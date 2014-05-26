@@ -5,15 +5,15 @@
 # Translators:
 # jui <appukonrad@gmail.com>, 2012-2013
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2007
-# fri <pavelfric@seznam.cz>, 2013-2014
-# fri <pavelfric@seznam.cz>, 2013-2014
+# fri, 2013-2014
+# fri, 2013-2014
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-03 23:04+0200\n"
-"PO-Revision-Date: 2014-04-04 08:17+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"POT-Creation-Date: 2014-04-30 18:55+0200\n"
+"PO-Revision-Date: 2014-05-11 18:41+0000\n"
+"Last-Translator: fri\n"
 "Language-Team: Czech (http://www.transifex.com/projects/p/pychess/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,28 +23,37 @@ msgstr ""
 
 # "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 #: glade/analyze_game.glade:22
-msgid "Ananlyze game"
-msgstr ""
+msgid "Analyze game"
+msgstr "Provést rozbor hry"
 
 #: glade/analyze_game.glade:89
 msgid "Use analyzer:"
-msgstr ""
+msgstr "Použít analyzátor:"
 
 #: glade/analyze_game.glade:124 glade/PyChess.glade:1804
 msgid "Maximum analysis time in seconds:"
 msgstr "Nejvíce času na rozbor v sekundách:"
 
 #: glade/analyze_game.glade:168
-msgid "Create variation thresold in centipawns:"
+msgid "Variation annotation creation thresold in centipawns:"
 msgstr ""
 
-#: glade/analyze_game.glade:204 glade/PyChess.glade:1231
+#: glade/analyze_game.glade:169
+msgid ""
+"If the analyzer finds a move where the evaluation difference (the difference"
+" between the evaluation for the move it thinks is the best move and the "
+"evaluation for the move made in the game) exceeds this value, it will add an"
+" annotation for that move (consisting of the engine's Principal Variation "
+"for the move) to the Annotation panel"
+msgstr ""
+
+#: glade/analyze_game.glade:205 glade/PyChess.glade:1231
 msgid "Colorize analyzed moves"
 msgstr "Barvit tahy, u nichž byl proveden rozbor"
 
-#: glade/analyze_game.glade:219 glade/PyChess.glade:1263
+#: glade/analyze_game.glade:220 glade/PyChess.glade:1263
 msgid "Show evaluation values"
-msgstr ""
+msgstr "Ukázat hodnoty vyhodnocení"
 
 #: glade/discovererDialog.glade:19
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -673,19 +682,19 @@ msgstr "Když je zapnuta tato volba, PyChess bude používat figurky namísto ve
 
 #: glade/PyChess.glade:1236
 msgid "If set, PyChess will colorize suboptimal analyzed moves with red."
-msgstr ""
+msgstr "Pokud je nastaveno, PyChess bude obarvovat tahy, u nichž byl proveden rozbor, jež však nejsou nejlepší, červeně."
 
 #: glade/PyChess.glade:1247
 msgid "Show elapsed move times"
-msgstr ""
+msgstr "Ukázat časy uplynulých tahů"
 
 #: glade/PyChess.glade:1252
 msgid "If set, the elapsed time that a player used for the move is shown."
-msgstr ""
+msgstr "Pokud je nastaveno, je ukázán uplynulý čas, jejž hráč použil na tah."
 
 #: glade/PyChess.glade:1268
-msgid "If set, the hint analyzer engine avaluation value is shown."
-msgstr ""
+msgid "If set, the hint analyzer engine evaluation value is shown."
+msgstr "Pokud je nastaveno, je ukázána hodnota vyhodnocení stroje poradního analyzátoru."
 
 #: glade/PyChess.glade:1292
 msgid "<b>General Display Options</b>"
@@ -1008,7 +1017,7 @@ msgstr "Rada dne"
 msgid "Quit PyChess"
 msgstr "Ukončit PyChess"
 
-#: glade/saveGamesDialog.glade:25 lib/pychess/widgets/ionest.py:394
+#: glade/saveGamesDialog.glade:25 lib/pychess/widgets/ionest.py:399
 msgid "Close _without Saving"
 msgstr "Zavřít _bez uložení"
 
@@ -1062,15 +1071,15 @@ msgstr "Rada dne"
 msgid "Show tips at startup"
 msgstr "Ukázat rady při spuštění"
 
-#: lib/pychess/Main.py:283
+#: lib/pychess/Main.py:284
 msgid "http://en.wikipedia.org/wiki/Chess"
 msgstr "http://cs.wikipedia.org/wiki/%C5%A0achy"
 
-#: lib/pychess/Main.py:286
+#: lib/pychess/Main.py:287
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
 msgstr "http://cs.wikipedia.org/wiki/Pravidla_%C5%A1ach%C5%AF"
 
-#: lib/pychess/Main.py:350 lib/pychess/widgets/gamenanny.py:73
+#: lib/pychess/Main.py:351 lib/pychess/widgets/gamenanny.py:73
 msgid "Welcome"
 msgstr "Vítejte"
 
@@ -1132,7 +1141,7 @@ msgstr "'%s' není registrované jméno"
 msgid ""
 "The entered password was invalid.\n"
 "If you forgot your password, go to <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a> to request a new one over email."
-msgstr ""
+msgstr "Zadané heslo bylo neplatné.\nPokud jste zapomněl své heslo, jděte na stránky <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a> a požádejte o nové, které bude zasláno elektronickou poštou."
 
 #: lib/pychess/ic/FICSConnection.py:145
 msgid "Connecting to server"
@@ -1228,52 +1237,52 @@ msgstr "Simultánní partie"
 msgid "In Tournament"
 msgstr "Na soutěži"
 
-#: lib/pychess/ic/FICSObjects.py:289 lib/pychess/ic/FICSObjects.py:499
+#: lib/pychess/ic/FICSObjects.py:291 lib/pychess/ic/FICSObjects.py:501
 #: lib/pychess/ic/ICLounge.py:1798
 msgid "Unrated"
 msgstr "Nehodnocený"
 
-#: lib/pychess/ic/FICSObjects.py:498 lib/pychess/ic/ICLounge.py:450
+#: lib/pychess/ic/FICSObjects.py:500 lib/pychess/ic/ICLounge.py:450
 #: lib/pychess/ic/ICLounge.py:1633
 msgid "Rated"
 msgstr "Hodnoceno"
 
-#: lib/pychess/ic/FICSObjects.py:505 lib/pychess/ic/ICLounge.py:1618
+#: lib/pychess/ic/FICSObjects.py:507 lib/pychess/ic/ICLounge.py:1618
 #, python-format
 msgid "%d min"
 msgstr "%d min"
 
-#: lib/pychess/ic/FICSObjects.py:507
+#: lib/pychess/ic/FICSObjects.py:509
 #, python-format
 msgid " + %d sec"
 msgstr " + %d s"
 
-#: lib/pychess/ic/FICSObjects.py:523
+#: lib/pychess/ic/FICSObjects.py:525
 #, python-format
 msgid "%(player)s plays %(color)s"
 msgstr "%(player)s plays %(color)s"
 
-#: lib/pychess/ic/FICSObjects.py:525 lib/pychess/ic/ICLounge.py:584
+#: lib/pychess/ic/FICSObjects.py:527 lib/pychess/ic/ICLounge.py:584
 msgid "white"
 msgstr "Bílý"
 
-#: lib/pychess/ic/FICSObjects.py:525 lib/pychess/ic/ICLounge.py:584
+#: lib/pychess/ic/FICSObjects.py:527 lib/pychess/ic/ICLounge.py:584
 msgid "black"
 msgstr "Černý"
 
-#: lib/pychess/ic/FICSObjects.py:558
+#: lib/pychess/ic/FICSObjects.py:560
 msgid "This is a continuation of an adjourned match"
 msgstr "Toto je pokračování přerušené hry"
 
-#: lib/pychess/ic/FICSObjects.py:647
+#: lib/pychess/ic/FICSObjects.py:649
 msgid "Opponent Rating"
 msgstr "Hodnocení soupeře"
 
-#: lib/pychess/ic/FICSObjects.py:649
+#: lib/pychess/ic/FICSObjects.py:651
 msgid "Manual Accept"
 msgstr "Přijmout ručně"
 
-#: lib/pychess/ic/FICSObjects.py:796
+#: lib/pychess/ic/FICSObjects.py:798
 msgid "Private"
 msgstr "Soukromý"
 
@@ -1351,7 +1360,7 @@ msgstr "Neznámé"
 msgid ""
 "You are currently logged in as a guest.\n"
 "A guest can't play rated games and therefore isn't able to play as many of the types of matches offered as a registered user. To register an account, go to <a href=\"http://www.freechess.org/Register/index.html\">http://www.freechess.org/Register/index.html</a>."
-msgstr ""
+msgstr "Nyní jste přihlášen jako host.\nHost nemůže hrát hodnocené hry a proto nemůže hrát tolik typů z nabízených utkání jako registrovaný uživatel. Pro zaregistrování účtu jděte na <a href=\"http://www.freechess.org/Register/index.html\">http://www.freechess.org/Register/index.html</a>."
 
 #: lib/pychess/ic/ICLounge.py:449 lib/pychess/ic/ICLounge.py:805
 msgid "Name"
@@ -2182,24 +2191,30 @@ msgid ""
 msgstr "Protože hráč přerušil hru. Kterýkoli hráč může hru přerušit bez svolení druhého hráče před druhým tahem. Žádné změny v hodnocení."
 
 #: lib/pychess/Utils/repr.py:58
+msgid ""
+"Because a player disconnected and there are too few moves to warrant "
+"adjournment. No rating changes have occurred."
+msgstr "Protože se hráč odpojil a je příliš málo tahů na to, aby bylo vynuceno odložení. Žádné změny v hodnocení."
+
+#: lib/pychess/Utils/repr.py:59
 msgid "Because the server was shut down. No rating changes have occurred."
 msgstr "Protože server byl vypnut. Žádné změny v hodnocení."
 
-#: lib/pychess/Utils/repr.py:60
+#: lib/pychess/Utils/repr.py:61
 #, python-format
 msgid "Because the %(white)s engine died"
 msgstr "Protože %(white)s stroj vypustil duši"
 
-#: lib/pychess/Utils/repr.py:61
+#: lib/pychess/Utils/repr.py:62
 #, python-format
 msgid "Because the %(black)s engine died"
 msgstr "Protože %(black)s stroj vypustil duši"
 
-#: lib/pychess/Utils/repr.py:62
+#: lib/pychess/Utils/repr.py:63
 msgid "Because the connection to the server was lost"
 msgstr "Protože spojení se serverem bylo ztraceno"
 
-#: lib/pychess/Utils/repr.py:63
+#: lib/pychess/Utils/repr.py:64
 msgid "The reason is unknown"
 msgstr "Důvod je neznámý"
 
@@ -2571,170 +2586,194 @@ msgid ""
 "You can try to start a new game with the engine, or try to play against another one."
 msgstr "PyChess ztratil spojení se strojem, pravděpodobně spadl.\n\nMůžete se pokusit o spuštění nové hry se strojem, nebo zkusit hrát proti jinému."
 
-#: lib/pychess/widgets/gamewidget.py:169
+#: lib/pychess/widgets/gamewidget.py:170 lib/pychess/widgets/gamewidget.py:284
 msgid "Abort"
 msgstr "Přerušit"
 
-#: lib/pychess/widgets/gamewidget.py:171
+#: lib/pychess/widgets/gamewidget.py:172
 msgid ""
 "This game can be automatically aborted without rating loss because there has"
 " not yet been two moves made"
 msgstr "Tuto hru lze automaticky přerušit beze ztráty hodnocení, protože ještě nebyly provedeny dva tahy"
 
-#: lib/pychess/widgets/gamewidget.py:173
+#: lib/pychess/widgets/gamewidget.py:174
 msgid "Offer Abort"
 msgstr "Nabídnout přerušení"
 
-#: lib/pychess/widgets/gamewidget.py:175
+#: lib/pychess/widgets/gamewidget.py:176
 msgid ""
 "Your opponent must agree to abort the game because there has been two or "
 "more moves made"
 msgstr "Váš soupeř musí souhlasit s přerušením hry, protože byly provedeny dva nebo více tahů"
 
-#: lib/pychess/widgets/gamewidget.py:193
+#: lib/pychess/widgets/gamewidget.py:194
 msgid "This game can not be adjourned because one or both players are guests"
 msgstr "Tuto hru nelze odložit, protože jeden nebo oba dva hráči jsou hosty"
 
-#: lib/pychess/widgets/gamewidget.py:210
+#: lib/pychess/widgets/gamewidget.py:211
 msgid "Claim Draw"
 msgstr "Dožadovat se remízy"
 
-#: lib/pychess/widgets/gamewidget.py:416 lib/pychess/widgets/gamewidget.py:471
+#: lib/pychess/widgets/gamewidget.py:289
+msgid "Pause"
+msgstr "Pozastavit"
+
+#: lib/pychess/widgets/gamewidget.py:290
+msgid "Resume"
+msgstr "Pokračovat"
+
+#: lib/pychess/widgets/gamewidget.py:292
+msgid "Offer Pause"
+msgstr "Nabídnout pozastavení"
+
+#: lib/pychess/widgets/gamewidget.py:293
+msgid "Offer Resume"
+msgstr "Nabídnout pokračování"
+
+#: lib/pychess/widgets/gamewidget.py:297
+msgid "Undo"
+msgstr "Zpět"
+
+#: lib/pychess/widgets/gamewidget.py:299
+msgid "Offer Undo"
+msgstr "Nabídnout vzetí tahu zpět"
+
+#: lib/pychess/widgets/gamewidget.py:429 lib/pychess/widgets/gamewidget.py:488
 msgid "vs"
 msgstr "proti"
 
-#: lib/pychess/widgets/gamewidget.py:518
+#: lib/pychess/widgets/gamewidget.py:535
 msgid "Jump to initial position"
 msgstr "Jít zpět na počáteční stav hry"
 
-#: lib/pychess/widgets/gamewidget.py:523
+#: lib/pychess/widgets/gamewidget.py:540
 msgid "Step back one move"
 msgstr "O tah zpět"
 
-#: lib/pychess/widgets/gamewidget.py:528
+#: lib/pychess/widgets/gamewidget.py:545
 msgid "Step forward one move"
 msgstr "O tah vpřed"
 
-#: lib/pychess/widgets/gamewidget.py:533
+#: lib/pychess/widgets/gamewidget.py:550
 msgid "Jump to latest position"
 msgstr "Jít na poslední stav hry"
 
-#: lib/pychess/widgets/gamewidget.py:748
+#: lib/pychess/widgets/gamewidget.py:769
 msgid "<b><big>PyChess was unable to load your panel settings</big></b>"
 msgstr "<b><big>PyChess nebyl schopen nahrát nastavení vašeho panelu</big></b>"
 
-#: lib/pychess/widgets/gamewidget.py:749
+#: lib/pychess/widgets/gamewidget.py:770
 msgid ""
 "Your panel settings have been reset. If this problem repeats, you should "
 "report it to the developers"
 msgstr "Nastavení vašeho panelu bylo nastaveno znovu na výchozí. Pokud se tento problém bude opakovat, měl byste jej nahlásit vývojářům"
 
-#: lib/pychess/widgets/ionest.py:80 lib/pychess/widgets/newGameDialog.py:329
+#: lib/pychess/widgets/ionest.py:82 lib/pychess/widgets/newGameDialog.py:329
 #: lib/pychess/widgets/TaskerManager.py:201
 msgid "You"
 msgstr "Vy"
 
-#: lib/pychess/widgets/ionest.py:83 lib/pychess/widgets/newGameDialog.py:330
+#: lib/pychess/widgets/ionest.py:85 lib/pychess/widgets/newGameDialog.py:330
 #: lib/pychess/widgets/preferencesDialog.py:52
 #: lib/pychess/widgets/TaskerManager.py:204
 msgid "Guest"
 msgstr "host"
 
-#: lib/pychess/widgets/ionest.py:105
+#: lib/pychess/widgets/ionest.py:108
 msgid "Correct the move, or start playing with what could be read"
 msgstr "Opravit tah nebo začít hrát s tím, co je možné přečíst"
 
-#: lib/pychess/widgets/ionest.py:136 lib/pychess/widgets/newGameDialog.py:410
+#: lib/pychess/widgets/ionest.py:141 lib/pychess/widgets/newGameDialog.py:410
 msgid "Open Game"
 msgstr "Otevřít hru"
 
-#: lib/pychess/widgets/ionest.py:146
+#: lib/pychess/widgets/ionest.py:151
 msgid "All Files"
 msgstr "Všechny soubory"
 
-#: lib/pychess/widgets/ionest.py:149
+#: lib/pychess/widgets/ionest.py:154
 msgid "Detect type automatically"
 msgstr "Detekovat typ automaticky"
 
-#: lib/pychess/widgets/ionest.py:155
+#: lib/pychess/widgets/ionest.py:160
 msgid "All Chess Files"
 msgstr "Všechny šachové soubory"
 
-#: lib/pychess/widgets/ionest.py:189
+#: lib/pychess/widgets/ionest.py:194
 msgid "Save elapsed move times and analyzing engine evaluation values."
 msgstr ""
 
-#: lib/pychess/widgets/ionest.py:224
+#: lib/pychess/widgets/ionest.py:229
 msgid "Save Game"
 msgstr "Uložit hru"
 
-#: lib/pychess/widgets/ionest.py:224
+#: lib/pychess/widgets/ionest.py:229
 msgid "Export position"
 msgstr "Vyvést stav hry"
 
-#: lib/pychess/widgets/ionest.py:228 lib/pychess/widgets/ionest.py:345
+#: lib/pychess/widgets/ionest.py:233 lib/pychess/widgets/ionest.py:350
 msgid "vs."
 msgstr "proti."
 
-#: lib/pychess/widgets/ionest.py:245
+#: lib/pychess/widgets/ionest.py:250
 #, python-format
 msgid "<big><b>Unknown file type '%s'</b></big>"
 msgstr "<big><b>Neznámý typ souboru '%s'</b></big>"
 
-#: lib/pychess/widgets/ionest.py:246
+#: lib/pychess/widgets/ionest.py:251
 #, python-format
 msgid ""
 "Was unable to save '%(uri)s' as PyChess doesn't know the format "
 "'%(ending)s'."
 msgstr "Nepodařilo se uložit '%(uri)s', protože PyChess nezná formát '%(ending)s'."
 
-#: lib/pychess/widgets/ionest.py:262
+#: lib/pychess/widgets/ionest.py:267
 #, python-format
 msgid "<big><b>Unable to save file '%s'</b></big>"
 msgstr "<big><b>Nelze uložit soubor '%s'</b></big>"
 
-#: lib/pychess/widgets/ionest.py:264
+#: lib/pychess/widgets/ionest.py:269
 msgid ""
 "You don't have the necessary rights to save the file.\n"
 "Please ensure that you have given the right path and try again."
 msgstr "Nemáte dostatečná oprávnění pro uložení souboru.\nUjistěte se, prosím, že jste zadal správnou cestu, a zkuste to znovu."
 
-#: lib/pychess/widgets/ionest.py:272
+#: lib/pychess/widgets/ionest.py:277
 msgid "_Replace"
 msgstr "Nah_radit"
 
-#: lib/pychess/widgets/ionest.py:276
+#: lib/pychess/widgets/ionest.py:281
 msgid "File exists"
 msgstr "Soubor existuje"
 
-#: lib/pychess/widgets/ionest.py:278
+#: lib/pychess/widgets/ionest.py:283
 #, python-format
 msgid ""
 "<big><b>A file named '%s' already exists. Would you like to replace "
 "it?</b></big>"
 msgstr "<big><b>Soubor pojmenovaný '%s' již existuje. Chcete ho nahradit?</b></big>"
 
-#: lib/pychess/widgets/ionest.py:279
+#: lib/pychess/widgets/ionest.py:284
 #, python-format
 msgid ""
 "The file already exists in '%s'. If you replace it, its content will be "
 "overwritten."
 msgstr "Soubor již existuje '%s'. Pokud jej nahradíte, jeho obsah bude přepsán."
 
-#: lib/pychess/widgets/ionest.py:294
+#: lib/pychess/widgets/ionest.py:299
 msgid "Could not save the file"
 msgstr "Nelze uložit soubor"
 
-#: lib/pychess/widgets/ionest.py:295
+#: lib/pychess/widgets/ionest.py:300
 msgid "<big><b>PyChess was not able to save the game</b></big>"
 msgstr "<big><b>PyChess se hru nepodařilo uložit</b></big>"
 
-#: lib/pychess/widgets/ionest.py:296
+#: lib/pychess/widgets/ionest.py:301
 #, python-format
 msgid "The error was: %s"
 msgstr "Chyba byla: %s"
 
-#: lib/pychess/widgets/ionest.py:331
+#: lib/pychess/widgets/ionest.py:336
 #, python-format
 msgid "There is %d game with unsaved moves."
 msgid_plural "There are %d games with unsaved moves."
@@ -2742,11 +2781,11 @@ msgstr[0] "Je tu %d hra s neuloženými tahy."
 msgstr[1] "Jsou tu %d hry s neuloženými tahy."
 msgstr[2] "Je tu %d her s neuloženými tahy."
 
-#: lib/pychess/widgets/ionest.py:334
+#: lib/pychess/widgets/ionest.py:339
 msgid "Save moves before closing?"
 msgstr "Uložit tahy před zavřením?"
 
-#: lib/pychess/widgets/ionest.py:351
+#: lib/pychess/widgets/ionest.py:356
 #, python-format
 msgid "_Save %d document"
 msgid_plural "_Save %d documents"
@@ -2754,11 +2793,11 @@ msgstr[0] "_Uložit %d hru"
 msgstr[1] "_Uložit %d hry"
 msgstr[2] "_Uložit %d her"
 
-#: lib/pychess/widgets/ionest.py:402
+#: lib/pychess/widgets/ionest.py:407
 msgid "<b><big>Save the current game before you close it?</big></b>"
 msgstr "<b><big>Uložit nynější hru před jejím zavřením?</big></b>"
 
-#: lib/pychess/widgets/ionest.py:404
+#: lib/pychess/widgets/ionest.py:409
 msgid ""
 "It is not possible later to continue the game,\n"
 "if you don't save it."
@@ -3163,79 +3202,79 @@ msgstr "Bílý má poněkud stísněnou pozici"
 msgid "White has a slightly cramped position"
 msgstr "Bílý má mírně stísněnou pozici"
 
-#: sidepanel/annotationPanel.py:18
+#: sidepanel/annotationPanel.py:19
 msgid "Annotation"
 msgstr "Poznámka"
 
-#: sidepanel/annotationPanel.py:21
+#: sidepanel/annotationPanel.py:22
 msgid "Annotated game"
 msgstr "Hra opatřená poznámkami"
 
-#: sidepanel/annotationPanel.py:178
+#: sidepanel/annotationPanel.py:179
 msgid "Add start comment"
 msgstr "Přidat začáteční poznámku"
 
-#: sidepanel/annotationPanel.py:183
+#: sidepanel/annotationPanel.py:184
 msgid "Add comment"
 msgstr "Přidat poznámku"
 
-#: sidepanel/annotationPanel.py:187 sidepanel/annotationPanel.py:250
+#: sidepanel/annotationPanel.py:188 sidepanel/annotationPanel.py:251
 msgid "Edit comment"
 msgstr "Upravit poznámku"
 
-#: sidepanel/annotationPanel.py:198
+#: sidepanel/annotationPanel.py:199
 msgid "Forced move"
 msgstr "Vynucený tah"
 
-#: sidepanel/annotationPanel.py:203
+#: sidepanel/annotationPanel.py:204
 msgid "Add move symbol"
 msgstr "Přidat značku pro tah"
 
-#: sidepanel/annotationPanel.py:209
+#: sidepanel/annotationPanel.py:210
 msgid "Unclear position"
 msgstr "Nejasná pozice"
 
-#: sidepanel/annotationPanel.py:218
+#: sidepanel/annotationPanel.py:219
 msgid "Zugzwang"
 msgstr "Vynucený tah"
 
-#: sidepanel/annotationPanel.py:219
+#: sidepanel/annotationPanel.py:220
 msgid "Development adv."
 msgstr "Přesun"
 
-#: sidepanel/annotationPanel.py:220
+#: sidepanel/annotationPanel.py:221
 msgid "Initiative"
 msgstr "Iniciativa"
 
-#: sidepanel/annotationPanel.py:221
+#: sidepanel/annotationPanel.py:222
 msgid "With attack"
 msgstr "S útokem"
 
-#: sidepanel/annotationPanel.py:222
+#: sidepanel/annotationPanel.py:223
 msgid "Compensation"
 msgstr "Náhrada"
 
-#: sidepanel/annotationPanel.py:223
+#: sidepanel/annotationPanel.py:224
 msgid "Counterplay"
 msgstr "Protihra"
 
-#: sidepanel/annotationPanel.py:224
+#: sidepanel/annotationPanel.py:225
 msgid "Time pressure"
 msgstr "Časová tíseň"
 
-#: sidepanel/annotationPanel.py:229
+#: sidepanel/annotationPanel.py:230
 msgid "Add evaluation symbol"
 msgstr "Přidat vyhodnocovací symbol"
 
-#: sidepanel/annotationPanel.py:233
+#: sidepanel/annotationPanel.py:234
 msgid "Remove symols"
 msgstr "Odstranit symboly"
 
-#: sidepanel/annotationPanel.py:240
+#: sidepanel/annotationPanel.py:241
 msgid "Remove variation"
 msgstr "Odstranit variantu"
 
-#: sidepanel/annotationPanel.py:637
+#: sidepanel/annotationPanel.py:638
 #, python-format
 msgid "round %s"
 msgstr "kolo %s"
