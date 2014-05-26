@@ -12,7 +12,7 @@ from pychess.System import uistuff
 from pychess.System.glock import glock_connect
 
 
-class ConsoleWindow:
+class ConsoleWindow (object):
     def __init__ (self, widgets, connection):
         self.connection = connection
 

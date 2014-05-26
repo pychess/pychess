@@ -52,8 +52,13 @@ class ICLounge (GObject):
         self.helperconn = helperconn
         self.host = host
         
-        self.need_who = True
-        self.need_games = True
+        def update_lists (queued_calls):
+            for task in queued_calls:
+                func = task[0]
+                func(*task[1:])
+        self.publisher = Publisher(update_lists, self.__init__,
+                                       Publisher.SEND_LIST)
+        self.publisher.start()
         
         self.widgets = uistuff.GladeWidgets("fics_lounge.glade")
         uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
@@ -87,33 +92,31 @@ class ICLounge (GObject):
         if self.connection.isRegistred():
             numtimes = conf.get("numberOfTimesLoggedInAsRegisteredUser", 0) + 1
             conf.set("numberOfTimesLoggedInAsRegisteredUser", numtimes)
-
-        global sections
-        sections = (
+        
+        self.sections = (
             VariousSection(self.widgets, self.connection),
             UserInfoSection(self.widgets, self.connection, self.host),
             NewsSection(self.widgets, self.connection),
 
-            SeekTabSection(self.widgets, self.connection, self.infobar),
-            SeekGraphSection(self.widgets, self.connection),
-            PlayerTabSection(self.widgets, self.connection),
-            GameTabSection(self.widgets, self.connection),
-            AdjournedTabSection(self.widgets, self.connection, self.infobar),
-
-            ChatWindow(self.widgets, self.connection),
-            ConsoleWindow(self.widgets, self.connection),
-
+            SeekTabSection(self.widgets, self.connection, self),
             SeekChallengeSection(self.widgets, self.connection),
+            SeekGraphSection(self.widgets, self.connection, self),
+            PlayerTabSection(self.widgets, self.connection, self),
+            GameTabSection(self.widgets, self.connection, self),
+            AdjournedTabSection(self.widgets, self.connection, self),
             
             # This is not really a section. It handles server messages which
             # don't correspond to a running game
-            Messages(self.widgets, self.connection, self.infobar),
+            Messages(self.widgets, self.connection, self),
             
             # This is not really a section. Merely a pair of BoardManager connects
             # which takes care of ionest and stuff when a new game is started or
             # observed
             CreatedBoards(self.widgets, self.connection)
         )
+        
+        self.chat = ChatWindow(self.widgets, self.connection)
+        self.console = ConsoleWindow(self.widgets, self.connection)
         
         self.connection.lounge_loaded.set()
         log.debug("ICLounge.__init__: finished")
@@ -134,21 +137,26 @@ class ICLounge (GObject):
     
     @glock.glocked
     def close (self):
-        if self.widgets != None:
+        try:
             self.widgets["fics_lounge"].hide()
-        global sections
-        if 'sections' in globals() and sections != None:
-            for i in range(len(sections)):
-                if hasattr(sections[i], "_del"):
-                    sections[i]._del()
-        sections = None
-        self.widgets = None
+            for section in self.sections:
+                section._del()
+            self.publisher._del()
+            self.sections = None
+            self.widgets = None
+        except TypeError:
+            pass
+        except AttributeError:
+            pass
 
 ################################################################################
 # Initialize Sections                                                          #
 ################################################################################
 
 class Section (object):
+    def _del (self):
+        pass
+    
     def get_infobarmessage_content (self, player, text, gametype=None):
         content = gtk.HBox()
         icon = gtk.Image()
@@ -372,18 +380,6 @@ class NewsSection(Section):
 
 class ParrentListSection (Section):
     """ Parrent for sections mainly consisting of a large treeview """
-    def __init__ (self):
-        def updateLists (queuedCalls):
-            for task in queuedCalls:
-                func = task[0]
-                func(*task[1:])
-        self.listPublisher = Publisher(updateLists, self.__init__,
-                                       Publisher.SEND_LIST)
-        self.listPublisher.start()
-    
-    def _del (self):
-        self.listPublisher._del()
-    
     def addColumns (self, treeview, *columns, **keyargs):
         if "hide" in keyargs: hide = keyargs["hide"]
         else: hide = []
@@ -430,12 +426,11 @@ class ParrentListSection (Section):
 
 class SeekTabSection (ParrentListSection):
 
-    def __init__ (self, widgets, connection, infobar):
-        ParrentListSection.__init__(self)
-
+    def __init__ (self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
-        self.infobar = infobar
+        self.infobar = lounge.infobar
+        self.publisher = lounge.publisher
         self.messages = {}
         self.seeks = {}
         self.challenges = {}
@@ -473,21 +468,21 @@ class SeekTabSection (ParrentListSection):
         self.tv.connect("row-activated", self.row_activated)
         
         self.connection.seeks.connect("FICSSeekCreated", lambda seeks, seek:
-                self.listPublisher.put((self.onAddSeek, seek)))
+                self.publisher.put((self.onAddSeek, seek)))
         self.connection.seeks.connect("FICSSeekRemoved", lambda seeks, seek:
-                self.listPublisher.put((self.onRemoveSeek, seek)))
+                self.publisher.put((self.onRemoveSeek, seek)))
         self.connection.challenges.connect("FICSChallengeIssued",
             lambda challenges, challenge: \
-            self.listPublisher.put((self.onChallengeAdd, challenge)))
+            self.publisher.put((self.onChallengeAdd, challenge)))
         self.connection.challenges.connect("FICSChallengeRemoved",
             lambda challenges, challenge: \
-            self.listPublisher.put((self.onChallengeRemove, challenge)))
+            self.publisher.put((self.onChallengeRemove, challenge)))
         self.connection.glm.connect("our-seeks-removed", lambda glm:
-                self.listPublisher.put((self.our_seeks_removed,)))
+                self.publisher.put((self.our_seeks_removed,)))
         self.connection.bm.connect("playGameCreated", lambda bm, game:
-                self.listPublisher.put((self.onPlayingGame,)) )
+                self.publisher.put((self.onPlayingGame,)) )
         self.connection.bm.connect("curGameEnded", lambda bm, game:
-                self.listPublisher.put((self.onCurGameEnded,)) )
+                self.publisher.put((self.onCurGameEnded,)) )
         
     def selectFunction (self, selection, model, path, is_selected):
         if model[path][9] == "grey": return False
@@ -724,11 +719,10 @@ GAME_LENGTH = 40
 
 class SeekGraphSection (ParrentListSection):
 
-    def __init__ (self, widgets, connection):
-        ParrentListSection.__init__(self)
-
+    def __init__ (self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
+        self.publisher = lounge.publisher
 
         self.graph = SpotGraph()
 
@@ -742,19 +736,19 @@ class SeekGraphSection (ParrentListSection):
         self.graph.connect("spotClicked", self.onSpotClicked)
 
         self.connection.seeks.connect("FICSSeekCreated", lambda seeks, seek:
-            self.listPublisher.put((self.onAddSought, seek)))
+            self.publisher.put((self.onAddSought, seek)))
         self.connection.seeks.connect("FICSSeekRemoved", lambda seeks, seek:
-            self.listPublisher.put((self.onRemoveSought, seek)))
+            self.publisher.put((self.onRemoveSought, seek)))
         self.connection.challenges.connect("FICSChallengeIssued",
             lambda challenges, challenge: \
-            self.listPublisher.put((self.onAddSought, challenge)))
+            self.publisher.put((self.onAddSought, challenge)))
         self.connection.challenges.connect("FICSChallengeRemoved",
             lambda challenges, challenge: \
-            self.listPublisher.put((self.onRemoveSought, challenge)))
+            self.publisher.put((self.onRemoveSought, challenge)))
         self.connection.bm.connect("playGameCreated", lambda bm, game:
-                self.listPublisher.put((self.onPlayingGame,)) )
+                self.publisher.put((self.onPlayingGame,)) )
         self.connection.bm.connect("curGameEnded", lambda bm, game:
-                self.listPublisher.put((self.onCurGameEnded,)) )
+                self.publisher.put((self.onCurGameEnded,)) )
 
     def onSpotClicked (self, graph, name):
         self.connection.bm.play(name)
@@ -790,11 +784,10 @@ class PlayerTabSection (ParrentListSection):
     
     widgets = []
     
-    def __init__ (self, widgets, connection):
-        ParrentListSection.__init__(self)
-
+    def __init__ (self, widgets, connection, lounge):
         PlayerTabSection.widgets = widgets
         self.connection = connection
+        self.lounge = lounge
         
         self.players = {}
         
@@ -971,10 +964,8 @@ class PlayerTabSection (ParrentListSection):
     def onPrivateChatClicked (self, button):
         player = self.getSelectedPlayer()
         if player is None: return
-        for section in sections:
-            if isinstance(section, ChatWindow):
-                section.openChatWithPlayer(player.name)
-                #TODO: isadmin og type
+        self.lounge.chat.openChatWithPlayer(player.name)
+        #TODO: isadmin og type
     
     def onObserveClicked (self, button):        
         player = self.getSelectedPlayer()
@@ -999,11 +990,10 @@ class PlayerTabSection (ParrentListSection):
 
 class GameTabSection (ParrentListSection):
 
-    def __init__ (self, widgets, connection):
-        ParrentListSection.__init__(self)
-
+    def __init__ (self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
+        self.publisher = lounge.publisher
 
         self.games = {}
 
@@ -1046,15 +1036,15 @@ class GameTabSection (ParrentListSection):
         self.tv.set_search_equal_func (searchCallback)
 
         self.connection.games.connect("FICSGameCreated", lambda games, game:
-                self.listPublisher.put((self.onGameAdd, game)) )
+                self.publisher.put((self.onGameAdd, game)) )
         self.connection.games.connect("FICSGameEnded", lambda games, game:
-                self.listPublisher.put((self.onGameRemove, game)) )
+                self.publisher.put((self.onGameRemove, game)) )
         self.widgets["observeButton"].connect ("clicked", self.onObserveClicked)
         self.tv.connect("row-activated", self.onObserveClicked)
         self.connection.bm.connect("obsGameCreated", lambda bm, game:
-                self.listPublisher.put((self.onGameObserved, game)) )
+                self.publisher.put((self.onGameObserved, game)) )
         self.connection.bm.connect("obsGameUnobserved", lambda bm, game:
-                self.listPublisher.put((self.onGameUnobserved, game)) )
+                self.publisher.put((self.onGameUnobserved, game)) )
 
     def on_query_tooltip (self, widget, x, y, keyboard_tip, tooltip):
         if not widget.get_tooltip_context(x, y, keyboard_tip):
@@ -1156,11 +1146,11 @@ class GameTabSection (ParrentListSection):
 
 class AdjournedTabSection (ParrentListSection):
 
-    def __init__ (self, widgets, connection, infobar):
-        ParrentListSection.__init__(self)
+    def __init__ (self, widgets, connection, lounge):
         self.connection = connection
         self.widgets = widgets
-        self.infobar = infobar
+        self.infobar = lounge.infobar
+        self.publisher = lounge.publisher
         self.games = {}
         self.messages = {}
         
@@ -1179,9 +1169,9 @@ class AdjournedTabSection (ParrentListSection):
         self.onSelectionChanged(self.selection)
 
         self.connection.adm.connect("adjournedGameAdded", lambda adm, game:
-                self.listPublisher.put((self.onAdjournedGameAdded, game)) )
+                self.publisher.put((self.onAdjournedGameAdded, game)) )
         self.connection.games.connect("FICSAdjournedGameRemoved", lambda games, game:
-                self.listPublisher.put((self.onAdjournedGameRemoved, game)) )
+                self.publisher.put((self.onAdjournedGameRemoved, game)) )
 
         widgets["resignButton"].connect("clicked", self.onResignButtonClicked)
         widgets["abortButton"].connect("clicked", self.onAbortButtonClicked)
@@ -1190,7 +1180,7 @@ class AdjournedTabSection (ParrentListSection):
         widgets["previewButton"].connect("clicked", self.onPreviewButtonClicked)
         self.tv.connect("row-activated", lambda *args: self.onPreviewButtonClicked(None))
         self.connection.adm.connect("adjournedGamePreview", lambda adm, game:
-            self.listPublisher.put((self.onGamePreview, game)))
+            self.publisher.put((self.onGamePreview, game)))
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         
     def onSelectionChanged (self, selection):
@@ -1378,7 +1368,7 @@ class AdjournedTabSection (ParrentListSection):
 
 RATING_SLIDER_STEP = 25
     
-class SeekChallengeSection (ParrentListSection):
+class SeekChallengeSection (Section):
     
     seekEditorWidgets = (
         "untimedCheck", "minutesSpin", "gainSpin",
@@ -1412,8 +1402,6 @@ class SeekChallengeSection (ParrentListSection):
     seekEditorWidgetGettersSetters = {}
     
     def __init__ (self, widgets, connection):
-        ParrentListSection.__init__(self)
-        
         self.widgets = widgets
         self.connection = connection
         
@@ -2016,9 +2004,9 @@ class PlayerNotificationMessage (InfoBarMessage):
         self.text = text
 
 class Messages (Section):
-    def __init__ (self, widgets, connection, infobar):
+    def __init__ (self, widgets, connection, lounge):
         self.connection = connection
-        self.infobar = infobar
+        self.infobar = lounge.infobar
         self.messages = []
         self.players = []
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)

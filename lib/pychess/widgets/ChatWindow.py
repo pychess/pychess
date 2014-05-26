@@ -563,7 +563,7 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
 # /Panels
 #===============================================================================
 
-class ChatWindow:
+class ChatWindow (object):
     def __init__ (self, widgets, connection):
         self.connection = connection
         self.window = None
