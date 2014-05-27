@@ -128,37 +128,24 @@ class LBoard:
             
         # Get information
         parts = fenstr.split()
-        
+        castChr = "-"
+        epChr = "-"
+        fiftyChr = "0"
+        moveNoChr = "1"
         if STRICT_FEN and len(parts) != 6:
             raise SyntaxError, _("FEN needs 6 data fields. \n\n%s") % fenstr
-        
         elif len(parts) < 2:
             raise SyntaxError, _("FEN needs at least 2 data fields in fenstr. \n\n%s") % fenstr
-        
         elif len(parts) >= 6:
             pieceChrs, colChr, castChr, epChr, fiftyChr, moveNoChr = parts[:6]
-        
         elif len(parts) == 5:
             pieceChrs, colChr, castChr, epChr, fiftyChr = parts
-            moveNoChr = "1"
-
         elif len(parts) == 4:
             pieceChrs, colChr, castChr, epChr = parts
-            fiftyChr = "0"
-            moveNoChr = "1"
-
         elif len(parts) == 3:
             pieceChrs, colChr, castChr = parts
-            epChr = "-"
-            fiftyChr = "0"
-            moveNoChr = "1"
-
         else:
             pieceChrs, colChr = parts
-            castChr = "-"
-            epChr = "-"
-            fiftyChr = "0"
-            moveNoChr = "1"
         
         # Try to validate some information
         # TODO: This should be expanded and perhaps moved
