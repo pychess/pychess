@@ -177,6 +177,8 @@ class CECPEngine (ProtocolEngine):
         self.optionQueue = []
         self.boardLock = RLock()
         self.undoQueue = []
+
+        self.analysis_timer = None
         
         self.connect("readyForOptions", self.__onReadyForOptions_before)
         self.connect_after("readyForOptions", self.__onReadyForOptions)
@@ -306,6 +308,10 @@ class CECPEngine (ProtocolEngine):
             finally:
                 # Clear the analyzed data, if any
                 self.emit("analyze", [])
+
+                if self.analysis_timer is not None:
+                    self.analysis_timer.cancel()
+                    self.analysis_timer.join()
     
     #===========================================================================
     #    Send the player move updates
@@ -647,8 +653,12 @@ class CECPEngine (ProtocolEngine):
         print >> self.engine, "analyze"
         self.engineIsAnalyzing = True
 
-        t = Timer(conf.get("max_analysis_spin", 3), stop_analyze)
-        t.start()
+        if self.analysis_timer is not None:
+            self.analysis_timer.cancel()
+            self.analysis_timer.join()
+
+        self.analysis_timer = Timer(conf.get("max_analysis_spin", 3), stop_analyze)
+        self.analysis_timer.start()
         
     def __printColor (self):
         if self.features["colors"]: #or self.mode == INVERSE_ANALYZING:
