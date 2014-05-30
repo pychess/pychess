@@ -694,9 +694,6 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.delete(start, end)
 
     def game_changed(self, game):
-        if game.status != RUNNING:
-            return
-
         buf = self.textbuffer
         end_iter = buf.get_end_iter
         start = end_iter().get_offset()
