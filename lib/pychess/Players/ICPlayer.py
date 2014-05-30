@@ -81,7 +81,7 @@ class ICPlayer (Player):
                 return
             
             # If game end coming from helper connection before last move made
-            # we have to update timemodel oursef
+            # we have to update timemodel ourselves
             if self.gamemodel.status in (DRAW, WHITEWON, BLACKWON):
                 if self.gamemodel.timed and self.gamemodel.timemodel.ply < ply:
                     self.gamemodel.timemodel.paused = False
