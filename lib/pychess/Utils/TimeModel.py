@@ -244,3 +244,7 @@ class TimeModel (GObject):
     @property
     def hasTimes(self):
         return len(self.intervals[0]) > 1
+        
+    @property
+    def ply(self):
+        return len(self.intervals[BLACK]) + len(self.intervals[WHITE]) - 2

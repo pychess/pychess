@@ -80,6 +80,18 @@ class ICPlayer (Player):
             if ply <= self.gamemodel.ply:
                 return
             
+            # If game end coming from helper connection before last move made
+            # we have to update timemodel oursef
+            if self.gamemodel.status in (DRAW, WHITEWON, BLACKWON):
+                if self.gamemodel.timed and self.gamemodel.timemodel.ply < ply:
+                    self.gamemodel.timemodel.paused = False
+                    self.gamemodel.timemodel.tap()
+                    self.gamemodel.timemodel.paused = True
+                    log.debug("ICPlayer.__boardUpdate: id=%d self.gamemodel.players=%s: updating timemodel" % \
+                        (id(self), str(self.gamemodel.players)))
+                    self.gamemodel.timemodel.updatePlayer (WHITE, wms/1000.)
+                    self.gamemodel.timemodel.updatePlayer (BLACK, bms/1000.)
+                
             if 1-curcol == self.color:
                 log.debug("ICPlayer.__boardUpdate: id=%d self=%s ply=%d: putting move=%s in queue" % \
                     (id(self), self, ply, lastmove))
