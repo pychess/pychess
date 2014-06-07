@@ -5,6 +5,7 @@ import re
 
 from pychess.Utils.IconLoader import load_icon
 from pychess.System import uistuff
+from pychess.System import glock
 from pychess.System.glock import glock_connect
 from pychess.widgets.ChatView import ChatView
 from pychess.widgets.pydock.PyDockTop import PyDockTop
@@ -114,15 +115,18 @@ class TextImageTree (gtk.TreeView):
     
     def addRow (self, id, text, type):
         if id in self.id2iter: return
-        iter = self.props.model.append([id, text, type])
+        with glock.glock:
+            iter = self.props.model.append([id, text, type])
         self.id2iter[id] = iter
         self.idSet.add(id)
     
     def removeRow (self, id):
         try:
             iter = self.id2iter[id]
-        except KeyError: return
-        self.props.model.remove(iter)
+        except KeyError:
+            return
+        with glock.glock:
+            self.props.model.remove(iter)
         del self.id2iter[id]
         self.idSet.remove(id)
     
@@ -499,11 +503,11 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
             self.playersList.addRow(self.compileId(player.name, TYPE_PERSONAL),
                 player.name + player.display_titles(), TYPE_PERSONAL)
             return False
-        glock_connect(self.connection.players, "FICSPlayerEntered", addPlayer)
+        self.connection.players.connect("FICSPlayerEntered", addPlayer)
         def removePlayer (players, player):
             self.playersList.removeRow(self.compileId(player.name, TYPE_PERSONAL))
             return False
-        glock_connect(self.connection.players, "FICSPlayerExited", removePlayer)
+        self.connection.players.connect("FICSPlayerExited", removePlayer)
         
     def _addChannels (self, channels):
         for id, name in channels:

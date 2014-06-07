@@ -28,8 +28,7 @@ class ConsoleWindow (object):
         self.window.add(self.consoleView)
         
         widgets["show_console_button"].connect("clicked", self.showConsole)
-        glock_connect(connection.com, "consoleMessage",
-                      self.onConsoleMessage, after=False)
+        connection.com.connect("consoleMessage", self.onConsoleMessage)
         glock_connect(connection, "disconnected",
                       lambda c: self.window and self.window.hide())
 
