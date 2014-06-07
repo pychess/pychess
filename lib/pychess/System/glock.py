@@ -88,6 +88,14 @@ def glocked(f):
             release()
     return newFunction
 
+class GLock (object):
+    def __enter__ (self):
+        acquire()
+    def __exit__ (self, *a):
+        release()
+
+glock = GLock()    
+
 if __name__ == "__main__":
     from threading import Thread
     def do ():

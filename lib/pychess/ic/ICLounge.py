@@ -788,18 +788,17 @@ class PlayerTabSection (ParrentListSection):
         PlayerTabSection.widgets = widgets
         self.connection = connection
         self.lounge = lounge
-        
         self.players = {}
+        self.columns = {TYPE_BLITZ: 3, TYPE_STANDARD: 4, TYPE_LIGHTNING: 5}
         
         self.tv = widgets["playertreeview"]
         self.store = gtk.ListStore(FICSPlayer, gtk.gdk.Pixbuf, str, int, int,
-                                   int, int, int, int, int, int, int, str, str)
+                                   int, str, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.addColumns(self.tv, "FICSPlayer", "", _("Name"), _("Blitz"),
-            _("Standard"), _("Lightning"), _("Atomic"), _("Bughouse"), _("Crazyhouse"),
-            _("Losers"), _("Suicide"), _("Wild"), _("Status"), "tooltip", hide=[0,6,7,8,9,10,11,13],
+            _("Standard"), _("Lightning"), _("Status"), "tooltip", hide=[0,7],
             pix=[1])
-        self.tv.set_tooltip_column(13,)
+        self.tv.set_tooltip_column(7,)
         self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         try:
@@ -819,7 +818,6 @@ class PlayerTabSection (ParrentListSection):
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
     
-    @glock.glocked
     def onPlayerAdded (self, players, player):
         log.debug("%s" % player,
                   extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
@@ -828,11 +826,11 @@ class PlayerTabSection (ParrentListSection):
                 extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
             return
         
-        ti = self.store.append([player, player.getIcon(),
-            player.name + player.display_titles(), player.blitz, player.standard,
-            player.lightning, player.atomic, player.bughouse, player.crazyhouse,
-            player.losers, player.suicide, player.wild, player.display_status,
-            get_player_tooltip_text(player)])
+        with glock.glock:
+            ti = self.store.append([player, player.getIcon(),
+                player.name + player.display_titles(), player.blitz,
+                player.standard, player.lightning, player.display_status,
+                get_player_tooltip_text(player)])
         self.players[player] = { "ti": ti }
         self.players[player]["status"] = player.connect(
             "notify::status", self.status_changed)
@@ -848,9 +846,9 @@ class PlayerTabSection (ParrentListSection):
                 "notify::elo", self.elo_changed, player)
         
         count = len(self.players)
-        self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
+        with glock.glock:
+            self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
         
-    @glock.glocked
     def onPlayerRemoved (self, players, player):
         log.debug("%s" % player,
                   extra={"task": (self.connection.username, "PTS.onPlayerRemoved")})
@@ -858,7 +856,8 @@ class PlayerTabSection (ParrentListSection):
 
         if self.store.iter_is_valid(self.players[player]["ti"]):
             ti = self.players[player]["ti"]
-            self.store.remove(ti)
+            with glock.glock:
+                self.store.remove(ti)
         for key in ("status", "game", "titles"):
             if player.handler_is_connected(self.players[player][key]):
                 player.disconnect(self.players[player][key])
@@ -873,18 +872,20 @@ class PlayerTabSection (ParrentListSection):
         del self.players[player]
         
         count = len(self.players)
-        self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
+        with glock.glock:
+            self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
     
-    @glock.glocked
-    def status_changed (self, player, property):
+    def status_changed (self, player, prop):
         log.debug("%s" % player, extra={"task":
             (self.connection.username, "PTS.status_changed")})
         if player not in self.players: return
 
         if self.store.iter_is_valid(self.players[player]["ti"]):
-            self.store.set(self.players[player]["ti"], 12, player.display_status)
-            self.store.set(self.players[player]["ti"], 13,
-                           get_player_tooltip_text(player))
+            with glock.glock:
+                self.store.set(self.players[player]["ti"], 6,
+                               player.display_status)
+                self.store.set(self.players[player]["ti"], 7,
+                               get_player_tooltip_text(player))
         
         if player.status == IC_STATUS_PLAYING and player.game and \
                 "private" not in self.players[player]:
@@ -898,68 +899,56 @@ class PlayerTabSection (ParrentListSection):
             del self.players[player]["private"]
         
         if player == self.getSelectedPlayer():
-            self.onSelectionChanged(None)
+            with glock.glock:
+                self.onSelectionChanged(None)
             
         return False
     
-    @glock.glocked
-    def titles_changed (self, player, property):
+    def titles_changed (self, player, prop):
         log.debug("%s" % player, extra={"task":
             (self.connection.username, "PTS.titles_changed")})
         if player not in self.players: return
         if not self.store.iter_is_valid(self.players[player]["ti"]): return
-        self.store.set(self.players[player]["ti"], 1, player.getIcon())
-        self.store.set(self.players[player]["ti"], 2,
-                       player.name + player.display_titles())
-        self.store.set(self.players[player]["ti"], 13,
-                       get_player_tooltip_text(player))
+        with glock.glock:
+            self.store.set(self.players[player]["ti"], 1, player.getIcon())
+            self.store.set(self.players[player]["ti"], 2,
+                           player.name + player.display_titles())
+            self.store.set(self.players[player]["ti"], 7,
+                           get_player_tooltip_text(player))
         return False
         
-    def private_changed (self, game, property, player):
+    def private_changed (self, game, prop, player):
         log.debug("%s" % player, extra={"task":
             (self.connection.username, "PTS.private_changed")})
-        self.status_changed(player, property)
-        self.onSelectionChanged(self.tv.get_selection())
+        self.status_changed(player, prop)
+        with glock.glock:
+            self.onSelectionChanged(self.tv.get_selection())
         return False
     
-    @glock.glocked
     def elo_changed (self, rating, prop, player):
         log.debug("%s %s" % (rating.elo, player), extra={"task":
             (self.connection.username, "PTS.elo_changed")})
         if player not in self.players: return
         if not self.store.iter_is_valid(self.players[player]["ti"]): return
         ti = self.players[player]["ti"]
-#        log.debug("elo_changed: %s" % (self.store.get(ti, 13)))
-        self.store.set(ti, 1, player.getIcon())
-        self.store.set(self.players[player]["ti"], 13,
-                       get_player_tooltip_text(player))
-        
-        if rating.type == TYPE_BLITZ:
-            self.store.set(ti, 3, player.blitz)
-        elif rating.type == TYPE_STANDARD:
-            self.store.set(ti, 4, player.standard)
-        elif rating.type == TYPE_LIGHTNING:
-            self.store.set(ti, 5, player.lightning)
-        elif rating.type == TYPE_ATOMIC:
-            self.store.set(ti, 6, player.atomic)
-        elif rating.type == TYPE_BUGHOUSE:
-            self.store.set(ti, 7, player.bughouse)
-        elif rating.type == TYPE_CRAZYHOUSE:
-            self.store.set(ti, 8, player.crazyhouse)
-        elif rating.type == TYPE_LOSERS:
-            self.store.set(ti, 9, player.losers)
-        elif rating.type == TYPE_SUICIDE:
-            self.store.set(ti, 10, player.suicide)
-        elif rating.type == TYPE_WILD:
-            self.store.set(ti, 11, player.wild)
+#        log.debug("elo_changed: %s" % (self.store.get(ti, 7)))
+
+        with glock.glock:
+            self.store.set(ti, 1, player.getIcon())
+            self.store.set(self.players[player]["ti"], 7,
+                           get_player_tooltip_text(player))
+            try:
+                self.store.set(ti, self.columns[rating.type], rating.elo)
+            except KeyError:
+                pass
         
         return False
     
     @classmethod
     def getSelectedPlayer (cls):
         model, iter = cls.widgets["playertreeview"].get_selection().get_selected()
-        if iter == None: return None
-        return model.get_value(iter, 0)
+        if iter:
+            return model.get_value(iter, 0)
     
     def onPrivateChatClicked (self, button):
         player = self.getSelectedPlayer()
@@ -972,7 +961,6 @@ class PlayerTabSection (ParrentListSection):
         if player is not None and player.game is not None:
             self.connection.bm.observe(player.game)
             
-    @glock.glocked
     def onSelectionChanged (self, selection):
         '''When the player selects a player from the player list, update the clickability of our buttons.'''
         player = self.getSelectedPlayer()
@@ -1104,7 +1092,7 @@ class GameTabSection (ParrentListSection):
         self._update_gamesrunning_label()
     
     @glock.glocked
-    def private_changed (self, game, property):
+    def private_changed (self, game, prop):
         if game in self.games and \
                 self.store.iter_is_valid(self.games[game]["ti"]):
             self.store.set(self.games[game]["ti"], 6, game.display_text)
@@ -1205,9 +1193,10 @@ class AdjournedTabSection (ParrentListSection):
         
     def _infobar_adjourned_message (self, game, player):
         if player not in self.messages:
-            text = _(" with whom you have an adjourned <b>%(timecontrol)s</b> <b>%(gametype)s</b> " + \
-                "game is online.")  % \
-                {"timecontrol": game.display_timecontrol, "gametype": game.game_type.display_text}
+            text = _(" with whom you have an adjourned <b>%(timecontrol)s</b> " + \
+                     "<b>%(gametype)s</b> game is online.")  % \
+                     {"timecontrol": game.display_timecontrol,
+                      "gametype": game.game_type.display_text}
             content = self.get_infobarmessage_content(player, text,
                                                       gametype=game.game_type)
             def callback (infobar, response, message):
@@ -1221,7 +1210,8 @@ class AdjournedTabSection (ParrentListSection):
                     try:
                         self.messages[player].dismiss()
                         del self.messages[player]
-                    except KeyError: pass
+                    except KeyError:
+                        pass
                 return False
             message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback)
             message.add_button(InfoBarMessageButton(_("Request Continuation"),
@@ -1232,20 +1222,23 @@ class AdjournedTabSection (ParrentListSection):
                                                     gtk.RESPONSE_CANCEL))
             update_button_by_player_status(message.buttons[0], player)
             self.messages[player] = message
-            self.infobar.push_message(message)
+            with glock.glock:
+                self.infobar.push_message(message)
             
-    @glock.glocked
-    def online_changed (self, player, property, game):
+    def online_changed (self, player, prop, game):
         log.debug("AdjournedTabSection.online_changed: %s %s" % \
             (repr(player), repr(game)))
+        
         if game in self.games and \
                 self.store.iter_is_valid(self.games[game]["ti"]):
-            self.store.set(self.games[game]["ti"], 3, player.display_online)
+            with glock.glock:
+                self.store.set(self.games[game]["ti"], 3, player.display_online)
         
         if player.online and player.adjournment:
             self._infobar_adjourned_message(game, player)
         elif not player.online and player in self.messages:
-            self.messages[player].dismiss()
+            with glock.glock:
+                self.messages[player].dismiss()
             # calling message.dismiss() might cause it to be removed from
             # self.messages in another callback, so we re-check
             if player in self.messages:
@@ -1253,7 +1246,6 @@ class AdjournedTabSection (ParrentListSection):
         
         return False
         
-    @glock.glocked
     def status_changed (self, player, prop, game):
         log.debug("AdjournedTabSection.status_changed: %s %s" % \
             (repr(player), repr(game)))
@@ -1262,8 +1254,12 @@ class AdjournedTabSection (ParrentListSection):
         except KeyError:
             pass
         else:
-            update_button_by_player_status(message.buttons[0], player)
-        self.onSelectionChanged(self.selection)
+            with glock.glock:
+                update_button_by_player_status(message.buttons[0], player)
+        
+        with glock.glock:
+            self.onSelectionChanged(self.selection)
+        
         return False
         
     def onAdjournedGameAdded (self, game):
@@ -2094,15 +2090,15 @@ class Messages (Section):
         player.connect("notify::titles",
                        self._replace_notification_message, player)
         
-    @glock.glocked
     def _replace_notification_message (self, obj, prop, player):
         log.debug("%s %s" % (repr(obj), player), extra={"task":
             (self.connection.username, "_replace_notification_message")})
         for message in self.messages:
             if isinstance(message, PlayerNotificationMessage) and \
                     message.player == player:
-                message.update_content(
-                    self.get_infobarmessage_content(player, message.text))
+                with glock.glock:
+                    message.update_content(
+                        self.get_infobarmessage_content(player, message.text))
         return False
     
     def _add_notification_message (self, player, text):
