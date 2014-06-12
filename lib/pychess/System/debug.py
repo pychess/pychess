@@ -2,10 +2,10 @@ import sys
 import time
 import traceback
 import threading
+from threading import Thread
 
-from pychess.System import glock
+from pychess.System import glock, fident
 from pychess.System.Log import log
-from pychess.System.ThreadPool import pool
 
 def start_thread_dump ():
     def thread_dumper ():
@@ -24,8 +24,10 @@ def start_thread_dump ():
             
             log.debug("\n" + "\n".join(stacks))
         
-        while 1:
+        while True:
             dump_threads()
             time.sleep(10)
     
-    pool.start(thread_dumper, thread_dumper)
+    t = Thread(target=thread_dumper, name=fident(thread_dumper))
+    t.daemon = True
+    t.start()

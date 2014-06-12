@@ -2,7 +2,7 @@ from __future__ import with_statement
 import collections
 from copy import copy
 import Queue
-from threading import RLock
+from threading import RLock, Thread
 
 from pychess.Utils.Move import *
 from pychess.Utils.Board import Board
@@ -13,10 +13,9 @@ from pychess.Utils.logic import validate, getMoveKillingKing, getStatus, legalMo
 from pychess.Utils.const import *
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils.lutils.lmove import ParsingError
-from pychess.System import conf
+from pychess.System import conf, fident
 from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
-from pychess.System.ThreadPool import pool
 from pychess.Variants.fischerandom import FischerRandomChess
 
 from ProtocolEngine import ProtocolEngine
@@ -78,7 +77,10 @@ class UCIEngine (ProtocolEngine):
     
     def start (self):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
-            pool.start(self.__startBlocking, self.__startBlocking)
+            t = Thread(target=self.__startBlocking,
+                       name=fident(self.__startBlocking))
+            t.daemon = True
+            t.start()
         else:
             self.__startBlocking()
     

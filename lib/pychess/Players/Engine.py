@@ -1,12 +1,11 @@
 from urllib import urlopen, urlencode
-
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+from threading import Thread
 
-from pychess.System.ThreadPool import pool
+from pychess.System import fident
 from pychess.System.Log import log
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import ARTIFICIAL, CHAT_ACTION
-
 
 from Player import Player
 
@@ -117,4 +116,6 @@ class Engine (Player):
             es = "<br>"
             answer = data[data.find(ss)+len(ss) : data.find(es,data.find(ss))]
             self.emit("offer", Offer(CHAT_ACTION, answer))
-        pool.start(answer, message)
+        t = Thread(target=answer, name=fident(answer), args=(message,))
+        t.daemon = True
+        t.start()

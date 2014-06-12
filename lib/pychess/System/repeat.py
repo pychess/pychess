@@ -1,18 +1,21 @@
 # -*- coding: UTF-8 -*-
 
 import time
-from pychess.System.ThreadPool import pool
+from threading import Thread
+from pychess.System import fident
 
 def repeat (func, *args, **kwargs):
     """ Repeats a function in a new thread until it returns False """
     def run ():
         while func(*args, **kwargs):
             pass
-    pool.start(run, func)
+    t = Thread(target=run, name=fident(func))
+    t.daemon = True
+    t.start()
 
 def repeat_sleep (func, sleeptime, recur=False):
     """
-    Runs func in a threadpool, and repeats it approximately each sleeptime [s]
+    Runs func in a thread and repeats it approximately each sleeptime [s]
     until func returns False. Notice that we sleep first, then run. Not the
     other way around. If repeat_sleep is called with recur=True, each call
     will be called with the return value of last call as argument. The
@@ -33,4 +36,6 @@ def repeat_sleep (func, sleeptime, recur=False):
                 val = func(val)
             else: val = func()
             if not val: break
-    pool.start(run, func)
+    t = Thread(target=run, name=fident(func))
+    t.daemon = True
+    t.start()
