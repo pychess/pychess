@@ -1,21 +1,24 @@
-from pychess.Players.PyChess import PyChess
-from pychess.System.prefix import addDataPrefix, isInstalled
-from pychess.System.repeat import repeat_sleep
-from pychess.System.ThreadPool import pool
-from pychess.System import GtkWorker
-from pychess.Utils.const import *
-from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Utils.lutils.lmove import determineAlgebraicNotation, toLAN
-from pychess.Utils.lutils import lsearch
-from pychess.Utils.repr import reprResult_long, reprReason_long
-from pychess.ic import FICSConnection
-from urllib import urlopen, urlencode
 import email.Utils
+import gtk
 import math
 import pychess
 import random
 import signal
 import subprocess
+from urllib import urlopen, urlencode
+from threading import Thread
+
+from pychess.Players.PyChess import PyChess
+from pychess.System.prefix import addDataPrefix, isInstalled
+from pychess.System.repeat import repeat_sleep
+from pychess.System import GtkWorker, fident
+from pychess.System.Log import log
+from pychess.Utils.const import *
+from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.lutils.lmove import determineAlgebraicNotation, toLAN, parseSAN
+from pychess.Utils.lutils import lsearch
+from pychess.Utils.repr import reprResult_long, reprReason_long
+from pychess.ic import FICSConnection
 
 class PyChessFICS(PyChess):
     def __init__ (self, password, from_address, to_address):
@@ -187,7 +190,9 @@ class PyChessFICS(PyChess):
         print "Session ended"
     
     def run(self):
-        pool.start(self.main, self.main)
+        t = Thread(target=self.main, name=fident(self.main))
+        t.daemon = True
+        t.start()
         gtk.gdk.threads_init()
         gtk.main()
     
@@ -270,7 +275,11 @@ class PyChessFICS(PyChess):
                     es = "<br>"
                     answer = data[data.find(ss)+len(ss) : data.find(es,data.find(ss))]
                     chatManager.tellPlayer(name, answer)
-                pool.start(onlineanswer, text)
+                t = Thread(target=onlineanswer,
+                           name=fident(onlineanswer),
+                           args=(text,))
+                t.daemon = True
+                t.start()
             #chatManager.tellPlayer(name, "Sorry, your request was nonsense.\n"+\
             #                           "Please read my help file for more info")
     

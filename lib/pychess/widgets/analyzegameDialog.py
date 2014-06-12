@@ -3,7 +3,7 @@ import threading
 
 import gamewidget
 from pychess.Utils.const import *
-from pychess.System import conf
+from pychess.System import conf, fident
 from pychess.System import glock
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect_after
@@ -109,9 +109,9 @@ def initialize(gameDic):
             widgets["analyze_game"].hide()
             widgets["analyze_ok_button"].set_sensitive(True)
                         
-        keep_alive_thread = threading.Thread(target = analyse_moves)
-        keep_alive_thread.daemon = True
-        keep_alive_thread.start()
+        t = threading.Thread(target=analyse_moves, name=fident(analyse_moves))
+        t.daemon = True
+        t.start()
         return True
     
     widgets["analyze_game"].connect("delete-event", hide_window)

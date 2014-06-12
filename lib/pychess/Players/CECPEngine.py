@@ -1,15 +1,12 @@
-from threading import RLock, Timer
+from threading import RLock, Timer, Thread
 import Queue
 import itertools
 import re
 import time
-
 import gtk, gobject
 
-from pychess.System import glock
-from pychess.System import conf
+from pychess.System import conf, fident
 from pychess.System.Log import log
-from pychess.System.ThreadPool import pool
 from pychess.Utils.Move import Move
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
@@ -20,7 +17,6 @@ from pychess.Utils.logic import validate, getMoveKillingKing
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Variants import variants
-
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
 from ProtocolEngine import ProtocolEngine
 
@@ -208,7 +204,10 @@ class CECPEngine (ProtocolEngine):
     
     def start (self):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
-            pool.start(self.__startBlocking, self.__startBlocking)
+            t = Thread(target=self.__startBlocking,
+                       name=fident(self.__startBlocking))
+            t.daemon = True
+            t.start()
         else:
             self.__startBlocking()
     

@@ -10,12 +10,11 @@ from copy import deepcopy
 
 from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 
-from pychess.System import conf
+from pychess.System import conf, fident
 from pychess.System.Log import log
 from pychess.System.command import Command
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
 from pychess.System.prefix import addUserConfigPrefix, getEngineDataPrefix
-from pychess.System.ThreadPool import pool, PooledThread
 from pychess.Players.Player import PlayerIsDead
 from pychess.Utils.const import *
 from CECPEngine import CECPEngine
@@ -56,7 +55,7 @@ backup = [
 ]
 
 
-class EngineDiscoverer (GObject, PooledThread):
+class EngineDiscoverer (GObject, Thread):
     
     __gsignals__ = {
         "discovering_started": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
@@ -67,7 +66,8 @@ class EngineDiscoverer (GObject, PooledThread):
     
     def __init__ (self):
         GObject.__init__(self)
-        PooledThread.__init__(self)
+        Thread.__init__(self, name=fident(self.run))
+        self.daemon = True
         self.engines = []
         self.jsonpath = addUserConfigPrefix("engines.json")
         try:

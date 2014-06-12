@@ -5,13 +5,14 @@ import time
 import threading
 from gobject import GObject, SIGNAL_RUN_FIRST
 from collections import defaultdict
-from threading import Event
+from threading import Event, Thread
 
 import pychess
+from pychess.System import fident
 from pychess.System.Log import log
-from pychess.System.ThreadPool import PooledThread
 from pychess.Utils.const import *
 
+from pychess.ic import NAMES_RE, TITLES_RE
 from managers.SeekManager import SeekManager
 from managers.FingerManager import FingerManager
 from managers.NewsManager import NewsManager
@@ -32,11 +33,10 @@ from VerboseTelnet import FromPlusPrediction
 from VerboseTelnet import FromToPrediction
 from VerboseTelnet import PredictionsTelnet
 from VerboseTelnet import NLinesPrediction
-from pychess.ic import NAMES_RE, TITLES_RE
 
 class LogOnError (StandardError): pass
 
-class Connection (GObject, PooledThread):
+class Connection (GObject, Thread):
     
     __gsignals__ = {
         'connecting':    (SIGNAL_RUN_FIRST, None, ()),
@@ -48,7 +48,8 @@ class Connection (GObject, PooledThread):
     
     def __init__ (self, host, ports, username, password):
         GObject.__init__(self)
-        PooledThread.__init__(self)
+        Thread.__init__(self, name=fident(self.run))
+        self.daemon = True
         self.host = host
         self.ports = ports
         self.username = username
@@ -278,9 +279,9 @@ class FICSConnection (Connection):
                         self.client.run_command("date")
                         last = time.time()
                     time.sleep(30)
-            keep_alive_thread = threading.Thread(target = keep_alive)
-            keep_alive_thread.daemon = True
-            keep_alive_thread.start()
+            t = threading.Thread(target=keep_alive, name=fident(keep_alive))
+            t.daemon = True
+            t.start()
         
         finally:
             self.connecting = False

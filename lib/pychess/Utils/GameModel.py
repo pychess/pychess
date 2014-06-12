@@ -1,15 +1,14 @@
 from collections import defaultdict
-from threading import RLock
+from threading import RLock, Thread
 import traceback
 import cStringIO
 import datetime
 import Queue
-
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
-from pychess.System.ThreadPool import PooledThread, pool
+from pychess.System import fident
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.Utils.Move import Move, toSAN
@@ -44,11 +43,13 @@ def undolocked (f):
     return newFunction
 
 def inthread (f):
-    def newFunction(*args, **kw):
-        pool.start(f, f, *args, **kw)
+    def newFunction(*args, **kwargs):
+        t = Thread(target=f, name=fident(f), args=args, kwargs=kwargs)
+        t.daemon = True
+        t.start()
     return newFunction
 
-class GameModel (GObject, PooledThread):
+class GameModel (GObject, Thread):
     
     """ GameModel contains all available data on a chessgame.
         It also has the task of controlling players actions and moves """
@@ -107,7 +108,8 @@ class GameModel (GObject, PooledThread):
     
     def __init__ (self, timemodel=None, variant=NormalChess):
         GObject.__init__(self)
-        PooledThread.__init__(self)
+        Thread.__init__(self, name=fident(self.run))
+        self.daemon = True
         self.variant = variant
         self.boards = [variant.board(setup=True)]
         

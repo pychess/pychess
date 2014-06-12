@@ -1,19 +1,17 @@
+import gobject
 import os
 import sys
 import signal
 import errno
 import time
 import threading
-
-import gtk
-import gobject
+from threading import Thread
 
 from pychess.Utils.const import *
+from pychess.System.GtkWorker import EmitPublisher
+from pychess.System import fident
 from Log import log
 from which import which
-from pychess.System.ThreadPool import pool
-from pychess.System import glock
-from pychess.System.GtkWorker import EmitPublisher
 
 class SubProcessError (Exception): pass
 class TimeOutError (Exception): pass
@@ -52,7 +50,7 @@ class SubProcess (gobject.GObject):
         self.buffer = ""
         
         self.linePublisher = EmitPublisher(self, "line",
-            'SubProcess.linePublisher.emit', EmitPublisher.SEND_LIST)
+            'SubProcess.linePublisher', EmitPublisher.SEND_LIST)
         self.linePublisher.start()
         
         self.defname = os.path.split(path)[1]
@@ -173,9 +171,11 @@ class SubProcess (gobject.GObject):
             else: raise OSError, error
     
     def gentleKill (self, first=1, second=1):
-        if pool is not None:
-            pool.start(self.__gentleKill_inner, self.__gentleKill_inner,
-                       first, second)
+        t = Thread(target=self.__gentleKill_inner,
+                   name=fident(self.__gentleKill_inner),
+                   args=(first, second))
+        t.daemon = True
+        t.start()
     
     def __gentleKill_inner (self, first, second):
         self.resume()

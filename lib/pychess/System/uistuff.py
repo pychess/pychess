@@ -2,13 +2,12 @@ import colorsys
 import Queue
 import re
 import webbrowser
-
 import gtk
 import pango
+from threading import Thread
 
-from pychess.System import conf, glock
+from pychess.System import conf, glock, fident
 from pychess.System.Log import log
-from pychess.System.ThreadPool import pool
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
 
@@ -438,7 +437,9 @@ def cacheGladefile(filename):
             builder.set_translation_domain("pychess")
             builder.add_from_file(addDataPrefix("glade/%s" % filename))
             cachedGlades[filename].put(builder)
-        pool.start(readit, readit)
+        t = Thread(target=readit, name=fident(readit))
+        t.daemon = True
+        t.start()
 
 class GladeWidgets:
     """ A simple class that wraps a the glade get_widget function

@@ -1,4 +1,5 @@
 from pychess.Players.PyChess import PyChess
+from pychess.System import conf, fident
 from pychess.Utils.book import getOpenings
 from pychess.Utils.const import *
 from pychess.Utils.lutils.Benchmark import benchmark
@@ -12,7 +13,7 @@ import pychess
 import re
 import signal
 import sys
-import threading
+from threading import Thread
 
 class PyChessCECP(PyChess):
     
@@ -351,11 +352,17 @@ class PyChessCECP(PyChess):
                 self.board.applyMove(parseSAN(self.board,result))
                 print "move %s" % result
             # TODO: start pondering, if enabled
-        self.thread = threading.Thread(target=PyChess._PyChess__go, args=(self,ondone))
+        self.thread = Thread(target=PyChess._PyChess__go,
+                             name=fident(PyChess._PyChess__go),
+                             args=(self,ondone))
+        self.thread.daemon = True
         self.thread.start()
     
     def __analyze (self):
-        self.thread = threading.Thread(target=PyChess._PyChess__analyze, args=(self,))
+        self.thread = Thread(target=PyChess._PyChess__analyze,
+                             name=fident(PyChess._PyChess__analyze),
+                             args=(self,))
+        self.thread.daemon = True
         self.thread.start()
 
     def __willingToDraw (self):
