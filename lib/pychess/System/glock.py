@@ -1,7 +1,9 @@
 import traceback
+from functools import wraps
 from threading import RLock, currentThread
 from gtk.gdk import threads_enter, threads_leave
 from pychess.System.Log import log
+from pychess.System import fident
 debug = False
 _rlock = RLock()
 
@@ -21,19 +23,18 @@ def acquire():
     # Ensure we don't deadlock if another thread is waiting on threads_enter
     # while we wait on _rlock.acquire()
     if me.getName() == "MainThread" and not has():
-        _debug(acquire.debug_name, me, '-> threads_leave')
+        _debug('glock.acquire', me, '-> threads_leave')
         threads_leave()
-        _debug(acquire.debug_name, me, '<- threads_leave')
+        _debug('glock.acquire', me, '<- threads_leave')
     # Acquire the lock, if it is not ours, or add one to the recursive counter
-    _debug(acquire.debug_name, me, '-> _rlock.acquire')
+    _debug('glock.acquire', me, '-> _rlock.acquire')
     _rlock.acquire()
-    _debug(acquire.debug_name, me, '<- _rlock.acquire')
+    _debug('glock.acquire', me, '<- _rlock.acquire')
     # If it is the first time we lock, we will acquire the gdklock
     if _rlock._RLock__count == 1:
-        _debug(acquire.debug_name, me, '-> threads_enter')
+        _debug('glock.acquire', me, '-> threads_enter')
         threads_enter()
-        _debug(acquire.debug_name, me, '<- threads_enter')
-acquire.debug_name = acquire.__module__.split('.')[-1] + '.' + acquire.__name__
+        _debug('glock.acquire', me, '<- threads_enter')
 
 def release():
     me = currentThread()
@@ -42,27 +43,26 @@ def release():
     # own it any more
     if me.getName() == "MainThread":
         if not has():
-            _debug(release.debug_name, me, '-> threads_leave')
+            _debug('glock.release', me, '-> threads_leave')
             threads_leave()
-            _debug(release.debug_name, me, '<- threads_leave')
+            _debug('glock.release', me, '<- threads_leave')
         else:
-            _debug(release.debug_name, me, '-> _rlock.release')
+            _debug('glock.release', me, '-> _rlock.release')
             _rlock.release()
-            _debug(release.debug_name, me, '<- _rlock.release')
+            _debug('glock.release', me, '<- _rlock.release')
     # If this is the last unlock, we also free the gdklock.
     elif has():
         if _rlock._RLock__count == 1:
-            _debug(release.debug_name, me, '-> threads_leave')
+            _debug('glock.release', me, '-> threads_leave')
             threads_leave()
-            _debug(release.debug_name, me, '<- threads_leave')
-        _debug(release.debug_name, me, '-> _rlock.release')
+            _debug('glock.release', me, '<- threads_leave')
+        _debug('glock.release', me, '-> _rlock.release')
         _rlock.release()
-        _debug(release.debug_name, me, '<- _rlock.release')
+        _debug('glock.release', me, '<- _rlock.release')
     else:
         log.warning("Tried to release un-owned glock\n%s" %
                     "".join(traceback.format_stack()),
-                    extra={"task": (me.ident, me.name, release.debug_name)})
-release.debug_name = release.__module__.split('.')[-1] + '.' + release.__name__
+                    extra={"task": (me.ident, me.name, 'glock.release')})
 
 def glock_connect(emitter, signal, function, *args, **kwargs):
     def handler(emitter, *extra):
@@ -80,7 +80,10 @@ def glock_connect_after(emitter, signal, function, *args):
     return glock_connect(emitter, signal, function, after=True, *args)
 
 def glocked(f):
+    @wraps(f)
     def newFunction(*args, **kw):
+        _debug('glocked.newFunction', currentThread(),
+               '-> acquire() (f=%s)' % fident(f))
         acquire()
         try:
             return f(*args, **kw)
