@@ -27,7 +27,7 @@ from pychess.Utils.lutils.lmove import listToSan, toSAN
 gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
 
 
-class PyChess:
+class PyChess (object):
     def __init__ (self):
         self.sd = MAXPLY
         self.skipPruneChance = 0

@@ -40,7 +40,7 @@ def set_gui_log_emitter():
             self.messages = []
 
             self.publisher = EmitPublisher (self, "logged",
-                'LogEmitter.publisher.emit', Publisher.SEND_LIST)
+                'LogEmitter.publisher', Publisher.SEND_LIST)
             self.publisher.start()
 
     class GLogHandler(logging.Handler):

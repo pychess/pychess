@@ -1,20 +1,18 @@
 import os
-from Queue import Queue
+import Queue
+import gtk, gobject, pango
+from threading import Thread
 
-import gtk, gobject, cairo, pango
-
-from pychess.System import conf
+from pychess.System import conf, fident
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import *
 from pychess.Utils.book import getOpenings
 from pychess.Utils.eco import get_eco
 from pychess.Utils.logic import legalMoveCount
 from pychess.Utils.EndgameTable import EndgameTable
-from pychess.Utils.Move import Move, toSAN, toFAN, parseAny, listToSan
+from pychess.Utils.Move import Move, toSAN, toFAN
 from pychess.System.prefix import addDataPrefix
-from pychess.System.ThreadPool import PooledThread
 from pychess.System.Log import log
-
 
 __title__ = _("Hints")
 
@@ -271,9 +269,11 @@ class EngineAdvisor(Advisor):
         return ""
 
 
-class EndgameAdvisor(Advisor, PooledThread):
+class EndgameAdvisor(Advisor, Thread):
     def __init__ (self, store, tv, boardview):
-        PooledThread.__init__(self)
+        Thread.__init__(self, name=fident(self.run))
+        self.daemon = True
+        # FIXME 'Advisor.name = ...' in Advisor.__init__ overwrites Thread.name
         Advisor.__init__(self, store, _("Endgame Table"), ENDGAME)
         self.egtb = EndgameTable()
         self.tv = tv
@@ -282,7 +282,7 @@ class EndgameAdvisor(Advisor, PooledThread):
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
 
         self.egtb.connect("scored", self.on_scored)
-        self.queue = Queue()
+        self.queue = Queue.Queue()
         self.start()
         
     class StopNow (Exception): pass

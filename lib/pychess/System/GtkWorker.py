@@ -1,16 +1,14 @@
 from threading import Thread
 import Queue
-
 from gobject import GObject, SIGNAL_RUN_FIRST
-from ThreadPool import PooledThread
-
 import glock
+from pychess.System import get_threadname, fident
 
 #
 # IDEA: We could implement gdk prioritizing by using a global PriorityQueue
 #
 
-class Publisher (PooledThread):
+class Publisher (Thread):
     """ Publisher can be used when a thread is often spitting out results,
         and you want to process these results in gtk as soon as possible.
         While waiting for gdk access, results will be stored, and depending on
@@ -19,8 +17,9 @@ class Publisher (PooledThread):
     
     SEND_LIST, SEND_LAST = range(2)
     
-    def __init__ (self, func, thread_name_obj, sendPolicy):
-        PooledThread.__init__(self, thread_name_obj=thread_name_obj)
+    def __init__ (self, func, thread_namer, sendPolicy):
+        Thread.__init__(self, name=get_threadname(thread_namer))
+        self.daemon = True
         self.queue = Queue.Queue()
         self.func = func
         self.sendPolicy = sendPolicy
@@ -43,7 +42,7 @@ class Publisher (PooledThread):
                         if v == self.StopNow:
                             break
                         l.append(v)
-                
+
                 if self.sendPolicy == self.SEND_LIST:
                     self.func(l)
                 elif self.sendPolicy == self.SEND_LAST:
@@ -65,9 +64,10 @@ class Publisher (PooledThread):
 class EmitPublisher (Publisher):
     """ EmitPublisher is a version of Publisher made for the common task of
         emitting a signal after waiting for the gdklock """
-    def __init__ (self, parrent, signal, thread_name_obj, sendPolicy):
-        Publisher.__init__(self, lambda v: parrent.emit(signal, v),
-                           thread_name_obj, sendPolicy)
+    def __init__ (self, parrent, signal, threadname, sendPolicy):
+        def emitter (v):
+            parrent.emit(signal, v)
+        Publisher.__init__(self, emitter, threadname, sendPolicy)
 
 class GtkWorker (GObject, Thread):
     
@@ -80,7 +80,8 @@ class GtkWorker (GObject, Thread):
     def __init__ (self, func):
         """ Initialize a new GtkWorker around a specific function """
         GObject.__init__(self)
-        Thread.__init__(self)
+        Thread.__init__(self, name=fident(func))
+        self.daemon = True
         
         # By some reason we cannot access __gsignals__, so we have to do a
         # little double work here
@@ -98,7 +99,7 @@ class GtkWorker (GObject, Thread):
         ########################################################################
         
         self.publisher = EmitPublisher (self, "published",
-            'GtkWorker.publisher.emit', Publisher.SEND_LIST)
+            'GtkWorker.publisher', Publisher.SEND_LIST)
         self.publisher.start()
         
         #self.progressor = EmitPublisher (self, "progressed", Publisher.SEND_LAST)
