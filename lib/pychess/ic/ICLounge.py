@@ -982,14 +982,13 @@ class GameTabSection (ParrentListSection):
         self.clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
 
         self.tv = self.widgets["gametreeview"]
-        self.store = gtk.ListStore(FICSGame, gtk.gdk.Pixbuf, str, int, str, int, str, int)
+        self.store = gtk.ListStore(FICSGame, gtk.gdk.Pixbuf, str, int, str, int, str)
         self.tv.set_model(gtk.TreeModelSort(self.store))
         self.model = self.tv.get_model()
         self.tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-        self.addColumns (
-                self.tv, "FICSGame", "", _("White Player"), _("Rating"),
-                _("Black Player"), _("Rating"),
-                _("Game Type"), "Time", hide=[0,7], pix=[1] )
+        self.addColumns(self.tv, "FICSGame", "", _("White Player"), _("Rating"),
+                        _("Black Player"), _("Rating"), _("Game Type"),
+                        hide=[0], pix=[1])
         self.tv.get_column(0).set_sort_column_id(0)
         self.model.set_sort_func(0, self.pixCompareFunction, 1)
         self.tv.set_has_tooltip(True)
@@ -998,11 +997,6 @@ class GameTabSection (ParrentListSection):
         self.selection = self.tv.get_selection()
         self.selection.connect("changed", self.onSelectionChanged)
         self.onSelectionChanged(self.selection)
-        
-        def typeCompareFunction (treemodel, iter0, iter1):
-            return cmp (treemodel.get_value(iter0, 7),
-                        treemodel.get_value(iter1, 7))
-        self.model.set_sort_func(6, typeCompareFunction)
 
         try:
             self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
@@ -1062,23 +1056,12 @@ class GameTabSection (ParrentListSection):
     def onGameAdd (self, game):
         log.debug("%s" % game,
                   extra={"task": (self.connection.username, "GTS.onGameAdd")})
-        if game.minutes != None:
-            length = game.minutes*60 + game.inc*40
-        elif game.game_type.rating_type == TYPE_LIGHTNING:
-            length = 100
-        elif game.game_type.rating_type == TYPE_BLITZ:
-            length = 9*60
-        elif game.game_type.rating_type == TYPE_STANDARD:
-            length = 15*60
-        else:
-            length = 0
-        
         ti = self.store.append ([game, self.clearpix,
             game.wplayer.name + game.wplayer.display_titles(),
             game.wplayer.getRatingForCurrentGame(),
             game.bplayer.name + game.bplayer.display_titles(),
             game.bplayer.getRatingForCurrentGame(),
-            game.display_text, length])
+            game.display_text])
         self.games[game] = { "ti": ti }
         self.games[game]["private_cid"] = game.connect("notify::private",
                                                        self.private_changed)
