@@ -86,9 +86,6 @@ class ICLounge (GObject):
         self.connection.connect("disconnected", lambda connection: self.close())
         self.connection.connect("error", self.on_connection_error)
         
-        # workaround for https://code.google.com/p/pychess/issues/detail?id=677
-        self.connection.nm.connect("readNews", self.on_news_item)
-        
         if self.connection.isRegistred():
             numtimes = conf.get("numberOfTimesLoggedInAsRegisteredUser", 0) + 1
             conf.set("numberOfTimesLoggedInAsRegisteredUser", numtimes)
@@ -120,10 +117,6 @@ class ICLounge (GObject):
         
         self.connection.lounge_loaded.set()
         log.debug("ICLounge.__init__: finished")
-        
-    @glock.glocked
-    def on_news_item (self, nm, news):            
-        self.widgets["show_chat_button"].set_sensitive(True)    
 
     def show (self):
         self.widgets["fics_lounge"].show()
