@@ -1,9 +1,6 @@
-import sys
-
 import gtk
 import gobject
 import pango
-
 from gtk.gdk import keyval_from_name
 
 from BorderBox import BorderBox
@@ -40,16 +37,16 @@ class ConsoleWindow (object):
         # scroll to the bottom
         adj = self.consoleView.sw.get_vadjustment()
         adj.set_value(adj.upper - adj.page_size)
-        
+
+    @staticmethod
+    def filter_unprintable(s):
+        return ''.join([c for c in s if ord(c) > 31 or ord(c) == 9])        
+
     def onConsoleMessage(self, com, lines):
         for line in lines:
-            # beep
-            if line.line == chr(7):
-                sys.stdout.write("\a")
-                sys.stdout.flush()
-                return
-            if line.line and not line.line.startswith('<'):
-                self.consoleView.addMessage(line.line)
+            line = self.filter_unprintable(line.line)
+            if line and not line.startswith('<'):
+                self.consoleView.addMessage(line)
         
 
 class ConsoleView (gtk.VPaned):
