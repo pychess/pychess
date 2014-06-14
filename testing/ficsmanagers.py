@@ -500,7 +500,8 @@ class BoardManagerTests(EmittingTestCase):
 
     def test7 (self):
         """ Make sure observe-game-created messages are caught """
-        lines = [BLOCK_START + '34' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
+        lines = ["{Game 12 (electricbenj vs. antonymelvin) Creating rated wild/fr match.}",
+                 BLOCK_START + '34' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
                  "You are now observing game 12.",
                  "Game 12: electricbenj (1535) antonymelvin (1507) rated wild/fr 7 8",
                  "<12> -------r pbp--p-- -pn-k--p -Q------ -----qP- -------- PPP--n-- -K-RR--- B -1 0 0 0 0 1 12 electricbenj antonymelvin 0 7 8 23 28 346573 428761 22 R/h1-e1 (0:11.807) Rhe1+ 0 1 0",
