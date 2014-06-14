@@ -783,6 +783,10 @@ class BoardManager (GObject):
         game = FICSGame(wplayer, bplayer, gameno=int(gameno))
         game = self.connection.games.get(game, emit=False)
         
+        if not game.supported:
+            log.warning("Trying to follow an unsupported type game %s" % game.game_type)
+            return
+
         if game.gameno in self.gamemodelStartedEvents:
             log.warning("%s already in gamemodelstartedevents" % game.gameno)
             return
