@@ -47,7 +47,7 @@ if not "HOME" in os.environ:
     os.environ["HOME"] = os.path.expanduser("~")
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
-if os.path.isdir(os.path.join(this_dir, ".hg")) and \
+if os.path.isdir(os.path.join(this_dir, "lib/pychess")) and \
         os.path.join(this_dir, "lib") not in sys.path:
     sys.path = [os.path.join(this_dir, "lib")] + sys.path
 
