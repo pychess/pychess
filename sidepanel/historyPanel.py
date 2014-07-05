@@ -164,7 +164,6 @@ class Sidepanel:
                 col.get_selection().select_iter(col.get_model().get_iter(row))
                 col.set_cursor((row,))
                 col.scroll_to_cell((row,), None, False)
-                col.grab_focus()
             except ValueError:
                 pass
                 # deleted variations by moves_undoing
