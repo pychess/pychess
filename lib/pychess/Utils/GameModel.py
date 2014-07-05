@@ -320,7 +320,7 @@ class GameModel (GObject, Thread):
     def getBoardAtPly (self, ply, variation=0):
         try:
             return self.variations[variation][self._plyToIndex(ply)]
-        except:
+        except IndexError:
             log.error("%d\t%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply, variation, len(self.variations)))
             raise
     

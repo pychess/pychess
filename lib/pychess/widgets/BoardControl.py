@@ -436,11 +436,13 @@ class NormalState (BoardState):
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
-        # We don't want empty cords
-        if self.getBoard()[cord] == None:
-            return False
-        # We should not be able to select an opponent piece
-        if self.getBoard()[cord].color != self.getBoard().color:
+        try:
+            board = self.getBoard()
+            if board[cord] == None:
+                return False # We don't want empty cords
+            elif board[cord].color != board.color:
+                return False # We shouldn't be able to select an opponent piece
+        except IndexError:
             return False
         return True
     
@@ -550,10 +552,12 @@ class SelectedState (BoardState):
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
-        # Select another piece
-        if self.getBoard()[cord] != None and \
-                self.getBoard()[cord].color == self.getBoard().color:
-            return True
+        try:
+            board = self.getBoard()
+            if board[cord] != None and board[cord].color == board.color:
+                return True  # Select another piece
+        except IndexError:
+            return False
         return self.validate(self.view.selected, cord)
     
     def press (self, x, y, button):
@@ -588,14 +592,15 @@ class LockedNormalState (LockedBoardState):
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
-        # Don't allow premove if neither player is human
         if not self.parent.allowPremove:
-            return False
-        # We don't want empty cords
-        if self.getBoard()[cord] == None:
-            return False
-        # We should not be able to select an opponent piece
-        if self.getBoard()[cord].color == self.getBoard().color:
+            return False # Don't allow premove if neither player is human
+        try:
+            board = self.getBoard()
+            if board[cord] == None:
+                return False # We don't want empty cords
+            elif board[cord].color == board.color:
+                return False # We shouldn't be able to select an opponent piece
+        except IndexError:
             return False
         return True
     
@@ -706,10 +711,12 @@ class LockedSelectedState (LockedBoardState):
     def isSelectable (self, cord):
         if not BoardState.isSelectable(self, cord):
             return False
-        # Select another piece
-        if self.getBoard()[cord] != None and \
-                self.getBoard()[cord].color != self.getBoard().color:
-            return True
+        try:
+            board = self.getBoard()
+            if board[cord] != None and board[cord].color != board.color:
+                return True # Select another piece
+        except IndexError:
+            return False
         return self.isAPotentiallyLegalNextMove(self.view.selected, cord)
 
     def motion (self, x, y):
