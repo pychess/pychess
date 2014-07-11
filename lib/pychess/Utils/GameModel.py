@@ -610,16 +610,16 @@ class GameModel (GObject, Thread):
                 if self.timed:
                     self.timemodel.tap()
                 
-                self.checkStatus()
-                
                 self.emit("game_changed")
-                
+
                 for spectator in self.spectators.values():
                     if spectator.board == self.boards[-2]:
                         spectator.putMove(self.boards[-1], self.moves[-1],
                                           self.boards[-2])
 
                 self.setOpening()
+
+                self.checkStatus()
 
             finally:
                 log.debug("GameModel.run: releasing self.applyingMoveLock")
