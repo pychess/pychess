@@ -248,3 +248,6 @@ class TimeModel (GObject):
     @property
     def ply(self):
         return len(self.intervals[BLACK]) + len(self.intervals[WHITE]) - 2
+
+    def hasBWTimes(self, bmovecount, wmovecount):
+        return len(self.intervals[BLACK]) > bmovecount and len(self.intervals[WHITE]) > wmovecount

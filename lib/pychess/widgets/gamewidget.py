@@ -282,7 +282,8 @@ class GameWidget (gobject.GObject):
             boardview.shownIsMainLine():
             wmovecount, color = divmod(shown + 1, 2)
             bmovecount = wmovecount -1 if color == WHITE else wmovecount
-            self.clock.update(wmovecount, bmovecount)
+            if self.gamemodel.timemodel.hasBWTimes(bmovecount, wmovecount):
+                self.clock.update(wmovecount, bmovecount)
         
     def game_started (self, gamemodel):
         if self.gamemodel.isLocalGame():
