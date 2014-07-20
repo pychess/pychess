@@ -441,7 +441,7 @@ class PyChess:
             gobject.idle_add(DiscovererDialog.show, discoverer, widgets["window1"])
         discoverer.connect("discovering_started", discovering_started)
         DiscovererDialog.init(discoverer)
-        discoverer.start()
+        discoverer.discover()
         
         #------------------------------------------------- Tip of the day dialog
         if conf.get("show_tip_at_startup", False):
