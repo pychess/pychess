@@ -55,7 +55,7 @@ backup = [
 ]
 
 
-class EngineDiscoverer (GObject, Thread):
+class EngineDiscoverer (GObject):
     
     __gsignals__ = {
         "discovering_started": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
@@ -66,8 +66,6 @@ class EngineDiscoverer (GObject, Thread):
     
     def __init__ (self):
         GObject.__init__(self)
-        Thread.__init__(self, name=fident(self.run))
-        self.daemon = True
         self.engines = []
         self.jsonpath = addUserConfigPrefix("engines.json")
         try:
@@ -235,7 +233,20 @@ class EngineDiscoverer (GObject, Thread):
             log.error("Saving engines.json raised exception: %s" % \
                       ", ".join(str(a) for a in e.args))
     
-    def run (self):
+    def discover(self):
+        class Discoverer(Thread):
+            def __init__(self, parent):
+                Thread.__init__(self, name=fident(self.run))
+                self.daemon = True
+                self.parent = parent
+                
+            def run(self):
+                self.parent.do_discover()
+                    
+        d = Discoverer(self)
+        d.start()
+        
+    def do_discover(self):
         self.engines = []
         # List available engines
         for engine in self._engines:
