@@ -168,7 +168,7 @@ class EnginesDialog():
                         self.cur_engine = binname
                         glock_connect_after(discoverer, "engine_discovered", update_store)
                         self.add = False
-                        discoverer.start()
+                        discoverer.discover()
                     except:
                         print "There is something wrong with this executable"
                 else:
@@ -237,7 +237,7 @@ class EnginesDialog():
                         engine["protocol"] = new_protocol
                         engine["recheck"] = True
                         glock_connect_after(discoverer, "engine_discovered", update_options)
-                        discoverer.start()
+                        discoverer.discover()
                     else:
                         # restore the original protocol
                         widgets["engine_protocol_combo"].set_active(0 if old_protocol=="uci" else 1)
