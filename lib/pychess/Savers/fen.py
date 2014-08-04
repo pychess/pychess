@@ -1,5 +1,5 @@
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.const import WAITING_TO_START
+from pychess.Utils.const import WAITING_TO_START, BLACKWON, WHITEWON, DRAW
 from pychess.Utils.logic import getStatus
 
 from ChessFile import LoadingError
@@ -39,6 +39,7 @@ class FenFile (ChessFile):
         model.boards = [board]
         model.variations = [model.boards]
         if model.status == WAITING_TO_START:
-            model.status, model.reason = getStatus(model.boards[-1])
-        
+            status, reason = getStatus(model.boards[-1])
+            if status in (BLACKWON, WHITEWON, DRAW):
+                model.status, model.reason = status, reason
         return model

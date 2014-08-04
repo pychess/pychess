@@ -1,6 +1,6 @@
 from ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.const import *
+from pychess.Utils.const import WHITE, BLACK, WON_RESIGN, WAITING_TO_START, BLACKWON, WHITEWON, DRAW
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.leval import evaluateComplete
 
@@ -117,7 +117,9 @@ class EpdFile (ChessFile):
             model.reason = WON_RESIGN
         
         if model.status == WAITING_TO_START:
-            model.status, model.reason = getStatus(model.boards[-1])
+            status, reason = getStatus(model.boards[-1])
+            if status in (BLACKWON, WHITEWON, DRAW):
+                model.status, model.reason = status, reason
         
         return model
         
