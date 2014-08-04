@@ -343,7 +343,7 @@ class _GameInitializationMode:
 
             gamemodel = GameModel (timemodel, variant)
 
-            if not validate():
+            if not validate(gamemodel):
                 return
             else:
                 cls.widgets["newgamedialog"].hide()
@@ -377,7 +377,7 @@ class NewGameMode (_GameInitializationMode):
             cls.widgets["newgamedialog"].present()
             return
 
-        def _validate():
+        def _validate(gamemodel):
             return True
 
         cls._hideOthers()
@@ -419,7 +419,7 @@ class LoadFileExtension (_GameInitializationMode):
         cls.widgets["newgamedialog"].set_title(_("Open Game"))
         cls.widgets["loadsidepanel"].show()
 
-        def _validate():
+        def _validate(gamemodel):
             return True
             
         def _callback (gamemodel, p0, p1):
@@ -533,11 +533,11 @@ class EnterNotationExtension (_GameInitializationMode):
             
             return text, loadType
             
-        def _validate():
+        def _validate(gamemodel):
             try:
                 text, loadType = _get_text()
                 chessfile = loadType.load(StringIO(text))
-                chessfile.loadToModel(0, -1)
+                chessfile.loadToModel(0, -1, model=gamemodel)
                 return True
             except LoadingError, e:
                 d = gtk.MessageDialog (type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK,
