@@ -2089,7 +2089,7 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkButton" id="panel_about_button">
                                     <property name="label">gtk-about</property>
                                     <property name="use_action_appearance">False</property>
-                                    <property name="visible">True</property>
+                                    <property name="visible">False</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
