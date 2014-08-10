@@ -382,18 +382,18 @@ class GameModel (GObject, Thread):
         
         elif offer.type == FLAG_CALL:
             assert self.timed
-            if self.timemodel.getPlayerTime(player.color) <= 0:
-                if self.timemodel.getPlayerTime(1-player.color) <= 0:
+            if self.timemodel.getPlayerTime(1-player.color) <= 0:
+                if self.timemodel.getPlayerTime(player.color) <= 0:                   
                     self.end(DRAW, DRAW_CALLFLAG)
-                elif not playerHasMatingMaterial(self.boards[-1], 1-player.color):
-                    if player.color == WHITE:
+                elif not playerHasMatingMaterial(self.boards[-1], player.color):
+                    if player.color == WHITE:                       
+                        self.end(DRAW, DRAW_WHITEINSUFFICIENTANDBLACKTIME)                        
+                    else:                        
                         self.end(DRAW, DRAW_BLACKINSUFFICIENTANDWHITETIME)
-                    else:
-                        self.end(DRAW, DRAW_WHITEINSUFFICIENTANDBLACKTIME)
                 else:
-                    if player == self.players[BLACK]:
+                    if player == self.players[WHITE]:                       
                         self.end(WHITEWON, WON_CALLFLAG)
-                    else:
+                    else:                      
                         self.end(BLACKWON, WON_CALLFLAG)
             else:
                 player.offerError(offer, ACTION_ERROR_NOT_OUT_OF_TIME)
