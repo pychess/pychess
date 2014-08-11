@@ -43,7 +43,7 @@ def prepare():
     discoverer.connect('discovering_started', cb_started)
     discoverer.connect('engine_discovered', cb_gotone)
     discoverer.connect('all_engines_discovered', start)
-    discoverer.start()
+    discoverer.discover()
 
 def cb_started(discoverer, binnames):
     print "Wait a moment while we discover %d engines" % len(binnames)
