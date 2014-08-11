@@ -142,7 +142,7 @@ def check_blund():
 def onAnalyze(analyzer, analysis):
     global values
     if analysis:
-        pv, score = analysis[0]
+        pv, score, depth = analysis[0]
         sys.stdout.write('.')
         sys.stdout.flush()
         if score != None:
@@ -161,5 +161,5 @@ if len(sys.argv) != 2 or sys.argv[1] == "--help":
 ###############################################################################
 # Push onto the mainloop and start it
 discoverer.connect('all_engines_discovered', start)
-discoverer.start()
+discoverer.discover()
 mainloop.run()
