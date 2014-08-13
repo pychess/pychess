@@ -8,6 +8,7 @@ from pychess.System import glock
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect_after
 from pychess.Players.engineNest import discoverer
+from pychess.widgets.preferencesDialog import anal_combo_get_value, anal_combo_set_value
 
 widgets = uistuff.GladeWidgets("analyze_game.glade")
 stop_event = threading.Event()
@@ -40,34 +41,9 @@ def initialize(gameDic):
                         update_analyzers_store)
     update_analyzers_store(discoverer)
 
-    def get_value (combobox):
-        engine = list(discoverer.getAnalyzers())[combobox.get_active()]
-        return engine.get("md5")
-    
-    def set_value (combobox, value):
-        engine = discoverer.getEngineByMd5(value)
-        if engine is None:
-            combobox.set_active(0)
-            # This return saves us from the None-engine being used
-            # in later code  -Jonas Thiem
-            return
-        else:
-            try:
-                index = list(discoverer.getAnalyzers()).index(engine)
-            except ValueError:
-                index = 0
-            combobox.set_active(index)
-
-        gamemodel = gameDic[gamewidget.cur_gmwidg()]
-        spectators = gamemodel.spectators
-        md5 = engine.get('md5')
-        
-        if HINT in spectators and spectators[HINT].md5 != md5:
-            gamemodel.remove_analyzer(HINT)
-            gamemodel.start_analyzer(HINT)
-                    
-    uistuff.keep(widgets["ana_combobox"], "ana_combobox", get_value,
-        lambda combobox, value: set_value(combobox, value))
+    uistuff.keep(widgets["ana_combobox"], "ana_combobox", anal_combo_get_value,
+        lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode",
+                                              "analyzer_check", HINT))
  
     def hide_window(button, *args):
         stop_event.set()
@@ -76,6 +52,8 @@ def initialize(gameDic):
         return True
     
     def run_analyze(button, *args):
+        old_check_value = conf.get("analyzer_check", True)
+        conf.set("analyzer_check", True)
         widgets["analyze_ok_button"].set_sensitive(False)
         gmwidg = gamewidget.cur_gmwidg()
         gamemodel = gameDic[gmwidg]
@@ -108,6 +86,7 @@ def initialize(gameDic):
             
             widgets["analyze_game"].hide()
             widgets["analyze_ok_button"].set_sensitive(True)
+            conf.set("analyzer_check", old_check_value)
                         
         t = threading.Thread(target=analyse_moves, name=fident(analyse_moves))
         t.daemon = True
