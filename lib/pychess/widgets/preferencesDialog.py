@@ -66,6 +66,37 @@ class GeneralTab:
 # Hint initing                                                               #
 ################################################################################
 
+def anal_combo_get_value (combobox):
+    engine = list(discoverer.getAnalyzers())[combobox.get_active()]
+    return engine.get("md5")
+
+def anal_combo_set_value (combobox, value, show_arrow_check, ana_check, analyzer_type):
+    engine = discoverer.getEngineByMd5(value)
+    if engine is None:
+        combobox.set_active(0)
+        # This return saves us from the None-engine being used
+        # in later code  -Jonas Thiem
+        return
+    else:
+        try:
+            index = list(discoverer.getAnalyzers()).index(engine)
+        except ValueError:
+            index = 0
+        combobox.set_active(index)
+    
+    from pychess.Main import gameDic
+    from pychess.widgets.gamewidget import widgets
+    for gmwidg in gameDic.keys():
+        spectators = gmwidg.gamemodel.spectators
+        md5 = engine.get('md5')
+        
+        if analyzer_type in spectators and \
+                spectators[analyzer_type].md5 != md5:
+            gmwidg.gamemodel.remove_analyzer(analyzer_type)
+            gmwidg.gamemodel.start_analyzer(analyzer_type)
+            if not widgets[show_arrow_check].get_active():
+                gmwidg.gamemodel.pause_analyzer(analyzer_type)
+
 class HintTab:
     def __init__ (self, widgets):
         self.widgets = widgets
@@ -190,41 +221,11 @@ class HintTab:
         
         # Give widgets to keeper
         
-        def get_value (combobox):
-            engine = list(discoverer.getAnalyzers())[combobox.get_active()]
-            return engine.get("md5")
-        
-        def set_value (combobox, value, show_arrow_check, ana_check, analyzer_type):
-            engine = discoverer.getEngineByMd5(value)
-            if engine is None:
-                combobox.set_active(0)
-                # This return saves us from the None-engine being used
-                # in later code  -Jonas Thiem
-                return
-            else:
-                try:
-                    index = list(discoverer.getAnalyzers()).index(engine)
-                except ValueError:
-                    index = 0
-                combobox.set_active(index)
-            
-            from pychess.Main import gameDic
-            for gmwidg in gameDic.keys():
-                spectators = gmwidg.gamemodel.spectators
-                md5 = engine.get('md5')
-                
-                if analyzer_type in spectators and \
-                        spectators[analyzer_type].md5 != md5:
-                    gmwidg.gamemodel.remove_analyzer(analyzer_type)
-                    gmwidg.gamemodel.start_analyzer(analyzer_type)
-                    if not widgets[show_arrow_check].get_active():
-                        gmwidg.gamemodel.pause_analyzer(analyzer_type)
-                        
-        uistuff.keep(widgets["ana_combobox"], "ana_combobox", get_value,
-            lambda combobox, value: set_value(combobox, value, "hint_mode",
+        uistuff.keep(widgets["ana_combobox"], "ana_combobox", anal_combo_get_value,
+            lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode",
                                               "analyzer_check", HINT))
-        uistuff.keep(widgets["inv_ana_combobox"], "inv_ana_combobox", get_value,
-            lambda combobox, value: set_value(combobox, value, "spy_mode",
+        uistuff.keep(widgets["inv_ana_combobox"], "inv_ana_combobox", anal_combo_get_value,
+            lambda combobox, value: anal_combo_set_value(combobox, value, "spy_mode",
                                               "inv_analyzer_check", SPY))
         
         uistuff.keep(widgets["max_analysis_spin"], "max_analysis_spin", first_value=3)
