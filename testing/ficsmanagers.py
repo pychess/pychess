@@ -547,6 +547,14 @@ class GamesTests(EmittingTestCase):
         lines = ["{Game 117 (GuestBKKF vs. GuestTSNL) GuestTSNL ran out of time and GuestBKKF has no material to mate} 1/2-1/2"]
         self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason', DRAW_WHITEINSUFFICIENTANDBLACKTIME)
 
+    def test6 (self):
+        lines = ["{Game 84 (mgatto vs. JoseCapablanca) Game courtesyadjourned by mgatto} *"]
+        self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason', ADJOURNED_COURTESY_WHITE)
+
+    def test7 (self):
+        lines = ["{Game 84 (mgatto vs. JoseCapablanca) Game courtesyadjourned by JoseCapablanca} *"]
+        self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason', ADJOURNED_COURTESY_BLACK)
+        
 class HelperManagerTests(EmittingTestCase):
     def setUp (self):
         EmittingTestCase.setUp(self)
