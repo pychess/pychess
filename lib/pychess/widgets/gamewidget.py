@@ -374,6 +374,9 @@ class GameWidget (gobject.GObject):
             self.board.view._set_redarrow(coordinates)
             
     def _on_analyze (self, analyzer, analysis, analyzer_type):
+        if not self.menuitems[analyzer_type + "_mode"].active:
+            return
+
         if len(analysis) >= 1 and analysis[0] is not None:
             moves = analysis[0][0]
             if moves and (self.gamemodel.curplayer.__type__ == LOCAL or \
