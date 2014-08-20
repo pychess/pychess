@@ -100,10 +100,17 @@ def parse_reason (result, reason, wname=None):
     elif result == ADJOURNED or "adjourned" in reason:
         result = ADJOURNED
         if "courtesy" in reason:
-            if "white" in reason:
+            if wname:
+                if wname in reason:
+                    reason = ADJOURNED_COURTESY_WHITE
+                else:
+                    reason = ADJOURNED_COURTESY_BLACK
+            elif "white" in reason:
                 reason = ADJOURNED_COURTESY_WHITE
-            else:
+            elif "black" in reason:
                 reason = ADJOURNED_COURTESY_BLACK
+            else:
+                reason = ADJOURNED_COURTESY
         elif "agreement" in reason:
             reason = ADJOURNED_AGREEMENT
         elif "connection" in reason:
