@@ -1434,6 +1434,7 @@ class SeekChallengeSection (Section):
         self.in_challenge_mode = False
         self.seeknumber = 1
         self.widgets["seekButton"].connect("clicked", self.onSeekButtonClicked)
+        self.widgets["seekAllButton"].connect("clicked", self.onSeekAllButtonClicked)
         self.widgets["challengeButton"].connect("clicked", self.onChallengeButtonClicked)
         self.widgets["challengeDialog"].connect("delete-event", self.onChallengeDialogResponse)
         self.widgets["challengeDialog"].connect("response", self.onChallengeDialogResponse)
@@ -1470,6 +1471,14 @@ class SeekChallengeSection (Section):
         
         min, incr, gametype, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
         self.connection.glm.seek(min, incr, gametype, rated, ratingrange, color, manual)
+    
+    def onSeekAllButtonClicked (self, button):
+        for i in range(1,4):
+            self.__loadSeekEditor(i)
+            min, incr, gametype, ratingrange, color, rated, manual = \
+                self.__getSeekEditorDialogValues()
+            self.connection.glm.seek(min, incr, gametype, rated, ratingrange,
+                                     color, manual)
 
     def onChallengeButtonClicked (self, button):
         player = PlayerTabSection.getSelectedPlayer()
