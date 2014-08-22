@@ -1153,7 +1153,7 @@ class AdjournedTabSection (ParrentListSection):
         if treeiter != None:
             a_row_is_selected = True
             game = model.get_value(treeiter, 0)
-            update_button_by_player_status(self.widgets["resumeButton"], game.opponent)
+            make_sensitive_if_available(self.widgets["resumeButton"], game.opponent)
         else:
             self.widgets["resumeButton"].set_sensitive(False)
             self.widgets["resumeButton"].set_tooltip_text("")
@@ -1196,7 +1196,7 @@ class AdjournedTabSection (ParrentListSection):
                                                     gtk.RESPONSE_HELP))
             message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
                                                     gtk.RESPONSE_CANCEL))
-            update_button_by_player_status(message.buttons[0], player)
+            make_sensitive_if_available(message.buttons[0], player)
             self.messages[player] = message
             with glock.glock:
                 self.infobar.push_message(message)
@@ -1231,7 +1231,7 @@ class AdjournedTabSection (ParrentListSection):
             pass
         else:
             with glock.glock:
-                update_button_by_player_status(message.buttons[0], player)
+                make_sensitive_if_available(message.buttons[0], player)
         
         with glock.glock:
             self.onSelectionChanged(self.selection)
