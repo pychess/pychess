@@ -117,7 +117,7 @@ class GameModel (GObject, Thread):
         self.scores = {}
         self.players = []
         
-        self.gameno = 0
+        self.gameno = None
         self.variations = [self.boards]
         
         self.status = WAITING_TO_START
@@ -358,6 +358,9 @@ class GameModel (GObject, Thread):
                 self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE:
                 return True
         return False
+
+    def isLoadedGame(self):
+        return self.gameno is not None
 
     ############################################################################
     # Offer management                                                         #
