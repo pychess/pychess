@@ -5,7 +5,7 @@
 import math
 import gtk
 
-from pychess.ic.FICSObjects import update_button_by_player_status
+from pychess.ic.FICSObjects import make_sensitive_if_available, make_sensitive_if_playing
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
@@ -105,44 +105,65 @@ def game_ended (gamemodel, reason, gmwidg):
     m2 = reprReason_long[reason] % nameDic
     content = InfoBar.get_message_content(m1, m2, gtk.STOCK_DIALOG_INFO)
     message = InfoBarMessage(gtk.MESSAGE_INFO, content, None)
-    
-    if gamemodel.hasLocalPlayer():
-        if isinstance(gamemodel, ICGameModel):
+
+    if isinstance(gamemodel, ICGameModel):
+        if gamemodel.hasLocalPlayer():
             def status_changed (player, prop, message):
                 with glock.glock:
-                    update_button_by_player_status(message.buttons[0], player)
+                    make_sensitive_if_available(message.buttons[0], player)
+                    make_sensitive_if_playing(message.buttons[1], player)
+            def callback (infobar, response, message):
+                if response == 0:
+                    gamemodel.remote_player.offerRematch()
+                elif response == 1:
+                    gamemodel.remote_player.observe()
+                return False
             gmwidg.cids[gamemodel.remote_ficsplayer] = \
-                gamemodel.remote_ficsplayer.connect("notify::status",
-                                                    status_changed, message)
+                gamemodel.remote_ficsplayer.connect("notify::status", status_changed, message)
             message.add_button(InfoBarMessageButton(_("Offer Rematch"), 0))
+            message.add_button(InfoBarMessageButton(
+                _("Observe %s" % gamemodel.remote_ficsplayer.name), 1))
+            status_changed(gamemodel.remote_ficsplayer, None, message)
+
         else:
-            message.add_button(InfoBarMessageButton(_("Play Rematch"), 1))
-            if gamemodel.status in UNDOABLE_STATES and gamemodel.reason in UNDOABLE_REASONS:
-                if gamemodel.ply == 1:
-                    message.add_button(InfoBarMessageButton(_("Undo one move"), 2))
-                elif gamemodel.ply > 1:
-                    message.add_button(InfoBarMessageButton(_("Undo two moves"), 2))
-    
-    def callback (infobar, response, message):
-        if response == 0:
-            gamemodel.remote_player.offerRematch()
-        elif response == 1:
-            # newGameDialog uses ionest uses gamenanny uses newGameDialog...
-            from pychess.widgets.newGameDialog import createRematch
-            createRematch(gamemodel)
-        elif response == 2:
-            if gamemodel.curplayer.__type__ == LOCAL and gamemodel.ply > 1:
-                offer = Offer(TAKEBACK_OFFER, gamemodel.ply-2)
-            else:
-                offer = Offer(TAKEBACK_OFFER, gamemodel.ply-1)
-            if gamemodel.players[0].__type__ == LOCAL:
-                gamemodel.players[0].emit("offer", offer)
-            else: gamemodel.players[1].emit("offer", offer)
-        return False
+            def status_changed (player, prop, button):
+                with glock.glock:
+                    make_sensitive_if_playing(button, player)
+            def callback (infobar, response, message):
+                if response in (0, 1):
+                    gamemodel.players[response].observe()
+                return False
+            for i, p in enumerate(gamemodel.ficsplayers):
+                b = InfoBarMessageButton(_("Observe %s" % p.name), i)
+                message.add_button(b)
+                gmwidg.cids[p] = p.connect("notify::status", status_changed, b)
+                status_changed(p, None, b)
+
+    elif gamemodel.hasLocalPlayer():
+        def callback (infobar, response, message):
+            if response == 1:
+                # newGameDialog uses ionest uses gamenanny uses newGameDialog...
+                from pychess.widgets.newGameDialog import createRematch
+                createRematch(gamemodel)
+            elif response == 2:
+                if gamemodel.curplayer.__type__ == LOCAL and gamemodel.ply > 1:
+                    offer = Offer(TAKEBACK_OFFER, gamemodel.ply-2)
+                else:
+                    offer = Offer(TAKEBACK_OFFER, gamemodel.ply-1)
+                if gamemodel.players[0].__type__ == LOCAL:
+                    gamemodel.players[0].emit("offer", offer)
+                else: gamemodel.players[1].emit("offer", offer)
+            return False
+        message.add_button(InfoBarMessageButton(_("Play Rematch"), 1))
+        if gamemodel.status in UNDOABLE_STATES and gamemodel.reason in UNDOABLE_REASONS:
+            if gamemodel.ply == 1:
+                message.add_button(InfoBarMessageButton(_("Undo one move"), 2))
+            elif gamemodel.ply > 1:
+                message.add_button(InfoBarMessageButton(_("Undo two moves"), 2))
+
     message.callback = callback
     
-    glock.acquire()
-    try:
+    with glock.glock:
         gmwidg.replaceMessages(message)
         gmwidg.status("%s %s." % (m1,m2[0].lower()+m2[1:]))
         
@@ -150,8 +171,6 @@ def game_ended (gamemodel, reason, gmwidg):
             engineDead(gamemodel.players[0], gmwidg)
         elif reason == BLACK_ENGINE_DIED:
             engineDead(gamemodel.players[1], gmwidg)
-    finally:
-        glock.release()
 
     if (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()) or \
             gamemodel.isEngine2EngineGame():
