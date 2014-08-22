@@ -139,6 +139,9 @@ def game_ended (gamemodel, reason, gmwidg):
                 gmwidg.cids[p] = p.connect("notify::status", status_changed, b)
                 status_changed(p, None, b)
 
+    elif gamemodel.isLoadedGame():
+        callback = None
+
     elif gamemodel.hasLocalPlayer():
         def callback (infobar, response, message):
             if response == 1:
