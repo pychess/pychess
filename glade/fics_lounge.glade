@@ -1807,6 +1807,7 @@ b) you change the variant or the time control</property>
                           <object class="GtkHBox" id="hbox17">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkLabel" id="activeSeeksLabel">
                                 <property name="visible">True</property>
@@ -2227,7 +2228,7 @@ b) you change the variant or the time control</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkHButtonBox" id="hbuttonbox2">
+                                      <object class="GtkHBox" id="hbuttonbox2">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="spacing">6</property>
@@ -2283,7 +2284,8 @@ b) you change the variant or the time control</property>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
-                                            <property name="position">0</property>
+                                            <property name="position">1</property>
+                                            <property name="pack_type">end</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -2337,7 +2339,8 @@ b) you change the variant or the time control</property>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
-                                            <property name="position">1</property>
+                                            <property name="position">0</property>
+                                            <property name="pack_type">end</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -2455,6 +2458,7 @@ b) you change the variant or the time control</property>
                           <object class="GtkHBox" id="hbox18">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
                             <child>
                               <object class="GtkLabel" id="playersOnlineLabel">
                                 <property name="visible">True</property>
