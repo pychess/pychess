@@ -24,7 +24,7 @@ class FICSRatings (dict):
             raise TypeError("bad val: %s %s" % (repr(val), type(val)))
         dict.__setitem__(self, key, val)
 
-def update_button_by_player_status (button, player):
+def make_sensitive_if_available (button, player):
     if player.isAvailableForGame():
         button.set_property("sensitive", True)
         button.set_property("tooltip-text", "")
@@ -32,6 +32,17 @@ def update_button_by_player_status (button, player):
         button.set_property("sensitive", False)
         button.set_property("tooltip-text", _("%(player)s is %(status)s") % \
             {"player": player.name, "status": player.display_status.lower()})
+
+def make_sensitive_if_playing (button, player):
+    status = player.display_status.lower()
+    if player.status == IC_STATUS_PLAYING:
+        button.set_property("sensitive", True)
+    else:
+        button.set_property("sensitive", False)
+        if player.status != IC_STATUS_OFFLINE:
+            status = _("not playing")
+    button.set_property("tooltip-text", _("%(player)s is %(status)s") % \
+        {"player": player.name, "status": status})
 
 def get_player_tooltip_text (player, show_status=True):
     text = "%s" % player.name

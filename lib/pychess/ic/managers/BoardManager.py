@@ -770,6 +770,7 @@ class BoardManager (GObject):
             if game_type.rating_type in player.ratings and \
                     player.ratings[game_type.rating_type].elo != rating:
                 player.ratings[game_type.rating_type].elo = rating
+            player.keep_after_logout = True
         game = gameclass(wplayer, bplayer, game_type=game_type,
             rated=(rated.lower() == "rated"), minutes=minutes, inc=increment,
             board=FICSBoard(wms, bms, pgn=pgn))
