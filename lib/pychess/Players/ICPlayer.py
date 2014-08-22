@@ -224,3 +224,6 @@ class ICPlayer (Player):
     
     def offerError (self, offer, error):
         pass
+
+    def observe (self):
+        self.connection.client.run_command("observe %s" % self.ichandle)
