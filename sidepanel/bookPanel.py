@@ -1,6 +1,7 @@
 import os
 import Queue
-import gtk, gobject, pango
+#import gtk, gobject, pango
+from gi.repository import Gtk, GObject, Pango
 from threading import Thread
 
 from pychess.System import conf, fident
@@ -119,8 +120,10 @@ class OpeningAdvisor(Advisor):
                 eco = opening[0]
                 self.opening_names.append("%s %s" % (opening[1], opening[2]))
 
-            self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco, False, False])
-        self.tv.expand_row(self.path, False)
+            self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco, False, False])        
+        tp = Gtk.TreePath(self.path)
+        #self.tv.expand_row(self.path, False)
+        self.tv.expand_row(tp, False)
     
     def child_tooltip (self, i):
         return "" if len(self.opening_names)==0 else self.opening_names[i]
@@ -338,20 +341,20 @@ class Sidepanel (object):
         self.boardcontrol = gmwidg.board
         self.boardview = self.boardcontrol.view
         
-        widgets = gtk.Builder()
+        widgets = Gtk.Builder()
         widgets.add_from_file(addDataPrefix("sidepanel/book.glade"))
         self.tv = widgets.get_object("treeview")
         self.sw = widgets.get_object("scrolledwindow")
         self.sw.unparent()
-        self.store = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, int, bool, str, bool, bool)
+        self.store = Gtk.TreeStore(GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT, int, bool, str, bool, bool)
         self.tv.set_model(self.store)
         
         ### move suggested
-        moveRenderer = gtk.CellRendererText()
+        moveRenderer = Gtk.CellRendererText()
         moveRenderer.set_property("xalign", 1.0)
-        c0 = gtk.TreeViewColumn("Move", moveRenderer)
+        c0 = Gtk.TreeViewColumn("Move", moveRenderer)
 
-        def getMoveText(column, cell, store, iter):
+        def getMoveText(column, cell, store, iter, data):
             board, move, pv = store[iter][0]
             if not move:
                 cell.set_property("text", "")
@@ -362,18 +365,18 @@ class Sidepanel (object):
                     cell.set_property("text", toSAN(board, move, True))
         c0.set_cell_data_func(moveRenderer, getMoveText)
 
-        ### strength of the move
-        c1 = gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)
+        ### strength of the move       
+        c1 = Gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)       
 
         ### multipv (number of analysis lines)
-        multipvRenderer = gtk.CellRendererSpin()
-        adjustment = gtk.Adjustment(value=conf.get("multipv", 1), lower=1, upper=9, step_incr=1)
+        multipvRenderer = Gtk.CellRendererSpin()
+        adjustment = Gtk.Adjustment(value=conf.get("multipv", 1), lower=1, upper=9, step_incr=1)
         multipvRenderer.set_property("adjustment", adjustment)
         multipvRenderer.set_property("editable", True)
         multipvRenderer.set_property("width_chars", 3)
-        c2 = gtk.TreeViewColumn("PV", multipvRenderer, editable=3)
+        c2 = Gtk.TreeViewColumn("PV", multipvRenderer, editable=3)
 
-        def spin_visible(column, cell, store, iter):
+        def spin_visible(column, cell, store, iter, data):           
             if store[iter][2] == 0:
                 cell.set_property('visible', False)
             else:
@@ -388,15 +391,18 @@ class Sidepanel (object):
         multipvRenderer.connect('edited', multipv_edited)
 
         ### header text, or analysis line
-        renderer = gtk.CellRendererText()
-        renderer.set_property("wrap-mode", pango.WRAP_WORD)
-        c3 = gtk.TreeViewColumn("Details", renderer, text=4)
+        renderer = Gtk.CellRendererText()
+        renderer.set_property("wrap-mode", Pango.WrapMode.WORD)
+        c3 = Gtk.TreeViewColumn("Details", renderer, text=4)
         # wrap analysis text column. thanks to
         # http://www.islascruz.org/html/index.php?blog/show/Wrap-text-in-a-TreeView-column.html
         def resize_wrap(scroll, allocation, treeview, column, cell):
             otherColumns = (c for c in treeview.get_columns() if c != column)
             newWidth = allocation.width - sum(c.get_width() for c in otherColumns)
-            newWidth -= treeview.style_get_property("horizontal-separator") * 4
+            # FIXME
+            #newWidth -= treeview.style_get_property("horizontal-separator") * 4
+            #newWidth -= treeview.style_get_property("horizontal-separator", temp) * 4
+            newWidth -= 16
             if cell.props.wrap_width == newWidth or newWidth <= 0:
                 return
 #             if newWidth < 100:
@@ -415,9 +421,9 @@ class Sidepanel (object):
         ### start/stop button for analysis engines
         toggleRenderer = CellRendererPixbufXt()
         toggleRenderer.set_property("stock-id", "gtk-add")
-        c4 = gtk.TreeViewColumn("StartStop", toggleRenderer)
+        c4 = Gtk.TreeViewColumn("StartStop", toggleRenderer)
 
-        def cb_visible(column, cell, store, iter):
+        def cb_visible(column, cell, store, iter, data):
             if not store[iter][6]:
                 cell.set_property('visible', False)
             else:
@@ -537,10 +543,10 @@ class Sidepanel (object):
         if legalMoveCount(boardview.model.getBoardAtPly(shown, boardview.shownVariationIdx)) == 0:
             if self.sw.get_child() == self.tv:
                 self.sw.remove(self.tv)
-                label = gtk.Label(_("In this position,\nthere is no legal move."))
+                label = Gtk.Label(_("In this position,\nthere is no legal move."))
                 label.set_property("yalign",0.1)
                 self.sw.add_with_viewport(label)
-                self.sw.get_child().set_shadow_type(gtk.SHADOW_NONE)
+                self.sw.get_child().set_shadow_type(Gtk.ShadowType.NONE)
                 self.sw.show_all()
             return
         
@@ -601,22 +607,28 @@ class Sidepanel (object):
 ################################################################################
 
 width, height = 80, 23
-class StrengthCellRenderer (gtk.GenericCellRenderer):
+class StrengthCellRenderer (Gtk.CellRenderer):
     __gproperties__ = {
-        "data": (gobject.TYPE_PYOBJECT, "Data", "Data", gobject.PARAM_READWRITE),
+        "data": (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.PARAM_READWRITE),
     }
     
     def __init__(self):
-        self.__gobject_init__()
+        #self.__gobject_init__()
+        Gtk.CellRenderer.__init__(self)
+        #GObject.GObject.__init__(self)      
         self.data = None
-        
-    def do_set_property(self, pspec, value):
+
+    #def do_set_property(self, property_id, value, pspec):    
+    def do_set_property(self, pspec, value):        
         setattr(self, pspec.name, value)
         
-    def do_get_property(self, pspec):
+    def do_get_property(self, pspec):      
         return getattr(self, pspec.name)
         
-    def on_render(self, window, widget, background_area, cell_area, expose_area, flags):
+    def do_render(self, context, treeview, cairorectangleint1, cairorectangleint2, cellrendererstate):          
+        return
+
+    def on_render(self, window, widget, background_area, cell_area, expose_area, flags):      
         if not self.data: return
         cairo = window.cairo_create()
         text, widthfrac, goodness = self.data
@@ -630,10 +642,10 @@ class StrengthCellRenderer (gtk.GenericCellRenderer):
             cairo.rel_move_to( 70 - w, (height - h) / 2)
             cairo.show_layout(layout)
        
-    def on_get_size(self, widget, cell_area=None):
+    def on_get_size(self, widget, cell_area=None):       
         return (0, 0, width, height)
-            
-gobject.type_register(StrengthCellRenderer)
+
+GObject.type_register(StrengthCellRenderer)
 
 ################################################################################
 # StrengthCellRenderer functions                                               #
@@ -669,17 +681,17 @@ def paintGraph (cairo, widthfrac, rgb, rect):
     cairo.restore()
 
 # cell renderer for start-stop putton
-class CellRendererPixbufXt(gtk.CellRendererPixbuf):
+class CellRendererPixbufXt(Gtk.CellRendererPixbuf):
     __gproperties__ = { 'active-state' :                                      
-                        (gobject.TYPE_STRING, 'pixmap/active widget state',  
+                        (GObject.TYPE_STRING, 'pixmap/active widget state',  
                         'stock-icon name representing active widget state',  
-                        None, gobject.PARAM_READWRITE) }                      
+                        None, GObject.PARAM_READWRITE) }                      
     __gsignals__    = { 'clicked' :                                          
-                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,)) , } 
+                        (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING,)) , } 
 
     def __init__( self ):                                                    
-        gtk.CellRendererPixbuf.__init__( self )                              
-        self.set_property( 'mode', gtk.CELL_RENDERER_MODE_ACTIVATABLE )      
+        GObject.GObject.__init__( self )                              
+        self.set_property( 'mode', Gtk.CellRendererMode.ACTIVATABLE )      
                                                                               
     def do_get_property( self, property ):                                    
         if property.name == 'active-state':                                  
@@ -694,10 +706,10 @@ class CellRendererPixbufXt(gtk.CellRendererPixbuf):
             raise AttributeError, 'unknown property %s' % property.name      
                                                                               
     def do_activate( self, event, widget, path,  background_area, cell_area, flags ):    
-        if event.type == gtk.gdk.BUTTON_PRESS:                                
+        if event.type == Gdk.EventType.BUTTON_PRESS:                                
             self.emit('clicked', path)          
                                                   
     #def do_clicked(self, path):                                        
         #print "do_clicked", path                              
         
-gobject.type_register(CellRendererPixbufXt)
+GObject.type_register(CellRendererPixbufXt)

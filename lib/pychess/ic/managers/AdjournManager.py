@@ -1,6 +1,7 @@
 import re
 import datetime
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 
 from BoardManager import BoardManager, moveListHeader1Str, names, months, dates
 from pychess.ic import *
@@ -8,16 +9,16 @@ from pychess.ic.FICSObjects import FICSAdjournedGame, FICSPlayer
 from pychess.Utils.const import *
 from pychess.System.Log import log
 
-class AdjournManager (GObject):
+class AdjournManager (GObject.GObject):
     
     __gsignals__ = {
-        'adjournedGameAdded' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'onAdjournmentsList' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'adjournedGamePreview' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        'adjournedGameAdded' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'onAdjournmentsList' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'adjournedGamePreview' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         
         self.connection = connection
         

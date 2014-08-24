@@ -1,12 +1,15 @@
-import gtk
+from gi.repository import Gtk
+from gi.repository import GObject
 import cairo
+#from gi.repository import cairo
 
 from pychess.gfx import Pieces
 
-class PieceWidget (gtk.DrawingArea):
+class PieceWidget (Gtk.DrawingArea):
     def __init__(self, piece):
-        gtk.DrawingArea.__init__(self)
-        self.connect("expose_event", self.expose)
+        GObject.GObject.__init__(self)
+        #self.connect("expose_event", self.expose)
+        self.connect("draw", self.expose)
         self.piece = piece
     
     def setPiece(self, piece):
@@ -15,7 +18,8 @@ class PieceWidget (gtk.DrawingArea):
     def getPiece(self):
         return self.piece
     
-    def expose(self, widget, event):
+#   def expose(self, widget, event):
+    def expose(self, widget, ctx):
         context = widget.window.cairo_create()
         rect = self.get_allocation()
         s = min(rect.width, rect.height)

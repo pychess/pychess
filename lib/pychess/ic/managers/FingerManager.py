@@ -1,5 +1,6 @@
 from threading import RLock
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 import re
 from time import time
 from pychess.ic import *
@@ -201,15 +202,15 @@ class FingerObject:
     def setTitles(self, titles):
         self.__titles = titles
 
-class FingerManager (GObject):
+class FingerManager (GObject.GObject):
     
     __gsignals__ = {
-        'fingeringFinished' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'ratingAdjusted' : (SIGNAL_RUN_FIRST, None, (str, str)),
+        'fingeringFinished' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'ratingAdjusted' : (GObject.SIGNAL_RUN_FIRST, None, (str, str)),
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         
         fingerLines = (

@@ -1,5 +1,6 @@
 import re
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 import threading
 
 from pychess.System.Log import log
@@ -144,25 +145,25 @@ def parse_reason (result, reason, wname=None):
     
     return result, reason
 
-class BoardManager (GObject):
+class BoardManager (GObject.GObject):
     
     __gsignals__ = {
-        'playGameCreated'     : (SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameCreated'      : (SIGNAL_RUN_FIRST, None, (object,)),
-        'boardUpdate'         : (SIGNAL_RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
-        'obsGameEnded'        : (SIGNAL_RUN_FIRST, None, (object,)),
-        'curGameEnded'        : (SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameUnobserved'   : (SIGNAL_RUN_FIRST, None, (object,)),
-        'gamePaused'          : (SIGNAL_RUN_FIRST, None, (int, bool)),
-        'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ()),
-        'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (object,)),
+        'playGameCreated'     : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'obsGameCreated'      : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'boardUpdate'         : (GObject.SIGNAL_RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
+        'obsGameEnded'        : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'curGameEnded'        : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'obsGameUnobserved'   : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'gamePaused'          : (GObject.SIGNAL_RUN_FIRST, None, (int, bool)),
+        'tooManySeeks'        : (GObject.SIGNAL_RUN_FIRST, None, ()),
+        'matchDeclined'       : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
     }
     
     castleSigns = {}
     queuedStyle12s = {}
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         
         self.connection = connection
         

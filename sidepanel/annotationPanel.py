@@ -2,8 +2,10 @@
 import re
 import datetime
 
-import gtk
-import pango
+from gi.repository import Gtk
+from gi.repository import Pango
+from gi.repository import GObject
+from gi.repository import Gdk
 
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import *
@@ -22,16 +24,17 @@ __icon__ = addDataPrefix("glade/panel_annotation.svg")
 __desc__ = _("Annotated game")
 
 
-class Sidepanel(gtk.TextView):
+class Sidepanel(Gtk.TextView):
     def __init__(self):
-        gtk.TextView.__init__(self)
+        GObject.GObject.__init__(self)
 
         self.set_editable(False)
         self.set_cursor_visible(False)
-        self.set_wrap_mode(gtk.WRAP_WORD)
+        self.set_wrap_mode(Gtk.WrapMode.WORD)
 
-        self.cursor_standard = gtk.gdk.Cursor(gtk.gdk.LEFT_PTR)
-        self.cursor_hand = gtk.gdk.Cursor(gtk.gdk.HAND2)
+        self.cursor_standard = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
+        #self.cursor_hand = Gdk.Cursor.new(Gdk.HAND2)
+        self.cursor_hand = Gdk.Cursor.new(Gdk.CursorType.HAND2)
         
         self.textview = self
         
@@ -44,23 +47,23 @@ class Sidepanel(gtk.TextView):
         
         self.textbuffer = self.get_buffer()
         
-        color0 = gtk.gdk.Color(red=0.0)
-        color1 = gtk.gdk.Color(red=0.2)
-        color2 = gtk.gdk.Color(red=0.4)
-        color3 = gtk.gdk.Color(red=0.6)
-        color4 = gtk.gdk.Color(red=0.8)
-        color5 = gtk.gdk.Color(red=1.0)
+        color0 = Gdk.Color(red=0.0, green=0.0, blue=0.0)
+        color1 = Gdk.Color(red=0.2, green=0.0, blue=0.0)
+        color2 = Gdk.Color(red=0.4, green=0.0, blue=0.0)
+        color3 = Gdk.Color(red=0.6, green=0.0, blue=0.0)
+        color4 = Gdk.Color(red=0.8, green=0.0, blue=0.0)
+        color5 = Gdk.Color(red=1.0, green=0.0, blue=0.0)
 
         self.textbuffer.create_tag("head1")
-        self.textbuffer.create_tag("head2", weight=pango.WEIGHT_BOLD)
-        self.textbuffer.create_tag("node", weight=pango.WEIGHT_BOLD, background="white")
+        self.textbuffer.create_tag("head2", weight=Pango.Weight.BOLD)
+        self.textbuffer.create_tag("node", weight=Pango.Weight.BOLD, background="white")
         self.textbuffer.create_tag("scored0", foreground_gdk=color0)
         self.textbuffer.create_tag("scored1", foreground_gdk=color1)
         self.textbuffer.create_tag("scored2", foreground_gdk=color2)
         self.textbuffer.create_tag("scored3", foreground_gdk=color3)
         self.textbuffer.create_tag("scored4", foreground_gdk=color4)
         self.textbuffer.create_tag("scored5", foreground_gdk=color5)
-        self.textbuffer.create_tag("emt", foreground="darkgrey", weight=pango.WEIGHT_NORMAL)
+        self.textbuffer.create_tag("emt", foreground="darkgrey", weight=Pango.Weight.NORMAL)
         self.textbuffer.create_tag("comment", foreground="darkblue")
         self.textbuffer.create_tag("variation-toplevel")
         self.textbuffer.create_tag("variation-even", foreground="darkgreen", style="italic")
@@ -72,8 +75,8 @@ class Sidepanel(gtk.TextView):
         self.textbuffer.create_tag("variation-margin2", left_margin=52)
 
     def load(self, gmwidg):
-        __widget__ = gtk.ScrolledWindow()
-        __widget__.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
+        __widget__ = Gtk.ScrolledWindow()
+        __widget__.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
         __widget__.add(self.textview)
 
         self.boardview = gmwidg.board.view
@@ -122,17 +125,18 @@ class Sidepanel(gtk.TextView):
 
     def motion_notify_event(self, widget, event):
         if (event.is_hint):
-            (x, y, state) = event.window.get_pointer()
+            #(x, y, state) = event.window.get_pointer()
+            (ign, x, y, state) = event.window.get_pointer()
         else:
             x = event.x
             y = event.y
-            state = event.state
+            state = event.get_state()
             
-        if self.textview.get_window_type(event.window) != gtk.TEXT_WINDOW_TEXT:
+        if self.textview.get_window_type(event.window) != Gtk.TextWindowType.TEXT:
             event.window.set_cursor(self.cursor_standard)
             return True
             
-        (x, y) = self.textview.window_to_buffer_coords(gtk.TEXT_WINDOW_WIDGET, int(x), int(y))
+        (x, y) = self.textview.window_to_buffer_coords(Gtk.TextWindowType.WIDGET, int(x), int(y))
         it = self.textview.get_iter_at_location(x, y)
         offset = it.get_offset()
         for ni in self.nodeIters:
@@ -144,7 +148,7 @@ class Sidepanel(gtk.TextView):
 
     def button_press_event(self, widget, event):
         (wx, wy) = event.get_coords()
-        (x, y) = self.textview.window_to_buffer_coords(gtk.TEXT_WINDOW_WIDGET, int(wx), int(wy))
+        (x, y) = self.textview.window_to_buffer_coords(Gtk.TextWindowType.WIDGET, int(wx), int(wy))
         it = self.textview.get_iter_at_location(x, y)
         offset = it.get_offset()
 
@@ -167,7 +171,7 @@ class Sidepanel(gtk.TextView):
 
         elif event.button == 3:
             if node is not None:
-                menu = gtk.Menu()
+                menu = Gtk.Menu()
                 position = -1
                 for index, child in enumerate(board.children):
                     if isinstance(child, basestring):
@@ -176,20 +180,20 @@ class Sidepanel(gtk.TextView):
 
                 if len(self.gamemodel.boards) > 1 and board == self.gamemodel.boards[1].board and \
                     not self.gamemodel.boards[0].board.children:
-                    menuitem = gtk.MenuItem(_("Add start comment"))
+                    menuitem = Gtk.MenuItem(_("Add start comment"))
                     menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0].board, 0)
                     menu.append(menuitem)
 
                 if position == -1:
-                    menuitem = gtk.MenuItem(_("Add comment"))
+                    menuitem = Gtk.MenuItem(_("Add comment"))
                     menuitem.connect('activate', self.edit_comment, board, 0)
                     menu.append(menuitem)
                 else:
-                    menuitem = gtk.MenuItem(_("Edit comment"))
+                    menuitem = Gtk.MenuItem(_("Edit comment"))
                     menuitem.connect('activate', self.edit_comment, board, position)
                     menu.append(menuitem)
 
-                symbol_menu1 = gtk.Menu()
+                symbol_menu1 = Gtk.Menu()
                 for nag, menutext in (("$1", "!"),
                                       ("$2", "?"),
                                       ("$3", "!!"),
@@ -197,15 +201,15 @@ class Sidepanel(gtk.TextView):
                                       ("$5", "!?"),
                                       ("$6", "?!"),
                                       ("$7", _("Forced move"))):
-                    menuitem = gtk.MenuItem(menutext)
+                    menuitem = Gtk.MenuItem(menutext)
                     menuitem.connect('activate', self.symbol_menu1_activate, board, nag)
                     symbol_menu1.append(menuitem)
 
-                menuitem = gtk.MenuItem(_("Add move symbol"))
+                menuitem = Gtk.MenuItem(_("Add move symbol"))
                 menuitem.set_submenu(symbol_menu1)
                 menu.append(menuitem)
                 
-                symbol_menu2 = gtk.Menu()
+                symbol_menu2 = Gtk.Menu()
                 for nag, menutext in (("$10", "="),
                                       ("$13", _("Unclear position")),
                                       ("$14", "+="),
@@ -223,22 +227,22 @@ class Sidepanel(gtk.TextView):
                                       ("$44", _("Compensation")),
                                       ("$132", _("Counterplay")),
                                       ("$138", _("Time pressure"))):
-                    menuitem = gtk.MenuItem(menutext)
+                    menuitem = Gtk.MenuItem(menutext)
                     menuitem.connect('activate', self.symbol_menu2_activate, board, nag)
                     symbol_menu2.append(menuitem)
 
-                menuitem = gtk.MenuItem(_("Add evaluation symbol"))
+                menuitem = Gtk.MenuItem(_("Add evaluation symbol"))
                 menuitem.set_submenu(symbol_menu2)
                 menu.append(menuitem)
 
-                menuitem = gtk.MenuItem(_("Remove symols"))
+                menuitem = Gtk.MenuItem(_("Remove symols"))
                 menuitem.connect('activate', self.remove_symbols, board)
                 menu.append(menuitem)
 
                 if board.pieceBoard not in self.gamemodel.variations[0]:
                     for vari in self.gamemodel.variations[1:]:
                         if board.pieceBoard in vari:
-                            menuitem = gtk.MenuItem(_("Remove variation"))
+                            menuitem = Gtk.MenuItem(_("Remove variation"))
                             menuitem.connect('activate', self.remove_variation, board, node["parent"], vari)
                             menu.append(menuitem)
                             break
@@ -248,16 +252,16 @@ class Sidepanel(gtk.TextView):
         return True
 
     def edit_comment(self, widget=None, board=None, index=0):
-        dialog = gtk.Dialog(_("Edit comment"),
+        dialog = Gtk.Dialog(_("Edit comment"),
                      None,
-                     gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                     (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                      gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+                     Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                     (Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT,
+                      Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
 
-        textedit = gtk.TextView()
+        textedit = Gtk.TextView()
         textedit.set_editable(True)
         textedit.set_cursor_visible(True)
-        textedit.set_wrap_mode(gtk.WRAP_WORD)
+        textedit.set_wrap_mode(Gtk.WrapMode.WORD)
 
         textbuffer = textedit.get_buffer()
         if not board.children:
@@ -266,8 +270,8 @@ class Sidepanel(gtk.TextView):
             board.children.insert(index, "")
         textbuffer.set_text(board.children[index])
         
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw.add(textedit)
 
         dialog.vbox.add(sw)
@@ -275,7 +279,7 @@ class Sidepanel(gtk.TextView):
         dialog.show_all()
 
         response = dialog.run()
-        if response == gtk.RESPONSE_ACCEPT:
+        if response == Gtk.ResponseType.ACCEPT:
             dialog.destroy()
             (iter_first, iter_last) = textbuffer.get_bounds()
             comment = textbuffer.get_text(iter_first, iter_last)
@@ -457,7 +461,8 @@ class Sidepanel(gtk.TextView):
                 break
 
         if start:
-            self.textview.scroll_to_iter(start, within_margin=0.03)
+            #self.textview.scroll_to_iter(start, within_margin=0.03)
+            self.textview.scroll_to_iter(start, 0.03, False, 0.00, 0.00)
 
     # Recursively insert the node tree
     def insert_nodes(self, node, level=0, ply=0, parent=None, result=None):
@@ -727,10 +732,12 @@ class Sidepanel(gtk.TextView):
     
     def __movestr(self, node):
         move = node.lastMove
-        if self.fan:
+        if self.fan:           
             movestr = toFAN(node.prev, move)
-        else:
-            movestr =  toSAN(node.prev, move, True)
-        nagsymbols = "".join([nag2symbol(nag) for nag in node.nags])
+        else:           
+            movestr =  toSAN(node.prev, move, True)          
+        nagsymbols = "".join([nag2symbol(nag) for nag in node.nags])     
+
         # To prevent wrap castling we will use hyphen bullet (U+2043)
-        return "%s%s%s" % (move_count(node), movestr.replace("-","⁃"), nagsymbols)
+        #return "%s%s%s" % (move_count(node), movestr.replace("-","⁃"), nagsymbols)
+        return "%s%s%s" % (move_count(node), movestr.decode('utf-8').replace(u'-', u'\u2043'), nagsymbols)

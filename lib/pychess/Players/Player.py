@@ -1,4 +1,5 @@
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+#from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+from gi.repository import GObject
 
 class PlayerIsDead (Exception):
     """ Used instead of returning a move,
@@ -11,18 +12,25 @@ class TurnInterrupt (Exception):
         player """
     pass
 
-class Player (GObject):
+#class Player (GObject):
+class Player (GObject.GObject):
     
     __gsignals__ = {
-        "offer": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "withdraw": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "decline": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "accept": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "name_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        #"offer": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        #"withdraw": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        #"decline": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        #"accept": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        #"name_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "offer": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
+        "withdraw": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
+        "decline": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
+        "accept": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
+        "name_changed": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+
     }
     
     def __init__ (self):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.name = ""
         self.ichandle = None
         self.icrating = None

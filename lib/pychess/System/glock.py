@@ -1,7 +1,8 @@
 import traceback
 from functools import wraps
 from threading import RLock, currentThread
-from gtk.gdk import threads_enter, threads_leave
+#from Gtk.gdk import threads_enter, threads_leave
+from gi.repository import Gdk
 from pychess.System.Log import log
 from pychess.System import fident
 debug = False
@@ -24,7 +25,7 @@ def acquire():
     # while we wait on _rlock.acquire()
     if me.getName() == "MainThread" and not has():
         _debug('glock.acquire', me, '-> threads_leave')
-        threads_leave()
+        Gdk.threads_leave()
         _debug('glock.acquire', me, '<- threads_leave')
     # Acquire the lock, if it is not ours, or add one to the recursive counter
     _debug('glock.acquire', me, '-> _rlock.acquire')
@@ -33,7 +34,7 @@ def acquire():
     # If it is the first time we lock, we will acquire the gdklock
     if _rlock._RLock__count == 1:
         _debug('glock.acquire', me, '-> threads_enter')
-        threads_enter()
+        Gdk.threads_enter()
         _debug('glock.acquire', me, '<- threads_enter')
 
 def release():
@@ -44,7 +45,7 @@ def release():
     if me.getName() == "MainThread":
         if not has():
             _debug('glock.release', me, '-> threads_leave')
-            threads_leave()
+            Gdk.threads_leave()
             _debug('glock.release', me, '<- threads_leave')
         else:
             _debug('glock.release', me, '-> _rlock.release')
@@ -54,7 +55,7 @@ def release():
     elif has():
         if _rlock._RLock__count == 1:
             _debug('glock.release', me, '-> threads_leave')
-            threads_leave()
+            Gdk.threads_leave()
             _debug('glock.release', me, '<- threads_leave')
         _debug('glock.release', me, '-> _rlock.release')
         _rlock.release()
