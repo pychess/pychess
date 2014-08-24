@@ -2,9 +2,10 @@
 
 import os
 
-import gtk
+from gi.repository import Gtk
 import cairo
-import rsvg
+#from gi.repository import cairo
+#import rsvg
 
 from pychess.Utils.const import *
 from pychess.gfx import Pieces

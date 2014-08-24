@@ -1,5 +1,5 @@
 import email.Utils
-import gtk
+from gi.repository import Gtk
 import math
 import pychess
 import random
@@ -131,7 +131,7 @@ class PyChessFICS(PyChess):
         return True
     
     def makeReady(self):
-        signal.signal(signal.SIGINT, gtk.main_quit)
+        signal.signal(signal.SIGINT, Gtk.main_quit)
         
         PyChess.makeReady(self)
         
@@ -193,8 +193,8 @@ class PyChessFICS(PyChess):
         t = Thread(target=self.main, name=fident(self.main))
         t.daemon = True
         t.start()
-        gtk.gdk.threads_init()
-        gtk.main()
+        Gdk.threads_init()
+        Gtk.main()
     
     #===========================================================================
     # General

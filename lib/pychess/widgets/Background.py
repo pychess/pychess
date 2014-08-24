@@ -1,7 +1,9 @@
 from os import path
 
-import gtk
+from gi.repository import Gtk
+from gi.repository import Gdk
 import cairo
+#from gi.repository import cairo
 
 from pychess.System.prefix import addDataPrefix, addUserCachePrefix
 
@@ -9,12 +11,20 @@ CLEARPATH = addDataPrefix("glade/clear.png")
 surface = None
 
 def giveBackground (widget):
-    widget.connect("expose_event", expose)
+    #widget.connect("expose_event", expose)
+    widget.connect("draw", expose)
     widget.connect("style-set", newtheme)
 
-def expose (widget, event):
-    cr = widget.window.cairo_create()
-    cr.rectangle (event.area.x, event.area.y, event.area.width, event.area.height)
+def expose (widget, context):
+    #cr = widget.window.cairo_create()
+    cr = widget.get_window().cairo_create()
+
+    x = widget.get_allocation().x
+    y = widget.get_allocation().y
+    width = widget.get_allocation().width
+    height = widget.get_allocation().height
+    cr.rectangle (x, y, width, height)
+    #cr.rectangle (event.area.x, event.area.y, event.area.width, event.area.height)
     if not surface:
         newtheme(widget, None)
     cr.set_source_surface(surface, 0, 0)
@@ -23,13 +33,19 @@ def expose (widget, event):
     cr.fill()
 
 def newtheme (widget, oldstyle):
-    global surface
-    
-    lnewcolor = widget.get_style().bg[gtk.STATE_NORMAL]
-    dnewcolor = widget.get_style().dark[gtk.STATE_NORMAL]
+    global surface 
+
+    # FIXME   
+    """    
+    #lnewcolor = widget.get_style().bg[Gtk.StateType.NORMAL]
+    context = widget.get_style_context()
+    lnewcolor = context.get_background_color(Gtk.StateType.NORMAL)
+
+    #dnewcolor = widget.get_style().dark[Gtk.StateType.NORMAL]
+    dnewcolor = context.get_dark_color(Gtk.StateType.NORMAL)
     if oldstyle:
-        loldcolor = oldstyle.bg[gtk.STATE_NORMAL]
-        doldcolor = oldstyle.dark[gtk.STATE_NORMAL]
+        loldcolor = oldstyle.bg[Gtk.StateType.NORMAL]
+        doldcolor = oldstyle.dark[Gtk.StateType.NORMAL]
         if lnewcolor.red   == loldcolor.red and \
            lnewcolor.green == loldcolor.green and \
            lnewcolor.blue  == loldcolor.blue and \
@@ -42,7 +58,21 @@ def newtheme (widget, oldstyle):
         lnewcolor.red/256, lnewcolor.green/256, lnewcolor.blue/256,
         dnewcolor.red/256, dnewcolor.green/256, dnewcolor.blue/256
     ]
-    
+    """
+
+    lnewcolor = Gdk.Color(237, 237, 237)
+    dnewcolor = Gdk.Color(166, 166, 166)
+
+    colors = [
+        lnewcolor.red/256, lnewcolor.green/256, lnewcolor.blue/256,
+        dnewcolor.red/256, dnewcolor.green/256, dnewcolor.blue/256
+    ]
+   
+    #colors = [
+    #    0.929, 0.929, 0.929,
+    #    0.651, 0.651, 0.651
+    #]
+
     # Check if a cache has been saved
     temppng = addUserCachePrefix("temp.png")
     if path.isfile(temppng):
@@ -75,3 +105,4 @@ def newtheme (widget, oldstyle):
     for color in colors:
         f.write(chr(color))
     surface.write_to_png(f)
+    

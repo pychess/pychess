@@ -1,17 +1,18 @@
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 
 sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
 
-class ErrorManager (GObject):
+class ErrorManager (GObject.GObject):
     
     __gsignals__ = {
-        'onCommandNotFound' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        'onAmbiguousMove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        'onIllegalMove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        'onCommandNotFound' : (GObject.SIGNAL_RUN_FIRST, None, (str,)),
+        'onAmbiguousMove' : (GObject.SIGNAL_RUN_FIRST, None, (str,)),
+        'onIllegalMove' : (GObject.SIGNAL_RUN_FIRST, None, (str,)),
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         connection.expect_line (self.onError, "(.*?): Command not found\.")
         connection.expect_line (self.onAmbiguousMove, "Ambiguous move \((%s)\)\." % sanmove)
         connection.expect_line (self.onIllegalMove, "Illegal move \((%s)\)\." % sanmove)

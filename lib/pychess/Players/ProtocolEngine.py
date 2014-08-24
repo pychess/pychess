@@ -1,4 +1,5 @@
-from gobject import SIGNAL_RUN_FIRST
+#from gobject import SIGNAL_RUN_FIRST
+from gi.repository import GObject
 from threading import Condition
 
 from pychess.System.Log import log
@@ -9,8 +10,10 @@ from pychess.Utils.repr import reprColor
 class ProtocolEngine (Engine):
     
     __gsignals__ = {
-        "readyForOptions": (SIGNAL_RUN_FIRST, None, ()),
-        "readyForMoves": (SIGNAL_RUN_FIRST, None, ())
+        #"readyForOptions": (SIGNAL_RUN_FIRST, None, ()),
+        #"readyForMoves": (SIGNAL_RUN_FIRST, None, ())
+       "readyForOptions": (GObject.SIGNAL_RUN_FIRST, None, ()),
+       "readyForMoves": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
     
     #===========================================================================

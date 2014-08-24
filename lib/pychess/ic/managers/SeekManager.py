@@ -1,4 +1,5 @@
-from gobject import GObject, SIGNAL_RUN_FIRST
+#from gobject import GObject, SIGNAL_RUN_FIRST
+from gi.repository import GObject
 import re
 from pychess.Utils.const import *
 from pychess.ic import *
@@ -20,18 +21,18 @@ rating_re = re.compile("[0-9]{2,}")
 deviation_estimated_re = re.compile("E")
 deviation_provisional_re = re.compile("P")
 
-class SeekManager (GObject):
+class SeekManager (GObject.GObject):
     
     __gsignals__ = {
-        'addSeek' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'removeSeek' : (SIGNAL_RUN_FIRST, None, (int,)),
-        'clearSeeks' : (SIGNAL_RUN_FIRST, None, ()),
-        'our_seeks_removed' : (SIGNAL_RUN_FIRST, None, ()),
-        'seek_updated' : (SIGNAL_RUN_FIRST, None, (str,)),
+        'addSeek' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'removeSeek' : (GObject.SIGNAL_RUN_FIRST, None, (int,)),
+        'clearSeeks' : (GObject.SIGNAL_RUN_FIRST, None, ()),
+        'our_seeks_removed' : (GObject.SIGNAL_RUN_FIRST, None, ()),
+        'seek_updated' : (GObject.SIGNAL_RUN_FIRST, None, (str,)),
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         
         self.connection.expect_line (self.on_seek_clear, "<sc>")

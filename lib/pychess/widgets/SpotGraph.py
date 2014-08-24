@@ -1,10 +1,13 @@
 import math
 ceil = lambda f: int(math.ceil(f))
 
-from gobject import *
-import gtk
+#from gobject import *
+from gi.repository import GObject
+
+from gi.repository import Gtk
 import cairo
-import pango
+#from gi.repository import cairo
+from gi.repository import Pango
 
 line = 10
 curve = 60
@@ -15,14 +18,14 @@ lineprc = 1/7.
 hpadding = 5
 vpadding = 3
 
-class SpotGraph (gtk.EventBox):
+class SpotGraph (Gtk.EventBox):
     
     __gsignals__ = {
-        'spotClicked' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,))
+        'spotClicked' : (GObject.SIGNAL_RUN_FIRST, None, (str,))
     }
     
     def __init__ (self):
-        gtk.EventBox.__init__(self)
+        GObject.GObject.__init__(self)
         self.connect("expose_event", self.expose)
         
         self.typeColors = [[[85, 152, 215], [59, 106, 151]],
@@ -33,10 +36,10 @@ class SpotGraph (gtk.EventBox):
                 color[1] = color[1]/255.
                 color[2] = color[2]/255.
         
-        self.add_events( gtk.gdk.LEAVE_NOTIFY_MASK |
-                         gtk.gdk.POINTER_MOTION_MASK |
-                         gtk.gdk.BUTTON_PRESS_MASK |
-                         gtk.gdk.BUTTON_RELEASE_MASK )
+        self.add_events( Gdk.EventMask.LEAVE_NOTIFY_MASK |
+                         Gdk.EventMask.POINTER_MOTION_MASK |
+                         Gdk.EventMask.BUTTON_PRESS_MASK |
+                         Gdk.EventMask.BUTTON_RELEASE_MASK )
         
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
@@ -63,7 +66,8 @@ class SpotGraph (gtk.EventBox):
             if not rect:
                 alloc = self.get_allocation()
                 rect = (0, 0, alloc.width, alloc.height)
-            rect = gtk.gdk.Rectangle(*map(int,rect))
+            #rect = (*map(int,rect))
+            rect = Gdk.Rectangle(*map(int,rect))
             self.window.invalidate_rect(rect, True)
             self.window.process_updates(True)
     
@@ -85,7 +89,7 @@ class SpotGraph (gtk.EventBox):
         
         context.set_line_width(line)
         context.set_line_cap(cairo.LINE_CAP_ROUND)
-        state = self.state == gtk.STATE_NORMAL and gtk.STATE_PRELIGHT or self.state
+        state = self.state == Gtk.StateType.NORMAL and Gtk.StateType.PRELIGHT or self.state
         context.set_source_color(self.get_style().dark[state])
         context.stroke()
         
@@ -151,7 +155,7 @@ class SpotGraph (gtk.EventBox):
             x, y, width, height = self.getTextBounds(self.hovered)
             
             self.get_style().paint_flat_box (self.window,
-                gtk.STATE_NORMAL, gtk.SHADOW_NONE, r, self, "tooltip",
+                Gtk.StateType.NORMAL, Gtk.ShadowType.NONE, r, self, "tooltip",
                 int(x-hpadding), int(y-vpadding),
                 ceil(width+hpadding*2), ceil(height+vpadding*2))
             
@@ -253,7 +257,7 @@ class SpotGraph (gtk.EventBox):
         height = alloc.height
         
         extends = self.create_pango_layout(text).get_extents()
-        scale = float(pango.SCALE)
+        scale = float(Pango.SCALE)
         x_bearing, y_bearing, twidth, theight = [e/scale for e in extends[1]]
         tx = x - x_bearing + dotLarge/2.
         ty = y - y_bearing - theight - dotLarge/2.
@@ -443,27 +447,27 @@ class SpotGraph (gtk.EventBox):
                (y - dotLarge*0.5 - alloc.y)/(alloc.height - line*1.5-dotLarge*0.5)
 
 if __name__ == "__main__":
-    w = gtk.Window()
-    nb = gtk.Notebook()
+    w = Gtk.Window()
+    nb = Gtk.Notebook()
     w.add(nb)
-    vb = gtk.VBox()
+    vb = Gtk.VBox()
     nb.append_page(vb)
     
     sg = SpotGraph()
     sg.addXMark(.5, "Center")
     sg.addYMark(.5, "Center")
-    vb.pack_start(sg)
+    vb.pack_start(sg, True, True, 0)
     
-    button = gtk.Button("New Spot")
+    button = Gtk.Button("New Spot")
     def callback (button):
         if not hasattr(button, "nextnum"):
             button.nextnum = 0
         else: button.nextnum += 1
         sg.addSpot(str(button.nextnum), "Blablabla", 1, 1, 0)
     button.connect("clicked", callback) 
-    vb.pack_start(button, expand=False)
+    vb.pack_start(button, False, True, 0)
     
-    w.connect("delete-event", gtk.main_quit)
+    w.connect("delete-event", Gtk.main_quit)
     w.show_all()
     w.resize(400,400)
-    gtk.main()
+    Gtk.main()

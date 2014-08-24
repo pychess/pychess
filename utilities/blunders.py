@@ -11,9 +11,12 @@
 
 ###############################################################################
 # Set up important things
-import glib, gobject
-gobject.threads_init()
-mainloop = glib.MainLoop()
+#import glib, gobject
+#import glib
+from gi.repository import GLib
+from gi.repository import GObject
+GObject.threads_init()
+mainloop = GLib.MainLoop()
 
 ###############################################################################
 # Do the rest of the imports

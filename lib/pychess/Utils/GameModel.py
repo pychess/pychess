@@ -4,7 +4,8 @@ import traceback
 import cStringIO
 import datetime
 import Queue
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
+#from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
+from gi.repository import GObject
 
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
@@ -49,11 +50,11 @@ def inthread (f):
         t.start()
     return newFunction
 
-class GameModel (GObject, Thread):
+class GameModel (GObject.GObject, Thread):
     
     """ GameModel contains all available data on a chessgame.
         It also has the task of controlling players actions and moves """
-    
+    """
     __gsignals__ = {
         # game_started is emitted when control is given to the players for the
         # first time. Notice this is after players.start has been called.
@@ -105,9 +106,62 @@ class GameModel (GObject, Thread):
         # scores_changed is emitted if the analyzing scores was changed.
         "analysis_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
     }
+    """
+    __gsignals__ = {
+        # game_started is emitted when control is given to the players for the
+        # first time. Notice this is after players.start has been called.
+        "game_started":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        # game_changed is emitted when a move has been made.
+        "game_changed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        # moves_undoig is emitted when a undoMoves call has been accepted, but
+        # before anywork has been done to execute it.
+        "moves_undoing": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,)),
+        # moves_undone is emitted after n moves have been undone in the
+        # gamemodel and the players.
+        "moves_undone":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,)),
+        # game_unended is emitted if moves have been undone, such that the game
+        # which had previously ended, is now again active.
+        "game_unended":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        # game_loading is emitted if the GameModel is about to load in a chess
+        # game from a file. 
+        "game_loading":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
+        # game_loaded is emitted after the chessformat handler has loaded in
+        # all the moves from a file to the game model.
+        "game_loaded":   (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
+        # game_saved is emitted in the end of model.save()
+        "game_saved":    (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (str,)),
+        # game_ended is emitted if the models state has been changed to an
+        # "ended state"
+        "game_ended":    (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,)),
+        # game_terminated is emitted if the game was terminated. That is all
+        # players and clocks were stopped, and it is no longer possible to
+        # resume the game, even by undo.
+        "game_terminated":    (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        # game_paused is emitted if the game was successfully paused.
+        "game_paused":   (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        # game_paused is emitted if the game was successfully resumed from a
+        # pause.
+        "game_resumed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        # action_error is currently only emitted by ICGameModel, in the case
+        # the "web model" didn't accept the action you were trying to do.
+        "action_error":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object, int)),
+        # players_changed is emitted if the players list was changed.
+        "players_changed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "analyzer_added": (GObject.SIGNAL_RUN_FIRST, None, (object, str)),
+        "analyzer_removed": (GObject.SIGNAL_RUN_FIRST, None, (object, str)),
+        "analyzer_paused": (GObject.SIGNAL_RUN_FIRST, None, (object, str)),
+        "analyzer_resumed": (GObject.SIGNAL_RUN_FIRST, None, (object, str)),
+        # opening_changed is emitted if the move changed the opening.
+        "opening_changed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        # variations_changed is emitted if a variation was added/deleted.
+        "variations_changed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        # scores_changed is emitted if the analyzing scores was changed.
+        "analysis_changed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,)),
+    }
     
     def __init__ (self, timemodel=None, variant=NormalChess):
-        GObject.__init__(self)
+        #GObject.__init__(self)
+        GObject.GObject.__init__(self)
         Thread.__init__(self, name=fident(self.run))
         self.daemon = True
         self.variant = variant
@@ -176,7 +230,9 @@ class GameModel (GObject, Thread):
         s += ", players=%s" % str(self.players)
         s += ", tags=%s" % str(self.tags)
         if len(self.boards) > 0:
-            s += "\nboard=%s" % self.boards[-1]
+            # FIXME UnicodeDecodeError for pygi
+            #s += "\nboard=%s" % self.boards[-1]
+            s += "\nboard=%s" % str(self.boards[-1]).decode('utf-8')            
         return s + ")>"
     
     @property
@@ -576,7 +632,7 @@ class GameModel (GObject, Thread):
                 if self.status in (WAITING_TO_START, PAUSED, RUNNING):
                     stringio = cStringIO.StringIO()
                     traceback.print_exc(file=stringio)
-                    error = stringio.getvalue()
+                    error = strinGio.getvalue()
                     log.error("GameModel.run: A Player died: player=%s error=%s\n%s" % (curPlayer, error, e))
                     if curColor == WHITE:
                         self.kill(WHITE_ENGINE_DIED)

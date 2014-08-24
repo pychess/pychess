@@ -1,16 +1,16 @@
-import gtk
+from gi.repository import Gtk
 
 
-class Accordion(gtk.TreeView):
+class Accordion(Gtk.TreeView):
     def __init__(self, model):
-        gtk.TreeView.__init__(self, model)
+        GObject.GObject.__init__(self, model)
 
         self.set_headers_visible(False)
         self.set_property("show-expanders", False)
         self.set_property("level-indentation", 10)
 
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Column', renderer)
+        renderer = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn('Column', renderer)
 
         def top_level(column, cell, store, iter):
             cell.set_property("text", store[iter][0])
@@ -25,7 +25,7 @@ class Accordion(gtk.TreeView):
         self.append_column(column)
 
         selection = self.get_selection()
-        selection.set_mode(gtk.SELECTION_SINGLE)
+        selection.set_mode(Gtk.SelectionMode.SINGLE)
         selection.connect('changed', self.on_selection_changed)
         self.current = None
 
@@ -42,12 +42,12 @@ class Accordion(gtk.TreeView):
         
 
 if __name__ == "__main__":
-    window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+    window = Gtk.Window(Gtk.WindowType.TOPLEVEL)
     window.set_title("Accordion example")
     window.set_size_request(200, 200)
-    window.connect("delete_event", gtk.main_quit)
+    window.connect("delete_event", Gtk.main_quit)
 
-    treestore = gtk.TreeStore(str)
+    treestore = Gtk.TreeStore(str)
     for parent in range(4):
         piter = treestore.append(None, ['parent %i' % parent])
         for child in range(3):
@@ -56,4 +56,4 @@ if __name__ == "__main__":
     accordion = Accordion(treestore)
     window.add(accordion)
     window.show_all()
-    gtk.main()
+    Gtk.main()

@@ -1,9 +1,11 @@
-import gtk
-import pango
+from gi.repository import Gtk
+from gi.repository import Pango
+from gi.repository import GObject
+from gi.repository import GdkPixbuf
 import math
 import random
 
-from gtk.gdk import pixbuf_new_from_file
+#from Gtk.gdk import pixbuf_new_from_file
 
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
@@ -20,25 +22,27 @@ from pychess.widgets import ionest, newGameDialog
 
 from Background import giveBackground
 from ToggleComboBox import ToggleComboBox
-
-class TaskerManager (gtk.Table):
+import traceback
+class TaskerManager (Gtk.Table):
     
-    def __init__ (self):
-        gtk.Table.__init__(self)
+    def __init__ (self):        
+        GObject.GObject.__init__(self)
         self.border = 20
         giveBackground(self)
-        self.connect("expose_event", self.expose)
+        #self.connect("expose_event", self.expose)
+        self.connect("draw", self.expose)
         #self.set_homogeneous(True)
     
-    def expose (self, widget, event):
-        cr = widget.window.cairo_create()
+    def expose (self, widget, ctx):
+        #cr = widget.window.cairo_create()
+        cr = widget.get_window().cairo_create()
         
         for widget in self.widgets:
             x = widget.get_allocation().x
             y = widget.get_allocation().y
             width = widget.get_allocation().width
             height = widget.get_allocation().height
-            
+          
             cr.move_to  (x-self.border, y)
             cr.curve_to (x-self.border, y-self.border/2.,
                          x-self.border/2., y-self.border,
@@ -55,12 +59,25 @@ class TaskerManager (gtk.Table):
             cr.curve_to (x-self.border/2., y+height+self.border,
                          x-self.border, y+height+self.border/2.,
                          x-self.border, y+height)
-            
-            cr.set_source_color(self.get_style().bg[gtk.STATE_NORMAL])
-            cr.fill()
+                 
+            # FIXME  
+            #cr.set_source_color(self.get_style().bg[gtk.STATE_NORMAL])
+            # colour = #ededed (237, 237, 237)  (0.92, 0.92, 0.92)
+
+            # this doesn't work - returns 0,0,0,0
+            context = self.get_style_context()
+            bgcolor = context.get_background_color(Gtk.StateFlags.NORMAL)
+            bgcolor2 = context.get_background_color(Gtk.StateType.NORMAL)
+           
+            # hard code until can be fixed           
+            cr.set_source_rgba(0.929, 0.929, 0.929, 1.0)
+            cr.fill()            
             
             cr.rectangle (x-self.border, y+height-30, width+self.border*2, 30)
-            cr.set_source_color(self.get_style().dark[gtk.STATE_NORMAL])
+            #cr.set_source_color(self.get_style().dark[Gtk.StateType.NORMAL])
+           
+            # hard code until can be fixed
+            cr.set_source_rgba(0.651, 0.651, 0.651, 1.0)
             cr.fill()
     
     def calcSpacings (self, n):
@@ -76,14 +93,14 @@ class TaskerManager (gtk.Table):
             yield (next, 1-next)
             next = first-(1-next)
     
-    def packTaskers (self, *widgets):
-        
+    def packTaskers (self, *widgets):          
         self.widgets = widgets
         
-        for widget in widgets:
+        for widget in widgets:            
+            #widget.connect("size-allocate", lambda *a:
+            #               self.window.invalidate_rect(self.get_allocation(), False))
             widget.connect("size-allocate", lambda *a:
-                           self.window.invalidate_rect(self.get_allocation(), False))
-        
+                           self.get_window().invalidate_rect(self.get_allocation(), False))
         root = math.sqrt(len(widgets))
         # Calculate number of rows
         rows = int(math.ceil(root))
@@ -113,7 +130,8 @@ class TaskerManager (gtk.Table):
         for row in range(rrows):
             for col in range(cols):
                 widget = widgets[row*cols + col]
-                alignment = gtk.Alignment(hspac[col], vspac[row])
+                #alignment = Gtk.Alignment.new(hspac[col], vspac[row])
+                alignment = Gtk.Alignment.new(hspac[col], vspac[row], 1, 1)
                 alignment.add(widget)
                 self.attach(alignment, col, col+1, row, row+1)
         
@@ -121,31 +139,35 @@ class TaskerManager (gtk.Table):
         # Add last row
         
         if rows > rrows:
-            lastrow = gtk.HBox()
+            lastrow = Gtk.HBox()
             # Calculate number of widgets in last row
             numw = len(widgets) - cols*rrows
             hspac = [s[0] for s in self.calcSpacings(numw)]
             for col, widget in enumerate(widgets[-numw:]):
-                alignment = gtk.Alignment(hspac[col], vspac[-1])
+                alignment = Gtk.Alignment.new(hspac[col], vspac[-1], 1, 1)
                 alignment.add(widget)
                 alignment.set_padding(self.border, self.border, self.border, self.border)
-                lastrow.pack_start(alignment)
+                lastrow.pack_start(alignment, True, True, 0)
             
             self.attach(lastrow, 0, cols, rrows, rrows+1)
 
-class NewGameTasker (gtk.Alignment):
+class NewGameTasker (Gtk.Alignment):
     
     def __init__ (self):
-        gtk.Alignment.__init__(self,0,0,0,0)
-        self.widgets = widgets = uistuff.GladeWidgets("taskers.glade")
+        #GObject.GObject.__init__(self,0,0,0,0)
+        GObject.GObject.__init__(self)       
+        self.widgets = widgets = uistuff.GladeWidgets("taskers.glade")       
         tasker = widgets["newGameTasker"]
         tasker.unparent()
         self.add(tasker)
         
         combo = ToggleComboBox()
-        combo.addItem(_("White"), pixbuf_new_from_file(addDataPrefix("glade/white.png")))
-        combo.addItem(_("Black"), pixbuf_new_from_file(addDataPrefix("glade/black.png")))
-        combo.addItem(_("Random"), pixbuf_new_from_file(addDataPrefix("glade/random.png")))
+        #combo.addItem(_("White"), pixbuf_new_from_file(addDataPrefix("glade/white.png")))
+        #combo.addItem(_("Black"), pixbuf_new_from_file(addDataPrefix("glade/black.png")))
+        #combo.addItem(_("Random"), pixbuf_new_from_file(addDataPrefix("glade/random.png")))
+        combo.addItem(_("White"), GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/white.png")))
+        combo.addItem(_("Black"), GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/black.png")))
+        combo.addItem(_("Random"), GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/random.png")))
         combo.setMarkup("<b>", "</b>")
         widgets["colorDock"].add(combo)
         uistuff.keep(combo, "newgametasker_colorcombo")
@@ -169,16 +191,16 @@ class NewGameTasker (gtk.Alignment):
         widgets["startButton"].connect("clicked", self.startClicked)
         self.widgets["opendialog1"].connect("clicked", self.openDialogClicked)
 
-    def __initPlayerCombo (self, discoverer, widgets):
+    def __initPlayerCombo (self, discoverer, widgets):       
         combo = self.playerCombo
         combo.update(newGameDialog.smallPlayerItems[0])
         if combo.active < 0:
-            combo.label.set_ellipsize(pango.ELLIPSIZE_MIDDLE)
+            combo.label.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
             combo.setMarkup("<b>", "</b>")
             combo.active = 1
             uistuff.keep(self.playerCombo, "newgametasker_playercombo")
 
-            def on_playerCombobox_changed (widget, event):
+            def on_playerCombobox_changed (widget, event):              
                 widgets["skillSlider"].props.visible = widget.active > 0
             combo.connect("changed", on_playerCombobox_changed)
         
@@ -190,10 +212,10 @@ class NewGameTasker (gtk.Alignment):
         newGameDialog.NewGameMode.run()
     
     def startClicked (self, button):
-        color = self.widgets["colorDock"].child.active
+        color = self.widgets["colorDock"].get_child().active
         if color == 2:
             color = random.choice([WHITE, BLACK])
-        opponent = self.widgets["opponentDock"].child.active
+        opponent = self.widgets["opponentDock"].get_child().active
         difficulty = int(self.widgets["skillSlider"].get_value())
         
         gamemodel = GameModel(TimeModel(5*60, 0))
@@ -216,10 +238,11 @@ class NewGameTasker (gtk.Alignment):
 
 big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
 
-class InternetGameTasker (gtk.Alignment):
+class InternetGameTasker (Gtk.Alignment):
     
     def __init__ (self):
-        gtk.Alignment.__init__(self,0,0,0,0)
+        #GObject.GObject.__init__(self,0,0,0,0)
+        GObject.GObject.__init__(self)
         self.widgets = uistuff.GladeWidgets("taskers.glade")
         tasker = self.widgets["internetGameTasker"]
         tasker.unparent()

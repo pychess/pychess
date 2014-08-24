@@ -1,4 +1,5 @@
-import gtk
+from gi.repository import Gtk
+from gi.repository import GObject
 
 #===============================================================================
 # Composite Constants
@@ -15,11 +16,12 @@ class DockComponent (object):
     def dock (self, widget, position, title, id):
         raise NotImplementedError
 
-class TabReceiver (gtk.Alignment):
+class TabReceiver (Gtk.Alignment):
     __instances = []
     
     def __init__ (self):
-        gtk.Alignment.__init__(self,1,1,1,1)
+        #GObject.GObject.__init__(self,1,1,1,1)
+        GObject.GObject.__init__(self)
         self.__instances.append(self)
     
     def _del (self):

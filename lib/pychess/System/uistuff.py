@@ -2,8 +2,10 @@ import colorsys
 import Queue
 import re
 import webbrowser
-import gtk
-import pango
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import Pango
+from gi.repository.GdkPixbuf import Pixbuf
 from threading import Thread
 
 from pychess.System import conf, glock, fident
@@ -13,24 +15,25 @@ from pychess.widgets.ToggleComboBox import ToggleComboBox
 
 
 def createCombo (combo, data=[]):
-    ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
+    #ls = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
+    ls = Gtk.ListStore(Pixbuf, str)
     for row in data:
         ls.append(row)
     combo.clear()
     
     combo.set_model(ls)
-    crp = gtk.CellRendererPixbuf()
+    crp = Gtk.CellRendererPixbuf()
     crp.set_property('xalign',0)
     crp.set_property('xpad', 2)
     combo.pack_start(crp, False)
     combo.add_attribute(crp, 'pixbuf', 0)
     
-    crt = gtk.CellRendererText()
+    crt = Gtk.CellRendererText()
     crt.set_property('xalign',0)
     crt.set_property('xpad', 4)
     combo.pack_start(crt, True)
     combo.add_attribute(crt, 'text', 1)
-    #crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
+    #crt.set_property('ellipsize', Pango.EllipsizeMode.MIDDLE)
 
 
 def updateCombo (combo, data):
@@ -78,7 +81,9 @@ def genColor (n, startpoint=0):
 def keepDown (scrolledWindow):
     def changed (vadjust):
         if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-            vadjust.set_value(vadjust.upper-vadjust.page_size)
+            # FIXME
+            #vadjust.set_value(vadjust.upper-vadjust.page_size)           
+            vadjust.set_upper(vadjust.get_page_size())       
             vadjust.need_scroll = True
     scrolledWindow.get_vadjustment().connect("changed", changed)
         
@@ -90,16 +95,18 @@ def keepDown (scrolledWindow):
 
 
 def appendAutowrapColumn (treeview, defwidth, name, **kvargs):
-    cell = gtk.CellRendererText()
-    cell.props.wrap_mode = pango.WRAP_WORD
+    cell = Gtk.CellRendererText()
+    cell.props.wrap_mode = Pango.WrapMode.WORD
     cell.props.wrap_width = defwidth
-    column = gtk.TreeViewColumn(name, cell, **kvargs)
+    column = Gtk.TreeViewColumn(name, cell, **kvargs)
     treeview.append_column(column)
     
     def callback (treeview, allocation, column, cell):
         otherColumns = (c for c in treeview.get_columns() if c != column)
         newWidth = allocation.width - sum(c.get_width() for c in otherColumns)
-        newWidth -= treeview.style_get_property("horizontal-separator") * 2
+        # FIXME
+        #newWidth -= treeview.style_get_property("horizontal-separator") * 2
+        newWidth -= 16
         if cell.props.wrap_width == newWidth or newWidth <= 0:
             return
         cell.props.wrap_width = newWidth
@@ -112,27 +119,27 @@ def appendAutowrapColumn (treeview, defwidth, name, **kvargs):
     treeview.connect_after("size-allocate", callback, column, cell)
     
     scroll = treeview.get_parent()
-    if isinstance(scroll, gtk.ScrolledWindow):
-        scroll.set_policy(gtk.POLICY_NEVER,
+    if isinstance(scroll, Gtk.ScrolledWindow):
+        scroll.set_policy(Gtk.PolicyType.NEVER,
                           scroll.get_policy()[1])
     
     return cell
 
 
 METHODS = (
-    # gtk.SpinButton should be listed prior to gtk.Entry, as it is a
+    # Gtk.SpinButton should be listed prior to Gtk.Entry, as it is a
     # subclass, but requires different handling
-    (gtk.SpinButton, ("get_value", "set_value", "value-changed")),
-    (gtk.Entry, ("get_text", "set_text", "changed")),
-    (gtk.Expander, ("get_expanded", "set_expanded", "notify::expanded")),
-    (gtk.ComboBox, ("get_active", "set_active", "changed")),
-    # gtk.ToggleComboBox should be listed prior to gtk.ToggleButton, as it is a
+    (Gtk.SpinButton, ("get_value", "set_value", "value-changed")),
+    (Gtk.Entry, ("get_text", "set_text", "changed")),
+    (Gtk.Expander, ("get_expanded", "set_expanded", "notify::expanded")),
+    (Gtk.ComboBox, ("get_active", "set_active", "changed")),
+    # Gtk.ToggleComboBox should be listed prior to Gtk.ToggleButton, as it is a
     # subclass, but requires different handling
     (ToggleComboBox, ("_get_active", "_set_active", "changed")),
-    (gtk.IconView, ("_get_active", "_set_active", "selection-changed")),
-    (gtk.ToggleButton, ("get_active", "set_active", "toggled")),
-    (gtk.CheckMenuItem, ("get_active", "set_active", "toggled")),
-    (gtk.Range, ("get_value", "set_value", "value-changed")))
+    (Gtk.IconView, ("_get_active", "_set_active", "selection-changed")),
+    (Gtk.ToggleButton, ("get_active", "set_active", "toggled")),
+    (Gtk.CheckMenuItem, ("get_active", "set_active", "toggled")),
+    (Gtk.Range, ("get_value", "set_value", "value-changed")))
 
 def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
     if widget == None:
@@ -179,7 +186,7 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
         conf.set(key, first_value)
 
 # loadDialogWidget() and saveDialogWidget() are similar to uistuff.keep() but are needed
-# for saving widget values for gtk.Dialog instances that are loaded with different
+# for saving widget values for Gtk.Dialog instances that are loaded with different
 # sets of values/configurations and which also aren't instant save like in
 # uistuff.keep(), but rather are saved later if and when the user clicks
 # the dialog's OK button
@@ -254,8 +261,8 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
     
     key = key + "window"
     
-    def savePosition (window, *event):
-        log.debug("keepWindowSize.savePosition: %s" % window.title)
+    def savePosition (window, *event):        
+        log.debug("keepWindowSize.savePosition: %s" % window.get_title())
         width = window.get_allocation().width
         height = window.get_allocation().height
         x, y = window.get_position()
@@ -276,7 +283,7 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
     window.connect("delete-event", savePosition, "delete-event")
     
     def loadPosition (window):
-        log.debug("keepWindowSize.loadPosition: %s" % window.title)
+        #log.debug("keepWindowSize.loadPosition: %s" % window.title)
         width, height = window.get_size_request()
         
         if conf.hasKey(key+"_width") and conf.hasKey(key+"_height"):
@@ -325,15 +332,16 @@ def onceWhenReady(window, func, *args, **kwargs):
     handler_id = window.connect_after("size-allocate", cb, func, *args, **kwargs)
 
 def getMonitorBounds():
-    screen = gtk.gdk.screen_get_default()
+    screen = Gdk.Screen.get_default()
     root_window = screen.get_root_window()
-    mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
+    #mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
+    ptr_window, mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
     current_monitor_number = screen.get_monitor_at_point(mouse_x,mouse_y)
     monitor_geometry = screen.get_monitor_geometry(current_monitor_number)
     return monitor_geometry.x, monitor_geometry.y, monitor_geometry.width, monitor_geometry.height
 
 
-tooltip = gtk.Window(gtk.WINDOW_POPUP)
+tooltip = Gtk.Window(Gtk.WindowType.POPUP)
 tooltip.set_name('gtk-tooltip')
 tooltip.ensure_style()
 tooltipStyle = tooltip.get_style()
@@ -341,7 +349,7 @@ tooltipStyle = tooltip.get_style()
 def makeYellow (box):
     def on_box_expose_event (box, event):
         box.style.paint_flat_box (box.window,
-            gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, box, "tooltip",
+            Gtk.StateType.NORMAL, Gtk.ShadowType.NONE, None, box, "tooltip",
             box.allocation.x, box.allocation.y,
             box.allocation.width, box.allocation.height)
     def cb (box):
@@ -379,7 +387,7 @@ def initTexviewLinks (textview, text):
         textbuffer.insert (textbuffer.get_end_iter(), text[:s])
         
         tag = textbuffer.create_tag (None, foreground="blue",
-                underline=pango.UNDERLINE_SINGLE)
+                underline=Pango.Underline.SINGLE)
         tags.append([tag, text[s:e], type, textbuffer.get_end_iter()])
         
         textbuffer.insert_with_tags (
@@ -402,24 +410,24 @@ def initTexviewLinks (textview, text):
         if not iter: return
         for tag, link, type, s, e in tags:
             if iter and iter.has_tag(tag) and \
-                    tag.props.foreground_gdk.red == 0xffff:
+                    tag.props.foreground_Gdk.red == 0xffff:
                 if type == "link":
                     webbrowser.open(link)
                 else: webbrowser.open("mailto:"+link)
             tag.props.foreground = "blue"
     
-    stcursor = gtk.gdk.Cursor(gtk.gdk.XTERM)
-    linkcursor = gtk.gdk.Cursor(gtk.gdk.HAND2)
+    stcursor = Gdk.Cursor.new(Gdk.XTERM)
+    linkcursor = Gdk.Cursor.new(Gdk.HAND2)
     def on_motion_in_textview(textview, event):
         textview.window.get_pointer()
         iter = textview.get_iter_at_location (int(event.x), int(event.y))
         if not iter: return
         for tag, link, type, s, e in tags:
             if iter.has_tag(tag):
-                textview.get_window(gtk.TEXT_WINDOW_TEXT).set_cursor (
+                textview.get_window(Gtk.TextWindowType.TEXT).set_cursor (
                         linkcursor)
                 break
-        else: textview.get_window(gtk.TEXT_WINDOW_TEXT).set_cursor(stcursor)
+        else: textview.get_window(Gtk.TextWindowType.TEXT).set_cursor(stcursor)
     
     textview.connect ("motion-notify-event", on_motion_in_textview)
     textview.connect ("leave_notify_event", on_motion_in_textview)
@@ -428,12 +436,12 @@ def initTexviewLinks (textview, text):
 
 cachedGlades = {}
 def cacheGladefile(filename):
-    """ gtk.Builder automatically caches the file, so we only need to use this
+    """ Gtk.Builder automatically caches the file, so we only need to use this
         file once """
     if filename not in cachedGlades:
         cachedGlades[filename] = Queue.Queue()
         def readit ():
-            builder = gtk.Builder()
+            builder = Gtk.Builder()
             builder.set_translation_domain("pychess")
             builder.add_from_file(addDataPrefix("glade/%s" % filename))
             cachedGlades[filename].put(builder)
@@ -455,7 +463,7 @@ class GladeWidgets:
         if not self.builder:
             glock.acquire()
 #            print "uistuff.py:gladefile = %s" % filename
-            self.builder = gtk.Builder()
+            self.builder = Gtk.Builder()
             self.builder.set_translation_domain("pychess")
             self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
             glock.release()

@@ -3,7 +3,8 @@
 
 import re
 
-import gtk, gobject, pango
+#import gtk, gobject, pango
+from gi.repository import Gtk, GObject, Pango
 
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect
@@ -24,26 +25,26 @@ class Sidepanel:
         horizontal = True
 
         if horizontal:
-            self.box = gtk.HBox()
+            self.box = Gtk.HBox()
         else:
-            self.box = gtk.VBox()
+            self.box = Gtk.VBox()
         __widget__ = self.box
 
         # Use two engine output widgets for each player color:
         self.output_white = EngineOutput(True)
         self.output_black = EngineOutput(False)
         if horizontal:
-            self.output_separator = gtk.VSeparator()
+            self.output_separator = Gtk.VSeparator()
         else:
-            self.output_separator = gtk.HSeparator()
+            self.output_separator = Gtk.HSeparator()
 
-        self.output_noengines = gtk.TextView()
+        self.output_noengines = Gtk.TextView()
         self.output_noengines.get_buffer().set_text(
         _("No chess engines (computer players) are participating in this game."))
         self.output_noengines.set_editable(False)
-        self.output_noengines.set_wrap_mode(gtk.WRAP_WORD_CHAR)
+        self.output_noengines.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
 
-        __widget__.pack_start(self.output_noengines)
+        __widget__.pack_start(self.output_noengines, True, True, 0)
         __widget__.show_all()
         
         self.boardview = gmwidg.board.view
@@ -88,7 +89,7 @@ class Sidepanel:
                     if self.output_black in self.box.get_children():
                         self.box.remove(self.output_black)
                         self.box.remove(self.output_separator)
-                    self.box.pack_start(self.output_white)
+                    self.box.pack_start(self.output_white, True, True, 0)
                     self.output_white.clear()
                     self.output_white.show_all()
                 self.output_white.setTitle(model.players[0].name)
@@ -103,7 +104,7 @@ class Sidepanel:
                     if gotWhiteEngine:
                         self.box.pack_start(self.output_separator, False)
                         self.output_separator.show()
-                    self.box.pack_start(self.output_black)
+                    self.box.pack_start(self.output_black, True, True, 0)
                     self.output_black.clear()
                     self.output_black.show_all()
                 self.output_black.setTitle(model.players[1].name)
@@ -118,7 +119,7 @@ class Sidepanel:
             if self.output_black in self.box.get_children():
                 self.box.remove(self.output_black)
             if not self.output_noengines in self.box.get_children():
-                self.box.pack_start(self.output_noengines)
+                self.box.pack_start(self.output_noengines, True, True, 0)
         return
 
     def players_changed (self, model):
@@ -135,21 +136,23 @@ class Sidepanel:
         self.updateVisibleOutputs(model)
         return
 
-class EngineOutput (gtk.VBox):
+class EngineOutput (Gtk.VBox):
     def __init__(self, white=True):
-        gtk.VBox.__init__(self)
+        GObject.GObject.__init__(self)
 
         self.attached_engine = None  # engine attached to which we listen
         self.white = white
         self.clear_on_output = False  # next thinking line belongs to new move
 
         # Title bar:
-        self.title_label = gtk.Label()
-        self.title_color = gtk.Image()
+        self.title_label = Gtk.Label()
+        self.title_color = Gtk.Image()
 
-        self.title_hbox = gtk.HBox()
-        self.title_hbox.pack_start(self.title_color, False)
-        self.title_hbox.pack_start(self.title_label, True, True)
+        self.title_hbox = Gtk.HBox()
+        #self.title_hbox.pack_start(self.title_color, False)
+        self.title_hbox.pack_start(self.title_color, False, False, 0)
+        #self.title_hbox.pack_start(self.title_label, True, True)
+        self.title_hbox.pack_start(self.title_label, True, True, 0)
 
         # Set black or white player icon in front:
         if white == True:
@@ -158,9 +161,9 @@ class EngineOutput (gtk.VBox):
             self.title_color.set_from_file(addDataPrefix("glade/black.png"))
         
         # output scrolled window container:
-        self.output_container = gtk.ScrolledWindow()
-        self.output_container.set_policy(gtk.POLICY_AUTOMATIC,
-        gtk.POLICY_AUTOMATIC)
+        self.output_container = Gtk.ScrolledWindow()
+        self.output_container.set_policy(Gtk.PolicyType.AUTOMATIC,
+        Gtk.PolicyType.AUTOMATIC)
 
         # Allow the user to make the output pretty tiny vertically
         # (to save space, only the last output line is really important)
@@ -171,20 +174,23 @@ class EngineOutput (gtk.VBox):
 
         # scroll down on new output: -- brute force variant
         def changed (vadjust):
-            vadjust.set_value(vadjust.upper-vadjust.page_size)
+            #vadjust.set_value(vadjust.upper-vadjust.page_size)            
+            vadjust.set_upper(vadjust.get_page_size())
         self.output_container.get_vadjustment().connect("changed", changed)
  
         # Text field for output:
-        self.output = gtk.TextView()
+        self.output = Gtk.TextView()
         self.output_container.add(self.output)
         self.output.set_editable(False)
-        self.output.set_wrap_mode(gtk.WRAP_WORD_CHAR)
-        self.tag_bold = self.output.get_buffer().create_tag("bold", weight=pango.WEIGHT_BOLD)
+        self.output.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
+        self.tag_bold = self.output.get_buffer().create_tag("bold", weight=Pango.Weight.BOLD)
         self.tag_color = self.output.get_buffer().create_tag("color", foreground="#0033ff")
         
         # Add all sub widgets to ourselves:
-        self.pack_start(self.title_hbox, False)
-        self.pack_start(self.output_container, True)
+        #self.pack_start(self.title_hbox, False)
+        #self.pack_start(self.output_container, True)
+        self.pack_start(self.title_hbox, False, False, 0)
+        self.pack_start(self.output_container, True, False, 0)
 
         # Precompile regexes we want to use:
         self.re_thinking_line_cecp = re.compile( r'^[0-9]+\.? +\-?[0-9]+ +' )

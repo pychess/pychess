@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 
 import os
-import gtk, gobject
+#import gtk, gobject
+from gi.repository import Gtk, GObject
 from pychess.Utils.const import reprResult, BLACK, FEN_EMPTY
 from pychess.Utils.Board import Board
 from pychess.System.protoopen import protoopen, splitUri
@@ -27,23 +28,23 @@ class BoardPreview:
         
         # Treeview
         self.list = self.widgets["gamesTree"]
-        self.list.set_model(gtk.ListStore(str, str,str,str))
+        self.list.set_model(Gtk.ListStore(str, str,str,str))
         # GTK_SELECTION_BROWSE - exactly one item is always selected
-        self.list.get_selection().set_mode(gtk.SELECTION_BROWSE)
+        self.list.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         self.list.get_selection().connect_after(
                 'changed', self.on_selection_changed)
         
         # Add columns
-        renderer = gtk.CellRendererText()
+        renderer = Gtk.CellRendererText()
         renderer.set_property("xalign",0)
-        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
+        self.list.append_column(Gtk.TreeViewColumn(None, renderer, text=0))
         
-        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=1))
-        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=2))
+        self.list.append_column(Gtk.TreeViewColumn(None, renderer, text=1))
+        self.list.append_column(Gtk.TreeViewColumn(None, renderer, text=2))
         
-        renderer = gtk.CellRendererText()
+        renderer = Gtk.CellRendererText()
         renderer.set_property("xalign",1)
-        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=3))
+        self.list.append_column(Gtk.TreeViewColumn(None, renderer, text=3))
         
         # Connect buttons
         self.widgets["first_button"].connect("clicked", self.on_first_button)
@@ -120,7 +121,7 @@ class BoardPreview:
             try:
                 self.chessfile.loadToModel(sel, -1, self.gamemodel)
             except LoadingError, e:
-                d = gtk.MessageDialog (type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK,
+                d = Gtk.MessageDialog (type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.OK,
                                         message_format=e.args[0])
                 d.format_secondary_text (e.args[1])
                 d.connect("response", lambda d,a: d.hide())

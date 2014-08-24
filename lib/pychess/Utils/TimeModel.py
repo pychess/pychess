@@ -1,26 +1,38 @@
 import heapq
 from time import time
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
+
+#from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
+from gi.repository import GObject
+
 from pychess.Utils.const import WHITE, BLACK
 from pychess.System import repeat
 from pychess.System.Log import log
 
-class TimeModel (GObject):
+class TimeModel (GObject.GObject):
     
     __gsignals__ = {
-        "player_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "time_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "zero_reached": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-        "pause_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, (bool,))
+        "player_changed": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "time_changed": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "zero_reached": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,)),
+        "pause_changed": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (bool,))
     }
+
+    #__gsignals__ = {
+    #    "player_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+    #    "time_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+    #    "zero_reached": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
+    #    "pause_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, (bool,))
+    #}
+
     
     ############################################################################
     # Initing                                                                  #
     ############################################################################
     
     def __init__ (self, secs=0, gain=0, bsecs=-1, minutes=-1):
-        GObject.__init__(self)
-        
+        #GObject.__init__(self)
+        GObject.GObject.__init__(self)
+
         if bsecs < 0: bsecs = secs
         if minutes < 0:
             minutes = secs / 60

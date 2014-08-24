@@ -1,12 +1,13 @@
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 
-class AutoLogOutManager (GObject):
+class AutoLogOutManager (GObject.GObject):
     __gsignals__ = {
-        'logOut': (SIGNAL_RUN_FIRST, None, ())
+        'logOut': (GObject.SIGNAL_RUN_FIRST, None, ())
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         
         self.connection.expect_line (self.onLogOut,

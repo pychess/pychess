@@ -1,5 +1,6 @@
 import re
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 
 from pychess.ic import BLKCMD_NEWS
 
@@ -9,15 +10,15 @@ months = "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
 AMOUNT_OF_NEWSITEMS = 5
 FICS_SENDS = 10
 
-class NewsManager (GObject):
+class NewsManager (GObject.GObject):
     
     __gsignals__ = {
-        'readingNews' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        'readNews' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        'readingNews' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'readNews' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         self.news = {}
         self.connection.expect_line (self.onNewsItem,

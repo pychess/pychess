@@ -1,5 +1,8 @@
 from urllib import urlopen, urlencode
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+
+#from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+from gi.repository import GObject
+
 from threading import Thread
 
 from pychess.System import fident
@@ -18,7 +21,8 @@ class Engine (Player):
         relative to the engine. If no score is known, the value can be None,
         but not 0, which is a draw. '''
     __gsignals__ = {
-        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
+        #'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
+        'analyze': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,))
     }
     
     def __init__(self, md5=None):

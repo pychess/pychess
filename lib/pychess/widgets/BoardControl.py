@@ -1,7 +1,12 @@
 # -*- coding: UTF-8 -*-
 
-import gtk, gtk.gdk
-from gobject import *
+#import gtk, Gtk.gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
+
+#from gobject import *
+from gi.repository import GObject
+
 import threading
 
 from pychess.System.prefix import addDataPrefix
@@ -18,15 +23,19 @@ from PromotionDialog import PromotionDialog
 from BoardView import BoardView, rect
 from BoardView import join
 
-class BoardControl (gtk.EventBox):
+class BoardControl (Gtk.EventBox):
     
+    #__gsignals__ = {
+    #    'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int)),
+    #    'action' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object))
+    #}
     __gsignals__ = {
-        'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int)),
-        'action' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object))
+        'piece_moved' : (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object, int)),
+        'action' : (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (str, object))
     }
     
     def __init__(self, gamemodel, actionMenuItems):
-        gtk.EventBox.__init__(self)
+        GObject.GObject.__init__(self)
         self.promotionDialog = PromotionDialog()
         self.view = BoardView(gamemodel)
         self.add(self.view)
@@ -46,7 +55,7 @@ class BoardControl (gtk.EventBox):
         gamemodel.connect("game_ended", self.game_ended)
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
-        self.add_events(gtk.gdk.LEAVE_NOTIFY_MASK|gtk.gdk.POINTER_MOTION_MASK)
+        self.add_events(Gdk.EventMask.LEAVE_NOTIFY_MASK|Gdk.EventMask.POINTER_MOTION_MASK)
         self.connect("motion_notify_event", self.motion_notify)
         self.connect("leave_notify_event", self.leave_notify)
         

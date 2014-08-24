@@ -1,30 +1,33 @@
-import gobject
-import gtk
+from gi.repository import GObject
+from gi.repository import Gtk
 
 def get_message_content (heading_text, message_text, image_stock_id):
-    hbox = gtk.HBox()
-    image = gtk.Image()
-    image.set_from_stock(image_stock_id, gtk.ICON_SIZE_DIALOG)
-    hbox.pack_start(image, expand=False, fill=False)
-    vbox = gtk.VBox()
-    label = gtk.Label()
+    hbox = Gtk.HBox()
+    image = Gtk.Image()
+    image.set_from_stock(image_stock_id, Gtk.IconSize.DIALOG)
+    #hbox.pack_start(image, expand=False, fill=False)
+    hbox.pack_start(image, False, False, 0)
+    vbox = Gtk.VBox()
+    label = Gtk.Label()
     label.props.xalign = 0
-    label.props.justify = gtk.JUSTIFY_LEFT
+    label.props.justify = Gtk.Justification.LEFT
     label.set_markup("<b><big>%s</big></b>" % heading_text)
-    vbox.pack_start(label, expand=False, fill=False)
-    label = gtk.Label()
+    #vbox.pack_start(label, expand=False, fill=False)
+    vbox.pack_start(label, False, False, 0)
+    label = Gtk.Label()
     label.props.xalign = 0
-    label.props.justify = gtk.JUSTIFY_LEFT
+    label.props.justify = Gtk.Justification.LEFT
     label.props.wrap = True
     label.set_width_chars(70)
     label.set_text(message_text)
-    vbox.pack_start(label, expand=False, fill=False)
+    #vbox.pack_start(label, expand=False, fill=False)
+    vbox.pack_start(label, False, False, 0)
     hbox.pack_start(vbox, expand=False, fill=False, padding=7)
     return hbox
 
-class InfoBarMessageButton (gobject.GObject):
+class InfoBarMessageButton (GObject.GObject):
     def __init__(self, text, response_id, sensitive=True, tooltip_text=""):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.text = text
         self.response_id = response_id
         self.sensitive = sensitive
@@ -38,25 +41,26 @@ class InfoBarMessageButton (gobject.GObject):
         return self._sensitive
     def set_sensitive (self, sensitive):
         self._sensitive = sensitive
-    sensitive = gobject.property(get_sensitive, set_sensitive)
+    sensitive = GObject.property(get_sensitive, set_sensitive)
 
     def get_tooltip_text (self):
         return self._tooltip_text
     def set_tooltip_text (self, tooltip_text):
         self._tooltip_text = tooltip_text
-    tooltip_text = gobject.property(get_tooltip_text, set_tooltip_text)
+    tooltip_text = GObject.property(get_tooltip_text, set_tooltip_text)
 
-class InfoBarMessage (gobject.GObject):
+class InfoBarMessage (GObject.GObject):
     __gsignals__ = {
-        "dismissed":  (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
-        "updated": (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()),
+        "dismissed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "updated": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
     
     def __init__ (self, message_type, content, callback):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.type = message_type
-        container = gtk.HBox()
-        container.pack_start(content, expand=False, fill=False)
+        container = Gtk.HBox()
+        #container.pack_start(content, expand=False, fill=False)
+        container.pack_start(content, False, False, 0)
         self.content = container
         self.callback = callback
         self.buttons = []
@@ -76,14 +80,14 @@ class InfoBarMessage (gobject.GObject):
         self.emit("dismissed")
     
     def update_content (self, content):
-        container = gtk.HBox()
+        container = Gtk.HBox()
         container.pack_start(content, expand=False, fill=False)
         self.content = container
         self.emit("updated")
         
-class InfoBar (gtk.InfoBar):
+class InfoBar (Gtk.InfoBar):
     """
-    This is a gtk.InfoBar which manages messages pushed onto it via
+    This is a Gtk.InfoBar which manages messages pushed onto it via
     push_message() like a stack. If/when the current message at the top of the
     stack is responded to or dismissed by the user, the next message in the
     stack waiting for a response is displayed. Messages that aren't applicable
@@ -91,7 +95,7 @@ class InfoBar (gtk.InfoBar):
     message.dismiss()
     """
     def __init__ (self, *args):
-        gtk.InfoBar.__init__(self, *args)
+        GObject.GObject.__init__(self, *args)
         self.messages = []
         self.response_cid = None
         self.connect_after("response", self._response_cb)
