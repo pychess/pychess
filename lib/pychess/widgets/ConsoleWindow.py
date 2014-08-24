@@ -1,7 +1,7 @@
-import gtk
-import gobject
-import pango
-from gtk.gdk import keyval_from_name
+from gi.repository import Gtk
+from gi.repository import GObject
+from gi.repository import Pango
+#from Gtk.gdk import keyval_from_name
 
 from BorderBox import BorderBox
 from pychess.System import glock
@@ -13,7 +13,7 @@ class ConsoleWindow (object):
     def __init__ (self, widgets, connection):
         self.connection = connection
 
-        self.window = gtk.Window()
+        self.window = Gtk.Window()
         self.window.set_border_width(12)
         self.window.set_icon_name("pychess")
         self.window.set_title("FICS Console")
@@ -49,39 +49,39 @@ class ConsoleWindow (object):
                 self.consoleView.addMessage(line)
         
 
-class ConsoleView (gtk.VPaned):
+class ConsoleView (Gtk.VPaned):
     __gsignals__ = {
-        'messageAdded' : (gobject.SIGNAL_RUN_FIRST, None, (str,str,object)),
-        'messageTyped' : (gobject.SIGNAL_RUN_FIRST, None, (str,))
+        'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
+        'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
     
     def __init__ (self, connection):
-        gtk.VPaned.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         
         # Inits the read view
-        self.readView = gtk.TextView()
-        fontdesc = pango.FontDescription("Monospace 10")
+        self.readView = Gtk.TextView()
+        fontdesc = Pango.FontDescription("Monospace 10")
         self.readView.modify_font(fontdesc)
         
         self.textbuffer = self.readView.get_buffer()
         self.textbuffer.create_tag("text", foreground="black")
         self.textbuffer.create_tag("mytext", foreground="darkblue")
 
-        self.sw = sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_NONE)
+        self.sw = sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw.set_shadow_type(Gtk.ShadowType.NONE)
         uistuff.keepDown(sw)
         sw.add(self.readView)
         self.readView.set_editable(False)
         self.readView.set_cursor_visible(False)
-        self.readView.props.wrap_mode = gtk.WRAP_WORD
+        self.readView.props.wrap_mode = Gtk.WrapMode.WORD
         self.pack1(sw, resize=True, shrink=True)
         
         # Inits the write view
         self.history = []
         self.pos = 0
-        self.writeView = gtk.Entry()
+        self.writeView = Gtk.Entry()
         #self.writeView.set_width_chars(80)
         self.pack2(self.writeView, resize=True, shrink=True)
         
@@ -112,7 +112,7 @@ class ConsoleView (gtk.VPaned):
    
     def onKeyPress (self, widget, event):
         if event.keyval in map(keyval_from_name,("Return", "KP_Enter")):
-            if not event.state & gtk.gdk.CONTROL_MASK:
+            if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
                 self.connection.client.run_command(buffer.props.text)
                 self.emit("messageTyped", buffer.props.text)

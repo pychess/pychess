@@ -39,26 +39,28 @@ def isInstalled ():
 # Locate files in user space                                                   #
 ################################################################################
 
+#import glib
+from gi.repository import GLib
 # The glib.get_user_*_dir() XDG functions below require pygobject >= 2.18
-try:
-    from glib import get_user_data_dir, get_user_config_dir, get_user_cache_dir
-except ImportError:
-    def __get_user_dir (xdg_env_var, fallback_dir_path):
-        try:
-            directory = os.environ[xdg_env_var]
-        except KeyError:
-            directory = join(os.environ["HOME"], fallback_dir_path)
-        return directory
-    def get_user_data_dir ():
-        return __get_user_dir("XDG_DATA_HOME", ".local/share")
-    def get_user_config_dir ():
-        return __get_user_dir("XDG_CONFIG_HOME", ".config")
-    def get_user_cache_dir ():
-        return __get_user_dir("XDG_CACHE_HOME", ".cache")
+#try:
+#    from glib import get_user_data_dir, get_user_config_dir, get_user_cache_dir
+#except ImportError:
+#    def __get_user_dir (xdg_env_var, fallback_dir_path):
+#        try:
+#            directory = os.environ[xdg_env_var]
+#        except KeyError:
+#            directory = join(os.environ["HOME"], fallback_dir_path)
+#        return directory
+#    def get_user_data_dir ():
+#        return __get_user_dir("XDG_DATA_HOME", ".local/share")
+#    def get_user_config_dir ():
+#        return __get_user_dir("XDG_CONFIG_HOME", ".config")
+#    def get_user_cache_dir ():
+#        return __get_user_dir("XDG_CACHE_HOME", ".cache")
 
 pychess = "pychess"
 def getUserDataPrefix ():
-    return join(get_user_data_dir(), pychess)
+    return join(GLib.get_user_data_dir(), pychess)
 def addUserDataPrefix (subpath):
     return join(getUserDataPrefix(), subpath)
 def getEngineDataPrefix ():
@@ -66,11 +68,11 @@ def getEngineDataPrefix ():
 def addEngineDataPrefix (subpath):
     return join(getEngineDataPrefix(), subpath)
 def getUserConfigPrefix ():
-    return join(get_user_config_dir(), pychess)
+    return join(GLib.get_user_config_dir(), pychess)
 def addUserConfigPrefix (subpath):
     return join(getUserConfigPrefix(), subpath)
 def getUserCachePrefix ():
-    return join(get_user_cache_dir(), pychess)
+    return join(GLib.get_user_cache_dir(), pychess)
 def addUserCachePrefix (subpath):
     return join(getUserCachePrefix(), subpath)
 

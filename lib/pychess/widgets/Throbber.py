@@ -2,15 +2,17 @@ import sys
 import time
 import math
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
 import cairo
+#from gi.repository import cairo
 
 if sys.platform == 'win32':
     from pychess.System.WinRsvg import rsvg
-else:
-    import rsvg
-
+else:    
+    from gi.repository import Rsvg
+    
 from pychess.System.uistuff import addDataPrefix
 from pychess.System.repeat import repeat_sleep
 from pychess.System import glock
@@ -18,10 +20,11 @@ from pychess.System import glock
 MAX_FPS = 20
 RAD_PS = 2*math.pi
 
-class Throbber (gtk.DrawingArea):
-    def __init__(self, width, height):
-        gtk.DrawingArea.__init__(self)
-        self.connect("expose_event", self.__expose)
+class Throbber (Gtk.DrawingArea):
+    def __init__(self, width, height):       
+        GObject.GObject.__init__(self)
+        #self.connect("expose_event", self.__expose)
+        self.connect("draw", self.__expose)
         self.surface = self.__loadSvg(addDataPrefix("glade/throbber.svg"),
                                       width, height)
         self.width = width
@@ -30,8 +33,8 @@ class Throbber (gtk.DrawingArea):
         self.stopped = False
         repeat_sleep(self.redraw, 1./MAX_FPS)
     
-    def __expose(self, widget, event):
-        context = widget.window.cairo_create()
+    def __expose(self, widget, context):
+        #context = widget.window.cairo_create()
         
         if not self.started:
             self.started = time.time()
@@ -51,14 +54,19 @@ class Throbber (gtk.DrawingArea):
         if self.stopped:
             return False
         
-        if self.window:
+        window = self.get_window()
+        #if self.window:
+        if window:
             glock.acquire()
             try:
-                if self.window:
+                window = self.get_window()
+                #if self.window:
+                if window:
                     a = self.get_allocation()
-                    rect = gtk.gdk.Rectangle(0, 0, a.width, a.height)
-                    self.window.invalidate_rect(rect, True)
-                    self.window.process_updates(True)
+                    rect = Gdk.Rectangle()
+                    rect.x, rect.y, rect.width, rect.height = (0, 0, a.width, a.height)
+                    self.get_window().invalidate_rect(rect, True)
+                    self.get_window().process_updates(True)
                     return True
             finally:
                 glock.release()
@@ -66,13 +74,14 @@ class Throbber (gtk.DrawingArea):
     def stop (self):    
         self.stopped = True
         
-    def __loadSvg (self, path, width, height):
-        svg = rsvg.Handle(path)
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
-        context = cairo.Context(surface)
-        context.set_operator(cairo.OPERATOR_SOURCE)
+    def __loadSvg (self, path, width, height):         
+        #svg = rsvg.Handle(path)        
+        svg = Rsvg.Handle.new_from_file(path)       
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)       
+        context = cairo.Context(surface)       
+        context.set_operator(cairo.OPERATOR_SOURCE)        
         if svg.props.width != width or svg.props.height != height:
             context.scale(width/float(svg.props.width),
-                          height/float(svg.props.height))
+                          height/float(svg.props.height))        
         svg.render_cairo(context)
         return surface

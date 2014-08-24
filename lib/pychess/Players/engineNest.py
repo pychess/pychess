@@ -8,7 +8,8 @@ from threading import Thread
 from os.path import join, dirname, abspath
 from copy import deepcopy
 
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+#from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+from gi.repository import GObject
 
 from pychess.System import conf, fident
 from pychess.System.Log import log
@@ -55,17 +56,22 @@ backup = [
 ]
 
 
-class EngineDiscoverer (GObject):
+#class EngineDiscoverer (GObject):
+class EngineDiscoverer (GObject.GObject):
     
     __gsignals__ = {
-        "discovering_started": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "engine_discovered": (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
-        "engine_failed": (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
-        "all_engines_discovered": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        #"discovering_started": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        #"engine_discovered": (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
+        #"engine_failed": (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
+        #"all_engines_discovered": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "discovering_started": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
+        "engine_discovered": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (str, object)),
+        "engine_failed": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (str, object)),
+        "all_engines_discovered": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
     }
     
     def __init__ (self):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.engines = []
         self.jsonpath = addUserConfigPrefix("engines.json")
         try:
@@ -86,9 +92,8 @@ class EngineDiscoverer (GObject):
         """ Searches for a readable, executable named 'name' in the PATH.
             For the PyChess engine, special handling is taken, and we search
             PYTHONPATH as well as the directory from where the 'os' module is
-            imported """
-        
-        if engine.get("vm_name") is not None:
+            imported """        
+        if engine.get("vm_name") is not None:          
             altpath = engine.get("vm_command")
             vmpath = searchPath(engine["vm_name"], access=os.R_OK|os.X_OK, altpath = altpath)
             
@@ -102,12 +107,11 @@ class EngineDiscoverer (GObject):
             
             if vmpath and path:
                 return vmpath, path
-        else:
+        else:           
             altpath = engine.get("command")
             path = searchPath(engine["name"], access=os.R_OK|os.X_OK, altpath=altpath)
             if path:
-                return None, path
-        
+                return None, path       
         return False
     
     def __fromUCIProcess (self, subprocess):
@@ -133,12 +137,12 @@ class EngineDiscoverer (GObject):
         
         return engine
     
-    def __discoverE (self, engine):
-        subproc = self.initEngine (engine, BLACK)
-        try:
-            subproc.connect('readyForOptions', self.__discoverE2, engine)
-            subproc.prestart() # Sends the 'start line'
-            subproc.start()
+    def __discoverE (self, engine):       
+        subproc = self.initEngine (engine, BLACK)       
+        try:                
+            subproc.connect('readyForOptions', self.__discoverE2, engine)            
+            subproc.prestart() # Sends the 'start line'         
+            subproc.start()           
         except SubProcessError, e:
             log.warning("Engine %s failed discovery: %s" % (engine["name"],e))
             self.emit("engine_failed", engine["name"], engine)
@@ -240,13 +244,13 @@ class EngineDiscoverer (GObject):
                 self.daemon = True
                 self.parent = parent
                 
-            def run(self):
+            def run(self):              
                 self.parent.do_discover()
                     
         d = Discoverer(self)
         d.start()
         
-    def do_discover(self):
+    def do_discover(self):       
         self.engines = []
         # List available engines
         for engine in self._engines:
@@ -262,8 +266,7 @@ class EngineDiscoverer (GObject):
                 self.__clean(rundata, engine)
                 engine['recheck'] = True
             
-            self.engines.append(engine)
-            
+            self.engines.append(engine)       
         ######
         # Runs all the engines in toBeRechecked, in order to gather information
         ######
@@ -276,32 +279,31 @@ class EngineDiscoverer (GObject):
                 self.engines.sort(key=lambda x: x["name"])
                 self.emit("all_engines_discovered")
         self.connect("engine_discovered", count, True)
-        self.connect("engine_failed", count, False)
-        
-        if self.toBeRechecked:
+        self.connect("engine_failed", count, False)       
+        if self.toBeRechecked:          
             self.emit("discovering_started", self.toBeRechecked.keys())
             self.connect("all_engines_discovered", self.save)
-            for engine, need in self.toBeRechecked.values():
-                self.__discoverE(engine)
-        else:
-            self.emit("all_engines_discovered")
-    
+            for engine, need in self.toBeRechecked.values():              
+                self.__discoverE(engine)               
+        else:          
+            self.emit("all_engines_discovered")       
+
     ############################################################################
     # Interaction                                                              #
     ############################################################################
     
-    def is_analyzer(self, engine):
+    def is_analyzer(self, engine):            
         protocol = engine.get("protocol")
-        if protocol == "uci":
+        if protocol == "uci":          
             return True
-        elif protocol == "xboard":
-            return engine.get("analyze") is not None
+        elif protocol == "xboard":         
+            return engine.get("analyze") is not None        
         
-    def getAnalyzers (self):
+    def getAnalyzers (self):      
         return [engine for engine in self.getEngines() if self.is_analyzer(engine)]
     
     def getEngines (self):
-        """ Returns list of engine dicts """
+        """ Returns list of engine dicts """     
         return self.engines
     
     def getEngineN (self, index):
@@ -343,27 +345,27 @@ class EngineDiscoverer (GObject):
     def getCountry (self, engine):
         return engine.get("country")
 
-    def initEngine (self, engine, color):
+    def initEngine (self, engine, color):    
         name = engine['name']
         protocol = engine["protocol"]
         protover = 2 if engine.get("protover") is None else engine.get("protover")
         path = engine['command']
-        args = [] if engine.get('args')is None else [a for a in engine['args']]
-        if engine.get('vm_command') is not None:
+        args = [] if engine.get('args')is None else [a for a in engine['args']]      
+        if engine.get('vm_command') is not None:          
             vmpath = engine['vm_command']
             vmargs = [] if engine.get('vm_args') is None else [a for a in engine['vm_args']]
             args = vmargs+[path]+args
             path = vmpath
-        md5 = engine['md5']
+        md5 = engine['md5']        
         
         working_directory = engine.get("workingDirectory")
         if working_directory:
             workdir = working_directory
         else:
             workdir = getEngineDataPrefix()
-        warnwords = ("illegal", "error", "exception")
-        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS, workdir)
-        engine_proc = attrToProtocol[protocol](subprocess, color, protover, md5)
+        warnwords = ("illegal", "error", "exception")      
+        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS, workdir)       
+        engine_proc = attrToProtocol[protocol](subprocess, color, protover, md5)     
         
         engine_proc.setName(name)
         
@@ -479,9 +481,12 @@ def is_cecp(engine_command):
 
 
 if __name__ == "__main__":
-    import glib, gobject
-    gobject.threads_init()
-    mainloop = glib.MainLoop()
+    from gi.repository import GLib
+    #import glib
+    from gi.repository import GObject
+    #import glib, gobject   
+    GObject.threads_init()
+    mainloop = GLib.MainLoop()
 
 #    discoverer = EngineDiscoverer()
 

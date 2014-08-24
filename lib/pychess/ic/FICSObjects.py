@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import gobject
-from gobject import GObject, SIGNAL_RUN_FIRST
+from gi.repository import GObject
+#from gobject import GObject, SIGNAL_RUN_FIRST
 
 from pychess.System.Log import log
 from pychess.Utils.IconLoader import load_icon
@@ -58,12 +58,12 @@ def get_player_tooltip_text (player, show_status=True):
         text += "\n%s" % player.display_status
     return text
         
-class FICSPlayer (GObject):
+class FICSPlayer (GObject.GObject):
     def __init__ (self, name, online=False, status=IC_STATUS_UNKNOWN, game=None,
                   titles=None):
         assert type(name) is str, name
         assert type(online) is bool, online
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.name = name
         self.online = online
         self._status = status
@@ -96,7 +96,7 @@ class FICSPlayer (GObject):
         return self._online
     def set_online (self, online):
         self._online = online
-    online = gobject.property(get_online, set_online)
+    online = GObject.property(get_online, set_online)
     
     @property
     def display_online (self):
@@ -108,7 +108,7 @@ class FICSPlayer (GObject):
     def set_status (self, status):
         self._previous_status = self._status
         self._status = status
-    status = gobject.property(get_status, set_status)
+    status = GObject.property(get_status, set_status)
     
     def restore_previous_status (self):
         self.status = self._previous_status
@@ -144,13 +144,13 @@ class FICSPlayer (GObject):
         if game is not None and not isinstance(game, FICSMatch):
             raise TypeError(type(game))
         self._game = game
-    game = gobject.property(get_game, set_game)
+    game = GObject.property(get_game, set_game)
         
     def get_titles (self):
         return self._titles
     def set_titles (self, titles):
         self._titles = titles
-    titles = gobject.property(get_titles, set_titles)
+    titles = GObject.property(get_titles, set_titles)
     
     def display_titles (self, long=False):
         r = ""
@@ -367,14 +367,18 @@ class FICSPlayer (GObject):
         except AttributeError:
             return 0
         
-class FICSPlayers (GObject):
+class FICSPlayers (GObject.GObject):
+    #__gsignals__ = {
+    #    'FICSPlayerEntered' : (SIGNAL_RUN_FIRST, None, (object,)),
+    #    'FICSPlayerExited' : (SIGNAL_RUN_FIRST, None, (object,))
+    #}
     __gsignals__ = {
-        'FICSPlayerEntered' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'FICSPlayerExited' : (SIGNAL_RUN_FIRST, None, (object,))
+        'FICSPlayerEntered' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSPlayerExited' : (GObject.SIGNAL_RUN_FIRST, None, (object,))
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.players = {}
         self.players_cids = {}
         self.connection = connection
@@ -466,14 +470,14 @@ class FICSPlayers (GObject):
 #            self[player].finger = finger
 #            # TODO: merge ratings and titles from finger object into ficsplayer object
 
-class FICSMatch (GObject):
+class FICSMatch (GObject.GObject):
     def __init__ (self, minutes, inc, rated, game_type):
         assert minutes is None or type(minutes) is int, type(minutes)
         assert inc is None or type(inc) is int, inc
         assert type(rated) is bool, rated
         assert game_type is None or game_type is GAME_TYPES_BY_FICS_NAME["wild"] \
             or game_type in GAME_TYPES.values(), game_type
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.minutes = minutes
         self.inc = inc
         self.rated = rated
@@ -570,14 +574,14 @@ class FICSChallenge (FICSSoughtMatch):
                                  color, game_type)
         self.adjourned = adjourned
 
-class FICSChallenges (GObject):
+class FICSChallenges (GObject.GObject):
     __gsignals__ = {
-        'FICSChallengeIssued' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'FICSChallengeRemoved' : (SIGNAL_RUN_FIRST, None, (object,))
+        'FICSChallengeIssued' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSChallengeRemoved' : (GObject.SIGNAL_RUN_FIRST, None, (object,))
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         self.challenges = {}
         
@@ -664,14 +668,14 @@ class FICSSeek (FICSSoughtMatch):
         self.automatic = automatic  # if True, auto accept; otherwise, manual accept
         self.formula = formula  # players' formula will be used to screen responses
 
-class FICSSeeks (GObject):
+class FICSSeeks (GObject.GObject):
     __gsignals__ = {
-        'FICSSeekCreated' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'FICSSeekRemoved' : (SIGNAL_RUN_FIRST, None, (object,))
+        'FICSSeekCreated' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSSeekRemoved' : (GObject.SIGNAL_RUN_FIRST, None, (object,))
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         self.seeks = {}
         
@@ -789,7 +793,7 @@ class FICSGame (FICSMatch):
         return self._private
     def set_private (self, private):
         self._private = private
-    private = gobject.property(get_private, set_private)
+    private = GObject.property(get_private, set_private)
         
     @property
     def display_text (self):
@@ -869,15 +873,15 @@ class FICSAdjournedGame (FICSGame):
         elif self.our_color == BLACK:
             return self.wplayer
 
-class FICSGames (GObject):
+class FICSGames (GObject.GObject):
     __gsignals__ = {
-        'FICSGameCreated' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'FICSGameEnded' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'FICSAdjournedGameRemoved' : (SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSGameCreated' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSGameEnded' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSAdjournedGameRemoved' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.games = {}
         self.games_by_gameno = {}
         self.adjourned_games = {}

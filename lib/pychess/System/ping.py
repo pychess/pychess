@@ -1,21 +1,23 @@
 # -*- coding: UTF-8 -*-
 
-from gobject import GObject, SIGNAL_RUN_FIRST
+#from gobject import GObject, SIGNAL_RUN_FIRST
+from gi.repository import GObject
+
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath
 import re
 
-class Pinger (GObject):
+class Pinger (GObject.GObject):
     """ The recieved signal contains the time it took to get response from the
         server in millisecconds. -1 means that some error occurred """
     
     __gsignals__ = {
-        "recieved": (SIGNAL_RUN_FIRST, None, (float,)),
-        "error": (SIGNAL_RUN_FIRST, None, (str,))
+        "recieved": (GObject.SIGNAL_RUN_FIRST, None, (float,)),
+        "error": (GObject.SIGNAL_RUN_FIRST, None, (str,))
     }
     
     def __init__ (self, host):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.host = host
         self.subproc = None
         

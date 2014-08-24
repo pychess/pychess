@@ -3,7 +3,8 @@ import time
 import math
 
 import cairo
-import rsvg
+#from gi.repository import cairo
+#import rsvg
 
 from pychess.Utils.const import *
 from pychess.System import conf

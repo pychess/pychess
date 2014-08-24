@@ -1,6 +1,9 @@
 
-import gtk, gtk.gdk
-from gobject import *
+#import gtk, Gtk.gdk
+from gi.repository import Gtk, Gtk.Gdk
+
+#from gobject import *
+from gi.repository import GObject
 
 from math import floor
 
@@ -10,21 +13,21 @@ from pychess.Utils.Cord import Cord
 
 ALL = 0
 
-class SetupBoard (gtk.EventBox):
+class SetupBoard (Gtk.EventBox):
     
     __gsignals__ = {
         'cord_clicked' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
     }
     
     def __init__(self):
-        gtk.EventBox.__init__(self)
+        GObject.GObject.__init__(self)
         self.view = BoardView()
         self.add(self.view)
         self.view.showEnpassant = True
         
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
-        self.add_events(gtk.gdk.LEAVE_NOTIFY_MASK|gtk.gdk.POINTER_MOTION_MASK)
+        self.add_events(Gdk.EventMask.LEAVE_NOTIFY_MASK|Gdk.EventMask.POINTER_MOTION_MASK)
         self.connect("motion_notify_event", self.motion_notify)
         self.connect("leave_notify_event", self.leave_notify)
         

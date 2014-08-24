@@ -1,8 +1,12 @@
 from math import ceil as float_ceil
 ceil = lambda f: int(float_ceil(f))
 
-import gtk, cairo
-import gobject
+#import gtk, cairo
+import cairo
+#from gi.repository import cairo
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
 
 from OverlayWindow import OverlayWindow
 
@@ -15,9 +19,9 @@ PADDING_Y = 0.4 # Amount of button height
 class StarArrowButton (OverlayWindow):
     
     __gsignals__ = {
-        'dropped' : (gobject.SIGNAL_RUN_FIRST, None, (int, object)),
-        'hovered' : (gobject.SIGNAL_RUN_FIRST, None, (int, object)),
-        'left' : (gobject.SIGNAL_RUN_FIRST, None, ()),
+        'dropped' : (GObject.SignalFlags.RUN_FIRST, None, (int, object)),
+        'hovered' : (GObject.SignalFlags.RUN_FIRST, None, (int, object)),
+        'left' : (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
     
     def __init__ (self, parent, northSvg, eastSvg, southSvg, westSvg, centerSvg, bgSvg):
@@ -27,12 +31,14 @@ class StarArrowButton (OverlayWindow):
         self.svgs = (northSvg, eastSvg, southSvg, westSvg, centerSvg)
         self.bgSvg = bgSvg
         self.size = ()
-        self.connect_after("expose-event", self.__onExposeEvent)
+        #self.connect_after("expose-event", self.__onExposeEvent)
+        self.connect_after("draw", self.__onExposeEvent)
         self.currentHovered = -1
         
-        targets = [("GTK_NOTEBOOK_TAB", gtk.TARGET_SAME_APP, 0xbadbeef)]
-        self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           targets, gtk.gdk.ACTION_MOVE)
+        #targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
+        targets = [Gtk.TargetEntry.new("GTK_NOTEBOOK_TAB",Gtk.TargetFlags.SAME_APP, 0xbadbeef)]        
+        self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
+                           targets, Gdk.DragAction.MOVE)
         self.drag_dest_set_track_motion(True)
         self.connect("drag-motion", self.__onDragMotion)
         self.connect("drag-leave", self.__onDragLeave)
@@ -73,7 +79,7 @@ class StarArrowButton (OverlayWindow):
             self.myparentPos = self.myparent.window.get_position()
         self.myparentAlloc = parentAlloc
     
-    def __onExposeEvent (self, self_, event):
+    def __onExposeEvent (self, self_, ctx):
         self._calcSize()
         
         context = self.window.cairo_create()
@@ -101,11 +107,11 @@ class StarArrowButton (OverlayWindow):
         x = ceil(dx*(1+PADDING_X)*buttonWidth - buttonWidth/2. + self.size[0]/2.)
         y = ceil(dy*(1+PADDING_Y)*buttonHeight - buttonHeight/2. + self.size[1]/2.)
         
-        return gtk.gdk.Rectangle(x, y, ceil(buttonWidth), ceil(buttonHeight))
+        return (x, y, ceil(buttonWidth), ceil(buttonHeight))
     
     def __getButtonAtPoint (self, x, y):
         for position in xrange(POSITIONS_COUNT):
-            region = gtk.gdk.region_rectangle(self.__getButtonRectangle(position))
+            region = Gdk.region_rectangle(self.__getButtonRectangle(position))
             if region.point_in(x, y):
                 return position
         return -1
@@ -119,9 +125,9 @@ class StarArrowButton (OverlayWindow):
             else: self.emit("left")
         
         if position > -1:
-            context.drag_status (gtk.gdk.ACTION_MOVE, timestamp)
+            context.drag_status (Gdk.DragAction.MOVE, timestamp)
             return True
-        context.drag_status (gtk.gdk.ACTION_DEFAULT, timestamp)
+        context.drag_status (Gdk.DragAction.DEFAULT, timestamp)
     
     def __onDragLeave (self, arrow, context, timestamp):
         if self.currentHovered != -1:
@@ -136,8 +142,8 @@ class StarArrowButton (OverlayWindow):
             return True
 
 if __name__ == "__main__":
-    w = gtk.Window()
-    w.connect("delete-event", gtk.main_quit)
+    w = Gtk.Window()
+    w.connect("delete-event", Gtk.main_quit)
     sab = StarArrowButton(w,
                           "/home/thomas/Programmering/workspace/pychess/glade/dock_top.svg",
                           "/home/thomas/Programmering/workspace/pychess/glade/dock_right.svg",
@@ -158,14 +164,14 @@ if __name__ == "__main__":
     
     w.show_all()
     sab.show_all()
-    gtk.main()
+    Gtk.main()
 
 #if __name__ != "__main__":
-#    w = gtk.Window()
-#    w.connect("delete-event", gtk.main_quit)
-#    hbox = gtk.HBox()
+#    w = Gtk.Window()
+#    w.connect("delete-event", Gtk.main_quit)
+#    hbox = Gtk.HBox()
 #    
-#    l = gtk.Layout()
+#    l = Gtk.Layout()
 #    l.set_size_request(200,200)
 #    sab = StarArrowButton("/home/thomas/Programmering/workspace/pychess/glade/dock_top.svg",
 #                          "/home/thomas/Programmering/workspace/pychess/glade/dock_right.svg",
@@ -180,11 +186,11 @@ if __name__ == "__main__":
 #        sab.showAt(l, CENTER)
 #    l.connect("button-press-event", handle)
 #    
-#    nb = gtk.Notebook()
-#    label = gtk.Label("hi")
+#    nb = Gtk.Notebook()
+#    label = Gtk.Label(label="hi")
 #    nb.append_page(label)
 #    nb.set_tab_detachable(label, True)
 #    hbox.add(nb)
 #    w.add(hbox)
 #    w.show_all()
-#    gtk.main()
+#    Gtk.main()

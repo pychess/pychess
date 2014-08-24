@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
@@ -20,22 +20,22 @@ class PromotionDialog:
         self.color = None
         
         self.widgets["knightDock"].add(PieceWidget(Piece(WHITE, KNIGHT)))
-        self.widgets["knightDock"].child.show()
+        self.widgets["knightDock"].get_child().show()
         self.widgets["bishopDock"].add(PieceWidget(Piece(WHITE, BISHOP)))
-        self.widgets["bishopDock"].child.show()
+        self.widgets["bishopDock"].get_child().show()
         self.widgets["rookDock"].add(PieceWidget(Piece(WHITE, ROOK)))
-        self.widgets["rookDock"].child.show()
+        self.widgets["rookDock"].get_child().show()
         self.widgets["queenDock"].add(PieceWidget(Piece(WHITE, QUEEN)))
-        self.widgets["queenDock"].child.show()
+        self.widgets["queenDock"].get_child().show()
         self.widgets["kingDock"].add(PieceWidget(Piece(WHITE, KING)))
-        self.widgets["kingDock"].child.show()
+        self.widgets["kingDock"].get_child().show()
     
     def setColor(self, color):
-        self.widgets["knightDock"].child.getPiece().color = color
-        self.widgets["bishopDock"].child.getPiece().color = color
-        self.widgets["rookDock"].child.getPiece().color = color
-        self.widgets["queenDock"].child.getPiece().color = color
-        self.widgets["kingDock"].child.getPiece().color = color
+        self.widgets["knightDock"].get_child().getPiece().color = color
+        self.widgets["bishopDock"].get_child().getPiece().color = color
+        self.widgets["rookDock"].get_child().getPiece().color = color
+        self.widgets["queenDock"].get_child().getPiece().color = color
+        self.widgets["kingDock"].get_child().getPiece().color = color
     
     def runAndHide(self, color, variant):
         self.setColor(color)
@@ -44,6 +44,6 @@ class PromotionDialog:
             
         res = self.dialog.run()
         self.dialog.hide()
-        if res != gtk.RESPONSE_DELETE_EVENT:
+        if res != Gtk.ResponseType.DELETE_EVENT:
             return [QUEEN, ROOK, BISHOP, KNIGHT, KING][int(res)]
         return None

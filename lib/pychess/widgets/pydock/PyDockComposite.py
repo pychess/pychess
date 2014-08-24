@@ -1,17 +1,18 @@
 import sys
-import gtk
+from gi.repository import Gtk
+from gi.repository import GObject
 
 from __init__ import DockComposite
 from __init__ import NORTH, EAST, SOUTH, WEST, CENTER
 
-class PyDockComposite (gtk.Alignment, DockComposite):
+class PyDockComposite (Gtk.Alignment, DockComposite):
     def __init__ (self, position):
-        gtk.Alignment.__init__(self, xscale=1, yscale=1)
+        GObject.GObject.__init__(self, xscale=1, yscale=1)
         
         if position == NORTH or position == SOUTH:
-            paned = gtk.VPaned()
+            paned = Gtk.VPaned()
         elif position == EAST or position == WEST:
-            paned = gtk.HPaned()
+            paned = Gtk.HPaned()
         
         self.position = position
         self.paned = paned
