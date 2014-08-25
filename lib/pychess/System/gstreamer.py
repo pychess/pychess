@@ -6,11 +6,11 @@ from gi.repository import GObject
 from Log import log
 
 try:
-    import pygst
-    pyGst.require('0.10')
+    import pygst   
+    pygst.require('0.10')
     from gi.repository import Gst
 
-except (ImportError, NameError) as e:
+except ImportError as e:
     log.error("Unable to import gstreamer. All sound will be mute.\n%s" % e)
     class Player (GObject.GObject):
         #__gsignals__ = {

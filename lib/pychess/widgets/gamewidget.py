@@ -668,7 +668,8 @@ def delGameWidget (gmwidg):
     gmwidg.emit("closed")
     
     called_from_preferences = False
-    wl = Gtk.window_list_toplevels()
+    #wl = Gtk.window_list_toplevels()
+    wl = Gtk.Window.list_toplevels()
     for window in wl:
         if window.is_active() and window == widgets["preferences"]:
             called_from_preferences = True
