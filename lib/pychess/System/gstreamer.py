@@ -10,7 +10,7 @@ try:
     pyGst.require('0.10')
     from gi.repository import Gst
 
-except ImportError, e:
+except (ImportError, NameError) as e:
     log.error("Unable to import gstreamer. All sound will be mute.\n%s" % e)
     class Player (GObject.GObject):
         #__gsignals__ = {
