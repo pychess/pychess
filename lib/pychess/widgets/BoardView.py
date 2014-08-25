@@ -1001,9 +1001,9 @@ class BoardView (Gtk.DrawingArea):
             xc, yc, square, s = self.square
             x, y = self.cord2Point(cord)
             context.rectangle(x, y, s, s)
-            if self.isLight(cord):
-                style = self.get_style().bg
-            else: style = self.get_style().dark
+            #if self.isLight(cord):
+            #    style = self.get_style().bg
+            #else: style = self.get_style().dark
             if cord == self.premove0 or cord == self.premove1:
                 if self.isLight(cord):
                     context.set_source_rgba(*light_blue)
