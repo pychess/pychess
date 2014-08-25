@@ -788,7 +788,11 @@ class GameModel (GObject.GObject, Thread):
         self.emit("game_ended", reason)
     
     def terminate (self):
-        log.debug("GameModel.terminate: %s" % repr(self))
+        # FIXME UnicodeEncodeError: 'ascii' codec can't encode character u'\u265c' in position 345: ordinal not in range(128)
+        try:
+            log.debug("GameModel.terminate: %s" % repr(self))
+        except UnicodeEncodeError as e: 
+            log.debug("GameModel.py - UnicodeEncodeError: %s" % e)
 
         if self.status != KILLED:
             #self.resume()
