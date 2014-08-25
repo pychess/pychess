@@ -606,7 +606,8 @@ class BoardView (Gtk.DrawingArea):
         self.square = (xc, yc, square, s)
     
     def save_board_size(self):
-        x, y, w, h = self.get_allocation()
+        a = self.get_allocation()
+        x, y, w, h = (a.x, a.y, a.width, a.height)
         conf.set("board_window_width",  w)
         conf.set("board_window_height", h)
         
