@@ -1,5 +1,6 @@
 from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GObject
 
 class ImageMenu(Gtk.EventBox):
     def __init__ (self, image, child):        
