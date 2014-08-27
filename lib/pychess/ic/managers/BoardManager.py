@@ -248,6 +248,19 @@ class BoardManager (GObject.GObject):
             % (names, names, ratedexp),
             "", "<12> (.+)")
 
+        self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek5,
+            "Your seek matches one already posted by %s\." % names,
+            "",
+            "<sr> ([\d ]+)",
+            "",
+            "<pr> (\d+)",
+            "",
+            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
+            % (names, ratings, names, ratings, ratedexp),
+            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
+            % (names, names, ratedexp),
+            "", "<12> (.+)")
+
         self.connection.expect_n_lines (self.onPlayGameCreatedFromGetgame,
             "Your seek qualifies for %s's getgame\." % names,
             "",
@@ -512,6 +525,12 @@ class BoardManager (GObject.GObject):
         self.connection.om.onOfferRemove(matchlist[5])
         self.onPlayGameCreated(matchlist[7:11])
     onPlayGameCreatedFromMatchingSeek4.BLKCMD = BLKCMD_SEEK
+    
+    def onPlayGameCreatedFromMatchingSeek5 (self, matchlist):
+        self.connection.glm.on_seek_remove(matchlist[2])
+        self.connection.om.onOfferRemove(matchlist[4])
+        self.onPlayGameCreated(matchlist[6:10])
+    onPlayGameCreatedFromMatchingSeek5.BLKCMD = BLKCMD_SEEK
     
     def onPlayGameCreatedFromGetgame (self, matchlist):
         self.connection.glm.on_seek_remove(matchlist[2])
