@@ -1,22 +1,14 @@
 from threading import Lock
-
-#from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from gi.repository import GObject
-
 from Log import log
 
 try:
-    import pygst   
-    pygst.require('0.10')
     from gi.repository import Gst
+    Gst.init_check(None)
 
 except ImportError as e:
     log.error("Unable to import gstreamer. All sound will be mute.\n%s" % e)
     class Player (GObject.GObject):
-        #__gsignals__ = {
-        #    'end': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        #    'error': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
-        #}
         __gsignals__ = {
             'end': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
             'error': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,))
@@ -29,14 +21,15 @@ except ImportError as e:
 else:
     class Player (GObject.GObject):
         __gsignals__ = {
-            'end': (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-            'error': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
+            'end': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+            'error': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,))
         }
         
         def __init__(self):
             GObject.GObject.__init__(self)
-            self.player = Gst.ElementFactory.make("playbin")
-            self.player.get_bus().add_watch(self.onMessage)
+            self.player = Gst.ElementFactory.make("playbin", "player")
+            bus = self.player.get_bus()
+            bus.connect("message", self.onMessage)
         
         def onMessage(self, bus, message):
             if message.type == Gst.MessageType.ERROR:
