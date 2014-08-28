@@ -1,4 +1,5 @@
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import GObject
 from gi.repository import Pango
 import re
@@ -104,7 +105,7 @@ class TextImageTree (Gtk.TreeView):
         # Mouse
         self.pressed = None
         self.stdcursor = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
-        self.linkcursor = Gdk.Cursor.new(Gdk.HAND2)
+        self.linkcursor = Gdk.Cursor.new(Gdk.CursorType.HAND2)
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
         self.connect("motion_notify_event", self.motion_notify)
@@ -170,7 +171,7 @@ class TextImageTree (Gtk.TreeView):
             type = model.get_value(iter, 2)
             self.emit("selected", id, type)
 
-class Panel:
+class Panel (object):
     def start (self): pass
     def addItem (self, id, text, type, chatView): pass
     def removeItem (self, id): pass
