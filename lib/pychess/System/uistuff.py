@@ -416,8 +416,8 @@ def initTexviewLinks (textview, text):
                 else: webbrowser.open("mailto:"+link)
             tag.props.foreground = "blue"
     
-    stcursor = Gdk.Cursor.new(Gdk.XTERM)
-    linkcursor = Gdk.Cursor.new(Gdk.HAND2)
+    stcursor = Gdk.Cursor(Gdk.CursorType.XTERM)
+    linkcursor = Gdk.Cursor(Gdk.CursorType.HAND2)
     def on_motion_in_textview(textview, event):
         textview.window.get_pointer()
         iter = textview.get_iter_at_location (int(event.x), int(event.y))
