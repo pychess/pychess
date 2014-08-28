@@ -65,13 +65,12 @@ class ChainLine (Gtk.Alignment):
     def __init__ (self, position):
         GObject.GObject.__init__(self)
         self.position = position
-        self.connect_after("size-allocate", self.onSizeAllocate)
-        self.connect_after("expose-event", self.onExpose)
-        self.set_flags(Gtk.NO_WINDOW)
+        self.connect_after("size-allocate", self.on_size_allocate)
+        self.connect_after("draw", self.on_draw)
         self.set_size_request(10,10)
         self.lastRectangle = None
         
-    def onSizeAllocate(self, widget, requisition):
+    def on_size_allocate(self, widget, requisition):
         if self.window:
             glock.acquire()
             try:
@@ -84,11 +83,7 @@ class ChainLine (Gtk.Alignment):
             finally:
                 glock.release()
         
-    def onExpose (self, widget, event):
-        context = widget.window.cairo_create()
-        context.rectangle(event.area.x, event.area.y,
-                          event.area.width, event.area.height)
-        context.clip()
+    def on_draw (self, context):
         self.draw(context)
         return False
 

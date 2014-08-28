@@ -9,8 +9,7 @@ from itertools import groupby
 
 #import gtk, gobject, pango, re
 import re
-from gi.repository import Gtk, GObject, Pango
-#from Gtk.gdk import pixbuf_new_from_file
+from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, Pango
 #from gobject import GObject, SIGNAL_RUN_FIRST
 #from gi.repository import GObject
 
@@ -67,8 +66,7 @@ class ICLounge (GObject.GObject):
         uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
         self.infobar = InfoBar()
         self.infobar.hide()
-        self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar,
-            expand=False, fill=False)
+        self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar, False, False, 0)
 
         def on_window_delete (window, event):
             self.emit("logout")
@@ -157,13 +155,13 @@ class Section (object):
         content = Gtk.HBox()
         icon = Gtk.Image()
         icon.set_from_pixbuf(player.getIcon(size=32, gametype=gametype))
-        content.pack_start(icon, expand=False, fill=False, padding=4)
+        content.pack_start(icon, False, False, 4)
         label = Gtk.Label()
         label.set_markup(player.getMarkup(gametype=gametype))
-        content.pack_start(label, expand=False, fill=False)
+        content.pack_start(label, False, False, 0)
         label = Gtk.Label()
         label.set_markup(text)
-        content.pack_start(label, expand=False, fill=False)
+        content.pack_start(label, False, False, 0)
         
         return content
     
@@ -359,7 +357,7 @@ class NewsSection(Section):
             textview.props.left_margin = 6
             uistuff.initTexviewLinks(textview, details)
 
-            alignment = Gtk.Alignment.new()
+            alignment = Gtk.Alignment()
             alignment.set_padding(3, 6, 12, 0)
             alignment.props.xscale = 1
             alignment.add(textview)
@@ -430,9 +428,9 @@ class SeekTabSection (ParrentListSection):
         self.messages = {}
         self.seeks = {}
         self.challenges = {}
-        self.seekPix = pixbuf_new_from_file(addDataPrefix("glade/seek.png"))
-        self.chaPix = pixbuf_new_from_file(addDataPrefix("glade/challenge.png"))
-        self.manSeekPix = pixbuf_new_from_file(addDataPrefix("glade/manseek.png"))
+        self.seekPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/seek.png"))
+        self.chaPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/challenge.png"))
+        self.manSeekPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/manseek.png"))
         
         self.tv = self.widgets["seektreeview"]
         self.store = Gtk.ListStore(FICSSoughtMatch, GdkPixbuf.Pixbuf,
@@ -446,17 +444,17 @@ class SeekTabSection (ParrentListSection):
         for i in range(2, 8):
             self.tv.get_model().set_sort_func(i, self.compareFunction, i)
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
         for n in range(2, 7):
             column = self.tv.get_column(n)
-            for cellrenderer in column.get_cell_renderers():
+            for cellrenderer in column.get_cells():
                 column.add_attribute(cellrenderer, "foreground", 9)
         self.selection = self.tv.get_selection()
         self.lastSeekSelected = None
-        self.selection.set_select_function(self.selectFunction, full=True)
+        self.selection.set_select_function(self.selectFunction, True)
         self.selection.connect("changed", self.onSelectionChanged)
         self.widgets["clearSeeksButton"].connect("clicked", self.onClearSeeksClicked)
         self.widgets["acceptButton"].connect("clicked", self.onAcceptClicked)
@@ -719,7 +717,6 @@ class SeekGraphSection (ParrentListSection):
         self.widgets = widgets
         self.connection = connection
         self.publisher = lounge.publisher
-
         self.graph = SpotGraph()
 
         for rating in YMARKS:
@@ -798,7 +795,7 @@ class PlayerTabSection (ParrentListSection):
         self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
@@ -982,7 +979,7 @@ class GameTabSection (ParrentListSection):
         self.games = {}
 
         self.recpix = load_icon(16, "media-record")
-        self.clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
+        self.clearpix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/board.png"))
 
         self.tv = self.widgets["gametreeview"]
         self.store = Gtk.ListStore(FICSGame, GdkPixbuf.Pixbuf, str, int, str, int, str)
@@ -1002,7 +999,7 @@ class GameTabSection (ParrentListSection):
         self.onSelectionChanged(self.selection)
 
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
@@ -1011,7 +1008,7 @@ class GameTabSection (ParrentListSection):
                 model.get_value(iter, 4).lower().startswith(key):
                 return False
             return True
-        self.tv.set_search_equal_func (searchCallback)
+        self.tv.set_search_equal_func(searchCallback, None)
 
         self.connection.games.connect("FICSGameCreated", lambda games, game:
                 self.publisher.put((self.onGameAdd, game)) )
@@ -1121,8 +1118,8 @@ class AdjournedTabSection (ParrentListSection):
         self.games = {}
         self.messages = {}
         
-        self.wpix = pixbuf_new_from_file(addDataPrefix("glade/white.png"))
-        self.bpix = pixbuf_new_from_file(addDataPrefix("glade/black.png"))
+        self.wpix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/white.png"))
+        self.bpix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/black.png"))
         
         self.tv = widgets["adjournedtreeview"]
         self.store = Gtk.ListStore(FICSAdjournedGame, GdkPixbuf.Pixbuf, str, str,
@@ -1833,6 +1830,7 @@ class SeekChallengeSection (Section):
             for variant in group:
                 subiter = model.append(iter, (variant.name,))
                 path = model.get_path(subiter)
+                path = path.to_string()
                 pathToVariant[path] = variant.board.variant
                 variantToPath[variant.board.variant] = path
         
@@ -1844,6 +1842,7 @@ class SeekChallengeSection (Section):
         
         def comboGetter (combo):
             path = model.get_path(combo.get_active_iter())
+            path = path.to_string()
             return pathToVariant[path]
             
         def comboSetter (combo, variant):

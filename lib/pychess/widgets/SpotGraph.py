@@ -1,10 +1,9 @@
 import math
 ceil = lambda f: int(math.ceil(f))
 
-#from gobject import *
 from gi.repository import GObject
-
 from gi.repository import Gtk
+from gi.repository import Gdk
 import cairo
 #from gi.repository import cairo
 from gi.repository import Pango
@@ -25,8 +24,8 @@ class SpotGraph (Gtk.EventBox):
     }
     
     def __init__ (self):
-        GObject.GObject.__init__(self)
-        self.connect("expose_event", self.expose)
+        Gtk.EventBox.__init__(self)
+        self.connect("draw", self.on_draw)
         
         self.typeColors = [[[85, 152, 215], [59, 106, 151]],
                            [[115, 210, 22], [78, 154, 6]]]
@@ -71,12 +70,11 @@ class SpotGraph (Gtk.EventBox):
             self.window.invalidate_rect(rect, True)
             self.window.process_updates(True)
     
-    def expose(self, widget, event):
-        context = widget.window.cairo_create()
-        self.draw(context, event.area)
+    def on_draw (self, context):
+        self.draw(context)
         return False
     
-    def draw (self, context, r):
+    def draw (self, context):
         alloc = self.get_allocation()
         width = alloc.width
         height = alloc.height
@@ -155,7 +153,7 @@ class SpotGraph (Gtk.EventBox):
             x, y, width, height = self.getTextBounds(self.hovered)
             
             self.get_style().paint_flat_box (self.window,
-                Gtk.StateType.NORMAL, Gtk.ShadowType.NONE, r, self, "tooltip",
+                Gtk.StateType.NORMAL, Gtk.ShadowType.NONE, None, self, "tooltip",
                 int(x-hpadding), int(y-vpadding),
                 ceil(width+hpadding*2), ceil(height+vpadding*2))
             
@@ -235,7 +233,6 @@ class SpotGraph (Gtk.EventBox):
     def clearSpots (self):
         self.hovered = None
         self.spots.clear()
-        self.redraw_canvas()
         self.redraw_canvas()
     
     def addXMark (self, x, title):
