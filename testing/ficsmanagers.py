@@ -456,6 +456,32 @@ class BoardManagerTests(EmittingTestCase):
         self.runAndAssertEquals("playGameCreated", lines, (game,))
     
     def test5 (self):
+        lines = [BLOCK_START + '213' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek matches one already posted by chemo.",
+                 "",
+                 "<sr> 6",
+                 "fics%",
+                 "Challenge from yms removed.",
+                 "",
+                 "<pr> 39",
+                 "fics%",
+                 "Creating: chemo (1749) mgatto (1547) rated lightning 1 0",
+                 "{Game 512 (chemo vs. mgatto) Creating rated lightning match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 512 chemo mgatto -1 1 0 39 39 60000 60000 1 none (0:00.000) none 1 0 0",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me.ratings[TYPE_BLITZ].elo = 1547
+        opponent = self.connection.players.get(FICSPlayer('chemo'))
+        opponent.ratings[TYPE_BLITZ].elo = 1749
+        game = FICSGame(opponent, me, gameno=512, rated=True,
+            game_type=GAME_TYPES['blitz'], private=False, minutes=1, inc=0,
+            board=FICSBoard(60000, 60000, fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+    
+    def test6 (self):
         lines = [BLOCK_START + '172' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek matches one already posted by fabk.",
                  "",
@@ -481,7 +507,7 @@ class BoardManagerTests(EmittingTestCase):
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
     
-    def test6 (self):
+    def test7 (self):
         lines = [BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek qualifies for antiseptic's getgame.",
                  "",
@@ -502,7 +528,7 @@ class BoardManagerTests(EmittingTestCase):
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
 
-    def test7 (self):
+    def test8 (self):
         lines = [BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek qualifies for opmentor's getgame.",
                  "",
@@ -524,7 +550,7 @@ class BoardManagerTests(EmittingTestCase):
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
 
-    def test8 (self):
+    def test9 (self):
         """ Make sure observe-game-created messages are caught """
         lines = ["{Game 12 (electricbenj vs. antonymelvin) Creating rated wild/fr match.}",
                  BLOCK_START + '34' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
