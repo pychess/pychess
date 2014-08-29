@@ -157,7 +157,8 @@ class GladeHandlers:
                 'app_name':'pychess',
                 'app_exec':'pychess',
                 'group':'pychess'}
-            recentManager.add_full("file://" + o.path, recent_data)
+            # FIXME
+            #recentManager.add_full("file://" + o.path, recent_data)
     
     def on_gmwidg_closed (gmwidg):
         del gameDic[gmwidg]
