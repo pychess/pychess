@@ -309,7 +309,7 @@ class GameWidget (GObject.GObject):
         self._update_menu_ask_to_move()
 
         if not gamemodel.timed and not gamemodel.timemodel.hasTimes:
-            self.boardvbox.remove(self.clock.parent)
+            self.boardvbox.remove(self.clock.get_parent())
     
     def game_ended (self, gamemodel, reason):
         for item in self.menuitems:

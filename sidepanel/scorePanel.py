@@ -125,9 +125,9 @@ class Sidepanel:
             self.plot.redraw()
             adj = self.sw.get_vadjustment()
 
-            y = self.plot.moveHeight*(shown-self.boardview.model.lowply)
-            if y < adj.value or y > adj.value + adj.page_size:
-                adj.set_value(min(y, adj.upper-adj.page_size))
+            y = self.plot.moveHeight*(shown-self.boardview.model.lowply)           
+            if y < adj.get_value() or y > adj.get_value() + adj.get_page_size():               
+                adj.set_value(min(y, adj.get_upper()-adj.get_page_size()))
 
     def analysis_changed (self, gamemodel, ply):
         if not self.boardview.shownIsMainLine():

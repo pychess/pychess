@@ -67,8 +67,7 @@ class Sidepanel:
         
         def changed (vadjust):
             if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-                #vadjust.set_value(vadjust.upper-vadjust.page_size)
-                vadjust.set_upper(vadjust.get_page_size())
+                vadjust.set_value(vadjust.get_upper()-vadjust.get_page_size())                
                 vadjust.need_scroll = True
         scrollwin.get_vadjustment().connect("changed", changed)
         

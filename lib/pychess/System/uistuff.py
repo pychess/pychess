@@ -80,10 +80,8 @@ def genColor (n, startpoint=0):
 
 def keepDown (scrolledWindow):
     def changed (vadjust):
-        if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-            # FIXME
-            #vadjust.set_value(vadjust.upper-vadjust.page_size)           
-            vadjust.set_upper(vadjust.get_page_size())       
+        if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:           
+            vadjust.set_value(vadjust.get_upper()-vadjust.get_page_size())
             vadjust.need_scroll = True
     scrolledWindow.get_vadjustment().connect("changed", changed)
         
