@@ -174,8 +174,7 @@ class EngineOutput (Gtk.VBox):
 
         # scroll down on new output: -- brute force variant
         def changed (vadjust):
-            #vadjust.set_value(vadjust.upper-vadjust.page_size)            
-            vadjust.set_upper(vadjust.get_page_size())
+            vadjust.set_value(vadjust.get_upper()-vadjust.get_page_size())           
         self.output_container.get_vadjustment().connect("changed", changed)
  
         # Text field for output:

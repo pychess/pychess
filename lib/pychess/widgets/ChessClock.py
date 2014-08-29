@@ -1,9 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from math import ceil, pi, cos, sin
-#import cairo, gtk, pango
 import cairo
-#from gi.repository import cairo
 from gi.repository import Gtk, Pango
 from gi.repository import Gdk
 from gi.repository import PangoCairo
@@ -56,8 +54,8 @@ class ChessClock (Gtk.DrawingArea):
         # FIXME
         #self.dark = self.get_style().dark[Gtk.StateType.NORMAL]
         #self.light = self.get_style().light[Gtk.StateType.NORMAL]
-        self.dark = Gdk.Color(0.3, 0.3, 0.3)
-        self.light = Gdk.Color(0.6, 0.6, 0.6)
+        self.dark = Gdk.Color(0.64, 0.64, 0.64)
+        self.light = Gdk.Color(1.0, 1.0, 1.0)
         if not self.model: return
         
         # Draw graphical Clock. Should this be moved to preferences?

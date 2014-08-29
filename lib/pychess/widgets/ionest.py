@@ -1,6 +1,5 @@
 """ The task of this module, is to save, load and init new games """
 
-#from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE, TYPE_PYOBJECT
 from gi.repository import GObject
 
 from pychess import Savers
@@ -146,8 +145,8 @@ def getOpenAndSaveDialogs():
         savedialog = Gtk.FileChooserDialog("", None, Gtk.FileChooserAction.SAVE,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
         savedialog.set_current_folder(os.environ["HOME"])
-        saveformats = Gtk.ListStore(str, str, TYPE_PYOBJECT)
-        exportformats = Gtk.ListStore(str, str, TYPE_PYOBJECT)
+        saveformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
+        exportformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
 
         # All files filter
         star = Gtk.FileFilter()

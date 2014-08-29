@@ -12,7 +12,7 @@ from pychess.Savers.ChessFile import LoadingError
 def ellipsize (string, maxlen):
     if len(string) <= maxlen or maxlen < 4:
         return string
-    return string[:maxlen-1] + "…"
+    return string[:maxlen-1] + u"…"
 
 class BoardPreview:
     
@@ -24,6 +24,7 @@ class BoardPreview:
         
         self.widgets = widgets
         self.fcbutton = fcbutton
+        self.opendialog = opendialog
         self.enddir = enddir
         
         # Treeview
@@ -153,12 +154,13 @@ class BoardPreview:
             pos += ".."
         self.widgets["posLabel"].set_text(pos)
     
-    def set_filename (self, filename):
+    def set_filename (self, filename):      
         asPath = splitUri(filename)[-1]
         if os.path.isfile(asPath):
             self.fcbutton.show()
-            if filename != self._retrieve_filename():
-                self.fcbutton.set_filename(os.path.abspath(asPath))
+            #if filename != self._retrieve_filename():
+            #    self.fcbutton.set_filename(os.path.abspath(asPath))
+            self.fcbutton.set_filename(os.path.abspath(asPath))
         else:
             self.fcbutton.set_uri("")
             self.fcbutton.hide()
@@ -177,6 +179,8 @@ class BoardPreview:
             return self.fcbutton.get_preview_filename()
         elif self.fcbutton.get_uri():
             return self.fcbutton.get_uri()[7:]
+        elif self.opendialog.get_filename():
+            return self.opendialog.get_filename()
     
     def get_position (self):
         return self.boardview.shown
