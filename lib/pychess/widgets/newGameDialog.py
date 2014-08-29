@@ -6,13 +6,8 @@ from operator import attrgetter
 from itertools import groupby
 
 from gi.repository import Gtk
-#from cairo import ImageSurface
-#from gi.repository import cairo
 import cairo
 
-#from gtksourceview2 import Buffer as SourceBuffer
-#from gtksourceview2 import View as SourceView
-#from gtksourceview2 import LanguageManager
 from gi.repository import GtkSource
 from gi.repository import GdkPixbuf
 
@@ -266,21 +261,25 @@ class _GameInitializationMode:
             for variant in group:
                 subiter = model.append(iter, (variant.name,))
                 path = model.get_path(subiter)
-                pathToVariant[path] = variant.board.variant
-                variantToPath[variant.board.variant] = path           
-            treeview.expand_row((i,), True)
+                pathToVariant[path.to_string()] = variant.board.variant
+                variantToPath[variant.board.variant] = path.to_string()                       
+            treeview.expand_row(Gtk.TreePath(i), True)
 
         selection = treeview.get_selection()
         selection.set_mode(Gtk.SelectionMode.BROWSE)
-        selection.set_select_function(lambda path: len(path) > 1)
+
+        def selfunc (selection, store, path, path_selected, data):                 
+            return len(path) > 1
+        
+        selection.set_select_function(selfunc, None)
         selection.select_path(variantToPath[conf.get(confid, default)])
 
-        def callback (selection):
-            model, iter = selection.get_selected()
+        def callback (selection):            
+            model, iter = selection.get_selected()            
             if iter:
                 radiobutton.set_label("%s" % model.get(iter, 0) + _(" chess"))
                 path = model.get_path(iter)
-                variant = pathToVariant[path]
+                variant = pathToVariant[path.to_string()]
                 conf.set(confid, variant)
         selection.connect("changed", callback)
         callback(selection)

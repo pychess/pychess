@@ -11,8 +11,7 @@ class ImageMenu(Gtk.EventBox):
         self.subwindow.set_decorated(False)
         self.subwindow.set_resizable(False)
         self.subwindow.set_type_hint(Gdk.WindowTypeHint.DIALOG)
-        self.subwindow.add(child)
-        #self.subwindow.connect_after("expose-event", self.__sub_onExpose)
+        self.subwindow.add(child)        
         self.subwindow.connect_after("draw", self.__sub_onExpose)
         self.subwindow.connect("button_press_event", self.__sub_onPress)
         self.subwindow.connect("motion_notify_event", self.__sub_onMotion)
@@ -31,7 +30,7 @@ class ImageMenu(Gtk.EventBox):
             topwindow = self.get_parent()
             while not isinstance(topwindow, Gtk.Window):
                 topwindow = topwindow.get_parent()
-            x, y = topwindow.window.get_position()
+            x, y = topwindow.get_window().get_position()
             x += self.get_allocation().x + self.get_allocation().width
             y += self.get_allocation().y
             self.subwindow.move(x, y)
@@ -46,14 +45,15 @@ class ImageMenu(Gtk.EventBox):
     
     def __sub_setGrabbed (self, grabbed):
         if grabbed and not Gdk.pointer_is_grabbed():
-            Gdk.pointer_grab(self.subwindow.window, event_mask =
+            Gdk.pointer_grab(self.subwindow.get_window(), True, 
                                  Gdk.EventMask.LEAVE_NOTIFY_MASK|
                                  Gdk.EventMask.POINTER_MOTION_MASK|
-                                 Gdk.EventMask.BUTTON_PRESS_MASK)
-            Gdk.keyboard_grab(self.subwindow.window)
+                                 Gdk.EventMask.BUTTON_PRESS_MASK,
+                                 None, None, Gdk.CURRENT_TIME)
+            Gdk.keyboard_grab(self.subwindow.get_window(), True, Gdk.CURRENT_TIME)
         elif Gdk.pointer_is_grabbed():
-            Gdk.pointer_ungrab() 
-            Gdk.keyboard_ungrab()
+            Gdk.pointer_ungrab(Gdk.CURRENT_TIME) 
+            Gdk.keyboard_ungrab(Gdk.CURRENT_TIME)
     
     def __sub_onMotion (self, subwindow, event):
         a = subwindow.get_allocation()
@@ -67,10 +67,11 @@ class ImageMenu(Gtk.EventBox):
     
     def __sub_onExpose (self, subwindow, ctx):
         a = subwindow.get_allocation()
-        context = subwindow.window.cairo_create()
+        context = subwindow.get_window().cairo_create()
         context.set_line_width(2)
         context.rectangle (a.x, a.y, a.width, a.height)
-        context.set_source_color(self.get_style().dark[Gtk.StateType.NORMAL])
+        # FIXME
+        context.set_source_rgba(0.64, 0.64, 0.64, 1.0)
         context.stroke()
         self.__sub_setGrabbed(self.isopen)
     
