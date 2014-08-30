@@ -3,7 +3,7 @@ from os import listdir
 from os.path import isdir, isfile, splitext
 from xml.dom import minidom
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GdkPixbuf
 
 from pychess.System.prefix import addDataPrefix, getDataPrefix
 from pychess.System.glock import glock_connect_after
@@ -319,8 +319,9 @@ class SoundTab:
         
         soundfilter = Gtk.FileFilter()
         soundfilter.set_name(_("Sound files"))
-        soundfilter.add_custom(soundfilter.get_needed(),
-                               lambda data: data[3] and data[3].startswith("audio/"))
+        #soundfilter.add_custom(soundfilter.get_needed(),
+        #                       lambda data: data[3] and data[3].startswith("audio/"))
+        soundfilter.add_mime_type("audio/*")
         opendialog.add_filter(soundfilter)
         opendialog.set_filter(soundfilter)
         
@@ -558,7 +559,7 @@ class ThemeTab:
                 index = self.themes.index(value)
             except ValueError:
                 index = 0
-            iconview.select_path((index,))
+            iconview.select_path(Gtk.TreePath(index,))
                 
         uistuff.keep(widgets["pieceTheme"], "pieceTheme", _get_active,
                      _set_active, "Pychess")

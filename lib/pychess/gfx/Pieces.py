@@ -4,7 +4,7 @@ import math
 
 import cairo
 #from gi.repository import cairo
-#import rsvg
+from gi.repository import Rsvg
 
 from pychess.Utils.const import *
 from pychess.System import conf
@@ -101,7 +101,7 @@ def drawPiece3(piece, context, x, y, psize, allWhite=False):
     
     if all_in_one:
         pieceid = '#%s%s' % ('White' if color==0 else 'Black', pnames[piece.sign-1])
-        image.render_cairo(context, id=pieceid)
+        image.render_cairo_sub(context, id=pieceid)
     else:
         image.render_cairo(context)
         
@@ -212,12 +212,12 @@ def get_svg_pieces(svgdir):
     """Load figurines from .svg files"""
 
     if all_in_one:
-        rsvg_handles = rsvg.Handle(addDataPrefix("pieces/%s/%s.svg" % (svgdir, svgdir)))
+        rsvg_handles = Rsvg.Handle.new_from_file(addDataPrefix("pieces/%s/%s.svg" % (svgdir, svgdir)))
     else:
         rsvg_handles = [[None]*7, [None]*7]
         for c, color in ((WHITE, 'white'), (BLACK, 'black')):
             for p in pieces:
-                rsvg_handles[c][p] = rsvg.Handle(addDataPrefix("pieces/%s/%s%s.svg" % (svgdir, color[0], reprSign[p].lower())))
+                rsvg_handles[c][p] = Rsvg.Handle.new_from_file(addDataPrefix("pieces/%s/%s%s.svg" % (svgdir, color[0], reprSign[p].lower())))
     return rsvg_handles
 
 
