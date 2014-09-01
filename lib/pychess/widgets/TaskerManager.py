@@ -131,7 +131,7 @@ class TaskerManager (Gtk.Table):
             for col in range(cols):
                 widget = widgets[row*cols + col]
                 #alignment = Gtk.Alignment.new(hspac[col], vspac[row])
-                alignment = Gtk.Alignment.new(hspac[col], vspac[row], 1, 1)
+                alignment = Gtk.Alignment.new(hspac[col], vspac[row], 0, 0)
                 alignment.add(widget)
                 self.attach(alignment, col, col+1, row, row+1)
         
@@ -144,7 +144,7 @@ class TaskerManager (Gtk.Table):
             numw = len(widgets) - cols*rrows
             hspac = [s[0] for s in self.calcSpacings(numw)]
             for col, widget in enumerate(widgets[-numw:]):
-                alignment = Gtk.Alignment.new(hspac[col], vspac[-1], 1, 1)
+                alignment = Gtk.Alignment.new(hspac[col], vspac[-1], 0, 0)
                 alignment.add(widget)
                 alignment.set_padding(self.border, self.border, self.border, self.border)
                 lastrow.pack_start(alignment, True, True, 0)
