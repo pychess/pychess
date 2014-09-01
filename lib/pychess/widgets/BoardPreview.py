@@ -66,27 +66,21 @@ class BoardPreview:
         self.boardview.autoUpdateShown = False
         
         # Add the filechooserbutton
-        self.widgets["fileChooserDock"].add(fcbutton)
-        # Connect doubleclicking a file to on_file_activated
-        fcbutton.connect("file-activated", self.on_file_activated)
-        # Connect the openbutton in the dialog to on_file_activated
-        openbut = opendialog.get_children()[0].get_children()[1].get_children()[0]
-        openbut.connect("clicked", self.on_file_activated)
-        
-        # The first time the button is opened, the player has just opened
-        # his/her file, before we connected the dialog.
-        if self._retrieve_filename():
-            self.on_file_activated(fcbutton)
-    
-    def on_file_activated (self, *args):
-        filename = self._retrieve_filename()
-        if filename:
-            self.set_filename(filename)
-        elif self.get_filename():
-            filename = self.get_filename()
-        else:
-            return
-        if os.path.isdir(filename):
+        self.widgets["fileChooserDock"].add(fcbutton)      
+
+        def on_file_set (*args):          
+            fcbutton = args[0]           
+            self.on_file_activated(fcbutton.get_filename())
+        fcbutton.connect("file-set", on_file_set)
+
+        def on_response (fcdialog, resp):              
+            if resp == Gtk.ResponseType.ACCEPT:
+                self.on_file_activated(opendialog.get_filename())
+        opendialog.connect("response", on_response)
+
+    def on_file_activated (self, filename):    
+        self.set_filename(filename)      
+        if os.path.isdir(filename):            
             return
         
         ending = filename[filename.rfind(".")+1:]
@@ -170,17 +164,7 @@ class BoardPreview:
         return self.filename
     
     def is_empty (self):
-        return not self.chessfile or not len(self.chessfile)
-    
-    def _retrieve_filename (self):
-        #if self.fcbutton.get_filename():
-        #    return self.fcbutton.get_filename()
-        if self.fcbutton.get_preview_filename():
-            return self.fcbutton.get_preview_filename()
-        elif self.fcbutton.get_uri():
-            return self.fcbutton.get_uri()[7:]
-        elif self.opendialog.get_filename():
-            return self.opendialog.get_filename()
+        return not self.chessfile or not len(self.chessfile) 
     
     def get_position (self):
         return self.boardview.shown
