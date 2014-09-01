@@ -631,9 +631,8 @@ class BoardView (Gtk.DrawingArea):
             start = time()            
             # FIXME 
             al = widget.get_allocation()                      
-            a = Gdk.Rectangle()            
-            a.x = al.x
-            a.y = al.y
+            a = Gdk.Rectangle()
+            a.x=a.y=0
             a.width = al.width
             a.height = al.height             
             with self.animationLock:
