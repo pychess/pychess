@@ -19,18 +19,18 @@ diaPieces = ((('\'','Ê','Â','À','Ä','Æ','È'),
               ('#','ë','ã','á','å','ç','é')))
 borderNums = ('¬','"','£','$','%','^','&','*')
 lisPieces = ((FAN_PIECES[BLACK][KNIGHT],'K'),
- (FAN_PIECES[BLACK][BISHOP],'J'),
- (FAN_PIECES[BLACK][ROOK],'L'),
- (FAN_PIECES[BLACK][QUEEN],'M'),
- (FAN_PIECES[BLACK][KING],'N'),
- (FAN_PIECES[WHITE][KNIGHT],'k'),
- (FAN_PIECES[WHITE][BISHOP],'j'),
- (FAN_PIECES[WHITE][ROOK],'l'),
- (FAN_PIECES[WHITE][QUEEN],'m'),
- (FAN_PIECES[WHITE][KING],'n'),
- ('†', '+'),
- ('‡', '+'),
- ('1/2', 'Z'))
+ (FAN_PIECES[BLACK][BISHOP],u'J'),
+ (FAN_PIECES[BLACK][ROOK],u'L'),
+ (FAN_PIECES[BLACK][QUEEN],u'M'),
+ (FAN_PIECES[BLACK][KING],u'N'),
+ (FAN_PIECES[WHITE][KNIGHT],u'k'),
+ (FAN_PIECES[WHITE][BISHOP],u'j'),
+ (FAN_PIECES[WHITE][ROOK],u'l'),
+ (FAN_PIECES[WHITE][QUEEN],u'm'),
+ (FAN_PIECES[WHITE][KING],u'n'),
+ (u'†', u'+'),
+ (u'‡', u'+'),
+ (u'1/2', u'Z'))
 
 def fanconv(fan):
     for f,r in lisPieces:
