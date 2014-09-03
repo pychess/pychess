@@ -3,6 +3,8 @@ import os
 from gi.repository import Gtk
 from gi.repository import GObject
 
+from gi.repository.GdkPixbuf import Pixbuf
+
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect_after
 from pychess.System.prefix import getEngineDataPrefix
@@ -39,7 +41,7 @@ class EnginesDialog():
         uistuff.keepWindowSize("engineswindow", self.dialog, defaultSize=(600, 500))
 
         # Put engines into tree store
-        allstore = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
+        allstore = Gtk.ListStore(Pixbuf, str)
         
         self.tv = self.widgets["engines_treeview"]
         self.tv.set_model(allstore)
@@ -361,7 +363,7 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
         elif value["type"] == "spin":
             adjustment = Gtk.Adjustment(value=int(value["value"]), lower=value["min"], upper=value["max"], step_incr=1)
             self.spin_renderer.set_property("adjustment", adjustment)
-            self.spin_renderer.set_property("text", value["value"])
+            self.spin_renderer.set_property("text", str(value["value"]))
             self.set_property("mode", Gtk.CellRendererMode.EDITABLE)
         elif value["type"] == "text":
             self.text_renderer.set_property("text", value["value"])
@@ -381,16 +383,16 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
     def do_get_property(self, pspec):
         return getattr(self, pspec.name)
 
-    def on_get_size(self, widget, cell_area=None):
+    def do_get_size(self, widget, cell_area=None):
         return self.renderer.get_size(widget, cell_area=cell_area)
         
-    def on_render(self, window, widget, background_area, cell_area, expose_area, flags):
-        self.renderer.render(window, widget, background_area, cell_area, expose_area, flags)
+    def do_render(self, ctx, widget, background_area, cell_area, flags):      
+        self.renderer.render(ctx, widget, background_area, cell_area, flags)
         
-    def on_activate(self, event, widget, path, background_area, cell_area, flags):
+    def do_activate(self, event, widget, path, background_area, cell_area, flags):
         return self.renderer.activate(event, widget, path, background_area, cell_area, flags)
         
-    def on_start_editing(self, event, widget, path, background_area, cell_area, flags):
+    def do_start_editing(self, event, widget, path, background_area, cell_area, flags):
         return self.renderer.start_editing(event, widget, path, background_area, cell_area, flags)
 
 GObject.type_register(KeyValueCellRenderer)
