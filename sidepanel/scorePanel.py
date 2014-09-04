@@ -155,7 +155,7 @@ class ScorePlot (Gtk.DrawingArea):
     __gtype_name__ = "ScorePlot"+str(randint(0,maxint))
     
     __gsignals__ = {
-        "selected" : (GObject.SIGNAL_RUN_FIRST, None, (int,))
+        "selected" : (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
     
     def __init__ (self, boardview):

@@ -11,10 +11,10 @@ from pychess.System.Log import log
 class TimeModel (GObject.GObject):
     
     __gsignals__ = {
-        "player_changed": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
-        "time_changed": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
-        "zero_reached": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,)),
-        "pause_changed": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (bool,))
+        "player_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "time_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "zero_reached": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "pause_changed": (GObject.SignalFlags.RUN_FIRST, None, (bool,))
     }
 
     #__gsignals__ = {

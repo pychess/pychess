@@ -384,8 +384,8 @@ class FICSPlayers (GObject.GObject):
     #    'FICSPlayerExited' : (SIGNAL_RUN_FIRST, None, (object,))
     #}
     __gsignals__ = {
-        'FICSPlayerEntered' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'FICSPlayerExited' : (GObject.SIGNAL_RUN_FIRST, None, (object,))
+        'FICSPlayerEntered' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'FICSPlayerExited' : (GObject.SignalFlags.RUN_FIRST, None, (object,))
     }
     
     def __init__ (self, connection):
@@ -587,8 +587,8 @@ class FICSChallenge (FICSSoughtMatch):
 
 class FICSChallenges (GObject.GObject):
     __gsignals__ = {
-        'FICSChallengeIssued' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'FICSChallengeRemoved' : (GObject.SIGNAL_RUN_FIRST, None, (object,))
+        'FICSChallengeIssued' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'FICSChallengeRemoved' : (GObject.SignalFlags.RUN_FIRST, None, (object,))
     }
     
     def __init__ (self, connection):
@@ -681,8 +681,8 @@ class FICSSeek (FICSSoughtMatch):
 
 class FICSSeeks (GObject.GObject):
     __gsignals__ = {
-        'FICSSeekCreated' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'FICSSeekRemoved' : (GObject.SIGNAL_RUN_FIRST, None, (object,))
+        'FICSSeekCreated' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'FICSSeekRemoved' : (GObject.SignalFlags.RUN_FIRST, None, (object,))
     }
     
     def __init__ (self, connection):
@@ -886,9 +886,9 @@ class FICSAdjournedGame (FICSGame):
 
 class FICSGames (GObject.GObject):
     __gsignals__ = {
-        'FICSGameCreated' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'FICSGameEnded' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'FICSAdjournedGameRemoved' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'FICSGameCreated' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'FICSGameEnded' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'FICSAdjournedGameRemoved' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):

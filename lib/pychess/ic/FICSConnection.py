@@ -40,11 +40,11 @@ class LogOnError (StandardError): pass
 class Connection (GObject.GObject, Thread):
     
     __gsignals__ = {
-        'connecting':    (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'connectingMsg': (GObject.SIGNAL_RUN_FIRST, None, (str,)),
-        'connected':     (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'disconnected':  (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'error':         (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'connecting':    (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'connectingMsg': (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'connected':     (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'disconnected':  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'error':         (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, host, ports, username, password):

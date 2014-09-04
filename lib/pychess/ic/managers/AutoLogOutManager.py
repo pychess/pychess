@@ -3,7 +3,7 @@ from gi.repository import GObject
 
 class AutoLogOutManager (GObject.GObject):
     __gsignals__ = {
-        'logOut': (GObject.SIGNAL_RUN_FIRST, None, ())
+        'logOut': (GObject.SignalFlags.RUN_FIRST, None, ())
     }
     
     def __init__ (self, connection):

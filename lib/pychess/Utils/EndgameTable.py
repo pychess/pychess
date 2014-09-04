@@ -12,7 +12,7 @@ class EndgameTable(GObject.GObject):
     """ Wrap the low-level providers of exact endgame knowledge. """
 
     __gsignals__ = {
-        "scored":  (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        "scored":  (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self):

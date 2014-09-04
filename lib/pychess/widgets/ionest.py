@@ -437,7 +437,7 @@ class Handler (GObject.GObject):
         Emit objects are gmwidg, gameobject """
 
     __gsignals__ = {
-        'gmwidg_created': (GObject.SIGNAL_RUN_FIRST, None, (object, object))
+        'gmwidg_created': (GObject.SignalFlags.RUN_FIRST, None, (object, object))
     }
 
     def __init__ (self):

@@ -79,8 +79,8 @@ class GtkWorker (GObject.GObject, Thread):
         #"progressed": (SIGNAL_RUN_FIRST, None, (float,)),
         #"published":  (SIGNAL_RUN_FIRST, None, (object,)),
         #"done":       (SIGNAL_RUN_FIRST, None, (object,))
-        "published":  (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        "done":       (GObject.SIGNAL_RUN_FIRST, None, (object,))
+        "published":  (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "done":       (GObject.SignalFlags.RUN_FIRST, None, (object,))
     }
     
     def __init__ (self, func):

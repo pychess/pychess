@@ -13,8 +13,8 @@ FICS_SENDS = 10
 class NewsManager (GObject.GObject):
     
     __gsignals__ = {
-        'readingNews' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'readNews' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'readingNews' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'readNews' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):

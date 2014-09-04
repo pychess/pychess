@@ -10,8 +10,8 @@ except ImportError as e:
     log.error("Unable to import gstreamer. All sound will be mute.\n%s" % e)
     class Player (GObject.GObject):
         __gsignals__ = {
-            'end': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
-            'error': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,))
+            'end': (GObject.SignalFlags.RUN_FIRST, None, ()),
+            'error': (GObject.SignalFlags.RUN_FIRST, None, (object,))
         }
         def checkSound(self):
             self.emit("error", None)
@@ -21,8 +21,8 @@ except ImportError as e:
 else:
     class Player (GObject.GObject):
         __gsignals__ = {
-            'end': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
-            'error': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,))
+            'end': (GObject.SignalFlags.RUN_FIRST, None, ()),
+            'error': (GObject.SignalFlags.RUN_FIRST, None, (object,))
         }
         
         def __init__(self):

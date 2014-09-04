@@ -12,8 +12,8 @@ class ProtocolEngine (Engine):
     __gsignals__ = {
         #"readyForOptions": (SIGNAL_RUN_FIRST, None, ()),
         #"readyForMoves": (SIGNAL_RUN_FIRST, None, ())
-       "readyForOptions": (GObject.SIGNAL_RUN_FIRST, None, ()),
-       "readyForMoves": (GObject.SIGNAL_RUN_FIRST, None, ())
+       "readyForOptions": (GObject.SignalFlags.RUN_FIRST, None, ()),
+       "readyForMoves": (GObject.SignalFlags.RUN_FIRST, None, ())
     }
     
     #===========================================================================

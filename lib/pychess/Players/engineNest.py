@@ -64,10 +64,10 @@ class EngineDiscoverer (GObject.GObject):
         #"engine_discovered": (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
         #"engine_failed": (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
         #"all_engines_discovered": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "discovering_started": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
-        "engine_discovered": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (str, object)),
-        "engine_failed": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (str, object)),
-        "all_engines_discovered": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "discovering_started": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "engine_discovered": (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
+        "engine_failed": (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
+        "all_engines_discovered": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
     
     def __init__ (self):
