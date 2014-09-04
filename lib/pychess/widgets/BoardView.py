@@ -78,32 +78,6 @@ def rect (r):
     rct.x, rct.y, rct.width, rct.height = (x, y, w, h) 
     return rct
 
-def union(r1,r2):
-    r=Gdk.Rectangle()
-    if r1.x < r2.x:
-        r.x = r1.x
-    else:
-        r.x = r2.x
-    if r1.y < r2.y:
-        r.y = r1.y
-    else:
-        r.y = r2.y
-    r1x = r1.x + r1.width
-    r1y = r1.y + r1.height
-    r2x = r2.x + r2.width
-    r2y = r2.y + r2.height
-    if r1x > r2x:
-        rx = r1x
-    else:
-        rx = r2x
-    if r1y > r2y:
-        ry = r1y
-    else:
-        ry = r2y
-    r.width = rx - r.x
-    r.height = ry - r.y
-    return(r)
-
 def matrixAround (rotatedMatrix, anchorX, anchorY):
     co = rotatedMatrix[0]
     si = rotatedMatrix[1]
@@ -767,7 +741,7 @@ class BoardView (Gtk.DrawingArea):
         cr.set_source_rgba(0.651, 0.651, 0.651, 1.0)
   
         context.set_line_width(t)
-        context.set_line_join(Gdk.JOIN_ROUND)
+        context.set_line_join(cairo.LINE_JOIN_ROUND)
         context.stroke()
         
         pangoScale = float(Pango.SCALE)
@@ -1160,7 +1134,7 @@ class BoardView (Gtk.DrawingArea):
         
         context.set_source_rgba(*fillc)
         context.fill_preserve()
-        context.set_line_join(Gdk.JOIN_ROUND)
+        context.set_line_join(cairo.LINE_JOIN_ROUND)
         context.set_line_width(asw*r[2])
         context.set_source_rgba(*strkc)
         context.stroke()
@@ -1250,7 +1224,7 @@ class BoardView (Gtk.DrawingArea):
         if self._selected == cord: return
         if self._selected:
             r = rect(self.cord2RectRelative(self._selected))
-            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
+            if cord: r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
         elif cord: r = rect(self.cord2RectRelative(cord))
         self._selected = cord
         self.redraw_canvas(r)
@@ -1267,7 +1241,7 @@ class BoardView (Gtk.DrawingArea):
             #r = Gdk.Rectangle()
             #r.x, r.y, r.width, r.height = tmpr 
             #if cord: r = r.union(rect(self.cord2RectRelative(cord)))
-            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
+            if cord: r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
         elif cord:
             r = rect(self.cord2RectRelative(cord))
             # convert r from tuple to rect
@@ -1284,7 +1258,7 @@ class BoardView (Gtk.DrawingArea):
         if self._active == cord: return
         if self._active:
             r = rect(self.cord2RectRelative(self._active))
-            if cord: r = r.union(rect(self.cord2RectRelative(cord)))
+            if cord: r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
         elif cord: r = rect(self.cord2RectRelative(cord))
         self._active = cord
         self.redraw_canvas(r)
@@ -1296,7 +1270,7 @@ class BoardView (Gtk.DrawingArea):
         if self._premove0 == cord: return
         if self._premove0:
             r = rect(self.cord2RectRelative(self._premove0))
-            if cord: r = r.union(rect(self.cord2RectRelative(cord)))
+            if cord: r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
         elif cord: r = rect(self.cord2RectRelative(cord))
         self._premove0 = cord
         self.redraw_canvas(r)
@@ -1308,7 +1282,7 @@ class BoardView (Gtk.DrawingArea):
         if self._premove1 == cord: return
         if self._premove1:
             r = rect(self.cord2RectRelative(self._premove1))
-            if cord: r = r.union(rect(self.cord2RectRelative(cord)))
+            if cord: r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
         elif cord: r = rect(self.cord2RectRelative(cord))
         self._premove1 = cord
         self.redraw_canvas(r)
@@ -1327,7 +1301,7 @@ class BoardView (Gtk.DrawingArea):
         if self._redarrow: paintCords += self._redarrow
         r = rect(self.cord2RectRelative(paintCords[0]))
         for cord in paintCords[1:]:
-            r = r.union(rect(self.cord2RectRelative(cord)))
+            r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
         self._redarrow = cords
         self.redraw_canvas(r)
     def _get_redarrow (self):
@@ -1341,7 +1315,7 @@ class BoardView (Gtk.DrawingArea):
         if self._greenarrow: paintCords += self._greenarrow
         r = rect(self.cord2RectRelative(paintCords[0]))
         for cord in paintCords[1:]:
-            r = r.union(rect(self.cord2RectRelative(cord)))
+            r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
         self._greenarrow = cords
         self.redraw_canvas(r)
     def _get_greenarrow (self):
@@ -1355,7 +1329,7 @@ class BoardView (Gtk.DrawingArea):
         if self._bluearrow: paintCords += self._bluearrow
         r = rect(self.cord2RectRelative(paintCords[0]))
         for cord in paintCords[1:]:
-            r = r.union(rect(self.cord2RectRelative(cord)))
+            r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
         self._bluearrow = cords
         self.redraw_canvas(r)
     def _get_bluearrow (self):

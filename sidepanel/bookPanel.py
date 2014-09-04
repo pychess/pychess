@@ -1,7 +1,7 @@
 import os
 import Queue
 #import gtk, gobject, pango
-from gi.repository import Gtk, GObject, Pango
+from gi.repository import Gdk, Gtk, GObject, Pango
 from threading import Thread
 
 from pychess.System import conf, fident
@@ -154,7 +154,7 @@ class EngineAdvisor(Advisor):
         parent = self.empty_parent()
         for line in range(self.linesExpected):
             self.store.append(parent, self.textOnlyRow(_("Calculating...")))
-        self.tv.expand_row(self.path, False)
+        self.tv.expand_row(Gtk.TreePath(self.path), False)
         return parent
     
     def shown_changed (self, boardview, shown):
@@ -258,7 +258,7 @@ class EngineAdvisor(Advisor):
                     self.linesExpected -= 1
         
     def row_activated (self, iter, model):
-        if self.mode == HINT and self.store.get_path(iter) != self.path:
+        if self.mode == HINT and self.store.get_path(iter) != Gtk.TreePath(self.path):
             moves = self.store[iter][0][2]
             if moves is not None:
                 model.add_variation(self.engine.board, moves)
@@ -380,7 +380,7 @@ class Sidepanel (object):
             if store[iter][2] == 0:
                 cell.set_property('visible', False)
             else:
-                cell.set_property("text", store[iter][2])
+                cell.set_property("text", str(store[iter][2]))
                 cell.set_property('visible', True)
         c2.set_cell_data_func(multipvRenderer, spin_visible)
 
