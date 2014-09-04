@@ -22,7 +22,7 @@ class Engine (Player):
         but not 0, which is a draw. '''
     __gsignals__ = {
         #'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
-        'analyze': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,))
+        'analyze': (GObject.SignalFlags.RUN_FIRST, None, (object,))
     }
     
     def __init__(self, md5=None):

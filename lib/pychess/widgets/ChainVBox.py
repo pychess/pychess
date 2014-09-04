@@ -14,7 +14,7 @@ class ChainVBox (Gtk.VBox):
     """ Inspired by the GIMP chainbutton widget """
 
     __gsignals__ = {
-        'clicked' : (GObject.SIGNAL_RUN_FIRST, None, ())
+        'clicked' : (GObject.SignalFlags.RUN_FIRST, None, ())
     }
 
     def __init__ (self):

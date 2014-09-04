@@ -7,7 +7,7 @@ from pychess.ic.VerboseTelnet import ConsoleHandler
 class ConsoleManager (GObject.GObject):
     
     __gsignals__ = {
-        'consoleMessage' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'consoleMessage' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):

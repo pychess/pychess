@@ -20,7 +20,7 @@ vpadding = 3
 class SpotGraph (Gtk.EventBox):
     
     __gsignals__ = {
-        'spotClicked' : (GObject.SIGNAL_RUN_FIRST, None, (str,))
+        'spotClicked' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
     
     def __init__ (self):

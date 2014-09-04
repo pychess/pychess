@@ -205,8 +205,8 @@ class FingerObject:
 class FingerManager (GObject.GObject):
     
     __gsignals__ = {
-        'fingeringFinished' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'ratingAdjusted' : (GObject.SIGNAL_RUN_FIRST, None, (str, str)),
+        'fingeringFinished' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'ratingAdjusted' : (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
     }
     
     def __init__ (self, connection):

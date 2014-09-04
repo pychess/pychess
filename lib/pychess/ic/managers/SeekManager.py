@@ -24,11 +24,11 @@ deviation_provisional_re = re.compile("P")
 class SeekManager (GObject.GObject):
     
     __gsignals__ = {
-        'addSeek' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'removeSeek' : (GObject.SIGNAL_RUN_FIRST, None, (int,)),
-        'clearSeeks' : (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'our_seeks_removed' : (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'seek_updated' : (GObject.SIGNAL_RUN_FIRST, None, (str,)),
+        'addSeek' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'removeSeek' : (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        'clearSeeks' : (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'our_seeks_removed' : (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'seek_updated' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
     
     def __init__ (self, connection):

@@ -6,9 +6,9 @@ sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
 class ErrorManager (GObject.GObject):
     
     __gsignals__ = {
-        'onCommandNotFound' : (GObject.SIGNAL_RUN_FIRST, None, (str,)),
-        'onAmbiguousMove' : (GObject.SIGNAL_RUN_FIRST, None, (str,)),
-        'onIllegalMove' : (GObject.SIGNAL_RUN_FIRST, None, (str,)),
+        'onCommandNotFound' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'onAmbiguousMove' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'onIllegalMove' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
     
     def __init__ (self, connection):

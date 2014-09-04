@@ -12,8 +12,8 @@ class Pinger (GObject.GObject):
         server in millisecconds. -1 means that some error occurred """
     
     __gsignals__ = {
-        "recieved": (GObject.SIGNAL_RUN_FIRST, None, (float,)),
-        "error": (GObject.SIGNAL_RUN_FIRST, None, (str,))
+        "recieved": (GObject.SignalFlags.RUN_FIRST, None, (float,)),
+        "error": (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
     
     def __init__ (self, host):

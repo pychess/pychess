@@ -155,15 +155,15 @@ def parse_reason (result, reason, wname=None):
 class BoardManager (GObject.GObject):
     
     __gsignals__ = {
-        'playGameCreated'     : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameCreated'      : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'boardUpdate'         : (GObject.SIGNAL_RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
-        'obsGameEnded'        : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'curGameEnded'        : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameUnobserved'   : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'gamePaused'          : (GObject.SIGNAL_RUN_FIRST, None, (int, bool)),
-        'tooManySeeks'        : (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'matchDeclined'       : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'playGameCreated'     : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'obsGameCreated'      : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'boardUpdate'         : (GObject.SignalFlags.RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
+        'obsGameEnded'        : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'curGameEnded'        : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'obsGameUnobserved'   : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'gamePaused'          : (GObject.SignalFlags.RUN_FIRST, None, (int, bool)),
+        'tooManySeeks'        : (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'matchDeclined'       : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     castleSigns = {}

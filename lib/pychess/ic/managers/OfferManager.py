@@ -53,12 +53,12 @@ for k,v in strToOfferType.iteritems():
 class OfferManager (GObject.GObject):
     
     __gsignals__ = {
-        'onOfferAdd' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'onOfferRemove' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'onOfferDeclined' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'onChallengeAdd' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'onChallengeRemove' : (GObject.SIGNAL_RUN_FIRST, None, (int,)),
-        'onActionError' : (GObject.SIGNAL_RUN_FIRST, None, (object, int)),
+        'onOfferAdd' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'onOfferRemove' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'onOfferDeclined' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'onChallengeAdd' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'onChallengeRemove' : (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        'onActionError' : (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
     }
     
     def __init__ (self, connection):

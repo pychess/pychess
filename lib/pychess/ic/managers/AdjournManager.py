@@ -12,9 +12,9 @@ from pychess.System.Log import log
 class AdjournManager (GObject.GObject):
     
     __gsignals__ = {
-        'adjournedGameAdded' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'onAdjournmentsList' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
-        'adjournedGamePreview' : (GObject.SIGNAL_RUN_FIRST, None, (object,)),
+        'adjournedGameAdded' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'onAdjournmentsList' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'adjournedGamePreview' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):

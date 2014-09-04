@@ -61,7 +61,7 @@ class TaskerManager (Gtk.Table):
                          x-self.border, y+height)
                  
             # FIXME  
-            #cr.set_source_color(self.get_style().bg[gtk.STATE_NORMAL])
+            #cr.set_source_color(self.get_style().bg[Gtk.StateType.NORMAL])
             # colour = #ededed (237, 237, 237)  (0.92, 0.92, 0.92)
 
             # this doesn't work - returns 0,0,0,0
