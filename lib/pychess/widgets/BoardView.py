@@ -129,7 +129,7 @@ class BoardView (Gtk.DrawingArea):
     #    'shown_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
     #}
     __gsignals__ = {
-        'shown_changed' : (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,))
+        'shown_changed' : (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
     
     def __init__(self, gamemodel=None, preview=False):
@@ -827,7 +827,7 @@ class BoardView (Gtk.DrawingArea):
                     if intersects(rect(bounding), r):
                         context.rectangle(xc+x*s,yc+y*s,s,s)       
         # FIXME
-        #context.set_source_color(self.get_style().dark[gtk.STATE_NORMAL])
+        #context.set_source_color(self.get_style().dark[Gtk.StateType.NORMAL])
         context.set_source_rgba(0.64, 0.64, 0.64, 1.0)
         context.fill()
         

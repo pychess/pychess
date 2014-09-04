@@ -110,53 +110,53 @@ class GameModel (GObject.GObject, Thread):
     __gsignals__ = {
         # game_started is emitted when control is given to the players for the
         # first time. Notice this is after players.start has been called.
-        "game_started":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "game_started":  (GObject.SignalFlags.RUN_FIRST, None, ()),
         # game_changed is emitted when a move has been made.
-        "game_changed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "game_changed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
         # moves_undoig is emitted when a undoMoves call has been accepted, but
         # before anywork has been done to execute it.
-        "moves_undoing": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,)),
+        "moves_undoing": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
         # moves_undone is emitted after n moves have been undone in the
         # gamemodel and the players.
-        "moves_undone":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,)),
+        "moves_undone":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
         # game_unended is emitted if moves have been undone, such that the game
         # which had previously ended, is now again active.
-        "game_unended":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "game_unended":  (GObject.SignalFlags.RUN_FIRST, None, ()),
         # game_loading is emitted if the GameModel is about to load in a chess
         # game from a file. 
-        "game_loading":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
+        "game_loading":  (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         # game_loaded is emitted after the chessformat handler has loaded in
         # all the moves from a file to the game model.
-        "game_loaded":   (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
+        "game_loaded":   (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         # game_saved is emitted in the end of model.save()
-        "game_saved":    (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (str,)),
+        "game_saved":    (GObject.SignalFlags.RUN_FIRST, None, (str,)),
         # game_ended is emitted if the models state has been changed to an
         # "ended state"
-        "game_ended":    (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,)),
+        "game_ended":    (GObject.SignalFlags.RUN_FIRST, None, (int,)),
         # game_terminated is emitted if the game was terminated. That is all
         # players and clocks were stopped, and it is no longer possible to
         # resume the game, even by undo.
-        "game_terminated":    (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "game_terminated":    (GObject.SignalFlags.RUN_FIRST, None, ()),
         # game_paused is emitted if the game was successfully paused.
-        "game_paused":   (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "game_paused":   (GObject.SignalFlags.RUN_FIRST, None, ()),
         # game_paused is emitted if the game was successfully resumed from a
         # pause.
-        "game_resumed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "game_resumed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
         # action_error is currently only emitted by ICGameModel, in the case
         # the "web model" didn't accept the action you were trying to do.
-        "action_error":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object, int)),
+        "action_error":  (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
         # players_changed is emitted if the players list was changed.
-        "players_changed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
-        "analyzer_added": (GObject.SIGNAL_RUN_FIRST, None, (object, str)),
-        "analyzer_removed": (GObject.SIGNAL_RUN_FIRST, None, (object, str)),
-        "analyzer_paused": (GObject.SIGNAL_RUN_FIRST, None, (object, str)),
-        "analyzer_resumed": (GObject.SIGNAL_RUN_FIRST, None, (object, str)),
+        "players_changed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "analyzer_added": (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
+        "analyzer_removed": (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
+        "analyzer_paused": (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
+        "analyzer_resumed": (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
         # opening_changed is emitted if the move changed the opening.
-        "opening_changed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "opening_changed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
         # variations_changed is emitted if a variation was added/deleted.
-        "variations_changed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "variations_changed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
         # scores_changed is emitted if the analyzing scores was changed.
-        "analysis_changed":  (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (int,)),
+        "analysis_changed":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
     }
     
     def __init__ (self, timemodel=None, variant=NormalChess):

@@ -43,8 +43,8 @@ from pychess.Utils.Rating import Rating
 
 class ICLounge (GObject.GObject):
     __gsignals__ = {
-        'logout'        : (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'autoLogout'    : (GObject.SIGNAL_RUN_FIRST, None, ()),
+        'logout'        : (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'autoLogout'    : (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
     
     def __init__ (self, connection, helperconn, host):

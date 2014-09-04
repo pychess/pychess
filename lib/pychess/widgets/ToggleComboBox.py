@@ -12,7 +12,7 @@ from pychess.Utils.IconLoader import load_icon
 class ToggleComboBox (Gtk.ToggleButton):
 
     # __gsignals__ = {'changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,))}
-    __gsignals__ = {'changed' : (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (GObject.TYPE_INT,))}
+    __gsignals__ = {'changed' : (GObject.SignalFlags.RUN_FIRST, None, (GObject.TYPE_INT,))}
 
     def __init__ (self):
         GObject.GObject.__init__(self)

@@ -8,7 +8,7 @@ def load_icon(size, *alternatives):
     alternatives = list(alternatives)
     name = alternatives.pop(0)
     try:
-        return it.load_icon(name, size, Gtk.ICON_LOOKUP_USE_BUILTIN)
+        return it.load_icon(name, size, Gtk.IconLookupFlags.USE_BUILTIN)
     except:
         if alternatives:
             return load_icon(size, *alternatives)

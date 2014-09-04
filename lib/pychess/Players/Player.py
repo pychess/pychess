@@ -21,11 +21,11 @@ class Player (GObject.GObject):
         #"decline": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         #"accept": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
         #"name_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "offer": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
-        "withdraw": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
-        "decline": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
-        "accept": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, (object,)),
-        "name_changed": (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE, ()),
+        "offer": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "withdraw": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "decline": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "accept": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "name_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
 
     }
     
