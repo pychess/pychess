@@ -139,7 +139,9 @@ class SubProcess (GObject.GObject):
             try:
                 line = channel.next()#readline()
             except StopIteration:
-                return False
+                # fix for pygi
+                #return False
+                return True
             if not line:
                 return True
             if isstderr:
