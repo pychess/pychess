@@ -28,13 +28,11 @@ class TaskerManager (Gtk.Table):
     def __init__ (self):        
         GObject.GObject.__init__(self)
         self.border = 20
-        giveBackground(self)
-        #self.connect("expose_event", self.expose)
+        giveBackground(self)        
         self.connect("draw", self.expose)
         #self.set_homogeneous(True)
     
-    def expose (self, widget, ctx):
-        #cr = widget.window.cairo_create()
+    def expose (self, widget, ctx):        
         cr = widget.get_window().cairo_create()
         
         for widget in self.widgets:
@@ -97,8 +95,6 @@ class TaskerManager (Gtk.Table):
         self.widgets = widgets
         
         for widget in widgets:            
-            #widget.connect("size-allocate", lambda *a:
-            #               self.window.invalidate_rect(self.get_allocation(), False))
             widget.connect("size-allocate", lambda *a:
                            self.get_window().invalidate_rect(self.get_allocation(), False))
         root = math.sqrt(len(widgets))
@@ -129,8 +125,7 @@ class TaskerManager (Gtk.Table):
         
         for row in range(rrows):
             for col in range(cols):
-                widget = widgets[row*cols + col]
-                #alignment = Gtk.Alignment.new(hspac[col], vspac[row])
+                widget = widgets[row*cols + col]                
                 alignment = Gtk.Alignment.new(hspac[col], vspac[row], 0, 0)
                 alignment.add(widget)
                 self.attach(alignment, col, col+1, row, row+1)
@@ -161,10 +156,7 @@ class NewGameTasker (Gtk.Alignment):
         tasker.unparent()
         self.add(tasker)
         
-        combo = ToggleComboBox()
-        #combo.addItem(_("White"), pixbuf_new_from_file(addDataPrefix("glade/white.png")))
-        #combo.addItem(_("Black"), pixbuf_new_from_file(addDataPrefix("glade/black.png")))
-        #combo.addItem(_("Random"), pixbuf_new_from_file(addDataPrefix("glade/random.png")))
+        combo = ToggleComboBox()      
         combo.addItem(_("White"), GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/white.png")))
         combo.addItem(_("Black"), GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/black.png")))
         combo.addItem(_("Random"), GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/random.png")))

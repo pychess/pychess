@@ -1,6 +1,5 @@
-#import gtk, cairo
 import cairo
-#from gi.repository import cairo
+
 from gi.repository import Gtk
 
 from math import ceil as fceil
@@ -14,8 +13,7 @@ class HighlightArea (OverlayWindow):
     
     def __init__ (self, parent):
         OverlayWindow.__init__(self, parent)
-        self.myparent = parent
-        #self.connect_after("expose-event", self.__onExpose)
+        self.myparent = parent       
         self.connect_after("draw", self.__onExpose)
     
     def showAt (self, position):
@@ -40,13 +38,11 @@ class HighlightArea (OverlayWindow):
         self.move(x, y)
         self.resize(ceil(width), ceil(height))
         self.show()
-    
-    #def __onExpose (self, self_, event):
+        
     def __onExpose (self, self_, ctx):
         context = self.window.cairo_create()
         a = self_.get_allocation()
-        context.rectangle(a.area)
-        #context.rectangle(event.area)
+        context.rectangle(a.area)        
         if self.is_composited():
             color = self.get_style().light[Gtk.StateType.SELECTED]
             context.set_operator(cairo.OPERATOR_CLEAR)

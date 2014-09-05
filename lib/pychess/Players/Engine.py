@@ -1,6 +1,5 @@
 from urllib import urlopen, urlencode
 
-#from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 from gi.repository import GObject
 
 from threading import Thread
@@ -20,8 +19,7 @@ class Engine (Player):
         The first element is the pv list of moves. The second is a score
         relative to the engine. If no score is known, the value can be None,
         but not 0, which is a draw. '''
-    __gsignals__ = {
-        #'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
+    __gsignals__ = {       
         'analyze': (GObject.SignalFlags.RUN_FIRST, None, (object,))
     }
     

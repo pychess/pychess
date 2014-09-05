@@ -1,4 +1,3 @@
-#import gtk, gobject
 from gi.repository import Gtk, GObject
 
 import gamewidget

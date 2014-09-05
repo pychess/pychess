@@ -207,7 +207,6 @@ class PyDockLeaf (DockLeaf):
     def __onPageSwitched (self, book, page, page_num):
         # When a tab is dragged over another tab, the page is temporally
         # switched, and the notebook child is hovered. Thus we need to reraise
-        # our star
-        #if self.starButton.window:
+        # our star        
         if self.starButton.get_window():
             self.starButton.window.raise_()

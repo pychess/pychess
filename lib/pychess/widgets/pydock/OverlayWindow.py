@@ -2,9 +2,8 @@ import os
 import re
 import sys
 
-from gi.repository import Gtk
 import cairo
-#from gi.repository import cairo
+from gi.repository import Gtk
 from gi.repository import GObject
 
 if sys.platform == 'win32':

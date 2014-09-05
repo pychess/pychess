@@ -1,8 +1,5 @@
 
-#import gtk, Gtk.gdk
 from gi.repository import Gtk, Gtk.Gdk
-
-#from gobject import *
 from gi.repository import GObject
 
 from math import floor

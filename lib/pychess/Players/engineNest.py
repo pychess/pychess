@@ -8,7 +8,6 @@ from threading import Thread
 from os.path import join, dirname, abspath
 from copy import deepcopy
 
-#from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from gi.repository import GObject
 
 from pychess.System import conf, fident
@@ -56,14 +55,9 @@ backup = [
 ]
 
 
-#class EngineDiscoverer (GObject):
 class EngineDiscoverer (GObject.GObject):
     
     __gsignals__ = {
-        #"discovering_started": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        #"engine_discovered": (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
-        #"engine_failed": (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
-        #"all_engines_discovered": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "discovering_started": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         "engine_discovered": (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
         "engine_failed": (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
@@ -481,10 +475,8 @@ def is_cecp(engine_command):
 
 
 if __name__ == "__main__":
-    from gi.repository import GLib
-    #import glib
-    from gi.repository import GObject
-    #import glib, gobject   
+    from gi.repository import GLib    
+    from gi.repository import GObject     
     GObject.threads_init()
     mainloop = GLib.MainLoop()
 

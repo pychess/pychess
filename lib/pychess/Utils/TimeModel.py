@@ -1,7 +1,6 @@
 import heapq
 from time import time
 
-#from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
 from gi.repository import GObject
 
 from pychess.Utils.const import WHITE, BLACK
@@ -17,20 +16,12 @@ class TimeModel (GObject.GObject):
         "pause_changed": (GObject.SignalFlags.RUN_FIRST, None, (bool,))
     }
 
-    #__gsignals__ = {
-    #    "player_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-    #    "time_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-    #    "zero_reached": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-    #    "pause_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, (bool,))
-    #}
-
     
     ############################################################################
     # Initing                                                                  #
     ############################################################################
     
-    def __init__ (self, secs=0, gain=0, bsecs=-1, minutes=-1):
-        #GObject.__init__(self)
+    def __init__ (self, secs=0, gain=0, bsecs=-1, minutes=-1):        
         GObject.GObject.__init__(self)
 
         if bsecs < 0: bsecs = secs

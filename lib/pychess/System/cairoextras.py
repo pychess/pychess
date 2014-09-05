@@ -2,7 +2,6 @@
 
 import ctypes
 import cairo
-#from gi.repository import cairo
 
 class FreeTypeLibInitializationFailed(Exception):
     pass

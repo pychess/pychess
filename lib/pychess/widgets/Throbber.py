@@ -6,7 +6,6 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
 import cairo
-#from gi.repository import cairo
 
 if sys.platform == 'win32':
     from pychess.System.WinRsvg import rsvg
@@ -22,8 +21,7 @@ RAD_PS = 2*math.pi
 
 class Throbber (Gtk.DrawingArea):
     def __init__(self, width, height):       
-        GObject.GObject.__init__(self)
-        #self.connect("expose_event", self.__expose)
+        GObject.GObject.__init__(self)        
         self.connect("draw", self.__expose)
         self.surface = self.__loadSvg(addDataPrefix("glade/throbber.svg"),
                                       width, height)
@@ -54,13 +52,11 @@ class Throbber (Gtk.DrawingArea):
         if self.stopped:
             return False
         
-        window = self.get_window()
-        #if self.window:
+        window = self.get_window()        
         if window:
             glock.acquire()
             try:
-                window = self.get_window()
-                #if self.window:
+                window = self.get_window()                
                 if window:
                     a = self.get_allocation()
                     rect = Gdk.Rectangle()
@@ -74,8 +70,7 @@ class Throbber (Gtk.DrawingArea):
     def stop (self):    
         self.stopped = True
         
-    def __loadSvg (self, path, width, height):         
-        #svg = rsvg.Handle(path)        
+    def __loadSvg (self, path, width, height):                         
         svg = Rsvg.Handle.new_from_file(path)       
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)       
         context = cairo.Context(surface)       

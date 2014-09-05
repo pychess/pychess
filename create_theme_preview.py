@@ -5,7 +5,6 @@ from os.path import isdir, isfile, splitext
 
 from gi.repository import Gtk
 import cairo
-#from gi.repository import cairo
 
 from pychess.Utils.const import *
 from pychess.Utils.Piece import Piece

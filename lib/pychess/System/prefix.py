@@ -39,7 +39,6 @@ def isInstalled ():
 # Locate files in user space                                                   #
 ################################################################################
 
-#import glib
 from gi.repository import GLib
 # The glib.get_user_*_dir() XDG functions below require pygobject >= 2.18
 #try:
