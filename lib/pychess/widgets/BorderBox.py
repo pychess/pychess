@@ -5,8 +5,7 @@ class BorderBox (Gtk.Alignment):
                                      bottom=False, left=False):
         # FIXME
         #GObject.GObject.__init__(self, 0, 0, 1, 1)
-        GObject.GObject.__init__(self)
-        #self.connect("expose-event", self._onExpose)
+        GObject.GObject.__init__(self)        
         self.connect("draw", self._onExpose)
 
         if widget:

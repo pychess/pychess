@@ -1,4 +1,3 @@
-#from gobject import GObject, SIGNAL_RUN_FIRST
 from gi.repository import GObject
 
 from Move import Move

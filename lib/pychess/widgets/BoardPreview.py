@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 
 import os
-#import gtk, gobject
 from gi.repository import Gtk, GObject
 from pychess.Utils.const import reprResult, BLACK, FEN_EMPTY
 from pychess.Utils.Board import Board

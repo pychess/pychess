@@ -1,6 +1,6 @@
 import os
 import Queue
-#import gtk, gobject, pango
+
 from gi.repository import Gdk, Gtk, GObject, Pango
 from threading import Thread
 
@@ -121,8 +121,7 @@ class OpeningAdvisor(Advisor):
                 self.opening_names.append("%s %s" % (opening[1], opening[2]))
 
             self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco, False, False])        
-        tp = Gtk.TreePath(self.path)
-        #self.tv.expand_row(self.path, False)
+        tp = Gtk.TreePath(self.path)        
         self.tv.expand_row(tp, False)
     
     def child_tooltip (self, i):

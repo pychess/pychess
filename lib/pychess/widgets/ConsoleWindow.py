@@ -1,7 +1,6 @@
 from gi.repository import Gtk
 from gi.repository import GObject
 from gi.repository import Pango
-#from Gtk.gdk import keyval_from_name
 
 from BorderBox import BorderBox
 from pychess.System import glock

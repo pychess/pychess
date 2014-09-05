@@ -5,7 +5,6 @@ import time
 import codecs
 import logging
 
-#import gtk, pango, gobject
 from gi.repository import Gtk, Pango, GObject
 
 from pychess.System import glock, uistuff

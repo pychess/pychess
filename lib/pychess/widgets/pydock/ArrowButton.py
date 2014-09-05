@@ -1,6 +1,5 @@
-#import gtk, cairo
 import cairo
-#from gi.repository import cairo
+
 from gi.repository import Gtk
 from gi.repository import GObject
 from gi.repository import Gdk
@@ -22,8 +21,7 @@ class ArrowButton (OverlayWindow):
         OverlayWindow.__init__(self, parent)      
         self.myparent = parent
         self.myposition = position
-        self.svgPath = svgPath
-        #self.connect_after("expose-event", self.__onExposeEvent)
+        self.svgPath = svgPath        
         self.connect_after("draw", self.__onExposeEvent)
         
         #targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]

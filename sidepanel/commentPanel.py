@@ -2,7 +2,6 @@
 
 from __future__ import with_statement
 
-#import gtk, pango
 from gi.repository import Gtk, Pango
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix

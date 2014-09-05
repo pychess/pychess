@@ -92,8 +92,7 @@ class SubProcess (GObject.GObject):
         subprocesses.append(self)
         log.debug("SubProcess.__init__: finished",  extra={"task":self.defname})
     
-    def _initChannel (self, filedesc, callbackflag, callback, isstderr):
-        #channel = GObject.IOChannel(filedesc)
+    def _initChannel (self, filedesc, callbackflag, callback, isstderr):        
         channel = GLib.IOChannel(filedesc)
         if sys.platform != "win32":
             channel.set_flags(GObject.IO_FLAG_NONBLOCK)

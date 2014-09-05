@@ -4,8 +4,6 @@ import os
 
 from gi.repository import Gtk
 import cairo
-#from gi.repository import cairo
-#import rsvg
 
 from pychess.Utils.const import *
 from pychess.gfx import Pieces

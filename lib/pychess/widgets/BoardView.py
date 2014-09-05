@@ -4,15 +4,11 @@ from math import floor, ceil, pi
 from time import time
 from threading import Lock, RLock
 
-#import Gtk.gdk, cairo
 from gi.repository import Gtk
 from gi.repository import Gdk
 import cairo
-#from gi.repository import cairo
 
-#from gobject import *
 from gi.repository import GObject
-
 from gi.repository import Pango
 
 from pychess.System import glock, conf
@@ -27,10 +23,7 @@ from pychess.Variants.blindfold import BlindfoldChess, HiddenPawnsChess, \
 from pychess.Variants.crazyhouse import CrazyhouseChess
 import preferencesDialog
 
-#def intersects (r00, r1):
 def intersects (r0, r1):
-    #r0 = Gdk.Rectangle()
-    #r0.x, r0.y, r0.width, r0.height = r00   
     w0 = r0.width + r0.x
     h0 = r0.height + r0.y
     w1 = r1.width + r1.x
@@ -72,8 +65,7 @@ def rect (r):
     w = int(ceil(r[2]))
     if len(r) == 4:
         h = int(ceil(r[3]))
-    else: h = w
-    #return  (x, y, w, h)
+    else: h = w    
     rct = Gdk.Rectangle() 
     rct.x, rct.y, rct.width, rct.height = (x, y, w, h) 
     return rct
@@ -98,10 +90,7 @@ SCALE_ROTATED_BOARD = False
 CORD_PADDING = 1.5
 
 class BoardView (Gtk.DrawingArea):
-    
-    #__gsignals__ = {
-    #    'shown_changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
-    #}
+
     __gsignals__ = {
         'shown_changed' : (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
@@ -121,9 +110,8 @@ class BoardView (Gtk.DrawingArea):
         glock_connect_after(self.model, "moves_undoing", self.moves_undoing)
         glock_connect_after(self.model, "game_loading", self.game_loading)
         glock_connect_after(self.model, "game_loaded", self.game_loaded)
-        glock_connect_after(self.model, "game_ended", self.game_ended)
+        glock_connect_after(self.model, "game_ended", self.game_ended)        
         
-        #self.connect("expose_event", self.expose)
         self.connect("draw", self.expose)
         self.connect_after("realize", self.on_realized)
         conf.notify_add("showCords", self.on_show_cords)
@@ -585,9 +573,7 @@ class BoardView (Gtk.DrawingArea):
         conf.set("board_window_width",  w)
         conf.set("board_window_height", h)
         
-    #def expose(self, widget, event):
-    def expose(self, widget, ctx):
-        #context = widget.window.cairo_create()
+    def expose(self, widget, ctx):       
         context = widget.get_window().cairo_create()
         #r = (event.area.x, event.area.y, event.area.width, event.area.height)
         #context.rectangle(r[0]-.5, r[1]-.5, r[2]+1, r[3]+1)

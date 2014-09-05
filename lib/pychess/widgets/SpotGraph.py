@@ -5,7 +5,6 @@ from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Gdk
 import cairo
-#from gi.repository import cairo
 from gi.repository import Pango
 
 line = 10
@@ -64,8 +63,7 @@ class SpotGraph (Gtk.EventBox):
         if self.window:
             if not rect:
                 alloc = self.get_allocation()
-                rect = (0, 0, alloc.width, alloc.height)
-            #rect = (*map(int,rect))
+                rect = (0, 0, alloc.width, alloc.height)            
             rect = Gdk.Rectangle(*map(int,rect))
             self.window.invalidate_rect(rect, True)
             self.window.process_updates(True)

@@ -37,14 +37,11 @@ class ChessClock (Gtk.DrawingArea):
         self.model = None
         #self.thread = None
         
-    def expose(self, widget, ctx):
-        #context = widget.window.cairo_create()
+    def expose(self, widget, ctx):        
         context = widget.get_window().cairo_create()
         a = widget.get_allocation()
         context.rectangle(a.x, a.y,
-                          a.width, a.height)
-        #context.rectangle(event.area.x, event.area.y,
-        #                  event.area.width, event.area.height)
+                          a.width, a.height)       
         context.clip()
         self.draw(context)
         return False

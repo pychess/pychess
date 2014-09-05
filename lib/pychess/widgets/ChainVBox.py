@@ -1,9 +1,7 @@
 import cairo
-#from gi.repository import cairo
+
 from gi.repository import Gtk
 from gi.repository import Gdk
-
-#from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 from gi.repository import GObject
 
 from pychess.System.prefix import addDataPrefix

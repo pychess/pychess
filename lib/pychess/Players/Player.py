@@ -1,4 +1,3 @@
-#from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from gi.repository import GObject
 
 class PlayerIsDead (Exception):
@@ -12,15 +11,9 @@ class TurnInterrupt (Exception):
         player """
     pass
 
-#class Player (GObject):
 class Player (GObject.GObject):
     
     __gsignals__ = {
-        #"offer": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        #"withdraw": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        #"decline": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        #"accept": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        #"name_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
         "offer": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         "withdraw": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         "decline": (GObject.SignalFlags.RUN_FIRST, None, (object,)),

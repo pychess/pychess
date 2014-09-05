@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-#from gobject import GObject, SIGNAL_RUN_FIRST
 from gi.repository import GObject
 
 from pychess.System.Log import log

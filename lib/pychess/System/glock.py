@@ -1,7 +1,7 @@
 import traceback
 from functools import wraps
 from threading import RLock, currentThread
-#from Gtk.gdk import threads_enter, threads_leave
+
 from gi.repository import Gdk
 from pychess.System.Log import log
 from pychess.System import fident

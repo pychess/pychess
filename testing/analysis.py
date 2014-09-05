@@ -9,7 +9,6 @@ from pychess.Players.CECPEngine import CECPEngine
 
 from Queue import Queue
 
-#from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
 from gi.repository import GObject
 
 class DummyCECPAnalyzerEngine(GObject.GObject):
