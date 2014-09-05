@@ -2,7 +2,6 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gdk
 from gi.repository import Gtk
-#from gobject import *
 from gi.repository import GObject
 
 from pychess.System.Log import log
@@ -10,8 +9,7 @@ from pychess.Utils.IconLoader import load_icon
 
 
 class ToggleComboBox (Gtk.ToggleButton):
-
-    # __gsignals__ = {'changed' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_INT,))}
+    
     __gsignals__ = {'changed' : (GObject.SignalFlags.RUN_FIRST, None, (GObject.TYPE_INT,))}
 
     def __init__ (self):
@@ -21,8 +19,7 @@ class ToggleComboBox (Gtk.ToggleButton):
         self.label = label = Gtk.Label()
         label.set_alignment(0, 0.5)
         self.hbox = hbox = Gtk.HBox()
-        self.image = Gtk.Image()
-        #hbox.pack_start(self.image, False, False)
+        self.image = Gtk.Image()        
         hbox.pack_start(self.image, False, False, 0)
         hbox.pack_start(label, True, True, 0)
         arrow = Gtk.Arrow (Gtk.ArrowType.DOWN, Gtk.ShadowType.OUT);
@@ -129,8 +126,7 @@ class ToggleComboBox (Gtk.ToggleButton):
             if self.active < len(self._items)-1:
                 self.active += 1
     
-    def button_press (self, widget, event):
-        #width = self.allocation.width
+    def button_press (self, widget, event):        
         width = self.get_allocation().width
         self.menu.set_size_request(-1,-1)
         # FIXME

@@ -3,11 +3,8 @@ from math import e
 from random import randint
 from sys import maxint
 
-#import gtk, gobject
 from gi.repository import Gtk, GObject
 from gi.repository import Gdk
-#from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
-#from gi.repository import GObject
 
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect
@@ -160,8 +157,7 @@ class ScorePlot (Gtk.DrawingArea):
     
     def __init__ (self, boardview):
         GObject.GObject.__init__(self)
-        self.boardview = boardview
-        #self.connect("expose_event", self.expose)
+        self.boardview = boardview        
         self.connect("draw", self.expose)
         self.connect("button-press-event", self.press)
         self.props.can_focus = True
@@ -200,13 +196,10 @@ class ScorePlot (Gtk.DrawingArea):
     def press (self, widget, event):
         self.grab_focus()
         self.emit('selected', event.y/self.moveHeight)
-    
-    #def expose (self, widget, event):
+        
     def expose (self, widget, ctx):
         context = widget.get_window().cairo_create()
-        a = widget.get_allocation()
-        #context.rectangle(event.area.x, event.area.y,
-        #                  event.area.width, event.area.height)
+        a = widget.get_allocation()        
         context.rectangle(a.x, a.y,
                           a.width, a.height)
         context.clip()

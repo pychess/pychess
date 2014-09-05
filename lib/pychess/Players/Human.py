@@ -1,6 +1,5 @@
 from Queue import Queue
 
-#import gtk, gobject
 from gi.repository import Gtk, GObject
 
 from pychess.Utils.const import *

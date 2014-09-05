@@ -1,7 +1,6 @@
 from threading import Thread
 import Queue
 
-#from gobject import GObject, SIGNAL_RUN_FIRST
 from gi.repository import GObject
 
 import glock
@@ -72,13 +71,10 @@ class EmitPublisher (Publisher):
             parrent.emit(signal, v)       
         Publisher.__init__(self, emitter, threadname, sendPolicy)       
 
-#class GtkWorker (GObject, Thread):
 class GtkWorker (GObject.GObject, Thread):
     
     __gsignals__ = {
         #"progressed": (SIGNAL_RUN_FIRST, None, (float,)),
-        #"published":  (SIGNAL_RUN_FIRST, None, (object,)),
-        #"done":       (SIGNAL_RUN_FIRST, None, (object,))
         "published":  (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         "done":       (GObject.SignalFlags.RUN_FIRST, None, (object,))
     }
@@ -124,9 +120,7 @@ class GtkWorker (GObject.GObject, Thread):
         self.handler_ids[handler_id] = signal
         return handler_id
     
-    def connect (self, detailed_signal, handler, *args):
-        #return self._mul_connect (GObject.connect,
-        #        detailed_signal, handler, *args)
+    def connect (self, detailed_signal, handler, *args):        
         return self._mul_connect (GObject.GObject.connect,
                 detailed_signal, handler, *args)
     def connect_after (self, detailed_signal, handler, *args):

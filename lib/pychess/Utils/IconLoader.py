@@ -1,8 +1,6 @@
-#from gtk import icon_theme_get_default, ICON_LOOKUP_USE_BUILTIN
 from gi.repository import Gtk
 from pychess.System.Log import log
 
-#it = icon_theme_get_default()
 it = Gtk.IconTheme.get_default()
 def load_icon(size, *alternatives):
     alternatives = list(alternatives)

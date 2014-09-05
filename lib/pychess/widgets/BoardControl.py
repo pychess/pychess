@@ -1,10 +1,7 @@
 # -*- coding: UTF-8 -*-
 
-#import gtk, Gtk.gdk
 from gi.repository import Gtk
 from gi.repository import Gdk
-
-#from gobject import *
 from gi.repository import GObject
 
 import threading
@@ -23,12 +20,8 @@ from PromotionDialog import PromotionDialog
 from BoardView import BoardView, rect
 from BoardView import join
 
-class BoardControl (Gtk.EventBox):
-    
-    #__gsignals__ = {
-    #    'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int)),
-    #    'action' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object))
-    #}
+class BoardControl (Gtk.EventBox):    
+
     __gsignals__ = {
         'piece_moved' : (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
         'action' : (GObject.SignalFlags.RUN_FIRST, None, (str, object))

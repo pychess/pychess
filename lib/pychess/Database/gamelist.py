@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-#import gtk, gobject
 from gi.repository import Gtk, GObject
 
 from sqlalchemy import select, func, and_, or_

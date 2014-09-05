@@ -1,6 +1,5 @@
 from __future__ import with_statement
 
-#import gtk, gobject
 from gi.repository import Gtk, GObject
 from gi.repository import Gdk
 

@@ -10,9 +10,6 @@ import subprocess
 import urllib 
 from urlparse import urlparse
 
-#import gobject, gtk
-#from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
-#from Gtk.gdk import keyval_from_name
 from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GObject
@@ -359,8 +356,7 @@ class PyChess:
         uistuff.keepWindowSize("main", widgets["window1"], (575,479), POSITION_GOLDEN)
         widgets["window1"].show()
         widgets["Background"].show_all()
-        
-        #flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
+                
         flags = Gtk.DestDefaults.MOTION | Gtk.DestDefaults.HIGHLIGHT | Gtk.DestDefaults.DROP
         # To get drag in the whole window, we add it to the menu and the
         # background. If it can be gotten to work, the drag_dest_set_proxy

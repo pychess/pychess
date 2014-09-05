@@ -2,7 +2,6 @@ from time import strftime, gmtime, localtime
 import random
 
 from gi.repository import Gtk
-#from Gtk.gdk import keyval_from_name
 from gi.repository import Pango
 from gi.repository import GObject
 
@@ -62,8 +61,7 @@ class ChatView (Gtk.VPaned):
         def callback (widget, ctx):
             widget.disconnect(handle_id)
             allocation = widget.get_allocation()
-            self.set_position(int(max(0.70*allocation.height, allocation.height-60)))
-        #handle_id = self.connect("expose-event", callback)
+            self.set_position(int(max(0.70*allocation.height, allocation.height-60)))        
         handle_id = self.connect("draw", callback)
         
         self.writeView.connect("key-press-event", self.onKeyPress)

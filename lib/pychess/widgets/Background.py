@@ -3,20 +3,17 @@ from os import path
 from gi.repository import Gtk
 from gi.repository import Gdk
 import cairo
-#from gi.repository import cairo
 
 from pychess.System.prefix import addDataPrefix, addUserCachePrefix
 
 CLEARPATH = addDataPrefix("glade/clear.png")
 surface = None
 
-def giveBackground (widget):
-    #widget.connect("expose_event", expose)
+def giveBackground (widget):    
     widget.connect("draw", expose)
     widget.connect("style-set", newtheme)
 
-def expose (widget, context):
-    #cr = widget.window.cairo_create()
+def expose (widget, context):    
     cr = widget.get_window().cairo_create()
 
     x = widget.get_allocation().x

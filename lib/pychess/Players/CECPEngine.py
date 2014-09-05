@@ -3,7 +3,7 @@ import Queue
 import itertools
 import re
 import time
-#import gtk, gobject
+
 from gi.repository import Gtk
 from gi.repository import GObject
 

@@ -11,8 +11,6 @@
 
 ###############################################################################
 # Set up important things
-#import glib, gobject
-#import glib
 from gi.repository import GLib
 from gi.repository import GObject
 GObject.threads_init()

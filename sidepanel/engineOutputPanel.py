@@ -3,7 +3,6 @@
 
 import re
 
-#import gtk, gobject, pango
 from gi.repository import Gtk, GObject, Pango
 
 from pychess.System import uistuff

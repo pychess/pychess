@@ -14,8 +14,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
 
 
-def createCombo (combo, data=[]):
-    #ls = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
+def createCombo (combo, data=[]):    
     ls = Gtk.ListStore(Pixbuf, str)
     for row in data:
         ls.append(row)
@@ -331,8 +330,7 @@ def onceWhenReady(window, func, *args, **kwargs):
 
 def getMonitorBounds():
     screen = Gdk.Screen.get_default()
-    root_window = screen.get_root_window()
-    #mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
+    root_window = screen.get_root_window()    
     ptr_window, mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
     current_monitor_number = screen.get_monitor_at_point(mouse_x,mouse_y)
     monitor_geometry = screen.get_monitor_geometry(current_monitor_number)

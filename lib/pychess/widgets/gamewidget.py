@@ -2,7 +2,7 @@
 """ This module handles the tabbed layout in PyChess """
 
 from gi.repository import GdkPixbuf
-#from gi.repository.GdkPixbuf import Pixbuf
+
 from BoardControl import BoardControl
 from ChessClock import ChessClock
 from MenuItemsDict import MenuItemsDict
@@ -753,14 +753,11 @@ def _ensureReadForGameWidgets ():
     
     for panel in sidePanels:
         hbox = Gtk.HBox()
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(panel.__icon__, 16, 16)
-        #icon = Gtk.image_new_from_pixbuf(pixbuf)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(panel.__icon__, 16, 16)        
         icon = Gtk.Image.new_from_pixbuf(pixbuf) 
         label = Gtk.Label(label=panel.__title__)
         label.set_size_request(0, 0)
-        label.set_alignment(0, 1)
-        #hbox.pack_start(icon, expand=False, fill=False)
-        #hbox.pack_start(label, expand=True, fill=True)
+        label.set_alignment(0, 1)        
         hbox.pack_start(icon, False, False, 0)
         hbox.pack_start(label, True, True, 0)
         hbox.set_spacing(2)

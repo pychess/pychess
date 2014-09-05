@@ -1,9 +1,8 @@
 from math import ceil as float_ceil
 ceil = lambda f: int(float_ceil(f))
 
-#import gtk, cairo
 import cairo
-#from gi.repository import cairo
+
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
@@ -30,8 +29,7 @@ class StarArrowButton (OverlayWindow):
         self.myparent = parent
         self.svgs = (northSvg, eastSvg, southSvg, westSvg, centerSvg)
         self.bgSvg = bgSvg
-        self.size = ()
-        #self.connect_after("expose-event", self.__onExposeEvent)
+        self.size = ()       
         self.connect_after("draw", self.__onExposeEvent)
         self.currentHovered = -1
         

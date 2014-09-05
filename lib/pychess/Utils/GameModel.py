@@ -4,7 +4,7 @@ import traceback
 import cStringIO
 import datetime
 import Queue
-#from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
+
 from gi.repository import GObject
 
 from pychess.Savers.ChessFile import LoadingError
@@ -54,59 +54,7 @@ class GameModel (GObject.GObject, Thread):
     
     """ GameModel contains all available data on a chessgame.
         It also has the task of controlling players actions and moves """
-    """
-    __gsignals__ = {
-        # game_started is emitted when control is given to the players for the
-        # first time. Notice this is after players.start has been called.
-        "game_started":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        # game_changed is emitted when a move has been made.
-        "game_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        # moves_undoig is emitted when a undoMoves call has been accepted, but
-        # before anywork has been done to execute it.
-        "moves_undoing": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-        # moves_undone is emitted after n moves have been undone in the
-        # gamemodel and the players.
-        "moves_undone":  (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-        # game_unended is emitted if moves have been undone, such that the game
-        # which had previously ended, is now again active.
-        "game_unended":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        # game_loading is emitted if the GameModel is about to load in a chess
-        # game from a file. 
-        "game_loading":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        # game_loaded is emitted after the chessformat handler has loaded in
-        # all the moves from a file to the game model.
-        "game_loaded":   (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        # game_saved is emitted in the end of model.save()
-        "game_saved":    (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        # game_ended is emitted if the models state has been changed to an
-        # "ended state"
-        "game_ended":    (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-        # game_terminated is emitted if the game was terminated. That is all
-        # players and clocks were stopped, and it is no longer possible to
-        # resume the game, even by undo.
-        "game_terminated":    (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        # game_paused is emitted if the game was successfully paused.
-        "game_paused":   (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        # game_paused is emitted if the game was successfully resumed from a
-        # pause.
-        "game_resumed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        # action_error is currently only emitted by ICGameModel, in the case
-        # the "web model" didn't accept the action you were trying to do.
-        "action_error":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int)),
-        # players_changed is emitted if the players list was changed.
-        "players_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "analyzer_added": (SIGNAL_RUN_FIRST, None, (object, str)),
-        "analyzer_removed": (SIGNAL_RUN_FIRST, None, (object, str)),
-        "analyzer_paused": (SIGNAL_RUN_FIRST, None, (object, str)),
-        "analyzer_resumed": (SIGNAL_RUN_FIRST, None, (object, str)),
-        # opening_changed is emitted if the move changed the opening.
-        "opening_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        # variations_changed is emitted if a variation was added/deleted.
-        "variations_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        # scores_changed is emitted if the analyzing scores was changed.
-        "analysis_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-    }
-    """
+
     __gsignals__ = {
         # game_started is emitted when control is given to the players for the
         # first time. Notice this is after players.start has been called.
@@ -159,8 +107,7 @@ class GameModel (GObject.GObject, Thread):
         "analysis_changed":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
     }
     
-    def __init__ (self, timemodel=None, variant=NormalChess):
-        #GObject.__init__(self)
+    def __init__ (self, timemodel=None, variant=NormalChess):        
         GObject.GObject.__init__(self)
         Thread.__init__(self, name=fident(self.run))
         self.daemon = True
