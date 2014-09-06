@@ -101,7 +101,7 @@ class Sidepanel:
             if gotBlackEngine:
                 if not self.output_black in self.box.get_children():
                     if gotWhiteEngine:
-                        self.box.pack_start(self.output_separator, False)
+                        self.box.pack_start(self.output_separator, False, True, 0)
                         self.output_separator.show()
                     self.box.pack_start(self.output_black, True, True, 0)
                     self.output_black.clear()
