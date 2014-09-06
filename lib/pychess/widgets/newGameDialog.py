@@ -5,8 +5,11 @@ from cStringIO import StringIO
 from operator import attrgetter
 from itertools import groupby
 
+from gi.repository import GObject
+from gi.repository import Gdk
 from gi.repository import Gtk
-import cairo
+
+from cairo import ImageSurface
 
 from gi.repository import GtkSource
 from gi.repository import GdkPixbuf
@@ -468,8 +471,8 @@ class EnterNotationExtension (_GameInitializationMode):
         cls.widgets["imageButtonDock"].add(cls.ib)
         cls.ib.show()
 
-        cls.sourcebuffer = SourceBuffer()
-        sourceview = SourceView(cls.sourcebuffer)
+        cls.sourcebuffer = GtkSource.Buffer()
+        sourceview = GtkSource.View.new_with_buffer(cls.sourcebuffer)
         sourceview.set_tooltip_text(
             _("Type or paste PGN game or FEN positions here"))
         cls.widgets["scrolledwindow6"].add(sourceview)
@@ -479,7 +482,7 @@ class EnterNotationExtension (_GameInitializationMode):
         sourceview.set_insert_spaces_instead_of_tabs(True)
         sourceview.set_wrap_mode(Gtk.WrapMode.WORD)
 
-        man = LanguageManager()
+        man = GtkSource.LanguageManager()
         # Init new version
         if hasattr(man.props, 'search_path'):
             path = os.path.join(getDataPrefix(),"gtksourceview-1.0/language-specs")
@@ -515,7 +518,7 @@ class EnterNotationExtension (_GameInitializationMode):
 
         def _get_text():
             text = cls.sourcebuffer.get_text(
-                cls.sourcebuffer.get_start_iter(), cls.sourcebuffer.get_end_iter())
+                cls.sourcebuffer.get_start_iter(), cls.sourcebuffer.get_end_iter(), False)
 
             # Test if the ImageButton has two layers and is set on the local language
             if len(cls.ib.surfaces) == 2 and cls.ib.current == 0:
@@ -565,7 +568,7 @@ class ImageButton(Gtk.DrawingArea):
         GObject.GObject.__init__(self)
         self.set_events(Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON_PRESS_MASK)
 
-        self.connect("expose-event", self.draw)
+        self.connect("draw", self.draw)
         self.connect("button_press_event", self.buttonPress)
 
         self.surfaces = [ImageSurface.create_from_png(path) for path in imagePaths]
@@ -575,10 +578,7 @@ class ImageButton(Gtk.DrawingArea):
         self.size = (0, 0, width, height)
         self.set_size_request(width, height)
 
-    def draw (self, self_, event):
-        context = self.window.cairo_create()
-        context.rectangle (event.area.x, event.area.y,
-                            event.area.width, event.area.height)
+    def draw (self, self_, context):       
         context.set_source_surface(self.surfaces[self.current], 0, 0)
         context.fill()
 
