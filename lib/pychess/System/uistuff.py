@@ -85,8 +85,8 @@ def keepDown (scrolledWindow):
     scrolledWindow.get_vadjustment().connect("changed", changed)
         
     def value_changed (vadjust):
-        vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
-                vadjust.upper) < vadjust.step_increment
+        vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() - \
+                vadjust.get_upper()) < vadjust.get_step_increment()
     scrolledWindow.get_vadjustment().connect("value-changed", value_changed)
 
 
