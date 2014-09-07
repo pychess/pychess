@@ -43,6 +43,9 @@ class LBoard:
         # The high level owner Board (with Piece objects) in gamemodel
         self.pieceBoard = None
         
+        # This will True except in so called null_board
+        # null_board act as parent of the variation
+        # when we add a variation to last played board from hint panel
         self.fen_was_applied = False
         
     @property
