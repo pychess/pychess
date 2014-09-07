@@ -106,6 +106,7 @@ def game_ended (gamemodel, reason, gmwidg):
     content = InfoBar.get_message_content(m1, m2, gtk.STOCK_DIALOG_INFO)
     message = InfoBarMessage(gtk.MESSAGE_INFO, content, None)
 
+    callback = None
     if isinstance(gamemodel, ICGameModel):
         if gamemodel.hasLocalPlayer():
             def status_changed (player, prop, message):
@@ -139,9 +140,6 @@ def game_ended (gamemodel, reason, gmwidg):
                 gmwidg.cids[p] = p.connect("notify::status", status_changed, b)
                 status_changed(p, None, b)
 
-    elif gamemodel.isLoadedGame():
-        callback = None
-
     elif gamemodel.hasLocalPlayer():
         def callback (infobar, response, message):
             if response == 1:
@@ -157,7 +155,8 @@ def game_ended (gamemodel, reason, gmwidg):
                     gamemodel.players[0].emit("offer", offer)
                 else: gamemodel.players[1].emit("offer", offer)
             return False
-        message.add_button(InfoBarMessageButton(_("Play Rematch"), 1))
+        if not gamemodel.isLoadedGame():
+            message.add_button(InfoBarMessageButton(_("Play Rematch"), 1))
         if gamemodel.status in UNDOABLE_STATES and gamemodel.reason in UNDOABLE_REASONS:
             if gamemodel.ply == 1:
                 message.add_button(InfoBarMessageButton(_("Undo one move"), 2))
