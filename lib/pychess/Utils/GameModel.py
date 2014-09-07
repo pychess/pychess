@@ -100,8 +100,10 @@ class GameModel (GObject, Thread):
         "analyzer_resumed": (SIGNAL_RUN_FIRST, None, (object, str)),
         # opening_changed is emitted if the move changed the opening.
         "opening_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        # variations_changed is emitted if a variation was added/deleted.
-        "variations_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        # variation_added is emitted if a variation was added.
+        "variation_added":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object,object)),
+        # variation_extended is emitted if a new move was added to a variation.
+        "variation_extended":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object,object)),
         # scores_changed is emitted if the analyzing scores was changed.
         "analysis_changed":  (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
     }
@@ -845,7 +847,7 @@ class GameModel (GObject, Thread):
         variation[0] = board0
         self.variations.append(head[:board0.ply-self.lowply] + variation)
         self.needsSave = True
-        self.emit("variations_changed")
+        self.emit("variation_added", board0.board.next.children[-1], board0.board.next)
         return self.variations[-1]
 
     def add_move2variation(self, board, move, variationIdx):
@@ -869,4 +871,4 @@ class GameModel (GObject, Thread):
         
         self.variations[variationIdx].append(new)
         self.needsSave = True
-        self.emit("variations_changed")
+        self.emit("variation_extended", board.board, new.board)
