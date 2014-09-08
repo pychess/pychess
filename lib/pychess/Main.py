@@ -61,7 +61,7 @@ recentManager = Gtk.RecentManager.get_default()
 class GladeHandlers:
     
     def on_window_key_press (window, event):
-        log.debug('on_window_key_press: %s %s' % (window.title, event))
+        log.debug('on_window_key_press: %s %s' % (window.get_title(), event))
         # Tabbing related shortcuts
         if not gamewidget.getheadbook():
             pagecount = 0
