@@ -159,10 +159,10 @@ class TextImageTree (Gtk.TreeView):
         if path_col_pos and path_col_pos[1] == self.rightcol:
             self.window.set_cursor(self.linkcursor)
         else:
-            self.window.set_cursor(self.stdcursor)
+            self.get_window().set_cursor(self.stdcursor)
     
     def leave_notify (self, widget, event):
-        self.window.set_cursor(self.stdcursor)
+        self.get_window().set_cursor(self.stdcursor)
     
     def selection_changed (self, selection):
         model, iter = selection.get_selected()
@@ -264,7 +264,7 @@ class ViewsPanel (Gtk.Notebook, Panel):
     
     def addPage (self, widget, id):
         self.id2Widget[id] = widget
-        self.append_page(widget)
+        self.append_page(widget, None)
         widget.show_all()
     
     def removePage (self, id):
@@ -472,14 +472,14 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.joinedList.connect("selected", self.onSelect)
         vbox.pack_start(self.joinedList, True, True, 0)
         
-        expander = Gtk.Expander(_("More channels"))
+        expander = Gtk.Expander.new(_("More channels"))
         vbox.pack_start(expander, False, True, 0)
         self.channelsList = TextImageTree("gtk-add")
         self.channelsList.connect("activated", self.onAdd)
         self.channelsList.fixed_height_mode = True
         expander.add(self.channelsList)
         
-        expander = Gtk.Expander(_("More players"))
+        expander = Gtk.Expander.new(_("More players"))
         vbox.pack_start(expander, False, True, 0)
         self.playersList = TextImageTree("gtk-add")
         self.playersList.connect("activated", self.onAdd)

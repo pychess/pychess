@@ -60,11 +60,12 @@ class SpotGraph (Gtk.EventBox):
     ############################################################################
     
     def redraw_canvas(self, rect=None):
-        if self.window:
+        if self.get_window():
             if not rect:
                 alloc = self.get_allocation()
-                rect = (0, 0, alloc.width, alloc.height)            
-            rect = Gdk.Rectangle(*map(int,rect))
+                r = (0, 0, alloc.width, alloc.height)            
+            rect = Gdk.Rectangle()
+            rect.x, rect.y, rect.width, rect.height = r
             self.window.invalidate_rect(rect, True)
             self.window.process_updates(True)
     
