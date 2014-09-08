@@ -2,7 +2,6 @@
 
 import datetime
 from gi.repository import GObject
-#from gobject import GObject, SIGNAL_RUN_FIRST
 
 from pychess.System.Log import log
 from pychess.Utils.IconLoader import load_icon
@@ -379,10 +378,6 @@ class FICSPlayer (GObject.GObject):
             return 0
         
 class FICSPlayers (GObject.GObject):
-    #__gsignals__ = {
-    #    'FICSPlayerEntered' : (SIGNAL_RUN_FIRST, None, (object,)),
-    #    'FICSPlayerExited' : (SIGNAL_RUN_FIRST, None, (object,))
-    #}
     __gsignals__ = {
         'FICSPlayerEntered' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'FICSPlayerExited' : (GObject.SignalFlags.RUN_FIRST, None, (object,))
@@ -649,13 +644,13 @@ def get_rating_range_display_text (rmin=0, rmax=9999):
     assert type(rmin) is type(int()) and rmin >= 0 and rmin <= 9999, rmin
     assert type(rmax) is type(int()) and rmax >= 0 and rmax <= 9999, rmax
     if rmin > 0:
-        text = "%d" % rmin
+        text = u"%d" % rmin
         if rmax == 9999:
-            text += "↑"
+            text += u"↑"
         else:
-            text += "-%d" % rmax
+            text += u"-%d" % rmax
     elif rmax != 9999:
-        text = "%d↓" % rmax
+        text = u"%d↓" % rmax
     else:
         text = None
     return text
