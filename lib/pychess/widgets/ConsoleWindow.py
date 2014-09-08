@@ -35,7 +35,7 @@ class ConsoleWindow (object):
 
         # scroll to the bottom
         adj = self.consoleView.sw.get_vadjustment()
-        adj.set_value(adj.upper - adj.page_size)
+        adj.set_value(adj.get_upper() - adj.get_page_size())
 
     @staticmethod
     def filter_unprintable(s):
@@ -85,11 +85,11 @@ class ConsoleView (Gtk.VPaned):
         self.pack2(self.writeView, resize=True, shrink=True)
         
         # Forces are reasonable position for the panner.
-        def callback (widget, event):
+        def callback (widget, context):
             widget.disconnect(handle_id)
             allocation = widget.get_allocation()
             self.set_position(int(max(0.79*allocation.height, allocation.height-60)))
-        handle_id = self.connect("expose-event", callback)
+        handle_id = self.connect("draw", callback)
         
         self.writeView.connect("key-press-event", self.onKeyPress)
 
