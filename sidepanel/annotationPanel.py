@@ -22,6 +22,23 @@ __icon__ = addDataPrefix("glade/panel_annotation.svg")
 __desc__ = _("Annotated game")
 
 
+"""
+We are maintaining a list of nodes to help manipulate the textbuffer.
+Node can represent a move, comment or variation (start/end) marker.
+Nodes are dicts with keys like:
+board  = in move node it's the lboard of move 
+         in comment node it's the lboard where the comment belongs to
+         in end variation marker node it's the first lboard of the variation
+         in start variation marker is's None
+start  = the beginning offest of the node in the textbuffer
+end    = the ending offest of the node in the textbuffer
+parent = the parent lboard if the node is a move in a variation, otherwise None 
+vari   = in end variation node it's the start variation marker node
+         in start variation node it's None
+level  = depth in variation tree (0 for mainline nodes, 1 for first level variation moves, etc.)
+index  = in comment nodes the index of comment if more exist for a move
+"""
+
 class Sidepanel(gtk.TextView):
     def __init__(self):
         gtk.TextView.__init__(self)
@@ -125,32 +142,26 @@ class Sidepanel(gtk.TextView):
         return __widget__
 
     def tag_event_handler(self, tag, widget, event, iter):
-        char_index = iter.get_offset()
+        """ Calls variation remover when clicking on remove marker """
+        
         tag_name = tag.get_property("name")
         if event.type == gtk.gdk.BUTTON_PRESS and tag_name == "remove-variation":
-            while True:
-                iter.backward_char()
-                if not iter.get_char() in (u"✖", "]", ")", "\n", " "):
-                    break
-                
             offset = iter.get_offset()
             node = None
             for n in self.nodelist:
                 if offset >= n["start"] and offset < n["end"]:
                     node = n
-                    board = node["board"]
                     break
             if node is None:
                 return
                 
-            for vari in self.gamemodel.variations[1:]:
-                if board.pieceBoard in vari:
-                    self.remove_variation(board, node["parent"], vari)
-                    break
+            self.remove_variation(node)
 
         return False
         
     def motion_notify_event(self, widget, event):
+        """ Handles mouse cursor changes (standard/hand) """
+        
         if (event.is_hint):
             (x, y, state) = event.window.get_pointer()
         else:
@@ -166,13 +177,15 @@ class Sidepanel(gtk.TextView):
         it = self.textview.get_iter_at_location(x, y)
         offset = it.get_offset()
         for node in self.nodelist:
-            if offset >= node["start"] and offset < node["end"]:
+            if offset >= node["start"] and offset < node["end"] and not "vari" in node:
                 event.window.set_cursor(self.cursor_hand)
                 return True
         event.window.set_cursor(self.cursor_standard)
         return True
 
     def button_press_event(self, widget, event):
+        """ Calls setShownBoard() or edit_comment() on mouse click, or pops-up local menu """
+        
         (wx, wy) = event.get_coords()
         (x, y) = self.textview.window_to_buffer_coords(gtk.TEXT_WINDOW_WIDGET, int(wx), int(wy))
         it = self.textview.get_iter_at_location(x, y)
@@ -187,14 +200,18 @@ class Sidepanel(gtk.TextView):
         
         if node is None:
             return True
-            
+        
+        # left mouse click
         if event.button == 1:
-            if "comment" in node:
+            if "vari" in node:
+                # tag_event_handler() will handle 
+                return True
+            elif "comment" in node:
                 self.edit_comment(board=board, index=node["index"])
             else:
                 self.boardview.setShownBoard(board.pieceBoard)
-                self.update_selected_node()
 
+        # local menu on right mouse click
         elif event.button == 3:
             if node is not None:
                 menu = gtk.Menu()
@@ -348,10 +365,27 @@ class Sidepanel(gtk.TextView):
             self.update_node(board)
             self.gamemodel.needsSave = True
 
-    def remove_variation(self, board, parent, vari):
-        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
-        in_vari = shown_board in vari
+    def print_node(self, node):
+        """ Just a debug helper """
         
+        if "vari" in node:
+            if node["board"] is None:
+                text = "["
+            else:
+                text = "]"
+        elif "comment" in node:
+            text = node["comment"]
+        else:
+            text = self.__movestr(node["board"])
+        return text
+        
+    def remove_variation(self, node):
+        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
+        # TODO
+        in_vari = True #shown_board in vari
+        
+        board = node["board"]
+        parent = node["parent"]
         # Set new shown board if needed
         if in_vari:
             if parent.pieceBoard is None:
@@ -371,23 +405,33 @@ class Sidepanel(gtk.TextView):
             if board.pieceBoard in vari:
                 self.gamemodel.variations.remove(vari)
 
-        # Set new shownVariationIdx
-        if parent.pieceBoard is None:
-            self.boardview.shownVariationIdx = 0
-        else:
-            for vari in self.gamemodel.variations:
-                if in_vari:
-                    if parent.pieceBoard in vari:
-                        self.boardview.shownVariationIdx = self.gamemodel.variations.index(vari)
-                        break
-                else:
-                    if shown_board in vari:
-                        self.boardview.shownVariationIdx = self.gamemodel.variations.index(vari)
-                        break
-        self.update()
+        last_node = self.nodelist[-1] == node
+
+        startnode = node["vari"]
+        start = startnode["start"]
+        end = node["end"]
+
+        need_delete = []
+        for n in self.nodelist[self.nodelist.index(startnode):]:
+            if n["start"] < end:
+                need_delete.append(n)
+
+        if not last_node:
+            diff = end - start
+            for n in self.nodelist[self.nodelist.index(node)+1:]:
+                n["start"] -= diff
+                n["end"] -= diff
+
+        for n in need_delete:
+            self.nodelist.remove(n)
+
+        start_iter = self.textbuffer.get_iter_at_offset(start)
+        end_iter = self.textbuffer.get_iter_at_offset(end)
+        self.textbuffer.delete(start_iter, end_iter)
+
         self.gamemodel.needsSave = True
 
-    def variation_start(self, iter, level):
+    def variation_start(self, iter, index, level):
         start = iter.get_offset()
         self.textbuffer.insert(iter, "\n")
         if level == 0:
@@ -396,20 +440,44 @@ class Sidepanel(gtk.TextView):
             self.textbuffer.insert_with_tags_by_name(iter, "(", "variation-even", "variation-margin1")
         else:
             self.textbuffer.insert_with_tags_by_name(iter, "(", "variation-uneven", "variation-margin2")
-        return iter.get_offset() - start
+
+        node = {}
+        node["board"] = None
+        node["vari"] = None
+        node["start"] = start
+        node["end"] =  iter.get_offset()
         
-    def variation_end(self, iter, level):
+        if index == -1:
+            self.nodelist.append(node)
+        else:
+            self.nodelist.insert(index, node)
+
+        return (iter.get_offset() - start, node)
+        
+    def variation_end(self, iter, index, level, firstboard, parent, opening_node):
         start = iter.get_offset()
         if level == 0:
             self.textbuffer.insert_with_tags_by_name(iter, "]", "variation-toplevel", "variation-margin0")
-            self.textbuffer.insert_with_tags_by_name(iter, u"✖ ", "remove-variation")
         elif (level+1) % 2 == 0:
             self.textbuffer.insert_with_tags_by_name(iter, ")", "variation-even", "variation-margin1")
-            self.textbuffer.insert_with_tags_by_name(iter, u"✖ ", "remove-variation")
         else:
             self.textbuffer.insert_with_tags_by_name(iter, ")", "variation-uneven", "variation-margin2")
-            self.textbuffer.insert_with_tags_by_name(iter, u"✖ ", "remove-variation")
+
+        self.textbuffer.insert_with_tags_by_name(iter, u"✖ ", "remove-variation")
         self.textbuffer.insert(iter, "\n")
+
+        node = {}
+        node["board"] = firstboard
+        node["parent"] = parent
+        node["vari"] = opening_node
+        node["start"] = start
+        node["end"] =  iter.get_offset()
+
+        if index == -1:
+            self.nodelist.append(node)
+        else:
+            self.nodelist.insert(index, node)
+
         return iter.get_offset() - start
 
     def update_node(self, board):
@@ -502,30 +570,25 @@ class Sidepanel(gtk.TextView):
                 break
         
         if node is None:
-            next_node_index = -1
+            next_node_index = len(self.nodelist)
             end = self.textbuffer.get_end_iter()
             level = 0
-        elif node == self.nodelist[-1]:
-            next_node_index = -1
-            level = node["level"]
         else:
             next_node_index = self.nodelist.index(node) + 1
             level = node["level"]
 
-        diff = 0
-
-        diff += self.variation_start(end, level)
+        diff, opening_node = self.variation_start(end, next_node_index, level)
 
         for i, board in enumerate(boards):
             if board.prev is None:
                 continue
-            inserted_node = self.insert_node(board, end, next_node_index+i-1, level+1, parent)
+            inserted_node = self.insert_node(board, end, next_node_index+i, level+1, parent)
             diff += inserted_node["end"] - inserted_node["start"]
 
-        diff += self.variation_end(end, level)
+        diff += self.variation_end(end, next_node_index + len(boards), level, boards[0], parent, opening_node)
 
         if next_node_index > 0:
-            for node in self.nodelist[next_node_index + len(boards)-1:]:
+            for node in self.nodelist[next_node_index + len(boards)+1:]:
                 node["start"] += diff
                 node["end"] += diff
 
@@ -533,6 +596,8 @@ class Sidepanel(gtk.TextView):
         self.gamemodel.needsSave = True
 
     def colorize_node(self, ply, start, end):
+        """ Update the node color """
+
         self.textbuffer.remove_tag_by_name("emt", start, end)
         self.textbuffer.remove_tag_by_name("scored5", start, end)
         self.textbuffer.remove_tag_by_name("scored4", start, end)
@@ -561,7 +626,6 @@ class Sidepanel(gtk.TextView):
         else:
             self.textbuffer.apply_tag_by_name("scored0", start, end)
 
-    # Update the score chenged node color
     def analysis_changed(self, gamemodel, ply):
         if not self.boardview.shownIsMainLine():
             return
@@ -605,15 +669,14 @@ class Sidepanel(gtk.TextView):
             self.textbuffer.insert_with_tags_by_name(end, emt_eval, "emt")
 
             if next_node is not None:
-                if next_node["level"] == 1:
-                    self.textbuffer.insert_with_tags_by_name(end, "\n[", "variation-toplevel", "variation-margin0")
                 diff = end.get_offset() - next_node["start"]
                 for node in self.nodelist[self.nodelist.index(next_node):]:
                     node["start"] += diff
                     node["end"] += diff
                 
-    # Update the selected node highlight
     def update_selected_node(self):
+        """ Update the selected node highlight """
+        
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
         shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
         start = None
@@ -627,8 +690,9 @@ class Sidepanel(gtk.TextView):
         if start:
             self.textview.scroll_to_iter(start, within_margin=0.03)
 
-    # Recursively insert the node tree
     def insert_nodes(self, board, level=0, parent=None, result=None):
+        """ Recursively builds the node tree """
+
         end_iter = self.textbuffer.get_end_iter # Convenience shortcut to the function
 
         while True: 
@@ -667,9 +731,9 @@ class Sidepanel(gtk.TextView):
                     self.insert_comment(child, board, index, parent, level)
                 else:
                     # variation
-                    self.variation_start(end_iter(), level)
+                    diff, opening_node = self.variation_start(end_iter(), -1, level)
                     self.insert_nodes(child[0], level+1, parent=board)
-                    self.variation_end(end_iter(), level)
+                    self.variation_end(end_iter(), -1, level, child[1], board, opening_node)
             
             if board.next:
                 board = board.next
@@ -778,8 +842,9 @@ class Sidepanel(gtk.TextView):
 
         self.textbuffer.insert(end_iter(), "\n\n")
 
-    # Update the entire notation tree
     def update(self, *args):
+        """ Update the entire notation tree """
+
         self.textbuffer.set_text('')
         self.nodelist = []
         self.insert_header(self.gamemodel)
