@@ -170,18 +170,13 @@ class BoardManager (GObject.GObject):
     queuedStyle12s = {}
     
     def __init__ (self, connection):
-        GObject.GObject.__init__(self)
-        
+        GObject.GObject.__init__(self)        
         self.connection = connection
-        
         self.connection.expect_line (self.onStyle12, "<12> (.+)")
-        
         self.connection.expect_line (self.onWasPrivate,
                 "Sorry, game (\d+) is a private game\.")
-        
         self.connection.expect_line (self.tooManySeeks,
                                      "You can only have 3 active seeks.")
-        
         self.connection.expect_line (self.matchDeclined,
                                      "%s declines the match offer." % names)
         
@@ -191,7 +186,14 @@ class BoardManager (GObject.GObject):
             "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
             % (names, names, ratedexp),
             "", "<12> (.+)")
-        
+        # TODO: Trying to precisely match every type of possible response FICS
+        # will throw at us for "Your seek matches..." or "Your seek qualifies
+        # for [player]'s getgame" is error prone and we can never be sure we
+        # even have all of the different types of replies the server will throw
+        # at us. So we should probably make it possible for multi-line
+        # prediction callbacks in VerboseTelnet to put lines the callback isn't
+        # interested in or doesn't handle back onto the input line stack in
+        # VerboseTelnet.TelnetLines
         self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek,
             "Your seek matches one already posted by %s\." % names,
             "",
@@ -202,7 +204,6 @@ class BoardManager (GObject.GObject):
             "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
             % (names, names, ratedexp),
             "", "<12> (.+)")
-        
         self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek2,
             "Your seek matches one already posted by %s\." % names,
             "",
@@ -215,7 +216,6 @@ class BoardManager (GObject.GObject):
             "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
             % (names, names, ratedexp),
             "", "<12> (.+)")
-        
         self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek3,
             "Your seek matches one already posted by %s\." % names,
             "",
@@ -232,7 +232,6 @@ class BoardManager (GObject.GObject):
             "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
             % (names, names, ratedexp),
             "", "<12> (.+)")
-        
         self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek4,
             "Your seek matches one already posted by %s\." % names,
             "",
@@ -273,7 +272,6 @@ class BoardManager (GObject.GObject):
             "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
             % (names, names, ratedexp),
             "", "<12> (.+)")
-
         self.connection.expect_n_lines (self.onPlayGameCreatedFromGetgame,
             "Your seek qualifies for %s's getgame\." % names,
             "",
@@ -284,7 +282,6 @@ class BoardManager (GObject.GObject):
             "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
             % (names, names, ratedexp),
             "", "<12> (.+)")
-
         self.connection.expect_n_lines (self.onPlayGameCreatedFromGetgame2,
             "Your seek qualifies for %s's getgame\." % names,
             "",
@@ -297,24 +294,34 @@ class BoardManager (GObject.GObject):
             "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
             % (names, names, ratedexp),
             "", "<12> (.+)")
+        self.connection.expect_n_lines (self.onPlayGameCreatedFromGetgame3,
+            "Your seek qualifies for %s's getgame\." % names,
+            "",
+            "<sr> ([\d ]+)",
+            "%s Challenge to %s withdrawn\." % \
+            (self.connection.client.lines.line_prefix, names),
+            "",
+            "<pr> ([\d ]+)",
+            "",
+            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
+            % (names, ratings, names, ratings, ratedexp),
+            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
+            % (names, names, ratedexp),
+            "", "<12> (.+)")
 
         self.connection.expect_n_lines (self.onObserveGameCreated,
             "You are now observing game \d+\.",
             "Game (\d+): %s %s %s %s %s [\w/]+ \d+ \d+"
             % (names, ratings, names, ratings, ratedexp))
-        
         self.connection.expect_n_lines (self.onFollowingPlayer,
             "You will now be following %s's games\." % names,
             "You are now observing game \d+\.",
             "Game (\d+): %s %s %s %s %s [\w/]+ \d+ \d+"
             % (names, ratings, names, ratings, ratedexp))
-        
         self.connection.expect_fromto (self.onObserveGameMovesReceived,
             "Movelist for game (\d+):", "{Still in progress} \*")
-        
         self.connection.expect_line (self.onGamePause,
                 "Game (\d+): Game clock (paused|resumed)\.")
-        
         self.connection.expect_line (self.onUnobserveGame,
                 "Removing game (\d+) from observation list\.")
         
@@ -561,6 +568,12 @@ class BoardManager (GObject.GObject):
         self.connection.glm.on_seek_remove(matchlist[4])
         self.onPlayGameCreated(matchlist[6:10])
     onPlayGameCreatedFromGetgame2.BLKCMD = BLKCMD_SEEK
+    
+    def onPlayGameCreatedFromGetgame3 (self, matchlist):
+        self.connection.glm.on_seek_remove(matchlist[2])
+        self.connection.om.onOfferRemove(matchlist[5])
+        self.onPlayGameCreated(matchlist[7:11])
+    onPlayGameCreatedFromGetgame3.BLKCMD = BLKCMD_SEEK
     
     def parseGame (self, matchlist, gameclass, in_progress=False):
         """ 

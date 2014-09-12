@@ -551,6 +551,31 @@ class BoardManagerTests(EmittingTestCase):
         self.runAndAssertEquals("playGameCreated", lines, (game,))
 
     def test9 (self):
+        lines = [BLOCK_START + '538' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek qualifies for opmentor's getgame.",
+                 "",
+                 "<sr> 33",
+                 "fics% Challenge to georgespock withdrawn." ,
+                 "",
+                 "<pr> 6",
+                 "fics%",
+                 "Creating: opmentor (++++) mgatto (1576) unrated lightning 1 0",
+                 "{Game 72 (opmentor vs. mgatto) Creating unrated lightning match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 72 opmentor mgatto -1 1 0 39 39 60000 60000 1 none (0:00.000) none 1 0 0",
+                 "",
+                 "Game 72: A disconnection will be considered a forfeit.",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('mgatto'))
+        opponent = self.connection.players.get(FICSPlayer('opmentor'))
+        game = FICSGame(opponent, me, gameno=72, rated=False,
+            game_type=GAME_TYPES['lightning'], private=False, minutes=1, inc=0,
+            board=FICSBoard(60000, 60000,  fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+
+    def test10 (self):
         """ Make sure observe-game-created messages are caught """
         lines = ["{Game 12 (electricbenj vs. antonymelvin) Creating rated wild/fr match.}",
                  BLOCK_START + '34' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
