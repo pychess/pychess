@@ -90,6 +90,10 @@ class BoardControl (gtk.EventBox):
         return promotion
         
     def emit_move_signal (self, cord0, cord1, promotion=None):
+        # Game end can change cord0 to None while dragging a piece
+        if cord0 is None:
+            return
+            
         color = self.view.model.boards[-1].color
         board = self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
         # Ask player for which piece to promote into. If this move does not
