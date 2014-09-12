@@ -41,7 +41,7 @@ level  = depth in variation tree (0 for mainline nodes, 1 for first level variat
 index  = in comment nodes the index of comment if more exist for a move
 """
 
-class Sidepanel(gtk.TextView):
+class Sidepanel(Gtk.TextView):
     def __init__(self):
         GObject.GObject.__init__(self)
 
