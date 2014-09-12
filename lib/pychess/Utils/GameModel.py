@@ -102,9 +102,9 @@ class GameModel (GObject.GObject, Thread):
         # opening_changed is emitted if the move changed the opening.
         "opening_changed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
         # variation_added is emitted if a variation was added.
-        "variation_added":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object,object)),
+        "variation_added":  (GObject.SignalFlags.RUN_FIRST, None, (object,object)),
         # variation_extended is emitted if a new move was added to a variation.
-        "variation_extended":  (SIGNAL_RUN_FIRST, TYPE_NONE, (object,object)),
+        "variation_extended":  (GObject.SignalFlags.RUN_FIRST, None, (object,object)),
         # scores_changed is emitted if the analyzing scores was changed.
         "analysis_changed":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
     }
