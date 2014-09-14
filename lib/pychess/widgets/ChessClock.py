@@ -7,6 +7,7 @@ from gtk import gdk
 from pychess.System import glock
 from pychess.System.repeat import repeat_sleep
 from pychess.Utils.const import WHITE, BLACK
+import preferencesDialog
 
 
 def formatTime(seconds, clk2pgn=False):
@@ -32,7 +33,7 @@ class ChessClock (gtk.DrawingArea):
         self.names = [_("White"),_("Black")]
         
         self.model = None
-        #self.thread = None
+        self.short_on_time = [False, False]
         
     def expose(self, widget, event):
         context = widget.window.cairo_create()
@@ -177,6 +178,10 @@ class ChessClock (gtk.DrawingArea):
         self.redraw_canvas()
     
     def update(self, wmovecount=-1, bmovecount=-1):
+        if self.model.getPlayerTime(self.model.movingColor) <= 10 and not self.short_on_time[self.model.movingColor]:
+            self.short_on_time[self.model.movingColor] = True
+            preferencesDialog.SoundTab.playAction("shortOnTime")
+
         if self.model.paused and wmovecount == -1 and bmovecount == -1:
             return not self.model.ended
         wt = formatTime (self.model.getPlayerTime(WHITE, wmovecount))

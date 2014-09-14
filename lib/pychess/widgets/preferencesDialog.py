@@ -257,6 +257,8 @@ if not conf.hasKey("sounduri7"):
     conf.set("sounduri7", "file://"+addDataPrefix("sounds/obs_mov.ogg"))
 if not conf.hasKey("sounduri8"):
     conf.set("sounduri8", "file://"+addDataPrefix("sounds/obs_end.ogg"))
+if not conf.hasKey("sounduri9"):
+    conf.set("sounduri9", "file://"+addDataPrefix("sounds/alarm.ogg"))
 
 class SoundTab:
     
@@ -274,7 +276,8 @@ class SoundTab:
         "gameIsLost": 5,
         "gameIsDrawn": 6,
         "observedMoves": 7,
-        "oberservedEnds": 8
+        "oberservedEnds": 8,
+        "shortOnTime": 9,
     }
     
     _player = None
