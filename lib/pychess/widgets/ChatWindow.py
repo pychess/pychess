@@ -23,8 +23,8 @@ class BulletCellRenderer (Gtk.CellRenderer):
         "color": (object, "Color", "Color", GObject.PARAM_READWRITE),
     }
     
-    def __init__(self):
-        self.__gobject_init__()     
+    def __init__(self):        
+        GObject.GObject.__init__(self)
         self.color = None
         self.width = 16
         self.height = 16
@@ -307,7 +307,7 @@ class InfoPanel (Gtk.Notebook, Panel):
     
     def addPage (self, widget, id):
         self.id2Widget[id] = widget
-        self.append_page(widget)
+        self.append_page(widget, None)
         widget.show_all()
     
     def removePage (self, id):

@@ -1024,7 +1024,7 @@ class GameTabSection (ParrentListSection):
     def on_query_tooltip (self, widget, x, y, keyboard_tip, tooltip):
         if not widget.get_tooltip_context(x, y, keyboard_tip):
             return False
-        model, path, iter = widget.get_tooltip_context(x, y, keyboard_tip)
+        bool, wx, wy, model, path, iter = widget.get_tooltip_context(x, y, keyboard_tip)
         bin_x, bin_y = widget.convert_widget_to_bin_window_coords(x, y)
         result = widget.get_path_at_pos(bin_x, bin_y)
         
