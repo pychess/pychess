@@ -1,4 +1,5 @@
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import GObject
 from gi.repository import Pango
 
@@ -110,7 +111,7 @@ class ConsoleView (Gtk.VPaned):
             glock.release()
    
     def onKeyPress (self, widget, event):
-        if event.keyval in map(keyval_from_name,("Return", "KP_Enter")):
+        if event.keyval in map(Gdk.keyval_from_name,("Return", "KP_Enter")):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
                 self.connection.client.run_command(buffer.props.text)
@@ -151,7 +152,7 @@ class ConsoleView (Gtk.VPaned):
                 self.pos = len(self.history)
                 return True
 
-        elif event.keyval == keyval_from_name("Up"):
+        elif event.keyval == Gdk.keyval_from_name("Up"):
             if self.pos > 0:
                 buffer = self.writeView.get_buffer()
                 self.pos -= 1
@@ -159,7 +160,7 @@ class ConsoleView (Gtk.VPaned):
             widget.grab_focus()
             return True
 
-        elif event.keyval == keyval_from_name("Down"):
+        elif event.keyval == Gdk.keyval_from_name("Down"):
             buffer = self.writeView.get_buffer()
             if self.pos == len(self.history)-1:
                 self.pos += 1
