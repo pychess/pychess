@@ -30,16 +30,12 @@ def expose (widget, context):
     cr.fill()
 
 def newtheme (widget, oldstyle):
-    global surface 
-
-    # FIXME   
-    """    
-    #lnewcolor = widget.get_style().bg[Gtk.StateType.NORMAL]
-    context = widget.get_style_context()
-    lnewcolor = context.get_background_color(Gtk.StateType.NORMAL)
-
-    #dnewcolor = widget.get_style().dark[Gtk.StateType.NORMAL]
-    dnewcolor = context.get_dark_color(Gtk.StateType.NORMAL)
+    global surface  
+    
+    sc = widget.get_style_context()
+    bool1, lnewcolor = sc.lookup_color("bg_color")    
+    bool1, dnewcolor = sc.lookup_color("dark_color")
+  
     if oldstyle:
         loldcolor = oldstyle.bg[Gtk.StateType.NORMAL]
         doldcolor = oldstyle.dark[Gtk.StateType.NORMAL]
@@ -49,26 +45,12 @@ def newtheme (widget, oldstyle):
            dnewcolor.red   == doldcolor.red and \
            dnewcolor.green == doldcolor.green and \
            dnewcolor.blue  == doldcolor.blue:
-            return
-    
+            return    
+  
     colors = [
-        lnewcolor.red/256, lnewcolor.green/256, lnewcolor.blue/256,
-        dnewcolor.red/256, dnewcolor.green/256, dnewcolor.blue/256
+        int(lnewcolor.red * 255), int(lnewcolor.green * 255), int(lnewcolor.blue * 255),
+        int(dnewcolor.red * 255), int(dnewcolor.green * 255), int(dnewcolor.blue * 255)
     ]
-    """
-
-    lnewcolor = Gdk.Color(237, 237, 237)
-    dnewcolor = Gdk.Color(166, 166, 166)
-
-    colors = [
-        lnewcolor.red/256, lnewcolor.green/256, lnewcolor.blue/256,
-        dnewcolor.red/256, dnewcolor.green/256, dnewcolor.blue/256
-    ]
-   
-    #colors = [
-    #    0.929, 0.929, 0.929,
-    #    0.651, 0.651, 0.651
-    #]
 
     # Check if a cache has been saved
     temppng = addUserCachePrefix("temp.png")
@@ -86,12 +68,12 @@ def newtheme (widget, oldstyle):
     surface = cairo.ImageSurface(cairo.FORMAT_RGB24,
             imgsurface.get_width(), imgsurface.get_height())
     ctx = cairo.Context (surface)
-    if lnewcolor.blue-dnewcolor.blue > 0:
-        a = dnewcolor.red/(3*(lnewcolor.blue-dnewcolor.blue)*(1-AVGALPHA))
+    if lnewcolor.blue*65535 - dnewcolor.blue*65535 > 0:
+        a = dnewcolor.red*65535/(3*(lnewcolor.blue*65535 - dnewcolor.blue*65535)*(1-AVGALPHA))
         ctx.set_source_rgb(
-            lnewcolor.red/65535./2  + dnewcolor.red/65535.*a/2,
-            lnewcolor.green/65535./2 + dnewcolor.green/65535.*a/2,
-            lnewcolor.blue/65535./2  + dnewcolor.blue/65535.*a/2)
+            lnewcolor.red/2  + dnewcolor.red*a/2,
+            lnewcolor.green/2 + dnewcolor.green*a/2,
+            lnewcolor.blue/2  + dnewcolor.blue*a/2)
         ctx.paint()
     ctx.set_source_surface(imgsurface, 0, 0)
     ctx.paint_with_alpha(.8)

@@ -321,6 +321,22 @@ class PyChess:
         #Gtk.about_dialog_set_url_hook(self.website)
         widgets = uistuff.GladeWidgets("PyChess.glade")       
         widgets.getGlade().connect_signals(GladeHandlers.__dict__)
+
+        # FIXME - need to set colors from gtk3 theme
+        # set colors
+        #settings = Gtk.Settings.get_default()
+        #log.info("Theme Name: '%s'" % settings.props.gtk_theme_name)
+        sc = widgets["window1"].get_style_context()        
+        #theme_bg_color = sc.lookup_color("theme_bg_color")
+        #bg_color = sc.lookup_color("bg_color")
+        # hard code colors for now
+        data = "@define-color bg_color #ededed; \
+                @define-color light_color #ffffff; \
+                @define-color dark_color #a6a6a6;"
+        provider = Gtk.CssProvider.new()
+        provider.load_from_data(data)
+        sc.add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)        
+     
         tasker = TaskerManager()
         tasker.packTaskers (NewGameTasker(), InternetGameTasker())
         widgets["Background"].add(tasker)

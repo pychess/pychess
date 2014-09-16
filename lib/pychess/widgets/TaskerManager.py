@@ -56,26 +56,17 @@ class TaskerManager (Gtk.Table):
             cr.line_to  (x, y+height+self.border)
             cr.curve_to (x-self.border/2., y+height+self.border,
                          x-self.border, y+height+self.border/2.,
-                         x-self.border, y+height)
-                 
-            # FIXME  
-            #cr.set_source_color(self.get_style().bg[Gtk.StateType.NORMAL])
-            # colour = #ededed (237, 237, 237)  (0.92, 0.92, 0.92)
-
-            # this doesn't work - returns 0,0,0,0
-            context = self.get_style_context()
-            bgcolor = context.get_background_color(Gtk.StateFlags.NORMAL)
-            bgcolor2 = context.get_background_color(Gtk.StateType.NORMAL)
+                         x-self.border, y+height)                 
            
-            # hard code until can be fixed           
-            cr.set_source_rgba(0.929, 0.929, 0.929, 1.0)
+            sc = self.get_style_context()
+            bool1, bgcolor = sc.lookup_color("bg_color")
+            bool1, darkcolor = sc.lookup_color("dark_color")               
+            
+            cr.set_source_rgba(bgcolor.red, bgcolor.green, bgcolor.blue, bgcolor.alpha)
             cr.fill()            
             
-            cr.rectangle (x-self.border, y+height-30, width+self.border*2, 30)
-            #cr.set_source_color(self.get_style().dark[Gtk.StateType.NORMAL])
-           
-            # hard code until can be fixed
-            cr.set_source_rgba(0.651, 0.651, 0.651, 1.0)
+            cr.rectangle (x-self.border, y+height-30, width+self.border*2, 30)            
+            cr.set_source_rgba(darkcolor.red, darkcolor.green, darkcolor.blue, darkcolor.alpha)            
             cr.fill()
     
     def calcSpacings (self, n):

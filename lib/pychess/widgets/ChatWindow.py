@@ -402,7 +402,7 @@ class InfoPanel (Gtk.Notebook, Panel):
             list.fixed_height_mode = True
             
             self.separatorIter = self.store.append([(),"",True])
-            list.set_row_separator_func(lambda m,i: m.get_value(i, 2))
+            list.set_row_separator_func(lambda m,i: m.get_value(i, 2), None)
             sw.add(list)
             
             self.store.connect("row-inserted", lambda w,p,i: list.queue_resize())
