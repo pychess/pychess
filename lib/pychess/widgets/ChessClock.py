@@ -47,12 +47,10 @@ class ChessClock (Gtk.DrawingArea):
         return False
     
     def draw(self, context):
-
-        # FIXME
-        #self.dark = self.get_style().dark[Gtk.StateType.NORMAL]
-        #self.light = self.get_style().light[Gtk.StateType.NORMAL]
-        self.dark = Gdk.Color(0.64, 0.64, 0.64)
-        self.light = Gdk.Color(1.0, 1.0, 1.0)
+       
+        sc = self.get_style_context()
+        bool1, self.light = sc.lookup_color("light_color")    
+        bool1, self.dark = sc.lookup_color("dark_color")        
         if not self.model: return
         
         # Draw graphical Clock. Should this be moved to preferences?
@@ -62,9 +60,8 @@ class ChessClock (Gtk.DrawingArea):
         context.rectangle(
             rect.width/2. * self.model.movingColor, 0,
             rect.width/2., rect.height)
-        # FIXME
-        #context.set_source_color(self.dark)
-        context.set_source_rgba(self.dark.red, self.dark.green, self.dark.blue, 1.0)       
+        
+        context.set_source_rgba(self.dark.red, self.dark.green, self.dark.blue, self.dark.alpha)       
         context.fill_preserve()
         context.new_path()
         
@@ -139,36 +136,24 @@ class ChessClock (Gtk.DrawingArea):
         
         if drawClock:
             paintClock (WHITE)
-        if (self.model.movingColor or WHITE) == WHITE:
-            # FIXME
-            #context.set_source_color(self.light)
-            context.set_source_rgba(self.light.red, self.light.green, self.light.blue, 1.0) 
-        else:
-            #context.set_source_color(self.dark) 
-            context.set_source_rgba(self.dark.red, self.dark.green, self.dark.blue, 1.0)
-        # FIXME
-        #y = rect.height/2. - layout0.get_extents()[0][3]/pangoScale/2 \
-        #                   - layout0.get_extents()[0][1]/pangoScale
+        if (self.model.movingColor or WHITE) == WHITE:          
+            context.set_source_rgba(self.light.red, self.light.green, self.light.blue, self.light.alpha) 
+        else:          
+            context.set_source_rgba(self.dark.red, self.dark.green, self.dark.blue, self.dark.alpha)        
         y = rect.height/2. - layout0.get_extents()[0].height/pangoScale/2 \
                            - layout0.get_extents()[0].y/pangoScale
-        context.move_to(rect.height-7,y)
-        #context.show_layout(layout0)
+        context.move_to(rect.height-7,y)       
         PangoCairo.show_layout(context, layout0)
 
         if drawClock:
             paintClock (BLACK)
-        if self.model.movingColor == BLACK:
-            #context.set_source_color(self.light)
-            context.set_source_rgba(self.light.red, self.light.green, self.light.blue, 1.0)
-        else: 
-            #context.set_source_color(self.dark)                     
-            context.set_source_rgba(self.dark.red, self.dark.green, self.dark.blue, 1.0)       
-        #y = rect.height/2. - layout1.get_extents()[0][3]/pangoScale/2 \
-        #                   - layout1.get_extents()[0][1]/pangoScale
+        if self.model.movingColor == BLACK:            
+            context.set_source_rgba(self.light.red, self.light.green, self.light.blue, self.light.alpha)
+        else:
+            context.set_source_rgba(self.dark.red, self.dark.green, self.dark.blue, self.dark.alpha)       
         y = rect.height/2. - layout0.get_extents()[0].height/pangoScale/2 \
                            - layout0.get_extents()[0].y/pangoScale
-        context.move_to(rect.width/2. + rect.height-7, y)
-        #context.show_layout(layout1)
+        context.move_to(rect.width/2. + rect.height-7, y)        
         PangoCairo.show_layout(context, layout1)
 
     def redraw_canvas(self):
