@@ -576,6 +576,38 @@ class BoardManagerTests(EmittingTestCase):
         self.runAndAssertEquals("playGameCreated", lines, (game,))
 
     def test10 (self):
+        lines = [BLOCK_START + '110' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek matches one already posted by Strix.",
+                 "",
+                 "<sr> 68 105",
+                 "fics%" ,
+                 "<sr> 89",
+                 "fics% Challenge to yunger withdrawn.",
+                 "",
+                 "<pr> 14",
+                 "fics% Challenge to joranday withdrawn.",
+                 "",
+                 "<pr> 9",
+                 "fics%",
+                 "Creating: gbtami (1626) Strix (1581) rated blitz 3 0",
+                 "{Game 333 (gbtami vs. Strix) Creating rated blitz match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 333 gbtami Strix 1 3 0 39 39 180000 180000 1 none (0:00.000) none 0 0 0",
+                 "",
+                 "Game 333: A disconnection will be considered a forfeit.",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me.ratings[TYPE_BLITZ].elo = 1626
+        opponent = self.connection.players.get(FICSPlayer('Strix'))
+        opponent.ratings[TYPE_BLITZ].elo = 1581
+        game = FICSGame(me, opponent, gameno=333, rated=True,
+            game_type=GAME_TYPES['blitz'], private=False, minutes=3, inc=0,
+            board=FICSBoard(180000, 180000, fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+
+    def test11 (self):
         """ Make sure observe-game-created messages are caught """
         lines = ["{Game 12 (electricbenj vs. antonymelvin) Creating rated wild/fr match.}",
                  BLOCK_START + '34' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
