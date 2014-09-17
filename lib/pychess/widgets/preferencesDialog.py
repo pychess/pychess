@@ -265,7 +265,7 @@ class SoundTab:
     SOUND_DIRS = (addDataPrefix("sounds"), "/usr/share/sounds",
                   "/usr/local/share/sounds", os.environ["HOME"])
     
-    COUNT_OF_SOUNDS = 9
+    COUNT_OF_SOUNDS = 10
     
     actionToKeyNo = {
         "aPlayerMoves": 0,

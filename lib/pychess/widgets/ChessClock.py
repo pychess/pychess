@@ -178,7 +178,7 @@ class ChessClock (gtk.DrawingArea):
         self.redraw_canvas()
     
     def update(self, wmovecount=-1, bmovecount=-1):
-        if self.model.getPlayerTime(self.model.movingColor) <= 10 and not self.short_on_time[self.model.movingColor]:
+        if self.model.getPlayerTime(self.model.movingColor) <= 15 and not self.short_on_time[self.model.movingColor]:
             self.short_on_time[self.model.movingColor] = True
             preferencesDialog.SoundTab.playAction("shortOnTime")
 
