@@ -14,9 +14,11 @@ from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmovegen
 from pychess.Variants.crazyhouse import CrazyhouseChess
 
+import preferencesDialog
 from PromotionDialog import PromotionDialog
 from BoardView import BoardView, rect
 from BoardView import join
+
 
 class BoardControl (gtk.EventBox):
     
@@ -469,6 +471,10 @@ class ActiveState (BoardState):
     
     def release (self, x, y):
         cord = self.point2Cord(x,y)
+
+        if cord != self.view.active and not self.validate(self.view.selected, cord):
+            preferencesDialog.SoundTab.playAction("invalidMove")
+
         if not cord:
             self.view.active = None
             self.view.selected = None
@@ -588,7 +594,8 @@ class SelectedState (BoardState):
         else:  # Unselecting by pressing an inactive cord
             self.view.selected = None
             self.parent.setStateNormal()
-
+            preferencesDialog.SoundTab.playAction("invalidMove")
+            
 class LockedNormalState (LockedBoardState):
     '''
     It is the opponent's turn and no piece or cord is selected.
