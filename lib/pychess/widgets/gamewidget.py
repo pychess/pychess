@@ -14,7 +14,7 @@ from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.const import *
 from pychess.Utils.lutils import lmove
 from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
-from pychess.ic import get_infobarmessage_content
+from pychess.ic import get_infobarmessage_content, get_infobarmessage_content2
 from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.widgets.InfoBar import InfoBar, InfoBarMessage, InfoBarMessageButton
@@ -142,6 +142,7 @@ class GameWidget (gobject.GObject):
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         if isinstance(gamemodel, ICGameModel):
             gamemodel.connection.bm.connect("player_lagged", self.player_lagged)
+            gamemodel.connection.bm.connect("opp_not_out_of_time", self.opp_not_out_of_time)
         board.view.connect("shown_changed", self.shown_changed)
         
         # Some stuff in the sidepanels .load functions might change UI, so we
@@ -495,6 +496,25 @@ class GameWidget (gobject.GObject):
             message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
             message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
                                                     gtk.RESPONSE_CANCEL))
+            with glock.glock:
+                self.showMessage(message)
+        return False
+    
+    def opp_not_out_of_time (self, bm):
+        if self.gamemodel.remote_player.time <= 0:
+            content = get_infobarmessage_content2(
+                self.gamemodel.remote_ficsplayer,
+                _(" is lagging heavily but hasn't disconnected"),
+                _("Continue to wait for opponent, or try to adjourn the game?"),
+                gametype=self.gamemodel.ficsgame.game_type)
+            def response_cb (infobar, response, message):
+                if response == 2:
+                    self.gamemodel.connection.client.run_command("adjourn")
+                message.dismiss()
+                return False
+            message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, response_cb)
+            message.add_button(InfoBarMessageButton(_("Wait"), gtk.RESPONSE_CANCEL))
+            message.add_button(InfoBarMessageButton(_("Adjourn"), 2))
             with glock.glock:
                 self.showMessage(message)
         return False

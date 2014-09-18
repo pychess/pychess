@@ -13,10 +13,9 @@ class ICPlayer (Player):
     
     def __init__ (self, gamemodel, ichandle, gameno, color, name, icrating=None):
         Player.__init__(self)
-        
+        self.offers = {}
         self.queue = Queue()
         self.okqueue = Queue()
-        
         self.setName(name)
         self.ichandle = ichandle
         self.icrating = icrating
@@ -24,19 +23,20 @@ class ICPlayer (Player):
         self.gameno = gameno
         self.gamemodel = gamemodel
         self.connection = connection = self.gamemodel.connection
-        
         self.connections = connections = defaultdict(list)
         connections[connection.bm].append(connection.bm.connect_after("boardUpdate", self.__boardUpdate))
         connections[connection.om].append(connection.om.connect("onOfferAdd", self.__onOfferAdd))
         connections[connection.om].append(connection.om.connect("onOfferRemove", self.__onOfferRemove))
         connections[connection.om].append(connection.om.connect("onOfferDeclined", self.__onOfferDeclined))
         connections[connection.cm].append(connection.cm.connect("privateMessage", self.__onPrivateMessage))
-        
-        self.offers = {}
-    
+            
     def getICHandle (self):
         return self.name
     
+    @property
+    def time (self):
+        self.gamemodel.timemodel.getPlayerTime(self.color)
+        
     #===========================================================================
     #    Handle signals from the connection
     #===========================================================================
