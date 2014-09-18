@@ -69,19 +69,20 @@ class ChainLine (Gtk.Alignment):
         self.lastRectangle = None
         
     def on_size_allocate(self, widget, requisition):
-        if self.window:
+        if self.get_window():
             glock.acquire()
             try:
                 a = self.get_allocation()
-                rect = (a.x, a.y, a.width, a.height)
-                unionrect = self.lastRectangle.union(rect) if self.lastRectangle != None else rect
-                self.window.invalidate_rect(unionrect, True)
-                self.window.process_updates(True)
+                rect = Gdk.Rectangle()
+                rect.x, rect.y, rect.width, rect.height = (a.x, a.y, a.width, a.height)
+                unionrect = Gdk.rectangle_union(self.lastRectangle, rect) if self.lastRectangle != None else rect
+                self.get_window().invalidate_rect(unionrect, True)
+                self.get_window().process_updates(True)
                 self.lastRectangle = rect
             finally:
-                glock.release()
-        
-    def on_draw (self, context):
+                glock.release()        
+
+    def on_draw (self, widget, context):
         self.draw(context)
         return False
 

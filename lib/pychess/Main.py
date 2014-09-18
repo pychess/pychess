@@ -332,7 +332,11 @@ class PyChess:
         # hard code colors for now
         data = "@define-color bg_color #ededed; \
                 @define-color light_color #ffffff; \
-                @define-color dark_color #a6a6a6;"
+                @define-color dark_color #a6a6a6; \
+                @define-color dark_prelight #a9a9a9; \
+                @define-color fg_prelight #313739; \
+                @define-color bg_prelight #ededed;"
+
         provider = Gtk.CssProvider.new()
         provider.load_from_data(data)
         sc.add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)        

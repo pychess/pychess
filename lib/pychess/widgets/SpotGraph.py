@@ -38,7 +38,9 @@ class SpotGraph (Gtk.EventBox):
                          Gdk.EventMask.POINTER_MOTION_MASK |
                          Gdk.EventMask.BUTTON_PRESS_MASK |
                          Gdk.EventMask.BUTTON_RELEASE_MASK )
-        
+
+        self.state = 0
+
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
         self.connect("motion_notify_event", self.motion_notify)
@@ -59,17 +61,17 @@ class SpotGraph (Gtk.EventBox):
     # Drawing                                                                  #
     ############################################################################
     
-    def redraw_canvas(self, rect=None):
-        if self.get_window():
-            if not rect:
+    def redraw_canvas(self, prect=None):
+        if self.get_window():           
+            if not prect:
                 alloc = self.get_allocation()
-                r = (0, 0, alloc.width, alloc.height)            
+                prect = (0, 0, alloc.width, alloc.height)            
             rect = Gdk.Rectangle()
-            rect.x, rect.y, rect.width, rect.height = r
-            self.window.invalidate_rect(rect, True)
-            self.window.process_updates(True)
-    
-    def on_draw (self, context):
+            rect.x, rect.y, rect.width, rect.height = prect
+            self.get_window().invalidate_rect(rect, True)
+            self.get_window().process_updates(True)    
+
+    def on_draw (self, widget, context):
         self.draw(context)
         return False
     
@@ -86,21 +88,27 @@ class SpotGraph (Gtk.EventBox):
         
         context.set_line_width(line)
         context.set_line_cap(cairo.LINE_CAP_ROUND)
-        state = self.state == Gtk.StateType.NORMAL and Gtk.StateType.PRELIGHT or self.state
-        context.set_source_color(self.get_style().dark[state])
+        state = self.state == Gtk.StateType.NORMAL and Gtk.StateType.PRELIGHT or self.state       
+
+        sc = self.get_style_context()
+        bool1, dark_prelight = sc.lookup_color("dark_prelight")
+        bool1, fg_prelight = sc.lookup_color("fg_prelight")
+        bool1, bg_prelight = sc.lookup_color("bg_prelight")
+        
+        context.set_source_rgba(dark_prelight.red, dark_prelight.green, dark_prelight.blue, dark_prelight.alpha)
         context.stroke()
         
         #------------------------------------------------ Paint horizontal marks
-        for x, title in self.xmarks:
-            context.set_source_color(self.get_style().fg[self.state])
+        for x, title in self.xmarks:           
+            context.set_source_rgba(fg_prelight.red, fg_prelight.green, fg_prelight.blue, fg_prelight.alpha)
             context.set_font_size(12)
             x, y = self.prcToPix (x, 1)
             context.move_to (x+line/2., y-line/2.)
             context.rotate(-math.pi/2)
             context.show_text(title)
-            context.rotate(math.pi/2)
+            context.rotate(math.pi/2)            
             
-            context.set_source_color(self.get_style().bg[self.state])
+            context.set_source_rgba(bg_prelight.red, bg_prelight.green, bg_prelight.blue, bg_prelight.alpha)
             context.move_to (x-line/2., y)
             context.rel_curve_to (6, 0,  6, line,  6, line)
             context.rel_curve_to (0, -line,  6, -line,  6, -line)
@@ -108,14 +116,14 @@ class SpotGraph (Gtk.EventBox):
             context.fill()
         
         #-------------------------------------------------- Paint vertical marks
-        for y, title in self.ymarks:
-            context.set_source_color(self.get_style().fg[self.state])
+        for y, title in self.ymarks:           
+            context.set_source_rgba(fg_prelight.red, fg_prelight.green, fg_prelight.blue, fg_prelight.alpha)
             context.set_font_size(12)
             x, y = self.prcToPix (0, y)
             context.move_to (x+line/2., y+line/2.)
-            context.show_text(title)
-            
-            context.set_source_color(self.get_style().bg[self.state])
+            context.show_text(title)            
+           
+            context.set_source_rgba(bg_prelight.red, bg_prelight.green, bg_prelight.blue, bg_prelight.alpha)
             context.move_to (x, y-line/2.)
             context.rel_curve_to (0, 6,  -line, 6,  -line, 6)
             context.rel_curve_to (line, 0,  line, 6,  line, 6)
@@ -156,8 +164,8 @@ class SpotGraph (Gtk.EventBox):
                 int(x-hpadding), int(y-vpadding),
                 ceil(width+hpadding*2), ceil(height+vpadding*2))
             
-            context.move_to(x, y)
-            context.set_source_color(self.get_style().fg[self.state])
+            context.move_to(x, y)            
+            context.set_source_rgba(fg_prelight.red, fg_prelight.green, fg_prelight.blue, fg_prelight.alpha)
             context.show_layout(self.create_pango_layout(text))
     
     ############################################################################

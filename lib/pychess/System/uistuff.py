@@ -415,7 +415,7 @@ def initTexviewLinks (textview, text):
     stcursor = Gdk.Cursor(Gdk.CursorType.XTERM)
     linkcursor = Gdk.Cursor(Gdk.CursorType.HAND2)
     def on_motion_in_textview(textview, event):
-        textview.window.get_pointer()
+        textview.get_window().get_pointer()
         iter = textview.get_iter_at_location (int(event.x), int(event.y))
         if not iter: return
         for tag, link, type, s, e in tags:

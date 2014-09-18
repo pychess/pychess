@@ -132,14 +132,14 @@ class ICLogon:
             content_area.remove(widget)
         content = Gtk.HBox()
         image = Gtk.Image()
-        image.set_from_stock(Gtk.STOCK_DIALOG_WARNING, Gtk.IconSize.DIALOG)
-        content.pack_start(image, expand=False, fill=False)
+        image.set_from_stock(Gtk.STOCK_DIALOG_WARNING, Gtk.IconSize.DIALOG)       
+        content.pack_start(image, False, False, 0)
         vbox = Gtk.VBox()
         label = Gtk.Label()
         label.props.xalign = 0
         label.props.justify = Gtk.Justification.LEFT
         label.set_markup("<b><big>%s</big></b>" % title)
-        vbox.pack_start(label, expand=True, fill=False)
+        vbox.pack_start(label, True, False, 0)
         for line in str(text).split("\n"):
             label = Gtk.Label()
             label.set_size_request(476, -1)
@@ -148,8 +148,8 @@ class ICLogon:
             label.props.xalign = 0
             label.props.justify = Gtk.Justification.LEFT
             label.set_markup(line)
-            vbox.pack_start(label, expand=True, fill=False)
-        content.pack_start(vbox, expand=False, fill=False, padding=7)
+            vbox.pack_start(label, True, False, 0)
+        content.pack_start(vbox, False, False, 7)
         content_area.add(content)
         self.widgets["messagePanel"].show_all()
     
