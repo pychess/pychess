@@ -14,9 +14,10 @@ from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.const import *
 from pychess.Utils.lutils import lmove
 from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
+from pychess.ic import get_infobarmessage_content
 from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
-from pychess.widgets.InfoBar import InfoBar
+from pychess.widgets.InfoBar import InfoBar, InfoBarMessage, InfoBarMessageButton
 from pydock.PyDockTop import PyDockTop
 from pydock.__init__ import CENTER, EAST, SOUTH
 import cStringIO
@@ -25,9 +26,6 @@ import gobject
 import imp
 import os
 import traceback
-
-
-
 
 ################################################################################
 # Initialize modul constants, and a few worker functions                       #
@@ -142,7 +140,8 @@ class GameWidget (gobject.GObject):
             self.game_info_label.set_text(" " + self.gamemodel.display_text)
         if gamemodel.timed:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
-        
+        if isinstance(gamemodel, ICGameModel):
+            gamemodel.connection.bm.connect("player_lagged", self.player_lagged)
         board.view.connect("shown_changed", self.shown_changed)
         
         # Some stuff in the sidepanels .load functions might change UI, so we
@@ -484,6 +483,21 @@ class GameWidget (gobject.GObject):
                           (repr(player), str(color)))
                 self.menuitems["call_flag"].sensitive = True
                 break
+
+    def player_lagged (self, bm, player):
+        if player in self.gamemodel.ficsplayers:
+            content = get_infobarmessage_content(player,
+                                                 _(" has lagged for 30 seconds"),
+                                                 self.gamemodel.ficsgame.game_type)
+            def response_cb (infobar, response, message):
+                message.dismiss()
+                return False
+            message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
+            message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
+                                                    gtk.RESPONSE_CANCEL))
+            with glock.glock:
+                self.showMessage(message)
+        return False
     
     def initTabcontents(self):
         tabcontent = createAlignment(gtk.Notebook().props.tab_vborder,0,0,0)
@@ -638,8 +652,7 @@ class GameWidget (gobject.GObject):
         self.infobar.clear_messages()
         if self == cur_gmwidg():
             notebooks["messageArea"].hide()
-
-
+    
 ################################################################################
 # Main handling of gamewidgets                                                 #
 ################################################################################
