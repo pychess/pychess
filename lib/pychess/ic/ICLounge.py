@@ -150,20 +150,6 @@ class Section (object):
     def _del (self):
         pass
     
-    def get_infobarmessage_content (self, player, text, gametype=None):
-        content = gtk.HBox()
-        icon = gtk.Image()
-        icon.set_from_pixbuf(player.getIcon(size=32, gametype=gametype))
-        content.pack_start(icon, expand=False, fill=False, padding=4)
-        label = gtk.Label()
-        label.set_markup(player.getMarkup(gametype=gametype))
-        content.pack_start(label, expand=False, fill=False)
-        label = gtk.Label()
-        label.set_markup(text)
-        content.pack_start(label, expand=False, fill=False)
-        
-        return content
-    
 ############################################################################
 # Initialize Various smaller sections                                      #
 ############################################################################
@@ -572,8 +558,8 @@ class SeekTabSection (ParrentListSection):
                    "color": _("white") if challenge.color == "white" else _("black")}
             else:
                 text += "."
-        content = self.get_infobarmessage_content(challenge.player, text,
-                                                  gametype=challenge.game_type)
+        content = get_infobarmessage_content(challenge.player, text,
+                                             gametype=challenge.game_type)
         def callback (infobar, response, message):
             if response == gtk.RESPONSE_ACCEPT:
                 self.connection.om.acceptIndex(challenge.index)
@@ -1173,8 +1159,8 @@ class AdjournedTabSection (ParrentListSection):
                      "<b>%(gametype)s</b> game is online.")  % \
                      {"timecontrol": game.display_timecontrol,
                       "gametype": game.game_type.display_text}
-            content = self.get_infobarmessage_content(player, text,
-                                                      gametype=game.game_type)
+            content = get_infobarmessage_content(player, text,
+                                                 gametype=game.game_type)
             def callback (infobar, response, message):
                 log.debug("%s" % player, extra={"task": (self.connection.username,
                           "_infobar_adjourned_message.callback")})
@@ -2027,8 +2013,8 @@ class Messages (Section):
     
     @glock.glocked
     def matchDeclined (self, bm, player):
-        text = _(" has declined your offer for a match.")
-        content = self.get_infobarmessage_content(player, text)
+        text = _(" has declined your offer for a match")
+        content = get_infobarmessage_content(player, text)
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
@@ -2083,11 +2069,11 @@ class Messages (Section):
                     message.player == player:
                 with glock.glock:
                     message.update_content(
-                        self.get_infobarmessage_content(player, message.text))
+                        get_infobarmessage_content(player, message.text))
         return False
     
     def _add_notification_message (self, player, text):
-        content = self.get_infobarmessage_content(player, text)
+        content = get_infobarmessage_content(player, text)
         def response_cb (infobar, response, message):
             message.dismiss()
 #             self.messages.remove(message)

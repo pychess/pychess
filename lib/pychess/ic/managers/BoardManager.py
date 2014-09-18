@@ -163,6 +163,7 @@ class BoardManager (GObject):
         'gamePaused'          : (SIGNAL_RUN_FIRST, None, (int, bool)),
         'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ()),
         'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (object,)),
+        'player_lagged'        : (SIGNAL_RUN_FIRST, None, (object,)),
     }
     
     castleSigns = {}
@@ -173,11 +174,13 @@ class BoardManager (GObject):
         self.connection = connection
         self.connection.expect_line (self.onStyle12, "<12> (.+)")
         self.connection.expect_line (self.onWasPrivate,
-                "Sorry, game (\d+) is a private game\.")
+            "Sorry, game (\d+) is a private game\.")
         self.connection.expect_line (self.tooManySeeks,
-                                     "You can only have 3 active seeks.")
+            "You can only have 3 active seeks.")
         self.connection.expect_line (self.matchDeclined,
-                                     "%s declines the match offer." % names)
+            "%s declines the match offer." % names)
+        self.connection.expect_line(self.player_lagged,
+            "Game (\d+): %s has lagged for (\d+) seconds\." % names)
         
         self.connection.expect_n_lines (self.onPlayGameCreated,
             "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
@@ -484,7 +487,7 @@ class BoardManager (GObject):
         decliner, = match.groups()
         decliner = self.connection.players.get(FICSPlayer(decliner), create=False)
         self.emit("matchDeclined", decliner)
-    
+        
     @classmethod
     def generateCastleSigns (cls, style12, game_type):
         if game_type.variant_type == FISCHERRANDOMCHESS:
@@ -952,6 +955,11 @@ class BoardManager (GObject):
         self.emit("obsGameUnobserved", game)
         # TODO: delete self.castleSigns[gameno] ?
     onUnobserveGame.BLKCMD = BLKCMD_UNOBSERVE
+    
+    def player_lagged (self, match):
+        gameno, player, num_seconds = match.groups()
+        player = self.connection.players.get(FICSPlayer(player))
+        self.emit("player_lagged", player)
         
     ############################################################################
     #   Interacting                                                            #
@@ -995,5 +1003,3 @@ if __name__ == "__main__":
     
     print bm._BoardManager__parseStyle12("rnbqkbnr pppp-ppp -------- ----p--- ----PP-- -------- PPPP--PP RNBQKBNR B 5 1 1 1 1 0 241 GuestGFFC GuestNXMP -4 2 12 39 39 120000 120000 1 none (0:00.000) none 0 0 0",
                                          ("k","q"))
-    
-    

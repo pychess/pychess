@@ -1,3 +1,4 @@
+import gtk
 import re
 from pychess import Variants
 from pychess.Utils.const import *
@@ -227,6 +228,19 @@ def parse_title_hex (titlehex):
         if int(titlehex, 16) & key:
             titles.add(HEX_TO_TITLE[key])
     return titles
+
+def get_infobarmessage_content (player, text, gametype=None):
+    content = gtk.HBox()
+    icon = gtk.Image()
+    icon.set_from_pixbuf(player.getIcon(size=32, gametype=gametype))
+    content.pack_start(icon, expand=False, fill=False, padding=4)
+    label = gtk.Label()
+    label.set_markup(player.getMarkup(gametype=gametype))
+    content.pack_start(label, expand=False, fill=False)
+    label = gtk.Label()
+    label.set_markup(text)
+    content.pack_start(label, expand=False, fill=False)
+    return content
 
 """
 Internal command codes used in FICS block mode
