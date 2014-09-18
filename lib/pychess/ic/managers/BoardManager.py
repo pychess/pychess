@@ -163,7 +163,8 @@ class BoardManager (GObject):
         'gamePaused'          : (SIGNAL_RUN_FIRST, None, (int, bool)),
         'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ()),
         'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (object,)),
-        'player_lagged'        : (SIGNAL_RUN_FIRST, None, (object,)),
+        'player_lagged'       : (SIGNAL_RUN_FIRST, None, (object,)),
+        'opp_not_out_of_time' : (SIGNAL_RUN_FIRST, None, ()),
     }
     
     castleSigns = {}
@@ -181,6 +182,8 @@ class BoardManager (GObject):
             "%s declines the match offer." % names)
         self.connection.expect_line(self.player_lagged,
             "Game (\d+): %s has lagged for (\d+) seconds\." % names)
+        self.connection.expect_line(self.opp_not_out_of_time,
+            "Opponent is not out of time, wait for server autoflag\.")
         
         self.connection.expect_n_lines (self.onPlayGameCreated,
             "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
@@ -961,6 +964,10 @@ class BoardManager (GObject):
         player = self.connection.players.get(FICSPlayer(player))
         self.emit("player_lagged", player)
         
+    def opp_not_out_of_time (self, match):
+        self.emit("opp_not_out_of_time")
+    opp_not_out_of_time.BLKCMD = BLKCMD_FLAG
+    
     ############################################################################
     #   Interacting                                                            #
     ############################################################################
