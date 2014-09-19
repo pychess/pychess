@@ -1,7 +1,10 @@
-import gtk
 import re
+
+from gi.repository import Gtk
+
 from pychess import Variants
 from pychess.Utils.const import *
+
 
 IC_CONNECTED, IC_DISCONNECTED = range(2)
 
@@ -230,38 +233,38 @@ def parse_title_hex (titlehex):
     return titles
 
 def get_infobarmessage_content (player, text, gametype=None):
-    content = gtk.HBox()
-    icon = gtk.Image()
+    content = Gtk.HBox()
+    icon = Gtk.Image()
     icon.set_from_pixbuf(player.getIcon(size=32, gametype=gametype))
-    content.pack_start(icon, expand=False, fill=False, padding=4)
-    label = gtk.Label()
+    content.pack_start(icon, False, False, 4)
+    label = Gtk.Label()
     label.set_markup(player.getMarkup(gametype=gametype))
-    content.pack_start(label, expand=False, fill=False)
-    label = gtk.Label()
+    content.pack_start(label, False, False, 0)
+    label = Gtk.Label()
     label.set_markup(text)
-    content.pack_start(label, expand=False, fill=False)
+    content.pack_start(label, False, False, 0)
     return content
 
 def get_infobarmessage_content2 (player, heading_text, message_text,
                                  gametype=None):
-    hbox = gtk.HBox()
-    image = gtk.Image()
+    hbox = Gtk.HBox()
+    image = Gtk.Image()
     image.set_from_pixbuf(player.getIcon(size=24, gametype=gametype))
-    hbox.pack_start(image, expand=False, fill=False)
-    label = gtk.Label()
+    hbox.pack_start(image, False, False, 0)
+    label = Gtk.Label()
     markup = player.getMarkup(gametype=gametype, long_titles=False)
     label.set_markup(markup + heading_text)
-    hbox.pack_start(label, expand=False, fill=False)
-    vbox = gtk.VBox()
-    vbox.pack_start(hbox, expand=False, fill=False)
-    label = gtk.Label()
+    hbox.pack_start(label, False, False, 0)
+    vbox = Gtk.VBox()
+    vbox.pack_start(hbox, False, False, 0)
+    label = Gtk.Label()
     label.props.xalign = 0
     label.props.xpad = 4
-    label.props.justify = gtk.JUSTIFY_LEFT
+    label.props.justify = Gtk.JUSTIFY_LEFT
     label.props.wrap = True
     label.set_width_chars(70)
     label.set_text(message_text)
-    vbox.pack_start(label, expand=False, fill=False, padding=5)
+    vbox.pack_start(label, False, False, 5)
     return vbox
     
 """
