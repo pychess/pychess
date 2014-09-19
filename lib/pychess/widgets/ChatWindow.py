@@ -35,11 +35,10 @@ class BulletCellRenderer (Gtk.CellRenderer):
     def do_get_property(self, pspec):
         return getattr(self, pspec.name)
     
-    def on_render(self, window, widget, bg_area, cell_area, expose_area, flags):
+    def do_render(self, context, widget, bg_area, cell_area, flags):
         if not self.color: return
         
         x, y = self.get_size(widget, cell_area)[:2]
-        context = window.cairo_create()
         
         r,g,b = self.color
         context.set_source_rgb (r,g,b)
@@ -157,7 +156,7 @@ class TextImageTree (Gtk.TreeView):
     def motion_notify (self, widget, event):
         path_col_pos = self.get_path_at_pos(int(event.x), int(event.y))
         if path_col_pos and path_col_pos[1] == self.rightcol:
-            self.window.set_cursor(self.linkcursor)
+            self.get_window().set_cursor(self.linkcursor)
         else:
             self.get_window().set_cursor(self.stdcursor)
     
@@ -349,14 +348,20 @@ class InfoPanel (Gtk.Notebook, Panel):
             tv = Gtk.TreeView(store)
             tv.get_selection().set_mode(Gtk.SelectionMode.NONE)
             tv.set_headers_visible(False)
-            tv.modify_base(Gtk.StateType.NORMAL, self.get_style().bg[Gtk.StateType.NORMAL].copy())
+            
+            sc = tv.get_style_context()
+            bool1, bg_color = sc.lookup_color("bg_color")
+            bool1, bg_active = sc.lookup_color("bg_active")
+            tv.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
+
             cell = Gtk.CellRendererText()
-            cell.props.cell_background_gdk = self.get_style().bg[Gtk.StateType.ACTIVE].copy()
+            cell.props.background_rgba = bg_active
+
             cell.props.cell_background_set = True 
             cell.props.yalign = 0
             tv.append_column(Gtk.TreeViewColumn("", cell, text=0))
             cell = uistuff.appendAutowrapColumn(tv, 50, "Notes", text=1)
-            cell.props.cell_background_gdk = self.get_style().bg[Gtk.StateType.NORMAL].copy()
+            cell.props.background_rgba = bg_color
             cell.props.cell_background_set = True 
             sw = Gtk.ScrolledWindow()
             sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -402,9 +407,10 @@ class InfoPanel (Gtk.Notebook, Panel):
             list.fixed_height_mode = True
             
             self.separatorIter = self.store.append([(),"",True])
-            list.set_row_separator_func(lambda m,i: m.get_value(i, 2), None)
-            sw.add(list)
             
+            list.set_row_separator_func(lambda m,i,d: m.get_value(i, 2), None)
+            sw.add(list)
+ 
             self.store.connect("row-inserted", lambda w,p,i: list.queue_resize())
             self.store.connect("row-deleted", lambda w,i: list.queue_resize())
             
@@ -576,6 +582,7 @@ class ChatWindow (object):
         widgets["show_chat_button"].connect("clicked", self.showChat)
         glock_connect(connection.cm, "privateMessage",
                       self.onPersonMessage, after=False)
+
         glock_connect(connection, "disconnected",
                       lambda c: self.window and self.window.hide())
         
