@@ -335,7 +335,8 @@ class PyChess:
                 @define-color dark_color #a6a6a6; \
                 @define-color dark_prelight #a9a9a9; \
                 @define-color fg_prelight #313739; \
-                @define-color bg_prelight #ededed;"
+                @define-color bg_prelight #ededed; \
+                @define-color bg_active #d6d6d6;"
 
         provider = Gtk.CssProvider.new()
         provider.load_from_data(data)
