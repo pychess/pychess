@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-23 14:11+0200\n"
+"POT-Creation-Date: 2014-09-18 00:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -135,7 +135,7 @@ msgid "Edit Seek"
 msgstr ""
 
 #: glade/fics_lounge.glade:594 lib/pychess/ic/ICLounge.py:1695
-#: lib/pychess/ic/__init__.py:97 lib/pychess/Utils/GameModel.py:185
+#: lib/pychess/ic/__init__.py:97 lib/pychess/Utils/GameModel.py:187
 msgid "Untimed"
 msgstr ""
 
@@ -208,14 +208,14 @@ msgstr ""
 
 #: glade/fics_lounge.glade:1401 lib/pychess/Database/gamelist.py:40
 #: lib/pychess/ic/ICLounge.py:1595 lib/pychess/Utils/repr.py:8
-#: lib/pychess/widgets/ChessClock.py:32
+#: lib/pychess/widgets/ChessClock.py:33
 #: lib/pychess/widgets/TaskerManager.py:146
 msgid "White"
 msgstr ""
 
 #: glade/fics_lounge.glade:1429 lib/pychess/Database/gamelist.py:40
 #: lib/pychess/ic/ICLounge.py:1597 lib/pychess/Utils/repr.py:8
-#: lib/pychess/widgets/ChessClock.py:32
+#: lib/pychess/widgets/ChessClock.py:33
 #: lib/pychess/widgets/TaskerManager.py:147
 msgid "Black"
 msgstr ""
@@ -330,15 +330,15 @@ msgstr ""
 msgid "_Game List"
 msgstr ""
 
-#: glade/fics_lounge.glade:2850 glade/PyChess.glade:3175
+#: glade/fics_lounge.glade:2850 glade/PyChess.glade:3280
 msgid "Offer _Resume"
 msgstr ""
 
-#: glade/fics_lounge.glade:2909 glade/PyChess.glade:3214
+#: glade/fics_lounge.glade:2909 glade/PyChess.glade:3319
 msgid "R_esign"
 msgstr ""
 
-#: glade/fics_lounge.glade:2954 glade/PyChess.glade:3154
+#: glade/fics_lounge.glade:2954 glade/PyChess.glade:3259
 msgid "Offer _Draw"
 msgstr ""
 
@@ -547,15 +547,15 @@ msgstr ""
 msgid "Knights"
 msgstr ""
 
-#: glade/PyChess.glade:544 lib/pychess/widgets/preferencesDialog.py:330
+#: glade/PyChess.glade:544 lib/pychess/widgets/preferencesDialog.py:336
 msgid "Beep"
 msgstr ""
 
-#: glade/PyChess.glade:547 lib/pychess/widgets/preferencesDialog.py:331
+#: glade/PyChess.glade:547 lib/pychess/widgets/preferencesDialog.py:337
 msgid "Select sound file..."
 msgstr ""
 
-#: glade/PyChess.glade:550 lib/pychess/widgets/preferencesDialog.py:329
+#: glade/PyChess.glade:550 lib/pychess/widgets/preferencesDialog.py:335
 msgid "No sound"
 msgstr ""
 
@@ -826,191 +826,199 @@ msgstr ""
 msgid "_Use sounds in PyChess"
 msgstr ""
 
-#: glade/PyChess.glade:2527
+#: glade/PyChess.glade:2521
 msgid "A player _checks:"
 msgstr ""
 
-#: glade/PyChess.glade:2542
+#: glade/PyChess.glade:2536
 msgid "A player _moves:"
 msgstr ""
 
-#: glade/PyChess.glade:2555
+#: glade/PyChess.glade:2549
 msgid "Game is _drawn:"
 msgstr ""
 
-#: glade/PyChess.glade:2570
+#: glade/PyChess.glade:2564
 msgid "Game is _lost:"
 msgstr ""
 
-#: glade/PyChess.glade:2585
+#: glade/PyChess.glade:2579
 msgid "Game is _won:"
 msgstr ""
 
-#: glade/PyChess.glade:2600
+#: glade/PyChess.glade:2594
 msgid "A player c_aptures:"
 msgstr ""
 
-#: glade/PyChess.glade:2629
+#: glade/PyChess.glade:2623
 msgid "Game is _set-up:"
 msgstr ""
 
-#: glade/PyChess.glade:2681
+#: glade/PyChess.glade:2674
 msgid "_Observed moves:"
 msgstr ""
 
-#: glade/PyChess.glade:2696
+#: glade/PyChess.glade:2689
 msgid "Observed _ends:"
 msgstr ""
 
 #: glade/PyChess.glade:2801
+msgid "Short on _time:"
+msgstr ""
+
+#: glade/PyChess.glade:2852
+msgid "_Invalid move:"
+msgstr ""
+
+#: glade/PyChess.glade:2906
 msgid "<b>Play Sound When...</b>"
 msgstr ""
 
-#: glade/PyChess.glade:2823
+#: glade/PyChess.glade:2928
 msgid "_Sounds"
 msgstr ""
 
-#: glade/PyChess.glade:2870
+#: glade/PyChess.glade:2975
 msgid "_Game"
 msgstr ""
 
-#: glade/PyChess.glade:2877
+#: glade/PyChess.glade:2982
 msgid "_New Game"
 msgstr ""
 
-#: glade/PyChess.glade:2890
+#: glade/PyChess.glade:2995
 msgid "Play _Internet Chess"
 msgstr ""
 
-#: glade/PyChess.glade:2909
+#: glade/PyChess.glade:3014
 msgid "_Load Game"
 msgstr ""
 
-#: glade/PyChess.glade:2925
+#: glade/PyChess.glade:3030
 msgid "Load _Recent Game"
 msgstr ""
 
-#: glade/PyChess.glade:2933
+#: glade/PyChess.glade:3038
 msgid "Open _Database"
 msgstr ""
 
-#: glade/PyChess.glade:2943
+#: glade/PyChess.glade:3048
 msgid "Setup Position"
 msgstr ""
 
-#: glade/PyChess.glade:2953
+#: glade/PyChess.glade:3058
 msgid "Enter Game _Notation"
 msgstr ""
 
-#: glade/PyChess.glade:2966
+#: glade/PyChess.glade:3071
 msgid "_Save Game"
 msgstr ""
 
-#: glade/PyChess.glade:2980
+#: glade/PyChess.glade:3085
 msgid "Save Game _As"
 msgstr ""
 
-#: glade/PyChess.glade:2994
+#: glade/PyChess.glade:3099
 msgid "_Export Position"
 msgstr ""
 
-#: glade/PyChess.glade:3008
+#: glade/PyChess.glade:3113
 msgid "_Analyze Game"
 msgstr ""
 
-#: glade/PyChess.glade:3042
+#: glade/PyChess.glade:3147
 msgid "Player _Rating"
 msgstr ""
 
-#: glade/PyChess.glade:3087
+#: glade/PyChess.glade:3192
 msgid "_Edit"
 msgstr ""
 
-#: glade/PyChess.glade:3097
+#: glade/PyChess.glade:3202
 msgid "_Engines"
 msgstr ""
 
-#: glade/PyChess.glade:3123
+#: glade/PyChess.glade:3228
 msgid "_Actions"
 msgstr ""
 
-#: glade/PyChess.glade:3134
+#: glade/PyChess.glade:3239
 msgid "Offer _Abort"
 msgstr ""
 
-#: glade/PyChess.glade:3144
+#: glade/PyChess.glade:3249
 msgid "Offer Ad_journment"
 msgstr ""
 
-#: glade/PyChess.glade:3165
+#: glade/PyChess.glade:3270
 msgid "Offer _Pause"
 msgstr ""
 
-#: glade/PyChess.glade:3181
+#: glade/PyChess.glade:3286
 msgid "Offer _Undo"
 msgstr ""
 
-#: glade/PyChess.glade:3204
+#: glade/PyChess.glade:3309
 msgid "_Call Flag"
 msgstr ""
 
-#: glade/PyChess.glade:3224
+#: glade/PyChess.glade:3329
 msgid "Ask to _Move"
 msgstr ""
 
-#: glade/PyChess.glade:3239
+#: glade/PyChess.glade:3344
 msgid "Auto Call _Flag"
 msgstr ""
 
-#: glade/PyChess.glade:3252
+#: glade/PyChess.glade:3357
 msgid "_View"
 msgstr ""
 
-#: glade/PyChess.glade:3259
+#: glade/PyChess.glade:3364
 msgid "_Rotate Board"
 msgstr ""
 
-#: glade/PyChess.glade:3273
+#: glade/PyChess.glade:3378
 msgid "_Fullscreen"
 msgstr ""
 
-#: glade/PyChess.glade:3286
+#: glade/PyChess.glade:3391
 msgid "Leave _Fullscreen"
 msgstr ""
 
-#: glade/PyChess.glade:3303
+#: glade/PyChess.glade:3408
 msgid "_Show Sidepanels"
 msgstr ""
 
-#: glade/PyChess.glade:3314
+#: glade/PyChess.glade:3419
 msgid "_Log Viewer"
 msgstr ""
 
-#: glade/PyChess.glade:3331
+#: glade/PyChess.glade:3436
 msgid "_Hint mode"
 msgstr ""
 
-#: glade/PyChess.glade:3343
+#: glade/PyChess.glade:3448
 msgid "Sp_y mode"
 msgstr ""
 
-#: glade/PyChess.glade:3358
+#: glade/PyChess.glade:3463
 msgid "_Help"
 msgstr ""
 
-#: glade/PyChess.glade:3368
+#: glade/PyChess.glade:3473
 msgid "About Chess"
 msgstr ""
 
-#: glade/PyChess.glade:3377
+#: glade/PyChess.glade:3482
 msgid "How to Play"
 msgstr ""
 
-#: glade/PyChess.glade:3386
+#: glade/PyChess.glade:3491
 msgid "Translate PyChess"
 msgstr ""
 
-#: glade/PyChess.glade:3392
+#: glade/PyChess.glade:3497
 msgid "Tip of the Day"
 msgstr ""
 
@@ -1992,11 +2000,11 @@ msgstr ""
 msgid "Died"
 msgstr ""
 
-#: lib/pychess/Utils/GameModel.py:135
+#: lib/pychess/Utils/GameModel.py:137
 msgid "Local Event"
 msgstr ""
 
-#: lib/pychess/Utils/GameModel.py:136
+#: lib/pychess/Utils/GameModel.py:138
 msgid "Local Site"
 msgstr ""
 
@@ -2526,77 +2534,77 @@ msgstr ""
 msgid "Select working directory"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:123
+#: lib/pychess/widgets/gamenanny.py:124
 msgid "Offer Rematch"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:125 lib/pychess/widgets/gamenanny.py:137
+#: lib/pychess/widgets/gamenanny.py:126 lib/pychess/widgets/gamenanny.py:138
 #, python-format
 msgid "Observe %s"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:160
+#: lib/pychess/widgets/gamenanny.py:159
 msgid "Play Rematch"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:163
+#: lib/pychess/widgets/gamenanny.py:162
 msgid "Undo one move"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:165
+#: lib/pychess/widgets/gamenanny.py:164
 msgid "Undo two moves"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:194
+#: lib/pychess/widgets/gamenanny.py:193
 msgid "The game is paused"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:215 lib/pychess/widgets/gamenanny.py:216
+#: lib/pychess/widgets/gamenanny.py:214 lib/pychess/widgets/gamenanny.py:215
 msgid "Loaded game"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:222
+#: lib/pychess/widgets/gamenanny.py:221
 msgid "Saved game"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:226
+#: lib/pychess/widgets/gamenanny.py:225
 msgid "Analyzer started"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:275
+#: lib/pychess/widgets/gamenanny.py:274
 msgid "You sent an abort offer"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:277
+#: lib/pychess/widgets/gamenanny.py:276
 msgid "You sent an adjournment offer"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:279
+#: lib/pychess/widgets/gamenanny.py:278
 msgid "You sent a draw offer"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:281
+#: lib/pychess/widgets/gamenanny.py:280
 msgid "You sent a pause offer"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:283
+#: lib/pychess/widgets/gamenanny.py:282
 msgid "You sent a resume offer"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:285
+#: lib/pychess/widgets/gamenanny.py:284
 msgid "You sent an undo offer"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:287
+#: lib/pychess/widgets/gamenanny.py:286
 msgid "You asked your opponent to move"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:299
+#: lib/pychess/widgets/gamenanny.py:298
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:300
+#: lib/pychess/widgets/gamenanny.py:299
 msgid ""
 "PyChess has lost connection to the engine, probably because it has died.\n"
 "\n"
@@ -2882,15 +2890,15 @@ msgstr ""
 msgid "Select Gaviota TB path"
 msgstr ""
 
-#: lib/pychess/widgets/preferencesDialog.py:311
+#: lib/pychess/widgets/preferencesDialog.py:317
 msgid "Open Sound File"
 msgstr ""
 
-#: lib/pychess/widgets/preferencesDialog.py:321
+#: lib/pychess/widgets/preferencesDialog.py:327
 msgid "Sound files"
 msgstr ""
 
-#: lib/pychess/widgets/preferencesDialog.py:466
+#: lib/pychess/widgets/preferencesDialog.py:472
 msgid "Undescribed panel"
 msgstr ""
 
@@ -2980,7 +2988,7 @@ msgstr ""
 msgid "Unofficial channel %d"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/LBoard.py:136
+#: lib/pychess/Utils/lutils/LBoard.py:139
 #, python-format
 msgid ""
 "FEN needs 6 data fields. \n"
@@ -2988,7 +2996,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/LBoard.py:138
+#: lib/pychess/Utils/lutils/LBoard.py:141
 #, python-format
 msgid ""
 "FEN needs at least 2 data fields in fenstr. \n"
@@ -2996,7 +3004,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/LBoard.py:155
+#: lib/pychess/Utils/lutils/LBoard.py:158
 #, python-format
 msgid ""
 "Needs 7 slashes in piece placement field. \n"
@@ -3004,7 +3012,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/LBoard.py:158
+#: lib/pychess/Utils/lutils/LBoard.py:161
 #, python-format
 msgid ""
 "Active color field must be one of w or b. \n"
@@ -3012,7 +3020,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/LBoard.py:164
+#: lib/pychess/Utils/lutils/LBoard.py:167
 #, python-format
 msgid ""
 "Castling availability field is not legal. \n"
@@ -3020,7 +3028,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: lib/pychess/Utils/lutils/LBoard.py:167
+#: lib/pychess/Utils/lutils/LBoard.py:170
 #, python-format
 msgid ""
 "En passant cord is not legal. \n"
@@ -3280,71 +3288,67 @@ msgstr ""
 msgid "Annotated game"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:179
+#: sidepanel/annotationPanel.py:226
 msgid "Add start comment"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:184
+#: sidepanel/annotationPanel.py:231
 msgid "Add comment"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:188 sidepanel/annotationPanel.py:251
+#: sidepanel/annotationPanel.py:235 sidepanel/annotationPanel.py:290
 msgid "Edit comment"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:199
+#: sidepanel/annotationPanel.py:246
 msgid "Forced move"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:204
+#: sidepanel/annotationPanel.py:251
 msgid "Add move symbol"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:210
+#: sidepanel/annotationPanel.py:257
 msgid "Unclear position"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:219
+#: sidepanel/annotationPanel.py:266
 msgid "Zugzwang"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:220
+#: sidepanel/annotationPanel.py:267
 msgid "Development adv."
 msgstr ""
 
-#: sidepanel/annotationPanel.py:221
+#: sidepanel/annotationPanel.py:268
 msgid "Initiative"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:222
+#: sidepanel/annotationPanel.py:269
 msgid "With attack"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:223
+#: sidepanel/annotationPanel.py:270
 msgid "Compensation"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:224
+#: sidepanel/annotationPanel.py:271
 msgid "Counterplay"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:225
+#: sidepanel/annotationPanel.py:272
 msgid "Time pressure"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:230
+#: sidepanel/annotationPanel.py:277
 msgid "Add evaluation symbol"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:234
-msgid "Remove symols"
+#: sidepanel/annotationPanel.py:281
+msgid "Remove symbols"
 msgstr ""
 
-#: sidepanel/annotationPanel.py:241
-msgid "Remove variation"
-msgstr ""
-
-#: sidepanel/annotationPanel.py:638
+#: sidepanel/annotationPanel.py:815
 #, python-format
 msgid "round %s"
 msgstr ""
