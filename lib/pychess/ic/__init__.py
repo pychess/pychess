@@ -1,3 +1,4 @@
+import gtk
 import re
 from pychess import Variants
 from pychess.Utils.const import *
@@ -228,6 +229,41 @@ def parse_title_hex (titlehex):
             titles.add(HEX_TO_TITLE[key])
     return titles
 
+def get_infobarmessage_content (player, text, gametype=None):
+    content = gtk.HBox()
+    icon = gtk.Image()
+    icon.set_from_pixbuf(player.getIcon(size=32, gametype=gametype))
+    content.pack_start(icon, expand=False, fill=False, padding=4)
+    label = gtk.Label()
+    label.set_markup(player.getMarkup(gametype=gametype))
+    content.pack_start(label, expand=False, fill=False)
+    label = gtk.Label()
+    label.set_markup(text)
+    content.pack_start(label, expand=False, fill=False)
+    return content
+
+def get_infobarmessage_content2 (player, heading_text, message_text,
+                                 gametype=None):
+    hbox = gtk.HBox()
+    image = gtk.Image()
+    image.set_from_pixbuf(player.getIcon(size=24, gametype=gametype))
+    hbox.pack_start(image, expand=False, fill=False)
+    label = gtk.Label()
+    markup = player.getMarkup(gametype=gametype, long_titles=False)
+    label.set_markup(markup + heading_text)
+    hbox.pack_start(label, expand=False, fill=False)
+    vbox = gtk.VBox()
+    vbox.pack_start(hbox, expand=False, fill=False)
+    label = gtk.Label()
+    label.props.xalign = 0
+    label.props.xpad = 4
+    label.props.justify = gtk.JUSTIFY_LEFT
+    label.props.wrap = True
+    label.set_width_chars(70)
+    label.set_text(message_text)
+    vbox.pack_start(label, expand=False, fill=False, padding=5)
+    return vbox
+    
 """
 Internal command codes used in FICS block mode
 (see "help block_codes" and "help iv_block").

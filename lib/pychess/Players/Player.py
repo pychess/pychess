@@ -36,6 +36,10 @@ class Player (GObject.GObject):
     def __repr__ (self):
         return self.name
     
+    @property
+    def time (self):
+        pass  # Optional
+    
     #===========================================================================
     #    Starting the game
     #===========================================================================
