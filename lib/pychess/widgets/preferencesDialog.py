@@ -236,7 +236,7 @@ class HintTab:
 
 # Setup default sounds
 
-for i in xrange(9):
+for i in xrange(11):
     if not conf.hasKey("soundcombo%d" % i):
         conf.set("soundcombo%d" % i, SOUND_URI)
 if not conf.hasKey("sounduri0"):
@@ -257,13 +257,17 @@ if not conf.hasKey("sounduri7"):
     conf.set("sounduri7", "file://"+addDataPrefix("sounds/obs_mov.ogg"))
 if not conf.hasKey("sounduri8"):
     conf.set("sounduri8", "file://"+addDataPrefix("sounds/obs_end.ogg"))
+if not conf.hasKey("sounduri9"):
+    conf.set("sounduri9", "file://"+addDataPrefix("sounds/alarm.ogg"))
+if not conf.hasKey("sounduri10"):
+    conf.set("sounduri10", "file://"+addDataPrefix("sounds/invalid.ogg"))
 
 class SoundTab:
     
     SOUND_DIRS = (addDataPrefix("sounds"), "/usr/share/sounds",
                   "/usr/local/share/sounds", os.environ["HOME"])
     
-    COUNT_OF_SOUNDS = 9
+    COUNT_OF_SOUNDS = 11
     
     actionToKeyNo = {
         "aPlayerMoves": 0,
@@ -274,7 +278,9 @@ class SoundTab:
         "gameIsLost": 5,
         "gameIsDrawn": 6,
         "observedMoves": 7,
-        "oberservedEnds": 8
+        "oberservedEnds": 8,
+        "shortOnTime": 9,
+        "invalidMove": 10,
     }
     
     _player = None

@@ -16,12 +16,13 @@ from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmovegen
 from pychess.Variants.crazyhouse import CrazyhouseChess
 
+import preferencesDialog
 from PromotionDialog import PromotionDialog
 from BoardView import BoardView, rect
 from BoardView import join
 
-class BoardControl (Gtk.EventBox):    
 
+class BoardControl (Gtk.EventBox):    
     __gsignals__ = {
         'piece_moved' : (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
         'action' : (GObject.SignalFlags.RUN_FIRST, None, (str, object))
@@ -92,6 +93,10 @@ class BoardControl (Gtk.EventBox):
         return promotion
         
     def emit_move_signal (self, cord0, cord1, promotion=None):
+        # Game end can change cord0 to None while dragging a piece
+        if cord0 is None:
+            return
+            
         color = self.view.model.boards[-1].color
         board = self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
         # Ask player for which piece to promote into. If this move does not
@@ -467,6 +472,10 @@ class ActiveState (BoardState):
     
     def release (self, x, y):
         cord = self.point2Cord(x,y)
+
+        if cord != self.view.active and not self.validate(self.view.selected, cord):
+            preferencesDialog.SoundTab.playAction("invalidMove")
+
         if not cord:
             self.view.active = None
             self.view.selected = None
@@ -586,7 +595,8 @@ class SelectedState (BoardState):
         else:  # Unselecting by pressing an inactive cord
             self.view.selected = None
             self.parent.setStateNormal()
-
+            preferencesDialog.SoundTab.playAction("invalidMove")
+            
 class LockedNormalState (LockedBoardState):
     '''
     It is the opponent's turn and no piece or cord is selected.

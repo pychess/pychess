@@ -289,11 +289,10 @@ class FICSPlayer (GObject.GObject):
                 rating = self.getStrength()
             return self.getIconByRating(rating, size)
     
-    def getMarkup (self, gametype=None):
-        markup = "<big><b>%s</b></big>" % self.name
+    def getMarkup (self, gametype=None, big=True, long_titles=True):
+        markup = "<b>%s</b>" % self.name
         if self.isGuest():
-            markup += " <big>(%s)</big>" % \
-                TITLE_TYPE_DISPLAY_TEXTS[TYPE_UNREGISTERED]
+            markup += self.display_titles(long=long_titles)
         else:
             if gametype:
                 rating = self.getRatingByGameType(gametype)
@@ -301,10 +300,13 @@ class FICSPlayer (GObject.GObject):
                 rating = self.getStrength()
             if rating < 1:
                 rating = _("Unrated")
-            markup += " <big>(%s)</big>" % rating
+            markup += " (%s)" % rating
             
             if self.display_titles() != "":
-                markup += "<big>%s</big>" % self.display_titles(long=True)
+                markup += self.display_titles(long=long_titles)
+            
+        if big:
+            markup = "<big>" + markup + "</big>"
             
         return markup
     
