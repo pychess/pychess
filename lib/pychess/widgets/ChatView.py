@@ -2,6 +2,7 @@ from time import strftime, gmtime, localtime
 import random
 
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import Pango
 from gi.repository import GObject
 
@@ -136,7 +137,7 @@ class ChatView (Gtk.VPaned):
         self.writeView.set_sensitive(True)
     
     def onKeyPress (self, widget, event):
-        if event.keyval in map(keyval_from_name,("Return", "KP_Enter")):
+        if event.keyval in list(map(Gdk.keyval_from_name,("Return", "KP_Enter"))):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
                 self.emit("messageTyped", buffer.props.text)
