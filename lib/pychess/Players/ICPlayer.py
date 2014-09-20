@@ -22,9 +22,16 @@ class ICPlayer (Player):
         self.color = color
         self.gameno = gameno
         self.gamemodel = gamemodel
+        
+        # If some times later FICS creates another game with same wplayer,bplayer,gameno
+        # this will change to False and boardUpdate messages will be ignored
+        self.current = True
+        
         self.connection = connection = self.gamemodel.connection
         self.connections = connections = defaultdict(list)
         connections[connection.bm].append(connection.bm.connect_after("boardUpdate", self.__boardUpdate))
+        connections[connection.bm].append(connection.bm.connect_after("playGameCreated", self.__playGameCreated))
+        connections[connection.bm].append(connection.bm.connect_after("obsGameCreated", self.__obsGameCreated))
         connections[connection.om].append(connection.om.connect("onOfferAdd", self.__onOfferAdd))
         connections[connection.om].append(connection.om.connect("onOfferRemove", self.__onOfferRemove))
         connections[connection.om].append(connection.om.connect("onOfferDeclined", self.__onOfferDeclined))
@@ -40,7 +47,23 @@ class ICPlayer (Player):
     #===========================================================================
     #    Handle signals from the connection
     #===========================================================================
-    
+
+    def __playGameCreated (self, bm, ficsgame):
+        if self.gamemodel.ficsplayers[0] == ficsgame.wplayer and \
+            self.gamemodel.ficsplayers[1] == ficsgame.bplayer and \
+            self.gameno == ficsgame.gameno:
+                log.debug("ICPlayer.__playGameCreated: gameno reappeared: gameno=%s white=%s black=%s" % \
+                    (ficsgame.gameno, ficsgame.wplayer.name, ficsgame.bplayer.name))
+                self.current = False
+                
+    def __obsGameCreated (self, bm, ficsgame):
+        if self.gamemodel.ficsplayers[0] == ficsgame.wplayer and \
+            self.gamemodel.ficsplayers[1] == ficsgame.bplayer and \
+            self.gameno == ficsgame.gameno:
+                log.debug("ICPlayer.__obsGameCreated: gameno reappeared: gameno=%s white=%s black=%s" % \
+                    (ficsgame.gameno, ficsgame.wplayer.name, ficsgame.bplayer.name))
+                self.current = False
+
     def __onOfferAdd (self, om, offer):
         if self.gamemodel.status in UNFINISHED_STATES and not self.gamemodel.isObservationGame():
             log.debug("ICPlayer.__onOfferAdd: emitting offer: self.gameno=%s self.name=%s %s" % \
@@ -72,7 +95,8 @@ class ICPlayer (Player):
         
         if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
             and wname == self.gamemodel.players[0].ichandle \
-            and bname == self.gamemodel.players[1].ichandle:
+            and bname == self.gamemodel.players[1].ichandle \
+            and self.current:
             log.debug("ICPlayer.__boardUpdate: id=%d self=%s gameno=%s: this is my move" % \
                 (id(self), self, gameno))
             
