@@ -132,7 +132,9 @@ METHODS = (
     (gtk.IconView, ("_get_active", "_set_active", "selection-changed")),
     (gtk.ToggleButton, ("get_active", "set_active", "toggled")),
     (gtk.CheckMenuItem, ("get_active", "set_active", "toggled")),
-    (gtk.Range, ("get_value", "set_value", "value-changed")))
+    (gtk.Range, ("get_value", "set_value", "value-changed")),
+    (gtk.TreeSortable, ("get_value", "set_value", "sort-column-changed")),
+    )
 
 def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
     if widget == None:

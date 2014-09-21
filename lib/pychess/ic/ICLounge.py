@@ -420,7 +420,8 @@ class SeekTabSection (ParrentListSection):
         self.tv = self.widgets["seektreeview"]
         self.store = gtk.ListStore(FICSSoughtMatch, gtk.gdk.Pixbuf,
             gtk.gdk.Pixbuf, str, int, str, str, str, int, str, str)
-        self.tv.set_model(gtk.TreeModelSort(self.store))
+        self.modelsort = gtk.TreeModelSort(self.store)
+        self.tv.set_model(self.modelsort)
         self.addColumns (self.tv, "FICSSoughtMatch", "", "", _("Name"),
             _("Rating"), _("Rated"), _("Type"), _("Clock"), "gametime",
             "textcolor", "tooltip", hide=[0,8,9,10], pix=[1,2] )
@@ -462,6 +463,21 @@ class SeekTabSection (ParrentListSection):
                 self.publisher.put((self.onPlayingGame,)) )
         self.connection.bm.connect("curGameEnded", lambda bm, game:
                 self.publisher.put((self.onCurGameEnded,)) )
+        
+        def get_sort_order(modelsort):
+            id, order = modelsort.get_sort_column_id()
+            id += 1
+            if order == gtk.SORT_DESCENDING:
+                id = -1 * id
+            return id
+
+        def set_sort_order(modelsort, value):
+            order = gtk.SORT_ASCENDING if value > 0 else gtk.SORT_DESCENDING
+            modelsort.set_sort_column_id(abs(value) - 1, order)
+
+        uistuff.keep(self.modelsort, "seektreeview_sort_order_col", get_sort_order, \
+            lambda modelsort, value: set_sort_order(modelsort, value))
+        
         
     def selectFunction (self, selection, model, path, is_selected):
         if model[path][9] == "grey": return False
