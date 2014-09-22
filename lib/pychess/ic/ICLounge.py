@@ -1994,6 +1994,7 @@ class Messages (Section):
         self.players = []
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
+        self.connection.bm.connect("req_not_fit_formula", self.req_not_fit_formula)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         self.connection.glm.connect("seek-updated", self.on_seek_updated)
         self.connection.glm.connect("our-seeks-removed", self.our_seeks_removed)
@@ -2031,6 +2032,21 @@ class Messages (Section):
     def matchDeclined (self, bm, player):
         text = _(" has declined your offer for a match")
         content = get_infobarmessage_content(player, text)
+        def response_cb (infobar, response, message):
+            message.dismiss()
+            return False
+        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
+                                                gtk.RESPONSE_CANCEL))
+        self.messages.append(message)
+        self.infobar.push_message(message)
+
+    @glock.glocked
+    def req_not_fit_formula(self, bm, player, formula):
+        content = get_infobarmessage_content2(
+            player,
+            _(" uses a formula not fitting your match request:"),
+            formula)
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
