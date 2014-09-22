@@ -143,6 +143,7 @@ class GameWidget (gobject.GObject):
         if isinstance(gamemodel, ICGameModel):
             gamemodel.connection.bm.connect("player_lagged", self.player_lagged)
             gamemodel.connection.bm.connect("opp_not_out_of_time", self.opp_not_out_of_time)
+            gamemodel.connection.bm.connect("req_not_fit_formula", self.req_not_fit_formula)
         board.view.connect("shown_changed", self.shown_changed)
         
         # Some stuff in the sidepanels .load functions might change UI, so we
@@ -519,6 +520,22 @@ class GameWidget (gobject.GObject):
                 self.showMessage(message)
         return False
     
+    def req_not_fit_formula(self, bm, player, formula):
+        if player in self.gamemodel.ficsplayers:
+            content = get_infobarmessage_content2(
+                player,
+                _(" uses a formula not fitting your match request:"),
+                formula)
+            def response_cb (infobar, response, message):
+                message.dismiss()
+                return False
+            message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
+            message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
+                                                    gtk.RESPONSE_CANCEL))
+            with glock.glock:
+                self.showMessage(message)
+        return False
+        
     def initTabcontents(self):
         tabcontent = createAlignment(gtk.Notebook().props.tab_vborder,0,0,0)
         hbox = gtk.HBox()

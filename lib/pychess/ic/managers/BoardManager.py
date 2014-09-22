@@ -165,6 +165,7 @@ class BoardManager (GObject):
         'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (object,)),
         'player_lagged'       : (SIGNAL_RUN_FIRST, None, (object,)),
         'opp_not_out_of_time' : (SIGNAL_RUN_FIRST, None, ()),
+        'req_not_fit_formula' : (SIGNAL_RUN_FIRST, None, (object, str)),
     }
     
     castleSigns = {}
@@ -184,6 +185,10 @@ class BoardManager (GObject):
             "Game (\d+): %s has lagged for (\d+) seconds\." % names)
         self.connection.expect_line(self.opp_not_out_of_time,
             "Opponent is not out of time, wait for server autoflag\.")
+
+        self.connection.expect_n_lines(self.req_not_fit_formula,
+            "Match request does not fit formula for %s:" % names,
+            "%s's formula: (.+)" % names)
         
         self.connection.expect_n_lines (self.onPlayGameCreated,
             "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
@@ -968,6 +973,13 @@ class BoardManager (GObject):
         self.emit("opp_not_out_of_time")
     opp_not_out_of_time.BLKCMD = BLKCMD_FLAG
     
+    def req_not_fit_formula (self, matchlist):
+        player, formula = matchlist[1].groups()
+        player = self.connection.players.get(FICSPlayer(player))
+        self.emit("req_not_fit_formula", player, formula)
+    req_not_fit_formula.BLKCMD = BLKCMD_MATCH
+        
+        
     ############################################################################
     #   Interacting                                                            #
     ############################################################################
