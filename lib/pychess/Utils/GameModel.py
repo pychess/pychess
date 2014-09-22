@@ -169,6 +169,19 @@ class GameModel (GObject.GObject, Thread):
         self.undoLock = RLock()
         self.undoQueue = Queue.Queue()
     
+    def __unicode__ (self):       
+        s = "<GameModel at %s" % id(self)
+        s += " (ply=%s" % self.ply
+        if len(self.moves) > 0:
+            s += ", move=%s" % self.moves[-1]
+        s += ", variant=%s" % self.variant.name
+        s += ", status=%s, reason=%s" % (str(self.status), str(self.reason))
+        s += ", players=%s" % str(self.players)
+        s += ", tags=%s" % str(self.tags)
+        if len(self.boards) > 0:            
+            s += "\nboard=%s" % str(self.boards[-1]).decode('utf-8')            
+        return s
+
     def __repr__ (self):
         s = "<GameModel at %s" % id(self)
         s += " (ply=%s" % self.ply
@@ -737,11 +750,7 @@ class GameModel (GObject.GObject, Thread):
         self.emit("game_ended", reason)
     
     def terminate (self):
-        # FIXME UnicodeEncodeError: 'ascii' codec can't encode character u'\u265c' in position 345: ordinal not in range(128)
-        try:
-            log.debug("GameModel.terminate: %s" % repr(self))
-        except UnicodeEncodeError as e: 
-            log.debug("GameModel.py - UnicodeEncodeError: %s" % e)
+        log.debug("GameModel.terminate: %s" % unicode(self))        
 
         if self.status != KILLED:
             #self.resume()
