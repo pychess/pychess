@@ -29,8 +29,11 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
          A Savers.something module with a load function capable of loading it,
          An int of the game in file you want to load,
          The position from where to start the game) """
-    log.debug("ionest.generalStart: %s\n %s\n %s" % (gamemodel, player0tup, player1tup))
-    
+    try:
+        log.debug("ionest.generalStart: %s\n %s\n %s" % (unicode(gamemodel), player0tup, player1tup))
+    except UnicodeEncodeError as e:
+        log.debug("unicode error1 in ionest.py: %s\n" % e)
+
     def work (w): 
         return workfunc(w, gamemodel, player0tup, player1tup, loaddata)
     worker = GtkWorker(work)
@@ -59,7 +62,11 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     worker.execute()
 
 def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
-    log.debug("ionest.workfunc: %s\n %s\n %s" % (gamemodel, player0tup, player1tup))
+    try:
+        log.debug("ionest.workfunc: %s\n %s\n %s" % (unicode(gamemodel), player0tup, player1tup))        
+    except UnicodeEncodeError as e:       
+        log.debug("unicode error2 in ionest.py: %s\n" % e)
+
     gmwidg = gamewidget.GameWidget(gamemodel)
     worker.publish((gmwidg,gamemodel))
     
