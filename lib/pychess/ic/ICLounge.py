@@ -1994,6 +1994,8 @@ class Messages (Section):
         self.players = []
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
+        self.connection.bm.connect("player_on_censor", self.player_on_censor)
+        self.connection.bm.connect("player_on_noplay", self.player_on_noplay)
         self.connection.bm.connect("req_not_fit_formula", self.req_not_fit_formula)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         self.connection.glm.connect("seek-updated", self.on_seek_updated)
@@ -2031,6 +2033,32 @@ class Messages (Section):
     @glock.glocked
     def matchDeclined (self, bm, player):
         text = _(" has declined your offer for a match")
+        content = get_infobarmessage_content(player, text)
+        def response_cb (infobar, response, message):
+            message.dismiss()
+            return False
+        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
+                                                gtk.RESPONSE_CANCEL))
+        self.messages.append(message)
+        self.infobar.push_message(message)
+
+    @glock.glocked
+    def player_on_censor(self, bm, player):
+        text = _(" is censoring you")
+        content = get_infobarmessage_content(player, text)
+        def response_cb (infobar, response, message):
+            message.dismiss()
+            return False
+        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
+                                                gtk.RESPONSE_CANCEL))
+        self.messages.append(message)
+        self.infobar.push_message(message)
+
+    @glock.glocked
+    def player_on_noplay(self, bm, player):
+        text = _(" noplay listing you")
         content = get_infobarmessage_content(player, text)
         def response_cb (infobar, response, message):
             message.dismiss()

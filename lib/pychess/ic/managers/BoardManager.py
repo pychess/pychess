@@ -163,6 +163,8 @@ class BoardManager (GObject):
         'gamePaused'          : (SIGNAL_RUN_FIRST, None, (int, bool)),
         'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ()),
         'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (object,)),
+        'player_on_censor'    : (SIGNAL_RUN_FIRST, None, (object,)),
+        'player_on_noplay'    : (SIGNAL_RUN_FIRST, None, (object,)),
         'player_lagged'       : (SIGNAL_RUN_FIRST, None, (object,)),
         'opp_not_out_of_time' : (SIGNAL_RUN_FIRST, None, ()),
         'req_not_fit_formula' : (SIGNAL_RUN_FIRST, None, (object, str)),
@@ -181,6 +183,10 @@ class BoardManager (GObject):
             "You can only have 3 active seeks.")
         self.connection.expect_line (self.matchDeclined,
             "%s declines the match offer." % names)
+        self.connection.expect_line (self.player_on_censor,
+            "%s is censoring you." % names)
+        self.connection.expect_line (self.player_on_noplay,
+            "You are on %s's noplay list." % names)
         self.connection.expect_line(self.player_lagged,
             "Game (\d+): %s has lagged for (\d+) seconds\." % names)
         self.connection.expect_line(self.opp_not_out_of_time,
@@ -495,7 +501,7 @@ class BoardManager (GObject):
         decliner, = match.groups()
         decliner = self.connection.players.get(FICSPlayer(decliner), create=False)
         self.emit("matchDeclined", decliner)
-        
+
     @classmethod
     def generateCastleSigns (cls, style12, game_type):
         if game_type.variant_type == FISCHERRANDOMCHESS:
@@ -978,7 +984,18 @@ class BoardManager (GObject):
         player = self.connection.players.get(FICSPlayer(player))
         self.emit("req_not_fit_formula", player, formula)
     req_not_fit_formula.BLKCMD = BLKCMD_MATCH
-        
+
+    def player_on_censor(self, match):
+        player, = match.groups()
+        player = self.connection.players.get(FICSPlayer(player))
+        self.emit("player_on_censor", player)
+    player_on_censor.BLKCMD = BLKCMD_MATCH
+
+    def player_on_noplay(self, match):
+        player, = match.groups()
+        player = self.connection.players.get(FICSPlayer(player))
+        self.emit("player_on_noplay", player)
+    player_on_noplay.BLKCMD = BLKCMD_MATCH
         
     ############################################################################
     #   Interacting                                                            #
