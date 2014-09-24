@@ -1,0 +1,915 @@
+# -*- coding: UTF-8 -*-
+import re
+import datetime
+
+import gtk
+import pango
+
+from pychess.Utils import prettyPrintScore
+from pychess.Utils.const import *
+from pychess.System import conf
+from pychess.System.glock import glock_connect
+from pychess.System.Log import log
+from pychess.System.prefix import addDataPrefix
+from pychess.Utils.lutils.lmove import toSAN, toFAN
+from pychess.Savers.pgn import move_count
+from pychess.Savers.pgnbase import nag2symbol
+from pychess.widgets.ChessClock import formatTime
+
+__title__ = _("Annotation")
+__active__ = True
+__icon__ = addDataPrefix("glade/panel_annotation.svg")
+__desc__ = _("Annotated game")
+
+
+"""
+We are maintaining a list of nodes to help manipulate the textbuffer.
+Node can represent a move, comment or variation (start/end) marker.
+Nodes are dicts with keys like:
+board  = in move node it's the lboard of move 
+         in comment node it's the lboard where the comment belongs to
+         in end variation marker node it's the first lboard of the variation
+         in start variation marker is's None
+start  = the beginning offest of the node in the textbuffer
+end    = the ending offest of the node in the textbuffer
+parent = the parent lboard if the node is a move in a variation, otherwise None 
+vari   = in end variation node it's the start variation marker node
+         in start variation node it's None
+level  = depth in variation tree (0 for mainline nodes, 1 for first level variation moves, etc.)
+index  = in comment nodes the index of comment if more exist for a move
+"""
+
+class Sidepanel(gtk.TextView):
+    def __init__(self):
+        gtk.TextView.__init__(self)
+
+        self.set_editable(False)
+        self.set_cursor_visible(False)
+        self.set_wrap_mode(gtk.WRAP_WORD)
+
+        self.cursor_standard = gtk.gdk.Cursor(gtk.gdk.LEFT_PTR)
+        self.cursor_hand = gtk.gdk.Cursor(gtk.gdk.HAND2)
+        
+        self.textview = self
+        
+        self.nodelist = []
+        self.oldWidth = 0
+        self.autoUpdateSelected = True
+        
+        self.connect("motion-notify-event", self.motion_notify_event)
+        self.connect("button-press-event", self.button_press_event)
+        
+        self.textbuffer = self.get_buffer()
+        
+        color0 = gtk.gdk.Color(red=0.0)
+        color1 = gtk.gdk.Color(red=0.2)
+        color2 = gtk.gdk.Color(red=0.4)
+        color3 = gtk.gdk.Color(red=0.6)
+        color4 = gtk.gdk.Color(red=0.8)
+        color5 = gtk.gdk.Color(red=1.0)
+
+        tag = self.textbuffer.create_tag("remove-variation")
+        tag.connect("event", self.tag_event_handler)
+
+        self.textbuffer.create_tag("head1")
+        self.textbuffer.create_tag("head2", weight=pango.WEIGHT_BOLD)
+        self.textbuffer.create_tag("move", weight=pango.WEIGHT_BOLD, background="white")
+        self.textbuffer.create_tag("scored0", foreground_gdk=color0)
+        self.textbuffer.create_tag("scored1", foreground_gdk=color1)
+        self.textbuffer.create_tag("scored2", foreground_gdk=color2)
+        self.textbuffer.create_tag("scored3", foreground_gdk=color3)
+        self.textbuffer.create_tag("scored4", foreground_gdk=color4)
+        self.textbuffer.create_tag("scored5", foreground_gdk=color5)
+        self.textbuffer.create_tag("emt", foreground="darkgrey", weight=pango.WEIGHT_NORMAL)
+        self.textbuffer.create_tag("comment", foreground="darkblue")
+        self.textbuffer.create_tag("variation-toplevel", weight=pango.WEIGHT_NORMAL)
+        self.textbuffer.create_tag("variation-even", foreground="darkgreen", style="italic")
+        self.textbuffer.create_tag("variation-uneven", foreground="darkred", style="italic")
+        self.textbuffer.create_tag("selected", background_full_height=True, background="grey")
+        self.textbuffer.create_tag("margin", left_margin=4)
+        self.textbuffer.create_tag("variation-margin0", left_margin=20)
+        self.textbuffer.create_tag("variation-margin1", left_margin=36)
+        self.textbuffer.create_tag("variation-margin2", left_margin=52)
+
+    def load(self, gmwidg):
+        __widget__ = gtk.ScrolledWindow()
+        __widget__.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
+        __widget__.add(self.textview)
+
+        self.boardview = gmwidg.board.view
+        self.boardview.connect("shown_changed", self.shown_changed)
+
+        self.gamemodel = gmwidg.board.view.model
+        glock_connect(self.gamemodel, "game_loaded", self.update)
+        glock_connect(self.gamemodel, "game_changed", self.game_changed)
+        glock_connect(self.gamemodel, "game_started", self.update)
+        glock_connect(self.gamemodel, "game_ended", self.update)
+        glock_connect(self.gamemodel, "moves_undoing", self.moves_undoing)
+        glock_connect(self.gamemodel, "opening_changed", self.update)
+        glock_connect(self.gamemodel, "players_changed", self.players_changed)
+        glock_connect(self.gamemodel, "variation_added", self.variation_added)
+        glock_connect(self.gamemodel, "variation_extended", self.variation_extended)
+        glock_connect(self.gamemodel, "analysis_changed", self.analysis_changed)
+
+        # Connect to preferences
+        self.fan = conf.get("figuresInNotation", False)
+        def figuresInNotationCallback(none):
+            self.fan = conf.get("figuresInNotation", False)
+            self.update()
+        conf.notify_add("figuresInNotation", figuresInNotationCallback)
+        
+        # Elapsed move time
+        self.showEmt = conf.get("showEmt", False)
+        def showEmtCallback(none):
+            self.showEmt = conf.get("showEmt", False)
+            self.update()
+        conf.notify_add("showEmt", showEmtCallback)
+
+        # Blunders
+        self.showBlunder = conf.get("showBlunder", False)
+        def showBlunderCallback(none):
+            self.showBlunder = conf.get("showBlunder", False)
+            self.update()
+        conf.notify_add("showBlunder", showBlunderCallback)
+
+        # Eval values
+        self.showEval = conf.get("showEval", False)
+        def showEvalCallback(none):
+            self.showEval = conf.get("showEval", False)
+            self.update()
+        conf.notify_add("showEval", showEvalCallback)
+
+        return __widget__
+
+    def tag_event_handler(self, tag, widget, event, iter):
+        """ Calls variation remover when clicking on remove marker """
+        
+        tag_name = tag.get_property("name")
+        if event.type == gtk.gdk.BUTTON_PRESS and tag_name == "remove-variation":
+            offset = iter.get_offset()
+            node = None
+            for n in self.nodelist:
+                if offset >= n["start"] and offset < n["end"]:
+                    node = n
+                    break
+            if node is None:
+                return
+                
+            self.remove_variation(node)
+
+        return False
+        
+    def motion_notify_event(self, widget, event):
+        """ Handles mouse cursor changes (standard/hand) """
+        
+        if (event.is_hint):
+            (x, y, state) = event.window.get_pointer()
+        else:
+            x = event.x
+            y = event.y
+            state = event.state
+            
+        if self.textview.get_window_type(event.window) != gtk.TEXT_WINDOW_TEXT:
+            event.window.set_cursor(self.cursor_standard)
+            return True
+            
+        (x, y) = self.textview.window_to_buffer_coords(gtk.TEXT_WINDOW_WIDGET, int(x), int(y))
+        it = self.textview.get_iter_at_location(x, y)
+        offset = it.get_offset()
+        for node in self.nodelist:
+            if offset >= node["start"] and offset < node["end"] and not "vari" in node:
+                event.window.set_cursor(self.cursor_hand)
+                return True
+        event.window.set_cursor(self.cursor_standard)
+        return True
+
+    def button_press_event(self, widget, event):
+        """ Calls setShownBoard() or edit_comment() on mouse click, or pops-up local menu """
+        
+        (wx, wy) = event.get_coords()
+        (x, y) = self.textview.window_to_buffer_coords(gtk.TEXT_WINDOW_WIDGET, int(wx), int(wy))
+        it = self.textview.get_iter_at_location(x, y)
+        offset = it.get_offset()
+        
+        node = None
+        for n in self.nodelist:
+            if offset >= n["start"] and offset < n["end"]:
+                node = n
+                board = node["board"]
+                break
+        
+        if node is None:
+            return True
+        
+        # left mouse click
+        if event.button == 1:
+            if "vari" in node:
+                # tag_event_handler() will handle 
+                return True
+            elif "comment" in node:
+                self.edit_comment(board=board, index=node["index"])
+            else:
+                self.boardview.setShownBoard(board.pieceBoard)
+
+        # local menu on right mouse click
+        elif event.button == 3:
+            if node is not None:
+                menu = gtk.Menu()
+                position = -1
+                for index, child in enumerate(board.children):
+                    if isinstance(child, basestring):
+                        position = index
+                        break
+
+                if len(self.gamemodel.boards) > 1 and board == self.gamemodel.boards[1].board and \
+                    not self.gamemodel.boards[0].board.children:
+                    menuitem = gtk.MenuItem(_("Add start comment"))
+                    menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0].board, 0)
+                    menu.append(menuitem)
+
+                if position == -1:
+                    menuitem = gtk.MenuItem(_("Add comment"))
+                    menuitem.connect('activate', self.edit_comment, board, 0)
+                    menu.append(menuitem)
+                else:
+                    menuitem = gtk.MenuItem(_("Edit comment"))
+                    menuitem.connect('activate', self.edit_comment, board, position)
+                    menu.append(menuitem)
+
+                symbol_menu1 = gtk.Menu()
+                for nag, menutext in (("$1", "!"),
+                                      ("$2", "?"),
+                                      ("$3", "!!"),
+                                      ("$4", "??"),
+                                      ("$5", "!?"),
+                                      ("$6", "?!"),
+                                      ("$7", _("Forced move"))):
+                    menuitem = gtk.MenuItem(menutext)
+                    menuitem.connect('activate', self.symbol_menu1_activate, board, nag)
+                    symbol_menu1.append(menuitem)
+
+                menuitem = gtk.MenuItem(_("Add move symbol"))
+                menuitem.set_submenu(symbol_menu1)
+                menu.append(menuitem)
+                
+                symbol_menu2 = gtk.Menu()
+                for nag, menutext in (("$10", "="),
+                                      ("$13", _("Unclear position")),
+                                      ("$14", "+="),
+                                      ("$15", "=+"),
+                                      ("$16", "±"),
+                                      ("$17", "∓"),
+                                      ("$18", "+-"),
+                                      ("$19", "-+"),
+                                      ("$20", "+--"),
+                                      ("$21", "--+"),
+                                      ("$22", _("Zugzwang")),
+                                      ("$32", _("Development adv.")),
+                                      ("$36", _("Initiative")),
+                                      ("$40", _("With attack")),
+                                      ("$44", _("Compensation")),
+                                      ("$132", _("Counterplay")),
+                                      ("$138", _("Time pressure"))):
+                    menuitem = gtk.MenuItem(menutext)
+                    menuitem.connect('activate', self.symbol_menu2_activate, board, nag)
+                    symbol_menu2.append(menuitem)
+
+                menuitem = gtk.MenuItem(_("Add evaluation symbol"))
+                menuitem.set_submenu(symbol_menu2)
+                menu.append(menuitem)
+
+                menuitem = gtk.MenuItem(_("Remove symbols"))
+                menuitem.connect('activate', self.remove_symbols, board)
+                menu.append(menuitem)
+
+                menu.show_all()
+                menu.popup( None, None, None, event.button, event.time)
+        return True
+
+    def edit_comment(self, widget=None, board=None, index=0):
+        dialog = gtk.Dialog(_("Edit comment"),
+                     None,
+                     gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                     (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                      gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+
+        textedit = gtk.TextView()
+        textedit.set_editable(True)
+        textedit.set_cursor_visible(True)
+        textedit.set_wrap_mode(gtk.WRAP_WORD)
+
+        textbuffer = textedit.get_buffer()
+        if not board.children:
+            board.children.append("")
+        elif not isinstance(board.children[index], basestring):
+            board.children.insert(index, "")
+        textbuffer.set_text(board.children[index])
+        
+        sw = gtk.ScrolledWindow()
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        sw.add(textedit)
+
+        dialog.vbox.add(sw)
+        dialog.resize(300, 200)
+        dialog.show_all()
+
+        response = dialog.run()
+        if response == gtk.RESPONSE_ACCEPT:
+            dialog.destroy()
+            (iter_first, iter_last) = textbuffer.get_bounds()
+            comment = textbuffer.get_text(iter_first, iter_last)
+            if board.children[index] != comment:
+                board.children[index] = comment
+                self.gamemodel.needsSave = True
+                self.update()
+        else:
+            dialog.destroy()
+
+    # Add move symbol menu
+    def symbol_menu1_activate(self, widget, board, nag):
+        if len(board.nags) == 0:
+            board.nags.append(nag)
+            self.gamemodel.needsSave = True
+        else:
+            if board.nags[0] != nag:
+                board.nags[0] = nag
+                self.gamemodel.needsSave = True
+
+        if self.gamemodel.needsSave:
+            self.update_node(board)
+                
+    # Add evaluation symbol menu
+    def symbol_menu2_activate(self, widget, board, nag):
+        color = board.color
+        if color == WHITE and nag in ("$22", "$32", "$36", "$40", "$44", "$132", "$138"):
+            nag = "$%s" % (int(nag[1:]) + 1)
+
+        if len(board.nags) == 0:
+            board.nags.append("")
+            board.nags.append(nag)
+            self.gamemodel.needsSave = True
+        if len(board.nags) == 1:
+            board.nags.append(nag)
+            self.gamemodel.needsSave = True
+        else:
+            if board.nags[1] != nag:
+                board.nags[1] = nag
+                self.gamemodel.needsSave = True
+
+        if self.gamemodel.needsSave:
+            self.update_node(board)
+
+    def remove_symbols(self, widget, board):
+        if board.nags:
+            board.nags = []
+            self.update_node(board)
+            self.gamemodel.needsSave = True
+
+    def print_node(self, node):
+        """ Just a debug helper """
+        
+        if "vari" in node:
+            if node["board"] is None:
+                text = "["
+            else:
+                text = "]"
+        elif "comment" in node:
+            text = node["comment"]
+        else:
+            text = self.__movestr(node["board"])
+        return text
+        
+    def remove_variation(self, node):
+        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
+        # TODO
+        in_vari = True #shown_board in vari
+        
+        board = node["board"]
+        parent = node["parent"]
+        # Set new shown board if needed
+        if in_vari:
+            if parent.pieceBoard is None:
+                # variation without played move at game end 
+                self.boardview.setShownBoard(self.gamemodel.boards[-1])
+            else:
+                self.boardview.setShownBoard(parent.pieceBoard)
+        
+        # Remove the variation (list of lboards) containing board from parent's children list
+        for child in parent.children:
+            if isinstance(child, list) and board in child:
+                parent.children.remove(child)
+                break
+
+        # Remove all variations from gamemodel's variations list which contains this board
+        for vari in self.gamemodel.variations[1:]:
+            if board.pieceBoard in vari:
+                self.gamemodel.variations.remove(vari)
+
+        last_node = self.nodelist[-1] == node
+
+        startnode = node["vari"]
+        start = startnode["start"]
+        end = node["end"]
+
+        need_delete = []
+        for n in self.nodelist[self.nodelist.index(startnode):]:
+            if n["start"] < end:
+                need_delete.append(n)
+
+        if not last_node:
+            diff = end - start
+            for n in self.nodelist[self.nodelist.index(node)+1:]:
+                n["start"] -= diff
+                n["end"] -= diff
+
+        for n in need_delete:
+            self.nodelist.remove(n)
+
+        start_iter = self.textbuffer.get_iter_at_offset(start)
+        end_iter = self.textbuffer.get_iter_at_offset(end)
+        self.textbuffer.delete(start_iter, end_iter)
+
+        self.gamemodel.needsSave = True
+
+    def variation_start(self, iter, index, level):
+        start = iter.get_offset()
+        self.textbuffer.insert(iter, "\n")
+        if level == 0:
+            self.textbuffer.insert_with_tags_by_name(iter, "[", "variation-toplevel", "variation-margin0")
+        elif (level+1) % 2 == 0:
+            self.textbuffer.insert_with_tags_by_name(iter, "(", "variation-even", "variation-margin1")
+        else:
+            self.textbuffer.insert_with_tags_by_name(iter, "(", "variation-uneven", "variation-margin2")
+
+        node = {}
+        node["board"] = None
+        node["vari"] = None
+        node["start"] = start
+        node["end"] =  iter.get_offset()
+        
+        if index == -1:
+            self.nodelist.append(node)
+        else:
+            self.nodelist.insert(index, node)
+
+        return (iter.get_offset() - start, node)
+        
+    def variation_end(self, iter, index, level, firstboard, parent, opening_node):
+        start = iter.get_offset()
+        if level == 0:
+            self.textbuffer.insert_with_tags_by_name(iter, "]", "variation-toplevel", "variation-margin0")
+        elif (level+1) % 2 == 0:
+            self.textbuffer.insert_with_tags_by_name(iter, ")", "variation-even", "variation-margin1")
+        else:
+            self.textbuffer.insert_with_tags_by_name(iter, ")", "variation-uneven", "variation-margin2")
+
+        self.textbuffer.insert_with_tags_by_name(iter, u"✖ ", "remove-variation")
+        self.textbuffer.insert(iter, "\n")
+
+        node = {}
+        node["board"] = firstboard
+        node["parent"] = parent
+        node["vari"] = opening_node
+        node["start"] = start
+        node["end"] =  iter.get_offset()
+
+        if index == -1:
+            self.nodelist.append(node)
+        else:
+            self.nodelist.insert(index, node)
+
+        return iter.get_offset() - start
+
+    def update_node(self, board):
+        node = None
+        for n in self.nodelist:
+            if n["board"] == board:
+                start = self.textbuffer.get_iter_at_offset(n["start"])
+                end = self.textbuffer.get_iter_at_offset(n["end"])
+                node = n
+                break
+    
+        if node is None:
+            return
+
+        index = self.nodelist.index(node)
+        level = node["level"]
+        parent = node["parent"]
+        diff = node["end"] - node["start"]
+        self.nodelist.remove(node)
+        self.textbuffer.delete(start, end)
+        inserted_node = self.insert_node(board, start, index, level, parent)
+        diff = inserted_node["end"] - inserted_node["start"] - diff
+
+        if len(self.nodelist) > index + 1:
+            for node in self.nodelist[index+1:]:
+                node["start"] += diff
+                node["end"] += diff
+
+    def insert_node(self, board, iter, index, level, parent):
+        start = iter.get_offset()
+        movestr = self.__movestr(board)
+        self.textbuffer.insert(iter, "%s " % movestr)
+        
+        startIter = self.textbuffer.get_iter_at_offset(start)
+        endIter = self.textbuffer.get_iter_at_offset(iter.get_offset())
+
+        if level == 0:
+            self.textbuffer.apply_tag_by_name("move", startIter, endIter)
+            self.textbuffer.apply_tag_by_name("margin", startIter, endIter)
+            self.colorize_node(board.plyCount, startIter, endIter)
+        elif level == 1:
+            self.textbuffer.apply_tag_by_name("variation-toplevel", startIter, endIter)
+            self.textbuffer.apply_tag_by_name("variation-margin0", startIter, endIter)
+        elif level % 2 == 0:
+            self.textbuffer.apply_tag_by_name("variation-even", startIter, endIter)
+            self.textbuffer.apply_tag_by_name("variation-margin1", startIter, endIter)
+        else:
+            self.textbuffer.apply_tag_by_name("variation-uneven", startIter, endIter)
+            self.textbuffer.apply_tag_by_name("variation-margin2", startIter, endIter)
+
+        node = {}
+        node["board"] = board
+        node["start"] = start       
+        node["end"] = iter.get_offset()
+        node["parent"] = parent
+        node["level"] = level
+
+        if index == -1:
+            self.nodelist.append(node)
+        else:
+            self.nodelist.insert(index, node)
+        return node
+
+    def variation_extended(self, gamemodel, prev_board, board):
+        node = None
+        for n in self.nodelist:
+            if n["board"] == prev_board:
+                end = self.textbuffer.get_iter_at_offset(n["end"])
+                node = n
+                break
+
+        node_index = self.nodelist.index(node) + 1
+
+        inserted_node = self.insert_node(board, end, node_index, node["level"], node["parent"])
+        diff = inserted_node["end"] - inserted_node["start"]
+
+        if len(self.nodelist) > node_index+1:
+            for node in self.nodelist[node_index+1:]:
+                node["start"] += diff
+                node["end"] += diff
+
+        self.gamemodel.needsSave = True
+        
+    def variation_added(self, gamemodel, boards, parent):
+        node = None
+        for n in self.nodelist:
+            if n["board"] == parent:
+                end = self.textbuffer.get_iter_at_offset(n["end"])
+                node = n
+                break
+        
+        if node is None:
+            next_node_index = len(self.nodelist)
+            end = self.textbuffer.get_end_iter()
+            level = 0
+        else:
+            next_node_index = self.nodelist.index(node) + 1
+            level = node["level"]
+
+        diff, opening_node = self.variation_start(end, next_node_index, level)
+
+        for i, board in enumerate(boards):
+            if board.prev is None:
+                continue
+            inserted_node = self.insert_node(board, end, next_node_index+i, level+1, parent)
+            diff += inserted_node["end"] - inserted_node["start"]
+
+        diff += self.variation_end(end, next_node_index + len(boards), level, boards[0], parent, opening_node)
+
+        if next_node_index > 0:
+            for node in self.nodelist[next_node_index + len(boards)+1:]:
+                node["start"] += diff
+                node["end"] += diff
+
+        self.boardview.setShownBoard(boards[1].pieceBoard)
+        self.gamemodel.needsSave = True
+
+    def colorize_node(self, ply, start, end):
+        """ Update the node color """
+
+        self.textbuffer.remove_tag_by_name("emt", start, end)
+        self.textbuffer.remove_tag_by_name("scored5", start, end)
+        self.textbuffer.remove_tag_by_name("scored4", start, end)
+        self.textbuffer.remove_tag_by_name("scored3", start, end)
+        self.textbuffer.remove_tag_by_name("scored2", start, end)
+        self.textbuffer.remove_tag_by_name("scored1", start, end)
+        if self.showBlunder and ply-1 in self.gamemodel.scores and ply in self.gamemodel.scores:
+            color = (ply-1) % 2
+            oldmoves, oldscore, olddepth = self.gamemodel.scores[ply-1]
+            oldscore = oldscore * -1 if color == BLACK else oldscore
+            moves, score, depth = self.gamemodel.scores[ply]
+            score = score * -1 if color == WHITE else score
+            diff = score-oldscore
+            if (diff > 400 and color==BLACK) or (diff < -400 and color==WHITE):
+                self.textbuffer.apply_tag_by_name("scored5", start, end)
+            elif (diff > 200 and color==BLACK) or (diff < -200 and color==WHITE):
+                self.textbuffer.apply_tag_by_name("scored4", start, end)
+            elif (diff > 90 and color==BLACK) or (diff < -90 and color==WHITE):
+                self.textbuffer.apply_tag_by_name("scored3", start, end)
+            elif (diff > 50 and color==BLACK) or (diff < -50 and color==WHITE):
+                self.textbuffer.apply_tag_by_name("scored2", start, end)
+            elif (diff > 20 and color==BLACK) or (diff < -20 and color==WHITE):
+                self.textbuffer.apply_tag_by_name("scored1", start, end)
+            else:
+                self.textbuffer.apply_tag_by_name("scored0", start, end)
+        else:
+            self.textbuffer.apply_tag_by_name("scored0", start, end)
+
+    def analysis_changed(self, gamemodel, ply):
+        if not self.boardview.shownIsMainLine():
+            return
+            
+        board = gamemodel.getBoardAtPly(ply).board
+        node = None
+        if self.showEval or self.showBlunder:
+            for n in self.nodelist:
+                if n["board"] == board:
+                    start = self.textbuffer.get_iter_at_offset(n["start"])
+                    end = self.textbuffer.get_iter_at_offset(n["end"])
+                    node = n
+                    break
+        
+        if node is None:
+            return
+        
+        if self.showBlunder:
+            self.colorize_node(ply, start, end)
+
+        emt_eval = ""
+        if self.showEmt and self.gamemodel.timemodel.hasTimes:
+            elapsed = gamemodel.timemodel.getElapsedMoveTime(board.plyCount - gamemodel.lowply)
+            emt_eval = "%s " % formatTime(elapsed)
+
+        if self.showEval:
+            if board.plyCount in gamemodel.scores:
+                moves, score, depth = gamemodel.scores[board.plyCount]
+                score = score * -1 if board.color == BLACK else score
+                emt_eval += "%s " % prettyPrintScore(score, depth)
+        
+        if emt_eval:
+            if node == self.nodelist[-1]:
+                next_node = None
+                self.textbuffer.delete(end, self.textbuffer.get_end_iter())
+            else:
+                next_node = self.nodelist[self.nodelist.index(node)+1]
+                next_start = self.textbuffer.get_iter_at_offset(next_node["start"])
+                self.textbuffer.delete(end, next_start)
+                
+            self.textbuffer.insert_with_tags_by_name(end, emt_eval, "emt")
+
+            if next_node is not None:
+                diff = end.get_offset() - next_node["start"]
+                for node in self.nodelist[self.nodelist.index(next_node):]:
+                    node["start"] += diff
+                    node["end"] += diff
+                
+    def update_selected_node(self):
+        """ Update the selected node highlight """
+        
+        self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
+        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
+        start = None
+        for node in self.nodelist:
+            if node["board"] == shown_board.board:
+                start = self.textbuffer.get_iter_at_offset(node["start"])
+                end = self.textbuffer.get_iter_at_offset(node["end"])
+                self.textbuffer.apply_tag_by_name("selected", start, end)
+                break
+
+        if start:
+            self.textview.scroll_to_iter(start, within_margin=0.03)
+
+    def insert_nodes(self, board, level=0, parent=None, result=None):
+        """ Recursively builds the node tree """
+
+        end_iter = self.textbuffer.get_end_iter # Convenience shortcut to the function
+
+        while True: 
+            start = end_iter().get_offset()
+            
+            if board is None:
+                break
+            
+            # Initial game or variation comment
+            if board.prev is None:
+                for index, child in enumerate(board.children):
+                    if isinstance(child, basestring):
+                        if 0: # TODO board.plyCount == self.gamemodel.lowply:
+                            self.insert_comment(child + "\n", board, index, parent, level)
+                        else:
+                            self.insert_comment(child, board, index, parent, level)
+                board = board.next
+                continue
+            
+            if board.fen_was_applied:
+                self.insert_node(board, end_iter(), -1, level, parent)
+                
+            if self.showEmt and level == 0 and board.fen_was_applied and self.gamemodel.timemodel.hasTimes:
+                elapsed = self.gamemodel.timemodel.getElapsedMoveTime(board.plyCount - self.gamemodel.lowply)
+                self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % formatTime(elapsed), "emt")
+
+            if self.showEval and level == 0 and board.fen_was_applied and board.plyCount in self.gamemodel.scores:
+                moves, score, depth = self.gamemodel.scores[board.plyCount]
+                score = score * -1 if board.color == BLACK else score
+                endIter = self.textbuffer.get_iter_at_offset(end_iter().get_offset())
+                self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % prettyPrintScore(score, depth), "emt")
+
+            for index, child in enumerate(board.children):
+                if isinstance(child, basestring):
+                    # comment
+                    self.insert_comment(child, board, index, parent, level)
+                else:
+                    # variation
+                    diff, opening_node = self.variation_start(end_iter(), -1, level)
+                    self.insert_nodes(child[0], level+1, parent=board)
+                    self.variation_end(end_iter(), -1, level, child[1], board, opening_node)
+            
+            if board.next:
+                board = board.next
+            else:
+                break
+
+        if result and result != "*":
+            self.textbuffer.insert_with_tags_by_name(end_iter(), " "+result, "move")
+
+    def insert_comment(self, comment, board, index, parent, level=0):
+        comment = re.sub("\[%.*?\]", "", comment)
+        if not comment:
+            return
+            
+        end_iter = self.textbuffer.get_end_iter
+        start = end_iter().get_offset()
+
+        if level > 0:
+            self.textbuffer.insert_with_tags_by_name(end_iter(), comment, "comment", "margin")
+        else:
+            self.textbuffer.insert_with_tags_by_name(end_iter(), comment, "comment")
+
+        node = {}
+        node["board"] = board
+        node["comment"] = comment
+        node["index"] = index
+        node["start"] = start     
+        node["end"] = end_iter().get_offset()
+        node["parent"] = parent
+        node["level"] = 0
+        self.nodelist.append(node)
+        
+        self.textbuffer.insert(end_iter(), " ")
+
+    def insert_header(self, gm):
+        if gm.players:
+            text = repr(gm.players[0])
+        else:
+            return
+
+        end_iter = self.textbuffer.get_end_iter
+
+        self.textbuffer.insert_with_tags_by_name(end_iter(), text, "head2")
+        white_elo = gm.tags.get('WhiteElo')
+        if white_elo:
+            self.textbuffer.insert_with_tags_by_name(end_iter(), " %s" % white_elo, "head1")
+
+        self.textbuffer.insert_with_tags_by_name(end_iter(), " - ", "head1")
+
+        #text = gm.tags['Black']
+        text = repr(gm.players[1])
+        self.textbuffer.insert_with_tags_by_name(end_iter(), text, "head2")
+        black_elo = gm.tags.get('BlackElo')
+        if black_elo:
+            self.textbuffer.insert_with_tags_by_name(end_iter(), " %s" % black_elo, "head1")
+
+        status = reprResult[gm.status]
+        if status != '*':
+            result = status
+        else:
+            result = gm.tags['Result']
+        self.textbuffer.insert_with_tags_by_name(end_iter(), ' ' + result + '\n', "head2")
+
+        text = ""
+        event = gm.tags['Event']
+        if event and event != "?":
+            text += event
+
+        site = gm.tags['Site']
+        if site and site != "?":
+            if len(text) > 0:
+                text += ', '
+            text += site
+
+        round = gm.tags['Round']
+        if round and round != "?":
+            if len(text) > 0:
+                text += ', '
+            text += _('round %s') % round
+
+        game_date = gm.tags.get('Date')
+        if game_date is None:
+            game_date = "%02d.%02d.%02d" % (gm.tags['Year'], gm.tags['Month'], gm.tags['Day'])
+        if (not '?' in game_date) and game_date.count('.') == 2:
+            y, m, d = map(int, game_date.split('.'))
+            # strftime() is limited to > 1900 dates
+            try:
+                text += ', ' + datetime.date(y, m, d).strftime('%x')
+            except ValueError:
+                text += ', ' + game_date
+        elif not '?' in game_date[:4]:
+            text += ', ' + game_date[:4]
+        self.textbuffer.insert_with_tags_by_name(end_iter(), text, "head1")
+
+        eco = gm.tags.get('ECO')
+        if eco:
+            self.textbuffer.insert_with_tags_by_name(end_iter(), "\n" + eco, "head2")
+            opening = gm.tags.get('Opening')
+            if opening:
+                self.textbuffer.insert_with_tags_by_name(end_iter(), " - ", "head1")
+                self.textbuffer.insert_with_tags_by_name(end_iter(), opening, "head2")
+            variation = gm.tags.get('Variation')
+            if variation:
+                self.textbuffer.insert_with_tags_by_name(end_iter(), ", ", "head1")
+                self.textbuffer.insert_with_tags_by_name(end_iter(), variation, "head2")
+
+        self.textbuffer.insert(end_iter(), "\n\n")
+
+    def update(self, *args):
+        """ Update the entire notation tree """
+
+        self.textbuffer.set_text('')
+        self.nodelist = []
+        self.insert_header(self.gamemodel)
+
+        status = reprResult[self.gamemodel.status]
+        if status != '*':
+            result = status
+        else:
+            result = self.gamemodel.tags['Result']
+
+        self.insert_nodes(self.gamemodel.boards[0].board, result=result)
+        self.update_selected_node()
+
+    def shown_changed(self, boardview, shown):
+        self.update_selected_node()
+
+    def moves_undoing(self, game, moves):
+        assert game.ply > 0, "Can't undo when ply <= 0"
+        start = self.textbuffer.get_start_iter()
+        end = self.textbuffer.get_end_iter()
+        for node in reversed(self.nodelist):
+            self.nodelist.remove(node)
+            if node["board"].pieceBoard == self.gamemodel.variations[0][-moves]:
+                start = self.textbuffer.get_iter_at_offset(node["start"])
+                break
+        self.textbuffer.delete(start, end)
+
+    def game_changed(self, game):
+        end_iter = self.textbuffer.get_end_iter
+        start = end_iter().get_offset()
+        board = game.getBoardAtPly(game.ply, variation=0).board
+
+        self.textbuffer.insert(end_iter(), "%s " % self.__movestr(board))
+
+        startIter = self.textbuffer.get_iter_at_offset(start)
+        endIter = self.textbuffer.get_iter_at_offset(end_iter().get_offset())
+
+        self.textbuffer.apply_tag_by_name("move", startIter, endIter)
+
+        node = {}
+        node["board"] = board
+        node["start"] = startIter.get_offset()        
+        node["end"] = end_iter().get_offset()
+        node["parent"] = None
+        node["level"] = 0
+
+        self.nodelist.append(node)
+
+        if self.showEmt and self.gamemodel.timed:
+            elapsed = self.gamemodel.timemodel.getElapsedMoveTime(board.plyCount - self.gamemodel.lowply)
+            self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % formatTime(elapsed), "emt")
+
+        self.update_selected_node()
+    
+    def players_changed(self, model):
+        log.debug("annotationPanel.players_changed: starting")
+        self.update
+        log.debug("annotationPanel.players_changed: returning")
+    
+    def __movestr(self, board):
+        move = board.lastMove
+        if self.fan:
+            movestr = toFAN(board.prev, move)
+        else:
+            movestr =  toSAN(board.prev, move, True)
+        nagsymbols = "".join([nag2symbol(nag) for nag in board.nags])
+        # To prevent wrap castling we will use hyphen bullet (U+2043)
+        return "%s%s%s" % (move_count(board), movestr.replace("-","⁃"), nagsymbols)
