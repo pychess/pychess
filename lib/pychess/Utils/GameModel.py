@@ -168,33 +168,18 @@ class GameModel (GObject.GObject, Thread):
         self.applyingMoveLock = RLock()
         self.undoLock = RLock()
         self.undoQueue = Queue.Queue()
-    
-    def __unicode__ (self):       
-        s = "<GameModel at %s" % id(self)
-        s += " (ply=%s" % self.ply
-        if len(self.moves) > 0:
-            s += ", move=%s" % self.moves[-1]
-        s += ", variant=%s" % self.variant.name
-        s += ", status=%s, reason=%s" % (str(self.status), str(self.reason))
-        s += ", players=%s" % str(self.players)
-        s += ", tags=%s" % str(self.tags)
-        if len(self.boards) > 0:            
-            s += "\nboard=%s" % str(self.boards[-1]).decode('utf-8')            
-        return s
 
     def __repr__ (self):
         s = "<GameModel at %s" % id(self)
         s += " (ply=%s" % self.ply
         if len(self.moves) > 0:
             s += ", move=%s" % self.moves[-1]
-        s += ", variant=%s" % self.variant.name
+        s += ", variant=%s" % self.variant.name.encode('utf-8')
         s += ", status=%s, reason=%s" % (str(self.status), str(self.reason))
         s += ", players=%s" % str(self.players)
         s += ", tags=%s" % str(self.tags)
-        if len(self.boards) > 0:
-            # FIXME UnicodeDecodeError for pygi
-            #s += "\nboard=%s" % self.boards[-1]
-            s += "\nboard=%s" % str(self.boards[-1]).decode('utf-8')            
+        if len(self.boards) > 0:            
+            s += "\nboard=%s" % self.boards[-1]                       
         return s + ")>"
     
     @property
@@ -750,7 +735,7 @@ class GameModel (GObject.GObject, Thread):
         self.emit("game_ended", reason)
     
     def terminate (self):
-        log.debug("GameModel.terminate: %s" % unicode(self))        
+        log.debug("GameModel.terminate: %s" % self)        
 
         if self.status != KILLED:
             #self.resume()
