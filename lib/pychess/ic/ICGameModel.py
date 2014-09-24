@@ -30,7 +30,8 @@ class ICGameModel (GameModel):
     def __repr__ (self):
         s = GameModel.__repr__(self)
         s = s.replace("<GameModel", "<ICGameModel")
-        s = s.replace(", players=", ", ficsgame=%s, players=" % self.ficsgame)
+        fg = repr(self.ficsgame)
+        s = s.replace(", players=", ", ficsgame=%s, players=" % fg)        
         return s
 
     @property
