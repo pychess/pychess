@@ -466,14 +466,18 @@ class SeekTabSection (ParrentListSection):
         
         def get_sort_order(modelsort):
             id, order = modelsort.get_sort_column_id()
-            id += 1
+            if id is None or id < 0:
+                id = 0
+            else:
+                id += 1
             if order == gtk.SORT_DESCENDING:
                 id = -1 * id
             return id
 
         def set_sort_order(modelsort, value):
-            order = gtk.SORT_ASCENDING if value > 0 else gtk.SORT_DESCENDING
-            modelsort.set_sort_column_id(abs(value) - 1, order)
+            if value != 0:
+                order = gtk.SORT_ASCENDING if value > 0 else gtk.SORT_DESCENDING
+                modelsort.set_sort_column_id(abs(value) - 1, order)
 
         uistuff.keep(self.modelsort, "seektreeview_sort_order_col", get_sort_order, \
             lambda modelsort, value: set_sort_order(modelsort, value))
