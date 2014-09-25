@@ -260,7 +260,7 @@ def get_infobarmessage_content2 (player, heading_text, message_text,
     label = Gtk.Label()
     label.props.xalign = 0
     label.props.xpad = 4
-    label.props.justify = Gtk.JUSTIFY_LEFT
+    label.props.justify = Gtk.Justification.LEFT
     label.props.wrap = True
     label.set_width_chars(70)
     label.set_text(message_text)
