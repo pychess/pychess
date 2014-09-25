@@ -94,9 +94,17 @@ class ICGameModel (GameModel):
         if self.timed:
             log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s: updating timemodel" % \
                 (id(self), str(self.players)))
+            # If game end coming from helper connection before last move made
+            # we have to tap() ourselves
+            if self.status in (DRAW, WHITEWON, BLACKWON):
+                if self.timemodel.ply < ply:
+                    self.timemodel.paused = False
+                    self.timemodel.tap()
+                    self.timemodel.paused = True
+
             self.timemodel.updatePlayer (WHITE, wms/1000.)
             self.timemodel.updatePlayer (BLACK, bms/1000.)
-        
+
         if ply < self.ply:
             log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s self.ply=%d ply=%d: TAKEBACK" % \
                 (id(self), str(self.players), self.ply, ply))
