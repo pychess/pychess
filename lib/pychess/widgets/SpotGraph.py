@@ -6,6 +6,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 import cairo
 from gi.repository import Pango
+from gi.repository import PangoCairo
 
 line = 10
 curve = 60
@@ -23,7 +24,7 @@ class SpotGraph (Gtk.EventBox):
     }
     
     def __init__ (self):
-        Gtk.EventBox.__init__(self)
+        GObject.GObject.__init__(self)
         self.connect("draw", self.on_draw)
         
         self.typeColors = [[[85, 152, 215], [59, 106, 151]],
@@ -79,9 +80,9 @@ class SpotGraph (Gtk.EventBox):
         alloc = self.get_allocation()
         width = alloc.width
         height = alloc.height
-        
+
         #------------------------------------------------------ Paint side ruler
-        context.move_to(alloc.x+line, alloc.y+line)
+        context.move_to(line, line)
         context.rel_line_to(0, height-line*2-curve)
         context.rel_curve_to(0, curve,  0, curve,  curve, curve)
         context.rel_line_to(width-line*2-curve, 0)
@@ -158,15 +159,15 @@ class SpotGraph (Gtk.EventBox):
             context.stroke()
             
             x, y, width, height = self.getTextBounds(self.hovered)
-            
-            self.get_style().paint_flat_box (self.window,
-                Gtk.StateType.NORMAL, Gtk.ShadowType.NONE, None, self, "tooltip",
-                int(x-hpadding), int(y-vpadding),
-                ceil(width+hpadding*2), ceil(height+vpadding*2))
-            
+            # FIXME (Deprecated)
+            Gtk.paint_flat_box(self.get_style(), context, Gtk.StateType.NORMAL,
+                               Gtk.ShadowType.NONE, self, None,
+                               int(x-hpadding), int(y-vpadding),
+                               ceil(width+hpadding*2), ceil(height+vpadding*2))
+
             context.move_to(x, y)            
             context.set_source_rgba(fg_prelight.red, fg_prelight.green, fg_prelight.blue, fg_prelight.alpha)
-            context.show_layout(self.create_pango_layout(text))
+            PangoCairo.show_layout(context, self.create_pango_layout(text))
     
     ############################################################################
     # Events                                                                   #
@@ -262,7 +263,7 @@ class SpotGraph (Gtk.EventBox):
         
         extends = self.create_pango_layout(text).get_extents()
         scale = float(Pango.SCALE)
-        x_bearing, y_bearing, twidth, theight = [e/scale for e in extends[1]]
+        x_bearing, y_bearing, twidth, theight = [extends[1].x/scale, extends[1].y/scale, extends[1].width/scale, extends[1].height/scale]
         tx = x - x_bearing + dotLarge/2.
         ty = y - y_bearing - theight - dotLarge/2.
         
@@ -437,18 +438,18 @@ class SpotGraph (Gtk.EventBox):
                 return spot
         
         return None
-    
+
     def prcToPix (self, x, y):
         """ Translates from 0-1 cords to real world cords """ 
         alloc = self.get_allocation()
-        return x*(alloc.width - line*1.5-dotLarge*0.5) + line*1.5 + alloc.x, \
-               y*(alloc.height - line*1.5-dotLarge*0.5) + dotLarge*0.5 + alloc.y
+        return x*(alloc.width - line*1.5-dotLarge*0.5) + line*1.5, \
+               y*(alloc.height - line*1.5-dotLarge*0.5) + dotLarge*0.5
     
     def pixToPrc (self, x, y):
         """ Translates from real world cords to 0-1 cords """ 
         alloc = self.get_allocation()
-        return (x - line*1.5 - alloc.x)/(alloc.width - line*1.5-dotLarge*0.5), \
-               (y - dotLarge*0.5 - alloc.y)/(alloc.height - line*1.5-dotLarge*0.5)
+        return (x - line*1.5)/(alloc.width - line*1.5-dotLarge*0.5), \
+               (y - dotLarge*0.5)/(alloc.height - line*1.5-dotLarge*0.5)
 
 if __name__ == "__main__":
     w = Gtk.Window()
