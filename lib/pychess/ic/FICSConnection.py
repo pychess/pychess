@@ -27,7 +27,7 @@ from managers.ErrorManager import ErrorManager
 from managers.AdjournManager import AdjournManager
 
 from FICSObjects import *
-from TimeSeal import TimeSeal
+from TimeSeal import TimeSeal, CanceledException
 from VerboseTelnet import LinePrediction
 from VerboseTelnet import FromPlusPrediction
 from VerboseTelnet import FromToPrediction
@@ -283,6 +283,9 @@ class FICSConnection (Connection):
             t.daemon = True
             t.start()
         
+        except CanceledException, e:
+            log.info("FICSConnection._connect: %s" % repr(e),
+                     extra={"task": (self.host, "raw")})
         finally:
             self.connecting = False
     
@@ -303,13 +306,16 @@ class FICSConnection (Connection):
         finally:
             self.emit("disconnected")
     
+    def cancel (self):
+        self.close()
+        self.client.cancel()
+        
     def close (self):
         if self.isConnected():
             self.connected = False
             try:
                 if self.conn is None and self.lvm:
                     self.lvm.stop()
-                self.client.run_command("quit")
             except Exception, e:
                 if not isinstance(e, (IOError, LogOnError, EOFError,
                         socket.error, socket.gaierror, socket.herror)):

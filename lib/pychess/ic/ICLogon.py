@@ -26,7 +26,7 @@ def run():
 
 class AutoLogoutException (Exception): pass    
 
-class ICLogon:
+class ICLogon (object):
     def __init__ (self):
         self.connection = None
         self.lounge = None
@@ -93,7 +93,7 @@ class ICLogon:
         self.canceled = True
         
         if self.connection and self.connection.isConnecting():
-            self._disconnect()
+            self._cancel()
             self.showNormal()
         if hide:
             self.widgets["fics_logon"].hide()
@@ -166,6 +166,14 @@ class ICLogon:
         for connection in (self.connection, self.helperconn):
             if connection:
                 connection.close()
+        self.connection = None
+        self.helperconn = None
+        self.lounge = None
+    
+    def _cancel (self):
+        for connection in (self.connection, self.helperconn):
+            if connection:
+                connection.cancel()
         self.connection = None
         self.helperconn = None
         self.lounge = None
