@@ -241,6 +241,11 @@ class PredictionsTelnet (object):
             return self.telnet.write(text)
         else:
             return self.telnet.write("%s\n" % text)
+
+    def cancel (self):
+        self.run_command("quit")
+        self.telnet.cancel()
     
     def close (self):
+        self.run_command("quit")
         self.telnet.close()
