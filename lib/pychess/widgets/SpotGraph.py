@@ -25,7 +25,7 @@ class SpotGraph (Gtk.EventBox):
     
     def __init__ (self):
         GObject.GObject.__init__(self)
-        self.connect("draw", self.on_draw)
+        self.connect("draw", self.expose)
         
         self.typeColors = [[[85, 152, 215], [59, 106, 151]],
                            [[115, 210, 22], [78, 154, 6]]]
@@ -34,14 +34,12 @@ class SpotGraph (Gtk.EventBox):
                 color[0] = color[0]/255.
                 color[1] = color[1]/255.
                 color[2] = color[2]/255.
-        
+
         self.add_events( Gdk.EventMask.LEAVE_NOTIFY_MASK |
                          Gdk.EventMask.POINTER_MOTION_MASK |
                          Gdk.EventMask.BUTTON_PRESS_MASK |
                          Gdk.EventMask.BUTTON_RELEASE_MASK )
-
         self.state = 0
-
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
         self.connect("motion_notify_event", self.motion_notify)
@@ -70,9 +68,10 @@ class SpotGraph (Gtk.EventBox):
             rect = Gdk.Rectangle()
             rect.x, rect.y, rect.width, rect.height = prect
             self.get_window().invalidate_rect(rect, True)
-            self.get_window().process_updates(True)    
-
-    def on_draw (self, widget, context):
+            self.get_window().process_updates(True)
+    
+    def expose(self, widget, ctx):
+        context = widget.get_window().cairo_create()
         self.draw(context)
         return False
     
@@ -80,22 +79,21 @@ class SpotGraph (Gtk.EventBox):
         alloc = self.get_allocation()
         width = alloc.width
         height = alloc.height
-
+        
         #------------------------------------------------------ Paint side ruler
-        context.move_to(line, line)
+        context.move_to(alloc.x+line, alloc.y+line)
         context.rel_line_to(0, height-line*2-curve)
         context.rel_curve_to(0, curve,  0, curve,  curve, curve)
         context.rel_line_to(width-line*2-curve, 0)
         
-        context.set_line_width(line)
-        context.set_line_cap(cairo.LINE_CAP_ROUND)
-        state = self.state == Gtk.StateType.NORMAL and Gtk.StateType.PRELIGHT or self.state       
-
         sc = self.get_style_context()
         bool1, dark_prelight = sc.lookup_color("dark_prelight")
         bool1, fg_prelight = sc.lookup_color("fg_prelight")
         bool1, bg_prelight = sc.lookup_color("bg_prelight")
-        
+
+        context.set_line_width(line)
+        context.set_line_cap(cairo.LINE_CAP_ROUND)        
+        state = self.state == Gtk.StateType.NORMAL and Gtk.StateType.PRELIGHT or self.state        
         context.set_source_rgba(dark_prelight.red, dark_prelight.green, dark_prelight.blue, dark_prelight.alpha)
         context.stroke()
         
@@ -123,7 +121,7 @@ class SpotGraph (Gtk.EventBox):
             x, y = self.prcToPix (0, y)
             context.move_to (x+line/2., y+line/2.)
             context.show_text(title)            
-           
+            
             context.set_source_rgba(bg_prelight.red, bg_prelight.green, bg_prelight.blue, bg_prelight.alpha)
             context.move_to (x, y-line/2.)
             context.rel_curve_to (0, 6,  -line, 6,  -line, 6)
@@ -159,16 +157,18 @@ class SpotGraph (Gtk.EventBox):
             context.stroke()
             
             x, y, width, height = self.getTextBounds(self.hovered)
-            # FIXME (Deprecated)
-            Gtk.paint_flat_box(self.get_style(), context, Gtk.StateType.NORMAL,
-                               Gtk.ShadowType.NONE, self, None,
-                               int(x-hpadding), int(y-vpadding),
-                               ceil(width+hpadding*2), ceil(height+vpadding*2))
-
+           
+            sc = self.get_style_context()
+            sc.save()
+            sc.add_class(Gtk.STYLE_CLASS_NOTEBOOK)
+            Gtk.render_background(sc, context, int(x-hpadding), int(y-vpadding), ceil(width+hpadding*2), ceil(height+vpadding*2))
+            Gtk.render_frame(sc, context, int(x-hpadding), int(y-vpadding), ceil(width+hpadding*2), ceil(height+vpadding*2))
+            sc.restore()          
+            
             context.move_to(x, y)            
-            context.set_source_rgba(fg_prelight.red, fg_prelight.green, fg_prelight.blue, fg_prelight.alpha)
+            context.set_source_rgba(fg_prelight.red, fg_prelight.green, fg_prelight.blue, fg_prelight.alpha)           
             PangoCairo.show_layout(context, self.create_pango_layout(text))
-    
+
     ############################################################################
     # Events                                                                   #
     ############################################################################
@@ -438,25 +438,39 @@ class SpotGraph (Gtk.EventBox):
                 return spot
         
         return None
-
+    
     def prcToPix (self, x, y):
         """ Translates from 0-1 cords to real world cords """ 
         alloc = self.get_allocation()
-        return x*(alloc.width - line*1.5-dotLarge*0.5) + line*1.5, \
-               y*(alloc.height - line*1.5-dotLarge*0.5) + dotLarge*0.5
+        return x*(alloc.width - line*1.5-dotLarge*0.5) + line*1.5 + alloc.x, \
+               y*(alloc.height - line*1.5-dotLarge*0.5) + dotLarge*0.5 + alloc.y
     
     def pixToPrc (self, x, y):
         """ Translates from real world cords to 0-1 cords """ 
         alloc = self.get_allocation()
-        return (x - line*1.5)/(alloc.width - line*1.5-dotLarge*0.5), \
-               (y - dotLarge*0.5)/(alloc.height - line*1.5-dotLarge*0.5)
+        return (x - line*1.5 - alloc.x)/(alloc.width - line*1.5-dotLarge*0.5), \
+               (y - dotLarge*0.5 - alloc.y)/(alloc.height - line*1.5-dotLarge*0.5)
 
 if __name__ == "__main__":
     w = Gtk.Window()
+
+    sc = w.get_style_context()
+    data = "@define-color bg_color #ededed; \
+            @define-color light_color #ffffff; \
+            @define-color dark_color #a6a6a6; \
+            @define-color dark_prelight #a9a9a9; \
+            @define-color fg_prelight #313739; \
+            @define-color bg_prelight #ededed; \
+            @define-color bg_active #d6d6d6;"
+
+    provider = Gtk.CssProvider.new()
+    provider.load_from_data(data)
+    sc.add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)  
+
     nb = Gtk.Notebook()
     w.add(nb)
     vb = Gtk.VBox()
-    nb.append_page(vb)
+    nb.append_page(vb, None)
     
     sg = SpotGraph()
     sg.addXMark(.5, "Center")
