@@ -8,11 +8,10 @@ import gobject
 import re
 import socket
 import webbrowser
-
+from collections import defaultdict
 
 host = None
 port = None
-
 dialog = None
 def run():
     global dialog
@@ -32,13 +31,12 @@ class ICLogon (object):
         self.connection = None
         self.lounge = None
         self.canceled = False
-        
+        self.cids = defaultdict(list)
         self.widgets = uistuff.GladeWidgets("fics_logon.glade")
         uistuff.keepWindowSize("fics_logon", self.widgets["fics_logon"],
                                defaultPosition=uistuff.POSITION_GOLDEN)
         self.widgets["fics_logon"].connect('key-press-event',
                 lambda w, e: e.keyval == gtk.keysyms.Escape and w.hide())
-        
         def on_logOnAsGuest_toggled (check):
             self.widgets["nameLabel"].set_sensitive(not check.get_active())
             self.widgets["nameEntry"].set_sensitive(not check.get_active())
@@ -52,13 +50,18 @@ class ICLogon (object):
         self.infobar.set_message_type(gtk.MESSAGE_WARNING)
         self.widgets["messagePanelHBox"].pack_start(self.infobar, 
             expand=False, fill=False)
-        
         self.widgets["cancelButton"].connect("clicked", self.onCancel, True)
         self.widgets["stopButton"].connect("clicked", self.onCancel, False)
         self.widgets["createNewButton"].connect("clicked", self.onCreateNew)
         self.widgets["connectButton"].connect("clicked", self.onConnectClicked)
     
     def _disconnect (self):
+        for obj in self.cids:
+            for cid in self.cids[obj]:
+                if obj.handler_is_connected(cid):
+                    obj.disconnect(cid)
+        self.cids.clear()
+        
         self.connection.close()
         self.helperconn.close()
         self.connection = None
@@ -178,9 +181,11 @@ class ICLogon (object):
         self.connection = FICSMainConnection(self.host, ports, username, password)
         self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
         self.helperconn.start()
-        glock_connect(self.connection, "connected", self.onConnected)
-        glock_connect(self.connection, "error", self.onConnectionError)
-        glock_connect(self.connection, "connectingMsg", self.showMessage)
+        for signal, callback in (("connected", self.onConnected),
+                                 ("error", self.onConnectionError),
+                                 ("connectingMsg", self.showMessage)):
+            self.cids[self.connection].append(
+                glock_connect(self.connection, signal, callback))
         self.connection.start()
     
     def onConnected (self, connection):
@@ -188,8 +193,8 @@ class ICLogon (object):
         self.hide()
         self.lounge.show()
         self.lounge.connect("logout", lambda iclounge: self.onLogout(connection))
-        glock_connect(self.lounge, "autoLogout",
-                      lambda iclounge: self.onAutologout(connection))
+        self.cids[self.lounge].append(glock_connect(self.lounge, "autoLogout",
+            lambda lounge: self.onAutologout(connection)))
         
         self.showNormal()
         self.widgets["messagePanel"].hide()
@@ -213,7 +218,7 @@ class ICLogon (object):
     def onLogout (self, connection):
         self._disconnect()
     
-    def onAutologout (self, connection, alm):
+    def onAutologout (self, connection):
         self._disconnect()
         self.showError(connection, AutoLogoutException())
         self.present()
