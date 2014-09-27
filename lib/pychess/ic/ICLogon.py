@@ -1,6 +1,7 @@
-from FICSConnection import FICSConnection, LogOnError
+from FICSConnection import FICSMainConnection, FICSHelperConnection, LogOnException
 from ICLounge import ICLounge
-from pychess.System import glock, uistuff
+from pychess.System import uistuff
+from pychess.System.glock import glock_connect
 from pychess.Utils.const import *
 import gtk
 import gobject
@@ -57,6 +58,18 @@ class ICLogon (object):
         self.widgets["createNewButton"].connect("clicked", self.onCreateNew)
         self.widgets["connectButton"].connect("clicked", self.onConnectClicked)
     
+    def _disconnect (self):
+        self.connection.close()
+        self.helperconn.close()
+        self.connection = None
+        self.helperconn = None
+        self.lounge = None
+    
+    def _cancel (self):
+        self.connection.cancel()
+        self.helperconn.cancel()
+        self._disconnect()
+    
     def show (self):
         self.widgets["fics_logon"].show()
     
@@ -89,24 +102,11 @@ class ICLogon (object):
     def showMessage (self, connection, message):
         self.widgets["progressbar"].set_text(message)
     
-    def onCancel (self, widget, hide):
-        self.canceled = True
-        
-        if self.connection and self.connection.isConnecting():
-            self._cancel()
-            self.showNormal()
-        if hide:
-            self.widgets["fics_logon"].hide()
-        return True
-    
-    def onCreateNew (self, button):
-        webbrowser.open("http://www.freechess.org/Register/index.html")
-    
     def showError (self, connection, error):
         text = str(error)
         if isinstance (error, IOError):
             title = _("Connection Error")
-        elif isinstance (error, LogOnError):
+        elif isinstance (error, LogOnException):
             title =_("Log on Error")
         elif isinstance (error, EOFError):
             title = _("Connection was closed")
@@ -151,46 +151,8 @@ class ICLogon (object):
         content_area.add(content)
         self.widgets["messagePanel"].show_all()
     
-    def onConnected (self, connection):
-        self.lounge = ICLounge(connection, self.helperconn, self.host)
-        self.hide()
-        self.lounge.show()
-        self.lounge.connect("logout", lambda iclounge: self.onLogout(connection))
-        glock.glock_connect(self.lounge, "autoLogout",
-                            lambda iclounge: self.onAutologout(connection))
-        
-        self.showNormal()
-        self.widgets["messagePanel"].hide()
-    
-    def _disconnect (self):
-        for connection in (self.connection, self.helperconn):
-            if connection:
-                connection.close()
-        self.connection = None
-        self.helperconn = None
-        self.lounge = None
-    
-    def _cancel (self):
-        for connection in (self.connection, self.helperconn):
-            if connection:
-                connection.cancel()
-        self.connection = None
-        self.helperconn = None
-        self.lounge = None
-        
-    def onLogout (self, connection):
-        self._disconnect()
-    
-    def onConnectionError (self, connection, error):
-        self._disconnect()
-        if not self.canceled:
-            self.showError(connection, error)
-            self.present()
-    
-    def onAutologout (self, connection, alm):
-        self._disconnect()
-        self.showError(connection, AutoLogoutException())
-        self.present()
+    def onCreateNew (self, button):
+        webbrowser.open("http://www.freechess.org/Register/index.html")
         
     def onConnectClicked (self, button):
         self.canceled = False
@@ -210,16 +172,48 @@ class ICLogon (object):
             ports = map(int, re.findall("\d+", ports))
             if not 5000 in ports: ports.append(5000)
             if not 23 in ports: ports.append(23)
+            
         self.showConnecting()
-
         self.host = host if host is not None else "freechess.org"
-        
-        self.connection = FICSConnection(self.host, ports, username, password)
-        self.helperconn = FICSConnection(self.host, ports, "guest", "", conn=self.connection)
+        self.connection = FICSMainConnection(self.host, ports, username, password)
+        self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
         self.helperconn.start()
-
-        glock.glock_connect(self.connection, "connected", self.onConnected)
-        glock.glock_connect(self.connection, "error", self.onConnectionError)
-        glock.glock_connect(self.connection, "connectingMsg", self.showMessage)
-        
+        glock_connect(self.connection, "connected", self.onConnected)
+        glock_connect(self.connection, "error", self.onConnectionError)
+        glock_connect(self.connection, "connectingMsg", self.showMessage)
         self.connection.start()
+    
+    def onConnected (self, connection):
+        self.lounge = ICLounge(connection, self.helperconn, self.host)
+        self.hide()
+        self.lounge.show()
+        self.lounge.connect("logout", lambda iclounge: self.onLogout(connection))
+        glock_connect(self.lounge, "autoLogout",
+                      lambda iclounge: self.onAutologout(connection))
+        
+        self.showNormal()
+        self.widgets["messagePanel"].hide()
+    
+    def onCancel (self, widget, hide):
+        self.canceled = True
+        
+        if self.connection and self.connection.isConnecting():
+            self._cancel()
+            self.showNormal()
+        if hide:
+            self.widgets["fics_logon"].hide()
+        return True
+    
+    def onConnectionError (self, connection, error):
+        self._disconnect()
+        if not self.canceled:
+            self.showError(connection, error)
+            self.present()
+        
+    def onLogout (self, connection):
+        self._disconnect()
+    
+    def onAutologout (self, connection, alm):
+        self._disconnect()
+        self.showError(connection, AutoLogoutException())
+        self.present()

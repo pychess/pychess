@@ -34,7 +34,7 @@ from VerboseTelnet import FromToPrediction
 from VerboseTelnet import PredictionsTelnet
 from VerboseTelnet import NLinesPrediction
 
-class LogOnError (StandardError): pass
+class LogOnException (Exception): pass
 
 class Connection (GObject, Thread):
     
@@ -106,7 +106,7 @@ class Connection (GObject, Thread):
         return self.username
     
     def isRegistred (self):
-        return self.password
+        return self.password is not None and self.password != ""
     
     def isConnected (self):
         return self.connected
@@ -123,20 +123,15 @@ BADPAS = _("The entered password was invalid.\n" + \
            "http://www.freechess.org/password</a> to request a new one over email.")
 
 class FICSConnection (Connection):
-    def __init__ (self, host, ports, username="guest", password="", conn=None):
+    def __init__ (self, host, ports, username="guest", password=""):
         Connection.__init__(self, host, ports, username, password)
-        self.conn = conn
-        self.lvm = None
-        self.registred = None
-        self.notify_users = []
         
-        if self.conn is None:
-            self.lounge_loaded = Event()
-            self.players = FICSPlayers(self)
-            self.games = FICSGames(self)
-            self.seeks = FICSSeeks(self)
-            self.challenges = FICSChallenges(self)
-        
+    def _post_connect_hook (self, lines):
+        pass
+    
+    def _start_managers (self):
+        pass
+    
     def _connect (self):
         self.connecting = True
         self.emit("connecting")
@@ -160,7 +155,7 @@ class FICSConnection (Connection):
             self.client.read_until("login: ")
             self.emit('connectingMsg', _("Logging on to server"))
             
-            if self.username and self.username != "guest":
+            if self.username != "guest":
                 print >> self.client, self.username
                 got = self.client.read_until("password:",
                                              "enter the server as",
@@ -169,23 +164,21 @@ class FICSConnection (Connection):
                     self.client.sensitive = True
                     print >> self.client, self.password
                     self.client.sensitive = False
-                    self.registred = True
                 # No such name
                 elif got == 1:
-                    raise LogOnError, NOTREG % self.username
+                    raise LogOnException, NOTREG % self.username
                 # Bad name
                 elif got == 2:
-                    raise LogOnError, NOTREG % self.username
+                    raise LogOnException, NOTREG % self.username
             else:
                 print >> self.client, "guest"
                 self.client.read_until("Press return")
                 print >> self.client
-                self.registred = False
             
             while True:
                 line = self.client.readline()
                 if "Invalid password" in line:
-                    raise LogOnError, BADPAS
+                    raise LogOnException, BADPAS
                 
                 match = re.search("\*\*\*\* Starting FICS session as " +
                     "(%s)%s \*\*\*\*" % (NAMES_RE, TITLES_RE), line)
@@ -193,15 +186,11 @@ class FICSConnection (Connection):
                     self.username = match.groups()[0]
                     break
                 
+            self.emit('connectingMsg', _("Setting up environment"))
             lines = self.client.readuntil("ics%")
-            notify_users = re.search(
-                "Present company includes: ((?:%s ?)+)\." % NAMES_RE, lines)
-            if notify_users:
-                self.notify_users.extend(notify_users.groups()[0].split(" "))
-            
+            self._post_connect_hook(lines)
             self.FatICS = self.client.FatICS
             self.client.name = self.username
-            self.emit('connectingMsg', _("Setting up environment"))
             self.client = PredictionsTelnet(self.client, self.predictions,
                                             self.reply_cmd_dict)
             self.client.lines.line_prefix = "fics%"
@@ -211,66 +200,10 @@ class FICSConnection (Connection):
             self.client.run_command("iset ms 1")
             self.client.run_command("set seek 0")
             
-            # The helper just wants only player and game notifications
-            if self.conn:
-                self.conn.lounge_loaded.wait()
-                
-                # set open 1 is a requirement for availinfo notifications
-                self.client.run_command("set open 1")
-                self.client.run_command("set shout 0")
-                self.client.run_command("set cshout 0")
-                self.client.run_command("set tell 0")
-                self.client.run_command("set chanoff 1")
-                self.client.run_command("set gin 1")
-                self.client.run_command("set availinfo 1")
-                self.client.run_command("iset allresults 1")
-                
-                # New ivar pin
-                # http://www.freechess.org/Help/HelpFiles/new_features.html
-                self.client.run_command("iset pin 1")
-                
-                self.hm = HelperManager(self, self.conn)
-
-            else:
-                # Important: As the other managers use ListAndVarManager, we need it
-                # to be instantiated first. We might decide that the purpose of this
-                # manager is different - used by different parts of the code - so it
-                # should be implemented into the FICSConnection somehow.
-                self.lvm = ListAndVarManager(self)
-                while not self.lvm.isReady():
-                    self.client.parse()
-#                 print "self.lvm.setVariable"
-                self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
-
-                # FIXME: Some managers use each other to avoid regexp collapse. To
-                # avoid having to init the in a specific order, connect calls should
-                # be moved to a "start" function, so all managers would be in
-                # the connection object when they are called
-
-                self.em = ErrorManager(self)
-                self.glm = SeekManager(self)
-                self.bm = BoardManager(self)
-                self.fm = FingerManager(self)
-                self.nm = NewsManager(self)
-                self.om = OfferManager(self)
-                self.cm = ChatManager(self)
-                self.alm = AutoLogOutManager(self)
-                self.adm = AdjournManager(self)
-                self.com = ConsoleManager(self)
-                self.bm.start()
-                self.players.start()
-                self.games.start()
-                self.seeks.start()
-                self.challenges.start()
-
-                # disable setting iveriables from console
-                self.lvm.setVariable("lock", 1)
-                
+            self._start_managers()
             self.connecting = False
             self.connected = True
-            
-            if self.conn is None:
-                self.emit("connected")
+            self.emit("connected")
 
             def keep_alive():
                 last = time.time()
@@ -297,9 +230,11 @@ class FICSConnection (Connection):
                 while self.isConnected():
                     self.client.parse()
             except Exception, e:
+                log.info("FICSConnection.run: %s" % repr(e),
+                         extra={"task": (self.host, "raw")})
                 self.close()
-                if isinstance(e, (IOError, LogOnError, EOFError, socket.error,
-                                  socket.gaierror, socket.herror)):
+                if isinstance(e, (IOError, LogOnException, EOFError,
+                                  socket.error, socket.gaierror, socket.herror)):
                     self.emit("error", e)
                 else:
                     raise
@@ -311,22 +246,89 @@ class FICSConnection (Connection):
         self.client.cancel()
         
     def close (self):
-        if self.isConnected():
-            self.connected = False
-            try:
-                if self.conn is None and self.lvm:
-                    self.lvm.stop()
-            except Exception, e:
-                if not isinstance(e, (IOError, LogOnError, EOFError,
-                        socket.error, socket.gaierror, socket.herror)):
-                    raise
+        self.connected = False
         self.client.close()
+
+class FICSMainConnection (FICSConnection):
+    def __init__ (self, host, ports, username="guest", password=""):
+        FICSConnection.__init__(self, host, ports, username, password)
+        self.lvm = None
+        self.notify_users = []
+        self.lounge_loaded = Event()
+        self.players = FICSPlayers(self)
+        self.games = FICSGames(self)
+        self.seeks = FICSSeeks(self)
+        self.challenges = FICSChallenges(self)
     
-    def isRegistred (self):
-        assert self.registred != None
-        return self.registred
-    
-    def getUsername (self):
-        '''Return the username of the logged in player. Useful for determining if player is the logged in player.'''
-        assert self.username != None
-        return self.username
+    def close (self):
+        try:
+            self.lvm.stop()
+        except AttributeError:
+            pass
+        except Exception, e:
+            if not isinstance(e, (IOError, LogOnException, EOFError,
+                    socket.error, socket.gaierror, socket.herror)):
+                raise
+        finally:
+            FICSConnection.close(self)
+        
+    def _post_connect_hook (self, lines):
+        notify_users = re.search(
+            "Present company includes: ((?:%s ?)+)\." % NAMES_RE, lines)
+        if notify_users:
+            self.notify_users.extend(notify_users.groups()[0].split(" "))
+
+    def _start_managers (self):
+        # Important: As the other managers use ListAndVarManager, we need it
+        # to be instantiated first. We might decide that the purpose of this
+        # manager is different - used by different parts of the code - so it
+        # should be implemented into the FICSConnection somehow.
+        self.lvm = ListAndVarManager(self)
+        while not self.lvm.isReady():
+            self.client.parse()
+#           print "self.lvm.setVariable"
+        self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
+
+        # FIXME: Some managers use each other to avoid regexp collapse. To
+        # avoid having to init the in a specific order, connect calls should
+        # be moved to a "start" function, so all managers would be in
+        # the connection object when they are called
+        self.em = ErrorManager(self)
+        self.glm = SeekManager(self)
+        self.bm = BoardManager(self)
+        self.fm = FingerManager(self)
+        self.nm = NewsManager(self)
+        self.om = OfferManager(self)
+        self.cm = ChatManager(self)
+        self.alm = AutoLogOutManager(self)
+        self.adm = AdjournManager(self)
+        self.com = ConsoleManager(self)
+        self.bm.start()
+        self.players.start()
+        self.games.start()
+        self.seeks.start()
+        self.challenges.start()
+
+        # disable setting iveriables from console
+        self.lvm.setVariable("lock", 1)
+
+class FICSHelperConnection (FICSConnection):
+    def __init__ (self, main_conn, host, ports, username="guest", password=""):
+        FICSConnection.__init__(self, host, ports, username, password)
+        self.main_conn = main_conn
+
+    def _start_managers (self):
+        # The helper just wants only player and game notifications
+        self.main_conn.lounge_loaded.wait()
+        # set open 1 is a requirement for availinfo notifications
+        self.client.run_command("set open 1")
+        self.client.run_command("set shout 0")
+        self.client.run_command("set cshout 0")
+        self.client.run_command("set tell 0")
+        self.client.run_command("set chanoff 1")
+        self.client.run_command("set gin 1")
+        self.client.run_command("set availinfo 1")
+        self.client.run_command("iset allresults 1")
+        # ivar pin: http://www.freechess.org/Help/HelpFiles/new_features.html
+        self.client.run_command("iset pin 1")
+        self.hm = HelperManager(self, self.main_conn)
