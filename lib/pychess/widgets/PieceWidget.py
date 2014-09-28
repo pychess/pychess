@@ -17,7 +17,7 @@ class PieceWidget (Gtk.DrawingArea):
         return self.piece
 
     def expose(self, widget, ctx):
-        context = widget.window.cairo_create()
+        context = widget.get_window().cairo_create()
         rect = self.get_allocation()
         s = min(rect.width, rect.height)
         x = (rect.width-s) / 2.0
