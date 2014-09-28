@@ -80,7 +80,8 @@ class TextImageTree (Gtk.TreeView):
         self.id2iter = {}
         
         self.icon_name = icon_name
-        self.props.model = Gtk.ListStore(str,str,int)
+        pm = Gtk.ListStore(str,str,int)
+        self.props.model = pm
         self.idSet = set()
         
         self.set_headers_visible(False)
