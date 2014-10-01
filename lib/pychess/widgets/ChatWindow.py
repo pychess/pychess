@@ -351,8 +351,8 @@ class InfoPanel (Gtk.Notebook, Panel):
             tv.set_headers_visible(False)
             
             sc = tv.get_style_context()
-            bool1, bg_color = sc.lookup_color("bg_color")
-            bool1, bg_active = sc.lookup_color("bg_active")
+            bool1, bg_color = sc.lookup_color("p_bg_color")
+            bool1, bg_active = sc.lookup_color("p_bg_active")
             tv.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
 
             cell = Gtk.CellRendererText()
