@@ -87,9 +87,9 @@ class SpotGraph (Gtk.EventBox):
         context.rel_line_to(width-line*2-curve, 0)
         
         sc = self.get_style_context()
-        bool1, dark_prelight = sc.lookup_color("dark_prelight")
-        bool1, fg_prelight = sc.lookup_color("fg_prelight")
-        bool1, bg_prelight = sc.lookup_color("bg_prelight")
+        bool1, dark_prelight = sc.lookup_color("p_dark_prelight")
+        bool1, fg_prelight = sc.lookup_color("p_fg_prelight")
+        bool1, bg_prelight = sc.lookup_color("p_bg_prelight")
 
         context.set_line_width(line)
         context.set_line_cap(cairo.LINE_CAP_ROUND)        
@@ -455,13 +455,13 @@ if __name__ == "__main__":
     w = Gtk.Window()
 
     sc = w.get_style_context()
-    data = "@define-color bg_color #ededed; \
-            @define-color light_color #ffffff; \
-            @define-color dark_color #a6a6a6; \
-            @define-color dark_prelight #a9a9a9; \
-            @define-color fg_prelight #313739; \
-            @define-color bg_prelight #ededed; \
-            @define-color bg_active #d6d6d6;"
+    data = "@define-color p_bg_color #ededed; \
+            @define-color p_light_color #ffffff; \
+            @define-color p_dark_color #a6a6a6; \
+            @define-color p_dark_prelight #a9a9a9; \
+            @define-color p_fg_prelight #313739; \
+            @define-color p_bg_prelight #ededed; \
+            @define-color p_bg_active #d6d6d6;"
 
     provider = Gtk.CssProvider.new()
     provider.load_from_data(data)

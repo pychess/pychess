@@ -50,8 +50,8 @@ class ChessClock (Gtk.DrawingArea):
     def draw(self, context):
        
         sc = self.get_style_context()
-        bool1, self.light = sc.lookup_color("light_color")    
-        bool1, self.dark = sc.lookup_color("dark_color")        
+        bool1, self.light = sc.lookup_color("p_light_color")    
+        bool1, self.dark = sc.lookup_color("p_dark_color")        
         if not self.model: return
         
         # Draw graphical Clock. Should this be moved to preferences?

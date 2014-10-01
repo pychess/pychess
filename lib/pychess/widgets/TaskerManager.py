@@ -59,8 +59,8 @@ class TaskerManager (Gtk.Table):
                          x-self.border, y+height)                 
            
             sc = self.get_style_context()
-            bool1, bgcolor = sc.lookup_color("bg_color")
-            bool1, darkcolor = sc.lookup_color("dark_color")               
+            bool1, bgcolor = sc.lookup_color("p_bg_color")
+            bool1, darkcolor = sc.lookup_color("p_dark_color")               
             
             cr.set_source_rgba(bgcolor.red, bgcolor.green, bgcolor.blue, bgcolor.alpha)
             cr.fill()            
