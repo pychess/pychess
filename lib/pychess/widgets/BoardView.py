@@ -10,6 +10,7 @@ import cairo
 
 from gi.repository import GObject
 from gi.repository import Pango
+from gi.repository import PangoCairo
 
 from pychess.System import glock, conf
 from pychess.System.glock import glock_connect, glock_connect_after
@@ -721,11 +722,10 @@ class BoardView (Gtk.DrawingArea):
         
         context.rectangle(xc-t*1.5,yc-t*1.5,square+t*3,square+t*3)
 
-        # FIXME
-        # #a68ca68ca68c
-        #context.set_source_color(self.get_style().dark[Gtk.StateType.NORMAL])
-        cr.set_source_rgba(0.651, 0.651, 0.651, 1.0)
-  
+        sc = self.get_style_context()
+        bool1, dcolor = sc.lookup_color("p_dark_color")
+        context.set_source_rgba(dcolor.red, dcolor.green, dcolor.blue, dcolor.alpha)
+
         context.set_line_width(t)
         context.set_line_join(cairo.LINE_JOIN_ROUND)
         context.stroke()
@@ -738,13 +738,12 @@ class BoardView (Gtk.DrawingArea):
                 layout = self.create_pango_layout("%d" % rank)
                 layout.set_font_description(
                         Pango.FontDescription("bold %d" % ss))
-                
-                w = layout.get_extents()[1][2]/pangoScale
-                h = layout.get_extents()[0][3]/pangoScale
+                w = layout.get_extents()[1].width/pangoScale
+                h = layout.get_extents()[0].height/pangoScale
                 
                 # Draw left side
                 context.move_to(xc-t*2.5-w, s*n+yc+h/2+t)
-                context.show_layout(layout)
+                PangoCairo.show_layout(context, layout)
                 
                 # Draw right side
                 #context.move_to(xc+square+t*2.5, s*n+yc+h/2+t)
@@ -757,7 +756,7 @@ class BoardView (Gtk.DrawingArea):
                 
                 w = layout.get_pixel_size()[0]
                 h = layout.get_pixel_size()[1]
-                y = layout.get_extents()[1][1]/pangoScale
+                y = layout.get_extents()[1].y/pangoScale
                 
                 # Draw top
                 #context.move_to(xc+s*n+s/2.-w/2., yc-h-t*1.5)
@@ -765,7 +764,7 @@ class BoardView (Gtk.DrawingArea):
                 
                 # Draw bottom
                 context.move_to(xc+s*n+s/2.-w/2., yc+square+t*1.5+abs(y))
-                context.show_layout(layout)
+                PangoCairo.show_layout(context, layout)
         
         matrix, invmatrix = matrixAround(
                 self.matrixPi, xc+square/2., yc+square/2.)
