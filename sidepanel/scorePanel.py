@@ -3,8 +3,8 @@ from math import e
 from random import randint
 from sys import maxint
 
-import gtk, gobject
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+from gi.repository import Gtk, GObject
+from gi.repository import Gdk
 
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect
@@ -23,11 +23,11 @@ class Sidepanel:
     def load (self, gmwidg):
         self.boardview = gmwidg.board.view
         self.plot = ScorePlot(self.boardview)
-        self.sw = __widget__ = gtk.ScrolledWindow()
-        __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        port = gtk.Viewport()
+        self.sw = __widget__ = Gtk.ScrolledWindow()
+        __widget__.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        port = Gtk.Viewport()
         port.add(self.plot)
-        port.set_shadow_type(gtk.SHADOW_NONE)
+        port.set_shadow_type(Gtk.ShadowType.NONE)
         __widget__.add(port)
         __widget__.show_all()
         
@@ -122,9 +122,9 @@ class Sidepanel:
             self.plot.redraw()
             adj = self.sw.get_vadjustment()
 
-            y = self.plot.moveHeight*(shown-self.boardview.model.lowply)
-            if y < adj.value or y > adj.value + adj.page_size:
-                adj.set_value(min(y, adj.upper-adj.page_size))
+            y = self.plot.moveHeight*(shown-self.boardview.model.lowply)           
+            if y < adj.get_value() or y > adj.get_value() + adj.get_page_size():               
+                adj.set_value(min(y, adj.get_upper()-adj.get_page_size()))
 
     def analysis_changed (self, gamemodel, ply):
         if not self.boardview.shownIsMainLine():
@@ -147,21 +147,21 @@ class Sidepanel:
         self.boardview.setShownBoard(board)
 
 
-class ScorePlot (gtk.DrawingArea):
+class ScorePlot (Gtk.DrawingArea):
     
     __gtype_name__ = "ScorePlot"+str(randint(0,maxint))
     
     __gsignals__ = {
-        "selected" : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
+        "selected" : (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
     
     def __init__ (self, boardview):
-        gtk.DrawingArea.__init__(self)
-        self.boardview = boardview
-        self.connect("expose_event", self.expose)
+        GObject.GObject.__init__(self)
+        self.boardview = boardview        
+        self.connect("draw", self.expose)
         self.connect("button-press-event", self.press)
         self.props.can_focus = True
-        self.set_events(gtk.gdk.BUTTON_PRESS_MASK|gtk.gdk.KEY_PRESS_MASK)
+        self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK|Gdk.EventMask.KEY_PRESS_MASK)
         self.moveHeight = 12
         self.scores = []
         self.selected = 0
@@ -186,20 +186,22 @@ class ScorePlot (gtk.DrawingArea):
         del self.scores[:]
     
     def redraw (self):
-        if self.window:
+        if self.get_window():
             a = self.get_allocation()
-            rect = gtk.gdk.Rectangle(0, 0, a.width, a.height)
-            self.window.invalidate_rect(rect, True)
-            self.window.process_updates(True)
+            rect = Gdk.Rectangle()
+            rect.x, rect.y, rect.width, rect.height = (0, 0, a.width, a.height)
+            self.get_window().invalidate_rect(rect, True)
+            self.get_window().process_updates(True)
     
     def press (self, widget, event):
         self.grab_focus()
         self.emit('selected', event.y/self.moveHeight)
-    
-    def expose (self, widget, event):
-        context = widget.window.cairo_create()
-        context.rectangle(event.area.x, event.area.y,
-                          event.area.width, event.area.height)
+        
+    def expose (self, widget, ctx):
+        context = widget.get_window().cairo_create()
+        a = widget.get_allocation()        
+        context.rectangle(a.x, a.y,
+                          a.width, a.height)
         context.clip()
         self.draw(context)
         self.set_size_request(-1, (len(self.scores))*self.moveHeight)
@@ -269,8 +271,10 @@ class ScorePlot (gtk.DrawingArea):
         cr.set_line_width(lw)
         y = (self.selected)*self.moveHeight
         cr.rectangle(lw/2, y-lw/2, width-lw, self.moveHeight+lw)
-        col = self.get_style().base[gtk.STATE_SELECTED]
-        r, g, b = map(lambda x: x/65535., (col.red, col.green, col.blue))
+        # FIXME
+        #col = self.get_style().base[Gtk.StateType.SELECTED]
+        #r, g, b = map(lambda x: x/65535., (col.red, col.green, col.blue))
+        r, g, b= 0.290, 0.565, 0.851
         cr.set_source_rgba (r, g, b, .15)
         cr.fill_preserve()
         cr.set_source_rgb (r, g, b)

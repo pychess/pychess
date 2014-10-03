@@ -1,5 +1,8 @@
-import gtk, cairo
-import gobject
+import cairo
+
+from gi.repository import Gtk
+from gi.repository import GObject
+from gi.repository import Gdk
 
 from OverlayWindow import OverlayWindow
 
@@ -9,22 +12,22 @@ class ArrowButton (OverlayWindow):
     """ Leafs will connect to the drag-drop signal """
     
     __gsignals__ = {
-        'dropped' : (gobject.SIGNAL_RUN_FIRST, None, (object,)),
-        'hovered' : (gobject.SIGNAL_RUN_FIRST, None, (object,)),
-        'left' : (gobject.SIGNAL_RUN_FIRST, None, ()),
+        'dropped' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'hovered' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'left' : (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
     
     def __init__ (self, parent, svgPath, position):
-        OverlayWindow.__init__(self, parent)
-        
+        OverlayWindow.__init__(self, parent)      
         self.myparent = parent
         self.myposition = position
-        self.svgPath = svgPath
-        self.connect_after("expose-event", self.__onExposeEvent)
+        self.svgPath = svgPath        
+        self.connect_after("draw", self.__onExposeEvent)
         
-        targets = [("GTK_NOTEBOOK_TAB", gtk.TARGET_SAME_APP, 0xbadbeef)]
-        self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           targets, gtk.gdk.ACTION_MOVE)
+        #targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
+        targets = [Gtk.TargetEntry.new("GTK_NOTEBOOK_TAB",Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
+        self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
+                           targets, Gdk.DragAction.MOVE)
         self.drag_dest_set_track_motion(True)
         self.connect("drag-motion", self.__onDragMotion)
         self.connect("drag-leave", self.__onDragLeave)
@@ -63,7 +66,7 @@ class ArrowButton (OverlayWindow):
         self.myparentAlloc = parentAlloc
         self.myparentPos = self.myparent.window.get_position()
     
-    def __onExposeEvent (self, self_, event):
+    def __onExposeEvent (self, self_, ctx):
         self._calcSize()
         context = self.window.cairo_create()
         width, height = self.getSizeOfSvg(self.svgPath)
@@ -75,7 +78,7 @@ class ArrowButton (OverlayWindow):
             context.paint()
             context.set_operator(cairo.OPERATOR_OVER)
         
-        mask = gtk.gdk.Pixmap(None, width, height, 1)
+        mask = Gdk.Pixmap(None, width, height, 1)
         mcontext = mask.cairo_create()
         mcontext.set_source_surface(surface, 0, 0)
         mcontext.paint()

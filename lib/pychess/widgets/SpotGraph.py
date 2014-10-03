@@ -1,10 +1,12 @@
 import math
 ceil = lambda f: int(math.ceil(f))
 
-from gobject import *
-import gtk
+from gi.repository import GObject
+from gi.repository import Gtk
+from gi.repository import Gdk
 import cairo
-import pango
+from gi.repository import Pango
+from gi.repository import PangoCairo
 
 line = 10
 curve = 60
@@ -15,15 +17,15 @@ lineprc = 1/7.
 hpadding = 5
 vpadding = 3
 
-class SpotGraph (gtk.EventBox):
+class SpotGraph (Gtk.EventBox):
     
     __gsignals__ = {
-        'spotClicked' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,))
+        'spotClicked' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
     
     def __init__ (self):
-        gtk.EventBox.__init__(self)
-        self.connect("expose_event", self.expose)
+        GObject.GObject.__init__(self)
+        self.connect("draw", self.expose)
         
         self.typeColors = [[[85, 152, 215], [59, 106, 151]],
                            [[115, 210, 22], [78, 154, 6]]]
@@ -32,12 +34,12 @@ class SpotGraph (gtk.EventBox):
                 color[0] = color[0]/255.
                 color[1] = color[1]/255.
                 color[2] = color[2]/255.
-        
-        self.add_events( gtk.gdk.LEAVE_NOTIFY_MASK |
-                         gtk.gdk.POINTER_MOTION_MASK |
-                         gtk.gdk.BUTTON_PRESS_MASK |
-                         gtk.gdk.BUTTON_RELEASE_MASK )
-        
+
+        self.add_events( Gdk.EventMask.LEAVE_NOTIFY_MASK |
+                         Gdk.EventMask.POINTER_MOTION_MASK |
+                         Gdk.EventMask.BUTTON_PRESS_MASK |
+                         Gdk.EventMask.BUTTON_RELEASE_MASK )
+        self.state = 0
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
         self.connect("motion_notify_event", self.motion_notify)
@@ -58,21 +60,22 @@ class SpotGraph (gtk.EventBox):
     # Drawing                                                                  #
     ############################################################################
     
-    def redraw_canvas(self, rect=None):
-        if self.window:
-            if not rect:
+    def redraw_canvas(self, prect=None):
+        if self.get_window():           
+            if not prect:
                 alloc = self.get_allocation()
-                rect = (0, 0, alloc.width, alloc.height)
-            rect = gtk.gdk.Rectangle(*map(int,rect))
-            self.window.invalidate_rect(rect, True)
-            self.window.process_updates(True)
+                prect = (0, 0, alloc.width, alloc.height)            
+            rect = Gdk.Rectangle()
+            rect.x, rect.y, rect.width, rect.height = prect
+            self.get_window().invalidate_rect(rect, True)
+            self.get_window().process_updates(True)
     
-    def expose(self, widget, event):
-        context = widget.window.cairo_create()
-        self.draw(context, event.area)
+    def expose(self, widget, ctx):
+        context = widget.get_window().cairo_create()
+        self.draw(context)
         return False
     
-    def draw (self, context, r):
+    def draw (self, context):
         alloc = self.get_allocation()
         width = alloc.width
         height = alloc.height
@@ -83,23 +86,28 @@ class SpotGraph (gtk.EventBox):
         context.rel_curve_to(0, curve,  0, curve,  curve, curve)
         context.rel_line_to(width-line*2-curve, 0)
         
+        sc = self.get_style_context()
+        bool1, dark_prelight = sc.lookup_color("p_dark_prelight")
+        bool1, fg_prelight = sc.lookup_color("p_fg_prelight")
+        bool1, bg_prelight = sc.lookup_color("p_bg_prelight")
+
         context.set_line_width(line)
-        context.set_line_cap(cairo.LINE_CAP_ROUND)
-        state = self.state == gtk.STATE_NORMAL and gtk.STATE_PRELIGHT or self.state
-        context.set_source_color(self.get_style().dark[state])
+        context.set_line_cap(cairo.LINE_CAP_ROUND)        
+        state = self.state == Gtk.StateType.NORMAL and Gtk.StateType.PRELIGHT or self.state        
+        context.set_source_rgba(dark_prelight.red, dark_prelight.green, dark_prelight.blue, dark_prelight.alpha)
         context.stroke()
         
         #------------------------------------------------ Paint horizontal marks
-        for x, title in self.xmarks:
-            context.set_source_color(self.get_style().fg[self.state])
+        for x, title in self.xmarks:           
+            context.set_source_rgba(fg_prelight.red, fg_prelight.green, fg_prelight.blue, fg_prelight.alpha)
             context.set_font_size(12)
             x, y = self.prcToPix (x, 1)
             context.move_to (x+line/2., y-line/2.)
             context.rotate(-math.pi/2)
             context.show_text(title)
-            context.rotate(math.pi/2)
+            context.rotate(math.pi/2)            
             
-            context.set_source_color(self.get_style().bg[self.state])
+            context.set_source_rgba(bg_prelight.red, bg_prelight.green, bg_prelight.blue, bg_prelight.alpha)
             context.move_to (x-line/2., y)
             context.rel_curve_to (6, 0,  6, line,  6, line)
             context.rel_curve_to (0, -line,  6, -line,  6, -line)
@@ -107,14 +115,14 @@ class SpotGraph (gtk.EventBox):
             context.fill()
         
         #-------------------------------------------------- Paint vertical marks
-        for y, title in self.ymarks:
-            context.set_source_color(self.get_style().fg[self.state])
+        for y, title in self.ymarks:           
+            context.set_source_rgba(fg_prelight.red, fg_prelight.green, fg_prelight.blue, fg_prelight.alpha)
             context.set_font_size(12)
             x, y = self.prcToPix (0, y)
             context.move_to (x+line/2., y+line/2.)
-            context.show_text(title)
+            context.show_text(title)            
             
-            context.set_source_color(self.get_style().bg[self.state])
+            context.set_source_rgba(bg_prelight.red, bg_prelight.green, bg_prelight.blue, bg_prelight.alpha)
             context.move_to (x, y-line/2.)
             context.rel_curve_to (0, 6,  -line, 6,  -line, 6)
             context.rel_curve_to (line, 0,  line, 6,  line, 6)
@@ -149,16 +157,18 @@ class SpotGraph (gtk.EventBox):
             context.stroke()
             
             x, y, width, height = self.getTextBounds(self.hovered)
+           
+            sc = self.get_style_context()
+            sc.save()
+            sc.add_class(Gtk.STYLE_CLASS_NOTEBOOK)
+            Gtk.render_background(sc, context, int(x-hpadding), int(y-vpadding), ceil(width+hpadding*2), ceil(height+vpadding*2))
+            Gtk.render_frame(sc, context, int(x-hpadding), int(y-vpadding), ceil(width+hpadding*2), ceil(height+vpadding*2))
+            sc.restore()          
             
-            self.get_style().paint_flat_box (self.window,
-                gtk.STATE_NORMAL, gtk.SHADOW_NONE, r, self, "tooltip",
-                int(x-hpadding), int(y-vpadding),
-                ceil(width+hpadding*2), ceil(height+vpadding*2))
-            
-            context.move_to(x, y)
-            context.set_source_color(self.get_style().fg[self.state])
-            context.show_layout(self.create_pango_layout(text))
-    
+            context.move_to(x, y)            
+            context.set_source_rgba(fg_prelight.red, fg_prelight.green, fg_prelight.blue, fg_prelight.alpha)           
+            PangoCairo.show_layout(context, self.create_pango_layout(text))
+
     ############################################################################
     # Events                                                                   #
     ############################################################################
@@ -232,7 +242,6 @@ class SpotGraph (gtk.EventBox):
         self.hovered = None
         self.spots.clear()
         self.redraw_canvas()
-        self.redraw_canvas()
     
     def addXMark (self, x, title):
         self.xmarks.append( (x, title) )
@@ -253,8 +262,8 @@ class SpotGraph (gtk.EventBox):
         height = alloc.height
         
         extends = self.create_pango_layout(text).get_extents()
-        scale = float(pango.SCALE)
-        x_bearing, y_bearing, twidth, theight = [e/scale for e in extends[1]]
+        scale = float(Pango.SCALE)
+        x_bearing, y_bearing, twidth, theight = [extends[1].x/scale, extends[1].y/scale, extends[1].width/scale, extends[1].height/scale]
         tx = x - x_bearing + dotLarge/2.
         ty = y - y_bearing - theight - dotLarge/2.
         
@@ -443,27 +452,41 @@ class SpotGraph (gtk.EventBox):
                (y - dotLarge*0.5 - alloc.y)/(alloc.height - line*1.5-dotLarge*0.5)
 
 if __name__ == "__main__":
-    w = gtk.Window()
-    nb = gtk.Notebook()
+    w = Gtk.Window()
+
+    sc = w.get_style_context()
+    data = "@define-color p_bg_color #ededed; \
+            @define-color p_light_color #ffffff; \
+            @define-color p_dark_color #a6a6a6; \
+            @define-color p_dark_prelight #a9a9a9; \
+            @define-color p_fg_prelight #313739; \
+            @define-color p_bg_prelight #ededed; \
+            @define-color p_bg_active #d6d6d6;"
+
+    provider = Gtk.CssProvider.new()
+    provider.load_from_data(data)
+    sc.add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)  
+
+    nb = Gtk.Notebook()
     w.add(nb)
-    vb = gtk.VBox()
-    nb.append_page(vb)
+    vb = Gtk.VBox()
+    nb.append_page(vb, None)
     
     sg = SpotGraph()
     sg.addXMark(.5, "Center")
     sg.addYMark(.5, "Center")
-    vb.pack_start(sg)
+    vb.pack_start(sg, True, True, 0)
     
-    button = gtk.Button("New Spot")
+    button = Gtk.Button("New Spot")
     def callback (button):
         if not hasattr(button, "nextnum"):
             button.nextnum = 0
         else: button.nextnum += 1
         sg.addSpot(str(button.nextnum), "Blablabla", 1, 1, 0)
     button.connect("clicked", callback) 
-    vb.pack_start(button, expand=False)
+    vb.pack_start(button, False, True, 0)
     
-    w.connect("delete-event", gtk.main_quit)
+    w.connect("delete-event", Gtk.main_quit)
     w.show_all()
     w.resize(400,400)
-    gtk.main()
+    Gtk.main()

@@ -1,31 +1,33 @@
 import cairo
-import gtk
-from gtk import gdk
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
+
 from pychess.System.prefix import addDataPrefix
 from pychess.System import glock
 from BorderBox import BorderBox
 
-class ChainVBox (gtk.VBox):
+class ChainVBox (Gtk.VBox):
     """ Inspired by the GIMP chainbutton widget """
 
     __gsignals__ = {
-        'clicked' : (SIGNAL_RUN_FIRST, TYPE_NONE, ())
+        'clicked' : (GObject.SignalFlags.RUN_FIRST, None, ())
     }
 
     def __init__ (self):
-        gtk.VBox.__init__(self)
+        GObject.GObject.__init__(self)
         chainline = ChainLine(CHAIN_TOP)
-        self.pack_start(chainline)
-        self.button = gtk.Button()
-        self.pack_start(self.button, expand=False)
+        self.pack_start(chainline, True, True, 0)
+        self.button = Gtk.Button()
+        self.pack_start(self.button, False, True, 0)
         chainline = ChainLine(CHAIN_BOTTOM)
-        self.pack_start(chainline)
+        self.pack_start(chainline, True, True, 0)
         
-        self.image = gtk.Image()
+        self.image = Gtk.Image()
         self.image.set_from_file(addDataPrefix("glade/stock-vchain-24.png"))
         self.button.set_image(self.image)
-        self.button.set_relief(gtk.RELIEF_NONE)
+        self.button.set_relief(Gtk.ReliefStyle.NONE)
         self.button.set_property("yalign", 0)
         self._active = True
         self.button.connect("clicked", self.onClicked)
@@ -53,43 +55,39 @@ class ChainVBox (gtk.VBox):
 CHAIN_TOP, CHAIN_BOTTOM = range(2)
 SHORT_LINE = 2
 LONG_LINE = 8
-class ChainLine (gtk.Alignment):
+class ChainLine (Gtk.Alignment):
     """ The ChainLine's are the little right-angle lines above and below the chain
         button that visually connect the ChainButton to the widgets who's values
         are "chained" together by the ChainButton being active """
         
     def __init__ (self, position):
-        gtk.Alignment.__init__(self)
+        GObject.GObject.__init__(self)
         self.position = position
-        self.connect_after("size-allocate", self.onSizeAllocate)
-        self.connect_after("expose-event", self.onExpose)
-        self.set_flags(gtk.NO_WINDOW)
+        self.connect_after("size-allocate", self.on_size_allocate)
+        self.connect_after("draw", self.on_draw)
         self.set_size_request(10,10)
         self.lastRectangle = None
         
-    def onSizeAllocate(self, widget, requisition):
-        if self.window:
+    def on_size_allocate(self, widget, requisition):
+        if self.get_window():
             glock.acquire()
             try:
                 a = self.get_allocation()
-                rect = gdk.Rectangle(a.x, a.y, a.width, a.height)
-                unionrect = self.lastRectangle.union(rect) if self.lastRectangle != None else rect
-                self.window.invalidate_rect(unionrect, True)
-                self.window.process_updates(True)
+                rect = Gdk.Rectangle()
+                rect.x, rect.y, rect.width, rect.height = (a.x, a.y, a.width, a.height)
+                unionrect = Gdk.rectangle_union(self.lastRectangle, rect) if self.lastRectangle != None else rect
+                self.get_window().invalidate_rect(unionrect, True)
+                self.get_window().process_updates(True)
                 self.lastRectangle = rect
             finally:
-                glock.release()
-        
-    def onExpose (self, widget, event):
-        context = widget.window.cairo_create()
-        context.rectangle(event.area.x, event.area.y,
-                          event.area.width, event.area.height)
-        context.clip()
+                glock.release()        
+
+    def on_draw (self, widget, context):
         self.draw(context)
         return False
 
 ###
-### the original gtk.Style.paint_polygon() way to draw, like The GIMP does it
+### the original Gtk.Style.paint_polygon() way to draw, like The GIMP does it
 ###
 #    def draw (self, widget, event):
 #        a = self.get_allocation()
@@ -107,8 +105,8 @@ class ChainLine (gtk.Alignment):
 #        
 #        style = widget.get_style()
 #        style.paint_polygon(widget.get_parent_window(),
-#                            gtk.STATE_NORMAL,
-#                            gtk.SHADOW_ETCHED_OUT,
+#                            Gtk.StateType.NORMAL,
+#                            Gtk.ShadowType.ETCHED_OUT,
 #                            event.area,
 #                            widget,
 #                            "chainbutton",
@@ -154,22 +152,22 @@ class ChainLine (gtk.Alignment):
         return s + ")"
     
 if __name__ == "__main__":
-    win = gtk.Window()
+    win = Gtk.Window()
     chainvbox = ChainVBox()
-    label = gtk.Label("Locked")
-    adjustment = gtk.Adjustment(value=10, upper=100, lower=0, step_incr=1)
-    spinbutton1 = gtk.SpinButton(adjustment=adjustment)
-    adjustment = gtk.Adjustment(value=0, upper=100, lower=0, step_incr=1)
-    spinbutton2 = gtk.SpinButton(adjustment=adjustment)
-    table = gtk.Table(rows=3,columns=2)
+    label = Gtk.Label(label="Locked")
+    adjustment = Gtk.Adjustment(value=10, upper=100, lower=0, step_incr=1)
+    spinbutton1 = Gtk.SpinButton(adjustment=adjustment)
+    adjustment = Gtk.Adjustment(value=0, upper=100, lower=0, step_incr=1)
+    spinbutton2 = Gtk.SpinButton(adjustment=adjustment)
+    table = Gtk.Table(rows=3,columns=2)
 #    table.attach(label,0,2,0,1)
 #    table.attach(chainvbox,1,2,1,3)
 #    table.attach(spinbutton1,0,1,1,2)
 #    table.attach(spinbutton2,0,1,2,3)
-    table.attach(label,0,2,0,1,xoptions=gtk.SHRINK)
-    table.attach(chainvbox,1,2,1,3,xoptions=gtk.SHRINK)
-    table.attach(spinbutton1,0,1,1,2,xoptions=gtk.SHRINK)
-    table.attach(spinbutton2,0,1,2,3,xoptions=gtk.SHRINK)
+    table.attach(label,0,2,0,1,xoptions=Gtk.AttachOptions.SHRINK)
+    table.attach(chainvbox,1,2,1,3,xoptions=Gtk.AttachOptions.SHRINK)
+    table.attach(spinbutton1,0,1,1,2,xoptions=Gtk.AttachOptions.SHRINK)
+    table.attach(spinbutton2,0,1,2,3,xoptions=Gtk.AttachOptions.SHRINK)
     table.set_row_spacings(2)
     def onChainBoxClicked (*whatever):
         if chainvbox.active == False:
@@ -180,6 +178,6 @@ if __name__ == "__main__":
     bb = BorderBox(widget=table)
     win.add(bb)
 #    win.resize(150,100)
-    win.connect("delete-event", gtk.main_quit)
+    win.connect("delete-event", Gtk.main_quit)
     win.show_all()
-    gtk.main()
+    Gtk.main()

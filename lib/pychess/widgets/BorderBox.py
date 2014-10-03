@@ -1,10 +1,13 @@
-import gtk
-class BorderBox (gtk.Alignment):
+from gi.repository import Gtk
+from gi.repository import GObject
+class BorderBox (Gtk.Alignment):
     def __init__ (self, widget=None, top=False, right=False,
                                      bottom=False, left=False):
-        gtk.Alignment.__init__(self, 0, 0, 1, 1)
-        self.connect("expose-event", self._onExpose)
-        
+        # FIXME
+        #GObject.GObject.__init__(self, 0, 0, 1, 1)
+        GObject.GObject.__init__(self)        
+        self.connect("draw", self._onExpose)
+
         if widget:
             self.add(widget)
         
@@ -15,12 +18,14 @@ class BorderBox (gtk.Alignment):
         self._updateBorders()
     
     
-    def _onExpose(self, area, event):
-        context = self.window.cairo_create()
-        color = self.get_style().dark[gtk.STATE_NORMAL]
-        context.set_source_rgb(color.red/65535.,
-                               color.green/65535.,
-                               color.blue/65535.)
+    def _onExpose(self, area, ctx):
+        context = self.get_window().cairo_create()
+        # FIXME
+        #color = self.get_style().dark[Gtk.StateType.NORMAL]
+        #context.set_source_rgb(color.red/65535.,
+        #                       color.green/65535.,
+        #                       color.blue/65535.)
+        context.set_source_rgba(0.651, 0.651, 0.651, 1.0)
         
         r = self.get_allocation()
         x = r.x + .5

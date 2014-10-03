@@ -1,7 +1,7 @@
 from __future__ import with_statement
 
-import gtk, gobject
-from gtk import gdk
+from gi.repository import Gtk, GObject
+from gi.repository import Gdk
 
 from pychess.System import conf
 from pychess.System.glock import glock_connect
@@ -26,7 +26,7 @@ class Sidepanel:
     
     def load (self, gmwidg):
         
-        widgets = gtk.Builder()
+        widgets = Gtk.Builder()
         widgets.add_from_file(addDataPrefix("sidepanel/history.glade"))
         __widget__ = widgets.get_object("panel")
         __widget__.unparent()
@@ -45,11 +45,11 @@ class Sidepanel:
         self.right = widgets.get_object("treeview3")
         
         def fixList (list, xalign=0):
-            list.set_model(gtk.ListStore(str))
-            renderer = gtk.CellRendererText()
+            list.set_model(Gtk.ListStore(str))
+            renderer = Gtk.CellRendererText()
             renderer.set_property("xalign",xalign)
-            list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
-            list.get_selection().set_mode(gtk.SELECTION_SINGLE)
+            list.append_column(Gtk.TreeViewColumn(None, renderer, text=0))
+            list.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         
         fixList(self.numbers, 1)
         fixList(self.left, 0)
@@ -66,13 +66,13 @@ class Sidepanel:
         
         def changed (vadjust):
             if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-                vadjust.set_value(vadjust.upper-vadjust.page_size)
+                vadjust.set_value(vadjust.get_upper()-vadjust.get_page_size())                
                 vadjust.need_scroll = True
         scrollwin.get_vadjustment().connect("changed", changed)
         
         def value_changed (vadjust):
-            vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
-                        vadjust.upper) < vadjust.step_increment
+            vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() - \
+                        vadjust.get_upper()) < vadjust.get_step_increment()
         scrollwin.get_vadjustment().connect("value-changed", value_changed)
         
         # Connect to preferences

@@ -1,5 +1,6 @@
 import re
-from gobject import GObject, SIGNAL_RUN_FIRST
+#from gobject import GObject, SIGNAL_RUN_FIRST
+from gi.repository import GObject
 
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
@@ -49,19 +50,19 @@ offerTypeToStr = {}
 for k,v in strToOfferType.iteritems():
     offerTypeToStr[v] = k
 
-class OfferManager (GObject):
+class OfferManager (GObject.GObject):
     
     __gsignals__ = {
-        'onOfferAdd' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'onOfferRemove' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'onOfferDeclined' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'onChallengeAdd' : (SIGNAL_RUN_FIRST, None, (object,)),
-        'onChallengeRemove' : (SIGNAL_RUN_FIRST, None, (int,)),
-        'onActionError' : (SIGNAL_RUN_FIRST, None, (object, int)),
+        'onOfferAdd' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'onOfferRemove' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'onOfferDeclined' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'onChallengeAdd' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'onChallengeRemove' : (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        'onActionError' : (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         
         self.connection = connection
         

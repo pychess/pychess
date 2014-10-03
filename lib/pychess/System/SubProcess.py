@@ -1,4 +1,5 @@
-import gobject
+from gi.repository import GObject
+from gi.repository import GLib
 import os
 import sys
 import signal
@@ -13,6 +14,7 @@ from pychess.System import fident
 from Log import log
 from which import which
 
+import traceback
 class SubProcessError (Exception): pass
 class TimeOutError (Exception): pass
 
@@ -33,15 +35,18 @@ def finishAllSubprocesses ():
     for subprocess in subprocesses:
         subprocess.subprocFinishedEvent.wait()
 
-class SubProcess (gobject.GObject):
+class SubProcess (GObject.GObject):
     
     __gsignals__ = {
-        "line": (gobject.SIGNAL_RUN_FIRST, None, (object,)),
-        "died": (gobject.SIGNAL_RUN_FIRST, None, ())
+        "line": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "died": (GObject.SignalFlags.RUN_FIRST, None, ())
     }
-    
-    def __init__(self, path, args=[], warnwords=[], env=None, chdir="."):
-        gobject.GObject.__init__(self)
+
+
+
+
+    def __init__(self, path, args=[], warnwords=[], env=None, chdir="."):      
+        GObject.GObject.__init__(self)
         
         self.path = path
         self.args = args
@@ -50,9 +55,10 @@ class SubProcess (gobject.GObject):
         self.buffer = ""
         
         self.linePublisher = EmitPublisher(self, "line",
-            'SubProcess.linePublisher', EmitPublisher.SEND_LIST)
-        self.linePublisher.start()
-        
+            'SubProcess.linePublisher', EmitPublisher.SEND_LIST)        
+       
+        self.linePublisher.start()        
+       
         self.defname = os.path.split(path)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
         t = time.time()
@@ -62,15 +68,15 @@ class SubProcess (gobject.GObject):
         
         argv = [str(u) for u in [self.path]+self.args]
         log.debug("SubProcess.__init__: spawning...",  extra={"task":self.defname})
-        self.pid, stdin, stdout, stderr = gobject.spawn_async(argv,
+        self.pid, stdin, stdout, stderr = GObject.spawn_async(argv,
                 working_directory=chdir, child_setup=self.__setup,
                 standard_input=True, standard_output=True, standard_error=True,
-                flags=gobject.SPAWN_DO_NOT_REAP_CHILD|gobject.SPAWN_SEARCH_PATH)
-        
+                flags=GObject.SPAWN_DO_NOT_REAP_CHILD|GObject.SPAWN_SEARCH_PATH)        
+       
         log.debug("SubProcess.__init__: _initChannel...",  extra={"task":self.defname})
         self.__channelTags = []
         self.inChannel = self._initChannel(stdin, None, None, False)
-        readFlags = gobject.IO_IN|gobject.IO_HUP#|gobject.IO_ERR
+        readFlags = GObject.IO_IN|GObject.IO_HUP#|GObject.IO_ERR
         self.outChannel = self._initChannel(stdout, readFlags, self.__io_cb, False)
         self.errChannel = self._initChannel(stderr, readFlags, self.__io_cb, True)
         
@@ -78,18 +84,18 @@ class SubProcess (gobject.GObject):
         self.channelsClosed = False
         self.channelsClosedLock = threading.Lock()
         log.debug("SubProcess.__init__: child_watch_add...",  extra={"task":self.defname})
-        gobject.child_watch_add(self.pid, self.__child_watch_callback)
-        
+        GObject.child_watch_add(self.pid, self.__child_watch_callback)        
+       
         log.debug("SubProcess.__init__: subprocExitCode...",  extra={"task":self.defname})
         self.subprocExitCode = (None, None)
         self.subprocFinishedEvent = threading.Event()
         subprocesses.append(self)
         log.debug("SubProcess.__init__: finished",  extra={"task":self.defname})
     
-    def _initChannel (self, filedesc, callbackflag, callback, isstderr):
-        channel = gobject.IOChannel(filedesc)
+    def _initChannel (self, filedesc, callbackflag, callback, isstderr):        
+        channel = GLib.IOChannel(filedesc)
         if sys.platform != "win32":
-            channel.set_flags(gobject.IO_FLAG_NONBLOCK)
+            channel.set_flags(GObject.IO_FLAG_NONBLOCK)
         if callback:
             tag = channel.add_watch(callbackflag, callback, isstderr)
             self.__channelTags.append(tag)
@@ -105,11 +111,11 @@ class SubProcess (gobject.GObject):
             self.channelsClosedLock.release()
 
         for tag in self.__channelTags:
-            gobject.source_remove(tag)
+            GObject.source_remove(tag)
         for channel in (self.inChannel, self.outChannel, self.errChannel):
             try:
                 channel.close()
-            except gobject.GError, error:
+            except GObject.GError, error:
                 pass
     
     def __setup (self):
@@ -132,7 +138,9 @@ class SubProcess (gobject.GObject):
             try:
                 line = channel.next()#readline()
             except StopIteration:
-                return False
+                # fix for pygi
+                #return False
+                return True
             if not line:
                 return True
             if isstderr:
@@ -156,7 +164,7 @@ class SubProcess (gobject.GObject):
         if data.endswith("\n"):
             try:
                 self.inChannel.flush()
-            except gobject.GError, e:
+            except GObject.GError, e:
                 log.error(str(e)+". Last line wasn't sent.", extra={"task":self.defname})
 
     def sendSignal (self, sign):
@@ -213,7 +221,7 @@ class SubProcess (gobject.GObject):
         self.sendSignal(signal.SIGINT)
 
 if __name__ == "__main__":
-    loop = gobject.MainLoop()
+    loop = GObject.MainLoop()
     paths = ("igang.dk", "google.com", "google.dk", "myspace.com", "yahoo.com")
     maxlen = max(len(p) for p in paths)
     def callback (subp, line, path):

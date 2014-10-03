@@ -1,4 +1,5 @@
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+#from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+from gi.repository import GObject
 import re
 from pychess.Utils.const import *
 from pychess.ic import *
@@ -17,10 +18,10 @@ mf = "(?:([mf]{1,2})\s?)?"
 whomatch = "(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
 whomatch_re = re.compile(whomatch)
 
-class HelperManager (GObject):
+class HelperManager (GObject.GObject):
     
     def __init__ (self, helperconn, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         
         self.helperconn = helperconn
         self.connection = connection

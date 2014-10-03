@@ -1,16 +1,17 @@
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 
 from pychess.ic.VerboseTelnet import ConsoleHandler
 
 
-class ConsoleManager (GObject):
+class ConsoleManager (GObject.GObject):
     
     __gsignals__ = {
-        'consoleMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
+        'consoleMessage' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         self.connection.client.lines.consolehandler = ConsoleHandler(self.onConsoleMessage)
 

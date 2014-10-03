@@ -1,4 +1,4 @@
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+from gi.repository import GObject
 
 class PlayerIsDead (Exception):
     """ Used instead of returning a move,
@@ -11,18 +11,19 @@ class TurnInterrupt (Exception):
         player """
     pass
 
-class Player (GObject):
+class Player (GObject.GObject):
     
     __gsignals__ = {
-        "offer": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "withdraw": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "decline": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "accept": (SIGNAL_RUN_FIRST, TYPE_NONE, (object,)),
-        "name_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
+        "offer": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "withdraw": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "decline": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "accept": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "name_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
+
     }
     
     def __init__ (self):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.name = ""
         self.ichandle = None
         self.icrating = None

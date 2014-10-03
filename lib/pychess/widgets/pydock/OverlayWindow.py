@@ -2,25 +2,28 @@ import os
 import re
 import sys
 
-import gtk
 import cairo
+from gi.repository import Gtk
+from gi.repository import GObject
 
 if sys.platform == 'win32':
     from pychess.System.WinRsvg import rsvg
 else:
-    import rsvg
+    #import rsvg
+    pass
 
 
-class OverlayWindow (gtk.Window):
+class OverlayWindow (Gtk.Window):
     """ This class knows about being an overlaywindow and some svg stuff """
     
     cache = {} # Class global self.cache for svgPath:rsvg and (svgPath,w,h):surface
     
     def __init__ (self, parent):
-        gtk.Window.__init__(self, gtk.WINDOW_POPUP)
-        colormap = self.get_screen().get_rgba_colormap()
-        if colormap:
-            self.set_colormap(colormap)
+        #GObject.GObject.__init__(self, Gtk.WindowType.POPUP)
+        GObject.GObject.__init__(self)
+        #colormap = self.get_screen().get_rgba_colormap()
+        #if colormap:
+        #    self.set_colormap(colormap)
         self.myparent = parent
     
     #===========================================================================
@@ -37,7 +40,7 @@ class OverlayWindow (gtk.Window):
     def digAHole (self, svgShape, width, height):
         
         # Create a bitmap and clear it
-        mask = gtk.gdk.Pixmap(None, width, height, 1)
+        mask = Gdk.Pixmap(None, width, height, 1)
         mcontext = mask.cairo_create()
         mcontext.set_source_rgb(0, 0, 0)
         mcontext.set_operator(cairo.OPERATOR_DEST_OUT)
@@ -94,12 +97,12 @@ class OverlayWindow (gtk.Window):
             return "#"+"".join(hex(c/256)[2:].zfill(2) for c in pixels)
         
         TEMP_PATH = "/tmp/pychess_theamed.svg"
-        colorDic = {"#18b0ff": colorToHex("light", gtk.STATE_SELECTED),
-                    "#575757": colorToHex("text_aa", gtk.STATE_PRELIGHT),
-                    "#e3ddd4": colorToHex("bg", gtk.STATE_NORMAL),
-                    "#d4cec5": colorToHex("bg", gtk.STATE_INSENSITIVE),
-                    "#ffffff": colorToHex("base", gtk.STATE_NORMAL),
-                    "#000000": colorToHex("fg", gtk.STATE_NORMAL)}
+        colorDic = {"#18b0ff": colorToHex("light", Gtk.StateType.SELECTED),
+                    "#575757": colorToHex("text_aa", Gtk.StateType.PRELIGHT),
+                    "#e3ddd4": colorToHex("bg", Gtk.StateType.NORMAL),
+                    "#d4cec5": colorToHex("bg", Gtk.StateType.INSENSITIVE),
+                    "#ffffff": colorToHex("base", Gtk.StateType.NORMAL),
+                    "#000000": colorToHex("fg", Gtk.StateType.NORMAL)}
         
         data = file(svgPath).read()
         data = re.sub("|".join(colorDic.keys()),
