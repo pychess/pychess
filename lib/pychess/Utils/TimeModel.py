@@ -1,26 +1,29 @@
 import heapq
 from time import time
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE, GObject
+
+from gi.repository import GObject
+
 from pychess.Utils.const import WHITE, BLACK
 from pychess.System import repeat
 from pychess.System.Log import log
 
-class TimeModel (GObject):
+class TimeModel (GObject.GObject):
     
     __gsignals__ = {
-        "player_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "time_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, ()),
-        "zero_reached": (SIGNAL_RUN_FIRST, TYPE_NONE, (int,)),
-        "pause_changed": (SIGNAL_RUN_FIRST, TYPE_NONE, (bool,))
+        "player_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "time_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "zero_reached": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "pause_changed": (GObject.SignalFlags.RUN_FIRST, None, (bool,))
     }
+
     
     ############################################################################
     # Initing                                                                  #
     ############################################################################
     
-    def __init__ (self, secs=0, gain=0, bsecs=-1, minutes=-1):
-        GObject.__init__(self)
-        
+    def __init__ (self, secs=0, gain=0, bsecs=-1, minutes=-1):        
+        GObject.GObject.__init__(self)
+
         if bsecs < 0: bsecs = secs
         if minutes < 0:
             minutes = secs / 60

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy toplevel-contextual -->
+  <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkAdjustment" id="adjustment1">
     <property name="lower">1</property>
     <property name="upper">240</property>
@@ -39,19 +38,18 @@
     <property name="icon_name">pychess</property>
     <property name="type_hint">normal</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox2">
+      <object class="GtkBox" id="dialog-vbox2">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">1</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area2">
+          <object class="GtkButtonBox" id="dialog-action_area2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button1">
                 <property name="label">gtk-cancel</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -65,7 +63,6 @@
             </child>
             <child>
               <object class="GtkButton" id="sendChallengeButton">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -195,7 +192,6 @@
                     <property name="row_spacing">3</property>
                     <child>
                       <object class="GtkButton" id="challenge1RadioConfigButton">
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="can_default">True</property>
@@ -237,7 +233,6 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="challenge2RadioConfigButton">
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="can_default">True</property>
@@ -281,7 +276,6 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="challenge3RadioConfigButton">
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="can_default">True</property>
@@ -331,11 +325,11 @@
                         <child>
                           <object class="GtkRadioButton" id="challenge3Radio">
                             <property name="label" translatable="yes">Lightning:</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="use_underline">True</property>
+                            <property name="xalign">0.5</property>
                             <property name="draw_indicator">True</property>
                             <property name="group">challenge1Radio</property>
                           </object>
@@ -355,7 +349,6 @@
                         <child>
                           <object class="GtkRadioButton" id="challenge2Radio">
                             <property name="label" translatable="yes">Standard:</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -380,7 +373,6 @@
                         <child>
                           <object class="GtkRadioButton" id="challenge1Radio">
                             <property name="label" translatable="yes">Blitz:</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -491,19 +483,18 @@
     <property name="icon_name">pychess</property>
     <property name="type_hint">normal</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox4">
+      <object class="GtkBox" id="dialog-vbox4">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area4">
+          <object class="GtkButtonBox" id="dialog-action_area4">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button15">
                 <property name="label">gtk-cancel</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -519,7 +510,6 @@
             <child>
               <object class="GtkButton" id="button16">
                 <property name="label">gtk-ok</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -592,10 +582,10 @@
                                 <child>
                                   <object class="GtkCheckButton" id="untimedCheck">
                                     <property name="label" translatable="yes">Untimed</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="xalign">0.5</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -659,8 +649,6 @@
                                                 <property name="invisible_char">●</property>
                                                 <property name="primary_icon_activatable">False</property>
                                                 <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
                                                 <property name="adjustment">adjustment1</property>
                                               </object>
                                               <packing>
@@ -689,8 +677,6 @@
                                                 <property name="invisible_char">●</property>
                                                 <property name="primary_icon_activatable">False</property>
                                                 <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
                                                 <property name="adjustment">adjustment2</property>
                                               </object>
                                               <packing>
@@ -826,10 +812,10 @@
                                 <child>
                                   <object class="GtkCheckButton" id="strengthCheck">
                                     <property name="label" translatable="yes">Don't care</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="xalign">0.5</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -1255,7 +1241,6 @@ b) you change the variant or the time control</property>
                                             <child>
                                               <object class="GtkLinkButton" id="toleranceButton">
                                                 <property name="label" translatable="yes">Hide</property>
-                                                <property name="use_action_appearance">False</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">True</property>
@@ -1359,11 +1344,11 @@ b) you change the variant or the time control</property>
                                 <child>
                                   <object class="GtkRadioButton" id="nocolorRadio">
                                     <property name="label" translatable="yes">Don't care</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="use_underline">True</property>
+                                    <property name="xalign">0.5</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -1399,11 +1384,11 @@ b) you change the variant or the time control</property>
                                     <child>
                                       <object class="GtkRadioButton" id="whitecolorRadio">
                                         <property name="label" translatable="yes">White</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="use_underline">True</property>
+                                        <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">nocolorRadio</property>
                                       </object>
@@ -1427,11 +1412,11 @@ b) you change the variant or the time control</property>
                                     <child>
                                       <object class="GtkRadioButton" id="blackcolorRadio">
                                         <property name="label" translatable="yes">Black</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="use_underline">True</property>
+                                        <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">nocolorRadio</property>
                                       </object>
@@ -1525,11 +1510,11 @@ b) you change the variant or the time control</property>
                                 <child>
                                   <object class="GtkRadioButton" id="noVariantRadio">
                                     <property name="label" translatable="yes">Play normal chess rules</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="use_underline">True</property>
+                                    <property name="xalign">0.5</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -1565,10 +1550,10 @@ b) you change the variant or the time control</property>
                                     <child>
                                       <object class="GtkRadioButton" id="variantRadio">
                                         <property name="label" translatable="yes">Play</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
                                         <property name="group">noVariantRadio</property>
                                       </object>
@@ -1689,11 +1674,11 @@ b) you change the variant or the time control</property>
                                 <child>
                                   <object class="GtkCheckButton" id="ratedGameCheck">
                                     <property name="label" translatable="yes">Rated game</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="use_underline">True</property>
+                                    <property name="xalign">0.5</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -1705,10 +1690,10 @@ b) you change the variant or the time control</property>
                                 <child>
                                   <object class="GtkCheckButton" id="manualAcceptCheck">
                                     <property name="label" translatable="yes">Manually accept opponent</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="xalign">0.5</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -1824,7 +1809,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="clearSeeksButton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
@@ -1849,7 +1833,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="acceptButton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
@@ -1874,7 +1857,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="declineButton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
@@ -1909,11 +1891,13 @@ b) you change the variant or the time control</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="hscrollbar_policy">never</property>
-                            <property name="vscrollbar_policy">automatic</property>
                             <child>
                               <object class="GtkTreeView" id="seektreeview">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection" id="treeview-selection1"/>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -1959,7 +1943,6 @@ b) you change the variant or the time control</property>
                                         <property name="row_spacing">3</property>
                                         <child>
                                           <object class="GtkButton" id="seek1RadioConfigButton">
-                                            <property name="use_action_appearance">False</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="can_default">True</property>
@@ -2001,7 +1984,6 @@ b) you change the variant or the time control</property>
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="seek2RadioConfigButton">
-                                            <property name="use_action_appearance">False</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="can_default">True</property>
@@ -2045,7 +2027,6 @@ b) you change the variant or the time control</property>
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="seek3RadioConfigButton">
-                                            <property name="use_action_appearance">False</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="can_default">True</property>
@@ -2095,11 +2076,11 @@ b) you change the variant or the time control</property>
                                             <child>
                                               <object class="GtkRadioButton" id="seek3Radio">
                                                 <property name="label" translatable="yes">Lightning:</property>
-                                                <property name="use_action_appearance">False</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="use_underline">True</property>
+                                                <property name="xalign">0.5</property>
                                                 <property name="draw_indicator">True</property>
                                                 <property name="group">seek1Radio</property>
                                               </object>
@@ -2119,7 +2100,6 @@ b) you change the variant or the time control</property>
                                             <child>
                                               <object class="GtkRadioButton" id="seek2Radio">
                                                 <property name="label" translatable="yes">Standard:</property>
-                                                <property name="use_action_appearance">False</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
@@ -2144,7 +2124,6 @@ b) you change the variant or the time control</property>
                                             <child>
                                               <object class="GtkRadioButton" id="seek1Radio">
                                                 <property name="label" translatable="yes">Blitz:</property>
-                                                <property name="use_action_appearance">False</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
@@ -2232,65 +2211,8 @@ b) you change the variant or the time control</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="spacing">6</property>
-                                        <property name="layout_style">end</property>
-                                        <child>
-                                          <object class="GtkButton" id="seekButton">
-                                            <property name="use_action_appearance">False</property>
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="can_default">True</property>
-                                            <property name="receives_default">True</property>
-                                            <child>
-                                              <object class="GtkAlignment" id="alignment114">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="xscale">0</property>
-                                                <property name="yscale">0</property>
-                                                <child>
-                                                  <object class="GtkHBox" id="hbox2001">
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">False</property>
-                                                    <property name="spacing">2</property>
-                                                    <child>
-                                                      <object class="GtkImage" id="image345">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="pixbuf">seek.png</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="expand">False</property>
-                                                        <property name="fill">False</property>
-                                                        <property name="position">0</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="label78">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="label" translatable="yes">Send seek</property>
-                                                        <property name="use_underline">True</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="expand">False</property>
-                                                        <property name="fill">False</property>
-                                                        <property name="position">1</property>
-                                                      </packing>
-                                                    </child>
-                                                  </object>
-                                                </child>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="position">1</property>
-                                            <property name="pack_type">end</property>
-                                          </packing>
-                                        </child>
                                         <child>
                                           <object class="GtkButton" id="seekAllButton">
-                                            <property name="use_action_appearance">False</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="can_default">True</property>
@@ -2339,8 +2261,62 @@ b) you change the variant or the time control</property>
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
-                                            <property name="position">0</property>
                                             <property name="pack_type">end</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="seekButton">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="can_default">True</property>
+                                            <property name="receives_default">True</property>
+                                            <child>
+                                              <object class="GtkAlignment" id="alignment114">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="xscale">0</property>
+                                                <property name="yscale">0</property>
+                                                <child>
+                                                  <object class="GtkHBox" id="hbox2001">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">False</property>
+                                                    <property name="spacing">2</property>
+                                                    <child>
+                                                      <object class="GtkImage" id="image345">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="pixbuf">seek.png</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">False</property>
+                                                        <property name="position">0</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label78">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="label" translatable="yes">Send seek</property>
+                                                        <property name="use_underline">True</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="expand">False</property>
+                                                        <property name="fill">False</property>
+                                                        <property name="position">1</property>
+                                                      </packing>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="pack_type">end</property>
+                                            <property name="position">1</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -2400,7 +2376,7 @@ b) you change the variant or the time control</property>
                           </object>
                           <packing>
                             <property name="x_options">GTK_FILL</property>
-                            <property name="y_options"></property>
+                            <property name="y_options"/>
                           </packing>
                         </child>
                         <child>
@@ -2428,7 +2404,7 @@ b) you change the variant or the time control</property>
                             <property name="top_attach">1</property>
                             <property name="bottom_attach">2</property>
                             <property name="x_options">GTK_FILL</property>
-                            <property name="y_options"></property>
+                            <property name="y_options"/>
                           </packing>
                         </child>
                       </object>
@@ -2475,7 +2451,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="challengeButton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -2529,7 +2504,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="observe_button">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -2583,7 +2557,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="private_chat_button">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -2647,11 +2620,13 @@ b) you change the variant or the time control</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="hscrollbar_policy">never</property>
-                            <property name="vscrollbar_policy">automatic</property>
                             <child>
                               <object class="GtkTreeView" id="playertreeview">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection" id="treeview-selection2"/>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -2704,7 +2679,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="observeButton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -2768,11 +2742,13 @@ b) you change the variant or the time control</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="hscrollbar_policy">never</property>
-                            <property name="vscrollbar_policy">automatic</property>
                             <child>
                               <object class="GtkTreeView" id="gametreeview">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection" id="treeview-selection3"/>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -2812,7 +2788,6 @@ b) you change the variant or the time control</property>
                             <property name="spacing">6</property>
                             <child>
                               <object class="GtkButton" id="resumeButton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -2870,7 +2845,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="resignButton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -2929,7 +2903,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="drawButton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -2974,7 +2947,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="abortButton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -3019,7 +2991,6 @@ b) you change the variant or the time control</property>
                             </child>
                             <child>
                               <object class="GtkButton" id="previewButton">
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="can_default">True</property>
@@ -3086,12 +3057,13 @@ b) you change the variant or the time control</property>
                           <object class="GtkScrolledWindow" id="scrolledwindow6">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="hscrollbar_policy">automatic</property>
-                            <property name="vscrollbar_policy">automatic</property>
                             <child>
                               <object class="GtkTreeView" id="adjournedtreeview">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection" id="treeview-selection4"/>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -3246,9 +3218,8 @@ b) you change the variant or the time control</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">3</property>
                             <child>
-                              <object class="GtkButton" id="show_chat_button">
-                                <property name="label" translatable="yes">Show _Chat</property>
-                                <property name="use_action_appearance">False</property>
+                              <object class="GtkButton" id="show_console_button">
+                                <property name="label" translatable="yes">Show Console</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -3261,9 +3232,8 @@ b) you change the variant or the time control</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="show_console_button">
-                                <property name="label" translatable="yes">Show Console</property>
-                                <property name="use_action_appearance">False</property>
+                              <object class="GtkButton" id="show_chat_button">
+                                <property name="label" translatable="yes">Show _Chat</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -3278,7 +3248,6 @@ b) you change the variant or the time control</property>
                             <child>
                               <object class="GtkButton" id="logoffButton">
                                 <property name="label" translatable="yes">_Log Off</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>

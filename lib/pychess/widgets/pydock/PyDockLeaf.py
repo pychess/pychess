@@ -1,5 +1,5 @@
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GObject
 
 from pychess.System.prefix import addDataPrefix
 
@@ -14,14 +14,14 @@ class PyDockLeaf (DockLeaf):
         DockLeaf.__init__(self)
         self.set_no_show_all(True)
         
-        self.book = gtk.Notebook()
+        self.book = Gtk.Notebook()
         self.book.connect("drag-begin", self.__onDragBegin)
         self.book.connect("drag-end", self.__onDragEnd)
         self.book.connect_after("switch-page", self.__onPageSwitched)
         self.add(self.book)
         self.book.show()
-        self.book.props.tab_vborder = 0
-        self.book.props.tab_hborder = 1
+        #self.book.props.tab_vborder = 0
+        #self.book.props.tab_hborder = 1
         
         self.highlightArea = HighlightArea(self)
         #self.put(self.highlightArea, 0, 0)
@@ -41,11 +41,11 @@ class PyDockLeaf (DockLeaf):
         self.dockable = True
         self.panels = []
         
-        self.zoomPointer = gtk.Label()
+        self.zoomPointer = Gtk.Label()
         self.realtop = None
         self.zoomed = False
         
-        #assert isinstance(widget, gtk.Notebook)
+        #assert isinstance(widget, Gtk.Notebook)
         
         self.__add(widget, title, id)
     
@@ -60,7 +60,7 @@ class PyDockLeaf (DockLeaf):
         #widget = BorderBox(widget, top=True)
         self.panels.append((widget, title, id))
         self.book.append_page(widget, title)
-        self.book.set_tab_label_packing(widget, True, True, gtk.PACK_START)
+        #self.book.set_tab_label_packing(widget, True, True, Gtk.PACK_START)
         self.book.set_tab_detachable(widget, True)
         self.book.set_tab_reorderable(widget, True)
         widget.show_all()
@@ -105,7 +105,7 @@ class PyDockLeaf (DockLeaf):
                 self._del()
             # We need to idle_add this, as the widget won't emit drag-ended, if
             # it is removed to early
-            gobject.idle_add(cb)
+            GObject.idle_add(cb)
         
         return title, id
     
@@ -207,6 +207,6 @@ class PyDockLeaf (DockLeaf):
     def __onPageSwitched (self, book, page, page_num):
         # When a tab is dragged over another tab, the page is temporally
         # switched, and the notebook child is hovered. Thus we need to reraise
-        # our star
-        if self.starButton.window:
+        # our star        
+        if self.starButton.get_window():
             self.starButton.window.raise_()

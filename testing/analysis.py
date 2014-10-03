@@ -9,15 +9,15 @@ from pychess.Players.CECPEngine import CECPEngine
 
 from Queue import Queue
 
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+from gi.repository import GObject
 
-class DummyCECPAnalyzerEngine(GObject):
+class DummyCECPAnalyzerEngine(GObject.GObject):
     __gsignals__ = {
         "line": (SIGNAL_RUN_FIRST, None, (object,)),
         "died": (SIGNAL_RUN_FIRST, None, ()),
     }
     def __init__(self):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.defname = 'Dummy'
         self.Q = Queue()
     def putline(self, line):

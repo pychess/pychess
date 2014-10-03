@@ -23,15 +23,15 @@ logemitter = LogEmitter()
 
 def set_gui_log_emitter():
     global logemitter
-    import gobject
+    from gi.repository import GObject
     from GtkWorker import EmitPublisher, Publisher
 
-    class LogEmitter(gobject.GObject):
+    class LogEmitter(GObject.GObject):
         __gsignals__ = {
-            "logged": (gobject.SIGNAL_RUN_FIRST, None, (object,))
+            "logged": (GObject.SignalFlags.RUN_FIRST, None, (object,))
         }                                              # list of (str, float, str, int)
         def __init__ (self):
-            gobject.GObject.__init__(self)
+            GObject.GObject.__init__(self)
 
             # We store everything in this list, so that the LogDialog, which is
             # imported a little later, will have all data ever given to Log.

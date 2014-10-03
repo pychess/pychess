@@ -3,7 +3,7 @@ import os
 from os import listdir
 from os.path import isdir, isfile, splitext
 
-import gtk
+from gi.repository import Gtk
 import cairo
 
 from pychess.Utils.const import *

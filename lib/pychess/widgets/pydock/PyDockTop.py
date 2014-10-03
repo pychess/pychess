@@ -1,8 +1,8 @@
 import os
 from xml.dom import minidom
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GObject
 
 from pychess.System.prefix import addDataPrefix
 
@@ -49,8 +49,8 @@ class PyDockTop (TopDock):
         self.remove(widget)
     
     def getComponents (self):
-        if isinstance(self.child, DockComponent):
-            return [self.child]
+        if isinstance(self.get_child(), DockComponent):
+            return [self.get_child()]
         return []
     
     def dock (self, widget, position, title, id):
@@ -59,10 +59,10 @@ class PyDockTop (TopDock):
             self.addComponent(leaf)
             return leaf
         else:
-            return self.child.dock(widget, position, title, id)
+            return self.get_child().dock(widget, position, title, id)
     
     def clear (self):
-        self.remove(self.child)
+        self.remove(self.get_child())
     
     #===========================================================================
     #    Signals
@@ -113,8 +113,8 @@ class PyDockTop (TopDock):
             dockElem.setAttribute("id", self.id)
             doc.documentElement.appendChild(dockElem)
         
-        if self.child:
-            self.__addToXML(self.child, dockElem, doc)
+        if self.get_child():
+            self.__addToXML(self.get_child(), dockElem, doc)
         f = file(xmlpath, "w")
         doc.writexml(f)
         f.close()

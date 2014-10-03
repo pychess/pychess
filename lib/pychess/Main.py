@@ -10,9 +10,9 @@ import subprocess
 import urllib 
 from urlparse import urlparse
 
-import gobject, gtk
-from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
-from gtk.gdk import keyval_from_name
+from gi.repository import Gdk
+from gi.repository import Gtk
+from gi.repository import GObject
 
 from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
@@ -38,13 +38,13 @@ from pychess.ic import ICLogon
 #from pychess.Database.gamelist import GameList
 from pychess import VERSION, VERSION_NAME
 
-leftkeys  = map(keyval_from_name, ("Left", "KP_Left"))
-rightkeys = map(keyval_from_name, ("Right", "KP_Right"))
-upkeys    = map(keyval_from_name, ("Up", "KP_Up"))
-downkeys  = map(keyval_from_name, ("Down", "KP_Down"))
-homekeys  = map(keyval_from_name, ("Home", "KP_Home"))
-endkeys   = map(keyval_from_name, ("End", "KP_End"))
-functionkeys = [keyval_from_name(k) for k in ("F1", "F2", "F3", "F4", "F5",
+leftkeys  = map(Gdk.keyval_from_name, ("Left", "KP_Left"))
+rightkeys = map(Gdk.keyval_from_name, ("Right", "KP_Right"))
+upkeys    = map(Gdk.keyval_from_name, ("Up", "KP_Up"))
+downkeys  = map(Gdk.keyval_from_name, ("Down", "KP_Down"))
+homekeys  = map(Gdk.keyval_from_name, ("Home", "KP_Home"))
+endkeys   = map(Gdk.keyval_from_name, ("End", "KP_End"))
+functionkeys = [Gdk.keyval_from_name(k) for k in ("F1", "F2", "F3", "F4", "F5",
                 "F6", "F7", "F8", "F9", "F10", "F11")]
 
 ################################################################################
@@ -55,35 +55,35 @@ gameDic = {}
 ########################
 #  For Racent Chooser 
 ########################
-recentManager = gtk.recent_manager_get_default()
+recentManager = Gtk.RecentManager.get_default()
 
 
 class GladeHandlers:
     
     def on_window_key_press (window, event):
-        log.debug('on_window_key_press: %s %s' % (window.title, event))
+        log.debug('on_window_key_press: %s %s' % (window.get_title(), event))
         # Tabbing related shortcuts
         if not gamewidget.getheadbook():
             pagecount = 0
         else: pagecount = gamewidget.getheadbook().get_n_pages()
         if pagecount > 1:
-            if event.state & gtk.gdk.CONTROL_MASK:
+            if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 page_num = gamewidget.getheadbook().get_current_page()
                 # Move selected
-                if event.state & gtk.gdk.SHIFT_MASK:
+                if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
                     child = gamewidget.getheadbook().get_nth_page(page_num)
-                    if event.keyval == gtk.keysyms.Page_Up:
+                    if event.keyval == Gdk.KEY_Page_Up:
                         gamewidget.getheadbook().reorder_child(child, (page_num-1)%pagecount)
                         return True
-                    elif event.keyval == gtk.keysyms.Page_Down:
+                    elif event.keyval == Gdk.KEY_Page_Down:
                         gamewidget.getheadbook().reorder_child(child, (page_num+1)%pagecount)
                         return True
                 # Change selected
                 else:
-                    if event.keyval == gtk.keysyms.Page_Up:
+                    if event.keyval == Gdk.KEY_Page_Up:
                         gamewidget.getheadbook().set_current_page((page_num-1)%pagecount)
                         return True
-                    elif event.keyval == gtk.keysyms.Page_Down:
+                    elif event.keyval == Gdk.KEY_Page_Down:
                         gamewidget.getheadbook().set_current_page((page_num+1)%pagecount)
                         return True
 
@@ -97,7 +97,7 @@ class GladeHandlers:
 
             # Navigate on boardview with arrow keys
             if event.keyval in leftkeys:
-                if event.state & gtk.gdk.CONTROL_MASK:
+                if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                     gmwidg.board.view.backToMainLine()
                     return True
                 else:
@@ -119,13 +119,13 @@ class GladeHandlers:
                 gmwidg.board.view.showLast()
                 return True
 
-            if (not event.state & gtk.gdk.CONTROL_MASK) and \
-                    (not event.state & gtk.gdk.MOD1_MASK) and \
-                    (event.keyval != gtk.keysyms.Escape) and \
+            if (not event.get_state() & Gdk.ModifierType.CONTROL_MASK) and \
+                    (not event.get_state() & Gdk.ModifierType.MOD1_MASK) and \
+                    (event.keyval != Gdk.KEY_Escape) and \
                     (event.keyval not in functionkeys):
                 # Enter moves with keyboard
                 board_control = gmwidg.board
-                keyname = gtk.gdk.keyval_name(event.keyval)
+                keyname = Gdk.keyval_name(event.keyval)
                 board_control.key_pressed(keyname)
                 gmwidg.status(board_control.keybuffer)
                 return True
@@ -154,7 +154,8 @@ class GladeHandlers:
                 'app_name':'pychess',
                 'app_exec':'pychess',
                 'group':'pychess'}
-            recentManager.add_full("file://" + o.path, recent_data)
+            # FIXME
+            #recentManager.add_full("file://" + o.path, recent_data)
     
     def on_gmwidg_closed (gmwidg):
         del gameDic[gmwidg]
@@ -219,8 +220,8 @@ class GladeHandlers:
         response = ionest.closeGame(gmwidg, gameDic[gmwidg])
     
     def on_quit1_activate (widget, *args):
-        if ionest.closeAllGames(gameDic.items()) in (gtk.RESPONSE_OK, gtk.RESPONSE_YES):
-            gtk.main_quit()
+        if ionest.closeAllGames(gameDic.items()) in (Gtk.ResponseType.OK, Gtk.ResponseType.YES):
+            Gtk.main_quit()
         else: return True
 
     #          View Menu          #
@@ -317,9 +318,10 @@ class PyChess:
         #=======================================================================
         # Init glade and the 'GladeHandlers'
         #=======================================================================
-        gtk.about_dialog_set_url_hook(self.website)
-        widgets = uistuff.GladeWidgets("PyChess.glade")
+        #Gtk.about_dialog_set_url_hook(self.website)
+        widgets = uistuff.GladeWidgets("PyChess.glade")       
         widgets.getGlade().connect_signals(GladeHandlers.__dict__)
+
         tasker = TaskerManager()
         tasker.packTaskers (NewGameTasker(), InternetGameTasker())
         widgets["Background"].add(tasker)
@@ -355,17 +357,17 @@ class PyChess:
         uistuff.keepWindowSize("main", widgets["window1"], (575,479), POSITION_GOLDEN)
         widgets["window1"].show()
         widgets["Background"].show_all()
-        
-        flags = DEST_DEFAULT_MOTION | DEST_DEFAULT_HIGHLIGHT | DEST_DEFAULT_DROP
+                
+        flags = Gtk.DestDefaults.MOTION | Gtk.DestDefaults.HIGHLIGHT | Gtk.DestDefaults.DROP
         # To get drag in the whole window, we add it to the menu and the
         # background. If it can be gotten to work, the drag_dest_set_proxy
         # method is very interesting.
-        widgets["menubar1"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
-        widgets["Background"].drag_dest_set(flags, dnd_list, gtk.gdk.ACTION_COPY)
+        #widgets["menubar1"].drag_dest_set(flags, dnd_list, Gdk.DragAction.COPY)
+        #widgets["Background"].drag_dest_set(flags, dnd_list, Gdk.DragAction.COPY)
         # TODO: http://code.google.com/p/pychess/issues/detail?id=737
         # The following two should really be set in the glade file
-        #widgets["menubar1"].set_events(widgets["menubar1"].get_events() | gtk.gdk.DRAG_STATUS)
-        #widgets["Background"].set_events(widgets["Background"].get_events() | gtk.gdk.DRAG_STATUS)
+        #widgets["menubar1"].set_events(widgets["menubar1"].get_events() | Gdk.DRAG_STATUS)
+        #widgets["Background"].set_events(widgets["Background"].get_events() | Gdk.DRAG_STATUS)
         
         #=======================================================================
         # Init 'minor' dialogs
@@ -428,13 +430,14 @@ class PyChess:
                 #shomething wrong whit the uri
                 recentManager.remove_item(uri)
                 
-        self.menu_recent = gtk.RecentChooserMenu(recentManager)
+        #self.menu_recent = Gtk.RecentChooserMenu(recentManager)
+        self.menu_recent = Gtk.RecentChooserMenu()
         self.menu_recent.set_show_tips(True)
-        self.menu_recent.set_sort_type(gtk.RECENT_SORT_MRU)
+        self.menu_recent.set_sort_type(Gtk.RecentSortType.MRU)
         self.menu_recent.set_limit(10)
         self.menu_recent.set_name("menu_recent")
         
-        self.file_filter = gtk.RecentFilter()
+        self.file_filter = Gtk.RecentFilter()
         self.file_filter.add_mime_type("application/x-chess-pgn")
         self.menu_recent.set_filter(self.file_filter)
 
@@ -443,7 +446,7 @@ class PyChess:
         
         #----------------------------------------------------- Discoverer dialog
         def discovering_started (discoverer, binnames):
-            gobject.idle_add(DiscovererDialog.show, discoverer, widgets["window1"])
+            GObject.idle_add(DiscovererDialog.show, discoverer, widgets["window1"])
         discoverer.connect("discovering_started", discovering_started)
         DiscovererDialog.init(discoverer)
         discoverer.discover()
@@ -477,11 +480,12 @@ def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
             pass
 
     pychess = PyChess(log_viewer, chess_file)
-    signal.signal(signal.SIGINT, gtk.main_quit)
+    signal.signal(signal.SIGINT, Gtk.main_quit)
     def cleanup ():
         SubProcess.finishAllSubprocesses()
     atexit.register(cleanup)
-    gtk.gdk.threads_init()
+    Gdk.threads_init()
+    GObject.threads_init()
     
     glock.debug = not no_glock_debug
     log.info("PyChess %s %s rev. %s %s started" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
@@ -494,4 +498,4 @@ def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
     if ics_port:
         ICLogon.port = ics_port
     
-    gtk.main()
+    Gtk.main()

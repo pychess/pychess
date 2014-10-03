@@ -1,6 +1,7 @@
-import gtk
-import gobject
-import pango
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
+from gi.repository import Pango
 import re
 
 from pychess.Utils.IconLoader import load_icon
@@ -17,13 +18,13 @@ def get_playername (playername):
     m = re.match("(\w+)\W*", playername)
     return m.groups()[0]
     
-class BulletCellRenderer (gtk.GenericCellRenderer):
+class BulletCellRenderer (Gtk.CellRenderer):
     __gproperties__ = {
-        "color": (object, "Color", "Color", gobject.PARAM_READWRITE),
+        "color": (object, "Color", "Color", GObject.PARAM_READWRITE),
     }
     
-    def __init__(self):
-        self.__gobject_init__()
+    def __init__(self):        
+        GObject.GObject.__init__(self)
         self.color = None
         self.width = 16
         self.height = 16
@@ -34,11 +35,10 @@ class BulletCellRenderer (gtk.GenericCellRenderer):
     def do_get_property(self, pspec):
         return getattr(self, pspec.name)
     
-    def on_render(self, window, widget, bg_area, cell_area, expose_area, flags):
+    def do_render(self, context, widget, bg_area, cell_area, flags):
         if not self.color: return
         
         x, y = self.get_size(widget, cell_area)[:2]
-        context = window.cairo_create()
         
         r,g,b = self.color
         context.set_source_rgb (r,g,b)
@@ -64,23 +64,24 @@ class BulletCellRenderer (gtk.GenericCellRenderer):
             x = 0
         return (x+1, y+1, self.width+2, self.height+2)
 
-gobject.type_register(BulletCellRenderer)
+GObject.type_register(BulletCellRenderer)
 
-class TextImageTree (gtk.TreeView):
+class TextImageTree (Gtk.TreeView):
     """ Defines a tree with two columns.
         The first one has text. The seccond one a clickable stock_icon """
     
     __gsignals__ = {
-        'activated' : (gobject.SIGNAL_RUN_FIRST, None, (str,str,int)),
-        'selected' : (gobject.SIGNAL_RUN_FIRST, None, (str,int))
+        'activated' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,int)),
+        'selected' : (GObject.SignalFlags.RUN_FIRST, None, (str,int))
     }
     
     def __init__(self, icon_name):
-        gtk.TreeView.__init__(self)
+        GObject.GObject.__init__(self)
         self.id2iter = {}
         
         self.icon_name = icon_name
-        self.props.model = gtk.ListStore(str,str,int)
+        pm = Gtk.ListStore(str,str,int)
+        self.props.model = pm
         self.idSet = set()
         
         self.set_headers_visible(False)
@@ -88,23 +89,23 @@ class TextImageTree (gtk.TreeView):
         self.set_search_column(1)
         
         # First column
-        crt = gtk.CellRendererText()
-        crt.props.ellipsize = pango.ELLIPSIZE_END
-        self.leftcol = gtk.TreeViewColumn("", crt, text=1)
+        crt = Gtk.CellRendererText()
+        crt.props.ellipsize = Pango.EllipsizeMode.END
+        self.leftcol = Gtk.TreeViewColumn("", crt, text=1)
         self.leftcol.set_expand(True)
         self.append_column(self.leftcol)
         
         # Second column
         pixbuf = load_icon(16, icon_name)
-        crp = gtk.CellRendererPixbuf()
+        crp = Gtk.CellRendererPixbuf()
         crp.props.pixbuf = pixbuf
-        self.rightcol = gtk.TreeViewColumn("", crp)
+        self.rightcol = Gtk.TreeViewColumn("", crp)
         self.append_column(self.rightcol)
         
         # Mouse
         self.pressed = None
-        self.stdcursor = gtk.gdk.Cursor(gtk.gdk.LEFT_PTR)
-        self.linkcursor = gtk.gdk.Cursor(gtk.gdk.HAND2)
+        self.stdcursor = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
+        self.linkcursor = Gdk.Cursor.new(Gdk.CursorType.HAND2)
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
         self.connect("motion_notify_event", self.motion_notify)
@@ -156,12 +157,12 @@ class TextImageTree (gtk.TreeView):
     def motion_notify (self, widget, event):
         path_col_pos = self.get_path_at_pos(int(event.x), int(event.y))
         if path_col_pos and path_col_pos[1] == self.rightcol:
-            self.window.set_cursor(self.linkcursor)
+            self.get_window().set_cursor(self.linkcursor)
         else:
-            self.window.set_cursor(self.stdcursor)
+            self.get_window().set_cursor(self.stdcursor)
     
     def leave_notify (self, widget, event):
-        self.window.set_cursor(self.stdcursor)
+        self.get_window().set_cursor(self.stdcursor)
     
     def selection_changed (self, selection):
         model, iter = selection.get_selected()
@@ -170,7 +171,7 @@ class TextImageTree (gtk.TreeView):
             type = model.get_value(iter, 2)
             self.emit("selected", id, type)
 
-class Panel:
+class Panel (object):
     def start (self): pass
     def addItem (self, id, text, type, chatView): pass
     def removeItem (self, id): pass
@@ -180,21 +181,21 @@ class Panel:
 # Panels
 #===============================================================================
 
-class ViewsPanel (gtk.Notebook, Panel):
+class ViewsPanel (Gtk.Notebook, Panel):
     
     def __init__ (self, connection):
-        gtk.Notebook.__init__(self)
+        GObject.GObject.__init__(self)
         self.set_show_tabs(False)
         self.set_show_border(False)
         self.id2Widget = {}
         self.connection = connection
         
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_markup("<big>%s</big>" %
                          _("You have opened no conversations yet"))
         label.props.xalign = .5
         label.props.yalign = 0.381966011
-        label.props.justify = gtk.JUSTIFY_CENTER
+        label.props.justify = Gtk.Justification.CENTER
         label.props.wrap = True
         label.props.width_request = 300
         self.append_page(label, None)
@@ -263,7 +264,7 @@ class ViewsPanel (gtk.Notebook, Panel):
     
     def addPage (self, widget, id):
         self.id2Widget[id] = widget
-        self.append_page(widget)
+        self.append_page(widget, None)
         widget.show_all()
     
     def removePage (self, id):
@@ -271,18 +272,18 @@ class ViewsPanel (gtk.Notebook, Panel):
         self.remove_page(self.page_num(child))
 
 
-class InfoPanel (gtk.Notebook, Panel):
+class InfoPanel (Gtk.Notebook, Panel):
     def __init__ (self, connection):
-        gtk.Notebook.__init__(self)
+        GObject.GObject.__init__(self)
         self.set_show_tabs(False)
         self.set_show_border(False)
         self.id2Widget = {}
         
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_markup("<big>%s</big>" % _("No conversation's selected"))
         label.props.xalign = .5
         label.props.yalign = 0.381966011
-        label.props.justify = gtk.JUSTIFY_CENTER
+        label.props.justify = Gtk.Justification.CENTER
         label.props.wrap = True
         label.props.width_request = 115
         self.append_page(label, None)
@@ -306,17 +307,17 @@ class InfoPanel (gtk.Notebook, Panel):
     
     def addPage (self, widget, id):
         self.id2Widget[id] = widget
-        self.append_page(widget)
+        self.append_page(widget, None)
         widget.show_all()
     
     def removePage (self, id):
         child = self.id2Widget.pop(id)
         self.remove_page(self.page_num(child))
     
-    class PlayerInfoItem (gtk.Alignment):
+    class PlayerInfoItem (Gtk.Alignment):
         def __init__ (self, id, text, chatView, connection):
-            gtk.Alignment.__init__(self, xscale=1, yscale=1)
-            self.add(gtk.Label(_("Loading player data")))
+            GObject.GObject.__init__(self, xscale=1, yscale=1)
+            self.add(Gtk.Label(label=_("Loading player data")))
 
             playername = get_playername(text)            
             self.fm = connection.fm
@@ -326,39 +327,45 @@ class InfoPanel (gtk.Notebook, Panel):
             self.fm.finger(playername)
         
         def onFingeringFinished (self, fm, finger, playername):
-            if not isinstance(self.get_child(), gtk.Label) or \
+            if not isinstance(self.get_child(), Gtk.Label) or \
                     finger.getName().lower() != playername.lower():
                 return
             self.fm.disconnect(self.handle_id)
             
-            label = gtk.Label()
+            label = Gtk.Label()
             label.set_markup("<b>%s</b>" % playername)
-            widget = gtk.Frame()
+            widget = Gtk.Frame()
             widget.set_label_widget(label)
-            widget.set_shadow_type(gtk.SHADOW_NONE)
+            widget.set_shadow_type(Gtk.ShadowType.NONE)
             
-            alignment = gtk.Alignment(0, 0, 1, 1)
+            alignment = Gtk.Alignment.new(0, 0, 1, 1)
             alignment.set_padding(3, 0, 12, 0)
             widget.add(alignment)
             
-            store = gtk.ListStore(str,str)
+            store = Gtk.ListStore(str,str)
             for i, note in enumerate(finger.getNotes()):
                 if note:
                     store.append([str(i+1),note])
-            tv = gtk.TreeView(store)
-            tv.get_selection().set_mode(gtk.SELECTION_NONE)
+            tv = Gtk.TreeView(store)
+            tv.get_selection().set_mode(Gtk.SelectionMode.NONE)
             tv.set_headers_visible(False)
-            tv.modify_base(gtk.STATE_NORMAL, self.get_style().bg[gtk.STATE_NORMAL].copy())
-            cell = gtk.CellRendererText()
-            cell.props.cell_background_gdk = self.get_style().bg[gtk.STATE_ACTIVE].copy()
+            
+            sc = tv.get_style_context()
+            bool1, bg_color = sc.lookup_color("p_bg_color")
+            bool1, bg_active = sc.lookup_color("p_bg_active")
+            tv.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
+
+            cell = Gtk.CellRendererText()
+            cell.props.background_rgba = bg_active
+
             cell.props.cell_background_set = True 
             cell.props.yalign = 0
-            tv.append_column(gtk.TreeViewColumn("", cell, text=0))
+            tv.append_column(Gtk.TreeViewColumn("", cell, text=0))
             cell = uistuff.appendAutowrapColumn(tv, 50, "Notes", text=1)
-            cell.props.cell_background_gdk = self.get_style().bg[gtk.STATE_NORMAL].copy()
+            cell.props.background_rgba = bg_color
             cell.props.cell_background_set = True 
-            sw = gtk.ScrolledWindow()
-            sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+            sw = Gtk.ScrolledWindow()
+            sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
             sw.add(tv)
             alignment.add(sw)
             
@@ -366,14 +373,14 @@ class InfoPanel (gtk.Notebook, Panel):
             self.add(widget)
             widget.show_all()
     
-    class ChannelInfoItem (gtk.Alignment):
+    class ChannelInfoItem (Gtk.Alignment):
         def __init__ (self, id, text, chatView, connection):
-            gtk.Alignment.__init__(self, xscale=1, yscale=1)
+            GObject.GObject.__init__(self, xscale=1, yscale=1)
             self.cm = connection.cm
-            self.add(gtk.Label(_("Receiving list of players")))
+            self.add(Gtk.Label(label=_("Receiving list of players")))
             
             chatView.connect("messageAdded", self.onMessageAdded)
-            self.store = gtk.ListStore(object, # (r,g,b) Color tuple
+            self.store = Gtk.ListStore(object, # (r,g,b) Color tuple
                                        str,    # name string
                                        bool    # is separator
                                        )
@@ -383,27 +390,28 @@ class InfoPanel (gtk.Notebook, Panel):
             self.cm.getPeopleInChannel(id)
         
         def onNamesRecieved (self, cm, channel, people, channel_):
-            if not isinstance(self.get_child(), gtk.Label) or channel != channel_:
+            if not isinstance(self.get_child(), Gtk.Label) or channel != channel_:
                 return
             cm.disconnect(self.handle_id)
             
-            sw = gtk.ScrolledWindow()
-            sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+            sw = Gtk.ScrolledWindow()
+            sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
             
-            list = gtk.TreeView()
+            list = Gtk.TreeView()
             list.set_headers_visible(False)
             list.set_tooltip_column(1)
             list.set_model(self.store)
-            list.append_column(gtk.TreeViewColumn("", BulletCellRenderer(), color=0))
-            cell = gtk.CellRendererText()
-            cell.props.ellipsize = pango.ELLIPSIZE_END
-            list.append_column(gtk.TreeViewColumn("", cell, text=1))
+            list.append_column(Gtk.TreeViewColumn("", BulletCellRenderer(), color=0))
+            cell = Gtk.CellRendererText()
+            cell.props.ellipsize = Pango.EllipsizeMode.END
+            list.append_column(Gtk.TreeViewColumn("", cell, text=1))
             list.fixed_height_mode = True
             
             self.separatorIter = self.store.append([(),"",True])
-            list.set_row_separator_func(lambda m,i: m.get_value(i, 2))
-            sw.add(list)
             
+            list.set_row_separator_func(lambda m,i,d: m.get_value(i, 2), None)
+            sw.add(list)
+ 
             self.store.connect("row-inserted", lambda w,p,i: list.queue_resize())
             self.store.connect("row-deleted", lambda w,i: list.queue_resize())
             
@@ -449,37 +457,37 @@ class InfoPanel (gtk.Notebook, Panel):
             # simply add him before the separator
             self.store.insert_before(self.separatorIter, [color, sender, False])
 
-class ChannelsPanel (gtk.ScrolledWindow, Panel):
+class ChannelsPanel (Gtk.ScrolledWindow, Panel):
     
     __gsignals__ = {
-        'conversationAdded' : (gobject.SIGNAL_RUN_FIRST, None, (str,str,int)),
-        'conversationRemoved' : (gobject.SIGNAL_RUN_FIRST, None, (str,)),
-        'conversationSelected' : (gobject.SIGNAL_RUN_FIRST, None, (str,))
+        'conversationAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,int)),
+        'conversationRemoved' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'conversationSelected' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
     
     def __init__ (self, connection):
-        gtk.ScrolledWindow.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         
-        self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        vbox = gtk.VBox()
+        self.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        vbox = Gtk.VBox()
         self.add_with_viewport(vbox)
-        self.child.set_shadow_type(gtk.SHADOW_NONE)
+        self.get_child().set_shadow_type(Gtk.ShadowType.NONE)
         
         self.joinedList = TextImageTree("gtk-remove")
         self.joinedList.connect("activated", self.onRemove)
         self.joinedList.connect("selected", self.onSelect)
-        vbox.pack_start(self.joinedList)
+        vbox.pack_start(self.joinedList, True, True, 0)
         
-        expander = gtk.Expander(_("More channels"))
-        vbox.pack_start(expander, expand=False)
+        expander = Gtk.Expander.new(_("More channels"))
+        vbox.pack_start(expander, False, True, 0)
         self.channelsList = TextImageTree("gtk-add")
         self.channelsList.connect("activated", self.onAdd)
         self.channelsList.fixed_height_mode = True
         expander.add(self.channelsList)
         
-        expander = gtk.Expander(_("More players"))
-        vbox.pack_start(expander, expand=False)
+        expander = Gtk.Expander.new(_("More players"))
+        vbox.pack_start(expander, False, True, 0)
         self.playersList = TextImageTree("gtk-add")
         self.playersList.connect("activated", self.onAdd)
         self.playersList.fixed_height_mode = True
@@ -575,6 +583,7 @@ class ChatWindow (object):
         widgets["show_chat_button"].connect("clicked", self.showChat)
         glock_connect(connection.cm, "privateMessage",
                       self.onPersonMessage, after=False)
+
         glock_connect(connection, "disconnected",
                       lambda c: self.window and self.window.hide())
         
@@ -590,7 +599,7 @@ class ChatWindow (object):
         self.window.present()
         
     def initUi (self):
-        self.window = gtk.Window()
+        self.window = Gtk.Window()
         self.window.set_border_width(12)
         self.window.set_icon_name("pychess")
         self.window.set_title("PyChess - Internet Chess Chat")
@@ -602,15 +611,15 @@ class ChatWindow (object):
         dock.show()
         self.window.add(dock)
         
-        leaf = dock.dock(self.viewspanel, CENTER, gtk.Label("chat"), "chat")
+        leaf = dock.dock(self.viewspanel, CENTER, Gtk.Label(label="chat"), "chat")
         leaf.setDockable(False)
         
         self.channelspanel.connect('conversationAdded', self.onConversationAdded)
         self.channelspanel.connect('conversationRemoved', self.onConversationRemoved)
         self.channelspanel.connect('conversationSelected', self.onConversationSelected)
-        leaf.dock(self.channelspanel, WEST, gtk.Label(_("Conversations")), "conversations")
+        leaf.dock(self.channelspanel, WEST, Gtk.Label(label=_("Conversations")), "conversations")
         
-        leaf.dock(self.infopanel, EAST, gtk.Label(_("Conversation info")), "info")
+        leaf.dock(self.infopanel, EAST, Gtk.Label(label=_("Conversation info")), "info")
         
         for panel in self.panels:
             panel.show_all()
@@ -639,7 +648,7 @@ class ChatWindow (object):
     
     def openChatWithPlayer (self, name):
         self.showChat()
-        self.window.window.raise_()
+        self.window.get_window().raise_()
         cm = self.connection.cm
         self.onPersonMessage(cm, name, "", False, "")
         self.channelspanel.onPersonMessage(cm, name, "", False, "")
@@ -667,5 +676,5 @@ if __name__ == "__main__":
     cw = ChatWindow({}, Con())
     globals()["_"] = lambda x:x
     cw.showChat()
-    cw.window.connect("delete-event", gtk.main_quit)
-    gtk.main()
+    cw.window.connect("delete-event", Gtk.main_quit)
+    Gtk.main()

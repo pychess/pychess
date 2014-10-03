@@ -3,7 +3,8 @@ import re
 import socket
 import time
 import threading
-from gobject import GObject, SIGNAL_RUN_FIRST
+#from gobject import GObject, SIGNAL_RUN_FIRST
+from gi.repository import GObject
 from collections import defaultdict
 from threading import Event, Thread
 
@@ -36,18 +37,18 @@ from VerboseTelnet import NLinesPrediction
 
 class LogOnException (Exception): pass
 
-class Connection (GObject, Thread):
+class Connection (GObject.GObject, Thread):
     
     __gsignals__ = {
-        'connecting':    (SIGNAL_RUN_FIRST, None, ()),
-        'connectingMsg': (SIGNAL_RUN_FIRST, None, (str,)),
-        'connected':     (SIGNAL_RUN_FIRST, None, ()),
-        'disconnected':  (SIGNAL_RUN_FIRST, None, ()),
-        'error':         (SIGNAL_RUN_FIRST, None, (object,)),
+        'connecting':    (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'connectingMsg': (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'connected':     (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'disconnected':  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'error':         (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, host, ports, username, password):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         Thread.__init__(self, name=fident(self.run))
         self.daemon = True
         self.host = host

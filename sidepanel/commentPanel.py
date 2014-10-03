@@ -2,7 +2,7 @@
 
 from __future__ import with_statement
 
-import gtk, pango
+from gi.repository import Gtk, Pango
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.System.glock import *
@@ -40,19 +40,19 @@ class Sidepanel:
             glock_connect(self.gamemodel, "moves_undoing", self.moves_undoing)
         ]
 
-        widgets = gtk.Builder()
+        widgets = Gtk.Builder()
         widgets.add_from_file(addDataPrefix("sidepanel/book.glade"))
         self.tv = widgets.get_object("treeview")
         scrollwin = widgets.get_object("scrolledwindow")
         scrollwin.unparent()
 
-        self.store = gtk.ListStore(str)
+        self.store = Gtk.ListStore(str)
         self.tv.set_model(self.store)
-        self.tv.get_selection().set_mode(gtk.SELECTION_BROWSE)
-        #r = gtk.CellRendererText()
+        self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
+        #r = Gtk.CellRendererText()
         #r.set_property("wrap-width", 177) #FIXME: Fixed width size
-        #r.set_property("wrap-mode", pango.WRAP_WORD)
-        #self.tv.append_column(gtk.TreeViewColumn("Comment", r, text=0))
+        #r.set_property("wrap-mode", Pango.WrapMode.WORD)
+        #self.tv.append_column(Gtk.TreeViewColumn("Comment", r, text=0))
         uistuff.appendAutowrapColumn(self.tv, 200, "Comment", text=0)
 
         self.tv.get_selection().connect_after('changed', self.select_cursor_row)

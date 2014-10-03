@@ -3,8 +3,8 @@ from ICLounge import ICLounge
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect
 from pychess.Utils.const import *
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GObject
 import re
 import socket
 import webbrowser
@@ -12,6 +12,7 @@ from collections import defaultdict
 
 host = None
 port = None
+
 dialog = None
 def run():
     global dialog
@@ -36,7 +37,7 @@ class ICLogon (object):
         uistuff.keepWindowSize("fics_logon", self.widgets["fics_logon"],
                                defaultPosition=uistuff.POSITION_GOLDEN)
         self.widgets["fics_logon"].connect('key-press-event',
-                lambda w, e: e.keyval == gtk.keysyms.Escape and w.hide())
+                lambda w, e: e.keyval == Gdk.KEY_Escape and w.hide())        
         def on_logOnAsGuest_toggled (check):
             self.widgets["nameLabel"].set_sensitive(not check.get_active())
             self.widgets["nameEntry"].set_sensitive(not check.get_active())
@@ -46,10 +47,12 @@ class ICLogon (object):
         uistuff.keep(self.widgets["logOnAsGuest"], "logOnAsGuest")
         uistuff.keep(self.widgets["nameEntry"], "usernameEntry")
         uistuff.keep(self.widgets["passEntry"], "passwordEntry")
-        self.infobar = gtk.InfoBar()
-        self.infobar.set_message_type(gtk.MESSAGE_WARNING)
+        self.infobar = Gtk.InfoBar()
+        self.infobar.set_message_type(Gtk.MessageType.WARNING)
+        #self.widgets["messagePanelHBox"].pack_start(self.infobar, 
+        #    expand=False, fill=False)
         self.widgets["messagePanelHBox"].pack_start(self.infobar, 
-            expand=False, fill=False)
+            False, False, 0)        
         self.widgets["cancelButton"].connect("clicked", self.onCancel, True)
         self.widgets["stopButton"].connect("clicked", self.onCancel, False)
         self.widgets["createNewButton"].connect("clicked", self.onCreateNew)
@@ -91,7 +94,7 @@ class ICLogon (object):
         def pulse ():
             self.widgets["progressbar"].pulse()
             return not self.connection.isConnected()
-        self.pulser = gobject.timeout_add(30, pulse)
+        self.pulser = GObject.timeout_add(30, pulse)
     
     def showNormal (self):
         self.widgets["mainbox"].set_sensitive(True)
@@ -100,7 +103,7 @@ class ICLogon (object):
         self.widgets["stopButton"].hide()
         self.widgets["progressbarBox"].hide()
         self.widgets["progressbar"].set_text("")
-        gobject.source_remove(self.pulser)
+        GObject.source_remove(self.pulser)
     
     def showMessage (self, connection, message):
         self.widgets["progressbar"].set_text(message)
@@ -131,26 +134,26 @@ class ICLogon (object):
         content_area = self.infobar.get_content_area()
         for widget in content_area:
             content_area.remove(widget)
-        content = gtk.HBox()
-        image = gtk.Image()
-        image.set_from_stock(gtk.STOCK_DIALOG_WARNING, gtk.ICON_SIZE_DIALOG)
-        content.pack_start(image, expand=False, fill=False)
-        vbox = gtk.VBox()
-        label = gtk.Label()
+        content = Gtk.HBox()
+        image = Gtk.Image()
+        image.set_from_stock(Gtk.STOCK_DIALOG_WARNING, Gtk.IconSize.DIALOG)       
+        content.pack_start(image, False, False, 0)
+        vbox = Gtk.VBox()
+        label = Gtk.Label()
         label.props.xalign = 0
-        label.props.justify = gtk.JUSTIFY_LEFT
+        label.props.justify = Gtk.Justification.LEFT
         label.set_markup("<b><big>%s</big></b>" % title)
-        vbox.pack_start(label, expand=True, fill=False)
+        vbox.pack_start(label, True, False, 0)
         for line in str(text).split("\n"):
-            label = gtk.Label()
+            label = Gtk.Label()
             label.set_size_request(476, -1)
             label.props.selectable = True
             label.props.wrap = True
             label.props.xalign = 0
-            label.props.justify = gtk.JUSTIFY_LEFT
+            label.props.justify = Gtk.Justification.LEFT
             label.set_markup(line)
-            vbox.pack_start(label, expand=True, fill=False)
-        content.pack_start(vbox, expand=False, fill=False, padding=7)
+            vbox.pack_start(label, True, False, 0)
+        content.pack_start(vbox, False, False, 7)
         content_area.add(content)
         self.widgets["messagePanel"].show_all()
     
@@ -175,7 +178,6 @@ class ICLogon (object):
             ports = map(int, re.findall("\d+", ports))
             if not 5000 in ports: ports.append(5000)
             if not 23 in ports: ports.append(23)
-            
         self.showConnecting()
         self.host = host if host is not None else "freechess.org"
         self.connection = FICSMainConnection(self.host, ports, username, password)

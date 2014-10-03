@@ -1,4 +1,6 @@
-import gtk, cairo
+import cairo
+
+from gi.repository import Gtk
 
 from math import ceil as fceil
 ceil = lambda f: int(fceil(f))
@@ -11,8 +13,8 @@ class HighlightArea (OverlayWindow):
     
     def __init__ (self, parent):
         OverlayWindow.__init__(self, parent)
-        self.myparent = parent
-        self.connect_after("expose-event", self.__onExpose)
+        self.myparent = parent       
+        self.connect_after("draw", self.__onExpose)
     
     def showAt (self, position):
         alloc = self.myparent.get_allocation()
@@ -36,12 +38,13 @@ class HighlightArea (OverlayWindow):
         self.move(x, y)
         self.resize(ceil(width), ceil(height))
         self.show()
-    
-    def __onExpose (self, self_, event):
+        
+    def __onExpose (self, self_, ctx):
         context = self.window.cairo_create()
-        context.rectangle(event.area)
+        a = self_.get_allocation()
+        context.rectangle(a.area)        
         if self.is_composited():
-            color = self.get_style().light[gtk.STATE_SELECTED]
+            color = self.get_style().light[Gtk.StateType.SELECTED]
             context.set_operator(cairo.OPERATOR_CLEAR)
             context.set_source_rgba(0,0,0,0.0)
             context.fill_preserve ()
@@ -49,6 +52,6 @@ class HighlightArea (OverlayWindow):
             context.set_source_rgba(color.red/65535., color.green/65535., color.blue/65535., 0.5)
             context.fill()
         else:
-            context.set_source_color(self.get_style().light[gtk.STATE_SELECTED])
+            context.set_source_color(self.get_style().light[Gtk.StateType.SELECTED])
             context.set_operator(cairo.OPERATOR_OVER)
             context.fill()

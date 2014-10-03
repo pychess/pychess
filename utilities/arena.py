@@ -12,9 +12,11 @@ import sys
 
 ###############################################################################
 # Set up important things
-import glib, gobject
-gobject.threads_init()
-mainloop = glib.MainLoop()
+from gi.repository import GLib
+from gi.repository import GObject
+
+GObject.threads_init()
+mainloop = GLib.MainLoop()
 
 from pychess.Utils.const import *
 
@@ -40,10 +42,10 @@ from pychess.Variants import variants
 # Look up engines
 def prepare():
     print "Discovering engines",
-    discoverer.connect('discovering_started', cb_started)
-    discoverer.connect('engine_discovered', cb_gotone)
-    discoverer.connect('all_engines_discovered', start)
-    discoverer.discover()
+    discoverer.connect('discovering_started', cb_started)   
+    discoverer.connect('engine_discovered', cb_gotone)  
+    discoverer.connect('all_engines_discovered', start)   
+    discoverer.discover()   
 
 def cb_started(discoverer, binnames):
     print "Wait a moment while we discover %d engines" % len(binnames)

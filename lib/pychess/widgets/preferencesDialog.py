@@ -3,7 +3,7 @@ from os import listdir
 from os.path import isdir, isfile, splitext
 from xml.dom import minidom
 
-import gtk
+from gi.repository import Gtk, GdkPixbuf
 
 from pychess.System.prefix import addDataPrefix, getDataPrefix
 from pychess.System.glock import glock_connect_after
@@ -37,8 +37,8 @@ def initialize(widgets):
         return True
     widgets["preferences"].connect("delete-event", delete_event)
     widgets["preferences"].connect("key-press-event",
-        lambda w,e: w.event(gtk.gdk.Event(gtk.gdk.DELETE))
-        if e.keyval == gtk.keysyms.Escape else None)
+        lambda w,e: w.event(Gdk.Event(Gdk.DELETE))
+        if e.keyval == Gdk.KEY_Escape else None)
 
 ################################################################################
 # General initing                                                              #
@@ -111,11 +111,11 @@ class HintTab:
         path = conf.get("opening_file_entry", default_path)
         conf.set("opening_file_entry", path)
 
-        book_chooser_dialog = gtk.FileChooserDialog(_("Select book file"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
-            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        book_chooser_button = gtk.FileChooserButton(book_chooser_dialog)
+        book_chooser_dialog = Gtk.FileChooserDialog(_("Select book file"), None, Gtk.FileChooserAction.OPEN,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        book_chooser_button = Gtk.FileChooserButton(book_chooser_dialog)
 
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name(_("Opening books"))
         filter.add_pattern("*.bin")
         book_chooser_dialog.add_filter(filter)
@@ -144,9 +144,9 @@ class HintTab:
         egtb_path = conf.get("egtb_path", default_path)
         conf.set("egtb_path", egtb_path)
 
-        egtb_chooser_dialog = gtk.FileChooserDialog(_("Select Gaviota TB path"), None, gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
-            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        egtb_chooser_button = gtk.FileChooserButton(egtb_chooser_dialog)
+        egtb_chooser_dialog = Gtk.FileChooserDialog(_("Select Gaviota TB path"), None, Gtk.FileChooserAction.SELECT_FOLDER,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        egtb_chooser_button = Gtk.FileChooserButton(egtb_chooser_dialog)
         egtb_chooser_button.set_current_folder(egtb_path)
 
         self.widgets["egtbChooserDock"].add(egtb_chooser_button)
@@ -313,20 +313,21 @@ class SoundTab:
         
         # Init open dialog
         
-        opendialog = gtk.FileChooserDialog (
-                _("Open Sound File"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
-                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN,
-                  gtk.RESPONSE_ACCEPT))
+        opendialog = Gtk.FileChooserDialog (
+                _("Open Sound File"), None, Gtk.FileChooserAction.OPEN,
+                 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
+                  Gtk.ResponseType.ACCEPT))
         
         for dir in self.SOUND_DIRS:
             if os.path.isdir(dir):
                 opendialog.set_current_folder(dir)
                 break
         
-        soundfilter = gtk.FileFilter()
+        soundfilter = Gtk.FileFilter()
         soundfilter.set_name(_("Sound files"))
-        soundfilter.add_custom(soundfilter.get_needed(),
-                               lambda data: data[3] and data[3].startswith("audio/"))
+        #soundfilter.add_custom(soundfilter.get_needed(),
+        #                       lambda data: data[3] and data[3].startswith("audio/"))
+        soundfilter.add_mime_type("audio/*")
         opendialog.add_filter(soundfilter)
         opendialog.set_filter(soundfilter)
         
@@ -347,7 +348,7 @@ class SoundTab:
         
         def callback (combobox, index):
             if combobox.get_active() == SOUND_SELECT:
-                if opendialog.run() == gtk.RESPONSE_ACCEPT:
+                if opendialog.run() == Gtk.ResponseType.ACCEPT:
                     uri = opendialog.get_uri()
                     model = combobox.get_model()
                     conf.set("sounduri%d"%index, uri)
@@ -426,10 +427,10 @@ class PanelTab:
             for elem in doc.getElementsByTagName("panel"):
                 saved_panels.append(elem.getAttribute("id"))
         
-        store = gtk.ListStore(bool, gtk.gdk.Pixbuf, str, object)
+        store = Gtk.ListStore(bool, GdkPixbuf.Pixbuf, str, object)
         for panel in sidePanels:
             checked = True if not xmlOK else panel.__name__ in saved_panels
-            panel_icon = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 32, 32)
+            panel_icon = GdkPixbuf.Pixbuf.new_from_file_at_size(panel.__icon__, 32, 32)
             text = "<b>%s</b>\n%s" % (panel.__title__, panel.__desc__)
             store.append((checked, panel_icon, text, panel))
         
@@ -440,11 +441,11 @@ class PanelTab:
         self.widgets['panel_enable_button'].connect('toggled', self.panel_toggled)
         self.tv.get_selection().connect('changed', self.selection_changed)
         
-        pixbuf = gtk.CellRendererPixbuf()
+        pixbuf = Gtk.CellRendererPixbuf()
         pixbuf.props.yalign = 0
         pixbuf.props.ypad = 3
         pixbuf.props.xpad = 3
-        self.tv.append_column(gtk.TreeViewColumn("Icon", pixbuf, pixbuf=1, sensitive=0))
+        self.tv.append_column(Gtk.TreeViewColumn("Icon", pixbuf, pixbuf=1, sensitive=0))
         
         uistuff.appendAutowrapColumn(self.tv, 200, "Name", markup=2, sensitive=0)
         
@@ -467,7 +468,7 @@ class PanelTab:
         path = store.get_path(iter)
         panel = store[path][3]
         
-        d = gtk.MessageDialog (type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_CLOSE)
+        d = Gtk.MessageDialog (type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.CLOSE)
         d.set_markup ("<big><b>%s</b></big>" % panel.__title__)
         text = panel.__about__ if hasattr(panel, '__about__') else _('Undescribed panel')
         d.format_secondary_text (text)
@@ -530,13 +531,13 @@ class ThemeTab:
     
     def __init__ (self, widgets):
         self.themes = self.discover_themes()
-        store = gtk.ListStore(gtk.gdk.Pixbuf, str)
+        store = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
         
         for theme in self.themes:
             pngfile = "%s/%s.png" % (addDataPrefix("pieces"), theme)
         
             if isfile(pngfile):
-                pixbuf = gtk.gdk.pixbuf_new_from_file(pngfile)
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file(pngfile)
                 store.append((pixbuf, theme))
             else:
                 print "WARNING: No piece theme preview icons find. Run create_theme_preview.sh !"
@@ -564,7 +565,7 @@ class ThemeTab:
                 index = self.themes.index(value)
             except ValueError:
                 index = 0
-            iconview.select_path((index,))
+            iconview.select_path(Gtk.TreePath(index,))
                 
         uistuff.keep(widgets["pieceTheme"], "pieceTheme", _get_active,
                      _set_active, "Pychess")

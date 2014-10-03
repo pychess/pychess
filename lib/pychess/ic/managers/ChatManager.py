@@ -1,4 +1,5 @@
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 import threading
 import re
 from math import ceil
@@ -15,32 +16,32 @@ namesC = re.compile(names)
 CHANNEL_SHOUT = "shout"
 CHANNEL_CSHOUT = "cshout"
 
-class ChatManager (GObject):
+class ChatManager (GObject.GObject):
     
     __gsignals__ = {
-        'channelMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, bool, bool, str, str)),
-        'kibitzMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str)),
-        'privateMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str, bool, str)),
-        'bughouseMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str)),
-        'announcement' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        'channelMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, bool, bool, str, str)),
+        'kibitzMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        'privateMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, str, bool, str)),
+        'bughouseMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        'announcement' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
         
-        'arrivalNotification': (SIGNAL_RUN_FIRST, None, (object,)),
-        'departedNotification': (SIGNAL_RUN_FIRST, None, (object,)),
+        'arrivalNotification': (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'departedNotification': (GObject.SignalFlags.RUN_FIRST, None, (object,)),
 
-        'channelAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        'channelRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        'channelJoinError': (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str)),
-        'channelsListed': (SIGNAL_RUN_FIRST, None, (object,)),
+        'channelAdd' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'channelRemove' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'channelJoinError': (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        'channelsListed': (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         
-        'channelLog' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, int, str, str)),
-        'toldChannel' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, int)),
+        'channelLog' : (GObject.SignalFlags.RUN_FIRST, None, (str, int, str, str)),
+        'toldChannel' : (GObject.SignalFlags.RUN_FIRST, None, (str, int)),
         
-        'recievedChannels' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
-        'recievedNames' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
+        'recievedChannels' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
+        'recievedNames' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         
         self.connection.expect_line (self.onPrivateMessage,

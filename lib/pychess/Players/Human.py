@@ -1,6 +1,6 @@
 from Queue import Queue
 
-import gtk, gobject
+from gi.repository import Gtk, GObject
 
 from pychess.Utils.const import *
 from pychess.Utils.logic import validate
@@ -74,7 +74,7 @@ class Human (Player):
     __type__ = LOCAL
     
     __gsignals__ = {
-        "messageRecieved": (gobject.SIGNAL_RUN_FIRST, None, (str,)),
+        "messageRecieved": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
     
     def __init__ (self, gmwidg, color, name, ichandle=None, icrating=None):
@@ -176,11 +176,11 @@ class Human (Player):
     def hurry (self):
         title = _("Your opponent asks you to hurry!")
         text = _("Generally this means nothing, as the game is time-based, but if you want to please your opponent, perhaps you should get going.")
-        content = InfoBar.get_message_content(title, text, gtk.STOCK_DIALOG_INFO)
+        content = InfoBar.get_message_content(title, text, Gtk.STOCK_DIALOG_INFO)
         def response_cb (infobar, response, message):
             message.dismiss()
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self._show_message(message)
         
     @glock.glocked
@@ -233,16 +233,16 @@ class Human (Player):
             text = text % param
         
         def response_cb (infobar, response, message):
-            if response == gtk.RESPONSE_ACCEPT:
+            if response == Gtk.ResponseType.ACCEPT:
                 self.emit("accept", offer)
-            elif response == gtk.RESPONSE_NO:
+            elif response == Gtk.ResponseType.NO:
                 self.emit("decline", offer)
             message.dismiss()
-        content = InfoBar.get_message_content(heading, text, gtk.STOCK_DIALOG_QUESTION)
-        message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, response_cb)
-        message.add_button(InfoBarMessageButton(_("Accept"), gtk.RESPONSE_ACCEPT))
-        message.add_button(InfoBarMessageButton(_("Decline"), gtk.RESPONSE_NO))
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        content = InfoBar.get_message_content(heading, text, Gtk.STOCK_DIALOG_QUESTION)
+        message = InfoBarMessage(Gtk.MessageType.QUESTION, content, response_cb)
+        message.add_button(InfoBarMessageButton(_("Accept"), Gtk.ResponseType.ACCEPT))
+        message.add_button(InfoBarMessageButton(_("Decline"), Gtk.ResponseType.NO))
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self._show_message(message)
     
     def offerDeclined (self, offer):
@@ -250,14 +250,14 @@ class Human (Player):
         assert offer.type in ACTION_NAMES
         heading = _("%s was declined by your opponent") % ACTION_NAMES[offer.type]
         text = _("Resend %s?" % ACTION_NAMES[offer.type].lower())
-        content = InfoBar.get_message_content(heading, text, gtk.STOCK_DIALOG_INFO)
+        content = InfoBar.get_message_content(heading, text, Gtk.STOCK_DIALOG_INFO)
         def response_cb (infobar, response, message):
-            if response == gtk.RESPONSE_ACCEPT:
+            if response == Gtk.ResponseType.ACCEPT:
                 self.emit("offer", offer)
             message.dismiss()
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-        message.add_button(InfoBarMessageButton(_("Resend"), gtk.RESPONSE_ACCEPT))
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(_("Resend"), Gtk.ResponseType.ACCEPT))
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self._show_message(message)
     
     def offerWithdrawn (self, offer):
@@ -265,11 +265,11 @@ class Human (Player):
         assert offer.type in ACTION_NAMES
         heading = _("%s was withdrawn by your opponent") % ACTION_NAMES[offer.type]
         text = _("Your opponent seems to have changed their mind.")
-        content = InfoBar.get_message_content(heading, text, gtk.STOCK_DIALOG_INFO)
+        content = InfoBar.get_message_content(heading, text, Gtk.STOCK_DIALOG_INFO)
         def response_cb (infobar, response, message):
             message.dismiss()
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self._show_message(message)
     
     def offerError (self, offer, error):
@@ -288,11 +288,11 @@ class Human (Player):
             heading = _("%s returns an error") % actionName
             text = ERROR_MESSAGES[error]
         
-        content = InfoBar.get_message_content(heading, text, gtk.STOCK_DIALOG_WARNING)
+        content = InfoBar.get_message_content(heading, text, Gtk.STOCK_DIALOG_WARNING)
         def response_cb (infobar, response, message):
             message.dismiss()
-        message = InfoBarMessage(gtk.MESSAGE_WARNING, content, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.WARNING, content, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self._show_message(message)
     
     @glock.glocked
