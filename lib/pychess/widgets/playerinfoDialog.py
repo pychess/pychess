@@ -1,4 +1,4 @@
-import gtk, gobject
+from gi.repository import Gtk, GObject
 
 import gamewidget
 
@@ -12,12 +12,12 @@ def run(widgets):
 
 def initialize(widgets):
     def addColumns (treeview, *columns):
-        model = gtk.ListStore(*((str,)*len(columns)))
+        model = Gtk.ListStore(*((str,)*len(columns)))
         treeview.set_model(model)
-        treeview.get_selection().set_mode(gtk.SELECTION_NONE)
+        treeview.get_selection().set_mode(Gtk.SelectionMode.NONE)
         for i, name in enumerate(columns):
-            crt = gtk.CellRendererText()
-            column = gtk.TreeViewColumn(name, crt, text=i)
+            crt = Gtk.CellRendererText()
+            column = Gtk.TreeViewColumn(name, crt, text=i)
             treeview.append_column(column)
     
     addColumns(widgets["results_view"],
@@ -32,9 +32,9 @@ def initialize(widgets):
     model = widgets["rating_view"].get_model()
     model.append(("1771","1734","1659","1791","1700"))
     
-    widgets["history_view"].set_model(gtk.ListStore(object))
-    widgets["history_view"].get_selection().set_mode(gtk.SELECTION_NONE)
-    widgets["history_view"].append_column(gtk.TreeViewColumn(
+    widgets["history_view"].set_model(Gtk.ListStore(object))
+    widgets["history_view"].get_selection().set_mode(Gtk.SelectionMode.NONE)
+    widgets["history_view"].append_column(Gtk.TreeViewColumn(
             "Player Rating History", HistoryCellRenderer(), data=0))
     widgets["history_view"].get_model().append((1,))
     
@@ -44,13 +44,13 @@ def initialize(widgets):
     widgets["player_info"].connect("delete-event", hide_window)
     widgets["player_info_close_button"].connect("clicked", hide_window)
 
-class HistoryCellRenderer (gtk.GenericCellRenderer):
+class HistoryCellRenderer (Gtk.CellRenderer):
     __gproperties__ = {
-        "data": (gobject.TYPE_PYOBJECT, "Data", "Data", gobject.PARAM_READWRITE),
+        "data": (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.PARAM_READWRITE),
     }
     
     def __init__(self):
-        self.__gobject_init__()
+        self.__gobject_init__()       
         self.data = None
     
     def do_set_property(self, pspec, value):

@@ -1,6 +1,8 @@
 from threading import Thread
 import Queue
-from gobject import GObject, SIGNAL_RUN_FIRST
+
+from gi.repository import GObject
+
 import glock
 from pychess.System import get_threadname, fident
 
@@ -18,21 +20,21 @@ class Publisher (Thread):
     SEND_LIST, SEND_LAST = range(2)
     
     def __init__ (self, func, thread_namer, sendPolicy):
-        Thread.__init__(self, name=get_threadname(thread_namer))
+        Thread.__init__(self, name=get_threadname(thread_namer))      
         self.daemon = True
         self.queue = Queue.Queue()
         self.func = func
-        self.sendPolicy = sendPolicy
+        self.sendPolicy = sendPolicy       
     
-    def run (self):
+    def run (self):     
         while True:
-            v = self.queue.get()
+            v = self.queue.get()            
             if v == self.StopNow:
                 break
             
             glock.acquire()
             try:
-                l = [v]
+                l = [v]               
                 while True:
                     try:
                         v = self.queue.get_nowait()
@@ -42,7 +44,7 @@ class Publisher (Thread):
                         if v == self.StopNow:
                             break
                         l.append(v)
-
+                
                 if self.sendPolicy == self.SEND_LIST:
                     self.func(l)
                 elif self.sendPolicy == self.SEND_LAST:
@@ -65,21 +67,21 @@ class EmitPublisher (Publisher):
     """ EmitPublisher is a version of Publisher made for the common task of
         emitting a signal after waiting for the gdklock """
     def __init__ (self, parrent, signal, threadname, sendPolicy):
-        def emitter (v):
-            parrent.emit(signal, v)
-        Publisher.__init__(self, emitter, threadname, sendPolicy)
+        def emitter (v):               
+            parrent.emit(signal, v)       
+        Publisher.__init__(self, emitter, threadname, sendPolicy)       
 
-class GtkWorker (GObject, Thread):
+class GtkWorker (GObject.GObject, Thread):
     
     __gsignals__ = {
         #"progressed": (SIGNAL_RUN_FIRST, None, (float,)),
-        "published":  (SIGNAL_RUN_FIRST, None, (object,)),
-        "done":       (SIGNAL_RUN_FIRST, None, (object,))
+        "published":  (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "done":       (GObject.SignalFlags.RUN_FIRST, None, (object,))
     }
     
     def __init__ (self, func):
         """ Initialize a new GtkWorker around a specific function """
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         Thread.__init__(self, name=fident(func))
         self.daemon = True
         
@@ -118,8 +120,8 @@ class GtkWorker (GObject, Thread):
         self.handler_ids[handler_id] = signal
         return handler_id
     
-    def connect (self, detailed_signal, handler, *args):
-        return self._mul_connect (GObject.connect,
+    def connect (self, detailed_signal, handler, *args):        
+        return self._mul_connect (GObject.GObject.connect,
                 detailed_signal, handler, *args)
     def connect_after (self, detailed_signal, handler, *args):
         return self._mul_connect (GObject.connect_after,
@@ -157,8 +159,8 @@ class GtkWorker (GObject, Thread):
             the gdklock.
             If this is not true, and the work is not done, calling get will
             result in a deadlock.
-            If you haven't used the gtk.gdk.threads_enter nor
-            gtk.gdk.threads_leave function, everything should be fine."""
+            If you haven't used the Gdk.threads_enter nor
+            Gdk.threads_leave function, everything should be fine."""
         
         if not self.isDone():
             glock.release()
@@ -266,41 +268,41 @@ if __name__ == "__main__":
             #worker.setProgress(n/limit)
         return primes
     
-    import gtk
-    w = gtk.Window()
-    vbox = gtk.VBox()
+    from gi.repository import Gtk
+    w = Gtk.Window()
+    vbox = Gtk.VBox()
     w.add(vbox)
     
     worker = GtkWorker(findPrimes)
     
-    sbut = gtk.Button("Start")
+    sbut = Gtk.Button("Start")
     def callback (button, *args):
         sbut.set_sensitive(False)
         worker.execute()
     sbut.connect("clicked", callback)
     vbox.add(sbut)
     
-    cbut = gtk.Button("Cancel")
+    cbut = Gtk.Button("Cancel")
     def callback (button, *args):
         cbut.set_sensitive(False)
         worker.cancel()
     cbut.connect("clicked", callback)
     vbox.add(cbut)
     
-    gbut = gtk.Button("Get")
+    gbut = Gtk.Button("Get")
     def callback (button, *args):
         gbut.set_sensitive(False)
         print "Found:", worker.get()
     gbut.connect("clicked", callback)
     vbox.add(gbut)
     
-    #prog = gtk.ProgressBar()
+    #prog = Gtk.ProgressBar()
     #def callback (worker, progress):
         #prog.set_fraction(progress)
     #worker.connect("progressed", callback)
     #vbox.add(prog)
     
-    field = gtk.Entry()
+    field = Gtk.Entry()
     def process (worker, primes):
         field.set_text(str(primes[-1]))
     worker.connect("published", process)
@@ -310,7 +312,7 @@ if __name__ == "__main__":
         print "Finished, Cancelled:", worker.isCancelled()
     worker.connect("done", done)
     
-    w.connect("destroy", gtk.main_quit)
+    w.connect("destroy", Gtk.main_quit)
     w.show_all()
-    gtk.gdk.threads_init()
-    gtk.main()
+    Gdk.threads_init()
+    Gtk.main()

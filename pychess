@@ -19,20 +19,11 @@ if sys.version_info < (2, 6, 0):
     print 'ERROR: PyChess requires Python >= 2.6'
     sys.exit(1)
 
-import pygtk
-pygtk.require("2.0")
+import gi
+gi.require_version("Gtk", "3.0")
 
 try:
-    import rsvg
-except ImportError:
-    print 'ERROR: Could not load the rsvg python module.'
-    print 'You need to install the rsvg python package which is called '
-    print 'python-rsvg in Debian/Ubuntu and gnome-python2-rsvg in RPM based '
-    print 'distributions like Fedora'
-    sys.exit(1)
-
-try:
-    import gtksourceview2
+    from gi.repository import GtkSource
 except ImportError:
     print 'ERROR: Could not load the gtksourceview2 python module.'
     print 'You need to install the gtksourceview2 python package which is '

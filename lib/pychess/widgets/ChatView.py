@@ -1,43 +1,43 @@
 from time import strftime, gmtime, localtime
 import random
 
-import gtk
-from gtk.gdk import keyval_from_name
-import pango
-import gobject
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import Pango
+from gi.repository import GObject
 
 from pychess.System import glock
 from pychess.System import uistuff
 from BorderBox import BorderBox
 
-class ChatView (gtk.VPaned):
+class ChatView (Gtk.VPaned):
     __gsignals__ = {
-        'messageAdded' : (gobject.SIGNAL_RUN_FIRST, None, (str,str,object)),
-        'messageTyped' : (gobject.SIGNAL_RUN_FIRST, None, (str,))
+        'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
+        'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
     
     def __init__ (self):
-        gtk.VPaned.__init__(self)
+        GObject.GObject.__init__(self)
         
         # States for the color generator
         self.colors = {}
         self.startpoint = random.random()
         
         # Inits the read view
-        self.readView = gtk.TextView()
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_NONE)
+        self.readView = Gtk.TextView()
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw.set_shadow_type(Gtk.ShadowType.NONE)
         sw.set_size_request(-1, 20)
         uistuff.keepDown(sw)
         sw.add(self.readView)
         self.readView.set_editable(False)
-        self.readView.props.wrap_mode = gtk.WRAP_WORD
+        self.readView.props.wrap_mode = Gtk.WrapMode.WORD
         self.readView.props.pixels_below_lines = 1
         self.readView.props.pixels_above_lines = 2
         self.readView.props.left_margin = 2
         #self.readView.get_buffer().create_tag("log",
-        #        foreground = self.readView.get_style().fg[gtk.STATE_INSENSITIVE])
+        #        foreground = self.readView.get_style().fg[Gtk.StateType.INSENSITIVE])
         self.pack1(BorderBox(sw,bottom=True), resize=True, shrink=True)
         
         # Create a 'log mark' in the beginning of the text buffer. Because we
@@ -47,23 +47,23 @@ class ChatView (gtk.VPaned):
         self.readView.get_buffer().create_mark("logMark", start)
         
         # Inits the write view
-        self.writeView = gtk.TextView()
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_NONE)
+        self.writeView = Gtk.TextView()
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw.set_shadow_type(Gtk.ShadowType.NONE)
         sw.add(self.writeView)
-        self.writeView.props.wrap_mode = gtk.WRAP_WORD
+        self.writeView.props.wrap_mode = Gtk.WrapMode.WORD
         self.writeView.props.pixels_below_lines = 1
         self.writeView.props.pixels_above_lines = 2
         self.writeView.props.left_margin = 2
         self.pack2(BorderBox(sw,top=True), resize=True, shrink=True)
         
         # Forces are reasonable position for the panner.
-        def callback (widget, event):
+        def callback (widget, ctx):
             widget.disconnect(handle_id)
             allocation = widget.get_allocation()
-            self.set_position(int(max(0.70*allocation.height, allocation.height-60)))
-        handle_id = self.connect("expose-event", callback)
+            self.set_position(int(max(0.70*allocation.height, allocation.height-60)))        
+        handle_id = self.connect("draw", callback)
         
         self.writeView.connect("key-press-event", self.onKeyPress)
 
@@ -76,7 +76,7 @@ class ChatView (gtk.VPaned):
             color = [int(c * 255) for c in color]
             color = "#" + "".join([hex(v)[2:].zfill(2) for v in color])
             tb.create_tag(pref + "_normal", foreground=color)
-            tb.create_tag(pref + "_bold", foreground=color, weight=pango.WEIGHT_BOLD)
+            tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
     
     def clear (self):
         self.writeView.get_buffer().props.text = ""
@@ -137,8 +137,8 @@ class ChatView (gtk.VPaned):
         self.writeView.set_sensitive(True)
     
     def onKeyPress (self, widget, event):
-        if event.keyval in map(keyval_from_name,("Return", "KP_Enter")):
-            if not event.state & gtk.gdk.CONTROL_MASK:
+        if event.keyval in list(map(Gdk.keyval_from_name,("Return", "KP_Enter"))):
+            if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
                 self.emit("messageTyped", buffer.props.text)
                 buffer.props.text = ""

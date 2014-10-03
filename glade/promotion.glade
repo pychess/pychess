@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy toplevel-contextual -->
+  <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkDialog" id="promotionDialog">
     <property name="can_focus">False</property>
     <property name="border_width">3</property>
@@ -10,17 +9,16 @@
     <property name="icon_name">pychess</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="vbox1">
+      <object class="GtkBox" id="vbox1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="hbuttonbox1">
+          <object class="GtkButtonBox" id="hbuttonbox1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button1">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -66,7 +64,6 @@
             </child>
             <child>
               <object class="GtkButton" id="button2">
-                <property name="use_action_appearance">False</property>
                 <property name="height_request">60</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -113,7 +110,6 @@
             </child>
             <child>
               <object class="GtkButton" id="button3">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -159,7 +155,6 @@
             </child>
             <child>
               <object class="GtkButton" id="button4">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -205,7 +200,6 @@
             </child>
             <child>
               <object class="GtkButton" id="button5">
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>

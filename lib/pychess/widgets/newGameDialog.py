@@ -5,12 +5,14 @@ from cStringIO import StringIO
 from operator import attrgetter
 from itertools import groupby
 
-import gtk
+from gi.repository import GObject
+from gi.repository import Gdk
+from gi.repository import Gtk
+
 from cairo import ImageSurface
 
-from gtksourceview2 import Buffer as SourceBuffer
-from gtksourceview2 import View as SourceView
-from gtksourceview2 import LanguageManager
+from gi.repository import GtkSource
+from gi.repository import GdkPixbuf
 
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
@@ -38,7 +40,7 @@ from pychess.Variants.normal import NormalChess
 # Background.Taskers so they have a similar look.
 #===============================================================================
 
-big_time = gtk.gdk.pixbuf_new_from_file(addDataPrefix("glade/stock_alarm.svg"))
+big_time = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/stock_alarm.svg"))
 big_people = load_icon(48, "stock_people", "system-users")
 iwheels = load_icon(24, "gtk-execute")
 ipeople = load_icon(24, "stock_people", "system-users")
@@ -77,10 +79,10 @@ def createPlayerUIGlobals (discoverer):
         c = discoverer.getCountry(engine)
         path = addDataPrefix("flags/%s.png" % c)
         if c and os.path.isfile(path):
-            flag_icon = gtk.gdk.pixbuf_new_from_file(path)
+            flag_icon = GdkPixbuf.Pixbuf.new_from_file(path)
         else:
             path = addDataPrefix("flags/unknown.png")
-            flag_icon = gtk.gdk.pixbuf_new_from_file(path)
+            flag_icon = GdkPixbuf.Pixbuf.new_from_file(path)
         for variant in discoverer.getEngineVariants(engine):
             playerItems[variant] += [(flag_icon, name)]
             smallPlayerItems[variant] += [(snotebook, name)]
@@ -192,25 +194,29 @@ class _GameInitializationMode:
 
     @classmethod
     def __initTimeRadio (cls, name, id, radiobutton, configImage, defmin, defgain):
-        minSpin = gtk.SpinButton(gtk.Adjustment(1,1,240,1))
-        gainSpin = gtk.SpinButton(gtk.Adjustment(0,-60,60,1))
+        #minSpin = Gtk.SpinButton(Gtk.Adjustment(1,1,240,1))
+        minSpin = Gtk.SpinButton()
+        minSpin.set_adjustment(Gtk.Adjustment(1,1,240,1))
+        #gainSpin = Gtk.SpinButton(Gtk.Adjustment(0,-60,60,1))
+        gainSpin = Gtk.SpinButton()
+        gainSpin.set_adjustment(Gtk.Adjustment(0,-60,60,1))
         cls.widgets["%s min" % id] = minSpin
         cls.widgets["%s gain" % id] = gainSpin
         uistuff.keep(minSpin, "%s min" % id, first_value=defmin)
         uistuff.keep(gainSpin, "%s gain" % id, first_value=defgain)
 
-        table = gtk.Table(2, 2)
+        table = Gtk.Table(2, 2)
         table.props.row_spacing = 3
         table.props.column_spacing = 12
-        label = gtk.Label(_("Minutes:"))
+        label = Gtk.Label(label=_("Minutes:"))
         label.props.xalign = 0
         table.attach(label, 0, 1, 0, 1)
         table.attach(minSpin, 1, 2, 0, 1)
-        label = gtk.Label(_("Gain:"))
+        label = Gtk.Label(label=_("Gain:"))
         label.props.xalign = 0
         table.attach(label, 0, 1, 1, 2)
         table.attach(gainSpin, 1, 2, 1, 2)
-        alignment = gtk.Alignment(1,1,1,1)
+        alignment = Gtk.Alignment.new(1,1,1,1)
         alignment.set_padding(6,6,12,12)
         alignment.add(table)
         ImageMenu.switchWithImage(configImage, alignment)
@@ -233,11 +239,11 @@ class _GameInitializationMode:
 
     @classmethod
     def __initVariantRadio (cls, confid, radiobutton, configImage, default):
-        model = gtk.TreeStore(str)
-        treeview = gtk.TreeView(model)
+        model = Gtk.TreeStore(str)
+        treeview = Gtk.TreeView(model)
         treeview.set_headers_visible(False)
-        treeview.append_column(gtk.TreeViewColumn(None, gtk.CellRendererText(), text=0))
-        alignment = gtk.Alignment(1,1,1,1)
+        treeview.append_column(Gtk.TreeViewColumn(None, Gtk.CellRendererText(), text=0))
+        alignment = Gtk.Alignment.new(1,1,1,1)
         alignment.set_padding(6,6,12,12)
         alignment.add(treeview)
         ImageMenu.switchWithImage(configImage, alignment)
@@ -258,21 +264,25 @@ class _GameInitializationMode:
             for variant in group:
                 subiter = model.append(iter, (variant.name,))
                 path = model.get_path(subiter)
-                pathToVariant[path] = variant.board.variant
-                variantToPath[variant.board.variant] = path
-            treeview.expand_row((i,), True)
+                pathToVariant[path.to_string()] = variant.board.variant
+                variantToPath[variant.board.variant] = path.to_string()                       
+            treeview.expand_row(Gtk.TreePath(i), True)
 
         selection = treeview.get_selection()
-        selection.set_mode(gtk.SELECTION_BROWSE)
-        selection.set_select_function(lambda path: len(path) > 1)
+        selection.set_mode(Gtk.SelectionMode.BROWSE)
+
+        def selfunc (selection, store, path, path_selected, data):                 
+            return len(path) > 1
+        
+        selection.set_select_function(selfunc, None)
         selection.select_path(variantToPath[conf.get(confid, default)])
 
-        def callback (selection):
-            model, iter = selection.get_selected()
+        def callback (selection):            
+            model, iter = selection.get_selected()            
             if iter:
                 radiobutton.set_label("%s" % model.get(iter, 0) + _(" chess"))
                 path = model.get_path(iter)
-                variant = pathToVariant[path]
+                variant = pathToVariant[path.to_string()]
                 conf.set(confid, variant)
         selection.connect("changed", callback)
         callback(selection)
@@ -280,7 +290,7 @@ class _GameInitializationMode:
     @classmethod
     def _generalRun (cls, callback, validate):
         def onResponse(dialog, res):
-            if res != gtk.RESPONSE_OK:
+            if res != Gtk.ResponseType.OK:
                 cls.widgets["newgamedialog"].hide()
                 cls.widgets["newgamedialog"].disconnect(handlerId)
                 return
@@ -392,7 +402,7 @@ class LoadFileExtension (_GameInitializationMode):
     @classmethod
     def _init (cls):
         opendialog, savedialog, enddir, savecombo, savers = ionest.getOpenAndSaveDialogs()
-        cls.filechooserbutton = gtk.FileChooserButton(opendialog)
+        cls.filechooserbutton = Gtk.FileChooserButton(opendialog)
         cls.loadSidePanel = BoardPreview.BoardPreview(cls.widgets,
                 cls.filechooserbutton, opendialog, enddir)
 
@@ -406,7 +416,7 @@ class LoadFileExtension (_GameInitializationMode):
         if not uri:
             res = ionest.opendialog.run()
             ionest.opendialog.hide()
-            if res != gtk.RESPONSE_ACCEPT:
+            if res != Gtk.ResponseType.ACCEPT:
                 return
         else:
             if not uri[uri.rfind(".")+1:] in ionest.enddir:
@@ -461,8 +471,8 @@ class EnterNotationExtension (_GameInitializationMode):
         cls.widgets["imageButtonDock"].add(cls.ib)
         cls.ib.show()
 
-        cls.sourcebuffer = SourceBuffer()
-        sourceview = SourceView(cls.sourcebuffer)
+        cls.sourcebuffer = GtkSource.Buffer()
+        sourceview = GtkSource.View.new_with_buffer(cls.sourcebuffer)
         sourceview.set_tooltip_text(
             _("Type or paste PGN game or FEN positions here"))
         cls.widgets["scrolledwindow6"].add(sourceview)
@@ -470,9 +480,9 @@ class EnterNotationExtension (_GameInitializationMode):
 
         # Pgn format does not allow tabulator
         sourceview.set_insert_spaces_instead_of_tabs(True)
-        sourceview.set_wrap_mode(gtk.WRAP_WORD)
+        sourceview.set_wrap_mode(Gtk.WrapMode.WORD)
 
-        man = LanguageManager()
+        man = GtkSource.LanguageManager()
         # Init new version
         if hasattr(man.props, 'search_path'):
             path = os.path.join(getDataPrefix(),"gtksourceview-1.0/language-specs")
@@ -508,7 +518,7 @@ class EnterNotationExtension (_GameInitializationMode):
 
         def _get_text():
             text = cls.sourcebuffer.get_text(
-                cls.sourcebuffer.get_start_iter(), cls.sourcebuffer.get_end_iter())
+                cls.sourcebuffer.get_start_iter(), cls.sourcebuffer.get_end_iter(), False)
 
             # Test if the ImageButton has two layers and is set on the local language
             if len(cls.ib.surfaces) == 2 and cls.ib.current == 0:
@@ -541,7 +551,7 @@ class EnterNotationExtension (_GameInitializationMode):
                 gamemodel.status = WAITING_TO_START
                 return True
             except LoadingError, e:
-                d = gtk.MessageDialog (type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK,
+                d = Gtk.MessageDialog (type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.OK,
                                         message_format=e.args[0])
                 d.format_secondary_text (e.args[1])
                 d.connect("response", lambda d,a: d.hide())
@@ -554,30 +564,27 @@ class EnterNotationExtension (_GameInitializationMode):
 
         cls._generalRun(_callback, _validate)
 
-class ImageButton(gtk.DrawingArea):
+class ImageButton(Gtk.DrawingArea):
     def __init__ (self, imagePaths):
-        gtk.DrawingArea.__init__(self)
-        self.set_events(gtk.gdk.EXPOSURE_MASK | gtk.gdk.BUTTON_PRESS_MASK)
+        GObject.GObject.__init__(self)
+        self.set_events(Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON_PRESS_MASK)
 
-        self.connect("expose-event", self.draw)
+        self.connect("draw", self.draw)
         self.connect("button_press_event", self.buttonPress)
 
         self.surfaces = [ImageSurface.create_from_png(path) for path in imagePaths]
         self.current = 0
 
         width, height = self.surfaces[0].get_width(), self.surfaces[0].get_height()
-        self.size = gtk.gdk.Rectangle(0, 0, width, height)
+        self.size = (0, 0, width, height)
         self.set_size_request(width, height)
 
-    def draw (self, self_, event):
-        context = self.window.cairo_create()
-        context.rectangle (event.area.x, event.area.y,
-                            event.area.width, event.area.height)
+    def draw (self, self_, context):       
         context.set_source_surface(self.surfaces[self.current], 0, 0)
         context.fill()
 
     def buttonPress (self, self_, event):
-        if event.button == 1 and event.type == gtk.gdk.BUTTON_PRESS:
+        if event.button == 1 and event.type == Gdk.EventType.BUTTON_PRESS:
             self.current = (self.current + 1) % len(self.surfaces)
             self.window.invalidate_rect(self.size, True)
             self.window.process_updates(True)

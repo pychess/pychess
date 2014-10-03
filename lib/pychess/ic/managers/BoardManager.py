@@ -1,5 +1,6 @@
 import re
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 import threading
 
 from pychess.System.Log import log
@@ -151,30 +152,30 @@ def parse_reason (result, reason, wname=None):
     
     return result, reason
 
-class BoardManager (GObject):
+class BoardManager (GObject.GObject):
     
     __gsignals__ = {
-        'playGameCreated'     : (SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameCreated'      : (SIGNAL_RUN_FIRST, None, (object,)),
-        'boardUpdate'         : (SIGNAL_RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
-        'obsGameEnded'        : (SIGNAL_RUN_FIRST, None, (object,)),
-        'curGameEnded'        : (SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameUnobserved'   : (SIGNAL_RUN_FIRST, None, (object,)),
-        'gamePaused'          : (SIGNAL_RUN_FIRST, None, (int, bool)),
-        'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ()),
-        'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (object,)),
-        'player_on_censor'    : (SIGNAL_RUN_FIRST, None, (object,)),
-        'player_on_noplay'    : (SIGNAL_RUN_FIRST, None, (object,)),
-        'player_lagged'       : (SIGNAL_RUN_FIRST, None, (object,)),
-        'opp_not_out_of_time' : (SIGNAL_RUN_FIRST, None, ()),
-        'req_not_fit_formula' : (SIGNAL_RUN_FIRST, None, (object, str)),
+        'playGameCreated'     : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'obsGameCreated'      : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'boardUpdate'         : (GObject.SignalFlags.RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
+        'obsGameEnded'        : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'curGameEnded'        : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'obsGameUnobserved'   : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'gamePaused'          : (GObject.SignalFlags.RUN_FIRST, None, (int, bool)),
+        'tooManySeeks'        : (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'matchDeclined'       : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'player_on_censor'    : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'player_on_noplay'    : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'player_lagged'       : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'opp_not_out_of_time' : (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'req_not_fit_formula' : (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
     }
     
     castleSigns = {}
     queuedStyle12s = {}
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)        
         self.connection = connection
         self.connection.expect_line (self.onStyle12, "<12> (.+)")
         self.connection.expect_line (self.onWasPrivate,

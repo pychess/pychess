@@ -1,6 +1,6 @@
 import os
 
-import gtk
+from gi.repository import Gtk
 
 from Throbber import Throbber
 from pychess.Players.engineNest import discoverer
@@ -48,7 +48,7 @@ class DiscovererDialog:
         #=======================================================================
         # Show the window
         #=======================================================================
-        cls.widgets["discovererDialog"].set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        cls.widgets["discovererDialog"].set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         cls.widgets["discovererDialog"].set_modal(True)
         cls.widgets["discovererDialog"].set_transient_for(mainwindow)
         cls.widgets["discovererDialog"].show_all()
@@ -60,10 +60,10 @@ class DiscovererDialog:
         #======================================================================
         cls.nameToBar = {}
         for i, name in enumerate(binnames):
-            label = gtk.Label(name+":")
+            label = Gtk.Label(label=name+":")
             label.props.xalign = 1
             cls.widgets["enginesTable"].attach(label, 0, 1, i, i+1)
-            bar = gtk.ProgressBar()
+            bar = Gtk.ProgressBar()
             cls.widgets["enginesTable"].attach(bar, 1, 2, i, i+1)
             cls.nameToBar[name] = bar
     

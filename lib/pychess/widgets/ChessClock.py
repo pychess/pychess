@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
 
 from math import ceil, pi, cos, sin
-import cairo, gtk, pango
-from gtk import gdk
+import cairo
+from gi.repository import Gtk, Pango
+from gi.repository import Gdk
+from gi.repository import PangoCairo
+from gi.repository import GObject
 
 from pychess.System import glock
 from pychess.System.repeat import repeat_sleep
@@ -25,29 +28,30 @@ def formatTime(seconds, clk2pgn=False):
     else:
         return minus+"%d:%02d" % (minutes, seconds)
 
-class ChessClock (gtk.DrawingArea):
+class ChessClock (Gtk.DrawingArea):
     
-    def __init__(self):
-        gtk.DrawingArea.__init__(self)
-        self.connect("expose_event", self.expose)
+    def __init__(self):        
+        GObject.GObject.__init__(self)
+        self.connect("draw", self.expose)
         self.names = [_("White"),_("Black")]
         
         self.model = None
         self.short_on_time = [False, False]
         
-    def expose(self, widget, event):
-        context = widget.window.cairo_create()
-        context.rectangle(event.area.x, event.area.y,
-                          event.area.width, event.area.height)
+    def expose(self, widget, ctx):        
+        context = widget.get_window().cairo_create()
+        a = widget.get_allocation()
+        context.rectangle(a.x, a.y,
+                          a.width, a.height)       
         context.clip()
         self.draw(context)
         return False
     
     def draw(self, context):
-        
-        self.dark = self.get_style().dark[gtk.STATE_NORMAL]
-        self.light = self.get_style().light[gtk.STATE_NORMAL]
-        
+       
+        sc = self.get_style_context()
+        bool1, self.light = sc.lookup_color("p_light_color")    
+        bool1, self.dark = sc.lookup_color("p_dark_color")        
         if not self.model: return
         
         # Draw graphical Clock. Should this be moved to preferences?
@@ -57,22 +61,23 @@ class ChessClock (gtk.DrawingArea):
         context.rectangle(
             rect.width/2. * self.model.movingColor, 0,
             rect.width/2., rect.height)
-        context.set_source_color(self.dark)
+        
+        context.set_source_rgba(self.dark.red, self.dark.green, self.dark.blue, self.dark.alpha)       
         context.fill_preserve()
         context.new_path()
         
         time0 = self.names[0], self.formatedCache[WHITE]
         layout0 = self.create_pango_layout(" %s: %s " % (time0))
-        layout0.set_font_description(pango.FontDescription("Sans Serif 17"))
+        layout0.set_font_description(Pango.FontDescription("Sans Serif 17"))
         
         time1 = self.names[1], self.formatedCache[BLACK]
         layout1 = self.create_pango_layout(" %s: %s " % (time1))
-        layout1.set_font_description(pango.FontDescription("Sans Serif 17"))
+        layout1.set_font_description(Pango.FontDescription("Sans Serif 17"))
         
         w = max(layout1.get_pixel_size()[0], layout0.get_pixel_size()[0])*2
         self.set_size_request(w+rect.height+7, -1)
         
-        pangoScale = float(pango.SCALE)
+        pangoScale = float(Pango.SCALE)
         
         # Analog clock code.
         def paintClock (player):
@@ -132,33 +137,36 @@ class ChessClock (gtk.DrawingArea):
         
         if drawClock:
             paintClock (WHITE)
-        if (self.model.movingColor or WHITE) == WHITE:
-            context.set_source_color(self.light)
-        else: context.set_source_color(self.dark)
-        y = rect.height/2. - layout0.get_extents()[0][3]/pangoScale/2 \
-                           - layout0.get_extents()[0][1]/pangoScale
-        context.move_to(rect.height-7,y)
-        context.show_layout(layout0)
-        
+        if (self.model.movingColor or WHITE) == WHITE:          
+            context.set_source_rgba(self.light.red, self.light.green, self.light.blue, self.light.alpha) 
+        else:          
+            context.set_source_rgba(self.dark.red, self.dark.green, self.dark.blue, self.dark.alpha)        
+        y = rect.height/2. - layout0.get_extents()[0].height/pangoScale/2 \
+                           - layout0.get_extents()[0].y/pangoScale
+        context.move_to(rect.height-7,y)       
+        PangoCairo.show_layout(context, layout0)
+
         if drawClock:
             paintClock (BLACK)
-        if self.model.movingColor == BLACK:
-            context.set_source_color(self.light)
-        else: context.set_source_color(self.dark)
-        y = rect.height/2. - layout1.get_extents()[0][3]/pangoScale/2 \
-                           - layout1.get_extents()[0][1]/pangoScale
-        context.move_to(rect.width/2. + rect.height-7, y)
-        context.show_layout(layout1)
-    
+        if self.model.movingColor == BLACK:            
+            context.set_source_rgba(self.light.red, self.light.green, self.light.blue, self.light.alpha)
+        else:
+            context.set_source_rgba(self.dark.red, self.dark.green, self.dark.blue, self.dark.alpha)       
+        y = rect.height/2. - layout0.get_extents()[0].height/pangoScale/2 \
+                           - layout0.get_extents()[0].y/pangoScale
+        context.move_to(rect.width/2. + rect.height-7, y)        
+        PangoCairo.show_layout(context, layout1)
+
     def redraw_canvas(self):
-        if self.window:
+        if self.get_window():
             glock.acquire()
             try:
-                if self.window:
+                if self.get_window():
                     a = self.get_allocation()
-                    rect = gdk.Rectangle(0, 0, a.width, a.height)
-                    self.window.invalidate_rect(rect, True)
-                    self.window.process_updates(True)
+                    rect = Gdk.Rectangle()
+                    rect.x, rect.y, rect.width, rect.height = (0, 0, a.width, a.height)
+                    self.get_window().invalidate_rect(rect, True)
+                    self.get_window().process_updates(True)
             finally:
                 glock.release()
     
