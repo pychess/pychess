@@ -497,9 +497,9 @@ class GameWidget (GObject.GObject):
             def response_cb (infobar, response, message):
                 message.dismiss()
                 return False
-            message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-            message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                    gtk.RESPONSE_CANCEL))
+            message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+            message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                    Gtk.ResponseType.CANCEL))
             with glock.glock:
                 self.showMessage(message)
         return False
@@ -516,8 +516,8 @@ class GameWidget (GObject.GObject):
                     self.gamemodel.connection.client.run_command("adjourn")
                 message.dismiss()
                 return False
-            message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, response_cb)
-            message.add_button(InfoBarMessageButton(_("Wait"), gtk.RESPONSE_CANCEL))
+            message = InfoBarMessage(Gtk.MessageType.QUESTION, content, response_cb)
+            message.add_button(InfoBarMessageButton(_("Wait"), Gtk.ResponseType.CANCEL))
             message.add_button(InfoBarMessageButton(_("Adjourn"), 2))
             with glock.glock:
                 self.showMessage(message)
