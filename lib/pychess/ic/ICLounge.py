@@ -7,11 +7,8 @@ from math import e
 from operator import attrgetter
 from itertools import groupby
 
-#import gtk, gobject, pango, re
 import re
 from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, Pango
-#from gobject import GObject, SIGNAL_RUN_FIRST
-#from gi.repository import GObject
 
 from pychess.ic import *
 from pychess.System import conf, glock, uistuff
@@ -471,13 +468,13 @@ class SeekTabSection (ParrentListSection):
                 id = 0
             else:
                 id += 1
-            if order == gtk.SORT_DESCENDING:
+            if order == Gtk.SortType.DESCENDING:
                 id = -1 * id
             return id
 
         def set_sort_order(modelsort, value):
             if value != 0:
-                order = Gtk.SORT_ASCENDING if value > 0 else gtk.SORT_DESCENDING
+                order = Gtk.SortType.ASCENDING if value > 0 else Gtk.SortType.DESCENDING
                 modelsort.set_sort_column_id(abs(value) - 1, order)
 
         uistuff.keep(self.modelsort, "seektreeview_sort_order_col", get_sort_order, \
@@ -2056,9 +2053,9 @@ class Messages (Section):
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
 
@@ -2069,9 +2066,9 @@ class Messages (Section):
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
 
@@ -2084,9 +2081,9 @@ class Messages (Section):
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
     
