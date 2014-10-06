@@ -24,7 +24,6 @@ def expose (widget, context):
     width = widget.get_allocation().width
     height = widget.get_allocation().height
     cr.rectangle (x, y, width, height)
-    #cr.rectangle (event.area.x, event.area.y, event.area.width, event.area.height)
     if not surface:
         newtheme(widget)
     cr.set_source_surface(surface, 0, 0)
@@ -37,13 +36,28 @@ def newtheme (widget):
     
     sc = widget.get_style_context()
 
-    # get bg color from theme    
+    # get colors from theme
+
+    # bg color
     found, bgcol = sc.lookup_color("bg_color")
     if not found:        
         found, bgcol = sc.lookup_color("theme_bg_color")
         if not found:
             # fallback value
             bgcol = Gdk.RGBA(red=0.929412, green=0.929412, blue=0.929412, alpha=1.0)
+
+    # bg selected color
+    found, bgsel = sc.lookup_color("theme_selected_bg_color")
+    if not found:
+        # fallback value
+        bgsel = Gdk.RGBA(red=0.290, green=0.565, blue=0.851, alpha=1.0)
+
+    # fg color
+    found, fgcol = sc.lookup_color("fg_color")
+    if not found:
+        found, fgcol = sc.lookup_color("theme_fg_color")
+        if not found:            
+            fgcol= Gdk.RGBA(red=0.180392, green=0.203922, blue=0.211765, alpha=1.000000)
 
     def get_col(col, mult):
         r = col.red * mult
@@ -54,8 +68,57 @@ def newtheme (widget):
         if b > 1.0: b = 1.0
         return Gdk.RGBA(r, g, b, 1.0)
 
-    # get dark color
-    dcol = get_col(bgcol, 0.7)
+    # derive other colors
+    bgacol = get_col(bgcol, 0.9)           # bg_active    
+    dcol = get_col(bgcol, 0.7)             # dark
+    darksel = get_col(bgsel, 0.71)         # dark selected
+    dpcol = get_col(bgcol, 0.71)           # dark prelight
+    dacol = get_col(dcol, 0.9)             # dark_active
+    lcol = get_col(bgcol, 1.3)             # light color
+    fgsel = Gdk.RGBA(1.0, 1.0, 1.0, 1.0)   # fg selected
+    fgpcol = get_col(fgcol, 1.054)         # fg prelight
+    fgacol = Gdk.RGBA(0.0, 0.0, 0.0, 1.0)  # fg active
+
+    # return hex string #rrggbb
+    def color_to_string(color): 
+        red, green, blue = color        
+        return "#%02X%02X%02X" % (int(red * 255), int(green * 255), int(blue * 255))
+
+    # convert to #rrggbb
+    bg_color = color_to_string((bgcol.red, bgcol.green, bgcol.blue))
+    bg_prelight = bg_color
+    bg_active = color_to_string((bgacol.red, bgacol.green, bgacol.blue))
+    bg_selected = color_to_string((bgsel.red, bgsel.green, bgsel.blue))
+    dark_color = color_to_string((dcol.red, dcol.green, dcol.blue))
+    dark_prelight = color_to_string((dpcol.red, dpcol.green, dpcol.blue))    
+    dark_active = color_to_string((dacol.red, dacol.green, dacol.blue))
+    dark_selected = color_to_string((darksel.red, darksel.green, darksel.blue))
+    light_color = color_to_string((lcol.red, lcol.green, lcol.blue))
+    fg_color = color_to_string((fgcol.red, fgcol.green, fgcol.blue))
+    fg_active = color_to_string((fgacol.red, fgacol.green, fgacol.blue))
+    fg_prelight = color_to_string((fgpcol.red, fgpcol.green, fgpcol.blue))
+    fg_selected = color_to_string((fgsel.red, fgsel.green, fgsel.blue))
+
+    data = "@define-color p_bg_color " + bg_color + ";" \
+           "@define-color p_bg_prelight " +  bg_prelight + ";" \
+           "@define-color p_bg_active " + bg_active + ";" \
+           "@define-color p_bg_selected " + bg_selected + ";" \
+           "@define-color p_dark_color " + dark_color + ";" \
+           "@define-color p_dark_prelight " + dark_prelight + ";" \
+           "@define-color p_dark_active " + dark_active + ";" \
+           "@define-color p_dark_selected " + dark_selected + ";" \
+           "@define-color p_light_color " + light_color + ";" \
+           "@define-color p_fg_color " + fg_color + ";" \
+           "@define-color p_fg_prelight " + fg_prelight + ";" \
+           "@define-color p_fg_selected " + fg_selected + ";" \
+           "@define-color p_fg_active " + fg_active + ";"
+
+    if provider is not None:        
+        sc.remove_provider_for_screen(Gdk.Screen.get_default(), provider)
+
+    provider = Gtk.CssProvider.new()
+    provider.load_from_data(data)
+    sc.add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     lnewcolor = bgcol
     dnewcolor = dcol
@@ -72,56 +135,6 @@ def newtheme (widget):
 
     loldcolor = lnewcolor
     doldcolor = dnewcolor
-
-    # If 1st time in or theme changed then set up some colors that can be used in
-    # all pychess modules
-
-    # light color
-    lcol = get_col(bgcol, 1.3)
-
-    # bg_active
-    bgacol = get_col(bgcol, 0.9)
-
-    # dark prelight
-    dpcol = get_col(bgcol, 0.71)
-
-    # get fg color
-    found, fgcol = sc.lookup_color("fg_color")
-    if not found:
-        found, fgcol = sc.lookup_color("theme_fg_color")
-        if not found:            
-            fgcol= Gdk.RGBA(red=0.180392, green=0.203922, blue=0.211765, alpha=1.000000)
-
-    fgpcol = get_col(fgcol, 1.054)    
-
-    # return hex string #rrggbb
-    def color_to_string(color): 
-        red, green, blue = color        
-        return "#%02X%02X%02X" % (int(red * 255), int(green * 255), int(blue * 255))
-
-    # convert to #rrggbb
-    bg_color = color_to_string((bgcol.red, bgcol.green, bgcol.blue))
-    bg_prelight = bg_color
-    bg_active = color_to_string((bgacol.red, bgacol.green, bgacol.blue))
-    dark_color = color_to_string((dcol.red, dcol.green, dcol.blue))
-    dark_prelight = color_to_string((dpcol.red, dpcol.green, dpcol.blue))    
-    light_color = color_to_string((lcol.red, lcol.green, lcol.blue))
-    fg_prelight = color_to_string((fgpcol.red, fgpcol.green, fgpcol.blue))
-
-    data = "@define-color p_bg_color " + bg_color + ";" \
-           "@define-color p_bg_prelight " +  bg_prelight + ";" \
-           "@define-color p_bg_active " + bg_active + ";" \
-           "@define-color p_dark_color " + dark_color + ";" \
-           "@define-color p_dark_prelight " + dark_prelight + ";" \
-           "@define-color p_light_color " + light_color + ";" \
-           "@define-color p_fg_prelight " + fg_prelight + ";"
-
-    if provider is not None:        
-        sc.remove_provider_for_screen(Gdk.Screen.get_default(), provider)
-
-    provider = Gtk.CssProvider.new()
-    provider.load_from_data(data)
-    sc.add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     # global colors have been set up
     # now set colors on startup panel
