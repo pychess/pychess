@@ -589,15 +589,13 @@ class BoardView (Gtk.DrawingArea):
             s.print_stats()
         else:
             self.drawcount += 1
-            start = time()            
-            # FIXME 
+            start = time()
             al = widget.get_allocation()                      
             a = Gdk.Rectangle()
             a.x=a.y=0
             a.width = al.width
             a.height = al.height             
             with self.animationLock:
-                #self.draw(context, event.area)
                 self.draw(context, a)
             self.drawtime += time() - start
             #if self.drawcount % 100 == 0:
@@ -784,10 +782,10 @@ class BoardView (Gtk.DrawingArea):
                 if x % 2 + y % 2 == 1:
                     bounding = self.cord2RectRelative((xc+x*s,yc+y*s,s))                 
                     if intersects(rect(bounding), r):
-                        context.rectangle(xc+x*s,yc+y*s,s,s)       
-        # FIXME
-        #context.set_source_color(self.get_style().dark[Gtk.StateType.NORMAL])
-        context.set_source_rgba(0.64, 0.64, 0.64, 1.0)
+                        context.rectangle(xc+x*s,yc+y*s,s,s)
+        sc = self.get_style_context()
+        found, col = sc.lookup_color("p_dark_color")
+        context.set_source_rgba(col.red, col.green, col.blue, col.alpha)       
         context.fill()
         
         if not self.showCords:
@@ -856,33 +854,35 @@ class BoardView (Gtk.DrawingArea):
 
         parseC = lambda c: (c.red/65535., c.green/65535., c.blue/65535.)
 
-        # FIXME
-        #fgN = parseC(self.get_style().fg[Gtk.StateType.NORMAL])
-        #fgS = fgN
-        #fgA = parseC(self.get_style().fg[Gtk.StateType.ACTIVE])
-        #fgP = parseC(self.get_style().fg[Gtk.StateType.PRELIGHT])
-        #fgM = fgN
-        fgN= (0.192, 0.216, 0.224)
+        sc = self.get_style_context()
+
+        found, col = sc.lookup_color("p_fg_color")
+        fgN = (col.red, col.green, col.blue)
         fgS = fgN
-        fgA= (0.0, 0.0, 0.0)
-        fgP= (0.0, 0.0, 0.0)
+
+        found, col = sc.lookup_color("p_fg_active")
+        fgA = (col.red, col.green, col.blue)
+
+        found, col = sc.lookup_color("p_fg_prelight")
+        fgP = (col.red, col.green, col.blue)
+
         fgM = fgN
 
         # As default we use normal foreground for selected cords, as it looks
         # less confusing. However for some themes, the normal foreground is so
         # similar to the selected background, that we have to use the selected
         # foreground.
-        # FIXME
-        #bgSl = parseC(self.get_style().bg[Gtk.StateType.SELECTED])
-        #bgSd = parseC(self.get_style().dark[Gtk.StateType.SELECTED])
-        bgSl = (0.290, 0.565, 0.851)
-        bgSd = (0.216, 0.396, 0.582)
+
+        found, col = sc.lookup_color("p_bg_selected")
+        bgSl = (col.red, col.green, col.blue)
+
+        found, col = sc.lookup_color("p_dark_selected")
+        bgSd = (col.red, col.green, col.blue)
 
         if min((fgN[0]-bgSl[0])**2+(fgN[1]-bgSl[1])**2+(fgN[2]-bgSl[2])**2,
                (fgN[0]-bgSd[0])**2+(fgN[1]-bgSd[1])**2+(fgN[2]-bgSd[2])**2) < 0.2:
-            # FIXME
-            #fgS = parseC(self.get_style().fg[Gtk.StateType.SELECTED])
-            fgS = (1.0, 1.0, 1.0)
+            found, col = sc.lookup_color("p_fg_selected")
+            fgS = (col.red, col.green, col.blue)
 
         # Draw dying pieces (Found in self.deadlist)
         for piece, x, y in self.deadlist:
@@ -942,11 +942,11 @@ class BoardView (Gtk.DrawingArea):
         dark_blue = (0.475, 0.700, 0.950, 0.5)
 
         used = []
-        for cord, state in ((self.active, Gtk.StateType.ACTIVE),
-                            (self.selected, Gtk.StateType.SELECTED),
-                            (self.premove0, Gtk.StateType.SELECTED),
-                            (self.premove1, Gtk.StateType.SELECTED),
-                            (self.hover, Gtk.StateType.PRELIGHT)):
+        for cord, state in ((self.active, "_active"),
+                            (self.selected, "_selected"),
+                            (self.premove0, "_selected"),
+                            (self.premove1, "_selected"),
+                            (self.hover, "_prelight")):
             if not cord: continue
             if cord in used: continue
             # Ensure that same cord, if having multiple "tasks", doesn't get
@@ -959,23 +959,25 @@ class BoardView (Gtk.DrawingArea):
             xc, yc, square, s = self.square
             x, y = self.cord2Point(cord)
             context.rectangle(x, y, s, s)
-            #if self.isLight(cord):
-            #    style = self.get_style().bg
-            #else: style = self.get_style().dark
             if cord == self.premove0 or cord == self.premove1:
                 if self.isLight(cord):
                     context.set_source_rgba(*light_blue)
                 else:
                     context.set_source_rgba(*dark_blue)
             else:
-                # FIXME
-                #context.set_source_color(style[state]) 
-                # False #a9e0a9e0a9e0
-                # True #f2aff2aff2af             
+                sc = self.get_style_context()
                 if self.isLight(cord):
-                    context.set_source_rgba(0.94, 0.94, 0.94)
+                    # bg
+                    found, color = sc.lookup_color("p_bg" + state)
+                    if not found:
+                        print "color not found in boardview.py:","p_bg" + state
+                    context.set_source_rgba(*color)
                 else:
-                    context.set_source_rgba(0.66, 0.66, 0.66)
+                    # dark
+                    found, color = sc.lookup_color("p_dark" + state)
+                    if not found:
+                        print "color not found in boardview.py:","p_dark" + state
+                    context.set_source_rgba(*color)
             context.fill()
     
     ###############################
