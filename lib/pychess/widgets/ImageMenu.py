@@ -70,8 +70,9 @@ class ImageMenu(Gtk.EventBox):
         context = subwindow.get_window().cairo_create()
         context.set_line_width(2)
         context.rectangle (a.x, a.y, a.width, a.height)
-        # FIXME
-        context.set_source_rgba(0.64, 0.64, 0.64, 1.0)
+        sc = self.get_style_context()
+        found, color = sc.lookup_color("p_dark_color")
+        context.set_source_rgba(*color)
         context.stroke()
         self.__sub_setGrabbed(self.isopen)
     

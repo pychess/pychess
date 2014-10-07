@@ -4,6 +4,7 @@ from os.path import isdir, isfile, splitext
 from xml.dom import minidom
 
 from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gdk
 
 from pychess.System.prefix import addDataPrefix, getDataPrefix
 from pychess.System.glock import glock_connect_after

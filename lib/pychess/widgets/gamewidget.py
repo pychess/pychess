@@ -447,8 +447,7 @@ class GameWidget (GObject.GObject):
         return t
         
     def players_changed (self, gamemodel):
-        #FIXME
-        #log.debug("GameWidget.players_changed: starting %s" % repr(gamemodel))        
+        log.debug("GameWidget.players_changed: starting %s" % repr(gamemodel))
         for player in gamemodel.players:
             self.name_changed(player)
             # Notice that this may connect the same player many times. In
