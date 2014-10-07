@@ -271,11 +271,9 @@ class ScorePlot (Gtk.DrawingArea):
         cr.set_line_width(lw)
         y = (self.selected)*self.moveHeight
         cr.rectangle(lw/2, y-lw/2, width-lw, self.moveHeight+lw)
-        # FIXME
-        #col = self.get_style().base[Gtk.StateType.SELECTED]
-        #r, g, b = map(lambda x: x/65535., (col.red, col.green, col.blue))
-        r, g, b= 0.290, 0.565, 0.851
-        cr.set_source_rgba (r, g, b, .15)
+        sc = self.get_style_context()
+        found, color = sc.lookup_color("p_bg_selected")
+        cr.set_source_rgba (color.red, color.green, color.blue, .15)
         cr.fill_preserve()
-        cr.set_source_rgb (r, g, b)
+        cr.set_source_rgb (color.red, color.green, color.blue)
         cr.stroke()

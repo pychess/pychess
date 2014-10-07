@@ -20,13 +20,11 @@ class BorderBox (Gtk.Alignment):
     
     def _onExpose(self, area, ctx):
         context = self.get_window().cairo_create()
-        # FIXME
-        #color = self.get_style().dark[Gtk.StateType.NORMAL]
-        #context.set_source_rgb(color.red/65535.,
-        #                       color.green/65535.,
-        #                       color.blue/65535.)
-        context.set_source_rgba(0.651, 0.651, 0.651, 1.0)
-        
+
+        sc = self.get_style_context()
+        found, color = sc.lookup_color("p_dark_color")
+        context.set_source_rgba(*color)
+
         r = self.get_allocation()
         x = r.x + .5
         y = r.y + .5
