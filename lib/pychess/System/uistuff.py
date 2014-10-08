@@ -4,6 +4,7 @@ import re
 import webbrowser
 from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GObject
 from gi.repository import Pango
 from gi.repository.GdkPixbuf import Pixbuf
 from threading import Thread
@@ -101,9 +102,13 @@ def appendAutowrapColumn (treeview, defwidth, name, **kvargs):
     def callback (treeview, allocation, column, cell):
         otherColumns = (c for c in treeview.get_columns() if c != column)
         newWidth = allocation.width - sum(c.get_width() for c in otherColumns)
-        # FIXME
-        #newWidth -= treeview.style_get_property("horizontal-separator") * 2
-        newWidth -= 16
+
+        hsep = GObject.Value()
+        hsep.init(GObject.TYPE_INT)
+        hsep.set_int(0)
+        treeview.style_get_property("horizontal-separator", hsep)
+        newWidth -= hsep.get_int() * 2
+
         if cell.props.wrap_width == newWidth or newWidth <= 0:
             return
         cell.props.wrap_width = newWidth
