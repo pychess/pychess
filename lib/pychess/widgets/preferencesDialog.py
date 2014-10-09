@@ -38,7 +38,7 @@ def initialize(widgets):
         return True
     widgets["preferences"].connect("delete-event", delete_event)
     widgets["preferences"].connect("key-press-event",
-        lambda w,e: w.event(Gdk.Event(Gdk.DELETE))
+        lambda w,e: w.event(Gdk.Event(Gdk.EventType.DELETE))
         if e.keyval == Gdk.KEY_Escape else None)
 
 ################################################################################
