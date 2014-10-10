@@ -523,14 +523,10 @@ class GameWidget (GObject.GObject):
         return False
     
     def initTabcontents(self):
-        # FIXME
-        #tabcontent = createAlignment(Gtk.Notebook().props.tab_vborder,0,0,0)
         tabcontent = createAlignment(0,0,0,0)
         hbox = Gtk.HBox()
         hbox.set_spacing(4)
-        # FIXME
-        #hbox.pack_start(createImage(light_off, True, True, 0), expand=False)
-        hbox.pack_start(createImage(light_off), True, True, 0)
+        hbox.pack_start(createImage(light_off), False, True, 0)
         close_button = Gtk.Button()
         close_button.set_property("can-focus", False)
         close_button.add(createImage(gtk_close))
@@ -541,9 +537,7 @@ class GameWidget (GObject.GObject):
         text_hbox = Gtk.HBox()
         white_label = Gtk.Label(label="")
         text_hbox.pack_start(white_label, False, True, 0)
-        # FIXME
-        #text_hbox.pack_start(Gtk.Label(" %s " % _("vs", True, True, 0)), expand=False)
-        text_hbox.pack_start(Gtk.Label(" %s " % _("vs")), True, True, 0)
+        text_hbox.pack_start(Gtk.Label(" %s " % _("vs")), False, True, 0)
         black_label = Gtk.Label(label="")
         text_hbox.pack_start(black_label, False, True, 0)
         gameinfo_label = Gtk.Label(label="")
@@ -757,8 +751,6 @@ def _ensureReadForGameWidgets ():
     align.set_property("yscale", 0)
     headbook = Gtk.Notebook()
     headbook.set_scrollable(True)
-    # FIXME
-    #headbook.props.tab_vborder = 0
     align.add(headbook)
     mainvbox.pack_start(align, False, True, 0)
     show_tabs(not conf.get("hideTabs", False))
