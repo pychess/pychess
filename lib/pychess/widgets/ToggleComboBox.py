@@ -129,8 +129,6 @@ class ToggleComboBox (Gtk.ToggleButton):
     def button_press (self, widget, event):        
         width = self.get_allocation().width
         self.menu.set_size_request(-1,-1)
-        # FIXME
-        #ownWidth = self.menu.size_request()[0]
         ownWidth = self.menu.size_request().width
         self.menu.set_size_request(max(width,ownWidth),-1)
         self.set_active(True)         
