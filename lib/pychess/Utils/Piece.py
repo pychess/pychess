@@ -3,9 +3,10 @@ from pychess.Utils.repr import reprSign, reprColor, reprPiece
 
 
 class Piece:
-    def __init__ (self, color, piece):
+    def __init__ (self, color, piece, captured=False):
         self.color = color
         self.piece = piece
+        self.captured = captured
         
         # in crazyhouse we need to know this for later captures
         self.promoted = False
