@@ -203,7 +203,7 @@ class EnginesDialog():
         ################################################################
         dir_chooser_dialog = Gtk.FileChooserDialog(_("Select working directory"), None, Gtk.FileChooserAction.SELECT_FOLDER,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
-        dir_chooser_button = Gtk.FileChooserButton(dir_chooser_dialog)
+        dir_chooser_button = Gtk.FileChooserButton.new_with_dialog(dir_chooser_dialog)
 
         self.widgets["dirChooserDock"].add(dir_chooser_button)
         dir_chooser_button.show()
