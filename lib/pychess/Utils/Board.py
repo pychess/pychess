@@ -246,10 +246,10 @@ class Board:
         if self[move.cord1] is not None or flag == ENPASSANT:
             if self.variant == CRAZYHOUSECHESS:
                 piece = PAWN if flag == ENPASSANT or self[move.cord1].promoted else self[move.cord1].piece
-                new_piece = Piece(self.color, piece)
+                new_piece = Piece(self.color, piece, captured=True)
             else:
                 piece = PAWN if flag == ENPASSANT else self[move.cord1].piece
-                new_piece = Piece(1-self.color, piece)
+                new_piece = Piece(1-self.color, piece, captured=True)
             nth[self.color] += 1
             newBoard[self.newHoldingCord(self.color, nth[self.color])] = new_piece
             
@@ -258,7 +258,7 @@ class Board:
                 for acord in cordsAround(move.cord1):
                     piece = self[acord]
                     if piece and piece.piece != PAWN and acord != cord0:
-                        new_piece = Piece(piece.color, piece.piece)
+                        new_piece = Piece(piece.color, piece.piece, captured=True)
                         nth[1-piece.color] += 1
                         newBoard[self.newHoldingCord(1-piece.color, nth[1-piece.color])] = new_piece
                         newBoard[acord] = None
@@ -274,7 +274,7 @@ class Board:
         else:
             if self.variant == ATOMICCHESS and (flag == ENPASSANT or self[move.cord1] is not None):
                 piece = self[move.cord0].piece
-                new_piece = Piece(self.color, piece)
+                new_piece = Piece(self.color, piece, captured=True)
                 nth[1-self.color] += 1
                 newBoard[self.newHoldingCord(1-self.color, nth[1-self.color])] = new_piece
                 newBoard[cord1] = None
