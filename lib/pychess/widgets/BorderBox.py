@@ -3,9 +3,7 @@ from gi.repository import GObject
 class BorderBox (Gtk.Alignment):
     def __init__ (self, widget=None, top=False, right=False,
                                      bottom=False, left=False):
-        # FIXME
-        #GObject.GObject.__init__(self, 0, 0, 1, 1)
-        GObject.GObject.__init__(self)        
+        GObject.GObject.__init__(self)
         self.connect("draw", self._onExpose)
 
         if widget:

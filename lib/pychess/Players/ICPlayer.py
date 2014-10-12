@@ -139,12 +139,8 @@ class ICPlayer (Player):
     #===========================================================================
     
     def makeMove (self, board1, move, board2):
-        # FIXME
-        try:
-            log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s" % \
+        log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s" % \
                 (id(self), self, move, board1, board2))
-        except UnicodeDecodeError as e:
-            log.debug("UnicodeDecodeError in ICPlayer.py: %s" % e)
         if board2 and not self.gamemodel.isObservationGame():
             # TODO: Will this work if we just always use CASTLE_SAN?
             cn = CASTLE_KK
