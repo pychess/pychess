@@ -46,7 +46,7 @@ class ArrowButton (OverlayWindow):
         if self.myparentAlloc == None:
             self.resize(width, height)
         
-        if self.window and not self.hasHole:
+        if self.get_window() and not self.hasHole:
             self.hasHole = True
             self.digAHole(self.svgPath, width, height)
         
@@ -64,11 +64,11 @@ class ArrowButton (OverlayWindow):
             self.move(x, y)
         
         self.myparentAlloc = parentAlloc
-        self.myparentPos = self.myparent.window.get_position()
+        self.myparentPos = self.myparent.get_window().get_position()
     
     def __onExposeEvent (self, self_, ctx):
         self._calcSize()
-        context = self.window.cairo_create()
+        context = self.get_window().cairo_create()
         width, height = self.getSizeOfSvg(self.svgPath)
         surface = self.getSurfaceFromSvg(self.svgPath, width, height)
         
@@ -78,12 +78,13 @@ class ArrowButton (OverlayWindow):
             context.paint()
             context.set_operator(cairo.OPERATOR_OVER)
         
-        mask = Gdk.Pixmap(None, width, height, 1)
-        mcontext = mask.cairo_create()
-        mcontext.set_source_surface(surface, 0, 0)
-        mcontext.paint()
-        self.window.shape_combine_mask(mask, 0, 0)
-        
+        # FIXME
+        #mask = Gdk.Pixmap(None, width, height, 1)
+        #mcontext = mask.cairo_create()
+        #mcontext.set_source_surface(surface, 0, 0)
+        #mcontext.paint()
+        #self.window.shape_combine_mask(mask, 0, 0)
+
         context.set_source_surface(surface, 0, 0)
         context.paint()
     

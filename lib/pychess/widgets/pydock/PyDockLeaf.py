@@ -191,14 +191,15 @@ class PyDockLeaf (DockLeaf):
         if self.dockable:
             if sender.get_parent() == self and self.book.get_n_pages() == 1:
                 return
-            child = sender.get_nth_page(sender.get_current_page())
-            title, id = sender.get_parent().undock(child)
-            self.dock(child, position, title, id)
+            # FIXME
+            #child = sender.get_nth_page(sender.get_current_page())
+            #title, id = sender.get_parent().undock(child)
+            #self.dock(child, position, title, id)
     
     def __onHover (self, starButton, position, widget):
         if self.dockable:
             self.highlightArea.showAt(position)
-            starButton.window.raise_()
+            starButton.get_window().raise_()
     
     def __onLeave (self, starButton):
         self.highlightArea.hide()
@@ -209,4 +210,4 @@ class PyDockLeaf (DockLeaf):
         # switched, and the notebook child is hovered. Thus we need to reraise
         # our star        
         if self.starButton.get_window():
-            self.starButton.window.raise_()
+            self.starButton.get_window().raise_()
