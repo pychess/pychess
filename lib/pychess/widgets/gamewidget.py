@@ -818,7 +818,7 @@ def _ensureReadForGameWidgets ():
         except Exception, e:
             stringio = cStringIO.StringIO()
             traceback.print_exc(file=stringio)
-            error = strinGio.getvalue()
+            error = stringio.getvalue()
             log.error("Dock loading error: %s\n%s" % (e, error))
             md = Gtk.MessageDialog(widgets["window1"], type=Gtk.MessageType.ERROR,
                                    buttons=Gtk.ButtonsType.CLOSE)
