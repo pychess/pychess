@@ -4,13 +4,13 @@ import sys
 
 import cairo
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository import GObject
 
 if sys.platform == 'win32':
     from pychess.System.WinRsvg import rsvg
 else:
-    #import rsvg
-    pass
+    from gi.repository import Rsvg
 
 
 class OverlayWindow (Gtk.Window):
@@ -19,8 +19,8 @@ class OverlayWindow (Gtk.Window):
     cache = {} # Class global self.cache for svgPath:rsvg and (svgPath,w,h):surface
     
     def __init__ (self, parent):
-        #GObject.GObject.__init__(self, Gtk.WindowType.POPUP)
-        GObject.GObject.__init__(self)
+        Gtk.Window.__init__(self, Gtk.WindowType.POPUP)
+
         #colormap = self.get_screen().get_rgba_colormap()
         #if colormap:
         #    self.set_colormap(colormap)
@@ -39,29 +39,37 @@ class OverlayWindow (Gtk.Window):
     
     def digAHole (self, svgShape, width, height):
         
+        # FIXME       
         # Create a bitmap and clear it
-        mask = Gdk.Pixmap(None, width, height, 1)
-        mcontext = mask.cairo_create()
-        mcontext.set_source_rgb(0, 0, 0)
-        mcontext.set_operator(cairo.OPERATOR_DEST_OUT)
-        mcontext.paint()
-        
+        #mask = Gdk.Pixmap(None, width, height, 1)
+        #mcontext = mask.cairo_create()
+        #mcontext.set_source_rgb(0, 0, 0)
+        #mcontext.set_operator(cairo.OPERATOR_DEST_OUT)
+        #mcontext.paint()
+
         # Paint our shape
-        surface = self.getSurfaceFromSvg(svgShape, width, height)
-        mcontext.set_operator(cairo.OPERATOR_OVER)
-        mcontext.set_source_surface(surface, 0, 0)
-        mcontext.paint()
-        
+        #surface = self.getSurfaceFromSvg(svgShape, width, height)
+        #mcontext.set_operator(cairo.OPERATOR_OVER)
+        #mcontext.set_source_surface(surface, 0, 0)
+        #mcontext.paint()
+
         # Apply it only if aren't composited, in which case we only need input
         # masking
-        if self.is_composited():
-            self.window.input_shape_combine_mask(mask, 0, 0)
-        else: self.window.shape_combine_mask(mask, 0, 0)
-    
+        #if self.is_composited():
+        #    self.window.input_shape_combine_mask(mask, 0, 0)
+        #else: self.window.shape_combine_mask(mask, 0, 0)
+
+        surface = self.getSurfaceFromSvg(svgShape, width, height)
+        ctx = self.get_window().cairo_create()
+        ctx.set_source_surface(surface, 0, 0)
+        ctx.paint()
+
     def translateCoords (self, x, y):
-        x1, y1 = self.myparent.window.get_position()
-        x += x1 + self.myparent.get_allocation().x
-        y += y1 + self.myparent.get_allocation().y
+        tl = self.myparent.get_toplevel()
+        x1, y1 = tl.get_window().get_position()
+        tx = self.myparent.translate_coordinates(self.myparent.get_toplevel(), x, y)
+        x = x1 + tx[0]
+        y = y1 + tx[1]
         return x, y
     
     #===========================================================================
@@ -97,12 +105,19 @@ class OverlayWindow (Gtk.Window):
             return "#"+"".join(hex(c/256)[2:].zfill(2) for c in pixels)
         
         TEMP_PATH = "/tmp/pychess_theamed.svg"
-        colorDic = {"#18b0ff": colorToHex("light", Gtk.StateType.SELECTED),
-                    "#575757": colorToHex("text_aa", Gtk.StateType.PRELIGHT),
-                    "#e3ddd4": colorToHex("bg", Gtk.StateType.NORMAL),
-                    "#d4cec5": colorToHex("bg", Gtk.StateType.INSENSITIVE),
-                    "#ffffff": colorToHex("base", Gtk.StateType.NORMAL),
-                    "#000000": colorToHex("fg", Gtk.StateType.NORMAL)}
+        # FIXME
+        #colorDic = {"#18b0ff": colorToHex("light", Gtk.StateType.SELECTED),
+        #            "#575757": colorToHex("text_aa", Gtk.StateType.PRELIGHT),
+        #            "#e3ddd4": colorToHex("bg", Gtk.StateType.NORMAL),
+        #            "#d4cec5": colorToHex("bg", Gtk.StateType.INSENSITIVE),
+        #            "#ffffff": colorToHex("base", Gtk.StateType.NORMAL),
+        #            "#000000": colorToHex("fg", Gtk.StateType.NORMAL)}
+        colorDic = {"#18b0ff": "#85bcf6",
+                    "#575757": "#898c8d",
+                    "#e3ddd4": "#ededed",
+                    "#d4cec5": "#ededed",
+                    "#ffffff": "#ffffff",
+                    "#000000": "#313739"}
         
         data = file(svgPath).read()
         data = re.sub("|".join(colorDic.keys()),
@@ -111,7 +126,7 @@ class OverlayWindow (Gtk.Window):
         f = file(TEMP_PATH, "w")
         f.write(data)
         f.close()
-        svg = rsvg.Handle(TEMP_PATH)
+        svg = Rsvg.Handle.new_from_file(TEMP_PATH)
         os.remove(TEMP_PATH)
         return svg
     

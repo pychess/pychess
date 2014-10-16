@@ -60,7 +60,7 @@ class StarArrowButton (OverlayWindow):
             self.size = map(int, (starWidth*scale, starHeight*scale))
             self.resize(self.size[0], self.size[1])
             
-            if self.window:
+            if self.get_window():
                 self.hasHole = True
                 self.digAHole(self.bgSvg, self.size[0], self.size[1])
         
@@ -68,19 +68,19 @@ class StarArrowButton (OverlayWindow):
             self.hasHole = True
             self.digAHole(self.bgSvg, self.size[0], self.size[1])
         
-        if self.myparent.window:
+        if self.myparent.get_window():
             x, y = self.translateCoords(int(parentAlloc.width/2. - self.size[0]/2.),
                                         int(parentAlloc.height/2. - self.size[1]/2.))
             if (x,y) != self.get_position():
                 self.move(x, y)
             
-            self.myparentPos = self.myparent.window.get_position()
+            self.myparentPos = self.myparent.get_window().get_position()
         self.myparentAlloc = parentAlloc
     
     def __onExposeEvent (self, self_, ctx):
         self._calcSize()
         
-        context = self.window.cairo_create()
+        context = self.get_window().cairo_create()
         self.paintTransparent(context)
         surface = self.getSurfaceFromSvg(self.bgSvg, self.size[0], self.size[1])
         context.set_source_surface(surface, 0, 0)
@@ -89,7 +89,7 @@ class StarArrowButton (OverlayWindow):
         for position in range(POSITIONS_COUNT):
             rect = self.__getButtonRectangle(position)
             
-            context = self.window.cairo_create()
+            context = self.get_window().cairo_create()
             surface = self.getSurfaceFromSvg(self.svgs[position],
                                              rect.width, rect.height)
             context.set_source_surface(surface, rect.x, rect.y)
@@ -105,12 +105,18 @@ class StarArrowButton (OverlayWindow):
         x = ceil(dx*(1+PADDING_X)*buttonWidth - buttonWidth/2. + self.size[0]/2.)
         y = ceil(dy*(1+PADDING_Y)*buttonHeight - buttonHeight/2. + self.size[1]/2.)
         
-        return (x, y, ceil(buttonWidth), ceil(buttonHeight))
+        rect = Gdk.Rectangle() 
+        rect.x, rect.y, rect.width, rect.height = (x, y, ceil(buttonWidth), ceil(buttonHeight)) 
+        return rect
     
     def __getButtonAtPoint (self, x, y):
         for position in xrange(POSITIONS_COUNT):
-            region = Gdk.region_rectangle(self.__getButtonRectangle(position))
-            if region.point_in(x, y):
+
+            rect = Gdk.Rectangle()
+            rect.x, rect.y, rect.width, rect.height = (x, y, 1, 1)
+
+            inside, dest = Gdk.rectangle_intersect(self.__getButtonRectangle(position), rect)
+            if inside:
                 return position
         return -1
     
@@ -119,13 +125,17 @@ class StarArrowButton (OverlayWindow):
         if self.currentHovered != position:
             self.currentHovered = position
             if position > -1:
-                self.emit("hovered", position, context.get_source_widget())
+                # FIXME
+                #self.emit("hovered", position, context.get_source_widget())
+                self.emit("hovered", position, context.get_source_window())
             else: self.emit("left")
         
         if position > -1:
-            context.drag_status (Gdk.DragAction.MOVE, timestamp)
+            # FIXME
+            #context.drag_status (Gdk.DragAction.MOVE, timestamp)
             return True
-        context.drag_status (Gdk.DragAction.DEFAULT, timestamp)
+        # FIXME
+        #context.drag_status (Gdk.DragAction.DEFAULT, timestamp)
     
     def __onDragLeave (self, arrow, context, timestamp):
         if self.currentHovered != -1:
@@ -135,7 +145,9 @@ class StarArrowButton (OverlayWindow):
     def __onDragDrop (self, arrow, context, x, y, timestamp):
         position = self.__getButtonAtPoint(x, y)
         if position > -1:
-            self.emit("dropped", position, context.get_source_widget())
+            # FIXME
+            #self.emit("dropped", position, context.get_source_widget())
+            self.emit("dropped", position, context.get_source_window())
             context.finish(True, True, timestamp)
             return True
 
@@ -159,7 +171,6 @@ if __name__ == "__main__":
         cr.set_operator(cairo.OPERATOR_OVER)
         cr.fill()
     #w.connect("e)
-    
     w.show_all()
     sab.show_all()
     Gtk.main()
