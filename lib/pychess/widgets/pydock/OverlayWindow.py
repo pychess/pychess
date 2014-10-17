@@ -21,9 +21,11 @@ class OverlayWindow (Gtk.Window):
     def __init__ (self, parent):
         Gtk.Window.__init__(self, Gtk.WindowType.POPUP)
 
-        #colormap = self.get_screen().get_rgba_colormap()
-        #if colormap:
-        #    self.set_colormap(colormap)
+        # set RGBA visual for the window so transparency works
+        self.set_app_paintable(True)
+        visual = self.get_screen().get_rgba_visual()
+        if visual:
+            self.set_visual(visual)
         self.myparent = parent
     
     #===========================================================================
