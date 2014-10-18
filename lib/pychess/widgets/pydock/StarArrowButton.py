@@ -125,17 +125,13 @@ class StarArrowButton (OverlayWindow):
         if self.currentHovered != position:
             self.currentHovered = position
             if position > -1:
-                # FIXME
-                #self.emit("hovered", position, context.get_source_widget())
-                self.emit("hovered", position, context.get_source_window())
+                self.emit("hovered", position, Gtk.drag_get_source_widget(context))
             else: self.emit("left")
         
         if position > -1:
-            # FIXME
-            #context.drag_status (Gdk.DragAction.MOVE, timestamp)
+            Gdk.drag_status(context, Gdk.DragAction.MOVE, timestamp)
             return True
-        # FIXME
-        #context.drag_status (Gdk.DragAction.DEFAULT, timestamp)
+        Gdk.drag_status(context, Gdk.DragAction.DEFAULT, timestamp)
     
     def __onDragLeave (self, arrow, context, timestamp):
         if self.currentHovered != -1:
@@ -145,9 +141,7 @@ class StarArrowButton (OverlayWindow):
     def __onDragDrop (self, arrow, context, x, y, timestamp):
         position = self.__getButtonAtPoint(x, y)
         if position > -1:
-            # FIXME
-            #self.emit("dropped", position, context.get_source_widget())
-            self.emit("dropped", position, context.get_source_window())
+            self.emit("dropped", position, Gtk.drag_get_source_widget(context))
             context.finish(True, True, timestamp)
             return True
 

@@ -86,7 +86,7 @@ class PyDockTop (TopDock):
     
     def __onHover (self, arrowButton, widget):
         self.highlightArea.showAt(arrowButton.myposition)
-        arrowButton.window.raise_()
+        arrowButton.get_window().raise_()
     
     def __onLeave (self, arrowButton):
         self.highlightArea.hide()
