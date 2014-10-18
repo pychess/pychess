@@ -191,10 +191,10 @@ class PyDockLeaf (DockLeaf):
         if self.dockable:
             if sender.get_parent() == self and self.book.get_n_pages() == 1:
                 return
-            # FIXME
-            #child = sender.get_nth_page(sender.get_current_page())
-            #title, id = sender.get_parent().undock(child)
-            #self.dock(child, position, title, id)
+            cp = sender.get_current_page()
+            child = sender.get_nth_page(sender.get_current_page())
+            title, id = sender.get_parent().undock(child)
+            self.dock(child, position, title, id)
     
     def __onHover (self, starButton, position, widget):
         if self.dockable:
