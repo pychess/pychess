@@ -42,19 +42,17 @@ class HighlightArea (OverlayWindow):
     def __onExpose (self, self_, ctx):
         context = self.get_window().cairo_create()
         a = self_.get_allocation()
-        context.rectangle(a.x, a.y, a.width, a.height)        
+        context.rectangle(a.x, a.y, a.width, a.height)
+        sc = self.get_style_context()
+        found, color = sc.lookup_color('p_light_selected')
         if self.is_composited():
-            # FIXME
-            #color = self.get_style().light[Gtk.StateType.SELECTED]
-            sc = self.get_style_context()
-            found, color = sc.lookup_color('p_light_color')
             context.set_operator(cairo.OPERATOR_CLEAR)
             context.set_source_rgba(0,0,0,0.0)
             context.fill_preserve ()
             context.set_operator(cairo.OPERATOR_OVER)
-            context.set_source_rgba(color.red/65535., color.green/65535., color.blue/65535., 0.5)
+            context.set_source_rgba(color.red, color.green, color.blue, 0.5)
             context.fill()
         else:
-            context.set_source_color(self.get_style().light[Gtk.StateType.SELECTED])
+            context.set_source_rgba(color.red, color.green, color.blue)
             context.set_operator(cairo.OPERATOR_OVER)
             context.fill()
