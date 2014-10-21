@@ -59,6 +59,20 @@ def newtheme (widget):
         if not found:            
             fgcol= Gdk.RGBA(red=0.180392, green=0.203922, blue=0.211765, alpha=1.000000)
 
+    # base color
+    found, basecol = sc.lookup_color("base_color")
+    if not found:        
+        found, basecol = sc.lookup_color("theme_base_color")
+        if not found:
+            basecol = Gdk.RGBA(red=0.929412, green=0.929412, blue=0.929412, alpha=1.0)
+
+    # text color
+    found, textcol = sc.lookup_color("text_color")
+    if not found:        
+        found, textcol = sc.lookup_color("theme_text_color")
+        if not found:
+            textcol = Gdk.RGBA(red=0.180392, green=0.203922, blue=0.211765, alpha=1.0)
+
     def get_col(col, mult):
         r = col.red * mult
         g = col.green * mult
@@ -69,49 +83,39 @@ def newtheme (widget):
         return Gdk.RGBA(r, g, b, 1.0)
 
     # derive other colors
-    bgacol = get_col(bgcol, 0.9)           # bg_active    
-    dcol = get_col(bgcol, 0.7)             # dark
-    darksel = get_col(bgsel, 0.71)         # dark selected
-    dpcol = get_col(bgcol, 0.71)           # dark prelight
-    dacol = get_col(dcol, 0.9)             # dark_active
-    lcol = get_col(bgcol, 1.3)             # light color
-    fgsel = Gdk.RGBA(1.0, 1.0, 1.0, 1.0)   # fg selected
-    fgpcol = get_col(fgcol, 1.054)         # fg prelight
-    fgacol = Gdk.RGBA(0.0, 0.0, 0.0, 1.0)  # fg active
+    bgacol   = get_col(bgcol, 0.9)           # bg_active    
+    dcol     = get_col(bgcol, 0.7)           # dark
+    darksel  = get_col(bgsel, 0.71)          # dark selected
+    dpcol    = get_col(bgcol, 0.71)          # dark prelight
+    dacol    = get_col(dcol, 0.9)            # dark_active
+    lcol     = get_col(bgcol, 1.3)           # light color
+    lightsel = get_col(bgsel, 1.3)           # light selected
+    fgsel    = Gdk.RGBA(1.0, 1.0, 1.0, 1.0)  # fg selected
+    fgpcol   = get_col(fgcol, 1.054)         # fg prelight
+    fgacol   = Gdk.RGBA(0.0, 0.0, 0.0, 1.0)  # fg active
+    textaacol=Gdk.RGBA(min((basecol.red+textcol.red)/2., 1.0), min((basecol.green+textcol.green)/2., 1.0), min((basecol.blue+textcol.blue)/2., 1.0))   # text_aa
 
     # return hex string #rrggbb
-    def color_to_string(color): 
-        red, green, blue = color        
-        return "#%02X%02X%02X" % (int(red * 255), int(green * 255), int(blue * 255))
+    def hexcol(color):
+        return "#%02X%02X%02X" % (int(color.red * 255), int(color.green * 255), int(color.blue * 255))
 
-    # convert to #rrggbb
-    bg_color = color_to_string((bgcol.red, bgcol.green, bgcol.blue))
-    bg_prelight = bg_color
-    bg_active = color_to_string((bgacol.red, bgacol.green, bgacol.blue))
-    bg_selected = color_to_string((bgsel.red, bgsel.green, bgsel.blue))
-    dark_color = color_to_string((dcol.red, dcol.green, dcol.blue))
-    dark_prelight = color_to_string((dpcol.red, dpcol.green, dpcol.blue))    
-    dark_active = color_to_string((dacol.red, dacol.green, dacol.blue))
-    dark_selected = color_to_string((darksel.red, darksel.green, darksel.blue))
-    light_color = color_to_string((lcol.red, lcol.green, lcol.blue))
-    fg_color = color_to_string((fgcol.red, fgcol.green, fgcol.blue))
-    fg_active = color_to_string((fgacol.red, fgacol.green, fgacol.blue))
-    fg_prelight = color_to_string((fgpcol.red, fgpcol.green, fgpcol.blue))
-    fg_selected = color_to_string((fgsel.red, fgsel.green, fgsel.blue))
-
-    data = "@define-color p_bg_color " + bg_color + ";" \
-           "@define-color p_bg_prelight " +  bg_prelight + ";" \
-           "@define-color p_bg_active " + bg_active + ";" \
-           "@define-color p_bg_selected " + bg_selected + ";" \
-           "@define-color p_dark_color " + dark_color + ";" \
-           "@define-color p_dark_prelight " + dark_prelight + ";" \
-           "@define-color p_dark_active " + dark_active + ";" \
-           "@define-color p_dark_selected " + dark_selected + ";" \
-           "@define-color p_light_color " + light_color + ";" \
-           "@define-color p_fg_color " + fg_color + ";" \
-           "@define-color p_fg_prelight " + fg_prelight + ";" \
-           "@define-color p_fg_selected " + fg_selected + ";" \
-           "@define-color p_fg_active " + fg_active + ";"
+    data = "@define-color p_bg_color "          + hexcol(bgcol) + ";" \
+           "@define-color p_bg_prelight "       + hexcol(bgcol) + ";" \
+           "@define-color p_bg_active "         + hexcol(bgacol) + ";" \
+           "@define-color p_bg_selected "       + hexcol(bgsel) + ";" \
+           "@define-color p_bg_insensitive "    + hexcol(bgcol) + ";" \
+           "@define-color p_base_color "        + hexcol(basecol) + ";" \
+           "@define-color p_dark_color "        + hexcol(dcol) + ";" \
+           "@define-color p_dark_prelight "     + hexcol(dpcol) + ";" \
+           "@define-color p_dark_active "       + hexcol(dacol) + ";" \
+           "@define-color p_dark_selected "     + hexcol(darksel) + ";" \
+           "@define-color p_text_aa "           + hexcol(textaacol) + ";" \
+           "@define-color p_light_color "       + hexcol(lcol) + ";" \
+           "@define-color p_light_selected "    + hexcol(lightsel) + ";" \
+           "@define-color p_fg_color "          + hexcol(fgcol) + ";" \
+           "@define-color p_fg_prelight "       + hexcol(fgpcol) + ";" \
+           "@define-color p_fg_selected "       + hexcol(fgsel) + ";" \
+           "@define-color p_fg_active "         + hexcol(fgacol) + ";"
 
     if provider is not None:        
         sc.remove_provider_for_screen(Gdk.Screen.get_default(), provider)

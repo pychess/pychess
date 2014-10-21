@@ -40,31 +40,36 @@ class OverlayWindow (Gtk.Window):
             cairoContext.set_operator(cairo.OPERATOR_OVER)
     
     def digAHole (self, svgShape, width, height):
-        
-        # FIXME       
+
+        # FIXME
+        # For Python 2.x pycairo does not support/implement cairo.Region()
+        # https://bugs.launchpad.net/ubuntu/+source/pygobject/+bug/1028115/comments/8
+        return
+
         # Create a bitmap and clear it
-        #mask = Gdk.Pixmap(None, width, height, 1)
-        #mcontext = mask.cairo_create()
-        #mcontext.set_source_rgb(0, 0, 0)
-        #mcontext.set_operator(cairo.OPERATOR_DEST_OUT)
-        #mcontext.paint()
+        mask = cairo.ImageSurface(cairo.FORMAT_A1, width, height)
+        mcontext = cairo.Context(mask)
+        mcontext.set_source_rgb(0, 0, 0)
+        mcontext.set_operator(cairo.OPERATOR_DEST_OUT)
+        mcontext.paint()
 
         # Paint our shape
-        #surface = self.getSurfaceFromSvg(svgShape, width, height)
-        #mcontext.set_operator(cairo.OPERATOR_OVER)
-        #mcontext.set_source_surface(surface, 0, 0)
-        #mcontext.paint()
+        surface = self.getSurfaceFromSvg(svgShape, width, height)
+        mcontext.set_operator(cairo.OPERATOR_OVER)
+        mcontext.set_source_surface(surface, 0, 0)
+        mcontext.paint()
 
         # Apply it only if aren't composited, in which case we only need input
         # masking
-        #if self.is_composited():
-        #    self.window.input_shape_combine_mask(mask, 0, 0)
-        #else: self.window.shape_combine_mask(mask, 0, 0)
+        try:
+            mregion = Gdk.cairo_region_create_from_surface(mask)
+        except TypeError:
+            return
 
-        surface = self.getSurfaceFromSvg(svgShape, width, height)
-        ctx = self.get_window().cairo_create()
-        ctx.set_source_surface(surface, 0, 0)
-        ctx.paint()
+        if self.is_composited():
+            self.get_window().input_shape_combine_region(mregion, 0, 0)
+        else:
+            self.get_window().shape_combine_region(mregion, 0, 0)
 
     def translateCoords (self, x, y):
         tl = self.myparent.get_toplevel()
@@ -107,20 +112,23 @@ class OverlayWindow (Gtk.Window):
             return "#"+"".join(hex(c/256)[2:].zfill(2) for c in pixels)
         
         TEMP_PATH = "/tmp/pychess_theamed.svg"
-        # FIXME
-        #colorDic = {"#18b0ff": colorToHex("light", Gtk.StateType.SELECTED),
-        #            "#575757": colorToHex("text_aa", Gtk.StateType.PRELIGHT),
-        #            "#e3ddd4": colorToHex("bg", Gtk.StateType.NORMAL),
-        #            "#d4cec5": colorToHex("bg", Gtk.StateType.INSENSITIVE),
-        #            "#ffffff": colorToHex("base", Gtk.StateType.NORMAL),
-        #            "#000000": colorToHex("fg", Gtk.StateType.NORMAL)}
-        colorDic = {"#18b0ff": "#85bcf6",
-                    "#575757": "#898c8d",
-                    "#e3ddd4": "#ededed",
-                    "#d4cec5": "#ededed",
-                    "#ffffff": "#ffffff",
-                    "#000000": "#313739"}
-        
+
+        # return hex string #rrggbb
+        def getcol(col):
+            found, color = sc.lookup_color(col)
+            # not found colors are black
+            if not found: print "color not found in overlaywindow.py:",col
+            return "#%02X%02X%02X" % (int(color.red * 255), int(color.green * 255), int(color.blue * 255))
+
+        sc = self.get_style_context()
+
+        colorDic = {"#18b0ff": getcol("p_light_selected"),
+                    "#575757": getcol("p_text_aa"),
+                    "#e3ddd4": getcol("p_bg_color"),
+                    "#d4cec5": getcol("p_bg_insensitive"),
+                    "#ffffff": getcol("p_base_color"),
+                    "#000000": getcol("p_fg_color")}        
+
         data = file(svgPath).read()
         data = re.sub("|".join(colorDic.keys()),
                       lambda m: m.group() in colorDic and colorDic[m.group()] or m.group(),
