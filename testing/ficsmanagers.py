@@ -608,6 +608,30 @@ class BoardManagerTests(EmittingTestCase):
         self.runAndAssertEquals("playGameCreated", lines, (game,))
 
     def test11 (self):
+        lines = [BLOCK_START + '321' + BLOCK_SEPARATOR + '73' + BLOCK_SEPARATOR,
+                 "Your challenge intercepts pianazo's challenge.",
+                 "",
+                 "<pr> 4",
+                 "fics%" ,
+                 "Creating: gbtami (1475) pianazo (1520) rated blitz 3 0",
+                 "{Game 422 (gbtami vs. pianazo) Creating rated blitz match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 422 gbtami pianazo 1 3 0 39 39 180000 180000 1 none (0:00.000) none 0 0 0",
+                 "",
+                 "Game 422: A disconnection will be considered a forfeit.",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me.ratings[TYPE_BLITZ].elo = 1475
+        opponent = self.connection.players.get(FICSPlayer('pianazo'))
+        opponent.ratings[TYPE_BLITZ].elo = 1520
+        game = FICSGame(me, opponent, gameno=422, rated=True,
+            game_type=GAME_TYPES['blitz'], private=False, minutes=3, inc=0,
+            board=FICSBoard(180000, 180000, fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+
+    def test12 (self):
         """ Make sure observe-game-created messages are caught """
         lines = ["{Game 12 (electricbenj vs. antonymelvin) Creating rated wild/fr match.}",
                  BLOCK_START + '34' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
