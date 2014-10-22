@@ -162,7 +162,6 @@ class Board:
             shift = -1 if self.color == WHITE else 1
             ep_cord = Cord(cord1.x, cord1.y + shift)
             moved.append( (self[ep_cord], ep_cord) )
-            nth[self.color] += 1
             cord = self.newHoldingCord(self.color)
             new.append( board1[cord] )
 
