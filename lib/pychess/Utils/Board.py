@@ -86,8 +86,10 @@ class Board:
                 if (row.get(x) is not None) and row.get(x).piece == piece:
                     return Cord(x, i)
 
-    def newHoldingCord(self, color, nth):
-        """Find the nth empty slot in given colors holding"""
+    def newHoldingCord(self, color, nth=1):
+        """Find the nth empty slot in given colors holding.
+        In atomic explosions nth can be > 1.   
+        """
         
         enum = reverse_enum if color == BLACK else enumerate
         files = ((self.FILES+1, self.FILES+2, self.FILES+3), (-2, -3, -4))
@@ -104,9 +106,6 @@ class Board:
         new = []
         dead = []
 
-        # Sequence nubers of next newHoldingCord of WHITE and BLACK
-        nth = [0, 0]
-        
         if move.flag == NULL_MOVE:
             return moved, new, dead
             
@@ -119,6 +118,9 @@ class Board:
             return moved, new, dead
 
         if self.variant == ATOMICCHESS and (self[cord1] or move.flag == ENPASSANT):
+            # Sequence nubers of next newHoldingCord of WHITE and BLACK
+            nth = [0, 0]
+        
             piece = self[cord0]
             nth[1-piece.color] += 1
             cord = self.newHoldingCord(1-piece.color, nth[1-piece.color])
@@ -129,12 +131,12 @@ class Board:
 
         if self[cord1]:
             piece = PAWN if self.variant == CRAZYHOUSECHESS and self[cord1].promoted else self[cord1].piece
-            nth[self.color] += 1
-            cord = self.newHoldingCord(self.color, nth[self.color])
+            cord = self.newHoldingCord(self.color)
             moved.append( (board1[cord], cord1) )
             new.append( board1[cord] )
 
             if self.variant == ATOMICCHESS:
+                nth[self.color] += 1
                 from pychess.Variants.atomic import cordsAround
                 for acord in cordsAround(cord1):
                     piece = self[acord]
@@ -161,7 +163,7 @@ class Board:
             ep_cord = Cord(cord1.x, cord1.y + shift)
             moved.append( (self[ep_cord], ep_cord) )
             nth[self.color] += 1
-            cord = self.newHoldingCord(self.color, nth[self.color])
+            cord = self.newHoldingCord(self.color)
             new.append( board1[cord] )
 
         return moved, new, dead
