@@ -5,7 +5,7 @@ import time
 import codecs
 import logging
 
-from gi.repository import Gtk, Pango, GObject
+from gi.repository import Gtk, Gdk, Pango, GObject
 
 from pychess.System import glock, uistuff
 from pychess.System.Log import log, logemitter
@@ -54,7 +54,7 @@ class InformationWindow:
         def selectionChanged (selection):
             treestore, iter = selection.get_selected()
             if iter:
-                child = cls.pathToPage[treestore.get_path(iter)]["child"]
+                child = cls.pathToPage[treestore.get_path(iter).to_string()]["child"]
                 cls.pages.set_current_page(cls.pages.page_num(child))
         cls.treeview.get_selection().connect("changed", selectionChanged)
     
@@ -86,6 +86,8 @@ class InformationWindow:
     @classmethod
     def _createPage (cls, parrentIter, tag):
         name = tag[-1]
+        if type(name) == int:
+            name=str(name)
         iter = cls.treeview.get_model().append(parrentIter, (name,))
         cls.tagToIter[tag] = iter
         
@@ -129,10 +131,10 @@ class InformationWindow:
         
         
         
-        cls.pages.append_page(frame)
+        cls.pages.append_page(frame, None)
         page = {"child": frame, "textview":textview}
         cls.tagToPage[tag] = page
-        cls.pathToPage[cls.treeview.get_model().get_path(iter)] = page
+        cls.pathToPage[cls.treeview.get_model().get_path(iter).to_string()] = page
         
         cls.treeview.expand_all()
     
@@ -193,7 +195,7 @@ class InformationWindow:
             length = len(widgets["searchEntry"].get_text())
             iter1 = widgets["textview"].get_buffer().get_iter_at_offset(goto+length)
             widgets["textview"].get_buffer().select_range(iter0, iter1)
-            widgets["textview"].scroll_to_iter(iter0, 0.2)
+            widgets["textview"].scroll_to_iter(iter0, 0.2, False, 0.5, 0.5)
     
     @classmethod
     def onTextviewKeypress (cls, textview, event, widgets):
@@ -201,7 +203,7 @@ class InformationWindow:
             if event.keyval in (ord("f"), ord("F")):
                 widgets["findbar"].props.visible = not widgets["findbar"].props.visible
                 if widgets["findbar"].props.visible:
-                    signal = widgets["searchEntry"].connect_after("expose-event",
+                    signal = widgets["searchEntry"].connect_after("draw",
                             lambda w,e: w.grab_focus() or
                             widgets["searchEntry"].disconnect(signal))
     
