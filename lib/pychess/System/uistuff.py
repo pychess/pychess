@@ -350,14 +350,15 @@ tooltip.ensure_style()
 tooltipStyle = tooltip.get_style()
 
 def makeYellow (box):
-    def on_box_expose_event (box, event):
-        box.style.paint_flat_box (box.window,
-            Gtk.StateType.NORMAL, Gtk.ShadowType.NONE, None, box, "tooltip",
-            box.allocation.x, box.allocation.y,
-            box.allocation.width, box.allocation.height)
+    def on_box_expose_event (box, context):
+        #box.style.paint_flat_box (box.window,
+        #    Gtk.StateType.NORMAL, Gtk.ShadowType.NONE, None, box, "tooltip",
+        #    box.allocation.x, box.allocation.y,
+        #    box.allocation.width, box.allocation.height)
+        pass
     def cb (box):
         box.set_style(tooltipStyle)
-        box.connect("expose-event", on_box_expose_event)
+        box.connect("draw", on_box_expose_event)
     onceWhenReady(box, cb)
 
 
