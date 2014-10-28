@@ -71,13 +71,18 @@ class BoardPreview:
             fcbutton = args[0]           
             self.on_file_activated(fcbutton.get_filename())
         fcbutton.connect("file-set", on_file_set)
+        # This is needed for game files specified on the command line to work
+        fcbutton.connect("file-activated", on_file_set)
 
         def on_response (fcdialog, resp):              
             if resp == Gtk.ResponseType.ACCEPT:
                 self.on_file_activated(opendialog.get_filename())
         opendialog.connect("response", on_response)
 
-    def on_file_activated (self, filename):    
+    def on_file_activated (self, filename):
+        # filename is None if a non-existent file is passed as command line argument
+        if filename is None:
+            return
         self.set_filename(filename)      
         if os.path.isdir(filename):            
             return
