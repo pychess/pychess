@@ -220,17 +220,9 @@ class BoardManager (GObject):
         self.connection.expect_fromto (self.onPlayGameCreatedFromMatchingSeekOrGetGame,
             "Your seek (?:matches one already posted by %s|qualifies for %s's getgame)\." % (names, names),
             "<12> (.+)")
-
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromInterceptedChallenge,
+        self.connection.expect_fromto (self.onPlayGameCreatedFromInterceptedChallenge,
             "Your challenge intercepts %s's challenge\." % names,
-            "",
-            "<pr> ([\d ]+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
+            "<12> (.+)")
 
         self.connection.expect_n_lines (self.onObserveGameCreated,
             "You are now observing game \d+\.",
@@ -457,8 +449,7 @@ class BoardManager (GObject):
     onPlayGameCreatedFromMatchingSeekOrGetGame.BLKCMD = BLKCMD_SEEK
     
     def onPlayGameCreatedFromInterceptedChallenge(self, matchlist):
-        self.connection.om.onOfferRemove(matchlist[2])
-        self.onPlayGameCreated(matchlist[4:8])
+        self.onPlayGameCreatedFromMatchingSeekOrGetGame(matchlist)
     onPlayGameCreatedFromInterceptedChallenge.BLKCMD = BLKCMD_MATCH
     
     def parseGame (self, matchlist, gameclass, in_progress=False):
