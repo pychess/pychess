@@ -217,10 +217,10 @@ class BoardManager (GObject):
         # prediction callbacks in VerboseTelnet to put lines the callback isn't
         # interested in or doesn't handle back onto the input line stack in
         # VerboseTelnet.TelnetLines
-        self.connection.expect_fromto (self.onPlayGameCreatedFromMatchingSeekOrGetGame,
+        self.connection.expect_fromto (self.onMatchingSeekOrGetGame,
             "Your seek (?:matches one already posted by %s|qualifies for %s's getgame)\." % (names, names),
-            "<12> (.+)")
-        self.connection.expect_fromto (self.onPlayGameCreatedFromInterceptedChallenge,
+            "(?:<12>|<sn>) (.+)")
+        self.connection.expect_fromto (self.onInterceptedChallenge,
             "Your challenge intercepts %s's challenge\." % names,
             "<12> (.+)")
 
@@ -437,20 +437,23 @@ class BoardManager (GObject):
         self.gamemodelStartedEvents[gameno] = threading.Event()
         self.emit("playGameCreated", game)
 
-    def onPlayGameCreatedFromMatchingSeekOrGetGame(self, matchlist):
-        for line in matchlist[1:-4]:
-            if line.startswith("<sr>"):
-                self.connection.glm.on_seek_remove(sr.match(line))
-            elif line.startswith("<pr>"):
-                self.connection.om.onOfferRemove(pr.match(line))
-        self.onPlayGameCreated((creating0.match(matchlist[-4]),
-                                creating1.match(matchlist[-3]),
-                                matchlist[-1]))
-    onPlayGameCreatedFromMatchingSeekOrGetGame.BLKCMD = BLKCMD_SEEK
+    def onMatchingSeekOrGetGame(self, matchlist):
+        if matchlist[-1].string.startswith("<12>"):
+            for line in matchlist[1:-4]:
+                    if line.startswith("<sr>"):
+                        self.connection.glm.on_seek_remove(sr.match(line))
+                    elif line.startswith("<pr>"):
+                        self.connection.om.onOfferRemove(pr.match(line))
+            self.onPlayGameCreated((creating0.match(matchlist[-4]),
+                                    creating1.match(matchlist[-3]),
+                                    matchlist[-1]))
+        else:
+            self.connection.glm.on_seek_add(matchlist[-1])
+    onMatchingSeekOrGetGame.BLKCMD = BLKCMD_SEEK
     
-    def onPlayGameCreatedFromInterceptedChallenge(self, matchlist):
-        self.onPlayGameCreatedFromMatchingSeekOrGetGame(matchlist)
-    onPlayGameCreatedFromInterceptedChallenge.BLKCMD = BLKCMD_MATCH
+    def onInterceptedChallenge(self, matchlist):
+        self.onMatchingSeekOrGetGame(matchlist)
+    onInterceptedChallenge.BLKCMD = BLKCMD_MATCH
     
     def parseGame (self, matchlist, gameclass, in_progress=False):
         """ 

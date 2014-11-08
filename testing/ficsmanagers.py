@@ -348,6 +348,36 @@ class SeekManagerTests(EmittingTestCase):
                  BLOCK_END]
         self.runAndAssertEquals('seek_updated', lines, ('to manual; rating range now 0-9999',))
 
+    def test10 (self):
+        """ Seek add resulting from a seek matches command reply """
+        lines = [BLOCK_START + '66' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek matches one already posted by Bezo.",
+                 "Issuing match request since the seek was set to manual.",
+                 "Issuing: gbtami (1671) Bezo (1569) rated lightning 1 0.",
+                 "Your lightning rating will change:  Win: +6,  Draw: -2,  Loss: -10",
+                 "Your new RD will be 22.9",
+                 "",
+                 "<pt> 32 w=Bezo t=match p=gbtami (1671) Bezo (1569) rated lightning 1 0",
+                 "fics%",
+                 "Your seek matches one already posted by BugMashine.",
+                 "Issuing match request since the seek was set to manual.",
+                 "Issuing: gbtami (1671) BugMashine (1692) rated lightning 1 0.",
+                 "Your lightning rating will change:  Win: +8,  Draw: +0,  Loss: -8",
+                 "Your new RD will be 22.9",
+                 "",
+                 "<pt> 34 w=BugMashine t=match p=gbtami (1671) BugMashine (1692) rated lightning 1 0",
+                 "fics%",
+                 "",
+                 "<sn> 46 w=gbtami ti=00 rt=1671  t=1 i=0 r=r tp=lightning c=? rr=1500-1700 a=t f=f",
+                 "fics% Your seek has been posted with index 46.",
+                 "(2 player(s) saw the seek.)",
+                 BLOCK_END]
+        player = FICSPlayer('gbtami')
+        player.ratings[TYPE_BLITZ].elo = 1671
+        expectedResult = FICSSeek(46, player, 1, 0, True, None,
+            GAME_TYPES["lightning"], automatic=False)
+        self.runAndAssertEquals('addSeek', lines, (expectedResult,))
+
 class BoardManagerTests(EmittingTestCase):
     
     def setUp (self):
@@ -675,7 +705,8 @@ class BoardManagerTests(EmittingTestCase):
         self.assertEqual(self.deleted_seeks, set((125, 127, 109)))
 
     def test12 (self):
-        lines = [BLOCK_START + '321' + BLOCK_SEPARATOR + '73' + BLOCK_SEPARATOR,
+        lines = [self.match_offer(4),
+                 BLOCK_START + '321' + BLOCK_SEPARATOR + '73' + BLOCK_SEPARATOR,
                  "Your challenge intercepts pianazo's challenge.",
                  "",
                  "<pr> 4",
@@ -697,9 +728,11 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_offers, set((4,)))
 
     def test13 (self):
-        lines = [BLOCK_START + '321' + BLOCK_SEPARATOR + '73' + BLOCK_SEPARATOR,
+        lines = [self.match_offer(25),
+                 BLOCK_START + '321' + BLOCK_SEPARATOR + '73' + BLOCK_SEPARATOR,
                  "Your challenge intercepts clisus's challenge.",
                  "",
                  "<sr> 117",
@@ -721,6 +754,8 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_offers, set((25,)))
+        self.assertEqual(self.deleted_seeks, set((117,)))
 
     def test14 (self):
         """ Make sure observe-game-created messages are caught """
