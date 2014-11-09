@@ -407,6 +407,8 @@ class SoundTab:
             widgets["useSounds"].set_active(False)
         self.getPlayer().connect("error", soundError)
 
+        uistuff.keep(widgets["alarm_spin"], "alarm_spin", first_value=15)
+
 ################################################################################
 # Panel initing                                                               #
 ################################################################################
