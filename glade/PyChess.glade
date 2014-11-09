@@ -57,6 +57,13 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="adjustment3">
+    <property name="lower">1</property>
+    <property name="upper">999</property>
+    <property name="value">15</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkDialog" id="game_info">
     <property name="can_focus">False</property>
     <property name="border_width">7</property>
@@ -2291,7 +2298,7 @@ It will search positions from http://www.k4it.de/</property>
                               <object class="GtkTable" id="table9">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="n_rows">14</property>
+                                <property name="n_rows">15</property>
                                 <property name="n_columns">3</property>
                                 <property name="column_spacing">3</property>
                                 <property name="row_spacing">3</property>
@@ -2893,6 +2900,55 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="bottom_attach">4</property>
                                     <property name="x_options">GTK_FILL</property>
                                     <property name="y_options"/>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="soundlabel11">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
+                                    <property name="label" translatable="yes">Activate alarm when _remaining sec is:</property>
+                                    <property name="use_underline">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">14</property>
+                                    <property name="bottom_attach">15</property>
+                                    <property name="x_options">GTK_FILL</property>
+                                    <property name="y_options"/>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <object class="GtkHBox" id="hbox7">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkSpinButton" id="alarm_spin">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="max_length">3</property>
+                                        <property name="invisible_char">●</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                        <property name="adjustment">adjustment3</property>
+                                        <property name="numeric">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">14</property>
+                                    <property name="bottom_attach">15</property>
                                   </packing>
                                 </child>
                               </object>
