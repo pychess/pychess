@@ -167,7 +167,7 @@ def validate (board, move):
         if kingExplode(board.board, move.move, board.color):
             return False
         # Exploding oppont king takes precedence over mate
-        elif kingExplode(board.board, move.move, 1-board.color):
+        elif kingExplode(board.board, move.move, 1-board.color) and validateMove(board.board, move.move):
             return True
         else:
             return standard_validate (board, move)
