@@ -348,12 +348,53 @@ class SeekManagerTests(EmittingTestCase):
                  BLOCK_END]
         self.runAndAssertEquals('seek_updated', lines, ('to manual; rating range now 0-9999',))
 
+    def test10 (self):
+        """ Seek add resulting from a seek matches command reply """
+        lines = [BLOCK_START + '66' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek matches one already posted by Bezo.",
+                 "Issuing match request since the seek was set to manual.",
+                 "Issuing: gbtami (1671) Bezo (1569) rated lightning 1 0.",
+                 "Your lightning rating will change:  Win: +6,  Draw: -2,  Loss: -10",
+                 "Your new RD will be 22.9",
+                 "",
+                 "<pt> 32 w=Bezo t=match p=gbtami (1671) Bezo (1569) rated lightning 1 0",
+                 "fics%",
+                 "Your seek matches one already posted by BugMashine.",
+                 "Issuing match request since the seek was set to manual.",
+                 "Issuing: gbtami (1671) BugMashine (1692) rated lightning 1 0.",
+                 "Your lightning rating will change:  Win: +8,  Draw: +0,  Loss: -8",
+                 "Your new RD will be 22.9",
+                 "",
+                 "<pt> 34 w=BugMashine t=match p=gbtami (1671) BugMashine (1692) rated lightning 1 0",
+                 "fics%",
+                 "",
+                 "<sn> 46 w=gbtami ti=00 rt=1671  t=1 i=0 r=r tp=lightning c=? rr=1500-1700 a=t f=f",
+                 "fics% Your seek has been posted with index 46.",
+                 "(2 player(s) saw the seek.)",
+                 BLOCK_END]
+        player = FICSPlayer('gbtami')
+        player.ratings[TYPE_BLITZ].elo = 1671
+        expectedResult = FICSSeek(46, player, 1, 0, True, None,
+            GAME_TYPES["lightning"], automatic=False)
+        self.runAndAssertEquals('addSeek', lines, (expectedResult,))
+
 class BoardManagerTests(EmittingTestCase):
     
     def setUp (self):
         EmittingTestCase.setUp(self)
         self.manager = self.connection.bm
+
+        self.deleted_offers = set()
+        def pr_handler(manager, offer): self.deleted_offers.add(offer)
+        self.connection.om.connect('onChallengeRemove', pr_handler)
+
+        self.deleted_seeks = set()
+        def sr_handler(manager, seek): self.deleted_seeks.add(seek)
+        self.connection.glm.connect('removeSeek', sr_handler)
     
+    def match_offer(self, offer):
+        return "<pf> %s w=GuestABCD t=match p=GuestABCD (----) [black] GuestEFGH (----) unrated untimed" % offer
+
     def test1 (self):
         lines = [BLOCK_START + '110' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek matches one already posted by Thegermain.",
@@ -377,6 +418,7 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_seeks, set((111, 25, 153)))
     
     def test2 (self):
         lines = [BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
@@ -398,9 +440,11 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_seeks, set((135,)))
     
     def test3 (self):
-        lines = [BLOCK_START + '172' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+        lines = [self.match_offer(11),
+                 BLOCK_START + '172' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek matches one already posted by suugakusya.",
                  "",
                  "<sr> 89",
@@ -427,9 +471,12 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_seeks, set((89, 90)))
+        self.assertEqual(self.deleted_offers, set((11,)))
     
     def test4 (self):
-        lines = [BLOCK_START + '172' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+        lines = [self.match_offer(11),
+                 BLOCK_START + '172' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek matches one already posted by suugakusya.",
                  "",
                  "<sr> 89",
@@ -454,9 +501,12 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_seeks, set((89,)))
+        self.assertEqual(self.deleted_offers, set((11,)))
     
     def test5 (self):
-        lines = [BLOCK_START + '213' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+        lines = [self.match_offer(39),
+                 BLOCK_START + '213' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek matches one already posted by chemo.",
                  "",
                  "<sr> 6",
@@ -480,9 +530,12 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_seeks, set((6,)))
+        self.assertEqual(self.deleted_offers, set((39,)))
     
     def test6 (self):
-        lines = [BLOCK_START + '172' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+        lines = [self.match_offer(53),
+                 BLOCK_START + '172' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek matches one already posted by fabk.",
                  "",
                  "<sr> 93 71",
@@ -506,6 +559,8 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_seeks, set((93, 71)))
+        self.assertEqual(self.deleted_offers, set((53,)))
     
     def test7 (self):
         lines = [BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
@@ -527,6 +582,7 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_seeks, set((145,)))
 
     def test8 (self):
         lines = [BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
@@ -549,9 +605,11 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_seeks, set((179, 3)))
 
     def test9 (self):
-        lines = [BLOCK_START + '538' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+        lines = [self.match_offer(6),
+                 BLOCK_START + '538' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek qualifies for opmentor's getgame.",
                  "",
                  "<sr> 33",
@@ -574,9 +632,13 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_offers, set((6,)))
+        self.assertEqual(self.deleted_seeks, set((33,)))
 
     def test10 (self):
-        lines = [BLOCK_START + '110' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+        lines = [self.match_offer(14),
+                 self.match_offer(9),
+                 BLOCK_START + '110' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
                  "Your seek matches one already posted by Strix.",
                  "",
                  "<sr> 68 105",
@@ -606,8 +668,96 @@ class BoardManagerTests(EmittingTestCase):
         me.game = game
         opponent.game = game
         self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_offers, set((14, 9)))
+        self.assertEqual(self.deleted_seeks, set((68, 105, 89)))
 
     def test11 (self):
+        lines = [self.match_offer(12),
+                 BLOCK_START + '279' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+                 "Your seek matches one already posted by coopnomaks.",
+                 "",
+                 "<sr> 125 127",
+                 "fics%" ,
+                 "<sr> 109",
+                 "fics%",
+                 "Challenge from Deji withdrawn.",
+                 "",
+                 "<pr> 12",
+                 "fics%",
+                 "Creating: coopnomaks (1570) gbtami (1609) rated blitz 3 0",
+                 "{Game 501 (coopnomaks vs. gbtami) Creating rated blitz match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 501 coopnomaks gbtami -1 3 0 39 39 180000 180000 1 none (0:00.000) none 0 0 0",
+                 "",
+                 "Game 501: A disconnection will be considered a forfeit.",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me.ratings[TYPE_BLITZ].elo = 1609
+        opponent = self.connection.players.get(FICSPlayer('coopnomaks'))
+        opponent.ratings[TYPE_BLITZ].elo = 1570
+        game = FICSGame(opponent, me, gameno=501, rated=True,
+            game_type=GAME_TYPES['blitz'], private=False, minutes=3, inc=0,
+            board=FICSBoard(180000, 180000, fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_offers, set((12,)))
+        self.assertEqual(self.deleted_seeks, set((125, 127, 109)))
+
+    def test12 (self):
+        lines = [self.match_offer(4),
+                 BLOCK_START + '321' + BLOCK_SEPARATOR + '73' + BLOCK_SEPARATOR,
+                 "Your challenge intercepts pianazo's challenge.",
+                 "",
+                 "<pr> 4",
+                 "fics%" ,
+                 "Creating: gbtami (1475) pianazo (1520) rated blitz 3 0",
+                 "{Game 422 (gbtami vs. pianazo) Creating rated blitz match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 422 gbtami pianazo 1 3 0 39 39 180000 180000 1 none (0:00.000) none 0 0 0",
+                 "",
+                 "Game 422: A disconnection will be considered a forfeit.",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me.ratings[TYPE_BLITZ].elo = 1475
+        opponent = self.connection.players.get(FICSPlayer('pianazo'))
+        opponent.ratings[TYPE_BLITZ].elo = 1520
+        game = FICSGame(me, opponent, gameno=422, rated=True,
+            game_type=GAME_TYPES['blitz'], private=False, minutes=3, inc=0,
+            board=FICSBoard(180000, 180000, fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_offers, set((4,)))
+
+    def test13 (self):
+        lines = [self.match_offer(25),
+                 BLOCK_START + '321' + BLOCK_SEPARATOR + '73' + BLOCK_SEPARATOR,
+                 "Your challenge intercepts clisus's challenge.",
+                 "",
+                 "<sr> 117",
+                 "fics%" ,
+                 "<pr> 25",
+                 "fics%" ,
+                 "Creating: clisus (1470) mgatto (1542) rated lightning 1 0",
+                 "{Game 225 (clisus vs. mgatto) Creating rated lightning match.}",
+                 "",
+                 "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 225 clisus mgatto -1 1 0 39 39 60000 60000 1 none (0:00.000) none 1 0 0",
+                 BLOCK_END]
+        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me.ratings[TYPE_BLITZ].elo = 1542
+        opponent = self.connection.players.get(FICSPlayer('clisus'))
+        opponent.ratings[TYPE_BLITZ].elo = 1470
+        game = FICSGame(opponent, me, gameno=225, rated=True,
+            game_type=GAME_TYPES['lightning'], private=False, minutes=1, inc=0,
+            board=FICSBoard(60000, 60000, fen=FEN_START))
+        me.game = game
+        opponent.game = game
+        self.runAndAssertEquals("playGameCreated", lines, (game,))
+        self.assertEqual(self.deleted_offers, set((25,)))
+        self.assertEqual(self.deleted_seeks, set((117,)))
+
+    def test14 (self):
         """ Make sure observe-game-created messages are caught """
         lines = ["{Game 12 (electricbenj vs. antonymelvin) Creating rated wild/fr match.}",
                  BLOCK_START + '34' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
