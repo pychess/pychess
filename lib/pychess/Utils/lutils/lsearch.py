@@ -61,6 +61,9 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     if board.variant == ATOMICCHESS:
         if bin(board.boards[board.color][KING]).count("1") == 0:
             return [], MATED
+    elif board.variant == KINGOFTHEHILLCHESS:
+        if board.kings[board.color-1] in (E4, E5, D4, D5):
+            return [], MATED
 
     ############################################################################
     # Look in the end game table
