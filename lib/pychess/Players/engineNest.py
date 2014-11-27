@@ -78,6 +78,33 @@ class EngineDiscoverer (GObject):
             log.info("engineNest: Couldn\'t open engines.json, creating a new.\n%s" % e)
             self._engines = deepcopy(backup)
     
+        for protocol in ("xboard", "uci"):
+            for path in ("/usr/local/share/games/plugins", "/usr/share/games/plugins"):
+                path = os.path.join(path, protocol)
+                if os.path.isdir(path):
+                    for entry in os.listdir(path):
+                        name, ext = os.path.splitext(entry)
+                        if ext == ".eng":
+                            with open(os.path.join(path, entry)) as f:
+                                plugin_spec = f.readline().strip()
+                                engine_command = f.readline().strip()
+                                new_engine = {}
+                                if engine_command.startswith("cd ") and engine_command.find(";") > 0:
+                                    parts = engine_command.split(";")
+                                    working_directory = parts[0][3:]
+                                    engine_command = parts[1]
+                                    new_engine["workingDirectory"] = working_directory
+
+                                find = False
+                                for engine in self._engines:
+                                    if engine["name"] == engine_command:
+                                        find = True
+                                        break
+                                if not find:
+                                    new_engine["protocol"] = protocol
+                                    new_engine["name"] = engine_command
+                                    self._engines.append(new_engine)
+                                    
     ############################################################################
     # Discover methods                                                         #
     ############################################################################
