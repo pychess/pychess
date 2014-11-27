@@ -137,6 +137,8 @@ class CECPEngine (ProtocolEngine):
             "smp":       0,
             "egt":       '',
             "option":    '',
+            "exclude":   0,
+            "done":      None,
         }
         
         self.supported_features = [
@@ -877,26 +879,26 @@ class CECPEngine (ProtocolEngine):
                 # As "parts" is split with no thoughs on quotes or double quotes
                 # we need to do some extra handling.
                 
-                if pair.find("=") < 0: continue
+                if pair.find("=") < 0:
+                    continue
                 key, value = pair.split("=",1)
                 
-                if value[0] in ('"',"'") and value[-1] in ('"',"'"):
+                if not key in self.features:
+                    continue
+                    
+                if value.startswith('"') and value.endswith('"'):
                     value = value[1:-1]
                 
                 # If our pair was unfinished, like myname="GNU, we search the
                 # rest of the pairs for a quotating mark.
-                elif value[0] in ('"',"'"):
+                elif value[0] == '"':
                     rest = value[1:] + " " + " ".join(parts[2+i:])
-                    i = rest.find('"')
-                    j = rest.find("'")
-                    if i + j == -2:
+                    j = rest.find('"')
+                    if j == -1:
                         log.warning("Missing endquotation in %s feature", extra={"task":self.defname})
                         value = rest
-                    elif min(i, j) != -1:
-                        value = rest[:min(i, j)]
                     else:
-                        l = max(i, j)
-                        value = rest[:l]
+                        value = rest[:j]
                 
                 elif value.isdigit():
                     value = int(value)
