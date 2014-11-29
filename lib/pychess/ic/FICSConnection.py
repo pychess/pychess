@@ -155,7 +155,8 @@ class FICSConnection (Connection):
             self.client.read_until("login: ")
             self.emit('connectingMsg', _("Logging on to server"))
             
-            if self.username != "guest":
+            # login with registered handle
+            if self.password:
                 print >> self.client, self.username
                 got = self.client.read_until("password:",
                                              "enter the server as",
@@ -171,7 +172,10 @@ class FICSConnection (Connection):
                 elif got == 2:
                     raise LogOnException, NOTREG % self.username
             else:
-                print >> self.client, "guest"
+                if self.username:
+                    print >> self.client, self.username
+                else:
+                    print >> self.client, "guest"
                 self.client.read_until("Press return")
                 print >> self.client
             
