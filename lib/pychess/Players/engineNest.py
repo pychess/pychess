@@ -248,6 +248,10 @@ class EngineDiscoverer (GObject):
         engine['md5'] = md5sum
         if vmpath is not None:
             engine['vm_command'] = vmpath
+        if "variants" in engine:
+            del engine["variants"]
+        if "options" in engine:
+            del engine["options"]
         
     ######
     # Save the xml
@@ -356,10 +360,14 @@ class EngineDiscoverer (GObject):
                     if variantClass.cecp_name in engine.get("variants"):
                         yield variantClass.board.variant
                 # UCI knows Chess960 only
-                if variantClass.cecp_name == "fischerandom" and engine.get("options"):
+                if engine.get("options"):
                     for option in engine["options"]:
-                        if option["name"] == "UCI_Chess960":
+                        if option["name"] == "UCI_Chess960" and variantClass.cecp_name == "fischerandom":
                             yield variantClass.board.variant
+                        elif option["name"] == "UCI_Variant":
+                            if variantClass.cecp_name in option["choices"] or \
+                                variantClass.cecp_name.lower().replace("-", "") in option["choices"]:
+                                yield variantClass.board.variant
     
     def getName (self, engine=None):
         # Test if the call was to get the name of the thread
