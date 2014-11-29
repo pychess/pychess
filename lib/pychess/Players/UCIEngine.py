@@ -272,6 +272,8 @@ class UCIEngine (ProtocolEngine):
         if variant == FischerRandomChess:
             assert self.hasOption("UCI_Chess960")
             self.setOption("UCI_Chess960", True)
+        elif self.hasOption("UCI_Variant") and not variant.standard_rules:
+            self.setOption("UCI_Variant", variant.cecp_name)
     
     def setOptionTime (self, secs, gain):
         self.wtime = int(max(secs*1000*self.timeHandicap, 1))
