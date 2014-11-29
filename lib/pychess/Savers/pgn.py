@@ -116,6 +116,8 @@ def save (file, model, position=None):
         print >> file, '[Variant "Suicide"]'
     elif issubclass(model.variant, LosersChess):
         print >> file, '[Variant "Losers"]'
+    elif issubclass(model.variant, KingOfTheHillChess):
+        print >> file, '[Variant "Kingofthehill"]'
     if model.boards[0].asFen() != FEN_START:
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
