@@ -548,7 +548,7 @@ class UCIEngine (ProtocolEngine):
                 self.waitingForMove = False
 
                 try:
-                    move = parseAN(self.board, parts[1])
+                    move = parseAny(self.board, parts[1])
                 except ParsingError, e:
                     self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                     return
@@ -574,7 +574,7 @@ class UCIEngine (ProtocolEngine):
                         # But in some cases, what they send may not even be
                         # correct AN - specially in the case of promotion.
                         try:
-                            pondermove = parseAN(self.board, parts[3])
+                            pondermove = parseAny(self.board, parts[3])
                         except ParsingError:
                             pass
                         else:
