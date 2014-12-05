@@ -14,7 +14,7 @@ import gobject, gtk
 from gtk import DEST_DEFAULT_MOTION, DEST_DEFAULT_HIGHLIGHT, DEST_DEFAULT_DROP
 from gtk.gdk import keyval_from_name
 
-from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
+from pychess.System import conf, glock, idle_add, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log
 from pychess.System.debug import start_thread_dump
@@ -486,6 +486,7 @@ def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
     
     pychess = PyChess(log_viewer, chess_file)
     glock.debug = not no_glock_debug
+    idle_add.debug = not no_glock_debug
     log.info("PyChess %s %s rev. %s %s started" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
     log.info("Command line args: '%s'" % chess_file)
     if not no_thread_debug:
