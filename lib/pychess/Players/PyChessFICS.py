@@ -18,7 +18,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import determineAlgebraicNotation, toLAN, parseSAN
 from pychess.Utils.lutils import lsearch
 from pychess.Utils.repr import reprResult_long, reprReason_long
-from pychess.ic import FICSConnection
+from pychess.ic.FICSConnection import FICSMainConnection
 
 class PyChessFICS(PyChess):
     def __init__ (self, password, from_address, to_address):
@@ -135,8 +135,8 @@ class PyChessFICS(PyChess):
         
         PyChess.makeReady(self)
         
-        self.connection = FICSConnection("freechess.org",self.ports,
-                                         self.username, self.password)
+        self.connection = FICSMainConnection("freechess.org", self.ports,
+                                             self.username, self.password)
         self.connection.connect("connectingMsg", self.__showConnectLog)
         self.connection._connect()
         

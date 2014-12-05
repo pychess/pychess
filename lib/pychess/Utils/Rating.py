@@ -43,22 +43,4 @@ class Rating (gobject.GObject):
         return Rating(self.type, self.elo, deviation=self.deviation,
             wins=self.wins, losses=self.losses, draws=self.draws,
             bestElo=self.bestElo, bestTime=self.bestTime)
-    
-    def update (self, rating):
-        if self.type != rating.type:
-            raise TypeError
-        elif self.elo != rating.elo:
-            self.elo = rating.elo
-        elif self.deviation != rating.deviation:
-            self.deviation = rating.deviation
-        elif self.wins != rating.wins:
-            self.wins = rating.wins
-        elif self.losses != rating.losses:
-            self.losses = rating.losses
-        elif self.draws != rating.draws:
-            self.draws = rating.draws
-        elif self.bestElo != rating.bestElo:
-            self.bestElo = rating.bestElo
-        elif self.bestTime != rating.bestTime:
-            self.bestTime = rating.bestTime
         

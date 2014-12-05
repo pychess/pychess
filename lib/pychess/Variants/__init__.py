@@ -22,6 +22,7 @@ from wildcastle import WildcastleChess
 from wildcastleshuffle import WildcastleShuffleChess
 from blindfold import BlindfoldChess, HiddenPawnsChess, \
                       HiddenPiecesChess, AllWhiteChess
+from kingofthehill import KingOfTheHillChess
 
 variants = {NORMALCHESS : NormalChess,
             CORNERCHESS : CornerChess,
@@ -48,4 +49,5 @@ variants = {NORMALCHESS : NormalChess,
             HIDDENPIECESCHESS : HiddenPiecesChess,
             WILDCASTLECHESS: WildcastleChess,
             WILDCASTLESHUFFLECHESS: WildcastleShuffleChess,
+            KINGOFTHEHILLCHESS: KingOfTheHillChess,
             }

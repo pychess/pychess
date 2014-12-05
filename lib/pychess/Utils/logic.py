@@ -14,6 +14,7 @@ from lutils.attack import getAttacks
 from pychess.Variants.suicide import pieceCount
 from pychess.Variants.losers import testKingOnly
 from pychess.Variants.atomic import kingExplode
+from pychess.Variants.kingofthehill import testKingInCenter
 
 
 def getDestinationCords (board, cord):
@@ -60,6 +61,13 @@ def getStatus (board):
             else:
                 status = WHITEWON
             return status, WON_KINGEXPLODE
+    elif board.variant == KINGOFTHEHILLCHESS:
+        if testKingInCenter(lboard):
+            if board.color == BLACK:
+                status = WHITEWON
+            else:
+                status = BLACKWON
+            return status, WON_KINGINCENTER
     else:
         if ldraw.testMaterial (lboard):
             return DRAW, DRAW_INSUFFICIENT
@@ -167,7 +175,7 @@ def validate (board, move):
         if kingExplode(board.board, move.move, board.color):
             return False
         # Exploding oppont king takes precedence over mate
-        elif kingExplode(board.board, move.move, 1-board.color):
+        elif kingExplode(board.board, move.move, 1-board.color) and validateMove(board.board, move.move):
             return True
         else:
             return standard_validate (board, move)

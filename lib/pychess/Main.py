@@ -476,22 +476,24 @@ def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
         except OSError, e:
             pass
 
-    pychess = PyChess(log_viewer, chess_file)
     signal.signal(signal.SIGINT, gtk.main_quit)
     def cleanup ():
         SubProcess.finishAllSubprocesses()
     atexit.register(cleanup)
+    gobject.threads_init()
     gtk.gdk.threads_init()
+    gtk.threads_enter()
     
+    pychess = PyChess(log_viewer, chess_file)
     glock.debug = not no_glock_debug
     log.info("PyChess %s %s rev. %s %s started" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
     log.info("Command line args: '%s'" % chess_file)
     if not no_thread_debug:
         start_thread_dump()
-
     if ics_host:
         ICLogon.host = ics_host
     if ics_port:
         ICLogon.port = ics_port
     
     gtk.main()
+    gtk.threads_leave()
