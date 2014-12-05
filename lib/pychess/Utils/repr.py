@@ -41,6 +41,7 @@ reprReason_long = {
     WON_LESSMATERIAL: _("Because %(winner)s has fewer pieces"),
     WON_NOMATERIAL: _("Because %(winner)s lost all pieces"),
     WON_KINGEXPLODE: _("Because %(loser)s king exploded"),
+    WON_KINGINCENTER: _("Because %(winner)s king reached the center"),
 
     ADJOURNED_LOST_CONNECTION: _("Because a player lost connection"),
     ADJOURNED_AGREEMENT: _("Because both players agreed to an adjournment"),

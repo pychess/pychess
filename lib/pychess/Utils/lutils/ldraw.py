@@ -54,7 +54,7 @@ def testMaterial (board):
         return True
         
     # Tests KBKB. Draw if bishops are of same color
-    if not wn + wr + bn + wr and wb == 1 and bb == 1:
+    if not wn + wr + bn + br and wb == 1 and bb == 1:
         if board.boards[WHITE][BISHOP] & BLACK_SQUARES and True != \
            board.boards[BLACK][BISHOP] & BLACK_SQUARES and True:
             return True

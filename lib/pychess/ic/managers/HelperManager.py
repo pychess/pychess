@@ -31,15 +31,15 @@ class HelperManager (GObject):
 
         if self.helperconn.FatICS:
             self.helperconn.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
-
         else:
             # New ivar pin
             # http://www.freechess.org/Help/HelpFiles/new_features.html
             self.helperconn.expect_line (self.on_player_whoI,
-                                         "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
-            
+                "([A-Za-z]+)([\^~:\#. &])(\\d{2})" +
+                "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
             self.helperconn.expect_line (self.on_player_connect,
-                                         "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
+                "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" +
+                "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
             self.helperconn.expect_line (self.on_player_disconnect, "<wd> ([A-Za-z]+)")
 
         self.helperconn.expect_line (self.on_game_add,
@@ -139,7 +139,8 @@ class HelperManager (GObject):
             rating = rating[1:]
         return int(rating) if rating.isdigit() else 0
     
-    def __parseTitles (self, titles):
+    @staticmethod
+    def parseTitles (titles):
         _titles = set()
         if titles:
             for title in titleslist_re.findall(titles):
@@ -154,12 +155,12 @@ class HelperManager (GObject):
         wild, wilddev, bughouse, bughousedev, crazyhouse, crazyhousedev, \
         suicide, suicidedev, losers, losersdev, atomic, atomicdev = match.groups()
         player = self.connection.players.get(FICSPlayer(name))
-        copy = player.copy()
-        copy.online = True
-        copy.status = STATUS[status]
-        copy.titles |= parse_title_hex(titlehex)        
 
-        for ratingtype, elo, dev in \
+        titles = parse_title_hex(titlehex)
+        if not player.titles >= titles:
+            player.titles |= titles
+            
+        for rtype, elo, dev in \
                 ((TYPE_BLITZ, blitz, blitzdev),
                  (TYPE_STANDARD, std, stddev),
                  (TYPE_LIGHTNING, light, lightdev),
@@ -168,12 +169,18 @@ class HelperManager (GObject):
                  (TYPE_CRAZYHOUSE, crazyhouse, crazyhousedev),
                  (TYPE_BUGHOUSE, bughouse, bughousedev),
                  (TYPE_LOSERS, losers, losersdev),
-                 (TYPE_SUICIDE, suicide, suicidedev),
-                 ):
-            copy.ratings[ratingtype].elo = self.parseRating(elo)
-            copy.ratings[ratingtype].deviation = DEVIATION[dev]
+                 (TYPE_SUICIDE, suicide, suicidedev)):
+            r = self.parseRating(elo)
+            if player.ratings[rtype].elo != r:
+                player.ratings[rtype].elo = r
+            player.ratings[rtype].deviation = DEVIATION[dev]
 
-        player.update(copy)
+        # do last so rating info is there when notifications are generated
+        status = STATUS[status]
+        if player.status != status:
+            player.status = status
+        if not player.online:
+            player.online = True
     
     def on_player_disconnect (self, match):
         name = match.groups()[0]
@@ -186,38 +193,48 @@ class HelperManager (GObject):
     def on_player_who (self, match):
         for blitz, status, name, titles in whomatch_re.findall(match.string):
             player = self.connection.players.get(FICSPlayer(name))
-            copy = player.copy()
-            copy.online = True
-            copy.status = STATUS[status]
-            copy.titles |= self.__parseTitles(titles)
-            copy.ratings[TYPE_BLITZ].elo = self.parseRating(blitz)
-            player.update(copy)
+            if not player.online:
+                player.online = True
+            status = STATUS[status]
+            if player.status != status:
+                player.status = status
+            titles = self.parseTitles(titles)
+            if not player.titles >= titles:
+                player.titles |= titles
+            blitz = self.parseRating(blitz)
+            if player.ratings[TYPE_BLITZ].elo != blitz:
+                player.ratings[TYPE_BLITZ].elo = blitz
     
     def on_player_unavailable (self, match):
         name, titles = match.groups()
         player = self.connection.players.get(FICSPlayer(name))
-        copy = player.copy()
-        copy.titles |= self.__parseTitles(titles)
+        titles = self.parseTitles(titles)
+        if not player.titles >= titles:
+            player.titles |= titles
         # we get here after players start a game, so we make sure that we don't
         # overwrite IC_STATUS_PLAYING
-        if copy.game is None and copy.status != IC_STATUS_PLAYING:
-            copy.status = IC_STATUS_NOT_AVAILABLE
-        player.update(copy)
+        if player.game is None and \
+                player.status not in (IC_STATUS_PLAYING, IC_STATUS_NOT_AVAILABLE):
+            player.status = IC_STATUS_NOT_AVAILABLE
         
     def on_player_available (self, matches):
         name, titles, blitz, std, wild, light, bughouse = matches[0].groups()
         player = self.connection.players.get(FICSPlayer(name))
-        copy = player.copy()
-        copy.online = True
-        copy.status = IC_STATUS_AVAILABLE
-        copy.titles |= self.__parseTitles(titles)
-        copy.ratings[TYPE_BLITZ].elo = self.parseRating(blitz)
-        copy.ratings[TYPE_STANDARD].elo = self.parseRating(std)
-        copy.ratings[TYPE_WILD].elo = self.parseRating(wild)
-        copy.ratings[TYPE_LIGHTNING].elo = self.parseRating(light)
-        copy.ratings[TYPE_BUGHOUSE].elo = self.parseRating(bughouse)
-#         copy.ratings[TYPE_ATOMIC].elo = self.parseRating(atomic)
-#         copy.ratings[TYPE_CRAZYHOUSE].elo = self.parseRating(crazyhouse)
-#         copy.ratings[TYPE_LOSERS].elo = self.parseRating(losers)
-#         copy.ratings[TYPE_SUICIDE].elo = self.parseRating(suicide)
-        player.update(copy)
+
+        if not player.online:
+            player.online = True
+        if player.status != IC_STATUS_AVAILABLE:
+            player.status = IC_STATUS_AVAILABLE
+        titles = self.parseTitles(titles)
+        if not player.titles >= titles:
+            player.titles |= titles
+
+        for rtype, rating in (
+                (TYPE_BLITZ, blitz),
+                (TYPE_STANDARD, std),
+                (TYPE_LIGHTNING, light),
+                (TYPE_WILD, wild),
+                (TYPE_BUGHOUSE, bughouse)):
+            rating = self.parseRating(rating)
+            if player.ratings[rtype].elo != rating:
+                player.ratings[rtype].elo = rating

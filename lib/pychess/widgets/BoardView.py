@@ -805,9 +805,8 @@ class BoardView (gtk.DrawingArea):
             if piece.piece != PAWN:
                 return
         
-        if not self.showCaptured:
-            if x < 0 or x >= self.FILES:
-                return
+        if piece.captured and not self.showCaptured:
+            return
 
         xc, yc, square, s = self.square
         

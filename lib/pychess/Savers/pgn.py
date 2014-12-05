@@ -20,6 +20,7 @@ from pychess.Variants.fischerandom import FischerRandomChess, FRCBoard
 from pychess.Variants.wildcastle import WildcastleChess, WildcastleBoard
 from pychess.Variants.suicide import SuicideChess, SuicideBoard
 from pychess.Variants.losers import LosersChess, LosersBoard
+from pychess.Variants.kingofthehill import KingOfTheHillChess, KingOfTheHillBoard
 from pychess.widgets.ChessClock import formatTime
 
 from pgnbase import PgnBase, pgn_load
@@ -115,6 +116,8 @@ def save (file, model, position=None):
         print >> file, '[Variant "Suicide"]'
     elif issubclass(model.variant, LosersChess):
         print >> file, '[Variant "Losers"]'
+    elif issubclass(model.variant, KingOfTheHillChess):
+        print >> file, '[Variant "Kingofthehill"]'
     if model.boards[0].asFen() != FEN_START:
         print >> file, '[SetUp "1"]'
         print >> file, '[FEN "%s"]' % model.boards[0].asFen()
@@ -320,6 +323,8 @@ class PGNFile (PgnBase):
                 model.tags["Variant"] = "Suicide"
             elif variant == "Losers":
                 model.tags["Variant"] = "Losers"
+            elif variant == "Kingofthehill":
+                model.tags["Variant"] = "Kingofthehill"
 
         if variant == "Fischerandom":
             board = LBoard(FISCHERRANDOMCHESS)
@@ -339,6 +344,9 @@ class PGNFile (PgnBase):
         elif variant == "Losers":
             board = LBoard(LOSERSCHESS)
             model.variant = LosersChess
+        elif variant == "Kingofthehill":
+            board = LBoard(KINGOFTHEHILLCHESS)
+            model.variant = KingOfTheHillChess
         else:
             board = LBoard()
 
@@ -386,6 +394,8 @@ class PGNFile (PgnBase):
                     board = SuicideBoard(setup=node.asFen(), lboard=node)
                 elif variant == "Losers":
                     board = LosersBoard(setup=node.asFen(), lboard=node)
+                elif variant == "Kingofthehill":
+                    board = KingOfTheHillBoard(setup=node.asFen(), lboard=node)
                 else:
                     board = Board(setup=node.asFen(), lboard=node)
             else:

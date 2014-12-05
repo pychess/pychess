@@ -34,6 +34,13 @@ movetime = "\((\d+):(\d\d)(?:\.(\d\d\d))?\)"
 moveListMoves = re.compile("(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" % \
     (sanmove, movetime, sanmove, movetime))
 
+creating0 = re.compile("Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
+    % (names, ratings, names, ratings, ratedexp))
+creating1 = re.compile("{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
+    % (names, names, ratedexp))
+pr = re.compile("<pr> ([\d ]+)")
+sr = re.compile("<sr> ([\d ]+)")
+
 fileToEpcord = (("a3","b3","c3","d3","e3","f3","g3","h3"),
                 ("a6","b6","c6","d6","e6","f6","g6","h6"))
 
@@ -210,140 +217,12 @@ class BoardManager (GObject):
         # prediction callbacks in VerboseTelnet to put lines the callback isn't
         # interested in or doesn't handle back onto the input line stack in
         # VerboseTelnet.TelnetLines
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek,
-            "Your seek matches one already posted by %s\." % names,
-            "",
-            "<sr> ([\d ]+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek2,
-            "Your seek matches one already posted by %s\." % names,
-            "",
-            "<sr> ([\d ]+)",
-            "",
-            "<sr> ([\d ]+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek3,
-            "Your seek matches one already posted by %s\." % names,
-            "",
-            "<sr> ([\d ]+)",
-            "",
-            "<sr> ([\d ]+)",
-            "%s Challenge to %s withdrawn\." % \
-            (self.connection.client.lines.line_prefix, names),
-            "",
-            "<pr> (\d+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek4,
-            "Your seek matches one already posted by %s\." % names,
-            "",
-            "<sr> ([\d ]+)",
-            "%s Challenge to %s withdrawn\." % \
-            (self.connection.client.lines.line_prefix, names),
-            "",
-            "<pr> (\d+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek5,
-            "Your seek matches one already posted by %s\." % names,
-            "",
-            "<sr> ([\d ]+)",
-            "",
-            "Challenge from %s removed\." % names,
-            "",
-            "<pr> (\d+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek6,
-            "Your seek matches one already posted by %s\." % names,
-            "",
-            "<sr> ([\d ]+)",
-            "",
-            "<pr> (\d+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromMatchingSeek7,
-            "Your seek matches one already posted by %s\." % names,
-            "",
-            "<sr> ([\d ]+)",
-            "",
-            "<sr> ([\d ]+)",
-            "%s Challenge to %s withdrawn\." % \
-            (self.connection.client.lines.line_prefix, names),
-            "",
-            "<pr> (\d+)",
-            "%s Challenge to %s withdrawn\." % \
-            (self.connection.client.lines.line_prefix, names),
-            "",
-            "<pr> (\d+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromGetgame,
-            "Your seek qualifies for %s's getgame\." % names,
-            "",
-            "<sr> ([\d ]+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromGetgame2,
-            "Your seek qualifies for %s's getgame\." % names,
-            "",
-            "<sr> ([\d ]+)",
-            "",
-            "<sr> ([\d ]+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
-        self.connection.expect_n_lines (self.onPlayGameCreatedFromGetgame3,
-            "Your seek qualifies for %s's getgame\." % names,
-            "",
-            "<sr> ([\d ]+)",
-            "%s Challenge to %s withdrawn\." % \
-            (self.connection.client.lines.line_prefix, names),
-            "",
-            "<pr> ([\d ]+)",
-            "",
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
+        self.connection.expect_fromto (self.onMatchingSeekOrGetGame,
+            "Your seek (?:matches one already posted by %s|qualifies for %s's getgame)\." % (names, names),
+            "(?:<12>|<sn>) (.+)")
+        self.connection.expect_fromto (self.onInterceptedChallenge,
+            "Your challenge intercepts %s's challenge\." % names,
+            "<12> (.+)")
 
         self.connection.expect_n_lines (self.onObserveGameCreated,
             "You are now observing game \d+\.",
@@ -557,67 +436,24 @@ class BoardManager (GObject):
         self.theGameImPlaying = game
         self.gamemodelStartedEvents[gameno] = threading.Event()
         self.emit("playGameCreated", game)
-    
-    def onPlayGameCreatedFromMatchingSeek (self, matchlist):
-        self.connection.glm.on_seek_remove(matchlist[2])
-        self.onPlayGameCreated(matchlist[4:8])
-    onPlayGameCreatedFromMatchingSeek.BLKCMD = BLKCMD_SEEK
-    
-    def onPlayGameCreatedFromMatchingSeek2 (self, matchlist):
-        self.connection.glm.on_seek_remove(matchlist[2])
-        self.connection.glm.on_seek_remove(matchlist[4])
-        self.onPlayGameCreated(matchlist[6:10])
-    onPlayGameCreatedFromMatchingSeek2.BLKCMD = BLKCMD_SEEK
-    
-    def onPlayGameCreatedFromMatchingSeek3 (self, matchlist):
-        self.connection.glm.on_seek_remove(matchlist[2])
-        self.connection.glm.on_seek_remove(matchlist[4])
-        self.connection.om.onOfferRemove(matchlist[7])
-        self.onPlayGameCreated(matchlist[9:13])
-    onPlayGameCreatedFromMatchingSeek3.BLKCMD = BLKCMD_SEEK
-    
-    def onPlayGameCreatedFromMatchingSeek4 (self, matchlist):
-        self.connection.glm.on_seek_remove(matchlist[2])
-        self.connection.om.onOfferRemove(matchlist[5])
-        self.onPlayGameCreated(matchlist[7:11])
-    onPlayGameCreatedFromMatchingSeek4.BLKCMD = BLKCMD_SEEK
-    
-    def onPlayGameCreatedFromMatchingSeek5 (self, matchlist):
-        self.connection.glm.on_seek_remove(matchlist[2])
-        self.connection.om.onOfferRemove(matchlist[6])
-        self.onPlayGameCreated(matchlist[8:12])
-    onPlayGameCreatedFromMatchingSeek5.BLKCMD = BLKCMD_SEEK
-    
-    def onPlayGameCreatedFromMatchingSeek6 (self, matchlist):
-        self.connection.glm.on_seek_remove(matchlist[2])
-        self.connection.om.onOfferRemove(matchlist[4])
-        self.onPlayGameCreated(matchlist[6:10])
-    onPlayGameCreatedFromMatchingSeek6.BLKCMD = BLKCMD_SEEK
 
-    def onPlayGameCreatedFromMatchingSeek7 (self, matchlist):
-        self.connection.glm.on_seek_remove(matchlist[2])
-        self.connection.glm.on_seek_remove(matchlist[4])
-        self.connection.om.onOfferRemove(matchlist[7])
-        self.connection.om.onOfferRemove(matchlist[10])
-        self.onPlayGameCreated(matchlist[12:16])
-    onPlayGameCreatedFromMatchingSeek7.BLKCMD = BLKCMD_SEEK
+    def onMatchingSeekOrGetGame(self, matchlist):
+        if matchlist[-1].string.startswith("<12>"):
+            for line in matchlist[1:-4]:
+                    if line.startswith("<sr>"):
+                        self.connection.glm.on_seek_remove(sr.match(line))
+                    elif line.startswith("<pr>"):
+                        self.connection.om.onOfferRemove(pr.match(line))
+            self.onPlayGameCreated((creating0.match(matchlist[-4]),
+                                    creating1.match(matchlist[-3]),
+                                    matchlist[-1]))
+        else:
+            self.connection.glm.on_seek_add(matchlist[-1])
+    onMatchingSeekOrGetGame.BLKCMD = BLKCMD_SEEK
     
-    def onPlayGameCreatedFromGetgame (self, matchlist):
-        self.connection.glm.on_seek_remove(matchlist[2])
-        self.onPlayGameCreated(matchlist[4:8])
-    onPlayGameCreatedFromGetgame.BLKCMD = BLKCMD_SEEK
-    
-    def onPlayGameCreatedFromGetgame2 (self, matchlist):
-        self.connection.glm.on_seek_remove(matchlist[2])
-        self.connection.glm.on_seek_remove(matchlist[4])
-        self.onPlayGameCreated(matchlist[6:10])
-    onPlayGameCreatedFromGetgame2.BLKCMD = BLKCMD_SEEK
-    
-    def onPlayGameCreatedFromGetgame3 (self, matchlist):
-        self.connection.glm.on_seek_remove(matchlist[2])
-        self.connection.om.onOfferRemove(matchlist[5])
-        self.onPlayGameCreated(matchlist[7:11])
-    onPlayGameCreatedFromGetgame3.BLKCMD = BLKCMD_SEEK
+    def onInterceptedChallenge(self, matchlist):
+        self.onMatchingSeekOrGetGame(matchlist)
+    onInterceptedChallenge.BLKCMD = BLKCMD_MATCH
     
     def parseGame (self, matchlist, gameclass, in_progress=False):
         """ 
