@@ -2,10 +2,9 @@ import os
 
 import gtk
 
-from Throbber import Throbber
 from pychess.Players.engineNest import discoverer
 from pychess.System import conf, uistuff
-from pychess.System.glock import glock_connect
+from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addDataPrefix
 
 uistuff.cacheGladefile("discovererDialog.glade")
@@ -26,35 +25,17 @@ class DiscovererDialog:
         #=======================================================================
         # Connect us to the discoverer
         #=======================================================================
-        glock_connect(discoverer, "discovering_started", cls._onDiscoveringStarted)
-        glock_connect(discoverer, "engine_discovered", cls._onEngineDiscovered)
-        glock_connect(discoverer, "all_engines_discovered", cls._onAllEnginesDiscovered)
+        discoverer.connect("discovering_started", cls._onDiscoveringStarted)
+        discoverer.connect("engine_discovered", cls._onEngineDiscovered)
+        discoverer.connect("all_engines_discovered", cls._onAllEnginesDiscovered)
         cls.finished = False
         cls.throbber = None
         
     @classmethod
-    def show (cls, discoverer, mainwindow):
+    def show (cls, discoverer, mainwindow, binnames):
         if cls.finished:
             return
-        
-        #=======================================================================
-        # Add throbber
-        #=======================================================================
-        
-        cls.throbber = Throbber(100, 100)
-        cls.throbber.set_size_request(100, 100)
-        cls.widgets["throbberDock"].add(cls.throbber)
-        
-        #=======================================================================
-        # Show the window
-        #=======================================================================
-        cls.widgets["discovererDialog"].set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-        cls.widgets["discovererDialog"].set_modal(True)
-        cls.widgets["discovererDialog"].set_transient_for(mainwindow)
-        cls.widgets["discovererDialog"].show_all()
-    
-    @classmethod
-    def _onDiscoveringStarted (cls, discoverer, binnames):
+
         #======================================================================
         # Insert the names to be discovered
         #======================================================================
@@ -66,13 +47,37 @@ class DiscovererDialog:
             bar = gtk.ProgressBar()
             cls.widgets["enginesTable"].attach(bar, 1, 2, i, i+1)
             cls.nameToBar[name] = bar
+        
+        #=======================================================================
+        # Add throbber
+        #=======================================================================
+        
+        cls.throbber = gtk.Spinner()
+        cls.throbber.set_size_request(50, 50)
+        cls.widgets["throbberDock"].add(cls.throbber)
+        
+        #=======================================================================
+        # Show the window
+        #=======================================================================
+        cls.widgets["discovererDialog"].set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        cls.widgets["discovererDialog"].set_modal(True)
+        cls.widgets["discovererDialog"].set_transient_for(mainwindow)
+        cls.widgets["discovererDialog"].show_all()
     
     @classmethod
+    @idle_add
+    def _onDiscoveringStarted (cls, discoverer, binnames):
+        cls.throbber.start()
+    
+    @classmethod
+    @idle_add
     def _onEngineDiscovered (cls, discoverer, binname, xmlenginevalue):
-        bar = cls.nameToBar[binname]
-        bar.props.fraction = 1
+        if binname in cls.nameToBar:
+            bar = cls.nameToBar[binname]
+            bar.props.fraction = 1
     
     @classmethod
+    @idle_add
     def _onAllEnginesDiscovered (cls, discoverer):
         cls.finished = True
         if cls.throbber:

@@ -443,7 +443,7 @@ class PyChess:
         
         #----------------------------------------------------- Discoverer dialog
         def discovering_started (discoverer, binnames):
-            gobject.idle_add(DiscovererDialog.show, discoverer, widgets["window1"])
+            gobject.idle_add(DiscovererDialog.show, discoverer, widgets["window1"], binnames)
         discoverer.connect("discovering_started", discovering_started)
         DiscovererDialog.init(discoverer)
         discoverer.discover()
