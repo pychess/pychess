@@ -44,6 +44,16 @@ def nurseGame (gmwidg, gamemodel):
     gamemodel.connect("game_changed", game_changed, gmwidg)
     gamemodel.connect("game_paused", game_paused, gmwidg)
 
+    if isinstance(gamemodel, ICGameModel):
+        gamemodel.connection.connect("disconnected", on_disconnected, gmwidg)
+
+def on_disconnected (fics_connection, gamewidget):
+    if gamewidget.game_ended_message:
+        for b in gamewidget.game_ended_message.buttons:
+            with glock.glock:
+                b.set_property("sensitive", False)
+                b.set_property("tooltip-text", "")
+
 #===============================================================================
 # Gamewidget signals
 #===============================================================================
@@ -164,6 +174,7 @@ def game_ended (gamemodel, reason, gmwidg):
                 message.add_button(InfoBarMessageButton(_("Undo two moves"), 2))
 
     message.callback = callback
+    gmwidg.game_ended_message = message
     
     with glock.glock:
         gmwidg.replaceMessages(message)

@@ -15,28 +15,31 @@ G_RESPONSE = '\x029'
 FILLER = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 IAC_WONT_ECHO = ''.join([telnetlib.IAC, telnetlib.WONT, telnetlib.ECHO])
 
-class TimeSeal:
+class CanceledException (Exception): pass
+
+class TimeSeal (object):
     BUFFER_SIZE = 4096
     sensitive = False
 
     def __init__(self):
         self.name = ""
+        self.connected = False
+        self.canceled = False
+        self.FatICS = False
+        self.buf = ''
+        self.writebuf = ''
+        self.stateinfo = None
+        self.sock = None
         
     def open (self, host, port):
-        if hasattr(self, "closed") and self.closed:
-            return
+        if self.canceled:
+            raise CanceledException()
         
         self.port = port
         self.host = host
         self.name = host
 
-        self.FatICS = False
-
-        self.connected = False
-        self.closed = False
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.stateinfo = None
-        
         self.sock.settimeout(10)
         try:
             self.sock.connect((host, port))
@@ -45,17 +48,20 @@ class TimeSeal:
                 raise
         self.sock.settimeout(None)
         
-        self.buf = ''
-        self.writebuf = ''
-        
         print >> self, self.get_init_string()
         self.cook_some()
     
+    def cancel (self):
+        self.canceled = True
+        self.close()
+        
     def close (self):
-        self.closed = True
-        if hasattr(self, "sock"):
+        self.connected = False
+        try:
             self.sock.close()
-    
+        except AttributeError:
+            pass
+        
     def encode(self, inbuf, timestamp = None):
         assert inbuf == "" or inbuf[-1] != "\n"
         
@@ -133,8 +139,7 @@ class TimeSeal:
         self.writebuf += str
         if "\n" not in self.writebuf:
             return
-        
-        if self.closed:
+        if not self.connected:
             return
         
         i = self.writebuf.rfind("\n")
@@ -150,6 +155,9 @@ class TimeSeal:
         return self.readuntil("\n")
     
     def readuntil(self, until):
+        if self.canceled:
+            raise CanceledException()
+        
         while True:
             i = self.buf.find(until)
             if i >= 0:
@@ -166,13 +174,12 @@ class TimeSeal:
         if not self.connected:
             log.debug(recv, extra={"task": (self.name, "raw")})
             self.buf += recv
+            self.connected = True
             
             if "FatICS" in self.buf:
                 self.FatICS = True
             elif "Starting FICS session" in self.buf:
-                self.connected = True
                 self.buf = self.buf.replace(IAC_WONT_ECHO, '')
-        
         else:
             recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
             recv = recv.replace("\r","")
@@ -184,6 +191,9 @@ class TimeSeal:
             self.buf += recv
     
     def read_until (self, *untils):
+        if self.canceled:
+            raise CanceledException()
+        
         while True:
             for i, until in enumerate(untils):
                 start = self.buf.find(until)
@@ -191,13 +201,3 @@ class TimeSeal:
                     self.buf = self.buf[:start]
                     return i
             self.cook_some()
-
-            
-
-
-
-
-
-
-
-
