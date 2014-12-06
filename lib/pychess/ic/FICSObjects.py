@@ -5,6 +5,7 @@ import gobject
 from gobject import GObject, SIGNAL_RUN_FIRST
 
 from pychess.System.Log import log
+from pychess.System.idle_add import idle_add
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.Rating import Rating
 from pychess.Utils.const import *
@@ -24,6 +25,7 @@ class FICSRatings (dict):
             raise TypeError("bad val: %s %s" % (repr(val), type(val)))
         dict.__setitem__(self, key, val)
 
+@idle_add
 def make_sensitive_if_available (button, player):
     if player.isAvailableForGame():
         button.set_property("sensitive", True)
@@ -33,6 +35,7 @@ def make_sensitive_if_available (button, player):
         button.set_property("tooltip-text", _("%(player)s is %(status)s") % \
             {"player": player.name, "status": player.display_status.lower()})
 
+@idle_add
 def make_sensitive_if_playing (button, player):
     status = player.display_status.lower()
     if player.status == IC_STATUS_PLAYING:

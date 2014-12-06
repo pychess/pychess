@@ -1,6 +1,6 @@
 import gamewidget
 from pychess.System import conf
-from pychess.System import glock
+from pychess.System.idle_add import idle_add
 from pychess.Utils.const import ACTION_MENU_ITEMS
 
 ################################################################################
@@ -48,11 +48,10 @@ class GtkMenuItem (object):
         if not self.gamewidget.isInFront(): return
         if gamewidget.getWidgets()[self.name].get_property(prop) != value:
             #print "setting %s property %s to %s.." % (self.name, prop, str(value)),
-            glock.acquire()
-            try:
+            @idle_add
+            def do():
                 gamewidget.getWidgets()[self.name].set_property(prop, value)
-            finally:
-                glock.release()
+            do()
             #print " success (%s = \"%s\")" % \
             #    (prop, gamewidget.getWidgets()[self.name].get_property(prop))
             

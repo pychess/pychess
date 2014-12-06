@@ -6,7 +6,7 @@ from gtk.gdk import keyval_from_name
 import pango
 import gobject
 
-from pychess.System import glock
+from pychess.System.idle_add import idle_add
 from pychess.System import uistuff
 from BorderBox import BorderBox
 
@@ -99,31 +99,25 @@ class ChatView (gtk.VPaned):
         # This is used to buzz the user and add senders to a list of active participants
         self.emit("messageAdded", sender, text, self.colors[pref])
     
+    @idle_add
     def insertLogMessage (self, timestamp, sender, text):
         """ Takes a list of (timestamp, sender, text) pairs, and inserts them in
             the beginning of the document.
             All text will be in a gray color """
-        glock.acquire()
-        try:
-            tb = self.readView.get_buffer()
-            iter = tb.get_iter_at_mark(tb.get_mark("logMark"))
-            time = strftime("%H:%M:%S", localtime(timestamp))
-            self.__addMessage(iter, time, sender, text)
-            tb.insert(iter, "\n")
-        finally:
-            glock.release()
+        tb = self.readView.get_buffer()
+        iter = tb.get_iter_at_mark(tb.get_mark("logMark"))
+        time = strftime("%H:%M:%S", localtime(timestamp))
+        self.__addMessage(iter, time, sender, text)
+        tb.insert(iter, "\n")
     
+    @idle_add
     def addMessage (self, sender, text):
-        glock.acquire()
-        try:
-            tb = self.readView.get_buffer()
-            iter = tb.get_end_iter()
-            # Messages have linebreak before the text. This is opposite to log
-            # messages
-            if tb.props.text: tb.insert(iter, "\n")
-            self.__addMessage(iter, strftime("%H:%M:%S"), sender, text)
-        finally:
-            glock.release()
+        tb = self.readView.get_buffer()
+        iter = tb.get_end_iter()
+        # Messages have linebreak before the text. This is opposite to log
+        # messages
+        if tb.props.text: tb.insert(iter, "\n")
+        self.__addMessage(iter, strftime("%H:%M:%S"), sender, text)
     
     def disable (self, message):
         """ Sets the write field insensitive, in cases where the channel is

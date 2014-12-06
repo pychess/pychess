@@ -5,7 +5,7 @@ from __future__ import with_statement
 import gtk, pango
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
-from pychess.System.glock import *
+from pychess.System.idle_add import idle_add
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprColor, reprPiece
 from pychess.Utils.lutils.lsort import staticExchangeEvaluate
@@ -35,9 +35,9 @@ class Sidepanel:
         
         self.gamemodel = gmwidg.board.view.model
         self.gmhandlers = [
-            glock_connect(self.gamemodel, "game_changed", self.game_changed),
-            glock_connect(self.gamemodel, "game_started", self.game_started),
-            glock_connect(self.gamemodel, "moves_undoing", self.moves_undoing)
+            self.gamemodel.connect("game_changed", self.game_changed),
+            self.gamemodel.connect("game_started", self.game_started),
+            self.gamemodel.connect("moves_undoing", self.moves_undoing)
         ]
 
         widgets = gtk.Builder()
@@ -84,6 +84,7 @@ class Sidepanel:
             pass
             # deleted variations by moves_undoing
     
+    @idle_add
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
         model = self.tv.get_model()
@@ -93,6 +94,7 @@ class Sidepanel:
     def game_started (self, model):
         self.game_changed(model)
 
+    @idle_add
     def game_changed (self, model):
         for ply in xrange(len(self.store)+model.lowply, model.ply+1):
             self.addComment(model, self.__chooseComment(model, ply))

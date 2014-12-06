@@ -4,7 +4,7 @@ import gtk
 import gobject
 
 from pychess.System import uistuff
-from pychess.System.glock import glock_connect_after
+from pychess.System.idle_add import idle_add
 from pychess.System.prefix import getEngineDataPrefix
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
 from pychess.widgets import newGameDialog
@@ -78,6 +78,7 @@ class EnginesDialog():
         optv.append_column(gtk.TreeViewColumn(
            "Data", KeyValueCellRenderer(self.options_store), data=1))
 
+        @idle_add
         def update_options(*args):
             if self.cur_engine is not None:
                 engines = discoverer.getEngines()
@@ -97,6 +98,7 @@ class EnginesDialog():
                             val["value"] = option.get("value", val["default"])
                         self.options_store.append([key, val])
 
+        @idle_add
         def update_store(*args):
             allstore.clear()
             newGameDialog.createPlayerUIGlobals(discoverer)
@@ -166,7 +168,7 @@ class EnginesDialog():
                         
                         discoverer.addEngine(binname, new_engine, protocol)
                         self.cur_engine = binname
-                        glock_connect_after(discoverer, "engine_discovered", update_store)
+                        discoverer.connect_after("engine_discovered", update_store)
                         self.add = False
                         discoverer.discover()
                     except:
@@ -236,7 +238,7 @@ class EnginesDialog():
                         # discover engine options for new protocol
                         engine["protocol"] = new_protocol
                         engine["recheck"] = True
-                        glock_connect_after(discoverer, "engine_discovered", update_options)
+                        discoverer.connect_after("engine_discovered", update_options)
                         discoverer.discover()
                     else:
                         # restore the original protocol

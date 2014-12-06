@@ -8,7 +8,7 @@ from gtk.gdk import pixbuf_new_from_file
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff, conf
-from pychess.System.glock import glock_connect_after
+from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon
@@ -156,7 +156,7 @@ class NewGameTasker (gtk.Alignment):
         # has also had time to init the constants we share with them.
         self.playerCombo = ToggleComboBox()
         widgets["opponentDock"].add(self.playerCombo)
-        glock_connect_after(discoverer, "all_engines_discovered",
+        discoverer.connect_after( "all_engines_discovered",
                             self.__initPlayerCombo, widgets)
         widgets['opponentLabel'].set_mnemonic_widget(self.playerCombo)
         
@@ -169,6 +169,8 @@ class NewGameTasker (gtk.Alignment):
         widgets["startButton"].connect("clicked", self.startClicked)
         self.widgets["opendialog1"].connect("clicked", self.openDialogClicked)
 
+
+    @idle_add
     def __initPlayerCombo (self, discoverer, widgets):
         combo = self.playerCombo
         combo.update(newGameDialog.smallPlayerItems[0])

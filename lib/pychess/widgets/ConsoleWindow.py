@@ -4,9 +4,8 @@ import pango
 from gtk.gdk import keyval_from_name
 
 from BorderBox import BorderBox
-from pychess.System import glock
 from pychess.System import uistuff
-from pychess.System.glock import glock_connect
+from pychess.System.idle_add import idle_add
 
 
 class ConsoleWindow (object):
@@ -26,8 +25,12 @@ class ConsoleWindow (object):
         
         widgets["show_console_button"].connect("clicked", self.showConsole)
         connection.com.connect("consoleMessage", self.onConsoleMessage)
-        glock_connect(connection, "disconnected",
-                      lambda c: self.window and self.window.hide())
+        connection.connect("disconnected", self.onDisconnected)
+
+    @idle_add
+    def onDisconnected(self, conn):
+        if self.window:
+            self.window.hide()
 
     def showConsole(self, *widget):
         self.window.show_all()
@@ -46,7 +49,7 @@ class ConsoleWindow (object):
         for line in lines:
             line = self.filter_unprintable(line.line)
             if line and not line.startswith('<'):
-                self.consoleView.addMessage(line)
+                self.consoleView.addMessage(line, False)
         
 
 class ConsoleView (gtk.VPaned):
@@ -94,21 +97,17 @@ class ConsoleView (gtk.VPaned):
         
         self.writeView.connect("key-press-event", self.onKeyPress)
 
-    
-    def addMessage (self, text, my=False):
-        glock.acquire()
-        try:
-            tb = self.readView.get_buffer()
-            iter = tb.get_end_iter()
-            # Messages have linebreak before the text. This is opposite to log
-            # messages
-            if tb.props.text:
-                tb.insert(iter, "\n")
-            tb = self.readView.get_buffer()
-            tag = "mytext" if my else "text"
-            tb.insert_with_tags_by_name(iter, text, tag)
-        finally:
-            glock.release()
+    @idle_add
+    def addMessage (self, text, my):
+        tb = self.readView.get_buffer()
+        iter = tb.get_end_iter()
+        # Messages have linebreak before the text. This is opposite to log
+        # messages
+        if tb.props.text:
+            tb.insert(iter, "\n")
+        tb = self.readView.get_buffer()
+        tag = "mytext" if my else "text"
+        tb.insert_with_tags_by_name(iter, text, tag)
    
     def onKeyPress (self, widget, event):
         if event.keyval in map(keyval_from_name,("Return", "KP_Enter")):
@@ -116,7 +115,7 @@ class ConsoleView (gtk.VPaned):
                 buffer = self.writeView.get_buffer()
                 self.connection.client.run_command(buffer.props.text)
                 self.emit("messageTyped", buffer.props.text)
-                self.addMessage(buffer.props.text, my=True)
+                self.addMessage(buffer.props.text, True)
                 adj = self.sw.get_vadjustment()
                 adj.set_value(adj.get_upper())
                 
