@@ -8,9 +8,8 @@ import gtk.gdk, cairo
 from gobject import *
 import pango
 
-from pychess.System import glock, conf
-from pychess.System.glock import glock_connect, glock_connect_after
-from pychess.System.repeat import repeat
+from pychess.System import conf
+from pychess.System.idle_add import idle_add
 from pychess.gfx import Pieces
 from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
@@ -99,13 +98,13 @@ class BoardView (gtk.DrawingArea):
         self.preview = preview
         self.shownVariationIdx = 0 # the main variation is the first in gamemodel.variations list
         
-        glock_connect(self.model, "game_started", self.game_started)
-        glock_connect_after(self.model, "game_started", self.game_started_after)
-        glock_connect_after(self.model, "game_changed", self.game_changed)
-        glock_connect_after(self.model, "moves_undoing", self.moves_undoing)
-        glock_connect_after(self.model, "game_loading", self.game_loading)
-        glock_connect_after(self.model, "game_loaded", self.game_loaded)
-        glock_connect_after(self.model, "game_ended", self.game_ended)
+        self.model.connect("game_started", self.game_started)
+        self.model.connect_after("game_started", self.game_started_after)
+        self.model.connect_after("game_changed", self.game_changed)
+        self.model.connect_after("moves_undoing", self.moves_undoing)
+        self.model.connect_after("game_loading", self.game_loading)
+        self.model.connect_after("game_loaded", self.game_loaded)
+        self.model.connect_after("game_ended", self.game_ended)
         
         self.connect("expose_event", self.expose)
         self.connect_after("realize", self.on_realized)
@@ -117,6 +116,8 @@ class BoardView (gtk.DrawingArea):
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES
         
+        self.animationID = -1
+        self._doStop = False
         self.animationStart = time()
         self.lastShown = None
         self.deadlist = []
@@ -404,19 +405,25 @@ class BoardView (gtk.DrawingArea):
         if self.realSetShown:
             self.emit("shown_changed", self.shown)
         
+        if self.animationID != -1:
+            self._doStop = True
+        
         self.animationStart = time()
-        if self.lastMove:
-            paintBox = self.paintBoxAround(self.lastMove)
-            self.lastMove = None
-            self.redraw_canvas(rect(paintBox))
-        if self.shown > self.model.lowply:
-            self.lastMove = self.model.getMoveAtPly(self.shown-1, self.shownVariationIdx)
-        else:
-            self.lastMove = None
+        @idle_add
+        def do():
+            if self.lastMove:
+                paintBox = self.paintBoxAround(self.lastMove)
+                self.lastMove = None
+                self.redraw_canvas(rect(paintBox))
+            if self.shown > self.model.lowply:
+                self.lastMove = self.model.getMoveAtPly(self.shown-1, self.shownVariationIdx)
+            else:
+                self.lastMove = None
 
-        self.runAnimation(redrawMisc=self.realSetShown)
-        if not conf.get("noAnimation", False):
-            repeat(self.runAnimation)
+            self.runAnimation(redrawMisc=self.realSetShown)
+            if not conf.get("noAnimation", False):
+                self.animationID = self.runAnimation(False)
+        do()
         
     shown = property(_get_shown, _set_shown)
     
@@ -432,6 +439,12 @@ class BoardView (gtk.DrawingArea):
         which starts the animation, also sets a timestamp for the acceleration
         to work properply.
         """
+        
+        if self._doStop:
+            self._doStop = False
+            self.animationID = -1
+            return False
+            
         with self.animationLock:
             paintBox = None
             
@@ -539,10 +552,13 @@ class BoardView (gtk.DrawingArea):
     
     def startAnimation (self):
         self.animationStart = time()
-        self.runAnimation(redrawMisc = True)
-        if not conf.get("noAnimation", False):
-            repeat(self.runAnimation)
-    
+        
+        @idle_add
+        def do():
+            self.runAnimation(redrawMisc=True)
+            if not conf.get("noAnimation", False):
+                self.animationID = self.runAnimation()
+        do()
     #############################
     #          Drawing          #
     #############################
@@ -602,8 +618,8 @@ class BoardView (gtk.DrawingArea):
     
     def redraw_canvas(self, r=None, queue=False):
         if self.window:
-            glock.acquire()
-            try:
+            @idle_add
+            def redraw(r, queue):
                 if self.window:
                     if not r:
                         alloc = self.get_allocation()
@@ -614,9 +630,8 @@ class BoardView (gtk.DrawingArea):
                     else:
                         self.window.invalidate_rect(r, True)
                         self.window.process_updates(True)
-            finally:
-                glock.release()
-    
+            redraw(r, queue)
+            
     ###############################
     #            draw             #
     ###############################
@@ -1272,14 +1287,13 @@ class BoardView (gtk.DrawingArea):
     
     def _set_rotation (self, radians):
         if not conf.get("fullAnimation", True):
-            glock.acquire()
-            try:
+            @idle_add
+            def rotate():
                 self._rotation = radians
                 self.nextRotation = radians
                 self.matrix = cairo.Matrix.init_rotate(radians)
                 self.redraw_canvas()
-            finally:
-                glock.release()
+            rotate()
         else:
             if hasattr(self, "nextRotation") and \
                     self.nextRotation != self.rotation:
@@ -1287,21 +1301,20 @@ class BoardView (gtk.DrawingArea):
             self.nextRotation = radians
             oldr = self.rotation
             start = time()
-            def callback ():
-                glock.acquire()
-                try:
-                    amount = (time()-start)/ANIMATION_TIME
-                    if amount > 1:
-                        amount = 1
-                        next = False
-                    else: next = True
-                    self._rotation = new = oldr + amount*(radians-oldr)
-                    self.matrix = cairo.Matrix.init_rotate(new)
-                    self.redraw_canvas()
-                finally:
-                    glock.release()
+            next = True
+            @idle_add
+            def rotate():
+                amount = (time()-start)/ANIMATION_TIME
+                if amount > 1:
+                    amount = 1
+                    next = False
+                else: next = True
+                self._rotation = new = oldr + amount*(radians-oldr)
+                self.matrix = cairo.Matrix.init_rotate(new)
+                self.redraw_canvas()
                 return next
-            repeat(callback)
+            while next:
+                next = rotate()
     
     def _get_rotation (self):
         return self._rotation

@@ -7,7 +7,7 @@ import gtk, gobject
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 
 from pychess.System import uistuff
-from pychess.System.glock import glock_connect
+from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, DRAW, RUNNING, WHITEWON, BLACKWON
 from pychess.Utils.lutils import leval
@@ -33,12 +33,12 @@ class Sidepanel:
         
         self.plot.connect("selected", self.plot_selected)
         self.boardview.connect('shown_changed', self.shown_changed)
-        glock_connect(self.boardview.model, "game_changed", self.game_changed)
-        glock_connect(self.boardview.model, "moves_undoing", self.moves_undoing)
-        glock_connect(self.boardview.model, "analysis_changed", self.analysis_changed)
+        self.boardview.model.connect("game_changed", self.game_changed)
+        self.boardview.model.connect("moves_undoing", self.moves_undoing)
+        self.boardview.model.connect("analysis_changed", self.analysis_changed)
         
         # Add the initial board
-        glock_connect(self.boardview.model, "game_started", self.game_changed)
+        self.boardview.model.connect("game_started", self.game_changed)
    
         uistuff.keepDown(__widget__)     
         
@@ -185,6 +185,7 @@ class ScorePlot (gtk.DrawingArea):
     def clear (self):
         del self.scores[:]
     
+    @idle_add
     def redraw (self):
         if self.window:
             a = self.get_allocation()

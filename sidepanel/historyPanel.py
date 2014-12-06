@@ -4,7 +4,7 @@ import gtk, gobject
 from gtk import gdk
 
 from pychess.System import conf
-from pychess.System.glock import glock_connect
+from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Move import toSAN, toFAN
 
@@ -33,9 +33,9 @@ class Sidepanel:
         
         self.boardview = gmwidg.board.view
         
-        glock_connect(self.boardview.model, "game_changed", self.game_changed)
-        glock_connect(self.boardview.model, "game_started", self.game_changed)
-        glock_connect(self.boardview.model, "moves_undoing", self.moves_undoing)
+        self.boardview.model.connect("game_changed", self.game_changed)
+        self.boardview.model.connect("game_started", self.game_changed)
+        self.boardview.model.connect("moves_undoing", self.moves_undoing)
         self.boardview.connect("shown_changed", self.shown_changed)
         
         # Initialize treeviews
@@ -106,6 +106,7 @@ class Sidepanel:
         board = self.boardview.model.boards[ply]
         self.boardview.setShownBoard(board)
     
+    @idle_add
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
         for i in xrange(moves):
@@ -119,6 +120,7 @@ class Sidepanel:
             except ValueError:
                 continue
     
+    @idle_add
     def game_changed (self, game):
         len_ = len(self.left.get_model()) + len(self.right.get_model()) + 1
         if len(self.left.get_model()) and not self.left.get_model()[0][0]:

@@ -5,8 +5,8 @@ from gobject import *
 import threading
 
 from pychess.System.prefix import addDataPrefix
-from pychess.System import glock
 from pychess.System.Log import log
+from pychess.System.idle_add import idle_add
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move, parseAny
 from pychess.Utils.const import *
@@ -80,15 +80,12 @@ class BoardControl (gtk.EventBox):
         self.connections = {}
         self.view.save_board_size()
 
+    @idle_add
     def getPromotion(self):
         color = self.view.model.boards[-1].color
         variant = self.view.model.boards[-1].variant
         promotion = None
-        glock.acquire()
-        try:
-            promotion = self.promotionDialog.runAndHide(color, variant)
-        finally:
-            glock.release()
+        promotion = self.promotionDialog.runAndHide(color, variant)
         return promotion
         
     def emit_move_signal (self, cord0, cord1, promotion=None):
@@ -157,7 +154,6 @@ class BoardControl (gtk.EventBox):
             del self.possibleBoards[self.view.shown-2]
     
     def moves_undone (self, gamemodel, moves):
-        glock.acquire()
         self.stateLock.acquire()
         try:
             self.view.selected = None
@@ -168,12 +164,10 @@ class BoardControl (gtk.EventBox):
             self.currentState = self.lockedNormalState
         finally:
             self.stateLock.release()
-            glock.release()
 
         self.view.startAnimation()
     
     def game_ended (self, gamemodel, reason):
-        glock.acquire()
         self.stateLock.acquire()
         try:
             self.view.selected = None
@@ -184,7 +178,6 @@ class BoardControl (gtk.EventBox):
             self.currentState = self.normalState
         finally:
             self.stateLock.release()
-            glock.release()
 
         self.view.startAnimation()
 
@@ -197,7 +190,6 @@ class BoardControl (gtk.EventBox):
     def setLocked (self, locked):
         do_animation = False
         
-        glock.acquire()
         self.stateLock.acquire()
         try:
             if locked and self.isLastPlayed(self.getBoard()) and \
@@ -224,12 +216,10 @@ class BoardControl (gtk.EventBox):
                     self.currentState = self.normalState
         finally:
             self.stateLock.release()
-            glock.release()
         
         if do_animation:
             self.view.startAnimation()
     
-    @glock.glocked
     def setStateSelected (self):
         self.stateLock.acquire()
         try:
@@ -242,7 +232,6 @@ class BoardControl (gtk.EventBox):
         finally:
             self.stateLock.release()
     
-    @glock.glocked
     def setStateActive (self):
         self.stateLock.acquire()
         try:
@@ -255,7 +244,6 @@ class BoardControl (gtk.EventBox):
         finally:
             self.stateLock.release()
     
-    @glock.glocked
     def setStateNormal (self):
         self.stateLock.acquire()
         try:

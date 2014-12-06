@@ -2,11 +2,11 @@
 
 from math import ceil, pi, cos, sin
 import cairo, gtk, pango
+import gobject
 from gtk import gdk
 
 from pychess.System import conf
-from pychess.System import glock
-from pychess.System.repeat import repeat_sleep
+from pychess.System.idle_add import idle_add
 from pychess.Utils.const import WHITE, BLACK
 import preferencesDialog
 
@@ -151,18 +151,14 @@ class ChessClock (gtk.DrawingArea):
         context.move_to(rect.width/2. + rect.height-7, y)
         context.show_layout(layout1)
     
+    @idle_add
     def redraw_canvas(self):
         if self.window:
-            glock.acquire()
-            try:
-                if self.window:
-                    a = self.get_allocation()
-                    rect = gdk.Rectangle(0, 0, a.width, a.height)
-                    self.window.invalidate_rect(rect, True)
-                    self.window.process_updates(True)
-            finally:
-                glock.release()
-    
+            a = self.get_allocation()
+            rect = gdk.Rectangle(0, 0, a.width, a.height)
+            self.window.invalidate_rect(rect, True)
+            self.window.process_updates(True)
+            
     def setModel (self, model):
         self.model = model
         self.model.connect("time_changed", self.time_changed)
@@ -170,7 +166,7 @@ class ChessClock (gtk.DrawingArea):
         self.formatedCache = [formatTime (
             self.model.getPlayerTime (self.model.movingColor or WHITE))] * 2
         if model.secs!=0 or model.gain!=0:
-            repeat_sleep(self.update, 0.1)
+            gobject.timeout_add(100, self.update)
     
     def time_changed (self, model):
         self.update()

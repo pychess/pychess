@@ -7,7 +7,7 @@ from pychess.Utils.logic import validate
 from pychess.Utils.Move import Move
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
-from pychess.System import glock, conf
+from pychess.System import conf
 
 from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
@@ -183,11 +183,9 @@ class Human (Player):
         message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
         self._show_message(message)
         
-    @glock.glocked
     def pause (self):
         self.gmwidg.setLocked(True)
     
-    @glock.glocked
     def resume (self):
         log.debug("Human.resume: %s" % (self))
         if self.board.view.model.curplayer == self:
@@ -295,6 +293,5 @@ class Human (Player):
         message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
         self._show_message(message)
     
-    @glock.glocked
     def _show_message (self, message):
         self.gmwidg.showMessage(message)
