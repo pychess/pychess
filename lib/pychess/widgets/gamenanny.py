@@ -11,7 +11,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.System import conf
-from pychess.System import glock
+from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.widgets import preferencesDialog
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
@@ -27,7 +27,7 @@ def nurseGame (gmwidg, gamemodel):
     gmwidg.connect("title_changed", on_gmwidg_title_changed)
     
     # Because of the async loading of games, the game might already be started,
-    # when the glock is ready and nurseGame is called.
+    # when nurseGame is called.
     # Thus we support both cases.
     if gamemodel.status == WAITING_TO_START:
         gamemodel.connect("game_started", on_game_started, gmwidg)
@@ -48,51 +48,43 @@ def nurseGame (gmwidg, gamemodel):
         gamemodel.connection.connect("disconnected", on_disconnected, gmwidg)
 
 def on_disconnected (fics_connection, gamewidget):
-    if gamewidget.game_ended_message:
+    @idle_add
+    def disable_buttons():
         for b in gamewidget.game_ended_message.buttons:
-            with glock.glock:
-                b.set_property("sensitive", False)
-                b.set_property("tooltip-text", "")
-
+            b.set_property("sensitive", False)
+            b.set_property("tooltip-text", "")
+    if gamewidget.game_ended_message:
+        disable_buttons()
 #===============================================================================
 # Gamewidget signals
 #===============================================================================
-
+@idle_add
 def on_gmwidg_infront (gmwidg):
-    glock.acquire()
-    try:
-        for widget in MENU_ITEMS:
-            if widget in gmwidg.menuitems:
-                continue
-            elif widget == 'show_sidepanels' and isDesignGWShown():
-                getWidgets()[widget].set_property('sensitive', False)
-            else:
-                getWidgets()[widget].set_property('sensitive', True)
-        
-        # Change window title
-        getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.display_text)
-    finally:
-        glock.release()
+    for widget in MENU_ITEMS:
+        if widget in gmwidg.menuitems:
+            continue
+        elif widget == 'show_sidepanels' and isDesignGWShown():
+            getWidgets()[widget].set_property('sensitive', False)
+        else:
+            getWidgets()[widget].set_property('sensitive', True)
+    
+    # Change window title
+    getWidgets()['window1'].set_title('%s - PyChess' % gmwidg.display_text)
     return False
 
+@idle_add
 def on_gmwidg_closed (gmwidg):
-    glock.acquire()
-    try:
-        if len(key2gmwidg) == 1:
-            getWidgets()['window1'].set_title('%s - PyChess' % _('Welcome'))
-    finally:
-        glock.release()
+    if len(key2gmwidg) == 1:
+        getWidgets()['window1'].set_title('%s - PyChess' % _('Welcome'))
     return False
 
+
+@idle_add
 def on_gmwidg_title_changed (gmwidg, new_title):
-    log.debug("gamenanny.on_gmwidg_title_changed: starting %s" % repr(gmwidg))
-    glock.acquire()
-    try:
-        if gmwidg.isInFront():
-            getWidgets()['window1'].set_title('%s - PyChess' % new_title)
-    finally:
-        glock.release()
-    log.debug("gamenanny.on_gmwidg_title_changed: returning")
+    #log.debug("gamenanny.on_gmwidg_title_changed: starting %s" % repr(gmwidg))
+    if gmwidg.isInFront():
+        getWidgets()['window1'].set_title('%s - PyChess' % new_title)
+    #log.debug("gamenanny.on_gmwidg_title_changed: returning")
     return False
 
 #===============================================================================
@@ -120,9 +112,8 @@ def game_ended (gamemodel, reason, gmwidg):
     if isinstance(gamemodel, ICGameModel):
         if gamemodel.hasLocalPlayer():
             def status_changed (player, prop, message):
-                with glock.glock:
-                    make_sensitive_if_available(message.buttons[0], player)
-                    make_sensitive_if_playing(message.buttons[1], player)
+                make_sensitive_if_available(message.buttons[0], player)
+                make_sensitive_if_playing(message.buttons[1], player)
             def callback (infobar, response, message):
                 if response == 0:
                     gamemodel.remote_player.offerRematch()
@@ -138,8 +129,7 @@ def game_ended (gamemodel, reason, gmwidg):
 
         else:
             def status_changed (player, prop, button):
-                with glock.glock:
-                    make_sensitive_if_playing(button, player)
+                make_sensitive_if_playing(button, player)
             def callback (infobar, response, message):
                 if response in (0, 1):
                     gamemodel.players[response].observe()
@@ -175,15 +165,18 @@ def game_ended (gamemodel, reason, gmwidg):
 
     message.callback = callback
     gmwidg.game_ended_message = message
-    
-    with glock.glock:
-        gmwidg.replaceMessages(message)
-        gmwidg.status("%s %s." % (m1,m2[0].lower()+m2[1:]))
+
+    @idle_add
+    def do():
+        if len(key2gmwidg) > 0:
+            gmwidg.replaceMessages(message)
+            gmwidg.status("%s %s." % (m1,m2[0].lower()+m2[1:]))
         
         if reason == WHITE_ENGINE_DIED:
             engineDead(gamemodel.players[0], gmwidg)
         elif reason == BLACK_ENGINE_DIED:
             engineDead(gamemodel.players[1], gmwidg)
+    do()
 
     if (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()) or \
             gamemodel.isEngine2EngineGame():
@@ -208,14 +201,13 @@ def game_paused (gamemodel, gmwidg):
 def game_changed (gamemodel, gmwidg):
     _set_statusbar(gmwidg, "")
     return False
-    
+
 def game_unended (gamemodel, gmwidg):
     log.debug("gamenanny.game_unended: %s" % gamemodel.boards[-1])
-    glock.acquire()
-    try:
+    @idle_add
+    def do():
         gmwidg.clearMessages()
-    finally:
-        glock.release()
+    do()
     _set_statusbar(gmwidg, "")
     return False
 

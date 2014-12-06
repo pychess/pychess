@@ -21,7 +21,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System import conf
-from pychess.System.glock import glock_connect_after
+from pychess.System.idle_add import idle_add
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
@@ -149,6 +149,7 @@ class _GameInitializationMode:
         cls.__initVariantRadio("ngvariant2", cls.widgets["playVariant2Radio"],
                                cls.widgets["configImageVariant2"], LOSERSCHESS)
 
+        @idle_add
         def updateCombos(*args):
             if cls.widgets["playNormalRadio"].get_active():
                 variant = NORMALCHESS
@@ -164,7 +165,7 @@ class _GameInitializationMode:
             uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], data)
             uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], data)
 
-        glock_connect_after(discoverer, "all_engines_discovered", updateCombos)
+        discoverer.connect_after("all_engines_discovered", updateCombos)
         updateCombos(discoverer)
 
         conf.notify_add("ngvariant1", updateCombos)

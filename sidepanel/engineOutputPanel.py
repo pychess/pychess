@@ -6,7 +6,7 @@ import re
 import gtk, gobject, pango
 
 from pychess.System import uistuff
-from pychess.System.glock import glock_connect
+from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import ARTIFICIAL
@@ -48,12 +48,13 @@ class Sidepanel:
         
         self.boardview = gmwidg.board.view
         
-        glock_connect(self.boardview.model, "game_changed", self.game_changed)
-        glock_connect(self.boardview.model, "players_changed", self.players_changed)
-        glock_connect(self.boardview.model, "game_started", self.game_changed)
+        self.boardview.model.connect("game_changed", self.game_changed)
+        self.boardview.model.connect("players_changed", self.players_changed)
+        self.boardview.model.connect("game_started", self.game_changed)
         
         return __widget__
 
+    @idle_add
     def updateVisibleOutputs (self, model):
         # Check which players participate and update which views are visible
         gotplayers = False

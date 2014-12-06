@@ -3,7 +3,7 @@ import gtk
 from gtk import gdk
 from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
 from pychess.System.prefix import addDataPrefix
-from pychess.System import glock
+from pychess.System.idle_add import idle_add
 from BorderBox import BorderBox
 
 class ChainVBox (gtk.VBox):
@@ -66,19 +66,16 @@ class ChainLine (gtk.Alignment):
         self.set_flags(gtk.NO_WINDOW)
         self.set_size_request(10,10)
         self.lastRectangle = None
-        
+
+    @idle_add
     def onSizeAllocate(self, widget, requisition):
         if self.window:
-            glock.acquire()
-            try:
-                a = self.get_allocation()
-                rect = gdk.Rectangle(a.x, a.y, a.width, a.height)
-                unionrect = self.lastRectangle.union(rect) if self.lastRectangle != None else rect
-                self.window.invalidate_rect(unionrect, True)
-                self.window.process_updates(True)
-                self.lastRectangle = rect
-            finally:
-                glock.release()
+            a = self.get_allocation()
+            rect = gdk.Rectangle(a.x, a.y, a.width, a.height)
+            unionrect = self.lastRectangle.union(rect) if self.lastRectangle != None else rect
+            self.window.invalidate_rect(unionrect, True)
+            self.window.process_updates(True)
+            self.lastRectangle = rect
         
     def onExpose (self, widget, event):
         context = widget.window.cairo_create()

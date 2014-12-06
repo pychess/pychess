@@ -8,7 +8,7 @@ import pango
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import *
 from pychess.System import conf
-from pychess.System.glock import glock_connect
+from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.lmove import toSAN, toFAN
@@ -100,16 +100,16 @@ class Sidepanel(gtk.TextView):
         self.boardview.connect("shown_changed", self.shown_changed)
 
         self.gamemodel = gmwidg.board.view.model
-        glock_connect(self.gamemodel, "game_loaded", self.update)
-        glock_connect(self.gamemodel, "game_changed", self.game_changed)
-        glock_connect(self.gamemodel, "game_started", self.update)
-        glock_connect(self.gamemodel, "game_ended", self.update)
-        glock_connect(self.gamemodel, "moves_undoing", self.moves_undoing)
-        glock_connect(self.gamemodel, "opening_changed", self.update)
-        glock_connect(self.gamemodel, "players_changed", self.players_changed)
-        glock_connect(self.gamemodel, "variation_added", self.variation_added)
-        glock_connect(self.gamemodel, "variation_extended", self.variation_extended)
-        glock_connect(self.gamemodel, "analysis_changed", self.analysis_changed)
+        self.gamemodel.connect("game_loaded", self.update)
+        self.gamemodel.connect("game_changed", self.game_changed)
+        self.gamemodel.connect("game_started", self.update)
+        self.gamemodel.connect("game_ended", self.update)
+        self.gamemodel.connect("moves_undoing", self.moves_undoing)
+        self.gamemodel.connect("opening_changed", self.update)
+        self.gamemodel.connect("players_changed", self.players_changed)
+        self.gamemodel.connect("variation_added", self.variation_added)
+        self.gamemodel.connect("variation_extended", self.variation_extended)
+        self.gamemodel.connect("analysis_changed", self.analysis_changed)
 
         # Connect to preferences
         self.fan = conf.get("figuresInNotation", False)
@@ -541,6 +541,7 @@ class Sidepanel(gtk.TextView):
             self.nodelist.insert(index, node)
         return node
 
+    @idle_add
     def variation_extended(self, gamemodel, prev_board, board):
         node = None
         for n in self.nodelist:
@@ -560,7 +561,8 @@ class Sidepanel(gtk.TextView):
                 node["end"] += diff
 
         self.gamemodel.needsSave = True
-        
+    
+    @idle_add
     def variation_added(self, gamemodel, boards, parent):
         node = None
         for n in self.nodelist:
@@ -626,6 +628,7 @@ class Sidepanel(gtk.TextView):
         else:
             self.textbuffer.apply_tag_by_name("scored0", start, end)
 
+    @idle_add
     def analysis_changed(self, gamemodel, ply):
         if not self.boardview.shownIsMainLine():
             return
@@ -842,6 +845,7 @@ class Sidepanel(gtk.TextView):
 
         self.textbuffer.insert(end_iter(), "\n\n")
 
+    @idle_add
     def update(self, *args):
         """ Update the entire notation tree """
 
@@ -861,6 +865,7 @@ class Sidepanel(gtk.TextView):
     def shown_changed(self, boardview, shown):
         self.update_selected_node()
 
+    @idle_add
     def moves_undoing(self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
         start = self.textbuffer.get_start_iter()
@@ -872,6 +877,7 @@ class Sidepanel(gtk.TextView):
                 break
         self.textbuffer.delete(start, end)
 
+    @idle_add
     def game_changed(self, game):
         end_iter = self.textbuffer.get_end_iter
         start = end_iter().get_offset()

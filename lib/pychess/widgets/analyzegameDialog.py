@@ -4,9 +4,8 @@ import threading
 import gamewidget
 from pychess.Utils.const import *
 from pychess.System import conf, fident
-from pychess.System import glock
 from pychess.System import uistuff
-from pychess.System.glock import glock_connect_after
+from pychess.System.idle_add import idle_add
 from pychess.Players.engineNest import discoverer
 from pychess.widgets.preferencesDialog import anal_combo_get_value, anal_combo_set_value
 
@@ -34,11 +33,11 @@ def initialize(gameDic):
     uistuff.createCombo(widgets["ana_combobox"])
 
     from pychess.widgets import newGameDialog
+    @idle_add
     def update_analyzers_store(discoverer):
         data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
         uistuff.updateCombo(widgets["ana_combobox"], data)
-    glock_connect_after(discoverer, "all_engines_discovered",
-                        update_analyzers_store)
+    discoverer.connect_after("all_engines_discovered", update_analyzers_store)
     update_analyzers_store(discoverer)
 
     uistuff.keep(widgets["ana_combobox"], "ana_combobox", anal_combo_get_value,
@@ -65,11 +64,10 @@ def initialize(gameDic):
             for board in gamemodel.boards:
                 if stop_event.is_set():
                     break
-                glock.acquire()
-                try:
+                @idle_add
+                def do():
                     gmwidg.board.view.setShownBoard(board)
-                finally:
-                    glock.release()
+                do()
                 analyzer.setBoard(board)
                 time.sleep(move_time+0.1)
 

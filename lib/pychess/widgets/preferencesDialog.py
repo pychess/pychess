@@ -6,7 +6,7 @@ from xml.dom import minidom
 import gtk
 
 from pychess.System.prefix import addDataPrefix, getDataPrefix
-from pychess.System.glock import glock_connect_after
+from pychess.System.idle_add import idle_add
 from pychess.System import conf, gstreamer, uistuff
 from pychess.System.uistuff import POSITION_GOLDEN
 from pychess.Players.engineNest import discoverer
@@ -170,11 +170,12 @@ class HintTab:
         uistuff.createCombo(widgets["inv_ana_combobox"])
 
         from pychess.widgets import newGameDialog
+        @idle_add
         def update_analyzers_store(discoverer):
             data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
             uistuff.updateCombo(widgets["ana_combobox"], data)
             uistuff.updateCombo(widgets["inv_ana_combobox"], data)
-        glock_connect_after(discoverer, "all_engines_discovered",
+        discoverer.connect_after("all_engines_discovered",
                             update_analyzers_store)
         update_analyzers_store(discoverer)
 

@@ -1,12 +1,20 @@
 
 """ This module handles the tabbed layout in PyChess """
 
+import cStringIO
+import gtk
+import gobject
+import imp
+import os
+import traceback
+from threading import Condition
+
 from BoardControl import BoardControl
 from ChessClock import ChessClock
 from MenuItemsDict import MenuItemsDict
-from pychess.System import glock, conf, prefix
+from pychess.System import conf, prefix
 from pychess.System.Log import log
-from pychess.System.glock import glock_connect
+from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.uistuff import makeYellow
 from pychess.Utils.GameModel import GameModel
@@ -20,12 +28,6 @@ from pychess.ic.ICGameModel import ICGameModel
 from pychess.widgets.InfoBar import InfoBar, InfoBarMessage, InfoBarMessageButton
 from pydock.PyDockTop import PyDockTop
 from pydock.__init__ import CENTER, EAST, SOUTH
-import cStringIO
-import gtk
-import gobject
-import imp
-import os
-import traceback
 
 ################################################################################
 # Initialize modul constants, and a few worker functions                       #
@@ -146,15 +148,17 @@ class GameWidget (gobject.GObject):
             gamemodel.connection.bm.connect("opp_not_out_of_time", self.opp_not_out_of_time)
         board.view.connect("shown_changed", self.shown_changed)
         
-        # Some stuff in the sidepanels .load functions might change UI, so we
-        # need glock
-        # TODO: Really?
-        glock.acquire()
-        try:
+        condition = Condition()
+        @idle_add
+        def do():
             self.panels = [panel.Sidepanel().load(self) for panel in sidePanels]
-        finally:
-            glock.release()
-    
+            condition.acquire()
+            condition.notify()
+            condition.release()
+        do()
+        condition.acquire()
+        condition.wait()
+        
     def _del (self):
         self.board._del()
         
@@ -450,14 +454,15 @@ class GameWidget (gobject.GObject):
             self.name_changed(player)
             # Notice that this may connect the same player many times. In
             # normal use that shouldn't be a problem.
-            glock_connect(player, "name_changed", self.name_changed)
+            player.connect("name_changed", self.name_changed)
         log.debug("GameWidget.players_changed: returning")
     
     def name_changed (self, player):
         log.debug("GameWidget.name_changed: starting %s" % repr(player))
         color = self.gamemodel.color(player)
-        glock.acquire()
-        try:
+        
+        @idle_add
+        def do():
             self.player_name_labels[color].set_text(
                 self.player_display_text(color=color))
             if isinstance(self.gamemodel, ICGameModel) and \
@@ -465,8 +470,7 @@ class GameWidget (gobject.GObject):
                 self.player_name_labels[color].set_tooltip_text(
                     get_player_tooltip_text(self.gamemodel.ficsplayers[color],
                                             show_status=False))
-        finally:
-            glock.release()
+        do()
         self.emit('title_changed', self.display_text)
         log.debug("GameWidget.name_changed: returning")
     
@@ -497,8 +501,10 @@ class GameWidget (gobject.GObject):
             message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
             message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
                                                     gtk.RESPONSE_CANCEL))
-            with glock.glock:
+            @idle_add
+            def do():
                 self.showMessage(message)
+            do()
         return False
     
     def opp_not_out_of_time (self, bm):
@@ -516,8 +522,10 @@ class GameWidget (gobject.GObject):
             message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, response_cb)
             message.add_button(InfoBarMessageButton(_("Wait"), gtk.RESPONSE_CANCEL))
             message.add_button(InfoBarMessageButton(_("Adjourn"), 2))
-            with glock.glock:
+            @idle_add
+            def do():
                 self.showMessage(message)
+            do()
         return False
     
     def initTabcontents(self):
@@ -621,8 +629,9 @@ class GameWidget (gobject.GObject):
         if len(self.tabcontent.child.get_children()) < 2:
             log.warning("GameWidget.setLocked: Not removing last tabcontent child")
             return
-        glock.acquire()
-        try:
+        
+        @idle_add
+        def light_on_off():
             child = self.tabcontent.child
             if child:
                 child.remove(child.get_children()[0])
@@ -631,19 +640,16 @@ class GameWidget (gobject.GObject):
                 else:
                     child.pack_start(createImage(light_off), expand=False)
             self.tabcontent.show_all()
-        finally:
-            glock.release()
+        light_on_off()
+        
         log.debug("GameWidget.setLocked: %s: returning" % self.gamemodel.players)
     
+    @idle_add
     def status (self, message):
-        glock.acquire()
-        try:
-            self.statusbar.pop(0)
-            if message:
-                #print "Setting statusbar to \"%s\"" % str(message)
-                self.statusbar.push(0, message)
-        finally:
-            glock.release()
+        self.statusbar.pop(0)
+        if message:
+            #print "Setting statusbar to \"%s\"" % str(message)
+            self.statusbar.push(0, message)
     
     def bringToFront (self):
         getheadbook().set_current_page(self.getPageNumber())
