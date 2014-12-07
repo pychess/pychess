@@ -186,6 +186,7 @@ class EngineAdvisor(Advisor):
         
         self.shown_changed(self.boardview, self.boardview.shown)
     
+    @idle_add
     def on_analyze (self, engine, analysis):
         m = self.boardview.model
         if m.isPlayingICSGame():
