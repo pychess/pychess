@@ -6,7 +6,6 @@ import threading
 
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
-from pychess.System.idle_add import idle_add
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move, parseAny
 from pychess.Utils.const import *
@@ -80,7 +79,6 @@ class BoardControl (gtk.EventBox):
         self.connections = {}
         self.view.save_board_size()
 
-    @idle_add
     def getPromotion(self):
         color = self.view.model.boards[-1].color
         variant = self.view.model.boards[-1].variant
