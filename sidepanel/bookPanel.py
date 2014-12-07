@@ -13,6 +13,7 @@ from pychess.Utils.EndgameTable import EndgameTable
 from pychess.Utils.Move import Move, toSAN, toFAN
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
+from pychess.System.idle_add import idle_add
 
 __title__ = _("Hints")
 
@@ -531,6 +532,7 @@ class Sidepanel (object):
                 advisor.active = True
                 advisor.shown_changed(self.boardview, self.boardview.shown)
 
+    @idle_add
     def shown_changed (self, boardview, shown):
         boardview.bluearrow = None
         
