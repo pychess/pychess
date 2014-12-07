@@ -8,7 +8,6 @@ from pychess.Database.model import engine, game, player, pl1, pl2, pychess_pdb
 from pychess.Savers.database import load
 from pychess.Utils.const import *
 from pychess.System.prefix import addDataPrefix
-from pychess.System.glock import glock_connect
 from pychess.Players.Human import Human
 from pychess.widgets import ionest
 from pychess.Utils.GameModel import GameModel

@@ -862,6 +862,7 @@ class Sidepanel(gtk.TextView):
         self.insert_nodes(self.gamemodel.boards[0].board, result=result)
         self.update_selected_node()
 
+    @idle_add
     def shown_changed(self, boardview, shown):
         self.update_selected_node()
 
