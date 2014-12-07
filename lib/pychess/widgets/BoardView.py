@@ -5,6 +5,7 @@ from time import time
 from threading import Lock, RLock
 
 import gtk.gdk, cairo
+import gobject
 from gobject import *
 import pango
 
@@ -422,7 +423,7 @@ class BoardView (gtk.DrawingArea):
 
             self.runAnimation(redrawMisc=self.realSetShown)
             if not conf.get("noAnimation", False):
-                self.animationID = self.runAnimation(False)
+                self.animationID = gobject.idle_add(self.runAnimation)
         do()
         
     shown = property(_get_shown, _set_shown)
@@ -557,7 +558,7 @@ class BoardView (gtk.DrawingArea):
         def do():
             self.runAnimation(redrawMisc=True)
             if not conf.get("noAnimation", False):
-                self.animationID = self.runAnimation()
+                self.animationID = gobject.idle_add(self.runAnimation)
         do()
     #############################
     #          Drawing          #
