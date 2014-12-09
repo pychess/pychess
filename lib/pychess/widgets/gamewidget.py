@@ -7,7 +7,7 @@ import gobject
 import imp
 import os
 import traceback
-from threading import Condition
+from threading import Condition, currentThread
 
 from BoardControl import BoardControl
 from ChessClock import ChessClock
@@ -106,6 +106,7 @@ class GameWidget (gobject.GObject):
         gobject.GObject.__init__(self)
         self.gamemodel = gamemodel
         self.cids = {}
+        self.closed = False
         
         tabcontent, white_label, black_label, game_info_label = self.initTabcontents()
         boardvbox, board, infobar, clock = self.initBoardAndClock(gamemodel)
@@ -148,16 +149,23 @@ class GameWidget (gobject.GObject):
             gamemodel.connection.bm.connect("opp_not_out_of_time", self.opp_not_out_of_time)
         board.view.connect("shown_changed", self.shown_changed)
         
-        condition = Condition()
-        @idle_add
+        fromGtkThread = currentThread().getName() == "MainThread"
+        if not fromGtkThread:
+            condition = Condition()
+
         def do():
             self.panels = [panel.Sidepanel().load(self) for panel in sidePanels]
+            if not fromGtkThread:
+                condition.acquire()
+                condition.notify()
+                condition.release()
+
+        if not fromGtkThread:
+            gobject.idle_add(do)
             condition.acquire()
-            condition.notify()
-            condition.release()
-        do()
-        condition.acquire()
-        condition.wait()
+            condition.wait()
+        else:
+            do()
         
     def _del (self):
         self.board._del()
@@ -672,8 +680,9 @@ class GameWidget (gobject.GObject):
     
     def replaceMessages (self, message):
         """ Replace all messages with message """
-        self.infobar.clear_messages()
-        self.showMessage(message)
+        if not self.closed:
+            self.infobar.clear_messages()
+            self.showMessage(message)
     
     def clearMessages (self):
         self.infobar.clear_messages()
@@ -694,6 +703,7 @@ def splitit(widget):
 def delGameWidget (gmwidg):
     """ Remove the widget from the GUI after the game has been terminated """
     log.debug("gamewidget.delGameWidget: starting %s" % repr(gmwidg))
+    gmwidg.closed = True
     gmwidg.emit("closed")
     
     called_from_preferences = False
