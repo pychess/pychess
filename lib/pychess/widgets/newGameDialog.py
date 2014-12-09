@@ -195,8 +195,8 @@ class _GameInitializationMode:
     def __initTimeRadio (cls, name, id, radiobutton, configImage, defmin, defgain):
         minSpin = gtk.SpinButton(gtk.Adjustment(1,1,240,1))
         gainSpin = gtk.SpinButton(gtk.Adjustment(0,-60,60,1))
-        cls.widgets["%s min" % id] = minSpin
-        cls.widgets["%s gain" % id] = gainSpin
+        setattr(cls, "%s_min" % id, minSpin)
+        setattr(cls, "%s_gain" % id, gainSpin)
         uistuff.keep(minSpin, "%s min" % id, first_value=defmin)
         uistuff.keep(gainSpin, "%s gain" % id, first_value=defgain)
 
@@ -300,14 +300,14 @@ class _GameInitializationMode:
                 secs = 0
                 incr = 0
             elif cls.widgets["blitzRadio"].get_active():
-                secs = cls.widgets["ngblitz min"].get_value_as_int()*60
-                incr = cls.widgets["ngblitz gain"].get_value_as_int()
+                secs = cls.ngblitz_min.get_value_as_int()*60
+                incr = cls.ngblitz_gain.get_value_as_int()
             elif cls.widgets["rapidRadio"].get_active():
-                secs = cls.widgets["ngrapid min"].get_value_as_int()*60
-                incr = cls.widgets["ngrapid gain"].get_value_as_int()
+                secs = cls.ngrapid_min.get_value_as_int()*60
+                incr = cls.ngrapid_gain.get_value_as_int()
             elif cls.widgets["normalRadio"].get_active():
-                secs = cls.widgets["ngnormal min"].get_value_as_int()*60
-                incr = cls.widgets["ngnormal gain"].get_value_as_int()
+                secs = cls.ngnormal_min.get_value_as_int()*60
+                incr = cls.ngnormal_gain.get_value_as_int()
 
             # Find players
             player0 = cls.widgets["whitePlayerCombobox"].get_active()

@@ -4,7 +4,6 @@ from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 from random import randrange
 
-uistuff.cacheGladefile("tipoftheday.glade")
 
 class TipOfTheDay:
     
