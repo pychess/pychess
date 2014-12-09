@@ -142,11 +142,11 @@ class ChainLine (gtk.Alignment):
     def __str__ (self):
         a = self.get_allocation()
         s = "ChainLine(%s, %s, %s, %s" % (a.x, a.y, a.width, a.height)
-        if self.points != None:
-            points = []
-            for a in self.points:
-                points.append("(%s, %s)" % (a[0], a[1]))
-            s += ", (" + ", ".join(points) + ")"
+#        if self.points != None:
+#            points = []
+#            for a in self.points:
+#                points.append("(%s, %s)" % (a[0], a[1]))
+#            s += ", (" + ", ".join(points) + ")"
         s += (self.position == CHAIN_TOP and ", CHAIN_TOP" or ", CHAIN_BOTTOM")
         return s + ")"
     
