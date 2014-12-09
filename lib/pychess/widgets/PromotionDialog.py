@@ -9,8 +9,6 @@ from pychess.Utils.const import *
 from PieceWidget import PieceWidget
 
 
-uistuff.cacheGladefile("promotion.glade")
-
 class PromotionDialog:
     
     def __init__(self):

@@ -7,7 +7,6 @@ from pychess.System import conf, uistuff
 from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addDataPrefix
 
-uistuff.cacheGladefile("discovererDialog.glade")
 
 class DiscovererDialog:
     
