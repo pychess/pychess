@@ -459,7 +459,7 @@ class PyChess:
         if chess_file:
             def do (discoverer):
                 newGameDialog.LoadFileExtension.run(chess_file)
-            glock.glock_connect_after(discoverer, "all_engines_discovered", do)
+            discoverer.connect_after("all_engines_discovered", do)
 
 def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
          ics_host, ics_port):
