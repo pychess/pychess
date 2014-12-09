@@ -428,49 +428,17 @@ def initTexviewLinks (textview, text):
     textview.connect("button_press_event", on_press_in_textview)
     textview.connect("button_release_event", on_release_in_textview)
 
-cachedGlades = {}
-def cacheGladefile(filename):
-    """ gtk.Builder automatically caches the file, so we only need to use this
-        file once """
-    if filename not in cachedGlades:
-        cachedGlades[filename] = Queue.Queue()
-        def readit ():
-            builder = gtk.Builder()
-            builder.set_translation_domain("pychess")
-            builder.add_from_file(addDataPrefix("glade/%s" % filename))
-            cachedGlades[filename].put(builder)
-        t = Thread(target=readit, name=fident(readit))
-        t.daemon = True
-        t.start()
 
 class GladeWidgets:
     """ A simple class that wraps a the glade get_widget function
         into the python __getitem__ version """
     def __init__ (self, filename):
-        self.builder = None
-        try:
-            if filename in cachedGlades:
-                self.builder = cachedGlades[filename].get(block=False)
-        except Queue.Empty:
-            pass
+        self.builder = gtk.Builder()
+        self.builder.set_translation_domain("pychess")
+        self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
         
-        if not self.builder:
-            glock.acquire()
-#            print "uistuff.py:gladefile = %s" % filename
-            self.builder = gtk.Builder()
-            self.builder.set_translation_domain("pychess")
-            self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
-            glock.release()
-        
-        self.extras = {}
-    
     def __getitem__(self, key):
-        if key in self.extras:
-            return self.extras[key]
         return self.builder.get_object(key)
-    
-    def __setitem__(self, key, widget):
-        self.extras[key] = widget
     
     def getGlade (self):
         return self.builder
