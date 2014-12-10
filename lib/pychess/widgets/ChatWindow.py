@@ -5,8 +5,7 @@ import re
 
 from pychess.Utils.IconLoader import load_icon
 from pychess.System import uistuff
-from pychess.System import glock
-from pychess.System.glock import glock_connect
+from pychess.System.idle_add import idle_add
 from pychess.widgets.ChatView import ChatView
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import NORTH, EAST, SOUTH, WEST, CENTER
@@ -113,23 +112,24 @@ class TextImageTree (gtk.TreeView):
         # Selection
         self.get_selection().connect("changed", self.selection_changed)
     
+    @idle_add
     def addRow (self, id, text, type):
         if id in self.id2iter: return
-        with glock.glock:
-            iter = self.props.model.append([id, text, type])
+        iter = self.props.model.append([id, text, type])
         self.id2iter[id] = iter
         self.idSet.add(id)
     
+    @idle_add
     def removeRow (self, id):
         try:
             iter = self.id2iter[id]
         except KeyError:
             return
-        with glock.glock:
-            self.props.model.remove(iter)
+        self.props.model.remove(iter)
         del self.id2iter[id]
         self.idSet.remove(id)
     
+    @idle_add
     def selectRow (self, id):
         iter = self.id2iter[id]
         self.get_selection().select_iter(iter)
@@ -213,13 +213,13 @@ class ViewsPanel (gtk.Notebook, Panel):
     
     def addItem (self, id, name, type, chatView):
         chatView.connect("messageTyped", self.onMessageTyped, id, name, type)
-        glock_connect(self.connection.cm, "channelMessage",
+        self.connection.cm.connect("channelMessage",
                       self.onChannelMessage, id, chatView)
-        glock_connect(self.connection.cm, "privateMessage",
+        self.connection.cm.connect("privateMessage",
                       self.onPersonMessage, get_playername(name), chatView)
         
         if type == TYPE_CHANNEL:
-            glock_connect(self.connection.cm, "channelLog",
+            self.connection.cm.connect("channelLog",
                           self.onChannelLog, id, chatView)
             self.connection.cm.getChannelLog(id)
             if not self.connection.cm.mayTellChannel(id):
@@ -320,11 +320,12 @@ class InfoPanel (gtk.Notebook, Panel):
 
             playername = get_playername(text)            
             self.fm = connection.fm
-            self.handle_id = glock_connect(self.fm, "fingeringFinished",
+            self.handle_id = self.fm.connect("fingeringFinished",
                                            self.onFingeringFinished, playername)
             
             self.fm.finger(playername)
         
+        @idle_add
         def onFingeringFinished (self, fm, finger, playername):
             if not isinstance(self.get_child(), gtk.Label) or \
                     finger.getName().lower() != playername.lower():
@@ -378,10 +379,11 @@ class InfoPanel (gtk.Notebook, Panel):
                                        bool    # is separator
                                        )
             
-            self.handle_id = glock_connect(self.cm, "recievedNames",
+            self.handle_id = self.cm.connect("recievedNames",
                                            self.onNamesRecieved, id)
             self.cm.getPeopleInChannel(id)
         
+        @idle_add
         def onNamesRecieved (self, cm, channel, people, channel_):
             if not isinstance(self.get_child(), gtk.Label) or channel != channel_:
                 return
@@ -483,8 +485,8 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
         self.playersList = TextImageTree("gtk-add")
         self.playersList.connect("activated", self.onAdd)
         self.playersList.fixed_height_mode = True
-        glock_connect(connection.cm, "privateMessage", self.onPersonMessage, after=True)
-        glock_connect(connection.cm, "channelsListed", self.onChannelsListed)
+        connection.cm.connect("privateMessage", self.onPersonMessage)
+        connection.cm.connect("channelsListed", self.onChannelsListed)
         expander.add(self.playersList)
         self.channels = {}
     
@@ -522,6 +524,7 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
                 else:
                     self.onAdd(self.channelsList, id, name, TYPE_CHANNEL)
 
+    @idle_add
     def onChannelsListed (self, cm, channels):    
         if not self.channels:
             self.channels = channels
@@ -558,6 +561,7 @@ class ChannelsPanel (gtk.ScrolledWindow, Panel):
     def onSelect (self, joinedList, id, type):
         self.emit('conversationSelected', id)
     
+    @idle_add
     def onPersonMessage (self, cm, name, title, isadmin, text):
         if not self.compileId(name, TYPE_PERSONAL) in self.joinedList:
             id = self.compileId(name, TYPE_PERSONAL)
@@ -573,15 +577,18 @@ class ChatWindow (object):
         self.window = None
         
         widgets["show_chat_button"].connect("clicked", self.showChat)
-        glock_connect(connection.cm, "privateMessage",
-                      self.onPersonMessage, after=False)
-        glock_connect(connection, "disconnected",
-                      lambda c: self.window and self.window.hide())
-        
+        connection.cm.connect("privateMessage", self.onPersonMessage)
+        connection.connect("disconnected", self.onDisconnected)
+
         self.viewspanel = ViewsPanel(self.connection)
         self.channelspanel = ChannelsPanel(self.connection)
         self.infopanel = InfoPanel(self.connection)
         self.panels = [self.viewspanel, self.channelspanel, self.infopanel]
+
+    @idle_add
+    def onDisconnected(self, conn):
+        if self.window:
+            self.window.hide()        
     
     def showChat (self, *widget):
         if not self.window:
@@ -629,6 +636,7 @@ class ChatWindow (object):
         for panel in self.panels:
             panel.selectItem(id)
     
+    @idle_add
     def onPersonMessage (self, cm, name, title, isadmin, text):
         if self.connection.bm.isPlaying():
             if not self.window:

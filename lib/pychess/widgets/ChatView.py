@@ -119,6 +119,7 @@ class ChatView (gtk.VPaned):
         if tb.props.text: tb.insert(iter, "\n")
         self.__addMessage(iter, strftime("%H:%M:%S"), sender, text)
     
+    @idle_add
     def disable (self, message):
         """ Sets the write field insensitive, in cases where the channel is
             read only. Use the message to give the user a propriate
@@ -126,6 +127,7 @@ class ChatView (gtk.VPaned):
         self.writeView.set_sensitive(False)
         self.writeView.props.buffer.set_text(message)
     
+    @idle_add
     def enable (self):
         self.writeView.props.buffer.set_text("")
         self.writeView.set_sensitive(True)
