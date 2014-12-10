@@ -6,7 +6,7 @@ import gtk
 import pango
 from threading import Thread
 
-from pychess.System import conf, glock, fident
+from pychess.System import conf, fident
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
