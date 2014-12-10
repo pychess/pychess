@@ -201,6 +201,7 @@ class InfoBar (gtk.InfoBar):
         self.show_all()
         
     def push_message (self, message):
+        return
         if not isinstance(message, InfoBarMessage):
             raise TypeError("Not of type InfoBarMessage: %s" % repr(message))
         
