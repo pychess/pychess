@@ -1,6 +1,9 @@
 import gobject
 import gtk
 
+from pychess.System.idle_add import idle_add
+
+
 def get_message_content (heading_text, message_text, image_stock_id):
     hbox = gtk.HBox()
     image = gtk.Image()
@@ -141,6 +144,7 @@ class InfoBar (gtk.InfoBar):
         
         return False
     
+    @idle_add
     def _button_sensitive_cb (self, button, property, message):
         try:
             shown_message = self.messages[-1]
@@ -152,6 +156,7 @@ class InfoBar (gtk.InfoBar):
         
         return False
     
+    @idle_add
     def _button_tooltip_cb (self, button, property, message):
         try:
             shown_message = self.messages[-1]
