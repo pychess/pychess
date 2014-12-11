@@ -170,6 +170,7 @@ class BoardView (gtk.DrawingArea):
         self.premovePiece = None
         self.premovePromotion = None
     
+    @idle_add
     def game_started_after (self, model):
         # reenable shrinking the board
         self.set_size_request(-1, -1)
