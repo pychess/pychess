@@ -415,6 +415,8 @@ class SeekTabSection (ParrentListSection):
         self.chaPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/challenge.png"))
         self.manSeekPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/manseek.png"))
         
+        self.widgets["seekExpander"].set_vexpand(False)
+        
         self.tv = self.widgets["seektreeview"]
         self.store = Gtk.ListStore(FICSSoughtMatch, GdkPixbuf.Pixbuf,
             GdkPixbuf.Pixbuf, str, int, str, str, str, int, str, str)
