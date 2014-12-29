@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+from functools import partial
 from hashlib import md5
 from threading import Thread
 from os.path import join, dirname, abspath
@@ -51,6 +52,14 @@ backup = [
     {"protocol": "uci", "name": "Houdini.exe", "country": "be", "vm_name": "wine"},
     {"protocol": "uci", "name": "Rybka.exe", "country": "ru", "vm_name": "wine"},
 ]
+
+
+def md5_sum(filename):
+    with open(filename, mode='rb') as f:
+        d = md5()
+        for buf in iter(partial(f.read, 4096), b''):
+            d.update(buf)
+    return d.hexdigest()
 
 
 class EngineDiscoverer (GObject.GObject):
@@ -209,8 +218,8 @@ class EngineDiscoverer (GObject.GObject):
         # Check if md5sum is not set, or if it has changed
         if engine.get("md5") is None:
             return True
-        with open(path) as f:
-            md5sum = md5(f.read()).hexdigest()
+        
+        md5sum = md5_sum(path)
         if engine.get("md5") != md5sum:
             return True
         
@@ -223,8 +232,7 @@ class EngineDiscoverer (GObject.GObject):
         
         vmpath, path = rundata
         
-        with open(path) as f:
-            md5sum = md5(f.read()).hexdigest()
+        md5sum = md5_sum(path)
         
         ######
         # Find the backup engine
