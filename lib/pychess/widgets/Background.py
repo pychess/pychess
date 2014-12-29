@@ -121,7 +121,7 @@ def newtheme (widget):
         sc.remove_provider_for_screen(Gdk.Screen.get_default(), provider)
 
     provider = Gtk.CssProvider.new()
-    provider.load_from_data(data)
+    provider.load_from_data(data.encode())
     sc.add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     lnewcolor = bgcol
@@ -155,7 +155,7 @@ def newtheme (widget):
     if path.isfile(temppng):
         f = open(temppng, "rb")
         # Check if the cache was made while using the same theme
-        if [ord(c) for c in f.read(6)] == colors:
+        if list(f.read(6)) == colors:
             surface = cairo.ImageSurface.create_from_png(f)
             return
     
@@ -179,7 +179,6 @@ def newtheme (widget):
     # Save a cache for later use. Save 'newcolor' in the frist three pixels
     # to check for theme changes between two instances
     f = open(temppng, "wb")
-    for color in colors:
-        f.write(chr(color))
+    f.write(bytes(colors))
     surface.write_to_png(f)
     
