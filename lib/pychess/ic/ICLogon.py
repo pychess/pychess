@@ -39,8 +39,6 @@ class ICLogon (object):
         self.widgets["fics_logon"].connect('key-press-event',
                 lambda w, e: e.keyval == Gdk.KEY_Escape and w.hide())        
         def on_logOnAsGuest_toggled (check):
-            self.widgets["nameLabel"].set_sensitive(not check.get_active())
-            self.widgets["nameEntry"].set_sensitive(not check.get_active())
             self.widgets["passwordLabel"].set_sensitive(not check.get_active())
             self.widgets["passEntry"].set_sensitive(not check.get_active())
         self.widgets["logOnAsGuest"].connect("toggled", on_logOnAsGuest_toggled)
@@ -165,7 +163,7 @@ class ICLogon (object):
         self.widgets["messagePanel"].hide()
         
         if self.widgets["logOnAsGuest"].get_active():
-            username = "guest"
+            username = self.widgets["nameEntry"].get_text()
             password = ""
         else:
             username = self.widgets["nameEntry"].get_text()

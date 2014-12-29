@@ -271,6 +271,8 @@ class UCIEngine (ProtocolEngine):
         if variant == FischerRandomChess:
             assert self.hasOption("UCI_Chess960")
             self.setOption("UCI_Chess960", True)
+        elif self.hasOption("UCI_Variant") and not variant.standard_rules:
+            self.setOption("UCI_Variant", variant.cecp_name)
     
     def setOptionTime (self, secs, gain):
         self.wtime = int(max(secs*1000*self.timeHandicap, 1))
@@ -545,7 +547,7 @@ class UCIEngine (ProtocolEngine):
                 self.waitingForMove = False
 
                 try:
-                    move = parseAN(self.board, parts[1])
+                    move = parseAny(self.board, parts[1])
                 except ParsingError, e:
                     self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                     return
@@ -571,7 +573,7 @@ class UCIEngine (ProtocolEngine):
                         # But in some cases, what they send may not even be
                         # correct AN - specially in the case of promotion.
                         try:
-                            pondermove = parseAN(self.board, parts[3])
+                            pondermove = parseAny(self.board, parts[3])
                         except ParsingError:
                             pass
                         else:
