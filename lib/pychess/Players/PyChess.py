@@ -103,7 +103,7 @@ class PyChess (object):
 
             prevtime = 0
             starttime = time()
-            lsearch.endtime = starttime + usetime if timed else sys.maxint
+            lsearch.endtime = starttime + usetime if timed else sys.maxsize
             if self.debug:
                 if timed:
                     print "# Time left: %3.2f s; Planing to think for %3.2f s" % (self.clock[self.playingAs], usetime)
@@ -167,7 +167,7 @@ class PyChess (object):
             protocol """
         
         start = time()
-        lsearch.endtime = sys.maxint
+        lsearch.endtime = sys.maxsize
         lsearch.searching = True
         
         for depth in xrange (1, self.sd):
