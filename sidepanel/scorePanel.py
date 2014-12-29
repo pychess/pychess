@@ -1,7 +1,6 @@
-
+import sys
 from math import e
 from random import randint
-from sys import maxint
 
 from gi.repository import Gtk, GObject
 from gi.repository import Gdk
@@ -69,9 +68,9 @@ class Sidepanel:
         if model.status == DRAW:
             points = 0
         elif model.status == WHITEWON:
-            points = maxint
+            points = sys.maxsize
         elif model.status == BLACKWON:
-            points = -maxint
+            points = -sys.maxsize
         else:
             if model.ply in model.scores:
                 points = model.scores[model.ply][1]
@@ -149,7 +148,7 @@ class Sidepanel:
 
 class ScorePlot (Gtk.DrawingArea):
     
-    __gtype_name__ = "ScorePlot"+str(randint(0,maxint))
+    __gtype_name__ = "ScorePlot"+str(randint(0,sys.maxsize))
     
     __gsignals__ = {
         "selected" : (GObject.SignalFlags.RUN_FIRST, None, (int,))

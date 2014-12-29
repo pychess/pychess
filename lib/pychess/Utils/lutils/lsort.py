@@ -1,9 +1,9 @@
+import sys
 
 from attack import getAttacks, staticExchangeEvaluate
 from pychess.Utils.eval import pos as positionValues
 from pychess.Variants.atomic import kingExplode
 
-from sys import maxint
 from ldata import *
 
 def getCaptureValue (board, move):
@@ -13,7 +13,7 @@ def getCaptureValue (board, move):
         return cpV - mpV
     else:
         temp = staticExchangeEvaluate (board, move)
-        return temp < 0 and -maxint or temp
+        return temp < 0 and -sys.maxsize or temp
 
 def sortCaptures (board, moves):
     f = lambda move: getCaptureValue (board, move)
@@ -32,7 +32,7 @@ def getMoveValue (board, table, depth, move):
     # There could be a non  hashfEXACT very promising move for us to test
     
     if table.isHashMove(depth, move):
-        return maxint
+        return sys.maxsize
     
     fcord = (move >> 6) & 63
     tcord = move & 63

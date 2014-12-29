@@ -31,7 +31,7 @@ def benchmark ():
     
     suite_time = time()
     suite_nodes = lsearch.nodes
-    lsearch.endtime = sys.maxint
+    lsearch.endtime = sys.maxsize
     lsearch.searching = True
     for i, fen in enumerate(benchmarkPositions):
         lsearch.table.clear()
