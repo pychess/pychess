@@ -232,8 +232,7 @@ class InternetGameTasker (Gtk.Alignment):
         self.add(tasker)
         
         def asGuestCallback (checkbutton):
-            for widget in (self.widgets["usernameLabel"], self.widgets["usernameEntry"],
-                           self.widgets["passwordLabel"], self.widgets["passwordEntry"]):
+            for widget in (self.widgets["passwordLabel"], self.widgets["passwordEntry"]):
                 widget.set_sensitive(not checkbutton.get_active())
         self.widgets["asGuestCheck"].connect("toggled", asGuestCallback)
         
