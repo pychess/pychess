@@ -122,6 +122,8 @@ BADPAS = _("The entered password was invalid.\n" + \
            "If you forgot your password, go to " + \
            "<a href=\"http://www.freechess.org/password\">" + \
            "http://www.freechess.org/password</a> to request a new one over email.")
+ALREADYIN = _("Sorry '%s' is already logged in")
+REGISTERED = _("'%s' is a registered name.  If it is yours, type the passworld.")
 
 class FICSConnection (Connection):
     def __init__ (self, host, ports, username="guest", password=""):
@@ -156,7 +158,8 @@ class FICSConnection (Connection):
             self.client.read_until("login: ")
             self.emit('connectingMsg', _("Logging on to server"))
             
-            if self.username != "guest":
+            # login with registered handle
+            if self.password:
                 print >> self.client, self.username
                 got = self.client.read_until("password:",
                                              "enter the server as",
@@ -172,14 +175,22 @@ class FICSConnection (Connection):
                 elif got == 2:
                     raise LogOnException, NOTREG % self.username
             else:
-                print >> self.client, "guest"
-                self.client.read_until("Press return")
+                if self.username:
+                    print >> self.client, self.username
+                else:
+                    print >> self.client, "guest"
+                got = self.client.read_until("Press return",
+                                             "If it is yours, type the password.")
+                if got == 1:
+                    raise LogOnException, REGISTERED % self.username
                 print >> self.client
             
             while True:
                 line = self.client.readline()
                 if "Invalid password" in line:
                     raise LogOnException, BADPAS
+                elif "is already logged in" in line:
+                    raise LogOnException, ALREADYIN % self.username
                 
                 match = re.search("\*\*\*\* Starting FICS session as " +
                     "(%s)%s \*\*\*\*" % (NAMES_RE, TITLES_RE), line)
