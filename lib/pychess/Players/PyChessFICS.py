@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import email.Utils
 from gi.repository import Gtk
 import math
@@ -6,9 +7,9 @@ import pychess
 import random
 import signal
 import subprocess
-from urllib import urlopen, urlencode
 from threading import Thread
 
+from pychess.compat import urlopen, urlencode
 from pychess.Players.PyChess import PyChess
 from pychess.System.prefix import addDataPrefix, isInstalled
 from pychess.System.repeat import repeat_sleep

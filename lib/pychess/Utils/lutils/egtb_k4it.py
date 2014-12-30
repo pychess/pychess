@@ -1,6 +1,6 @@
-import urllib
 import re
 
+from pychess.compat import urlopen
 from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.lutils.lmove import FILE, RANK
 from pychess.Utils.const import *
@@ -37,7 +37,7 @@ class egtb_k4it:
         # Request the page
         url = (URL + fen).replace(" ", "%20")
         try:
-            f = urllib.urlopen(url)
+            f = urlopen(url)
         except IOError as e:
             log.warning("Unable to read endgame tablebase from the Internet: %s" % repr(e))
             return []

@@ -15,9 +15,10 @@ POOLSIZE = 7
 # Configuration ends here #
 ###########################
 
-from urllib import urlopen
 from multiprocessing import Pool
 import re
+
+from pychess.compat import urlopen
 
 print("Getting data from Rosetta Launchpad...")
 data = urlopen('http://translations.launchpad.net/pychess/trunk/+translations').read()

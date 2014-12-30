@@ -1,7 +1,9 @@
-import urllib, os
+import os
+
+from pychess.compat import urlopen, url2pathname
 
 def splitUri (uri):
-    uri = urllib.url2pathname(uri) # escape special chars
+    uri = url2pathname(uri) # escape special chars
     uri = uri.strip('\r\n\x00') # remove \r\n and NULL
     return uri.split("://")
 
@@ -14,7 +16,7 @@ def protoopen (uri):
         pass
 
     try:
-        return urllib.urlopen(uri)
+        return urlopen(uri)
     except (IOError, OSError):
         pass
 
