@@ -78,4 +78,4 @@ def addUserCachePrefix (subpath):
 for directory in (getUserDataPrefix(), getEngineDataPrefix(),
                   getUserConfigPrefix(), getUserCachePrefix()):
     if not isdir(directory):
-        makedirs(directory, mode=0700)
+        makedirs(directory, mode=0o700)
