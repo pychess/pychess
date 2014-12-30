@@ -7,7 +7,7 @@ from gi.repository import Pango
 from gi.repository import GObject
 from gi.repository import Gdk
 
-from pychess.compat import basestring
+from pychess.compat import basestring, unicode
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import *
 from pychess.System import conf

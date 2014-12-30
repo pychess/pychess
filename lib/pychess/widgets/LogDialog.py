@@ -7,6 +7,7 @@ import logging
 
 from gi.repository import Gtk, Gdk, Pango, GObject
 
+from pychess.compat import unicode
 from pychess.System import glock, uistuff
 from pychess.System.Log import log, logemitter
 from pychess.System.prefix import addDataPrefix
