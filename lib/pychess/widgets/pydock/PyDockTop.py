@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 from xml.dom import minidom
 
@@ -6,12 +7,12 @@ from gi.repository import GObject
 
 from pychess.System.prefix import addDataPrefix
 
-from PyDockLeaf import PyDockLeaf
-from PyDockComposite import PyDockComposite
-from ArrowButton import ArrowButton
-from HighlightArea import HighlightArea
-from __init__ import TopDock, DockLeaf, DockComponent, DockComposite
-from __init__ import NORTH, EAST, SOUTH, WEST, CENTER
+from .PyDockLeaf import PyDockLeaf
+from .PyDockComposite import PyDockComposite
+from .ArrowButton import ArrowButton
+from .HighlightArea import HighlightArea
+from .__init__ import TopDock, DockLeaf, DockComponent, DockComposite
+from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER
 
 class PyDockTop (TopDock):
     def __init__ (self, id):

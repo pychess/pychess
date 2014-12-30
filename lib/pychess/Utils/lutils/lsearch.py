@@ -1,19 +1,20 @@
+from __future__ import absolute_import
 from time import time
 from random import random
 from heapq import heappush, heappop
 
-from lmovegen import genAllMoves, genCheckEvasions, genCaptures
-from egtb_gaviota import egtb_gaviota
+from .lmovegen import genAllMoves, genCheckEvasions, genCaptures
+from .egtb_gaviota import egtb_gaviota
 from pychess.Utils.const import *
 from pychess.Utils.Move import Move
 from pychess.Utils.logic import validate
-from leval import evaluateComplete
-from lsort import getCaptureValue, getMoveValue
-from lmove import toSAN
-from ldata import MATE_VALUE, VALUE_AT_PLY
-from TranspositionTable import TranspositionTable
+from .leval import evaluateComplete
+from .lsort import getCaptureValue, getMoveValue
+from .lmove import toSAN
+from .ldata import MATE_VALUE, VALUE_AT_PLY
+from .TranspositionTable import TranspositionTable
 from pychess.Variants.atomic import kingExplode
-import ldraw
+from . import ldraw
 
 TIMECHECK_FREQ = 500
 

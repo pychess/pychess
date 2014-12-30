@@ -1,4 +1,5 @@
-from const import *
+from __future__ import absolute_import
+from .const import *
 
 import __builtin__
 if '_' not in __builtin__.__dict__:

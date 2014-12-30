@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from collections import defaultdict
 from threading import RLock, Thread
 import traceback
@@ -18,8 +19,8 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants.normal import NormalChess
 from pychess.Variants import variants
 
-from logic import getStatus, isClaimableDraw, playerHasMatingMaterial
-from const import *
+from .logic import getStatus, isClaimableDraw, playerHasMatingMaterial
+from .const import *
 
 def undolocked (f):
     def newFunction(*args, **kw):

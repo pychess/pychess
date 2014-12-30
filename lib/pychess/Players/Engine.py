@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from urllib import urlopen, urlencode
 
 from gi.repository import GObject
@@ -9,7 +10,7 @@ from pychess.System.Log import log
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import ARTIFICIAL, CHAT_ACTION
 
-from Player import Player
+from .Player import Player
 
 class Engine (Player):
     

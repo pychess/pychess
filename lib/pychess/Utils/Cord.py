@@ -1,4 +1,5 @@
-from lutils.lmove import FILE, RANK
+from __future__ import absolute_import
+from .lutils.lmove import FILE, RANK
 
 class CordFormatException(Exception): pass
 

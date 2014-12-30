@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import absolute_import
+
 from math import floor, ceil, pi
 from time import time
 from threading import Lock, RLock
@@ -22,7 +24,7 @@ from pychess.Utils.const import *
 from pychess.Variants.blindfold import BlindfoldChess, HiddenPawnsChess, \
                                        HiddenPiecesChess, AllWhiteChess
 from pychess.Variants.crazyhouse import CrazyhouseChess
-import preferencesDialog
+from . import preferencesDialog
 
 def intersects (r0, r1):
     w0 = r0.width + r0.x

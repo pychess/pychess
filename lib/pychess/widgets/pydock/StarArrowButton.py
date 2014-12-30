@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from math import ceil as float_ceil
 ceil = lambda f: int(float_ceil(f))
 
@@ -7,7 +8,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
 
-from OverlayWindow import OverlayWindow
+from .OverlayWindow import OverlayWindow
 
 POSITIONS_COUNT = 5
 NORTH, EAST, SOUTH, WEST, CENTER = range(POSITIONS_COUNT)

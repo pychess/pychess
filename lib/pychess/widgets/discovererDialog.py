@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 import os
 
 from gi.repository import Gtk
 
-from Throbber import Throbber
+from .Throbber import Throbber
 from pychess.Players.engineNest import discoverer
 from pychess.System import conf, uistuff
 from pychess.System.glock import glock_connect

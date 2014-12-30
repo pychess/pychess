@@ -1,5 +1,6 @@
-from FICSConnection import FICSMainConnection, FICSHelperConnection, LogOnException
-from ICLounge import ICLounge
+from __future__ import absolute_import
+from .FICSConnection import FICSMainConnection, FICSHelperConnection, LogOnException
+from .ICLounge import ICLounge
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect
 from pychess.Utils.const import *

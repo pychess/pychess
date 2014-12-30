@@ -1,11 +1,11 @@
-
 """ This module handles the tabbed layout in PyChess """
+from __future__ import absolute_import
 
 from gi.repository import GdkPixbuf
 
-from BoardControl import BoardControl
-from ChessClock import ChessClock
-from MenuItemsDict import MenuItemsDict
+from .BoardControl import BoardControl
+from .ChessClock import ChessClock
+from .MenuItemsDict import MenuItemsDict
 from pychess.System import glock, conf, prefix
 from pychess.System.Log import log
 from pychess.System.glock import glock_connect
@@ -20,8 +20,8 @@ from pychess.ic import get_infobarmessage_content, get_infobarmessage_content2
 from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.widgets.InfoBar import InfoBar, InfoBarMessage, InfoBarMessageButton
-from pydock.PyDockTop import PyDockTop
-from pydock.__init__ import CENTER, EAST, SOUTH
+from .pydock.PyDockTop import PyDockTop
+from .pydock.__init__ import CENTER, EAST, SOUTH
 import cStringIO
 from gi.repository import Gtk
 from gi.repository import GObject

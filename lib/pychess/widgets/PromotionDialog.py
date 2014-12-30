@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from gi.repository import Gtk
 
 from pychess.System import uistuff
@@ -6,7 +7,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Piece import Piece, KING, QUEEN, ROOK, BISHOP, KNIGHT
 from pychess.Utils.const import *
 
-from PieceWidget import PieceWidget
+from .PieceWidget import PieceWidget
 
 
 uistuff.cacheGladefile("promotion.glade")

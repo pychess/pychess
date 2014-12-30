@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 
-from bitboard import *
-from attack import *
+from .bitboard import *
+from .attack import *
 from pychess.Utils.const import *
 
 ################################################################################

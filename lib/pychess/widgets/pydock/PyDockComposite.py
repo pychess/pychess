@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 import sys
 from gi.repository import Gtk
 from gi.repository import GObject
 
-from __init__ import DockComposite
-from __init__ import NORTH, EAST, SOUTH, WEST, CENTER
+from .__init__ import DockComposite
+from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER
 
 class PyDockComposite (Gtk.Alignment, DockComposite):
     def __init__ (self, position):
@@ -24,7 +25,7 @@ class PyDockComposite (Gtk.Alignment, DockComposite):
         parent = self.get_parent()
         while not isinstance(parent, DockComposite):
             parent = parent.get_parent()
-        from PyDockLeaf import PyDockLeaf
+        from .PyDockLeaf import PyDockLeaf
         leaf = PyDockLeaf(widget, title, id)
         new = PyDockComposite(position)
         parent.changeComponent(self, new)

@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import absolute_import
+
 import re
 from datetime import date
 
@@ -23,8 +25,8 @@ from pychess.Variants.losers import LosersChess, LosersBoard
 from pychess.Variants.kingofthehill import KingOfTheHillChess, KingOfTheHillBoard
 from pychess.widgets.ChessClock import formatTime
 
-from pgnbase import PgnBase, pgn_load
-from ChessFile import LoadingError
+from .pgnbase import PgnBase, pgn_load
+from .ChessFile import LoadingError
 
 
 __label__ = _("Chess Game")

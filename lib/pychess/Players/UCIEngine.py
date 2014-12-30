@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import collections
 from copy import copy
 import Queue
@@ -17,7 +18,7 @@ from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.Variants.fischerandom import FischerRandomChess
 
-from ProtocolEngine import ProtocolEngine
+from .ProtocolEngine import ProtocolEngine
 from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 
 TYPEDIC = {"check":lambda x:x=="true", "spin":int}

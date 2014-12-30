@@ -1,11 +1,12 @@
+from __future__ import absolute_import
 import os
 import re
 import sys
 import platform
 from ctypes import *
 
-from bitboard import firstBit, clearBit
-from lmovegen import genAllMoves, genCheckEvasions
+from .bitboard import firstBit, clearBit
+from .lmovegen import genAllMoves, genCheckEvasions
 from pychess.Utils.const import *
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix, getDataPrefix

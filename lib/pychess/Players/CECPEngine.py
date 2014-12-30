@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from threading import RLock, Timer, Thread
 import Queue
 import itertools
@@ -20,7 +21,7 @@ from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Variants import variants
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
-from ProtocolEngine import ProtocolEngine
+from .ProtocolEngine import ProtocolEngine
 
 def isdigits (strings):
     for s in strings:
