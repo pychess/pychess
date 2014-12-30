@@ -55,7 +55,7 @@ class LBoard:
 
     def repetitionCount (self, drawThreshold=3):
         rc = 1
-        for ply in xrange(4, 1+min(len(self.hist_hash), self.fifty), 2):
+        for ply in range(4, 1+min(len(self.hist_hash), self.fifty), 2):
             if self.hist_hash[-ply] == self.hash:
                 rc += 1
                 if rc >= drawThreshold: break

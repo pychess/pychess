@@ -257,7 +257,7 @@ if __name__ == "__main__":
     def findPrimes (worker):
         limit = 10**4.
         primes = []
-        for n in xrange(2, int(limit)+1):
+        for n in range(2, int(limit)+1):
             for p in primes:
                 if worker.isCancelled():
                     return primes

@@ -148,7 +148,7 @@ class InformationWindow:
         if tag in cls.tagToPage:
             return cls.tagToPage[tag]
         
-        for i in xrange(len(tag)-1):
+        for i in range(len(tag)-1):
             subtag = tag[:-i-1]
             if subtag in cls.tagToIter:
                 newtag = subtag+(tag[len(subtag)],)

@@ -160,7 +160,7 @@ class PyChessCECP(PyChess):
                     inc = int(lines[3])
                     minutes = lines[2].split(":")
                     # Per protocol spec, strip off any non-numeric suffixes.
-                    for i in xrange(len(minutes)):
+                    for i in range(len(minutes)):
                         minutes[i] = re.match(r'\d*', minutes[i]).group()
                     self.basetime = int(minutes[0])*60
                     if len(minutes) > 1 and minutes[1]:

@@ -11,7 +11,7 @@ from .const import *
 
 
 def reverse_enum(L):
-    for index in reversed(xrange(len(L))):
+    for index in reversed(range(len(L))):
         yield index, L[index]
 
 
@@ -28,7 +28,7 @@ class Board:
     FILES = 8
     
     def __init__ (self, setup=False, lboard=None):
-        self.data = [dict(enumerate([None]*self.FILES)) for i in xrange(self.RANKS)]
+        self.data = [dict(enumerate([None]*self.FILES)) for i in range(self.RANKS)]
         if lboard is None:
             self.board = LBoard(self.variant)
         else:

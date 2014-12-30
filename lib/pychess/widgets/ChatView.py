@@ -83,7 +83,7 @@ class ChatView (Gtk.VPaned):
         self.writeView.get_buffer().props.text = ""
         self.readView.get_buffer().props.text = ""
         tagtable = self.readView.get_buffer().get_tag_table()
-        for i in xrange(len(self.colors)):
+        for i in range(len(self.colors)):
             tagtable.remove("%d_normal" % i)
             tagtable.remove("%d_bold" % i)
         self.colors.clear()

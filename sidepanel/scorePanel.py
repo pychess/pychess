@@ -45,7 +45,7 @@ class Sidepanel:
         return __widget__
     
     def moves_undoing (self, model, moves):
-        for i in xrange(moves):
+        for i in range(moves):
             self.plot.undo()
         
         # As shown_changed will normally be emitted just after game_changed -
@@ -59,7 +59,7 @@ class Sidepanel:
         if len(self.plot)+model.lowply > model.ply:
             return
         
-        for i in xrange(len(self.plot)+model.lowply, model.ply):
+        for i in range(len(self.plot)+model.lowply, model.ply):
             if i in model.scores:
                 points = model.scores[i][1]
             else:

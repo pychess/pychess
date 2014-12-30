@@ -7,7 +7,7 @@ from pychess.Utils.Move import toFAN
 from pychess.Utils.const import *
 
 
-group = lambda l, s: [l[i:i+s] for i in xrange(0,len(l),s)]
+group = lambda l, s: [l[i:i+s] for i in range(0,len(l),s)]
 
 __label__ = _("Chess Alpha 2 Diagram")
 __ending__ = "html"
@@ -75,7 +75,7 @@ def save (file, model, position=None):
         sanmvs.append(fanconv(reprResult[model.status]))
     sanmvs.extend(['']*(-len(sanmvs)%4))
     sanmvs = group(sanmvs, 2)
-    for i in xrange((len(sanmvs)+1)/2):
+    for i in range((len(sanmvs)+1)/2):
         left = i+1+model.lowply/2
         writeMoves(file, str(i+1+model.lowply/2), sanmvs[i],
                          str(left+len(sanmvs)/2), sanmvs[i+len(sanmvs)/2])

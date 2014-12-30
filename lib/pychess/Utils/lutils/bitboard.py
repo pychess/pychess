@@ -6,7 +6,7 @@ from array import array
 def setBit (bitboard, i):
     return bitboard | bitPosArray[i]
 
-bitPosArray = [2**(63-i) for i in xrange(64)]
+bitPosArray = [2**(63-i) for i in range(64)]
 
 #===============================================================================
 # clearBit returns the bitboard with the ith bit unset
@@ -14,7 +14,7 @@ bitPosArray = [2**(63-i) for i in xrange(64)]
 def clearBit (bitboard, i):
     return bitboard & notBitPosArray[i]
 
-notBitPosArray = [~2**(63-i) for i in xrange(64)]
+notBitPosArray = [~2**(63-i) for i in range(64)]
 
 #===============================================================================
 # firstBit returns the bit closest to 0 (A4) that is set in the board
@@ -45,7 +45,7 @@ def lastBit (bitboard):
     return lsb [bitboard & -bitboard]
 
 lsb = {}
-for i in xrange(64):
+for i in range(64):
     lsb[2**i] = 63-i
 
 #===============================================================================

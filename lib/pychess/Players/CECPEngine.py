@@ -563,7 +563,7 @@ class CECPEngine (ProtocolEngine):
         log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s" % \
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task":self.defname})
         
-        for i in xrange(moves):
+        for i in range(moves):
             print("undo", file=self.engine)
         
         self.board = gamemodel.boards[-1]
@@ -579,7 +579,7 @@ class CECPEngine (ProtocolEngine):
         
         self.__tellEngineToStopPlayingCurrentColor()
         
-        for i in xrange(moves):
+        for i in range(moves):
             print("undo", file=self.engine)
         
         if gamemodel.curplayer == self:

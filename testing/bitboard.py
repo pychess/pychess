@@ -12,10 +12,10 @@ class BitboardTestCase(unittest.TestCase):
         self.positionSets = []
         # Random positions. Ten of each length. Will also include range(64) and
         # range(0)
-        for i in xrange(10):
-            for length in xrange(64):
+        for i in range(10):
+            for length in range(64):
                 if length:
-                    positions = random.sample(xrange(64), length)
+                    positions = random.sample(range(64), length)
                     board = reduce(operator.or_, (1<<(63-i) for i in positions))
                     self.positionSets.append( (positions, board) )
                 else:

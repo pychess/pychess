@@ -41,7 +41,7 @@ def benchmark ():
         board.applyFen(fen)
         pos_start_time = time()
         pos_start_nodes = lsearch.nodes
-        for depth in xrange (1, 6):
+        for depth in range (1, 6):
             mvs, scr = lsearch.alphaBeta (board, depth)
             pos_time = time() - pos_start_time
             pos_nodes = lsearch.nodes - pos_start_nodes
