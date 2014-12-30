@@ -4,10 +4,10 @@ from threading import RLock, Thread
 import traceback
 import cStringIO
 import datetime
-import Queue
 
 from gi.repository import GObject
 
+from pychess.compat import Queue, Empty
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
 from pychess.System import fident
@@ -38,7 +38,7 @@ def undolocked (f):
                         log.debug("undolocked: running queued func: %s %s %s" % \
                             (repr(func), repr(args), repr(kw)))
                         func(*args, **kw)
-                    except Queue.Empty:
+                    except Empty:
                         break
             finally:
                 self.undoLock.release()
@@ -168,7 +168,7 @@ class GameModel (GObject.GObject, Thread):
         
         self.applyingMoveLock = RLock()
         self.undoLock = RLock()
-        self.undoQueue = Queue.Queue()
+        self.undoQueue = Queue()
 
     def __repr__ (self):
         s = "<GameModel at %s" % id(self)

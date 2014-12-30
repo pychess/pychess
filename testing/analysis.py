@@ -7,7 +7,7 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
 from pychess.Players.CECPEngine import CECPEngine
 
-from Queue import Queue
+from pychess.compat import Queue
 
 from gi.repository import GObject
 

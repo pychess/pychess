@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import Queue
 from StringIO import StringIO
 from time import strftime, localtime, time
 from math import e

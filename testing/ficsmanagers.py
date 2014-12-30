@@ -1,8 +1,8 @@
 import unittest
 import datetime
-import Queue
 import random
 
+from pychess.compat import Queue, Empty
 from pychess.Utils.const import WHITE
 from pychess.ic import *
 from pychess.ic.FICSObjects import *
@@ -25,7 +25,7 @@ class DummyConnection(Connection):
     class DummyClient(PredictionsTelnet):
         class DummyTelnet():
             def __init__(self):
-                self.Q = Queue.Queue()
+                self.Q = Queue()
                 self.name = "dummytelnet"
             def putline(self, line):
                 self.Q.put(line)
@@ -66,7 +66,7 @@ class DummyConnection(Connection):
         while True:
             try:
                 self.process_line()
-            except Queue.Empty:
+            except Empty:
                 break
     
 class DummyVarManager:

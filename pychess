@@ -20,15 +20,6 @@ if sys.version_info < (2, 6, 0):
     print('ERROR: PyChess requires Python >= 2.6')
     sys.exit(1)
 
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
-
-if PY2:
-    # This hack fixes some UnicodDecode Errors caused pygi not making
-    # magic hidden automatic unicode conversion pygtk did
-    reload(sys)
-    sys.setdefaultencoding("utf-8")
-
 import gi
 gi.require_version("Gtk", "3.0")
 
@@ -62,6 +53,14 @@ except ImportError:
     print("Please try to run pychess as stated in the INSTALL file")
     sys.exit(1)
 
+# now we can import from compat module 
+from pychess.compat import PY2
+
+if PY2:
+    # This hack fixes some UnicodDecode Errors caused pygi not making
+    # magic hidden automatic unicode conversion pygtk did
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
 
 ###############################################################################
 # Set up translations

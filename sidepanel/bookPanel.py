@@ -1,9 +1,9 @@
 import os
-import Queue
 
 from gi.repository import Gdk, Gtk, GObject, Pango
 from threading import Thread
 
+from pychess.compat import Queue, Full
 from pychess.System import conf, fident
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import *
@@ -284,7 +284,7 @@ class EndgameAdvisor(Advisor, Thread):
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
 
         self.egtb.connect("scored", self.on_scored)
-        self.queue = Queue.Queue()
+        self.queue = Queue()
         self.start()
         
     class StopNow (Exception): pass
@@ -310,7 +310,7 @@ class EndgameAdvisor(Advisor, Thread):
     def gamewidget_closed (self, gamewidget):
         try:
             self.queue.put_nowait(self.StopNow)
-        except Queue.Full:
+        except Full:
             log.warning("EndgameAdvisor.gamewidget_closed: Queue.Full")
 
     def on_scored(self, w, ret):
