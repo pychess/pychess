@@ -137,9 +137,9 @@ class LBoard:
         fiftyChr = "0"
         moveNoChr = "1"
         if STRICT_FEN and len(parts) != 6:
-            raise SyntaxError, _("FEN needs 6 data fields. \n\n%s") % fenstr
+            raise SyntaxError(_("FEN needs 6 data fields. \n\n%s") % fenstr)
         elif len(parts) < 2:
-            raise SyntaxError, _("FEN needs at least 2 data fields in fenstr. \n\n%s") % fenstr
+            raise SyntaxError(_("FEN needs at least 2 data fields in fenstr. \n\n%s") % fenstr)
         elif len(parts) >= 6:
             pieceChrs, colChr, castChr, epChr, fiftyChr, moveNoChr = parts[:6]
         elif len(parts) == 5:
@@ -156,19 +156,19 @@ class LBoard:
         
         slashes = len([c for c in pieceChrs if c == "/"])
         if slashes < 7:
-            raise SyntaxError, _("Needs 7 slashes in piece placement field. \n\n%s") % fenstr
+            raise SyntaxError(_("Needs 7 slashes in piece placement field. \n\n%s") % fenstr)
         
         if not colChr.lower() in ("w", "b"):
-            raise SyntaxError, _("Active color field must be one of w or b. \n\n%s") % fenstr
+            raise SyntaxError(_("Active color field must be one of w or b. \n\n%s") % fenstr)
 
         if castChr != "-":
             for Chr in castChr:
                 valid_chars = "ABCDEFGHKQ" if self.variant==FISCHERRANDOMCHESS else "KQ"
                 if Chr.upper() not in valid_chars:
-                    raise SyntaxError, _("Castling availability field is not legal. \n\n%s") % fenstr
+                    raise SyntaxError(_("Castling availability field is not legal. \n\n%s") % fenstr)
         
         if epChr != "-" and not epChr in cordDic:
-            raise SyntaxError, _("En passant cord is not legal. \n\n%s") % fenstr
+            raise SyntaxError(_("En passant cord is not legal. \n\n%s") % fenstr)
                                  
         # Put the next one into comment, because we use 
         # "setboard 8/8/8/8/8/8/8/8 w - - 0 1" FEN to stop CECPEngine analyzers

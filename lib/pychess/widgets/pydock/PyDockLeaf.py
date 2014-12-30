@@ -93,7 +93,7 @@ class PyDockLeaf (DockLeaf):
             if widget_ == widget:
                 break
         else:
-            raise KeyError, "No %s in %s" % (widget, self)
+            raise KeyError("No %s in %s" % (widget, self))
         del self.panels[i]
         
         self.book.remove_page(self.book.page_num(widget))

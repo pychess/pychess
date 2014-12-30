@@ -904,7 +904,7 @@ class FICSGames (GObject.GObject):
             self.adjourned_games[hash(value)] = value
             
     def __delitem__ (self, game):
-        if not isinstance(game, FICSGame): raise TypeError, (repr(game), type(game))
+        if not isinstance(game, FICSGame): raise TypeError(repr(game), type(game))
         if game in self:
             del self.games[hash(game)]
         if game.gameno in self.games_by_gameno:

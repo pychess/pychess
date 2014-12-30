@@ -372,7 +372,7 @@ class CECPEngine (ProtocolEngine):
         if r == "ready":
             r = self.returnQueue.get()
         if r == "del":
-            raise PlayerIsDead, "Killed by foreign forces"
+            raise PlayerIsDead("Killed by foreign forces")
         if r == "int":
             raise TurnInterrupt
         

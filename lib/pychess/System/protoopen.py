@@ -18,7 +18,7 @@ def protoopen (uri):
     except (IOError, OSError):
         pass
 
-    raise IOError, "Protocol isn't supported by pychess"
+    raise IOError("Protocol isn't supported by pychess")
 
 def protosave (uri, append=False):
     """ Function for saving many things """
@@ -34,7 +34,7 @@ def protosave (uri, append=False):
             return file(splitted[0], "a")
         return file(splitted[0], "w")
 
-    raise IOError, "PyChess doesn't support writing to protocol"
+    raise IOError("PyChess doesn't support writing to protocol")
 
 def isWriteable (uri):
     """ Returns true if protoopen can open a write pipe to the uri """
