@@ -313,7 +313,7 @@ class FICSPlayer (GObject.GObject):
     def copy (self):
         player = FICSPlayer(self.name, online=self.online, status=self.status,
             titles=self.titles.copy())
-        for ratingtype, rating in self.ratings.iteritems():
+        for ratingtype, rating in self.ratings.items():
             player.ratings[ratingtype] = rating.copy()
         player.game = self.game
         player.adjournment = self.adjournment

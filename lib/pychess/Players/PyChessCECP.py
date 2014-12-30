@@ -82,7 +82,7 @@ class PyChessCECP(PyChess):
                     pass
      
                 elif lines[0] == "protover":
-                    stringPairs = ["=".join([k, '"%s"' % v if type(v) is str else str(v)]) for k,v in self.features.iteritems()]
+                    stringPairs = ["=".join([k, '"%s"' % v if type(v) is str else str(v)]) for k,v in self.features.items()]
                     print("feature %s" % " ".join(stringPairs))
                     print("feature done=1")
                 

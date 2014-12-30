@@ -337,7 +337,7 @@ nag2symbolDict = {
 }
 
 symbol2nagDict = {}
-for k, v in nag2symbolDict.iteritems():
+for k, v in nag2symbolDict.items():
     if v not in symbol2nagDict:
         symbol2nagDict[v] = k
 

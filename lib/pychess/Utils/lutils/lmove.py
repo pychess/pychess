@@ -554,9 +554,9 @@ def toFAN (board, move):
 ################################################################################
 
 fan2SanDic = {}
-for k, v in san2WhiteFanDic.iteritems():
+for k, v in san2WhiteFanDic.items():
     fan2SanDic[ord(v)] = unichr(k)
-for k, v in san2BlackFanDic.iteritems():
+for k, v in san2BlackFanDic.items():
     fan2SanDic[ord(v)] = unichr(k)
 
 def parseFAN (board, fan):
