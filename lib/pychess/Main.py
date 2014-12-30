@@ -13,7 +13,7 @@ from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GObject
 
-from pychess.compat import urlopen, urlparse
+from pychess.compat import urlopen, urlparse, basestring
 from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log

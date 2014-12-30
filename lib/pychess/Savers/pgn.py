@@ -6,6 +6,7 @@ from __future__ import print_function
 import re
 from datetime import date
 
+from pychess.compat import basestring
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.Utils.Board import Board
