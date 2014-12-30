@@ -71,7 +71,7 @@ def evalMaterial (board, color):
             material[WHITE] += PIECE_VALUES[piece] * pieceCount[WHITE][piece]
             material[BLACK] += PIECE_VALUES[piece] * pieceCount[BLACK][piece]
     
-    phase = max(1, 8 - (material[WHITE] + material[BLACK]) / 1150)
+    phase = max(1, 8 - (material[WHITE] + material[BLACK]) // 1150)
     
     # If both sides are equal, we don't need to compute anything!
     if material[BLACK] == material[WHITE]:
@@ -93,7 +93,7 @@ def evalMaterial (board, color):
     pawns = pieceCount[leading][PAWN]
     matDiff = material[leading] - material[1-leading]
     val = min(2400, matDiff) + \
-          (matDiff * (12000-matTotal) * pawns) / (6400 * (pawns+1))
+          (matDiff * (12000-matTotal) * pawns) // (6400 * (pawns+1))
     
     if leading == color:
         return val, phase
@@ -211,7 +211,7 @@ def cacheablePawnInfo (board, phase):
                 if (color == WHITE and not fromToRay[cord][cord|56] & pawns) or\
                    (color == BLACK and not fromToRay[cord][cord&7] & pawns):
                     passed |= bitPosArray[cord]
-                    score += (passedScores[color][cord>>3] * phase) / 12
+                    score += (passedScores[color][cord>>3] * phase) // 12
             
             # Backward pawns
             backward = False
@@ -373,7 +373,7 @@ def evalPawnStructure (board, color, phase, passed, weaked):
                 if found_hunter:
                     break
             if not found_hunter:
-                score += passedScores[color][RANK(pawn)] / 5
+                score += passedScores[color][RANK(pawn)] // 5
 
     # Penalize Pawn on d2,e2/d7,e7 is blocked
     blocker = board.blocker
@@ -452,7 +452,7 @@ def evalKing (board, color, phase):
         numbermod = (0,3,6,9,7,5,3)[total_in_front]
         
         s = bin(wall1&pawns).count("1") * 2 + bin(wall2&pawns).count("1")
-        return (s * numbermod * 5) / 6
+        return (s * numbermod * 5) // 6
     
     return 0
     
