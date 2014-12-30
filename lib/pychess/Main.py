@@ -7,14 +7,13 @@ import atexit
 import logging
 import signal
 import subprocess
-import urllib 
 import sys
 
 from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GObject
 
-from pychess.compat import urlparse
+from pychess.compat import urlopen, urlparse
 from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log
@@ -425,7 +424,7 @@ class PyChess:
         def recent_item_activated (self):
             uri = self.get_current_uri()
             try:
-                urllib.urlopen(uri).close()
+                urlopen(uri).close()
                 newGameDialog.LoadFileExtension.run(self.get_current_uri())
             except (IOError, OSError):
                 #shomething wrong whit the uri
