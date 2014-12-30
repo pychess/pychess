@@ -7,7 +7,9 @@ PY3 = sys.version_info[0] == 3
 
 if PY3:
     basestring = str
+    memoryview = memoryview
     unichr = chr
+    unicode = lambda x: x
     raw_input = input
 
     import builtins
@@ -21,6 +23,8 @@ if PY3:
     from urllib.parse import urlencode
 else:
     basestring = basestring
+    memoryview = buffer
+    unicode = unicode
     unichr = unichr
     raw_input = raw_input
     
