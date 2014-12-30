@@ -119,7 +119,7 @@ class BoardPreview:
         try:
             try:
                 self.chessfile.loadToModel(sel, -1, self.gamemodel)
-            except LoadingError, e:
+            except LoadingError as e:
                 d = Gtk.MessageDialog (type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.OK,
                                         message_format=e.args[0])
                 d.format_secondary_text (e.args[1])

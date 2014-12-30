@@ -166,7 +166,7 @@ class ICPlayer (Player):
                 move = parseSAN (board1, sanmove)
                 log.debug("ICPlayer.makemove: id(self)=%d self=%s parsed move=%s" % \
                     (id(self), self, move))
-            except ParsingError, e:
+            except ParsingError as e:
                 raise
             return move
         finally:

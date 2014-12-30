@@ -356,7 +356,7 @@ class PGNFile (PgnBase):
         if fenstr:
             try:
                 board.applyFen(fenstr)
-            except SyntaxError, e:
+            except SyntaxError as e:
                 board.applyFen(FEN_EMPTY)
                 raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
         else:

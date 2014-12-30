@@ -90,7 +90,7 @@ def semisynced(f):
                     try:
                         func_, args_, kw_ = self.funcQueue.get_nowait()
                         func_(*args_, **kw_)
-                    except TypeError, e:
+                    except TypeError as e:
                         print("TypeError: %s" % repr(args))
                         raise
                     except Queue.Empty:
@@ -302,7 +302,7 @@ class CECPEngine (ProtocolEngine):
                     self.returnQueue.put("del")
                     self.engine.gentleKill()
                 
-                except OSError, e:
+                except OSError as e:
                     # No need to raise on a hang up error, as the engine is dead
                     # anyways
                     if e.errno == 32:
@@ -770,7 +770,7 @@ class CECPEngine (ProtocolEngine):
                     else:
                         try:
                             move = parseAny(self.board, movestr)
-                        except ParsingError, e:
+                        except ParsingError as e:
                             self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                             return
                         

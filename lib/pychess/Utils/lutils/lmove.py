@@ -476,7 +476,7 @@ def parseAN (board, an):
     try:
         fcord = cordDic[an[:2]]
         tcord = cordDic[an[2:4]]
-    except KeyError, e:
+    except KeyError as e:
         raise ParsingError, (an, "the cord (%s) is incorrect" % e.args[0], board.asFen())
     
     flag = NORMAL_MOVE

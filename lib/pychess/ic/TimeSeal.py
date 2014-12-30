@@ -44,7 +44,7 @@ class TimeSeal (object):
         self.sock.settimeout(10)
         try:
             self.sock.connect((host, port))
-        except socket.error, e:
+        except socket.error as e:
             if e.errno != errno.EINPROGRESS:
                 raise
         self.sock.settimeout(None)

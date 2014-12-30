@@ -476,7 +476,7 @@ def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
         oldlogs.sort()
         try:
             os.remove(addUserDataPrefix(oldlogs[0]))
-        except OSError, e:
+        except OSError as e:
             pass
 
     signal.signal(signal.SIGINT, Gtk.main_quit)

@@ -34,7 +34,7 @@ class FenFile (ChessFile):
         fen = self.games[gameno]
         try:
             board = model.variant.board(setup=fen)
-        except SyntaxError, e:
+        except SyntaxError as e:
             board = model.variant.board()
             raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
         

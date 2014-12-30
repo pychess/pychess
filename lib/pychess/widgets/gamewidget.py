@@ -815,7 +815,7 @@ def _ensureReadForGameWidgets ():
     if os.path.isfile(dockLocation):
         try:
             dock.loadFromXML(dockLocation, docks)
-        except Exception, e:
+        except Exception as e:
             stringio = cStringIO.StringIO()
             traceback.print_exc(file=stringio)
             error = stringio.getvalue()

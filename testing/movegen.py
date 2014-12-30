@@ -84,7 +84,7 @@ class FindMovesTestCase(unittest.TestCase):
                 san = toSAN (board, move)
                 try:
                     move2 = parseSAN(board, san)
-                except ParsingError, e:
+                except ParsingError as e:
                     print(prevmoves)
                     raise ParsingError, e
                 self.assertEqual (move, move2)
