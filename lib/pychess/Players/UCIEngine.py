@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 import collections
 from copy import copy
 import Queue
@@ -73,7 +74,7 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def prestart (self):
-        print >> self.engine, "uci"
+        print("uci", file=self.engine)
     
     def start (self):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
@@ -106,9 +107,9 @@ class UCIEngine (ProtocolEngine):
         for option, value in self.optionsToBeSent.iteritems():
             if type(value) == bool:
                 value = str(value).lower()
-            print >> self.engine, "setoption name %s value %s" % (option, str(value))
+            print("setoption name %s value %s" % (option, str(value)), file=self.engine)
         
-        print >> self.engine, "isready"
+        print("isready", file=self.engine)
     
     def __onReadyForMoves (self, self_):
         self.returnQueue.put("ready")
@@ -137,8 +138,8 @@ class UCIEngine (ProtocolEngine):
             self.connected = False
             try:
                 try:
-                    print >> self.engine, "stop"
-                    print >> self.engine, "quit"
+                    print("stop", file=self.engine)
+                    print("quit", file=self.engine)
                     self.returnQueue.put("del")
                     return self.engine.gentleKill()
                 
@@ -223,7 +224,7 @@ class UCIEngine (ProtocolEngine):
                 ponderhit = True
             elif board2 and self.pondermove:
                 self.ignoreNext = True
-                print >> self.engine, "stop"
+                print("stop", file=self.engine)
             
             self._searchNow(ponderhit=ponderhit)
         
@@ -315,7 +316,7 @@ class UCIEngine (ProtocolEngine):
         if self.board.color == self.color or \
                 self.mode != NORMAL or self.pondermove:
             self.ignoreNext = True
-            print >> self.engine, "stop"
+            print("stop", file=self.engine)
     
     def resume (self):
         log.debug("resume: self=%s" % self, extra={"task":self.defname})
@@ -338,7 +339,7 @@ class UCIEngine (ProtocolEngine):
         # after that until there is another outstanding "position..go"
         with self.moveLock:
             if self.waitingForMove and self.readyForStop:
-                print >> self.engine, "stop"
+                print("stop", file=self.engine)
                 self.readyForStop = False
     
     def playerUndoMoves (self, moves, gamemodel):
@@ -409,7 +410,7 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def _newGame (self):
-        print >> self.engine, "ucinewgame"
+        print("ucinewgame", file=self.engine)
     
     def _searchNow (self, ponderhit=False):
         log.debug("_searchNow: self.needBestmove=%s ponderhit=%s self.board=%s" % \
@@ -430,7 +431,7 @@ class UCIEngine (ProtocolEngine):
                                     (self.wtime, self.incr, self.btime, self.incr))
                 
             else:
-                print >> self.engine, "stop"
+                print("stop", file=self.engine)
                 
                 if self.mode == INVERSE_ANALYZING:
                     if self.board.board.opIsChecked():
@@ -459,7 +460,7 @@ class UCIEngine (ProtocolEngine):
                     self.commands, extra={"task":self.defname})
             else:
                 for command in commands:
-                    print >> self.engine, command
+                    print(command, file=self.engine)
                 if getStatus(self.board)[1] != WON_MATE: # XXX This looks fishy.
                     self.needBestmove = True
                     self.readyForStop = True
@@ -468,10 +469,10 @@ class UCIEngine (ProtocolEngine):
         uciPos = self.uciPosition
         if not self.uciPositionListsMoves:
             uciPos += " moves"
-        print >> self.engine, "position", uciPos, \
-                                self._moveToUCI(self.board, self.pondermove)
-        print >> self.engine, "go ponder wtime", self.wtime, \
-            "winc", self.incr, "btime", self.btime, "binc", self.incr
+        print("position", uciPos, \
+                                self._moveToUCI(self.board, self.pondermove), file=self.engine)
+        print("go ponder wtime", self.wtime, \
+            "winc", self.incr, "btime", self.btime, "binc", self.incr, file=self.engine)
     
     #===========================================================================
     #    Parsing from engine
@@ -669,7 +670,7 @@ class UCIEngine (ProtocolEngine):
                     commands = self.commands.popleft()
                 
                 for command in commands:
-                    print >> self.engine, command
+                    print(command, file=self.engine)
                 self.needBestmove = True
                 self.readyForStop = True
                 log.debug("__sendQueuedGo: sent queued go=%s" % commands, extra={"task":self.defname})
@@ -692,8 +693,8 @@ class UCIEngine (ProtocolEngine):
             conf.set("multipv", n)
             with self.moveLock:
                 self.multipvSetting  = n
-                print >> self.engine, "stop"
-                print >> self.engine, "setoption name MultiPV value", n
+                print("stop", file=self.engine)
+                print("setoption name MultiPV value", n, file=self.engine)
                 self._searchNow()
         
         return n

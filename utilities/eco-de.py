@@ -1,3 +1,4 @@
+from __future__ import print_function
 # -*- coding: UTF-8 -*-
 
 # http://de.wikipedia.org/wiki/ECO-Code
@@ -88,17 +89,17 @@ if __name__ == '__main__':
             elif data and data[0] == "E32":
                 data[1] = "1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. Qc2"
                 
-            print data
+            print(data)
             
             if data:
-                print >> ecofile, '[ECO "%s"]' % data[0]
-                print >> ecofile, '[Opening "%s"]' % data[2].replace(u"\u2026", "...").encode("latin_1")
-                print >> ecofile
-                print >> ecofile, '%s' % local2eng(data[1])
-                print >> ecofile
+                print('[ECO "%s"]' % data[0], file=ecofile)
+                print('[Opening "%s"]' % data[2].replace(u"\u2026", "...").encode("latin_1"), file=ecofile)
+                print(file=ecofile)
+                print('%s' % local2eng(data[1]), file=ecofile)
+                print(file=ecofile)
 
                 eco_count += 1
 
-    print "%s lines" % eco_count
+    print("%s lines" % eco_count)
     
     ecofile.close()

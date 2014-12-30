@@ -1,3 +1,4 @@
+from __future__ import print_function
 # English eco.pgn was converted from
 # http://www.chessville.com/downloads_files/instructional_materials/ECO_Codes_With_Names_and_Moves.zip
 # others from wikipedia
@@ -61,11 +62,11 @@ if __name__ == '__main__':
         c.executemany("insert into openings(hash, base, eco, lang, opening, variation) values (?, ?, ?, ?, ?, ?)", rows)
         conn.commit()
 
-        print "Max ply was %s" % ply_max
+        print("Max ply was %s" % ply_max)
 
     # Several eco list contains only eco+name pairs, so
     # we will use base ECO line positions from en eco.pgn 
-    print "processing en eco.pgn"
+    print("processing en eco.pgn")
     feed("lang/en/eco.pgn", "en")
     
     for lang in [d for d in os.listdir("lang") if os.path.isdir("lang/"+d)]:
@@ -74,7 +75,7 @@ if __name__ == '__main__':
             
         pgnfile = "lang/%s/eco.pgn" % lang
         if os.path.isfile(pgnfile):
-            print "processing %s eco.pgn" % lang
+            print("processing %s eco.pgn" % lang)
             feed(pgnfile, lang)
     
     conn.close()

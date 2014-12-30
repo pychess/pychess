@@ -5,6 +5,7 @@
 # stuff, to make the PyChess Main class run smoothly.
 
 # faulthandler will be in Python 3.3; for 2.x you can download it from pypi
+from __future__ import print_function
 try:
     import faulthandler
     faulthandler.enable()
@@ -16,7 +17,7 @@ except ImportError:
 
 import os, sys
 if sys.version_info < (2, 6, 0):
-    print 'ERROR: PyChess requires Python >= 2.6'
+    print('ERROR: PyChess requires Python >= 2.6')
     sys.exit(1)
 
 # This hack fixes some UnicodDecode Errors caused pygi not making
@@ -30,9 +31,9 @@ gi.require_version("Gtk", "3.0")
 try:
     from gi.repository import GtkSource
 except ImportError:
-    print 'ERROR: Could not load the gtksourceview2 python module.'
-    print 'You need to install the gtksourceview2 python package which is '
-    print 'called pygtksourceview in most distributions'
+    print('ERROR: Could not load the gtksourceview2 python module.')
+    print('You need to install the gtksourceview2 python package which is ')
+    print('called pygtksourceview in most distributions')
     sys.exit(1)
 
 
@@ -53,8 +54,8 @@ if os.path.isdir(os.path.join(this_dir, "lib/pychess")) and \
 try:
     from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
 except ImportError:
-    print "ERROR: Could not import modules."
-    print "Please try to run pychess as stated in the INSTALL file"
+    print("ERROR: Could not import modules.")
+    print("Please try to run pychess as stated in the INSTALL file")
     sys.exit(1)
 
 
@@ -94,7 +95,7 @@ ics_port = None
 try:
     import argparse
 except ImportError:
-    print "argparse library not found; command line arguments won't work"
+    print("argparse library not found; command line arguments won't work")
 else:
     version = "%s (%s)" % (pychess.VERSION, pychess.VERSION_NAME)
     description = "The PyChess chess client, version %s." % version

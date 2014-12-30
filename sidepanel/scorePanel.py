@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 from math import e
 from random import randint
@@ -93,25 +94,25 @@ class Sidepanel:
         opboard.setColor(1-opboard.color)
         material, phase = leval.evalMaterial (board)
         if board.color == WHITE:
-            print "material", -material
+            print("material", -material)
             e1 = leval.evalKingTropism (board)
             e2 = leval.evalKingTropism (opboard)
-            print "evaluation: %d + %d = %d " % (e1, e2, e1+e2)
+            print("evaluation: %d + %d = %d " % (e1, e2, e1+e2))
             p1 = leval.evalPawnStructure (board, phase)
             p2 = leval.evalPawnStructure (opboard, phase)
-            print "pawns: %d + %d = %d " % (p1, p2, p1+p2)
-            print "knights:",-leval.evalKnights (board)
-            print "king:",-leval.evalKing(board,phase)
+            print("pawns: %d + %d = %d " % (p1, p2, p1+p2))
+            print("knights:",-leval.evalKnights (board))
+            print("king:",-leval.evalKing(board,phase))
         else:
-            print "material", material
-            print "evaluation:",leval.evalKingTropism (board)
-            print "pawns:", leval.evalPawnStructure (board, phase)
-            print "pawns2:", leval.evalPawnStructure (opboard, phase)
-            print "pawns3:", leval.evalPawnStructure (board, phase) + \
-                             leval.evalPawnStructure (opboard, phase)
-            print "knights:",leval.evalKnights (board)
-            print "king:",leval.evalKing(board,phase)
-        print "----------------------"
+            print("material", material)
+            print("evaluation:",leval.evalKingTropism (board))
+            print("pawns:", leval.evalPawnStructure (board, phase))
+            print("pawns2:", leval.evalPawnStructure (opboard, phase))
+            print("pawns3:", leval.evalPawnStructure (board, phase) + \
+                             leval.evalPawnStructure (opboard, phase))
+            print("knights:",leval.evalKnights (board))
+            print("king:",leval.evalKing(board,phase))
+        print("----------------------")
         
     def shown_changed (self, boardview, shown):
         if not boardview.shownIsMainLine():

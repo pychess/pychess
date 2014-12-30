@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import re
 from datetime import date
@@ -83,60 +84,60 @@ def save (file, model, position=None):
 
     status = reprResult[model.status]
 
-    print >> file, '[Event "%s"]' % model.tags["Event"]
-    print >> file, '[Site "%s"]' % model.tags["Site"]
-    print >> file, '[Date "%04d.%02d.%02d"]' % \
-        (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"]))
-    print >> file, '[Round "%s"]' % model.tags["Round"]
-    print >> file, '[White "%s"]' % repr(model.players[WHITE])
-    print >> file, '[Black "%s"]' % repr(model.players[BLACK])
-    print >> file, '[Result "%s"]' % status
+    print('[Event "%s"]' % model.tags["Event"], file=file)
+    print('[Site "%s"]' % model.tags["Site"], file=file)
+    print('[Date "%04d.%02d.%02d"]' % \
+        (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])), file=file)
+    print('[Round "%s"]' % model.tags["Round"], file=file)
+    print('[White "%s"]' % repr(model.players[WHITE]), file=file)
+    print('[Black "%s"]' % repr(model.players[BLACK]), file=file)
+    print('[Result "%s"]' % status, file=file)
     if "ECO" in model.tags:
-        print >> file, '[ECO "%s"]' % model.tags["ECO"]
+        print('[ECO "%s"]' % model.tags["ECO"], file=file)
     if "WhiteElo" in model.tags:
-        print >> file, '[WhiteElo "%s"]' % model.tags["WhiteElo"]
+        print('[WhiteElo "%s"]' % model.tags["WhiteElo"], file=file)
     if "BlackElo" in model.tags:
-        print >> file, '[BlackElo "%s"]' % model.tags["BlackElo"]
+        print('[BlackElo "%s"]' % model.tags["BlackElo"], file=file)
     if "TimeControl" in model.tags:
-        print >> file, '[TimeControl "%s"]' % model.tags["TimeControl"]
+        print('[TimeControl "%s"]' % model.tags["TimeControl"], file=file)
     if "Time" in model.tags:
-        print >> file, '[Time "%s"]' % str(model.tags["Time"])
+        print('[Time "%s"]' % str(model.tags["Time"]), file=file)
     if model.timed:
-        print >> file, '[WhiteClock "%s"]' % \
-            msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000))
-        print >> file, '[BlackClock "%s"]' % \
-            msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000))
+        print('[WhiteClock "%s"]' % \
+            msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)), file=file)
+        print('[BlackClock "%s"]' % \
+            msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)), file=file)
     if issubclass(model.variant, FischerRandomChess):
-        print >> file, '[Variant "Fischerandom"]'
+        print('[Variant "Fischerandom"]', file=file)
     elif issubclass(model.variant, AtomicChess):
-        print >> file, '[Variant "Atomic"]'
+        print('[Variant "Atomic"]', file=file)
     elif issubclass(model.variant, CrazyhouseChess):
-        print >> file, '[Variant "Crazyhouse"]'
+        print('[Variant "Crazyhouse"]', file=file)
     elif issubclass(model.variant, WildcastleChess):
-        print >> file, '[Variant "Wildcastle"]'
+        print('[Variant "Wildcastle"]', file=file)
     elif issubclass(model.variant, SuicideChess):
-        print >> file, '[Variant "Suicide"]'
+        print('[Variant "Suicide"]', file=file)
     elif issubclass(model.variant, LosersChess):
-        print >> file, '[Variant "Losers"]'
+        print('[Variant "Losers"]', file=file)
     elif issubclass(model.variant, KingOfTheHillChess):
-        print >> file, '[Variant "Kingofthehill"]'
+        print('[Variant "Kingofthehill"]', file=file)
     if model.boards[0].asFen() != FEN_START:
-        print >> file, '[SetUp "1"]'
-        print >> file, '[FEN "%s"]' % model.boards[0].asFen()
-    print >> file, '[PlyCount "%s"]' % (model.ply-model.lowply)
+        print('[SetUp "1"]', file=file)
+        print('[FEN "%s"]' % model.boards[0].asFen(), file=file)
+    print('[PlyCount "%s"]' % (model.ply-model.lowply), file=file)
     if "EventDate" in model.tags:
-        print >> file, '[EventDate "%s"]' % model.tags["EventDate"]
+        print('[EventDate "%s"]' % model.tags["EventDate"], file=file)
     if "Annotator" in model.tags:
-        print >> file, '[Annotator "%s"]' % model.tags["Annotator"]
-    print >> file
+        print('[Annotator "%s"]' % model.tags["Annotator"], file=file)
+    print(file=file)
 
     result = []
     walk(model.boards[0].board, result, model)
             
     result = " ".join(result)
     result = wrap(result, 80)
-    print >> file, result, status
-    print >> file
+    print(result, status, file=file)
+    print(file=file)
     file.close()
 
 def walk(node, result, model, vari=False):

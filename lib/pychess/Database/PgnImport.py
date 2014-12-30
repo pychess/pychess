@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import os
 import sys
@@ -126,7 +127,7 @@ class PgnImport():
 
     #@profile
     def do_import(self, filename):
-        print filename
+        print(filename)
         # collect new names not in they dict yet
         self.collection_data = []
         self.event_data = []
@@ -183,7 +184,7 @@ class PgnImport():
                         try:
                             board.applyFen(fenstr)
                         except SyntaxError, e:
-                            print _("The game #%s can't be loaded, because of an error parsing FEN") % (i+1), e.args[0]
+                            print(_("The game #%s can't be loaded, because of an error parsing FEN") % (i+1), e.args[0])
                             continue
                     else:
                         board = LBoard_FEN_START.clone()
@@ -193,14 +194,14 @@ class PgnImport():
                     boards = cf.parse_string(movetext, boards[0], -1)
 
                     if cf.error is not None:
-                        print "ERROR in game #%s" % (i+1), cf.error.args[0]
+                        print("ERROR in game #%s" % (i+1), cf.error.args[0])
                         continue
 
                     walk(boards[0], movelist, comments)
                     
                     if not movelist:
                         if (not comments) and (cf._getTag(i, 'White') is None) and (cf._getTag(i, 'Black') is None):
-                            print "empty game"
+                            print("empty game")
                             continue
                     
                     event_id = self.get_id(cf._getTag(i, 'Event'), event, EVENT)
@@ -297,7 +298,7 @@ class PgnImport():
 
                         self.conn.execute(self.ins_game, self.game_data)
                         self.game_data = []
-                        print pgnfile, i+1
+                        print(pgnfile, i+1)
                     
                 if self.collection_data:
                     self.conn.execute(self.ins_collection, self.collection_data)
@@ -323,12 +324,12 @@ class PgnImport():
                     self.conn.execute(self.ins_game, self.game_data)
                     self.game_data = []
 
-                print pgnfile, i+1
+                print(pgnfile, i+1)
                 trans.commit()
 
             except ProgrammingError, e:
                 trans.rollback()
-                print "Importing %s failed! %s" % (file, e)
+                print("Importing %s failed! %s" % (file, e))
 
     def import_FIDE_players(self):
         #print 'drop index'
@@ -371,12 +372,12 @@ class PgnImport():
                     if len(player_data) >= CHUNK:
                         self.conn.execute(ins_player, player_data)
                         player_data = []
-                        print i
+                        print(i)
 
                 if player_data:
                     self.conn.execute(ins_player, player_data)
 
-                print i+1
+                print(i+1)
                 trans.commit()
 
             except:
@@ -401,8 +402,8 @@ class PgnImport():
         result = self.conn.execute(s)
         games = result.fetchall()
         for g in games:
-            print "%s %s %s %s %s %s %s %s %s %s %s %s" % (g['id'], g['event'], g['site'], g['white'], g['black'],
-                g[5], g[6], g[7], g['eco'], reprResult[g['result']], g['white_elo'], g['black_elo'])
+            print("%s %s %s %s %s %s %s %s %s %s %s %s" % (g['id'], g['event'], g['site'], g['white'], g['black'],
+                g[5], g[6], g[7], g['eco'], reprResult[g['result']], g['white_elo'], g['black_elo']))
 
 
 if __name__ == "__main__":
@@ -423,7 +424,7 @@ if __name__ == "__main__":
                 for file in sorted(os.listdir(arg)):
                     if file[-4:].lower() in (".pgn", ".zip"):
                         imp.do_import(os.path.join(arg, file))
-        print "Elapsed time (secs): %s" % t.elapsed_secs
+        print("Elapsed time (secs): %s" % t.elapsed_secs)
     else:
         path = os.path.abspath(os.path.dirname(__file__))
         with Timer() as t:
@@ -431,6 +432,6 @@ if __name__ == "__main__":
             imp.do_import(os.path.join('../../../testing/gamefiles', "world_matches.pgn"))
             imp.do_import(os.path.join('../../../testing/gamefiles', "dortmund.pgn"))
             imp.do_import(os.path.join('../../../testing/gamefiles', "twic923.pgn"))
-        print "Elapsed time (secs): %s" % t.elapsed_secs
-        print "Old: 28.68"
+        print("Elapsed time (secs): %s" % t.elapsed_secs)
+        print("Old: 28.68")
     imp.print_db()

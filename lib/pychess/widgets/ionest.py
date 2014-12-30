@@ -1,4 +1,5 @@
 """ The task of this module, is to save, load and init new games """
+from __future__ import print_function
 
 from gi.repository import GObject
 
@@ -293,7 +294,7 @@ Please ensure that you have given the right path and try again."))
             elif replaceRes == Gtk.ResponseType.CANCEL:
                 continue
         else:
-            print repr(uri)
+            print(repr(uri))
         try:
             game.save(uri, saver, append, position)
         except IOError, e:

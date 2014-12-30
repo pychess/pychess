@@ -1,3 +1,4 @@
+from __future__ import print_function
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.leval import clearPawnTable
 from pychess.Utils.lutils.lmove import listToSan
@@ -46,9 +47,9 @@ def benchmark ():
             pos_nodes = lsearch.nodes - pos_start_nodes
             pv = " ".join(listToSan(board, mvs))
             time_cs = int(100 * pos_time)
-            print depth, scr, time_cs, pos_nodes, pv
-        print "Searched position", i, "at", int(pos_nodes / pos_time), "n/s"
+            print(depth, scr, time_cs, pos_nodes, pv)
+        print("Searched position", i, "at", int(pos_nodes / pos_time), "n/s")
     suite_time = time() - suite_time
     suite_nodes = lsearch.nodes - suite_nodes
-    print "Total:", suite_nodes, "nodes in", suite_time, "s: ", suite_nodes / suite_time, "n/s"
+    print("Total:", suite_nodes, "nodes in", suite_time, "s: ", suite_nodes / suite_time, "n/s")
     lsearch.nodes = 0

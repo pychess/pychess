@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import print_function
+
 import re
 
 from pychess.Utils.const import *
@@ -150,7 +152,7 @@ class PgnBase(ChessFile):
                     break
 
                 else:
-                    print "Unknown:",text
+                    print("Unknown:",text)
 
         return boards #, status
 
@@ -271,7 +273,7 @@ def pgn_load(file, klass=PgnBase):
                 if not inTags:
                     files[-1][1] += line.decode('latin_1')
                 else:
-                    print "Warning: ignored invalid tag pair %s" % line
+                    print("Warning: ignored invalid tag pair %s" % line)
         else:
             inTags = False
             if not files:

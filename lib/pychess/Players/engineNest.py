@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 import os
 import sys
 import json
@@ -525,7 +526,7 @@ if __name__ == "__main__":
 #    discoverer = EngineDiscoverer()
 
     def discovering_started (discoverer, names):
-        print "discovering_started", names
+        print("discovering_started", names)
     discoverer.connect("discovering_started", discovering_started)
 
     def engine_discovered (discoverer, name, engine):
@@ -533,8 +534,8 @@ if __name__ == "__main__":
     discoverer.connect("engine_discovered", engine_discovered)
 
     def all_engines_discovered (discoverer):
-        print "all_engines_discovered"
-        print [engine["name"] for engine in discoverer.getEngines()]
+        print("all_engines_discovered")
+        print([engine["name"] for engine in discoverer.getEngines()])
         mainloop.quit()
     discoverer.connect("all_engines_discovered", all_engines_discovered)
     

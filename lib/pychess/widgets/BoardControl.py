@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -43,7 +44,7 @@ class BoardControl (Gtk.EventBox):
         self.actionMenuItems = actionMenuItems
         self.connections = {}
         for key, menuitem in self.actionMenuItems.iteritems():
-            if menuitem == None: print key
+            if menuitem == None: print(key)
             self.connections[menuitem] = menuitem.connect("activate", self.actionActivate, key)
         
         self.view.connect("shown_changed", self.shown_changed)

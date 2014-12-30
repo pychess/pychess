@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 from copy import copy
 
 from .lutils.LBoard import LBoard
@@ -378,4 +379,4 @@ class Board:
                 else:
                     b += '.'
             b += "\n"
-        print b
+        print(b)

@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 from threading import RLock, Timer, Thread
 import Queue
 import itertools
@@ -90,7 +91,7 @@ def semisynced(f):
                         func_, args_, kw_ = self.funcQueue.get_nowait()
                         func_(*args_, **kw_)
                     except TypeError, e:
-                        print "TypeError: %s" % repr(args)
+                        print("TypeError: %s" % repr(args))
                         raise
                     except Queue.Empty:
                         break
@@ -190,16 +191,16 @@ class CECPEngine (ProtocolEngine):
     #===========================================================================
     
     def prestart (self):
-        print >> self.engine, "xboard"
+        print("xboard", file=self.engine)
         if self.protover == 1:
             # start a new game (CECPv1 engines):
-            print >> self.engine, "new"
+            print("new", file=self.engine)
 
             # we are now ready for options:
             self.emit("readyForOptions")
         elif self.protover == 2:
             # start advanced protocol initialisation:
-            print >> self.engine, "protover 2"
+            print("protover 2", file=self.engine)
 
             # we don't start a new game for CECPv2 here,
             # we will do it after feature accept/reject is completed.
@@ -247,10 +248,10 @@ class CECPEngine (ProtocolEngine):
         
         # We always want post turned on so the Engine Output sidebar can
         # show those things  -Jonas Thiem
-        print >> self.engine, "post"
+        print("post", file=self.engine)
         
         for command in self.optionQueue:
-            print >> self.engine, command
+            print(command, file=self.engine)
         
     def __onReadyForMoves (self, self_):
         # If we are an analyzer, this signal was already called in a different
@@ -259,7 +260,7 @@ class CECPEngine (ProtocolEngine):
             # workaround for crafty not sending analysis after it has found a mating line
             # http://code.google.com/p/pychess/issues/detail?id=515
             if "crafty" in self.features["myname"].lower():
-                print >> self.engine, "noise 0"
+                print("noise 0", file=self.engine)
 
             self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
         
@@ -277,13 +278,13 @@ class CECPEngine (ProtocolEngine):
             # for reasons and statuses lies in Main.py
             # Creating Status and Reason class would solve this
             if status == DRAW:
-                print >> self.engine, "result 1/2-1/2 {?}"
+                print("result 1/2-1/2 {?}", file=self.engine)
             elif status == WHITEWON:
-                print >> self.engine, "result 1-0 {?}"
+                print("result 1-0 {?}", file=self.engine)
             elif status == BLACKWON:
-                print >> self.engine, "result 0-1 {?}"
+                print("result 0-1 {?}", file=self.engine)
             else:
-                print >> self.engine, "result * {?}"
+                print("result * {?}", file=self.engine)
             
             # Make sure the engine exits and do some cleaning
             self.kill(reason)
@@ -297,7 +298,7 @@ class CECPEngine (ProtocolEngine):
             self.connected = False
             try:
                 try:
-                    print >> self.engine, "quit"
+                    print("quit", file=self.engine)
                     self.returnQueue.put("del")
                     self.engine.gentleKill()
                 
@@ -383,8 +384,8 @@ class CECPEngine (ProtocolEngine):
     @semisynced
     def updateTime (self, secs, opsecs):
         if self.features["time"]:
-            print >> self.engine, "time %s" % int(secs*100*self.timeHandicap)
-            print >> self.engine, "otim %s" % int(opsecs*100)
+            print("time %s" % int(secs*100*self.timeHandicap), file=self.engine)
+            print("otim %s" % int(opsecs*100), file=self.engine)
     
     #===========================================================================
     #    Standard options
@@ -530,7 +531,7 @@ class CECPEngine (ProtocolEngine):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
             return
         if self.features["pause"]:
-            print >> self.engine, "pause"
+            print("pause", file=self.engine)
         elif self.board:
             self.__tellEngineToStopPlayingCurrentColor()
             self._blockTillMove()
@@ -543,10 +544,10 @@ class CECPEngine (ProtocolEngine):
         
         if self.mode not in (ANALYZING, INVERSE_ANALYZING):
             if self.features["pause"]:
-                print "features resume"
-                print >> self.engine, "resume"
+                print("features resume")
+                print("resume", file=self.engine)
             elif self.board:
-                print "go resume"
+                print("go resume")
                 self.__tellEngineToPlayCurrentColorAndMakeMove()
     
     @semisynced
@@ -563,7 +564,7 @@ class CECPEngine (ProtocolEngine):
             (moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task":self.defname})
         
         for i in xrange(moves):
-            print >> self.engine, "undo"
+            print("undo", file=self.engine)
         
         self.board = gamemodel.boards[-1]
             
@@ -579,7 +580,7 @@ class CECPEngine (ProtocolEngine):
         self.__tellEngineToStopPlayingCurrentColor()
         
         for i in xrange(moves):
-            print >> self.engine, "undo"
+            print("undo", file=self.engine)
         
         if gamemodel.curplayer == self:
             self.board = gamemodel.boards[-1]
@@ -594,7 +595,7 @@ class CECPEngine (ProtocolEngine):
     def offer (self, offer):
         if offer.type == DRAW_OFFER:
             if self.features["draw"]:
-                print >> self.engine, "draw"
+                print("draw", file=self.engine)
         else:
             self.emit("accept", offer)
     
@@ -615,25 +616,25 @@ class CECPEngine (ProtocolEngine):
             self.engine.write("usermove ")
         
         if self.features["san"]:
-            print >> self.engine, toSAN(board, move)
+            print(toSAN(board, move), file=self.engine)
         else:
             cn = CASTLE_KK
             if board.variant == FISCHERRANDOMCHESS:
                 cn = CASTLE_SAN
-            print >> self.engine, toAN(board, move, short=True, castleNotation=cn)
+            print(toAN(board, move, short=True, castleNotation=cn), file=self.engine)
     
     def __tellEngineToMoveNow (self):
         if self.features["sigint"]:
             self.engine.sigint()
-        print >> self.engine, "?"
+        print("?", file=self.engine)
     
     def __tellEngineToStopPlayingCurrentColor (self):
-        print >> self.engine, "force"
+        print("force", file=self.engine)
         self.engineIsInNotPlaying = True
     
     def __tellEngineToPlayCurrentColorAndMakeMove (self):
         self.__printColor()
-        print >> self.engine, "go"
+        print("go", file=self.engine)
         self.engineIsInNotPlaying = False
     
     def __sendAnalyze (self, inverse=False):
@@ -647,14 +648,14 @@ class CECPEngine (ProtocolEngine):
 
         def stop_analyze ():
             if self.engineIsAnalyzing:
-                print >> self.engine, "exit"
+                print("exit", file=self.engine)
                 # Some engines (crafty, gnuchess) doesn't respond to exit command
                 # we try to force them to stop with an empty board fen
-                print >> self.engine, "setboard 8/8/8/8/8/8/8/8 w - - 0 1"
+                print("setboard 8/8/8/8/8/8/8/8 w - - 0 1", file=self.engine)
                 self.engineIsAnalyzing = False
         
-        print >> self.engine, "post"
-        print >> self.engine, "analyze"
+        print("post", file=self.engine)
+        print("analyze", file=self.engine)
         self.engineIsAnalyzing = True
 
         if self.analysis_timer is not None:
@@ -667,8 +668,8 @@ class CECPEngine (ProtocolEngine):
     def __printColor (self):
         if self.features["colors"]: #or self.mode == INVERSE_ANALYZING:
             if self.board.color == WHITE:
-                print >> self.engine, "white"
-            else: print >> self.engine, "black"
+                print("white", file=self.engine)
+            else: print("black", file=self.engine)
     
     def __setBoard (self, board):
         if self.features["setboard"]:
@@ -682,15 +683,15 @@ class CECPEngine (ProtocolEngine):
                     else:
                         fen_arr[1] = "b"
                 fen = " ".join(fen_arr)
-            print >> self.engine, "setboard %s" % fen
+            print("setboard %s" % fen, file=self.engine)
         else:
             # Kludge to set black to move, avoiding the troublesome and now
             # deprecated "black" command. - Equal to the one xboard uses
             self.__tellEngineToStopPlayingCurrentColor()
             if board.color == BLACK:
-                print >> self.engine, "a2a3"
-            print >> self.engine, "edit"
-            print >> self.engine, "#"
+                print("a2a3", file=self.engine)
+            print("edit", file=self.engine)
+            print("#", file=self.engine)
             for color in WHITE, BLACK:
                 for y, row in enumerate(board.data):
                     for x, piece in enumerate(row):
@@ -698,9 +699,9 @@ class CECPEngine (ProtocolEngine):
                             continue
                         sign = reprSign[piece.sign]
                         cord = repr(Cord(x,y))
-                        print >> self.engine, sign+cord
-                print >> self.engine, "c"
-            print >> self.engine, "."
+                        print(sign+cord, file=self.engine)
+                print("c", file=self.engine)
+            print(".", file=self.engine)
     
     def _blockTillMove (self):
         saved_state = self.boardLock._release_save()
@@ -740,7 +741,7 @@ class CECPEngine (ProtocolEngine):
             log.warning("__parseLine: illegal move: line=\"%s\", board=%s" \
                 % (line.strip(), self.board), extra={"task":self.defname})
             if parts[-2] == "sd" and parts[-1].isdigit():
-                print >> self.engine, "depth", parts[-1] 
+                print("depth", parts[-1], file=self.engine) 
             return
         
         # A Move (Perhaps)
@@ -764,7 +765,7 @@ class CECPEngine (ProtocolEngine):
                         # move, we ignore it. However the engine has to know that we
                         # ignored it, and thus we step it one back
                         log.info("__parseLine: Discarding engine's move: %s" % movestr, extra={"task":self.defname})
-                        print >> self.engine, "undo"
+                        print("undo", file=self.engine)
                         return
                     else:
                         try:
@@ -790,7 +791,7 @@ class CECPEngine (ProtocolEngine):
         if self.engineIsInNotPlaying:
             if parts[:4] == ["0","0","0","0"]:
                 # Crafty doesn't analyze until it is out of book
-                print >> self.engine, "book off"
+                print("book off", file=self.engine)
                 return
             
             match = anare.match(line)
@@ -907,9 +908,9 @@ class CECPEngine (ProtocolEngine):
                     value = int(value)
                 
                 if key in self.supported_features:
-                    print >> self.engine, "accepted %s" % key
+                    print("accepted %s" % key, file=self.engine)
                 else:
-                    print >> self.engine, "rejected %s" % key
+                    print("rejected %s" % key, file=self.engine)
                 
                 if key == "done":
                     if value == 1:
@@ -938,7 +939,7 @@ class CECPEngine (ProtocolEngine):
             if done1:
                 # Start a new game before using the engine:
                 # (CECPv2 engines)
-                print >> self.engine, "new"
+                print("new", file=self.engine)
 
                 # We are now ready for play:
                 self.emit("readyForOptions")
