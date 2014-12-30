@@ -549,7 +549,7 @@ class GameModel (GObject.GObject, Thread):
             return
         self.status = RUNNING
         
-        for player in self.players + self.spectators.values():
+        for player in self.players + list(self.spectators.values()):
             player.start()
         
         log.debug("GameModel.run: emitting 'game_started' self=%s" % self)
