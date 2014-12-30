@@ -1,9 +1,10 @@
 from __future__ import absolute_import
 from .const import *
 
-import __builtin__
-if '_' not in __builtin__.__dict__:
-    __builtin__.__dict__['_'] = lambda s: s
+from pychess.compat import builtins
+
+if '_' not in builtins.__dict__:
+    builtins.__dict__['_'] = lambda s: s
 
 
 reprColor = [_("White"), _("Black")]
