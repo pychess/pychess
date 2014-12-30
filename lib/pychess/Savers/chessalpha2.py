@@ -3,6 +3,8 @@
 from __future__ import print_function
 
 from htmlentitydefs import entitydefs
+
+from pychess.compat import unichr
 from pychess.Utils.Move import toFAN
 from pychess.Utils.const import *
 

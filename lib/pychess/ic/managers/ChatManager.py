@@ -5,6 +5,7 @@ import re
 from math import ceil
 import time
 
+from pychess.compat import unichr
 from pychess.System.Log import log
 from pychess.ic.FICSObjects import FICSPlayer
 
