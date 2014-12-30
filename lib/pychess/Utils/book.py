@@ -40,11 +40,11 @@ def getOpenings (board):
         key = board.hash
         # Find the first entry whose key is >= the position's hash
         bookFile.seek(0, os.SEEK_END)
-        lo, hi = 0, bookFile.tell() / 16 - 1
+        lo, hi = 0, bookFile.tell() // 16 - 1
         if hi < 0:
             return openings
         while lo < hi:
-            mid = (lo + hi) / 2
+            mid = (lo + hi) // 2
             bookFile.seek(mid * 16)
             entry = bookFile.read(entrysize)
             if len(entry) != entrysize:
