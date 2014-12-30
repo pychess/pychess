@@ -240,7 +240,7 @@ class EngineDiscoverer (GObject.GObject):
         # Find the backup engine
         ######
         try:
-            backup_engine = (c for c in backup if c["name"] == engine["name"]).next()
+            backup_engine = next((c for c in backup if c["name"] == engine["name"]))
             engine["country"] = backup_engine["country"]
         except StopIteration:
             log.warning("Engine '%s' has not been tested and verified to work with PyChess" % \
