@@ -582,7 +582,7 @@ class GameModel (GObject.GObject, Thread):
                 if self.status in (WAITING_TO_START, PAUSED, RUNNING):
                     stringio = StringIO()
                     traceback.print_exc(file=stringio)
-                    error = strinGio.getvalue()
+                    error = stringio.getvalue()
                     log.error("GameModel.run: A Player died: player=%s error=%s\n%s" % (curPlayer, error, e))
                     if curColor == WHITE:
                         self.kill(WHITE_ENGINE_DIED)
