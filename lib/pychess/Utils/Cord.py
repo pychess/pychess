@@ -53,8 +53,8 @@ class Cord:
         else: raise CordFormatException("x < 0 || x > 7 (%s, %d)" % (char, a))
         return a
     
-    def _set_cords (self, (x, y)):
-        self.x, self.y = x, y
+    def _set_cords (self, x_y):
+        self.x, self.y = x_y
     def _get_cords (self):
         return (self.x, self.y)
     cords = property(_get_cords, _set_cords)
