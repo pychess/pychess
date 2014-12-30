@@ -711,7 +711,7 @@ class LBoard:
                 else: b += "."
                 b += " "
             b += "\n# "
-        return b.encode("utf-8")
+        return b
     
     def asFen (self, enable_bfen=True):
         fenstr = []
