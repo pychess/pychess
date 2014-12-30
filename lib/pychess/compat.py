@@ -6,6 +6,7 @@ PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
 if PY3:
+    basestring = str
     unichr = chr
 
     import builtins
@@ -18,6 +19,7 @@ if PY3:
     from urllib.request import urlopen, url2pathname
     from urllib.parse import urlencode
 else:
+    basestring = basestring
     unichr = unichr
     
     import __builtin__ as builtins

@@ -5,6 +5,8 @@ import subprocess
 import traceback
 import shlex
 
+from pychess.compat import basestring
+
 
 class Command(object):
     """

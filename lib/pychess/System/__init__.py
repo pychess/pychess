@@ -1,5 +1,8 @@
 import inspect
 
+from pychess.compat import basestring
+
+
 def fident (f):
     '''
     Get an identifier for a function or method
