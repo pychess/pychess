@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import re
 import sys
@@ -117,7 +118,7 @@ class OverlayWindow (Gtk.Window):
         def getcol(col):
             found, color = sc.lookup_color(col)
             # not found colors are black
-            if not found: print "color not found in overlaywindow.py:",col
+            if not found: print("color not found in overlaywindow.py:",col)
             return "#%02X%02X%02X" % (int(color.red * 255), int(color.green * 255), int(color.blue * 255))
 
         sc = self.get_style_context()

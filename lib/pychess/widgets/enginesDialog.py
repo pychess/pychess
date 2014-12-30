@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 
 from gi.repository import Gtk
@@ -153,7 +154,7 @@ class EnginesDialog():
                                 # restore the original
                                 engine = discoverer.getEngineByName(self.cur_engine)
                                 engine_chooser_dialog.set_filename(engine["command"])
-                                print "Maybe not a chess engine"
+                                print("Maybe not a chess engine")
                                 return
                         path, binname = os.path.split(new_engine)
                         for e in discoverer.getEngines():
@@ -173,7 +174,7 @@ class EnginesDialog():
                         self.add = False
                         discoverer.discover()
                     except:
-                        print "There is something wrong with this executable"
+                        print("There is something wrong with this executable")
                 else:
                     # restore the original
                     engine = discoverer.getEngineByName(self.cur_engine)

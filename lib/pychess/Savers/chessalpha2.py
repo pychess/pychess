@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 from htmlentitydefs import entitydefs
 from pychess.Utils.Move import toFAN
 from pychess.Utils.const import *
@@ -59,11 +61,11 @@ table.pychess pre {margin:0; padding:0; font-family:"Chess Alpha 2"; font-size:1
 def save (file, model, position=None):
     """Saves the position as a diagram using chess fonts"""
     
-    print >> file, "<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>"
-    print >> file, "<style type='text/css'>%s</style>"%style
-    print >> file, "<table cellspacing='0' cellpadding='0' class='pychess'><tr><td colspan='6'><pre>"
+    print("<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>", file=file)
+    print("<style type='text/css'>%s</style>"%style, file=file)
+    print("<table cellspacing='0' cellpadding='0' class='pychess'><tr><td colspan='6'><pre>", file=file)
     writeDiagram(file, model)
-    print >> file, "</pre></td></tr>"
+    print("</pre></td></tr>", file=file)
     
     sanmvs = map(toFAN, model.boards[:-1], model.moves)
     sanmvs = map(fanconv, sanmvs)
@@ -77,7 +79,7 @@ def save (file, model, position=None):
         left = i+1+model.lowply/2
         writeMoves(file, str(i+1+model.lowply/2), sanmvs[i],
                          str(left+len(sanmvs)/2), sanmvs[i+len(sanmvs)/2])
-    print >> file, "</table>"
+    print("</table>", file=file)
     
     file.close()
 
@@ -85,18 +87,18 @@ def writeMoves(file, m1, movepair1, m2, movepair2):
     m1 += '.'; m2 += '.' 
     if not movepair2[0]:
         m2 = ''
-    print >> file, "<tr><td class='numa'>%s</td><td>%s</td><td>%s</td>" % (m1, movepair1[0], movepair1[1])
+    print("<tr><td class='numa'>%s</td><td>%s</td><td>%s</td>" % (m1, movepair1[0], movepair1[1]), file=file)
     if not movepair2[1] and movepair2[0] in map(fanconv, reprResult):
-        print >> file, "<td class='status' colspan='3'>%s</td></tr>" % movepair2[0] 
+        print("<td class='status' colspan='3'>%s</td></tr>" % movepair2[0], file=file) 
     else:
-        print >> file, "<td class='numb'>%s</td><td>%s</td><td>%s</td></tr>" % (m2, movepair2[0], movepair2[1])
+        print("<td class='numb'>%s</td><td>%s</td><td>%s</td></tr>" % (m2, movepair2[0], movepair2[1]), file=file)
 
 def writeDiagram(file, model, border = True, whitetop = False):
     data = model.boards[-1].data[:]
     if not whitetop: data.reverse()
     
     if border:
-        print >> file, "[&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;]"
+        print("[&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;]", file=file)
 
     for y,row in enumerate(data):
         if whitetop:
@@ -120,4 +122,4 @@ def writeDiagram(file, model, border = True, whitetop = False):
         file.write('\\\n')
 
     if border:
-        print >> file, "{ABCDEFGH}"
+        print("{ABCDEFGH}", file=file)

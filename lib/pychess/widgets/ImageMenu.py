@@ -1,3 +1,4 @@
+from __future__ import print_function
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
@@ -110,7 +111,7 @@ if __name__ == "__main__":
     
     switchWithImage(image, table)
     def onValueChanged (spin):
-        print spin.get_value()
+        print(spin.get_value())
     spin1.connect("value-changed", onValueChanged)
     spin2.connect("value-changed", onValueChanged)
     

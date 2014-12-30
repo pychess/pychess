@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Random Chess
 
 import random
@@ -42,4 +43,4 @@ class RandomChess:
 if __name__ == '__main__':
     Board = RandomBoard(True)
     for i in range(10):
-        print Board.random_start()
+        print(Board.random_start())

@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 from .ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WHITE, BLACK, WON_RESIGN, WAITING_TO_START, BLACKWON, WHITEWON, DRAW
@@ -63,7 +64,7 @@ def save (file, model, position=None):
     if model.status in (WHITEWON, BLACKWON) and model.reason == WON_RESIGN:
         file.write(" resign;")
     
-    print >> file
+    print(file=file)
     file.close()
     
 def load (file):

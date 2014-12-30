@@ -5,6 +5,7 @@
 #
 
 
+from __future__ import print_function
 from timeit import default_timer
 
 
@@ -22,7 +23,7 @@ class Timer(object):
         self.elapsed_secs = end - self.start
         self.elapsed = self.elapsed_secs * 1000 # millisecs
         if self.verbose:
-            print 'elapsed time: %f ms' % self.elapsed
+            print('elapsed time: %f ms' % self.elapsed)
 
 
 
@@ -42,12 +43,12 @@ if __name__ == '__main__':
     # print stored elapsed time in milliseconds
     with Timer() as t:
         r = requests.get(url)
-    print 'response time (millisecs): %.2f' % t.elapsed
+    print('response time (millisecs): %.2f' % t.elapsed)
     
     # print stored elapsed time in seconds
     with Timer() as t:
         r = requests.get(url)
-    print 'response time (secs): %.3f' % t.elapsed_secs
+    print('response time (secs): %.3f' % t.elapsed_secs)
 
 
 # example output:

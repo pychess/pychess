@@ -1,3 +1,4 @@
+from __future__ import print_function
 from gi.repository import Gtk
 
 
@@ -38,7 +39,7 @@ class Accordion(Gtk.TreeView):
             self.current = iter
 
         selected_item = model.get_value(iter, 0)
-        print selected_item
+        print(selected_item)
         
 
 if __name__ == "__main__":

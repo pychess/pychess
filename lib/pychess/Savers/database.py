@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 from array import array
 
@@ -111,11 +112,11 @@ def load(file):
     
     s = select([func.count(game.c.id)])
     count = conn.execute(s).scalar()
-    print "Database contains %s games" % count
+    print("Database contains %s games" % count)
     s = select([player.c.name])
     result = conn.execute(s)
     players = result.fetchall()
-    print "Database contains %s players" % len(players)
+    print("Database contains %s players" % len(players))
     
     s = select([game.c.id.label("Id"), pl1.c.name.label('White'), pl2.c.name.label('Black'), game.c.result.label('Result'),
                 event.c.name.label('Event'), site.c.name.label('Site'), game.c.round.label('Round'), 
@@ -241,7 +242,7 @@ class Database(PGNFile):
                     last_board.nags.append("$%s" % (elem-NAG))
 
                 else:
-                    print "Unknown element in movelist array:", elem
+                    print("Unknown element in movelist array:", elem)
 
             if error:
                 raise error

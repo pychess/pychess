@@ -1,3 +1,4 @@
+from __future__ import print_function
 # -*- coding: UTF-8 -*-
 
 from gi.repository import Gtk, GObject
@@ -122,7 +123,7 @@ class GameList(Gtk.TreeView):
                         .outerjoin(pl2, game.c.black_id==pl2.c.id)])
             self.count = self.conn.execute(s.where(self.where)).scalar()
             self.query = self.query.where(self.where)
-        print "%s game(s) match to query" % self.count
+        print("%s game(s) match to query" % self.count)
 
         if self.orderby is not None:
             self.query = self.query.order_by(self.orderby)
@@ -167,7 +168,7 @@ class GameList(Gtk.TreeView):
         
         result = self.conn.execute(query)
         self.chessfile.games = result.fetchall()
-        print "%s selected" % len(self.chessfile.games)
+        print("%s selected" % len(self.chessfile.games))
         self.id_list = []
         for i in range(len(self.chessfile.games)):
             game_id = self.chessfile.games[i]["Id"]
@@ -186,11 +187,11 @@ class GameList(Gtk.TreeView):
         self.set_cursor(0)
     
     def row_activated (self, widget, path, col):
-        print self.modelsort.convert_path_to_child_path(path)[0]
+        print(self.modelsort.convert_path_to_child_path(path)[0])
         game_id = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
-        print "game_id=%s" % game_id
+        print("game_id=%s" % game_id)
         gameno = self.id_list.index(game_id)
-        print "gameno=%s" % gameno
+        print("gameno=%s" % gameno)
         position = -1
 
         gamemodel = GameModel()

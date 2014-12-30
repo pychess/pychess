@@ -1,3 +1,4 @@
+from __future__ import print_function
 import unittest
 
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCheckEvasions
@@ -59,13 +60,13 @@ class FindMovesTestCase(unittest.TestCase):
                     self.perft(board, depth-1, prevmoves)
                     board.popMove()
             else:
-                print board
-                print "nmoves"
+                print(board)
+                print("nmoves")
                 for move in nmoves:
-                    print toSAN (board, move)
-                print "cmoves"
+                    print(toSAN (board, move))
+                print("cmoves")
                 for move in cmoves:
-                    print toSAN (board, move)
+                    print(toSAN (board, move))
                 self.assertEqual(nmoves, cmoves)
                 
         else:
@@ -84,7 +85,7 @@ class FindMovesTestCase(unittest.TestCase):
                 try:
                     move2 = parseSAN(board, san)
                 except ParsingError, e:
-                    print prevmoves
+                    print(prevmoves)
                     raise ParsingError, e
                 self.assertEqual (move, move2)
                 
@@ -112,7 +113,7 @@ class FindMovesTestCase(unittest.TestCase):
     
     def movegen(self, positions):
         for i, (fen, depths) in enumerate(positions):
-            print i+1, "/", len(positions), "-", fen
+            print(i+1, "/", len(positions), "-", fen)
             board = LBoard(NORMALCHESS)
             board.applyFen(fen)
             hash = board.hash
@@ -121,23 +122,23 @@ class FindMovesTestCase(unittest.TestCase):
                 if depth > self.MAXDEPTH:
                     break
                 self.count = 0
-                print "searching depth %d for %d moves" % \
-                        (depth, suposedMoveCount)
+                print("searching depth %d for %d moves" % \
+                        (depth, suposedMoveCount))
                 self.perft (board, depth, [])
                 self.assertEqual(board.hash, hash)
                 self.assertEqual(self.count, suposedMoveCount)
 
     def testMovegen1(self):
         """Testing NORMAL variant move generator with perftsuite.epd"""
-        print
+        print()
         self.MAXDEPTH = 3
         self.movegen(self.positions)
 
     def testMovegen2(self):
         """Testing NORMAL variant move generator with perftsuite2.epd"""
-        print
-        print "The movegen test with perftsuite2.epd takes time! If you really want it to run"
-        print "put the 'return' line into comment and use pypy instead of python!"
+        print()
+        print("The movegen test with perftsuite2.epd takes time! If you really want it to run")
+        print("put the 'return' line into comment and use pypy instead of python!")
         return
         self.MAXDEPTH = 7
         self.movegen(self.positions2)

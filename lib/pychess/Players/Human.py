@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Queue import Queue
 
 from gi.repository import Gtk, GObject
@@ -163,7 +164,7 @@ class Human (Player):
         self.queue.put("del")
     
     def kill (self, reason):
-        print "I am killed", self
+        print("I am killed", self)
         for id in self.conid:
             if self.board.handler_is_connected(id):
                 self.board.disconnect(id)

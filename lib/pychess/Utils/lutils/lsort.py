@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 import sys
 
 from .attack import getAttacks, staticExchangeEvaluate
@@ -67,8 +68,8 @@ def getMoveValue (board, table, depth, move):
     
     if fpiece not in positionValues:
         # That is, fpiece == EMPTY
-        print fcord, tcord
-        print board
+        print(fcord, tcord)
+        print(board)
     
     score = positionValues[fpiece][board.color][tcord] - \
             positionValues[fpiece][board.color][fcord]

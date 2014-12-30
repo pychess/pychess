@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 from threading import Thread
 import Queue
 
@@ -293,7 +294,7 @@ if __name__ == "__main__":
     gbut = Gtk.Button("Get")
     def callback (button, *args):
         gbut.set_sensitive(False)
-        print "Found:", worker.get()
+        print("Found:", worker.get())
     gbut.connect("clicked", callback)
     vbox.add(gbut)
     
@@ -310,7 +311,7 @@ if __name__ == "__main__":
     vbox.add(field)
     
     def done (worker, result):
-        print "Finished, Cancelled:", worker.isCancelled()
+        print("Finished, Cancelled:", worker.isCancelled())
     worker.connect("done", done)
     
     w.connect("destroy", Gtk.main_quit)

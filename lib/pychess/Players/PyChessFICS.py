@@ -1,3 +1,4 @@
+from __future__ import print_function
 import email.Utils
 from gi.repository import Gtk
 import math
@@ -187,7 +188,7 @@ class PyChessFICS(PyChess):
         self.connection.run()
         self.extendlog([str(self.acceptedTimesettings)])
         self.phoneHome("Session ended\n"+"\n".join(self.log))
-        print "Session ended"
+        print("Session ended")
     
     def run(self):
         t = Thread(target=self.main, name=fident(self.main))
@@ -201,7 +202,7 @@ class PyChessFICS(PyChess):
     #===========================================================================
     
     def __showConnectLog (self, connection, message):
-        print message
+        print(message)
     
     def __onLogOut (self, autoLogoutManager):
         self.connection.close()
@@ -251,9 +252,9 @@ class PyChessFICS(PyChess):
             command = " ".join(args[1:])
             if name in self.sudos or name == self.owner:
                 # Notice: This can be used to make nasty loops
-                print >> self.connection.client, command
+                print(command, file=self.connection.client)
             else:
-                print repr(name), self.sudos
+                print(repr(name), self.sudos)
                 chatManager.tellPlayer(name, "Please send me the password")
                 self.waitingForPassword = command
         
@@ -391,7 +392,7 @@ class PyChessFICS(PyChess):
         del self.log[:-10]
     
     def tellHome(self, message):
-        print message
+        print(message)
         if self.ownerOnline:
             self.connection.cm.tellPlayer(self.owner, message)
     
@@ -405,15 +406,15 @@ class PyChessFICS(PyChess):
                               email.Utils.parseaddr(self.to_address)[1]],
                               stdin=subprocess.PIPE)
         
-        print >> p.stdin, "MIME-Version: 1.0"
-        print >> p.stdin, "Content-Type: text/plain; charset=UTF-8"
-        print >> p.stdin, "Content-Disposition: inline"
-        print >> p.stdin, "From: %s" % self.from_address
-        print >> p.stdin, "To: %s" % self.to_address
-        print >> p.stdin, "Subject: %s" % SUBJECT
-        print >> p.stdin
-        print >> p.stdin, message
-        print >> p.stdin, "Cheers"
+        print("MIME-Version: 1.0", file=p.stdin)
+        print("Content-Type: text/plain; charset=UTF-8", file=p.stdin)
+        print("Content-Disposition: inline", file=p.stdin)
+        print("From: %s" % self.from_address, file=p.stdin)
+        print("To: %s" % self.to_address, file=p.stdin)
+        print("Subject: %s" % SUBJECT, file=p.stdin)
+        print(file=p.stdin)
+        print(message, file=p.stdin)
+        print("Cheers", file=p.stdin)
         
         p.stdin.close()
         p.wait()
