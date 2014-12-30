@@ -2,12 +2,11 @@ from __future__ import absolute_import
 from collections import defaultdict
 from threading import RLock, Thread
 import traceback
-import cStringIO
 import datetime
 
 from gi.repository import GObject
 
-from pychess.compat import Queue, Empty
+from pychess.compat import Queue, Empty, StringIO
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt
 from pychess.System import fident
@@ -581,7 +580,7 @@ class GameModel (GObject.GObject, Thread):
                     (id(self), str(self.players), self.ply, move, str(curPlayer)))
             except PlayerIsDead as e:
                 if self.status in (WAITING_TO_START, PAUSED, RUNNING):
-                    stringio = cStringIO.StringIO()
+                    stringio = StringIO()
                     traceback.print_exc(file=stringio)
                     error = strinGio.getvalue()
                     log.error("GameModel.run: A Player died: player=%s error=%s\n%s" % (curPlayer, error, e))

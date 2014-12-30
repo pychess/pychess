@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 from gi.repository import GdkPixbuf
 
+from pychess.compat import StringIO
 from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
@@ -22,7 +23,7 @@ from pychess.ic.ICGameModel import ICGameModel
 from pychess.widgets.InfoBar import InfoBar, InfoBarMessage, InfoBarMessageButton
 from .pydock.PyDockTop import PyDockTop
 from .pydock.__init__ import CENTER, EAST, SOUTH
-import cStringIO
+
 from gi.repository import Gtk
 from gi.repository import GObject
 import imp
@@ -816,7 +817,7 @@ def _ensureReadForGameWidgets ():
         try:
             dock.loadFromXML(dockLocation, docks)
         except Exception as e:
-            stringio = cStringIO.StringIO()
+            stringio = StringIO()
             traceback.print_exc(file=stringio)
             error = stringio.getvalue()
             log.error("Dock loading error: %s\n%s" % (e, error))
