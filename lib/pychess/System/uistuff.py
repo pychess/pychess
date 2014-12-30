@@ -147,14 +147,14 @@ METHODS = (
 
 def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
     if widget == None:
-        raise AttributeError, "key '%s' isn't in widgets" % key
+        raise AttributeError("key '%s' isn't in widgets" % key)
     
     for class_, methods_ in METHODS:
         if isinstance(widget, class_):
             getter, setter, signal = methods_
             break
     else:
-        raise AttributeError, "I don't have any knowledge of type: '%s'" % widget
+        raise AttributeError("I don't have any knowledge of type: '%s'" % widget)
     
     if get_value_:
         get_value = lambda: get_value_(widget)
@@ -199,7 +199,7 @@ def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
     key = widget_name + "-" + str(config_number)
     
     if widget == None:
-        raise AttributeError, "key '%s' isn't in widgets" % widget_name
+        raise AttributeError("key '%s' isn't in widgets" % widget_name)
     
     for class_, methods_ in METHODS:
         if isinstance(widget, class_):
@@ -207,7 +207,7 @@ def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
             break
     else:
         if set_value_ == None:
-            raise AttributeError, "I don't have any knowledge of type: '%s'" % widget
+            raise AttributeError("I don't have any knowledge of type: '%s'" % widget)
     
     if get_value_:
         get_value = lambda: get_value_(widget)
@@ -241,7 +241,7 @@ def saveDialogWidget (widget, widget_name, config_number, get_value_=None):
     key = widget_name + "-" + str(config_number)
     
     if widget == None:
-        raise AttributeError, "key '%s' isn't in widgets" % widget_name
+        raise AttributeError("key '%s' isn't in widgets" % widget_name)
     
     for class_, methods_ in METHODS:
         if isinstance(widget, class_):
@@ -249,7 +249,7 @@ def saveDialogWidget (widget, widget_name, config_number, get_value_=None):
             break
     else:
         if get_value_ == None:
-            raise AttributeError, "I don't have any knowledge of type: '%s'" % widget
+            raise AttributeError("I don't have any knowledge of type: '%s'" % widget)
     
     if get_value_:
         get_value = lambda: get_value_(widget)

@@ -178,7 +178,7 @@ class SubProcess (GObject.GObject):
             if error.errno == errno.ESRCH:
                 #No such process
                 pass
-            else: raise OSError, error
+            else: raise OSError(error)
     
     def gentleKill (self, first=1, second=1):
         t = Thread(target=self.__gentleKill_inner,

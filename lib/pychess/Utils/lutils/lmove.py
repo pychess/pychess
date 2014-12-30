@@ -103,7 +103,7 @@ def listToMoves (board, movstrs, type=None, testvalidate=False, ignoreErrors=Fal
         if testvalidate:
             if not validateMove (board, move):
                 if not ignoreErrors:
-                    raise ParsingError, (mstr, 'Validation', board.asFen())
+                    raise ParsingError(mstr, 'Validation', board.asFen())
                 break 
         
         moves.append(move)
@@ -249,7 +249,7 @@ def parseSAN (board, san):
     if c in ("K", "Q", "R", "B", "N", "k", "q", "r", "b", "n"):
         c = c.lower()
         if c == "k" and board.variant != SUICIDECHESS:
-            raise ParsingError, (san, _("invalid promoted piece"), board.asFen())
+            raise ParsingError(san, _("invalid promoted piece"), board.asFen())
             
         flag = chr2Sign[c] + 2
         if notat[-2] == "=":
@@ -257,7 +257,7 @@ def parseSAN (board, san):
         else: notat = notat[:-1]
     
     if len(notat) < 2:
-        raise ParsingError, (san, _("the move needs a piece and a cord"), board.asFen())
+        raise ParsingError(san, _("the move needs a piece and a cord"), board.asFen())
     
     if notat[0] in "O0o":
         fcord = board.ini_kings[color]
@@ -290,13 +290,13 @@ def parseSAN (board, san):
     else:
         piece = PAWN
         if notat[-1] in ("1", "8") and flag == NORMAL_MOVE:
-            raise ParsingError, (
+            raise ParsingError(
                     san, _("promotion move without promoted piece is incorrect"), board.asFen())
     
     if "x" in notat:
         notat, tcord = notat.split("x")
         if not tcord in cordDic:
-            raise ParsingError, (
+            raise ParsingError(
                     san, _("the captured cord (%s) is incorrect") % tcord, board.asFen())
 
         tcord = cordDic[tcord]
@@ -307,7 +307,7 @@ def parseSAN (board, san):
                 flag = ENPASSANT
     else:
         if not notat[-2:] in cordDic:
-            raise ParsingError, (
+            raise ParsingError(
                     san, _("the end cord (%s) is incorrect") % notat[-2:], board.asFen())
         
         tcord = cordDic[notat[-2:]]
@@ -374,7 +374,7 @@ def parseSAN (board, san):
                     return move
     
     errstring = "no %s is able to move to %s" % (reprPiece[piece], reprCord[tcord])
-    raise ParsingError, (san, errstring, board.asFen())
+    raise ParsingError(san, errstring, board.asFen())
 
 ################################################################################
 # toLan                                                                        #
@@ -471,19 +471,19 @@ def parseAN (board, an):
     """ Parse an Algebraic Notation string """
 
     if not 4 <= len(an) <= 6:
-        raise ParsingError, (an, "the move must be 4 or 6 chars long", board.asFen())
+        raise ParsingError(an, "the move must be 4 or 6 chars long", board.asFen())
     
     try:
         fcord = cordDic[an[:2]]
         tcord = cordDic[an[2:4]]
     except KeyError as e:
-        raise ParsingError, (an, "the cord (%s) is incorrect" % e.args[0], board.asFen())
+        raise ParsingError(an, "the cord (%s) is incorrect" % e.args[0], board.asFen())
     
     flag = NORMAL_MOVE
 
     if len(an) > 4 and not an[-1] in ("Q", "R", "B", "N", "q", "r", "b", "n"):
         if board.variant != SUICIDECHESS or board.variant == SUICIDECHESS and not an[-1] in ("K", "k"):
-            raise ParsingError, (an, "invalid promoted piece", board.asFen())
+            raise ParsingError(an, "invalid promoted piece", board.asFen())
 
     if len(an) == 5:
         #The a7a8q variant
@@ -511,7 +511,7 @@ def parseAN (board, an):
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
     elif board.arBoard[fcord] == PAWN and an[3] in ("1", "8"):
-            raise ParsingError, (
+            raise ParsingError(
                     an, _("promotion move without promoted piece is incorrect"), board.asFen())
 
     return newMove (fcord, tcord, flag)

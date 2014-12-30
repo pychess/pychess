@@ -699,13 +699,13 @@ class CellRendererPixbufXt(Gtk.CellRendererPixbuf):
         if property.name == 'active-state':                                  
             return self.active_state                                          
         else:                                                                
-            raise AttributeError, 'unknown property %s' % property.name      
+            raise AttributeError('unknown property %s' % property.name)      
                                                                               
     def do_set_property( self, property, value ):                            
         if property.name == 'active-state':                                  
             self.active_state = value                                        
         else:                                                                
-            raise AttributeError, 'unknown property %s' % property.name      
+            raise AttributeError('unknown property %s' % property.name)      
                                                                               
     def do_activate( self, event, widget, path,  background_area, cell_area, flags ):    
         if event.type == Gdk.EventType.BUTTON_PRESS:                                

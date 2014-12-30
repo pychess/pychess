@@ -318,7 +318,7 @@ class GameModel (GObject.GObject, Thread):
     def _plyToIndex (self, ply):
         index = ply - self.lowply
         if index < 0:
-            raise IndexError, "%s < %s\n" % (ply, self.lowply)
+            raise IndexError("%s < %s\n" % (ply, self.lowply))
         return index
     
     def getBoardAtPly (self, ply, variation=0):

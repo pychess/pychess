@@ -50,7 +50,7 @@ class Cord:
             a -= ord('A');
         elif ord('a') <= a <= ord('h'):
             a -= ord('a');
-        else: raise CordFormatException, "x < 0 || x > 7 (%s, %d)" % (char, a)
+        else: raise CordFormatException("x < 0 || x > 7 (%s, %d)" % (char, a))
         return a
     
     def _set_cords (self, (x, y)):

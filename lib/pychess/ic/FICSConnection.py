@@ -172,10 +172,10 @@ class FICSConnection (Connection):
                     self.client.sensitive = False
                 # No such name
                 elif got == 1:
-                    raise LogOnException, NOTREG % self.username
+                    raise LogOnException(NOTREG % self.username)
                 # Bad name
                 elif got == 2:
-                    raise LogOnException, NOTREG % self.username
+                    raise LogOnException(NOTREG % self.username)
             else:
                 if self.username:
                     print(self.username, file=self.client)
@@ -184,15 +184,15 @@ class FICSConnection (Connection):
                 got = self.client.read_until("Press return",
                                              "If it is yours, type the password.")
                 if got == 1:
-                    raise LogOnException, REGISTERED % self.username
+                    raise LogOnException(REGISTERED % self.username)
                 print(file=self.client)
             
             while True:
                 line = self.client.readline()
                 if "Invalid password" in line:
-                    raise LogOnException, BADPAS
+                    raise LogOnException(BADPAS)
                 elif "is already logged in" in line:
-                    raise LogOnException, ALREADYIN % self.username
+                    raise LogOnException(ALREADYIN % self.username)
                 
                 match = re.search("\*\*\*\* Starting FICS session as " +
                     "(%s)%s \*\*\*\*" % (NAMES_RE, TITLES_RE), line)
