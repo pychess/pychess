@@ -105,7 +105,7 @@ class UCIEngine (ProtocolEngine):
             if self.hasOption("MultiPV") and self.multipvSetting > 1:
                 self.setOption('MultiPV', self.multipvSetting)
             
-        for option, value in self.optionsToBeSent.iteritems():
+        for option, value in self.optionsToBeSent.items():
             if type(value) == bool:
                 value = str(value).lower()
             print("setoption name %s value %s" % (option, str(value)), file=self.engine)

@@ -43,7 +43,7 @@ class BoardControl (Gtk.EventBox):
         
         self.actionMenuItems = actionMenuItems
         self.connections = {}
-        for key, menuitem in self.actionMenuItems.iteritems():
+        for key, menuitem in self.actionMenuItems.items():
             if menuitem == None: print(key)
             self.connections[menuitem] = menuitem.connect("activate", self.actionActivate, key)
         
@@ -79,7 +79,7 @@ class BoardControl (Gtk.EventBox):
         self.keybuffer = ""
         
     def _del (self):
-        for menu, conid in self.connections.iteritems():
+        for menu, conid in self.connections.items():
             menu.disconnect(conid)
         self.connections = {}
         self.view.save_board_size()

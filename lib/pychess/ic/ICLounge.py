@@ -226,7 +226,7 @@ class UserInfoSection(Section):
                     table.attach(label(item, xalign=1), i+1,i+2,0,1)
                 row += 1
 
-                for rating_type, rating in finger.getRating().iteritems():
+                for rating_type, rating in finger.getRating().items():
                     ratinglabel = label( \
                         GAME_TYPES_BY_RATING_TYPE[rating_type].display_text + ":")
                     table.attach(ratinglabel, 0, 1, row, row+1)
@@ -1827,7 +1827,7 @@ class SeekChallengeSection (Section):
                       VARIANTS_OTHER: _("Other (standard rules)"),
                       VARIANTS_OTHER_NONSTANDARD: _("Other (non standard rules)"),
                       }
-        ficsvariants = [v for k, v in variants.iteritems() if k in VARIANT_GAME_TYPES and 
+        ficsvariants = [v for k, v in variants.items() if k in VARIANT_GAME_TYPES and 
                                                     v.board.variant not in UNSUPPORTED]
         groups = groupby(ficsvariants, attrgetter("variant_group"))
         pathToVariant = {}

@@ -570,33 +570,33 @@ MAXBITBOARD = (1<<64)-1
 for r in range(A2,A8+1,8):
     for cord in iterBits(ray00[r]):
         attack00[cord] = dict((map >> 8, ray >> 8)
-                              for map,ray in attack00[cord-8].iteritems())
+                              for map,ray in attack00[cord-8].items())
 
 for r in range(B1,H1+1):
     for cord in iterBits(ray90[r]):
         attack90[cord] = dict((map >> 1, ray >> 1)
-                              for map,ray in attack90[cord-1].iteritems())
+                              for map,ray in attack90[cord-1].items())
 
 # Bottom right
 for r in range(B1,H1+1):
     for cord in iterBits(ray45[r]):
         attack45[cord] = dict((map << 8 & MAXBITBOARD, ray << 8 & MAXBITBOARD)
-                              for map,ray in attack45[cord+8].iteritems())
+                              for map,ray in attack45[cord+8].items())
 
 # Top left
 for r in reversed(range(A8,H8)):
     for cord in iterBits(ray45[r]):
         attack45[cord] = dict((map >> 8, ray >> 8)
-                              for map,ray in attack45[cord-8].iteritems())
+                              for map,ray in attack45[cord-8].items())
 
 # Top right
 for r in range(B8,H8+1):
     for cord in iterBits(ray135[r]):
         attack135[cord] = dict((map >> 8, ray >> 8)
-                               for map,ray in attack135[cord-8].iteritems())
+                               for map,ray in attack135[cord-8].items())
 
 # Bottom left
 for r in reversed(range(A1,H1)):
     for cord in iterBits(ray135[r]):
         attack135[cord] = dict((map << 8 & MAXBITBOARD, ray << 8 & MAXBITBOARD)
-                               for map,ray in attack135[cord+8].iteritems())
+                               for map,ray in attack135[cord+8].items())

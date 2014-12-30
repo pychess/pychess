@@ -47,7 +47,7 @@ strToOfferType = {
 }
 
 offerTypeToStr = {}
-for k,v in strToOfferType.iteritems():
+for k,v in strToOfferType.items():
     offerTypeToStr[v] = k
 
 class OfferManager (GObject.GObject):

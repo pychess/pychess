@@ -74,7 +74,7 @@ class ListAndVarManager:
                 self.addToList(listName, item)
         
         # Restore variables
-        for key, usedvalue in self.variables.iteritems():
+        for key, usedvalue in self.variables.items():
             if key in self.variablesBackup and usedvalue != self.variablesBackup[key]:
                 self.setVariable(key, self.variablesBackup[key])
     
