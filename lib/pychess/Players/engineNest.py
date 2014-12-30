@@ -79,11 +79,11 @@ class EngineDiscoverer (GObject.GObject):
         self.jsonpath = addUserConfigPrefix("engines.json")
         try:
             self._engines = json.load(open(self.jsonpath))
-        except ValueError, e:
+        except ValueError as e:
             log.warning("engineNest: Couldn\'t read engines.json, renamed it to .bak\n%s" % (self.jsonpath,e))
             os.rename(self.jsonpath, self.jsonpath+".bak")
             self._engines = deepcopy(backup)
-        except IOError, e:
+        except IOError as e:
             log.info("engineNest: Couldn\'t open engines.json, creating a new.\n%s" % e)
             self._engines = deepcopy(backup)
     
@@ -173,10 +173,10 @@ class EngineDiscoverer (GObject.GObject):
             subproc.connect('readyForOptions', self.__discoverE2, engine)            
             subproc.prestart() # Sends the 'start line'         
             subproc.start()           
-        except SubProcessError, e:
+        except SubProcessError as e:
             log.warning("Engine %s failed discovery: %s" % (engine["name"],e))
             self.emit("engine_failed", engine["name"], engine)
-        except PlayerIsDead, e:
+        except PlayerIsDead as e:
             # Check if the player died after engine_discovered by our own hands
             if not self.toBeRechecked[engine["name"]][1]:
                 log.warning("Engine %s failed discovery: %s" % (engine["name"],e))
@@ -266,7 +266,7 @@ class EngineDiscoverer (GObject.GObject):
         try:
             with open(self.jsonpath, "w") as f:
                 json.dump(self._engines, f, indent=1, sort_keys=True)
-        except IOError, e:
+        except IOError as e:
             log.error("Saving engines.json raised exception: %s" % \
                       ", ".join(str(a) for a in e.args))
     

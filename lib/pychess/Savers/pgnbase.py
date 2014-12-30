@@ -89,7 +89,7 @@ class PgnBase(ChessFile):
                     mstr = m.group(MOVE)
                     try:
                         lmove = parseSAN(last_board, mstr)
-                    except ParsingError, e:
+                    except ParsingError as e:
                         # TODO: save the rest as comment
                         # last_board.children.append(string[m.start():])
                         notation, reason, boardfen = e.args

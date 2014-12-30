@@ -550,7 +550,7 @@ class EnterNotationExtension (_GameInitializationMode):
                 chessfile.loadToModel(0, -1, model=gamemodel)
                 gamemodel.status = WAITING_TO_START
                 return True
-            except LoadingError, e:
+            except LoadingError as e:
                 d = Gtk.MessageDialog (type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.OK,
                                         message_format=e.args[0])
                 d.format_secondary_text (e.args[1])

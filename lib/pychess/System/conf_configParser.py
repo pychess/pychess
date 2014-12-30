@@ -49,7 +49,7 @@ def set (key, value):
     try:
         configParser.set (section, key, str(value))
         configParser.set (section+"_Types", key, typeEncode[type(value)])
-    except Exception, e:
+    except Exception as e:
         log.error("Unable to save configuration '%s'='%s' because of error: %s %s"%
                 (repr(key), repr(value), e.__class__.__name__, ", ".join(str(a) for a in e.args)))
     for key_, func, args in idkeyfuncs.values():

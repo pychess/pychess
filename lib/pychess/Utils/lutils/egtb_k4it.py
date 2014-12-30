@@ -38,7 +38,7 @@ class egtb_k4it:
         url = (URL + fen).replace(" ", "%20")
         try:
             f = urllib.urlopen(url)
-        except IOError, e:
+        except IOError as e:
             log.warning("Unable to read endgame tablebase from the Internet: %s" % repr(e))
             return []
         data = f.read()

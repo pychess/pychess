@@ -106,7 +106,7 @@ def workfunc (worker, gamemodel, player0tup, player1tup, loaddata=None):
         try:
             uri, loader, gameno, position = loaddata
             gamemodel.loadAndStart (uri, loader, gameno, position)
-        except LoadingError, e:
+        except LoadingError as e:
             d = Gtk.MessageDialog (type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.OK,
                                     message_format=e.args[0])
             d.format_secondary_text (e.args[1])
@@ -297,7 +297,7 @@ Please ensure that you have given the right path and try again."))
             print(repr(uri))
         try:
             game.save(uri, saver, append, position)
-        except IOError, e:
+        except IOError as e:
             d = Gtk.MessageDialog(type=Gtk.MessageType.ERROR)
             d.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK)
             d.set_title(_("Could not save the file"))

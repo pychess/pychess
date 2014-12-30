@@ -122,17 +122,17 @@ if __name__ == '__main__':
     msg['To'] = to
     try:
         server = SMTP(smtp)
-    except SMTPConnectError, ex:
+    except SMTPConnectError as ex:
         print('\n%s'%ex)
     print('\nConnecting to Gmail account...')
     try:
         server.login(mail, passw)
-    except SMTPAuthenticationError, ex:
+    except SMTPAuthenticationError as ex:
         print('\n%s'%ex)
     print('Sending message...')
     try:
         server.sendmail(mail, to, msg.as_string())
-    except SMTPRecipientsRefused, ex:
+    except SMTPRecipientsRefused as ex:
         print('\n%s'%ex)
     print('Email send ok.')
     server.quit()

@@ -183,7 +183,7 @@ class PgnImport():
                     if fenstr:
                         try:
                             board.applyFen(fenstr)
-                        except SyntaxError, e:
+                        except SyntaxError as e:
                             print(_("The game #%s can't be loaded, because of an error parsing FEN") % (i+1), e.args[0])
                             continue
                     else:
@@ -327,7 +327,7 @@ class PgnImport():
                 print(pgnfile, i+1)
                 trans.commit()
 
-            except ProgrammingError, e:
+            except ProgrammingError as e:
                 trans.rollback()
                 print("Importing %s failed! %s" % (file, e))
 

@@ -109,7 +109,7 @@ class SeekManager (GObject.GObject):
                 color = "white"
             elif seek['c'] == "B":
                 color = "black"
-        except KeyError, e:
+        except KeyError as e:
             log.warning("on_seek_add: KeyError: %s %s" % (repr(e), repr(seek)))
             return
         
