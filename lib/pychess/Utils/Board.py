@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from copy import copy
 
+from pychess.compat import basestring
 from .lutils.LBoard import LBoard
 from .lutils.bitboard import iterBits
 from .lutils.lmove import RANK, FILE, FCORD, FLAG, PROMOTE_PIECE, toAN
