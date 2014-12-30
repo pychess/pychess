@@ -8,7 +8,14 @@ import logging
 import signal
 import subprocess
 import urllib 
-from urlparse import urlparse
+import sys
+
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
+if PY3:
+    from urllib.parse import urlparse
+else:
+    from urlparse import urlparse
 
 from gi.repository import Gdk
 from gi.repository import Gtk

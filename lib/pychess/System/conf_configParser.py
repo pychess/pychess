@@ -1,6 +1,12 @@
 import os, atexit
 from pychess.System.Log import log
-from ConfigParser import SafeConfigParser
+from pychess.Main import PY2, PY3
+
+if PY3:
+    from configparser import SafeConfigParser
+else:
+    from ConfigParser import SafeConfigParser
+
 configParser = SafeConfigParser()
 from pychess.System.prefix import addUserConfigPrefix
 
@@ -19,18 +25,21 @@ conid = 0
 
 typeEncode = {
     str: repr(str),
-    unicode: repr(unicode),
     int: repr(int),
     float: repr(float),
     bool: repr(bool)
 }
+if PY2:
+    typeEncode[unicode] = repr(unicode)
+
 typeDecode = {
     repr(str): configParser.get,
-    repr(unicode): configParser.get,
     repr(int): configParser.getint,
     repr(float): configParser.getfloat,
     repr(bool): configParser.getboolean,
 }
+if PY2:
+    typeDecode[repr(unicode)] = configParser.get
 
 def notify_add (key, func, args):
     global conid
