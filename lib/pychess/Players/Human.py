@@ -1,8 +1,8 @@
 from __future__ import print_function
-from Queue import Queue
 
 from gi.repository import Gtk, GObject
 
+from pychess.compat import Queue
 from pychess.Utils.const import *
 from pychess.Utils.logic import validate
 from pychess.Utils.Move import Move

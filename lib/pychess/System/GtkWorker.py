@@ -1,11 +1,12 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from threading import Thread
-import Queue
 
 from gi.repository import GObject
 
 from . import glock
+
+from pychess.compat import Queue, Empty
 from pychess.System import get_threadname, fident
 
 #
@@ -24,7 +25,7 @@ class Publisher (Thread):
     def __init__ (self, func, thread_namer, sendPolicy):
         Thread.__init__(self, name=get_threadname(thread_namer))      
         self.daemon = True
-        self.queue = Queue.Queue()
+        self.queue = Queue()
         self.func = func
         self.sendPolicy = sendPolicy       
     
@@ -40,7 +41,7 @@ class Publisher (Thread):
                 while True:
                     try:
                         v = self.queue.get_nowait()
-                    except Queue.Empty:
+                    except Empty:
                         break
                     else:
                         if v == self.StopNow:

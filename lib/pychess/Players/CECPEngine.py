@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from threading import RLock, Timer, Thread
-import Queue
 import itertools
 import re
 import time
@@ -9,6 +8,7 @@ import time
 from gi.repository import Gtk
 from gi.repository import GObject
 
+from pychess.compat import Queue, Empty
 from pychess.System import conf, fident
 from pychess.System.Log import log
 from pychess.Utils.Move import Move
@@ -93,7 +93,7 @@ def semisynced(f):
                     except TypeError as e:
                         print("TypeError: %s" % repr(args))
                         raise
-                    except Queue.Empty:
+                    except Empty:
                         break
             finally:
                 self.boardLock.release()
@@ -171,11 +171,11 @@ class CECPEngine (ProtocolEngine):
         self.lastpong = 0
         self.timeout = None
         
-        self.returnQueue = Queue.Queue()
+        self.returnQueue = Queue()
         self.engine.connect("line", self.parseLines)
         self.engine.connect("died", lambda e: self.returnQueue.put("del"))
         
-        self.funcQueue = Queue.Queue()
+        self.funcQueue = Queue()
         self.optionQueue = []
         self.boardLock = RLock()
         self.undoQueue = []
@@ -230,7 +230,7 @@ class CECPEngine (ProtocolEngine):
                     # Gaviota sends done=0 after "xboard" and after "protover 2" too
                     if r == "not ready":
                         r = self.returnQueue.get(True, max(self.timeout-time.time(),0))
-            except Queue.Empty:
+            except Empty:
                 log.warning("Got timeout error", extra={"task":self.defname})
                 self.emit("readyForOptions")
                 self.emit("readyForMoves")
