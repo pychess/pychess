@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from gi.repository import GObject
 from gi.repository import GLib
 import os
@@ -11,8 +12,8 @@ from threading import Thread
 from pychess.Utils.const import *
 from pychess.System.GtkWorker import EmitPublisher
 from pychess.System import fident
-from Log import log
-from which import which
+from .Log import log
+from .which import which
 
 import traceback
 class SubProcessError (Exception): pass

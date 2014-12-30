@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 
 ################################################################################
 # The purpose of this module, is to give a certain position a score. The       #
@@ -5,10 +6,10 @@
 ################################################################################
 
 from pychess.Utils.const import *
-from ldata import *
-from LBoard import LBoard
-from lsort import staticExchangeEvaluate
-from lmovegen import newMove
+from .ldata import *
+from .LBoard import LBoard
+from .lsort import staticExchangeEvaluate
+from .lmovegen import newMove
 from ctypes import create_string_buffer, memset
 from struct import Struct, pack_into, unpack_from
 

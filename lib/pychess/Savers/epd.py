@@ -1,4 +1,5 @@
-from ChessFile import ChessFile, LoadingError
+from __future__ import absolute_import
+from .ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WHITE, BLACK, WON_RESIGN, WAITING_TO_START, BLACKWON, WHITEWON, DRAW
 from pychess.Utils.logic import getStatus

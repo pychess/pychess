@@ -1,8 +1,9 @@
 """ The task of this module is to provide easy saving/loading of configurations
     It also supports gconf like connection, so you get notices when a property
     has changed. """
+from __future__ import absolute_import
 
-import conf_configParser as confmodule
+from . import conf_configParser as confmodule
 
 """Module for using gconf without having to care about types"""
 

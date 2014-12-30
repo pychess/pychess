@@ -1,5 +1,6 @@
-from bitboard import *
-from ldata import *
+from __future__ import absolute_import
+from .bitboard import *
+from .ldata import *
 from pychess.Utils.const import *
 
 #
@@ -325,8 +326,8 @@ def defends (board, fcord, tcord):
     # Can we "attack" the piece now?
     backupColor = board.color
     board.setColor(color)
-    from lmovegen import newMove
-    from validator import validateMove
+    from .lmovegen import newMove
+    from .validator import validateMove
     islegal = validateMove (board, newMove(fcord, tcord))
     board.setColor(backupColor)
     

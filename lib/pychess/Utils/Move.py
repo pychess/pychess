@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
 from pychess.Utils.lutils.lmovegen import newMove
-from lutils import lmove
+from .lutils import lmove
 
 class Move:
     

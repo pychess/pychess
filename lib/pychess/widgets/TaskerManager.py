@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from gi.repository import Gtk
 from gi.repository import Pango
 from gi.repository import GObject
@@ -20,8 +21,8 @@ from pychess.Variants import variants
 from pychess.ic import ICLogon
 from pychess.widgets import ionest, newGameDialog
 
-from Background import giveBackground
-from ToggleComboBox import ToggleComboBox
+from .Background import giveBackground
+from .ToggleComboBox import ToggleComboBox
 import traceback
 class TaskerManager (Gtk.Table):
     

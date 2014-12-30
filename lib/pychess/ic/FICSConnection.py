@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bisect
 import re
 import socket
@@ -14,26 +15,26 @@ from pychess.System.Log import log
 from pychess.Utils.const import *
 
 from pychess.ic import NAMES_RE, TITLES_RE
-from managers.SeekManager import SeekManager
-from managers.FingerManager import FingerManager
-from managers.NewsManager import NewsManager
-from managers.BoardManager import BoardManager
-from managers.OfferManager import OfferManager
-from managers.ChatManager import ChatManager
-from managers.ConsoleManager import ConsoleManager
-from managers.HelperManager import HelperManager
-from managers.ListAndVarManager import ListAndVarManager
-from managers.AutoLogOutManager import AutoLogOutManager
-from managers.ErrorManager import ErrorManager
-from managers.AdjournManager import AdjournManager
+from .managers.SeekManager import SeekManager
+from .managers.FingerManager import FingerManager
+from .managers.NewsManager import NewsManager
+from .managers.BoardManager import BoardManager
+from .managers.OfferManager import OfferManager
+from .managers.ChatManager import ChatManager
+from .managers.ConsoleManager import ConsoleManager
+from .managers.HelperManager import HelperManager
+from .managers.ListAndVarManager import ListAndVarManager
+from .managers.AutoLogOutManager import AutoLogOutManager
+from .managers.ErrorManager import ErrorManager
+from .managers.AdjournManager import AdjournManager
 
-from FICSObjects import *
-from TimeSeal import TimeSeal, CanceledException
-from VerboseTelnet import LinePrediction
-from VerboseTelnet import FromPlusPrediction
-from VerboseTelnet import FromToPrediction
-from VerboseTelnet import PredictionsTelnet
-from VerboseTelnet import NLinesPrediction
+from .FICSObjects import *
+from .TimeSeal import TimeSeal, CanceledException
+from .VerboseTelnet import LinePrediction
+from .VerboseTelnet import FromPlusPrediction
+from .VerboseTelnet import FromToPrediction
+from .VerboseTelnet import PredictionsTelnet
+from .VerboseTelnet import NLinesPrediction
 
 class LogOnException (Exception): pass
 

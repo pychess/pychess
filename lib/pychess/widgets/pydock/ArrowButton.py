@@ -1,12 +1,13 @@
+from __future__ import absolute_import
 import cairo
 
 from gi.repository import Gtk
 from gi.repository import GObject
 from gi.repository import Gdk
 
-from OverlayWindow import OverlayWindow
+from .OverlayWindow import OverlayWindow
 
-from __init__ import NORTH, EAST, SOUTH, WEST
+from .__init__ import NORTH, EAST, SOUTH, WEST
 
 class ArrowButton (OverlayWindow):
     """ Leafs will connect to the drag-drop signal """

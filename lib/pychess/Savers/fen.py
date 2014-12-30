@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WAITING_TO_START, BLACKWON, WHITEWON, DRAW
 from pychess.Utils.logic import getStatus
 
-from ChessFile import LoadingError
+from .ChessFile import LoadingError
 
 __label__ = _("Simple Chess Position")
 __ending__ = "fen"
@@ -17,7 +18,7 @@ def save (file, model, position=None):
 def load (file):
     return FenFile ([line for line in map(str.strip, file) if line])
 
-from ChessFile import ChessFile
+from .ChessFile import ChessFile
 
 class FenFile (ChessFile):
     

@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 import os
 import sys
 import time
 import logging
 
-from prefix import addUserDataPrefix
+from .prefix import addUserDataPrefix
 
 newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
 logformat = "%(asctime)s %(task)s %(levelname)s: %(message)s"
@@ -24,7 +25,7 @@ logemitter = LogEmitter()
 def set_gui_log_emitter():
     global logemitter
     from gi.repository import GObject
-    from GtkWorker import EmitPublisher, Publisher
+    from .GtkWorker import EmitPublisher, Publisher
 
     class LogEmitter(GObject.GObject):
         __gsignals__ = {

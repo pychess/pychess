@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 import sys
 import json
@@ -16,8 +17,8 @@ from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
 from pychess.System.prefix import addUserConfigPrefix, getEngineDataPrefix
 from pychess.Players.Player import PlayerIsDead
 from pychess.Utils.const import *
-from CECPEngine import CECPEngine
-from UCIEngine import UCIEngine
+from .CECPEngine import CECPEngine
+from .UCIEngine import UCIEngine
 from pychess.Variants import variants
 
 attrToProtocol = {"uci": UCIEngine, "xboard": CECPEngine}

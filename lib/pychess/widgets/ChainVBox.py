@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import cairo
 
 from gi.repository import Gtk
@@ -6,7 +7,7 @@ from gi.repository import GObject
 
 from pychess.System.prefix import addDataPrefix
 from pychess.System import glock
-from BorderBox import BorderBox
+from .BorderBox import BorderBox
 
 class ChainVBox (Gtk.VBox):
     """ Inspired by the GIMP chainbutton widget """

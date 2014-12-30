@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 from operator import or_
 from pychess.Utils.const import *
 #from pychess.Utils.lutils.lmove import RANK, FILE
-from bitboard import *
+from .bitboard import *
 def RANK (cord): return cord >> 3
 def FILE (cord): return cord & 7
 ################################################################################

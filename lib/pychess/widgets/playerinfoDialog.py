@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 from gi.repository import Gtk, GObject
 
-import gamewidget
+from . import gamewidget
 
 firstRun = True
 def run(widgets):

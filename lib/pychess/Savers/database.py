@@ -1,10 +1,12 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import absolute_import
+
 from array import array
 
 from sqlalchemy import select, func, and_
 
-from pgn import PGNFile
+from .pgn import PGNFile
 from pychess.Utils.const import reprResult, WHITE, BLACK
 from pychess.Utils.const import *
 from pychess.Utils.lutils.LBoard import LBoard

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import
+
 import Queue
 from StringIO import StringIO
 from time import strftime, localtime, time
@@ -34,8 +36,8 @@ from pychess.Savers import pgn, fen
 from pychess.Variants import variants
 from pychess.Variants.normal import NormalChess
 
-from FICSObjects import *
-from ICGameModel import ICGameModel
+from .FICSObjects import *
+from .ICGameModel import ICGameModel
 from pychess.Utils.Rating import Rating
 
 class ICLounge (GObject.GObject):

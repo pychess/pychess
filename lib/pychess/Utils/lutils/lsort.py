@@ -1,10 +1,11 @@
+from __future__ import absolute_import
 import sys
 
-from attack import getAttacks, staticExchangeEvaluate
+from .attack import getAttacks, staticExchangeEvaluate
 from pychess.Utils.eval import pos as positionValues
 from pychess.Variants.atomic import kingExplode
 
-from ldata import *
+from .ldata import *
 
 def getCaptureValue (board, move):
     mpV = PIECE_VALUES[board.arBoard[move>>6 & 63]]

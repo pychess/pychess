@@ -1,6 +1,7 @@
 """ This module intends to work as glue between the gamemodel and the gamewidget
     taking care of stuff that is neither very offscreen nor very onscreen
     like bringing up dialogs and """
+from __future__ import absolute_import
 
 import math
 from gi.repository import Gtk
@@ -17,7 +18,7 @@ from pychess.widgets import preferencesDialog
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
 from pychess.widgets import InfoBar
 
-from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
+from .gamewidget import getWidgets, key2gmwidg, isDesignGWShown
 
 def nurseGame (gmwidg, gamemodel):
     """ Call this function when gmwidget is just created """

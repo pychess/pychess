@@ -1,16 +1,17 @@
 """ This module contains chess logic functins for the pychess client. They are
     based upon the lutils modules, but supports standard object types and is
     therefore not as fast. """
+from __future__ import absolute_import
 
-from lutils import lmovegen
-from lutils.validator import validateMove
-from lutils.lmove import FCORD, TCORD
-from lutils import ldraw
-from Cord import Cord
-from Move import Move
-from const import *
-from lutils.bitboard import iterBits
-from lutils.attack import getAttacks
+from .lutils import lmovegen
+from .lutils.validator import validateMove
+from .lutils.lmove import FCORD, TCORD
+from .lutils import ldraw
+from .Cord import Cord
+from .Move import Move
+from .const import *
+from .lutils.bitboard import iterBits
+from .lutils.attack import getAttacks
 from pychess.Variants.suicide import pieceCount
 from pychess.Variants.losers import testKingOnly
 from pychess.Variants.atomic import kingExplode

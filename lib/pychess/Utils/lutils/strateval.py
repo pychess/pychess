@@ -4,8 +4,9 @@
     scores, but strings describing the differences.
     Can be used for commenting on board changes.
 """
+from __future__ import absolute_import
 
-from ldata import *
+from .ldata import *
 from pychess.Utils.const import *
 from pychess.Utils.lutils.attack import staticExchangeEvaluate, getAttacks, \
     defends
@@ -13,7 +14,7 @@ from pychess.Utils.lutils.lmove import TCORD, FCORD, FLAG, PROMOTE_PIECE, toSAN
 from pychess.Utils.lutils.lmovegen import genCaptures, genAllMoves, newMove
 from pychess.Utils.lutils.validator import validateMove
 from pychess.Utils.repr import reprColor, reprPiece
-import leval
+from . import leval
 
 
 def join(items):
