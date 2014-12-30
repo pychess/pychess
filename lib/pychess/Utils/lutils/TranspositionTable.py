@@ -15,7 +15,7 @@ entryType = Struct('=I B B H h H')
 class TranspositionTable:
     def __init__ (self, maxSize):
         assert maxSize > 0
-        self.buckets = maxSize / (4 * entryType.size)
+        self.buckets = maxSize // (4 * entryType.size)
         self.data = create_string_buffer(self.buckets * 4 * entryType.size)
         self.search_id = 0
         

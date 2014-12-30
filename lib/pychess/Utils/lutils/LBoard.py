@@ -529,7 +529,7 @@ class LBoard:
             self._addPiece(tcord, fpiece, color)
 
         if fpiece == PAWN and abs(fcord-tcord) == 16:
-            self.setEnpassant ((fcord + tcord) / 2)
+            self.setEnpassant ((fcord + tcord) // 2)
         else: self.setEnpassant (None)
         
         if tpiece == EMPTY and fpiece != PAWN:

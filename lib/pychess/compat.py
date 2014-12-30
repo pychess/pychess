@@ -8,6 +8,7 @@ PY3 = sys.version_info[0] == 3
 if PY3:
     basestring = str
     unichr = chr
+    raw_input = input
 
     import builtins
     from html.entities import entitydefs
@@ -21,6 +22,7 @@ if PY3:
 else:
     basestring = basestring
     unichr = unichr
+    raw_input = raw_input
     
     import __builtin__ as builtins
     from htmlentitydefs import entitydefs
