@@ -143,7 +143,7 @@ class UCIEngine (ProtocolEngine):
                     self.returnQueue.put("del")
                     return self.engine.gentleKill()
                 
-                except OSError, e:
+                except OSError as e:
                     # No need to raise on a hang up error, as the engine is dead
                     # anyways
                     if e.errno == 32:
@@ -550,7 +550,7 @@ class UCIEngine (ProtocolEngine):
 
                 try:
                     move = parseAny(self.board, parts[1])
-                except ParsingError, e:
+                except ParsingError as e:
                     self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                     return
                 
@@ -607,7 +607,7 @@ class UCIEngine (ProtocolEngine):
             movstrs = parts[parts.index("pv")+1:]
             try:
                 moves = listToMoves (self.board, movstrs, AN, validate=True, ignoreErrors=False)
-            except ParsingError, e:
+            except ParsingError as e:
                 # ParsingErrors may happen when parsing "old" lines from
                 # analyzing engines, which haven't yet noticed their new tasks
                 log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \

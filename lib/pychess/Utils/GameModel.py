@@ -492,7 +492,7 @@ class GameModel (GObject.GObject, Thread):
         try:
             chessfile.loadToModel(gameno, position, self)
         #Postpone error raising to make games loadable to the point of the error
-        except LoadingError, e:
+        except LoadingError as e:
             error = e
         else: error = None
         if self.players:
@@ -579,7 +579,7 @@ class GameModel (GObject.GObject, Thread):
                 else: move = curPlayer.makeMove(self.boards[-1], None, None)
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s" % \
                     (id(self), str(self.players), self.ply, move, str(curPlayer)))
-            except PlayerIsDead, e:
+            except PlayerIsDead as e:
                 if self.status in (WAITING_TO_START, PAUSED, RUNNING):
                     stringio = cStringIO.StringIO()
                     traceback.print_exc(file=stringio)

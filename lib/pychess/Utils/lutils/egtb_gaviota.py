@@ -47,7 +47,7 @@ class egtb_gaviota:
         tbPath = configuredTbPath or getDataPrefix()
         try:
             tbPathContents = os.listdir(tbPath)
-        except OSError, e:
+        except OSError as e:
             if configuredTbPath:
                 log.warning("Unable to open Gaviota TB folder: %s" % repr(e))
             return

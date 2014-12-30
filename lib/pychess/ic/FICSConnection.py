@@ -148,7 +148,7 @@ class FICSConnection (Connection):
                 log.debug("Trying port %d" % port, extra={"task": (self.host, "raw")})
                 try:
                     self.client.open(self.host, port)
-                except socket.error, e:
+                except socket.error as e:
                     log.debug("Failed to open port %d %s" % (port, e), extra={"task": (self.host, "raw")})
                     if i+1 == len(self.ports):
                         raise
@@ -230,7 +230,7 @@ class FICSConnection (Connection):
             t.daemon = True
             t.start()
         
-        except CanceledException, e:
+        except CanceledException as e:
             log.info("FICSConnection._connect: %s" % repr(e),
                      extra={"task": (self.host, "raw")})
         finally:
@@ -243,7 +243,7 @@ class FICSConnection (Connection):
                     self._connect()
                 while self.isConnected():
                     self.client.parse()
-            except Exception, e:
+            except Exception as e:
                 log.info("FICSConnection.run: %s" % repr(e),
                          extra={"task": (self.host, "raw")})
                 self.close()
@@ -279,7 +279,7 @@ class FICSMainConnection (FICSConnection):
             self.lvm.stop()
         except AttributeError:
             pass
-        except Exception, e:
+        except Exception as e:
             if not isinstance(e, (IOError, LogOnException, EOFError,
                     socket.error, socket.gaierror, socket.herror)):
                 raise

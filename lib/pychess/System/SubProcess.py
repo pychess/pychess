@@ -117,7 +117,7 @@ class SubProcess (GObject.GObject):
         for channel in (self.inChannel, self.outChannel, self.errChannel):
             try:
                 channel.close()
-            except GObject.GError, error:
+            except GObject.GError as error:
                 pass
     
     def __setup (self):
@@ -166,7 +166,7 @@ class SubProcess (GObject.GObject):
         if data.endswith("\n"):
             try:
                 self.inChannel.flush()
-            except GObject.GError, e:
+            except GObject.GError as e:
                 log.error(str(e)+". Last line wasn't sent.", extra={"task":self.defname})
 
     def sendSignal (self, sign):
@@ -174,7 +174,7 @@ class SubProcess (GObject.GObject):
             if sys.platform != "win32":
                 os.kill(self.pid, signal.SIGCONT)
             os.kill(self.pid, sign)
-        except OSError, error:
+        except OSError as error:
             if error.errno == errno.ESRCH:
                 #No such process
                 pass
