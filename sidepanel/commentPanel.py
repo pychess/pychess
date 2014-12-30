@@ -85,14 +85,14 @@ class Sidepanel:
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
         model = self.tv.get_model()
-        for i in xrange(moves):
+        for i in range(moves):
             model.remove(model.get_iter( (len(model)-1,) ))
     
     def game_started (self, model):
         self.game_changed(model)
 
     def game_changed (self, model):
-        for ply in xrange(len(self.store)+model.lowply, model.ply+1):
+        for ply in range(len(self.store)+model.lowply, model.ply+1):
             self.addComment(model, self.__chooseComment(model, ply))
     
     def addComment (self, model, comment):

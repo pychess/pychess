@@ -38,7 +38,7 @@ def genCastles (board):
         blocker = clearBit(clearBit(board.blocker, king), rook)
         stepover = fromToRay[king][king_after] | fromToRay[rook][rook_after]
         if not stepover & blocker:
-            for cord in xrange(min(king,king_after), max(king,king_after)+1):
+            for cord in range(min(king,king_after), max(king,king_after)+1):
                 if isAttacked (board, cord, 1-color):
                     return
             if FILE(king) == 3 and board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):

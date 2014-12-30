@@ -366,7 +366,7 @@ def closeAllGames (pairs):
         while True:
             response = dialog.run()
             if response == Gtk.ResponseType.YES:
-                for i in xrange(len(liststore)-1, -1, -1):
+                for i in range(len(liststore)-1, -1, -1):
                     checked, name = liststore[i]
                     if checked:
                         gmwidg, game = changedPairs[i]

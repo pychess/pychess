@@ -40,8 +40,8 @@ for theme in themes:
     context = cairo.Context(surface)
     context.set_source_rgb(0.5, 0.5, 0.5)
     
-    for x in xrange(4):
-        for y in xrange(4):
+    for x in range(4):
+        for y in range(4):
             if (x+y) % 2 == 1:
                 context.rectangle(x*SQUARE, y*SQUARE, SQUARE, SQUARE)
     context.fill()

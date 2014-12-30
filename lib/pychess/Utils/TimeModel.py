@@ -177,7 +177,7 @@ class TimeModel (GObject.GObject):
         if not self.started:
             self.start()
         
-        for i in xrange(moves):
+        for i in range(moves):
             self.movingColor = 1-self.movingColor
             del self.intervals[self.movingColor][-1]
         

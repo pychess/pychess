@@ -309,13 +309,13 @@ class SpotGraph (Gtk.EventBox):
             return xorg, yorg
         
         directions = [(math.cos((i+2)*math.pi/3),
-                       math.sin((i+2)*math.pi/3)) for i in xrange(6)]
+                       math.sin((i+2)*math.pi/3)) for i in range(6)]
         
         level = 1
         while True:
             x += dotSmall
             for dx, dy in directions:
-                for i in xrange(level):
+                for i in range(level):
                     if self.isEmpty (x, y):
                         return self.pixToPrc (x, y)
                     x += dx*dotSmall

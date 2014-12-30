@@ -39,7 +39,7 @@ class TranspositionTable:
     def probe (self, board, depth, alpha, beta):
         baseIndex = (board.hash % self.buckets) * 4
         key = (board.hash / self.buckets) & 0xffffffff
-        for i in xrange(baseIndex, baseIndex + 4):
+        for i in range(baseIndex, baseIndex + 4):
             tkey, search_id, hashf, tdepth, score, move = entryType.unpack_from(self.data, i * entryType.size)
             if tkey == key:
                 # Mate score bounds are guaranteed to be accurate at any depth.
@@ -58,7 +58,7 @@ class TranspositionTable:
         # We always overwrite *something*: an empty slot, this position's last entry, or else the least relevant.
         staleIndex = baseIndex
         staleRelevance = 0xffff
-        for i in xrange(baseIndex, baseIndex + 4):
+        for i in range(baseIndex, baseIndex + 4):
             tkey, search_id, thashf, tdepth, tscore, tmove = entryType.unpack_from(self.data, i * entryType.size)
             if tkey == 0 or tkey == key:
                 staleIndex = i

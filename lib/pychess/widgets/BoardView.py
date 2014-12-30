@@ -371,7 +371,7 @@ class BoardView (Gtk.DrawingArea):
         
         with self.animationLock:
             deadset = set()
-            for i in xrange(self.shown, shown, step):
+            for i in range(self.shown, shown, step):
                 board = self.model.getBoardAtPly(i, self.shownVariationIdx)
                 board1 = self.model.getBoardAtPly(i + step, self.shownVariationIdx)
                 if step == 1:
@@ -734,7 +734,7 @@ class BoardView (Gtk.DrawingArea):
         pangoScale = float(Pango.SCALE)
         
         def paint (inv):
-            for n in xrange(self.RANKS):
+            for n in range(self.RANKS):
                 rank = inv and n+1 or self.RANKS-n
                 layout = self.create_pango_layout("%d" % rank)
                 layout.set_font_description(
@@ -780,8 +780,8 @@ class BoardView (Gtk.DrawingArea):
         
     def drawBoard(self, context, r):
         xc, yc, square, s = self.square
-        for x in xrange(self.FILES):
-            for y in xrange(self.RANKS):
+        for x in range(self.FILES):
+            for y in range(self.RANKS):
                 if x % 2 + y % 2 == 1:
                     bounding = self.cord2RectRelative((xc+x*s,yc+y*s,s))                 
                     if intersects(rect(bounding), r):

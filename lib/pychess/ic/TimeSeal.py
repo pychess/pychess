@@ -82,7 +82,7 @@ class TimeSeal (object):
         
         encode_offset = random.randrange(ENCODELEN)
         
-        for i in xrange(len(buf)):
+        for i in range(len(buf)):
             buf[i] |= 0x80
             j = (i+encode_offset) % ENCODELEN
             buf[i] = chr((buf[i] ^ ENCODE[j]) - 32)

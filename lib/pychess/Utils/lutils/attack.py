@@ -229,7 +229,7 @@ def staticExchangeEvaluate (board, moveOrTcord, color=None):
         lastval = -PIECE_VALUES[board.arBoard[tcord]]
     
     while theirs:
-        for piece in xrange(PAWN, KING+1):
+        for piece in range(PAWN, KING+1):
             r = theirs & opboards[piece]
             if r:
                 cord = firstBit(r)
@@ -244,7 +244,7 @@ def staticExchangeEvaluate (board, moveOrTcord, color=None):
         if not ours:
             break
         
-        for piece in xrange(PAWN, KING+1):
+        for piece in range(PAWN, KING+1):
             r = ours & boards[piece]
             if r:
                 cord = firstBit(r)
@@ -259,7 +259,7 @@ def staticExchangeEvaluate (board, moveOrTcord, color=None):
     #  At this stage, we have the swap scores in a list.  We just need to
     #  mini-max the scores from the bottom up to the top of the list.
     
-    for n in xrange(len(swaplist)-1, 0, -1):
+    for n in range(len(swaplist)-1, 0, -1):
         if n & 1:
             if swaplist[n] <= swaplist[n-1]:
                 swaplist[n-1] = swaplist[n] 

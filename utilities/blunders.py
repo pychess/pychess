@@ -42,7 +42,7 @@ def queryGameno(path):
     print()
     
     print("The file contains the following games:")
-    for i in xrange(len(pgnfile)):
+    for i in range(len(pgnfile)):
         name1, name2 = pgnfile.get_player_names(i)
         print("[%d] %s vs. %s" % (i, name1, name2))
     print()
