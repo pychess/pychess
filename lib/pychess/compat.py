@@ -9,6 +9,8 @@ if PY3:
     unichr = chr
 
     import builtins
+    from html.entities import entitydefs
+
     from io import StringIO
     from urllib.parse import urlparse
     from configparser import SafeConfigParser
@@ -19,6 +21,7 @@ else:
     unichr = unichr
     
     import __builtin__ as builtins
+    from htmlentitydefs import entitydefs
     from cStringIO import StringIO
     from urlparse import urlparse
     from ConfigParser import SafeConfigParser
