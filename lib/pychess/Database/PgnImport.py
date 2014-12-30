@@ -15,6 +15,7 @@ from sqlalchemy import select, Index, func, and_
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.schema import DropIndex
 
+from pychess.compat import unicode
 from pychess.Utils.const import *
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.ChessFile import LoadingError

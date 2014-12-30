@@ -6,7 +6,7 @@ from .ldata import *
 from .bitboard import firstBit
 from .validator import validateMove
 
-from pychess.compat import unichr
+from pychess.compat import unichr, unicode
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprPiece, localReprSign
 from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove
