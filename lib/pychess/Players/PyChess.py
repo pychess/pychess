@@ -171,7 +171,7 @@ class PyChess (object):
         lsearch.endtime = sys.maxsize
         lsearch.searching = True
         
-        for depth in xrange (1, self.sd):
+        for depth in range (1, self.sd):
             if not lsearch.searching:
                 break
             t = time()

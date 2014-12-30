@@ -65,7 +65,7 @@ def start(discoverer):
     global engines, results, minutes
     engines = discoverer.getEngines()
     n = len(engines)
-    for i in xrange(n):
+    for i in range(n):
         results.append([None]*n)
     
     print()
@@ -138,11 +138,11 @@ def printScoreboard():
 
 def printResults():
     scores = []
-    for i in xrange(len(engines)):
-        points = sum(2 for j in xrange(len(engines)) if results[i][j] == WHITEWON) \
-               + sum(1 for j in xrange(len(engines)) if results[i][j] == DRAW) \
-               + sum(2 for j in xrange(len(engines)) if results[j][i] == BLACKWON) \
-               + sum(1 for j in xrange(len(engines)) if results[j][i] == DRAW)
+    for i in range(len(engines)):
+        points = sum(2 for j in range(len(engines)) if results[i][j] == WHITEWON) \
+               + sum(1 for j in range(len(engines)) if results[i][j] == DRAW) \
+               + sum(2 for j in range(len(engines)) if results[j][i] == BLACKWON) \
+               + sum(1 for j in range(len(engines)) if results[j][i] == DRAW)
         scores.append((points, i))
     scores.sort(reverse=True)
     for points, i in scores:
@@ -157,8 +157,8 @@ def printResults():
 
 import random
 def findMatch():
-    pos = [(i,j) for i in xrange(len(engines))
-                 for j in xrange(len(engines))
+    pos = [(i,j) for i in range(len(engines))
+                 for j in range(len(engines))
                  if i != j and results[i][j] == None]
     #pos = [(i,j) for i,j in pos if
     #       "pychess" in discoverer.getName(engines[i]).lower() or

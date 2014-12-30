@@ -238,7 +238,7 @@ class HintTab:
 
 # Setup default sounds
 
-for i in xrange(11):
+for i in range(11):
     if not conf.hasKey("soundcombo%d" % i):
         conf.set("soundcombo%d" % i, SOUND_URI)
 if not conf.hasKey("sounduri0"):
@@ -364,7 +364,7 @@ class SoundTab:
                     combobox.set_active(conf.get("soundcombo%d"%index,SOUND_MUTE))
                 opendialog.hide()
         
-        for i in xrange(self.COUNT_OF_SOUNDS):
+        for i in range(self.COUNT_OF_SOUNDS):
             combo = widgets["soundcombo%d"%i]
             uistuff.createCombo (combo, items)
             combo.set_active(0)
@@ -379,7 +379,7 @@ class SoundTab:
                 model.append([audioIco, os.path.split(uri)[1]])
                 combo.set_active(3)
         
-        for i in xrange(self.COUNT_OF_SOUNDS):
+        for i in range(self.COUNT_OF_SOUNDS):
             if conf.get("soundcombo%d"%i, SOUND_MUTE) == SOUND_URI and \
                     not os.path.isfile(conf.get("sounduri%d"%i,"")[7:]):
                 conf.set("soundcombo%d"%i, SOUND_MUTE)

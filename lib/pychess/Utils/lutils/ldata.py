@@ -60,8 +60,8 @@ isolani_weaker = ( -22, -24, -26, -28, -28, -26, -24, -22 )
 
 taxicab = [[0]*64 for i in range(64)]
 sdistance = [[0]*64 for i in range(64)]
-for fcord in xrange(64):
-    for tcord in xrange(fcord+1, 64):
+for fcord in range(64):
+    for tcord in range(fcord+1, 64):
         fx = FILE(fcord) 
         fy = RANK(fcord)
         tx = FILE(tcord)
@@ -69,7 +69,7 @@ for fcord in xrange(64):
         taxicab[fcord][tcord] = taxicab[fcord][tcord] = abs(fx-tx) + abs(fy-ty)
         sdistance[fcord][tcord] = sdistance[fcord][tcord] = min(abs(fx-tx), abs(fy-ty))
 
-distance = [[[0]*64 for i in xrange(64)] for j in xrange(KING+1)]
+distance = [[[0]*64 for i in range(64)] for j in range(KING+1)]
 
 distance[EMPTY] = None
 distance[KING] = sdistance
@@ -97,11 +97,11 @@ knightDistance = [
 
 # Calculate
 
-for fcord in xrange(64):
+for fcord in range(64):
     frank = RANK(fcord)
     ffile = FILE(fcord)
     
-    for tcord in xrange(fcord+1, 64):
+    for tcord in range(fcord+1, 64):
         # Notice, that we skip fcord == tcord, as all fields are zero from
         # scratch in anyway
         
@@ -254,8 +254,8 @@ kwingpawns2 = ( bitPosArray[G3] | bitPosArray[H2], bitPosArray[G6] | bitPosArray
 #  Ranks and files                                                             #
 ################################################################################
 
-rankBits = [255 << i*8 for i in xrange(7,-1,-1)]
-fileBits = [0x0101010101010101 << i for i in xrange(7,-1,-1)]
+rankBits = [255 << i*8 for i in range(7,-1,-1)]
+fileBits = [0x0101010101010101 << i for i in range(7,-1,-1)]
 
 ################################################################################
 ################################################################################
@@ -354,10 +354,10 @@ map = [
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 
 ]
 
-moveArray = [[0]*64 for i in xrange(len(dir))] # moveArray[8][64]
+moveArray = [[0]*64 for i in range(len(dir))] # moveArray[8][64]
 
-for piece in xrange(1,len(dir)):
-    for fcord in xrange(120):
+for piece in range(1,len(dir)):
+    for fcord in range(120):
         f = map[fcord]
         if f == -1:
             # We only generate moves for squares inside the board
@@ -394,10 +394,10 @@ del sliders[9]; del sliders[8]
 #  the index into rays[f] array allow us to find the ray in that direction.    #
 ################################################################################
 
-directions = [[-1]*64 for i in xrange(64)] # directions[64][64]
-rays = [[0]*8 for i in xrange(64)] # rays[64][8]
+directions = [[-1]*64 for i in range(64)] # directions[64][64]
+rays = [[0]*8 for i in range(64)] # rays[64][8]
 
-for fcord in xrange(120):
+for fcord in range(120):
     f = map[fcord]
     if f == -1: continue
     ray = -1
@@ -420,10 +420,10 @@ for fcord in xrange(120):
 #  ray is possible, then a 0 is returned.                                      #
 ################################################################################
 
-fromToRay = [[0]*64 for i in xrange(64)] # fromToRay[64][64]
+fromToRay = [[0]*64 for i in range(64)] # fromToRay[64][64]
 
 for piece in BISHOP, ROOK:
-    for fcord in xrange (120):
+    for fcord in range (120):
         f = map[fcord]
         if f == -1: continue
         for d in dir[piece]:
@@ -450,7 +450,7 @@ for piece in BISHOP, ROOK:
 passedPawnMask = [[0]*64, [0]*64]
 
 #  Do for white pawns first
-for cord in xrange(64):
+for cord in range(64):
     passedPawnMask[WHITE][cord] = rays[cord][7]
     passedPawnMask[BLACK][cord] = rays[cord][4]
     if cord & 7 != 0:
@@ -473,7 +473,7 @@ isolaniMask = [0]*8
 
 isolaniMask[0] = fileBits[1]
 isolaniMask[7] = fileBits[6]
-for i in xrange (1, 7):
+for i in range (1, 7):
     isolaniMask[i] = fileBits[i-1] | fileBits[i+1]
 
 #===============================================================================
@@ -484,40 +484,40 @@ for i in xrange (1, 7):
 #===============================================================================
 
 squarePawnMask = [[0]*64, [0]*64]
-for cord in xrange(64):
+for cord in range(64):
     # White mask
     l = 7 - RANK(cord)
     i = max(cord & 56, cord-l)
     j = min(cord | 7, cord+l)
-    for k in xrange(i, j+1):
+    for k in range(i, j+1):
         squarePawnMask[WHITE][cord] |= bitPosArray[k] | fromToRay[k][k|56]
     
     # Black mask
     l = RANK(cord)
     i = max(cord & 56, cord-l)
     j = min(cord | 7, cord+l)
-    for k in xrange(i, j+1):
+    for k in range(i, j+1):
         squarePawnMask[BLACK][cord] |= bitPosArray[k] | fromToRay[k][k&7]
 
 # For pawns on 2nd rank, they have same mask as pawns on 3rd rank
-for cord in xrange(A2, H2+1):
+for cord in range(A2, H2+1):
     squarePawnMask[WHITE][cord] = squarePawnMask[WHITE][cord+8]
-for cord in xrange(A7, H7+1):
+for cord in range(A7, H7+1):
     squarePawnMask[BLACK][cord] = squarePawnMask[BLACK][cord-8]
 
 ################################################################################
 #  These tables are used to calculate rook, queen and bishop moves             #
 ################################################################################
 
-ray00  = [rays[cord][5] | rays[cord][6] | 1<<(63-cord) for cord in xrange(64)]
-ray45  = [rays[cord][0] | rays[cord][3] | 1<<(63-cord) for cord in xrange(64)]
-ray90  = [rays[cord][4] | rays[cord][7] | 1<<(63-cord) for cord in xrange(64)]
-ray135 = [rays[cord][1] | rays[cord][2] | 1<<(63-cord) for cord in xrange(64)]
+ray00  = [rays[cord][5] | rays[cord][6] | 1<<(63-cord) for cord in range(64)]
+ray45  = [rays[cord][0] | rays[cord][3] | 1<<(63-cord) for cord in range(64)]
+ray90  = [rays[cord][4] | rays[cord][7] | 1<<(63-cord) for cord in range(64)]
+ray135 = [rays[cord][1] | rays[cord][2] | 1<<(63-cord) for cord in range(64)]
 
-attack00 = [{} for i in xrange(64)]
-attack45 = [{} for i in xrange(64)]
-attack90 = [{} for i in xrange(64)]
-attack135 = [{} for i in xrange(64)]
+attack00 = [{} for i in range(64)]
+attack45 = [{} for i in range(64)]
+attack90 = [{} for i in range(64)]
+attack135 = [{} for i in range(64)]
 
 cmap = [ 128, 64, 32, 16, 8, 4, 2, 1 ]
 rot1 = [ A1, A2, A3, A4, A5, A6, A7, A8 ]
@@ -526,8 +526,8 @@ rot3 = [ A8, B7, C6, D5, E4, F3, G2, H1 ]
 
 # To save time, we init a main line for each of the four directions, and next
 # we will translate it for each possible cord
-for cord in xrange(8):
-    for map in xrange(1, 256):
+for cord in range(8):
+    for map in range(1, 256):
         
         # Skip entries without cord set, as cord will always be set
         if not map & cmap[cord]:
@@ -567,36 +567,36 @@ for cord in xrange(8):
 
 MAXBITBOARD = (1<<64)-1
 
-for r in xrange(A2,A8+1,8):
+for r in range(A2,A8+1,8):
     for cord in iterBits(ray00[r]):
         attack00[cord] = dict((map >> 8, ray >> 8)
                               for map,ray in attack00[cord-8].iteritems())
 
-for r in xrange(B1,H1+1):
+for r in range(B1,H1+1):
     for cord in iterBits(ray90[r]):
         attack90[cord] = dict((map >> 1, ray >> 1)
                               for map,ray in attack90[cord-1].iteritems())
 
 # Bottom right
-for r in xrange(B1,H1+1):
+for r in range(B1,H1+1):
     for cord in iterBits(ray45[r]):
         attack45[cord] = dict((map << 8 & MAXBITBOARD, ray << 8 & MAXBITBOARD)
                               for map,ray in attack45[cord+8].iteritems())
 
 # Top left
-for r in reversed(xrange(A8,H8)):
+for r in reversed(range(A8,H8)):
     for cord in iterBits(ray45[r]):
         attack45[cord] = dict((map >> 8, ray >> 8)
                               for map,ray in attack45[cord-8].iteritems())
 
 # Top right
-for r in xrange(B8,H8+1):
+for r in range(B8,H8+1):
     for cord in iterBits(ray135[r]):
         attack135[cord] = dict((map >> 8, ray >> 8)
                                for map,ray in attack135[cord-8].iteritems())
 
 # Bottom left
-for r in reversed(xrange(A1,H1)):
+for r in reversed(range(A1,H1)):
     for cord in iterBits(ray135[r]):
         attack135[cord] = dict((map << 8 & MAXBITBOARD, ray << 8 & MAXBITBOARD)
                                for map,ray in attack135[cord+8].iteritems())

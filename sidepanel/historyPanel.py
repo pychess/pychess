@@ -106,7 +106,7 @@ class Sidepanel:
     
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
-        for i in xrange(moves):
+        for i in range(moves):
             try:
                 row, view, other = self._ply_to_row_col_other(game.variations[0][-1].ply-i)
                 model = view.get_model()
@@ -121,7 +121,7 @@ class Sidepanel:
         len_ = len(self.left.get_model()) + len(self.right.get_model()) + 1
         if len(self.left.get_model()) and not self.left.get_model()[0][0]:
             len_ -= 1
-        for ply in xrange(len_+game.lowply, game.ply+1):
+        for ply in range(len_+game.lowply, game.ply+1):
             self.__addMove(game, ply)
     
     def __addMove(self, game, ply):

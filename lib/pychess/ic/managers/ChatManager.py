@@ -321,7 +321,7 @@ class ChatManager (GObject.GObject):
         IS_TD = False
         if IS_TD:
             MAX_COM_SIZE = 1024 #TODO: Get from limits
-            for i in xrange(0,len(message),MAX_COM_SIZE):
+            for i in range(0,len(message),MAX_COM_SIZE):
                 chunk = message[i:i+MAX_COM_SIZE]
                 chunk = chunk.replace("\n", "\\n")
                 chunk = self.entityEncode(chunk)

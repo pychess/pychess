@@ -111,7 +111,7 @@ class StarArrowButton (OverlayWindow):
         return rect
     
     def __getButtonAtPoint (self, x, y):
-        for position in xrange(POSITIONS_COUNT):
+        for position in range(POSITIONS_COUNT):
 
             rect = Gdk.Rectangle()
             rect.x, rect.y, rect.width, rect.height = (x, y, 1, 1)

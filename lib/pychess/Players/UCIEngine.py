@@ -508,7 +508,7 @@ class UCIEngine (ProtocolEngine):
             dic = {}
             last = 1
             varlist = []
-            for i in xrange (2, len(parts)+1):
+            for i in range (2, len(parts)+1):
                 if i == len(parts) or parts[i] in OPTKEYS:
                     key = parts[last]
                     value = " ".join(parts[last+1:i])
