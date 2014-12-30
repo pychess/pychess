@@ -1,4 +1,6 @@
 from __future__ import print_function
+
+from pychess.compat import raw_input
 from pychess.Players.PyChess import PyChess
 from pychess.System import conf, fident
 from pychess.Utils.book import getOpenings

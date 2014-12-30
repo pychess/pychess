@@ -15,6 +15,7 @@ if os.path.join(this_dir, "../..") not in sys.path:
     sys.path = [os.path.join(this_dir, "../..")] + sys.path
 
 import pychess
+from pychess.compat import PY2
 from pychess.Utils import const
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.book import getOpenings
@@ -25,8 +26,10 @@ from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import listToSan, toSAN
 
-gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
-
+if PY2:
+    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
+else:
+    gettext.install("pychess", localedir=addDataPrefix("lang"))
 
 class PyChess (object):
     def __init__ (self):

@@ -29,8 +29,8 @@ PYTHONBIN = sys.executable.split("/")[-1]
 backup = [
     {"protocol": "xboard", "name": "PyChess.py", "country": "dk",
         "vm_name": PYTHONBIN, "vm_args": ["-u"]},
-    {"protocol": "xboard", "name": "shatranj.py", "country": "us",
-        "vm_name": PYTHONBIN, "vm_args": ["-u"], "args": ["-xboard"]},
+#    {"protocol": "xboard", "name": "shatranj.py", "country": "us",
+#        "vm_name": PYTHONBIN, "vm_args": ["-u"], "args": ["-xboard"]},
     {"protocol": "xboard", "name": "gnuchess", "country": "us"},
     {"protocol": "xboard", "name": "gnome-gnuchess", "country": "us"},
     {"protocol": "xboard", "name": "crafty", "country": "us"},
