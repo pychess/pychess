@@ -71,10 +71,16 @@ locale.setlocale(locale.LC_ALL, '')
 
 domain = "pychess"
 if isInstalled():
-    gettext.install(domain, unicode=1, names=('ngettext',))
+    if PY2:
+        gettext.install(domain, unicode=1, names=('ngettext',))
+    else:
+        gettext.install(domain, names=('ngettext',))
 else:
     locale_dir = addDataPrefix("lang")
-    gettext.install(domain, localedir=locale_dir, unicode=1, names=('ngettext',))
+    if PY2:
+        gettext.install(domain, localedir=locale_dir, unicode=1, names=('ngettext',))
+    else:
+        gettext.install(domain, localedir=locale_dir, names=('ngettext',))
     if sys.platform == "win32":
         from ctypes import cdll
         libintl = cdll.intl
