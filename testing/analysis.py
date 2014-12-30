@@ -13,8 +13,8 @@ from gi.repository import GObject
 
 class DummyCECPAnalyzerEngine(GObject.GObject):
     __gsignals__ = {
-        "line": (SIGNAL_RUN_FIRST, None, (object,)),
-        "died": (SIGNAL_RUN_FIRST, None, ()),
+        "line": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "died": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
     def __init__(self):
         GObject.GObject.__init__(self)
