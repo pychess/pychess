@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-from StringIO import StringIO
 from time import strftime, localtime, time
 from math import e
 from operator import attrgetter
@@ -13,6 +12,7 @@ import re
 from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, Pango
 
 from pychess.ic import *
+from pychess.compat import StringIO
 from pychess.System import conf, glock, uistuff
 from pychess.System.GtkWorker import Publisher
 from pychess.System.prefix import addDataPrefix
