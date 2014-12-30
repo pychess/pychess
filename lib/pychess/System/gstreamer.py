@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 from threading import Lock
 from gi.repository import GObject
-from Log import log
+from .Log import log
 
 try:
     from gi.repository import Gst

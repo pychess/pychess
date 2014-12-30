@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import cairo
 
 from gi.repository import Gtk
@@ -5,8 +6,8 @@ from gi.repository import Gtk
 from math import ceil as fceil
 ceil = lambda f: int(fceil(f))
 
-from __init__ import NORTH, EAST, SOUTH, WEST, CENTER
-from OverlayWindow import OverlayWindow
+from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER
+from .OverlayWindow import OverlayWindow
 
 class HighlightArea (OverlayWindow):
     """ An entirely blue widget """

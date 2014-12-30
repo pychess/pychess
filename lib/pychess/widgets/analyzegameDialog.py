@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 import time
 import threading
 
-import gamewidget
+from . import gamewidget
 from pychess.Utils.const import *
 from pychess.System import conf, fident
 from pychess.System import glock

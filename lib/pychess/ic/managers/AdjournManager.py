@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 import re
 import datetime
 #from gobject import *
 from gi.repository import GObject
 
-from BoardManager import BoardManager, moveListHeader1Str, names, months, dates
+from .BoardManager import BoardManager, moveListHeader1Str, names, months, dates
 from pychess.ic import *
 from pychess.ic.FICSObjects import FICSAdjournedGame, FICSPlayer
 from pychess.Utils.const import *

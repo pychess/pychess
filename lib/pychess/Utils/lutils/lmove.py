@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
 
-from ldata import *
-from bitboard import firstBit
-from validator import validateMove
+from __future__ import absolute_import
+
+from .ldata import *
+from .bitboard import firstBit
+from .validator import validateMove
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprPiece, localReprSign
 from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove

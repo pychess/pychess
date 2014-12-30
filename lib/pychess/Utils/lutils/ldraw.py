@@ -1,4 +1,5 @@
-from ldata import BLACK_SQUARES
+from __future__ import absolute_import
+from .ldata import BLACK_SQUARES
 from pychess.Utils.const import *
 
 def testFifty (board):

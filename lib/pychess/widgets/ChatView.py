@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from time import strftime, gmtime, localtime
 import random
 
@@ -8,7 +9,7 @@ from gi.repository import GObject
 
 from pychess.System import glock
 from pychess.System import uistuff
-from BorderBox import BorderBox
+from .BorderBox import BorderBox
 
 class ChatView (Gtk.VPaned):
     __gsignals__ = {

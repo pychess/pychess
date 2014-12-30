@@ -1,11 +1,12 @@
+from __future__ import absolute_import
 from copy import copy
 
-from lutils.LBoard import LBoard
-from lutils.bitboard import iterBits
-from lutils.lmove import RANK, FILE, FCORD, FLAG, PROMOTE_PIECE, toAN
-from Piece import Piece
-from Cord import Cord
-from const import *
+from .lutils.LBoard import LBoard
+from .lutils.bitboard import iterBits
+from .lutils.lmove import RANK, FILE, FCORD, FLAG, PROMOTE_PIECE, toAN
+from .Piece import Piece
+from .Cord import Cord
+from .const import *
 
 
 def reverse_enum(L):

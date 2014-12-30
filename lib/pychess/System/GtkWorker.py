@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 from threading import Thread
 import Queue
 
 from gi.repository import GObject
 
-import glock
+from . import glock
 from pychess.System import get_threadname, fident
 
 #

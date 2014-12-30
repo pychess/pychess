@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import absolute_import
+
 from math import ceil, pi, cos, sin
 import cairo
 from gi.repository import Gtk, Pango
@@ -11,7 +13,7 @@ from pychess.System import conf
 from pychess.System import glock
 from pychess.System.repeat import repeat_sleep
 from pychess.Utils.const import WHITE, BLACK
-import preferencesDialog
+from . import preferencesDialog
 
 
 def formatTime(seconds, clk2pgn=False):

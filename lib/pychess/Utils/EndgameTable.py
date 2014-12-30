@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 from gi.repository import GObject
 
-from Move import Move
-from lutils.egtb_k4it import egtb_k4it
-from lutils.egtb_gaviota import egtb_gaviota
+from .Move import Move
+from .lutils.egtb_k4it import egtb_k4it
+from .lutils.egtb_gaviota import egtb_gaviota
 
 providers = []
 

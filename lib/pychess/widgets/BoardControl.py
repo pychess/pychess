@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import absolute_import
+
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
@@ -16,10 +18,10 @@ from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmovegen
 from pychess.Variants.crazyhouse import CrazyhouseChess
 
-import preferencesDialog
-from PromotionDialog import PromotionDialog
-from BoardView import BoardView, rect
-from BoardView import join
+from . import preferencesDialog
+from .PromotionDialog import PromotionDialog
+from .BoardView import BoardView, rect
+from .BoardView import join
 
 
 class BoardControl (Gtk.EventBox):    

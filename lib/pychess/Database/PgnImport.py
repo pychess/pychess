@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import
+
 import os
 import sys
 import zipfile
 from datetime import date
 from array import array
 
-from profilehooks import profile
+from .profilehooks import profile
 
 from sqlalchemy import select, Index, func, and_
 from sqlalchemy.exc import ProgrammingError
@@ -410,7 +412,7 @@ if __name__ == "__main__":
 
     imp = PgnImport()
     
-    from timer import Timer
+    from .timer import Timer
     if len(sys.argv) > 1:
         arg = sys.argv[1]
         with Timer() as t:

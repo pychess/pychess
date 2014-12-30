@@ -1,13 +1,14 @@
+from __future__ import absolute_import
 from gi.repository import Gtk
 from gi.repository import GObject
 
 from pychess.System.prefix import addDataPrefix
 
-from __init__ import CENTER
-from __init__ import DockComposite, DockLeaf, TopDock
-from PyDockComposite import PyDockComposite
-from StarArrowButton import StarArrowButton
-from HighlightArea import HighlightArea
+from .__init__ import CENTER
+from .__init__ import DockComposite, DockLeaf, TopDock
+from .PyDockComposite import PyDockComposite
+from .StarArrowButton import StarArrowButton
+from .HighlightArea import HighlightArea
 
 class PyDockLeaf (DockLeaf):
     def __init__ (self, widget, title, id):

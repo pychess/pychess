@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprColor
-from ldata import *
-from attack import isAttacked
-from bitboard import *
-from PolyglotHash import *
+from .ldata import *
+from .attack import isAttacked
+from .bitboard import *
+from .PolyglotHash import *
 
 ################################################################################
 # FEN                                                                          #

@@ -1,4 +1,5 @@
-import gamewidget
+from __future__ import absolute_import
+
 from pychess.System import conf
 from pychess.System import glock
 from pychess.Utils.const import ACTION_MENU_ITEMS
@@ -46,6 +47,7 @@ class GtkMenuItem (object):
     
     def _set_widget (self, prop, value):
         if not self.gamewidget.isInFront(): return
+        from . import gamewidget
         if gamewidget.getWidgets()[self.name].get_property(prop) != value:
             #print "setting %s property %s to %s.." % (self.name, prop, str(value)),
             glock.acquire()
