@@ -41,8 +41,8 @@ def fanconv(fan):
 
 # Dictionaries and expressions for parsing diagrams
 entitydefs = dict(("&%s;"%a,unichr(ord(b)).encode('utf-8'))
-                  for a,b in entitydefs.iteritems() if len(b)==1)
-def2entity = dict((b, a) for a,b in entitydefs.iteritems())
+                  for a,b in entitydefs.items() if len(b)==1)
+def2entity = dict((b, a) for a,b in entitydefs.items())
     
 
 style = """
