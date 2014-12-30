@@ -38,7 +38,7 @@ class TranspositionTable:
     
     def probe (self, board, depth, alpha, beta):
         baseIndex = (board.hash % self.buckets) * 4
-        key = (board.hash / self.buckets) & 0xffffffff
+        key = (board.hash // self.buckets) & 0xffffffff
         for i in range(baseIndex, baseIndex + 4):
             tkey, search_id, hashf, tdepth, score, move = entryType.unpack_from(self.data, i * entryType.size)
             if tkey == key:
@@ -54,7 +54,7 @@ class TranspositionTable:
     
     def record (self, board, move, score, hashf, depth):
         baseIndex = (board.hash % self.buckets) * 4
-        key = (board.hash / self.buckets) & 0xffffffff
+        key = (board.hash // self.buckets) & 0xffffffff
         # We always overwrite *something*: an empty slot, this position's last entry, or else the least relevant.
         staleIndex = baseIndex
         staleRelevance = 0xffff
