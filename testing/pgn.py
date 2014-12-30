@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import unittest
 
@@ -37,10 +38,10 @@ def create_test(lines, result):
 filenames = ("atomic", "chess960rwch", "world_matches", "zh2200plus")
 
 for filename in filenames:
-    print "Creating test methods for %s" % filename
+    print("Creating test methods for %s" % filename)
     pgnfile = load(open('gamefiles/%s.pgn' % filename))
     for i, game in enumerate(pgnfile.games):
-        print "%s/%s" % (i+1, len(pgnfile.games))
+        print("%s/%s" % (i+1, len(pgnfile.games)))
         if i > 100:
             break
         model = pgnfile.loadToModel(i)

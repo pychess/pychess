@@ -1,3 +1,4 @@
+from __future__ import print_function
 import unittest
 
 from pychess.Utils.const import *
@@ -41,7 +42,7 @@ class DbTestCase(unittest.TestCase):
 
         result = self.conn.execute(db.select)
         db.games = result.fetchall()
-        print "%s selected" % len(db.games)
+        print("%s selected" % len(db.games))
 
         model = db.loadToModel(0)
 

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import errno
 import socket
 import telnetlib
@@ -48,7 +49,7 @@ class TimeSeal (object):
                 raise
         self.sock.settimeout(None)
         
-        print >> self, self.get_init_string()
+        print(self.get_init_string(), file=self)
         self.cook_some()
     
     def cancel (self):
@@ -186,7 +187,7 @@ class TimeSeal (object):
             log.debug(recv, extra={"task": (self.name, "raw")})
             
             for i in range(g_count):
-                print >> self, G_RESPONSE
+                print(G_RESPONSE, file=self)
             
             self.buf += recv
     

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys, os
 from os import listdir
 from os.path import isdir, isfile, splitext
@@ -543,7 +544,7 @@ class ThemeTab:
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file(pngfile)
                 store.append((pixbuf, theme))
             else:
-                print "WARNING: No piece theme preview icons find. Run create_theme_preview.sh !"
+                print("WARNING: No piece theme preview icons find. Run create_theme_preview.sh !")
                 break
 
         iconView = widgets["pieceTheme"]

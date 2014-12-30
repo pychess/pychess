@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 from gi.repository import GObject
 from gi.repository import GLib
 import os
@@ -226,7 +227,7 @@ if __name__ == "__main__":
     paths = ("igang.dk", "google.com", "google.dk", "myspace.com", "yahoo.com")
     maxlen = max(len(p) for p in paths)
     def callback (subp, line, path):
-        print "\t", path.ljust(maxlen), line.rstrip("\n")
+        print("\t", path.ljust(maxlen), line.rstrip("\n"))
     for path in paths:
         subp = SubProcess("/bin/ping", [path])
         subp.connect("line", callback, path)

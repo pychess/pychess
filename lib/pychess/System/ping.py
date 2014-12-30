@@ -1,3 +1,4 @@
+from __future__ import print_function
 # -*- coding: UTF-8 -*-
 
 from gi.repository import GObject
@@ -83,7 +84,7 @@ class Pinger (GObject.GObject):
 if __name__ == "__main__":
     pinger = Pinger("google.com")
     def callback(pinger, time):
-        print time
+        print(time)
     pinger.connect("recieved", callback)
     pinger.start()
     import time

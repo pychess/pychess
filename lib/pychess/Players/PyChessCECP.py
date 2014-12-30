@@ -1,3 +1,4 @@
+from __future__ import print_function
 from pychess.Players.PyChess import PyChess
 from pychess.System import conf, fident
 from pychess.Utils.book import getOpenings
@@ -82,8 +83,8 @@ class PyChessCECP(PyChess):
      
                 elif lines[0] == "protover":
                     stringPairs = ["=".join([k, '"%s"' % v if type(v) is str else str(v)]) for k,v in self.features.iteritems()]
-                    print "feature %s" % " ".join(stringPairs)
-                    print "feature done=1"
+                    print("feature %s" % " ".join(stringPairs))
+                    print("feature done=1")
                 
                 elif lines[0] in ("accepted", "rejected"):
                     # We only really care about one case:
@@ -186,12 +187,12 @@ class PyChessCECP(PyChess):
                     try:
                         move = parseAny (self.board, lines[1])
                     except ParsingError, e:
-                        print "Error (unknown command):", lines[1]
-                        print self.board
+                        print("Error (unknown command):", lines[1])
+                        print(self.board)
                         continue
                     if not validateMove(self.board, move):
-                        print "Illegal move", lines[1]
-                        print self.board
+                        print("Illegal move", lines[1])
+                        print(self.board)
                         continue
                     self.board.applyMove(move)
                     self.playingAs = self.board.color
@@ -205,11 +206,11 @@ class PyChessCECP(PyChess):
                         self.__stopSearching()
                 
                 elif lines[0] == "ping":
-                    print "pong", lines[1]
+                    print("pong", lines[1])
                     
                 elif lines[0] == "draw":
                     if self.__willingToDraw():
-                        print "offer draw"
+                        print("offer draw")
                 
                 elif lines[0] == "result":
                     # We don't really care what the result is at the moment.
@@ -222,7 +223,7 @@ class PyChessCECP(PyChess):
                         fen = " ".join(lines[1:])
                         self.board.applyFen(fen.replace("[", "/").replace("]", ""))
                     except SyntaxError as e:
-                        print "tellusererror Illegal position:", str(e)
+                        print("tellusererror Illegal position:", str(e))
                 
                 # "edit" is unimplemented. See docs. Exiting edit mode returns to analyze mode.
      
@@ -234,7 +235,7 @@ class PyChessCECP(PyChess):
                     if entries:
                         totalWeight = sum(entry[1] for entry in entries)
                         for entry in entries:
-                            print "\t%s\t%02.2f%%" % (toSAN(self.board, entry[0]), entry[1] * 100.0 / totalWeight)
+                            print("\t%s\t%02.2f%%" % (toSAN(self.board, entry[0]), entry[1] * 100.0 / totalWeight))
                 
                 elif lines[0] == "undo":
                     self.__stopSearching()
@@ -267,11 +268,11 @@ class PyChessCECP(PyChess):
                 elif lines[0] == "memory":
                     # FIXME: this is supposed to control the *total* memory use.
                     if lsearch.searching:
-                        print "Error (already searching):", line
+                        print("Error (already searching):", line)
                     else:
                         limit = int(lines[1])
                         if limit < 1:
-                            print "Error (limit too low):", line
+                            print("Error (limit too low):", line)
                         else:
                             pass
                             # TODO implement
@@ -293,7 +294,7 @@ class PyChessCECP(PyChess):
                         if 0 <= value <= 100:
                             self.skipPruneChance = value / 100.0
                         else:
-                            print "Error (argument must be an integer 0..100):", line
+                            print("Error (argument must be an integer 0..100):", line)
      
                 ########## CECP analyze mode commands ##########
                 # See http://www.gnu.org/software/xboard/engine-intf.html#11
@@ -315,18 +316,18 @@ class PyChessCECP(PyChess):
                         import cProfile
                         cProfile.runctx("benchmark()", locals(), globals(), lines[1])
                     else:
-                        print "Usage: profile outputfilename"
+                        print("Usage: profile outputfilename")
                 
                 elif len(lines) == 1:
                     # A GUI without usermove support might try to send a move.
                     try:
                         move = parseAny (self.board, line)
                     except:
-                        print "Error (unknown command):", line
+                        print("Error (unknown command):", line)
                         continue
                     if not validateMove(self.board, move):
-                        print "Illegal move", lines[0]
-                        print self.board
+                        print("Illegal move", lines[0])
+                        print(self.board)
                         continue
                     self.__stopSearching()
                     self.board.applyMove(move)
@@ -337,7 +338,7 @@ class PyChessCECP(PyChess):
                         self.__analyze()
 
                 else:
-                    print "Error (unknown command):", line
+                    print("Error (unknown command):", line)
             #except SystemExit:
                 #sys.exit(0)
             #except:
@@ -352,7 +353,7 @@ class PyChessCECP(PyChess):
         def ondone (result):
             if not self.forced:
                 self.board.applyMove(parseSAN(self.board,result))
-                print "move %s" % result
+                print("move %s" % result)
             # TODO: start pondering, if enabled
         self.thread = Thread(target=PyChess._PyChess__go,
                              name=fident(PyChess._PyChess__go),

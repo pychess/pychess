@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Chess960 (Fischer Random Chess)
 
 import random
@@ -410,4 +411,4 @@ def frc_castling_move(board, fcord, tcord, flag):
 if __name__ == '__main__':
     frcBoard = FRCBoard(True)
     for i in range(10):
-        print frcBoard.shuffle_start()
+        print(frcBoard.shuffle_start())

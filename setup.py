@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+from __future__ import print_function
 from imp import load_module, find_module
 pychess = load_module("pychess", *find_module("pychess",["lib"]))
 
@@ -13,7 +14,7 @@ import sys
 
 
 if sys.version_info < (2, 6, 0):
-    print 'ERROR: PyChess requires Python >= 2.6'
+    print('ERROR: PyChess requires Python >= 2.6')
     sys.exit(1)
 
 # To run "setup.py register" change name to "NAME+VERSION_NAME"

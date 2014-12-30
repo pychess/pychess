@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 import Queue
 from StringIO import StringIO
@@ -195,7 +196,7 @@ class UserInfoSection(Section):
 
     def onFinger (self, fm, finger):
         if finger.getName().lower() != self.connection.getUsername().lower():
-            print finger.getName(), self.connection.getUsername()
+            print(finger.getName(), self.connection.getUsername())
             return
         glock.acquire()
         try:

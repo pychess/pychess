@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 import bisect
 import re
 import socket
@@ -161,13 +162,13 @@ class FICSConnection (Connection):
             
             # login with registered handle
             if self.password:
-                print >> self.client, self.username
+                print(self.username, file=self.client)
                 got = self.client.read_until("password:",
                                              "enter the server as",
                                              "Try again.")
                 if got == 0:
                     self.client.sensitive = True
-                    print >> self.client, self.password
+                    print(self.password, file=self.client)
                     self.client.sensitive = False
                 # No such name
                 elif got == 1:
@@ -177,14 +178,14 @@ class FICSConnection (Connection):
                     raise LogOnException, NOTREG % self.username
             else:
                 if self.username:
-                    print >> self.client, self.username
+                    print(self.username, file=self.client)
                 else:
-                    print >> self.client, "guest"
+                    print("guest", file=self.client)
                 got = self.client.read_until("Press return",
                                              "If it is yours, type the password.")
                 if got == 1:
                     raise LogOnException, REGISTERED % self.username
-                print >> self.client
+                print(file=self.client)
             
             while True:
                 line = self.client.readline()

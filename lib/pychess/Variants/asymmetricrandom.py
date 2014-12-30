@@ -1,3 +1,4 @@
+from __future__ import print_function
 # AsymmetricRandom Chess
 
 import random
@@ -99,4 +100,4 @@ class AsymmetricRandomChess:
 if __name__ == '__main__':
     Board = AsymmetricRandomBoard(True)
     for i in range(10):
-        print Board.asymmetricrandom_start()
+        print(Board.asymmetricrandom_start())

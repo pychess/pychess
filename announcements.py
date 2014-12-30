@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 from getpass import getpass
 from smtplib import SMTP, SMTPConnectError, SMTPAuthenticationError, SMTPRecipientsRefused
 from email.mime.text import MIMEText
@@ -122,16 +123,16 @@ if __name__ == '__main__':
     try:
         server = SMTP(smtp)
     except SMTPConnectError, ex:
-        print '\n%s'%ex
-    print '\nConnecting to Gmail account...'
+        print('\n%s'%ex)
+    print('\nConnecting to Gmail account...')
     try:
         server.login(mail, passw)
     except SMTPAuthenticationError, ex:
-        print '\n%s'%ex
-    print 'Sending message...'
+        print('\n%s'%ex)
+    print('Sending message...')
     try:
         server.sendmail(mail, to, msg.as_string())
     except SMTPRecipientsRefused, ex:
-        print '\n%s'%ex
-    print 'Email send ok.'
+        print('\n%s'%ex)
+    print('Email send ok.')
     server.quit()

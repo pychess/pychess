@@ -1,3 +1,4 @@
+from __future__ import print_function
 import unittest
 
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCheckEvasions
@@ -60,26 +61,26 @@ class FRCFindMovesTestCase(unittest.TestCase):
             fen[2] = castl
             fen = ' '.join(fen)
 
-            print i+1, "/", len(positions), "-", fen
+            print(i+1, "/", len(positions), "-", fen)
             board.applyFen(fen)
             
             for depth, suposedMoveCount in enumerate(depths):
                 if depth+1 > self.MAXDEPTH: break
                 self.count = 0
-                print "searching depth %d for %d moves" % \
-                        (depth+1, suposedMoveCount)
+                print("searching depth %d for %d moves" % \
+                        (depth+1, suposedMoveCount))
                 self.perft (board, depth+1, [])
                 self.assertEqual(self.count, suposedMoveCount)
 
     def testMovegen1(self):
         """Testing FRC variant move generator with perftsuite.epd"""
-        print
+        print()
         self.MAXDEPTH = 2
         self.movegen(self.positions1)
 
     def testMovegen2(self):
         """Testing FRC variant move generator with frc_perftsuite.epd"""
-        print
+        print()
         self.MAXDEPTH = 2
         self.movegen(self.positions2)
 

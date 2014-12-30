@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 from math import floor, ceil, pi
 from time import time
@@ -645,7 +646,7 @@ class BoardView (Gtk.DrawingArea):
         #context.set_antialias (cairo.ANTIALIAS_NONE)
         
         if self.shown < self.model.lowply:
-            print "exiting cause to lowlpy", self.shown, self.model.lowply
+            print("exiting cause to lowlpy", self.shown, self.model.lowply)
             return
         
         alloc = self.get_allocation()
@@ -818,7 +819,7 @@ class BoardView (Gtk.DrawingArea):
     def __drawPiece(self, context, piece, x, y):
         # Maybe a premove was reset from another thread
         if piece is None:
-            print "Trying to draw a None piece"
+            print("Trying to draw a None piece")
             return
         if self.model.variant == BlindfoldChess:
             return
@@ -971,13 +972,13 @@ class BoardView (Gtk.DrawingArea):
                     # bg
                     found, color = sc.lookup_color("p_bg" + state)
                     if not found:
-                        print "color not found in boardview.py:","p_bg" + state
+                        print("color not found in boardview.py:","p_bg" + state)
                     context.set_source_rgba(*color)
                 else:
                     # dark
                     found, color = sc.lookup_color("p_dark" + state)
                     if not found:
-                        print "color not found in boardview.py:","p_dark" + state
+                        print("color not found in boardview.py:","p_dark" + state)
                     context.set_source_rgba(*color)
             context.fill()
     

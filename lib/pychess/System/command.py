@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+from __future__ import print_function
 import threading
 import subprocess
 import traceback
@@ -54,4 +55,4 @@ class Command(object):
 if __name__ == "__main__":
     command = Command("DC", "xboard\nprotover 2\n")
     command = Command("DC", "uci\n")
-    print command.run(timeout=3)
+    print(command.run(timeout=3))

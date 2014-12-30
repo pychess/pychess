@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 
 from os import listdir
@@ -30,7 +31,7 @@ themes.sort()
 
 for theme in themes:
     pngfile = "%s/%s.png" % (pieces, theme)
-    print 'Creating %s' % pngfile
+    print('Creating %s' % pngfile)
     
     Pieces.set_piece_theme(theme)
 

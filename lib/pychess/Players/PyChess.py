@@ -1,7 +1,8 @@
+from __future__ import print_function
 #!/usr/bin/pypy -u
 
 if __name__ == "__main__":
-    print "feature done=0"
+    print("feature done=0")
 
 import gettext
 import os
@@ -106,9 +107,9 @@ class PyChess (object):
             lsearch.endtime = starttime + usetime if timed else sys.maxsize
             if self.debug:
                 if timed:
-                    print "# Time left: %3.2f s; Planing to think for %3.2f s" % (self.clock[self.playingAs], usetime)
+                    print("# Time left: %3.2f s; Planing to think for %3.2f s" % (self.clock[self.playingAs], usetime))
                 else:
-                    print "# Searching to depth %d without timelimit" % self.sd
+                    print("# Searching to depth %d without timelimit" % self.sd)
 
             for depth in range(1, self.sd+1):
                 # Heuristic time saving
@@ -124,7 +125,7 @@ class PyChess (object):
                     if self.post:
                         pv = " ".join(listToSan(self.board, mvs))
                         time_cs = int(100 * (time()-starttime))
-                        print depth, self.scr, time_cs, lsearch.nodes, pv
+                        print(depth, self.scr, time_cs, lsearch.nodes, pv)
                 else:
                     # We were interrupted
                     if depth == 1:
@@ -143,15 +144,15 @@ class PyChess (object):
                 # This should only happen in terminal mode
                 
                 if self.scr == 0:
-                    print "result %s" % reprResult[DRAW]
+                    print("result %s" % reprResult[DRAW])
                 elif self.scr < 0:
                     if self.board.color == WHITE:
-                        print "result %s" % reprResult[BLACKWON]
-                    else: print "result %s" % reprResult[WHITEWON]
+                        print("result %s" % reprResult[BLACKWON])
+                    else: print("result %s" % reprResult[WHITEWON])
                 else:
                     if self.board.color == WHITE:
-                        print "result %s" % reprResult[WHITEWON]
-                    else: print "result %s" % reprResult[BLACKWON]
+                        print("result %s" % reprResult[WHITEWON])
+                    else: print("result %s" % reprResult[BLACKWON])
                 return
             
             lsearch.nodes = 0
@@ -179,7 +180,7 @@ class PyChess (object):
             
             pv = " ".join(listToSan(board, mvs))
             time_cs = int(100 * (time() - start))
-            print "%s %s %s %s %s" % (depth, scr, time_cs, lsearch.nodes, pv)
+            print("%s %s %s %s %s" % (depth, scr, time_cs, lsearch.nodes, pv))
             
             lsearch.nodes = 0
     
@@ -198,7 +199,7 @@ if __name__ == "__main__":
         pychess = PyChessFICS(*sys.argv[2:])
         
     else:
-        print "Unknown argument(s):", repr(sys.argv)
+        print("Unknown argument(s):", repr(sys.argv))
         sys.exit(0)
     
     pychess.makeReady()

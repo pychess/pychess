@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Corner Chess
 
 import random
@@ -45,4 +46,4 @@ class CornerChess:
 if __name__ == '__main__':
     Board = CornerBoard(True)
     for i in range(10):
-        print Board.shuffle_start()
+        print(Board.shuffle_start())
