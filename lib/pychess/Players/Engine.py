@@ -1,10 +1,10 @@
 from __future__ import absolute_import
-from urllib import urlopen, urlencode
 
 from gi.repository import GObject
 
 from threading import Thread
 
+from pychess.compat import urlopen, urlencode
 from pychess.System import fident
 from pychess.System.Log import log
 from pychess.Utils.Offer import Offer

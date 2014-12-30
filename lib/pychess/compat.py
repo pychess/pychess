@@ -12,7 +12,8 @@ if PY3:
     from urllib.parse import urlparse
     from configparser import SafeConfigParser
     from queue import Queue, Empty, Full
-    
+    from urllib.request import urlopen, url2pathname
+    from urllib.parse import urlencode
 else:
     unichr = unichr
     
@@ -20,3 +21,4 @@ else:
     from urlparse import urlparse
     from ConfigParser import SafeConfigParser
     from Queue import Queue, Empty, Full
+    from urllib import urlopen, urlencode, url2pathname
