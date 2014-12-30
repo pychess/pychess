@@ -1,6 +1,6 @@
 from collections import defaultdict
-from Queue import Queue
 
+from pychess.compat import Queue
 from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Move import parseSAN, toAN
 from pychess.Utils.lutils.lmove import ParsingError

@@ -1,11 +1,7 @@
 import os, atexit
-from pychess.System.Log import log
-from pychess.Main import PY2, PY3
 
-if PY3:
-    from configparser import SafeConfigParser
-else:
-    from ConfigParser import SafeConfigParser
+from pychess.compat import SafeConfigParser, PY2
+from pychess.System.Log import log
 
 configParser = SafeConfigParser()
 from pychess.System.prefix import addUserConfigPrefix

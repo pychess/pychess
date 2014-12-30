@@ -21,7 +21,7 @@ mainloop = GLib.MainLoop()
 # Do the rest of the imports
 import atexit
 import sys
-import Queue
+from pychess.compat import Queue
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Player import Player, TurnInterrupt, PlayerIsDead
 from pychess.System.protoopen import protoopen
@@ -72,7 +72,7 @@ def queryTime():
 class DummyPlayer (Player):
     def __init__(self):
         Player.__init__(self)
-        self.Q = Queue.Queue()
+        self.Q = Queue()
         self.__type__ = LOCAL
     def makeMove (self, board1, move, board2):
         r = self.Q.get()

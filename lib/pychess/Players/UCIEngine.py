@@ -1,10 +1,11 @@
 from __future__ import absolute_import
 from __future__ import print_function
+
 import collections
 from copy import copy
-import Queue
 from threading import RLock, Thread
 
+from pychess.compat import Queue
 from pychess.Utils.Move import *
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
@@ -58,7 +59,7 @@ class UCIEngine (ProtocolEngine):
         self.uciPositionListsMoves = False
         self.analysis = [ None ]
         
-        self.returnQueue = Queue.Queue()
+        self.returnQueue = Queue()
         self.engine.connect("line", self.parseLines)
         self.engine.connect("died", self.__die)
         

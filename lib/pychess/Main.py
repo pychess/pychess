@@ -10,17 +10,11 @@ import subprocess
 import urllib 
 import sys
 
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
-if PY3:
-    from urllib.parse import urlparse
-else:
-    from urlparse import urlparse
-
 from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GObject
 
+from pychess.compat import urlparse
 from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log

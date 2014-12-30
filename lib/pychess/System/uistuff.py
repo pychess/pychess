@@ -1,5 +1,4 @@
 import colorsys
-import Queue
 import re
 import webbrowser
 from gi.repository import Gtk
@@ -9,6 +8,7 @@ from gi.repository import Pango
 from gi.repository.GdkPixbuf import Pixbuf
 from threading import Thread
 
+from pychess.compat import Queue, Empty
 from pychess.System import conf, glock, fident
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
@@ -443,7 +443,7 @@ def cacheGladefile(filename):
     """ Gtk.Builder automatically caches the file, so we only need to use this
         file once """
     if filename not in cachedGlades:
-        cachedGlades[filename] = Queue.Queue()
+        cachedGlades[filename] = Queue()
         def readit ():
             builder = Gtk.Builder()
             builder.set_translation_domain("pychess")
@@ -461,7 +461,7 @@ class GladeWidgets:
         try:
             if filename in cachedGlades:
                 self.builder = cachedGlades[filename].get(block=False)
-        except Queue.Empty:
+        except Empty:
             pass
         
         if not self.builder:
