@@ -2,6 +2,7 @@ import unittest
 
 import random
 import operator
+from functools import reduce
 
 from pychess.Utils.lutils.bitboard import *
 
