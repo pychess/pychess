@@ -485,7 +485,7 @@ class SeekTabSection (ParrentListSection):
             lambda modelsort, value: set_sort_order(modelsort, value))
         
         
-    def selectFunction (self, selection, model, path, is_selected):
+    def selectFunction (self, selection, model, path, is_selected, data):
         if model[path][9] == "grey": return False
         else: return True
     
