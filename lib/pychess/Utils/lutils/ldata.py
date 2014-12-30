@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+
+from functools import reduce
 from operator import or_
 from pychess.Utils.const import *
 #from pychess.Utils.lutils.lmove import RANK, FILE
