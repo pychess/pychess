@@ -1,7 +1,7 @@
 import os.path
 import gettext
 import locale
-from cStringIO import StringIO
+
 from operator import attrgetter
 from itertools import groupby
 
@@ -14,6 +14,7 @@ from cairo import ImageSurface
 from gi.repository import GtkSource
 from gi.repository import GdkPixbuf
 
+from pychess.compat import StringIO
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
