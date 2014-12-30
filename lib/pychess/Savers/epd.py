@@ -85,7 +85,7 @@ class EpdFile (ChessFile):
             fen = " ".join(fieldlist[:4])
             opcodestr = " ".join(fieldlist[4:])
             
-        else: raise LoadingError, "EPD string can not have less than 4 field"
+        else: raise LoadingError("EPD string can not have less than 4 field")
         
         opcodes = {}
         for opcode in map(str.strip, opcodestr.split(";")):

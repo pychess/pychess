@@ -153,8 +153,7 @@ class PyDockTop (TopDock):
             if elem.getAttribute("id") == self.id:
                 break
         else:
-            raise AttributeError, \
-                  "XML file contains no <dock> elements with id '%s'" % self.id
+            raise AttributeError("XML file contains no <dock> elements with id '%s'" % self.id)
         
         child = [n for n in elem.childNodes if isinstance(n, minidom.Element)]
         if child:

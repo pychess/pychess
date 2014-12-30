@@ -150,7 +150,7 @@ class Human (Player):
         item = self.queue.get(block=True)
         self.gmwidg.setLocked(True)
         if item == "del":
-            raise PlayerIsDead, "Killed by foreign forces"
+            raise PlayerIsDead("Killed by foreign forces")
         if item == "int":
             log.debug("Human.makeMove: %s: raise TurnInterrupt" % self)
             raise TurnInterrupt

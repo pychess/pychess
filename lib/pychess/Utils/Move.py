@@ -27,7 +27,7 @@ class Move:
             self.cord0 = cord0
             self.cord1 = cord1
             if not board:
-                raise ValueError, "Move needs a Board object in order to investigate flags"
+                raise ValueError("Move needs a Board object in order to investigate flags")
             
             self.flag = NORMAL_MOVE
             
