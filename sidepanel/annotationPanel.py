@@ -149,7 +149,7 @@ class Sidepanel(Gtk.TextView):
         """ Calls variation remover when clicking on remove marker """
         
         tag_name = tag.get_property("name")
-        if event.type == gtk.gdk.BUTTON_PRESS and tag_name == "remove-variation":
+        if event.type == gdk.EventType.BUTTON_PRESS and tag_name == "remove-variation":
             offset = iter.get_offset()
             node = None
             for n in self.nodelist:
