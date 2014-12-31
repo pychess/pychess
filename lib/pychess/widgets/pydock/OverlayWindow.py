@@ -142,7 +142,7 @@ class OverlayWindow (Gtk.Window):
         return svg
     
     def __svgToSurface (self, svg, width, height):
-        assert type(width) == int
+        assert isinstance(width, int)
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
         context = cairo.Context(surface)
         context.set_operator(cairo.OPERATOR_SOURCE)

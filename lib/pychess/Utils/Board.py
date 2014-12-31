@@ -363,7 +363,7 @@ class Board:
         return newBoard
     
     def __eq__ (self, other):
-        if type(self) != type(other): return False
+        if not isinstance(self, type(other)): return False
         return self.board == other.board
 
     def printPieces(self):

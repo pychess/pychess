@@ -36,7 +36,7 @@ class ChainVBox (Gtk.VBox):
     def getActive (self):
         return self._active
     def setActive (self, active):
-        assert type(active) is bool
+        assert isinstance(active, bool)
         self._active = active
         if self._active is True:
             self.image.set_from_file(addDataPrefix("glade/stock-vchain-24.png"))

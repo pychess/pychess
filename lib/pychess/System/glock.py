@@ -28,7 +28,7 @@ def has (thread=None):
     if not thread:
         thread = currentThread()
     ro = rlock_owner(_rlock)
-    if type(ro) is int:
+    if isinstance(ro, int):
         return ro == thread.ident
     return ro == thread.name
 

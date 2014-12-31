@@ -48,8 +48,7 @@ class BitboardTestCase(unittest.TestCase):
         
         for positions,board in self.positionSets:
             positions.sort()
-            itered = list(iterBits(board))
-            itered.sort()
+            itered = sorted(iterBits(board))
             self.assertEqual(positions, itered)
 
 if __name__ == '__main__':
