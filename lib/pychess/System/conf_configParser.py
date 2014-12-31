@@ -39,6 +39,11 @@ def get (key):
     except ValueError:
         pass
 
+    try:
+        return configParser.getfloat(section, key)
+    except ValueError:
+        pass
+
     return configParser.get(section, key)
 
 def set (key, value):
