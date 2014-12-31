@@ -363,7 +363,7 @@ class PgnImport():
                     
                     player_data.append({
                         "fideid": int(line[:8]),
-                        "name": line[10:42].rstrip().decode('latin_1'),
+                        "name": line[10:42].rstrip(),
                         "title": title,
                         "fed": line[48:51],
                         "elo": elo,
