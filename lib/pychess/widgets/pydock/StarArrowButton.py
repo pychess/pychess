@@ -58,7 +58,7 @@ class StarArrowButton (OverlayWindow):
             starWidth, starHeight = self.getSizeOfSvg(self.bgSvg)
             scale = min(1, parentAlloc.width  / float(starWidth),
                            parentAlloc.height / float(starHeight))
-            self.size = map(int, (starWidth*scale, starHeight*scale))
+            self.size = list(map(int, (starWidth*scale, starHeight*scale)))
             self.resize(self.size[0], self.size[1])
             
             if self.get_window():

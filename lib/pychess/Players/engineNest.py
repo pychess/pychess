@@ -151,7 +151,7 @@ class EngineDiscoverer (GObject.GObject):
         if 'author' in ids:
             engine['author'] = ids['author']
         if options:
-            engine["options"] = options.values()
+            engine["options"] = list(options.values())
         return engine
     
     def __fromCECPProcess (self, subprocess):
@@ -163,7 +163,7 @@ class EngineDiscoverer (GObject.GObject):
         if features['analyze'] == 1:
             engine["analyze"] = True
         if options:
-            engine["options"] = options.values()
+            engine["options"] = list(options.values())
         
         return engine
     
