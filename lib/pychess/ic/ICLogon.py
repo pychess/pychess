@@ -174,7 +174,7 @@ class ICLogon (object):
             ports = (port,)
         else:
             ports = self.widgets["portsEntry"].get_text()
-            ports = map(int, re.findall("\d+", ports))
+            ports = list(map(int, re.findall("\d+", ports)))
             if not 5000 in ports: ports.append(5000)
             if not 23 in ports: ports.append(23)
         self.showConnecting()

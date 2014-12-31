@@ -69,7 +69,7 @@ def save (file, model, position=None):
     
     sanmvs = map(toFAN, model.boards[:-1], model.moves)
     sanmvs = map(fanconv, sanmvs)
-    if model.lowply & 1: sanmvs = ["&gt;"]+sanmvs
+    if model.lowply & 1: sanmvs = ["&gt;"]+list(sanmvs)
     if model.status in (DRAW, WHITEWON, BLACKWON):
         sanmvs.extend(['']*(-len(sanmvs)%2))
         sanmvs.append(fanconv(reprResult[model.status]))
