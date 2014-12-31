@@ -149,7 +149,7 @@ class Sidepanel(Gtk.TextView):
         """ Calls variation remover when clicking on remove marker """
         
         tag_name = tag.get_property("name")
-        if event.type == gdk.EventType.BUTTON_PRESS and tag_name == "remove-variation":
+        if event.type == Gdk.EventType.BUTTON_PRESS and tag_name == "remove-variation":
             offset = iter.get_offset()
             node = None
             for n in self.nodelist:
@@ -322,7 +322,7 @@ class Sidepanel(Gtk.TextView):
         if response == Gtk.ResponseType.ACCEPT:
             dialog.destroy()
             (iter_first, iter_last) = textbuffer.get_bounds()
-            comment = textbuffer.get_text(iter_first, iter_last)
+            comment = textbuffer.get_text(iter_first, iter_last, False)
             if board.children[index] != comment:
                 board.children[index] = comment
                 self.gamemodel.needsSave = True
