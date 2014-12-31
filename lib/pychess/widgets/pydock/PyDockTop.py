@@ -116,7 +116,7 @@ class PyDockTop (TopDock):
         
         if self.get_child():
             self.__addToXML(self.get_child(), dockElem, doc)
-        f = file(xmlpath, "w")
+        f = open(xmlpath, "w")
         doc.writexml(f)
         f.close()
         doc.unlink()

@@ -130,11 +130,11 @@ class OverlayWindow (Gtk.Window):
                     "#ffffff": getcol("p_base_color"),
                     "#000000": getcol("p_fg_color")}        
 
-        data = file(svgPath).read()
+        data = open(svgPath).read()
         data = re.sub("|".join(colorDic.keys()),
                       lambda m: m.group() in colorDic and colorDic[m.group()] or m.group(),
                       data)
-        f = file(TEMP_PATH, "w")
+        f = open(TEMP_PATH, "w")
         f.write(data)
         f.close()
         svg = Rsvg.Handle.new_from_file(TEMP_PATH)
