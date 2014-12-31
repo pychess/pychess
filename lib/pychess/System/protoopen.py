@@ -29,12 +29,12 @@ def protosave (uri, append=False):
     
     if splitted[0] == "file":
         if append:
-            return file(splitted[1], "a")
-        return file(splitted[1], "w")
+            return open(splitted[1], "a")
+        return open(splitted[1], "w")
     elif len(splitted) == 1:
         if append:
-            return file(splitted[0], "a")
-        return file(splitted[0], "w")
+            return open(splitted[0], "a")
+        return open(splitted[0], "w")
 
     raise IOError("PyChess doesn't support writing to protocol")
 
