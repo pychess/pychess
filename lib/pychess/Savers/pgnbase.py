@@ -268,10 +268,10 @@ def pgn_load(file, klass=PgnBase):
                 if not inTags:
                     files.append(["",""])
                     inTags = True
-                files[-1][0] += line.decode("latin_1")
+                files[-1][0] += line
             else:
                 if not inTags:
-                    files[-1][1] += line.decode('latin_1')
+                    files[-1][1] += line
                 else:
                     print("Warning: ignored invalid tag pair %s" % line)
         else:
@@ -280,7 +280,7 @@ def pgn_load(file, klass=PgnBase):
                 # In rare cases there might not be any tags at all. It's not
                 # legal, but we support it anyways.
                 files.append(["",""])
-            files[-1][1] += line.decode('latin_1')
+            files[-1][1] += line
                 
     return klass(files)
 

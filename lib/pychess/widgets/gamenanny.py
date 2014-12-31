@@ -6,6 +6,7 @@ from __future__ import absolute_import
 import math
 from gi.repository import Gtk
 
+from pychess.compat import unicode
 from pychess.ic.FICSObjects import make_sensitive_if_available, make_sensitive_if_playing
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.Utils.Offer import Offer
