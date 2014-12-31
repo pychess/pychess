@@ -1,6 +1,8 @@
 import os
 
-from pychess.compat import urlopen, url2pathname
+from pychess.compat import open, urlopen, url2pathname
+
+PGN_ENCODING = "latin_1"
 
 def splitUri (uri):
     uri = url2pathname(uri) # escape special chars
@@ -11,7 +13,7 @@ def protoopen (uri):
     """ Function for opening many things """
    
     try:
-        return open(uri, "rU")
+        return open(uri, "rU", encoding=PGN_ENCODING)
     except (IOError, OSError):
         pass
 
@@ -29,12 +31,12 @@ def protosave (uri, append=False):
     
     if splitted[0] == "file":
         if append:
-            return open(splitted[1], "a")
+            return open(splitted[1], "a", encoding=PGN_ENCODING)
         return open(splitted[1], "w")
     elif len(splitted) == 1:
         if append:
-            return open(splitted[0], "a")
-        return open(splitted[0], "w")
+            return open(splitted[0], "a", encoding=PGN_ENCODING)
+        return open(splitted[0], "w", encoding=PGN_ENCODING)
 
     raise IOError("PyChess doesn't support writing to protocol")
 
