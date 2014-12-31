@@ -980,7 +980,7 @@ class CECPEngine (ProtocolEngine):
             return {"type": "text", "name": name, "default": value}
         elif " -combo " in option:
             name, value = option.split(" -combo ")
-            choices = map(str.strip, value.split("///"))
+            choices = list(map(str.strip, value.split("///")))
             default = ""
             for choice in choices:
                 if choice.startswith("*"):
