@@ -629,7 +629,7 @@ class BoardView (Gtk.DrawingArea):
                     #    r = Gdk.Rectangle() 
                     #    r.x, r.y, r.width, r.height = t                                     
                     #assert type(r[2]) == int
-                    assert type(r.width) == int
+                    assert isinstance(r.width, int)
                     if queue:
                         self.queue_draw_area(r.x, r.y, r.width, r.height)
                     else:
@@ -806,13 +806,13 @@ class BoardView (Gtk.DrawingArea):
             self.cordMatrices = [None] * self.FILES*self.RANKS + [None] * self.FILES*4
             self.cordMatricesState = (self.square, self.rotation)
         c = x * self.FILES + y
-        if type(c) == int and self.cordMatrices[c]:
+        if isinstance(c, int) and self.cordMatrices[c]:
             matrices = self.cordMatrices[c]
         else:
             cx, cy = self.cord2Point(x,y)
             matrices = matrixAround(self.matrix, cx+s/2., cy+s/2.)
             matrices += (cx, cy)
-            if type(c) == int:
+            if isinstance(c, int):
                 self.cordMatrices[c] = matrices
         return matrices
     
@@ -1417,7 +1417,7 @@ class BoardView (Gtk.DrawingArea):
     def cord2RectRelative (self, cord, y=None):
         """ Like cord2Rect, but gives you bounding rect in case board is beeing
             Rotated """
-        if type(cord) == tuple:
+        if isinstance(cord, tuple):
             cx, cy, s = cord
         else:
             cx, cy, s = self.cord2Rect(cord, y)

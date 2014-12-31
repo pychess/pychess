@@ -3,7 +3,7 @@ from pychess.Utils.const import ACTIONS
 class Offer:
     def __init__(self, type_, param=None, index=None):
         assert type_ in ACTIONS, "Offer.__init__(): type not in ACTIONS: %s" % repr(type_)
-        assert index is None or type(index) is int, \
+        assert index is None or isinstance(index, int), \
             "Offer.__init__(): index not int: %s" % repr(index)
         self.type = type_
         self.param = param
@@ -13,7 +13,7 @@ class Offer:
         return hash((self.type, self.param, self.index))
     
     def __cmp__(self, other):
-        assert type(other) is type(self), "Offer.__cmp__(): not of type Offer: %s" % repr(other)
+        assert isinstance(other, type(self)), "Offer.__cmp__(): not of type Offer: %s" % repr(other)
         return cmp(hash(self), hash(other))
     
     def __repr__(self):

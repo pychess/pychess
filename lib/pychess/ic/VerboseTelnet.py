@@ -110,7 +110,7 @@ class FromToPrediction (MultipleLinesPrediction):
             match = self.regexps[1].match(line)
             if match:
                 self.matchlist.append(match)
-                self.matches = [m if type(m) is str else m.string for m in self.matchlist]
+                self.matches = [m if isinstance(m, str) else m.string for m in self.matchlist]
                 self.callback(self.matchlist)
                 del self.matchlist[:]
                 return RETURN_MATCH

@@ -22,8 +22,7 @@ from pychess.compat import urlopen
 
 print("Getting data from Rosetta Launchpad...")
 data = urlopen('http://translations.launchpad.net/pychess/trunk/+translations').read()
-langs = re.findall('/pychess/trunk/\+pots/pychess/(.*?)/\+translate', data)
-langs.sort()
+langs = sorted(re.findall('/pychess/trunk/\+pots/pychess/(.*?)/\+translate', data))
 
 def findContributors(lang):
     site = "https://translations.launchpad.net/pychess/trunk/+pots/pychess/%s/+translate" % lang

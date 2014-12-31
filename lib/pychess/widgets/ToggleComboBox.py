@@ -45,7 +45,7 @@ class ToggleComboBox (Gtk.ToggleButton):
         return self._active
     
     def _set_active(self, active):
-        if type(active) != int:
+        if not isinstance(active, int):
             raise TypeError
         if active == self._active: return
         if active >= len(self._items):
@@ -81,7 +81,7 @@ class ToggleComboBox (Gtk.ToggleButton):
             item = Gtk.MenuItem()
             label = Gtk.Label(label=text)
             label.props.xalign = 0
-            if type(stock) == str:
+            if isinstance(stock, str):
                 stock = load_icon(12, stock)
             image = Gtk.Image()
             image.set_from_pixbuf(stock)            

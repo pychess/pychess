@@ -129,7 +129,7 @@ class SubProcess (GObject.GObject):
         # Kill the engine on any signal but 'Resource temporarily unavailable'
         self.subprocExitCode = (code, os.strerror(code))
         if code != errno.EWOULDBLOCK:
-            if type(code) == str:
+            if isinstance(code, str):
                 log.error(code, extra={"task":self.defname})
             else: log.error(os.strerror(code), extra={"task":self.defname})
             self.emit("died")

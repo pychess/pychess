@@ -10,7 +10,7 @@ class Cord:
                 Cord(17), Cord("b3"), Cord(1,2), Cord("b",3) """
                 
         if var2 == None:
-            if type(var1) == int:
+            if isinstance(var1, int):
                 # We assume the format Cord(17)
                 self.x = FILE(var1)
                 self.y = RANK(var1)
@@ -19,7 +19,7 @@ class Cord:
                 self.x = self.charToInt(var1[0])
                 self.y = int(var1[1]) - 1
         else:
-            if type(var1) == str:
+            if isinstance(var1, str):
                 # We assume the format Cord("b",3)
                 self.x = self.charToInt(var1)
                 self.y = var2 -1

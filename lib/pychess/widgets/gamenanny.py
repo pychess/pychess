@@ -198,7 +198,7 @@ def game_ended (gamemodel, reason, gmwidg):
     return False
 
 def _set_statusbar (gamewidget, message):
-    assert type(message) is str or type(message) is unicode
+    assert isinstance(message, str) or isinstance(message, unicode)
     gamewidget.status(message)
     
 def game_paused (gamemodel, gmwidg):

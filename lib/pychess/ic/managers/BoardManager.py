@@ -689,8 +689,7 @@ class BoardManager (GObject.GObject):
             pgnHead += [ ("Variant", "Suicide") ]
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
         
-        moves = moves.items()
-        moves.sort()
+        moves = sorted(moves.items())
         for ply, move in moves:
             if ply % 2 == 0:
                 pgn += "%d. " % (ply/2+1)
