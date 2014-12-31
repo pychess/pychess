@@ -19,7 +19,7 @@ if __name__ == '__main__':
     # All xml tags are namespace prefixed in parsed tree !
     ns = "{http://www.w3.org/1999/xhtml}"
 
-    ecofile = file("eco.pgn", "w")
+    ecofile = open("eco.pgn", "w")
 
     tables = [c for c in tree.findall(".//%stable" % ns) if c.get("class") == "prettytable"]
     
