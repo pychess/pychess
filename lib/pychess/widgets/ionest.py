@@ -39,7 +39,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     def onPublished (worker, vallist):
         for val in vallist:
             # The worker will start by publishing (gmwidg, game)
-            if type(val) == tuple:
+            if isinstance(val, tuple):
                 gmwidg, game = val
                 gamewidget.attachGameWidget(gmwidg)
                 gamenanny.nurseGame(gmwidg, game)

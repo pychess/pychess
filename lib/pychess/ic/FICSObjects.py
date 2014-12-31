@@ -71,8 +71,8 @@ def get_player_tooltip_text (player, show_status=True):
 class FICSPlayer (GObject.GObject):
     def __init__ (self, name, online=False, status=IC_STATUS_UNKNOWN, game=None,
                   titles=None):
-        assert type(name) is str, name
-        assert type(online) is bool, online
+        assert isinstance(name, str), name
+        assert isinstance(online, bool), online
         GObject.GObject.__init__(self)
         self.name = name
         self.online = online
@@ -214,7 +214,7 @@ class FICSPlayer (GObject.GObject):
         return hash(self.name[0:10].lower())
     
     def __eq__ (self, player):
-        if type(self) == type(player) and hash(self) == hash(player):
+        if isinstance(self, type(player)) and hash(self) == hash(player):
             return True
         else:
             return False
@@ -262,7 +262,7 @@ class FICSPlayer (GObject.GObject):
 
     @classmethod
     def getIconByRating (cls, rating, size=16):
-        assert type(rating) == int, "rating not an int: %s" % str(rating)        
+        assert isinstance(rating, int), "rating not an int: %s" % str(rating)        
         if rating >= 1900:
             return load_icon(size, "weather-storm")
         elif rating >= 1600:
@@ -275,7 +275,7 @@ class FICSPlayer (GObject.GObject):
             return load_icon(size, "weather-clear")
     
     def getIcon (self, size=16, gametype=None):
-        assert type(size) == int, "size not an int: %s" % str(size)
+        assert isinstance(size, int), "size not an int: %s" % str(size)
         if self.isGuest():
             return load_icon(size, "stock_people", "system-users")
         elif self.isComputer():
@@ -379,7 +379,7 @@ class FICSPlayers (GObject.GObject):
         pass
 
     def __getitem__ (self, player):
-        if type(player) is not FICSPlayer: raise TypeError("%s" % repr(player))
+        if not isinstance(player, FICSPlayer): raise TypeError("%s" % repr(player))
         if hash(player) in self.players:
             return self.players[hash(player)]
         else:
@@ -387,8 +387,8 @@ class FICSPlayers (GObject.GObject):
 
     def __setitem__ (self, key, value):
         """ key and value must be the same FICSPlayer object """
-        if type(key) is not FICSPlayer: raise TypeError
-        if type(value) is not FICSPlayer: raise TypeError
+        if not isinstance(key, FICSPlayer): raise TypeError
+        if not isinstance(value, FICSPlayer): raise TypeError
         if key != value:
             raise Exception("Not the same: %s %s" % (repr(key), repr(value)))
         if hash(value) in self.players:
@@ -398,7 +398,7 @@ class FICSPlayers (GObject.GObject):
                                                        self.online_changed)
     
     def __delitem__ (self, player):
-        if type(player) is not FICSPlayer: raise TypeError
+        if not isinstance(player, FICSPlayer): raise TypeError
         if player in self:
             del self.players[hash(player)]
         if hash(player) in self.players_cids:
@@ -407,7 +407,7 @@ class FICSPlayers (GObject.GObject):
             del self.players_cids[hash(player)]
             
     def __contains__ (self, player):
-        if type(player) is not FICSPlayer: raise TypeError
+        if not isinstance(player, FICSPlayer): raise TypeError
         if hash(player) in self.players:
             return True
         else:
@@ -463,9 +463,9 @@ class FICSPlayers (GObject.GObject):
 
 class FICSMatch (GObject.GObject):
     def __init__ (self, minutes, inc, rated, game_type):
-        assert minutes is None or type(minutes) is int, type(minutes)
-        assert inc is None or type(inc) is int, inc
-        assert type(rated) is bool, rated
+        assert minutes is None or isinstance(minutes, int), type(minutes)
+        assert inc is None or isinstance(inc, int), inc
+        assert isinstance(rated, bool), rated
         assert game_type is None or game_type is GAME_TYPES_BY_FICS_NAME["wild"] \
             or game_type in GAME_TYPES.values(), game_type
         GObject.GObject.__init__(self)
@@ -514,7 +514,7 @@ def get_soughtmatch_tooltip_text (sought):
 
 class FICSSoughtMatch (FICSMatch):
     def __init__ (self, index, player, minutes, inc, rated, color, game_type):
-        assert index is None or type(index) is int, index
+        assert index is None or isinstance(index, int), index
         assert isinstance(player, FICSPlayer), player
         FICSMatch.__init__(self, minutes, inc, rated, game_type)
         self.index = index
@@ -525,7 +525,7 @@ class FICSSoughtMatch (FICSMatch):
         return self.index
 
     def __eq__ (self, sought):
-        if type(self) == type(sought) and hash(self) == hash(sought):
+        if isinstance(self, type(sought)) and hash(self) == hash(sought):
             return True
         else:
             return False
@@ -582,11 +582,11 @@ class FICSChallenges (GObject.GObject):
         self.connection.bm.connect("playGameCreated", self.onPlayingGame)
         
     def __getitem__ (self, index):
-        if not type(index) == int: raise TypeError
+        if not isinstance(index, int): raise TypeError
         return self.challenges[index]
 
     def __setitem__ (self, index, challenge):
-        if not type(index) == int: raise TypeError
+        if not isinstance(index, int): raise TypeError
         if not isinstance(challenge, FICSSoughtMatch): raise TypeError
         if index in self:
             log.warning("FICSChallenges: not overwriting challenge %s" %
@@ -596,7 +596,7 @@ class FICSChallenges (GObject.GObject):
         self.emit('FICSChallengeIssued', challenge)
     
     def __delitem__ (self, index):
-        if not type(index) == int: raise TypeError
+        if not isinstance(index, int): raise TypeError
         try:
             challenge = self.challenges[index]
         except KeyError:
@@ -605,7 +605,7 @@ class FICSChallenges (GObject.GObject):
         self.emit('FICSChallengeRemoved', challenge)
         
     def __contains__ (self, index):
-        if not type(index) == int: raise TypeError
+        if not isinstance(index, int): raise TypeError
         if index in self.challenges:
             return True
         else:
@@ -626,8 +626,8 @@ class FICSChallenges (GObject.GObject):
         self.clear()
 
 def get_rating_range_display_text (rmin=0, rmax=9999):
-    assert type(rmin) is type(int()) and rmin >= 0 and rmin <= 9999, rmin
-    assert type(rmax) is type(int()) and rmax >= 0 and rmax <= 9999, rmax
+    assert isinstance(rmin, type(int())) and rmin >= 0 and rmin <= 9999, rmin
+    assert isinstance(rmax, type(int())) and rmax >= 0 and rmax <= 9999, rmax
     if rmin > 0:
         text = u"%d" % rmin
         if rmax == 9999:
@@ -677,11 +677,11 @@ class FICSSeeks (GObject.GObject):
         self.connection.bm.connect("curGameEnded", self.onCurGameEnded)
     
     def __getitem__ (self, index):
-        if not type(index) == int: raise TypeError
+        if not isinstance(index, int): raise TypeError
         return self.seeks[index]
 
     def __setitem__ (self, index, seek):
-        if not type(index) == int: raise TypeError
+        if not isinstance(index, int): raise TypeError
         if not isinstance(seek, FICSSoughtMatch): raise TypeError
         if index in self:
             log.warning("FICSSeeks: not overwriting seek %s" % repr(seek))
@@ -690,7 +690,7 @@ class FICSSeeks (GObject.GObject):
         self.emit('FICSSeekCreated', seek)
     
     def __delitem__ (self, index):
-        if not type(index) == int: raise TypeError
+        if not isinstance(index, int): raise TypeError
         try:
             seek = self.seeks[index]
         except KeyError:
@@ -699,7 +699,7 @@ class FICSSeeks (GObject.GObject):
         self.emit('FICSSeekRemoved', seek)
         
     def __contains__ (self, index):
-        if not type(index) == int: raise TypeError
+        if not isinstance(index, int): raise TypeError
         if index in self.seeks:
             return True
         else:
@@ -724,8 +724,8 @@ class FICSSeeks (GObject.GObject):
     
 class FICSBoard (object):
     def __init__ (self, wms, bms, fen=None, pgn=None):
-        assert type(wms) is int, wms
-        assert type(bms) is int, bms
+        assert isinstance(wms, int), wms
+        assert isinstance(bms, int), bms
         self.wms = wms
         self.bms = bms
 #        assert fen != None or pgn != None
@@ -738,11 +738,11 @@ class FICSGame (FICSMatch):
                   reason=None, board=None, private=False):
         assert isinstance(wplayer, FICSPlayer), wplayer
         assert isinstance(bplayer, FICSPlayer), bplayer
-        assert gameno is None or type(gameno) is int, gameno
-        assert result is None or type(result) is int, result
-        assert reason is None or type(reason) is int, reason
+        assert gameno is None or isinstance(gameno, int), gameno
+        assert result is None or isinstance(result, int), result
+        assert reason is None or isinstance(reason, int), reason
         assert board is None or isinstance(board, FICSBoard), board
-        assert type(private) is bool, private
+        assert isinstance(private, bool), private
         FICSMatch.__init__(self, minutes, inc, rated, game_type)
         self.wplayer = wplayer
         self.bplayer = bplayer
@@ -832,8 +832,8 @@ class FICSAdjournedGame (FICSGame):
                   rated=False, game_type=None, private=False, minutes=None,
                   inc=None, result=None, reason=None, board=None):
         assert our_color is None or our_color in (WHITE, BLACK), our_color
-        assert length is None or type(length) is int, length
-        assert time is None or type(time) is datetime.datetime, time        
+        assert length is None or isinstance(length, int), length
+        assert time is None or isinstance(time, datetime.datetime), time        
         FICSGame.__init__(self, wplayer, bplayer, rated=rated, private=private,
             game_type=game_type, minutes=minutes, inc=inc, result=result,
             reason=reason, board=board)
@@ -924,7 +924,7 @@ class FICSGames (GObject.GObject):
     def values(self): return self.games.values()
     
     def get_game_by_gameno (self, gameno):
-        if type(gameno) is not int: raise TypeError
+        if not isinstance(gameno, int): raise TypeError
         return self.games_by_gameno[gameno]
     
     def get (self, game, create=True, emit=True):

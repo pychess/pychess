@@ -297,7 +297,7 @@ class SoundTab:
         if not conf.get("useSounds", True):
             return
         
-        if type(action) == str:
+        if isinstance(action, str):
             no = cls.actionToKeyNo[action]
         else: no = action
         typ = conf.get("soundcombo%d" % no, SOUND_MUTE)

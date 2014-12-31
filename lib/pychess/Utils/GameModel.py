@@ -480,7 +480,7 @@ class GameModel (GObject.GObject, Thread):
     def loadAndStart (self, uri, loader, gameno, position):
         assert self.status == WAITING_TO_START
 
-        uriIsFile = type(uri) != str
+        uriIsFile = not isinstance(uri, str)
         if not uriIsFile:
             chessfile = loader.load(protoopen(uri))
         else: 
@@ -528,7 +528,7 @@ class GameModel (GObject.GObject, Thread):
             raise error
     
     def save (self, uri, saver, append, position=None):
-        if type(uri) == str:
+        if isinstance(uri, str):
             fileobj = protosave(uri, append)
             self.uri = uri
         else:

@@ -10,8 +10,8 @@ from pychess.Utils.const import ACTION_MENU_ITEMS
 
 class GtkMenuItem (object):
     def __init__ (self, name, gamewidget, sensitive=False, label=None, tooltip=None):
-        assert type(sensitive) is bool
-        assert label is None or type(label) is str
+        assert isinstance(sensitive, bool)
+        assert label is None or isinstance(label, str)
         self.name = name
         self.gamewidget = gamewidget
         self._sensitive = sensitive
@@ -23,7 +23,7 @@ class GtkMenuItem (object):
         return self._sensitive
     @sensitive.setter
     def sensitive (self, sensitive):
-        assert type(sensitive) is bool
+        assert isinstance(sensitive, bool)
         self._sensitive = sensitive
         self._set_widget("sensitive", sensitive)
         
@@ -67,7 +67,7 @@ class GtkMenuItem (object):
 
 class GtkMenuToggleButton (GtkMenuItem):
     def __init__ (self, name, gamewidget, sensitive=False, active=False, label=None):
-        assert type(active) is bool
+        assert isinstance(active, bool)
         GtkMenuItem.__init__(self, name, gamewidget, sensitive, label)
         self._active = active
 
@@ -76,7 +76,7 @@ class GtkMenuToggleButton (GtkMenuItem):
         return self._active
     @active.setter
     def active (self, active):
-        assert type(active) is bool
+        assert isinstance(active, bool)
         self._active = active
         self._set_widget("active", active)
 

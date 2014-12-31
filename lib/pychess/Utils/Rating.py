@@ -7,7 +7,7 @@ class Rating (GObject.GObject):
         GObject.GObject.__init__(self)
         self.type = ratingtype
         for v in (elo, deviation, wins, losses, draws, bestElo, bestTime):
-            assert v == None or type(v) == int, v
+            assert v == None or isinstance(v, int), v
         self.elo = elo
         self.deviation = deviation
         self.wins = wins
@@ -19,7 +19,7 @@ class Rating (GObject.GObject):
     def get_elo (self):
         return self._elo
     def set_elo (self, elo):
-        assert type(elo) == int, type(elo)
+        assert isinstance(elo, int), type(elo)
         self._elo = elo
     elo = GObject.property(get_elo, set_elo)
     

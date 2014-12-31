@@ -77,7 +77,7 @@ class InformationWindow:
                 textview.get_buffer().get_end_iter(), "\n%s\n%s\n"%(t,"-"*60), str(logging.INFO))
             cls.tagToTime[tag] = timestamp
         
-        if type(message) == str:
+        if isinstance(message, str):
             message = unicode(message, "utf-8", 'rawreplace')
         if not message.endswith("\n"):
             message = "%s\n" % message
@@ -87,7 +87,7 @@ class InformationWindow:
     @classmethod
     def _createPage (cls, parrentIter, tag):
         name = tag[-1]
-        if type(name) == int:
+        if isinstance(name, int):
             name=str(name)
         iter = cls.treeview.get_model().append(parrentIter, (name,))
         cls.tagToIter[tag] = iter
@@ -141,9 +141,9 @@ class InformationWindow:
     
     @classmethod
     def _getPageFromTag (cls, tag):
-        if type(tag) == list:
+        if isinstance(tag, list):
             tag = tuple(tag)
-        elif type(tag) != tuple:
+        elif not isinstance(tag, tuple):
             tag = (tag,)
         
         if tag in cls.tagToPage:

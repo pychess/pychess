@@ -209,7 +209,7 @@ class UserInfoSection(Section):
             table.props.row_spacing = 4
 
             def label(value, xalign=0, is_error=False):
-                if type(value) == float:
+                if isinstance(value, float):
                     value = str(int(value))
                 if is_error:
                     label = Gtk.Label()
@@ -272,7 +272,7 @@ class UserInfoSection(Section):
                     extra={"task": (self.connection.username, "UIS.oF.callback")})
                 glock.acquire()
                 try:
-                    if type(pingtime) == str:
+                    if isinstance(pingtime, str):
                         self.ping_label.set_text(pingtime)
                     elif pingtime == -1:
                         self.ping_label.set_text(_("Unknown"))
@@ -389,7 +389,7 @@ class ParrentListSection (Section):
     def pixCompareFunction (self, treemodel, iter0, iter1, column):
         pix0 = treemodel.get_value(iter0, column)
         pix1 = treemodel.get_value(iter1, column)
-        if type(pix0) == GdkPixbuf.Pixbuf and type(pix1) == GdkPixbuf.Pixbuf:
+        if isinstance(pix0, GdkPixbuf.Pixbuf) and isinstance(pix1, GdkPixbuf.Pixbuf):
             return cmp(pix0.get_pixels(), pix1.get_pixels())
         return cmp(pix0, pix1)
     
@@ -1422,7 +1422,7 @@ class SeekChallengeSection (Section):
         def toleranceHBoxGetter (widget):
             return self.widgets["toleranceHBox"].get_property("visible")
         def toleranceHBoxSetter (widget, visible):
-            assert type(visible) is bool
+            assert isinstance(visible, bool)
             if visible:
                 self.widgets["toleranceHBox"].show()
             else:
@@ -1786,7 +1786,7 @@ class SeekChallengeSection (Section):
             self.lastdifference = difference
     
     def __clamp (self, rating):
-        assert type(rating) is int
+        assert isinstance(rating, int)
         mod = rating % RATING_SLIDER_STEP
         if mod > RATING_SLIDER_STEP / 2:
             return rating - mod + RATING_SLIDER_STEP

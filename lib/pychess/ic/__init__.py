@@ -159,7 +159,7 @@ def type_to_display_text (typename):
         return typename[0].upper() + typename[1:]
 
 def time_control_to_gametype (minutes, gain):
-    assert type(minutes) == int and type(gain) == int
+    assert isinstance(minutes, int) and isinstance(gain, int)
     assert minutes >= 0 and gain >= 0
     gainminutes = gain > 0 and (gain*60)-1 or 0
     if minutes is 0:
