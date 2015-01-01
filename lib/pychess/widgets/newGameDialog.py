@@ -565,7 +565,27 @@ class EnterNotationExtension (_GameInitializationMode):
 
         cls._generalRun(_callback, _validate)
 
-class ImageButton(Gtk.DrawingArea):
+class ImageButton(Gtk.Button):
+    def __init__ (self, imagePaths):
+        GObject.GObject.__init__(self)
+
+        self.surfaces = [Gtk.Image().new_from_file(path) for path in imagePaths]
+        self.current = 0
+
+        self.image = self.surfaces[self.current]
+        self.image.show()
+        self.add(self.image)
+
+        self.connect("clicked", self.on_clicked)
+        
+    def on_clicked(self, button):
+        self.current = (self.current + 1) % len(self.surfaces)
+        self.remove(self.image)
+        self.image = self.surfaces[self.current]
+        self.image.show()
+        self.add(self.image)
+        
+class xxxImageButton(Gtk.DrawingArea):
     def __init__ (self, imagePaths):
         GObject.GObject.__init__(self)
         self.set_events(Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON_PRESS_MASK)
