@@ -148,7 +148,7 @@ class HintTab:
 
         egtb_chooser_dialog = Gtk.FileChooserDialog(_("Select Gaviota TB path"), None, Gtk.FileChooserAction.SELECT_FOLDER,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
-        egtb_chooser_button = Gtk.FileChooserButton(egtb_chooser_dialog)
+        egtb_chooser_button = Gtk.FileChooserButton.new_with_dialog(egtb_chooser_dialog)
         egtb_chooser_button.set_current_folder(egtb_path)
 
         self.widgets["egtbChooserDock"].add(egtb_chooser_button)
