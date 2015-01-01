@@ -552,6 +552,18 @@ class ThemeTab:
         iconView.set_pixbuf_column(0)
         iconView.set_text_column(1)
         
+        #############################################
+        # Hack to fix spacing problem in iconview
+        # http://stackoverflow.com/questions/14090094/what-causes-the-different-display-behaviour-for-a-gtkiconview-between-different
+        def keep_size(crt, *args):
+            crt.handler_block(crt_notify)
+            crt.set_property('width', 40)
+            crt.handler_unblock(crt_notify)
+
+        crt, crp = iconView.get_cells()
+        crt_notify = crt.connect('notify', keep_size)
+        #############################################
+
         def _get_active(iconview):
             model = iconview.get_model()
             selected = iconview.get_selected_items()
