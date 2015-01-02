@@ -336,7 +336,7 @@ class Board:
         return self.board.asFen(enable_bfen)
     
     def __repr__ (self):
-        return str(self.board)
+        return repr(self.board)
     
     def __getitem__ (self, cord):
         return self.data[cord.y].get(cord.x)
