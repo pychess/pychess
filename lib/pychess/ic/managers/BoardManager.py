@@ -33,7 +33,7 @@ moveListHeader2Str = "%s ([^ ]+) match, initial time: (\d+) minutes, increment: 
 moveListHeader2 = re.compile(moveListHeader2Str, re.IGNORECASE)
 sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
 movetime = "\((\d+):(\d\d)(?:\.(\d\d\d))?\)"
-moveListMoves = re.compile("(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" % \
+moveListMoves = re.compile("\s*(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" % \
     (sanmove, movetime, sanmove, movetime))
 
 creating0 = re.compile("Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
@@ -692,7 +692,7 @@ class BoardManager (GObject.GObject):
         moves = sorted(moves.items())
         for ply, move in moves:
             if ply % 2 == 0:
-                pgn += "%d. " % (ply/2+1)
+                pgn += "%d. " % (ply//2+1)
             time = times[ply]
             pgn += "%s {[%%emt %s]} " % (move, time)
         pgn += "*\n"
