@@ -8,10 +8,13 @@ import sys
 import sqlite3
 import struct
 
+from pychess.compat import memoryview, unicode
 from pychess.Savers.pgn import load
+from pychess.System.protoopen import protoopen
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.eco import hash_struct
 
+    
 path = os.path.join(addDataPrefix("eco.db"))
 conn = sqlite3.connect(path)
 
@@ -24,7 +27,7 @@ if __name__ == '__main__':
     c.execute("create table openings(hash blob, base integer, eco text, lang text, opening text, variation text)")
 
     def feed(pgnfile, lang):
-        cf = load(open(pgnfile))
+        cf = load(protoopen(pgnfile))
         rows = []
         old_eco = ""
         ply_max = 0
@@ -52,10 +55,10 @@ if __name__ == '__main__':
                 if res is not None:
                     hash = res[0]
             else:
-                hash = buffer(hash_struct.pack(model.boards[-1].board.hash))
+                hash = memoryview(hash_struct.pack(model.boards[-1].board.hash))
                 
             if opening:
-                rows.append((hash, base, eco, lang, opening, variation))
+                rows.append((hash, base, unicode(eco), unicode(lang), unicode(opening), unicode(variation)))
                 
             old_eco = eco
                 
