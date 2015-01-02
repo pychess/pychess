@@ -435,7 +435,7 @@ class PGNFile (PgnBase):
         self.has_emt = self.has_emt and "TimeControl" in model.tags
         if self.has_emt or self.has_eval:
             if self.has_emt:
-                blacks = len(model.moves)/2
+                blacks = len(model.moves)//2
                 whites = len(model.moves)-blacks
 
                 model.timemodel.intervals = [
