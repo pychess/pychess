@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import errno
 import socket
 import telnetlib
@@ -12,8 +13,8 @@ from pychess.System.Log import log
 
 ENCODE = [ord(i) for i in "Timestamp (FICS) v1.0 - programmed by Henrik Gram."]
 ENCODELEN = len(ENCODE)
-G_RESPONSE = '\x029'
-FILLER = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+G_RESPONSE = b'\x029'
+FILLER = b"1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 IAC_WONT_ECHO = b''.join([telnetlib.IAC, telnetlib.WONT, telnetlib.ECHO])
 
 class CanceledException (Exception): pass
@@ -27,8 +28,8 @@ class TimeSeal (object):
         self.connected = False
         self.canceled = False
         self.FatICS = False
-        self.buf = ''
-        self.writebuf = ''
+        self.buf = bytearray(b"")
+        self.writebuf = bytearray(b"")
         self.stateinfo = None
         self.sock = None
         
@@ -48,7 +49,6 @@ class TimeSeal (object):
             if e.errno != errno.EINPROGRESS:
                 raise
         self.sock.settimeout(None)
-        
         print(self.get_init_string(), file=self)
         self.cook_some()
     
@@ -64,16 +64,16 @@ class TimeSeal (object):
             pass
         
     def encode(self, inbuf, timestamp = None):
-        assert inbuf == "" or inbuf[-1] != "\n"
+        assert inbuf == b"" or inbuf[-1] != b"\n"
         
         if not timestamp:
             timestamp = int(time.time()*1000 % 1e7)
-        enc = inbuf + '\x18%d\x19' % timestamp
+        enc = inbuf + bytearray('\x18%d\x19' % timestamp, "ascii")
         padding = 12 - len(enc)%12
         filler = random.sample(FILLER, padding)
-        enc += "".join(filler)
+        enc += bytearray(filler)
         
-        buf = [ord(i) for i in enc]
+        buf = enc #[ord(i) for i in enc]
         
         for i in range(0, len(buf), 12):
             buf[i + 11], buf[i] = buf[i], buf[i + 11]
@@ -85,11 +85,10 @@ class TimeSeal (object):
         for i in range(len(buf)):
             buf[i] |= 0x80
             j = (i+encode_offset) % ENCODELEN
-            buf[i] = chr((buf[i] ^ ENCODE[j]) - 32)
+            buf[i] = (buf[i] ^ ENCODE[j]) - 32
         
-        buf.append( chr(0x80 | encode_offset))
-        
-        return ''.join(buf)
+        buf += bytearray([ 0x80 | encode_offset])
+        return buf
 
     def get_init_string(self):
         """ timeseal header: TIMESTAMP|bruce|Linux gruber 2.6.15-gentoo-r1 #9
@@ -97,10 +96,10 @@ class TimeSeal (object):
             2.00GHz GenuineIntel GNU/Linux| 93049 """  
         user = getpass.getuser()
         uname = ' '.join(list(platform.uname()))
-        return  "TIMESTAMP|%(user)s|%(uname)s|" % locals()
+        return  "TIMESTAMP|" + user + "|" + uname + "|"
     
     def decode(self, buf, stateinfo = None):
-        expected_table = "[G]\n\r"
+        expected_table = b"[G]\n\r"
         # TODO: add support to FatICS's new zipseal protocol when it finalizes
         #expected_table = "[G]\n\r" if not self.FatICS else "[G]\r\n"
         final_state = len(expected_table)
@@ -134,26 +133,26 @@ class TimeSeal (object):
                 lookahead = []
                 state = 0
     
-        return ''.join(result), g_count, (state, lookahead)
+        return bytearray(result), g_count, (state, lookahead)
     
     def write(self, str):
-        self.writebuf += str
-        if "\n" not in self.writebuf:
+        self.writebuf += bytearray(str, "utf-8")
+        if b"\n" not in self.writebuf:
             return
         if not self.connected:
             return
         
-        i = self.writebuf.rfind("\n")
+        i = self.writebuf.rfind(b"\n")
         str = self.writebuf[:i]
         self.writebuf = self.writebuf[i+1:]
         
         logstr = "*"*len(str) if self.sensitive else str
         log.info(logstr, extra={"task": (self.name, "raw")})
         str = self.encode(str)
-        self.sock.send(str+"\n")
+        self.sock.send(str+b"\n")
     
     def readline(self):
-        return self.readuntil("\n")
+        return self.readuntil(b"\n")
     
     def readuntil(self, until):
         if self.canceled:
@@ -164,7 +163,7 @@ class TimeSeal (object):
             if i >= 0:
                 stuff = self.buf[:i+len(until)]
                 self.buf = self.buf[i+len(until):]
-                return stuff
+                return str(stuff.strip().decode("latin_1"))
             self.cook_some()
     
     def cook_some (self):
@@ -177,13 +176,13 @@ class TimeSeal (object):
             self.buf += recv
             self.connected = True
             
-            if "FatICS" in self.buf:
+            if b"FatICS" in self.buf:
                 self.FatICS = True
-            elif "Starting FICS session" in self.buf:
+            elif b"Starting FICS session" in self.buf:
                 self.buf = self.buf.replace(IAC_WONT_ECHO, '')
         else:
             recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
-            recv = recv.replace("\r","")
+            recv = recv.replace(b"\r", b"")
             log.debug(recv, extra={"task": (self.name, "raw")})
             
             for i in range(g_count):
@@ -197,7 +196,7 @@ class TimeSeal (object):
         
         while True:
             for i, until in enumerate(untils):
-                start = self.buf.find(until)
+                start = self.buf.find(bytearray(until, "ascii"))
                 if start >= 0:
                     self.buf = self.buf[:start]
                     return i

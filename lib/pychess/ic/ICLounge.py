@@ -12,7 +12,7 @@ import re
 from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, Pango
 
 from pychess.ic import *
-from pychess.compat import StringIO
+from pychess.compat import cmp, StringIO
 from pychess.System import conf, glock, uistuff
 from pychess.System.GtkWorker import Publisher
 from pychess.System.prefix import addDataPrefix
@@ -1781,14 +1781,14 @@ class SeekChallengeSection (Section):
         if self.loading_seek_editor is False and self.chainbox.active and \
                 difference is not self.lastdifference:
             newcenter = rating - self.lastdifference
-            self.widgets["ratingCenterSlider"].set_value(newcenter / RATING_SLIDER_STEP)
+            self.widgets["ratingCenterSlider"].set_value(newcenter // RATING_SLIDER_STEP)
         else:
             self.lastdifference = difference
     
     def __clamp (self, rating):
         assert isinstance(rating, int)
         mod = rating % RATING_SLIDER_STEP
-        if mod > RATING_SLIDER_STEP / 2:
+        if mod > RATING_SLIDER_STEP // 2:
             return rating - mod + RATING_SLIDER_STEP
         else:
             return rating - mod
@@ -1879,15 +1879,15 @@ class SeekChallengeSection (Section):
             lightning = self.__getRating(TYPE_LIGHTNING)
             
             if standard is not None:
-                self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = standard / RATING_SLIDER_STEP
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = standard // RATING_SLIDER_STEP
             elif blitz is not None:
-                self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = blitz / RATING_SLIDER_STEP
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = blitz // RATING_SLIDER_STEP
             if blitz is not None:
-                self.seekEditorWidgetDefaults["ratingCenterSlider"][1] = blitz / RATING_SLIDER_STEP
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][1] = blitz // RATING_SLIDER_STEP
             if lightning is not None:
-                self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = lightning / RATING_SLIDER_STEP
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = lightning // RATING_SLIDER_STEP
             elif blitz is not None:
-                self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = blitz / RATING_SLIDER_STEP
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = blitz // RATING_SLIDER_STEP
             
             for i in range(1,4):
                 self.__loadSeekEditor(i)

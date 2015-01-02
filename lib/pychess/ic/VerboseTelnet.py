@@ -30,10 +30,16 @@ class Prediction (object):
     
     def __hash__ (self):
         return self.hash
-    
+
+    # This used in PY2 only
     def __cmp__ (self, other):
         return self.callback == other.callback and \
                self.regexps == other.regexps
+
+    # Needed in PY3
+    def __lt__ (self, other):
+        return len(self.regexps) < len(other.regexps)
+
 
 
 RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE, RETURN_MATCH_END = range(4)
@@ -158,7 +164,7 @@ class TelnetLines (object):
         
     def _get_lines (self):
         lines = []
-        line = self.telnet.readline().strip()
+        line = self.telnet.readline()
         
         if line.startswith(self.line_prefix):
             line = line[len(self.line_prefix)+1:]
@@ -174,11 +180,11 @@ class TelnetLines (object):
                             extra={"task": (self.telnet.name, "lines")})
                 return lines
             code = int(code)
-            line = text if text else self.telnet.readline().strip()
+            line = text if text else self.telnet.readline()
             
             while not line.endswith(BLOCK_END):
                 lines.append(TelnetLine(line, code))
-                line = self.telnet.readline().strip()
+                line = self.telnet.readline()
             lines.append(TelnetLine(line[:-1], code))
             
             log.debug("%s %s %s" %
@@ -186,7 +192,7 @@ class TelnetLines (object):
                       extra={"task": (self.telnet.name, "command_reply")})
         else:
             lines.append(TelnetLine(line, None))
-
+        
         log.debug("\n".join(line.line for line in lines).strip(),
                   extra={"task": (self.telnet.name, "lines")})
         if self.consolehandler:
