@@ -2,8 +2,12 @@ import atexit
 from threading import Semaphore
 
 
+from pychess.compat import PY2
 from pychess.ic import BLKCMD_SHOWLIST, BLKCMD_VARIABLES, BLKCMD_IVARIABLES
 from pychess.System import conf
+
+def semaphore_value(s):
+    return s._Semaphore__value if PY2 else s._value
 
 
 class ListAndVarManager:
@@ -54,9 +58,9 @@ class ListAndVarManager:
     def isReady (self):
         # FatICS showlist output is not well formed yet
         if self.connection.FatICS:
-            return self.varLock._Semaphore__value
+            return semaphore_value(self.varLock)
         else:
-            return self.listLock._Semaphore__value and self.varLock._Semaphore__value
+            return semaphore_value(self.listLock) and semaphore_value(self.varLock)
     
     def stop (self):
         if not self.isReady():
@@ -101,7 +105,7 @@ class ListAndVarManager:
             if not listName in self.personalBackup:
                 self.personalBackup[listName] = set()
         # Unlock if people are waiting of the backup
-        if not self.listLock._Semaphore__value and \
+        if not semaphore_value(self.listLock) and \
                 len(self.personalLists) == len(self.personalBackup):
             self.listLock.release()
     onUpdateEmptyListitems.BLKCMD = BLKCMD_SHOWLIST
@@ -117,7 +121,7 @@ class ListAndVarManager:
             self.personalLists[listName] = items
             self.personalBackup[listName] = items
         # Unlock if people are waiting of the backup
-        if not self.listLock._Semaphore__value and \
+        if not semaphore_value(self.listLock) and \
                 len(self.personalLists) == len(self.personalBackup):
             self.listLock.release()
     onUpdateListitems.BLKCMD = BLKCMD_SHOWLIST
@@ -144,7 +148,7 @@ class ListAndVarManager:
                     self.variablesBackup[k] = v
         # Unlock if people are waiting of the backup and we've got the normal
         # variable backup set. The interface variables automatically reset
-        if not self.varLock._Semaphore__value and self.variablesBackup:
+        if not semaphore_value(self.varLock) and self.variablesBackup:
             self.varLock.release()
     onVariables.BLKCMD = BLKCMD_VARIABLES
     
