@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+
+from pychess.compat import PY3
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprColor
 from .ldata import *
@@ -711,7 +713,7 @@ class LBoard:
                 else: b += "."
                 b += " "
             b += "\n# "
-        return b
+        return b if PY3 else b.encode('utf8')
     
     def asFen (self, enable_bfen=True):
         fenstr = []
@@ -774,7 +776,7 @@ class LBoard:
         fenstr.append(str(self.fifty))
         fenstr.append(" ")
         
-        fullmove = (self.plyCount)/2 + 1
+        fullmove = (self.plyCount)//2 + 1
         fenstr.append(str(fullmove))
         
         return "".join(fenstr)

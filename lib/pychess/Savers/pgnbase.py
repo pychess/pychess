@@ -95,8 +95,8 @@ class PgnBase(ChessFile):
                         notation, reason, boardfen = e.args
                         ply = last_board.plyCount
                         if ply % 2 == 0:
-                            moveno = "%d." % (ply/2+1)
-                        else: moveno = "%d..." % (ply/2+1)
+                            moveno = "%d." % (ply//2+1)
+                        else: moveno = "%d..." % (ply//2+1)
                         errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
                                     'moveno': moveno, 'notation': notation}
                         errstr2 = _("The move failed because %s.") % reason
@@ -105,8 +105,8 @@ class PgnBase(ChessFile):
                     except:
                         ply = last_board.plyCount
                         if ply % 2 == 0:
-                            moveno = "%d." % (ply/2+1)
-                        else: moveno = "%d..." % (ply/2+1)
+                            moveno = "%d." % (ply//2+1)
+                        else: moveno = "%d..." % (ply//2+1)
                         errstr1 = _( "Error parsing move %(moveno)s %(mstr)s") % {"moveno": moveno, "mstr": mstr}
                         self.error = LoadingError (errstr1, "")
                         break

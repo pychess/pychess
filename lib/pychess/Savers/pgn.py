@@ -222,10 +222,10 @@ def move_count(node, black_periods=False):
     if node.fen_was_applied:
         ply = node.plyCount
         if ply % 2 == 1:
-            mvcount = "%d." % (ply/2+1)
+            mvcount = "%d." % (ply//2+1)
         elif node.prev.prev is None or node != node.prev.next or black_periods:
             # initial game move, or initial variation move
-            mvcount = "%d..." % (ply/2)
+            mvcount = "%d..." % (ply//2)
         elif node.prev.children:
             # move after real(not [%foo bar]) comment
             need_mvcount = False
@@ -238,7 +238,7 @@ def move_count(node, black_periods=False):
                     need_mvcount = True
                     break
             if need_mvcount:
-                mvcount = "%d..." % (ply/2)
+                mvcount = "%d..." % (ply//2)
             else:
                 mvcount = ""
         else:
