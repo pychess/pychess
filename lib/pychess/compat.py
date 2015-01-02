@@ -7,6 +7,7 @@ PY3 = sys.version_info[0] == 3
 
 if PY3:
     basestring = str
+    cmp = lambda x, y: (x > y) - (x < y)
     memoryview = memoryview
     open = open
     unichr = chr
@@ -24,6 +25,7 @@ if PY3:
     from urllib.parse import urlencode
 else:
     basestring = basestring
+    cmp = cmp
     memoryview = buffer
     unicode = unicode
     unichr = unichr

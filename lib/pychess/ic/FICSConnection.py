@@ -1,14 +1,15 @@
 from __future__ import absolute_import
 from __future__ import print_function
+
 import bisect
 import re
 import socket
 import time
 import threading
-#from gobject import GObject, SIGNAL_RUN_FIRST
-from gi.repository import GObject
 from collections import defaultdict
 from threading import Event, Thread
+
+from gi.repository import GObject
 
 import pychess
 from pychess.System import fident
@@ -201,7 +202,7 @@ class FICSConnection (Connection):
                     break
                 
             self.emit('connectingMsg', _("Setting up environment"))
-            lines = self.client.readuntil("ics%")
+            lines = self.client.readuntil(b"ics%")
             self._post_connect_hook(lines)
             self.FatICS = self.client.FatICS
             self.client.name = self.username

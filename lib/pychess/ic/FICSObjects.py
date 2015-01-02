@@ -333,7 +333,7 @@ class FICSPlayer (GObject.GObject):
             elif self.ratings[ratingtype].deviation == DEVIATION_PROVISIONAL:
                 ratingtotal += self.ratings[ratingtype].elo * 1
                 numratings += 1
-        return numratings > 0 and ratingtotal / numratings or 0
+        return numratings > 0 and ratingtotal // numratings or 0
     
     # FIXME: this isn't very accurate because of inflated standard ratings
     # and deflated lightning ratings and needs work

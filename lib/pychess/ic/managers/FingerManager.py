@@ -305,7 +305,7 @@ class FingerManager (GObject.GObject):
                     rating = Rating(gametype.rating_type, *args)
                 else:
                     bestTime = self.parseShortDate(ratings[6][1:-1])
-                    args = map(int,ratings[:6]) + [bestTime]
+                    args = list(map(int,ratings[:6])) + [bestTime]
                     rating = Rating(gametype.rating_type, *args)
                 finger.setRating(gametype.rating_type, rating)
             elif groupdict["email"] != None:
