@@ -237,8 +237,8 @@ class ChatManager (GObject.GObject):
     
     def convTime (self, h, m, s):
         # Convert to timestamp
-        tlist = [u for u in time.localtime()]
-        tstamp = time.mktime(tlist[0:3]+[h, m, s, 0, 0, 0])
+        t1, t2, t3, t4, t5, t6, t7, t8, t9 = time.localtime()
+        tstamp = time.mktime((t1, t2, t3, h, m, s, 0, 0, 0))
         # Difference to now in hours
         dif = (tstamp-time.time())/60./60.
         # As we know there is maximum 30 minutes in difference, we can guess when the
