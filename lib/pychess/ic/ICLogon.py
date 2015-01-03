@@ -56,6 +56,8 @@ class ICLogon (object):
         self.widgets["stopButton"].connect("clicked", self.onCancel, False)
         self.widgets["createNewButton"].connect("clicked", self.onCreateNew)
         self.widgets["connectButton"].connect("clicked", self.onConnectClicked)
+
+        self.widgets["progressbar"].set_show_text(True)
     
     def _disconnect (self):
         for obj in self.cids:
