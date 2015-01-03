@@ -333,7 +333,7 @@ class EndgameAdvisor(Advisor, Thread):
                 result = (_("Win"), 1, 1.0)
                 details = _("Mate in %d") % depth
             self.store.append(self.parent, [(self.board, move, None), result, 0, False, details, False, False])
-        self.tv.expand_row(self.path, False)
+        self.tv.expand_row(Gtk.TreePath(self.path), False)
 
 class Sidepanel (object):
     def load (self, gmwidg):
