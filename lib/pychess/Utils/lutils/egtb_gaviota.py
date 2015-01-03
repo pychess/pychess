@@ -72,7 +72,7 @@ class egtb_gaviota:
         self._setupFunctionPrototypes()
         
         self.pathList = self.tbpaths_init()
-        self.pathList = self.tbpaths_add(self.pathList, tbPath)
+        self.pathList = self.tbpaths_add(self.pathList, tbPath.encode())
         initInfo = self.tb_init(True, compressionScheme, self.pathList)
         self.initialized = ( self.tb_is_initialized() != 0 )
         if not self.initialized:
