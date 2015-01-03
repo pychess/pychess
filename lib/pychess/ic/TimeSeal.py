@@ -13,7 +13,7 @@ from pychess.System.Log import log
 
 ENCODE = [ord(i) for i in "Timestamp (FICS) v1.0 - programmed by Henrik Gram."]
 ENCODELEN = len(ENCODE)
-G_RESPONSE = b'\x029'
+G_RESPONSE = "\x029"
 FILLER = b"1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 IAC_WONT_ECHO = b''.join([telnetlib.IAC, telnetlib.WONT, telnetlib.ECHO])
 
@@ -73,7 +73,7 @@ class TimeSeal (object):
         filler = random.sample(FILLER, padding)
         enc += bytearray(filler)
         
-        buf = enc #[ord(i) for i in enc]
+        buf = enc
         
         for i in range(0, len(buf), 12):
             buf[i + 11], buf[i] = buf[i], buf[i + 11]
@@ -179,7 +179,7 @@ class TimeSeal (object):
             if b"FatICS" in self.buf:
                 self.FatICS = True
             elif b"Starting FICS session" in self.buf:
-                self.buf = self.buf.replace(IAC_WONT_ECHO, '')
+                self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
         else:
             recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
             recv = recv.replace(b"\r", b"")
