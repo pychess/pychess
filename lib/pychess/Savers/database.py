@@ -47,11 +47,11 @@ def save (file, model, position=None):
         if not name:
             return None
 
-        s = select([table.c.id], table.c.name==name.decode("utf_8"))
+        s = select([table.c.id], table.c.name==name)
         result = conn.execute(s)
         id_ = result.scalar()
         if id_ is None:
-            result = conn.execute(table.insert().values(name=name.decode("utf_8")))
+            result = conn.execute(table.insert().values(name=name))
             id_ = result.inserted_primary_key[0]
         return id_
 
@@ -93,7 +93,7 @@ def save (file, model, position=None):
             'annotator_id': annotator_id,
             'collection_id': collection_id, 
             'movelist': movelist.tostring(),
-            'comments': "|".join(comments).decode("utf_8"),
+            'comments': "|".join(comments),
             }
 
         if hasattr(model, "game_id") and model.game_id is not None:
