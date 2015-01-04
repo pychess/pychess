@@ -1,4 +1,6 @@
 from __future__ import print_function
+
+import re
 import sys
 import unittest
 
@@ -16,24 +18,35 @@ class PgnTestCase(unittest.TestCase):
         matches = [m[MOVE-1] for m in pattern.findall(moves)] 
         self.assertEqual(' '.join(matches), ' '.join(moves.split()))
 
-def create_test(lines, result):
+def create_test(o, n):
     def test_expected(self):
-        for orig, new in zip(lines.split(), result.split()):
+        for orig, new in zip(o.split(), n.split()):
             # Seems most .PGN unnecessary contains unambiguous notation
             # when second move candidate is invalid (leaves king in check)
             # f.e.: 1.e4 e5 2.d4 Nf6 3.Nc3 Bb4 Nge2
             if len(orig) == len(new)+1 and orig[0] == new[0] and orig[2:] == new[1:]:
                 continue
 
-            if orig[-1] in "?!" and new[-1] not in "?!":
+            elif orig[-1] in "?!" and new[-1] not in "?!":
                 # pgn export format uses nag
                 break
-            elif orig == "0-0" or orig == "0-0-0":
+            
+            elif (orig == "0-0" and new == "O-O") or (orig == "0-0-0" and new == "O-O-O"):
                 continue
 
             self.assertEqual(orig, new)
 
     return test_expected
+
+def normalize(text):
+    text = text.splitlines()
+    text = " ".join(text)
+    text = text.replace('.   ', '. ').replace('.  ', '. ')
+    text = text.replace('  )', ')').replace(' )', ')')
+    text = text.replace('(  ', '(').replace('( ', '(')
+    text = text.replace('  }', '}').replace(' }', '}')
+    text = text.replace('{  ', '{').replace('{ ', '{')
+    return text
 
 filenames = ("atomic", "chess960rwch", "world_matches", "zh2200plus")
 
@@ -44,27 +57,16 @@ for filename in filenames:
         print("%s/%s" % (i+1, len(pgnfile.games)))
         if i > 100:
             break
-        model = pgnfile.loadToModel(i)
-        result = []
-        walk(model.boards[0].board, result, model)
-        result = " ".join(result)
-        status = reprResult[model.status]
-        
-        lines = game[1].replace('.   ', '. ').replace('.  ', '. ')
-        lines = lines.replace('\r\n', ' ')
-        lines = lines.replace('  )', ')').replace(' )', ')')
-        lines = lines.replace('(  ', '(').replace('( ', '(')
-        lines = lines.replace('  }', '}').replace(' }', '}')
-        lines = lines.replace('{  ', '{').replace('{ ', '{')
-        lines = lines.replace('(\r\n', '(').replace('\r\n)', ')')
-        lines = lines.replace('{\r\n', '{').replace('\r\n}', '}')
-        lines = lines.splitlines()
-        lines = [line.strip() for line in lines]
-        lines = ' '.join(lines)
-        result = "%s %s" % (result, status)
 
-        # create a new test method
-        test_method = create_test(lines, result)
+        orig = normalize(game[1])
+
+        model = pgnfile.loadToModel(i)
+        new = []
+        walk(model.boards[0].board, new, model)
+        new = normalize(" ".join(new))
+
+        # create test method
+        test_method = create_test(orig, new)
         
         # change it's name to be unique in PgnTestCase class
         test_method.__name__ = 'test_%s_%d' % (filename, i+1)
