@@ -13,7 +13,7 @@ __append__ = True
 def save (file, model, position=None):
     """Saves game to file in fen format"""
     
-    print(model.boards[-1].asFen(), file=file)
+    print(u"%s" % model.boards[-1].asFen(), file=file)
     file.close()
     
 def load (file):
