@@ -18,7 +18,7 @@ def save (file, model, position=None):
     fen = model.boards[-1].asFen().split(" ")
     
     # First four parts of fen are the same in epd
-    file.write(" ".join(fen[:4]))
+    file.write(u" ".join(fen[:4]))
     
     ############################################################################
     # Repetition count                                                         #
@@ -56,15 +56,15 @@ def save (file, model, position=None):
     )
     
     for key, value in opcodes:
-        file.write(" %s %s;" % (key, value))
+        file.write(u" %s %s;" % (key, value))
     
     ############################################################################
     # Resign opcode                                                            #
     ############################################################################
     if model.status in (WHITEWON, BLACKWON) and model.reason == WON_RESIGN:
-        file.write(" resign;")
+        file.write(u" resign;")
     
-    print(file=file)
+    print(u"", file=file)
     file.close()
     
 def load (file):
