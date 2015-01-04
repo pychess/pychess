@@ -16,6 +16,8 @@ class TestPlayer():
     def __repr__(self):
         return self.name
 
+pgnfile = pgnload(open('gamefiles/annotated.pgn'))
+
 class DbTestCase(unittest.TestCase):
     
     def setUp(self):
@@ -26,7 +28,6 @@ class DbTestCase(unittest.TestCase):
     def test_databas(self):
         """Testing database save-load"""
 
-        pgnfile = pgnload(open('gamefiles/annotated.pgn'))
         model = pgnfile.loadToModel(0)
         
         p0, p1 = pgnfile.get_player_names(0)
