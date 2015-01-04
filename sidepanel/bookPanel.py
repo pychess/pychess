@@ -1,6 +1,6 @@
 import os
 
-from gi.repository import Gdk, Gtk, GObject, Pango
+from gi.repository import Gdk, Gtk, GObject, Pango, PangoCairo
 from threading import Thread
 
 from pychess.compat import Queue, Full
@@ -615,36 +615,34 @@ class StrengthCellRenderer (Gtk.CellRenderer):
     }
     
     def __init__(self):
-        #self.__gobject_init__()
         Gtk.CellRenderer.__init__(self)
-        #GObject.GObject.__init__(self)      
         self.data = None
 
-    #def do_set_property(self, property_id, value, pspec):    
     def do_set_property(self, pspec, value):        
         setattr(self, pspec.name, value)
         
     def do_get_property(self, pspec):      
         return getattr(self, pspec.name)
         
-    def do_render(self, context, treeview, cairorectangleint1, cairorectangleint2, cellrendererstate):          
-        return
-
-    def on_render(self, window, widget, background_area, cell_area, expose_area, flags):      
+    def do_render(self, context, widget, background_area, cell_area, flags):      
         if not self.data: return
-        cairo = window.cairo_create()
         text, widthfrac, goodness = self.data
         if widthfrac:
-            paintGraph(cairo, widthfrac, stoplightColor(goodness), cell_area)
+            paintGraph(context, widthfrac, stoplightColor(goodness), cell_area)
         if text:
-            layout = widget.create_pango_layout(text)
+            layout = PangoCairo.create_layout(context)
+            layout.set_text(text, -1)
+
+            fd = Pango.font_description_from_string ("Sans 10")
+            layout.set_font_description(fd)
+            
             w, h = layout.get_pixel_size()
-            context = widget.create_pango_context()
-            cairo.move_to(cell_area.x, cell_area.y)
-            cairo.rel_move_to( 70 - w, (height - h) / 2)
-            cairo.show_layout(layout)
-       
-    def on_get_size(self, widget, cell_area=None):       
+            context.move_to (cell_area.x, cell_area.y)
+            context.rel_move_to( 70 - w, (height - h) / 2)
+            
+            PangoCairo.show_layout(context, layout)      
+
+    def do_get_size(self, widget, cell_area=None):       
         return (0, 0, width, height)
 
 GObject.type_register(StrengthCellRenderer)
