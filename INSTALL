@@ -18,11 +18,16 @@ $ PYTHONPATH=lib/ python run_tests.py
 
 -------------
 Dependencies:
-python >= 2.6
-pygtk
-pygobject
-pycairo
-gnome-python-desktop
-python-rsvg (if it's in a separate package in your distribution)
 gnome-icon-theme
-gst-python (OPTIONAL for sound)
+python >= 2.6
+python-gi
+python-gi-cairo
+gobject-introspection
+gir1.2-glib-2.0
+gir1.2-gtk-3.0
+gir1.2-pango-1.0
+gir1.2-rsvg-2.0
+gir1.2-gdkpixbuf-2.0
+gir1.2-gtksource-3.0
+gir1.2-gstreamer-1.0
+gir1.2-gst-plugins-base-1.0
