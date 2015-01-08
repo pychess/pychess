@@ -800,6 +800,7 @@ If it can use both  you can set here which one you like.</property>
                             <property name="right_attach">2</property>
                             <property name="top_attach">1</property>
                             <property name="bottom_attach">2</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
