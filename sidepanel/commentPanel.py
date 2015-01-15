@@ -47,11 +47,7 @@ class Sidepanel:
         self.store = Gtk.ListStore(str)
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
-        #r = Gtk.CellRendererText()
-        #r.set_property("wrap-width", 177) #FIXME: Fixed width size
-        #r.set_property("wrap-mode", Pango.WrapMode.WORD)
-        #self.tv.append_column(Gtk.TreeViewColumn("Comment", r, text=0))
-        uistuff.appendAutowrapColumn(self.tv, 200, "Comment", text=0)
+        uistuff.appendAutowrapColumn(self.tv, "Comment", text=0)
 
         self.tv.get_selection().connect_after('changed', self.select_cursor_row)
         self.boardview = gmwidg.board.view
