@@ -4,7 +4,7 @@ from gi.repository import Gdk, Gtk, GObject, Pango, PangoCairo
 from threading import Thread
 
 from pychess.compat import Queue, Full
-from pychess.System import conf, fident
+from pychess.System import conf, fident, uistuff
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import *
 from pychess.Utils.book import getOpenings
@@ -389,37 +389,6 @@ class Sidepanel (object):
             self.advisors[int(path[0])].multipv_edited(int(text))
         multipvRenderer.connect('edited', multipv_edited)
 
-        ### header text, or analysis line
-        renderer = Gtk.CellRendererText()
-        renderer.set_property("wrap-mode", Pango.WrapMode.WORD)
-        c3 = Gtk.TreeViewColumn("Details", renderer, text=4)
-        # wrap analysis text column. thanks to
-        # http://www.islascruz.org/html/index.php?blog/show/Wrap-text-in-a-TreeView-column.html
-        def resize_wrap(scroll, allocation, treeview, column, cell):
-            otherColumns = (c for c in treeview.get_columns() if c != column)
-            newWidth = allocation.width - sum(c.get_width() for c in otherColumns)
-
-            hsep = GObject.Value()
-            hsep.init(GObject.TYPE_INT)
-            hsep.set_int(0)
-            treeview.style_get_property("horizontal-separator", hsep)
-            newWidth -= hsep.get_int() * 4
-
-            if cell.props.wrap_width == newWidth or newWidth <= 0:
-                return
-#             if newWidth < 100:
-#                 newWidth = 100
-            cell.props.wrap_width = newWidth
-#            column.set_property('min-width', newWidth + 10)
-#            column.set_property('max-width', newWidth + 10)
-            store = treeview.get_model()
-            iter = store.get_iter_first()
-            while iter and store.iter_is_valid(iter):
-                store.row_changed(store.get_path(iter), iter)
-                iter = store.iter_next(iter)
-                treeview.set_size_request(0,-1)
-        self.sw.connect_after('size-allocate', resize_wrap, self.tv, c3, renderer)
-        
         ### start/stop button for analysis engines
         toggleRenderer = CellRendererPixbufXt()
         toggleRenderer.set_property("stock-id", "gtk-add")
@@ -446,7 +415,8 @@ class Sidepanel (object):
         self.tv.append_column(c0)
         self.tv.append_column(c1)
         self.tv.append_column(c2)
-        self.tv.append_column(c3)
+        ### header text, or analysis line
+        uistuff.appendAutowrapColumn(self.tv, "Details", text=4)
         
         self.boardview.connect("shown_changed", self.shown_changed)
         self.tv.connect("cursor_changed", self.selection_changed)
