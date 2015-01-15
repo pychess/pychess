@@ -451,7 +451,7 @@ class PanelTab:
         pixbuf.props.xpad = 3
         self.tv.append_column(Gtk.TreeViewColumn("Icon", pixbuf, pixbuf=1, sensitive=0))
         
-        uistuff.appendAutowrapColumn(self.tv, 200, "Name", markup=2, sensitive=0)
+        uistuff.appendAutowrapColumn(self.tv, "Name", markup=2, sensitive=0)
         
         widgets['notebook1'].connect("switch-page", self.__on_switch_page)
         widgets["preferences"].connect("show", self.__on_show_window)

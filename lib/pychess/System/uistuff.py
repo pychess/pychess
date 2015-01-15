@@ -92,10 +92,11 @@ def keepDown (scrolledWindow):
 
 
 
-def appendAutowrapColumn (treeview, defwidth, name, **kvargs):
+# wrap analysis text column. thanks to
+# http://www.islascruz.org/html/index.php?blog/show/Wrap-text-in-a-TreeView-column.html
+def appendAutowrapColumn (treeview, name, **kvargs):
     cell = Gtk.CellRendererText()
     cell.props.wrap_mode = Pango.WrapMode.WORD
-    cell.props.wrap_width = defwidth
     column = Gtk.TreeViewColumn(name, cell, **kvargs)
     treeview.append_column(column)
     
@@ -107,7 +108,7 @@ def appendAutowrapColumn (treeview, defwidth, name, **kvargs):
         hsep.init(GObject.TYPE_INT)
         hsep.set_int(0)
         treeview.style_get_property("horizontal-separator", hsep)
-        newWidth -= hsep.get_int() * 2
+        newWidth -= hsep.get_int() * 4
 
         if cell.props.wrap_width == newWidth or newWidth <= 0:
             return

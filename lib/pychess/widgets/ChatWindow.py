@@ -361,7 +361,7 @@ class InfoPanel (Gtk.Notebook, Panel):
             cell.props.cell_background_set = True 
             cell.props.yalign = 0
             tv.append_column(Gtk.TreeViewColumn("", cell, text=0))
-            cell = uistuff.appendAutowrapColumn(tv, 50, "Notes", text=1)
+            cell = uistuff.appendAutowrapColumn(tv, "Notes", text=1)
             cell.props.background_rgba = bg_color
             cell.props.cell_background_set = True 
             sw = Gtk.ScrolledWindow()
