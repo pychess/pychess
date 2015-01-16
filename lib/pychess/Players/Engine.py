@@ -110,7 +110,7 @@ class Engine (Player):
         def answer (message):
             try:
                 data = urlopen("http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
-                               urlencode({"message":message, "botcust2":"x"})).read()
+                               urlencode({"message":message, "botcust2":"x"}).encode("utf-8")).read().decode('utf-8')
             except IOError as e:
                 log.warning("Couldn't answer message from online bot: '%s'" % e,
                          extra={"task":self.defname})
