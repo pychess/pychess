@@ -272,7 +272,7 @@ class PyChessFICS(PyChess):
             else:
                 def onlineanswer (message):
                     data = urlopen("http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
-                                   urlencode({"message":message, "botcust2":"x"})).read()
+                                   urlencode({"message":message, "botcust2":"x"}).encode("utf-8")).read().decode('utf-8')
                     ss = "<b>DMPGirl:</b>"
                     es = "<br>"
                     answer = data[data.find(ss)+len(ss) : data.find(es,data.find(ss))]
