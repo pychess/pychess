@@ -197,8 +197,7 @@ class ScorePlot (Gtk.DrawingArea):
         self.grab_focus()
         self.emit('selected', event.y/self.moveHeight)
         
-    def expose (self, widget, ctx):
-        context = widget.get_window().cairo_create()
+    def expose (self, widget, context):
         a = widget.get_allocation()        
         context.rectangle(a.x, a.y,
                           a.width, a.height)
