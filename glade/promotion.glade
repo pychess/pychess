@@ -19,6 +19,7 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button1">
+                <property name="height_request">60</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -110,6 +111,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button3">
+                <property name="height_request">60</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -155,6 +157,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button4">
+                <property name="height_request">60</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
@@ -200,6 +203,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button5">
+                <property name="height_request">60</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
