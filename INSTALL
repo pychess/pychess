@@ -19,9 +19,9 @@ $ PYTHONPATH=lib/ python run_tests.py
 -------------
 Dependencies:
 gnome-icon-theme
-python >= 2.6
-python-gi
-python-gi-cairo
+python >= 2.6   (or python3)
+python-gi       (or python3-gi)
+python-gi-cairo (or python3-gi-cairo)
 gobject-introspection
 gir1.2-glib-2.0
 gir1.2-gtk-3.0
