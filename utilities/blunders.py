@@ -110,7 +110,7 @@ def start(discoverer):
             return False
         check_blund()
         return True
-    glib.timeout_add_seconds(secs, cb)
+    GLib.timeout_add_seconds(secs, cb)
 
 def on_finish():
     print("Finish")
