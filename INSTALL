@@ -44,4 +44,23 @@ gdk-pixbuf2
 gtksourceview3
 gstreamer1
 gstreamer1-plugins-base
+(python2 is used by default.
+ To use python3 on Fedora 20 install python3, python3-gobject and python3-cairo
+ These packages aren't available on CentOS/RHEL) 
+
+Dependencies for Arch:
+python
+python-gobject
+python-cairo
+gobject-introspection
+glib2
+gtk3
+pango
+gdk-pixbuf2
+gtksourceview3
+gstreamer
+gst-plugins-base
+(Arch uses python3 by default. To use python2 install python2,
+ python2-gobject and python2-cairo)
+
 
