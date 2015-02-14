@@ -8,4 +8,5 @@ Linux desktop that does everything you require from an advanced chess client.
 Project homepage: http://pychess.org/  
 Download page: http://pychess.org/download/  
 Development page: https://github.com/pychess/pychess  
+Translations: https://www.transifex.com/projects/p/pychess/  
 Mailing list: http://groups.google.com/group/pychess-people  
