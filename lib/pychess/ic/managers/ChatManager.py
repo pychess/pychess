@@ -112,6 +112,7 @@ class ChatManager (GObject.GObject):
         self.connection.lvm.setVariable("ctell", 1)
         self.connection.lvm.setVariable("tell", 1)
         self.connection.lvm.setVariable("height", 240)
+        self.connection.lvm.setVariable("noescape", 0)
         
         self.connection.client.run_command("inchannel %s" % self.connection.username)
         self.connection.client.run_command("help channel_list")
