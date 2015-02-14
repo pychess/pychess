@@ -68,6 +68,9 @@ class LogPipe:
     def __init__ (self, to, flag=""):
         self.to = to
         self.flag = flag
+        # Needed for blunders/arena with python3
+        self.errors= to.errors
+        self.encoding = to.encoding
     
     def write (self, data):
         try:

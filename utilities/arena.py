@@ -11,6 +11,14 @@ from __future__ import print_function
 import os
 import sys
 
+from pychess.compat import raw_input, PY2
+
+if PY2:
+    # This hack fixes some UnicodDecode Errors caused pygi not making
+    # magic hidden automatic unicode conversion pygtk did
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
+
 ###############################################################################
 # Set up important things
 from gi.repository import GLib
