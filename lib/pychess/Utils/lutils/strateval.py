@@ -164,6 +164,10 @@ def attack_type (model, ply, phase):
                     yield _("exchanges material")
                 elif see > 0:
                     yield _("captures material")
+    else:
+        see = staticExchangeEvaluate(oldboard, move)
+        if see < 0:
+            yield _("sacrifies material")
 
     PIECE_VALUES[BISHOP] = bishopBackup
 
