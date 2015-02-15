@@ -14,6 +14,7 @@ from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.Utils.Move import Move, toSAN
 from pychess.Utils.eco import get_eco
+from pychess.Utils.Offer import Offer
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants.normal import NormalChess
 from pychess.Variants import variants
@@ -149,6 +150,8 @@ class GameModel (GObject.GObject, Thread):
         self.timed = self.timemodel.secs!=0 or self.timemodel.gain!=0
 
         if self.timed:
+            self.timemodel.connect('zero_reached', self.zero_reached)
+
             self.tags["TimeControl"] = \
                 "%d+%d" % (self.timemodel.minutes*60, self.timemodel.gain)
             # Notice: tags["WhiteClock"] and tags["BlackClock"] are never set
@@ -168,6 +171,12 @@ class GameModel (GObject.GObject, Thread):
         self.applyingMoveLock = RLock()
         self.undoLock = RLock()
         self.undoQueue = Queue()
+
+    def zero_reached (self, timemodel, color):
+        if self.players[1-color].__type__ == ARTIFICIAL:
+            if self.status == RUNNING and timemodel.getPlayerTime(color) <= 0:
+                log.info('Automatically sending flag call on behalf of player %s.' % self.players[1-color].name)
+                self.players[1-color].emit("offer", Offer(FLAG_CALL))
 
     def __repr__ (self):
         s = "<GameModel at %s" % id(self)
