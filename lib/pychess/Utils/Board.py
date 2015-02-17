@@ -27,6 +27,7 @@ class Board:
     variant = NORMALCHESS
     RANKS = 8
     FILES = 8
+    HOLDING_FILES = ((FILES+3, FILES+2, FILES+1), (-4, -3, -2))
     
     def __init__ (self, setup=False, lboard=None):
         self.data = [dict(enumerate([None]*self.FILES)) for i in range(self.RANKS)]
@@ -80,30 +81,62 @@ class Board:
                             self[self.newHoldingCord(color, 1)] = Piece(color, piece)
     
     def getHoldingCord(self, color, piece):
-        """Get the first occurence of piece in given colors holding"""
+        """Get the chord of first occurence of piece in given color holding"""
         
         enum = reverse_enum if color == WHITE else enumerate
-        files = ((self.FILES+3, self.FILES+2, self.FILES+1), (-4, -3, -2))
-        for x in files[color]:
+        for x in self.HOLDING_FILES[color]:
             for i, row in enum(self.data):
                 if (row.get(x) is not None) and row.get(x).piece == piece:
                     return Cord(x, i)
 
     def newHoldingCord(self, color, nth=1):
-        """Find the nth empty slot in given colors holding.
+        """Find the nth empty slot in given color holding.
         In atomic explosions nth can be > 1.   
         """
         
         enum = reverse_enum if color == BLACK else enumerate
-        files = ((self.FILES+1, self.FILES+2, self.FILES+3), (-2, -3, -4))
         empty = 0
-        for x in files[color]:
+        for x in reversed(self.HOLDING_FILES[color]):
             for i, row in enum(self.data):
                 if row.get(x) is None:
                     empty += 1
                     if empty == nth:
                         return Cord(x, i)
+
+    def getHoldingPieces(self, color):
+        """Get the list of pieces from given color holding"""
+        pieces = []
+        for x in self.HOLDING_FILES[color]:
+            for row in self.data:
+                if row.get(x) is not None:
+                    pieces.append(row.get(x))
+        return pieces
+        
+    def popPieceFromHolding(self, color, piece):
+        """Remove and return a piece in given color holding"""
+        
+        for x in self.HOLDING_FILES[color]:
+            for row in self.data:
+                if (row.get(x) is not None) and row.get(x).piece == piece:
+                    p = row.get(x)
+                    del row[x]
+                    return p
+        return None
     
+    def reorderHolding(self, color):
+        """Reorder captured pieces by their value"""
+        pieces = []
+        for piece in (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING):
+            while True:
+                p = self.popPieceFromHolding(color, piece)
+                if p is not None:
+                    pieces.append(p)
+                else:
+                    break
+        for piece in pieces:
+            self[self.newHoldingCord(color, 1)] = piece
+        
+        
     def simulateMove (self, board1, move):
         moved = []
         new = []
@@ -118,6 +151,8 @@ class Board:
             piece = FCORD(move.move)
             cord0 = self.getHoldingCord(self.color, piece)
             moved.append( (self[cord0], cord0) )
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(self.color)
             return moved, new, dead
 
         if self.variant == ATOMICCHESS and (self[cord1] or move.flag == ENPASSANT):
@@ -136,6 +171,8 @@ class Board:
             piece = PAWN if self.variant == CRAZYHOUSECHESS and self[cord1].promoted else self[cord1].piece
             cord = self.newHoldingCord(self.color)
             moved.append( (board1[cord], cord1) )
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(self.color)
             new.append( board1[cord] )
 
             if self.variant == ATOMICCHESS:
@@ -166,6 +203,8 @@ class Board:
             ep_cord = Cord(cord1.x, cord1.y + shift)
             moved.append( (self[ep_cord], ep_cord) )
             cord = self.newHoldingCord(self.color)
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(self.color)
             new.append( board1[cord] )
 
         return moved, new, dead
@@ -194,6 +233,8 @@ class Board:
             cord = self.getHoldingCord(1-self.color, piece)
             moved.append( (self[cord], cord) )
             self[cord].opacity = 1
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(self.color)
             dead.append( self[cord] )
 
             if self.variant == ATOMICCHESS:
@@ -223,6 +264,8 @@ class Board:
             cord = self.getHoldingCord(1-self.color, PAWN)
             moved.append( (self[cord], cord) )
             self[cord].opacity = 1
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(self.color)
             dead.append( self[cord] )
         
         return moved, new, dead
@@ -305,6 +348,8 @@ class Board:
         elif flag == ENPASSANT:
             newBoard[Cord(cord1.x, cord0.y)] = None
         
+        if flag == DROP or flag == ENPASSANT or self[move.cord1] is not None:
+            newBoard.reorderHolding(self.color)
         return newBoard
     
     def switchColor (self):
