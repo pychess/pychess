@@ -647,6 +647,11 @@ class GameModel (GObject.GObject, Thread):
             ended position, this will call __resume and emit game_unended. """
          
         log.debug("GameModel.checkStatus:")
+        
+        # call flag by engine
+        if self.status in UNDOABLE_STATES:
+            return
+            
         status, reason = getStatus(self.boards[-1])
 
         if self.endstatus is not None:
