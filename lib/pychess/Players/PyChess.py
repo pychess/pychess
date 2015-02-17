@@ -96,14 +96,11 @@ class PyChess (object):
                 usetime = self.searchtime
             else:
                 usetime = self.clock[self.playingAs] / self.__remainingMovesA()
-                if self.clock[self.playingAs] < 6*60+self.increment[self.playingAs]*40:
-                    # If game is blitz, we assume 40 moves rather than 80
+                if self.clock[self.playingAs] > 10:
+                    # If we have time, we assume 40 moves rather than 80
                     usetime *= 2
                 # The increment is a constant. We'll use this always
                 usetime += self.increment[self.playingAs]
-                if usetime < 0.5:
-                    # We don't wan't to search for e.g. 0 secs
-                    usetime = 0.5
 
             prevtime = 0
             starttime = time()
