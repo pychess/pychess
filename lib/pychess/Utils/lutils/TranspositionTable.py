@@ -1,7 +1,8 @@
-from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT, hashfBAD
-from pychess.Utils.lutils.ldata import MATE_VALUE, MAXPLY
 from ctypes import create_string_buffer, memset
 from struct import Struct, pack_into, unpack_from
+
+from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT, hashfBAD
+from pychess.Utils.lutils.ldata import MATE_VALUE, MAXPLY
 
 # Store hash entries in buckets of 4. An entry consists of:
 # key         32 bits derived from the board hash
