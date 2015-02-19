@@ -117,11 +117,11 @@ for pcord in range(64):
         knightTropism[pcord][kcord] = knightTropism[kcord][pcord] = \
             (6-distance[KNIGHT][pcord][kcord])**2 * 2 # 0 - 50
         bishopTropism[pcord][kcord] = bishopTropism[kcord][pcord] = \
-            (14 - distance[BISHOP][pcord][kcord] * sdistance[pcord][kcord])**2 * 30/169 # 0 - 30 
+            (14 - distance[BISHOP][pcord][kcord] * sdistance[pcord][kcord])**2 * 30//169 # 0 - 30 
         rookTropism[pcord][kcord] = rookTropism[kcord][pcord] = \
-            (14 - distance[ROOK][pcord][kcord] * sdistance[pcord][kcord])**2 * 40/169 # 0 - 40
+            (14 - distance[ROOK][pcord][kcord] * sdistance[pcord][kcord])**2 * 40//169 # 0 - 40
         queenTropism[pcord][kcord] = queenTropism[kcord][pcord] = \
-            (14 - distance[QUEEN][pcord][kcord] * sdistance[pcord][kcord])**2 * 50/169 # 0 - 50
+            (14 - distance[QUEEN][pcord][kcord] * sdistance[pcord][kcord])**2 * 50//169 # 0 - 50
 
 tropisms = {
     PAWN: pawnTropism,
@@ -518,7 +518,7 @@ def evalBishops (board, color, phase):
     if board.pieceCount[color][BISHOP] == 1:
         squareMask = WHITE_SQUARES if (bishops & WHITE_SQUARES) else BLACK_SQUARES
         score = - bin(pawns & squareMask).count("1") \
-                - bin(oppawns & squareMask).count("1")/2
+                - bin(oppawns & squareMask).count("1")//2
         if phase > 6:
             score += bin(board.friends[1-color] & squareMask).count("1")
 

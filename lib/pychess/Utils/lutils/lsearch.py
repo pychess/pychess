@@ -6,8 +6,6 @@ from heapq import heappush, heappop
 from .lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from .egtb_gaviota import egtb_gaviota
 from pychess.Utils.const import *
-from pychess.Utils.Move import Move
-from pychess.Utils.logic import validate
 from .leval import evaluateComplete
 from .lsort import getCaptureValue, getMoveValue
 from .lmove import toSAN
@@ -258,7 +256,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
 def quiescent (board, alpha, beta, ply):
     
     if skipPruneChance and random() < skipPruneChance:
-        return [], (alpha+beta)/2
+        return [], (alpha+beta) // 2
     
     global nodes
     
