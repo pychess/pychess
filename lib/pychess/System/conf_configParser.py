@@ -1,5 +1,4 @@
 import os, atexit
-from ast import literal_eval
 
 from pychess.compat import SafeConfigParser
 from pychess.System.Log import log

@@ -6,6 +6,7 @@ from pychess.Utils.const import *
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.lmove import parsePolyglot
+from pychess.System.Log import log
 
 # The book probing code is based on that of PolyGlot by Fabien Letouzey.
 # PolyGlot is available under the GNU GPL from http://wbec-ridderkerk.nl
@@ -34,6 +35,7 @@ def getOpenings (board):
 
     openings = []
     if not os.path.isfile(path):
+        log.warning("Could not find %s" % path)
         return openings
 
     with open(path, "rb") as bookFile:

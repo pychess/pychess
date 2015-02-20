@@ -1,5 +1,11 @@
 from __future__ import print_function
 
+import re
+import signal
+import sys
+from threading import Thread
+
+import pychess
 from pychess.compat import raw_input
 from pychess.Players.PyChess import PyChess
 from pychess.System import conf, fident
@@ -12,11 +18,8 @@ from pychess.Utils.lutils import lsearch, leval
 from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN, ParsingError
 from pychess.Utils.lutils import lsearch
 from pychess.Utils.lutils.validator import validateMove
-import pychess
-import re
-import signal
-import sys
-from threading import Thread
+from pychess.System.Log import log
+
 
 class PyChessCECP(PyChess):
     
@@ -72,15 +75,17 @@ class PyChessCECP(PyChess):
             except EOFError:
                 line = "quit"
             lines = line.split()
-            if 1:
-            #try:
+            
+            try:
                 if not lines:
                     continue
+
+                log.debug(line, extra={"task": "xboard"})
      
                 ########## CECP commands ##########
                 # See http://www.gnu.org/software/xboard/engine-intf.html#8
                 
-                elif lines[0] == "xboard":
+                if lines[0] == "xboard":
                     pass
      
                 elif lines[0] == "protover":
@@ -189,11 +194,11 @@ class PyChessCECP(PyChess):
                     try:
                         move = parseAny (self.board, lines[1])
                     except ParsingError as e:
-                        print("Error (unknown command):", lines[1])
+                        print("Error (unknown command): %s" % lines[1])
                         print(self.board)
                         continue
                     if not validateMove(self.board, move):
-                        print("Illegal move", lines[1])
+                        print("Illegal move: %s" % lines[1])
                         print(self.board)
                         continue
                     self.board.applyMove(move)
@@ -325,10 +330,10 @@ class PyChessCECP(PyChess):
                     try:
                         move = parseAny (self.board, line)
                     except:
-                        print("Error (unknown command):", line)
+                        print("Error (unknown command): %s" % line)
                         continue
                     if not validateMove(self.board, move):
-                        print("Illegal move", lines[0])
+                        print("Illegal move: %s" % lines[0])
                         print(self.board)
                         continue
                     self.__stopSearching()
@@ -340,11 +345,9 @@ class PyChessCECP(PyChess):
                         self.__analyze()
 
                 else:
-                    print("Error (unknown command):", line)
-            #except SystemExit:
-                #sys.exit(0)
-            #except:
-                #print "Error (missing or invalid argument)", line
+                    print("Error (unknown command): %s" % line)
+            except IndexError:
+                print("Error (missing argument): %s" % line)
     
     def __stopSearching(self):
         lsearch.searching = False
