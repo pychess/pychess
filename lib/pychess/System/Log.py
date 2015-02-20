@@ -1,4 +1,6 @@
+from __future__ import print_function
 from __future__ import absolute_import
+
 import os
 import sys
 import time
@@ -7,62 +9,23 @@ import logging
 from .prefix import addUserDataPrefix
 
 newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
-logformat = "%(asctime)s %(task)s %(levelname)s: %(message)s"
-logging.basicConfig(filename=addUserDataPrefix(newName), format=logformat, datefmt='%H:%M:%S')
+logformat = "%(asctime)s.%(msecs)03d %(task)s %(levelname)s: %(message)s"
+
+# delay=True argument prevents creating empty .log files
+fh = logging.FileHandler(addUserDataPrefix(newName), delay=True)
+fh.setFormatter(logging.Formatter(fmt=logformat, datefmt='%H:%M:%S'))
+
+logger = logging.getLogger()
+logger.addHandler(fh)
+
 
 class ExtraAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         kwargs["extra"] = kwargs.get("extra", {"task": "Default"})
         return msg, kwargs
 
-class LogEmitter(object):
-    messages = []
-    def connect(self, signal, messages):
-        return
-
-logemitter = LogEmitter()
-
-def set_gui_log_emitter():
-    global logemitter
-    from gi.repository import GObject
-    from .GtkWorker import EmitPublisher, Publisher
-
-    class LogEmitter(GObject.GObject):
-        __gsignals__ = {
-            "logged": (GObject.SignalFlags.RUN_FIRST, None, (object,))
-        }                                              # list of (str, float, str, int)
-        def __init__ (self):
-            GObject.GObject.__init__(self)
-
-            # We store everything in this list, so that the LogDialog, which is
-            # imported a little later, will have all data ever given to Log.
-            # When Dialog inits, it will set this list to None, and we will stop
-            # appending data to it. Ugly? Somewhat I guess.
-            self.messages = []
-
-            self.publisher = EmitPublisher (self, "logged",
-                'LogEmitter.publisher', Publisher.SEND_LIST)
-            self.publisher.start()
-
-    class GLogHandler(logging.Handler):
-        def __init__ (self, emitter):
-            logging.Handler.__init__(self)
-            self.emitter = emitter
-            
-        def emit(self, record):
-            message = self.format(record)
-            if self.emitter.messages != None:
-                self.emitter.messages.append((record.task, time.time(), message, record.levelno))
-            
-            self.emitter.publisher.put((record.task, time.time(), message, record.levelno))
-
-    logemitter = LogEmitter()
-    logger.addHandler(GLogHandler(logemitter))
-    
-
-logger = logging.getLogger()
 log = ExtraAdapter(logger, {})
-    
+
     
 class LogPipe:
     def __init__ (self, to, flag=""):
@@ -82,7 +45,9 @@ class LogPipe:
             else:
                 log.error("Could not write data '%s' to pipe '%s'" % (data, repr(self.to)))
         if log:
-            log.debug (data, extra={"task": self.flag})
+            for line in data.splitlines():
+                if line:
+                    log.debug (line, extra={"task": self.flag})
     
     def flush (self):
         self.to.flush()

@@ -1,10 +1,10 @@
-from __future__ import print_function
 #!/usr/bin/pypy -u
+from __future__ import print_function
 
 if __name__ == "__main__":
     print("feature done=0")
 
-import gettext
+import logging
 import os
 import random
 import sys
@@ -14,10 +14,8 @@ this_dir = os.path.dirname(os.path.abspath(__file__))
 if os.path.join(this_dir, "../..") not in sys.path:
     sys.path = [os.path.join(this_dir, "../..")] + sys.path
 
-import pychess
 from pychess.compat import PY2
 from pychess.Utils import const
-from pychess.System.prefix import addDataPrefix
 from pychess.Utils.book import getOpenings
 from pychess.Utils.const import *
 from pychess.Utils.lutils import lsearch
@@ -25,11 +23,8 @@ from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import listToSan, toSAN
+from pychess.System.Log import log
 
-if PY2:
-    gettext.install("pychess", localedir=addDataPrefix("lang"), unicode=1)
-else:
-    gettext.install("pychess", localedir=addDataPrefix("lang"))
 
 class PyChess (object):
     def __init__ (self):
@@ -125,7 +120,7 @@ class PyChess (object):
                     if self.post:
                         pv = " ".join(listToSan(self.board, mvs))
                         time_cs = int(100 * (time()-starttime))
-                        print(depth, self.scr, time_cs, lsearch.nodes, pv)
+                        print("%s %s %s %s %s" % (depth, self.scr, time_cs, lsearch.nodes, pv))
                 else:
                     # We were interrupted
                     if depth == 1:
@@ -190,13 +185,18 @@ class PyChess (object):
 
 if __name__ == "__main__":
     
-    if len(sys.argv) == 1 or sys.argv[1:] == ["xboard"]:
+    if len(sys.argv) == 1 or sys.argv[1:] == ["debug"]:
+        if "debug" in sys.argv[1:]:
+            log.logger.setLevel(logging.DEBUG)
+        else:
+            log.logger.setLevel(logging.WARNING)
+
         from pychess.Players.PyChessCECP import PyChessCECP
         pychess = PyChessCECP()
     
-    elif len(sys.argv) == 5 and sys.argv[1] == "fics":
-        from pychess.Players.PyChessFICS import PyChessFICS
-        pychess = PyChessFICS(*sys.argv[2:])
+#    elif len(sys.argv) == 5 and sys.argv[1] == "fics":
+#        from pychess.Players.PyChessFICS import PyChessFICS
+#        pychess = PyChessFICS(*sys.argv[2:])
         
     else:
         print("Unknown argument(s):", repr(sys.argv))
