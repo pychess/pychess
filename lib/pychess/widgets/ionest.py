@@ -1,6 +1,9 @@
 """ The task of this module, is to save, load and init new games """
 from __future__ import print_function
 
+import os
+
+from gi.repository import Gtk
 from gi.repository import GObject
 
 from pychess import Savers
@@ -14,8 +17,6 @@ from pychess.System.uistuff import GladeWidgets, keep
 from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamenanny, gamewidget
-from gi.repository import Gtk
-import os
 
 
 def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
@@ -147,7 +148,7 @@ def getOpenAndSaveDialogs():
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.ACCEPT))
         savedialog = Gtk.FileChooserDialog("", None, Gtk.FileChooserAction.SAVE,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT))
-        savedialog.set_current_folder(os.environ["HOME"])
+        savedialog.set_current_folder(os.path.expanduser("~"))
         saveformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
         exportformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
 

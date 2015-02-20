@@ -9,14 +9,9 @@ from gi.repository import Gtk, Gdk, Pango, GObject
 
 from pychess.compat import unicode
 from pychess.System import glock, uistuff
-from pychess.System.Log import log, logemitter
+from pychess.System.LogEmitter import logemitter
 from pychess.System.prefix import addDataPrefix
 
-def rawreplace(error):
-    symbols = (ur"\x%02x" % ord(s)
-        for s in error.object[error.start:error.end])
-    return u"".join(symbols), error.end
-codecs.register_error("rawreplace", rawreplace)
 
 class InformationWindow:
     
@@ -77,8 +72,6 @@ class InformationWindow:
                 textview.get_buffer().get_end_iter(), "\n%s\n%s\n"%(t,"-"*60), str(logging.INFO))
             cls.tagToTime[tag] = timestamp
         
-        if isinstance(message, str):
-            message = unicode(message, "utf-8", 'rawreplace')
         if not message.endswith("\n"):
             message = "%s\n" % message
         textview.get_buffer().insert_with_tags_by_name(

@@ -17,6 +17,7 @@ from pychess.compat import urlopen, urlparse, basestring
 from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log
+from pychess.System.LogEmitter import GLogHandler, logemitter
 from pychess.System.debug import start_thread_dump
 from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
 from pychess.Utils.const import HINT, NAME, SPY
@@ -467,9 +468,9 @@ class PyChess:
 def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
          ics_host, ics_port):
     # Start logging
-    log.logger.setLevel(logging.WARNING if no_debug is True else logging.DEBUG)
     if log_viewer:
-        Log.set_gui_log_emitter()
+        log.logger.addHandler(GLogHandler(logemitter))
+    log.logger.setLevel(logging.WARNING if no_debug is True else logging.DEBUG)
     oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
     conf.set("max_log_files", conf.get("max_log_files", 10))
     if len(oldlogs) >= conf.get("max_log_files", 10):

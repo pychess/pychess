@@ -1,5 +1,7 @@
 from __future__ import print_function
-import sys, os
+
+import os
+import sys
 from os import listdir
 from os.path import isdir, isfile, splitext
 from xml.dom import minidom
@@ -15,6 +17,7 @@ from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon
 from pychess.gfx import Pieces
+
 
 firstRun = True
 def run(widgets):
@@ -267,7 +270,7 @@ if not conf.hasKey("sounduri10"):
 class SoundTab:
     
     SOUND_DIRS = (addDataPrefix("sounds"), "/usr/share/sounds",
-                  "/usr/local/share/sounds", os.environ["HOME"])
+                  "/usr/local/share/sounds", os.path.expanduser("~"))
     
     COUNT_OF_SOUNDS = 11
     
