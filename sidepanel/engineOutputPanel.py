@@ -188,7 +188,7 @@ class EngineOutput (Gtk.VBox):
         #self.pack_start(self.title_hbox, False)
         #self.pack_start(self.output_container, True)
         self.pack_start(self.title_hbox, False, False, 0)
-        self.pack_start(self.output_container, True, False, 0)
+        self.pack_start(self.output_container, True, True, 0)
 
         # Precompile regexes we want to use:
         self.re_thinking_line_cecp = re.compile( r'^[0-9]+\.? +\-?[0-9]+ +' )
