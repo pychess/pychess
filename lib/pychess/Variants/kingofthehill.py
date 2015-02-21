@@ -11,7 +11,7 @@ class KingOfTheHillChess:
     __desc__ = _("Bringing your king legally to the center (e4, d4, e5, d5) instantly wins the game!\n" +
                  "Normal rules apply in other cases and checkmate also ends the game.")
     name = _("King of the hill")
-    cecp_name = "king-of-the-hill"
+    cecp_name = "kingofthehill"
     board = KingOfTheHillBoard
     need_initial_board = False
     standard_rules = False
