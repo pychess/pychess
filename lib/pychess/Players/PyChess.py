@@ -1,8 +1,8 @@
 #!/usr/bin/pypy -u
 from __future__ import print_function
 
-if __name__ == "__main__":
-    print("feature done=0")
+#if __name__ == "__main__":
+#    print("feature done=0")
 
 import logging
 import os

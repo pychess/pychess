@@ -47,7 +47,7 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic,king-of-the-hill",
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic,kingofthehill",
             "colors": 0,
             "ics": 0,
             "name": 0,
@@ -83,7 +83,7 @@ class PyChessCECP(PyChess):
                 log.debug(line, extra={"task": "xboard"})
      
                 ########## CECP commands ##########
-                # See http://www.gnu.org/software/xboard/engine-intf.html#8
+                # See http://home.hccnet.nl/h.g.muller/engine-intf.html
                 
                 if lines[0] == "xboard":
                     pass
@@ -126,7 +126,7 @@ class PyChessCECP(PyChess):
                         elif lines[1] == "atomic":
                             self.board.variant = ATOMICCHESS
                             self.board.iniAtomic()
-                        elif lines[1] == "king-of-the-hill":
+                        elif lines[1] == "kingofthehill":
                             self.board.variant = KINGOFTHEHILLCHESS
                 
                 elif lines[0] == "quit":
@@ -213,7 +213,7 @@ class PyChessCECP(PyChess):
                         self.__stopSearching()
                 
                 elif lines[0] == "ping":
-                    print("pong", lines[1])
+                    print("pong %s" % lines[1])
                     
                 elif lines[0] == "draw":
                     if self.__willingToDraw():

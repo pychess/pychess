@@ -38,6 +38,7 @@ class LogPipe:
     def write (self, data):
         try:
             self.to.write(data)
+            self.flush()
         except IOError:
             if self.flag == "stdout":
                 # Certainly hope we never end up here
