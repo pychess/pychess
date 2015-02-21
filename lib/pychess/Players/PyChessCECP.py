@@ -230,7 +230,7 @@ class PyChessCECP(PyChess):
                         fen = " ".join(lines[1:])
                         self.board.applyFen(fen.replace("[", "/").replace("]", ""))
                     except SyntaxError as e:
-                        print("tellusererror Illegal position:", str(e))
+                        print("tellusererror Illegal position: %s" % str(e))
                 
                 # "edit" is unimplemented. See docs. Exiting edit mode returns to analyze mode.
      
@@ -301,7 +301,7 @@ class PyChessCECP(PyChess):
                         if 0 <= value <= 100:
                             self.skipPruneChance = value / 100.0
                         else:
-                            print("Error (argument must be an integer 0..100):", line)
+                            print("Error (argument must be an integer 0..100): %s" % line)
      
                 ########## CECP analyze mode commands ##########
                 # See http://www.gnu.org/software/xboard/engine-intf.html#11
