@@ -464,7 +464,7 @@ class CECPEngine (ProtocolEngine):
         
         if strength == 20:
             if "gaviota" in self.features["egt"]:
-                self.optionQueue.append("egtpath %s" % conf.get("egtb_path", ""))
+                self.optionQueue.append("egtpath gaviota %s" % conf.get("egtb_path", ""))
         else:
             self.optionQueue.append("random")
     
