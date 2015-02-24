@@ -84,7 +84,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                 if state == WHITEWON:
                     score = -MATE_VALUE+steps
                 else: score = MATE_VALUE-steps
-            return [move.move], score
+            return [move], score
     
     ###########################################################################
     # We don't save repetition in the table, so we need to test draw before   #
@@ -339,12 +339,7 @@ class EndgameTable():
         
         pc = self._pieceCounts(lBoard)
         if self.provider.supports(pc):
-            results = provider.scoreAllMoves(lBoard)
-            if results:
-                ret = []
-                for lMove, result, depth in results:
-                    ret.append( (Move(lMove), result, depth) )
-                return ret
+            return self.provider.scoreAllMoves(lBoard)
         return []
 
 def enableEGTB():
