@@ -40,6 +40,7 @@ class PyChess (object):
         self.ponder = False # Currently unused
         self.post = False
         self.debug = True
+        self.outOfBook = False
     
     #===========================================================================
     # Play related
@@ -71,12 +72,14 @@ class PyChess (object):
                     break
                 if not move or random.randrange(totalWeight) < weight:
                     choice = move
+        if choice is None:
+            self.outOfBook = True
         return choice
     
     def __go (self, ondone=None):
         """ Finds and prints the best move from the current position """
         
-        mv = self.__getBestOpening()
+        mv = False if self.outOfBook else self.__getBestOpening()
         if mv:
             mvs = [mv]
         

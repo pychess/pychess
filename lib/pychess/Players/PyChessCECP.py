@@ -102,6 +102,7 @@ class PyChessCECP(PyChess):
                     self.__stopSearching()
                     self.board = LBoard(NORMALCHESS)
                     self.board.applyFen(FEN_START)
+                    self.outOfBook = False
                     self.forced = False
                     self.playingAs = BLACK
                     self.clock[:] = self.basetime, self.basetime
