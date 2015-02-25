@@ -4,7 +4,6 @@ from __future__ import print_function
 #if __name__ == "__main__":
 #    print("feature done=0")
 
-import logging
 import os
 import random
 import sys
@@ -23,7 +22,6 @@ from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import listToSan, toSAN
-from pychess.System.Log import log
 
 
 class PyChess (object):
@@ -181,29 +179,3 @@ class PyChess (object):
             print("%s %s %s %s %s" % (depth, scr, time_cs, lsearch.nodes, pv))
             
             lsearch.nodes = 0
-    
-################################################################################
-# main                                                                         #
-################################################################################
-
-if __name__ == "__main__":
-    
-    if len(sys.argv) == 1 or sys.argv[1:] == ["debug"]:
-        if "debug" in sys.argv[1:]:
-            log.logger.setLevel(logging.DEBUG)
-        else:
-            log.logger.setLevel(logging.WARNING)
-
-        from pychess.Players.PyChessCECP import PyChessCECP
-        pychess = PyChessCECP()
-    
-#    elif len(sys.argv) == 5 and sys.argv[1] == "fics":
-#        from pychess.Players.PyChessFICS import PyChessFICS
-#        pychess = PyChessFICS(*sys.argv[2:])
-        
-    else:
-        print("Unknown argument(s):", repr(sys.argv))
-        sys.exit(0)
-    
-    pychess.makeReady()
-    pychess.run()

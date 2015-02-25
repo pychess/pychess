@@ -419,3 +419,18 @@ class PyChessFICS(PyChess):
         
         p.stdin.close()
         p.wait()
+
+################################################################################
+# main                                                                         #
+################################################################################
+
+if __name__ == "__main__":
+    
+    if len(sys.argv) == 5 and sys.argv[1] == "fics":
+        pychess = PyChessFICS(*sys.argv[2:])
+    else:
+        print("Unknown argument(s):", repr(sys.argv))
+        sys.exit(0)
+    
+    pychess.makeReady()
+    pychess.run()
