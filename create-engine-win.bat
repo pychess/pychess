@@ -1,0 +1,1 @@
+pyinstaller pychess-engine.spec
