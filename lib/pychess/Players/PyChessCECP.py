@@ -59,6 +59,9 @@ class PyChessCECP(PyChess):
             "egt": "gaviota",
             "option": "skipPruneChance -slider 0 0 100"
         }
+        python = sys.executable.split("/")[-1]
+        python_version = "%s.%s.%s" % sys.version_info[0:3]
+        print("# %s [%s %s]" % (self.features["myname"], python, python_version))
     
     def handle_sigterm(self, *args):
         self.__stopSearching()
