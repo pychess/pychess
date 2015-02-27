@@ -167,7 +167,7 @@ class Board:
         else:
             moved.append( (self[cord0], cord0) )
 
-        if self[cord1]:
+        if self[cord1] and not (self.variant == FISCHERRANDOMCHESS and move.flag in (QUEEN_CASTLE, KING_CASTLE)):
             piece = PAWN if self.variant == CRAZYHOUSECHESS and self[cord1].promoted else self[cord1].piece
             cord = self.newHoldingCord(self.color)
             moved.append( (board1[cord], cord1) )
@@ -225,10 +225,10 @@ class Board:
             moved.append( (self[cord], cord) )
             self[cord].opacity = 1
             dead.append( self[cord] )
-        else:
+        elif not (self.variant == FISCHERRANDOMCHESS and move.flag in (QUEEN_CASTLE, KING_CASTLE)):
             moved.append( (self[cord1], cord1) )
         
-        if board1[cord1]:
+        if board1[cord1] and not (self.variant == FISCHERRANDOMCHESS and move.flag in (QUEEN_CASTLE, KING_CASTLE)):
             piece = PAWN if self.variant == CRAZYHOUSECHESS and board1[cord1].promoted else board1[cord1].piece
             cord = self.getHoldingCord(1-self.color, piece)
             moved.append( (self[cord], cord) )
