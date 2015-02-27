@@ -290,7 +290,8 @@ class Board:
 
         cord0, cord1 = move.cords
 
-        if self[move.cord1] is not None or flag == ENPASSANT:
+        if (self[move.cord1] is not None or flag == ENPASSANT) and \
+            not (self.variant == FISCHERRANDOMCHESS and flag in (QUEEN_CASTLE, KING_CASTLE)):
             if self.variant == CRAZYHOUSECHESS:
                 piece = PAWN if flag == ENPASSANT or self[move.cord1].promoted else self[move.cord1].piece
                 new_piece = Piece(self.color, piece, captured=True)
@@ -326,7 +327,10 @@ class Board:
                 newBoard[self.newHoldingCord(1-self.color, nth[1-self.color])] = new_piece
                 newBoard[cord1] = None
             else:
-                newBoard[cord1] = newBoard[cord0]
+                if self.variant == FISCHERRANDOMCHESS and flag in (QUEEN_CASTLE, KING_CASTLE):
+                    king = newBoard[cord0]
+                else:
+                    newBoard[cord1] = newBoard[cord0]
             
         if flag != NULL_MOVE and flag != DROP:
             newBoard[cord0] = None
@@ -339,6 +343,9 @@ class Board:
             finrook = self.board.fin_rooks[self.color][side]
             newBoard[Cord(finrook)] = newBoard[Cord(inirook)]
             newBoard[Cord(inirook)] = None
+            if self.variant == FISCHERRANDOMCHESS:
+                finking = self.board.fin_kings[self.color][side]
+                newBoard[Cord(finking)] = king
 
         if flag in PROMOTIONS:
             new_piece = Piece(self.color, PROMOTE_PIECE(flag))
