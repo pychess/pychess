@@ -2,7 +2,7 @@ from pychess.Utils.const import *
 from pychess.Utils.lutils.attack import isAttacked
 from pychess.Utils.lutils.bitboard import bitPosArray, clearBit
 from pychess.Utils.lutils.ldata import moveArray, fromToRay
-from pychess.Utils.lutils.lmovegen import genCastles
+from pychess.Utils.lutils.lmovegen import genCastles, newMove
 
 ################################################################################
 #   Validate move                                                              #
@@ -37,10 +37,15 @@ def validateMove (board, move):
     if not bitPosArray[fcord] & friends:
         return False
     
-    # TO square is a friendly piece, so illegal move  
+    # TO square is a friendly piece, so illegal move 
     if bitPosArray[tcord] & board.friends[color]:
         if board.variant == FISCHERRANDOMCHESS:
-            if not flag in (KING_CASTLE, QUEEN_CASTLE):
+            if flag in (KING_CASTLE, QUEEN_CASTLE):
+                # normalize the move to fit in "move in genCastles()" below
+                side = flag - QUEEN_CASTLE
+                if tcord == board.ini_rooks[board.color][side]:
+                    move = newMove(fcord, board.fin_kings[board.color][side], flag)
+            else:
                 return False
         else:
             return False
@@ -80,24 +85,12 @@ def validateMove (board, move):
     
     # King moves are also special, especially castling  
     elif fpiece == KING:
-        if board.variant == FISCHERRANDOMCHESS:
-            from pychess.Variants.fischerandom import frc_castling_move
-            if not (moveArray[fpiece][fcord] & bitPosArray[tcord] and \
-                    not flag in (KING_CASTLE, QUEEN_CASTLE)) and \
-               not frc_castling_move(board, fcord, tcord, flag):
-                return False
-        elif board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
-            if not (moveArray[fpiece][fcord] & bitPosArray[tcord] and \
-                    not flag in (KING_CASTLE, QUEEN_CASTLE)) and \
-               not move in genCastles(board):
-                return False
-        else:
-            if board.variant == ATOMICCHESS and tpiece:
-                return False
-            if not (moveArray[fpiece][fcord] & bitPosArray[tcord] and \
-                    not flag in (KING_CASTLE, QUEEN_CASTLE)) and \
-               not move in genCastles(board):
-                return False
+        if board.variant == ATOMICCHESS and tpiece:
+            return False
+        if not (moveArray[fpiece][fcord] & bitPosArray[tcord] and \
+                not flag in (KING_CASTLE, QUEEN_CASTLE)) and \
+                not move in genCastles(board):
+            return False
     
     # Other pieces are more easy
     else:
