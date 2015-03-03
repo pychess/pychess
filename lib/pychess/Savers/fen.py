@@ -17,7 +17,7 @@ def save (file, model, position=None):
     file.close()
     
 def load (file):
-    return FenFile ([line for line in map(str.strip, file) if line])
+    return FenFile ([line.strip() for line in file if line])
 
 from .ChessFile import ChessFile
 
@@ -33,9 +33,9 @@ class FenFile (ChessFile):
         #    fen = " ".join(fenlist[:5]) + " 1" 
         fen = self.games[gameno]
         try:
-            board = model.variant.board(setup=fen)
+            board = model.variant(setup=fen)
         except SyntaxError as e:
-            board = model.variant.board()
+            board = model.variant()
             raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
         
         model.boards = [board]

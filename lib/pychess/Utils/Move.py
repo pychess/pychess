@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+from __future__ import print_function
+
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
 from pychess.Utils.lutils.lmovegen import newMove
@@ -27,8 +29,7 @@ class Move:
                 raise ValueError("Move needs a Board object in order to investigate flags")
             
             self.flag = NORMAL_MOVE
-            
-            if board[self.cord0].piece == PAWN and  self.cord1.y in (0,7):
+            if board[self.cord0].piece == PAWN and  self.cord1.cord in board.PROMOTION_ZONE[board.board.color]:
                 if promotion == None: promotion = QUEEN
                 self.flag = lmove.FLAG_PIECE(promotion)
             
@@ -73,7 +74,8 @@ class Move:
     promotion = property(_get_promotion)
     
     def __repr__ (self):
-        promotion = "="+reprSign[lmove.PROMOTE_PIECE(self.flag)] if self.flag in PROMOTIONS else ""
+        promotion = "="+reprSign[lmove.PROMOTE_PIECE(self.flag)] \
+                    if self.flag in PROMOTIONS else ""
         
         if self.flag == DROP:
             piece = reprSign[lmove.FCORD(self.move)]

@@ -358,20 +358,20 @@ class EngineDiscoverer (GObject.GObject):
     def getEngineVariants (self, engine):
         for variantClass in variants.values():
             if variantClass.standard_rules:
-                yield variantClass.board.variant
+                yield variantClass.variant
             else:
                 if engine.get("variants"):
                     if variantClass.cecp_name in engine.get("variants"):
-                        yield variantClass.board.variant
+                        yield variantClass.variant
                 # UCI knows Chess960 only
                 if engine.get("options"):
                     for option in engine["options"]:
                         if option["name"] == "UCI_Chess960" and variantClass.cecp_name == "fischerandom":
-                            yield variantClass.board.variant
+                            yield variantClass.variant
                         elif option["name"] == "UCI_Variant":
                             if variantClass.cecp_name in option["choices"] or \
                                 variantClass.cecp_name.lower().replace("-", "") in option["choices"]:
-                                yield variantClass.board.variant
+                                yield variantClass.variant
     
     def getName (self, engine=None):
         # Test if the call was to get the name of the thread
@@ -484,7 +484,7 @@ def init_engine (analyzer_type, gamemodel, force=False):
         if engine is None:
             engine = anaengines[0]
         
-        if gamemodel.variant.board.variant in discoverer.getEngineVariants(engine):
+        if gamemodel.variant.variant in discoverer.getEngineVariants(engine):
             analyzer = discoverer.initAnalyzerEngine(engine, mode, gamemodel.variant)
             log.debug("%s analyzer: %s" % (analyzer_type, repr(analyzer)))
         

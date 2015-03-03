@@ -22,6 +22,7 @@ KING_VALUE = 2000
 PIECE_VALUES = [0, PAWN_VALUE, KNIGHT_VALUE,
                 BISHOP_VALUE, ROOK_VALUE, QUEEN_VALUE, KING_VALUE]
 
+ASEAN_PIECE_VALUES = (0, 100, 450, 180, 630, 180, 2000)
 CRAZY_PIECE_VALUES = (0, 100, 200, 240, 240, 380, 2000)
 ATOMIC_PIECE_VALUES = (0, 100, 90, 0, 220, 850, 2000)
 
@@ -330,6 +331,9 @@ dir = [
     [ -11, -10, -9, -1, 1, 9, 10, 11 ],
     [ -11, -10, -9, -1, 1, 9, 10, 11 ],
     [ -9, -11 ],
+    [ -11, -9, 9, 10, 11 ],
+    [ -11, -10, -9, 9, 11 ],
+    [ -11, -9, 9, 11 ],
     
     # Following are for front and back walls. Will be removed from list after
     # the loop
@@ -354,7 +358,7 @@ map = [
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 
 ]
 
-moveArray = [[0]*64 for i in range(len(dir))] # moveArray[8][64]
+moveArray = [[0]*64 for i in range(len(dir))] # moveArray[len(dir)][64]
 
 for piece in range(1,len(dir)):
     for fcord in range(120):
@@ -380,10 +384,10 @@ for piece in range(1,len(dir)):
                     break
         moveArray[piece][f] = b
 
-frontWall = (moveArray[8], moveArray[9])
-del moveArray[9]; del moveArray[8]
-del dir[9]; del dir[8]
-del sliders[9]; del sliders[8]
+frontWall = (moveArray[-2], moveArray[-1])
+del moveArray[-1]; del moveArray[-1]
+del dir[-1]; del dir[-1]
+del sliders[-1]; del sliders[-1]
 
 ################################################################################
 #  For each square, there are 8 rays.  The first 4 rays are diagonals          #

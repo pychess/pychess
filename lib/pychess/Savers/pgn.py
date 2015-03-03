@@ -18,13 +18,7 @@ from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils import prettyPrintScore
-from pychess.Variants.atomic import AtomicChess, AtomicBoard
-from pychess.Variants.crazyhouse import CrazyhouseChess, CrazyhouseBoard
-from pychess.Variants.fischerandom import FischerRandomChess, FRCBoard
-from pychess.Variants.wildcastle import WildcastleChess, WildcastleBoard
-from pychess.Variants.suicide import SuicideChess, SuicideBoard
-from pychess.Variants.losers import LosersChess, LosersBoard
-from pychess.Variants.kingofthehill import KingOfTheHillChess, KingOfTheHillBoard
+from pychess.Variants import name2variant
 from pychess.widgets.ChessClock import formatTime
 
 from .pgnbase import PgnBase, pgn_load
@@ -108,20 +102,10 @@ def save (file, model, position=None):
             msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)), file=file)
         print(u'[BlackClock "%s"]' % \
             msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)), file=file)
-    if issubclass(model.variant, FischerRandomChess):
-        print(u'[Variant "Fischerandom"]', file=file)
-    elif issubclass(model.variant, AtomicChess):
-        print(u'[Variant "Atomic"]', file=file)
-    elif issubclass(model.variant, CrazyhouseChess):
-        print(u'[Variant "Crazyhouse"]', file=file)
-    elif issubclass(model.variant, WildcastleChess):
-        print(u'[Variant "Wildcastle"]', file=file)
-    elif issubclass(model.variant, SuicideChess):
-        print(u'[Variant "Suicide"]', file=file)
-    elif issubclass(model.variant, LosersChess):
-        print(u'[Variant "Losers"]', file=file)
-    elif issubclass(model.variant, KingOfTheHillChess):
-        print(u'[Variant "Kingofthehill"]', file=file)
+
+    if model.variant.variant != NORMALCHESS:
+        print(u'[Variant "%s"]' % model.variant.cecp_name.capitalize(), file=file)
+
     if model.boards[0].asFen() != FEN_START:
         print(u'[SetUp "1"]', file=file)
         print(u'[FEN "%s"]' % model.boards[0].asFen(), file=file)
@@ -307,9 +291,9 @@ class PGNFile (PgnBase):
         variant = self.get_variant(gameno)
         
         if variant:
+            model.tags["Variant"] = variant
             # Fixes for some non statndard Chess960 .pgn
             if (fenstr is not None) and variant == "Fischerandom":
-                model.tags["Variant"] = "Fischerandom"
                 parts = fenstr.split()
                 parts[0] = parts[0].replace(".", "/").replace("0", "")
                 if len(parts) == 1:
@@ -317,40 +301,9 @@ class PGNFile (PgnBase):
                     parts.append("-")
                     parts.append("-")
                 fenstr = " ".join(parts)
-            elif variant == "Atomic":
-                model.tags["Variant"] = "Atomic"
-            elif variant == "Crazyhouse":
-                model.tags["Variant"] = "Crazyhouse"
-            elif variant == "Wildcastle":
-                model.tags["Variant"] = "Wildcastle"
-            elif variant == "Suicide":
-                model.tags["Variant"] = "Suicide"
-            elif variant == "Losers":
-                model.tags["Variant"] = "Losers"
-            elif variant == "Kingofthehill":
-                model.tags["Variant"] = "Kingofthehill"
 
-        if variant == "Fischerandom":
-            board = LBoard(FISCHERRANDOMCHESS)
-            model.variant = FischerRandomChess
-        elif variant == "Atomic":
-            board = LBoard(ATOMICCHESS)
-            model.variant = AtomicChess
-        elif variant == "Crazyhouse":
-            board = LBoard(CRAZYHOUSECHESS)
-            model.variant = CrazyhouseChess
-        elif variant == "Wildcastle":
-            board = LBoard(WILDCASTLECHESS)
-            model.variant = WildcastleChess
-        elif variant == "Suicide":
-            board = LBoard(SUICIDECHESS)
-            model.variant = SuicideChess
-        elif variant == "Losers":
-            board = LBoard(LOSERSCHESS)
-            model.variant = LosersChess
-        elif variant == "Kingofthehill":
-            board = LBoard(KINGOFTHEHILLCHESS)
-            model.variant = KingOfTheHillChess
+            model.variant = name2variant[variant]
+            board = LBoard(model.variant.variant)
         else:
             board = LBoard()
 
@@ -386,22 +339,7 @@ class PGNFile (PgnBase):
         def walk(node, path):
             if node.prev is None:
                 # initial game board
-                if variant == "Fischerandom":
-                    board = FRCBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Atomic":
-                    board = AtomicBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Crazyhouse":
-                    board = CrazyhouseBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Wildcastle":
-                    board = WildcastleBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Suicide":
-                    board = SuicideBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Losers":
-                    board = LosersBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Kingofthehill":
-                    board = KingOfTheHillBoard(setup=node.asFen(), lboard=node)
-                else:
-                    board = Board(setup=node.asFen(), lboard=node)
+                board = model.variant(setup=node.asFen(), lboard=node)
             else:
                 move = Move(node.lastMove)
                 try:

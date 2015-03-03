@@ -47,7 +47,7 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic,kingofthehill",
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic,kingofthehill,asean",
             "colors": 0,
             "ics": 0,
             "name": 0,
@@ -132,6 +132,8 @@ class PyChessCECP(PyChess):
                             self.board.iniAtomic()
                         elif lines[1] == "kingofthehill":
                             self.board.variant = KINGOFTHEHILLCHESS
+                        elif lines[1] == "asean":
+                            self.board.variant = ASEANCHESS
                 
                 elif lines[0] == "quit":
                     self.forced = True

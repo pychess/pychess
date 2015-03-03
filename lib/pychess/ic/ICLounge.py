@@ -34,7 +34,6 @@ from pychess.Players.ICPlayer import ICPlayer
 from pychess.Players.Human import Human
 from pychess.Savers import pgn, fen
 from pychess.Variants import variants
-from pychess.Variants.normal import NormalChess
 
 from .FICSObjects import *
 from .ICGameModel import ICGameModel
@@ -1828,7 +1827,7 @@ class SeekChallengeSection (Section):
                       VARIANTS_OTHER_NONSTANDARD: _("Other (non standard rules)"),
                       }
         ficsvariants = [v for k, v in variants.items() if k in VARIANT_GAME_TYPES and 
-                                                    v.board.variant not in UNSUPPORTED]
+                                                    v.variant not in UNSUPPORTED]
         groups = groupby(ficsvariants, attrgetter("variant_group"))
         pathToVariant = {}
         variantToPath = {}
@@ -1838,8 +1837,8 @@ class SeekChallengeSection (Section):
                 subiter = model.append(iter, (variant.name,))
                 path = model.get_path(subiter)
                 path = path.to_string()
-                pathToVariant[path] = variant.board.variant
-                variantToPath[variant.board.variant] = path
+                pathToVariant[path] = variant.variant
+                variantToPath[variant.variant] = path
         
         # this stops group names (eg "Shuffle") from being displayed in submenus
         def cellFunc (combo, cell, model, iter, data):

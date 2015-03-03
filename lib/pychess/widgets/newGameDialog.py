@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os.path
 import gettext
 import locale
@@ -34,7 +36,7 @@ from pychess.widgets import ImageMenu
 from pychess.Savers import fen, pgn
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Variants import variants
-from pychess.Variants.normal import NormalChess
+from pychess.Variants.normal import NormalBoard
 
 #===============================================================================
 # We init most dialog icons global to make them accessibly to the
@@ -254,9 +256,12 @@ class _GameInitializationMode:
                       VARIANTS_SHUFFLE: _("Shuffle"),
                       VARIANTS_OTHER: _("Other (standard rules)"),
                       VARIANTS_OTHER_NONSTANDARD: _("Other (non standard rules)"),
+                      VARIANTS_ASEAN: _("Asian variants"),
                       }
-        specialVariants = [v for v in variants.values() if v != NormalChess and 
-                                        v.board.variant not in UNSUPPORTED]
+        
+        specialVariants = [v for v in variants.values() if v != NormalBoard and 
+                                        v.variant not in UNSUPPORTED]
+        specialVariants = sorted(specialVariants, key=attrgetter("variant_group"))
         groups = groupby(specialVariants, attrgetter("variant_group"))
         pathToVariant = {}
         variantToPath = {}
@@ -265,8 +270,8 @@ class _GameInitializationMode:
             for variant in group:
                 subiter = model.append(iter, (variant.name,))
                 path = model.get_path(subiter)
-                pathToVariant[path.to_string()] = variant.board.variant
-                variantToPath[variant.board.variant] = path.to_string()                       
+                pathToVariant[path.to_string()] = variant.variant
+                variantToPath[variant.variant] = path.to_string()                       
             treeview.expand_row(Gtk.TreePath(i), True)
 
         selection = treeview.get_selection()
