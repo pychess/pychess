@@ -9,14 +9,12 @@ ASEANSTART = "rnbqkbnr/8/pppppppp/8/8/PPPPPPPP/8/RNBQKBNR w - - 0 1"
 
 class AseanBoard(Board):
     variant = ASEANCHESS
-    __desc__ = _("ASEAN: http://www.fide.com/images/stories/NEWS_2011/fide_news/Agenda_and_Annexes_2011/Annex_15_-_Proposed_Laws_of_ASEAN-Chess.pdf")
+    __desc__ = _("ASEAN: http://www.ncf-phil.org/downloadables/2014/May/Asean_chess/Laws_of_ASEAN_Chess_2011_Nov_26.doc")
     name = _("ASEAN")
     cecp_name = "asean"
     need_initial_board = True
     standard_rules = False
     variant_group = VARIANTS_ASEAN
-
-    PROMOTIONS = (QUEEN_PROMOTION,)
 
     def __init__ (self, setup=False, lboard=None):
         if setup is True:
