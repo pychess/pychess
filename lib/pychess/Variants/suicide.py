@@ -8,6 +8,14 @@ SUICIDESTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"
 
 class SuicideBoard(Board):
     variant = SUICIDECHESS
+    __desc__ = _("FICS suicide: http://www.freechess.org/Help/HelpFiles/suicide_chess.html")
+    name = _("Suicide")
+    cecp_name = "suicide"
+    need_initial_board = True
+    standard_rules = False
+    variant_group = VARIANTS_OTHER_NONSTANDARD
+
+    PROMOTIONS = (KING_PROMOTION, QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION)
 
     def __init__ (self, setup=False, lboard=None):
         if setup is True:
@@ -15,17 +23,10 @@ class SuicideBoard(Board):
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
 
-class SuicideChess:
-    __desc__ = _("FICS suicide: http://www.freechess.org/Help/HelpFiles/suicide_chess.html")
-    name = _("Suicide")
-    cecp_name = "suicide"
-    board = SuicideBoard
-    need_initial_board = True
-    standard_rules = False
-    variant_group = VARIANTS_OTHER_NONSTANDARD
 
 def pieceCount(board, color):
     return bin(board.friends[color]).count("1")
+
 
 if __name__ == '__main__':
     from pychess.Utils.Move import Move

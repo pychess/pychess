@@ -66,6 +66,10 @@ def evalMaterial (board, color):
         for piece in range(PAWN, KING+1):
             material[WHITE] += ATOMIC_PIECE_VALUES[piece] * pieceCount[WHITE][piece]
             material[BLACK] += ATOMIC_PIECE_VALUES[piece] * pieceCount[BLACK][piece]
+    elif board.variant in ASEAN_VARIANTS:
+        for piece in range(PAWN, KING+1):
+            material[WHITE] += ASEAN_PIECE_VALUES[piece] * pieceCount[WHITE][piece]
+            material[BLACK] += ASEAN_PIECE_VALUES[piece] * pieceCount[BLACK][piece]
     else:
         for piece in range(PAWN, KING):
             material[WHITE] += PIECE_VALUES[piece] * pieceCount[WHITE][piece]

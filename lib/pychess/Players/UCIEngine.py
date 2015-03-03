@@ -18,7 +18,7 @@ from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System import conf, fident
 from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
-from pychess.Variants.fischerandom import FischerRandomChess
+from pychess.Variants.fischerandom import FischerandomBoard
 
 from .ProtocolEngine import ProtocolEngine
 from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
@@ -271,7 +271,7 @@ class UCIEngine (ProtocolEngine):
         self._recordMoveList(model)
     
     def setOptionVariant (self, variant):
-        if variant == FischerRandomChess:
+        if variant == FischerandomBoard:
             assert self.hasOption("UCI_Chess960")
             self.setOption("UCI_Chess960", True)
         elif self.hasOption("UCI_Variant") and not variant.standard_rules:

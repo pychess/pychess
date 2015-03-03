@@ -177,20 +177,8 @@ class PgnBase(ChessFile):
         if variant:
             if "fischer" in variant.lower() or "960" in variant:
                 return "Fischerandom"
-            elif "atomic" in variant.lower():
-                return "Atomic"
-            elif "crazyhouse" in variant.lower():
-                return "Crazyhouse"
-            elif "wildcastle" in variant.lower():
-                return "Wildcastle"
-            elif "suicide" in variant.lower():
-                return "Suicide"
-            elif "losers" in variant.lower():
-                return "Losers"
-            elif "kingofthehill" in variant.lower().replace("-", ""):
-                return "Kingofthehill"
             else:
-                return ""
+                return variant.lower().capitalize()
         else:
             # FICS saves variant names in event tag
             event = self.get_event(no)
@@ -206,8 +194,6 @@ class PgnBase(ChessFile):
                 return "Suicide"
             elif "losers" in event.lower():
                 return "Losers"
-            elif "kingofthehill" in event.lower().replace("-", ""):
-                return "Kingofthehill"
             else:
                 return ""
 

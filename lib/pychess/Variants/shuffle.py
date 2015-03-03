@@ -8,6 +8,16 @@ from pychess.Utils.Board import Board
 
 class ShuffleBoard(Board):
     variant = SHUFFLECHESS
+    __desc__ = _("xboard nocastle: http://home.hccnet.nl/h.g.muller/engine-intf.html#8\n" +
+                 "FICS wild/2: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
+                 "* Random arrangement of the pieces behind the pawns\n" +
+                 "* No castling\n" +
+                 "* Black's arrangement mirrors white's")
+    name = _("Shuffle")
+    cecp_name = "nocastle"
+    need_initial_board = True
+    standard_rules = True
+    variant_group = VARIANTS_SHUFFLE
 
     def __init__ (self, setup=False, lboard=None):
         if setup is True:
@@ -22,19 +32,6 @@ class ShuffleBoard(Board):
         tmp = tmp + '/pppppppp/8/8/8/8/PPPPPPPP/' + tmp.upper() + ' w - - 0 1'
         
         return tmp
-
-class ShuffleChess:
-    __desc__ = _("xboard nocastle: http://home.hccnet.nl/h.g.muller/engine-intf.html#8\n" +
-                 "FICS wild/2: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
-                 "* Random arrangement of the pieces behind the pawns\n" +
-                 "* No castling\n" +
-                 "* Black's arrangement mirrors white's")
-    name = _("Shuffle")
-    cecp_name = "nocastle"
-    board = ShuffleBoard
-    need_initial_board = True
-    standard_rules = True
-    variant_group = VARIANTS_SHUFFLE
 
 
 if __name__ == '__main__':
