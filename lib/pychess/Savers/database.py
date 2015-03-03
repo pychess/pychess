@@ -14,7 +14,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
 from pychess.Database.model import metadata, event, site, player, pl1, pl2, game, annotator
-from pychess.Variants.fischerandom import FischerRandomChess
+from pychess.Variants.fischerandom import FischerandomBoard
 
 __label__ = _("PyChess database")
 __endings__ = "pdb",
@@ -37,7 +37,7 @@ def save (file, model, position=None):
     board = int(model.tags.get("Board")) if model.tags.get("Board") else None
     white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else None
     black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
-    variant = 1 if issubclass(model.variant, FischerRandomChess) else None
+    variant = 1 if issubclass(model.variant, FischerandomBoard) else None
     fen = model.boards[0].board.asFen()
     fen = fen if fen != FEN_START else None
     game_annotator = model.tags.get("Annotator")

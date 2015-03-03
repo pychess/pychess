@@ -94,6 +94,11 @@ def validateMove (board, move):
     
     # Other pieces are more easy
     else:
+        if board.variant in ASEAN_VARIANTS:
+            if fpiece == BISHOP:
+                fpiece = ASEAN_WBISHOP if board.color == WHITE else ASEAN_BBISHOP
+            elif fpiece == QUEEN:
+                fpiece = ASEAN_QUEEN
         if not moveArray[fpiece][fcord] & bitPosArray[tcord]:
             return False
     

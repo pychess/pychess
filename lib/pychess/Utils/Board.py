@@ -3,8 +3,8 @@ from __future__ import print_function
 from copy import copy
 
 from pychess.compat import basestring
-from .lutils.LBoard import LBoard
 from .lutils.bitboard import iterBits
+from .lutils.LBoard import LBoard
 from .lutils.lmove import RANK, FILE, FCORD, FLAG, PROMOTE_PIECE, toAN
 from .Piece import Piece
 from .Cord import Cord
@@ -28,6 +28,9 @@ class Board:
     RANKS = 8
     FILES = 8
     HOLDING_FILES = ((FILES+3, FILES+2, FILES+1), (-4, -3, -2))
+    PROMOTION_ZONE = ((A8, B8, C8, D8, E8, F8, G8, H8), \
+                      (A1, B1, C1, D1, E1, F1, G1, H1))
+    PROMOTIONS = (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION)
     
     def __init__ (self, setup=False, lboard=None):
         self.data = [dict(enumerate([None]*self.FILES)) for i in range(self.RANKS)]
@@ -402,7 +405,7 @@ class Board:
         
         if self.variant != NORMALCHESS:
             from pychess.Variants import variants
-            newBoard = variants[self.variant].board()
+            newBoard = variants[self.variant]()
         else:
             newBoard = Board()
         newBoard.board = lboard

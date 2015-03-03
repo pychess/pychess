@@ -22,9 +22,9 @@ from pychess.gfx import Pieces
 from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
-from pychess.Variants.blindfold import BlindfoldChess, HiddenPawnsChess, \
-                                       HiddenPiecesChess, AllWhiteChess
-from pychess.Variants.crazyhouse import CrazyhouseChess
+from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
+                                       HiddenPiecesBoard, AllWhiteBoard
+from pychess.Variants.crazyhouse import CrazyhouseBoard
 from . import preferencesDialog
 
 def intersects (r0, r1):
@@ -157,7 +157,7 @@ class BoardView (Gtk.DrawingArea):
         if self.preview:
             self.showCaptured = False
         else:
-            self.showCaptured = conf.get("showCaptured", False) or self.model.variant == CrazyhouseChess
+            self.showCaptured = conf.get("showCaptured", False) or self.model.variant == CrazyhouseBoard
         self._showEnpassant = False
         self.lastMove = None
         self.matrix = cairo.Matrix()
@@ -821,12 +821,12 @@ class BoardView (Gtk.DrawingArea):
         if piece is None:
             print("Trying to draw a None piece")
             return
-        if self.model.variant == BlindfoldChess:
+        if self.model.variant == BlindfoldBoard:
             return
-        elif self.model.variant == HiddenPawnsChess:
+        elif self.model.variant == HiddenPawnsBoard:
             if piece.piece == PAWN:
                 return
-        elif self.model.variant == HiddenPiecesChess:
+        elif self.model.variant == HiddenPiecesBoard:
             if piece.piece != PAWN:
                 return
         
@@ -847,7 +847,7 @@ class BoardView (Gtk.DrawingArea):
         context.transform(invmatrix)
         Pieces.drawPiece(  piece, context,
                     cx+CORD_PADDING, cy+CORD_PADDING,
-                    s-CORD_PADDING*2, allWhite=self.model.variant==AllWhiteChess)
+                    s-CORD_PADDING*2, allWhite=self.model.variant==AllWhiteBoard)
         context.transform(matrix)
     
     def drawPieces(self, context, r):
@@ -1377,7 +1377,7 @@ class BoardView (Gtk.DrawingArea):
     showCords = property(_get_showCords, _set_showCords)
 
     def _set_showCaptured (self, showCaptured):
-        self._showCaptured = showCaptured or self.model.variant == CrazyhouseChess
+        self._showCaptured = showCaptured or self.model.variant == CrazyhouseBoard
         files_for_holding = 6 if self._showCaptured else 0
         self.set_size_request(int(30*(self.FILES + files_for_holding)), 30*self.RANKS)
         self.redraw_canvas()

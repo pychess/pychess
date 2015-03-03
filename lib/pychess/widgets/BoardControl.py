@@ -17,7 +17,7 @@ from pychess.Utils.Move import Move, parseAny
 from pychess.Utils.const import *
 from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmovegen
-from pychess.Variants.crazyhouse import CrazyhouseChess
+from pychess.Variants.crazyhouse import CrazyhouseBoard
 
 from . import preferencesDialog
 from .PromotionDialog import PromotionDialog
@@ -104,13 +104,15 @@ class BoardControl (Gtk.EventBox):
         board = self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
-        
-        if promotion is None and board[cord0].sign == PAWN and cord1.y in (0, self.RANKS-1):
-            promotion = self.getPromotion()
-            if promotion is None:
-                # Put back pawn moved be d'n'd
-                self.view.runAnimation(redrawMisc = False)
-                return
+        if promotion is None and board[cord0].sign == PAWN and cord1.cord in board.PROMOTION_ZONE[color]:
+            if self.variant.variant in ASEAN_VARIANTS:
+                promotion = QUEEN
+            else:
+                promotion = self.getPromotion()
+                if promotion is None:
+                    # Put back pawn moved be d'n'd
+                    self.view.runAnimation(redrawMisc = False)
+                    return
         
         if cord0.x < 0 or cord0.x > self.FILES-1:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
@@ -370,7 +372,7 @@ class BoardState:
     def point2Cord (self, x, y):
         point = self.transPoint(x, y)
         p0, p1 = point[0], point[1]
-        if self.parent.variant == CrazyhouseChess:
+        if self.parent.variant == CrazyhouseBoard:
             if not -3 <= int(p0) <= self.FILES+2 or not 0 <= int(p1) <= self.RANKS-1:
                 return None
         else:
@@ -382,7 +384,7 @@ class BoardState:
         # Simple isSelectable method, disabling selecting cords out of bound etc
         if not cord:
             return False
-        if self.parent.variant == CrazyhouseChess:
+        if self.parent.variant == CrazyhouseBoard:
             if (not -3 <= cord.x <= self.FILES+2) or (not 0 <= cord.y <= self.RANKS-1):
                 return False
         else:

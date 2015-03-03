@@ -68,7 +68,7 @@ def save (file, model, position=None):
     file.close()
     
 def load (file):
-    return EpdFile ([line for line in map(str.strip, file) if line])
+    return EpdFile ([line.strip() for line in file if line])
 
 
 class EpdFile (ChessFile):
@@ -103,7 +103,7 @@ class EpdFile (ChessFile):
             fen += " " + opcodes["fmvn"]
         else: fen += " 1"
         
-        model.boards = [model.variant.board(setup=fen)]
+        model.boards = [model.variant(setup=fen)]
         model.variations = [model.boards]
         model.status = WAITING_TO_START
         

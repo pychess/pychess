@@ -16,7 +16,7 @@ from pychess.Utils.Move import Move, toSAN
 from pychess.Utils.eco import get_eco
 from pychess.Utils.Offer import Offer
 from pychess.Utils.TimeModel import TimeModel
-from pychess.Variants.normal import NormalChess
+from pychess.Variants.normal import NormalBoard
 from pychess.Variants import variants
 
 from .logic import getStatus, isClaimableDraw, playerHasMatingMaterial
@@ -110,12 +110,12 @@ class GameModel (GObject.GObject, Thread):
         "analysis_changed":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
     }
     
-    def __init__ (self, timemodel=None, variant=NormalChess):        
+    def __init__ (self, timemodel=None, variant=NormalBoard):        
         GObject.GObject.__init__(self)
         Thread.__init__(self, name=fident(self.run))
         self.daemon = True
         self.variant = variant
-        self.boards = [variant.board(setup=True)]
+        self.boards = [variant(setup=True)]
         
         self.moves = []
         self.scores = {}
@@ -193,11 +193,11 @@ class GameModel (GObject.GObject, Thread):
     
     @property
     def display_text (self):
-        if self.variant == NormalChess and not self.timed:
+        if self.variant == NormalBoard and not self.timed:
             return "[ " + _("Untimed") + " ]"
         else:
             t = "[ "
-            if self.variant != NormalChess:
+            if self.variant != NormalBoard:
                 t += self.variant.name + " "
             if self.timed:
                 t += self.timemodel.display_text + " "

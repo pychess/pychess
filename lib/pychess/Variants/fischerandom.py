@@ -13,8 +13,16 @@ from pychess.Utils.lutils.attack import *
 from pychess.Utils.lutils.lmove import FLAG, PROMOTE_PIECE
 
 
-class FRCBoard(Board):
+class FischerandomBoard(Board):
     variant = FISCHERRANDOMCHESS
+    __desc__ = _("http://en.wikipedia.org/wiki/Chess960\n" +
+                 "FICS wild/fr: http://www.freechess.org/Help/HelpFiles/wild.html")
+    name = _("Fischer Random")
+    cecp_name = "fischerandom"
+    need_initial_board = True
+    standard_rules = False
+    variant_group = VARIANTS_SHUFFLE
+
     
     def __init__ (self, setup=False, lboard=None):
         if setup == True:
@@ -68,18 +76,7 @@ class FRCBoard(Board):
         return tmp
 
 
-class FischerRandomChess:
-    __desc__ = _("http://en.wikipedia.org/wiki/Chess960\n" +
-                 "FICS wild/fr: http://www.freechess.org/Help/HelpFiles/wild.html")
-    name = _("Fischer Random")
-    cecp_name = "fischerandom"
-    board = FRCBoard
-    need_initial_board = True
-    standard_rules = False
-    variant_group = VARIANTS_SHUFFLE
-
-
 if __name__ == '__main__':
-    frcBoard = FRCBoard(True)
+    frcBoard = FischerandomBoard(True)
     for i in range(10):
         print(frcBoard.shuffle_start())
