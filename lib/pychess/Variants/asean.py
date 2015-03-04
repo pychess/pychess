@@ -54,7 +54,7 @@ class MakrukBoard(Board):
 
 class KambodianBoard(Board):
     variant = KAMBODIANCHESS
-    __desc__ = _("Kambodian: http://history.chess.free.fr/cambodian.htm")
+    __desc__ = _("Kambodian: http://www.khmerinstitute.org/culture/ok.html")
     name = _("Kambodian")
     cecp_name = "kambodian"
     need_initial_board = True
