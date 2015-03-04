@@ -43,7 +43,7 @@ EUROSHOGICHESS = range(32)
 
 ASEAN_VARIANTS = (ASEANCHESS, MAKRUKCHESS, KAMBODIANCHESS, AIWOKCHESS, SITTUYINCHESS)
 DROP_VARIANTS = (BUGHOUSECHESS, CRAZYHOUSECHESS, EUROSHOGICHESS)
-UNSUPPORTED = (BUGHOUSECHESS, MAKRUKCHESS, KAMBODIANCHESS, AIWOKCHESS, SITTUYINCHESS, EUROSHOGICHESS)
+UNSUPPORTED = (BUGHOUSECHESS, KAMBODIANCHESS, AIWOKCHESS, SITTUYINCHESS, EUROSHOGICHESS)
 
 # Chess variant groups
 VARIANTS_BLINDFOLD, VARIANTS_ODDS, VARIANTS_SHUFFLE, VARIANTS_OTHER, \
@@ -127,8 +127,11 @@ sliders = [ False, False, False, True, True, True, False, False, \
 
 # Piece signs
 reprSign = ["", "P", "N", "B", "R", "Q", "K"]
-chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN}
-chrU2Sign = {"K":KING, "Q": QUEEN, "R": ROOK, "B": BISHOP, "N": KNIGHT, "P":PAWN}
+reprSignMakruk = ["", "P", "N", "S", "R", "M", "K"]
+chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN,
+            "m": QUEEN, "s": BISHOP}
+chrU2Sign = {"K":KING, "Q": QUEEN, "R": ROOK, "B": BISHOP, "N": KNIGHT, "P":PAWN,
+            "M": QUEEN, "S": BISHOP}
 
 ################################################################################
 # Move values                                                                  #

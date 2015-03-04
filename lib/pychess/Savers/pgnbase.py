@@ -23,7 +23,7 @@ pattern = re.compile(r"""
     |(\))                # variation end
     |(\*|1-0|0-1|1/2)    # result (spec requires 1/2-1/2 for draw, but we want to tolerate simple 1/2 too)
     |(
-    ([a-hKQRBN][a-hxKQRBN1-8+#=\-]{1,6}
+    ([a-hKQRBNMS][a-hxKQRBNMS1-8+#=\-]{1,6}
     |[PNBRQ]@[a-h][1-8][+#]?  # crazyhouse drop move
     |o\-o(?:\-o)?
     |O\-O(?:\-O)?
