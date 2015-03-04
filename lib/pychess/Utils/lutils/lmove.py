@@ -120,7 +120,8 @@ def listToMoves (board, movstrs, type=None, testvalidate=False, ignoreErrors=Fal
 def toSAN (board, move, localRepr=False):
     """ Returns a Short/Abbreviated Algebraic Notation string of a move 
         The board should be prior to the move """
-    
+    reprSign = reprSignMakruk if board.variant == MAKRUKCHESS else reprSign
+
     # Has to be importet at calltime, as lmovegen imports lmove
     #from lmovegen import genAllMoves
 
@@ -168,7 +169,7 @@ def toSAN (board, move, localRepr=False):
     part1 = ""
     
     if fpiece != PAWN or flag == DROP:
-        if localRepr:
+        if localRepr and not board.variant == MAKRUKCHESS:
             part0 += localReprSign[fpiece]
         else:
             part0 += reprSign[fpiece]
@@ -218,7 +219,7 @@ def toSAN (board, move, localRepr=False):
     
     notat = part0 + part1
     if flag in PROMOTIONS:
-        if localRepr:
+        if localRepr and not board.variant == MAKRUKCHESS:
             notat += "="+localReprSign[PROMOTE_PIECE(flag)]
         else:
             notat += "="+reprSign[PROMOTE_PIECE(flag)]
@@ -238,7 +239,7 @@ def parseSAN (board, san):
     if notat == "--":
         return newMove(board.kings[color], board.kings[color], NULL_MOVE)
 
-    if notat[-1] in ("+", "#"):
+    if notat[-1] in "+#":
         notat = notat[:-1]
         # If '++' was used in place of #
         if notat[-1] == "+":
@@ -248,7 +249,7 @@ def parseSAN (board, san):
     
     # If last char is a piece char, we assue it the promote char
     c = notat[-1]
-    if c in ("K", "Q", "R", "B", "N", "k", "q", "r", "b", "n"):
+    if c in "KQRBNSMkqrbnsm":
         c = c.lower()
         if c == "k" and board.variant != SUICIDECHESS:
             raise ParsingError(san, _("invalid promoted piece"), board.asFen())
@@ -286,12 +287,12 @@ def parseSAN (board, san):
             piece = chrU2Sign[notat[0]]
         return newMove(piece, tcord, DROP)
     
-    if notat[0] in ("Q", "R", "B", "K", "N"):
+    if notat[0] in "QRBKNSM":
         piece = chrU2Sign[notat[0]]
         notat = notat[1:]
     else:
         piece = PAWN
-        if notat[-1] in ("1", "8") and flag == NORMAL_MOVE:
+        if notat[-1] in "18" and flag == NORMAL_MOVE:
             raise ParsingError(
                     san, _("promotion move without promoted piece is incorrect"), board.asFen())
     
@@ -441,6 +442,8 @@ def toAN (board, move, short=False, castleNotation=CASTLE_SAN):
         
         short -- returns the short variant, e.g. f7f8q rather than f7f8=Q
     """
+    reprSign = reprSignMakruk if board.variant == MAKRUKCHESS else reprSign
+
     fcord = (move >> 6) & 63
     tcord = move & 63
     flag = move >> 12
@@ -483,8 +486,8 @@ def parseAN (board, an):
     
     flag = NORMAL_MOVE
 
-    if len(an) > 4 and not an[-1] in ("Q", "R", "B", "N", "q", "r", "b", "n"):
-        if board.variant != SUICIDECHESS or board.variant == SUICIDECHESS and not an[-1] in ("K", "k"):
+    if len(an) > 4 and not an[-1] in "QRBNMSqrbnms":
+        if board.variant != SUICIDECHESS or board.variant == SUICIDECHESS and not an[-1] in "Kk":
             raise ParsingError(an, "invalid promoted piece", board.asFen())
 
     if len(an) == 5:
@@ -512,7 +515,7 @@ def parseAN (board, an):
     elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
-    elif board.arBoard[fcord] == PAWN and an[3] in ("1", "8"):
+    elif board.arBoard[fcord] == PAWN and an[3] in "18":
             raise ParsingError(
                     an, _("promotion move without promoted piece is incorrect"), board.asFen())
 

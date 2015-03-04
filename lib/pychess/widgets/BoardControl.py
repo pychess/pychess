@@ -16,6 +16,7 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move, parseAny
 from pychess.Utils.const import *
 from pychess.Utils.logic import validate
+from pychess.Utils.lutils import lmove
 from pychess.Utils.lutils import lmovegen
 from pychess.Variants.crazyhouse import CrazyhouseBoard
 
@@ -105,8 +106,8 @@ class BoardControl (Gtk.EventBox):
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
         if promotion is None and board[cord0].sign == PAWN and cord1.cord in board.PROMOTION_ZONE[color]:
-            if self.variant.variant in ASEAN_VARIANTS:
-                promotion = QUEEN
+            if len(self.variant.PROMOTIONS) == 1:
+                promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
             else:
                 promotion = self.getPromotion()
                 if promotion is None:

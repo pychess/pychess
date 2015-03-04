@@ -202,7 +202,10 @@ class LBoard:
                     promoted = True
                 else:
                     color = char.islower() and BLACK or WHITE
-                    piece = reprSign.index(char.upper())
+                    if self.variant == MAKRUKCHESS:
+                        piece = reprSignMakruk.index(char.upper())
+                    else:
+                        piece = reprSign.index(char.upper())
                     self._addPiece(cord, piece, color)
                     self.pieceCount[color][piece] += 1
                     if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS) and promoted:
@@ -726,7 +729,10 @@ class LBoard:
                     if empty > 0:
                         fenstr.append(str(empty))
                         empty = 0
-                    sign = reprSign[piece]
+                    if self.variant == MAKRUKCHESS:
+                        sign = reprSignMakruk[piece]
+                    else:
+                        sign = reprSign[piece]
                     if bitPosArray[(7-r)*8+i] & self.friends[WHITE]:
                         sign = sign.upper()
                     else: sign = sign.lower()
