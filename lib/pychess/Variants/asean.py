@@ -26,7 +26,7 @@ class AseanBoard(Board):
 #######################
 # Makruk, or Thai chess
 #######################
-MAKRUKSTART = "rnbkqbnr/8/pppppppp/8/8/PPPPPPPP/8/RNBQKBNR w - - 0 1"
+MAKRUKSTART = "rnskmsnr/8/pppppppp/8/8/PPPPPPPP/8/RNSMKSNR w - - 0 1"
 
 class MakrukBoard(Board):
     variant = MAKRUKCHESS
@@ -76,6 +76,8 @@ class KambodianBoard(Board):
 # Ai-Wok Makruk
 ###############
 
+AIWOKSTART = "rnskasnr/8/pppppppp/8/8/PPPPPPPP/8/RNSAKSNR w - - 0 1"
+
 class AiWokBoard(Board):
     variant = AIWOKCHESS
     __desc__ = _("Ai-Wok: http://www.open-aurec.com/wbforum/viewtopic.php?p=199364&sid=20963a1de2c164050de019e5ed6bf7c4#p199364")
@@ -91,7 +93,7 @@ class AiWokBoard(Board):
 
     def __init__ (self, setup=False, lboard=None):
         if setup is True:
-            Board.__init__(self, setup=MAKRUKSTART, lboard=lboard)
+            Board.__init__(self, setup=AIWOKSTART, lboard=lboard)
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
 
@@ -99,7 +101,7 @@ class AiWokBoard(Board):
 ############################
 # Sittuyin, or Myanmar Chess
 ############################
-SITTUYINSTART = "8/8/4pppp/pppp4/PPPP4/4PPPP/8/8/rrnnbbqkRRNNBBQK w - - 0 1"
+SITTUYINSTART = "8/8/4pppp/pppp4/PPPP4/4PPPP/8/8/rrnnssmkRRNNSSQM w - - 0 1"
 
 class SittuyinBoard(Board):
     variant = SITTUYINCHESS
