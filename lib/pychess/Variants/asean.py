@@ -26,7 +26,7 @@ class AseanBoard(Board):
 #######################
 # Makruk, or Thai chess
 #######################
-MAKRUKSTART = "rnskmsnr/8/pppppppp/8/8/PPPPPPPP/8/RNSMKSNR w - - 0 1"
+MAKRUKSTART = "rnsmksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKMSNR w - - 0 1"
 
 class MakrukBoard(Board):
     variant = MAKRUKCHESS
@@ -76,7 +76,7 @@ class KambodianBoard(Board):
 # Ai-Wok Makruk
 ###############
 
-AIWOKSTART = "rnskasnr/8/pppppppp/8/8/PPPPPPPP/8/RNSAKSNR w - - 0 1"
+AIWOKSTART = "rnsaksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKASNR w - - 0 1"
 
 class AiWokBoard(Board):
     variant = AIWOKCHESS
