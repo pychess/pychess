@@ -19,6 +19,7 @@ from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN, ParsingError
 from pychess.Utils.lutils import lsearch
 from pychess.Utils.lutils.validator import validateMove
 from pychess.System.Log import log
+from pychess.Variants.asean import ASEANSTART, MAKRUKSTART
 
 
 class PyChessCECP(PyChess):
@@ -133,9 +134,11 @@ class PyChessCECP(PyChess):
                         elif lines[1] == "kingofthehill":
                             self.board.variant = KINGOFTHEHILLCHESS
                         elif lines[1] == "asean":
-                            self.board.variant = ASEANCHESS
+                            self.board = LBoard(ASEANCHESS)
+                            self.board.applyFen(ASEANSTART)
                         elif lines[1] == "makruk":
-                            self.board.variant = MAKRUKCHESS
+                            self.board = LBoard(MAKRUKCHESS)
+                            self.board.applyFen(MAKRUKSTART)
                 
                 elif lines[0] == "quit":
                     self.forced = True
