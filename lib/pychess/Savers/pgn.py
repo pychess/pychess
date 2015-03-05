@@ -18,7 +18,7 @@ from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils import prettyPrintScore
-from pychess.Variants import name2variant
+from pychess.Variants import name2variant, NormalBoard
 from pychess.widgets.ChessClock import formatTime
 
 from .pgnbase import PgnBase, pgn_load
@@ -268,24 +268,28 @@ class PGNFile (PgnBase):
         for tag in ('Annotator', 'ECO', 'EventDate', 'Time', 'WhiteElo', 'BlackElo', 'TimeControl'):
             if self._getTag(gameno, tag):
                 model.tags[tag] = self._getTag(gameno, tag)
-        
+            else:
+                model.tags[tag] = ""
+
         # TODO: enable this when NewGameDialog is altered to give user option of
         # whether to use PGN's clock time, or their own custom time. Also,
         # dialog should set+insensitize variant based on the variant of the
         # game selected in the dialog
-#        if model.timed:
-#            for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
-#                if self._getTag(gameno, tag):
-#                    try:
-#                        ms = parseClockTimeTag(self._getTag(gameno, tag))
-#                        model.timemodel.intervals[color][0] = ms / 1000
-#                    except ValueError: 
-#                        raise LoadingError( \
-#                            "Error parsing '%s' Header for gameno %s" % (tag, gameno))
-#            if model.tags['TimeControl']:
-#                minutes, gain = parseTimeControlTag(model.tags['TimeControl'])
-#                model.timemodel.minutes = minutes
-#                model.timemodel.gain = gain
+        if model.tags['TimeControl']:
+            secs, gain = parseTimeControlTag(model.tags['TimeControl'])
+            model.timed = True
+            model.timemodel.secs = secs
+            model.timemodel.gain = gain
+            model.timemodel.minutes = secs / 60
+
+            for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
+                if self._getTag(gameno, tag):
+                    try:
+                        ms = parseClockTimeTag(self._getTag(gameno, tag))
+                        model.timemodel.intervals[color][0] = ms / 1000
+                    except ValueError: 
+                        raise LoadingError( \
+                            "Error parsing '%s' Header for gameno %s" % (tag, gameno))
         
         fenstr = self._getTag(gameno, "FEN")
         variant = self.get_variant(gameno)
@@ -305,6 +309,7 @@ class PGNFile (PgnBase):
             model.variant = name2variant[variant]
             board = LBoard(model.variant.variant)
         else:
+            model.variant = NormalBoard
             board = LBoard()
 
         if fenstr:

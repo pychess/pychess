@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
+from __future__ import print_function
 
 import os
 from gi.repository import Gtk, GObject
-from pychess.Utils.const import reprResult, BLACK, FEN_EMPTY
+
+from pychess.System import conf
+from pychess.Utils.const import reprResult, BLACK, FEN_EMPTY, NORMALCHESS
 from pychess.Utils.Board import Board
 from pychess.System.protoopen import protoopen, splitUri
 from pychess.widgets.BoardView import BoardView
@@ -101,6 +104,9 @@ class BoardPreview:
         
         self.lastSel = -1 # The row that was last selected
         self.list.set_cursor((0,))
+
+        self.widgets["whitePlayerCombobox"].set_active(0)
+        self.widgets["blackPlayerCombobox"].set_active(0)
     
     def on_selection_changed (self, selection):
         iter = selection.get_selected()[1]
@@ -125,6 +131,25 @@ class BoardPreview:
                 d.format_secondary_text (e.args[1])
                 d.connect("response", lambda d,a: d.hide())
                 d.show()
+
+            if self.gamemodel.variant.variant == NORMALCHESS:
+                radiobutton = self.widgets["playNormalRadio"]
+                radiobutton.set_active(True)
+            else:
+                radiobutton = self.widgets["playVariant1Radio"]
+                radiobutton.set_active(True)
+                conf.set("ngvariant1", self.gamemodel.variant.variant)
+                radiobutton.set_label("%s" % self.gamemodel.variant.name)
+
+            if self.gamemodel.tags["TimeControl"]:
+                radiobutton = self.widgets["blitzRadio"]
+                radiobutton.set_active(True)
+                conf.set("ngblitz min", self.gamemodel.timemodel.minutes)
+                conf.set("ngblitz gain", self.gamemodel.timemodel.gain)
+            else:
+                radiobutton = self.widgets["notimeRadio"]
+                radiobutton.set_active(True)
+                
             self.boardview.lastMove = None
             self.boardview._shown = self.gamemodel.lowply
             last = self.gamemodel.ply
