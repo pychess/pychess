@@ -76,7 +76,7 @@ class Board:
             if self.board.kings[BLACK] != -1:
                 self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
             
-            if self.variant == CRAZYHOUSECHESS:
+            if self.variant in DROP_VARIANTS:
                 for color in (BLACK, WHITE):
                     holding = self.board.holding[color]
                     for piece in holding:
@@ -156,6 +156,7 @@ class Board:
             moved.append( (self[cord0], cord0) )
             # add all captured pieces to "new" list to enforce repainting them after a possible reordering
             new = self.getHoldingPieces(self.color)
+            dead = new
             return moved, new, dead
 
         if self.variant == ATOMICCHESS and (self[cord1] or move.flag == ENPASSANT):
