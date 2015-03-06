@@ -143,6 +143,15 @@ def genPieceMoves(board, piece, tcord):
 
 def genAllMoves (board, drops=True):
     from pychess.Variants import variants
+
+    if drops and board.variant in DROP_VARIANTS:
+        for move in genDrops(board):
+            yield move
+
+    # In sittuyin you have to place your pieces before any real move
+    if board.variant == SITTUYINCHESS:
+        if board.plyCount < 16:
+            return 
     
     blocker = board.blocker
     notblocker = ~blocker
@@ -160,6 +169,8 @@ def genAllMoves (board, drops=True):
     kings = board.boards[board.color][KING]
 
     PROMOTIONS = variants[board.variant].PROMOTIONS
+    if board.variant == SITTUYINCHESS and queens:
+        PROMOTIONS = (NORMAL_MOVE,)
     
     # Knights
     knightMoves = moveArray[KNIGHT]
@@ -317,14 +328,17 @@ def genAllMoves (board, drops=True):
             else:
                 yield newMove (cord+9, cord)
     
+    # Sittuyin in place promotions
+    if board.variant == SITTUYINCHESS and pawns and not queens:
+        for cord in iterBits(pawns):
+            if cord in promotion_zone:
+                yield newMove(cord, cord, QUEEN_PROMOTION)
+    
     # Castling
     if kings:
         for move in genCastles(board):
             yield move
 
-    if drops and board.variant == CRAZYHOUSECHESS:
-        for move in genDrops(board):
-            yield move
 
 ################################################################################
 #   Generate capturing moves                                                   #
@@ -349,6 +363,8 @@ def genCaptures (board):
     kings = board.boards[board.color][KING]
     
     PROMOTIONS = variants[board.variant].PROMOTIONS
+    if board.variant == SITTUYINCHESS and queens:
+        PROMOTIONS = (NORMAL_MOVE,)
 
     # Knights
     knightMoves = moveArray[KNIGHT]
@@ -491,6 +507,8 @@ def genCheckEvasions (board):
     if bin(checkers).count("1") == 1:
 
         PROMOTIONS = variants[board.variant].PROMOTIONS
+        if board.variant == SITTUYINCHESS and board.boards[board.color][QUEEN]:
+            PROMOTIONS = (NORMAL_MOVE,)
         promotion_zone = variants[board.variant].PROMOTION_ZONE[color]
 
         # Captures of checking pieces (except by king, which we will test later)
@@ -578,6 +596,20 @@ def genDrops (board):
         if holding[piece] > 0:
             for cord, elem in enumerate(arBoard):
                 if elem == EMPTY:
+                    if board.variant == SITTUYINCHESS:
+                        if color == WHITE:
+                            if cord in (A3, B3, C3, D3) or cord > H3:
+                                continue
+                            if piece == ROOK and cord > H1 or \
+                               piece != ROOK and cord <= H1:
+                                continue
+                        else:
+                            if cord in (E6, F6, G6, H6) or cord < A6:
+                                continue
+                            if piece == ROOK and cord < A8 or \
+                               piece != ROOK and cord >= A8:
+                                continue
+
                     if piece == PAWN:
                         if cord >= 56 or cord <= 7:
                             continue

@@ -101,7 +101,7 @@ class AiWokBoard(Board):
 ############################
 # Sittuyin, or Myanmar Chess
 ############################
-SITTUYINSTART = "8/8/4pppp/pppp4/PPPP4/4PPPP/8/8/rrnnssmkRRNNSSQM w - - 0 1"
+SITTUYINSTART = "8/8/4pppp/pppp4/4PPPP/PPPP4/8/8/rrnnssmkRRNNSSMK w - - 0 1"
 
 class SittuyinBoard(Board):
     variant = SITTUYINCHESS
@@ -112,8 +112,8 @@ class SittuyinBoard(Board):
     standard_rules = False
     variant_group = VARIANTS_ASEAN
 
-    PROMOTION_ZONE = ((A6, B6, C6, D6, E6, F6, G6, H6), \
-                      (A3, B3, C3, D3, E3, F3, G3, H3))
+    PROMOTION_ZONE = ((A8, B7, C6, D5, E5, F6, G7, H8), \
+                      (A1, B2, C3, D4, E4, F3, G2, H1))
     PROMOTIONS = (QUEEN_PROMOTION,)
 
     def __init__ (self, setup=False, lboard=None):

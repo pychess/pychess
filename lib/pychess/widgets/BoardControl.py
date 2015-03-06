@@ -18,7 +18,6 @@ from pychess.Utils.const import *
 from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmove
 from pychess.Utils.lutils import lmovegen
-from pychess.Variants.crazyhouse import CrazyhouseBoard
 
 from . import preferencesDialog
 from .PromotionDialog import PromotionDialog
@@ -100,21 +99,29 @@ class BoardControl (Gtk.EventBox):
         # Game end can change cord0 to None while dragging a piece
         if cord0 is None:
             return
-            
         color = self.view.model.boards[-1].color
         board = self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
         if promotion is None and board[cord0].sign == PAWN and cord1.cord in board.PROMOTION_ZONE[color]:
             if len(self.variant.PROMOTIONS) == 1:
-                promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
+                if self.variant.variant == SITTUYINCHESS and board.board.boards[color][QUEEN]:
+                    promotion = None
+                else:
+                    if cord0 == cord1:
+                        promotion = self.getPromotion()
+                        if promotion is None:
+                            # Put back pawn moved be d'n'd
+                            self.view.runAnimation(redrawMisc = False)
+                            return
+                    else:
+                        promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
             else:
                 promotion = self.getPromotion()
                 if promotion is None:
                     # Put back pawn moved be d'n'd
                     self.view.runAnimation(redrawMisc = False)
                     return
-        
         if cord0.x < 0 or cord0.x > self.FILES-1:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
         else:
@@ -288,12 +295,14 @@ class BoardControl (Gtk.EventBox):
         return self.currentState.leave(event.x, event.y)
 
     def key_pressed (self, keyname):
-        if keyname in "PNBRQKOox12345678abcdefgh":
+        if keyname in "PNBRQKMFSOox12345678abcdefgh":
             self.keybuffer += keyname
         elif keyname == "minus":
             self.keybuffer += "-"
         elif keyname == "at":
             self.keybuffer += "@"
+        elif keyname == "equal":
+            self.keybuffer += "="
         elif keyname == "Return":
             color = self.view.model.boards[-1].color
             board = self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
@@ -373,7 +382,7 @@ class BoardState:
     def point2Cord (self, x, y):
         point = self.transPoint(x, y)
         p0, p1 = point[0], point[1]
-        if self.parent.variant == CrazyhouseBoard:
+        if self.parent.variant.variant in DROP_VARIANTS:
             if not -3 <= int(p0) <= self.FILES+2 or not 0 <= int(p1) <= self.RANKS-1:
                 return None
         else:
@@ -385,7 +394,7 @@ class BoardState:
         # Simple isSelectable method, disabling selecting cords out of bound etc
         if not cord:
             return False
-        if self.parent.variant == CrazyhouseBoard:
+        if self.parent.variant.variant in DROP_VARIANTS:
             if (not -3 <= cord.x <= self.FILES+2) or (not 0 <= cord.y <= self.RANKS-1):
                 return False
         else:

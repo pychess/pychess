@@ -141,7 +141,7 @@ class BoardPreview:
                 conf.set("ngvariant1", self.gamemodel.variant.variant)
                 radiobutton.set_label("%s" % self.gamemodel.variant.name)
 
-            if self.gamemodel.tags["TimeControl"]:
+            if self.gamemodel.tags.get("TimeControl"):
                 radiobutton = self.widgets["blitzRadio"]
                 radiobutton.set_active(True)
                 conf.set("ngblitz min", self.gamemodel.timemodel.minutes)

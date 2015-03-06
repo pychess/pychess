@@ -24,7 +24,6 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
 from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
                                        HiddenPiecesBoard, AllWhiteBoard
-from pychess.Variants.crazyhouse import CrazyhouseBoard
 from . import preferencesDialog
 
 def intersects (r0, r1):
@@ -157,7 +156,8 @@ class BoardView (Gtk.DrawingArea):
         if self.preview:
             self.showCaptured = False
         else:
-            self.showCaptured = conf.get("showCaptured", False) or self.model.variant == CrazyhouseBoard
+            self.showCaptured = conf.get("showCaptured", False) or \
+                                self.model.variant.variant in DROP_VARIANTS
         self._showEnpassant = False
         self.lastMove = None
         self.matrix = cairo.Matrix()
@@ -682,7 +682,8 @@ class BoardView (Gtk.DrawingArea):
             self.drawLastMove (context, r)
         
         if self.model.status == KILLED:
-            self.drawCross (context, r)
+            pass
+            #self.drawCross (context, r)
         
         # Unselect to mark redrawn areas - for debugging purposes
         #context.transform(self.invmatrix)
@@ -1377,7 +1378,7 @@ class BoardView (Gtk.DrawingArea):
     showCords = property(_get_showCords, _set_showCords)
 
     def _set_showCaptured (self, showCaptured):
-        self._showCaptured = showCaptured or self.model.variant == CrazyhouseBoard
+        self._showCaptured = showCaptured or self.model.variant.variant in DROP_VARIANTS
         files_for_holding = 6 if self._showCaptured else 0
         self.set_size_request(int(30*(self.FILES + files_for_holding)), 30*self.RANKS)
         self.redraw_canvas()
