@@ -9,8 +9,12 @@ from pychess.Variants.atomic import kingExplode
 from .ldata import *
 
 def getCaptureValue (board, move):
-    mpV = PIECE_VALUES[board.arBoard[move>>6 & 63]]
-    cpV = PIECE_VALUES[board.arBoard[move & 63]]
+    if board.variant in ASEAN_VARIANTS:
+        mpV = ASEAN_PIECE_VALUES[board.arBoard[move>>6 & 63]]
+        cpV = ASEAN_PIECE_VALUES[board.arBoard[move & 63]]
+    else:
+        mpV = PIECE_VALUES[board.arBoard[move>>6 & 63]]
+        cpV = PIECE_VALUES[board.arBoard[move & 63]]
     if mpV < cpV:
         return cpV - mpV
     else:
@@ -49,10 +53,16 @@ def getMoveValue (board, table, depth, move):
             if kingExplode(board, move, board.color):
                 return MATE_VALUE
         # We add some extra to ensure also bad captures will be searched early
-        return PIECE_VALUES[tpiece] - PIECE_VALUES[fpiece] + 1000
+        if board.variant in ASEAN_VARIANTS:
+            return ASEAN_PIECE_VALUES[tpiece] - PIECE_VALUES[fpiece] + 1000
+        else:
+            return PIECE_VALUES[tpiece] - PIECE_VALUES[fpiece] + 1000
     
     if flag in PROMOTIONS:
-        return PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
+        if board.variant in ASEAN_VARIANTS:
+            return ASEAN_PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
+        else:
+            return PIECE_VALUES[flag-3] - PAWN_VALUE + 1000
     
     if flag == DROP:
         return PIECE_VALUES[tpiece] + 1000
@@ -71,8 +81,11 @@ def getMoveValue (board, table, depth, move):
         print(fcord, tcord)
         print(board)
     
-    score = positionValues[fpiece][board.color][tcord] - \
-            positionValues[fpiece][board.color][fcord]
+    if board.variant in ASEAN_VARIANTS:
+        score = 0
+    else:
+        score = positionValues[fpiece][board.color][tcord] - \
+                positionValues[fpiece][board.color][fcord]
     
     # History heuristic
     score += table.getButterfly(move)

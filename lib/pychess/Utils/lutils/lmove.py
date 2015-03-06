@@ -167,6 +167,8 @@ def toSAN (board, move, localRepr=False):
     if fpiece != PAWN or flag == DROP:
         if board.variant == MAKRUKCHESS:
             part0 += reprSignMakruk[fpiece]
+        elif board.variant == SITTUYINCHESS:
+            part0 += reprSignSittuyin[fpiece]
         elif localRepr:
             part0 += localReprSign[fpiece]
         else:
@@ -211,14 +213,17 @@ def toSAN (board, move, localRepr=False):
                 part0 += reprFile[x]
     
     if tpiece != EMPTY or flag == ENPASSANT:
-        part1 = "x" + part1
-        if fpiece == PAWN:
-            part0 += reprFile[FILE(fcord)]
+        if not (board.variant == SITTUYINCHESS and fcord == tcord):
+            part1 = "x" + part1
+            if fpiece == PAWN:
+                part0 += reprFile[FILE(fcord)]
     
     notat = part0 + part1
     if flag in PROMOTIONS:
         if board.variant == MAKRUKCHESS:
             notat += "="+reprSignMakruk[PROMOTE_PIECE(flag)]
+        elif board.variant == SITTUYINCHESS:
+            notat += "="+reprSignSittuyin[PROMOTE_PIECE(flag)]
         elif localRepr:
             notat += "="+localReprSign[PROMOTE_PIECE(flag)]
         else:
@@ -249,21 +254,20 @@ def parseSAN (board, san):
     
     # If last char is a piece char, we assue it the promote char
     c = notat[-1]
-    if c in "KQRBNSMkqrbnsm":
+    if c in "KQRBNSMFkqrbnsmf.":
         c = c.lower()
         if c == "k" and board.variant != SUICIDECHESS:
             raise ParsingError(san, _("invalid promoted piece"), board.asFen())
+        elif c == "." and board.variant in (MAKRUKCHESS, SITTUYINCHESS):
+            # temporary hack for xboard bug
+            flag = QUEEN_PROMOTION
+        else:
+            flag = chr2Sign[c] + 2
             
-        flag = chr2Sign[c] + 2
         if notat[-2] == "=":
             notat = notat[:-2]
         else: notat = notat[:-1]
     
-    if board.variant == MAKRUKCHESS:
-        if notat[-1] == "=":
-            notat = notat[:-1]
-            flag = QUEEN_PROMOTION
-            
     if len(notat) < 2:
         raise ParsingError(san, _("the move needs a piece and a cord"), board.asFen())
     
@@ -292,7 +296,7 @@ def parseSAN (board, san):
             piece = chrU2Sign[notat[0]]
         return newMove(piece, tcord, DROP)
     
-    if notat[0] in "QRBKNSM":
+    if notat[0] in "QRBKNSMF":
         piece = chrU2Sign[notat[0]]
         notat = notat[1:]
     else:
@@ -356,6 +360,9 @@ def parseSAN (board, san):
             else:
                 pawns = board.boards[BLACK][PAWN]
                 fcord = tcord+16 if RANK(tcord)==4 and not (pawns & fileBits[FILE(tcord)] & rankBits[5]) else tcord+8
+            if board.variant == SITTUYINCHESS and flag == QUEEN_PROMOTION and \
+                (pawns & fileBits[FILE(tcord)] & rankBits[RANK(tcord)]):
+                return newMove(tcord, tcord, flag)
         return newMove(fcord, tcord, flag)
     else:
         if board.pieceCount[color][piece] == 1:
@@ -461,7 +468,10 @@ def toAN (board, move, short=False, castleNotation=CASTLE_SAN):
         # No treatment needed for CASTLE_KK
     
     if flag == DROP:
-        s = "%s@%s" % (reprSign[fcord], reprCord[tcord])
+        if board.variant == SITTUYINCHESS:
+            s = "%s@%s" % (reprSignSittuyin[fcord], reprCord[tcord])
+        else:
+            s = "%s@%s" % (reprSign[fcord], reprCord[tcord])
     else:
         s = reprCord[fcord] + reprCord[tcord]
     
@@ -469,11 +479,15 @@ def toAN (board, move, short=False, castleNotation=CASTLE_SAN):
         if short:
             if board.variant == MAKRUKCHESS:
                 s += reprSignMakruk[PROMOTE_PIECE(flag)].lower()
+            elif board.variant == SITTUYINCHESS:
+                s += reprSignSittuyin[PROMOTE_PIECE(flag)].lower()
             else:
                 s += reprSign[PROMOTE_PIECE(flag)].lower()
         else:
             if board.variant == MAKRUKCHESS:
                 s += "=" + reprSignMakruk[PROMOTE_PIECE(flag)]
+            elif board.variant == SITTUYINCHESS:
+                s += "=" + reprSignSittuyin[PROMOTE_PIECE(flag)]
             else:
                 s += "=" + reprSign[PROMOTE_PIECE(flag)]
     return s
@@ -496,7 +510,7 @@ def parseAN (board, an):
     
     flag = NORMAL_MOVE
 
-    if len(an) > 4 and not an[-1] in "QRBNMSqrbnms":
+    if len(an) > 4 and not an[-1] in "QRBNMSFqrbnmsf":
         if board.variant != SUICIDECHESS or board.variant == SUICIDECHESS and not an[-1] in "Kk":
             raise ParsingError(an, "invalid promoted piece", board.asFen())
 
@@ -526,12 +540,17 @@ def parseAN (board, an):
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
     elif board.arBoard[fcord] == PAWN:
-        if board.variant == MAKRUKCHESS:
+        if board.variant in (MAKRUKCHESS, SITTUYINCHESS):
             from pychess.Variants import variants
             bpromotion_zone = variants[board.variant].PROMOTION_ZONE[BLACK]
             wpromotion_zone = variants[board.variant].PROMOTION_ZONE[WHITE]
             if tcord in bpromotion_zone or tcord in wpromotion_zone:
-                flag = QUEEN_PROMOTION
+                if board.variant == SITTUYINCHESS:
+                    queens = board.boards[board.color][QUEEN]
+                    if not queens:
+                        flag = QUEEN_PROMOTION
+                else:
+                    flag = QUEEN_PROMOTION
         elif an[3] in "18":
             raise ParsingError(
                     an, _("promotion move without promoted piece is incorrect"), board.asFen())
@@ -546,6 +565,7 @@ san2WhiteFanDic = {
     ord(u"K"): FAN_PIECES[WHITE][KING],
     ord(u"Q"): FAN_PIECES[WHITE][QUEEN],
     ord(u"M"): FAN_PIECES[WHITE][QUEEN],
+    ord(u"F"): FAN_PIECES[WHITE][QUEEN],
     ord(u"R"): FAN_PIECES[WHITE][ROOK],
     ord(u"B"): FAN_PIECES[WHITE][BISHOP],
     ord(u"S"): FAN_PIECES[WHITE][BISHOP],
@@ -558,6 +578,7 @@ san2BlackFanDic = {
     ord(u"K"): FAN_PIECES[BLACK][KING],
     ord(u"Q"): FAN_PIECES[BLACK][QUEEN],
     ord(u"M"): FAN_PIECES[BLACK][QUEEN],
+    ord(u"F"): FAN_PIECES[BLACK][QUEEN],
     ord(u"R"): FAN_PIECES[BLACK][ROOK],
     ord(u"B"): FAN_PIECES[BLACK][BISHOP],
     ord(u"S"): FAN_PIECES[BLACK][BISHOP],

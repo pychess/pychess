@@ -771,6 +771,7 @@ class CECPEngine (ProtocolEngine):
                         try:
                             move = parseAny(self.board, movestr)
                         except ParsingError as e:
+                            log.info("__parseLine: ParsingError engine move: %s %s" % (movestr, self.board), extra={"task":self.defname})
                             self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                             return
                         
@@ -778,8 +779,10 @@ class CECPEngine (ProtocolEngine):
                             self.board = None
                             self.returnQueue.put(move)
                             return
-                        self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
-                        return
+                        else:
+                            log.info("__parseLine: can't validate engine move: %s %s" % (movestr, self.board), extra={"task":self.defname})
+                            self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
+                            return
                 finally:
                     log.debug("__parseLine(): releasing self.boardLock", extra={"task":self.defname})
                     self.boardLock.release()

@@ -28,8 +28,8 @@ class LBoard:
     fin_kings = ((C1,G1),(C8,G8))
     fin_rooks = ((D1,F1),(D8,F8))
 
-    holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0},
-               {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0})
+    holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0, KING:0},
+               {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0, KING:0})
 
     def __init__ (self, variant=NORMALCHESS):
         self.variant = variant
@@ -70,8 +70,8 @@ class LBoard:
         self.promoted = [0]*64
         self.capture_promoting = False
         self.hist_capture_promoting = []
-        self.holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0},
-                        {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0})
+        self.holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0, KING:0},
+                        {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0, KING:0})
 
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.
@@ -126,7 +126,7 @@ class LBoard:
             self.fin_kings = ([None, None], [None, None])
             self.fin_rooks = ([None, None], [None, None])
 
-        elif self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        elif self.variant in DROP_VARIANTS:
             self.iniHouse()
 
         elif self.variant == ATOMICCHESS:
@@ -156,7 +156,7 @@ class LBoard:
         # Try to validate some information
         # TODO: This should be expanded and perhaps moved
         
-        slashes = len([c for c in pieceChrs if c == "/"])
+        slashes = pieceChrs.count("/")
         if slashes < 7:
             raise SyntaxError(_("Needs 7 slashes in piece placement field. \n\n%s") % fenstr)
         
@@ -182,15 +182,18 @@ class LBoard:
         # Parse piece placement field
         
         promoted = False
+        # if there is a holding within [] we change it to BFEN style first
+        if pieceChrs.endswith("]"):
+            pieceChrs = pieceChrs[:-1].replace("[", "/")
         for r, rank in enumerate(pieceChrs.split("/")):
             cord = (7-r)*8
             for char in rank:
                 if r > 7:
                     # After the 8.rank BFEN can contain holdings (captured pieces)
                     # "~" after a piece letter denotes promoted piece
-                    if r == 8 and self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+                    if r == 8 and self.variant in DROP_VARIANTS:
                         color = char.islower() and BLACK or WHITE
-                        piece = reprSign.index(char.upper())
+                        piece = chrU2Sign[char.upper()]
                         self.holding[color][piece] += 1
                         continue
                     else:
@@ -202,13 +205,10 @@ class LBoard:
                     promoted = True
                 else:
                     color = char.islower() and BLACK or WHITE
-                    if self.variant == MAKRUKCHESS:
-                        piece = reprSignMakruk.index(char.upper())
-                    else:
-                        piece = reprSign.index(char.upper())
+                    piece = chrU2Sign[char.upper()]
                     self._addPiece(cord, piece, color)
                     self.pieceCount[color][piece] += 1
-                    if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS) and promoted:
+                    if self.variant in DROP_VARIANTS and promoted:
                         self.promoted[cord] = 1
                         promoted = False
                     cord += 1
@@ -320,6 +320,8 @@ class LBoard:
         elif self.variant == ATOMICCHESS:
             if not self.boards[self.color][KING]:
                 return False
+        elif self.variant == SITTUYINCHESS and self.plyCount < 16:
+            return False
         if self.checked == None:
             kingcord = self.kings[self.color]
             self.checked = isAttacked (self, kingcord, 1-self.color, ischecked=True)
@@ -331,6 +333,8 @@ class LBoard:
         elif self.variant == ATOMICCHESS:
             if not self.boards[1-self.color][KING]:
                 return False
+        elif self.variant == SITTUYINCHESS and self.plyCount < 16:
+            return False
         if self.opchecked == None:
             kingcord = self.kings[1-self.color]
             self.opchecked = isAttacked (self, kingcord, self.color, ischecked=True)
@@ -428,7 +432,7 @@ class LBoard:
         self.hist_fifty.append(self.fifty)
         self.hist_checked.append(self.checked)
         self.hist_opchecked.append(self.opchecked)
-        if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        if self.variant in DROP_VARIANTS:
             self.hist_capture_promoting.append(self.capture_promoting)
          
         self.opchecked = None
@@ -450,11 +454,11 @@ class LBoard:
             rookf = self.ini_rooks[color][side]
             rookt = self.fin_rooks[color][side]
 
-        # Capture
-        if tpiece != EMPTY:
+        # Capture (sittuyin in place promotion is not capture move!)
+        if tpiece != EMPTY and fcord != tcord:
             self._removePiece(tcord, tpiece, opcolor)
             self.pieceCount[opcolor][tpiece] -= 1
-            if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+            if self.variant in DROP_VARIANTS:
                 if self.promoted[tcord]:
                     if self.variant == CRAZYHOUSECHESS:
                         self.holding[color][PAWN] += 1
@@ -482,7 +486,7 @@ class LBoard:
         
         # Remove moving piece(s), then add them at their destination.
         if flag == DROP:
-            if self.variant == CRAZYHOUSECHESS:
+            if self.variant in DROP_VARIANTS:
                 assert self.holding[color][fpiece] > 0
             self.holding[color][fpiece] -= 1
             self.pieceCount[color][fpiece] += 1
@@ -515,7 +519,7 @@ class LBoard:
             self.pieceCount[color][fpiece] += 1
             self.pieceCount[color][PAWN] -=1
 
-        if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        if self.variant in DROP_VARIANTS:
             if tpiece == EMPTY:
                 self.capture_promoting = False
             
@@ -604,7 +608,7 @@ class LBoard:
             self._removePiece (tcord, tpiece, color)
         
         # Put back captured piece
-        if cpiece != EMPTY:
+        if cpiece != EMPTY and fcord != tcord:
             self._addPiece (tcord, cpiece, opcolor)
             self.pieceCount[opcolor][cpiece] += 1
             if self.variant == CRAZYHOUSECHESS:
@@ -649,7 +653,7 @@ class LBoard:
             if not (self.variant == ATOMICCHESS and (cpiece != EMPTY or flag == ENPASSANT)):
                 self._addPiece (fcord, tpiece, color)
 
-        if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        if self.variant in DROP_VARIANTS:
             if flag != DROP:
                 if self.promoted[tcord] and (not flag in PROMOTIONS):
                     self.promoted[fcord] = 1
@@ -716,6 +720,13 @@ class LBoard:
                 else: b += "."
                 b += " "
             b += "\n# "
+
+        if self.variant in DROP_VARIANTS:
+            for color in (BLACK, WHITE):
+                holding = self.holding[color]
+                b += "\n# [%s]" % "".join([FAN_PIECES[color][piece]*holding[piece] \
+                                            for piece in holding if holding[piece]>0])
+
         return b if PY3 else b.encode('utf8')
     
     def asFen (self, enable_bfen=True):
@@ -731,6 +742,8 @@ class LBoard:
                         empty = 0
                     if self.variant == MAKRUKCHESS:
                         sign = reprSignMakruk[piece]
+                    elif self.variant == SITTUYINCHESS:
+                        sign = reprSignSittuyin[piece]
                     else:
                         sign = reprSign[piece]
                     if bitPosArray[(7-r)*8+i] & self.friends[WHITE]:
@@ -747,13 +760,16 @@ class LBoard:
             if r != 7:
                 fenstr.append("/")
 
-        if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        if self.variant in DROP_VARIANTS:
             holding_pieces = []
             for color in (BLACK, WHITE):
                 holding = self.holding[color]
                 for piece in holding:
                     if holding[piece] > 0:
-                        sign = reprSign[piece]
+                        if self.variant == SITTUYINCHESS:
+                            sign = reprSignSittuyin[piece]
+                        else:
+                            sign = reprSign[piece]
                         sign = sign.upper() if color == WHITE else sign.lower()
                         holding_pieces.append(sign*holding[piece])
             if holding_pieces:
@@ -825,7 +841,7 @@ class LBoard:
             copy.ini_kings = self.ini_kings[:]
             copy.fin_kings = (self.fin_kings[0][:], self.fin_kings[1][:])
             copy.fin_rooks = (self.fin_rooks[0][:], self.fin_rooks[1][:])
-        elif self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        elif self.variant in DROP_VARIANTS:
             copy.promoted = self.promoted[:]
             copy.holding = (self.holding[0].copy(), self.holding[1].copy())
             copy.capture_promoting = self.capture_promoting

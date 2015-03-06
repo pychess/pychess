@@ -17,9 +17,10 @@ from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils import lsearch, leval
 from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN, ParsingError
 from pychess.Utils.lutils import lsearch
+from pychess.Utils.lutils.lmovegen import genAllMoves, genCaptures, genCheckEvasions
 from pychess.Utils.lutils.validator import validateMove
 from pychess.System.Log import log
-from pychess.Variants.asean import ASEANSTART, MAKRUKSTART
+from pychess.Variants.asean import ASEANSTART, MAKRUKSTART, SITTUYINSTART
 
 
 class PyChessCECP(PyChess):
@@ -48,7 +49,7 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic,kingofthehill,asean,makruk",
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic,kingofthehill,asean,makruk,sittuyin",
             "colors": 0,
             "ics": 0,
             "name": 0,
@@ -139,6 +140,9 @@ class PyChessCECP(PyChess):
                         elif lines[1] == "makruk":
                             self.board = LBoard(MAKRUKCHESS)
                             self.board.applyFen(MAKRUKSTART)
+                        elif lines[1] == "sittuyin":
+                            self.board = LBoard(SITTUYINCHESS)
+                            self.board.applyFen(SITTUYINSTART)
                 
                 elif lines[0] == "quit":
                     self.forced = True
@@ -325,7 +329,19 @@ class PyChessCECP(PyChess):
                 # Periodic updates (".") are not implemented.
      
                 ########## Custom commands ##########
-     
+
+                elif lines[0] == "moves":
+                    print(self.board) 
+                    print([toSAN(self.board, move) for move in genAllMoves(self.board)])
+
+                elif lines[0] == "captures":
+                    print(self.board) 
+                    print([toSAN(self.board, move) for move in genCaptures(self.board)])
+
+                elif lines[0] == "evasions":
+                    print(self.board) 
+                    print([toSAN(self.board, move) for move in genCheckEvasions(self.board)])
+
                 elif lines[0] == "benchmark":
                     benchmark()
                 

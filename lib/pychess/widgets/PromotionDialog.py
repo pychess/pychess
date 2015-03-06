@@ -42,6 +42,11 @@ class PromotionDialog:
         self.setColor(color)
         if variant != SUICIDECHESS:
             self.widgets["button5"].hide()
+        
+        if variant == SITTUYINCHESS:
+            self.widgets["button4"].hide()
+            self.widgets["button3"].hide()
+            self.widgets["button2"].hide()
             
         res = self.dialog.run()
         self.dialog.hide()

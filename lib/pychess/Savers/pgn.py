@@ -60,7 +60,7 @@ def parseClockTimeTag (tag):
     Parses 'WhiteClock'/'BlackClock' PGN headers and returns the time the
     player playing that color has left on their clock in milliseconds
     """
-    match = re.match("(\d{1,2}).(\d\d).(\d\d).(\d\d\d)", tag)
+    match = re.match("(\d{1,2}):(\d\d):(\d\d).(\d\d\d)", tag)
     if match:
         hour, min, sec, msec = match.groups()
         return int(msec) + int(sec)*1000 + int(min)*60*1000 + int(hour)*60*60*1000

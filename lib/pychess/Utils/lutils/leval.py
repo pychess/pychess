@@ -25,9 +25,11 @@ def evaluateComplete (board, color):
         return s
     s += evalBishops (board, color, phase)       - evalBishops (board, 1-color, phase)
     s += evalRooks (board, color, phase)         - evalRooks (board, 1-color, phase)
+    s += evalDoubleQR7 (board, color, phase)     - evalDoubleQR7 (board, 1-color, phase)
     s += evalKing (board, color, phase)          - evalKing (board, 1-color, phase)
     s += evalKingTropism (board, color, phase)   - evalKingTropism (board, 1-color, phase)
-    s += evalDoubleQR7 (board, color, phase)     - evalDoubleQR7 (board, 1-color, phase)
+    if board.variant in ASEAN_VARIANTS:
+        return s
     s += evalDev (board, color, phase)           -  evalDev (board, 1-color, phase)
     if board.variant == ATOMICCHESS:
         return s
