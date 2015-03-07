@@ -21,7 +21,7 @@ from pychess.Utils.logic import validate, getMoveKillingKing
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Variants import variants
-from pychess.Players.Player import PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
 from .ProtocolEngine import ProtocolEngine
 
 def isdigits (strings):
@@ -174,6 +174,7 @@ class CECPEngine (ProtocolEngine):
         self.returnQueue = Queue()
         self.engine.connect("line", self.parseLines)
         self.engine.connect("died", lambda e: self.returnQueue.put("del"))
+        self.invalid_move = None
         
         self.funcQueue = Queue()
         self.optionQueue = []
@@ -286,6 +287,9 @@ class CECPEngine (ProtocolEngine):
             else:
                 print("result * {?}", file=self.engine)
             
+            if reason == WON_ADJUDICATION:
+                self.returnQueue.put("invalid")
+                
             # Make sure the engine exits and do some cleaning
             self.kill(reason)
     
@@ -371,6 +375,8 @@ class CECPEngine (ProtocolEngine):
             r = self.returnQueue.get()
         if r == "ready":
             r = self.returnQueue.get()
+        if r == "invalid":
+            raise InvalidMove
         if r == "del":
             raise PlayerIsDead("Killed by foreign forces")
         if r == "int":
@@ -771,6 +777,7 @@ class CECPEngine (ProtocolEngine):
                         try:
                             move = parseAny(self.board, movestr)
                         except ParsingError as e:
+                            self.invalid_move = movestr
                             log.info("__parseLine: ParsingError engine move: %s %s" % (movestr, self.board), extra={"task":self.defname})
                             self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                             return
@@ -780,6 +787,7 @@ class CECPEngine (ProtocolEngine):
                             self.returnQueue.put(move)
                             return
                         else:
+                            self.invalid_move = movestr
                             log.info("__parseLine: can't validate engine move: %s %s" % (movestr, self.board), extra={"task":self.defname})
                             self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                             return
