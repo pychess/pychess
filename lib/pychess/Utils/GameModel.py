@@ -8,7 +8,7 @@ from gi.repository import GObject
 
 from pychess.compat import Queue, Empty, StringIO
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Players.Player import PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
 from pychess.System import fident
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
@@ -596,6 +596,12 @@ class GameModel (GObject.GObject, Thread):
                     if curColor == WHITE:
                         self.kill(WHITE_ENGINE_DIED)
                     else: self.kill(BLACK_ENGINE_DIED)
+                break
+            except InvalidMove as e:
+                if curColor == WHITE:
+                    self.end(BLACKWON, WON_ADJUDICATION)
+                else:
+                    self.end(WHITEWON, WON_ADJUDICATION)
                 break
             except TurnInterrupt:
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: TurnInterrupt" % \

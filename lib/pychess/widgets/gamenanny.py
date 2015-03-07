@@ -115,6 +115,12 @@ def game_ended (gamemodel, reason, gmwidg):
         nameDic["loser"] = gamemodel.players[WHITE]
     m1 = reprResult_long[gamemodel.status] % nameDic
     m2 = reprReason_long[reason] % nameDic
+    if gamemodel.reason == WON_ADJUDICATION:
+        color = BLACK if gamemodel.status == WHITEWON else WHITE
+        invalid_move = gamemodel.players[color].invalid_move
+        if invalid_move:
+            m2 += _(" invalid engine move: %s" % invalid_move)
+
     content = InfoBar.get_message_content(m1, m2, Gtk.STOCK_DIALOG_INFO)
     message = InfoBarMessage(Gtk.MessageType.INFO, content, None)
 
