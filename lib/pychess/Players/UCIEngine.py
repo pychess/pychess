@@ -21,7 +21,7 @@ from pychess.System.SubProcess import TimeOutError, SubProcessError
 from pychess.Variants.fischerandom import FischerandomBoard
 
 from .ProtocolEngine import ProtocolEngine
-from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt, InvalidMove
 
 TYPEDIC = {"check":lambda x:x=="true", "spin":int}
 OPTKEYS = ("name", "type", "min", "max", "default", "var")
@@ -62,6 +62,7 @@ class UCIEngine (ProtocolEngine):
         self.returnQueue = Queue()
         self.engine.connect("line", self.parseLines)
         self.engine.connect("died", self.__die)
+        self.invalid_move = None
         
         self.connect("readyForOptions", self.__onReadyForOptions_before)
         self.connect_after("readyForOptions", self.__onReadyForOptions)
@@ -128,6 +129,8 @@ class UCIEngine (ProtocolEngine):
     
     def end (self, status, reason):
         # UCI doens't care about reason, so we just kill
+        if reason == WON_ADJUDICATION:
+            self.returnQueue.put("invalid")
         self.kill(reason)
     
     def kill (self, reason):
@@ -232,6 +235,8 @@ class UCIEngine (ProtocolEngine):
         # Parse outputs
         try:
             r = self.returnQueue.get()
+            if r == "invalid":
+                raise InvalidMove
             if r == "del":
                 raise PlayerIsDead
             if r == "int":
@@ -542,16 +547,18 @@ class UCIEngine (ProtocolEngine):
                     self.readyForStop = True
                     return
                 
+                movestr = parts[1]
                 if not self.waitingForMove:
                     log.warning("__parseLine: self.waitingForMove==False, ignoring move=%s" % \
-                        parts[1], extra={"task":self.defname})
+                        movestr, extra={"task":self.defname})
                     self.pondermove = None
                     return
                 self.waitingForMove = False
 
                 try:
-                    move = parseAny(self.board, parts[1])
+                    move = parseAny(self.board, movestr)
                 except ParsingError as e:
+                    self.invalid_move = movestr
                     self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                     return
                 
@@ -560,6 +567,7 @@ class UCIEngine (ProtocolEngine):
                     # behalf of the engine.
                     log.error("__parseLine: move=%s didn't validate, putting 'del' in returnQueue. self.board=%s" % \
                         (repr(move), self.board), extra={"task":self.defname})
+                    self.invalid_move = movestr
                     self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                     return
                 

@@ -11,6 +11,12 @@ class TurnInterrupt (Exception):
         player """
     pass
 
+class InvalidMove (Exception):
+    """ Used instead of returning a move,
+        when an engine plays an invalid move """
+    pass
+
+
 class Player (GObject.GObject):
     
     __gsignals__ = {
