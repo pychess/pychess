@@ -14,6 +14,7 @@ modules_to_test = (
     "atomic",
     "crazyhouse",
     "losers",
+    "sittuyin",
     "suicide",
     "zobrist",
     "polyglot",
