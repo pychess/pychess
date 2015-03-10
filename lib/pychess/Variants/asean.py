@@ -101,7 +101,7 @@ class AiWokBoard(Board):
 ############################
 # Sittuyin, or Myanmar Chess
 ############################
-SITTUYINSTART = "8/8/4pppp/pppp4/4PPPP/PPPP4/8/8/rrnnssmkRRNNSSMK w - - 0 1"
+SITTUYINSTART = "8/8/4pppp/pppp4/4PPPP/PPPP4/8/8/rrnnssfkRRNNSSFK w - - 0 1"
 
 class SittuyinBoard(Board):
     variant = SITTUYINCHESS
