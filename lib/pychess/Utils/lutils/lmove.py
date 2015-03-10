@@ -301,7 +301,7 @@ def parseSAN (board, san):
         notat = notat[1:]
     else:
         piece = PAWN
-        if notat[-1] in "18" and flag == NORMAL_MOVE:
+        if notat[-1] in "18" and flag == NORMAL_MOVE and board.variant != SITTUYINCHESS:
             raise ParsingError(
                     san, _("promotion move without promoted piece is incorrect"), board.asFen())
     
