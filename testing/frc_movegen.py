@@ -75,13 +75,13 @@ class FRCFindMovesTestCase(unittest.TestCase):
     def testMovegen1(self):
         """Testing FRC variant move generator with perftsuite.epd"""
         print()
-        self.MAXDEPTH = 2
+        self.MAXDEPTH = 3
         self.movegen(self.positions1)
 
     def testMovegen2(self):
         """Testing FRC variant move generator with frc_perftsuite.epd"""
         print()
-        self.MAXDEPTH = 2
+        self.MAXDEPTH = 3
         self.movegen(self.positions2)
 
 
