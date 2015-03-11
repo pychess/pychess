@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import re
+import readline
 import signal
 import sys
 from threading import Thread
