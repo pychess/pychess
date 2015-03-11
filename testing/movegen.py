@@ -33,7 +33,6 @@ class FindMovesTestCase(unittest.TestCase):
                     board.popMove()
                     continue
 
-
                 nmoves.append(nmove)
                 board.popMove()
                 # Validator test
@@ -43,6 +42,10 @@ class FindMovesTestCase(unittest.TestCase):
             
             for move in genCheckEvasions(board):
                 board.applyMove(move)
+                if board.opIsChecked():
+                    board.popMove()
+                    continue
+
                 cmoves.append(move)
                 board.popMove()
                 # Validator test
@@ -82,6 +85,7 @@ class FindMovesTestCase(unittest.TestCase):
                 
                 # San test
                 san = toSAN (board, move)
+                #print(san)
                 try:
                     move2 = parseSAN(board, san)
                 except ParsingError as e:
@@ -110,11 +114,13 @@ class FindMovesTestCase(unittest.TestCase):
             parts = line.split(";")
             depths = [(int(s[1]), int(s[3:].rstrip())) for s in parts[1:]]
             self.positions2.append( (parts[0], depths) )
+            
+        self.positions3 = [("8/6k1/6p1/3s2P1/3npR2/2r5/p2N2F1/3K4 b - - 0 49", [(1, 31),])]
     
-    def movegen(self, positions):
+    def movegen(self, positions, variant):
         for i, (fen, depths) in enumerate(positions):
             print(i+1, "/", len(positions), "-", fen)
-            board = LBoard(NORMALCHESS)
+            board = LBoard(variant)
             board.applyFen(fen)
             hash = board.hash
             
@@ -131,8 +137,9 @@ class FindMovesTestCase(unittest.TestCase):
     def testMovegen1(self):
         """Testing NORMAL variant move generator with perftsuite.epd"""
         print()
+        #return
         self.MAXDEPTH = 3
-        self.movegen(self.positions)
+        self.movegen(self.positions, NORMALCHESS)
 
     def testMovegen2(self):
         """Testing NORMAL variant move generator with perftsuite2.epd"""
@@ -141,7 +148,14 @@ class FindMovesTestCase(unittest.TestCase):
         print("put the 'return' line into comment and use pypy instead of python!")
         return
         self.MAXDEPTH = 7
-        self.movegen(self.positions2)
+        self.movegen(self.positions2, NORMALCHESS)
+
+    def testMovegen3(self):
+        """Testing NORMAL variant move generator with perftsuite.epd"""
+        print()
+        #return
+        self.MAXDEPTH = 1
+        self.movegen(self.positions3, SITTUYINCHESS)
 
 
 if __name__ == '__main__':
