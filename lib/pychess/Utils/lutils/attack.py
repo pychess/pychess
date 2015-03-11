@@ -159,7 +159,7 @@ def pinnedOnKing (board, cord, color):
             return True
    
     #  Rank / file
-    if board.variant not in ASEAN_VARIANTS:
+    if board.variant in ASEAN_VARIANTS:
         if dir >= 4 and bitPosArray[cord1] & \
                 board.boards[opcolor][ROOK]:
             return True
