@@ -395,25 +395,36 @@ def parseSAN (board, san):
 # toLan                                                                        #
 ################################################################################
 
-def toLAN (board, move):
+def toLAN (board, move, localRepr=False):
     """ Returns a Long/Expanded Algebraic Notation string of a move
         board should be prior to the move """
     
     fcord = FCORD(move)
     tcord = TCORD(move)
+    flag = FLAG(move)
+    fpiece = fcord if flag == DROP else board.arBoard[fcord]
     
     s = ""
-    if board.arBoard[fcord] != PAWN:
-        s = reprSign[board.arBoard[fcord]]
-    s += reprCord[FCORD(move)]
-    
-    if board.arBoard[tcord] == EMPTY:
-        s += "-"
-    else: s += "x"
+    if fpiece != PAWN or flag == DROP:
+        if board.variant == MAKRUKCHESS:
+            s = reprSignMakruk[fpiece]
+        elif board.variant == SITTUYINCHESS:
+            s = reprSignSittuyin[fpiece]
+        elif localRepr:
+            s = localReprSign[fpiece]
+        else:
+            s = reprSign[fpiece]
+
+    if flag == DROP:
+        s += "@"
+    else:
+        s += reprCord[FCORD(move)]
+        if board.arBoard[tcord] == EMPTY:
+            s += "-"
+        else:
+            s += "x"
     
     s += reprCord[tcord]
-    
-    flag = FLAG(move)
     
     if flag in PROMOTIONS:
         s += "=" + reprSign[PROMOTE_PIECE(flag)]

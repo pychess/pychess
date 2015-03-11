@@ -12,6 +12,7 @@ from pychess.System import conf, fident
 from pychess.Utils.book import getOpenings
 from pychess.Utils.const import *
 from pychess.Utils.lutils.Benchmark import benchmark
+from pychess.Utils.lutils.perft import perft
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils import lsearch, leval
@@ -351,6 +352,14 @@ class PyChessCECP(PyChess):
                         cProfile.runctx("benchmark()", locals(), globals(), lines[1])
                     else:
                         print("Usage: profile outputfilename")
+
+                elif lines[0] == "perft":
+                    root = "0" if len(lines) < 3 else lines[2]
+                    depth = "1" if len(lines) == 1 else lines[1]
+                    if root.isdigit() and depth.isdigit():
+                        perft(self.board, int(depth), int(root))
+                    else:
+                        print("Error (arguments must be integer")
                 
                 elif len(lines) == 1:
                     # A GUI without usermove support might try to send a move.
