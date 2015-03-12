@@ -22,6 +22,7 @@ from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils.lsearch import alphaBeta
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import listToSan, toSAN
+from pychess.System.Log import log
 
 
 class PyChess (object):
@@ -39,6 +40,11 @@ class PyChess (object):
         self.post = False
         self.debug = True
         self.outOfBook = False
+
+    def print(self, text):
+        print(text)
+        sys.stdout.flush()
+        log.debug(text, extra={"task": "stdout"})
     
     #===========================================================================
     # Play related
@@ -104,9 +110,9 @@ class PyChess (object):
             lsearch.endtime = starttime + usetime if timed else sys.maxsize
             if self.debug:
                 if timed:
-                    print("# Time left: %3.2f s; Planing to think for %3.2f s" % (self.clock[self.playingAs], usetime))
+                    self.print("# Time left: %3.2f s; Planing to think for %3.2f s" % (self.clock[self.playingAs], usetime))
                 else:
-                    print("# Searching to depth %d without timelimit" % self.sd)
+                    self.print("# Searching to depth %d without timelimit" % self.sd)
 
             for depth in range(1, self.sd+1):
                 # Heuristic time saving
@@ -122,7 +128,7 @@ class PyChess (object):
                     if self.post:
                         pv = " ".join(listToSan(self.board, mvs))
                         time_cs = int(100 * (time()-starttime))
-                        print("%s %s %s %s %s" % (depth, self.scr, time_cs, lsearch.nodes, pv))
+                        self.print("%s %s %s %s %s" % (depth, self.scr, time_cs, lsearch.nodes, pv))
                 else:
                     # We were interrupted
                     if depth == 1:
@@ -141,15 +147,15 @@ class PyChess (object):
                 # This should only happen in terminal mode
                 
                 if self.scr == 0:
-                    print("result %s" % reprResult[DRAW])
+                    self.print("result %s" % reprResult[DRAW])
                 elif self.scr < 0:
                     if self.board.color == WHITE:
-                        print("result %s" % reprResult[BLACKWON])
-                    else: print("result %s" % reprResult[WHITEWON])
+                        self.print("result %s" % reprResult[BLACKWON])
+                    else: self.print("result %s" % reprResult[WHITEWON])
                 else:
                     if self.board.color == WHITE:
-                        print("result %s" % reprResult[WHITEWON])
-                    else: print("result %s" % reprResult[BLACKWON])
+                        self.print("result %s" % reprResult[WHITEWON])
+                    else: self.print("result %s" % reprResult[BLACKWON])
                 return
             
             lsearch.nodes = 0
@@ -177,7 +183,7 @@ class PyChess (object):
             
             pv = " ".join(listToSan(board, mvs))
             time_cs = int(100 * (time() - start))
-            print("%s %s %s %s %s" % (depth, scr, time_cs, lsearch.nodes, pv))
+            self.print("%s %s %s %s %s" % (depth, scr, time_cs, lsearch.nodes, pv))
             
             lsearch.nodes = 0
 
