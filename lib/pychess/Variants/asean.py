@@ -114,7 +114,7 @@ class SittuyinBoard(Board):
 
     PROMOTION_ZONE = ((A8, B7, C6, D5, E5, F6, G7, H8), \
                       (A1, B2, C3, D4, E4, F3, G2, H1))
-    PROMOTIONS = (QUEEN_PROMOTION,)
+    PROMOTIONS = (QUEEN_PROMOTION, NORMAL_MOVE)
 
     def __init__ (self, setup=False, lboard=None):
         if setup is True:
