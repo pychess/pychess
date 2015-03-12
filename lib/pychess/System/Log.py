@@ -55,6 +55,3 @@ class LogPipe:
     
     def fileno (self):
         return self.to.fileno()
-
-sys.stdout = LogPipe(sys.stdout, "stdout")
-sys.stderr = LogPipe(sys.stderr, "stdout")

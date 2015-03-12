@@ -16,7 +16,7 @@ from gi.repository import GObject
 from pychess.compat import urlopen, urlparse, basestring
 from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
-from pychess.System.Log import log
+from pychess.System.Log import log, LogPipe
 from pychess.System.LogEmitter import GLogHandler, logemitter
 from pychess.System.debug import start_thread_dump
 from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
@@ -490,6 +490,8 @@ def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
     
     pychess = PyChess(log_viewer, chess_file)
     glock.debug = not no_glock_debug
+    sys.stdout = LogPipe(sys.stdout, "stdout")
+    sys.stderr = LogPipe(sys.stderr, "stdout")
     log.info("PyChess %s %s rev. %s %s started" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
     log.info("Command line args: '%s'" % chess_file)
     if not no_thread_debug:
