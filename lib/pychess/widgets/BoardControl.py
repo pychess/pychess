@@ -104,18 +104,18 @@ class BoardControl (Gtk.EventBox):
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
         if promotion is None and board[cord0].sign == PAWN and cord1.cord in board.PROMOTION_ZONE[color]:
-            if len(self.variant.PROMOTIONS) == 1:
-                if self.variant.variant == SITTUYINCHESS and board.board.boards[color][QUEEN]:
+            if self.variant.variant == SITTUYINCHESS:
+                # no promotion allowed if we have queen
+                if board.board.boards[color][QUEEN]:
                     promotion = None
                 else:
-                    if cord0 == cord1:
-                        promotion = self.getPromotion()
-                        if promotion is None:
-                            # Put back pawn moved be d'n'd
-                            self.view.runAnimation(redrawMisc = False)
-                            return
-                    else:
-                        promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
+                    # promotion is always optional
+                    promotion = self.getPromotion()
+                    if promotion is None and cord0 == cord1:
+                        # if don't want in place promotion
+                        return
+            elif len(self.variant.PROMOTIONS) == 1:
+                promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
             else:
                 promotion = self.getPromotion()
                 if promotion is None:
