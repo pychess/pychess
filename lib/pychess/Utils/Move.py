@@ -32,7 +32,7 @@ class Move:
             if board[self.cord0].piece == PAWN and  self.cord1.cord in board.PROMOTION_ZONE[board.board.color]:
                 if promotion == None:
                     if board.variant == SITTUYINCHESS:
-                        if not board.board.boards[board.board.color][QUEEN]:
+                        if cord0 == cord1:
                             self.flag = lmove.FLAG_PIECE(QUEEN)
                     else:
                         self.flag = lmove.FLAG_PIECE(QUEEN)

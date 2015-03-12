@@ -551,18 +551,7 @@ def parseAN (board, an):
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
     elif board.arBoard[fcord] == PAWN:
-        if board.variant in (MAKRUKCHESS, SITTUYINCHESS):
-            from pychess.Variants import variants
-            bpromotion_zone = variants[board.variant].PROMOTION_ZONE[BLACK]
-            wpromotion_zone = variants[board.variant].PROMOTION_ZONE[WHITE]
-            if tcord in bpromotion_zone or tcord in wpromotion_zone:
-                if board.variant == SITTUYINCHESS:
-                    queens = board.boards[board.color][QUEEN]
-                    if not queens:
-                        flag = QUEEN_PROMOTION
-                else:
-                    flag = QUEEN_PROMOTION
-        elif an[3] in "18":
+        if an[3] in "18" and board.variant != SITTUYINCHESS:
             raise ParsingError(
                     an, _("promotion move without promoted piece is incorrect"), board.asFen())
 
