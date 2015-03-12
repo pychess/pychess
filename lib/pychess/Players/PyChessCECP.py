@@ -65,7 +65,7 @@ class PyChessCECP(PyChess):
         }
         python = sys.executable.split("/")[-1]
         python_version = "%s.%s.%s" % sys.version_info[0:3]
-        print("# %s [%s %s]" % (self.features["myname"], python, python_version))
+        self.print("# %s [%s %s]" % (self.features["myname"], python, python_version))
     
     def handle_sigterm(self, *args):
         self.__stopSearching()
@@ -74,7 +74,7 @@ class PyChessCECP(PyChess):
     def makeReady(self):
         signal.signal(signal.SIGINT, signal.SIG_IGN)
         signal.signal(signal.SIGTERM, self.handle_sigterm)
-    
+
     def run (self):
         while True:
             try:
@@ -97,8 +97,8 @@ class PyChessCECP(PyChess):
      
                 elif lines[0] == "protover":
                     stringPairs = ["=".join([k, '"%s"' % v if isinstance(v, str) else str(v)]) for k,v in self.features.items()]
-                    print("feature %s" % " ".join(stringPairs))
-                    print("feature done=1")
+                    self.print("feature %s" % " ".join(stringPairs))
+                    self.print("feature done=1")
                 
                 elif lines[0] in ("accepted", "rejected"):
                     # We only really care about one case:
@@ -211,12 +211,12 @@ class PyChessCECP(PyChess):
                     try:
                         move = parseAny (self.board, lines[1])
                     except ParsingError as e:
-                        print("Error (unknown command): %s" % lines[1])
-                        print(self.board)
+                        self.print("Error (unknown command): %s" % lines[1])
+                        self.print(self.board)
                         continue
                     if not validateMove(self.board, move):
-                        print("Illegal move: %s" % lines[1])
-                        print(self.board)
+                        self.print("Illegal move: %s" % lines[1])
+                        self.print(self.board)
                         continue
                     self.board.applyMove(move)
                     self.playingAs = self.board.color
@@ -230,11 +230,11 @@ class PyChessCECP(PyChess):
                         self.__stopSearching()
                 
                 elif lines[0] == "ping":
-                    print("pong %s" % lines[1])
+                    self.print("pong %s" % lines[1])
                     
                 elif lines[0] == "draw":
                     if self.__willingToDraw():
-                        print("offer draw")
+                        self.print("offer draw")
                 
                 elif lines[0] == "result":
                     # We don't really care what the result is at the moment.
@@ -247,7 +247,7 @@ class PyChessCECP(PyChess):
                         fen = " ".join(lines[1:])
                         self.board.applyFen(fen.replace("[", "/").replace("]", ""))
                     except SyntaxError as e:
-                        print("tellusererror Illegal position: %s" % str(e))
+                        self.print("tellusererror Illegal position: %s" % str(e))
                 
                 # "edit" is unimplemented. See docs. Exiting edit mode returns to analyze mode.
      
@@ -259,7 +259,7 @@ class PyChessCECP(PyChess):
                     if entries:
                         totalWeight = sum(entry[1] for entry in entries)
                         for entry in entries:
-                            print("\t%s\t%02.2f%%" % (toSAN(self.board, entry[0]), entry[1] * 100.0 / totalWeight))
+                            self.print("\t%s\t%02.2f%%" % (toSAN(self.board, entry[0]), entry[1] * 100.0 / totalWeight))
                 
                 elif lines[0] == "undo":
                     self.__stopSearching()
@@ -292,11 +292,11 @@ class PyChessCECP(PyChess):
                 elif lines[0] == "memory":
                     # FIXME: this is supposed to control the *total* memory use.
                     if lsearch.searching:
-                        print("Error (already searching):", line)
+                        self.print("Error (already searching):", line)
                     else:
                         limit = int(lines[1])
                         if limit < 1:
-                            print("Error (limit too low):", line)
+                            self.print("Error (limit too low):", line)
                         else:
                             pass
                             # TODO implement
@@ -318,7 +318,7 @@ class PyChessCECP(PyChess):
                         if 0 <= value <= 100:
                             self.skipPruneChance = value / 100.0
                         else:
-                            print("Error (argument must be an integer 0..100): %s" % line)
+                            self.print("Error (argument must be an integer 0..100): %s" % line)
      
                 ########## CECP analyze mode commands ##########
                 # See http://www.gnu.org/software/xboard/engine-intf.html#11
@@ -333,16 +333,16 @@ class PyChessCECP(PyChess):
                 ########## Custom commands ##########
 
                 elif lines[0] == "moves":
-                    print(self.board) 
-                    print([toSAN(self.board, move) for move in genAllMoves(self.board)])
+                    self.print(self.board) 
+                    self.print([toSAN(self.board, move) for move in genAllMoves(self.board)])
 
                 elif lines[0] == "captures":
-                    print(self.board) 
-                    print([toSAN(self.board, move) for move in genCaptures(self.board)])
+                    self.print(self.board) 
+                    self.print([toSAN(self.board, move) for move in genCaptures(self.board)])
 
                 elif lines[0] == "evasions":
-                    print(self.board) 
-                    print([toSAN(self.board, move) for move in genCheckEvasions(self.board)])
+                    self.print(self.board) 
+                    self.print([toSAN(self.board, move) for move in genCheckEvasions(self.board)])
 
                 elif lines[0] == "benchmark":
                     benchmark()
@@ -352,7 +352,7 @@ class PyChessCECP(PyChess):
                         import cProfile
                         cProfile.runctx("benchmark()", locals(), globals(), lines[1])
                     else:
-                        print("Usage: profile outputfilename")
+                        self.print("Usage: profile outputfilename")
 
                 elif lines[0] == "perft":
                     root = "0" if len(lines) < 3 else lines[2]
@@ -360,18 +360,18 @@ class PyChessCECP(PyChess):
                     if root.isdigit() and depth.isdigit():
                         perft(self.board, int(depth), int(root))
                     else:
-                        print("Error (arguments must be integer")
+                        self.print("Error (arguments must be integer")
                 
                 elif len(lines) == 1:
                     # A GUI without usermove support might try to send a move.
                     try:
                         move = parseAny (self.board, line)
                     except:
-                        print("Error (unknown command): %s" % line)
+                        self.print("Error (unknown command): %s" % line)
                         continue
                     if not validateMove(self.board, move):
-                        print("Illegal move: %s" % lines[0])
-                        print(self.board)
+                        self.print("Illegal move: %s" % lines[0])
+                        self.print(self.board)
                         continue
                     self.__stopSearching()
                     self.board.applyMove(move)
@@ -382,9 +382,9 @@ class PyChessCECP(PyChess):
                         self.__analyze()
 
                 else:
-                    print("Error (unknown command): %s" % line)
+                    self.print("Error (unknown command): %s" % line)
             except IndexError:
-                print("Error (missing argument): %s" % line)
+                self.print("Error (missing argument): %s" % line)
     
     def __stopSearching(self):
         lsearch.searching = False
@@ -395,7 +395,7 @@ class PyChessCECP(PyChess):
         def ondone (result):
             if not self.forced:
                 self.board.applyMove(parseSAN(self.board,result))
-                print("move %s" % result)
+                self.print("move %s" % result)
             # TODO: start pondering, if enabled
         self.thread = Thread(target=PyChess._PyChess__go,
                              name=fident(PyChess._PyChess__go),
