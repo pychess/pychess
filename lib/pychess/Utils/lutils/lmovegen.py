@@ -117,6 +117,15 @@ def genPieceMoves(board, piece, tcord):
             for fcord in iterBits(queens):
                 if tcord in iterBits(queenMoves[fcord] & notfriends):
                     moves.add(newMove(fcord, tcord))
+            # Cambodian extra first move
+            if board.variant == CAMBODIANCHESS:
+                if board.is_first_move[QUEEN][board.color]:
+                    if board.color == WHITE:
+                        if not board.arBoard[E3]:
+                            moves.add(newMove(E1, E3))
+                    else:
+                        if not board.arBoard[D6]:
+                            moves.add(newMove(D8, D6))
             return moves
         else:
             blocker = board.blocker
@@ -333,6 +342,27 @@ def genAllMoves (board, drops=True):
         for cord in iterBits(pawns):
             if cord in promotion_zone:
                 yield newMove(cord, cord, QUEEN_PROMOTION)
+
+    # Cambodian extra first moves for king and queen
+    if board.variant == CAMBODIANCHESS:
+        if board.is_first_move[KING][board.color]:
+            if board.color == WHITE:
+                if not board.arBoard[B2]:
+                    yield newMove(D1, B2)
+                if not board.arBoard[F2]:
+                    yield newMove(D1, F2)
+            else:
+                if not board.arBoard[C7]:
+                    yield newMove(E8, C7)
+                if not board.arBoard[G7]:
+                    yield newMove(E8, G7)
+        if board.is_first_move[QUEEN][board.color]:
+            if board.color == WHITE:
+                if not board.arBoard[E3]:
+                    yield newMove(E1, E3)
+            else:
+                if not board.arBoard[D6]:
+                    yield newMove(D8, D6)
     
     # Castling
     if kings:

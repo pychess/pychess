@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+from copy import deepcopy
+
 from pychess.compat import PY3
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprColor
@@ -73,6 +75,12 @@ class LBoard:
         self.holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0, KING:0},
                         {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0, KING:0})
 
+    def iniCambodian(self):
+        self.ini_kings = (D1, E8)
+        self.ini_queens = (E1, D8)
+        self.is_first_move = {KING: [True, True], QUEEN: [True, True]}
+        self.hist_is_first_move = []
+        
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.
             If the string is not properly
@@ -121,6 +129,7 @@ class LBoard:
         if self.variant == FISCHERRANDOMCHESS:
             self.ini_kings = [None, None]
             self.ini_rooks = ([None, None], [None, None])
+
         elif self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
             self.ini_kings = [None, None]
             self.fin_kings = ([None, None], [None, None])
@@ -131,6 +140,9 @@ class LBoard:
 
         elif self.variant == ATOMICCHESS:
             self.iniAtomic()
+
+        elif self.variant == CAMBODIANCHESS:
+            self.iniCambodian()
             
         # Get information
         parts = fenstr.split()
@@ -208,9 +220,17 @@ class LBoard:
                     piece = chrU2Sign[char.upper()]
                     self._addPiece(cord, piece, color)
                     self.pieceCount[color][piece] += 1
+
                     if self.variant in DROP_VARIANTS and promoted:
                         self.promoted[cord] = 1
                         promoted = False
+
+                    if self.variant == CAMBODIANCHESS:
+                        if piece == KING and self.kings[color] != self.ini_kings[color]:
+                            self.is_first_move[KING][color] = False
+                        if piece == QUEEN and cord != self.ini_queens[color]:
+                            self.is_first_move[QUEEN][color] = False
+
                     cord += 1
 
 
@@ -434,13 +454,21 @@ class LBoard:
         self.hist_opchecked.append(self.opchecked)
         if self.variant in DROP_VARIANTS:
             self.hist_capture_promoting.append(self.capture_promoting)
-         
+        if self.variant == CAMBODIANCHESS:
+            self.hist_is_first_move.append(deepcopy(self.is_first_move))
+            
         self.opchecked = None
         self.checked = None
 
         if flag == NULL_MOVE:
             self.setColor(opcolor)
             return move
+
+        if self.variant == CAMBODIANCHESS:
+            if fpiece == KING and self.is_first_move[KING][color]:
+                self.is_first_move[KING][color] = False
+            elif fpiece == QUEEN and self.is_first_move[QUEEN][color]:
+                self.is_first_move[QUEEN][color] = False
 
         # Castling moves can be represented strangely, so normalize them.
         if flag in (KING_CASTLE, QUEEN_CASTLE):
@@ -663,6 +691,9 @@ class LBoard:
                     self.promoted[tcord] = 0
             self.capture_promoting = self.hist_capture_promoting.pop()
         
+        if self.variant == CAMBODIANCHESS:
+            self.is_first_move = self.hist_is_first_move.pop()
+            
         self.setColor(color)
         
         self.checked = self.hist_checked.pop()
@@ -726,7 +757,7 @@ class LBoard:
                 holding = self.holding[color]
                 b += "\n# [%s]" % "".join([FAN_PIECES[color][piece]*holding[piece] \
                                             for piece in holding if holding[piece]>0])
-
+            
         return b if PY3 else b.encode('utf8')
     
     def asFen (self, enable_bfen=True):
@@ -740,7 +771,7 @@ class LBoard:
                     if empty > 0:
                         fenstr.append(str(empty))
                         empty = 0
-                    if self.variant == MAKRUKCHESS:
+                    if self.variant in (CAMBODIANCHESS, MAKRUKCHESS):
                         sign = reprSignMakruk[piece]
                     elif self.variant == SITTUYINCHESS:
                         sign = reprSignSittuyin[piece]
@@ -848,6 +879,10 @@ class LBoard:
             copy.hist_capture_promoting = self.hist_capture_promoting[:]
         elif self.variant == ATOMICCHESS:
             copy.hist_exploding_around = [a[:] for a in self.hist_exploding_around]
+        elif self.variant == CAMBODIANCHESS:
+            copy.is_first_move = {KING: self.is_first_move[KING][:], \
+                                  QUEEN: self.is_first_move[QUEEN][:]}
+            copy.hist_is_first_move = self.hist_is_first_move[:]
         
         copy.fen_was_applied = self.fen_was_applied
         return copy

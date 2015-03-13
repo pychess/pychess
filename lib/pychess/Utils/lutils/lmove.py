@@ -165,7 +165,7 @@ def toSAN (board, move, localRepr=False):
     part1 = ""
     
     if fpiece != PAWN or flag == DROP:
-        if board.variant == MAKRUKCHESS:
+        if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
             part0 += reprSignMakruk[fpiece]
         elif board.variant == SITTUYINCHESS:
             part0 += reprSignSittuyin[fpiece]
@@ -220,7 +220,7 @@ def toSAN (board, move, localRepr=False):
     
     notat = part0 + part1
     if flag in PROMOTIONS:
-        if board.variant == MAKRUKCHESS:
+        if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
             notat += "="+reprSignMakruk[PROMOTE_PIECE(flag)]
         elif board.variant == SITTUYINCHESS:
             notat += "="+reprSignSittuyin[PROMOTE_PIECE(flag)]
@@ -258,7 +258,7 @@ def parseSAN (board, san):
         c = c.lower()
         if c == "k" and board.variant != SUICIDECHESS:
             raise ParsingError(san, _("invalid promoted piece"), board.asFen())
-        elif c == "." and board.variant in (MAKRUKCHESS, SITTUYINCHESS):
+        elif c == "." and board.variant in (CAMBODIANCHESS, MAKRUKCHESS, SITTUYINCHESS):
             # temporary hack for xboard bug
             flag = QUEEN_PROMOTION
         else:
@@ -406,7 +406,7 @@ def toLAN (board, move, localRepr=False):
     
     s = ""
     if fpiece != PAWN or flag == DROP:
-        if board.variant == MAKRUKCHESS:
+        if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
             s = reprSignMakruk[fpiece]
         elif board.variant == SITTUYINCHESS:
             s = reprSignSittuyin[fpiece]
@@ -488,14 +488,14 @@ def toAN (board, move, short=False, castleNotation=CASTLE_SAN):
     
     if flag in PROMOTIONS:
         if short:
-            if board.variant == MAKRUKCHESS:
+            if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
                 s += reprSignMakruk[PROMOTE_PIECE(flag)].lower()
             elif board.variant == SITTUYINCHESS:
                 s += reprSignSittuyin[PROMOTE_PIECE(flag)].lower()
             else:
                 s += reprSign[PROMOTE_PIECE(flag)].lower()
         else:
-            if board.variant == MAKRUKCHESS:
+            if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
                 s += "=" + reprSignMakruk[PROMOTE_PIECE(flag)]
             elif board.variant == SITTUYINCHESS:
                 s += "=" + reprSignSittuyin[PROMOTE_PIECE(flag)]
