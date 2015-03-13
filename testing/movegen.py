@@ -115,8 +115,6 @@ class FindMovesTestCase(unittest.TestCase):
             depths = [(int(s[1]), int(s[3:].rstrip())) for s in parts[1:]]
             self.positions2.append( (parts[0], depths) )
             
-        self.positions3 = [("8/6k1/6p1/3s2P1/3npR2/2r5/p2N2F1/3K4 b - - 0 49", [(1, 32),(2, 653),(3, 18439),(4, 357804)])]
-    
     def movegen(self, positions, variant):
         for i, (fen, depths) in enumerate(positions):
             print(i+1, "/", len(positions), "-", fen)
@@ -151,11 +149,20 @@ class FindMovesTestCase(unittest.TestCase):
         self.movegen(self.positions2, NORMALCHESS)
 
     def testMovegen3(self):
-        """Testing SITTUYINCHESS variant move generator with one position"""
+        """Testing SITTUYINCHESS variant move generator"""
+        self.positions3 = [("8/6k1/6p1/3s2P1/3npR2/2r5/p2N2F1/3K4 b - - 0 49", [(1, 32),(2, 653),(3, 18439),(4, 357804)])]
         print()
         #return
         self.MAXDEPTH = 3
         self.movegen(self.positions3, SITTUYINCHESS)
+
+    def testMovegen4(self):
+        """Testing CAMBODIANCHESS variant move generator"""
+        self.positions4 = [("rnsmksnr/8/ppp1pppp/3p4/4P3/PPPP1PPP/8/RNSKMSNR w - - 0 2", [(1, 27),])]
+        print()
+        #return
+        self.MAXDEPTH = 1
+        self.movegen(self.positions4, CAMBODIANCHESS)
 
 
 if __name__ == '__main__':
