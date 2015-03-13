@@ -69,8 +69,8 @@ class PyChess (object):
     def __getBestOpening (self):
         totalWeight = 0
         choice = None
-        if self.board.variant not in (ASEANCHESS, MAKRUKCHESS, SITTUYINCHESS, LOSERSCHESS,\
-                                      SUICIDECHESS, ATOMICCHESS, KINGOFTHEHILLCHESS):
+        if self.board.variant not in (ASEANCHESS, CAMBODIANCHESS, MAKRUKCHESS, SITTUYINCHESS, \
+                                      LOSERSCHESS, SUICIDECHESS, ATOMICCHESS, KINGOFTHEHILLCHESS):
             for move, weight, histGames, histScore in getOpenings(self.board):
                 totalWeight += weight
                 if totalWeight == 0:

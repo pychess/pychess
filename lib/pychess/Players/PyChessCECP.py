@@ -51,7 +51,7 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic,kingofthehill,asean,makruk,sittuyin",
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic,kingofthehill,asean,cambodian,makruk,sittuyin",
             "colors": 0,
             "ics": 0,
             "name": 0,
@@ -139,6 +139,9 @@ class PyChessCECP(PyChess):
                         elif lines[1] == "asean":
                             self.board = LBoard(ASEANCHESS)
                             self.board.applyFen(ASEANSTART)
+                        elif lines[1] == "cambodian":
+                            self.board = LBoard(CAMBODIANCHESS)
+                            self.board.applyFen(MAKRUKSTART)
                         elif lines[1] == "makruk":
                             self.board = LBoard(MAKRUKCHESS)
                             self.board.applyFen(MAKRUKSTART)

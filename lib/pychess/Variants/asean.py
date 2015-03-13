@@ -52,11 +52,11 @@ class MakrukBoard(Board):
 # Ouk Chatrang, or Cambodian Makruk
 ##################################
 
-class KambodianBoard(Board):
-    variant = KAMBODIANCHESS
-    __desc__ = _("Kambodian: http://www.khmerinstitute.org/culture/ok.html")
-    name = _("Kambodian")
-    cecp_name = "kambodian"
+class CambodianBoard(Board):
+    variant = CAMBODIANCHESS
+    __desc__ = _("Cambodian: http://www.khmerinstitute.org/culture/ok.html")
+    name = _("Cambodian")
+    cecp_name = "cambodian"
     need_initial_board = True
     standard_rules = False
     variant_group = VARIANTS_ASEAN
