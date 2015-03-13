@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 
-from copy import deepcopy
-
 from pychess.compat import PY3
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprColor
@@ -159,7 +157,11 @@ class LBoard:
         elif len(parts) == 5:
             pieceChrs, colChr, castChr, epChr, fiftyChr = parts
         elif len(parts) == 4:
-            pieceChrs, colChr, castChr, epChr = parts
+            if parts[2].isdigit() and parts[3].isdigit():
+                # xboard FEN usage for asian variants
+                pieceChrs, colChr, fiftyChr, moveNoChr = parts
+            else:
+                pieceChrs, colChr, castChr, epChr = parts
         elif len(parts) == 3:
             pieceChrs, colChr, castChr = parts
         else:
@@ -455,7 +457,8 @@ class LBoard:
         if self.variant in DROP_VARIANTS:
             self.hist_capture_promoting.append(self.capture_promoting)
         if self.variant == CAMBODIANCHESS:
-            self.hist_is_first_move.append(deepcopy(self.is_first_move))
+            self.hist_is_first_move.append({KING: self.is_first_move[KING][:], \
+                                            QUEEN: self.is_first_move[QUEEN][:]})
             
         self.opchecked = None
         self.checked = None
