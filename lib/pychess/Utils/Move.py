@@ -55,7 +55,7 @@ class Move:
                         ((board.board.color == WHITE and board.board.castling & W_OO) or \
                         (board.board.color == BLACK and board.board.castling & B_OO))):
                         self.flag = KING_CASTLE
-                else:
+                elif board.variant != CAMBODIANCHESS:
                     if self.cord0.x - self.cord1.x == 2:
                         self.flag = QUEEN_CASTLE if self.cord0.x == 4 else KING_CASTLE
                     elif self.cord0.x - self.cord1.x == -2:
