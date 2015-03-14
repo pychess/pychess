@@ -136,18 +136,29 @@ class PyChessCECP(PyChess):
                             self.board.iniAtomic()
                         elif lines[1] == "kingofthehill":
                             self.board.variant = KINGOFTHEHILLCHESS
+                            self.print("setup (PNBRQKpnbrqk) 8x8+0_fairy %s" % FEN_START)
                         elif lines[1] == "asean":
                             self.board = LBoard(ASEANCHESS)
                             self.board.applyFen(ASEANSTART)
-                        elif lines[1] == "cambodian":
-                            self.board = LBoard(CAMBODIANCHESS)
-                            self.board.applyFen(MAKRUKSTART)
                         elif lines[1] == "makruk":
                             self.board = LBoard(MAKRUKCHESS)
                             self.board.applyFen(MAKRUKSTART)
+                        elif lines[1] == "cambodian":
+                            self.board = LBoard(CAMBODIANCHESS)
+                            self.board.applyFen(MAKRUKSTART)
+                            self.print("setup (PN.R.M....SKpn.r.m....sk) 8x8+0_makruk %s" % MAKRUKSTART)
+                            self.print("piece K& KiN")
+                            self.print("piece M& FifD")
                         elif lines[1] == "sittuyin":
                             self.board = LBoard(SITTUYINCHESS)
                             self.board.applyFen(SITTUYINSTART)
+                            self.print("setup (PN.R.F....SKpn.r.f....sk) 8x8+6_bughouse %s" % SITTUYINSTART)
+                            self.print("piece N& Nj@3")
+                            self.print("piece S& FfWj@3")
+                            self.print("piece F& Fjb@3")
+                            self.print("piece R& R@1")
+                            self.print("piece K& Kj@3")
+                            self.print("piece P& fmWfcFj@3")
                 
                 elif lines[0] == "quit":
                     self.forced = True
