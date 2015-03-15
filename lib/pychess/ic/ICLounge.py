@@ -379,9 +379,10 @@ class ParrentListSection (Section):
             treeview.append_column(column)
 
     def lowLeftSearchPosFunc (self, tv, search_dialog):
-        x = tv.allocation.x + tv.get_toplevel().window.get_position()[0]
-        y = tv.allocation.y + tv.get_toplevel().window.get_position()[1] + \
-            tv.allocation.height
+        alloc = tv.get_allocation()
+        window = tv.get_toplevel().get_window()
+        x = alloc.x + window.get_position()[0]
+        y = alloc.y + window.get_position()[1] + alloc.height
         search_dialog.move(x, y)
         search_dialog.show_all()
 
@@ -431,7 +432,7 @@ class SeekTabSection (ParrentListSection):
         for i in range(2, 8):
             self.tv.get_model().set_sort_func(i, self.compareFunction, i)
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
@@ -801,7 +802,7 @@ class PlayerTabSection (ParrentListSection):
         self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
@@ -1005,7 +1006,7 @@ class GameTabSection (ParrentListSection):
         self.onSelectionChanged(self.selection)
 
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
@@ -1014,7 +1015,7 @@ class GameTabSection (ParrentListSection):
                 model.get_value(iter, 4).lower().startswith(key):
                 return False
             return True
-        self.tv.set_search_equal_func(searchCallback, None)
+        self.tv.set_search_equal_func(searchCallback)
 
         self.connection.games.connect("FICSGameCreated", lambda games, game:
                 self.publisher.put((self.onGameAdd, game)) )
