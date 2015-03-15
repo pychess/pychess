@@ -4,6 +4,7 @@ from .ICLounge import ICLounge
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect
 from pychess.Utils.const import *
+from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GObject
 import re
