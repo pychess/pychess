@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+from __future__ import print_function
+
 from gi.repository import Gtk
 from gi.repository import GObject
 
@@ -51,7 +53,7 @@ class PyDockLeaf (DockLeaf):
         self.__add(widget, title, id)
     
     def __repr__ (self):
-        s = DockLeaf.__repr__(self)
+        s = "leaf" #DockLeaf.__repr__(self)
         panels = []
         for widget, title, id in self.getPanels():
             panels.append(id)

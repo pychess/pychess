@@ -82,7 +82,6 @@ class BoardControl (Gtk.EventBox):
         for menu, conid in self.connections.items():
             menu.disconnect(conid)
         self.connections = {}
-        self.view.save_board_size()
 
     def getPromotion(self):
         color = self.view.model.boards[-1].color
