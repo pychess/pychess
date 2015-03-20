@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+from __future__ import print_function
+
 from math import ceil as float_ceil
 ceil = lambda f: int(float_ceil(f))
 
