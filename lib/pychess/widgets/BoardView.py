@@ -557,12 +557,6 @@ class BoardView (Gtk.DrawingArea):
     #############################
     
     def on_realized (self, widget):
-        if not self.preview:
-            # restore saved board size
-            width = conf.get("board_window_width", 100)
-            height = conf.get("board_window_height", 100)
-            widget.set_size_request(width, height)
-
         p = (1-self.padding)
         alloc = self.get_allocation()
         square = float(min(alloc.width, alloc.height))*p
@@ -571,12 +565,6 @@ class BoardView (Gtk.DrawingArea):
         s = square/self.FILES
         self.square = (xc, yc, square, s)
     
-    def save_board_size(self):
-        a = self.get_allocation()
-        x, y, w, h = (a.x, a.y, a.width, a.height)
-        conf.set("board_window_width",  w)
-        conf.set("board_window_height", h)
-        
     def expose(self, widget, ctx):       
         context = widget.get_window().cairo_create()
         #r = (event.area.x, event.area.y, event.area.width, event.area.height)

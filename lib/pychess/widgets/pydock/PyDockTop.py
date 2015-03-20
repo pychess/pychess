@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+from __future__ import print_function
+
 import os
 from xml.dom import minidom
 
@@ -33,6 +35,9 @@ class PyDockTop (TopDock):
     
     def _del (self):
         TopDock._del(self)
+
+    def __repr__ (self):
+        return "top (%s) % self.id"
     
     #===========================================================================
     #    Component stuff
