@@ -345,7 +345,8 @@ def genAllMoves (board, drops=True):
 
     # Cambodian extra first moves for king and queen
     if board.variant == CAMBODIANCHESS:
-        if board.is_first_move[KING][board.color]:
+        if board.arBoard[board.ini_kings[board.color]] == KING and \
+            board.is_first_move[KING][board.color]:
             if board.color == WHITE:
                 if not board.arBoard[B2]:
                     yield newMove(D1, B2)
@@ -356,7 +357,8 @@ def genAllMoves (board, drops=True):
                     yield newMove(E8, C7)
                 if not board.arBoard[G7]:
                     yield newMove(E8, G7)
-        if board.is_first_move[QUEEN][board.color]:
+        if board.arBoard[board.ini_queens[board.color]] == QUEEN and \
+            board.is_first_move[QUEEN][board.color]:
             if board.color == WHITE:
                 if not board.arBoard[E3]:
                     yield newMove(E1, E3)
