@@ -22,7 +22,7 @@ from pychess.Utils.lutils import lsearch
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCaptures, genCheckEvasions
 from pychess.Utils.lutils.validator import validateMove
 from pychess.System.Log import log
-from pychess.Variants.asean import ASEANSTART, MAKRUKSTART, SITTUYINSTART
+from pychess.Variants.asean import ASEANSTART, MAKRUKSTART, KAMBODIANSTART, SITTUYINSTART
 
 
 class PyChessCECP(PyChess):
@@ -145,8 +145,8 @@ class PyChessCECP(PyChess):
                             self.board.applyFen(MAKRUKSTART)
                         elif lines[1] == "cambodian":
                             self.board = LBoard(CAMBODIANCHESS)
-                            self.board.applyFen(MAKRUKSTART)
-                            self.print("setup (PN.R.M....SKpn.r.m....sk) 8x8+0_makruk %s" % MAKRUKSTART)
+                            self.board.applyFen(KAMBODIANSTART)
+                            self.print("setup (PN.R.M....SKpn.r.m....sk) 8x8+0_makruk %s" % KAMBODIANSTART)
                             self.print("piece K& KiN")
                             self.print("piece M& FifD")
                         elif lines[1] == "sittuyin":

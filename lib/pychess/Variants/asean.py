@@ -51,6 +51,9 @@ class MakrukBoard(Board):
 ##################################
 # Ouk Chatrang, or Cambodian Makruk
 ##################################
+# DEde in cambodian starting fen indicate
+# that queens and kings are virgins (not moved yet)
+KAMBODIANSTART = "rnsmksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKMSNR w DEde - 0 1"
 
 class CambodianBoard(Board):
     variant = CAMBODIANCHESS
@@ -67,7 +70,7 @@ class CambodianBoard(Board):
 
     def __init__ (self, setup=False, lboard=None):
         if setup is True:
-            Board.__init__(self, setup=MAKRUKSTART, lboard=lboard)
+            Board.__init__(self, setup=KAMBODIANSTART, lboard=lboard)
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
 
