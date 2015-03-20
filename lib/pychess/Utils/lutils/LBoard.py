@@ -181,7 +181,12 @@ class LBoard:
             for Chr in castChr:
                 valid_chars = "ABCDEFGHKQ" if self.variant==FISCHERRANDOMCHESS else "KQ"
                 if Chr.upper() not in valid_chars:
-                    raise SyntaxError(_("Castling availability field is not legal. \n\n%s") % fenstr)
+                    if self.variant == CAMBODIANCHESS:
+                        pass
+                        # sjaakii uses DEde in cambodian starting fen to indicate
+                        # that queens and kings are virgins (not moved yet)
+                    else:
+                        raise SyntaxError(_("Castling availability field is not legal. \n\n%s") % fenstr)
         
         if epChr != "-" and not epChr in cordDic:
             raise SyntaxError(_("En passant cord is not legal. \n\n%s") % fenstr)
@@ -819,8 +824,22 @@ class LBoard:
     
         fenstr.append(self.color == WHITE and "w" or "b")
         fenstr.append(" ")
-        
-        fenstr.append(self.reprCastling())
+
+        if self.variant == CAMBODIANCHESS:
+            cast = ""
+            if self.is_first_move[KING][WHITE]:
+                cast += "D"
+            if self.is_first_move[QUEEN][WHITE]:
+                cast += "E"
+            if self.is_first_move[KING][BLACK]:
+                cast += "d"
+            if self.is_first_move[QUEEN][BLACK]:
+                cast += "e"
+            if not cast:
+                cast = "-"
+            fenstr.append(cast)
+        else:
+            fenstr.append(self.reprCastling())
         fenstr.append(" ")
         
         if not self.enpassant:
@@ -883,6 +902,8 @@ class LBoard:
         elif self.variant == ATOMICCHESS:
             copy.hist_exploding_around = [a[:] for a in self.hist_exploding_around]
         elif self.variant == CAMBODIANCHESS:
+            copy.ini_kings = self.ini_kings
+            copy.ini_queens = self.ini_queens
             copy.is_first_move = {KING: self.is_first_move[KING][:], \
                                   QUEEN: self.is_first_move[QUEEN][:]}
             copy.hist_is_first_move = self.hist_is_first_move[:]
