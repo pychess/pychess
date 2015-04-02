@@ -42,7 +42,7 @@ class ICPlayer (Player):
     
     @property
     def time (self):
-        self.gamemodel.timemodel.getPlayerTime(self.color)
+        return self.gamemodel.timemodel.getPlayerTime(self.color)
         
     #===========================================================================
     #    Handle signals from the connection
