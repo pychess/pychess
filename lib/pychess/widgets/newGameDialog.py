@@ -281,7 +281,9 @@ class _GameInitializationMode:
             return len(path) > 1
         
         selection.set_select_function(selfunc, None)
-        selection.select_path(variantToPath[conf.get(confid, default)])
+        variant = conf.get(confid, default)
+        if variant in variantToPath:
+            selection.select_path(variantToPath[variant])
 
         def callback (selection):            
             model, iter = selection.get_selected()            
