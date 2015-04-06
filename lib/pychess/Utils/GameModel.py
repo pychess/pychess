@@ -9,7 +9,7 @@ from gi.repository import GObject
 from pychess.compat import Queue, Empty, StringIO
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
-from pychess.System import fident
+from pychess.System import conf, fident
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
 from pychess.Utils.Move import Move, toSAN
@@ -173,7 +173,8 @@ class GameModel (GObject.GObject, Thread):
         self.undoQueue = Queue()
 
     def zero_reached (self, timemodel, color):
-        if self.players[1-color].__type__ == ARTIFICIAL:
+        if conf.get('autoCallFlag', False) and \
+            self.players[1-color].__type__ == ARTIFICIAL:
             if self.status == RUNNING and timemodel.getPlayerTime(color) <= 0:
                 log.info('Automatically sending flag call on behalf of player %s.' % self.players[1-color].name)
                 self.players[1-color].emit("offer", Offer(FLAG_CALL))
