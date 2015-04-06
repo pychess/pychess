@@ -10,6 +10,7 @@ from gi.repository.GdkPixbuf import Pixbuf
 from pychess.System import uistuff
 from pychess.System.glock import glock_connect_after
 from pychess.System.prefix import getEngineDataPrefix
+from pychess.System.SubProcess import searchPath
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
 from pychess.widgets import newGameDialog
 
@@ -135,8 +136,9 @@ class EnginesDialog():
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
         filter = Gtk.FileFilter()
-        filter.set_name(_("Chess engines"))
+        filter.set_name(_("Executable files"))
         filter.add_mime_type("application/x-executable")
+        filter.add_mime_type("application/x-ms-dos-executable")
         engine_chooser_dialog.add_filter(filter)
         self.add = False
 
@@ -146,15 +148,38 @@ class EnginesDialog():
 
             if response == Gtk.ResponseType.OK:
                 new_engine = engine_chooser_dialog.get_filename()
+                if new_engine.lower().endswith(".exe"):
+                    vm_name = "wine" 
+                    vmpath = searchPath(vm_name, access=os.R_OK|os.X_OK)
+                    if vmpath is None:
+                        d = Gtk.MessageDialog(
+                                type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
+                        d.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
+                        d.format_secondary_text(_("wine not installed"))
+                        d.run()
+                        d.hide()
+                        new_engine = ""
+                    else:
+                        vmpath += " "
+                else:
+                    vm_name = None
+                    vmpath = ""
+                
                 if new_engine:
                     try:
-                        uci = is_uci(new_engine)
+                        uci = is_uci(vmpath + new_engine)
                         if not uci:
-                            if not is_cecp(new_engine):
+                            if not is_cecp(vmpath + new_engine):
                                 # restore the original
                                 engine = discoverer.getEngineByName(self.cur_engine)
                                 engine_chooser_dialog.set_filename(engine["command"])
-                                print("Maybe not a chess engine")
+                                d = Gtk.MessageDialog(
+                                        type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
+                                d.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
+                                d.format_secondary_text(_("There is something wrong with this executable"))
+                                d.run()
+                                d.hide()
+                                engine_chooser_dialog.hide()
                                 return
                         path, binname = os.path.split(new_engine)
                         for e in discoverer.getEngines():
@@ -168,13 +193,18 @@ class EnginesDialog():
                         active = self.widgets["engine_protocol_combo"].get_active()
                         protocol = "uci" if active==0 else "xboard"
                         
-                        discoverer.addEngine(binname, new_engine, protocol)
+                        discoverer.addEngine(binname, new_engine, protocol, vm_name)
                         self.cur_engine = binname
                         glock_connect_after(discoverer, "engine_discovered", update_store)
                         self.add = False
                         discoverer.discover()
                     except:
-                        print("There is something wrong with this executable")
+                        d = Gtk.MessageDialog(
+                                type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
+                        d.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
+                        d.format_secondary_text(_("There is something wrong with this executable"))
+                        d.run()
+                        d.hide()
                 else:
                     # restore the original
                     engine = discoverer.getEngineByName(self.cur_engine)

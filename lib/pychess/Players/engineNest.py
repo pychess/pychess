@@ -441,11 +441,13 @@ class EngineDiscoverer (GObject.GObject):
         engine.prestart()
         return engine
 
-    def addEngine(self, name, new_engine, protocol):
+    def addEngine(self, name, new_engine, protocol, vm_name):
         engine = {"name": name,
                   "protocol": protocol,
                   "command": new_engine,
                   "recheck": True}
+        if vm_name is not None:
+            engine["vm_name"] = vm_name
         self._engines.append(engine)
 
     def removeEngine(self, name):
