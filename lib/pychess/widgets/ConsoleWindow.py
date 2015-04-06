@@ -95,6 +95,8 @@ class ConsoleView (Gtk.VPaned):
         
         self.writeView.connect("key-press-event", self.onKeyPress)
 
+        self.readView.connect("size-allocate", self.onSizeAllocate)
+
     
     def addMessage (self, text, my=False):
         glock.acquire()
@@ -118,8 +120,6 @@ class ConsoleView (Gtk.VPaned):
                 self.connection.client.run_command(buffer.props.text)
                 self.emit("messageTyped", buffer.props.text)
                 self.addMessage(buffer.props.text, my=True)
-                adj = self.sw.get_vadjustment()
-                adj.set_value(adj.get_upper())
                 
                 # Maintain variables backup, it will be restored to fics on quit
                 for var in self.connection.lvm.variablesBackup:
@@ -172,3 +172,6 @@ class ConsoleView (Gtk.VPaned):
             widget.grab_focus()
             return True
                 
+    def onSizeAllocate(self, widget, event):
+        adj = self.sw.get_vadjustment()
+        adj.set_value(adj.get_upper() - adj.get_page_size())
