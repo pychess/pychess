@@ -973,15 +973,13 @@ class BoardView (Gtk.DrawingArea):
                 if self.isLight(cord):
                     # bg
                     found, color = sc.lookup_color("p_bg" + state)
-                    if not found:
-                        print("color not found in boardview.py:","p_bg" + state)
-                    context.set_source_rgba(*color)
                 else:
                     # dark
                     found, color = sc.lookup_color("p_dark" + state)
-                    if not found:
-                        print("color not found in boardview.py:","p_dark" + state)
-                    context.set_source_rgba(*color)
+                if not found:
+                    print("color not found in boardview.py:","p_dark" + state)
+                r, g, b, a = color.red, color.green, color.blue, color.alpha
+                context.set_source_rgba(r, g, b, a)
             context.fill()
     
     ###############################
