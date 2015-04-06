@@ -18,6 +18,8 @@ from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamenanny, gamewidget
 
+save_pgn_file = None
+
 
 def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     """ The player tuples are:
@@ -222,6 +224,20 @@ def saveGameSimple (uri, game):
     saver = enddir[ending[1:]]
     game.save(uri, saver, append=False)
 
+def saveGamePGN (game):
+    opendialog, savedialog, enddir, savecombo, savers = getOpenAndSaveDialogs()
+    uri = save_pgn_file
+    append = False
+    position = None
+    index = savecombo.get_active()
+    format = saveformats[index]
+    saver = format[2]
+    try:
+        game.save(uri, saver, append, position)
+        return True
+    except IOError, e:
+        return False
+
 def saveGameAs (game, position=None):
     opendialog, savedialog, enddir, savecombo, savers = getOpenAndSaveDialogs()
 
@@ -396,6 +412,15 @@ def closeGame (gmwidg, game):
     if not game.isChanged():
         response = Gtk.ResponseType.OK
     else:
+        str = "<b><big>Save the current game before you close it?</big></b>"
+        # TPJB change starts
+        if save_pgn_file:
+            x = saveGamePGN(game)
+            if x:
+                return Gtk.ResponseType.OK
+            str = "<b><big>Unable to save to configured file. Save the current game before you close it?</big></b>"
+        # end
+
         #if conf.get("autoSave", False): # Autosave option from preferences?
             #game.save(None, Savers.database, append=False)
             #response = Gtk.ResponseType.OK
@@ -410,7 +435,7 @@ def closeGame (gmwidg, game):
 
         gmwidg.bringToFront()
 
-        d.set_markup(_("<b><big>Save the current game before you close it?</big></b>"))
+        d.set_markup(_(str))
         d.format_secondary_text (_(
             "It is not possible later to continue the game,\nif you don't save it."))
         
