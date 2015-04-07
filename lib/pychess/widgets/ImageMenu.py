@@ -73,7 +73,8 @@ class ImageMenu(Gtk.EventBox):
         context.rectangle (a.x, a.y, a.width, a.height)
         sc = self.get_style_context()
         found, color = sc.lookup_color("p_dark_color")
-        context.set_source_rgba(*color)
+        r, g, b, a = color.red, color.green, color.blue, color.alpha
+        context.set_source_rgba(r, g, b, a)
         context.stroke()
         self.__sub_setGrabbed(self.isopen)
     
