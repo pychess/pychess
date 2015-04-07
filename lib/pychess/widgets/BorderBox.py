@@ -21,7 +21,8 @@ class BorderBox (Gtk.Alignment):
 
         sc = self.get_style_context()
         found, color = sc.lookup_color("p_dark_color")
-        context.set_source_rgba(*color)
+        r, g, b, a = color.red, color.green, color.blue, color.alpha
+        context.set_source_rgba(r, g, b, a)
 
         r = self.get_allocation()
         x = r.x + .5
