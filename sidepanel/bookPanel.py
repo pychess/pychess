@@ -62,9 +62,10 @@ class Advisor (object):
         pass
     
     def query_tooltip (self, path):
-        if not path[1:]:
+        indices = path.get_indices()
+        if not indices[1:]:
             return self.tooltip
-        return self.child_tooltip(path[1])
+        return self.child_tooltip(indices[1])
     
     def empty_parent (self):
         while True:
@@ -547,7 +548,9 @@ class Sidepanel (object):
         board, move, pv = self.store[iter][0]
         # The row may be tied to a specific action.
         path = self.store.get_path(iter)
-        self.advisors[path[0]].row_activated(iter, self.boardview.model)
+        indices = path.get_indices()
+        if indices:
+            self.advisors[indices[0]].row_activated(iter, self.boardview.model)
     
     def query_tooltip(self, treeview, x, y, keyboard_mode, tooltip):
         # First, find out where the pointer is:
@@ -566,11 +569,12 @@ class Sidepanel (object):
         treeview.set_tooltip_row(tooltip, path)
         
         # And ask the advisor for some text
-        iter = self.store.get_iter(path)
-        text = self.advisors[path[0]].query_tooltip(path)
-        if text:
-            tooltip.set_markup(text)
-            return True # Show the tip.
+        indices = path.get_indices()
+        if indices:
+            text = self.advisors[indices[0]].query_tooltip(path)
+            if text:
+                tooltip.set_markup(text)
+                return True # Show the tip.
             
         return False
 

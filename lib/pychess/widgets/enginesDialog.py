@@ -287,7 +287,9 @@ class EnginesDialog():
             store, iter = self.tv.get_selection().get_selected()
             if iter:
                 self.selection = True
-                row = store.get_path(iter)[0]
+                path = store.get_path(iter)
+                indices = path.get_indices()
+                row = indices[0]
                 name = store[row][1]
                 self.cur_engine = name
                 engine = discoverer.getEngineByName(name)
