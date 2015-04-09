@@ -278,7 +278,7 @@ class _GameInitializationMode:
         selection.set_mode(Gtk.SelectionMode.BROWSE)
 
         def selfunc (selection, store, path, path_selected, data):                 
-            return len(path) > 1
+            return path.get_depth() > 1
         
         selection.set_select_function(selfunc, None)
         variant = conf.get(confid, default)

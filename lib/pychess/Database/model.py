@@ -3,6 +3,7 @@
 import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Sequence, Integer, String, SmallInteger, CHAR, LargeBinary, UnicodeText
 
+from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
 from pychess.System.prefix import addUserDataPrefix 
 
@@ -74,9 +75,9 @@ game = Table('game', metadata,
 def ini_collection():
     conn = engine.connect()
     new_values = [
-        {"id": LOCAL, "name": u"Local game"},
-        {"id": ARTIFICIAL, "name": u"Chess engine(s)"},
-        {"id": REMOTE, "name": u"ICS game"},
+        {"id": LOCAL, "name": unicode("Local game")},
+        {"id": ARTIFICIAL, "name": unicode("Chess engine(s)")},
+        {"id": REMOTE, "name": unicode("ICS game")},
         ]
     conn.execute(collection.insert(), new_values)
     conn.close()

@@ -4,6 +4,7 @@ from __future__ import print_function
 import os
 from gi.repository import Gtk, GObject
 
+from pychess.compat import unicode
 from pychess.System import conf
 from pychess.Utils.const import reprResult, BLACK, FEN_EMPTY, NORMALCHESS
 from pychess.Utils.Board import Board
@@ -14,7 +15,7 @@ from pychess.Savers.ChessFile import LoadingError
 def ellipsize (string, maxlen):
     if len(string) <= maxlen or maxlen < 4:
         return string
-    return string[:maxlen-1] + u"…"
+    return string[:maxlen-1] + unicode("…")
 
 class BoardPreview:
     
