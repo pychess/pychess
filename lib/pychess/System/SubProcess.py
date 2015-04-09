@@ -138,7 +138,8 @@ class SubProcess (GObject.GObject):
     def __io_cb (self, channel, condition, isstderr):
         while True:
             try:
-                line = channel.next()#readline()
+#                line = channel.next()#readline()
+                line = channel.readline()
             except StopIteration:
                 # fix for pygi
                 #return False

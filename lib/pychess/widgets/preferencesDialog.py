@@ -574,10 +574,12 @@ class ThemeTab:
             if len(selected) == 0:
                 return conf.get("pieceTheme", "Pychess")
             
-            i = selected[0][0]
-            theme = model[i][1]
-            Pieces.set_piece_theme(theme)
-            return theme
+            indices = selected[0].get_indices()
+            if indices:
+                i = indices[0]
+                theme = model[i][1]
+                Pieces.set_piece_theme(theme)
+                return theme
         
         def _set_active(iconview, value):
             try:
