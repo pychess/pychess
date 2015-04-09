@@ -493,14 +493,18 @@ class EnterNotationExtension (_GameInitializationMode):
         man = GtkSource.LanguageManager()
         # Init new version
         if hasattr(man.props, 'search_path'):
-            path = os.path.join(getDataPrefix(),"gtksourceview-1.0/language-specs")
-            man.props.search_path = man.props.search_path + [path]
-            if 'pgn' in man.get_language_ids():
-                lang = man.get_language('pgn')
-                cls.sourcebuffer.set_language(lang)
-            else:
+            try:
+                path = os.path.join(getDataPrefix(),"gtksourceview-1.0/language-specs")
+                man.props.search_path = man.props.search_path + [path]
+                if 'pgn' in man.get_language_ids():
+                    lang = man.get_language('pgn')
+                    cls.sourcebuffer.set_language(lang)
+                else:
+                    log.warning("Unable to load pgn syntax-highlighting.")
+                cls.sourcebuffer.set_highlight_syntax(True)
+            except NotImplementedError:
+                # Python 2.7.3 in Ubuntu 12.04
                 log.warning("Unable to load pgn syntax-highlighting.")
-            cls.sourcebuffer.set_highlight_syntax(True)
         # Init old version
         else:
             os.environ["XDG_DATA_DIRS"] = getDataPrefix()+":/usr/share/"
