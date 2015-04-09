@@ -61,9 +61,12 @@ class Sidepanel:
         iter = selection.get_selected()[1]
         if iter == None: return
         if self.frozen.on: return
-        row = self.tv.get_model().get_path(iter)[0]
-        board = self.gamemodel.boards[row]
-        self.boardview.setShownBoard(board)
+        path = self.tv.get_model().get_path(iter)
+        indices = path.get_indices()
+        if indices:
+            row = indices[0]
+            board = self.gamemodel.boards[row]
+            self.boardview.setShownBoard(board)
     
     def shown_changed (self, boardview, shown):
         if not boardview.shownIsMainLine():
@@ -97,9 +100,12 @@ class Sidepanel:
         # If latest ply is shown, we select the new latest
         iter = self.tv.get_selection().get_selected()[1]
         if iter:
-            row = self.tv.get_model().get_path(iter)[0]
-            if row < self.boardview.shown-1:
-                return
+            path = self.tv.get_model().get_path(iter)
+            indices = path.get_indices()
+            if indices:
+                row = indices[0]
+                if row < self.boardview.shown-1:
+                    return
         
         if self.boardview.shown >= model.ply:
             iter = self.store.get_iter(len(self.store)-1)

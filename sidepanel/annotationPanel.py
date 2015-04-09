@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+
 import re
 import datetime
 
@@ -468,7 +469,7 @@ class Sidepanel(Gtk.TextView):
         else:
             self.textbuffer.insert_with_tags_by_name(iter, ")", "variation-uneven", "variation-margin2")
 
-        self.textbuffer.insert_with_tags_by_name(iter, u"✖ ", "remove-variation")
+        self.textbuffer.insert_with_tags_by_name(iter, unicode("✖ "), "remove-variation")
         self.textbuffer.insert(iter, "\n")
 
         node = {}
@@ -918,4 +919,4 @@ class Sidepanel(Gtk.TextView):
             movestr =  unicode(toSAN(board.prev, move, True))
         nagsymbols = "".join([nag2symbol(nag) for nag in board.nags])
         # To prevent wrap castling we will use hyphen bullet (U+2043)       
-        return "%s%s%s" % (move_count(board), movestr.replace(u'-', u'\u2043'), nagsymbols)
+        return "%s%s%s" % (move_count(board), movestr.replace('-', unicode('⁃ ')), nagsymbols)

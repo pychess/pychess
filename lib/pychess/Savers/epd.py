@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
+from __future__ import unicode_literals
+
 from .ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WHITE, BLACK, WON_RESIGN, WAITING_TO_START, BLACKWON, WHITEWON, DRAW
@@ -18,7 +20,7 @@ def save (file, model, position=None):
     fen = model.boards[-1].asFen().split(" ")
     
     # First four parts of fen are the same in epd
-    file.write(u" ".join(fen[:4]))
+    file.write(" ".join(fen[:4]))
     
     ############################################################################
     # Repetition count                                                         #
@@ -56,15 +58,15 @@ def save (file, model, position=None):
     )
     
     for key, value in opcodes:
-        file.write(u" %s %s;" % (key, value))
+        file.write(" %s %s;" % (key, value))
     
     ############################################################################
     # Resign opcode                                                            #
     ############################################################################
     if model.status in (WHITEWON, BLACKWON) and model.reason == WON_RESIGN:
-        file.write(u" resign;")
+        file.write(" resign;")
     
-    print(u"", file=file)
+    print("", file=file)
     file.close()
     
 def load (file):

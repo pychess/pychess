@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
-
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
 from .ldata import *
 from .bitboard import firstBit
@@ -562,29 +562,29 @@ def parseAN (board, an):
 ################################################################################
 
 san2WhiteFanDic = {
-    ord(u"K"): FAN_PIECES[WHITE][KING],
-    ord(u"Q"): FAN_PIECES[WHITE][QUEEN],
-    ord(u"M"): FAN_PIECES[WHITE][QUEEN],
-    ord(u"F"): FAN_PIECES[WHITE][QUEEN],
-    ord(u"R"): FAN_PIECES[WHITE][ROOK],
-    ord(u"B"): FAN_PIECES[WHITE][BISHOP],
-    ord(u"S"): FAN_PIECES[WHITE][BISHOP],
-    ord(u"N"): FAN_PIECES[WHITE][KNIGHT],
-    ord(u"+"): u"†",
-    ord(u"#"): u"‡"
+    ord("K"): FAN_PIECES[WHITE][KING],
+    ord("Q"): FAN_PIECES[WHITE][QUEEN],
+    ord("M"): FAN_PIECES[WHITE][QUEEN],
+    ord("F"): FAN_PIECES[WHITE][QUEEN],
+    ord("R"): FAN_PIECES[WHITE][ROOK],
+    ord("B"): FAN_PIECES[WHITE][BISHOP],
+    ord("S"): FAN_PIECES[WHITE][BISHOP],
+    ord("N"): FAN_PIECES[WHITE][KNIGHT],
+    ord("+"): "†",
+    ord("#"): "‡"
 }
 
 san2BlackFanDic = {
-    ord(u"K"): FAN_PIECES[BLACK][KING],
-    ord(u"Q"): FAN_PIECES[BLACK][QUEEN],
-    ord(u"M"): FAN_PIECES[BLACK][QUEEN],
-    ord(u"F"): FAN_PIECES[BLACK][QUEEN],
-    ord(u"R"): FAN_PIECES[BLACK][ROOK],
-    ord(u"B"): FAN_PIECES[BLACK][BISHOP],
-    ord(u"S"): FAN_PIECES[BLACK][BISHOP],
-    ord(u"N"): FAN_PIECES[BLACK][KNIGHT],
-    ord(u"+"): u"†",
-    ord(u"#"): u"‡"
+    ord("K"): FAN_PIECES[BLACK][KING],
+    ord("Q"): FAN_PIECES[BLACK][QUEEN],
+    ord("M"): FAN_PIECES[BLACK][QUEEN],
+    ord("F"): FAN_PIECES[BLACK][QUEEN],
+    ord("R"): FAN_PIECES[BLACK][ROOK],
+    ord("B"): FAN_PIECES[BLACK][BISHOP],
+    ord("S"): FAN_PIECES[BLACK][BISHOP],
+    ord("N"): FAN_PIECES[BLACK][KNIGHT],
+    ord("+"): "†",
+    ord("#"): "‡"
 }
 
 def toFAN (board, move):

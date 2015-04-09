@@ -378,7 +378,7 @@ class ParrentListSection (Section):
             column.set_reorderable(True)
             treeview.append_column(column)
 
-    def lowLeftSearchPosFunc (self, tv, search_dialog):
+    def lowLeftSearchPosFunc (self, tv, search_dialog, user_data):
         alloc = tv.get_allocation()
         window = tv.get_toplevel().get_window()
         x = alloc.x + window.get_position()[0]
@@ -422,8 +422,8 @@ class SeekTabSection (ParrentListSection):
         self.tv = self.widgets["seektreeview"]
         self.store = Gtk.ListStore(FICSSoughtMatch, GdkPixbuf.Pixbuf,
             GdkPixbuf.Pixbuf, str, int, str, str, str, int, str, str)
-        self.modelsort = Gtk.TreeModelSort(self.store)
-        self.tv.set_model(self.modelsort)
+        self.model = Gtk.TreeModelSort(model=self.store)
+        self.tv.set_model(self.model)
         self.addColumns (self.tv, "FICSSoughtMatch", "", "", _("Name"),
             _("Rating"), _("Rated"), _("Type"), _("Clock"), "gametime",
             "textcolor", "tooltip", hide=[0,8,9,10], pix=[1,2] )
@@ -432,7 +432,7 @@ class SeekTabSection (ParrentListSection):
         for i in range(2, 8):
             self.tv.get_model().set_sort_func(i, self.compareFunction, i)
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
@@ -481,7 +481,7 @@ class SeekTabSection (ParrentListSection):
                 order = Gtk.SortType.ASCENDING if value > 0 else Gtk.SortType.DESCENDING
                 modelsort.set_sort_column_id(abs(value) - 1, order)
 
-        uistuff.keep(self.modelsort, "seektreeview_sort_order_col", get_sort_order, \
+        uistuff.keep(self.model, "seektreeview_sort_order_col", get_sort_order, \
             lambda modelsort, value: set_sort_order(modelsort, value))
         
         
@@ -794,7 +794,8 @@ class PlayerTabSection (ParrentListSection):
         self.tv = widgets["playertreeview"]
         self.store = Gtk.ListStore(FICSPlayer, GdkPixbuf.Pixbuf, str, int, int,
                                    int, str, str)
-        self.tv.set_model(Gtk.TreeModelSort(self.store))
+        self.model = Gtk.TreeModelSort(model=self.store)
+        self.tv.set_model(self.model)
         self.addColumns(self.tv, "FICSPlayer", "", _("Name"), _("Blitz"),
             _("Standard"), _("Lightning"), _("Status"), "tooltip", hide=[0,7],
             pix=[1])
@@ -802,7 +803,7 @@ class PlayerTabSection (ParrentListSection):
         self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
@@ -990,8 +991,8 @@ class GameTabSection (ParrentListSection):
 
         self.tv = self.widgets["gametreeview"]
         self.store = Gtk.ListStore(FICSGame, GdkPixbuf.Pixbuf, str, int, str, int, str)
-        self.tv.set_model(Gtk.TreeModelSort(self.store))
-        self.model = self.tv.get_model()
+        self.model = Gtk.TreeModelSort(model=self.store)
+        self.tv.set_model(self.model)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
         self.addColumns(self.tv, "FICSGame", "", _("White Player"), _("Rating"),
                         _("Black Player"), _("Rating"), _("Game Type"),
@@ -1006,16 +1007,16 @@ class GameTabSection (ParrentListSection):
         self.onSelectionChanged(self.selection)
 
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
-        def searchCallback (model, column, key, iter):
+        def searchCallback (model, column, key, iter, user_data):
             if model.get_value(iter, 2).lower().startswith(key) or \
                 model.get_value(iter, 4).lower().startswith(key):
                 return False
             return True
-        self.tv.set_search_equal_func(searchCallback)
+        self.tv.set_search_equal_func(searchCallback, None)
 
         self.connection.games.connect("FICSGameCreated", lambda games, game:
                 self.publisher.put((self.onGameAdd, game)) )
@@ -1131,7 +1132,8 @@ class AdjournedTabSection (ParrentListSection):
         self.tv = widgets["adjournedtreeview"]
         self.store = Gtk.ListStore(FICSAdjournedGame, GdkPixbuf.Pixbuf, str, str,
                                    str, str, str)
-        self.tv.set_model(Gtk.TreeModelSort(self.store))
+        self.model = Gtk.TreeModelSort(model=self.store)
+        self.tv.set_model(self.model)
         self.addColumns (self.tv, "FICSAdjournedGame", _("Your Color"),
             _("Opponent"), _("Is Online"), _("Time Control"), _("Game Type"),
             _("Date/Time"), hide=[0], pix=[1])

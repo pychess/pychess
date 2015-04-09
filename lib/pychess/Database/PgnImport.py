@@ -29,11 +29,11 @@ CHUNK = 1000
 EVENT, SITE, PLAYER, ANNOTATOR, COLLECTION = range(5)
 
 removeDic = {
-    ord(u"'"): None,
-    ord(u","): None,
-    ord(u"."): None,
-    ord(u"-"): None,
-    ord(u" "): None,
+    ord(unicode("'")): None,
+    ord(unicode(",")): None,
+    ord(unicode(".")): None,
+    ord(unicode("-")): None,
+    ord(unicode(" ")): None,
 }
 
 LBoard_FEN_START = LBoard()
@@ -273,7 +273,7 @@ class PgnImport():
                         'annotator_id': annotator_id,
                         'collection_id': collection_id,
                         'movelist': movelist.tostring(),
-                        'comments': u"|".join(comments),
+                        'comments': unicode("|".join(comments)),
                         })
 
                     if len(self.game_data) >= CHUNK:
@@ -398,7 +398,7 @@ class PgnImport():
                     game.c.event_id==a1.c.id,
                     game.c.site_id==a2.c.id,
                     game.c.white_id==a3.c.id,
-                    game.c.black_id==a4.c.id)).where(and_(a3.c.name.startswith(u"Réti"), a4.c.name.startswith(u"Van Nüss")))
+                    game.c.black_id==a4.c.id)).where(and_(a3.c.name.startswith(unicode("Réti")), a4.c.name.startswith(unicode("Van Nüss"))))
                      
         result = self.conn.execute(s)
         games = result.fetchall()
