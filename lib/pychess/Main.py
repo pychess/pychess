@@ -150,13 +150,15 @@ class GladeHandlers:
     def on_recent_game_activated (gamemodel, uri):
         if isinstance(uri, basestring):
             o = urlparse(uri)
-            recent_data = Gtk.RecentData()
-            recent_data.mime_type = 'application/x-chess-pgn'
-            recent_data.app_name = 'pychess'
-            recent_data.app_exec = 'pychess'
-            #recent_data.groups = ['pychess']    # cannot add groups in python https://bugzilla.gnome.org/show_bug.cgi?id=695970
-
-            recentManager.add_full("file://" + o.path, recent_data)
+            if GObject.pygobject_version >= (3, 7, 4):
+                recent_data = Gtk.RecentData()
+                recent_data.mime_type = 'application/x-chess-pgn'
+                recent_data.app_name = 'pychess'
+                recent_data.app_exec = 'pychess'
+                #recent_data.groups = ['pychess']    # cannot add groups in python https://bugzilla.gnome.org/show_bug.cgi?id=695970
+                recentManager.add_full("file://" + o.path, recent_data)
+            else:
+                recentManager.add_item("file://" + o.path)
     
     def on_gmwidg_closed (gmwidg):
         del gameDic[gmwidg]
