@@ -168,7 +168,7 @@ class GladeHandlers:
     
     #          Drag 'n' Drop          #
     
-    def on_drag_received (wi, context, x, y, selection, target_type, timestamp):
+    def on_drag_received (self, wi, context, x, y, selection, target_type, timestamp):
         uri = selection.data.strip()
         uris = uri.split()
         if len(uris) > 1:
@@ -178,58 +178,58 @@ class GladeHandlers:
     
     #          Game Menu          #
     
-    def on_new_game1_activate (widget):
+    def on_new_game1_activate(self, widget):
         newGameDialog.NewGameMode.run()
     
-    def on_play_internet_chess_activate (widget):
+    def on_play_internet_chess_activate(self, widget):
         ICLogon.run()
     
-    def on_load_game1_activate (widget):
+    def on_load_game1_activate(self, widget):
         newGameDialog.LoadFileExtension.run(None)
     
-    def on_set_up_position_activate (widget):
+    def on_set_up_position_activate(self, widget):
         # Not implemented yet
         pass
 
-    def on_open_database_activate (widget):
+    def on_open_database_activate(self, widget):
         #GameList().load_games()
         pass
     
-    def on_enter_game_notation_activate (widget):
+    def on_enter_game_notation_activate(self, widget):
         newGameDialog.EnterNotationExtension.run()
     
-    def on_save_game1_activate (widget):
+    def on_save_game1_activate(self, widget):
         ionest.saveGame (gameDic[gamewidget.cur_gmwidg()])
     
-    def on_save_game_as1_activate (widget):
+    def on_save_game_as1_activate(self, widget):
         ionest.saveGameAs (gameDic[gamewidget.cur_gmwidg()])
 
-    def on_export_position_activate (widget):
+    def on_export_position_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
         position = gmwidg.board.view.shown
         ionest.saveGameAs (gameDic[gmwidg], position)
 
-    def on_analyze_game_activate (widget):
+    def on_analyze_game_activate(self, widget):
         analyzegameDialog.run(gameDic)
 
-    def on_properties1_activate (widget):
+    def on_properties1_activate(self, widget):
         gameinfoDialog.run(gamewidget.getWidgets(), gameDic)
     
-    def on_player_rating1_activate (widget):
+    def on_player_rating1_activate(self, widget):
         playerinfoDialog.run(gamewidget.getWidgets())
     
-    def on_close1_activate (widget):
+    def on_close1_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
         response = ionest.closeGame(gmwidg, gameDic[gmwidg])
     
-    def on_quit1_activate (widget, *args):
+    def on_quit1_activate(self, widget, *args):
         if ionest.closeAllGames(gameDic.items()) in (Gtk.ResponseType.OK, Gtk.ResponseType.YES):
             Gtk.main_quit()
         else: return True
 
     #          View Menu          #
     
-    def on_rotate_board1_activate (widget):
+    def on_rotate_board1_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
         if gmwidg.board.view.rotation:
             gmwidg.board.view.rotation = 0
@@ -237,29 +237,29 @@ class GladeHandlers:
             gmwidg.board.view.rotation = math.pi
 
     
-    def on_fullscreen1_activate (widget):
+    def on_fullscreen1_activate(self, widget):
         gamewidget.getWidgets()["window1"].fullscreen()
         gamewidget.getWidgets()["fullscreen1"].hide()
         gamewidget.getWidgets()["leave_fullscreen1"].show()
     
-    def on_leave_fullscreen1_activate (widget):
+    def on_leave_fullscreen1_activate(self, widget):
         gamewidget.getWidgets()["window1"].unfullscreen()
         gamewidget.getWidgets()["leave_fullscreen1"].hide()
         gamewidget.getWidgets()["fullscreen1"].show()
     
-    def on_about1_activate (widget):
+    def on_about1_activate(self, widget):
         gamewidget.getWidgets()["aboutdialog1"].show()
     
-    def on_log_viewer1_activate (widget):
+    def on_log_viewer1_activate(self, widget):
         from pychess.widgets import LogDialog
         if widget.get_active():
             LogDialog.show()
         else: LogDialog.hide()
     
-    def on_show_sidepanels_activate (widget):
+    def on_show_sidepanels_activate(self, widget):
         gamewidget.zoomToBoard(not widget.get_active())
     
-    def on_hint_mode_activate (widget):
+    def on_hint_mode_activate(self, widget):
         for gmwidg in gameDic.keys():
             if gmwidg.isInFront():
                 if widget.get_active():
@@ -267,7 +267,7 @@ class GladeHandlers:
                 else:
                     gmwidg.gamemodel.pause_analyzer(HINT)
     
-    def on_spy_mode_activate (widget):
+    def on_spy_mode_activate(self, widget):
         for gmwidg in gameDic.keys():
             if gmwidg.isInFront():
                 if widget.get_active():
@@ -277,29 +277,29 @@ class GladeHandlers:
 
     #          Edit menu          #
     
-    def on_manage_engines_activate (widget):
+    def on_manage_engines_activate(self, widget):
         enginesDialog.run(gamewidget.getWidgets())
     
-    def on_preferences_activate (widget):
+    def on_preferences_activate(self, widget):
         preferencesDialog.run(gamewidget.getWidgets())
     
     #          Help menu          #
     
-    def on_about_chess1_activate (widget):
+    def on_about_chess1_activate(self, widget):
         webbrowser.open(_("http://en.wikipedia.org/wiki/Chess"))
     
-    def on_how_to_play1_activate (widget):
+    def on_how_to_play1_activate(self, widget):
         webbrowser.open(_("http://en.wikipedia.org/wiki/Rules_of_chess"))
 
-    def translate_this_application_activate(widget):
+    def translate_this_application_activate(self, widget):
         webbrowser.open("http://code.google.com/p/pychess/wiki/TransifexTranslates")
         
-    def on_TipOfTheDayMenuItem_activate (widget):
+    def on_TipOfTheDayMenuItem_activate(self, widget):
         tipOfTheDay.TipOfTheDay.show()
     
     #          Other          #
     
-    def on_notebook2_switch_page (widget, page, page_num):
+    def on_notebook2_switch_page (self, widget, page, page_num):
         gamewidget.getWidgets()["notebook3"].set_current_page(page_num)
     
 
@@ -323,7 +323,7 @@ class PyChess:
         #=======================================================================
         #Gtk.about_dialog_set_url_hook(self.website)
         widgets = uistuff.GladeWidgets("PyChess.glade")       
-        widgets.getGlade().connect_signals(GladeHandlers.__dict__)
+        widgets.getGlade().connect_signals(GladeHandlers())
 
         tasker = TaskerManager()
         tasker.packTaskers (NewGameTasker(), InternetGameTasker())
