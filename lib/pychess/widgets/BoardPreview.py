@@ -118,7 +118,9 @@ class BoardPreview:
             self.boardview.redraw_canvas()
             return
         
-        sel = self.list.get_model().get_path(iter)[0]
+        path = self.list.get_model().get_path(iter)
+        indices = path.get_indices()
+        sel = indices[0]
         if sel == self.lastSel: return
         self.lastSel = sel
         
@@ -201,5 +203,8 @@ class BoardPreview:
     
     def get_gameno (self):
         iter = self.list.get_selection().get_selected()[1]
-        if iter == None: return -1
-        return self.list.get_model().get_path(iter)[0]
+        if iter == None:
+            return -1
+        path = self.list.get_model().get_path(iter)
+        indices = path.get_indices()
+        return indices[0]
