@@ -78,7 +78,7 @@ class ToggleComboBox (Gtk.ToggleButton):
         if stock == None:
             item = Gtk.MenuItem(text)
         else:
-            item = Gtk.MenuItem()
+            item = Gtk.ImageMenuItem()
             label = Gtk.Label(label=text)
             label.props.xalign = 0
             if isinstance(stock, str):
