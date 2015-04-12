@@ -75,8 +75,8 @@ def createPlayerUIGlobals (discoverer):
     analyzerItems = []
 
     for variantClass in variants.values():
-        playerItems += [ [(ipeople, _("Human Being"))] ]
-        smallPlayerItems += [ [(speople, _("Human Being"))] ]
+        playerItems += [ [(ipeople, _("Human Being"), "")] ]
+        smallPlayerItems += [ [(speople, _("Human Being"), "")] ]
     for engine in discoverer.getEngines():
         name = engine["name"]
         c = discoverer.getCountry(engine)
