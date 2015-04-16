@@ -399,13 +399,13 @@ class PyChess:
                 self.hg_date = out[1]
                 self.aboutdialog.set_comments("rev. %s\n%s\n%s" % (self.hg_rev, self.hg_date, comments))
         
-        with open(prefix.addDataPrefix("ARTISTS")) as f:
+        with open(prefix.addDataPrefix("ARTISTS"), encoding="utf-8") as f:
             self.aboutdialog.set_artists(f.read().splitlines())
-        with open(prefix.addDataPrefix("AUTHORS")) as f:
+        with open(prefix.addDataPrefix("AUTHORS"), encoding="utf-8") as f:
             self.aboutdialog.set_authors(f.read().splitlines())
-        with open(prefix.addDataPrefix("DOCUMENTERS")) as f:
+        with open(prefix.addDataPrefix("DOCUMENTERS"), encoding="utf-8") as f:
             self.aboutdialog.set_documenters(f.read().splitlines())
-        with open(prefix.addDataPrefix("TRANSLATORS")) as f:
+        with open(prefix.addDataPrefix("TRANSLATORS"), encoding="utf-8") as f:
             self.aboutdialog.set_translator_credits(f.read())
 
         def on_about_response(dialog, response, *args):
