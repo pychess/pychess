@@ -31,16 +31,9 @@ class Prediction (object):
     def __hash__ (self):
         return self.hash
 
-    # This used in PY2 only
-    def __cmp__ (self, other):
-        return self.callback == other.callback and \
-               self.regexps == other.regexps
-
-    # Needed in PY3
-    def __lt__ (self, other):
-        return len(self.regexps) < len(other.regexps)
-
-
+    def __len__(self):
+        return len(self.regexps)
+        
 
 RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE, RETURN_MATCH_END = range(4)
 
@@ -212,9 +205,9 @@ class PredictionsTelnet (object):
         line = self.lines.popleft()
         if not line.line: return # TODO: necessary?
         
-        for p in (reversed(self.reply_cmd_dict[line.code])
-                  if line.code and line.code in self.reply_cmd_dict
-                  else self.predictions):
+        for p in self.reply_cmd_dict[line.code] \
+                  if line.code and line.code in self.reply_cmd_dict \
+                  else self.predictions:
 #            print "parse_line: trying prediction %s for line '%s'" % (p.name, line)
             answer = self.test_prediction(p, line)
             if answer in (RETURN_MATCH, RETURN_MATCH_END):
