@@ -73,10 +73,12 @@ class Connection (GObject.GObject, Thread):
         self.predictions.add(prediction)
         self.predictionsDict[prediction.callback] = prediction
         if hasattr(prediction.callback, "BLKCMD"):
-            bisect.insort(self.reply_cmd_dict[prediction.callback.BLKCMD], prediction)
-            # Do sorted inserts so we can later test the longest predictions first.
+            predictions = self.reply_cmd_dict[prediction.callback.BLKCMD]
+            predictions.append(prediction)
+            # Do reverse sorted so we can later test the longest predictions first.
             # This is so that matching prefers the longest match for matches
             # that start out with the same regexp line(s)
+            self.reply_cmd_dict[prediction.callback.BLKCMD] = sorted(predictions, key=len, reverse=True)
             
     def unexpect (self, callback):
         self.predictions.remove(self.predictionsDict.pop(callback))
