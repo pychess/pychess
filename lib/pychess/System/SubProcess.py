@@ -96,6 +96,7 @@ class SubProcess (GObject.GObject):
     
     def _initChannel (self, filedesc, callbackflag, callback, isstderr):        
         channel = GLib.IOChannel(filedesc)
+        channel.set_encoding(None)
         if sys.platform != "win32":
             channel.set_flags(GObject.IO_FLAG_NONBLOCK)
         if callback:
@@ -144,7 +145,8 @@ class SubProcess (GObject.GObject):
                 # fix for pygi
                 #return False
                 return True
-            if not line:
+            # Some engines send author names in different encodinds (f.e. spike)
+            if line.startswith("id author") or not line:
                 return True
             if isstderr:
                 log.error(line, extra={"task":self.defname})
