@@ -32,7 +32,7 @@ moveListHeader2Str = "%s ([^ ]+) match, initial time: (\d+) minutes, increment: 
     ratedexp
 moveListHeader2 = re.compile(moveListHeader2Str, re.IGNORECASE)
 sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
-movetime = "\((\d+):(\d\d)(?:\.(\d\d\d))?\)"
+movetime = "\((\d:)?(\d{1,2}):(\d\d)(?:\.(\d\d\d))?\)"
 moveListMoves = re.compile("\s*(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" % \
     (sanmove, movetime, sanmove, movetime))
 
@@ -609,31 +609,35 @@ class BoardManager (GObject.GObject):
             if not moveListMoves.match(line):
                 log.error("BoardManager.parseGame: unmatched line: \"%s\"" % \
                           repr(line))
-                raise
-            moveno, wmove, wmin, wsec, wmsec, bmove, bmin, bsec, bmsec = \
+                raise Exception("BoardManager.parseGame: unmatched line: \"%s\"" % \
+                          repr(line))
+            moveno, wmove, whour, wmin, wsec, wmsec, bmove, bhour, bmin, bsec, bmsec = \
                 moveListMoves.match(line).groups()
+            if whour is None:
+                whour = 0
+            if bhour is None:
+                bhour = 0
             ply = int(moveno)*2-2
-            
             if wmove:
                 moves[ply] = wmove
-                wms -= (int(wmin) * 60 * 1000) + (int(wsec) * 1000)
+                wms -= (int(whour) * 60 * 60 * 1000) + (int(wmin) * 60 * 1000) + (int(wsec) * 1000)
                 if wmsec is not None:
                     wms -= int(wmsec)
                 else:
                     wmsec = 0
                 if int(moveno) > 1 and increment > 0:
                     wms += (increment * 1000)
-                times[ply] = "0:%02d:%02d.%03d" % (int(wmin), int(wsec), int(wmsec))
+                times[ply] = "%01d:%02d:%02d.%03d" % (int(whour), int(wmin), int(wsec), int(wmsec))
             if bmove:
                 moves[ply+1] = bmove
-                bms -= (int(bmin) * 60 * 1000) + (int(bsec) * 1000)
+                bms -= (int(bhour) * 60 * 60 * 1000) + (int(bmin) * 60 * 1000) + (int(bsec) * 1000)
                 if bmsec is not None:
                     bms -= int(bmsec)
                 else:
                     bmsec = 0
                 if int(moveno) > 1 and increment > 0:
                     bms += (increment * 1000)
-                times[ply+1] = "0:%02d:%02d.%03d" % (int(bmin), int(bsec), int(bmsec))
+                times[ply+1] = "%01d:%02d:%02d.%03d" % (int(bhour), int(bmin), int(bsec), int(bmsec))
         
         if in_progress:
             # Apply queued board updates
