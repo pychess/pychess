@@ -16,6 +16,7 @@ from pychess.Variants.suicide import pieceCount
 from pychess.Variants.losers import testKingOnly
 from pychess.Variants.atomic import kingExplode
 from pychess.Variants.kingofthehill import testKingInCenter
+from pychess.Variants.threecheck import checkCount
 
 
 def getDestinationCords (board, cord):
@@ -69,6 +70,13 @@ def getStatus (board):
             else:
                 status = BLACKWON
             return status, WON_KINGINCENTER
+    elif board.variant == THREECHECKCHESS:
+        if checkCount(lboard) == 3:
+            if board.color == BLACK:
+                status = WHITEWON
+            else:
+                status = BLACKWON
+            return status, WON_THREECHECK
     else:
         if ldraw.testMaterial (lboard):
             return DRAW, DRAW_INSUFFICIENT
