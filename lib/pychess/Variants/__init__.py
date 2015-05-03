@@ -25,6 +25,7 @@ from .wildcastleshuffle import WildcastleShuffleBoard
 from .blindfold import BlindfoldBoard, HiddenPawnsBoard, \
                     HiddenPiecesBoard, AllWhiteBoard
 from .kingofthehill import KingOfTheHillBoard
+from .threecheck import ThreeCheckBoard
 from .asean import AiWokBoard, AseanBoard, CambodianBoard, \
                     MakrukBoard, SittuyinBoard
 from .euroshogi import EuroShogiBoard
@@ -56,6 +57,7 @@ variants = {NORMALCHESS : NormalBoard,
             WILDCASTLECHESS: WildcastleBoard,
             WILDCASTLESHUFFLECHESS: WildcastleShuffleBoard,
             KINGOFTHEHILLCHESS: KingOfTheHillBoard,
+            THREECHECKCHESS: ThreeCheckBoard,
             AIWOKCHESS: AiWokBoard,
             ASEANCHESS: AseanBoard,
             CAMBODIANCHESS: CambodianBoard,
