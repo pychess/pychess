@@ -51,7 +51,8 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic,kingofthehill,asean,cambodian,makruk,sittuyin",
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic," + \
+                        "kingofthehill,3check,asean,cambodian,makruk,sittuyin",
             "colors": 0,
             "ics": 0,
             "name": 0,
@@ -134,6 +135,8 @@ class PyChessCECP(PyChess):
                         elif lines[1] == "atomic":
                             self.board.variant = ATOMICCHESS
                             self.board.iniAtomic()
+                        elif lines[1] == "3check":
+                            self.board.variant = THREECHECKCHESS
                         elif lines[1] == "kingofthehill":
                             self.board.variant = KINGOFTHEHILLCHESS
                             self.print("setup (PNBRQKpnbrqk) 8x8+0_fairy %s" % FEN_START)

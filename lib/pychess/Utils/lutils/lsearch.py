@@ -12,6 +12,8 @@ from .lmove import toSAN
 from .ldata import MATE_VALUE, VALUE_AT_PLY
 from .TranspositionTable import TranspositionTable
 from pychess.Variants.atomic import kingExplode
+from pychess.Variants.kingofthehill import testKingInCenter
+from pychess.Variants.threecheck import checkCount
 from . import ldraw
 
 TIMECHECK_FREQ = 500
@@ -61,7 +63,10 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if bin(board.boards[board.color][KING]).count("1") == 0:
             return [], MATED
     elif board.variant == KINGOFTHEHILLCHESS:
-        if board.kings[board.color-1] in (E4, E5, D4, D5):
+        if testKingInCenter(board):
+            return [], MATED
+    elif board.variant == THREECHECKCHESS:
+        if checkCount(board) == 3:
             return [], MATED
 
     ############################################################################
