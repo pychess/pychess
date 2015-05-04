@@ -365,7 +365,7 @@ class InfoPanel (Gtk.Notebook, Panel):
             cell.props.background_rgba = bg_color
             cell.props.cell_background_set = True 
             sw = Gtk.ScrolledWindow()
-            sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+            sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             sw.add(tv)
             alignment.add(sw)
             
@@ -395,7 +395,7 @@ class InfoPanel (Gtk.Notebook, Panel):
             cm.disconnect(self.handle_id)
             
             sw = Gtk.ScrolledWindow()
-            sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+            sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             
             list = Gtk.TreeView()
             list.set_headers_visible(False)
@@ -469,7 +469,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         GObject.GObject.__init__(self)
         self.connection = connection
         
-        self.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         vbox = Gtk.VBox()
         self.add_with_viewport(vbox)
         self.get_child().set_shadow_type(Gtk.ShadowType.NONE)
