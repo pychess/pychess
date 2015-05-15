@@ -649,7 +649,7 @@ class CECPEngine (ProtocolEngine):
             # Many engines don't like positions able to take down enemy
             # king. Therefore we just return the "kill king" move
             # automaticaly
-            self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1, "")])
+            self.emit("analyze", [([toAN(self.board, getMoveKillingKing(self.board))], MATE_VALUE-1, "")])
             return
 
         def stop_analyze ():
@@ -818,18 +818,8 @@ class CECPEngine (ProtocolEngine):
                     scoreval = int(score)
                 
                 mvstrs = movere.findall(moves)
-                try:
-                    moves = listToMoves (self.board, mvstrs, type=None, validate=True, ignoreErrors=False)
-                except:
-                    # Errors may happen when parsing "old" lines from
-                    # analyzing engines, which haven't yet noticed their new tasks
-                    log.debug('Ignored an "old" line from analyzer: %s %s' % (self.board, mvstrs), extra={"task":self.defname})
-                    return
-                
-                # Don't emit if we weren't able to parse moves, or if we have a move
-                # to kill the opponent king - as it confuses many engines
-                if moves and not self.board.board.opIsChecked():
-                    self.emit("analyze", [(moves, scoreval, depth.strip())])
+                if mvstrs:
+                    self.emit("analyze", [(mvstrs, scoreval, depth.strip())])
                 
                 return
         

@@ -444,7 +444,7 @@ class UCIEngine (ProtocolEngine):
                         # Many engines don't like positions able to take down enemy
                         # king. Therefore we just return the "kill king" move
                         # automaticaly
-                        self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1, "")])
+                        self.emit("analyze", [([toAN(self.board, getMoveKillingKing(self.board))], MATE_VALUE-1, "")])
                         return
                     commands.append("position fen %s" % self.board.asFen())
                 else:
@@ -614,14 +614,6 @@ class UCIEngine (ProtocolEngine):
                         score = sign*MATE_VALUE
             
             movstrs = parts[parts.index("pv")+1:]
-            try:
-                moves = listToMoves (self.board, movstrs, AN, validate=True, ignoreErrors=False)
-            except ParsingError as e:
-                # ParsingErrors may happen when parsing "old" lines from
-                # analyzing engines, which haven't yet noticed their new tasks
-                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
-                    (' '.join(movstrs),e), extra={"task":self.defname})
-                return
 
             if "depth" in parts:
                 depth = parts[parts.index("depth")+1]
@@ -629,7 +621,7 @@ class UCIEngine (ProtocolEngine):
                 depth = ""
                 
             if multipv <= len(self.analysis):
-                self.analysis[multipv - 1] = (moves, score, depth)
+                self.analysis[multipv - 1] = (movstrs, score, depth)
 
             self.emit("analyze", self.analysis)
             return

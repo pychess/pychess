@@ -15,7 +15,9 @@ from pychess.System.uistuff import makeYellow
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.const import *
+from pychess.Utils.Move import listToMoves
 from pychess.Utils.lutils import lmove
+from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic import get_infobarmessage_content, get_infobarmessage_content2
 from pychess.ic.FICSObjects import get_player_tooltip_text
@@ -378,16 +380,28 @@ class GameWidget (GObject.GObject):
             self.board.view._set_redarrow(coordinates)
             
     def _on_analyze (self, analyzer, analysis, analyzer_type):
+        if self.board.view.animating:
+            return
+
         if not self.menuitems[analyzer_type + "_mode"].active:
             return
 
         if len(analysis) >= 1 and analysis[0] is not None:
-            moves = analysis[0][0]
+            movstrs, score, depth = analysis[0]
+            board = analyzer.board 
+            try:
+                moves = listToMoves (board, movstrs, validate=True)
+            except ParsingError as e:
+                # ParsingErrors may happen when parsing "old" lines from
+                # analyzing engines, which haven't yet noticed their new tasks
+                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
+                    (' '.join(movstrs),e))
+                return
+            
             if moves and (self.gamemodel.curplayer.__type__ == LOCAL or \
                [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE] or \
                self.gamemodel.status not in UNFINISHED_STATES):
                 if moves[0].flag == DROP:
-                    board = analyzer.board 
                     piece = lmove.FCORD(moves[0].move)
                     color = board.color if analyzer_type == HINT else 1-board.color
                     cord0 = board.getHoldingCord(color, piece)
