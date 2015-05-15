@@ -11,7 +11,8 @@ from pychess.Utils.book import getOpenings
 from pychess.Utils.eco import get_eco
 from pychess.Utils.logic import legalMoveCount
 from pychess.Utils.EndgameTable import EndgameTable
-from pychess.Utils.Move import Move, toSAN, toFAN
+from pychess.Utils.Move import Move, toSAN, toFAN, listToMoves
+from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
 
@@ -189,6 +190,9 @@ class EngineAdvisor(Advisor):
         self.shown_changed(self.boardview, self.boardview.shown)
     
     def on_analyze (self, engine, analysis):
+        if self.boardview.animating:
+            return
+            
         m = self.boardview.model
         if m.isPlayingICSGame():
             return
@@ -202,14 +206,24 @@ class EngineAdvisor(Advisor):
             if line is None:
                 self.store[self.path + (i,)] = self.textOnlyRow("")
                 continue
+
+            board0 = self.engine.board
+            board = board0.clone()
                 
-            pv, score, depth = line
+            movstrs, score, depth = line
+            try:
+                pv = listToMoves(board, movstrs, validate=True)
+            except ParsingError as e:
+                # ParsingErrors may happen when parsing "old" lines from
+                # analyzing engines, which haven't yet noticed their new tasks
+                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
+                    (' '.join(movstrs),e))
+                return
+
             move = None
             if pv:
                 move = pv[0]
 
-            board0 = self.engine.board
-            board = board0.clone()
             ply0 = board.ply if self.mode == HINT else board.ply+1
             counted_pv = []
             for j, pvmove in enumerate(pv):

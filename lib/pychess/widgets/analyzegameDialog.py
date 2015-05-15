@@ -7,7 +7,10 @@ from pychess.Utils.const import *
 from pychess.System import conf, fident
 from pychess.System import glock
 from pychess.System import uistuff
+from pychess.System.Log import log
 from pychess.System.glock import glock_connect_after
+from pychess.Utils.Move import listToMoves
+from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Players.engineNest import discoverer
 from pychess.widgets.preferencesDialog import anal_combo_get_value, anal_combo_set_value
 
@@ -75,7 +78,7 @@ def initialize(gameDic):
                 time.sleep(move_time+0.1)
 
                 ply = board.ply
-                if ply-1 in gamemodel.scores: 
+                if ply-1 in gamemodel.scores and ply in gamemodel.scores: 
                     color = (ply-1) % 2
                     oldmoves, oldscore, olddepth = gamemodel.scores[ply-1]
                     oldscore = oldscore * -1 if color == BLACK else oldscore
@@ -83,7 +86,14 @@ def initialize(gameDic):
                     score = score * -1 if color == WHITE else score
                     diff = score-oldscore
                     if (diff > thresold and color==BLACK) or (diff < -1*thresold and color==WHITE):
-                        gamemodel.add_variation(gamemodel.boards[ply-1], oldmoves)
+                        try:
+                            pv = listToMoves(gamemodel.boards[ply-1], oldmoves, validate=True)
+                            gamemodel.add_variation(gamemodel.boards[ply-1], pv)
+                        except ParsingError as e:
+                            # ParsingErrors may happen when parsing "old" lines from
+                            # analyzing engines, which haven't yet noticed their new tasks
+                            log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
+                                (' '.join(oldmoves),e))
             
             widgets["analyze_game"].hide()
             widgets["analyze_ok_button"].set_sensitive(True)
