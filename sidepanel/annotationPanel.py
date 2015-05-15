@@ -633,9 +633,12 @@ class Sidepanel(Gtk.TextView):
             self.textbuffer.apply_tag_by_name("scored0", start, end)
 
     def analysis_changed(self, gamemodel, ply):
+        if self.boardview.animating:
+            return
+
         if not self.boardview.shownIsMainLine():
             return
-            
+        
         board = gamemodel.getBoardAtPly(ply).board
         node = None
         if self.showEval or self.showBlunder:

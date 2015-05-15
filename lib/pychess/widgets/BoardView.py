@@ -171,7 +171,7 @@ class BoardView (Gtk.DrawingArea):
         
         self.gotStarted = False
         self.animationLock = RLock()
-        self.rotationLock = Lock()
+        self.animating = False
         
         self.draggedPiece = None  # a piece being dragged by the user
         self.premovePiece = None
@@ -423,9 +423,8 @@ class BoardView (Gtk.DrawingArea):
         else:
             self.lastMove = None
 
-        self.runAnimation(redrawMisc=self.realSetShown)
-        if not conf.get("noAnimation", False):
-            repeat(self.runAnimation)
+        self.animating = True
+        repeat(self.runAnimation)
         
     shown = property(_get_shown, _set_shown)
     
@@ -528,29 +527,21 @@ class BoardView (Gtk.DrawingArea):
             for dead in ready:
                 self.deadlist.remove(dead)
 
-
-        if redrawMisc:
-            for cord in (self.selected, self.active, self.premove0, self.premove1, self.hover):
-                if cord:
-                    paintBox = join(paintBox, self.cord2RectRelative(cord))
-            for arrow in (self.redarrow, self.greenarrow, self.bluearrow):
-                if arrow:
-                    paintBox = join(paintBox, self.cord2RectRelative(arrow[0]))
-                    paintBox = join(paintBox, self.cord2RectRelative(arrow[1]))
-            if self.lastMove:
-                paintBox = join(paintBox,
-                                self.paintBoxAround(self.lastMove))
-
         if paintBox:
             self.redraw_canvas(rect(paintBox))
 
-        return paintBox and True or False
+        if conf.get("noAnimation", False):
+            self.animating = False
+            return False
+        else:
+            if not paintBox:
+                self.animating = False
+            return paintBox and True or False
     
     def startAnimation (self):
         self.animationStart = time()
-        self.runAnimation(redrawMisc = True)
-        if not conf.get("noAnimation", False):
-            repeat(self.runAnimation)
+        self.animating = True
+        repeat(self.runAnimation)
     
     #############################
     #          Drawing          #
@@ -1360,6 +1351,7 @@ class BoardView (Gtk.DrawingArea):
                 finally:
                     glock.release()
                 return next
+            self.animating = True
             repeat(callback)
     
     def _get_rotation (self):
