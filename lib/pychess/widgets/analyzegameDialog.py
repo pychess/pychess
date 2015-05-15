@@ -62,6 +62,7 @@ def initialize(gameDic):
         gmwidg = gamewidget.cur_gmwidg()
         gamemodel = gameDic[gmwidg]
         analyzer = gamemodel.spectators[HINT]
+        gmwidg.menuitems["hint_mode"].active = True
 
         def analyse_moves():
             move_time = int(conf.get("max_analysis_spin", 3))
