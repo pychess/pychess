@@ -1,12 +1,20 @@
 """ This module handles the tabbed layout in PyChess """
 from __future__ import absolute_import
 
+import imp
+import os
+import traceback
+
+from gi.repository import Gdk
+from gi.repository import Gtk
+from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
 from pychess.compat import StringIO
 from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
+from pychess.Savers import pgn
 from pychess.System import glock, conf, prefix
 from pychess.System.Log import log
 from pychess.System.glock import glock_connect
@@ -26,11 +34,6 @@ from pychess.widgets.InfoBar import InfoBar, InfoBarMessage, InfoBarMessageButto
 from .pydock.PyDockTop import PyDockTop
 from .pydock.__init__ import CENTER, EAST, SOUTH
 
-from gi.repository import Gtk
-from gi.repository import GObject
-import imp
-import os
-import traceback
 
 ################################################################################
 # Initialize modul constants, and a few worker functions                       #
@@ -692,6 +695,11 @@ class GameWidget (GObject.GObject):
         self.infobar.clear_messages()
         if self == cur_gmwidg():
             notebooks["messageArea"].hide()
+    
+    def copy_pgn(self):
+        output = StringIO()
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        clipboard.set_text(pgn.save(output, self.gamemodel), -1)
     
 ################################################################################
 # Main handling of gamewidgets                                                 #

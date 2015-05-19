@@ -276,6 +276,9 @@ class GladeHandlers:
                     gmwidg.gamemodel.pause_analyzer(SPY)
 
     #          Edit menu          #
+
+    def on_copy_pgn_activate(self, widget):
+        gamewidget.cur_gmwidg().copy_pgn()
     
     def on_manage_engines_activate(self, widget):
         enginesDialog.run(gamewidget.getWidgets())

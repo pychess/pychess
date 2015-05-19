@@ -211,7 +211,8 @@ GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "export_position1", "analyze_g
 ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
                      "call_flag", "resign", "ask_to_move")
 VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
-MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
+EDIT_MENU_ITEMS = ("copy_pgn",)
+MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS + EDIT_MENU_ITEMS
 
 ################################################################################
 # Subprocess                                                                   #
