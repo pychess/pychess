@@ -3211,6 +3211,23 @@ It will search positions from http://www.k4it.de/</property>
                   <object class="GtkMenu" id="edit_menu">
                     <property name="can_focus">False</property>
                     <child>
+                      <object class="GtkMenuItem" id="copy_pgn">
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">_Copy PGN</property>
+                        <property name="use_underline">True</property>
+                        <accelerator key="C" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <signal name="activate" handler="on_copy_pgn_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="separator2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkMenuItem" id="manage_engines">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>

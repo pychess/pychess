@@ -123,7 +123,9 @@ def save (file, model, position=None):
     result = wrap(result, 80)
     print(result, status, file=file)
     print("", file=file)
+    output = file.getvalue()
     file.close()
+    return output
 
 def walk(node, result, model, vari=False):
     """Prepares a game data for .pgn storage.
