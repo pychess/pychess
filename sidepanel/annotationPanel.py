@@ -47,8 +47,8 @@ class Sidepanel(Gtk.TextView):
     def __init__(self):
         GObject.GObject.__init__(self)
 
-        self.set_editable(False)
-        self.set_cursor_visible(False)
+        #self.set_editable(False)
+        #self.set_cursor_visible(False)
         self.set_wrap_mode(Gtk.WrapMode.WORD)
 
         self.cursor_standard = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
@@ -101,6 +101,7 @@ class Sidepanel(Gtk.TextView):
         __widget__.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
         __widget__.add(self.textview)
 
+        self.gamewidget = gmwidg
         self.boardview = gmwidg.board.view
         self.boardview.connect("shown_changed", self.shown_changed)
 
@@ -219,8 +220,13 @@ class Sidepanel(Gtk.TextView):
 
         # local menu on right mouse click
         elif event.button == 3:
+            self.menu = Gtk.Menu()
+
+            menuitem = Gtk.MenuItem(_("Copy PGN"))
+            menuitem.connect('activate', self.copy_pgn)
+            self.menu.append(menuitem)
+
             if node is not None:
-                menu = Gtk.Menu()
                 position = -1
                 for index, child in enumerate(board.children):
                     if isinstance(child, basestring):
@@ -231,16 +237,16 @@ class Sidepanel(Gtk.TextView):
                     not self.gamemodel.boards[0].board.children:
                     menuitem = Gtk.MenuItem(_("Add start comment"))
                     menuitem.connect('activate', self.edit_comment, self.gamemodel.boards[0].board, 0)
-                    menu.append(menuitem)
+                    self.menu.append(menuitem)
 
                 if position == -1:
                     menuitem = Gtk.MenuItem(_("Add comment"))
                     menuitem.connect('activate', self.edit_comment, board, 0)
-                    menu.append(menuitem)
+                    self.menu.append(menuitem)
                 else:
                     menuitem = Gtk.MenuItem(_("Edit comment"))
                     menuitem.connect('activate', self.edit_comment, board, position)
-                    menu.append(menuitem)
+                    self.menu.append(menuitem)
 
                 symbol_menu1 = Gtk.Menu()
                 for nag, menutext in (("$1", "!"),
@@ -256,7 +262,7 @@ class Sidepanel(Gtk.TextView):
 
                 menuitem = Gtk.MenuItem(_("Add move symbol"))
                 menuitem.set_submenu(symbol_menu1)
-                menu.append(menuitem)
+                self.menu.append(menuitem)
                 
                 symbol_menu2 = Gtk.Menu()
                 for nag, menutext in (("$10", "="),
@@ -282,16 +288,19 @@ class Sidepanel(Gtk.TextView):
 
                 menuitem = Gtk.MenuItem(_("Add evaluation symbol"))
                 menuitem.set_submenu(symbol_menu2)
-                menu.append(menuitem)
+                self.menu.append(menuitem)
 
                 menuitem = Gtk.MenuItem(_("Remove symbols"))
                 menuitem.connect('activate', self.remove_symbols, board)
-                menu.append(menuitem)
+                self.menu.append(menuitem)
 
-                menu.show_all()
-                menu.popup( None, None, None, event.button, event.time)
+                self.menu.show_all()
+                self.menu.popup(None, None, None, None, event.button, event.time)
         return True
 
+    def copy_pgn(self, widget):
+        self.gamewidget.copy_pgn()
+        
     def edit_comment(self, widget=None, board=None, index=0):
         dialog = Gtk.Dialog(_("Edit comment"),
                      None,
