@@ -34,6 +34,7 @@ def initialize(widgets):
     SoundTab(widgets)
     PanelTab(widgets)
     ThemeTab(widgets)
+    SaveTab(widgets)
     
     uistuff.keepWindowSize("preferencesdialog", widgets["preferences"],
                            defaultPosition=POSITION_GOLDEN)
@@ -532,9 +533,11 @@ class PanelTab:
     def __on_hide_window(self, widget):
         self.hideit()
 
+#############################################################################
+# Theme initing                                                             #
+#############################################################################
 
 class ThemeTab:
-
     
     def __init__ (self, widgets):
         self.themes = self.discover_themes()
@@ -602,3 +605,19 @@ class ThemeTab:
         themes.sort()
         
         return themes
+
+#############################################################################
+# Save initing                                                              #
+#############################################################################
+
+class SaveTab:
+    
+    def __init__ (self, widgets):
+        # Init 'auto save" checkbutton
+        def checkCallBack (*args):
+            checkbox = widgets["autoSave"]
+            widgets["save_frame"].set_property("sensitive", checkbox.get_active())
+        conf.notify_add("autoSave", checkCallBack)
+        widgets["autoSave"].set_active(False)
+        uistuff.keep(widgets["autoSave"], "autoSave")
+        checkCallBack()

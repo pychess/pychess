@@ -18,8 +18,6 @@ from pychess.Utils.const import *
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamenanny, gamewidget
 
-save_pgn_file = None
-
 
 def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     """ The player tuples are:
@@ -225,17 +223,14 @@ def saveGameSimple (uri, game):
     game.save(uri, saver, append=False)
 
 def saveGamePGN (game):
-    opendialog, savedialog, enddir, savecombo, savers = getOpenAndSaveDialogs()
-    uri = save_pgn_file
-    append = False
-    position = None
-    index = savecombo.get_active()
-    format = saveformats[index]
-    saver = format[2]
+    # TODO: GUI
+    uri = conf.get("autoSaveFile", os.path.expanduser("~") + "/pychess.pgn")
+    saver = pgn
+    append = True
     try:
-        game.save(uri, saver, append, position)
+        game.save(uri, saver, append)
         return True
-    except IOError, e:
+    except IOError as e:
         return False
 
 def saveGameAs (game, position=None):
@@ -339,67 +334,76 @@ def closeAllGames (pairs):
     if len(changedPairs) == 0:
         response = Gtk.ResponseType.OK
 
-    #if conf.get("autoSave", False): # Autosave option from preferences?
-        #for gmwidg, game in changedPairs:
-            #game.save(None, Savers.database, append=False)
-        #response = Gtk.ResponseType.OK
-    #else:
-    
     elif len(changedPairs) == 1:
         response = closeGame(*changedPairs[0])
     else:
-        widgets = GladeWidgets("saveGamesDialog.glade")
-        dialog = widgets["saveGamesDialog"]
-        heading = widgets["saveGamesDialogHeading"]
-        saveLabel = widgets["saveGamesDialogSaveLabel"]
-        treeview = widgets["saveGamesDialogTreeview"]
+        markup = "<big><b>" + \
+                ngettext("There is %d game with unsaved moves.",
+                "There are %d games with unsaved moves.",
+                len(changedPairs)) % len(changedPairs) + \
+                " " + _("Save moves before closing?") + \
+                "</b></big>"
+                               
+        if conf.get("autoSave", False):
+            for gmwidg, game in changedPairs:
+                x = saveGamePGN(game)
+                if x:
+                    response = Gtk.ResponseType.OK
+                else:
+                    response = None
+                    markup = "<b><big>" + \
+                            _("Unable to save to configured file. Save the games before closing?") + \
+                            "</big></b>"
+                    break
+                    
+        if response is None:
+            widgets = GladeWidgets("saveGamesDialog.glade")
+            dialog = widgets["saveGamesDialog"]
+            heading = widgets["saveGamesDialogHeading"]
+            saveLabel = widgets["saveGamesDialogSaveLabel"]
+            treeview = widgets["saveGamesDialogTreeview"]
 
-        heading.set_markup("<big><b>" +
-                           ngettext("There is %d game with unsaved moves.",
-                              "There are %d games with unsaved moves.",
-                              len(changedPairs)) % len(changedPairs) +
-                           " " + _("Save moves before closing?") +
-                           "</b></big>")
+            heading.set_markup(markup)
 
-        liststore = Gtk.ListStore(bool, str)
-        treeview.set_model(liststore)
-        renderer = Gtk.CellRendererToggle()
-        renderer.props.activatable = True
-        treeview.append_column(Gtk.TreeViewColumn("", renderer, active=0))
-        treeview.append_column(Gtk.TreeViewColumn("", Gtk.CellRendererText(), text=1))
-        for gmwidg, game in changedPairs:
-            liststore.append((True, "%s %s %s" %
-                             (game.players[0], _("vs."), game.players[1])))
+            liststore = Gtk.ListStore(bool, str)
+            treeview.set_model(liststore)
+            renderer = Gtk.CellRendererToggle()
+            renderer.props.activatable = True
+            treeview.append_column(Gtk.TreeViewColumn("", renderer, active=0))
+            treeview.append_column(Gtk.TreeViewColumn("", Gtk.CellRendererText(), text=1))
+            for gmwidg, game in changedPairs:
+                liststore.append((True, "%s %s %s" %
+                                 (game.players[0], _("vs."), game.players[1])))
 
-        def callback (cell, path):
-            if path:
-                liststore[path][0] = not liststore[path][0]
-            saves = len(tuple(row for row in liststore if row[0]))
-            saveLabel.set_text(ngettext("_Save %d document", "_Save %d documents", saves) % saves)
-            saveLabel.set_use_underline(True)
-        renderer.connect("toggled", callback)
+            def callback (cell, path):
+                if path:
+                    liststore[path][0] = not liststore[path][0]
+                saves = len(tuple(row for row in liststore if row[0]))
+                saveLabel.set_text(ngettext("_Save %d document", "_Save %d documents", saves) % saves)
+                saveLabel.set_use_underline(True)
+            renderer.connect("toggled", callback)
 
-        callback(None, None)
+            callback(None, None)
 
-        while True:
-            response = dialog.run()
-            if response == Gtk.ResponseType.YES:
-                for i in range(len(liststore)-1, -1, -1):
-                    checked, name = liststore[i]
-                    if checked:
-                        gmwidg, game = changedPairs[i]
-                        if saveGame(game) == Gtk.ResponseType.ACCEPT:
-                            del pairs[i]
-                            liststore.remove(liststore.get_iter((i,)))
-                            game.end(ABORTED, ABORTED_AGREEMENT)
-                            gamewidget.delGameWidget(gmwidg)
-                        else:
-                            break
+            while True:
+                response = dialog.run()
+                if response == Gtk.ResponseType.YES:
+                    for i in range(len(liststore)-1, -1, -1):
+                        checked, name = liststore[i]
+                        if checked:
+                            gmwidg, game = changedPairs[i]
+                            if saveGame(game) == Gtk.ResponseType.ACCEPT:
+                                del pairs[i]
+                                liststore.remove(liststore.get_iter((i,)))
+                                game.end(ABORTED, ABORTED_AGREEMENT)
+                                gamewidget.delGameWidget(gmwidg)
+                            else:
+                                break
+                    else:
+                        break
                 else:
                     break
-            else:
-                break
-        dialog.destroy()
+            dialog.destroy()
 
     if response not in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
         for gmwidg, game in pairs:
@@ -412,35 +416,34 @@ def closeGame (gmwidg, game):
     if not game.isChanged():
         response = Gtk.ResponseType.OK
     else:
-        str = "<b><big>Save the current game before you close it?</big></b>"
-        # TPJB change starts
-        if save_pgn_file:
+        markup = "<b><big>" + \
+                _("Save the current game before you close it?") + \
+                "</big></b>"
+        if conf.get("autoSave", False):
             x = saveGamePGN(game)
             if x:
-                return Gtk.ResponseType.OK
-            str = "<b><big>Unable to save to configured file. Save the current game before you close it?</big></b>"
-        # end
+                response = Gtk.ResponseType.OK
+            else:
+                response = None
+                markup = "<b><big>" + \
+                        _("Unable to save to configured file. Save the current game before you close it?") + \
+                        "</big></b>"
+        if response is None:
+            d = Gtk.MessageDialog (type = Gtk.MessageType.WARNING)
+            d.add_button(_("Close _without Saving"), Gtk.ResponseType.OK)
+            d.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+            if game.uri:
+                d.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.YES)
+            else: d.add_button(Gtk.STOCK_SAVE_AS, Gtk.ResponseType.YES)
 
-        #if conf.get("autoSave", False): # Autosave option from preferences?
-            #game.save(None, Savers.database, append=False)
-            #response = Gtk.ResponseType.OK
-        #else
-        
-        d = Gtk.MessageDialog (type = Gtk.MessageType.WARNING)
-        d.add_button(_("Close _without Saving"), Gtk.ResponseType.OK)
-        d.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
-        if game.uri:
-            d.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.YES)
-        else: d.add_button(Gtk.STOCK_SAVE_AS, Gtk.ResponseType.YES)
+            gmwidg.bringToFront()
 
-        gmwidg.bringToFront()
-
-        d.set_markup(_(str))
-        d.format_secondary_text (_(
-            "It is not possible later to continue the game,\nif you don't save it."))
-        
-        response = d.run()
-        d.destroy()
+            d.set_markup(markup)
+            d.format_secondary_text (_(
+                "It is not possible later to continue the game,\nif you don't save it."))
+            
+            response = d.run()
+            d.destroy()
 
         if response == Gtk.ResponseType.YES:
             # Test if cancel was pressed in the save-file-dialog

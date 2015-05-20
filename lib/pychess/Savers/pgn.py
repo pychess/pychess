@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import re
 from datetime import date
 
-from pychess.compat import basestring
+from pychess.compat import basestring, StringIO
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.Utils.Board import Board
@@ -123,7 +123,7 @@ def save (file, model, position=None):
     result = wrap(result, 80)
     print(result, status, file=file)
     print("", file=file)
-    output = file.getvalue()
+    output = file.getvalue() if isinstance(file, StringIO) else ""
     file.close()
     return output
 

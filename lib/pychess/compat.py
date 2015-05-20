@@ -33,7 +33,7 @@ else:
     
     import __builtin__ as builtins
     from htmlentitydefs import entitydefs
-    from cStringIO import StringIO
+    from StringIO import StringIO
     from urlparse import urlparse
     from ConfigParser import SafeConfigParser
     from Queue import Queue, Empty, Full
