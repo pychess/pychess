@@ -471,7 +471,7 @@ class PyChess:
             glock.glock_connect_after(discoverer, "all_engines_discovered", do)
 
 def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
-         ics_host, ics_port):
+         ics_host, ics_port, auto_sf):
     # Start logging
     if log_viewer:
         log.logger.addHandler(GLogHandler(logemitter))
@@ -505,6 +505,8 @@ def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
         ICLogon.host = ics_host
     if ics_port:
         ICLogon.port = ics_port
+    if auto_sf:
+        ionest.save_pgn_file = auto_sf
     
     Gtk.main()
     Gdk.threads_leave()
