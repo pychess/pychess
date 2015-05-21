@@ -95,7 +95,10 @@ class Sidepanel:
         if iter == None: return
         if self.frozen.on: return
 
-        row = tree.get_model().get_path(iter)[0]
+        path = tree.get_model().get_path(iter)
+        indices = path.get_indices()
+        row = indices[0]
+
         if self.boardview.model.lowply & 1:
             ply = row*2 + col
         else:
