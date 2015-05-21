@@ -616,8 +616,30 @@ class SaveTab:
         # Init 'auto save" checkbutton
         def checkCallBack (*args):
             checkbox = widgets["autoSave"]
-            widgets["save_frame"].set_property("sensitive", checkbox.get_active())
+            widgets["autosave_grid"].set_property("sensitive", checkbox.get_active())
         conf.notify_add("autoSave", checkCallBack)
         widgets["autoSave"].set_active(False)
         uistuff.keep(widgets["autoSave"], "autoSave")
         checkCallBack()
+
+        default_path = os.path.expanduser("~")
+        autoSavePath = conf.get("autoSavePath", default_path)
+        conf.set("autoSavePath", autoSavePath)
+
+        auto_save_chooser_dialog = Gtk.FileChooserDialog(_("Select auto save path"), None, Gtk.FileChooserAction.SELECT_FOLDER,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        auto_save_chooser_button = Gtk.FileChooserButton.new_with_dialog(auto_save_chooser_dialog)
+        auto_save_chooser_button.set_current_folder(autoSavePath)
+
+        widgets["savePathChooserDock"].add(auto_save_chooser_button)
+        auto_save_chooser_button.show()
+
+        def select_auto_save(button):
+            new_directory = auto_save_chooser_dialog.get_filename()
+            if new_directory != autoSavePath:
+                conf.set("autoSavePath", new_directory)
+
+        auto_save_chooser_button.connect("current-folder-changed", select_auto_save)
+
+        conf.set("autoSaveFormat", conf.get("autoSaveFormat", "pychess"))
+        uistuff.keep(widgets["autoSaveFormat"], "autoSaveFormat")

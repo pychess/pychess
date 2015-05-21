@@ -223,8 +223,14 @@ def saveGameSimple (uri, game):
     game.save(uri, saver, append=False)
 
 def saveGamePGN (game):
-    # TODO: GUI
-    uri = conf.get("autoSaveFile", os.path.expanduser("~") + "/pychess.pgn")
+    filename = conf.get("autoSaveFormat", "pychess")
+    filename = filename.replace("#n1", game.tags["White"])
+    filename = filename.replace("#n2", game.tags["Black"])
+    filename = filename.replace("#y", "%s" % game.tags["Year"])
+    filename = filename.replace("#m", "%s" % game.tags["Month"])
+    filename = filename.replace("#d", "%s" % game.tags["Day"])
+    uri = conf.get("autoSavePath", os.path.expanduser("~")) + \
+        "/" + filename + ".pgn"
     saver = pgn
     append = True
     try:
@@ -413,6 +419,7 @@ def closeAllGames (pairs):
     return response
 
 def closeGame (gmwidg, game):
+    response = None
     if not game.isChanged():
         response = Gtk.ResponseType.OK
     else:
@@ -424,7 +431,6 @@ def closeGame (gmwidg, game):
             if x:
                 response = Gtk.ResponseType.OK
             else:
-                response = None
                 markup = "<b><big>" + \
                         _("Unable to save to configured file. Save the current game before you close it?") + \
                         "</big></b>"
