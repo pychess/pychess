@@ -887,6 +887,12 @@ If it can use both  you can set here which one you like.</property>
                         <child>
                           <placeholder/>
                         </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1501,6 +1507,7 @@ If it can use both  you can set here which one you like.</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, PyChess will suggest best opening moves on hint panel.</property>
+                                        <property name="halign">start</property>
                                         <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
@@ -1579,6 +1586,7 @@ If it can use both  you can set here which one you like.</property>
                                         <property name="tooltip_text" translatable="yes">If set, PyChess will show game results for different moves in positions containing 6 or less pieces.
 You can download tablebase files from:
 http://www.olympuschess.com/egtb/gaviota/</property>
+                                        <property name="halign">start</property>
                                         <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
@@ -1653,6 +1661,7 @@ http://www.olympuschess.com/egtb/gaviota/</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">If set, PyChess will show game results for different moves in positions containing 6 or less pieces.
 It will search positions from http://www.k4it.de/</property>
+                                    <property name="halign">start</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="use_underline">True</property>
                                     <property name="xalign">0.5</property>
@@ -1712,6 +1721,7 @@ It will search positions from http://www.k4it.de/</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
                                         <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
@@ -1786,6 +1796,7 @@ It will search positions from http://www.k4it.de/</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="halign">start</property>
                                         <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
@@ -2267,6 +2278,7 @@ It will search positions from http://www.k4it.de/</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="halign">start</property>
                             <property name="use_action_appearance">False</property>
                             <property name="use_underline">True</property>
                             <property name="xalign">0.5</property>
@@ -3599,8 +3611,8 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="use_underline">True</property>
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
-                        <accelerator key="Escape" signal="activate"/>
                         <accelerator key="F11" signal="activate"/>
+                        <accelerator key="Escape" signal="activate"/>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
                       </object>
                     </child>
