@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkAccelGroup" id="accelgroup1"/>
   <object class="GtkAboutDialog" id="aboutdialog1">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -21,9 +22,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License 
 along with PyChess; if not, write to the Free Software Foundation, Inc., 
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA</property>
-    <property name="authors"/>
-    <property name="documenters"/>
-    <property name="artists"/>
+    <property name="authors"></property>
+    <property name="documenters"></property>
+    <property name="artists"></property>
     <property name="logo">about.png</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
@@ -42,7 +43,6 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
       </object>
     </child>
   </object>
-  <object class="GtkAccelGroup" id="accelgroup1"/>
   <object class="GtkAdjustment" id="adjustment1">
     <property name="upper">100</property>
     <property name="value">1</property>
@@ -83,10 +83,12 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
             <child>
               <object class="GtkButton" id="game_info_cancel_button">
                 <property name="label">gtk-cancel</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -98,10 +100,12 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
             <child>
               <object class="GtkButton" id="game_info_ok_button">
                 <property name="label">gtk-ok</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -176,7 +180,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
-                                <property name="y_options"/>
+                                <property name="y_options"></property>
                               </packing>
                             </child>
                             <child>
@@ -190,7 +194,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
                                 <property name="x_options">GTK_FILL</property>
-                                <property name="y_options"/>
+                                <property name="y_options"></property>
                               </packing>
                             </child>
                             <child>
@@ -202,7 +206,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                               </object>
                               <packing>
                                 <property name="x_options">GTK_FILL</property>
-                                <property name="y_options"/>
+                                <property name="y_options"></property>
                               </packing>
                             </child>
                             <child>
@@ -216,7 +220,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="right_attach">4</property>
-                                <property name="y_options"/>
+                                <property name="y_options"></property>
                               </packing>
                             </child>
                             <child>
@@ -232,7 +236,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
                                 <property name="x_options">GTK_FILL</property>
-                                <property name="y_options"/>
+                                <property name="y_options"></property>
                               </packing>
                             </child>
                             <child>
@@ -249,7 +253,7 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                                 <property name="right_attach">4</property>
                                 <property name="top_attach">1</property>
                                 <property name="bottom_attach">2</property>
-                                <property name="y_options"/>
+                                <property name="y_options"></property>
                               </packing>
                             </child>
                             <child>
@@ -578,9 +582,11 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
             <child>
               <object class="GtkButton" id="engines_close_button">
                 <property name="label">gtk-close</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -875,6 +881,12 @@ If it can use both  you can set here which one you like.</property>
                         <child>
                           <placeholder/>
                         </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -932,10 +944,12 @@ If it can use both  you can set here which one you like.</property>
             <child>
               <object class="GtkButton" id="add_engine_button">
                 <property name="label">gtk-new</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -947,10 +961,12 @@ If it can use both  you can set here which one you like.</property>
             <child>
               <object class="GtkButton" id="copy_engine_button">
                 <property name="label">gtk-copy</property>
+                <property name="use_action_appearance">False</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -962,11 +978,13 @@ If it can use both  you can set here which one you like.</property>
             <child>
               <object class="GtkButton" id="remove_engine_button">
                 <property name="label">gtk-delete</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -1119,10 +1137,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="hideTabs">
                                         <property name="label" translatable="yes">_Hide tabs when only one game is open</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, this hides the tab in the top of the playing window, when it is not needed.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
@@ -1136,10 +1157,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="autoRotate">
                                         <property name="label" translatable="yes">Auto _rotate board to current human player</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, the board will turn after each move, to show the natural view for the current player.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
@@ -1153,10 +1177,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="faceToFace">
                                         <property name="label" translatable="yes">Face _to Face display mode</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, the black pieces will be head down, suitable for playing against friends on mobile devices.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
@@ -1170,10 +1197,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="showCords">
                                         <property name="label" translatable="yes">Sho_w cords</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, the playing board will display labels and ranks for each chess field. These are usable in chess notation.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
@@ -1187,10 +1217,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="showCaptured">
                                         <property name="label" translatable="yes">Show _captured pieces</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, the captured figurines will be shown next to the board.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
@@ -1204,10 +1237,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="figuresInNotation">
                                         <property name="label" translatable="yes">Prefer figures in _notation</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, PyChess will use figures to express moved pieces, rather than uppercase letters.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
@@ -1221,10 +1257,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="showBlunder">
                                         <property name="label" translatable="yes">Colorize analyzed moves</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, PyChess will colorize suboptimal analyzed moves with red.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -1237,10 +1276,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="showEmt">
                                         <property name="label" translatable="yes">Show elapsed move times</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, the elapsed time that a player used for the move is shown.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -1253,10 +1295,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="showEval">
                                         <property name="label" translatable="yes">Show evaluation values</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, the hint analyzer engine evaluation value is shown.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
@@ -1316,10 +1361,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkRadioButton" id="fullAnimation">
                                         <property name="label" translatable="yes">F_ull board animation</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">Animate pieces, board rotation and more. Use this on fast machines.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
@@ -1333,10 +1381,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkRadioButton" id="moveAnimation">
                                         <property name="label" translatable="yes">Only animate _moves</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">Only animate piece moves.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
@@ -1351,10 +1402,13 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkRadioButton" id="noAnimation">
                                         <property name="label" translatable="yes">No _animation</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">Never use animation. Use this on slow machines.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="draw_indicator">True</property>
@@ -1442,10 +1496,12 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="opening_check">
                                         <property name="label" translatable="yes">Use opening _book</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, PyChess will suggest best opening moves on hint panel.</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="active">True</property>
@@ -1516,12 +1572,14 @@ If it can use both  you can set here which one you like.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="endgame_check">
                                         <property name="label" translatable="yes">Use _local tablebases</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">If set, PyChess will show game results for different moves in positions containing 6 or less pieces.
 You can download tablebase files from:
 http://www.olympuschess.com/egtb/gaviota/</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="active">True</property>
@@ -1589,11 +1647,13 @@ http://www.olympuschess.com/egtb/gaviota/</property>
                                 <child>
                                   <object class="GtkCheckButton" id="online_egtb_check">
                                     <property name="label" translatable="yes">Use _online tablebases</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">If set, PyChess will show game results for different moves in positions containing 6 or less pieces.
 It will search positions from http://www.k4it.de/</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="use_underline">True</property>
                                     <property name="xalign">0.5</property>
                                     <property name="active">True</property>
@@ -1648,9 +1708,11 @@ It will search positions from http://www.k4it.de/</property>
                                     <child>
                                       <object class="GtkCheckButton" id="analyzer_check">
                                         <property name="label" translatable="yes">Use _analyzer</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="active">True</property>
@@ -1720,9 +1782,11 @@ It will search positions from http://www.k4it.de/</property>
                                     <child>
                                       <object class="GtkCheckButton" id="inv_analyzer_check">
                                         <property name="label" translatable="yes">Use _inverted analyzer</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
                                         <property name="active">True</property>
@@ -1920,8 +1984,10 @@ It will search positions from http://www.k4it.de/</property>
                                 <property name="homogeneous">True</property>
                                 <child>
                                   <object class="GtkButton" id="button7">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkAlignment" id="alignment9">
                                         <property name="visible">True</property>
@@ -1971,8 +2037,10 @@ It will search positions from http://www.k4it.de/</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="button6">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkAlignment" id="alignment13">
                                         <property name="visible">True</property>
@@ -2022,10 +2090,12 @@ It will search positions from http://www.k4it.de/</property>
                                 </child>
                                 <child>
                                   <object class="GtkToggleButton" id="panel_enable_button">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="use_underline">True</property>
                                     <child>
                                       <object class="GtkAlignment" id="alignment14">
@@ -2076,9 +2146,11 @@ It will search positions from http://www.k4it.de/</property>
                                 <child>
                                   <object class="GtkButton" id="panel_about_button">
                                     <property name="label">gtk-about</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="sensitive">False</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="use_stock">True</property>
                                   </object>
                                   <packing>
@@ -2191,9 +2263,11 @@ It will search positions from http://www.k4it.de/</property>
                         <child>
                           <object class="GtkCheckButton" id="useSounds">
                             <property name="label" translatable="yes">_Use sounds in PyChess</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="use_underline">True</property>
                             <property name="xalign">0.5</property>
                             <property name="draw_indicator">True</property>
@@ -2279,6 +2353,9 @@ It will search positions from http://www.k4it.de/</property>
                                 <property name="n_columns">3</property>
                                 <property name="column_spacing">3</property>
                                 <property name="row_spacing">3</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
                                 <child>
                                   <object class="GtkComboBox" id="soundcombo0">
                                     <property name="visible">True</property>
@@ -2369,9 +2446,11 @@ It will search positions from http://www.k4it.de/</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton0">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image88">
                                         <property name="visible">True</property>
@@ -2384,14 +2463,16 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="left_attach">2</property>
                                     <property name="right_attach">3</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton1">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image99">
                                         <property name="visible">True</property>
@@ -2406,14 +2487,16 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">1</property>
                                     <property name="bottom_attach">2</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton2">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image100">
                                         <property name="visible">True</property>
@@ -2428,14 +2511,16 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">2</property>
                                     <property name="bottom_attach">3</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton4">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image133">
                                         <property name="visible">True</property>
@@ -2450,14 +2535,16 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">6</property>
                                     <property name="bottom_attach">7</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton5">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image14">
                                         <property name="visible">True</property>
@@ -2472,14 +2559,16 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">7</property>
                                     <property name="bottom_attach">8</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton6">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image15">
                                         <property name="visible">True</property>
@@ -2494,7 +2583,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">8</property>
                                     <property name="bottom_attach">9</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2509,7 +2598,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">1</property>
                                     <property name="bottom_attach">2</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2522,7 +2611,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </object>
                                   <packing>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2537,7 +2626,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">8</property>
                                     <property name="bottom_attach">9</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2552,7 +2641,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">7</property>
                                     <property name="bottom_attach">8</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2567,7 +2656,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">6</property>
                                     <property name="bottom_attach">7</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2582,7 +2671,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">2</property>
                                     <property name="bottom_attach">3</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2611,7 +2700,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">5</property>
                                     <property name="bottom_attach">6</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2630,9 +2719,11 @@ It will search positions from http://www.k4it.de/</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton3">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image1004">
                                         <property name="visible">True</property>
@@ -2647,7 +2738,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">5</property>
                                     <property name="bottom_attach">6</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2662,7 +2753,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">10</property>
                                     <property name="bottom_attach">11</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2677,7 +2768,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">11</property>
                                     <property name="bottom_attach">12</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2710,9 +2801,11 @@ It will search positions from http://www.k4it.de/</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton7">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image1005">
                                         <property name="visible">True</property>
@@ -2727,14 +2820,16 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">10</property>
                                     <property name="bottom_attach">11</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton8">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image1006">
                                         <property name="visible">True</property>
@@ -2749,7 +2844,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">11</property>
                                     <property name="bottom_attach">12</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2808,9 +2903,11 @@ It will search positions from http://www.k4it.de/</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton9">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image1007">
                                         <property name="visible">True</property>
@@ -2825,7 +2922,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">13</property>
                                     <property name="bottom_attach">14</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2859,9 +2956,11 @@ It will search positions from http://www.k4it.de/</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="soundbutton10">
+                                    <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
                                     <child>
                                       <object class="GtkImage" id="image17">
                                         <property name="visible">True</property>
@@ -2876,7 +2975,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">3</property>
                                     <property name="bottom_attach">4</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
                                 </child>
                                 <child>
@@ -2891,11 +2990,8 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="top_attach">14</property>
                                     <property name="bottom_attach">15</property>
                                     <property name="x_options">GTK_FILL</property>
-                                    <property name="y_options"/>
+                                    <property name="y_options"></property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                                 <child>
                                   <object class="GtkHBox" id="hbox7">
@@ -2909,8 +3005,6 @@ It will search positions from http://www.k4it.de/</property>
                                         <property name="invisible_char">●</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">adjustment3</property>
                                         <property name="numeric">True</property>
                                       </object>
@@ -2984,9 +3078,12 @@ It will search positions from http://www.k4it.de/</property>
                         <child>
                           <object class="GtkCheckButton" id="autoSave">
                             <property name="label" translatable="yes">_Auto save games to .pgn</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="halign">start</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="use_underline">True</property>
                             <property name="xalign">0.5</property>
                             <property name="draw_indicator">True</property>
@@ -3059,6 +3156,7 @@ It will search positions from http://www.k4it.de/</property>
             <signal name="drag-data-received" handler="on_drag_received" swapped="no"/>
             <child>
               <object class="GtkMenuItem" id="game2">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">_Game</property>
@@ -3069,6 +3167,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="new_game1">
                         <property name="label" translatable="yes">_New Game</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
@@ -3081,6 +3180,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="play_internet_chess">
                         <property name="label" translatable="yes">Play _Internet Chess</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
@@ -3099,6 +3199,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="load_game1">
                         <property name="label" translatable="yes">_Load Game</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
@@ -3110,6 +3211,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="load_recent_game1">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Load _Recent Game</property>
@@ -3118,6 +3220,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="open_database">
+                        <property name="use_action_appearance">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Open _Database</property>
                         <property name="use_underline">True</property>
@@ -3127,6 +3230,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="set_up_position1">
+                        <property name="use_action_appearance">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Setup Position</property>
                         <property name="use_underline">True</property>
@@ -3135,6 +3239,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="enter_game_notation1">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Enter Game _Notation</property>
@@ -3151,6 +3256,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="save_game1">
                         <property name="label" translatable="yes">_Save Game</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3164,6 +3270,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="save_game_as1">
                         <property name="label" translatable="yes">Save Game _As</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3177,6 +3284,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="export_position1">
                         <property name="label" translatable="yes">_Export Position</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3190,6 +3298,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="analyze_game1">
                         <property name="label" translatable="yes">_Analyze Game</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3208,6 +3317,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="properties1">
                         <property name="label">gtk-properties</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3219,6 +3329,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="player_rating1">
+                        <property name="use_action_appearance">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Player _Rating</property>
                         <property name="use_underline">True</property>
@@ -3234,6 +3345,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="close1">
                         <property name="label">gtk-close</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3246,6 +3358,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="quit1">
                         <property name="label">gtk-quit</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
@@ -3260,6 +3373,7 @@ It will search positions from http://www.k4it.de/</property>
             </child>
             <child>
               <object class="GtkMenuItem" id="edit">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">_Edit</property>
@@ -3269,6 +3383,7 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkMenuItem" id="copy_pgn">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3286,6 +3401,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="manage_engines">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">_Engines</property>
@@ -3296,6 +3412,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="preferences1">
                         <property name="label">gtk-preferences</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
@@ -3310,6 +3427,7 @@ It will search positions from http://www.k4it.de/</property>
             </child>
             <child>
               <object class="GtkMenuItem" id="action1">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">_Actions</property>
@@ -3319,6 +3437,7 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkMenuItem" id="abort">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3328,6 +3447,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="adjourn">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3337,6 +3457,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="draw">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3347,6 +3468,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="pause1">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3356,6 +3478,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="resume1">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3366,6 +3489,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="undo1">
                         <property name="label" translatable="yes">Offer _Undo</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3383,6 +3507,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="call_flag">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3392,6 +3517,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="resign">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3401,6 +3527,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="ask_to_move">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3416,6 +3543,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkCheckMenuItem" id="auto_call_flag">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Auto Call _Flag</property>
@@ -3428,6 +3556,7 @@ It will search positions from http://www.k4it.de/</property>
             </child>
             <child>
               <object class="GtkMenuItem" id="vis1">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">_View</property>
@@ -3438,6 +3567,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="rotate_board1">
                         <property name="label" translatable="yes">_Rotate Board</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3451,6 +3581,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="fullscreen1">
                         <property name="label" translatable="yes">_Fullscreen</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
@@ -3463,17 +3594,19 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="leave_fullscreen1">
                         <property name="label" translatable="yes">Leave _Fullscreen</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
-                        <accelerator key="F11" signal="activate"/>
                         <accelerator key="Escape" signal="activate"/>
+                        <accelerator key="F11" signal="activate"/>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
                       <object class="GtkCheckMenuItem" id="show_sidepanels">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3485,6 +3618,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkCheckMenuItem" id="log_viewer1">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">_Log Viewer</property>
@@ -3500,6 +3634,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkCheckMenuItem" id="hint_mode">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3511,6 +3646,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkCheckMenuItem" id="spy_mode">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -3526,6 +3662,7 @@ It will search positions from http://www.k4it.de/</property>
             </child>
             <child>
               <object class="GtkMenuItem" id="help1">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">_Help</property>
@@ -3535,6 +3672,7 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkMenuItem" id="about_chess1">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">About Chess</property>
@@ -3543,6 +3681,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="how_to_play1">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">How to Play</property>
@@ -3551,6 +3690,7 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="translate_this_application">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Translate PyChess</property>
@@ -3560,6 +3700,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="tip_of_the_day1">
                         <property name="label" translatable="yes">Tip of the Day</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="image">image9</property>
@@ -3576,6 +3717,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkImageMenuItem" id="about1">
                         <property name="label">gtk-about</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
