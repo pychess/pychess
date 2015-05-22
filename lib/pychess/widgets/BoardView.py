@@ -236,6 +236,7 @@ class BoardView (Gtk.DrawingArea):
             self.shown = board.ply
             self.shownVariationIdx = 0
             self.shown = model.ply-moves
+        self.redraw_canvas()
     
     def game_loading (self, model, uri):
         self.autoUpdateShown = False
