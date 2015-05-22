@@ -152,9 +152,10 @@ class BoardControl (Gtk.EventBox):
         elif key == "ask_to_move":
             self.emit("action", HURRY_ACTION, None)
         elif key == "undo1":
-            curColor = self.view.model.variations[0][-1].color
-            curPlayer = self.view.model.players[curColor]
-            if curPlayer.__type__ == LOCAL and self.view.model.ply - self.view.model.lowply > 1:
+            curplayer = self.view.model.curplayer
+            waitingplayer = self.view.model.waitingplayer
+            if curplayer.__type__ == LOCAL and waitingplayer.__type__ == ARTIFICIAL and \
+                self.view.model.ply - self.view.model.lowply > 1:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
             else:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply-1)
@@ -182,8 +183,6 @@ class BoardControl (Gtk.EventBox):
         finally:
             self.stateLock.release()
             glock.release()
-
-        self.view.startAnimation()
     
     def game_ended (self, gamemodel, reason):
         glock.acquire()
