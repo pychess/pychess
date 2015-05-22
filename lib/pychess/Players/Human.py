@@ -224,6 +224,11 @@ class Human (Player):
     def offer (self, offer):
         log.debug("Human.offer: self=%s %s" % (self, offer))
         assert offer.type in OFFER_MESSAGES
+        
+        if self.gamemodel.players[1-self.color].__type__ is LOCAL:
+            self.emit("accept", offer)
+            return
+        
         heading, text, takes_param = OFFER_MESSAGES[offer.type]
         if takes_param:
             param = offer.param

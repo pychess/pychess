@@ -109,16 +109,17 @@ class Sidepanel:
     
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
-        for i in range(moves):
-            try:
-                row, view, other = self._ply_to_row_col_other(game.variations[0][-1].ply-i)
-                model = view.get_model()
-                model.remove(model.get_iter((row,)))
-                if view == self.left:
-                    model = self.numbers.get_model()
+        with self.frozen:
+            for i in range(moves):
+                try:
+                    row, view, other = self._ply_to_row_col_other(game.variations[0][-1].ply-i)
+                    model = view.get_model()
                     model.remove(model.get_iter((row,)))
-            except ValueError:
-                continue
+                    if view == self.left:
+                        model = self.numbers.get_model()
+                        model.remove(model.get_iter((row,)))
+                except ValueError:
+                    continue
     
     def game_changed (self, game):
         len_ = len(self.left.get_model()) + len(self.right.get_model()) + 1
