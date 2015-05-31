@@ -126,7 +126,7 @@ class GameWidget (GObject.GObject):
         infobar.connect("hide", self.infobar_hidden)
         self.game_ended_message = None
         self.clock = clock
-        self.notebookKey = Gtk.Label(); self.notebookKey.set_size_request(0,0)
+        self.notebookKey = Gtk.Alignment()
         self.boardvbox = boardvbox
         self.stat_hbox = stat_hbox
         self.menuitems = MenuItemsDict(self)
