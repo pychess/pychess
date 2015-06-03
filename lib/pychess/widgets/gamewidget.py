@@ -62,10 +62,10 @@ light_on = load_icon(16, "stock_3d-light-on", "weather-clear")
 light_off = load_icon(16, "stock_3d-light-off", "weather-clear-night")
 gtk_close = load_icon(16, "gtk-close")
 
-media_previous = load_icon(16, "gtk-media-previous-ltr")
-media_rewind = load_icon(16, "gtk-media-rewind-ltr")
-media_forward = load_icon(16, "gtk-media-forward-ltr")
-media_next = load_icon(16, "gtk-media-next-ltr")
+media_previous = load_icon(24, "gtk-media-previous-ltr")
+media_rewind = load_icon(24, "gtk-media-rewind-ltr")
+media_forward = load_icon(24, "gtk-media-forward-ltr")
+media_next = load_icon(24, "gtk-media-next-ltr")
 
 path = prefix.addDataPrefix("sidepanel")
 postfix = "Panel.py"
@@ -658,6 +658,10 @@ class GameWidget (GObject.GObject):
         log.debug("GameWidget.setLocked: %s: returning" % self.gamemodel.players)
     
     def status (self, message):
+        # Enable only moves entered by keyboard
+        # TODO: revise all statusbar messages, maybe some of them can be sent to infobar
+        if len(message) > 7:
+            return
         glock.acquire()
         try:
             self.statusbar.pop(0)
@@ -782,13 +786,6 @@ def _ensureReadForGameWidgets ():
     
     centerVBox = Gtk.VBox()
     
-    # The message area
-    
-    centerVBox.pack_start(notebooks["messageArea"], False, True, 0)
-    def ma_switch_page (notebook, gpointer, page_num):
-        notebook.props.visible = notebook.get_nth_page(page_num).get_child().props.visible
-    notebooks["messageArea"].connect("switch-page", ma_switch_page)
-    
     # The dock
     
     global dock, dockAlign
@@ -886,11 +883,24 @@ def _ensureReadForGameWidgets ():
         dock.saveToXML(dockLocation)
         dock._del()
     dock.connect("unrealize", unrealize)
+
+    hbox = Gtk.HBox()
     
     # The status bar
-    
     notebooks["statusbar"].set_border_width(4)
-    centerVBox.pack_start(notebooks["statusbar"], False, True, 0)
+    hbox.pack_start(notebooks["statusbar"], False, True, 0)
+    
+    # The message area
+    align = createAlignment(4,4,0,4)
+    sw = Gtk.ScrolledWindow()
+    sw.add(notebooks["messageArea"])
+    align.add(sw)
+    hbox.pack_start(align, False, True, 0)
+    def ma_switch_page (notebook, gpointer, page_num):
+        notebook.props.visible = notebook.get_nth_page(page_num).get_child().props.visible
+    notebooks["messageArea"].connect("switch-page", ma_switch_page)
+    centerVBox.pack_start(hbox, False, True, 0)
+
     mainvbox.pack_start(centerVBox, True, True, 0)
     centerVBox.show_all()
     mainvbox.show()

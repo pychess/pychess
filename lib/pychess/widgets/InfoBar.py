@@ -3,9 +3,9 @@ from gi.repository import Gtk
 
 def get_message_content (heading_text, message_text, image_stock_id):
     hbox = Gtk.HBox()
-    image = Gtk.Image()
-    image.set_from_stock(image_stock_id, Gtk.IconSize.DIALOG)    
-    hbox.pack_start(image, False, False, 0)
+    #image = Gtk.Image()
+    #image.set_from_stock(image_stock_id, Gtk.IconSize.DIALOG)    
+    #hbox.pack_start(image, False, False, 0)
     vbox = Gtk.VBox()
     label = Gtk.Label()
     label.props.xalign = 0
