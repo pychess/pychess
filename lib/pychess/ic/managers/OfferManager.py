@@ -136,6 +136,7 @@ class OfferManager (GObject.GObject):
             log.warning("OfferManager.onOfferAdd: Declining unknown offer type: " + \
                 "offertype=%s parameters=%s index=%d" % (offertype, parameters, index))
             self.connection.client.run_command("decline %d" % index)
+            return
         offertype = strToOfferType[offertype]
         if offertype == TAKEBACK_OFFER:
             offer = Offer(offertype, param=int(parameters), index=index)
