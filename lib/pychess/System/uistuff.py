@@ -101,15 +101,14 @@ def appendAutowrapColumn (treeview, name, **kvargs):
     treeview.append_column(column)
     
     def callback (treeview, allocation, column, cell):
-        otherColumns = (c for c in treeview.get_columns() if c != column)
+        otherColumns = [c for c in treeview.get_columns() if c != column]
         newWidth = allocation.width - sum(c.get_width() for c in otherColumns)
 
         hsep = GObject.Value()
         hsep.init(GObject.TYPE_INT)
         hsep.set_int(0)
         treeview.style_get_property("horizontal-separator", hsep)
-        newWidth -= hsep.get_int() * 4
-
+        newWidth -= hsep.get_int() * (len(otherColumns)+1) * 2
         if cell.props.wrap_width == newWidth or newWidth <= 0:
             return
         cell.props.wrap_width = newWidth

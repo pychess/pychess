@@ -366,6 +366,7 @@ class Sidepanel (object):
         ### move suggested
         moveRenderer = Gtk.CellRendererText()
         moveRenderer.set_property("xalign", 1.0)
+        moveRenderer.set_property("yalign", 0)
         c0 = Gtk.TreeViewColumn("Move", moveRenderer)
 
         def getMoveText(column, cell, store, iter, data):
@@ -387,8 +388,9 @@ class Sidepanel (object):
         adjustment = Gtk.Adjustment(value=conf.get("multipv", 1), lower=1, upper=9, step_incr=1)
         multipvRenderer.set_property("adjustment", adjustment)
         multipvRenderer.set_property("editable", True)
-        multipvRenderer.set_property("width_chars", 3)
+        multipvRenderer.set_property("width_chars", 1)
         c2 = Gtk.TreeViewColumn("PV", multipvRenderer, editable=3)
+        c2.set_property("min_width", 80)
 
         def spin_visible(column, cell, store, iter, data):           
             if store[iter][2] == 0:
