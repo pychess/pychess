@@ -3,9 +3,6 @@ from __future__ import print_function
 import threading
 import subprocess
 import traceback
-import shlex
-
-from pychess.compat import basestring
 
 
 class Command(object):
@@ -22,8 +19,6 @@ class Command(object):
     output, error = '', ''
 
     def __init__(self, command, inputstr):
-        if isinstance(command, basestring):
-            command = shlex.split(command)
         self.command = command
         self.inputstr = inputstr
 
