@@ -493,7 +493,7 @@ def init_engine (analyzer_type, gamemodel, force=False):
     return analyzer
 
 def is_uci(engine_command):
-    command = Command(engine_command, "uci\n")
+    command = Command(engine_command.replace(" ", "\\ "), "uci\n") # Solved adding new engines that contains spaces in the path
     output = command.run(timeout=3)[1]
     uci = False
     for line in output.split("\n"):
