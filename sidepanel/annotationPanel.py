@@ -931,4 +931,4 @@ class Sidepanel(Gtk.TextView):
             movestr =  unicode(toSAN(board.prev, move, True))
         nagsymbols = "".join([nag2symbol(nag) for nag in board.nags])
         # To prevent wrap castling we will use hyphen bullet (U+2043)       
-        return "%s%s%s" % (move_count(board), movestr.replace('-', unicode('⁃ ')), nagsymbols)
+        return "%s%s%s" % (move_count(board), movestr.replace('-', unicode('⁃')), nagsymbols)
