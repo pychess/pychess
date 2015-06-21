@@ -75,6 +75,8 @@ class Sidepanel(Gtk.TextView):
 
         tag = self.textbuffer.create_tag("remove-variation")
         tag.connect("event", self.tag_event_handler)
+        
+        self.variation_end_tag = self.textbuffer.create_tag("variation_end")
 
         self.textbuffer.create_tag("head1")
         self.textbuffer.create_tag("head2", weight=Pango.Weight.BOLD)
@@ -448,7 +450,8 @@ class Sidepanel(Gtk.TextView):
 
     def variation_start(self, iter, index, level):
         start = iter.get_offset()
-        self.textbuffer.insert(iter, "\n")
+        if not iter.ends_tag(tag=self.variation_end_tag):
+            self.textbuffer.insert(iter, "\n")
         if level == 0:
             self.textbuffer.insert_with_tags_by_name(iter, "[", "variation-toplevel", "variation-margin0")
         elif (level+1) % 2 == 0:
@@ -479,7 +482,7 @@ class Sidepanel(Gtk.TextView):
             self.textbuffer.insert_with_tags_by_name(iter, ")", "variation-uneven", "variation-margin2")
 
         self.textbuffer.insert_with_tags_by_name(iter, unicode("✖ "), "remove-variation")
-        self.textbuffer.insert(iter, "\n")
+        self.textbuffer.insert_with_tags_by_name(iter, "\n","variation_end")
 
         node = {}
         node["board"] = firstboard
