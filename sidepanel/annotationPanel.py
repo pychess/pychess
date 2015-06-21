@@ -324,7 +324,7 @@ class Sidepanel(Gtk.TextView):
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw.add(textedit)
 
-        dialog.vbox.add(sw)
+        dialog.get_content_area().pack_start(sw, True, True, 0)
         dialog.resize(300, 200)
         dialog.show_all()
 
