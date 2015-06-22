@@ -275,7 +275,8 @@ class EngineAdvisor(Advisor):
         if self.mode == HINT and self.store.get_path(iter) != Gtk.TreePath(self.path):
             moves = self.store[iter][0][2]
             if moves is not None:
-                model.add_variation(self.engine.board, moves)
+                score = self.store[iter][1][0]
+                model.add_variation(self.engine.board, moves, score=score)
 
     def child_tooltip (self, i):
         if self.active:

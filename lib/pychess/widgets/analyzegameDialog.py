@@ -9,6 +9,7 @@ from pychess.System import glock
 from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System.glock import glock_connect_after
+from pychess.Utils import prettyPrintScore
 from pychess.Utils.Move import listToMoves
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Players.engineNest import discoverer
@@ -82,6 +83,7 @@ def initialize(gameDic):
                 if ply-1 in gamemodel.scores and ply in gamemodel.scores: 
                     color = (ply-1) % 2
                     oldmoves, oldscore, olddepth = gamemodel.scores[ply-1]
+                    score_str = prettyPrintScore(oldscore, olddepth)
                     oldscore = oldscore * -1 if color == BLACK else oldscore
                     moves, score, depth = gamemodel.scores[ply]
                     score = score * -1 if color == WHITE else score
@@ -89,7 +91,7 @@ def initialize(gameDic):
                     if (diff > thresold and color==BLACK) or (diff < -1*thresold and color==WHITE):
                         try:
                             pv = listToMoves(gamemodel.boards[ply-1], oldmoves, validate=True)
-                            gamemodel.add_variation(gamemodel.boards[ply-1], pv)
+                            gamemodel.add_variation(gamemodel.boards[ply-1], pv, comment="", score=score_str)
                         except ParsingError as e:
                             # ParsingErrors may happen when parsing "old" lines from
                             # analyzing engines, which haven't yet noticed their new tasks
