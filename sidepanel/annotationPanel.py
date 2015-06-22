@@ -579,7 +579,7 @@ class Sidepanel(Gtk.TextView):
 
         self.gamemodel.needsSave = True
         
-    def variation_added(self, gamemodel, boards, parent):
+    def variation_added(self, gamemodel, boards, parent, comment, score):
         node = None
         for n in self.nodelist:
             if n["board"] == parent:
@@ -598,11 +598,23 @@ class Sidepanel(Gtk.TextView):
         diff, opening_node = self.variation_start(end, next_node_index, level)
 
         for i, board in enumerate(boards):
-            if board.prev is None:
-                continue
-            inserted_node = self.insert_node(board, end, next_node_index+i, level+1, parent)
-            diff += inserted_node["end"] - inserted_node["start"]
+            if (board.prev is None):
+                if comment:
+                    board.children.append(comment)
+                    inserted_node = self.insert_comment(comment, board, 0)
+                    diff += inserted_node["end"] - inserted_node["start"]
+                else:
+                    continue
+            else:
+                inserted_node = self.insert_node(board, end, next_node_index+i, level+1, parent)
+                diff += inserted_node["end"] - inserted_node["start"]
 
+        if score:
+            board.children.append(score)
+            inserted_node = self.insert_comment(score, board, 0)
+            diff += inserted_node["end"] - inserted_node["start"]
+        
+        end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
         diff += self.variation_end(end, next_node_index + len(boards), level, boards[0], parent, opening_node)
 
         if next_node_index > 0:
@@ -728,9 +740,9 @@ class Sidepanel(Gtk.TextView):
                 for index, child in enumerate(board.children):
                     if isinstance(child, basestring):
                         if 0: # TODO board.plyCount == self.gamemodel.lowply:
-                            self.insert_comment(child + "\n", board, index, parent, level)
+                            self.insert_comment(child + "\n", board, index)
                         else:
-                            self.insert_comment(child, board, index, parent, level)
+                            self.insert_comment(child, board, index)
                 board = board.next
                 continue
             
@@ -750,7 +762,7 @@ class Sidepanel(Gtk.TextView):
             for index, child in enumerate(board.children):
                 if isinstance(child, basestring):
                     # comment
-                    self.insert_comment(child, board, index, parent, level)
+                    self.insert_comment(child, board, index)
                 else:
                     # variation
                     diff, opening_node = self.variation_start(end_iter(), -1, level)
@@ -765,31 +777,29 @@ class Sidepanel(Gtk.TextView):
         if result and result != "*":
             self.textbuffer.insert_with_tags_by_name(end_iter(), " "+result, "move")
 
-    def insert_comment(self, comment, board, index, parent, level=0):
+    def insert_comment(self, comment, board, index):
         comment = re.sub("\[%.*?\]", "", comment)
         if not comment:
             return
             
-        end_iter = self.textbuffer.get_end_iter
-        start = end_iter().get_offset()
+        for n in self.nodelist:
+            if n["board"] == board:
+                end_iter = self.textbuffer.get_iter_at_offset(n["end"])
+                break
+        start = end_iter.get_offset()
 
-        if level > 0:
-            self.textbuffer.insert_with_tags_by_name(end_iter(), comment, "comment", "margin")
-        else:
-            self.textbuffer.insert_with_tags_by_name(end_iter(), comment, "comment")
+        self.textbuffer.insert_with_tags_by_name(end_iter, comment+" ", "comment")
 
         node = {}
         node["board"] = board
         node["comment"] = comment
         node["index"] = index
         node["start"] = start     
-        node["end"] = end_iter().get_offset()
-        node["parent"] = parent
-        node["level"] = 0
+        node["end"] = end_iter.get_offset()
         self.nodelist.append(node)
         
-        self.textbuffer.insert(end_iter(), " ")
-
+        return node
+        
     def insert_header(self, gm):
         if gm.players:
             text = repr(gm.players[0])

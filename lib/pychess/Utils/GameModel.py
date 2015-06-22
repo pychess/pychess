@@ -103,9 +103,9 @@ class GameModel (GObject.GObject, Thread):
         # opening_changed is emitted if the move changed the opening.
         "opening_changed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
         # variation_added is emitted if a variation was added.
-        "variation_added":  (GObject.SignalFlags.RUN_FIRST, None, (object,object)),
+        "variation_added":  (GObject.SignalFlags.RUN_FIRST, None, (object, object, str, str)),
         # variation_extended is emitted if a new move was added to a variation.
-        "variation_extended":  (GObject.SignalFlags.RUN_FIRST, None, (object,object)),
+        "variation_extended":  (GObject.SignalFlags.RUN_FIRST, None, (object, object)),
         # scores_changed is emitted if the analyzing scores was changed.
         "analysis_changed":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
     }
@@ -831,7 +831,7 @@ class GameModel (GObject.GObject, Thread):
             return True
         return False
 
-    def add_variation(self, board, moves):
+    def add_variation(self, board, moves, comment="", score=""):
         board0 = board
         board = board0.clone()
         board.board.prev = None
@@ -869,7 +869,7 @@ class GameModel (GObject.GObject, Thread):
         variation[0] = board0
         self.variations.append(head[:board0.ply-self.lowply] + variation)
         self.needsSave = True
-        self.emit("variation_added", board0.board.next.children[-1], board0.board.next)
+        self.emit("variation_added", board0.board.next.children[-1], board0.board.next, comment, score)
         return self.variations[-1]
 
     def add_move2variation(self, board, move, variationIdx):
