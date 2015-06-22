@@ -781,7 +781,8 @@ class Sidepanel(Gtk.TextView):
         comment = re.sub("\[%.*?\]", "", comment)
         if not comment:
             return
-            
+        
+        end_iter = self.textbuffer.get_end_iter()
         for n in self.nodelist:
             if n["board"] == board:
                 end_iter = self.textbuffer.get_iter_at_offset(n["end"])
