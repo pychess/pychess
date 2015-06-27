@@ -51,6 +51,8 @@ class LBoard:
         # when we add a variation to last played board from hint panel
         self.fen_was_applied = False
         
+        self.hash = 0
+        
     @property
     def lastMove (self):
         return self.hist_move[-1] if self.fen_was_applied and len(self.hist_move) > 0 else None
@@ -470,6 +472,7 @@ class LBoard:
 
         if flag == NULL_MOVE:
             self.setColor(opcolor)
+            self.plyCount += 1
             return move
 
         if self.variant == CAMBODIANCHESS:
@@ -711,9 +714,12 @@ class LBoard:
         self.hash = self.hist_hash.pop()
         self.fifty = self.hist_fifty.pop()
         self.plyCount -= 1
-        
+    
     def __hash__ (self):
         return self.hash
+    
+    def __eq__ (self, other):
+        return self.hash == other.hash and self.plyCount == other.plyCount
     
     def reprCastling (self):
         if not self.castling:
