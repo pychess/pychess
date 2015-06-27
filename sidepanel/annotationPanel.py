@@ -980,7 +980,7 @@ class Sidepanel(Gtk.TextView):
     
     def players_changed(self, model):
         log.debug("annotationPanel.players_changed: starting")
-        self.update
+        self.update()
         log.debug("annotationPanel.players_changed: returning")
     
     def __movestr(self, board):
