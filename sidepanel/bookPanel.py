@@ -12,6 +12,7 @@ from pychess.Utils.eco import get_eco
 from pychess.Utils.logic import legalMoveCount
 from pychess.Utils.EndgameTable import EndgameTable
 from pychess.Utils.Move import Move, toSAN, toFAN, listToMoves
+from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
@@ -276,7 +277,19 @@ class EngineAdvisor(Advisor):
             moves = self.store[iter][0][2]
             if moves is not None:
                 score = self.store[iter][1][0]
-                model.add_variation(self.engine.board, moves, score=score)
+                model.add_variation(self.engine.board, moves, comment="", score=score)
+                
+        if self.mode == SPY and self.store.get_path(iter) != Gtk.TreePath(self.path):
+            moves = self.store[iter][0][2]
+            if moves is not None:
+                score = self.store[iter][1][0]
+                board = self.engine.board.board
+                # SPY analyzer has inverted color boards
+                # we need to chage it to get the board in gamemodel variations board list later
+                board.setColor(1-board.color)
+                king = board.kings[board.color]
+                null_move = Move(newMove(king, king, NULL_MOVE))
+                model.add_variation(self.engine.board, [null_move] + moves, comment="", score=score)
 
     def child_tooltip (self, i):
         if self.active:

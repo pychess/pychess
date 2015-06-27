@@ -15,6 +15,7 @@ from pychess.System import conf
 from pychess.System.glock import glock_connect
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
+from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toSAN, toFAN
 from pychess.Savers.pgn import move_count
 from pychess.Savers.pgnbase import nag2symbol
@@ -25,6 +26,8 @@ __active__ = True
 __icon__ = addDataPrefix("glade/panel_annotation.svg")
 __desc__ = _("Annotated game")
 
+EMPTY_BOARD = LBoard()
+EMPTY_BOARD.applyFen(FEN_EMPTY)
 
 """
 We are maintaining a list of nodes to help manipulate the textbuffer.
@@ -76,7 +79,7 @@ class Sidepanel(Gtk.TextView):
         tag = self.textbuffer.create_tag("remove-variation")
         tag.connect("event", self.tag_event_handler)
         
-        self.variation_end_tag = self.textbuffer.create_tag("variation_end")
+        self.new_line_tag = self.textbuffer.create_tag("new_line")
 
         self.textbuffer.create_tag("head1")
         self.textbuffer.create_tag("head2", weight=Pango.Weight.BOLD)
@@ -336,7 +339,10 @@ class Sidepanel(Gtk.TextView):
             (iter_first, iter_last) = textbuffer.get_bounds()
             comment = textbuffer.get_text(iter_first, iter_last, False)
             if board.children[index] != comment:
-                board.children[index] = comment
+                if comment:
+                    board.children[index] = comment
+                else:
+                    del board.children[index]
                 self.gamemodel.needsSave = True
                 self.update()
         else:
@@ -450,8 +456,8 @@ class Sidepanel(Gtk.TextView):
 
     def variation_start(self, iter, index, level):
         start = iter.get_offset()
-        if not iter.ends_tag(tag=self.variation_end_tag):
-            self.textbuffer.insert(iter, "\n")
+        if not iter.ends_tag(tag=self.new_line_tag):
+            self.textbuffer.insert_with_tags_by_name(iter, "\n", "new_line")
         if level == 0:
             self.textbuffer.insert_with_tags_by_name(iter, "[", "variation-toplevel", "variation-margin0")
         elif (level+1) % 2 == 0:
@@ -460,7 +466,7 @@ class Sidepanel(Gtk.TextView):
             self.textbuffer.insert_with_tags_by_name(iter, "(", "variation-uneven", "variation-margin2")
 
         node = {}
-        node["board"] = None
+        node["board"] = EMPTY_BOARD
         node["vari"] = None
         node["start"] = start
         node["end"] =  iter.get_offset()
@@ -482,7 +488,8 @@ class Sidepanel(Gtk.TextView):
             self.textbuffer.insert_with_tags_by_name(iter, ")", "variation-uneven", "variation-margin2")
 
         self.textbuffer.insert_with_tags_by_name(iter, unicode("✖ "), "remove-variation")
-        self.textbuffer.insert_with_tags_by_name(iter, "\n","variation_end")
+        if not iter.begins_tag(tag=self.new_line_tag):
+            self.textbuffer.insert_with_tags_by_name(iter, "\n","new_line")
 
         node = {}
         node["board"] = firstboard
@@ -499,6 +506,7 @@ class Sidepanel(Gtk.TextView):
         return iter.get_offset() - start
 
     def update_node(self, board):
+        """ Called after adding/removing evaluation simbols """
         node = None
         for n in self.nodelist:
             if n["board"] == board:
@@ -580,12 +588,13 @@ class Sidepanel(Gtk.TextView):
         self.gamemodel.needsSave = True
         
     def variation_added(self, gamemodel, boards, parent, comment, score):
+        
+        # first find the iter where we will inset this new variation
         node = None
         for n in self.nodelist:
             if n["board"] == parent:
                 end = self.textbuffer.get_iter_at_offset(n["end"])
                 node = n
-                break
         
         if node is None:
             next_node_index = len(self.nodelist)
@@ -594,29 +603,62 @@ class Sidepanel(Gtk.TextView):
         else:
             next_node_index = self.nodelist.index(node) + 1
             level = node["level"]
-
-        diff, opening_node = self.variation_start(end, next_node_index, level)
-
+        
+        # diff will store the offset we need to shift the remaining stuff
+        diff = 0
+        
+        # inserting score of move we variating as comment
+        if parent.plyCount in gamemodel.scores and not isinstance(parent.children[0], basestring):
+            bmoves, bscore, bdepth = gamemodel.scores[parent.plyCount]
+            bscore = bscore * -1 if parent.color == BLACK else bscore
+            bcomment = prettyPrintScore(bscore, bdepth)
+            parent.children.insert(0, bcomment)
+            inserted_node = self.insert_comment(bcomment, parent, None, level=level)
+            diff += inserted_node["end"] - inserted_node["start"]
+            end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
+            next_node_index += 1
+        
+        # variation opening parenthesis
+        sdiff, opening_node = self.variation_start(end, next_node_index, level)
+        diff += sdiff
+        
+        ini_board = None
         for i, board in enumerate(boards):
+            # do we have initial variation comment?
             if (board.prev is None):
                 if comment:
                     board.children.append(comment)
-                    inserted_node = self.insert_comment(comment, board, 0)
-                    diff += inserted_node["end"] - inserted_node["start"]
-                else:
-                    continue
+                    ini_board = board
+                continue
             else:
+                # insert variation move
                 inserted_node = self.insert_node(board, end, next_node_index+i, level+1, parent)
                 diff += inserted_node["end"] - inserted_node["start"]
+                end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
+
+                if ini_board is not None:
+                    # insert initial variation comment
+                    inserted_comment = self.insert_comment(comment, board, parent, level=level+1, ini_board=ini_board)
+                    comment_diff = inserted_comment["end"] - inserted_comment["start"]
+                    inserted_node["start"] += comment_diff
+                    inserted_node["end"] += comment_diff
+                    end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
+                    diff += comment_diff
+                    leading = False
+                    next_node_index += 1
+                    ini_board = None
 
         if score:
+            # insert score of variation latest move as comment
             board.children.append(score)
-            inserted_node = self.insert_comment(score, board, 0)
+            inserted_node = self.insert_comment(score, board, parent, level=level+1)
             diff += inserted_node["end"] - inserted_node["start"]
-        
-        end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
+            end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
+            next_node_index += 1
+            
         diff += self.variation_end(end, next_node_index + len(boards), level, boards[0], parent, opening_node)
 
+        # adjust remaining stuff offsets
         if next_node_index > 0:
             for node in self.nodelist[next_node_index + len(boards)+1:]:
                 node["start"] += diff
@@ -739,10 +781,7 @@ class Sidepanel(Gtk.TextView):
             if board.prev is None:
                 for index, child in enumerate(board.children):
                     if isinstance(child, basestring):
-                        if 0: # TODO board.plyCount == self.gamemodel.lowply:
-                            self.insert_comment(child + "\n", board, index)
-                        else:
-                            self.insert_comment(child, board, index)
+                        self.insert_comment(child, board.next, parent, index=index, level=level, ini_board=board)
                 board = board.next
                 continue
             
@@ -762,7 +801,7 @@ class Sidepanel(Gtk.TextView):
             for index, child in enumerate(board.children):
                 if isinstance(child, basestring):
                     # comment
-                    self.insert_comment(child, board, index)
+                    self.insert_comment(child, board, parent, index=index, level=level)
                 else:
                     # variation
                     diff, opening_node = self.variation_start(end_iter(), -1, level)
@@ -777,27 +816,34 @@ class Sidepanel(Gtk.TextView):
         if result and result != "*":
             self.textbuffer.insert_with_tags_by_name(end_iter(), " "+result, "move")
 
-    def insert_comment(self, comment, board, index):
+    def insert_comment(self, comment, board, parent, index=0, level=0, ini_board=None):
         comment = re.sub("\[%.*?\]", "", comment)
         if not comment:
             return
         
         end_iter = self.textbuffer.get_end_iter()
+        pos = 0
         for n in self.nodelist:
             if n["board"] == board:
-                end_iter = self.textbuffer.get_iter_at_offset(n["end"])
+                if ini_board is not None:
+                    end_iter = self.textbuffer.get_iter_at_offset(n["start"])
+                else:
+                    end_iter = self.textbuffer.get_iter_at_offset(n["end"])
+                pos = self.nodelist.index(n)
                 break
         start = end_iter.get_offset()
 
         self.textbuffer.insert_with_tags_by_name(end_iter, comment+" ", "comment")
 
         node = {}
-        node["board"] = board
+        node["board"] = ini_board if ini_board is not None else board
         node["comment"] = comment
         node["index"] = index
+        node["parent"] = parent
+        node["level"] = level
         node["start"] = start     
         node["end"] = end_iter.get_offset()
-        self.nodelist.append(node)
+        self.nodelist.insert(pos if ini_board is not None else pos+1, node)
         
         return node
         
