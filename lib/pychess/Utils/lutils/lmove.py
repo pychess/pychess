@@ -102,7 +102,7 @@ def listToMoves (board, movstrs, type=None, testvalidate=False, ignoreErrors=Fal
                 break
             raise
         
-        if testvalidate:
+        if testvalidate and mstr !=  "--":
             if not validateMove (board, move):
                 if not ignoreErrors:
                     raise ParsingError(mstr, 'Validation', board.asFen())
@@ -451,7 +451,7 @@ def parseLAN (board, lan):
     # We want to use the SAN parser for LAN moves like "Nb1-c3" or "Rd3xd7"
     # The san parser should be able to handle most stuff, as long as we remove
     # the slash
-    if not lan.upper().startswith("O-O"):
+    if not lan.upper().startswith("O-O") and not lan.startswith("--"):
         lan = lan.replace("-","")
     return parseSAN (board, lan)
 
