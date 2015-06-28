@@ -119,6 +119,7 @@ class GameModel (GObject.GObject, Thread):
         
         self.moves = []
         self.scores = {}
+        self.spy_scores = {}
         self.players = []
         
         self.gameno = None
@@ -234,8 +235,7 @@ class GameModel (GObject.GObject, Thread):
         analyzer.setOptionInitialBoard(self)
         self.spectators[analyzer_type] = analyzer
         self.emit("analyzer_added", analyzer, analyzer_type)
-        if analyzer_type == HINT:
-            analyzer.connect("analyze", self.on_analyze)
+        analyzer.connect("analyze", self.on_analyze)
         return analyzer
     
     def remove_analyzer (self, analyzer_type):
@@ -279,8 +279,11 @@ class GameModel (GObject.GObject, Thread):
             pv, score, depth = analysis[0]
             ply = analyzer.board.ply
             if score != None:
-                self.scores[ply] = (pv, score, depth)
-                self.emit("analysis_changed", ply)
+                if analyzer.mode == ANALYZING:
+                    self.scores[ply] = (pv, score, depth)
+                    self.emit("analysis_changed", ply)
+                else:
+                    self.spy_scores[ply] = (pv, score, depth)
         
     def setOpening(self):
         if self.ply > 40:
