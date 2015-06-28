@@ -63,6 +63,7 @@ def initialize(gameDic):
         gmwidg = gamewidget.cur_gmwidg()
         gamemodel = gameDic[gmwidg]
         analyzer = gamemodel.spectators[HINT]
+        inv_analyzer = gamemodel.spectators[SPY]
         gmwidg.menuitems["hint_mode"].active = True
 
         def analyse_moves():
@@ -77,6 +78,7 @@ def initialize(gameDic):
                 finally:
                     glock.release()
                 analyzer.setBoard(board)
+                inv_analyzer.setBoard(board)
                 time.sleep(move_time+0.1)
 
                 ply = board.ply
@@ -91,7 +93,18 @@ def initialize(gameDic):
                     if (diff > thresold and color==BLACK) or (diff < -1*thresold and color==WHITE):
                         try:
                             pv = listToMoves(gamemodel.boards[ply-1], oldmoves, validate=True)
-                            gamemodel.add_variation(gamemodel.boards[ply-1], pv, comment="", score=score_str)
+                            gamemodel.add_variation(gamemodel.boards[ply-1], pv, comment="Better is", score=score_str)
+                        except ParsingError as e:
+                            # ParsingErrors may happen when parsing "old" lines from
+                            # analyzing engines, which haven't yet noticed their new tasks
+                            log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
+                                (' '.join(oldmoves),e))
+
+                        try:
+                            oldmoves, oldscore, olddepth = gamemodel.spy_scores[ply-1]
+                            score_str = prettyPrintScore(oldscore, olddepth)
+                            pv = listToMoves(gamemodel.boards[ply-1], ["--"] + oldmoves, validate=True)
+                            gamemodel.add_variation(gamemodel.boards[ply-1], pv, comment="Treatening", score=score_str)
                         except ParsingError as e:
                             # ParsingErrors may happen when parsing "old" lines from
                             # analyzing engines, which haven't yet noticed their new tasks
