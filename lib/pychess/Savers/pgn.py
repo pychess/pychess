@@ -288,7 +288,13 @@ class PGNFile (PgnBase):
                 if self._getTag(gameno, tag):
                     try:
                         ms = parseClockTimeTag(self._getTag(gameno, tag))
-                        model.timemodel.intervals[color][0] = ms / 1000
+                        # We need to fix when FICS reports negative clock time like this
+                        # [TimeControl "180+0"]
+                        # [WhiteClock "0:00:15.867"]
+                        # [BlackClock "23:59:58.820"]
+                        start_sec = (ms - 24*60*60*1000) / 1000. if ms > 23*60*60*1000 else ms / 1000.
+                        print (ms, start_sec)
+                        model.timemodel.intervals[color][0] = start_sec
                     except ValueError: 
                         raise LoadingError( \
                             "Error parsing '%s' Header for gameno %s" % (tag, gameno))
