@@ -488,8 +488,11 @@ class Sidepanel(Gtk.TextView):
             self.textbuffer.insert_with_tags_by_name(iter, ")", "variation-uneven", "variation-margin2")
 
         self.textbuffer.insert_with_tags_by_name(iter, unicode("✖ "), "remove-variation")
-        if not iter.begins_tag(tag=self.new_line_tag):
-            self.textbuffer.insert_with_tags_by_name(iter, "\n","new_line")
+        chr = iter.get_char()
+        
+        # somehow iter.begins_tag() doesn't work, so we use get_char() instead
+        if iter.get_char() != "\n":
+            self.textbuffer.insert_with_tags_by_name(iter, "\n", "new_line")
 
         node = {}
         node["board"] = firstboard
