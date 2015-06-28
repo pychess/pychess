@@ -293,7 +293,6 @@ class PGNFile (PgnBase):
                         # [WhiteClock "0:00:15.867"]
                         # [BlackClock "23:59:58.820"]
                         start_sec = (ms - 24*60*60*1000) / 1000. if ms > 23*60*60*1000 else ms / 1000.
-                        print (ms, start_sec)
                         model.timemodel.intervals[color][0] = start_sec
                     except ValueError: 
                         raise LoadingError( \
