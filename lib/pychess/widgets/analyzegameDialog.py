@@ -30,6 +30,8 @@ def run(gameDic):
 
 def initialize(gameDic):
     
+    uistuff.keep(widgets["fromCurrent"], "fromCurrent", first_value=True)
+    uistuff.keep(widgets["threatPV"], "threatPV")
     uistuff.keep(widgets["showEval"], "showEval")
     uistuff.keep(widgets["showBlunder"], "showBlunder", first_value=True)
     uistuff.keep(widgets["max_analysis_spin"], "max_analysis_spin", first_value=3)
@@ -67,9 +69,12 @@ def initialize(gameDic):
         gmwidg.menuitems["hint_mode"].active = True
 
         def analyse_moves():
+            from_current = conf.get("fromCurrent", True)
+            start_ply = gmwidg.board.view.shown if from_current else 0
             move_time = int(conf.get("max_analysis_spin", 3))
             thresold = int(conf.get("variation_thresold_spin", 50))
-            for board in gamemodel.boards:
+            threat_PV = conf.get("ThreatPV", False)
+            for board in gamemodel.boards[start_ply:]:
                 if stop_event.is_set():
                     break
                 glock.acquire()
@@ -91,6 +96,17 @@ def initialize(gameDic):
                     score = score * -1 if color == WHITE else score
                     diff = score-oldscore
                     if (diff > thresold and color==BLACK) or (diff < -1*thresold and color==WHITE):
+                        if threat_PV:
+                            try:
+                                oldmoves0, oldscore0, olddepth0 = gamemodel.spy_scores[ply-1]
+                                score_str0 = prettyPrintScore(oldscore0, olddepth0)
+                                pv0 = listToMoves(gamemodel.boards[ply-1], ["--"] + oldmoves0, validate=True)
+                                gamemodel.add_variation(gamemodel.boards[ply-1], pv0, comment="Treatening", score=score_str0)
+                            except ParsingError as e:
+                                # ParsingErrors may happen when parsing "old" lines from
+                                # analyzing engines, which haven't yet noticed their new tasks
+                                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
+                                    (' '.join(oldmoves),e))
                         try:
                             pv = listToMoves(gamemodel.boards[ply-1], oldmoves, validate=True)
                             gamemodel.add_variation(gamemodel.boards[ply-1], pv, comment="Better is", score=score_str)
@@ -100,17 +116,6 @@ def initialize(gameDic):
                             log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
                                 (' '.join(oldmoves),e))
 
-                        try:
-                            oldmoves, oldscore, olddepth = gamemodel.spy_scores[ply-1]
-                            score_str = prettyPrintScore(oldscore, olddepth)
-                            pv = listToMoves(gamemodel.boards[ply-1], ["--"] + oldmoves, validate=True)
-                            gamemodel.add_variation(gamemodel.boards[ply-1], pv, comment="Treatening", score=score_str)
-                        except ParsingError as e:
-                            # ParsingErrors may happen when parsing "old" lines from
-                            # analyzing engines, which haven't yet noticed their new tasks
-                            log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
-                                (' '.join(oldmoves),e))
-            
             widgets["analyze_game"].hide()
             widgets["analyze_ok_button"].set_sensitive(True)
             conf.set("analyzer_check", old_check_value)
