@@ -3093,7 +3093,7 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="border_width">6</property>
-                    <property name="spacing">12</property>
+                    <property name="spacing">3</property>
                     <child>
                       <object class="GtkAlignment" id="alignment48">
                         <property name="visible">True</property>
@@ -3262,7 +3262,54 @@ It will search positions from http://www.k4it.de/</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkAlignment" id="alignment16">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">5</property>
+                        <child>
+                          <object class="GtkCheckButton" id="saveEmt">
+                            <property name="label" translatable="yes">Save elapsed move _times</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="halign">start</property>
+                            <property name="use_underline">True</property>
+                            <property name="xalign">0.5</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment18">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">5</property>
+                        <child>
+                          <object class="GtkCheckButton" id="saveEval">
+                            <property name="label" translatable="yes">Save analyzing engine _evaluation values</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="halign">start</property>
+                            <property name="use_underline">True</property>
+                            <property name="xalign">0.5</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">3</property>
+                      </packing>
                     </child>
                   </object>
                 </child>

@@ -643,3 +643,6 @@ class SaveTab:
 
         conf.set("autoSaveFormat", conf.get("autoSaveFormat", "pychess"))
         uistuff.keep(widgets["autoSaveFormat"], "autoSaveFormat")
+
+        uistuff.keep(widgets["saveEmt"], "saveEmt")
+        uistuff.keep(widgets["saveEval"], "saveEval")
