@@ -116,8 +116,11 @@ def save (file, model, position=None):
         print('[Annotator "%s"]' % model.tags["Annotator"], file=file)
     print("", file=file)
 
+    save_emt = conf.get("saveEmt", False)
+    save_eval = conf.get("saveEval", False)
+
     result = []
-    walk(model.boards[0].board, result, model)
+    walk(model.boards[0].board, result, model, save_emt, save_eval)
             
     result = " ".join(result)
     result = wrap(result, 80)
@@ -127,7 +130,7 @@ def save (file, model, position=None):
     file.close()
     return output
 
-def walk(node, result, model, vari=False):
+def walk(node, result, model, save_emt, save_eval, vari=False):
     """Prepares a game data for .pgn storage.
        Recursively walks the node tree to collect moves and comments
        into a resulting movetext string.
@@ -136,8 +139,6 @@ def walk(node, result, model, vari=False):
        node - list (a tree of lboards created by the pgn parser)
        result - str (movetext strings)"""
 
-    enhanced_save = conf.get("enhanced_save_check", False)
-    
     def store(text):
         if len(result) > 1 and result[-1] == "(":
             result[-1] = "(%s" % text
@@ -158,20 +159,22 @@ def walk(node, result, model, vari=False):
             node = node.next
             continue
 
-        movecount = move_count(node, black_periods=enhanced_save and "TimeControl" in model.tags)
+        movecount = move_count(node, black_periods=(save_emt or scae_eval) and "TimeControl" in model.tags)
         if movecount is not None:
             if movecount:
                 store(movecount)
             move = node.lastMove
             store(toSAN(node.prev, move))
-            if enhanced_save and not vari:
+            if (save_emt or save_eval) and not vari:
                 emt_eval = ""
-                if "TimeControl" in model.tags:
+                if "TimeControl" in model.tags and save_emt:
                     elapsed = model.timemodel.getElapsedMoveTime(node.plyCount - model.lowply)
                     emt_eval = "[%%emt %s]" % formatTime(elapsed, clk2pgn=True)
-                if node.plyCount in model.scores:
+                if node.plyCount in model.scores and save_eval:
                     moves, score, depth = model.scores[node.plyCount]
-                    emt_eval += "[%%eval %0.2f/%s]" % (score, depth)
+                    if node.color == BLACK:
+                        score = -score
+                    emt_eval += "[%%eval %0.2f/%s]" % (score / 100.0, depth)
                 if emt_eval:
                     store("{%s}" % emt_eval)
 
@@ -189,13 +192,13 @@ def walk(node, result, model, vari=False):
                 # variations
                 if node.fen_was_applied:
                     store("(")
-                    walk(child[0], result, model, vari=True)
+                    walk(child[0], result, model, save_emt, save_eval, vari=True)
                     store(")")
                     # variation after last played move is not valid pgn
                     # but we will save it as in comment
                 else:
                     store("{Analyzer's primary variation:")
-                    walk(child[0], result, model, vari=True)
+                    walk(child[0], result, model, save_emt, save_eval, vari=True)
                     store("}")
 
         if node.next:
@@ -415,9 +418,11 @@ class PGNFile (PgnBase):
                                 sign, num, fraction, depth = match.groups()
                                 sign = 1 if sign is None or sign == "+" else -1
                                 num = int(num) if int(num) == MATE_VALUE else int(num)
-                                fraction = 0 if fraction is None else float(fraction)/100
-                                value = sign * (num + fraction)
+                                fraction = 0 if fraction is None else int(fraction)
+                                value = sign * (num * 100 + fraction)
                                 depth = "" if depth is None else depth
+                                if board.color == BLACK:
+                                    value = -value
                                 model.scores[ply] = ("", value, depth)
 
             log.debug("pgn.loadToModel: intervals %s" % model.timemodel.intervals)
