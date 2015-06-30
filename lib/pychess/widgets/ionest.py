@@ -196,12 +196,6 @@ def getOpenAndSaveDialogs():
         savecombo.set_active(default)
         savedialog.set_extra_widget(savecombo)
 
-        dialogBox = savedialog.get_content_area()
-        enhanced_save_check  = Gtk.CheckButton(_("Save elapsed move times and analyzing engine evaluation values."))
-        dialogBox.pack_end(enhanced_save_check, expand=False, fill=False, padding=0)
-        keep(enhanced_save_check, "enhanced_save_check", first_value=False)
-        enhanced_save_check.show()            
-
     return opendialog, savedialog, enddir, savecombo, savers
 
 ################################################################################
