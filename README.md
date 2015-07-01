@@ -10,3 +10,4 @@ Download page: http://pychess.org/download/
 Development page: https://github.com/pychess/pychess  
 Translations: https://www.transifex.com/projects/p/pychess/  
 Mailing list: http://groups.google.com/group/pychess-people  
+Chat: http://webchat.freenode.net/?channels=pychess&uio=d4  
