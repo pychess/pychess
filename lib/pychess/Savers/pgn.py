@@ -130,7 +130,7 @@ def save (file, model, position=None):
     file.close()
     return output
 
-def walk(node, result, model, save_emt, save_eval, vari=False):
+def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
     """Prepares a game data for .pgn storage.
        Recursively walks the node tree to collect moves and comments
        into a resulting movetext string.
@@ -159,7 +159,7 @@ def walk(node, result, model, save_emt, save_eval, vari=False):
             node = node.next
             continue
 
-        movecount = move_count(node, black_periods=(save_emt or scae_eval) and "TimeControl" in model.tags)
+        movecount = move_count(node, black_periods=(save_emt or save_eval) and "TimeControl" in model.tags)
         if movecount is not None:
             if movecount:
                 store(movecount)
