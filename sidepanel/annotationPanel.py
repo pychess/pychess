@@ -667,7 +667,7 @@ class Sidepanel(Gtk.TextView):
                 node["start"] += diff
                 node["end"] += diff
 
-        # if new variation is com from clicking in book panel
+        # if new variation is coming from clicking in book panel
         # we want to jump into the first board in new vari
         if not comment:
             self.boardview.setShownBoard(boards[1].pieceBoard)
