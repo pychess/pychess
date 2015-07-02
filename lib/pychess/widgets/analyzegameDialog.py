@@ -121,7 +121,8 @@ def initialize(gameDic):
                                 oldmoves0, oldscore0, olddepth0 = gamemodel.spy_scores[ply-1]
                                 score_str0 = prettyPrintScore(oldscore0, olddepth0)
                                 pv0 = listToMoves(gamemodel.boards[ply-1], ["--"] + oldmoves0, validate=True)
-                                gamemodel.add_variation(gamemodel.boards[ply-1], pv0, comment="Treatening", score=score_str0)
+                                if len(pv0) > 2:
+                                    gamemodel.add_variation(gamemodel.boards[ply-1], pv0, comment="Treatening", score=score_str0)
                             except ParsingError as e:
                                 # ParsingErrors may happen when parsing "old" lines from
                                 # analyzing engines, which haven't yet noticed their new tasks

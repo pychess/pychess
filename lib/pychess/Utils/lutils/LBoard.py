@@ -51,8 +51,6 @@ class LBoard:
         # when we add a variation to last played board from hint panel
         self.fen_was_applied = False
         
-        self.hash = 0
-        
     @property
     def lastMove (self):
         return self.hist_move[-1] if self.fen_was_applied and len(self.hist_move) > 0 else None
@@ -719,7 +717,9 @@ class LBoard:
         return self.hash
     
     def __eq__ (self, other):
-        return self.hash == other.hash and self.plyCount == other.plyCount
+        return self.fen_was_applied and other is not None and \
+            self.hash == other.hash and self.plyCount == other.plyCount
+            
     
     def reprCastling (self):
         if not self.castling:
