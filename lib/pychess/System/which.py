@@ -60,6 +60,8 @@ __all__ = 'which which_files'.split()
 
 import sys, os, os.path
 
+from pychess.compat import basestring
+
 _windows = sys.platform.startswith('win')
 
 if _windows:

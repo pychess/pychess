@@ -1,10 +1,10 @@
-
+from __future__ import print_function
+import sys
 from math import e
 from random import randint
-from sys import maxint
 
-import gtk, gobject
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+from gi.repository import Gtk, GObject
+from gi.repository import Gdk
 
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
@@ -23,11 +23,11 @@ class Sidepanel:
     def load (self, gmwidg):
         self.boardview = gmwidg.board.view
         self.plot = ScorePlot(self.boardview)
-        self.sw = __widget__ = gtk.ScrolledWindow()
-        __widget__.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        port = gtk.Viewport()
+        self.sw = __widget__ = Gtk.ScrolledWindow()
+        __widget__.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        port = Gtk.Viewport()
         port.add(self.plot)
-        port.set_shadow_type(gtk.SHADOW_NONE)
+        port.set_shadow_type(Gtk.ShadowType.NONE)
         __widget__.add(port)
         __widget__.show_all()
         
@@ -45,7 +45,7 @@ class Sidepanel:
         return __widget__
     
     def moves_undoing (self, model, moves):
-        for i in xrange(moves):
+        for i in range(moves):
             self.plot.undo()
         
         # As shown_changed will normally be emitted just after game_changed -
@@ -59,7 +59,7 @@ class Sidepanel:
         if len(self.plot)+model.lowply > model.ply:
             return
         
-        for i in xrange(len(self.plot)+model.lowply, model.ply):
+        for i in range(len(self.plot)+model.lowply, model.ply):
             if i in model.scores:
                 points = model.scores[i][1]
             else:
@@ -69,9 +69,9 @@ class Sidepanel:
         if model.status == DRAW:
             points = 0
         elif model.status == WHITEWON:
-            points = maxint
+            points = sys.maxsize
         elif model.status == BLACKWON:
-            points = -maxint
+            points = -sys.maxsize
         else:
             if model.ply in model.scores:
                 points = model.scores[model.ply][1]
@@ -94,25 +94,25 @@ class Sidepanel:
         opboard.setColor(1-opboard.color)
         material, phase = leval.evalMaterial (board)
         if board.color == WHITE:
-            print "material", -material
+            print("material", -material)
             e1 = leval.evalKingTropism (board)
             e2 = leval.evalKingTropism (opboard)
-            print "evaluation: %d + %d = %d " % (e1, e2, e1+e2)
+            print("evaluation: %d + %d = %d " % (e1, e2, e1+e2))
             p1 = leval.evalPawnStructure (board, phase)
             p2 = leval.evalPawnStructure (opboard, phase)
-            print "pawns: %d + %d = %d " % (p1, p2, p1+p2)
-            print "knights:",-leval.evalKnights (board)
-            print "king:",-leval.evalKing(board,phase)
+            print("pawns: %d + %d = %d " % (p1, p2, p1+p2))
+            print("knights:",-leval.evalKnights (board))
+            print("king:",-leval.evalKing(board,phase))
         else:
-            print "material", material
-            print "evaluation:",leval.evalKingTropism (board)
-            print "pawns:", leval.evalPawnStructure (board, phase)
-            print "pawns2:", leval.evalPawnStructure (opboard, phase)
-            print "pawns3:", leval.evalPawnStructure (board, phase) + \
-                             leval.evalPawnStructure (opboard, phase)
-            print "knights:",leval.evalKnights (board)
-            print "king:",leval.evalKing(board,phase)
-        print "----------------------"
+            print("material", material)
+            print("evaluation:",leval.evalKingTropism (board))
+            print("pawns:", leval.evalPawnStructure (board, phase))
+            print("pawns2:", leval.evalPawnStructure (opboard, phase))
+            print("pawns3:", leval.evalPawnStructure (board, phase) + \
+                             leval.evalPawnStructure (opboard, phase))
+            print("knights:",leval.evalKnights (board))
+            print("king:",leval.evalKing(board,phase))
+        print("----------------------")
         
     def shown_changed (self, boardview, shown):
         if not boardview.shownIsMainLine():
@@ -122,16 +122,20 @@ class Sidepanel:
             self.plot.redraw()
             adj = self.sw.get_vadjustment()
 
-            y = self.plot.moveHeight*(shown-self.boardview.model.lowply)
-            if y < adj.value or y > adj.value + adj.page_size:
-                adj.set_value(min(y, adj.upper-adj.page_size))
+            y = self.plot.moveHeight*(shown-self.boardview.model.lowply)           
+            if y < adj.get_value() or y > adj.get_value() + adj.get_page_size():               
+                adj.set_value(min(y, adj.get_upper()-adj.get_page_size()))
 
     def analysis_changed (self, gamemodel, ply):
+        if self.boardview.animating:
+            return
+
         if not self.boardview.shownIsMainLine():
             return
         if ply-gamemodel.lowply > len(self.plot.scores)-1:
             # analysis line of yet undone position
             return
+
         color = (ply-1) % 2
         score = gamemodel.scores[ply][1]
         score = score * -1 if color==WHITE else score
@@ -147,21 +151,21 @@ class Sidepanel:
         self.boardview.setShownBoard(board)
 
 
-class ScorePlot (gtk.DrawingArea):
+class ScorePlot (Gtk.DrawingArea):
     
-    __gtype_name__ = "ScorePlot"+str(randint(0,maxint))
+    __gtype_name__ = "ScorePlot"+str(randint(0,sys.maxsize))
     
     __gsignals__ = {
-        "selected" : (SIGNAL_RUN_FIRST, TYPE_NONE, (int,))
+        "selected" : (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
     
     def __init__ (self, boardview):
-        gtk.DrawingArea.__init__(self)
-        self.boardview = boardview
-        self.connect("expose_event", self.expose)
+        GObject.GObject.__init__(self)
+        self.boardview = boardview        
+        self.connect("draw", self.expose)
         self.connect("button-press-event", self.press)
         self.props.can_focus = True
-        self.set_events(gtk.gdk.BUTTON_PRESS_MASK|gtk.gdk.KEY_PRESS_MASK)
+        self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK|Gdk.EventMask.KEY_PRESS_MASK)
         self.moveHeight = 12
         self.scores = []
         self.selected = 0
@@ -187,20 +191,21 @@ class ScorePlot (gtk.DrawingArea):
     
     @idle_add
     def redraw (self):
-        if self.window:
+        if self.get_window():
             a = self.get_allocation()
-            rect = gtk.gdk.Rectangle(0, 0, a.width, a.height)
-            self.window.invalidate_rect(rect, True)
-            self.window.process_updates(True)
+            rect = Gdk.Rectangle()
+            rect.x, rect.y, rect.width, rect.height = (0, 0, a.width, a.height)
+            self.get_window().invalidate_rect(rect, True)
+            self.get_window().process_updates(True)
     
     def press (self, widget, event):
         self.grab_focus()
         self.emit('selected', event.y/self.moveHeight)
-    
-    def expose (self, widget, event):
-        context = widget.window.cairo_create()
-        context.rectangle(event.area.x, event.area.y,
-                          event.area.width, event.area.height)
+        
+    def expose (self, widget, context):
+        a = widget.get_allocation()        
+        context.rectangle(a.x, a.y,
+                          a.width, a.height)
         context.clip()
         self.draw(context)
         self.set_size_request(-1, (len(self.scores))*self.moveHeight)
@@ -270,9 +275,9 @@ class ScorePlot (gtk.DrawingArea):
         cr.set_line_width(lw)
         y = (self.selected)*self.moveHeight
         cr.rectangle(lw/2, y-lw/2, width-lw, self.moveHeight+lw)
-        col = self.get_style().base[gtk.STATE_SELECTED]
-        r, g, b = map(lambda x: x/65535., (col.red, col.green, col.blue))
-        cr.set_source_rgba (r, g, b, .15)
+        sc = self.get_style_context()
+        found, color = sc.lookup_color("p_bg_selected")
+        cr.set_source_rgba (color.red, color.green, color.blue, .15)
         cr.fill_preserve()
-        cr.set_source_rgb (r, g, b)
+        cr.set_source_rgb (color.red, color.green, color.blue)
         cr.stroke()

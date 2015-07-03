@@ -1,11 +1,12 @@
+from __future__ import absolute_import
 import os
 import re
 import sys
 import platform
 from ctypes import *
 
-from bitboard import firstBit, clearBit
-from lmovegen import genAllMoves, genCheckEvasions
+from .bitboard import firstBit, clearBit
+from .lmovegen import genAllMoves, genCheckEvasions
 from pychess.Utils.const import *
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix, getDataPrefix
@@ -46,7 +47,7 @@ class egtb_gaviota:
         tbPath = configuredTbPath or getDataPrefix()
         try:
             tbPathContents = os.listdir(tbPath)
-        except OSError, e:
+        except OSError as e:
             if configuredTbPath:
                 log.warning("Unable to open Gaviota TB folder: %s" % repr(e))
             return
@@ -71,7 +72,7 @@ class egtb_gaviota:
         self._setupFunctionPrototypes()
         
         self.pathList = self.tbpaths_init()
-        self.pathList = self.tbpaths_add(self.pathList, tbPath)
+        self.pathList = self.tbpaths_add(self.pathList, tbPath.encode())
         initInfo = self.tb_init(True, compressionScheme, self.pathList)
         self.initialized = ( self.tb_is_initialized() != 0 )
         if not self.initialized:

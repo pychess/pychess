@@ -30,11 +30,10 @@ class Prediction (object):
     
     def __hash__ (self):
         return self.hash
-    
-    def __cmp__ (self, other):
-        return self.callback == other.callback and \
-               self.regexps == other.regexps
 
+    def __len__(self):
+        return len(self.regexps)
+        
 
 RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE, RETURN_MATCH_END = range(4)
 
@@ -110,7 +109,7 @@ class FromToPrediction (MultipleLinesPrediction):
             match = self.regexps[1].match(line)
             if match:
                 self.matchlist.append(match)
-                self.matches = [m if type(m) is str else m.string for m in self.matchlist]
+                self.matches = [m if isinstance(m, str) else m.string for m in self.matchlist]
                 self.callback(self.matchlist)
                 del self.matchlist[:]
                 return RETURN_MATCH
@@ -158,7 +157,7 @@ class TelnetLines (object):
         
     def _get_lines (self):
         lines = []
-        line = self.telnet.readline().strip()
+        line = self.telnet.readline()
         
         if line.startswith(self.line_prefix):
             line = line[len(self.line_prefix)+1:]
@@ -174,11 +173,11 @@ class TelnetLines (object):
                             extra={"task": (self.telnet.name, "lines")})
                 return lines
             code = int(code)
-            line = text if text else self.telnet.readline().strip()
+            line = text if text else self.telnet.readline()
             
             while not line.endswith(BLOCK_END):
                 lines.append(TelnetLine(line, code))
-                line = self.telnet.readline().strip()
+                line = self.telnet.readline()
             lines.append(TelnetLine(line[:-1], code))
             
             log.debug("%s %s %s" %
@@ -186,7 +185,7 @@ class TelnetLines (object):
                       extra={"task": (self.telnet.name, "command_reply")})
         else:
             lines.append(TelnetLine(line, None))
-
+        
         log.debug("\n".join(line.line for line in lines).strip(),
                   extra={"task": (self.telnet.name, "lines")})
         if self.consolehandler:
@@ -206,9 +205,9 @@ class PredictionsTelnet (object):
         line = self.lines.popleft()
         if not line.line: return # TODO: necessary?
         
-        for p in (reversed(self.reply_cmd_dict[line.code])
-                  if line.code and line.code in self.reply_cmd_dict
-                  else self.predictions):
+        for p in self.reply_cmd_dict[line.code] \
+                  if line.code and line.code in self.reply_cmd_dict \
+                  else self.predictions:
 #            print "parse_line: trying prediction %s for line '%s'" % (p.name, line)
             answer = self.test_prediction(p, line)
             if answer in (RETURN_MATCH, RETURN_MATCH_END):

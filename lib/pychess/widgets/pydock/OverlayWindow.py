@@ -1,26 +1,33 @@
+from __future__ import print_function
+
 import os
 import re
 import sys
 
-import gtk
 import cairo
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
 
 if sys.platform == 'win32':
     from pychess.System.WinRsvg import rsvg
 else:
-    import rsvg
+    from gi.repository import Rsvg
 
 
-class OverlayWindow (gtk.Window):
+class OverlayWindow (Gtk.Window):
     """ This class knows about being an overlaywindow and some svg stuff """
     
     cache = {} # Class global self.cache for svgPath:rsvg and (svgPath,w,h):surface
     
     def __init__ (self, parent):
-        gtk.Window.__init__(self, gtk.WINDOW_POPUP)
-        colormap = self.get_screen().get_rgba_colormap()
-        if colormap:
-            self.set_colormap(colormap)
+        Gtk.Window.__init__(self, Gtk.WindowType.POPUP)
+
+        # set RGBA visual for the window so transparency works
+        self.set_app_paintable(True)
+        visual = self.get_screen().get_rgba_visual()
+        if visual:
+            self.set_visual(visual)
         self.myparent = parent
     
     #===========================================================================
@@ -35,30 +42,43 @@ class OverlayWindow (gtk.Window):
             cairoContext.set_operator(cairo.OPERATOR_OVER)
     
     def digAHole (self, svgShape, width, height):
-        
+
+        # FIXME
+        # For Python 2.x pycairo does not support/implement cairo.Region()
+        # https://bugs.launchpad.net/ubuntu/+source/pygobject/+bug/1028115/comments/8
+        return
+
         # Create a bitmap and clear it
-        mask = gtk.gdk.Pixmap(None, width, height, 1)
-        mcontext = mask.cairo_create()
+        mask = cairo.ImageSurface(cairo.FORMAT_A1, width, height)
+        mcontext = cairo.Context(mask)
         mcontext.set_source_rgb(0, 0, 0)
         mcontext.set_operator(cairo.OPERATOR_DEST_OUT)
         mcontext.paint()
-        
+
         # Paint our shape
         surface = self.getSurfaceFromSvg(svgShape, width, height)
         mcontext.set_operator(cairo.OPERATOR_OVER)
         mcontext.set_source_surface(surface, 0, 0)
         mcontext.paint()
-        
+
         # Apply it only if aren't composited, in which case we only need input
         # masking
+        try:
+            mregion = Gdk.cairo_region_create_from_surface(mask)
+        except TypeError:
+            return
+
         if self.is_composited():
-            self.window.input_shape_combine_mask(mask, 0, 0)
-        else: self.window.shape_combine_mask(mask, 0, 0)
-    
+            self.get_window().input_shape_combine_region(mregion, 0, 0)
+        else:
+            self.get_window().shape_combine_region(mregion, 0, 0)
+
     def translateCoords (self, x, y):
-        x1, y1 = self.myparent.window.get_position()
-        x += x1 + self.myparent.get_allocation().x
-        y += y1 + self.myparent.get_allocation().y
+        tl = self.myparent.get_toplevel()
+        x1, y1 = tl.get_window().get_position()
+        tx = self.myparent.translate_coordinates(self.myparent.get_toplevel(), x, y)
+        x = x1 + tx[0]
+        y = y1 + tx[1]
         return x, y
     
     #===========================================================================
@@ -94,26 +114,36 @@ class OverlayWindow (gtk.Window):
             return "#"+"".join(hex(c/256)[2:].zfill(2) for c in pixels)
         
         TEMP_PATH = "/tmp/pychess_theamed.svg"
-        colorDic = {"#18b0ff": colorToHex("light", gtk.STATE_SELECTED),
-                    "#575757": colorToHex("text_aa", gtk.STATE_PRELIGHT),
-                    "#e3ddd4": colorToHex("bg", gtk.STATE_NORMAL),
-                    "#d4cec5": colorToHex("bg", gtk.STATE_INSENSITIVE),
-                    "#ffffff": colorToHex("base", gtk.STATE_NORMAL),
-                    "#000000": colorToHex("fg", gtk.STATE_NORMAL)}
-        
-        data = file(svgPath).read()
+
+        # return hex string #rrggbb
+        def getcol(col):
+            found, color = sc.lookup_color(col)
+            # not found colors are black
+            if not found: print("color not found in overlaywindow.py:",col)
+            return "#%02X%02X%02X" % (int(color.red * 255), int(color.green * 255), int(color.blue * 255))
+
+        sc = self.get_style_context()
+
+        colorDic = {"#18b0ff": getcol("p_light_selected"),
+                    "#575757": getcol("p_text_aa"),
+                    "#e3ddd4": getcol("p_bg_color"),
+                    "#d4cec5": getcol("p_bg_insensitive"),
+                    "#ffffff": getcol("p_base_color"),
+                    "#000000": getcol("p_fg_color")}        
+
+        data = open(svgPath).read()
         data = re.sub("|".join(colorDic.keys()),
                       lambda m: m.group() in colorDic and colorDic[m.group()] or m.group(),
                       data)
-        f = file(TEMP_PATH, "w")
+        f = open(TEMP_PATH, "w")
         f.write(data)
         f.close()
-        svg = rsvg.Handle(TEMP_PATH)
+        svg = Rsvg.Handle.new_from_file(TEMP_PATH)
         os.remove(TEMP_PATH)
         return svg
     
     def __svgToSurface (self, svg, width, height):
-        assert type(width) == int
+        assert isinstance(width, int)
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
         context = cairo.Context(surface)
         context.set_operator(cairo.OPERATOR_SOURCE)

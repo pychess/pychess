@@ -1,13 +1,16 @@
-from urllib import urlopen, urlencode
-from gobject import SIGNAL_RUN_FIRST, TYPE_NONE
+from __future__ import absolute_import
+
+from gi.repository import GObject
+
 from threading import Thread
 
+from pychess.compat import urlopen, urlencode
 from pychess.System import fident
 from pychess.System.Log import log
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import ARTIFICIAL, CHAT_ACTION
 
-from Player import Player
+from .Player import Player
 
 class Engine (Player):
     
@@ -17,8 +20,8 @@ class Engine (Player):
         The first element is the pv list of moves. The second is a score
         relative to the engine. If no score is known, the value can be None,
         but not 0, which is a draw. '''
-    __gsignals__ = {
-        'analyze': (SIGNAL_RUN_FIRST, TYPE_NONE, (object,))
+    __gsignals__ = {       
+        'analyze': (GObject.SignalFlags.RUN_FIRST, None, (object,))
     }
     
     def __init__(self, md5=None):
@@ -107,8 +110,8 @@ class Engine (Player):
         def answer (message):
             try:
                 data = urlopen("http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
-                               urlencode({"message":message, "botcust2":"x"})).read()
-            except IOError, e:
+                               urlencode({"message":message, "botcust2":"x"}).encode("utf-8")).read().decode('utf-8')
+            except IOError as e:
                 log.warning("Couldn't answer message from online bot: '%s'" % e,
                          extra={"task":self.defname})
                 return

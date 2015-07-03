@@ -1,4 +1,5 @@
-import gamewidget
+from __future__ import absolute_import
+from . import gamewidget
 from pychess.Utils.const import BLACK, WHITE
 
 

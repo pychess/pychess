@@ -17,12 +17,50 @@ cd testing
 $ PYTHONPATH=lib/ python run_tests.py
 
 -------------
-Dependencies:
-python >= 2.6
-pygtk
-pygobject
-pycairo
-gnome-python-desktop
-python-rsvg (if it's in a separate package in your distribution)
+Dependencies for Ubuntu/Debian:
 gnome-icon-theme
-gst-python (OPTIONAL for sound)
+python >= 2.6   (or python3)
+python-gi       (or python3-gi)
+python-gi-cairo (or python3-gi-cairo)
+gobject-introspection
+gir1.2-glib-2.0
+gir1.2-gtk-3.0
+gir1.2-pango-1.0
+gir1.2-rsvg-2.0
+gir1.2-gdkpixbuf-2.0
+gir1.2-gtksource-3.0
+gir1.2-gstreamer-1.0
+gir1.2-gst-plugins-base-1.0
+
+Dependencies for CentOS/RHEL7 and Fedora 20:
+python
+pygobject3
+pycairo
+gobject-introspection
+glib2
+gtk3
+pango
+gdk-pixbuf2
+gtksourceview3
+gstreamer1
+gstreamer1-plugins-base
+(python2 is used by default.
+ To use python3 on Fedora 20 install python3, python3-gobject and python3-cairo
+ These packages aren't available on CentOS/RHEL) 
+
+Dependencies for Arch:
+python
+python-gobject
+python-cairo
+gobject-introspection
+glib2
+gtk3
+pango
+gdk-pixbuf2
+gtksourceview3
+gstreamer
+gst-plugins-base
+(Arch uses python3 by default. To use python2 install python2,
+ python2-gobject and python2-cairo)
+
+

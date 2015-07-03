@@ -1,9 +1,13 @@
-import sys, os
+from __future__ import print_function
+
+import os
+import sys
 from os import listdir
 from os.path import isdir, isfile, splitext
 from xml.dom import minidom
 
-import gtk
+from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gdk
 
 from pychess.System.prefix import addDataPrefix, getDataPrefix
 from pychess.System.idle_add import idle_add
@@ -13,6 +17,7 @@ from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon
 from pychess.gfx import Pieces
+
 
 firstRun = True
 def run(widgets):
@@ -29,6 +34,7 @@ def initialize(widgets):
     SoundTab(widgets)
     PanelTab(widgets)
     ThemeTab(widgets)
+    SaveTab(widgets)
     
     uistuff.keepWindowSize("preferencesdialog", widgets["preferences"],
                            defaultPosition=POSITION_GOLDEN)
@@ -37,8 +43,8 @@ def initialize(widgets):
         return True
     widgets["preferences"].connect("delete-event", delete_event)
     widgets["preferences"].connect("key-press-event",
-        lambda w,e: w.event(gtk.gdk.Event(gtk.gdk.DELETE))
-        if e.keyval == gtk.keysyms.Escape else None)
+        lambda w,e: w.event(Gdk.Event(Gdk.EventType.DELETE))
+        if e.keyval == Gdk.KEY_Escape else None)
 
 ################################################################################
 # General initing                                                              #
@@ -111,11 +117,11 @@ class HintTab:
         path = conf.get("opening_file_entry", default_path)
         conf.set("opening_file_entry", path)
 
-        book_chooser_dialog = gtk.FileChooserDialog(_("Select book file"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
-            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        book_chooser_button = gtk.FileChooserButton(book_chooser_dialog)
+        book_chooser_dialog = Gtk.FileChooserDialog(_("Select book file"), None, Gtk.FileChooserAction.OPEN,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        book_chooser_button = Gtk.FileChooserButton(book_chooser_dialog)
 
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name(_("Opening books"))
         filter.add_pattern("*.bin")
         book_chooser_dialog.add_filter(filter)
@@ -144,9 +150,9 @@ class HintTab:
         egtb_path = conf.get("egtb_path", default_path)
         conf.set("egtb_path", egtb_path)
 
-        egtb_chooser_dialog = gtk.FileChooserDialog(_("Select Gaviota TB path"), None, gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
-            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        egtb_chooser_button = gtk.FileChooserButton(egtb_chooser_dialog)
+        egtb_chooser_dialog = Gtk.FileChooserDialog(_("Select Gaviota TB path"), None, Gtk.FileChooserAction.SELECT_FOLDER,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        egtb_chooser_button = Gtk.FileChooserButton.new_with_dialog(egtb_chooser_dialog)
         egtb_chooser_button.set_current_folder(egtb_path)
 
         self.widgets["egtbChooserDock"].add(egtb_chooser_button)
@@ -237,7 +243,7 @@ class HintTab:
 
 # Setup default sounds
 
-for i in xrange(11):
+for i in range(11):
     if not conf.hasKey("soundcombo%d" % i):
         conf.set("soundcombo%d" % i, SOUND_URI)
 if not conf.hasKey("sounduri0"):
@@ -266,7 +272,7 @@ if not conf.hasKey("sounduri10"):
 class SoundTab:
     
     SOUND_DIRS = (addDataPrefix("sounds"), "/usr/share/sounds",
-                  "/usr/local/share/sounds", os.environ["HOME"])
+                  "/usr/local/share/sounds", os.path.expanduser("~"))
     
     COUNT_OF_SOUNDS = 11
     
@@ -296,7 +302,7 @@ class SoundTab:
         if not conf.get("useSounds", True):
             return
         
-        if type(action) == str:
+        if isinstance(action, str):
             no = cls.actionToKeyNo[action]
         else: no = action
         typ = conf.get("soundcombo%d" % no, SOUND_MUTE)
@@ -314,20 +320,21 @@ class SoundTab:
         
         # Init open dialog
         
-        opendialog = gtk.FileChooserDialog (
-                _("Open Sound File"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
-                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN,
-                  gtk.RESPONSE_ACCEPT))
+        opendialog = Gtk.FileChooserDialog (
+                _("Open Sound File"), None, Gtk.FileChooserAction.OPEN,
+                 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
+                  Gtk.ResponseType.ACCEPT))
         
         for dir in self.SOUND_DIRS:
             if os.path.isdir(dir):
                 opendialog.set_current_folder(dir)
                 break
         
-        soundfilter = gtk.FileFilter()
+        soundfilter = Gtk.FileFilter()
         soundfilter.set_name(_("Sound files"))
-        soundfilter.add_custom(soundfilter.get_needed(),
-                               lambda data: data[3] and data[3].startswith("audio/"))
+        #soundfilter.add_custom(soundfilter.get_needed(),
+        #                       lambda data: data[3] and data[3].startswith("audio/"))
+        soundfilter.add_mime_type("audio/*")
         opendialog.add_filter(soundfilter)
         opendialog.set_filter(soundfilter)
         
@@ -348,7 +355,7 @@ class SoundTab:
         
         def callback (combobox, index):
             if combobox.get_active() == SOUND_SELECT:
-                if opendialog.run() == gtk.RESPONSE_ACCEPT:
+                if opendialog.run() == Gtk.ResponseType.ACCEPT:
                     uri = opendialog.get_uri()
                     model = combobox.get_model()
                     conf.set("sounduri%d"%index, uri)
@@ -362,7 +369,7 @@ class SoundTab:
                     combobox.set_active(conf.get("soundcombo%d"%index,SOUND_MUTE))
                 opendialog.hide()
         
-        for i in xrange(self.COUNT_OF_SOUNDS):
+        for i in range(self.COUNT_OF_SOUNDS):
             combo = widgets["soundcombo%d"%i]
             uistuff.createCombo (combo, items)
             combo.set_active(0)
@@ -377,7 +384,7 @@ class SoundTab:
                 model.append([audioIco, os.path.split(uri)[1]])
                 combo.set_active(3)
         
-        for i in xrange(self.COUNT_OF_SOUNDS):
+        for i in range(self.COUNT_OF_SOUNDS):
             if conf.get("soundcombo%d"%i, SOUND_MUTE) == SOUND_URI and \
                     not os.path.isfile(conf.get("sounduri%d"%i,"")[7:]):
                 conf.set("soundcombo%d"%i, SOUND_MUTE)
@@ -429,10 +436,10 @@ class PanelTab:
             for elem in doc.getElementsByTagName("panel"):
                 saved_panels.append(elem.getAttribute("id"))
         
-        store = gtk.ListStore(bool, gtk.gdk.Pixbuf, str, object)
+        store = Gtk.ListStore(bool, GdkPixbuf.Pixbuf, str, object)
         for panel in sidePanels:
             checked = True if not xmlOK else panel.__name__ in saved_panels
-            panel_icon = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 32, 32)
+            panel_icon = GdkPixbuf.Pixbuf.new_from_file_at_size(panel.__icon__, 32, 32)
             text = "<b>%s</b>\n%s" % (panel.__title__, panel.__desc__)
             store.append((checked, panel_icon, text, panel))
         
@@ -443,13 +450,13 @@ class PanelTab:
         self.widgets['panel_enable_button'].connect('toggled', self.panel_toggled)
         self.tv.get_selection().connect('changed', self.selection_changed)
         
-        pixbuf = gtk.CellRendererPixbuf()
+        pixbuf = Gtk.CellRendererPixbuf()
         pixbuf.props.yalign = 0
         pixbuf.props.ypad = 3
         pixbuf.props.xpad = 3
-        self.tv.append_column(gtk.TreeViewColumn("Icon", pixbuf, pixbuf=1, sensitive=0))
+        self.tv.append_column(Gtk.TreeViewColumn("Icon", pixbuf, pixbuf=1, sensitive=0))
         
-        uistuff.appendAutowrapColumn(self.tv, 200, "Name", markup=2, sensitive=0)
+        uistuff.appendAutowrapColumn(self.tv, "Name", markup=2, sensitive=0)
         
         widgets['notebook1'].connect("switch-page", self.__on_switch_page)
         widgets["preferences"].connect("show", self.__on_show_window)
@@ -470,7 +477,7 @@ class PanelTab:
         path = store.get_path(iter)
         panel = store[path][3]
         
-        d = gtk.MessageDialog (type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_CLOSE)
+        d = Gtk.MessageDialog (type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.CLOSE)
         d.set_markup ("<big><b>%s</b></big>" % panel.__title__)
         text = panel.__about__ if hasattr(panel, '__about__') else _('Undescribed panel')
         d.format_secondary_text (text)
@@ -527,22 +534,24 @@ class PanelTab:
     def __on_hide_window(self, widget):
         self.hideit()
 
+#############################################################################
+# Theme initing                                                             #
+#############################################################################
 
 class ThemeTab:
-
     
     def __init__ (self, widgets):
         self.themes = self.discover_themes()
-        store = gtk.ListStore(gtk.gdk.Pixbuf, str)
+        store = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
         
         for theme in self.themes:
             pngfile = "%s/%s.png" % (addDataPrefix("pieces"), theme)
         
             if isfile(pngfile):
-                pixbuf = gtk.gdk.pixbuf_new_from_file(pngfile)
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file(pngfile)
                 store.append((pixbuf, theme))
             else:
-                print "WARNING: No piece theme preview icons find. Run create_theme_preview.sh !"
+                print("WARNING: No piece theme preview icons find. Run create_theme_preview.sh !")
                 break
 
         iconView = widgets["pieceTheme"]
@@ -550,6 +559,18 @@ class ThemeTab:
         iconView.set_pixbuf_column(0)
         iconView.set_text_column(1)
         
+        #############################################
+        # Hack to fix spacing problem in iconview
+        # http://stackoverflow.com/questions/14090094/what-causes-the-different-display-behaviour-for-a-gtkiconview-between-different
+        def keep_size(crt, *args):
+            crt.handler_block(crt_notify)
+            crt.set_property('width', 40)
+            crt.handler_unblock(crt_notify)
+
+        crt, crp = iconView.get_cells()
+        crt_notify = crt.connect('notify', keep_size)
+        #############################################
+
         def _get_active(iconview):
             model = iconview.get_model()
             selected = iconview.get_selected_items()
@@ -557,17 +578,19 @@ class ThemeTab:
             if len(selected) == 0:
                 return conf.get("pieceTheme", "Pychess")
             
-            i = selected[0][0]
-            theme = model[i][1]
-            Pieces.set_piece_theme(theme)
-            return theme
+            indices = selected[0].get_indices()
+            if indices:
+                i = indices[0]
+                theme = model[i][1]
+                Pieces.set_piece_theme(theme)
+                return theme
         
         def _set_active(iconview, value):
             try:
                 index = self.themes.index(value)
             except ValueError:
                 index = 0
-            iconview.select_path((index,))
+            iconview.select_path(Gtk.TreePath(index,))
                 
         uistuff.keep(widgets["pieceTheme"], "pieceTheme", _get_active,
                      _set_active, "Pychess")
@@ -583,3 +606,44 @@ class ThemeTab:
         themes.sort()
         
         return themes
+
+#############################################################################
+# Save initing                                                              #
+#############################################################################
+
+class SaveTab:
+    
+    def __init__ (self, widgets):
+        # Init 'auto save" checkbutton
+        def checkCallBack (*args):
+            checkbox = widgets["autoSave"]
+            widgets["autosave_grid"].set_property("sensitive", checkbox.get_active())
+        conf.notify_add("autoSave", checkCallBack)
+        widgets["autoSave"].set_active(False)
+        uistuff.keep(widgets["autoSave"], "autoSave")
+        checkCallBack()
+
+        default_path = os.path.expanduser("~")
+        autoSavePath = conf.get("autoSavePath", default_path)
+        conf.set("autoSavePath", autoSavePath)
+
+        auto_save_chooser_dialog = Gtk.FileChooserDialog(_("Select auto save path"), None, Gtk.FileChooserAction.SELECT_FOLDER,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        auto_save_chooser_button = Gtk.FileChooserButton.new_with_dialog(auto_save_chooser_dialog)
+        auto_save_chooser_button.set_current_folder(autoSavePath)
+
+        widgets["savePathChooserDock"].add(auto_save_chooser_button)
+        auto_save_chooser_button.show()
+
+        def select_auto_save(button):
+            new_directory = auto_save_chooser_dialog.get_filename()
+            if new_directory != autoSavePath:
+                conf.set("autoSavePath", new_directory)
+
+        auto_save_chooser_button.connect("current-folder-changed", select_auto_save)
+
+        conf.set("autoSaveFormat", conf.get("autoSaveFormat", "pychess"))
+        uistuff.keep(widgets["autoSaveFormat"], "autoSaveFormat")
+
+        uistuff.keep(widgets["saveEmt"], "saveEmt")
+        uistuff.keep(widgets["saveEval"], "saveEval")

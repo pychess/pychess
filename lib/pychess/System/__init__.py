@@ -1,4 +1,8 @@
 import inspect
+import sys
+
+from pychess.compat import basestring
+
 
 def fident (f):
     '''
@@ -11,7 +15,11 @@ def fident (f):
         joinchar = ':'
         fparent = f.__module__.split('.')[-1]
 
-    lineno = inspect.getsourcelines(f)[1]
+    if getattr(sys, 'frozen', False):
+        lineno = 0
+    else:
+        lineno = inspect.getsourcelines(f)[1]
+        
     fullname = joinchar.join((fparent, f.__name__))
     return ':'.join((fullname, str(lineno)))
 

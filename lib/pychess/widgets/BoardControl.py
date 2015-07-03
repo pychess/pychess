@@ -1,7 +1,12 @@
 # -*- coding: UTF-8 -*-
 
-import gtk, gtk.gdk
-from gobject import *
+from __future__ import absolute_import
+from __future__ import print_function
+
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
+
 import threading
 
 from pychess.System.prefix import addDataPrefix
@@ -10,24 +15,23 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move, parseAny
 from pychess.Utils.const import *
 from pychess.Utils.logic import validate
+from pychess.Utils.lutils import lmove
 from pychess.Utils.lutils import lmovegen
-from pychess.Variants.crazyhouse import CrazyhouseChess
 
-import preferencesDialog
-from PromotionDialog import PromotionDialog
-from BoardView import BoardView, rect
-from BoardView import join
+from . import preferencesDialog
+from .PromotionDialog import PromotionDialog
+from .BoardView import BoardView, rect
+from .BoardView import join
 
 
-class BoardControl (gtk.EventBox):
-    
+class BoardControl (Gtk.EventBox):    
     __gsignals__ = {
-        'piece_moved' : (SIGNAL_RUN_FIRST, TYPE_NONE, (object, int)),
-        'action' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object))
+        'piece_moved' : (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
+        'action' : (GObject.SignalFlags.RUN_FIRST, None, (str, object))
     }
     
     def __init__(self, gamemodel, actionMenuItems):
-        gtk.EventBox.__init__(self)
+        GObject.GObject.__init__(self)
         self.promotionDialog = PromotionDialog()
         self.view = BoardView(gamemodel)
         self.add(self.view)
@@ -38,8 +42,8 @@ class BoardControl (gtk.EventBox):
         
         self.actionMenuItems = actionMenuItems
         self.connections = {}
-        for key, menuitem in self.actionMenuItems.iteritems():
-            if menuitem == None: print key
+        for key, menuitem in self.actionMenuItems.items():
+            if menuitem == None: print(key)
             self.connections[menuitem] = menuitem.connect("activate", self.actionActivate, key)
         
         self.view.connect("shown_changed", self.shown_changed)
@@ -47,7 +51,7 @@ class BoardControl (gtk.EventBox):
         gamemodel.connect("game_ended", self.game_ended)
         self.connect("button_press_event", self.button_press)
         self.connect("button_release_event", self.button_release)
-        self.add_events(gtk.gdk.LEAVE_NOTIFY_MASK|gtk.gdk.POINTER_MOTION_MASK)
+        self.add_events(Gdk.EventMask.LEAVE_NOTIFY_MASK|Gdk.EventMask.POINTER_MOTION_MASK)
         self.connect("motion_notify_event", self.motion_notify)
         self.connect("leave_notify_event", self.leave_notify)
         
@@ -74,10 +78,9 @@ class BoardControl (gtk.EventBox):
         self.keybuffer = ""
         
     def _del (self):
-        for menu, conid in self.connections.iteritems():
+        for menu, conid in self.connections.items():
             menu.disconnect(conid)
         self.connections = {}
-        self.view.save_board_size()
 
     def getPromotion(self):
         color = self.view.model.boards[-1].color
@@ -90,19 +93,29 @@ class BoardControl (gtk.EventBox):
         # Game end can change cord0 to None while dragging a piece
         if cord0 is None:
             return
-            
         color = self.view.model.boards[-1].color
         board = self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
-        
-        if promotion is None and board[cord0].sign == PAWN and cord1.y in (0, self.RANKS-1):
-            promotion = self.getPromotion()
-            if promotion is None:
-                # Put back pawn moved be d'n'd
-                self.view.runAnimation(redrawMisc = False)
-                return
-        
+        if promotion is None and board[cord0].sign == PAWN and cord1.cord in board.PROMOTION_ZONE[color]:
+            if self.variant.variant == SITTUYINCHESS:
+                # no promotion allowed if we have queen
+                if board.board.boards[color][QUEEN]:
+                    promotion = None
+                else:
+                    # promotion is always optional
+                    promotion = self.getPromotion()
+                    if promotion is None and cord0 == cord1:
+                        # if don't want in place promotion
+                        return
+            elif len(self.variant.PROMOTIONS) == 1:
+                promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
+            else:
+                promotion = self.getPromotion()
+                if promotion is None:
+                    # Put back pawn moved be d'n'd
+                    self.view.runAnimation(redrawMisc = False)
+                    return
         if cord0.x < 0 or cord0.x > self.FILES-1:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
         else:
@@ -134,9 +147,10 @@ class BoardControl (gtk.EventBox):
         elif key == "ask_to_move":
             self.emit("action", HURRY_ACTION, None)
         elif key == "undo1":
-            curColor = self.view.model.variations[0][-1].color
-            curPlayer = self.view.model.players[curColor]
-            if curPlayer.__type__ == LOCAL and self.view.model.ply - self.view.model.lowply > 1:
+            curplayer = self.view.model.curplayer
+            waitingplayer = self.view.model.waitingplayer
+            if curplayer.__type__ == LOCAL and waitingplayer.__type__ == ARTIFICIAL and \
+                self.view.model.ply - self.view.model.lowply > 1:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
             else:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply-1)
@@ -162,8 +176,6 @@ class BoardControl (gtk.EventBox):
             self.currentState = self.lockedNormalState
         finally:
             self.stateLock.release()
-
-        self.view.startAnimation()
     
     def game_ended (self, gamemodel, reason):
         self.stateLock.acquire()
@@ -267,12 +279,14 @@ class BoardControl (gtk.EventBox):
         return self.currentState.leave(event.x, event.y)
 
     def key_pressed (self, keyname):
-        if keyname in "PNBRQKOox12345678abcdefgh":
+        if keyname in "PNBRQKMFSOox12345678abcdefgh":
             self.keybuffer += keyname
         elif keyname == "minus":
             self.keybuffer += "-"
         elif keyname == "at":
             self.keybuffer += "@"
+        elif keyname == "equal":
+            self.keybuffer += "="
         elif keyname == "Return":
             color = self.view.model.boards[-1].color
             board = self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
@@ -352,7 +366,7 @@ class BoardState:
     def point2Cord (self, x, y):
         point = self.transPoint(x, y)
         p0, p1 = point[0], point[1]
-        if self.parent.variant == CrazyhouseChess:
+        if self.parent.variant.variant in DROP_VARIANTS:
             if not -3 <= int(p0) <= self.FILES+2 or not 0 <= int(p1) <= self.RANKS-1:
                 return None
         else:
@@ -364,7 +378,7 @@ class BoardState:
         # Simple isSelectable method, disabling selecting cords out of bound etc
         if not cord:
             return False
-        if self.parent.variant == CrazyhouseChess:
+        if self.parent.variant.variant in DROP_VARIANTS:
             if (not -3 <= cord.x <= self.FILES+2) or (not 0 <= cord.y <= self.RANKS-1):
                 return False
         else:

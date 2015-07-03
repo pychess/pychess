@@ -1,7 +1,8 @@
-from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT, hashfBAD
-from pychess.Utils.lutils.ldata import MATE_VALUE, MAXPLY
 from ctypes import create_string_buffer, memset
 from struct import Struct, pack_into, unpack_from
+
+from pychess.Utils.const import hashfALPHA, hashfBETA, hashfEXACT, hashfBAD
+from pychess.Utils.lutils.ldata import MATE_VALUE, MAXPLY
 
 # Store hash entries in buckets of 4. An entry consists of:
 # key         32 bits derived from the board hash
@@ -15,7 +16,7 @@ entryType = Struct('=I B B H h H')
 class TranspositionTable:
     def __init__ (self, maxSize):
         assert maxSize > 0
-        self.buckets = maxSize / (4 * entryType.size)
+        self.buckets = maxSize // (4 * entryType.size)
         self.data = create_string_buffer(self.buckets * 4 * entryType.size)
         self.search_id = 0
         
@@ -38,8 +39,8 @@ class TranspositionTable:
     
     def probe (self, board, depth, alpha, beta):
         baseIndex = (board.hash % self.buckets) * 4
-        key = (board.hash / self.buckets) & 0xffffffff
-        for i in xrange(baseIndex, baseIndex + 4):
+        key = (board.hash // self.buckets) & 0xffffffff
+        for i in range(baseIndex, baseIndex + 4):
             tkey, search_id, hashf, tdepth, score, move = entryType.unpack_from(self.data, i * entryType.size)
             if tkey == key:
                 # Mate score bounds are guaranteed to be accurate at any depth.
@@ -54,11 +55,11 @@ class TranspositionTable:
     
     def record (self, board, move, score, hashf, depth):
         baseIndex = (board.hash % self.buckets) * 4
-        key = (board.hash / self.buckets) & 0xffffffff
+        key = (board.hash // self.buckets) & 0xffffffff
         # We always overwrite *something*: an empty slot, this position's last entry, or else the least relevant.
         staleIndex = baseIndex
         staleRelevance = 0xffff
-        for i in xrange(baseIndex, baseIndex + 4):
+        for i in range(baseIndex, baseIndex + 4):
             tkey, search_id, thashf, tdepth, tscore, tmove = entryType.unpack_from(self.data, i * entryType.size)
             if tkey == 0 or tkey == key:
                 staleIndex = i

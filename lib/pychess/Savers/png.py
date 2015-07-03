@@ -2,9 +2,8 @@
 
 import os
 
-import gtk
+from gi.repository import Gtk
 import cairo
-import rsvg
 
 from pychess.Utils.const import *
 from pychess.gfx import Pieces
@@ -48,8 +47,8 @@ class Diagram(BoardView):
                     Pieces.drawPiece(piece, context, x*SQUARE, (7-y)*SQUARE, SQUARE)
 
     def __drawBoard(self, context):
-        for x in xrange(8):
-            for y in xrange(8):
+        for x in range(8):
+            for y in range(8):
                 if (x+y) % 2 == 1:
                     context.rectangle(x*SQUARE, y*SQUARE, SQUARE, SQUARE)
         context.fill()

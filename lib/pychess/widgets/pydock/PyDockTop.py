@@ -1,17 +1,20 @@
+from __future__ import absolute_import
+from __future__ import print_function
+
 import os
 from xml.dom import minidom
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GObject
 
 from pychess.System.prefix import addDataPrefix
 
-from PyDockLeaf import PyDockLeaf
-from PyDockComposite import PyDockComposite
-from ArrowButton import ArrowButton
-from HighlightArea import HighlightArea
-from __init__ import TopDock, DockLeaf, DockComponent, DockComposite
-from __init__ import NORTH, EAST, SOUTH, WEST, CENTER
+from .PyDockLeaf import PyDockLeaf
+from .PyDockComposite import PyDockComposite
+from .ArrowButton import ArrowButton
+from .HighlightArea import HighlightArea
+from .__init__ import TopDock, DockLeaf, DockComponent, DockComposite
+from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER
 
 class PyDockTop (TopDock):
     def __init__ (self, id):
@@ -32,6 +35,9 @@ class PyDockTop (TopDock):
     
     def _del (self):
         TopDock._del(self)
+
+    def __repr__ (self):
+        return "top (%s) % self.id"
     
     #===========================================================================
     #    Component stuff
@@ -49,8 +55,8 @@ class PyDockTop (TopDock):
         self.remove(widget)
     
     def getComponents (self):
-        if isinstance(self.child, DockComponent):
-            return [self.child]
+        if isinstance(self.get_child(), DockComponent):
+            return [self.get_child()]
         return []
     
     def dock (self, widget, position, title, id):
@@ -59,10 +65,10 @@ class PyDockTop (TopDock):
             self.addComponent(leaf)
             return leaf
         else:
-            return self.child.dock(widget, position, title, id)
+            return self.get_child().dock(widget, position, title, id)
     
     def clear (self):
-        self.remove(self.child)
+        self.remove(self.get_child())
     
     #===========================================================================
     #    Signals
@@ -86,7 +92,7 @@ class PyDockTop (TopDock):
     
     def __onHover (self, arrowButton, widget):
         self.highlightArea.showAt(arrowButton.myposition)
-        arrowButton.window.raise_()
+        arrowButton.get_window().raise_()
     
     def __onLeave (self, arrowButton):
         self.highlightArea.hide()
@@ -113,9 +119,9 @@ class PyDockTop (TopDock):
             dockElem.setAttribute("id", self.id)
             doc.documentElement.appendChild(dockElem)
         
-        if self.child:
-            self.__addToXML(self.child, dockElem, doc)
-        f = file(xmlpath, "w")
+        if self.get_child():
+            self.__addToXML(self.get_child(), dockElem, doc)
+        f = open(xmlpath, "w")
         doc.writexml(f)
         f.close()
         doc.unlink()
@@ -152,8 +158,7 @@ class PyDockTop (TopDock):
             if elem.getAttribute("id") == self.id:
                 break
         else:
-            raise AttributeError, \
-                  "XML file contains no <dock> elements with id '%s'" % self.id
+            raise AttributeError("XML file contains no <dock> elements with id '%s'" % self.id)
         
         child = [n for n in elem.childNodes if isinstance(n, minidom.Element)]
         if child:

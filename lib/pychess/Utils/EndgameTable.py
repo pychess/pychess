@@ -1,21 +1,22 @@
-from gobject import GObject, SIGNAL_RUN_FIRST
+from __future__ import absolute_import
+from gi.repository import GObject
 
-from Move import Move
-from lutils.egtb_k4it import egtb_k4it
-from lutils.egtb_gaviota import egtb_gaviota
+from .Move import Move
+from .lutils.egtb_k4it import egtb_k4it
+from .lutils.egtb_gaviota import egtb_gaviota
 
 providers = []
 
-class EndgameTable(GObject):
+class EndgameTable(GObject.GObject):
     
     """ Wrap the low-level providers of exact endgame knowledge. """
 
     __gsignals__ = {
-        "scored":  (SIGNAL_RUN_FIRST, None, (object,)),
+        "scored":  (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
 
         global providers
         if not providers:

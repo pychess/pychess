@@ -1,9 +1,10 @@
+from __future__ import print_function
 import os
 
 from os import listdir
 from os.path import isdir, isfile, splitext
 
-import gtk
+from gi.repository import Gtk
 import cairo
 
 from pychess.Utils.const import *
@@ -30,7 +31,7 @@ themes.sort()
 
 for theme in themes:
     pngfile = "%s/%s.png" % (pieces, theme)
-    print 'Creating %s' % pngfile
+    print('Creating %s' % pngfile)
     
     Pieces.set_piece_theme(theme)
 
@@ -39,8 +40,8 @@ for theme in themes:
     context = cairo.Context(surface)
     context.set_source_rgb(0.5, 0.5, 0.5)
     
-    for x in xrange(4):
-        for y in xrange(4):
+    for x in range(4):
+        for y in range(4):
             if (x+y) % 2 == 1:
                 context.rectangle(x*SQUARE, y*SQUARE, SQUARE, SQUARE)
     context.fill()

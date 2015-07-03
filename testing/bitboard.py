@@ -2,6 +2,7 @@ import unittest
 
 import random
 import operator
+from functools import reduce
 
 from pychess.Utils.lutils.bitboard import *
 
@@ -11,10 +12,10 @@ class BitboardTestCase(unittest.TestCase):
         self.positionSets = []
         # Random positions. Ten of each length. Will also include range(64) and
         # range(0)
-        for i in xrange(10):
-            for length in xrange(64):
+        for i in range(10):
+            for length in range(64):
                 if length:
-                    positions = random.sample(xrange(64), length)
+                    positions = random.sample(range(64), length)
                     board = reduce(operator.or_, (1<<(63-i) for i in positions))
                     self.positionSets.append( (positions, board) )
                 else:
@@ -47,8 +48,7 @@ class BitboardTestCase(unittest.TestCase):
         
         for positions,board in self.positionSets:
             positions.sort()
-            itered = list(iterBits(board))
-            itered.sort()
+            itered = sorted(iterBits(board))
             self.assertEqual(positions, itered)
 
 if __name__ == '__main__':

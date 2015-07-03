@@ -1,8 +1,12 @@
 # -*- coding: UTF-8 -*-
+from __future__ import absolute_import
+from __future__ import print_function
+from __future__ import unicode_literals
 
 import re
 from datetime import date
 
+from pychess.compat import basestring, StringIO
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.Utils.Board import Board
@@ -14,17 +18,11 @@ from pychess.Utils.const import *
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils import prettyPrintScore
-from pychess.Variants.atomic import AtomicChess, AtomicBoard
-from pychess.Variants.crazyhouse import CrazyhouseChess, CrazyhouseBoard
-from pychess.Variants.fischerandom import FischerRandomChess, FRCBoard
-from pychess.Variants.wildcastle import WildcastleChess, WildcastleBoard
-from pychess.Variants.suicide import SuicideChess, SuicideBoard
-from pychess.Variants.losers import LosersChess, LosersBoard
-from pychess.Variants.kingofthehill import KingOfTheHillChess, KingOfTheHillBoard
+from pychess.Variants import name2variant, NormalBoard
 from pychess.widgets.ChessClock import formatTime
 
-from pgnbase import PgnBase, pgn_load
-from ChessFile import LoadingError
+from .pgnbase import PgnBase, pgn_load
+from .ChessFile import LoadingError
 
 
 __label__ = _("Chess Game")
@@ -62,7 +60,7 @@ def parseClockTimeTag (tag):
     Parses 'WhiteClock'/'BlackClock' PGN headers and returns the time the
     player playing that color has left on their clock in milliseconds
     """
-    match = re.match("(\d{1,2}).(\d\d).(\d\d).(\d\d\d)", tag)
+    match = re.match("(\d{1,2}):(\d\d):(\d\d).(\d\d\d)", tag)
     if match:
         hour, min, sec, msec = match.groups()
         return int(msec) + int(sec)*1000 + int(min)*60*1000 + int(hour)*60*60*1000
@@ -79,65 +77,60 @@ def parseTimeControlTag (tag):
     
 def save (file, model, position=None):
 
-    status = reprResult[model.status]
+    status = "%s" % reprResult[model.status]
 
-    print >> file, '[Event "%s"]' % model.tags["Event"]
-    print >> file, '[Site "%s"]' % model.tags["Site"]
-    print >> file, '[Date "%04d.%02d.%02d"]' % \
-        (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"]))
-    print >> file, '[Round "%s"]' % model.tags["Round"]
-    print >> file, '[White "%s"]' % repr(model.players[WHITE])
-    print >> file, '[Black "%s"]' % repr(model.players[BLACK])
-    print >> file, '[Result "%s"]' % status
+    print('[Event "%s"]' % model.tags["Event"], file=file)
+    print('[Site "%s"]' % model.tags["Site"], file=file)
+    print('[Date "%04d.%02d.%02d"]' % \
+        (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])), file=file)
+    print('[Round "%s"]' % model.tags["Round"], file=file)
+    print('[White "%s"]' % repr(model.players[WHITE]), file=file)
+    print('[Black "%s"]' % repr(model.players[BLACK]), file=file)
+    print('[Result "%s"]' % status, file=file)
     if "ECO" in model.tags:
-        print >> file, '[ECO "%s"]' % model.tags["ECO"]
+        print('[ECO "%s"]' % model.tags["ECO"], file=file)
     if "WhiteElo" in model.tags:
-        print >> file, '[WhiteElo "%s"]' % model.tags["WhiteElo"]
+        print('[WhiteElo "%s"]' % model.tags["WhiteElo"], file=file)
     if "BlackElo" in model.tags:
-        print >> file, '[BlackElo "%s"]' % model.tags["BlackElo"]
+        print('[BlackElo "%s"]' % model.tags["BlackElo"], file=file)
     if "TimeControl" in model.tags:
-        print >> file, '[TimeControl "%s"]' % model.tags["TimeControl"]
+        print('[TimeControl "%s"]' % model.tags["TimeControl"], file=file)
     if "Time" in model.tags:
-        print >> file, '[Time "%s"]' % str(model.tags["Time"])
+        print('[Time "%s"]' % str(model.tags["Time"]), file=file)
     if model.timed:
-        print >> file, '[WhiteClock "%s"]' % \
-            msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000))
-        print >> file, '[BlackClock "%s"]' % \
-            msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000))
-    if issubclass(model.variant, FischerRandomChess):
-        print >> file, '[Variant "Fischerandom"]'
-    elif issubclass(model.variant, AtomicChess):
-        print >> file, '[Variant "Atomic"]'
-    elif issubclass(model.variant, CrazyhouseChess):
-        print >> file, '[Variant "Crazyhouse"]'
-    elif issubclass(model.variant, WildcastleChess):
-        print >> file, '[Variant "Wildcastle"]'
-    elif issubclass(model.variant, SuicideChess):
-        print >> file, '[Variant "Suicide"]'
-    elif issubclass(model.variant, LosersChess):
-        print >> file, '[Variant "Losers"]'
-    elif issubclass(model.variant, KingOfTheHillChess):
-        print >> file, '[Variant "Kingofthehill"]'
+        print('[WhiteClock "%s"]' % \
+            msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)), file=file)
+        print('[BlackClock "%s"]' % \
+            msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)), file=file)
+
+    if model.variant.variant != NORMALCHESS:
+        print('[Variant "%s"]' % model.variant.cecp_name.capitalize(), file=file)
+
     if model.boards[0].asFen() != FEN_START:
-        print >> file, '[SetUp "1"]'
-        print >> file, '[FEN "%s"]' % model.boards[0].asFen()
-    print >> file, '[PlyCount "%s"]' % (model.ply-model.lowply)
+        print('[SetUp "1"]', file=file)
+        print('[FEN "%s"]' % model.boards[0].asFen(), file=file)
+    print('[PlyCount "%s"]' % (model.ply-model.lowply), file=file)
     if "EventDate" in model.tags:
-        print >> file, '[EventDate "%s"]' % model.tags["EventDate"]
+        print('[EventDate "%s"]' % model.tags["EventDate"], file=file)
     if "Annotator" in model.tags:
-        print >> file, '[Annotator "%s"]' % model.tags["Annotator"]
-    print >> file
+        print('[Annotator "%s"]' % model.tags["Annotator"], file=file)
+    print("", file=file)
+
+    save_emt = conf.get("saveEmt", False)
+    save_eval = conf.get("saveEval", False)
 
     result = []
-    walk(model.boards[0].board, result, model)
+    walk(model.boards[0].board, result, model, save_emt, save_eval)
             
     result = " ".join(result)
     result = wrap(result, 80)
-    print >> file, result, status
-    print >> file
+    print(result, status, file=file)
+    print("", file=file)
+    output = file.getvalue() if isinstance(file, StringIO) else ""
     file.close()
+    return output
 
-def walk(node, result, model, vari=False):
+def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
     """Prepares a game data for .pgn storage.
        Recursively walks the node tree to collect moves and comments
        into a resulting movetext string.
@@ -146,8 +139,6 @@ def walk(node, result, model, vari=False):
        node - list (a tree of lboards created by the pgn parser)
        result - str (movetext strings)"""
 
-    enhanced_save = conf.get("enhanced_save_check", False)
-    
     def store(text):
         if len(result) > 1 and result[-1] == "(":
             result[-1] = "(%s" % text
@@ -168,20 +159,22 @@ def walk(node, result, model, vari=False):
             node = node.next
             continue
 
-        movecount = move_count(node, black_periods=enhanced_save and "TimeControl" in model.tags)
+        movecount = move_count(node, black_periods=(save_emt or save_eval) and "TimeControl" in model.tags)
         if movecount is not None:
             if movecount:
                 store(movecount)
             move = node.lastMove
             store(toSAN(node.prev, move))
-            if enhanced_save and not vari:
+            if (save_emt or save_eval) and not vari:
                 emt_eval = ""
-                if "TimeControl" in model.tags:
+                if "TimeControl" in model.tags and save_emt:
                     elapsed = model.timemodel.getElapsedMoveTime(node.plyCount - model.lowply)
                     emt_eval = "[%%emt %s]" % formatTime(elapsed, clk2pgn=True)
-                if node.plyCount in model.scores:
+                if node.plyCount in model.scores and save_eval:
                     moves, score, depth = model.scores[node.plyCount]
-                    emt_eval += "[%%eval %0.2f/%s]" % (score, depth)
+                    if node.color == BLACK:
+                        score = -score
+                    emt_eval += "[%%eval %0.2f/%s]" % (score / 100.0, depth)
                 if emt_eval:
                     store("{%s}" % emt_eval)
 
@@ -199,13 +192,13 @@ def walk(node, result, model, vari=False):
                 # variations
                 if node.fen_was_applied:
                     store("(")
-                    walk(child[0], result, model, vari=True)
+                    walk(child[0], result, model, save_emt, save_eval, vari=True)
                     store(")")
                     # variation after last played move is not valid pgn
                     # but we will save it as in comment
                 else:
                     store("{Analyzer's primary variation:")
-                    walk(child[0], result, model, vari=True)
+                    walk(child[0], result, model, save_emt, save_eval, vari=True)
                     store("}")
 
         if node.next:
@@ -218,10 +211,10 @@ def move_count(node, black_periods=False):
     if node.fen_was_applied:
         ply = node.plyCount
         if ply % 2 == 1:
-            mvcount = "%d." % (ply/2+1)
+            mvcount = "%d." % (ply//2+1)
         elif node.prev.prev is None or node != node.prev.next or black_periods:
             # initial game move, or initial variation move
-            mvcount = "%d..." % (ply/2)
+            mvcount = "%d..." % (ply//2)
         elif node.prev.children:
             # move after real(not [%foo bar]) comment
             need_mvcount = False
@@ -234,7 +227,7 @@ def move_count(node, black_periods=False):
                     need_mvcount = True
                     break
             if need_mvcount:
-                mvcount = "%d..." % (ply/2)
+                mvcount = "%d..." % (ply//2)
             else:
                 mvcount = ""
         else:
@@ -280,32 +273,41 @@ class PGNFile (PgnBase):
         for tag in ('Annotator', 'ECO', 'EventDate', 'Time', 'WhiteElo', 'BlackElo', 'TimeControl'):
             if self._getTag(gameno, tag):
                 model.tags[tag] = self._getTag(gameno, tag)
-        
+            else:
+                model.tags[tag] = ""
+
         # TODO: enable this when NewGameDialog is altered to give user option of
         # whether to use PGN's clock time, or their own custom time. Also,
         # dialog should set+insensitize variant based on the variant of the
         # game selected in the dialog
-#        if model.timed:
-#            for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
-#                if self._getTag(gameno, tag):
-#                    try:
-#                        ms = parseClockTimeTag(self._getTag(gameno, tag))
-#                        model.timemodel.intervals[color][0] = ms / 1000
-#                    except ValueError: 
-#                        raise LoadingError( \
-#                            "Error parsing '%s' Header for gameno %s" % (tag, gameno))
-#            if model.tags['TimeControl']:
-#                minutes, gain = parseTimeControlTag(model.tags['TimeControl'])
-#                model.timemodel.minutes = minutes
-#                model.timemodel.gain = gain
+        if model.tags['TimeControl']:
+            secs, gain = parseTimeControlTag(model.tags['TimeControl'])
+            model.timed = True
+            model.timemodel.secs = secs
+            model.timemodel.gain = gain
+            model.timemodel.minutes = secs / 60
+
+            for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
+                if self._getTag(gameno, tag):
+                    try:
+                        ms = parseClockTimeTag(self._getTag(gameno, tag))
+                        # We need to fix when FICS reports negative clock time like this
+                        # [TimeControl "180+0"]
+                        # [WhiteClock "0:00:15.867"]
+                        # [BlackClock "23:59:58.820"]
+                        start_sec = (ms - 24*60*60*1000) / 1000. if ms > 23*60*60*1000 else ms / 1000.
+                        model.timemodel.intervals[color][0] = start_sec
+                    except ValueError: 
+                        raise LoadingError( \
+                            "Error parsing '%s' Header for gameno %s" % (tag, gameno))
         
         fenstr = self._getTag(gameno, "FEN")
         variant = self.get_variant(gameno)
         
         if variant:
+            model.tags["Variant"] = variant
             # Fixes for some non statndard Chess960 .pgn
             if (fenstr is not None) and variant == "Fischerandom":
-                model.tags["Variant"] = "Fischerandom"
                 parts = fenstr.split()
                 parts[0] = parts[0].replace(".", "/").replace("0", "")
                 if len(parts) == 1:
@@ -313,47 +315,17 @@ class PGNFile (PgnBase):
                     parts.append("-")
                     parts.append("-")
                 fenstr = " ".join(parts)
-            elif variant == "Atomic":
-                model.tags["Variant"] = "Atomic"
-            elif variant == "Crazyhouse":
-                model.tags["Variant"] = "Crazyhouse"
-            elif variant == "Wildcastle":
-                model.tags["Variant"] = "Wildcastle"
-            elif variant == "Suicide":
-                model.tags["Variant"] = "Suicide"
-            elif variant == "Losers":
-                model.tags["Variant"] = "Losers"
-            elif variant == "Kingofthehill":
-                model.tags["Variant"] = "Kingofthehill"
 
-        if variant == "Fischerandom":
-            board = LBoard(FISCHERRANDOMCHESS)
-            model.variant = FischerRandomChess
-        elif variant == "Atomic":
-            board = LBoard(ATOMICCHESS)
-            model.variant = AtomicChess
-        elif variant == "Crazyhouse":
-            board = LBoard(CRAZYHOUSECHESS)
-            model.variant = CrazyhouseChess
-        elif variant == "Wildcastle":
-            board = LBoard(WILDCASTLECHESS)
-            model.variant = WildcastleChess
-        elif variant == "Suicide":
-            board = LBoard(SUICIDECHESS)
-            model.variant = SuicideChess
-        elif variant == "Losers":
-            board = LBoard(LOSERSCHESS)
-            model.variant = LosersChess
-        elif variant == "Kingofthehill":
-            board = LBoard(KINGOFTHEHILLCHESS)
-            model.variant = KingOfTheHillChess
+            model.variant = name2variant[variant]
+            board = LBoard(model.variant.variant)
         else:
+            model.variant = NormalBoard
             board = LBoard()
 
         if fenstr:
             try:
                 board.applyFen(fenstr)
-            except SyntaxError, e:
+            except SyntaxError as e:
                 board.applyFen(FEN_EMPTY)
                 raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
         else:
@@ -382,22 +354,7 @@ class PGNFile (PgnBase):
         def walk(node, path):
             if node.prev is None:
                 # initial game board
-                if variant == "Fischerandom":
-                    board = FRCBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Atomic":
-                    board = AtomicBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Crazyhouse":
-                    board = CrazyhouseBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Wildcastle":
-                    board = WildcastleBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Suicide":
-                    board = SuicideBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Losers":
-                    board = LosersBoard(setup=node.asFen(), lboard=node)
-                elif variant == "Kingofthehill":
-                    board = KingOfTheHillBoard(setup=node.asFen(), lboard=node)
-                else:
-                    board = Board(setup=node.asFen(), lboard=node)
+                board = model.variant(setup=node.asFen(), lboard=node)
             else:
                 move = Move(node.lastMove)
                 try:
@@ -431,7 +388,7 @@ class PGNFile (PgnBase):
         self.has_emt = self.has_emt and "TimeControl" in model.tags
         if self.has_emt or self.has_eval:
             if self.has_emt:
-                blacks = len(model.moves)/2
+                blacks = len(model.moves)//2
                 whites = len(model.moves)-blacks
 
                 model.timemodel.intervals = [
@@ -461,9 +418,11 @@ class PGNFile (PgnBase):
                                 sign, num, fraction, depth = match.groups()
                                 sign = 1 if sign is None or sign == "+" else -1
                                 num = int(num) if int(num) == MATE_VALUE else int(num)
-                                fraction = 0 if fraction is None else float(fraction)/100
-                                value = sign * (num + fraction)
+                                fraction = 0 if fraction is None else int(fraction)
+                                value = sign * (num * 100 + fraction)
                                 depth = "" if depth is None else depth
+                                if board.color == BLACK:
+                                    value = -value
                                 model.scores[ply] = ("", value, depth)
 
             log.debug("pgn.loadToModel: intervals %s" % model.timemodel.intervals)

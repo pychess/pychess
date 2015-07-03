@@ -3,7 +3,7 @@
 # to do stuff manually
 
 import threading
-from Queue import Queue
+from pychess.compat import Queue
 
 def TaskQueue ():
     if hasattr(Queue, "task_done"):

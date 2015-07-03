@@ -8,18 +8,20 @@
     
     PYTHONPATH=lib/ python blunders.py game.pgn
 '''
+from __future__ import print_function
 
 ###############################################################################
 # Set up important things
-import glib, gobject
-gobject.threads_init()
-mainloop = glib.MainLoop()
+from gi.repository import GLib
+from gi.repository import GObject
+GObject.threads_init()
+mainloop = GLib.MainLoop()
 
 ###############################################################################
 # Do the rest of the imports
 import atexit
 import sys
-import Queue
+from pychess.compat import Queue, raw_input, PY2
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Player import Player, TurnInterrupt, PlayerIsDead
 from pychess.System.protoopen import protoopen
@@ -29,48 +31,54 @@ from pychess.Utils.const import *
 from pychess.Utils.Move import listToSan, toSAN
 from pychess.Savers import pgn
 
+if PY2:
+    # This hack fixes some UnicodDecode Errors caused pygi not making
+    # magic hidden automatic unicode conversion pygtk did
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
+
 ###############################################################################
 # Ask the user for details
 def queryGameno(path):
     pgnfile = pgn.load(protoopen(path))
-    print "Selected file %s" % path
+    print("Selected file %s" % path)
     if len(pgnfile) == 0:
-        print "The file is empty."
+        print("The file is empty.")
         sys.exit()
-    print
+    print()
     
-    print "The file contains the following games:"
-    for i in xrange(len(pgnfile)):
+    print("The file contains the following games:")
+    for i in range(len(pgnfile)):
         name1, name2 = pgnfile.get_player_names(i)
-        print "[%d] %s vs. %s" % (i, name1, name2)
-    print
+        print("[%d] %s vs. %s" % (i, name1, name2))
+    print()
     if len(pgnfile) == 1:
-        print "Autoselecting game 0."
+        print("Autoselecting game 0.")
         gameno = 0
     else:
         gameno = int(raw_input("Select game number to be analyzed. [n]: "))
-    print
+    print()
     
     return pgnfile, gameno
 
 def queryAnalyzer(analyzers):
-    print "PyChess found the following analyzers on your system:"
+    print("PyChess found the following analyzers on your system:")
     for i, engine in enumerate(analyzers):
-        print "[%d] %s" % (i, discoverer.getName(engine))
-    print
+        print("[%d] %s" % (i, discoverer.getName(engine)))
+    print()
     n = int(raw_input("What engine should be your analyzer? [n] "))
-    print
+    print()
     return analyzers[n]
 
 def queryTime():
     secs = int(raw_input("Enter how many seconds we should use for each move [n]: "))
-    print
+    print()
     return secs
 
 class DummyPlayer (Player):
     def __init__(self):
         Player.__init__(self)
-        self.Q = Queue.Queue()
+        self.Q = Queue()
         self.__type__ = LOCAL
     def makeMove (self, board1, move, board2):
         r = self.Q.get()
@@ -89,9 +97,9 @@ def start(discoverer):
     analyzer = queryAnalyzer(discoverer.getAnalyzers())
     secs = queryTime()
     name1, name2 = pgnfile.get_player_names(gameno)
-    print "%s will now analyze the game between %s and %s with %d seconds per move." % \
-            (discoverer.getName(analyzer), name1, name2, secs)
-    print
+    print("%s will now analyze the game between %s and %s with %d seconds per move." % \
+            (discoverer.getName(analyzer), name1, name2, secs))
+    print()
     
     global game, values
     values = {}
@@ -108,14 +116,14 @@ def start(discoverer):
             return False
         check_blund()
         return True
-    glib.timeout_add_seconds(secs, cb)
+    GLib.timeout_add_seconds(secs, cb)
 
 def on_finish():
-    print "Finish"
+    print("Finish")
     mainloop.quit()
 
 def check_blund():
-    print
+    print()
     
     if game.ply+1 in values and game.ply in values:
         color = game.ply % 2
@@ -123,20 +131,20 @@ def check_blund():
         moves, score = values[game.ply+1]
         dif = score-oldscore
         if dif < -100 and color == WHITE:
-            print "White blunder", dif
-            print "Should have done:", ", ".join(listToSan(game.getBoardAtPly(game.ply),oldmoves))
-            print
+            print("White blunder", dif)
+            print("Should have done:", ", ".join(listToSan(game.getBoardAtPly(game.ply),oldmoves)))
+            print()
         elif dif > 100 and color == BLACK:
-            print "Black blunder", dif
-            print "Should have done:", ", ".join(listToSan(game.getBoardAtPly(game.ply),oldmoves))
-            print
+            print("Black blunder", dif)
+            print("Should have done:", ", ".join(listToSan(game.getBoardAtPly(game.ply),oldmoves)))
+            print()
     
     movename = toSAN(game.getBoardAtPly(game.ply-1),game.getMoveAtPly(game.ply-1))
     if game.ply % 2 == 1:
         move_suffix = ""
     else:
         move_suffix = "..."
-    print "Considering %d%s %s " % ((game.ply+1)//2, move_suffix, movename,),
+    print("Considering %d%s %s " % ((game.ply+1)//2, move_suffix, movename,), end=' ')
     game.undoMoves(1)
 
 def onAnalyze(analyzer, analysis):
@@ -152,10 +160,10 @@ def onAnalyze(analyzer, analysis):
 # Slightly validate arguments 
 
 if len(sys.argv) != 2 or sys.argv[1] == "--help":
-    print "Usage: python blunders.py FILENAME   Analyze the specified pgn file"
-    print "       python blunders.py --help     Display this help and exit"
-    print "Note: You'll probably need to run the scripts with your PYTHONPATH set"
-    print " like 'PYTHONPATH=../lib/ python blunders...'"
+    print("Usage: python blunders.py FILENAME   Analyze the specified pgn file")
+    print("       python blunders.py --help     Display this help and exit")
+    print("Note: You'll probably need to run the scripts with your PYTHONPATH set")
+    print(" like 'PYTHONPATH=../lib/ python blunders...'")
     sys.exit()
 
 ###############################################################################

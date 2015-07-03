@@ -1,4 +1,8 @@
-from ChessFile import ChessFile, LoadingError
+from __future__ import absolute_import
+from __future__ import print_function
+from __future__ import unicode_literals
+
+from .ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WHITE, BLACK, WON_RESIGN, WAITING_TO_START, BLACKWON, WHITEWON, DRAW
 from pychess.Utils.logic import getStatus
@@ -62,11 +66,11 @@ def save (file, model, position=None):
     if model.status in (WHITEWON, BLACKWON) and model.reason == WON_RESIGN:
         file.write(" resign;")
     
-    print >> file
+    print("", file=file)
     file.close()
     
 def load (file):
-    return EpdFile ([line for line in map(str.strip, file) if line])
+    return EpdFile ([line.strip() for line in file if line])
 
 
 class EpdFile (ChessFile):
@@ -83,7 +87,7 @@ class EpdFile (ChessFile):
             fen = " ".join(fieldlist[:4])
             opcodestr = " ".join(fieldlist[4:])
             
-        else: raise LoadingError, "EPD string can not have less than 4 field"
+        else: raise LoadingError("EPD string can not have less than 4 field")
         
         opcodes = {}
         for opcode in map(str.strip, opcodestr.split(";")):
@@ -101,7 +105,7 @@ class EpdFile (ChessFile):
             fen += " " + opcodes["fmvn"]
         else: fen += " 1"
         
-        model.boards = [model.variant.board(setup=fen)]
+        model.boards = [model.variant(setup=fen)]
         model.variations = [model.boards]
         model.status = WAITING_TO_START
         

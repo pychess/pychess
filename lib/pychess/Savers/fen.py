@@ -1,8 +1,12 @@
+from __future__ import absolute_import
+from __future__ import print_function
+from __future__ import unicode_literals
+
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WAITING_TO_START, BLACKWON, WHITEWON, DRAW
 from pychess.Utils.logic import getStatus
 
-from ChessFile import LoadingError
+from .ChessFile import LoadingError
 
 __label__ = _("Simple Chess Position")
 __ending__ = "fen"
@@ -11,13 +15,13 @@ __append__ = True
 def save (file, model, position=None):
     """Saves game to file in fen format"""
     
-    print >> file, model.boards[-1].asFen()
+    print("%s" % model.boards[-1].asFen(), file=file)
     file.close()
     
 def load (file):
-    return FenFile ([line for line in map(str.strip, file) if line])
+    return FenFile ([line.strip() for line in file if line])
 
-from ChessFile import ChessFile
+from .ChessFile import ChessFile
 
 class FenFile (ChessFile):
     
@@ -31,9 +35,9 @@ class FenFile (ChessFile):
         #    fen = " ".join(fenlist[:5]) + " 1" 
         fen = self.games[gameno]
         try:
-            board = model.variant.board(setup=fen)
-        except SyntaxError, e:
-            board = model.variant.board()
+            board = model.variant(setup=fen)
+        except SyntaxError as e:
+            board = model.variant()
             raise LoadingError(_("The game can't be loaded, because of an error parsing FEN"), e.args[0])
         
         model.boards = [board]

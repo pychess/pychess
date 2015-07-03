@@ -7,17 +7,17 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Board import Board
 from pychess.Players.CECPEngine import CECPEngine
 
-from Queue import Queue
+from pychess.compat import Queue
 
-from gobject import GObject, SIGNAL_RUN_FIRST, TYPE_NONE
+from gi.repository import GObject
 
-class DummyCECPAnalyzerEngine(GObject):
+class DummyCECPAnalyzerEngine(GObject.GObject):
     __gsignals__ = {
-        "line": (SIGNAL_RUN_FIRST, None, (object,)),
-        "died": (SIGNAL_RUN_FIRST, None, ()),
+        "line": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "died": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
     def __init__(self):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.defname = 'Dummy'
         self.Q = Queue()
     def putline(self, line):
@@ -58,7 +58,7 @@ class CECPTests(EmittingTestCase):
         engine.putline(analine)
         results = self.getSignalResults(analyzer)
         self.assertNotEqual(results, None, "signal wasn't sent")
-        self.assertEqual(results, ([(listToMoves(board,moves), score, depth)],))
+        self.assertEqual(results, ([(moves, score, depth)],))
     
     def setUp (self):
         self.engineA, self.analyzerA = self._setupengine(ANALYZING)

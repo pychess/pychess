@@ -1,15 +1,18 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from copy import copy
 
-from lutils.LBoard import LBoard
-from lutils.bitboard import iterBits
-from lutils.lmove import RANK, FILE, FCORD, FLAG, PROMOTE_PIECE, toAN
-from Piece import Piece
-from Cord import Cord
-from const import *
+from pychess.compat import basestring
+from .lutils.bitboard import iterBits
+from .lutils.LBoard import LBoard
+from .lutils.lmove import RANK, FILE, FCORD, FLAG, PROMOTE_PIECE, toAN
+from .Piece import Piece
+from .Cord import Cord
+from .const import *
 
 
 def reverse_enum(L):
-    for index in reversed(xrange(len(L))):
+    for index in reversed(range(len(L))):
         yield index, L[index]
 
 
@@ -24,9 +27,13 @@ class Board:
     variant = NORMALCHESS
     RANKS = 8
     FILES = 8
+    HOLDING_FILES = ((FILES+3, FILES+2, FILES+1), (-4, -3, -2))
+    PROMOTION_ZONE = ((A8, B8, C8, D8, E8, F8, G8, H8), \
+                      (A1, B1, C1, D1, E1, F1, G1, H1))
+    PROMOTIONS = (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION)
     
     def __init__ (self, setup=False, lboard=None):
-        self.data = [dict(enumerate([None]*self.FILES)) for i in xrange(self.RANKS)]
+        self.data = [dict(enumerate([None]*self.FILES)) for i in range(self.RANKS)]
         if lboard is None:
             self.board = LBoard(self.variant)
         else:
@@ -69,7 +76,7 @@ class Board:
             if self.board.kings[BLACK] != -1:
                 self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
             
-            if self.variant == CRAZYHOUSECHESS:
+            if self.variant in DROP_VARIANTS:
                 for color in (BLACK, WHITE):
                     holding = self.board.holding[color]
                     for piece in holding:
@@ -77,30 +84,62 @@ class Board:
                             self[self.newHoldingCord(color, 1)] = Piece(color, piece)
     
     def getHoldingCord(self, color, piece):
-        """Get the first occurence of piece in given colors holding"""
+        """Get the chord of first occurence of piece in given color holding"""
         
         enum = reverse_enum if color == WHITE else enumerate
-        files = ((self.FILES+3, self.FILES+2, self.FILES+1), (-4, -3, -2))
-        for x in files[color]:
+        for x in self.HOLDING_FILES[color]:
             for i, row in enum(self.data):
                 if (row.get(x) is not None) and row.get(x).piece == piece:
                     return Cord(x, i)
 
     def newHoldingCord(self, color, nth=1):
-        """Find the nth empty slot in given colors holding.
+        """Find the nth empty slot in given color holding.
         In atomic explosions nth can be > 1.   
         """
         
         enum = reverse_enum if color == BLACK else enumerate
-        files = ((self.FILES+1, self.FILES+2, self.FILES+3), (-2, -3, -4))
         empty = 0
-        for x in files[color]:
+        for x in reversed(self.HOLDING_FILES[color]):
             for i, row in enum(self.data):
                 if row.get(x) is None:
                     empty += 1
                     if empty == nth:
                         return Cord(x, i)
+
+    def getHoldingPieces(self, color):
+        """Get the list of pieces from given color holding"""
+        pieces = []
+        for x in self.HOLDING_FILES[color]:
+            for row in self.data:
+                if row.get(x) is not None:
+                    pieces.append(row.get(x))
+        return pieces
+        
+    def popPieceFromHolding(self, color, piece):
+        """Remove and return a piece in given color holding"""
+        
+        for x in self.HOLDING_FILES[color]:
+            for row in self.data:
+                if (row.get(x) is not None) and row.get(x).piece == piece:
+                    p = row.get(x)
+                    del row[x]
+                    return p
+        return None
     
+    def reorderHolding(self, color):
+        """Reorder captured pieces by their value"""
+        pieces = []
+        for piece in (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING):
+            while True:
+                p = self.popPieceFromHolding(color, piece)
+                if p is not None:
+                    pieces.append(p)
+                else:
+                    break
+        for piece in pieces:
+            self[self.newHoldingCord(color, 1)] = piece
+        
+        
     def simulateMove (self, board1, move):
         moved = []
         new = []
@@ -115,6 +154,9 @@ class Board:
             piece = FCORD(move.move)
             cord0 = self.getHoldingCord(self.color, piece)
             moved.append( (self[cord0], cord0) )
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(self.color)
+            dead = new
             return moved, new, dead
 
         if self.variant == ATOMICCHESS and (self[cord1] or move.flag == ENPASSANT):
@@ -129,10 +171,12 @@ class Board:
         else:
             moved.append( (self[cord0], cord0) )
 
-        if self[cord1]:
+        if self[cord1] and not (self.variant == FISCHERRANDOMCHESS and move.flag in (QUEEN_CASTLE, KING_CASTLE)):
             piece = PAWN if self.variant == CRAZYHOUSECHESS and self[cord1].promoted else self[cord1].piece
             cord = self.newHoldingCord(self.color)
             moved.append( (board1[cord], cord1) )
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(self.color)
             new.append( board1[cord] )
 
             if self.variant == ATOMICCHESS:
@@ -163,6 +207,8 @@ class Board:
             ep_cord = Cord(cord1.x, cord1.y + shift)
             moved.append( (self[ep_cord], ep_cord) )
             cord = self.newHoldingCord(self.color)
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(self.color)
             new.append( board1[cord] )
 
         return moved, new, dead
@@ -183,14 +229,16 @@ class Board:
             moved.append( (self[cord], cord) )
             self[cord].opacity = 1
             dead.append( self[cord] )
-        else:
+        elif not (self.variant == FISCHERRANDOMCHESS and move.flag in (QUEEN_CASTLE, KING_CASTLE)):
             moved.append( (self[cord1], cord1) )
         
-        if board1[cord1]:
+        if board1[cord1] and not (self.variant == FISCHERRANDOMCHESS and move.flag in (QUEEN_CASTLE, KING_CASTLE)):
             piece = PAWN if self.variant == CRAZYHOUSECHESS and board1[cord1].promoted else board1[cord1].piece
             cord = self.getHoldingCord(1-self.color, piece)
             moved.append( (self[cord], cord) )
             self[cord].opacity = 1
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(self.color)
             dead.append( self[cord] )
 
             if self.variant == ATOMICCHESS:
@@ -220,6 +268,8 @@ class Board:
             cord = self.getHoldingCord(1-self.color, PAWN)
             moved.append( (self[cord], cord) )
             self[cord].opacity = 1
+            # add all captured pieces to "new" list to enforce repainting them after a possible reordering
+            new = self.getHoldingPieces(self.color)
             dead.append( self[cord] )
         
         return moved, new, dead
@@ -244,7 +294,8 @@ class Board:
 
         cord0, cord1 = move.cords
 
-        if self[move.cord1] is not None or flag == ENPASSANT:
+        if (self[move.cord1] is not None or flag == ENPASSANT) and \
+            not (self.variant == FISCHERRANDOMCHESS and flag in (QUEEN_CASTLE, KING_CASTLE)):
             if self.variant == CRAZYHOUSECHESS:
                 piece = PAWN if flag == ENPASSANT or self[move.cord1].promoted else self[move.cord1].piece
                 new_piece = Piece(self.color, piece, captured=True)
@@ -280,7 +331,10 @@ class Board:
                 newBoard[self.newHoldingCord(1-self.color, nth[1-self.color])] = new_piece
                 newBoard[cord1] = None
             else:
-                newBoard[cord1] = newBoard[cord0]
+                if self.variant == FISCHERRANDOMCHESS and flag in (QUEEN_CASTLE, KING_CASTLE):
+                    king = newBoard[cord0]
+                else:
+                    newBoard[cord1] = newBoard[cord0]
             
         if flag != NULL_MOVE and flag != DROP:
             newBoard[cord0] = None
@@ -293,6 +347,9 @@ class Board:
             finrook = self.board.fin_rooks[self.color][side]
             newBoard[Cord(finrook)] = newBoard[Cord(inirook)]
             newBoard[Cord(inirook)] = None
+            if self.variant == FISCHERRANDOMCHESS:
+                finking = self.board.fin_kings[self.color][side]
+                newBoard[Cord(finking)] = king
 
         if flag in PROMOTIONS:
             new_piece = Piece(self.color, PROMOTE_PIECE(flag))
@@ -302,12 +359,16 @@ class Board:
         elif flag == ENPASSANT:
             newBoard[Cord(cord1.x, cord0.y)] = None
         
+        if flag == DROP or flag == ENPASSANT or self[move.cord1] is not None:
+            newBoard.reorderHolding(self.color)
         return newBoard
     
     def switchColor (self):
         """ Switches the current color to move and unsets the enpassant cord.
             Mostly to be used by inversed analyzers """
-        return self.setColor(1-self.color)
+        new_board = self.setColor(1-self.color)
+        new_board.board.next = self.board.next
+        return new_board
     
     def _get_enpassant (self):
         if self.board.enpassant != None:
@@ -333,7 +394,7 @@ class Board:
         return self.board.asFen(enable_bfen)
     
     def __repr__ (self):
-        return str(self.board)
+        return repr(self.board)
     
     def __getitem__ (self, cord):
         return self.data[cord.y].get(cord.x)
@@ -347,7 +408,7 @@ class Board:
         
         if self.variant != NORMALCHESS:
             from pychess.Variants import variants
-            newBoard = variants[self.variant].board()
+            newBoard = variants[self.variant]()
         else:
             newBoard = Board()
         newBoard.board = lboard
@@ -360,7 +421,7 @@ class Board:
         return newBoard
     
     def __eq__ (self, other):
-        if type(self) != type(other): return False
+        if not isinstance(self, type(other)): return False
         return self.board == other.board
 
     def printPieces(self):
@@ -377,4 +438,4 @@ class Board:
                 else:
                     b += '.'
             b += "\n"
-        print b
+        print(b)

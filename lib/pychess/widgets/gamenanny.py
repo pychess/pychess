@@ -1,10 +1,12 @@
 """ This module intends to work as glue between the gamemodel and the gamewidget
     taking care of stuff that is neither very offscreen nor very onscreen
     like bringing up dialogs and """
+from __future__ import absolute_import
 
 import math
-import gtk
+from gi.repository import Gtk
 
+from pychess.compat import unicode
 from pychess.ic.FICSObjects import make_sensitive_if_available, make_sensitive_if_playing
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.Utils.Offer import Offer
@@ -17,7 +19,7 @@ from pychess.widgets import preferencesDialog
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
 from pychess.widgets import InfoBar
 
-from gamewidget import getWidgets, key2gmwidg, isDesignGWShown
+from .gamewidget import getWidgets, key2gmwidg, isDesignGWShown
 
 def nurseGame (gmwidg, gamemodel):
     """ Call this function when gmwidget is just created """
@@ -105,8 +107,14 @@ def game_ended (gamemodel, reason, gmwidg):
         nameDic["loser"] = gamemodel.players[WHITE]
     m1 = reprResult_long[gamemodel.status] % nameDic
     m2 = reprReason_long[reason] % nameDic
-    content = InfoBar.get_message_content(m1, m2, gtk.STOCK_DIALOG_INFO)
-    message = InfoBarMessage(gtk.MESSAGE_INFO, content, None)
+    if gamemodel.reason == WON_ADJUDICATION:
+        color = BLACK if gamemodel.status == WHITEWON else WHITE
+        invalid_move = gamemodel.players[color].invalid_move
+        if invalid_move:
+            m2 += _(" invalid engine move: %s" % invalid_move)
+
+    content = InfoBar.get_message_content(m1, m2, Gtk.STOCK_DIALOG_INFO)
+    message = InfoBarMessage(Gtk.MessageType.INFO, content, None)
 
     callback = None
     if isinstance(gamemodel, ICGameModel):
@@ -147,7 +155,9 @@ def game_ended (gamemodel, reason, gmwidg):
                 from pychess.widgets.newGameDialog import createRematch
                 createRematch(gamemodel)
             elif response == 2:
-                if gamemodel.curplayer.__type__ == LOCAL and gamemodel.ply > 1:
+                if gamemodel.curplayer.__type__ == LOCAL and \
+                   gamemodel.waitingplayer.__type__ == ARTIFICIAL and \
+                   gamemodel.ply > 1:
                     offer = Offer(TAKEBACK_OFFER, gamemodel.ply-2)
                 else:
                     offer = Offer(TAKEBACK_OFFER, gamemodel.ply-1)
@@ -190,7 +200,7 @@ def game_ended (gamemodel, reason, gmwidg):
     return False
 
 def _set_statusbar (gamewidget, message):
-    assert type(message) is str or type(message) is unicode
+    assert isinstance(message, str) or isinstance(message, unicode)
     gamewidget.status(message)
     
 def game_paused (gamemodel, gmwidg):
@@ -297,7 +307,7 @@ def offer_callback (player, offer, gamemodel, gmwidg):
 
 def engineDead (engine, gmwidg):
     gmwidg.bringToFront()
-    d = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+    d = Gtk.MessageDialog(type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
     d.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
     d.format_secondary_text(_("PyChess has lost connection to the engine, probably because it has died.\n\nYou can try to start a new game with the engine, or try to play against another one."))
     d.connect("response", lambda d,r: d.hide())
