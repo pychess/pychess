@@ -1,22 +1,23 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from gi.repository import GObject
-from gi.repository import GLib
+
 import os
 import sys
 import signal
 import errno
 import time
+import traceback
 import threading
 from threading import Thread
 
+from gi.repository import GObject
+from gi.repository import GLib
+
 from pychess.Utils.const import *
-from pychess.System.GtkWorker import EmitPublisher
 from pychess.System import fident
 from .Log import log
 from .which import which
 
-import traceback
 class SubProcessError (Exception): pass
 class TimeOutError (Exception): pass
 
@@ -44,9 +45,6 @@ class SubProcess (GObject.GObject):
         "died": (GObject.SignalFlags.RUN_FIRST, None, ())
     }
 
-
-
-
     def __init__(self, path, args=[], warnwords=[], env=None, chdir="."):      
         GObject.GObject.__init__(self)
         
@@ -56,11 +54,6 @@ class SubProcess (GObject.GObject):
         self.env = env or os.environ
         self.buffer = ""
         
-        self.linePublisher = EmitPublisher(self, "line",
-            'SubProcess.linePublisher', EmitPublisher.SEND_LIST)        
-       
-        self.linePublisher.start()        
-       
         self.defname = os.path.split(path)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
         t = time.time()
@@ -157,7 +150,7 @@ class SubProcess (GObject.GObject):
                         break
                 else: log.debug(line.rstrip(), extra={"task":self.defname})
             
-            self.linePublisher.put(line)
+            self.emit("line", line)
 
     def write (self, data):
         if self.channelsClosed:
@@ -206,7 +199,6 @@ class SubProcess (GObject.GObject):
             self.subprocFinishedEvent.set()
             return code
         self.subprocFinishedEvent.set()
-        self.linePublisher._del()
         return code
     
     def pause (self):
