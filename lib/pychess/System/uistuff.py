@@ -10,7 +10,7 @@ from gi.repository import Pango
 from gi.repository.GdkPixbuf import Pixbuf
 
 from pychess.compat import Queue, Empty
-from pychess.System import conf, glock, fident
+from pychess.System import conf, fident
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
