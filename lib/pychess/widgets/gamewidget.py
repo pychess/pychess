@@ -17,7 +17,7 @@ from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
 from pychess.Savers import pgn
-from pychess.System import glock, conf, prefix
+from pychess.System import conf, prefix
 
 from pychess.System.Log import log
 from pychess.System.idle_add import idle_add
