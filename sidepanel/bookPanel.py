@@ -1,16 +1,19 @@
 import os
-import Queue
-import gtk, gobject, pango
+
+from gi.repository import Gdk, Gtk, GObject, Pango, PangoCairo
 from threading import Thread
 
-from pychess.System import conf, fident
+from pychess.compat import Queue, Full
+from pychess.System import conf, fident, uistuff
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import *
 from pychess.Utils.book import getOpenings
 from pychess.Utils.eco import get_eco
 from pychess.Utils.logic import legalMoveCount
 from pychess.Utils.EndgameTable import EndgameTable
-from pychess.Utils.Move import Move, toSAN, toFAN
+from pychess.Utils.Move import Move, toSAN, toFAN, listToMoves
+from pychess.Utils.lutils.lmovegen import newMove
+from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
 from pychess.System.idle_add import idle_add
@@ -62,9 +65,10 @@ class Advisor (object):
         pass
     
     def query_tooltip (self, path):
-        if not path[1:]:
+        indices = path.get_indices()
+        if not indices[1:]:
             return self.tooltip
-        return self.child_tooltip(path[1])
+        return self.child_tooltip(indices[1])
     
     def empty_parent (self):
         while True:
@@ -120,8 +124,9 @@ class OpeningAdvisor(Advisor):
                 eco = opening[0]
                 self.opening_names.append("%s %s" % (opening[1], opening[2]))
 
-            self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco, False, False])
-        self.tv.expand_row(self.path, False)
+            self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco, False, False])        
+        tp = Gtk.TreePath(self.path)        
+        self.tv.expand_row(tp, False)
     
     def child_tooltip (self, i):
         return "" if len(self.opening_names)==0 else self.opening_names[i]
@@ -152,7 +157,7 @@ class EngineAdvisor(Advisor):
         parent = self.empty_parent()
         for line in range(self.linesExpected):
             self.store.append(parent, self.textOnlyRow(_("Calculating...")))
-        self.tv.expand_row(self.path, False)
+        self.tv.expand_row(Gtk.TreePath(self.path), False)
         return parent
     
     def shown_changed (self, boardview, shown):
@@ -188,6 +193,9 @@ class EngineAdvisor(Advisor):
     
     @idle_add
     def on_analyze (self, engine, analysis):
+        if self.boardview.animating:
+            return
+            
         m = self.boardview.model
         if m.isPlayingICSGame():
             return
@@ -201,14 +209,24 @@ class EngineAdvisor(Advisor):
             if line is None:
                 self.store[self.path + (i,)] = self.textOnlyRow("")
                 continue
+
+            board0 = self.engine.board
+            board = board0.clone()
                 
-            pv, score, depth = line
+            movstrs, score, depth = line
+            try:
+                pv = listToMoves(board, movstrs, validate=True)
+            except ParsingError as e:
+                # ParsingErrors may happen when parsing "old" lines from
+                # analyzing engines, which haven't yet noticed their new tasks
+                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
+                    (' '.join(movstrs),e))
+                return
+
             move = None
             if pv:
                 move = pv[0]
 
-            board0 = self.engine.board
-            board = board0.clone()
             ply0 = board.ply if self.mode == HINT else board.ply+1
             counted_pv = []
             for j, pvmove in enumerate(pv):
@@ -257,10 +275,23 @@ class EngineAdvisor(Advisor):
                     self.linesExpected -= 1
         
     def row_activated (self, iter, model):
-        if self.mode == HINT and self.store.get_path(iter) != self.path:
+        if self.mode == HINT and self.store.get_path(iter) != Gtk.TreePath(self.path):
             moves = self.store[iter][0][2]
             if moves is not None:
-                model.add_variation(self.engine.board, moves)
+                score = self.store[iter][1][0]
+                model.add_variation(self.engine.board, moves, comment="", score=score)
+                
+        if self.mode == SPY and self.store.get_path(iter) != Gtk.TreePath(self.path):
+            moves = self.store[iter][0][2]
+            if moves is not None:
+                score = self.store[iter][1][0]
+                board = self.engine.board.board
+                # SPY analyzer has inverted color boards
+                # we need to chage it to get the board in gamemodel variations board list later
+                board.setColor(1-board.color)
+                king = board.kings[board.color]
+                null_move = Move(newMove(king, king, NULL_MOVE))
+                model.add_variation(self.engine.board, [null_move] + moves, comment="", score=score)
 
     def child_tooltip (self, i):
         if self.active:
@@ -284,7 +315,7 @@ class EndgameAdvisor(Advisor, Thread):
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
 
         self.egtb.connect("scored", self.on_scored)
-        self.queue = Queue.Queue()
+        self.queue = Queue()
         self.start()
         
     class StopNow (Exception): pass
@@ -310,7 +341,7 @@ class EndgameAdvisor(Advisor, Thread):
     def gamewidget_closed (self, gamewidget):
         try:
             self.queue.put_nowait(self.StopNow)
-        except Queue.Full:
+        except Full:
             log.warning("EndgameAdvisor.gamewidget_closed: Queue.Full")
 
     def on_scored(self, w, ret):
@@ -333,27 +364,28 @@ class EndgameAdvisor(Advisor, Thread):
                 result = (_("Win"), 1, 1.0)
                 details = _("Mate in %d") % depth
             self.store.append(self.parent, [(self.board, move, None), result, 0, False, details, False, False])
-        self.tv.expand_row(self.path, False)
+        self.tv.expand_row(Gtk.TreePath(self.path), False)
 
 class Sidepanel (object):
     def load (self, gmwidg):
         self.boardcontrol = gmwidg.board
         self.boardview = self.boardcontrol.view
         
-        widgets = gtk.Builder()
+        widgets = Gtk.Builder()
         widgets.add_from_file(addDataPrefix("sidepanel/book.glade"))
         self.tv = widgets.get_object("treeview")
         self.sw = widgets.get_object("scrolledwindow")
         self.sw.unparent()
-        self.store = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, int, bool, str, bool, bool)
+        self.store = Gtk.TreeStore(GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT, int, bool, str, bool, bool)
         self.tv.set_model(self.store)
         
         ### move suggested
-        moveRenderer = gtk.CellRendererText()
+        moveRenderer = Gtk.CellRendererText()
         moveRenderer.set_property("xalign", 1.0)
-        c0 = gtk.TreeViewColumn("Move", moveRenderer)
+        moveRenderer.set_property("yalign", 0)
+        c0 = Gtk.TreeViewColumn("Move", moveRenderer)
 
-        def getMoveText(column, cell, store, iter):
+        def getMoveText(column, cell, store, iter, data):
             board, move, pv = store[iter][0]
             if not move:
                 cell.set_property("text", "")
@@ -364,22 +396,23 @@ class Sidepanel (object):
                     cell.set_property("text", toSAN(board, move, True))
         c0.set_cell_data_func(moveRenderer, getMoveText)
 
-        ### strength of the move
-        c1 = gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)
+        ### strength of the move       
+        c1 = Gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)       
 
         ### multipv (number of analysis lines)
-        multipvRenderer = gtk.CellRendererSpin()
-        adjustment = gtk.Adjustment(value=conf.get("multipv", 1), lower=1, upper=9, step_incr=1)
+        multipvRenderer = Gtk.CellRendererSpin()
+        adjustment = Gtk.Adjustment(value=conf.get("multipv", 1), lower=1, upper=9, step_incr=1)
         multipvRenderer.set_property("adjustment", adjustment)
         multipvRenderer.set_property("editable", True)
-        multipvRenderer.set_property("width_chars", 3)
-        c2 = gtk.TreeViewColumn("PV", multipvRenderer, editable=3)
+        multipvRenderer.set_property("width_chars", 1)
+        c2 = Gtk.TreeViewColumn("PV", multipvRenderer, editable=3)
+        c2.set_property("min_width", 80)
 
-        def spin_visible(column, cell, store, iter):
+        def spin_visible(column, cell, store, iter, data):           
             if store[iter][2] == 0:
                 cell.set_property('visible', False)
             else:
-                cell.set_property("text", store[iter][2])
+                cell.set_property("text", str(store[iter][2]))
                 cell.set_property('visible', True)
         c2.set_cell_data_func(multipvRenderer, spin_visible)
 
@@ -389,37 +422,12 @@ class Sidepanel (object):
             self.advisors[int(path[0])].multipv_edited(int(text))
         multipvRenderer.connect('edited', multipv_edited)
 
-        ### header text, or analysis line
-        renderer = gtk.CellRendererText()
-        renderer.set_property("wrap-mode", pango.WRAP_WORD)
-        c3 = gtk.TreeViewColumn("Details", renderer, text=4)
-        # wrap analysis text column. thanks to
-        # http://www.islascruz.org/html/index.php?blog/show/Wrap-text-in-a-TreeView-column.html
-        def resize_wrap(scroll, allocation, treeview, column, cell):
-            otherColumns = (c for c in treeview.get_columns() if c != column)
-            newWidth = allocation.width - sum(c.get_width() for c in otherColumns)
-            newWidth -= treeview.style_get_property("horizontal-separator") * 4
-            if cell.props.wrap_width == newWidth or newWidth <= 0:
-                return
-#             if newWidth < 100:
-#                 newWidth = 100
-            cell.props.wrap_width = newWidth
-#            column.set_property('min-width', newWidth + 10)
-#            column.set_property('max-width', newWidth + 10)
-            store = treeview.get_model()
-            iter = store.get_iter_first()
-            while iter and store.iter_is_valid(iter):
-                store.row_changed(store.get_path(iter), iter)
-                iter = store.iter_next(iter)
-                treeview.set_size_request(0,-1)
-        self.sw.connect_after('size-allocate', resize_wrap, self.tv, c3, renderer)
-        
         ### start/stop button for analysis engines
         toggleRenderer = CellRendererPixbufXt()
         toggleRenderer.set_property("stock-id", "gtk-add")
-        c4 = gtk.TreeViewColumn("StartStop", toggleRenderer)
+        c4 = Gtk.TreeViewColumn("StartStop", toggleRenderer)
 
-        def cb_visible(column, cell, store, iter):
+        def cb_visible(column, cell, store, iter, data):
             if not store[iter][6]:
                 cell.set_property('visible', False)
             else:
@@ -440,7 +448,8 @@ class Sidepanel (object):
         self.tv.append_column(c0)
         self.tv.append_column(c1)
         self.tv.append_column(c2)
-        self.tv.append_column(c3)
+        ### header text, or analysis line
+        uistuff.appendAutowrapColumn(self.tv, "Details", text=4)
         
         self.boardview.connect("shown_changed", self.shown_changed)
         self.tv.connect("cursor_changed", self.selection_changed)
@@ -540,10 +549,10 @@ class Sidepanel (object):
         if legalMoveCount(boardview.model.getBoardAtPly(shown, boardview.shownVariationIdx)) == 0:
             if self.sw.get_child() == self.tv:
                 self.sw.remove(self.tv)
-                label = gtk.Label(_("In this position,\nthere is no legal move."))
+                label = Gtk.Label(_("In this position,\nthere is no legal move."))
                 label.set_property("yalign",0.1)
                 self.sw.add_with_viewport(label)
-                self.sw.get_child().set_shadow_type(gtk.SHADOW_NONE)
+                self.sw.get_child().set_shadow_type(Gtk.ShadowType.NONE)
                 self.sw.show_all()
             return
         
@@ -572,7 +581,9 @@ class Sidepanel (object):
         board, move, pv = self.store[iter][0]
         # The row may be tied to a specific action.
         path = self.store.get_path(iter)
-        self.advisors[path[0]].row_activated(iter, self.boardview.model)
+        indices = path.get_indices()
+        if indices:
+            self.advisors[indices[0]].row_activated(iter, self.boardview.model)
     
     def query_tooltip(self, treeview, x, y, keyboard_mode, tooltip):
         # First, find out where the pointer is:
@@ -591,11 +602,12 @@ class Sidepanel (object):
         treeview.set_tooltip_row(tooltip, path)
         
         # And ask the advisor for some text
-        iter = self.store.get_iter(path)
-        text = self.advisors[path[0]].query_tooltip(path)
-        if text:
-            tooltip.set_markup(text)
-            return True # Show the tip.
+        indices = path.get_indices()
+        if indices:
+            text = self.advisors[indices[0]].query_tooltip(path)
+            if text:
+                tooltip.set_markup(text)
+                return True # Show the tip.
             
         return False
 
@@ -604,39 +616,43 @@ class Sidepanel (object):
 ################################################################################
 
 width, height = 80, 23
-class StrengthCellRenderer (gtk.GenericCellRenderer):
+class StrengthCellRenderer (Gtk.CellRenderer):
     __gproperties__ = {
-        "data": (gobject.TYPE_PYOBJECT, "Data", "Data", gobject.PARAM_READWRITE),
+        "data": (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.PARAM_READWRITE),
     }
     
     def __init__(self):
-        self.__gobject_init__()
+        Gtk.CellRenderer.__init__(self)
         self.data = None
-        
-    def do_set_property(self, pspec, value):
+
+    def do_set_property(self, pspec, value):        
         setattr(self, pspec.name, value)
         
-    def do_get_property(self, pspec):
+    def do_get_property(self, pspec):      
         return getattr(self, pspec.name)
         
-    def on_render(self, window, widget, background_area, cell_area, expose_area, flags):
+    def do_render(self, context, widget, background_area, cell_area, flags):      
         if not self.data: return
-        cairo = window.cairo_create()
         text, widthfrac, goodness = self.data
         if widthfrac:
-            paintGraph(cairo, widthfrac, stoplightColor(goodness), cell_area)
+            paintGraph(context, widthfrac, stoplightColor(goodness), cell_area)
         if text:
-            layout = widget.create_pango_layout(text)
-            w, h = layout.get_pixel_size()
-            context = widget.create_pango_context()
-            cairo.move_to(cell_area.x, cell_area.y)
-            cairo.rel_move_to( 70 - w, (height - h) / 2)
-            cairo.show_layout(layout)
-       
-    def on_get_size(self, widget, cell_area=None):
-        return (0, 0, width, height)
+            layout = PangoCairo.create_layout(context)
+            layout.set_text(text, -1)
+
+            fd = Pango.font_description_from_string ("Sans 10")
+            layout.set_font_description(fd)
             
-gobject.type_register(StrengthCellRenderer)
+            w, h = layout.get_pixel_size()
+            context.move_to (cell_area.x, cell_area.y)
+            context.rel_move_to( 70 - w, (height - h) / 2)
+            
+            PangoCairo.show_layout(context, layout)      
+
+    def do_get_size(self, widget, cell_area=None):       
+        return (0, 0, width, height)
+
+GObject.type_register(StrengthCellRenderer)
 
 ################################################################################
 # StrengthCellRenderer functions                                               #
@@ -672,35 +688,35 @@ def paintGraph (cairo, widthfrac, rgb, rect):
     cairo.restore()
 
 # cell renderer for start-stop putton
-class CellRendererPixbufXt(gtk.CellRendererPixbuf):
+class CellRendererPixbufXt(Gtk.CellRendererPixbuf):
     __gproperties__ = { 'active-state' :                                      
-                        (gobject.TYPE_STRING, 'pixmap/active widget state',  
+                        (GObject.TYPE_STRING, 'pixmap/active widget state',  
                         'stock-icon name representing active widget state',  
-                        None, gobject.PARAM_READWRITE) }                      
+                        None, GObject.PARAM_READWRITE) }                      
     __gsignals__    = { 'clicked' :                                          
-                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING,)) , } 
+                        (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING,)) , } 
 
     def __init__( self ):                                                    
-        gtk.CellRendererPixbuf.__init__( self )                              
-        self.set_property( 'mode', gtk.CELL_RENDERER_MODE_ACTIVATABLE )      
+        GObject.GObject.__init__( self )                              
+        self.set_property( 'mode', Gtk.CellRendererMode.ACTIVATABLE )      
                                                                               
     def do_get_property( self, property ):                                    
         if property.name == 'active-state':                                  
             return self.active_state                                          
         else:                                                                
-            raise AttributeError, 'unknown property %s' % property.name      
+            raise AttributeError('unknown property %s' % property.name)      
                                                                               
     def do_set_property( self, property, value ):                            
         if property.name == 'active-state':                                  
             self.active_state = value                                        
         else:                                                                
-            raise AttributeError, 'unknown property %s' % property.name      
+            raise AttributeError('unknown property %s' % property.name)      
                                                                               
     def do_activate( self, event, widget, path,  background_area, cell_area, flags ):    
-        if event.type == gtk.gdk.BUTTON_PRESS:                                
+        if event.type == Gdk.EventType.BUTTON_PRESS:                                
             self.emit('clicked', path)          
                                                   
     #def do_clicked(self, path):                                        
         #print "do_clicked", path                              
         
-gobject.type_register(CellRendererPixbufXt)
+GObject.type_register(CellRendererPixbufXt)

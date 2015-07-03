@@ -1,18 +1,24 @@
-
 """ This module handles the tabbed layout in PyChess """
+from __future__ import absolute_import
 
-import cStringIO
-import gtk
-import gobject
 import imp
 import os
 import traceback
 from threading import Condition, currentThread
 
-from BoardControl import BoardControl
-from ChessClock import ChessClock
-from MenuItemsDict import MenuItemsDict
-from pychess.System import conf, prefix
+from gi.repository import Gdk
+from gi.repository import Gtk
+from gi.repository import GLib
+from gi.repository import GObject
+from gi.repository import GdkPixbuf
+
+from pychess.compat import StringIO
+from .BoardControl import BoardControl
+from .ChessClock import ChessClock
+from .MenuItemsDict import MenuItemsDict
+from pychess.Savers import pgn
+from pychess.System import glock, conf, prefix
+
 from pychess.System.Log import log
 from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addUserConfigPrefix
@@ -20,21 +26,24 @@ from pychess.System.uistuff import makeYellow
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.const import *
+from pychess.Utils.Move import listToMoves
 from pychess.Utils.lutils import lmove
+from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic import get_infobarmessage_content, get_infobarmessage_content2
 from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.widgets.InfoBar import InfoBar, InfoBarMessage, InfoBarMessageButton
-from pydock.PyDockTop import PyDockTop
-from pydock.__init__ import CENTER, EAST, SOUTH
+from .pydock.PyDockTop import PyDockTop
+from .pydock.__init__ import CENTER, EAST, SOUTH
+
 
 ################################################################################
 # Initialize modul constants, and a few worker functions                       #
 ################################################################################
 
 def createAlignment (top, right, bottom, left):
-    align = gtk.Alignment(.5, .5, 1, 1)
+    align = Gtk.Alignment.new(.5, .5, 1, 1)
     align.set_property("top-padding", top)
     align.set_property("right-padding", right)
     align.set_property("bottom-padding", bottom)
@@ -42,13 +51,13 @@ def createAlignment (top, right, bottom, left):
     return align
 
 def cleanNotebook ():
-    notebook = gtk.Notebook()
+    notebook = Gtk.Notebook()
     notebook.set_show_tabs(False)
     notebook.set_show_border(False)
     return notebook
 
 def createImage (pixbuf):
-    image = gtk.Image()
+    image = Gtk.Image()
     image.set_from_pixbuf(pixbuf)
     return image
 
@@ -56,10 +65,10 @@ light_on = load_icon(16, "stock_3d-light-on", "weather-clear")
 light_off = load_icon(16, "stock_3d-light-off", "weather-clear-night")
 gtk_close = load_icon(16, "gtk-close")
 
-media_previous = load_icon(16, "gtk-media-previous-ltr")
-media_rewind = load_icon(16, "gtk-media-rewind-ltr")
-media_forward = load_icon(16, "gtk-media-forward-ltr")
-media_next = load_icon(16, "gtk-media-next-ltr")
+media_previous = load_icon(24, "gtk-media-previous-ltr")
+media_rewind = load_icon(24, "gtk-media-rewind-ltr")
+media_forward = load_icon(24, "gtk-media-forward-ltr")
+media_next = load_icon(24, "gtk-media-next-ltr")
 
 path = prefix.addDataPrefix("sidepanel")
 postfix = "Panel.py"
@@ -87,23 +96,23 @@ notebooks = {"board": cleanNotebook(),
 for panel in sidePanels:
     notebooks[panel.__name__] = cleanNotebook()
 
-docks = {"board": (gtk.Label("Board"), notebooks["board"])}
+docks = {"board": (Gtk.Label(label="Board"), notebooks["board"])}
 
 ################################################################################
 # The holder class for tab releated widgets                                    #
 ################################################################################
 
-class GameWidget (gobject.GObject):
+class GameWidget (GObject.GObject):
     
     __gsignals__ = {
-        'close_clicked': (gobject.SIGNAL_RUN_FIRST, None, ()), 
-        'infront': (gobject.SIGNAL_RUN_FIRST, None, ()),
-        'title_changed': (gobject.SIGNAL_RUN_FIRST, None, (str,)),
-        'closed': (gobject.SIGNAL_RUN_FIRST, None, ()),
+        'close_clicked': (GObject.SignalFlags.RUN_FIRST, None, ()), 
+        'infront': (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'title_changed': (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
     
     def __init__ (self, gamemodel):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.gamemodel = gamemodel
         self.cids = {}
         self.closed = False
@@ -121,7 +130,7 @@ class GameWidget (gobject.GObject):
         infobar.connect("hide", self.infobar_hidden)
         self.game_ended_message = None
         self.clock = clock
-        self.notebookKey = gtk.Label(); self.notebookKey.set_size_request(0,0)
+        self.notebookKey = Gtk.Alignment()
         self.boardvbox = boardvbox
         self.stat_hbox = stat_hbox
         self.menuitems = MenuItemsDict(self)
@@ -161,7 +170,7 @@ class GameWidget (gobject.GObject):
                 condition.release()
 
         if not fromGtkThread:
-            gobject.idle_add(do)
+            GLib.idle_add(do)
             condition.acquire()
             condition.wait()
         else:
@@ -320,7 +329,7 @@ class GameWidget (gobject.GObject):
         self._update_menu_ask_to_move()
 
         if not gamemodel.timed and not gamemodel.timemodel.hasTimes:
-            self.boardvbox.remove(self.clock.parent)
+            self.boardvbox.remove(self.clock.get_parent())
     
     def game_ended (self, gamemodel, reason):
         for item in self.menuitems:
@@ -387,16 +396,28 @@ class GameWidget (gobject.GObject):
             self.board.view._set_redarrow(coordinates)
             
     def _on_analyze (self, analyzer, analysis, analyzer_type):
+        if self.board.view.animating:
+            return
+
         if not self.menuitems[analyzer_type + "_mode"].active:
             return
 
         if len(analysis) >= 1 and analysis[0] is not None:
-            moves = analysis[0][0]
+            movstrs, score, depth = analysis[0]
+            board = analyzer.board 
+            try:
+                moves = listToMoves (board, movstrs, validate=True)
+            except ParsingError as e:
+                # ParsingErrors may happen when parsing "old" lines from
+                # analyzing engines, which haven't yet noticed their new tasks
+                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
+                    (' '.join(movstrs),e))
+                return
+            
             if moves and (self.gamemodel.curplayer.__type__ == LOCAL or \
                [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE] or \
                self.gamemodel.status not in UNFINISHED_STATES):
                 if moves[0].flag == DROP:
-                    board = analyzer.board 
                     piece = lmove.FCORD(moves[0].move)
                     color = board.color if analyzer_type == HINT else 1-board.color
                     cord0 = board.getHoldingCord(color, piece)
@@ -506,9 +527,9 @@ class GameWidget (gobject.GObject):
             def response_cb (infobar, response, message):
                 message.dismiss()
                 return False
-            message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-            message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                    gtk.RESPONSE_CANCEL))
+            message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+            message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                    Gtk.ResponseType.CANCEL))
             @idle_add
             def do():
                 self.showMessage(message)
@@ -527,8 +548,8 @@ class GameWidget (gobject.GObject):
                     self.gamemodel.connection.client.run_command("adjourn")
                 message.dismiss()
                 return False
-            message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, response_cb)
-            message.add_button(InfoBarMessageButton(_("Wait"), gtk.RESPONSE_CANCEL))
+            message = InfoBarMessage(Gtk.MessageType.QUESTION, content, response_cb)
+            message.add_button(InfoBarMessageButton(_("Wait"), Gtk.ResponseType.CANCEL))
             message.add_button(InfoBarMessageButton(_("Adjourn"), 2))
             @idle_add
             def do():
@@ -537,33 +558,33 @@ class GameWidget (gobject.GObject):
         return False
     
     def initTabcontents(self):
-        tabcontent = createAlignment(gtk.Notebook().props.tab_vborder,0,0,0)
-        hbox = gtk.HBox()
+        tabcontent = createAlignment(0,0,0,0)
+        hbox = Gtk.HBox()
         hbox.set_spacing(4)
-        hbox.pack_start(createImage(light_off), expand=False)
-        close_button = gtk.Button()
+        hbox.pack_start(createImage(light_off), False, True, 0)
+        close_button = Gtk.Button()
         close_button.set_property("can-focus", False)
         close_button.add(createImage(gtk_close))
-        close_button.set_relief(gtk.RELIEF_NONE)
+        close_button.set_relief(Gtk.ReliefStyle.NONE)
         close_button.set_size_request(20, 18)
         close_button.connect("clicked", lambda w: self.emit("close_clicked"))
-        hbox.pack_end(close_button, expand=False)
-        text_hbox = gtk.HBox()
-        white_label = gtk.Label("")
-        text_hbox.pack_start(white_label, expand=False)
-        text_hbox.pack_start(gtk.Label(" %s " % _("vs")), expand=False)
-        black_label = gtk.Label("")
-        text_hbox.pack_start(black_label, expand=False)
-        gameinfo_label = gtk.Label("")
-        text_hbox.pack_start(gameinfo_label, expand=False)
+        hbox.pack_end(close_button, False, True, 0)
+        text_hbox = Gtk.HBox()
+        white_label = Gtk.Label(label="")
+        text_hbox.pack_start(white_label, False, True, 0)
+        text_hbox.pack_start(Gtk.Label(" %s " % _("vs")), False, True, 0)
+        black_label = Gtk.Label(label="")
+        text_hbox.pack_start(black_label, False, True, 0)
+        gameinfo_label = Gtk.Label(label="")
+        text_hbox.pack_start(gameinfo_label, False, True, 0)
 #        label.set_alignment(0,.7)
-        hbox.pack_end(text_hbox)
+        hbox.pack_end(text_hbox, True, True, 0)
         tabcontent.add(hbox)
         tabcontent.show_all() # Gtk doesn't show tab labels when the rest is
         return tabcontent, white_label, black_label, gameinfo_label
     
     def initBoardAndClock(self, gamemodel):
-        boardvbox = gtk.VBox()
+        boardvbox = Gtk.VBox()
         boardvbox.set_spacing(2)
         infobar = InfoBar()
         
@@ -572,61 +593,61 @@ class GameWidget (gobject.GObject):
         cclock.setModel(gamemodel.timemodel)
         ccalign.add(cclock)
         ccalign.set_size_request(-1, 32)
-        boardvbox.pack_start(ccalign, expand=False)
+        boardvbox.pack_start(ccalign, False, True, 0)
         
         actionMenuDic = {}
         for item in ACTION_MENU_ITEMS:
             actionMenuDic[item] = widgets[item]
         
         board = BoardControl(gamemodel, actionMenuDic)
-        boardvbox.pack_start(board)
+        boardvbox.pack_start(board, True, True, 0)
         return boardvbox, board, infobar, cclock
     
     def initStatusbar(self, board):
         def tip (widget, x, y, keyboard_mode, tooltip, text):
-            l = gtk.Label(text)
+            l = Gtk.Label(label=text)
             tooltip.set_custom(l)
             l.show()
             return True
-        stat_hbox = gtk.HBox()
-        page_vbox = gtk.VBox()
+        stat_hbox = Gtk.HBox()
+        page_vbox = Gtk.VBox()
         page_vbox.set_spacing(1)
-        sep = gtk.HSeparator()
+        sep = Gtk.HSeparator()
         sep.set_size_request(-1, 2)
-        page_hbox = gtk.HBox()
-        startbut = gtk.Button()
+        page_hbox = Gtk.HBox()
+        startbut = Gtk.Button()
         startbut.add(createImage(media_previous))
-        startbut.set_relief(gtk.RELIEF_NONE)
+        startbut.set_relief(Gtk.ReliefStyle.NONE)
         startbut.props.has_tooltip = True
         startbut.connect("query-tooltip", tip, _("Jump to initial position"))
-        backbut = gtk.Button()
+        backbut = Gtk.Button()
         backbut.add(createImage(media_rewind))
-        backbut.set_relief(gtk.RELIEF_NONE)
+        backbut.set_relief(Gtk.ReliefStyle.NONE)
         backbut.props.has_tooltip = True
         backbut.connect("query-tooltip", tip, _("Step back one move"))
-        forwbut = gtk.Button()
+        forwbut = Gtk.Button()
         forwbut.add(createImage(media_forward))
-        forwbut.set_relief(gtk.RELIEF_NONE)
+        forwbut.set_relief(Gtk.ReliefStyle.NONE)
         forwbut.props.has_tooltip = True
         forwbut.connect("query-tooltip", tip, _("Step forward one move"))
-        endbut = gtk.Button()
+        endbut = Gtk.Button()
         endbut.add(createImage(media_next))
-        endbut.set_relief(gtk.RELIEF_NONE)
+        endbut.set_relief(Gtk.ReliefStyle.NONE)
         endbut.props.has_tooltip = True
         endbut.connect("query-tooltip", tip, _("Jump to latest position"))
         startbut.connect("clicked", lambda w: board.view.showFirst())
         backbut.connect("clicked", lambda w: board.view.showPrev())
         forwbut.connect("clicked", lambda w: board.view.showNext())
         endbut.connect("clicked", lambda w: board.view.showLast())
-        page_hbox.pack_start(startbut)
-        page_hbox.pack_start(backbut)
-        page_hbox.pack_start(forwbut)
-        page_hbox.pack_start(endbut)
-        page_vbox.pack_start(sep)
-        page_vbox.pack_start(page_hbox)
-        statusbar = gtk.Statusbar()
-        stat_hbox.pack_start(page_vbox, expand=False)
-        stat_hbox.pack_start(statusbar)
+        page_hbox.pack_start(startbut, True, True, 0)
+        page_hbox.pack_start(backbut, True, True, 0)
+        page_hbox.pack_start(forwbut, True, True, 0)
+        page_hbox.pack_start(endbut, True, True, 0)
+        page_vbox.pack_start(sep, True, True, 0)
+        page_vbox.pack_start(page_hbox, True, True, 0)
+        statusbar = Gtk.Statusbar()
+        stat_hbox.pack_start(page_vbox, False, True, 0)
+        stat_hbox.pack_start(statusbar, True, True, 0)
         return statusbar, stat_hbox
     
     def setLocked (self, locked):
@@ -634,19 +655,21 @@ class GameWidget (gobject.GObject):
         log.debug("GameWidget.setLocked: %s locked=%s" % (self.gamemodel.players, str(locked)))
         self.board.setLocked(locked)
         if not self.tabcontent.get_children(): return
-        if len(self.tabcontent.child.get_children()) < 2:
+        if len(self.tabcontent.get_child().get_children()) < 2:
             log.warning("GameWidget.setLocked: Not removing last tabcontent child")
             return
         
         @idle_add
         def light_on_off():
-            child = self.tabcontent.child
+            child = self.tabcontent.get_child()
             if child:
                 child.remove(child.get_children()[0])
                 if not locked:
-                    child.pack_start(createImage(light_on), expand=False)
+                    #child.pack_start(createImage(light_on, True, True, 0), expand=False)
+                    child.pack_start(createImage(light_on), True, True, 0)
                 else:
-                    child.pack_start(createImage(light_off), expand=False)
+                    #child.pack_start(createImage(light_off, True, True, 0), expand=False)
+                    child.pack_start(createImage(light_off), True, True, 0)
             self.tabcontent.show_all()
         light_on_off()
         
@@ -654,10 +677,14 @@ class GameWidget (gobject.GObject):
     
     @idle_add
     def status (self, message):
-        self.statusbar.pop(0)
-        if message:
-            #print "Setting statusbar to \"%s\"" % str(message)
-            self.statusbar.push(0, message)
+        # Enable only moves entered by keyboard
+        # TODO: revise all statusbar messages, maybe some of them can be sent to infobar
+        if len(message) > 7:
+            return
+            self.statusbar.pop(0)
+            if message:
+                #print "Setting statusbar to \"%s\"" % str(message)
+                self.statusbar.push(0, message)
     
     def bringToFront (self):
         getheadbook().set_current_page(self.getPageNumber())
@@ -689,6 +716,11 @@ class GameWidget (gobject.GObject):
         if self == cur_gmwidg():
             notebooks["messageArea"].hide()
     
+    def copy_pgn(self):
+        output = StringIO()
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        clipboard.set_text(pgn.save(output, self.gamemodel), -1)
+    
 ################################################################################
 # Main handling of gamewidgets                                                 #
 ################################################################################
@@ -707,7 +739,8 @@ def delGameWidget (gmwidg):
     gmwidg.emit("closed")
     
     called_from_preferences = False
-    wl = gtk.window_list_toplevels()
+    #wl = Gtk.window_list_toplevels()
+    wl = Gtk.Window.list_toplevels()
     for window in wl:
         if window.is_active() and window == widgets["preferences"]:
             called_from_preferences = True
@@ -733,7 +766,7 @@ def delGameWidget (gmwidg):
         mainvbox.remove(centerVBox)
         mainvbox.remove(mainvbox.get_children()[1])
         
-        mainvbox.pack_end(background)
+        mainvbox.pack_end(background, True, True, 0)
         background.show()
         
         if not called_from_preferences:
@@ -760,23 +793,15 @@ def _ensureReadForGameWidgets ():
     
     align = createAlignment (4, 4, 0, 4)
     align.set_property("yscale", 0)
-    headbook = gtk.Notebook()
+    headbook = Gtk.Notebook()
     headbook.set_scrollable(True)
-    headbook.props.tab_vborder = 0
     align.add(headbook)
-    mainvbox.pack_start(align, expand=False)
+    mainvbox.pack_start(align, False, True, 0)
     show_tabs(not conf.get("hideTabs", False))
     
     # Initing center
     
-    centerVBox = gtk.VBox()
-    
-    # The message area
-    
-    centerVBox.pack_start(notebooks["messageArea"], expand=False)
-    def ma_switch_page (notebook, gpointer, page_num):
-        notebook.props.visible = notebook.get_nth_page(page_num).child.props.visible
-    notebooks["messageArea"].connect("switch-page", ma_switch_page)
+    centerVBox = Gtk.VBox()
     
     # The dock
     
@@ -784,36 +809,36 @@ def _ensureReadForGameWidgets ():
     dock = PyDockTop("main")
     dockAlign = createAlignment(4,4,0,4)
     dockAlign.add(dock)
-    centerVBox.pack_start(dockAlign)
+    centerVBox.pack_start(dockAlign, True, True, 0)
     dockAlign.show()
     dock.show()
     
     for panel in sidePanels:
-        hbox = gtk.HBox()
-        pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(panel.__icon__, 16, 16)
-        icon = gtk.image_new_from_pixbuf(pixbuf)
-        label = gtk.Label(panel.__title__)
+        hbox = Gtk.HBox()
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(panel.__icon__, 16, 16)        
+        icon = Gtk.Image.new_from_pixbuf(pixbuf) 
+        label = Gtk.Label(label=panel.__title__)
         label.set_size_request(0, 0)
-        label.set_alignment(0, 1)
-        hbox.pack_start(icon, expand=False, fill=False)
-        hbox.pack_start(label, expand=True, fill=True)
+        label.set_alignment(0, 1)        
+        hbox.pack_start(icon, False, False, 0)
+        hbox.pack_start(label, True, True, 0)
         hbox.set_spacing(2)
         hbox.show_all()
         
         def cb (widget, x, y, keyboard_mode, tooltip, title, desc, filename):
-            table = gtk.Table(2,2)
+            table = Gtk.Table(2,2)
             table.set_row_spacings(2)
             table.set_col_spacings(6)
             table.set_border_width(4)
-            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(filename, 56, 56)
-            image = gtk.image_new_from_pixbuf(pixbuf)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename, 56, 56)
+            image = Gtk.Image.new_from_pixbuf(pixbuf)
             image.set_alignment(0, 0)
             table.attach(image, 0,1,0,2)
-            titleLabel = gtk.Label()
+            titleLabel = Gtk.Label()
             titleLabel.set_markup("<b>%s</b>" % title)
             titleLabel.set_alignment(0, 0)
             table.attach(titleLabel, 1,2,0,1)
-            descLabel = gtk.Label(desc)
+            descLabel = Gtk.Label(label=desc)
             descLabel.props.wrap = True
             table.attach(descLabel, 1,2,1,2)
             tooltip.set_custom(table)
@@ -827,13 +852,13 @@ def _ensureReadForGameWidgets ():
     if os.path.isfile(dockLocation):
         try:
             dock.loadFromXML(dockLocation, docks)
-        except Exception, e:
-            stringio = cStringIO.StringIO()
+        except Exception as e:
+            stringio = StringIO()
             traceback.print_exc(file=stringio)
             error = stringio.getvalue()
             log.error("Dock loading error: %s\n%s" % (e, error))
-            md = gtk.MessageDialog(widgets["window1"], type=gtk.MESSAGE_ERROR,
-                                   buttons=gtk.BUTTONS_CLOSE)
+            md = Gtk.MessageDialog(widgets["window1"], type=Gtk.MessageType.ERROR,
+                                   buttons=Gtk.ButtonsType.CLOSE)
             md.set_markup(_("<b><big>PyChess was unable to load your panel settings</big></b>"))
             md.format_secondary_text(_("Your panel settings have been reset. If this problem repeats, you should report it to the developers"))
             md.run()
@@ -844,7 +869,7 @@ def _ensureReadForGameWidgets ():
                 panel.unparent()
     
     if not os.path.isfile(dockLocation):
-        leaf = dock.dock(docks["board"][1], CENTER, gtk.Label(docks["board"][0]), "board")
+        leaf = dock.dock(docks["board"][1], CENTER, Gtk.Label(label=docks["board"][0]), "board")
         docks["board"][1].show_all()
         leaf.setDockable(False)
 
@@ -875,12 +900,25 @@ def _ensureReadForGameWidgets ():
         dock.saveToXML(dockLocation)
         dock._del()
     dock.connect("unrealize", unrealize)
+
+    hbox = Gtk.HBox()
     
     # The status bar
-    
     notebooks["statusbar"].set_border_width(4)
-    centerVBox.pack_start(notebooks["statusbar"], expand=False)
-    mainvbox.pack_start(centerVBox)
+    hbox.pack_start(notebooks["statusbar"], False, True, 0)
+    
+    # The message area
+    align = createAlignment(4,4,0,4)
+    sw = Gtk.ScrolledWindow()
+    sw.add(notebooks["messageArea"])
+    align.add(sw)
+    hbox.pack_start(align, False, True, 0)
+    def ma_switch_page (notebook, gpointer, page_num):
+        notebook.props.visible = notebook.get_nth_page(page_num).get_child().props.visible
+    notebooks["messageArea"].connect("switch-page", ma_switch_page)
+    centerVBox.pack_start(hbox, False, True, 0)
+
+    mainvbox.pack_start(centerVBox, True, True, 0)
     centerVBox.show_all()
     mainvbox.show()
     
@@ -910,7 +948,7 @@ def attachGameWidget (gmwidg):
     
     headbook.append_page(gmwidg.notebookKey, gmwidg.tabcontent)
     gmwidg.notebookKey.show_all()
-    headbook.set_tab_label_packing(gmwidg.notebookKey, True, True, gtk.PACK_START)
+    #headbook.set_tab_label_packing(gmwidg.notebookKey, True, True, Gtk.PACK_START)
     if hasattr(headbook, "set_tab_reorderable"):
         headbook.set_tab_reorderable (gmwidg.notebookKey, True)
     
@@ -923,13 +961,13 @@ def attachGameWidget (gmwidg):
     align = createAlignment(4,4,0,4)
     align.show()
     align.add(gmwidg.infobar)
-    notebooks["messageArea"].append_page(align)
-    notebooks["board"].append_page(gmwidg.boardvbox)
+    notebooks["messageArea"].append_page(align, None)
+    notebooks["board"].append_page(gmwidg.boardvbox, None)
     gmwidg.boardvbox.show_all()
     for panel, instance in zip(sidePanels, gmwidg.panels):
-        notebooks[panel.__name__].append_page(instance)
+        notebooks[panel.__name__].append_page(instance, None)
         instance.show_all()
-    notebooks["statusbar"].append_page(gmwidg.stat_hbox)
+    notebooks["statusbar"].append_page(gmwidg.stat_hbox, None)
     gmwidg.stat_hbox.show_all()
 
     # We should always show tabs if more than one exists
@@ -951,7 +989,7 @@ def getheadbook ():
     if len(widgets["mainvbox"].get_children()) == 2:
         # If the headbook hasn't been added yet
         return None
-    return widgets["mainvbox"].get_children()[1].child
+    return widgets["mainvbox"].get_children()[1].get_child()
 
 def zoomToBoard (viewZoomed):
     if not notebooks["board"].get_parent(): return

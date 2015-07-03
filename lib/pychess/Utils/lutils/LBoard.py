@@ -1,9 +1,12 @@
+from __future__ import absolute_import
+
+from pychess.compat import PY3
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprColor
-from ldata import *
-from attack import isAttacked
-from bitboard import *
-from PolyglotHash import *
+from .ldata import *
+from .attack import isAttacked
+from .bitboard import *
+from .PolyglotHash import *
 
 ################################################################################
 # FEN                                                                          #
@@ -25,8 +28,8 @@ class LBoard:
     fin_kings = ((C1,G1),(C8,G8))
     fin_rooks = ((D1,F1),(D8,F8))
 
-    holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0},
-               {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0})
+    holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0, KING:0},
+               {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0, KING:0})
 
     def __init__ (self, variant=NORMALCHESS):
         self.variant = variant
@@ -54,7 +57,7 @@ class LBoard:
 
     def repetitionCount (self, drawThreshold=3):
         rc = 1
-        for ply in xrange(4, 1+min(len(self.hist_hash), self.fifty), 2):
+        for ply in range(4, 1+min(len(self.hist_hash), self.fifty), 2):
             if self.hist_hash[-ply] == self.hash:
                 rc += 1
                 if rc >= drawThreshold: break
@@ -67,9 +70,15 @@ class LBoard:
         self.promoted = [0]*64
         self.capture_promoting = False
         self.hist_capture_promoting = []
-        self.holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0},
-                        {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0})
+        self.holding = ({PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0, KING:0},
+                        {PAWN:0, KNIGHT:0, BISHOP:0, ROOK:0, QUEEN:0, KING:0})
 
+    def iniCambodian(self):
+        self.ini_kings = (D1, E8)
+        self.ini_queens = (E1, D8)
+        self.is_first_move = {KING: [True, True], QUEEN: [True, True]}
+        self.hist_is_first_move = []
+        
     def applyFen (self, fenstr):
         """ Applies the fenstring to the board.
             If the string is not properly
@@ -118,16 +127,20 @@ class LBoard:
         if self.variant == FISCHERRANDOMCHESS:
             self.ini_kings = [None, None]
             self.ini_rooks = ([None, None], [None, None])
+
         elif self.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
             self.ini_kings = [None, None]
             self.fin_kings = ([None, None], [None, None])
             self.fin_rooks = ([None, None], [None, None])
 
-        elif self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        elif self.variant in DROP_VARIANTS:
             self.iniHouse()
 
         elif self.variant == ATOMICCHESS:
             self.iniAtomic()
+
+        elif self.variant == CAMBODIANCHESS:
+            self.iniCambodian()
             
         # Get information
         parts = fenstr.split()
@@ -136,15 +149,19 @@ class LBoard:
         fiftyChr = "0"
         moveNoChr = "1"
         if STRICT_FEN and len(parts) != 6:
-            raise SyntaxError, _("FEN needs 6 data fields. \n\n%s") % fenstr
+            raise SyntaxError(_("FEN needs 6 data fields. \n\n%s") % fenstr)
         elif len(parts) < 2:
-            raise SyntaxError, _("FEN needs at least 2 data fields in fenstr. \n\n%s") % fenstr
+            raise SyntaxError(_("FEN needs at least 2 data fields in fenstr. \n\n%s") % fenstr)
         elif len(parts) >= 6:
             pieceChrs, colChr, castChr, epChr, fiftyChr, moveNoChr = parts[:6]
         elif len(parts) == 5:
             pieceChrs, colChr, castChr, epChr, fiftyChr = parts
         elif len(parts) == 4:
-            pieceChrs, colChr, castChr, epChr = parts
+            if parts[2].isdigit() and parts[3].isdigit():
+                # xboard FEN usage for asian variants
+                pieceChrs, colChr, fiftyChr, moveNoChr = parts
+            else:
+                pieceChrs, colChr, castChr, epChr = parts
         elif len(parts) == 3:
             pieceChrs, colChr, castChr = parts
         else:
@@ -153,21 +170,26 @@ class LBoard:
         # Try to validate some information
         # TODO: This should be expanded and perhaps moved
         
-        slashes = len([c for c in pieceChrs if c == "/"])
+        slashes = pieceChrs.count("/")
         if slashes < 7:
-            raise SyntaxError, _("Needs 7 slashes in piece placement field. \n\n%s") % fenstr
+            raise SyntaxError(_("Needs 7 slashes in piece placement field. \n\n%s") % fenstr)
         
         if not colChr.lower() in ("w", "b"):
-            raise SyntaxError, _("Active color field must be one of w or b. \n\n%s") % fenstr
+            raise SyntaxError(_("Active color field must be one of w or b. \n\n%s") % fenstr)
 
         if castChr != "-":
             for Chr in castChr:
                 valid_chars = "ABCDEFGHKQ" if self.variant==FISCHERRANDOMCHESS else "KQ"
                 if Chr.upper() not in valid_chars:
-                    raise SyntaxError, _("Castling availability field is not legal. \n\n%s") % fenstr
+                    if self.variant == CAMBODIANCHESS:
+                        pass
+                        # sjaakii uses DEde in cambodian starting fen to indicate
+                        # that queens and kings are virgins (not moved yet)
+                    else:
+                        raise SyntaxError(_("Castling availability field is not legal. \n\n%s") % fenstr)
         
         if epChr != "-" and not epChr in cordDic:
-            raise SyntaxError, _("En passant cord is not legal. \n\n%s") % fenstr
+            raise SyntaxError(_("En passant cord is not legal. \n\n%s") % fenstr)
                                  
         # Put the next one into comment, because we use 
         # "setboard 8/8/8/8/8/8/8/8 w - - 0 1" FEN to stop CECPEngine analyzers
@@ -179,15 +201,18 @@ class LBoard:
         # Parse piece placement field
         
         promoted = False
+        # if there is a holding within [] we change it to BFEN style first
+        if pieceChrs.endswith("]"):
+            pieceChrs = pieceChrs[:-1].replace("[", "/")
         for r, rank in enumerate(pieceChrs.split("/")):
             cord = (7-r)*8
             for char in rank:
                 if r > 7:
                     # After the 8.rank BFEN can contain holdings (captured pieces)
                     # "~" after a piece letter denotes promoted piece
-                    if r == 8 and self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+                    if r == 8 and self.variant in DROP_VARIANTS:
                         color = char.islower() and BLACK or WHITE
-                        piece = reprSign.index(char.upper())
+                        piece = chrU2Sign[char.upper()]
                         self.holding[color][piece] += 1
                         continue
                     else:
@@ -199,12 +224,20 @@ class LBoard:
                     promoted = True
                 else:
                     color = char.islower() and BLACK or WHITE
-                    piece = reprSign.index(char.upper())
+                    piece = chrU2Sign[char.upper()]
                     self._addPiece(cord, piece, color)
                     self.pieceCount[color][piece] += 1
-                    if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS) and promoted:
+
+                    if self.variant in DROP_VARIANTS and promoted:
                         self.promoted[cord] = 1
                         promoted = False
+
+                    if self.variant == CAMBODIANCHESS:
+                        if piece == KING and self.kings[color] != self.ini_kings[color]:
+                            self.is_first_move[KING][color] = False
+                        if piece == QUEEN and cord != self.ini_queens[color]:
+                            self.is_first_move[QUEEN][color] = False
+
                     cord += 1
 
 
@@ -314,6 +347,8 @@ class LBoard:
         elif self.variant == ATOMICCHESS:
             if not self.boards[self.color][KING]:
                 return False
+        elif self.variant == SITTUYINCHESS and self.plyCount < 16:
+            return False
         if self.checked == None:
             kingcord = self.kings[self.color]
             self.checked = isAttacked (self, kingcord, 1-self.color, ischecked=True)
@@ -325,6 +360,8 @@ class LBoard:
         elif self.variant == ATOMICCHESS:
             if not self.boards[1-self.color][KING]:
                 return False
+        elif self.variant == SITTUYINCHESS and self.plyCount < 16:
+            return False
         if self.opchecked == None:
             kingcord = self.kings[1-self.color]
             self.opchecked = isAttacked (self, kingcord, self.color, ischecked=True)
@@ -422,15 +459,25 @@ class LBoard:
         self.hist_fifty.append(self.fifty)
         self.hist_checked.append(self.checked)
         self.hist_opchecked.append(self.opchecked)
-        if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        if self.variant in DROP_VARIANTS:
             self.hist_capture_promoting.append(self.capture_promoting)
-         
+        if self.variant == CAMBODIANCHESS:
+            self.hist_is_first_move.append({KING: self.is_first_move[KING][:], \
+                                            QUEEN: self.is_first_move[QUEEN][:]})
+            
         self.opchecked = None
         self.checked = None
 
         if flag == NULL_MOVE:
             self.setColor(opcolor)
+            self.plyCount += 1
             return move
+
+        if self.variant == CAMBODIANCHESS:
+            if fpiece == KING and self.is_first_move[KING][color]:
+                self.is_first_move[KING][color] = False
+            elif fpiece == QUEEN and self.is_first_move[QUEEN][color]:
+                self.is_first_move[QUEEN][color] = False
 
         # Castling moves can be represented strangely, so normalize them.
         if flag in (KING_CASTLE, QUEEN_CASTLE):
@@ -444,11 +491,11 @@ class LBoard:
             rookf = self.ini_rooks[color][side]
             rookt = self.fin_rooks[color][side]
 
-        # Capture
-        if tpiece != EMPTY:
+        # Capture (sittuyin in place promotion is not capture move!)
+        if tpiece != EMPTY and fcord != tcord:
             self._removePiece(tcord, tpiece, opcolor)
             self.pieceCount[opcolor][tpiece] -= 1
-            if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+            if self.variant in DROP_VARIANTS:
                 if self.promoted[tcord]:
                     if self.variant == CRAZYHOUSECHESS:
                         self.holding[color][PAWN] += 1
@@ -476,7 +523,7 @@ class LBoard:
         
         # Remove moving piece(s), then add them at their destination.
         if flag == DROP:
-            if self.variant == CRAZYHOUSECHESS:
+            if self.variant in DROP_VARIANTS:
                 assert self.holding[color][fpiece] > 0
             self.holding[color][fpiece] -= 1
             self.pieceCount[color][fpiece] += 1
@@ -509,7 +556,7 @@ class LBoard:
             self.pieceCount[color][fpiece] += 1
             self.pieceCount[color][PAWN] -=1
 
-        if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        if self.variant in DROP_VARIANTS:
             if tpiece == EMPTY:
                 self.capture_promoting = False
             
@@ -528,7 +575,7 @@ class LBoard:
             self._addPiece(tcord, fpiece, color)
 
         if fpiece == PAWN and abs(fcord-tcord) == 16:
-            self.setEnpassant ((fcord + tcord) / 2)
+            self.setEnpassant ((fcord + tcord) // 2)
         else: self.setEnpassant (None)
         
         if tpiece == EMPTY and fpiece != PAWN:
@@ -598,7 +645,7 @@ class LBoard:
             self._removePiece (tcord, tpiece, color)
         
         # Put back captured piece
-        if cpiece != EMPTY:
+        if cpiece != EMPTY and fcord != tcord:
             self._addPiece (tcord, cpiece, opcolor)
             self.pieceCount[opcolor][cpiece] += 1
             if self.variant == CRAZYHOUSECHESS:
@@ -643,7 +690,7 @@ class LBoard:
             if not (self.variant == ATOMICCHESS and (cpiece != EMPTY or flag == ENPASSANT)):
                 self._addPiece (fcord, tpiece, color)
 
-        if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        if self.variant in DROP_VARIANTS:
             if flag != DROP:
                 if self.promoted[tcord] and (not flag in PROMOTIONS):
                     self.promoted[fcord] = 1
@@ -653,6 +700,9 @@ class LBoard:
                     self.promoted[tcord] = 0
             self.capture_promoting = self.hist_capture_promoting.pop()
         
+        if self.variant == CAMBODIANCHESS:
+            self.is_first_move = self.hist_is_first_move.pop()
+            
         self.setColor(color)
         
         self.checked = self.hist_checked.pop()
@@ -662,9 +712,14 @@ class LBoard:
         self.hash = self.hist_hash.pop()
         self.fifty = self.hist_fifty.pop()
         self.plyCount -= 1
-        
+    
     def __hash__ (self):
         return self.hash
+    
+    def __eq__ (self, other):
+        return self.fen_was_applied and other is not None and \
+            self.hash == other.hash and self.plyCount == other.plyCount
+            
     
     def reprCastling (self):
         if not self.castling:
@@ -710,7 +765,14 @@ class LBoard:
                 else: b += "."
                 b += " "
             b += "\n# "
-        return b.encode("utf-8")
+
+        if self.variant in DROP_VARIANTS:
+            for color in (BLACK, WHITE):
+                holding = self.holding[color]
+                b += "\n# [%s]" % "".join([FAN_PIECES[color][piece]*holding[piece] \
+                                            for piece in holding if holding[piece]>0])
+            
+        return b if PY3 else b.encode('utf8')
     
     def asFen (self, enable_bfen=True):
         fenstr = []
@@ -723,7 +785,12 @@ class LBoard:
                     if empty > 0:
                         fenstr.append(str(empty))
                         empty = 0
-                    sign = reprSign[piece]
+                    if self.variant in (CAMBODIANCHESS, MAKRUKCHESS):
+                        sign = reprSignMakruk[piece]
+                    elif self.variant == SITTUYINCHESS:
+                        sign = reprSignSittuyin[piece]
+                    else:
+                        sign = reprSign[piece]
                     if bitPosArray[(7-r)*8+i] & self.friends[WHITE]:
                         sign = sign.upper()
                     else: sign = sign.lower()
@@ -738,13 +805,16 @@ class LBoard:
             if r != 7:
                 fenstr.append("/")
 
-        if self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        if self.variant in DROP_VARIANTS:
             holding_pieces = []
             for color in (BLACK, WHITE):
                 holding = self.holding[color]
                 for piece in holding:
                     if holding[piece] > 0:
-                        sign = reprSign[piece]
+                        if self.variant == SITTUYINCHESS:
+                            sign = reprSignSittuyin[piece]
+                        else:
+                            sign = reprSign[piece]
                         sign = sign.upper() if color == WHITE else sign.lower()
                         holding_pieces.append(sign*holding[piece])
             if holding_pieces:
@@ -760,8 +830,22 @@ class LBoard:
     
         fenstr.append(self.color == WHITE and "w" or "b")
         fenstr.append(" ")
-        
-        fenstr.append(self.reprCastling())
+
+        if self.variant == CAMBODIANCHESS:
+            cast = ""
+            if self.is_first_move[KING][WHITE]:
+                cast += "D"
+            if self.is_first_move[QUEEN][WHITE]:
+                cast += "E"
+            if self.is_first_move[KING][BLACK]:
+                cast += "d"
+            if self.is_first_move[QUEEN][BLACK]:
+                cast += "e"
+            if not cast:
+                cast = "-"
+            fenstr.append(cast)
+        else:
+            fenstr.append(self.reprCastling())
         fenstr.append(" ")
         
         if not self.enpassant:
@@ -773,7 +857,7 @@ class LBoard:
         fenstr.append(str(self.fifty))
         fenstr.append(" ")
         
-        fullmove = (self.plyCount)/2 + 1
+        fullmove = (self.plyCount)//2 + 1
         fenstr.append(str(fullmove))
         
         return "".join(fenstr)
@@ -816,13 +900,19 @@ class LBoard:
             copy.ini_kings = self.ini_kings[:]
             copy.fin_kings = (self.fin_kings[0][:], self.fin_kings[1][:])
             copy.fin_rooks = (self.fin_rooks[0][:], self.fin_rooks[1][:])
-        elif self.variant in (BUGHOUSECHESS, CRAZYHOUSECHESS):
+        elif self.variant in DROP_VARIANTS:
             copy.promoted = self.promoted[:]
             copy.holding = (self.holding[0].copy(), self.holding[1].copy())
             copy.capture_promoting = self.capture_promoting
             copy.hist_capture_promoting = self.hist_capture_promoting[:]
         elif self.variant == ATOMICCHESS:
             copy.hist_exploding_around = [a[:] for a in self.hist_exploding_around]
+        elif self.variant == CAMBODIANCHESS:
+            copy.ini_kings = self.ini_kings
+            copy.ini_queens = self.ini_queens
+            copy.is_first_move = {KING: self.is_first_move[KING][:], \
+                                  QUEEN: self.is_first_move[QUEEN][:]}
+            copy.hist_is_first_move = self.hist_is_first_move[:]
         
         copy.fen_was_applied = self.fen_was_applied
         return copy

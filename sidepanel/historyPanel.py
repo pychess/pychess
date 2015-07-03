@@ -1,7 +1,5 @@
-from __future__ import with_statement
-
-import gtk, gobject
-from gtk import gdk
+from gi.repository import Gtk, GObject
+from gi.repository import Gdk
 
 from pychess.System import conf
 from pychess.System.idle_add import idle_add
@@ -26,7 +24,7 @@ class Sidepanel:
     
     def load (self, gmwidg):
         
-        widgets = gtk.Builder()
+        widgets = Gtk.Builder()
         widgets.add_from_file(addDataPrefix("sidepanel/history.glade"))
         __widget__ = widgets.get_object("panel")
         __widget__.unparent()
@@ -45,11 +43,11 @@ class Sidepanel:
         self.right = widgets.get_object("treeview3")
         
         def fixList (list, xalign=0):
-            list.set_model(gtk.ListStore(str))
-            renderer = gtk.CellRendererText()
+            list.set_model(Gtk.ListStore(str))
+            renderer = Gtk.CellRendererText()
             renderer.set_property("xalign",xalign)
-            list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
-            list.get_selection().set_mode(gtk.SELECTION_SINGLE)
+            list.append_column(Gtk.TreeViewColumn(None, renderer, text=0))
+            list.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         
         fixList(self.numbers, 1)
         fixList(self.left, 0)
@@ -66,13 +64,13 @@ class Sidepanel:
         
         def changed (vadjust):
             if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-                vadjust.set_value(vadjust.upper-vadjust.page_size)
+                vadjust.set_value(vadjust.get_upper()-vadjust.get_page_size())                
                 vadjust.need_scroll = True
         scrollwin.get_vadjustment().connect("changed", changed)
         
         def value_changed (vadjust):
-            vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
-                        vadjust.upper) < vadjust.step_increment
+            vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() - \
+                        vadjust.get_upper()) < vadjust.get_step_increment()
         scrollwin.get_vadjustment().connect("value-changed", value_changed)
         
         # Connect to preferences
@@ -97,7 +95,10 @@ class Sidepanel:
         if iter == None: return
         if self.frozen.on: return
 
-        row = tree.get_model().get_path(iter)[0]
+        path = tree.get_model().get_path(iter)
+        indices = path.get_indices()
+        row = indices[0]
+
         if self.boardview.model.lowply & 1:
             ply = row*2 + col
         else:
@@ -109,23 +110,24 @@ class Sidepanel:
     @idle_add
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
-        for i in xrange(moves):
-            try:
-                row, view, other = self._ply_to_row_col_other(game.variations[0][-1].ply-i)
-                model = view.get_model()
-                model.remove(model.get_iter((row,)))
-                if view == self.left:
-                    model = self.numbers.get_model()
+        with self.frozen:
+            for i in range(moves):
+                try:
+                    row, view, other = self._ply_to_row_col_other(game.variations[0][-1].ply-i)
+                    model = view.get_model()
                     model.remove(model.get_iter((row,)))
-            except ValueError:
-                continue
+                    if view == self.left:
+                        model = self.numbers.get_model()
+                        model.remove(model.get_iter((row,)))
+                except ValueError:
+                    continue
     
     @idle_add
     def game_changed (self, game):
         len_ = len(self.left.get_model()) + len(self.right.get_model()) + 1
         if len(self.left.get_model()) and not self.left.get_model()[0][0]:
             len_ -= 1
-        for ply in xrange(len_+game.lowply, game.ply+1):
+        for ply in range(len_+game.lowply, game.ply+1):
             self.__addMove(game, ply)
     
     def __addMove(self, game, ply):

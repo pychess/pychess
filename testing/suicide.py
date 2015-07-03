@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import print_function
+
 import sys
 import unittest
 
@@ -69,7 +71,7 @@ class SuicideTestCase(unittest.TestCase):
         #self.assertTrue(validate(board, parseSAN(board, 'Kxb7')))
 
         board = SuicideBoard(setup=FEN3)
-        print board
+        print(board)
         self.assertTrue(validate(board, parseSAN(board, 'Ked2')))
 
 if __name__ == '__main__':

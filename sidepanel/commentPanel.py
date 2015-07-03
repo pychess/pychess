@@ -1,8 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from __future__ import with_statement
-
-import gtk, pango
+from gi.repository import Gtk, Pango
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.System.idle_add import idle_add
@@ -40,20 +38,16 @@ class Sidepanel:
             self.gamemodel.connect("moves_undoing", self.moves_undoing)
         ]
 
-        widgets = gtk.Builder()
+        widgets = Gtk.Builder()
         widgets.add_from_file(addDataPrefix("sidepanel/book.glade"))
         self.tv = widgets.get_object("treeview")
         scrollwin = widgets.get_object("scrolledwindow")
         scrollwin.unparent()
 
-        self.store = gtk.ListStore(str)
+        self.store = Gtk.ListStore(str)
         self.tv.set_model(self.store)
-        self.tv.get_selection().set_mode(gtk.SELECTION_BROWSE)
-        #r = gtk.CellRendererText()
-        #r.set_property("wrap-width", 177) #FIXME: Fixed width size
-        #r.set_property("wrap-mode", pango.WRAP_WORD)
-        #self.tv.append_column(gtk.TreeViewColumn("Comment", r, text=0))
-        uistuff.appendAutowrapColumn(self.tv, 200, "Comment", text=0)
+        self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
+        uistuff.appendAutowrapColumn(self.tv, "Comment", text=0)
 
         self.tv.get_selection().connect_after('changed', self.select_cursor_row)
         self.boardview = gmwidg.board.view
@@ -67,9 +61,12 @@ class Sidepanel:
         iter = selection.get_selected()[1]
         if iter == None: return
         if self.frozen.on: return
-        row = self.tv.get_model().get_path(iter)[0]
-        board = self.gamemodel.boards[row]
-        self.boardview.setShownBoard(board)
+        path = self.tv.get_model().get_path(iter)
+        indices = path.get_indices()
+        if indices:
+            row = indices[0]
+            board = self.gamemodel.boards[row]
+            self.boardview.setShownBoard(board)
     
     def shown_changed (self, boardview, shown):
         if not boardview.shownIsMainLine():
@@ -88,7 +85,7 @@ class Sidepanel:
     def moves_undoing (self, game, moves):
         assert game.ply > 0, "Can't undo when ply <= 0"
         model = self.tv.get_model()
-        for i in xrange(moves):
+        for i in range(moves):
             model.remove(model.get_iter( (len(model)-1,) ))
     
     def game_started (self, model):
@@ -96,7 +93,7 @@ class Sidepanel:
 
     @idle_add
     def game_changed (self, model):
-        for ply in xrange(len(self.store)+model.lowply, model.ply+1):
+        for ply in range(len(self.store)+model.lowply, model.ply+1):
             self.addComment(model, self.__chooseComment(model, ply))
     
     def addComment (self, model, comment):
@@ -105,9 +102,12 @@ class Sidepanel:
         # If latest ply is shown, we select the new latest
         iter = self.tv.get_selection().get_selected()[1]
         if iter:
-            row = self.tv.get_model().get_path(iter)[0]
-            if row < self.boardview.shown-1:
-                return
+            path = self.tv.get_model().get_path(iter)
+            indices = path.get_indices()
+            if indices:
+                row = indices[0]
+                if row < self.boardview.shown-1:
+                    return
         
         if self.boardview.shown >= model.ply:
             iter = self.store.get_iter(len(self.store)-1)

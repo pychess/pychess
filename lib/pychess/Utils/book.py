@@ -1,4 +1,5 @@
 import os
+import sys
 from struct import Struct
 from collections import namedtuple
 
@@ -6,6 +7,21 @@ from pychess.Utils.const import *
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.lmove import parsePolyglot
+from pychess.System.Log import log
+
+
+if getattr(sys, 'frozen', False):
+    # pyinstaller specific!
+    path = os.path.join(sys._MEIPASS, "pychess_book.bin")
+else:
+    default_path = os.path.join(addDataPrefix("pychess_book.bin"))
+    path = conf.get("opening_file_entry", default_path) 
+
+if os.path.isfile(path):
+    bookfile = True
+else:
+    bookfile= False
+    log.warning("Could not find %s" % path)
 
 # The book probing code is based on that of PolyGlot by Fabien Letouzey.
 # PolyGlot is available under the GNU GPL from http://wbec-ridderkerk.nl
@@ -29,22 +45,19 @@ def getOpenings (board):
         scored (with 2 per victory and 1 per draw). However, opening books
         aren't required to keep this information. """
 
-    default_path = os.path.join(addDataPrefix("pychess_book.bin"))
-    path = conf.get("opening_file_entry", default_path) 
-
     openings = []
-    if not os.path.isfile(path):
+    if not bookfile:
         return openings
-
+    
     with open(path, "rb") as bookFile:
         key = board.hash
         # Find the first entry whose key is >= the position's hash
         bookFile.seek(0, os.SEEK_END)
-        lo, hi = 0, bookFile.tell() / 16 - 1
+        lo, hi = 0, bookFile.tell() // 16 - 1
         if hi < 0:
             return openings
         while lo < hi:
-            mid = (lo + hi) / 2
+            mid = (lo + hi) // 2
             bookFile.seek(mid * 16)
             entry = bookFile.read(entrysize)
             if len(entry) != entrysize:

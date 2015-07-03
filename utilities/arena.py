@@ -6,15 +6,26 @@
     This script executes a tournament between the engines installed on your
     system. The script is executed from a terminal with the usual environment.
 '''
+from __future__ import print_function
 
 import os
 import sys
 
+from pychess.compat import raw_input, PY2
+
+if PY2:
+    # This hack fixes some UnicodDecode Errors caused pygi not making
+    # magic hidden automatic unicode conversion pygtk did
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
+
 ###############################################################################
 # Set up important things
-import glib, gobject
-gobject.threads_init()
-mainloop = glib.MainLoop()
+from gi.repository import GLib
+from gi.repository import GObject
+
+GObject.threads_init()
+mainloop = GLib.MainLoop()
 
 from pychess.Utils.const import *
 
@@ -39,14 +50,14 @@ from pychess.Variants import variants
 ###############################################################################
 # Look up engines
 def prepare():
-    print "Discovering engines",
-    discoverer.connect('discovering_started', cb_started)
-    discoverer.connect('engine_discovered', cb_gotone)
-    discoverer.connect('all_engines_discovered', start)
-    discoverer.discover()
+    print("Discovering engines", end=' ')
+    discoverer.connect('discovering_started', cb_started)   
+    discoverer.connect('engine_discovered', cb_gotone)  
+    discoverer.connect('all_engines_discovered', start)   
+    discoverer.discover()   
 
 def cb_started(discoverer, binnames):
-    print "Wait a moment while we discover %d engines" % len(binnames)
+    print("Wait a moment while we discover %d engines" % len(binnames))
 
 def cb_gotone (discoverer, binname, engine):
     sys.stdout.write(".")
@@ -62,20 +73,20 @@ def start(discoverer):
     global engines, results, minutes
     engines = discoverer.getEngines()
     n = len(engines)
-    for i in xrange(n):
+    for i in range(n):
         results.append([None]*n)
     
-    print
-    print "Your installed engines are:"
+    print()
+    print("Your installed engines are:")
     for i, engine in enumerate(engines):
         name = discoverer.getName(engine)
-        print "[%s] %s" % (name[:3], name)
-    print "The total amount of fights will be %d" % (n*(n-1))
-    print
+        print("[%s] %s" % (name[:3], name))
+    print("The total amount of fights will be %d" % (n*(n-1)))
+    print()
     minutes = int(raw_input("Please enter the clock minutes for each game [n]: "))
-    print "The games will last up to %d minutes." % (2*n*(n-1)*minutes)
-    print "You will be informed of the progress as the games finish."
-    print
+    print("The games will last up to %d minutes." % (2*n*(n-1)*minutes))
+    print("You will be informed of the progress as the games finish.")
+    print()
     
     runGame()
 
@@ -84,7 +95,7 @@ def start(discoverer):
 def runGame():
     a, b = findMatch()
     if a == None:
-        print "All games have now been played. Here are the final scores:"
+        print("All games have now been played. Here are the final scores:")
         printResults()
         mainloop.quit()
         return
@@ -100,18 +111,18 @@ def runGame():
     game.start()
 
 def cb_gamestarted(game):
-    print "Starting the game between %s and %s" % tuple(game.players)
+    print("Starting the game between %s and %s" % tuple(game.players))
 
 def cb_gameended(game, reason):
-    print "The game between %s and %s ended %s" % (tuple(game.players)+(reprResult[game.status],))
+    print("The game between %s and %s ended %s" % (tuple(game.players)+(reprResult[game.status],)))
     if game.status not in (DRAW, WHITEWON, BLACKWON):
-        print "Something must have gone wrong. But we'll just try to continue!"
+        print("Something must have gone wrong. But we'll just try to continue!")
     else:
         i, j = current
         results[i][j] = game.status
-        print "The current scores are:"
+        print("The current scores are:")
     printScoreboard()
-    print
+    print()
     
     f = open("arena.pgn", "a+")
     save(f, game)
@@ -122,28 +133,28 @@ def cb_gameended(game, reason):
 # A few helpers
 def printScoreboard():
     names = [discoverer.getName(e)[:3] for e in engines]
-    print "W\B", " ".join(names)
+    print("W\B", " ".join(names))
     for i, nameA in enumerate(names):
-        print nameA,
+        print(nameA, end=' ')
         for j, nameB in enumerate(names):
-            if i == j: print " # ",
-            elif results[i][j] == DRAW: print "½-½",
-            elif results[i][j] == WHITEWON: print "1-0",
-            elif results[i][j] == BLACKWON: print "0-1",
-            else: print " . ",
-        print
+            if i == j: print(" # ", end=' ')
+            elif results[i][j] == DRAW: print("½-½", end=' ')
+            elif results[i][j] == WHITEWON: print("1-0", end=' ')
+            elif results[i][j] == BLACKWON: print("0-1", end=' ')
+            else: print(" . ", end=' ')
+        print()
 
 def printResults():
     scores = []
-    for i in xrange(len(engines)):
-        points = sum(2 for j in xrange(len(engines)) if results[i][j] == WHITEWON) \
-               + sum(1 for j in xrange(len(engines)) if results[i][j] == DRAW) \
-               + sum(2 for j in xrange(len(engines)) if results[j][i] == BLACKWON) \
-               + sum(1 for j in xrange(len(engines)) if results[j][i] == DRAW)
+    for i in range(len(engines)):
+        points = sum(2 for j in range(len(engines)) if results[i][j] == WHITEWON) \
+               + sum(1 for j in range(len(engines)) if results[i][j] == DRAW) \
+               + sum(2 for j in range(len(engines)) if results[j][i] == BLACKWON) \
+               + sum(1 for j in range(len(engines)) if results[j][i] == DRAW)
         scores.append((points, i))
     scores.sort(reverse=True)
     for points, i in scores:
-        print discoverer.getName(engines[i]), ":", points/2, "½"*(points%2)
+        print(discoverer.getName(engines[i]), ":", points/2, "½"*(points%2))
 
 #def findMatch():
 #    for i, engineA in enumerate(engines):
@@ -154,8 +165,8 @@ def printResults():
 
 import random
 def findMatch():
-    pos = [(i,j) for i in xrange(len(engines))
-                 for j in xrange(len(engines))
+    pos = [(i,j) for i in range(len(engines))
+                 for j in range(len(engines))
                  if i != j and results[i][j] == None]
     #pos = [(i,j) for i,j in pos if
     #       "pychess" in discoverer.getName(engines[i]).lower() or

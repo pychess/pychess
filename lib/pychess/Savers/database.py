@@ -1,17 +1,20 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import absolute_import
+from __future__ import print_function
+
 from array import array
 
 from sqlalchemy import select, func, and_
 
-from pgn import PGNFile
+from .pgn import PGNFile
 from pychess.Utils.const import reprResult, WHITE, BLACK
 from pychess.Utils.const import *
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
 from pychess.Database.model import metadata, event, site, player, pl1, pl2, game, annotator
-from pychess.Variants.fischerandom import FischerRandomChess
+from pychess.Variants.fischerandom import FischerandomBoard
 
 __label__ = _("PyChess database")
 __endings__ = "pdb",
@@ -34,7 +37,7 @@ def save (file, model, position=None):
     board = int(model.tags.get("Board")) if model.tags.get("Board") else None
     white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else None
     black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
-    variant = 1 if issubclass(model.variant, FischerRandomChess) else None
+    variant = 1 if issubclass(model.variant, FischerandomBoard) else None
     fen = model.boards[0].board.asFen()
     fen = fen if fen != FEN_START else None
     game_annotator = model.tags.get("Annotator")
@@ -44,11 +47,11 @@ def save (file, model, position=None):
         if not name:
             return None
 
-        s = select([table.c.id], table.c.name==name.decode("utf_8"))
+        s = select([table.c.id], table.c.name==name)
         result = conn.execute(s)
         id_ = result.scalar()
         if id_ is None:
-            result = conn.execute(table.insert().values(name=name.decode("utf_8")))
+            result = conn.execute(table.insert().values(name=name))
             id_ = result.inserted_primary_key[0]
         return id_
 
@@ -90,7 +93,7 @@ def save (file, model, position=None):
             'annotator_id': annotator_id,
             'collection_id': collection_id, 
             'movelist': movelist.tostring(),
-            'comments': "|".join(comments).decode("utf_8"),
+            'comments': "|".join(comments),
             }
 
         if hasattr(model, "game_id") and model.game_id is not None:
@@ -109,11 +112,11 @@ def load(file):
     
     s = select([func.count(game.c.id)])
     count = conn.execute(s).scalar()
-    print "Database contains %s games" % count
+    print("Database contains %s games" % count)
     s = select([player.c.name])
     result = conn.execute(s)
     players = result.fetchall()
-    print "Database contains %s players" % len(players)
+    print("Database contains %s players" % len(players))
     
     s = select([game.c.id.label("Id"), pl1.c.name.label('White'), pl2.c.name.label('Black'), game.c.result.label('Result'),
                 event.c.name.label('Event'), site.c.name.label('Site'), game.c.round.label('Round'), 
@@ -239,7 +242,7 @@ class Database(PGNFile):
                     last_board.nags.append("$%s" % (elem-NAG))
 
                 else:
-                    print "Unknown element in movelist array:", elem
+                    print("Unknown element in movelist array:", elem)
 
             if error:
                 raise error

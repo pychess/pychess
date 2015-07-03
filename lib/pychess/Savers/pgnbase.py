@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import print_function
+
 import re
 
 from pychess.Utils.const import *
@@ -21,8 +23,8 @@ pattern = re.compile(r"""
     |(\))                # variation end
     |(\*|1-0|0-1|1/2)    # result (spec requires 1/2-1/2 for draw, but we want to tolerate simple 1/2 too)
     |(
-    ([a-hKQRBN][a-hxKQRBN1-8+#=\-]{1,6}
-    |[PNBRQ]@[a-h][1-8][+#]?  # crazyhouse drop move
+    ([a-hKQRBNMSF][a-hxKQRBNMSF1-8+#=\-]{1,6}
+    |[PNBRQMSFK]@[a-h][1-8][+#]?  # drop move
     |o\-o(?:\-o)?
     |O\-O(?:\-O)?
     |0\-0(?:\-0)?
@@ -87,14 +89,14 @@ class PgnBase(ChessFile):
                     mstr = m.group(MOVE)
                     try:
                         lmove = parseSAN(last_board, mstr)
-                    except ParsingError, e:
+                    except ParsingError as e:
                         # TODO: save the rest as comment
                         # last_board.children.append(string[m.start():])
                         notation, reason, boardfen = e.args
                         ply = last_board.plyCount
                         if ply % 2 == 0:
-                            moveno = "%d." % (ply/2+1)
-                        else: moveno = "%d..." % (ply/2+1)
+                            moveno = "%d." % (ply//2+1)
+                        else: moveno = "%d..." % (ply//2+1)
                         errstr1 = _("The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
                                     'moveno': moveno, 'notation': notation}
                         errstr2 = _("The move failed because %s.") % reason
@@ -103,8 +105,8 @@ class PgnBase(ChessFile):
                     except:
                         ply = last_board.plyCount
                         if ply % 2 == 0:
-                            moveno = "%d." % (ply/2+1)
-                        else: moveno = "%d..." % (ply/2+1)
+                            moveno = "%d." % (ply//2+1)
+                        else: moveno = "%d..." % (ply//2+1)
                         errstr1 = _( "Error parsing move %(moveno)s %(mstr)s") % {"moveno": moveno, "mstr": mstr}
                         self.error = LoadingError (errstr1, "")
                         break
@@ -150,7 +152,7 @@ class PgnBase(ChessFile):
                     break
 
                 else:
-                    print "Unknown:",text
+                    print("Unknown:",text)
 
         return boards #, status
 
@@ -175,20 +177,8 @@ class PgnBase(ChessFile):
         if variant:
             if "fischer" in variant.lower() or "960" in variant:
                 return "Fischerandom"
-            elif "atomic" in variant.lower():
-                return "Atomic"
-            elif "crazyhouse" in variant.lower():
-                return "Crazyhouse"
-            elif "wildcastle" in variant.lower():
-                return "Wildcastle"
-            elif "suicide" in variant.lower():
-                return "Suicide"
-            elif "losers" in variant.lower():
-                return "Losers"
-            elif "kingofthehill" in variant.lower().replace("-", ""):
-                return "Kingofthehill"
             else:
-                return ""
+                return variant.lower().capitalize()
         else:
             # FICS saves variant names in event tag
             event = self.get_event(no)
@@ -204,8 +194,6 @@ class PgnBase(ChessFile):
                 return "Suicide"
             elif "losers" in event.lower():
                 return "Losers"
-            elif "kingofthehill" in event.lower().replace("-", ""):
-                return "Kingofthehill"
             else:
                 return ""
 
@@ -266,19 +254,19 @@ def pgn_load(file, klass=PgnBase):
                 if not inTags:
                     files.append(["",""])
                     inTags = True
-                files[-1][0] += line.decode("latin_1")
+                files[-1][0] += line
             else:
                 if not inTags:
-                    files[-1][1] += line.decode('latin_1')
+                    files[-1][1] += line
                 else:
-                    print "Warning: ignored invalid tag pair %s" % line
+                    print("Warning: ignored invalid tag pair %s" % line)
         else:
             inTags = False
             if not files:
                 # In rare cases there might not be any tags at all. It's not
                 # legal, but we support it anyways.
                 files.append(["",""])
-            files[-1][1] += line.decode('latin_1')
+            files[-1][1] += line
                 
     return klass(files)
 
@@ -335,7 +323,7 @@ nag2symbolDict = {
 }
 
 symbol2nagDict = {}
-for k, v in nag2symbolDict.iteritems():
+for k, v in nag2symbolDict.items():
     if v not in symbol2nagDict:
         symbol2nagDict[v] = k
 

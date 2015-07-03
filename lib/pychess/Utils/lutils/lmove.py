@@ -1,8 +1,12 @@
 # -*- coding: UTF-8 -*-
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-from ldata import *
-from bitboard import firstBit
-from validator import validateMove
+from .ldata import *
+from .bitboard import firstBit
+from .validator import validateMove
+
+from pychess.compat import unichr, unicode
 from pychess.Utils.const import *
 from pychess.Utils.repr import reprPiece, localReprSign
 from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove
@@ -98,10 +102,10 @@ def listToMoves (board, movstrs, type=None, testvalidate=False, ignoreErrors=Fal
                 break
             raise
         
-        if testvalidate:
+        if testvalidate and mstr !=  "--":
             if not validateMove (board, move):
                 if not ignoreErrors:
-                    raise ParsingError, (mstr, 'Validation', board.asFen())
+                    raise ParsingError(mstr, 'Validation', board.asFen())
                 break 
         
         moves.append(move)
@@ -116,9 +120,6 @@ def listToMoves (board, movstrs, type=None, testvalidate=False, ignoreErrors=Fal
 def toSAN (board, move, localRepr=False):
     """ Returns a Short/Abbreviated Algebraic Notation string of a move 
         The board should be prior to the move """
-    
-    # Has to be importet at calltime, as lmovegen imports lmove
-    #from lmovegen import genAllMoves
 
     def check_or_mate():
         board_clone = board.clone()
@@ -164,7 +165,11 @@ def toSAN (board, move, localRepr=False):
     part1 = ""
     
     if fpiece != PAWN or flag == DROP:
-        if localRepr:
+        if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
+            part0 += reprSignMakruk[fpiece]
+        elif board.variant == SITTUYINCHESS:
+            part0 += reprSignSittuyin[fpiece]
+        elif localRepr:
             part0 += localReprSign[fpiece]
         else:
             part0 += reprSign[fpiece]
@@ -208,13 +213,18 @@ def toSAN (board, move, localRepr=False):
                 part0 += reprFile[x]
     
     if tpiece != EMPTY or flag == ENPASSANT:
-        part1 = "x" + part1
-        if fpiece == PAWN:
-            part0 += reprFile[FILE(fcord)]
+        if not (board.variant == SITTUYINCHESS and fcord == tcord):
+            part1 = "x" + part1
+            if fpiece == PAWN:
+                part0 += reprFile[FILE(fcord)]
     
     notat = part0 + part1
     if flag in PROMOTIONS:
-        if localRepr:
+        if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
+            notat += "="+reprSignMakruk[PROMOTE_PIECE(flag)]
+        elif board.variant == SITTUYINCHESS:
+            notat += "="+reprSignSittuyin[PROMOTE_PIECE(flag)]
+        elif localRepr:
             notat += "="+localReprSign[PROMOTE_PIECE(flag)]
         else:
             notat += "="+reprSign[PROMOTE_PIECE(flag)]
@@ -234,7 +244,7 @@ def parseSAN (board, san):
     if notat == "--":
         return newMove(board.kings[color], board.kings[color], NULL_MOVE)
 
-    if notat[-1] in ("+", "#"):
+    if notat[-1] in "+#":
         notat = notat[:-1]
         # If '++' was used in place of #
         if notat[-1] == "+":
@@ -244,18 +254,22 @@ def parseSAN (board, san):
     
     # If last char is a piece char, we assue it the promote char
     c = notat[-1]
-    if c in ("K", "Q", "R", "B", "N", "k", "q", "r", "b", "n"):
+    if c in "KQRBNSMFkqrbnsmf.":
         c = c.lower()
         if c == "k" and board.variant != SUICIDECHESS:
-            raise ParsingError, (san, _("invalid promoted piece"), board.asFen())
+            raise ParsingError(san, _("invalid promoted piece"), board.asFen())
+        elif c == "." and board.variant in (CAMBODIANCHESS, MAKRUKCHESS, SITTUYINCHESS):
+            # temporary hack for xboard bug
+            flag = QUEEN_PROMOTION
+        else:
+            flag = chr2Sign[c] + 2
             
-        flag = chr2Sign[c] + 2
         if notat[-2] == "=":
             notat = notat[:-2]
         else: notat = notat[:-1]
     
     if len(notat) < 2:
-        raise ParsingError, (san, _("the move needs a piece and a cord"), board.asFen())
+        raise ParsingError(san, _("the move needs a piece and a cord"), board.asFen())
     
     if notat[0] in "O0o":
         fcord = board.ini_kings[color]
@@ -282,19 +296,19 @@ def parseSAN (board, san):
             piece = chrU2Sign[notat[0]]
         return newMove(piece, tcord, DROP)
     
-    if notat[0] in ("Q", "R", "B", "K", "N"):
+    if notat[0] in "QRBKNSMF":
         piece = chrU2Sign[notat[0]]
         notat = notat[1:]
     else:
         piece = PAWN
-        if notat[-1] in ("1", "8") and flag == NORMAL_MOVE:
-            raise ParsingError, (
+        if notat[-1] in "18" and flag == NORMAL_MOVE and board.variant != SITTUYINCHESS:
+            raise ParsingError(
                     san, _("promotion move without promoted piece is incorrect"), board.asFen())
     
     if "x" in notat:
         notat, tcord = notat.split("x")
         if not tcord in cordDic:
-            raise ParsingError, (
+            raise ParsingError(
                     san, _("the captured cord (%s) is incorrect") % tcord, board.asFen())
 
         tcord = cordDic[tcord]
@@ -305,7 +319,7 @@ def parseSAN (board, san):
                 flag = ENPASSANT
     else:
         if not notat[-2:] in cordDic:
-            raise ParsingError, (
+            raise ParsingError(
                     san, _("the end cord (%s) is incorrect") % notat[-2:], board.asFen())
         
         tcord = cordDic[notat[-2:]]
@@ -346,6 +360,9 @@ def parseSAN (board, san):
             else:
                 pawns = board.boards[BLACK][PAWN]
                 fcord = tcord+16 if RANK(tcord)==4 and not (pawns & fileBits[FILE(tcord)] & rankBits[5]) else tcord+8
+            if board.variant == SITTUYINCHESS and flag == QUEEN_PROMOTION and \
+                (pawns & fileBits[FILE(tcord)] & rankBits[RANK(tcord)]):
+                return newMove(tcord, tcord, flag)
         return newMove(fcord, tcord, flag)
     else:
         if board.pieceCount[color][piece] == 1:
@@ -372,31 +389,42 @@ def parseSAN (board, san):
                     return move
     
     errstring = "no %s is able to move to %s" % (reprPiece[piece], reprCord[tcord])
-    raise ParsingError, (san, errstring, board.asFen())
+    raise ParsingError(san, errstring, board.asFen())
 
 ################################################################################
 # toLan                                                                        #
 ################################################################################
 
-def toLAN (board, move):
+def toLAN (board, move, localRepr=False):
     """ Returns a Long/Expanded Algebraic Notation string of a move
         board should be prior to the move """
     
     fcord = FCORD(move)
     tcord = TCORD(move)
+    flag = FLAG(move)
+    fpiece = fcord if flag == DROP else board.arBoard[fcord]
     
     s = ""
-    if board.arBoard[fcord] != PAWN:
-        s = reprSign[board.arBoard[fcord]]
-    s += reprCord[FCORD(move)]
-    
-    if board.arBoard[tcord] == EMPTY:
-        s += "-"
-    else: s += "x"
+    if fpiece != PAWN or flag == DROP:
+        if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
+            s = reprSignMakruk[fpiece]
+        elif board.variant == SITTUYINCHESS:
+            s = reprSignSittuyin[fpiece]
+        elif localRepr:
+            s = localReprSign[fpiece]
+        else:
+            s = reprSign[fpiece]
+
+    if flag == DROP:
+        s += "@"
+    else:
+        s += reprCord[FCORD(move)]
+        if board.arBoard[tcord] == EMPTY:
+            s += "-"
+        else:
+            s += "x"
     
     s += reprCord[tcord]
-    
-    flag = FLAG(move)
     
     if flag in PROMOTIONS:
         s += "=" + reprSign[PROMOTE_PIECE(flag)]
@@ -423,7 +451,7 @@ def parseLAN (board, lan):
     # We want to use the SAN parser for LAN moves like "Nb1-c3" or "Rd3xd7"
     # The san parser should be able to handle most stuff, as long as we remove
     # the slash
-    if not lan.upper().startswith("O-O"):
+    if not lan.upper().startswith("O-O") and not lan.startswith("--"):
         lan = lan.replace("-","")
     return parseSAN (board, lan)
 
@@ -437,6 +465,7 @@ def toAN (board, move, short=False, castleNotation=CASTLE_SAN):
         
         short -- returns the short variant, e.g. f7f8q rather than f7f8=Q
     """
+
     fcord = (move >> 6) & 63
     tcord = move & 63
     flag = move >> 12
@@ -450,15 +479,28 @@ def toAN (board, move, short=False, castleNotation=CASTLE_SAN):
         # No treatment needed for CASTLE_KK
     
     if flag == DROP:
-        s = "%s@%s" % (reprSign[fcord], reprCord[tcord])
+        if board.variant == SITTUYINCHESS:
+            s = "%s@%s" % (reprSignSittuyin[fcord], reprCord[tcord])
+        else:
+            s = "%s@%s" % (reprSign[fcord], reprCord[tcord])
     else:
         s = reprCord[fcord] + reprCord[tcord]
     
     if flag in PROMOTIONS:
         if short:
-            s += reprSign[PROMOTE_PIECE(flag)].lower()
+            if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
+                s += reprSignMakruk[PROMOTE_PIECE(flag)].lower()
+            elif board.variant == SITTUYINCHESS:
+                s += reprSignSittuyin[PROMOTE_PIECE(flag)].lower()
+            else:
+                s += reprSign[PROMOTE_PIECE(flag)].lower()
         else:
-            s += "=" + reprSign[PROMOTE_PIECE(flag)]
+            if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
+                s += "=" + reprSignMakruk[PROMOTE_PIECE(flag)]
+            elif board.variant == SITTUYINCHESS:
+                s += "=" + reprSignSittuyin[PROMOTE_PIECE(flag)]
+            else:
+                s += "=" + reprSign[PROMOTE_PIECE(flag)]
     return s
 
 ################################################################################
@@ -469,19 +511,19 @@ def parseAN (board, an):
     """ Parse an Algebraic Notation string """
 
     if not 4 <= len(an) <= 6:
-        raise ParsingError, (an, "the move must be 4 or 6 chars long", board.asFen())
+        raise ParsingError(an, "the move must be 4 or 6 chars long", board.asFen())
     
     try:
         fcord = cordDic[an[:2]]
         tcord = cordDic[an[2:4]]
-    except KeyError, e:
-        raise ParsingError, (an, "the cord (%s) is incorrect" % e.args[0], board.asFen())
+    except KeyError as e:
+        raise ParsingError(an, "the cord (%s) is incorrect" % e.args[0], board.asFen())
     
     flag = NORMAL_MOVE
 
-    if len(an) > 4 and not an[-1] in ("Q", "R", "B", "N", "q", "r", "b", "n"):
-        if board.variant != SUICIDECHESS or board.variant == SUICIDECHESS and not an[-1] in ("K", "k"):
-            raise ParsingError, (an, "invalid promoted piece", board.asFen())
+    if len(an) > 4 and not an[-1] in "QRBNMSFqrbnmsf":
+        if board.variant != SUICIDECHESS or board.variant == SUICIDECHESS and not an[-1] in "Kk":
+            raise ParsingError(an, "invalid promoted piece", board.asFen())
 
     if len(an) == 5:
         #The a7a8q variant
@@ -508,8 +550,9 @@ def parseAN (board, an):
     elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \
             FILE(fcord) != FILE(tcord) and RANK(fcord) != RANK(tcord):
         flag = ENPASSANT
-    elif board.arBoard[fcord] == PAWN and an[3] in ("1", "8"):
-            raise ParsingError, (
+    elif board.arBoard[fcord] == PAWN:
+        if an[3] in "18" and board.variant != SITTUYINCHESS:
+            raise ParsingError(
                     an, _("promotion move without promoted piece is incorrect"), board.asFen())
 
     return newMove (fcord, tcord, flag)
@@ -519,23 +562,29 @@ def parseAN (board, an):
 ################################################################################
 
 san2WhiteFanDic = {
-    ord(u"K"): FAN_PIECES[WHITE][KING],
-    ord(u"Q"): FAN_PIECES[WHITE][QUEEN],
-    ord(u"R"): FAN_PIECES[WHITE][ROOK],
-    ord(u"B"): FAN_PIECES[WHITE][BISHOP],
-    ord(u"N"): FAN_PIECES[WHITE][KNIGHT],
-    ord(u"+"): u"†",
-    ord(u"#"): u"‡"
+    ord("K"): FAN_PIECES[WHITE][KING],
+    ord("Q"): FAN_PIECES[WHITE][QUEEN],
+    ord("M"): FAN_PIECES[WHITE][QUEEN],
+    ord("F"): FAN_PIECES[WHITE][QUEEN],
+    ord("R"): FAN_PIECES[WHITE][ROOK],
+    ord("B"): FAN_PIECES[WHITE][BISHOP],
+    ord("S"): FAN_PIECES[WHITE][BISHOP],
+    ord("N"): FAN_PIECES[WHITE][KNIGHT],
+    ord("+"): "†",
+    ord("#"): "‡"
 }
 
 san2BlackFanDic = {
-    ord(u"K"): FAN_PIECES[BLACK][KING],
-    ord(u"Q"): FAN_PIECES[BLACK][QUEEN],
-    ord(u"R"): FAN_PIECES[BLACK][ROOK],
-    ord(u"B"): FAN_PIECES[BLACK][BISHOP],
-    ord(u"N"): FAN_PIECES[BLACK][KNIGHT],
-    ord(u"+"): u"†",
-    ord(u"#"): u"‡"
+    ord("K"): FAN_PIECES[BLACK][KING],
+    ord("Q"): FAN_PIECES[BLACK][QUEEN],
+    ord("M"): FAN_PIECES[BLACK][QUEEN],
+    ord("F"): FAN_PIECES[BLACK][QUEEN],
+    ord("R"): FAN_PIECES[BLACK][ROOK],
+    ord("B"): FAN_PIECES[BLACK][BISHOP],
+    ord("S"): FAN_PIECES[BLACK][BISHOP],
+    ord("N"): FAN_PIECES[BLACK][KNIGHT],
+    ord("+"): "†",
+    ord("#"): "‡"
 }
 
 def toFAN (board, move):
@@ -552,9 +601,9 @@ def toFAN (board, move):
 ################################################################################
 
 fan2SanDic = {}
-for k, v in san2WhiteFanDic.iteritems():
+for k, v in san2WhiteFanDic.items():
     fan2SanDic[ord(v)] = unichr(k)
-for k, v in san2BlackFanDic.iteritems():
+for k, v in san2BlackFanDic.items():
     fan2SanDic[ord(v)] = unichr(k)
 
 def parseFAN (board, fan):

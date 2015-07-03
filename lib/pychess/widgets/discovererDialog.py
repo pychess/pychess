@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import os
 
-import gtk
+from gi.repository import Gtk
 
 from pychess.Players.engineNest import discoverer
 from pychess.System import conf, uistuff
@@ -40,10 +41,10 @@ class DiscovererDialog:
         #======================================================================
         cls.nameToBar = {}
         for i, name in enumerate(binnames):
-            label = gtk.Label(name+":")
+            label = Gtk.Label(label=name+":")
             label.props.xalign = 1
             cls.widgets["enginesTable"].attach(label, 0, 1, i, i+1)
-            bar = gtk.ProgressBar()
+            bar = Gtk.ProgressBar()
             cls.widgets["enginesTable"].attach(bar, 1, 2, i, i+1)
             cls.nameToBar[name] = bar
         
@@ -51,14 +52,14 @@ class DiscovererDialog:
         # Add throbber
         #=======================================================================
         
-        cls.throbber = gtk.Spinner()
+        cls.throbber = Gtk.Spinner()
         cls.throbber.set_size_request(50, 50)
         cls.widgets["throbberDock"].add(cls.throbber)
         
         #=======================================================================
         # Show the window
         #=======================================================================
-        cls.widgets["discovererDialog"].set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        cls.widgets["discovererDialog"].set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         cls.widgets["discovererDialog"].set_modal(True)
         cls.widgets["discovererDialog"].set_transient_for(mainwindow)
         cls.widgets["discovererDialog"].show_all()
@@ -67,6 +68,17 @@ class DiscovererDialog:
     @idle_add
     def _onDiscoveringStarted (cls, discoverer, binnames):
         cls.throbber.start()
+        #======================================================================
+        # Insert the names to be discovered
+        #======================================================================
+        cls.nameToBar = {}
+        for i, name in enumerate(binnames):
+            label = Gtk.Label(label=name+":")
+            label.props.xalign = 1
+            cls.widgets["enginesTable"].attach(label, 0, 1, i, i+1)
+            bar = Gtk.ProgressBar()
+            cls.widgets["enginesTable"].attach(bar, 1, 2, i, i+1)
+            cls.nameToBar[name] = bar
     
     @classmethod
     @idle_add

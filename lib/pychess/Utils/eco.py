@@ -1,9 +1,11 @@
+from __future__ import print_function
 import os
 import atexit
 import gettext
 import sqlite3
 import struct
 
+from pychess.compat import memoryview
 from pychess.System.prefix import addDataPrefix, isInstalled
 
 db_path = os.path.join(addDataPrefix("eco.db"))
@@ -12,7 +14,7 @@ if os.path.exists(db_path):
     atexit.register(conn.close)
     ECO_OK = True
 else:
-    print "Warning: eco.db not find, run pgn2ecodb.sh"
+    print("Warning: eco.db not find, run pgn2ecodb.sh")
     ECO_OK = False
 
 if isInstalled():
@@ -33,6 +35,6 @@ def get_eco(hash):
         return None
     cur = conn.cursor()
     select = "select eco, opening, variation from openings where hash=? and lang=?"
-    cur.execute(select, (buffer(hash_struct.pack(hash)), lang))
+    cur.execute(select, (memoryview(hash_struct.pack(hash)), lang))
     return cur.fetchone()
     

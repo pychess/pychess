@@ -1,36 +1,40 @@
 import colorsys
-import Queue
 import re
 import webbrowser
-import gtk
-import pango
 from threading import Thread
 
-from pychess.System import conf, fident
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
+from gi.repository import Pango
+from gi.repository.GdkPixbuf import Pixbuf
+
+from pychess.compat import Queue, Empty
+from pychess.System import conf, glock, fident
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
 
 
-def createCombo (combo, data=[]):
-    ls = gtk.ListStore(gtk.gdk.Pixbuf, str)
+def createCombo (combo, data=[]):    
+    ls = Gtk.ListStore(Pixbuf, str)
     for row in data:
         ls.append(row)
     combo.clear()
     
     combo.set_model(ls)
-    crp = gtk.CellRendererPixbuf()
+    crp = Gtk.CellRendererPixbuf()
     crp.set_property('xalign',0)
     crp.set_property('xpad', 2)
     combo.pack_start(crp, False)
     combo.add_attribute(crp, 'pixbuf', 0)
     
-    crt = gtk.CellRendererText()
+    crt = Gtk.CellRendererText()
     crt.set_property('xalign',0)
     crt.set_property('xpad', 4)
     combo.pack_start(crt, True)
     combo.add_attribute(crt, 'text', 1)
-    #crt.set_property('ellipsize', pango.ELLIPSIZE_MIDDLE)
+    #crt.set_property('ellipsize', Pango.EllipsizeMode.MIDDLE)
 
 
 def updateCombo (combo, data):
@@ -77,29 +81,35 @@ def genColor (n, startpoint=0):
 
 def keepDown (scrolledWindow):
     def changed (vadjust):
-        if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-            vadjust.set_value(vadjust.upper-vadjust.page_size)
+        if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:           
+            vadjust.set_value(vadjust.get_upper()-vadjust.get_page_size())
             vadjust.need_scroll = True
     scrolledWindow.get_vadjustment().connect("changed", changed)
         
     def value_changed (vadjust):
-        vadjust.need_scroll = abs(vadjust.value + vadjust.page_size - \
-                vadjust.upper) < vadjust.step_increment
+        vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() - \
+                vadjust.get_upper()) < vadjust.get_step_increment()
     scrolledWindow.get_vadjustment().connect("value-changed", value_changed)
 
 
 
-def appendAutowrapColumn (treeview, defwidth, name, **kvargs):
-    cell = gtk.CellRendererText()
-    cell.props.wrap_mode = pango.WRAP_WORD
-    cell.props.wrap_width = defwidth
-    column = gtk.TreeViewColumn(name, cell, **kvargs)
+# wrap analysis text column. thanks to
+# http://www.islascruz.org/html/index.php?blog/show/Wrap-text-in-a-TreeView-column.html
+def appendAutowrapColumn (treeview, name, **kvargs):
+    cell = Gtk.CellRendererText()
+    cell.props.wrap_mode = Pango.WrapMode.WORD
+    column = Gtk.TreeViewColumn(name, cell, **kvargs)
     treeview.append_column(column)
     
     def callback (treeview, allocation, column, cell):
-        otherColumns = (c for c in treeview.get_columns() if c != column)
+        otherColumns = [c for c in treeview.get_columns() if c != column]
         newWidth = allocation.width - sum(c.get_width() for c in otherColumns)
-        newWidth -= treeview.style_get_property("horizontal-separator") * 2
+
+        hsep = GObject.Value()
+        hsep.init(GObject.TYPE_INT)
+        hsep.set_int(0)
+        treeview.style_get_property("horizontal-separator", hsep)
+        newWidth -= hsep.get_int() * (len(otherColumns)+1) * 2
         if cell.props.wrap_width == newWidth or newWidth <= 0:
             return
         cell.props.wrap_width = newWidth
@@ -112,40 +122,40 @@ def appendAutowrapColumn (treeview, defwidth, name, **kvargs):
     treeview.connect_after("size-allocate", callback, column, cell)
     
     scroll = treeview.get_parent()
-    if isinstance(scroll, gtk.ScrolledWindow):
-        scroll.set_policy(gtk.POLICY_NEVER,
+    if isinstance(scroll, Gtk.ScrolledWindow):
+        scroll.set_policy(Gtk.PolicyType.NEVER,
                           scroll.get_policy()[1])
     
     return cell
 
 
 METHODS = (
-    # gtk.SpinButton should be listed prior to gtk.Entry, as it is a
+    # Gtk.SpinButton should be listed prior to Gtk.Entry, as it is a
     # subclass, but requires different handling
-    (gtk.SpinButton, ("get_value", "set_value", "value-changed")),
-    (gtk.Entry, ("get_text", "set_text", "changed")),
-    (gtk.Expander, ("get_expanded", "set_expanded", "notify::expanded")),
-    (gtk.ComboBox, ("get_active", "set_active", "changed")),
-    # gtk.ToggleComboBox should be listed prior to gtk.ToggleButton, as it is a
+    (Gtk.SpinButton, ("get_value", "set_value", "value-changed")),
+    (Gtk.Entry, ("get_text", "set_text", "changed")),
+    (Gtk.Expander, ("get_expanded", "set_expanded", "notify::expanded")),
+    (Gtk.ComboBox, ("get_active", "set_active", "changed")),
+    # Gtk.ToggleComboBox should be listed prior to Gtk.ToggleButton, as it is a
     # subclass, but requires different handling
     (ToggleComboBox, ("_get_active", "_set_active", "changed")),
-    (gtk.IconView, ("_get_active", "_set_active", "selection-changed")),
-    (gtk.ToggleButton, ("get_active", "set_active", "toggled")),
-    (gtk.CheckMenuItem, ("get_active", "set_active", "toggled")),
-    (gtk.Range, ("get_value", "set_value", "value-changed")),
-    (gtk.TreeSortable, ("get_value", "set_value", "sort-column-changed")),
+    (Gtk.IconView, ("_get_active", "_set_active", "selection-changed")),
+    (Gtk.ToggleButton, ("get_active", "set_active", "toggled")),
+    (Gtk.CheckMenuItem, ("get_active", "set_active", "toggled")),
+    (Gtk.Range, ("get_value", "set_value", "value-changed")),
+    (Gtk.TreeSortable, ("get_value", "set_value", "sort-column-changed")),
     )
 
 def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
     if widget == None:
-        raise AttributeError, "key '%s' isn't in widgets" % key
+        raise AttributeError("key '%s' isn't in widgets" % key)
     
     for class_, methods_ in METHODS:
         if isinstance(widget, class_):
             getter, setter, signal = methods_
             break
     else:
-        raise AttributeError, "I don't have any knowledge of type: '%s'" % widget
+        raise AttributeError("I don't have any knowledge of type: '%s'" % widget)
     
     if get_value_:
         get_value = lambda: get_value_(widget)
@@ -181,7 +191,7 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
         conf.set(key, first_value)
 
 # loadDialogWidget() and saveDialogWidget() are similar to uistuff.keep() but are needed
-# for saving widget values for gtk.Dialog instances that are loaded with different
+# for saving widget values for Gtk.Dialog instances that are loaded with different
 # sets of values/configurations and which also aren't instant save like in
 # uistuff.keep(), but rather are saved later if and when the user clicks
 # the dialog's OK button
@@ -190,7 +200,7 @@ def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
     key = widget_name + "-" + str(config_number)
     
     if widget == None:
-        raise AttributeError, "key '%s' isn't in widgets" % widget_name
+        raise AttributeError("key '%s' isn't in widgets" % widget_name)
     
     for class_, methods_ in METHODS:
         if isinstance(widget, class_):
@@ -198,7 +208,7 @@ def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
             break
     else:
         if set_value_ == None:
-            raise AttributeError, "I don't have any knowledge of type: '%s'" % widget
+            raise AttributeError("I don't have any knowledge of type: '%s'" % widget)
     
     if get_value_:
         get_value = lambda: get_value_(widget)
@@ -232,7 +242,7 @@ def saveDialogWidget (widget, widget_name, config_number, get_value_=None):
     key = widget_name + "-" + str(config_number)
     
     if widget == None:
-        raise AttributeError, "key '%s' isn't in widgets" % widget_name
+        raise AttributeError("key '%s' isn't in widgets" % widget_name)
     
     for class_, methods_ in METHODS:
         if isinstance(widget, class_):
@@ -240,7 +250,7 @@ def saveDialogWidget (widget, widget_name, config_number, get_value_=None):
             break
     else:
         if get_value_ == None:
-            raise AttributeError, "I don't have any knowledge of type: '%s'" % widget
+            raise AttributeError("I don't have any knowledge of type: '%s'" % widget)
     
     if get_value_:
         get_value = lambda: get_value_(widget)
@@ -256,8 +266,8 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
     
     key = key + "window"
     
-    def savePosition (window, *event):
-        log.debug("keepWindowSize.savePosition: %s" % window.title)
+    def savePosition (window, *event):        
+        log.debug("keepWindowSize.savePosition: %s" % window.get_title())
         width = window.get_allocation().width
         height = window.get_allocation().height
         x, y = window.get_position()
@@ -278,7 +288,7 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
     window.connect("delete-event", savePosition, "delete-event")
     
     def loadPosition (window):
-        log.debug("keepWindowSize.loadPosition: %s" % window.title)
+        #log.debug("keepWindowSize.loadPosition: %s" % window.title)
         width, height = window.get_size_request()
         
         if conf.hasKey(key+"_width") and conf.hasKey(key+"_height"):
@@ -327,28 +337,29 @@ def onceWhenReady(window, func, *args, **kwargs):
     handler_id = window.connect_after("size-allocate", cb, func, *args, **kwargs)
 
 def getMonitorBounds():
-    screen = gtk.gdk.screen_get_default()
-    root_window = screen.get_root_window()
-    mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
+    screen = Gdk.Screen.get_default()
+    root_window = screen.get_root_window()    
+    ptr_window, mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
     current_monitor_number = screen.get_monitor_at_point(mouse_x,mouse_y)
     monitor_geometry = screen.get_monitor_geometry(current_monitor_number)
     return monitor_geometry.x, monitor_geometry.y, monitor_geometry.width, monitor_geometry.height
 
 
-tooltip = gtk.Window(gtk.WINDOW_POPUP)
+tooltip = Gtk.Window(Gtk.WindowType.POPUP)
 tooltip.set_name('gtk-tooltip')
 tooltip.ensure_style()
 tooltipStyle = tooltip.get_style()
 
 def makeYellow (box):
-    def on_box_expose_event (box, event):
-        box.style.paint_flat_box (box.window,
-            gtk.STATE_NORMAL, gtk.SHADOW_NONE, None, box, "tooltip",
-            box.allocation.x, box.allocation.y,
-            box.allocation.width, box.allocation.height)
+    def on_box_expose_event (box, context):
+        #box.style.paint_flat_box (box.window,
+        #    Gtk.StateType.NORMAL, Gtk.ShadowType.NONE, None, box, "tooltip",
+        #    box.allocation.x, box.allocation.y,
+        #    box.allocation.width, box.allocation.height)
+        pass
     def cb (box):
         box.set_style(tooltipStyle)
-        box.connect("expose-event", on_box_expose_event)
+        box.connect("draw", on_box_expose_event)
     onceWhenReady(box, cb)
 
 
@@ -381,7 +392,7 @@ def initTexviewLinks (textview, text):
         textbuffer.insert (textbuffer.get_end_iter(), text[:s])
         
         tag = textbuffer.create_tag (None, foreground="blue",
-                underline=pango.UNDERLINE_SINGLE)
+                underline=Pango.Underline.SINGLE)
         tags.append([tag, text[s:e], type, textbuffer.get_end_iter()])
         
         textbuffer.insert_with_tags (
@@ -404,24 +415,24 @@ def initTexviewLinks (textview, text):
         if not iter: return
         for tag, link, type, s, e in tags:
             if iter and iter.has_tag(tag) and \
-                    tag.props.foreground_gdk.red == 0xffff:
+                    tag.props.foreground_Gdk.red == 0xffff:
                 if type == "link":
                     webbrowser.open(link)
                 else: webbrowser.open("mailto:"+link)
             tag.props.foreground = "blue"
     
-    stcursor = gtk.gdk.Cursor(gtk.gdk.XTERM)
-    linkcursor = gtk.gdk.Cursor(gtk.gdk.HAND2)
+    stcursor = Gdk.Cursor(Gdk.CursorType.XTERM)
+    linkcursor = Gdk.Cursor(Gdk.CursorType.HAND2)
     def on_motion_in_textview(textview, event):
-        textview.window.get_pointer()
+        #textview.get_window().get_pointer()
         iter = textview.get_iter_at_location (int(event.x), int(event.y))
         if not iter: return
         for tag, link, type, s, e in tags:
             if iter.has_tag(tag):
-                textview.get_window(gtk.TEXT_WINDOW_TEXT).set_cursor (
+                textview.get_window(Gtk.TextWindowType.TEXT).set_cursor (
                         linkcursor)
                 break
-        else: textview.get_window(gtk.TEXT_WINDOW_TEXT).set_cursor(stcursor)
+        else: textview.get_window(Gtk.TextWindowType.TEXT).set_cursor(stcursor)
     
     textview.connect ("motion-notify-event", on_motion_in_textview)
     textview.connect ("leave_notify_event", on_motion_in_textview)
@@ -433,7 +444,7 @@ class GladeWidgets:
     """ A simple class that wraps a the glade get_widget function
         into the python __getitem__ version """
     def __init__ (self, filename):
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.set_translation_domain("pychess")
         self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
         

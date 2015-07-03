@@ -1,11 +1,16 @@
+from __future__ import print_function
 import os
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
+
+from gi.repository.GdkPixbuf import Pixbuf
 
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
 from pychess.System.prefix import getEngineDataPrefix
+from pychess.System.SubProcess import searchPath
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
 from pychess.widgets import newGameDialog
 
@@ -22,7 +27,7 @@ def run(widgets):
         widgets["manage_engines_dialog"].connect("delete-event", delete_event)
         widgets["engines_close_button"].connect("clicked", delete_event)
         widgets["manage_engines_dialog"].connect("key-press-event",
-            lambda w,e: delete_event(w) if e.keyval == gtk.keysyms.Escape else None)
+            lambda w,e: delete_event(w) if e.keyval == Gdk.KEY_Escape else None)
 
         firstRun = False
 
@@ -39,15 +44,15 @@ class EnginesDialog():
         uistuff.keepWindowSize("engineswindow", self.dialog, defaultSize=(600, 500))
 
         # Put engines into tree store
-        allstore = gtk.ListStore(gtk.gdk.Pixbuf, str)
+        allstore = Gtk.ListStore(Pixbuf, str)
         
         self.tv = self.widgets["engines_treeview"]
         self.tv.set_model(allstore)
-        self.tv.append_column(gtk.TreeViewColumn(
-                "Flag", gtk.CellRendererPixbuf(), pixbuf=0))
-        name_renderer = gtk.CellRendererText()
+        self.tv.append_column(Gtk.TreeViewColumn(
+                "Flag", Gtk.CellRendererPixbuf(), pixbuf=0))
+        name_renderer = Gtk.CellRendererText()
         name_renderer.set_property("editable", True)
-        self.tv.append_column(gtk.TreeViewColumn("Name", name_renderer, text=1))
+        self.tv.append_column(Gtk.TreeViewColumn("Name", name_renderer, text=1))
         def name_edited(renderer, path, new_name):
             if self.cur_engine is not None:
                 old_name = self.cur_engine
@@ -65,17 +70,17 @@ class EnginesDialog():
 
         # Add cell renderer to protocol combo column
         protocol_combo = self.widgets["engine_protocol_combo"]
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         protocol_combo.pack_start(cell, True)
         protocol_combo.add_attribute(cell, "text", 0)
 
         # Add columns and cell renderers to options treeview 
-        self.options_store = gtk.ListStore(str, gobject.TYPE_PYOBJECT)
+        self.options_store = Gtk.ListStore(str, GObject.TYPE_PYOBJECT)
         optv = self.widgets["options_treeview"]
         optv.set_model(self.options_store)
-        optv.append_column(gtk.TreeViewColumn(
-           "Option", gtk.CellRendererText(), text=0))
-        optv.append_column(gtk.TreeViewColumn(
+        optv.append_column(Gtk.TreeViewColumn(
+           "Option", Gtk.CellRendererText(), text=0))
+        optv.append_column(Gtk.TreeViewColumn(
            "Data", KeyValueCellRenderer(self.options_store), data=1))
 
         @idle_add
@@ -129,12 +134,13 @@ class EnginesDialog():
         ################################################################
         # add button
         ################################################################
-        engine_chooser_dialog = gtk.FileChooserDialog(_("Select engine"), None, gtk.FILE_CHOOSER_ACTION_OPEN,
-            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        engine_chooser_dialog = Gtk.FileChooserDialog(_("Select engine"), None, Gtk.FileChooserAction.OPEN,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
-        filter = gtk.FileFilter()
-        filter.set_name(_("Chess engines"))
+        filter = Gtk.FileFilter()
+        filter.set_name(_("Executable files"))
         filter.add_mime_type("application/x-executable")
+        filter.add_mime_type("application/x-ms-dos-executable")
         engine_chooser_dialog.add_filter(filter)
         self.add = False
 
@@ -142,17 +148,40 @@ class EnginesDialog():
             self.add = True
             response = engine_chooser_dialog.run()
 
-            if response == gtk.RESPONSE_OK:
+            if response == Gtk.ResponseType.OK:
                 new_engine = engine_chooser_dialog.get_filename()
+                if new_engine.lower().endswith(".exe"):
+                    vm_name = "wine" 
+                    vmpath = searchPath(vm_name, access=os.R_OK|os.X_OK)
+                    if vmpath is None:
+                        d = Gtk.MessageDialog(
+                                type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
+                        d.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
+                        d.format_secondary_text(_("wine not installed"))
+                        d.run()
+                        d.hide()
+                        new_engine = ""
+                    else:
+                        vmpath += " "
+                else:
+                    vm_name = None
+                    vmpath = ""
+                
                 if new_engine:
                     try:
-                        uci = is_uci(new_engine)
+                        uci = is_uci(vmpath + new_engine)
                         if not uci:
-                            if not is_cecp(new_engine):
+                            if not is_cecp(vmpath + new_engine):
                                 # restore the original
                                 engine = discoverer.getEngineByName(self.cur_engine)
                                 engine_chooser_dialog.set_filename(engine["command"])
-                                print "Maybe not a chess engine"
+                                d = Gtk.MessageDialog(
+                                        type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
+                                d.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
+                                d.format_secondary_text(_("There is something wrong with this executable"))
+                                d.run()
+                                d.hide()
+                                engine_chooser_dialog.hide()
                                 return
                         path, binname = os.path.split(new_engine)
                         for e in discoverer.getEngines():
@@ -166,13 +195,18 @@ class EnginesDialog():
                         active = self.widgets["engine_protocol_combo"].get_active()
                         protocol = "uci" if active==0 else "xboard"
                         
-                        discoverer.addEngine(binname, new_engine, protocol)
+                        discoverer.addEngine(binname, new_engine, protocol, vm_name)
                         self.cur_engine = binname
                         discoverer.connect_after("engine_discovered", update_store)
                         self.add = False
                         discoverer.discover()
                     except:
-                        print "There is something wrong with this executable"
+                        d = Gtk.MessageDialog(
+                                type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
+                        d.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
+                        d.format_secondary_text(_("There is something wrong with this executable"))
+                        d.run()
+                        d.hide()
                 else:
                     # restore the original
                     engine = discoverer.getEngineByName(self.cur_engine)
@@ -200,9 +234,9 @@ class EnginesDialog():
         ################################################################
         # engine working directory
         ################################################################
-        dir_chooser_dialog = gtk.FileChooserDialog(_("Select working directory"), None, gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
-            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        dir_chooser_button = gtk.FileChooserButton(dir_chooser_dialog)
+        dir_chooser_dialog = Gtk.FileChooserDialog(_("Select working directory"), None, Gtk.FileChooserAction.SELECT_FOLDER,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        dir_chooser_button = Gtk.FileChooserButton.new_with_dialog(dir_chooser_dialog)
 
         self.widgets["dirChooserDock"].add(dir_chooser_button)
         dir_chooser_button.show()
@@ -255,7 +289,9 @@ class EnginesDialog():
             store, iter = self.tv.get_selection().get_selected()
             if iter:
                 self.selection = True
-                row = store.get_path(iter)[0]
+                path = store.get_path(iter)
+                indices = path.get_indices()
+                row = indices[0]
                 name = store[row][1]
                 self.cur_engine = name
                 engine = discoverer.getEngineByName(name)
@@ -280,9 +316,9 @@ class EnginesDialog():
         tree_selection.select_path((0,))
 
 
-class KeyValueCellRenderer(gtk.GenericCellRenderer):
+class KeyValueCellRenderer(Gtk.CellRenderer):
     """ Custom renderer providing different renderers in different rows.
-        The model parameter is a gtk.ListStore(str, gobject.TYPE_PYOBJECT)
+        The model parameter is a Gtk.ListStore(str, GObject.TYPE_PYOBJECT)
         containing key data pairs. Each data is a dictionary with
         name, type, default, value, min, max (for spin options), choices (list of combo options)
         The 'type' can be 'check', 'spin', 'text', 'combo', 'button'.
@@ -293,37 +329,36 @@ class KeyValueCellRenderer(gtk.GenericCellRenderer):
             ('NalimovPath', {'name': 'NalimovPath', 'default': '',  'type': 'text', 'value': '/home/egtb'})
             ('Clear Hash', {'name': 'Clear Hash', 'type': 'button'})
     """
-    __gproperties__ = {"data": (gobject.TYPE_PYOBJECT, "Data", "Data", gobject.PARAM_READWRITE)}
+    __gproperties__ = {"data": (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.PARAM_READWRITE)}
     
     def __init__(self, model):
-        gtk.GenericCellRenderer.__init__(self)
-
+        GObject.GObject.__init__(self)       
         self.data = None
 
-        self.text_renderer = gtk.CellRendererText()
+        self.text_renderer = Gtk.CellRendererText()
         self.text_renderer.set_property("editable", True)
         self.text_renderer.connect("edited", self.text_edited_cb, model)
 
-        self.toggle_renderer = gtk.CellRendererToggle()
+        self.toggle_renderer = Gtk.CellRendererToggle()
         self.toggle_renderer.set_property("activatable", True)
         self.toggle_renderer.set_property("xalign", 0)
         self.toggle_renderer.connect("toggled", self.toggled_cb, model)
 
-        self.ro_toggle_renderer = gtk.CellRendererToggle()
+        self.ro_toggle_renderer = Gtk.CellRendererToggle()
         self.ro_toggle_renderer.set_property("activatable", False)
         self.ro_toggle_renderer.set_property("xalign", 0)
 
-        self.spin_renderer = gtk.CellRendererSpin()
+        self.spin_renderer = Gtk.CellRendererSpin()
         self.spin_renderer.set_property("editable", True)
         self.spin_renderer.connect("edited", self.spin_edited_cb, model)
 
-        self.combo_renderer = gtk.CellRendererCombo()
+        self.combo_renderer = Gtk.CellRendererCombo()
         self.combo_renderer.set_property("has_entry", False)
         self.combo_renderer.set_property("editable", True)
         self.combo_renderer.set_property("text_column", 0)
         self.combo_renderer.connect("edited", self.text_edited_cb, model)
 
-        self.button_renderer = gtk.CellRendererText()
+        self.button_renderer = Gtk.CellRendererText()
         self.button_renderer.set_property("editable", False)
 
     def text_edited_cb(self, cell, path, new_text, model):
@@ -360,22 +395,22 @@ class KeyValueCellRenderer(gtk.GenericCellRenderer):
     def do_set_property(self, pspec, value):
         if value["type"] == "check":
             self.toggle_renderer.set_active(value["value"])
-            self.set_property("mode", gtk.CELL_RENDERER_MODE_ACTIVATABLE)
+            self.set_property("mode", Gtk.CellRendererMode.ACTIVATABLE)
         elif value["type"] == "spin":
-            adjustment = gtk.Adjustment(value=int(value["value"]), lower=value["min"], upper=value["max"], step_incr=1)
+            adjustment = Gtk.Adjustment(value=int(value["value"]), lower=value["min"], upper=value["max"], step_incr=1)
             self.spin_renderer.set_property("adjustment", adjustment)
-            self.spin_renderer.set_property("text", value["value"])
-            self.set_property("mode", gtk.CELL_RENDERER_MODE_EDITABLE)
+            self.spin_renderer.set_property("text", str(value["value"]))
+            self.set_property("mode", Gtk.CellRendererMode.EDITABLE)
         elif value["type"] == "text":
             self.text_renderer.set_property("text", value["value"])
-            self.set_property("mode", gtk.CELL_RENDERER_MODE_EDITABLE)
+            self.set_property("mode", Gtk.CellRendererMode.EDITABLE)
         elif value["type"] == "combo":
-            liststore = gtk.ListStore(str)
+            liststore = Gtk.ListStore(str)
             for choice in value["choices"]:
                 liststore.append([choice])
             self.combo_renderer.set_property("model", liststore)
             self.combo_renderer.set_property("text", value["value"])
-            self.set_property("mode", gtk.CELL_RENDERER_MODE_EDITABLE)
+            self.set_property("mode", Gtk.CellRendererMode.EDITABLE)
         elif value["type"] == "button":
             self.button_renderer.set_property("text", "")
 
@@ -384,16 +419,16 @@ class KeyValueCellRenderer(gtk.GenericCellRenderer):
     def do_get_property(self, pspec):
         return getattr(self, pspec.name)
 
-    def on_get_size(self, widget, cell_area=None):
+    def do_get_size(self, widget, cell_area=None):
         return self.renderer.get_size(widget, cell_area=cell_area)
         
-    def on_render(self, window, widget, background_area, cell_area, expose_area, flags):
-        self.renderer.render(window, widget, background_area, cell_area, expose_area, flags)
+    def do_render(self, ctx, widget, background_area, cell_area, flags):      
+        self.renderer.render(ctx, widget, background_area, cell_area, flags)
         
-    def on_activate(self, event, widget, path, background_area, cell_area, flags):
+    def do_activate(self, event, widget, path, background_area, cell_area, flags):
         return self.renderer.activate(event, widget, path, background_area, cell_area, flags)
         
-    def on_start_editing(self, event, widget, path, background_area, cell_area, flags):
+    def do_start_editing(self, event, widget, path, background_area, cell_area, flags):
         return self.renderer.start_editing(event, widget, path, background_area, cell_area, flags)
 
-gobject.type_register(KeyValueCellRenderer)
+GObject.type_register(KeyValueCellRenderer)

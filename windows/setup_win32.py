@@ -21,7 +21,7 @@ opts = {
         'compressed': 1,
         'optimize': 2,
         'packages': 'encodings',
-        'includes': 'cairo,pangocairo,pango,atk,gobject,xml.dom,xml.dom.minidom,threading,shutil,pygtk,gtk,sys,gtk.Builder',
+        'includes': 'cairo,pangocairo,pango,atk,gobject,xml.dom,xml.dom.minidom,threading,shutil,pygtk,gtk,sys,Gtk.Builder',
         },
     }
 

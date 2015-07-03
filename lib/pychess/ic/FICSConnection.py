@@ -1,11 +1,15 @@
+from __future__ import absolute_import
+from __future__ import print_function
+
 import bisect
 import re
 import socket
 import time
 import threading
-from gobject import GObject, SIGNAL_RUN_FIRST
 from collections import defaultdict
 from threading import Event, Thread
+
+from gi.repository import GObject
 
 import pychess
 from pychess.System import fident
@@ -13,41 +17,41 @@ from pychess.System.Log import log
 from pychess.Utils.const import *
 
 from pychess.ic import NAMES_RE, TITLES_RE
-from managers.SeekManager import SeekManager
-from managers.FingerManager import FingerManager
-from managers.NewsManager import NewsManager
-from managers.BoardManager import BoardManager
-from managers.OfferManager import OfferManager
-from managers.ChatManager import ChatManager
-from managers.ConsoleManager import ConsoleManager
-from managers.HelperManager import HelperManager
-from managers.ListAndVarManager import ListAndVarManager
-from managers.AutoLogOutManager import AutoLogOutManager
-from managers.ErrorManager import ErrorManager
-from managers.AdjournManager import AdjournManager
+from .managers.SeekManager import SeekManager
+from .managers.FingerManager import FingerManager
+from .managers.NewsManager import NewsManager
+from .managers.BoardManager import BoardManager
+from .managers.OfferManager import OfferManager
+from .managers.ChatManager import ChatManager
+from .managers.ConsoleManager import ConsoleManager
+from .managers.HelperManager import HelperManager
+from .managers.ListAndVarManager import ListAndVarManager
+from .managers.AutoLogOutManager import AutoLogOutManager
+from .managers.ErrorManager import ErrorManager
+from .managers.AdjournManager import AdjournManager
 
-from FICSObjects import *
-from TimeSeal import TimeSeal, CanceledException
-from VerboseTelnet import LinePrediction
-from VerboseTelnet import FromPlusPrediction
-from VerboseTelnet import FromToPrediction
-from VerboseTelnet import PredictionsTelnet
-from VerboseTelnet import NLinesPrediction
+from .FICSObjects import *
+from .TimeSeal import TimeSeal, CanceledException
+from .VerboseTelnet import LinePrediction
+from .VerboseTelnet import FromPlusPrediction
+from .VerboseTelnet import FromToPrediction
+from .VerboseTelnet import PredictionsTelnet
+from .VerboseTelnet import NLinesPrediction
 
 class LogOnException (Exception): pass
 
-class Connection (GObject, Thread):
+class Connection (GObject.GObject, Thread):
     
     __gsignals__ = {
-        'connecting':    (SIGNAL_RUN_FIRST, None, ()),
-        'connectingMsg': (SIGNAL_RUN_FIRST, None, (str,)),
-        'connected':     (SIGNAL_RUN_FIRST, None, ()),
-        'disconnected':  (SIGNAL_RUN_FIRST, None, ()),
-        'error':         (SIGNAL_RUN_FIRST, None, (object,)),
+        'connecting':    (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'connectingMsg': (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'connected':     (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'disconnected':  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'error':         (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, host, ports, username, password):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         Thread.__init__(self, name=fident(self.run))
         self.daemon = True
         self.host = host
@@ -69,10 +73,12 @@ class Connection (GObject, Thread):
         self.predictions.add(prediction)
         self.predictionsDict[prediction.callback] = prediction
         if hasattr(prediction.callback, "BLKCMD"):
-            bisect.insort(self.reply_cmd_dict[prediction.callback.BLKCMD], prediction)
-            # Do sorted inserts so we can later test the longest predictions first.
+            predictions = self.reply_cmd_dict[prediction.callback.BLKCMD]
+            predictions.append(prediction)
+            # Do reverse sorted so we can later test the longest predictions first.
             # This is so that matching prefers the longest match for matches
             # that start out with the same regexp line(s)
+            self.reply_cmd_dict[prediction.callback.BLKCMD] = sorted(predictions, key=len, reverse=True)
             
     def unexpect (self, callback):
         self.predictions.remove(self.predictionsDict.pop(callback))
@@ -145,7 +151,7 @@ class FICSConnection (Connection):
                 log.debug("Trying port %d" % port, extra={"task": (self.host, "raw")})
                 try:
                     self.client.open(self.host, port)
-                except socket.error, e:
+                except socket.error as e:
                     log.debug("Failed to open port %d %s" % (port, e), extra={"task": (self.host, "raw")})
                     if i+1 == len(self.ports):
                         raise
@@ -159,37 +165,37 @@ class FICSConnection (Connection):
             
             # login with registered handle
             if self.password:
-                print >> self.client, self.username
+                print(self.username, file=self.client)
                 got = self.client.read_until("password:",
                                              "enter the server as",
                                              "Try again.")
                 if got == 0:
                     self.client.sensitive = True
-                    print >> self.client, self.password
+                    print(self.password, file=self.client)
                     self.client.sensitive = False
                 # No such name
                 elif got == 1:
-                    raise LogOnException, NOTREG % self.username
+                    raise LogOnException(NOTREG % self.username)
                 # Bad name
                 elif got == 2:
-                    raise LogOnException, NOTREG % self.username
+                    raise LogOnException(NOTREG % self.username)
             else:
                 if self.username:
-                    print >> self.client, self.username
+                    print(self.username, file=self.client)
                 else:
-                    print >> self.client, "guest"
+                    print("guest", file=self.client)
                 got = self.client.read_until("Press return",
                                              "If it is yours, type the password.")
                 if got == 1:
-                    raise LogOnException, REGISTERED % self.username
-                print >> self.client
+                    raise LogOnException(REGISTERED % self.username)
+                print(file=self.client)
             
             while True:
                 line = self.client.readline()
                 if "Invalid password" in line:
-                    raise LogOnException, BADPAS
+                    raise LogOnException(BADPAS)
                 elif "is already logged in" in line:
-                    raise LogOnException, ALREADYIN % self.username
+                    raise LogOnException(ALREADYIN % self.username)
                 
                 match = re.search("\*\*\*\* Starting FICS session as " +
                     "(%s)%s \*\*\*\*" % (NAMES_RE, TITLES_RE), line)
@@ -198,7 +204,7 @@ class FICSConnection (Connection):
                     break
                 
             self.emit('connectingMsg', _("Setting up environment"))
-            lines = self.client.readuntil("ics%")
+            lines = self.client.readuntil(b"ics%")
             self._post_connect_hook(lines)
             self.FatICS = self.client.FatICS
             self.client.name = self.username
@@ -227,7 +233,7 @@ class FICSConnection (Connection):
             t.daemon = True
             t.start()
         
-        except CanceledException, e:
+        except CanceledException as e:
             log.info("FICSConnection._connect: %s" % repr(e),
                      extra={"task": (self.host, "raw")})
         finally:
@@ -240,7 +246,7 @@ class FICSConnection (Connection):
                     self._connect()
                 while self.isConnected():
                     self.client.parse()
-            except Exception, e:
+            except Exception as e:
                 log.info("FICSConnection.run: %s" % repr(e),
                          extra={"task": (self.host, "raw")})
                 self.close()
@@ -276,7 +282,7 @@ class FICSMainConnection (FICSConnection):
             self.lvm.stop()
         except AttributeError:
             pass
-        except Exception, e:
+        except Exception as e:
             if not isinstance(e, (IOError, LogOnException, EOFError,
                     socket.error, socket.gaierror, socket.herror)):
                 raise

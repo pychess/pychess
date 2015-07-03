@@ -1,13 +1,15 @@
+from __future__ import print_function
+
 import email.Utils
-import gtk
+from gi.repository import Gtk
 import math
 import pychess
 import random
 import signal
 import subprocess
-from urllib import urlopen, urlencode
 from threading import Thread
 
+from pychess.compat import urlopen, urlencode
 from pychess.Players.PyChess import PyChess
 from pychess.System.prefix import addDataPrefix, isInstalled
 from pychess.System.repeat import repeat_sleep
@@ -131,7 +133,7 @@ class PyChessFICS(PyChess):
         return True
     
     def makeReady(self):
-        signal.signal(signal.SIGINT, gtk.main_quit)
+        signal.signal(signal.SIGINT, Gtk.main_quit)
         
         PyChess.makeReady(self)
         
@@ -187,21 +189,21 @@ class PyChessFICS(PyChess):
         self.connection.run()
         self.extendlog([str(self.acceptedTimesettings)])
         self.phoneHome("Session ended\n"+"\n".join(self.log))
-        print "Session ended"
+        print("Session ended")
     
     def run(self):
         t = Thread(target=self.main, name=fident(self.main))
         t.daemon = True
         t.start()
-        gtk.gdk.threads_init()
-        gtk.main()
+        Gdk.threads_init()
+        Gtk.main()
     
     #===========================================================================
     # General
     #===========================================================================
     
     def __showConnectLog (self, connection, message):
-        print message
+        print(message)
     
     def __onLogOut (self, autoLogoutManager):
         self.connection.close()
@@ -251,9 +253,9 @@ class PyChessFICS(PyChess):
             command = " ".join(args[1:])
             if name in self.sudos or name == self.owner:
                 # Notice: This can be used to make nasty loops
-                print >> self.connection.client, command
+                print(command, file=self.connection.client)
             else:
-                print repr(name), self.sudos
+                print(repr(name), self.sudos)
                 chatManager.tellPlayer(name, "Please send me the password")
                 self.waitingForPassword = command
         
@@ -270,7 +272,7 @@ class PyChessFICS(PyChess):
             else:
                 def onlineanswer (message):
                     data = urlopen("http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
-                                   urlencode({"message":message, "botcust2":"x"})).read()
+                                   urlencode({"message":message, "botcust2":"x"}).encode("utf-8")).read().decode('utf-8')
                     ss = "<b>DMPGirl:</b>"
                     es = "<br>"
                     answer = data[data.find(ss)+len(ss) : data.find(es,data.find(ss))]
@@ -391,7 +393,7 @@ class PyChessFICS(PyChess):
         del self.log[:-10]
     
     def tellHome(self, message):
-        print message
+        print(message)
         if self.ownerOnline:
             self.connection.cm.tellPlayer(self.owner, message)
     
@@ -405,15 +407,30 @@ class PyChessFICS(PyChess):
                               email.Utils.parseaddr(self.to_address)[1]],
                               stdin=subprocess.PIPE)
         
-        print >> p.stdin, "MIME-Version: 1.0"
-        print >> p.stdin, "Content-Type: text/plain; charset=UTF-8"
-        print >> p.stdin, "Content-Disposition: inline"
-        print >> p.stdin, "From: %s" % self.from_address
-        print >> p.stdin, "To: %s" % self.to_address
-        print >> p.stdin, "Subject: %s" % SUBJECT
-        print >> p.stdin
-        print >> p.stdin, message
-        print >> p.stdin, "Cheers"
+        print("MIME-Version: 1.0", file=p.stdin)
+        print("Content-Type: text/plain; charset=UTF-8", file=p.stdin)
+        print("Content-Disposition: inline", file=p.stdin)
+        print("From: %s" % self.from_address, file=p.stdin)
+        print("To: %s" % self.to_address, file=p.stdin)
+        print("Subject: %s" % SUBJECT, file=p.stdin)
+        print(file=p.stdin)
+        print(message, file=p.stdin)
+        print("Cheers", file=p.stdin)
         
         p.stdin.close()
         p.wait()
+
+################################################################################
+# main                                                                         #
+################################################################################
+
+if __name__ == "__main__":
+    
+    if len(sys.argv) == 5 and sys.argv[1] == "fics":
+        pychess = PyChessFICS(*sys.argv[2:])
+    else:
+        print("Unknown argument(s):", repr(sys.argv))
+        sys.exit(0)
+    
+    pychess.makeReady()
+    pychess.run()

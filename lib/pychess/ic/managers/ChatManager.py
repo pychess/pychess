@@ -1,9 +1,11 @@
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 import threading
 import re
 from math import ceil
 import time
 
+from pychess.compat import unichr
 from pychess.System.Log import log
 from pychess.ic.FICSObjects import FICSPlayer
 
@@ -15,32 +17,32 @@ namesC = re.compile(names)
 CHANNEL_SHOUT = "shout"
 CHANNEL_CSHOUT = "cshout"
 
-class ChatManager (GObject):
+class ChatManager (GObject.GObject):
     
     __gsignals__ = {
-        'channelMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, bool, bool, str, str)),
-        'kibitzMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str)),
-        'privateMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str, bool, str)),
-        'bughouseMessage' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str)),
-        'announcement' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
+        'channelMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, bool, bool, str, str)),
+        'kibitzMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        'privateMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, str, bool, str)),
+        'bughouseMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        'announcement' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
         
-        'arrivalNotification': (SIGNAL_RUN_FIRST, None, (object,)),
-        'departedNotification': (SIGNAL_RUN_FIRST, None, (object,)),
+        'arrivalNotification': (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'departedNotification': (GObject.SignalFlags.RUN_FIRST, None, (object,)),
 
-        'channelAdd' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        'channelRemove' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str,)),
-        'channelJoinError': (SIGNAL_RUN_FIRST, TYPE_NONE, (str, str)),
-        'channelsListed': (SIGNAL_RUN_FIRST, None, (object,)),
+        'channelAdd' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'channelRemove' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'channelJoinError': (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        'channelsListed': (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         
-        'channelLog' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, int, str, str)),
-        'toldChannel' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, int)),
+        'channelLog' : (GObject.SignalFlags.RUN_FIRST, None, (str, int, str, str)),
+        'toldChannel' : (GObject.SignalFlags.RUN_FIRST, None, (str, int)),
         
-        'recievedChannels' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
-        'recievedNames' : (SIGNAL_RUN_FIRST, TYPE_NONE, (str, object)),
+        'recievedChannels' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
+        'recievedNames' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
     }
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         
         self.connection.expect_line (self.onPrivateMessage,
@@ -235,8 +237,8 @@ class ChatManager (GObject):
     
     def convTime (self, h, m, s):
         # Convert to timestamp
-        tlist = [u for u in time.localtime()]
-        tstamp = time.mktime(tlist[0:3]+[h, m, s, 0, 0, 0])
+        t1, t2, t3, t4, t5, t6, t7, t8, t9 = time.localtime()
+        tstamp = time.mktime((t1, t2, t3, h, m, s, 0, 0, 0))
         # Difference to now in hours
         dif = (tstamp-time.time())/60./60.
         # As we know there is maximum 30 minutes in difference, we can guess when the
@@ -320,7 +322,7 @@ class ChatManager (GObject):
         IS_TD = False
         if IS_TD:
             MAX_COM_SIZE = 1024 #TODO: Get from limits
-            for i in xrange(0,len(message),MAX_COM_SIZE):
+            for i in range(0,len(message),MAX_COM_SIZE):
                 chunk = message[i:i+MAX_COM_SIZE]
                 chunk = chunk.replace("\n", "\\n")
                 chunk = self.entityEncode(chunk)
