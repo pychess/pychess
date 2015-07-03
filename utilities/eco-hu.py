@@ -1,3 +1,4 @@
+from __future__ import print_function
 # -*- coding: UTF-8 -*-
 
 # http://hu.wikipedia.org/wiki/Sakkmegnyit%C3%A1sok_list%C3%A1ja
@@ -18,7 +19,7 @@ if __name__ == '__main__':
     # All xml tags are namespace prefixed in parsed tree !
     ns = "{http://www.w3.org/1999/xhtml}"
 
-    ecofile = file("eco.pgn", "w")
+    ecofile = open("eco.pgn", "w")
 
     rows = [c for c in tree.findall(".//%sli" % ns) if c.get("class") is None]
     
@@ -44,20 +45,20 @@ if __name__ == '__main__':
         data.append(''.join(names))
 
             
-        print data
+        print(data)
         
         if data:
-            print >> ecofile, '[ECO "%s"]' % data[0]
-            print >> ecofile, '[Opening "%s"]' % data[1].replace(u"\u2026", "...").replace(u"ő", u"ö").encode("latin_1")
-            print >> ecofile
-            print >> ecofile, '*'
-            print >> ecofile
+            print('[ECO "%s"]' % data[0], file=ecofile)
+            print('[Opening "%s"]' % data[1].replace(u"\u2026", "...").replace(u"ő", u"ö").encode("latin_1"), file=ecofile)
+            print(file=ecofile)
+            print('*', file=ecofile)
+            print(file=ecofile)
             
             eco_count += 1
     
         if data[0] == "E99":
             break
     
-    print "%s lines" % eco_count
+    print("%s lines" % eco_count)
     
     ecofile.close()

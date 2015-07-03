@@ -1,7 +1,10 @@
+from __future__ import absolute_import
+from __future__ import print_function
+
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import *
 from pychess.Utils.lutils.lmovegen import newMove
-from lutils import lmove
+from .lutils import lmove
 
 class Move:
     
@@ -14,9 +17,6 @@ class Move:
         if not cord1:
             self.move = cord0
             self.flag = self.move >> 12
-            if self.flag in PROMOTIONS:
-                self.promotion = lmove.PROMOTE_PIECE (self.move)
-            else: self.promotion = QUEEN
             self.cord0 = None if self.flag == DROP else Cord(lmove.FCORD(self.move))
             self.cord1 = Cord(lmove.TCORD(self.move))
             
@@ -26,13 +26,18 @@ class Move:
             self.cord0 = cord0
             self.cord1 = cord1
             if not board:
-                raise ValueError, "Move needs a Board object in order to investigate flags"
+                raise ValueError("Move needs a Board object in order to investigate flags")
             
             self.flag = NORMAL_MOVE
-            
-            if board[self.cord0].piece == PAWN and  self.cord1.y in (0,7):
-                if promotion == None: promotion = QUEEN
-                self.flag = lmove.FLAG_PIECE(promotion)
+            if board[self.cord0].piece == PAWN and  self.cord1.cord in board.PROMOTION_ZONE[board.board.color]:
+                if promotion == None:
+                    if board.variant == SITTUYINCHESS:
+                        if cord0 == cord1:
+                            self.flag = lmove.FLAG_PIECE(QUEEN)
+                    else:
+                        self.flag = lmove.FLAG_PIECE(QUEEN)
+                else:
+                    self.flag = lmove.FLAG_PIECE(promotion)
             
             elif board[self.cord0].piece == KING:
                 if self.cord0 == self.cord1:
@@ -50,7 +55,7 @@ class Move:
                         ((board.board.color == WHITE and board.board.castling & W_OO) or \
                         (board.board.color == BLACK and board.board.castling & B_OO))):
                         self.flag = KING_CASTLE
-                else:
+                elif board.variant != CAMBODIANCHESS:
                     if self.cord0.x - self.cord1.x == 2:
                         self.flag = QUEEN_CASTLE if self.cord0.x == 4 else KING_CASTLE
                     elif self.cord0.x - self.cord1.x == -2:
@@ -75,7 +80,8 @@ class Move:
     promotion = property(_get_promotion)
     
     def __repr__ (self):
-        promotion = "="+reprSign[lmove.PROMOTE_PIECE(self.flag)] if self.flag in PROMOTIONS else ""
+        promotion = "="+reprSign[lmove.PROMOTE_PIECE(self.flag)] \
+                    if self.flag in PROMOTIONS else ""
         
         if self.flag == DROP:
             piece = reprSign[lmove.FCORD(self.move)]

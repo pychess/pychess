@@ -1,18 +1,23 @@
-import gtk, cairo
+from __future__ import absolute_import
+from __future__ import print_function
+
+import cairo
+
+from gi.repository import Gtk
 
 from math import ceil as fceil
 ceil = lambda f: int(fceil(f))
 
-from __init__ import NORTH, EAST, SOUTH, WEST, CENTER
-from OverlayWindow import OverlayWindow
+from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER
+from .OverlayWindow import OverlayWindow
 
 class HighlightArea (OverlayWindow):
     """ An entirely blue widget """
     
     def __init__ (self, parent):
         OverlayWindow.__init__(self, parent)
-        self.myparent = parent
-        self.connect_after("expose-event", self.__onExpose)
+        self.myparent = parent       
+        self.connect_after("draw", self.__onExpose)
     
     def showAt (self, position):
         alloc = self.myparent.get_allocation()
@@ -36,19 +41,21 @@ class HighlightArea (OverlayWindow):
         self.move(x, y)
         self.resize(ceil(width), ceil(height))
         self.show()
-    
-    def __onExpose (self, self_, event):
-        context = self.window.cairo_create()
-        context.rectangle(event.area)
+        
+    def __onExpose (self, self_, ctx):
+        context = self.get_window().cairo_create()
+        a = self_.get_allocation()
+        context.rectangle(a.x, a.y, a.width, a.height)
+        sc = self.get_style_context()
+        found, color = sc.lookup_color('p_light_selected')
         if self.is_composited():
-            color = self.get_style().light[gtk.STATE_SELECTED]
             context.set_operator(cairo.OPERATOR_CLEAR)
             context.set_source_rgba(0,0,0,0.0)
             context.fill_preserve ()
             context.set_operator(cairo.OPERATOR_OVER)
-            context.set_source_rgba(color.red/65535., color.green/65535., color.blue/65535., 0.5)
+            context.set_source_rgba(color.red, color.green, color.blue, 0.5)
             context.fill()
         else:
-            context.set_source_color(self.get_style().light[gtk.STATE_SELECTED])
+            context.set_source_rgba(color.red, color.green, color.blue)
             context.set_operator(cairo.OPERATOR_OVER)
             context.fill()

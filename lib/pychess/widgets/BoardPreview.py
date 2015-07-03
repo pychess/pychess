@@ -1,8 +1,12 @@
 # -*- coding: UTF-8 -*-
+from __future__ import print_function
 
 import os
-import gtk, gobject
-from pychess.Utils.const import reprResult, BLACK, FEN_EMPTY
+from gi.repository import Gtk, GObject
+
+from pychess.compat import unicode
+from pychess.System import conf
+from pychess.Utils.const import reprResult, BLACK, FEN_EMPTY, NORMALCHESS
 from pychess.Utils.Board import Board
 from pychess.System.protoopen import protoopen, splitUri
 from pychess.widgets.BoardView import BoardView
@@ -11,7 +15,7 @@ from pychess.Savers.ChessFile import LoadingError
 def ellipsize (string, maxlen):
     if len(string) <= maxlen or maxlen < 4:
         return string
-    return string[:maxlen-1] + "…"
+    return string[:maxlen-1] + unicode("…")
 
 class BoardPreview:
     
@@ -23,27 +27,28 @@ class BoardPreview:
         
         self.widgets = widgets
         self.fcbutton = fcbutton
+        self.opendialog = opendialog
         self.enddir = enddir
         
         # Treeview
         self.list = self.widgets["gamesTree"]
-        self.list.set_model(gtk.ListStore(str, str,str,str))
+        self.list.set_model(Gtk.ListStore(str, str,str,str))
         # GTK_SELECTION_BROWSE - exactly one item is always selected
-        self.list.get_selection().set_mode(gtk.SELECTION_BROWSE)
+        self.list.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         self.list.get_selection().connect_after(
                 'changed', self.on_selection_changed)
         
         # Add columns
-        renderer = gtk.CellRendererText()
+        renderer = Gtk.CellRendererText()
         renderer.set_property("xalign",0)
-        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=0))
+        self.list.append_column(Gtk.TreeViewColumn(None, renderer, text=0))
         
-        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=1))
-        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=2))
+        self.list.append_column(Gtk.TreeViewColumn(None, renderer, text=1))
+        self.list.append_column(Gtk.TreeViewColumn(None, renderer, text=2))
         
-        renderer = gtk.CellRendererText()
+        renderer = Gtk.CellRendererText()
         renderer.set_property("xalign",1)
-        self.list.append_column(gtk.TreeViewColumn(None, renderer, text=3))
+        self.list.append_column(Gtk.TreeViewColumn(None, renderer, text=3))
         
         # Connect buttons
         self.widgets["first_button"].connect("clicked", self.on_first_button)
@@ -64,27 +69,26 @@ class BoardPreview:
         self.boardview.autoUpdateShown = False
         
         # Add the filechooserbutton
-        self.widgets["fileChooserDock"].add(fcbutton)
-        # Connect doubleclicking a file to on_file_activated
-        fcbutton.connect("file-activated", self.on_file_activated)
-        # Connect the openbutton in the dialog to on_file_activated
-        openbut = opendialog.get_children()[0].get_children()[1].get_children()[0]
-        openbut.connect("clicked", self.on_file_activated)
-        
-        # The first time the button is opened, the player has just opened
-        # his/her file, before we connected the dialog.
-        if self._retrieve_filename():
-            self.on_file_activated(fcbutton)
-    
-    def on_file_activated (self, *args):
-        filename = self._retrieve_filename()
-        if filename:
-            self.set_filename(filename)
-        elif self.get_filename():
-            filename = self.get_filename()
-        else:
+        self.widgets["fileChooserDock"].add(fcbutton)      
+
+        def on_file_set (*args):          
+            fcbutton = args[0]           
+            self.on_file_activated(fcbutton.get_filename())
+        fcbutton.connect("file-set", on_file_set)
+        # This is needed for game files specified on the command line to work
+        fcbutton.connect("file-activated", on_file_set)
+
+        def on_response (fcdialog, resp):              
+            if resp == Gtk.ResponseType.ACCEPT:
+                self.on_file_activated(opendialog.get_filename())
+        opendialog.connect("response", on_response)
+
+    def on_file_activated (self, filename):
+        # filename is None if a non-existent file is passed as command line argument
+        if filename is None:
             return
-        if os.path.isdir(filename):
+        self.set_filename(filename)      
+        if os.path.isdir(filename):            
             return
         
         ending = filename[filename.rfind(".")+1:]
@@ -101,6 +105,9 @@ class BoardPreview:
         
         self.lastSel = -1 # The row that was last selected
         self.list.set_cursor((0,))
+
+        self.widgets["whitePlayerCombobox"].set_active(0)
+        self.widgets["blackPlayerCombobox"].set_active(0)
     
     def on_selection_changed (self, selection):
         iter = selection.get_selected()[1]
@@ -111,7 +118,9 @@ class BoardPreview:
             self.boardview.redraw_canvas()
             return
         
-        sel = self.list.get_model().get_path(iter)[0]
+        path = self.list.get_model().get_path(iter)
+        indices = path.get_indices()
+        sel = indices[0]
         if sel == self.lastSel: return
         self.lastSel = sel
         
@@ -119,12 +128,31 @@ class BoardPreview:
         try:
             try:
                 self.chessfile.loadToModel(sel, -1, self.gamemodel)
-            except LoadingError, e:
-                d = gtk.MessageDialog (type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK,
+            except LoadingError as e:
+                d = Gtk.MessageDialog (type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.OK,
                                         message_format=e.args[0])
                 d.format_secondary_text (e.args[1])
                 d.connect("response", lambda d,a: d.hide())
                 d.show()
+
+            if self.gamemodel.variant.variant == NORMALCHESS:
+                radiobutton = self.widgets["playNormalRadio"]
+                radiobutton.set_active(True)
+            else:
+                radiobutton = self.widgets["playVariant1Radio"]
+                radiobutton.set_active(True)
+                conf.set("ngvariant1", self.gamemodel.variant.variant)
+                radiobutton.set_label("%s" % self.gamemodel.variant.name)
+
+            if self.gamemodel.tags.get("TimeControl"):
+                radiobutton = self.widgets["blitzRadio"]
+                radiobutton.set_active(True)
+                conf.set("ngblitz min", self.gamemodel.timemodel.minutes)
+                conf.set("ngblitz gain", self.gamemodel.timemodel.gain)
+            else:
+                radiobutton = self.widgets["notimeRadio"]
+                radiobutton.set_active(True)
+                
             self.boardview.lastMove = None
             self.boardview._shown = self.gamemodel.lowply
             last = self.gamemodel.ply
@@ -152,12 +180,13 @@ class BoardPreview:
             pos += ".."
         self.widgets["posLabel"].set_text(pos)
     
-    def set_filename (self, filename):
+    def set_filename (self, filename):      
         asPath = splitUri(filename)[-1]
         if os.path.isfile(asPath):
             self.fcbutton.show()
-            if filename != self._retrieve_filename():
-                self.fcbutton.set_filename(os.path.abspath(asPath))
+            #if filename != self._retrieve_filename():
+            #    self.fcbutton.set_filename(os.path.abspath(asPath))
+            self.fcbutton.set_filename(os.path.abspath(asPath))
         else:
             self.fcbutton.set_uri("")
             self.fcbutton.hide()
@@ -167,20 +196,15 @@ class BoardPreview:
         return self.filename
     
     def is_empty (self):
-        return not self.chessfile or not len(self.chessfile)
-    
-    def _retrieve_filename (self):
-        #if self.fcbutton.get_filename():
-        #    return self.fcbutton.get_filename()
-        if self.fcbutton.get_preview_filename():
-            return self.fcbutton.get_preview_filename()
-        elif self.fcbutton.get_uri():
-            return self.fcbutton.get_uri()[7:]
+        return not self.chessfile or not len(self.chessfile) 
     
     def get_position (self):
         return self.boardview.shown
     
     def get_gameno (self):
         iter = self.list.get_selection().get_selected()[1]
-        if iter == None: return -1
-        return self.list.get_model().get_path(iter)[0]
+        if iter == None:
+            return -1
+        path = self.list.get_model().get_path(iter)
+        indices = path.get_indices()
+        return indices[0]

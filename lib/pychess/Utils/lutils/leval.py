@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 
 ################################################################################
 # The purpose of this module, is to give a certain position a score. The       #
@@ -5,10 +6,10 @@
 ################################################################################
 
 from pychess.Utils.const import *
-from ldata import *
-from LBoard import LBoard
-from lsort import staticExchangeEvaluate
-from lmovegen import newMove
+from .ldata import *
+from .LBoard import LBoard
+from .lsort import staticExchangeEvaluate
+from .lmovegen import newMove
 from ctypes import create_string_buffer, memset
 from struct import Struct, pack_into, unpack_from
 
@@ -24,9 +25,11 @@ def evaluateComplete (board, color):
         return s
     s += evalBishops (board, color, phase)       - evalBishops (board, 1-color, phase)
     s += evalRooks (board, color, phase)         - evalRooks (board, 1-color, phase)
+    s += evalDoubleQR7 (board, color, phase)     - evalDoubleQR7 (board, 1-color, phase)
     s += evalKing (board, color, phase)          - evalKing (board, 1-color, phase)
     s += evalKingTropism (board, color, phase)   - evalKingTropism (board, 1-color, phase)
-    s += evalDoubleQR7 (board, color, phase)     - evalDoubleQR7 (board, 1-color, phase)
+    if board.variant in ASEAN_VARIANTS:
+        return s
     s += evalDev (board, color, phase)           -  evalDev (board, 1-color, phase)
     if board.variant == ATOMICCHESS:
         return s
@@ -48,29 +51,33 @@ def evalMaterial (board, color):
     opcolor = 1-color
     material = [0, 0]
     if board.variant == CRAZYHOUSECHESS:
-        for piece in xrange(PAWN, KING):
+        for piece in range(PAWN, KING):
             material[WHITE] += CRAZY_PIECE_VALUES[piece] * pieceCount[WHITE][piece]
             material[BLACK] += CRAZY_PIECE_VALUES[piece] * pieceCount[BLACK][piece]
             material[WHITE] += CRAZY_PIECE_VALUES[piece] * board.holding[WHITE][piece]
             material[BLACK] += CRAZY_PIECE_VALUES[piece] * board.holding[BLACK][piece]
     elif board.variant == LOSERSCHESS:
-        for piece in xrange(PAWN, KING):
+        for piece in range(PAWN, KING):
             material[WHITE] += pieceCount[WHITE][piece]
             material[BLACK] += pieceCount[BLACK][piece]
     elif board.variant == SUICIDECHESS:
-        for piece in xrange(PAWN, KING+1):
+        for piece in range(PAWN, KING+1):
             material[WHITE] += pieceCount[WHITE][piece]
             material[BLACK] += pieceCount[BLACK][piece]
     elif board.variant == ATOMICCHESS:
-        for piece in xrange(PAWN, KING+1):
+        for piece in range(PAWN, KING+1):
             material[WHITE] += ATOMIC_PIECE_VALUES[piece] * pieceCount[WHITE][piece]
             material[BLACK] += ATOMIC_PIECE_VALUES[piece] * pieceCount[BLACK][piece]
+    elif board.variant in ASEAN_VARIANTS:
+        for piece in range(PAWN, KING+1):
+            material[WHITE] += ASEAN_PIECE_VALUES[piece] * pieceCount[WHITE][piece]
+            material[BLACK] += ASEAN_PIECE_VALUES[piece] * pieceCount[BLACK][piece]
     else:
-        for piece in xrange(PAWN, KING):
+        for piece in range(PAWN, KING):
             material[WHITE] += PIECE_VALUES[piece] * pieceCount[WHITE][piece]
             material[BLACK] += PIECE_VALUES[piece] * pieceCount[BLACK][piece]
     
-    phase = max(1, 8 - (material[WHITE] + material[BLACK]) / 1150)
+    phase = max(1, 8 - (material[WHITE] + material[BLACK]) // 1150)
     
     # If both sides are equal, we don't need to compute anything!
     if material[BLACK] == material[WHITE]:
@@ -92,7 +99,7 @@ def evalMaterial (board, color):
     pawns = pieceCount[leading][PAWN]
     matDiff = material[leading] - material[1-leading]
     val = min(2400, matDiff) + \
-          (matDiff * (12000-matTotal) * pawns) / (6400 * (pawns+1))
+          (matDiff * (12000-matTotal) * pawns) // (6400 * (pawns+1))
     
     if leading == color:
         return val, phase
@@ -103,24 +110,24 @@ def evalMaterial (board, color):
 # evalKingTropism                                                              #
 ################################################################################
 
-pawnTropism = [[0]*64 for i in xrange(64)]
-bishopTropism = [[0]*64 for i in xrange(64)]
-knightTropism = [[0]*64 for i in xrange(64)]
-rookTropism = [[0]*64 for i in xrange(64)]
-queenTropism = [[0]*64 for i in xrange(64)]
+pawnTropism = [[0]*64 for i in range(64)]
+bishopTropism = [[0]*64 for i in range(64)]
+knightTropism = [[0]*64 for i in range(64)]
+rookTropism = [[0]*64 for i in range(64)]
+queenTropism = [[0]*64 for i in range(64)]
 
-for pcord in xrange(64):
-    for kcord in xrange(pcord+1, 64):
+for pcord in range(64):
+    for kcord in range(pcord+1, 64):
         pawnTropism[pcord][kcord] = pawnTropism[kcord][pcord] = \
             (14 - taxicab[pcord][kcord])**2 * 10/169 # 0 - 10
         knightTropism[pcord][kcord] = knightTropism[kcord][pcord] = \
             (6-distance[KNIGHT][pcord][kcord])**2 * 2 # 0 - 50
         bishopTropism[pcord][kcord] = bishopTropism[kcord][pcord] = \
-            (14 - distance[BISHOP][pcord][kcord] * sdistance[pcord][kcord])**2 * 30/169 # 0 - 30 
+            (14 - distance[BISHOP][pcord][kcord] * sdistance[pcord][kcord])**2 * 30//169 # 0 - 30 
         rookTropism[pcord][kcord] = rookTropism[kcord][pcord] = \
-            (14 - distance[ROOK][pcord][kcord] * sdistance[pcord][kcord])**2 * 40/169 # 0 - 40
+            (14 - distance[ROOK][pcord][kcord] * sdistance[pcord][kcord])**2 * 40//169 # 0 - 40
         queenTropism[pcord][kcord] = queenTropism[kcord][pcord] = \
-            (14 - distance[QUEEN][pcord][kcord] * sdistance[pcord][kcord])**2 * 50/169 # 0 - 50
+            (14 - distance[QUEEN][pcord][kcord] * sdistance[pcord][kcord])**2 * 50//169 # 0 - 50
 
 tropisms = {
     PAWN: pawnTropism,
@@ -146,8 +153,8 @@ def evalKingTropism (board, color, phase):
         #opking = firstBit(oppieces[QUEEN])
     
     score = 0
-    for piece in xrange(KNIGHT, KING):
-#    for piece in xrange(PAWN, KING):
+    for piece in range(KNIGHT, KING):
+#    for piece in range(PAWN, KING):
         bitboard = pieces[piece]
         tropism = _tropisms[piece]
         # inlined iterBits()
@@ -210,7 +217,7 @@ def cacheablePawnInfo (board, phase):
                 if (color == WHITE and not fromToRay[cord][cord|56] & pawns) or\
                    (color == BLACK and not fromToRay[cord][cord&7] & pawns):
                     passed |= bitPosArray[cord]
-                    score += (passedScores[color][cord>>3] * phase) / 12
+                    score += (passedScores[color][cord>>3] * phase) // 12
             
             # Backward pawns
             backward = False
@@ -258,7 +265,7 @@ def cacheablePawnInfo (board, phase):
             # Increment file count for isolani & doubled pawn evaluation
             nfile[cord&7] += 1
         
-        for i in xrange(8):
+        for i in range(8):
             # Doubled pawns
             if nfile[i] > 1:
                 score += -(8+phase)
@@ -335,12 +342,12 @@ def evalPawnStructure (board, color, phase, passed, weaked):
         # Connected passed pawns on 6th or 7th rank
         t = passed & brank67[color]
         opMajorCount = 0
-        for p in xrange(KNIGHT, KING):
+        for p in range(KNIGHT, KING):
             opMajorCount += board.pieceCount[opcolor][p]
         if t and opMajorCount == 1:
             n1 = FILE(opking)
             n2 = RANK(opking)
-            for f in xrange(7):
+            for f in range(7):
                 if t & fileBits[f] and t & fileBits[f+1] and \
                         (n1 < f-1 or n1 > f+1 or (color == WHITE and n2 < 4) or \
                                                  (color == BLACK and n2 > 3)):
@@ -363,7 +370,7 @@ def evalPawnStructure (board, color, phase, passed, weaked):
                 prom_cord = 7 << 3 | FILE(pawn)
             else: prom_cord = FILE(pawn)
             distance_to_promotion = distance[PAWN][pawn][prom_cord]
-            for piece in xrange(KNIGHT, KING+1):
+            for piece in range(KNIGHT, KING+1):
                 for cord in iterBits(opboards[piece]):
                     hunter_distance = distance[piece][cord][prom_cord]
                     if hunter_distance <= distance_to_promotion:
@@ -372,7 +379,7 @@ def evalPawnStructure (board, color, phase, passed, weaked):
                 if found_hunter:
                     break
             if not found_hunter:
-                score += passedScores[color][RANK(pawn)] / 5
+                score += passedScores[color][RANK(pawn)] // 5
 
     # Penalize Pawn on d2,e2/d7,e7 is blocked
     blocker = board.blocker
@@ -451,7 +458,7 @@ def evalKing (board, color, phase):
         numbermod = (0,3,6,9,7,5,3)[total_in_front]
         
         s = bin(wall1&pawns).count("1") * 2 + bin(wall2&pawns).count("1")
-        return (s * numbermod * 5) / 6
+        return (s * numbermod * 5) // 6
     
     return 0
     
@@ -517,7 +524,7 @@ def evalBishops (board, color, phase):
     if board.pieceCount[color][BISHOP] == 1:
         squareMask = WHITE_SQUARES if (bishops & WHITE_SQUARES) else BLACK_SQUARES
         score = - bin(pawns & squareMask).count("1") \
-                - bin(oppawns & squareMask).count("1")/2
+                - bin(oppawns & squareMask).count("1")//2
         if phase > 6:
             score += bin(board.friends[1-color] & squareMask).count("1")
 

@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Atomic Chess
 
 from pychess.Utils.const import *
@@ -10,12 +11,9 @@ from pychess.Utils.lutils.ldata import *
 
 class AtomicBoard(Board):
     variant = ATOMICCHESS
-
-class AtomicChess:
     __desc__ = _("FICS atomic: http://www.freechess.org/Help/HelpFiles/atomic.html")
     name = _("Atomic")
     cecp_name = "atomic"
-    board = AtomicBoard
     need_initial_board = False
     standard_rules = False
     variant_group = VARIANTS_OTHER_NONSTANDARD
@@ -49,19 +47,19 @@ def kingExplode(board, move, color):
 if __name__ == '__main__':
     FEN = "rnbqkbnr/ppp1pppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1"
     b = AtomicBoard(FEN)
-    print b.board.__repr__()
+    print(b.board.__repr__())
     
     for acord, apiece, acolor in piecesAround(b.board, B8):
-        print acord, apiece, acolor
+        print(acord, apiece, acolor)
     for acord, apiece, acolor in piecesAround(b.board, E1):
-        print acord, apiece, acolor
+        print(acord, apiece, acolor)
     
     from pychess.Utils.lutils.lmove import parseAN
     b = b.move(Move(parseAN(b.board, "d8d2")))
-    print b.board.__repr__()
-    print b.board.pieceCount
+    print(b.board.__repr__())
+    print(b.board.pieceCount)
 
     b.board.popMove()
-    print b.board.__repr__()
-    print b.board.pieceCount
+    print(b.board.__repr__())
+    print(b.board.pieceCount)
     

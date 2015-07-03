@@ -1,3 +1,4 @@
+from pychess.compat import basestring
 from pychess.Utils.const import *
 from pychess.Utils.lutils.lmovegen import newMove
 

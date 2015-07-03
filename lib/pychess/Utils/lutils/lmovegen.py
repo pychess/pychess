@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 
-from bitboard import *
-from attack import *
+from .bitboard import *
+from .attack import *
 from pychess.Utils.const import *
 
 ################################################################################
@@ -37,7 +38,7 @@ def genCastles (board):
         blocker = clearBit(clearBit(board.blocker, king), rook)
         stepover = fromToRay[king][king_after] | fromToRay[rook][rook_after]
         if not stepover & blocker:
-            for cord in xrange(min(king,king_after), max(king,king_after)+1):
+            for cord in range(min(king,king_after), max(king,king_after)+1):
                 if isAttacked (board, cord, 1-color):
                     return
             if FILE(king) == 3 and board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
@@ -83,14 +84,21 @@ def genPieceMoves(board, piece, tcord):
         return moves
         
     if piece == BISHOP:
-        blocker = board.blocker
         bishops = board.boards[board.color][BISHOP]
-        for fcord in iterBits(bishops):
-            attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
-                          attack135[fcord][ray135[fcord] & blocker]
-            if tcord in iterBits(attackBoard & notfriends):
-                moves.add(newMove(fcord, tcord))
-        return moves
+        if board.variant in ASEAN_VARIANTS:
+            bishopMoves = moveArray[ASEAN_WBISHOP if board.color == WHITE else ASEAN_BBISHOP]
+            for fcord in iterBits(bishops):
+                if tcord in iterBits(bishopMoves[fcord] & notfriends):
+                    moves.add(newMove(fcord, tcord))
+            return moves
+        else:
+            blocker = board.blocker
+            for fcord in iterBits(bishops):
+                attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
+                              attack135[fcord][ray135[fcord] & blocker]
+                if tcord in iterBits(attackBoard & notfriends):
+                    moves.add(newMove(fcord, tcord))
+            return moves
         
     if piece == ROOK:
         blocker = board.blocker
@@ -103,19 +111,35 @@ def genPieceMoves(board, piece, tcord):
         return moves
 
     if piece == QUEEN:
-        blocker = board.blocker
         queens = board.boards[board.color][QUEEN]
-        for fcord in iterBits(queens):
-            attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
-                          attack135[fcord][ray135[fcord] & blocker]
-            if tcord in iterBits(attackBoard & notfriends):
-                moves.add(newMove(fcord, tcord))
+        if board.variant in ASEAN_VARIANTS:
+            queenMoves = moveArray[ASEAN_QUEEN]
+            for fcord in iterBits(queens):
+                if tcord in iterBits(queenMoves[fcord] & notfriends):
+                    moves.add(newMove(fcord, tcord))
+            # Cambodian extra first move
+            if board.variant == CAMBODIANCHESS:
+                if board.is_first_move[QUEEN][board.color]:
+                    if board.color == WHITE:
+                        if not board.arBoard[E3]:
+                            moves.add(newMove(E1, E3))
+                    else:
+                        if not board.arBoard[D6]:
+                            moves.add(newMove(D8, D6))
+            return moves
+        else:
+            blocker = board.blocker
+            for fcord in iterBits(queens):
+                attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
+                              attack135[fcord][ray135[fcord] & blocker]
+                if tcord in iterBits(attackBoard & notfriends):
+                    moves.add(newMove(fcord, tcord))
 
-            attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
-                          attack90[fcord][ray90[fcord] & blocker]
-            if tcord in iterBits(attackBoard & notfriends):
-                moves.add(newMove(fcord, tcord))
-        return moves
+                attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
+                              attack90[fcord][ray90[fcord] & blocker]
+                if tcord in iterBits(attackBoard & notfriends):
+                    moves.add(newMove(fcord, tcord))
+            return moves
         
     if board.variant == SUICIDECHESS and piece == KING:
         kings = board.boards[board.color][KING]
@@ -127,6 +151,16 @@ def genPieceMoves(board, piece, tcord):
             return moves
 
 def genAllMoves (board, drops=True):
+    from pychess.Variants import variants
+
+    if drops and board.variant in DROP_VARIANTS:
+        for move in genDrops(board):
+            yield move
+
+    # In sittuyin you have to place your pieces before any real move
+    if board.variant == SITTUYINCHESS:
+        if board.plyCount < 16:
+            return 
     
     blocker = board.blocker
     notblocker = ~blocker
@@ -142,6 +176,10 @@ def genAllMoves (board, drops=True):
     rooks = board.boards[board.color][ROOK]
     queens = board.boards[board.color][QUEEN]
     kings = board.boards[board.color][KING]
+
+    PROMOTIONS = variants[board.variant].PROMOTIONS
+    if board.variant == SITTUYINCHESS and queens:
+        PROMOTIONS = (NORMAL_MOVE,)
     
     # Knights
     knightMoves = moveArray[KNIGHT]
@@ -160,19 +198,40 @@ def genAllMoves (board, drops=True):
             else:
                 yield newMove(cord, c)
     
-    # Rooks and Queens
-    for cord in iterBits(rooks | queens):
-        attackBoard = attack00[cord][ray00[cord] & blocker] | \
-                      attack90[cord][ray90[cord] & blocker]
-        for c in iterBits(attackBoard & notfriends):
-            yield newMove(cord, c)
+    if board.variant in ASEAN_VARIANTS:
+        # Rooks 
+        for cord in iterBits(rooks):
+            attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                          attack90[cord][ray90[cord] & blocker]
+            for c in iterBits(attackBoard & notfriends):
+                yield newMove(cord, c)
+
+        # Queens
+        queenMoves = moveArray[ASEAN_QUEEN]
+        for cord in iterBits(queens):
+            for c in iterBits(queenMoves[cord] & notfriends):
+                yield newMove(cord, c)
+
+        # Bishops
+        bishopMoves = moveArray[ASEAN_WBISHOP if board.color == WHITE else ASEAN_BBISHOP]
+        for cord in iterBits(bishops):
+            for c in iterBits(bishopMoves[cord] & notfriends):
+                yield newMove(cord, c)
+
+    else:
+        # Rooks and Queens
+        for cord in iterBits(rooks | queens):
+            attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                          attack90[cord][ray90[cord] & blocker]
+            for c in iterBits(attackBoard & notfriends):
+                yield newMove(cord, c)
     
-    # Bishops and Queens
-    for cord in iterBits(bishops | queens):
-        attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
-                      attack135[cord][ray135[cord] & blocker]
-        for c in iterBits(attackBoard & notfriends):
-            yield newMove(cord, c)
+        # Bishops and Queens
+        for cord in iterBits(bishops | queens):
+            attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
+                          attack135[cord][ray135[cord] & blocker]
+            for c in iterBits(attackBoard & notfriends):
+                yield newMove(cord, c)
     
     # White pawns
     pawnEnemies = enemies | (enpassant != None and bitPosArray[enpassant] or 0)
@@ -180,12 +239,12 @@ def genAllMoves (board, drops=True):
         
         # One step
         
+        promotion_zone = variants[board.variant].PROMOTION_ZONE[WHITE]
         movedpawns = (pawns >> 8) & notblocker # Move all pawns one step forward
         for cord in iterBits(movedpawns):
-            if cord >= 56:
+            if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if board.variant == SUICIDECHESS or p != KING_PROMOTION:
-                        yield newMove(cord-8, cord, p)
+                    yield newMove(cord-8, cord, p)
             else:
                 #if (cord-8, cord) == (33, 41):
                 #    print repr(board)
@@ -205,7 +264,7 @@ def genAllMoves (board, drops=True):
         capLeftPawns = pawns & ~fileBits[0]
         capLeftPawns = (capLeftPawns >> 7) & pawnEnemies
         for cord in iterBits(capLeftPawns):
-            if cord >= 56:
+            if cord in promotion_zone:
                 for p in PROMOTIONS:
                     if board.variant == SUICIDECHESS or p != KING_PROMOTION:
                         yield newMove(cord-7, cord, p)
@@ -219,10 +278,9 @@ def genAllMoves (board, drops=True):
         capRightPawns = pawns & ~fileBits[7]
         capRightPawns = (capRightPawns >> 9) & pawnEnemies
         for cord in iterBits(capRightPawns):
-            if cord >= 56:
+            if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if board.variant == SUICIDECHESS or p != KING_PROMOTION:
-                        yield newMove(cord-9, cord, p)
+                    yield newMove(cord-9, cord, p)
             elif cord == enpassant:
                 yield newMove (cord-9, cord, ENPASSANT)
             else:
@@ -233,10 +291,11 @@ def genAllMoves (board, drops=True):
         
         # One step
         
+        promotion_zone = variants[board.variant].PROMOTION_ZONE[BLACK]
         movedpawns = (pawns << 8) & notblocker
         movedpawns &= 0xffffffffffffffff  # contrain to 64 bits
         for cord in iterBits(movedpawns):
-            if cord <= 7:
+            if cord in promotion_zone:
                 for p in PROMOTIONS:
                     if board.variant == SUICIDECHESS or p != KING_PROMOTION:
                         yield newMove(cord+8, cord, p)
@@ -257,10 +316,9 @@ def genAllMoves (board, drops=True):
         capLeftPawns = pawns & ~fileBits[7]
         capLeftPawns = capLeftPawns << 7 & pawnEnemies
         for cord in iterBits(capLeftPawns):
-            if cord <= 7:
+            if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if board.variant == SUICIDECHESS or p != KING_PROMOTION:
-                        yield newMove(cord+7, cord, p)
+                    yield newMove(cord+7, cord, p)
             elif cord == enpassant:
                 yield newMove (cord+7, cord, ENPASSANT)
             else:
@@ -271,29 +329,55 @@ def genAllMoves (board, drops=True):
         capRightPawns = pawns & ~fileBits[0]
         capRightPawns = capRightPawns << 9 & pawnEnemies
         for cord in iterBits(capRightPawns):
-            if cord <= 7:
+            if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if board.variant == SUICIDECHESS or p != KING_PROMOTION:
-                        yield newMove(cord+9, cord, p)
+                    yield newMove(cord+9, cord, p)
             elif cord == enpassant:
                 yield newMove (cord+9, cord, ENPASSANT)
             else:
                 yield newMove (cord+9, cord)
+    
+    # Sittuyin in place promotions
+    if board.variant == SITTUYINCHESS and pawns and not queens:
+        for cord in iterBits(pawns):
+            if cord in promotion_zone:
+                yield newMove(cord, cord, QUEEN_PROMOTION)
+
+    # Cambodian extra first moves for king and queen
+    if board.variant == CAMBODIANCHESS:
+        if board.arBoard[board.ini_kings[board.color]] == KING and \
+            board.is_first_move[KING][board.color]:
+            if board.color == WHITE:
+                if not board.arBoard[B2]:
+                    yield newMove(D1, B2)
+                if not board.arBoard[F2]:
+                    yield newMove(D1, F2)
+            else:
+                if not board.arBoard[C7]:
+                    yield newMove(E8, C7)
+                if not board.arBoard[G7]:
+                    yield newMove(E8, G7)
+        if board.arBoard[board.ini_queens[board.color]] == QUEEN and \
+            board.is_first_move[QUEEN][board.color]:
+            if board.color == WHITE:
+                if not board.arBoard[E3]:
+                    yield newMove(E1, E3)
+            else:
+                if not board.arBoard[D6]:
+                    yield newMove(D8, D6)
     
     # Castling
     if kings:
         for move in genCastles(board):
             yield move
 
-    if drops and board.variant == CRAZYHOUSECHESS:
-        for move in genDrops(board):
-            yield move
 
 ################################################################################
 #   Generate capturing moves                                                   #
 ################################################################################
 
 def genCaptures (board):
+    from pychess.Variants import variants
     
     blocker = board.blocker
     notblocker = ~blocker
@@ -310,6 +394,10 @@ def genCaptures (board):
     queens = board.boards[board.color][QUEEN]
     kings = board.boards[board.color][KING]
     
+    PROMOTIONS = variants[board.variant].PROMOTIONS
+    if board.variant == SITTUYINCHESS and queens:
+        PROMOTIONS = (NORMAL_MOVE,)
+
     # Knights
     knightMoves = moveArray[KNIGHT]
     for cord in iterBits(knights):
@@ -325,23 +413,41 @@ def genCaptures (board):
                 yield newMove(cord, c)
     
     # Rooks and Queens
-    for cord in iterBits(rooks|queens):
-        attackBoard = attack00[cord][ray00[cord] & blocker] | \
-                      attack90[cord][ray90[cord] & blocker]
-        for c in iterBits(attackBoard & enemies):
-            yield newMove(cord, c)
+    if board.variant in ASEAN_VARIANTS:
+        for cord in iterBits(rooks):
+            attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                          attack90[cord][ray90[cord] & blocker]
+            for c in iterBits(attackBoard & enemies):
+                yield newMove(cord, c)
+    else:
+        for cord in iterBits(rooks|queens):
+            attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                          attack90[cord][ray90[cord] & blocker]
+            for c in iterBits(attackBoard & enemies):
+                yield newMove(cord, c)
     
     # Bishops and Queens
-    for cord in iterBits(bishops|queens):
-        attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
-                      attack135[cord][ray135[cord] & blocker]
-        for c in iterBits(attackBoard & enemies):
-            yield newMove(cord, c)
+    if board.variant in ASEAN_VARIANTS:
+        bishopMoves = moveArray[ASEAN_WBISHOP if board.color == WHITE else ASEAN_BBISHOP]
+        for cord in iterBits(bishops):
+            for c in iterBits(bishopMoves[cord] & enemies):
+                yield newMove(cord, c)
+        queenMoves = moveArray[ASEAN_QUEEN]
+        for cord in iterBits(queens):
+            for c in iterBits(queenMoves[cord] & enemies):
+                yield newMove(cord, c)
+    else:
+        for cord in iterBits(bishops|queens):
+            attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
+                          attack135[cord][ray135[cord] & blocker]
+            for c in iterBits(attackBoard & enemies):
+                yield newMove(cord, c)
     
     # White pawns
     pawnEnemies = enemies | (enpassant != None and bitPosArray[enpassant] or 0)
     
     if board.color == WHITE:
+        promotion_zone = variants[board.variant].PROMOTION_ZONE[WHITE]
         
         # Promotes
         
@@ -356,10 +462,9 @@ def genCaptures (board):
         capLeftPawns = pawns & ~fileBits[0]
         capLeftPawns = (capLeftPawns >> 7) & pawnEnemies
         for cord in iterBits(capLeftPawns):
-            if cord >= 56:
+            if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if board.variant == SUICIDECHESS or p != KING_PROMOTION:
-                        yield newMove(cord-7, cord, p)
+                    yield newMove(cord-7, cord, p)
             elif cord == enpassant:
                 yield newMove (cord-7, cord, ENPASSANT)
             else:
@@ -370,10 +475,9 @@ def genCaptures (board):
         capRightPawns = pawns & ~fileBits[7]
         capRightPawns = (capRightPawns >> 9) & pawnEnemies
         for cord in iterBits(capRightPawns):
-            if cord >= 56:
+            if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if board.variant == SUICIDECHESS or p != KING_PROMOTION:
-                        yield newMove(cord-9, cord, p)
+                    yield newMove(cord-9, cord, p)
             elif cord == enpassant:
                 yield newMove (cord-9, cord, ENPASSANT)
             else:
@@ -381,6 +485,7 @@ def genCaptures (board):
     
     # Black pawns
     else:
+        promotion_zone = variants[board.variant].PROMOTION_ZONE[BLACK]
         
         # One step
         
@@ -395,10 +500,9 @@ def genCaptures (board):
         capLeftPawns = pawns & ~fileBits[7]
         capLeftPawns = capLeftPawns << 7 & pawnEnemies
         for cord in iterBits(capLeftPawns):
-            if cord <= 7:
+            if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if board.variant == SUICIDECHESS or p != KING_PROMOTION:
-                        yield newMove(cord+7, cord, p)
+                    yield newMove(cord+7, cord, p)
             elif cord == enpassant:
                 yield newMove (cord+7, cord, ENPASSANT)
             else:
@@ -409,10 +513,9 @@ def genCaptures (board):
         capRightPawns = pawns & ~fileBits[0]
         capRightPawns = capRightPawns << 9 & pawnEnemies
         for cord in iterBits(capRightPawns):
-            if cord <= 7:
+            if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if board.variant == SUICIDECHESS or p != KING_PROMOTION:
-                        yield newMove(cord+9, cord, p)
+                    yield newMove(cord+9, cord, p)
             elif cord == enpassant:
                 yield newMove (cord+9, cord, ENPASSANT)
             else:
@@ -423,6 +526,7 @@ def genCaptures (board):
 ################################################################################
 
 def genCheckEvasions (board):
+    from pychess.Variants import variants
     color = board.color
     opcolor = 1-color
     
@@ -434,16 +538,19 @@ def genCheckEvasions (board):
     arBoard = board.arBoard
     if bin(checkers).count("1") == 1:
 
+        PROMOTIONS = variants[board.variant].PROMOTIONS
+        if board.variant == SITTUYINCHESS and board.boards[board.color][QUEEN]:
+            PROMOTIONS = (NORMAL_MOVE,)
+        promotion_zone = variants[board.variant].PROMOTION_ZONE[color]
+
         # Captures of checking pieces (except by king, which we will test later)
         chkcord = firstBit (checkers)
         b = getAttacks (board, chkcord, color) & ~kings
         for cord in iterBits(b):
             if not pinnedOnKing (board, cord, color):
-                if arBoard[cord] == PAWN and \
-                        (chkcord <= H1 or chkcord >= A8):
+                if arBoard[cord] == PAWN and chkcord in promotion_zone:
                     for p in PROMOTIONS:
-                        if board.variant == SUICIDECHESS or p != KING_PROMOTION:
-                            yield newMove(cord, chkcord, p)
+                        yield newMove(cord, chkcord, p)
                 else:
                     yield newMove (cord, chkcord)
         
@@ -483,10 +590,9 @@ def genCheckEvasions (board):
                     # If the piece is blocking another attack, we cannot move it
                     if pinnedOnKing (board, fcord, color):
                         continue
-                    if arBoard[fcord] == PAWN and (cord > H7 or cord < A2):
+                    if arBoard[fcord] == PAWN and cord in promotion_zone:
                         for p in PROMOTIONS:
-                            if board.variant == SUICIDECHESS or p != KING_PROMOTION:
-                                yield newMove(fcord, cord, p)
+                            yield newMove(fcord, cord, p)
                     else:
                         yield newMove (fcord, cord)
                     
@@ -495,7 +601,7 @@ def genCheckEvasions (board):
                     for piece in holding:
                         if holding[piece] > 0:
                             if piece == PAWN:
-                                if cord >= 56 or cord <= 7:
+                                if cord in promotion_zone:
                                     continue
                             yield newMove (piece, cord, DROP)
     
@@ -522,6 +628,20 @@ def genDrops (board):
         if holding[piece] > 0:
             for cord, elem in enumerate(arBoard):
                 if elem == EMPTY:
+                    if board.variant == SITTUYINCHESS:
+                        if color == WHITE:
+                            if cord in (A3, B3, C3, D3) or cord > H3:
+                                continue
+                            if piece == ROOK and cord > H1 or \
+                               piece != ROOK and cord <= H1:
+                                continue
+                        else:
+                            if cord in (E6, F6, G6, H6) or cord < A6:
+                                continue
+                            if piece == ROOK and cord < A8 or \
+                               piece != ROOK and cord >= A8:
+                                continue
+
                     if piece == PAWN:
                         if cord >= 56 or cord <= 7:
                             continue

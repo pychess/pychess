@@ -1,8 +1,10 @@
-from const import *
+from __future__ import absolute_import
+from .const import *
 
-import __builtin__
-if '_' not in __builtin__.__dict__:
-    __builtin__.__dict__['_'] = lambda s: s
+from pychess.compat import builtins
+
+if '_' not in builtins.__dict__:
+    builtins.__dict__['_'] = lambda s: s
 
 
 reprColor = [_("White"), _("Black")]
@@ -42,6 +44,7 @@ reprReason_long = {
     WON_NOMATERIAL: _("Because %(winner)s lost all pieces"),
     WON_KINGEXPLODE: _("Because %(loser)s king exploded"),
     WON_KINGINCENTER: _("Because %(winner)s king reached the center"),
+    WON_THREECHECK: _("Because %(winner)s was giving check 3 times"),
 
     ADJOURNED_LOST_CONNECTION: _("Because a player lost connection"),
     ADJOURNED_AGREEMENT: _("Because both players agreed to an adjournment"),

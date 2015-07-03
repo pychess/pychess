@@ -1,3 +1,4 @@
+from __future__ import print_function
 import unittest
 
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCheckEvasions
@@ -32,7 +33,6 @@ class FindMovesTestCase(unittest.TestCase):
                     board.popMove()
                     continue
 
-
                 nmoves.append(nmove)
                 board.popMove()
                 # Validator test
@@ -42,6 +42,10 @@ class FindMovesTestCase(unittest.TestCase):
             
             for move in genCheckEvasions(board):
                 board.applyMove(move)
+                if board.opIsChecked():
+                    board.popMove()
+                    continue
+
                 cmoves.append(move)
                 board.popMove()
                 # Validator test
@@ -59,13 +63,13 @@ class FindMovesTestCase(unittest.TestCase):
                     self.perft(board, depth-1, prevmoves)
                     board.popMove()
             else:
-                print board
-                print "nmoves"
+                print(board)
+                print("nmoves")
                 for move in nmoves:
-                    print toSAN (board, move)
-                print "cmoves"
+                    print(toSAN (board, move))
+                print("cmoves")
                 for move in cmoves:
-                    print toSAN (board, move)
+                    print(toSAN (board, move))
                 self.assertEqual(nmoves, cmoves)
                 
         else:
@@ -81,11 +85,12 @@ class FindMovesTestCase(unittest.TestCase):
                 
                 # San test
                 san = toSAN (board, move)
+                #print(san)
                 try:
                     move2 = parseSAN(board, san)
-                except ParsingError, e:
-                    print prevmoves
-                    raise ParsingError, e
+                except ParsingError as e:
+                    print(prevmoves)
+                    raise ParsingError(e)
                 self.assertEqual (move, move2)
                 
                 board.applyMove (move)
@@ -93,27 +98,10 @@ class FindMovesTestCase(unittest.TestCase):
                 self.perft(board, depth-1, prevmoves)
                 board.popMove()
     
-    def setUp(self):
-        self.positions = []
-        for line in open('gamefiles/perftsuite.epd'):
-            if line.startswith("#"):
-                continue
-            parts = line.split(";")
-            depths = [(int(s[1]), int(s[3:].rstrip())) for s in parts[1:]]
-            self.positions.append( (parts[0], depths) )
-
-        self.positions2 = []
-        for line in open('gamefiles/perftsuite2.epd'):
-            if line.startswith("#"):
-                continue
-            parts = line.split(";")
-            depths = [(int(s[1]), int(s[3:].rstrip())) for s in parts[1:]]
-            self.positions2.append( (parts[0], depths) )
-    
-    def movegen(self, positions):
+    def movegen(self, positions, variant):
         for i, (fen, depths) in enumerate(positions):
-            print i+1, "/", len(positions), "-", fen
-            board = LBoard(NORMALCHESS)
+            print(i+1, "/", len(positions), "-", fen)
+            board = LBoard(variant)
             board.applyFen(fen)
             hash = board.hash
             
@@ -121,27 +109,68 @@ class FindMovesTestCase(unittest.TestCase):
                 if depth > self.MAXDEPTH:
                     break
                 self.count = 0
-                print "searching depth %d for %d moves" % \
-                        (depth, suposedMoveCount)
+                print("searching depth %d for %d moves" % \
+                        (depth, suposedMoveCount))
                 self.perft (board, depth, [])
                 self.assertEqual(board.hash, hash)
                 self.assertEqual(self.count, suposedMoveCount)
 
     def testMovegen1(self):
         """Testing NORMAL variant move generator with perftsuite.epd"""
-        print
+        print()
+        #return
         self.MAXDEPTH = 3
-        self.movegen(self.positions)
+        positions = []
+        for line in open('gamefiles/perftsuite.epd'):
+            if line.startswith("#"):
+                continue
+            parts = line.split(";")
+            depths = [(int(s[1]), int(s[3:].rstrip())) for s in parts[1:]]
+            positions.append( (parts[0], depths) )
+        
+        self.movegen(positions, NORMALCHESS)
 
     def testMovegen2(self):
         """Testing NORMAL variant move generator with perftsuite2.epd"""
-        print
-        print "The movegen test with perftsuite2.epd takes time! If you really want it to run"
-        print "put the 'return' line into comment and use pypy instead of python!"
+        print()
+        print("The movegen test with perftsuite2.epd takes time! If you really want it to run")
+        print("put the 'return' line into comment and use pypy instead of python!")
         return
         self.MAXDEPTH = 7
-        self.movegen(self.positions2)
+        positions = []
+        for line in open('gamefiles/perftsuite2.epd'):
+            if line.startswith("#"):
+                continue
+            parts = line.split(";")
+            depths = [(int(s[1]), int(s[3:].rstrip())) for s in parts[1:]]
+            positions.append( (parts[0], depths) )
+        self.movegen(positions, NORMALCHESS)
 
+    def testMovegen3(self):
+        """Testing SITTUYINCHESS variant move generator"""
+        positions = [("8/6k1/6p1/3s2P1/3npR2/2r5/p2N2F1/3K4 b - - 0 49", [(1, 32),(2, 653),(3, 18439),(4, 357804)])]
+        print()
+        #return
+        self.MAXDEPTH = 3
+        self.movegen(positions, SITTUYINCHESS)
+
+    def testMovegen4(self):
+        """Testing CAMBODIANCHESS variant move generator"""
+        positions = [("rnsmksnr/8/ppp1pppp/3p4/4P3/PPPP1PPP/8/RNSKMSNR w - - 0 2", [(1, 27), (2, 728)]),
+                     ("rns2snr/2m1k3/ppp1pppp/3p4/4P3/PPPP1PPP/3K1M2/RNS2SNR w - - 4 4", [(1, 23), (2, 527), (3, 12264)]),
+                    ]
+        print()
+        #return
+        self.MAXDEPTH = 3
+        self.movegen(positions, CAMBODIANCHESS)
+
+    def testMovegen5(self):
+        """Testing MAKRUK variant move generator"""
+        positions = [("rnsmksnr/8/ppppp1pp/2P5/5p2/PP1PPPPP/8/RNSKMSNR w - - 0 3", [(1, 26), (2, 665), (3, 17062), (4, 432413)])]
+        print()
+        #return
+        self.MAXDEPTH = 3
+        self.movegen(positions, MAKRUKCHESS)
 
 if __name__ == '__main__':
     unittest.main()

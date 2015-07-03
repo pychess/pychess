@@ -1,19 +1,20 @@
+from __future__ import absolute_import
 from time import time
 from random import random
 from heapq import heappush, heappop
 
-from lmovegen import genAllMoves, genCheckEvasions, genCaptures
-from egtb_gaviota import egtb_gaviota
+from .lmovegen import genAllMoves, genCheckEvasions, genCaptures
+from .egtb_gaviota import egtb_gaviota
 from pychess.Utils.const import *
-from pychess.Utils.Move import Move
-from pychess.Utils.logic import validate
-from leval import evaluateComplete
-from lsort import getCaptureValue, getMoveValue
-from lmove import toSAN
-from ldata import MATE_VALUE, VALUE_AT_PLY
-from TranspositionTable import TranspositionTable
+from .leval import evaluateComplete
+from .lsort import getCaptureValue, getMoveValue
+from .lmove import toSAN
+from .ldata import MATE_VALUE, VALUE_AT_PLY
+from .TranspositionTable import TranspositionTable
 from pychess.Variants.atomic import kingExplode
-import ldraw
+from pychess.Variants.kingofthehill import testKingInCenter
+from pychess.Variants.threecheck import checkCount
+from . import ldraw
 
 TIMECHECK_FREQ = 500
 
@@ -62,7 +63,10 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if bin(board.boards[board.color][KING]).count("1") == 0:
             return [], MATED
     elif board.variant == KINGOFTHEHILLCHESS:
-        if board.kings[board.color-1] in (E4, E5, D4, D5):
+        if testKingInCenter(board):
+            return [], MATED
+    elif board.variant == THREECHECKCHESS:
+        if checkCount(board) == 3:
             return [], MATED
 
     ############################################################################
@@ -85,7 +89,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
                 if state == WHITEWON:
                     score = -MATE_VALUE+steps
                 else: score = MATE_VALUE-steps
-            return [move.move], score
+            return [move], score
     
     ###########################################################################
     # We don't save repetition in the table, so we need to test draw before   #
@@ -101,7 +105,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Look up transposition table                                              #
     ############################################################################
     # TODO: add holder to hash
-    if board.variant != CRAZYHOUSECHESS:
+    if board.variant not in DROP_VARIANTS:
         if ply == 0:
             table.newSearch()
 
@@ -257,7 +261,7 @@ def alphaBeta (board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
 def quiescent (board, alpha, beta, ply):
     
     if skipPruneChance and random() < skipPruneChance:
-        return [], (alpha+beta)/2
+        return [], (alpha+beta) // 2
     
     global nodes
     
@@ -340,12 +344,7 @@ class EndgameTable():
         
         pc = self._pieceCounts(lBoard)
         if self.provider.supports(pc):
-            results = provider.scoreAllMoves(lBoard)
-            if results:
-                ret = []
-                for lMove, result, depth in results:
-                    ret.append( (Move(lMove), result, depth) )
-                return ret
+            return self.provider.scoreAllMoves(lBoard)
         return []
 
 def enableEGTB():

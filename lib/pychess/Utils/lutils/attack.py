@@ -1,5 +1,6 @@
-from bitboard import *
-from ldata import *
+from __future__ import absolute_import
+from .bitboard import *
+from .ldata import *
 from pychess.Utils.const import *
 
 #
@@ -22,20 +23,30 @@ def isAttacked (board, cord, color, ischecked=False):
     blocker = board.blocker
     
     # Bishops & Queens
-    bitboard = (pboards[BISHOP] | pboards[QUEEN]) & _moveArray[BISHOP][cord]
-    if bitboard:
-        others = ~bitboard & blocker
-        # inlined iterBits()
-        while bitboard:
-            bit = bitboard & -bitboard
-            ray = rayto[lsb[bit]]
-            # If there is a path and no other piece stand in our way
-            if ray and not ray & others:
-                return True
-            bitboard -= bit
+    if board.variant in ASEAN_VARIANTS:
+        bishopMoves = _moveArray[ASEAN_BBISHOP if color == WHITE else ASEAN_WBISHOP]
+        if pboards[BISHOP] & bishopMoves[cord]:
+            return True
+        if pboards[QUEEN] & _moveArray[ASEAN_QUEEN][cord]:
+            return True
+    else:
+        bitboard = (pboards[BISHOP] | pboards[QUEEN]) & _moveArray[BISHOP][cord]
+        if bitboard:
+            others = ~bitboard & blocker
+            # inlined iterBits()
+            while bitboard:
+                bit = bitboard & -bitboard
+                ray = rayto[lsb[bit]]
+                # If there is a path and no other piece stand in our way
+                if ray and not ray & others:
+                    return True
+                bitboard -= bit
 
     # Rooks & Queens
-    bitboard = (pboards[ROOK] | pboards[QUEEN]) & _moveArray[ROOK][cord]
+    if board.variant in ASEAN_VARIANTS:
+        bitboard = pboards[ROOK] & _moveArray[ROOK][cord]
+    else:
+        bitboard = (pboards[ROOK] | pboards[QUEEN]) & _moveArray[ROOK][cord]
     if bitboard:
         others = ~bitboard & blocker
         # inlined iterBits()
@@ -82,18 +93,27 @@ def getAttacks (board, cord, color):
     blocker = board.blocker
     
     # Bishops and Queens
-    bitboard = (pieces[BISHOP] | pieces[QUEEN]) & _moveArray[BISHOP][cord]
-    # inlined iterBits()
-    while bitboard:
-        bit = bitboard & -bitboard
-        c = lsb[bit]
-        ray = rayto[c]
-        if ray and not clearBit(ray & blocker, c):
-            bits |= bitPosArray[c]
-        bitboard -= bit
+    if board.variant in ASEAN_VARIANTS:
+        bishopMoves = _moveArray[ASEAN_BBISHOP if color == WHITE else ASEAN_WBISHOP]
+        bits |= pieces[BISHOP] & bishopMoves[cord]
+
+        bits |= pieces[QUEEN] & _moveArray[ASEAN_QUEEN][cord]
+    else:
+        bitboard = (pieces[BISHOP] | pieces[QUEEN]) & _moveArray[BISHOP][cord]
+        # inlined iterBits()
+        while bitboard:
+            bit = bitboard & -bitboard
+            c = lsb[bit]
+            ray = rayto[c]
+            if ray and not clearBit(ray & blocker, c):
+                bits |= bitPosArray[c]
+            bitboard -= bit
     
     # Rooks and queens
-    bitboard = (pieces[ROOK] | pieces[QUEEN]) & _moveArray[ROOK][cord]
+    if board.variant in ASEAN_VARIANTS:
+        bitboard = pieces[ROOK] & _moveArray[ROOK][cord]
+    else:
+        bitboard = (pieces[ROOK] | pieces[QUEEN]) & _moveArray[ROOK][cord]
     # inlined iterBits()
     while bitboard:
         bit = bitboard & -bitboard
@@ -105,36 +125,6 @@ def getAttacks (board, cord, color):
     
     return bits
 
-def getPieceMoves (board, cord, color, piece):
-    """ To create a bitboard of specified pieces of color, which can move to
-        cord """
-    
-    _moveArray = moveArray
-    color = board.color
-    pieces = board.boards[color]
-    
-    if piece == KNIGHT or piece == KING:
-        return pieces[piece] & _moveArray[piece][cord]
-    
-    rayto = fromToRay[cord]
-    blocker = board.blocker
-    
-    if sliders[piece]:
-        cords = pieces[piece] & _moveArray[piece][cord]
-        bits = 0
-        for c in iterBits(cords):
-            ray = rayto[c]
-            if ray and not clearBit(ray & blocker, c):
-                bits |= bitPosArray[c]
-        return bits
-    
-    if piece == PAWN:
-        pawns = pieces[PAWN]
-        bits = pawns & _moveArray[color == WHITE and BPAWN or PAWN][cord]
-        bits |= pawns & bitPosArray[cord + (color == WHITE and -8 or 8)]
-        if not blocker & bitPosArray[cord + (color == WHITE and -8 or 8)]:
-            bits |= pawns & rankBits[color == WHITE and 1 or 6]
-        return bits
 
 def pinnedOnKing (board, cord, color):
     # Determine if the piece on cord is pinned against its colors king.
@@ -161,14 +151,22 @@ def pinnedOnKing (board, cord, color):
     cord1 = cord > kingCord and firstBit (b) or lastBit (b)
 
     #  If diagonal
-    if dir <= 3 and    bitPosArray[cord1] & \
-            (board.boards[opcolor][QUEEN] | board.boards[opcolor][BISHOP]):
-        return True
+    if board.variant in ASEAN_VARIANTS:
+        pass
+    else:
+        if dir <= 3 and bitPosArray[cord1] & \
+                (board.boards[opcolor][QUEEN] | board.boards[opcolor][BISHOP]):
+            return True
    
     #  Rank / file
-    if dir >= 4 and bitPosArray[cord1] & \
-            (board.boards[opcolor][QUEEN] | board.boards[opcolor][ROOK]):
-        return True
+    if board.variant in ASEAN_VARIANTS:
+        if dir >= 4 and bitPosArray[cord1] & \
+                board.boards[opcolor][ROOK]:
+            return True
+    else:
+        if dir >= 4 and bitPosArray[cord1] & \
+                (board.boards[opcolor][QUEEN] | board.boards[opcolor][ROOK]):
+            return True
 
     return False
 
@@ -207,6 +205,8 @@ def staticExchangeEvaluate (board, moveOrTcord, color=None):
         if xray[board.arBoard[fcord]]:
             ours, theirs = addXrayPiece (board, tcord, fcord, color, ours, theirs)
         
+        from pychess.Variants import variants
+        PROMOTIONS = variants[board.variant].PROMOTIONS
         if flag in PROMOTIONS:
             swaplist = [PIECE_VALUES[flag-3] - PAWN_VALUE]
             lastval = -PIECE_VALUES[flag-3]
@@ -228,7 +228,7 @@ def staticExchangeEvaluate (board, moveOrTcord, color=None):
         lastval = -PIECE_VALUES[board.arBoard[tcord]]
     
     while theirs:
-        for piece in xrange(PAWN, KING+1):
+        for piece in range(PAWN, KING+1):
             r = theirs & opboards[piece]
             if r:
                 cord = firstBit(r)
@@ -243,7 +243,7 @@ def staticExchangeEvaluate (board, moveOrTcord, color=None):
         if not ours:
             break
         
-        for piece in xrange(PAWN, KING+1):
+        for piece in range(PAWN, KING+1):
             r = ours & boards[piece]
             if r:
                 cord = firstBit(r)
@@ -258,7 +258,7 @@ def staticExchangeEvaluate (board, moveOrTcord, color=None):
     #  At this stage, we have the swap scores in a list.  We just need to
     #  mini-max the scores from the bottom up to the top of the list.
     
-    for n in xrange(len(swaplist)-1, 0, -1):
+    for n in range(len(swaplist)-1, 0, -1):
         if n & 1:
             if swaplist[n] <= swaplist[n-1]:
                 swaplist[n-1] = swaplist[n] 
@@ -285,8 +285,12 @@ def addXrayPiece (board, tcord, fcord, color, ours, theirs):
     else: ncord = lastBit(a)
     
     piece = board.arBoard[ncord]
-    if piece == QUEEN or (piece == ROOK and dir > 3) or \
-                         (piece == BISHOP and dir < 4):
+    if board.variant in ASEAN_VARIANTS:
+        cond = piece == ROOK and dir > 3
+    else:
+        cond = piece == QUEEN or (piece == ROOK and dir > 3) or \
+                         (piece == BISHOP and dir < 4)
+    if cond:
         bit = bitPosArray[ncord]
         if bit & board.friends[color]:
             ours |= bit
@@ -325,8 +329,8 @@ def defends (board, fcord, tcord):
     # Can we "attack" the piece now?
     backupColor = board.color
     board.setColor(color)
-    from lmovegen import newMove
-    from validator import validateMove
+    from .lmovegen import newMove
+    from .validator import validateMove
     islegal = validateMove (board, newMove(fcord, tcord))
     board.setColor(backupColor)
     

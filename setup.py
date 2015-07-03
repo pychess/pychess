@@ -1,5 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
+from __future__ import print_function
 
 from imp import load_module, find_module
 pychess = load_module("pychess", *find_module("pychess",["lib"]))
@@ -13,7 +14,7 @@ import sys
 
 
 if sys.version_info < (2, 6, 0):
-    print 'ERROR: PyChess requires Python >= 2.6'
+    print('ERROR: PyChess requires Python >= 2.6')
     sys.exit(1)
 
 # To run "setup.py register" change name to "NAME+VERSION_NAME"
@@ -61,49 +62,30 @@ PyChess has many other features including:
 
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
-    'Environment :: X11 Applications :: Gnome',
+    'Environment :: X11 Applications :: GTK',
     'Intended Audience :: End Users/Desktop',
-    'License :: OSI Approved :: GNU General Public License (GPL)',
+    'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
     'Operating System :: POSIX',
     'Programming Language :: Python',
-    'Topic :: Desktop Environment :: Gnome',
+    'Programming Language :: Python :: 3',
     'Topic :: Games/Entertainment :: Board Games',
-    'Natural Language :: Arabic',
-    'Natural Language :: Bulgarian',
-    'Natural Language :: Catalan',
-    'Natural Language :: Czech',
-    'Natural Language :: Danish',
-    'Natural Language :: Dutch',
-    'Natural Language :: English',
-    'Natural Language :: Finnish',
-    'Natural Language :: French',
-    'Natural Language :: German',
-    'Natural Language :: Greek',
-    'Natural Language :: Hebrew',
-    'Natural Language :: Hindi', 
-    'Natural Language :: Hungarian',
-    'Natural Language :: Italian',
-    'Natural Language :: Japanese',
-    'Natural Language :: Norwegian',
-    'Natural Language :: Persian',
-    'Natural Language :: Polish',
-    'Natural Language :: Portuguese',
-    'Natural Language :: Portuguese (Brazilian)',
-    'Natural Language :: Romanian',
-    'Natural Language :: Russian',
-    'Natural Language :: Slovak',
-    'Natural Language :: Spanish',
-    'Natural Language :: Swedish',
-    'Natural Language :: Turkish',
-]
+    ]
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
+# save
+stderr = sys.stderr
+stdout = sys.stdout
+
 if not isfile("eco.db"):
-    execfile("pgn2ecodb.py")
+    exec(open("pgn2ecodb.py").read())
 
 if not isfile(os.path.abspath("pieces/Pychess.png")):
-    execfile("create_theme_preview.py")
+    exec(open("create_theme_preview.py").read())
+
+# restore
+sys.stderr = stderr
+sys.stdout = stdout
 
 DATA_FILES = [("share/pychess",
     ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin", "eco.db"])]

@@ -1,30 +1,36 @@
-import gtk, cairo
-import gobject
+from __future__ import absolute_import
+from __future__ import print_function
 
-from OverlayWindow import OverlayWindow
+import cairo
 
-from __init__ import NORTH, EAST, SOUTH, WEST
+from gi.repository import Gtk
+from gi.repository import GObject
+from gi.repository import Gdk
+
+from .OverlayWindow import OverlayWindow
+
+from .__init__ import NORTH, EAST, SOUTH, WEST
 
 class ArrowButton (OverlayWindow):
     """ Leafs will connect to the drag-drop signal """
     
     __gsignals__ = {
-        'dropped' : (gobject.SIGNAL_RUN_FIRST, None, (object,)),
-        'hovered' : (gobject.SIGNAL_RUN_FIRST, None, (object,)),
-        'left' : (gobject.SIGNAL_RUN_FIRST, None, ()),
+        'dropped' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'hovered' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'left' : (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
     
     def __init__ (self, parent, svgPath, position):
-        OverlayWindow.__init__(self, parent)
-        
+        OverlayWindow.__init__(self, parent)      
         self.myparent = parent
         self.myposition = position
-        self.svgPath = svgPath
-        self.connect_after("expose-event", self.__onExposeEvent)
+        self.svgPath = svgPath        
+        self.connect_after("draw", self.__onExposeEvent)
         
-        targets = [("GTK_NOTEBOOK_TAB", gtk.TARGET_SAME_APP, 0xbadbeef)]
-        self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           targets, gtk.gdk.ACTION_MOVE)
+        #targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
+        targets = [Gtk.TargetEntry.new("GTK_NOTEBOOK_TAB",Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
+        self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
+                           targets, Gdk.DragAction.MOVE)
         self.drag_dest_set_track_motion(True)
         self.connect("drag-motion", self.__onDragMotion)
         self.connect("drag-leave", self.__onDragLeave)
@@ -43,7 +49,7 @@ class ArrowButton (OverlayWindow):
         if self.myparentAlloc == None:
             self.resize(width, height)
         
-        if self.window and not self.hasHole:
+        if self.get_window() and not self.hasHole:
             self.hasHole = True
             self.digAHole(self.svgPath, width, height)
         
@@ -61,11 +67,11 @@ class ArrowButton (OverlayWindow):
             self.move(x, y)
         
         self.myparentAlloc = parentAlloc
-        self.myparentPos = self.myparent.window.get_position()
+        self.myparentPos = self.myparent.get_window().get_position()
     
-    def __onExposeEvent (self, self_, event):
+    def __onExposeEvent (self, self_, ctx):
         self._calcSize()
-        context = self.window.cairo_create()
+        context = self.get_window().cairo_create()
         width, height = self.getSizeOfSvg(self.svgPath)
         surface = self.getSurfaceFromSvg(self.svgPath, width, height)
         
@@ -75,12 +81,13 @@ class ArrowButton (OverlayWindow):
             context.paint()
             context.set_operator(cairo.OPERATOR_OVER)
         
-        mask = gtk.gdk.Pixmap(None, width, height, 1)
-        mcontext = mask.cairo_create()
-        mcontext.set_source_surface(surface, 0, 0)
-        mcontext.paint()
-        self.window.shape_combine_mask(mask, 0, 0)
-        
+        # FIXME
+        #mask = Gdk.Pixmap(None, width, height, 1)
+        #mcontext = mask.cairo_create()
+        #mcontext.set_source_surface(surface, 0, 0)
+        #mcontext.paint()
+        #self.window.shape_combine_mask(mask, 0, 0)
+
         context.set_source_surface(surface, 0, 0)
         context.paint()
     
@@ -91,7 +98,7 @@ class ArrowButton (OverlayWindow):
     def __onDragMotion (self, arrow, context, x, y, timestamp):
         if not self.hovered and self.__containsPoint(x,y):
             self.hovered = True
-            self.emit("hovered", context.get_source_widget())
+            self.emit("hovered", Gtk.drag_get_source_widget(context))
         elif self.hovered and not self.__containsPoint(x,y):
             self.hovered = False
             self.emit("left")
@@ -103,6 +110,6 @@ class ArrowButton (OverlayWindow):
     
     def __onDragDrop (self, arrow, context, x, y, timestamp):
         if self.__containsPoint(x,y):
-            self.emit("dropped", context.get_source_widget())
+            self.emit("dropped", Gtk.drag_get_source_widget(context))
             context.finish(True, True, timestamp)
             return True

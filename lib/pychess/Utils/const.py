@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
+from __future__ import unicode_literals
 
 ################################################################################
 # PyChess information                                                          #
 ################################################################################
 
 NAME = "PyChess"
-ENGINES_XML_API_VERSION = "0.12"
 
 ################################################################################
 # Player info                                                                  #
@@ -27,7 +27,7 @@ WHITE, BLACK = range(2)
 # Game states
 WAITING_TO_START, PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON, KILLED, \
     ADJOURNED, ABORTED, UNKNOWN_STATE = range(10)
-reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "?", "*", "?", "?"]
+reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "*", "*", "*", "*"]
 
 UNDOABLE_STATES = (DRAW, WHITEWON, BLACKWON)
 UNFINISHED_STATES = (WAITING_TO_START, PAUSED, RUNNING, UNKNOWN_STATE)
@@ -38,12 +38,17 @@ ASYMMETRICRANDOMCHESS, UPSIDEDOWNCHESS, PAWNSPUSHEDCHESS, PAWNSPASSEDCHESS, \
 THEBANCHESS, PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS, \
 BLINDFOLDCHESS, HIDDENPAWNSCHESS, HIDDENPIECESCHESS, ALLWHITECHESS, \
 ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, LOSERSCHESS, SUICIDECHESS, \
-WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, KINGOFTHEHILLCHESS = range(26)
+WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS, \
+ASEANCHESS, MAKRUKCHESS, SITTUYINCHESS, CAMBODIANCHESS, AIWOKCHESS, \
+EUROSHOGICHESS = range(33)
 
-UNSUPPORTED = (BUGHOUSECHESS,)
+ASEAN_VARIANTS = (ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, AIWOKCHESS, SITTUYINCHESS)
+DROP_VARIANTS = (BUGHOUSECHESS, CRAZYHOUSECHESS, EUROSHOGICHESS, SITTUYINCHESS)
+UNSUPPORTED = (BUGHOUSECHESS, AIWOKCHESS, EUROSHOGICHESS)
 
 # Chess variant groups
-VARIANTS_BLINDFOLD, VARIANTS_ODDS, VARIANTS_SHUFFLE, VARIANTS_OTHER, VARIANTS_OTHER_NONSTANDARD = range(5)
+VARIANTS_BLINDFOLD, VARIANTS_ODDS, VARIANTS_SHUFFLE, VARIANTS_OTHER, \
+VARIANTS_OTHER_NONSTANDARD, VARIANTS_ASEAN = range(6)
 
 # Action errors
 ACTION_ERROR_NOT_OUT_OF_TIME, \
@@ -63,7 +68,8 @@ DRAW_50MOVES, DRAW_ADJUDICATION, DRAW_AGREE, DRAW_CALLFLAG, DRAW_INSUFFICIENT, \
     DRAW_BLACKINSUFFICIENTANDWHITETIME, DRAW_WHITEINSUFFICIENTANDBLACKTIME, \
 WON_ADJUDICATION, WON_CALLFLAG, WON_DISCONNECTION, WON_MATE, WON_RESIGN, \
     WON_LESSMATERIAL, WON_NOMATERIAL, WON_KINGEXPLODE, WON_KINGINCENTER, \
-WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, DISCONNECTED, UNKNOWN_REASON = range(38)
+    WON_THREECHECK, \
+WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, DISCONNECTED, UNKNOWN_REASON = range(39)
 
 UNDOABLE_REASONS = (DRAW_50MOVES, DRAW_INSUFFICIENT, DRAW_LENGTH,
                     DRAW_REPITITION, DRAW_STALEMATE, DRAW_AGREE, DRAW_CALLFLAG, \
@@ -114,15 +120,21 @@ NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
 ################################################################################
 
 # BPAWN is a pawn that moves in the opposite direction
-EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN = range(8)
+EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN, \
+ASEAN_WBISHOP, ASEAN_BBISHOP, ASEAN_QUEEN = range(11)
 
 # Is sliding piece
-sliders = [ False, False, False, True, True, True, False, False ]
+sliders = [ False, False, False, True, True, True, False, False, \
+            False, False, False ]
 
 # Piece signs
 reprSign = ["", "P", "N", "B", "R", "Q", "K"]
-chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN}
-chrU2Sign = {"K":KING, "Q": QUEEN, "R": ROOK, "B": BISHOP, "N": KNIGHT, "P":PAWN}
+reprSignMakruk = ["", "P", "N", "S", "R", "M", "K"]
+reprSignSittuyin = ["", "P", "N", "S", "R", "F", "K"]
+chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN,
+            "m": QUEEN, "s": BISHOP, "f": QUEEN}
+chrU2Sign = {"K":KING, "Q": QUEEN, "R": ROOK, "B": BISHOP, "N": KNIGHT, "P":PAWN,
+            "M": QUEEN, "S": BISHOP, "F": QUEEN}
 
 ################################################################################
 # Move values                                                                  #
@@ -130,16 +142,16 @@ chrU2Sign = {"K":KING, "Q": QUEEN, "R": ROOK, "B": BISHOP, "N": KNIGHT, "P":PAWN
 
 NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
 KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, KING_PROMOTION, NULL_MOVE, DROP = range(11)
-
 PROMOTIONS = (KING_PROMOTION, QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION)
+
 # Algebraic notation types: Short, Long, Figure and Simpe
 SAN, LAN, FAN, AN = range(4)
 # Castling notation types: e.g., O-O, e1g1, e1h1
 CASTLE_SAN, CASTLE_KK, CASTLE_KR = range(3)
 
 FAN_PIECES = [
-    ["", u"♙", u"♘", u"♗", u"♖", u"♕", u"♔", ""],
-    ["", u"♟", u"♞", u"♝", u"♜", u"♛", u"♚", ""]
+    ["", "♙", "♘", "♗", "♖", "♕", "♔", ""],
+    ["", "♟", "♞", "♝", "♜", "♛", "♚", ""]
 ]
 
 ################################################################################
@@ -199,7 +211,8 @@ GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "export_position1", "analyze_g
 ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
                      "call_flag", "resign", "ask_to_move")
 VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
-MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS
+EDIT_MENU_ITEMS = ("copy_pgn",)
+MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS + EDIT_MENU_ITEMS
 
 ################################################################################
 # Subprocess                                                                   #

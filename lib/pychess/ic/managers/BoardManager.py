@@ -1,5 +1,7 @@
+from __future__ import print_function
 import re
-from gobject import *
+#from gobject import *
+from gi.repository import GObject
 import threading
 
 from pychess.System.Log import log
@@ -30,8 +32,8 @@ moveListHeader2Str = "%s ([^ ]+) match, initial time: (\d+) minutes, increment: 
     ratedexp
 moveListHeader2 = re.compile(moveListHeader2Str, re.IGNORECASE)
 sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
-movetime = "\((\d+):(\d\d)(?:\.(\d\d\d))?\)"
-moveListMoves = re.compile("(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" % \
+movetime = "\((\d:)?(\d{1,2}):(\d\d)(?:\.(\d\d\d))?\)"
+moveListMoves = re.compile("\s*(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" % \
     (sanmove, movetime, sanmove, movetime))
 
 creating0 = re.compile("Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
@@ -158,30 +160,30 @@ def parse_reason (result, reason, wname=None):
     
     return result, reason
 
-class BoardManager (GObject):
+class BoardManager (GObject.GObject):
     
     __gsignals__ = {
-        'playGameCreated'     : (SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameCreated'      : (SIGNAL_RUN_FIRST, None, (object,)),
-        'boardUpdate'         : (SIGNAL_RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
-        'obsGameEnded'        : (SIGNAL_RUN_FIRST, None, (object,)),
-        'curGameEnded'        : (SIGNAL_RUN_FIRST, None, (object,)),
-        'obsGameUnobserved'   : (SIGNAL_RUN_FIRST, None, (object,)),
-        'gamePaused'          : (SIGNAL_RUN_FIRST, None, (int, bool)),
-        'tooManySeeks'        : (SIGNAL_RUN_FIRST, None, ()),
-        'matchDeclined'       : (SIGNAL_RUN_FIRST, None, (object,)),
-        'player_on_censor'    : (SIGNAL_RUN_FIRST, None, (object,)),
-        'player_on_noplay'    : (SIGNAL_RUN_FIRST, None, (object,)),
-        'player_lagged'       : (SIGNAL_RUN_FIRST, None, (object,)),
-        'opp_not_out_of_time' : (SIGNAL_RUN_FIRST, None, ()),
-        'req_not_fit_formula' : (SIGNAL_RUN_FIRST, None, (object, str)),
+        'playGameCreated'     : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'obsGameCreated'      : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'boardUpdate'         : (GObject.SignalFlags.RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
+        'obsGameEnded'        : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'curGameEnded'        : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'obsGameUnobserved'   : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'gamePaused'          : (GObject.SignalFlags.RUN_FIRST, None, (int, bool)),
+        'tooManySeeks'        : (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'matchDeclined'       : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'player_on_censor'    : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'player_on_noplay'    : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'player_lagged'       : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'opp_not_out_of_time' : (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'req_not_fit_formula' : (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
     }
     
     castleSigns = {}
     queuedStyle12s = {}
     
     def __init__ (self, connection):
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)        
         self.connection = connection
         self.connection.expect_line (self.onStyle12, "<12> (.+)")
         self.connection.expect_line (self.onWasPrivate,
@@ -607,31 +609,35 @@ class BoardManager (GObject):
             if not moveListMoves.match(line):
                 log.error("BoardManager.parseGame: unmatched line: \"%s\"" % \
                           repr(line))
-                raise
-            moveno, wmove, wmin, wsec, wmsec, bmove, bmin, bsec, bmsec = \
+                raise Exception("BoardManager.parseGame: unmatched line: \"%s\"" % \
+                          repr(line))
+            moveno, wmove, whour, wmin, wsec, wmsec, bmove, bhour, bmin, bsec, bmsec = \
                 moveListMoves.match(line).groups()
+            if whour is None:
+                whour = 0
+            if bhour is None:
+                bhour = 0
             ply = int(moveno)*2-2
-            
             if wmove:
                 moves[ply] = wmove
-                wms -= (int(wmin) * 60 * 1000) + (int(wsec) * 1000)
+                wms -= (int(whour) * 60 * 60 * 1000) + (int(wmin) * 60 * 1000) + (int(wsec) * 1000)
                 if wmsec is not None:
                     wms -= int(wmsec)
                 else:
                     wmsec = 0
                 if int(moveno) > 1 and increment > 0:
                     wms += (increment * 1000)
-                times[ply] = "0:%02d:%02d.%03d" % (int(wmin), int(wsec), int(wmsec))
+                times[ply] = "%01d:%02d:%02d.%03d" % (int(whour), int(wmin), int(wsec), int(wmsec))
             if bmove:
                 moves[ply+1] = bmove
-                bms -= (int(bmin) * 60 * 1000) + (int(bsec) * 1000)
+                bms -= (int(bhour) * 60 * 60 * 1000) + (int(bmin) * 60 * 1000) + (int(bsec) * 1000)
                 if bmsec is not None:
                     bms -= int(bmsec)
                 else:
                     bmsec = 0
                 if int(moveno) > 1 and increment > 0:
                     bms += (increment * 1000)
-                times[ply+1] = "0:%02d:%02d.%03d" % (int(bmin), int(bsec), int(bmsec))
+                times[ply+1] = "%01d:%02d:%02d.%03d" % (int(bhour), int(bmin), int(bsec), int(bmsec))
         
         if in_progress:
             # Apply queued board updates
@@ -687,11 +693,10 @@ class BoardManager (GObject):
             pgnHead += [ ("Variant", "Suicide") ]
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
         
-        moves = moves.items()
-        moves.sort()
+        moves = sorted(moves.items())
         for ply, move in moves:
             if ply % 2 == 0:
-                pgn += "%d. " % (ply/2+1)
+                pgn += "%d. " % (ply//2+1)
             time = times[ply]
             pgn += "%s {[%%emt %s]} " % (move, time)
         pgn += "*\n"
@@ -870,8 +875,8 @@ if __name__ == "__main__":
     con = Connection("","","","")
     bm = BoardManager(con)
     
-    print bm._BoardManager__parseStyle12("rkbrnqnb pppppppp -------- -------- -------- -------- PPPPPPPP RKBRNQNB W -1 1 1 1 1 0 161 GuestNPFS GuestMZZK -1 2 12 39 39 120 120 1 none (0:00) none 1 0 0",
-                                         ("d","a"))
+    print(bm._BoardManager__parseStyle12("rkbrnqnb pppppppp -------- -------- -------- -------- PPPPPPPP RKBRNQNB W -1 1 1 1 1 0 161 GuestNPFS GuestMZZK -1 2 12 39 39 120 120 1 none (0:00) none 1 0 0",
+                                         ("d","a")))
     
-    print bm._BoardManager__parseStyle12("rnbqkbnr pppp-ppp -------- ----p--- ----PP-- -------- PPPP--PP RNBQKBNR B 5 1 1 1 1 0 241 GuestGFFC GuestNXMP -4 2 12 39 39 120000 120000 1 none (0:00.000) none 0 0 0",
-                                         ("k","q"))
+    print(bm._BoardManager__parseStyle12("rnbqkbnr pppp-ppp -------- ----p--- ----PP-- -------- PPPP--PP RNBQKBNR B 5 1 1 1 1 0 241 GuestGFFC GuestNXMP -4 2 12 39 39 120000 120000 1 none (0:00.000) none 0 0 0",
+                                         ("k","q")))

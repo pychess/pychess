@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import
+from __future__ import print_function
+
 import os
 import sys
 import zipfile
 from datetime import date
 from array import array
 
-from profilehooks import profile
+from .profilehooks import profile
 
 from sqlalchemy import select, Index, func, and_
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.schema import DropIndex
 
+from pychess.compat import unicode
 from pychess.Utils.const import *
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.ChessFile import LoadingError
@@ -25,11 +29,11 @@ CHUNK = 1000
 EVENT, SITE, PLAYER, ANNOTATOR, COLLECTION = range(5)
 
 removeDic = {
-    ord(u"'"): None,
-    ord(u","): None,
-    ord(u"."): None,
-    ord(u"-"): None,
-    ord(u" "): None,
+    ord(unicode("'")): None,
+    ord(unicode(",")): None,
+    ord(unicode(".")): None,
+    ord(unicode("-")): None,
+    ord(unicode(" ")): None,
 }
 
 LBoard_FEN_START = LBoard()
@@ -124,7 +128,7 @@ class PgnImport():
 
     #@profile
     def do_import(self, filename):
-        print filename
+        print(filename)
         # collect new names not in they dict yet
         self.collection_data = []
         self.event_data = []
@@ -180,8 +184,8 @@ class PgnImport():
                     if fenstr:
                         try:
                             board.applyFen(fenstr)
-                        except SyntaxError, e:
-                            print _("The game #%s can't be loaded, because of an error parsing FEN") % (i+1), e.args[0]
+                        except SyntaxError as e:
+                            print(_("The game #%s can't be loaded, because of an error parsing FEN") % (i+1), e.args[0])
                             continue
                     else:
                         board = LBoard_FEN_START.clone()
@@ -191,14 +195,14 @@ class PgnImport():
                     boards = cf.parse_string(movetext, boards[0], -1)
 
                     if cf.error is not None:
-                        print "ERROR in game #%s" % (i+1), cf.error.args[0]
+                        print("ERROR in game #%s" % (i+1), cf.error.args[0])
                         continue
 
                     walk(boards[0], movelist, comments)
                     
                     if not movelist:
                         if (not comments) and (cf._getTag(i, 'White') is None) and (cf._getTag(i, 'Black') is None):
-                            print "empty game"
+                            print("empty game")
                             continue
                     
                     event_id = self.get_id(cf._getTag(i, 'Event'), event, EVENT)
@@ -269,7 +273,7 @@ class PgnImport():
                         'annotator_id': annotator_id,
                         'collection_id': collection_id,
                         'movelist': movelist.tostring(),
-                        'comments': u"|".join(comments),
+                        'comments': unicode("|".join(comments)),
                         })
 
                     if len(self.game_data) >= CHUNK:
@@ -295,7 +299,7 @@ class PgnImport():
 
                         self.conn.execute(self.ins_game, self.game_data)
                         self.game_data = []
-                        print pgnfile, i+1
+                        print(pgnfile, i+1)
                     
                 if self.collection_data:
                     self.conn.execute(self.ins_collection, self.collection_data)
@@ -321,12 +325,12 @@ class PgnImport():
                     self.conn.execute(self.ins_game, self.game_data)
                     self.game_data = []
 
-                print pgnfile, i+1
+                print(pgnfile, i+1)
                 trans.commit()
 
-            except ProgrammingError, e:
+            except ProgrammingError as e:
                 trans.rollback()
-                print "Importing %s failed! %s" % (file, e)
+                print("Importing %s failed! %s" % (file, e))
 
     def import_FIDE_players(self):
         #print 'drop index'
@@ -359,7 +363,7 @@ class PgnImport():
                     
                     player_data.append({
                         "fideid": int(line[:8]),
-                        "name": line[10:42].rstrip().decode('latin_1'),
+                        "name": line[10:42].rstrip(),
                         "title": title,
                         "fed": line[48:51],
                         "elo": elo,
@@ -369,12 +373,12 @@ class PgnImport():
                     if len(player_data) >= CHUNK:
                         self.conn.execute(ins_player, player_data)
                         player_data = []
-                        print i
+                        print(i)
 
                 if player_data:
                     self.conn.execute(ins_player, player_data)
 
-                print i+1
+                print(i+1)
                 trans.commit()
 
             except:
@@ -394,13 +398,13 @@ class PgnImport():
                     game.c.event_id==a1.c.id,
                     game.c.site_id==a2.c.id,
                     game.c.white_id==a3.c.id,
-                    game.c.black_id==a4.c.id)).where(and_(a3.c.name.startswith(u"Réti"), a4.c.name.startswith(u"Van Nüss")))
+                    game.c.black_id==a4.c.id)).where(and_(a3.c.name.startswith(unicode("Réti")), a4.c.name.startswith(unicode("Van Nüss"))))
                      
         result = self.conn.execute(s)
         games = result.fetchall()
         for g in games:
-            print "%s %s %s %s %s %s %s %s %s %s %s %s" % (g['id'], g['event'], g['site'], g['white'], g['black'],
-                g[5], g[6], g[7], g['eco'], reprResult[g['result']], g['white_elo'], g['black_elo'])
+            print("%s %s %s %s %s %s %s %s %s %s %s %s" % (g['id'], g['event'], g['site'], g['white'], g['black'],
+                g[5], g[6], g[7], g['eco'], reprResult[g['result']], g['white_elo'], g['black_elo']))
 
 
 if __name__ == "__main__":
@@ -410,7 +414,7 @@ if __name__ == "__main__":
 
     imp = PgnImport()
     
-    from timer import Timer
+    from .timer import Timer
     if len(sys.argv) > 1:
         arg = sys.argv[1]
         with Timer() as t:
@@ -421,7 +425,7 @@ if __name__ == "__main__":
                 for file in sorted(os.listdir(arg)):
                     if file[-4:].lower() in (".pgn", ".zip"):
                         imp.do_import(os.path.join(arg, file))
-        print "Elapsed time (secs): %s" % t.elapsed_secs
+        print("Elapsed time (secs): %s" % t.elapsed_secs)
     else:
         path = os.path.abspath(os.path.dirname(__file__))
         with Timer() as t:
@@ -429,6 +433,6 @@ if __name__ == "__main__":
             imp.do_import(os.path.join('../../../testing/gamefiles', "world_matches.pgn"))
             imp.do_import(os.path.join('../../../testing/gamefiles', "dortmund.pgn"))
             imp.do_import(os.path.join('../../../testing/gamefiles', "twic923.pgn"))
-        print "Elapsed time (secs): %s" % t.elapsed_secs
-        print "Old: 28.68"
+        print("Elapsed time (secs): %s" % t.elapsed_secs)
+        print("Old: 28.68")
     imp.print_db()

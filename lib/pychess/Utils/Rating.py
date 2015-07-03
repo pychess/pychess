@@ -1,13 +1,13 @@
-import gobject
+from gi.repository import GObject
 from pychess.ic import *
 
-class Rating (gobject.GObject):
+class Rating (GObject.GObject):
     def __init__(self, ratingtype, elo, deviation=DEVIATION_NONE, wins=0,
                  losses=0, draws=0, bestElo=0, bestTime=0):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.type = ratingtype
         for v in (elo, deviation, wins, losses, draws, bestElo, bestTime):
-            assert v == None or type(v) == int, v
+            assert v == None or isinstance(v, int), v
         self.elo = elo
         self.deviation = deviation
         self.wins = wins
@@ -19,9 +19,9 @@ class Rating (gobject.GObject):
     def get_elo (self):
         return self._elo
     def set_elo (self, elo):
-        assert type(elo) == int, type(elo)
+        assert isinstance(elo, int), type(elo)
         self._elo = elo
-    elo = gobject.property(get_elo, set_elo)
+    elo = GObject.property(get_elo, set_elo)
     
     def __repr__ (self):
         r = "type=%s, elo=%s" % (self.type, self.elo)

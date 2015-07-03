@@ -1,4 +1,5 @@
-from lutils.lmove import FILE, RANK
+from __future__ import absolute_import
+from .lutils.lmove import FILE, RANK
 
 class CordFormatException(Exception): pass
 
@@ -9,7 +10,7 @@ class Cord:
                 Cord(17), Cord("b3"), Cord(1,2), Cord("b",3) """
                 
         if var2 == None:
-            if type(var1) == int:
+            if isinstance(var1, int):
                 # We assume the format Cord(17)
                 self.x = FILE(var1)
                 self.y = RANK(var1)
@@ -18,7 +19,7 @@ class Cord:
                 self.x = self.charToInt(var1[0])
                 self.y = int(var1[1]) - 1
         else:
-            if type(var1) == str:
+            if isinstance(var1, str):
                 # We assume the format Cord("b",3)
                 self.x = self.charToInt(var1)
                 self.y = var2 -1
@@ -49,11 +50,11 @@ class Cord:
             a -= ord('A');
         elif ord('a') <= a <= ord('h'):
             a -= ord('a');
-        else: raise CordFormatException, "x < 0 || x > 7 (%s, %d)" % (char, a)
+        else: raise CordFormatException("x < 0 || x > 7 (%s, %d)" % (char, a))
         return a
     
-    def _set_cords (self, (x, y)):
-        self.x, self.y = x, y
+    def _set_cords (self, x_y):
+        self.x, self.y = x_y
     def _get_cords (self):
         return (self.x, self.y)
     cords = property(_get_cords, _set_cords)

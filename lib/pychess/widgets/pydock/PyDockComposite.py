@@ -1,29 +1,35 @@
+from __future__ import absolute_import
+from __future__ import print_function
+
 import sys
-import gtk
+from gi.repository import Gtk
+from gi.repository import GObject
 
-from __init__ import DockComposite
-from __init__ import NORTH, EAST, SOUTH, WEST, CENTER
+from .__init__ import DockComposite
+from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER, reprPos
 
-class PyDockComposite (gtk.Alignment, DockComposite):
+class PyDockComposite (Gtk.Alignment, DockComposite):
     def __init__ (self, position):
-        gtk.Alignment.__init__(self, xscale=1, yscale=1)
+        GObject.GObject.__init__(self, xscale=1, yscale=1)
         
         if position == NORTH or position == SOUTH:
-            paned = gtk.VPaned()
+            paned = Gtk.VPaned()
         elif position == EAST or position == WEST:
-            paned = gtk.HPaned()
-        
+            paned = Gtk.HPaned()
         self.position = position
         self.paned = paned
         self.add(self.paned)
         self.paned.show()
+
+    def __repr__ (self):
+        return "composite %s (%s, %s)" % (reprPos[self.position], repr(self.paned.get_child1()), repr(self.paned.get_child2()))
     
     def dock (self, widget, position, title, id):
         assert position != CENTER, "POSITION_CENTER only makes sense for leaves"
         parent = self.get_parent()
         while not isinstance(parent, DockComposite):
             parent = parent.get_parent()
-        from PyDockLeaf import PyDockLeaf
+        from .PyDockLeaf import PyDockLeaf
         leaf = PyDockLeaf(widget, title, id)
         new = PyDockComposite(position)
         parent.changeComponent(self, new)
@@ -33,10 +39,10 @@ class PyDockComposite (gtk.Alignment, DockComposite):
     def changeComponent (self, old, new):
         if old == self.paned.get_child1():
             self.paned.remove(old)
-            self.paned.pack1(new, resize=False, shrink=False)
+            self.paned.pack1(new, resize=True, shrink=False)
         else:
             self.paned.remove(old)
-            self.paned.pack2(new, resize=False, shrink=False)
+            self.paned.pack2(new, resize=True, shrink=False)
         new.show()
     
     def removeComponent (self, component):
@@ -57,16 +63,15 @@ class PyDockComposite (gtk.Alignment, DockComposite):
     
     def initChildren (self, old, new, preserve_dimensions=False):
         if self.position == NORTH or self.position == WEST:
-            self.paned.pack1(new, resize=False, shrink=False)
-            self.paned.pack2(old, resize=False, shrink=False)
+            self.paned.pack1(new, resize=True, shrink=False)
+            self.paned.pack2(old, resize=True, shrink=False)
         elif self.position == SOUTH or self.position == EAST:
-            self.paned.pack1(old, resize=False, shrink=False)
-            self.paned.pack2(new, resize=False, shrink=False)
+            self.paned.pack1(old, resize=True, shrink=False)
+            self.paned.pack2(new, resize=True, shrink=False)
         old.show()
         new.show()
         def cb (widget, allocation):
             if allocation.height != 1:
-#                 print "initChildren.cb: resetting"
                 if self.position == NORTH:
                     pos = 0.381966011 * allocation.height
                 elif self.position == SOUTH:

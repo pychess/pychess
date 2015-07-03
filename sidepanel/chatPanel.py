@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
-import gtk
-import pango
+from gi.repository import Gtk
+from gi.repository import Pango
 
 import time
 

@@ -5,17 +5,13 @@ import time
 import codecs
 import logging
 
-import gtk, pango, gobject
+from gi.repository import Gtk, Gdk, Pango, GObject
 
+from pychess.compat import unicode
 from pychess.System import glock, uistuff
-from pychess.System.Log import log, logemitter
+from pychess.System.LogEmitter import logemitter
 from pychess.System.prefix import addDataPrefix
 
-def rawreplace(error):
-    symbols = (ur"\x%02x" % ord(s)
-        for s in error.object[error.start:error.end])
-    return u"".join(symbols), error.end
-codecs.register_error("rawreplace", rawreplace)
 
 class InformationWindow:
     
@@ -26,35 +22,35 @@ class InformationWindow:
         cls.pathToPage = {}
         cls.tagToTime = {}
         
-        cls.window = gtk.Window()
+        cls.window = Gtk.Window()
         cls.window.set_title(_("PyChess Information Window"))
         cls.window.set_border_width(12)
         cls.window.set_icon_name("pychess")
         uistuff.keepWindowSize("logdialog", cls.window, (640,480))
-        mainHBox = gtk.HBox()
+        mainHBox = Gtk.HBox()
         mainHBox.set_spacing(6)
         cls.window.add(mainHBox)
         
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_IN)
-        mainHBox.pack_start(sw, expand=False)
-        cls.treeview = gtk.TreeView(gtk.TreeStore(str))
-        cls.treeview.append_column(gtk.TreeViewColumn("", gtk.CellRendererText(), text=0))
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        sw.set_shadow_type(Gtk.ShadowType.IN)
+        mainHBox.pack_start(sw, False, True, 0)
+        cls.treeview = Gtk.TreeView(Gtk.TreeStore(str))
+        cls.treeview.append_column(Gtk.TreeViewColumn("", Gtk.CellRendererText(), text=0))
         cls.treeview.set_headers_visible(False)
-        cls.treeview.get_selection().set_mode(gtk.SELECTION_BROWSE)
+        cls.treeview.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         sw.add(cls.treeview)
-        cls.pages = gtk.Notebook()
+        cls.pages = Gtk.Notebook()
         cls.pages.set_show_tabs(False)
         cls.pages.set_show_border(False)
-        mainHBox.pack_start(cls.pages)
+        mainHBox.pack_start(cls.pages, True, True, 0)
         
         mainHBox.show_all()
         
         def selectionChanged (selection):
             treestore, iter = selection.get_selected()
             if iter:
-                child = cls.pathToPage[treestore.get_path(iter)]["child"]
+                child = cls.pathToPage[treestore.get_path(iter).to_string()]["child"]
                 cls.pages.set_current_page(cls.pages.page_num(child))
         cls.treeview.get_selection().connect("changed", selectionChanged)
     
@@ -76,8 +72,6 @@ class InformationWindow:
                 textview.get_buffer().get_end_iter(), "\n%s\n%s\n"%(t,"-"*60), str(logging.INFO))
             cls.tagToTime[tag] = timestamp
         
-        if type(message) == str:
-            message = unicode(message, "utf-8", 'rawreplace')
         if not message.endswith("\n"):
             message = "%s\n" % message
         textview.get_buffer().insert_with_tags_by_name(
@@ -86,6 +80,8 @@ class InformationWindow:
     @classmethod
     def _createPage (cls, parrentIter, tag):
         name = tag[-1]
+        if isinstance(name, int):
+            name=str(name)
         iter = cls.treeview.get_model().append(parrentIter, (name,))
         cls.tagToIter[tag] = iter
         
@@ -98,9 +94,9 @@ class InformationWindow:
         textview = widgets["textview"]
         tb = textview.get_buffer()
         tb.create_tag(str(logging.DEBUG), family='Monospace')
-        tb.create_tag(str(logging.INFO), family='Monospace', weight=pango.WEIGHT_BOLD)
+        tb.create_tag(str(logging.INFO), family='Monospace', weight=Pango.Weight.BOLD)
         tb.create_tag(str(logging.WARNING), family='Monospace', foreground="red")
-        tb.create_tag(str(logging.ERROR), family='Monospace', weight=pango.WEIGHT_BOLD, foreground="red")
+        tb.create_tag(str(logging.ERROR), family='Monospace', weight=Pango.Weight.BOLD, foreground="red")
         
         
         findbar = widgets["findbar"]
@@ -129,24 +125,24 @@ class InformationWindow:
         
         
         
-        cls.pages.append_page(frame)
+        cls.pages.append_page(frame, None)
         page = {"child": frame, "textview":textview}
         cls.tagToPage[tag] = page
-        cls.pathToPage[cls.treeview.get_model().get_path(iter)] = page
+        cls.pathToPage[cls.treeview.get_model().get_path(iter).to_string()] = page
         
         cls.treeview.expand_all()
     
     @classmethod
     def _getPageFromTag (cls, tag):
-        if type(tag) == list:
+        if isinstance(tag, list):
             tag = tuple(tag)
-        elif type(tag) != tuple:
+        elif not isinstance(tag, tuple):
             tag = (tag,)
         
         if tag in cls.tagToPage:
             return cls.tagToPage[tag]
         
-        for i in xrange(len(tag)-1):
+        for i in range(len(tag)-1):
             subtag = tag[:-i-1]
             if subtag in cls.tagToIter:
                 newtag = subtag+(tag[len(subtag)],)
@@ -193,21 +189,21 @@ class InformationWindow:
             length = len(widgets["searchEntry"].get_text())
             iter1 = widgets["textview"].get_buffer().get_iter_at_offset(goto+length)
             widgets["textview"].get_buffer().select_range(iter0, iter1)
-            widgets["textview"].scroll_to_iter(iter0, 0.2)
+            widgets["textview"].scroll_to_iter(iter0, 0.2, False, 0.5, 0.5)
     
     @classmethod
     def onTextviewKeypress (cls, textview, event, widgets):
-        if event.state & gtk.gdk.CONTROL_MASK:
+        if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
             if event.keyval in (ord("f"), ord("F")):
                 widgets["findbar"].props.visible = not widgets["findbar"].props.visible
                 if widgets["findbar"].props.visible:
-                    signal = widgets["searchEntry"].connect_after("expose-event",
+                    signal = widgets["searchEntry"].connect_after("draw",
                             lambda w,e: w.grab_focus() or
                             widgets["searchEntry"].disconnect(signal))
     
     @classmethod
     def onFindbarKeypress (cls, findbar, event):
-        if gtk.gdk.keyval_name(event.keyval) == "Escape":
+        if Gdk.keyval_name(event.keyval) == "Escape":
             findbar.props.visible = False
     
     
@@ -220,9 +216,9 @@ uistuff.cacheGladefile("findbar.glade")
 
 InformationWindow._init()
 
-import gobject
+from gi.repository import GObject
 def addMessages2 (emitter, messages):
-    gobject.idle_add(addMessages2, messages)
+    GObject.idle_add(addMessages2, messages)
 
 def addMessages (emitter, messages):
     for task, timestamp, message, type in messages:
@@ -257,5 +253,5 @@ def hide ():
 
 if __name__ == "__main__":
     show()
-    InformationWindow.window.connect("delete-event", gtk.main_quit)
-    gtk.main()
+    InformationWindow.window.connect("delete-event", Gtk.main_quit)
+    Gtk.main()

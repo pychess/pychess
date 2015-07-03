@@ -1,9 +1,11 @@
-from __future__ import with_statement
+from __future__ import absolute_import
+from __future__ import print_function
+
 import collections
 from copy import copy
-import Queue
 from threading import RLock, Thread
 
+from pychess.compat import Queue
 from pychess.Utils.Move import *
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
@@ -16,10 +18,10 @@ from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System import conf, fident
 from pychess.System.Log import log
 from pychess.System.SubProcess import TimeOutError, SubProcessError
-from pychess.Variants.fischerandom import FischerRandomChess
+from pychess.Variants.fischerandom import FischerandomBoard
 
-from ProtocolEngine import ProtocolEngine
-from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
+from .ProtocolEngine import ProtocolEngine
+from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt, InvalidMove
 
 TYPEDIC = {"check":lambda x:x=="true", "spin":int}
 OPTKEYS = ("name", "type", "min", "max", "default", "var")
@@ -57,9 +59,10 @@ class UCIEngine (ProtocolEngine):
         self.uciPositionListsMoves = False
         self.analysis = [ None ]
         
-        self.returnQueue = Queue.Queue()
+        self.returnQueue = Queue()
         self.engine.connect("line", self.parseLines)
         self.engine.connect("died", self.__die)
+        self.invalid_move = None
         
         self.connect("readyForOptions", self.__onReadyForOptions_before)
         self.connect_after("readyForOptions", self.__onReadyForOptions)
@@ -73,7 +76,7 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def prestart (self):
-        print >> self.engine, "uci"
+        print("uci", file=self.engine)
     
     def start (self):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
@@ -103,12 +106,12 @@ class UCIEngine (ProtocolEngine):
             if self.hasOption("MultiPV") and self.multipvSetting > 1:
                 self.setOption('MultiPV', self.multipvSetting)
             
-        for option, value in self.optionsToBeSent.iteritems():
-            if type(value) == bool:
+        for option, value in self.optionsToBeSent.items():
+            if isinstance(value, bool):
                 value = str(value).lower()
-            print >> self.engine, "setoption name %s value %s" % (option, str(value))
+            print("setoption name %s value %s" % (option, str(value)), file=self.engine)
         
-        print >> self.engine, "isready"
+        print("isready", file=self.engine)
     
     def __onReadyForMoves (self, self_):
         self.returnQueue.put("ready")
@@ -126,6 +129,8 @@ class UCIEngine (ProtocolEngine):
     
     def end (self, status, reason):
         # UCI doens't care about reason, so we just kill
+        if reason == WON_ADJUDICATION:
+            self.returnQueue.put("invalid")
         self.kill(reason)
     
     def kill (self, reason):
@@ -137,12 +142,12 @@ class UCIEngine (ProtocolEngine):
             self.connected = False
             try:
                 try:
-                    print >> self.engine, "stop"
-                    print >> self.engine, "quit"
+                    print("stop", file=self.engine)
+                    print("quit", file=self.engine)
                     self.returnQueue.put("del")
                     return self.engine.gentleKill()
                 
-                except OSError, e:
+                except OSError as e:
                     # No need to raise on a hang up error, as the engine is dead
                     # anyways
                     if e.errno == 32:
@@ -223,13 +228,15 @@ class UCIEngine (ProtocolEngine):
                 ponderhit = True
             elif board2 and self.pondermove:
                 self.ignoreNext = True
-                print >> self.engine, "stop"
+                print("stop", file=self.engine)
             
             self._searchNow(ponderhit=ponderhit)
         
         # Parse outputs
         try:
             r = self.returnQueue.get()
+            if r == "invalid":
+                raise InvalidMove
             if r == "del":
                 raise PlayerIsDead
             if r == "int":
@@ -269,7 +276,7 @@ class UCIEngine (ProtocolEngine):
         self._recordMoveList(model)
     
     def setOptionVariant (self, variant):
-        if variant == FischerRandomChess:
+        if variant == FischerandomBoard:
             assert self.hasOption("UCI_Chess960")
             self.setOption("UCI_Chess960", True)
         elif self.hasOption("UCI_Variant") and not variant.standard_rules:
@@ -315,7 +322,7 @@ class UCIEngine (ProtocolEngine):
         if self.board.color == self.color or \
                 self.mode != NORMAL or self.pondermove:
             self.ignoreNext = True
-            print >> self.engine, "stop"
+            print("stop", file=self.engine)
     
     def resume (self):
         log.debug("resume: self=%s" % self, extra={"task":self.defname})
@@ -338,7 +345,7 @@ class UCIEngine (ProtocolEngine):
         # after that until there is another outstanding "position..go"
         with self.moveLock:
             if self.waitingForMove and self.readyForStop:
-                print >> self.engine, "stop"
+                print("stop", file=self.engine)
                 self.readyForStop = False
     
     def playerUndoMoves (self, moves, gamemodel):
@@ -409,7 +416,7 @@ class UCIEngine (ProtocolEngine):
     #===========================================================================
     
     def _newGame (self):
-        print >> self.engine, "ucinewgame"
+        print("ucinewgame", file=self.engine)
     
     def _searchNow (self, ponderhit=False):
         log.debug("_searchNow: self.needBestmove=%s ponderhit=%s self.board=%s" % \
@@ -430,14 +437,14 @@ class UCIEngine (ProtocolEngine):
                                     (self.wtime, self.incr, self.btime, self.incr))
                 
             else:
-                print >> self.engine, "stop"
+                print("stop", file=self.engine)
                 
                 if self.mode == INVERSE_ANALYZING:
                     if self.board.board.opIsChecked():
                         # Many engines don't like positions able to take down enemy
                         # king. Therefore we just return the "kill king" move
                         # automaticaly
-                        self.emit("analyze", [([getMoveKillingKing(self.board)], MATE_VALUE-1, "")])
+                        self.emit("analyze", [([toAN(self.board, getMoveKillingKing(self.board))], MATE_VALUE-1, "")])
                         return
                     commands.append("position fen %s" % self.board.asFen())
                 else:
@@ -459,7 +466,7 @@ class UCIEngine (ProtocolEngine):
                     self.commands, extra={"task":self.defname})
             else:
                 for command in commands:
-                    print >> self.engine, command
+                    print(command, file=self.engine)
                 if getStatus(self.board)[1] != WON_MATE: # XXX This looks fishy.
                     self.needBestmove = True
                     self.readyForStop = True
@@ -468,10 +475,10 @@ class UCIEngine (ProtocolEngine):
         uciPos = self.uciPosition
         if not self.uciPositionListsMoves:
             uciPos += " moves"
-        print >> self.engine, "position", uciPos, \
-                                self._moveToUCI(self.board, self.pondermove)
-        print >> self.engine, "go ponder wtime", self.wtime, \
-            "winc", self.incr, "btime", self.btime, "binc", self.incr
+        print("position", uciPos, \
+                                self._moveToUCI(self.board, self.pondermove), file=self.engine)
+        print("go ponder wtime", self.wtime, \
+            "winc", self.incr, "btime", self.btime, "binc", self.incr, file=self.engine)
     
     #===========================================================================
     #    Parsing from engine
@@ -506,7 +513,7 @@ class UCIEngine (ProtocolEngine):
             dic = {}
             last = 1
             varlist = []
-            for i in xrange (2, len(parts)+1):
+            for i in range (2, len(parts)+1):
                 if i == len(parts) or parts[i] in OPTKEYS:
                     key = parts[last]
                     value = " ".join(parts[last+1:i])
@@ -540,16 +547,18 @@ class UCIEngine (ProtocolEngine):
                     self.readyForStop = True
                     return
                 
+                movestr = parts[1]
                 if not self.waitingForMove:
                     log.warning("__parseLine: self.waitingForMove==False, ignoring move=%s" % \
-                        parts[1], extra={"task":self.defname})
+                        movestr, extra={"task":self.defname})
                     self.pondermove = None
                     return
                 self.waitingForMove = False
 
                 try:
-                    move = parseAny(self.board, parts[1])
-                except ParsingError, e:
+                    move = parseAny(self.board, movestr)
+                except ParsingError as e:
+                    self.invalid_move = movestr
                     self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                     return
                 
@@ -558,6 +567,7 @@ class UCIEngine (ProtocolEngine):
                     # behalf of the engine.
                     log.error("__parseLine: move=%s didn't validate, putting 'del' in returnQueue. self.board=%s" % \
                         (repr(move), self.board), extra={"task":self.defname})
+                    self.invalid_move = movestr
                     self.end(WHITEWON if self.board.color == BLACK else BLACKWON, WON_ADJUDICATION)
                     return
                 
@@ -604,14 +614,6 @@ class UCIEngine (ProtocolEngine):
                         score = sign*MATE_VALUE
             
             movstrs = parts[parts.index("pv")+1:]
-            try:
-                moves = listToMoves (self.board, movstrs, AN, validate=True, ignoreErrors=False)
-            except ParsingError, e:
-                # ParsingErrors may happen when parsing "old" lines from
-                # analyzing engines, which haven't yet noticed their new tasks
-                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
-                    (' '.join(movstrs),e), extra={"task":self.defname})
-                return
 
             if "depth" in parts:
                 depth = parts[parts.index("depth")+1]
@@ -619,7 +621,7 @@ class UCIEngine (ProtocolEngine):
                 depth = ""
                 
             if multipv <= len(self.analysis):
-                self.analysis[multipv - 1] = (moves, score, depth)
+                self.analysis[multipv - 1] = (movstrs, score, depth)
 
             self.emit("analyze", self.analysis)
             return
@@ -669,7 +671,7 @@ class UCIEngine (ProtocolEngine):
                     commands = self.commands.popleft()
                 
                 for command in commands:
-                    print >> self.engine, command
+                    print(command, file=self.engine)
                 self.needBestmove = True
                 self.readyForStop = True
                 log.debug("__sendQueuedGo: sent queued go=%s" % commands, extra={"task":self.defname})
@@ -692,8 +694,8 @@ class UCIEngine (ProtocolEngine):
             conf.set("multipv", n)
             with self.moveLock:
                 self.multipvSetting  = n
-                print >> self.engine, "stop"
-                print >> self.engine, "setoption name MultiPV value", n
+                print("stop", file=self.engine)
+                print("setoption name MultiPV value", n, file=self.engine)
                 self._searchNow()
         
         return n

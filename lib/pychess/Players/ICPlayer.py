@@ -1,6 +1,6 @@
 from collections import defaultdict
-from Queue import Queue
 
+from pychess.compat import Queue
 from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Move import parseSAN, toAN
 from pychess.Utils.lutils.lmove import ParsingError
@@ -42,7 +42,7 @@ class ICPlayer (Player):
     
     @property
     def time (self):
-        self.gamemodel.timemodel.getPlayerTime(self.color)
+        return self.gamemodel.timemodel.getPlayerTime(self.color)
         
     #===========================================================================
     #    Handle signals from the connection
@@ -140,7 +140,7 @@ class ICPlayer (Player):
     
     def makeMove (self, board1, move, board2):
         log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s" % \
-            (id(self), self, move, board1, board2))
+                (id(self), self, move, board1, board2))
         if board2 and not self.gamemodel.isObservationGame():
             # TODO: Will this work if we just always use CASTLE_SAN?
             cn = CASTLE_KK
@@ -166,7 +166,7 @@ class ICPlayer (Player):
                 move = parseSAN (board1, sanmove)
                 log.debug("ICPlayer.makemove: id(self)=%d self=%s parsed move=%s" % \
                     (id(self), self, move))
-            except ParsingError, e:
+            except ParsingError as e:
                 raise
             return move
         finally:

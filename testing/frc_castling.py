@@ -1,3 +1,4 @@
+from __future__ import print_function
 import unittest
 
 from pychess.Utils.const import *
@@ -21,10 +22,10 @@ class FRCCastlingTestCase(unittest.TestCase):
 
     def testFRCCastling(self):
         """Testing FRC castling movegen"""
-        print
+        print()
 
         for fen, castles in data:
-            print fen
+            print(fen)
             board = LBoard(FISCHERRANDOMCHESS)
             board.applyFen(fen)
             #print board

@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import print_function
 
-import Queue
-from StringIO import StringIO
+import re
 from time import strftime, localtime, time
 from math import e
 from operator import attrgetter
 from itertools import groupby
 
-import gtk, gobject, pango, re
-from gtk.gdk import pixbuf_new_from_file
-from gobject import GObject, SIGNAL_RUN_FIRST
+from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, Pango
 
 from pychess.ic import *
+from pychess.compat import cmp, StringIO
 from pychess.System import conf, uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.System.ping import Pinger
@@ -34,10 +34,9 @@ from pychess.Players.Human import Human
 from pychess.Savers import pgn, fen
 from pychess.System.idle_add import idle_add
 from pychess.Variants import variants
-from pychess.Variants.normal import NormalChess
 
-from FICSObjects import *
-from ICGameModel import ICGameModel
+from .FICSObjects import *
+from .ICGameModel import ICGameModel
 
 class PlayerNotificationMessage (InfoBarMessage):
     def __init__ (self, message_type, content, callback, player, text):
@@ -45,15 +44,15 @@ class PlayerNotificationMessage (InfoBarMessage):
         self.player = player
         self.text = text
 
-class ICLounge (GObject):
+class ICLounge (GObject.GObject):
     __gsignals__ = {
-        'logout'        : (SIGNAL_RUN_FIRST, None, ()),
-        'autoLogout'    : (SIGNAL_RUN_FIRST, None, ()),
+        'logout'        : (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'autoLogout'    : (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
     
     def __init__ (self, connection, helperconn, host):
         log.debug("ICLounge.__init__: starting")
-        GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self.connection = connection
         self.helperconn = helperconn
         self.host = host
@@ -63,8 +62,7 @@ class ICLounge (GObject):
         uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
         self.infobar = InfoBar()
         self.infobar.hide()
-        self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar,
-            expand=False, fill=False)
+        self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar, False, False, 0)
         
         def on_window_delete (window, event):
             self.emit("logout")
@@ -217,18 +215,18 @@ class ICLounge (GObject):
         
     @idle_add
     def tooManySeeks (self, bm):
-        label = gtk.Label(_("You may only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
+        label = Gtk.Label(label=_("You may only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
         label.set_width_chars(80)
         label.props.xalign = 0
         label.set_line_wrap(True)
         def response_cb (infobar, response, message):
-            if response == gtk.RESPONSE_YES:
+            if response == Gtk.ResponseType.YES:
                 self.connection.client.run_command("unseek")
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_QUESTION, label, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_YES, gtk.RESPONSE_YES))
-        message.add_button(InfoBarMessageButton(gtk.STOCK_NO, gtk.RESPONSE_NO))
+        message = InfoBarMessage(Gtk.MessageType.QUESTION, label, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_YES, Gtk.ResponseType.YES))
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_NO, Gtk.ResponseType.NO))
         self.messages.append(message)
         self.infobar.push_message(message)
     
@@ -239,9 +237,9 @@ class ICLounge (GObject):
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
 
@@ -252,9 +250,9 @@ class ICLounge (GObject):
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
 
@@ -265,9 +263,9 @@ class ICLounge (GObject):
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
 
@@ -280,9 +278,9 @@ class ICLounge (GObject):
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_INFO, content, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
     
@@ -294,25 +292,25 @@ class ICLounge (GObject):
             message_text.replace("to automatic accept", _("to automatic accept"))
         if "rating range now" in message_text:
             message_text.replace("rating range now", _("rating range now"))
-        label = gtk.Label(_("Seek updated") + ": " + message_text)
+        label = Gtk.Label(label=_("Seek updated") + ": " + message_text)
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_INFO, label, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, label, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
     
     @idle_add
     def our_seeks_removed (self, glm):
-        label = gtk.Label(_("Your seeks have been removed"))
+        label = Gtk.Label(label=_("Your seeks have been removed"))
         def response_cb (infobar, response, message):
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_INFO, label, response_cb)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.INFO, label, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
         
@@ -349,10 +347,10 @@ class ICLounge (GObject):
             message.dismiss()
 #             self.messages.remove(message)
             return False
-        message = PlayerNotificationMessage(gtk.MESSAGE_INFO, content,
+        message = PlayerNotificationMessage(Gtk.MessageType.INFO, content,
                                             response_cb, player, text)
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                gtk.RESPONSE_CANCEL))
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
     
@@ -405,7 +403,7 @@ class UserInfoSection(Section):
     @idle_add
     def onFinger (self, fm, finger):
         if finger.getName().lower() != self.connection.getUsername().lower():
-            print finger.getName(), self.connection.getUsername()
+            print (finger.getName(), self.connection.getUsername())
             return
         
         rows = 1
@@ -413,18 +411,18 @@ class UserInfoSection(Section):
         if finger.getEmail(): rows += 1
         if finger.getCreated(): rows += 1
 
-        table = gtk.Table(6, rows)
+        table = Gtk.Table(6, rows)
         table.props.column_spacing = 12
         table.props.row_spacing = 4
 
         def label(value, xalign=0, is_error=False):
-            if type(value) == float:
+            if isinstance(value, float):
                 value = str(int(value))
             if is_error:
-                label = gtk.Label()
+                label = Gtk.Label()
                 label.set_markup('<span size="larger" foreground="red">' + value + "</span>")
             else:
-                label = gtk.Label(value)
+                label = Gtk.Label(label=value)
             label.props.xalign = xalign
             return label
 
@@ -435,7 +433,7 @@ class UserInfoSection(Section):
                 table.attach(label(item, xalign=1), i+1,i+2,0,1)
             row += 1
 
-            for rating_type, rating in finger.getRating().iteritems():
+            for rating_type, rating in finger.getRating().items():
                 ratinglabel = label( \
                     GAME_TYPES_BY_RATING_TYPE[rating_type].display_text + ":")
                 table.attach(ratinglabel, 0, 1, row, row+1)
@@ -449,7 +447,7 @@ class UserInfoSection(Section):
                 table.attach(label(rating.losses, xalign=1), 4, 5, row, row+1)
                 row += 1
 
-            table.attach(gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
+            table.attach(Gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
             row += 1
         
         if finger.getSanctions() != "":
@@ -474,14 +472,14 @@ class UserInfoSection(Section):
             if self.dock.get_children():
                 self.dock.get_children()[0].remove(self.ping_label)
         else:
-            self.ping_label = gtk.Label(_("Connecting")+"...")
+            self.ping_label = Gtk.Label(label=_("Connecting")+"...")
             self.ping_label.props.xalign = 0
             
         @idle_add
         def callback (pinger, pingtime):
             log.debug("'%s' '%s'" % (str(self.pinger), str(pingtime)),
                 extra={"task": (self.connection.username, "UIS.oF.callback")})
-            if type(pingtime) == str:
+            if isinstance(pingtime, str):
                 self.ping_label.set_text(pingtime)
             elif pingtime == -1:
                 self.ping_label.set_text(_("Unknown"))
@@ -495,9 +493,9 @@ class UserInfoSection(Section):
         row += 1
 
         if not self.connection.isRegistred():
-            vbox = gtk.VBox()
+            vbox = Gtk.VBox()
             table.attach(vbox, 0, 6, row, row+1)
-            label0 = gtk.Label()
+            label0 = Gtk.Label()
             label0.props.xalign = 0
             label0.props.wrap = True
             label0.props.width_request = 300
@@ -529,15 +527,15 @@ class NewsSection(Section):
         weekday, month, day, title, details = news
 
         dtitle = "%s, %s %s: %s" % (weekday, month, day, title)
-        label = gtk.Label(dtitle)
+        label = Gtk.Label(label=dtitle)
         label.props.width_request = 300
         label.props.xalign = 0
-        label.set_ellipsize(pango.ELLIPSIZE_END)
-        expander = gtk.Expander()
+        label.set_ellipsize(Pango.EllipsizeMode.END)
+        expander = Gtk.Expander()
         expander.set_label_widget(label)
         expander.set_tooltip_text(title)
-        textview = gtk.TextView ()
-        textview.set_wrap_mode (gtk.WRAP_WORD)
+        textview = Gtk.TextView ()
+        textview.set_wrap_mode (Gtk.WrapMode.WORD)
         textview.set_editable (False)
         textview.set_cursor_visible (False)
         textview.props.pixels_above_lines = 4
@@ -546,14 +544,14 @@ class NewsSection(Section):
         textview.props.left_margin = 6
         uistuff.initTexviewLinks(textview, details)
 
-        alignment = gtk.Alignment()
+        alignment = Gtk.Alignment()
         alignment.set_padding(3, 6, 12, 0)
         alignment.props.xscale = 1
         alignment.add(textview)
 
         expander.add(alignment)
         expander.show_all()
-        self.widgets["newsVBox"].pack_end(expander)
+        self.widgets["newsVBox"].pack_end(expander, True, True, 0)
 
 ############################################################################
 # Initialize Lists                                                         #
@@ -569,29 +567,30 @@ class ParrentListSection (Section):
         for i, name in enumerate(columns):
             if i in hide: continue
             if i in pix:
-                crp = gtk.CellRendererPixbuf()
+                crp = Gtk.CellRendererPixbuf()
                 crp.props.xalign = .5
-                column = gtk.TreeViewColumn(name, crp, pixbuf=i)
+                column = Gtk.TreeViewColumn(name, crp, pixbuf=i)
             else:
-                crt = gtk.CellRendererText()
-                column = gtk.TreeViewColumn(name, crt, text=i)
+                crt = Gtk.CellRendererText()
+                column = Gtk.TreeViewColumn(name, crt, text=i)
                 column.set_sort_column_id(i)
                 column.set_resizable(True)
 
             column.set_reorderable(True)
             treeview.append_column(column)
 
-    def lowLeftSearchPosFunc (self, tv, search_dialog):
-        x = tv.allocation.x + tv.get_toplevel().window.get_position()[0]
-        y = tv.allocation.y + tv.get_toplevel().window.get_position()[1] + \
-            tv.allocation.height
+    def lowLeftSearchPosFunc (self, tv, search_dialog, user_data):
+        alloc = tv.get_allocation()
+        window = tv.get_toplevel().get_window()
+        x = alloc.x + window.get_position()[0]
+        y = alloc.y + window.get_position()[1] + alloc.height
         search_dialog.move(x, y)
         search_dialog.show_all()
 
     def pixCompareFunction (self, treemodel, iter0, iter1, column):
         pix0 = treemodel.get_value(iter0, column)
         pix1 = treemodel.get_value(iter1, column)
-        if type(pix0) == gtk.gdk.Pixbuf and type(pix1) == gtk.gdk.Pixbuf:
+        if isinstance(pix0, GdkPixbuf.Pixbuf) and isinstance(pix1, GdkPixbuf.Pixbuf):
             return cmp(pix0.get_pixels(), pix1.get_pixels())
         return cmp(pix0, pix1)
     
@@ -614,15 +613,17 @@ class SeekTabSection (ParrentListSection):
         self.messages = {}
         self.seeks = {}
         self.challenges = {}
-        self.seekPix = pixbuf_new_from_file(addDataPrefix("glade/seek.png"))
-        self.chaPix = pixbuf_new_from_file(addDataPrefix("glade/challenge.png"))
-        self.manSeekPix = pixbuf_new_from_file(addDataPrefix("glade/manseek.png"))
+        self.seekPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/seek.png"))
+        self.chaPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/challenge.png"))
+        self.manSeekPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/manseek.png"))
+        
+        self.widgets["seekExpander"].set_vexpand(False)
         
         self.tv = self.widgets["seektreeview"]
-        self.store = gtk.ListStore(FICSSoughtMatch, gtk.gdk.Pixbuf,
-            gtk.gdk.Pixbuf, str, int, str, str, str, int, str, str)
-        self.modelsort = gtk.TreeModelSort(self.store)
-        self.tv.set_model(self.modelsort)
+        self.store = Gtk.ListStore(FICSSoughtMatch, GdkPixbuf.Pixbuf,
+            GdkPixbuf.Pixbuf, str, int, str, str, str, int, str, str)
+        self.model = Gtk.TreeModelSort(model=self.store)
+        self.tv.set_model(self.model)
         self.addColumns (self.tv, "FICSSoughtMatch", "", "", _("Name"),
             _("Rating"), _("Rated"), _("Type"), _("Clock"), "gametime",
             "textcolor", "tooltip", hide=[0,8,9,10], pix=[1,2] )
@@ -631,17 +632,17 @@ class SeekTabSection (ParrentListSection):
         for i in range(2, 8):
             self.tv.get_model().set_sort_func(i, self.compareFunction, i)
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
         for n in range(2, 7):
             column = self.tv.get_column(n)
-            for cellrenderer in column.get_cell_renderers():
+            for cellrenderer in column.get_cells():
                 column.add_attribute(cellrenderer, "foreground", 9)
         self.selection = self.tv.get_selection()
         self.lastSeekSelected = None
-        self.selection.set_select_function(self.selectFunction, full=True)
+        self.selection.set_select_function(self.selectFunction, True)
         self.selection.connect("changed", self.onSelectionChanged)
         self.widgets["clearSeeksButton"].connect("clicked", self.onClearSeeksClicked)
         self.widgets["acceptButton"].connect("clicked", self.onAcceptClicked)
@@ -662,20 +663,20 @@ class SeekTabSection (ParrentListSection):
                 id = 0
             else:
                 id += 1
-            if order == gtk.SORT_DESCENDING:
+            if order == Gtk.SortType.DESCENDING:
                 id = -1 * id
             return id
 
         def set_sort_order(modelsort, value):
             if value != 0:
-                order = gtk.SORT_ASCENDING if value > 0 else gtk.SORT_DESCENDING
+                order = Gtk.SortType.ASCENDING if value > 0 else Gtk.SortType.DESCENDING
                 modelsort.set_sort_column_id(abs(value) - 1, order)
 
-        uistuff.keep(self.modelsort, "seektreeview_sort_order_col", get_sort_order, \
+        uistuff.keep(self.model, "seektreeview_sort_order_col", get_sort_order, \
             lambda modelsort, value: set_sort_order(modelsort, value))
         
         
-    def selectFunction (self, selection, model, path, is_selected):
+    def selectFunction (self, selection, model, path, is_selected, data):
         if model[path][9] == "grey": return False
         else: return True
     
@@ -691,7 +692,7 @@ class SeekTabSection (ParrentListSection):
         row0 = list(model[model.get_path(iter0)])
         row1 = list(model[model.get_path(iter1)])
         is_ascending = True if self.tv.get_column(column-1).get_sort_order() is \
-                               gtk.SORT_ASCENDING else False
+                               Gtk.SortType.ASCENDING else False
         if self.__isAChallengeOrOurSeek(row0) and not self.__isAChallengeOrOurSeek(row1):
             if is_ascending: return -1
             else: return 1
@@ -777,16 +778,16 @@ class SeekTabSection (ParrentListSection):
                                              gametype=challenge.game_type)
         @idle_add
         def callback (infobar, response, message):
-            if response == gtk.RESPONSE_ACCEPT:
+            if response == Gtk.ResponseType.ACCEPT:
                 self.connection.om.acceptIndex(challenge.index)
-            elif response == gtk.RESPONSE_NO:
+            elif response == Gtk.ResponseType.NO:
                 self.connection.om.declineIndex(challenge.index)
             message.dismiss()
             return False
-        message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback)
-        message.add_button(InfoBarMessageButton(_("Accept"), gtk.RESPONSE_ACCEPT))
-        message.add_button(InfoBarMessageButton(_("Decline"), gtk.RESPONSE_NO))
-        message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE, gtk.RESPONSE_CANCEL))
+        message = InfoBarMessage(Gtk.MessageType.QUESTION, content, callback)
+        message.add_button(InfoBarMessageButton(_("Accept"), Gtk.ResponseType.ACCEPT))
+        message.add_button(InfoBarMessageButton(_("Decline"), Gtk.ResponseType.NO))
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self.messages[hash(challenge)] = message
         self.infobar.push_message(message)
         
@@ -985,9 +986,10 @@ class PlayerTabSection (ParrentListSection):
         self.columns = {TYPE_BLITZ: 3, TYPE_STANDARD: 4, TYPE_LIGHTNING: 5}
         
         self.tv = widgets["playertreeview"]
-        self.store = gtk.ListStore(FICSPlayer, gtk.gdk.Pixbuf, str, int, int,
+        self.store = Gtk.ListStore(FICSPlayer, GdkPixbuf.Pixbuf, str, int, int,
                                    int, str, str)
-        self.tv.set_model(gtk.TreeModelSort(self.store))
+        self.model = Gtk.TreeModelSort(model=self.store)
+        self.tv.set_model(self.model)
         self.addColumns(self.tv, "FICSPlayer", "", _("Name"), _("Blitz"),
             _("Standard"), _("Lightning"), _("Status"), "tooltip", hide=[0,7],
             pix=[1])
@@ -995,7 +997,7 @@ class PlayerTabSection (ParrentListSection):
         self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
@@ -1120,7 +1122,7 @@ class PlayerTabSection (ParrentListSection):
         self.status_changed(player, prop)
         def update_gui():
             self.onSelectionChanged(self.tv.get_selection())
-        gobject.idle_add(update_gui)
+        idle_add(update_gui)
         return False
     
     @idle_add
@@ -1179,12 +1181,12 @@ class GameTabSection (ParrentListSection):
         self.connection = connection
         self.games = {}
         self.recpix = load_icon(16, "media-record")
-        self.clearpix = pixbuf_new_from_file(addDataPrefix("glade/board.png"))
+        self.clearpix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/board.png"))
         self.tv = self.widgets["gametreeview"]
-        self.store = gtk.ListStore(FICSGame, gtk.gdk.Pixbuf, str, int, str, int, str)
-        self.tv.set_model(gtk.TreeModelSort(self.store))
-        self.model = self.tv.get_model()
-        self.tv.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+        self.store = Gtk.ListStore(FICSGame, GdkPixbuf.Pixbuf, str, int, str, int, str)
+        self.model = Gtk.TreeModelSort(model=self.store)
+        self.tv.set_model(self.model)
+        self.tv.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
         self.addColumns(self.tv, "FICSGame", "", _("White Player"), _("Rating"),
                         _("Black Player"), _("Rating"), _("Game Type"),
                         hide=[0], pix=[1])
@@ -1197,16 +1199,16 @@ class GameTabSection (ParrentListSection):
         self.onSelectionChanged(self.selection)
 
         try:
-            self.tv.set_search_position_func(self.lowLeftSearchPosFunc)
+            self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
-        def searchCallback (model, column, key, iter):
+        def searchCallback (model, column, key, iter, user_data):
             if model.get_value(iter, 2).lower().startswith(key) or \
                 model.get_value(iter, 4).lower().startswith(key):
                 return False
             return True
-        self.tv.set_search_equal_func (searchCallback)
+        self.tv.set_search_equal_func (searchCallback, None)
 
         self.connection.games.connect("FICSGameCreated", self.onGameAdd)
         self.connection.games.connect("FICSGameEnded", self.onGameRemove)
@@ -1218,7 +1220,7 @@ class GameTabSection (ParrentListSection):
     def on_query_tooltip (self, widget, x, y, keyboard_tip, tooltip):
         if not widget.get_tooltip_context(x, y, keyboard_tip):
             return False
-        model, path, iter = widget.get_tooltip_context(x, y, keyboard_tip)
+        bool, wx, wy, model, path, iter = widget.get_tooltip_context(x, y, keyboard_tip)
         bin_x, bin_y = widget.convert_widget_to_bin_window_coords(x, y)
         result = widget.get_path_at_pos(bin_x, bin_y)
         
@@ -1315,12 +1317,13 @@ class AdjournedTabSection (ParrentListSection):
         self.infobar = lounge.infobar
         self.games = {}
         self.messages = {}
-        self.wpix = pixbuf_new_from_file(addDataPrefix("glade/white.png"))
-        self.bpix = pixbuf_new_from_file(addDataPrefix("glade/black.png"))
+        self.wpix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/white.png"))
+        self.bpix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/black.png"))
         self.tv = widgets["adjournedtreeview"]
-        self.store = gtk.ListStore(FICSAdjournedGame, gtk.gdk.Pixbuf, str, str,
+        self.store = Gtk.ListStore(FICSAdjournedGame, GdkPixbuf.Pixbuf, str, str,
                                    str, str, str)
-        self.tv.set_model(gtk.TreeModelSort(self.store))
+        self.model = Gtk.TreeModelSort(model=self.store)
+        self.tv.set_model(self.model)
         self.addColumns (self.tv, "FICSAdjournedGame", _("Your Color"),
             _("Opponent"), _("Is Online"), _("Time Control"), _("Game Type"),
             _("Date/Time"), hide=[0], pix=[1])
@@ -1371,9 +1374,9 @@ class AdjournedTabSection (ParrentListSection):
             def callback (infobar, response, message):
                 log.debug("%s" % player, extra={"task": (self.connection.username,
                           "_infobar_adjourned_message.callback")})
-                if response == gtk.RESPONSE_ACCEPT:
+                if response == Gtk.ResponseType.ACCEPT:
                     self.connection.client.run_command("match %s" % player.name)
-                elif response == gtk.RESPONSE_HELP:
+                elif response == Gtk.ResponseType.HELP:
                     self.connection.adm.queryMoves(game)
                 else:
                     try:
@@ -1382,13 +1385,13 @@ class AdjournedTabSection (ParrentListSection):
                     except KeyError:
                         pass
                 return False
-            message = InfoBarMessage(gtk.MESSAGE_QUESTION, content, callback)
+            message = InfoBarMessage(Gtk.MessageType.QUESTION, content, callback)
             message.add_button(InfoBarMessageButton(_("Request Continuation"),
-                                                    gtk.RESPONSE_ACCEPT))
+                                                    Gtk.ResponseType.ACCEPT))
             message.add_button(InfoBarMessageButton(_("Examine Adjourned Game"),
-                                                    gtk.RESPONSE_HELP))
-            message.add_button(InfoBarMessageButton(gtk.STOCK_CLOSE,
-                                                    gtk.RESPONSE_CANCEL))
+                                                    Gtk.ResponseType.HELP))
+            message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                    Gtk.ResponseType.CANCEL))
             make_sensitive_if_available(message.buttons[0], player)
             self.messages[player] = message
             self.infobar.push_message(message)
@@ -1594,9 +1597,9 @@ class SeekChallengeSection (Section):
 
         self.widgets["editSeekDialog"].connect("delete_event", lambda *a: True)
 #         glock.glock_connect(self.connection, "disconnected",
-#             lambda c: self.widgets and self.widgets["editSeekDialog"].response(gtk.RESPONSE_CANCEL))
+#             lambda c: self.widgets and self.widgets["editSeekDialog"].response(Gtk.ResponseType.CANCEL))
 #         glock.glock_connect(self.connection, "disconnected",
-#             lambda c: self.widgets and self.widgets["challengeDialog"].response(gtk.RESPONSE_CANCEL))
+#             lambda c: self.widgets and self.widgets["challengeDialog"].response(Gtk.ResponseType.CANCEL))
 
         self.widgets["strengthCheck"].connect("toggled", self.onStrengthCheckToggled)
         self.onStrengthCheckToggled(self.widgets["strengthCheck"])
@@ -1608,7 +1611,7 @@ class SeekChallengeSection (Section):
         def toleranceHBoxGetter (widget):
             return self.widgets["toleranceHBox"].get_property("visible")
         def toleranceHBoxSetter (widget, visible):
-            assert type(visible) is bool
+            assert isinstance(visible, bool)
             if visible:
                 self.widgets["toleranceHBox"].show()
             else:
@@ -1719,7 +1722,7 @@ class SeekChallengeSection (Section):
         
     def onEditSeekDialogResponse (self, dialog, response):
         self.widgets["editSeekDialog"].hide()
-        if response != gtk.RESPONSE_OK:
+        if response != Gtk.ResponseType.OK:
             return
         self.__saveSeekEditor(self.seeknumber)
         self.__writeSavedSeeks(self.seeknumber)
@@ -1967,14 +1970,14 @@ class SeekChallengeSection (Section):
         if self.loading_seek_editor is False and self.chainbox.active and \
                 difference is not self.lastdifference:
             newcenter = rating - self.lastdifference
-            self.widgets["ratingCenterSlider"].set_value(newcenter / RATING_SLIDER_STEP)
+            self.widgets["ratingCenterSlider"].set_value(newcenter // RATING_SLIDER_STEP)
         else:
             self.lastdifference = difference
     
     def __clamp (self, rating):
-        assert type(rating) is int
+        assert isinstance(rating, int)
         mod = rating % RATING_SLIDER_STEP
-        if mod > RATING_SLIDER_STEP / 2:
+        if mod > RATING_SLIDER_STEP // 2:
             return rating - mod + RATING_SLIDER_STEP
         else:
             return rating - mod
@@ -2002,8 +2005,8 @@ class SeekChallengeSection (Section):
         self.widgets["ratedGameCheck"].set_sensitive(sensitive)
     
     def __initVariantCombo (self, combo):
-        model = gtk.TreeStore(str)
-        cellRenderer = gtk.CellRendererText()
+        model = Gtk.TreeStore(str)
+        cellRenderer = Gtk.CellRendererText()
         combo.clear()
         combo.pack_start(cellRenderer, True)
         combo.add_attribute(cellRenderer, 'text', 0)
@@ -2013,8 +2016,8 @@ class SeekChallengeSection (Section):
                       VARIANTS_OTHER: _("Other (standard rules)"),
                       VARIANTS_OTHER_NONSTANDARD: _("Other (non standard rules)"),
                       }
-        ficsvariants = [v for k, v in variants.iteritems() if k in VARIANT_GAME_TYPES and 
-                                                    v.board.variant not in UNSUPPORTED]
+        ficsvariants = [v for k, v in variants.items() if k in VARIANT_GAME_TYPES and 
+                                                    v.variant not in UNSUPPORTED]
         groups = groupby(ficsvariants, attrgetter("variant_group"))
         pathToVariant = {}
         variantToPath = {}
@@ -2023,8 +2026,9 @@ class SeekChallengeSection (Section):
             for variant in group:
                 subiter = model.append(iter, (variant.name,))
                 path = model.get_path(subiter)
-                pathToVariant[path] = variant.board.variant
-                variantToPath[variant.board.variant] = path
+                path = path.to_string()
+                pathToVariant[path] = variant.variant
+                variantToPath[variant.variant] = path
         
         # this stops group names (eg "Shuffle") from being displayed in submenus
         def cellFunc (combo, cell, model, iter, data):
@@ -2034,6 +2038,7 @@ class SeekChallengeSection (Section):
         
         def comboGetter (combo):
             path = model.get_path(combo.get_active_iter())
+            path = path.to_string()
             return pathToVariant[path]
             
         def comboSetter (combo, variant):
@@ -2064,15 +2069,15 @@ class SeekChallengeSection (Section):
             lightning = self.__getRating(TYPE_LIGHTNING)
             
             if standard is not None:
-                self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = standard / RATING_SLIDER_STEP
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = standard // RATING_SLIDER_STEP
             elif blitz is not None:
-                self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = blitz / RATING_SLIDER_STEP
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = blitz // RATING_SLIDER_STEP
             if blitz is not None:
-                self.seekEditorWidgetDefaults["ratingCenterSlider"][1] = blitz / RATING_SLIDER_STEP
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][1] = blitz // RATING_SLIDER_STEP
             if lightning is not None:
-                self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = lightning / RATING_SLIDER_STEP
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = lightning // RATING_SLIDER_STEP
             elif blitz is not None:
-                self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = blitz / RATING_SLIDER_STEP
+                self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = blitz // RATING_SLIDER_STEP
             
             for i in range(1,4):
                 self.__loadSeekEditor(i)

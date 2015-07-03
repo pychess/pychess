@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy toplevel-contextual -->
+  <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkAdjustment" id="adjustment1">
     <property name="lower">1</property>
     <property name="upper">21</property>
@@ -31,7 +30,6 @@
                 <property name="right_padding">3</property>
                 <child>
                   <object class="GtkButton" id="opendialog1">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -185,7 +183,6 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="startButton">
-                    <property name="use_action_appearance">False</property>
                     <property name="height_request">30</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -279,7 +276,6 @@
                 <property name="right_padding">3</property>
                 <child>
                   <object class="GtkButton" id="opendialog2">
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -340,11 +336,11 @@
                     <child>
                       <object class="GtkCheckButton" id="asGuestCheck">
                         <property name="label" translatable="yes">Log on as G_uest</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
+                        <property name="xalign">0.5</property>
                         <property name="draw_indicator">True</property>
                       </object>
                       <packing>
@@ -360,8 +356,6 @@
                         <property name="activates_default">True</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
-                        <property name="primary_icon_sensitive">True</property>
-                        <property name="secondary_icon_sensitive">True</property>
                         <accessibility>
                           <action action_name="activate" description="connectButton"/>
                         </accessibility>
@@ -383,8 +377,6 @@
                         <property name="activates_default">True</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
-                        <property name="primary_icon_sensitive">True</property>
-                        <property name="secondary_icon_sensitive">True</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -438,7 +430,6 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="connectButton">
-                    <property name="use_action_appearance">False</property>
                     <property name="height_request">30</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>

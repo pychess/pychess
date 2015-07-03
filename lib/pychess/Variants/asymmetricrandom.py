@@ -1,3 +1,4 @@
+from __future__ import print_function
 # AsymmetricRandom Chess
 
 import random
@@ -7,6 +8,18 @@ from pychess.Utils.Board import Board
 
 class AsymmetricRandomBoard(Board):
     variant = ASYMMETRICRANDOMCHESS
+    __desc__ = \
+        _("FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
+          "* Randomly chosen pieces (two queens or three rooks possible)\n" +
+          "* Exactly one king of each color\n" +
+          "* Pieces placed randomly behind the pawns, SUBJECT TO THE CONSTRAINT THAT THE BISHOPS ARE BALANCED\n" +
+          "* No castling\n" +
+          "* Black's arrangement DOES NOT mirrors white's")
+    name = _("Asymmetric Random")
+    cecp_name = "unknown"
+    need_initial_board = True
+    standard_rules = True
+    variant_group = VARIANTS_SHUFFLE
 
     def __init__ (self, setup=False, lboard=None):
         if setup is True:
@@ -80,23 +93,7 @@ class AsymmetricRandomBoard(Board):
         return tmp
 
 
-class AsymmetricRandomChess:
-    __desc__ = \
-        _("FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
-          "* Randomly chosen pieces (two queens or three rooks possible)\n" +
-          "* Exactly one king of each color\n" +
-          "* Pieces placed randomly behind the pawns, SUBJECT TO THE CONSTRAINT THAT THE BISHOPS ARE BALANCED\n" +
-          "* No castling\n" +
-          "* Black's arrangement DOES NOT mirrors white's")
-    name = _("Asymmetric Random")
-    cecp_name = "unknown"
-    board = AsymmetricRandomBoard
-    need_initial_board = True
-    standard_rules = True
-    variant_group = VARIANTS_SHUFFLE
-
-
 if __name__ == '__main__':
     Board = AsymmetricRandomBoard(True)
     for i in range(10):
-        print Board.asymmetricrandom_start()
+        print(Board.asymmetricrandom_start())
