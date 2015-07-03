@@ -81,7 +81,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     # Starting
     if loaddata:
         try:
-            uri, loader, gameno, position = loaddatax
+            uri, loader, gameno, position = loaddata
             gamemodel.loadAndStart (uri, loader, gameno, position)
         except LoadingError as e:
             d = Gtk.MessageDialog (type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.OK)
