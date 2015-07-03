@@ -172,7 +172,7 @@ class CECPEngine (ProtocolEngine):
         self.timeout = None
         
         self.returnQueue = Queue()
-        self.engine.connect("line", self.parseLines)
+        self.engine.connect("line", self.parseLine)
         self.engine.connect("died", lambda e: self.returnQueue.put("del"))
         self.invalid_move = None
         
@@ -726,11 +726,7 @@ class CECPEngine (ProtocolEngine):
     #    Parsing
     #===========================================================================
     
-    def parseLines (self, engine, lines):
-        for line in lines:
-            self.__parseLine(line)
-    
-    def __parseLine (self, line):
+    def parseLine (self, engine, line):
         if line[0:1] == "#":
             # Debug line which we shall ignore as specified in CECPv2 specs
             return

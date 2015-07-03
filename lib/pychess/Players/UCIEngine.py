@@ -60,7 +60,7 @@ class UCIEngine (ProtocolEngine):
         self.analysis = [ None ]
         
         self.returnQueue = Queue()
-        self.engine.connect("line", self.parseLines)
+        self.engine.connect("line", self.parseLine)
         self.engine.connect("died", self.__die)
         self.invalid_move = None
         
@@ -484,11 +484,7 @@ class UCIEngine (ProtocolEngine):
     #    Parsing from engine
     #===========================================================================
     
-    def parseLines (self, engine, lines):
-        for line in lines:
-            self.__parseLine(line)
-    
-    def __parseLine (self, line):
+    def parseLine (self, engine, line):
         if not self.connected: return
         parts = line.split()
         if not parts: return
