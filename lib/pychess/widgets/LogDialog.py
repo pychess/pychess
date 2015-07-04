@@ -5,10 +5,10 @@ import time
 import codecs
 import logging
 
-from gi.repository import Gtk, Gdk, Pango, GObject
+from gi.repository import Gtk, Gdk, Pango, GObject, GLib
 
 from pychess.compat import unicode
-from pychess.System import glock, uistuff
+from pychess.System import uistuff
 from pychess.System.LogEmitter import logemitter
 from pychess.System.prefix import addDataPrefix
 
@@ -64,19 +64,21 @@ class InformationWindow:
     
     @classmethod
     def newMessage (cls, tag, timestamp, message, importance):
-        textview = cls._getPageFromTag(tag)["textview"]
-        
-        if not tag in cls.tagToTime or timestamp-cls.tagToTime[tag] >= 1:
-            t = time.strftime("%H:%M:%S", time.localtime(timestamp))
+        def _newMessage(cls, tag, timestamp, message, importance):
+            textview = cls._getPageFromTag(tag)["textview"]
+            
+            if not tag in cls.tagToTime or timestamp-cls.tagToTime[tag] >= 1:
+                t = time.strftime("%H:%M:%S", time.localtime(timestamp))
+                textview.get_buffer().insert_with_tags_by_name(
+                    textview.get_buffer().get_end_iter(), "\n%s\n%s\n"%(t,"-"*60), str(logging.INFO))
+                cls.tagToTime[tag] = timestamp
+            
+            if not message.endswith("\n"):
+                message = "%s\n" % message
             textview.get_buffer().insert_with_tags_by_name(
-                textview.get_buffer().get_end_iter(), "\n%s\n%s\n"%(t,"-"*60), str(logging.INFO))
-            cls.tagToTime[tag] = timestamp
+                textview.get_buffer().get_end_iter(), message, str(importance))
+        GLib.idle_add(_newMessage, cls, tag, timestamp, message, importance)
         
-        if not message.endswith("\n"):
-            message = "%s\n" % message
-        textview.get_buffer().insert_with_tags_by_name(
-            textview.get_buffer().get_end_iter(), message, str(importance))
-    
     @classmethod
     def _createPage (cls, parrentIter, tag):
         name = tag[-1]
@@ -206,9 +208,6 @@ class InformationWindow:
         if Gdk.keyval_name(event.keyval) == "Escape":
             findbar.props.visible = False
     
-    
-uistuff.cacheGladefile("findbar.glade")
-
 
 ################################################################################
 # Add early messages and connect for new                                       #
@@ -216,22 +215,16 @@ uistuff.cacheGladefile("findbar.glade")
 
 InformationWindow._init()
 
-from gi.repository import GObject
-def addMessages2 (emitter, messages):
-    GObject.idle_add(addMessages2, messages)
+def addMessage (emitter, message):
+    task, timestamp, message, type = message
+    InformationWindow.newMessage (task, timestamp, message, type)
 
-def addMessages (emitter, messages):
-    for task, timestamp, message, type in messages:
-        InformationWindow.newMessage (task, timestamp, message, type)
+for message in logemitter.messages:
+    addMessage(logemitter, message)
+logemitter.messages = None
 
-glock.acquire()
-try:
-    addMessages(logemitter, logemitter.messages)
-    logemitter.messages = None
-finally:
-    glock.release()
+logemitter.connect ("logged", addMessage)
 
-logemitter.connect ("logged", addMessages)
 
 ################################################################################
 # External functions                                                           #
