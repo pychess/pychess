@@ -717,7 +717,7 @@ class LBoard:
         return self.hash
     
     def __eq__ (self, other):
-        return self.fen_was_applied and other is not None and \
+        return self.fen_was_applied and isinstance(other, LBoard) and \
             self.hash == other.hash and self.plyCount == other.plyCount
             
     
