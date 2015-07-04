@@ -21,10 +21,10 @@ class DummyCECPAnalyzerEngine(GObject.GObject):
         self.defname = 'Dummy'
         self.Q = Queue()
     def putline(self, line):
-        self.emit('line', [line])
+        self.emit('line', line)
     def write(self, text):
         if text.strip() == 'protover 2':
-            self.emit('line', ['feature setboard=1 analyze=1 ping=1 draw=0 sigint=0 done=1'])
+            self.emit('line', 'feature setboard=1 analyze=1 ping=1 draw=0 sigint=0 done=1')
         pass
     def readline(self):
         return self.Q.get()
