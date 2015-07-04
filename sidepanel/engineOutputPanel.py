@@ -301,40 +301,39 @@ class EngineOutput (Gtk.VBox):
         if infoFound:
             self.appendThinking(depth, score, pv)
 
-    def parseLines (self, engine, lines):
-        for line in lines:
-            # Clean up the line a bit:
-            line = line.strip(" \r\t\n")
-            line = line.replace("\t", " ")
+    def parseLine (self, engine, line):
+        # Clean up the line a bit:
+        line = line.strip(" \r\t\n")
+        line = line.replace("\t", " ")
 
-            # PARSING THINKING OUTPUT (roughly, simply identifies the lines):
+        # PARSING THINKING OUTPUT (roughly, simply identifies the lines):
 
-            # GNU Chess/CECP/Winboard engine thinking output lines:
-            if self.re_thinking_line_cecp.match(line):
+        # GNU Chess/CECP/Winboard engine thinking output lines:
+        if self.re_thinking_line_cecp.match(line):
+            self.parseInfoLine(line)
+
+        # UCI engine thinking output lines:
+        if self.re_thinking_line_uci.match(line):
+            if line.find("depth") != -1 and line.find("score") != -1:
                 self.parseInfoLine(line)
 
-            # UCI engine thinking output lines:
-            if self.re_thinking_line_uci.match(line):
-                if line.find("depth") != -1 and line.find("score") != -1:
-                    self.parseInfoLine(line)
+        # PARSE MOVE LINES (roughly, we merely identify them):
 
-            # PARSE MOVE LINES (roughly, we merely identify them):
+        # We want to clear on the next output info line
+        # when a move arrived, so that for every move
+        # we freshly fill our thinking output:
 
-            # We want to clear on the next output info line
-            # when a move arrived, so that for every move
-            # we freshly fill our thinking output:
+        # CECP/Winboard move line, long algebraeic notation:
+        if self.re_move_line_cecp_alg.match(line):
+            self.clear_on_output = True
 
-            # CECP/Winboard move line, long algebraeic notation:
-            if self.re_move_line_cecp_alg.match(line):
-                self.clear_on_output = True
+        # CECP/Winboard move line, SAN notation:
+        if self.re_move_line_cecp_san.match(line):
+            self.clear_on_output = True
 
-            # CECP/Winboard move line, SAN notation:
-            if self.re_move_line_cecp_san.match(line):
-                self.clear_on_output = True
-
-            # UCI move line:
-            if self.re_move_line_uci.match(line):
-                self.clear_on_output = True
+        # UCI move line:
+        if self.re_move_line_uci.match(line):
+            self.clear_on_output = True
         return
 
     def clear (self):
@@ -356,7 +355,7 @@ class EngineOutput (Gtk.VBox):
         # Attach to new engine:
         log.debug("Attaching " + self.__str__() + " to engine " + engine.__str__(), extra={"task":engine.defname})
         self.attached_engine = engine
-        self.attached_handler_id = engine.connect("line", self.parseLines)
+        self.attached_handler_id = engine.connect("line", self.parseLine)
         return
 
     def detachEngine (self):
