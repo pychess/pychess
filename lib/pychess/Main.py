@@ -15,7 +15,7 @@ from gi.repository import GLib
 from gi.repository import GObject
 
 from pychess.compat import urlopen, urlparse, basestring, open
-from pychess.System import conf, glock, uistuff, prefix, SubProcess, Log, idle_add
+from pychess.System import conf, uistuff, prefix, SubProcess, Log, idle_add
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log, LogPipe
 from pychess.System.LogEmitter import GLogHandler, logemitter
@@ -490,12 +490,8 @@ def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
     def cleanup ():
         SubProcess.finishAllSubprocesses()
     atexit.register(cleanup)
-    Gdk.threads_init()
-    GObject.threads_init()
-    Gdk.threads_enter()
     
     pychess = PyChess(log_viewer, chess_file)
-    glock.debug = not no_glock_debug
     idle_add.debug = not no_glock_debug
 
     sys.stdout = LogPipe(sys.stdout, "stdout")
@@ -510,4 +506,3 @@ def run (no_debug, no_glock_debug, no_thread_debug, log_viewer, chess_file,
         ICLogon.port = ics_port
     
     Gtk.main()
-    Gdk.threads_leave()

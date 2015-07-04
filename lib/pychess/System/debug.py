@@ -4,7 +4,7 @@ import traceback
 import threading
 from threading import Thread
 
-from pychess.System import glock, fident
+from pychess.System import fident
 from pychess.System.Log import log
 
 def start_thread_dump ():
@@ -17,8 +17,6 @@ def start_thread_dump ():
             stacks = []
             for thread_id, frame in sys._current_frames().items():
                 stack = traceback.format_list(traceback.extract_stack(frame))
-                if glock.has(thread=id2thread[thread_id]):
-                    stacks.append("has glock")
                 stacks.append("Thread: %s (%d)" % (id2thread[thread_id].name, thread_id))
                 stacks.append("".join(stack))
             
