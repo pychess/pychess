@@ -323,7 +323,7 @@ class EndgameAdvisor(Advisor, Thread):
     def run (self):
         while True:
             v = self.queue.get()
-            if issubclass(v, Exception) and v == self.StopNow:
+            if v == self.StopNow:
                 break
             elif v == self.board.board:
                 self.egtb.scoreAllMoves(v)
