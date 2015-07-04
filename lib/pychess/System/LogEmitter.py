@@ -2,7 +2,6 @@ import time
 import logging
 
 from gi.repository import GObject
-from .GtkWorker import EmitPublisher, Publisher
 
 
 class LogEmitter(GObject.GObject):
@@ -18,9 +17,6 @@ class LogEmitter(GObject.GObject):
         # appending data to it. Ugly? Somewhat I guess.
         self.messages = []
 
-        self.publisher = EmitPublisher (self, "logged",
-            'LogEmitter.publisher', Publisher.SEND_LIST)
-        self.publisher.start()
 
 class GLogHandler(logging.Handler):
     def __init__ (self, emitter):
@@ -32,6 +28,6 @@ class GLogHandler(logging.Handler):
         if self.emitter.messages != None:
             self.emitter.messages.append((record.task, time.time(), message, record.levelno))
         
-        self.emitter.publisher.put((record.task, time.time(), message, record.levelno))
+        self.emitter.emit("logged", (record.task, time.time(), message, record.levelno))
 
 logemitter = LogEmitter()
