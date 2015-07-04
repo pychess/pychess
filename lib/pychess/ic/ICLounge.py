@@ -1596,10 +1596,7 @@ class SeekChallengeSection (Section):
         self.widgets["variantCombo"].connect("changed", self.onVariantComboChanged)
 
         self.widgets["editSeekDialog"].connect("delete_event", lambda *a: True)
-#         glock.glock_connect(self.connection, "disconnected",
-#             lambda c: self.widgets and self.widgets["editSeekDialog"].response(Gtk.ResponseType.CANCEL))
-#         glock.glock_connect(self.connection, "disconnected",
-#             lambda c: self.widgets and self.widgets["challengeDialog"].response(Gtk.ResponseType.CANCEL))
+#        self.widgets["challengeDialog"].connect("delete_event", lambda *a: True)
 
         self.widgets["strengthCheck"].connect("toggled", self.onStrengthCheckToggled)
         self.onStrengthCheckToggled(self.widgets["strengthCheck"])
