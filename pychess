@@ -91,7 +91,7 @@ else:
 
 import pychess
 no_debug = False
-no_glock_debug = False
+no_idle_add_debug = False
 no_thread_debug = False
 log_viewer = False
 chess_file = sys.argv[1] if len(sys.argv) > 1 else None
@@ -111,8 +111,8 @@ else:
         version="%(prog)s" + " %s" % version)
     parser.add_argument('--no-debug', action='store_true',
         help='turn off debugging output')
-    parser.add_argument('--no-glock-debug', action='store_true',
-        help='turn off glock debugging output')
+    parser.add_argument('--no-idle-add-debug', action='store_true',
+        help='turn off idle-add debugging output')
     parser.add_argument('--no-thread-debug', action='store_true',
         help='turn off thread debugging output')
     parser.add_argument('--log-viewer', action='store_true',
@@ -126,7 +126,7 @@ else:
     
     args = parser.parse_args()
     no_debug = args.no_debug
-    no_glock_debug = args.no_glock_debug
+    no_idle_add_debug = args.no_idle_add_debug
     no_thread_debug = args.no_thread_debug
     log_viewer = args.log_viewer
     chess_file = args.chess_file
@@ -137,5 +137,5 @@ else:
 # Let's rumble!
 
 import pychess.Main
-pychess.Main.run(no_debug, no_glock_debug, no_thread_debug, log_viewer,
+pychess.Main.run(no_debug, no_idle_add_debug, no_thread_debug, log_viewer,
                  chess_file, ics_host, ics_port)
