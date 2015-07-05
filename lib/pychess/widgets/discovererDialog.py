@@ -25,11 +25,11 @@ class DiscovererDialog:
         #=======================================================================
         # Connect us to the discoverer
         #=======================================================================
-        discoverer.connect("discovering_started", cls._onDiscoveringStarted)
         discoverer.connect("engine_discovered", cls._onEngineDiscovered)
         discoverer.connect("all_engines_discovered", cls._onAllEnginesDiscovered)
         cls.finished = False
         cls.throbber = None
+        cls.nameToBar = {}
         
     @classmethod
     def show (cls, discoverer, mainwindow, binnames):
@@ -39,7 +39,6 @@ class DiscovererDialog:
         #======================================================================
         # Insert the names to be discovered
         #======================================================================
-        cls.nameToBar = {}
         for i, name in enumerate(binnames):
             label = Gtk.Label(label=name+":")
             label.props.xalign = 1
@@ -64,21 +63,7 @@ class DiscovererDialog:
         cls.widgets["discovererDialog"].set_transient_for(mainwindow)
         cls.widgets["discovererDialog"].show_all()
     
-    @classmethod
-    @idle_add
-    def _onDiscoveringStarted (cls, discoverer, binnames):
         cls.throbber.start()
-        #======================================================================
-        # Insert the names to be discovered
-        #======================================================================
-        cls.nameToBar = {}
-        for i, name in enumerate(binnames):
-            label = Gtk.Label(label=name+":")
-            label.props.xalign = 1
-            cls.widgets["enginesTable"].attach(label, 0, 1, i, i+1)
-            bar = Gtk.ProgressBar()
-            cls.widgets["enginesTable"].attach(bar, 1, 2, i, i+1)
-            cls.nameToBar[name] = bar
     
     @classmethod
     @idle_add
