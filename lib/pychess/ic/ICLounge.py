@@ -184,6 +184,7 @@ class ICLounge (GObject.GObject):
             ionest.generalStart(gamemodel, player0tup, player1tup,
                                 (StringIO(ficsgame.board.fen), fen, 0, -1))
 
+    @idle_add
     def onObserveGameCreated (self, bm, ficsgame):
         log.debug("ICLounge.onObserveGameCreated: %s" % ficsgame)
         if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
