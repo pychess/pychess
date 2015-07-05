@@ -468,7 +468,7 @@ class PyChess:
     def handleArgs (self, chess_file):
         if chess_file:
             def do (discoverer):
-                newGameDialog.LoadFileExtension.run(chess_file)
+                GLib.idle_add(newGameDialog.LoadFileExtension.run, chess_file)
             discoverer.connect_after("all_engines_discovered", do)
 
 def run (no_debug, no_idle_add_debug, no_thread_debug, log_viewer, chess_file,
