@@ -100,7 +100,7 @@ class ConsoleView (Gtk.VPaned):
         self.writeView.connect("key-press-event", self.onKeyPress)
 
     @idle_add
-    def addMessage (self, text, my=False):
+    def addMessage (self, text, my):
         tb = self.readView.get_buffer()
         iter = tb.get_end_iter()
         # Messages have linebreak before the text. This is opposite to log

@@ -154,7 +154,7 @@ class _GameInitializationMode:
         cls.__initVariantRadio("ngvariant2", cls.widgets["playVariant2Radio"],
                                cls.widgets["configImageVariant2"], LOSERSCHESS)
 
-        @idle_add
+        #@idle_add
         def updateCombos(*args):
             if cls.widgets["playNormalRadio"].get_active():
                 variant = NORMALCHESS
