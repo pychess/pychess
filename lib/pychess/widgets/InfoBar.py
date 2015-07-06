@@ -188,7 +188,15 @@ class InfoBar (Gtk.InfoBar):
             button._button = None
         
     def _load_message (self, message):
-        for container in (self.get_action_area(), self.get_content_area()):
+        aa = self.get_action_area()
+        if aa is None:
+            print("InfoBar action_area is None")
+            return
+        ca = self.get_content_area()
+        if ca is None:
+            print("InfoBar content_area is None")
+            return
+        for container in (aa, ca):
             for widget in container:
                 container.remove(widget)
         self.set_message_type(message.type)

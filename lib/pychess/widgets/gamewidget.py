@@ -700,17 +700,20 @@ class GameWidget (GObject.GObject):
         if self == cur_gmwidg():
             notebooks["messageArea"].hide()
     
+    @idle_add
     def showMessage (self, message):
         self.infobar.push_message(message)
         if self == cur_gmwidg():
             notebooks["messageArea"].show()
     
+    @idle_add
     def replaceMessages (self, message):
         """ Replace all messages with message """
         if not self.closed:
             self.infobar.clear_messages()
             self.showMessage(message)
     
+    @idle_add
     def clearMessages (self):
         self.infobar.clear_messages()
         if self == cur_gmwidg():
