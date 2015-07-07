@@ -60,7 +60,7 @@ class ICLounge (GObject.GObject):
         self.players = []
         self.widgets = uistuff.GladeWidgets("fics_lounge.glade")
         uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
-        self.infobar = InfoBar()
+        self.infobar = InfoBarNotebook()
         self.infobar.hide()
         self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar, False, False, 0)
         
