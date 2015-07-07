@@ -551,7 +551,7 @@ class ThemeTab:
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file(pngfile)
                 store.append((pixbuf, theme))
             else:
-                print("WARNING: No piece theme preview icons find. Run create_theme_preview.sh !")
+                print("WARNING: No piece theme preview icons found. Please run create_theme_preview.sh !")
                 break
 
         iconView = widgets["pieceTheme"]

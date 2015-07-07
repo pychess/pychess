@@ -14,7 +14,7 @@ if os.path.exists(db_path):
     atexit.register(conn.close)
     ECO_OK = True
 else:
-    print("Warning: eco.db not find, run pgn2ecodb.sh")
+    print("Warning: eco.db not found, please run pgn2ecodb.sh")
     ECO_OK = False
 
 if isInstalled():
