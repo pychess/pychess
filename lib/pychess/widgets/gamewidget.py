@@ -33,7 +33,7 @@ from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic import get_infobarmessage_content, get_infobarmessage_content2
 from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
-from pychess.widgets.InfoBar import InfoBar, InfoBarMessage, InfoBarMessageButton
+from pychess.widgets.InfoBar import InfoBarNotebook, InfoBarMessage, InfoBarMessageButton
 from .pydock.PyDockTop import PyDockTop
 from .pydock.__init__ import CENTER, EAST, SOUTH
 
@@ -586,7 +586,7 @@ class GameWidget (GObject.GObject):
     def initBoardAndClock(self, gamemodel):
         boardvbox = Gtk.VBox()
         boardvbox.set_spacing(2)
-        infobar = InfoBar()
+        infobar = InfoBarNotebook()
         
         ccalign = createAlignment(0, 0, 0, 0)
         cclock = ChessClock()
