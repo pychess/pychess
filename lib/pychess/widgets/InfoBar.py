@@ -22,7 +22,7 @@ def get_message_content (heading_text, message_text, image_stock_id):
     label.set_width_chars(70)
     label.set_text(message_text)    
     vbox.pack_start(label, False, False, 0)
-    hbox.pack_start(vbox, expand=False, fill=False, padding=7)
+    hbox.pack_start(vbox, False, False, 7)
     return hbox
 
 class InfoBarMessageButton (GObject.GObject):
@@ -80,7 +80,7 @@ class InfoBarMessage (GObject.GObject):
     
     def update_content (self, content):
         container = Gtk.HBox()
-        container.pack_start(content, expand=False, fill=False)
+        container.pack_start(content, False, False, 0)
         self.content = container
         self.emit("updated")
         
