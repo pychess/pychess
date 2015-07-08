@@ -216,7 +216,6 @@ class ICLogon (object):
             self.showNormal()
         if hide:
             self.widgets["fics_logon"].hide()
-        return True
     
     @idle_add
     def onConnectionError (self, connection, error):
