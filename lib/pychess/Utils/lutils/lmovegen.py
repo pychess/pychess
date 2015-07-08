@@ -43,7 +43,10 @@ def genCastles (board):
                     return
             if FILE(king) == 3 and board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS):
                 castle = QUEEN_CASTLE if castle == KING_CASTLE else KING_CASTLE
-            return newMove (king, king_after, castle)
+            if board.variant == FISCHERRANDOMCHESS:
+                return newMove (king, rook, castle)
+            else:
+                return newMove (king, king_after, castle)
     
     king = board.ini_kings[board.color]
     wildcastle = FILE(king) == 3 and board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
