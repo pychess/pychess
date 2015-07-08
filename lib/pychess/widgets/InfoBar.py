@@ -47,6 +47,10 @@ class InfoBarMessageButton (GObject.GObject):
     tooltip_text = GObject.property(get_tooltip_text, set_tooltip_text)
 
 class InfoBarMessage (Gtk.InfoBar):
+    __gsignals__ = {
+        "dismissed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
+    }
+
     def __init__ (self, message_type, content, callback):
         GObject.GObject.__init__(self)
         self.callback = callback
@@ -73,6 +77,7 @@ class InfoBarMessage (Gtk.InfoBar):
         
     def dismiss (self):
         self.hide()
+        self.emit("dismissed")
     
     def update_content (self, content):
         for widget in self.get_content_area():
@@ -95,6 +100,9 @@ class InfoBarNotebook(Gtk.Notebook):
         
     def push_message (self, message):
 
+        def on_dismissed(mesage):
+            self.remove_page(self.page_num(message))
+            
         def on_response(message, response_id):
             if callable(message.callback):
                 message.callback(self, response_id, message)
@@ -105,6 +113,7 @@ class InfoBarNotebook(Gtk.Notebook):
             self.remove_page(cp)
         self.append_page(message, None)
         message.connect("response", on_response)
+        message.connect("dismissed", on_dismissed)
         self.show_all()
 
     def clear_messages (self):
