@@ -647,3 +647,4 @@ class SaveTab:
 
         uistuff.keep(widgets["saveEmt"], "saveEmt")
         uistuff.keep(widgets["saveEval"], "saveEval")
+        uistuff.keep(widgets["saveOwnGames"], "saveOwnGames")

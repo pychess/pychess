@@ -192,6 +192,8 @@ def saveGameSimple (uri, game):
     game.save(uri, saver, append=False)
 
 def saveGamePGN (game):
+    if conf.get("saveOwnGames", False) and not game.hasLocalPlayer():
+        return True
     filename = conf.get("autoSaveFormat", "pychess")
     filename = filename.replace("#n1", game.tags["White"])
     filename = filename.replace("#n2", game.tags["Black"])
