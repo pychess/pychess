@@ -659,7 +659,7 @@ class GameModel (GObject.GObject, Thread):
         log.debug("GameModel.checkStatus:")
         
         # call flag by engine
-        if self.status in UNDOABLE_STATES:
+        if self.isEngine2EngineGame() and self.status in UNDOABLE_STATES:
             return
             
         status, reason = getStatus(self.boards[-1])
