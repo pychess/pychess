@@ -344,6 +344,9 @@ class BoardState:
     def validate (self, cord0, cord1):
         if cord0 is None or cord1 is None:
             return False
+        # prevent accidental NULL_MOVE creation
+        if cord0 == cord1:
+            return False
         if self.getBoard()[cord0] == None:
             return False
         if cord1.x < 0 or cord1.x > self.FILES-1:
