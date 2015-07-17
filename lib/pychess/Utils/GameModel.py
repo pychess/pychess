@@ -127,6 +127,7 @@ class GameModel (GObject.GObject, Thread):
         
         self.status = WAITING_TO_START
         self.reason = UNKNOWN_REASON
+        self.curColor = WHITE
         
         if timemodel is None:
             self.timemodel = TimeModel()
@@ -570,16 +571,17 @@ class GameModel (GObject.GObject, Thread):
         
         # Let GameModel end() itself on games started with loadAndStart()
         self.checkStatus()
+
+        self.curColor = self.boards[-1].color
         
         while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
-            curColor = self.boards[-1].color
-            curPlayer = self.players[curColor]
+            curPlayer = self.players[self.curColor]
             
             if self.timed:
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time" % \
                     (id(self), str(self.players), str(self.ply), str(curPlayer)))
-                curPlayer.updateTime(self.timemodel.getPlayerTime(curColor),
-                                     self.timemodel.getPlayerTime(1-curColor))
+                curPlayer.updateTime(self.timemodel.getPlayerTime(self.curColor),
+                                     self.timemodel.getPlayerTime(1-self.curColor))
             
             try:
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: calling %s.makeMove()" % \
@@ -597,12 +599,12 @@ class GameModel (GObject.GObject, Thread):
                     traceback.print_exc(file=stringio)
                     error = stringio.getvalue()
                     log.error("GameModel.run: A Player died: player=%s error=%s\n%s" % (curPlayer, error, e))
-                    if curColor == WHITE:
+                    if self.curColor == WHITE:
                         self.kill(WHITE_ENGINE_DIED)
                     else: self.kill(BLACK_ENGINE_DIED)
                 break
             except InvalidMove as e:
-                if curColor == WHITE:
+                if self.curColor == WHITE:
                     self.end(BLACKWON, WON_ADJUDICATION)
                 else:
                     self.end(WHITEWON, WON_ADJUDICATION)
@@ -645,6 +647,7 @@ class GameModel (GObject.GObject, Thread):
                 self.setOpening()
 
                 self.checkStatus()
+                self.curColor = 1 - self.curColor
 
             finally:
                 log.debug("GameModel.run: releasing self.applyingMoveLock")
