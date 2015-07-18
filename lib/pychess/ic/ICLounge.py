@@ -403,9 +403,9 @@ class UserInfoSection(Section):
 
     @idle_add
     def onFinger (self, fm, finger):
-        if finger.getName().lower() != self.connection.getUsername().lower():
-            print (finger.getName(), self.connection.getUsername())
-            return
+#        if finger.getName().lower() != self.connection.getUsername().lower():
+#            print (finger.getName(), self.connection.getUsername())
+#            return
         
         rows = 1
         if finger.getRating(): rows += len(finger.getRating())+1
