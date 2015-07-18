@@ -172,10 +172,11 @@ class HintTab:
                                                 on_endgame_check_toggled)
 
         # Analyzing engines
-        uistuff.createCombo(widgets["ana_combobox"])
-        uistuff.createCombo(widgets["inv_ana_combobox"])
-
         from pychess.widgets import newGameDialog
+        data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
+        uistuff.createCombo(widgets["ana_combobox"], data)
+        uistuff.createCombo(widgets["inv_ana_combobox"], data)
+
         @idle_add
         def update_analyzers_store(discoverer):
             data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
