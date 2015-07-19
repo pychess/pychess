@@ -620,27 +620,17 @@ class BoardView (Gtk.DrawingArea):
     #        redraw_canvas        #
     ###############################
     
-    def redraw_canvas(self, r=None, queue=False):
+    def redraw_canvas(self, r=None):
         if self.get_window():
             @idle_add
-            def redraw(r, queue):
+            def redraw(r):
                 if self.get_window():
                     if not r:
                         alloc = self.get_allocation()
                         r = Gdk.Rectangle()
                         r.x, r.y, r.width, r.height = (0, 0, alloc.width, alloc.height)
-                    #if type(r) is tuple:
-                    #    t = r
-                    #    r = Gdk.Rectangle() 
-                    #    r.x, r.y, r.width, r.height = t                                     
-                    #assert type(r[2]) == int
-                    assert isinstance(r.width, int)
-                    if queue:
-                        self.queue_draw_area(r.x, r.y, r.width, r.height)
-                    else:
-                        self.get_window().invalidate_rect(r, True)
-                        self.get_window().process_updates(True)
-            redraw(r, queue)
+                    self.queue_draw_area(r.x, r.y, r.width, r.height)
+            redraw(r)
             
     ###############################
     #            draw             #
