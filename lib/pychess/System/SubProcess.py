@@ -133,7 +133,7 @@ class SubProcess (GObject.GObject):
         line = ""
         if condition is GObject.IO_IN:
             line = channel.readline()
-        elif condition is GObject.IO_HUP:
+        elif condition is GObject.IO_IN|GObject.IO_HUP:
             return False
         # Some engines send author names in different encodinds (f.e. spike)
         if line.startswith("id author") or not line:
