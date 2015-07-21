@@ -1,5 +1,6 @@
 from __future__ import print_function
 import os
+import sys
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -141,6 +142,8 @@ class EnginesDialog():
         filter.set_name(_("Executable files"))
         filter.add_mime_type("application/x-executable")
         filter.add_mime_type("application/x-ms-dos-executable")
+        filter.add_mime_type("application/x-msdownload")
+        filter.add_pattern("*.exe")
         engine_chooser_dialog.add_filter(filter)
         self.add = False
 
@@ -150,7 +153,7 @@ class EnginesDialog():
 
             if response == Gtk.ResponseType.OK:
                 new_engine = engine_chooser_dialog.get_filename()
-                if new_engine.lower().endswith(".exe"):
+                if new_engine.lower().endswith(".exe") and sys.platform != "win32":
                     vm_name = "wine" 
                     vmpath = searchPath(vm_name, access=os.R_OK|os.X_OK)
                     if vmpath is None:

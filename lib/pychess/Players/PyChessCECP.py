@@ -6,6 +6,9 @@ import signal
 import sys
 from threading import Thread
 
+if sys.platform != "win32":
+    import readline    
+    
 import pychess
 from pychess.compat import raw_input
 from pychess.Players.PyChess import PyChess
