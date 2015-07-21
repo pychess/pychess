@@ -79,7 +79,7 @@ class SubProcess (GObject.GObject):
         self.channelsClosed = False
         self.channelsClosedLock = threading.Lock()
         log.debug("SubProcess.__init__: child_watch_add...",  extra={"task":self.defname})
-        GObject.child_watch_add(self.pid, self.__child_watch_callback)        
+        GObject.child_watch_add(self.pid, self.__child_watch_callback, None)        
        
         log.debug("SubProcess.__init__: subprocExitCode...",  extra={"task":self.defname})
         self.subprocExitCode = (None, None)
@@ -117,7 +117,7 @@ class SubProcess (GObject.GObject):
     def __setup (self):
         os.nice(15)
     
-    def __child_watch_callback (self, pid, code):
+    def __child_watch_callback (self, pid, code, data):
         log.debug("SubProcess.__child_watch_callback: %s" % repr(code), 
                   extra={"task":self.defname})
         # Kill the engine on any signal but 'Resource temporarily unavailable'
@@ -130,28 +130,27 @@ class SubProcess (GObject.GObject):
             self.gentleKill()
     
     def __io_cb (self, channel, condition, isstderr):
-        while True:
-            try:
-#                line = channel.next()#readline()
-                line = channel.readline()
-            except StopIteration:
-                # fix for pygi
-                #return False
-                return True
-            # Some engines send author names in different encodinds (f.e. spike)
-            if line.startswith("id author") or not line:
-                return True
-            if isstderr:
-                log.error(line, extra={"task":self.defname})
+        line = ""
+        if condition is GObject.IO_IN:
+            line = channel.readline()
+        elif condition is GObject.IO_HUP:
+            return False
+        # Some engines send author names in different encodinds (f.e. spike)
+        if line.startswith("id author") or not line:
+            return True
+        if isstderr:
+            log.error(line, extra={"task":self.defname})
+        else:
+            for word in self.warnwords:
+                if word in line:
+                    log.warning(line, extra={"task":self.defname})
+                    return False
             else:
-                for word in self.warnwords:
-                    if word in line:
-                        log.warning(line, extra={"task":self.defname})
-                        break
-                else: log.debug(line.rstrip(), extra={"task":self.defname})
+                log.debug(line.rstrip(), extra={"task":self.defname})
+        
+        self.emit("line", line)
+        return True
             
-            self.emit("line", line)
-
     def write (self, data):
         if self.channelsClosed:
             log.warning("Chan closed for %r" % data, extra={"task":self.defname})
@@ -170,11 +169,12 @@ class SubProcess (GObject.GObject):
             if sys.platform != "win32":
                 os.kill(self.pid, signal.SIGCONT)
             os.kill(self.pid, sign)
-        except OSError as error:
-            if error.errno == errno.ESRCH:
+        except OSError as e:
+            if e.errno == errno.ESRCH:
                 #No such process
                 pass
-            else: raise OSError(error)
+            else:
+                raise OSError(e.errno, os.strerror(e.errno))
     
     def gentleKill (self, first=1, second=1):
         t = Thread(target=self.__gentleKill_inner,
@@ -202,7 +202,8 @@ class SubProcess (GObject.GObject):
         return code
     
     def pause (self):
-        self.sendSignal(signal.SIGSTOP)
+        if sys.platform != "win32":
+            self.sendSignal(signal.SIGSTOP)
     
     def resume (self):
         if sys.platform != "win32":
