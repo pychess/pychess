@@ -137,6 +137,9 @@ class EngineDiscoverer (GObject.GObject):
             
             if vmpath and path:
                 return vmpath, path
+            elif path and sys.platform == "win32" and engine.get("vm_name") == "wine":
+                return None, path
+
         else:           
             altpath = engine.get("command")
             path = searchPath(engine["name"], access=os.R_OK|os.X_OK, altpath=altpath)
