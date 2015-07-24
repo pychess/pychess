@@ -17,6 +17,14 @@ if sys.version_info < (2, 6, 0):
     print('ERROR: PyChess requires Python >= 2.6')
     sys.exit(1)
 
+if sys.platform == "win32":
+    try:
+        from gi.repository import Gtk
+    except ImportError:
+        print('ERROR: PyChess in Windows Platform requires to install PyGObject.')
+        print('Installing from http://sourceforge.net/projects/pygobjectwin32')
+        sys.exit(1)
+
 # To run "setup.py register" change name to "NAME+VERSION_NAME"
 # because pychess from another author already exist in pypi.
 VERSION = pychess.VERSION
@@ -88,7 +96,7 @@ sys.stderr = stderr
 sys.stdout = stdout
 
 DATA_FILES = [("share/pychess",
-    ["README", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin", "eco.db"])]
+    ["README.md", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin", "eco.db"])]
 
 # UI
 DATA_FILES += [("share/pychess/glade", glob('glade/*.glade'))]
