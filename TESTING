@@ -1,2 +1,0 @@
-Continuous integration service runs 'setup.py buid' and unittests
-after each commit at https://drone.io/gbtami/pychess
