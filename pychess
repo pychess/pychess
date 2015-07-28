@@ -63,6 +63,12 @@ if PY2:
 # Set up translations
 
 import gettext, locale
+
+# http://stackoverflow.com/questions/3678174/python-gettext-doesnt-load-translations-on-windows
+if sys.platform == "win32":
+    from pychess.System.gettext_windows import setup_env
+    setup_env()
+
 locale.setlocale(locale.LC_ALL, '')
 
 domain = "pychess"
@@ -84,7 +90,6 @@ else:
         libintl.bind_textdomain_codeset(domain, 'UTF-8')
     else:
         locale.bindtextdomain(domain, locale_dir)
-
 
 ###############################################################################
 # Parse command line arguments
