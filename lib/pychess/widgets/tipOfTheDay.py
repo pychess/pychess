@@ -49,7 +49,7 @@ class TipOfTheDay:
 
 tips = (
     _("You can start a new game by <b>Game</b> > <b>New Game</b>, in New Game window do you can choose <b>Players</b>, <b>Time Control</b> and <b>Chess Variants</b>."),
-    _("You can choose from 8 different difficulties to play against the computer."),
+    _("You can choose from 20 different difficulties to play against the computer."),
     _("Chess Variants are like the pieces of the last line will be placed on the board."),
     _("To save a game <b>Game</b> > <b>Save Game As</b>, give the filename and choose where you want to be saved. At the bottom choose extension type of the file, and <b>Save</b>."),
     _("Do you know that you can call flag when the clock is with you, <b>Actions</b> > <b>Call Flag</b>."),
