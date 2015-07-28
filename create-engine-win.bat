@@ -1,1 +1,2 @@
-pyinstaller pychess-engine.spec
+c:\Python27\Scripts\pyinstaller pychess-engine.spec
+@pause
