@@ -101,7 +101,8 @@ def initialize(gameDic):
                     gmwidg.board.view.setShownBoard(board)
                 do()
                 analyzer.setBoard(board)
-                inv_analyzer.setBoard(board)
+                if threat_PV:
+                    inv_analyzer.setBoard(board)
                 time.sleep(move_time+0.1)
 
                 ply = board.ply
