@@ -74,6 +74,7 @@ locale.setlocale(locale.LC_ALL, '')
 
 domain = "pychess"
 if isInstalled():
+    locale_dir = os.path.join(os.path.dirname(getDataPrefix()), "locale")
     if PY2:
         gettext.install(domain, unicode=1, names=('ngettext',))
     else:
@@ -84,13 +85,16 @@ else:
         gettext.install(domain, localedir=locale_dir, unicode=1, names=('ngettext',))
     else:
         gettext.install(domain, localedir=locale_dir, names=('ngettext',))
-    if sys.platform == "win32":
-        from ctypes import cdll
-        libintl = cdll.intl
-        libintl.bindtextdomain(domain, locale_dir)
-        libintl.bind_textdomain_codeset(domain, 'UTF-8')
-    else:
-        locale.bindtextdomain(domain, locale_dir)
+
+# http://stackoverflow.com/questions/10094335/how-to-bind-a-text-domain-to-a-local-folder-for-gettext-under-gtk3
+print("localedir", locale_dir)
+if sys.platform == "win32":
+    from ctypes import cdll
+    libintl = cdll.LoadLibrary("libintl-8")
+    libintl.bindtextdomain(domain, locale_dir)
+    libintl.bind_textdomain_codeset(domain, 'UTF-8')
+else:
+    locale.bindtextdomain(domain, locale_dir)
 
 ###############################################################################
 # Parse command line arguments
