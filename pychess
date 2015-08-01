@@ -65,9 +65,10 @@ if PY2:
 import gettext, locale
 
 # http://stackoverflow.com/questions/3678174/python-gettext-doesnt-load-translations-on-windows
-if sys.platform == "win32":
-    from pychess.System.gettext_windows import setup_env
-    setup_env()
+if sys.platform.startswith('win'):
+    if os.getenv('LANG') is None:
+        lang, enc = locale.getdefaultlocale()
+        os.environ['LANG'] = lang
 
 locale.setlocale(locale.LC_ALL, '')
 

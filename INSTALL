@@ -63,4 +63,13 @@ gst-plugins-base
 (Arch uses python3 by default. To use python2 install python2,
  python2-gobject and python2-cairo)
 
-
+Dependencies for Windows:
+python >= 2.6
+GStreamer (from http://gstreamer.freedesktop.org/data/pkg/windows)
+PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
+  Base packages
+  GDK-Pixbuf
+  GTK+ 3.x
+  GTKSourceView 3.x
+  Pango
+(create engine: pyinstaller and pywin32)
