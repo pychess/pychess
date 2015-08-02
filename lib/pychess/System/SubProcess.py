@@ -170,8 +170,8 @@ class SubProcess (GObject.GObject):
                 os.kill(self.pid, signal.SIGCONT)
             os.kill(self.pid, sign)
         except OSError as e:
-            if e.errno == errno.ESRCH:
-                #No such process
+            if e.errno in (errno.ESRCH, errno.EACCES, errno.EINVAL):
+                #No such process, Permission denied, Invalid argument
                 pass
             else:
                 raise OSError(e.errno, os.strerror(e.errno))
@@ -210,7 +210,11 @@ class SubProcess (GObject.GObject):
             self.sendSignal(signal.SIGCONT)
     
     def sigkill (self):
-        self.sendSignal(signal.SIGKILL)
+        if sys.platform == "win32":
+            self.sendSignal(signal.SIGABRT)
+        else:
+            self.sendSignal(signal.SIGKILL)
+        GLib.spawn_close_pid(self.pid)
     
     def sigterm (self):
         self.sendSignal(signal.SIGTERM)
