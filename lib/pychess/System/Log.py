@@ -6,13 +6,15 @@ import sys
 import time
 import logging
 
+from pychess.compat import PY3
 from .prefix import addUserDataPrefix
 
 newName = time.strftime("%Y-%m-%d_%H-%M-%S") + ".log"
 logformat = "%(asctime)s.%(msecs)03d %(task)s %(levelname)s: %(message)s"
 
 # delay=True argument prevents creating empty .log files
-fh = logging.FileHandler(addUserDataPrefix(newName), delay=True)
+encoding = "utf-8" if sys.platform == "win32" and PY3 else None
+fh = logging.FileHandler(addUserDataPrefix(newName), delay=True, encoding=encoding)
 fh.setFormatter(logging.Formatter(fmt=logformat, datefmt='%H:%M:%S'))
 
 logger = logging.getLogger()
