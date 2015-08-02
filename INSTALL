@@ -65,10 +65,11 @@ gst-plugins-base
 
 Dependencies for Windows:
 python >= 2.6
-GStreamer (from http://gstreamer.freedesktop.org/data/pkg/windows)
 PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
   Base packages
   GDK-Pixbuf
+  GStreamer
+  Gst-plugins
   GTK+ 3.x
   GTKSourceView 3.x
   Pango
