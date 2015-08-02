@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+
 from threading import Lock
 from gi.repository import GObject
 from .Log import log
@@ -29,6 +30,8 @@ else:
         def __init__(self):
             GObject.GObject.__init__(self)
             self.player = Gst.ElementFactory.make("playbin", "player")
+            fakesink = Gst.ElementFactory.make("fakesink", "fakesink")
+            self.player.set_property("video-sink", fakesink)
             bus = self.player.get_bus()
             bus.connect("message", self.onMessage)
         
@@ -37,10 +40,12 @@ else:
                 # Sound seams sometimes to work, even though errors are dropped.
                 # Therefore we really can't do anything to test.
                 # self.emit("error", message)
+                self.player.set_state(Gst.State.NULL)
                 simpleMessage, advMessage = message.parse_error()
                 log.warning("Gstreamer error '%s': %s" % (simpleMessage, advMessage))
                 self._del()
             elif message.type == Gst.MessageType.EOS:
+                self.player.set_state(Gst.State.NULL)
                 self.emit("end")
             return True
         
@@ -48,6 +53,3 @@ else:
             self.player.set_state(Gst.State.READY)
             self.player.set_property("uri", uri)
             self.player.set_state(Gst.State.PLAYING)
-        
-        def _del (self):
-            self.player.set_state(Gst.State.NULL)

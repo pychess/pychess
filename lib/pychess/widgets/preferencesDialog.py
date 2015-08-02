@@ -9,6 +9,7 @@ from xml.dom import minidom
 from gi.repository import Gtk, GdkPixbuf
 from gi.repository import Gdk
 
+from pychess.compat import pathname2url, url2pathname
 from pychess.System.prefix import addDataPrefix, getDataPrefix
 from pychess.System.idle_add import idle_add
 from pychess.System import conf, gstreamer, uistuff
@@ -248,27 +249,27 @@ for i in range(11):
     if not conf.hasKey("soundcombo%d" % i):
         conf.set("soundcombo%d" % i, SOUND_URI)
 if not conf.hasKey("sounduri0"):
-    conf.set("sounduri0", "file://"+addDataPrefix("sounds/move1.ogg"))
+    conf.set("sounduri0", "file:"+pathname2url(addDataPrefix("sounds/move1.ogg")))
 if not conf.hasKey("sounduri1"):
-    conf.set("sounduri1", "file://"+addDataPrefix("sounds/check1.ogg"))
+    conf.set("sounduri1", "file:"+pathname2url(addDataPrefix("sounds/check1.ogg")))
 if not conf.hasKey("sounduri2"):
-    conf.set("sounduri2", "file://"+addDataPrefix("sounds/capture1.ogg"))
+    conf.set("sounduri2", "file:"+pathname2url(addDataPrefix("sounds/capture1.ogg")))
 if not conf.hasKey("sounduri3"):
-    conf.set("sounduri3", "file://"+addDataPrefix("sounds/start1.ogg"))
+    conf.set("sounduri3", "file:"+pathname2url(addDataPrefix("sounds/start1.ogg")))
 if not conf.hasKey("sounduri4"):
-    conf.set("sounduri4", "file://"+addDataPrefix("sounds/win1.ogg"))
+    conf.set("sounduri4", "file:"+pathname2url(addDataPrefix("sounds/win1.ogg")))
 if not conf.hasKey("sounduri5"):
-    conf.set("sounduri5", "file://"+addDataPrefix("sounds/lose1.ogg"))
+    conf.set("sounduri5", "file:"+pathname2url(addDataPrefix("sounds/lose1.ogg")))
 if not conf.hasKey("sounduri6"):
-    conf.set("sounduri6", "file://"+addDataPrefix("sounds/draw1.ogg"))
+    conf.set("sounduri6", "file:"+pathname2url(addDataPrefix("sounds/draw1.ogg")))
 if not conf.hasKey("sounduri7"):
-    conf.set("sounduri7", "file://"+addDataPrefix("sounds/obs_mov.ogg"))
+    conf.set("sounduri7", "file:"+pathname2url(addDataPrefix("sounds/obs_mov.ogg")))
 if not conf.hasKey("sounduri8"):
-    conf.set("sounduri8", "file://"+addDataPrefix("sounds/obs_end.ogg"))
+    conf.set("sounduri8", "file:"+pathname2url(addDataPrefix("sounds/obs_end.ogg")))
 if not conf.hasKey("sounduri9"):
-    conf.set("sounduri9", "file://"+addDataPrefix("sounds/alarm.ogg"))
+    conf.set("sounduri9", "file:"+pathname2url(addDataPrefix("sounds/alarm.ogg")))
 if not conf.hasKey("sounduri10"):
-    conf.set("sounduri10", "file://"+addDataPrefix("sounds/invalid.ogg"))
+    conf.set("sounduri10", "file:"+pathname2url(addDataPrefix("sounds/invalid.ogg")))
 
 class SoundTab:
     
@@ -312,7 +313,7 @@ class SoundTab:
             sys.stdout.flush()
         elif typ == SOUND_URI:
             uri = conf.get("sounduri%d" % no, "")
-            if not os.path.isfile(uri[7:]):
+            if not os.path.isfile(url2pathname(uri[5:])):
                 conf.set("soundcombo%d" % no, SOUND_MUTE)
                 return
             cls.getPlayer().play(uri)
@@ -333,11 +334,9 @@ class SoundTab:
         
         soundfilter = Gtk.FileFilter()
         soundfilter.set_name(_("Sound files"))
-        #soundfilter.add_custom(soundfilter.get_needed(),
-        #                       lambda data: data[3] and data[3].startswith("audio/"))
-        soundfilter.add_mime_type("audio/*")
+        soundfilter.add_mime_type("audio/ogg")
+        soundfilter.add_pattern("*.ogg")
         opendialog.add_filter(soundfilter)
-        opendialog.set_filter(soundfilter)
         
         # Get combo icons
         
@@ -380,14 +379,14 @@ class SoundTab:
             label.props.mnemonic_widget = combo
             
             uri = conf.get("sounduri%d"%i,"")
-            if os.path.isfile(uri[7:]):
+            if os.path.isfile(url2pathname(uri[5:])):
                 model = combo.get_model()
                 model.append([audioIco, os.path.split(uri)[1]])
                 combo.set_active(3)
         
         for i in range(self.COUNT_OF_SOUNDS):
             if conf.get("soundcombo%d"%i, SOUND_MUTE) == SOUND_URI and \
-                    not os.path.isfile(conf.get("sounduri%d"%i,"")[7:]):
+                    not os.path.isfile(url2pathname(conf.get("sounduri%d"%i,"")[5:])):
                 conf.set("soundcombo%d"%i, SOUND_MUTE)
             uistuff.keep(widgets["soundcombo%d"%i], "soundcombo%d"%i)
             #widgets["soundcombo%d"%i].set_active(conf.get("soundcombo%d"%i, SOUND_MUTE))
