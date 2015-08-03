@@ -8,15 +8,15 @@ from pychess.System import fident
 
 debug = False
 
-def _debug (debug_name, msg):
-    if debug:
-        thread = currentThread()
-        log.debug(msg, extra={'task': (thread.ident, thread.name, debug_name)})
-
 def idle_add (f):
     @wraps(f)
     def new_func (*args):
-        _debug('idle_add.new_func', '%s(%s)' % (fident(f),
-                                                ','.join([str(a) for a in args])))
-        GLib.idle_add(f, *args)
+        thread = currentThread()
+        if debug:
+            msg = '%s(%s)' % (fident(f), ','.join([str(a) for a in args]))
+            log.debug(msg, extra={'task': (thread.ident, thread.name, 'idle_add.new_func')})
+        if thread.name == "MainThread":
+            f(*args)
+        else:
+            GLib.idle_add(f, *args)
     return new_func
