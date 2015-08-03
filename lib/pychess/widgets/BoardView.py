@@ -5,7 +5,7 @@ from __future__ import print_function
 
 from math import floor, ceil, pi
 from time import time
-from threading import Lock, RLock
+from threading import Lock, RLock, currentThread
 
 import cairo
 from gi.repository import Gtk
@@ -422,7 +422,7 @@ class BoardView (Gtk.DrawingArea):
         self.animationStart = time()
 
         @idle_add
-        def do():
+        def do_set_shown():
             if self.lastMove:
                 paintBox = self.paintBoxAround(self.lastMove)
                 self.lastMove = None
@@ -434,10 +434,11 @@ class BoardView (Gtk.DrawingArea):
 
             self.runAnimation(redrawMisc=self.realSetShown)
             if not conf.get("noAnimation", False):
-                self.animationID = GLib.idle_add(self.runAnimation)
+                while self.animating:
+                    self.animationID = self.runAnimation()
 
         self.animating = True
-        do()
+        do_set_shown()
         
     shown = property(_get_shown, _set_shown)
     
@@ -561,13 +562,14 @@ class BoardView (Gtk.DrawingArea):
         self.animationStart = time()
         
         @idle_add
-        def do():
+        def do_start_animation():
             self.runAnimation(redrawMisc=True)
             if not conf.get("noAnimation", False):
-                self.animationID = GLib.idle_add(self.runAnimation)
+                while self.animating:
+                    self.animationID = self.runAnimation()
 
         self.animating = True
-        do()
+        do_start_animation()
 
     #############################
     #          Drawing          #
@@ -629,7 +631,9 @@ class BoardView (Gtk.DrawingArea):
                         alloc = self.get_allocation()
                         r = Gdk.Rectangle()
                         r.x, r.y, r.width, r.height = (0, 0, alloc.width, alloc.height)
-                    self.queue_draw_area(r.x, r.y, r.width, r.height)
+#                    self.queue_draw_area(r.x, r.y, r.width, r.height)
+                    self.get_window().invalidate_rect(r, True)
+                    self.get_window().process_updates(True)
             redraw(r)
             
     ###############################
