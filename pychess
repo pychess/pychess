@@ -87,7 +87,6 @@ else:
         gettext.install(domain, localedir=locale_dir, names=('ngettext',))
 
 # http://stackoverflow.com/questions/10094335/how-to-bind-a-text-domain-to-a-local-folder-for-gettext-under-gtk3
-print("localedir", locale_dir)
 if sys.platform == "win32":
     from ctypes import cdll
     libintl = cdll.LoadLibrary("libintl-8")
