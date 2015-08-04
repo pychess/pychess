@@ -1756,6 +1756,7 @@ class SeekChallengeSection (Section):
         self.widgets["editSeekDialog"].set_title(title)
         
     def __showSeekEditor (self, seeknumber, challengemode=False):
+        self.widgets["editSeekDialog"].set_transient_for(self.widgets["fics_lounge"])
         self.__updateSeekEditor(seeknumber, challengemode)
         self.widgets["editSeekDialog"].present()
     
