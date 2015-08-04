@@ -11,10 +11,9 @@ import sys
 ################################################################################
 
 # Test if we are installed on the system, or are being run from tar/svn
-if hasattr(sys, 'frozen') and sys.frozen is True:
+if getattr(sys, 'frozen', False):
     _prefix = ""
     _installed = True
-    print("frozen", _prefix)
 else:
     if sys.prefix in __file__:
         for sub in ("share", "games", "share/games",
@@ -22,14 +21,12 @@ else:
             _prefix = os.path.join (sys.prefix, sub, "pychess")
             if os.path.isdir(_prefix):
                 _installed = True
-                print("installed", _prefix)
                 break
         else:
             raise Exception("can't find the pychess data directory")
     else:
         _prefix = os.path.abspath (os.path.join (os.path.dirname (__file__), "../../.."))
         _installed = False
-        print("not installed", _prefix)
 
 def addDataPrefix (subpath):
     return os.path.abspath (os.path.join (_prefix, subpath))
