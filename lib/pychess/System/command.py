@@ -26,7 +26,7 @@ class Command(object):
         """ Run a command then return: (status, output, error). """
         def target(**kwargs):
             try:
-                self.process = subprocess.Popen(self.command, **kwargs)
+                self.process = subprocess.Popen(self.command, universal_newlines=True, **kwargs)
                 self.output, self.error = self.process.communicate(input=self.inputstr)
                 self.status = self.process.returncode
             except:
