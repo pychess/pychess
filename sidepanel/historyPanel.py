@@ -151,6 +151,7 @@ class Sidepanel:
         
         view.get_model().append([notat])
     
+    @idle_add
     def shown_changed (self, boardview, shown):
         if not boardview.shownIsMainLine():
             return
