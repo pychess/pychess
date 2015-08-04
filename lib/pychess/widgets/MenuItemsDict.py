@@ -51,9 +51,9 @@ class GtkMenuItem (object):
         if gamewidget.getWidgets()[self.name].get_property(prop) != value:
             #print "setting %s property %s to %s.." % (self.name, prop, str(value)),
             @idle_add
-            def do():
+            def do_set_menu_item_prop():
                 gamewidget.getWidgets()[self.name].set_property(prop, value)
-            do()
+            do_set_menu_item_prop()
             #print " success (%s = \"%s\")" % \
             #    (prop, gamewidget.getWidgets()[self.name].get_property(prop))
             
