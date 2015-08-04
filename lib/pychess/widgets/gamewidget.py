@@ -491,7 +491,7 @@ class GameWidget (GObject.GObject):
         color = self.gamemodel.color(player)
         
         @idle_add
-        def do():
+        def do_name_changed():
             self.player_name_labels[color].set_text(
                 self.player_display_text(color=color))
             if isinstance(self.gamemodel, ICGameModel) and \
@@ -499,7 +499,7 @@ class GameWidget (GObject.GObject):
                 self.player_name_labels[color].set_tooltip_text(
                     get_player_tooltip_text(self.gamemodel.ficsplayers[color],
                                             show_status=False))
-        do()
+        do_name_changed()
         self.emit('title_changed', self.display_text)
         log.debug("GameWidget.name_changed: returning")
     
@@ -531,9 +531,9 @@ class GameWidget (GObject.GObject):
             message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
                                                     Gtk.ResponseType.CANCEL))
             @idle_add
-            def do():
+            def do_player_lagged():
                 self.showMessage(message)
-            do()
+            do_player_lagged()
         return False
     
     def opp_not_out_of_time (self, bm):
@@ -552,9 +552,9 @@ class GameWidget (GObject.GObject):
             message.add_button(InfoBarMessageButton(_("Wait"), Gtk.ResponseType.CANCEL))
             message.add_button(InfoBarMessageButton(_("Adjourn"), 2))
             @idle_add
-            def do():
+            def do_opp_not_out_of_time():
                 self.showMessage(message)
-            do()
+            do_opp_not_out_of_time()
         return False
     
     def initTabcontents(self):
