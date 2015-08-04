@@ -63,12 +63,12 @@ def createImage (pixbuf):
 
 light_on = load_icon(16, "stock_3d-light-on", "weather-clear")
 light_off = load_icon(16, "stock_3d-light-off", "weather-clear-night")
-gtk_close = load_icon(16, "gtk-close")
+gtk_close = load_icon(16, "gtk-close", "window-close")
 
-media_previous = load_icon(24, "gtk-media-previous-ltr")
-media_rewind = load_icon(24, "gtk-media-rewind-ltr")
-media_forward = load_icon(24, "gtk-media-forward-ltr")
-media_next = load_icon(24, "gtk-media-next-ltr")
+media_previous = load_icon(24, "gtk-media-previous-ltr", "media-skip-backward")
+media_rewind = load_icon(24, "gtk-media-rewind-ltr", "media-seek-backward")
+media_forward = load_icon(24, "gtk-media-forward-ltr", "media-seek-forward")
+media_next = load_icon(24, "gtk-media-next-ltr", "media-skip-forward")
 
 path = prefix.addDataPrefix("sidepanel")
 postfix = "Panel.py"

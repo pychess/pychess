@@ -45,7 +45,7 @@ from pychess.Variants.normal import NormalBoard
 
 big_time = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/stock_alarm.svg"))
 big_people = load_icon(48, "stock_people", "system-users")
-iwheels = load_icon(24, "gtk-execute")
+iwheels = load_icon(24, "gtk-execute", "system-run")
 ipeople = load_icon(24, "stock_people", "system-users")
 inotebook = load_icon(24, "stock_notebook", "computer")
 speople = load_icon(16, "stock_people", "system-users")
