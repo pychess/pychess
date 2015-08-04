@@ -8,11 +8,7 @@ import cairo
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
-
-if sys.platform == 'win32':
-    from pychess.System.WinRsvg import rsvg
-else:
-    from gi.repository import Rsvg
+from gi.repository import Rsvg
 
 
 class OverlayWindow (Gtk.Window):
