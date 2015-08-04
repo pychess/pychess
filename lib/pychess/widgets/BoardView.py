@@ -420,24 +420,24 @@ class BoardView (Gtk.DrawingArea):
             self._doStop = True
         
         self.animationStart = time()
+        self.animating = True
+
+        if self.lastMove:
+            paintBox = self.paintBoxAround(self.lastMove)
+            self.lastMove = None
+            self.redraw_canvas(rect(paintBox))
+        if self.shown > self.model.lowply:
+            self.lastMove = self.model.getMoveAtPly(self.shown-1, self.shownVariationIdx)
+        else:
+            self.lastMove = None
 
         @idle_add
         def do_set_shown():
-            if self.lastMove:
-                paintBox = self.paintBoxAround(self.lastMove)
-                self.lastMove = None
-                self.redraw_canvas(rect(paintBox))
-            if self.shown > self.model.lowply:
-                self.lastMove = self.model.getMoveAtPly(self.shown-1, self.shownVariationIdx)
-            else:
-                self.lastMove = None
-
             self.runAnimation(redrawMisc=self.realSetShown)
             if not conf.get("noAnimation", False):
                 while self.animating:
                     self.animationID = self.runAnimation()
 
-        self.animating = True
         do_set_shown()
         
     shown = property(_get_shown, _set_shown)
@@ -559,8 +559,6 @@ class BoardView (Gtk.DrawingArea):
             return paintBox and True or False
     
     def startAnimation (self):
-        self.animationStart = time()
-        
         @idle_add
         def do_start_animation():
             self.runAnimation(redrawMisc=True)
@@ -568,6 +566,7 @@ class BoardView (Gtk.DrawingArea):
                 while self.animating:
                     self.animationID = self.runAnimation()
 
+        self.animationStart = time()
         self.animating = True
         do_start_animation()
 
@@ -623,18 +622,17 @@ class BoardView (Gtk.DrawingArea):
     ###############################
     
     def redraw_canvas(self, r=None):
-        if self.get_window():
-            @idle_add
-            def redraw(r):
-                if self.get_window():
-                    if not r:
-                        alloc = self.get_allocation()
-                        r = Gdk.Rectangle()
-                        r.x, r.y, r.width, r.height = (0, 0, alloc.width, alloc.height)
+        @idle_add
+        def redraw(r):
+            if self.get_window():
+                if not r:
+                    alloc = self.get_allocation()
+                    r = Gdk.Rectangle()
+                    r.x, r.y, r.width, r.height = (0, 0, alloc.width, alloc.height)
 #                    self.queue_draw_area(r.x, r.y, r.width, r.height)
-                    self.get_window().invalidate_rect(r, True)
-                    self.get_window().process_updates(True)
-            redraw(r)
+                self.get_window().invalidate_rect(r, True)
+                self.get_window().process_updates(True)
+        redraw(r)
             
     ###############################
     #            draw             #

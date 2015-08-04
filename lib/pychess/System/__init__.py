@@ -15,7 +15,8 @@ def fident (f):
         joinchar = ':'
         fparent = f.__module__.split('.')[-1]
 
-    if getattr(sys, 'frozen', False):
+    # sometimes inspect.getsourcelines() segfaults on windows
+    if getattr(sys, 'frozen', False) or sys.platform == "win32":
         lineno = 0
     else:
         lineno = inspect.getsourcelines(f)[1]
