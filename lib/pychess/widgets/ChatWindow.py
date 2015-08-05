@@ -302,8 +302,9 @@ class InfoPanel (Gtk.Notebook, Panel):
         self.removePage(id)
     
     def selectItem (self, id):
-        child = self.id2Widget[id] 
-        self.set_current_page(self.page_num(child))
+        child = self.id2Widget.get(id)
+        if child is not None:
+            self.set_current_page(self.page_num(child))
     
     
     def addPage (self, widget, id):
