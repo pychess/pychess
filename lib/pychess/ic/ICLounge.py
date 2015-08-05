@@ -326,7 +326,7 @@ class ICLounge (GObject.GObject):
     def onArrivalNotification (self, cm, player):
         log.debug("%s" % player, extra={"task":
             (self.connection.username, "onArrivalNotification")})
-        self._add_notification_message(player, _(" has arrived"))
+        self._add_notification_message(player, _(" has arrived"), chat=True)
         if player not in self.players:
             self.players.append(player)
             self._connect_to_player_changes(player)
@@ -337,19 +337,24 @@ class ICLounge (GObject.GObject):
 
     @idle_add
     def user_from_notify_list_is_present (self, player):
-        self._add_notification_message(player, _(" is present"))
+        self._add_notification_message(player, _(" is present"), chat=True)
         if player not in self.players:
             self.players.append(player)
             self._connect_to_player_changes(player)
     
-    def _add_notification_message (self, player, text):
+    def _add_notification_message (self, player, text, chat=False):
         content = get_infobarmessage_content(player, text)
         def response_cb (infobar, response, message):
+            if response == 1:
+                if player is None: return
+                self.chat.openChatWithPlayer(player.name)
             message.dismiss()
 #             self.messages.remove(message)
             return False
         message = PlayerNotificationMessage(Gtk.MessageType.INFO, content,
                                             response_cb, player, text)
+        if chat:
+            message.add_button(InfoBarMessageButton(_("Chat"), 1))
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
                                                 Gtk.ResponseType.CANCEL))
         self.messages.append(message)
