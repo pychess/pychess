@@ -8,7 +8,7 @@ import errno
 import time
 import traceback
 import threading
-from threading import Thread
+from threading import currentThread, Thread
 
 from gi.repository import GObject
 from gi.repository import GLib
@@ -63,24 +63,36 @@ class SubProcess (GObject.GObject):
         
         argv = [str(u) for u in [self.path]+self.args]
         log.debug("SubProcess.__init__: spawning...",  extra={"task":self.defname})
-        self.pid, stdin, stdout, stderr = GObject.spawn_async(argv,
-                working_directory=chdir, child_setup=self.__setup,
-                standard_input=True, standard_output=True, standard_error=True,
-                flags=GObject.SPAWN_DO_NOT_REAP_CHILD|GObject.SPAWN_SEARCH_PATH)        
-       
-        log.debug("SubProcess.__init__: _initChannel...",  extra={"task":self.defname})
-        self.__channelTags = []
-        self.inChannel = self._initChannel(stdin, None, None, False)
-        readFlags = GObject.IO_IN|GObject.IO_HUP#|GObject.IO_ERR
-        self.outChannel = self._initChannel(stdout, readFlags, self.__io_cb, False)
-        self.errChannel = self._initChannel(stderr, readFlags, self.__io_cb, True)
         
-        log.debug("SubProcess.__init__: channelsClosed...",  extra={"task":self.defname})
-        self.channelsClosed = False
-        self.channelsClosedLock = threading.Lock()
-        log.debug("SubProcess.__init__: child_watch_add...",  extra={"task":self.defname})
-        GObject.child_watch_add(self.pid, self.__child_watch_callback, None)        
-       
+        def do_spawn_async(event):
+            self.pid, stdin, stdout, stderr = GObject.spawn_async(argv,
+                    working_directory=chdir, child_setup=self.__setup,
+                    standard_input=True, standard_output=True, standard_error=True,
+                    flags=GObject.SPAWN_DO_NOT_REAP_CHILD|GObject.SPAWN_SEARCH_PATH)        
+           
+            log.debug("SubProcess.__init__: _initChannel...",  extra={"task":self.defname})
+            self.__channelTags = []
+            self.inChannel = self._initChannel(stdin, None, None, False)
+            readFlags = GObject.IO_IN|GObject.IO_HUP#|GObject.IO_ERR
+            self.outChannel = self._initChannel(stdout, readFlags, self.__io_cb, False)
+            self.errChannel = self._initChannel(stderr, readFlags, self.__io_cb, True)
+            
+            log.debug("SubProcess.__init__: channelsClosed...",  extra={"task":self.defname})
+            self.channelsClosed = False
+            self.channelsClosedLock = threading.Lock()
+            log.debug("SubProcess.__init__: child_watch_add...",  extra={"task":self.defname})
+            GObject.child_watch_add(self.pid, self.__child_watch_callback, None)
+            if event is not None:
+                event.set()
+        
+        thread = currentThread()
+        if thread.name == "MainThread":
+            do_spawn_async(None)
+        else:
+            event = threading.Event()
+            GLib.idle_add(do_spawn_async, event)
+            event.wait()
+        
         log.debug("SubProcess.__init__: subprocExitCode...",  extra={"task":self.defname})
         self.subprocExitCode = (None, None)
         self.subprocFinishedEvent = threading.Event()
