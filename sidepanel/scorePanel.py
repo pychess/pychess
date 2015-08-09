@@ -33,12 +33,12 @@ class Sidepanel:
         
         self.plot.connect("selected", self.plot_selected)
         self.boardview.connect('shown_changed', self.shown_changed)
-        self.boardview.model.connect("game_changed", self.game_changed)
-        self.boardview.model.connect("moves_undoing", self.moves_undoing)
-        self.boardview.model.connect("analysis_changed", self.analysis_changed)
+        self.boardview.model.connect_after("game_changed", self.game_changed)
+        self.boardview.model.connect_after("moves_undoing", self.moves_undoing)
+        self.boardview.model.connect_after("analysis_changed", self.analysis_changed)
         
         # Add the initial board
-        self.boardview.model.connect("game_started", self.game_changed)
+        self.boardview.model.connect_after("game_started", self.game_changed)
    
         uistuff.keepDown(__widget__)     
         

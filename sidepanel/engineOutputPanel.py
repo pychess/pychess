@@ -48,9 +48,9 @@ class Sidepanel:
         
         self.boardview = gmwidg.board.view
         
-        self.boardview.model.connect("game_changed", self.game_changed)
-        self.boardview.model.connect("players_changed", self.players_changed)
-        self.boardview.model.connect("game_started", self.game_changed)
+        self.boardview.model.connect_after("game_changed", self.game_changed)
+        self.boardview.model.connect_after("players_changed", self.players_changed)
+        self.boardview.model.connect_after("game_started", self.game_changed)
         
         return __widget__
 
