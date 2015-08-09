@@ -296,7 +296,7 @@ class GladeHandlers:
         webbrowser.open(_("http://en.wikipedia.org/wiki/Rules_of_chess"))
 
     def translate_this_application_activate(self, widget):
-        webbrowser.open("http://code.google.com/p/pychess/wiki/TransifexTranslates")
+        webbrowser.open("https://www.transifex.com/projects/p/pychess/")
         
     def on_TipOfTheDayMenuItem_activate(self, widget):
         tipOfTheDay.TipOfTheDay.show()
@@ -389,9 +389,9 @@ class PyChess:
             
         #---------------------------------------------------------- About dialog
         self.aboutdialog = widgets["aboutdialog1"]
-        self.aboutdialog.set_name(NAME)
+        self.aboutdialog.set_program_name(NAME)
         link = self.aboutdialog.get_website()
-        self.aboutdialog.set_copyright("Copyright © 2006-2014")
+        self.aboutdialog.set_copyright("Copyright © 2006-2015")
         self.aboutdialog.set_version(VERSION_NAME+" "+VERSION)
         if os.path.isdir(prefix.addDataPrefix(".hg")):
             cmd = ["hg", "tip", "--cwd", prefix.getDataPrefix(), "--template", "{node|short} {date|isodate}"]
