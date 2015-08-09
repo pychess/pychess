@@ -4,7 +4,8 @@ from __future__ import absolute_import
 import imp
 import os
 import traceback
-from threading import Condition, currentThread
+import threading
+from threading import currentThread
 
 from gi.repository import Gdk
 from gi.repository import Gtk
@@ -158,23 +159,18 @@ class GameWidget (GObject.GObject):
             gamemodel.connection.bm.connect("opp_not_out_of_time", self.opp_not_out_of_time)
         board.view.connect("shown_changed", self.shown_changed)
         
-        fromGtkThread = currentThread().getName() == "MainThread"
-        if not fromGtkThread:
-            condition = Condition()
-
-        def do():
+        def do_load_panels(event):
             self.panels = [panel.Sidepanel().load(self) for panel in sidePanels]
-            if not fromGtkThread:
-                condition.acquire()
-                condition.notify()
-                condition.release()
+            if event is not None:
+                event.set()
 
-        if not fromGtkThread:
-            GLib.idle_add(do)
-            condition.acquire()
-            condition.wait()
+        thread = currentThread()
+        if thread.name == "MainThread":
+            do_load_panels(None)
         else:
-            do()
+            event = threading.Event()
+            GLib.idle_add(do_load_panels, event)
+            event.wait()
         
     def _del (self):
         self.board._del()
