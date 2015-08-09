@@ -33,9 +33,9 @@ class Sidepanel:
         
         self.gamemodel = gmwidg.board.view.model
         self.gmhandlers = [
-            self.gamemodel.connect("game_changed", self.game_changed),
-            self.gamemodel.connect("game_started", self.game_started),
-            self.gamemodel.connect("moves_undoing", self.moves_undoing)
+            self.gamemodel.connect_after("game_changed", self.game_changed),
+            self.gamemodel.connect_after("game_started", self.game_started),
+            self.gamemodel.connect_after("moves_undoing", self.moves_undoing)
         ]
 
         widgets = Gtk.Builder()

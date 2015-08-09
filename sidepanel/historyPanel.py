@@ -31,9 +31,9 @@ class Sidepanel:
         
         self.boardview = gmwidg.board.view
         
-        self.boardview.model.connect("game_changed", self.game_changed)
-        self.boardview.model.connect("game_started", self.game_changed)
-        self.boardview.model.connect("moves_undoing", self.moves_undoing)
+        self.boardview.model.connect_after("game_changed", self.game_changed)
+        self.boardview.model.connect_after("game_started", self.game_changed)
+        self.boardview.model.connect_after("moves_undoing", self.moves_undoing)
         self.boardview.connect("shown_changed", self.shown_changed)
         
         # Initialize treeviews
