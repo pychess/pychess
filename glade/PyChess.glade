@@ -5,9 +5,9 @@
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="type_hint">normal</property>
-    <property name="comments" translatable="yes">Chess client for the Gnome desktop</property>
-    <property name="website">http://code.google.com/p/pychess</property>
-    <property name="website_label">http://code.google.com/p/pychess</property>
+    <property name="comments" translatable="yes">Chess client</property>
+    <property name="website">https://github.com/pychess/pychess</property>
+    <property name="website_label">https://github.com/pychess/pychess</property>
     <property name="license" translatable="yes">PyChess is free software; you can redistribute it and/or modify 
 it under the terms of the GNU General Public License as published by 
 the Free Software Foundation; either version 2 of the License, or 
