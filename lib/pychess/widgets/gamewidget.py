@@ -136,9 +136,9 @@ class GameWidget (GObject.GObject):
         self.stat_hbox = stat_hbox
         self.menuitems = MenuItemsDict(self)
         
-        gamemodel.connect("game_started", self.game_started)
-        gamemodel.connect("game_ended", self.game_ended)
-        gamemodel.connect("game_changed", self.game_changed)
+        gamemodel.connect_after("game_started", self.game_started)
+        gamemodel.connect_after("game_ended", self.game_ended)
+        gamemodel.connect_after("game_changed", self.game_changed)
         gamemodel.connect("game_paused", self.game_paused)
         gamemodel.connect("game_resumed", self.game_resumed)
         gamemodel.connect("moves_undone", self.moves_undone)
