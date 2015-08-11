@@ -4,14 +4,15 @@
 # 
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009
+# Sreekumar <sreekumar.r84@live.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-09 11:01+0100\n"
-"PO-Revision-Date: 2014-11-09 10:22+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
-"Language-Team: Malayalam (http://www.transifex.com/projects/p/pychess/language/ml/)\n"
+"PO-Revision-Date: 2015-01-26 16:04+0000\n"
+"Last-Translator: Sreekumar <sreekumar.r84@live.com>\n"
+"Language-Team: Malayalam (http://www.transifex.com/gbtami/pychess/language/ml/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,7 +22,7 @@ msgstr ""
 # "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 #: glade/analyze_game.glade:22
 msgid "Analyze game"
-msgstr ""
+msgstr "കളി വിശകലനം ചെയ്യുക"
 
 #: glade/analyze_game.glade:89
 msgid "Use analyzer:"
@@ -29,7 +30,7 @@ msgstr ""
 
 #: glade/analyze_game.glade:124 glade/PyChess.glade:1811
 msgid "Maximum analysis time in seconds:"
-msgstr ""
+msgstr "വിശകലനത്തിനുള്ള പരമാവതി സമയം seconds-ഇൽ"
 
 #: glade/analyze_game.glade:168
 msgid "Variation annotation creation thresold in centipawns:"
@@ -46,7 +47,7 @@ msgstr ""
 
 #: glade/analyze_game.glade:205 glade/PyChess.glade:1238
 msgid "Colorize analyzed moves"
-msgstr ""
+msgstr "വിശകലനം ചെയ്ത നീകങ്ങൽക്കു നിറം നല്കുക"
 
 #: glade/analyze_game.glade:220 glade/PyChess.glade:1270
 msgid "Show evaluation values"
@@ -54,7 +55,7 @@ msgstr ""
 
 #: glade/discovererDialog.glade:19
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
-msgstr ""
+msgstr "<big></b>പൈചെസ്സ് നിങ്ങളുടെ എഞ്ചിനുകൾ കണ്ടെത്തുകയാണ്. ദെയവായി കാത്തിരിക്കുക"
 
 #: glade/discovererDialog.glade:78
 msgid "PyChess.py:"
@@ -302,7 +303,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:2423
 msgid "Time"
-msgstr ""
+msgstr "സമയം "
 
 #: glade/fics_lounge.glade:2443
 msgid "Seek _Graph"
@@ -318,7 +319,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:2564 glade/fics_lounge.glade:2739
 msgid "Observe"
-msgstr ""
+msgstr "നിരീക്ഷിക്കുക"
 
 #: glade/fics_lounge.glade:2618
 msgid "Start Private Chat"
@@ -394,7 +395,7 @@ msgstr ""
 
 #: glade/findbar.glade:132
 msgid "_Next"
-msgstr ""
+msgstr "_അടുത്തതു"
 
 #: glade/findbar.glade:161
 msgid "Search:"
@@ -402,15 +403,15 @@ msgstr ""
 
 #: glade/newInOut.glade:34 lib/pychess/widgets/newGameDialog.py:384
 msgid "New Game"
-msgstr ""
+msgstr "പുതിയ കളി"
 
 #: glade/newInOut.glade:99
 msgid "_Start Game"
-msgstr ""
+msgstr "_കളി തുടങ്ങുക"
 
 #: glade/newInOut.glade:208
 msgid "_Black player:"
-msgstr ""
+msgstr "_കറുപ്പിന്റെ കളികാരാൻ:"
 
 #: glade/newInOut.glade:225
 msgid "_White player:"

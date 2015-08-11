@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# srividya <srividyabharadwaj26@gmail.com>, 2014
 # Yogesh K S <yogesh@karnatakaeducation.org.in>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-09 11:01+0100\n"
-"PO-Revision-Date: 2014-11-09 10:22+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
-"Language-Team: Kannada (http://www.transifex.com/projects/p/pychess/language/kn/)\n"
+"PO-Revision-Date: 2014-11-19 11:42+0000\n"
+"Last-Translator: srividya <srividyabharadwaj26@gmail.com>\n"
+"Language-Team: Kannada (http://www.transifex.com/gbtami/pychess/language/kn/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,15 +22,15 @@ msgstr ""
 # "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 #: glade/analyze_game.glade:22
 msgid "Analyze game"
-msgstr ""
+msgstr "ಆಟವನ್ನು ವಿಶ್ಲೇಷಿಸು"
 
 #: glade/analyze_game.glade:89
 msgid "Use analyzer:"
-msgstr ""
+msgstr "ವಿಶ್ಲೇಷಕವನ್ನು ಬಳಸು:"
 
 #: glade/analyze_game.glade:124 glade/PyChess.glade:1811
 msgid "Maximum analysis time in seconds:"
-msgstr ""
+msgstr "ವಿಶ್ಲೇಷಣೆಯ ಗರಿಷ್ಠ ಸಮಯ ಸೆಕೆಂಡುಗಳಲ್ಲಿ:"
 
 #: glade/analyze_game.glade:168
 msgid "Variation annotation creation thresold in centipawns:"
@@ -46,11 +47,11 @@ msgstr ""
 
 #: glade/analyze_game.glade:205 glade/PyChess.glade:1238
 msgid "Colorize analyzed moves"
-msgstr ""
+msgstr "ವಿಶ್ಲೇಷಿಸಿದ ನಡಿಗೆಗಳಿಗೆ ಬಣ್ಣೆಸು"
 
 #: glade/analyze_game.glade:220 glade/PyChess.glade:1270
 msgid "Show evaluation values"
-msgstr ""
+msgstr "ಮೌಲ್ಯಮಾಪನ ಮೌಲ್ಯಗಳನ್ನು ತೋರಿಸು"
 
 #: glade/discovererDialog.glade:19
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
@@ -58,7 +59,7 @@ msgstr ""
 
 #: glade/discovererDialog.glade:78
 msgid "PyChess.py:"
-msgstr ""
+msgstr "PyChess.py:"
 
 #: glade/discovererDialog.glade:90
 msgid "ShredderLinuxChess:"
@@ -66,7 +67,7 @@ msgstr ""
 
 #: glade/discovererDialog.glade:102
 msgid "gnuchess:"
-msgstr ""
+msgstr "ಗ್ನು ಚೆಸ್"
 
 #: glade/fics_logon.glade:7
 msgid "PyChess - Connect to Internet Chess"
@@ -74,19 +75,19 @@ msgstr ""
 
 #: glade/fics_logon.glade:47
 msgid "<b><big>Connect to the Free Online Chess Server</big></b>"
-msgstr ""
+msgstr "<b><big>ಉಚಿತ ಆನ್ ಲೈನ್ ಚದುರಂಗ ಸರ್ವರ್ ಗೆ ಸಂಪರ್ಕ ಮಾಡಿ</big></b>"
 
 #: glade/fics_logon.glade:129 glade/taskers.glade:402
 msgid "_Password:"
-msgstr ""
+msgstr "_ಗುಪ್ತಪದ"
 
 #: glade/fics_logon.glade:143
 msgid "_Name:"
-msgstr ""
+msgstr "_ಹೆಸರು"
 
 #: glade/fics_logon.glade:191
 msgid "Log on as _Guest"
-msgstr ""
+msgstr "ಅತಿಥಿಯಾಗಿ ಪ್ರವೇಶಿಸು"
 
 #: glade/fics_logon.glade:229
 msgid "Po_rts:"
@@ -94,23 +95,23 @@ msgstr ""
 
 #: glade/fics_logon.glade:334
 msgid "S_ign up"
-msgstr ""
+msgstr "ಸೈನ್ ಅಪ್"
 
 #: glade/fics_lounge.glade:36
 msgid "Challenge: <Player>"
-msgstr ""
+msgstr "ಸವಾಲು: <Player>"
 
 #: glade/fics_lounge.glade:100
 msgid "Send Challenge"
-msgstr ""
+msgstr "ಸವಾಲನ್ನು ಕಳುಹಿಸು"
 
 #: glade/fics_lounge.glade:136
 msgid "<big>Challenge:</big>"
-msgstr ""
+msgstr "<big>ಸವಾಲು:</big>"
 
 #: glade/fics_lounge.glade:333 glade/fics_lounge.glade:2097
 msgid "Lightning:"
-msgstr ""
+msgstr "ಮಿಂಚಿನ :"
 
 #: glade/fics_lounge.glade:357 glade/fics_lounge.glade:2121
 msgid "Standard:"
@@ -118,7 +119,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:382 glade/fics_lounge.glade:2146
 msgid "Blitz:"
-msgstr ""
+msgstr "ಬ್ಲಿಟ್ಜ್"
 
 #: glade/fics_lounge.glade:408
 msgid "2 min, Fischer Random, Black"
@@ -248,7 +249,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:1737
 msgid "<b>Options</b>"
-msgstr ""
+msgstr "<b>ಆಯ್ಕೆಗಳು</b>"
 
 #: glade/fics_lounge.glade:1765
 msgid "PyChess - Internet Chess: FICS"

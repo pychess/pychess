@@ -3,7 +3,8 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Adolfo Jayme Barrientos <fito@libreoffice.org>, 2012
+# Adolfo Jayme Barrientos, 2012
+# Antonio de la Vega Jiménez <antonio.v.j95@gmail.com>, 2015
 # Henderb Rodriguez <henderbj@gmail.com>, 2014
 # Henderb Rodriguez <henderbj@gmail.com>, 2014
 # ignotus confutatis <ignotus@teksapiens.com>, 2013
@@ -13,9 +14,9 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-09 11:01+0100\n"
-"PO-Revision-Date: 2014-11-09 10:22+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/pychess/language/es/)\n"
+"PO-Revision-Date: 2015-05-09 13:13+0000\n"
+"Last-Translator: Antonio de la Vega Jiménez <antonio.v.j95@gmail.com>\n"
+"Language-Team: Spanish (http://www.transifex.com/gbtami/pychess/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,7 +26,7 @@ msgstr ""
 # "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 #: glade/analyze_game.glade:22
 msgid "Analyze game"
-msgstr ""
+msgstr "Analizar partida"
 
 #: glade/analyze_game.glade:89
 msgid "Use analyzer:"
@@ -37,7 +38,7 @@ msgstr "Tiempo de análisis máximo en segundos:"
 
 #: glade/analyze_game.glade:168
 msgid "Variation annotation creation thresold in centipawns:"
-msgstr ""
+msgstr "Crear umbral de variación en centipawns ( 1/100 del valor de un peón):"
 
 #: glade/analyze_game.glade:169
 msgid ""
@@ -46,7 +47,7 @@ msgid ""
 "evaluation for the move made in the game) exceeds this value, it will add an"
 " annotation for that move (consisting of the engine's Principal Variation "
 "for the move) to the Annotation panel"
-msgstr ""
+msgstr "Si el analizador encuentra un movimiento donde la diferencia de evaluación (la diferencia entre la evaluación para el movimiento que piensa que es el mejor y la evaluación para el movimiento hecho en el juego) es superior a este valor, se agregará una anotación para el movimiento (que consiste en de Variación Principal del motor para el movimiento) al panel Anotación"
 
 #: glade/analyze_game.glade:205 glade/PyChess.glade:1238
 msgid "Colorize analyzed moves"
@@ -288,7 +289,7 @@ msgstr "Enviar búsqueda"
 
 #: glade/fics_lounge.glade:2325
 msgid "Send all seeks"
-msgstr ""
+msgstr "Enviar todas la búsquedas "
 
 #: glade/fics_lounge.glade:2361
 msgid "Create Seek"
@@ -699,7 +700,7 @@ msgstr "Si es fijado, se muestra el tiempo transcurrido que un jugador ha usado 
 
 #: glade/PyChess.glade:1275
 msgid "If set, the hint analyzer engine evaluation value is shown."
-msgstr ""
+msgstr "Si se activa, se muestra el valor de evaluación del motor analizador de pista."
 
 #: glade/PyChess.glade:1299
 msgid "<b>General Display Options</b>"
@@ -872,7 +873,7 @@ msgstr ""
 
 #: glade/PyChess.glade:2859
 msgid "_Invalid move:"
-msgstr ""
+msgstr "_Movimiento inválido: "
 
 #: glade/PyChess.glade:2910
 msgid "Activate alarm when _remaining sec is:"
@@ -1179,7 +1180,7 @@ msgstr "%(player)s es %(status)s"
 
 #: lib/pychess/ic/FICSObjects.py:43
 msgid "not playing"
-msgstr ""
+msgstr "No se esta jugando"
 
 #: lib/pychess/ic/FICSObjects.py:51 lib/pychess/ic/ICLounge.py:797
 #: lib/pychess/ic/ICLounge.py:1702 lib/pychess/ic/__init__.py:95
@@ -1570,7 +1571,7 @@ msgstr "Solo puedes procesar 3 búsquedas al mismo tiempo. Si quieres agregar un
 
 #: lib/pychess/ic/ICLounge.py:2039
 msgid " has declined your offer for a match"
-msgstr ""
+msgstr "ha rechazado su oferta para una partida"
 
 #: lib/pychess/ic/ICLounge.py:2052
 msgid " is censoring you"
@@ -2002,7 +2003,7 @@ msgstr "Partida"
 
 #: lib/pychess/Savers/pgn.py:396
 msgid "Invalid move."
-msgstr ""
+msgstr "Movimiento inválido."
 
 #: lib/pychess/Savers/png.py:16
 msgid "Png image"
@@ -2225,7 +2226,7 @@ msgstr "Un jugador abortó la partida. Cualquiera de los dos jugadores puede abo
 msgid ""
 "Because a player disconnected and there are too few moves to warrant "
 "adjournment. No rating changes have occurred."
-msgstr ""
+msgstr "Debido a que un jugador esta desconectado y hay muy pocos movimientos para justificar el aplazamiento. No se han producido cambios de calificación."
 
 #: lib/pychess/Utils/repr.py:59
 msgid "Because the server was shut down. No rating changes have occurred."
@@ -2652,27 +2653,27 @@ msgstr "Reclamar tablas"
 
 #: lib/pychess/widgets/gamewidget.py:296
 msgid "Pause"
-msgstr ""
+msgstr "Pausa"
 
 #: lib/pychess/widgets/gamewidget.py:297
 msgid "Resume"
-msgstr ""
+msgstr "Reanudar"
 
 #: lib/pychess/widgets/gamewidget.py:299
 msgid "Offer Pause"
-msgstr ""
+msgstr "Proponer Pausa"
 
 #: lib/pychess/widgets/gamewidget.py:300
 msgid "Offer Resume"
-msgstr ""
+msgstr "Proponer Reanudar"
 
 #: lib/pychess/widgets/gamewidget.py:304
 msgid "Undo"
-msgstr ""
+msgstr "Deshacer "
 
 #: lib/pychess/widgets/gamewidget.py:306
 msgid "Offer Undo"
-msgstr ""
+msgstr "Proponer Deshacer"
 
 #: lib/pychess/widgets/gamewidget.py:439 lib/pychess/widgets/gamewidget.py:538
 msgid "vs"
@@ -2680,23 +2681,23 @@ msgstr "contra"
 
 #: lib/pychess/widgets/gamewidget.py:492
 msgid " has lagged for 30 seconds"
-msgstr ""
+msgstr "ha quedado retrasado durante 30 segundos"
 
 #: lib/pychess/widgets/gamewidget.py:508
 msgid " is lagging heavily but hasn't disconnected"
-msgstr ""
+msgstr "esta muy retrasado, pero no se ha desconectado"
 
 #: lib/pychess/widgets/gamewidget.py:509
 msgid "Continue to wait for opponent, or try to adjourn the game?"
-msgstr ""
+msgstr "Continuar esperando oponente, o intentar aplazar el juego?"
 
 #: lib/pychess/widgets/gamewidget.py:517
 msgid "Wait"
-msgstr ""
+msgstr "Espera"
 
 #: lib/pychess/widgets/gamewidget.py:518
 msgid "Adjourn"
-msgstr ""
+msgstr "Aplazar "
 
 #: lib/pychess/widgets/gamewidget.py:585
 msgid "Jump to initial position"
@@ -2903,7 +2904,7 @@ msgstr " ajedrez"
 
 #: lib/pychess/widgets/newGameDialog.py:467
 msgid "Type or paste PGN game or FEN positions here"
-msgstr ""
+msgstr "Escribe o pega el juego PGN o las posiciones FEN aquí "
 
 #: lib/pychess/widgets/newGameDialog.py:506
 msgid "Enter Game"
@@ -3070,7 +3071,7 @@ msgstr ""
 
 #: lib/pychess/Utils/lutils/lmove.py:250
 msgid "invalid promoted piece"
-msgstr ""
+msgstr "pieza promocionada no válida"
 
 #: lib/pychess/Utils/lutils/lmove.py:258
 msgid "the move needs a piece and a cord"
@@ -3378,7 +3379,7 @@ msgstr "Agrega símbolo de evaluación"
 
 #: sidepanel/annotationPanel.py:281
 msgid "Remove symbols"
-msgstr ""
+msgstr "Eliminar símbolos"
 
 #: sidepanel/annotationPanel.py:815
 #, python-format
