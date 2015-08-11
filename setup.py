@@ -162,7 +162,7 @@ setup (
     long_description = LONG_DESC,
     license          = 'GPL3',
     url              = 'http://pychess.org',
-    download_url     = 'http://code.google.com/p/pychess/downloads/list',
+    download_url     = 'http://pychess.org/download/',
     package_dir      = {'': 'lib'},
     packages         = PACKAGES,
     data_files       = DATA_FILES,
