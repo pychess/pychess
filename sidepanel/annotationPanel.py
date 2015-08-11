@@ -749,7 +749,6 @@ class Sidepanel(Gtk.TextView):
                 next_node = self.nodelist[self.nodelist.index(node)+1]
                 next_start = self.textbuffer.get_iter_at_offset(next_node["start"])
                 self.textbuffer.delete(end, next_start)
-                
             self.textbuffer.insert_with_tags_by_name(end, emt_eval, "emt")
 
             if next_node is not None:
@@ -975,6 +974,7 @@ class Sidepanel(Gtk.TextView):
         endIter = self.textbuffer.get_iter_at_offset(end_iter().get_offset())
 
         self.textbuffer.apply_tag_by_name("move", startIter, endIter)
+        self.colorize_node(board.plyCount, startIter, endIter)
 
         node = {}
         node["board"] = board
