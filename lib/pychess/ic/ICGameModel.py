@@ -175,7 +175,8 @@ class ICGameModel (GameModel):
                 opPlayer.offer(offer)
             # If the offer was an update to an old one, like a new takebackvalue
             # we want to remove the old one from self.offers
-            for offer_ in self.offers.keys():
+            offers = self.offers.keys()
+            for offer_ in offers:
                 if offer.type == offer_.type and offer != offer_:
                     del self.offers[offer_]
     
