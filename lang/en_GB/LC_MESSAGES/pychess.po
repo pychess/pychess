@@ -9,9 +9,9 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-09 11:01+0100\n"
-"PO-Revision-Date: 2014-11-09 10:22+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
-"Language-Team: English (United Kingdom) (http://www.transifex.com/projects/p/pychess/language/en_GB/)\n"
+"PO-Revision-Date: 2014-11-26 13:50+0000\n"
+"Last-Translator: Andi Chandler <andi@gowling.com>\n"
+"Language-Team: English (United Kingdom) (http://www.transifex.com/gbtami/pychess/language/en_GB/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -864,15 +864,15 @@ msgstr "Observed _ends:"
 
 #: glade/PyChess.glade:2808
 msgid "Short on _time:"
-msgstr ""
+msgstr "Short on _time:"
 
 #: glade/PyChess.glade:2859
 msgid "_Invalid move:"
-msgstr ""
+msgstr "_Invalid move:"
 
 #: glade/PyChess.glade:2910
 msgid "Activate alarm when _remaining sec is:"
-msgstr ""
+msgstr "Activate alarm when _remaining sec is:"
 
 #: glade/PyChess.glade:2962
 msgid "<b>Play Sound When...</b>"
@@ -1566,19 +1566,19 @@ msgstr "You may only have 3 outstanding seeks at the same time. If you want to a
 
 #: lib/pychess/ic/ICLounge.py:2039
 msgid " has declined your offer for a match"
-msgstr ""
+msgstr " has declined your offer for a match"
 
 #: lib/pychess/ic/ICLounge.py:2052
 msgid " is censoring you"
-msgstr ""
+msgstr " is censoring you"
 
 #: lib/pychess/ic/ICLounge.py:2065
 msgid " noplay listing you"
-msgstr ""
+msgstr " noplay listing you"
 
 #: lib/pychess/ic/ICLounge.py:2080
 msgid " uses a formula not fitting your match request:"
-msgstr ""
+msgstr " uses a formula not fitting your match request:"
 
 #: lib/pychess/ic/ICLounge.py:2094
 msgid "to manual accept"
@@ -2676,23 +2676,23 @@ msgstr "vs"
 
 #: lib/pychess/widgets/gamewidget.py:492
 msgid " has lagged for 30 seconds"
-msgstr ""
+msgstr " has lagged for 30 seconds"
 
 #: lib/pychess/widgets/gamewidget.py:508
 msgid " is lagging heavily but hasn't disconnected"
-msgstr ""
+msgstr " is lagging heavily but hasn't disconnected"
 
 #: lib/pychess/widgets/gamewidget.py:509
 msgid "Continue to wait for opponent, or try to adjourn the game?"
-msgstr ""
+msgstr "Continue to wait for opponent, or try to adjourn the game?"
 
 #: lib/pychess/widgets/gamewidget.py:517
 msgid "Wait"
-msgstr ""
+msgstr "Wait"
 
 #: lib/pychess/widgets/gamewidget.py:518
 msgid "Adjourn"
-msgstr ""
+msgstr "Adjourn"
 
 #: lib/pychess/widgets/gamewidget.py:585
 msgid "Jump to initial position"
@@ -3374,7 +3374,7 @@ msgstr "Add evaluation symbol"
 
 #: sidepanel/annotationPanel.py:281
 msgid "Remove symbols"
-msgstr ""
+msgstr "Remove symbols"
 
 #: sidepanel/annotationPanel.py:815
 #, python-format
