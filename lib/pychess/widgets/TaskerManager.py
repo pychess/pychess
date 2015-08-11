@@ -116,13 +116,13 @@ class TaskerManager (Gtk.Table):
         
         # Add filled out rows
         
-        for row in range(rrows):
+        for row in range(rows):
             for col in range(cols):
                 widget = widgets[row*cols + col]                
                 alignment = Gtk.Alignment.new(hspac[col], vspac[row], 0, 0)
                 alignment.add(widget)
                 self.attach(alignment, col, col+1, row, row+1)
-        
+        return
         
         # Add last row
         
