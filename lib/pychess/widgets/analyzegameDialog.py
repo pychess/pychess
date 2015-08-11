@@ -86,7 +86,7 @@ def initialize(gameDic):
             abort()
         message = InfoBarMessage(Gtk.MessageType.QUESTION, content, response_cb)
         message.add_button(InfoBarMessageButton(_("Abort"), Gtk.ResponseType.CANCEL))
-        gmwidg.showMessage(message)
+        gmwidg.replaceMessages(message)
 
         def analyse_moves():
             from_current = conf.get("fromCurrent", True)
