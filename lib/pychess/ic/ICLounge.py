@@ -809,7 +809,7 @@ class SeekTabSection (ParrentListSection):
             self.chaPix, challenge.player.name + challenge.player.display_titles(),
             challenge.player_rating, challenge.display_rated,
             challenge.game_type.display_text, challenge.display_timecontrol,
-            challenge.sortable_time, "black",
+            challenge.sortable_time, self.textcolor_normal(),
             get_challenge_tooltip_text(challenge)])
         self.challenges[hash(challenge)] = ti
         self.__updateActiveSeeksLabel()
