@@ -5,16 +5,17 @@
 # Translators:
 # Alexandro Casanova <shorterfire@gmail.com>, 2013-2014
 # Leandro Alves Vianna <leandrovianna50@gmail.com>, 2014
-# Leonardo Gregianin <leogregianin@gmail.com>, 2014
+# Leandro Cristante de Oliveira <lcristante@aol.com>, 2014
+# Leonardo Gregianin <leogregianin@gmail.com>, 2014-2015
 # Alexandro Casanova <shorterfire@gmail.com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-09 11:01+0100\n"
-"PO-Revision-Date: 2014-11-09 10:22+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
-"Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/pychess/language/pt_BR/)\n"
+"PO-Revision-Date: 2015-06-16 02:00+0000\n"
+"Last-Translator: Leonardo Gregianin <leogregianin@gmail.com>\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/gbtami/pychess/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -871,7 +872,7 @@ msgstr ""
 
 #: glade/PyChess.glade:2859
 msgid "_Invalid move:"
-msgstr ""
+msgstr "Movimento _inválido:"
 
 #: glade/PyChess.glade:2910
 msgid "Activate alarm when _remaining sec is:"
@@ -931,7 +932,7 @@ msgstr "_Exportar Posição"
 
 #: glade/PyChess.glade:3169
 msgid "_Analyze Game"
-msgstr ""
+msgstr "_Analisar partida"
 
 #: glade/PyChess.glade:3203
 msgid "Player _Rating"
@@ -1286,7 +1287,7 @@ msgstr "negras"
 
 #: lib/pychess/ic/FICSObjects.py:559
 msgid "This is a continuation of an adjourned match"
-msgstr ""
+msgstr "Esta é a continuação de um jogo adiado"
 
 #: lib/pychess/ic/FICSObjects.py:648
 msgid "Opponent Rating"
@@ -1569,7 +1570,7 @@ msgstr "Você só pode ter 3 buscas pendentes ao mesmo tempo. Se você quiser ad
 
 #: lib/pychess/ic/ICLounge.py:2039
 msgid " has declined your offer for a match"
-msgstr ""
+msgstr "recusou sua oferta para um jogo"
 
 #: lib/pychess/ic/ICLounge.py:2052
 msgid " is censoring you"
@@ -2001,7 +2002,7 @@ msgstr "Jogo de Xadrez"
 
 #: lib/pychess/Savers/pgn.py:396
 msgid "Invalid move."
-msgstr ""
+msgstr "Movimento inválido."
 
 #: lib/pychess/Savers/png.py:16
 msgid "Png image"
@@ -2687,7 +2688,7 @@ msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:509
 msgid "Continue to wait for opponent, or try to adjourn the game?"
-msgstr ""
+msgstr "Continuar esperando pelo oponente, ou tentar adiar o jogo?"
 
 #: lib/pychess/widgets/gamewidget.py:517
 msgid "Wait"
@@ -2695,7 +2696,7 @@ msgstr "Espere"
 
 #: lib/pychess/widgets/gamewidget.py:518
 msgid "Adjourn"
-msgstr ""
+msgstr "Adiar"
 
 #: lib/pychess/widgets/gamewidget.py:585
 msgid "Jump to initial position"
@@ -2902,7 +2903,7 @@ msgstr " _"
 
 #: lib/pychess/widgets/newGameDialog.py:467
 msgid "Type or paste PGN game or FEN positions here"
-msgstr ""
+msgstr "Tecle ou cole sua partida PGN ou posição FEN aqui"
 
 #: lib/pychess/widgets/newGameDialog.py:506
 msgid "Enter Game"
@@ -3065,11 +3066,11 @@ msgid ""
 "En passant cord is not legal. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Coordenadas do En passant não são legais. \n\n%s"
 
 #: lib/pychess/Utils/lutils/lmove.py:250
 msgid "invalid promoted piece"
-msgstr ""
+msgstr "peça inválida para promoção"
 
 #: lib/pychess/Utils/lutils/lmove.py:258
 msgid "the move needs a piece and a cord"

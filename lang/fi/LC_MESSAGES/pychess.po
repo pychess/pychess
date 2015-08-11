@@ -4,14 +4,15 @@
 # 
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008
+# Riku Lahtinen <rikul.lajolla@kiu.as>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-09 11:01+0100\n"
-"PO-Revision-Date: 2014-11-09 10:22+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
-"Language-Team: Finnish (http://www.transifex.com/projects/p/pychess/language/fi/)\n"
+"PO-Revision-Date: 2015-01-24 11:41+0000\n"
+"Last-Translator: Riku Lahtinen <rikul.lajolla@kiu.as>\n"
+"Language-Team: Finnish (http://www.transifex.com/gbtami/pychess/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,15 +22,15 @@ msgstr ""
 # "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 #: glade/analyze_game.glade:22
 msgid "Analyze game"
-msgstr ""
+msgstr "Analysoi peli"
 
 #: glade/analyze_game.glade:89
 msgid "Use analyzer:"
-msgstr ""
+msgstr "Käytä analysaattoria:"
 
 #: glade/analyze_game.glade:124 glade/PyChess.glade:1811
 msgid "Maximum analysis time in seconds:"
-msgstr ""
+msgstr "Maksimi analysointiaika sekunneissa:"
 
 #: glade/analyze_game.glade:168
 msgid "Variation annotation creation thresold in centipawns:"
@@ -98,15 +99,15 @@ msgstr "S_ign up"
 
 #: glade/fics_lounge.glade:36
 msgid "Challenge: <Player>"
-msgstr ""
+msgstr "Haasta:<Player>"
 
 #: glade/fics_lounge.glade:100
 msgid "Send Challenge"
-msgstr ""
+msgstr "Lähetä haaste"
 
 #: glade/fics_lounge.glade:136
 msgid "<big>Challenge:</big>"
-msgstr ""
+msgstr "<big>Haaste:</big>"
 
 #: glade/fics_lounge.glade:333 glade/fics_lounge.glade:2097
 msgid "Lightning:"
@@ -126,11 +127,11 @@ msgstr ""
 
 #: glade/fics_lounge.glade:430
 msgid "10 min + 6 sec/move, White"
-msgstr ""
+msgstr "10 min + 6 s/siirto, Valkoinen"
 
 #: glade/fics_lounge.glade:452
 msgid "5 min"
-msgstr ""
+msgstr "5 min"
 
 #: glade/fics_lounge.glade:488
 msgid "Edit Seek"
@@ -143,7 +144,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:647
 msgid "Minutes:  "
-msgstr ""
+msgstr "Minuutit:"
 
 #: glade/fics_lounge.glade:677
 msgid "   Gain:  "
@@ -213,7 +214,7 @@ msgstr ""
 #: lib/pychess/widgets/ChessClock.py:34
 #: lib/pychess/widgets/TaskerManager.py:146
 msgid "White"
-msgstr ""
+msgstr "Valkoinen"
 
 #: glade/fics_lounge.glade:1429 lib/pychess/Database/gamelist.py:40
 #: lib/pychess/ic/ICLounge.py:1603 lib/pychess/Utils/repr.py:8
@@ -414,7 +415,7 @@ msgstr ""
 
 #: glade/newInOut.glade:225
 msgid "_White player:"
-msgstr ""
+msgstr "_Valkoinen pelaaja:"
 
 #: glade/newInOut.glade:336
 msgid "<b>Players</b>"
@@ -527,7 +528,7 @@ msgstr ""
 
 #: glade/PyChess.glade:269
 msgid "White:"
-msgstr ""
+msgstr "Valkoinen:"
 
 #: glade/PyChess.glade:281
 msgid "Black:"
@@ -1024,15 +1025,15 @@ msgstr ""
 
 #: glade/PyChess.glade:3553
 msgid "Tip of the Day"
-msgstr ""
+msgstr "Päivän vihje"
 
 #: glade/saveGamesDialog.glade:8
 msgid "Quit PyChess"
-msgstr ""
+msgstr "Lopeta PyChess"
 
 #: glade/saveGamesDialog.glade:25 lib/pychess/widgets/ionest.py:400
 msgid "Close _without Saving"
-msgstr ""
+msgstr "Sulje tallentamatta"
 
 #: glade/saveGamesDialog.glade:87
 msgid "_Save %d documents"
@@ -1046,7 +1047,7 @@ msgstr ""
 
 #: glade/saveGamesDialog.glade:165
 msgid "Select the games you want to save:"
-msgstr ""
+msgstr "Valitse pelit, jotka haluat tallentaa:"
 
 #: glade/saveGamesDialog.glade:207
 msgid "If you don't save, new changes to your games will be permanently lost."
@@ -1275,7 +1276,7 @@ msgstr ""
 
 #: lib/pychess/ic/FICSObjects.py:513 lib/pychess/ic/ICLounge.py:578
 msgid "white"
-msgstr ""
+msgstr "valkoinen"
 
 #: lib/pychess/ic/FICSObjects.py:513 lib/pychess/ic/ICLounge.py:578
 msgid "black"
@@ -1345,7 +1346,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:252
 msgid "Email"
-msgstr ""
+msgstr "Sähköposti"
 
 #: lib/pychess/ic/ICLounge.py:257
 msgid "Spent"
@@ -1361,7 +1362,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:268
 msgid "Connecting"
-msgstr ""
+msgstr "Yhdistetään"
 
 #: lib/pychess/ic/ICLounge.py:278 lib/pychess/Savers/epd.py:134
 msgid "Unknown"
@@ -1431,7 +1432,7 @@ msgstr ""
 
 #: lib/pychess/ic/ICLounge.py:995
 msgid "White Player"
-msgstr ""
+msgstr "Valkoinen pelaaja"
 
 #: lib/pychess/ic/ICLounge.py:996
 msgid "Black Player"
@@ -2051,7 +2052,7 @@ msgstr ""
 #: lib/pychess/Utils/repr.py:16
 #, python-format
 msgid "%(white)s won the game"
-msgstr ""
+msgstr "%(white)s voitti pelin"
 
 #: lib/pychess/Utils/repr.py:17
 #, python-format
@@ -2108,14 +2109,14 @@ msgstr ""
 msgid ""
 "Because %(white)s ran out of time and %(black)s has insufficient material to"
 " mate"
-msgstr ""
+msgstr "Koska %(white)s aika loppui ja %(black)s on riittämätön materiaali mattiin"
 
 #: lib/pychess/Utils/repr.py:33
 #, python-format
 msgid ""
 "Because %(black)s ran out of time and %(white)s has insufficient material to"
 " mate"
-msgstr ""
+msgstr "Koska %(black)s aika loppui ja %(white)s on riittämätön materiaali mattiin"
 
 #: lib/pychess/Utils/repr.py:34
 msgid "Because both players have the same amount of pieces"
@@ -3477,7 +3478,7 @@ msgstr ""
 
 #: sidepanel/commentPanel.py:18
 msgid "Comments"
-msgstr ""
+msgstr "Kommentit"
 
 #: sidepanel/commentPanel.py:22
 msgid "The comments panel will try to analyze and explain the moves played"
