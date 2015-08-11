@@ -627,7 +627,7 @@ class SeekTabSection (ParrentListSection):
         
         self.tv = self.widgets["seektreeview"]
         self.store = Gtk.ListStore(FICSSoughtMatch, GdkPixbuf.Pixbuf,
-            GdkPixbuf.Pixbuf, str, int, str, str, str, int, str, str)
+            GdkPixbuf.Pixbuf, str, int, str, str, str, int, Gdk.RGBA, str)
         self.model = Gtk.TreeModelSort(model=self.store)
         self.tv.set_model(self.model)
         self.addColumns (self.tv, "FICSSoughtMatch", "", "", _("Name"),
@@ -645,7 +645,7 @@ class SeekTabSection (ParrentListSection):
         for n in range(2, 7):
             column = self.tv.get_column(n)
             for cellrenderer in column.get_cells():
-                column.add_attribute(cellrenderer, "foreground", 9)
+                column.add_attribute(cellrenderer, "foreground_rgba", 9)
         self.selection = self.tv.get_selection()
         self.lastSeekSelected = None
         self.selection.set_select_function(self.selectFunction, True)
@@ -681,15 +681,22 @@ class SeekTabSection (ParrentListSection):
         uistuff.keep(self.model, "seektreeview_sort_order_col", get_sort_order, \
             lambda modelsort, value: set_sort_order(modelsort, value))
         
-        
+    def textcolor_normal(self):
+        sc = self.tv.get_style_context()
+        return sc.get_color(Gtk.StateFlags.NORMAL)
+
+    def textcolor_selected(self):
+        sc = self.tv.get_style_context()
+        return sc.get_color(Gtk.StateFlags.INSENSITIVE)
+
     def selectFunction (self, selection, model, path, is_selected, data):
-        if model[path][9] == "grey": return False
+        if model[path][9] == self.textcolor_selected(): return False
         else: return True
     
     def __isAChallengeOrOurSeek (self, row):
         sought = row[0]
         textcolor = row[9]
-        if (isinstance(sought, FICSChallenge)) or (textcolor == "grey"):
+        if (isinstance(sought, FICSChallenge)) or (textcolor == self.textcolor_selected()):
             return True
         else:
             return False
@@ -723,15 +730,15 @@ class SeekTabSection (ParrentListSection):
         log.debug("%s" % seek,
                   extra={"task": (self.connection.username, "onAddSeek")})
         pix = self.seekPix if seek.automatic else self.manSeekPix
-        textcolor = "grey" if seek.player.name == self.connection.getUsername() \
-            else "black"
+        textcolor = self.textcolor_selected() if seek.player.name == self.connection.getUsername() \
+            else self.textcolor_normal()
         seek_ = [seek, seek.player.getIcon(gametype=seek.game_type), pix,
             seek.player.name + seek.player.display_titles(), seek.player_rating,
             seek.display_rated, seek.game_type.display_text,
             seek.display_timecontrol, seek.sortable_time, textcolor,
             get_seek_tooltip_text(seek)]
  
-        if textcolor == "grey":
+        if textcolor == self.textcolor_selected():
             ti = self.store.prepend(seek_)
             self.tv.scroll_to_cell(self.store.get_path(ti))
             self.widgets["clearSeeksButton"].set_sensitive(True)
