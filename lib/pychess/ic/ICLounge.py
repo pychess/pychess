@@ -8,7 +8,7 @@ from math import e
 from operator import attrgetter
 from itertools import groupby
 
-from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, Pango
+from gi.repository import GLib, Gtk, Gdk, GdkPixbuf, GObject, Pango
 
 from pychess.ic import *
 from pychess.compat import cmp, StringIO
@@ -1026,37 +1026,39 @@ class PlayerTabSection (ParrentListSection):
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
     
-    @idle_add
+    #@idle_add
     def onPlayerAdded (self, players, player):
-        log.debug("%s" % player,
-                  extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
-        if player in self.players:
-            log.warning("%s already in self" % player,
-                extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
-            return
-        self.players[player] = {}
-        
-        self.players[player]["ti"] = self.store.append([player,
-            player.getIcon(), player.name + player.display_titles(),
-            player.blitz, player.standard, player.lightning,
-            player.display_status, get_player_tooltip_text(player)])
-        self.players[player]["status"] = player.connect(
-            "notify::status", self.status_changed)
-        self.players[player]["game"] = player.connect(
-            "notify::game", self.status_changed)
-        self.players[player]["titles"] = player.connect(
-            "notify::titles", self.titles_changed)
-        if player.game:
-            self.players[player]["private"] = player.game.connect(
-                "notify::private", self.private_changed, player)
-        for rt in RATING_TYPES:
-            self.players[player][rt] = player.ratings[rt].connect(
-                "notify::elo", self.elo_changed, player)
-        
-        count = len(self.players)
-        self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
-        
-        return False
+        def do_onPlayerAdded(players, player):
+            log.debug("%s" % player,
+                      extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
+            if player in self.players:
+                log.warning("%s already in self" % player,
+                    extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
+                return
+            self.players[player] = {}
+            
+            self.players[player]["ti"] = self.store.append([player,
+                player.getIcon(), player.name + player.display_titles(),
+                player.blitz, player.standard, player.lightning,
+                player.display_status, get_player_tooltip_text(player)])
+            self.players[player]["status"] = player.connect(
+                "notify::status", self.status_changed)
+            self.players[player]["game"] = player.connect(
+                "notify::game", self.status_changed)
+            self.players[player]["titles"] = player.connect(
+                "notify::titles", self.titles_changed)
+            if player.game:
+                self.players[player]["private"] = player.game.connect(
+                    "notify::private", self.private_changed, player)
+            for rt in RATING_TYPES:
+                self.players[player][rt] = player.ratings[rt].connect(
+                    "notify::elo", self.elo_changed, player)
+            
+            count = len(self.players)
+            self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
+            
+            return False
+        GLib.idle_add(do_onPlayerAdded, players, player, priority=GLib.PRIORITY_LOW)
     
     @idle_add
     def onPlayerRemoved (self, players, player):
@@ -1262,20 +1264,22 @@ class GameTabSection (ParrentListSection):
         count = len(self.games)
         self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
 
-    @idle_add
+    #@idle_add
     def onGameAdd (self, games, game):
-        log.debug("%s" % game,
-                  extra={"task": (self.connection.username, "GTS.onGameAdd")})
-        ti = self.store.append ([game, self.clearpix,
-            game.wplayer.name + game.wplayer.display_titles(),
-            game.wplayer.getRatingForCurrentGame(),
-            game.bplayer.name + game.bplayer.display_titles(),
-            game.bplayer.getRatingForCurrentGame(),
-            game.display_text])
-        self.games[game] = { "ti": ti }
-        self.games[game]["private_cid"] = game.connect("notify::private",
-                                                       self.private_changed)
-        self._update_gamesrunning_label()
+        def do_onGameAdd(games, game):
+            log.debug("%s" % game,
+                      extra={"task": (self.connection.username, "GTS.onGameAdd")})
+            ti = self.store.append ([game, self.clearpix,
+                game.wplayer.name + game.wplayer.display_titles(),
+                game.wplayer.getRatingForCurrentGame(),
+                game.bplayer.name + game.bplayer.display_titles(),
+                game.bplayer.getRatingForCurrentGame(),
+                game.display_text])
+            self.games[game] = { "ti": ti }
+            self.games[game]["private_cid"] = game.connect("notify::private",
+                                                           self.private_changed)
+            self._update_gamesrunning_label()
+        GLib.idle_add(do_onGameAdd, games, game, priority=GLib.PRIORITY_LOW)
     
     @idle_add
     def private_changed (self, game, prop):
