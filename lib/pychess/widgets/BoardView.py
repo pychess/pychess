@@ -1339,13 +1339,12 @@ class BoardView (Gtk.DrawingArea):
     
     def _set_rotation (self, radians):
         if not conf.get("fullAnimation", True):
-            @idle_add
             def rotate():
                 self._rotation = radians
                 self.nextRotation = radians
                 self.matrix = cairo.Matrix.init_rotate(radians)
                 self.redraw_canvas()
-            rotate()
+            GLib.idle_add(rotate)
         else:
             if hasattr(self, "nextRotation") and \
                     self.nextRotation != self.rotation:
@@ -1355,7 +1354,6 @@ class BoardView (Gtk.DrawingArea):
             start = time()
             next = True
 
-            @idle_add
             def rotate():
                 amount = (time()-start)/ANIMATION_TIME
                 if amount > 1:
@@ -1368,8 +1366,7 @@ class BoardView (Gtk.DrawingArea):
                 return next
 
             self.animating = True
-            while next:
-                next = rotate()
+            GLib.idle_add(rotate)
     
     def _get_rotation (self):
         return self._rotation
