@@ -748,6 +748,8 @@ class LBoard:
             return "".join(strs)
     
     def __repr__ (self):
+        if not hasattr(self, "color"):
+            return("LBoard without applied FEN")
         b = "#" + reprColor[self.color] + " "
         b += self.reprCastling() + " "
         b += self.enpassant != None and reprCord[self.enpassant] or "-"
