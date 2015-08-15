@@ -80,7 +80,10 @@ def newtheme (widget):
         if r > 1.0: r = 1.0
         if g > 1.0: g = 1.0
         if b > 1.0: b = 1.0
-        return Gdk.RGBA(r, g, b, 1.0)
+        if r==1 and g==1 and b==1:
+            return Gdk.RGBA(0.99, 0.99, 0.99, 1.0)
+        else:
+            return Gdk.RGBA(r, g, b, 1.0)
 
     # derive other colors
     bgacol   = get_col(bgcol, 0.9)           # bg_active    
