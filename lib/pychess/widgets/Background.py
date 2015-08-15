@@ -93,7 +93,7 @@ def newtheme (widget):
     dacol    = get_col(dcol, 0.9)            # dark_active
     lcol     = get_col(bgcol, 1.3)           # light color
     lightsel = get_col(bgsel, 1.3)           # light selected
-    fgsel    = Gdk.RGBA(1.0, 1.0, 1.0, 1.0)  # fg selected
+    fgsel    = Gdk.RGBA(0.99, 0.99, 0.99, 1.0)  # fg selected
     fgpcol   = get_col(fgcol, 1.054)         # fg prelight
     fgacol   = Gdk.RGBA(0.0, 0.0, 0.0, 1.0)  # fg active
     textaacol=Gdk.RGBA(min((basecol.red+textcol.red)/2., 1.0), min((basecol.green+textcol.green)/2., 1.0), min((basecol.blue+textcol.blue)/2., 1.0))   # text_aa
