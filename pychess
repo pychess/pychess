@@ -15,9 +15,10 @@ except ImportError:
 ###############################################################################
 # Check requirements
 
+import argparse
 import os, sys
-if sys.version_info < (2, 6, 0):
-    print('ERROR: PyChess requires Python >= 2.6')
+if sys.version_info < (2, 7, 0):
+    print('ERROR: PyChess requires Python >= 2.7')
     sys.exit(1)
 
 import gi
@@ -107,40 +108,35 @@ chess_file = sys.argv[1] if len(sys.argv) > 1 else None
 ics_host = None
 ics_port = None
 
-try:
-    import argparse
-except ImportError:
-    print("argparse library not found; command line arguments won't work")
-else:
-    version = "%s (%s)" % (pychess.VERSION, pychess.VERSION_NAME)
-    description = "The PyChess chess client, version %s." % version
-    
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('--version', action='version',
-        version="%(prog)s" + " %s" % version)
-    parser.add_argument('--no-debug', action='store_true',
-        help='turn off debugging output')
-    parser.add_argument('--no-idle-add-debug', action='store_true',
-        help='turn off idle-add debugging output')
-    parser.add_argument('--no-thread-debug', action='store_true',
-        help='turn off thread debugging output')
-    parser.add_argument('--log-viewer', action='store_true',
-        help='enable Log Viewer menu')
-    parser.add_argument('--ics-host', action='store',
-        help='the hostname of internet chess server (default is freechess.org)')
-    parser.add_argument('--ics-port', action='store', type=int,
-        help='the connection port of internet chess server (default is 5000)')
-    parser.add_argument('chess_file', nargs='?', metavar='chessfile',
-        help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
-    
-    args = parser.parse_args()
-    no_debug = args.no_debug
-    no_idle_add_debug = args.no_idle_add_debug
-    no_thread_debug = args.no_thread_debug
-    log_viewer = args.log_viewer
-    chess_file = args.chess_file
-    ics_host = args.ics_host
-    ics_port = args.ics_port
+version = "%s (%s)" % (pychess.VERSION, pychess.VERSION_NAME)
+description = "The PyChess chess client, version %s." % version
+
+parser = argparse.ArgumentParser(description=description)
+parser.add_argument('--version', action='version',
+    version="%(prog)s" + " %s" % version)
+parser.add_argument('--no-debug', action='store_true',
+    help='turn off debugging output')
+parser.add_argument('--no-idle-add-debug', action='store_true',
+    help='turn off idle-add debugging output')
+parser.add_argument('--no-thread-debug', action='store_true',
+    help='turn off thread debugging output')
+parser.add_argument('--log-viewer', action='store_true',
+    help='enable Log Viewer menu')
+parser.add_argument('--ics-host', action='store',
+    help='the hostname of internet chess server (default is freechess.org)')
+parser.add_argument('--ics-port', action='store', type=int,
+    help='the connection port of internet chess server (default is 5000)')
+parser.add_argument('chess_file', nargs='?', metavar='chessfile',
+    help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
+
+args = parser.parse_args()
+no_debug = args.no_debug
+no_idle_add_debug = args.no_idle_add_debug
+no_thread_debug = args.no_thread_debug
+log_viewer = args.log_viewer
+chess_file = args.chess_file
+ics_host = args.ics_host
+ics_port = args.ics_port
     
 ###############################################################################
 # Let's rumble!

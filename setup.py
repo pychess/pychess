@@ -13,8 +13,8 @@ import os
 import sys
 
 
-if sys.version_info < (2, 6, 0):
-    print('ERROR: PyChess requires Python >= 2.6')
+if sys.version_info < (2, 7, 0):
+    print('ERROR: PyChess requires Python >= 2.7')
     sys.exit(1)
 
 if sys.platform == "win32":
