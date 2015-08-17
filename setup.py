@@ -6,6 +6,7 @@ from imp import load_module, find_module
 pychess = load_module("pychess", *find_module("pychess",["lib"]))
 
 from distutils.core import setup
+from distutils.command.register import register
 from glob import glob
 from os import listdir
 from os.path import isdir, isfile
@@ -24,12 +25,17 @@ if sys.platform == "win32":
         print('ERROR: PyChess in Windows Platform requires to install PyGObject.')
         print('Installing from http://sourceforge.net/projects/pygobjectwin32')
         sys.exit(1)
-
-# To run "setup.py register" change name to "NAME+VERSION_NAME"
-# because pychess from another author already exist in pypi.
+    
 VERSION = pychess.VERSION
 
 NAME = "pychess"
+
+# We have to subclass register command because
+# PyChess from another author already exist on pypi.
+class RegisterCommand(register):
+    def run(self):
+        self.distribution.metadata.name = "PyChess-%s" % pychess.VERSION_NAME
+        register.run(self)
 
 DESC = "Chess client"
 
@@ -151,6 +157,7 @@ PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
 # Setup
 
 setup (
+    cmdclass         = {"register": RegisterCommand},
     name             = NAME,
     version          = VERSION,
     author           = 'Pychess team',
