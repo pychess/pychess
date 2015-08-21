@@ -732,6 +732,7 @@ def splitit(widget):
         widget.remove(child)
 
 def delGameWidget (gmwidg):
+    print("delGameWidget()")
     """ Remove the widget from the GUI after the game has been terminated """
     log.debug("gamewidget.delGameWidget: starting %s" % repr(gmwidg))
     gmwidg.closed = True

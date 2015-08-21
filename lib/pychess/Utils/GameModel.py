@@ -767,16 +767,19 @@ class GameModel (GObject.GObject, Thread):
         if self.status != KILLED:
             #self.resume()
             for player in self.players:
+                print("player.end()")
                 player.end(self.status, self.reason)
             
             for spectator in self.spectators.values():
+                print("spectator.end()")
                 spectator.end(self.status, self.reason)
             
             if self.timed:
                 log.debug("GameModel.terminate: -> timemodel.end()")
+                print("timemodel.end()")
                 self.timemodel.end()
                 log.debug("GameModel.terminate: <- timemodel.end() %s" % repr(self.timemodel))
-        
+        print("terminate OK")
         self.emit("game_terminated")
     
     ############################################################################
