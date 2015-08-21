@@ -8,7 +8,7 @@ from gi.repository import GObject
 
 from pychess import Savers
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Savers import * # This needs an import all not to break autoloading
+from pychess.Savers import fen, epd, pgn, chessalpha2
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
@@ -390,6 +390,7 @@ def closeAllGames (pairs):
     return response
 
 def closeGame (gmwidg, game):
+    print("closeGame()")
     response = None
     if not game.isChanged():
         response = Gtk.ResponseType.OK
@@ -430,6 +431,7 @@ def closeGame (gmwidg, game):
     if response not in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
         if game.status in UNFINISHED_STATES:
             game.end(ABORTED, ABORTED_AGREEMENT)
+        print("game.terminate()")
         game.terminate()
         gamewidget.delGameWidget (gmwidg)
 
