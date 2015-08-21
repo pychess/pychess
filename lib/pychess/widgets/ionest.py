@@ -307,6 +307,7 @@ Please ensure that you have given the right path and try again."))
 # Closing                                                                      #
 ################################################################################
 def closeAllGames (pairs):
+    print ("closeAllGames()")
     changedPairs = [(gmwidg, game) for gmwidg, game in pairs if game.isChanged()]
     if len(changedPairs) == 0:
         response = Gtk.ResponseType.OK
@@ -332,8 +333,9 @@ def closeAllGames (pairs):
                             _("Unable to save to configured file. Save the games before closing?") + \
                             "</big></b>"
                     break
-                    
-        if response is None:
+                    res
+        if ponse is None:
+            print("ponse is None")
             widgets = GladeWidgets("saveGamesDialog.glade")
             dialog = widgets["saveGamesDialog"]
             heading = widgets["saveGamesDialogHeading"]
@@ -384,8 +386,11 @@ def closeAllGames (pairs):
 
     if response not in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
         for gmwidg, game in pairs:
+            print("gaem.end()")
             game.end(ABORTED, ABORTED_AGREEMENT)
+            print("game.terminate()")
             game.terminate()
+            print("OK")
 
     return response
 
