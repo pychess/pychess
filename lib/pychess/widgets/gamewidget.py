@@ -568,7 +568,7 @@ class GameWidget (GObject.GObject):
             print("on_game_close_clicked")
             self.emit("game_close_clicked")
             return True
-        close_button.connect("clicked", on_game_close_clicked)
+        close_button.connect("pressed", on_game_close_clicked)
 
         hbox.pack_end(close_button, False, True, 0)
         text_hbox = Gtk.HBox()
