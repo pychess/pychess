@@ -228,7 +228,8 @@ class GladeHandlers:
         if isinstance(widget, Gtk.Button):
             gmwidg = gamewidget.cur_gmwidg()
             response = ionest.closeGame(gmwidg, gameDic[gmwidg])
-        
+            return False
+            
         if ionest.closeAllGames(gameDic.items()) in (Gtk.ResponseType.OK, Gtk.ResponseType.YES):
             Gtk.main_quit()
         else: return True
