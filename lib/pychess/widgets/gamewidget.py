@@ -563,7 +563,12 @@ class GameWidget (GObject.GObject):
         close_button.add(createImage(gtk_close))
         close_button.set_relief(Gtk.ReliefStyle.NONE)
         close_button.set_size_request(20, 18)
-        close_button.connect("clicked", lambda w: self.emit("game_close_clicked"))
+
+        def on_game_close_clicked(button):
+            self.emit("game_close_clicked")
+            return True
+        close_button.connect("clicked", on_game_close_clicked)
+
         hbox.pack_end(close_button, False, True, 0)
         text_hbox = Gtk.HBox()
         white_label = Gtk.Label(label="")
