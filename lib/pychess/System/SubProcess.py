@@ -69,7 +69,7 @@ class SubProcess (GObject.GObject):
                     working_directory=chdir, child_setup=self.__setup,
                     standard_input=True, standard_output=True, standard_error=True,
                     flags=GObject.SPAWN_DO_NOT_REAP_CHILD|GObject.SPAWN_SEARCH_PATH)        
-           
+            print ("spawn_async PID=", self.pid)
             log.debug("SubProcess.__init__: _initChannel...",  extra={"task":self.defname})
             self.__channelTags = []
             self.inChannel = self._initChannel(stdin, None, None, False)
