@@ -307,7 +307,6 @@ Please ensure that you have given the right path and try again."))
 # Closing                                                                      #
 ################################################################################
 def closeAllGames (pairs):
-    print ("closeAllGames()")
     changedPairs = [(gmwidg, game) for gmwidg, game in pairs if game.isChanged()]
     if len(changedPairs) == 0:
         response = Gtk.ResponseType.OK
@@ -334,8 +333,7 @@ def closeAllGames (pairs):
                             "</big></b>"
                     break
                     res
-        if ponse is None:
-            print("ponse is None")
+        if response is None:
             widgets = GladeWidgets("saveGamesDialog.glade")
             dialog = widgets["saveGamesDialog"]
             heading = widgets["saveGamesDialogHeading"]
@@ -386,16 +384,12 @@ def closeAllGames (pairs):
 
     if response not in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
         for gmwidg, game in pairs:
-            print("gaem.end()")
             game.end(ABORTED, ABORTED_AGREEMENT)
-            print("game.terminate()")
             game.terminate()
-            print("OK")
 
     return response
 
 def closeGame (gmwidg, game):
-    print("closeGame()")
     response = None
     if not game.isChanged():
         response = Gtk.ResponseType.OK
@@ -436,7 +430,6 @@ def closeGame (gmwidg, game):
     if response not in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
         if game.status in UNFINISHED_STATES:
             game.end(ABORTED, ABORTED_AGREEMENT)
-        print("game.terminate()")
         game.terminate()
         gamewidget.delGameWidget (gmwidg)
 

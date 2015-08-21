@@ -565,10 +565,8 @@ class GameWidget (GObject.GObject):
         close_button.set_size_request(20, 18)
 
         def on_game_close_clicked(button):
-            print("on_game_close_clicked")
             self.emit("game_close_clicked")
-            return True
-        close_button.connect("pressed", on_game_close_clicked)
+        close_button.connect("clicked", on_game_close_clicked)
 
         hbox.pack_end(close_button, False, True, 0)
         text_hbox = Gtk.HBox()
@@ -738,7 +736,6 @@ def splitit(widget):
         widget.remove(child)
 
 def delGameWidget (gmwidg):
-    print("delGameWidget()")
     """ Remove the widget from the GUI after the game has been terminated """
     log.debug("gamewidget.delGameWidget: starting %s" % repr(gmwidg))
     gmwidg.closed = True

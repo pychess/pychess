@@ -69,7 +69,7 @@ class SubProcess (GObject.GObject):
                     working_directory=chdir, child_setup=self.__setup,
                     standard_input=True, standard_output=True, standard_error=True,
                     flags=GObject.SPAWN_DO_NOT_REAP_CHILD|GObject.SPAWN_SEARCH_PATH)        
-            print ("spawn_async PID=", self.pid)
+            
             log.debug("SubProcess.__init__: _initChannel...",  extra={"task":self.defname})
             self.__channelTags = []
             self.inChannel = self._initChannel(stdin, None, None, False)
@@ -179,20 +179,14 @@ class SubProcess (GObject.GObject):
     def sendSignal (self, sign):
         try:
             if sys.platform != "win32":
-                print("os.kill", self.pid, signal.SIGCONT)
                 os.kill(self.pid, signal.SIGCONT)
-            print("os.kill", self.pid, sign)
             os.kill(self.pid, sign)
         except OSError as e:
-            print("OSError")
             if e.errno in (errno.ESRCH, errno.EACCES, errno.EINVAL):
                 #No such process, Permission denied, Invalid argument
                 pass
             else:
                 raise OSError(e.errno, os.strerror(e.errno))
-        except:
-            print("other exception")
-            raise
     
     def gentleKill (self, first=1, second=1):
         t = Thread(target=self.__gentleKill_inner,
