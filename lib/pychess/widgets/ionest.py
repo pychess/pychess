@@ -33,7 +33,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     log.debug("ionest.generalStart: %s\n %s\n %s" % (gamemodel, player0tup, player1tup))
 
     gmwidg = gamewidget.GameWidget(gamemodel)
-    gmwidg.connect("close_clicked", closeGame, gamemodel)
+    gmwidg.connect("game_close_clicked", closeGame, gamemodel)
 
     #worker.publish((gmwidg,gamemodel))
     gamewidget.attachGameWidget(gmwidg)

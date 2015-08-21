@@ -106,7 +106,7 @@ docks = {"board": (Gtk.Label(label="Board"), notebooks["board"])}
 class GameWidget (GObject.GObject):
     
     __gsignals__ = {
-        'close_clicked': (GObject.SignalFlags.RUN_FIRST, None, ()), 
+        'game_close_clicked': (GObject.SignalFlags.RUN_FIRST, None, ()), 
         'infront': (GObject.SignalFlags.RUN_FIRST, None, ()),
         'title_changed': (GObject.SignalFlags.RUN_FIRST, None, (str,)),
         'closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
@@ -563,7 +563,7 @@ class GameWidget (GObject.GObject):
         close_button.add(createImage(gtk_close))
         close_button.set_relief(Gtk.ReliefStyle.NONE)
         close_button.set_size_request(20, 18)
-        close_button.connect("clicked", lambda w: self.emit("close_clicked"))
+        close_button.connect("clicked", lambda w: self.emit("game_close_clicked"))
         hbox.pack_end(close_button, False, True, 0)
         text_hbox = Gtk.HBox()
         white_label = Gtk.Label(label="")
