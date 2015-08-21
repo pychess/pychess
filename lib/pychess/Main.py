@@ -224,6 +224,7 @@ class GladeHandlers:
         response = ionest.closeGame(gmwidg, gameDic[gmwidg])
     
     def on_quit1_activate(self, widget, *args):
+        print("on_quit1_activate()")
         if ionest.closeAllGames(gameDic.items()) in (Gtk.ResponseType.OK, Gtk.ResponseType.YES):
             Gtk.main_quit()
         else: return True
