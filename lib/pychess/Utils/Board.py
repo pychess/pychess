@@ -347,7 +347,8 @@ class Board:
             inirook = self.board.ini_rooks[self.color][side]
             finrook = self.board.fin_rooks[self.color][side]
             newBoard[Cord(finrook)] = newBoard[Cord(inirook)]
-            newBoard[Cord(inirook)] = None
+            if inirook != finrook:
+                newBoard[Cord(inirook)] = None
             if self.variant == FISCHERRANDOMCHESS:
                 finking = self.board.fin_kings[self.color][side]
                 newBoard[Cord(finking)] = king
