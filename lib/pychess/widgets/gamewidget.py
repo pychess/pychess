@@ -913,9 +913,11 @@ def _ensureReadForGameWidgets ():
     # The message area
     align = createAlignment(4,4,0,4)
     sw = Gtk.ScrolledWindow()
-    sw.add(notebooks["messageArea"])
+    port = Gtk.Viewport()
+    port.add(notebooks["messageArea"])
+    sw.add(port)
     align.add(sw)
-    hbox.pack_start(align, False, True, 0)
+    hbox.pack_start(align, True, True, 0)
     def ma_switch_page (notebook, gpointer, page_num):
         notebook.props.visible = notebook.get_nth_page(page_num).get_child().props.visible
     notebooks["messageArea"].connect("switch-page", ma_switch_page)
