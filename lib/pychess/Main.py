@@ -224,16 +224,10 @@ class GladeHandlers:
         response = ionest.closeGame(gmwidg, gameDic[gmwidg])
     
     def on_quit1_activate(self, widget, *args):
-        print(widget)
-        # trying to handle the case when clicking on game close button calls this
-        if isinstance(widget, Gtk.Button):
-            gmwidg = gamewidget.cur_gmwidg()
-            response = ionest.closeGame(gmwidg, gameDic[gmwidg])
-            return False
-            
         if ionest.closeAllGames(gameDic.items()) in (Gtk.ResponseType.OK, Gtk.ResponseType.YES):
             Gtk.main_quit()
-        else: return True
+        else:
+            return True
 
     #          View Menu          #
     
@@ -366,6 +360,8 @@ class PyChess:
         # Show main window and init d'n'd
         #=======================================================================
         widgets["window1"].set_title('%s - PyChess' % _('Welcome'))
+        widgets["window1"].connect("delete-event",
+                                   GladeHandlers.__dict__["on_quit1_activate"])
         widgets["window1"].connect("key-press-event",
                                    GladeHandlers.__dict__["on_window_key_press"])
         uistuff.keepWindowSize("main", widgets["window1"], (575,479), POSITION_GOLDEN)
