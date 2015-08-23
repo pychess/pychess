@@ -32,7 +32,7 @@ else:
             
             def __init__(self):
                 GObject.GObject.__init__(self)
-                self.player = None#Gst.ElementFactory.make("playbin", "player")
+                self.player = Gst.ElementFactory.make("playbin", "player")
                 fakesink = Gst.ElementFactory.make("fakesink", "fakesink")
                 self.player.set_property("video-sink", fakesink)
                 bus = self.player.get_bus()
