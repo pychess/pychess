@@ -307,6 +307,7 @@ Please ensure that you have given the right path and try again."))
 # Closing                                                                      #
 ################################################################################
 def closeAllGames (pairs):
+    log.debug("ionest.closeAllGames")
     changedPairs = [(gmwidg, game) for gmwidg, game in pairs if game.isChanged()]
     if len(changedPairs) == 0:
         response = Gtk.ResponseType.OK
@@ -390,6 +391,7 @@ def closeAllGames (pairs):
     return response
 
 def closeGame (gmwidg, game):
+    log.debug("ionest.closeGame")
     response = None
     if not game.isChanged():
         response = Gtk.ResponseType.OK

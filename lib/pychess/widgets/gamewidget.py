@@ -565,6 +565,7 @@ class GameWidget (GObject.GObject):
         close_button.set_size_request(20, 18)
 
         def on_game_close_clicked(button):
+            log.debug("gamewidget.on_game_close_clicked %s" % button)
             self.emit("game_close_clicked")
         close_button.connect("clicked", on_game_close_clicked)
 

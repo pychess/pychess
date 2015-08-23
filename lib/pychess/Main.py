@@ -7,6 +7,7 @@ import atexit
 import logging
 import signal
 import subprocess
+import platform
 import sys
 
 from gi.repository import Gdk
@@ -19,7 +20,7 @@ from pychess.System import conf, uistuff, prefix, SubProcess, Log, idle_add
 from pychess.System.uistuff import POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN
 from pychess.System.Log import log, LogPipe
 from pychess.System.LogEmitter import GLogHandler, logemitter
-from pychess.System.debug import start_thread_dump
+from pychess.System.debug import start_thread_dump, dump_threads
 from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
 from pychess.Utils.const import HINT, NAME, SPY
 from pychess.widgets import enginesDialog
@@ -162,6 +163,7 @@ class GladeHandlers:
                 recentManager.add_item("file://" + o.path)
     
     def on_gmwidg_closed (gmwidg):
+        log.debug("GladeHandlers.on_gmwidg_closed")
         del gameDic[gmwidg]
         if not gameDic:
             for widget in gamewidget.MENU_ITEMS:
@@ -224,6 +226,8 @@ class GladeHandlers:
         response = ionest.closeGame(gmwidg, gameDic[gmwidg])
     
     def on_quit1_activate(self, widget, *args):
+        log.debug("GladeHandlers.on_quit1_activate %s" % widget)
+        dump_threads()
         if ionest.closeAllGames(gameDic.items()) in (Gtk.ResponseType.OK, Gtk.ResponseType.YES):
             Gtk.main_quit()
         else:
@@ -396,15 +400,12 @@ class PyChess:
         link = self.aboutdialog.get_website()
         self.aboutdialog.set_copyright("Copyright © 2006-2015")
         self.aboutdialog.set_version(VERSION_NAME+" "+VERSION)
-        if os.path.isdir(prefix.addDataPrefix(".hg")):
-            cmd = ["hg", "tip", "--cwd", prefix.getDataPrefix(), "--template", "{node|short} {date|isodate}"]
-            process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-            out = process.stdout.readline().split()
-            if len(out)>=2:
+        if os.path.isdir(prefix.addDataPrefix(".git")):
+            label = subprocess.check_output(["git", "describe"])
+            if label:
                 comments = self.aboutdialog.get_comments()
-                self.hg_rev = out[0]
-                self.hg_date = out[1]
-                self.aboutdialog.set_comments("rev. %s\n%s\n%s" % (self.hg_rev, self.hg_date, comments))
+                self.git_rev = label
+                self.aboutdialog.set_comments("git %s\n%s" % (self.git_rev, comments))
         
         with open(prefix.addDataPrefix("ARTISTS"), encoding="utf-8") as f:
             self.aboutdialog.set_artists(f.read().splitlines())
@@ -499,8 +500,11 @@ def run (no_debug, no_idle_add_debug, no_thread_debug, log_viewer, chess_file,
 
     sys.stdout = LogPipe(sys.stdout, "stdout")
     sys.stderr = LogPipe(sys.stderr, "stdout")
-    log.info("PyChess %s %s rev. %s %s started" % (VERSION_NAME, VERSION, pychess.hg_rev, pychess.hg_date))
+    log.info("PyChess %s %s git %s" % (VERSION_NAME, VERSION, pychess.git_rev))
     log.info("Command line args: '%s'" % chess_file)
+    log.info("Platform: %s" % platform.platform())
+    log.info("Python version: %s.%s.%s" % sys.version_info[0:3])
+    log.info("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
     if not no_thread_debug:
         start_thread_dump()
     if ics_host:
