@@ -227,7 +227,7 @@ class GladeHandlers:
     
     def on_quit1_activate(self, widget, *args):
         if isinstance(widget, Gdk.Event):
-            if len(gameDic) == 1:
+            if len(gameDic) == 1 and conf.get("hideTabs", False):
                 gmwidg = gamewidget.cur_gmwidg()
                 response = ionest.closeGame(gmwidg, gameDic[gmwidg])
                 return True
