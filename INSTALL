@@ -20,6 +20,7 @@ $ PYTHONPATH=lib/ python run_tests.py
 Dependencies for Ubuntu/Debian:
 gnome-icon-theme
 python >= 2.7   (or python3)
+python-cairo    (or python3-cairo)
 python-gi       (or python3-gi)
 python-gi-cairo (or python3-gi-cairo)
 gobject-introspection
