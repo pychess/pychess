@@ -324,8 +324,7 @@ dnd_list = [ ('application/x-chess-pgn', 0, 0xbadbeef),
 
 class PyChess:
     def __init__(self, log_viewer, chess_file):
-        self.hg_rev = ""
-        self.hg_date = ""
+        self.git_rev = ""
         
         self.initGlade(log_viewer)
         self.handleArgs(chess_file)

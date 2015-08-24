@@ -15,13 +15,20 @@ if getattr(sys, 'frozen', False):
     _prefix = ""
     _installed = True
 else:
+    home_local = os.path.expanduser("~") + "/.local"
     if sys.prefix in __file__:
         for sub in ("share", "games", "share/games",
-                    "local/games", "local/share/games"):
+                    "local/share", "local/games", "local/share/games"):
             _prefix = os.path.join (sys.prefix, sub, "pychess")
-            if os.path.isdir(_prefix):
+            if os.path.isdir(os.path.join(_prefix, "pieces")):
                 _installed = True
                 break
+        else:
+            raise Exception("can't find the pychess data directory")
+    elif home_local in __file__:
+        _prefix = os.path.join (home_local, "share", "pychess")
+        if os.path.isdir(os.path.join(_prefix, "pieces")):
+            _installed = True
         else:
             raise Exception("can't find the pychess data directory")
     else:
