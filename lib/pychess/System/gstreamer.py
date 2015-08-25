@@ -33,10 +33,13 @@ else:
             def __init__(self):
                 GObject.GObject.__init__(self)
                 self.player = Gst.ElementFactory.make("playbin", "player")
-                fakesink = Gst.ElementFactory.make("fakesink", "fakesink")
-                self.player.set_property("video-sink", fakesink)
-                bus = self.player.get_bus()
-                bus.connect("message", self.onMessage)
+                if self.player is None:
+                    log.error('ERROR: Gst.ElementFactory.make("playbin", "player") failed')
+                else:
+                    fakesink = Gst.ElementFactory.make("fakesink", "fakesink")
+                    self.player.set_property("video-sink", fakesink)
+                    bus = self.player.get_bus()
+                    bus.connect("message", self.onMessage)
             
             def onMessage(self, bus, message):
                 if message.type == Gst.MessageType.ERROR:
@@ -53,6 +56,7 @@ else:
                 return True
             
             def play(self, uri):
-                self.player.set_state(Gst.State.READY)
-                self.player.set_property("uri", uri)
-                self.player.set_state(Gst.State.PLAYING)
+                if self.player is not None:
+                    self.player.set_state(Gst.State.READY)
+                    self.player.set_property("uri", uri)
+                    self.player.set_state(Gst.State.PLAYING)
