@@ -61,7 +61,7 @@ class GameModel (GObject.GObject, Thread):
         # first time. Notice this is after players.start has been called.
         "game_started":  (GObject.SignalFlags.RUN_FIRST, None, ()),
         # game_changed is emitted when a move has been made.
-        "game_changed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "game_changed":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
         # moves_undoig is emitted when a undoMoves call has been accepted, but
         # before anywork has been done to execute it.
         "moves_undoing": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
@@ -637,7 +637,7 @@ class GameModel (GObject.GObject, Thread):
                 if self.timed:
                     self.timemodel.tap()
                 
-                self.emit("game_changed")
+                self.emit("game_changed", self.ply)
 
                 for spectator in self.spectators.values():
                     if spectator.board == self.boards[-2]:
@@ -862,6 +862,7 @@ class GameModel (GObject.GObject, Thread):
             from pychess.Utils.lutils.LBoard import LBoard
             null_board = LBoard()
             null_board.prev = board0.board
+            null_board.plyCount = board0.board.plyCount + 1
             board0.board.next = null_board
 
         board0.board.next.children.append([board.board for board in variation])

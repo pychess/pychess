@@ -593,7 +593,6 @@ class Sidepanel(Gtk.TextView):
         
     @idle_add
     def variation_added(self, gamemodel, boards, parent, comment, score):
-        
         # first find the iter where we will inset this new variation
         node = None
         for n in self.nodelist:
@@ -963,12 +962,15 @@ class Sidepanel(Gtk.TextView):
         self.textbuffer.delete(start, end)
 
     @idle_add
-    def game_changed(self, game):
+    def game_changed(self, game, ply):
+        board = game.getBoardAtPly(ply, variation=0).board
+        # if self.update() insterted all nodes before (f.e opening_changed), do nothing
+        if self.nodelist and self.nodelist[-1]["board"] == board:
+            return
         end_iter = self.textbuffer.get_end_iter
         start = end_iter().get_offset()
-        board = game.getBoardAtPly(game.ply, variation=0).board
-
-        self.textbuffer.insert(end_iter(), "%s " % self.__movestr(board))
+        movestr = self.__movestr(board)
+        self.textbuffer.insert(end_iter(), "%s " % movestr)
 
         startIter = self.textbuffer.get_iter_at_offset(start)
         endIter = self.textbuffer.get_iter_at_offset(end_iter().get_offset())

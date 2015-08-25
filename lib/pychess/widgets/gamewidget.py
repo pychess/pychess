@@ -336,7 +336,7 @@ class GameWidget (GObject.GObject):
         self._set_arrow(SPY, None)
         return False
     
-    def game_changed (self, gamemodel):
+    def game_changed (self, gamemodel, ply):
         '''This runs when the game changes. It updates everything.'''
         self._update_menu_abort()
         self._update_menu_ask_to_move()
@@ -369,7 +369,7 @@ class GameWidget (GObject.GObject):
         return False
     
     def moves_undone (self, gamemodel, moves):
-        self.game_changed(gamemodel)
+        self.game_changed(gamemodel, 0)
         return False
     
     def game_unended (self, gamemodel):

@@ -32,7 +32,7 @@ class Sidepanel:
         self.boardview = gmwidg.board.view
         
         self.boardview.model.connect_after("game_changed", self.game_changed)
-        self.boardview.model.connect_after("game_started", self.game_changed)
+        self.boardview.model.connect_after("game_started", self.game_started)
         self.boardview.model.connect_after("moves_undoing", self.moves_undoing)
         self.boardview.connect("shown_changed", self.shown_changed)
         
@@ -123,12 +123,15 @@ class Sidepanel:
                     continue
     
     @idle_add
-    def game_changed (self, game):
+    def game_changed (self, game, ply):
         len_ = len(self.left.get_model()) + len(self.right.get_model()) + 1
         if len(self.left.get_model()) and not self.left.get_model()[0][0]:
             len_ -= 1
-        for ply in range(len_+game.lowply, game.ply+1):
-            self.__addMove(game, ply)
+        for i in range(len_+game.lowply, ply+1):
+            self.__addMove(game, i)
+
+    def game_started(self, game):
+        self.game_changed(game, 0)
     
     def __addMove(self, game, ply):
         #print "Am I doing anything?"

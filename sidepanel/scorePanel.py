@@ -36,9 +36,7 @@ class Sidepanel:
         self.boardview.model.connect_after("game_changed", self.game_changed)
         self.boardview.model.connect_after("moves_undoing", self.moves_undoing)
         self.boardview.model.connect_after("analysis_changed", self.analysis_changed)
-        
-        # Add the initial board
-        self.boardview.model.connect_after("game_started", self.game_changed)
+        self.boardview.model.connect_after("game_started", self.game_started)
    
         uistuff.keepDown(__widget__)     
         
@@ -55,11 +53,11 @@ class Sidepanel:
             self.plot.select(model.ply-model.lowply - moves)
         self.plot.redraw()
     
-    def game_changed (self, model):
-        if len(self.plot)+model.lowply > model.ply:
+    def game_changed (self, model, ply):
+        if len(self.plot)+model.lowply > ply:
             return
         
-        for i in range(len(self.plot)+model.lowply, model.ply):
+        for i in range(len(self.plot)+model.lowply, ply):
             if i in model.scores:
                 points = model.scores[i][1]
             else:
@@ -73,17 +71,17 @@ class Sidepanel:
         elif model.status == BLACKWON:
             points = -sys.maxsize
         else:
-            if model.ply in model.scores:
-                points = model.scores[model.ply][1]
+            if ply in model.scores:
+                points = model.scores[ply][1]
             else:
-                points = leval.evaluateComplete(model.getBoardAtPly(model.ply).board, WHITE)
+                points = leval.evaluateComplete(model.getBoardAtPly(ply).board, WHITE)
         self.plot.addScore(points)
         
         # As shown_changed will normally be emitted just after game_changed -
         # if we are viewing the latest position - we can do the selection change
         # now, and thereby avoid redraw being called twice
-        if self.plot.selected == model.ply-model.lowply -1:
-            self.plot.select(model.ply-model.lowply)
+        if self.plot.selected == ply-model.lowply -1:
+            self.plot.select(ply-model.lowply)
         self.plot.redraw()
         
         # Uncomment this to debug eval function
@@ -113,6 +111,9 @@ class Sidepanel:
             print("knights:",leval.evalKnights (board))
             print("king:",leval.evalKing(board,phase))
         print("----------------------")
+
+    def game_started(self, model):
+        self.game_changed(model, 0)
         
     def shown_changed (self, boardview, shown):
         if not boardview.shownIsMainLine():

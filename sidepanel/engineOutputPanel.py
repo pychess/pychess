@@ -50,7 +50,7 @@ class Sidepanel:
         
         self.boardview.model.connect_after("game_changed", self.game_changed)
         self.boardview.model.connect_after("players_changed", self.players_changed)
-        self.boardview.model.connect_after("game_started", self.game_changed)
+        self.boardview.model.connect_after("game_started", self.game_started)
         
         return __widget__
 
@@ -128,11 +128,11 @@ class Sidepanel:
         log.debug("engineOutputPanel.players_changed: returning")
         return
 
-    def game_started (self, model):   
+    def game_started (self, model):
         self.updateVisibleOutputs(model)
         return
 
-    def game_changed (self, model):
+    def game_changed (self, model, ply):
         self.updateVisibleOutputs(model)
         return
 
