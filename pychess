@@ -21,17 +21,25 @@ if sys.version_info < (2, 7, 0):
     print('ERROR: PyChess requires Python >= 2.7')
     sys.exit(1)
 
-import gi
-gi.require_version("Gtk", "3.0")
-
 try:
+    import cairo
+    from gi.repository import Gtk
+    from gi.repository import Gdk
+    from gi.repository import GdkPixbuf
+    from gi.repository import GLib
+    from gi.repository import GObject
+    from gi.repository import Pango
+    from gi.repository import PangoCairo
+    from gi.repository import Rsvg
     from gi.repository import GtkSource
-except ImportError:
-    print('ERROR: Could not load the gtksourceview2 python module.')
-    print('You need to install the gtksourceview2 python package which is ')
-    print('called pygtksourceview in most distributions')
+    from gi.repository import cairo as gi_cairo
+except ImportError as e:
+    print("ERROR: Not all dependencies installed! You can find them in INSTALL")
+    print(e)
     sys.exit(1)
 
+import gi
+gi.require_version("Gtk", "3.0")
 
 ###############################################################################
 # Fix environment
