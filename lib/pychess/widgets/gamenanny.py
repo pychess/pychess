@@ -208,7 +208,7 @@ def game_paused (gamemodel, gmwidg):
     _set_statusbar(gmwidg, s)
     return False
     
-def game_changed (gamemodel, gmwidg):
+def game_changed (gamemodel, ply, gmwidg):
     _set_statusbar(gmwidg, "")
     return False
 

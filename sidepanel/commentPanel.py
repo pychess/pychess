@@ -89,12 +89,12 @@ class Sidepanel:
             model.remove(model.get_iter( (len(model)-1,) ))
     
     def game_started (self, model):
-        self.game_changed(model)
+        self.game_changed(model, 0)
 
     @idle_add
-    def game_changed (self, model):
-        for ply in range(len(self.store)+model.lowply, model.ply+1):
-            self.addComment(model, self.__chooseComment(model, ply))
+    def game_changed (self, model, ply):
+        for i in range(len(self.store)+model.lowply, ply+1):
+            self.addComment(model, self.__chooseComment(model, i))
     
     def addComment (self, model, comment):
         self.store.append([comment])
