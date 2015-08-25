@@ -199,7 +199,7 @@ class BoardView (Gtk.DrawingArea):
             self.gotStarted = True
             self.startAnimation()
     
-    def game_changed (self, model):
+    def game_changed (self, model, ply):
         # Play sounds
         if self.model.players and self.model.status != WAITING_TO_START:
             move = model.moves[-1]
@@ -219,8 +219,8 @@ class BoardView (Gtk.DrawingArea):
         # Auto updating self.shown can be disabled. Useful for loading games.
         # If we are not at the latest game we are probably browsing the history,
         # and we won't like auto updating.
-        if self.autoUpdateShown and self.shown+1 >= model.ply and self.shownIsMainLine():
-            self.shown = model.ply
+        if self.autoUpdateShown and self.shown+1 >= ply and self.shownIsMainLine():
+            self.shown = ply
             
             # Rotate board
             if conf.get("autoRotate", True):
