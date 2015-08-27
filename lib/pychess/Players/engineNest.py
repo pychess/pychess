@@ -27,6 +27,7 @@ attrToProtocol = {"uci": UCIEngine, "xboard": CECPEngine}
 PYTHONBIN = sys.executable.split("/")[-1]
 
 backup = [
+    {"protocol": "xboard", "name": "pychess-engine", "country": "dk"},
     {"protocol": "xboard", "name": "PyChess.py", "country": "dk",
         "vm_name": PYTHONBIN, "vm_args": ["-u"]},
 #    {"protocol": "xboard", "name": "shatranj.py", "country": "us",
@@ -86,7 +87,8 @@ class EngineDiscoverer (GObject.GObject):
         except IOError as e:
             log.info("engineNest: Couldn\'t open engines.json, creating a new.\n%s" % e)
             self._engines = deepcopy(backup)
-    
+        
+        # Try to detect engines shipping .eng files on Linux (suggested by HGM on talkcess.com forum)
         for protocol in ("xboard", "uci"):
             for path in ("/usr/local/share/games/plugins", "/usr/share/games/plugins"):
                 path = os.path.join(path, protocol)
@@ -125,9 +127,12 @@ class EngineDiscoverer (GObject.GObject):
             imported """        
         if engine.get("vm_name") is not None:          
             altpath = engine.get("vm_command")
-            vmpath = searchPath(engine["vm_name"], access=os.R_OK|os.X_OK, altpath = altpath)
+            if getattr(sys, 'frozen', False) and engine["vm_name"] == "wine":
+                vmpath = None
+            else:
+                vmpath = searchPath(engine["vm_name"], access=os.R_OK|os.X_OK, altpath = altpath)
             
-            if engine["name"] == "PyChess.py":
+            if engine["name"] == "PyChess.py" and not getattr(sys, 'frozen', False):
                 path = join(abspath(dirname(__file__)), "PyChess.py")
                 if not os.access(path, os.R_OK):
                     path = None
