@@ -2,17 +2,28 @@
 
 from __future__ import print_function
 
-from imp import load_module, find_module
-pychess = load_module("pychess", *find_module("pychess",["lib"]))
-
-from distutils.core import setup
-from distutils.command.register import register
 from glob import glob
 from os import listdir
 from os.path import isdir, isfile
 import os
+import site
 import sys
 
+from imp import load_module, find_module
+pychess = load_module("pychess", *find_module("pychess",["lib"]))
+
+bdist_msi =False
+if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
+    try:
+        from cx_Freeze import setup, Executable
+        bdist_msi = True
+    except ImportError:
+        print("ERROR: can't import cx_Freeze!")
+        sys.exit(1)
+else:
+    from distutils.core import setup
+
+from distutils.command.register import register
 
 if sys.version_info < (2, 7, 0):
     print('ERROR: PyChess requires Python >= 2.7')
@@ -25,7 +36,7 @@ if sys.platform == "win32":
         print('ERROR: PyChess in Windows Platform requires to install PyGObject.')
         print('Installing from http://sourceforge.net/projects/pygobjectwin32')
         sys.exit(1)
-    
+
 VERSION = pychess.VERSION
 
 NAME = "pychess"
@@ -148,13 +159,75 @@ for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d
         os.popen("msgfmt lang/%s/%s.po -o lang/%s/%s.mo" % (dir,pofile,dir,pofile))
     DATA_FILES += [("share/locale/"+dir+"/LC_MESSAGES", ["lang/"+dir+"/"+pofile+".mo"])]
 
-# Packages
+PACKAGES = []
 
-PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
-            "pychess.Players", "pychess.Savers", "pychess.System",
-            "pychess.Utils", "pychess.Utils.lutils", "pychess.Variants",
-            "pychess.widgets", "pychess.widgets.pydock" ]
-# Setup
+if bdist_msi:
+    # TODO: cx_freeze doesn't allow letters in version
+    VERSION = "0.12"
+    
+    ## Get the site-package folder, not everybody will install
+    ## Python into C:\PythonXX
+    site_dir = site.getsitepackages()[1]
+    include_dll_path = os.path.join(site_dir, "gnome")
+
+    ## Collect the list of missing dll when cx_freeze builds the app
+    missing_dll = [f for f in os.listdir(include_dll_path) if \
+                    f.endswith(".dll") or (f.startswith("gspawn") and f.endswith(".exe"))]
+
+    ## We need to add all the libraries too (for themes, etc..)
+    gtk_libs = ['etc',
+                'share/icons/hicolor',
+                'share/icons/adwaita/16x16',
+                'share/icons/adwaita/24x24',
+                'lib/gio',
+                'lib/gdk-pixbuf-2.0',
+                'lib/girepository-1.0',
+                'share/glib-2.0'
+    ]
+
+    ## Create the list of includes as cx_freeze likes
+    include_files = []
+    for dll in missing_dll:
+        include_files.append((os.path.join(include_dll_path, dll), dll))
+
+    ## Let's add gtk libraries folders and files
+    for lib in gtk_libs:
+        include_files.append((os.path.join(include_dll_path, lib), lib))
+
+    base = None
+    ## Lets not open the console while running the app
+    if sys.platform == "win32":
+        base = "Win32GUI"
+
+    executables = [Executable("pychess",
+                            base=base,
+                            icon="pychess.ico",
+                            shortcutName="PyChess",
+                            shortcutDir="DesktopFolder"),
+                    Executable(script="lib/__main__.py",
+                            targetName="pychess-engine.exe",
+                            base=base)]
+                            
+    bdist_msi_options = {
+        "upgrade_code": "{5167584f-c196-428f-be40-4c861025e90a}",
+        "add_to_path": True}
+    
+    build_exe_options = {
+        "compressed": False,
+        "path": sys.path + ["lib"],
+        "includes": ["gi"],
+        "packages": ["gi", "pychess"],
+        "include_files": include_files,
+        }
+else:
+    PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
+                "pychess.Players", "pychess.Savers", "pychess.System",
+                "pychess.Utils", "pychess.Utils.lutils", "pychess.Variants",
+                "pychess.widgets", "pychess.widgets.pydock" ]
+
+    build_exe_options = {}
+    bdist_msi_options = {}
+    executables = {}
 
 setup (
     cmdclass         = {"register": RegisterCommand},
@@ -173,5 +246,9 @@ setup (
     package_dir      = {'': 'lib'},
     packages         = PACKAGES,
     data_files       = DATA_FILES,
-    scripts          = ['pychess']
+    scripts          = ['pychess'],
+    options          = {"build_exe": build_exe_options,
+                        "bdist_msi": bdist_msi_options
+                        },
+    executables      = executables
 )

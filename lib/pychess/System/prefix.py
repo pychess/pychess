@@ -10,9 +10,9 @@ import sys
 # Locate files in system space                                                 #
 ################################################################################
 
-# Test if we are installed on the system, or are being run from tar/svn
+# Test if we are installed on the system, frozen or are being run from tar/svn
 if getattr(sys, 'frozen', False):
-    _prefix = ""
+    _prefix = os.path.join(os.path.dirname(sys.executable), "share", "pychess")
     _installed = True
 else:
     home_local = os.path.expanduser("~") + "/.local"
