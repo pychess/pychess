@@ -8,7 +8,7 @@ from gi.repository import GObject
 
 from pychess import Savers
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Savers import fen, epd, pgn, chessalpha2
+from pychess.Savers import *
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
