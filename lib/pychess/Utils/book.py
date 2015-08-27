@@ -10,7 +10,7 @@ from pychess.Utils.lutils.lmove import parsePolyglot
 from pychess.System.Log import log
 
 
-if getattr(sys, 'frozen', False):
+if getattr(sys, 'frozen', False) and hasattr(sys, "_MEIPASS"):
     # pyinstaller specific!
     path = os.path.join(sys._MEIPASS, "pychess_book.bin")
 else:
