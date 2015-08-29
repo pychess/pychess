@@ -1,13 +1,17 @@
 import os
+import sys
 
-from pychess.compat import open, urlopen, url2pathname
+from pychess.compat import open, urlopen, unquote
 
 PGN_ENCODING = "latin_1"
 
 def splitUri (uri):
-    uri = url2pathname(uri) # escape special chars
+    uri = unquote(uri) # escape special chars
     uri = uri.strip('\r\n\x00') # remove \r\n and NULL
-    return uri.split("://")
+    if sys.platform == "win32":
+        return uri.split(":///")
+    else:
+        return uri.split("://")
 
 def protoopen (uri):
     """ Function for opening many things """
