@@ -1,9 +1,9 @@
 import os, atexit
 
-from pychess.compat import SafeConfigParser
+from pychess.compat import RawConfigParser
 from pychess.System.Log import log
 
-configParser = SafeConfigParser()
+configParser = RawConfigParser()
 from pychess.System.prefix import addUserConfigPrefix
 
 section = "General"
