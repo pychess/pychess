@@ -285,6 +285,7 @@ Please ensure that you have given the right path and try again."))
                 continue
         else:
             print(repr(uri))
+            
         try:
             game.save(uri, saver, append, position)
         except IOError as e:
@@ -293,7 +294,6 @@ Please ensure that you have given the right path and try again."))
             d.set_title(_("Could not save the file"))
             d.set_markup(_("<big><b>PyChess was not able to save the game</b></big>"))
             d.format_secondary_text(_("The error was: %s") % ", ".join(str(a) for a in e.args))
-            os.remove(uri)
             d.run()
             d.hide()
             continue
