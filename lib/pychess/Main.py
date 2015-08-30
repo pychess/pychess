@@ -404,7 +404,10 @@ class PyChess:
         self.aboutdialog.set_copyright("Copyright © 2006-2015")
         self.aboutdialog.set_version(VERSION_NAME+" "+VERSION)
         if os.path.isdir(prefix.addDataPrefix(".git")):
-            label = subprocess.check_output(["git", "describe"])
+            try:
+                label = subprocess.check_output(["git", "describe"])
+            except CalledProcessError:
+                label = ""
             if label:
                 comments = self.aboutdialog.get_comments()
                 self.git_rev = label
