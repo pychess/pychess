@@ -406,7 +406,7 @@ class PyChess:
         if os.path.isdir(prefix.addDataPrefix(".git")):
             try:
                 label = subprocess.check_output(["git", "describe"])
-            except CalledProcessError:
+            except subprocess.CalledProcessError:
                 label = ""
             if label:
                 comments = self.aboutdialog.get_comments()
