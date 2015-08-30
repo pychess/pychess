@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 import imp
 import os
+import sys
 import traceback
 import threading
 from threading import currentThread
@@ -182,7 +183,7 @@ class GameWidget (GObject.GObject):
         self.cids.clear()
     
     def _update_menu_abort (self):
-        if self.gamemodel.isEngine2EngineGame():
+        if self.gamemodel.hasEnginePlayer():
             self.menuitems["abort"].sensitive = True
             self.menuitems["abort"].tooltip = ""
         elif self.gamemodel.isObservationGame():
@@ -244,7 +245,10 @@ class GameWidget (GObject.GObject):
                  (self.gamemodel.isLocalGame() or \
                   (isinstance(self.gamemodel, ICGameModel) and \
                    self.gamemodel.ply > 1))):
-                return True
+                if sys.platform == "win32" and self.gamemodel.hasEnginePlayer():
+                    return False
+                else:
+                    return True
             else:
                 return False
         
