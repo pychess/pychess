@@ -353,6 +353,12 @@ class GameModel (GObject.GObject, Thread):
             return True
         else:
             return False
+
+    def hasEnginePlayer (self):
+        if self.players[0].__type__ == ARTIFICIAL or self.players[1].__type__ == ARTIFICIAL:
+            return True
+        else:
+            return False
     
     def isLocalGame (self):
         if self.players[0].__type__ != REMOTE and self.players[1].__type__ != REMOTE:
