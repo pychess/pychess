@@ -43,7 +43,9 @@ class ChessClock (Gtk.DrawingArea):
         
     def expose(self, widget, ctx):        
         context = widget.get_window().cairo_create()
-        a = widget.get_allocation()
+        ce = context.clip_extents()
+        a = Gdk.Rectangle()
+        a.x, a.y, a.width, a.height = ce[0], ce[1], ce[2]-ce[0], ce[3]-ce[1]
         context.rectangle(a.x, a.y,
                           a.width, a.height)       
         context.clip()
@@ -60,7 +62,9 @@ class ChessClock (Gtk.DrawingArea):
         # Draw graphical Clock. Should this be moved to preferences?
         drawClock = True 
         
-        rect = self.get_allocation()
+        rect = Gdk.Rectangle()
+        ce = context.clip_extents()
+        rect.x, rect.y, rect.width, rect.height = ce[0], ce[1], ce[2]-ce[0], ce[3]-ce[1]
         context.rectangle(
             rect.width/2. * self.model.movingColor, 0,
             rect.width/2., rect.height)

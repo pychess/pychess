@@ -583,33 +583,29 @@ class BoardView (Gtk.DrawingArea):
         s = square/self.FILES
         self.square = (xc, yc, square, s)
     
-    def expose(self, widget, ctx):       
+    def expose(self, widget, ctx):
         context = widget.get_window().cairo_create()
-        #r = (event.area.x, event.area.y, event.area.width, event.area.height)
-        #context.rectangle(r[0]-.5, r[1]-.5, r[2]+1, r[3]+1)
-        #context.clip()
-        
+
+        self.drawcount += 1
+        start = time()
+        a = Gdk.Rectangle()
+        ce = ctx.clip_extents()
+        a.x, a.y, a.width, a.height = ce[0], ce[1], ce[2]-ce[0], ce[3]-ce[1]
+
         if False:
             import profile
-            profile.runctx("self.draw(context, event.area)", locals(), globals(), "/tmp/pychessprofile")
+            profile.runctx("self.draw(context, a)", locals(), globals(), "/tmp/pychessprofile")
             from pstats import Stats
             s = Stats("/tmp/pychessprofile")
             s.sort_stats('cumulative')
             s.print_stats()
         else:
-            self.drawcount += 1
-            start = time()
-            al = widget.get_allocation()                      
-            a = Gdk.Rectangle()
-            a.x=a.y=0
-            a.width = al.width
-            a.height = al.height             
             with self.animationLock:
                 self.draw(context, a)
             self.drawtime += time() - start
             #if self.drawcount % 100 == 0:
-            #    print "Average FPS: %0.3f - %d / %d" % \
-            #      (self.drawcount/self.drawtime, self.drawcount, self.drawtime)
+            #    print( "Average FPS: %0.3f - %d / %d" % \
+            #      (self.drawcount/self.drawtime, self.drawcount, self.drawtime))
             
         return False
     
