@@ -586,7 +586,6 @@ class BoardView (Gtk.DrawingArea):
     def expose(self, widget, ctx):
         context = widget.get_window().cairo_create()
 
-        self.drawcount += 1
         start = time()
         a = Gdk.Rectangle()
         ce = ctx.clip_extents()
@@ -602,7 +601,8 @@ class BoardView (Gtk.DrawingArea):
         else:
             with self.animationLock:
                 self.draw(context, a)
-            self.drawtime += time() - start
+            #self.drawcount += 1
+            #self.drawtime += time() - start
             #if self.drawcount % 100 == 0:
             #    print( "Average FPS: %0.3f - %d / %d" % \
             #      (self.drawcount/self.drawtime, self.drawcount, self.drawtime))
@@ -792,9 +792,7 @@ class BoardView (Gtk.DrawingArea):
             for x in range(self.FILES):
                 for y in range(self.RANKS):
                     if x % 2 + y % 2 == 1:
-                        bounding = self.cord2RectRelative((xc+x*s, yc+y*s, s))                 
-                        if intersects(rect(bounding), r):
-                            context.rectangle(xc+x*s, yc+y*s, s, s)
+                        context.rectangle(xc+x*s, yc+y*s, s, s)
             context.fill()
         
         if not self.showCords:
