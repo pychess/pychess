@@ -860,8 +860,6 @@ class BoardView (Gtk.DrawingArea):
         pieces = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
         xc, yc, square, s = self.square
 
-        parseC = lambda c: (c.red/65535., c.green/65535., c.blue/65535.)
-
         sc = self.get_style_context()
 
         found, col = sc.lookup_color("p_fg_color")
