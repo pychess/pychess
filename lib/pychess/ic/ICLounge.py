@@ -1600,7 +1600,7 @@ class SeekChallengeSection (Section):
         self.widgets["minutesSpin"].connect("value-changed", self.onTimeSpinChanged)
         self.widgets["gainSpin"].connect("value-changed", self.onTimeSpinChanged)
         self.onTimeSpinChanged(self.widgets["minutesSpin"])
-        
+
         self.widgets["nocolorRadio"].connect("toggled", self.onColorRadioChanged)
         self.widgets["whitecolorRadio"].connect("toggled", self.onColorRadioChanged)
         self.widgets["blackcolorRadio"].connect("toggled", self.onColorRadioChanged)
@@ -1622,6 +1622,14 @@ class SeekChallengeSection (Section):
         self.widgets["toleranceSlider"].connect("value-changed", self.onToleranceSliderChanged)
         self.onToleranceSliderChanged(self.widgets["toleranceSlider"])
         self.widgets["toleranceButton"].connect("clicked", self.onToleranceButtonClicked)
+
+        def intGetter (widget):
+            return int(widget.get_value())
+        self.seekEditorWidgetGettersSetters["minutesSpin"] = (intGetter, None)
+        self.seekEditorWidgetGettersSetters["gainSpin"] = (intGetter, None)
+        self.seekEditorWidgetGettersSetters["ratingCenterSlider"] = (intGetter, None)
+        self.seekEditorWidgetGettersSetters["toleranceSlider"] = (intGetter, None)
+
         def toleranceHBoxGetter (widget):
             return self.widgets["toleranceHBox"].get_property("visible")
         def toleranceHBoxSetter (widget, visible):
