@@ -101,12 +101,16 @@ class InfoBarNotebook(Gtk.Notebook):
     def push_message (self, message):
 
         def on_dismissed(mesage):
-            self.remove_page(self.page_num(message))
+            pn = self.page_num(message)
+            if pn != -1:
+                self.remove_page(pn)
             
         def on_response(message, response_id):
             if callable(message.callback):
                 message.callback(self, response_id, message)
-            self.remove_page(self.page_num(message))
+            pn = self.page_num(message)
+            if pn != -1:
+                self.remove_page(pn)
             
         cp = self.get_current_page()
         if cp > 0:
