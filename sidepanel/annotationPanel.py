@@ -429,7 +429,11 @@ class Sidepanel(Gtk.TextView):
                 self.gamemodel.variations.remove(vari)
 
         last_node = self.nodelist[-1] == node
-
+        
+        # remove null_board if variation was added on last played move
+        if not parent.fen_was_applied:
+            parent.prev.next = None
+        
         startnode = node["vari"]
         start = startnode["start"]
         end = node["end"]
@@ -610,17 +614,6 @@ class Sidepanel(Gtk.TextView):
         
         # diff will store the offset we need to shift the remaining stuff
         diff = 0
-        
-        # inserting score of move we variating as comment
-        if parent.plyCount in gamemodel.scores and not isinstance(parent.children[0], basestring):
-            bmoves, bscore, bdepth = gamemodel.scores[parent.plyCount]
-            bscore = bscore * -1 if parent.color == BLACK else bscore
-            bcomment = prettyPrintScore(bscore, bdepth)
-            parent.children.insert(0, bcomment)
-            inserted_node = self.insert_comment(bcomment, parent, None, level=level)
-            diff += inserted_node["end"] - inserted_node["start"]
-            end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
-            next_node_index += 1
         
         # variation opening parenthesis
         sdiff, opening_node = self.variation_start(end, next_node_index, level)

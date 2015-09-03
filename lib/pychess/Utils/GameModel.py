@@ -868,7 +868,6 @@ class GameModel (GObject.GObject, Thread):
             from pychess.Utils.lutils.LBoard import LBoard
             null_board = LBoard()
             null_board.prev = board0.board
-            null_board.plyCount = board0.board.plyCount + 1
             board0.board.next = null_board
 
         board0.board.next.children.append([board.board for board in variation])

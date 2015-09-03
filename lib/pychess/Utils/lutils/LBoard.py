@@ -748,7 +748,7 @@ class LBoard:
             return "".join(strs)
     
     def __repr__ (self):
-        if not hasattr(self, "color"):
+        if not self.fen_was_applied:
             return("LBoard without applied FEN")
         b = "#" + reprColor[self.color] + " "
         b += self.reprCastling() + " "
