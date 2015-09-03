@@ -187,7 +187,7 @@ class Sidepanel:
                        + getMessages("defencive_moves"):
             if prefix:
                 strings.append("%s %s %s %s" %
-                              (reprColor[color], prefix, _("and"), message))
+                              (reprColor[color], prefix, _("and")+"\n", message))
                 prefix = ""
             else:
                 strings.append("%s %s" % (reprColor[color], message))
@@ -204,7 +204,7 @@ class Sidepanel:
                 score, message = messages[0]
                 if prefix:
                     strings.append("%s %s %s %s" %
-                                  (reprColor[color], prefix, _("and"), message))
+                                  (reprColor[color], prefix, _("and")+"\n", message))
                     prefix = ""
 
         # ----------------------------------------------------------------------
