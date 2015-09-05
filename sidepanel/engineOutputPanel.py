@@ -205,6 +205,7 @@ class EngineOutput (Gtk.VBox):
     def _del (self):
         self.detachEngine()
 
+    @idle_add
     def appendNewline (self):
         # Start a new line if text output isn't empty:
         if self.output.get_buffer().get_char_count() > 0:
@@ -212,6 +213,7 @@ class EngineOutput (Gtk.VBox):
             self.output.get_buffer().insert(self.output.get_buffer().
             get_end_iter(), "\n")
 
+    @idle_add
     def append (self, line, tag=None):
         # Append a specific string with the given formatting:
         oldenditer = self.output.get_buffer().get_end_iter()
@@ -336,6 +338,7 @@ class EngineOutput (Gtk.VBox):
             self.clear_on_output = True
         return
 
+    @idle_add
     def clear (self):
         self.output.get_buffer().set_text("")
         return
