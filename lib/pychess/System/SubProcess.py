@@ -280,10 +280,8 @@ class SubProcess(GObject.GObject):
                 event.set()
 
         if currentThread().name == "MainThread":
-            print("%s in MainThread" % self.defname[0])
             start_subprocess(None)
         else:
-            print("%s in idle_add" % self.defname[0])
             event = threading.Event()
             GLib.idle_add(start_subprocess, event)
             event.wait()
