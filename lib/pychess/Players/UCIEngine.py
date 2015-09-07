@@ -488,11 +488,10 @@ class UCIEngine (ProtocolEngine):
         if not self.connected: return
         parts = line.split()
         if not parts: return
-        
         #---------------------------------------------------------- Initializing
         if parts[0] == "id":
-            self.ids[parts[1]] = " ".join(parts[2:])
             if parts[1] == "name":
+                self.ids[parts[1]] = " ".join(parts[2:])
                 self.setName(self.ids["name"])
             return
         
