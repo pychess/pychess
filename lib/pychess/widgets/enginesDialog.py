@@ -106,11 +106,19 @@ class EnginesDialog():
 
         @idle_add
         def update_store(*args):
-            allstore.clear()
             newGameDialog.createPlayerUIGlobals(discoverer)
+            engine_names = [row[1] for row in allstore]
+            new_items = []
             # don't add the very first (Human) player to engine store
             for item in newGameDialog.playerItems[0][1:]:
-                allstore.append(item)
+                if item[1] not in engine_names:
+                    new_items.append(item)
+            iter = None
+            for item in new_items:
+                iter = allstore.append(item)
+            if iter is not None:
+                ts = self.tv.get_selection()
+                ts.select_iter(iter)
             update_options()
 
         update_store()
@@ -124,11 +132,15 @@ class EnginesDialog():
                 engine = discoverer.getEngineByName(self.cur_engine)
                 discoverer.removeEngine(self.cur_engine)
                 discoverer.save()
-                update_store(discoverer)
+
+                selection = self.tv.get_selection()
+                result = selection.get_selected()
+                if result is not None:
+                    model, iter = result
+                    model.remove(iter)
+
                 # Notify playerCombos in NewGameTasker
                 discoverer.emit("all_engines_discovered")
-                ts = self.tv.get_selection()
-                ts.select_path((0,))
 
         self.widgets["remove_engine_button"].connect("clicked", remove)
 

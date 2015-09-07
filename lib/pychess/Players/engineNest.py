@@ -345,7 +345,7 @@ class EngineDiscoverer (GObject.GObject):
     
     def getEngines (self):
         """ Returns list of engine dicts """     
-        return self.engines
+        return sorted(self.engines, key=lambda engine: engine["name"].lower())
     
     def getEngineN (self, index):
         return self.getEngines()[index]
