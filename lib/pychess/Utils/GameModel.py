@@ -678,9 +678,8 @@ class GameModel (GObject.GObject, Thread):
             return
          
         if status != RUNNING and self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            engine_engine = self.players[WHITE].__type__ == ARTIFICIAL and self.players[BLACK].__type__ == ARTIFICIAL
             if status == DRAW and reason in (DRAW_REPITITION, DRAW_50MOVES):
-                if engine_engine:
+                if self.isEngine2EngineGame():
                     self.end(status, reason)
                     return
             else:
@@ -696,10 +695,16 @@ class GameModel (GObject.GObject, Thread):
    
     def __pause (self):
         log.debug("GameModel.__pause: %s" % self)
-        for player in self.players:
-            player.pause()
-        if self.timed:
-            self.timemodel.pause()
+        if self.isEngine2EngineGame():
+            for player in self.players:
+                player.end(self.status, self.reason)
+            if self.timed:
+                self.timemodel.end()
+        else:
+            for player in self.players:
+                player.pause()
+            if self.timed:
+                self.timemodel.pause()
     
     @inthread
     def pause (self):
