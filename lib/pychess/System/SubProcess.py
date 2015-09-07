@@ -267,13 +267,14 @@ class SubProcess(GObject.GObject):
                 argv, shell=False,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
+                preexec_fn=self.__setup,
                 cwd=chdir,
                 universal_newlines=True,
                 startupinfo=startupinfo)
             self.pid = self.subprocess.pid
             
             self.stop_reading = threading.Event()
-            t = Thread(target=self.stdout_reader)
+            t = Thread(target=self.__stdout_reader)
             t.start()
             
             if event is not None:
@@ -290,7 +291,10 @@ class SubProcess(GObject.GObject):
         self.subprocFinishedEvent = threading.Event()
         subprocesses.append(self)
 
-    def stdout_reader(self):
+    def __setup (self):
+        os.nice(15)
+
+    def __stdout_reader(self):
         while True:
             if self.stop_reading.is_set():
                 break
