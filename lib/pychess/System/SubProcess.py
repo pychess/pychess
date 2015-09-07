@@ -260,14 +260,16 @@ class SubProcess(GObject.GObject):
                 # To prevent engines opening console window
                 startupinfo = subprocess.STARTUPINFO()
                 startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                preexec_fn = None
             else:
                 startupinfo = None
+                preexec_fn = self.__setup
                 
             self.subprocess = subprocess.Popen(
                 argv, shell=False,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
-                preexec_fn=self.__setup,
+                preexec_fn=preexec_fn,
                 cwd=chdir,
                 universal_newlines=True,
                 startupinfo=startupinfo)
