@@ -81,7 +81,7 @@ class EngineDiscoverer (GObject.GObject):
         try:
             self._engines = json.load(open(self.jsonpath))
         except ValueError as e:
-            log.warning("engineNest: Couldn\'t read engines.json, renamed it to .bak\n%s" % (self.jsonpath,e))
+            log.warning("engineNest: Couldn\'t read engines.json, renamed it to .bak\n%s\n%s" % (self.jsonpath, e))
             os.rename(self.jsonpath, self.jsonpath+".bak")
             self._engines = deepcopy(backup)
         except IOError as e:
