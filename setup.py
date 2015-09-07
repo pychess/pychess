@@ -177,9 +177,8 @@ if bdist_msi:
 
     ## We need to add all the libraries too (for themes, etc..)
     gtk_libs = ['etc',
-                'share/icons/hicolor',
-                'share/icons/adwaita/16x16',
-                'share/icons/adwaita/24x24',
+                'share/icons/adwaita',
+                'share/themes/adwaita',
                 'lib/gio',
                 'lib/gdk-pixbuf-2.0',
                 'lib/girepository-1.0',
