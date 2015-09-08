@@ -83,6 +83,8 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
         try:
             uri, loader, gameno, position = loaddata
             gamemodel.loadAndStart (uri, loader, gameno, position)
+            if position != gamemodel.ply:
+                gmwidg.board.view.shown = position
         except LoadingError as e:
             d = Gtk.MessageDialog (type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.OK)
             d.set_markup(_("<big><b>Error loading game</big></b>"))
