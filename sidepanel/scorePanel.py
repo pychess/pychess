@@ -113,7 +113,7 @@ class Sidepanel:
         print("----------------------")
 
     def game_started(self, model):
-        self.game_changed(model, 0)
+        self.game_changed(model, model.ply)
         
     def shown_changed (self, boardview, shown):
         if not boardview.shownIsMainLine():
