@@ -89,7 +89,7 @@ class Sidepanel:
             model.remove(model.get_iter( (len(model)-1,) ))
     
     def game_started (self, model):
-        self.game_changed(model, 0)
+        self.game_changed(model, model.ply)
 
     @idle_add
     def game_changed (self, model, ply):

@@ -131,7 +131,7 @@ class Sidepanel:
             self.__addMove(game, i)
 
     def game_started(self, game):
-        self.game_changed(game, 0)
+        self.game_changed(game, game.ply)
     
     def __addMove(self, game, ply):
         #print "Am I doing anything?"
