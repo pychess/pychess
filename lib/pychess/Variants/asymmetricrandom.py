@@ -57,7 +57,7 @@ class AsymmetricRandomBoard(Board):
         class RandomEnumeratePieces:
             def __init__ (self, pieces):
                 self.pieces = pieces[:]
-                self.randomindexstack = range(8)
+                self.randomindexstack = list(range(8))
                 random.shuffle(self.randomindexstack)
             def __iter__ (self):
                 return self
