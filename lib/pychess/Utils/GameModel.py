@@ -618,6 +618,7 @@ class GameModel (GObject.GObject, Thread):
             except TurnInterrupt:
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: TurnInterrupt" % \
                     (id(self), str(self.players), self.ply))
+                self.curColor = self.boards[-1].color
                 continue
             
             log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: acquiring self.applyingMoveLock" % \
