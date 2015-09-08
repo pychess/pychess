@@ -509,7 +509,7 @@ class GameModel (GObject.GObject, Thread):
         self.gameno = gameno
         self.emit("game_loading", uri)
         try:
-            chessfile.loadToModel(gameno, position, self)
+            chessfile.loadToModel(gameno, -1, self)
         #Postpone error raising to make games loadable to the point of the error
         except LoadingError as e:
             error = e
