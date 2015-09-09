@@ -38,7 +38,7 @@ def finishAllSubprocesses ():
     for subprocess in subprocesses:
         subprocess.subprocFinishedEvent.wait()
 
-class xSubProcess (GObject.GObject):
+class SubProcess (GObject.GObject):
     
     __gsignals__ = {
         "line": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
@@ -68,7 +68,7 @@ class xSubProcess (GObject.GObject):
             self.pid, stdin, stdout, stderr = GObject.spawn_async(argv,
                     working_directory=chdir, child_setup=self.__setup,
                     standard_input=True, standard_output=True, standard_error=True,
-                    flags=GObject.SPAWN_DO_NOT_REAP_CHILD|GObject.SPAWN_SEARCH_PATH)        
+                    flags=GLib.SPAWN_DO_NOT_REAP_CHILD|GLib.SPAWN_SEARCH_PATH|GLib.SPAWN_WIN32_HIDDEN_CONSOLE)        
             
             log.debug("SubProcess.__init__: _initChannel...",  extra={"task":self.defname})
             self.__channelTags = []
@@ -237,7 +237,7 @@ class xSubProcess (GObject.GObject):
 ################################################################################
 import subprocess
 
-class SubProcess(GObject.GObject):
+class xSubProcess(GObject.GObject):
     __gsignals__ = {
         "line": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         "died": (GObject.SignalFlags.RUN_FIRST, None, ())
