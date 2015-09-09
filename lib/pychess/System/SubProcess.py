@@ -240,7 +240,8 @@ class SubProcess (GObject.GObject):
 ################################################################################
 import subprocess
 
-class xSubProcess(GObject.GObject):
+if sys.platform == "win32":
+  class SubProcess(GObject.GObject):
     __gsignals__ = {
         "line": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         "died": (GObject.SignalFlags.RUN_FIRST, None, ())
