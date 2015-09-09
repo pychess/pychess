@@ -696,7 +696,10 @@ class SeekTabSection (ParrentListSection):
     def __isAChallengeOrOurSeek (self, row):
         sought = row[0]
         textcolor = row[9]
-        if (isinstance(sought, FICSChallenge)) or (textcolor == self.textcolor_selected()):
+        r0, g0, b0 = textcolor.red, textcolor.green, textcolor.blue
+        selected = self.textcolor_selected()
+        r1, g1, b1 = selected.red, selected.green, selected.blue
+        if (isinstance(sought, FICSChallenge)) or (r0==r1 and g0==g1 and b0==b1):
             return True
         else:
             return False
