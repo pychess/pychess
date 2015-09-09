@@ -4,19 +4,21 @@
 # This script is to check package requirements, and set up system/enviroment
 # stuff, to make the PyChess Main class run smoothly.
 
-# faulthandler will be in Python 3.3; for 2.x you can download it from pypi
 from __future__ import print_function
-try:
-    import faulthandler
-    faulthandler.enable()
-except ImportError:
-    pass
+import argparse
+import os, sys
+
+# faulthandler will be in Python 3.3; for 2.x you can download it from pypi
+if not getattr(sys, 'frozen', False):
+    try:
+        import faulthandler
+        faulthandler.enable()
+    except ImportError:
+        pass
 
 ###############################################################################
 # Check requirements
 
-import argparse
-import os, sys
 if sys.version_info < (2, 7, 0):
     print('ERROR: PyChess requires Python >= 2.7')
     sys.exit(1)
