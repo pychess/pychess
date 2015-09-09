@@ -65,10 +65,13 @@ class SubProcess (GObject.GObject):
         log.debug("SubProcess.__init__: spawning...",  extra={"task":self.defname})
         
         def do_spawn_async(event):
+            flags = GLib.SPAWN_DO_NOT_REAP_CHILD|GLib.SPAWN_SEARCH_PATH
+            if sys.platform == "win32":
+                flags |= GLib.SPAWN_WIN32_HIDDEN_CONSOLE
             self.pid, stdin, stdout, stderr = GObject.spawn_async(argv,
                     working_directory=chdir, child_setup=self.__setup,
                     standard_input=True, standard_output=True, standard_error=True,
-                    flags=GLib.SPAWN_DO_NOT_REAP_CHILD|GLib.SPAWN_SEARCH_PATH|GLib.SPAWN_WIN32_HIDDEN_CONSOLE)        
+                    flags=flags)        
             
             log.debug("SubProcess.__init__: _initChannel...",  extra={"task":self.defname})
             self.__channelTags = []
