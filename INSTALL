@@ -69,8 +69,6 @@ python >= 2.7
 PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
   Base packages
   GDK-Pixbuf
-  GStreamer
-  Gst-plugins
   GTK+ 3.x
   GTKSourceView 3.x
   Pango
