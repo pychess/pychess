@@ -172,7 +172,6 @@ if bdist_msi:
 
     ## Collect the list of missing dll when cx_freeze builds the app
     missing_dll = [f for f in os.listdir(include_dll_path) if \
-                    (not f.startswith("libgst")) and \
                     (f.endswith(".dll") or (f.startswith("gspawn") and f.endswith(".exe")))]
 
     ## We need to add all the libraries too (for themes, etc..)
@@ -196,8 +195,8 @@ if bdist_msi:
 
     base = None
     ## Lets not open the console while running the app
-    #if sys.platform == "win32":
-    #    base = "Win32GUI"
+    if sys.platform == "win32":
+        base = "Win32GUI"
 
     executables = [Executable("pychess",
                             base=base,
@@ -206,7 +205,8 @@ if bdist_msi:
                             shortcutDir="DesktopFolder"),
                     Executable(script="lib/__main__.py",
                             targetName="pychess-engine.exe",
-                            base=base)]
+                            base=base),
+                            ]
                             
     bdist_msi_options = {
         "upgrade_code": "{5167584f-c196-428f-be40-4c861025e90a}",
@@ -214,7 +214,7 @@ if bdist_msi:
     
     build_exe_options = {
         "compressed": False,
-        #"include_msvcr": True,
+        "include_msvcr": True,
         "path": sys.path + ["lib"],
         "includes": ["gi"],
         "packages": ["gi", "pychess"],
