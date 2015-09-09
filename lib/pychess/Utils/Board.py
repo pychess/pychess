@@ -155,7 +155,7 @@ class Board:
             cord0 = self.getHoldingCord(self.color, piece)
             moved.append( (self[cord0], cord0) )
             # add all captured pieces to "new" list to enforce repainting them after a possible reordering
-            new = self.getHoldingPieces(self.color)
+            new = board1.getHoldingPieces(self.color)
             dead = new
             return moved, new, dead
 
@@ -176,8 +176,7 @@ class Board:
             cord = self.newHoldingCord(self.color)
             moved.append( (board1[cord], cord1) )
             # add all captured pieces to "new" list to enforce repainting them after a possible reordering
-            new = self.getHoldingPieces(self.color)
-            new.append( board1[cord] )
+            new = board1.getHoldingPieces(self.color)
 
             if self.variant == ATOMICCHESS:
                 nth[self.color] += 1
@@ -206,10 +205,8 @@ class Board:
             shift = -1 if self.color == WHITE else 1
             ep_cord = Cord(cord1.x, cord1.y + shift)
             moved.append( (self[ep_cord], ep_cord) )
-            cord = self.newHoldingCord(self.color)
             # add all captured pieces to "new" list to enforce repainting them after a possible reordering
-            new = self.getHoldingPieces(self.color)
-            new.append( board1[cord] )
+            new = board1.getHoldingPieces(self.color)
 
         return moved, new, dead
     
