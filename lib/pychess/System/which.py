@@ -233,7 +233,7 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
                 woex = os.path.join(dir, file)
                 for ext in pathext:
                     name = woex + ext
-                    if os.path.exists(name) and os.access(name, mode):
+                    if os.path.isfile(name) and os.access(name, mode):
                         return name
 #                        yield name
     return None
