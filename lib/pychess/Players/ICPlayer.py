@@ -72,7 +72,7 @@ class ICPlayer (Player):
             self.emit ("offer", offer)
     
     def __onOfferDeclined (self, om, offer):
-        for offer_ in self.gamemodel.offers.keys():
+        for offer_ in list(self.gamemodel.offers.keys()):
             if offer.type == offer_.type:
                 offer.param = offer_.param
         log.debug("ICPlayer.__onOfferDeclined: emitting decline for %s" % offer)
@@ -220,8 +220,7 @@ class ICPlayer (Player):
         log.debug("ICPlayer.offer: self=%s %s" % (repr(self), offer))
         if offer.type == TAKEBACK_OFFER:
             # only 1 outstanding takeback offer allowed on FICS, so remove any of ours
-            indexes = self.offers.keys()
-            for index in indexes:
+            for index in list(self.offers.keys()):
                 if self.offers[index].type == TAKEBACK_OFFER:
                     log.debug("ICPlayer.offer: del self.offers[%s] %s" % (index, offer))
                     del self.offers[index]
