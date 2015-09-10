@@ -109,8 +109,7 @@ class ICGameModel (GameModel):
         if ply < self.ply:
             log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s self.ply=%d ply=%d: TAKEBACK" % \
                 (id(self), str(self.players), self.ply, ply))
-            offers = self.offers.keys()
-            for offer in offers:
+            for offer in list(self.offers.keys()):
                 if offer.type == TAKEBACK_OFFER:
                     # There can only be 1 outstanding takeback offer for both players on FICS,
                     # (a counter-offer by the offeree for a takeback for a different number of
@@ -144,7 +143,7 @@ class ICGameModel (GameModel):
         # sometimes FICS pauses/unpauses a game clock without telling us that the
         # original offer was "accepted"/"received", such as when one player offers
         # "pause" and the other player responds not with "accept" but "pause"
-        for offer in self.offers.keys():
+        for offer in list(self.offers.keys()):
             if offer.type in (PAUSE_OFFER, RESUME_OFFER):
                 del self.offers[offer]
     
@@ -175,8 +174,7 @@ class ICGameModel (GameModel):
                 opPlayer.offer(offer)
             # If the offer was an update to an old one, like a new takebackvalue
             # we want to remove the old one from self.offers
-            offers = self.offers.keys()
-            for offer_ in offers:
+            for offer_ in list(self.offers.keys()):
                 if offer.type == offer_.type and offer != offer_:
                     del self.offers[offer_]
     
