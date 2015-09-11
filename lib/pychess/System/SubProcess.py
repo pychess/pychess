@@ -282,7 +282,7 @@ if sys.platform == "win32":
             log.debug("SubProcess.__init__: pid=%s" % self.pid,  extra={"task":self.defname})
             
             self.stop_reading = threading.Event()
-            t = Thread(target=self.__stdout_reader)
+            t = Thread(target=self.__stdout_reader, name=self.defname[0])
             t.start()
             
             if event is not None:
@@ -313,6 +313,7 @@ if sys.platform == "win32":
                 elif self.subprocess.stdout.closed:
                     GLib.idle_add(self.emit, "died")
                     self.gentleKill()
+                    break
                 else:
                     line = self.subprocess.stdout.readline()
                     if line:
@@ -358,7 +359,6 @@ if sys.platform == "win32":
     def write(self, data):
         if self.subprocess.poll() is not None:
             GLib.idle_add(self.emit, "died")
-            return
         elif self.subprocess.stdin.closed:
             GLib.idle_add(self.emit, "died")
             self.gentleKill()
