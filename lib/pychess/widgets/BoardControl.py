@@ -149,8 +149,10 @@ class BoardControl (Gtk.EventBox):
         elif key == "undo1":
             curplayer = self.view.model.curplayer
             waitingplayer = self.view.model.waitingplayer
-            if curplayer.__type__ == LOCAL and waitingplayer.__type__ == ARTIFICIAL and \
-                self.view.model.ply - self.view.model.lowply > 1:
+            if curplayer.__type__ == LOCAL \
+                and (waitingplayer.__type__ == ARTIFICIAL or \
+                     self.view.model.isPlayingICSGame()) \
+                and self.view.model.ply - self.view.model.lowply > 1:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply-2)
             else:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply-1)
