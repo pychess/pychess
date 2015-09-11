@@ -497,6 +497,7 @@ def run (no_debug, no_idle_add_debug, no_thread_debug, log_viewer, chess_file,
             pass
 
     signal.signal(signal.SIGINT, Gtk.main_quit)
+    signal.signal(signal.SIGTERM, Gtk.main_quit)
     def cleanup ():
         SubProcess.finishAllSubprocesses()
     atexit.register(cleanup)
