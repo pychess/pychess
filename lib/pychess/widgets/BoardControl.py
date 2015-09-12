@@ -312,6 +312,7 @@ class BoardControl (Gtk.EventBox):
     def _genPossibleBoards(self, ply):
         possibleBoards = []
         curboard = self.view.model.getBoardAtPly(ply, self.view.shownVariationIdx)
+        curboard = curboard.clone()
         for lmove in lmovegen.genAllMoves(curboard.board):
             move = Move(lmove)
             board = curboard.move(move)
