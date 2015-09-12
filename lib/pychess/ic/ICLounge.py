@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import re
+import sys
 from time import strftime, localtime, time
 from math import e
 from operator import attrgetter
@@ -473,30 +474,32 @@ class UserInfoSection(Section):
             table.attach(label(s), 1, 6, row, row+1)
             row += 1
 
-        table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
-        if self.ping_label:
-            if self.dock.get_children():
-                self.dock.get_children()[0].remove(self.ping_label)
-        else:
-            self.ping_label = Gtk.Label(label=_("Connecting")+"...")
-            self.ping_label.props.xalign = 0
-            
-        @idle_add
-        def callback (pinger, pingtime):
-            log.debug("'%s' '%s'" % (str(self.pinger), str(pingtime)),
-                extra={"task": (self.connection.username, "UIS.oF.callback")})
-            if isinstance(pingtime, str):
-                self.ping_label.set_text(pingtime)
-            elif pingtime == -1:
-                self.ping_label.set_text(_("Unknown"))
-            else: self.ping_label.set_text("%.0f ms" % pingtime)
-        if not self.pinger:
-            self.pinger = Pinger(self.host)
-            self.pinger.start()
-            self.pinger.connect("recieved", callback)
-            self.pinger.connect("error", callback)
-        table.attach(self.ping_label, 1, 6, row, row+1)
-        row += 1
+        # TODO: ping causes random crashes on Windows
+        if sys.platform != "win32":
+            table.attach(label(_("Ping")+":"), 0, 1, row, row+1)
+            if self.ping_label:
+                if self.dock.get_children():
+                    self.dock.get_children()[0].remove(self.ping_label)
+            else:
+                self.ping_label = Gtk.Label(label=_("Connecting")+"...")
+                self.ping_label.props.xalign = 0
+                
+            @idle_add
+            def callback (pinger, pingtime):
+                log.debug("'%s' '%s'" % (str(self.pinger), str(pingtime)),
+                    extra={"task": (self.connection.username, "UIS.oF.callback")})
+                if isinstance(pingtime, str):
+                    self.ping_label.set_text(pingtime)
+                elif pingtime == -1:
+                    self.ping_label.set_text(_("Unknown"))
+                else: self.ping_label.set_text("%.0f ms" % pingtime)
+            if not self.pinger:
+                self.pinger = Pinger(self.host)
+                self.pinger.start()
+                self.pinger.connect("recieved", callback)
+                self.pinger.connect("error", callback)
+            table.attach(self.ping_label, 1, 6, row, row+1)
+            row += 1
 
         if not self.connection.isRegistred():
             vbox = Gtk.VBox()
