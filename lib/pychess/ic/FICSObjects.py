@@ -421,6 +421,7 @@ class FICSPlayers (GObject.GObject):
     def items(self): return self.players.items()
     def values(self): return self.players.values()
     
+    @idle_add
     def online_changed (self, player, prop):
         if player.online:
             self.emit("FICSPlayerEntered", player)
@@ -445,6 +446,7 @@ class FICSPlayers (GObject.GObject):
             raise KeyError
         return player
         
+    @idle_add
     def player_disconnected (self, player):
         log.debug("%s" % player,
             extra={"task": (self.connection.username, "player_disconnected")})

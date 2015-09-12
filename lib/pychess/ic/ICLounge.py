@@ -1066,31 +1066,33 @@ class PlayerTabSection (ParrentListSection):
             return False
         GLib.idle_add(do_onPlayerAdded, players, player, priority=GLib.PRIORITY_LOW)
     
-    @idle_add
+    #@idle_add
     def onPlayerRemoved (self, players, player):
-        log.debug("%s" % player,
-                  extra={"task": (self.connection.username, "PTS.onPlayerRemoved")})
+        def do_onPlayerRemoved(players, player):
+            log.debug("%s" % player,
+                      extra={"task": (self.connection.username, "PTS.onPlayerRemoved")})
 
-        try:
-            self.store.remove(self.players[player]["ti"])
-            for key in ("status", "game", "titles"):
-                if player.handler_is_connected(self.players[player][key]):
-                    player.disconnect(self.players[player][key])
-            if player.game and "private" in self.players[player] and \
-                player.game.handler_is_connected(
-                    self.players[player]["private"]):
-                player.game.disconnect(self.players[player]["private"])
-            for rt in RATING_TYPES:
-                if player.ratings[rt].handler_is_connected(
-                        self.players[player][rt]):
-                    player.ratings[rt].disconnect(self.players[player][rt])
-            del self.players[player]
-        except KeyError:
-            pass
-        count = len(self.players)
-        self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
+            try:
+                self.store.remove(self.players[player]["ti"])
+                for key in ("status", "game", "titles"):
+                    if player.handler_is_connected(self.players[player][key]):
+                        player.disconnect(self.players[player][key])
+                if player.game and "private" in self.players[player] and \
+                    player.game.handler_is_connected(
+                        self.players[player]["private"]):
+                    player.game.disconnect(self.players[player]["private"])
+                for rt in RATING_TYPES:
+                    if player.ratings[rt].handler_is_connected(
+                            self.players[player][rt]):
+                        player.ratings[rt].disconnect(self.players[player][rt])
+                del self.players[player]
+            except KeyError:
+                pass
+            count = len(self.players)
+            self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
 
-        return False
+            return False
+        GLib.idle_add(do_onPlayerRemoved, players, player, priority=GLib.PRIORITY_LOW)
     
     @idle_add
     def status_changed (self, player, prop):
