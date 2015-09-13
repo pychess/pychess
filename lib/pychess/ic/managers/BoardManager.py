@@ -647,7 +647,7 @@ class BoardManager (GObject.GObject):
                 if lastmove == None: continue
                 moves[ply-1] = lastmove
                 # Updated the queuedMoves in case there has been a takeback
-                for moveply in moves.keys():
+                for moveply in list(moves.keys()):
                     if moveply > ply-1:
                         del moves[moveply]
             del self.queuedStyle12s[gameno]
