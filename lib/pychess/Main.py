@@ -481,7 +481,7 @@ class PyChess:
                 GLib.idle_add(newGameDialog.LoadFileExtension.run, chess_file)
             discoverer.connect_after("all_engines_discovered", do)
 
-def run (no_debug, no_idle_add_debug, no_thread_debug, log_viewer, chess_file,
+def run (no_debug, idle_add_debug, no_thread_debug, log_viewer, chess_file,
          ics_host, ics_port):
     # Start logging
     if log_viewer:
@@ -497,12 +497,13 @@ def run (no_debug, no_idle_add_debug, no_thread_debug, log_viewer, chess_file,
             pass
 
     signal.signal(signal.SIGINT, Gtk.main_quit)
+    signal.signal(signal.SIGTERM, Gtk.main_quit)
     def cleanup ():
         SubProcess.finishAllSubprocesses()
     atexit.register(cleanup)
     
     pychess = PyChess(log_viewer, chess_file)
-    idle_add.debug = not no_idle_add_debug
+    idle_add.debug = idle_add_debug
 
     sys.stdout = LogPipe(sys.stdout, "stdout")
     sys.stderr = LogPipe(sys.stderr, "stdout")

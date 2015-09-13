@@ -184,9 +184,21 @@ class EnginesDialog():
                 
                 if new_engine:
                     try:
-                        uci = is_uci(vmpath + new_engine)
-                        if not uci:
-                            if not is_cecp(vmpath + new_engine):
+                        # Most engines are UCI, but variant engines are CECP,
+                        # so we better to start with CECP this case
+                        if "sjaakii" in new_engine.lower() or \
+                            "sjeng" in new_engine.lower():
+                            checkers = [is_cecp, is_uci]
+                        else:
+                            checkers = [is_uci, is_cecp]
+                        for checker in checkers:
+                            ok = checker(vmpath + new_engine)
+                            if ok:
+                                uci = checker is is_uci
+                                break
+                            else:
+                                continue
+                            if not checker(vmpath + new_engine):
                                 # restore the original
                                 engine = discoverer.getEngineByName(self.cur_engine)
                                 engine_chooser_dialog.set_filename(engine["command"])
@@ -198,6 +210,7 @@ class EnginesDialog():
                                 d.hide()
                                 engine_chooser_dialog.hide()
                                 return
+                            uci = checker is is_uci
                         path, binname = os.path.split(new_engine)
                         for e in discoverer.getEngines():
                             if e["name"] == binname:

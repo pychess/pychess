@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-from gi.repository import GObject
+from gi.repository import GLib, GObject
 
 from pychess.compat import unicode
 from pychess.System.Log import log
@@ -423,7 +423,7 @@ class FICSPlayers (GObject.GObject):
     
     def online_changed (self, player, prop):
         if player.online:
-            self.emit("FICSPlayerEntered", player)
+            GLib.idle_add(self.emit, "FICSPlayerEntered", player, priority=GLib.PRIORITY_LOW)
     
     # This method is a temporary hack until ChatWindow/ChatManager are
     # converted to use FICSPlayer references rather than player's names
@@ -436,7 +436,6 @@ class FICSPlayers (GObject.GObject):
         return names
 
     def get (self, player, create=True):
-        # TODO: lock
         if player in self:
             player = self[player]
         elif create:
@@ -446,8 +445,8 @@ class FICSPlayers (GObject.GObject):
         return player
         
     def player_disconnected (self, player):
-        log.debug("%s" % player,
-            extra={"task": (self.connection.username, "player_disconnected")})
+        #log.debug("%s" % player,
+        #    extra={"task": (self.connection.username, "player_disconnected")})
         if player in self:
             player = self[player]
             player.online = False
@@ -458,7 +457,7 @@ class FICSPlayers (GObject.GObject):
             else:
                 log.debug("Not removing %s" % player, extra={"task":
                     (self.connection.username, "player_disconnected")})
-            self.emit('FICSPlayerExited', player)
+            GLib.idle_add(self.emit, 'FICSPlayerExited', player, priority=GLib.PRIORITY_LOW)
     
 #    def onFinger (self, fm, finger):
 #        player = FICSPlayer(finger.getName())
