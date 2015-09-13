@@ -81,6 +81,8 @@ class TimeModel (GObject.GObject):
                 GLib.source_remove(self.zero_listener_id)
             self.zero_listener_time = s
             self.zero_listener_id = GLib.timeout_add(10, self.__checkzero, color)
+            default_context = GLib.main_context_get_thread_default() or GLib.main_context_default()
+            self.zero_listener_source = default_context.find_source_by_id(self.zero_listener_id)
     
     def __checkzero(self, color):
         if self.getPlayerTime(color) <= 0:
@@ -131,7 +133,8 @@ class TimeModel (GObject.GObject):
         log.debug("TimeModel.end: self=%s" % self)
         self.pause()
         self.ended = True
-        if self.zero_listener_id is not None:
+        if (self.zero_listener_id is not None) and \
+            not self.zero_listener_source.is_destroyed():
             GLib.source_remove(self.zero_listener_id)
     
     def pause (self):
