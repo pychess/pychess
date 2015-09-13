@@ -5,13 +5,14 @@ from __future__ import absolute_import
 from math import ceil, pi, cos, sin
 
 import cairo
-from gi.repository import Gtk, Pango
+from gi.repository import GLib
+from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import Pango
 from gi.repository import PangoCairo
 from gi.repository import GObject
 
 from pychess.System import conf
-from pychess.System.idle_add import idle_add
 from pychess.Utils.const import WHITE, BLACK
 from . import preferencesDialog
 
@@ -164,14 +165,15 @@ class ChessClock (Gtk.DrawingArea):
         context.move_to(rect.width/2. + rect.height-7, y)        
         PangoCairo.show_layout(context, layout1)
 
-    @idle_add
     def redraw_canvas(self):
-        if self.get_window():
-            a = self.get_allocation()
-            rect = Gdk.Rectangle()
-            rect.x, rect.y, rect.width, rect.height = (0, 0, a.width, a.height)
-            self.get_window().invalidate_rect(rect, True)
-            self.get_window().process_updates(True)
+        def do_redraw_canvas():
+            if self.get_window():
+                a = self.get_allocation()
+                rect = Gdk.Rectangle()
+                rect.x, rect.y, rect.width, rect.height = (0, 0, a.width, a.height)
+                self.get_window().invalidate_rect(rect, True)
+                self.get_window().process_updates(True)
+        GLib.idle_add(do_redraw_canvas)
     
     def setModel (self, model):
         self.model = model
