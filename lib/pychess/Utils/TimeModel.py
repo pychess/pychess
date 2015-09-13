@@ -1,7 +1,7 @@
 import heapq
 from time import time
 
-from gi.repository import GObject
+from gi.repository import GLib, GObject
 
 from pychess.Utils.const import WHITE, BLACK
 from pychess.System import repeat
@@ -47,7 +47,9 @@ class TimeModel (GObject.GObject):
         self.connect('time_changed', self.__zerolistener, 'time_changed')
         self.connect('player_changed', self.__zerolistener, 'player_changed')
         self.connect('pause_changed', self.__zerolistener, 'pause_changed')
-        self.heap = []
+
+        self.zero_listener_id = None
+        self.zero_listener_time = 0
     
     def __repr__ (self):
         s = "<TimeModel object at %s (White: %s Black: %s ended=%s)>" % \
@@ -55,45 +57,37 @@ class TimeModel (GObject.GObject):
              str(self.getPlayerTime(BLACK)), self.ended)
         return s
     
+    @property
+    def ply(self):
+        return len(self.intervals[0]) + len(self.intervals[1]) - 2
+        
     def __zerolistener(self, *args):
         if self.ended:
             return False
         
-        # If we are called by a sleeper (rather than a signal) we need to pop
-        # at least one time, as we might otherwise end up with items in the
-        # heap, but no sleepers.
-        if len(args) == 0 and self.heap:
-            self.heap.pop()
-        # Pop others (could this give a problem where too many are popped?)
-        # No I don't think so. If a sleeper is too slow, so a later sleeper
-        # comes before him and pops him, then it is most secure not to rely on
-        # mr late, and start a new one.
-        # We won't be 'one behind' always, because the previous pop doesnt
-        # happen if the heap is empty.
-        while self.heap and self.heap[-1] <= time():
-            self.heap.pop()
+        cur_time = time()
+        t1 = cur_time + self.getPlayerTime(WHITE)
+        t2 = cur_time + self.getPlayerTime(BLACK)
+        if t1 <= t2:
+            t = t1
+            color = WHITE
+        else:
+            t = t2
+            color = BLACK
         
-        if self.getPlayerTime(WHITE) <= 0:
-            #print 'emit for white'
-            self.emit('zero_reached', WHITE)
-        if self.getPlayerTime(BLACK) <= 0:
-            #print 'emit for black'
-            self.emit('zero_reached', BLACK)
-        
-        #print 'heap is now', self.heap
-        
-        t1 = time() + self.getPlayerTime(WHITE)
-        t2 = time() + self.getPlayerTime(BLACK)
-        t = min(t1,t2)
-        
-        if not self.heap or t < self.heap[-1]:
-            s = t-time()+0.01
-            if s > 0:
-                self.heap.append(t)
-                # Because of recur, we wont get callback more than once.
-                repeat.repeat_sleep(self.__zerolistener, s, recur=True)
-                #print 'repeat on', s
+        s = t-cur_time+0.01
+        if s > 0 and s != self.zero_listener_time:
+            if self.zero_listener_id is not None:
+                GLib.source_remove(self.zero_listener_id)
+            self.zero_listener_time = s
+            self.zero_listener_id = GLib.timeout_add(10, self.__checkzero, color)
     
+    def __checkzero(self, color):
+        if self.getPlayerTime(color) <= 0:
+            self.emit('zero_reached', color)
+            return False
+        return True
+        
     ############################################################################
     # Interacting                                                              #
     ############################################################################
@@ -114,8 +108,8 @@ class TimeModel (GObject.GObject):
         else:
             self.intervals[self.movingColor].append (
                     self.intervals[self.movingColor][-1] )
-            
-            if len(self.intervals[0]) + len(self.intervals[1]) >= 4:
+            # FICS rule
+            if self.ply >= 2:
                 self.started = True
         
         self.movingColor = 1-self.movingColor
@@ -137,6 +131,8 @@ class TimeModel (GObject.GObject):
         log.debug("TimeModel.end: self=%s" % self)
         self.pause()
         self.ended = True
+        if self.zero_listener_id is not None:
+            GLib.source_remove(self.zero_listener_id)
     
     def pause (self):
         log.debug("TimeModel.pause: self=%s" % self)
@@ -198,20 +194,6 @@ class TimeModel (GObject.GObject):
         if color == self.movingColor and self.started:
             self.counter = secs + time() - self.intervals[color][-1]
         else: self.intervals[color][-1] = secs
-        self.emit("time_changed")
-    
-    def syncClock (self, wsecs, bsecs):
-        """ Syncronize clock to e.g. fics time """
-        if self.movingColor == WHITE:
-            if self.started:
-                self.counter = wsecs + time() - self.intervals[WHITE][-1]
-            else: self.intervals[WHITE][-1] = wsecs
-            self.intervals[BLACK][-1] = bsecs
-        else:
-            if self.started:
-                self.counter = bsecs + time() - self.intervals[BLACK][-1]
-            else: self.intervals[BLACK][-1] = bsecs
-            self.intervals[WHITE][-1] = wsecs
         self.emit("time_changed")
     
     ############################################################################
