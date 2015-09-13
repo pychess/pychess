@@ -77,7 +77,8 @@ class TimeModel (GObject.GObject):
         
         s = t-cur_time+0.01
         if s > 0 and s != self.zero_listener_time:
-            if self.zero_listener_id is not None:
+            if (self.zero_listener_id is not None) and \
+                not self.zero_listener_source.is_destroyed():
                 GLib.source_remove(self.zero_listener_id)
             self.zero_listener_time = s
             self.zero_listener_id = GLib.timeout_add(10, self.__checkzero, color)
