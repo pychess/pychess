@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
@@ -162,11 +163,13 @@ class BoardControl (Gtk.EventBox):
             self.emit("action", RESUME_OFFER, None)
     
     def shown_changed (self, view, shown):
-        self.lockedPly = self.view.shown
-        self.possibleBoards[self.lockedPly] = self._genPossibleBoards(self.lockedPly)
-        if self.view.shown-2 in self.possibleBoards:
-            del self.possibleBoards[self.view.shown-2]
-    
+        def do_shown_changed():
+            self.lockedPly = self.view.shown
+            self.possibleBoards[self.lockedPly] = self._genPossibleBoards(self.lockedPly)
+            if self.view.shown-2 in self.possibleBoards:
+                del self.possibleBoards[self.view.shown-2]
+        GLib.idle_add(do_shown_changed)
+        
     def moves_undone (self, gamemodel, moves):
         self.stateLock.acquire()
         try:
