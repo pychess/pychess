@@ -1032,7 +1032,6 @@ class PlayerTabSection (ParrentListSection):
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
     
-    #@idle_add
     def onPlayerAdded (self, players, player):
         def do_onPlayerAdded(players, player):
             log.debug("%s" % player,
@@ -1066,7 +1065,6 @@ class PlayerTabSection (ParrentListSection):
             return False
         GLib.idle_add(do_onPlayerAdded, players, player, priority=GLib.PRIORITY_LOW)
     
-    #@idle_add
     def onPlayerRemoved (self, players, player):
         def do_onPlayerRemoved(players, player):
             log.debug("%s" % player,
@@ -1272,7 +1270,6 @@ class GameTabSection (ParrentListSection):
         count = len(self.games)
         self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
 
-    #@idle_add
     def onGameAdd (self, games, game):
         def do_onGameAdd(games, game):
             log.debug("%s" % game,
@@ -1298,17 +1295,18 @@ class GameTabSection (ParrentListSection):
         self.onSelectionChanged(self.tv.get_selection())
         return False
         
-    @idle_add
     def onGameRemove (self, games, game):
-        log.debug("%s" % game,
-                  extra={"task": (self.connection.username, "GTS.onGameRemove")})
-        if game not in self.games: return
-        if self.store.iter_is_valid(self.games[game]["ti"]):
-            self.store.remove(self.games[game]["ti"])
-        if game.handler_is_connected(self.games[game]["private_cid"]):
-            game.disconnect(self.games[game]["private_cid"])
-        del self.games[game]
-        self._update_gamesrunning_label()
+        def do_onGameRemove(games, game):
+            log.debug("%s" % game,
+                      extra={"task": (self.connection.username, "GTS.onGameRemove")})
+            if game not in self.games: return
+            if self.store.iter_is_valid(self.games[game]["ti"]):
+                self.store.remove(self.games[game]["ti"])
+            if game.handler_is_connected(self.games[game]["private_cid"]):
+                game.disconnect(self.games[game]["private_cid"])
+            del self.games[game]
+            self._update_gamesrunning_label()
+        GLib.idle_add(do_onGameRemove, games, game, priority=GLib.PRIORITY_LOW)
 
     def onObserveClicked (self, widget, *args):
         model, paths = self.tv.get_selection().get_selected_rows()
