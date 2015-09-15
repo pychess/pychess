@@ -388,7 +388,7 @@ class BoardView (Gtk.DrawingArea):
                 # piece
                 for piece, cord0 in moved:
                     # Test if the piece already has a realcoord (has been dragged)
-                    if piece.x == None:
+                    if (piece is not None) and piece.x == None:
                         # We don't want newly restored pieces to flew from their
                         # deadspot to their old position, as it doesn't work
                         # vice versa  
