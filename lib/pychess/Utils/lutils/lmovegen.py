@@ -97,8 +97,11 @@ def genPieceMoves(board, piece, tcord):
         else:
             blocker = board.blocker
             for fcord in iterBits(bishops):
-                attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
-                              attack135[fcord][ray135[fcord] & blocker]
+                try:
+                    attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
+                                  attack135[fcord][ray135[fcord] & blocker]
+                except KeyError:
+                    attackBoard = 0
                 if tcord in iterBits(attackBoard & notfriends):
                     moves.add(newMove(fcord, tcord))
             return moves
@@ -107,8 +110,11 @@ def genPieceMoves(board, piece, tcord):
         blocker = board.blocker
         rooks = board.boards[board.color][ROOK]
         for fcord in iterBits(rooks):
-            attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
-                          attack90[fcord][ray90[fcord] & blocker]
+            try:
+                attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
+                              attack90[fcord][ray90[fcord] & blocker]
+            except KeyError:
+                attackBoard = 0
             if tcord in iterBits(attackBoard & notfriends):
                 moves.add(newMove(fcord, tcord))
         return moves
@@ -133,13 +139,19 @@ def genPieceMoves(board, piece, tcord):
         else:
             blocker = board.blocker
             for fcord in iterBits(queens):
-                attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
-                              attack135[fcord][ray135[fcord] & blocker]
+                try:
+                    attackBoard = attack45 [fcord][ray45 [fcord] & blocker] | \
+                                  attack135[fcord][ray135[fcord] & blocker]
+                except KeyError:
+                    attackBoard = 0
                 if tcord in iterBits(attackBoard & notfriends):
                     moves.add(newMove(fcord, tcord))
-
-                attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
-                              attack90[fcord][ray90[fcord] & blocker]
+                
+                try:
+                    attackBoard = attack00[fcord][ray00[fcord] & blocker] | \
+                                  attack90[fcord][ray90[fcord] & blocker]
+                except KeyError:
+                    attackBoard = 0
                 if tcord in iterBits(attackBoard & notfriends):
                     moves.add(newMove(fcord, tcord))
             return moves
@@ -204,8 +216,11 @@ def genAllMoves (board, drops=True):
     if board.variant in ASEAN_VARIANTS:
         # Rooks 
         for cord in iterBits(rooks):
-            attackBoard = attack00[cord][ray00[cord] & blocker] | \
-                          attack90[cord][ray90[cord] & blocker]
+            try:
+                attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                              attack90[cord][ray90[cord] & blocker]
+            except KeyError:
+                attackBoard = 0
             for c in iterBits(attackBoard & notfriends):
                 yield newMove(cord, c)
 
@@ -224,15 +239,21 @@ def genAllMoves (board, drops=True):
     else:
         # Rooks and Queens
         for cord in iterBits(rooks | queens):
-            attackBoard = attack00[cord][ray00[cord] & blocker] | \
-                          attack90[cord][ray90[cord] & blocker]
+            try:
+                attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                              attack90[cord][ray90[cord] & blocker]
+            except KeyError:
+                attackBoard = 0
             for c in iterBits(attackBoard & notfriends):
                 yield newMove(cord, c)
     
         # Bishops and Queens
         for cord in iterBits(bishops | queens):
-            attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
-                          attack135[cord][ray135[cord] & blocker]
+            try:
+                attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
+                              attack135[cord][ray135[cord] & blocker]
+            except KeyError:
+                attackBoard = 0
             for c in iterBits(attackBoard & notfriends):
                 yield newMove(cord, c)
     
@@ -418,14 +439,20 @@ def genCaptures (board):
     # Rooks and Queens
     if board.variant in ASEAN_VARIANTS:
         for cord in iterBits(rooks):
-            attackBoard = attack00[cord][ray00[cord] & blocker] | \
-                          attack90[cord][ray90[cord] & blocker]
+            try:
+                attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                              attack90[cord][ray90[cord] & blocker]
+            except KeyError:
+                attackBoard = 0
             for c in iterBits(attackBoard & enemies):
                 yield newMove(cord, c)
     else:
         for cord in iterBits(rooks|queens):
-            attackBoard = attack00[cord][ray00[cord] & blocker] | \
-                          attack90[cord][ray90[cord] & blocker]
+            try:
+                attackBoard = attack00[cord][ray00[cord] & blocker] | \
+                              attack90[cord][ray90[cord] & blocker]
+            except KeyError:
+                attackBoard = 0
             for c in iterBits(attackBoard & enemies):
                 yield newMove(cord, c)
     
@@ -441,8 +468,11 @@ def genCaptures (board):
                 yield newMove(cord, c)
     else:
         for cord in iterBits(bishops|queens):
-            attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
-                          attack135[cord][ray135[cord] & blocker]
+            try:
+                attackBoard = attack45 [cord][ray45 [cord] & blocker] | \
+                              attack135[cord][ray135[cord] & blocker]
+            except KeyError:
+                attackBoard = 0
             for c in iterBits(attackBoard & enemies):
                 yield newMove(cord, c)
     
