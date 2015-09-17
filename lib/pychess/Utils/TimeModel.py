@@ -50,7 +50,8 @@ class TimeModel (GObject.GObject):
 
         self.zero_listener_id = None
         self.zero_listener_time = 0
-    
+        self.zero_listener_source = None
+        
     def __repr__ (self):
         s = "<TimeModel object at %s (White: %s Black: %s ended=%s)>" % \
             (id(self), str(self.getPlayerTime(WHITE)),
@@ -78,12 +79,14 @@ class TimeModel (GObject.GObject):
         s = t-cur_time+0.01
         if s > 0 and s != self.zero_listener_time:
             if (self.zero_listener_id is not None) and \
+                (self.zero_listener_source is not None) and \
                 not self.zero_listener_source.is_destroyed():
                 GLib.source_remove(self.zero_listener_id)
             self.zero_listener_time = s
             self.zero_listener_id = GLib.timeout_add(10, self.__checkzero, color)
             default_context = GLib.main_context_get_thread_default() or GLib.main_context_default()
-            self.zero_listener_source = default_context.find_source_by_id(self.zero_listener_id)
+            if hasattr(default_context, "find_source_by_id"):
+                self.zero_listener_source = default_context.find_source_by_id(self.zero_listener_id)
     
     def __checkzero(self, color):
         if self.getPlayerTime(color) <= 0:
@@ -135,6 +138,7 @@ class TimeModel (GObject.GObject):
         self.pause()
         self.ended = True
         if (self.zero_listener_id is not None) and \
+            (self.zero_listener_source is not None) and \
             not self.zero_listener_source.is_destroyed():
             GLib.source_remove(self.zero_listener_id)
     
