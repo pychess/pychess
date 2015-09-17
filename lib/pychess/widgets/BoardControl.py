@@ -316,6 +316,8 @@ class BoardControl (Gtk.EventBox):
 
     def _genPossibleBoards(self, ply):
         possibleBoards = []
+        if len(self.view.model.players) == 2 and self.view.model.isEngine2EngineGame():
+            return possibleBoards
         curboard = self.view.model.getBoardAtPly(ply, self.view.shownVariationIdx)
         for lmove in lmovegen.genAllMoves(curboard.board.clone()):
             move = Move(lmove)

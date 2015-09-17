@@ -413,6 +413,8 @@ class GameWidget (GObject.GObject):
                 log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
                     (' '.join(movstrs),e))
                 return
+            except:
+                return
             
             if moves and (self.gamemodel.curplayer.__type__ == LOCAL or \
                [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE] or \
