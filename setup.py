@@ -8,7 +8,6 @@ from os.path import isdir, isfile
 import os
 import site
 import sys
-import msilib
 
 from imp import load_module, find_module
 pychess = load_module("pychess", *find_module("pychess",["lib"]))
@@ -22,6 +21,8 @@ if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
     except ImportError:
         print("ERROR: can't import cx_Freeze!")
         sys.exit(1)
+
+    import msilib
 
     # Monkeypatching cx_freezee to do per user installer
     class peruser_bdist_msi(bdist_msi):
