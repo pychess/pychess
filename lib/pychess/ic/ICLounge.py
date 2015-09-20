@@ -27,7 +27,7 @@ from pychess.widgets.preferencesDialog import SoundTab
 from pychess.widgets.InfoBar import *
 from pychess.Utils.const import *
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.Rating import Rating
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.ICPlayer import ICPlayer
@@ -622,9 +622,9 @@ class SeekTabSection (ParrentListSection):
         self.messages = {}
         self.seeks = {}
         self.challenges = {}
-        self.seekPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/seek.png"))
-        self.chaPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/challenge.png"))
-        self.manSeekPix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/manseek.png"))
+        self.seekPix = get_pixbuf("glade/seek.png")
+        self.chaPix = get_pixbuf("glade/challenge.png")
+        self.manSeekPix = get_pixbuf("glade/manseek.png")
         
         self.widgets["seekExpander"].set_vexpand(False)
         
@@ -1202,7 +1202,7 @@ class GameTabSection (ParrentListSection):
         self.connection = connection
         self.games = {}
         self.recpix = load_icon(16, "media-record")
-        self.clearpix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/board.png"))
+        self.clearpix = get_pixbuf("glade/board.png")
         self.tv = self.widgets["gametreeview"]
         self.store = Gtk.ListStore(FICSGame, GdkPixbuf.Pixbuf, str, int, str, int, str)
         self.model = Gtk.TreeModelSort(model=self.store)
@@ -1340,8 +1340,8 @@ class AdjournedTabSection (ParrentListSection):
         self.infobar = lounge.infobar
         self.games = {}
         self.messages = {}
-        self.wpix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/white.png"))
-        self.bpix = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/black.png"))
+        self.wpix = get_pixbuf("glade/white.png")
+        self.bpix = get_pixbuf("glade/black.png")
         self.tv = widgets["adjournedtreeview"]
         self.store = Gtk.ListStore(FICSAdjournedGame, GdkPixbuf.Pixbuf, str, str,
                                    str, str, str)
