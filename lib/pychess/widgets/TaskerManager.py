@@ -14,7 +14,7 @@ from pychess.System import uistuff, conf
 from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE, BLACK, NORMALCHESS
 from pychess.Variants import variants
@@ -150,9 +150,9 @@ class NewGameTasker (Gtk.Alignment):
         self.add(tasker)
         
         combo = ToggleComboBox()      
-        combo.addItem(_("White"), GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/white.png")))
-        combo.addItem(_("Black"), GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/black.png")))
-        combo.addItem(_("Random"), GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/random.png")))
+        combo.addItem(_("White"), get_pixbuf("glade/white.png"))
+        combo.addItem(_("Black"), get_pixbuf("glade/black.png"))
+        combo.addItem(_("Random"), get_pixbuf("glade/random.png"))
         combo.setMarkup("<b>", "</b>")
         widgets["colorDock"].add(combo)
         uistuff.keep(combo, "newgametasker_colorcombo")

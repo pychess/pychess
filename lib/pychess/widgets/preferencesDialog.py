@@ -16,7 +16,7 @@ from pychess.System import conf, gstreamer, uistuff
 from pychess.System.uistuff import POSITION_GOLDEN
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
-from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.gfx import Pieces
 
 
@@ -438,7 +438,7 @@ class PanelTab:
         store = Gtk.ListStore(bool, GdkPixbuf.Pixbuf, str, object)
         for panel in sidePanels:
             checked = True if not xmlOK else panel.__name__ in saved_panels
-            panel_icon = GdkPixbuf.Pixbuf.new_from_file_at_size(panel.__icon__, 32, 32)
+            panel_icon = get_pixbuf(panel.__icon__, 32)
             text = "<b>%s</b>\n%s" % (panel.__title__, panel.__desc__)
             store.append((checked, panel_icon, text, panel))
         
@@ -547,7 +547,7 @@ class ThemeTab:
             pngfile = "%s/%s.png" % (addDataPrefix("pieces"), theme)
         
             if isfile(pngfile):
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file(pngfile)
+                pixbuf = get_pixbuf(pngfile)
                 store.append((pixbuf, theme))
             else:
                 print("WARNING: No piece theme preview icons found. Please run create_theme_preview.sh !")

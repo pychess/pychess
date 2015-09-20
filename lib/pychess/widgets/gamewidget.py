@@ -26,7 +26,7 @@ from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.uistuff import makeYellow
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.const import *
 from pychess.Utils.Move import listToMoves
 from pychess.Utils.lutils import lmove
@@ -825,7 +825,7 @@ def _ensureReadForGameWidgets ():
     
     for panel in sidePanels:
         hbox = Gtk.HBox()
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(panel.__icon__, 16, 16)        
+        pixbuf = get_pixbuf(panel.__icon__, 16)        
         icon = Gtk.Image.new_from_pixbuf(pixbuf) 
         label = Gtk.Label(label=panel.__title__)
         label.set_size_request(0, 0)
@@ -840,7 +840,7 @@ def _ensureReadForGameWidgets ():
             table.set_row_spacings(2)
             table.set_col_spacings(6)
             table.set_border_width(4)
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename, 56, 56)
+            pixbuf = get_pixbuf(filename, 56)
             image = Gtk.Image.new_from_pixbuf(pixbuf)
             image.set_alignment(0, 0)
             table.attach(image, 0,1,0,2)
