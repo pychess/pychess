@@ -8,18 +8,44 @@ from os.path import isdir, isfile
 import os
 import site
 import sys
+import msilib
 
 from imp import load_module, find_module
 pychess = load_module("pychess", *find_module("pychess",["lib"]))
 
-bdist_msi =False
+msi =False
 if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
     try:
         from cx_Freeze import setup, Executable
-        bdist_msi = True
+        from cx_Freeze.windist import bdist_msi
+        msi = True
     except ImportError:
         print("ERROR: can't import cx_Freeze!")
         sys.exit(1)
+
+    # Monkeypatching cx_freezee to do per user installer
+    class peruser_bdist_msi(bdist_msi):
+        def add_properties(self):
+            metadata = self.distribution.metadata
+            props = [
+                    ('DistVersion', metadata.get_version()),
+                    ('DefaultUIFont', 'DlgFont8'),
+                    ('ErrorDialog', 'ErrorDlg'),
+                    ('Progress1', 'Install'),
+                    ('Progress2', 'installs'),
+                    ('MaintenanceForm_Action', 'Repair'),
+                    ('ALLUSERS', '2'),
+                    ('MSIINSTALLPERUSER','1')
+            ]
+            email = metadata.author_email or metadata.maintainer_email
+            if email:
+                props.append(("ARPCONTACT", email))
+            if metadata.url:
+                props.append(("ARPURLINFOABOUT", metadata.url))
+            if self.upgrade_code is not None:
+                props.append(("UpgradeCode", self.upgrade_code))
+            msilib.add_data(self.db, 'Property', props)
+    bdist_msi.add_properties = peruser_bdist_msi.add_properties
 else:
     from distutils.core import setup
 
@@ -164,7 +190,7 @@ for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d
 
 PACKAGES = []
 
-if bdist_msi:
+if msi:
     # TODO: cx_freeze doesn't allow letters in version
     VERSION = "0.12"
     
