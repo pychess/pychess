@@ -17,7 +17,7 @@ from gi.repository import GtkSource
 from gi.repository import GdkPixbuf
 
 from pychess.compat import StringIO
-from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import *
@@ -42,8 +42,7 @@ from pychess.Variants.normal import NormalBoard
 # We init most dialog icons global to make them accessibly to the
 # Background.Taskers so they have a similar look.
 #===============================================================================
-
-big_time = GdkPixbuf.Pixbuf.new_from_file(addDataPrefix("glade/stock_alarm.svg"))
+big_time = get_pixbuf("glade/stock_alarm.svg")
 big_people = load_icon(48, "stock_people", "system-users")
 iwheels = load_icon(24, "gtk-execute", "system-run")
 ipeople = load_icon(24, "stock_people", "system-users")
@@ -82,10 +81,10 @@ def createPlayerUIGlobals (discoverer):
         c = discoverer.getCountry(engine)
         path = addDataPrefix("flags/%s.png" % c)
         if c and os.path.isfile(path):
-            flag_icon = GdkPixbuf.Pixbuf.new_from_file(path)
+            flag_icon = get_pixbuf(path)
         else:
             path = addDataPrefix("flags/unknown.png")
-            flag_icon = GdkPixbuf.Pixbuf.new_from_file(path)
+            flag_icon = get_pixbuf(path)
         for variant in discoverer.getEngineVariants(engine):
             playerItems[variant] += [(flag_icon, name)]
             smallPlayerItems[variant] += [(snotebook, name)]
