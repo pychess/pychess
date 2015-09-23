@@ -15,9 +15,9 @@ class ImageMenu(Gtk.EventBox):
         self.subwindow.add(child)        
         self.subwindow.connect_after("draw", self.__sub_onExpose)
         self.subwindow.connect("button_press_event", self.__sub_onPress)
-        self.subwindow.connect("motion_notify_event", self.__sub_onMotion)
-        self.subwindow.connect("leave_notify_event", self.__sub_onMotion)
-        self.subwindow.connect("delete-event", self.__sub_onDelete)
+        #self.subwindow.connect("motion_notify_event", self.__sub_onMotion)
+        #self.subwindow.connect("leave_notify_event", self.__sub_onMotion)
+        #self.subwindow.connect("delete-event", self.__sub_onDelete)
         self.subwindow.connect("focus-out-event", self.__sub_onFocusOut)
         child.show_all()
         
@@ -76,7 +76,7 @@ class ImageMenu(Gtk.EventBox):
         r, g, b, a = color.red, color.green, color.blue, color.alpha
         context.set_source_rgba(r, g, b, a)
         context.stroke()
-        self.__sub_setGrabbed(self.isopen)
+        #self.__sub_setGrabbed(self.isopen)
     
     def __sub_onDelete (self, subwindow, event):
         self.setOpen(False)
@@ -103,10 +103,12 @@ if __name__ == "__main__":
     
     table = Gtk.Table(2, 2)
     table.attach(Gtk.Label(label="Minutes:"), 0, 1, 0, 1)
-    spin1 = Gtk.SpinButton(Gtk.Adjustment(0,0,100,1))
+    spin1 = Gtk.SpinButton()
+    spin1.set_adjustment(Gtk.Adjustment(0,0,100,1))
     table.attach(spin1, 1, 2, 0, 1)
     table.attach(Gtk.Label(label="Gain:"), 0, 1, 1, 2)
-    spin2 = Gtk.SpinButton(Gtk.Adjustment(0,0,100,1))
+    spin2 = Gtk.SpinButton()
+    spin2.set_adjustment(Gtk.Adjustment(0,0,100,1))
     table.attach(spin2, 1, 2, 1, 2)
     table.set_border_width(6)
     
