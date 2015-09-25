@@ -137,6 +137,7 @@ class ChatView (Gtk.VPaned):
         if event.keyval in list(map(Gdk.keyval_from_name,("Return", "KP_Enter"))):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
-                self.emit("messageTyped", buffer.props.text)
-                buffer.props.text = ""
+                if buffer.props.text:
+                    self.emit("messageTyped", buffer.props.text)
+                    buffer.props.text = ""
                 return True
