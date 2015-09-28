@@ -20,6 +20,6 @@ def load_icon(size, *alternatives):
 def get_pixbuf(path, size=None):
     file = Gio.File.new_for_path(addDataPrefix(path))
     if size is None:
-        return GdkPixbuf.Pixbuf.new_from_stream(file.read())
+        return GdkPixbuf.Pixbuf.new_from_stream(file.read(None), None)
     else:
-        return GdkPixbuf.Pixbuf.new_from_stream_at_scale(file.read(), size, size, True, None)
+        return GdkPixbuf.Pixbuf.new_from_stream_at_scale(file.read(None), size, size, True, None)
