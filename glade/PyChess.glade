@@ -1173,6 +1173,26 @@ If it can use both  you can set here which one you like.</property>
                                       </packing>
                                     </child>
                                     <child>
+                                      <object class="GtkCheckButton" id="closeAll">
+                                        <property name="label" translatable="yes">_Use main app closer [x] to close all games</property>
+                                        <property name="use_action_appearance">False</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">If set, clicking on main application window closer first time it closes all games.</property>
+                                        <property name="halign">start</property>
+                                        <property name="use_action_appearance">False</property>
+                                        <property name="use_underline">True</property>
+                                        <property name="xalign">0.5</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
                                       <object class="GtkCheckButton" id="autoRotate">
                                         <property name="label" translatable="yes">Auto _rotate board to current human player</property>
                                         <property name="use_action_appearance">False</property>
@@ -1189,7 +1209,7 @@ If it can use both  you can set here which one you like.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
-                                        <property name="position">1</property>
+                                        <property name="position">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1209,7 +1229,7 @@ If it can use both  you can set here which one you like.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
-                                        <property name="position">2</property>
+                                        <property name="position">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1229,7 +1249,7 @@ If it can use both  you can set here which one you like.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
-                                        <property name="position">3</property>
+                                        <property name="position">4</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1249,7 +1269,7 @@ If it can use both  you can set here which one you like.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
-                                        <property name="position">4</property>
+                                        <property name="position">5</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1269,7 +1289,7 @@ If it can use both  you can set here which one you like.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
-                                        <property name="position">5</property>
+                                        <property name="position">6</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1288,7 +1308,7 @@ If it can use both  you can set here which one you like.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
-                                        <property name="position">6</property>
+                                        <property name="position">7</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1307,7 +1327,7 @@ If it can use both  you can set here which one you like.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
-                                        <property name="position">7</property>
+                                        <property name="position">8</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -1326,7 +1346,7 @@ If it can use both  you can set here which one you like.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
-                                        <property name="position">8</property>
+                                        <property name="position">9</property>
                                       </packing>
                                     </child>
                                   </object>
