@@ -231,7 +231,9 @@ class GladeHandlers:
                 gmwidg = gamewidget.cur_gmwidg()
                 response = ionest.closeGame(gmwidg, gameDic[gmwidg])
                 return True
-                
+            elif len(gameDic) >= 1 and conf.get("closeAll", False):
+                response = ionest.closeAllGames(gameDic.items())
+                return True
         if ionest.closeAllGames(gameDic.items()) in (Gtk.ResponseType.OK, Gtk.ResponseType.YES):
             Gtk.main_quit()
         else:
