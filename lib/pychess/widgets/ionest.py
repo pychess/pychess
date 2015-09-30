@@ -310,6 +310,7 @@ Please ensure that you have given the right path and try again."))
 ################################################################################
 def closeAllGames (pairs):
     log.debug("ionest.closeAllGames")
+    response = None
     changedPairs = [(gmwidg, game) for gmwidg, game in pairs if game.isChanged()]
     if len(changedPairs) == 0:
         response = Gtk.ResponseType.OK
@@ -373,9 +374,11 @@ def closeAllGames (pairs):
                         if checked:
                             gmwidg, game = changedPairs[i]
                             if saveGame(game) == Gtk.ResponseType.ACCEPT:
-                                del pairs[i]
                                 liststore.remove(liststore.get_iter((i,)))
-                                game.end(ABORTED, ABORTED_AGREEMENT)
+                                del changedPairs[i]
+                                if game.status in UNFINISHED_STATES:
+                                    game.end(ABORTED, ABORTED_AGREEMENT)
+                                game.terminate()
                                 gamewidget.delGameWidget(gmwidg)
                             else:
                                 break
@@ -387,8 +390,11 @@ def closeAllGames (pairs):
 
     if response not in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
         for gmwidg, game in pairs:
-            game.end(ABORTED, ABORTED_AGREEMENT)
+            if game.status in UNFINISHED_STATES:
+                game.end(ABORTED, ABORTED_AGREEMENT)
             game.terminate()
+            if gmwidg.notebookKey in gamewidget.key2gmwidg:
+                gamewidget.delGameWidget(gmwidg)
 
     return response
 
