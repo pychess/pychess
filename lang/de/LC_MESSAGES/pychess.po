@@ -11,13 +11,14 @@
 # Pilgrim <pilgrim@clovermail.net>, 2013
 # scuffi <scuffle@gmx.de>, 2014-2015
 # Steve <raccoon@gmx.at>, 2014
+# Valsu <valsu@hylia.de>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-08-11 17:25+0200\n"
-"PO-Revision-Date: 2015-08-14 13:10+0000\n"
-"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
+"PO-Revision-Date: 2015-09-28 12:31+0000\n"
+"Last-Translator: Valsu <valsu@hylia.de>\n"
 "Language-Team: German (http://www.transifex.com/gbtami/pychess/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -899,7 +900,7 @@ msgstr "_Klänge"
 
 #: glade/PyChess.glade:3104
 msgid "_Auto save finished games"
-msgstr ""
+msgstr "_Automatisch beendete Spiele speichern"
 
 #: glade/PyChess.glade:3139
 msgid "Save files to:"
@@ -991,7 +992,7 @@ msgstr "Einstellung"
 
 #: glade/PyChess.glade:3618
 msgid "_Copy PGN"
-msgstr ""
+msgstr "_PGN kopieren"
 
 #: glade/PyChess.glade:3635
 msgid "_Engines"
@@ -1214,12 +1215,12 @@ msgstr "Das eingegebene Passwort war ungültig.\nWenn Sie Ihr Passwort vergessen
 #: lib/pychess/ic/FICSConnection.py:130
 #, python-format
 msgid "Sorry '%s' is already logged in"
-msgstr ""
+msgstr "Entschuldigung, '%s' ist bereits angemeldet"
 
 #: lib/pychess/ic/FICSConnection.py:131
 #, python-format
 msgid "'%s' is a registered name.  If it is yours, type the passworld."
-msgstr ""
+msgstr "'%s' ist ein registrierter Name.  Gehört er zu Ihnen, tippen Sie bitte das Passwort ein."
 
 #: lib/pychess/ic/FICSConnection.py:149
 msgid "Connecting to server"
@@ -2228,12 +2229,12 @@ msgstr "Weil der König von %(loser)s explodiert ist"
 #: lib/pychess/Utils/repr.py:46
 #, python-format
 msgid "Because %(winner)s king reached the center"
-msgstr ""
+msgstr "Weil %(winner)s König die Brettmitte erreicht hat"
 
 #: lib/pychess/Utils/repr.py:47
 #, python-format
 msgid "Because %(winner)s was giving check 3 times"
-msgstr ""
+msgstr "Weil %(winner)s 3-mal im Schach gestanden hat"
 
 #: lib/pychess/Utils/repr.py:49
 msgid "Because a player lost connection"
@@ -2344,7 +2345,7 @@ msgstr ""
 
 #: lib/pychess/Variants/asean.py:33
 msgid "Makruk: http://en.wikipedia.org/wiki/Makruk"
-msgstr ""
+msgstr "Makruk: https://de.wikipedia.org/wiki/Makruk"
 
 #: lib/pychess/Variants/asean.py:34
 msgid "Makruk"
@@ -2352,11 +2353,11 @@ msgstr ""
 
 #: lib/pychess/Variants/asean.py:60
 msgid "Cambodian: http://www.khmerinstitute.org/culture/ok.html"
-msgstr ""
+msgstr "Ouk-Khmer: https://en.wikipedia.org/wiki/Ouk-Khmer_%28Hill's_version%29"
 
 #: lib/pychess/Variants/asean.py:61
 msgid "Cambodian"
-msgstr ""
+msgstr "Ouk-Khmer"
 
 #: lib/pychess/Variants/asean.py:86
 msgid ""
@@ -2484,7 +2485,7 @@ msgstr ""
 
 #: lib/pychess/Variants/kingofthehill.py:10
 msgid "King of the hill"
-msgstr ""
+msgstr "König des Hügels"
 
 #: lib/pychess/Variants/knightodds.py:8
 msgid "One player starts with one less knight piece"
@@ -2593,7 +2594,7 @@ msgstr ""
 
 #: lib/pychess/Variants/threecheck.py:10
 msgid "Win by giving check 3 times"
-msgstr ""
+msgstr "Gewonnen durch 3-maliges Schach geben"
 
 #: lib/pychess/Variants/threecheck.py:11
 msgid "Three-check"
@@ -2644,11 +2645,11 @@ msgstr "Wildcastle shuffle"
 
 #: lib/pychess/widgets/analyzegameDialog.py:81
 msgid "Game analyzing in progress..."
-msgstr ""
+msgstr "Spielanalyse läuft..."
 
 #: lib/pychess/widgets/analyzegameDialog.py:82
 msgid "Do you want to abort it?"
-msgstr ""
+msgstr "Möchten Sie abbrechen?"
 
 #: lib/pychess/widgets/analyzegameDialog.py:88
 #: lib/pychess/widgets/gamewidget.py:193 lib/pychess/widgets/gamewidget.py:308
@@ -2704,7 +2705,7 @@ msgstr "Ausführbare Dateien"
 #: lib/pychess/widgets/enginesDialog.py:209
 #, python-format
 msgid "<big><b>Unable to add %s</b></big>"
-msgstr ""
+msgstr "<big><b>Konnte %s nicht hinzufügen</b></big>"
 
 #: lib/pychess/widgets/enginesDialog.py:163
 msgid "wine not installed"
@@ -2713,7 +2714,7 @@ msgstr "wine ist nicht installiert"
 #: lib/pychess/widgets/enginesDialog.py:184
 #: lib/pychess/widgets/enginesDialog.py:210
 msgid "There is something wrong with this executable"
-msgstr ""
+msgstr "Etwas stimmt mit dieser ausführbaren Datei nicht"
 
 #: lib/pychess/widgets/enginesDialog.py:240
 msgid "Select working directory"
@@ -2722,7 +2723,7 @@ msgstr "Arbeitsverzeichnis auswählen"
 #: lib/pychess/widgets/gamenanny.py:114
 #, python-format
 msgid " invalid engine move: %s"
-msgstr ""
+msgstr "unzulässiger Zug der Schach-Engine: %s"
 
 #: lib/pychess/widgets/gamenanny.py:133
 msgid "Offer Rematch"
@@ -3024,7 +3025,7 @@ msgstr[1] "Speichere %d Partien"
 
 #: lib/pychess/widgets/ionest.py:398
 msgid "Save the current game before you close it?"
-msgstr ""
+msgstr "Aktuelles Spiel vor dem schließen speichern?"
 
 #: lib/pychess/widgets/ionest.py:406
 msgid ""
@@ -3136,7 +3137,7 @@ msgstr "Starte eine neue Partie mit <b>Partie</b> > <b>Neue Partie</b>. Im neuen
 #: lib/pychess/widgets/tipOfTheDay.py:52
 msgid ""
 "You can choose from 20 different difficulties to play against the computer."
-msgstr ""
+msgstr "Sie können aus 20 Schwierigkeitsgraden auswählen um gegen den Computer zu spielen."
 
 #: lib/pychess/widgets/tipOfTheDay.py:53
 msgid ""
@@ -3227,7 +3228,7 @@ msgid ""
 "FEN needs at least 2 data fields in fenstr. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "FEN benötigt mindestens 2 Datenfelder in fenstr.\n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:175
 #, python-format
@@ -3243,7 +3244,7 @@ msgid ""
 "Active color field must be one of w or b. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Aktives Farbfeld muss entweder w oder b sein.\n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:189
 #, python-format
@@ -3281,7 +3282,7 @@ msgstr "Das ausgewählte Feld (%s) ist ungültig"
 #: lib/pychess/Utils/lutils/lmove.py:323
 #, python-format
 msgid "the end cord (%s) is incorrect"
-msgstr ""
+msgstr "Das Schlussfeld (%s) ist ungültig"
 
 #: lib/pychess/Utils/lutils/strateval.py:24 sidepanel/commentPanel.py:190
 #: sidepanel/commentPanel.py:207
@@ -3516,7 +3517,7 @@ msgstr "Kommentierte Partie"
 
 #: sidepanel/annotationPanel.py:230
 msgid "Copy PGN"
-msgstr ""
+msgstr "PGN kopieren"
 
 #: sidepanel/annotationPanel.py:243
 msgid "Add start comment"
