@@ -459,7 +459,7 @@ class EngineDiscoverer (GObject.GObject):
         self._engines.append(engine)
 
     def removeEngine(self, name):
-        names = [engine["name"] for engine in self.getEngines()]
+        names = [engine["name"] for engine in self.engines]
         index = names.index(name)
         del self.engines[index]
         
