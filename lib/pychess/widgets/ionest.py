@@ -389,6 +389,7 @@ def closeAllGames (pairs):
             dialog.destroy()
 
     if response not in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
+        pairs = [(gmwidg, game) for gmwidg, game in pairs]
         for gmwidg, game in pairs:
             if game.status in UNFINISHED_STATES:
                 game.end(ABORTED, ABORTED_AGREEMENT)
