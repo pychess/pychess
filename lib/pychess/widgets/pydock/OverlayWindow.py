@@ -3,6 +3,7 @@ from __future__ import print_function
 import os
 import re
 import sys
+import tempfile
 
 import cairo
 from gi.repository import Gtk
@@ -109,7 +110,7 @@ class OverlayWindow (Gtk.Window):
             pixels = (color.red, color.green, color.blue)
             return "#"+"".join(hex(c/256)[2:].zfill(2) for c in pixels)
         
-        TEMP_PATH = "/tmp/pychess_theamed.svg"
+        TEMP_PATH = os.path.join(tempfile.gettempdir(), "pychess_theamed.svg")
 
         # return hex string #rrggbb
         def getcol(col):
