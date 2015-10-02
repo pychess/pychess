@@ -36,9 +36,14 @@ class HighlightArea (OverlayWindow):
         elif position == CENTER:
             x, y = 0, 0
             width, height = alloc.width, alloc.height
-        
-        x, y = self.translateCoords(int(x), int(y))
-        self.move(x, y)
+
+        try:
+            x, y = self.translateCoords(int(x), int(y))
+            self.move(x, y)
+        except:
+            pass
+            # Can't move to x,y, because top level parent has no window.
+
         self.resize(ceil(width), ceil(height))
         self.show()
         
