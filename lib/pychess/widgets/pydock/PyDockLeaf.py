@@ -191,6 +191,12 @@ class PyDockLeaf (DockLeaf):
     
     def __onDrop (self, starButton, position, sender):
         self.highlightArea.hide()
+
+        # if the undocked leaf was alone, __onDragEnd may not triggered
+        # because leaf was removed
+        for instance in self.getInstances():
+            instance.hideArrows()
+
         if self.dockable:
             if sender.get_parent() == self and self.book.get_n_pages() == 1:
                 return
