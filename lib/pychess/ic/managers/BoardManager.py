@@ -613,10 +613,8 @@ class BoardManager (GObject.GObject):
                           repr(line))
             moveno, wmove, whour, wmin, wsec, wmsec, bmove, bhour, bmin, bsec, bmsec = \
                 moveListMoves.match(line).groups()
-            if whour is None:
-                whour = 0
-            if bhour is None:
-                bhour = 0
+            whour = 0 if whour is None else int(whour[0])
+            bhour = 0 if bhour is None else int(bhour[0])
             ply = int(moveno)*2-2
             if wmove:
                 moves[ply] = wmove
