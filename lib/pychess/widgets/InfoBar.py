@@ -68,7 +68,8 @@ class InfoBarMessage (Gtk.InfoBar):
         button._button = Gtk.InfoBar.add_button(self, button.text, button.response_id)
         
         def set_sensitive(button, property):
-            self.set_response_sensitive(button.response_id, button.sensitive)
+            if self.get_children():
+                self.set_response_sensitive(button.response_id, button.sensitive)
         button.connect("notify::sensitive", set_sensitive)
         
         def set_tooltip_text(button, property):
