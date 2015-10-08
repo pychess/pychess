@@ -84,7 +84,12 @@ class SubProcess (GObject.GObject):
             self.channelsClosed = False
             self.channelsClosedLock = threading.Lock()
             log.debug("SubProcess.__init__: child_watch_add...",  extra={"task":self.defname})
-            GObject.child_watch_add(self.pid, self.__child_watch_callback, None)
+            
+            # On Python3 pygobject versions before 3.10.0 spawn_async returns pid as 0
+            # see https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=712537
+            if self.pid != 0:
+                GObject.child_watch_add(self.pid, self.__child_watch_callback, None)
+            
             if event is not None:
                 event.set()
         
@@ -181,9 +186,10 @@ class SubProcess (GObject.GObject):
 
     def sendSignal (self, sign):
         try:
-            if sys.platform != "win32":
+            if sys.platform != "win32" and self.pid != 0:
                 os.kill(self.pid, signal.SIGCONT)
-            os.kill(self.pid, sign)
+            if self.pid != 0:
+                os.kill(self.pid, sign)
         except OSError as e:
             if e.errno in (errno.ESRCH, errno.EACCES, errno.EINVAL):
                 #No such process, Permission denied, Invalid argument
@@ -229,7 +235,8 @@ class SubProcess (GObject.GObject):
             self.sendSignal(signal.SIGABRT)
         else:
             self.sendSignal(signal.SIGKILL)
-        GLib.spawn_close_pid(self.pid)
+        if self.pid != 0:
+            GLib.spawn_close_pid(self.pid)
     
     def sigterm (self):
         self.sendSignal(signal.SIGTERM)
