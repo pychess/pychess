@@ -70,8 +70,14 @@ class ConsoleView (Gtk.VPaned):
         self.readView.modify_font(fontdesc)
         
         self.textbuffer = self.readView.get_buffer()
-        sc = self.get_style_context()
-        self.textbuffer.create_tag("text", foreground=sc.get_color(Gtk.StateFlags.NORMAL))
+
+        sc = self.readView.get_style_context()
+        bool1, bg_color = sc.lookup_color("p_bg_color")
+        self.readView.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
+        bool1, fg_color = sc.lookup_color("p_fg_color")
+        self.readView.override_color(Gtk.StateFlags.NORMAL, fg_color)
+
+        self.textbuffer.create_tag("text")
         self.textbuffer.create_tag("mytext", weight=Pango.Weight.BOLD)
 
         self.sw = sw = Gtk.ScrolledWindow()
