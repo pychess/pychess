@@ -66,10 +66,16 @@ class Sidepanel(Gtk.TextView):
         
         self.connect("motion-notify-event", self.motion_notify_event)
         self.connect("button-press-event", self.button_press_event)
+
+        sc = self.textview.get_style_context()
+        bool1, bg_color = sc.lookup_color("p_bg_color")
+        self.textview.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
+        bool1, fg_color = sc.lookup_color("p_fg_color")
+        self.textview.override_color(Gtk.StateFlags.NORMAL, fg_color)
         
         self.textbuffer = self.get_buffer()
         
-        color0 = Gdk.RGBA(red=0.0, green=0.0, blue=0.0)
+        color0 = fg_color
         color1 = Gdk.RGBA(red=0.2, green=0.0, blue=0.0)
         color2 = Gdk.RGBA(red=0.4, green=0.0, blue=0.0)
         color3 = Gdk.RGBA(red=0.6, green=0.0, blue=0.0)
@@ -83,7 +89,7 @@ class Sidepanel(Gtk.TextView):
 
         self.textbuffer.create_tag("head1")
         self.textbuffer.create_tag("head2", weight=Pango.Weight.BOLD)
-        self.textbuffer.create_tag("move", weight=Pango.Weight.BOLD, background="white")
+        self.textbuffer.create_tag("move", weight=Pango.Weight.BOLD)
         self.textbuffer.create_tag("scored0", foreground_rgba=color0)
         self.textbuffer.create_tag("scored1", foreground_rgba=color1)
         self.textbuffer.create_tag("scored2", foreground_rgba=color2)
