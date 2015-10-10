@@ -654,6 +654,13 @@ class ChatWindow (object):
         else:
             self.showChat()
             self.window.set_urgency_hint(True)
+            self.initial_focus_id = self.window.connect(
+                "focus-in-event", self.on_initial_focus_in)
+
+    def on_initial_focus_in(self, widget, event):
+        self.window.set_urgency_hint(False)
+        self.window.disconnect(self.initial_focus_id)
+        return False
     
     def openChatWithPlayer (self, name):
         self.showChat()
