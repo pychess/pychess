@@ -616,11 +616,12 @@ class GameWidget (GObject.GObject):
             tooltip.set_custom(l)
             l.show()
             return True
-        stat_hbox = Gtk.HBox()
-        page_vbox = Gtk.VBox()
-        page_vbox.set_spacing(1)
-        sep = Gtk.HSeparator()
-        sep.set_size_request(-1, 2)
+        align = createAlignment (4, 0, 4, 0)
+        #stat_hbox = Gtk.HBox()
+        #page_vbox = Gtk.VBox()
+        #page_vbox.set_spacing(1)
+        #sep = Gtk.HSeparator()
+        #sep.set_size_request(-1, 2)
         page_hbox = Gtk.HBox()
         startbut = Gtk.Button()
         startbut.add(createImage(media_previous))
@@ -650,12 +651,13 @@ class GameWidget (GObject.GObject):
         page_hbox.pack_start(backbut, True, True, 0)
         page_hbox.pack_start(forwbut, True, True, 0)
         page_hbox.pack_start(endbut, True, True, 0)
-        page_vbox.pack_start(sep, True, True, 0)
-        page_vbox.pack_start(page_hbox, True, True, 0)
+        #page_vbox.pack_start(sep, True, True, 0)
+        #page_vbox.pack_start(page_hbox, True, True, 0)
         statusbar = Gtk.Statusbar()
-        stat_hbox.pack_start(page_vbox, False, True, 0)
-        stat_hbox.pack_start(statusbar, True, True, 0)
-        return statusbar, stat_hbox
+        #stat_hbox.pack_start(page_vbox, False, True, 0)
+        #stat_hbox.pack_start(statusbar, True, True, 0)
+        align.add(page_hbox)
+        return statusbar, align
     
     def setLocked (self, locked):
         """ Makes the board insensitive and turns off the tab ready indicator """
@@ -918,12 +920,14 @@ def _ensureReadForGameWidgets ():
     hbox.pack_start(notebooks["statusbar"], False, True, 0)
     
     # The message area
-    align = createAlignment(4,4,0,4)
-    sw = Gtk.ScrolledWindow()
-    port = Gtk.Viewport()
-    port.add(notebooks["messageArea"])
-    sw.add(port)
-    align.add(sw)
+    # TODO: If you try to fix this first read issue #958 and 1018
+    align = createAlignment(0,0,0,0)
+    #sw = Gtk.ScrolledWindow()
+    #port = Gtk.Viewport()
+    #port.add(notebooks["messageArea"])
+    #sw.add(port)
+    #align.add(sw)
+    align.add(notebooks["messageArea"])
     hbox.pack_start(align, True, True, 0)
     def ma_switch_page (notebook, gpointer, page_num):
         notebook.props.visible = notebook.get_nth_page(page_num).get_child().props.visible
@@ -970,7 +974,7 @@ def attachGameWidget (gmwidg):
     headbook.connect_after("switch-page", callback, gmwidg)
     gmwidg.emit("infront")
     
-    align = createAlignment(4,4,0,4)
+    align = createAlignment(0,0,0,0)
     align.show()
     align.add(gmwidg.infobar)
     notebooks["messageArea"].append_page(align, None)
