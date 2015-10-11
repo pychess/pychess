@@ -5,24 +5,26 @@ from pychess.System.idle_add import idle_add
 
 
 def get_message_content (heading_text, message_text, image_stock_id):
+    # TODO: If you try to fix this first read issue #958 and 1018
     hbox = Gtk.HBox()
     #image = Gtk.Image()
     #image.set_from_stock(image_stock_id, Gtk.IconSize.DIALOG)    
     #hbox.pack_start(image, False, False, 0)
     vbox = Gtk.VBox()
-    label = Gtk.Label()
-    label.props.xalign = 0
-    label.props.justify = Gtk.Justification.LEFT
-    label.set_markup("<b><big>%s</big></b>" % heading_text)    
-    vbox.pack_start(label, False, False, 0)
+    #label = Gtk.Label()
+    #label.props.xalign = 0
+    #label.props.justify = Gtk.Justification.LEFT
+    #label.set_markup("<b><big>%s</big></b>" % heading_text)    
+    #label.set_text(heading_text)    
+    #vbox.pack_start(label, False, False, 0)
     label = Gtk.Label()
     label.props.xalign = 0
     label.props.justify = Gtk.Justification.LEFT
     label.props.wrap = True
-    label.set_width_chars(70)
-    label.set_text(message_text)    
+    #label.set_width_chars(70)
+    label.set_text("%s %s" % (heading_text, message_text))
     vbox.pack_start(label, False, False, 0)
-    hbox.pack_start(vbox, False, False, 7)
+    hbox.pack_start(vbox, False, False, 0)
     return hbox
 
 class InfoBarMessageButton (GObject.GObject):
