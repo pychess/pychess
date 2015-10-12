@@ -131,8 +131,8 @@ parser.add_argument('--no-debug', action='store_true',
     help='turn off debugging output')
 parser.add_argument('--idle-add-debug', action='store_true',
     help='turn on idle-add debugging output')
-parser.add_argument('--no-thread-debug', action='store_true',
-    help='turn off thread debugging output')
+parser.add_argument('--thread-debug', action='store_true',
+    help='turn on thread debugging output')
 parser.add_argument('--log-viewer', action='store_true',
     help='enable Log Viewer menu')
 parser.add_argument('--ics-host', action='store',
@@ -145,7 +145,7 @@ parser.add_argument('chess_file', nargs='?', metavar='chessfile',
 args = parser.parse_args()
 no_debug = args.no_debug
 idle_add_debug = args.idle_add_debug
-no_thread_debug = args.no_thread_debug
+thread_debug = args.thread_debug
 log_viewer = args.log_viewer
 chess_file = args.chess_file
 ics_host = args.ics_host
@@ -155,5 +155,5 @@ ics_port = args.ics_port
 # Let's rumble!
 
 import pychess.Main
-pychess.Main.run(no_debug, idle_add_debug, no_thread_debug, log_viewer,
+pychess.Main.run(no_debug, idle_add_debug, thread_debug, log_viewer,
                  chess_file, ics_host, ics_port)
