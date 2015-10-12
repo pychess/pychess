@@ -483,7 +483,7 @@ class PyChess:
                 GLib.idle_add(newGameDialog.LoadFileExtension.run, chess_file)
             discoverer.connect_after("all_engines_discovered", do)
 
-def run (no_debug, idle_add_debug, no_thread_debug, log_viewer, chess_file,
+def run (no_debug, idle_add_debug, thread_debug, log_viewer, chess_file,
          ics_host, ics_port):
     # Start logging
     if log_viewer:
@@ -514,7 +514,7 @@ def run (no_debug, idle_add_debug, no_thread_debug, log_viewer, chess_file,
     log.info("Platform: %s" % platform.platform())
     log.info("Python version: %s.%s.%s" % sys.version_info[0:3])
     log.info("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
-    if not no_thread_debug:
+    if thread_debug:
         start_thread_dump()
     if ics_host:
         ICLogon.host = ics_host
