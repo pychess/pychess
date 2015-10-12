@@ -9,6 +9,7 @@ from gi.repository import GObject
 
 from pychess.System.idle_add import idle_add
 from pychess.System import uistuff
+from pychess.widgets.Background import set_textview_color
 from .BorderBox import BorderBox
 
 class ChatView (Gtk.VPaned):
@@ -27,11 +28,7 @@ class ChatView (Gtk.VPaned):
         # Inits the read view
         self.readView = Gtk.TextView()
 
-        sc = self.readView.get_style_context()
-        bool1, bg_color = sc.lookup_color("p_bg_color")
-        self.readView.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
-        bool1, fg_color = sc.lookup_color("p_fg_color")
-        self.readView.override_color(Gtk.StateFlags.NORMAL, fg_color)
+        set_textview_color(self.readView)
 
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
@@ -57,11 +54,7 @@ class ChatView (Gtk.VPaned):
         # Inits the write view
         self.writeView = Gtk.TextView()
 
-        sc = self.writeView.get_style_context()
-        bool1, bg_color = sc.lookup_color("p_bg_color")
-        self.writeView.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
-        bool1, fg_color = sc.lookup_color("p_fg_color")
-        self.writeView.override_color(Gtk.StateFlags.NORMAL, fg_color)
+        set_textview_color(self.writeView)
 
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
