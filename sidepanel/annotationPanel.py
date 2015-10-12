@@ -19,6 +19,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toSAN, toFAN
 from pychess.Savers.pgn import move_count
 from pychess.Savers.pgnbase import nag2symbol
+from pychess.widgets.Background import set_textview_color
 from pychess.widgets.ChessClock import formatTime
 
 __title__ = _("Annotation")
@@ -67,11 +68,7 @@ class Sidepanel(Gtk.TextView):
         self.connect("motion-notify-event", self.motion_notify_event)
         self.connect("button-press-event", self.button_press_event)
 
-        sc = self.textview.get_style_context()
-        bool1, bg_color = sc.lookup_color("p_bg_color")
-        self.textview.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
-        bool1, fg_color = sc.lookup_color("p_fg_color")
-        self.textview.override_color(Gtk.StateFlags.NORMAL, fg_color)
+        bg_color, fg_color = set_textview_color(self.textview)
         
         self.textbuffer = self.get_buffer()
         
