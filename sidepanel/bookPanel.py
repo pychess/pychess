@@ -346,6 +346,7 @@ class EndgameAdvisor(Advisor, Thread):
         except Full:
             log.warning("EndgameAdvisor.gamewidget_closed: Queue.Full")
 
+    @idle_add
     def on_scored(self, w, ret):
         m = self.boardview.model
         if m.isPlayingICSGame():
