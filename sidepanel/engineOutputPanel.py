@@ -10,6 +10,7 @@ from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import ARTIFICIAL
+from pychess.widgets.Background import set_textview_color
 
 __title__ = _("Engines")
 
@@ -38,6 +39,7 @@ class Sidepanel:
             self.output_separator = Gtk.HSeparator()
 
         self.output_noengines = Gtk.TextView()
+        set_textview_color(self.output_noengines)
         self.output_noengines.get_buffer().set_text(
         _("No chess engines (computer players) are participating in this game."))
         self.output_noengines.set_editable(False)
@@ -175,6 +177,7 @@ class EngineOutput (Gtk.VBox):
  
         # Text field for output:
         self.output = Gtk.TextView()
+        set_textview_color(self.output)
         self.output_container.add(self.output)
         self.output.set_editable(False)
         self.output.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
