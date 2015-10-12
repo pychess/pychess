@@ -7,6 +7,8 @@ from threading import Thread
 from pychess.System import fident
 from pychess.System.Log import log
 
+# This may cause random crashes
+# https://github.com/pychess/pychess/issues/1023
 def dump_threads ():
     stacks = []
     for thread in threading.enumerate():
