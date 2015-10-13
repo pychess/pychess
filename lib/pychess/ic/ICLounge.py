@@ -1628,6 +1628,7 @@ class SeekChallengeSection (Section):
         self.widgets["toleranceSlider"].connect("value-changed", self.onToleranceSliderChanged)
         self.onToleranceSliderChanged(self.widgets["toleranceSlider"])
         self.widgets["toleranceButton"].connect("clicked", self.onToleranceButtonClicked)
+        self.widgets["toleranceButton"].connect("activate-link", lambda link_button : True)
 
         def intGetter (widget):
             return int(widget.get_value())
@@ -1789,6 +1790,15 @@ class SeekChallengeSection (Section):
         self.widgets["editSeekDialog"].set_transient_for(self.widgets["fics_lounge"])
         self.__updateSeekEditor(seeknumber, challengemode)
         self.widgets["editSeekDialog"].present()
+
+        # ugly hack to fix https://github.com/pychess/pychess/issues/1024
+        # self.widgets["editSeekDialog"].queue_draw() doesn't work
+        if sys.platform == "win32":
+            self.widgets["editSeekDialog"].hide()
+            allocation = self.widgets["editSeekDialog"].get_allocation()
+            self.widgets["editSeekDialog"].set_size_request(
+                        allocation.width, allocation.height)
+            self.widgets["editSeekDialog"].show()
     
     #-------------------------------------------------------- Seek Editor
     
@@ -2155,10 +2165,8 @@ class SeekChallengeSection (Section):
         
     def __updateRatingCenterInfoBox (self):
         if self.widgets["toleranceHBox"].get_property("visible") == True:
-            self.widgets["ratingCenterAlignment"].set_property("top-padding", 4)
             self.widgets["ratingCenterInfoHBox"].show()
         else:
-            self.widgets["ratingCenterAlignment"].set_property("top-padding", 0)
             self.widgets["ratingCenterInfoHBox"].hide()
     
     def __updateToleranceButton (self):
