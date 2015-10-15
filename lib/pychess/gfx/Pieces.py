@@ -271,4 +271,4 @@ def set_piece_theme(piece_set):
         except:
             drawPiece = drawPiece2
 
-set_piece_theme(conf.get("pieceTheme", "pychess"))
+set_piece_theme(conf.get("pieceTheme", "Chessicons"))

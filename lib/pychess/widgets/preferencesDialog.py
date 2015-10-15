@@ -575,7 +575,7 @@ class ThemeTab:
             selected = iconview.get_selected_items()
             
             if len(selected) == 0:
-                return conf.get("pieceTheme", "Pychess")
+                return conf.get("pieceTheme", "Chessicons")
             
             indices = selected[0].get_indices()
             if indices:
@@ -592,7 +592,7 @@ class ThemeTab:
             iconview.select_path(Gtk.TreePath(index,))
                 
         uistuff.keep(widgets["pieceTheme"], "pieceTheme", _get_active,
-                     _set_active, "Pychess")
+                     _set_active, "Chessicons")
 
     def discover_themes(self):
         themes = ['Pychess']
