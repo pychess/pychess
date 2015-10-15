@@ -373,7 +373,7 @@ class PyChess:
                                    GladeHandlers.__dict__["on_quit1_activate"])
         widgets["window1"].connect("key-press-event",
                                    GladeHandlers.__dict__["on_window_key_press"])
-        uistuff.keepWindowSize("main", widgets["window1"], (575,479), POSITION_GOLDEN)
+        uistuff.keepWindowSize("main", widgets["window1"], None, POSITION_GOLDEN)
         widgets["window1"].show()
         widgets["Background"].show_all()
                 
