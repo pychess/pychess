@@ -456,6 +456,7 @@ class GladeWidgets:
         self.builder.set_translation_domain("pychess")
         self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
 
+        # TODO: remove this when upstream fixes translations with Python3+Windows
         if PY3 and sys.platform == "win32":
             for obj in self.builder.get_objects():
                 if (not isinstance(obj, Gtk.SeparatorMenuItem)) and hasattr(obj, "get_label"):
