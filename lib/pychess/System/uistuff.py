@@ -1,5 +1,6 @@
 import colorsys
 import re
+import sys
 import webbrowser
 from threading import Thread
 
@@ -9,7 +10,7 @@ from gi.repository import GObject
 from gi.repository import Pango
 from gi.repository.GdkPixbuf import Pixbuf
 
-from pychess.compat import Queue, Empty
+from pychess.compat import Queue, Empty,PY3
 from pychess.System import conf, fident
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
@@ -454,6 +455,17 @@ class GladeWidgets:
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain("pychess")
         self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
+
+        if PY3 and sys.platform == "win32":
+            for obj in self.builder.get_objects():
+                if (not isinstance(obj, Gtk.SeparatorMenuItem)) and hasattr(obj, "get_label"):
+                    label = obj.get_label()
+                    if label is not None:
+                        obj.set_label(_(label))
+                elif hasattr(obj, "get_title"):
+                    title = obj.get_title()
+                    if title is not None:
+                        obj.set_title(_(title))
         
     def __getitem__(self, key):
         return self.builder.get_object(key)
