@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 from __future__ import print_function
+
+import sys
 import threading
 import subprocess
 import traceback
@@ -24,14 +26,7 @@ class Command(object):
 
     def run(self, timeout=None, **kwargs):
         """ Run a command then return: (status, output, error). """
-        def target(**kwargs):
-            try:
-                self.process = subprocess.Popen(self.command, universal_newlines=True, **kwargs)
-                self.output, self.error = self.process.communicate(input=self.inputstr)
-                self.status = self.process.returncode
-            except:
-                self.error = traceback.format_exc()
-                self.status = -1
+
         # default stdin, stdout and stderr
         if 'stdin' not in kwargs:
             kwargs['stdin'] = subprocess.PIPE
@@ -39,15 +34,38 @@ class Command(object):
             kwargs['stdout'] = subprocess.PIPE
         if 'stderr' not in kwargs:
             kwargs['stderr'] = subprocess.PIPE
-        # thread
-        thread = threading.Thread(target=target, kwargs=kwargs)
-        thread.start()
-        thread.join(timeout)
-        if thread.is_alive():
-            self.process.terminate()
-            thread.join()
-        return self.status, self.output, self.error
 
+        try:
+            self.process = subprocess.Popen(self.command, universal_newlines=True, **kwargs)
+        except OSError:
+            return self.status, self.output, self.error
+        except ValueError:
+            return self.status, self.output, self.error
+
+        if sys.version_info >= (3, 3, 0):
+            try:
+                self.output, self.error = self.process.communicate(input=self.inputstr, timeout=timeout)
+            except subprocess.TimeoutExpired:
+                self.process.kill()
+                self.output, self.error = self.process.communicate()
+            self.status = self.process.returncode
+            return self.status, self.output, self.error
+        else:
+            def target(**kwargs):
+                try:
+                    self.output, self.error = self.process.communicate(input=self.inputstr)
+                    self.status = self.process.returncode
+                except:
+                    self.error = traceback.format_exc()
+                    self.status = -1
+            # thread
+            thread = threading.Thread(target=target, kwargs=kwargs)
+            thread.start()
+            thread.join(timeout)
+            if thread.is_alive():
+                self.process.kill()
+                thread.join()
+            return self.status, self.output, self.error
 
 if __name__ == "__main__":
     command = Command("DC", "xboard\nprotover 2\n")
