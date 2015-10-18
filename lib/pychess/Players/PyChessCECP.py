@@ -231,11 +231,13 @@ class PyChessCECP(PyChess):
                         move = parseAny (self.board, lines[1])
                     except ParsingError as e:
                         self.print("Error (unknown command): %s" % lines[1])
-                        self.print(self.board)
+                        if sys.platform != "win32":
+                            self.print(self.board)
                         continue
                     if not validateMove(self.board, move):
                         self.print("Illegal move: %s" % lines[1])
-                        self.print(self.board)
+                        if sys.platform != "win32":
+                            self.print(self.board)
                         continue
                     self.board.applyMove(move)
                     self.playingAs = self.board.color
