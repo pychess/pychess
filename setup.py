@@ -181,13 +181,15 @@ if sys.platform == "win32":
     sys.path.append(argv0_path + "\\tools\\i18n")
     import msgfmt
 
-for dir in [d for d in listdir("lang") if d.find(".svn") < 0 and isdir("lang/"+d) and d != "en"]:
+pychess_langs = []
+for dir in [d for d in listdir("lang") if isdir("lang/"+d) and d != "en"]:
     if sys.platform == "win32":
         file = "lang/%s/%s" % (dir,pofile)
         msgfmt.make(file+".po", file+".mo")
     else:
         os.popen("msgfmt lang/%s/%s.po -o lang/%s/%s.mo" % (dir,pofile,dir,pofile))
     DATA_FILES += [("share/locale/"+dir+"/LC_MESSAGES", ["lang/"+dir+"/"+pofile+".mo"])]
+    pychess_langs.append(dir)
 
 PACKAGES = []
 
@@ -199,7 +201,11 @@ if msi:
     ## Python into C:\PythonXX
     site_dir = site.getsitepackages()[1]
     include_dll_path = os.path.join(site_dir, "gnome")
-
+    lang_path = os.path.join(site_dir, "gnome", "share", "locale")
+    
+    ## gtk3.0 .mo files
+    gtk_mo = [f + "/LC_MESSAGES/gtk30.mo" for f in os.listdir(lang_path) if f in pychess_langs]
+    
     ## Collect the list of missing dll when cx_freeze builds the app
     missing_dll = [f for f in os.listdir(include_dll_path) if \
                     (f.endswith(".dll") or (f.startswith("gspawn") and f.endswith(".exe")))]
@@ -216,6 +222,11 @@ if msi:
 
     ## Create the list of includes as cx_freeze likes
     include_files = []
+    for mo in gtk_mo:
+        mofile = os.path.join(lang_path, mo)
+        if os.path.isfile(mofile):
+            include_files.append((mofile, "share/locale/" + mo))
+
     for dll in missing_dll:
         include_files.append((os.path.join(include_dll_path, dll), dll))
 
