@@ -144,7 +144,7 @@ class Sidepanel:
         
         # Test if the row is 'filled'
         if len(view.get_model()) == len(self.numbers.get_model()):
-            num = str((ply+1)/2)+"."
+            num = str((ply+1)//2)+"."
             self.numbers.get_model().append([num])
         
         # Test if the move is black first move. This will be the case if the
