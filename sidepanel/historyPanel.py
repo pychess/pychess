@@ -129,6 +129,7 @@ class Sidepanel:
             len_ -= 1
         for i in range(len_+game.lowply, ply+1):
             self.__addMove(game, i)
+        self.shown_changed (self.boardview, ply)
 
     def game_started(self, game):
         self.game_changed(game, game.ply)
