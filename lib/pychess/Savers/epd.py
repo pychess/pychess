@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from pychess.compat import unicode
+from pychess.compat import strip
 from .ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WHITE, BLACK, WON_RESIGN, WAITING_TO_START, BLACKWON, WHITEWON, DRAW
@@ -91,7 +91,7 @@ class EpdFile (ChessFile):
         else: raise LoadingError("EPD string can not have less than 4 field")
         
         opcodes = {}
-        for opcode in map(unicode.strip, opcodestr.split(";")):
+        for opcode in map(strip, opcodestr.split(";")):
             space = opcode.find(" ")
             if space == -1:
                 opcodes[opcode] = True
