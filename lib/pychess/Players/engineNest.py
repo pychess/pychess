@@ -5,7 +5,7 @@ import sys
 import json
 from functools import partial
 from hashlib import md5
-from threading import Thread
+from threading import Thread, Lock
 from os.path import join, dirname, abspath
 from copy import deepcopy
 
@@ -312,13 +312,14 @@ class EngineDiscoverer (GObject.GObject):
         # Runs all the engines in toBeRechecked, in order to gather information
         ######
         self.toBeRechecked = dict((c["name"],[c,False]) for c in self._engines if c.get('recheck'))
-        
+        self.all_done_lock = Lock()
         def count(self_, name, engine, wentwell):
-            if wentwell:
-                self.toBeRechecked[name][1] = True
-            if all([elem[1] for elem in self.toBeRechecked.values()]):
-                self.engines.sort(key=lambda x: x["name"])
-                self.emit("all_engines_discovered")
+            with self.all_done_lock:
+                if wentwell:
+                    self.toBeRechecked[name][1] = True
+                if all([elem[1] for elem in self.toBeRechecked.values()]):
+                    self.engines.sort(key=lambda x: x["name"])
+                    self.emit("all_engines_discovered")
         self.connect("engine_discovered", count, True)
         self.connect("engine_failed", count, False)       
         if self.toBeRechecked:          
