@@ -26,7 +26,13 @@ attrToProtocol = {"uci": UCIEngine, "xboard": CECPEngine}
 
 PYTHONBIN = sys.executable.split("/")[-1]
 
-backup = [
+if sys.platform == "win32":
+    if getattr(sys, 'frozen', False):
+        backup = [{"protocol": "xboard", "name": "pychess-engine", "country": "dk"}]
+    else:
+        backup = [{"protocol": "xboard", "name": "PyChess.py", "country": "dk"}]
+else:
+    backup = [
     {"protocol": "xboard", "name": "pychess-engine", "country": "dk"},
     {"protocol": "xboard", "name": "PyChess.py", "country": "dk",
         "vm_name": PYTHONBIN, "vm_args": ["-u"]},
@@ -54,7 +60,7 @@ backup = [
     {"protocol": "uci", "name": "diablo", "country": "us"},
     {"protocol": "uci", "name": "Houdini.exe", "country": "be", "vm_name": "wine"},
     {"protocol": "uci", "name": "Rybka.exe", "country": "ru", "vm_name": "wine"},
-]
+    ]
 
 
 def md5_sum(filename):
