@@ -184,13 +184,14 @@ class EnginesDialog():
                 
                 if new_engine:
                     try:
-                        # Most engines are UCI, but variant engines are CECP,
+                        # Some engines support CECP and UCI, but variant engines are CECP,
                         # so we better to start with CECP this case
-                        if "sjaakii" in new_engine.lower() or \
-                            "sjeng" in new_engine.lower():
+                        variant_engines = ("fmax", "sjaakii", "sjeng")
+                        if any((True for e in variant_engines if e in new_engine.lower())):
                             checkers = [is_cecp, is_uci]
                         else:
                             checkers = [is_uci, is_cecp]
+                        uci = False
                         for checker in checkers:
                             ok = checker(vmpath + new_engine)
                             if ok:
@@ -210,7 +211,6 @@ class EnginesDialog():
                                 d.hide()
                                 engine_chooser_dialog.hide()
                                 return
-                            uci = checker is is_uci
                         path, binname = os.path.split(new_engine)
                         for e in discoverer.getEngines():
                             if e["name"] == binname:
@@ -221,7 +221,7 @@ class EnginesDialog():
                         self.widgets["engine_args_entry"].set_text("")
                         
                         active = self.widgets["engine_protocol_combo"].get_active()
-                        protocol = "uci" if active==0 else "xboard"
+                        protocol = "uci" if uci else "xboard"
                         
                         discoverer.addEngine(binname, new_engine, protocol, vm_name)
                         self.cur_engine = binname
