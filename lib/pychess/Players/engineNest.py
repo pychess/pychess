@@ -408,7 +408,7 @@ class EngineDiscoverer (GObject.GObject):
         if working_directory:
             workdir = working_directory
         else:
-            workdir = getEngineDataPrefix()
+            workdir = os.path.dirname(engine["command"])
         warnwords = ("illegal", "error", "exception")      
         subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS, workdir)       
         engine_proc = attrToProtocol[protocol](subprocess, color, protover, md5)     
