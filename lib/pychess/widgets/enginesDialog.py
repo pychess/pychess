@@ -199,7 +199,7 @@ class EnginesDialog():
                                 break
                             else:
                                 continue
-                            if not checker(vmpath + new_engine):
+                            if not ok:
                                 # restore the original
                                 engine = discoverer.getEngineByName(self.cur_engine)
                                 engine_chooser_dialog.set_filename(engine["command"])
