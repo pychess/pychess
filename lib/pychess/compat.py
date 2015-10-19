@@ -13,6 +13,7 @@ if PY3:
     unichr = chr
     unicode = lambda x: x
     raw_input = input
+    strip = str.strip
 
     import builtins
     from html.entities import entitydefs
@@ -30,6 +31,7 @@ else:
     unicode = unicode
     unichr = unichr
     raw_input = raw_input
+    strip = unicode.strip
     
     import __builtin__ as builtins
     from htmlentitydefs import entitydefs
