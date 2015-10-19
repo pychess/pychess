@@ -44,10 +44,10 @@ class egtb_k4it:
         data = f.read()
         
         # Parse
-        for color, move_data in enumerate(data.split("\nNEXTCOLOR\n")):
+        for color, move_data in enumerate(data.split(b"\nNEXTCOLOR\n")):
             try:
                 moves = []
-                for fcord, tcord, promotion, result in expression.findall(move_data):
+                for fcord, tcord, promotion, result in expression.findall(move_data.decode()):
                     fcord = int(fcord)
                     tcord = int(tcord)
                     
