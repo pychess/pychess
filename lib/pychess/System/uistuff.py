@@ -467,7 +467,7 @@ class GladeWidgets:
                     title = obj.get_title()
                     if title is not None:
                         obj.set_title(_(title))
-                elif hasattr(obj, "get_tooltip_text"):
+                if hasattr(obj, "get_tooltip_text"):
                     text = obj.get_tooltip_text()
                     if text is not None:
                         obj.set_tooltip_text(_(text))
