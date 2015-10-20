@@ -4,6 +4,7 @@ import sys
 
 from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GLib
 from gi.repository import GObject
 
 from gi.repository.GdkPixbuf import Pixbuf
@@ -14,7 +15,6 @@ from pychess.System.prefix import getEngineDataPrefix
 from pychess.System.SubProcess import searchPath
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
 from pychess.widgets import newGameDialog
-
 
 firstRun = True
 def run(widgets):
@@ -84,7 +84,6 @@ class EnginesDialog():
         optv.append_column(Gtk.TreeViewColumn(
            "Data", KeyValueCellRenderer(self.options_store), data=1))
 
-        @idle_add
         def update_options(*args):
             if self.cur_engine is not None:
                 engines = discoverer.getEngines()
@@ -104,7 +103,6 @@ class EnginesDialog():
                             val["value"] = option.get("value", val["default"])
                         self.options_store.append([key, val])
 
-        @idle_add
         def update_store(*args):
             newGameDialog.createPlayerUIGlobals(discoverer)
             engine_names = [row[1] for row in allstore]
@@ -122,6 +120,10 @@ class EnginesDialog():
             update_options()
 
         update_store()
+
+        def do_update_store(*args):
+            GLib.idle_add(update_store)
+        discoverer.connect_after("engine_discovered", do_update_store)
         
         ################################################################
         # remove button
@@ -225,7 +227,6 @@ class EnginesDialog():
                         
                         discoverer.addEngine(binname, new_engine, protocol, vm_name)
                         self.cur_engine = binname
-                        discoverer.connect_after("engine_discovered", update_store)
                         self.add = False
                         discoverer.discover()
                     except:
@@ -300,7 +301,6 @@ class EnginesDialog():
                         # discover engine options for new protocol
                         engine["protocol"] = new_protocol
                         engine["recheck"] = True
-                        discoverer.connect_after("engine_discovered", update_options)
                         discoverer.discover()
                     else:
                         # restore the original protocol
