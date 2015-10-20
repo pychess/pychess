@@ -30,7 +30,8 @@ if sys.platform == "win32":
     if getattr(sys, 'frozen', False):
         backup = [{"protocol": "xboard", "name": "pychess-engine", "country": "dk"}]
     else:
-        backup = [{"protocol": "xboard", "name": "PyChess.py", "country": "dk"}]
+        backup = [{"protocol": "xboard", "name": "PyChess.py", "country": "dk",
+        "vm_name": PYTHONBIN, "vm_args": ["-u"]}]
 else:
     backup = [
     {"protocol": "xboard", "name": "pychess-engine", "country": "dk"},
@@ -181,7 +182,7 @@ class EngineDiscoverer (GObject.GObject):
         
         return engine
     
-    def __discoverE (self, engine):       
+    def __discoverE (self, engine):
         subproc = self.initEngine (engine, BLACK)       
         try:                
             subproc.connect('readyForOptions', self.__discoverE2, engine)            
@@ -331,8 +332,9 @@ class EngineDiscoverer (GObject.GObject):
         if self.toBeRechecked:          
             self.emit("discovering_started", self.toBeRechecked.keys())
             self.connect("all_engines_discovered", self.save)
-            for engine, need in self.toBeRechecked.values():              
-                self.__discoverE(engine)               
+            for engine, done in self.toBeRechecked.values():
+                if not done:
+                    self.__discoverE(engine)               
         else:          
             self.emit("all_engines_discovered")       
 
