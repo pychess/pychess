@@ -26,6 +26,7 @@ from pychess.Utils.lutils.validator import validateMove
 from pychess.System.Log import log
 from pychess.Variants.asean import ASEANSTART, MAKRUKSTART, KAMBODIANSTART, SITTUYINSTART
 
+ASCII = sys.platform == "win32"
 
 class PyChessCECP(PyChess):
     
@@ -231,13 +232,11 @@ class PyChessCECP(PyChess):
                         move = parseAny (self.board, lines[1])
                     except ParsingError as e:
                         self.print("Error (unknown command): %s" % lines[1])
-                        if sys.platform != "win32":
-                            self.print(self.board)
+                        self.print(self.board.prepr(ascii=ASCII))
                         continue
                     if not validateMove(self.board, move):
                         self.print("Illegal move: %s" % lines[1])
-                        if sys.platform != "win32":
-                            self.print(self.board)
+                        self.print(self.board.prepr(ascii=ASCII))
                         continue
                     self.board.applyMove(move)
                     self.playingAs = self.board.color
@@ -354,15 +353,15 @@ class PyChessCECP(PyChess):
                 ########## Custom commands ##########
 
                 elif lines[0] == "moves":
-                    self.print(self.board) 
+                    self.print(self.board.prepr(ascii=ASCII))
                     self.print([toSAN(self.board, move) for move in genAllMoves(self.board)])
 
                 elif lines[0] == "captures":
-                    self.print(self.board) 
+                    self.print(self.board.prepr(ascii=ASCII)) 
                     self.print([toSAN(self.board, move) for move in genCaptures(self.board)])
 
                 elif lines[0] == "evasions":
-                    self.print(self.board) 
+                    self.print(self.board.prepr(ascii=ASCII))
                     self.print([toSAN(self.board, move) for move in genCheckEvasions(self.board)])
 
                 elif lines[0] == "benchmark":
@@ -392,7 +391,7 @@ class PyChessCECP(PyChess):
                         continue
                     if not validateMove(self.board, move):
                         self.print("Illegal move: %s" % lines[0])
-                        self.print(self.board)
+                        self.print(self.board.prepr(ascii=ASCII))
                         continue
                     self.__stopSearching()
                     self.board.applyMove(move)
