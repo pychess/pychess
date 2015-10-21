@@ -159,6 +159,7 @@ DATA_FILES += [('share/icons/hicolor/scalable/apps', ['pychess.svg'])]
 DATA_FILES += [('share/pixmaps', ['pychess.svg'])]
 if sys.platform == "win32":
     DATA_FILES += [("share/pychess/sounds", glob('sounds/*.wav'))]
+    DATA_FILES += [("share/pychess/engines", glob('engines/*.*'))]
 else:
     DATA_FILES += [("share/pychess/sounds", glob('sounds/*.ogg'))]
 DATA_FILES += [('share/icons/hicolor/24x24/apps', ['pychess.png'])]

@@ -3,6 +3,7 @@ from __future__ import print_function
 import os
 import sys
 import json
+import platform
 from functools import partial
 from hashlib import md5
 from threading import Thread, Lock
@@ -15,7 +16,7 @@ from pychess.System import conf, fident
 from pychess.System.Log import log
 from pychess.System.command import Command
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
-from pychess.System.prefix import addUserConfigPrefix, getEngineDataPrefix
+from pychess.System.prefix import addUserConfigPrefix, getDataPrefix
 from pychess.Players.Player import PlayerIsDead
 from pychess.Utils.const import *
 from .CECPEngine import CECPEngine
@@ -25,13 +26,18 @@ from pychess.Variants import variants
 attrToProtocol = {"uci": UCIEngine, "xboard": CECPEngine}
 
 PYTHONBIN = sys.executable.split("/")[-1]
+BITNESS = "64" if platform.machine().endswith('64') else "32"
 
 if sys.platform == "win32":
+    backup = [
+        {"protocol": "uci", "name": "stockfish-6-%s.exe" % BITNESS, "country": "no"},
+        {"protocol": "xboard", "name": "sjaakii_win%s_dc.exe" % BITNESS, "country": "nl"},
+        ]
     if getattr(sys, 'frozen', False):
-        backup = [{"protocol": "xboard", "name": "pychess-engine", "country": "dk"}]
+        backup.append({"protocol": "xboard", "name": "pychess-engine", "country": "dk"})
     else:
-        backup = [{"protocol": "xboard", "name": "PyChess.py", "country": "dk",
-        "vm_name": PYTHONBIN, "vm_args": ["-u"]}]
+        backup.append({"protocol": "xboard", "name": "PyChess.py", "country": "dk",
+                        "vm_name": PYTHONBIN, "vm_args": ["-u"]})
 else:
     backup = [
     {"protocol": "xboard", "name": "pychess-engine", "country": "dk"},
@@ -152,8 +158,10 @@ class EngineDiscoverer (GObject.GObject):
             elif path and sys.platform == "win32" and engine.get("vm_name") == "wine":
                 return None, path
 
-        else:           
+        else:
             altpath = engine.get("command")
+            if sys.platform == "win32" and not altpath:
+                altpath = os.path.join(getDataPrefix(), "engines", engine["name"])
             path = searchPath(engine["name"], access=os.R_OK|os.X_OK, altpath=altpath)
             if path:
                 return None, path       
