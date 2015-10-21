@@ -303,12 +303,16 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
             log.debug("Resizing window to width=%s height=%s" % (width, height))
             window.resize(width, height)
 
-        else:
+        elif key=="mainwindow":
             monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds()
             width = int(monitor_width/2)
             height = int(monitor_height/4)*3
             log.debug("Resizing window to width=%s height=%s" % (width, height))
             window.resize(width, height)
+            
+        elif key=="preferencesdialogwindow":
+            window.resize(1, 1)
+
         
         if conf.hasKey(key+"_x") and conf.hasKey(key+"_y"):
             log.debug("Moving window to x=%s y=%s" % (conf.getStrict(key+"_x"),
