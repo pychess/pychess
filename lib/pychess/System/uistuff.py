@@ -305,7 +305,7 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
 
         else:
             monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds()
-            width = int(monitor_width/4)*3
+            width = int(monitor_width/2)
             height = int(monitor_height/4)*3
             log.debug("Resizing window to width=%s height=%s" % (width, height))
             window.resize(width, height)
