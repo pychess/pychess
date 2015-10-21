@@ -361,8 +361,8 @@ class PyChess:
             widgets[widget].set_sensitive(False)
 
         uistuff.keep(widgets["hint_mode"], "hint_mode", first_value=True)
-        uistuff.keep(widgets["spy_mode"], "spy_mode")
-        uistuff.keep(widgets["show_sidepanels"], "show_sidepanels")
+        uistuff.keep(widgets["spy_mode"], "spy_mode", first_value=True)
+        uistuff.keep(widgets["show_sidepanels"], "show_sidepanels", first_value=True)
         uistuff.keep(widgets["auto_call_flag"], "autoCallFlag", first_value=True)
         
         #=======================================================================
