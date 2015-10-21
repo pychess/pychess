@@ -42,7 +42,7 @@ class EnginesDialog():
         self.cur_engine = None
         self.default_workdir = getEngineDataPrefix()
         
-        uistuff.keepWindowSize("engineswindow", self.dialog, defaultSize=(600, 500))
+        uistuff.keepWindowSize("engineswindow", self.dialog, defaultSize=(1, 500))
 
         # Put engines into tree store
         allstore = Gtk.ListStore(Pixbuf, str)
