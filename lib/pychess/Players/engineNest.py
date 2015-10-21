@@ -509,7 +509,8 @@ def init_engine (analyzer_type, gamemodel, force=False):
         anaengines = list(discoverer.getAnalyzers())
         engine = discoverer.getEngineByMd5(conf.get(combo_name, 0))
         if engine is None:
-            engine = anaengines[0]
+            # Let Stockfish to be default analyzer in Windows installer
+            engine = anaengines[-1]
         
         if gamemodel.variant.variant in discoverer.getEngineVariants(engine):
             analyzer = discoverer.initAnalyzerEngine(engine, mode, gamemodel.variant)
