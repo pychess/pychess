@@ -747,7 +747,7 @@ class LBoard:
                     strs.append("q")
             return "".join(strs)
     
-    def __repr__ (self):
+    def prepr(self, ascii=False):
         if not self.fen_was_applied:
             return("LBoard without applied FEN")
         b = "#" + reprColor[self.color] + " "
@@ -760,10 +760,10 @@ class LBoard:
                 if piece != EMPTY:
                     if bitPosArray[(7-r)*8+i] & self.friends[WHITE]:
                         assert self.boards[WHITE][piece], "self.boards doesn't match self.arBoard !!!"
-                        sign = FAN_PIECES[WHITE][piece]
+                        sign = reprSign[piece] if ascii else FAN_PIECES[WHITE][piece]
                     else:
                         assert self.boards[BLACK][piece], "self.boards doesn't match self.arBoard !!!"
-                        sign = FAN_PIECES[BLACK][piece]
+                        sign = reprSign[piece].lower() if ascii else FAN_PIECES[BLACK][piece]
                     b += sign
                 else: b += "."
                 b += " "
@@ -772,9 +772,12 @@ class LBoard:
         if self.variant in DROP_VARIANTS:
             for color in (BLACK, WHITE):
                 holding = self.holding[color]
-                b += "\n# [%s]" % "".join([FAN_PIECES[color][piece]*holding[piece] \
+                b += "\n# [%s]" % "".join([reprSign[piece] if ascii else FAN_PIECES[color][piece]*holding[piece] \
                                             for piece in holding if holding[piece]>0])
-            
+        return b
+        
+    def __repr__ (self):
+        b = self.prepr()
         return b if PY3 else b.encode('utf8')
     
     def asFen (self, enable_bfen=True):
