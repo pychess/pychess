@@ -13,7 +13,6 @@ from pychess.compat import pathname2url, url2pathname, unquote
 from pychess.System.prefix import addDataPrefix, getDataPrefix
 from pychess.System.idle_add import idle_add
 from pychess.System import conf, gstreamer, uistuff
-from pychess.System.uistuff import POSITION_GOLDEN
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
@@ -37,8 +36,8 @@ def initialize(widgets):
     ThemeTab(widgets)
     SaveTab(widgets)
     
-    uistuff.keepWindowSize("preferencesdialog", widgets["preferences"],
-                           defaultPosition=POSITION_GOLDEN)
+    uistuff.keepWindowSize("preferencesdialog", widgets["preferences"])
+    
     def delete_event (widget, *args):
         widgets["preferences"].hide()
         return True
