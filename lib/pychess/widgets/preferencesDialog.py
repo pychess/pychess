@@ -189,8 +189,10 @@ class HintTab:
 
         # Save, load and make analyze combos active
         
-        conf.set("ana_combobox", conf.get("ana_combobox", 0))
-        conf.set("inv_ana_combobox", conf.get("inv_ana_combobox", 0))
+        # Let Stockfish to be default analyzer in Windows installer
+        default = discoverer.getEngineN(-1).get("md5")
+        conf.set("ana_combobox", conf.get("ana_combobox", default))
+        conf.set("inv_ana_combobox", conf.get("inv_ana_combobox", default))
         
         def on_analyzer_check_toggled (check):
             widgets["analyzers_vbox"].set_sensitive(check.get_active())
@@ -229,7 +231,7 @@ class HintTab:
                                               on_invanalyzer_check_toggled)
         
         # Give widgets to keeper
-        
+
         uistuff.keep(widgets["ana_combobox"], "ana_combobox", anal_combo_get_value,
             lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode",
                                               "analyzer_check", HINT))
