@@ -33,7 +33,7 @@ class Sidepanel:
         
         self.boardview.model.connect_after("game_changed", self.game_changed)
         self.boardview.model.connect_after("game_started", self.game_started)
-        self.boardview.model.connect_after("moves_undoing", self.moves_undoing)
+        self.boardview.model.connect_after("moves_undone", self.moves_undone)
         self.boardview.connect("shown_changed", self.shown_changed)
         
         # Initialize treeviews
@@ -108,12 +108,11 @@ class Sidepanel:
         self.boardview.setShownBoard(board)
     
     @idle_add
-    def moves_undoing (self, game, moves):
-        assert game.ply > 0, "Can't undo when ply <= 0"
+    def moves_undone (self, game, moves):
         with self.frozen:
-            for i in range(moves):
+            for i in reversed(range(moves)):
                 try:
-                    row, view, other = self._ply_to_row_col_other(game.variations[0][-1].ply-i)
+                    row, view, other = self._ply_to_row_col_other(game.variations[0][-1].ply+moves-i)
                     model = view.get_model()
                     model.remove(model.get_iter((row,)))
                     if view == self.left:

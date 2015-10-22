@@ -155,9 +155,7 @@ def game_ended (gamemodel, reason, gmwidg):
                 from pychess.widgets.newGameDialog import createRematch
                 createRematch(gamemodel)
             elif response == 2:
-                if gamemodel.curplayer.__type__ == LOCAL and \
-                   gamemodel.waitingplayer.__type__ == ARTIFICIAL and \
-                   gamemodel.ply > 1:
+                if gamemodel.ply > 1:
                     offer = Offer(TAKEBACK_OFFER, gamemodel.ply-2)
                 else:
                     offer = Offer(TAKEBACK_OFFER, gamemodel.ply-1)
