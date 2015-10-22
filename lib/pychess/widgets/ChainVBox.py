@@ -7,6 +7,7 @@ from gi.repository import GObject
 
 from pychess.System.prefix import addDataPrefix
 from pychess.System.idle_add import idle_add
+from pychess.widgets.BoardView import union
 from .BorderBox import BorderBox
 
 
@@ -76,7 +77,7 @@ class ChainLine (Gtk.Alignment):
             a = self.get_allocation()
             rect = Gdk.Rectangle()
             rect.x, rect.y, rect.width, rect.height = (a.x, a.y, a.width, a.height)
-            unionrect = Gdk.rectangle_union(self.lastRectangle, rect) if self.lastRectangle != None else rect
+            unionrect = union(self.lastRectangle, rect) if self.lastRectangle != None else rect
             self.get_window().invalidate_rect(unionrect, True)
             self.get_window().process_updates(True)
             self.lastRectangle = rect
