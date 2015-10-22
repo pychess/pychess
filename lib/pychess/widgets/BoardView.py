@@ -43,6 +43,15 @@ def contains (r0, r1):
     return r0.x <= r1.x and w0 >= w1 and \
            r0.y <= r1.y and h0 >= h1
 
+def union (r0, r1):
+    x = min(r0.x, r1.x)
+    y = min(r0.y, r1.y)
+    w = max(r0.x+r0.width, r1.x+r1.width) - x
+    h = max(r0.y+r0.height, r1.y+r1.height) - y
+    rct = Gdk.Rectangle() 
+    rct.x, rct.y, rct.width, rct.height = (x, y, w, h) 
+    return rct
+
 def join (r0, r1):
     """ Take (x, y, w, [h]) squares """
     
@@ -1213,7 +1222,7 @@ class BoardView (Gtk.DrawingArea):
         if self._selected == cord: return
         if self._selected:
             r = rect(self.cord2RectRelative(self._selected))
-            if cord: r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
+            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
         elif cord: r = rect(self.cord2RectRelative(cord))
         self._selected = cord
         self.redraw_canvas(r)
@@ -1230,7 +1239,7 @@ class BoardView (Gtk.DrawingArea):
             #r = Gdk.Rectangle()
             #r.x, r.y, r.width, r.height = tmpr 
             #if cord: r = r.union(rect(self.cord2RectRelative(cord)))
-            if cord: r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
+            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
         elif cord:
             r = rect(self.cord2RectRelative(cord))
             # convert r from tuple to rect
@@ -1247,7 +1256,7 @@ class BoardView (Gtk.DrawingArea):
         if self._active == cord: return
         if self._active:
             r = rect(self.cord2RectRelative(self._active))
-            if cord: r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
+            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
         elif cord: r = rect(self.cord2RectRelative(cord))
         self._active = cord
         self.redraw_canvas(r)
@@ -1259,7 +1268,7 @@ class BoardView (Gtk.DrawingArea):
         if self._premove0 == cord: return
         if self._premove0:
             r = rect(self.cord2RectRelative(self._premove0))
-            if cord: r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
+            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
         elif cord: r = rect(self.cord2RectRelative(cord))
         self._premove0 = cord
         self.redraw_canvas(r)
@@ -1271,7 +1280,7 @@ class BoardView (Gtk.DrawingArea):
         if self._premove1 == cord: return
         if self._premove1:
             r = rect(self.cord2RectRelative(self._premove1))
-            if cord: r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
+            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
         elif cord: r = rect(self.cord2RectRelative(cord))
         self._premove1 = cord
         self.redraw_canvas(r)
@@ -1290,7 +1299,7 @@ class BoardView (Gtk.DrawingArea):
         if self._redarrow: paintCords += self._redarrow
         r = rect(self.cord2RectRelative(paintCords[0]))
         for cord in paintCords[1:]:
-            r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
+            r = union(r, rect(self.cord2RectRelative(cord)))
         self._redarrow = cords
         self.redraw_canvas(r)
     def _get_redarrow (self):
@@ -1304,7 +1313,7 @@ class BoardView (Gtk.DrawingArea):
         if self._greenarrow: paintCords += self._greenarrow
         r = rect(self.cord2RectRelative(paintCords[0]))
         for cord in paintCords[1:]:
-            r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
+            r = union(r, rect(self.cord2RectRelative(cord)))
         self._greenarrow = cords
         self.redraw_canvas(r)
     def _get_greenarrow (self):
@@ -1318,7 +1327,7 @@ class BoardView (Gtk.DrawingArea):
         if self._bluearrow: paintCords += self._bluearrow
         r = rect(self.cord2RectRelative(paintCords[0]))
         for cord in paintCords[1:]:
-            r = Gdk.rectangle_union(r, rect(self.cord2RectRelative(cord)))
+            r = union(r, rect(self.cord2RectRelative(cord)))
         self._bluearrow = cords
         self.redraw_canvas(r)
     def _get_bluearrow (self):
