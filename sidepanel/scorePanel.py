@@ -34,7 +34,7 @@ class Sidepanel:
         self.plot.connect("selected", self.plot_selected)
         self.boardview.connect('shown_changed', self.shown_changed)
         self.boardview.model.connect_after("game_changed", self.game_changed)
-        self.boardview.model.connect_after("moves_undoing", self.moves_undoing)
+        self.boardview.model.connect_after("moves_undone", self.moves_undone)
         self.boardview.model.connect_after("analysis_changed", self.analysis_changed)
         self.boardview.model.connect_after("game_started", self.game_started)
    
@@ -42,7 +42,7 @@ class Sidepanel:
         
         return __widget__
     
-    def moves_undoing (self, model, moves):
+    def moves_undone (self, model, moves):
         for i in range(moves):
             self.plot.undo()
         

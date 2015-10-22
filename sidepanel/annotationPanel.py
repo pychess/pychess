@@ -118,7 +118,7 @@ class Sidepanel(Gtk.TextView):
         self.gamemodel.connect_after("game_changed", self.game_changed)
         self.gamemodel.connect_after("game_started", self.update)
         self.gamemodel.connect_after("game_ended", self.update)
-        self.gamemodel.connect_after("moves_undoing", self.moves_undoing)
+        self.gamemodel.connect_after("moves_undone", self.moves_undone)
         self.gamemodel.connect_after("opening_changed", self.update)
         self.gamemodel.connect_after("players_changed", self.players_changed)
         self.gamemodel.connect("variation_added", self.variation_added)
@@ -946,15 +946,16 @@ class Sidepanel(Gtk.TextView):
         self.update_selected_node()
 
     @idle_add
-    def moves_undoing(self, game, moves):
-        assert game.ply > 0, "Can't undo when ply <= 0"
+    def moves_undone(self, game, moves):
         start = self.textbuffer.get_start_iter()
         end = self.textbuffer.get_end_iter()
         for node in reversed(self.nodelist):
-            self.nodelist.remove(node)
-            if node["board"].pieceBoard == self.gamemodel.variations[0][-moves]:
-                start = self.textbuffer.get_iter_at_offset(node["start"])
+            if node["board"].pieceBoard == self.gamemodel.variations[0][-1]:
+                start = self.textbuffer.get_iter_at_offset(node["end"])
                 break
+            else:
+                self.nodelist.remove(node)
+                
         self.textbuffer.delete(start, end)
 
     @idle_add

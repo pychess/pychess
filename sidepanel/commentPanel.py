@@ -35,7 +35,7 @@ class Sidepanel:
         self.gmhandlers = [
             self.gamemodel.connect_after("game_changed", self.game_changed),
             self.gamemodel.connect_after("game_started", self.game_started),
-            self.gamemodel.connect_after("moves_undoing", self.moves_undoing)
+            self.gamemodel.connect_after("moves_undone", self.moves_undone)
         ]
 
         widgets = Gtk.Builder()
@@ -82,8 +82,7 @@ class Sidepanel:
             # deleted variations by moves_undoing
     
     @idle_add
-    def moves_undoing (self, game, moves):
-        assert game.ply > 0, "Can't undo when ply <= 0"
+    def moves_undone (self, game, moves):
         model = self.tv.get_model()
         for i in range(moves):
             model.remove(model.get_iter( (len(model)-1,) ))
