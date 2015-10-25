@@ -2450,6 +2450,17 @@ b) you change the variant or the time control</property>
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkSpinner" id="playersSpinner">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkButton" id="challengeButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -2499,7 +2510,7 @@ b) you change the variant or the time control</property>
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                             <child>
@@ -2552,7 +2563,7 @@ b) you change the variant or the time control</property>
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
-                                <property name="position">2</property>
+                                <property name="position">3</property>
                               </packing>
                             </child>
                             <child>
@@ -2605,7 +2616,7 @@ b) you change the variant or the time control</property>
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
-                                <property name="position">3</property>
+                                <property name="position">4</property>
                               </packing>
                             </child>
                           </object>
@@ -2678,6 +2689,17 @@ b) you change the variant or the time control</property>
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkSpinner" id="gamesSpinner">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkButton" id="observeButton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -2727,7 +2749,7 @@ b) you change the variant or the time control</property>
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                           </object>
@@ -3302,7 +3324,7 @@ b) you change the variant or the time control</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Asymmetric Random	</col>
+        <col id="0" translatable="yes">Asymmetric Random    </col>
       </row>
     </data>
   </object>

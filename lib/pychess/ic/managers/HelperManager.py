@@ -29,6 +29,7 @@ class HelperManager (GObject.GObject):
         self.helperconn.expect_line (self.on_game_list,
                 "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d:)?(\d+):(\d+)\s*-\s*(\d:)?(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
                 % (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())))
+        self.helperconn.expect_line (self.on_game_list_end, "(\d+) games displayed .*")
 
         if self.helperconn.FatICS:
             self.helperconn.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
@@ -38,6 +39,7 @@ class HelperManager (GObject.GObject):
             self.helperconn.expect_line (self.on_player_whoI,
                 "([A-Za-z]+)([\^~:\#. &])(\\d{2})" +
                 "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
+            self.helperconn.expect_line (self.on_player_whoI_end, "(\d+) Players Displayed.")
             self.helperconn.expect_line (self.on_player_connect,
                 "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" +
                 "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
@@ -51,7 +53,7 @@ class HelperManager (GObject.GObject):
         self.helperconn.expect_fromto (self.on_player_available, "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)" % 
                 (names, ratings, ratings, ratings, ratings, ratings), "is now available for matches.")
 
-
+        self.players = []
         #b: blitz      l: lightning   u: untimed      e: examined game
         #s: standard   w: wild        x: atomic       z: crazyhouse        
         #B: Bughouse   L: losers      S: Suicide
@@ -60,6 +62,7 @@ class HelperManager (GObject.GObject):
         else:
             self.helperconn.client.run_command("who IbslwBzSLx")
             
+        self.games = []
         self.helperconn.client.run_command("games /bslwBzSLx")
 
     def on_game_list (self, match):
@@ -86,8 +89,12 @@ class HelperManager (GObject.GObject):
                     player.ratings[gametype.rating_type].elo != rating:
                 player.ratings[gametype.rating_type].elo = rating
         
-        self.connection.games.get(game)
+        self.games.append(self.connection.games.get(game, emit=False))
     on_game_list.BLKCMD = BLKCMD_GAMES
+        
+    def on_game_list_end(self, match):
+        self.connection.games.emit("FICSGameCreated", self.games)
+    on_game_list_end.BLKCMD = BLKCMD_GAMES
         
     def on_game_add (self, match):
         gameno, wname, bname, rated, game_type = match.groups()
@@ -149,14 +156,14 @@ class HelperManager (GObject.GObject):
                     _titles.add(TITLES[title])
         return _titles
 
-    def on_player_connect (self, match):
+    def on_player_connect (self, match, set_online=True):
         # bslwBzSLx
         # gbtami 001411E1663P1483P1720P0P1646P0P0P1679P
         name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
         wild, wilddev, bughouse, bughousedev, crazyhouse, crazyhousedev, \
         suicide, suicidedev, losers, losersdev, atomic, atomicdev = match.groups()
         player = self.connection.players.get(FICSPlayer(name))
-
+        self.players.append(player)
         titles = parse_title_hex(titlehex)
         if not player.titles >= titles:
             player.titles |= titles
@@ -180,7 +187,7 @@ class HelperManager (GObject.GObject):
         status = STATUS[status]
         if player.status != status:
             player.status = status
-        if not player.online:
+        if set_online and not player.online:
             player.online = True
     
     def on_player_disconnect (self, match):
@@ -188,8 +195,12 @@ class HelperManager (GObject.GObject):
         self.connection.players.player_disconnected(FICSPlayer(name))
 
     def on_player_whoI (self, match):
-        self.on_player_connect(match)
+        self.on_player_connect(match, set_online=False)
     on_player_whoI.BLKCMD = BLKCMD_WHO
+    
+    def on_player_whoI_end (self, match):
+        self.connection.players.emit("FICSPlayerEntered", self.players)
+    on_player_whoI_end.BLKCMD = BLKCMD_WHO
     
     def on_player_who (self, match):
         for blitz, status, name, titles in whomatch_re.findall(match.string):
