@@ -1031,39 +1031,44 @@ class PlayerTabSection (ParrentListSection):
         
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
-    
-    def onPlayerAdded (self, players, player):
-        def do_onPlayerAdded(players, player):
-            log.debug("%s" % player,
-                      extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
-            if player in self.players:
-                log.warning("%s already in self" % player,
-                    extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
-                return
-            self.players[player] = {}
-            
-            self.players[player]["ti"] = self.store.append([player,
-                player.getIcon(), player.name + player.display_titles(),
-                player.blitz, player.standard, player.lightning,
-                player.display_status, get_player_tooltip_text(player)])
-            self.players[player]["status"] = player.connect(
-                "notify::status", self.status_changed)
-            self.players[player]["game"] = player.connect(
-                "notify::game", self.status_changed)
-            self.players[player]["titles"] = player.connect(
-                "notify::titles", self.titles_changed)
-            if player.game:
-                self.players[player]["private"] = player.game.connect(
-                    "notify::private", self.private_changed, player)
-            for rt in RATING_TYPES:
-                self.players[player][rt] = player.ratings[rt].connect(
-                    "notify::elo", self.elo_changed, player)
-            
-            count = len(self.players)
-            self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
-            
+
+        self.widgets["playersSpinner"].start()
+
+    def onPlayerAdded (self, players, new_players):
+        def do_onPlayerAdded(players, new_players):
+            for player in new_players:
+                log.debug("%s" % player,
+                          extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
+                if player in self.players:
+                    log.warning("%s already in self" % player,
+                        extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
+                    continue
+                self.players[player] = {}
+                
+                self.players[player]["ti"] = self.store.append([player,
+                    player.getIcon(), player.name + player.display_titles(),
+                    player.blitz, player.standard, player.lightning,
+                    player.display_status, get_player_tooltip_text(player)])
+                self.players[player]["status"] = player.connect(
+                    "notify::status", self.status_changed)
+                self.players[player]["game"] = player.connect(
+                    "notify::game", self.status_changed)
+                self.players[player]["titles"] = player.connect(
+                    "notify::titles", self.titles_changed)
+                if player.game:
+                    self.players[player]["private"] = player.game.connect(
+                        "notify::private", self.private_changed, player)
+                for rt in RATING_TYPES:
+                    self.players[player][rt] = player.ratings[rt].connect(
+                        "notify::elo", self.elo_changed, player)
+                
+                count = len(self.players)
+                self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
+
+            if len(new_players) > 1:
+                self.widgets["playersSpinner"].stop()
             return False
-        GLib.idle_add(do_onPlayerAdded, players, player, priority=GLib.PRIORITY_LOW)
+        GLib.idle_add(do_onPlayerAdded, players, new_players, priority=GLib.PRIORITY_LOW)
     
     def onPlayerRemoved (self, players, player):
         def do_onPlayerRemoved(players, player):
@@ -1238,6 +1243,8 @@ class GameTabSection (ParrentListSection):
         self.connection.bm.connect("obsGameCreated", self.onGameObserved)
         self.connection.bm.connect("obsGameUnobserved", self.onGameUnobserved)
 
+        self.widgets["gamesSpinner"].start()
+
     def on_query_tooltip (self, widget, x, y, keyboard_tip, tooltip):
         if not widget.get_tooltip_context(x, y, keyboard_tip):
             return False
@@ -1270,21 +1277,24 @@ class GameTabSection (ParrentListSection):
         count = len(self.games)
         self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
 
-    def onGameAdd (self, games, game):
-        def do_onGameAdd(games, game):
-            log.debug("%s" % game,
-                      extra={"task": (self.connection.username, "GTS.onGameAdd")})
-            ti = self.store.append ([game, self.clearpix,
-                game.wplayer.name + game.wplayer.display_titles(),
-                game.wplayer.getRatingForCurrentGame(),
-                game.bplayer.name + game.bplayer.display_titles(),
-                game.bplayer.getRatingForCurrentGame(),
-                game.display_text])
-            self.games[game] = { "ti": ti }
-            self.games[game]["private_cid"] = game.connect("notify::private",
-                                                           self.private_changed)
-            self._update_gamesrunning_label()
-        GLib.idle_add(do_onGameAdd, games, game, priority=GLib.PRIORITY_LOW)
+    def onGameAdd (self, games, new_games):
+        def do_onGameAdd(games, new_games):
+            for game in new_games:
+                log.debug("%s" % game,
+                          extra={"task": (self.connection.username, "GTS.onGameAdd")})
+                ti = self.store.append ([game, self.clearpix,
+                    game.wplayer.name + game.wplayer.display_titles(),
+                    game.wplayer.getRatingForCurrentGame(),
+                    game.bplayer.name + game.bplayer.display_titles(),
+                    game.bplayer.getRatingForCurrentGame(),
+                    game.display_text])
+                self.games[game] = { "ti": ti }
+                self.games[game]["private_cid"] = game.connect("notify::private",
+                                                               self.private_changed)
+                self._update_gamesrunning_label()
+            if len(new_games) > 0:
+                self.widgets["gamesSpinner"].stop()
+        GLib.idle_add(do_onGameAdd, games, new_games, priority=GLib.PRIORITY_LOW)
     
     @idle_add
     def private_changed (self, game, prop):

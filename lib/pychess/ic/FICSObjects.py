@@ -423,7 +423,7 @@ class FICSPlayers (GObject.GObject):
     
     def online_changed (self, player, prop):
         if player.online:
-            GLib.idle_add(self.emit, "FICSPlayerEntered", player, priority=GLib.PRIORITY_LOW)
+            GLib.idle_add(self.emit, "FICSPlayerEntered", [player,], priority=GLib.PRIORITY_LOW)
     
     # This method is a temporary hack until ChatWindow/ChatManager are
     # converted to use FICSPlayer references rather than player's names
@@ -939,7 +939,7 @@ class FICSGames (GObject.GObject):
         elif create:
             self[game] = game
             if emit:
-                self.emit("FICSGameCreated", game)
+                self.emit("FICSGameCreated", [game,])
         else:
             raise KeyError
         return game

@@ -511,9 +511,10 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
                 self.playersList.addRow(id, player.name + player.display_titles(),
                                         TYPE_PERSONAL)
         
-        def addPlayer (players, player):
-            self.playersList.addRow(self.compileId(player.name, TYPE_PERSONAL),
-                player.name + player.display_titles(), TYPE_PERSONAL)
+        def addPlayer (players, new_players):
+            for player in new_players:
+                self.playersList.addRow(self.compileId(player.name, TYPE_PERSONAL),
+                    player.name + player.display_titles(), TYPE_PERSONAL)
             return False
         self.connection.players.connect("FICSPlayerEntered", addPlayer)
         def removePlayer (players, player):
