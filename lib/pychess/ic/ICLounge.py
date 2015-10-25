@@ -1067,6 +1067,7 @@ class PlayerTabSection (ParrentListSection):
 
             if len(new_players) > 1:
                 self.widgets["playersSpinner"].stop()
+                self.widgets["playersSpinner"].hide()
             return False
         GLib.idle_add(do_onPlayerAdded, players, new_players, priority=GLib.PRIORITY_LOW)
     
@@ -1294,6 +1295,7 @@ class GameTabSection (ParrentListSection):
                 self._update_gamesrunning_label()
             if len(new_games) > 0:
                 self.widgets["gamesSpinner"].stop()
+                self.widgets["gamesSpinner"].hide()
         GLib.idle_add(do_onGameAdd, games, new_games, priority=GLib.PRIORITY_LOW)
     
     @idle_add
