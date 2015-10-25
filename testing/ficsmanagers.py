@@ -778,7 +778,7 @@ class GamesTests(EmittingTestCase):
         lines = ["{Game 12 (VrtX vs. pulsoste) Creating rated crazyhouse match.}"]
         game = FICSGame(FICSPlayer('VrtX'), FICSPlayer('pulsoste'), gameno=12,
             rated=True, game_type=GAME_TYPES['crazyhouse'], private=False)
-        self.runAndAssertEquals("FICSGameCreated", lines, (game,))
+        self.runAndAssertEquals("FICSGameCreated", lines, ([game,],))
         
         lines = [BLOCK_START + '218' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
                  "Sorry, game 12 is a private game.",
