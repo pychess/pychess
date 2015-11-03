@@ -149,7 +149,10 @@ class TimeSeal (object):
         logstr = "*"*len(str) if self.sensitive else str
         log.info(logstr, extra={"task": (self.name, "raw")})
         str = self.encode(str)
-        self.sock.send(str+b"\n")
+        try:
+            self.sock.send(str+b"\n")
+        except:
+            pass
     
     def readline(self):
         return self.readuntil(b"\n")
