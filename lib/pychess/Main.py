@@ -291,6 +291,9 @@ class GladeHandlers:
 
     def on_copy_pgn_activate(self, widget):
         gamewidget.cur_gmwidg().copy_pgn()
+
+    def on_copy_fen_activate(self, widget):
+        gamewidget.cur_gmwidg().copy_fen()
     
     def on_manage_engines_activate(self, widget):
         enginesDialog.run(gamewidget.getWidgets())
