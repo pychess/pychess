@@ -3478,6 +3478,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkMenuItem" id="set_up_position1">
                         <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Setup Position</property>
                         <property name="use_underline">True</property>

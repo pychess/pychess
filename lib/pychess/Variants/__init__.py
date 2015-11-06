@@ -29,6 +29,7 @@ from .threecheck import ThreeCheckBoard
 from .asean import AiWokBoard, AseanBoard, CambodianBoard, \
                     MakrukBoard, SittuyinBoard
 from .euroshogi import EuroShogiBoard
+from .setupposition import SetupBoard
 
 
 variants = {NORMALCHESS : NormalBoard,
@@ -64,6 +65,7 @@ variants = {NORMALCHESS : NormalBoard,
             MAKRUKCHESS: MakrukBoard,
             SITTUYINCHESS: SittuyinBoard,
             EUROSHOGICHESS: EuroShogiBoard,
+            SETUPCHESS: SetupBoard,
             }
 
 name2variant = dict([(v.cecp_name.capitalize(), v) for v in variants.values()])
