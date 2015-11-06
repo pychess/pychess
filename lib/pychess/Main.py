@@ -191,8 +191,7 @@ class GladeHandlers:
         newGameDialog.LoadFileExtension.run(None)
     
     def on_set_up_position_activate(self, widget):
-        # Not implemented yet
-        pass
+        newGameDialog.SetupPositionExtension.run()
 
     def on_open_database_activate(self, widget):
         #GameList().load_games()
