@@ -3530,6 +3530,16 @@ It will search positions from http://www.k4it.de/</property>
                       </object>
                     </child>
                     <child>
+                      <object class="GtkMenuItem" id="share_game">
+                        <property name="label" translatable="yes">Share Game</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">False</property>
+                        <signal name="activate" handler="on_share_game_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="export_position1">
                         <property name="label" translatable="yes">_Export Position</property>
                         <property name="use_action_appearance">False</property>

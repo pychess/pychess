@@ -37,6 +37,7 @@ from pychess.widgets.TaskerManager import TaskerManager
 from pychess.widgets.TaskerManager import NewGameTasker
 from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.Players.engineNest import discoverer
+from pychess.Savers import chesspastebin
 from pychess.ic import ICLogon
 #from pychess.Database.gamelist import GameList
 from pychess import VERSION, VERSION_NAME
@@ -205,6 +206,9 @@ class GladeHandlers:
     
     def on_save_game_as1_activate(self, widget):
         ionest.saveGameAs (gameDic[gamewidget.cur_gmwidg()])
+
+    def on_share_game_activate(self, widget):
+        chesspastebin.paste(gameDic[gamewidget.cur_gmwidg()])
 
     def on_export_position_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
