@@ -500,8 +500,9 @@ class FICSMatch (GObject.GObject):
 
     @property
     def sortable_time (self):
-        gainminutes = (self.inc*60)-1 if self.inc != None and self.inc > 0 else 0
-        return self.minutes*60 + gainminutes
+        #http://www.freechess.org/Help/HelpFiles/etime.html
+        etime = self.minutes + self.inc*2./3.
+        return etime
     
 def get_soughtmatch_tooltip_text (sought):
     text = "%s" % sought.player.name

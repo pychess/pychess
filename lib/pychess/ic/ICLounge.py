@@ -604,7 +604,7 @@ class ParrentListSection (Section):
         return cmp(pix0, pix1)
     
     def timeCompareFunction (self, treemodel, iter0, iter1, column):
-        (minute0, minute1) = (treemodel.get_value(iter0, 7), treemodel.get_value(iter1, 7))
+        (minute0, minute1) = (treemodel.get_value(iter0, 8), treemodel.get_value(iter1, 8))
         return cmp(minute0, minute1)
 
 
