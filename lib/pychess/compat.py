@@ -19,11 +19,11 @@ if PY3:
     from html.entities import entitydefs
 
     from io import StringIO
-    from urllib.parse import urlparse
     from configparser import RawConfigParser, SafeConfigParser
     from queue import Queue, Empty, Full
-    from urllib.request import urlopen, url2pathname, pathname2url
-    from urllib.parse import urlencode, unquote
+    from urllib.request import Request, urlopen, url2pathname, pathname2url
+    from urllib.parse import urlencode, urlparse, unquote
+    from urllib.error import HTTPError, URLError
 else:
     basestring = basestring
     cmp = cmp
@@ -39,7 +39,8 @@ else:
     from urlparse import urlparse
     from ConfigParser import RawConfigParser, SafeConfigParser
     from Queue import Queue, Empty, Full
-    from urllib import urlopen, urlencode, url2pathname, pathname2url, unquote
+    from urllib import urlencode, url2pathname, pathname2url, unquote
+    from urllib2 import Request, urlopen, HTTPError, URLError
 
     from io import open
 

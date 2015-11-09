@@ -3478,6 +3478,7 @@ It will search positions from http://www.k4it.de/</property>
                     <child>
                       <object class="GtkMenuItem" id="set_up_position1">
                         <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Setup Position</property>
                         <property name="use_underline">True</property>
@@ -3526,6 +3527,16 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="use_stock">False</property>
                         <accelerator key="S" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_save_game_as1_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="share_game">
+                        <property name="label" translatable="yes">Share Game</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">False</property>
+                        <signal name="activate" handler="on_share_game_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -3638,6 +3649,18 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="use_underline">True</property>
                         <accelerator key="C" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_copy_pgn_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="copy_fen">
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">_Copy FEN</property>
+                        <property name="use_underline">True</property>
+                        <accelerator key="C" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                        <signal name="activate" handler="on_copy_fen_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>

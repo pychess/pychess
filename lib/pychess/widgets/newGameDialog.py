@@ -7,9 +7,10 @@ import locale
 from operator import attrgetter
 from itertools import groupby
 
-from gi.repository import GObject
 from gi.repository import Gdk
 from gi.repository import Gtk
+from gi.repository import GLib
+from gi.repository import GObject
 
 from cairo import ImageSurface
 
@@ -19,10 +20,14 @@ from gi.repository import GdkPixbuf
 from pychess.compat import StringIO
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.GameModel import GameModel
+from pychess.Utils.SetupModel import SetupModel, SetupPlayer
 from pychess.Utils.TimeModel import TimeModel
+from pychess.Utils.IconLoader import get_pixbuf
 from pychess.Utils.const import *
 from pychess.Utils.repr import localReprSign
 from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.lutils.ldata import FILE
+from pychess.Utils.lutils.validator import validateMove
 from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System import conf
@@ -33,6 +38,8 @@ from pychess.Players.Human import Human
 from pychess.widgets import BoardPreview
 from pychess.widgets import ionest
 from pychess.widgets import ImageMenu
+from pychess.widgets.BoardControl import BoardControl
+from pychess.widgets.gamewidget import createAlignment
 from pychess.Savers import fen, pgn
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Variants import variants
@@ -93,10 +100,12 @@ def createPlayerUIGlobals (discoverer):
 
 discoverer.connect("all_engines_discovered", createPlayerUIGlobals)
 
+COPY, CLEAR, PASTE = 2, 3, 4
+
 #===============================================================================
 # GameInitializationMode is the super class of new game dialogs. Dialogs include
-# the standard new game dialog, the load file dialog and the enter notation
-# dialog.
+# the standard new game dialog, the load file dialog, the enter notation dialog
+# and the setup position dialog.
 #===============================================================================
 
 class _GameInitializationMode:
@@ -108,6 +117,7 @@ class _GameInitializationMode:
         if not hasattr(cls, "hasRunInit"):
             cls._init()
             cls.hasRunInit = True
+        cls.widgets["newgamedialog"].resize(1,1)
 
     @classmethod
     def _init (cls):
@@ -297,12 +307,43 @@ class _GameInitializationMode:
 
     @classmethod
     def _generalRun (cls, callback, validate):
-        def onResponse(dialog, res):
-            if res != Gtk.ResponseType.OK:
+        def onResponse(dialog, response):
+            if response == COPY:
+                clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+                clipboard.set_text(cls.get_fen(), -1)
+                #print("put clipboard:", clipboard.wait_for_text())
+                return
+            elif response == CLEAR:
+                cls.board_control.emit("action", "SETUP", True)
+                cls.ini_widgets(True)
+                #print("clear")
+                return
+            elif response == PASTE:
+                clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+                text = clipboard.wait_for_text()
+                #print("got clipboard:", text)
+                if len(text.split()) < 2:
+                    return
+                try:
+                    lboard = cls.setupmodel.variant(setup=text).board
+                    cls.ini_widgets(lboard.asFen())
+                    cls.board_control.emit("action", "SETUP", text)
+                except SyntaxError as e:
+                    d = Gtk.MessageDialog (type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.OK,
+                                            message_format=e.args[0])
+                    if len(e.args) > 1:
+                        d.format_secondary_text (e.args[1])
+                    d.connect("response", lambda d,a: d.hide())
+                    d.show()
+                return
+            elif response != Gtk.ResponseType.OK:
                 cls.widgets["newgamedialog"].hide()
                 cls.widgets["newgamedialog"].disconnect(handlerId)
                 return
 
+            if hasattr(cls, "board_control"):
+                cls.board_control.emit("action", "CLOSE", None)
+                
             # Find variant
             if cls.widgets["playNormalRadio"].get_active():
                 variant_index = NORMALCHESS
@@ -374,8 +415,10 @@ class _GameInitializationMode:
     @classmethod
     def _hideOthers (cls):
         for extension in ("loadsidepanel", "enterGameNotationSidePanel",
-                "enterGameNotationSidePanel"):
+                "setupPositionSidePanel"):
             cls.widgets[extension].hide()
+        for button in ("copy_button", "clear_button", "paste_button"):
+            cls.widgets[button].hide()
 
 ################################################################################
 # NewGameMode                                                                  #
@@ -451,6 +494,160 @@ class LoadFileExtension (_GameInitializationMode):
                 ionest.generalStart(gamemodel, p0, p1)
         cls._generalRun(_callback, _validate)
 
+################################################################################
+# SetupPositionExtension                                                       #
+################################################################################
+
+class SetupPositionExtension (_GameInitializationMode):
+    @classmethod
+    def _init (cls):
+        def callback (widget, allocation):
+            cls.widgets["setupPositionFrame"].set_size_request(
+                    523, allocation.height-4)
+        cls.widgets["setupPositionSidePanel"].connect_after("size-allocate", callback)
+
+        cls.castl = set()
+
+        cls.white = Gtk.Image.new_from_pixbuf(get_pixbuf("glade/white.png"))
+        cls.black = Gtk.Image.new_from_pixbuf(get_pixbuf("glade/black.png"))
+        cls.widgets["side_button"].set_image(cls.white)
+
+        cls.widgets["side_button"].connect("toggled", cls.side_button_toggled)
+        cls.widgets["moveno_spin"].connect("value-changed", cls.moveno_spin_changed)
+        cls.widgets["fifty_spin"].connect("value-changed", cls.fifty_spin_changed)
+        cls.widgets["woo"].connect("toggled", cls.castl_toggled, "K")
+        cls.widgets["wooo"].connect("toggled", cls.castl_toggled, "Q")
+        cls.widgets["boo"].connect("toggled", cls.castl_toggled, "k")
+        cls.widgets["booo"].connect("toggled", cls.castl_toggled, "q")
+
+        ep_store = Gtk.ListStore(str)
+        ep_store.append(["-"])
+        for f in reprFile:
+            ep_store.append([f])
+        cls.widgets["ep_combo"].set_model(ep_store)
+        renderer_text = Gtk.CellRendererText()
+        cls.widgets["ep_combo"].pack_start(renderer_text, True)
+        cls.widgets["ep_combo"].add_attribute(renderer_text, "text", 0)
+        cls.widgets["ep_combo"].set_active(0)
+        cls.widgets["ep_combo"].connect("changed", cls.ep_combo_changed)
+
+    @classmethod
+    def side_button_toggled(cls, button):
+        if button.get_active():
+            button.set_image(cls.black)
+        else:
+            button.set_image(cls.white)
+        cls.fen_changed()
+
+    @classmethod
+    def fen_changed(cls):
+        cls.widgets["fen_entry"].set_text(cls.get_fen())
+
+    @classmethod
+    def game_changed(cls, model, ply):
+        GLib.idle_add(cls.fen_changed)
+
+    @classmethod
+    def ep_combo_changed(cls, combo):
+        cls.fen_changed()
+
+    @classmethod
+    def moveno_spin_changed(cls, spin):
+        cls.fen_changed()
+
+    @classmethod
+    def fifty_spin_changed(cls, spin):
+        cls.fen_changed()
+        
+    @classmethod
+    def castl_toggled(cls, button, castl):
+        if button.get_active():
+            cls.castl.add(castl)
+        else:
+            cls.castl.discard(castl)
+        cls.fen_changed()
+
+    @classmethod
+    def get_fen(cls):
+        pieces = cls.setupmodel.boards[-1].as_fen()
+        side = "b" if cls.widgets["side_button"].get_active() else "w"
+        castl = "".join(sorted(cls.castl)) if cls.castl else "-"
+
+        ep = "-"
+        rank = "3" if side == "b" else "6"
+        tree_iter = cls.widgets["ep_combo"].get_active_iter()
+        if tree_iter != None:
+            model = cls.widgets["ep_combo"].get_model()
+            ep = model[tree_iter][0]
+        ep = ep if ep=="-" else ep+rank
+
+        fifty = cls.widgets["fifty_spin"].get_value_as_int()
+        moveno = cls.widgets["moveno_spin"].get_value_as_int()
+
+        parts = (pieces, side, castl, ep, fifty, moveno)
+        return "%s %s %s %s %s %s" % parts
+
+    @classmethod
+    def ini_widgets(cls, setup):
+        lboard = cls.setupmodel.variant(setup=setup).board
+        cls.widgets["side_button"].set_active(False if lboard.color == WHITE else True)
+        cls.widgets["fifty_spin"].set_value(lboard.fifty)
+        cls.widgets["moveno_spin"].set_value(lboard.plyCount//2 + 1)
+        ep = lboard.enpassant
+        cls.widgets["ep_combo"].set_active(0 if ep is None else FILE(ep)+1)
+        cls.castl = set()
+        cls.widgets["woo"].set_active(lboard.castling & W_OO)
+        cls.widgets["wooo"].set_active(lboard.castling & W_OOO)
+        cls.widgets["boo"].set_active(lboard.castling & B_OO)
+        cls.widgets["booo"].set_active(lboard.castling & B_OOO)
+
+    @classmethod
+    def run (cls):
+        cls._ensureReady()
+        if cls.widgets["newgamedialog"].props.visible:
+            cls.widgets["newgamedialog"].present()
+            print("de return")
+            return
+
+        cls._hideOthers()
+        for button in ("copy_button", "clear_button", "paste_button"):
+            cls.widgets[button].show()
+        cls.widgets["newgamedialog"].set_title(_("Setup Position"))
+        cls.widgets["setupPositionSidePanel"].show()
+
+        cls.setupmodel = SetupModel() 
+        cls.board_control = BoardControl(cls.setupmodel, {}, setup_position=True)
+        cls.setupmodel.curplayer = SetupPlayer(cls.board_control)
+        cls.setupmodel.connect("game_changed", cls.game_changed)
+
+        child = cls.widgets["setupBoardDock"].get_child()
+        if child is not None:
+            cls.widgets["setupBoardDock"].remove(child)
+        cls.widgets["setupBoardDock"].add(cls.board_control)
+        cls.board_control.show_all()
+        cls.ini_widgets(True)
+        cls.widgets["fen_entry"].set_text(cls.get_fen())
+
+        cls.setupmodel.start()
+
+        def _validate(gamemodel):
+            try:
+                text = cls.get_fen()
+                lboard = cls.setupmodel.variant(setup=text).board
+                return True
+            except (AssertionError, LoadingError, SyntaxError) as e:
+                d = Gtk.MessageDialog (type=Gtk.MessageType.WARNING, buttons=Gtk.ButtonsType.OK,
+                                        message_format=e.args[0])
+                if len(e.args) > 1:
+                    d.format_secondary_text (e.args[1])
+                d.connect("response", lambda d,a: d.hide())
+                d.show()
+                return False
+            
+        def _callback (gamemodel, p0, p1):
+            text = cls.get_fen()
+            ionest.generalStart(gamemodel, p0, p1, (StringIO(text), fen, 0, -1))
+        cls._generalRun(_callback, _validate)
 
 ################################################################################
 # EnterNotationExtension                                                       #
