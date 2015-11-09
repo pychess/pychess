@@ -106,13 +106,14 @@ class BoardView (Gtk.DrawingArea):
         'shown_changed' : (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
     
-    def __init__(self, gamemodel=None, preview=False):
+    def __init__(self, gamemodel=None, preview=False, setup_position=False):
         GObject.GObject.__init__(self)
         
         if gamemodel == None:
             gamemodel = GameModel()
         self.model = gamemodel
         self.preview = preview
+        self.setup_position = setup_position
         self.shownVariationIdx = 0 # the main variation is the first in gamemodel.variations list
         
         self.model.connect("game_started", self.game_started)
@@ -680,7 +681,8 @@ class BoardView (Gtk.DrawingArea):
             self.drawArrows (context)
             with self.animationLock:
                 self.drawPieces (context, r)
-            self.drawLastMove (context, r)
+            if not self.setup_position:
+                self.drawLastMove (context, r)
         
         if self.model.status == KILLED:
             pass
@@ -714,7 +716,8 @@ class BoardView (Gtk.DrawingArea):
         thickness = 0.01
         signsize = 0.04
         
-        if not self.showCords: return
+        if (not self.showCords) and (not self.setup_position):
+            return
         
         xc, yc, square, s = self.square
         
@@ -772,9 +775,10 @@ class BoardView (Gtk.DrawingArea):
         matrix, invmatrix = matrixAround(
                 self.matrixPi, xc+square/2., yc+square/2.)
         paint(False)
-        context.transform(matrix)
-        paint(True)
-        context.transform(invmatrix)
+        if conf.get("faceToFace", False):
+            context.transform(matrix)
+            paint(True)
+            context.transform(invmatrix)
     
     ###############################
     #          drawBoard          #
@@ -969,6 +973,10 @@ class BoardView (Gtk.DrawingArea):
             bounding = self.cord2RectRelative(cord)
             if not intersects(rect(bounding), redrawn): continue
             
+            board = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
+            if board[cord] is None and (cord.x < 0 or cord.x > self.FILES-1):
+                continue
+
             xc, yc, square, s = self.square
             x, y = self.cord2Point(cord)
             context.rectangle(x, y, s, s)

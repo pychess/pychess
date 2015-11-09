@@ -37,6 +37,7 @@ from pychess.widgets.TaskerManager import TaskerManager
 from pychess.widgets.TaskerManager import NewGameTasker
 from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.Players.engineNest import discoverer
+from pychess.Savers import chesspastebin
 from pychess.ic import ICLogon
 #from pychess.Database.gamelist import GameList
 from pychess import VERSION, VERSION_NAME
@@ -191,8 +192,7 @@ class GladeHandlers:
         newGameDialog.LoadFileExtension.run(None)
     
     def on_set_up_position_activate(self, widget):
-        # Not implemented yet
-        pass
+        newGameDialog.SetupPositionExtension.run()
 
     def on_open_database_activate(self, widget):
         #GameList().load_games()
@@ -206,6 +206,9 @@ class GladeHandlers:
     
     def on_save_game_as1_activate(self, widget):
         ionest.saveGameAs (gameDic[gamewidget.cur_gmwidg()])
+
+    def on_share_game_activate(self, widget):
+        chesspastebin.paste(gameDic[gamewidget.cur_gmwidg()])
 
     def on_export_position_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
@@ -291,6 +294,9 @@ class GladeHandlers:
 
     def on_copy_pgn_activate(self, widget):
         gamewidget.cur_gmwidg().copy_pgn()
+
+    def on_copy_fen_activate(self, widget):
+        gamewidget.cur_gmwidg().copy_fen()
     
     def on_manage_engines_activate(self, widget):
         enginesDialog.run(gamewidget.getWidgets())
