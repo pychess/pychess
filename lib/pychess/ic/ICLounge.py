@@ -604,7 +604,7 @@ class ParrentListSection (Section):
         return cmp(pix0, pix1)
     
     def timeCompareFunction (self, treemodel, iter0, iter1, column):
-        (minute0, minute1) = (treemodel.get_value(iter0, 7), treemodel.get_value(iter1, 7))
+        (minute0, minute1) = (treemodel.get_value(iter0, 8), treemodel.get_value(iter1, 8))
         return cmp(minute0, minute1)
 
 
@@ -1224,6 +1224,11 @@ class GameTabSection (ParrentListSection):
                         hide=[0], pix=[1])
         self.tv.get_column(0).set_sort_column_id(0)
         self.model.set_sort_func(0, self.pixCompareFunction, 1)
+        for i in range(1, 6):
+            self.model.set_sort_func(i, self.compareFunction, i)
+        self.prev_sort_column_id = []
+        self.model.connect("sort-column-changed", self.on_sort_column_change)
+
         self.tv.set_has_tooltip(True)
         self.tv.connect("query-tooltip", self.on_query_tooltip)
         self.selection = self.tv.get_selection()
@@ -1250,6 +1255,48 @@ class GameTabSection (ParrentListSection):
         self.connection.bm.connect("obsGameUnobserved", self.onGameUnobserved)
 
         self.widgets["gamesSpinner"].start()
+
+    # Multi-column sort based on TreeModelSortUtil from 
+    # https://github.com/metomi/rose/blob/master/lib/python/rose/gtk/util.py
+    def on_sort_column_change(self, model):
+        """ Store previous sorting information for multi-column sorts. """
+        id, order = model.get_sort_column_id()
+        if id is None and order is None:
+            return False
+        if (self.prev_sort_column_id and
+                self.prev_sort_column_id[0][0] == id):
+            self.prev_sort_column_id.pop(0)
+        self.prev_sort_column_id.insert(0, (id, order))
+        if len(self.prev_sort_column_id) > 2:
+            self.prev_sort_column_id.pop()
+
+    def compareFunction (self, model, iter0, iter1, column):
+        """ Multi-column sort. """
+        val0 = model.get_value(iter0, column)
+        val1 = model.get_value(iter1, column)
+        rval = cmp(val0, val1)
+        # If rval is 1 or -1, no need for a multi-column sort.
+        if rval == 0:
+            this_order = model.get_sort_column_id()[1]
+            cmp_factor = 1
+            if this_order == Gtk.SortType.DESCENDING:
+                # We need to de-invert the sort order for multi sorting.
+                cmp_factor = -1
+        i = 0
+        while rval == 0 and i < len(self.prev_sort_column_id):
+            next_id, next_order = self.prev_sort_column_id[i]
+            if next_id == column:
+                i += 1
+                continue
+            next_cmp_factor = cmp_factor * 1
+            if next_order == Gtk.SortType.DESCENDING:
+                # Set the correct order for multi sorting.
+                next_cmp_factor = cmp_factor * -1
+            val0 = model.get_value(iter0, next_id)
+            val1 = model.get_value(iter1, next_id)
+            rval = next_cmp_factor * cmp(val0, val1)
+            i += 1
+        return rval
 
     def on_query_tooltip (self, widget, x, y, keyboard_tip, tooltip):
         if not widget.get_tooltip_context(x, y, keyboard_tip):

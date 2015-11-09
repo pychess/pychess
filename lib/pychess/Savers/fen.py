@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from pychess.compat import StringIO
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WAITING_TO_START, BLACKWON, WHITEWON, DRAW
 from pychess.Utils.logic import getStatus
@@ -15,8 +16,10 @@ __append__ = True
 def save (file, model, position=None):
     """Saves game to file in fen format"""
     
-    print("%s" % model.boards[-1].asFen(), file=file)
+    print("%s" % model.boards[-1 if position is None else position].asFen(), file=file)
+    output = file.getvalue() if isinstance(file, StringIO) else ""
     file.close()
+    return output
     
 def load (file):
     return FenFile ([line.strip() for line in file if line])

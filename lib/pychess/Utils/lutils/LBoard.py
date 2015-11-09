@@ -857,7 +857,7 @@ class LBoard:
         if not self.enpassant:
             fenstr.append("-")
         else:
-                fenstr.append(reprCord[self.enpassant])
+            fenstr.append(reprCord[self.enpassant])
         fenstr.append(" ")
         
         fenstr.append(str(self.fifty))

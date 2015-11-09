@@ -18,7 +18,7 @@ from pychess.compat import StringIO
 from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
-from pychess.Savers import pgn
+from pychess.Savers import pgn, fen
 from pychess.System import conf, prefix
 
 from pychess.System.Log import log
@@ -732,7 +732,12 @@ class GameWidget (GObject.GObject):
         output = StringIO()
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(pgn.save(output, self.gamemodel), -1)
-    
+
+    def copy_fen(self):
+        output = StringIO()
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        clipboard.set_text(fen.save(output, self.gamemodel, self.board.view.shown), -1)
+
 ################################################################################
 # Main handling of gamewidgets                                                 #
 ################################################################################
