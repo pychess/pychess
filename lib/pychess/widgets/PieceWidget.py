@@ -2,13 +2,15 @@ from gi.repository import Gtk
 from gi.repository import GObject
 import cairo
 
+from pychess.Utils.const import *
 from pychess.gfx import Pieces
 
 class PieceWidget (Gtk.DrawingArea):
-    def __init__(self, piece):
+    def __init__(self, piece, variant):
         GObject.GObject.__init__(self)        
         self.connect("draw", self.expose)
         self.piece = piece
+        self.asean = variant in ASEAN_VARIANTS
     
     def setPiece(self, piece):
         self.piece = piece
@@ -22,4 +24,4 @@ class PieceWidget (Gtk.DrawingArea):
         s = min(rect.width, rect.height)
         x = (rect.width-s) / 2.0
         y = (rect.height-s) / 2.0
-        Pieces.drawPiece(self.piece, context, x, y, s)
+        Pieces.drawPiece(self.piece, context, x, y, s, asean=self.asean)
