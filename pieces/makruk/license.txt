@@ -1,4 +1,1 @@
-http://rybkaforum.net/cgi-bin/rybkaforum/topic_show.pl?tid=6786
-http://rybkaforum.net/cgi-bin/rybkaforum/topic_show.pl?tid=8336
-http://www.benvanvlierden.nl/Download/FSOpaque.zip
-
+The software in this directory are published under the GPL license agreement http://www.gnu.org/copyleft/gpl.html
