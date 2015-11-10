@@ -40,10 +40,10 @@ class BoardControl (Gtk.EventBox):
     def __init__(self, gamemodel, actionMenuItems, setup_position=False):
         GObject.GObject.__init__(self)
         self.setup_position = setup_position
-        self.promotionDialog = PromotionDialog()
         self.view = BoardView(gamemodel, setup_position=setup_position)
         self.add(self.view)
         self.variant = gamemodel.variant
+        self.promotionDialog = PromotionDialog(self.variant.variant)
 
         self.RANKS = gamemodel.boards[0].RANKS
         self.FILES = gamemodel.boards[0].FILES
