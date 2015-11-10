@@ -112,6 +112,8 @@ class BoardView (Gtk.DrawingArea):
         if gamemodel == None:
             gamemodel = GameModel()
         self.model = gamemodel
+        self.allwhite = self.model.variant==AllWhiteBoard
+        self.asean = self.model.variant.variant in ASEAN_VARIANTS
         self.preview = preview
         self.setup_position = setup_position
         self.shownVariationIdx = 0 # the main variation is the first in gamemodel.variations list
@@ -864,7 +866,7 @@ class BoardView (Gtk.DrawingArea):
         context.transform(invmatrix)
         Pieces.drawPiece(  piece, context,
                     cx+CORD_PADDING, cy+CORD_PADDING,
-                    s-CORD_PADDING*2, allWhite=self.model.variant==AllWhiteBoard)
+                    s-CORD_PADDING*2, allwhite=self.allwhite, asean=self.asean)
         context.transform(matrix)
     
     def drawPieces(self, context, r):

@@ -29,7 +29,7 @@ def parse(n, psize):
             
 # This has double speed at drawing, but when generating new functions, it
 # takes about ten times longer.
-def drawPiece1 (piece, cc, x, y, psize, allWhite=False):
+def drawPiece1 (piece, cc, x, y, psize, allwhite=False, asean=False):
     cc.save()
     cc.move_to(x,y)
     
@@ -40,8 +40,8 @@ def drawPiece1 (piece, cc, x, y, psize, allWhite=False):
     cc.fill()
     cc.restore()
 
-def drawPieceReal (piece, cc, psize, allWhite=False):
-    color = WHITE if allWhite else piece.color
+def drawPieceReal (piece, cc, psize, allwhite=False, asean=False):
+    color = WHITE if allwhite else piece.color
     
     # Do the actual drawing to the Cairo context
     for cmd, points in parsedPieces[color][piece.sign][psize]:
@@ -56,8 +56,12 @@ def drawPieceReal (piece, cc, psize, allWhite=False):
             cc.fill_preserve()
             cc.set_source_rgb(0,0,0)
                 
-def drawPiece2 (piece, cc, x, y, psize, allWhite=False):
+def drawPiece2 (piece, cc, x, y, psize, allwhite=False, asean=False):
     """Rendering pieces with draw each time method"""
+
+    if asean:
+        drawPiece3(piece, cc, x, y, psize, allwhite=allwhite, asean=True)
+        return
 
     cc.save()
     cc.move_to(x,y)
@@ -67,18 +71,23 @@ def drawPiece2 (piece, cc, x, y, psize, allWhite=False):
                 for cmd, points in parsedPieces[piece.color][piece.sign][size]]
         parsedPieces[piece.color][piece.sign][psize] = list
     
-    drawPieceReal (piece, cc, psize, allWhite)
+    drawPieceReal (piece, cc, psize, allwhite)
     cc.fill()
     cc.restore()
 
 piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
 pnames = ('Pawn','Knight','Bishop','Rook','Queen','King')
 
-def drawPiece3(piece, context, x, y, psize, allWhite=False):
+def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False):
     """Rendering pieces using .svg chess figurines"""
 
-    color = WHITE if allWhite else piece.color
-    if all_in_one:
+    color = WHITE if allwhite else piece.color
+    if asean:
+        image = makruk_svg_pieces[color][piece.sign]
+        w, h = image.props.width, image.props.height
+        offset_x = 0
+        offset_y = 0
+    elif all_in_one:
         image = svg_pieces
         w, h = image.props.width/6, image.props.height/2
         offset_x = piece_ord[piece.sign]*psize
@@ -98,7 +107,9 @@ def drawPiece3(piece, context, x, y, psize, allWhite=False):
     
     context.push_group()
     
-    if all_in_one:
+    if asean:
+        image.render_cairo(context)
+    elif all_in_one:
         pieceid = '#%s%s' % ('White' if color==0 else 'Black', pnames[piece.sign-1])
         image.render_cairo_sub(context, id=pieceid)
     else:
@@ -108,10 +119,14 @@ def drawPiece3(piece, context, x, y, psize, allWhite=False):
     context.paint_with_alpha(piece.opacity)
     context.restore()
 
-def drawPiece4(piece, context, x, y, psize, allWhite=False):
+def drawPiece4(piece, context, x, y, psize, allwhite=False, asean=False):
     """Rendering pieces using .ttf chessfont figurines"""
 
-    color = WHITE if allWhite else piece.color
+    if asean:
+        drawPiece3(piece, context, x, y, psize, allwhite=allwhite, asean=True)
+        return
+        
+    color = WHITE if allwhite else piece.color
 
     context.set_font_face(chess_font_face)
     context.set_font_size(psize)
@@ -137,8 +152,12 @@ def drawPiece4(piece, context, x, y, psize, allWhite=False):
     
 # This version has proven itself nearly three times as slow as the "draw each time" method.
 # At least when drawing one path only. Might be useful when drawing svg    
-def drawPiece5 (piece, cc, x, y, psize, allWhite=False):
+def drawPiece5 (piece, cc, x, y, psize, allwhite=False, asean=False):
     """Rendering pieces from cache instead of draw each time"""
+
+    if asean:
+        drawPiece3(piece, context, x, y, psize, allwhite=allwhite, asean=True)
+        return
 
     if not piece in surfaceCache:
         s = cc.get_target().create_similar(cairo.CONTENT_COLOR_ALPHA, int(size), int(size))
@@ -271,4 +290,5 @@ def set_piece_theme(piece_set):
         except:
             drawPiece = drawPiece2
 
+makruk_svg_pieces = get_svg_pieces("makruk")
 set_piece_theme(conf.get("pieceTheme", "Chessicons"))
