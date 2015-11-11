@@ -16,7 +16,7 @@ from pychess.System import conf, fident
 from pychess.System.Log import log
 from pychess.System.command import Command
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
-from pychess.System.prefix import addUserConfigPrefix, getDataPrefix
+from pychess.System.prefix import addUserConfigPrefix, getDataPrefix, getEngineDataPrefix
 from pychess.Players.Player import PlayerIsDead
 from pychess.Utils.const import *
 from .CECPEngine import CECPEngine
@@ -424,7 +424,7 @@ class EngineDiscoverer (GObject.GObject):
         if working_directory:
             workdir = working_directory
         else:
-            workdir = os.path.dirname(engine["command"])
+            workdir = getEngineDataPrefix()
         warnwords = ("illegal", "error", "exception")      
         subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS, workdir)       
         engine_proc = attrToProtocol[protocol](subprocess, color, protover, md5)     
