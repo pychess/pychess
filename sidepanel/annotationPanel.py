@@ -21,6 +21,7 @@ from pychess.Savers.pgn import move_count
 from pychess.Savers.pgnbase import nag2symbol
 from pychess.widgets.Background import set_textview_color
 from pychess.widgets.ChessClock import formatTime
+from pychess.Utils.TimeModel import TimeModel
 
 __title__ = _("Annotation")
 __active__ = True
@@ -34,13 +35,13 @@ EMPTY_BOARD.applyFen(FEN_EMPTY)
 We are maintaining a list of nodes to help manipulate the textbuffer.
 Node can represent a move, comment or variation (start/end) marker.
 Nodes are dicts with keys like:
-board  = in move node it's the lboard of move 
+board  = in move node it's the lboard of move
          in comment node it's the lboard where the comment belongs to
          in end variation marker node it's the first lboard of the variation
          in start variation marker is's None
 start  = the beginning offest of the node in the textbuffer
 end    = the ending offest of the node in the textbuffer
-parent = the parent lboard if the node is a move in a variation, otherwise None 
+parent = the parent lboard if the node is a move in a variation, otherwise None
 vari   = in end variation node it's the start variation marker node
          in start variation node it's None
 level  = depth in variation tree (0 for mainline nodes, 1 for first level variation moves, etc.)
@@ -58,20 +59,20 @@ class Sidepanel(Gtk.TextView):
         self.cursor_standard = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
         #self.cursor_hand = Gdk.Cursor.new(Gdk.HAND2)
         self.cursor_hand = Gdk.Cursor.new(Gdk.CursorType.HAND2)
-        
+
         self.textview = self
-        
+
         self.nodelist = []
         self.oldWidth = 0
         self.autoUpdateSelected = True
-        
+
         self.connect("motion-notify-event", self.motion_notify_event)
         self.connect("button-press-event", self.button_press_event)
 
         bg_color, fg_color = set_textview_color(self.textview)
-        
+
         self.textbuffer = self.get_buffer()
-        
+
         color0 = fg_color
         color1 = Gdk.RGBA(red=0.2, green=0.0, blue=0.0)
         color2 = Gdk.RGBA(red=0.4, green=0.0, blue=0.0)
@@ -81,7 +82,7 @@ class Sidepanel(Gtk.TextView):
 
         tag = self.textbuffer.create_tag("remove-variation")
         tag.connect("event", self.tag_event_handler)
-        
+
         self.new_line_tag = self.textbuffer.create_tag("new_line")
 
         self.textbuffer.create_tag("head1")
@@ -131,7 +132,7 @@ class Sidepanel(Gtk.TextView):
             self.fan = conf.get("figuresInNotation", False)
             self.update()
         conf.notify_add("figuresInNotation", figuresInNotationCallback)
-        
+
         # Elapsed move time
         self.showEmt = conf.get("showEmt", False)
         def showEmtCallback(none):
@@ -157,7 +158,7 @@ class Sidepanel(Gtk.TextView):
 
     def tag_event_handler(self, tag, widget, event, iter):
         """ Calls variation remover when clicking on remove marker """
-        
+
         tag_name = tag.get_property("name")
         if event.type == Gdk.EventType.BUTTON_PRESS and tag_name == "remove-variation":
             offset = iter.get_offset()
@@ -168,14 +169,14 @@ class Sidepanel(Gtk.TextView):
                     break
             if node is None:
                 return
-                
+
             self.remove_variation(node)
 
         return False
-        
+
     def motion_notify_event(self, widget, event):
         """ Handles mouse cursor changes (standard/hand) """
-        
+
         if (event.is_hint):
             #(x, y, state) = event.window.get_pointer()
             (ign, x, y, state) = event.window.get_pointer()
@@ -183,11 +184,11 @@ class Sidepanel(Gtk.TextView):
             x = event.x
             y = event.y
             state = event.get_state()
-            
+
         if self.textview.get_window_type(event.window) != Gtk.TextWindowType.TEXT:
             event.window.set_cursor(self.cursor_standard)
             return True
-            
+
         (x, y) = self.textview.window_to_buffer_coords(Gtk.TextWindowType.WIDGET, int(x), int(y))
         it = self.textview.get_iter_at_location(x, y)
         offset = it.get_offset()
@@ -200,7 +201,7 @@ class Sidepanel(Gtk.TextView):
 
     def button_press_event(self, widget, event):
         """ Calls setShownBoard() or edit_comment() on mouse click, or pops-up local menu """
-        
+
         (wx, wy) = event.get_coords()
         (x, y) = self.textview.window_to_buffer_coords(Gtk.TextWindowType.WIDGET, int(wx), int(wy))
         it = self.textview.get_iter_at_location(x, y)
@@ -212,14 +213,14 @@ class Sidepanel(Gtk.TextView):
                 node = n
                 board = node["board"]
                 break
-        
+
         if node is None:
             return True
-        
+
         # left mouse click
         if event.button == 1:
             if "vari" in node:
-                # tag_event_handler() will handle 
+                # tag_event_handler() will handle
                 return True
             elif "comment" in node:
                 self.edit_comment(board=board, index=node["index"])
@@ -271,7 +272,7 @@ class Sidepanel(Gtk.TextView):
                 menuitem = Gtk.MenuItem(_("Add move symbol"))
                 menuitem.set_submenu(symbol_menu1)
                 self.menu.append(menuitem)
-                
+
                 symbol_menu2 = Gtk.Menu()
                 for nag, menutext in (("$10", "="),
                                       ("$13", _("Unclear position")),
@@ -308,7 +309,7 @@ class Sidepanel(Gtk.TextView):
 
     def copy_pgn(self, widget):
         self.gamewidget.copy_pgn()
-        
+
     def edit_comment(self, widget=None, board=None, index=0):
         dialog = Gtk.Dialog(_("Edit comment"),
                      None,
@@ -327,7 +328,7 @@ class Sidepanel(Gtk.TextView):
         elif not isinstance(board.children[index], basestring):
             board.children.insert(index, "")
         textbuffer.set_text(board.children[index])
-        
+
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw.add(textedit)
@@ -363,7 +364,7 @@ class Sidepanel(Gtk.TextView):
 
         if self.gamemodel.needsSave:
             self.update_node(board)
-                
+
     # Add evaluation symbol menu
     def symbol_menu2_activate(self, widget, board, nag):
         color = board.color
@@ -393,7 +394,7 @@ class Sidepanel(Gtk.TextView):
 
     def print_node(self, node):
         """ Just a debug helper """
-        
+
         if "vari" in node:
             if node["board"] is None:
                 text = "["
@@ -404,22 +405,22 @@ class Sidepanel(Gtk.TextView):
         else:
             text = self.__movestr(node["board"])
         return text
-        
+
     def remove_variation(self, node):
         shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
         # TODO
         in_vari = True #shown_board in vari
-        
+
         board = node["board"]
         parent = node["parent"]
         # Set new shown board if needed
         if in_vari:
             if parent.pieceBoard is None:
-                # variation without played move at game end 
+                # variation without played move at game end
                 self.boardview.setShownBoard(self.gamemodel.boards[-1])
             else:
                 self.boardview.setShownBoard(parent.pieceBoard)
-        
+
         # Remove the variation (list of lboards) containing board from parent's children list
         for child in parent.children:
             if isinstance(child, list) and board in child:
@@ -432,11 +433,11 @@ class Sidepanel(Gtk.TextView):
                 self.gamemodel.variations.remove(vari)
 
         last_node = self.nodelist[-1] == node
-        
+
         # remove null_board if variation was added on last played move
         if not parent.fen_was_applied:
             parent.prev.next = None
-        
+
         startnode = node["vari"]
         start = startnode["start"]
         end = node["end"]
@@ -477,14 +478,14 @@ class Sidepanel(Gtk.TextView):
         node["vari"] = None
         node["start"] = start
         node["end"] =  iter.get_offset()
-        
+
         if index == -1:
             self.nodelist.append(node)
         else:
             self.nodelist.insert(index, node)
 
         return (iter.get_offset() - start, node)
-        
+
     def variation_end(self, iter, index, level, firstboard, parent, opening_node):
         start = iter.get_offset()
         if level == 0:
@@ -496,7 +497,7 @@ class Sidepanel(Gtk.TextView):
 
         self.textbuffer.insert_with_tags_by_name(iter, unicode("✖ "), "remove-variation")
         chr = iter.get_char()
-        
+
         # somehow iter.begins_tag() doesn't work, so we use get_char() instead
         if iter.get_char() != "\n":
             self.textbuffer.insert_with_tags_by_name(iter, "\n", "new_line")
@@ -524,7 +525,7 @@ class Sidepanel(Gtk.TextView):
                 end = self.textbuffer.get_iter_at_offset(n["end"])
                 node = n
                 break
-    
+
         if node is None:
             return
 
@@ -546,7 +547,7 @@ class Sidepanel(Gtk.TextView):
         start = iter.get_offset()
         movestr = self.__movestr(board)
         self.textbuffer.insert(iter, "%s " % movestr)
-        
+
         startIter = self.textbuffer.get_iter_at_offset(start)
         endIter = self.textbuffer.get_iter_at_offset(iter.get_offset())
 
@@ -566,7 +567,7 @@ class Sidepanel(Gtk.TextView):
 
         node = {}
         node["board"] = board
-        node["start"] = start       
+        node["start"] = start
         node["end"] = iter.get_offset()
         node["parent"] = parent
         node["level"] = level
@@ -597,7 +598,7 @@ class Sidepanel(Gtk.TextView):
                 node["end"] += diff
 
         self.gamemodel.needsSave = True
-        
+
     @idle_add
     def variation_added(self, gamemodel, boards, parent, comment, score):
         # first find the iter where we will inset this new variation
@@ -606,7 +607,7 @@ class Sidepanel(Gtk.TextView):
             if n["board"] == parent:
                 end = self.textbuffer.get_iter_at_offset(n["end"])
                 node = n
-        
+
         if node is None:
             next_node_index = len(self.nodelist)
             end = self.textbuffer.get_end_iter()
@@ -614,14 +615,14 @@ class Sidepanel(Gtk.TextView):
         else:
             next_node_index = self.nodelist.index(node) + 1
             level = node["level"]
-        
+
         # diff will store the offset we need to shift the remaining stuff
         diff = 0
-        
+
         # variation opening parenthesis
         sdiff, opening_node = self.variation_start(end, next_node_index, level)
         diff += sdiff
-        
+
         ini_board = None
         for i, board in enumerate(boards):
             # do we have initial variation comment?
@@ -655,7 +656,7 @@ class Sidepanel(Gtk.TextView):
             diff += inserted_node["end"] - inserted_node["start"]
             end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
             next_node_index += 1
-            
+
         diff += self.variation_end(end, next_node_index + len(boards), level, boards[0], parent, opening_node)
 
         # adjust remaining stuff offsets
@@ -708,7 +709,7 @@ class Sidepanel(Gtk.TextView):
 
         if not self.boardview.shownIsMainLine():
             return
-        
+
         board = gamemodel.getBoardAtPly(ply).board
         node = None
         if self.showEval or self.showBlunder:
@@ -718,10 +719,10 @@ class Sidepanel(Gtk.TextView):
                     end = self.textbuffer.get_iter_at_offset(n["end"])
                     node = n
                     break
-        
+
         if node is None:
             return
-            
+
         if self.showBlunder:
             self.colorize_node(ply, start, end)
 
@@ -735,7 +736,7 @@ class Sidepanel(Gtk.TextView):
                 moves, score, depth = gamemodel.scores[board.plyCount]
                 score = score * -1 if board.color == BLACK else score
                 emt_eval += "%s " % prettyPrintScore(score, depth)
-        
+
         if emt_eval:
             if node == self.nodelist[-1]:
                 next_node = None
@@ -751,10 +752,10 @@ class Sidepanel(Gtk.TextView):
                 for node in self.nodelist[self.nodelist.index(next_node):]:
                     node["start"] += diff
                     node["end"] += diff
-                
+
     def update_selected_node(self):
         """ Update the selected node highlight """
-        
+
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
         shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
         start = None
@@ -774,12 +775,12 @@ class Sidepanel(Gtk.TextView):
 
         end_iter = self.textbuffer.get_end_iter # Convenience shortcut to the function
 
-        while True: 
+        while True:
             start = end_iter().get_offset()
-            
+
             if board is None:
                 break
-            
+
             # Initial game or variation comment
             if board.prev is None:
                 for index, child in enumerate(board.children):
@@ -787,10 +788,10 @@ class Sidepanel(Gtk.TextView):
                         self.insert_comment(child, board.next, parent, index=index, level=level, ini_board=board)
                 board = board.next
                 continue
-            
+
             if board.fen_was_applied:
                 self.insert_node(board, end_iter(), -1, level, parent)
-                
+
             if self.showEmt and level == 0 and board.fen_was_applied and self.gamemodel.timemodel.hasTimes:
                 elapsed = self.gamemodel.timemodel.getElapsedMoveTime(board.plyCount - self.gamemodel.lowply)
                 self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % formatTime(elapsed), "emt")
@@ -810,7 +811,7 @@ class Sidepanel(Gtk.TextView):
                     diff, opening_node = self.variation_start(end_iter(), -1, level)
                     self.insert_nodes(child[0], level+1, parent=board)
                     self.variation_end(end_iter(), -1, level, child[1], board, opening_node)
-            
+
             if board.next:
                 board = board.next
             else:
@@ -823,7 +824,7 @@ class Sidepanel(Gtk.TextView):
         comment = re.sub("\[%.*?\]", "", comment)
         if not comment:
             return
-        
+
         end_iter = self.textbuffer.get_end_iter()
         pos = 0
         for n in self.nodelist:
@@ -844,18 +845,19 @@ class Sidepanel(Gtk.TextView):
         node["index"] = index
         node["parent"] = parent
         node["level"] = level
-        node["start"] = start     
+        node["start"] = start
         node["end"] = end_iter.get_offset()
         self.nodelist.insert(pos if ini_board is not None else pos+1, node)
-        
+
         return node
-        
+
     def insert_header(self, gm):
+
+        log.debug("Cajone: GM : %s" % gm)
         if gm.players:
             text = repr(gm.players[0])
         else:
             return
-
         end_iter = self.textbuffer.get_end_iter
 
         self.textbuffer.insert_with_tags_by_name(end_iter(), text, "head2")
@@ -880,9 +882,18 @@ class Sidepanel(Gtk.TextView):
         self.textbuffer.insert_with_tags_by_name(end_iter(), ' ' + result + '\n', "head2")
 
         text = ""
+        mins,inc = str.split(gm.tags['TimeControl'],'+')
+        mins = int(mins) / 60
+        mins =  "[ " + "{:.0f}".format(mins)
+        if inc != '0':
+            text += mins + ' mins + ' + inc + ' secs '
+        else:
+            text += mins + ' mins '
+
         event = gm.tags['Event']
         if event and event != "?":
             text += event
+        text += ' ]'
 
         site = gm.tags['Site']
         if site and site != "?":
@@ -910,6 +921,7 @@ class Sidepanel(Gtk.TextView):
             text += ', ' + game_date[:4]
         self.textbuffer.insert_with_tags_by_name(end_iter(), text, "head1")
 
+
         eco = gm.tags.get('ECO')
         if eco:
             self.textbuffer.insert_with_tags_by_name(end_iter(), "\n" + eco, "head2")
@@ -923,6 +935,7 @@ class Sidepanel(Gtk.TextView):
                 self.textbuffer.insert_with_tags_by_name(end_iter(), variation, "head2")
 
         self.textbuffer.insert(end_iter(), "\n\n")
+
 
     @idle_add
     def update(self, *args):
@@ -955,7 +968,7 @@ class Sidepanel(Gtk.TextView):
                 break
             else:
                 self.nodelist.remove(node)
-                
+
         self.textbuffer.delete(start, end)
 
     @idle_add
@@ -977,7 +990,7 @@ class Sidepanel(Gtk.TextView):
 
         node = {}
         node["board"] = board
-        node["start"] = startIter.get_offset()        
+        node["start"] = startIter.get_offset()
         node["end"] = end_iter().get_offset()
         node["parent"] = None
         node["level"] = 0
@@ -989,18 +1002,18 @@ class Sidepanel(Gtk.TextView):
             self.textbuffer.insert_with_tags_by_name(end_iter(), "%s " % formatTime(elapsed), "emt")
 
         self.update_selected_node()
-    
+
     def players_changed(self, model):
         log.debug("annotationPanel.players_changed: starting")
         self.update()
         log.debug("annotationPanel.players_changed: returning")
-    
+
     def __movestr(self, board):
         move = board.lastMove
-        if self.fan:           
+        if self.fan:
             movestr = unicode(toFAN(board.prev, move))
-        else:          
+        else:
             movestr =  unicode(toSAN(board.prev, move, True))
         nagsymbols = "".join([nag2symbol(nag) for nag in board.nags])
-        # To prevent wrap castling we will use hyphen bullet (U+2043)       
+        # To prevent wrap castling we will use hyphen bullet (U+2043)
         return "%s%s%s" % (move_count(board), movestr.replace('-', unicode('⁃')), nagsymbols)
