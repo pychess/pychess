@@ -50,6 +50,7 @@ class ICLogon (object):
         uistuff.keep(self.widgets["logOnAsGuest"], "logOnAsGuest")
         uistuff.keep(self.widgets["nameEntry"], "usernameEntry")
         uistuff.keep(self.widgets["passEntry"], "passwordEntry")
+        uistuff.keep(self.widgets["autoLogin"], "autoLogin")
         self.infobar = Gtk.InfoBar()
         self.infobar.set_message_type(Gtk.MessageType.WARNING)
         #self.widgets["messagePanelHBox"].pack_start(self.infobar, 
