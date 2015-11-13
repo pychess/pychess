@@ -346,7 +346,8 @@ class PyChess:
         widgets.getGlade().connect_signals(GladeHandlers())
 
         tasker = TaskerManager()
-        tasker.packTaskers (NewGameTasker(), InternetGameTasker())
+        new_game_tasker, internet_game_tasker = NewGameTasker(), InternetGameTasker()
+        tasker.packTaskers (new_game_tasker, internet_game_tasker)
         widgets["Background"].add(tasker)
         
         #------------------------------------------------------ Redirect widgets
@@ -480,6 +481,9 @@ class PyChess:
         if conf.get("show_tip_at_startup", False):
             tipOfTheDay.TipOfTheDay.show()
 
+        if conf.get("autoLogin", False):
+            internet_game_tasker.connectClicked(None)
+            
     def website(self, clb, link):
         webbrowser.open(link)
     
