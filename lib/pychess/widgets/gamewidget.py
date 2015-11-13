@@ -151,10 +151,8 @@ class GameWidget (GObject.GObject):
         gamemodel.connect("analyzer_resumed", self.analyzer_resumed)
         gamemodel.connect("analyzer_paused", self.analyzer_paused)
         self.players_changed(gamemodel)
-        log.debug("Cajone: Self_GameModel: %s" % self.gamemodel)
         if self.display_text:
             self.game_info_label.set_text(" " + self.display_text)
-            log.debug("Cajone: Label_SET: %s" % self.game_info_label)
         if gamemodel.timed:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         if isinstance(gamemodel, ICGameModel):
@@ -472,15 +470,12 @@ class GameWidget (GObject.GObject):
 
     @property
     def display_text (self):
+        if not self.gamemodel.players:
+            return ""
         '''This will give you the name of the game.'''
         vs = " " + _("vs") + " "
         t = vs.join((self.player_display_text(color=WHITE),
                      self.player_display_text(color=BLACK)))
-        log.debug("Cajone: begin : %s" % t)
-
-        if self.gamemodel.display_text:
-#            t += " " + self.gamemodel.display_text
-            log.debug("Cajone: end : %s" % t)
         return t
 
     def players_changed (self, gamemodel):
