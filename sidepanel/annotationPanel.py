@@ -853,7 +853,6 @@ class Sidepanel(Gtk.TextView):
 
     def insert_header(self, gm):
 
-        log.debug("Cajone: GM : %s" % gm)
         if gm.players:
             text = repr(gm.players[0])
         else:
