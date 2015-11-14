@@ -50,6 +50,7 @@ class ICLogon (object):
         uistuff.keep(self.widgets["logOnAsGuest"], "logOnAsGuest")
         uistuff.keep(self.widgets["nameEntry"], "usernameEntry")
         uistuff.keep(self.widgets["passEntry"], "passwordEntry")
+        uistuff.keep(self.widgets["hostEntry"], "hostEntry")
         uistuff.keep(self.widgets["autoLogin"], "autoLogin")
         self.infobar = Gtk.InfoBar()
         self.infobar.set_message_type(Gtk.MessageType.WARNING)
@@ -184,8 +185,10 @@ class ICLogon (object):
             ports = list(map(int, re.findall("\d+", ports)))
             if not 5000 in ports: ports.append(5000)
             if not 23 in ports: ports.append(23)
+        alternate_host = self.widgets["hostEntry"].get_text()
+
         self.showConnecting()
-        self.host = host if host is not None else "freechess.org"
+        self.host = host if host is not None else alternate_host if alternate_host else "freechess.org"
         self.connection = FICSMainConnection(self.host, ports, username, password)
         self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
         self.helperconn.start()
