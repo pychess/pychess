@@ -152,7 +152,6 @@ class GameWidget (GObject.GObject):
         gamemodel.connect("analyzer_paused", self.analyzer_paused)
         self.players_changed(gamemodel)
         if self.gamemodel.display_text:
-            log.debug("Cajone IsInstance of ICGameModel : %s , %r" % (type(self.gamemodel).__name__,isinstance(gamemodel,ICGameModel)))
             if isinstance(gamemodel, ICGameModel):
                 self.game_info_label.set_text(" " + self.display_text + "[ Board : " + str(self.gamemodel.ficsgame.gameno) + "]")
             else:
