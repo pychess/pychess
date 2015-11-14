@@ -80,12 +80,12 @@ class TextImageTree (Gtk.TreeView):
         self.id2iter = {}
         
         self.icon_name = icon_name
-        pm = Gtk.ListStore(str,str,int)
+        pm = Gtk.ListStore(str,str,int,str)
         self.props.model = pm
         self.idSet = set()
         
         self.set_headers_visible(False)
-        self.set_tooltip_column(1)
+        self.set_tooltip_column(3)
         self.set_search_column(1)
         
         # First column
@@ -117,7 +117,7 @@ class TextImageTree (Gtk.TreeView):
     @idle_add
     def addRow (self, id, text, type):
         if id in self.id2iter: return
-        iter = self.props.model.append([id, text, type])
+        iter = self.props.model.append([id, text , type,GObject.markup_escape_text(text)])
         self.id2iter[id] = iter
         self.idSet.add(id)
     
