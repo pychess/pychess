@@ -881,7 +881,7 @@ class Sidepanel(Gtk.TextView):
         self.textbuffer.insert_with_tags_by_name(end_iter(), ' ' + result + '\n', "head2")
 
         text = ""
-        mins,inc = str.split(gm.tags['TimeControl'],'+')
+        mins, inc = gm.tags['TimeControl'].split('+')
         mins = int(mins) / 60
         mins =  "[ " + "{:.0f}".format(mins)
         if inc != '0':
