@@ -151,8 +151,11 @@ class GameWidget (GObject.GObject):
         gamemodel.connect("analyzer_resumed", self.analyzer_resumed)
         gamemodel.connect("analyzer_paused", self.analyzer_paused)
         self.players_changed(gamemodel)
-        if self.display_text:
-            self.game_info_label.set_text(" " + self.display_text)
+        if self.gamemodel.display_text:
+            if type(gamemodel).__name__ == 'GameModel':
+                self.game_info_label.set_text(" " + self.display_text)
+            else:
+                self.game_info_label.set_text(" " + self.display_text + "[ Board : " + str(self.gamemodel.ficsgame.gameno) + "]")
         if gamemodel.timed:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         if isinstance(gamemodel, ICGameModel):
