@@ -232,10 +232,10 @@ class ScorePlot (Gtk.DrawingArea):
         # Draw dark middle line                #
         ########################################
         
-        cr.set_source_rgb (0, 0, 0)
+        cr.set_source_rgb (1, 0, 0)
         cr.move_to(width/2., 0)
         cr.line_to(width/2., height)
-        cr.set_line_width(0.15)
+        cr.set_line_width(0.25)
         cr.stroke()
         
         ########################################
