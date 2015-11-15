@@ -50,7 +50,7 @@ class ICLounge (GObject.GObject):
         'logout'        : (GObject.SignalFlags.RUN_FIRST, None, ()),
         'autoLogout'    : (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
-    
+
     def __init__ (self, connection, helperconn, host):
         log.debug("ICLounge.__init__: starting")
         GObject.GObject.__init__(self)
@@ -64,7 +64,7 @@ class ICLounge (GObject.GObject):
         self.infobar = InfoBarNotebook()
         self.infobar.hide()
         self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar, False, False, 0)
-        
+
         def on_window_delete (window, event):
             self.emit("logout")
             self.close()
@@ -73,7 +73,7 @@ class ICLounge (GObject.GObject):
         def on_logoffButton_clicked (button):
             self.emit("logout")
             self.close()
-        self.widgets["logoffButton"].connect("clicked", on_logoffButton_clicked)        
+        self.widgets["logoffButton"].connect("clicked", on_logoffButton_clicked)
         def on_autoLogout (alm):
             self.emit("autoLogout")
             self.close()
@@ -100,7 +100,7 @@ class ICLounge (GObject.GObject):
         for user in self.connection.notify_users:
             user = self.connection.players.get(FICSPlayer(user))
             self.user_from_notify_list_is_present(user)
-        
+
         self.userinfo = UserInfoSection(self.widgets, self.connection, self.host)
         self.news = NewsSection(self.widgets, self.connection)
         self.seeks_list = SeekTabSection(self.widgets, self.connection, self)
@@ -115,7 +115,7 @@ class ICLounge (GObject.GObject):
             self.adjourned_games_tab)
         self.chat = ChatWindow(self.widgets, self.connection)
         self.console = ConsoleWindow(self.widgets, self.connection)
-        
+
         self.connection.lounge_loaded.set()
         log.debug("ICLounge.__init__: finished")
 
@@ -124,11 +124,11 @@ class ICLounge (GObject.GObject):
 
     def present (self):
         self.widgets["fics_lounge"].present()
-    
+
     def on_connection_error (self, connection, error):
         log.warning("ICLounge.on_connection_error: %s" % repr(error))
         self.close()
-    
+
     @idle_add
     def close (self):
         try:
@@ -145,7 +145,7 @@ class ICLounge (GObject.GObject):
     @idle_add
     def onPlayGameCreated (self, bm, ficsgame):
         log.debug("ICLounge.onPlayGameCreated: %s" % ficsgame)
-        
+
         for message in self.messages:
             message.dismiss()
         del self.messages[:]
@@ -158,9 +158,9 @@ class ICLounge (GObject.GObject):
         gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
         gamemodel.connect("game_started", lambda gamemodel:
                      self.connection.bm.onGameModelStarted(ficsgame.gameno))
-        
+
         wplayer, bplayer = ficsgame.wplayer, ficsgame.bplayer
-        
+
         # We start
         if wplayer.name.lower() == self.connection.getUsername().lower():
             player0tup = (LOCAL, Human, (WHITE, wplayer.long_name(), wplayer.name,
@@ -168,7 +168,7 @@ class ICLounge (GObject.GObject):
             player1tup = (REMOTE, ICPlayer, (gamemodel, bplayer.name,
                 ficsgame.gameno, BLACK, bplayer.long_name(),
                 bplayer.getRatingForCurrentGame()), bplayer.long_name())
-        
+
         # She starts
         else:
             player1tup = (LOCAL, Human, (BLACK, bplayer.long_name(), bplayer.name,
@@ -178,7 +178,7 @@ class ICLounge (GObject.GObject):
             player0 = ICPlayer(gamemodel, wplayer.name, ficsgame.gameno, WHITE,
                                wplayer.long_name(), wplayer.getRatingForCurrentGame())
             player0tup = (REMOTE, lambda:player0, (), wplayer.long_name())
-        
+
         if not ficsgame.board.fen:
             ionest.generalStart(gamemodel, player0tup, player1tup)
         else:
@@ -200,7 +200,7 @@ class ICLounge (GObject.GObject):
         gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
         gamemodel.connect("game_started", lambda gamemodel:
                      self.connection.bm.onGameModelStarted(ficsgame.gameno))
-        
+
         # The players need to start listening for moves IN this method if they
         # want to be noticed of all moves the FICS server sends us from now on
         wplayer, bplayer = ficsgame.wplayer, ficsgame.bplayer
@@ -208,13 +208,13 @@ class ICLounge (GObject.GObject):
                            WHITE, wplayer.long_name(), wplayer.getRatingForCurrentGame())
         player1 = ICPlayer(gamemodel, bplayer.name, ficsgame.gameno,
                            BLACK, bplayer.long_name(), bplayer.getRatingForCurrentGame())
-        
+
         player0tup = (REMOTE, lambda:player0, (), wplayer.long_name())
         player1tup = (REMOTE, lambda:player1, (), bplayer.long_name())
-        
+
         ionest.generalStart(gamemodel, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))
-        
+
     @idle_add
     def tooManySeeks (self, bm):
         label = Gtk.Label(label=_("You may only have 3 outstanding seeks at the same time. If you want to add a new seek you must clear your currently active seeks. Clear your seeks?"))
@@ -231,7 +231,7 @@ class ICLounge (GObject.GObject):
         message.add_button(InfoBarMessageButton(Gtk.STOCK_NO, Gtk.ResponseType.NO))
         self.messages.append(message)
         self.infobar.push_message(message)
-    
+
     @idle_add
     def matchDeclined (self, bm, player):
         text = _(" has declined your offer for a match")
@@ -285,7 +285,7 @@ class ICLounge (GObject.GObject):
                                                 Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
-    
+
     @idle_add
     def on_seek_updated (self, glm, message_text):
         if "manual accept" in message_text:
@@ -303,7 +303,7 @@ class ICLounge (GObject.GObject):
                                                 Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
-    
+
     @idle_add
     def our_seeks_removed (self, glm):
         label = Gtk.Label(label=_("Your seeks have been removed"))
@@ -315,14 +315,14 @@ class ICLounge (GObject.GObject):
                                                 Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
-        
+
     def _connect_to_player_changes (self, player):
         for rt in (TYPE_BLITZ, TYPE_LIGHTNING):
             player.ratings[rt].connect("notify::elo",
                 self._replace_notification_message, player)
         player.connect("notify::titles",
                        self._replace_notification_message, player)
-    
+
     @idle_add
     def onArrivalNotification (self, cm, player):
         log.debug("%s" % player, extra={"task":
@@ -331,7 +331,7 @@ class ICLounge (GObject.GObject):
         if player not in self.players:
             self.players.append(player)
             self._connect_to_player_changes(player)
-    
+
     @idle_add
     def onDepartedNotification (self, cm, player):
         self._add_notification_message(player, _(" has departed"))
@@ -342,7 +342,7 @@ class ICLounge (GObject.GObject):
         if player not in self.players:
             self.players.append(player)
             self._connect_to_player_changes(player)
-    
+
     def _add_notification_message (self, player, text, chat=False):
         content = get_infobarmessage_content(player, text)
         def response_cb (infobar, response, message):
@@ -360,7 +360,7 @@ class ICLounge (GObject.GObject):
                                                 Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
-    
+
     @idle_add
     def _replace_notification_message (self, obj, prop, player):
         log.debug("%s %s" % (repr(obj), player), extra={"task":
@@ -412,7 +412,7 @@ class UserInfoSection(Section):
         if finger.getName().lower() != self.connection.getUsername().lower():
 #            print (finger.getName(), self.connection.getUsername())
             return
-        
+
         rows = 1
         if finger.getRating(): rows += len(finger.getRating())+1
         if finger.getEmail(): rows += 1
@@ -456,17 +456,17 @@ class UserInfoSection(Section):
 
             table.attach(Gtk.HSeparator(), 0, 6, row, row+1, ypadding=2)
             row += 1
-        
+
         if finger.getSanctions() != "":
             table.attach(label(_("Sanctions")+":", is_error=True), 0, 1, row, row+1)
             table.attach(label(finger.getSanctions()), 1, 6, row, row+1)
             row += 1
-        
+
         if finger.getEmail():
             table.attach(label(_("Email")+":"), 0, 1, row, row+1)
             table.attach(label(finger.getEmail()), 1, 6, row, row+1)
             row += 1
-        
+
         if finger.getCreated():
             table.attach(label(_("Spent")+":"), 0, 1, row, row+1)
             s = strftime("%Y %B %d ", localtime(time()))
@@ -483,7 +483,7 @@ class UserInfoSection(Section):
             else:
                 self.ping_label = Gtk.Label(label=_("Connecting")+"...")
                 self.ping_label.props.xalign = 0
-                
+
             @idle_add
             def callback (pinger, pingtime):
                 log.debug("'%s' '%s'" % (str(self.pinger), str(pingtime)),
@@ -602,7 +602,7 @@ class ParrentListSection (Section):
         if isinstance(pix0, GdkPixbuf.Pixbuf) and isinstance(pix1, GdkPixbuf.Pixbuf):
             return cmp(pix0.get_pixels(), pix1.get_pixels())
         return cmp(pix0, pix1)
-    
+
     def timeCompareFunction (self, treemodel, iter0, iter1, column):
         (minute0, minute1) = (treemodel.get_value(iter0, 8), treemodel.get_value(iter1, 8))
         return cmp(minute0, minute1)
@@ -625,9 +625,9 @@ class SeekTabSection (ParrentListSection):
         self.seekPix = get_pixbuf("glade/seek.png")
         self.chaPix = get_pixbuf("glade/challenge.png")
         self.manSeekPix = get_pixbuf("glade/manseek.png")
-        
+
         self.widgets["seekExpander"].set_vexpand(False)
-        
+
         self.tv = self.widgets["seektreeview"]
         self.store = Gtk.ListStore(FICSSoughtMatch, GdkPixbuf.Pixbuf,
             GdkPixbuf.Pixbuf, str, int, str, str, str, int, Gdk.RGBA, str)
@@ -657,7 +657,7 @@ class SeekTabSection (ParrentListSection):
         self.widgets["acceptButton"].connect("clicked", self.onAcceptClicked)
         self.widgets["declineButton"].connect("clicked", self.onDeclineClicked)
         self.tv.connect("row-activated", self.row_activated)
-        
+
         self.connection.seeks.connect("FICSSeekCreated", self.onAddSeek)
         self.connection.seeks.connect("FICSSeekRemoved", self.onRemoveSeek)
         self.connection.challenges.connect("FICSChallengeIssued", self.onChallengeAdd)
@@ -665,7 +665,7 @@ class SeekTabSection (ParrentListSection):
         self.connection.glm.connect("our-seeks-removed", self.our_seeks_removed)
         self.connection.bm.connect("playGameCreated", self.onPlayingGame)
         self.connection.bm.connect("curGameEnded", self.onCurGameEnded)
-        
+
         def get_sort_order(modelsort):
             id, order = modelsort.get_sort_column_id()
             if id is None or id < 0:
@@ -683,7 +683,7 @@ class SeekTabSection (ParrentListSection):
 
         uistuff.keep(self.model, "seektreeview_sort_order_col", get_sort_order, \
             lambda modelsort, value: set_sort_order(modelsort, value))
-        
+
     def textcolor_normal(self):
         sc = self.tv.get_style_context()
         return sc.get_color(Gtk.StateFlags.NORMAL)
@@ -695,7 +695,7 @@ class SeekTabSection (ParrentListSection):
     def selectFunction (self, selection, model, path, is_selected, data):
         if model[path][9] == self.textcolor_selected(): return False
         else: return True
-    
+
     def __isAChallengeOrOurSeek (self, row):
         sought = row[0]
         textcolor = row[9]
@@ -706,7 +706,7 @@ class SeekTabSection (ParrentListSection):
             return True
         else:
             return False
-    
+
     def compareFunction (self, model, iter0, iter1, column):
         row0 = list(model[model.get_path(iter0)])
         row1 = list(model[model.get_path(iter1)])
@@ -730,7 +730,7 @@ class SeekTabSection (ParrentListSection):
     def __updateActiveSeeksLabel (self):
         count = len(self.seeks) + len(self.challenges)
         self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") % count)
-    
+
     @idle_add
     def onAddSeek (self, seeks, seek):
         log.debug("%s" % seek,
@@ -743,7 +743,7 @@ class SeekTabSection (ParrentListSection):
             seek.display_rated, seek.game_type.display_text,
             seek.display_timecontrol, seek.sortable_time, textcolor,
             get_seek_tooltip_text(seek)]
- 
+
         if textcolor == self.textcolor_selected():
             ti = self.store.prepend(seek_)
             self.tv.scroll_to_cell(self.store.get_path(ti))
@@ -752,7 +752,7 @@ class SeekTabSection (ParrentListSection):
             ti = self.store.append(seek_)
         self.seeks[hash(seek)] = ti
         self.__updateActiveSeeksLabel()
-        
+
     @idle_add
     def onRemoveSeek (self, seeks, seek):
         log.debug("%s" % seek,
@@ -767,13 +767,13 @@ class SeekTabSection (ParrentListSection):
             self.store.remove(treeiter)
         del self.seeks[hash(seek)]
         self.__updateActiveSeeksLabel()
-    
+
     @idle_add
     def onChallengeAdd (self, challenges, challenge):
         log.debug("%s" % challenge,
                   extra={"task": (self.connection.username, "onChallengeAdd")})
         SoundTab.playAction("aPlayerChecks")
-        
+
         # TODO: differentiate between challenges and manual-seek-accepts
         # (wait until seeks are comparable FICSSeek objects to do this)
         # Related: http://code.google.com/p/pychess/issues/detail?id=206
@@ -809,7 +809,7 @@ class SeekTabSection (ParrentListSection):
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self.messages[hash(challenge)] = message
         self.infobar.push_message(message)
-        
+
         ti = self.store.prepend ([challenge,
             challenge.player.getIcon(gametype=challenge.game_type),
             self.chaPix, challenge.player.name + challenge.player.display_titles(),
@@ -846,7 +846,7 @@ class SeekTabSection (ParrentListSection):
     @idle_add
     def our_seeks_removed (self, glm):
         self.widgets["clearSeeksButton"].set_sensitive(False)
-    
+
     def onAcceptClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
@@ -877,11 +877,11 @@ class SeekTabSection (ParrentListSection):
         else:
             message.dismiss()
             del self.messages[hash(sought)]
-        
+
     def onClearSeeksClicked (self, button):
         self.connection.client.run_command("unseek")
         self.widgets["clearSeeksButton"].set_sensitive(False)
-    
+
     def row_activated (self, treeview, path, view_column):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
@@ -901,16 +901,16 @@ class SeekTabSection (ParrentListSection):
             sought = model.get_value(iter, 0)
             if isinstance(sought, FICSChallenge):
                 selection_is_challenge = True
-        
+
         self.lastSeekSelected = sought
         self.widgets["acceptButton"].set_sensitive(a_seek_is_selected)
         self.widgets["declineButton"].set_sensitive(selection_is_challenge)
-    
+
     def _clear_messages (self):
         for message in self.messages.values():
             message.dismiss()
         self.messages.clear()
-    
+
     @idle_add
     def onPlayingGame (self, bm, game):
         self._clear_messages()
@@ -961,14 +961,22 @@ class SeekGraphSection (ParrentListSection):
 
     def onSpotClicked (self, graph, name):
         self.connection.bm.play(name)
-    
+
     @idle_add
     def onAddSought (self, manager, sought):
         log.debug("%s" % sought,
                   extra={"task": (self.connection.username, "onAddSought")})
         x = XLOCATION(float(sought.minutes) + float(sought.inc) * GAME_LENGTH/60.)
         y = YLOCATION(float(sought.player_rating))
-        type_ = 0 if sought.rated else 1
+        if ((sought.rated) and ('(C)' in sought.player.long_name())):
+            type_ = 2
+        elif (not(sought.rated) and ('(C)' in sought.player.long_name())):
+            type_ = 3
+        elif sought.rated:
+            type_ = 0
+        else:
+            type_ = 1
+
         if isinstance(sought, FICSChallenge):
             tooltip_text = get_challenge_tooltip_text(sought)
         else:
@@ -994,16 +1002,16 @@ class SeekGraphSection (ParrentListSection):
 ########################################################################
 
 class PlayerTabSection (ParrentListSection):
-    
+
     widgets = []
-    
+
     def __init__ (self, widgets, connection, lounge):
         PlayerTabSection.widgets = widgets
         self.connection = connection
         self.lounge = lounge
         self.players = {}
         self.columns = {TYPE_BLITZ: 3, TYPE_STANDARD: 4, TYPE_LIGHTNING: 5}
-        
+
         self.tv = widgets["playertreeview"]
         self.store = Gtk.ListStore(FICSPlayer, GdkPixbuf.Pixbuf, str, int, int,
                                    int, str, str)
@@ -1028,7 +1036,7 @@ class PlayerTabSection (ParrentListSection):
         widgets["private_chat_button"].set_sensitive(False)
         widgets["observe_button"].connect("clicked", self.onObserveClicked)
         widgets["observe_button"].set_sensitive(False)
-        
+
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
 
@@ -1042,7 +1050,7 @@ class PlayerTabSection (ParrentListSection):
                 player.getIcon(), player.name + player.display_titles(),
                 player.blitz, player.standard, player.lightning,
                 player.display_status, get_player_tooltip_text(player))
-        
+
         def do_onPlayerAdded(players, new_players, np):
             for player in new_players:
                 #log.debug("%s" % player,
@@ -1052,7 +1060,7 @@ class PlayerTabSection (ParrentListSection):
                     #    extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
                     continue
                 self.players[player] = {}
-                
+
                 self.players[player]["ti"] = self.store.append(np[player])
                 self.players[player]["status"] = player.connect(
                     "notify::status", self.status_changed)
@@ -1066,7 +1074,7 @@ class PlayerTabSection (ParrentListSection):
                 for rt in RATING_TYPES:
                     self.players[player][rt] = player.ratings[rt].connect(
                         "notify::elo", self.elo_changed, player)
-                
+
             count = len(self.players)
             self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
 
@@ -1075,7 +1083,7 @@ class PlayerTabSection (ParrentListSection):
                 self.widgets["playersSpinner"].hide()
             return False
         GLib.idle_add(do_onPlayerAdded, players, new_players, np, priority=GLib.PRIORITY_LOW)
-    
+
     def onPlayerRemoved (self, players, player):
         def do_onPlayerRemoved(players, player):
             log.debug("%s" % player,
@@ -1102,7 +1110,7 @@ class PlayerTabSection (ParrentListSection):
 
             return False
         GLib.idle_add(do_onPlayerRemoved, players, player, priority=GLib.PRIORITY_LOW)
-    
+
     @idle_add
     def status_changed (self, player, prop):
         log.debug("%s" % player, extra={"task":
@@ -1124,14 +1132,14 @@ class PlayerTabSection (ParrentListSection):
                 "private" in self.players[player]:
             game = player.game
             if game and game.handler_is_connected(self.players[player]["private"]):
-                game.disconnect(self.players[player]["private"]) 
+                game.disconnect(self.players[player]["private"])
             del self.players[player]["private"]
-        
+
         if player == self.getSelectedPlayer():
             self.onSelectionChanged(None)
-            
+
         return False
-    
+
     @idle_add
     def titles_changed (self, player, prop):
         log.debug("%s" % player, extra={"task":
@@ -1147,7 +1155,7 @@ class PlayerTabSection (ParrentListSection):
             pass
 
         return False
-        
+
     def private_changed (self, game, prop, player):
         log.debug("%s" % player, extra={"task":
             (self.connection.username, "PTS.private_changed")})
@@ -1156,7 +1164,7 @@ class PlayerTabSection (ParrentListSection):
             self.onSelectionChanged(self.tv.get_selection())
         idle_add(update_gui)
         return False
-    
+
     @idle_add
     def elo_changed (self, rating, prop, player):
         log.debug("%s %s" % (rating.elo, player), extra={"task":
@@ -1170,25 +1178,25 @@ class PlayerTabSection (ParrentListSection):
                            self.columns[rating.type], rating.elo)
         except KeyError:
             pass
-        
+
         return False
-    
+
     def getSelectedPlayer (self):
         model, iter = self.widgets["playertreeview"].get_selection().get_selected()
         if iter:
             return model.get_value(iter, 0)
-    
+
     def onPrivateChatClicked (self, button):
         player = self.getSelectedPlayer()
         if player is None: return
         self.lounge.chat.openChatWithPlayer(player.name)
         #TODO: isadmin og type
-    
-    def onObserveClicked (self, button):        
+
+    def onObserveClicked (self, button):
         player = self.getSelectedPlayer()
         if player is not None and player.game is not None:
             self.connection.bm.observe(player.game)
-            
+
     def onSelectionChanged (self, selection):
         player = self.getSelectedPlayer()
         user_name = self.connection.getUsername()
@@ -1201,7 +1209,7 @@ class PlayerTabSection (ParrentListSection):
             player is not None and \
             player.isAvailableForGame() and \
             player.name != user_name)
-        
+
 ########################################################################
 # Initialize Games List                                                #
 ########################################################################
@@ -1256,7 +1264,7 @@ class GameTabSection (ParrentListSection):
 
         self.widgets["gamesSpinner"].start()
 
-    # Multi-column sort based on TreeModelSortUtil from 
+    # Multi-column sort based on TreeModelSortUtil from
     # https://github.com/metomi/rose/blob/master/lib/python/rose/gtk/util.py
     def on_sort_column_change(self, model):
         """ Store previous sorting information for multi-column sorts. """
@@ -1304,7 +1312,7 @@ class GameTabSection (ParrentListSection):
         bool, wx, wy, model, path, iter = widget.get_tooltip_context(x, y, keyboard_tip)
         bin_x, bin_y = widget.convert_widget_to_bin_window_coords(x, y)
         result = widget.get_path_at_pos(bin_x, bin_y)
-        
+
         if result is not None:
             path, column, cell_x, cell_y = result
             for player, column_number in ((self.model[path][0].wplayer, 1),
@@ -1314,7 +1322,7 @@ class GameTabSection (ParrentListSection):
                     widget.set_tooltip_cell(tooltip, path, None, None)
                     return True
         return False
-        
+
     def onSelectionChanged (self, selection):
         model, paths = selection.get_selected_rows()
         a_selected_game_is_observable = False
@@ -1325,7 +1333,7 @@ class GameTabSection (ParrentListSection):
                 a_selected_game_is_observable = True
                 break
         self.widgets["observeButton"].set_sensitive(a_selected_game_is_observable)
-    
+
     def _update_gamesrunning_label (self):
         count = len(self.games)
         self.widgets["gamesRunningLabel"].set_text(_("Games running: %d") % count)
@@ -1352,7 +1360,7 @@ class GameTabSection (ParrentListSection):
                 self.widgets["gamesSpinner"].stop()
                 self.widgets["gamesSpinner"].hide()
         GLib.idle_add(do_onGameAdd, games, new_games, ng, priority=GLib.PRIORITY_LOW)
-    
+
     @idle_add
     def private_changed (self, game, prop):
         try:
@@ -1361,7 +1369,7 @@ class GameTabSection (ParrentListSection):
             pass
         self.onSelectionChanged(self.tv.get_selection())
         return False
-        
+
     def onGameRemove (self, games, game):
         def do_onGameRemove(games, game):
             log.debug("%s" % game,
@@ -1432,7 +1440,7 @@ class AdjournedTabSection (ParrentListSection):
         self.tv.connect("row-activated", lambda *args: self.onPreviewButtonClicked(None))
         self.connection.adm.connect("adjournedGamePreview", self.onGamePreview)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
-        
+
     def onSelectionChanged (self, selection):
         model, treeiter = selection.get_selected()
         a_row_is_selected = False
@@ -1445,14 +1453,14 @@ class AdjournedTabSection (ParrentListSection):
             self.widgets["resumeButton"].set_tooltip_text("")
         for button in ("resignButton", "abortButton", "drawButton", "previewButton"):
             self.widgets[button].set_sensitive(a_row_is_selected)
-        
+
     @idle_add
     def onPlayGameCreated (self, bm, board):
         for message in self.messages.values():
             message.dismiss()
         self.messages = {}
         return False
-        
+
     def _infobar_adjourned_message (self, game, player):
         if player not in self.messages:
             text = _(" with whom you have an adjourned <b>%(timecontrol)s</b> " + \
@@ -1485,17 +1493,17 @@ class AdjournedTabSection (ParrentListSection):
             make_sensitive_if_available(message.buttons[0], player)
             self.messages[player] = message
             self.infobar.push_message(message)
-    
+
     @idle_add
     def online_changed (self, player, prop, game):
         log.debug("AdjournedTabSection.online_changed: %s %s" % \
             (repr(player), repr(game)))
-        
+
         try:
             self.store.set(self.games[game]["ti"], 3, player.display_online)
         except KeyError:
             pass
-        
+
         if player.online and player.adjournment:
             self._infobar_adjourned_message(game, player)
         elif not player.online and player in self.messages:
@@ -1504,9 +1512,9 @@ class AdjournedTabSection (ParrentListSection):
             # self.messages in another callback, so we re-check
             if player in self.messages:
                 del self.messages[player]
-        
+
         return False
-    
+
     @idle_add
     def status_changed (self, player, prop, game):
         log.debug("AdjournedTabSection.status_changed: %s %s" % \
@@ -1517,10 +1525,10 @@ class AdjournedTabSection (ParrentListSection):
             pass
         else:
             make_sensitive_if_available(message.buttons[0], player)
-        
+
         self.onSelectionChanged(self.selection)
         return False
-        
+
     @idle_add
     def onAdjournedGameAdded (self, adm, game):
         if game not in self.games:
@@ -1534,12 +1542,12 @@ class AdjournedTabSection (ParrentListSection):
                 "notify::online", self.online_changed, game)
             self.games[game]["status_cid"] = game.opponent.connect(
                 "notify::status", self.status_changed, game)
-        
+
         if game.opponent.online:
             self._infobar_adjourned_message(game, game.opponent)
-        
+
         return False
-    
+
     @idle_add
     def onAdjournedGameRemoved (self, adm, game):
         if game in self.games:
@@ -1554,33 +1562,33 @@ class AdjournedTabSection (ParrentListSection):
                 if game.opponent in self.messages:
                     del self.messages[game.opponent]
             del self.games[game]
-        
+
         return False
-    
+
     def onResignButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
         game = model.get_value(iter, 0)
         self.connection.adm.resign(game)
-    
+
     def onDrawButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
         game = model.get_value(iter, 0)
         self.connection.adm.draw(game)
-    
+
     def onAbortButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
         game = model.get_value(iter, 0)
         self.connection.adm.abort(game)
-    
+
     def onResumeButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
         game = model.get_value(iter, 0)
         self.connection.adm.resume(game)
-    
+
     def onPreviewButtonClicked (self, button):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
@@ -1600,7 +1608,7 @@ class AdjournedTabSection (ParrentListSection):
         timemodel.intervals[1][0] = ficsgame.minutes * 60
 
         gamemodel = ICGameModel(self.connection, ficsgame, timemodel)
-        
+
         # The players need to start listening for moves IN this method if they
         # want to be noticed of all moves the FICS server sends us from now on.
         # Hence the lazy loading is skipped.
@@ -1611,23 +1619,23 @@ class AdjournedTabSection (ParrentListSection):
         player1 = ICPlayer(gamemodel, bplayer.name, -1, BLACK,
             bplayer.long_name(game_type=ficsgame.game_type),
             icrating=bplayer.getRatingByGameType(ficsgame.game_type))
-        
+
         player0tup = (REMOTE, lambda:player0, (), wplayer.long_name())
         player1tup = (REMOTE, lambda:player1, (), bplayer.long_name())
-        
+
         ionest.generalStart(gamemodel, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))
         gamemodel.connect("game_started", lambda gamemodel:
                           gamemodel.end(ADJOURNED, ficsgame.reason))
-        
+
 ############################################################################
 # Initialize "Create Seek" and "Challenge" panels, and "Edit Seek:" dialog #
 ############################################################################
 
 RATING_SLIDER_STEP = 25
-    
+
 class SeekChallengeSection (Section):
-    
+
     seekEditorWidgets = (
         "untimedCheck", "minutesSpin", "gainSpin",
         "strengthCheck", "chainAlignment", "ratingCenterSlider", "toleranceSlider", "toleranceHBox",
@@ -1637,7 +1645,7 @@ class SeekChallengeSection (Section):
         # overwriting the user's saved value for the variant radio buttons
         "variantCombo", "noVariantRadio", "variantRadio",
         "ratedGameCheck", "manualAcceptCheck" )
-    
+
     seekEditorWidgetDefaults = {
         "untimedCheck": [False, False, False],
         "minutesSpin": [15, 5, 2],
@@ -1656,19 +1664,19 @@ class SeekChallengeSection (Section):
         "ratedGameCheck": [False, True, True],
         "manualAcceptCheck": [False, False, False],
     }
-    
+
     seekEditorWidgetGettersSetters = {}
-    
+
     def __init__ (self, lounge):
         self.lounge = lounge
         self.widgets = lounge.widgets
         self.connection = lounge.connection
-        
+
         self.finger = None
         conf.set("numberOfFingers", 0)
         self.connection.fm.connect("fingeringFinished", self.onFinger)
         self.connection.fm.finger(self.connection.getUsername())
-        
+
         self.widgets["untimedCheck"].connect("toggled", self.onUntimedCheckToggled)
         self.widgets["minutesSpin"].connect("value-changed", self.onTimeSpinChanged)
         self.widgets["gainSpin"].connect("value-changed", self.onTimeSpinChanged)
@@ -1678,7 +1686,7 @@ class SeekChallengeSection (Section):
         self.widgets["whitecolorRadio"].connect("toggled", self.onColorRadioChanged)
         self.widgets["blackcolorRadio"].connect("toggled", self.onColorRadioChanged)
         self.onColorRadioChanged(self.widgets["nocolorRadio"])
-        
+
         self.widgets["noVariantRadio"].connect("toggled", self.onVariantRadioChanged)
         self.widgets["variantRadio"].connect("toggled", self.onVariantRadioChanged)
         variantComboGetter, variantComboSetter = self.__initVariantCombo(self.widgets["variantCombo"])
@@ -1713,7 +1721,7 @@ class SeekChallengeSection (Section):
             else:
                 self.widgets["toleranceHBox"].hide()
         self.seekEditorWidgetGettersSetters["toleranceHBox"] = (toleranceHBoxGetter, toleranceHBoxSetter)
-        
+
         self.chainbox = ChainVBox()
         self.widgets["chainAlignment"].add(self.chainbox)
         def chainboxGetter (widget):
@@ -1721,7 +1729,7 @@ class SeekChallengeSection (Section):
         def chainboxSetter (widget, is_active):
             self.chainbox.active = is_active
         self.seekEditorWidgetGettersSetters["chainAlignment"] = (chainboxGetter, chainboxSetter)
-        
+
         self.challengee = None
         self.in_challenge_mode = False
         self.seeknumber = 1
@@ -1731,15 +1739,15 @@ class SeekChallengeSection (Section):
         self.widgets["challengeDialog"].connect("delete-event", self.onChallengeDialogResponse)
         self.widgets["challengeDialog"].connect("response", self.onChallengeDialogResponse)
         self.widgets["editSeekDialog"].connect("response", self.onEditSeekDialogResponse)
-        
+
         for widget in ("seek1Radio", "seek2Radio", "seek3Radio",
                        "challenge1Radio", "challenge2Radio", "challenge3Radio"):
             uistuff.keep(self.widgets[widget], widget)
-        
+
         self.lastdifference = 0
         self.loading_seek_editor = False
         self.savedSeekRadioTexts = [ GAME_TYPES["blitz"].display_text ] * 3
-        
+
         for i in range(1,4):
             self.__loadSeekEditor(i)
             self.__writeSavedSeeks(i)
@@ -1747,12 +1755,12 @@ class SeekChallengeSection (Section):
                 "clicked", self.onSeekRadioConfigButtonClicked, i)
             self.widgets["challenge%sRadioConfigButton" % i].connect(
                 "clicked", self.onChallengeRadioConfigButtonClicked, i)
-        
+
         if not self.connection.isRegistred():
             self.chainbox.active = False
             self.widgets["chainAlignment"].set_sensitive(False)
             self.widgets["chainAlignment"].set_tooltip_text(_("The chain button is disabled because you are logged in as a guest. Guests can't establish ratings, and the chain button's state has no effect when there is no rating to which to tie \"Opponent Strength\" to"))
-    
+
     def onSeekButtonClicked (self, button):
         if self.widgets["seek3Radio"].get_active():
             self.__loadSeekEditor(3)
@@ -1760,10 +1768,10 @@ class SeekChallengeSection (Section):
             self.__loadSeekEditor(2)
         else:
             self.__loadSeekEditor(1)
-        
+
         min, incr, gametype, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
         self.connection.glm.seek(min, incr, gametype, rated, ratingrange, color, manual)
-    
+
     def onSeekAllButtonClicked (self, button):
         for i in range(1,4):
             self.__loadSeekEditor(i)
@@ -1777,7 +1785,7 @@ class SeekChallengeSection (Section):
         if player is None: return
         self.challengee = player
         self.in_challenge_mode = True
-        
+
         for i in range(1,4):
             self.__loadSeekEditor(i)
             self.__writeSavedSeeks(i)
@@ -1789,18 +1797,18 @@ class SeekChallengeSection (Section):
         else:
             seeknumber = 1
         self.__updateSeekEditor(seeknumber, challengemode=True)
-        
+
         self.widgets["challengeeNameLabel"].set_markup(player.getMarkup())
         self.widgets["challengeeImage"].set_from_pixbuf(player.getIcon(size=32))
         title = _("Challenge: ") + player.name
         self.widgets["challengeDialog"].set_title(title)
         self.widgets["challengeDialog"].present()
-    
+
     def onChallengeDialogResponse (self, dialog, response):
         self.widgets["challengeDialog"].hide()
         if response is not 5:
             return True
-        
+
         if self.widgets["challenge3Radio"].get_active():
             self.__loadSeekEditor(3)
         elif self.widgets["challenge2Radio"].get_active():
@@ -1809,20 +1817,20 @@ class SeekChallengeSection (Section):
             self.__loadSeekEditor(1)
         min, incr, gametype, ratingrange, color, rated, manual = self.__getSeekEditorDialogValues()
         self.connection.om.challenge(self.challengee.name, gametype, min, incr, rated, color)
-    
-    def onSeekRadioConfigButtonClicked (self, configimage, seeknumber): 
+
+    def onSeekRadioConfigButtonClicked (self, configimage, seeknumber):
         self.__showSeekEditor(seeknumber)
-    
+
     def onChallengeRadioConfigButtonClicked (self, configimage, seeknumber):
         self.__showSeekEditor(seeknumber, challengemode=True)
-        
+
     def onEditSeekDialogResponse (self, dialog, response):
         self.widgets["editSeekDialog"].hide()
         if response != Gtk.ResponseType.OK:
             return
         self.__saveSeekEditor(self.seeknumber)
         self.__writeSavedSeeks(self.seeknumber)
-    
+
     def __updateSeekEditor (self, seeknumber, challengemode=False):
         self.in_challenge_mode = challengemode
         self.seeknumber = seeknumber
@@ -1838,21 +1846,21 @@ class SeekChallengeSection (Section):
             self.widgets["manualAcceptCheck"].set_sensitive(False)
             self.widgets["manualAcceptCheck"].set_tooltip_text(
                 _("This option is not applicable because you're challenging a player"))
-        
-        self.widgets["chainAlignment"].show_all()        
+
+        self.widgets["chainAlignment"].show_all()
         self.__loadSeekEditor(seeknumber)
         self.widgets["seek%dRadio" % seeknumber].set_active(True)
         self.widgets["challenge%dRadio" % seeknumber].set_active(True)
-        
+
         self.__updateYourRatingHBox()
         self.__updateRatingCenterInfoBox()
         self.__updateToleranceButton()
         self.__updateRatedGameCheck()
         self.onUntimedCheckToggled(self.widgets["untimedCheck"])
-        
+
         title = _("Edit Seek: ") + self.widgets["seek%dRadio" % seeknumber].get_label()[:-1]
         self.widgets["editSeekDialog"].set_title(title)
-        
+
     def __showSeekEditor (self, seeknumber, challengemode=False):
         self.widgets["editSeekDialog"].set_transient_for(self.widgets["fics_lounge"])
         self.__updateSeekEditor(seeknumber, challengemode)
@@ -1866,9 +1874,9 @@ class SeekChallengeSection (Section):
             self.widgets["editSeekDialog"].set_size_request(
                         allocation.width, allocation.height)
             self.widgets["editSeekDialog"].show()
-    
+
     #-------------------------------------------------------- Seek Editor
-    
+
     def __writeSavedSeeks (self, seeknumber):
         """ Writes saved seek strings for both the Seek Panel and the Challenge Panel """
         min, gain, gametype, ratingrange, color, rated, manual = \
@@ -1877,7 +1885,7 @@ class SeekChallengeSection (Section):
             time_control_to_gametype(min, gain).display_text
         self.__writeSeekRadioLabels()
         seek = {}
-        
+
         if gametype == GAME_TYPES["untimed"]:
             seek["time"] = gametype.display_text
         elif gain > 0:
@@ -1885,25 +1893,25 @@ class SeekChallengeSection (Section):
                 {'minutes' : min, 'gain' : gain}
         else:
             seek["time"] = _("%d min") % min
-        
+
         if isinstance(gametype, VariantGameType):
             seek["variant"] = "%s" % gametype.display_text
-        
+
         rrtext = get_rating_range_display_text(ratingrange[0], ratingrange[1])
         if rrtext:
             seek["rating"] = rrtext
-        
+
         if color == WHITE:
             seek["color"] = _("White")
         elif color == BLACK:
             seek["color"] = _("Black")
-        
+
         if rated and gametype != GAME_TYPES["untimed"]:
             seek["rated"] = _("Rated")
-        
+
         if manual:
             seek["manual"] = _("Manual")
-        
+
         seek_ = []
         challenge = []
         challengee_is_guest = self.challengee and self.challengee.isGuest()
@@ -1915,7 +1923,7 @@ class SeekChallengeSection (Section):
                     challenge.append(seek[key])
         seektext = ", ".join(seek_)
         challengetext = ", ".join(challenge)
-        
+
         if seeknumber == 1:
             self.widgets["seek1RadioLabel"].set_text(seektext)
             self.widgets["challenge1RadioLabel"].set_text(challengetext)
@@ -1925,7 +1933,7 @@ class SeekChallengeSection (Section):
         else:
             self.widgets["seek3RadioLabel"].set_text(seektext)
             self.widgets["challenge3RadioLabel"].set_text(challengetext)
-        
+
     def __loadSeekEditor (self, seeknumber):
         self.loading_seek_editor = True
         for widget in self.seekEditorWidgets:
@@ -1939,10 +1947,10 @@ class SeekChallengeSection (Section):
                                    first_value=self.seekEditorWidgetDefaults[widget][seeknumber-1])
             else:
                 uistuff.loadDialogWidget(self.widgets[widget], widget, seeknumber)
-        
+
         self.lastdifference = conf.get("lastdifference-%d" % seeknumber, -1)
         self.loading_seek_editor = False
-        
+
     def __saveSeekEditor (self, seeknumber):
         for widget in self.seekEditorWidgets:
             if widget in self.seekEditorWidgetGettersSetters:
@@ -1950,7 +1958,7 @@ class SeekChallengeSection (Section):
                                          get_value_=self.seekEditorWidgetGettersSetters[widget][0])
             else:
                 uistuff.saveDialogWidget(self.widgets[widget], widget, seeknumber)
-        
+
         conf.set("lastdifference-%d" % seeknumber, self.lastdifference)
 
     def __getSeekEditorDialogValues (self):
@@ -1960,7 +1968,7 @@ class SeekChallengeSection (Section):
         else:
             min = int(self.widgets["minutesSpin"].get_value())
             incr = int(self.widgets["gainSpin"].get_value())
-        
+
         if self.widgets["strengthCheck"].get_active():
             ratingrange = [0, 9999]
         else:
@@ -1969,9 +1977,9 @@ class SeekChallengeSection (Section):
             minrating = center - tolerance
             minrating = minrating > 0 and minrating or 0
             maxrating = center + tolerance
-            maxrating = maxrating >= 3000 and 9999 or maxrating 
+            maxrating = maxrating >= 3000 and 9999 or maxrating
             ratingrange = [minrating, maxrating]
-        
+
         if self.widgets["nocolorRadio"].get_active():
             color = None
         elif self.widgets["whitecolorRadio"].get_active():
@@ -1990,13 +1998,13 @@ class SeekChallengeSection (Section):
         rated = self.widgets["ratedGameCheck"].get_active() and \
                    not self.widgets["untimedCheck"].get_active()
         manual = self.widgets["manualAcceptCheck"].get_active()
-        
+
         return min, incr, gametype, ratingrange, color, rated, manual
-        
+
     def __writeSeekRadioLabels (self):
         gameTypes = { _("Untimed"): [0, 1], _("Standard"): [0, 1],
                       _("Blitz"): [0, 1], _("Lightning"): [0, 1] }
-        
+
         for i in range(3):
             gameTypes[self.savedSeekRadioTexts[i]][0] += 1
         for i in range(3):
@@ -2009,26 +2017,26 @@ class SeekChallengeSection (Section):
             else:
                 self.widgets["seek%dRadio" % (i+1)].set_label(self.savedSeekRadioTexts[i]+":")
                 self.widgets["challenge%dRadio" % (i+1)].set_label(self.savedSeekRadioTexts[i]+":")
-    
+
     def __updateRatingRangeBox (self):
         center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
         tolerance = int(self.widgets["toleranceSlider"].get_value()) * RATING_SLIDER_STEP
         minRating = center - tolerance
         minRating = minRating > 0 and minRating or 0
         maxRating = center + tolerance
-        maxRating = maxRating >= 3000 and 9999 or maxRating 
-        
+        maxRating = maxRating >= 3000 and 9999 or maxRating
+
         self.widgets["ratingRangeMinLabel"].set_label("%d" % minRating)
         self.widgets["ratingRangeMaxLabel"].set_label("%d" % maxRating)
-        
+
         for widgetName, rating in (("ratingRangeMinImage", minRating),
                                    ("ratingRangeMaxImage", maxRating)):
             pixbuf = FICSPlayer.getIconByRating(rating)
             self.widgets[widgetName].set_from_pixbuf(pixbuf)
-        
+
         self.widgets["ratingRangeMinImage"].show()
         self.widgets["ratingRangeMinLabel"].show()
-        self.widgets["dashLabel"].show()        
+        self.widgets["dashLabel"].show()
         self.widgets["ratingRangeMaxImage"].show()
         self.widgets["ratingRangeMaxLabel"].show()
         if minRating == 0:
@@ -2039,12 +2047,12 @@ class SeekChallengeSection (Section):
         if maxRating == 9999:
             self.widgets["ratingRangeMaxImage"].hide()
             self.widgets["ratingRangeMaxLabel"].hide()
-            self.widgets["dashLabel"].hide()            
+            self.widgets["dashLabel"].hide()
             self.widgets["ratingRangeMinLabel"].set_label("%d↑" % minRating)
         if minRating == 0 and maxRating == 9999:
             self.widgets["ratingRangeMinLabel"].set_label(_("Any strength"))
             self.widgets["ratingRangeMinLabel"].show()
-    
+
     def __getGameType (self):
         if self.widgets["untimedCheck"].get_active():
             gametype = GAME_TYPES["untimed"]
@@ -2057,7 +2065,7 @@ class SeekChallengeSection (Section):
             variant = variant_combo_getter(self.widgets["variantCombo"])
             gametype = VARIANT_GAME_TYPES[variant]
         return gametype
-        
+
     def __updateYourRatingHBox (self):
         gametype = self.__getGameType()
         self.widgets["yourRatingNameLabel"].set_label("(" + gametype.display_text + ")")
@@ -2069,7 +2077,7 @@ class SeekChallengeSection (Section):
         pixbuf = FICSPlayer.getIconByRating(rating)
         self.widgets["yourRatingImage"].set_from_pixbuf(pixbuf)
         self.widgets["yourRatingLabel"].set_label(str(rating))
-        
+
         center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
         rating = self.__clamp(rating)
         difference = rating - center
@@ -2079,7 +2087,7 @@ class SeekChallengeSection (Section):
             self.widgets["ratingCenterSlider"].set_value(newcenter // RATING_SLIDER_STEP)
         else:
             self.lastdifference = difference
-    
+
     def __clamp (self, rating):
         assert isinstance(rating, int)
         mod = rating % RATING_SLIDER_STEP
@@ -2087,7 +2095,7 @@ class SeekChallengeSection (Section):
             return rating - mod + RATING_SLIDER_STEP
         else:
             return rating - mod
-    
+
     def __updateRatedGameCheck (self):
         # on FICS, untimed games can't be rated, nor can games against a guest
         if not self.connection.isRegistred():
@@ -2109,7 +2117,7 @@ class SeekChallengeSection (Section):
             sensitive = True
             self.widgets["ratedGameCheck"].set_tooltip_text("")
         self.widgets["ratedGameCheck"].set_sensitive(sensitive)
-    
+
     def __initVariantCombo (self, combo):
         model = Gtk.TreeStore(str)
         cellRenderer = Gtk.CellRendererText()
@@ -2117,12 +2125,12 @@ class SeekChallengeSection (Section):
         combo.pack_start(cellRenderer, True)
         combo.add_attribute(cellRenderer, 'text', 0)
         combo.set_model(model)
-        
+
         groupNames = {VARIANTS_SHUFFLE: _("Shuffle"),
                       VARIANTS_OTHER: _("Other (standard rules)"),
                       VARIANTS_OTHER_NONSTANDARD: _("Other (non standard rules)"),
                       }
-        ficsvariants = [v for k, v in variants.items() if k in VARIANT_GAME_TYPES and 
+        ficsvariants = [v for k, v in variants.items() if k in VARIANT_GAME_TYPES and
                                                     v.variant not in UNSUPPORTED]
         groups = groupby(ficsvariants, attrgetter("variant_group"))
         pathToVariant = {}
@@ -2135,24 +2143,24 @@ class SeekChallengeSection (Section):
                 path = path.to_string()
                 pathToVariant[path] = variant.variant
                 variantToPath[variant.variant] = path
-        
+
         # this stops group names (eg "Shuffle") from being displayed in submenus
         def cellFunc (combo, cell, model, iter, data):
             isChildNode = not model.iter_has_child(iter)
             cell.set_property("sensitive", isChildNode)
         combo.set_cell_data_func(cellRenderer, cellFunc, None)
-        
+
         def comboGetter (combo):
             path = model.get_path(combo.get_active_iter())
             path = path.to_string()
             return pathToVariant[path]
-            
+
         def comboSetter (combo, variant):
             if variant not in VARIANT_GAME_TYPES:
                 variant = LOSERSCHESS
             combo.set_active_iter(model.get_iter(variantToPath[variant]))
         return comboGetter, comboSetter
-    
+
     def __getRating (self, gametype):
         if self.finger is None: return None
         try:
@@ -2161,19 +2169,19 @@ class SeekChallengeSection (Section):
         except KeyError:  # the user doesn't have a rating for this game type
             rating = None
         return rating
-        
+
     @idle_add
     def onFinger (self, fm, finger):
         if not finger.getName() == self.connection.getUsername(): return
         self.finger = finger
-        
+
         numfingers = conf.get("numberOfFingers", 0) + 1
         conf.set("numberOfFingers", numfingers)
         if conf.get("numberOfTimesLoggedInAsRegisteredUser", 0) is 1 and numfingers is 1:
             standard = self.__getRating(TYPE_STANDARD)
             blitz = self.__getRating(TYPE_BLITZ)
             lightning = self.__getRating(TYPE_LIGHTNING)
-            
+
             if standard is not None:
                 self.seekEditorWidgetDefaults["ratingCenterSlider"][0] = standard // RATING_SLIDER_STEP
             elif blitz is not None:
@@ -2184,7 +2192,7 @@ class SeekChallengeSection (Section):
                 self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = lightning // RATING_SLIDER_STEP
             elif blitz is not None:
                 self.seekEditorWidgetDefaults["ratingCenterSlider"][2] = blitz // RATING_SLIDER_STEP
-            
+
             for i in range(1,4):
                 self.__loadSeekEditor(i)
                 self.__updateSeekEditor(i)
@@ -2192,14 +2200,14 @@ class SeekChallengeSection (Section):
                 self.__writeSavedSeeks(i)
 
         self.__updateYourRatingHBox()
-    
+
     def onTimeSpinChanged (self, spin):
         minutes = self.widgets["minutesSpin"].get_value_as_int()
         gain = self.widgets["gainSpin"].get_value_as_int()
         name = time_control_to_gametype(minutes, gain).display_text
         self.widgets["timeControlNameLabel"].set_label("%s" % name)
         self.__updateYourRatingHBox()
-    
+
     def onUntimedCheckToggled (self, check):
         is_untimed_game = check.get_active()
         self.widgets["timeControlConfigVBox"].set_sensitive(not is_untimed_game)
@@ -2213,29 +2221,29 @@ class SeekChallengeSection (Section):
             self.widgets["variantFrame"].set_tooltip_text("")
         self.__updateRatedGameCheck()  # sets sensitivity of widgets["ratedGameCheck"]
         self.__updateYourRatingHBox()
-        
+
     def onStrengthCheckToggled (self, check):
         strengthsensitive = not check.get_active()
-        self.widgets["strengthConfigVBox"].set_sensitive(strengthsensitive)        
-        
+        self.widgets["strengthConfigVBox"].set_sensitive(strengthsensitive)
+
     def onRatingCenterSliderChanged (self, slider):
         center = int(self.widgets["ratingCenterSlider"].get_value()) * RATING_SLIDER_STEP
         pixbuf = FICSPlayer.getIconByRating(center)
         self.widgets["ratingCenterLabel"].set_label("%d" % (center))
-        self.widgets["ratingCenterImage"].set_from_pixbuf(pixbuf)        
+        self.widgets["ratingCenterImage"].set_from_pixbuf(pixbuf)
         self.__updateRatingRangeBox()
 
         rating = self.__getRating(self.__getGameType().rating_type)
         if rating is None: return
         rating = self.__clamp(rating)
         self.lastdifference = rating - center
-        
+
     def __updateRatingCenterInfoBox (self):
         if self.widgets["toleranceHBox"].get_property("visible") == True:
             self.widgets["ratingCenterInfoHBox"].show()
         else:
             self.widgets["ratingCenterInfoHBox"].hide()
-    
+
     def __updateToleranceButton (self):
         if self.widgets["toleranceHBox"].get_property("visible") == True:
             self.widgets["toleranceButton"].set_property("label", _("Hide"))
@@ -2268,9 +2276,9 @@ class SeekChallengeSection (Section):
 
     def onVariantRadioChanged (self, radio):
         self.__updateYourRatingHBox()
-    
+
     def onVariantComboChanged (self, combo):
-        self.widgets["variantRadio"].set_active(True)            
+        self.widgets["variantRadio"].set_active(True)
         self.__updateYourRatingHBox()
         min, gain, gametype, ratingrange, color, rated, manual = \
             self.__getSeekEditorDialogValues()
