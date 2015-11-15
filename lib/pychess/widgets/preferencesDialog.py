@@ -119,7 +119,7 @@ class HintTab:
 
         book_chooser_dialog = Gtk.FileChooserDialog(_("Select book file"), None, Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
-        book_chooser_button = Gtk.FileChooserButton(book_chooser_dialog)
+        book_chooser_button = Gtk.FileChooserButton.new_with_dialog(book_chooser_dialog)
 
         filter = Gtk.FileFilter()
         filter.set_name(_("Opening books"))
