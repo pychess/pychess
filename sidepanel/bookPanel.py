@@ -86,7 +86,7 @@ class OpeningAdvisor(Advisor):
     def __init__ (self, store, tv):
         Advisor.__init__(self, store, _("Opening Book"), OPENING)
         self.tooltip = _("The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
-        self.opening_names = []
+#        self.opening_names = []
         self.tv = tv
         
     def shown_changed (self, boardview, shown):
@@ -119,17 +119,17 @@ class OpeningAdvisor(Advisor):
             opening = get_eco(b.move(Move(move)).board.hash)
             if opening is None:
                 eco = ""
-                self.opening_names.append("")
+#                self.opening_names.append("")
             else:
-                eco = opening[0]
-                self.opening_names.append("%s %s" % (opening[1], opening[2]))
+                eco = "%s - %s %s" % (opening[0], opening[1], opening[2])
+#                self.opening_names.append("%s %s" % (opening[1], opening[2]))
 
             self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco, False, False])        
         tp = Gtk.TreePath(self.path)        
         self.tv.expand_row(tp, False)
     
-    def child_tooltip (self, i):
-        return "" if len(self.opening_names)==0 else self.opening_names[i]
+#    def child_tooltip (self, i):
+#        return "" if len(self.opening_names)==0 else self.opening_names[i]
 
 
 class EngineAdvisor(Advisor):
