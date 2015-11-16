@@ -516,11 +516,11 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         if self.channels:
             self._addChannels(self.channels)
         for player in list(self.connection.players.values()):
+            id = self.compileId(player.name, TYPE_PERSONAL)
             if (str(player.name) in self.connection.notify_users):
                 self.friendsList.addRow(id, player.name + player.display_titles(),TYPE_PERSONAL)
 
             if ((player.online) and (not( str(player.name) in self.connection.notify_users))):
-                id = self.compileId(player.name, TYPE_PERSONAL)
                 self.playersList.addRow(id, player.name + player.display_titles(),TYPE_PERSONAL)
 
         def addPlayer (players, new_players):
