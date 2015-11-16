@@ -429,7 +429,7 @@ class FICSPlayers (GObject.GObject):
     # converted to use FICSPlayer references rather than player's names
     def get_online_playernames (self):
         names = []
-        players = self.values()
+        players = list(self.values())
         for player in players:
             if player.online:
                 names.append(player.name)
