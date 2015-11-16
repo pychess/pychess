@@ -515,27 +515,16 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.channels = self.connection.cm.getChannels()
         if self.channels:
             self._addChannels(self.channels)
+        for player in list(self.connection.players.values()):
+            if (str(player.name) in self.connection.notify_users):
+                self.friendsList.addRow(id, player.name + player.display_titles(),TYPE_PERSONAL)
 
-#        log.debug("Cajone Players  %s" % (self.connection.players.values()))
-        self.all_players = list(self.connection.players.values())
-        for player in self.all_players:
-            log.debug("Cajone Player Online %s : %s" % (self.connection.notify_users, str(player.name)))
-            if player.online:
-                truth = player.name in self.connection.notify_users
-                log.debug("Cajone Is it true : %r" % truth)
+            if ((player.online) and (not( str(player.name) in self.connection.notify_users))):
                 id = self.compileId(player.name, TYPE_PERSONAL)
-                log.debug("Cajone Mates : Player Online %s : %s" % (self.connection.notify_users, str(player.name)))
-                if (str(player.name) in self.connection.notify_users):
-                    self.friendsList.addRow(id, player.name + player.display_titles(),
-                                        TYPE_PERSONAL)
-                else:
-                    self.playersList.addRow(id, player.name + player.display_titles(),
-                                        TYPE_PERSONAL)
-
+                self.playersList.addRow(id, player.name + player.display_titles(),TYPE_PERSONAL)
 
         def addPlayer (players, new_players):
             for player in new_players:
-                log.debug("Cajone Mates : Player Added %s : %s" % (new_players , str(player.name)))
                 if (str(player.name) in self.connection.notify_users):
                     self.friendsList.addRow(self.compileId(player.name, TYPE_PERSONAL),
                         player.name + player.display_titles(), TYPE_PERSONAL)
