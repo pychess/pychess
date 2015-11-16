@@ -535,7 +535,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.connection.players.connect("FICSPlayerEntered", addPlayer)
 
         def removePlayer (players, player):
-            if player.name in list(self.connection.notify_users):
+            if (str(player.name) in list(self.connection.notify_users)):
                 self.friendsList.removeRow(self.compileId(player.name, TYPE_PERSONAL))
             else:
                 self.playersList.removeRow(self.compileId(player.name, TYPE_PERSONAL))
