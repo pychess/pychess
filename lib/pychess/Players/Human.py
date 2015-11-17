@@ -7,6 +7,7 @@ from pychess.Utils.const import *
 from pychess.Utils.logic import validate
 from pychess.Utils.Move import Move
 from pychess.Utils.Offer import Offer
+from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.System import conf
 
@@ -174,6 +175,7 @@ class Human (Player):
     #    Interacting with the player
     #===========================================================================
     
+    @idle_add
     def hurry (self):
         title = _("Your opponent asks you to hurry!")
         text = _("Generally this means nothing, as the game is time-based, but if you want to please your opponent, perhaps you should get going.")
@@ -182,7 +184,7 @@ class Human (Player):
             message.dismiss()
         message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
-        self._show_message(message)
+        self.gmwidg.showMessage(message)
         
     def pause (self):
         self.gmwidg.setLocked(True)
@@ -219,6 +221,7 @@ class Human (Player):
     #    Offer handling
     #===========================================================================
     
+    @idle_add
     def offer (self, offer):
         log.debug("Human.offer: self=%s %s" % (self, offer))
         assert offer.type in OFFER_MESSAGES
@@ -247,8 +250,9 @@ class Human (Player):
         message.add_button(InfoBarMessageButton(_("Accept"), Gtk.ResponseType.ACCEPT))
         message.add_button(InfoBarMessageButton(_("Decline"), Gtk.ResponseType.NO))
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
-        self._show_message(message)
+        self.gmwidg.showMessage(message)
     
+    @idle_add
     def offerDeclined (self, offer):
         log.debug("Human.offerDeclined: self=%s %s" % (self, offer))
         assert offer.type in ACTION_NAMES
@@ -262,8 +266,9 @@ class Human (Player):
         message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
         message.add_button(InfoBarMessageButton(_("Resend"), Gtk.ResponseType.ACCEPT))
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
-        self._show_message(message)
+        self.gmwidg.showMessage(message)
     
+    @idle_add
     def offerWithdrawn (self, offer):
         log.debug("Human.offerWithdrawn: self=%s %s" % (self, offer))
         assert offer.type in ACTION_NAMES
@@ -274,8 +279,9 @@ class Human (Player):
             message.dismiss()
         message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
-        self._show_message(message)
+        self.gmwidg.showMessage(message)
     
+    @idle_add
     def offerError (self, offer, error):
         log.debug("Human.offerError: self=%s error=%s %s" % (self, error, offer))
         assert offer.type in ACTION_NAMES
@@ -297,7 +303,4 @@ class Human (Player):
             message.dismiss()
         message = InfoBarMessage(Gtk.MessageType.WARNING, content, response_cb)
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
-        self._show_message(message)
-    
-    def _show_message (self, message):
         self.gmwidg.showMessage(message)

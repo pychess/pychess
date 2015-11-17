@@ -1,8 +1,6 @@
 from gi.repository import GObject
 from gi.repository import Gtk
 
-from pychess.System.idle_add import idle_add
-
 
 def get_message_content (heading_text, message_text, image_stock_id):
     # TODO: If you try to fix this first read issue #958 and 1018

@@ -93,6 +93,7 @@ def on_gmwidg_title_changed (gmwidg, new_title):
 # Gamemodel signals
 #===============================================================================
 
+@idle_add
 def game_ended (gamemodel, reason, gmwidg):
     log.debug("gamenanny.game_ended: reason=%s gmwidg=%s\ngamemodel=%s" % \
         (reason, gmwidg, gamemodel))
@@ -174,17 +175,14 @@ def game_ended (gamemodel, reason, gmwidg):
     message.callback = callback
     gmwidg.game_ended_message = message
 
-    @idle_add
-    def do():
-        if len(key2gmwidg) > 0:
-            gmwidg.replaceMessages(message)
-            gmwidg.status("%s %s." % (m1,m2[0].lower()+m2[1:]))
-        
-        if reason == WHITE_ENGINE_DIED:
-            engineDead(gamemodel.players[0], gmwidg)
-        elif reason == BLACK_ENGINE_DIED:
-            engineDead(gamemodel.players[1], gmwidg)
-    do()
+    if len(key2gmwidg) > 0:
+        gmwidg.replaceMessages(message)
+        gmwidg.status("%s %s." % (m1,m2[0].lower()+m2[1:]))
+    
+    if reason == WHITE_ENGINE_DIED:
+        engineDead(gamemodel.players[0], gmwidg)
+    elif reason == BLACK_ENGINE_DIED:
+        engineDead(gamemodel.players[1], gmwidg)
 
     if (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()) or \
             gamemodel.isEngine2EngineGame():
@@ -210,12 +208,10 @@ def game_changed (gamemodel, ply, gmwidg):
     _set_statusbar(gmwidg, "")
     return False
 
+@idle_add
 def game_unended (gamemodel, gmwidg):
     log.debug("gamenanny.game_unended: %s" % gamemodel.boards[-1])
-    @idle_add
-    def do():
-        gmwidg.clearMessages()
-    do()
+    gmwidg.clearMessages()
     _set_statusbar(gmwidg, "")
     return False
 
