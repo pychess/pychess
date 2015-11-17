@@ -523,6 +523,7 @@ class GameWidget (GObject.GObject):
                 self.menuitems["call_flag"].sensitive = True
                 break
 
+    @idle_add
     def player_lagged (self, bm, player):
         if player in self.gamemodel.ficsplayers:
             content = get_infobarmessage_content(player,
@@ -534,12 +535,10 @@ class GameWidget (GObject.GObject):
             message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
             message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
                                                     Gtk.ResponseType.CANCEL))
-            @idle_add
-            def do_player_lagged():
-                self.showMessage(message)
-            do_player_lagged()
+            self.showMessage(message)
         return False
 
+    @idle_add
     def opp_not_out_of_time (self, bm):
         if self.gamemodel.remote_player.time <= 0:
             content = get_infobarmessage_content2(
@@ -555,10 +554,7 @@ class GameWidget (GObject.GObject):
             message = InfoBarMessage(Gtk.MessageType.QUESTION, content, response_cb)
             message.add_button(InfoBarMessageButton(_("Wait"), Gtk.ResponseType.CANCEL))
             message.add_button(InfoBarMessageButton(_("Adjourn"), 2))
-            @idle_add
-            def do_opp_not_out_of_time():
-                self.showMessage(message)
-            do_opp_not_out_of_time()
+            self.showMessage(message)
         return False
 
     def initTabcontents(self):
@@ -711,20 +707,17 @@ class GameWidget (GObject.GObject):
         if self == cur_gmwidg():
             notebooks["messageArea"].hide()
 
-    @idle_add
     def showMessage (self, message):
         self.infobar.push_message(message)
         if self == cur_gmwidg():
             notebooks["messageArea"].show()
 
-    @idle_add
     def replaceMessages (self, message):
         """ Replace all messages with message """
         if not self.closed:
             self.infobar.clear_messages()
             self.showMessage(message)
 
-    @idle_add
     def clearMessages (self):
         self.infobar.clear_messages()
         if self == cur_gmwidg():
