@@ -36,9 +36,9 @@ def get_user_names(value=None):
     """ Split and return usernameEntry config item into registered and guest username
     """
     if value is not None:
-        names = value.split()
+        names = value.split("|")
     else:
-        names = conf.get("usernameEntry", "").split()
+        names = conf.get("usernameEntry", "").split("|")
     if len(names) == 0:
         names = ["", ""]
     elif len(names) < 2:
@@ -69,9 +69,9 @@ class ICLogon (object):
         def user_name_get_value(entry):
             names = get_user_names()
             if as_guest.get_active():
-                text = "%s %s" % (names[0], entry.get_text())
+                text = "%s|%s" % (names[0], entry.get_text())
             else:
-                text = "%s %s" % (entry.get_text(), names[1])
+                text = "%s|%s" % (entry.get_text(), names[1])
             return text
 
         def user_name_set_value(entry, value):
