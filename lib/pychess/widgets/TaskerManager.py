@@ -248,9 +248,9 @@ class InternetGameTasker (Gtk.Alignment):
         def user_name_get_value(entry):
             names = ICLogon.get_user_names()
             if as_guest.get_active():
-                text = "%s %s" % (names[0], entry.get_text())
+                text = "%s|%s" % (names[0], entry.get_text())
             else:
-                text = "%s %s" % (entry.get_text(), names[1])
+                text = "%s|%s" % (entry.get_text(), names[1])
             return text
 
         def user_name_set_value(entry, value):
