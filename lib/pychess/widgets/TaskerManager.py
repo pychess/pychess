@@ -235,13 +235,33 @@ class InternetGameTasker (Gtk.Alignment):
         tasker.unparent()
         self.add(tasker)
         
-        def asGuestCallback (checkbutton):
-            for widget in (self.widgets["passwordLabel"], self.widgets["passwordEntry"]):
-                widget.set_sensitive(not checkbutton.get_active())
+        def asGuestCallback (check):
+            names = ICLogon.get_user_names()
+            self.widgets["usernameEntry"].set_text(names[1] if check.get_active() else names[0])
+            self.widgets["passwordLabel"].set_sensitive(not check.get_active())
+            self.widgets["passwordEntry"].set_sensitive(not check.get_active())
         self.widgets["asGuestCheck"].connect("toggled", asGuestCallback)
         
         uistuff.keep(self.widgets["asGuestCheck"], "asGuestCheck")
-        uistuff.keep(self.widgets["usernameEntry"], "usernameEntry")
+
+        as_guest = self.widgets["asGuestCheck"]
+        def user_name_get_value(entry):
+            names = ICLogon.get_user_names()
+            if as_guest.get_active():
+                text = "%s %s" % (names[0], entry.get_text())
+            else:
+                text = "%s %s" % (entry.get_text(), names[1])
+            return text
+
+        def user_name_set_value(entry, value):
+            names = ICLogon.get_user_names(value=value)
+            if as_guest.get_active():
+                entry.set_text(names[1])
+            else:
+                entry.set_text(names[0])
+
+        uistuff.keep(self.widgets["usernameEntry"], "usernameEntry", \
+                    user_name_get_value, user_name_set_value)
         uistuff.keep(self.widgets["passwordEntry"], "passwordEntry")
         
         self.widgets["connectButton"].connect("clicked", self.connectClicked)

@@ -9,7 +9,7 @@ from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GObject
 
-from pychess.System import uistuff
+from pychess.System import uistuff, conf
 from pychess.System.idle_add import idle_add
 from pychess.Utils.const import *
 from .FICSConnection import FICSMainConnection, FICSHelperConnection, LogOnException
@@ -32,6 +32,19 @@ def run():
 
 class AutoLogoutException (Exception): pass    
 
+def get_user_names(value=None):
+    """ Split and return usernameEntry config item into registered and guest username
+    """
+    if value is not None:
+        names = value.split()
+    else:
+        names = conf.get("usernameEntry", "").split()
+    if len(names) == 0:
+        names = ["", ""]
+    elif len(names) < 2:
+        names.append(names[0])
+    return names
+
 class ICLogon (object):
     def __init__ (self):
         self.connection = None
@@ -43,12 +56,33 @@ class ICLogon (object):
                                defaultPosition=uistuff.POSITION_GOLDEN)
         self.widgets["fics_logon"].connect('key-press-event',
                 lambda w, e: e.keyval == Gdk.KEY_Escape and w.hide())        
+
         def on_logOnAsGuest_toggled (check):
+            names = get_user_names()
+            self.widgets["nameEntry"].set_text(names[1] if check.get_active() else names[0])
             self.widgets["passwordLabel"].set_sensitive(not check.get_active())
             self.widgets["passEntry"].set_sensitive(not check.get_active())
         self.widgets["logOnAsGuest"].connect("toggled", on_logOnAsGuest_toggled)
-        uistuff.keep(self.widgets["logOnAsGuest"], "logOnAsGuest")
-        uistuff.keep(self.widgets["nameEntry"], "usernameEntry")
+        uistuff.keep(self.widgets["logOnAsGuest"], "asGuestCheck")
+
+        as_guest = self.widgets["logOnAsGuest"]
+        def user_name_get_value(entry):
+            names = get_user_names()
+            if as_guest.get_active():
+                text = "%s %s" % (names[0], entry.get_text())
+            else:
+                text = "%s %s" % (entry.get_text(), names[1])
+            return text
+
+        def user_name_set_value(entry, value):
+            names = get_user_names(value=value)
+            if as_guest.get_active():
+                entry.set_text(names[1])
+            else:
+                entry.set_text(names[0])
+
+        uistuff.keep(self.widgets["nameEntry"], "usernameEntry", \
+                    user_name_get_value, user_name_set_value)
         uistuff.keep(self.widgets["passEntry"], "passwordEntry")
         uistuff.keep(self.widgets["hostEntry"], "hostEntry")
         uistuff.keep(self.widgets["autoLogin"], "autoLogin")
