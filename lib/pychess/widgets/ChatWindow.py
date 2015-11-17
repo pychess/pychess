@@ -484,6 +484,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.joinedList.connect("selected", self.onSelect)
         vbox.pack_start(self.joinedList, True, True, 0)
 
+        vbox.pack_start(Gtk.Separator.new(0),True,True,2)
         expander = Gtk.Expander.new(_("Friends"))
         vbox.pack_start(expander, False, True, 0)
         self.friendsList = TextImageTree("gtk-add")
@@ -491,6 +492,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.friendsList.fixed_height_mode = True
         connection.cm.connect("privateMessage", self.onPersonMessage)
         connection.cm.connect("channelsListed", self.onChannelsListed)
+        vbox.pack_start(Gtk.Separator.new(0),True,True,2)
         expander.add(self.friendsList)
         self.channels = {}
 
@@ -499,6 +501,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.channelsList = TextImageTree("gtk-add")
         self.channelsList.connect("activated", self.onAdd)
         self.channelsList.fixed_height_mode = True
+        vbox.pack_start(Gtk.Separator.new(0),True,True,2)
         expander.add(self.channelsList)
 
         expander = Gtk.Expander.new(_("More players"))
@@ -508,6 +511,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.playersList.fixed_height_mode = True
         connection.cm.connect("privateMessage", self.onPersonMessage)
         connection.cm.connect("channelsListed", self.onChannelsListed)
+        vbox.pack_start(Gtk.Separator.new(0),True,True,2)
         expander.add(self.playersList)
         self.channels = {}
 
