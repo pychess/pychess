@@ -652,7 +652,7 @@ class BoardManager (GObject.GObject):
         
         pgnHead = [
             ("Event", "FICS %s %s game" % (rated.lower(), game_type.fics_name)),
-            ("Site", "FICS"),
+            ("Site", "freechess.org"),
             ("White", wname),
             ("Black", bname),
             ("TimeControl", "%d+%d" % (minutes * 60, increment)),
