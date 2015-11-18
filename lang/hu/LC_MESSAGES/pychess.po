@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-11-17 20:48+0100\n"
-"PO-Revision-Date: 2015-11-18 23:09+0000\n"
+"PO-Revision-Date: 2015-11-18 23:17+0000\n"
 "Last-Translator: gbtami <gbtami@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/gbtami/pychess/language/hu/)\n"
 "MIME-Version: 1.0\n"
@@ -492,7 +492,7 @@ msgstr "<b>Játszma beírása</b>"
 
 #: glade/newInOut.glade:1314
 msgid "Halfmove clock"
-msgstr "Féllépés számláló döntetlenhez"
+msgstr "Féllépés számláló"
 
 #: glade/newInOut.glade:1327
 msgid "En passant line"
@@ -504,7 +504,7 @@ msgstr "Lépésre következik"
 
 #: glade/newInOut.glade:1351
 msgid "Move number"
-msgstr "Lépés szám"
+msgstr "Lépésszám"
 
 #: glade/newInOut.glade:1361
 msgid "Black O-O"
