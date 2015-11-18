@@ -881,18 +881,19 @@ class Sidepanel(Gtk.TextView):
         self.textbuffer.insert_with_tags_by_name(end_iter(), ' ' + result + '\n', "head2")
 
         text = ""
-        mins, inc = gm.tags['TimeControl'].split('+')
-        mins = int(mins) / 60
-        mins =  "[ " + "{:.0f}".format(mins)
-        if inc != '0':
-            text += mins + ' mins + ' + inc + ' secs '
-        else:
-            text += mins + ' mins '
+        time_control = gm.tags.get('TimeControl')
+        if time_control:
+            mins, inc = time_control.split('+')
+            mins = int(mins) / 60
+            mins =  "{:.0f}".format(mins)
+            if inc != '0':
+                text += mins + ' mins + ' + inc + ' secs '
+            else:
+                text += mins + ' mins '
 
         event = gm.tags['Event']
         if event and event != "?":
             text += event
-        text += ' ]'
 
         site = gm.tags['Site']
         if site and site != "?":
