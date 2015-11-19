@@ -700,7 +700,7 @@ class CECPEngine (ProtocolEngine):
             print("#", file=self.engine)
             for color in WHITE, BLACK:
                 for y, row in enumerate(board.data):
-                    for x, piece in enumerate(row):
+                    for x, piece in row.items():
                         if not piece or piece.color != color:
                             continue
                         sign = reprSign[piece.sign]
