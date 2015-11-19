@@ -1,0 +1,6 @@
+?package(pychess):needs="X11" \
+ section="Games/Board" \
+ title="PyChess" \
+ longtitle="PyChess - chess graphical user interface for several chess engines" \
+ command="/usr/games/pychess" \
+ icon="/usr/share/pixmaps/pychess.xpm"
