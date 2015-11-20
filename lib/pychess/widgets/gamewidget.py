@@ -950,6 +950,12 @@ def _ensureReadForGameWidgets ():
     def hb_switch_page (notebook, gpointer, page_num):
         for notebook in notebooks.values():
             notebook.set_current_page(page_num)
+
+#        log.debug("HB_switch ficsgame no. %s , %s " % (key2gmwidg[getheadbook().get_nth_page(page_num)].gamemodel.ficsgame.gameno,str(page_num)))
+        gmwidg  = key2gmwidg[getheadbook().get_nth_page(page_num)]
+        primary = "primary " + str(gmwidg.gamemodel.ficsgame.gameno)
+        gmwidg.gamemodel.connection.client.run_command(primary)
+
     headbook.connect("switch-page", hb_switch_page)
 
     if hasattr(headbook, "set_tab_reorderable"):
@@ -961,10 +967,6 @@ def _ensureReadForGameWidgets ():
                 for notebook in notebooks.values():
                     notebook.reorder_child(notebook.get_nth_page(old_num), new_num)
         headbook.connect("page-reordered", page_reordered, headbook)
-        gmwidg = cur_gmwidg()
-        log.debug("Cajone gmwidg %s" % gmwidg.gamemodel.ficsgame.gameno)
-        primary = "primary " + str(gmwidg.gamemodel.ficsgame.gameno)
-        gmwidg.gamemodel.connection.client.run_command(primary)
 
 def attachGameWidget (gmwidg):
     log.debug("attachGameWidget: %s" % gmwidg)
@@ -984,11 +986,6 @@ def attachGameWidget (gmwidg):
             gmwidg.emit("infront")
     headbook.connect_after("switch-page", callback, gmwidg)
     gmwidg.emit("infront")
-
-    log.debug("Cajone gmwidg %s" % gmwidg.gamemodel.ficsgame.gameno)
-    primary = "primary " + str(gmwidg.gamemodel.ficsgame.gameno)
-    gmwidg.gamemodel.connection.client.run_command(primary)
-
 
     align = createAlignment(0,0,0,0)
     align.show()
