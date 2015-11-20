@@ -943,6 +943,12 @@ def _ensureReadForGameWidgets ():
     def hb_switch_page (notebook, gpointer, page_num):
         for notebook in notebooks.values():
             notebook.set_current_page(page_num)
+
+#        log.debug("HB_switch ficsgame no. %s , %s " % (key2gmwidg[getheadbook().get_nth_page(page_num)].gamemodel.ficsgame.gameno,str(page_num)))
+        gmwidg  = key2gmwidg[getheadbook().get_nth_page(page_num)]
+        primary = "primary " + str(gmwidg.gamemodel.ficsgame.gameno)
+        gmwidg.gamemodel.connection.client.run_command(primary)
+
     headbook.connect("switch-page", hb_switch_page)
 
     if hasattr(headbook, "set_tab_reorderable"):
