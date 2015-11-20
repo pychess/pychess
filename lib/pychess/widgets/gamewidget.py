@@ -946,8 +946,9 @@ def _ensureReadForGameWidgets ():
 
 #        log.debug("HB_switch ficsgame no. %s , %s " % (key2gmwidg[getheadbook().get_nth_page(page_num)].gamemodel.ficsgame.gameno,str(page_num)))
         gmwidg  = key2gmwidg[getheadbook().get_nth_page(page_num)]
-        primary = "primary " + str(gmwidg.gamemodel.ficsgame.gameno)
-        gmwidg.gamemodel.connection.client.run_command(primary)
+        if isinstance(gmwidg.gamemodel, ICGameModel):
+            primary = "primary " + str(gmwidg.gamemodel.ficsgame.gameno)
+            gmwidg.gamemodel.connection.client.run_command(primary)
 
     headbook.connect("switch-page", hb_switch_page)
 
