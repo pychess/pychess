@@ -186,9 +186,10 @@ def newtheme (widget):
     surface.write_to_png(f)
     
 def set_textview_color(textview):
+    # TODO: breaks text selection visibility
     sc = textview.get_style_context()
     bool1, bg_color = sc.lookup_color("p_light_color")
-    textview.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
+    #textview.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
     bool1, fg_color = sc.lookup_color("p_fg_color")
-    textview.override_color(Gtk.StateFlags.NORMAL, fg_color)
+    #textview.override_color(Gtk.StateFlags.NORMAL, fg_color)
     return (bg_color, fg_color)
