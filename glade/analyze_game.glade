@@ -161,7 +161,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">If the analyzer finds a move where the evaluation difference (the difference between the evaluation for the move it thinks is the best move and the evaluation for the move made in the game) exceeds this value, it will add an annotation for that move (consisting of the engine's Principal Variation for the move) to the Annotation panel</property>
-                        <property name="label" translatable="yes">Variation annotation creation thresold in centipawns:</property>
+                        <property name="label" translatable="yes">Variation annotation creation threshold in centipawns:</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -170,7 +170,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSpinButton" id="variation_thresold_spin">
+                      <object class="GtkSpinButton" id="variation_threshold_spin">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="max_length">3</property>
@@ -211,7 +211,7 @@
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="threatPV">
-                    <property name="label" translatable="yes">Add threatening varation lines </property>
+                    <property name="label" translatable="yes">Add threatening variation lines </property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>

@@ -128,7 +128,7 @@ BADPAS = _("The entered password was invalid.\n" + \
            "<a href=\"http://www.freechess.org/password\">" + \
            "http://www.freechess.org/password</a> to request a new one over email.")
 ALREADYIN = _("Sorry '%s' is already logged in")
-REGISTERED = _("'%s' is a registered name.  If it is yours, type the passworld.")
+REGISTERED = _("'%s' is a registered name.  If it is yours, type the password.")
 
 class FICSConnection (Connection):
     def __init__ (self, host, ports, username="guest", password=""):
