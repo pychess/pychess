@@ -1194,8 +1194,11 @@ class PlayerTabSection (ParrentListSection):
 
     def onObserveClicked (self, button):
         player = self.getSelectedPlayer()
-        if player is not None and player.game is not None:
-            self.connection.bm.observe(player.game)
+        if player is not None:
+            if player.game is not None:
+                self.connection.bm.observe(player.game)
+            else:
+                self.connection.bm.observe(None, player=player)
 
     def onSelectionChanged (self, selection):
         player = self.getSelectedPlayer()
@@ -1204,7 +1207,8 @@ class PlayerTabSection (ParrentListSection):
         self.widgets["observe_button"].set_sensitive(
             player is not None and \
             player.isObservable() and \
-            user_name not in (player.game.wplayer.name, player.game.bplayer.name))
+            (player.game is None or \
+            user_name not in (player.game.wplayer.name, player.game.bplayer.name)))
         self.widgets["challengeButton"].set_sensitive(
             player is not None and \
             player.isAvailableForGame() and \
