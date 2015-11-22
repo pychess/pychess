@@ -228,11 +228,6 @@ class BoardManager (GObject.GObject):
 
         self.connection.expect_n_lines (self.onObserveGameCreated,
             "You are now observing game \d+\.",
-            "Game (\d+): %s %s %s %s %s [\w/]+ \d+ \d+"
-            % (names, ratings, names, ratings, ratedexp))
-
-        self.connection.expect_n_lines (self.onObserveExaminedGameCreated,
-            "You are now observing game \d+\.",
             "Game (\d+): %s %s %s %s %s ([\w/]+) (\d+) (\d+)"
             % (names, ratings, names, ratings, ratedexp),
             '',
@@ -728,39 +723,16 @@ class BoardManager (GObject.GObject):
     def onObserveGameCreated (self, matchlist):
         log.debug("'%s'" % (matchlist[1].string),
             extra={"task": (self.connection.username, "BM.onObserveGameCreated")})
-        gameno, wname, wrating, bname, brating, rated = matchlist[1].groups()
+        gameno, wname, wrating, bname, brating, rated, gametype, min, inc = matchlist[1].groups()
         wplayer = self.connection.players.get(FICSPlayer(wname))
         bplayer = self.connection.players.get(FICSPlayer(bname))
         game = FICSGame(wplayer, bplayer, gameno=int(gameno))
-        game = self.connection.games.get(game, emit=False)
-        
-        if not game.supported:
-            log.warning("Trying to follow an unsupported type game %s" % game.game_type)
-            return
-
-        if game.gameno in self.gamemodelStartedEvents:
-            log.warning("%s already in gamemodelstartedevents" % game.gameno)
-            return
-        
-        self.gamesImObserving[game] = None
-        self.queuedStyle12s[game.gameno] = []
-        self.queuedEmits[game.gameno] = []
-        self.gamemodelStartedEvents[game.gameno] = threading.Event()
-
-        # FICS doesn't send the move list after 'observe' and 'follow' commands
-        self.connection.client.run_command("moves %d" % game.gameno)
-    onObserveGameCreated.BLKCMD = BLKCMD_OBSERVE
-
-    def onObserveExaminedGameCreated (self, matchlist):
-        log.debug("'%s'" % (matchlist[1].string),
-            extra={"task": (self.connection.username, "BM.onObserveExaminedGameCreated")})
-        gameno, wname, wrating, bname, brating, rated, gametype, min, inc = matchlist[1].groups()
 
         style12 = matchlist[-1].groups()[0]
         gameno = int(gameno)
         wrating = self.parseRating(wrating)
         brating = self.parseRating(brating)
-        rated = rated == "rated"
+        #rated = rated == "rated"
         game_type = GAME_TYPES[gametype]
         
         castleSigns = self.generateCastleSigns(style12, game_type)
@@ -768,23 +740,48 @@ class BoardManager (GObject.GObject):
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                 self.parseStyle12(style12, castleSigns)
 
-        wplayer = self.connection.players.get(FICSPlayer(wname))
-        bplayer = self.connection.players.get(FICSPlayer(bname))
-        for player, rating in ((wplayer, wrating), (bplayer, brating)):
-            if game_type.rating_type in player.ratings and \
-                    player.ratings[game_type.rating_type].elo != rating:
-                player.ratings[game_type.rating_type].elo = rating
-        pgn = '[FEN "%s"]\n *\n' % fen 
-        game = FICSGame(wplayer, bplayer, gameno=gameno, rated=rated,
-            game_type=game_type, minutes=int(min), inc=int(inc),
-            board=FICSBoard(wms, bms, pgn=pgn))
-        game = self.connection.games.get(game)
-        self.gamesImObserving[game] = None
+        if relation == IC_POS_OBSERVING_EXAMINATION:
+            pgnHead = [
+                ("Event", "FICS %s %s game" % (rated, game_type.fics_name)),
+                ("Site", "freechess.org"),
+                ("White", wname),
+                ("Black", bname),
+                ("TimeControl", "%d+%d" % (int(min) * 60, int(inc))),
+                ("Result", "*"),
+                ("WhiteClock", msToClockTimeTag(wms)),
+                ("BlackClock", msToClockTimeTag(bms)),
+                ("SetUp", "1"),
+                ("FEN", fen)
+                ]
+            pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
+            game = FICSGame(wplayer, bplayer, gameno=gameno, rated=rated=="rated",
+                game_type=game_type, minutes=int(min), inc=int(inc),
+                board=FICSBoard(wms, bms, pgn=pgn))
+            game = self.connection.games.get(game)
+            self.gamesImObserving[game] = None
 
-        self.gamemodelStartedEvents[game.gameno] = threading.Event()
-        self.emit("obsGameCreated", game)
-        self.gamemodelStartedEvents[game.gameno].wait()
-    onObserveExaminedGameCreated.BLKCMD = BLKCMD_OBSERVE
+            self.gamemodelStartedEvents[game.gameno] = threading.Event()
+            self.emit("obsGameCreated", game)
+            self.gamemodelStartedEvents[game.gameno].wait()
+        else:
+            game = self.connection.games.get(game, emit=False)
+            
+            if not game.supported:
+                log.warning("Trying to follow an unsupported type game %s" % game.game_type)
+                return
+
+            if game.gameno in self.gamemodelStartedEvents:
+                log.warning("%s already in gamemodelstartedevents" % game.gameno)
+                return
+            
+            self.gamesImObserving[game] = None
+            self.queuedStyle12s[game.gameno] = []
+            self.queuedEmits[game.gameno] = []
+            self.gamemodelStartedEvents[game.gameno] = threading.Event()
+
+            # FICS doesn't send the move list after 'observe' and 'follow' commands
+            self.connection.client.run_command("moves %d" % game.gameno)
+    onObserveGameCreated.BLKCMD = BLKCMD_OBSERVE
 
     def onFollowingPlayer (self, matchlist):
         self.onObserveGameCreated(matchlist[1:])
