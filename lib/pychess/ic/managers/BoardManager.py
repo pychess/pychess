@@ -230,6 +230,14 @@ class BoardManager (GObject.GObject):
             "You are now observing game \d+\.",
             "Game (\d+): %s %s %s %s %s [\w/]+ \d+ \d+"
             % (names, ratings, names, ratings, ratedexp))
+
+        self.connection.expect_n_lines (self.onObserveExaminedGameCreated,
+            "You are now observing game \d+\.",
+            "Game (\d+): %s %s %s %s %s ([\w/]+) (\d+) (\d+)"
+            % (names, ratings, names, ratings, ratedexp),
+            '',
+            "<12> (.+)")
+
         self.connection.expect_n_lines (self.onFollowingPlayer,
             "You will now be following %s's games\." % names,
             "You are now observing game \d+\.",
@@ -743,6 +751,41 @@ class BoardManager (GObject.GObject):
         self.connection.client.run_command("moves %d" % game.gameno)
     onObserveGameCreated.BLKCMD = BLKCMD_OBSERVE
 
+    def onObserveExaminedGameCreated (self, matchlist):
+        log.debug("'%s'" % (matchlist[1].string),
+            extra={"task": (self.connection.username, "BM.onObserveExaminedGameCreated")})
+        gameno, wname, wrating, bname, brating, rated, gametype, min, inc = matchlist[1].groups()
+
+        style12 = matchlist[-1].groups()[0]
+        gameno = int(gameno)
+        wrating = self.parseRating(wrating)
+        brating = self.parseRating(brating)
+        rated = rated == "rated"
+        game_type = GAME_TYPES[gametype]
+        
+        castleSigns = self.generateCastleSigns(style12, game_type)
+        self.castleSigns[gameno] = castleSigns
+        gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
+                self.parseStyle12(style12, castleSigns)
+
+        wplayer = self.connection.players.get(FICSPlayer(wname))
+        bplayer = self.connection.players.get(FICSPlayer(bname))
+        for player, rating in ((wplayer, wrating), (bplayer, brating)):
+            if game_type.rating_type in player.ratings and \
+                    player.ratings[game_type.rating_type].elo != rating:
+                player.ratings[game_type.rating_type].elo = rating
+        pgn = '[FEN "%s"]\n *\n' % fen 
+        game = FICSGame(wplayer, bplayer, gameno=gameno, rated=rated,
+            game_type=game_type, minutes=int(min), inc=int(inc),
+            board=FICSBoard(wms, bms, pgn=pgn))
+        game = self.connection.games.get(game)
+        self.gamesImObserving[game] = None
+
+        self.gamemodelStartedEvents[game.gameno] = threading.Event()
+        self.emit("obsGameCreated", game)
+        self.gamemodelStartedEvents[game.gameno].wait()
+    onObserveExaminedGameCreated.BLKCMD = BLKCMD_OBSERVE
+
     def onFollowingPlayer (self, matchlist):
         self.onObserveGameCreated(matchlist[1:])
     onFollowingPlayer.BLKCMD = BLKCMD_FOLLOW
@@ -852,8 +895,11 @@ class BoardManager (GObject.GObject):
     def callflag (self):
         self.connection.client.run_command("flag")
     
-    def observe (self, game):
-        self.connection.client.run_command("observe %d" % game.gameno)
+    def observe (self, game, player=None):
+        if game is not None:
+            self.connection.client.run_command("observe %d" % game.gameno)
+        elif player is not None:
+            self.connection.client.run_command("observe %s" % player.name)
 
     def unobserve (self, game):
         if game.gameno is not None:
