@@ -17,19 +17,19 @@ from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
 
 
-def createCombo (combo, data=[]):    
+def createCombo (combo, data=[]):
     ls = Gtk.ListStore(Pixbuf, str)
     for row in data:
         ls.append(row)
     combo.clear()
-    
+
     combo.set_model(ls)
     crp = Gtk.CellRendererPixbuf()
     crp.set_property('xalign',0)
     crp.set_property('xpad', 2)
     combo.pack_start(crp, False)
     combo.add_attribute(crp, 'pixbuf', 0)
-    
+
     crt = Gtk.CellRendererText()
     crt.set_property('xalign',0)
     crt.set_property('xpad', 4)
@@ -82,11 +82,11 @@ def genColor (n, startpoint=0):
 
 def keepDown (scrolledWindow):
     def changed (vadjust):
-        if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:           
+        if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
             vadjust.set_value(vadjust.get_upper()-vadjust.get_page_size())
             vadjust.need_scroll = True
     scrolledWindow.get_vadjustment().connect("changed", changed)
-        
+
     def value_changed (vadjust):
         vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() - \
                 vadjust.get_upper()) < vadjust.get_step_increment()
@@ -101,7 +101,7 @@ def appendAutowrapColumn (treeview, name, **kvargs):
     cell.props.wrap_mode = Pango.WrapMode.WORD
     column = Gtk.TreeViewColumn(name, cell, **kvargs)
     treeview.append_column(column)
-    
+
     def callback (treeview, allocation, column, cell):
         otherColumns = [c for c in treeview.get_columns() if c != column]
         newWidth = allocation.width - sum(c.get_width() for c in otherColumns)
@@ -121,12 +121,12 @@ def appendAutowrapColumn (treeview, name, **kvargs):
             iter = store.iter_next(iter)
         treeview.set_size_request(0,-1)
     treeview.connect_after("size-allocate", callback, column, cell)
-    
+
     scroll = treeview.get_parent()
     if isinstance(scroll, Gtk.ScrolledWindow):
         scroll.set_policy(Gtk.PolicyType.NEVER,
                           scroll.get_policy()[1])
-    
+
     return cell
 
 
@@ -150,19 +150,19 @@ METHODS = (
 def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
     if widget == None:
         raise AttributeError("key '%s' isn't in widgets" % key)
-    
+
     for class_, methods_ in METHODS:
         if isinstance(widget, class_):
             getter, setter, signal = methods_
             break
     else:
         raise AttributeError("I don't have any knowledge of type: '%s'" % widget)
-    
+
     if get_value_:
         get_value = lambda: get_value_(widget)
     else:
         get_value = getattr(widget, getter)
-    
+
     if set_value_:
         set_value = lambda v: set_value_(widget, v)
     else:
@@ -179,13 +179,13 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
             else: conf.set(key, get_value())
         else:
             set_value(v)
-    
+
     def callback(*args):
         if not conf.hasKey(key) or conf.getStrict(key) != get_value():
             conf.set(key, get_value())
     widget.connect(signal, callback)
     conf.notify_add(key, lambda *args: setFromConf())
-    
+
     if conf.hasKey(key):
         setFromConf()
     elif first_value != None:
@@ -199,10 +199,10 @@ def keep (widget, key, get_value_=None, set_value_=None, first_value=None):
 def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
                       set_value_=None, first_value=None):
     key = widget_name + "-" + str(config_number)
-    
+
     if widget == None:
         raise AttributeError("key '%s' isn't in widgets" % widget_name)
-    
+
     for class_, methods_ in METHODS:
         if isinstance(widget, class_):
             getter, setter, signal = methods_
@@ -210,7 +210,7 @@ def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
     else:
         if set_value_ == None:
             raise AttributeError("I don't have any knowledge of type: '%s'" % widget)
-    
+
     if get_value_:
         get_value = lambda: get_value_(widget)
     else:
@@ -220,7 +220,7 @@ def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
         set_value = lambda v: set_value_(widget, v)
     else:
         set_value = getattr(widget, setter)
-    
+
     if conf.hasKey(key):
         try:
             v = conf.getStrict(key)
@@ -241,10 +241,10 @@ def loadDialogWidget (widget, widget_name, config_number, get_value_=None,
 
 def saveDialogWidget (widget, widget_name, config_number, get_value_=None):
     key = widget_name + "-" + str(config_number)
-    
+
     if widget == None:
         raise AttributeError("key '%s' isn't in widgets" % widget_name)
-    
+
     for class_, methods_ in METHODS:
         if isinstance(widget, class_):
             getter, setter, signal = methods_
@@ -252,7 +252,7 @@ def saveDialogWidget (widget, widget_name, config_number, get_value_=None):
     else:
         if get_value_ == None:
             raise AttributeError("I don't have any knowledge of type: '%s'" % widget)
-    
+
     if get_value_:
         get_value = lambda: get_value_(widget)
     else:
@@ -264,40 +264,40 @@ def saveDialogWidget (widget, widget_name, config_number, get_value_=None):
 POSITION_NONE, POSITION_CENTER, POSITION_GOLDEN = range(3)
 def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE):
     """ You should call keepWindowSize before show on your windows """
-    
+
     key = key + "window"
-    
-    def savePosition (window, *event):        
+
+    def savePosition (window, *event):
         log.debug("keepWindowSize.savePosition: %s" % window.get_title())
         width = window.get_allocation().width
         height = window.get_allocation().height
         x, y = window.get_position()
-        
+
         if width <= 0:
             log.error("Setting width = '%d' for %s to conf" % (width,key))
         if height <= 0:
             log.error("Setting height = '%d' for %s to conf" % (height,key))
-        
+
         log.debug("Saving window position width=%s height=%s x=%s y=%s" %
                   (width, height, x, y))
         conf.set(key+"_width",  width)
         conf.set(key+"_height", height)
         conf.set(key+"_x", x)
         conf.set(key+"_y", y)
-        
+
         return False
     window.connect("delete-event", savePosition, "delete-event")
-    
+
     def loadPosition (window):
         #log.debug("keepWindowSize.loadPosition: %s" % window.title)
         width, height = window.get_size_request()
-        
+
         if conf.hasKey(key+"_width") and conf.hasKey(key+"_height"):
             width = conf.getStrict(key+"_width")
             height = conf.getStrict(key+"_height")
             log.debug("Resizing window to width=%s height=%s" % (width, height))
             window.resize(width, height)
-        
+
         elif defaultSize:
             width, height = defaultSize
             log.debug("Resizing window to width=%s height=%s" % (width, height))
@@ -309,17 +309,17 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
             height = int(monitor_height/4)*3
             log.debug("Resizing window to width=%s height=%s" % (width, height))
             window.resize(width, height)
-            
+
         elif key=="preferencesdialogwindow":
             window.resize(1, 1)
 
-        
+
         if conf.hasKey(key+"_x") and conf.hasKey(key+"_y"):
             log.debug("Moving window to x=%s y=%s" % (conf.getStrict(key+"_x"),
                                                       conf.getStrict(key+"_y")))
             window.move(conf.getStrict(key+"_x"),
                         conf.getStrict(key+"_y"))
-        
+
         elif defaultPosition in (POSITION_CENTER, POSITION_GOLDEN):
             monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds()
             x = int(monitor_width/2-width/2) + monitor_x
@@ -330,9 +330,9 @@ def keepWindowSize (key, window, defaultSize=None, defaultPosition=POSITION_NONE
                 y = int(monitor_height/2.618-height/2) + monitor_y
             log.debug("Moving window to x=%s y=%s" % (x, y))
             window.move(x, y)
-        
+
     loadPosition(window)
-    
+
     # In rare cases, gtk throws some gtk_size_allocation error, which is
     # probably a race condition. To avoid the window forgets its size in
     # these cases, we add this extra hook
@@ -350,7 +350,7 @@ def onceWhenReady(window, func, *args, **kwargs):
 
 def getMonitorBounds():
     screen = Gdk.Screen.get_default()
-    root_window = screen.get_root_window()    
+    root_window = screen.get_root_window()
     ptr_window, mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
     current_monitor_number = screen.get_monitor_at_point(mouse_x,mouse_y)
     monitor_geometry = screen.get_monitor_geometry(current_monitor_number)
@@ -382,14 +382,14 @@ emailre = re.compile("[\w\.]+@[\w\.]+\.\w{2,4}")
 def initTexviewLinks (textview, text):
     tags = []
     textbuffer = textview.get_buffer()
-    
+
     while True:
         linkmatch = linkre.search(text)
         emailmatch = emailre.search(text)
         if not linkmatch and not emailmatch:
             textbuffer.insert (textbuffer.get_end_iter(), text)
             break
-        
+
         if emailmatch and (not linkmatch or \
                 emailmatch.start() < linkmatch.start()):
             s = emailmatch.start()
@@ -402,18 +402,18 @@ def initTexviewLinks (textview, text):
                 e -= 1
             type = "link"
         textbuffer.insert (textbuffer.get_end_iter(), text[:s])
-        
+
         tag = textbuffer.create_tag (None, foreground="blue",
                 underline=Pango.Underline.SINGLE)
         tags.append([tag, text[s:e], type, textbuffer.get_end_iter()])
-        
+
         textbuffer.insert_with_tags (
                 textbuffer.get_end_iter(), text[s:e], tag)
-        
+
         tags[-1].append(textbuffer.get_end_iter())
-        
+
         text = text[e:]
-    
+
     def on_press_in_textview (textview, event):
         iter = textview.get_iter_at_location (int(event.x), int(event.y))
         if not iter: return
@@ -421,7 +421,7 @@ def initTexviewLinks (textview, text):
             if iter.has_tag(tag):
                 tag.props.foreground = "red"
                 break
-    
+
     def on_release_in_textview (textview, event):
         iter = textview.get_iter_at_location (int(event.x), int(event.y))
         if not iter: return
@@ -432,7 +432,7 @@ def initTexviewLinks (textview, text):
                     webbrowser.open(link)
                 else: webbrowser.open("mailto:"+link)
             tag.props.foreground = "blue"
-    
+
     stcursor = Gdk.Cursor(Gdk.CursorType.XTERM)
     linkcursor = Gdk.Cursor(Gdk.CursorType.HAND2)
     def on_motion_in_textview(textview, event):
@@ -445,7 +445,7 @@ def initTexviewLinks (textview, text):
                         linkcursor)
                 break
         else: textview.get_window(Gtk.TextWindowType.TEXT).set_cursor(stcursor)
-    
+
     textview.connect ("motion-notify-event", on_motion_in_textview)
     textview.connect ("leave_notify_event", on_motion_in_textview)
     textview.connect("button_press_event", on_press_in_textview)
@@ -475,10 +475,10 @@ class GladeWidgets:
                     text = obj.get_tooltip_text()
                     if text is not None:
                         obj.set_tooltip_text(_(text))
-        
+
     def __getitem__(self, key):
         return self.builder.get_object(key)
-    
+
     def getGlade (self):
         return self.builder
 
