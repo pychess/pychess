@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the pychess package.
 # 
 # Translators:
-# Ardit Dani <ardit.dani@gmail.com>, 2014
+# Ardit Dani <ardit.dani@gmail.com>, 2014-2015
+# gbtami <gbtami@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-17 20:48+0100\n"
-"PO-Revision-Date: 2015-11-18 09:05+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"POT-Creation-Date: 2015-11-21 18:43+0100\n"
+"PO-Revision-Date: 2015-11-23 00:44+0000\n"
+"Last-Translator: Ardit Dani <ardit.dani@gmail.com>\n"
 "Language-Team: Albanian (http://www.transifex.com/gbtami/pychess/language/sq/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -38,19 +39,19 @@ msgid ""
 "evaluation for the move made in the game) exceeds this value, it will add an"
 " annotation for that move (consisting of the engine's Principal Variation "
 "for the move) to the Annotation panel"
-msgstr ""
+msgstr "Nëse analizuesi gjen një lëvizje ku vlerësimi dallon (dallimi në mes të vlerësimit për lëvizje mendon është veprim më i mirë dhe vlerësimi për lëvizje të bëra në lojë) tejkalon këtë vlerë, ajo do të shtojë një shënim për këtë lëvizje (të përbërë në variacionin kryesor të motorrit për lëvizje) në panelin shënimit"
 
 #: glade/analyze_game.glade:164
-msgid "Variation annotation creation thresold in centipawns:"
-msgstr ""
+msgid "Variation annotation creation threshold in centipawns:"
+msgstr "Variacion shënim krijimi pragu në inçushtarë:"
 
 #: glade/analyze_game.glade:198
 msgid "Analyze from current position"
-msgstr ""
+msgstr "Analizo nga pozicioni aktual"
 
 #: glade/analyze_game.glade:214
-msgid "Add threatening varation lines "
-msgstr ""
+msgid "Add threatening variation lines "
+msgstr "Shto linja kërcënuese variacioni"
 
 #: glade/analyze_game.glade:229 glade/PyChess.glade:1297
 msgid "Colorize analyzed moves"
@@ -98,7 +99,7 @@ msgstr "Hyr si_Mysafir"
 
 #: glade/fics_logon.glade:227
 msgid "Host:"
-msgstr ""
+msgstr "Pritësi:"
 
 #: glade/fics_logon.glade:259
 msgid "Po_rts:"
@@ -106,7 +107,7 @@ msgstr "Po_rtë:"
 
 #: glade/fics_logon.glade:271
 msgid "Auto login on startup"
-msgstr ""
+msgstr "Hyrje automatike në fillim"
 
 #: glade/fics_logon.glade:385
 msgid "S_ign up"
@@ -296,7 +297,7 @@ msgstr "5 min, 1200-1800, Manuale"
 
 #: glade/fics_lounge.glade:2247
 msgid "Send all seeks"
-msgstr ""
+msgstr "Dërgo t'gjitha kërkimet"
 
 #: glade/fics_lounge.glade:2301
 msgid "Send seek"
@@ -394,7 +395,7 @@ msgstr "<b>Vegla</b>"
 
 #: glade/fics_lounge.glade:3327
 msgid "Asymmetric Random    "
-msgstr ""
+msgstr "Asimetrik të rastësishme"
 
 #: glade/findbar.glade:6
 msgid "window1"
@@ -426,15 +427,15 @@ msgstr "_Fillo Lojen"
 
 #: glade/newInOut.glade:130
 msgid "Copy FEN"
-msgstr ""
+msgstr "Kopjo FEN"
 
 #: glade/newInOut.glade:143
 msgid "Clear"
-msgstr ""
+msgstr "Pastro"
 
 #: glade/newInOut.glade:156
 msgid "Paste FEN"
-msgstr ""
+msgstr "Ngjit FEN"
 
 #: glade/newInOut.glade:257
 msgid "_Black player:"
@@ -454,15 +455,15 @@ msgstr "_Pamatur"
 
 #: glade/newInOut.glade:475
 msgid "Blitz:    5 min"
-msgstr ""
+msgstr "Blitz:    5 min"
 
 #: glade/newInOut.glade:526
 msgid "Rapid:    15 min + 10 sec/move"
-msgstr ""
+msgstr "Shpejtë:    15 min + 10 sek/lëvizje"
 
 #: glade/newInOut.glade:575
 msgid "Normal:   40 min + 15 sec/move"
-msgstr ""
+msgstr "Normale:   40 min + 15 sek/lëvizje"
 
 #: glade/newInOut.glade:684
 msgid "_Play Normal chess"
@@ -490,35 +491,35 @@ msgstr "<b>Shkruaj Shënimin Lojës</b>"
 
 #: glade/newInOut.glade:1314
 msgid "Halfmove clock"
-msgstr ""
+msgstr "Gjysëmlevizje orë "
 
 #: glade/newInOut.glade:1327
 msgid "En passant line"
-msgstr ""
+msgstr "Një linjë kalimi"
 
 #: glade/newInOut.glade:1339
 msgid "Side to move"
-msgstr ""
+msgstr "Anë për të lëvizur"
 
 #: glade/newInOut.glade:1351
 msgid "Move number"
-msgstr ""
+msgstr "Numërim lëvizje"
 
 #: glade/newInOut.glade:1361
 msgid "Black O-O"
-msgstr ""
+msgstr "Zezë O-O"
 
 #: glade/newInOut.glade:1375
 msgid "Black O-O-O"
-msgstr ""
+msgstr "Zezë O-O-O"
 
 #: glade/newInOut.glade:1389
 msgid "White O-O-O"
-msgstr ""
+msgstr "Bardhë O-O-O"
 
 #: glade/newInOut.glade:1403
 msgid "White O-O"
-msgstr ""
+msgstr "Bardhë O-O"
 
 #: glade/promotion.glade:7
 msgid "Promotion"
@@ -550,7 +551,7 @@ msgstr "<b><big>Nxitja torrës në çfarë?</big></b>"
 
 #: glade/PyChess.glade:8
 msgid "Chess client"
-msgstr ""
+msgstr "Klientë shahu"
 
 #: glade/PyChess.glade:11
 msgid ""
@@ -695,13 +696,13 @@ msgstr "Nëse vendosur, kjo fsheh kutinë në krye të dritares së lojës, kur 
 
 #: glade/PyChess.glade:1177
 msgid "_Use main app closer [x] to close all games"
-msgstr ""
+msgstr "_Përdor app kryesorë afër [x] për të mbyllur të gjithë lojrat"
 
 #: glade/PyChess.glade:1182
 msgid ""
 "If set, clicking on main application window closer first time it closes all "
 "games."
-msgstr ""
+msgstr "Nëse është vendosur, duke klikuar në dritaren kryesore mbyllëse të programit për herë të parë mbyll të gjitha lojrat."
 
 #: glade/PyChess.glade:1197
 msgid "Auto _rotate board to current human player"
@@ -761,11 +762,11 @@ msgstr "Shfaq kohën e lëvizjeve kaluar"
 
 #: glade/PyChess.glade:1321
 msgid "If set, the elapsed time that a player used for the move is shown."
-msgstr ""
+msgstr "Nëse caktuar, koha e kaluar se një lojtari e përdorur për lëvizje është treguar."
 
 #: glade/PyChess.glade:1340
 msgid "If set, the hint analyzer engine evaluation value is shown."
-msgstr ""
+msgstr "Nëse caktuar, vlera vlerësimit analizues së motorit është treguar."
 
 #: glade/PyChess.glade:1367
 msgid "<b>General Display Options</b>"
@@ -934,15 +935,15 @@ msgstr "Vëzhgimi _mbaroj:"
 
 #: glade/PyChess.glade:2924
 msgid "Short on _time:"
-msgstr ""
+msgstr "Mbaroj _koha:"
 
 #: glade/PyChess.glade:2977
 msgid "_Invalid move:"
-msgstr ""
+msgstr "_Lëvizje gabuar:"
 
 #: glade/PyChess.glade:3030
 msgid "Activate alarm when _remaining sec is:"
-msgstr ""
+msgstr "Aktivizo alarmin kur _sekondat e mbetur janë:"
 
 #: glade/PyChess.glade:3077
 msgid "<b>Play Sound When...</b>"
@@ -954,39 +955,39 @@ msgstr "_Tinguj"
 
 #: glade/PyChess.glade:3124
 msgid "_Auto save finished games"
-msgstr ""
+msgstr "_Ruaj automatikisht lojrat e mbaruara"
 
 #: glade/PyChess.glade:3159
 msgid "Save files to:"
-msgstr ""
+msgstr "Ruaj skedarë në:"
 
 #: glade/PyChess.glade:3190
 msgid "Use name format:"
-msgstr ""
+msgstr "Formati përdoruesi:"
 
 #: glade/PyChess.glade:3240
 msgid "Names:  #n1, #n2"
-msgstr ""
+msgstr "Emra:  #n1, #n2"
 
 #: glade/PyChess.glade:3253
 msgid "Year, month, day: #y, #m, #d"
-msgstr ""
+msgstr "Viti, muaj, dita: #v, #m, #d"
 
 #: glade/PyChess.glade:3291
 msgid "Save elapsed move _times"
-msgstr ""
+msgstr "Ruaj lëvizjen_kohës kaluar"
 
 #: glade/PyChess.glade:3316
 msgid "Save analyzing engine _evaluation values"
-msgstr ""
+msgstr "Ruaj analizën e vlerave e _vlerësimit së motorit "
 
 #: glade/PyChess.glade:3341
 msgid "Save _own games only"
-msgstr ""
+msgstr "Ruani vetën lojën _tuaj "
 
 #: glade/PyChess.glade:3370
 msgid "Save"
-msgstr ""
+msgstr "Ruaj"
 
 #: glade/PyChess.glade:3409
 msgid "_Game"
@@ -1030,7 +1031,7 @@ msgstr "Ruaj Lojën _Si"
 
 #: glade/PyChess.glade:3534
 msgid "Share Game"
-msgstr ""
+msgstr "Shpërndaj lojën"
 
 #: glade/PyChess.glade:3544
 msgid "_Export Position"
@@ -1050,11 +1051,11 @@ msgstr "_Modifiko"
 
 #: glade/PyChess.glade:3648
 msgid "_Copy PGN"
-msgstr ""
+msgstr "_Kopjo PGN"
 
 #: glade/PyChess.glade:3660
 msgid "_Copy FEN"
-msgstr ""
+msgstr "_Kopjo FEN"
 
 #: glade/PyChess.glade:3677
 msgid "_Engines"
@@ -1272,17 +1273,17 @@ msgstr "'%s' nuk është një emër i regjistruar"
 msgid ""
 "The entered password was invalid.\n"
 "If you forgot your password, go to <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a> to request a new one over email."
-msgstr ""
+msgstr "Fjalëkalimi i futur nuk është i vlefshëm.\nNëse keni harruar fjalëkalimin, shko në <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a> për të kërkuar një të ri ndërmjet email."
 
 #: lib/pychess/ic/FICSConnection.py:130
 #, python-format
 msgid "Sorry '%s' is already logged in"
-msgstr ""
+msgstr "Më vjen keq '%s' është i kyçur tashmë"
 
 #: lib/pychess/ic/FICSConnection.py:131
 #, python-format
-msgid "'%s' is a registered name.  If it is yours, type the passworld."
-msgstr ""
+msgid "'%s' is a registered name.  If it is yours, type the password."
+msgstr "'%s' është një emër i regjistruar. Në qoftë se kjo është e juaja, shkruani fjalëkalimin."
 
 #: lib/pychess/ic/FICSConnection.py:149
 msgid "Connecting to server"
@@ -1303,7 +1304,7 @@ msgstr "%(player)s është %(status)s"
 
 #: lib/pychess/ic/FICSObjects.py:46
 msgid "not playing"
-msgstr ""
+msgstr "dukemos luajtur"
 
 #: lib/pychess/ic/FICSObjects.py:54 lib/pychess/ic/ICLounge.py:1020
 #: lib/pychess/ic/ICLounge.py:2006 lib/pychess/ic/__init__.py:98
@@ -1457,7 +1458,7 @@ msgstr "Ju mund të keni vetëm 3 teprica kërkuese në të njëjtën kohë. Në
 
 #: lib/pychess/ic/ICLounge.py:237
 msgid " has declined your offer for a match"
-msgstr ""
+msgstr "ka refuzuar ofertën tuaj për një ndeshje"
 
 #: lib/pychess/ic/ICLounge.py:250
 msgid " is censoring you"
@@ -1465,11 +1466,11 @@ msgstr "censurimi juaj"
 
 #: lib/pychess/ic/ICLounge.py:263
 msgid " noplay listing you"
-msgstr ""
+msgstr "i listuar jashtëloje"
 
 #: lib/pychess/ic/ICLounge.py:278
 msgid " uses a formula not fitting your match request:"
-msgstr ""
+msgstr "përdor një formulë jo të përshtatshëm kërkesës tuaj për ndeshje:"
 
 #: lib/pychess/ic/ICLounge.py:292
 msgid "to manual accept"
@@ -1557,7 +1558,7 @@ msgstr "Panjohur"
 msgid ""
 "You are currently logged in as a guest.\n"
 "A guest can't play rated games and therefore isn't able to play as many of the types of matches offered as a registered user. To register an account, go to <a href=\"http://www.freechess.org/Register/index.html\">http://www.freechess.org/Register/index.html</a>."
-msgstr ""
+msgstr "Ju jeni i kyçur aktualisht si mysafir.\nNjë mysafir nuk mund të luajë lojëra të vlerësuara dhe për këtë arsye nuk është në gjendje për të luajtur lojëra e llojeve të ndeshjeve të ofruara si përdorues i regjistruar. Për të regjistruar një llogari, shko në <a href=\"http://www.freechess.org/Register/index.html\">http://www.freechess.org/Register/index.html</a>."
 
 #: lib/pychess/ic/ICLounge.py:636 lib/pychess/ic/ICLounge.py:1020
 msgid "Name"
@@ -1594,11 +1595,11 @@ msgstr " Ju sfidon në një <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> lojë"
 msgid " where <b>%(player)s</b> plays <b>%(color)s</b>."
 msgstr " ku <b>%(player)s</b> luan <b>%(color)s</b>."
 
-#: lib/pychess/ic/ICLounge.py:807 lib/pychess/Players/Human.py:247
+#: lib/pychess/ic/ICLounge.py:807 lib/pychess/Players/Human.py:250
 msgid "Accept"
 msgstr "Prano"
 
-#: lib/pychess/ic/ICLounge.py:808 lib/pychess/Players/Human.py:248
+#: lib/pychess/ic/ICLounge.py:808 lib/pychess/Players/Human.py:251
 msgid "Decline"
 msgstr "Refuzo"
 
@@ -1885,204 +1886,204 @@ msgstr "D"
 msgid "The engine %s reports an error:"
 msgstr "Motori %s raporton një gabim:"
 
-#: lib/pychess/Players/Human.py:19
+#: lib/pychess/Players/Human.py:20
 msgid "Your opponent has offered you a draw."
 msgstr "Kundërshtari juaj ju ofroi një parëzim. "
 
-#: lib/pychess/Players/Human.py:20
+#: lib/pychess/Players/Human.py:21
 msgid ""
 "Your opponent has offered you a draw. If you accept this offer, the game "
 "will end with a score of 1/2 - 1/2."
 msgstr "Kundërshtari juaj ju ka ofruar një barazim. Në qoftë se ju pranoni këtë ofertë, loja do të përfundojë me një rezultat prej 1/2 - 1/2."
 
-#: lib/pychess/Players/Human.py:22
+#: lib/pychess/Players/Human.py:23
 msgid "Your opponent wants to abort the game."
 msgstr "Kundërshtari juaj do të ndërpresi lojën."
 
-#: lib/pychess/Players/Human.py:23
+#: lib/pychess/Players/Human.py:24
 msgid ""
 "Your opponent has asked that the game be aborted. If you accept this offer, "
 "the game will end with no rating change."
 msgstr "Kundërshtari juaj ka kërkuar që loja të ndërpritet. Në qoftë se ju pranoni këtë ofertë, loja do të përfundojë me asnjë vlerësim ndryshimi."
 
-#: lib/pychess/Players/Human.py:25
+#: lib/pychess/Players/Human.py:26
 msgid "Your opponent wants to adjourn the game."
 msgstr "Kundërshtari juaj do të shtyjë lojën."
 
-#: lib/pychess/Players/Human.py:26
+#: lib/pychess/Players/Human.py:27
 msgid ""
 "Your opponent has asked that the game be adjourned. If you accept this "
 "offer, the game will be adjourned and you can resume it later (when your "
 "opponent is online and both players agree to resume)."
 msgstr "Kundërshtari juaj ka kërkuar që loja të shtyhet. Në qoftë se ju pranoni këtë ofertë, loja do të shtyhet dhe ju mund të rifillojë më vonë (kur kundërshtari juaj është në linjë dhe të dy lojtarët bien dakord të rinisin)."
 
-#: lib/pychess/Players/Human.py:28
+#: lib/pychess/Players/Human.py:29
 #, python-format
 msgid "Your opponent wants to undo %s move(s)."
 msgstr "Kundërshtari juaj do të ribëjë %s lëvizje(s)."
 
-#: lib/pychess/Players/Human.py:29
+#: lib/pychess/Players/Human.py:30
 #, python-format
 msgid ""
 "Your opponent has asked that the last %s move(s) be undone. If you accept "
 "this offer, the game will continue from the earlier position."
 msgstr "Kundërshtari juaj ka kërkuar që lëvizjet e %s kaluara(s) të kthehen. Në qoftë se ju pranoni këtë ofertë, loja do të vazhdojë nga pozicioni mëparshëm."
 
-#: lib/pychess/Players/Human.py:31
+#: lib/pychess/Players/Human.py:32
 msgid "Your opponent wants to pause the game."
 msgstr "Kundërshtari juaj do të bëj një pauzë të lojës."
 
-#: lib/pychess/Players/Human.py:32
+#: lib/pychess/Players/Human.py:33
 msgid ""
 "Your opponent has asked that the game be paused. If you accept this offer, "
 "the game clock will be paused until both players agree to resume the game."
 msgstr "Kundërshtari juaj ka kërkuar që loja të ndalohet. Në qoftë se ju pranoni këtë ofertë, ora e lojes do të jenë ndaluar derisa të dy lojtarët të bien dakord për të rifilluar lojën."
 
-#: lib/pychess/Players/Human.py:34
+#: lib/pychess/Players/Human.py:35
 msgid "Your opponent wants to resume the game."
 msgstr "Kundërshtari juaj do të rifillojë lojën."
 
-#: lib/pychess/Players/Human.py:35
+#: lib/pychess/Players/Human.py:36
 msgid ""
 "Your opponent has asked that the game be resumed. If you accept this offer, "
 "the game clock will continue from where it was paused."
 msgstr "Kundërshtari juaj ka kërkuar që loja të rifillojë. Në qoftë se ju pranoni këtë ofertë, ora e lojes do të vazhdojë nga ku ajo ishte ndaluar."
 
-#: lib/pychess/Players/Human.py:39
+#: lib/pychess/Players/Human.py:40
 msgid "The resignation"
 msgstr "Dorëheqja"
 
-#: lib/pychess/Players/Human.py:40
+#: lib/pychess/Players/Human.py:41
 msgid "The flag call"
 msgstr "Thirrje Flamuri"
 
-#: lib/pychess/Players/Human.py:41
+#: lib/pychess/Players/Human.py:42
 msgid "The draw offer"
 msgstr "Oferta Remi"
 
-#: lib/pychess/Players/Human.py:42
+#: lib/pychess/Players/Human.py:43
 msgid "The abort offer"
 msgstr "Ofertë ndërprerje"
 
-#: lib/pychess/Players/Human.py:43
+#: lib/pychess/Players/Human.py:44
 msgid "The adjourn offer"
 msgstr "Oferta pezullo"
 
-#: lib/pychess/Players/Human.py:44
+#: lib/pychess/Players/Human.py:45
 msgid "The pause offer"
 msgstr "Oferta pushim"
 
-#: lib/pychess/Players/Human.py:45
+#: lib/pychess/Players/Human.py:46
 msgid "The resume offer"
 msgstr "Oferta rinisë"
 
-#: lib/pychess/Players/Human.py:46
+#: lib/pychess/Players/Human.py:47
 msgid "The offer to switch sides"
 msgstr "Oferta për të ndryshuar anët"
 
-#: lib/pychess/Players/Human.py:47
+#: lib/pychess/Players/Human.py:48
 msgid "The takeback offer"
 msgstr "Oferta merrmbrapa"
 
-#: lib/pychess/Players/Human.py:51
+#: lib/pychess/Players/Human.py:52
 msgid "resign"
 msgstr "tërhiqu"
 
-#: lib/pychess/Players/Human.py:52
+#: lib/pychess/Players/Human.py:53
 msgid "call your opponents flag"
 msgstr "thirr flamujt e kundërshtarët tuaj"
 
-#: lib/pychess/Players/Human.py:53
+#: lib/pychess/Players/Human.py:54
 msgid "offer a draw"
 msgstr "Ofro një Barazim"
 
-#: lib/pychess/Players/Human.py:54
+#: lib/pychess/Players/Human.py:55
 msgid "offer an abort"
 msgstr "Ofro një ndërprerje"
 
-#: lib/pychess/Players/Human.py:55
+#: lib/pychess/Players/Human.py:56
 msgid "offer to adjourn"
 msgstr "Ofro një pezullim"
 
-#: lib/pychess/Players/Human.py:56
+#: lib/pychess/Players/Human.py:57
 msgid "offer a pause"
 msgstr "Ofro një pushim"
 
-#: lib/pychess/Players/Human.py:57
+#: lib/pychess/Players/Human.py:58
 msgid "offer to resume"
 msgstr "Ofro një rifillim"
 
-#: lib/pychess/Players/Human.py:58
+#: lib/pychess/Players/Human.py:59
 msgid "offer to switch sides"
 msgstr "Ofro një ndryshim anësh"
 
-#: lib/pychess/Players/Human.py:59
+#: lib/pychess/Players/Human.py:60
 msgid "offer a takeback"
 msgstr "Ofro një merrmbrapa"
 
-#: lib/pychess/Players/Human.py:60
+#: lib/pychess/Players/Human.py:61
 msgid "ask your opponent to move"
 msgstr "kërkoi kundërshtarit tuaj për të lëvizur"
 
-#: lib/pychess/Players/Human.py:65
+#: lib/pychess/Players/Human.py:66
 msgid "Your opponent is not out of time."
 msgstr "Kundërshtari juaj nuk është jashtë kohe."
 
-#: lib/pychess/Players/Human.py:67
+#: lib/pychess/Players/Human.py:68
 msgid "The clock hasn't been started yet."
 msgstr "Ora nuk ka filluar ende."
 
-#: lib/pychess/Players/Human.py:69
+#: lib/pychess/Players/Human.py:70
 msgid "You can't switch colors during the game."
 msgstr "Ju nuk mund të ndryshoni ngjyra gjatë lojës."
 
-#: lib/pychess/Players/Human.py:71
+#: lib/pychess/Players/Human.py:72
 msgid "You have tried to undo too many moves."
 msgstr "Ju keni provuar për të ndrequr shumë lëvizje."
 
-#: lib/pychess/Players/Human.py:178
+#: lib/pychess/Players/Human.py:180
 msgid "Your opponent asks you to hurry!"
 msgstr "Kundërshtari juaj ju pyet që të ngutemi!"
 
-#: lib/pychess/Players/Human.py:179
+#: lib/pychess/Players/Human.py:181
 msgid ""
 "Generally this means nothing, as the game is time-based, but if you want to "
 "please your opponent, perhaps you should get going."
 msgstr "Në përgjithësi kjo do të thotë asgjë, pasi loja është e bazuar në kohë, por në qoftë se ju doni të kënaqni kundërshtarin tuaj, ndoshta ju duhet të merrni do."
 
-#: lib/pychess/Players/Human.py:255
+#: lib/pychess/Players/Human.py:259
 #, python-format
 msgid "%s was declined by your opponent"
 msgstr "%s është refuzuar nga kundërshtari juaj"
 
-#: lib/pychess/Players/Human.py:256
+#: lib/pychess/Players/Human.py:260
 #, python-format
 msgid "Resend %s?"
 msgstr "Ridergoni %s?"
 
-#: lib/pychess/Players/Human.py:263
+#: lib/pychess/Players/Human.py:267
 msgid "Resend"
 msgstr "Ridërgoni"
 
-#: lib/pychess/Players/Human.py:270
+#: lib/pychess/Players/Human.py:275
 #, python-format
 msgid "%s was withdrawn by your opponent"
 msgstr "%s është tërhequr nga kundërshtari juaj"
 
-#: lib/pychess/Players/Human.py:271
+#: lib/pychess/Players/Human.py:276
 msgid "Your opponent seems to have changed their mind."
 msgstr "Kundërshtari juaj duket të ketë ndryshuar mendjen e tyre."
 
-#: lib/pychess/Players/Human.py:284
+#: lib/pychess/Players/Human.py:290
 #, python-format
 msgid "Unable to accept %s"
 msgstr "Në pamundësi për të pranuar %s"
 
-#: lib/pychess/Players/Human.py:285
+#: lib/pychess/Players/Human.py:291
 msgid "Probably because it has been withdrawn."
 msgstr "Ndoshta për shkak se ajo është tërhequr."
 
-#: lib/pychess/Players/Human.py:292
+#: lib/pychess/Players/Human.py:298
 #, python-format
 msgid "%s returns an error"
 msgstr "%s kthen një gabim"
@@ -2093,11 +2094,11 @@ msgstr "Shah Alfa 2 Diagram"
 
 #: lib/pychess/Savers/chesspastebin.py:39
 msgid "Game shared at "
-msgstr ""
+msgstr "Loja e shpërndarë në"
 
 #: lib/pychess/Savers/chesspastebin.py:41
 msgid "(Link is available on clipboard.)"
-msgstr ""
+msgstr "(Lidhja është në dispozicion në tabelë.)"
 
 #: lib/pychess/Savers/database.py:19
 msgid "PyChess database"
@@ -2138,7 +2139,7 @@ msgstr "Lojë Shahu"
 
 #: lib/pychess/Savers/pgn.py:363
 msgid "Invalid move."
-msgstr ""
+msgstr "Lëvizje gabuar."
 
 #: lib/pychess/Savers/png.py:15
 msgid "Png image"
@@ -2299,12 +2300,12 @@ msgstr "Sepse %(loser)s mbreti shpërtheu"
 #: lib/pychess/Utils/repr.py:46
 #, python-format
 msgid "Because %(winner)s king reached the center"
-msgstr ""
+msgstr "Sepse %(winner)s mbreti arriti në qendër"
 
 #: lib/pychess/Utils/repr.py:47
 #, python-format
 msgid "Because %(winner)s was giving check 3 times"
-msgstr ""
+msgstr "Sepse %(winner)s i është dhënë shah 3 herë"
 
 #: lib/pychess/Utils/repr.py:49
 msgid "Because a player lost connection"
@@ -2371,7 +2372,7 @@ msgstr "Për shkak se një lojtar e ndërpreu lojën. Ose lojtari mund të ndër
 msgid ""
 "Because a player disconnected and there are too few moves to warrant "
 "adjournment. No rating changes have occurred."
-msgstr ""
+msgstr "Sepse një lojtar i shkëputur dhe ka shumë pak lëvizje që kërkojnë shtyrje. Nuk ka ndryshime pozicioni."
 
 #: lib/pychess/Utils/repr.py:63
 msgid "Because the server was shut down. No rating changes have occurred."
@@ -2407,45 +2408,45 @@ msgstr "sek"
 msgid ""
 "ASEAN: http://www.ncf-"
 "phil.org/downloadables/2014/May/Asean_chess/Laws_of_ASEAN_Chess_2011_Nov_26.doc"
-msgstr ""
+msgstr "ASEAN: http://www.ncf-phil.org/downloadables/2014/May/Asean_chess/Laws_of_ASEAN_Chess_2011_Nov_26.doc"
 
 #: lib/pychess/Variants/asean.py:13
 msgid "ASEAN"
-msgstr ""
+msgstr "ASEAN"
 
 #: lib/pychess/Variants/asean.py:33
 msgid "Makruk: http://en.wikipedia.org/wiki/Makruk"
-msgstr ""
+msgstr "Makruk: http://en.wikipedia.org/wiki/Makruk"
 
 #: lib/pychess/Variants/asean.py:34
 msgid "Makruk"
-msgstr ""
+msgstr "Makruk"
 
 #: lib/pychess/Variants/asean.py:60
 msgid "Cambodian: http://www.khmerinstitute.org/culture/ok.html"
-msgstr ""
+msgstr "Kambodian: http://www.khmerinstitute.org/culture/ok.html"
 
 #: lib/pychess/Variants/asean.py:61
 msgid "Cambodian"
-msgstr ""
+msgstr "Kambodian"
 
 #: lib/pychess/Variants/asean.py:86
 msgid ""
 "Ai-Wok: http://www.open-"
 "aurec.com/wbforum/viewtopic.php?p=199364&sid=20963a1de2c164050de019e5ed6bf7c4#p199364"
-msgstr ""
+msgstr "Ai-Wok: http://www.open-aurec.com/wbforum/viewtopic.php?p=199364&sid=20963a1de2c164050de019e5ed6bf7c4#p199364"
 
 #: lib/pychess/Variants/asean.py:87
 msgid "Ai-Wok"
-msgstr ""
+msgstr "Ai-Wok"
 
 #: lib/pychess/Variants/asean.py:111
 msgid "Sittuyin: http://en.wikipedia.org/wiki/Sittuyin"
-msgstr ""
+msgstr "Sittuyin: http://en.wikipedia.org/wiki/Sittuyin"
 
 #: lib/pychess/Variants/asean.py:112
 msgid "Sittuyin"
-msgstr ""
+msgstr "Sittuyin"
 
 #: lib/pychess/Variants/asymmetricrandom.py:12
 msgid ""
@@ -2531,11 +2532,11 @@ msgstr "FICS shtëpi-çmendur: http://www.freechess.org/Help/HelpFiles/crazyhous
 
 #: lib/pychess/Variants/euroshogi.py:9
 msgid "EuroShogi: http://en.wikipedia.org/wiki/EuroShogi"
-msgstr ""
+msgstr "EuroShogi: http://en.wikipedia.org/wiki/EuroShogi"
 
 #: lib/pychess/Variants/euroshogi.py:10
 msgid "EuroShogi"
-msgstr ""
+msgstr "EuroShogi"
 
 #: lib/pychess/Variants/fischerandom.py:18
 msgid ""
@@ -2551,11 +2552,11 @@ msgstr "Fischer Rastësishëm"
 msgid ""
 "Bringing your king legally to the center (e4, d4, e5, d5) instantly wins the game!\n"
 "Normal rules apply in other cases and checkmate also ends the game."
-msgstr ""
+msgstr "Sjellja e mbretit tuaj ligjërisht në qendër (e4, d4, e5, d5) menjëherë fiton lojën!\nRregullat normale aplikohen në raste të tjera dhe shahmate gjithashtu përfundon lojën."
 
 #: lib/pychess/Variants/kingofthehill.py:10
 msgid "King of the hill"
-msgstr ""
+msgstr "Mbreti i lartësisë"
 
 #: lib/pychess/Variants/knightodds.py:8
 msgid "One player starts with one less knight piece"
@@ -2664,11 +2665,11 @@ msgstr "Theban"
 
 #: lib/pychess/Variants/threecheck.py:10
 msgid "Win by giving check 3 times"
-msgstr ""
+msgstr "Fito duke dhënë 3 herë shah"
 
 #: lib/pychess/Variants/threecheck.py:11
 msgid "Three-check"
-msgstr ""
+msgstr "Tre-shah"
 
 #: lib/pychess/Variants/upsidedown.py:10
 msgid ""
@@ -2715,11 +2716,11 @@ msgstr "Kala-terbuar përzierje"
 
 #: lib/pychess/widgets/analyzegameDialog.py:81
 msgid "Game analyzing in progress..."
-msgstr ""
+msgstr "Analiza e lojës në progres..."
 
 #: lib/pychess/widgets/analyzegameDialog.py:82
 msgid "Do you want to abort it?"
-msgstr ""
+msgstr "Dëshironi ta ndërprisni?"
 
 #: lib/pychess/widgets/analyzegameDialog.py:88
 #: lib/pychess/widgets/gamewidget.py:197 lib/pychess/widgets/gamewidget.py:315
@@ -2746,23 +2747,23 @@ msgstr "Ngarko informacionet e lojtarit"
 msgid "Receiving list of players"
 msgstr "Marrja e listës së lojtarëve"
 
-#: lib/pychess/widgets/ChatWindow.py:487
+#: lib/pychess/widgets/ChatWindow.py:488
 msgid "Friends"
-msgstr ""
+msgstr "Shoqëria"
 
-#: lib/pychess/widgets/ChatWindow.py:497
+#: lib/pychess/widgets/ChatWindow.py:499
 msgid "More channels"
 msgstr "Më shumë kanale"
 
-#: lib/pychess/widgets/ChatWindow.py:504
+#: lib/pychess/widgets/ChatWindow.py:507
 msgid "More players"
 msgstr "Më shumë lojtarë"
 
-#: lib/pychess/widgets/ChatWindow.py:649
+#: lib/pychess/widgets/ChatWindow.py:653
 msgid "Conversations"
 msgstr "Biseda"
 
-#: lib/pychess/widgets/ChatWindow.py:651
+#: lib/pychess/widgets/ChatWindow.py:655
 msgid "Conversation info"
 msgstr "Informacion bisede"
 
@@ -2772,104 +2773,104 @@ msgstr "Përzgjedh motorin"
 
 #: lib/pychess/widgets/enginesDialog.py:156
 msgid "Executable files"
-msgstr ""
+msgstr "Skedarë ekzekutues"
 
 #: lib/pychess/widgets/enginesDialog.py:176
 #: lib/pychess/widgets/enginesDialog.py:210
 #: lib/pychess/widgets/enginesDialog.py:235
 #, python-format
 msgid "<big><b>Unable to add %s</b></big>"
-msgstr ""
+msgstr "<big><b>I pamundur shtimi %s</b></big>"
 
 #: lib/pychess/widgets/enginesDialog.py:177
 msgid "wine not installed"
-msgstr ""
+msgstr "wine jo i instaluar"
 
 #: lib/pychess/widgets/enginesDialog.py:211
 #: lib/pychess/widgets/enginesDialog.py:236
 msgid "There is something wrong with this executable"
-msgstr ""
+msgstr "Ka diçka të gabuar me këtë ekzekutues"
 
 #: lib/pychess/widgets/enginesDialog.py:266
 msgid "Select working directory"
 msgstr "Përzgjedh skedarë funksional"
 
-#: lib/pychess/widgets/gamenanny.py:114
+#: lib/pychess/widgets/gamenanny.py:115
 #, python-format
 msgid " invalid engine move: %s"
-msgstr ""
+msgstr " lëvizje e gabuar motorri: %s"
 
-#: lib/pychess/widgets/gamenanny.py:133
+#: lib/pychess/widgets/gamenanny.py:134
 msgid "Offer Rematch"
 msgstr "Ofro Ndeshjekthimi"
 
-#: lib/pychess/widgets/gamenanny.py:135 lib/pychess/widgets/gamenanny.py:146
+#: lib/pychess/widgets/gamenanny.py:136 lib/pychess/widgets/gamenanny.py:147
 #, python-format
 msgid "Observe %s"
-msgstr ""
+msgstr "Vëzhgo %s"
 
-#: lib/pychess/widgets/gamenanny.py:167
+#: lib/pychess/widgets/gamenanny.py:168
 msgid "Play Rematch"
 msgstr "Luaj Ndeshjekthimi"
 
-#: lib/pychess/widgets/gamenanny.py:170
+#: lib/pychess/widgets/gamenanny.py:171
 msgid "Undo one move"
 msgstr "Kthe një veprim"
 
-#: lib/pychess/widgets/gamenanny.py:172
+#: lib/pychess/widgets/gamenanny.py:173
 msgid "Undo two moves"
 msgstr "Kthe dy veprime"
 
-#: lib/pychess/widgets/gamenanny.py:205
+#: lib/pychess/widgets/gamenanny.py:203
 msgid "The game is paused"
 msgstr "Loja është e ndaluar"
 
-#: lib/pychess/widgets/gamenanny.py:225 lib/pychess/widgets/gamenanny.py:226
+#: lib/pychess/widgets/gamenanny.py:221 lib/pychess/widgets/gamenanny.py:222
 msgid "Loaded game"
 msgstr "Loja ngarkuar"
 
-#: lib/pychess/widgets/gamenanny.py:232
+#: lib/pychess/widgets/gamenanny.py:228
 msgid "Saved game"
 msgstr "Loja ruajtur"
 
-#: lib/pychess/widgets/gamenanny.py:236
+#: lib/pychess/widgets/gamenanny.py:232
 msgid "Analyzer started"
 msgstr "Analizuesi filloj"
 
-#: lib/pychess/widgets/gamenanny.py:285
+#: lib/pychess/widgets/gamenanny.py:281
 msgid "You sent an abort offer"
 msgstr "Ju dërguat një ofertë ndërprerje"
 
-#: lib/pychess/widgets/gamenanny.py:287
+#: lib/pychess/widgets/gamenanny.py:283
 msgid "You sent an adjournment offer"
 msgstr "Ju dërguat një ofertë pezullimi"
 
-#: lib/pychess/widgets/gamenanny.py:289
+#: lib/pychess/widgets/gamenanny.py:285
 msgid "You sent a draw offer"
 msgstr "Ju dërguat një ofertë rem"
 
-#: lib/pychess/widgets/gamenanny.py:291
+#: lib/pychess/widgets/gamenanny.py:287
 msgid "You sent a pause offer"
 msgstr "Ju dërguat një ofertë pushimi"
 
-#: lib/pychess/widgets/gamenanny.py:293
+#: lib/pychess/widgets/gamenanny.py:289
 msgid "You sent a resume offer"
 msgstr "Ju dërguat një ofertë rinisëse"
 
-#: lib/pychess/widgets/gamenanny.py:295
+#: lib/pychess/widgets/gamenanny.py:291
 msgid "You sent an undo offer"
 msgstr "Ju dërguat një ofertë kthimi"
 
-#: lib/pychess/widgets/gamenanny.py:297
+#: lib/pychess/widgets/gamenanny.py:293
 msgid "You asked your opponent to move"
 msgstr "Ju kërkuat kundërshtarin tuaj për të lëvizur"
 
-#: lib/pychess/widgets/gamenanny.py:309
+#: lib/pychess/widgets/gamenanny.py:305
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
 msgstr "<big><b>Motorri, %s, ka vdekur</b></big>"
 
-#: lib/pychess/widgets/gamenanny.py:310
+#: lib/pychess/widgets/gamenanny.py:306
 msgid ""
 "PyChess has lost connection to the engine, probably because it has died.\n"
 "\n"
@@ -2910,11 +2911,11 @@ msgstr "Rifillo"
 
 #: lib/pychess/widgets/gamewidget.py:323
 msgid "Offer Pause"
-msgstr ""
+msgstr "Ofro Pushim"
 
 #: lib/pychess/widgets/gamewidget.py:324
 msgid "Offer Resume"
-msgstr ""
+msgstr "Ofro Rifillim"
 
 #: lib/pychess/widgets/gamewidget.py:328
 msgid "Undo"
@@ -2924,51 +2925,51 @@ msgstr "Kthe"
 msgid "Offer Undo"
 msgstr "Ofro  Kthe"
 
-#: lib/pychess/widgets/gamewidget.py:479 lib/pychess/widgets/gamewidget.py:584
+#: lib/pychess/widgets/gamewidget.py:479 lib/pychess/widgets/gamewidget.py:580
 msgid "vs"
 msgstr "vs"
 
-#: lib/pychess/widgets/gamewidget.py:529
+#: lib/pychess/widgets/gamewidget.py:530
 msgid " has lagged for 30 seconds"
-msgstr ""
+msgstr "është vonuar për 30 sekonda"
+
+#: lib/pychess/widgets/gamewidget.py:546
+msgid " is lagging heavily but hasn't disconnected"
+msgstr "është vonuar shumë, por nuk është shkëputur"
 
 #: lib/pychess/widgets/gamewidget.py:547
-msgid " is lagging heavily but hasn't disconnected"
-msgstr ""
-
-#: lib/pychess/widgets/gamewidget.py:548
 msgid "Continue to wait for opponent, or try to adjourn the game?"
-msgstr ""
+msgstr "Vazhdoni të prisni për kundërshtarin, ose përpiquni të shtyni lojën?"
 
-#: lib/pychess/widgets/gamewidget.py:556
+#: lib/pychess/widgets/gamewidget.py:555
 msgid "Wait"
 msgstr "Prit"
 
-#: lib/pychess/widgets/gamewidget.py:557
+#: lib/pychess/widgets/gamewidget.py:556
 msgid "Adjourn"
-msgstr ""
+msgstr "Pezulloj"
 
-#: lib/pychess/widgets/gamewidget.py:632
+#: lib/pychess/widgets/gamewidget.py:628
 msgid "Jump to initial position"
 msgstr "Shko ne pozicionin fillestar"
 
-#: lib/pychess/widgets/gamewidget.py:637
+#: lib/pychess/widgets/gamewidget.py:633
 msgid "Step back one move"
 msgstr "Shko prapa një levizje"
 
-#: lib/pychess/widgets/gamewidget.py:642
+#: lib/pychess/widgets/gamewidget.py:638
 msgid "Step forward one move"
 msgstr "Shko para një lëvizje"
 
-#: lib/pychess/widgets/gamewidget.py:647
+#: lib/pychess/widgets/gamewidget.py:643
 msgid "Jump to latest position"
 msgstr "Shko tek pozicioni fundit"
 
-#: lib/pychess/widgets/gamewidget.py:881
+#: lib/pychess/widgets/gamewidget.py:874
 msgid "<b><big>PyChess was unable to load your panel settings</big></b>"
 msgstr "<b><big>PyShah nuk ishte në gjendje për të ngarkuar parametrat tuaj panelit</big></b>"
 
-#: lib/pychess/widgets/gamewidget.py:882
+#: lib/pychess/widgets/gamewidget.py:875
 msgid ""
 "Your panel settings have been reset. If this problem repeats, you should "
 "report it to the developers"
@@ -2987,7 +2988,7 @@ msgstr "Vizitor"
 
 #: lib/pychess/widgets/ionest.py:90
 msgid "<big><b>Error loading game</big></b>"
-msgstr ""
+msgstr "<big><b>Gabim në ngarkimin e lojës</big></b>"
 
 #: lib/pychess/widgets/ionest.py:124 lib/pychess/widgets/newGameDialog.py:480
 msgid "Open Game"
@@ -3088,7 +3089,7 @@ msgstr "Ruaj lëvizjet para mbylljes?"
 
 #: lib/pychess/widgets/ionest.py:336
 msgid "Unable to save to configured file. Save the games before closing?"
-msgstr ""
+msgstr "Në pamundësi për të ruajtur në skedarin e konfiguruar. Ruaj lojën para se ta mbyllni?"
 
 #: lib/pychess/widgets/ionest.py:363
 #, python-format
@@ -3099,13 +3100,13 @@ msgstr[1] "_Ruaj %d dokumentet"
 
 #: lib/pychess/widgets/ionest.py:409
 msgid "Save the current game before you close it?"
-msgstr ""
+msgstr "Ruaj lojën aktuale para se të mbyllni atë?"
 
 #: lib/pychess/widgets/ionest.py:417
 msgid ""
 "Unable to save to configured file. Save the current game before you close "
 "it?"
-msgstr ""
+msgstr "Në pamundësi për të ruajtur në skedarin e konfiguruar. Ruaj lojën aktuale para se të mbyllni atë?"
 
 #: lib/pychess/widgets/ionest.py:431
 msgid ""
@@ -3159,7 +3160,7 @@ msgstr "Shanset"
 
 #: lib/pychess/widgets/newGameDialog.py:269
 msgid "Asian variants"
-msgstr ""
+msgstr "Variante aziatik"
 
 #: lib/pychess/widgets/newGameDialog.py:301
 msgid " chess"
@@ -3167,7 +3168,7 @@ msgstr "Shah"
 
 #: lib/pychess/widgets/newGameDialog.py:682
 msgid "Type or paste PGN game or FEN positions here"
-msgstr ""
+msgstr "Shkruaj ose ngjit këtu pozicionet e lojës PGN ose Fen"
 
 #: lib/pychess/widgets/newGameDialog.py:725
 msgid "Enter Game"
@@ -3199,7 +3200,7 @@ msgstr "Paneli papërshkrimit"
 
 #: lib/pychess/widgets/preferencesDialog.py:630
 msgid "Select auto save path"
-msgstr ""
+msgstr "Zgjedh rrugën automatike ruajtëse"
 
 #: lib/pychess/widgets/tipOfTheDay.py:51
 msgid ""
@@ -3211,7 +3212,7 @@ msgstr "Ju mund të filloni një lojë të re duke<b>Lojë</b> > <b>Lojë e Re <
 #: lib/pychess/widgets/tipOfTheDay.py:52
 msgid ""
 "You can choose from 20 different difficulties to play against the computer."
-msgstr ""
+msgstr "Ju mund të zgjidhni nga 20 vështirësi të ndryshme për të luajtur kundër kompjuter."
 
 #: lib/pychess/widgets/tipOfTheDay.py:53
 msgid ""
@@ -3294,7 +3295,7 @@ msgid ""
 "FEN needs 6 data fields. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "FEN ka nevojë për 6 fushat e të dhënave. \n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:154
 #, python-format
@@ -3302,7 +3303,7 @@ msgid ""
 "FEN needs at least 2 data fields in fenstr. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "FEN ka nevojë për të paktën 2 fusha të dhënash në fenstr. \n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:175
 #, python-format
@@ -3310,7 +3311,7 @@ msgid ""
 "Needs 7 slashes in piece placement field. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Nevojiten 7 lëvizje në pjesët e vendosura në fushë. \n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:178
 #, python-format
@@ -3318,7 +3319,7 @@ msgid ""
 "Active color field must be one of w or b. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Ngjyra aktive e fushës duhet të jetë njëra e w ose b. \n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:189
 #, python-format
@@ -3326,7 +3327,7 @@ msgid ""
 "Castling availability field is not legal. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Vlefshmëria e fushës për rrëke nuk është e ligjshme. \n\n%s"
 
 #: lib/pychess/Utils/lutils/LBoard.py:192
 #, python-format
@@ -3334,11 +3335,11 @@ msgid ""
 "En passant cord is not legal. \n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Marrëveshja kalimtare nuk është e ligjshme. \n\n%s"
 
 #: lib/pychess/Utils/lutils/lmove.py:260
 msgid "invalid promoted piece"
-msgstr ""
+msgstr "Gurë i promovuar paligjmërisht"
 
 #: lib/pychess/Utils/lutils/lmove.py:272
 msgid "the move needs a piece and a cord"
@@ -3351,12 +3352,12 @@ msgstr "promovimin veprim pa pjesë të promovuar guri është e pasaktë"
 #: lib/pychess/Utils/lutils/lmove.py:312
 #, python-format
 msgid "the captured cord (%s) is incorrect"
-msgstr "lidhja e kapur (%s) është i pasaktë"
+msgstr "lidhja e kapur (%s) është e pasaktë"
 
 #: lib/pychess/Utils/lutils/lmove.py:323
 #, python-format
 msgid "the end cord (%s) is incorrect"
-msgstr ""
+msgstr "lidhja e fundit (%s) është e pasaktë"
 
 #: lib/pychess/Utils/lutils/strateval.py:24 sidepanel/commentPanel.py:189
 #: sidepanel/commentPanel.py:206
@@ -3591,7 +3592,7 @@ msgstr "Lojë e shënuar"
 
 #: sidepanel/annotationPanel.py:234
 msgid "Copy PGN"
-msgstr ""
+msgstr "Kopjo PGN"
 
 #: sidepanel/annotationPanel.py:247
 msgid "Add start comment"
@@ -3653,7 +3654,7 @@ msgstr "Shto simbol vlerësimi"
 msgid "Remove symbols"
 msgstr "Hiq simbole"
 
-#: sidepanel/annotationPanel.py:907
+#: sidepanel/annotationPanel.py:908
 #, python-format
 msgid "round %s"
 msgstr "loja %s"

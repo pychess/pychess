@@ -7,6 +7,7 @@
 # Ilyas B Arinov <prot.tcpip@gmail.com>, 2014
 # Daniel <Yellow2815@ya.ru>, 2015
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2007
+# gbtami <gbtami@gmail.com>, 2015
 # Ilyas B Arinov <prot.tcpip@gmail.com>, 2014
 # Ilyas B Arinov <prot.tcpip@gmail.com>, 2015
 # Ilyas B Arinov <prot.tcpip@gmail.com>, 2015
@@ -19,9 +20,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-17 20:48+0100\n"
-"PO-Revision-Date: 2015-11-18 09:05+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"POT-Creation-Date: 2015-11-21 18:43+0100\n"
+"PO-Revision-Date: 2015-11-22 09:35+0000\n"
+"Last-Translator: gbtami <gbtami@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/gbtami/pychess/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -52,7 +53,7 @@ msgid ""
 msgstr "Если анализатор найдет ход, разница оценки которого (разница между оценкой хода по его мнению наилучшего и оценкой ходов, сделанных в игре) превосходит это значение, он добавит аннотацию для этого хода (в зависимости от принципиальной вариации движка для хода) на панель аннотаций"
 
 #: glade/analyze_game.glade:164
-msgid "Variation annotation creation thresold in centipawns:"
+msgid "Variation annotation creation threshold in centipawns:"
 msgstr "Вариации погрешности создания аннотации в сантипешках:"
 
 #: glade/analyze_game.glade:198
@@ -60,7 +61,7 @@ msgid "Analyze from current position"
 msgstr ""
 
 #: glade/analyze_game.glade:214
-msgid "Add threatening varation lines "
+msgid "Add threatening variation lines "
 msgstr ""
 
 #: glade/analyze_game.glade:229 glade/PyChess.glade:1297
@@ -1292,7 +1293,7 @@ msgstr ""
 
 #: lib/pychess/ic/FICSConnection.py:131
 #, python-format
-msgid "'%s' is a registered name.  If it is yours, type the passworld."
+msgid "'%s' is a registered name.  If it is yours, type the password."
 msgstr ""
 
 #: lib/pychess/ic/FICSConnection.py:149
@@ -1605,11 +1606,11 @@ msgstr " Предлагает вам сыграть игру типа <b>%(time)
 msgid " where <b>%(player)s</b> plays <b>%(color)s</b>."
 msgstr " где <b>%(player)s</b> играет <b>%(color)s</b>."
 
-#: lib/pychess/ic/ICLounge.py:807 lib/pychess/Players/Human.py:247
+#: lib/pychess/ic/ICLounge.py:807 lib/pychess/Players/Human.py:250
 msgid "Accept"
 msgstr "Принять"
 
-#: lib/pychess/ic/ICLounge.py:808 lib/pychess/Players/Human.py:248
+#: lib/pychess/ic/ICLounge.py:808 lib/pychess/Players/Human.py:251
 msgid "Decline"
 msgstr "Отклонить"
 
@@ -1896,204 +1897,204 @@ msgstr "D"
 msgid "The engine %s reports an error:"
 msgstr "Движок %s сообщил об ошибке:"
 
-#: lib/pychess/Players/Human.py:19
+#: lib/pychess/Players/Human.py:20
 msgid "Your opponent has offered you a draw."
 msgstr "Ваш соперник предложил вам ничью."
 
-#: lib/pychess/Players/Human.py:20
+#: lib/pychess/Players/Human.py:21
 msgid ""
 "Your opponent has offered you a draw. If you accept this offer, the game "
 "will end with a score of 1/2 - 1/2."
 msgstr "Ваш соперник предложил ничью. Если вы примите предложение, то игра закончится со счётом 1/2 - 1/2."
 
-#: lib/pychess/Players/Human.py:22
+#: lib/pychess/Players/Human.py:23
 msgid "Your opponent wants to abort the game."
 msgstr "Ваш соперник хочет отменить игру."
 
-#: lib/pychess/Players/Human.py:23
+#: lib/pychess/Players/Human.py:24
 msgid ""
 "Your opponent has asked that the game be aborted. If you accept this offer, "
 "the game will end with no rating change."
 msgstr "Ваш соперник предложил прервать игру. Если вы примете предложение, игра закончится без изменения рейтинга."
 
-#: lib/pychess/Players/Human.py:25
+#: lib/pychess/Players/Human.py:26
 msgid "Your opponent wants to adjourn the game."
 msgstr "Ваш соперник хочет отложить игру."
 
-#: lib/pychess/Players/Human.py:26
+#: lib/pychess/Players/Human.py:27
 msgid ""
 "Your opponent has asked that the game be adjourned. If you accept this "
 "offer, the game will be adjourned and you can resume it later (when your "
 "opponent is online and both players agree to resume)."
 msgstr "Ваш соперник предложил отложить игру. Если вы примете предложение, игру можно будет продолжить позже (когда соперник будет в сети и оба игрока согласятся продолжить игру)."
 
-#: lib/pychess/Players/Human.py:28
+#: lib/pychess/Players/Human.py:29
 #, python-format
 msgid "Your opponent wants to undo %s move(s)."
 msgstr "Ваш соперник хочет отменить %s ход(ов)."
 
-#: lib/pychess/Players/Human.py:29
+#: lib/pychess/Players/Human.py:30
 #, python-format
 msgid ""
 "Your opponent has asked that the last %s move(s) be undone. If you accept "
 "this offer, the game will continue from the earlier position."
 msgstr "Ваш соперник предложил отменить последние %s ходов. Если вы примете предложение, игра продолжится с предыдущей позиции."
 
-#: lib/pychess/Players/Human.py:31
+#: lib/pychess/Players/Human.py:32
 msgid "Your opponent wants to pause the game."
 msgstr "Ваш соперник хочет приостановить игру."
 
-#: lib/pychess/Players/Human.py:32
+#: lib/pychess/Players/Human.py:33
 msgid ""
 "Your opponent has asked that the game be paused. If you accept this offer, "
 "the game clock will be paused until both players agree to resume the game."
 msgstr "Ваш соперник предложил приостановить игру. Если вы примете предложение, игровые часы будут приостановлены, пока оба игрока не будут согласны продолжить игру."
 
-#: lib/pychess/Players/Human.py:34
+#: lib/pychess/Players/Human.py:35
 msgid "Your opponent wants to resume the game."
 msgstr "Ваш соперник хочет продолжить игру."
 
-#: lib/pychess/Players/Human.py:35
+#: lib/pychess/Players/Human.py:36
 msgid ""
 "Your opponent has asked that the game be resumed. If you accept this offer, "
 "the game clock will continue from where it was paused."
 msgstr "Ваш соперник предложил продолжить игру. Если вы примете предложение, часы продолжат отсчёт с момента их приостановки."
 
-#: lib/pychess/Players/Human.py:39
+#: lib/pychess/Players/Human.py:40
 msgid "The resignation"
 msgstr "Сдача партии"
 
-#: lib/pychess/Players/Human.py:40
+#: lib/pychess/Players/Human.py:41
 msgid "The flag call"
 msgstr "Вызвать флаг"
 
-#: lib/pychess/Players/Human.py:41
+#: lib/pychess/Players/Human.py:42
 msgid "The draw offer"
 msgstr "Предложение ничьей"
 
-#: lib/pychess/Players/Human.py:42
+#: lib/pychess/Players/Human.py:43
 msgid "The abort offer"
 msgstr "Предложение прервать"
 
-#: lib/pychess/Players/Human.py:43
+#: lib/pychess/Players/Human.py:44
 msgid "The adjourn offer"
 msgstr "Предложение отложить"
 
-#: lib/pychess/Players/Human.py:44
+#: lib/pychess/Players/Human.py:45
 msgid "The pause offer"
 msgstr "Предложение приостановить"
 
-#: lib/pychess/Players/Human.py:45
+#: lib/pychess/Players/Human.py:46
 msgid "The resume offer"
 msgstr "Предложение продолжить"
 
-#: lib/pychess/Players/Human.py:46
+#: lib/pychess/Players/Human.py:47
 msgid "The offer to switch sides"
 msgstr "Предложение поменяться местами"
 
-#: lib/pychess/Players/Human.py:47
+#: lib/pychess/Players/Human.py:48
 msgid "The takeback offer"
 msgstr "Предложение отменить ход"
 
-#: lib/pychess/Players/Human.py:51
+#: lib/pychess/Players/Human.py:52
 msgid "resign"
 msgstr "сдаться"
 
-#: lib/pychess/Players/Human.py:52
+#: lib/pychess/Players/Human.py:53
 msgid "call your opponents flag"
 msgstr "бросить флаг противника"
 
-#: lib/pychess/Players/Human.py:53
+#: lib/pychess/Players/Human.py:54
 msgid "offer a draw"
 msgstr "предложить ничью"
 
-#: lib/pychess/Players/Human.py:54
+#: lib/pychess/Players/Human.py:55
 msgid "offer an abort"
 msgstr "предложить прервать"
 
-#: lib/pychess/Players/Human.py:55
+#: lib/pychess/Players/Human.py:56
 msgid "offer to adjourn"
 msgstr "предложить отложить партию"
 
-#: lib/pychess/Players/Human.py:56
+#: lib/pychess/Players/Human.py:57
 msgid "offer a pause"
 msgstr "предложить приостановку"
 
-#: lib/pychess/Players/Human.py:57
+#: lib/pychess/Players/Human.py:58
 msgid "offer to resume"
 msgstr "предложить продолжить"
 
-#: lib/pychess/Players/Human.py:58
+#: lib/pychess/Players/Human.py:59
 msgid "offer to switch sides"
 msgstr "предложить поменяться местами"
 
-#: lib/pychess/Players/Human.py:59
+#: lib/pychess/Players/Human.py:60
 msgid "offer a takeback"
 msgstr "предложить отменить ход"
 
-#: lib/pychess/Players/Human.py:60
+#: lib/pychess/Players/Human.py:61
 msgid "ask your opponent to move"
 msgstr "попросить противника сделать ход"
 
-#: lib/pychess/Players/Human.py:65
+#: lib/pychess/Players/Human.py:66
 msgid "Your opponent is not out of time."
 msgstr "У противника не истекло время."
 
-#: lib/pychess/Players/Human.py:67
+#: lib/pychess/Players/Human.py:68
 msgid "The clock hasn't been started yet."
 msgstr "Часы ещё не запущены."
 
-#: lib/pychess/Players/Human.py:69
+#: lib/pychess/Players/Human.py:70
 msgid "You can't switch colors during the game."
 msgstr "Вы не можете сменить цвета во время игры."
 
-#: lib/pychess/Players/Human.py:71
+#: lib/pychess/Players/Human.py:72
 msgid "You have tried to undo too many moves."
 msgstr "Вы пытаетесь отменить слишком много ходов."
 
-#: lib/pychess/Players/Human.py:178
+#: lib/pychess/Players/Human.py:180
 msgid "Your opponent asks you to hurry!"
 msgstr "Противник просит вас поторопиться!"
 
-#: lib/pychess/Players/Human.py:179
+#: lib/pychess/Players/Human.py:181
 msgid ""
 "Generally this means nothing, as the game is time-based, but if you want to "
 "please your opponent, perhaps you should get going."
 msgstr "В общих чертах, это ничего не значит, потому как игра зависит от времени, но если вы хотите попросить противника, возможно вам стоит продолжить."
 
-#: lib/pychess/Players/Human.py:255
+#: lib/pychess/Players/Human.py:259
 #, python-format
 msgid "%s was declined by your opponent"
 msgstr "%s было отклонено противником"
 
-#: lib/pychess/Players/Human.py:256
+#: lib/pychess/Players/Human.py:260
 #, python-format
 msgid "Resend %s?"
 msgstr "Переслать %s?"
 
-#: lib/pychess/Players/Human.py:263
+#: lib/pychess/Players/Human.py:267
 msgid "Resend"
 msgstr "Пересылка"
 
-#: lib/pychess/Players/Human.py:270
+#: lib/pychess/Players/Human.py:275
 #, python-format
 msgid "%s was withdrawn by your opponent"
 msgstr "%s был снят вашим оппонентом"
 
-#: lib/pychess/Players/Human.py:271
+#: lib/pychess/Players/Human.py:276
 msgid "Your opponent seems to have changed their mind."
 msgstr "Кажется, ваш противник передумал."
 
-#: lib/pychess/Players/Human.py:284
+#: lib/pychess/Players/Human.py:290
 #, python-format
 msgid "Unable to accept %s"
 msgstr "Не возможно принять %s"
 
-#: lib/pychess/Players/Human.py:285
+#: lib/pychess/Players/Human.py:291
 msgid "Probably because it has been withdrawn."
 msgstr "Возможно, потому что он покинул партию."
 
-#: lib/pychess/Players/Human.py:292
+#: lib/pychess/Players/Human.py:298
 #, python-format
 msgid "%s returns an error"
 msgstr "%s возвращает ошибку"
@@ -2757,23 +2758,23 @@ msgstr "Загрузка данных игрока"
 msgid "Receiving list of players"
 msgstr "Получение списка игроков"
 
-#: lib/pychess/widgets/ChatWindow.py:487
+#: lib/pychess/widgets/ChatWindow.py:488
 msgid "Friends"
 msgstr ""
 
-#: lib/pychess/widgets/ChatWindow.py:497
+#: lib/pychess/widgets/ChatWindow.py:499
 msgid "More channels"
 msgstr "Больше каналов"
 
-#: lib/pychess/widgets/ChatWindow.py:504
+#: lib/pychess/widgets/ChatWindow.py:507
 msgid "More players"
 msgstr "Больше игроков"
 
-#: lib/pychess/widgets/ChatWindow.py:649
+#: lib/pychess/widgets/ChatWindow.py:653
 msgid "Conversations"
 msgstr "Беседы"
 
-#: lib/pychess/widgets/ChatWindow.py:651
+#: lib/pychess/widgets/ChatWindow.py:655
 msgid "Conversation info"
 msgstr "Информация о беседе"
 
@@ -2805,82 +2806,82 @@ msgstr ""
 msgid "Select working directory"
 msgstr "Выберите рабочую директорию"
 
-#: lib/pychess/widgets/gamenanny.py:114
+#: lib/pychess/widgets/gamenanny.py:115
 #, python-format
 msgid " invalid engine move: %s"
 msgstr ""
 
-#: lib/pychess/widgets/gamenanny.py:133
+#: lib/pychess/widgets/gamenanny.py:134
 msgid "Offer Rematch"
 msgstr "Предложить реванш"
 
-#: lib/pychess/widgets/gamenanny.py:135 lib/pychess/widgets/gamenanny.py:146
+#: lib/pychess/widgets/gamenanny.py:136 lib/pychess/widgets/gamenanny.py:147
 #, python-format
 msgid "Observe %s"
 msgstr "Наблюдать %s"
 
-#: lib/pychess/widgets/gamenanny.py:167
+#: lib/pychess/widgets/gamenanny.py:168
 msgid "Play Rematch"
 msgstr "Играть реванш"
 
-#: lib/pychess/widgets/gamenanny.py:170
+#: lib/pychess/widgets/gamenanny.py:171
 msgid "Undo one move"
 msgstr "Отменить один ход"
 
-#: lib/pychess/widgets/gamenanny.py:172
+#: lib/pychess/widgets/gamenanny.py:173
 msgid "Undo two moves"
 msgstr "Отменить два хода"
 
-#: lib/pychess/widgets/gamenanny.py:205
+#: lib/pychess/widgets/gamenanny.py:203
 msgid "The game is paused"
 msgstr "Игра приостановлена"
 
-#: lib/pychess/widgets/gamenanny.py:225 lib/pychess/widgets/gamenanny.py:226
+#: lib/pychess/widgets/gamenanny.py:221 lib/pychess/widgets/gamenanny.py:222
 msgid "Loaded game"
 msgstr "Партия загружена"
 
-#: lib/pychess/widgets/gamenanny.py:232
+#: lib/pychess/widgets/gamenanny.py:228
 msgid "Saved game"
 msgstr "Партия сохранена"
 
-#: lib/pychess/widgets/gamenanny.py:236
+#: lib/pychess/widgets/gamenanny.py:232
 msgid "Analyzer started"
 msgstr "Анализатор запущен"
 
-#: lib/pychess/widgets/gamenanny.py:285
+#: lib/pychess/widgets/gamenanny.py:281
 msgid "You sent an abort offer"
 msgstr "Вы отменили предложение"
 
-#: lib/pychess/widgets/gamenanny.py:287
+#: lib/pychess/widgets/gamenanny.py:283
 msgid "You sent an adjournment offer"
 msgstr "Вы предложили отложить игру"
 
-#: lib/pychess/widgets/gamenanny.py:289
+#: lib/pychess/widgets/gamenanny.py:285
 msgid "You sent a draw offer"
 msgstr "Вы предложили ничью"
 
-#: lib/pychess/widgets/gamenanny.py:291
+#: lib/pychess/widgets/gamenanny.py:287
 msgid "You sent a pause offer"
 msgstr "Вы предложили приостановить игру"
 
-#: lib/pychess/widgets/gamenanny.py:293
+#: lib/pychess/widgets/gamenanny.py:289
 msgid "You sent a resume offer"
 msgstr "Вы предложили продолжить"
 
-#: lib/pychess/widgets/gamenanny.py:295
+#: lib/pychess/widgets/gamenanny.py:291
 msgid "You sent an undo offer"
 msgstr "Вы отменили предложение"
 
-#: lib/pychess/widgets/gamenanny.py:297
+#: lib/pychess/widgets/gamenanny.py:293
 msgid "You asked your opponent to move"
 msgstr "Вы попросили соперника сделать ход"
 
-#: lib/pychess/widgets/gamenanny.py:309
+#: lib/pychess/widgets/gamenanny.py:305
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
 msgstr "<big><b>Компьютерная программа, %s, остановлена</b></big>"
 
-#: lib/pychess/widgets/gamenanny.py:310
+#: lib/pychess/widgets/gamenanny.py:306
 msgid ""
 "PyChess has lost connection to the engine, probably because it has died.\n"
 "\n"
@@ -2935,51 +2936,51 @@ msgstr "Отмена"
 msgid "Offer Undo"
 msgstr "Предложить отмену"
 
-#: lib/pychess/widgets/gamewidget.py:479 lib/pychess/widgets/gamewidget.py:584
+#: lib/pychess/widgets/gamewidget.py:479 lib/pychess/widgets/gamewidget.py:580
 msgid "vs"
 msgstr "против"
 
-#: lib/pychess/widgets/gamewidget.py:529
+#: lib/pychess/widgets/gamewidget.py:530
 msgid " has lagged for 30 seconds"
 msgstr "испытал задержку в 30 секунд"
 
-#: lib/pychess/widgets/gamewidget.py:547
+#: lib/pychess/widgets/gamewidget.py:546
 msgid " is lagging heavily but hasn't disconnected"
 msgstr "испытывает серьезную задержку, но не отключился"
 
-#: lib/pychess/widgets/gamewidget.py:548
+#: lib/pychess/widgets/gamewidget.py:547
 msgid "Continue to wait for opponent, or try to adjourn the game?"
 msgstr "Продолжать ждать противника или попробовать отложить игру?"
 
-#: lib/pychess/widgets/gamewidget.py:556
+#: lib/pychess/widgets/gamewidget.py:555
 msgid "Wait"
 msgstr "Ожидание"
 
-#: lib/pychess/widgets/gamewidget.py:557
+#: lib/pychess/widgets/gamewidget.py:556
 msgid "Adjourn"
 msgstr "Отложить"
 
-#: lib/pychess/widgets/gamewidget.py:632
+#: lib/pychess/widgets/gamewidget.py:628
 msgid "Jump to initial position"
 msgstr "Перейти к начальной позиции"
 
-#: lib/pychess/widgets/gamewidget.py:637
+#: lib/pychess/widgets/gamewidget.py:633
 msgid "Step back one move"
 msgstr "Назад на один ход"
 
-#: lib/pychess/widgets/gamewidget.py:642
+#: lib/pychess/widgets/gamewidget.py:638
 msgid "Step forward one move"
 msgstr "Вперёд на один ход"
 
-#: lib/pychess/widgets/gamewidget.py:647
+#: lib/pychess/widgets/gamewidget.py:643
 msgid "Jump to latest position"
 msgstr "Перейти к последней позиции"
 
-#: lib/pychess/widgets/gamewidget.py:881
+#: lib/pychess/widgets/gamewidget.py:874
 msgid "<b><big>PyChess was unable to load your panel settings</big></b>"
 msgstr "<b><big>PyChess не в состоянии загрузить ваши настройки панели</big></b>"
 
-#: lib/pychess/widgets/gamewidget.py:882
+#: lib/pychess/widgets/gamewidget.py:875
 msgid ""
 "Your panel settings have been reset. If this problem repeats, you should "
 "report it to the developers"
@@ -3670,7 +3671,7 @@ msgstr "Добавить оценочный символ"
 msgid "Remove symbols"
 msgstr "Удалить символы"
 
-#: sidepanel/annotationPanel.py:907
+#: sidepanel/annotationPanel.py:908
 #, python-format
 msgid "round %s"
 msgstr "раунд %s"

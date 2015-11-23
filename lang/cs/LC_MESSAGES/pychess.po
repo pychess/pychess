@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-17 20:48+0100\n"
-"PO-Revision-Date: 2015-11-18 09:05+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"POT-Creation-Date: 2015-11-21 18:43+0100\n"
+"PO-Revision-Date: 2015-11-23 20:37+0000\n"
+"Last-Translator: fri\n"
 "Language-Team: Czech (http://www.transifex.com/gbtami/pychess/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -45,7 +45,7 @@ msgid ""
 msgstr "Pokud analyzátor najde tah, kde rozdíl ve vyhodnocení (rozdíl mezi vyhodnocením pro tah, o kterém si myslí, že je nejlepším tahem, a vyhodnocením pro tah zahraný ve hře) překročí tuto hodnotu, přidá poznámku k tomuto tahu (sestávající z hlavní herní obměny stroje pro ten tah) do panelu s poznámkami"
 
 #: glade/analyze_game.glade:164
-msgid "Variation annotation creation thresold in centipawns:"
+msgid "Variation annotation creation threshold in centipawns:"
 msgstr "Práh pro vytvoření poznámky k obměně v centipěšácích:"
 
 #: glade/analyze_game.glade:198
@@ -53,7 +53,7 @@ msgid "Analyze from current position"
 msgstr "Rozebrat od nynější polohy"
 
 #: glade/analyze_game.glade:214
-msgid "Add threatening varation lines "
+msgid "Add threatening variation lines "
 msgstr "Přidat řádky hrozící obměny "
 
 #: glade/analyze_game.glade:229 glade/PyChess.glade:1297
@@ -102,7 +102,7 @@ msgstr "Přihlásit se jako _host"
 
 #: glade/fics_logon.glade:227
 msgid "Host:"
-msgstr ""
+msgstr "Host:"
 
 #: glade/fics_logon.glade:259
 msgid "Po_rts:"
@@ -110,7 +110,7 @@ msgstr "_Přípojky:"
 
 #: glade/fics_logon.glade:271
 msgid "Auto login on startup"
-msgstr ""
+msgstr "Automatické přihlášení při spuštění"
 
 #: glade/fics_logon.glade:385
 msgid "S_ign up"
@@ -398,7 +398,7 @@ msgstr "<b>Nástroje</b>"
 
 #: glade/fics_lounge.glade:3327
 msgid "Asymmetric Random    "
-msgstr ""
+msgstr "Nesouměrná náhoda"
 
 #: glade/findbar.glade:6
 msgid "window1"
@@ -430,15 +430,15 @@ msgstr "Spustit hru"
 
 #: glade/newInOut.glade:130
 msgid "Copy FEN"
-msgstr ""
+msgstr "Kopírovat FEN"
 
 #: glade/newInOut.glade:143
 msgid "Clear"
-msgstr ""
+msgstr "Vyprázdnit"
 
 #: glade/newInOut.glade:156
 msgid "Paste FEN"
-msgstr ""
+msgstr "Vložit FEN"
 
 #: glade/newInOut.glade:257
 msgid "_Black player:"
@@ -458,15 +458,15 @@ msgstr "_Bez omezení"
 
 #: glade/newInOut.glade:475
 msgid "Blitz:    5 min"
-msgstr ""
+msgstr "Bleskovka: 5 minut"
 
 #: glade/newInOut.glade:526
 msgid "Rapid:    15 min + 10 sec/move"
-msgstr ""
+msgstr "Rychlovka: 15 min + 10 s/tah"
 
 #: glade/newInOut.glade:575
 msgid "Normal:   40 min + 15 sec/move"
-msgstr ""
+msgstr "Normální: 40 min + 15 s/tah"
 
 #: glade/newInOut.glade:684
 msgid "_Play Normal chess"
@@ -494,35 +494,35 @@ msgstr "<b>Vstoupit do záznamu hry</b>"
 
 #: glade/newInOut.glade:1314
 msgid "Halfmove clock"
-msgstr ""
+msgstr "Hodiny poloviny tahu"
 
 #: glade/newInOut.glade:1327
 msgid "En passant line"
-msgstr ""
+msgstr "Řádek cestou"
 
 #: glade/newInOut.glade:1339
 msgid "Side to move"
-msgstr ""
+msgstr "Strana na tahu"
 
 #: glade/newInOut.glade:1351
 msgid "Move number"
-msgstr ""
+msgstr "Číslo tahu"
 
 #: glade/newInOut.glade:1361
 msgid "Black O-O"
-msgstr ""
+msgstr "Černý O-O"
 
 #: glade/newInOut.glade:1375
 msgid "Black O-O-O"
-msgstr ""
+msgstr "Černý O-O-O"
 
 #: glade/newInOut.glade:1389
 msgid "White O-O-O"
-msgstr ""
+msgstr "Bílý O-O-O"
 
 #: glade/newInOut.glade:1403
 msgid "White O-O"
-msgstr ""
+msgstr "Bílý O-O"
 
 #: glade/promotion.glade:7
 msgid "Promotion"
@@ -1034,7 +1034,7 @@ msgstr "Ul_ožit hru jako..."
 
 #: glade/PyChess.glade:3534
 msgid "Share Game"
-msgstr ""
+msgstr "Sdílet hru"
 
 #: glade/PyChess.glade:3544
 msgid "_Export Position"
@@ -1058,7 +1058,7 @@ msgstr "_Kopírovat PGN"
 
 #: glade/PyChess.glade:3660
 msgid "_Copy FEN"
-msgstr ""
+msgstr "_Kopírovat FEN"
 
 #: glade/PyChess.glade:3677
 msgid "_Engines"
@@ -1285,7 +1285,7 @@ msgstr "Promiňte '%s' je již přihlášen"
 
 #: lib/pychess/ic/FICSConnection.py:131
 #, python-format
-msgid "'%s' is a registered name.  If it is yours, type the passworld."
+msgid "'%s' is a registered name.  If it is yours, type the password."
 msgstr "'%s' je zaregistrované jméno. Pokud je vaše, zadejte heslo."
 
 #: lib/pychess/ic/FICSConnection.py:149
@@ -1598,11 +1598,11 @@ msgstr " vás vyzývá ke hře <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> "
 msgid " where <b>%(player)s</b> plays <b>%(color)s</b>."
 msgstr " kde <b>%(player)s</b> hraje<b>%(color)s</b>."
 
-#: lib/pychess/ic/ICLounge.py:807 lib/pychess/Players/Human.py:247
+#: lib/pychess/ic/ICLounge.py:807 lib/pychess/Players/Human.py:250
 msgid "Accept"
 msgstr "Přijmout"
 
-#: lib/pychess/ic/ICLounge.py:808 lib/pychess/Players/Human.py:248
+#: lib/pychess/ic/ICLounge.py:808 lib/pychess/Players/Human.py:251
 msgid "Decline"
 msgstr "Odmítnout"
 
@@ -1889,204 +1889,204 @@ msgstr "D"
 msgid "The engine %s reports an error:"
 msgstr "Stroj %s hlásí chybu:"
 
-#: lib/pychess/Players/Human.py:19
+#: lib/pychess/Players/Human.py:20
 msgid "Your opponent has offered you a draw."
 msgstr "Váš soupeř nabídl remízu."
 
-#: lib/pychess/Players/Human.py:20
+#: lib/pychess/Players/Human.py:21
 msgid ""
 "Your opponent has offered you a draw. If you accept this offer, the game "
 "will end with a score of 1/2 - 1/2."
 msgstr "Váš soupeř nabídl remízu. Pokud tuto nabídku přijmete, hra se skončí s výsledkem 1/2 k 1/2."
 
-#: lib/pychess/Players/Human.py:22
+#: lib/pychess/Players/Human.py:23
 msgid "Your opponent wants to abort the game."
 msgstr "Váš soupeř chce hru ukončit."
 
-#: lib/pychess/Players/Human.py:23
+#: lib/pychess/Players/Human.py:24
 msgid ""
 "Your opponent has asked that the game be aborted. If you accept this offer, "
 "the game will end with no rating change."
 msgstr "Váš soupeř požádal o ukončení hry. Pokud tuto nabídku přijmete, hra se skončí beze změny hodnocení."
 
-#: lib/pychess/Players/Human.py:25
+#: lib/pychess/Players/Human.py:26
 msgid "Your opponent wants to adjourn the game."
 msgstr "Váš soupeř chce hru odložit."
 
-#: lib/pychess/Players/Human.py:26
+#: lib/pychess/Players/Human.py:27
 msgid ""
 "Your opponent has asked that the game be adjourned. If you accept this "
 "offer, the game will be adjourned and you can resume it later (when your "
 "opponent is online and both players agree to resume)."
 msgstr "Váš soupeř požádal o odložení hry. Pokud tuto nabídku přijmete, hra bude odložena a vy v ní můžete pokračovat později (až váš soupeř bude připojen k internetu a až budou oba hráči souhlasit s pokračováním)."
 
-#: lib/pychess/Players/Human.py:28
+#: lib/pychess/Players/Human.py:29
 #, python-format
 msgid "Your opponent wants to undo %s move(s)."
 msgstr "Váš soupeř chce vrátit zpět %s tah(y)."
 
-#: lib/pychess/Players/Human.py:29
+#: lib/pychess/Players/Human.py:30
 #, python-format
 msgid ""
 "Your opponent has asked that the last %s move(s) be undone. If you accept "
 "this offer, the game will continue from the earlier position."
 msgstr "Váš soupeř požádal o to, aby se poslední %s tah(y) vzaly zpátky. Pokud tuto nabídku přijmete, hra bude pokračovat z dřívější pozice."
 
-#: lib/pychess/Players/Human.py:31
+#: lib/pychess/Players/Human.py:32
 msgid "Your opponent wants to pause the game."
 msgstr "Váš soupeř chce přestávku ve hře."
 
-#: lib/pychess/Players/Human.py:32
+#: lib/pychess/Players/Human.py:33
 msgid ""
 "Your opponent has asked that the game be paused. If you accept this offer, "
 "the game clock will be paused until both players agree to resume the game."
 msgstr "Váš soupeř požádal o pozastavení hry. Pokud tuto nabídku přijmete, herní hodiny budou zastaveny tak dlouho, až budou oba hráči souhlasit s pokračováním ve hře."
 
-#: lib/pychess/Players/Human.py:34
+#: lib/pychess/Players/Human.py:35
 msgid "Your opponent wants to resume the game."
 msgstr "Váš soupeř chce pokračovat ve hře."
 
-#: lib/pychess/Players/Human.py:35
+#: lib/pychess/Players/Human.py:36
 msgid ""
 "Your opponent has asked that the game be resumed. If you accept this offer, "
 "the game clock will continue from where it was paused."
 msgstr "Váš soupeř požádal o pokračování ve hře. Pokud tuto nabídku přijmete, herní hodiny budou budou opět spuštěny. Bude se pokračovat od toho časového okamžiku, kdy se přestalo."
 
-#: lib/pychess/Players/Human.py:39
+#: lib/pychess/Players/Human.py:40
 msgid "The resignation"
 msgstr "Vzdání se"
 
-#: lib/pychess/Players/Human.py:40
+#: lib/pychess/Players/Human.py:41
 msgid "The flag call"
 msgstr "Volání vlajky"
 
-#: lib/pychess/Players/Human.py:41
+#: lib/pychess/Players/Human.py:42
 msgid "The draw offer"
 msgstr "Nabídka remízy"
 
-#: lib/pychess/Players/Human.py:42
+#: lib/pychess/Players/Human.py:43
 msgid "The abort offer"
 msgstr "Nabídka přerušení"
 
-#: lib/pychess/Players/Human.py:43
+#: lib/pychess/Players/Human.py:44
 msgid "The adjourn offer"
 msgstr "Nabídka odložení"
 
-#: lib/pychess/Players/Human.py:44
+#: lib/pychess/Players/Human.py:45
 msgid "The pause offer"
 msgstr "Nabídka pozastavení"
 
-#: lib/pychess/Players/Human.py:45
+#: lib/pychess/Players/Human.py:46
 msgid "The resume offer"
 msgstr "Nabídka pokračování"
 
-#: lib/pychess/Players/Human.py:46
+#: lib/pychess/Players/Human.py:47
 msgid "The offer to switch sides"
 msgstr "Nabídka výměny stran"
 
-#: lib/pychess/Players/Human.py:47
+#: lib/pychess/Players/Human.py:48
 msgid "The takeback offer"
 msgstr "Nabídka vzetí zpět"
 
-#: lib/pychess/Players/Human.py:51
+#: lib/pychess/Players/Human.py:52
 msgid "resign"
 msgstr "Vzdát"
 
-#: lib/pychess/Players/Human.py:52
+#: lib/pychess/Players/Human.py:53
 msgid "call your opponents flag"
 msgstr "Žádat vítězství v čase"
 
-#: lib/pychess/Players/Human.py:53
+#: lib/pychess/Players/Human.py:54
 msgid "offer a draw"
 msgstr "Nabídnout remízu"
 
-#: lib/pychess/Players/Human.py:54
+#: lib/pychess/Players/Human.py:55
 msgid "offer an abort"
 msgstr "Nabídnout přerušení"
 
-#: lib/pychess/Players/Human.py:55
+#: lib/pychess/Players/Human.py:56
 msgid "offer to adjourn"
 msgstr "Nabídnout odložení"
 
-#: lib/pychess/Players/Human.py:56
+#: lib/pychess/Players/Human.py:57
 msgid "offer a pause"
 msgstr "Nabídnout pozastavení"
 
-#: lib/pychess/Players/Human.py:57
+#: lib/pychess/Players/Human.py:58
 msgid "offer to resume"
 msgstr "Nabídnout pokračování"
 
-#: lib/pychess/Players/Human.py:58
+#: lib/pychess/Players/Human.py:59
 msgid "offer to switch sides"
 msgstr "Nabídnout změnu stran"
 
-#: lib/pychess/Players/Human.py:59
+#: lib/pychess/Players/Human.py:60
 msgid "offer a takeback"
 msgstr "Nabídnout vzetí zpět"
 
-#: lib/pychess/Players/Human.py:60
+#: lib/pychess/Players/Human.py:61
 msgid "ask your opponent to move"
 msgstr "Vyzvat svého soupeře k tahu"
 
-#: lib/pychess/Players/Human.py:65
+#: lib/pychess/Players/Human.py:66
 msgid "Your opponent is not out of time."
 msgstr "Váš soupeř má ještě zbytek hracího času."
 
-#: lib/pychess/Players/Human.py:67
+#: lib/pychess/Players/Human.py:68
 msgid "The clock hasn't been started yet."
 msgstr "Hodiny ještě neběží."
 
-#: lib/pychess/Players/Human.py:69
+#: lib/pychess/Players/Human.py:70
 msgid "You can't switch colors during the game."
 msgstr "Nemůžete měnit barvy během hry."
 
-#: lib/pychess/Players/Human.py:71
+#: lib/pychess/Players/Human.py:72
 msgid "You have tried to undo too many moves."
 msgstr "Pokusil jste se vzít zpět příliš mnoho tahů."
 
-#: lib/pychess/Players/Human.py:178
+#: lib/pychess/Players/Human.py:180
 msgid "Your opponent asks you to hurry!"
 msgstr "Váš soupeř požaduje, abyste si pospíšil!"
 
-#: lib/pychess/Players/Human.py:179
+#: lib/pychess/Players/Human.py:181
 msgid ""
 "Generally this means nothing, as the game is time-based, but if you want to "
 "please your opponent, perhaps you should get going."
 msgstr "Obecně o nic nejde, jelikož hra je založena na času, ale pokud chcete svého soupeře potěšit, možná byste si měl pohnout."
 
-#: lib/pychess/Players/Human.py:255
+#: lib/pychess/Players/Human.py:259
 #, python-format
 msgid "%s was declined by your opponent"
 msgstr "%s byla vaším soupeřem odmítnuta"
 
-#: lib/pychess/Players/Human.py:256
+#: lib/pychess/Players/Human.py:260
 #, python-format
 msgid "Resend %s?"
 msgstr "Poslat %s znovu?"
 
-#: lib/pychess/Players/Human.py:263
+#: lib/pychess/Players/Human.py:267
 msgid "Resend"
 msgstr "Poslat znovu"
 
-#: lib/pychess/Players/Human.py:270
+#: lib/pychess/Players/Human.py:275
 #, python-format
 msgid "%s was withdrawn by your opponent"
 msgstr "%s byla vaším soupeřem stažena"
 
-#: lib/pychess/Players/Human.py:271
+#: lib/pychess/Players/Human.py:276
 msgid "Your opponent seems to have changed their mind."
 msgstr "Zdá se, že váš soupeř změnil názor."
 
-#: lib/pychess/Players/Human.py:284
+#: lib/pychess/Players/Human.py:290
 #, python-format
 msgid "Unable to accept %s"
 msgstr "Nelze přijmout %s"
 
-#: lib/pychess/Players/Human.py:285
+#: lib/pychess/Players/Human.py:291
 msgid "Probably because it has been withdrawn."
 msgstr "Pravděpodobně z toho důvodu, že to bylo staženo."
 
-#: lib/pychess/Players/Human.py:292
+#: lib/pychess/Players/Human.py:298
 #, python-format
 msgid "%s returns an error"
 msgstr "%s vrátil chybu"
@@ -2097,11 +2097,11 @@ msgstr "Čachy-Alpha-2-Diagram"
 
 #: lib/pychess/Savers/chesspastebin.py:39
 msgid "Game shared at "
-msgstr ""
+msgstr "Hra sdílena v"
 
 #: lib/pychess/Savers/chesspastebin.py:41
 msgid "(Link is available on clipboard.)"
-msgstr ""
+msgstr "(Odkaz je dostupný ve schránce.)"
 
 #: lib/pychess/Savers/database.py:19
 msgid "PyChess database"
@@ -2750,23 +2750,23 @@ msgstr "Nahrávají se data hráčů"
 msgid "Receiving list of players"
 msgstr "Přijímá se počet hráčů"
 
-#: lib/pychess/widgets/ChatWindow.py:487
+#: lib/pychess/widgets/ChatWindow.py:488
 msgid "Friends"
-msgstr ""
+msgstr "Přátelé"
 
-#: lib/pychess/widgets/ChatWindow.py:497
+#: lib/pychess/widgets/ChatWindow.py:499
 msgid "More channels"
 msgstr "Více kanálů"
 
-#: lib/pychess/widgets/ChatWindow.py:504
+#: lib/pychess/widgets/ChatWindow.py:507
 msgid "More players"
 msgstr "Více hráčů"
 
-#: lib/pychess/widgets/ChatWindow.py:649
+#: lib/pychess/widgets/ChatWindow.py:653
 msgid "Conversations"
 msgstr "Rozhovory"
 
-#: lib/pychess/widgets/ChatWindow.py:651
+#: lib/pychess/widgets/ChatWindow.py:655
 msgid "Conversation info"
 msgstr "Informace o rozhovoru"
 
@@ -2798,82 +2798,82 @@ msgstr "S tímto spustitelným souborem je něco v nepořádku"
 msgid "Select working directory"
 msgstr "Vybrat pracovní adresář"
 
-#: lib/pychess/widgets/gamenanny.py:114
+#: lib/pychess/widgets/gamenanny.py:115
 #, python-format
 msgid " invalid engine move: %s"
 msgstr " neplatný tah stroje: %s"
 
-#: lib/pychess/widgets/gamenanny.py:133
+#: lib/pychess/widgets/gamenanny.py:134
 msgid "Offer Rematch"
 msgstr "Nabídnout odvetu"
 
-#: lib/pychess/widgets/gamenanny.py:135 lib/pychess/widgets/gamenanny.py:146
+#: lib/pychess/widgets/gamenanny.py:136 lib/pychess/widgets/gamenanny.py:147
 #, python-format
 msgid "Observe %s"
 msgstr "Pozorovat %s"
 
-#: lib/pychess/widgets/gamenanny.py:167
+#: lib/pychess/widgets/gamenanny.py:168
 msgid "Play Rematch"
 msgstr "Hrát odvetu"
 
-#: lib/pychess/widgets/gamenanny.py:170
+#: lib/pychess/widgets/gamenanny.py:171
 msgid "Undo one move"
 msgstr "Zpět o jeden krok"
 
-#: lib/pychess/widgets/gamenanny.py:172
+#: lib/pychess/widgets/gamenanny.py:173
 msgid "Undo two moves"
 msgstr "Zpět o dva kroky"
 
-#: lib/pychess/widgets/gamenanny.py:205
+#: lib/pychess/widgets/gamenanny.py:203
 msgid "The game is paused"
 msgstr "Hra je pozastavena"
 
-#: lib/pychess/widgets/gamenanny.py:225 lib/pychess/widgets/gamenanny.py:226
+#: lib/pychess/widgets/gamenanny.py:221 lib/pychess/widgets/gamenanny.py:222
 msgid "Loaded game"
 msgstr "Načtená hra"
 
-#: lib/pychess/widgets/gamenanny.py:232
+#: lib/pychess/widgets/gamenanny.py:228
 msgid "Saved game"
 msgstr "Uložená hra"
 
-#: lib/pychess/widgets/gamenanny.py:236
+#: lib/pychess/widgets/gamenanny.py:232
 msgid "Analyzer started"
 msgstr "Analyzátor spuštěn"
 
-#: lib/pychess/widgets/gamenanny.py:285
+#: lib/pychess/widgets/gamenanny.py:281
 msgid "You sent an abort offer"
 msgstr "Poslal jste nabídku na přerušení"
 
-#: lib/pychess/widgets/gamenanny.py:287
+#: lib/pychess/widgets/gamenanny.py:283
 msgid "You sent an adjournment offer"
 msgstr "Poslal jste nabídku na odložení"
 
-#: lib/pychess/widgets/gamenanny.py:289
+#: lib/pychess/widgets/gamenanny.py:285
 msgid "You sent a draw offer"
 msgstr "Poslal jste nabídku na remízu"
 
-#: lib/pychess/widgets/gamenanny.py:291
+#: lib/pychess/widgets/gamenanny.py:287
 msgid "You sent a pause offer"
 msgstr "Poslal jste nabídku na pozastavení"
 
-#: lib/pychess/widgets/gamenanny.py:293
+#: lib/pychess/widgets/gamenanny.py:289
 msgid "You sent a resume offer"
 msgstr "Poslal jste nabídku na pokračování"
 
-#: lib/pychess/widgets/gamenanny.py:295
+#: lib/pychess/widgets/gamenanny.py:291
 msgid "You sent an undo offer"
 msgstr "Poslal jste nabídku na vzetí zpět"
 
-#: lib/pychess/widgets/gamenanny.py:297
+#: lib/pychess/widgets/gamenanny.py:293
 msgid "You asked your opponent to move"
 msgstr "Vyzval jste svého soupeře k tahu"
 
-#: lib/pychess/widgets/gamenanny.py:309
+#: lib/pychess/widgets/gamenanny.py:305
 #, python-format
 msgid "<big><b>Engine, %s, has died</b></big>"
 msgstr "<big><b>Stroj, %s, spadl</b></big>"
 
-#: lib/pychess/widgets/gamenanny.py:310
+#: lib/pychess/widgets/gamenanny.py:306
 msgid ""
 "PyChess has lost connection to the engine, probably because it has died.\n"
 "\n"
@@ -2928,51 +2928,51 @@ msgstr "Zpět"
 msgid "Offer Undo"
 msgstr "Nabídnout vzetí tahu zpět"
 
-#: lib/pychess/widgets/gamewidget.py:479 lib/pychess/widgets/gamewidget.py:584
+#: lib/pychess/widgets/gamewidget.py:479 lib/pychess/widgets/gamewidget.py:580
 msgid "vs"
 msgstr "proti"
 
-#: lib/pychess/widgets/gamewidget.py:529
+#: lib/pychess/widgets/gamewidget.py:530
 msgid " has lagged for 30 seconds"
 msgstr "je pozadu o 30 sekund"
 
-#: lib/pychess/widgets/gamewidget.py:547
+#: lib/pychess/widgets/gamewidget.py:546
 msgid " is lagging heavily but hasn't disconnected"
 msgstr "je těžce pozadu, ale neodpojil se"
 
-#: lib/pychess/widgets/gamewidget.py:548
+#: lib/pychess/widgets/gamewidget.py:547
 msgid "Continue to wait for opponent, or try to adjourn the game?"
 msgstr "Pokračovat v čekání na soupeře, nebo se pokusit o odložení hry?"
 
-#: lib/pychess/widgets/gamewidget.py:556
+#: lib/pychess/widgets/gamewidget.py:555
 msgid "Wait"
 msgstr "Čekat"
 
-#: lib/pychess/widgets/gamewidget.py:557
+#: lib/pychess/widgets/gamewidget.py:556
 msgid "Adjourn"
 msgstr "Odložit"
 
-#: lib/pychess/widgets/gamewidget.py:632
+#: lib/pychess/widgets/gamewidget.py:628
 msgid "Jump to initial position"
 msgstr "Jít zpět na počáteční stav hry"
 
-#: lib/pychess/widgets/gamewidget.py:637
+#: lib/pychess/widgets/gamewidget.py:633
 msgid "Step back one move"
 msgstr "O tah zpět"
 
-#: lib/pychess/widgets/gamewidget.py:642
+#: lib/pychess/widgets/gamewidget.py:638
 msgid "Step forward one move"
 msgstr "O tah vpřed"
 
-#: lib/pychess/widgets/gamewidget.py:647
+#: lib/pychess/widgets/gamewidget.py:643
 msgid "Jump to latest position"
 msgstr "Jít na poslední stav hry"
 
-#: lib/pychess/widgets/gamewidget.py:881
+#: lib/pychess/widgets/gamewidget.py:874
 msgid "<b><big>PyChess was unable to load your panel settings</big></b>"
 msgstr "<b><big>PyChess nebyl schopen nahrát nastavení vašeho panelu</big></b>"
 
-#: lib/pychess/widgets/gamewidget.py:882
+#: lib/pychess/widgets/gamewidget.py:875
 msgid ""
 "Your panel settings have been reset. If this problem repeats, you should "
 "report it to the developers"
@@ -3473,7 +3473,7 @@ msgstr "%(color)s má nového prošlého pěšce na %(cord)s"
 
 #: lib/pychess/Utils/lutils/strateval.py:470
 msgid "half-open"
-msgstr "polootevřený"
+msgstr "polootevřené"
 
 #: lib/pychess/Utils/lutils/strateval.py:472
 #, python-format
@@ -3660,7 +3660,7 @@ msgstr "Přidat vyhodnocovací symbol"
 msgid "Remove symbols"
 msgstr "Odstranit symboly"
 
-#: sidepanel/annotationPanel.py:907
+#: sidepanel/annotationPanel.py:908
 #, python-format
 msgid "round %s"
 msgstr "kolo %s"
