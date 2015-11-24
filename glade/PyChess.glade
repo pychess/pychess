@@ -2430,11 +2430,12 @@ It will search positions from http://www.k4it.de/</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkColorButton" id="colorbutton2">
+                                          <object class="GtkColorButton" id="light_cbtn">
+                                            <property name="name">light_cbtn</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
-                                            <property name="rgba">rgb(238,238,236)</property>
+                                            <property name="rgba">rgb(117,80,123)</property>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
@@ -2466,7 +2467,8 @@ It will search positions from http://www.k4it.de/</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkColorButton" id="colorbutton3">
+                                          <object class="GtkColorButton" id="dark_cbtn">
+                                            <property name="name">dark_cbtn</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
@@ -3915,6 +3917,30 @@ If it can use both  you can set here which one you like.</property>
                             <property name="bottom_attach">2</property>
                             <property name="y_options">GTK_FILL</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>
