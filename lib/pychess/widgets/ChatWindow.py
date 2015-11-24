@@ -5,6 +5,7 @@ from gi.repository import Gdk
 from gi.repository import GObject
 from gi.repository import Pango
 
+from pychess.compat import cmp
 from pychess.Utils.IconLoader import load_icon
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
@@ -82,12 +83,15 @@ class TextImageTree (Gtk.TreeView):
 
         self.icon_name = icon_name
         pm = Gtk.ListStore(str,str,int,str)
-        self.props.model = pm
+        self.sort_model = Gtk.TreeModelSort(model=pm)
+        self.set_model(self.sort_model)
         self.idSet = set()
 
         self.set_headers_visible(False)
         self.set_tooltip_column(3)
         self.set_search_column(1)
+        self.sort_model.set_sort_column_id(1, Gtk.SortType.ASCENDING)
+        self.sort_model.set_sort_func(1, self.compareFunction, 1)
 
         # First column
         crt = Gtk.CellRendererText()
@@ -118,7 +122,8 @@ class TextImageTree (Gtk.TreeView):
     @idle_add
     def addRow (self, id, text, type):
         if id in self.id2iter: return
-        iter = self.props.model.append([id, text , type,GObject.markup_escape_text(text)])
+        model = self.sort_model.get_model()
+        iter = model.append([id, text , type, GObject.markup_escape_text(text)])
         self.id2iter[id] = iter
         self.idSet.add(id)
 
@@ -128,14 +133,17 @@ class TextImageTree (Gtk.TreeView):
             iter = self.id2iter[id]
         except KeyError:
             return
-        self.props.model.remove(iter)
+        model = self.sort_model.get_model()
+        model.remove(iter)
         del self.id2iter[id]
         self.idSet.remove(id)
 
     @idle_add
     def selectRow (self, id):
         iter = self.id2iter[id]
-        self.get_selection().select_iter(iter)
+        iter = self.sort_model.convert_child_iter_to_iter(iter)[1]
+        sel = self.get_selection()
+        sel.select_iter(iter)
 
     def __contains__ (self, id):
         return id in self.idSet
@@ -149,10 +157,11 @@ class TextImageTree (Gtk.TreeView):
         path_col_pos = self.get_path_at_pos(int(event.x), int(event.y))
         if path_col_pos and path_col_pos[1] == self.rightcol:
             if self.pressed == path_col_pos[0]:
-                iter = self.props.model.get_iter(self.pressed)
-                id = self.props.model.get_value(iter, 0)
-                text = self.props.model.get_value(iter, 1)
-                type = self.props.model.get_value(iter, 2)
+                model = self.sort_model
+                iter = model.get_iter(self.pressed)
+                id = model.get_value(iter, 0)
+                text = model.get_value(iter, 1)
+                type = model.get_value(iter, 2)
                 self.emit("activated", id, text, type)
         self.pressed = None
 
@@ -172,6 +181,14 @@ class TextImageTree (Gtk.TreeView):
             id = model.get_value(iter, 0)
             type = model.get_value(iter, 2)
             self.emit("selected", id, type)
+
+    def compareFunction (self, treemodel, iter0, iter1, column):
+        val0 = treemodel.get_value(iter0, column).split(":")[0]
+        val1 = treemodel.get_value(iter1, column).split(":")[0]
+        if val0.isdigit() and val1.isdigit():
+            return cmp(int(val0), int(val1))
+        return cmp(val0, val1)
+
 
 class Panel (object):
     def start (self): pass
@@ -484,7 +501,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.joinedList.connect("selected", self.onSelect)
         vbox.pack_start(self.joinedList, True, True, 0)
 
-        vbox.pack_start(Gtk.Separator.new(0),True,True,2)
+        vbox.pack_start(Gtk.Separator.new(0),False,False,2)
         expander = Gtk.Expander.new(_("Friends"))
         vbox.pack_start(expander, False, True, 0)
         self.friendsList = TextImageTree("gtk-add")
@@ -492,7 +509,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.friendsList.fixed_height_mode = True
         connection.cm.connect("privateMessage", self.onPersonMessage)
         connection.cm.connect("channelsListed", self.onChannelsListed)
-        vbox.pack_start(Gtk.Separator.new(0),True,True,2)
+        vbox.pack_start(Gtk.Separator.new(0),False,False,2)
         expander.add(self.friendsList)
         self.channels = {}
 
@@ -501,7 +518,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.channelsList = TextImageTree("gtk-add")
         self.channelsList.connect("activated", self.onAdd)
         self.channelsList.fixed_height_mode = True
-        vbox.pack_start(Gtk.Separator.new(0),True,True,2)
+        vbox.pack_start(Gtk.Separator.new(0),False,False,2)
         expander.add(self.channelsList)
 
         expander = Gtk.Expander.new(_("More players"))
@@ -511,7 +528,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.playersList.fixed_height_mode = True
         connection.cm.connect("privateMessage", self.onPersonMessage)
         connection.cm.connect("channelsListed", self.onChannelsListed)
-        vbox.pack_start(Gtk.Separator.new(0),True,True,2)
+        vbox.pack_start(Gtk.Separator.new(0),False,False,2)
         expander.add(self.playersList)
         self.channels = {}
 
