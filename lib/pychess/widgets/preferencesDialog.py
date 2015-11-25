@@ -554,9 +554,10 @@ class ThemeTab:
 
         # This should probably be in Utils module
         def hex12_to_rgb(hstr):
-            hexstr = hstr[1:3] + hstr[5:7] + hstr[10:12]
-#            log.debug("Cajone HexStr :  %s , %s " % (hexstr, struct.unpack('BBB',bytes.fromhex(hexstr))))
-            return struct.unpack('BBB',bytes.fromhex(hexstr))
+            r = int(hstr[1:5],16)
+            g = int(hstr[6:10],16)
+            b = int(hstr[11:],16)
+            return (r,g,b)
 
         def on_color_set_light(color):
             conf.set('lightcolour',widgets['light_cbtn'].get_color().to_string())
