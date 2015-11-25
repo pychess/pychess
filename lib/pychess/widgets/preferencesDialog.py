@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import sys
+import struct
 from os import listdir
 from os.path import isdir, isfile, splitext
 from xml.dom import minidom
@@ -547,46 +548,49 @@ class ThemeTab:
 
     def __init__ (self, widgets):
 
+        #################
         # Board Colours
+        #################
 
-        # Get the current board colours if set, if not set them to default
-        conf.set("lightcolour", conf.get("lightcolour", Gdk.Color.parse("#fff")))
-        conf.set("darkcolour", conf.get("darkcolour", Gdk.Color.parse("#000")))
-
-        light_square = Gdk.RGBA.parse("#fff")
-        light_square_str  = Gdk.get_rgba(light_square)
-
-        dark_square = Gdk.RGBA.parse("#000")
-        dark_square_str  = Gdk.get_rgba(dark_square)
-
-        log.debug("Cajone Square RGB : %s : %s " % (light_square,dark_square))
-        log.debug("Cajone Square STR RGB : %s : %s " % (light_square_str,dark_square_str))
-
-        # Set the color swatches in preference to stored values
-        widgets['light_cbtn'].set_rgba(light_square)
-        widgets['dark_cbtn'].set_rgba(dark_square)
-
-
+        # This should probably be in Utils module
+        def hex12_to_rgb(hstr):
+            hexstr = hstr[1:3] + hstr[5:7] + hstr[10:12]
+#            log.debug("Cajone HexStr :  %s , %s " % (hexstr, struct.unpack('BBB',bytes.fromhex(hexstr))))
+            return struct.unpack('BBB',bytes.fromhex(hexstr))
 
         def on_color_set_light(color):
-            conf.set('lightcolour',widgets['light_cbtn'].get_rgba())
-            log.debug("Cajone Light Colors %s :  " % (widgets['light_cbtn'].get_rgba()))
-            log.debug("Cajone Light Colors Set %s :  " % (conf.get('lightcolour',"NOT SET")))
+            conf.set('lightcolour',widgets['light_cbtn'].get_color().to_string())
+#            log.debug("Cajone Light Colors %s :  " % (widgets['light_cbtn'].get_color().to_string()))
 
         widgets["light_cbtn"].connect_after("color-set",
                                                 on_color_set_light)
 
         def on_color_set_dark(color):
-            conf.set('darkcolour',widgets['dark_cbtn'].get_rgba())
-            log.debug("Cajone Dark Color %s :  " % (widgets['dark_cbtn'].get_rgba()))
-            log.debug("Cajone Dark Colors Set %s :  " % (conf.get('darkcolour',"NOT SET")))
+            conf.set('darkcolour',widgets['dark_cbtn'].get_color().to_string())
+#            log.debug("Cajone Dark Color %s :  " % (widgets['dark_cbtn'].get_color().to_string()))
 
         widgets["dark_cbtn"].connect_after("color-set",
                                                 on_color_set_dark)
 
 
+        # Get the current board colours if set, if not set, set them to default
 
+        conf.set("lightcolour", conf.get("lightcolour", "#ffffffffffff"))
+        conf.set("darkcolour", conf.get("darkcolour", "#000000000000"))
+
+        lightcolour =  Gdk.Color(*list(hex12_to_rgb(conf.get("lightcolour", "#ffffffffffff"))))
+        darkcolour =  Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#000000000000"))))
+
+        # Set the color swatches in preference to stored values
+        widgets['light_cbtn'].set_color(lightcolour)
+        widgets['dark_cbtn'].set_color(darkcolour)
+
+
+
+
+        #############
         # Chess Sets
+        #############
         self.themes = self.discover_themes()
         store = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
 
