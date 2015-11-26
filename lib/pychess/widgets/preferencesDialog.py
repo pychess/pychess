@@ -555,8 +555,8 @@ class ThemeTab:
         # This should probably be in Utils module
         def hex12_to_rgb(hstr):
             r = int(hstr[1:5],16)
-            g = int(hstr[6:10],16)
-            b = int(hstr[11:],16)
+            g = int(hstr[5:9],16)
+            b = int(hstr[9:],16)
             return (r,g,b)
 
         def on_color_set_light(color):
