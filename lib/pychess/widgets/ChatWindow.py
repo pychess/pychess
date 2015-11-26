@@ -346,6 +346,7 @@ class InfoPanel (Gtk.Notebook, Panel):
 
             self.fm.finger(playername)
 
+
         @idle_add
         def onFingeringFinished (self, fm, finger, playername):
             if not isinstance(self.get_child(), Gtk.Label) or \
@@ -400,15 +401,27 @@ class InfoPanel (Gtk.Notebook, Panel):
             self.cm = connection.cm
             self.add(Gtk.Label(label=_("Receiving list of players")))
 
+            self.names = set()
             chatView.connect("messageAdded", self.onMessageAdded)
             self.store = Gtk.ListStore(object, # (r,g,b) Color tuple
                                        str,    # name string
                                        bool    # is separator
                                        )
 
+            connection.players.connect("FICSPlayerExited", self.onPlayerRemoved)
+
             self.handle_id = self.cm.connect("recievedNames",
                                            self.onNamesRecieved, id)
             self.cm.getPeopleInChannel(id)
+
+        @idle_add
+        def onPlayerRemoved (self, players, player):
+            if player.name in self.names:
+                for row in self.store:
+                    if row[1] == player.name:
+                        self.store.remove(row.iter)
+                        break
+                self.names.remove(player.name)
 
         @idle_add
         def onNamesRecieved (self, cm, channel, people, channel_):
@@ -439,11 +452,12 @@ class InfoPanel (Gtk.Notebook, Panel):
 
             # Add those names. If this is not the first namesRecieve, we only
             # add the new names
-            noneed = set([name for color, name, isSeparator in self.store])
+            noneed = set([name for (color, name, isSeparator) in self.store])
             for name in people:
                 if name in noneed: continue
                 self.store.append([(1,1,1), name, False])
-
+                self.names.add(name)
+                
             self.remove(self.get_child())
             self.add(sw)
             self.show_all()
