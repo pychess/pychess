@@ -579,12 +579,14 @@ class ThemeTab:
         conf.set("lightcolour", conf.get("lightcolour", "#ffffffffffff"))
         conf.set("darkcolour", conf.get("darkcolour", "#000000000000"))
 
-        lightcolour =  Gdk.Color(*list(hex12_to_rgb(conf.get("lightcolour", "#ffffffffffff"))))
-        darkcolour =  Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#000000000000"))))
+
+        # Next 2 lines take a #hex str converts them to a color then to a RGBA representation
+        lightcolour =  Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("lightcolour", "#ffffffffffff")))))
+        darkcolour =  Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#000000000000")))))
 
         # Set the color swatches in preference to stored values
-        widgets['light_cbtn'].set_color(lightcolour)
-        widgets['dark_cbtn'].set_color(darkcolour)
+        widgets['light_cbtn'].set_rgba(lightcolour)
+        widgets['dark_cbtn'].set_rgba(darkcolour)
 
 
 
