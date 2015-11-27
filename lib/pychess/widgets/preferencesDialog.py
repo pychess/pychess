@@ -538,6 +538,12 @@ class PanelTab:
         self.hideit()
 
 
+def hex12_to_rgb(hstr):
+    r = int(hstr[1:5],16)
+    g = int(hstr[5:9],16)
+    b = int(hstr[9:],16)
+    return (r,g,b)
+
 
 #############################################################################
 # Theme initing                                                             #
@@ -553,12 +559,12 @@ class ThemeTab:
         #################
 
         # This should probably be in Utils module
-        def hex12_to_rgb(hstr):
-            r = int(hstr[1:5],16)
-            g = int(hstr[5:9],16)
-            b = int(hstr[9:],16)
-            return (r,g,b)
-
+#        def hex12_to_rgb(hstr):
+#            r = int(hstr[1:5],16)
+#            g = int(hstr[5:9],16)
+#            b = int(hstr[9:],16)
+#            return (r,g,b)
+#
         def on_color_set_light(color):
             conf.set('lightcolour',widgets['light_cbtn'].get_color().to_string())
 #            log.debug("Cajone Light Colors %s :  " % (widgets['light_cbtn'].get_color().to_string()))
