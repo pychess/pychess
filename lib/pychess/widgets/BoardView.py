@@ -27,6 +27,8 @@ from . import preferencesDialog
 
 from pychess.System.Log import log
 
+from .preferencesDialog import hex12_to_rgb
+
 def intersects (r0, r1):
     w0 = r0.width + r0.x
     h0 = r0.height + r0.y
@@ -792,6 +794,7 @@ class BoardView (Gtk.DrawingArea):
         xc, yc, square, s = self.square
         sc = self.get_style_context()
         found, col = sc.lookup_color("p_dark_color")
+        col = Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#000000000000")))))
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
         if self.model.variant.variant in ASEAN_VARIANTS:
