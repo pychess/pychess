@@ -968,8 +968,8 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="F11" signal="activate"/>
                         <accelerator key="Escape" signal="activate"/>
+                        <accelerator key="F11" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -2418,15 +2418,18 @@ It will search positions from http://www.k4it.de/</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
                                           <object class="GtkLabel" id="label30">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="label" translatable="yes">Light Squares</property>
+                                            <property name="label" translatable="yes">Light Squares :</property>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -2440,8 +2443,11 @@ It will search positions from http://www.k4it.de/</property>
                                           <packing>
                                             <property name="expand">True</property>
                                             <property name="fill">False</property>
-                                            <property name="position">1</property>
+                                            <property name="position">2</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                       <packing>
@@ -2455,15 +2461,18 @@ It will search positions from http://www.k4it.de/</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
                                           <object class="GtkLabel" id="label31">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="label" translatable="yes">Dark Squares</property>
+                                            <property name="label" translatable="yes">Dark Squares :</property>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">1</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -2477,14 +2486,51 @@ It will search positions from http://www.k4it.de/</property>
                                           <packing>
                                             <property name="expand">True</property>
                                             <property name="fill">False</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox" id="reset">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="reset_btn">
+                                            <property name="label" translatable="yes">Reset Default Colours</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="relief">half</property>
+                                            <property name="xalign">0.43000000715255737</property>
+                                            <property name="yalign">0.49000000953674316</property>
+                                            <signal name="clicked" handler="on_reset_colour_clicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
                                             <property name="position">1</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">1</property>
+                                        <property name="position">2</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -3917,6 +3963,24 @@ If it can use both  you can set here which one you like.</property>
                             <property name="bottom_attach">2</property>
                             <property name="y_options">GTK_FILL</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>
