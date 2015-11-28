@@ -742,6 +742,7 @@ class BoardView (Gtk.DrawingArea):
 
         sc = self.get_style_context()
         bool1, dcolor = sc.lookup_color("p_dark_color")
+        dcolor = Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#000000000000")))))
         context.set_source_rgba(dcolor.red, dcolor.green, dcolor.blue, dcolor.alpha)
 
         context.set_line_width(t)
