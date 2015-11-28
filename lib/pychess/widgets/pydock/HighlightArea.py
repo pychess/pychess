@@ -13,12 +13,12 @@ from .OverlayWindow import OverlayWindow
 
 class HighlightArea (OverlayWindow):
     """ An entirely blue widget """
-    
+
     def __init__ (self, parent):
         OverlayWindow.__init__(self, parent)
-        self.myparent = parent       
+        self.myparent = parent
         self.connect_after("draw", self.__onExpose)
-    
+
     def showAt (self, position):
         alloc = self.myparent.get_allocation()
         if position == NORTH:
@@ -46,7 +46,7 @@ class HighlightArea (OverlayWindow):
 
         self.resize(ceil(width), ceil(height))
         self.show()
-        
+
     def __onExpose (self, self_, ctx):
         context = self.get_window().cairo_create()
         a = self_.get_allocation()
