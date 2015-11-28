@@ -21,13 +21,13 @@ from pychess.gfx import Pieces
 from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
+from pychess.Utils.Board import hex12_to_rgb
 from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
                                        HiddenPiecesBoard, AllWhiteBoard
 from . import preferencesDialog
 
 from pychess.System.Log import log
 
-from .preferencesDialog import hex12_to_rgb
 
 def intersects (r0, r1):
     w0 = r0.width + r0.x
@@ -136,6 +136,8 @@ class BoardView (Gtk.DrawingArea):
         conf.notify_add("showCaptured", self.on_show_captured)
         conf.notify_add("faceToFace", self.on_face_to_face)
         conf.notify_add("pieceTheme", self.on_set_piece_theme)
+        conf.notify_add("lightcolour", self.on_board_colour_theme)
+        conf.notify_add("darkcolour", self.on_board_colour_theme)
 
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES
@@ -305,6 +307,10 @@ class BoardView (Gtk.DrawingArea):
 
     def on_set_piece_theme (self, *args):
         self.redraw_canvas()
+
+    def on_board_colour_theme(self, *args):
+        self.redraw_canvas()
+
 
     ###############################
     #          Animation          #
@@ -793,6 +799,14 @@ class BoardView (Gtk.DrawingArea):
     def drawBoard(self, context, r):
         xc, yc, square, s = self.square
         sc = self.get_style_context()
+        col = Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("lightcolour", "#ffffffffffff")))))
+        context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
+        for x in range(self.FILES):
+            for y in range(self.RANKS):
+                if x % 2 + y % 2 != 1:
+                    context.rectangle(xc+x*s, yc+y*s, s, s)
+        context.fill()
+
         found, col = sc.lookup_color("p_dark_color")
         col = Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#000000000000")))))
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)

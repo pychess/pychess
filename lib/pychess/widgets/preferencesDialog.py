@@ -17,6 +17,7 @@ from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
+from pychess.Utils.Board import hex12_to_rgb
 from pychess.gfx import Pieces
 from pychess.System.Log import log
 
@@ -538,12 +539,6 @@ class PanelTab:
         self.hideit()
 
 
-def hex12_to_rgb(hstr):
-    r = int(hstr[1:5],16)
-    g = int(hstr[5:9],16)
-    b = int(hstr[9:],16)
-    return (r,g,b)
-
 
 #############################################################################
 # Theme initing                                                             #
@@ -558,33 +553,28 @@ class ThemeTab:
         # Board Colours
         #################
 
-        # This should probably be in Utils module
-#        def hex12_to_rgb(hstr):
-#            r = int(hstr[1:5],16)
-#            g = int(hstr[5:9],16)
-#            b = int(hstr[9:],16)
-#            return (r,g,b)
-#
-        def on_color_set_light(color):
+        def on_colour_set_light(color_btn):
             conf.set('lightcolour',widgets['light_cbtn'].get_color().to_string())
-#            log.debug("Cajone Light Colors %s :  " % (widgets['light_cbtn'].get_color().to_string()))
 
         widgets["light_cbtn"].connect_after("color-set",
-                                                on_color_set_light)
+                                                on_colour_set_light)
 
-        def on_color_set_dark(color):
+        def on_colour_set_dark(color_btn):
             conf.set('darkcolour',widgets['dark_cbtn'].get_color().to_string())
-#            log.debug("Cajone Dark Color %s :  " % (widgets['dark_cbtn'].get_color().to_string()))
 
         widgets["dark_cbtn"].connect_after("color-set",
-                                                on_color_set_dark)
+                                                on_colour_set_dark)
+
+        def on_reset_colour_clicked(btn):
+            conf.set("lightcolour", "#ffffffffffff")
+            conf.set("darkcolour", "#000000000000")
+
+        widgets["reset_btn"].connect("clicked", on_reset_colour_clicked)
 
 
         # Get the current board colours if set, if not set, set them to default
-
         conf.set("lightcolour", conf.get("lightcolour", "#ffffffffffff"))
         conf.set("darkcolour", conf.get("darkcolour", "#000000000000"))
-
 
         # Next 2 lines take a #hex str converts them to a color then to a RGBA representation
         lightcolour =  Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("lightcolour", "#ffffffffffff")))))
@@ -593,8 +583,6 @@ class ThemeTab:
         # Set the color swatches in preference to stored values
         widgets['light_cbtn'].set_rgba(lightcolour)
         widgets['dark_cbtn'].set_rgba(darkcolour)
-
-
 
 
         #############
