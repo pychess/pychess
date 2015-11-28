@@ -524,7 +524,7 @@ def is_uci(engine_command):
     uci = False
     for line in output.splitlines():
         line = line.rstrip()
-        if line == "uciok":
+        if line == "uciok" or line.startswith("info string"):
             uci = True
             break
         elif "Error" in line or "Illegal" in line or "Invalid" in line:
