@@ -802,17 +802,25 @@ class BoardView (Gtk.DrawingArea):
         sc = self.get_style_context()
         col = Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("lightcolour", "#ffffffffffff")))))
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
-        for x in range(self.FILES):
-            for y in range(self.RANKS):
-                if x % 2 + y % 2 != 1:
-                    context.rectangle(xc+x*s, yc+y*s, s, s)
-        context.fill()
+
+        if self.model.variant.variant in ASEAN_VARIANTS:
+            # just fill the whole board with light color
+            context.rectangle(xc, yc, s*self.FILES, s*self.RANKS)
+            context.fill()
+        else:
+            # light squares
+            for x in range(self.FILES):
+                for y in range(self.RANKS):
+                    if x % 2 + y % 2 != 1:
+                        context.rectangle(xc+x*s, yc+y*s, s, s)
+            context.fill()
 
         found, col = sc.lookup_color("p_dark_color")
         col = Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#000000000000")))))
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
         if self.model.variant.variant in ASEAN_VARIANTS:
+            # just unfilled rectangles
             for x in range(self.FILES):
                 for y in range(self.RANKS):
                     context.rectangle(xc+x*s, yc+y*s , s, s)
@@ -824,15 +832,15 @@ class BoardView (Gtk.DrawingArea):
                 context.rel_line_to(-square, square)
                 context.stroke()
         else:
+            # dark squares
             for x in range(self.FILES):
                 for y in range(self.RANKS):
                     if x % 2 + y % 2 == 1:
                         context.rectangle(xc+x*s, yc+y*s, s, s)
             context.fill()
 
-        if not self.showCords:
-            context.rectangle(xc, yc, self.FILES*s, self.RANKS*s)
-            context.stroke()
+        context.rectangle(xc, yc, self.FILES*s, self.RANKS*s)
+        context.stroke()
 
     ###############################
     #         drawPieces          #
