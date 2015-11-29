@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.19.0 -->
+<!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
   <object class="GtkAboutDialog" id="aboutdialog1">
@@ -172,8 +172,8 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                               <object class="GtkLabel" id="label6">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Event:</property>
                                 <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Event:</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -186,8 +186,8 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                               <object class="GtkLabel" id="label3">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Site:</property>
                                 <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Site:</property>
                               </object>
                               <packing>
                                 <property name="x_options">GTK_FILL</property>
@@ -212,8 +212,8 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                               <object class="GtkLabel" id="label1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Round:</property>
                                 <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Round:</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -245,8 +245,8 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                               <object class="GtkLabel" id="label7">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">White:</property>
                                 <property name="xalign">0</property>
+                                <property name="label" translatable="yes">White:</property>
                               </object>
                               <packing>
                                 <property name="top_attach">2</property>
@@ -257,8 +257,8 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                               <object class="GtkLabel" id="label21">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Black:</property>
                                 <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Black:</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -968,8 +968,8 @@ along with PyChess; if not, write to the Free Software Foundation, Inc.,
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="F11" signal="activate"/>
                         <accelerator key="Escape" signal="activate"/>
+                        <accelerator key="F11" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -1935,10 +1935,10 @@ It will search positions from http://www.k4it.de/</property>
                                               <object class="GtkLabel" id="label62">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
                                                 <property name="label" translatable="yes">The analyzer will run in the background and analyze the game. &lt;b&gt;This is necessary for the hint mode to work&lt;/b&gt;</property>
                                                 <property name="use_markup">True</property>
                                                 <property name="wrap">True</property>
-                                                <property name="xalign">0</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -2009,10 +2009,10 @@ It will search positions from http://www.k4it.de/</property>
                                               <object class="GtkLabel" id="label63">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
+                                                <property name="xalign">3.7252902984619141e-09</property>
                                                 <property name="label" translatable="yes">The inverse analyzer will analyze the game as if your opponent was to move. &lt;b&gt;This is necessary for the spy mode to work&lt;/b&gt;</property>
                                                 <property name="use_markup">True</property>
                                                 <property name="wrap">True</property>
-                                                <property name="xalign">3.7252902984619141e-09</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -2385,218 +2385,233 @@ It will search positions from http://www.k4it.de/</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="vexpand">True</property>
+                <property name="top_padding">3</property>
                 <child>
-                  <object class="GtkBox" id="box1">
+                  <object class="GtkAlignment" id="alignment2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
+                    <property name="left_padding">3</property>
                     <child>
-                      <object class="GtkFrame" id="Boardcolour_frame">
-                        <property name="name">Board Colours</property>
+                      <object class="GtkBox" id="box1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">etched-out</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
                         <child>
-                          <object class="GtkBox" id="boardcolours_box">
+                          <object class="GtkAlignment" id="alignment15">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="border_width">0</property>
-                            <property name="orientation">vertical</property>
+                            <property name="top_padding">6</property>
+                            <property name="left_padding">3</property>
                             <child>
-                              <object class="GtkBox" id="light">
+                              <object class="GtkFrame" id="Boardcolour_frame">
+                                <property name="name">Board Colours</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="label_xalign">0</property>
+                                <property name="shadow_type">none</property>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="label30">
+                                  <object class="GtkAlignment" id="alignment22">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Light Squares :</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkColorButton" id="light_cbtn">
-                                    <property name="name">light_cbtn</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="rgba">rgb(117,80,123)</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="padding">4</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkBox" id="dark">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="label31">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Dark Squares :</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkColorButton" id="dark_cbtn">
-                                    <property name="name">dark_cbtn</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="rgba">rgb(186,189,182)</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="padding">4</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkBox" id="reset">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="reset_btn">
-                                    <property name="label" translatable="yes">Reset Default Colours</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="relief">half</property>
-                                    <property name="xalign">0.43000000715255737</property>
-                                    <property name="yalign">0.49000000953674316</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="padding">4</property>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkLabel" id="label29">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">&lt;b&gt;Board Colours&lt;/b&gt;</property>
-                            <property name="use_markup">True</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkFrame" id="chess_sets_frame">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">etched-out</property>
-                        <child>
-                          <object class="GtkAlignment" id="alignment2">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="left_padding">12</property>
-                            <child>
-                              <object class="GtkBox" id="pieces_box">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="orientation">vertical</property>
-                                <child>
-                                  <object class="GtkScrolledWindow" id="scrolledwindow4">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="min_content_width">2</property>
-                                    <property name="min_content_height">2</property>
+                                    <property name="left_padding">12</property>
                                     <child>
-                                      <object class="GtkIconView" id="pieceTheme">
+                                      <object class="GtkBox" id="boardcolours_box">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="margin">6</property>
-                                        <property name="vexpand">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="border_width">0</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <object class="GtkBox" id="light">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="spacing">9</property>
+                                            <child>
+                                              <object class="GtkLabel" id="label30">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">Light Squares :</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkColorButton" id="light_cbtn">
+                                                <property name="name">light_cbtn</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="rgba">rgb(117,80,123)</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="padding">4</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox" id="dark">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="spacing">9</property>
+                                            <child>
+                                              <object class="GtkLabel" id="label31">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">Dark Squares :</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkColorButton" id="dark_cbtn">
+                                                <property name="name">dark_cbtn</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="rgba">rgb(186,189,182)</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="padding">4</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox" id="reset">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <child>
+                                              <object class="GtkButton" id="reset_btn">
+                                                <property name="label" translatable="yes">Reset Default Colours</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">True</property>
+                                                <property name="relief">half</property>
+                                                <property name="xalign">0.43000000715255737</property>
+                                                <property name="yalign">0.49000000953674316</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="padding">4</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                     </child>
                                   </object>
-                                  <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
+                                </child>
+                                <child type="label">
+                                  <object class="GtkLabel" id="label29">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">&lt;b&gt;Board Colours&lt;/b&gt;</property>
+                                    <property name="use_markup">True</property>
+                                  </object>
                                 </child>
                               </object>
                             </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
                         </child>
-                        <child type="label">
-                          <object class="GtkLabel" id="label28">
+                        <child>
+                          <object class="GtkFrame" id="chess_sets_frame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">&lt;b&gt;Chess Sets&lt;/b&gt;</property>
-                            <property name="use_markup">True</property>
+                            <property name="label_xalign">0</property>
+                            <property name="shadow_type">none</property>
+                            <child>
+                              <object class="GtkAlignment" id="alignment21">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="left_padding">12</property>
+                                <child>
+                                  <object class="GtkBox" id="pieces_box">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="orientation">vertical</property>
+                                    <child>
+                                      <object class="GtkScrolledWindow" id="scrolledwindow4">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="shadow_type">etched-out</property>
+                                        <property name="min_content_width">2</property>
+                                        <property name="min_content_height">2</property>
+                                        <child>
+                                          <object class="GtkIconView" id="pieceTheme">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="margin">6</property>
+                                            <property name="vexpand">True</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel" id="label28">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Chess Sets&lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                            </child>
                           </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
                     </child>
                   </object>
                 </child>
@@ -2956,9 +2971,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel1">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">A player _checks:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">1</property>
@@ -2971,9 +2986,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel0">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">A player _moves:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="x_options">GTK_FILL</property>
@@ -2984,9 +2999,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel6">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Game is _drawn:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">8</property>
@@ -2999,9 +3014,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel5">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Game is _lost:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">7</property>
@@ -3014,9 +3029,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel4">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Game is _won:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">6</property>
@@ -3029,9 +3044,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel2">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">A player c_aptures:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">2</property>
@@ -3058,9 +3073,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel3">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Game is _set-up:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">5</property>
@@ -3110,9 +3125,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel7">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">_Observed moves:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">10</property>
@@ -3125,9 +3140,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel8">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Observed _ends:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">11</property>
@@ -3239,9 +3254,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel9">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Short on _time:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">13</property>
@@ -3291,9 +3306,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel10">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">_Invalid move:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">3</property>
@@ -3343,9 +3358,9 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="soundlabel11">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Activate alarm when _remaining sec is:</property>
                                     <property name="use_underline">True</property>
-                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="top_attach">14</property>
@@ -3471,8 +3486,8 @@ It will search positions from http://www.k4it.de/</property>
                               <object class="GtkLabel" id="label23">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Save files to:</property>
                                 <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Save files to:</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -3498,9 +3513,9 @@ It will search positions from http://www.k4it.de/</property>
                               <object class="GtkLabel" id="label24">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Use name format:</property>
                                 <property name="xalign">0</property>
                                 <property name="yalign">0.49000000953674316</property>
+                                <property name="label" translatable="yes">Use name format:</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -3523,9 +3538,9 @@ It will search positions from http://www.k4it.de/</property>
                               <object class="GtkLabel" id="label25">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="xpad">2</property>
                                 <property name="label">.pgn</property>
-                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="left_attach">2</property>
@@ -3543,8 +3558,8 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="can_focus">False</property>
                                     <property name="valign">start</property>
                                     <property name="margin_top">1</property>
-                                    <property name="label" translatable="yes">Names:  #n1, #n2</property>
                                     <property name="xalign">0</property>
+                                    <property name="label" translatable="yes">Names:  #n1, #n2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -3556,8 +3571,8 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkLabel" id="label27">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Year, month, day: #y, #m, #d</property>
                                     <property name="xalign">0</property>
+                                    <property name="label" translatable="yes">Year, month, day: #y, #m, #d</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -3811,8 +3826,8 @@ It will search positions from http://www.k4it.de/</property>
                           <object class="GtkLabel" id="label17">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Command:</property>
                             <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Command:</property>
                           </object>
                           <packing>
                             <property name="top_attach">1</property>
@@ -3825,8 +3840,8 @@ It will search positions from http://www.k4it.de/</property>
                           <object class="GtkLabel" id="label18">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Protocol:</property>
                             <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Protocol:</property>
                           </object>
                           <packing>
                             <property name="top_attach">4</property>
@@ -3839,8 +3854,8 @@ It will search positions from http://www.k4it.de/</property>
                           <object class="GtkLabel" id="label19">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Parameters:</property>
                             <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Parameters:</property>
                           </object>
                           <packing>
                             <property name="top_attach">2</property>
@@ -3903,8 +3918,8 @@ If it can use both  you can set here which one you like.</property>
                           <object class="GtkLabel" id="label20">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Working directory:</property>
                             <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Working directory:</property>
                           </object>
                           <packing>
                             <property name="top_attach">3</property>
@@ -3953,6 +3968,24 @@ If it can use both  you can set here which one you like.</property>
                             <property name="bottom_attach">2</property>
                             <property name="y_options">GTK_FILL</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>
