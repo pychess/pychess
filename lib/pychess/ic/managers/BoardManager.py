@@ -236,8 +236,11 @@ class BoardManager (GObject.GObject):
         self.connection.expect_n_lines (self.onFollowingPlayer,
             "You will now be following %s's games\." % names,
             "You are now observing game \d+\.",
-            "Game (\d+): %s %s %s %s %s [\w/]+ \d+ \d+"
-            % (names, ratings, names, ratings, ratedexp))
+            "Game (\d+): %s %s %s %s %s ([\w/]+) (\d+) (\d+)"
+            % (names, ratings, names, ratings, ratedexp),
+            '',
+            "<12> (.+)")
+
         self.connection.expect_fromto (self.onObserveGameMovesReceived,
             "Movelist for game (\d+):", "{Still in progress} \*")
         self.connection.expect_line (self.onGamePause,
