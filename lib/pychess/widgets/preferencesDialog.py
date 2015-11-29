@@ -567,18 +567,18 @@ class ThemeTab:
 
         def on_reset_colour_clicked(btn):
             conf.set("lightcolour", "#ffffffffffff")
-            conf.set("darkcolour", "#000000000000")
+            conf.set("darkcolour", "#aaaaaaaaaaaa")
 
         widgets["reset_btn"].connect("clicked", on_reset_colour_clicked)
 
 
         # Get the current board colours if set, if not set, set them to default
         conf.set("lightcolour", conf.get("lightcolour", "#ffffffffffff"))
-        conf.set("darkcolour", conf.get("darkcolour", "#000000000000"))
+        conf.set("darkcolour", conf.get("darkcolour", "#aaaaaaaaaaaa"))
 
         # Next 2 lines take a #hex str converts them to a color then to a RGBA representation
         lightcolour =  Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("lightcolour", "#ffffffffffff")))))
-        darkcolour =  Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#000000000000")))))
+        darkcolour =  Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#aaaaaaaaaaaa")))))
 
         # Set the color swatches in preference to stored values
         widgets['light_cbtn'].set_rgba(lightcolour)
