@@ -114,6 +114,8 @@ def appendAutowrapColumn (treeview, name, **kvargs):
         if cell.props.wrap_width == newWidth or newWidth <= 0:
             return
         cell.props.wrap_width = newWidth
+        column.set_property('min-width', newWidth + 10)
+        column.set_property('max-width', newWidth + 10)
         store = treeview.get_model()
         iter = store.get_iter_first()
         while iter and store.iter_is_valid(iter):
