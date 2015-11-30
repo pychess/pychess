@@ -129,6 +129,8 @@ BADPAS = _("The entered password was invalid.\n" + \
            "http://www.freechess.org/password</a> to request a new one over email.")
 ALREADYIN = _("Sorry '%s' is already logged in")
 REGISTERED = _("'%s' is a registered name.  If it is yours, type the password.")
+PREVENTED = _("Due to abuse problems, guest connections have been prevented.\n" + \
+              "You can still register on http://www.freechess.org")
 
 class FICSConnection (Connection):
     def __init__ (self, host, ports, username="guest", password=""):
@@ -185,9 +187,12 @@ class FICSConnection (Connection):
                 else:
                     print("guest", file=self.client)
                 got = self.client.read_until("Press return",
-                                             "If it is yours, type the password.")
+                                             "If it is yours, type the password.",
+                                             "guest connections have been prevented")
                 if got == 1:
                     raise LogOnException(REGISTERED % self.username)
+                elif got == 2:
+                    raise LogOnException(PREVENTED)
                 print(file=self.client)
             
             while True:
