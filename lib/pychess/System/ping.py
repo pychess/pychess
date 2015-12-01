@@ -10,11 +10,11 @@ from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess, searchPath
 
 class Pinger (GObject.GObject):
-    """ The recieved signal contains the time it took to get response from the
+    """ The received signal contains the time it took to get response from the
         server in millisecconds. -1 means that some error occurred """
     
     __gsignals__ = {
-        "recieved": (GObject.SignalFlags.RUN_FIRST, None, (float,)),
+        "received": (GObject.SignalFlags.RUN_FIRST, None, (float,)),
         "error": (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
     
@@ -54,7 +54,7 @@ class Pinger (GObject.GObject):
             time = float(time)
             if unit == "s":
                 time *= 1000
-            self.emit("recieved", time)
+            self.emit("received", time)
         else:
             for expr in self.errorExprs:
                 match = expr.search(line)
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     pinger = Pinger("google.com")
     def callback(pinger, time):
         print(time)
-    pinger.connect("recieved", callback)
+    pinger.connect("received", callback)
     pinger.start()
     import time
     time.sleep(5)

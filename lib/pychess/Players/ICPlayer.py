@@ -94,9 +94,10 @@ class ICPlayer (Player):
             (id(self), self, gameno, wname, bname, ply, curcol, lastmove, fen, wms, bms))
         
         if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
-            and wname == self.gamemodel.players[0].ichandle \
-            and bname == self.gamemodel.players[1].ichandle \
             and self.current:
+            # LectureBot allways uses gameno 1 for many games in one lecture
+            #and wname == self.gamemodel.players[0].ichandle \
+            #and bname == self.gamemodel.players[1].ichandle \
             log.debug("ICPlayer.__boardUpdate: id=%d self=%s gameno=%s: this is my move" % \
                 (id(self), self, gameno))
             
@@ -104,14 +105,14 @@ class ICPlayer (Player):
             if ply <= self.gamemodel.ply:
                 return
             
-            if 1-curcol == self.color:
+            if 1-curcol == self.color and lastmove is not None:
                 log.debug("ICPlayer.__boardUpdate: id=%d self=%s ply=%d: putting move=%s in queue" % \
                     (id(self), self, ply, lastmove))
                 self.queue.put((ply, lastmove))
                 # Ensure the fics thread doesn't continue parsing, before the
-                # game/player thread has recieved the move.
+                # game/player thread has received the move.
                 # Specifically this ensures that we aren't killed due to end of
-                # game before our last move is recieved
+                # game before our last move is received
                 self.okqueue.get(block=True)
     
     #===========================================================================
@@ -198,6 +199,10 @@ class ICPlayer (Player):
         if movecount % 2 == 1 and gamemodel.curplayer != self:
             self.queue.put("int")
     
+    def resetPosition (self):
+        """ Used in observed examined games f.e. when LectureBot starts another example"""
+        self.queue.put("int")
+
     def putMessage (self, text):
         self.connection.cm.tellPlayer (self.name, text)
     

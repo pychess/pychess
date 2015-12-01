@@ -45,6 +45,7 @@ class FenFile (ChessFile):
         
         model.boards = [board]
         model.variations = [model.boards]
+        model.moves = []
         if model.status == WAITING_TO_START:
             status, reason = getStatus(model.boards[-1])
             if status in (BLACKWON, WHITEWON, DRAW):
