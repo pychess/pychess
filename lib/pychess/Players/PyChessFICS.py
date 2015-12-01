@@ -328,7 +328,7 @@ class PyChessFICS(PyChess):
             self.playingAs = WHITE
         
         self.board = LBoard(NORMALCHESS)
-        # Now we wait until we recieve the board.
+        # Now we wait until we receive the board.
     
     def __go (self):
         if self.worker:

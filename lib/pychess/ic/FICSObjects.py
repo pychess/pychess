@@ -252,9 +252,9 @@ class FICSPlayer (GObject.GObject):
         else: return True
     
     def isObservable (self):
-        #return self.status == IC_STATUS_EXAMINING \
-        #        or \
-        return (self.status == IC_STATUS_PLAYING and \
+        return self.status == IC_STATUS_EXAMINING \
+                or \
+              (self.status == IC_STATUS_PLAYING and \
                 self.game is not None and not self.game.private and self.game.supported)
         
     def isGuest (self):

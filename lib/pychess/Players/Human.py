@@ -76,7 +76,7 @@ class Human (Player):
     __type__ = LOCAL
     
     __gsignals__ = {
-        "messageRecieved": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "messageReceived": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
     
     def __init__ (self, gmwidg, color, name, ichandle=None, icrating=None):
@@ -212,7 +212,7 @@ class Human (Player):
             self.gmwidg.setLocked(False)
     
     def putMessage (self, text):
-        self.emit("messageRecieved", text)
+        self.emit("messageReceived", text)
     
     def sendMessage (self, text):
         self.emit("offer", Offer(CHAT_ACTION, param=text))
