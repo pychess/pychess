@@ -496,7 +496,7 @@ class UserInfoSection(Section):
             if not self.pinger:
                 self.pinger = Pinger(self.host)
                 self.pinger.start()
-                self.pinger.connect("recieved", callback)
+                self.pinger.connect("received", callback)
                 self.pinger.connect("error", callback)
             table.attach(self.ping_label, 1, 6, row, row+1)
             row += 1

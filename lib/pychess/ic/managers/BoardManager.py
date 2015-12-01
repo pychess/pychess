@@ -735,7 +735,6 @@ class BoardManager (GObject.GObject):
         gameno = int(gameno)
         wrating = self.parseRating(wrating)
         brating = self.parseRating(brating)
-        #rated = rated == "rated"
         game_type = GAME_TYPES[gametype]
         
         castleSigns = self.generateCastleSigns(style12, game_type)
@@ -744,15 +743,15 @@ class BoardManager (GObject.GObject):
                 self.parseStyle12(style12, castleSigns)
 
         if relation == IC_POS_OBSERVING_EXAMINATION:
+            if int(self.connection.lvm.getVariable("kibitz")) == 0:
+                # TODO: add infobar message to get permission changing v_kibitz
+                self.connection.client.run_command("set kibitz 1")
             pgnHead = [
                 ("Event", "FICS %s %s game" % (rated, game_type.fics_name)),
                 ("Site", "freechess.org"),
                 ("White", wname),
                 ("Black", bname),
-                ("TimeControl", "%d+%d" % (int(min) * 60, int(inc))),
                 ("Result", "*"),
-                ("WhiteClock", msToClockTimeTag(wms)),
-                ("BlackClock", msToClockTimeTag(bms)),
                 ("SetUp", "1"),
                 ("FEN", fen)
                 ]

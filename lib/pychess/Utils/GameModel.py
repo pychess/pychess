@@ -108,6 +108,8 @@ class GameModel (GObject.GObject, Thread):
         "variation_extended":  (GObject.SignalFlags.RUN_FIRST, None, (object, object)),
         # scores_changed is emitted if the analyzing scores was changed.
         "analysis_changed":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        # FICS games can get kibitz/whisper messages
+        "message_received":    (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
     }
     
     def __init__ (self, timemodel=None, variant=NormalBoard):        
@@ -211,10 +213,10 @@ class GameModel (GObject.GObject, Thread):
         assert self.status == WAITING_TO_START
         self.players = players
         for player in self.players:
-            self.connections[player].append(player.connect("offer", self.offerRecieved))
-            self.connections[player].append(player.connect("withdraw", self.withdrawRecieved))
-            self.connections[player].append(player.connect("decline", self.declineRecieved))
-            self.connections[player].append(player.connect("accept", self.acceptRecieved))
+            self.connections[player].append(player.connect("offer", self.offerReceived))
+            self.connections[player].append(player.connect("withdraw", self.withdrawReceived))
+            self.connections[player].append(player.connect("decline", self.declineReceived))
+            self.connections[player].append(player.connect("accept", self.acceptReceived))
         self.tags["White"] = str(self.players[WHITE])
         self.tags["Black"] = str(self.players[BLACK])
         log.debug("GameModel.setPlayers: -> emit players_changed")
@@ -392,8 +394,8 @@ class GameModel (GObject.GObject, Thread):
     # Offer management                                                         #
     ############################################################################
     
-    def offerRecieved (self, player, offer):
-        log.debug("GameModel.offerRecieved: offerer=%s %s" % (repr(player), offer))
+    def offerReceived (self, player, offer):
+        log.debug("GameModel.offerReceived: offerer=%s %s" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
@@ -436,7 +438,7 @@ class GameModel (GObject.GObject, Thread):
         
         elif offer.type in OFFERS:
             if offer not in self.offers:
-                log.debug("GameModel.offerRecieved: doing %s.offer(%s)" % \
+                log.debug("GameModel.offerReceived: doing %s.offer(%s)" % \
                     (repr(opPlayer), offer))
                 self.offers[offer] = player
                 opPlayer.offer(offer)
@@ -445,8 +447,8 @@ class GameModel (GObject.GObject, Thread):
                 if offer.type == offer_.type and offer != offer_:
                     del self.offers[offer_]
     
-    def withdrawRecieved (self, player, offer):
-        log.debug("GameModel.withdrawRecieved: withdrawer=%s %s" % \
+    def withdrawReceived (self, player, offer):
+        log.debug("GameModel.withdrawReceived: withdrawer=%s %s" % \
             (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
@@ -458,21 +460,21 @@ class GameModel (GObject.GObject, Thread):
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_WITHDRAW)
     
-    def declineRecieved (self, player, offer):
-        log.debug("GameModel.declineRecieved: decliner=%s %s" % (repr(player), offer))
+    def declineReceived (self, player, offer):
+        log.debug("GameModel.declineReceived: decliner=%s %s" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
         
         if offer in self.offers and self.offers[offer] == opPlayer:
             del self.offers[offer]
-            log.debug("GameModel.declineRecieved: declining %s" % offer)
+            log.debug("GameModel.declineReceived: declining %s" % offer)
             opPlayer.offerDeclined(offer)
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_DECLINE)
     
-    def acceptRecieved (self, player, offer):
-        log.debug("GameModel.acceptRecieved: accepter=%s %s" % (repr(player), offer))
+    def acceptReceived (self, player, offer):
+        log.debug("GameModel.acceptReceived: accepter=%s %s" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
@@ -481,7 +483,7 @@ class GameModel (GObject.GObject, Thread):
             if offer.type == DRAW_OFFER:
                 self.end(DRAW, DRAW_AGREE)
             elif offer.type == TAKEBACK_OFFER:
-                log.debug("GameModel.acceptRecieved: undoMoves(%s)" % \
+                log.debug("GameModel.acceptReceived: undoMoves(%s)" % \
                     (self.ply - offer.param))
                 self.undoMoves(self.ply - offer.param)
             elif offer.type == ADJOURN_OFFER:
@@ -500,8 +502,9 @@ class GameModel (GObject.GObject, Thread):
     # Data stuff                                                               #
     ############################################################################
     
-    def loadAndStart (self, uri, loader, gameno, position):
-        assert self.status == WAITING_TO_START
+    def loadAndStart (self, uri, loader, gameno, position, first_time=True):
+        if first_time:
+            assert self.status == WAITING_TO_START
 
         uriIsFile = not isinstance(uri, str)
         if not uriIsFile:
@@ -537,15 +540,16 @@ class GameModel (GObject.GObject, Thread):
         if self.timed:
             self.timemodel.setMovingColor(self.boards[-1].color)
         
-        if self.status == RUNNING:
-            if self.timed and self.ply >= 2:
-                self.timemodel.start()
-        
-        # Store end status from Result tag
-        if self.status in (DRAW, WHITEWON, BLACKWON):
-            self.endstatus = self.status
-        self.status = WAITING_TO_START
-        self.start()
+        if first_time:
+            if self.status == RUNNING:
+                if self.timed and self.ply >= 2:
+                    self.timemodel.start()
+            
+            # Store end status from Result tag
+            if self.status in (DRAW, WHITEWON, BLACKWON):
+                self.endstatus = self.status
+            self.status = WAITING_TO_START
+            self.start()
         
         if error:
             raise error

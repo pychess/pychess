@@ -13,6 +13,7 @@ titles = "(?:\([A-Z*]+\))*"
 names = "([A-Za-z]+)"+titles
 titlesC = re.compile(titles)
 namesC = re.compile(names)
+ratings = "\(\s*([0-9\ \-\+]{1,4}[P E]?|UNR)\)"
 
 CHANNEL_SHOUT = "shout"
 CHANNEL_CSHOUT = "cshout"
@@ -21,7 +22,8 @@ class ChatManager (GObject.GObject):
     
     __gsignals__ = {
         'channelMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, bool, bool, str, str)),
-        'kibitzMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        'kibitzMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, int, str)),
+        'whisperMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, int, str)),
         'privateMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, str, bool, str)),
         'bughouseMessage' : (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
         'announcement' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
@@ -37,8 +39,8 @@ class ChatManager (GObject.GObject):
         'channelLog' : (GObject.SignalFlags.RUN_FIRST, None, (str, int, str, str)),
         'toldChannel' : (GObject.SignalFlags.RUN_FIRST, None, (str, int)),
         
-        'recievedChannels' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
-        'recievedNames' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
+        'receivedChannels' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
+        'receivedNames' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
     }
     
     def __init__ (self, connection):
@@ -55,6 +57,10 @@ class ChatManager (GObject.GObject):
                 "%s(\*)? (c-)?shouts: (.*)" % names)
         self.connection.expect_line (self.onShoutMessage,
                 "--> %s(\*)?:? (.*)" % names)
+        self.connection.expect_line (self.onKibitzMessage,
+                "%s%s\[(\d+)\] kibitzes: (.*)" % (names, ratings))
+        self.connection.expect_line (self.onWhisperMessage,
+                "%s%s\[(\d+)\] whispers: (.*)" % (names, ratings))
         
         self.connection.expect_line(self.onArrivalNotification,
                                     "Notification: %s has arrived\." % names)
@@ -147,13 +153,13 @@ class ChatManager (GObject.GObject):
         
     def getNoChannelPlayers (self, match):
         channel = match.groups()[0]
-        self.emit('recievedNames', channel, [])
+        self.emit('receivedNames', channel, [])
     
     def getChannelPlayers(self, matchlist):
         channel, name, people = matchlist[0].groups()
         people += " " + " ".join(matchlist[1:-1])
         people = namesC.findall(titlesC.sub("",people))
-        self.emit('recievedNames', channel, people)
+        self.emit('receivedNames', channel, people)
     
     def gotPlayerChannels(self, matchlist):
         name = matchlist[0].groups()
@@ -195,6 +201,16 @@ class ChatManager (GObject.GObject):
             self.emit("channelMessage", name, isadmin, isme, CHANNEL_CSHOUT, text)
         else:
             self.emit("channelMessage", name, isadmin, isme, CHANNEL_SHOUT, text)
+
+    def onKibitzMessage (self, match):
+        name, rating, gameno, text = match.groups()
+        text = self.entityDecode(text)
+        self.emit("kibitzMessage", name, int(gameno), text)
+
+    def onWhisperMessage (self, match):
+        name, rating, gameno, text = match.groups()
+        text = self.entityDecode(text)
+        self.emit("whisperMessage", name, int(gameno), text)
     
     def onArrivalNotification (self, match):
         name = match.groups()[0]
@@ -224,7 +240,7 @@ class ChatManager (GObject.GObject):
     
     def onChannelLogLine (self, match):
         if not self.currentLogChannel:
-            log.warning("Recieved log line before channel was set")
+            log.warning("Received log line before channel was set")
             return
         h, m, s, handle, text = match.groups()
         time = self.convTime(int(h), int(m), int(s))
@@ -270,7 +286,7 @@ class ChatManager (GObject.GObject):
     def getPeopleInChannel (self, channel):
         if channel in (CHANNEL_SHOUT, CHANNEL_CSHOUT):
             people = self.connection.players.get_online_playernames()
-            self.emit('recievedNames', channel, people)
+            self.emit('receivedNames', channel, people)
         self.connection.client.run_command("inchannel %s" % channel)
     
     def joinChannel (self, channel):
@@ -330,3 +346,7 @@ class ChatManager (GObject.GObject):
         else:
             for line in message.strip().split("\n"):
                 self.tellPlayer(player, line)
+
+    def whisper(self, message):
+        message = self.entityEncode(message)
+        self.connection.client.run_command("whisper %s" % message)

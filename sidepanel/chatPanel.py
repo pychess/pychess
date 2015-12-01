@@ -37,18 +37,26 @@ class Sidepanel:
         elif gamemodel.players[1].__type__ == LOCAL:
             self.player = gamemodel.players[1]
             self.opplayer = gamemodel.players[0]
+        elif gamemodel.isObservationGame():
+            self.gamemodel.connect("message_received", self.onICMessageReieved)
         else:
             log.info("Chatpanel loaded with no local players")
             self.chatView.hide()
         
         if hasattr(self, "player"):
-            self.player.connect("messageRecieved", self.onMessageReieved)
+            self.player.connect("messageReceived", self.onMessageReieved)
         
         self.chatView.enable()
     
     def onMessageReieved (self, player, text):
         self.chatView.addMessage(repr(self.opplayer), text)
+
+    def onICMessageReieved (self, icgamemodel, player, text):
+        self.chatView.addMessage(player, text)
     
     def onMessageSent (self, chatView, text):
-        self.player.sendMessage(text)
-        self.chatView.addMessage(repr(self.player), text)
+        if hasattr(self, "player"):
+            self.player.sendMessage(text)
+            self.chatView.addMessage(repr(self.player), text)
+        else:
+            name = self.gamemodel.connection.cm.whisper(text)

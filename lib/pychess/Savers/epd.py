@@ -50,7 +50,7 @@ def save (file, model, position=None):
         ("fmvn", fen[5]), # In fen full move number is the 6th field
         ("hmvc", fen[4]), # In fen halfmove clock is the 5th field
         
-        # Email and name of reciever and sender. We don't know the email.
+        # Email and name of receiver and sender. We don't know the email.
         ("tcri", "?@?.? %s" % repr(model.players[color]).replace(";","")),
         ("tcsi", "?@?.? %s" % repr(model.players[1-color]).replace(";","")),
         

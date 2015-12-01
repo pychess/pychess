@@ -223,7 +223,7 @@ class ViewsPanel (Gtk.Notebook, Panel):
         # additem event and we add a new view. This however means that the first
         # message the user sends isn't registred by our privateMessage handler.
         # Therefore we save all messages sent by this hook, and when later we
-        # add new items, we test if anything was already recieved
+        # add new items, we test if anything was already received
         self.messageBuffer = {}
         def globalPersonalMessage (cm, name, title, isadmin, text):
             if not name in self.messageBuffer:
@@ -410,8 +410,8 @@ class InfoPanel (Gtk.Notebook, Panel):
 
             connection.players.connect("FICSPlayerExited", self.onPlayerRemoved)
 
-            self.handle_id = self.cm.connect("recievedNames",
-                                           self.onNamesRecieved, id)
+            self.handle_id = self.cm.connect("receivedNames",
+                                           self.onNamesReceived, id)
             self.cm.getPeopleInChannel(id)
 
         @idle_add
@@ -424,7 +424,7 @@ class InfoPanel (Gtk.Notebook, Panel):
                 self.names.remove(player.name)
 
         @idle_add
-        def onNamesRecieved (self, cm, channel, people, channel_):
+        def onNamesReceived (self, cm, channel, people, channel_):
             if not isinstance(self.get_child(), Gtk.Label) or channel != channel_:
                 return
             cm.disconnect(self.handle_id)
@@ -450,7 +450,7 @@ class InfoPanel (Gtk.Notebook, Panel):
             self.store.connect("row-inserted", lambda w,p,i: list.queue_resize())
             self.store.connect("row-deleted", lambda w,i: list.queue_resize())
 
-            # Add those names. If this is not the first namesRecieve, we only
+            # Add those names. If this is not the first namesReceive, we only
             # add the new names
             noneed = set([name for (color, name, isSeparator) in self.store])
             for name in people:
