@@ -13,7 +13,7 @@ import threading
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
 from pychess.Utils.Cord import Cord
-from pychess.Utils.Move import Move, parseAny
+from pychess.Utils.Move import Move, parseAny, toAN
 from pychess.Utils.const import *
 from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmove
@@ -130,12 +130,16 @@ class BoardControl (Gtk.EventBox):
         else:
             move = Move(cord0, cord1, board, promotion)
         
-        if self.view.model.curplayer.__type__ == LOCAL and self.view.shownIsMainLine() and \
-           self.view.model.boards[-1] == board and self.view.model.status == RUNNING:
+        if (self.view.model.curplayer.__type__ == LOCAL or self.view.model.examined) and \
+            self.view.shownIsMainLine() and \
+            self.view.model.boards[-1] == board and \
+            self.view.model.status == RUNNING:
             if self.setup_position:
                 self.emit("piece_moved", (cord0, cord1), board[cord0].color)
             else:
                 self.emit("piece_moved", move, color)
+                if self.view.model.examined:
+                    self.view.model.connection.bm.sendMove(toAN (board, move))
         else:
             if board.board.next is None and not self.view.shownIsMainLine():
                 self.view.model.add_move2variation(board, move, self.view.shownVariationIdx)

@@ -169,6 +169,7 @@ class BoardManager (GObject.GObject):
         'obsGameEnded'        : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'curGameEnded'        : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'obsGameUnobserved'   : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'madeExaminer'        : (GObject.SignalFlags.RUN_FIRST, None, (int,)),
         'gamePaused'          : (GObject.SignalFlags.RUN_FIRST, None, (int, bool)),
         'tooManySeeks'        : (GObject.SignalFlags.RUN_FIRST, None, ()),
         'matchDeclined'       : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
@@ -247,6 +248,9 @@ class BoardManager (GObject.GObject):
                 "Game (\d+): Game clock (paused|resumed)\.")
         self.connection.expect_line (self.onUnobserveGame,
                 "Removing game (\d+) from observation list\.")
+        
+        self.connection.expect_line (self.made_examiner,
+            "%s has made you an examiner of game (\d+)\." % names)
         
         self.queuedEmits = {}
         self.gamemodelStartedEvents = {}
@@ -877,7 +881,16 @@ class BoardManager (GObject.GObject):
         player = self.connection.players.get(FICSPlayer(player))
         self.emit("player_on_noplay", player)
     player_on_noplay.BLKCMD = BLKCMD_MATCH
-        
+
+    def made_examiner (self, match):
+        """ Changing from observer to examiner """
+        player, gameno = match.groups()
+        gameno = int(gameno)
+        try:
+            game = self.connection.games.get_game_by_gameno(gameno)
+        except KeyError: return
+        self.emit("madeExaminer", gameno)
+
     ############################################################################
     #   Interacting                                                            #
     ############################################################################

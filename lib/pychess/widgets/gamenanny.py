@@ -119,7 +119,7 @@ def game_ended (gamemodel, reason, gmwidg):
 
     callback = None
     if isinstance(gamemodel, ICGameModel):
-        if gamemodel.hasLocalPlayer():
+        if gamemodel.hasLocalPlayer() and not gamemodel.examined:
             def status_changed (player, prop, message):
                 make_sensitive_if_available(message.buttons[0], player)
                 make_sensitive_if_playing(message.buttons[1], player)

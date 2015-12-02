@@ -29,7 +29,9 @@ class Sidepanel:
     
     @idle_add
     def onGameStarted (self, gamemodel):
-        if gamemodel.players[0].__type__ == LOCAL:
+        if gamemodel.isObservationGame() or gamemodel.examined:
+            self.gamemodel.connect("message_received", self.onICMessageReieved)
+        elif gamemodel.players[0].__type__ == LOCAL:
             self.player = gamemodel.players[0]
             self.opplayer = gamemodel.players[1]
             if gamemodel.players[1].__type__ == LOCAL:
@@ -37,8 +39,6 @@ class Sidepanel:
         elif gamemodel.players[1].__type__ == LOCAL:
             self.player = gamemodel.players[1]
             self.opplayer = gamemodel.players[0]
-        elif gamemodel.isObservationGame():
-            self.gamemodel.connect("message_received", self.onICMessageReieved)
         else:
             log.info("Chatpanel loaded with no local players")
             self.chatView.hide()
