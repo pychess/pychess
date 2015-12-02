@@ -18,12 +18,14 @@ class ICGameModel (GameModel):
         self.connection = connection
         self.ficsgame = ficsgame
         self.ficsplayers = (ficsgame.wplayer, ficsgame.bplayer)
-        
+        self.examined = False
+
         connections = self.connections
         connections[connection.bm].append(connection.bm.connect("boardUpdate", self.onBoardUpdate))
         connections[connection.bm].append(connection.bm.connect("obsGameEnded", self.onGameEnded))
         connections[connection.bm].append(connection.bm.connect("curGameEnded", self.onGameEnded))
         connections[connection.bm].append(connection.bm.connect("gamePaused", self.onGamePaused))
+        connections[connection.bm].append(connection.bm.connect("madeExaminer", self.onMadeExaminer))
         connections[connection.om].append(connection.om.connect("onActionError", self.onActionError))
         connections[connection.cm].append(connection.cm.connect("kibitzMessage", self.onKibitzMessage))
         connections[connection.cm].append(connection.cm.connect("whisperMessage", self.onWhisperMessage))
@@ -148,6 +150,9 @@ class ICGameModel (GameModel):
                     self.emit("game_started")
                     curPlayer = self.players[self.curColor]
                     curPlayer.resetPosition()
+
+    def onMadeExaminer (self, bm, gameno):
+        self.examined = True
 
     def onGameEnded (self, bm, ficsgame):
         if ficsgame == self.ficsgame and len(self.players) >= 2:
