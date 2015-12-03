@@ -114,9 +114,12 @@ class ChatManager (GObject.GObject):
         # http://code.google.com/p/pychess/issues/detail?id=376
         # and can be removed when conversion to FICS block mode is done
         self.connection.lvm.setVariable("Lang", "English")
-        self.connection.lvm.setVariable("kibitz", 0)
-        self.connection.lvm.setVariable("ctell", 1)
-        self.connection.lvm.setVariable("tell", 1)
+        
+        # We shouldn't touch any user variables
+        ###self.connection.lvm.setVariable("kibitz", 0)
+        ###self.connection.lvm.setVariable("ctell", 1)
+        ###self.connection.lvm.setVariable("tell", 1)
+        
         self.connection.lvm.setVariable("height", 240)
         
         self.connection.client.run_command("inchannel %s" % self.connection.username)

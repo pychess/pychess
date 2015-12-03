@@ -747,9 +747,6 @@ class BoardManager (GObject.GObject):
                 self.parseStyle12(style12, castleSigns)
 
         if relation == IC_POS_OBSERVING_EXAMINATION:
-            if int(self.connection.lvm.getVariable("kibitz")) == 0:
-                # TODO: add infobar message to get permission changing v_kibitz
-                self.connection.client.run_command("set kibitz 1")
             pgnHead = [
                 ("Event", "FICS %s %s game" % (rated, game_type.fics_name)),
                 ("Site", "freechess.org"),
@@ -762,7 +759,7 @@ class BoardManager (GObject.GObject):
             pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
             game = FICSGame(wplayer, bplayer, gameno=gameno, rated=rated=="rated",
                 game_type=game_type, minutes=int(min), inc=int(inc),
-                board=FICSBoard(wms, bms, pgn=pgn))
+                board=FICSBoard(wms, bms, pgn=pgn), relation=relation)
             game = self.connection.games.get(game)
             self.gamesImObserving[game] = None
 
