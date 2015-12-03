@@ -913,6 +913,9 @@ class BoardManager (GObject.GObject):
         elif player is not None:
             self.connection.client.run_command("observe %s" % player.name)
 
+    def unexamine (self):
+        self.connection.client.run_command("unexamine")
+
     def unobserve (self, game):
         if game.gameno is not None:
             self.connection.client.run_command("unobserve %d" % game.gameno)
