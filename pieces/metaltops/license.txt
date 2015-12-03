@@ -1,0 +1,1 @@
+The software in this directory are published under the GPL license agreement http://www.gnu.org/copyleft/gpl.html
