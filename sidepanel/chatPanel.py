@@ -29,7 +29,7 @@ class Sidepanel:
         if isinstance(self.gamemodel, ICGameModel):
             self.gamemodel.connect("message_received", self.onICMessageReieved)
         return self.chatView
-    
+
     @idle_add
     def onGameStarted (self, gamemodel):
         if gamemodel.isObservationGame() or gamemodel.examined:
@@ -46,21 +46,24 @@ class Sidepanel:
         else:
             log.info("Chatpanel loaded with no local players")
             self.chatView.hide()
-        
+
         if hasattr(self, "player"):
             self.player.connect("messageReceived", self.onMessageReieved)
-        
+
         self.chatView.enable()
-    
+
     def onMessageReieved (self, player, text):
         self.chatView.addMessage(repr(self.opplayer), text)
 
     def onICMessageReieved (self, icgamemodel, player, text):
         self.chatView.addMessage(player, text)
-    
+
     def onMessageSent (self, chatView, text):
         if hasattr(self, "player"):
-            self.player.sendMessage(text)
-            self.chatView.addMessage(repr(self.player), text)
+            if (text.startswith('# ') or text.startswith('whisper ')):
+                name = self.gamemodel.connection.cm.whisper(text)
+            else :
+                self.player.sendMessage(text)
+                self.chatView.addMessage(repr(self.player), text)
         else:
             name = self.gamemodel.connection.cm.whisper(text)
