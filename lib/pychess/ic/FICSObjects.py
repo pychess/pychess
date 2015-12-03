@@ -742,7 +742,7 @@ class FICSBoard (object):
 class FICSGame (FICSMatch):
     def __init__ (self, wplayer, bplayer, gameno=None,
                   game_type=None, rated=False, minutes=None, inc=None, result=None,
-                  reason=None, board=None, private=False):
+                  reason=None, board=None, private=False, relation=None):
         assert isinstance(wplayer, FICSPlayer), wplayer
         assert isinstance(bplayer, FICSPlayer), bplayer
         assert gameno is None or isinstance(gameno, int), gameno
@@ -758,6 +758,7 @@ class FICSGame (FICSMatch):
         self.reason = reason
         self.board = board
         self.private = private
+        self.relation = relation
     
     def __hash__ (self):
         return hash(":".join((self.wplayer.name[0:10].lower(),
