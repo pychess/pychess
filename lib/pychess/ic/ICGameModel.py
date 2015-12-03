@@ -18,7 +18,6 @@ class ICGameModel (GameModel):
         self.connection = connection
         self.ficsgame = ficsgame
         self.ficsplayers = (ficsgame.wplayer, ficsgame.bplayer)
-        self.examined = False
 
         connections = self.connections
         connections[connection.bm].append(connection.bm.connect("boardUpdate", self.onBoardUpdate))

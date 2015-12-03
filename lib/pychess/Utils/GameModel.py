@@ -137,6 +137,7 @@ class GameModel (GObject.GObject, Thread):
             self.timemodel = timemodel
         
         self.connections = defaultdict(list)  # mainly for IC subclasses
+        self.examined = False
         
         now = datetime.datetime.now()
         self.tags = {
