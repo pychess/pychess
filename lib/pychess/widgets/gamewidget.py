@@ -175,7 +175,10 @@ class GameWidget (GObject.GObject):
             event = threading.Event()
             GLib.idle_add(do_load_panels, event)
             event.wait()
-
+        
+        if isinstance(gamemodel, ICGameModel):
+            gamemodel.gmwidg_ready.set()
+        
     def _del (self):
         self.board._del()
 
