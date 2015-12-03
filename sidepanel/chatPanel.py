@@ -11,6 +11,7 @@ from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import LOCAL, WHITE, BLACK
 from pychess.widgets.ChatView import ChatView
+from pychess.ic.ICGameModel import ICGameModel
 
 __title__ = _("Chat")
 
@@ -25,12 +26,15 @@ class Sidepanel:
         self.chatView.connect("messageTyped", self.onMessageSent)
         self.gamemodel = gmwidg.gamemodel
         self.gamemodel.connect("game_started", self.onGameStarted)
+        if isinstance(self.gamemodel, ICGameModel):
+            self.gamemodel.connect("message_received", self.onICMessageReieved)
         return self.chatView
     
     @idle_add
     def onGameStarted (self, gamemodel):
         if gamemodel.isObservationGame() or gamemodel.examined:
-            self.gamemodel.connect("message_received", self.onICMessageReieved)
+            # no local player but enable chat to send/receive whisper/kibitz
+            pass
         elif gamemodel.players[0].__type__ == LOCAL:
             self.player = gamemodel.players[0]
             self.opplayer = gamemodel.players[1]

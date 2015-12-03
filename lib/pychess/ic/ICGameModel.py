@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+import threading
+
 from pychess.compat import StringIO
 from pychess.System.Log import log
 from pychess.Utils.GameModel import GameModel
@@ -18,6 +20,7 @@ class ICGameModel (GameModel):
         self.connection = connection
         self.ficsgame = ficsgame
         self.ficsplayers = (ficsgame.wplayer, ficsgame.bplayer)
+        self.gmwidg_ready = threading.Event()
 
         connections = self.connections
         connections[connection.bm].append(connection.bm.connect("boardUpdate", self.onBoardUpdate))
@@ -189,6 +192,8 @@ class ICGameModel (GameModel):
     ############################################################################
 
     def onKibitzMessage (self, cm, name, gameno, text):
+        if not self.gmwidg_ready.is_set():
+            self.gmwidg_ready.wait()
         if gameno != self.ficsgame.gameno:
             return
         self.emit("message_received", name, text)
