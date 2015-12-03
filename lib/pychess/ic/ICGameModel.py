@@ -254,7 +254,10 @@ class ICGameModel (GameModel):
             self.__disconnect()
             
             if self.isObservationGame():
-                self.connection.bm.unobserve(self.ficsgame)
+                if self.examined:
+                    self.connection.bm.unexamine()
+                else:
+                    self.connection.bm.unobserve(self.ficsgame)
             else:
                 self.connection.om.offer(Offer(ABORT_OFFER), -1)
                 self.connection.om.offer(Offer(RESIGNATION), -1)
