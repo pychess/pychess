@@ -193,7 +193,8 @@ class BoardControl (Gtk.EventBox):
             self.view.hover = None
             self.view.draggedPiece = None
             self.view.setPremove(None, None, None, None)
-            self.currentState = self.lockedNormalState
+            if not self.view.model.examined:
+                self.currentState = self.lockedNormalState
         finally:
             self.stateLock.release()
     
