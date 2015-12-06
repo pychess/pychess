@@ -68,6 +68,10 @@ class BulletCellRenderer (Gtk.CellRenderer):
 
 GObject.type_register(BulletCellRenderer)
 
+
+add_icon = load_icon(16, "gtk-add", "list-add")
+remove_icon = load_icon(16, "gtk-remove", "list-remove")
+
 class TextImageTree (Gtk.TreeView):
     """ Defines a tree with two columns.
         The first one has text. The seccond one a clickable stock_icon """
@@ -77,11 +81,10 @@ class TextImageTree (Gtk.TreeView):
         'selected' : (GObject.SignalFlags.RUN_FIRST, None, (str,int))
     }
 
-    def __init__(self, icon_name):
+    def __init__(self, icon):
         GObject.GObject.__init__(self)
         self.id2iter = {}
 
-        self.icon_name = icon_name
         pm = Gtk.ListStore(str,str,int,str)
         self.sort_model = Gtk.TreeModelSort(model=pm)
         self.set_model(self.sort_model)
@@ -101,9 +104,8 @@ class TextImageTree (Gtk.TreeView):
         self.append_column(self.leftcol)
 
         # Second column
-        pixbuf = load_icon(16, icon_name)
         crp = Gtk.CellRendererPixbuf()
-        crp.props.pixbuf = pixbuf
+        crp.props.pixbuf = icon
         self.rightcol = Gtk.TreeViewColumn("", crp)
         self.append_column(self.rightcol)
 
@@ -510,7 +512,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.add_with_viewport(vbox)
         self.get_child().set_shadow_type(Gtk.ShadowType.NONE)
 
-        self.joinedList = TextImageTree("gtk-remove")
+        self.joinedList = TextImageTree(remove_icon)
         self.joinedList.connect("activated", self.onRemove)
         self.joinedList.connect("selected", self.onSelect)
         vbox.pack_start(self.joinedList, True, True, 0)
@@ -518,7 +520,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         vbox.pack_start(Gtk.Separator.new(0),False,False,2)
         expander = Gtk.Expander.new(_("Friends"))
         vbox.pack_start(expander, False, True, 0)
-        self.friendsList = TextImageTree("gtk-add")
+        self.friendsList = TextImageTree(add_icon)
         self.friendsList.connect("activated", self.onAdd)
         self.friendsList.fixed_height_mode = True
         connection.cm.connect("privateMessage", self.onPersonMessage)
@@ -529,7 +531,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
 
         expander = Gtk.Expander.new(_("More channels"))
         vbox.pack_start(expander, False, True, 0)
-        self.channelsList = TextImageTree("gtk-add")
+        self.channelsList = TextImageTree(add_icon)
         self.channelsList.connect("activated", self.onAdd)
         self.channelsList.fixed_height_mode = True
         vbox.pack_start(Gtk.Separator.new(0),False,False,2)
@@ -537,7 +539,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
 
         expander = Gtk.Expander.new(_("More players"))
         vbox.pack_start(expander, False, True, 0)
-        self.playersList = TextImageTree("gtk-add")
+        self.playersList = TextImageTree(add_icon)
         self.playersList.connect("activated", self.onAdd)
         self.playersList.fixed_height_mode = True
         connection.cm.connect("privateMessage", self.onPersonMessage)
