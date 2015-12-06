@@ -17,7 +17,6 @@ from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import *
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
-from pychess.Utils.Board import hex12_to_rgb
 from pychess.gfx import Pieces
 from pychess.System.Log import log
 
@@ -577,8 +576,10 @@ class ThemeTab:
         conf.set("darkcolour", conf.get("darkcolour", "#aaaaaaaaaaaa"))
 
         # Next 2 lines take a #hex str converts them to a color then to a RGBA representation
-        lightcolour =  Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("lightcolour", "#ffffffffffff")))))
-        darkcolour =  Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#aaaaaaaaaaaa")))))
+        lightcolour =  Gdk.RGBA()
+        lightcolour.parse(conf.get("lightcolour", "#ffffffffffff"))
+        darkcolour =  Gdk.RGBA()
+        darkcolour.parse(conf.get("darkcolour", "#aaaaaaaaaaaa"))
 
         # Set the color swatches in preference to stored values
         widgets['light_cbtn'].set_rgba(lightcolour)
