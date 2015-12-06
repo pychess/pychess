@@ -11,16 +11,6 @@ from .Cord import Cord
 from .const import *
 
 
-
-# Takes a 13 byte hex string ie "#ffabfe2cd5d5" and returns an rgb tuple
-def hex12_to_rgb(hstr):
-    r = int(hstr[1:5],16)
-    g = int(hstr[5:9],16)
-    b = int(hstr[9:],16)
-    return (r,g,b)
-
-
-
 def reverse_enum(L):
     for index in reversed(range(len(L))):
         yield index, L[index]

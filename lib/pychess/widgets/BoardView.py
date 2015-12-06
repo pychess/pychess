@@ -21,7 +21,6 @@ from pychess.gfx import Pieces
 from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import *
-from pychess.Utils.Board import hex12_to_rgb
 from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
                                        HiddenPiecesBoard, AllWhiteBoard
 from . import preferencesDialog
@@ -742,7 +741,8 @@ class BoardView (Gtk.DrawingArea):
 
         sc = self.get_style_context()
         bool1, dcolor = sc.lookup_color("p_dark_color")
-        dcolor = Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#000000000000")))))
+        dcolor = Gdk.RGBA()
+        dcolor.parse(conf.get("darkcolour", "#000000000000"))
         context.set_source_rgba(dcolor.red, dcolor.green, dcolor.blue, dcolor.alpha)
 
         context.set_line_width(t)
@@ -800,7 +800,8 @@ class BoardView (Gtk.DrawingArea):
     def drawBoard(self, context, r):
         xc, yc, square, s = self.square
         sc = self.get_style_context()
-        col = Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("lightcolour", "#ffffffffffff")))))
+        col = Gdk.RGBA()
+        col.parse(conf.get("lightcolour", "#ffffffffffff"))
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
         if self.model.variant.variant in ASEAN_VARIANTS:
@@ -816,7 +817,8 @@ class BoardView (Gtk.DrawingArea):
             context.fill()
 
         found, col = sc.lookup_color("p_dark_color")
-        col = Gdk.RGBA().from_color(Gdk.Color(*list(hex12_to_rgb(conf.get("darkcolour", "#000000000000")))))
+        col = Gdk.RGBA()
+        col.parse(conf.get("darkcolour", "#000000000000"))
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
         if self.model.variant.variant in ASEAN_VARIANTS:
