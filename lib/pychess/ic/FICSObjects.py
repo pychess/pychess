@@ -503,7 +503,7 @@ class FICSMatch (GObject.GObject):
     @property
     def sortable_time (self):
         #http://www.freechess.org/Help/HelpFiles/etime.html
-        etime = self.minutes + self.inc*2./3.
+        etime = self.minutes + int(round(self.inc*2./3.))
         return etime
     
 def get_soughtmatch_tooltip_text (sought):
