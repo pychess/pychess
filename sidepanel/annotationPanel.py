@@ -213,10 +213,12 @@ class Sidepanel(Gtk.TextView):
                 node = n
                 board = node["board"]
                 break
-
         if node is None:
             return True
-
+        #print("-------------------------------------------------------")
+        #print("index is:", self.nodelist.index(node))
+        #print(node)
+        #print("-------------------------------------------------------")
         # left mouse click
         if event.button == 1:
             if "vari" in node:
@@ -607,6 +609,7 @@ class Sidepanel(Gtk.TextView):
             if n["board"] == parent:
                 end = self.textbuffer.get_iter_at_offset(n["end"])
                 node = n
+                break
 
         if node is None:
             next_node_index = len(self.nodelist)
@@ -657,7 +660,7 @@ class Sidepanel(Gtk.TextView):
             end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
             next_node_index += 1
 
-        diff += self.variation_end(end, next_node_index + len(boards), level, boards[0], parent, opening_node)
+        diff += self.variation_end(end, next_node_index + len(boards), level, boards[1], parent, opening_node)
 
         # adjust remaining stuff offsets
         if next_node_index > 0:
@@ -785,7 +788,7 @@ class Sidepanel(Gtk.TextView):
             if board.prev is None:
                 for index, child in enumerate(board.children):
                     if isinstance(child, basestring):
-                        self.insert_comment(child, board.next, parent, index=index, level=level, ini_board=board)
+                        self.insert_comment(child, board, parent, index=index, level=level, ini_board=board)
                 board = board.next
                 continue
 
@@ -826,7 +829,7 @@ class Sidepanel(Gtk.TextView):
             return
 
         end_iter = self.textbuffer.get_end_iter()
-        pos = 0
+        pos = len(self.nodelist)
         for n in self.nodelist:
             if n["board"] == board:
                 if ini_board is not None:
