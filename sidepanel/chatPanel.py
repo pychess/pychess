@@ -60,7 +60,11 @@ class Sidepanel:
 
     def onMessageSent (self, chatView, text):
         if hasattr(self, "player"):
-            if (text.startswith('# ') or text.startswith('whisper ')):
+            if text.startswith('# ') :
+                text = text[2:]
+                name = self.gamemodel.connection.cm.whisper(text)
+            elif text.startswith('whisper '):
+                text = text[8:]
                 name = self.gamemodel.connection.cm.whisper(text)
             else :
                 self.player.sendMessage(text)
