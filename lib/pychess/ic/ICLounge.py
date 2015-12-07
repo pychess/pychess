@@ -1063,6 +1063,11 @@ class PlayerTabSection (ParrentListSection):
                     #log.warning("%s already in self" % player,
                     #    extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
                     continue
+
+                # player can leave before we finish processing "who IbslwBzSLx"
+                if player not in np:
+                    continue
+
                 self.players[player] = {}
 
                 self.players[player]["ti"] = self.store.append(np[player])
@@ -1357,6 +1362,9 @@ class GameTabSection (ParrentListSection):
                     game.display_text)
         def do_onGameAdd(games, new_games, ng):
             for game in new_games:
+                # game removed before we finish processing "games /bslwBzSLx"
+                if game not in ng:
+                    continue
                 #log.debug("%s" % game,
                 #          extra={"task": (self.connection.username, "GTS.onGameAdd")})
                 ti = self.store.append (ng[game])
