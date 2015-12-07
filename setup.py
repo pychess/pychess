@@ -197,7 +197,7 @@ PACKAGES = []
 
 if msi:
     # TODO: cx_freeze doesn't allow letters in version
-    VERSION = "0.12.0"
+    #VERSION = "0.12.0"
     
     ## Get the site-package folder, not everybody will install
     ## Python into C:\PythonXX
