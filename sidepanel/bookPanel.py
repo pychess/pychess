@@ -609,7 +609,13 @@ class Sidepanel (object):
         if indices:
             text = self.advisors[indices[0]].query_tooltip(path)
             if text:
-                tooltip.set_markup(text)
+                label = Gtk.Label()
+                label.props.wrap = True
+                label.props.width_chars = 60
+                label.props.max_width_chars = 60
+                label.set_text(text)
+                tooltip.set_custom(label)
+                #tooltip.set_markup(text)
                 return True # Show the tip.
             
         return False

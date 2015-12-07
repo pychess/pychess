@@ -98,7 +98,11 @@ def keepDown (scrolledWindow):
 # http://www.islascruz.org/html/index.php?blog/show/Wrap-text-in-a-TreeView-column.html
 def appendAutowrapColumn (treeview, name, **kvargs):
     cell = Gtk.CellRendererText()
-    cell.props.wrap_mode = Pango.WrapMode.WORD
+    #cell.props.wrap_mode = Pango.WrapMode.WORD
+    # TODO:
+    # changed to ellipsize instead until "never ending grow" bug gets fixed
+    # see https://github.com/pychess/pychess/issues/1054
+    cell.props.ellipsize = Pango.EllipsizeMode.END
     column = Gtk.TreeViewColumn(name, cell, **kvargs)
     treeview.append_column(column)
 
@@ -120,7 +124,7 @@ def appendAutowrapColumn (treeview, name, **kvargs):
             store.row_changed(store.get_path(iter), iter)
             iter = store.iter_next(iter)
         treeview.set_size_request(0,-1)
-    treeview.connect_after("size-allocate", callback, column, cell)
+    #treeview.connect_after("size-allocate", callback, column, cell)
 
     scroll = treeview.get_parent()
     if isinstance(scroll, Gtk.ScrolledWindow):
