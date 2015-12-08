@@ -430,6 +430,8 @@ class PyChess:
             self.aboutdialog.set_documenters(f.read().splitlines())
         with open(prefix.addDataPrefix("TRANSLATORS"), encoding="utf-8") as f:
             self.aboutdialog.set_translator_credits(f.read())
+        with open(prefix.addDataPrefix("LICENSE"), encoding="utf-8") as f:
+            self.aboutdialog.set_license(f.read())
 
         def on_about_response(dialog, response, *args):
             # system-defined GtkDialog responses are always negative, in which    
