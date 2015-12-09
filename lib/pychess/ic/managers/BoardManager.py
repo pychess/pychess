@@ -588,10 +588,25 @@ class BoardManager (GObject.GObject):
         minutes = int(minutes)
         increment = int(increment)
         game_type = GAME_TYPES[game_type]
+
         reason = matchlist[-1].group().lower()
-        result = None if in_progress else ADJOURNED
+        if in_progress:
+            result = None
+            result_str = "*"
+        elif "1-0" in reason:
+            result = WHITEWON
+            result_str = "1-0"
+        elif "0-1" in reason:
+            result = BLACKWON
+            result_str = "0-1"
+        elif "1/2-1/2" in reason:
+            result = DRAW
+            result_str = "1/2-1/2"
+        else:
+            result = ADJOURNED
+            result_str = "*"
         result, reason = parse_reason(result, reason)
-        
+
         index += 3
         if matchlist[index].startswith("<12>"):
             style12 = matchlist[index][5:]
@@ -666,7 +681,7 @@ class BoardManager (GObject.GObject):
             ("White", wname),
             ("Black", bname),
             ("TimeControl", "%d+%d" % (minutes * 60, increment)),
-            ("Result", "*"),
+            ("Result", result_str),
             ("WhiteClock", msToClockTimeTag(wms)),
             ("BlackClock", msToClockTimeTag(bms)),
         ]
@@ -716,7 +731,7 @@ class BoardManager (GObject.GObject):
                     player.ratings[game_type.rating_type].elo != rating:
                 player.ratings[game_type.rating_type].elo = rating
             player.keep_after_logout = True
-        game = gameclass(wplayer, bplayer, game_type=game_type,
+        game = gameclass(wplayer, bplayer, game_type=game_type, result=result,
             rated=(rated.lower() == "rated"), minutes=minutes, inc=increment,
             board=FICSBoard(wms, bms, pgn=pgn))
         if in_progress:

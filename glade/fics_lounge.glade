@@ -3104,7 +3104,7 @@ b) you change the variant or the time control</property>
                       <object class="GtkLabel" id="label55">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">_Adjourned</property>
+                        <property name="label" translatable="yes">_Archived</property>
                         <property name="use_underline">True</property>
                       </object>
                       <packing>

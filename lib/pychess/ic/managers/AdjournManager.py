@@ -6,16 +6,34 @@ from gi.repository import GObject
 
 from .BoardManager import BoardManager, moveListHeader1Str, names, months, dates
 from pychess.ic import *
-from pychess.ic.FICSObjects import FICSAdjournedGame, FICSPlayer
+from pychess.ic.FICSObjects import FICSAdjournedGame, FICSHistoryGame, FICSPlayer
 from pychess.Utils.const import *
 from pychess.System.Log import log
+
+reasons_dict = {"Adj": WON_ADJUDICATION,
+                "Agr": DRAW_AGREE,
+                "Dis": WON_DISCONNECTION,
+                "Fla": WON_CALLFLAG,
+                "Mat": WON_MATE,
+                "NM": DRAW_INSUFFICIENT,
+                "Rep": DRAW_REPITITION,
+                "Res": WON_RESIGN,
+                "TM": DRAW_BLACKINSUFFICIENTANDWHITETIME, #DRAW_WHITEINSUFFICIENTANDBLACKTIME
+                "WLM": WON_NOMATERIAL,
+                "WNM": WON_NOMATERIAL,
+                "50": DRAW_50MOVES}
+
+reasons = "(%s)" % "|".join(reasons_dict.keys())
 
 class AdjournManager (GObject.GObject):
     
     __gsignals__ = {
         'adjournedGameAdded' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'onAdjournmentsList' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
-        'adjournedGamePreview' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'archiveGamePreview' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'historyGameAdded' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'onHistoryList' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'historyGamePreview' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):
@@ -23,20 +41,28 @@ class AdjournManager (GObject.GObject):
         
         self.connection = connection
         
-        self.connection.expect_line (self.__onStoredResponseNO,
+        self.connection.expect_line (self.__onAdjournedResponseNO,
                                      "%s has no adjourned games\." %
+                                     self.connection.username)
+
+        self.connection.expect_line (self.__onHistoryResponseNO,
+                                     "%s has no history games\." %
                                      self.connection.username)
         
         self.connection.expect_fromto (self.__onSmovesResponse,
                                        moveListHeader1Str,
 #                                       "\s*{((?:Game courtesyadjourned by (Black|White))|(?:Still in progress)|(?:Game adjourned by mutual agreement)|(?:(White|Black) lost connection; game adjourned)|(?:Game adjourned by ((?:server shutdown)|(?:adjudication)|(?:simul holder))))} \*")
-                                        "\s*{.*(?:(?:[Gg]ame.*adjourned)|(?:Still in progress)|(?:Game drawn.*)|(?:White.*)|(?:Black.*)).*}\s*(?:(?:1/2-1/2)|(?:1-0)|(?:0-1))?\s*")
-
+                                        "\s*{.*(?:([Gg]ame.*adjourned.\s*)|(?:Still in progress)|(?:Game drawn.*)|(?:White.*)|(?:Black.*)).*}\s*(?:(?:1/2-1/2)|(?:1-0)|(?:0-1))?\s*")
 
         self.connection.expect_fromplus(self.__onStoredResponseYES,
                                         "\s*C Opponent\s+On Type\s+Str\s+M\s+ECO\s+Date",
                                         "\s*\d+: (B|W) %s\s+(Y|N) \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(---|\?\?\?|[A-Z]\d+)\s+%s" %
                                         (names, dates)) 
+
+        self.connection.expect_fromplus(self.__onHistoryResponseYES,
+                                        "\s*Opponent\s+Type\s+ECO\s+End\s+Date",
+                                        "\s*(\d+): (-|\+|=) \d+\s+(W|B)\s+\d+ %s\s+ \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|[A-Z]\d+)\s+%s\s+%s" %
+                                        (names, reasons, dates)) 
         
         self.connection.expect_line (self.__onAdjournedGameResigned,
                                      "You have resigned the game\.")
@@ -44,6 +70,7 @@ class AdjournManager (GObject.GObject):
         self.connection.bm.connect("curGameEnded", self.__onCurGameEnded)
         
         self.queryAdjournments()
+        self.queryHistory()
         
         #TODO: Connect to {Game 67 (MAd vs. Sandstrom) Game adjourned by mutual agreement} *
         #TODO: Connect to adjourned game as adjudicated
@@ -94,29 +121,94 @@ class AdjournManager (GObject.GObject):
             adjournments.append(game)
             
         self.emit("onAdjournmentsList", adjournments)
+
+    def __onHistoryResponseYES (self, matchlist):
+        #History for user:
+        #Opponent      Type         ECO End Date
+        #66: - 1735 B    0 GuestHKZX     [ bu  3   0] B23 Res Sun Dec  6, 15:50 EST 2015
+        #67: - 1703 B    0 GuestQWML     [ lu  1   0] B07 Fla Sun Dec  6, 15:53 EST 2015
+        history = []
+        for match in matchlist[1:]:
+            #print(match.groups())
+            history_no = match.groups()[0]
+            result = match.groups()[1]
+            our_color = match.groups()[2]
+            if result == "+":
+                result = WHITEWON if our_color == WHITE else BLACKWON
+            elif result == "-":
+                result = WHITEWON if our_color == BLACK else BLACKWON
+            else:
+                result = DRAW
+            opponent_name = match.groups()[3]
+            game_type = match.groups()[4]
+            minutes, gain = match.groups()[5:7]
+            eco = match.groups()[7]
+            reason = reasons_dict[match.groups()[8]]
+            week, month, day, hour, minute, timezone, year = match.groups()[9:16]
+            gametime = datetime.datetime(int(year), months.index(month)+1, int(day),
+                                         int(hour), int(minute))
+            private = game_type[0] == "p"
+            rated = game_type[2] == "r"
+            gametype = GAME_TYPES_BY_SHORT_FICS_NAME[game_type[1]]
+            our_color = our_color == "B" and BLACK or WHITE
+            minutes = int(minutes)
+            gain = int(gain)
+            
+            user = self.connection.players.get(
+                FICSPlayer(self.connection.getUsername()))
+            opponent = FICSPlayer(opponent_name, status=IC_STATUS_OFFLINE)
+            opponent = self.connection.players.get(opponent)
+            wplayer, bplayer = (user, opponent) if our_color == WHITE \
+                                                else (opponent, user)
+            game = FICSHistoryGame(wplayer, bplayer, game_type=gametype,
+                rated=rated, minutes=minutes, inc=gain, private=private,
+                our_color=our_color, time=gametime, reason=reason,
+                history_no=history_no, result=result)
+            
+            if game not in self.connection.games:
+                game = self.connection.games.get(game, emit=False)
+                self.emit("historyGameAdded", game)
+            history.append(game)
+            
+        self.emit("onHistoryList", history)
         
-    def __onStoredResponseNO (self, match):
+    def __onAdjournedResponseNO (self, match):
         self.emit("onAdjournmentsList", [])
+
+    def __onHistoryResponseNO (self, match):
+        self.emit("onHistoryList", [])
     
     def __onSmovesResponse (self, matchlist):
-        game = self.connection.bm.parseGame(matchlist, FICSAdjournedGame,
-                                            in_progress=False)
+        if "adjourn" in matchlist[-1].group():
+            game = self.connection.bm.parseGame(matchlist, FICSAdjournedGame,
+                                                in_progress=False)
+        else:
+            game = self.connection.bm.parseGame(matchlist, FICSHistoryGame,
+                                                in_progress=False)
         if game is None: return
-        self.emit("adjournedGamePreview", game)
+        self.emit("archiveGamePreview", game)
     __onSmovesResponse.BLKCMD = BLKCMD_SMOVES
-    
+
     def __onAdjournedGameResigned (self, match):
         self.queryAdjournments()
 
     def __onCurGameEnded (self, bm, game):
         if game.result == ADJOURNED:
             self.queryAdjournments()
+        elif game.result in (DRAW, WHITEWON, BLACKWON):
+            self.queryHistory()
     
     def queryAdjournments (self):
         self.connection.client.run_command("stored")
     
+    def queryHistory (self):
+        self.connection.client.run_command("history")
+
     def queryMoves (self, game):
-        self.connection.client.run_command("smoves %s" % game.opponent.name)
+        if isinstance(game, FICSHistoryGame):
+            self.connection.client.run_command("smoves %s %s" % (self.connection.username, game.history_no))
+        else:
+            self.connection.client.run_command("smoves %s" % game.opponent.name)
     
     def challenge (self, playerName):
         self.connection.client.run_command("match %s" % playerName)

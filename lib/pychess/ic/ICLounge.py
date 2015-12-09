@@ -1434,19 +1434,21 @@ class AdjournedTabSection (ParrentListSection):
         self.wpix = get_pixbuf("glade/white.png")
         self.bpix = get_pixbuf("glade/black.png")
         self.tv = widgets["adjournedtreeview"]
-        self.store = Gtk.ListStore(FICSAdjournedGame, GdkPixbuf.Pixbuf, str, str,
+        self.store = Gtk.ListStore(FICSGame, str, GdkPixbuf.Pixbuf, str, str,
                                    str, str, str)
         self.model = Gtk.TreeModelSort(model=self.store)
         self.tv.set_model(self.model)
-        self.addColumns (self.tv, "FICSAdjournedGame", _("Your Color"),
+        self.addColumns (self.tv, "FICSGame", "", _("Color"),
             _("Opponent"), _("Is Online"), _("Time Control"), _("Game Type"),
-            _("Date/Time"), hide=[0], pix=[1])
+            _("Date/Time"), hide=[0], pix=[2])
         self.selection = self.tv.get_selection()
         self.selection.connect("changed", self.onSelectionChanged)
         self.onSelectionChanged(self.selection)
 
         self.connection.adm.connect("adjournedGameAdded", self.onAdjournedGameAdded)
         self.connection.games.connect("FICSAdjournedGameRemoved", self.onAdjournedGameRemoved)
+        self.connection.adm.connect("historyGameAdded", self.onHistoryGameAdded)
+        self.connection.games.connect("FICSHistoryGameRemoved", self.onHistoryGameRemoved)
 
         widgets["resignButton"].connect("clicked", self.onResignButtonClicked)
         widgets["abortButton"].connect("clicked", self.onAbortButtonClicked)
@@ -1454,7 +1456,7 @@ class AdjournedTabSection (ParrentListSection):
         widgets["resumeButton"].connect("clicked", self.onResumeButtonClicked)
         widgets["previewButton"].connect("clicked", self.onPreviewButtonClicked)
         self.tv.connect("row-activated", lambda *args: self.onPreviewButtonClicked(None))
-        self.connection.adm.connect("adjournedGamePreview", self.onGamePreview)
+        self.connection.adm.connect("archiveGamePreview", self.onGamePreview)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
 
     def onSelectionChanged (self, selection):
@@ -1463,12 +1465,19 @@ class AdjournedTabSection (ParrentListSection):
         if treeiter != None:
             a_row_is_selected = True
             game = model.get_value(treeiter, 0)
-            make_sensitive_if_available(self.widgets["resumeButton"], game.opponent)
+            if isinstance(game, FICSAdjournedGame):
+                make_sensitive_if_available(self.widgets["resumeButton"], game.opponent)
+                for button in ("resignButton", "abortButton", "drawButton"):
+                    self.widgets[button].set_sensitive(True)
+            else:
+                for button in ("resignButton", "abortButton", "drawButton"):
+                    self.widgets[button].set_sensitive(False)
         else:
             self.widgets["resumeButton"].set_sensitive(False)
             self.widgets["resumeButton"].set_tooltip_text("")
-        for button in ("resignButton", "abortButton", "drawButton", "previewButton"):
-            self.widgets[button].set_sensitive(a_row_is_selected)
+            for button in ("resignButton", "abortButton", "drawButton"):
+                self.widgets[button].set_sensitive(False)
+        self.widgets["previewButton"].set_sensitive(a_row_is_selected)
 
     @idle_add
     def onPlayGameCreated (self, bm, board):
@@ -1516,7 +1525,7 @@ class AdjournedTabSection (ParrentListSection):
             (repr(player), repr(game)))
 
         try:
-            self.store.set(self.games[game]["ti"], 3, player.display_online)
+            self.store.set(self.games[game]["ti"], 4, player.display_online)
         except KeyError:
             pass
 
@@ -1549,7 +1558,7 @@ class AdjournedTabSection (ParrentListSection):
     def onAdjournedGameAdded (self, adm, game):
         if game not in self.games:
             pix = (self.wpix, self.bpix)[game.our_color]
-            ti = self.store.append([game, pix, game.opponent.name,
+            ti = self.store.append([game, "*", pix, game.opponent.name,
                 game.opponent.display_online, game.display_timecontrol,
                 game.game_type.display_text, game.display_time])
             self.games[game] = {}
@@ -1561,6 +1570,25 @@ class AdjournedTabSection (ParrentListSection):
 
         if game.opponent.online:
             self._infobar_adjourned_message(game, game.opponent)
+
+        return False
+
+    @idle_add
+    def onHistoryGameAdded (self, adm, game):
+        if game not in self.games:
+            pix = (self.wpix, self.bpix)[game.our_color]
+            if game.result == DRAW:
+                result = "="
+            elif (game.our_color == WHITE and game.result == WHITEWON) or \
+                 (game.our_color == BLACK and game.result == BLACKWON):
+                result = "+"
+            else:
+                result = "–"
+            ti = self.store.append([game, result, pix, game.opponent.name,
+                game.opponent.display_online, game.display_timecontrol,
+                game.game_type.display_text, game.display_time])
+            self.games[game] = {}
+            self.games[game]["ti"] = ti
 
         return False
 
@@ -1577,6 +1605,15 @@ class AdjournedTabSection (ParrentListSection):
                 self.messages[game.opponent].dismiss()
                 if game.opponent in self.messages:
                     del self.messages[game.opponent]
+            del self.games[game]
+
+        return False
+
+    @idle_add
+    def onHistoryGameRemoved (self, adm, game):
+        if game in self.games:
+            if self.store.iter_is_valid(self.games[game]["ti"]):
+                self.store.remove(self.games[game]["ti"])
             del self.games[game]
 
         return False
@@ -1638,11 +1675,10 @@ class AdjournedTabSection (ParrentListSection):
 
         player0tup = (REMOTE, lambda:player0, (), wplayer.long_name())
         player1tup = (REMOTE, lambda:player1, (), bplayer.long_name())
-
         ionest.generalStart(gamemodel, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))
         gamemodel.connect("game_started", lambda gamemodel:
-                          gamemodel.end(ADJOURNED, ficsgame.reason))
+                          gamemodel.end(ficsgame.result, ficsgame.reason))
 
 ############################################################################
 # Initialize "Create Seek" and "Challenge" panels, and "Edit Seek:" dialog #
