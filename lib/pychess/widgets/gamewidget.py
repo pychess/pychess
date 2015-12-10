@@ -71,6 +71,7 @@ media_previous = load_icon(24, "gtk-media-previous-ltr", "media-skip-backward")
 media_rewind = load_icon(24, "gtk-media-rewind-ltr", "media-seek-backward")
 media_forward = load_icon(24, "gtk-media-forward-ltr", "media-seek-forward")
 media_next = load_icon(24, "gtk-media-next-ltr", "media-skip-forward")
+media_eject = load_icon(24, "media-player-eject", "media-eject")
 
 path = prefix.addDataPrefix("sidepanel")
 postfix = "Panel.py"
@@ -638,6 +639,12 @@ class GameWidget (GObject.GObject):
         backbut.set_relief(Gtk.ReliefStyle.NONE)
         backbut.props.has_tooltip = True
         backbut.connect("query-tooltip", tip, _("Step back one move"))
+        mainbut = Gtk.Button()
+        mainbut.add(createImage(media_eject))
+        mainbut.set_relief(Gtk.ReliefStyle.NONE)
+        mainbut.props.has_tooltip = True
+        mainbut.connect("query-tooltip", tip, _("Go back to the main line"))
+
         forwbut = Gtk.Button()
         forwbut.add(createImage(media_forward))
         forwbut.set_relief(Gtk.ReliefStyle.NONE)
@@ -650,10 +657,12 @@ class GameWidget (GObject.GObject):
         endbut.connect("query-tooltip", tip, _("Jump to latest position"))
         startbut.connect("clicked", lambda w: board.view.showFirst())
         backbut.connect("clicked", lambda w: board.view.showPrev())
+        mainbut.connect("clicked", lambda w: board.view.backToMainLine())
         forwbut.connect("clicked", lambda w: board.view.showNext())
         endbut.connect("clicked", lambda w: board.view.showLast())
         page_hbox.pack_start(startbut, True, True, 0)
         page_hbox.pack_start(backbut, True, True, 0)
+        page_hbox.pack_start(mainbut, True, True, 0)
         page_hbox.pack_start(forwbut, True, True, 0)
         page_hbox.pack_start(endbut, True, True, 0)
         #page_vbox.pack_start(sep, True, True, 0)
