@@ -218,6 +218,8 @@ class ICLounge (GObject.GObject):
         if ficsgame.relation == IC_POS_OBSERVING_EXAMINATION:
             if int(self.connection.lvm.variablesBackup["kibitz"]) == 0:
                 self.connection.cm.whisper(_("You have to set kibitz on to see bot messages here."))
+        elif ficsgame.relation == IC_POS_EXAMINATING:
+            gamemodel.examined = True
 
     @idle_add
     def tooManySeeks (self, bm):

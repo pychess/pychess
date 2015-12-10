@@ -152,6 +152,12 @@ class ICGameModel (GameModel):
                     self.emit("game_started")
                     curPlayer = self.players[self.curColor]
                     curPlayer.resetPosition()
+        elif ply > self.ply+1:
+            self.status = RUNNING
+            self.loadAndStart(StringIO(fen), fen_loader, 0, -1, first_time=False)
+            self.emit("game_started")
+            curPlayer = self.players[self.curColor]
+            curPlayer.resetPosition()
 
     def onMadeExaminer (self, bm, gameno):
         self.examined = True

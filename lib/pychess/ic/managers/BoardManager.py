@@ -369,8 +369,34 @@ class BoardManager (GObject.GObject):
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                 self.parseStyle12(style12, castleSigns)
 
-        self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
+        if lastmove is None and \
+            relation == IC_POS_EXAMINATING and \
+            not gameno in self.connection.games.games_by_gameno: 
+            pgnHead = [
+                ("Event", "FICS examined game"),
+                ("Site", "freechess.org"),
+                ("White", wname),
+                ("Black", bname),
+                ("Result", "*"),
+                ("SetUp", "1"),
+                ("FEN", fen)
+                ]
+            pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
+            wplayer = self.connection.players.get(FICSPlayer(wname))
+            bplayer = self.connection.players.get(FICSPlayer(bname))
+            game = FICSGame(wplayer, bplayer, gameno=int(gameno),
+                game_type=GAME_TYPES["examined"], minutes=0, inc=0,
+                board=FICSBoard(0, 0, pgn=pgn), relation=relation)
+            game = self.connection.games.get(game)
+            self.gamesImObserving[game] = None
+
+            self.gamemodelStartedEvents[game.gameno] = threading.Event()
+            self.emit("obsGameCreated", game)
+            self.gamemodelStartedEvents[game.gameno].wait()
+        else:
+            self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
     
+        
     def onGameModelStarted (self, gameno):
         self.gamemodelStartedEvents[gameno].set()
     

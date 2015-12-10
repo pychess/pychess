@@ -105,7 +105,7 @@ class ICPlayer (Player):
             if ply <= self.gamemodel.ply:
                 return
             
-            if 1-curcol == self.color and lastmove is not None:
+            if 1-curcol == self.color and ply == self.gamemodel.ply+1 and lastmove is not None:
                 log.debug("ICPlayer.__boardUpdate: id=%d self=%s ply=%d: putting move=%s in queue" % \
                     (id(self), self, ply, lastmove))
                 self.queue.put((ply, lastmove))
