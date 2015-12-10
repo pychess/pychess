@@ -1484,34 +1484,49 @@ class BoardView (Gtk.DrawingArea):
         return x % 2 + y % 2 == 1
 
     def showFirst (self):
-        self.shown = self.model.lowply
-        self.shownVariationIdx = 0
+        if self.model.examined:
+            self.model.goFirst()
+        else:
+            self.shown = self.model.lowply
+            self.shownVariationIdx = 0
 
     def showPrev (self, step=1):
-        if self.shown > self.model.lowply:
-            if self.shown - step > self.model.lowply:
-                self.shown -= step
-            else:
-                self.shown = self.model.lowply
+        if self.model.examined:
+            self.model.goPrev(step)
+        else:
+            if self.shown > self.model.lowply:
+                if self.shown - step > self.model.lowply:
+                    self.shown -= step
+                else:
+                    self.shown = self.model.lowply
 
-            if self.model.getBoardAtPly(self.shown, self.shownVariationIdx) in self.model.variations[0]:
-                self.shownVariationIdx = 0
+                if self.model.getBoardAtPly(self.shown, self.shownVariationIdx) in self.model.variations[0]:
+                    self.shownVariationIdx = 0
 
     def showNext (self, step=1):
-        maxply = self.model.variations[self.shownVariationIdx][-1].ply
-        if self.shown < maxply:
-            if self.shown + step < maxply:
-                self.shown += step
-            else:
-                self.shown = maxply
+        if self.model.examined:
+            self.model.goNext(step)
+        else:
+            maxply = self.model.variations[self.shownVariationIdx][-1].ply
+            if self.shown < maxply:
+                if self.shown + step < maxply:
+                    self.shown += step
+                else:
+                    self.shown = maxply
 
     def showLast (self):
-        maxply = self.model.variations[self.shownVariationIdx][-1].ply
-        self.shown = maxply
+        if self.model.examined:
+            self.model.goLast()
+        else:
+            maxply = self.model.variations[self.shownVariationIdx][-1].ply
+            self.shown = maxply
 
     def backToMainLine(self):
-        while not self.shownIsMainLine():
-            self.showPrev()
+        if self.model.examined:
+            self.model.backToMainLine()
+        else:
+            while not self.shownIsMainLine():
+                self.showPrev()
 
     def setPremove(self, premovePiece, premove0, premove1, premovePly, promotion=None):
         self.premovePiece = premovePiece

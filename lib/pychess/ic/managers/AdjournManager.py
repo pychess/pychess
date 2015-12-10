@@ -209,6 +209,12 @@ class AdjournManager (GObject.GObject):
             self.connection.client.run_command("smoves %s %s" % (self.connection.username, game.history_no))
         else:
             self.connection.client.run_command("smoves %s" % game.opponent.name)
+
+    def examine (self, game):
+        if isinstance(game, FICSAdjournedGame):
+            self.connection.client.run_command("examine %s" % game.opponent.name)
+        else:
+            self.connection.client.run_command("examine %s %s" % (self.connection.username, game.history_no))
     
     def challenge (self, playerName):
         self.connection.client.run_command("match %s" % playerName)

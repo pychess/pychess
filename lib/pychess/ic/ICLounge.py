@@ -1458,6 +1458,7 @@ class AdjournedTabSection (ParrentListSection):
         widgets["drawButton"].connect("clicked", self.onDrawButtonClicked)
         widgets["resumeButton"].connect("clicked", self.onResumeButtonClicked)
         widgets["previewButton"].connect("clicked", self.onPreviewButtonClicked)
+        widgets["examineButton"].connect("clicked", self.onExamineButtonClicked)
         self.tv.connect("row-activated", lambda *args: self.onPreviewButtonClicked(None))
         self.connection.adm.connect("archiveGamePreview", self.onGamePreview)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
@@ -1481,6 +1482,7 @@ class AdjournedTabSection (ParrentListSection):
             for button in ("resignButton", "abortButton", "drawButton"):
                 self.widgets[button].set_sensitive(False)
         self.widgets["previewButton"].set_sensitive(a_row_is_selected)
+        self.widgets["examineButton"].set_sensitive(a_row_is_selected)
 
     @idle_add
     def onPlayGameCreated (self, bm, board):
@@ -1654,6 +1656,12 @@ class AdjournedTabSection (ParrentListSection):
         if iter == None: return
         game = model.get_value(iter, 0)
         self.connection.adm.queryMoves(game)
+
+    def onExamineButtonClicked (self, button):
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        game = model.get_value(iter, 0)
+        self.connection.adm.examine(game)
 
     @idle_add
     def onGamePreview (self, adm, ficsgame):

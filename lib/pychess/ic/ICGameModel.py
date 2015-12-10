@@ -277,3 +277,18 @@ class ICGameModel (GameModel):
             GameModel.kill(self, reason)
         else:
             GameModel.end(self, status, reason)
+
+    def goFirst (self):
+        self.connection.client.run_command("backward 999")
+
+    def goPrev (self, step=1):
+        self.connection.client.run_command("backward %s" % step)
+
+    def goNext (self, step=1):
+        self.connection.client.run_command("forward %s" % step)
+
+    def goLast (self):
+        self.connection.client.run_command("forward 999")
+
+    def backToMainLine(self):
+        self.connection.client.run_command("revert")
