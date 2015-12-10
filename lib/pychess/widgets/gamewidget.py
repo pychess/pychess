@@ -71,7 +71,7 @@ media_previous = load_icon(24, "gtk-media-previous-ltr", "media-skip-backward")
 media_rewind = load_icon(24, "gtk-media-rewind-ltr", "media-seek-backward")
 media_forward = load_icon(24, "gtk-media-forward-ltr", "media-seek-forward")
 media_next = load_icon(24, "gtk-media-next-ltr", "media-skip-forward")
-media_eject = load_icon(24, "media-player-eject", "media-eject")
+media_eject = load_icon(24, "player-eject", "media-eject")
 
 path = prefix.addDataPrefix("sidepanel")
 postfix = "Panel.py"
