@@ -196,7 +196,7 @@ class AdjournManagerTests(EmittingTestCase):
     def test4(self):
         """ Test acquiring preview without adjournment list """
         
-        signal = 'adjournedGamePreview'
+        signal = 'archiveGamePreview'
         
         lines = ['BwanaSlei (1137) vs. mgatto (1336) --- Wed Nov  5, 20:56 PST 2008',
                  'Rated blitz match, initial time: 5 minutes, increment: 0 seconds.',
@@ -226,7 +226,7 @@ class AdjournManagerTests(EmittingTestCase):
     def test5(self):
         """ Test acquiring preview with adjournment list """
         
-        signal = 'adjournedGamePreview'
+        signal = 'archiveGamePreview'
         
         lines = ['C Opponent       On Type          Str  M    ECO Date',
                  '1: W BabyLurking     Y [ br  5   0] 29-13 W27  D37 Fri Nov  5, 04:41 PDT 2010',
