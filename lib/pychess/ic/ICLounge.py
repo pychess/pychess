@@ -1435,15 +1435,16 @@ class AdjournedTabSection (ParrentListSection):
         self.bpix = get_pixbuf("glade/black.png")
         self.tv = widgets["adjournedtreeview"]
         self.store = Gtk.ListStore(FICSGame, str, GdkPixbuf.Pixbuf, str, str,
-                                   str, str, str)
+                                   str, str, str, int)
         self.model = Gtk.TreeModelSort(model=self.store)
         self.tv.set_model(self.model)
         self.addColumns (self.tv, "FICSGame", "", _("Color"),
             _("Opponent"), _("Is Online"), _("Time Control"), _("Game Type"),
-            _("Date/Time"), hide=[0], pix=[2])
+            _("Date/Time"), "sortable_time", hide=[0,8], pix=[2])
         self.selection = self.tv.get_selection()
         self.selection.connect("changed", self.onSelectionChanged)
         self.onSelectionChanged(self.selection)
+        self.tv.get_model().set_sort_func(5, self.compareFunction, 5)
 
         self.connection.adm.connect("adjournedGameAdded", self.onAdjournedGameAdded)
         self.connection.games.connect("FICSAdjournedGameRemoved", self.onAdjournedGameRemoved)
@@ -1519,6 +1520,10 @@ class AdjournedTabSection (ParrentListSection):
             self.messages[player] = message
             self.infobar.push_message(message)
 
+    def compareFunction (self, treemodel, iter0, iter1, column):
+        (minute0, minute1) = (treemodel.get_value(iter0, 8), treemodel.get_value(iter1, 8))
+        return cmp(minute0, minute1)
+
     @idle_add
     def online_changed (self, player, prop, game):
         log.debug("AdjournedTabSection.online_changed: %s %s" % \
@@ -1560,7 +1565,7 @@ class AdjournedTabSection (ParrentListSection):
             pix = (self.wpix, self.bpix)[game.our_color]
             ti = self.store.append([game, "*", pix, game.opponent.name,
                 game.opponent.display_online, game.display_timecontrol,
-                game.game_type.display_text, game.display_time])
+                game.game_type.display_text, game.display_time, game.sortable_time])
             self.games[game] = {}
             self.games[game]["ti"] = ti
             self.games[game]["online_cid"] = game.opponent.connect(
@@ -1586,7 +1591,7 @@ class AdjournedTabSection (ParrentListSection):
                 result = "–"
             ti = self.store.append([game, result, pix, game.opponent.name,
                 game.opponent.display_online, game.display_timecontrol,
-                game.game_type.display_text, game.display_time])
+                game.game_type.display_text, game.display_time, game.sortable_time])
             self.games[game] = {}
             self.games[game]["ti"] = ti
 

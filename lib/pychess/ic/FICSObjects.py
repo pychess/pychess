@@ -863,7 +863,7 @@ class FICSAdjournedGame (FICSGame):
     @property
     def display_time (self):
         if self.time is not None:
-            return self.time.strftime("%x %H:%M")
+            return self.time.isoformat(' ')
     
     @property
     def opponent (self):
@@ -901,7 +901,7 @@ class FICSHistoryGame (FICSGame):
     @property
     def display_time (self):
         if self.time is not None:
-            return self.time.strftime("%x %H:%M")
+            return self.time.isoformat(' ')
 
 
 class FICSGames (GObject.GObject):
