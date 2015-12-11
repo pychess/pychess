@@ -631,7 +631,7 @@ class BoardManager (GObject.GObject):
         else:
             result = ADJOURNED
             result_str = "*"
-        result, reason = parse_reason(result, reason)
+        result, reason = parse_reason(result, reason, wname=wname)
 
         index += 3
         if matchlist[index].startswith("<12>"):
