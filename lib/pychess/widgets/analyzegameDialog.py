@@ -109,8 +109,8 @@ def initialize(gameDic):
                 if ply-1 in gamemodel.scores and ply in gamemodel.scores: 
                     color = (ply-1) % 2
                     oldmoves, oldscore, olddepth = gamemodel.scores[ply-1]
-                    score_str = prettyPrintScore(oldscore, olddepth)
                     oldscore = oldscore * -1 if color == BLACK else oldscore
+                    score_str = prettyPrintScore(oldscore, olddepth)
                     moves, score, depth = gamemodel.scores[ply]
                     score = score * -1 if color == WHITE else score
                     diff = score-oldscore

@@ -242,7 +242,6 @@ class EngineAdvisor(Advisor):
                 counted_pv.append("%s%s" % (mvcount, toFAN(board, pvmove) if is_FAN else toSAN(board, pvmove, True)))
                 board = board.move(pvmove)
 
-            # TODO make a move's "goodness" relative to other moves or past scores
             goodness = (min(max(score, -250), 250) + 250) / 500.0
             if self.engine.board.color == BLACK:
                 score = -score
