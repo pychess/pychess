@@ -1,4 +1,5 @@
 [![Build Status](https://drone.io/github.com/pychess/pychess/status.png)](https://drone.io/github.com/pychess/pychess/latest)
+[![Documentation Status](https://readthedocs.org/projects/pychess/badge/?version=latest)](http://pychess.readthedocs.org/en/latest/?badge=latest)
 
 PyChess - a free chess client for Linux
 
