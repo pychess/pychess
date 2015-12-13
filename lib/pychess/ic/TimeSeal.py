@@ -28,6 +28,7 @@ class TimeSeal (object):
         self.connected = False
         self.canceled = False
         self.FatICS = False
+        self.USCN = False
         self.buf = bytearray(b"")
         self.writebuf = bytearray(b"")
         self.stateinfo = None
@@ -178,9 +179,11 @@ class TimeSeal (object):
             log.debug(recv, extra={"task": (self.name, "raw")})
             self.buf += recv
             self.connected = True
-            
             if b"FatICS" in self.buf:
                 self.FatICS = True
+            elif b"puertorico.com" in self.buf:
+                self.USCN = True
+                self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
             elif b"Starting FICS session" in self.buf:
                 self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
         else:

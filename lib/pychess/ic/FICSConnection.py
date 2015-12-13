@@ -68,6 +68,8 @@ class Connection (GObject.GObject, Thread):
 
         # Are we connected to FatICS ?
         self.FatICS = False
+        
+        self.USCN = False
     
     def expect (self, prediction):
         self.predictions.add(prediction)
@@ -207,17 +209,26 @@ class FICSConnection (Connection):
                 if match:
                     self.username = match.groups()[0]
                     break
-                
+                match = re.search("Created temporary login '(%s)'" % NAMES_RE, line)
+                if match:
+                    self.username = match.groups()[0]
+                    break
+                match = re.search("answers to frequently asked questions", line)
+                if match:
+                    break
+            
             self.emit('connectingMsg', _("Setting up environment"))
             lines = self.client.readuntil(b"ics%")
             self._post_connect_hook(lines)
             self.FatICS = self.client.FatICS
+            self.USCN = self.client.USCN
             self.client.name = self.username
             self.client = PredictionsTelnet(self.client, self.predictions,
                                             self.reply_cmd_dict)
             self.client.lines.line_prefix = "fics%"
-            self.client.run_command("iset block 1")
-            self.client.lines.block_mode = True
+            if not self.USCN:
+                self.client.run_command("iset block 1")
+                self.client.lines.block_mode = True
             self.client.run_command("iset defprompt 1")
             self.client.run_command("iset ms 1")
             self.client.run_command("set seek 0")
@@ -226,7 +237,7 @@ class FICSConnection (Connection):
             self.connecting = False
             self.connected = True
             self.emit("connected")
-
+            
             def keep_alive():
                 last = time.time()
                 while self.isConnected():
