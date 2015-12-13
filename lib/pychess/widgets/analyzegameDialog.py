@@ -69,12 +69,16 @@ def initialize(gameDic):
 
         old_check_value = conf.get("analyzer_check", True)
         conf.set("analyzer_check", True)
+        if HINT not in gamemodel.spectators:
+            gamemodel.start_analyzer(HINT)
         analyzer = gamemodel.spectators[HINT]
         gmwidg.menuitems["hint_mode"].active = True
         threat_PV = conf.get("ThreatPV", False)
         if threat_PV:
             old_inv_check_value = conf.get("inv_analyzer_check", True)
             conf.set("inv_analyzer_check", True)
+            if SPY not in gamemodel.spectators:
+                gamemodel.start_analyzer(SPY)
             inv_analyzer = gamemodel.spectators[SPY]
             gmwidg.menuitems["spy_mode"].active = True
 
@@ -82,6 +86,9 @@ def initialize(gameDic):
         text = _("Do you want to abort it?")
         content = InfoBar.get_message_content(title, text, Gtk.STOCK_DIALOG_QUESTION)
         def response_cb (infobar, response, message):
+            conf.set("analyzer_check", old_check_value)
+            if threat_PV:
+                conf.set("inv_analyzer_check", old_inv_check_value)
             message.dismiss()
             abort()
         message = InfoBarMessage(Gtk.MessageType.QUESTION, content, response_cb)
