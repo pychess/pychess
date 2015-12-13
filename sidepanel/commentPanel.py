@@ -94,6 +94,7 @@ class Sidepanel:
     def game_changed (self, model, ply):
         for i in range(len(self.store)+model.lowply, ply+1):
             self.addComment(model, self.__chooseComment(model, i))
+        self.shown_changed (self.boardview, ply)
     
     def addComment (self, model, comment):
         self.store.append([comment])
