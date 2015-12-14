@@ -18,8 +18,7 @@ mf = "(?:([mf]{1,2})\s?)?"
 whomatch = "(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
 whomatch_re = re.compile(whomatch)
 rating_re = re.compile("[0-9]{2,}")
-deviation_estimated_re = re.compile("E")
-deviation_provisional_re = re.compile("P")
+
 
 class SeekManager (GObject.GObject):
     
