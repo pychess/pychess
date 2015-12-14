@@ -57,7 +57,7 @@ class ListAndVarManager:
 
     def isReady (self):
         # FatICS showlist output is not well formed yet
-        if self.connection.FatICS:
+        if self.connection.FatICS or self.connection.USCN:
             return semaphore_value(self.varLock)
         else:
             return semaphore_value(self.listLock) and semaphore_value(self.varLock)

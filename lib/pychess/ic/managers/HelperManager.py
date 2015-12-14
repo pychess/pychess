@@ -31,7 +31,7 @@ class HelperManager (GObject.GObject):
                 % (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())))
         self.helperconn.expect_line (self.on_game_list_end, "(\d+) games displayed .*")
 
-        if self.helperconn.FatICS:
+        if self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
         else:
             # New ivar pin
@@ -57,13 +57,16 @@ class HelperManager (GObject.GObject):
         #b: blitz      l: lightning   u: untimed      e: examined game
         #s: standard   w: wild        x: atomic       z: crazyhouse        
         #B: Bughouse   L: losers      S: Suicide
-        if self.helperconn.FatICS:
+        if self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.client.run_command("who")
         else:
             self.helperconn.client.run_command("who IbslwBzSLx")
             
         self.games = []
-        self.helperconn.client.run_command("games /bslwBzSLx")
+        if self.helperconn.FatICS or self.helperconn.USCN:
+            self.helperconn.client.run_command("games")
+        else:
+            self.helperconn.client.run_command("games /bslwBzSLx")
 
     def on_game_list (self, match):
         gameno, wrating, wname, brating, bname, private, shorttype, rated, min, \

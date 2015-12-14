@@ -1046,7 +1046,10 @@ class PlayerTabSection (ParrentListSection):
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
 
-        self.widgets["playersSpinner"].start()
+        if self.connection.FatICS or self.connection.USCN:
+            self.widgets["playersSpinner"].hide()
+        else:
+            self.widgets["playersSpinner"].start()
 
     def onPlayerAdded (self, players, new_players):
         # Let the hard work to be done in the helper connection thread
@@ -1277,7 +1280,10 @@ class GameTabSection (ParrentListSection):
         self.connection.bm.connect("obsGameCreated", self.onGameObserved)
         self.connection.bm.connect("obsGameUnobserved", self.onGameUnobserved)
 
-        self.widgets["gamesSpinner"].start()
+        if self.connection.FatICS or self.connection.USCN:
+            self.widgets["gamesSpinner"].hide()
+        else:
+            self.widgets["gamesSpinner"].start()
 
     # Multi-column sort based on TreeModelSortUtil from
     # https://github.com/metomi/rose/blob/master/lib/python/rose/gtk/util.py
