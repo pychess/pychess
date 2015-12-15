@@ -10,7 +10,7 @@ from pychess.Utils.const import *
 from pychess.Players.Human import Human
 from pychess.Players.Player import TurnInterrupt
 from pychess.Savers import fen as fen_loader
-from pychess.ic import GAME_TYPES
+from pychess.ic import *
 from pychess.ic.FICSObjects import FICSPlayer
 
 class ICGameModel (GameModel):
@@ -92,6 +92,13 @@ class ICGameModel (GameModel):
                 return True
         return False
     
+    @property
+    def noTD(self):
+        for player in self.ficsplayers:
+            if TYPE_TOURNAMENT_DIRECTOR in player.titles:
+                return False
+        return True
+
     def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
         log.debug(("ICGameModel.onBoardUpdate: id=%s self.ply=%s self.players=%s gameno=%s " + \
                   "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s") % \

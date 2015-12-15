@@ -87,6 +87,7 @@ class ICLounge (GObject.GObject):
                 log.error("Fics answered '%s': Command not found" % cmd))
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         self.connection.bm.connect("obsGameCreated", self.onObserveGameCreated)
+        self.connection.fm.connect("fingeringFinished", self.onFinger)
         # the rest of these relay server messages to the lounge infobar
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
@@ -218,8 +219,19 @@ class ICLounge (GObject.GObject):
         if ficsgame.relation == IC_POS_OBSERVING_EXAMINATION:
             if int(self.connection.lvm.variablesBackup["kibitz"]) == 0:
                 self.connection.cm.whisper(_("You have to set kibitz on to see bot messages here."))
+            self.connection.fm.finger(bplayer.name)
+            self.connection.fm.finger(wplayer.name)
         elif ficsgame.relation == IC_POS_EXAMINATING:
             gamemodel.examined = True
+
+    @idle_add
+    def onFinger (self, fm, finger):
+        titles = finger.getTitles()
+        if titles is not None:
+            name = finger.getName()
+            player = self.connection.players.get(FICSPlayer(name))
+            for title in titles:
+                player.titles.add(TITLES[title])
 
     @idle_add
     def tooManySeeks (self, bm):
@@ -1158,7 +1170,6 @@ class PlayerTabSection (ParrentListSection):
     def titles_changed (self, player, prop):
         log.debug("%s" % player, extra={"task":
             (self.connection.username, "PTS.titles_changed")})
-
         try:
             self.store.set(self.players[player]["ti"], 1, player.getIcon())
             self.store.set(self.players[player]["ti"], 2,

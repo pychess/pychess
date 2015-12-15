@@ -1484,14 +1484,14 @@ class BoardView (Gtk.DrawingArea):
         return x % 2 + y % 2 == 1
 
     def showFirst (self):
-        if self.model.examined:
+        if self.model.examined and self.model.noTD:
             self.model.goFirst()
         else:
             self.shown = self.model.lowply
             self.shownVariationIdx = 0
 
     def showPrev (self, step=1):
-        if self.model.examined:
+        if self.model.examined and self.model.noTD:
             self.model.goPrev(step)
         else:
             if self.shown > self.model.lowply:
@@ -1504,7 +1504,7 @@ class BoardView (Gtk.DrawingArea):
                     self.shownVariationIdx = 0
 
     def showNext (self, step=1):
-        if self.model.examined:
+        if self.model.examined and self.model.noTD:
             self.model.goNext(step)
         else:
             maxply = self.model.variations[self.shownVariationIdx][-1].ply
@@ -1515,14 +1515,14 @@ class BoardView (Gtk.DrawingArea):
                     self.shown = maxply
 
     def showLast (self):
-        if self.model.examined:
+        if self.model.examined and self.model.noTD:
             self.model.goLast()
         else:
             maxply = self.model.variations[self.shownVariationIdx][-1].ply
             self.shown = maxply
 
     def backToMainLine(self):
-        if self.model.examined:
+        if self.model.examined and self.model.noTD:
             self.model.backToMainLine()
         else:
             while not self.shownIsMainLine():
