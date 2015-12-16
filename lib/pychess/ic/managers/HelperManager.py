@@ -10,7 +10,7 @@ from pychess.System.Log import log
 rated = "(rated|unrated)"
 colors = "(?:\[(white|black)\]\s?)?"
 ratings = "([\d\+\- ]{1,4})"
-titleslist = "(?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|CA|C|U|D|B|T|\*)"
+titleslist = "(?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|CA|CM|C|U|D|B|T|H|\*)"
 titleslist_re = re.compile(titleslist)
 titles = "((?:\(%s\))+)?" % titleslist
 names = "([a-zA-Z]+)%s" % titles
