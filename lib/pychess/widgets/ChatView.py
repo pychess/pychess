@@ -86,6 +86,7 @@ class ChatView (Gtk.VPaned):
             tb.create_tag(pref + "_normal", foreground=color)
             tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
     
+    @idle_add
     def clear (self):
         self.writeView.get_buffer().props.text = ""
         self.readView.get_buffer().props.text = ""

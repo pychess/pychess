@@ -119,6 +119,7 @@ class FromToPrediction (MultipleLinesPrediction):
         return RETURN_NO_MATCH
 
 TelnetLine = collections.namedtuple('TelnetLine', ['line', 'code'])
+EmptyTelnetLine = TelnetLine("", None)
 
 class TelnetLines (object):
     def __init__ (self, telnet):
@@ -153,7 +154,7 @@ class TelnetLines (object):
             return self.lines.popleft()
         except IndexError:
             self.lines.extend(self._get_lines())
-            return self.lines.popleft()
+            return self.lines.popleft() if self.lines else EmptyTelnetLine
         
     def _get_lines (self):
         lines = []

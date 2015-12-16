@@ -464,6 +464,7 @@ class InfoPanel (Gtk.Notebook, Panel):
             self.add(sw)
             self.show_all()
 
+        @idle_add
         def onMessageAdded (self, chatView, sender, text, color):
             iter = self.store.get_iter_first()
 
