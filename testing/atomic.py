@@ -5,8 +5,8 @@ from __future__ import print_function
 import sys
 import unittest
 
-from pychess.Utils.const import ATOMICCHESS
-from pychess.Utils.logic import validate
+from pychess.Utils.const import *
+from pychess.Utils.logic import validate, getStatus
 from pychess.Utils.Move import Move, parseSAN
 from pychess.Variants.atomic import AtomicBoard
 from pychess.Utils.lutils.LBoard import LBoard
@@ -20,13 +20,18 @@ from pychess.Utils.lutils.lmovegen import genAllMoves
 # . . . . . . . .
 # ♙ ♙ ♙ ♙ . ♙ ♙ ♙
 # ♖ . ♗ ♕ ♔ ♗ . ♖
-FEN = "r2nkbnr/pp1bpppp/2p5/1N6/3q4/8/PPPP1PPP/R1BQKB1R w KQkq - 0 1"
+FEN1 = "r2nkbnr/pp1bpppp/2p5/1N6/3q4/8/PPPP1PPP/R1BQKB1R w KQkq - 0 1"
+
+FEN2 = "8/8/8/8/5k2/8/1qK5/8 b - - 0 1"
+
+FEN3 = "7k/6R1/8/5K2/8/8/8/8 b - - 0 1"
+
 
 class AtomicTestCase(unittest.TestCase):
     def test_validate1(self):
         """Testing castling rights lose in explosion in Atomic variant"""
         
-        board = AtomicBoard(setup=FEN)
+        board = AtomicBoard(setup=FEN1)
         board = board.move(parseSAN(board, 'Nxa7'))
         print(board)
         # Rook exploded, no O-O-O anymore!
@@ -38,7 +43,7 @@ class AtomicTestCase(unittest.TestCase):
     def test_validate2(self):
         """Testing explode king vs mate in Atomic variant"""
         
-        board = AtomicBoard(setup=FEN)
+        board = AtomicBoard(setup=FEN1)
         board = board.move(parseSAN(board, 'Nc7+'))
         print(board)
         # King explosion takes precedence over mate!
@@ -47,11 +52,29 @@ class AtomicTestCase(unittest.TestCase):
         self.assertTrue(not validate(board, parseSAN(board, 'Qxb2')))
         self.assertTrue(not validate(board, parseSAN(board, 'Qe4+')))
 
+    def test_getstatus1(self):
+        """Testing bare black king is not draw in Atomic variant"""
+        
+        board = AtomicBoard(setup=FEN2)
+        board = board.move(parseSAN(board, 'Qxc2'))
+        print(board)
+        self.assertEqual(getStatus(board), (BLACKWON, WON_KINGEXPLODE))
+
+    def test_getstatus2(self):
+        """Testing bare white king is not draw in Atomic variant"""
+
+        board = AtomicBoard(setup=FEN3)
+        self.assertTrue(not validate(board, parseSAN(board, 'Kxg7')))
+        self.assertTrue(not validate(board, parseSAN(board, 'Kg8')))
+        self.assertTrue(not validate(board, parseSAN(board, 'Kh7')))
+        print(board)
+        self.assertEqual(getStatus(board), (DRAW, DRAW_STALEMATE))
+
     def test_apply_pop(self):
         """Testing Atomic applyMove popMove"""
 
         board = LBoard(variant=ATOMICCHESS)
-        board.applyFen(FEN)
+        board.applyFen(FEN1)
         print(board)
         hist_exploding_around0 = [a[:] for a in board.hist_exploding_around]
         print_apply_pop = False
