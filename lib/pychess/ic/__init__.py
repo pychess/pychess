@@ -192,7 +192,7 @@ TITLE_TYPE_DISPLAY_TEXTS_SHORT = (
     _("T"), _("U"), _("CA"),
     _("SR"), _("TD"), _("TM"),
     _("GM"), _("IM"), _("FM"),
-    _("WGM"), _("WIM"), _("WFM"), _("D"), _("H"), _("CM")
+    _("WGM"), _("WIM"), _("WFM"), _("D"), _("H"), _("CM"), _("FA"), _("NM")
 )
 
 TITLES = {  # From FICS 'help who'
@@ -214,6 +214,8 @@ TITLES = {  # From FICS 'help who'
     "D":   TYPE_DUMMY_ACCOUNT,
     "H": TYPE_SERVICE_REPRESENTATIVE,
     "CM": TYPE_CANDIDATE_MASTER,
+    "FA": TYPE_FIDE_ARBEITER,
+    "NM": TYPE_NATIONAL_MASTER,
 }
 
 HEX_TO_TITLE = {
