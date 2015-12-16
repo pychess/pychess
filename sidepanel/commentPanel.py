@@ -73,13 +73,14 @@ class Sidepanel:
             return
         row = shown - self.gamemodel.lowply
 
-        try:
-            iter = self.store.get_iter(row)
-            self.tv.get_selection().select_iter(iter)
-            self.tv.scroll_to_cell(row)
-        except ValueError:
-            pass
-            # deleted variations by moves_undoing
+        with self.frozen:
+            try:
+                iter = self.store.get_iter(row)
+                self.tv.get_selection().select_iter(iter)
+                self.tv.scroll_to_cell(row)
+            except ValueError:
+                pass
+                # deleted variations by moves_undoing
     
     @idle_add
     def moves_undone (self, game, moves):
