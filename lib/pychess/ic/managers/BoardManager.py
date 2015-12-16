@@ -205,13 +205,23 @@ class BoardManager (GObject.GObject):
         self.connection.expect_n_lines(self.req_not_fit_formula,
             "Match request does not fit formula for %s:" % names,
             "%s's formula: (.+)" % names)
-        
-        self.connection.expect_n_lines (self.onPlayGameCreated,
-            "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
-            % (names, ratings, names, ratings, ratedexp),
-            "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
-            % (names, names, ratedexp),
-            "", "<12> (.+)")
+
+        if self.connection.USCN:
+            self.connection.expect_n_lines (self.onPlayGameCreated,
+                "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
+                % (names, ratings, names, ratings, ratedexp),
+                "",
+                "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
+                % (names, names, ratedexp),
+                "", "<12> (.+)")
+        else:
+            self.connection.expect_n_lines (self.onPlayGameCreated,
+                "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?"
+                % (names, ratings, names, ratings, ratedexp),
+                "{Game (\d+) \(%s vs\. %s\) (?:Creating|Continuing) %s ([^ ]+) match\."
+                % (names, names, ratedexp),
+                "", "<12> (.+)")
+
         # TODO: Trying to precisely match every type of possible response FICS
         # will throw at us for "Your seek matches..." or "Your seek qualifies
         # for [player]'s getgame" is error prone and we can never be sure we
@@ -440,18 +450,13 @@ class BoardManager (GObject.GObject):
             (matchlist[0].string, matchlist[1].string, matchlist[-1].string),
             extra={"task": (self.connection.username, "BM.onPlayGameCreated")})
         wname, wrating, bname, brating, rated, type, min, inc = matchlist[0].groups()
-        gameno, wname, bname, rated, type = matchlist[1].groups()
-        style12 = matchlist[-1].groups()[0]
+        next = 2 if self.connection.USCN else 1
+        gameno, wname, bname, rated, type = matchlist[next].groups()
         gameno = int(gameno)
         wrating = self.parseRating(wrating)
         brating = self.parseRating(brating)
         rated = rated == "rated"
         game_type = GAME_TYPES[type]
-        
-        castleSigns = self.generateCastleSigns(style12, game_type)
-        self.castleSigns[gameno] = castleSigns
-        gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                self.parseStyle12(style12, castleSigns)
 
         wplayer = self.connection.players.get(FICSPlayer(wname))
         bplayer = self.connection.players.get(FICSPlayer(bname))
@@ -459,9 +464,17 @@ class BoardManager (GObject.GObject):
             if game_type.rating_type in player.ratings and \
                     player.ratings[game_type.rating_type].elo != rating:
                 player.ratings[game_type.rating_type].elo = rating
+        
+        style12 = matchlist[-1].groups()[0]
+        castleSigns = self.generateCastleSigns(style12, game_type)
+        self.castleSigns[gameno] = castleSigns
+        gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
+                self.parseStyle12(style12, castleSigns)
+
         game = FICSGame(wplayer, bplayer, gameno=gameno, rated=rated,
             game_type=game_type, minutes=int(min), inc=int(inc),
             board=FICSBoard(wms, bms, fen=fen))
+
         game = self.connection.games.get(game)
 
         for player in (wplayer, bplayer):
