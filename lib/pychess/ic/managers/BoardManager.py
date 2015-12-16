@@ -237,12 +237,18 @@ class BoardManager (GObject.GObject):
             "Your challenge intercepts %s's challenge\." % names,
             "<12> (.+)")
 
-        self.connection.expect_n_lines (self.onObserveGameCreated,
-            "You are now observing game \d+\.",
-            "Game (\d+): %s %s %s %s %s ([\w/]+) (\d+) (\d+)"
-            % (names, ratings, names, ratings, ratedexp),
-            '',
-            "<12> (.+)")
+        if self.connection.USCN:
+            self.connection.expect_n_lines (self.onObserveGameCreated,
+                "You are now observing game \d+\.",
+                '',
+                "<12> (.+)")
+        else:
+            self.connection.expect_n_lines (self.onObserveGameCreated,
+                "You are now observing game \d+\.",
+                "Game (\d+): %s %s %s %s %s ([\w/]+) (\d+) (\d+)"
+                % (names, ratings, names, ratings, ratedexp),
+                '',
+                "<12> (.+)")
 
         self.connection.expect_n_lines (self.onFollowingPlayer,
             "You will now be following %s's games\." % names,
@@ -784,21 +790,27 @@ class BoardManager (GObject.GObject):
     def onObserveGameCreated (self, matchlist):
         log.debug("'%s'" % (matchlist[1].string),
             extra={"task": (self.connection.username, "BM.onObserveGameCreated")})
-        gameno, wname, wrating, bname, brating, rated, gametype, min, inc = matchlist[1].groups()
-        wplayer = self.connection.players.get(FICSPlayer(wname))
-        bplayer = self.connection.players.get(FICSPlayer(bname))
-        game = FICSGame(wplayer, bplayer, gameno=int(gameno))
+        if self.connection.USCN:
+            # TODO? is this ok?
+            game_type = GAME_TYPES["blitz"]
+            castleSigns = ("k","q")
+        else:
+            gameno, wname, wrating, bname, brating, rated, gametype, min, inc = matchlist[1].groups()
+            wrating = self.parseRating(wrating)
+            brating = self.parseRating(brating)
+            game_type = GAME_TYPES[gametype]
 
         style12 = matchlist[-1].groups()[0]
-        gameno = int(gameno)
-        wrating = self.parseRating(wrating)
-        brating = self.parseRating(brating)
-        game_type = GAME_TYPES[gametype]
         
         castleSigns = self.generateCastleSigns(style12, game_type)
-        self.castleSigns[gameno] = castleSigns
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                 self.parseStyle12(style12, castleSigns)
+        gameno = int(gameno)
+        self.castleSigns[gameno] = castleSigns
+
+        wplayer = self.connection.players.get(FICSPlayer(wname))
+        bplayer = self.connection.players.get(FICSPlayer(bname))
+        game = FICSGame(wplayer, bplayer, gameno=gameno)
 
         if relation == IC_POS_OBSERVING_EXAMINATION:
             pgnHead = [
