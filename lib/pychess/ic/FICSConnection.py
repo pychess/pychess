@@ -209,11 +209,16 @@ class FICSConnection (Connection):
                 if match:
                     self.username = match.groups()[0]
                     break
+                    
+                # USCN specific lines
                 match = re.search("Created temporary login '(%s)'" % NAMES_RE, line)
                 if match:
                     self.username = match.groups()[0]
                     break
                 match = re.search("answers to frequently asked questions", line)
+                if match:
+                    break
+                match = re.search("This is the admin message of the day", line)
                 if match:
                     break
             
@@ -361,7 +366,10 @@ class FICSHelperConnection (FICSConnection):
         self.client.run_command("set chanoff 1")
         self.client.run_command("set gin 1")
         self.client.run_command("set availinfo 1")
-        self.client.run_command("iset allresults 1")
-        # ivar pin: http://www.freechess.org/Help/HelpFiles/new_features.html
-        self.client.run_command("iset pin 1")
+        if self.FatICS or self.USCN:
+            self.client.run_command("set pin 1")
+        else:
+            self.client.run_command("iset allresults 1")
+            # ivar pin: http://www.freechess.org/Help/HelpFiles/new_features.html
+            self.client.run_command("iset pin 1")
         self.hm = HelperManager(self, self.main_conn)

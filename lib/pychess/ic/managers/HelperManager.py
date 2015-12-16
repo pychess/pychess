@@ -33,6 +33,8 @@ class HelperManager (GObject.GObject):
 
         if self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.expect_line (self.on_player_who, "%s(?:\s{2,}%s)+" % (whomatch, whomatch))
+            self.helperconn.expect_line (self.on_player_connect, "\[([A-Za-z]+) has connected\.\]")
+            self.helperconn.expect_line (self.on_player_disconnect, "\[([A-Za-z]+) has disconnected\.\]")
         else:
             # New ivar pin
             # http://www.freechess.org/Help/HelpFiles/new_features.html
@@ -40,10 +42,10 @@ class HelperManager (GObject.GObject):
                 "([A-Za-z]+)([\^~:\#. &])(\\d{2})" +
                 "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
             self.helperconn.expect_line (self.on_player_whoI_end, "(\d+) Players Displayed.")
-            self.helperconn.expect_line (self.on_player_connect,
+            self.helperconn.expect_line (self.on_player_connectI,
                 "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" +
                 "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
-            self.helperconn.expect_line (self.on_player_disconnect, "<wd> ([A-Za-z]+)")
+            self.helperconn.expect_line (self.on_player_disconnectI, "<wd> ([A-Za-z]+)")
 
         self.helperconn.expect_line (self.on_game_add,
                 "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
@@ -159,7 +161,7 @@ class HelperManager (GObject.GObject):
                     _titles.add(TITLES[title])
         return _titles
 
-    def on_player_connect (self, match, set_online=True):
+    def on_player_connectI (self, match, set_online=True):
         # bslwBzSLx
         # gbtami 001411E1663P1483P1720P0P1646P0P0P1679P
         name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
@@ -192,13 +194,13 @@ class HelperManager (GObject.GObject):
             player.status = status
         if set_online and not player.online:
             player.online = True
-    
-    def on_player_disconnect (self, match):
+
+    def on_player_disconnectI (self, match):
         name = match.groups()[0]
         self.connection.players.player_disconnected(FICSPlayer(name))
 
     def on_player_whoI (self, match):
-        self.on_player_connect(match, set_online=False)
+        self.on_player_connectI(match, set_online=False)
     on_player_whoI.BLKCMD = BLKCMD_WHO
     
     def on_player_whoI_end (self, match):
@@ -219,6 +221,16 @@ class HelperManager (GObject.GObject):
             blitz = self.parseRating(blitz)
             if player.ratings[TYPE_BLITZ].elo != blitz:
                 player.ratings[TYPE_BLITZ].elo = blitz
+
+    def on_player_connect (self, match):
+        name = match.groups()[0]
+        player = self.connection.players.get(FICSPlayer(name))
+        self.players.append(player)
+        player.online = True
+
+    def on_player_disconnect (self, match):
+        name = match.groups()[0]
+        self.connection.players.player_disconnected(FICSPlayer(name))
     
     def on_player_unavailable (self, match):
         name, titles = match.groups()

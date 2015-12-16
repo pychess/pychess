@@ -20,9 +20,13 @@ class ListAndVarManager:
         self.personalBackup = {}
         self.listLock = Semaphore(0)
         
-        self.connection.expect_fromplus (self.onUpdateLists,
-                "Lists:",
-                "(?:\w+\s+is (?:PUBLIC|PERSONAL))|$")
+        if self.connection.USCN:
+            self.connection.expect_line (self.onUpdateList,
+                    "(?:\w+\s+is (?:PUBLIC|PERSONAL))|$")
+        else:
+            self.connection.expect_fromplus (self.onUpdateLists,
+                    "Lists:",
+                    "(?:\w+\s+is (?:PUBLIC|PERSONAL))|$")
         
         self.connection.expect_line (self.onUpdateEmptyListitems,
                 "-- (\w+) list: 0 \w+ --")
@@ -95,6 +99,14 @@ class ListAndVarManager:
             else:
                 self.personalLists[name] = set()
     onUpdateLists.BLKCMD = BLKCMD_SHOWLIST
+
+    def onUpdateList (self, match):
+        name, _, public_personal = match.group(0).split()
+        self.connection.client.run_command("showlist %s" % name)
+        if public_personal == "PUBLIC":
+            self.publicLists[name] = set()
+        else:
+            self.personalLists[name] = set()
     
     def onUpdateEmptyListitems (self, match):
         listName = match.groups()[0]
