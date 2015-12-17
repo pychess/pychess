@@ -26,6 +26,8 @@ FEN2 = "8/8/8/8/5k2/8/1qK5/8 b - - 0 1"
 
 FEN3 = "7k/6R1/8/5K2/8/8/8/8 b - - 0 1"
 
+FEN4 = "r4bn1/4p2r/2n2pp1/p2p2Pk/1p4Qp/2P1P3/PP1P3P/R1B1K2R b KQ - 0 1"
+
 
 class AtomicTestCase(unittest.TestCase):
     def test_validate1(self):
@@ -69,6 +71,13 @@ class AtomicTestCase(unittest.TestCase):
         self.assertTrue(not validate(board, parseSAN(board, 'Kh7')))
         print(board)
         self.assertEqual(getStatus(board), (DRAW, DRAW_STALEMATE))
+
+    def test_getstatus3(self):
+        """Testing possible to mate with the queen unaided in Atomic variant"""
+        
+        board = AtomicBoard(setup=FEN4)
+        print(board)
+        self.assertEqual(getStatus(board), (WHITEWON, WON_MATE))
 
     def test_apply_pop(self):
         """Testing Atomic applyMove popMove"""
