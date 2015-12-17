@@ -114,7 +114,12 @@ class ConsoleView (Gtk.VPaned):
         tb = self.readView.get_buffer()
         tag = "mytext" if my else "text"
         tb.insert_with_tags_by_name(iter, text, tag)
-        self.readView.connect("size-allocate", self.onSizeAllocate)
+
+        # scroll to the bottom but only if we are not scrolled up to read back
+        adj = self.sw.get_vadjustment()
+        if adj.get_value() >= adj.get_upper() - adj.get_page_size() - 1e-12:
+            iter = tb.get_end_iter()
+            self.readView.scroll_to_iter(iter, 0.00, False, 1.00, 1.00)
 
     def onKeyPress (self, widget, event):
         if event.keyval in map(Gdk.keyval_from_name,("Return", "KP_Enter")):
@@ -174,7 +179,3 @@ class ConsoleView (Gtk.VPaned):
                 buffer.props.text = self.history[self.pos]
             widget.grab_focus()
             return True
-                
-    def onSizeAllocate(self, widget, event):
-        adj = self.sw.get_vadjustment()
-        adj.set_value(adj.get_upper() - adj.get_page_size())
