@@ -60,7 +60,9 @@ class ICLounge (GObject.GObject):
         self.messages = []
         self.players = []
         self.widgets = uistuff.GladeWidgets("fics_lounge.glade")
-        uistuff.keepWindowSize("fics_lounge", self.widgets["fics_lounge"])
+        lounge = self.widgets["fics_lounge"]
+        uistuff.keepWindowSize("fics_lounge", lounge)
+        lounge.set_title("PyChess - Internet Chess: %s" % connection.ics_name)
         self.infobar = InfoBarNotebook()
         self.infobar.hide()
         self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar, False, False, 0)

@@ -466,7 +466,7 @@
                               <object class="GtkLabel" id="label1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">&lt;b&gt;_Connect to FICS&lt;/b&gt;</property>
+                                <property name="label" translatable="yes">&lt;b&gt;_Connect to server&lt;/b&gt;</property>
                                 <property name="use_markup">True</property>
                                 <property name="use_underline">True</property>
                                 <property name="mnemonic_widget">connectButton</property>

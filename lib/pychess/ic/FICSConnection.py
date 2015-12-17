@@ -70,7 +70,16 @@ class Connection (GObject.GObject, Thread):
         self.FatICS = False
         
         self.USCN = False
-    
+
+    @property
+    def ics_name(self):
+        if self.FatICS:
+            return("FatICS")
+        elif self.USCN:
+            return("USCN")
+        else:
+            return("FICS")
+
     def expect (self, prediction):
         self.predictions.add(prediction)
         self.predictionsDict[prediction.callback] = prediction
