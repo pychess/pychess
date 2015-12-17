@@ -17,7 +17,10 @@ class ConsoleWindow (object):
 
         self.window = Gtk.Window()
         self.window.set_border_width(12)
+
+        # ChatWindow uses this to check is_active() so don't touch this!
         self.window.set_icon_name("pychess")
+
         self.window.set_title("%s Console" % connection.ics_name)
         self.window.connect("delete-event", lambda w,e: w.hide() or True)
         

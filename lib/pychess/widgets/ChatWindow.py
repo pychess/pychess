@@ -707,7 +707,13 @@ class ChatWindow (object):
 
     @idle_add
     def onPersonMessage (self, cm, name, title, isadmin, text):
-        if self.connection.bm.isPlaying():
+        console_active = False
+        for window in Gtk.Window.list_toplevels():
+            if window.is_active() and "pychess" in window.get_icon_name():
+                console_active = True
+                break
+
+        if self.connection.bm.isPlaying() or console_active:
             if not self.window:
                 self.initUi()
         else:
