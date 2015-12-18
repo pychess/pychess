@@ -7,7 +7,6 @@ from gi.repository import Gdk
 from gi.repository import Pango
 from gi.repository import GObject
 
-from pychess.System.idle_add import idle_add
 from pychess.System import uistuff
 from pychess.widgets.Background import set_textview_color
 from .BorderBox import BorderBox
@@ -86,7 +85,6 @@ class ChatView (Gtk.VPaned):
             tb.create_tag(pref + "_normal", foreground=color)
             tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
     
-    @idle_add
     def clear (self):
         self.writeView.get_buffer().props.text = ""
         self.readView.get_buffer().props.text = ""
@@ -108,7 +106,6 @@ class ChatView (Gtk.VPaned):
         # This is used to buzz the user and add senders to a list of active participants
         self.emit("messageAdded", sender, text, self.colors[pref])
     
-    @idle_add
     def insertLogMessage (self, timestamp, sender, text):
         """ Takes a list of (timestamp, sender, text) pairs, and inserts them in
             the beginning of the document.
@@ -119,7 +116,6 @@ class ChatView (Gtk.VPaned):
         self.__addMessage(iter, time, sender, text)
         tb.insert(iter, "\n")
     
-    @idle_add
     def addMessage (self, sender, text):
         tb = self.readView.get_buffer()
         iter = tb.get_end_iter()
@@ -128,7 +124,6 @@ class ChatView (Gtk.VPaned):
         if tb.props.text: tb.insert(iter, "\n")
         self.__addMessage(iter, strftime("%H:%M:%S"), sender, text)
     
-    @idle_add
     def disable (self, message):
         """ Sets the write field insensitive, in cases where the channel is
             read only. Use the message to give the user a propriate
@@ -136,7 +131,6 @@ class ChatView (Gtk.VPaned):
         self.writeView.set_sensitive(False)
         self.writeView.props.buffer.set_text(message)
     
-    @idle_add
     def enable (self):
         self.writeView.props.buffer.set_text("")
         self.writeView.set_sensitive(True)

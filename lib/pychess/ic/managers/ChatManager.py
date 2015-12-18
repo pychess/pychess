@@ -1,9 +1,12 @@
 #from gobject import *
-from gi.repository import GObject
+
 import threading
 import re
 from math import ceil
 import time
+
+from gi.repository import GLib
+from gi.repository import GObject
 
 from pychess.compat import unichr
 from pychess.System.Log import log
@@ -71,12 +74,12 @@ class ChatManager (GObject.GObject):
                 "channels only for their designated topics.",
                 "SPECIAL NOTE")
         
-        self.connection.expect_line (lambda m: self.emit('channelAdd', m.groups()[0]),
+        self.connection.expect_line (lambda m: GLib.idle_add(self.emit, 'channelAdd', m.groups()[0]),
                 "\[(\d+)\] added to your channel list.")
-        self.connection.expect_line (lambda m: self.emit('channelRemove', m.groups()[0]),
+        self.connection.expect_line (lambda m: GLib.idle_add(self.emit, 'channelRemove', m.groups()[0]),
                 "\[(\d+)\] removed to your channel list.")
         
-        self.connection.expect_line (lambda m: self.emit('channelJoinError', *m.groups()),
+        self.connection.expect_line (lambda m: GLib.idle_add(self.emit, 'channelJoinError', *m.groups()),
                 "Only (.+?) may join channel (\d+)\.")
         
         self.connection.expect_line (self.getNoChannelPlayers,
@@ -152,17 +155,17 @@ class ChatManager (GObject.GObject):
         for i in numbers:
             self.channels.append((str(i), _("Unofficial channel %d" % i)))
         
-        self.emit('channelsListed', self.channels)
+        GLib.idle_add(self.emit, 'channelsListed', self.channels)
         
     def getNoChannelPlayers (self, match):
         channel = match.groups()[0]
-        self.emit('receivedNames', channel, [])
+        GLib.idle_add(self.emit, 'receivedNames', channel, [])
     
     def getChannelPlayers(self, matchlist):
         channel, name, people = matchlist[0].groups()
         people += " " + " ".join(matchlist[1:-1])
         people = namesC.findall(titlesC.sub("",people))
-        self.emit('receivedNames', channel, people)
+        GLib.idle_add(self.emit, 'receivedNames', channel, people)
     
     def gotPlayerChannels(self, matchlist):
         name = matchlist[0].groups()
@@ -174,18 +177,18 @@ class ChatManager (GObject.GObject):
     def onPrivateMessage (self, match):
         name, isadmin, text = match.groups()
         text = self.entityDecode(text)
-        self.emit("privateMessage", name, "title", isadmin, text)
+        GLib.idle_add(self.emit, "privateMessage", name, "title", isadmin, text)
     
     def onAnnouncement (self, match):
         text = match.groups()[0]
         text = self.entityDecode(text)
-        self.emit("announcement", text)
+        GLib.idle_add(self.emit, "announcement", text)
     
     def onChannelMessage (self, match):
         name, isadmin, channel, text = match.groups()
         text = self.entityDecode(text)
         isme = name.lower() == self.connection.username.lower()
-        self.emit("channelMessage", name, isadmin, isme, channel, text)
+        GLib.idle_add(self.emit, "channelMessage", name, isadmin, isme, channel, text)
     
     def onShoutMessage (self, match):
         if len(match.groups()) == 4:
@@ -201,19 +204,19 @@ class ChatManager (GObject.GObject):
         
         # t-shout is used to invite to tournaments
         if type == "c-":
-            self.emit("channelMessage", name, isadmin, isme, CHANNEL_CSHOUT, text)
+            GLib.idle_add(self.emit, "channelMessage", name, isadmin, isme, CHANNEL_CSHOUT, text)
         else:
-            self.emit("channelMessage", name, isadmin, isme, CHANNEL_SHOUT, text)
+            GLib.idle_add(self.emit, "channelMessage", name, isadmin, isme, CHANNEL_SHOUT, text)
 
     def onKibitzMessage (self, match):
         name, rating, gameno, text = match.groups()
         text = self.entityDecode(text)
-        self.emit("kibitzMessage", name, int(gameno), text)
+        GLib.idle_add(self.emit, "kibitzMessage", name, int(gameno), text)
 
     def onWhisperMessage (self, match):
         name, rating, gameno, text = match.groups()
         text = self.entityDecode(text)
-        self.emit("whisperMessage", name, int(gameno), text)
+        GLib.idle_add(self.emit, "whisperMessage", name, int(gameno), text)
     
     def onArrivalNotification (self, match):
         name = match.groups()[0]
@@ -223,7 +226,7 @@ class ChatManager (GObject.GObject):
             return
         if player.name not in self.connection.notify_users:
             self.connection.notify_users.append(player.name)
-        self.emit("arrivalNotification", player)
+        GLib.idle_add(self.emit, "arrivalNotification", player)
     
     def onDepartedNotification (self, match):
         name = match.groups()[0]
@@ -231,11 +234,11 @@ class ChatManager (GObject.GObject):
             player = self.connection.players.get(FICSPlayer(name))
         except KeyError:
             return
-        self.emit("departedNotification", player)
+        GLib.idle_add(self.emit, "departedNotification", player)
     
     def toldChannel (self, match):
         amount, channel = match.groups()
-        self.emit("toldChannel", channel, int(amount))
+        GLib.idle_add(self.emit, "toldChannel", channel, int(amount))
     
     def onChannelLogStart (self, match):
         channel, = match.groups()
@@ -248,7 +251,7 @@ class ChatManager (GObject.GObject):
         h, m, s, handle, text = match.groups()
         time = self.convTime(int(h), int(m), int(s))
         text = self.entityDecode(text)
-        self.emit("channelLog", self.currentLogChannel, time, handle, text)
+        GLib.idle_add(self.emit, "channelLog", self.currentLogChannel, time, handle, text)
     
     def onChannelLogBreak (self, match):
         self.connection.client.run_command("xtell chlog Next")
@@ -289,7 +292,7 @@ class ChatManager (GObject.GObject):
     def getPeopleInChannel (self, channel):
         if channel in (CHANNEL_SHOUT, CHANNEL_CSHOUT):
             people = self.connection.players.get_online_playernames()
-            self.emit('receivedNames', channel, people)
+            GLib.idle_add(self.emit, 'receivedNames', channel, people)
         self.connection.client.run_command("inchannel %s" % channel)
     
     def joinChannel (self, channel):
