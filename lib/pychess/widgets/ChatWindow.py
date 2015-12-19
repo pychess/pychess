@@ -74,7 +74,7 @@ remove_icon = load_icon(16, "gtk-remove", "list-remove")
 
 class TextImageTree (Gtk.TreeView):
     """ Defines a tree with two columns.
-        The first one has text. The seccond one a clickable stock_icon """
+        The first one has text. The second one a clickable stock_icon """
 
     __gsignals__ = {
         'activated' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,int)),
@@ -204,6 +204,11 @@ class Panel (object):
 
 class ViewsPanel (Gtk.Notebook, Panel):
 
+    __gsignals__ = {
+        'channel_content_Changed' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
+    }
+
+
     def __init__ (self, connection):
         GObject.GObject.__init__(self)
         self.set_show_tabs(False)
@@ -281,6 +286,7 @@ class ViewsPanel (Gtk.Notebook, Panel):
     def onChannelMessage (self, cm, name, isadmin, isme, channel, text, name_, chatView):
         if channel.lower() == name_.lower() and not isme:
             chatView.addMessage(name, text)
+            self.emit('channel_content_Changed',channel)
 
 
     def addPage (self, widget, id):
@@ -459,7 +465,7 @@ class InfoPanel (Gtk.Notebook, Panel):
                 if name in noneed: continue
                 self.store.append([(1,1,1), name, False])
                 self.names.add(name)
-                
+
             self.remove(self.get_child())
             self.add(sw)
             self.show_all()
@@ -549,6 +555,40 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         expander.add(self.playersList)
         self.channels = {}
 
+
+    def change_fg_colour(self,lc, cell ,model, iter,data):
+        if data == model[iter][0]:
+            cell.set_property('foreground_rgba',Gdk.RGBA(0.8,0.2,0.2,1))
+        else:
+            cell.set_property('foreground_rgba',Gdk.RGBA(0,0,0,1))
+
+
+    def change_fg_colour_back(self, lc, cell ,model, iter,data):
+        if iter:
+            cell.set_property('foreground_rgba',Gdk.RGBA(0,0,0,1))
+
+
+    def channel_Highlight(self, a,channel,b):
+
+        """ Description: Highlights channels ( that are NOT in focus ) and changes there background colour
+                         to represent change in contents
+            channel : str - channel the message is intended for
+        """
+
+        jList = self.joinedList
+        lc = jList.leftcol      # treeViewColumn
+
+        model , cur_iter = jList.get_selection().get_selected() #Selected iter
+        temp_iter = jList.id2iter[channel]
+        temp_iter = jList.sort_model.convert_child_iter_to_iter(temp_iter)[1] #channel iter
+        jList.get_selection().select_iter(temp_iter)
+        cell = lc.get_cells()[0]
+        jList.get_selection().select_iter(cur_iter)
+        if cur_iter != temp_iter :
+            iter = temp_iter
+            lc.set_cell_data_func(cell,self.change_fg_colour,func_data=channel)
+
+
     def start (self):
         self.channels = self.connection.cm.getChannels()
         if self.channels:
@@ -628,7 +668,13 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
             self.connection.cm.removeChannel(id)
 
     def onSelect (self, joinedList, id, type):
+
         self.emit('conversationSelected', id)
+
+        model , iter = joinedList.get_selection().get_selected() #Selected iter
+        cell = joinedList.leftcol.get_cells()[0]
+        joinedList.leftcol.set_cell_data_func(cell,self.change_fg_colour_back,func_data=None)
+
 
     @idle_add
     def onPersonMessage (self, cm, name, title, isadmin, text):
@@ -653,6 +699,7 @@ class ChatWindow (object):
         self.channelspanel = ChannelsPanel(self.connection)
         self.infopanel = InfoPanel(self.connection)
         self.panels = [self.viewspanel, self.channelspanel, self.infopanel]
+        self.viewspanel.connect('channel_content_Changed', self.channelspanel.channel_Highlight,id)
 
     @idle_add
     def onDisconnected(self, conn):
