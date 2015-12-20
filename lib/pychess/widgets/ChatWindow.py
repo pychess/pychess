@@ -554,27 +554,26 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         vbox.pack_start(Gtk.Separator.new(0),False,False,2)
         expander.add(self.playersList)
         self.channels = {}
+        self.highlighted = {}
 
 
     def change_fg_colour(self,lc, cell ,model, iter,data):
-        if data == model[iter][0]:
-            cell.set_property('foreground_rgba',Gdk.RGBA(0.8,0.2,0.2,1))
-        else:
-            cell.set_property('foreground_rgba',Gdk.RGBA(0,0,0,1))
+        for chan in data:
+            if model[iter][0] == chan:
+                if data[chan] :
+                    cell.set_property('foreground_rgba',Gdk.RGBA(0.8,0.3,0.3,1))
+                else:
+                    cell.set_property('foreground_rgba',Gdk.RGBA(0,0,0,1))
 
 
-    def change_fg_colour_back(self, lc, cell ,model, iter,data):
-        if iter:
-            cell.set_property('foreground_rgba',Gdk.RGBA(0,0,0,1))
 
 
     def channel_Highlight(self, a,channel,b):
 
-        """ Description: Highlights channels ( that are NOT in focus ) and changes there background colour
+        """ Description: Highlights channels ( that are NOT in focus ) and changes there foreground colour
                          to represent change in contents
             channel : str - channel the message is intended for
         """
-
         jList = self.joinedList
         lc = jList.leftcol      # treeViewColumn
 
@@ -584,9 +583,10 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         jList.get_selection().select_iter(temp_iter)
         cell = lc.get_cells()[0]
         jList.get_selection().select_iter(cur_iter)
+        self.highlighted[channel] = True
         if cur_iter != temp_iter :
             iter = temp_iter
-            lc.set_cell_data_func(cell,self.change_fg_colour,func_data=channel)
+            lc.set_cell_data_func(cell,self.change_fg_colour,func_data=self.highlighted)
 
 
     def start (self):
@@ -670,10 +670,10 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
     def onSelect (self, joinedList, id, type):
 
         self.emit('conversationSelected', id)
-
         model , iter = joinedList.get_selection().get_selected() #Selected iter
         cell = joinedList.leftcol.get_cells()[0]
-        joinedList.leftcol.set_cell_data_func(cell,self.change_fg_colour_back,func_data=None)
+        self.highlighted[id] = False
+        joinedList.leftcol.set_cell_data_func(cell,self.change_fg_colour,func_data=self.highlighted)
 
 
     @idle_add
