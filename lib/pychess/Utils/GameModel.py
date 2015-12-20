@@ -135,6 +135,7 @@ class GameModel (GObject.GObject, Thread):
             self.timemodel = TimeModel()
         else:
             self.timemodel = timemodel
+        self.timemodel.gamemodel = self
         
         self.connections = defaultdict(list)  # mainly for IC subclasses
         self.examined = False

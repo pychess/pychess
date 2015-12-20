@@ -13,7 +13,7 @@ from gi.repository import PangoCairo
 from gi.repository import GObject
 
 from pychess.System import conf
-from pychess.Utils.const import WHITE, BLACK
+from pychess.Utils.const import *
 from . import preferencesDialog
 
 
@@ -193,6 +193,8 @@ class ChessClock (Gtk.DrawingArea):
     def update(self, wmovecount=-1, bmovecount=-1):
         alarm_time = int(conf.get("alarm_spin", 15))
         if self.model.getPlayerTime(self.model.movingColor) <= alarm_time and \
+            self.model.gamemodel.players[self.model.movingColor].__type__ == LOCAL and \
+            self.model.gamemodel.status in UNFINISHED_STATES and \
             not self.short_on_time[self.model.movingColor]:
             self.short_on_time[self.model.movingColor] = True
             preferencesDialog.SoundTab.playAction("shortOnTime")
