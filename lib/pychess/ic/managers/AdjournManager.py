@@ -61,7 +61,7 @@ class AdjournManager (GObject.GObject):
 
         self.connection.expect_fromplus(self.__onHistoryResponseYES,
                                         "\s*Opponent\s+Type\s+ECO\s+End\s+Date",
-                                        "\s*(\d+): (-|\+|=) \d+\s+(W|B)\s+\d+ %s\s+ \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|[A-Z]\d+)\s+%s\s+%s" %
+                                        "\s*(\d+): (-|\+|=) \d+\s+(W|B)\s+\d+ %s\s+\[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|[A-Z]\d+)\s+%s\s+%s" %
                                         (names, reasons, dates)) 
         
         self.connection.expect_line (self.__onAdjournedGameResigned,
@@ -121,6 +121,7 @@ class AdjournManager (GObject.GObject):
             adjournments.append(game)
             
         self.emit("onAdjournmentsList", adjournments)
+    __onStoredResponseYES.BLKCMD = BLKCMD_STORED
 
     def __onHistoryResponseYES (self, matchlist):
         #History for user:
@@ -171,12 +172,15 @@ class AdjournManager (GObject.GObject):
             history.append(game)
             
         self.emit("onHistoryList", history)
+    __onHistoryResponseYES.BLKCMD = BLKCMD_HISTORY
         
     def __onAdjournedResponseNO (self, match):
         self.emit("onAdjournmentsList", [])
+    __onAdjournedResponseNO.BLKCMD = BLKCMD_STORED
 
     def __onHistoryResponseNO (self, match):
         self.emit("onHistoryList", [])
+    __onHistoryResponseNO.BLKCMD = BLKCMD_HISTORY
     
     def __onSmovesResponse (self, matchlist):
         if "adjourn" in matchlist[-1].group():
