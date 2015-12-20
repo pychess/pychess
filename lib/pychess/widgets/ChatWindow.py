@@ -559,7 +559,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
 
     def change_fg_colour(self,lc, cell ,model, iter,data):
         for chan in data:
-            if model[iter][0] in chan:
+            if model[iter][0] == chan:
                 if data[chan] :
                     cell.set_property('foreground_rgba',Gdk.RGBA(0.8,0.3,0.3,1))
                 else:
@@ -570,7 +570,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
 
     def channel_Highlight(self, a,channel,b):
 
-        """ Description: Highlights channels ( that are NOT in focus ) and changes there background colour
+        """ Description: Highlights channels ( that are NOT in focus ) and changes there foreground colour
                          to represent change in contents
             channel : str - channel the message is intended for
         """
