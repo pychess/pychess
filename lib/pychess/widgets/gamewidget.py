@@ -154,9 +154,9 @@ class GameWidget (GObject.GObject):
         self.players_changed(gamemodel)
         if self.gamemodel.display_text:
             if isinstance(gamemodel, ICGameModel):
-                self.game_info_label.set_text(" " + self.display_text + "[ Board : " + str(self.gamemodel.ficsgame.gameno) + "]")
+                self.game_info_label.set_text("%s [%s]" % (self.display_text, self.gamemodel.ficsgame.gameno))
             else:
-                self.game_info_label.set_text(" " + self.display_text)
+                self.game_info_label.set_text(self.display_text)
         if gamemodel.timed:
             gamemodel.timemodel.connect("zero_reached", self.zero_reached)
         if isinstance(gamemodel, ICGameModel):
@@ -474,8 +474,7 @@ class GameWidget (GObject.GObject):
 
     def player_display_text (self, color=WHITE):
         if isinstance(self.gamemodel, ICGameModel):
-            return self.gamemodel.ficsplayers[color].long_name(
-                game_type=self.gamemodel.ficsgame.game_type)
+            return self.gamemodel.ficsplayers[color].name
         else:
             return repr(self.gamemodel.players[color])
 
