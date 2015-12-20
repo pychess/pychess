@@ -483,7 +483,7 @@ class GameWidget (GObject.GObject):
         if not self.gamemodel.players:
             return ""
         '''This will give you the name of the game.'''
-        vs = " " + _("vs") + " "
+        vs = " - "
         t = vs.join((self.player_display_text(color=WHITE),
                      self.player_display_text(color=BLACK)))
         return t
@@ -584,7 +584,7 @@ class GameWidget (GObject.GObject):
         text_hbox = Gtk.HBox()
         white_label = Gtk.Label(label="")
         text_hbox.pack_start(white_label, False, True, 0)
-        text_hbox.pack_start(Gtk.Label(" %s " % _("vs")), False, True, 0)
+        text_hbox.pack_start(Gtk.Label(" - " ), False, True, 0)
         black_label = Gtk.Label(label="")
         text_hbox.pack_start(black_label, False, True, 0)
         gameinfo_label = Gtk.Label(label="")
