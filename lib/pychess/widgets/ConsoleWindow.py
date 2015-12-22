@@ -8,6 +8,7 @@ from gi.repository import Pango
 from .BorderBox import BorderBox
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
+from pychess.widgets import insert_formatted
 from pychess.widgets.Background import set_textview_color
 
 
@@ -116,7 +117,7 @@ class ConsoleView (Gtk.VPaned):
             tb.insert(iter, "\n")
         tb = self.readView.get_buffer()
         tag = "mytext" if my else "text"
-        tb.insert_with_tags_by_name(iter, text, tag)
+        insert_formatted(self.readView, iter, text, tag=tag)
 
         # scroll to the bottom but only if we are not scrolled up to read back
         adj = self.sw.get_vadjustment()

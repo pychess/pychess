@@ -8,8 +8,10 @@ from gi.repository import Pango
 from gi.repository import GObject
 
 from pychess.System import uistuff
+from pychess.widgets import insert_formatted
 from pychess.widgets.Background import set_textview_color
 from .BorderBox import BorderBox
+
 
 class ChatView (Gtk.VPaned):
     __gsignals__ = {
@@ -102,7 +104,7 @@ class ChatView (Gtk.VPaned):
         # Insert time, name and text with different stylesd
         tb.insert_with_tags_by_name(iter, "(%s) "%time, pref+"_normal")
         tb.insert_with_tags_by_name(iter, sender+": ", pref+"_bold")
-        tb.insert(iter, text)
+        insert_formatted(self.readView, iter, text)
         # This is used to buzz the user and add senders to a list of active participants
         self.emit("messageAdded", sender, text, self.colors[pref])
     
