@@ -89,6 +89,7 @@ class ICLounge (GObject.GObject):
                 log.error("Fics answered '%s': Command not found" % cmd))
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         self.connection.bm.connect("obsGameCreated", self.onObserveGameCreated)
+        self.connection.bm.connect("exGameCreated", self.onObserveGameCreated)
         self.connection.fm.connect("fingeringFinished", self.onFinger)
         # the rest of these relay server messages to the lounge infobar
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
@@ -217,7 +218,6 @@ class ICLounge (GObject.GObject):
 
         ionest.generalStart(gamemodel, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))
-
         if ficsgame.relation == IC_POS_OBSERVING_EXAMINATION:
             if int(self.connection.lvm.variablesBackup["kibitz"]) == 0:
                 self.connection.cm.whisper(_("You have to set kibitz on to see bot messages here."))
@@ -1479,7 +1479,7 @@ class AdjournedTabSection (ParrentListSection):
         widgets["previewButton"].connect("clicked", self.onPreviewButtonClicked)
         widgets["examineButton"].connect("clicked", self.onExamineButtonClicked)
         self.tv.connect("row-activated", lambda *args: self.onPreviewButtonClicked(None))
-        self.connection.adm.connect("archiveGamePreview", self.onGamePreview)
+        self.connection.bm.connect("archiveGamePreview", self.onGamePreview)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
 
     def onSelectionChanged (self, selection):

@@ -27,7 +27,8 @@ class ICGameModel (GameModel):
         connections[connection.bm].append(connection.bm.connect("obsGameEnded", self.onGameEnded))
         connections[connection.bm].append(connection.bm.connect("curGameEnded", self.onGameEnded))
         connections[connection.bm].append(connection.bm.connect("gamePaused", self.onGamePaused))
-        connections[connection.bm].append(connection.bm.connect("madeExaminer", self.onMadeExaminer))
+        connections[connection.bm].append(connection.bm.connect("madeExamined", self.onMadeExamined))
+        connections[connection.bm].append(connection.bm.connect("madeUnExamined", self.onMadeUnExamined))
         connections[connection.om].append(connection.om.connect("onActionError", self.onActionError))
         connections[connection.cm].append(connection.cm.connect("kibitzMessage", self.onKibitzMessage))
         connections[connection.cm].append(connection.cm.connect("whisperMessage", self.onWhisperMessage))
@@ -159,6 +160,7 @@ class ICGameModel (GameModel):
                     self.emit("game_started")
                     curPlayer = self.players[self.curColor]
                     curPlayer.resetPosition()
+
         elif ply > self.ply+1:
             self.status = RUNNING
             self.loadAndStart(StringIO(fen), fen_loader, 0, -1, first_time=False)
@@ -166,8 +168,11 @@ class ICGameModel (GameModel):
             curPlayer = self.players[self.curColor]
             curPlayer.resetPosition()
 
-    def onMadeExaminer (self, bm, gameno):
+    def onMadeExamined (self, bm, gameno):
         self.examined = True
+
+    def onMadeUnExamined (self, bm, gameno):
+        self.examined = False
 
     def onGameEnded (self, bm, ficsgame):
         if ficsgame == self.ficsgame and len(self.players) >= 2:
@@ -268,14 +273,14 @@ class ICGameModel (GameModel):
     #
     
     def end (self, status, reason):
+        if self.examined:
+            self.connection.bm.unexamine()
+
         if self.status in UNFINISHED_STATES:
             self.__disconnect()
             
             if self.isObservationGame():
-                if self.examined:
-                    self.connection.bm.unexamine()
-                else:
-                    self.connection.bm.unobserve(self.ficsgame)
+                self.connection.bm.unobserve(self.ficsgame)
             else:
                 self.connection.om.offer(Offer(ABORT_OFFER), -1)
                 self.connection.om.offer(Offer(RESIGNATION), -1)

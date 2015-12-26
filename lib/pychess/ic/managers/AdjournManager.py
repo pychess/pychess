@@ -30,10 +30,8 @@ class AdjournManager (GObject.GObject):
     __gsignals__ = {
         'adjournedGameAdded' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'onAdjournmentsList' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
-        'archiveGamePreview' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'historyGameAdded' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'onHistoryList' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
-        'historyGamePreview' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):
@@ -48,11 +46,6 @@ class AdjournManager (GObject.GObject):
         self.connection.expect_line (self.__onHistoryResponseNO,
                                      "%s has no history games\." %
                                      self.connection.username)
-        
-        self.connection.expect_fromto (self.__onSmovesResponse,
-                                       moveListHeader1Str,
-#                                       "\s*{((?:Game courtesyadjourned by (Black|White))|(?:Still in progress)|(?:Game adjourned by mutual agreement)|(?:(White|Black) lost connection; game adjourned)|(?:Game adjourned by ((?:server shutdown)|(?:adjudication)|(?:simul holder))))} \*")
-                                        "\s*{.*(?:([Gg]ame.*adjourned.\s*)|(?:Still in progress)|(?:Game drawn.*)|(?:White.*)|(?:Black.*)).*}\s*(?:(?:1/2-1/2)|(?:1-0)|(?:0-1))?\s*")
 
         self.connection.expect_fromplus(self.__onStoredResponseYES,
                                         "\s*C Opponent\s+On Type\s+Str\s+M\s+ECO\s+Date",
@@ -135,9 +128,9 @@ class AdjournManager (GObject.GObject):
             result = match.groups()[1]
             our_color = match.groups()[2]
             if result == "+":
-                result = WHITEWON if our_color == WHITE else BLACKWON
+                result = WHITEWON if our_color == "W" else BLACKWON
             elif result == "-":
-                result = WHITEWON if our_color == BLACK else BLACKWON
+                result = WHITEWON if our_color == "B" else BLACKWON
             else:
                 result = DRAW
             opponent_name = match.groups()[3]
@@ -181,17 +174,6 @@ class AdjournManager (GObject.GObject):
     def __onHistoryResponseNO (self, match):
         self.emit("onHistoryList", [])
     __onHistoryResponseNO.BLKCMD = BLKCMD_HISTORY
-    
-    def __onSmovesResponse (self, matchlist):
-        if "adjourn" in matchlist[-1].group():
-            game = self.connection.bm.parseGame(matchlist, FICSAdjournedGame,
-                                                in_progress=False)
-        else:
-            game = self.connection.bm.parseGame(matchlist, FICSHistoryGame,
-                                                in_progress=False)
-        if game is None: return
-        self.emit("archiveGamePreview", game)
-    __onSmovesResponse.BLKCMD = BLKCMD_SMOVES
 
     def __onAdjournedGameResigned (self, match):
         self.queryAdjournments()
@@ -215,6 +197,8 @@ class AdjournManager (GObject.GObject):
             self.connection.client.run_command("smoves %s" % game.opponent.name)
 
     def examine (self, game):
+        game.board = None
+        self.connection.examined_game = game
         if isinstance(game, FICSAdjournedGame):
             self.connection.client.run_command("examine %s" % game.opponent.name)
         else:

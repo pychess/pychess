@@ -838,13 +838,14 @@ class FICSGame (FICSMatch):
 class FICSAdjournedGame (FICSGame):
     def __init__ (self, wplayer, bplayer, our_color=None, length=None, time=None,
                   rated=False, game_type=None, private=False, minutes=None,
-                  inc=None, result=None, reason=None, board=None):
+                  inc=None, result=None, reason=None, board=None, relation=None,
+                  gameno=None):
         assert our_color is None or our_color in (WHITE, BLACK), our_color
         assert length is None or isinstance(length, int), length
         assert time is None or isinstance(time, datetime.datetime), time        
         FICSGame.__init__(self, wplayer, bplayer, rated=rated, private=private,
             game_type=game_type, minutes=minutes, inc=inc, result=result,
-            reason=reason, board=board)
+            reason=reason, board=board, relation=relation, gameno=gameno)
         self.our_color = our_color
         self.length = length
         self.time = time
@@ -876,12 +877,13 @@ class FICSAdjournedGame (FICSGame):
 class FICSHistoryGame (FICSGame):
     def __init__ (self, wplayer, bplayer, our_color=None, time=None,
                   rated=False, game_type=None, private=False, minutes=None,
-                  inc=None, result=None, reason=None, board=None, history_no=None):
+                  inc=None, result=None, reason=None, board=None, relation=None,
+                  gameno=None, history_no=None):
         assert our_color is None or our_color in (WHITE, BLACK), our_color
         assert time is None or isinstance(time, datetime.datetime), time        
         FICSGame.__init__(self, wplayer, bplayer, rated=rated, private=private,
             game_type=game_type, minutes=minutes, inc=inc, result=result,
-            reason=reason, board=board)
+            reason=reason, board=board, relation=relation, gameno=gameno)
         self.our_color = our_color
         self.time = time
         self.history_no = history_no
