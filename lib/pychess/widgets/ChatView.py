@@ -17,7 +17,7 @@ class Observers (Gtk.VPaned):
     def __init__ (self):
         GObject.GObject.__init__(self)
 
-        # Inits the read view
+        # Inits the observers view
         self.obsView = Gtk.TextView()
 
         self.obsView.set_size_request(-1, 3)
@@ -38,6 +38,7 @@ class Observers (Gtk.VPaned):
         self.chatView = cw = ChatView()
         self.pack2(BorderBox(cw,bottom=True), resize=True, shrink=False)
         self.update_observers()
+        self.chatView.connect("updateObservers", self.update_observers)
 
     def update_observers(self):
         self.obsView.get_buffer().props.text = ""
@@ -48,7 +49,8 @@ class Observers (Gtk.VPaned):
 class ChatView (Gtk.VPaned):
     __gsignals__ = {
         'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
-        'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
+        'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'updateObservers' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
 
     def __init__ (self):
@@ -141,6 +143,7 @@ class ChatView (Gtk.VPaned):
         insert_formatted(self.readView, iter, text)
         # This is used to buzz the user and add senders to a list of active participants
         self.emit("messageAdded", sender, text, self.colors[pref])
+        self.emit("updateObservers",text)
 
     def insertLogMessage (self, timestamp, sender, text):
         """ Takes a list of (timestamp, sender, text) pairs, and inserts them in
