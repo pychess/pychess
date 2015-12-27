@@ -1680,7 +1680,11 @@ class AdjournedTabSection (ParrentListSection):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
         game = model.get_value(iter, 0)
-        self.connection.adm.examine(game)
+        if self.connection.examined_game is None:
+            self.connection.adm.examine(game)
+        else:
+            # TODO: InfoBarMessage
+            print("You are already examining a game.")
 
     @idle_add
     def onGamePreview (self, adm, ficsgame):
