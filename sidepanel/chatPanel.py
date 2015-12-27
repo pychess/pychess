@@ -10,7 +10,7 @@ from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import LOCAL, WHITE, BLACK
-from pychess.widgets.ChatView import ChatView
+from pychess.widgets.ChatView import  Observers
 from pychess.ic.ICGameModel import ICGameModel
 
 __title__ = _("Chat")
@@ -21,14 +21,14 @@ __desc__ = _("The chat panel lets you communicate with your opponent during the 
 
 class Sidepanel:
     def load (self, gmwidg):
-        self.chatView = ChatView()
-        self.chatView.disable("Waiting for game to load")
-        self.chatView.connect("messageTyped", self.onMessageSent)
+        self.obsView = Observers()
+#        self.chatView.disable("Waiting for game to load")
+#        self.chatView.connect("messageTyped", self.onMessageSent)
         self.gamemodel = gmwidg.gamemodel
         self.gamemodel.connect("game_started", self.onGameStarted)
         if isinstance(self.gamemodel, ICGameModel):
             self.gamemodel.connect("message_received", self.onICMessageReieved)
-        return self.chatView
+        return self.obsView
 
     @idle_add
     def onGameStarted (self, gamemodel):
@@ -50,7 +50,7 @@ class Sidepanel:
         if hasattr(self, "player"):
             self.player.connect("messageReceived", self.onMessageReieved)
 
-        self.chatView.enable()
+#        self.chatView.enable()
 
     def onMessageReieved (self, player, text):
         self.chatView.addMessage(repr(self.opplayer), text)
