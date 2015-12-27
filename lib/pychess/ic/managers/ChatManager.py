@@ -133,12 +133,12 @@ class ChatManager (GObject.GObject):
         #Observing 112 [DrStupp vs. hajaK]: pgg (1 user)
         #1 game displayed (of 254 in progress).
         self.connection.expect_line (self.get_allob_List,
-                                     "Observing\.*:")
+                                     'Observing.*:([\s+\(\w+\)\w+]+)\(')
 
 
     def get_allob_List(self,match):
-        log.debug("Cajone AllOb : %s  " % match)
-
+        observers = match.groups(1)
+        log.debug("Cajone AllOb : %s  " % observers)
 
     def getChannels(self):
         return self.channels
