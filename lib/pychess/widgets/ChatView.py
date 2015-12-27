@@ -20,6 +20,7 @@ class Observers (Gtk.VPaned):
         # Inits the read view
         self.obsView = Gtk.TextView()
 
+        self.obsView.set_size_request(-1, 3)
         set_textview_color(self.obsView)
 
         sw = Gtk.ScrolledWindow()
@@ -34,11 +35,14 @@ class Observers (Gtk.VPaned):
         self.obsView.props.pixels_above_lines = 2
         self.obsView.props.left_margin = 2
         self.pack1(BorderBox(sw,bottom=True), resize=True, shrink=True)
-        cw = ChatView()
-        self.pack2(BorderBox(cw,bottom=True), resize=True, shrink=True)
+        self.chatView = cw = ChatView()
+        self.pack2(BorderBox(cw,bottom=True), resize=True, shrink=False)
+        self.update_observers()
 
-    def update_observers():
-        pass
+    def update_observers(self):
+        self.obsView.get_buffer().props.text = ""
+        tb = self.obsView.get_buffer()
+        self.obsView.get_buffer().props.text = "Observers: "
 
 
 class ChatView (Gtk.VPaned):
@@ -57,12 +61,13 @@ class ChatView (Gtk.VPaned):
         # Inits the read view
         self.readView = Gtk.TextView()
 
+        self.readView.set_size_request(-1, 30)
         set_textview_color(self.readView)
 
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw.set_shadow_type(Gtk.ShadowType.NONE)
-        sw.set_size_request(-1, 20)
+        sw.set_size_request(-1, 250)
         uistuff.keepDown(sw)
         sw.add(self.readView)
         self.readView.set_editable(False)
@@ -72,7 +77,7 @@ class ChatView (Gtk.VPaned):
         self.readView.props.left_margin = 2
         #self.readView.get_buffer().create_tag("log",
         #        foreground = self.readView.get_style().fg[Gtk.StateType.INSENSITIVE])
-        self.pack1(BorderBox(sw,bottom=True), resize=True, shrink=True)
+        self.pack1(BorderBox(sw,bottom=True), resize=True, shrink=False)
 
         # Create a 'log mark' in the beginning of the text buffer. Because we
         # query the log asynchronously and in chunks, we can use this to insert
@@ -88,12 +93,13 @@ class ChatView (Gtk.VPaned):
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw.set_shadow_type(Gtk.ShadowType.NONE)
+        sw.set_size_request(-1, 3)
         sw.add(self.writeView)
         self.writeView.props.wrap_mode = Gtk.WrapMode.WORD
         self.writeView.props.pixels_below_lines = 1
         self.writeView.props.pixels_above_lines = 2
         self.writeView.props.left_margin = 2
-        self.pack2(BorderBox(sw,top=True), resize=True, shrink=True)
+        self.pack2(BorderBox(sw,top=True), resize=True, shrink=False)
 
         # Forces are reasonable position for the panner.
         def callback (widget, ctx):

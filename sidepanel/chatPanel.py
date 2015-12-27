@@ -22,8 +22,8 @@ __desc__ = _("The chat panel lets you communicate with your opponent during the 
 class Sidepanel:
     def load (self, gmwidg):
         self.obsView = Observers()
-#        self.chatView.disable("Waiting for game to load")
-#        self.chatView.connect("messageTyped", self.onMessageSent)
+        self.obsView.chatView.disable("Waiting for game to load")
+        self.obsView.chatView.connect("messageTyped", self.onMessageSent)
         self.gamemodel = gmwidg.gamemodel
         self.gamemodel.connect("game_started", self.onGameStarted)
         if isinstance(self.gamemodel, ICGameModel):
@@ -45,18 +45,18 @@ class Sidepanel:
             self.opplayer = gamemodel.players[0]
         else:
             log.info("Chatpanel loaded with no local players")
-            self.chatView.hide()
+            self.obsView.chatView.hide()
 
         if hasattr(self, "player"):
             self.player.connect("messageReceived", self.onMessageReieved)
 
-#        self.chatView.enable()
+        self.obsView.chatView.enable()
 
     def onMessageReieved (self, player, text):
-        self.chatView.addMessage(repr(self.opplayer), text)
+        self.obsView.chatView.addMessage(repr(self.opplayer), text)
 
     def onICMessageReieved (self, icgamemodel, player, text):
-        self.chatView.addMessage(player, text)
+        self.obsView.chatView.addMessage(player, text)
 
     def onMessageSent (self, chatView, text):
         if hasattr(self, "player"):
@@ -68,6 +68,6 @@ class Sidepanel:
                 name = self.gamemodel.connection.cm.whisper(text)
             else :
                 self.player.sendMessage(text)
-                self.chatView.addMessage(repr(self.player), text)
+                self.obsView.chatView.addMessage(repr(self.player), text)
         else:
             name = self.gamemodel.connection.cm.whisper(text)
