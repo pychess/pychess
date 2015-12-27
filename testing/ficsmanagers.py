@@ -53,6 +53,7 @@ class DummyConnection(Connection):
         self.client = self.DummyClient(self.predictions, self.reply_cmd_dict)
         self.client.lines.block_mode = True
         self.client.lines.line_prefix = "fics%"
+        self.examined_game = None
         
     def getUsername(self):
         return self.username
@@ -193,66 +194,6 @@ class AdjournManagerTests(EmittingTestCase):
         self.runAndAssertEquals('onAdjournmentsList',
             ['%s has no adjourned games.' % self.connection.username], ([],))
     
-    def test4(self):
-        """ Test acquiring preview without adjournment list """
-        
-        signal = 'archiveGamePreview'
-        
-        lines = ['BwanaSlei (1137) vs. mgatto (1336) --- Wed Nov  5, 20:56 PST 2008',
-                 'Rated blitz match, initial time: 5 minutes, increment: 0 seconds.',
-                 '',
-                 'Move  BwanaSlei               mgatto',
-                 '----  ---------------------   ---------------------',
-                 '  1.  e4      (0:00.000)     c5      (0:00.000)',  
-                 '  2.  Nf3     (0:00.000) ',
-                 '      {White lost connection; game adjourned} *',
-                 'fics% ']
-        
-        expectedPgn = '[Event "FICS rated blitz game"]\n[Site "FICS"]\n[White "BwanaSlei"]\n' \
-                      '[Black "mgatto"]\n[TimeControl "300+0"]\n[Result "*"]\n' \
-                      '[WhiteClock "0:05:00.000"]\n[BlackClock "0:05:00.000"]\n' \
-                      '[WhiteElo "1137"]\n[BlackElo "1336"]\n[Year "2008"]\n' \
-                      '[Month "11"]\n[Day "5"]\n[Time "20:56:00"]\n'
-        expectedPgn += '1. e4 c5 2. Nf3 *\n'
-        game = FICSAdjournedGame(FICSPlayer("BwanaSlei"), FICSPlayer("mgatto"),
-            rated=True, game_type=GAME_TYPES["blitz"], minutes=5, inc=0,
-            board=FICSBoard(300000, 300000, expectedPgn), reason=11)
-        game.wplayer.ratings[TYPE_BLITZ].elo = 1137
-        game.bplayer.ratings[TYPE_BLITZ].elo = 1336
-        expectedResults = (game,)
-        
-        self.runAndAssertEquals(signal, lines, expectedResults)
-    
-    def test5(self):
-        """ Test acquiring preview with adjournment list """
-        
-        signal = 'archiveGamePreview'
-        
-        lines = ['C Opponent       On Type          Str  M    ECO Date',
-                 '1: W BabyLurking     Y [ br  5   0] 29-13 W27  D37 Fri Nov  5, 04:41 PDT 2010',
-                 '',
-                 'mgatto (1233) vs. BabyLurking (1455) --- Fri Nov  5, 04:33 PDT 2010',
-                 'Rated blitz match, initial time: 5 minutes, increment: 0 seconds.',
-                 '',
-                 'Move  mgatto             BabyLurking',
-                 '----  ----------------   ----------------',
-                 '1.  Nf3     (0:00)     d5      (0:00)',
-                 '2.  d4      (0:03)     Nf6     (0:00)',
-                 '3.  c4      (0:03)     e6      (0:00)',
-                 '    {Game adjourned by mutual agreement} *']
-        
-        expectedPgn = '[Event "FICS rated blitz game"]\n[Site "FICS"]\n[White "mgatto"]\n' \
-                      '[Black "BabyLurking"]\n[TimeControl "300+0"]\n[Result "*"]\n' \
-                      '[WhiteClock "0:04:54.000"]\n[BlackClock "0:05:00.000"]\n' \
-                      '[WhiteElo "1233"]\n[BlackElo "1455"]\n[Year "2010"]\n[Month "11"]' \
-                      '\n[Day "5"]\n[Time "04:33:00"]\n1. Nf3 d5 2. d4 Nf6 3. c4 e6 *\n'
-        game = FICSAdjournedGame(FICSPlayer("mgatto"), FICSPlayer("BabyLurking"),
-            rated=True, game_type=GAME_TYPES["blitz"], minutes=5, inc=0,
-            board=FICSBoard(294000, 300000, expectedPgn), reason=6)
-        game.wplayer.ratings[TYPE_BLITZ].elo = 1233
-        game.bplayer.ratings[TYPE_BLITZ].elo = 1455
-        expectedResults = (game,)
-        self.runAndAssertEquals(signal, lines, expectedResults)
 
 ###############################################################################
 # SeekManager
@@ -768,7 +709,69 @@ class BoardManagerTests(EmittingTestCase):
                  BLOCK_END]
         self.connection.process_lines(lines)
         self.assertEqual(self.connection.client.commands[-1], "moves 12")
+
+    def test15(self):
+        """ Test acquiring preview without adjournment list """
         
+        signal = 'archiveGamePreview'
+        
+        lines = ['BwanaSlei (1137) vs. mgatto (1336) --- Wed Nov  5, 20:56 PST 2008',
+                 'Rated blitz match, initial time: 5 minutes, increment: 0 seconds.',
+                 '',
+                 'Move  BwanaSlei               mgatto',
+                 '----  ---------------------   ---------------------',
+                 '  1.  e4      (0:00.000)     c5      (0:00.000)',  
+                 '  2.  Nf3     (0:00.000) ',
+                 '      {White lost connection; game adjourned} *',
+                 'fics% ']
+        
+        expectedPgn = '[Event "FICS rated blitz game"]\n[Site "FICS"]\n[White "BwanaSlei"]\n' \
+                      '[Black "mgatto"]\n[TimeControl "300+0"]\n[Result "*"]\n' \
+                      '[WhiteClock "0:05:00.000"]\n[BlackClock "0:05:00.000"]\n' \
+                      '[WhiteElo "1137"]\n[BlackElo "1336"]\n[Year "2008"]\n' \
+                      '[Month "11"]\n[Day "5"]\n[Time "20:56:00"]\n'
+        expectedPgn += '1. e4 c5 2. Nf3 *\n'
+        game = FICSAdjournedGame(FICSPlayer("BwanaSlei"), FICSPlayer("mgatto"),
+            rated=True, game_type=GAME_TYPES["blitz"], minutes=5, inc=0,
+            board=FICSBoard(300000, 300000, expectedPgn), reason=11)
+        game.wplayer.ratings[TYPE_BLITZ].elo = 1137
+        game.bplayer.ratings[TYPE_BLITZ].elo = 1336
+        expectedResults = (game,)
+        
+        self.runAndAssertEquals(signal, lines, expectedResults)
+    
+    def test16(self):
+        """ Test acquiring preview with adjournment list """
+        
+        signal = 'archiveGamePreview'
+        
+        lines = ['C Opponent       On Type          Str  M    ECO Date',
+                 '1: W BabyLurking     Y [ br  5   0] 29-13 W27  D37 Fri Nov  5, 04:41 PDT 2010',
+                 '',
+                 'mgatto (1233) vs. BabyLurking (1455) --- Fri Nov  5, 04:33 PDT 2010',
+                 'Rated blitz match, initial time: 5 minutes, increment: 0 seconds.',
+                 '',
+                 'Move  mgatto             BabyLurking',
+                 '----  ----------------   ----------------',
+                 '1.  Nf3     (0:00)     d5      (0:00)',
+                 '2.  d4      (0:03)     Nf6     (0:00)',
+                 '3.  c4      (0:03)     e6      (0:00)',
+                 '    {Game adjourned by mutual agreement} *']
+        
+        expectedPgn = '[Event "FICS rated blitz game"]\n[Site "FICS"]\n[White "mgatto"]\n' \
+                      '[Black "BabyLurking"]\n[TimeControl "300+0"]\n[Result "*"]\n' \
+                      '[WhiteClock "0:04:54.000"]\n[BlackClock "0:05:00.000"]\n' \
+                      '[WhiteElo "1233"]\n[BlackElo "1455"]\n[Year "2010"]\n[Month "11"]' \
+                      '\n[Day "5"]\n[Time "04:33:00"]\n1. Nf3 d5 2. d4 Nf6 3. c4 e6 *\n'
+        game = FICSAdjournedGame(FICSPlayer("mgatto"), FICSPlayer("BabyLurking"),
+            rated=True, game_type=GAME_TYPES["blitz"], minutes=5, inc=0,
+            board=FICSBoard(294000, 300000, expectedPgn), reason=6)
+        game.wplayer.ratings[TYPE_BLITZ].elo = 1233
+        game.bplayer.ratings[TYPE_BLITZ].elo = 1455
+        expectedResults = (game,)
+        self.runAndAssertEquals(signal, lines, expectedResults)
+
+
 class GamesTests(EmittingTestCase):
     def setUp (self):
         EmittingTestCase.setUp(self)
