@@ -653,11 +653,14 @@ class SeekTabSection (ParrentListSection):
             GdkPixbuf.Pixbuf, str, int, str, str, str, int, Gdk.RGBA, str)
         self.model = Gtk.TreeModelSort(model=self.store)
         self.tv.set_model(self.model)
-        self.addColumns (self.tv, "FICSSoughtMatch", "", _"Accept", _("Name"),
+        self.addColumns (self.tv, "FICSSoughtMatch", "", "", _("Name"),
             _("Rating"), _("Rated"), _("Type"), _("Clock"), "gametime",
             "textcolor", "tooltip", hide=[0,8,9,10], pix=[1,2] )
         self.tv.set_search_column(3)
         self.tv.set_tooltip_column(10,)
+        for i in range(0, 2):
+            self.tv.get_column(i).set_sort_column_id(i)
+            self.tv.get_model().set_sort_func(i, self.pixCompareFunction, i+1)
         for i in range(2, 8):
             self.tv.get_model().set_sort_func(i, self.compareFunction, i)
         try:
