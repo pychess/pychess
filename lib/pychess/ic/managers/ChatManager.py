@@ -11,6 +11,7 @@ from gi.repository import GObject
 from pychess.compat import unichr
 from pychess.System.Log import log
 from pychess.ic.FICSObjects import FICSPlayer
+from pychess.ic.__init__ import *
 
 titles = "(?:\([A-Z*]+\))*"
 names = "([A-Za-z]+)"+titles
@@ -44,6 +45,8 @@ class ChatManager (GObject.GObject):
 
         'receivedChannels' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
         'receivedNames' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
+
+        'ObserverNames' : (GObject.SignalFlags.RUN_FIRST, None, (int, object)),
     }
 
     def __init__ (self, connection):
@@ -129,16 +132,22 @@ class ChatManager (GObject.GObject):
         self.connection.client.run_command("help channel_list")
         self.channels = {}
 
-        #allob 112
         #Observing 112 [DrStupp vs. hajaK]: pgg (1 user)
-        #1 game displayed (of 254 in progress).
         self.connection.expect_line (self.get_allob_List,
-                                     'Observing.*:([\s+\(\w+\)\w+]+)\(')
+                                     'Observing\s+(\d+).*:([\s+\(\w+\)\w+]+)\(' )
 
 
     def get_allob_List(self,match):
-        observers = match.groups(1)
-        log.debug("Cajone AllOb : %s  " % observers)
+        pass
+        observers_dic = {}
+        gameno = match.group(1)
+        observers = match.group(2)
+        oblist = observers.split()
+        for player in oblist:
+            if player[:5] != "Guest":
+                observers_dic[player] = FICSPlayer(player).getRatingByGameType(GAME_TYPES['standard'])
+                log.debug("Cajone Player %s| %s | %s " % (player,FICSPlayer(player.standard),observers_dic[player]))
+        log.debug("Cajone AllOb : %s : %s  " % (gameno,observers))
 
     def getChannels(self):
         return self.channels
