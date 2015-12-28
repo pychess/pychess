@@ -1928,7 +1928,7 @@ class SeekChallengeSection (Section):
             self.widgets["strengthFrame"].set_sensitive(True)
             self.widgets["strengthFrame"].set_tooltip_text("")
             self.widgets["manualAcceptCheck"].set_sensitive(True)
-            self.widgets["manualAcceptCheck"].set_tooltip_text("")
+            self.widgets["manualAcceptCheck"].set_tooltip_text(_("If set you can refuse players accepting your seek"))
         else:
             self.widgets["strengthFrame"].set_sensitive(False)
             self.widgets["strengthFrame"].set_tooltip_text(
