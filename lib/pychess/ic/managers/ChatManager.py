@@ -46,7 +46,7 @@ class ChatManager (GObject.GObject):
         'receivedChannels' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
         'receivedNames' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
 
-        'ObserverNames' : (GObject.SignalFlags.RUN_FIRST, None, (int, object)),
+        'ObserverNames' : (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
     }
 
     def __init__ (self, connection):
@@ -138,7 +138,12 @@ class ChatManager (GObject.GObject):
 
 
     def get_allob_List(self,match):
-        pass
+        """ Description: Processes the returning pattern matched of the FICS allob command
+                         extracts out the gameno and a list of observers before emmiting them for collection
+                         by the observers view
+            match: (re.reg-ex) is the complied matching pattern for processing
+        """
+
         observers_dic = {}
         gameno = match.group(1)
         observers = match.group(2)
@@ -146,8 +151,9 @@ class ChatManager (GObject.GObject):
         for player in oblist:
             if player[:5] != "Guest":
                 observers_dic[player] = FICSPlayer(player).getRatingByGameType(GAME_TYPES['standard'])
-                log.debug("Cajone Player %s| %s | %s " % (player,FICSPlayer(player.standard),observers_dic[player]))
+                log.debug("Cajone Player %s| %s " % (player,observers_dic[player]))
         log.debug("Cajone AllOb : %s : %s  " % (gameno,observers))
+        self.emit('ObserverNames',gameno,observers)
 
     def getChannels(self):
         return self.channels

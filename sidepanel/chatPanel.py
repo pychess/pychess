@@ -25,6 +25,7 @@ class Sidepanel:
         self.obsView.chatView.disable("Waiting for game to load")
         self.obsView.chatView.connect("messageTyped", self.onMessageSent)
         self.gamemodel = gmwidg.gamemodel
+        self.gamemodel.connect.cm.get_allob_List("ObserverNames", self.obsView.update_observers)
         self.gamemodel.connect("game_started", self.onGameStarted)
         if isinstance(self.gamemodel, ICGameModel):
             self.gamemodel.connect("message_received", self.onICMessageReieved)
@@ -57,6 +58,10 @@ class Sidepanel:
 
     def onICMessageReieved (self, icgamemodel, player, text):
         self.obsView.chatView.addMessage(player, text)
+        # emit an allob <gameno> to FICS
+        allob = 'allob ' + str(ficsgame.gameno)
+        icgamemodel.connection.client.run_command(allob)
+
 
     def onMessageSent (self, chatView, text):
         if hasattr(self, "player"):

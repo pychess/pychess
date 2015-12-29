@@ -37,20 +37,17 @@ class Observers (Gtk.VPaned):
         self.pack1(BorderBox(sw,bottom=True), resize=True, shrink=True)
         self.chatView = cw = ChatView()
         self.pack2(BorderBox(cw,bottom=True), resize=True, shrink=False)
-        self.update_observers()
-        self.chatView.connect("updateObservers", self.update_observers)
 
-    def update_observers(self):
+    def update_observers(self,gameno,observers):
         self.obsView.get_buffer().props.text = ""
         tb = self.obsView.get_buffer()
-        self.obsView.get_buffer().props.text = "Observers: "
+        self.obsView.get_buffer().props.text = "Observers: " + observers
 
 
 class ChatView (Gtk.VPaned):
     __gsignals__ = {
         'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
         'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
-        'updateObservers' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
 
     def __init__ (self):
@@ -143,7 +140,6 @@ class ChatView (Gtk.VPaned):
         insert_formatted(self.readView, iter, text)
         # This is used to buzz the user and add senders to a list of active participants
         self.emit("messageAdded", sender, text, self.colors[pref])
-        self.emit("updateObservers",text)
 
     def insertLogMessage (self, timestamp, sender, text):
         """ Takes a list of (timestamp, sender, text) pairs, and inserts them in
