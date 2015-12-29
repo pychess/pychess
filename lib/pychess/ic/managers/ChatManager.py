@@ -46,7 +46,7 @@ class ChatManager (GObject.GObject):
         'receivedChannels' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
         'receivedNames' : (GObject.SignalFlags.RUN_FIRST, None, (str, object)),
 
-        'ObserverNames' : (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        'observers_received' : (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
     }
 
     def __init__ (self, connection):
@@ -149,11 +149,8 @@ class ChatManager (GObject.GObject):
         observers = match.group(2)
         oblist = observers.split()
         for player in oblist:
-            if player[:5] != "Guest":
-                observers_dic[player] = FICSPlayer(player).getRatingByGameType(GAME_TYPES['standard'])
-                log.debug("Cajone Player %s| %s " % (player,observers_dic[player]))
-        log.debug("Cajone AllOb : %s : %s  " % (gameno,observers))
-        self.emit('ObserverNames',gameno,observers)
+            observers_dic[player] = FICSPlayer(player).getRatingByGameType(GAME_TYPES['standard'])
+        self.emit('observers_received',gameno,observers)
 
     def getChannels(self):
         return self.channels

@@ -38,7 +38,7 @@ class Observers (Gtk.VPaned):
         self.chatView = cw = ChatView()
         self.pack2(BorderBox(cw,bottom=True), resize=True, shrink=False)
 
-    def update_observers(self,gameno,observers):
+    def update_observers(self,other,observers):
         self.obsView.get_buffer().props.text = ""
         tb = self.obsView.get_buffer()
         self.obsView.get_buffer().props.text = "Observers: " + observers

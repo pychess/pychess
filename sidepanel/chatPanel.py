@@ -12,6 +12,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import LOCAL, WHITE, BLACK
 from pychess.widgets.ChatView import  Observers
 from pychess.ic.ICGameModel import ICGameModel
+from pychess.ic.managers.ChatManager import ChatManager
 
 __title__ = _("Chat")
 
@@ -20,12 +21,14 @@ __icon__ = addDataPrefix("glade/panel_chat.svg")
 __desc__ = _("The chat panel lets you communicate with your opponent during the game, assuming he or she is interested")
 
 class Sidepanel:
+
+
     def load (self, gmwidg):
         self.obsView = Observers()
         self.obsView.chatView.disable("Waiting for game to load")
         self.obsView.chatView.connect("messageTyped", self.onMessageSent)
         self.gamemodel = gmwidg.gamemodel
-        self.gamemodel.connect.cm.get_allob_List("ObserverNames", self.obsView.update_observers)
+        self.gamemodel.connect("observers_received", self.obsView.update_observers)
         self.gamemodel.connect("game_started", self.onGameStarted)
         if isinstance(self.gamemodel, ICGameModel):
             self.gamemodel.connect("message_received", self.onICMessageReieved)
