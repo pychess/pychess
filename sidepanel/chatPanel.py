@@ -38,7 +38,8 @@ class Sidepanel:
     def onGameStarted (self, gamemodel):
         if gamemodel.isObservationGame() or gamemodel.examined:
             # no local player but enable chat to send/receive whisper/kibitz
-            pass
+            allob = 'allob ' + str(gamemodel.ficsgame.gameno)
+            gamemodel.connection.client.run_command(allob)
         elif gamemodel.players[0].__type__ == LOCAL:
             self.player = gamemodel.players[0]
             self.opplayer = gamemodel.players[1]
