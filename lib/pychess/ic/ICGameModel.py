@@ -32,8 +32,9 @@ class ICGameModel (GameModel):
         connections[connection.om].append(connection.om.connect("onActionError", self.onActionError))
         connections[connection.cm].append(connection.cm.connect("kibitzMessage", self.onKibitzMessage))
         connections[connection.cm].append(connection.cm.connect("whisperMessage", self.onWhisperMessage))
+        connections[connection.cm].append(connection.cm.connect("observers_received", self.onObserversReceived))
         connections[connection].append(connection.connect("disconnected", self.onDisconnected))
-        
+
         rated = "rated" if ficsgame.rated else "unrated"
         # This is in the format that ficsgames.org writes these PGN headers
         self.tags["Event"] = "FICS %s %s game" % (rated, ficsgame.game_type.fics_name)
@@ -43,7 +44,7 @@ class ICGameModel (GameModel):
         s = GameModel.__repr__(self)
         s = s.replace("<GameModel", "<ICGameModel")
         fg = repr(self.ficsgame)
-        s = s.replace(", players=", ", ficsgame=%s, players=" % fg)        
+        s = s.replace(", players=", ", ficsgame=%s, players=" % fg)
         return s
 
     @property
@@ -55,44 +56,44 @@ class ICGameModel (GameModel):
         if self.ficsgame.game_type.display_text:
             t += self.ficsgame.game_type.display_text + " "
         return t + "]"
-    
+
     def __disconnect (self):
         if self.connections is None: return
         for obj in self.connections:
             # Humans need to stay connected post-game so that "GUI > Actions" works
             if isinstance(obj, Human):
                 continue
-            
+
             for handler_id in self.connections[obj]:
                 if obj.handler_is_connected(handler_id):
                     log.debug("ICGameModel.__disconnect: object=%s handler_id=%s" % \
                         (repr(obj), repr(handler_id)))
                     obj.disconnect(handler_id)
         self.connections = None
-    
+
     def ficsplayer (self, player):
         if player.ichandle == self.ficsplayers[0].name:
             return self.ficsplayers[0]
         else:
             return self.ficsplayers[1]
-    
+
     @property
     def remote_player (self):
         if self.players[0].__type__ == REMOTE:
             return self.players[0]
         else:
             return self.players[1]
-        
+
     @property
-    def remote_ficsplayer (self):    
+    def remote_ficsplayer (self):
         return self.ficsplayer(self.remote_player)
-        
+
     def hasGuestPlayers (self):
         for player in self.ficsplayers:
             if player.isGuest():
                 return True
         return False
-    
+
     @property
     def noTD(self):
         for player in self.ficsplayers:
@@ -180,19 +181,19 @@ class ICGameModel (GameModel):
                 "ICGameModel.onGameEnded: self.players=%s ficsgame=%s" % \
                 (repr(self.players), repr(ficsgame)))
             self.end(ficsgame.result, ficsgame.reason)
-    
+
     def setPlayers (self, players):
         GameModel.setPlayers(self, players)
         if self.players[WHITE].icrating:
             self.tags["WhiteElo"] = self.players[WHITE].icrating
         if self.players[BLACK].icrating:
             self.tags["BlackElo"] = self.players[BLACK].icrating
-    
+
     def onGamePaused (self, bm, gameno, paused):
         if paused:
             self.pause()
         else: self.resume()
-        
+
         # we have to do this here rather than in acceptReceived(), because
         # sometimes FICS pauses/unpauses a game clock without telling us that the
         # original offer was "accepted"/"received", such as when one player offers
@@ -200,7 +201,7 @@ class ICGameModel (GameModel):
         for offer in list(self.offers.keys()):
             if offer.type in (PAUSE_OFFER, RESUME_OFFER):
                 del self.offers[offer]
-    
+
     def onDisconnected (self, connection):
         if self.status in (WAITING_TO_START, PAUSED, RUNNING):
             self.end (KILLED, DISCONNECTED)
@@ -220,23 +221,29 @@ class ICGameModel (GameModel):
         if gameno != self.ficsgame.gameno:
             return
         self.emit("message_received", name, text)
-    
+
+    def onObserversReceived(self,other,gameno,observers):
+        if int(gameno) != self.ficsgame.gameno:
+            return
+        self.emit("observers_received",observers)
+
+
     ############################################################################
     # Offer management                                                         #
     ############################################################################
-    
+
     def offerReceived (self, player, offer):
         log.debug("ICGameModel.offerReceived: offerer=%s %s" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         else: opPlayer = self.players[WHITE]
-        
+
         if offer.type == CHAT_ACTION:
             opPlayer.putMessage(offer.param)
-        
+
         elif offer.type in (RESIGNATION, FLAG_CALL):
             self.connection.om.offer(offer, self.ply)
-        
+
         elif offer.type in OFFERS:
             if offer not in self.offers:
                 log.debug("ICGameModel.offerReceived: %s.offer(%s)" % (repr(opPlayer), offer))
@@ -247,7 +254,7 @@ class ICGameModel (GameModel):
             for offer_ in list(self.offers.keys()):
                 if offer.type == offer_.type and offer != offer_:
                     del self.offers[offer_]
-    
+
     def acceptReceived (self, player, offer):
         log.debug("ICGameModel.acceptReceived: accepter=%s %s" % (repr(player), offer))
         if player.__type__ == LOCAL:
@@ -257,34 +264,34 @@ class ICGameModel (GameModel):
                 log.debug("ICGameModel.acceptReceived: connection.om.accept(%s)" % offer)
                 self.connection.om.accept(offer)
                 del self.offers[offer]
-        
+
         # We don't handle any ServerPlayer calls here, as the fics server will
         # know automatically if he/she accepts an offer, and will simply send
         # us the result.
-    
+
     def checkStatus (self):
         pass
 
     def onActionError (self, om, offer, error):
         self.emit("action_error", offer, error)
-    
+
     #
     # End
     #
-    
+
     def end (self, status, reason):
         if self.examined:
             self.connection.bm.unexamine()
 
         if self.status in UNFINISHED_STATES:
             self.__disconnect()
-            
+
             if self.isObservationGame():
                 self.connection.bm.unobserve(self.ficsgame)
             else:
                 self.connection.om.offer(Offer(ABORT_OFFER), -1)
                 self.connection.om.offer(Offer(RESIGNATION), -1)
-        
+
         if status == KILLED:
             GameModel.kill(self, reason)
         else:
