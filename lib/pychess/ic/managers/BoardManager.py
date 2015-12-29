@@ -165,11 +165,14 @@ class BoardManager (GObject.GObject):
     __gsignals__ = {
         'playGameCreated'     : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'obsGameCreated'      : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'exGameCreated'       : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'archiveGamePreview'  : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'boardUpdate'         : (GObject.SignalFlags.RUN_FIRST, None, (int, int, int, str, str, str, str, int, int)),
         'obsGameEnded'        : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'curGameEnded'        : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'obsGameUnobserved'   : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
-        'madeExaminer'        : (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        'madeExamined'        : (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        'madeUnExamined'      : (GObject.SignalFlags.RUN_FIRST, None, (int,)),
         'gamePaused'          : (GObject.SignalFlags.RUN_FIRST, None, (int, bool)),
         'tooManySeeks'        : (GObject.SignalFlags.RUN_FIRST, None, ()),
         'matchDeclined'       : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
@@ -260,13 +263,22 @@ class BoardManager (GObject.GObject):
 
         self.connection.expect_fromto (self.onObserveGameMovesReceived,
             "Movelist for game (\d+):", "{Still in progress} \*")
+
+        self.connection.expect_fromto (self.onArchiveGameSMovesReceived,
+                                       moveListHeader1Str,
+#                                       "\s*{((?:Game courtesyadjourned by (Black|White))|(?:Still in progress)|(?:Game adjourned by mutual agreement)|(?:(White|Black) lost connection; game adjourned)|(?:Game adjourned by ((?:server shutdown)|(?:adjudication)|(?:simul holder))))} \*")
+                                        "\s*{.*(?:([Gg]ame.*adjourned.\s*)|(?:Still in progress)|(?:Game drawn.*)|(?:White.*)|(?:Black.*)).*}\s*(?:(?:1/2-1/2)|(?:1-0)|(?:0-1))?\s*")
+
         self.connection.expect_line (self.onGamePause,
                 "Game (\d+): Game clock (paused|resumed)\.")
         self.connection.expect_line (self.onUnobserveGame,
                 "Removing game (\d+) from observation list\.")
         
-        self.connection.expect_line (self.made_examiner,
+        self.connection.expect_line (self.made_examined,
             "%s has made you an examiner of game (\d+)\." % names)
+        
+        self.connection.expect_line (self.made_unexamined,
+            "You are no longer examining game (\d+)\.")
         
         self.queuedEmits = {}
         self.gamemodelStartedEvents = {}
@@ -368,7 +380,6 @@ class BoardManager (GObject.GObject):
     def onStyle12 (self, match):
         style12 = match.groups()[0]
         gameno = int(style12.split()[15])
-        
         if gameno in self.queuedStyle12s:
             self.queuedStyle12s[gameno].append(style12)
             return
@@ -385,9 +396,8 @@ class BoardManager (GObject.GObject):
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
                 self.parseStyle12(style12, castleSigns)
 
-        if lastmove is None and \
-            relation == IC_POS_EXAMINATING and \
-            not gameno in self.connection.games.games_by_gameno: 
+        # examine starts with a <12> line only
+        if lastmove is None and relation == IC_POS_EXAMINATING:
             pgnHead = [
                 ("Event", "FICS examined game"),
                 ("Site", "freechess.org"),
@@ -400,15 +410,44 @@ class BoardManager (GObject.GObject):
             pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
             wplayer = self.connection.players.get(FICSPlayer(wname))
             bplayer = self.connection.players.get(FICSPlayer(bname))
-            game = FICSGame(wplayer, bplayer, gameno=int(gameno),
-                game_type=GAME_TYPES["examined"], minutes=0, inc=0,
-                board=FICSBoard(0, 0, pgn=pgn), relation=relation)
+
+            # examine from console or got mexamine in observed game
+            if self.connection.examined_game is None:
+                no_smoves = True
+                game = FICSGame(wplayer, bplayer, gameno=int(gameno),
+                    game_type=GAME_TYPES["examined"], minutes=0, inc=0,
+                    board=FICSBoard(0, 0, pgn=pgn), relation=relation)
+                self.connection.examined_game = game
+            else:
+                # examine an archived game from GUI
+                no_smoves = False
+                game = self.connection.examined_game
+                game.gameno = int(gameno)
+                game.relation = relation
+                #game.game_type = GAME_TYPES["examined"]
             game = self.connection.games.get(game)
+
+            # don't start new game in puzzlebot/endgamebot when they just reuse gameno
+            if game.relation == IC_POS_OBSERVING_EXAMINATION or \
+                (game.board is not None and game.board.pgn == pgn):
+                self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
+                return
+
+            game.relation = relation
+            game.board=FICSBoard(0, 0, pgn=pgn)
             self.gamesImObserving[game] = None
 
+            # start a new game now or after smoves
             self.gamemodelStartedEvents[game.gameno] = threading.Event()
-            self.emit("obsGameCreated", game)
-            self.gamemodelStartedEvents[game.gameno].wait()
+            if no_smoves:
+                self.emit("exGameCreated", game)
+                self.gamemodelStartedEvents[game.gameno].wait()
+            else:
+                if isinstance(game, FICSHistoryGame):
+                    self.connection.client.run_command("smoves %s %s" % (self.connection.username, game.history_no))
+                elif isinstance(game, FICSAdjournedGame):
+                    self.connection.client.run_command("smoves %s" % game.opponent.name)
+                self.connection.client.run_command("forward 999")
         else:
             self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
     
@@ -512,7 +551,7 @@ class BoardManager (GObject.GObject):
         self.onMatchingSeekOrGetGame(matchlist)
     onInterceptedChallenge.BLKCMD = BLKCMD_MATCH
     
-    def parseGame (self, matchlist, gameclass, in_progress=False):
+    def parseGame (self, matchlist, gameclass, in_progress=False, gameno=None):
         """ 
         Parses the header and movelist for an observed or stored game from its
         matchlist (an re.match object) into a gameclass (FICSGame or subclass
@@ -707,7 +746,7 @@ class BoardManager (GObject.GObject):
                     bms += (increment * 1000)
                 times[ply+1] = "%01d:%02d:%02d.%03d" % (int(bhour), int(bmin), int(bsec), int(bmsec))
         
-        if in_progress:
+        if in_progress and gameno in self.queuedStyle12s:
             # Apply queued board updates
             for style12 in self.queuedStyle12s[gameno]:
                 gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
@@ -782,6 +821,8 @@ class BoardManager (GObject.GObject):
         if in_progress:
             game.gameno = gameno
         else:
+            if gameno is not None:
+                game.gameno = gameno
             game.reason = reason
         game = self.connection.games.get(game, emit=False)
         
@@ -860,6 +901,8 @@ class BoardManager (GObject.GObject):
         log.debug("'%s'" % (matchlist[0].string), extra={"task":
             (self.connection.username, "BM.onObserveGameMovesReceived")})
         game = self.parseGame(matchlist, FICSGame, in_progress=True)
+        if game.gameno not in self.gamemodelStartedEvents:
+            return
         self.emit ("obsGameCreated", game)
         try:
             self.gamemodelStartedEvents[game.gameno].wait()
@@ -869,6 +912,27 @@ class BoardManager (GObject.GObject):
             emit()        
         del self.queuedEmits[game.gameno]
     onObserveGameMovesReceived.BLKCMD = BLKCMD_MOVES
+
+    def onArchiveGameSMovesReceived (self, matchlist):
+        log.debug("'%s'" % (matchlist[0].string), extra={"task":
+            (self.connection.username, "BM.onArchiveGameSMovesReceived")})
+        klass = FICSAdjournedGame if "adjourn" in matchlist[-1].group() else FICSHistoryGame
+        if self.connection.examined_game is not None:
+            gameno = self.connection.examined_game.gameno
+        else:
+            gameno = None
+        game = self.parseGame(matchlist, klass, in_progress=False, gameno=gameno)
+        if game.gameno not in self.gamemodelStartedEvents:
+            self.emit("archiveGamePreview", game)
+            return
+        game.relation = IC_POS_EXAMINATING
+        game.game_type = GAME_TYPES["examined"]
+        self.emit ("exGameCreated", game)
+        try:
+            self.gamemodelStartedEvents[game.gameno].wait()
+        except KeyError:
+            pass
+    onArchiveGameSMovesReceived.BLKCMD = BLKCMD_SMOVES
 
     def onGameEnd (self, games, game):
         log.debug("BM.onGameEnd: %s" % game)
@@ -945,14 +1009,24 @@ class BoardManager (GObject.GObject):
         self.emit("player_on_noplay", player)
     player_on_noplay.BLKCMD = BLKCMD_MATCH
 
-    def made_examiner (self, match):
+    def made_examined (self, match):
         """ Changing from observer to examiner """
         player, gameno = match.groups()
         gameno = int(gameno)
         try:
             game = self.connection.games.get_game_by_gameno(gameno)
         except KeyError: return
-        self.emit("madeExaminer", gameno)
+        self.emit("madeExamined", gameno)
+
+    def made_unexamined (self, match):
+        """You are no longer examine game"""
+        self.connection.examined_game = None
+        gameno, = match.groups()
+        gameno = int(gameno)
+        try:
+            game = self.connection.games.get_game_by_gameno(gameno)
+        except KeyError: return
+        self.emit("madeUnExamined", gameno)
 
     ############################################################################
     #   Interacting                                                            #

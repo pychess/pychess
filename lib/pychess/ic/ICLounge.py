@@ -89,6 +89,7 @@ class ICLounge (GObject.GObject):
                 log.error("Fics answered '%s': Command not found" % cmd))
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         self.connection.bm.connect("obsGameCreated", self.onObserveGameCreated)
+        self.connection.bm.connect("exGameCreated", self.onObserveGameCreated)
         self.connection.fm.connect("fingeringFinished", self.onFinger)
         # the rest of these relay server messages to the lounge infobar
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
@@ -217,7 +218,6 @@ class ICLounge (GObject.GObject):
 
         ionest.generalStart(gamemodel, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))
-
         if ficsgame.relation == IC_POS_OBSERVING_EXAMINATION:
             if int(self.connection.lvm.variablesBackup["kibitz"]) == 0:
                 self.connection.cm.whisper(_("You have to set kibitz on to see bot messages here."))
@@ -660,6 +660,9 @@ class SeekTabSection (ParrentListSection):
             "textcolor", "tooltip", hide=[0,8,9,10], pix=[1,2] )
         self.tv.set_search_column(3)
         self.tv.set_tooltip_column(10,)
+        for i in range(0, 2):
+            self.tv.get_column(i).set_sort_column_id(i)
+            self.tv.get_model().set_sort_func(i, self.pixCompareFunction, i+1)
         for i in range(2, 8):
             self.tv.get_model().set_sort_func(i, self.compareFunction, i)
         try:
@@ -1481,7 +1484,7 @@ class AdjournedTabSection (ParrentListSection):
         widgets["previewButton"].connect("clicked", self.onPreviewButtonClicked)
         widgets["examineButton"].connect("clicked", self.onExamineButtonClicked)
         self.tv.connect("row-activated", lambda *args: self.onPreviewButtonClicked(None))
-        self.connection.adm.connect("archiveGamePreview", self.onGamePreview)
+        self.connection.bm.connect("archiveGamePreview", self.onGamePreview)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
 
     def onSelectionChanged (self, selection):
@@ -1682,7 +1685,11 @@ class AdjournedTabSection (ParrentListSection):
         model, iter = self.tv.get_selection().get_selected()
         if iter == None: return
         game = model.get_value(iter, 0)
-        self.connection.adm.examine(game)
+        if self.connection.examined_game is None:
+            self.connection.adm.examine(game)
+        else:
+            # TODO: InfoBarMessage
+            print("You are already examining a game.")
 
     @idle_add
     def onGamePreview (self, adm, ficsgame):
@@ -1926,7 +1933,7 @@ class SeekChallengeSection (Section):
             self.widgets["strengthFrame"].set_sensitive(True)
             self.widgets["strengthFrame"].set_tooltip_text("")
             self.widgets["manualAcceptCheck"].set_sensitive(True)
-            self.widgets["manualAcceptCheck"].set_tooltip_text("")
+            self.widgets["manualAcceptCheck"].set_tooltip_text(_("If set you can refuse players accepting your seek"))
         else:
             self.widgets["strengthFrame"].set_sensitive(False)
             self.widgets["strengthFrame"].set_tooltip_text(

@@ -306,6 +306,7 @@ class FICSMainConnection (FICSConnection):
         self.games = FICSGames(self)
         self.seeks = FICSSeeks(self)
         self.challenges = FICSChallenges(self)
+        self.examined_game = None
     
     def close (self):
         try:
