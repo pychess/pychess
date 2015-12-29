@@ -93,6 +93,7 @@ class ICLounge (GObject.GObject):
         self.connection.fm.connect("fingeringFinished", self.onFinger)
         # the rest of these relay server messages to the lounge infobar
         self.connection.bm.connect("tooManySeeks", self.tooManySeeks)
+        self.connection.bm.connect("nonoWhileExamine", self.nonoWhileExamine)
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
         self.connection.bm.connect("player_on_censor", self.player_on_censor)
         self.connection.bm.connect("player_on_noplay", self.player_on_noplay)
@@ -251,6 +252,18 @@ class ICLounge (GObject.GObject):
         message = InfoBarMessage(Gtk.MessageType.QUESTION, label, response_cb)
         message.add_button(InfoBarMessageButton(Gtk.STOCK_YES, Gtk.ResponseType.YES))
         message.add_button(InfoBarMessageButton(Gtk.STOCK_NO, Gtk.ResponseType.NO))
+        self.messages.append(message)
+        self.infobar.push_message(message)
+
+    @idle_add
+    def nonoWhileExamine (self, bm):
+        label = Gtk.Label(_("You can't touch this! You are examining a game."))
+        def response_cb (infobar, response, message):
+            message.dismiss()
+            return False
+        message = InfoBarMessage(Gtk.MessageType.INFO, label, response_cb)
+        message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
+                                                Gtk.ResponseType.CANCEL))
         self.messages.append(message)
         self.infobar.push_message(message)
 
@@ -1454,6 +1467,7 @@ class AdjournedTabSection (ParrentListSection):
     def __init__ (self, widgets, connection, lounge):
         self.connection = connection
         self.widgets = widgets
+        self.lounge = lounge
         self.infobar = lounge.infobar
         self.games = {}
         self.messages = {}
@@ -1688,8 +1702,7 @@ class AdjournedTabSection (ParrentListSection):
         if self.connection.examined_game is None:
             self.connection.adm.examine(game)
         else:
-            # TODO: InfoBarMessage
-            print("You are already examining a game.")
+            self.lounge.nonoWhileExamine(None)
 
     @idle_add
     def onGamePreview (self, adm, ficsgame):

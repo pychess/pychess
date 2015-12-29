@@ -175,6 +175,7 @@ class BoardManager (GObject.GObject):
         'madeUnExamined'      : (GObject.SignalFlags.RUN_FIRST, None, (int,)),
         'gamePaused'          : (GObject.SignalFlags.RUN_FIRST, None, (int, bool)),
         'tooManySeeks'        : (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'nonoWhileExamine'    : (GObject.SignalFlags.RUN_FIRST, None, ()),
         'matchDeclined'       : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'player_on_censor'    : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         'player_on_noplay'    : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
@@ -194,6 +195,9 @@ class BoardManager (GObject.GObject):
             "Sorry, game (\d+) is a private game\.")
         self.connection.expect_line (self.tooManySeeks,
             "You can only have 3 active seeks.")
+        self.connection.expect_line (self.nonoWhileExamine,
+            "(?:You cannot challenge while you are examining a game.)|"+
+            "(?:You are already examining a game.)")
         self.connection.expect_line (self.matchDeclined,
             "%s declines the match offer." % names)
         self.connection.expect_line (self.player_on_censor,
@@ -468,6 +472,10 @@ class BoardManager (GObject.GObject):
     def tooManySeeks (self, match):
         self.emit("tooManySeeks")
     tooManySeeks.BLKCMD = BLKCMD_SEEK
+
+    def nonoWhileExamine (self, match):
+        self.emit("nonoWhileExamine")
+    nonoWhileExamine.BLKCMD = BLKCMD_SEEK
     
     def matchDeclined (self, match):
         decliner, = match.groups()
