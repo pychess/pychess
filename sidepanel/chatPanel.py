@@ -62,7 +62,7 @@ class Sidepanel:
     def onICMessageReieved (self, icgamemodel, player, text):
         self.obsView.chatView.addMessage(player, text)
         # emit an allob <gameno> to FICS
-        allob = 'allob ' + str(ficsgame.gameno)
+        allob = 'allob ' + str(icgamemodel.ficsgame.gameno)
         icgamemodel.connection.client.run_command(allob)
 
 
