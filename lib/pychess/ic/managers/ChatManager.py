@@ -160,7 +160,7 @@ class ChatManager (GObject.GObject):
             else :
                 obs_dic[player] =  0
         obs_sorted  = sorted(obs_dic.items(), key=operator.itemgetter(1),reverse=True)
-        obs_str = ""
+        obs_str = "\n"
         for toople in obs_sorted :
             player,rating = toople
             if rating == 0 :
