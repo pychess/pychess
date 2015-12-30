@@ -112,10 +112,12 @@ class ChatView (Gtk.VPaned):
 
     @idle_add
     def update_observers(self, other, observers):
+        num_of_observers = len(observers.split())
+        label = 'Observers : (' + str(num_of_observers) + ') '
         self.obsView.get_buffer().props.text = ""
         tb = self.obsView.get_buffer()
         self.obs_btn = Gtk.Button()
-        self.obs_btn.set_label('Observers:')
+        self.obs_btn.set_label(label)
         self.obs_btn.connect("clicked", self.on_obs_btn_clicked)
         iter = tb.get_iter_at_offset(0)
         anchor1 = tb.create_child_anchor(iter)

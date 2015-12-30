@@ -156,7 +156,7 @@ class ChatManager (GObject.GObject):
                     obs_dic[player] = ficsplayer.getRatingByGameType(GAME_TYPES['standard'])
                 except KeyError:
                     obs_dic[player] =  0
-                    print("player %s is not in self.connection.players" % player) 
+                    print("player %s is not in self.connection.players" % player)
             else :
                 obs_dic[player] =  0
         obs_sorted  = sorted(obs_dic.items(), key=operator.itemgetter(1),reverse=True)
