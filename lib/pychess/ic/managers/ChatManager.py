@@ -19,7 +19,7 @@ names = "([A-Za-z]+)"+titles
 titlesC = re.compile(titles)
 namesC = re.compile(names)
 ratings = "\(\s*([0-9\ \-\+]{1,4}[P E]?|UNR)\)"
-''
+
 CHANNEL_SHOUT = "shout"
 CHANNEL_CSHOUT = "cshout"
 
