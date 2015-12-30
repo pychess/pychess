@@ -10,7 +10,7 @@ from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import LOCAL, WHITE, BLACK
-from pychess.widgets.ChatView import  Observers
+from pychess.widgets.ChatView import  ChatView
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.ic.managers.ChatManager import ChatManager
 
@@ -24,15 +24,15 @@ class Sidepanel:
 
 
     def load (self, gmwidg):
-        self.obsView = Observers()
-        self.obsView.chatView.disable("Waiting for game to load")
-        self.obsView.chatView.connect("messageTyped", self.onMessageSent)
         self.gamemodel = gmwidg.gamemodel
-        self.gamemodel.connect("observers_received", self.obsView.update_observers)
         self.gamemodel.connect("game_started", self.onGameStarted)
+        self.chatView = ChatView(self.gamemodel)
+        self.chatView.disable("Waiting for game to load")
+        self.chatView.connect("messageTyped", self.onMessageSent)
         if isinstance(self.gamemodel, ICGameModel):
+            self.gamemodel.connect("observers_received", self.chatView.update_observers)
             self.gamemodel.connect("message_received", self.onICMessageReieved)
-        return self.obsView
+        return self.chatView
 
     @idle_add
     def onGameStarted (self, gamemodel):
@@ -50,18 +50,19 @@ class Sidepanel:
             self.opplayer = gamemodel.players[0]
         else:
             log.info("Chatpanel loaded with no local players")
-            self.obsView.chatView.hide()
+            self.chatView.hide()
 
         if hasattr(self, "player"):
             self.player.connect("messageReceived", self.onMessageReieved)
 
-        self.obsView.chatView.enable()
+        self.chatView.enable()
 
+    @idle_add
     def onMessageReieved (self, player, text):
-        self.obsView.chatView.addMessage(repr(self.opplayer), text)
+        self.chatView.addMessage(repr(self.opplayer), text)
 
     def onICMessageReieved (self, icgamemodel, player, text):
-        self.obsView.chatView.addMessage(player, text)
+        self.chatView.addMessage(player, text)
         # emit an allob <gameno> to FICS
         allob = 'allob ' + str(icgamemodel.ficsgame.gameno)
         icgamemodel.connection.client.run_command(allob)
@@ -77,6 +78,6 @@ class Sidepanel:
                 name = self.gamemodel.connection.cm.whisper(text)
             else :
                 self.player.sendMessage(text)
-                self.obsView.chatView.addMessage(repr(self.player), text)
+                self.chatView.addMessage(repr(self.player), text)
         else:
             name = self.gamemodel.connection.cm.whisper(text)

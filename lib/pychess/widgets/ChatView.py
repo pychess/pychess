@@ -7,43 +7,111 @@ from gi.repository import Gdk
 from gi.repository import Pango
 from gi.repository import GObject
 
+from pychess.System.idle_add import idle_add
 from pychess.System import uistuff
 from pychess.widgets import insert_formatted
 from pychess.widgets.Background import set_textview_color
+from pychess.ic.ICGameModel import ICGameModel
 from .BorderBox import BorderBox
 
 
-class Observers (Gtk.VPaned):
-    def __init__ (self):
+class ChatView (Gtk.VPaned):
+    __gsignals__ = {
+        'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
+        'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+    }
+
+    def __init__ (self, gamemodel=None):
         GObject.GObject.__init__(self)
+        self.gamemodel = gamemodel
+        
+        # States for the color generator
+        self.colors = {}
+        self.startpoint = random.random()
 
-        # Inits the observers view
-        self.obsView = Gtk.TextView()
+        # Inits the read view
+        self.readView = Gtk.TextView()
+        self.readView.set_size_request(-1, 30)
+        set_textview_color(self.readView)
 
-        self.obsView.set_size_request(-1, 3)
-        set_textview_color(self.obsView)
+        sw1 = Gtk.ScrolledWindow()
+        sw1.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw1.set_shadow_type(Gtk.ShadowType.NONE)
+        sw1.set_size_request(-1, 250)
+        uistuff.keepDown(sw1)
+        
+        sw1.add(self.readView)
+        self.readView.set_editable(False)
+        self.readView.props.wrap_mode = Gtk.WrapMode.WORD
+        self.readView.props.pixels_below_lines = 1
+        self.readView.props.pixels_above_lines = 2
+        self.readView.props.left_margin = 2
+        #self.readView.get_buffer().create_tag("log",
+        #        foreground = self.readView.get_style().fg[Gtk.StateType.INSENSITIVE])
 
-        sw = Gtk.ScrolledWindow()
-        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        sw.set_shadow_type(Gtk.ShadowType.NONE)
-        sw.set_size_request(-1, 3)
-        uistuff.keepDown(sw)
-        sw.add(self.obsView)
-        self.obsView.set_editable(False)
-        self.obsView.props.wrap_mode = Gtk.WrapMode.WORD
-        self.obsView.props.pixels_below_lines = 1
-        self.obsView.props.pixels_above_lines = 2
-        self.obsView.props.left_margin = 2
-        self.pack1(BorderBox(sw,bottom=True), resize=True, shrink=True)
-        self.chatView = cw = ChatView()
-        self.pack2(BorderBox(cw,bottom=True), resize=True, shrink=False)
+        if isinstance(self.gamemodel, ICGameModel):
+            vp = Gtk.VPaned()
+            
+            # Inits the observers view
+            self.obsView = Gtk.TextView()
+            self.obsView.set_size_request(-1, 3)
+            set_textview_color(self.obsView)
 
-    def on_obs_btn_clicked(self,other):
-#        allob = 'allob ' + str(gamemodel.ficsgame.gameno)
-#        gamemodel.connection.client.run_command(allob)
-        pass
+            sw0 = Gtk.ScrolledWindow()
+            sw0.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+            sw0.set_shadow_type(Gtk.ShadowType.NONE)
+            sw0.set_size_request(-1, 3)
+            uistuff.keepDown(sw0)
+            sw0.add(self.obsView)
+            self.obsView.set_editable(False)
+            self.obsView.props.wrap_mode = Gtk.WrapMode.WORD
+            self.obsView.props.pixels_below_lines = 1
+            self.obsView.props.pixels_above_lines = 2
+            self.obsView.props.left_margin = 2
 
-    def update_observers(self,other,observers):
+            vp.pack1(BorderBox(sw0, bottom=True), resize=True, shrink=True)
+            vp.pack2(BorderBox(sw1, top=True), resize=True, shrink=False)
+
+            self.pack1(BorderBox(vp, bottom=True), resize=True, shrink=True)
+        else:
+            self.pack1(BorderBox(sw1, bottom=True), resize=True, shrink=True)
+
+        # Create a 'log mark' in the beginning of the text buffer. Because we
+        # query the log asynchronously and in chunks, we can use this to insert
+        # it correctly after previous log messages, but before the new messages.
+        start = self.readView.get_buffer().get_start_iter()
+        self.readView.get_buffer().create_mark("logMark", start)
+
+        # Inits the write view
+        self.writeView = Gtk.TextView()
+        set_textview_color(self.writeView)
+
+        sw2 = Gtk.ScrolledWindow()
+        sw2.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw2.set_shadow_type(Gtk.ShadowType.NONE)
+        sw2.set_size_request(-1, 3)
+        sw2.add(self.writeView)
+        self.writeView.props.wrap_mode = Gtk.WrapMode.WORD
+        self.writeView.props.pixels_below_lines = 1
+        self.writeView.props.pixels_above_lines = 2
+        self.writeView.props.left_margin = 2
+        self.pack2(BorderBox(sw2, top=True), resize=True, shrink=False)
+
+        # Forces are reasonable position for the panner.
+        def callback (widget, ctx):
+            widget.disconnect(handle_id)
+            allocation = widget.get_allocation()
+            self.set_position(int(max(0.70*allocation.height, allocation.height-60)))
+        handle_id = self.connect("draw", callback)
+
+        self.writeView.connect("key-press-event", self.onKeyPress)
+
+    def on_obs_btn_clicked(self, other):
+        allob = 'allob ' + str(self.gamemodel.ficsgame.gameno)
+        self.gamemodel.connection.client.run_command(allob)
+
+    @idle_add
+    def update_observers(self, other, observers):
         self.obsView.get_buffer().props.text = ""
         tb = self.obsView.get_buffer()
         self.obs_btn = Gtk.Button()
@@ -56,72 +124,6 @@ class Observers (Gtk.VPaned):
         self.obsView.show_all()
 
 #        self.obsView.get_buffer().props.text = "Observers: " + observers
-
-
-class ChatView (Gtk.VPaned):
-    __gsignals__ = {
-        'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
-        'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
-    }
-
-    def __init__ (self):
-        GObject.GObject.__init__(self)
-
-        # States for the color generator
-        self.colors = {}
-        self.startpoint = random.random()
-
-        # Inits the read view
-        self.readView = Gtk.TextView()
-
-        self.readView.set_size_request(-1, 30)
-        set_textview_color(self.readView)
-
-        sw = Gtk.ScrolledWindow()
-        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        sw.set_shadow_type(Gtk.ShadowType.NONE)
-        sw.set_size_request(-1, 250)
-        uistuff.keepDown(sw)
-        sw.add(self.readView)
-        self.readView.set_editable(False)
-        self.readView.props.wrap_mode = Gtk.WrapMode.WORD
-        self.readView.props.pixels_below_lines = 1
-        self.readView.props.pixels_above_lines = 2
-        self.readView.props.left_margin = 2
-        #self.readView.get_buffer().create_tag("log",
-        #        foreground = self.readView.get_style().fg[Gtk.StateType.INSENSITIVE])
-        self.pack1(BorderBox(sw,bottom=True), resize=True, shrink=False)
-
-        # Create a 'log mark' in the beginning of the text buffer. Because we
-        # query the log asynchronously and in chunks, we can use this to insert
-        # it correctly after previous log messages, but before the new messages.
-        start = self.readView.get_buffer().get_start_iter()
-        self.readView.get_buffer().create_mark("logMark", start)
-
-        # Inits the write view
-        self.writeView = Gtk.TextView()
-
-        set_textview_color(self.writeView)
-
-        sw = Gtk.ScrolledWindow()
-        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        sw.set_shadow_type(Gtk.ShadowType.NONE)
-        sw.set_size_request(-1, 3)
-        sw.add(self.writeView)
-        self.writeView.props.wrap_mode = Gtk.WrapMode.WORD
-        self.writeView.props.pixels_below_lines = 1
-        self.writeView.props.pixels_above_lines = 2
-        self.writeView.props.left_margin = 2
-        self.pack2(BorderBox(sw,top=True), resize=True, shrink=False)
-
-        # Forces are reasonable position for the panner.
-        def callback (widget, ctx):
-            widget.disconnect(handle_id)
-            allocation = widget.get_allocation()
-            self.set_position(int(max(0.70*allocation.height, allocation.height-60)))
-        handle_id = self.connect("draw", callback)
-
-        self.writeView.connect("key-press-event", self.onKeyPress)
 
     def _ensureColor(self, pref):
         """ Ensures that the tags for pref_normal and pref_bold are set in the text buffer """

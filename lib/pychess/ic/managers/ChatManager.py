@@ -151,7 +151,12 @@ class ChatManager (GObject.GObject):
         oblist = observers.split()
         for player in oblist:
             if '(U)' not in player :
-                obs_dic[player] = self.connection.players[FICSPlayer(player)].getRatingByGameType(GAME_TYPES['standard'])
+                try:
+                    ficsplayer = self.connection.players[FICSPlayer(player)]
+                    obs_dic[player] = ficsplayer.getRatingByGameType(GAME_TYPES['standard'])
+                except KeyError:
+                    obs_dic[player] =  0
+                    print("player %s is not in self.connection.players" % player) 
             else :
                 obs_dic[player] =  0
         obs_sorted  = sorted(obs_dic.items(), key=operator.itemgetter(1),reverse=True)
