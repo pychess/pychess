@@ -38,10 +38,24 @@ class Observers (Gtk.VPaned):
         self.chatView = cw = ChatView()
         self.pack2(BorderBox(cw,bottom=True), resize=True, shrink=False)
 
+    def on_obs_btn_clicked(self,other):
+#        allob = 'allob ' + str(gamemodel.ficsgame.gameno)
+#        gamemodel.connection.client.run_command(allob)
+        pass
+
     def update_observers(self,other,observers):
         self.obsView.get_buffer().props.text = ""
         tb = self.obsView.get_buffer()
-        self.obsView.get_buffer().props.text = "Observers: " + observers
+        self.obs_btn = Gtk.Button()
+        self.obs_btn.set_label('Observers:')
+        self.obs_btn.connect("clicked", self.on_obs_btn_clicked)
+        iter = tb.get_iter_at_offset(0)
+        anchor1 = tb.create_child_anchor(iter)
+        tb.insert(iter, observers)
+        self.obsView.add_child_at_anchor(self.obs_btn, anchor1)
+        self.obsView.show_all()
+
+#        self.obsView.get_buffer().props.text = "Observers: " + observers
 
 
 class ChatView (Gtk.VPaned):

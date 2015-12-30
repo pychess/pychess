@@ -4,6 +4,7 @@ import threading
 import re
 from math import ceil
 import time
+import operator
 
 from gi.repository import GLib
 from gi.repository import GObject
@@ -144,13 +145,25 @@ class ChatManager (GObject.GObject):
             match: (re.reg-ex) is the complied matching pattern for processing
         """
 
-        observers_dic = {}
+        obs_dic = {}
         gameno = match.group(1)
         observers = match.group(2)
         oblist = observers.split()
         for player in oblist:
-            observers_dic[player] = FICSPlayer(player).getRatingByGameType(GAME_TYPES['standard'])
-        self.emit('observers_received',gameno,observers)
+            if '(U)' not in player :
+                obs_dic[player] = self.connection.players[FICSPlayer(player)].getRatingByGameType(GAME_TYPES['standard'])
+            else :
+                obs_dic[player] =  0
+        obs_sorted  = sorted(obs_dic.items(), key=operator.itemgetter(1),reverse=True)
+        obs_str = ""
+        for toople in obs_sorted :
+            player,rating = toople
+            if rating == 0 :
+                obs_str += player + " "        # Don't print ratings for guest accounts
+            else:
+                obs_str += player + "[" + str(rating) + "] "
+        self.emit('observers_received',gameno,obs_str)
+
 
     def getChannels(self):
         return self.channels
