@@ -150,7 +150,7 @@ class ChatManager (GObject.GObject):
         observers = match.group(2)
         oblist = observers.split()
         for player in oblist:
-            if player[:5] != 'Guest' :
+            if '(U)' not in player :
                 obs_dic[player] = self.connection.players[FICSPlayer(player)].getRatingByGameType(GAME_TYPES['standard'])
             else :
                 obs_dic[player] =  0
