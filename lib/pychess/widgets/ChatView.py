@@ -24,7 +24,7 @@ class ChatView (Gtk.VPaned):
     def __init__ (self, gamemodel=None):
         GObject.GObject.__init__(self)
         self.gamemodel = gamemodel
-        
+
         # States for the color generator
         self.colors = {}
         self.startpoint = random.random()
@@ -37,9 +37,9 @@ class ChatView (Gtk.VPaned):
         sw1 = Gtk.ScrolledWindow()
         sw1.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw1.set_shadow_type(Gtk.ShadowType.NONE)
-        sw1.set_size_request(-1, 250)
+        sw1.set_size_request(-1, 300)
         uistuff.keepDown(sw1)
-        
+
         sw1.add(self.readView)
         self.readView.set_editable(False)
         self.readView.props.wrap_mode = Gtk.WrapMode.WORD
@@ -51,7 +51,7 @@ class ChatView (Gtk.VPaned):
 
         if isinstance(self.gamemodel, ICGameModel):
             vp = Gtk.VPaned()
-            
+
             # Inits the observers view
             self.obsView = Gtk.TextView()
             self.obsView.set_size_request(-1, 3)
