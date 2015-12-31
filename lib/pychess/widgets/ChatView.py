@@ -142,15 +142,12 @@ class ChatView (Gtk.VPaned):
             self.colors[pref] = color
             color = [int(c * 255) for c in color]
             color = "#" + "".join([hex(v)[2:].zfill(2) for v in color])
+            tb.create_tag(pref + "_normal", foreground=color)
+            tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
             if isinstance(self.gamemodel, ICGameModel):
                 otb = self.obsView.get_buffer()
                 otb.create_tag(pref + "_normal", foreground=color)
                 otb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
-                tb.create_tag(pref + "_normal", foreground=color)
-                tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
-            else:
-                tb.create_tag(pref + "_normal", foreground=color)
-                tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
 
 
     def clear (self):
