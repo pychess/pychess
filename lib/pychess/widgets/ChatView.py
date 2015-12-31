@@ -136,16 +136,22 @@ class ChatView (Gtk.VPaned):
 
     def _ensureColor(self, pref):
         """ Ensures that the tags for pref_normal and pref_bold are set in the text buffer """
-        otb = self.obsView.get_buffer()
-        rtb = self.readView.get_buffer()
+        tb = self.readView.get_buffer()
         if not pref in self.colors:
             color = uistuff.genColor(len(self.colors) + 1, self.startpoint)
             self.colors[pref] = color
             color = [int(c * 255) for c in color]
             color = "#" + "".join([hex(v)[2:].zfill(2) for v in color])
-            for tb in  otb,rtb :
+            if isinstance(self.gamemodel, ICGameModel):
+                otb = self.obsView.get_buffer()
+                otb.create_tag(pref + "_normal", foreground=color)
+                otb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
                 tb.create_tag(pref + "_normal", foreground=color)
                 tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
+            else:
+                tb.create_tag(pref + "_normal", foreground=color)
+                tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
+
 
     def clear (self):
         self.writeView.get_buffer().props.text = ""
