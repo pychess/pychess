@@ -112,7 +112,8 @@ class ChatView (Gtk.VPaned):
 
     @idle_add
     def update_observers(self, other, observers):
-        num_of_observers = len(observers.split())
+        obs_list = observers.split()
+        num_of_observers = len(obs_list)
         label = 'Observers : (' + str(num_of_observers) + ') '
         self.obsView.get_buffer().props.text = ""
         tb = self.obsView.get_buffer()
@@ -121,22 +122,30 @@ class ChatView (Gtk.VPaned):
         self.obs_btn.connect("clicked", self.on_obs_btn_clicked)
         iter = tb.get_iter_at_offset(0)
         anchor1 = tb.create_child_anchor(iter)
-        tb.insert(iter, observers)
+        tb.insert(iter, '\n')
         self.obsView.add_child_at_anchor(self.obs_btn, anchor1)
+        for player in obs_list:
+            if '[' in player:               # Colourize only players able to interact with chat View
+                pref,rest = player.split('[')
+                self._ensureColor(pref)
+                tb.insert_with_tags_by_name(iter,player+' : ',pref+"_bold")
+            else:
+                tb.insert(iter,player+ ' ')
         self.obsView.show_all()
 
-#        self.obsView.get_buffer().props.text = "Observers: " + observers
 
     def _ensureColor(self, pref):
         """ Ensures that the tags for pref_normal and pref_bold are set in the text buffer """
-        tb = self.readView.get_buffer()
+        otb = self.obsView.get_buffer()
+        rtb = self.readView.get_buffer()
         if not pref in self.colors:
             color = uistuff.genColor(len(self.colors) + 1, self.startpoint)
             self.colors[pref] = color
             color = [int(c * 255) for c in color]
             color = "#" + "".join([hex(v)[2:].zfill(2) for v in color])
-            tb.create_tag(pref + "_normal", foreground=color)
-            tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
+            for tb in  otb,rtb :
+                tb.create_tag(pref + "_normal", foreground=color)
+                tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
 
     def clear (self):
         self.writeView.get_buffer().props.text = ""
