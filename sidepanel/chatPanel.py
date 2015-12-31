@@ -51,8 +51,9 @@ class Sidepanel:
             log.info("Chatpanel loaded with no local players")
             self.chatView.hide()
 
-        allob = 'allob ' + str(gamemodel.ficsgame.gameno)
-        gamemodel.connection.client.run_command(allob)
+        if isinstance(gamemodel, ICGameModel):
+            allob = 'allob ' + str(gamemodel.ficsgame.gameno)
+            gamemodel.connection.client.run_command(allob)
 
         if hasattr(self, "player"):
             self.player.connect("messageReceived", self.onMessageReieved)
