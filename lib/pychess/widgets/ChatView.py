@@ -16,9 +16,6 @@ from pychess.ic.ICGameModel import ICGameModel
 from .BorderBox import BorderBox
 
 
-refresh = Gtk.Image()
-refresh.set_from_pixbuf(load_icon(16, "view-refresh", "stock-refresh"))
-
 class ChatView (Gtk.VPaned):
     __gsignals__ = {
         'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
@@ -54,6 +51,9 @@ class ChatView (Gtk.VPaned):
         #        foreground = self.readView.get_style().fg[Gtk.StateType.INSENSITIVE])
 
         if isinstance(self.gamemodel, ICGameModel):
+            self.refresh = Gtk.Image()
+            self.refresh.set_from_pixbuf(load_icon(16, "view-refresh", "stock-refresh"))
+
             vp = Gtk.VPaned()
 
             # Inits the observers view
@@ -121,7 +121,7 @@ class ChatView (Gtk.VPaned):
         self.obsView.get_buffer().props.text = ""
         tb = self.obsView.get_buffer()
         self.obs_btn = Gtk.Button()
-        self.obs_btn.set_image(refresh)
+        self.obs_btn.set_image(self.refresh)
         self.obs_btn.set_label(label)
         self.obs_btn.connect("clicked", self.on_obs_btn_clicked)
         iter = tb.get_iter_at_offset(0)
