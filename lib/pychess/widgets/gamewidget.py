@@ -151,6 +151,7 @@ class GameWidget (GObject.GObject):
         gamemodel.connect("analyzer_removed", self.analyzer_removed)
         gamemodel.connect("analyzer_resumed", self.analyzer_resumed)
         gamemodel.connect("analyzer_paused", self.analyzer_paused)
+        gamemodel.connect("message_received", self.message_received)
         self.players_changed(gamemodel)
         if self.gamemodel.display_text:
             if isinstance(gamemodel, ICGameModel):
@@ -516,6 +517,11 @@ class GameWidget (GObject.GObject):
         do_name_changed()
         self.emit('title_changed', self.display_text)
         log.debug("GameWidget.name_changed: returning")
+
+    def message_received(self, gamemodel, name, msg):
+        if gamemodel.isObservationGame() and not self.isInFront():
+            text = self.game_info_label.get_text()
+            self.game_info_label.set_markup('<span color="red" weight="bold">%s</span>' % text)
 
     def zero_reached (self, timemodel, color):
         if self.gamemodel.status not in UNFINISHED_STATES: return
@@ -999,6 +1005,8 @@ def attachGameWidget (gmwidg):
             gmwidg.emit("infront")
             if gmwidg.gamemodel.players and gmwidg.gamemodel.isObservationGame():
                 gmwidg.light_on_off(False)
+                text = gmwidg.game_info_label.get_text()
+                gmwidg.game_info_label.set_markup('<span color="black" weight="bold">%s</span>' % text)
             
     headbook.connect_after("switch-page", callback, gmwidg)
     gmwidg.emit("infront")
