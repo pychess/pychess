@@ -556,7 +556,6 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.channels = {}
         self.highlighted = {}
 
-
     def change_fg_colour(self,lc, cell ,model, iter,data):
         for chan in data:
             if model[iter][0] == chan:
@@ -564,9 +563,6 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
                     cell.set_property('foreground_rgba',Gdk.RGBA(0.8,0.3,0.3,1))
                 else:
                     cell.set_property('foreground_rgba',Gdk.RGBA(0,0,0,1))
-
-
-
 
     def channel_Highlight(self, a,channel,b):
 
@@ -587,7 +583,6 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         if cur_iter != temp_iter :
             iter = temp_iter
             lc.set_cell_data_func(cell,self.change_fg_colour,func_data=self.highlighted)
-
 
     def start (self):
         self.channels = self.connection.cm.getChannels()
@@ -668,13 +663,11 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
             self.connection.cm.removeChannel(id)
 
     def onSelect (self, joinedList, id, type):
-
         self.emit('conversationSelected', id)
         model , iter = joinedList.get_selection().get_selected() #Selected iter
         cell = joinedList.leftcol.get_cells()[0]
         self.highlighted[id] = False
         joinedList.leftcol.set_cell_data_func(cell,self.change_fg_colour,func_data=self.highlighted)
-
 
     @idle_add
     def onPersonMessage (self, cm, name, title, isadmin, text):

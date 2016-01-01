@@ -364,6 +364,9 @@ class GameWidget (GObject.GObject):
                gamemodel.spectators[analyzer_type].board == gamemodel.boards[-1]:
                 self._set_arrow(analyzer_type, None)
         self.name_changed(gamemodel.players[0]) #We may need to add * to name
+        
+        if gamemodel.isObservationGame() and not self.isInFront():
+            self.light_on_off(True)
         return False
 
     def game_saved(self, gamemodel, uri):
@@ -672,6 +675,19 @@ class GameWidget (GObject.GObject):
         align.add(page_hbox)
         return statusbar, align
 
+    @idle_add
+    def light_on_off(self, on):
+        child = self.tabcontent.get_child()
+        if child:
+            child.remove(child.get_children()[0])
+            if on:
+                #child.pack_start(createImage(light_on, True, True, 0), expand=False)
+                child.pack_start(createImage(light_on), True, True, 0)
+            else:
+                #child.pack_start(createImage(light_off, True, True, 0), expand=False)
+                child.pack_start(createImage(light_off), True, True, 0)
+        self.tabcontent.show_all()
+
     def setLocked (self, locked):
         """ Makes the board insensitive and turns off the tab ready indicator """
         log.debug("GameWidget.setLocked: %s locked=%s" % (self.gamemodel.players, str(locked)))
@@ -681,19 +697,7 @@ class GameWidget (GObject.GObject):
             log.warning("GameWidget.setLocked: Not removing last tabcontent child")
             return
 
-        @idle_add
-        def light_on_off():
-            child = self.tabcontent.get_child()
-            if child:
-                child.remove(child.get_children()[0])
-                if not locked:
-                    #child.pack_start(createImage(light_on, True, True, 0), expand=False)
-                    child.pack_start(createImage(light_on), True, True, 0)
-                else:
-                    #child.pack_start(createImage(light_off, True, True, 0), expand=False)
-                    child.pack_start(createImage(light_off), True, True, 0)
-            self.tabcontent.show_all()
-        light_on_off()
+        self.light_on_off(not locked)
 
         log.debug("GameWidget.setLocked: %s: returning" % self.gamemodel.players)
 
@@ -993,6 +997,9 @@ def attachGameWidget (gmwidg):
     def callback (notebook, gpointer, page_num, gmwidg):
         if notebook.get_nth_page(page_num) == gmwidg.notebookKey:
             gmwidg.emit("infront")
+            if gmwidg.gamemodel.players and gmwidg.gamemodel.isObservationGame():
+                gmwidg.light_on_off(False)
+            
     headbook.connect_after("switch-page", callback, gmwidg)
     gmwidg.emit("infront")
 

@@ -70,7 +70,6 @@ class Sidepanel:
         allob = 'allob ' + str(icgamemodel.ficsgame.gameno)
         icgamemodel.connection.client.run_command(allob)
 
-
     def onMessageSent (self, chatView, text):
         if hasattr(self, "player"):
             if text.startswith('# ') :
