@@ -24,7 +24,7 @@ class ChatView (Gtk.VPaned):
     def __init__ (self, gamemodel=None):
         GObject.GObject.__init__(self)
         self.gamemodel = gamemodel
-        
+
         # States for the color generator
         self.colors = {}
         self.startpoint = random.random()
@@ -37,9 +37,9 @@ class ChatView (Gtk.VPaned):
         sw1 = Gtk.ScrolledWindow()
         sw1.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw1.set_shadow_type(Gtk.ShadowType.NONE)
-        sw1.set_size_request(-1, 250)
+        sw1.set_size_request(-1, 300)
         uistuff.keepDown(sw1)
-        
+
         sw1.add(self.readView)
         self.readView.set_editable(False)
         self.readView.props.wrap_mode = Gtk.WrapMode.WORD
@@ -51,7 +51,7 @@ class ChatView (Gtk.VPaned):
 
         if isinstance(self.gamemodel, ICGameModel):
             vp = Gtk.VPaned()
-            
+
             # Inits the observers view
             self.obsView = Gtk.TextView()
             self.obsView.set_size_request(-1, 3)
@@ -112,18 +112,27 @@ class ChatView (Gtk.VPaned):
 
     @idle_add
     def update_observers(self, other, observers):
+        obs_list = observers.split()
+        num_of_observers = len(obs_list)
+        label = 'Observers : (' + str(num_of_observers) + ') '
         self.obsView.get_buffer().props.text = ""
         tb = self.obsView.get_buffer()
         self.obs_btn = Gtk.Button()
-        self.obs_btn.set_label('Observers:')
+        self.obs_btn.set_label(label)
         self.obs_btn.connect("clicked", self.on_obs_btn_clicked)
         iter = tb.get_iter_at_offset(0)
         anchor1 = tb.create_child_anchor(iter)
-        tb.insert(iter, observers)
+        tb.insert(iter, '\n')
         self.obsView.add_child_at_anchor(self.obs_btn, anchor1)
+        for player in obs_list:
+            if '[' in player:               # Colourize only players able to interact with chat View
+                pref,rest = player.split('[')
+                self._ensureColor(pref)
+                tb.insert_with_tags_by_name(iter,player+' : ',pref+"_bold")
+            else:
+                tb.insert(iter,player+ ' ')
         self.obsView.show_all()
 
-#        self.obsView.get_buffer().props.text = "Observers: " + observers
 
     def _ensureColor(self, pref):
         """ Ensures that the tags for pref_normal and pref_bold are set in the text buffer """
@@ -135,6 +144,11 @@ class ChatView (Gtk.VPaned):
             color = "#" + "".join([hex(v)[2:].zfill(2) for v in color])
             tb.create_tag(pref + "_normal", foreground=color)
             tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
+            if isinstance(self.gamemodel, ICGameModel):
+                otb = self.obsView.get_buffer()
+                otb.create_tag(pref + "_normal", foreground=color)
+                otb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
+
 
     def clear (self):
         self.writeView.get_buffer().props.text = ""
