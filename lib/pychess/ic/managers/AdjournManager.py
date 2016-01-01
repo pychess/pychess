@@ -49,12 +49,12 @@ class AdjournManager (GObject.GObject):
 
         self.connection.expect_fromplus(self.__onStoredResponseYES,
                                         "\s*C Opponent\s+On Type\s+Str\s+M\s+ECO\s+Date",
-                                        "\s*\d+: (B|W) %s\s+(Y|N) \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(---|\?\?\?|[A-Z]\d+)\s+%s" %
+                                        "\s*\d+: (B|W) %s\s+(Y|N) \[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(\d+)-(\d+)\s+(W|B)(\d+)\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s" %
                                         (names, dates)) 
 
         self.connection.expect_fromplus(self.__onHistoryResponseYES,
                                         "\s*Opponent\s+Type\s+ECO\s+End\s+Date",
-                                        "\s*(\d+): (-|\+|=) \d+\s+(W|B)\s+\d+ %s\s+\[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|[A-Z]\d+)\s+%s\s+%s" %
+                                        "\s*(\d+): (-|\+|=) \d+\s+(W|B)\s+\d+ %s\s+\[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+%s" %
                                         (names, reasons, dates)) 
         
         self.connection.expect_line (self.__onAdjournedGameResigned,
