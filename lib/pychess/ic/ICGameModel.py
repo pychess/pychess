@@ -222,10 +222,10 @@ class ICGameModel (GameModel):
             return
         self.emit("message_received", name, text)
 
-    def onObserversReceived(self,other,gameno,observers):
+    def onObserversReceived(self, other, gameno, observers):
         if int(gameno) != self.ficsgame.gameno:
             return
-        self.emit("observers_received",observers)
+        self.emit("observers_received", observers)
 
 
     ############################################################################

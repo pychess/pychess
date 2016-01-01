@@ -134,11 +134,13 @@ class ChatManager (GObject.GObject):
         self.channels = {}
 
         #Observing 112 [DrStupp vs. hajaK]: pgg (1 user)
-        self.connection.expect_line (self.get_allob_List,
-                                     'Observing\s+(\d+).*:([\s+\(\w+\)\w+]+)\(' )
+        self.connection.expect_line (self.get_allob_list,
+                                     '(?:Observing|Examining)\s+(\d+).*:([\s+\(\w+\)\w+]+)\(' )
+
+        self.connection.expect_line (self.on_allob_no, "No one is observing game (\d+).")
 
 
-    def get_allob_List(self,match):
+    def get_allob_list(self, match):
         """ Description: Processes the returning pattern matched of the FICS allob command
                          extracts out the gameno and a list of observers before emmiting them for collection
                          by the observers view
@@ -156,7 +158,7 @@ class ChatManager (GObject.GObject):
                     obs_dic[player] = ficsplayer.getRatingByGameType(GAME_TYPES['standard'])
                 except KeyError:
                     obs_dic[player] =  0
-                    print("player %s is not in self.connection.players" % player)
+                    #print("player %s is not in self.connection.players" % player)
             else :
                 obs_dic[player] =  0
         obs_sorted  = sorted(obs_dic.items(), key=operator.itemgetter(1),reverse=True)
@@ -164,11 +166,16 @@ class ChatManager (GObject.GObject):
         for toople in obs_sorted :
             player,rating = toople
             if rating == 0 :
-                obs_str += player + " "        # Don't print ratings for guest accounts
+                obs_str += "%s " % player # Don't print ratings for guest accounts
             else:
-                obs_str += player + "[" + str(rating) + "] "
+                obs_str += "%s(%s) " % (player, rating)
         self.emit('observers_received',gameno,obs_str)
+    get_allob_list.BLKCMD = BLKCMD_ALLOBSERVERS
 
+    def on_allob_no(self, match):
+        gameno = match.group(1)
+        self.emit('observers_received', gameno, "")
+    on_allob_no.BLKCMD = BLKCMD_ALLOBSERVERS
 
     def getChannels(self):
         return self.channels

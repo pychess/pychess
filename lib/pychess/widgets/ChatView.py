@@ -11,9 +11,13 @@ from pychess.System.idle_add import idle_add
 from pychess.System import uistuff
 from pychess.widgets import insert_formatted
 from pychess.widgets.Background import set_textview_color
+from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.ic.ICGameModel import ICGameModel
 from .BorderBox import BorderBox
 
+
+refresh = Gtk.Image()
+refresh.set_from_pixbuf(load_icon(16, "view-refresh", "stock-refresh"))
 
 class ChatView (Gtk.VPaned):
     __gsignals__ = {
@@ -31,13 +35,13 @@ class ChatView (Gtk.VPaned):
 
         # Inits the read view
         self.readView = Gtk.TextView()
-        self.readView.set_size_request(-1, 30)
+        #self.readView.set_size_request(-1, 30)
         set_textview_color(self.readView)
 
         sw1 = Gtk.ScrolledWindow()
         sw1.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw1.set_shadow_type(Gtk.ShadowType.NONE)
-        sw1.set_size_request(-1, 300)
+        #sw1.set_size_request(-1, 300)
         uistuff.keepDown(sw1)
 
         sw1.add(self.readView)
@@ -54,7 +58,7 @@ class ChatView (Gtk.VPaned):
 
             # Inits the observers view
             self.obsView = Gtk.TextView()
-            self.obsView.set_size_request(-1, 3)
+            #self.obsView.set_size_request(-1, 3)
             set_textview_color(self.obsView)
 
             sw0 = Gtk.ScrolledWindow()
@@ -69,7 +73,7 @@ class ChatView (Gtk.VPaned):
             self.obsView.props.pixels_above_lines = 2
             self.obsView.props.left_margin = 2
 
-            vp.pack1(BorderBox(sw0, bottom=True), resize=True, shrink=True)
+            vp.pack1(BorderBox(sw0, bottom=True), resize=False, shrink=False)
             vp.pack2(BorderBox(sw1, top=True), resize=True, shrink=False)
 
             self.pack1(BorderBox(vp, bottom=True), resize=True, shrink=True)
@@ -95,7 +99,7 @@ class ChatView (Gtk.VPaned):
         self.writeView.props.pixels_below_lines = 1
         self.writeView.props.pixels_above_lines = 2
         self.writeView.props.left_margin = 2
-        self.pack2(BorderBox(sw2, top=True), resize=True, shrink=False)
+        self.pack2(BorderBox(sw2, top=True), resize=False, shrink=False)
 
         # Forces are reasonable position for the panner.
         def callback (widget, ctx):
@@ -113,11 +117,11 @@ class ChatView (Gtk.VPaned):
     @idle_add
     def update_observers(self, other, observers):
         obs_list = observers.split()
-        num_of_observers = len(obs_list)
-        label = 'Observers : (' + str(num_of_observers) + ') '
+        label = _("Observers")
         self.obsView.get_buffer().props.text = ""
         tb = self.obsView.get_buffer()
         self.obs_btn = Gtk.Button()
+        self.obs_btn.set_image(refresh)
         self.obs_btn.set_label(label)
         self.obs_btn.connect("clicked", self.on_obs_btn_clicked)
         iter = tb.get_iter_at_offset(0)
@@ -125,12 +129,15 @@ class ChatView (Gtk.VPaned):
         tb.insert(iter, '\n')
         self.obsView.add_child_at_anchor(self.obs_btn, anchor1)
         for player in obs_list:
-            if '[' in player:               # Colourize only players able to interact with chat View
-                pref,rest = player.split('[')
+            # Colourize only players able to interact with chat View
+            if player.endswith("(U)"):
+                tb.insert(iter, "%s " % player[:-3])
+            elif "(" in player:
+                pref,rest = player.split('(')
                 self._ensureColor(pref)
-                tb.insert_with_tags_by_name(iter,player+' : ',pref+"_bold")
+                tb.insert_with_tags_by_name(iter, "%s " % player, pref+"_bold")
             else:
-                tb.insert(iter,player+ ' ')
+                tb.insert(iter, "%s " % player)
         self.obsView.show_all()
 
 
