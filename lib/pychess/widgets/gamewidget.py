@@ -177,10 +177,10 @@ class GameWidget (GObject.GObject):
             event = threading.Event()
             GLib.idle_add(do_load_panels, event)
             event.wait()
-        
+
         if isinstance(gamemodel, ICGameModel):
             gamemodel.gmwidg_ready.set()
-        
+
     def _del (self):
         self.board._del()
 
@@ -359,13 +359,17 @@ class GameWidget (GObject.GObject):
         self._update_menu_draw()
         self._update_menu_pause_and_resume()
         self._update_menu_undo()
+        if isinstance(gamemodel, ICGameModel): # on FICS game board change update allob
+            allob = 'allob ' + str(gamemodel.ficsgame.gameno)
+            gamemodel.connection.client.run_command(allob)
+
         for analyzer_type in (HINT, SPY):
             # only clear arrows if analyzer is examining the last position
             if analyzer_type in gamemodel.spectators and \
                gamemodel.spectators[analyzer_type].board == gamemodel.boards[-1]:
                 self._set_arrow(analyzer_type, None)
         self.name_changed(gamemodel.players[0]) #We may need to add * to name
-        
+
         if gamemodel.isObservationGame() and not self.isInFront():
             self.light_on_off(True)
         return False
@@ -1007,7 +1011,7 @@ def attachGameWidget (gmwidg):
                 gmwidg.light_on_off(False)
                 text = gmwidg.game_info_label.get_text()
                 gmwidg.game_info_label.set_markup('<span color="black" weight="bold">%s</span>' % text)
-            
+
     headbook.connect_after("switch-page", callback, gmwidg)
     gmwidg.emit("infront")
 

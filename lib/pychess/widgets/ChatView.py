@@ -43,6 +43,7 @@ class ChatView (Gtk.VPaned):
 
         sw1.add(self.readView)
         self.readView.set_editable(False)
+        self.readView.set_cursor_visible(False)
         self.readView.props.wrap_mode = Gtk.WrapMode.WORD
         self.readView.props.pixels_below_lines = 1
         self.readView.props.pixels_above_lines = 2
@@ -58,6 +59,7 @@ class ChatView (Gtk.VPaned):
 
             # Inits the observers view
             self.obsView = Gtk.TextView()
+            self.obsView.set_cursor_visible(False)
             #self.obsView.set_size_request(-1, 3)
             set_textview_color(self.obsView)
 
