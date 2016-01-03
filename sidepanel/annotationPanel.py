@@ -115,7 +115,7 @@ class Sidepanel(Gtk.TextView):
         self.boardview.connect("shown_changed", self.shown_changed)
 
         self.gamemodel = gmwidg.board.view.model
-        self.gamemodel.connect_after("game_loaded", self.update)
+        self.gamemodel.connect_after("game_loaded", self.game_loaded)
         self.gamemodel.connect_after("game_changed", self.game_changed)
         self.gamemodel.connect_after("game_started", self.update)
         self.gamemodel.connect_after("game_ended", self.update)
@@ -1010,6 +1010,11 @@ class Sidepanel(Gtk.TextView):
         log.debug("annotationPanel.players_changed: starting")
         self.update()
         log.debug("annotationPanel.players_changed: returning")
+
+    def game_loaded(self, model, uri):
+        for ply in range(min(40, model.ply)):
+            model.setOpening(ply)
+        self.update()
 
     def __movestr(self, board):
         move = board.lastMove

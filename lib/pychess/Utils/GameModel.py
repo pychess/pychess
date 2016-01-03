@@ -292,12 +292,14 @@ class GameModel (GObject.GObject, Thread):
                 else:
                     self.spy_scores[ply] = (pv, score, depth)
 
-    def setOpening(self):
-        if self.ply > 40:
+    def setOpening(self, ply=None):
+        if ply is None:
+            ply = self.ply
+        if ply > 40:
             return
 
-        if self.ply > 0:
-            opening = get_eco(self.getBoardAtPly(self.ply).board.hash)
+        if ply > 0:
+            opening = get_eco(self.getBoardAtPly(ply).board.hash)
         else:
             opening = ("", "", "")
         if opening is not None:
