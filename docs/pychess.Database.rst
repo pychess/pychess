@@ -36,22 +36,6 @@ pychess.Database.model module
     :undoc-members:
     :show-inheritance:
 
-pychess.Database.print_pstats module
-------------------------------------
-
-.. automodule:: pychess.Database.print_pstats
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pychess.Database.profilehooks module
-------------------------------------
-
-.. automodule:: pychess.Database.profilehooks
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.Database.timer module
 -----------------------------
 

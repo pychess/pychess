@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import email.Utils
+import email.utils
 from gi.repository import Gtk
 import math
 import pychess
@@ -13,7 +13,7 @@ from pychess.compat import urlopen, urlencode
 from pychess.Players.PyChess import PyChess
 from pychess.System.prefix import addDataPrefix, isInstalled
 from pychess.System.repeat import repeat_sleep
-from pychess.System import GtkWorker, fident
+from pychess.System import fident
 from pychess.System.Log import log
 from pychess.Utils.const import *
 from pychess.Utils.lutils.LBoard import LBoard
@@ -333,6 +333,7 @@ class PyChessFICS(PyChess):
     def __go (self):
         if self.worker:
             self.worker.cancel()
+        # TODO: fix it
         self.worker = GtkWorker(lambda worker: PyChess._PyChess__go(self, worker))
         self.worker.connect("published", lambda w, msg: self.extendlog(msg))
         self.worker.connect("done", self.__onMoveCalculated)
@@ -403,8 +404,8 @@ class PyChessFICS(PyChess):
         SUBJECT = "Besked fra botten"
         
         p = subprocess.Popen([SENDMAIL, '-f',
-                              email.Utils.parseaddr(self.from_address)[1],
-                              email.Utils.parseaddr(self.to_address)[1]],
+                              email.utils.parseaddr(self.from_address)[1],
+                              email.utils.parseaddr(self.to_address)[1]],
                               stdin=subprocess.PIPE)
         
         print("MIME-Version: 1.0", file=p.stdin)

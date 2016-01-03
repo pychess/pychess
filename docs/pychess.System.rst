@@ -4,14 +4,6 @@ pychess.System package
 Submodules
 ----------
 
-pychess.System.GtkWorker module
--------------------------------
-
-.. automodule:: pychess.System.GtkWorker
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.System.Log module
 -------------------------
 

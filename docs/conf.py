@@ -4,6 +4,19 @@
 import sys
 import os
 
+# mocking C extension modules we use in pychess
+from unittest.mock import MagicMock
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+MOCK_MODULES = ['Gtk', 'Gdk', 'GdkPixbuf', 'GOobject', 'GLib', 'Pango', 'PangoCairo', 'Rsvg', 'GtkSource']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+
+# fix environment
 sys.path.insert(0, os.path.abspath('../lib'))
 sys.path.insert(0, os.path.abspath('../sidepanels'))
 

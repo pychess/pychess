@@ -1,4 +1,5 @@
 """ The task of this module, is to save, load and init new games """
+
 from __future__ import print_function
 
 import os
@@ -20,16 +21,18 @@ from pychess.widgets import gamenanny, gamewidget
 
 def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     """ The player tuples are:
-        (The type af player in a System.const value,
-         A callable creating the player,
-         A list of arguments for the callable,
-         A preliminary name for the player)
+    (The type af player in a System.const value,
+    A callable creating the player,
+    A list of arguments for the callable,
+    A preliminary name for the player)
 
-        If loaddata is specified, it should be a tuple of:
-        (A text uri or fileobj,
-         A Savers.something module with a load function capable of loading it,
-         An int of the game in file you want to load,
-         The position from where to start the game) """
+    If loaddata is specified, it should be a tuple of:
+    (A text uri or fileobj,
+    A Savers.something module with a load function capable of loading it,
+    An int of the game in file you want to load,
+    The position from where to start the game)
+    """
+
     log.debug("ionest.generalStart: %s\n %s\n %s" % (gamemodel, player0tup, player1tup))
 
     gmwidg = gamewidget.GameWidget(gamemodel)

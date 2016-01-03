@@ -1,11 +1,11 @@
 
 from gi.repository import Gtk
-from gi.repository.Gtk import Gdk
+from gi.repository import Gdk
 from gi.repository import GObject
 
 from math import floor
 
-from BoardView import BoardView
+from pychess.widgets.BoardView import BoardView
 from pychess.Utils.const import *
 from pychess.Utils.Cord import Cord
 
@@ -14,7 +14,7 @@ ALL = 0
 class SetupBoard (Gtk.EventBox):
     
     __gsignals__ = {
-        'cord_clicked' : (SIGNAL_RUN_FIRST, TYPE_NONE, (TYPE_PYOBJECT,)),
+        'cord_clicked' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__(self):

@@ -9,7 +9,7 @@ import zipfile
 from datetime import date
 from array import array
 
-from .profilehooks import profile
+#from .profilehooks import profile
 
 from sqlalchemy import select, Index, func, and_
 from sqlalchemy.exc import ProgrammingError

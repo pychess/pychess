@@ -3,7 +3,7 @@ from pychess.Utils.const import *
 from pychess.Utils.lutils.lmovegen import newMove
 
 MAXMOVE = newMove(63, 63, NULL_MOVE)
-COMMENT, VARI_START, VARI_END, NAG = [MAXMOVE+i+1 for i in range(4)]
+COMMENT, VARI_START, VARI_END, NAG = (MAXMOVE+i+1 for i in range(4))
 
 def walk(node, arr, txt):
     """Prepares a game data for databse.
