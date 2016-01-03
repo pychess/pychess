@@ -531,6 +531,7 @@ class BoardManager (GObject.GObject):
         
         self.theGameImPlaying = game
         self.gamemodelStartedEvents[gameno] = threading.Event()
+        self.connection.client.run_command("follow")
         self.emit("playGameCreated", game)
 
     def onMatchingSeekOrGetGame(self, matchlist):
