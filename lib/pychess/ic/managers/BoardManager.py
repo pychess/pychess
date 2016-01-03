@@ -257,14 +257,6 @@ class BoardManager (GObject.GObject):
                 '',
                 "<12> (.+)")
 
-        self.connection.expect_n_lines (self.onFollowingPlayer,
-            "You will now be following %s's games\." % names,
-            "You are now observing game \d+\.",
-            "Game (\d+): %s %s %s %s %s ([\w/]+) (\d+) (\d+)"
-            % (names, ratings, names, ratings, ratedexp),
-            '',
-            "<12> (.+)")
-
         self.connection.expect_fromto (self.onObserveGameMovesReceived,
             "Movelist for game (\d+):", "{Still in progress} \*")
 
@@ -859,7 +851,6 @@ class BoardManager (GObject.GObject):
 
         wplayer = self.connection.players.get(FICSPlayer(wname))
         bplayer = self.connection.players.get(FICSPlayer(bname))
-        game = FICSGame(wplayer, bplayer, gameno=gameno)
 
         if relation == IC_POS_OBSERVING_EXAMINATION:
             pgnHead = [
@@ -882,6 +873,9 @@ class BoardManager (GObject.GObject):
             self.emit("obsGameCreated", game)
             self.gamemodelStartedEvents[game.gameno].wait()
         else:
+            game = FICSGame(wplayer, bplayer, gameno=gameno, rated=rated=="rated",
+                game_type=game_type, minutes=int(min), inc=int(inc),
+                relation=relation)
             game = self.connection.games.get(game, emit=False)
             
             if not game.supported:
@@ -901,10 +895,6 @@ class BoardManager (GObject.GObject):
             self.connection.client.run_command("moves %d" % game.gameno)
     onObserveGameCreated.BLKCMD = BLKCMD_OBSERVE
 
-    def onFollowingPlayer (self, matchlist):
-        self.onObserveGameCreated(matchlist[1:])
-    onFollowingPlayer.BLKCMD = BLKCMD_FOLLOW
-    
     def onObserveGameMovesReceived (self, matchlist):
         log.debug("'%s'" % (matchlist[0].string), extra={"task":
             (self.connection.username, "BM.onObserveGameMovesReceived")})
