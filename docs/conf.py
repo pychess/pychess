@@ -12,7 +12,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
             return Mock()
 
-MOCK_MODULES = ['Gtk', 'Gdk', 'GdkPixbuf', 'GOobject', 'GLib', 'Pango', 'PangoCairo', 'Rsvg', 'GtkSource']
+MOCK_MODULES = ['cairo', 'gi', 'gi.repository', 'gi.repository.GdkPixbuf']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
