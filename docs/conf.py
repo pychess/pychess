@@ -7,12 +7,33 @@ import os
 # mocking C extension modules we use in pychess
 from unittest.mock import MagicMock
 
+class GObjectMock(MagicMock):
+    class GObject():
+        def connect(*args):
+            pass
+
+class GtkMock(MagicMock):
+    class Alignment:
+        pass
+    class Notebook:
+        def set_show_border(*args):
+            pass
+        def set_show_tabs(*args):
+            pass
+    class ScrolledWindow:
+        pass
+
 class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):
+        if name == "GObject":
+            return GObjectMock()
+        elif name == "Gtk":
+            return GtkMock()
+        else:
             return Mock()
 
-MOCK_MODULES = ['cairo', 'gi', 'gi.repository', 'gi.repository.GdkPixbuf']
+MOCK_MODULES = ['cairo', 'gi', 'gi.repository', 'gi.repository.GdkPixbuf', 'sqlalchemy']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 

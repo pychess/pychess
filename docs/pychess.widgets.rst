@@ -107,14 +107,6 @@ pychess.widgets.InfoBar module
     :undoc-members:
     :show-inheritance:
 
-pychess.widgets.LogDialog module
---------------------------------
-
-.. automodule:: pychess.widgets.LogDialog
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.widgets.MenuItemsDict module
 ------------------------------------
 
