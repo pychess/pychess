@@ -1,8 +1,9 @@
 from __future__ import print_function
+
 import re
-#from gobject import *
-from gi.repository import GObject
 import threading
+
+from gi.repository import GObject
 
 from pychess.System.Log import log
 from pychess.Savers.pgn import msToClockTimeTag

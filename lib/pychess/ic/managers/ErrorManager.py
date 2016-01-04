@@ -1,4 +1,3 @@
-#from gobject import *
 from gi.repository import GObject
 
 sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"

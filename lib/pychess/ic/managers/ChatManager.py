@@ -1,5 +1,3 @@
-#from gobject import *
-
 import threading
 import re
 from math import ceil

@@ -1,8 +1,9 @@
-from threading import RLock
-#from gobject import *
-from gi.repository import GObject
 import re
 from time import time
+from threading import RLock
+
+from gi.repository import GObject
+
 from pychess.ic import *
 from pychess.Utils.const import *
 from pychess.Utils.Rating import Rating

@@ -1,5 +1,5 @@
 import re
-#from gobject import *
+
 from gi.repository import GObject
 
 from pychess.ic import BLKCMD_NEWS

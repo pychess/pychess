@@ -1,4 +1,3 @@
-#from gobject import *
 from gi.repository import GObject
 
 from pychess.ic.VerboseTelnet import ConsoleHandler

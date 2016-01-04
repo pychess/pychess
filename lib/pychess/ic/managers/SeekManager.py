@@ -1,6 +1,7 @@
-#from gobject import GObject, SIGNAL_RUN_FIRST
-from gi.repository import GObject
 import re
+
+from gi.repository import GObject
+
 from pychess.Utils.const import *
 from pychess.ic import *
 from pychess.ic.FICSObjects import *
