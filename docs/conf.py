@@ -38,7 +38,8 @@ class Mock(MagicMock):
         else:
             return Mock()
 
-MOCK_MODULES = ['cairo', 'gi', 'gi.repository', 'gi.repository.GdkPixbuf', 'sqlalchemy']
+MOCK_MODULES = ['cairo', 'gi', 'gi.repository', 'gi.repository.GdkPixbuf',
+                'sqlalchemy', 'sqlalchemy.exc', 'sqlalchemy.schema']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
