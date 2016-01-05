@@ -29,16 +29,17 @@
   <ul>
    <li>CECP and UCI chess engine support with customizable engine configurations</li>
    <li>Polyglot opening book support</li>
+   <li>Gaviota end-game tablebase support</li>
    <li>Hint and Spy move arrows</li>
    <li>Hint, Score, and Annotation panels</li>
    <li>Play and analyze games in separate game tabs</li>
-   <li>18 chess variants including Chess960, Suicide, Crazyhouse, Shuffle, Losers, Piece Odds, and Atomic</li>
+   <li>Countless chess variants including Chess960, Suicide, Crazyhouse, Shuffle, Wildcastle, Losers, Atomic, Three-check, King of the hill, Makruk, Sittuyin, Cambodian</li>
    <li>Reads and writes PGN, EPD and FEN chess file formats</li>
    <li>Undo and pause chess games</li>
    <li>Move animation in games</li>
    <li>Drag and drop chess files</li>
    <li>Optional game move and event sounds</li>
-   <li>Chess piece themes with 40 built-in piece themes</li>
+   <li>Chess piece themes with 42 built-in piece themes</li>
    <li>Legal move highlighting</li>
    <li>Direct copy+paste pgn game input via Enter Game Notation open-game dialog</li>
    <li>Internationalised text and Figurine Algebraic Notation (FAN) support</li>

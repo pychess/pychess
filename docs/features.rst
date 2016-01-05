@@ -1,0 +1,21 @@
+Features
+--------
+
+- CECP and UCI chess engine support with customizable engine configurations
+- Polyglot opening book support
+- Gaviota end-game tablebase support
+- Hint and Spy move arrows
+- Hint, Score, and Annotation panels
+- Play and analyze games in separate game tabs
+- Countless chess variants including Chess960, Suicide, Crazyhouse, Shuffle, Wildcastle, Losers, Atomic, Three-check, King of the hill, Makruk, Sittuyin, Cambodian
+- Reads and writes PGN, EPD and FEN chess file formats
+- Undo and pause chess games
+- Move animation in games
+- Drag and drop chess files
+- Optional game move and event sounds
+- Chess piece themes with 42 built-in piece themes
+- Legal move highlighting
+- Direct copy+paste pgn game input via Enter Game Notation open-game dialog
+- Internationalised text and Figurine Algebraic Notation (FAN) support
+- Translated into 38 languages (languages with +5% strings translated)
+- Easy to use and intuitive look and feel
