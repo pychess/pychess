@@ -118,6 +118,15 @@ class ChatView (Gtk.VPaned):
 
     @idle_add
     def update_observers(self, other, observers):
+        """
+        ==================   ============  ============
+        Arguments            Type          Description
+        ==================   ============  ===========
+        other                Not used
+        observers            str           string of observers and there ratings
+        ==================   ============  ===========
+        """
+
         obs_list = observers.split()
         label = _("Observers")
         self.obsView.get_buffer().props.text = ""
