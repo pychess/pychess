@@ -57,6 +57,8 @@ extensions = [
     'sphinx.ext.intersphinx',
 ]
 
+#intersphinx_mapping = {'Gtk' : ('http://lazka.github.io/pgi-docs/#Gtk-3.0/', None )}
+
 # Sort members by type
 autodoc_member_order = 'groupwise'
 
