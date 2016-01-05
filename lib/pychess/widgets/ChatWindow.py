@@ -565,11 +565,16 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
                     cell.set_property('foreground_rgba',Gdk.RGBA(0,0,0,1))
 
     def channel_Highlight(self, a, channel, b):
-        """ Description: Highlights channels ( that are NOT in focus ) and changes there foreground colour
-        to represent change in contents
-        channel : str - channel the message is intended for
         """
-        
+        :Description: Highlights a channel ( that are **not** in focus ) that has received an update and
+        changes it's foreground colour to represent change in contents
+
+        :param a: not used
+        :param channel: **(str)** The channel the message is intended for
+        :param b:  not used
+        :return: None
+        """
+
         jList = self.joinedList
         lc = jList.leftcol      # treeViewColumn
 
