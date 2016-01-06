@@ -561,8 +561,8 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         :Description: Changes the foreground colour  of a  cell
 
 
-        :param lc:  (`TreeViewColumn <http://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeViewColumn.html#Gtk.TreeViewColumn>`_ ) The column we are interested in
-        :param cell: **(listcoloumn cell)** The cell we want to change
+        :param lc:  ( Gtk.TreeViewColumn_ ) The column we are interested in
+        :param cell: ( Gtk.CellRenderer_ ) The cell we want to change
         :param model: **(treeview model)**
         :param iter: **(treeview Iterator)**
         :param data: **(Dictionary(key=int,value=bool))**  value is true if channel already highlighted
