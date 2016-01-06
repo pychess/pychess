@@ -150,8 +150,10 @@ class ChatManager (GObject.GObject):
         observers = match.group(2)
         oblist = observers.split()
         for player in oblist:
-            if '(U)' not in player :
+            if '(U)' not in player : # deals with unregistered players
                 try:
+                    if '(' in player : # deals with admin and multi titled players
+                        player,rest = player.split('(',1)
                     ficsplayer = self.connection.players[FICSPlayer(player)]
                     obs_dic[player] = ficsplayer.getRatingByGameType(GAME_TYPES['standard'])
                 except KeyError:

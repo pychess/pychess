@@ -62,6 +62,7 @@ extensions = [
 intersphinx_mapping = {
     'gobject': ('http://lazka.github.io/pgi-docs/GObject-2.0', None),
     'gtk': ('http://lazka.github.io/pgi-docs/Gtk-3.0', None),
+    'python': ('https://docs.python.org/3.4', None)
 }
 
 # Sort members by type

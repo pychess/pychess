@@ -558,14 +558,13 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
 
     def change_fg_colour(self,lc, cell ,model, iter,data):
         """
-        :Description: Changes the foreground colour  of a  cell
+        :Description: Changes the foreground colour of a cell
 
-
-        :param lc:  ( Gtk.TreeViewColumn_ ) The column we are interested in
-        :param cell: ( Gtk.CellRenderer_ ) The cell we want to change
-        :param model: **(treeview model)**
-        :param iter: **(treeview Iterator)**
-        :param data: **(Dictionary(key=int,value=bool))**  value is true if channel already highlighted
+        :param lc: :class:`Gtk.TreeViewColumn` The column we are interested in
+        :param cell: :class:`Gtk.CellRenderer` The cell we want to change
+        :param model: :class:`Gtk.TreeModel`
+        :param iter: :class:`Gtk.TreeIter`
+        :param data: :py:class:`dict` (key=int,value=bool) value is true if channel already highlighted
         :return: None
         """
 

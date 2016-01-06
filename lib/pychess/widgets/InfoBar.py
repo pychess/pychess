@@ -89,7 +89,7 @@ class InfoBarMessage (Gtk.InfoBar):
         
 class InfoBarNotebook(Gtk.Notebook):
     """
-    This is a Gtk.Notebook which manages InfoBarMessage objects pushed onto it via
+    This is a :class:`Gtk.Notebook` which manages InfoBarMessage objects pushed onto it via
     push_message() like a stack. If/when the current message at the top of the
     stack is responded to or dismissed by the user, the next message in the
     stack waiting for a response is displayed. Messages that aren't applicable
