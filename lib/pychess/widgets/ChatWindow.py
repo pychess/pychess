@@ -557,6 +557,18 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         self.highlighted = {}
 
     def change_fg_colour(self,lc, cell ,model, iter,data):
+        """
+        :Description: Changes the foreground colour  of a  cell
+
+
+        :param lc:  (`TreeViewColumn <http://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeViewColumn.html#Gtk.TreeViewColumn>`_ ) The column we are interested in
+        :param cell: **(listcoloumn cell)** The cell we want to change
+        :param model: **(treeview model)**
+        :param iter: **(treeview Iterator)**
+        :param data: **(Dictionary(key=int,value=bool))**  value is true if channel already highlighted
+        :return: None
+        """
+
         for chan in data:
             if model[iter][0] == chan:
                 if data[chan] :
@@ -564,9 +576,10 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
                 else:
                     cell.set_property('foreground_rgba',Gdk.RGBA(0,0,0,1))
 
+
     def channel_Highlight(self, a, channel, b):
         """
-        :Description: Highlights a channel ( that are **not** in focus ) that has received an update and
+        :Description: Highlights a channel ( that is **not** in focus ) that has received an update and
         changes it's foreground colour to represent change in contents
 
         :param a: not used

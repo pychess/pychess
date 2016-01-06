@@ -57,6 +57,8 @@ extensions = [
     'sphinx.ext.intersphinx',
 ]
 
+#intersphinx_mapping = {'Gtk' : ('http://lazka.github.io/pgi-docs/#Gtk-3.0/', None )}
+
 intersphinx_mapping = {
     'gobject': ('http://lazka.github.io/pgi-docs/GObject-2.0', None),
     'gtk': ('http://lazka.github.io/pgi-docs/Gtk-3.0', None),
