@@ -84,7 +84,7 @@ class ConsoleView (Gtk.VPaned):
         self.sw = sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw.set_shadow_type(Gtk.ShadowType.NONE)
-#        uistuff.keepDown(sw)
+        uistuff.keepDown(sw)
         sw.add(self.readView)
         self.readView.set_editable(False)
         self.readView.set_cursor_visible(False)
