@@ -1,0 +1,2 @@
+.. _Gtk.TreeViewColumn: http://lazka.github.io/pgi-docs/#Gtk-3.0/classes/TreeViewColumn.html#Gtk.TreeViewColumn 
+.. _Gtk.CellRenderer: http://lazka.github.io/pgi-docs/#Gtk-3.0/classes/CellRenderer.html#Gtk.CellRenderer

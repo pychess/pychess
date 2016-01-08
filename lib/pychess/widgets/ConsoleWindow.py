@@ -24,12 +24,12 @@ class ConsoleWindow (object):
 
         self.window.set_title("%s Console" % connection.ics_name)
         self.window.connect("delete-event", lambda w,e: w.hide() or True)
-        
+
         uistuff.keepWindowSize("consolewindow", self.window, defaultSize=(700,400))
 
         self.consoleView = ConsoleView(self.connection)
         self.window.add(self.consoleView)
-        
+
         widgets["show_console_button"].connect("clicked", self.showConsole)
         connection.com.connect("consoleMessage", self.onConsoleMessage)
         connection.connect("disconnected", self.onDisconnected)
@@ -50,30 +50,30 @@ class ConsoleWindow (object):
 
     @staticmethod
     def filter_unprintable(s):
-        return ''.join([c for c in s if ord(c) > 31 or ord(c) == 9])        
+        return ''.join([c for c in s if ord(c) > 31 or ord(c) == 9])
 
     def onConsoleMessage(self, com, lines):
         for line in lines:
             line = self.filter_unprintable(line.line)
             if line and not line.startswith('<'):
                 self.consoleView.addMessage(line, False)
-        
+
 
 class ConsoleView (Gtk.VPaned):
     __gsignals__ = {
         'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
         'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
-    
+
     def __init__ (self, connection):
         GObject.GObject.__init__(self)
         self.connection = connection
-        
+
         # Inits the read view
         self.readView = Gtk.TextView()
         fontdesc = Pango.FontDescription("Monospace 10")
         self.readView.modify_font(fontdesc)
-        
+
         self.textbuffer = self.readView.get_buffer()
 
         set_textview_color(self.readView)
@@ -84,27 +84,27 @@ class ConsoleView (Gtk.VPaned):
         self.sw = sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw.set_shadow_type(Gtk.ShadowType.NONE)
-        uistuff.keepDown(sw)
+#        uistuff.keepDown(sw)
         sw.add(self.readView)
         self.readView.set_editable(False)
         self.readView.set_cursor_visible(False)
         self.readView.props.wrap_mode = Gtk.WrapMode.WORD
         self.pack1(sw, resize=True, shrink=True)
-        
+
         # Inits the write view
         self.history = []
         self.pos = 0
         self.writeView = Gtk.Entry()
         #self.writeView.set_width_chars(80)
         self.pack2(self.writeView, resize=True, shrink=True)
-        
+
         # Forces are reasonable position for the panner.
         def callback (widget, context):
             widget.disconnect(handle_id)
             allocation = widget.get_allocation()
             self.set_position(int(max(0.79*allocation.height, allocation.height-60)))
         handle_id = self.connect("draw", callback)
-        
+
         self.writeView.connect("key-press-event", self.onKeyPress)
 
     @idle_add
@@ -132,7 +132,7 @@ class ConsoleView (Gtk.VPaned):
                 self.connection.client.run_command(buffer.props.text)
                 self.emit("messageTyped", buffer.props.text)
                 self.addMessage(buffer.props.text, True)
-                
+
                 # Maintain variables backup, it will be restored to fics on quit
                 for var in self.connection.lvm.variablesBackup:
                     if buffer.props.text == "set %s" % var:
