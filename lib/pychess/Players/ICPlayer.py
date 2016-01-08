@@ -204,7 +204,7 @@ class ICPlayer (Player):
         self.queue.put("int")
 
     def putMessage (self, text):
-        self.connection.cm.tellPlayer (self.name, text)
+        self.connection.cm.tellPlayer (self.ichandle, text)
 
     #===========================================================================
     #    Offer handling
