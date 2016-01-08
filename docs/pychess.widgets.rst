@@ -259,5 +259,3 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
-
-.. include:: ./links_names.txt
