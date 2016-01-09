@@ -30,8 +30,8 @@ BITNESS = "64" if platform.machine().endswith('64') else "32"
 
 if sys.platform == "win32":
     backup = [
-        {"protocol": "uci", "name": "stockfish-6-%s.exe" % BITNESS, "country": "no"},
-        {"protocol": "xboard", "name": "sjaakii_win%s_dc.exe" % BITNESS, "country": "nl"},
+        {"protocol": "uci", "name": "stockfish-7-%s.exe" % BITNESS, "country": "no"},
+        {"protocol": "xboard", "name": "sjaakii_win%s_ms.exe" % BITNESS, "country": "nl"},
         ]
     if getattr(sys, 'frozen', False):
         backup.append({"protocol": "xboard", "name": "pychess-engine", "country": "dk"})
