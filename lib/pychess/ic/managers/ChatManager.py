@@ -133,7 +133,7 @@ class ChatManager (GObject.GObject):
 
         #Observing 112 [DrStupp vs. hajaK]: pgg (1 user)
         self.connection.expect_line (self.get_allob_list,
-                                     '(?:Observing|Examining)\s+(\d+).*:([\s+\(\w+\)\w+]+)\(' )
+                                     '(?:Observing|Examining) (\d+) \[[A-Za-z]+ vs. [A-Za-z]+\]: (.+) \(')
 
         self.connection.expect_line (self.on_allob_no, "No one is observing game (\d+).")
 
