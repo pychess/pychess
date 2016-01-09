@@ -25,23 +25,31 @@ if sys.version_info < (2, 7, 0):
 
 try:
     import cairo
-    from gi.repository import Gtk
-    from gi.repository import Gdk
-    from gi.repository import GdkPixbuf
-    from gi.repository import GLib
-    from gi.repository import GObject
-    from gi.repository import Pango
-    from gi.repository import PangoCairo
-    from gi.repository import Rsvg
-    from gi.repository import GtkSource
-    from gi.repository import cairo as gi_cairo
-except ImportError as e:
+except ImportError:
+    print("ERROR: PyChess requires python-cairo to be installed.")
+    sys.exit(1)
+
+try:
+    import gi
+except ImportError:
+    print("ERROR: PyChess requires pygobject to be installed.")
+    sys.exit(1)
+
+try:
+    gi.require_version("cairo", "1.0")
+    gi.require_version("GLib", "2.0")
+    gi.require_version("Gdk", "3.0")
+    gi.require_version("GdkPixbuf", "2.0")
+    gi.require_version("GObject", "2.0")
+    gi.require_version("Gtk", "3.0")
+    gi.require_version("GtkSource", "3.0")
+    gi.require_version("Pango", "1.0")
+    gi.require_version("PangoCairo", "1.0")
+    gi.require_version("Rsvg", "2.0")
+except ValueError as e:
     print("ERROR: Not all dependencies installed! You can find them in INSTALL")
     print(e)
     sys.exit(1)
-
-import gi
-gi.require_version("Gtk", "3.0")
 
 ###############################################################################
 # Fix environment
