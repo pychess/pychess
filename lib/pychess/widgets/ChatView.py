@@ -138,7 +138,7 @@ class ChatView (Gtk.VPaned):
             if player.endswith("(U)"):
                 tb.insert(iter, "%s " % player[:-3])
             elif "(" in player:
-                pref,rest = player.split('(')
+                pref,rest = player.split('(',1)
                 self._ensureColor(pref)
                 tb.insert_with_tags_by_name(iter, "%s " % player, pref+"_bold")
             else:
