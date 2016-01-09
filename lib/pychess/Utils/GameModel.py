@@ -404,12 +404,18 @@ class GameModel (GObject.GObject, Thread):
         log.debug("GameModel.offerReceived: offerer=%s %s" % (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
-        else: opPlayer = self.players[WHITE]
-
+        elif player == self.players[BLACK]:
+            opPlayer = self.players[WHITE]
+        else:
+            # Player comments echoed to opponent if the player started a conversation
+            # with you prior to observing a game the player is in #1113 
+            return
+            
         if offer.type == HURRY_ACTION:
             opPlayer.hurry()
 
         elif offer.type == CHAT_ACTION:
+            print("GameModel.offerreceived(player, offer)", player.name, offer.param)
             opPlayer.putMessage(offer.param)
 
         elif offer.type == RESIGNATION:
