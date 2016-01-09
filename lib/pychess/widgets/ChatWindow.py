@@ -14,7 +14,7 @@ from pychess.widgets.ChatView import ChatView
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import NORTH, EAST, SOUTH, WEST, CENTER
 
-TYPE_PERSONAL, TYPE_CHANNEL = range(2)
+TYPE_PERSONAL, TYPE_CHANNEL , TYPE_GUEST , TYPE_ADMIN , TYPE_COMP , TYPE_BLINDFOLD = range(6)
 
 def get_playername (playername):
     m = re.match("(\w+)\W*", playername)
@@ -252,7 +252,7 @@ class ViewsPanel (Gtk.Notebook, Panel):
             if not self.connection.cm.mayTellChannel(id):
                 chatView.disable(_("Only registered users may talk to this channel"))
 
-        elif type == TYPE_PERSONAL:
+        elif type in (TYPE_PERSONAL,TYPE_COMP,TYPE_GUEST,TYPE_ADMIN,TYPE_BLINDFOLD):
             if name in self.messageBuffer:
                 for title, isadmin, messagetext in self.messageBuffer[name]:
                     chatView.addMessage(name, messagetext)
@@ -318,7 +318,7 @@ class InfoPanel (Gtk.Notebook, Panel):
         self.connection = connection
 
     def addItem (self, id, text, type, chatView):
-        if type == TYPE_PERSONAL:
+        if type in (TYPE_PERSONAL,TYPE_COMP,TYPE_GUEST,TYPE_ADMIN,TYPE_BLINDFOLD):
             infoItem = self.PlayerInfoItem(id, text, chatView, self.connection)
         elif type == TYPE_CHANNEL:
             infoItem = self.ChannelInfoItem(id, text, chatView, self.connection)
@@ -536,6 +536,17 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         expander.add(self.friendsList)
         self.channels = {}
 
+        expander = Gtk.Expander.new(_("Admin"))
+        vbox.pack_start(expander, False, True, 0)
+        self.adminList = TextImageTree(add_icon)
+        self.adminList.connect("activated", self.onAdd)
+        self.adminList.fixed_height_mode = True
+        connection.cm.connect("privateMessage", self.onPersonMessage)
+        connection.cm.connect("channelsListed", self.onChannelsListed)
+        vbox.pack_start(Gtk.Separator.new(0),False,False,2)
+        expander.add(self.adminList)
+
+
         expander = Gtk.Expander.new(_("More channels"))
         vbox.pack_start(expander, False, True, 0)
         self.channelsList = TextImageTree(add_icon)
@@ -553,6 +564,37 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         connection.cm.connect("channelsListed", self.onChannelsListed)
         vbox.pack_start(Gtk.Separator.new(0),False,False,2)
         expander.add(self.playersList)
+
+        expander = Gtk.Expander.new(_("Computers"))
+        vbox.pack_start(expander, False, True, 0)
+        self.compList = TextImageTree(add_icon)
+        self.compList.connect("activated", self.onAdd)
+        self.compList.fixed_height_mode = True
+        connection.cm.connect("privateMessage", self.onPersonMessage)
+        connection.cm.connect("channelsListed", self.onChannelsListed)
+        vbox.pack_start(Gtk.Separator.new(0),False,False,2)
+        expander.add(self.compList)
+
+        expander = Gtk.Expander.new(_("BlindFold"))
+        vbox.pack_start(expander, False, True, 0)
+        self.blindList = TextImageTree(add_icon)
+        self.blindList.connect("activated", self.onAdd)
+        self.blindList.fixed_height_mode = True
+        connection.cm.connect("privateMessage", self.onPersonMessage)
+        connection.cm.connect("channelsListed", self.onChannelsListed)
+        vbox.pack_start(Gtk.Separator.new(0),False,False,2)
+        expander.add(self.blindList)
+
+        expander = Gtk.Expander.new(_("Guests"))
+        vbox.pack_start(expander, False, True, 0)
+        self.guestList = TextImageTree(add_icon)
+        self.guestList.connect("activated", self.onAdd)
+        self.guestList.fixed_height_mode = True
+        connection.cm.connect("privateMessage", self.onPersonMessage)
+        connection.cm.connect("channelsListed", self.onChannelsListed)
+        vbox.pack_start(Gtk.Separator.new(0),False,False,2)
+        expander.add(self.guestList)
+
         self.channels = {}
         self.highlighted = {}
 
@@ -609,15 +651,33 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
             id = self.compileId(player.name, TYPE_PERSONAL)
             if (str(player.name) in self.connection.notify_users):
                 self.friendsList.addRow(id, player.name + player.display_titles(),TYPE_PERSONAL)
-
-            if ((player.online) and (not( str(player.name) in self.connection.notify_users))):
+            elif  ((player.online) and ('(B)' in player.display_titles())):
+                self.blindList.addRow(id, player.name + player.display_titles(),TYPE_BLINDFOLD)
+            elif  ((player.online) and ('(C)' in player.display_titles())):
+                self.compList.addRow(id, player.name + player.display_titles(),TYPE_COMP)
+            elif  ((player.online) and ('Guest' in str(player.name))):
+                self.guestList.addRow(id, player.name + player.display_titles(),TYPE_GUEST)
+            elif  player.online :
                 self.playersList.addRow(id, player.name + player.display_titles(),TYPE_PERSONAL)
+
+
+
 
         def addPlayer (players, new_players):
             for player in new_players:
+                #print("Player : %s : %s" % (str(player.name),player.display_titles()))
                 if (str(player.name) in self.connection.notify_users):
                     self.friendsList.addRow(self.compileId(player.name, TYPE_PERSONAL),
                         player.name + player.display_titles(), TYPE_PERSONAL)
+                elif '(C)' in  str(player.display_titles()):
+                    self.compList.addRow(self.compileId(player.name, TYPE_COMP),
+                        player.name + player.display_titles(), TYPE_COMP)
+                elif '(B)' in  str(player.display_titles()):
+                    self.blindList.addRow(self.compileId(player.name, TYPE_BLINDFOLD),
+                        player.name + player.display_titles(), TYPE_BLINDFOLD)
+                elif 'Guest' in  str(player.name):
+                    self.guestList.addRow(self.compileId(player.name, TYPE_GUEST),
+                        player.name + player.display_titles(), TYPE_GUEST)
                 else:
                     self.playersList.addRow(self.compileId(player.name, TYPE_PERSONAL),
                         player.name + player.display_titles(), TYPE_PERSONAL)
@@ -652,12 +712,12 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
             self._addChannels(channels)
 
     def compileId (self, id, type):
-        if type == TYPE_PERSONAL:
-            id = "person" + id.lower()
-        elif type == TYPE_CHANNEL:
+        if type == TYPE_CHANNEL:
             # FIXME: We can't really add stuff to the id, as panels use it to
             # identify the channel
             assert not id.startswith("person"), "Oops, this is a problem"
+        else:
+            id = "person" + id.lower()
         return id
 
     def onAdd (self, list, id, text, type):
@@ -675,6 +735,15 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
             self.channelsList.addRow(id, text, type)
         elif type == TYPE_PERSONAL:
             self.playersList.addRow(id, text, type)
+        elif type == TYPE_COMP:
+            self.compList.addRow(id, text, type)
+        elif type == TYPE_ADMIN:
+            self.adminList.addRow(id, text, type)
+        elif type == TYPE_GUEST:
+            self.guestList.addRow(id, text, type)
+        elif type == TYPE_BLINDFOLD:
+            self.blindList.addRow(id, text, type)
+
         self.emit('conversationRemoved', id)
         if type == TYPE_CHANNEL:
             self.connection.cm.removeChannel(id)
