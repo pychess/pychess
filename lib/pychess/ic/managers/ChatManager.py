@@ -153,7 +153,7 @@ class ChatManager (GObject.GObject):
             if '(U)' not in player : # deals with unregistered players
                 try:
                     if '(' in player : # deals with admin and multi titled players
-                        player,rest = player.split('(',1)
+                        player,rest = player.split('(')
                     ficsplayer = self.connection.players[FICSPlayer(player)]
                     obs_dic[player] = ficsplayer.getRatingByGameType(GAME_TYPES['standard'])
                 except KeyError:
@@ -161,7 +161,9 @@ class ChatManager (GObject.GObject):
                     #print("player %s is not in self.connection.players" % player)
             else :
                 obs_dic[player] =  0
+#        obs_sorted  = sorted(obs_dic.items(), key=operator.itemgetter(1),reverse=True)
         obs_sorted  = sorted(obs_dic.items(), key=operator.itemgetter(1),reverse=True)
+        print("OB Sorted %s : %s : %s " % (oblist,obs_dic,obs_sorted))
         obs_str = ""
         for toople in obs_sorted :
             player,rating = toople
