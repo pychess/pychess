@@ -372,28 +372,17 @@ class InfoPanel (Gtk.Notebook, Panel):
             alignment.set_padding(3, 0, 12, 0)
             widget.add(alignment)
 
-            store = Gtk.ListStore(str,str)
+            tv = Gtk.TextView()
+            tv.set_editable(False)
+            tv.set_cursor_visible(False)
+            tv.props.wrap_mode = Gtk.WrapMode.WORD
+
+            tb = tv.get_buffer()
+            iter = tb.get_end_iter()
             for i, note in enumerate(finger.getNotes()):
                 if note:
-                    store.append([str(i+1),note])
-            tv = Gtk.TreeView(store)
-            tv.get_selection().set_mode(Gtk.SelectionMode.NONE)
-            tv.set_headers_visible(False)
-
-            sc = tv.get_style_context()
-            bool1, bg_color = sc.lookup_color("p_bg_color")
-            bool1, bg_active = sc.lookup_color("p_bg_active")
-            tv.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
-
-            cell = Gtk.CellRendererText()
-            cell.props.background_rgba = bg_active
-
-            cell.props.cell_background_set = True
-            cell.props.yalign = 0
-            tv.append_column(Gtk.TreeViewColumn("", cell, text=0))
-            cell = uistuff.appendAutowrapColumn(tv, "Notes", text=1)
-            cell.props.background_rgba = bg_color
-            cell.props.cell_background_set = True
+                    tb.insert(iter, "%s: %s\n" % (i+1, note))
+            tv.show_all()
             sw = Gtk.ScrolledWindow()
             sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             sw.add(tv)
