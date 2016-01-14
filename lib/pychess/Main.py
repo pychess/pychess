@@ -503,13 +503,16 @@ def run (no_debug, idle_add_debug, thread_debug, log_viewer, chess_file,
     log.logger.setLevel(logging.WARNING if no_debug is True else logging.DEBUG)
     oldlogs = [l for l in os.listdir(getUserDataPrefix()) if l.endswith(".log")]
     conf.set("max_log_files", conf.get("max_log_files", 10))
-    if len(oldlogs) >= conf.get("max_log_files", 10):
-        oldlogs.sort()
+    oldlogs.sort()
+    l = len(oldlogs)
+    while l > conf.get("max_log_files", 10):
         try:
             os.remove(addUserDataPrefix(oldlogs[0]))
+            del oldlogs[0]
         except OSError as e:
             pass
-
+        l -= 1
+        
     signal.signal(signal.SIGINT, Gtk.main_quit)
     signal.signal(signal.SIGTERM, Gtk.main_quit)
     def cleanup ():
