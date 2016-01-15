@@ -205,7 +205,7 @@ class Panel (object):
 class ViewsPanel (Gtk.Notebook, Panel):
 
     __gsignals__ = {
-        'channel_content_Changed' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
+        'channel_content_Changed' : (GObject.SignalFlags.RUN_FIRST, None, (str,int))
     }
 
 
@@ -282,12 +282,12 @@ class ViewsPanel (Gtk.Notebook, Panel):
     def onPersonMessage (self, cm, name, title, isadmin, text, name_, chatView):
         if name.lower() == name_.lower():
             chatView.addMessage(name, text)
-            self.emit('channel_content_Changed',name_)
+            self.emit('channel_content_Changed',name_,TYPE_PERSONAL)
 
     def onChannelMessage (self, cm, name, isadmin, isme, channel, text, name_, chatView):
         if channel.lower() == name_.lower() and not isme:
             chatView.addMessage(name, text)
-            self.emit('channel_content_Changed',channel)
+            self.emit('channel_content_Changed',channel,TYPE_CHANNEL)
 
 
     def addPage (self, widget, id):
@@ -608,23 +608,22 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
                     cell.set_property('foreground_rgba',Gdk.RGBA(0,0,0,1))
 
 
-    def channel_Highlight(self, a, channel, b):
+    def channel_Highlight(self, a, channel, type,b ):
         """
         :Description: Highlights a channel ( that is **not** in focus ) that has received an update and
         changes it's foreground colour to represent change in contents
 
         :param a: not used
         :param channel: **(str)** The channel the message is intended for
+        :param type: either TYPE_CHANNEL or TYPE_PERSONAL
         :param b:  not used
         :return: None
         """
-        chan_ref = re.compile('^[\dCS]h*[eo]*[su]*[st]*') # reg-exp to determine channel or person
-
         jList = self.joinedList
         lc = jList.leftcol      # treeViewColumn
 
         model , cur_iter = jList.get_selection().get_selected() #Selected iter
-        if ((not chan_ref.search(channel)) or len(channel) > 5 ): # len() required for names begining with 'Shout' or 'Chess'
+        if type == TYPE_PERSONAL:
             channel = "person" + channel.lower()
         temp_iter = jList.id2iter[channel]
         temp_iter = jList.sort_model.convert_child_iter_to_iter(temp_iter)[1] #channel iter
