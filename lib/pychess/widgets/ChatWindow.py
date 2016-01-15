@@ -624,7 +624,7 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         lc = jList.leftcol      # treeViewColumn
 
         model , cur_iter = jList.get_selection().get_selected() #Selected iter
-        if ((not chan_ref.search(channel)) and len(channel) > 5 ): # len() required for names begining with 'Shout' or 'Chess'
+        if ((not chan_ref.search(channel)) or len(channel) > 5 ): # len() required for names begining with 'Shout' or 'Chess'
             channel = "person" + channel.lower()
         temp_iter = jList.id2iter[channel]
         temp_iter = jList.sort_model.convert_child_iter_to_iter(temp_iter)[1] #channel iter
