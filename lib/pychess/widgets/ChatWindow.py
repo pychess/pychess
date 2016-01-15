@@ -282,6 +282,7 @@ class ViewsPanel (Gtk.Notebook, Panel):
     def onPersonMessage (self, cm, name, title, isadmin, text, name_, chatView):
         if name.lower() == name_.lower():
             chatView.addMessage(name, text)
+            self.emit('channel_content_Changed',name_)
 
     def onChannelMessage (self, cm, name, isadmin, isme, channel, text, name_, chatView):
         if channel.lower() == name_.lower() and not isme:
@@ -617,11 +618,14 @@ class ChannelsPanel (Gtk.ScrolledWindow, Panel):
         :param b:  not used
         :return: None
         """
+        chan_ref = re.compile('^[\dCS]h*[eo]*[su]*[st]*') # reg-exp to determine channel or person
 
         jList = self.joinedList
         lc = jList.leftcol      # treeViewColumn
 
         model , cur_iter = jList.get_selection().get_selected() #Selected iter
+        if ((not chan_ref.search(channel)) and len(channel) > 5 ): # len() required for names begining with 'Shout' or 'Chess'
+            channel = "person" + channel.lower()
         temp_iter = jList.id2iter[channel]
         temp_iter = jList.sort_model.convert_child_iter_to_iter(temp_iter)[1] #channel iter
         jList.get_selection().select_iter(temp_iter)
