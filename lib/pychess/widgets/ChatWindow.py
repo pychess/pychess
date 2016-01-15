@@ -10,6 +10,7 @@ from pychess.Utils.IconLoader import load_icon
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
+from pychess.widgets import insert_formatted
 from pychess.widgets.ChatView import ChatView
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import NORTH, EAST, SOUTH, WEST, CENTER
@@ -378,11 +379,10 @@ class InfoPanel (Gtk.Notebook, Panel):
             tv.set_cursor_visible(False)
             tv.props.wrap_mode = Gtk.WrapMode.WORD
 
-            tb = tv.get_buffer()
-            iter = tb.get_end_iter()
+            iter = tv.get_buffer().get_end_iter()
             for i, note in enumerate(finger.getNotes()):
                 if note:
-                    tb.insert(iter, "%s: %s\n" % (i+1, note))
+                    insert_formatted(tv, iter, "%s\n" % note)
             tv.show_all()
             sw = Gtk.ScrolledWindow()
             sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
