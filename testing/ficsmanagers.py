@@ -885,7 +885,8 @@ class ConsoleManagerTests(EmittingTestCase):
         self.manager = self.connection.com
     
     def test1 (self):
-        lines = [BLOCK_START + '138' + BLOCK_SEPARATOR + '37' + BLOCK_SEPARATOR,
+        # id=0 needed here to let consolehandler work
+        lines = [BLOCK_START + '0' + BLOCK_SEPARATOR + '37' + BLOCK_SEPARATOR,
                  "Finger of mgatto:",
                  "",
                  "On for: 44 mins   Idle: 0 secs",
@@ -910,7 +911,7 @@ class ConsoleManagerTests(EmittingTestCase):
                  BLOCK_END]
         expected_result = [TelnetLine(line, 37) for line in lines[1:-1]]
         expected_result.append(TelnetLine('', 37))
-        self.runAndAssertEquals("consoleMessage", lines, (expected_result,))
+        self.runAndAssertEquals("consoleMessage", lines, (expected_result, None))
 
 if __name__ == '__main__':
     unittest.main()
