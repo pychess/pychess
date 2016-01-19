@@ -121,6 +121,8 @@ class ICLounge (GObject.GObject):
         self.chat = ChatWindow(self.widgets, self.connection)
         self.console = ConsoleWindow(self.widgets, self.connection)
 
+        self.connection.com.onConsoleMessage("", self.connection.ini_messages)
+
         self.connection.lounge_loaded.set()
         log.debug("ICLounge.__init__: finished")
 

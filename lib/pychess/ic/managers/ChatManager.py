@@ -118,14 +118,9 @@ class ChatManager (GObject.GObject):
         # Setting 'Lang' is a workaround for
         # http://code.google.com/p/pychess/issues/detail?id=376
         # and can be removed when conversion to FICS block mode is done
-        self.connection.lvm.setVariable("Lang", "English")
+        self.connection.client.run_command("set Lang English")
 
-        # We shouldn't touch any user variables
-        ###self.connection.lvm.setVariable("kibitz", 0)
-        ###self.connection.lvm.setVariable("ctell", 1)
-        ###self.connection.lvm.setVariable("tell", 1)
-
-        self.connection.lvm.setVariable("height", 240)
+        self.connection.client.run_command("set height 240")
 
         self.connection.client.run_command("inchannel %s" % self.connection.username)
         self.connection.client.run_command("help channel_list")
@@ -182,10 +177,6 @@ class ChatManager (GObject.GObject):
 
     def getJoinedChannels(self):
         channels = self.connection.lvm.getList("channel")
-        if self.connection.lvm.getVariable("shout"):
-            channels.add(CHANNEL_SHOUT)
-        if self.connection.lvm.getVariable("cshout"):
-            channels.add(CHANNEL_CSHOUT)
         return channels
 
     channelListItem = re.compile("((?:\d+,?)+)\s*(.*)")
@@ -344,15 +335,10 @@ class ChatManager (GObject.GObject):
         self.connection.client.run_command("inchannel %s" % channel)
 
     def joinChannel (self, channel):
-        if channel in (CHANNEL_SHOUT, CHANNEL_CSHOUT):
-            self.connection.lvm.setVariable(channel, 1)
         self.connection.client.run_command("+channel %s" % channel)
 
     def removeChannel (self, channel):
-        if channel in (CHANNEL_SHOUT, CHANNEL_CSHOUT):
-            self.connection.lvm.setVariable(channel, 0)
         self.connection.client.run_command("-channel %s" % channel)
-
 
     def mayTellChannel (self, channel):
         if self.connection.isRegistred() or channel in ("4", "7", "53"):

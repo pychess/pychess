@@ -200,6 +200,7 @@ class FICSConnection (Connection):
                 got = self.client.read_until("Press return",
                                              "If it is yours, type the password.",
                                              "guest connections have been prevented")
+                #got = 2
                 if got == 1:
                     raise LogOnException(REGISTERED % self.username)
                 elif got == 2:
@@ -247,7 +248,7 @@ class FICSConnection (Connection):
             self.client.run_command("iset ms 1")
             self.client.run_command("set seek 0")
             
-            self._start_managers()
+            self._start_managers(lines)
             self.connecting = False
             self.connected = True
             self.emit("connected")
@@ -301,6 +302,7 @@ class FICSMainConnection (FICSConnection):
         FICSConnection.__init__(self, host, ports, username, password)
         self.lvm = None
         self.notify_users = []
+        self.ini_messages = []
         self.lounge_loaded = Event()
         self.players = FICSPlayers(self)
         self.games = FICSGames(self)
@@ -321,26 +323,20 @@ class FICSMainConnection (FICSConnection):
             FICSConnection.close(self)
         
     def _post_connect_hook (self, lines):
+        self.ini_messages = lines.splitlines()
         notify_users = re.search(
             "Present company includes: ((?:%s ?)+)\." % NAMES_RE, lines)
         if notify_users:
             self.notify_users.extend(notify_users.groups()[0].split(" "))
 
-    def _start_managers (self):
-        # Important: As the other managers use ListAndVarManager, we need it
-        # to be instantiated first. We might decide that the purpose of this
-        # manager is different - used by different parts of the code - so it
-        # should be implemented into the FICSConnection somehow.
-        self.lvm = ListAndVarManager(self)
-        while not self.lvm.isReady():
-            self.client.parse()
-#           print "self.lvm.setVariable"
-        self.lvm.setVariable("interface", NAME+" "+pychess.VERSION)
+    def _start_managers (self, lines):
+        self.client.run_command("set interface %s %s" % (NAME, pychess.VERSION))
 
         # FIXME: Some managers use each other to avoid regexp collapse. To
         # avoid having to init the in a specific order, connect calls should
         # be moved to a "start" function, so all managers would be in
         # the connection object when they are called
+        self.lvm = ListAndVarManager(self)
         self.em = ErrorManager(self)
         self.glm = SeekManager(self)
         self.bm = BoardManager(self)
@@ -358,14 +354,15 @@ class FICSMainConnection (FICSConnection):
         self.challenges.start()
 
         # disable setting iveriables from console
-        self.lvm.setVariable("lock", 1)
+        self.client.run_command("iset lock 1")
+
 
 class FICSHelperConnection (FICSConnection):
     def __init__ (self, main_conn, host, ports, username="guest", password=""):
         FICSConnection.__init__(self, host, ports, username, password)
         self.main_conn = main_conn
 
-    def _start_managers (self):
+    def _start_managers (self, lines):
         # The helper just wants only player and game notifications
         self.main_conn.lounge_loaded.wait()
         # set open 1 is a requirement for availinfo notifications

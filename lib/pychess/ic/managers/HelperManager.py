@@ -64,7 +64,7 @@ class HelperManager (GObject.GObject):
             self.helperconn.client.run_command("who")
         else:
             self.helperconn.client.run_command("who IbslwBzSLx")
-            
+
         self.games = []
         if self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.client.run_command("games")

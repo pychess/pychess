@@ -283,24 +283,21 @@ class BoardManager (GObject.GObject):
         self.gamesImObserving = {}
         
         # The ms ivar makes the remaining second fields in style12 use ms
-        self.connection.lvm.setVariable("ms", 1)
+        self.connection.client.run_command("iset ms 1")
         # Style12 is a must, when you don't want to parse visualoptimized stuff
-        self.connection.lvm.setVariable("style", "12")
+        self.connection.client.run_command("set style 12")
         # When we observe fischer games, this puts a startpos in the movelist
-        self.connection.lvm.setVariable("startpos", 1)
+        self.connection.client.run_command("iset startpos 1")
         # movecase ensures that bc3 will never be a bishop move
-        self.connection.lvm.setVariable("movecase", 1)
+        self.connection.client.run_command("iset movecase 1")
         # don't unobserve games when we start a new game
-        self.connection.lvm.setVariable("unobserve", 3)
+        self.connection.client.run_command("set unobserve 3")
         self.connection.lvm.autoFlagNotify()
         
         # gameinfo <g1> doesn't really have any interesting info, at least not
         # until we implement crasyhouse and stuff
-        # self.connection.lvm.setVariable("gameinfo", 1)
+        # self.connection.client.run_command("iset gameinfo 1")
         
-        # We don't use deltamoves as fisc won't send them with variants
-        #self.connection.lvm.setVariable("compressmove", 1)
-
     def start (self):    
         self.connection.games.connect("FICSGameEnded", self.onGameEnd)
         

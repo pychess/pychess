@@ -122,12 +122,13 @@ TelnetLine = collections.namedtuple('TelnetLine', ['line', 'code'])
 EmptyTelnetLine = TelnetLine("", None)
 
 class TelnetLines (object):
-    def __init__ (self, telnet):
+    def __init__ (self, telnet, show_reply):
         self.telnet = telnet
         self.lines = collections.deque()
         self._block_mode = False
         self._line_prefix = None
         self.consolehandler = None
+        self.show_reply = show_reply
         
     @property
     def block_mode (self):
@@ -159,6 +160,7 @@ class TelnetLines (object):
     def _get_lines (self):
         lines = []
         line = self.telnet.readline()
+        id = 0
         
         if line.startswith(self.line_prefix):
             line = line[len(self.line_prefix)+1:]
@@ -174,6 +176,7 @@ class TelnetLines (object):
                             extra={"task": (self.telnet.name, "lines")})
                 return lines
             code = int(code)
+            id = int(id)
             line = text if text else self.telnet.readline()
             
             while not line.endswith(BLOCK_END):
@@ -190,7 +193,9 @@ class TelnetLines (object):
         log.debug("\n".join(line.line for line in lines).strip(),
                   extra={"task": (self.telnet.name, "lines")})
         if self.consolehandler:
-            self.consolehandler.handle(lines)
+            if id == 0 or id in self.show_reply:
+                self.consolehandler.handle(lines)
+                #self.show_reply.discard(id)
         
         return lines
     
@@ -199,8 +204,9 @@ class PredictionsTelnet (object):
         self.telnet = telnet
         self.predictions = predictions
         self.reply_cmd_dict = reply_cmd_dict
-        self.lines = TelnetLines(telnet)
-        self.__command_id = 0
+        self.show_reply = set([])
+        self.lines = TelnetLines(telnet, self.show_reply)
+        self.__command_id = 1
     
     def parse (self):
         line = self.lines.popleft()
@@ -232,12 +238,14 @@ class PredictionsTelnet (object):
             
         return answer
         
-    def run_command(self, text):
+    def run_command(self, text, show_reply=False):
         log.debug(text, extra={"task": (self.telnet.name, "run_command")})
         if self.lines.block_mode:
             # TODO: reuse id after command reply handled
             self.__command_id += 1
             text = "%s %s\n" % (self.__command_id, text)
+            if show_reply:
+                self.show_reply.add(self.__command_id)
             return self.telnet.write(text)
         else:
             return self.telnet.write("%s\n" % text)

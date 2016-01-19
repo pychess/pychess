@@ -106,15 +106,19 @@ class ICLogon (object):
                     obj.disconnect(cid)
         self.cids.clear()
         
-        self.connection.close()
-        self.helperconn.close()
-        self.connection = None
-        self.helperconn = None
+        if self.connection is not None:
+            self.connection.close()
+            self.connection = None
+        if self.helperconn is not None:
+            self.helperconn.close()
+            self.helperconn = None
         self.lounge = None
     
     def _cancel (self):
-        self.connection.cancel()
-        self.helperconn.cancel()
+        if self.connection is not None:
+            self.connection.cancel()
+        if self.helperconn is not None:
+            self.helperconn.cancel()
         self._disconnect()
     
     def show (self):
@@ -225,6 +229,7 @@ class ICLogon (object):
         self.host = host if host is not None else alternate_host if alternate_host else "freechess.org"
         self.connection = FICSMainConnection(self.host, ports, username, password)
         self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
+        self.helperconn.connect("error", self.onHelperConnectionError)
         self.helperconn.start()
         for signal, callback in (("connected", self.onConnected),
                                  ("error", self.onConnectionError),
@@ -232,6 +237,13 @@ class ICLogon (object):
             self.cids[self.connection].append(
                 self.connection.connect(signal, callback))
         self.connection.start()
+
+    @idle_add
+    def onHelperConnectionError (self, connection, error):
+        if self.helperconn is not None:
+            self.helperconn.cancel()
+            self.helperconn.close()
+            self.helperconn = None
     
     @idle_add
     def onConnected (self, connection):

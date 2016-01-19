@@ -97,7 +97,7 @@ class OfferManager (GObject.GObject):
         self.lastPly = 0
         self.offers = {}
         
-        self.connection.lvm.setVariable("pendinfo", 1)
+        self.connection.client.run_command("iset pendinfo 1")
     
     def onOfferDeclined (self, match):
         log.debug("OfferManager.onOfferDeclined: match.string=%s" % match.string)

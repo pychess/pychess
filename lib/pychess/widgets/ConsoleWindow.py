@@ -52,7 +52,11 @@ class ConsoleWindow (object):
     def filter_unprintable(s):
         return ''.join([c for c in s if ord(c) > 31 or ord(c) == 9])
 
-    def onConsoleMessage(self, com, lines):
+    def onConsoleMessage(self, com, lines, ini_lines=None):
+        if ini_lines is not None:
+            for line in ini_lines:
+                self.consoleView.addMessage(line, False)
+
         for line in lines:
             line = self.filter_unprintable(line.line)
             if line and not line.startswith('<'):
@@ -129,36 +133,9 @@ class ConsoleView (Gtk.VPaned):
         if event.keyval in map(Gdk.keyval_from_name,("Return", "KP_Enter")):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
-                self.connection.client.run_command(buffer.props.text)
+                self.connection.client.run_command(buffer.props.text, show_reply=True)
                 self.emit("messageTyped", buffer.props.text)
                 self.addMessage(buffer.props.text, True)
-
-                # Maintain variables backup, it will be restored to fics on quit
-                for var in self.connection.lvm.variablesBackup:
-                    if buffer.props.text == "set %s" % var:
-                        if self.connection.lvm.variablesBackup[var] == 0:
-                            self.connection.lvm.variablesBackup[var] = 1
-                        else:
-                            self.connection.lvm.variablesBackup[var] = 0
-                    elif buffer.props.text in ("set %s 1" % var, "set %s on" % var, "set %s true" % var):
-                        self.connection.lvm.variablesBackup[var] = 1
-                    elif buffer.props.text in ("set %s 0" % var, "set %s off" % var, "set %s false" % var):
-                        self.connection.lvm.variablesBackup[var] = 0
-                    elif buffer.props.text.startswith("set %s " % var):
-                        parts = buffer.props.text.split()
-                        if len(parts) == 3 and parts[2]:
-                            self.connection.lvm.variablesBackup[var] = parts[2]
-
-                # Maintain lists backup, it will be restored to fics on quit
-                for list in self.connection.lvm.personalBackup:
-                    if buffer.props.text.startswith("addlist %s " % var) or buffer.props.text.startswith("+%s " % var):
-                        parts = buffer.props.text.split()
-                        if len(parts) == 3 and parts[2]:
-                            self.connection.lvm.personalBackup[var].add(parts[2])
-                    if buffer.props.text.startswith("sublist %s " % var) or buffer.props.text.startswith("-%s " % var):
-                        parts = buffer.props.text.split()
-                        if len(parts) == 3 and parts[2]:
-                            self.connection.lvm.personalBackup[var].discard(parts[2])
 
                 self.history.append(buffer.props.text)
                 buffer.props.text = ""

@@ -54,9 +54,9 @@ class SeekManager (GObject.GObject):
             "<sr> (\d+)",
             "",
             "<sn> (.+)")
-        self.connection.lvm.setVariable("seekinfo", 1)
-        self.connection.lvm.setVariable("seekremove", 1)
-        self.connection.lvm.setVariable("showownseek", 1)
+        self.connection.client.run_command("iset seekinfo 1")
+        self.connection.client.run_command("iset seekremove 1")
+        self.connection.client.run_command("set showownseek 1")
         
     def seek (self, startmin, incsec, game_type, rated, ratings=(0, 9999),
               color=None, manual=False):
@@ -171,7 +171,7 @@ class SeekManager (GObject.GObject):
     on_seek_updated.BLKCMD = BLKCMD_SEEK
     
     def refresh_seeks (self):
-        self.connection.lvm.setVariable("seekinfo", 1)
+        self.connection.client.run_command("iset seekinfo 1")
     
 if __name__ == "__main__":
     assert type_to_display_text("Loaded from eco/a00") == type_to_display_text("eco/a00") == "Eco A00"
