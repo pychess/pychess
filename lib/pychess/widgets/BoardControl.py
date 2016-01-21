@@ -12,6 +12,7 @@ import threading
 
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
+from pychess.System import conf
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move, parseAny, toAN
 from pychess.Utils.const import *
@@ -120,11 +121,14 @@ class BoardControl (Gtk.EventBox):
             elif len(self.variant.PROMOTIONS) == 1:
                 promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
             else:
-                promotion = self.getPromotion()
-                if promotion is None:
-                    # Put back pawn moved be d'n'd
-                    self.view.runAnimation(redrawMisc = False)
-                    return
+                if conf.get("autoPromote", True):
+                    promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
+                else:
+                    promotion = self.getPromotion()
+                    if promotion is None:
+                        # Put back pawn moved be d'n'd
+                        self.view.runAnimation(redrawMisc = False)
+                        return
         if cord0.x < 0 or cord0.x > self.FILES-1:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
         else:

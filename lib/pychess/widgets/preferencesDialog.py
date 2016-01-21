@@ -68,7 +68,7 @@ class GeneralTab:
             uistuff.keep(widgets[key], key)
 
         # Options on by default
-        for key in ("autoRotate", "fullAnimation", "showBlunder"):
+        for key in ("autoRotate", "autoPromote", "fullAnimation", "showBlunder"):
             uistuff.keep(widgets[key], key, first_value=True)
 
 ################################################################################
