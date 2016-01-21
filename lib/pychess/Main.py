@@ -153,15 +153,7 @@ class GladeHandlers:
     def on_recent_game_activated (gamemodel, uri):
         if isinstance(uri, basestring):
             path = url2pathname(uri)
-            if GObject.pygobject_version >= (3, 7, 4):
-                recent_data = Gtk.RecentData()
-                recent_data.mime_type = 'application/x-chess-pgn'
-                recent_data.app_name = 'pychess'
-                recent_data.app_exec = 'pychess'
-                #recent_data.groups = ['pychess']    # cannot add groups in python https://bugzilla.gnome.org/show_bug.cgi?id=695970
-                recentManager.add_full("file:"+pathname2url(path), recent_data)
-            else:
-                recentManager.add_item("file:"+pathname2url(path))
+            recentManager.add_item("file:"+pathname2url(path))
     
     def on_gmwidg_closed (gmwidg):
         log.debug("GladeHandlers.on_gmwidg_closed")
@@ -495,8 +487,8 @@ class PyChess:
                 GLib.idle_add(newGameDialog.LoadFileExtension.run, chess_file)
             discoverer.connect_after("all_engines_discovered", do)
 
-def run (no_debug, idle_add_debug, thread_debug, log_viewer, chess_file,
-         ics_host, ics_port):
+def run (no_debug, idle_add_debug, thread_debug, log_viewer,
+         purge_recent, chess_file, ics_host, ics_port):
     # Start logging
     if log_viewer:
         log.logger.addHandler(GLogHandler(logemitter))
@@ -512,7 +504,14 @@ def run (no_debug, idle_add_debug, thread_debug, log_viewer, chess_file,
         except OSError as e:
             pass
         l -= 1
-        
+    
+    if purge_recent:
+        items = recentManager.get_items()
+        for item in items:
+            uri = item.get_uri()
+            if item.get_application_info("pychess"):
+                recentManager.remove_item(uri)
+
     signal.signal(signal.SIGINT, Gtk.main_quit)
     signal.signal(signal.SIGTERM, Gtk.main_quit)
     def cleanup ():

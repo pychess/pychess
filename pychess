@@ -143,6 +143,8 @@ parser.add_argument('--thread-debug', action='store_true',
     help='turn on thread debugging output')
 parser.add_argument('--log-viewer', action='store_true',
     help='enable Log Viewer menu')
+parser.add_argument('--purge-recent', action='store_true',
+    help='purge recent games menu')
 parser.add_argument('--ics-host', action='store',
     help='the hostname of internet chess server (default is freechess.org)')
 parser.add_argument('--ics-port', action='store', type=int,
@@ -155,6 +157,7 @@ no_debug = args.no_debug
 idle_add_debug = args.idle_add_debug
 thread_debug = args.thread_debug
 log_viewer = args.log_viewer
+purge_recent = args.purge_recent
 chess_file = args.chess_file
 ics_host = args.ics_host
 ics_port = args.ics_port
@@ -164,4 +167,4 @@ ics_port = args.ics_port
 
 import pychess.Main
 pychess.Main.run(no_debug, idle_add_debug, thread_debug, log_viewer,
-                 chess_file, ics_host, ics_port)
+                 purge_recent, chess_file, ics_host, ics_port)
