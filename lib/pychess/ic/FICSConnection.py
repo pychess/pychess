@@ -246,7 +246,6 @@ class FICSConnection (Connection):
                 self.client.lines.block_mode = True
             self.client.run_command("iset defprompt 1")
             self.client.run_command("iset ms 1")
-            self.client.run_command("set seek 0")
             
             self._start_managers(lines)
             self.connecting = False
