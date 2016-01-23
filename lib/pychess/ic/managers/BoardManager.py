@@ -438,9 +438,11 @@ class BoardManager (GObject.GObject):
                 self.gamemodelStartedEvents[game.gameno].wait()
             else:
                 if isinstance(game, FICSHistoryGame):
-                    self.connection.client.run_command("smoves %s %s" % (self.connection.username, game.history_no))
+                    self.connection.client.run_command("smoves %s %s" % (self.connection.history_owner, game.history_no))
+                elif isinstance(game, FICSJournalGame):
+                    self.connection.client.run_command("smoves %s %%%s" % (self.connection.journal_owner, game.journal_no))
                 elif isinstance(game, FICSAdjournedGame):
-                    self.connection.client.run_command("smoves %s" % game.opponent.name)
+                    self.connection.client.run_command("smoves %s %s" % (self.connection.stored_owner, game.opponent.name))
                 self.connection.client.run_command("forward 999")
         else:
             self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)

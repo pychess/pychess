@@ -95,6 +95,34 @@ class FromPlusPrediction (MultipleLinesPrediction):
         del self.matchlist[:]
         return RETURN_NO_MATCH
 
+class FromABPlusPrediction (MultipleLinesPrediction):
+    def __init__ (self, callback, regexp0, regexp1, regexp2):
+        MultipleLinesPrediction.__init__(self, callback, regexp0, regexp1, regexp2)
+    
+    def handle (self, line):
+        if not self.matchlist:
+            match = self.regexps[0].match(line)
+            if match:
+                self.matchlist.append(match)
+                return RETURN_NEED_MORE
+        elif len(self.matchlist) == 1:
+            match = self.regexps[1].match(line)
+            if match:
+                self.matchlist.append(match)
+                return RETURN_NEED_MORE
+        else:
+            match = self.regexps[2].match(line)
+            if match:
+                self.matchlist.append(match)
+                return RETURN_NEED_MORE
+            else:
+                self.matches = [m.string for m in self.matchlist]
+                self.callback(self.matchlist)
+                del self.matchlist[:]
+                return RETURN_MATCH_END
+        del self.matchlist[:]
+        return RETURN_NO_MATCH
+
 class FromToPrediction (MultipleLinesPrediction):
     def __init__ (self, callback, regexp0, regexp1):
         MultipleLinesPrediction.__init__(self, callback, regexp0, regexp1)

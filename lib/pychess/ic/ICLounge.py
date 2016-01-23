@@ -1473,16 +1473,14 @@ class AdjournedTabSection (ParrentListSection):
         self.infobar = lounge.infobar
         self.games = {}
         self.messages = {}
-        self.wpix = get_pixbuf("glade/white.png")
-        self.bpix = get_pixbuf("glade/black.png")
         self.tv = widgets["adjournedtreeview"]
-        self.store = Gtk.ListStore(FICSGame, str, GdkPixbuf.Pixbuf, str, str,
+        self.store = Gtk.ListStore(FICSGame, str, str, str, str,
                                    str, str, str, int)
         self.model = Gtk.TreeModelSort(model=self.store)
         self.tv.set_model(self.model)
-        self.addColumns (self.tv, "FICSGame", "", _("Color"),
-            _("Opponent"), _("Is Online"), _("Time Control"), _("Game Type"),
-            _("Date/Time"), "sortable_time", hide=[0,8], pix=[2])
+        self.addColumns (self.tv, "FICSGame", _("White"), _("result"),
+            _("Black"), _("Is Online"), _("Time Control"), _("Game Type"),
+            _("Date/Time"), "sortable_time", hide=[0, 8])
         self.selection = self.tv.get_selection()
         self.selection.connect("changed", self.onSelectionChanged)
         self.onSelectionChanged(self.selection)
@@ -1492,6 +1490,8 @@ class AdjournedTabSection (ParrentListSection):
         self.connection.games.connect("FICSAdjournedGameRemoved", self.onAdjournedGameRemoved)
         self.connection.adm.connect("historyGameAdded", self.onHistoryGameAdded)
         self.connection.games.connect("FICSHistoryGameRemoved", self.onHistoryGameRemoved)
+        self.connection.adm.connect("journalGameAdded", self.onJournalGameAdded)
+        self.connection.games.connect("FICSJournalGameRemoved", self.onJournalGameRemoved)
 
         widgets["resignButton"].connect("clicked", self.onResignButtonClicked)
         widgets["abortButton"].connect("clicked", self.onAbortButtonClicked)
@@ -1509,7 +1509,8 @@ class AdjournedTabSection (ParrentListSection):
         if treeiter != None:
             a_row_is_selected = True
             game = model.get_value(treeiter, 0)
-            if isinstance(game, FICSAdjournedGame):
+            if isinstance(game, FICSAdjournedGame) and \
+                self.connection.stored_owner == self.connection.username:
                 make_sensitive_if_available(self.widgets["resumeButton"], game.opponent)
                 for button in ("resignButton", "abortButton", "drawButton"):
                     self.widgets[button].set_sensitive(True)
@@ -1606,8 +1607,7 @@ class AdjournedTabSection (ParrentListSection):
     @idle_add
     def onAdjournedGameAdded (self, adm, game):
         if game not in self.games:
-            pix = (self.wpix, self.bpix)[game.our_color]
-            ti = self.store.append([game, "*", pix, game.opponent.name,
+            ti = self.store.append([game, game.wplayer.name, reprResult[game.result], game.bplayer.name,
                 game.opponent.display_online, game.display_timecontrol,
                 game.game_type.display_text, game.display_time, game.sortable_time])
             self.games[game] = {}
@@ -1625,16 +1625,19 @@ class AdjournedTabSection (ParrentListSection):
     @idle_add
     def onHistoryGameAdded (self, adm, game):
         if game not in self.games:
-            pix = (self.wpix, self.bpix)[game.our_color]
-            if game.result == DRAW:
-                result = "="
-            elif (game.our_color == WHITE and game.result == WHITEWON) or \
-                 (game.our_color == BLACK and game.result == BLACKWON):
-                result = "+"
-            else:
-                result = "–"
-            ti = self.store.append([game, result, pix, game.opponent.name,
-                game.opponent.display_online, game.display_timecontrol,
+            ti = self.store.append([game, game.wplayer.name, reprResult[game.result], game.bplayer.name,
+                game.wplayer.display_online, game.display_timecontrol,
+                game.game_type.display_text, game.display_time, game.sortable_time])
+            self.games[game] = {}
+            self.games[game]["ti"] = ti
+
+        return False
+
+    @idle_add
+    def onJournalGameAdded (self, adm, game):
+        if game not in self.games:
+            ti = self.store.append([game, game.wplayer.name, reprResult[game.result], game.bplayer.name,
+                game.wplayer.display_online, game.display_timecontrol,
                 game.game_type.display_text, game.display_time, game.sortable_time])
             self.games[game] = {}
             self.games[game]["ti"] = ti
@@ -1660,6 +1663,15 @@ class AdjournedTabSection (ParrentListSection):
 
     @idle_add
     def onHistoryGameRemoved (self, adm, game):
+        if game in self.games:
+            if self.store.iter_is_valid(self.games[game]["ti"]):
+                self.store.remove(self.games[game]["ti"])
+            del self.games[game]
+
+        return False
+
+    @idle_add
+    def onJournalGameRemoved (self, adm, game):
         if game in self.games:
             if self.store.iter_is_valid(self.games[game]["ti"]):
                 self.store.remove(self.games[game]["ti"])

@@ -34,6 +34,7 @@ from .FICSObjects import *
 from .TimeSeal import TimeSeal, CanceledException
 from .VerboseTelnet import LinePrediction
 from .VerboseTelnet import FromPlusPrediction
+from .VerboseTelnet import FromABPlusPrediction
 from .VerboseTelnet import FromToPrediction
 from .VerboseTelnet import PredictionsTelnet
 from .VerboseTelnet import NLinesPrediction
@@ -108,6 +109,9 @@ class Connection (GObject.GObject, Thread):
     
     def expect_fromplus (self, callback, regexp0, regexp1):
         self.expect(FromPlusPrediction(callback, regexp0, regexp1))
+
+    def expect_fromABplus (self, callback, regexp0, regexp1, regexp2):
+        self.expect(FromABPlusPrediction(callback, regexp0, regexp1, regexp2))
     
     def expect_fromto (self, callback, regexp0, regexp1):
         self.expect(FromToPrediction(callback, regexp0, regexp1))
@@ -308,6 +312,9 @@ class FICSMainConnection (FICSConnection):
         self.seeks = FICSSeeks(self)
         self.challenges = FICSChallenges(self)
         self.examined_game = None
+        self.stored_owner  = self.username
+        self.history_owner = self.username
+        self.journal_owner = self.username
     
     def close (self):
         try:
