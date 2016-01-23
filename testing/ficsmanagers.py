@@ -152,9 +152,10 @@ class AdjournManagerTests(EmittingTestCase):
         
         signal = 'onAdjournmentsList'
         
-        lines = ['    C Opponent       On Type          Str  M    ECO Date',
-            ' 1: W gbtami         N [ wr  2   2] 31-31 W18  --- Wed Dec 23, 06:58 PST 2009',
-            'fics% ']
+        lines = ['Stored games for tester:',
+                 '    C Opponent       On Type          Str  M    ECO Date',
+                 ' 1: W gbtami         N [ wr  2   2] 31-31 W18  --- Wed Dec 23, 06:58 PST 2009',
+                 'fics% ']
         
         gametime = datetime.datetime(2009, 12, 23, 6, 58)
         us = self.connection.players.get(FICSPlayer(self.connection.getUsername()))
@@ -171,7 +172,8 @@ class AdjournManagerTests(EmittingTestCase):
         
         signal = 'onAdjournmentsList'
         
-        lines = ['    C Opponent       On Type          Str  M    ECO Date',
+        lines = ['Stored games for tester:',
+                 '    C Opponent       On Type          Str  M    ECO Date',
                  ' 1: W TheDane       N [ br  2  12]  0-0  B2   ??? Sun Nov 23,  6:14 CST 1997',
                  ' 2: W PyChess       Y [psu  2  12] 39-39 W3   C20 Sun Jan 11, 17:40 ??? 2009',
                  'fics% ']

@@ -85,7 +85,7 @@ class AdjournManager (GObject.GObject):
         #TODO: Connect to adjourned game as adjudicated
     
     def __onStoredResponseYES (self, matchlist):
-        #Stored games of User: 
+        #Stored games for User: 
         #     C Opponent     On Type          Str  M    ECO Date
         #  1: W TheDane       N [ br  2  12]  0-0  B2   ??? Sun Nov 23,  6:14 CST 1997
         #  2: W PyChess       Y [psu  2  12] 39-39 W3   C20 Sun Jan 11, 17:40 ??? 2009
