@@ -704,6 +704,7 @@ class SeekTabSection (ParrentListSection):
         self.connection.challenges.connect("FICSChallengeIssued", self.onChallengeAdd)
         self.connection.challenges.connect("FICSChallengeRemoved", self.onChallengeRemove)
         self.connection.glm.connect("our-seeks-removed", self.our_seeks_removed)
+        self.connection.glm.connect("assessReceived", self.onAssessReceived)
         self.connection.bm.connect("playGameCreated", self.onPlayingGame)
         self.connection.bm.connect("curGameEnded", self.onCurGameEnded)
 
@@ -728,18 +729,19 @@ class SeekTabSection (ParrentListSection):
         self.menu = Gtk.Menu()
         self.accept_item = Gtk.MenuItem(_("Accept"))
         self.accept_item.connect("activate", self.onAcceptClicked)
+        self.assess_item = Gtk.MenuItem(_("Assess"))
+        self.assess_item.connect("activate", self.on_assess)
         #self.challenge_item = Gtk.MenuItem(_("Challenge"))
         #self.challenge_item.connect("activate", self.on_challenge)
         #self.finger_item = Gtk.MenuItem(_("Finger"))
         #self.finger_item.connect("activate", self.on_finger)
-        #self.assess_item = Gtk.MenuItem(_("Assess"))
-        #self.assess_item.connect("activate", self.on_assess)
         self.archived_item = Gtk.MenuItem(_("Archived"))
         self.archived_item.connect("activate", self.on_archived)
         self.menu.append(self.accept_item)
+        self.menu.append(self.assess_item)
         #self.menu.append(self.challenge_item)
         #self.menu.append(self.finger_item)
-        #self.menu.append(self.assess_item)
+        self.menu.append(Gtk.SeparatorMenuItem())
         self.menu.append(self.archived_item)
         self.menu.attach_to_widget(self.tv, None)
 
@@ -759,7 +761,27 @@ class SeekTabSection (ParrentListSection):
         print("challenge")
 
     def on_assess(self, widget):
-        print("assess")
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        sought = model.get_value(iter, 0)
+        player1 = self.connection.username
+        player2 = sought.player.name
+        type = sought.game_type.short_fics_name
+        self.connection.glm.assess(player1, player2, type)
+
+    @idle_add
+    def onAssessReceived(self, glm, assess):
+        dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK)
+        dialog.set_markup(assess["type"])
+        text1 = "%-18s %18s\n" % (assess["names"][0],assess["names"][1])
+        text2 = "%-18s %18s\n" % (assess["oldRD"][0],assess["oldRD"][1])
+        text3 = "%-8s%13s%10s\n" % ("Win:", assess["win"][0],assess["win"][1])
+        text4 = "%-8s%12s%10s\n" % ("Draw:", assess["draw"][0],assess["draw"][1])
+        text5 = "%-8s%12s%10s\n" % ("Loss:", assess["loss"][0],assess["loss"][1])
+        text6 = "%-8s%10s%10s\n" % ("New RD:", assess["newRD"][0],assess["newRD"][1])
+        dialog.format_secondary_text(text1+text2+text3+text4+text5+text6)
+        dialog.run()
+        dialog.destroy()
 
     def on_finger(self, widget):
         print("finger")
@@ -1331,8 +1353,8 @@ class GameTabSection (ParrentListSection):
         self.model = Gtk.TreeModelSort(model=self.store)
         self.tv.set_model(self.model)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
-        self.addColumns(self.tv, "FICSGame", "", _("White Player"), _("Rating"),
-                        _("Black Player"), _("Rating"), _("Game Type"), _("Rated"),
+        self.addColumns(self.tv, "FICSGame", "", _("White"), _("Rating"),
+                        _("Black"), _("Rating"), _("Type"), _("Rated"),
                         hide=[0], pix=[1])
         self.tv.get_column(0).set_sort_column_id(0)
         self.model.set_sort_func(0, self.pixCompareFunction, 1)
@@ -1531,8 +1553,8 @@ class AdjournedTabSection (ParrentListSection):
                                    str, str, str, int)
         self.model = Gtk.TreeModelSort(model=self.store)
         self.tv.set_model(self.model)
-        self.addColumns (self.tv, "FICSGame", _("White"), _("Result"),
-            _("Black"), _("Rated"), _("Time Control"), _("Game Type"),
+        self.addColumns (self.tv, "FICSGame", _("White"), "",
+            _("Black"), _("Rated"), _("Clock"), _("Type"),
             _("Date/Time"), "sortable_time", hide=[0, 8])
         self.selection = self.tv.get_selection()
         self.selection.connect("changed", self.onSelectionChanged)

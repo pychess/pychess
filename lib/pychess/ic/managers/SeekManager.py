@@ -19,6 +19,7 @@ mf = "(?:([mf]{1,2})\s?)?"
 whomatch = "(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
 whomatch_re = re.compile(whomatch)
 rating_re = re.compile("[0-9]{2,}")
+type_re = "(Lightning|Blitz|Standard|Suicide|Wild|Crazyhouse|Bughouse|Losers|Atomic)"
 
 
 class SeekManager (GObject.GObject):
@@ -29,6 +30,7 @@ class SeekManager (GObject.GObject):
         'clearSeeks' : (GObject.SignalFlags.RUN_FIRST, None, ()),
         'our_seeks_removed' : (GObject.SignalFlags.RUN_FIRST, None, ()),
         'seek_updated' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'assessReceived' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
     
     def __init__ (self, connection):
@@ -54,6 +56,16 @@ class SeekManager (GObject.GObject):
             "<sr> (\d+)",
             "",
             "<sn> (.+)")
+
+        self.connection.expect_n_lines (self.on_assess,
+            "\s*%s\s*" % type_re,
+            "\s*(\w+)\s+(\w+)\s*",
+            "\s*(\(.+\))\s+(\(.+\))\s*",
+            "\s*Win: .+",
+            "\s*Draw: .+",
+            "\s*Loss: .+",
+            "\s*New RD: .+")
+
         self.connection.client.run_command("iset seekinfo 1")
         self.connection.client.run_command("iset seekremove 1")
         self.connection.client.run_command("iset showownseek 1")
@@ -74,9 +86,22 @@ class SeekManager (GObject.GObject):
             s += " %d-%d" % (ratings[0], ratings[1])
         
         self.connection.client.run_command(s, show_reply=True)
-    
-    ###
-    
+
+    def assess(self, player1, player2, type):
+        self.connection.client.run_command("assess %s %s /%s" % (player1, player2, type))
+
+    def on_assess(self, matchlist):
+        assess = {}
+        assess["type"] = matchlist[0].groups()[0]
+        assess["names"] = matchlist[1].groups()[0], matchlist[1].groups()[1]
+        assess["oldRD"] = matchlist[2].groups()[0], matchlist[2].groups()[1]
+        assess["win"] = matchlist[3].string.split()[1:]
+        assess["draw"] = matchlist[4].string.split()[1:]
+        assess["loss"] = matchlist[5].string.split()[1:]
+        assess["newRD"] = matchlist[6].string.split()[2:]
+        self.emit("assessReceived", assess)
+    on_assess.BLKCMD = BLKCMD_ASSESS
+
     def on_seek_add (self, match):
         # The <s> message looks like:
         # <s> index w=name_from ti=titles rt=rating t=time i=increment
