@@ -697,6 +697,7 @@ class SeekTabSection (ParrentListSection):
         self.widgets["acceptButton"].connect("clicked", self.onAcceptClicked)
         self.widgets["declineButton"].connect("clicked", self.onDeclineClicked)
         self.tv.connect("row-activated", self.row_activated)
+        self.tv.connect('button-press-event' , self.button_press_event)
 
         self.connection.seeks.connect("FICSSeekCreated", self.onAddSeek)
         self.connection.seeks.connect("FICSSeekRemoved", self.onRemoveSeek)
@@ -723,6 +724,58 @@ class SeekTabSection (ParrentListSection):
 
         uistuff.keep(self.model, "seektreeview_sort_order_col", get_sort_order, \
             lambda modelsort, value: set_sort_order(modelsort, value))
+
+        self.menu = Gtk.Menu()
+        self.accept_item = Gtk.MenuItem(_("Accept"))
+        self.accept_item.connect("activate", self.onAcceptClicked)
+        #self.challenge_item = Gtk.MenuItem(_("Challenge"))
+        #self.challenge_item.connect("activate", self.on_challenge)
+        #self.finger_item = Gtk.MenuItem(_("Finger"))
+        #self.finger_item.connect("activate", self.on_finger)
+        #self.assess_item = Gtk.MenuItem(_("Assess"))
+        #self.assess_item.connect("activate", self.on_assess)
+        self.archived_item = Gtk.MenuItem(_("Archived"))
+        self.archived_item.connect("activate", self.on_archived)
+        self.menu.append(self.accept_item)
+        #self.menu.append(self.challenge_item)
+        #self.menu.append(self.finger_item)
+        #self.menu.append(self.assess_item)
+        self.menu.append(self.archived_item)
+        self.menu.attach_to_widget(self.tv, None)
+
+    def button_press_event(self, treeview, event):
+        if event.button == 3: # right click
+            pathinfo = treeview.get_path_at_pos(int(event.x), int(event.y))
+            if pathinfo is not None:
+                path, col, cellx, celly = pathinfo
+                treeview.grab_focus()
+                treeview.set_cursor(path, col, 0)
+                self.menu.show_all()
+                self.menu.popup(None, None, None, None, event.button, Gtk.get_current_event_time())
+            return True
+        return False
+
+    def on_challenge(self, widget):
+        print("challenge")
+
+    def on_assess(self, widget):
+        print("assess")
+
+    def on_finger(self, widget):
+        print("finger")
+
+    def on_archived(self, widget):
+        model, iter = self.tv.get_selection().get_selected()
+        if iter == None: return
+        sought = model.get_value(iter, 0)
+        owner = sought.player.name
+        self.connection.adm.queryAdjournments(owner)
+        self.connection.adm.queryHistory(owner)
+        self.connection.adm.queryJournal(owner)
+        
+        notebook = self.widgets["notebook"]
+        archived = self.widgets["archiveListContent"]
+        notebook.set_current_page(notebook.page_num(archived))
 
     def textcolor_normal(self):
         sc = self.tv.get_style_context()
@@ -1516,7 +1569,7 @@ class AdjournedTabSection (ParrentListSection):
                 for button in ("resignButton", "abortButton", "drawButton"):
                     self.widgets[button].set_sensitive(True)
             else:
-                for button in ("resignButton", "abortButton", "drawButton"):
+                for button in ("resignButton", "abortButton", "drawButton", "resumeButton"):
                     self.widgets[button].set_sensitive(False)
         else:
             self.widgets["resumeButton"].set_sensitive(False)
@@ -1574,9 +1627,10 @@ class AdjournedTabSection (ParrentListSection):
     def online_changed (self, player, prop, game):
         log.debug("AdjournedTabSection.online_changed: %s %s" % \
             (repr(player), repr(game)))
-
+        partner = game.bplayer if game.wplayer.name == player.name else game.wplayer
+        result = "▷" if partner.name == self.connection.username and game.opponent.online else "*"
         try:
-            self.store.set(self.games[game]["ti"], 4, _("Online!") if player.online else "*")
+            self.store.set(self.games[game]["ti"], 2, result)
         except KeyError:
             pass
 
@@ -1608,7 +1662,9 @@ class AdjournedTabSection (ParrentListSection):
     @idle_add
     def onAdjournedGameAdded (self, adm, game):
         if game not in self.games:
-            ti = self.store.append([game, game.wplayer.name, reprResult[game.result], game.bplayer.name,
+            partner = game.bplayer if game.wplayer.name == game.opponent.name else game.wplayer
+            result = "▷" if partner.name == self.connection.username and game.opponent.online else "*"
+            ti = self.store.append([game, game.wplayer.name, result, game.bplayer.name,
                 game.display_rated, game.display_timecontrol,
                 game.game_type.display_text, game.display_time, game.sortable_time])
             self.games[game] = {}

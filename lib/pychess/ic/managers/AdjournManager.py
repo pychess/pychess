@@ -42,17 +42,14 @@ class AdjournManager (GObject.GObject):
         
         self.connection = connection
         
-        self.connection.expect_line (self.__onAdjournedResponseNO,
-                                     "%s has no adjourned games\." %
-                                     self.connection.username)
+        self.connection.expect_line (self.__onStoredResponseNO,
+                                     "%s has no adjourned games\." % names)
 
         self.connection.expect_line (self.__onHistoryResponseNO,
-                                     "%s has no history games\." %
-                                     self.connection.username)
+                                     "%s has no history games\." % names)
 
         self.connection.expect_line (self.__onJournalResponseNO,
-                                     "%s has no journal entries\." %
-                                     self.connection.username)
+                                     "%s has no journal entries\." % names)
 
         self.connection.expect_fromABplus(self.__onStoredResponseYES,
                                         "Stored games for %s:" % names,
@@ -226,15 +223,18 @@ class AdjournManager (GObject.GObject):
         self.emit("onJournalList", journal)
     __onJournalResponseYES.BLKCMD = BLKCMD_JOURNAL
     
-    def __onAdjournedResponseNO (self, match):
+    def __onStoredResponseNO (self, match):
+        self.connection.stored_owner = match.groups()[0]
         self.emit("onAdjournmentsList", [])
-    __onAdjournedResponseNO.BLKCMD = BLKCMD_STORED
+    __onStoredResponseNO.BLKCMD = BLKCMD_STORED
 
     def __onHistoryResponseNO (self, match):
+        self.connection.history_owner = match.groups()[0]
         self.emit("onHistoryList", [])
     __onHistoryResponseNO.BLKCMD = BLKCMD_HISTORY
 
     def __onJournalResponseNO (self, match):
+        self.connection.journal_owner = match.groups()[0]
         self.emit("onJournalList", [])
     __onJournalResponseNO.BLKCMD = BLKCMD_JOURNAL
 
@@ -247,14 +247,23 @@ class AdjournManager (GObject.GObject):
         elif game.result in (DRAW, WHITEWON, BLACKWON):
             self.queryHistory()
     
-    def queryAdjournments (self):
-        self.connection.client.run_command("stored")
+    def queryAdjournments (self, owner=None):
+        if owner is None:
+            self.connection.client.run_command("stored")
+        else:
+            self.connection.client.run_command("stored %s" % owner)
     
-    def queryHistory (self):
-        self.connection.client.run_command("history")
+    def queryHistory (self, owner=None):
+        if owner is None:
+            self.connection.client.run_command("history")
+        else:
+            self.connection.client.run_command("history %s" % owner)
 
-    def queryJournal (self):
-        self.connection.client.run_command("journal")
+    def queryJournal (self, owner=None):
+        if owner is None:
+            self.connection.client.run_command("journal")
+        else:
+            self.connection.client.run_command("journal %s" % owner)
 
     def queryMoves (self, game):
         if isinstance(game, FICSHistoryGame):

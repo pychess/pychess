@@ -839,7 +839,7 @@ class FICSAdjournedGame (FICSGame):
                   gameno=None):
         assert our_color is None or our_color in (WHITE, BLACK), our_color
         assert length is None or isinstance(length, int), length
-        assert time is None or isinstance(time, datetime.datetime), time        
+        assert time is None or isinstance(time, datetime.datetime), time
         FICSGame.__init__(self, wplayer, bplayer, rated=rated, private=private,
             game_type=game_type, minutes=minutes, inc=inc, result=result,
             reason=reason, board=board, relation=relation, gameno=gameno)
@@ -861,7 +861,7 @@ class FICSAdjournedGame (FICSGame):
     @property
     def display_time (self):
         if self.time is not None:
-            return self.time.isoformat(' ')
+            return self.time.isoformat(' ')[0:16]
     
     @property
     def opponent (self):
@@ -876,7 +876,7 @@ class FICSHistoryGame (FICSGame):
                   rated=False, game_type=None, private=False, minutes=None,
                   inc=None, result=None, reason=None, board=None, relation=None,
                   gameno=None, history_no=None):
-        assert time is None or isinstance(time, datetime.datetime), time        
+        assert time is None or isinstance(time, datetime.datetime), time
         FICSGame.__init__(self, wplayer, bplayer, rated=rated, private=private,
             game_type=game_type, minutes=minutes, inc=inc, result=result,
             reason=reason, board=board, relation=relation, gameno=gameno)
@@ -891,7 +891,7 @@ class FICSHistoryGame (FICSGame):
     @property
     def display_time (self):
         if self.time is not None:
-            return self.time.isoformat(' ')
+            return self.time.isoformat(' ')[0:16]
 
 class FICSJournalGame (FICSGame):
     def __init__ (self, wplayer, bplayer, our_color=None, time=None,
@@ -899,7 +899,7 @@ class FICSJournalGame (FICSGame):
                   inc=None, result=None, reason=None, board=None, relation=None,
                   gameno=None, journal_no=None):
         assert our_color is None or our_color in (WHITE, BLACK), our_color
-        assert time is None or isinstance(time, datetime.datetime), time        
+        assert time is None or isinstance(time, datetime.datetime), time
         FICSGame.__init__(self, wplayer, bplayer, rated=rated, private=private,
             game_type=game_type, minutes=minutes, inc=inc, result=result,
             reason=reason, board=board, relation=relation, gameno=gameno)
@@ -912,7 +912,7 @@ class FICSJournalGame (FICSGame):
 
     @property
     def display_time (self):
-        return ""
+        return _("Unknown")
 
 class FICSGames (GObject.GObject):
     __gsignals__ = {

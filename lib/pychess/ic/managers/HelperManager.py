@@ -201,7 +201,7 @@ class HelperManager (GObject.GObject):
         self.connection.players.player_disconnected(FICSPlayer(name))
 
     def on_player_whoI (self, match):
-        self.on_player_connectI(match, set_online=False)
+        self.on_player_connectI(match)
     on_player_whoI.BLKCMD = BLKCMD_WHO
     
     def on_player_whoI_end (self, match):
