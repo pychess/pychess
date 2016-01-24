@@ -192,7 +192,7 @@ class SpotGraph (Gtk.EventBox):
         self.pressed = False
         if self.hovered:
             self.redraw_canvas(self.getBounds(self.hovered))
-            if self.pointIsOnSpot (event.x+alloc.x, event.y+alloc.y, self.hovered):
+            if event.button == 1 and self.pointIsOnSpot (event.x+alloc.x, event.y+alloc.y, self.hovered):
                 self.emit("spotClicked", self.hovered[3])
 
     def motion_notify (self, widget, event):
