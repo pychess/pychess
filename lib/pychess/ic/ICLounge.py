@@ -1499,6 +1499,7 @@ class AdjournedTabSection (ParrentListSection):
         widgets["resumeButton"].connect("clicked", self.onResumeButtonClicked)
         widgets["previewButton"].connect("clicked", self.onPreviewButtonClicked)
         widgets["examineButton"].connect("clicked", self.onExamineButtonClicked)
+        widgets["mygamesButton"].connect("clicked", self.onMygamesButtonClicked)
         self.tv.connect("row-activated", lambda *args: self.onPreviewButtonClicked(None))
         self.connection.bm.connect("archiveGamePreview", self.onGamePreview)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
@@ -1717,6 +1718,11 @@ class AdjournedTabSection (ParrentListSection):
             self.connection.adm.examine(game)
         else:
             self.lounge.nonoWhileExamine(None)
+
+    def onMygamesButtonClicked (self, button):
+        self.connection.adm.queryAdjournments()
+        self.connection.adm.queryHistory()
+        self.connection.adm.queryJournal()
 
     @idle_add
     def onGamePreview (self, adm, ficsgame):
