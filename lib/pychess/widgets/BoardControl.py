@@ -121,7 +121,7 @@ class BoardControl (Gtk.EventBox):
             elif len(self.variant.PROMOTIONS) == 1:
                 promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
             else:
-                if conf.get("autoPromote", True):
+                if conf.get("autoPromote", False):
                     promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
                 else:
                     promotion = self.getPromotion()
