@@ -1550,16 +1550,16 @@ class AdjournedTabSection (ParrentListSection):
         self.messages = {}
         self.tv = widgets["adjournedtreeview"]
         self.store = Gtk.ListStore(FICSGame, str, str, str, str,
-                                   str, str, str, int)
+                                   str, str, str, str, str, int)
         self.model = Gtk.TreeModelSort(model=self.store)
         self.tv.set_model(self.model)
-        self.addColumns (self.tv, "FICSGame", _("White"), "",
-            _("Black"), _("Rated"), _("Clock"), _("Type"),
-            _("Date/Time"), "sortable_time", hide=[0, 8])
+        self.addColumns (self.tv, "FICSGame", _("White"), "", "",
+            _("Black"), "", _("Rated"), _("Clock"), _("Type"),
+            _("Date/Time"), "sortable_time", hide=[0, 10])
         self.selection = self.tv.get_selection()
         self.selection.connect("changed", self.onSelectionChanged)
         self.onSelectionChanged(self.selection)
-        self.tv.get_model().set_sort_func(5, self.compareFunction, 5)
+        self.tv.get_model().set_sort_func(5, self.compareFunction, 7)
 
         self.connection.adm.connect("adjournedGameAdded", self.onAdjournedGameAdded)
         self.connection.games.connect("FICSAdjournedGameRemoved", self.onAdjournedGameRemoved)
@@ -1642,7 +1642,7 @@ class AdjournedTabSection (ParrentListSection):
             self.infobar.push_message(message)
 
     def compareFunction (self, treemodel, iter0, iter1, column):
-        (minute0, minute1) = (treemodel.get_value(iter0, 8), treemodel.get_value(iter1, 8))
+        (minute0, minute1) = (treemodel.get_value(iter0, 10), treemodel.get_value(iter1, 10))
         return cmp(minute0, minute1)
 
     @idle_add
@@ -1652,7 +1652,7 @@ class AdjournedTabSection (ParrentListSection):
         partner = game.bplayer if game.wplayer.name == player.name else game.wplayer
         result = "▷" if partner.name == self.connection.username and game.opponent.online else "*"
         try:
-            self.store.set(self.games[game]["ti"], 2, result)
+            self.store.set(self.games[game]["ti"], 3, result)
         except KeyError:
             pass
 
@@ -1686,8 +1686,8 @@ class AdjournedTabSection (ParrentListSection):
         if game not in self.games:
             partner = game.bplayer if game.wplayer.name == game.opponent.name else game.wplayer
             result = "▷" if partner.name == self.connection.username and game.opponent.online else "*"
-            ti = self.store.append([game, game.wplayer.name, result, game.bplayer.name,
-                game.display_rated, game.display_timecontrol,
+            ti = self.store.append([game, game.wplayer.name, game.wrating, result, game.bplayer.name,
+                game.brating, game.display_rated, game.display_timecontrol,
                 game.game_type.display_text, game.display_time, game.sortable_time])
             self.games[game] = {}
             self.games[game]["ti"] = ti
@@ -1704,8 +1704,8 @@ class AdjournedTabSection (ParrentListSection):
     @idle_add
     def onHistoryGameAdded (self, adm, game):
         if game not in self.games:
-            ti = self.store.append([game, game.wplayer.name, reprResult[game.result], game.bplayer.name,
-                game.display_rated, game.display_timecontrol,
+            ti = self.store.append([game, game.wplayer.name, game.wrating, reprResult[game.result],
+                game.bplayer.name, game.brating, game.display_rated, game.display_timecontrol,
                 game.game_type.display_text, game.display_time, game.sortable_time])
             self.games[game] = {}
             self.games[game]["ti"] = ti
@@ -1715,8 +1715,8 @@ class AdjournedTabSection (ParrentListSection):
     @idle_add
     def onJournalGameAdded (self, adm, game):
         if game not in self.games:
-            ti = self.store.append([game, game.wplayer.name, reprResult[game.result], game.bplayer.name,
-                game.display_rated, game.display_timecontrol,
+            ti = self.store.append([game, game.wplayer.name, game.wrating, reprResult[game.result],
+                game.bplayer.name, game.brating, game.display_rated, game.display_timecontrol,
                 game.game_type.display_text, game.display_time, game.sortable_time])
             self.games[game] = {}
             self.games[game]["ti"] = ti

@@ -18,6 +18,7 @@ reasons_dict = {"Adj": WON_ADJUDICATION,
                 "NM": DRAW_INSUFFICIENT,
                 "Rep": DRAW_REPITITION,
                 "Res": WON_RESIGN,
+                "Sta": DRAW_STALEMATE,
                 "TM": DRAW_BLACKINSUFFICIENTANDWHITETIME, #DRAW_WHITEINSUFFICIENTANDBLACKTIME
                 "WLM": WON_NOMATERIAL,
                 "WNM": WON_NOMATERIAL,
@@ -60,7 +61,7 @@ class AdjournManager (GObject.GObject):
         self.connection.expect_fromABplus(self.__onHistoryResponseYES,
                                         "History for %s:" % names,
                                         "\s*Opponent\s+Type\s+ECO\s+End\s+Date",
-                                        "\s*(\d+): (-|\+|=) \d+\s+(W|B)\s+\d+ %s\s+\[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+%s" %
+                                        "\s*(\d+): (-|\+|=) (\d+)\s+(W|B)\s+(\d+) %s\s+\[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+%s" %
                                         (names, reasons, dates)) 
 
         self.connection.expect_fromABplus(self.__onJournalResponseYES,
@@ -141,25 +142,31 @@ class AdjournManager (GObject.GObject):
             #print(match.groups())
             history_no = match.groups()[0]
             result = match.groups()[1]
-            owner_color = match.groups()[2]
+            owner_rating = match.groups()[2]
+            owner_color = match.groups()[3]
+            opp_rating = match.groups()[4]
             if result == "+":
                 result = WHITEWON if owner_color == "W" else BLACKWON
             elif result == "-":
                 result = WHITEWON if owner_color == "B" else BLACKWON
             else:
                 result = DRAW
-            opponent_name = match.groups()[3]
+            opponent_name = match.groups()[5]
             if owner_color == "W":
                 white = self.connection.history_owner
                 black = opponent_name
+                wrating = owner_rating
+                brating = opp_rating
             else:
                 white = opponent_name
                 black = self.connection.history_owner
-            game_type = match.groups()[4]
-            minutes, gain = match.groups()[5:7]
-            eco = match.groups()[7]
-            reason = reasons_dict[match.groups()[8]]
-            week, month, day, hour, minute, timezone, year = match.groups()[9:16]
+                brating = owner_rating
+                wrating = opp_rating
+            game_type = match.groups()[6]
+            minutes, gain = match.groups()[7:9]
+            eco = match.groups()[9]
+            reason = reasons_dict[match.groups()[10]]
+            week, month, day, hour, minute, timezone, year = match.groups()[11:18]
             gametime = datetime.datetime(int(year), months.index(month)+1, int(day),
                                          int(hour), int(minute))
             private = game_type[0] == "p"
@@ -173,7 +180,7 @@ class AdjournManager (GObject.GObject):
             bplayer = self.connection.players.get(FICSPlayer(black, status=IC_STATUS_OFFLINE))
             game = FICSHistoryGame(wplayer, bplayer, game_type=gametype,
                 rated=rated, minutes=minutes, inc=gain, private=private,
-                time=gametime, reason=reason,
+                wrating=wrating, brating=brating, time=gametime, reason=reason,
                 history_no=history_no, result=result)
             
             if game not in self.connection.games:
@@ -197,7 +204,9 @@ class AdjournManager (GObject.GObject):
             result = match.groups()[10]
             result = reprResult.index(result)
             white = match.groups()[1]
+            wrating = match.groups()[2]
             black = match.groups()[3]
+            brating = match.groups()[4]
             game_type = match.groups()[5]
             minutes, gain = match.groups()[6:8]
             eco = match.groups()[8]
@@ -212,7 +221,7 @@ class AdjournManager (GObject.GObject):
             bplayer = self.connection.players.get(FICSPlayer(black, status=IC_STATUS_OFFLINE))
             game = FICSJournalGame(wplayer, bplayer, game_type=gametype,
                 rated=rated, minutes=minutes, inc=gain, private=private,
-                reason=reason,
+                wrating=wrating, brating=brating, reason=reason,
                 journal_no=journal_no, result=result)
             
             if game not in self.connection.games:
