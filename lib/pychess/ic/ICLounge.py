@@ -745,6 +745,8 @@ class SeekTabSection (ParrentListSection):
         self.menu.append(self.archived_item)
         self.menu.attach_to_widget(self.tv, None)
 
+        self.assess_sent = False
+
     def button_press_event(self, treeview, event):
         if event.button == 3: # right click
             pathinfo = treeview.get_path_at_pos(int(event.x), int(event.y))
@@ -768,20 +770,23 @@ class SeekTabSection (ParrentListSection):
         player2 = sought.player.name
         type = sought.game_type.short_fics_name
         self.connection.glm.assess(player1, player2, type)
+        self.assess_sent = True
 
     @idle_add
     def onAssessReceived(self, glm, assess):
-        dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK)
-        dialog.set_markup(assess["type"])
-        text1 = "%-18s %18s\n" % (assess["names"][0],assess["names"][1])
-        text2 = "%-18s %18s\n" % (assess["oldRD"][0],assess["oldRD"][1])
-        text3 = "%-8s%13s%10s\n" % ("Win:", assess["win"][0],assess["win"][1])
-        text4 = "%-8s%12s%10s\n" % ("Draw:", assess["draw"][0],assess["draw"][1])
-        text5 = "%-8s%12s%10s\n" % ("Loss:", assess["loss"][0],assess["loss"][1])
-        text6 = "%-8s%10s%10s\n" % ("New RD:", assess["newRD"][0],assess["newRD"][1])
-        dialog.format_secondary_text(text1+text2+text3+text4+text5+text6)
-        dialog.run()
-        dialog.destroy()
+        if self.assess_sent:
+            self.assess_sent = False
+            dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK)
+            dialog.set_markup(assess["type"])
+            text1 = "%-18s %18s\n" % (assess["names"][0],assess["names"][1])
+            text2 = "%-18s %18s\n" % (assess["oldRD"][0],assess["oldRD"][1])
+            text3 = "%-8s%13s%10s\n" % ("Win:", assess["win"][0],assess["win"][1])
+            text4 = "%-8s%12s%10s\n" % ("Draw:", assess["draw"][0],assess["draw"][1])
+            text5 = "%-8s%12s%10s\n" % ("Loss:", assess["loss"][0],assess["loss"][1])
+            text6 = "%-8s%10s%10s\n" % ("New RD:", assess["newRD"][0],assess["newRD"][1])
+            dialog.format_secondary_text(text1+text2+text3+text4+text5+text6)
+            dialog.run()
+            dialog.destroy()
 
     def on_finger(self, widget):
         print("finger")
