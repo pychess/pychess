@@ -788,10 +788,10 @@ class BoardView (Gtk.DrawingArea):
         matrix, invmatrix = matrixAround(
                 self.matrixPi, xc+square/2., yc+square/2.)
         paint(False)
-        if conf.get("faceToFace", False):
-            context.transform(matrix)
-            paint(True)
-            context.transform(invmatrix)
+
+        context.transform(matrix)
+        paint(True)
+        context.transform(invmatrix)
 
     ###############################
     #          drawBoard          #
