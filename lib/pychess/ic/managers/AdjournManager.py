@@ -50,7 +50,7 @@ class AdjournManager (GObject.GObject):
                                      "%s has no history games\." % names)
 
         self.connection.expect_line (self.__onJournalResponseNO,
-                                     "%s has no journal entries\." % names)
+                                     "(%s has no journal entries\.)|(That journal is private.)" % names)
 
         self.connection.expect_fromABplus(self.__onStoredResponseYES,
                                         "Stored games for %s:" % names,
