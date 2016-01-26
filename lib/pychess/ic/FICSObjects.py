@@ -681,6 +681,7 @@ class FICSSeeks (GObject.GObject):
         self.connection.glm.connect("addSeek", self.onAddSeek)
         self.connection.glm.connect("removeSeek", self.onRemoveSeek)
         self.connection.glm.connect("clearSeeks", self.onClearSeeks)
+        self.connection.bm.connect("curGameEnded", self.onCurGameEnded)
     
     def __getitem__ (self, index):
         if not isinstance(index, int): raise TypeError
@@ -724,6 +725,9 @@ class FICSSeeks (GObject.GObject):
     
     def onClearSeeks (self, glm):
         self.clear()
+
+    def onCurGameEnded(self, bm, game):
+        self.connection.glm.refresh_seeks()
 
 
 class FICSBoard (object):

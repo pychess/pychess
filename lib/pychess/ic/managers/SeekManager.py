@@ -194,6 +194,9 @@ class SeekManager (GObject.GObject):
         self.emit("seek_updated", text)
     on_seek_updated.BLKCMD = BLKCMD_SEEK
 
+    def refresh_seeks (self):
+        self.connection.client.run_command("iset seekinfo 1")
+
 
 if __name__ == "__main__":
     assert type_to_display_text("Loaded from eco/a00") == type_to_display_text("eco/a00") == "Eco A00"
