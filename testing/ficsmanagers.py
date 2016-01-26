@@ -4,8 +4,10 @@ import random
 
 from pychess.compat import Queue, Empty
 from pychess.Utils.const import WHITE
+from pychess.Utils.TimeModel import TimeModel
 from pychess.ic import *
 from pychess.ic.FICSObjects import *
+from pychess.ic.ICGameModel import ICGameModel
 from pychess.ic.FICSConnection import Connection
 from pychess.ic.VerboseTelnet import PredictionsTelnet, ConsoleHandler, TelnetLine
 from pychess.ic.managers.AdjournManager import AdjournManager
@@ -107,8 +109,14 @@ class EmittingTestCase(unittest.TestCase):
         
     def runAndAssertEquals(self, signal, lines, expectedResults):
         self.args = None
-        def handler(manager, *args): self.args = args
+        def handler(manager, *args):
+            self.args = args
+            #print(signal, args[0])
+            if signal == "obsGameCreated":
+                ficsgame = args[0]
+                self.connection.bm.onGameModelStarted(ficsgame.gameno)
         self.manager.connect(signal, handler)
+
         random.shuffle(self.connection.client.predictions)
         self.connection.process_lines(lines)
         self.assertNotEqual(self.args, None, "%s signal wasn't sent" % signal)
@@ -770,6 +778,73 @@ class BoardManagerTests(EmittingTestCase):
             board=FICSBoard(294000, 300000, expectedPgn), reason=6)
         game.wplayer.ratings[TYPE_BLITZ].elo = 1233
         game.bplayer.ratings[TYPE_BLITZ].elo = 1455
+        expectedResults = (game,)
+        self.runAndAssertEquals(signal, lines, expectedResults)
+
+
+    def test17(self):
+        """ Test observing game """
+        
+        lines = ["{Game 463 (schachbjm vs. Maras) Creating rated standard match.}",
+                 BLOCK_START + '34' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
+                 'You are now observing game 463.',
+                'Game 463: schachbjm (2243) Maras (2158E) rated standard 45 45',
+                '',
+                '<12> -r------ --k----- ----p--- n-ppPb-p -----P-P -PP-K-P- PR------ --R----- W -1 0 0 0 0 11 463 schachbjm Maras 0 45 45 17 15 557871 274070 37 R/f8-b8 (0:10.025) Rb8 0 1 0',
+                 BLOCK_END]
+
+        self.connection.process_lines(lines)
+        self.assertEqual(self.connection.client.commands[-1], "moves 463")
+                
+        signal = 'obsGameCreated'
+        lines = ['Movelist for game 463:',
+                 '',
+                'schachbjm (2243) vs. Maras (2158) --- Sat Jan 23, 14:34 EST 2016',
+                'Rated standard match, initial time: 45 minutes, increment: 45 seconds.',
+                '',
+                'Move  schachbjm               Maras',
+                '----  ---------------------   ---------------------',
+                '1.  e4      (0:00.000)      e6      (0:00.000)',
+                '2.  d4      (0:01.617)      d5      (0:02.220)',
+                '3.  Nc3     (0:00.442)      Nc6     (0:54.807)',
+                '4.  e5      (0:40.427)      Nge7    (0:28.205)',
+                '5.  Nf3     (0:21.570)      Nf5     (0:28.818)',
+                '6.  h4      (1:17.369)      h5      (4:58.315)',
+                '7.  Bg5     (0:55.946)      Be7     (4:01.555)',
+                '8.  Qd2     (0:02.434)      b6      (5:12.110)',
+                '9.  O-O-O   (0:59.124)      Bb7     (0:08.796)',
+                '10.  Kb1     (0:01.900)      Qd7     (4:39.500)',
+                '11.  Bxe7    (19:59.514)     Qxe7    (2:42.462)',
+                '12.  g3      (0:58.847)      O-O-O   (0:36.468)',
+                '13.  Bh3     (0:12.284)      Nh6     (4:06.076)',
+                '14.  Ne2     (0:02.387)      g6      (5:02.695)',
+                '15.  Nf4     (0:02.976)      Kb8     (5:26.776)',
+                '16.  Rhe1    (2:33.781)      Na5     (2:23.956)',
+                '17.  b3      (0:28.817)      Rc8     (1:09.281)',
+                '18.  Ng5     (8:15.515)      c5      (5:17.139)',
+                '19.  Bxe6    (12:26.052)     fxe6    (1:14.670)',
+                '20.  Nxg6    (0:02.168)      Qd7     (1:23.832)',
+                '21.  Nxh8    (0:02.249)      Rxh8    (0:04.212)',
+                '22.  dxc5    (0:14.456)      Nf5     (0:24.046)',
+                '23.  cxb6    (0:07.092)      axb6    (0:03.296)',
+                '24.  Qb4     (0:42.800)      Qc6     (2:48.991)',
+                '25.  Nf7     (2:09.657)      Rc8     (0:37.030)',
+                '26.  Rd2     (0:01.602)      Qc5     (5:03.082)',
+                '27.  Qxc5    (0:09.672)      bxc5    (0:00.100)',
+                '28.  Nd6     (0:00.849)      Rf8     (0:04.101)',
+                '29.  c3      (0:57.437)      Kc7     (3:05.263)',
+                '30.  Nxf5    (1:51.872)      Rxf5    (0:00.100)',
+                '31.  f4      (0:00.603)      Bc6     (1:06.696)',
+                '32.  Kc2     (0:01.613)      Be8     (0:07.670)',
+                '33.  Kd3     (1:39.823)      Rf8     (1:28.227)',
+                '34.  Ke3     (0:06.207)      Bg6     (0:08.648)',
+                '35.  Rc1     (3:24.100)      Bf5     (1:11.762)',
+                '36.  Rb2     (0:13.173)      Rb8     (0:10.025)',
+                '{Still in progress} *',]
+        
+        game = FICSGame(FICSPlayer("schachbjm"), FICSPlayer("Maras"),
+                gameno=463)
+        game = self.connection.games.get(game)
         expectedResults = (game,)
         self.runAndAssertEquals(signal, lines, expectedResults)
 

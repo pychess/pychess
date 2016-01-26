@@ -736,6 +736,11 @@ class FICSBoard (object):
         self.fen = fen
         self.pgn = pgn
 
+    def __repr__ (self):
+        r = "wms=%s\nbms=%s\npgn=%s" % (self.wms, self.bms, self.pgn)
+        return r
+
+
 class FICSGame (FICSMatch):
     def __init__ (self, wplayer, bplayer, gameno=None,
                   game_type=None, rated=False, minutes=None, inc=None, result=None,

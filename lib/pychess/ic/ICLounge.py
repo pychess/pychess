@@ -157,11 +157,11 @@ class ICLounge (GObject.GObject):
             message.dismiss()
         del self.messages[:]
 
-        if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
+        if ficsgame.minutes == 0:
             timemodel = TimeModel()
         else:
-            timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc,
-                bsecs=ficsgame.board.bms/1000., minutes=ficsgame.minutes)
+            timemodel = TimeModel (ficsgame.minutes*60, ficsgame.inc)
+        
         gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
         gamemodel.connect("game_started", lambda gamemodel:
                      self.connection.bm.onGameModelStarted(ficsgame.gameno))
@@ -195,14 +195,10 @@ class ICLounge (GObject.GObject):
     @idle_add
     def onObserveGameCreated (self, bm, ficsgame):
         log.debug("ICLounge.onObserveGameCreated: %s" % ficsgame)
-        if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
+        if ficsgame.minutes == 0:
             timemodel = TimeModel()
         else:
-            timemodel = TimeModel (ficsgame.board.wms/1000., ficsgame.inc,
-                bsecs=ficsgame.board.bms/1000., minutes=ficsgame.minutes)
-
-        timemodel.intervals[0][0] = ficsgame.minutes * 60
-        timemodel.intervals[1][0] = ficsgame.minutes * 60
+            timemodel = TimeModel (ficsgame.minutes*60, ficsgame.inc)
 
         gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
         gamemodel.connect("game_started", lambda gamemodel:
@@ -1810,14 +1806,10 @@ class AdjournedTabSection (ParrentListSection):
     @idle_add
     def onGamePreview (self, adm, ficsgame):
         log.debug("ICLounge.onGamePreview: %s" % ficsgame)
-        if ficsgame.board.wms == 0 and ficsgame.board.bms == 0:
+        if ficsgame.minutes ==0:
             timemodel = TimeModel()
         else:
-            timemodel = TimeModel(ficsgame.board.wms/1000., ficsgame.inc,
-                bsecs=ficsgame.board.bms/1000., minutes=ficsgame.minutes)
-
-        timemodel.intervals[0][0] = ficsgame.minutes * 60
-        timemodel.intervals[1][0] = ficsgame.minutes * 60
+            timemodel = TimeModel(ficsgame.minutes*60, ficsgame.inc)
 
         gamemodel = ICGameModel(self.connection, ficsgame, timemodel)
 

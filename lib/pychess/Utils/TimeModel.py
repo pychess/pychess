@@ -23,7 +23,6 @@ class TimeModel (GObject.GObject):
     
     def __init__ (self, secs=0, gain=0, bsecs=-1, minutes=-1):        
         GObject.GObject.__init__(self)
-
         if bsecs < 0: bsecs = secs
         if minutes < 0:
             minutes = secs / 60
@@ -103,7 +102,6 @@ class TimeModel (GObject.GObject):
         self.emit("player_changed")
     
     def tap (self):
-        
         if self.paused: return
         
         if self.started:
@@ -129,7 +127,6 @@ class TimeModel (GObject.GObject):
     def start (self):
         if self.started: return
         self.started = True
-        
         self.counter = time()
         self.emit("time_changed")
     
@@ -201,7 +198,7 @@ class TimeModel (GObject.GObject):
     def updatePlayer (self, color, secs):
         if color == self.movingColor and self.started:
             self.counter = secs + time() - self.intervals[color][-1]
-        else: self.intervals[color][-1] = secs
+        self.intervals[color][-1] = secs
         self.emit("time_changed")
     
     ############################################################################

@@ -733,7 +733,7 @@ class BoardManager (GObject.GObject):
                     wms -= int(wmsec)
                 else:
                     wmsec = 0
-                if int(moveno) > 1 and increment > 0:
+                if increment > 0:
                     wms += (increment * 1000)
                 times[ply] = "%01d:%02d:%02d.%03d" % (int(whour), int(wmin), int(wsec), int(wmsec))
             if bmove:
@@ -743,10 +743,9 @@ class BoardManager (GObject.GObject):
                     bms -= int(bmsec)
                 else:
                     bmsec = 0
-                if int(moveno) > 1 and increment > 0:
+                if increment > 0:
                     bms += (increment * 1000)
                 times[ply+1] = "%01d:%02d:%02d.%03d" % (int(bhour), int(bmin), int(bsec), int(bmsec))
-        
         if in_progress and gameno in self.queuedStyle12s:
             # Apply queued board updates
             for style12 in self.queuedStyle12s[gameno]:
@@ -759,7 +758,7 @@ class BoardManager (GObject.GObject):
                     if moveply > ply-1:
                         del moves[moveply]
             del self.queuedStyle12s[gameno]
-        
+
         pgnHead = [
             ("Event", "FICS %s %s game" % (rated.lower(), game_type.fics_name)),
             ("Site", "freechess.org"),
@@ -819,6 +818,7 @@ class BoardManager (GObject.GObject):
         game = gameclass(wplayer, bplayer, game_type=game_type, result=result,
             rated=(rated.lower() == "rated"), minutes=minutes, inc=increment,
             board=FICSBoard(wms, bms, pgn=pgn))
+        
         if in_progress:
             game.gameno = gameno
         else:

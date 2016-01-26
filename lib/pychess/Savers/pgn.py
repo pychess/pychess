@@ -286,7 +286,6 @@ class PGNFile (PgnBase):
             model.timemodel.secs = secs
             model.timemodel.gain = gain
             model.timemodel.minutes = secs / 60
-
             for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
                 if self._getTag(gameno, tag):
                     try:
@@ -398,7 +397,6 @@ class PGNFile (PgnBase):
                 secs, gain = parseTimeControlTag(model.tags['TimeControl'])
                 model.timemodel.intervals[0][0] = secs
                 model.timemodel.intervals[1][0] = secs
-            
             for ply, board in enumerate(boards):
                 for child in board.children:
                     if isinstance(child, basestring):
@@ -410,7 +408,7 @@ class PGNFile (PgnBase):
                                 prev = model.timemodel.intervals[color][movecount-1]
                                 msec = 0 if msec is None else int(msec)
                                 msec += int(sec)*1000 + int(minute)*60*1000 + int(hour)*60*60*1000
-                                model.timemodel.intervals[color][movecount] = prev - msec/1000
+                                model.timemodel.intervals[color][movecount] = prev - msec/1000. + gain
                         
                         if self.has_eval:
                             match = moveeval.search(child)
@@ -424,7 +422,6 @@ class PGNFile (PgnBase):
                                 if board.color == BLACK:
                                     value = -value
                                 model.scores[ply] = ("", value, depth)
-
             log.debug("pgn.loadToModel: intervals %s" % model.timemodel.intervals)
 
         # Find the physical status of the game
