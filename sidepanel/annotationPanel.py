@@ -409,7 +409,7 @@ class Sidepanel(Gtk.TextView):
         return text
 
     def remove_variation(self, node):
-        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
+        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shown_variation_idx)
         # TODO
         in_vari = True #shown_board in vari
 
@@ -760,7 +760,7 @@ class Sidepanel(Gtk.TextView):
         """ Update the selected node highlight """
 
         self.textbuffer.remove_tag_by_name("selected", self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter())
-        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shownVariationIdx)
+        shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shown_variation_idx)
         start = None
         for node in self.nodelist:
             if node["board"] == shown_board.board:
