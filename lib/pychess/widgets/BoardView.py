@@ -118,7 +118,7 @@ class BoardView(Gtk.DrawingArea):
     def __init__(self, gamemodel=None, preview=False, setup_position=False):
         GObject.GObject.__init__(self)
 
-        if gamemodel == None:
+        if gamemodel is None:
             gamemodel = GameModel()
         self.model = gamemodel
         self.allwhite = self.model.variant == AllWhiteBoard
@@ -147,7 +147,7 @@ class BoardView(Gtk.DrawingArea):
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES
 
-        self.animationID = -1
+        self.animimation_id = -1
         self._doStop = False
         self.animationStart = time()
         self.lastShown = None
@@ -322,9 +322,9 @@ class BoardView(Gtk.DrawingArea):
     ###############################
 
     def paintBoxAround(self, move):
-        paintBox = self.cord2RectRelative(move.cord1)
+        paint_box = self.cord2RectRelative(move.cord1)
         if move.flag != DROP:
-            paintBox = join(paintBox, self.cord2RectRelative(move.cord0))
+            paint_box = join(paint_box, self.cord2RectRelative(move.cord0))
         if move.flag in (KING_CASTLE, QUEEN_CASTLE):
             board = self.model.boards[-1].board
             color = board.color
@@ -332,15 +332,15 @@ class BoardView(Gtk.DrawingArea):
                 board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
             if move.flag == KING_CASTLE:
                 side = 0 if wildcastle else 1
-                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.ini_rooks[color][side])))
-                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.fin_rooks[color][side])))
-                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.fin_kings[color][side])))
+                paint_box = join(paint_box, self.cord2RectRelative(Cord(board.ini_rooks[color][side])))
+                paint_box = join(paint_box, self.cord2RectRelative(Cord(board.fin_rooks[color][side])))
+                paint_box = join(paint_box, self.cord2RectRelative(Cord(board.fin_kings[color][side])))
             else:
                 side = 1 if wildcastle else 0
-                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.ini_rooks[color][side])))
-                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.fin_rooks[color][side])))
-                paintBox = join(paintBox, self.cord2RectRelative(Cord(board.fin_kings[color][side])))
-        return paintBox
+                paint_box = join(paint_box, self.cord2RectRelative(Cord(board.ini_rooks[color][side])))
+                paint_box = join(paint_box, self.cord2RectRelative(Cord(board.fin_rooks[color][side])))
+                paint_box = join(paint_box, self.cord2RectRelative(Cord(board.fin_kings[color][side])))
+        return paint_box
 
     def setShownBoard(self, board):
         """Set shown to the index of the given board in board list.
@@ -416,7 +416,7 @@ class BoardView(Gtk.DrawingArea):
                 # piece
                 for piece, cord0 in moved:
                     # Test if the piece already has a realcoord(has been dragged)
-                    if (piece is not None) and piece.x == None:
+                    if (piece is not None) and piece.x is None:
                         # We don't want newly restored pieces to flew from their
                         # deadspot to their old position, as it doesn't work
                         # vice versa
@@ -444,16 +444,16 @@ class BoardView(Gtk.DrawingArea):
         if self.realSetShown:
             self.emit("shown_changed", self.shown)
 
-        if self.animationID != -1:
+        if self.animimation_id != -1:
             self._doStop = True
 
         self.animationStart = time()
         self.animating = True
 
         if self.lastMove:
-            paintBox = self.paintBoxAround(self.lastMove)
+            paint_box = self.paintBoxAround(self.lastMove)
             self.lastMove = None
-            self.redraw_canvas(rect(paintBox))
+            self.redraw_canvas(rect(paint_box))
         if self.shown > self.model.lowply:
             self.lastMove = self.model.getMoveAtPly(self.shown-1, self.shownVariationIdx)
         else:
@@ -464,7 +464,7 @@ class BoardView(Gtk.DrawingArea):
             self.runAnimation(redrawMisc=self.realSetShown)
             if not conf.get("noAnimation", False):
                 while self.animating:
-                    self.animationID = self.runAnimation()
+                    self.animimation_id = self.runAnimation()
 
         do_set_shown()
 
@@ -485,19 +485,21 @@ class BoardView(Gtk.DrawingArea):
 
         if self._doStop:
             self._doStop = False
-            self.animationID = -1
+            self.animimation_id = -1
             return False
 
         with self.animationLock:
-            paintBox = None
+            paint_box = None
 
             mod = min(1, (time()-self.animationStart)/ANIMATION_TIME)
             board = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
 
             for y, row in enumerate(board.data):
                 for x, piece in row.items():
-                    if not piece: continue
-                    if piece == self.draggedPiece: continue
+                    if not piece:
+                        continue
+                    if piece == self.draggedPiece:
+                        continue
                     if piece == self.premovePiece:
                         # if premove move is being made, the piece will already be
                         #sitting on the cord it needs to move to-
@@ -523,13 +525,13 @@ class BoardView(Gtk.DrawingArea):
                         else:
                             newx, newy = x, y
 
-                        paintBox = join(paintBox, self.cord2RectRelative(piece.x, piece.y))
-                        paintBox = join(paintBox, self.cord2RectRelative(newx, newy))
+                        paint_box = join(paint_box, self.cord2RectRelative(piece.x, piece.y))
+                        paint_box = join(paint_box, self.cord2RectRelative(newx, newy))
 
                         if (newx <= x <= piece.x or newx >= x >= piece.x) and \
                            (newy <= y <= piece.y or newy >= y >= piece.y) or \
                            abs(newx-x) < 0.005 and abs(newy-y) < 0.005:
-                            paintBox = join(paintBox, self.cord2RectRelative(x, y))
+                            paint_box = join(paint_box, self.cord2RectRelative(x, y))
                             piece.x = None
                             piece.y = None
                         else:
@@ -544,9 +546,9 @@ class BoardView(Gtk.DrawingArea):
                             px = x
                             py = y
 
-                        if paintBox:
-                            paintBox = join(paintBox, self.cord2RectRelative(px, py))
-                        else: paintBox = self.cord2RectRelative(px, py)
+                        if paint_box:
+                            paint_box = join(paint_box, self.cord2RectRelative(px, py))
+                        else: paint_box = self.cord2RectRelative(px, py)
 
                         if not conf.get("noAnimation", False):
                             newOp = piece.opacity + (1-piece.opacity)*mod
@@ -560,9 +562,9 @@ class BoardView(Gtk.DrawingArea):
             ready = []
             for i, dead in enumerate(self.deadlist):
                 piece, x, y = dead
-                if not paintBox:
-                    paintBox = self.cord2RectRelative(x, y)
-                else: paintBox = join(paintBox, self.cord2RectRelative(x, y))
+                if not paint_box:
+                    paint_box = self.cord2RectRelative(x, y)
+                else: paint_box = join(paint_box, self.cord2RectRelative(x, y))
 
                 if not conf.get("noAnimation", False):
                     newOp = piece.opacity + (0-piece.opacity)*mod
@@ -576,16 +578,16 @@ class BoardView(Gtk.DrawingArea):
             for dead in ready:
                 self.deadlist.remove(dead)
 
-        if paintBox:
-            self.redraw_canvas(rect(paintBox))
+        if paint_box:
+            self.redraw_canvas(rect(paint_box))
 
         if conf.get("noAnimation", False):
             self.animating = False
             return False
         else:
-            if not paintBox:
+            if not paint_box:
                 self.animating = False
-            return paintBox and True or False
+            return paint_box and True or False
 
     def startAnimation(self):
         @idle_add
@@ -593,7 +595,7 @@ class BoardView(Gtk.DrawingArea):
             self.runAnimation(redrawMisc=True)
             if not conf.get("noAnimation", False):
                 while self.animating:
-                    self.animationID = self.runAnimation()
+                    self.animimation_id = self.runAnimation()
 
         self.animationStart = time()
         self.animating = True
@@ -740,7 +742,8 @@ class BoardView(Gtk.DrawingArea):
 
         xc, yc, square, s = self.square
 
-        if contains(rect((xc, yc, square)), r): return
+        if contains(rect((xc, yc, square)), r):
+            return
 
         t = thickness*square
         ss = signsize*square
@@ -979,13 +982,13 @@ class BoardView(Gtk.DrawingArea):
         context.set_source_rgb(*fgP)
         for y, row in enumerate(pieces.data):
             for x, piece in row.items():
-                if not piece or piece.x == None or piece.opacity < 1:
+                if not piece or piece.x is None or piece.opacity < 1:
                     continue
                 self.__drawPiece(context, piece, piece.x, piece.y)
 
         # Draw standing premove piece
         context.set_source_rgb(*fgM)
-        if self.premovePiece and self.premovePiece.x == None and self.premove0 and self.premove1:
+        if self.premovePiece and self.premovePiece.x is None and self.premove0 and self.premove1:
             self.__drawPiece(context, self.premovePiece, self.premove1.x, self.premove1.y)
 
 
@@ -1000,18 +1003,21 @@ class BoardView(Gtk.DrawingArea):
 
         used = []
         for cord, state in ((self.active, "_active"),
-                           (self.selected, "_selected"),
-                           (self.premove0, "_selected"),
-                           (self.premove1, "_selected"),
-                           (self.hover, "_prelight")):
-            if not cord: continue
-            if cord in used: continue
+                            (self.selected, "_selected"),
+                            (self.premove0, "_selected"),
+                            (self.premove1, "_selected"),
+                            (self.hover, "_prelight")):
+            if not cord:
+                continue
+            if cord in used:
+                continue
             # Ensure that same cord, if having multiple "tasks", doesn't get
             # painted more than once
             used.append(cord)
 
             bounding = self.cord2RectRelative(cord)
-            if not intersects(rect(bounding), redrawn): continue
+            if not intersects(rect(bounding), redrawn):
+                continue
 
             board = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
             if board[cord] is None and (cord.x < 0 or cord.x > self.FILES-1):
@@ -1044,8 +1050,10 @@ class BoardView(Gtk.DrawingArea):
     ###############################
 
     def drawLastMove(self, context, redrawn):
-        if not self.lastMove: return
-        if self.shown <= self.model.lowply: return
+        if not self.lastMove:
+            return
+        if self.shown <= self.model.lowply:
+            return
         show_board = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
         last_board = self.model.getBoardAtPly(self.shown - 1, self.shownVariationIdx)
         capture = self.lastMove.is_capture(last_board)
@@ -1065,11 +1073,11 @@ class BoardView(Gtk.DrawingArea):
         ms = ((1, 1), (-1, 1), (-1, -1), (1, -1))
 
         light_yellow = (.929, .831, 0, 0.8)
-        dark_yellow  = (.769, .627, 0, 0.5)
+        dark_yellow = (.769, .627, 0, 0.5)
         light_orange = (.961, .475, 0, 0.8)
-        dark_orange  = (.808, .361, 0, 0.5)
-        light_green  = (0.337, 0.612, 0.117, 0.8)
-        dark_green   = (0.237, 0.512, 0.17, 0.5)
+        dark_orange = (.808, .361, 0, 0.5)
+        light_green = (0.337, 0.612, 0.117, 0.8)
+        dark_green = (0.237, 0.512, 0.17, 0.5)
 
         if self.lastMove.flag in (KING_CASTLE, QUEEN_CASTLE):
             ksq0 = last_board.board.kings[last_board.color]
@@ -1217,14 +1225,17 @@ class BoardView(Gtk.DrawingArea):
     ###############################
 
     def drawEnpassant(self, context, redrawn):
-        if not self.showEnpassant: return
+        if not self.showEnpassant:
+            return
         enpassant = self.model.boards[-1].enpassant
-        if not enpassant: return
+        if not enpassant:
+            return
 
         context.set_source_rgb(0, 0, 0)
         xc, yc, square, s = self.square
         x, y = self.cord2Point(enpassant)
-        if not intersects(rect((x, y, s, s)), redrawn): return
+        if not intersects(rect((x, y, s, s)), redrawn):
+            return
 
         x, y = self.cord2Point(enpassant)
         cr = context
@@ -1268,11 +1279,14 @@ class BoardView(Gtk.DrawingArea):
 
     def _set_selected(self, cord):
         self._active = None
-        if self._selected == cord: return
+        if self._selected == cord:
+            return
         if self._selected:
             r = rect(self.cord2RectRelative(self._selected))
-            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
-        elif cord: r = rect(self.cord2RectRelative(cord))
+            if cord:
+                r = union(r, rect(self.cord2RectRelative(cord)))
+        elif cord:
+            r = rect(self.cord2RectRelative(cord))
         self._selected = cord
         self.redraw_canvas(r)
     def _get_selected(self):
@@ -1280,7 +1294,8 @@ class BoardView(Gtk.DrawingArea):
     selected = property(_get_selected, _set_selected)
 
     def _set_hover(self, cord):
-        if self._hover == cord: return
+        if self._hover == cord:
+            return
         if self._hover:
             r = rect(self.cord2RectRelative(self._hover))
             # convert r from tuple to rect
@@ -1288,7 +1303,8 @@ class BoardView(Gtk.DrawingArea):
             #r = Gdk.Rectangle()
             #r.x, r.y, r.width, r.height = tmpr
             #if cord: r = r.union(rect(self.cord2RectRelative(cord)))
-            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
+            if cord:
+                r = union(r, rect(self.cord2RectRelative(cord)))
         elif cord:
             r = rect(self.cord2RectRelative(cord))
             # convert r from tuple to rect
@@ -1302,11 +1318,13 @@ class BoardView(Gtk.DrawingArea):
     hover = property(_get_hover, _set_hover)
 
     def _set_active(self, cord):
-        if self._active == cord: return
+        if self._active == cord:
+            return
         if self._active:
             r = rect(self.cord2RectRelative(self._active))
             if cord: r = union(r, rect(self.cord2RectRelative(cord)))
-        elif cord: r = rect(self.cord2RectRelative(cord))
+        elif cord:
+            r = rect(self.cord2RectRelative(cord))
         self._active = cord
         self.redraw_canvas(r)
     def _get_active(self):
@@ -1314,11 +1332,14 @@ class BoardView(Gtk.DrawingArea):
     active = property(_get_active, _set_active)
 
     def _set_premove0(self, cord):
-        if self._premove0 == cord: return
+        if self._premove0 == cord:
+            return
         if self._premove0:
             r = rect(self.cord2RectRelative(self._premove0))
-            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
-        elif cord: r = rect(self.cord2RectRelative(cord))
+            if cord:
+                r = union(r, rect(self.cord2RectRelative(cord)))
+        elif cord:
+            r = rect(self.cord2RectRelative(cord))
         self._premove0 = cord
         self.redraw_canvas(r)
     def _get_premove0(self):
@@ -1326,11 +1347,14 @@ class BoardView(Gtk.DrawingArea):
     premove0 = property(_get_premove0, _set_premove0)
 
     def _set_premove1(self, cord):
-        if self._premove1 == cord: return
+        if self._premove1 == cord:
+            return
         if self._premove1:
             r = rect(self.cord2RectRelative(self._premove1))
-            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
-        elif cord: r = rect(self.cord2RectRelative(cord))
+            if cord:
+                r = union(r, rect(self.cord2RectRelative(cord)))
+        elif cord:
+            r = rect(self.cord2RectRelative(cord))
         self._premove1 = cord
         self.redraw_canvas(r)
     def _get_premove1(self):
@@ -1342,24 +1366,31 @@ class BoardView(Gtk.DrawingArea):
     ################################
 
     def _set_redarrow(self, cords):
-        if cords == self._redarrow: return
+        if cords == self._redarrow:
+            return
         paintCords = []
-        if cords: paintCords += cords
-        if self._redarrow: paintCords += self._redarrow
+        if cords:
+            paintCords += cords
+        if self._redarrow:
+            paintCords += self._redarrow
         r = rect(self.cord2RectRelative(paintCords[0]))
         for cord in paintCords[1:]:
             r = union(r, rect(self.cord2RectRelative(cord)))
         self._redarrow = cords
         self.redraw_canvas(r)
+
     def _get_redarrow(self):
         return self._redarrow
     redarrow = property(_get_redarrow, _set_redarrow)
 
     def _set_greenarrow(self, cords):
-        if cords == self._greenarrow: return
+        if cords == self._greenarrow:
+            return
         paintCords = []
-        if cords: paintCords += cords
-        if self._greenarrow: paintCords += self._greenarrow
+        if cords:
+            paintCords += cords
+        if self._greenarrow:
+            paintCords += self._greenarrow
         r = rect(self.cord2RectRelative(paintCords[0]))
         for cord in paintCords[1:]:
             r = union(r, rect(self.cord2RectRelative(cord)))
@@ -1370,10 +1401,13 @@ class BoardView(Gtk.DrawingArea):
     greenarrow = property(_get_greenarrow, _set_greenarrow)
 
     def _set_bluearrow(self, cords):
-        if cords == self._bluearrow: return
+        if cords == self._bluearrow:
+            return
         paintCords = []
-        if cords: paintCords += cords
-        if self._bluearrow: paintCords += self._bluearrow
+        if cords:
+            paintCords += cords
+        if self._bluearrow:
+            paintCords += self._bluearrow
         r = rect(self.cord2RectRelative(paintCords[0]))
         for cord in paintCords[1:]:
             r = union(r, rect(self.cord2RectRelative(cord)))
@@ -1442,7 +1476,8 @@ class BoardView(Gtk.DrawingArea):
     showCaptured = property(_get_showCaptured, _set_showCaptured)
 
     def _set_showEnpassant(self, showEnpassant):
-        if self._showEnpassant == showEnpassant: return
+        if self._showEnpassant == showEnpassant:
+            return
         if self.model:
             enpascord = self.model.boards[-1].enpassant
             if enpascord:
@@ -1458,11 +1493,11 @@ class BoardView(Gtk.DrawingArea):
     ###########################
 
     def cord2Rect(self, cord, y=None):
-        if y == None:
+        if y is None:
             x, y = cord.x, cord.y
         else: x = cord
-        xc, yc, square, s = self.square
 
+        xc, yc, square, s = self.square
         r = (xc+x*s, yc+(self.RANKS-1-y)*s, s)
         return r
 
