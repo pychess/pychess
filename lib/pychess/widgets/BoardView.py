@@ -416,7 +416,7 @@ class BoardView(Gtk.DrawingArea):
                 # piece
                 for piece, cord0 in moved:
                     # Test if the piece already has a realcoord(has been dragged)
-                    if(piece is not None) and piece.x == None:
+                    if (piece is not None) and piece.x == None:
                         # We don't want newly restored pieces to flew from their
                         # deadspot to their old position, as it doesn't work
                         # vice versa
@@ -526,7 +526,7 @@ class BoardView(Gtk.DrawingArea):
                         paintBox = join(paintBox, self.cord2RectRelative(piece.x, piece.y))
                         paintBox = join(paintBox, self.cord2RectRelative(newx, newy))
 
-                        if(newx <= x <= piece.x or newx >= x >= piece.x) and \
+                        if (newx <= x <= piece.x or newx >= x >= piece.x) and \
                            (newy <= y <= piece.y or newy >= y >= piece.y) or \
                            abs(newx-x) < 0.005 and abs(newy-y) < 0.005:
                             paintBox = join(paintBox, self.cord2RectRelative(x, y))
@@ -735,7 +735,7 @@ class BoardView(Gtk.DrawingArea):
         thickness = 0.01
         signsize = 0.04
 
-        if(not self.showCords) and(not self.setup_position):
+        if (not self.showCords) and (not self.setup_position):
             return
 
         xc, yc, square, s = self.square
@@ -902,9 +902,9 @@ class BoardView(Gtk.DrawingArea):
                 matrix = invmatrix = cairo.Matrix(1, 0, 0, 1, 0, 0)
 
         context.transform(invmatrix)
-        Pieces.drawPiece(  piece, context,
-                    cx+CORD_PADDING, cy+CORD_PADDING,
-                    s-CORD_PADDING*2, allwhite = self.allwhite, asean=self.asean)
+        Pieces.drawPiece(piece, context, \
+            cx + CORD_PADDING, cy + CORD_PADDING,\
+            s - CORD_PADDING * 2, allwhite=self.allwhite, asean=self.asean)
         context.transform(matrix)
 
     def drawPieces(self, context, r):
@@ -943,7 +943,7 @@ class BoardView(Gtk.DrawingArea):
 
         # Draw dying pieces(Found in self.deadlist)
         for piece, x, y in self.deadlist:
-            context.set_source_rgba(fgN[0],fgN[1],fgN[2],piece.opacity)
+            context.set_source_rgba(fgN[0], fgN[1], fgN[2], piece.opacity)
             self.__drawPiece(context, piece, x, y)
 
         # Draw pieces reincarnating(With opacity < 1)
@@ -953,7 +953,7 @@ class BoardView(Gtk.DrawingArea):
                     continue
                 if piece.x:
                     x, y = piece.x, piece.y
-                context.set_source_rgba(fgN[0],fgN[1],fgN[2],piece.opacity)
+                context.set_source_rgba(fgN[0], fgN[1], fgN[2], piece.opacity)
                 self.__drawPiece(context, piece, x, y)
 
         # Draw standing pieces(Only those who intersect drawn area)
@@ -963,13 +963,13 @@ class BoardView(Gtk.DrawingArea):
                     continue
                 if not piece or piece.x != None or piece.opacity < 1:
                     continue
-                if not intersects(rect(self.cord2RectRelative(x,y)), r):
+                if not intersects(rect(self.cord2RectRelative(x, y)), r):
                     continue
-                if Cord(x,y) == self.selected:
+                if Cord(x, y) == self.selected:
                     context.set_source_rgb(*fgS)
-                elif Cord(x,y) == self.active:
+                elif Cord(x, y) == self.active:
                     context.set_source_rgb(*fgA)
-                elif Cord(x,y) == self.hover:
+                elif Cord(x, y) == self.hover:
                     context.set_source_rgb(*fgP)
                 else: context.set_source_rgb(*fgN)
 
@@ -1014,7 +1014,7 @@ class BoardView(Gtk.DrawingArea):
             if not intersects(rect(bounding), redrawn): continue
 
             board = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
-            if board[cord] is None and(cord.x < 0 or cord.x > self.FILES-1):
+            if board[cord] is None and (cord.x < 0 or cord.x > self.FILES-1):
                 continue
 
             xc, yc, square, s = self.square
@@ -1198,7 +1198,7 @@ class BoardView(Gtk.DrawingArea):
 
         if self.bluearrow:
             self.__drawArrow(context, self.bluearrow, aw, ahw, ahh, asw,
-                             (.447,.624,.812, 0.9), (.204,.396,.643, 1))
+                             (.447, .624, .812, 0.9), (.204, .396, .643, 1))
 
 #         if self.shown != self.model.ply or \
 #            self.model.boards != self.model.variations[0]:
@@ -1206,11 +1206,11 @@ class BoardView(Gtk.DrawingArea):
 
         if self.greenarrow:
             self.__drawArrow(context, self.greenarrow, aw, ahw, ahh, asw,
-                             (.54,.886,.2, 0.9), (.306,.604,.024, 1))
+                             (.54, .886, .2, 0.9), (.306, .604, .024, 1))
 
         if self.redarrow:
             self.__drawArrow(context, self.redarrow, aw, ahw, ahh, asw,
-                             (.937,.16,.16, 0.9), (.643, 0, 0, 1))
+                             (.937, .16, .16, 0.9), (.643, 0, 0, 1))
 
     ###############################
     #        drawEnpassant        #
