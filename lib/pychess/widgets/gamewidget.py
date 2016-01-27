@@ -412,7 +412,7 @@ class GameWidget (GObject.GObject):
         if analyzer_type == HINT:
             self.board.view._set_greenarrow(coordinates)
         else:
-            self.board.view._set_redarrow(coordinates)
+            self.board.view._set_Redarrow(coordinates)
 
     def _on_analyze (self, analyzer, analysis, analyzer_type):
         if self.board.view.animating:
