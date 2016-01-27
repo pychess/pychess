@@ -90,15 +90,24 @@ def rect(rectangle):
     rct.x, rct.y, rct.width, rct.height = (x_size, y_size, width, height)
     return rct
 
-def matrixAround(rotatedMatrix, anchorX, anchorY):
-    co = rotatedMatrix[0]
-    si = rotatedMatrix[1]
-    aysi = anchorY*si
-    axsi = anchorX*si
-    ayco = anchorY*(1-co)
-    axco = anchorX*(1-co)
-    matrix = cairo.Matrix(co, si, -si, co, axco+aysi, ayco-axsi)
-    invmatrix = cairo.Matrix(co, -si, si, co, axco-aysi, ayco+axsi)
+def matrixAround(rotated_matrix, anchor_x, anchor_y):
+    """
+    Description : Rotates a matrix through the hypotenuse so that the original
+    matrix becomes the inverse matrix and the inverse matrix becomes matrix
+
+    """
+    corner = rotated_matrix[0]
+    side = rotated_matrix[1]
+    anchor_yside = anchor_y*side
+    anchor_xside = anchor_x*side
+    anchor_ycorner = anchor_y*(1-corner)
+    anchor_xcorner = anchor_x*(1-corner)
+    matrix = cairo.Matrix(corner, side, -side, corner, \
+                          anchor_xcorner+anchor_yside, \
+                          anchor_ycorner-anchor_xside)
+    invmatrix = cairo.Matrix(corner, -side, side, corner, \
+                             anchor_xcorner-anchor_yside, \
+                             anchor_ycorner+anchor_xside)
     return matrix, invmatrix
 
 ANIMATION_TIME = 0.5
@@ -125,7 +134,7 @@ class BoardView(Gtk.DrawingArea):
         self.asean = self.model.variant.variant in ASEAN_VARIANTS
         self.preview = preview
         self.setup_position = setup_position
-        self.shownVariationIdx = 0 # the main variation is the first in gamemodel.variations list
+        self.shown_variation_idx = 0 # the main variation is the first in gamemodel.variations list
 
         self.model.connect("game_started", self.game_started)
         self.model.connect("game_started", self.game_started_after)
@@ -149,13 +158,13 @@ class BoardView(Gtk.DrawingArea):
 
         self.animimation_id = -1
         self._doStop = False
-        self.animationStart = time()
-        self.lastShown = None
+        self.animation_start = time()
+        self.last_shown = None
         self.deadlist = []
 
-        self.autoUpdateShown = True
+        self.auto_update_shown = True
 
-        self.realSetShown = True
+        self.real_set_shown = True
         # only false when self.shown set temporarily(change shown variation)
         # to avoid redrawMisc in animation
 
@@ -242,7 +251,7 @@ class BoardView(Gtk.DrawingArea):
         # Auto updating self.shown can be disabled. Useful for loading games.
         # If we are not at the latest game we are probably browsing the history,
         # and we won't like auto updating.
-        if self.autoUpdateShown and self.shown+1 >= ply and self.shownIsMainLine():
+        if self.auto_update_shown and self.shown+1 >= ply and self.shownIsMainLine():
             self.shown = ply
 
             # Rotate board
@@ -255,19 +264,19 @@ class BoardView(Gtk.DrawingArea):
             self.shown = model.ply-moves
         else:
             # Go back to the mainline to let animation system work
-            board = model.getBoardAtPly(self.shown, self.shownVariationIdx)
+            board = model.getBoardAtPly(self.shown, self.shown_variation_idx)
             while board not in model.variations[0]:
-                board = model.variations[self.shownVariationIdx][board.ply-model.lowply-1]
+                board = model.variations[self.shown_variation_idx][board.ply-model.lowply-1]
             self.shown = board.ply
-            self.shownVariationIdx = 0
+            self.shown_variation_idx = 0
             self.shown = model.ply-moves
         self.redraw_canvas()
 
     def game_loading(self, model, uri):
-        self.autoUpdateShown = False
+        self.auto_update_shown = False
 
     def game_loaded(self, model, uri):
-        self.autoUpdateShown = True
+        self.auto_update_shown = True
         self._shown = model.ply
 
     def game_ended(self, model, reason):
@@ -349,29 +358,29 @@ class BoardView(Gtk.DrawingArea):
         If board is in the main line, reset the shown variation idx to 0(the main line).
         """
 
-        if board in self.model.variations[self.shownVariationIdx]:
+        if board in self.model.variations[self.shown_variation_idx]:
             # if the board to be shown is in the current shown variation, we are ok
-            self.shown = self.model.variations[self.shownVariationIdx].index(board) + self.model.lowply
+            self.shown = self.model.variations[self.shown_variation_idx].index(board) + self.model.lowply
             if board in self.model.variations[0]:
-                self.shownVariationIdx = 0
+                self.shown_variation_idx = 0
         else:
             # else we have to go back first
             for vari in self.model.variations:
                 if board in vari:
                     # Go back to the common board of variations to let animation system work
                     board_in_vari = board
-                    while board_in_vari not in self.model.variations[self.shownVariationIdx]:
+                    while board_in_vari not in self.model.variations[self.shown_variation_idx]:
                         board_in_vari = vari[board_in_vari.ply-self.model.lowply-1]
-                    self.realSetShown = False
+                    self.real_set_shown = False
                     self.shown = board_in_vari.ply
                     break
             # swich to the new variation
-            self.shownVariationIdx = self.model.variations.index(vari)
-            self.realSetShown = True
-            self.shown = self.model.variations[self.shownVariationIdx].index(board) + self.model.lowply
+            self.shown_variation_idx = self.model.variations.index(vari)
+            self.real_set_shown = True
+            self.shown = self.model.variations[self.shown_variation_idx].index(board) + self.model.lowply
 
     def shownIsMainLine(self):
-        return self.shownVariationIdx == 0
+        return self.shown_variation_idx == 0
 
     def _get_shown(self):
         return self._shown
@@ -384,7 +393,7 @@ class BoardView(Gtk.DrawingArea):
             return
 
         # This would cause IndexErrors later
-        if not self.model.lowply <= shown <= self.model.variations[self.shownVariationIdx][-1].ply:
+        if not self.model.lowply <= shown <= self.model.variations[self.shown_variation_idx][-1].ply:
             return
 
         # If there is only one board, we don't do any animation, but simply
@@ -392,7 +401,7 @@ class BoardView(Gtk.DrawingArea):
         if len(self.model.boards) == 1 or self.shown < self.model.lowply:
             self._shown = shown
             if shown > self.model.lowply:
-                self.lastMove = self.model.getMoveAtPly(shown-1, self.shownVariationIdx)
+                self.lastMove = self.model.getMoveAtPly(shown-1, self.shown_variation_idx)
             self.emit("shown_changed", self.shown)
             self.redraw_canvas()
             return
@@ -403,13 +412,13 @@ class BoardView(Gtk.DrawingArea):
         with self.animationLock:
             deadset = set()
             for i in range(self.shown, shown, step):
-                board = self.model.getBoardAtPly(i, self.shownVariationIdx)
-                board1 = self.model.getBoardAtPly(i + step, self.shownVariationIdx)
+                board = self.model.getBoardAtPly(i, self.shown_variation_idx)
+                board1 = self.model.getBoardAtPly(i + step, self.shown_variation_idx)
                 if step == 1:
-                    move = self.model.getMoveAtPly(i, self.shownVariationIdx)
+                    move = self.model.getMoveAtPly(i, self.shown_variation_idx)
                     moved, new, dead = board.simulateMove(board1, move)
                 else:
-                    move = self.model.getMoveAtPly(i-1, self.shownVariationIdx)
+                    move = self.model.getMoveAtPly(i-1, self.shown_variation_idx)
                     moved, new, dead = board.simulateUnmove(board1, move)
 
                 # We need to ensure, that the piece coordinate is saved in the
@@ -435,19 +444,19 @@ class BoardView(Gtk.DrawingArea):
                     piece.opacity = 0
 
         self.deadlist = []
-        for y, row in enumerate(self.model.getBoardAtPly(self.shown, self.shownVariationIdx).data):
+        for y, row in enumerate(self.model.getBoardAtPly(self.shown, self.shown_variation_idx).data):
             for x, piece in row.items():
                 if piece in deadset:
                     self.deadlist.append((piece, x, y))
 
         self._shown = shown
-        if self.realSetShown:
+        if self.real_set_shown:
             self.emit("shown_changed", self.shown)
 
         if self.animimation_id != -1:
             self._doStop = True
 
-        self.animationStart = time()
+        self.animation_start = time()
         self.animating = True
 
         if self.lastMove:
@@ -455,13 +464,13 @@ class BoardView(Gtk.DrawingArea):
             self.lastMove = None
             self.redraw_canvas(rect(paint_box))
         if self.shown > self.model.lowply:
-            self.lastMove = self.model.getMoveAtPly(self.shown-1, self.shownVariationIdx)
+            self.lastMove = self.model.getMoveAtPly(self.shown-1, self.shown_variation_idx)
         else:
             self.lastMove = None
 
         @idle_add
         def do_set_shown():
-            self.runAnimation(redrawMisc=self.realSetShown)
+            self.runAnimation(redrawMisc=self.real_set_shown)
             if not conf.get("noAnimation", False):
                 while self.animating:
                     self.animimation_id = self.runAnimation()
@@ -491,8 +500,8 @@ class BoardView(Gtk.DrawingArea):
         with self.animationLock:
             paint_box = None
 
-            mod = min(1, (time()-self.animationStart)/ANIMATION_TIME)
-            board = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
+            mod = min(1, (time()-self.animation_start)/ANIMATION_TIME)
+            board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
 
             for y, row in enumerate(board.data):
                 for x, piece in row.items():
@@ -597,7 +606,7 @@ class BoardView(Gtk.DrawingArea):
                 while self.animating:
                     self.animimation_id = self.runAnimation()
 
-        self.animationStart = time()
+        self.animation_start = time()
         self.animating = True
         do_start_animation()
 
@@ -911,7 +920,7 @@ class BoardView(Gtk.DrawingArea):
         context.transform(matrix)
 
     def drawPieces(self, context, r):
-        pieces = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
+        pieces = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
         xc, yc, square, s = self.square
 
         sc = self.get_style_context()
@@ -1019,7 +1028,7 @@ class BoardView(Gtk.DrawingArea):
             if not intersects(rect(bounding), redrawn):
                 continue
 
-            board = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
+            board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
             if board[cord] is None and (cord.x < 0 or cord.x > self.FILES-1):
                 continue
 
@@ -1054,8 +1063,8 @@ class BoardView(Gtk.DrawingArea):
             return
         if self.shown <= self.model.lowply:
             return
-        show_board = self.model.getBoardAtPly(self.shown, self.shownVariationIdx)
-        last_board = self.model.getBoardAtPly(self.shown - 1, self.shownVariationIdx)
+        show_board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
+        last_board = self.model.getBoardAtPly(self.shown - 1, self.shown_variation_idx)
         capture = self.lastMove.is_capture(last_board)
 
         wh = 0.27 # Width of marker
@@ -1532,7 +1541,7 @@ class BoardView(Gtk.DrawingArea):
             self.model.goFirst()
         else:
             self.shown = self.model.lowply
-            self.shownVariationIdx = 0
+            self.shown_variation_idx = 0
 
     def showPrev(self, step=1):
         if self.model.examined and self.model.noTD:
@@ -1544,14 +1553,14 @@ class BoardView(Gtk.DrawingArea):
                 else:
                     self.shown = self.model.lowply
 
-                if self.model.getBoardAtPly(self.shown, self.shownVariationIdx) in self.model.variations[0]:
-                    self.shownVariationIdx = 0
+                if self.model.getBoardAtPly(self.shown, self.shown_variation_idx) in self.model.variations[0]:
+                    self.shown_variation_idx = 0
 
     def showNext(self, step=1):
         if self.model.examined and self.model.noTD:
             self.model.goNext(step)
         else:
-            maxply = self.model.variations[self.shownVariationIdx][-1].ply
+            maxply = self.model.variations[self.shown_variation_idx][-1].ply
             if self.shown < maxply:
                 if self.shown + step < maxply:
                     self.shown += step
@@ -1562,7 +1571,7 @@ class BoardView(Gtk.DrawingArea):
         if self.model.examined and self.model.noTD:
             self.model.goLast()
         else:
-            maxply = self.model.variations[self.shownVariationIdx][-1].ply
+            maxply = self.model.variations[self.shown_variation_idx][-1].ply
             self.shown = maxply
 
     def backToMainLine(self):

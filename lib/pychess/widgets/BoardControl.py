@@ -32,12 +32,12 @@ class BoardControl (Gtk.EventBox):
         make moves and emit offers.
         SetuPositionDialog uses setup_position=True to disable most validation.
     """
-    
+
     __gsignals__ = {
         'piece_moved' : (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
         'action' : (GObject.SignalFlags.RUN_FIRST, None, (str, object))
     }
-    
+
     def __init__(self, gamemodel, actionMenuItems, setup_position=False):
         GObject.GObject.__init__(self)
         self.setup_position = setup_position
@@ -48,13 +48,13 @@ class BoardControl (Gtk.EventBox):
 
         self.RANKS = gamemodel.boards[0].RANKS
         self.FILES = gamemodel.boards[0].FILES
-        
+
         self.actionMenuItems = actionMenuItems
         self.connections = {}
         for key, menuitem in self.actionMenuItems.items():
             if menuitem == None: print(key)
             self.connections[menuitem] = menuitem.connect("activate", self.actionActivate, key)
-        
+
         self.view.connect("shown_changed", self.shown_changed)
         gamemodel.connect("moves_undoing", self.moves_undone)
         gamemodel.connect("game_ended", self.game_ended)
@@ -63,7 +63,7 @@ class BoardControl (Gtk.EventBox):
         self.add_events(Gdk.EventMask.LEAVE_NOTIFY_MASK|Gdk.EventMask.POINTER_MOTION_MASK)
         self.connect("motion_notify_event", self.motion_notify)
         self.connect("leave_notify_event", self.leave_notify)
-        
+
         self.selected_last = None
         self.stateLock = threading.Lock()
         self.normalState = NormalState(self)
@@ -73,11 +73,11 @@ class BoardControl (Gtk.EventBox):
         self.lockedSelectedState = LockedSelectedState(self)
         self.lockedActiveState = LockedActiveState(self)
         self.currentState = self.normalState
-        
+
         self.lockedPly = self.view.shown
         self.possibleBoards = {
             self.lockedPly : self._genPossibleBoards(self.lockedPly) }
-        
+
         self.allowPremove = False
         def onGameStart (gamemodel):
             if not self.setup_position:
@@ -86,7 +86,7 @@ class BoardControl (Gtk.EventBox):
                         self.allowPremove = True
         gamemodel.connect("game_started", onGameStart)
         self.keybuffer = ""
-        
+
     def _del (self):
         for menu, conid in self.connections.items():
             menu.disconnect(conid)
@@ -98,13 +98,13 @@ class BoardControl (Gtk.EventBox):
         promotion = None
         promotion = self.promotionDialog.runAndHide(color, variant)
         return promotion
-        
+
     def emit_move_signal (self, cord0, cord1, promotion=None):
         # Game end can change cord0 to None while dragging a piece
         if cord0 is None:
             return
         color = self.view.model.boards[-1].color
-        board = self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
+        board = self.view.model.getBoardAtPly(self.view.shown, self.view.shown_variation_idx)
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
         if promotion is None and board[cord0].sign == PAWN and cord1.cord in board.PROMOTION_ZONE[color]:
@@ -133,7 +133,7 @@ class BoardControl (Gtk.EventBox):
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
         else:
             move = Move(cord0, cord1, board, promotion)
-        
+
         if (self.view.model.curplayer.__type__ == LOCAL or self.view.model.examined) and \
             self.view.shownIsMainLine() and \
             self.view.model.boards[-1] == board and \
@@ -146,12 +146,12 @@ class BoardControl (Gtk.EventBox):
                     self.view.model.connection.bm.sendMove(toAN (board, move))
         else:
             if board.board.next is None and not self.view.shownIsMainLine():
-                self.view.model.add_move2variation(board, move, self.view.shownVariationIdx)
+                self.view.model.add_move2variation(board, move, self.view.shown_variation_idx)
                 self.view.shown += 1
             else:
                 new_vari = self.view.model.add_variation(board, (move,))
                 self.view.setShownBoard(new_vari[-1])
-    
+
     def actionActivate (self, widget, key):
         """ Put actions from a menu or similar """
         if key == "call_flag":
@@ -180,7 +180,7 @@ class BoardControl (Gtk.EventBox):
             self.emit("action", PAUSE_OFFER, None)
         elif key == "resume1":
             self.emit("action", RESUME_OFFER, None)
-    
+
     def shown_changed (self, view, shown):
         def do_shown_changed():
             self.lockedPly = self.view.shown
@@ -188,7 +188,7 @@ class BoardControl (Gtk.EventBox):
             if self.view.shown-2 in self.possibleBoards:
                 del self.possibleBoards[self.view.shown-2]
         GLib.idle_add(do_shown_changed)
-        
+
     def moves_undone (self, gamemodel, moves):
         self.stateLock.acquire()
         try:
@@ -201,7 +201,7 @@ class BoardControl (Gtk.EventBox):
                 self.currentState = self.lockedNormalState
         finally:
             self.stateLock.release()
-    
+
     def game_ended (self, gamemodel, reason):
         self.stateLock.acquire()
         try:
@@ -218,14 +218,14 @@ class BoardControl (Gtk.EventBox):
         self.view.startAnimation()
 
     def getBoard (self):
-        return self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
+        return self.view.model.getBoardAtPly(self.view.shown, self.view.shown_variation_idx)
 
     def isLastPlayed(self, board):
         return board == self.view.model.boards[-1]
-    
+
     def setLocked (self, locked):
         do_animation = False
-        
+
         self.stateLock.acquire()
         try:
             if locked and self.isLastPlayed(self.getBoard()) and \
@@ -252,10 +252,10 @@ class BoardControl (Gtk.EventBox):
                     self.currentState = self.normalState
         finally:
             self.stateLock.release()
-        
+
         if do_animation:
             self.view.startAnimation()
-    
+
     def setStateSelected (self):
         self.stateLock.acquire()
         try:
@@ -267,7 +267,7 @@ class BoardControl (Gtk.EventBox):
                 self.currentState = self.selectedState
         finally:
             self.stateLock.release()
-    
+
     def setStateActive (self):
         self.stateLock.acquire()
         try:
@@ -279,7 +279,7 @@ class BoardControl (Gtk.EventBox):
                 self.currentState = self.activeState
         finally:
             self.stateLock.release()
-    
+
     def setStateNormal (self):
         self.stateLock.acquire()
         try:
@@ -291,16 +291,16 @@ class BoardControl (Gtk.EventBox):
                 self.currentState = self.normalState
         finally:
             self.stateLock.release()
-    
+
     def button_press (self, widget, event):
         return self.currentState.press(event.x, event.y, event.button)
-    
+
     def button_release (self, widget, event):
         return self.currentState.release(event.x, event.y)
-    
+
     def motion_notify (self, widget, event):
         return self.currentState.motion(event.x, event.y)
-    
+
     def leave_notify (self, widget, event):
         return self.currentState.leave(event.x, event.y)
 
@@ -315,7 +315,7 @@ class BoardControl (Gtk.EventBox):
             self.keybuffer += "="
         elif keyname == "Return":
             color = self.view.model.boards[-1].color
-            board = self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
+            board = self.view.model.getBoardAtPly(self.view.shown, self.view.shown_variation_idx)
             try:
                 move = parseAny(board, self.keybuffer)
             except:
@@ -326,7 +326,7 @@ class BoardControl (Gtk.EventBox):
                     self.emit("piece_moved", move, color)
                 else:
                     if board.board.next is None and not self.view.shownIsMainLine():
-                        self.view.model.add_move2variation(board, move, self.view.shownVariationIdx)
+                        self.view.model.add_move2variation(board, move, self.view.shown_variation_idx)
                         self.view.shown += 1
                     else:
                         new_vari = self.view.model.add_variation(board, (move,))
@@ -341,7 +341,7 @@ class BoardControl (Gtk.EventBox):
             return possibleBoards
         if len(self.view.model.players) == 2 and self.view.model.isEngine2EngineGame():
             return possibleBoards
-        curboard = self.view.model.getBoardAtPly(ply, self.view.shownVariationIdx)
+        curboard = self.view.model.getBoardAtPly(ply, self.view.shown_variation_idx)
         for lmove in lmovegen.genAllMoves(curboard.board.clone()):
             move = Move(lmove)
             board = curboard.move(move)
@@ -369,10 +369,10 @@ class BoardState:
 
         self.RANKS = self.view.model.boards[0].RANKS
         self.FILES = self.view.model.boards[0].FILES
-    
+
     def getBoard (self):
-        return self.view.model.getBoardAtPly(self.view.shown, self.view.shownVariationIdx)
-    
+        return self.view.model.getBoardAtPly(self.view.shown, self.view.shown_variation_idx)
+
     def validate (self, cord0, cord1):
         if cord0 is None or cord1 is None:
             return False
@@ -397,7 +397,7 @@ class BoardState:
                 return False
             else:
                 return True
-        
+
         if cord1.x < 0 or cord1.x > self.FILES-1:
             return False
         if cord0.x < 0 or cord0.x > self.FILES-1:
@@ -405,16 +405,16 @@ class BoardState:
             return validate(self.getBoard(), Move(lmovegen.newMove(self.getBoard()[cord0].piece, cord1.cord, DROP)))
         else:
             return validate(self.getBoard(), Move(cord0, cord1, self.getBoard()))
-    
+
     def transPoint (self, x, y):
         xc, yc, square, s = self.view.square
         x, y = self.view.invmatrix.transform_point(x,y)
         y -= yc; x -= xc
-        
+
         y /= float(s)
         x /= float(s)
         return x, self.RANKS-y
-    
+
     def point2Cord (self, x, y):
         point = self.transPoint(x, y)
         p0, p1 = point[0], point[1]
@@ -425,7 +425,7 @@ class BoardState:
             if not 0 <= int(p0) <= self.FILES-1 or not 0 <= int(p1) <= self.RANKS-1:
                 return None
         return Cord(int(p0) if p0>= 0 else int(p0)-1, int(p1))
-    
+
     def isSelectable (self, cord):
         # Simple isSelectable method, disabling selecting cords out of bound etc
         if not cord:
@@ -439,13 +439,13 @@ class BoardState:
             if (not 0 <= cord.x <= self.FILES-1) or (not 0 <= cord.y <= self.RANKS-1):
                 return False
         return True
-    
+
     def press (self, x, y, button):
         pass
-    
+
     def release (self, x, y):
         pass
-    
+
     def motion (self, x, y):
         cord = self.point2Cord(x, y)
         if self.lastMotionCord == cord:
@@ -455,7 +455,7 @@ class BoardState:
             if not self.view.model.isPlayingICSGame():
                 self.view.hover = cord
         else: self.view.hover = None
-    
+
     def leave (self, x, y):
         a = self.parent.get_allocation()
         if not (0 <= x < a.width and 0 <= y < a.height):
@@ -469,11 +469,11 @@ class LockedBoardState (BoardState):
     '''
     def __init__ (self, board):
         BoardState.__init__(self, board)
-    
+
     def isAPotentiallyLegalNextMove (self, cord0, cord1):
         """ Determines whether the given move is at all legally possible
             as the next move after the player who's turn it is makes their move
-            Note: This doesn't always return the correct value, such as when 
+            Note: This doesn't always return the correct value, such as when
             BoardControl.setLocked() has been called and we've begun a drag,
             but view.shown and BoardControl.lockedPly haven't been updated yet """
         if cord0 == None or cord1 == None:
@@ -506,7 +506,7 @@ class NormalState (BoardState):
         except IndexError:
             return False
         return True
-    
+
     def press (self, x, y, button):
         self.parent.grab_focus()
         cord = self.point2Cord(x,y)
@@ -525,7 +525,7 @@ class ActiveState (BoardState):
         if self.parent.setup_position:
             return True
         return self.validate(self.view.active, cord)
-    
+
     def release (self, x, y):
         cord = self.point2Cord(x,y)
         if cord != self.view.active and not self.validate(self.view.selected, cord):
@@ -537,7 +537,7 @@ class ActiveState (BoardState):
             self.view.draggedPiece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
-        
+
         # When in the mixed active/selected state
         elif self.view.selected:
             # Move when releasing on a good cord
@@ -568,7 +568,7 @@ class ActiveState (BoardState):
                 self.view.draggedPiece = None
                 self.view.startAnimation()
                 self.parent.setStateSelected()
-        
+
         # If dragged and released on a possible cord
         elif self.validate(self.view.active, cord):
             self.parent.setStateNormal()
@@ -579,7 +579,7 @@ class ActiveState (BoardState):
                 self.view.startAnimation()
             self.parent.emit_move_signal(self.view.active, cord)
             self.view.active = None
-        
+
         # Select last piece user tried to move or that was selected
         elif self.view.active or self.view.selected:
             self.view.selected = self.view.active if self.view.active else self.view.selected
@@ -587,7 +587,7 @@ class ActiveState (BoardState):
             self.view.draggedPiece = None
             self.view.startAnimation()
             self.parent.setStateSelected()
-        
+
         # Send back, if dragging to a not possible cord
         else:
             self.view.active = None
@@ -595,9 +595,9 @@ class ActiveState (BoardState):
             self.view.draggedPiece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
-        
+
         self.parent.selected_last = self.view.selected
-    
+
     def motion (self, x, y):
         BoardState.motion(self, x, y)
         fcord = self.view.active
@@ -609,13 +609,13 @@ class ActiveState (BoardState):
         elif  piece.color != self.getBoard().color:
             if not self.parent.setup_position:
                 return
-            
+
         xc, yc, square, s = self.view.square
         co, si = self.view.matrix[0], self.view.matrix[1]
         point = self.transPoint(x-s*(co+si)/2., y+s*(co-si)/2.)
         if not point: return
         x, y = point
-        
+
         if piece.x != x or piece.y != y:
             if piece.x:
                 paintBox = self.view.cord2RectRelative(piece.x, piece.y)
@@ -641,10 +641,10 @@ class SelectedState (BoardState):
         except IndexError:
             return False
         return self.validate(self.view.selected, cord)
-    
+
     def press (self, x, y, button):
         cord = self.point2Cord(x,y)
-        # Unselecting by pressing the selected cord, or marking the cord to be 
+        # Unselecting by pressing the selected cord, or marking the cord to be
         # moved to. We don't unset self.view.selected, so ActiveState can handle
         # things correctly
         if self.isSelectable(cord):
@@ -661,17 +661,17 @@ class SelectedState (BoardState):
                 # ActiveState.release() will use self.view.selected as the source piece
                 # rather than self.view.active, we need to update it here
                 self.view.selected = cord   # re-select new cord
-            
+
             self.view.draggedPiece = self.getBoard()[cord]
             self.view.active = cord
             self.parent.setStateActive()
-        
+
         else:  # Unselecting by pressing an inactive cord
             self.view.selected = None
             self.parent.setStateNormal()
             if not self.parent.setup_position:
                 preferencesDialog.SoundTab.playAction("invalidMove")
-            
+
 class LockedNormalState (LockedBoardState):
     '''
     It is the opponent's turn and no piece or cord is selected.
@@ -690,7 +690,7 @@ class LockedNormalState (LockedBoardState):
         except IndexError:
             return False
         return True
-    
+
     def press (self, x, y, button):
         self.parent.grab_focus()
         cord = self.point2Cord(x,y)
@@ -766,7 +766,7 @@ class LockedActiveState (LockedBoardState):
             self.parent.setStateNormal()
 
         self.parent.selected_last = self.view.selected
-    
+
     def motion (self, x, y):
         BoardState.motion(self, x, y)
         fcord = self.view.active
@@ -775,7 +775,7 @@ class LockedActiveState (LockedBoardState):
         piece = self.getBoard()[fcord]
         if not piece or piece.color == self.getBoard().color:
             return
-        
+
         xc, yc, square, s = self.view.square
         co, si = self.view.matrix[0], self.view.matrix[1]
         point = self.transPoint(x-s*(co+si)/2., y+s*(co-si)/2.)
@@ -816,10 +816,10 @@ class LockedSelectedState (LockedBoardState):
             if not self.view.model.isPlayingICSGame():
                 self.view.hover = cord
         else: self.view.hover = None
-    
+
     def press (self, x, y, button):
         cord = self.point2Cord(x,y)
-        # Unselecting by pressing the selected cord, or marking the cord to be 
+        # Unselecting by pressing the selected cord, or marking the cord to be
         # moved to. We don't unset self.view.selected, so ActiveState can handle
         # things correctly
         if self.isSelectable(cord):
@@ -829,11 +829,11 @@ class LockedSelectedState (LockedBoardState):
                not self.isAPotentiallyLegalNextMove(self.view.selected, cord):
                 # corner-case encountered (see comment in SelectedState.press)
                 self.view.selected = cord  # re-select new cord
-            
+
             self.view.draggedPiece = self.getBoard()[cord]
             self.view.active = cord
             self.parent.setStateActive()
-        
+
         else:  # Unselecting by pressing an inactive cord
             self.view.selected = None
             self.parent.setStateNormal()
