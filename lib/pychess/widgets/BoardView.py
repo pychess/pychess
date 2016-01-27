@@ -37,6 +37,10 @@ def intersects(r_zero, r_one):
             (h_zero < r_zero.y or h_zero > r_one.y)
 
 def contains(r_zero, r_one):
+    """ Takes two squares and determines if square one is contained
+        within square zero
+        Returns a boolean
+    """
     w_zero = r_zero.width + r_zero.x
     h_zero = r_zero.height + r_zero.y
     w_one = r_one.width + r_one.x
@@ -45,6 +49,10 @@ def contains(r_zero, r_one):
            r_zero.y <= r_one.y and h_zero >= h_one
 
 def union(r_zero, r_one):
+    """ Takes 2 rectangles and returns a rectangle that represents
+        the union of the two areas
+        Returns a Gdk.Rectangle
+    """
     x_min = min(r_zero.x, r_one.x)
     y_min = min(r_zero.y, r_one.y)
     w_max = max(r_zero.x+r_zero.width, r_one.x+r_one.width) - x_min
@@ -94,6 +102,7 @@ def matrixAround(rotated_matrix, anchor_x, anchor_y):
     """
     Description : Rotates a matrix through the hypotenuse so that the original
     matrix becomes the inverse matrix and the inverse matrix becomes matrix
+    Returns a tuple representing the matrix and its inverse
 
     """
     corner = rotated_matrix[0]
@@ -157,7 +166,7 @@ class BoardView(Gtk.DrawingArea):
         self.FILES = self.model.boards[0].FILES
 
         self.animimation_id = -1
-        self._doStop = False
+        self._do_stop = False
         self.animation_start = time()
         self.last_shown = None
         self.deadlist = []
@@ -183,26 +192,26 @@ class BoardView(Gtk.DrawingArea):
         self._bluearrow = None
 
         self._shown = self.model.ply
-        self._showCords = False
+        self._show_cords = False
         self.showCords = conf.get("showCords", False)
-        self._showCaptured = False
+        self._show_captured = False
         if self.preview:
             self.showCaptured = False
         else:
             self.showCaptured = conf.get("showCaptured", False) or \
                                 self.model.variant.variant in DROP_VARIANTS
-        self._showEnpassant = False
+        self._show_enpassant = False
         self.lastMove = None
         self.matrix = cairo.Matrix()
-        self.matrixPi = cairo.Matrix.init_rotate(pi)
+        self.matrix_pi = cairo.Matrix.init_rotate(pi)
         self.invmatrix = cairo.Matrix().invert()
-        self.cordMatricesState = (0, 0)
+        self.cord_matrices_state = (0, 0)
         self._rotation = 0
 
         self.drawcount = 0
         self.drawtime = 0
 
-        self.gotStarted = False
+        self.got_started = False
         self.animationLock = RLock()
         self.animating = False
 
@@ -218,7 +227,7 @@ class BoardView(Gtk.DrawingArea):
 
     def game_started(self, model):
         if conf.get("noAnimation", False):
-            self.gotStarted = True
+            self.got_started = True
             self.redraw_canvas()
         else:
             if model.moves:
@@ -228,7 +237,7 @@ class BoardView(Gtk.DrawingArea):
                     for piece in row.values(): #row:
                         if piece:
                             piece.opacity = 0
-            self.gotStarted = True
+            self.got_started = True
             self.startAnimation()
 
     def game_changed(self, model, ply):
@@ -454,7 +463,7 @@ class BoardView(Gtk.DrawingArea):
             self.emit("shown_changed", self.shown)
 
         if self.animimation_id != -1:
-            self._doStop = True
+            self._do_stop = True
 
         self.animation_start = time()
         self.animating = True
@@ -492,8 +501,8 @@ class BoardView(Gtk.DrawingArea):
         to work properply.
         """
 
-        if self._doStop:
-            self._doStop = False
+        if self._do_stop:
+            self._do_stop = False
             self.animimation_id = -1
             return False
 
@@ -513,7 +522,7 @@ class BoardView(Gtk.DrawingArea):
                         # if premove move is being made, the piece will already be
                         #sitting on the cord it needs to move to-
                         # do not animate and reset premove to None
-                        if self.shown == self.premovePly:
+                        if self.shown == self.premove_ply:
                             piece.x = None
                             piece.y = None
                             self.setPremove(None, None, None, None)
@@ -705,7 +714,7 @@ class BoardView(Gtk.DrawingArea):
         if min(alloc.width, alloc.height) > 32:
             self.drawCords(context, r)
 
-        if self.gotStarted:
+        if self.got_started:
             self.drawSpecial(context, r)
             self.drawEnpassant(context, r)
             self.drawArrows(context)
@@ -805,8 +814,7 @@ class BoardView(Gtk.DrawingArea):
                 context.move_to(xc+s*n+s/2.-w/2., yc+square+t*1.5+abs(y))
                 PangoCairo.show_layout(context, layout)
 
-        matrix, invmatrix = matrixAround(
-            self.matrixPi, xc+square/2., yc+square/2.)
+        matrix, invmatrix = matrixAround(self.matrix_pi, xc+square/2., yc+square/2.)
         paint(False)
 
         context.transform(matrix)
@@ -870,19 +878,19 @@ class BoardView(Gtk.DrawingArea):
 
     def getCordMatrices(self, x, y, inv=False):
         xc, yc, square, s = self.square
-        square_, rot_ = self.cordMatricesState
+        square_, rot_ = self.cord_matrices_state
         if square != self.square or rot_ != self.rotation:
-            self.cordMatrices = [None] * self.FILES*self.RANKS + [None] * self.FILES*4
-            self.cordMatricesState = (self.square, self.rotation)
+            self.cord_matrices = [None] * self.FILES*self.RANKS + [None] * self.FILES*4
+            self.cord_matrices_state = (self.square, self.rotation)
         c = x * self.FILES + y
-        if isinstance(c, int) and self.cordMatrices[c]:
-            matrices = self.cordMatrices[c]
+        if isinstance(c, int) and self.cord_matrices[c]:
+            matrices = self.cord_matrices[c]
         else:
             cx, cy = self.cord2Point(x, y)
             matrices = matrixAround(self.matrix, cx+s/2., cy+s/2.)
             matrices += (cx, cy)
             if isinstance(c, int):
-                self.cordMatrices[c] = matrices
+                self.cord_matrices[c] = matrices
         return matrices
 
     def __drawPiece(self, context, piece, x, y):
@@ -1286,7 +1294,7 @@ class BoardView(Gtk.DrawingArea):
     #          Cord vars          #
     ###############################
 
-    def _set_selected(self, cord):
+    def _set_Selected(self, cord):
         self._active = None
         if self._selected == cord:
             return
@@ -1300,9 +1308,9 @@ class BoardView(Gtk.DrawingArea):
         self.redraw_canvas(r)
     def _get_selected(self):
         return self._selected
-    selected = property(_get_selected, _set_selected)
+    selected = property(_get_selected, _set_Selected)
 
-    def _set_hover(self, cord):
+    def _set_Hover(self, cord):
         if self._hover == cord:
             return
         if self._hover:
@@ -1324,9 +1332,9 @@ class BoardView(Gtk.DrawingArea):
         self.redraw_canvas(r)
     def _get_hover(self):
         return self._hover
-    hover = property(_get_hover, _set_hover)
+    hover = property(_get_hover, _set_Hover)
 
-    def _set_active(self, cord):
+    def _set_Active(self, cord):
         if self._active == cord:
             return
         if self._active:
@@ -1338,9 +1346,9 @@ class BoardView(Gtk.DrawingArea):
         self.redraw_canvas(r)
     def _get_active(self):
         return self._active
-    active = property(_get_active, _set_active)
+    active = property(_get_active, _set_Active)
 
-    def _set_premove0(self, cord):
+    def _set_Premove0(self, cord):
         if self._premove0 == cord:
             return
         if self._premove0:
@@ -1353,9 +1361,9 @@ class BoardView(Gtk.DrawingArea):
         self.redraw_canvas(r)
     def _get_premove0(self):
         return self._premove0
-    premove0 = property(_get_premove0, _set_premove0)
+    premove0 = property(_get_premove0, _set_Premove0)
 
-    def _set_premove1(self, cord):
+    def _set_Premove1(self, cord):
         if self._premove1 == cord:
             return
         if self._premove1:
@@ -1368,13 +1376,13 @@ class BoardView(Gtk.DrawingArea):
         self.redraw_canvas(r)
     def _get_premove1(self):
         return self._premove1
-    premove1 = property(_get_premove1, _set_premove1)
+    premove1 = property(_get_premove1, _set_Premove1)
 
     ################################
     #          Arrow vars          #
     ################################
 
-    def _set_redarrow(self, cords):
+    def _set_Redarrow(self, cords):
         if cords == self._redarrow:
             return
         paintCords = []
@@ -1388,9 +1396,9 @@ class BoardView(Gtk.DrawingArea):
         self._redarrow = cords
         self.redraw_canvas(r)
 
-    def _get_redarrow(self):
+    def _get_Redarrow(self):
         return self._redarrow
-    redarrow = property(_get_redarrow, _set_redarrow)
+    redarrow = property(_get_Redarrow, _set_Redarrow)
 
     def _set_greenarrow(self, cords):
         if cords == self._greenarrow:
@@ -1430,7 +1438,7 @@ class BoardView(Gtk.DrawingArea):
     #          Other vars          #
     ################################
 
-    def _set_rotation(self, radians):
+    def _set_Rotation(self, radians):
         if not conf.get("fullAnimation", True):
             def rotate():
                 self._rotation = radians
@@ -1463,39 +1471,39 @@ class BoardView(Gtk.DrawingArea):
 
     def _get_rotation(self):
         return self._rotation
-    rotation = property(_get_rotation, _set_rotation)
+    rotation = property(_get_rotation, _set_Rotation)
 
-    def _set_showCords(self, showCords):
+    def _set_show_cords(self, showCords):
         if not showCords:
             self.padding = 0
         else: self.padding = self.pad
-        self._showCords = showCords
+        self._show_cords = showCords
         self.redraw_canvas()
-    def _get_showCords(self):
-        return self._showCords
-    showCords = property(_get_showCords, _set_showCords)
+    def _get_show_cords(self):
+        return self._show_cords
+    showCords = property(_get_show_cords, _set_show_cords)
 
-    def _set_showCaptured(self, showCaptured):
-        self._showCaptured = showCaptured or self.model.variant.variant in DROP_VARIANTS
-        files_for_holding = 6 if self._showCaptured else 0
+    def _set_show_captured(self, showCaptured):
+        self._show_captured = showCaptured or self.model.variant.variant in DROP_VARIANTS
+        files_for_holding = 6 if self._show_captured else 0
         self.set_size_request(int(30*(self.FILES + files_for_holding)), 30*self.RANKS)
         self.redraw_canvas()
-    def _get_showCaptured(self):
-        return False if self.preview else self._showCaptured
-    showCaptured = property(_get_showCaptured, _set_showCaptured)
+    def _get_show_captured(self):
+        return False if self.preview else self._show_captured
+    showCaptured = property(_get_show_captured, _set_show_captured)
 
-    def _set_showEnpassant(self, showEnpassant):
-        if self._showEnpassant == showEnpassant:
+    def _set_show_enpassant(self, showEnpassant):
+        if self._show_enpassant == showEnpassant:
             return
         if self.model:
             enpascord = self.model.boards[-1].enpassant
             if enpascord:
                 r = rect(self.cord2RectRelative(enpascord))
                 self.redraw_canvas(r)
-        self._showEnpassant = showEnpassant
-    def _get_showEnpassant(self):
-        return self._showEnpassant
-    showEnpassant = property(_get_showEnpassant, _set_showEnpassant)
+        self._show_enpassant = showEnpassant
+    def _get_show_enpassant(self):
+        return self._show_enpassant
+    showEnpassant = property(_get_show_enpassant, _set_show_enpassant)
 
     ###########################
     #          Other          #
@@ -1581,9 +1589,9 @@ class BoardView(Gtk.DrawingArea):
             while not self.shownIsMainLine():
                 self.showPrev()
 
-    def setPremove(self, premovePiece, premove0, premove1, premovePly, promotion=None):
+    def setPremove(self, premovePiece, premove0, premove1, premove_ply, promotion=None):
         self.premovePiece = premovePiece
         self.premove0 = premove0
         self.premove1 = premove1
-        self.premovePly = premovePly
+        self.premove_ply = premove_ply
         self.premovePromotion = promotion
