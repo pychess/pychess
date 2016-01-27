@@ -5,74 +5,80 @@ from __future__ import print_function
 
 from math import floor, ceil, pi
 from time import time
-from threading import Lock, RLock, currentThread
+from threading import RLock # , Lock , currentThread
 
 import cairo
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import GLib
-from gi.repository import GObject
-from gi.repository import Pango
-from gi.repository import PangoCairo
-
+from gi.repository import Gtk, Gdk, GLib, GObject, Pango, PangoCairo
+#from gi.repository import Gdk
+#from gi.repository import GLib
+#from gi.repository import GObject
+#from gi.repository import Pango
+#from gi.repository import PangoCairo
+#
 from pychess.System import conf
 from pychess.System.idle_add import idle_add
 from pychess.gfx import Pieces
 from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.const import *
+from pychess.Utils.const import ASEAN_VARIANTS, DROP_VARIANTS, WAITING_TO_START, REMOTE, \
+                                LOCAL, DRAW, WHITEWON, BLACKWON, ABORTED, KILLED, DROP, \
+                                KING_CASTLE, QUEEN_CASTLE, WILDCASTLESHUFFLECHESS, \
+                                WILDCASTLECHESS, PAWN, KNIGHT, SITTUYINCHESS, BLACK
 from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
                                        HiddenPiecesBoard, AllWhiteBoard
 from . import preferencesDialog
 
-from pychess.System.Log import log
+#from pychess.System.Log import log
 
 
-def intersects(r0, r1):
-    w0 = r0.width + r0.x
-    h0 = r0.height + r0.y
-    w1 = r1.width + r1.x
-    h1 = r1.height + r1.y
-    return  (w1 < r1.x or w1 > r0.x) and \
-            (h1 < r1.y or h1 > r0.y) and \
-            (w0 < r0.x or w0 > r1.x) and \
-            (h0 < r0.y or h0 > r1.y)
+def intersects(r_zero, r_one):
+    """ Takes two square and determines if they have an Intersection
+        Returns a boolean
+    """
+    w_zero = r_zero.width + r_zero.x
+    h_zero = r_zero.height + r_zero.y
+    w_one = r_one.width + r_one.x
+    h_one = r_one.height + r_one.y
+    return  (w_one < r_one.x or w_one > r_zero.x) and \
+            (h_one < r_one.y or h_one > r_zero.y) and \
+            (w_zero < r_zero.x or w_zero > r_one.x) and \
+            (h_zero < r_zero.y or h_zero > r_one.y)
 
-def contains(r0, r1):
-    w0 = r0.width + r0.x
-    h0 = r0.height + r0.y
-    w1 = r1.width + r1.x
-    h1 = r1.height + r1.y
-    return r0.x <= r1.x and w0 >= w1 and \
-           r0.y <= r1.y and h0 >= h1
+def contains(r_zero, r_one):
+    w_zero = r_zero.width + r_zero.x
+    h_zero = r_zero.height + r_zero.y
+    w_one = r_one.width + r_one.x
+    h_one = r_one.height + r_one.y
+    return r_zero.x <= r_one.x and w_zero >= w_one and \
+           r_zero.y <= r_one.y and h_zero >= h_one
 
-def union(r0, r1):
-    x = min(r0.x, r1.x)
-    y = min(r0.y, r1.y)
-    w = max(r0.x+r0.width, r1.x+r1.width) - x
-    h = max(r0.y+r0.height, r1.y+r1.height) - y
+def union(r_zero, r_one):
+    x_min = min(r_zero.x, r_one.x)
+    y_min = min(r_zero.y, r_one.y)
+    w_max = max(r_zero.x+r_zero.width, r_one.x+r_one.width) - x_min
+    h_max = max(r_zero.y+r_zero.height, r_one.y+r_one.height) - y_min
     rct = Gdk.Rectangle()
-    rct.x, rct.y, rct.width, rct.height = (x, y, w, h)
+    rct.x, rct.y, rct.width, rct.height = (x_min, y_min, w_max, h_max)
     return rct
 
-def join(r0, r1):
+def join(r_zero, r_one):
     """ Take (x, y, w, [h]) squares """
 
-    if not r0: return r1
-    if not r1: return r0
-    if not r0 and not r1: return None
+    if not r_zero: return r_one
+    if not r_one: return r_zero
+    if not r_zero and not r_one: return None
 
-    if len(r0) == 3:
-        r0 = (r0[0], r0[1], r0[2], r0[2])
-    if len(r1) == 3:
-        r1 = (r1[0], r1[1], r1[2], r1[2])
+    if len(r_zero) == 3:
+        r_zero = (r_zero[0], r_zero[1], r_zero[2], r_zero[2])
+    if len(r_one) == 3:
+        r_one = (r_one[0], r_one[1], r_one[2], r_one[2])
 
-    x1 = min(r0[0], r1[0])
-    x2 = max(r0[0]+r0[2], r1[0]+r1[2])
-    y1 = min(r0[1], r1[1])
-    y2 = max(r0[1]+r0[3], r1[1]+r1[3])
+    x_one = min(r_zero[0], r_one[0])
+    x_two = max(r_zero[0]+r_zero[2], r_one[0]+r_one[2])
+    y_one = min(r_zero[1], r_one[1])
+    y_two = max(r_zero[1]+r_zero[3], r_one[1]+r_one[3])
 
-    return (x1, y1, x2 - x1, y2 - y1)
+    return (x_one, y_one, x_two - x_one, y_two - y_one)
 
 def rect(r):
     x, y = [int(floor(v)) for v in r[:2]]
@@ -364,7 +370,7 @@ class BoardView(Gtk.DrawingArea):
             self.shown = self.model.variations[self.shownVariationIdx].index(board) + self.model.lowply
 
     def shownIsMainLine(self):
-        return self.shownVariationIdx==0
+        return self.shownVariationIdx == 0
 
     def _get_shown(self):
         return self._shown
@@ -978,7 +984,7 @@ class BoardView(Gtk.DrawingArea):
         # Draw standing premove piece
         context.set_source_rgb(*fgM)
         if self.premovePiece and self.premovePiece.x == None and self.premove0 and self.premove1:
-                self.__drawPiece(context, self.premovePiece, self.premove1.x, self.premove1.y)
+            self.__drawPiece(context, self.premovePiece, self.premove1.x, self.premove1.y)
 
 
     ###############################
@@ -1054,7 +1060,7 @@ class BoardView(Gtk.DrawingArea):
 
         d0 = {-1:1-p0, 1:p0}
         d1 = {-1:1-p1, 1:p1}
-        ms = ((1, 1),(-1, 1),(-1,-1),(1,-1))
+        ms = ((1, 1), (-1, 1), (-1,-1), (1,-1))
 
         light_yellow = (.929, .831, 0, 0.8)
         dark_yellow  = (.769, .627, 0, 0.5)
