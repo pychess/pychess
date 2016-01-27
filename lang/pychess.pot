@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-18 11:45+0100\n"
+"POT-Creation-Date: 2016-01-27 13:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Use analyzer:"
 msgstr ""
 
-#: glade/analyze_game.glade:122 glade/PyChess.glade:2035
+#: glade/analyze_game.glade:122 glade/PyChess.glade:2054
 msgid "Maximum analysis time in seconds:"
 msgstr ""
 
@@ -50,11 +50,11 @@ msgstr ""
 msgid "Add threatening variation lines "
 msgstr ""
 
-#: glade/analyze_game.glade:229 glade/PyChess.glade:1440
+#: glade/analyze_game.glade:229 glade/PyChess.glade:1459
 msgid "Colorize analyzed moves"
 msgstr ""
 
-#: glade/analyze_game.glade:244 glade/PyChess.glade:1476
+#: glade/analyze_game.glade:244 glade/PyChess.glade:1495
 msgid "Show evaluation values"
 msgstr ""
 
@@ -150,7 +150,7 @@ msgstr ""
 msgid "Edit Seek"
 msgstr ""
 
-#: glade/fics_lounge.glade:584 lib/pychess/ic/ICLounge.py:2113
+#: glade/fics_lounge.glade:584 lib/pychess/ic/ICLounge.py:2208
 #: lib/pychess/ic/__init__.py:101 lib/pychess/Utils/GameModel.py:206
 msgid "Untimed"
 msgstr ""
@@ -168,7 +168,7 @@ msgid "Time control:  "
 msgstr ""
 
 #: glade/fics_lounge.glade:716 lib/pychess/ic/FICSObjects.py:56
-#: lib/pychess/ic/ICLounge.py:1059 lib/pychess/ic/ICLounge.py:2113
+#: lib/pychess/ic/ICLounge.py:1137 lib/pychess/ic/ICLounge.py:2208
 #: lib/pychess/ic/__init__.py:99
 msgid "Standard"
 msgstr ""
@@ -214,7 +214,7 @@ msgstr ""
 msgid "Tolerance:"
 msgstr ""
 
-#: glade/fics_lounge.glade:1243 lib/pychess/ic/ICLounge.py:2357
+#: glade/fics_lounge.glade:1243 lib/pychess/ic/ICLounge.py:2452
 msgid "Hide"
 msgstr ""
 
@@ -223,14 +223,16 @@ msgid "<b>Opponent Strength</b>"
 msgstr ""
 
 #: glade/fics_lounge.glade:1386 lib/pychess/Database/gamelist.py:40
-#: lib/pychess/ic/ICLounge.py:2013 lib/pychess/Utils/repr.py:10
+#: lib/pychess/ic/ICLounge.py:1357 lib/pychess/ic/ICLounge.py:1557
+#: lib/pychess/ic/ICLounge.py:2108 lib/pychess/Utils/repr.py:10
 #: lib/pychess/widgets/ChessClock.py:40
 #: lib/pychess/widgets/TaskerManager.py:153
 msgid "White"
 msgstr ""
 
 #: glade/fics_lounge.glade:1414 lib/pychess/Database/gamelist.py:40
-#: lib/pychess/ic/ICLounge.py:2015 lib/pychess/Utils/repr.py:10
+#: lib/pychess/ic/ICLounge.py:1358 lib/pychess/ic/ICLounge.py:1558
+#: lib/pychess/ic/ICLounge.py:2110 lib/pychess/Utils/repr.py:10
 #: lib/pychess/widgets/ChessClock.py:40
 #: lib/pychess/widgets/TaskerManager.py:154
 msgid "Black"
@@ -308,9 +310,9 @@ msgstr ""
 msgid "_Seeks / Challenges"
 msgstr ""
 
-#: glade/fics_lounge.glade:2374 lib/pychess/ic/ICLounge.py:474
-#: lib/pychess/ic/ICLounge.py:672 lib/pychess/ic/ICLounge.py:1279
-#: lib/pychess/ic/ICLounge.py:1280
+#: glade/fics_lounge.glade:2374 lib/pychess/ic/ICLounge.py:472
+#: lib/pychess/ic/ICLounge.py:670 lib/pychess/ic/ICLounge.py:1357
+#: lib/pychess/ic/ICLounge.py:1358
 msgid "Rating"
 msgstr ""
 
@@ -346,55 +348,59 @@ msgstr ""
 msgid "_Game List"
 msgstr ""
 
-#: glade/fics_lounge.glade:2847 glade/PyChess.glade:841
+#: glade/fics_lounge.glade:2847
+msgid "_My games"
+msgstr ""
+
+#: glade/fics_lounge.glade:2904 glade/PyChess.glade:841
 msgid "Offer _Resume"
 msgstr ""
 
-#: glade/fics_lounge.glade:2905 glade/PyChess.glade:880
+#: glade/fics_lounge.glade:2962 glade/PyChess.glade:880
 msgid "R_esign"
 msgstr ""
 
-#: glade/fics_lounge.glade:2949 glade/PyChess.glade:820
+#: glade/fics_lounge.glade:3006 glade/PyChess.glade:820
 msgid "Offer _Draw"
 msgstr ""
 
-#: glade/fics_lounge.glade:2993
+#: glade/fics_lounge.glade:3050
 msgid "Offer A_bort"
 msgstr ""
 
-#: glade/fics_lounge.glade:3050
+#: glade/fics_lounge.glade:3107
 msgid "Pre_view"
 msgstr ""
 
-#: glade/fics_lounge.glade:3094
+#: glade/fics_lounge.glade:3151
 msgid "Examine"
 msgstr ""
 
-#: glade/fics_lounge.glade:3151
+#: glade/fics_lounge.glade:3208
 msgid "_Archived"
 msgstr ""
 
-#: glade/fics_lounge.glade:3256
+#: glade/fics_lounge.glade:3313
 msgid "<b>News</b>"
 msgstr ""
 
-#: glade/fics_lounge.glade:3288
+#: glade/fics_lounge.glade:3345
 msgid "Show Console"
 msgstr ""
 
-#: glade/fics_lounge.glade:3302
+#: glade/fics_lounge.glade:3359
 msgid "Show _Chat"
 msgstr ""
 
-#: glade/fics_lounge.glade:3316
+#: glade/fics_lounge.glade:3373
 msgid "_Log Off"
 msgstr ""
 
-#: glade/fics_lounge.glade:3336
+#: glade/fics_lounge.glade:3393
 msgid "<b>Tools</b>"
 msgstr ""
 
-#: glade/fics_lounge.glade:3371
+#: glade/fics_lounge.glade:3428
 msgid "Asymmetric Random    "
 msgstr ""
 
@@ -813,112 +819,120 @@ msgid ""
 msgstr ""
 
 #: glade/PyChess.glade:1364
-msgid "Face _to Face display mode"
+msgid "Auto _promote to  queen"
 msgstr ""
 
 #: glade/PyChess.glade:1369
+msgid "If set, pawn promotes to queen without promotion dialog selection."
+msgstr ""
+
+#: glade/PyChess.glade:1383
+msgid "Face _to Face display mode"
+msgstr ""
+
+#: glade/PyChess.glade:1388
 msgid ""
 "If set, the black pieces will be head down, suitable for playing against "
 "friends on mobile devices."
 msgstr ""
 
-#: glade/PyChess.glade:1383
+#: glade/PyChess.glade:1402
 msgid "Sho_w cords"
 msgstr ""
 
-#: glade/PyChess.glade:1388
+#: glade/PyChess.glade:1407
 msgid ""
 "If set, the playing board will display labels and ranks for each chess "
 "field. These are usable in chess notation."
 msgstr ""
 
-#: glade/PyChess.glade:1402
+#: glade/PyChess.glade:1421
 msgid "Show _captured pieces"
 msgstr ""
 
-#: glade/PyChess.glade:1407
+#: glade/PyChess.glade:1426
 msgid "If set, the captured figurines will be shown next to the board."
 msgstr ""
 
-#: glade/PyChess.glade:1421
+#: glade/PyChess.glade:1440
 msgid "Prefer figures in _notation"
 msgstr ""
 
-#: glade/PyChess.glade:1426
+#: glade/PyChess.glade:1445
 msgid ""
 "If set, PyChess will use figures to express moved pieces, rather than "
 "uppercase letters."
 msgstr ""
 
-#: glade/PyChess.glade:1445
+#: glade/PyChess.glade:1464
 msgid "If set, PyChess will colorize suboptimal analyzed moves with red."
 msgstr ""
 
-#: glade/PyChess.glade:1458
+#: glade/PyChess.glade:1477
 msgid "Show elapsed move times"
 msgstr ""
 
-#: glade/PyChess.glade:1463
+#: glade/PyChess.glade:1482
 msgid "If set, the elapsed time that a player used for the move is shown."
 msgstr ""
 
-#: glade/PyChess.glade:1481
+#: glade/PyChess.glade:1500
 msgid "If set, the hint analyzer engine evaluation value is shown."
 msgstr ""
 
-#: glade/PyChess.glade:1507
-msgid "<b>General Display Options</b>"
-msgstr ""
-
-#: glade/PyChess.glade:1541
-msgid "F_ull board animation"
-msgstr ""
-
-#: glade/PyChess.glade:1546
-msgid "Animate pieces, board rotation and more. Use this on fast machines."
+#: glade/PyChess.glade:1526
+msgid "<b>General Options</b>"
 msgstr ""
 
 #: glade/PyChess.glade:1560
-msgid "Only animate _moves"
+msgid "F_ull board animation"
 msgstr ""
 
 #: glade/PyChess.glade:1565
+msgid "Animate pieces, board rotation and more. Use this on fast machines."
+msgstr ""
+
+#: glade/PyChess.glade:1579
+msgid "Only animate _moves"
+msgstr ""
+
+#: glade/PyChess.glade:1584
 msgid "Only animate piece moves."
 msgstr ""
 
-#: glade/PyChess.glade:1580
+#: glade/PyChess.glade:1599
 msgid "No _animation"
 msgstr ""
 
-#: glade/PyChess.glade:1585
+#: glade/PyChess.glade:1604
 msgid "Never use animation. Use this on slow machines."
 msgstr ""
 
-#: glade/PyChess.glade:1613
+#: glade/PyChess.glade:1632
 msgid "<b>Animation</b>"
 msgstr ""
 
-#: glade/PyChess.glade:1632
+#: glade/PyChess.glade:1651
 msgid "_General"
 msgstr ""
 
-#: glade/PyChess.glade:1673
+#: glade/PyChess.glade:1692
 msgid "Use opening _book"
 msgstr ""
 
-#: glade/PyChess.glade:1678
+#: glade/PyChess.glade:1697
 msgid "If set, PyChess will suggest best opening moves on hint panel."
 msgstr ""
 
-#: glade/PyChess.glade:1705
+#: glade/PyChess.glade:1724
 msgid "Polyglot book file:"
 msgstr ""
 
-#: glade/PyChess.glade:1749
+#: glade/PyChess.glade:1768
 msgid "Use _local tablebases"
 msgstr ""
 
-#: glade/PyChess.glade:1754
+#: glade/PyChess.glade:1773
 msgid ""
 "If set, PyChess will show game results for different moves in positions "
 "containing 6 or less pieces.\n"
@@ -926,228 +940,228 @@ msgid ""
 "http://www.olympuschess.com/egtb/gaviota/"
 msgstr ""
 
-#: glade/PyChess.glade:1784
+#: glade/PyChess.glade:1803
 msgid "Gaviota TB path:"
 msgstr ""
 
-#: glade/PyChess.glade:1824
+#: glade/PyChess.glade:1843
 msgid "Use _online tablebases"
 msgstr ""
 
-#: glade/PyChess.glade:1829
+#: glade/PyChess.glade:1848
 msgid ""
 "If set, PyChess will show game results for different moves in positions "
 "containing 6 or less pieces.\n"
 "It will search positions from http://www.k4it.de/"
 msgstr ""
 
-#: glade/PyChess.glade:1851
+#: glade/PyChess.glade:1870
 msgid "<b>Opening, endgame</b>"
 msgstr ""
 
-#: glade/PyChess.glade:1885
+#: glade/PyChess.glade:1904
 msgid "Use _analyzer"
 msgstr ""
 
-#: glade/PyChess.glade:1927
+#: glade/PyChess.glade:1946
 msgid ""
 "The analyzer will run in the background and analyze the game. <b>This is "
 "necessary for the hint mode to work</b>"
 msgstr ""
 
-#: glade/PyChess.glade:1959
+#: glade/PyChess.glade:1978
 msgid "Use _inverted analyzer"
 msgstr ""
 
-#: glade/PyChess.glade:2001
+#: glade/PyChess.glade:2020
 msgid ""
 "The inverse analyzer will analyze the game as if your opponent was to move. "
 "<b>This is necessary for the spy mode to work</b>"
 msgstr ""
 
-#: glade/PyChess.glade:2077
+#: glade/PyChess.glade:2096
 msgid "<b>Analyzing</b>"
 msgstr ""
 
-#: glade/PyChess.glade:2099
+#: glade/PyChess.glade:2118
 msgid "_Hints"
 msgstr ""
 
-#: glade/PyChess.glade:2244
+#: glade/PyChess.glade:2263
 msgid "Uninstall"
 msgstr ""
 
-#: glade/PyChess.glade:2298
+#: glade/PyChess.glade:2317
 msgid "Ac_tive"
 msgstr ""
 
-#: glade/PyChess.glade:2348
+#: glade/PyChess.glade:2367
 msgid "<b>Installed Sidepanels</b>"
 msgstr ""
 
-#: glade/PyChess.glade:2363
+#: glade/PyChess.glade:2382
 msgid "Side_panels"
 msgstr ""
 
-#: glade/PyChess.glade:2421
+#: glade/PyChess.glade:2440
 msgid "Light Squares :"
 msgstr ""
 
-#: glade/PyChess.glade:2460
+#: glade/PyChess.glade:2479
 msgid "Dark Squares :"
 msgstr ""
 
-#: glade/PyChess.glade:2496
+#: glade/PyChess.glade:2515
 msgid "Reset Default Colours"
 msgstr ""
 
-#: glade/PyChess.glade:2532
+#: glade/PyChess.glade:2551
 msgid "<b>Board Colours</b>"
 msgstr ""
 
-#: glade/PyChess.glade:2591
+#: glade/PyChess.glade:2610
 msgid "<b>Chess Sets</b>"
 msgstr ""
 
-#: glade/PyChess.glade:2615
+#: glade/PyChess.glade:2634
 msgid "Themes"
 msgstr ""
 
-#: glade/PyChess.glade:2640
+#: glade/PyChess.glade:2659
 msgid "_Use sounds in PyChess"
 msgstr ""
 
-#: glade/PyChess.glade:2963
+#: glade/PyChess.glade:2982
 msgid "A player _checks:"
 msgstr ""
 
-#: glade/PyChess.glade:2978
+#: glade/PyChess.glade:2997
 msgid "A player _moves:"
 msgstr ""
 
-#: glade/PyChess.glade:2991
+#: glade/PyChess.glade:3010
 msgid "Game is _drawn:"
 msgstr ""
 
-#: glade/PyChess.glade:3006
+#: glade/PyChess.glade:3025
 msgid "Game is _lost:"
 msgstr ""
 
-#: glade/PyChess.glade:3021
+#: glade/PyChess.glade:3040
 msgid "Game is _won:"
 msgstr ""
 
-#: glade/PyChess.glade:3036
+#: glade/PyChess.glade:3055
 msgid "A player c_aptures:"
 msgstr ""
 
-#: glade/PyChess.glade:3065
+#: glade/PyChess.glade:3084
 msgid "Game is _set-up:"
 msgstr ""
 
-#: glade/PyChess.glade:3117
+#: glade/PyChess.glade:3136
 msgid "_Observed moves:"
 msgstr ""
 
-#: glade/PyChess.glade:3132
+#: glade/PyChess.glade:3151
 msgid "Observed _ends:"
 msgstr ""
 
-#: glade/PyChess.glade:3246
+#: glade/PyChess.glade:3265
 msgid "Short on _time:"
 msgstr ""
 
-#: glade/PyChess.glade:3298
+#: glade/PyChess.glade:3317
 msgid "_Invalid move:"
 msgstr ""
 
-#: glade/PyChess.glade:3350
+#: glade/PyChess.glade:3369
 msgid "Activate alarm when _remaining sec is:"
 msgstr ""
 
-#: glade/PyChess.glade:3397
+#: glade/PyChess.glade:3416
 msgid "<b>Play Sound When...</b>"
 msgstr ""
 
-#: glade/PyChess.glade:3419
+#: glade/PyChess.glade:3438
 msgid "_Sounds"
 msgstr ""
 
-#: glade/PyChess.glade:3444
+#: glade/PyChess.glade:3463
 msgid "_Auto save finished games"
 msgstr ""
 
-#: glade/PyChess.glade:3478
+#: glade/PyChess.glade:3497
 msgid "Save files to:"
 msgstr ""
 
-#: glade/PyChess.glade:3506
+#: glade/PyChess.glade:3525
 msgid "Use name format:"
 msgstr ""
 
-#: glade/PyChess.glade:3550
+#: glade/PyChess.glade:3569
 msgid "Names:  #n1, #n2"
 msgstr ""
 
-#: glade/PyChess.glade:3563
+#: glade/PyChess.glade:3582
 msgid "Year, month, day: #y, #m, #d"
 msgstr ""
 
-#: glade/PyChess.glade:3600
+#: glade/PyChess.glade:3619
 msgid "Save elapsed move _times"
 msgstr ""
 
-#: glade/PyChess.glade:3625
+#: glade/PyChess.glade:3644
 msgid "Save analyzing engine _evaluation values"
 msgstr ""
 
-#: glade/PyChess.glade:3650
+#: glade/PyChess.glade:3669
 msgid "Save _own games only"
 msgstr ""
 
-#: glade/PyChess.glade:3679
+#: glade/PyChess.glade:3698
 msgid "Save"
 msgstr ""
 
-#: glade/PyChess.glade:3709
+#: glade/PyChess.glade:3728
 msgid "uci"
 msgstr ""
 
-#: glade/PyChess.glade:3712
+#: glade/PyChess.glade:3731
 msgid "xboard"
 msgstr ""
 
-#: glade/PyChess.glade:3720
+#: glade/PyChess.glade:3739
 msgid "Manage engines"
 msgstr ""
 
-#: glade/PyChess.glade:3818
+#: glade/PyChess.glade:3837
 msgid "Command:"
 msgstr ""
 
-#: glade/PyChess.glade:3832
+#: glade/PyChess.glade:3851
 msgid "Protocol:"
 msgstr ""
 
-#: glade/PyChess.glade:3846
+#: glade/PyChess.glade:3865
 msgid "Parameters:"
 msgstr ""
 
-#: glade/PyChess.glade:3859
+#: glade/PyChess.glade:3878
 msgid "Command line parameters needed by the engine."
 msgstr ""
 
-#: glade/PyChess.glade:3884
+#: glade/PyChess.glade:3903
 msgid ""
 "Engines use uci or xboard communication protocol to talk to the GUI.\n"
 "If it can use both  you can set here which one you like."
 msgstr ""
 
-#: glade/PyChess.glade:3910
+#: glade/PyChess.glade:3929
 msgid "Working directory:"
 msgstr ""
 
-#: glade/PyChess.glade:3923
+#: glade/PyChess.glade:3942
 msgid "The directory where the engine will be started from."
 msgstr ""
 
@@ -1209,15 +1223,15 @@ msgstr ""
 msgid "Show tips at startup"
 msgstr ""
 
-#: lib/pychess/Main.py:310
+#: lib/pychess/Main.py:302
 msgid "http://en.wikipedia.org/wiki/Chess"
 msgstr ""
 
-#: lib/pychess/Main.py:313
+#: lib/pychess/Main.py:305
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
 msgstr ""
 
-#: lib/pychess/Main.py:378 lib/pychess/widgets/gamenanny.py:80
+#: lib/pychess/Main.py:370 lib/pychess/widgets/gamenanny.py:80
 msgid "Welcome"
 msgstr ""
 
@@ -1266,16 +1280,16 @@ msgstr ""
 msgid "The game #%s can't be loaded, because of an error parsing FEN"
 msgstr ""
 
-#: lib/pychess/ic/FICSConnection.py:135
+#: lib/pychess/ic/FICSConnection.py:139
 msgid "The connection was broken - got \"end of file\" message"
 msgstr ""
 
-#: lib/pychess/ic/FICSConnection.py:136
+#: lib/pychess/ic/FICSConnection.py:140
 #, python-format
 msgid "'%s' is not a registered name"
 msgstr ""
 
-#: lib/pychess/ic/FICSConnection.py:137
+#: lib/pychess/ic/FICSConnection.py:141
 msgid ""
 "The entered password was invalid.\n"
 "If you forgot your password, go to <a href=\"http://www.freechess.org/"
@@ -1283,31 +1297,31 @@ msgid ""
 "email."
 msgstr ""
 
-#: lib/pychess/ic/FICSConnection.py:141
+#: lib/pychess/ic/FICSConnection.py:145
 #, python-format
 msgid "Sorry '%s' is already logged in"
 msgstr ""
 
-#: lib/pychess/ic/FICSConnection.py:142
+#: lib/pychess/ic/FICSConnection.py:146
 #, python-format
 msgid "'%s' is a registered name.  If it is yours, type the password."
 msgstr ""
 
-#: lib/pychess/ic/FICSConnection.py:143
+#: lib/pychess/ic/FICSConnection.py:147
 msgid ""
 "Due to abuse problems, guest connections have been prevented.\n"
 "You can still register on http://www.freechess.org"
 msgstr ""
 
-#: lib/pychess/ic/FICSConnection.py:162
+#: lib/pychess/ic/FICSConnection.py:166
 msgid "Connecting to server"
 msgstr ""
 
-#: lib/pychess/ic/FICSConnection.py:177
+#: lib/pychess/ic/FICSConnection.py:181
 msgid "Logging on to server"
 msgstr ""
 
-#: lib/pychess/ic/FICSConnection.py:235
+#: lib/pychess/ic/FICSConnection.py:239
 msgid "Setting up environment"
 msgstr ""
 
@@ -1320,14 +1334,14 @@ msgstr ""
 msgid "not playing"
 msgstr ""
 
-#: lib/pychess/ic/FICSObjects.py:54 lib/pychess/ic/ICLounge.py:1058
-#: lib/pychess/ic/ICLounge.py:2114 lib/pychess/ic/__init__.py:98
+#: lib/pychess/ic/FICSObjects.py:54 lib/pychess/ic/ICLounge.py:1136
+#: lib/pychess/ic/ICLounge.py:2209 lib/pychess/ic/__init__.py:98
 #: lib/pychess/widgets/newGameDialog.py:153
 msgid "Blitz"
 msgstr ""
 
-#: lib/pychess/ic/FICSObjects.py:58 lib/pychess/ic/ICLounge.py:1059
-#: lib/pychess/ic/ICLounge.py:2114 lib/pychess/ic/__init__.py:100
+#: lib/pychess/ic/FICSObjects.py:58 lib/pychess/ic/ICLounge.py:1137
+#: lib/pychess/ic/ICLounge.py:2209 lib/pychess/ic/__init__.py:100
 msgid "Lightning"
 msgstr ""
 
@@ -1392,16 +1406,17 @@ msgid "In Tournament"
 msgstr ""
 
 #: lib/pychess/ic/FICSObjects.py:308 lib/pychess/ic/FICSObjects.py:492
-#: lib/pychess/ic/ICLounge.py:2183
+#: lib/pychess/ic/ICLounge.py:2278
 msgid "Unrated"
 msgstr ""
 
-#: lib/pychess/ic/FICSObjects.py:491 lib/pychess/ic/ICLounge.py:672
-#: lib/pychess/ic/ICLounge.py:2018
+#: lib/pychess/ic/FICSObjects.py:491 lib/pychess/ic/ICLounge.py:670
+#: lib/pychess/ic/ICLounge.py:1358 lib/pychess/ic/ICLounge.py:1558
+#: lib/pychess/ic/ICLounge.py:2113
 msgid "Rated"
 msgstr ""
 
-#: lib/pychess/ic/FICSObjects.py:498 lib/pychess/ic/ICLounge.py:2003
+#: lib/pychess/ic/FICSObjects.py:498 lib/pychess/ic/ICLounge.py:2098
 #, python-format
 msgid "%d min"
 msgstr ""
@@ -1416,11 +1431,11 @@ msgstr ""
 msgid "%(player)s plays %(color)s"
 msgstr ""
 
-#: lib/pychess/ic/FICSObjects.py:519 lib/pychess/ic/ICLounge.py:831
+#: lib/pychess/ic/FICSObjects.py:519 lib/pychess/ic/ICLounge.py:909
 msgid "white"
 msgstr ""
 
-#: lib/pychess/ic/FICSObjects.py:519 lib/pychess/ic/ICLounge.py:831
+#: lib/pychess/ic/FICSObjects.py:519 lib/pychess/ic/ICLounge.py:909
 msgid "black"
 msgstr ""
 
@@ -1436,8 +1451,13 @@ msgstr ""
 msgid "Manual Accept"
 msgstr ""
 
-#: lib/pychess/ic/FICSObjects.py:804
+#: lib/pychess/ic/FICSObjects.py:810
 msgid "Private"
+msgstr ""
+
+#: lib/pychess/ic/FICSObjects.py:930 lib/pychess/ic/ICLounge.py:527
+#: lib/pychess/Savers/epd.py:139
+msgid "Unknown"
 msgstr ""
 
 #: lib/pychess/ic/ICLogon.py:159 lib/pychess/ic/ICLogon.py:165
@@ -1464,119 +1484,115 @@ msgstr ""
 msgid "You have been logged out because you were idle more than 60 minutes"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:224
+#: lib/pychess/ic/ICLounge.py:222
 msgid "You have to set kibitz on to see bot messages here."
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:243
+#: lib/pychess/ic/ICLounge.py:241
 msgid ""
 "You may only have 3 outstanding seeks at the same time. If you want to add a "
 "new seek you must clear your currently active seeks. Clear your seeks?"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:260
+#: lib/pychess/ic/ICLounge.py:258
 msgid "You can't touch this! You are examining a game."
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:272
+#: lib/pychess/ic/ICLounge.py:270
 msgid " has declined your offer for a match"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:285
+#: lib/pychess/ic/ICLounge.py:283
 msgid " is censoring you"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:298
+#: lib/pychess/ic/ICLounge.py:296
 msgid " noplay listing you"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:313
+#: lib/pychess/ic/ICLounge.py:311
 msgid " uses a formula not fitting your match request:"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:327
+#: lib/pychess/ic/ICLounge.py:325
 msgid "to manual accept"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:329
+#: lib/pychess/ic/ICLounge.py:327
 msgid "to automatic accept"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:331
+#: lib/pychess/ic/ICLounge.py:329
 msgid "rating range now"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:332
+#: lib/pychess/ic/ICLounge.py:330
 msgid "Seek updated"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:344
+#: lib/pychess/ic/ICLounge.py:342
 msgid "Your seeks have been removed"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:365
+#: lib/pychess/ic/ICLounge.py:363
 msgid " has arrived"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:372
+#: lib/pychess/ic/ICLounge.py:370
 msgid " has departed"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:376
+#: lib/pychess/ic/ICLounge.py:374
 msgid " is present"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:393 sidepanel/chatPanel.py:17
+#: lib/pychess/ic/ICLounge.py:391 sidepanel/chatPanel.py:17
 msgid "Chat"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:474 sidepanel/bookPanel.py:366
+#: lib/pychess/ic/ICLounge.py:472 sidepanel/bookPanel.py:366
 msgid "Win"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:474 sidepanel/bookPanel.py:360
+#: lib/pychess/ic/ICLounge.py:472 sidepanel/bookPanel.py:360
 msgid "Draw"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:474 sidepanel/bookPanel.py:363
+#: lib/pychess/ic/ICLounge.py:472 sidepanel/bookPanel.py:363
 msgid "Loss"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:484
+#: lib/pychess/ic/ICLounge.py:482
 msgid ""
 "On FICS, your \"Wild\" rating encompasses all of the following variants at "
 "all time controls:\n"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:496
+#: lib/pychess/ic/ICLounge.py:494
 msgid "Sanctions"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:501
+#: lib/pychess/ic/ICLounge.py:499
 msgid "Email"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:506
+#: lib/pychess/ic/ICLounge.py:504
 msgid "Spent"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:508
+#: lib/pychess/ic/ICLounge.py:506
 msgid "online in total"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:514
+#: lib/pychess/ic/ICLounge.py:512
 msgid "Ping"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:519
+#: lib/pychess/ic/ICLounge.py:517
 msgid "Connecting"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:529 lib/pychess/Savers/epd.py:139
-msgid "Unknown"
-msgstr ""
-
-#: lib/pychess/ic/ICLounge.py:546
+#: lib/pychess/ic/ICLounge.py:544
 msgid ""
 "You are currently logged in as a guest.\n"
 "A guest can't play rated games and therefore isn't able to play as many of "
@@ -1585,191 +1601,173 @@ msgid ""
 "freechess.org/Register/index.html</a>."
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:671 lib/pychess/ic/ICLounge.py:1058
+#: lib/pychess/ic/ICLounge.py:669 lib/pychess/ic/ICLounge.py:1136
 msgid "Name"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:672
+#: lib/pychess/ic/ICLounge.py:670 lib/pychess/ic/ICLounge.py:1358
+#: lib/pychess/ic/ICLounge.py:1558
 msgid "Type"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:672
+#: lib/pychess/ic/ICLounge.py:670 lib/pychess/ic/ICLounge.py:1558
 msgid "Clock"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:770
+#: lib/pychess/ic/ICLounge.py:726 lib/pychess/ic/ICLounge.py:923
+#: lib/pychess/Players/Human.py:250
+msgid "Accept"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:728
+msgid "Assess"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:734
+msgid "Archived"
+msgstr ""
+
+#: lib/pychess/ic/ICLounge.py:848
 #, python-format
 msgid "Active seeks: %d"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:819
+#: lib/pychess/ic/ICLounge.py:897
 #, python-format
 msgid ""
 " would like to resume your adjourned <b>%(time)s</b> <b>%(gametype)s</b> "
 "game."
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:824
+#: lib/pychess/ic/ICLounge.py:902
 #, python-format
 msgid " challenges you to a <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> game"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:829
+#: lib/pychess/ic/ICLounge.py:907
 #, python-format
 msgid " where <b>%(player)s</b> plays <b>%(color)s</b>."
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:845 lib/pychess/Players/Human.py:250
-msgid "Accept"
-msgstr ""
-
-#: lib/pychess/ic/ICLounge.py:846 lib/pychess/Players/Human.py:251
+#: lib/pychess/ic/ICLounge.py:924 lib/pychess/Players/Human.py:251
 msgid "Decline"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:987
+#: lib/pychess/ic/ICLounge.py:1065
 msgid " min"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1059
+#: lib/pychess/ic/ICLounge.py:1137
 msgid "Status"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1125 lib/pychess/ic/ICLounge.py:1155
+#: lib/pychess/ic/ICLounge.py:1203 lib/pychess/ic/ICLounge.py:1233
 #, python-format
 msgid "Players: %d"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1279
-msgid "White Player"
-msgstr ""
-
-#: lib/pychess/ic/ICLounge.py:1280
-msgid "Black Player"
-msgstr ""
-
-#: lib/pychess/ic/ICLounge.py:1280 lib/pychess/ic/ICLounge.py:1482
-msgid "Game Type"
-msgstr ""
-
-#: lib/pychess/ic/ICLounge.py:1391
+#: lib/pychess/ic/ICLounge.py:1469
 #, python-format
 msgid "Games running: %d"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1481
-msgid "Color"
-msgstr ""
-
-#: lib/pychess/ic/ICLounge.py:1482
-msgid "Opponent"
-msgstr ""
-
-#: lib/pychess/ic/ICLounge.py:1482
-msgid "Is Online"
-msgstr ""
-
-#: lib/pychess/ic/ICLounge.py:1482
-msgid "Time Control"
-msgstr ""
-
-#: lib/pychess/ic/ICLounge.py:1483
+#: lib/pychess/ic/ICLounge.py:1559
 msgid "Date/Time"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1534
+#: lib/pychess/ic/ICLounge.py:1614
 #, python-format
 msgid ""
 " with whom you have an adjourned <b>%(timecontrol)s</b> <b>%(gametype)s</b> "
 "game is online."
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1555
+#: lib/pychess/ic/ICLounge.py:1635
 msgid "Request Continuation"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1557
+#: lib/pychess/ic/ICLounge.py:1637
 msgid "Examine Adjourned Game"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1870
+#: lib/pychess/ic/ICLounge.py:1965
 msgid ""
 "The chain button is disabled because you are logged in as a guest. Guests "
 "can't establish ratings, and the chain button's state has no effect when "
 "there is no rating to which to tie \"Opponent Strength\" to"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1911
+#: lib/pychess/ic/ICLounge.py:2006
 msgid "Challenge: "
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1949
+#: lib/pychess/ic/ICLounge.py:2044
 msgid "If set you can refuse players accepting your seek"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1953 lib/pychess/ic/ICLounge.py:1956
+#: lib/pychess/ic/ICLounge.py:2048 lib/pychess/ic/ICLounge.py:2051
 msgid "This option is not applicable because you're challenging a player"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:1969
+#: lib/pychess/ic/ICLounge.py:2064
 msgid "Edit Seek: "
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2000
+#: lib/pychess/ic/ICLounge.py:2095
 #, python-format
 msgid "%(minutes)d min + %(gain)d sec/move"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2021
+#: lib/pychess/ic/ICLounge.py:2116
 msgid "Manual"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2161
+#: lib/pychess/ic/ICLounge.py:2256
 msgid "Any strength"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2213
+#: lib/pychess/ic/ICLounge.py:2308
 msgid "You can't play rated games because you are logged in as a guest"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2217
+#: lib/pychess/ic/ICLounge.py:2312
 msgid "You can't play rated games because \"Untimed\" is checked, "
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2218
+#: lib/pychess/ic/ICLounge.py:2313
 msgid "and on FICS, untimed games can't be rated"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2222
+#: lib/pychess/ic/ICLounge.py:2317
 msgid "This option is not available because you're challenging a guest, "
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2223
+#: lib/pychess/ic/ICLounge.py:2318
 msgid "and guests can't play rated games"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2237 lib/pychess/Variants/shuffle.py:16
+#: lib/pychess/ic/ICLounge.py:2332 lib/pychess/Variants/shuffle.py:16
 #: lib/pychess/widgets/newGameDialog.py:266
 msgid "Shuffle"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2238 lib/pychess/widgets/newGameDialog.py:267
+#: lib/pychess/ic/ICLounge.py:2333 lib/pychess/widgets/newGameDialog.py:267
 msgid "Other (standard rules)"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2239 lib/pychess/widgets/newGameDialog.py:268
+#: lib/pychess/ic/ICLounge.py:2334 lib/pychess/widgets/newGameDialog.py:268
 msgid "Other (non standard rules)"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2326
+#: lib/pychess/ic/ICLounge.py:2421
 msgid "You can't select a variant because \"Untimed\" is checked, "
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2327
+#: lib/pychess/ic/ICLounge.py:2422
 msgid "and on FICS, untimed games have to be normal chess rules"
 msgstr ""
 
-#: lib/pychess/ic/ICLounge.py:2359
+#: lib/pychess/ic/ICLounge.py:2454
 msgid "Change Tolerance"
 msgstr ""
 
@@ -2156,7 +2154,7 @@ msgstr ""
 msgid "Simple Chess Position"
 msgstr ""
 
-#: lib/pychess/Savers/fen.py:44 lib/pychess/Savers/pgn.py:330
+#: lib/pychess/Savers/fen.py:44 lib/pychess/Savers/pgn.py:329
 msgid "The game can't be loaded, because of an error parsing FEN"
 msgstr ""
 
@@ -2181,7 +2179,7 @@ msgstr ""
 msgid "Chess Game"
 msgstr ""
 
-#: lib/pychess/Savers/pgn.py:363
+#: lib/pychess/Savers/pgn.py:362
 msgid "Invalid move."
 msgstr ""
 
@@ -2440,11 +2438,11 @@ msgstr ""
 msgid "The reason is unknown"
 msgstr ""
 
-#: lib/pychess/Utils/TimeModel.py:232
+#: lib/pychess/Utils/TimeModel.py:229
 msgid "min"
 msgstr ""
 
-#: lib/pychess/Utils/TimeModel.py:234
+#: lib/pychess/Utils/TimeModel.py:231
 msgid "sec"
 msgstr ""
 
@@ -3343,15 +3341,15 @@ msgid ""
 "atoms in the Universe?"
 msgstr ""
 
-#: lib/pychess/ic/managers/ChatManager.py:193
+#: lib/pychess/ic/managers/ChatManager.py:184
 msgid "Shout"
 msgstr ""
 
-#: lib/pychess/ic/managers/ChatManager.py:194
+#: lib/pychess/ic/managers/ChatManager.py:185
 msgid "Chess Shout"
 msgstr ""
 
-#: lib/pychess/ic/managers/ChatManager.py:204
+#: lib/pychess/ic/managers/ChatManager.py:195
 #, python-format
 msgid "Unofficial channel %d"
 msgstr ""
