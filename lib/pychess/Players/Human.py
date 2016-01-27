@@ -74,14 +74,14 @@ ERROR_MESSAGES = {
 
 class Human (Player):
     __type__ = LOCAL
-    
+
     __gsignals__ = {
         "messageReceived": (GObject.SignalFlags.RUN_FIRST, None, (str,)),
     }
-    
+
     def __init__ (self, gmwidg, color, name, ichandle=None, icrating=None):
         Player.__init__(self)
-        
+
         self.defname = "Human"
         self.board = gmwidg.board
         self.gmwidg = gmwidg
@@ -95,32 +95,32 @@ class Human (Player):
         self.setName(name)
         self.ichandle = ichandle
         self.icrating = icrating
-        
+
         if self.gamemodel.timed:
             self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
-    
+
     #===========================================================================
     #    Handle signals from the board
     #===========================================================================
-    
+
     def zero_reached (self, timemodel, color):
         if conf.get('autoCallFlag', False) and \
                 self.gamemodel.status == RUNNING and \
                 timemodel.getPlayerTime(1-self.color) <= 0:
             log.info('Automatically sending flag call on behalf of player %s.' % self.name)
             self.emit("offer", Offer(FLAG_CALL))
-    
+
     def piece_moved (self, board, move, color):
         if color != self.color:
             return
         self.queue.put(move)
-    
+
     def emit_action (self, action, param):
         # If there are two or more tabs open, we have to ensure us that it is
         # us who are in the active tab, and not the others
         if not self.gmwidg.isInFront(): return
         log.debug("Human.emit_action: self.name=%s, action=%s" % (self.name, action))
-        
+
         # If there are two human players, we have to ensure us that it was us
         # who did the action, and not the others
         if self.gamemodel.players[1-self.color].__type__ == LOCAL:
@@ -131,20 +131,20 @@ class Human (Player):
                 if self.gamemodel.boards[-1].color != self.color:
                     return
         self.emit("offer", Offer(action, param=param))
-    
+
     #===========================================================================
     #    Send the player move updates
     #===========================================================================
-    
+
     def makeMove (self, board1, move, board2):
         log.debug("Human.makeMove: move=%s, board1=%s board2=%s" % \
             (move, board1, board2))
-        if self.board.view.premovePiece and self.board.view.premove0 and self.board.view.premove1 and \
-            self.color == self.board.view.premovePiece.color:
-            if validate(board1, Move(self.board.view.premove0, self.board.view.premove1, board1, promotion=self.board.view.premovePromotion)):
+        if self.board.view.premove_piece and self.board.view.premove0 and self.board.view.premove1 and \
+            self.color == self.board.view.premove_piece.color:
+            if validate(board1, Move(self.board.view.premove0, self.board.view.premove1, board1, promotion=self.board.view.premove_promotion)):
                 log.debug("Human.makeMove: Setting move to premove %s %s" % \
                     (self.board.view.premove0, self.board.view.premove1))
-                self.board.emit_move_signal(self.board.view.premove0, self.board.view.premove1, promotion=self.board.view.premovePromotion)
+                self.board.emit_move_signal(self.board.view.premove0, self.board.view.premove1, promotion=self.board.view.premove_promotion)
             # reset premove
             self.board.view.setPremove(None, None, None, None)
         self.gmwidg.setLocked(False)
@@ -156,25 +156,25 @@ class Human (Player):
             log.debug("Human.makeMove: %s: raise TurnInterrupt" % self)
             raise TurnInterrupt
         return item
-    
+
     #===========================================================================
     #    Ending the game
     #===========================================================================
-    
+
     def end (self, status, reason):
         self.queue.put("del")
-    
+
     def kill (self, reason):
         print("I am killed", self)
         for id in self.conid:
             if self.board.handler_is_connected(id):
                 self.board.disconnect(id)
         self.queue.put("del")
-    
+
     #===========================================================================
     #    Interacting with the player
     #===========================================================================
-    
+
     @idle_add
     def hurry (self):
         title = _("Your opponent asks you to hurry!")
@@ -185,15 +185,15 @@ class Human (Player):
         message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self.gmwidg.showMessage(message)
-        
+
     def pause (self):
         self.gmwidg.setLocked(True)
-    
+
     def resume (self):
         log.debug("Human.resume: %s" % (self))
         if self.board.view.model.curplayer == self:
             self.gmwidg.setLocked(False)
-    
+
     def playerUndoMoves (self, movecount, gamemodel):
         log.debug("Human.playerUndoMoves:  movecount=%s self=%s" % (movecount, self))
         #If the movecount is odd, the player has changed, and we have to interupt
@@ -203,33 +203,33 @@ class Human (Player):
             if gamemodel.curplayer != self:
                 log.debug("Human.playerUndoMoves: putting TurnInterrupt into self.queue")
                 self.queue.put("int")
-        
+
         # If the movecount is even, we have to ensure the board is unlocked.
         # This is because it might have been locked by the game ending, but
         # perhaps we have now undone some moves, and it is no longer ended.
         elif movecount % 2 == 0 and gamemodel.curplayer == self:
             log.debug("Human.playerUndoMoves: self=%s: calling gmwidg.setLocked" % (self))
             self.gmwidg.setLocked(False)
-    
+
     def putMessage (self, text):
         self.emit("messageReceived", text)
-    
+
     def sendMessage (self, text):
         self.emit("offer", Offer(CHAT_ACTION, param=text))
-    
+
     #===========================================================================
     #    Offer handling
     #===========================================================================
-    
+
     @idle_add
     def offer (self, offer):
         log.debug("Human.offer: self=%s %s" % (self, offer))
         assert offer.type in OFFER_MESSAGES
-        
+
         if self.gamemodel.players[1-self.color].__type__ is LOCAL:
             self.emit("accept", offer)
             return
-        
+
         heading, text, takes_param = OFFER_MESSAGES[offer.type]
         if takes_param:
             param = offer.param
@@ -238,7 +238,7 @@ class Human (Player):
                 param = self.gamemodel.ply - offer.param
             heading = heading % param
             text = text % param
-        
+
         def response_cb (infobar, response, message):
             if response == Gtk.ResponseType.ACCEPT:
                 self.emit("accept", offer)
@@ -251,7 +251,7 @@ class Human (Player):
         message.add_button(InfoBarMessageButton(_("Decline"), Gtk.ResponseType.NO))
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self.gmwidg.showMessage(message)
-    
+
     @idle_add
     def offerDeclined (self, offer):
         log.debug("Human.offerDeclined: self=%s %s" % (self, offer))
@@ -267,7 +267,7 @@ class Human (Player):
         message.add_button(InfoBarMessageButton(_("Resend"), Gtk.ResponseType.ACCEPT))
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self.gmwidg.showMessage(message)
-    
+
     @idle_add
     def offerWithdrawn (self, offer):
         log.debug("Human.offerWithdrawn: self=%s %s" % (self, offer))
@@ -280,7 +280,7 @@ class Human (Player):
         message = InfoBarMessage(Gtk.MessageType.INFO, content, response_cb)
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE, Gtk.ResponseType.CANCEL))
         self.gmwidg.showMessage(message)
-    
+
     @idle_add
     def offerError (self, offer, error):
         log.debug("Human.offerError: self=%s error=%s %s" % (self, error, offer))
@@ -297,7 +297,7 @@ class Human (Player):
         else:
             heading = _("%s returns an error") % actionName
             text = ERROR_MESSAGES[error]
-        
+
         content = InfoBar.get_message_content(heading, text, Gtk.STOCK_DIALOG_WARNING)
         def response_cb (infobar, response, message):
             message.dismiss()
