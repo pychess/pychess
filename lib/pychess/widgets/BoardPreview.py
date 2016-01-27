@@ -62,7 +62,7 @@ class BoardPreview:
         self.widgets["boardPreviewDock"].add(self.boardview)
         self.boardview.show()
         self.gamemodel = self.boardview.model
-        self.boardview.gotStarted = True
+        self.boardview.got_started = True
 
         # Connect label showing possition
         self.boardview.connect('shown_changed', self.shown_changed)
