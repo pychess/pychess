@@ -124,7 +124,7 @@ class BoardPreview:
         if sel == self.lastSel: return
         self.lastSel = sel
 
-        self.boardview.animationLock.acquire()
+        self.boardview.animation_lock.acquire()
         try:
             try:
                 self.chessfile.loadToModel(sel, -1, self.gamemodel)
@@ -157,7 +157,7 @@ class BoardPreview:
             self.boardview._shown = self.gamemodel.lowply
             last = self.gamemodel.ply
         finally:
-            self.boardview.animationLock.release()
+            self.boardview.animation_lock.release()
         self.boardview.redraw_canvas()
         self.boardview.shown = last
         self.shown_changed(self.boardview, last)

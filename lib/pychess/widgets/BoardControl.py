@@ -195,7 +195,7 @@ class BoardControl (Gtk.EventBox):
             self.view.selected = None
             self.view.active = None
             self.view.hover = None
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             self.view.setPremove(None, None, None, None)
             if not self.view.model.examined:
                 self.currentState = self.lockedNormalState
@@ -209,7 +209,7 @@ class BoardControl (Gtk.EventBox):
             self.view.selected = None
             self.view.active = None
             self.view.hover = None
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             self.view.setPremove(None, None, None, None)
             self.currentState = self.normalState
         finally:
@@ -234,7 +234,7 @@ class BoardControl (Gtk.EventBox):
                     self.view.selected = None
                     self.view.active = None
                     self.view.hover = None
-                    self.view.draggedPiece = None
+                    self.view.dragged_piece = None
                     do_animation = True
 
                 if self.currentState == self.selectedState:
@@ -511,7 +511,7 @@ class NormalState (BoardState):
         self.parent.grab_focus()
         cord = self.point2Cord(x,y)
         if self.isSelectable(cord):
-            self.view.draggedPiece = self.getBoard()[cord]
+            self.view.dragged_piece = self.getBoard()[cord]
             self.view.active = cord
             self.parent.setStateActive()
 
@@ -534,7 +534,7 @@ class ActiveState (BoardState):
         if not cord:
             self.view.active = None
             self.view.selected = None
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
 
@@ -545,7 +545,7 @@ class ActiveState (BoardState):
                 self.parent.setStateNormal()
                 # It is important to emit_move_signal after setting state
                 # as listeners of the function probably will lock the board
-                self.view.draggedPiece = None
+                self.view.dragged_piece = None
                 self.parent.emit_move_signal(self.view.selected, cord)
                 if self.parent.setup_position:
                     if not (self.view.selected.x < 0 or self.view.selected.x > self.FILES-1):
@@ -560,19 +560,19 @@ class ActiveState (BoardState):
                 # user clicked (press+release) same piece twice, so unselect it
                 self.view.active = None
                 self.view.selected = None
-                self.view.draggedPiece = None
+                self.view.dragged_piece = None
                 self.view.startAnimation()
                 self.parent.setStateNormal()
             else:  # leave last selected piece selected
                 self.view.active = None
-                self.view.draggedPiece = None
+                self.view.dragged_piece = None
                 self.view.startAnimation()
                 self.parent.setStateSelected()
 
         # If dragged and released on a possible cord
         elif self.validate(self.view.active, cord):
             self.parent.setStateNormal()
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             # removig piece from board
             if self.parent.setup_position and \
                 (cord.x < 0 or cord.x > self.FILES-1):
@@ -584,7 +584,7 @@ class ActiveState (BoardState):
         elif self.view.active or self.view.selected:
             self.view.selected = self.view.active if self.view.active else self.view.selected
             self.view.active = None
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             self.view.startAnimation()
             self.parent.setStateSelected()
 
@@ -592,7 +592,7 @@ class ActiveState (BoardState):
         else:
             self.view.active = None
             # Send the piece back to its original cord
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
 
@@ -662,7 +662,7 @@ class SelectedState (BoardState):
                 # rather than self.view.active, we need to update it here
                 self.view.selected = cord   # re-select new cord
 
-            self.view.draggedPiece = self.getBoard()[cord]
+            self.view.dragged_piece = self.getBoard()[cord]
             self.view.active = cord
             self.parent.setStateActive()
 
@@ -695,7 +695,7 @@ class LockedNormalState (LockedBoardState):
         self.parent.grab_focus()
         cord = self.point2Cord(x,y)
         if self.isSelectable(cord):
-            self.view.draggedPiece = self.getBoard()[cord]
+            self.view.dragged_piece = self.getBoard()[cord]
             self.view.active = cord
             self.parent.setStateActive()
 
@@ -722,7 +722,7 @@ class LockedActiveState (LockedBoardState):
             # User clicked (press+release) same piece twice, so unselect it
             self.view.active = None
             self.view.selected = None
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
         elif self.parent.allowPremove and self.view.selected and self.isAPotentiallyLegalNextMove(self.view.selected, cord):
@@ -735,7 +735,7 @@ class LockedActiveState (LockedBoardState):
             self.view.setPremove(board[self.view.selected], self.view.selected, cord, self.view.shown+2, promotion)
             self.view.selected = None
             self.view.active = None
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
         elif self.parent.allowPremove and self.isAPotentiallyLegalNextMove(self.view.active, cord):
@@ -748,20 +748,20 @@ class LockedActiveState (LockedBoardState):
             self.view.setPremove(self.getBoard()[self.view.active], self.view.active, cord, self.view.shown+2, promotion)
             self.view.selected = None
             self.view.active = None
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
         elif self.view.active or self.view.selected:
             # Select last piece user tried to move or that was selected
             self.view.selected = self.view.active if self.view.active else self.view.selected
             self.view.active = None
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             self.view.startAnimation()
             self.parent.setStateSelected()
         else:
             self.view.active = None
             self.view.selected = None
-            self.view.draggedPiece = None
+            self.view.dragged_piece = None
             self.view.startAnimation()
             self.parent.setStateNormal()
 
@@ -830,7 +830,7 @@ class LockedSelectedState (LockedBoardState):
                 # corner-case encountered (see comment in SelectedState.press)
                 self.view.selected = cord  # re-select new cord
 
-            self.view.draggedPiece = self.getBoard()[cord]
+            self.view.dragged_piece = self.getBoard()[cord]
             self.view.active = cord
             self.parent.setStateActive()
 

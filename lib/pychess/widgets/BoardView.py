@@ -145,13 +145,13 @@ class BoardView(Gtk.DrawingArea):
         self.setup_position = setup_position
         self.shown_variation_idx = 0 # the main variation is the first in gamemodel.variations list
 
-        self.model.connect("game_started", self.game_started)
-        self.model.connect("game_started", self.game_started_after)
-        self.model.connect("game_changed", self.game_changed)
-        self.model.connect("moves_undoing", self.moves_undoing)
-        self.model.connect("game_loading", self.game_loading)
-        self.model.connect("game_loaded", self.game_loaded)
-        self.model.connect("game_ended", self.game_ended)
+        self.model.connect("game_started", self.gameStarted)
+        self.model.connect("game_started", self.gameStartedAfter)
+        self.model.connect("game_changed", self.gameChanged)
+        self.model.connect("moves_undoing", self.movesUndoing)
+        self.model.connect("game_loading", self.gameLoading)
+        self.model.connect("game_loaded", self.gameLoaded)
+        self.model.connect("game_ended", self.gameEnded)
 
         self.connect("draw", self.expose)
         self.connect_after("realize", self.on_realized)
@@ -212,27 +212,27 @@ class BoardView(Gtk.DrawingArea):
         self.drawtime = 0
 
         self.got_started = False
-        self.animationLock = RLock()
+        self.animation_lock = RLock()
         self.animating = False
 
-        self.draggedPiece = None  # a piece being dragged by the user
-        self.premovePiece = None
-        self.premovePromotion = None
+        self.dragged_piece = None  # a piece being dragged by the user
+        self.premove_piece = None
+        self.premove_promotion = None
 
     @idle_add
-    def game_started_after(self, model):
+    def gameStartedAfter(self, model):
         # reenable shrinking the board
         self.set_size_request(-1, -1)
         self.emit("shown_changed", self.shown)
 
-    def game_started(self, model):
+    def gameStarted(self, model):
         if conf.get("noAnimation", False):
             self.got_started = True
             self.redraw_canvas()
         else:
             if model.moves:
                 self.lastMove = model.moves[-1]
-            with self.animationLock:
+            with self.animation_lock:
                 for row in self.model.boards[-1].data:
                     for piece in row.values(): #row:
                         if piece:
@@ -240,7 +240,7 @@ class BoardView(Gtk.DrawingArea):
             self.got_started = True
             self.startAnimation()
 
-    def game_changed(self, model, ply):
+    def gameChanged(self, model, ply):
         # Play sounds
         if self.model.players and self.model.status != WAITING_TO_START:
             move = model.moves[-1]
@@ -268,7 +268,7 @@ class BoardView(Gtk.DrawingArea):
                 if self.model.players and self.model.curplayer.__type__ == LOCAL:
                     self.rotation = self.model.boards[-1].color * pi
 
-    def moves_undoing(self, model, moves):
+    def movesUndoing(self, model, moves):
         if self.shownIsMainLine():
             self.shown = model.ply-moves
         else:
@@ -281,14 +281,14 @@ class BoardView(Gtk.DrawingArea):
             self.shown = model.ply-moves
         self.redraw_canvas()
 
-    def game_loading(self, model, uri):
+    def gameLoading(self, model, uri):
         self.auto_update_shown = False
 
-    def game_loaded(self, model, uri):
+    def gameLoaded(self, model, uri):
         self.auto_update_shown = True
         self._shown = model.ply
 
-    def game_ended(self, model, reason):
+    def gameEnded(self, model, reason):
         self.redraw_canvas()
 
         if self.model.players:
@@ -418,7 +418,7 @@ class BoardView(Gtk.DrawingArea):
 
         step = shown > self.shown and 1 or -1
 
-        with self.animationLock:
+        with self.animation_lock:
             deadset = set()
             for i in range(self.shown, shown, step):
                 board = self.model.getBoardAtPly(i, self.shown_variation_idx)
@@ -506,7 +506,7 @@ class BoardView(Gtk.DrawingArea):
             self.animimation_id = -1
             return False
 
-        with self.animationLock:
+        with self.animation_lock:
             paint_box = None
 
             mod = min(1, (time()-self.animation_start)/ANIMATION_TIME)
@@ -516,9 +516,9 @@ class BoardView(Gtk.DrawingArea):
                 for x, piece in row.items():
                     if not piece:
                         continue
-                    if piece == self.draggedPiece:
+                    if piece == self.dragged_piece:
                         continue
-                    if piece == self.premovePiece:
+                    if piece == self.premove_piece:
                         # if premove move is being made, the piece will already be
                         #sitting on the cord it needs to move to-
                         # do not animate and reset premove to None
@@ -648,7 +648,7 @@ class BoardView(Gtk.DrawingArea):
             s.sort_stats('cumulative')
             s.print_stats()
         else:
-            with self.animationLock:
+            with self.animation_lock:
                 self.draw(context, a)
             #self.drawcount += 1
             #self.drawtime += time() - start
@@ -718,7 +718,7 @@ class BoardView(Gtk.DrawingArea):
             self.drawSpecial(context, r)
             self.drawEnpassant(context, r)
             self.drawArrows(context)
-            with self.animationLock:
+            with self.animation_lock:
                 self.drawPieces(context, r)
             if not self.setup_position:
                 self.drawLastMove(context, r)
@@ -979,7 +979,7 @@ class BoardView(Gtk.DrawingArea):
         # Draw standing pieces(Only those who intersect drawn area)
         for y, row in enumerate(pieces.data):
             for x, piece in row.items():
-                if piece == self.premovePiece:
+                if piece == self.premove_piece:
                     continue
                 if not piece or piece.x != None or piece.opacity < 1:
                     continue
@@ -1005,8 +1005,8 @@ class BoardView(Gtk.DrawingArea):
 
         # Draw standing premove piece
         context.set_source_rgb(*fgM)
-        if self.premovePiece and self.premovePiece.x is None and self.premove0 and self.premove1:
-            self.__drawPiece(context, self.premovePiece, self.premove1.x, self.premove1.y)
+        if self.premove_piece and self.premove_piece.x is None and self.premove0 and self.premove1:
+            self.__drawPiece(context, self.premove_piece, self.premove1.x, self.premove1.y)
 
 
     ###############################
@@ -1442,15 +1442,15 @@ class BoardView(Gtk.DrawingArea):
         if not conf.get("fullAnimation", True):
             def rotate():
                 self._rotation = radians
-                self.nextRotation = radians
+                self.next_rotation = radians
                 self.matrix = cairo.Matrix.init_rotate(radians)
                 self.redraw_canvas()
             GLib.idle_add(rotate)
         else:
-            if hasattr(self, "nextRotation") and \
-                    self.nextRotation != self.rotation:
+            if hasattr(self, "next_rotation") and \
+                    self.next_rotation != self.rotation:
                 return
-            self.nextRotation = radians
+            self.next_rotation = radians
             oldr = self.rotation
             start = time()
             next = True
@@ -1589,9 +1589,9 @@ class BoardView(Gtk.DrawingArea):
             while not self.shownIsMainLine():
                 self.showPrev()
 
-    def setPremove(self, premovePiece, premove0, premove1, premove_ply, promotion=None):
-        self.premovePiece = premovePiece
+    def setPremove(self, premove_piece, premove0, premove1, premove_ply, promotion=None):
+        self.premove_piece = premove_piece
         self.premove0 = premove0
         self.premove1 = premove1
         self.premove_ply = premove_ply
-        self.premovePromotion = promotion
+        self.premove_promotion = promotion
