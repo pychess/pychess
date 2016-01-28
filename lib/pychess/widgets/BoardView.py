@@ -296,7 +296,7 @@ class BoardView(Gtk.DrawingArea):
         self.redrawCanvas()
 
         if self.model.players:
-            sound = False
+            sound =  ""
 
             if model.status == DRAW:
                 sound = "gameIsDrawn"
@@ -320,7 +320,7 @@ class BoardView(Gtk.DrawingArea):
 
             # This should never be false, unless status is set to UNKNOWN or
             # something strange
-            if sound:
+            if sound != "":
                 preferencesDialog.SoundTab.playAction(sound)
 
     def onShowCords(self, *args):
@@ -373,7 +373,8 @@ class BoardView(Gtk.DrawingArea):
 
         if board in self.model.variations[self.shown_variation_idx]:
             # if the board to be shown is in the current shown variation, we are ok
-            self.shown = self.model.variations[self.shown_variation_idx].index(board) + self.model.lowply
+            self.shown = self.model.variations[self.shown_variation_idx].index(board) + \
+                self.model.lowply
             if board in self.model.variations[0]:
                 self.shown_variation_idx = 0
         else:
@@ -390,7 +391,8 @@ class BoardView(Gtk.DrawingArea):
             # swich to the new variation
             self.shown_variation_idx = self.model.variations.index(vari)
             self.real_set_shown = True
-            self.shown = self.model.variations[self.shown_variation_idx].index(board) + self.model.lowply
+            self.shown = self.model.variations[self.shown_variation_idx].index(board) + \
+                self.model.lowply
 
     def shownIsMainLine(self):
         return self.shown_variation_idx == 0
@@ -532,7 +534,8 @@ class BoardView(Gtk.DrawingArea):
                             piece.y = None
                             self.setPremove(None, None, None, None)
                             continue
-                        # otherwise, animate premove piece moving to the premove cord rather than the cord it actually exists on
+                        # otherwise, animate premove piece moving to the premove cord
+                        # rather than the cord it actually exists on
                         elif self.premove0 and self.premove1:
                             x_loc = self.premove1.x
                             y_loc = self.premove1.y
@@ -630,32 +633,33 @@ class BoardView(Gtk.DrawingArea):
     #############################
 
     def onRealized(self, widget):
-        p = (1-self.padding)
+        padding = (1-self.padding)
         alloc = self.get_allocation()
-        square = float(min(alloc.width, alloc.height))*p
-        xc = alloc.width/2. - square/2
-        yc = alloc.height/2. - square/2
-        s = square/self.FILES
-        self.square = (xc, yc, square, s)
+        square = float(min(alloc.width, alloc.height)) * padding
+        xc_loc = alloc.width/2. - square/2
+        yc_loc = alloc.height/2. - square/2
+        size = square/self.FILES
+        self.square = (xc_loc, yc_loc, square, size)
 
     def expose(self, widget, ctx):
         context = widget.get_window().cairo_create()
 
         start = time()
-        a = Gdk.Rectangle()
-        ce = ctx.clip_extents()
-        a.x, a.y, a.width, a.height = ce[0], ce[1], ce[2]-ce[0], ce[3]-ce[1]
+        rectangle = Gdk.Rectangle()
+        clip_ext = ctx.clip_extents()
+        rectangle.x, rectangle.y = clip_ext[0], clip_ext[1]
+        rectangle.width, rectangle.height = clip_ext[2] - clip_ext[0], clip_ext[3] - clip_ext[1]
 
         if False:
             import profile
-            profile.runctx("self.draw(context, a)", locals(), globals(), "/tmp/pychessprofile")
+            profile.runctx("self.draw(context, rectangle)", locals(), globals(), "/tmp/pychessprofile")
             from pstats import Stats
             s = Stats("/tmp/pychessprofile")
             s.sort_stats('cumulative')
             s.print_stats()
         else:
             with self.animation_lock:
-                self.draw(context, a)
+                self.draw(context, rectangle)
             #self.drawcount += 1
             #self.drawtime += time() - start
             #if self.drawcount % 100 == 0:
@@ -857,9 +861,9 @@ class BoardView(Gtk.DrawingArea):
 
         if self.model.variant.variant in ASEAN_VARIANTS:
             # just unfilled rectangles
-            for x in range(self.FILES):
-                for y in range(self.RANKS):
-                    context.rectangle(xc+x*s, yc+y*s, s, s)
+            for x_loc in range(self.FILES):
+                for y_loc in range(self.RANKS):
+                    context.rectangle((xc + x_loc * s), (yc + y_loc * s), s, s)
             # diagonals
             if self.model.variant.variant == SITTUYINCHESS:
                 context.move_to(xc, yc)
@@ -869,10 +873,10 @@ class BoardView(Gtk.DrawingArea):
                 context.stroke()
         else:
             # dark squares
-            for x in range(self.FILES):
-                for y in range(self.RANKS):
-                    if x % 2 + y % 2 == 1:
-                        context.rectangle(xc+x*s, yc+y*s, s, s)
+            for x_loc in range(self.FILES):
+                for y_loc in range(self.RANKS):
+                    if x_loc % 2 + y_loc % 2 == 1:
+                        context.rectangle((xc + x_loc * s), (yc + y_loc * s), s, s)
             context.fill()
 
         context.rectangle(xc, yc, self.FILES*s, self.RANKS*s)
@@ -937,39 +941,39 @@ class BoardView(Gtk.DrawingArea):
         pieces = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
         xc, yc, square, s = self.square
 
-        sc = self.get_style_context()
+        style_ctxt = self.get_style_context()
 
-        found, col = sc.lookup_color("p_fg_color")
-        fgN = (col.red, col.green, col.blue)
-        fgS = fgN
+        found, col = style_ctxt.lookup_color("p_fg_color")
+        fg_n = (col.red, col.green, col.blue)
+        fg_s = fg_n
 
-        found, col = sc.lookup_color("p_fg_active")
-        fgA = (col.red, col.green, col.blue)
+        found, col = style_ctxt.lookup_color("p_fg_active")
+        fg_a = (col.red, col.green, col.blue)
 
-        found, col = sc.lookup_color("p_fg_prelight")
-        fgP = (col.red, col.green, col.blue)
+        found, col = style_ctxt.lookup_color("p_fg_prelight")
+        fg_p = (col.red, col.green, col.blue)
 
-        fgM = fgN
+        fg_m = fg_n
 
         # As default we use normal foreground for selected cords, as it looks
         # less confusing. However for some themes, the normal foreground is so
         # similar to the selected background, that we have to use the selected
         # foreground.
 
-        found, col = sc.lookup_color("p_bg_selected")
-        bgSl = (col.red, col.green, col.blue)
+        found, col = style_ctxt.lookup_color("p_bg_selected")
+        bg_sl = (col.red, col.green, col.blue)
 
-        found, col = sc.lookup_color("p_dark_selected")
-        bgSd = (col.red, col.green, col.blue)
+        found, col = style_ctxt.lookup_color("p_dark_selected")
+        bg_sd = (col.red, col.green, col.blue)
 
-        if min((fgN[0]-bgSl[0])**2+(fgN[1]-bgSl[1])**2+(fgN[2]-bgSl[2])**2,
-               (fgN[0]-bgSd[0])**2+(fgN[1]-bgSd[1])**2+(fgN[2]-bgSd[2])**2) < 0.2:
-            found, col = sc.lookup_color("p_fg_selected")
-            fgS = (col.red, col.green, col.blue)
+        if min((fg_n[0]-bg_sl[0])**2+(fg_n[1]-bg_sl[1])**2+(fg_n[2]-bg_sl[2])**2,
+               (fg_n[0]-bg_sd[0])**2+(fg_n[1]-bg_sd[1])**2+(fg_n[2]-bg_sd[2])**2) < 0.2:
+            found, col = style_ctxt.lookup_color("p_fg_selected")
+            fg_s = (col.red, col.green, col.blue)
 
         # Draw dying pieces(Found in self.deadlist)
         for piece, x_loc, y_loc in self.deadlist:
-            context.set_source_rgba(fgN[0], fgN[1], fgN[2], piece.opacity)
+            context.set_source_rgba(fg_n[0], fg_n[1], fg_n[2], piece.opacity)
             self.__drawPiece(context, piece, x_loc, y_loc)
 
         # Draw pieces reincarnating(With opacity < 1)
@@ -979,7 +983,7 @@ class BoardView(Gtk.DrawingArea):
                     continue
                 if piece.x:
                     x_loc, y_loc = piece.x, piece.y
-                context.set_source_rgba(fgN[0], fgN[1], fgN[2], piece.opacity)
+                context.set_source_rgba(fg_n[0], fg_n[1], fg_n[2], piece.opacity)
                 self.__drawPiece(context, piece, x_loc, y_loc)
 
         # Draw standing pieces(Only those who intersect drawn area)
@@ -992,17 +996,17 @@ class BoardView(Gtk.DrawingArea):
                 if not intersects(rect(self.cord2RectRelative(x_loc, y_loc)), r):
                     continue
                 if Cord(x_loc, y_loc) == self.selected:
-                    context.set_source_rgb(*fgS)
+                    context.set_source_rgb(*fg_s)
                 elif Cord(x_loc, y_loc) == self.active:
-                    context.set_source_rgb(*fgA)
+                    context.set_source_rgb(*fg_a)
                 elif Cord(x_loc, y_loc) == self.hover:
-                    context.set_source_rgb(*fgP)
-                else: context.set_source_rgb(*fgN)
+                    context.set_source_rgb(*fg_p)
+                else: context.set_source_rgb(*fg_n)
 
                 self.__drawPiece(context, piece, x_loc, y_loc)
 
         # Draw moving or dragged pieces(Those with piece.x and piece.y != None)
-        context.set_source_rgb(*fgP)
+        context.set_source_rgb(*fg_p)
         for y_loc, row in enumerate(pieces.data):
             for x_loc, piece in row.items():
                 if not piece or piece.x is None or piece.opacity < 1:
@@ -1010,7 +1014,7 @@ class BoardView(Gtk.DrawingArea):
                 self.__drawPiece(context, piece, piece.x, piece.y)
 
         # Draw standing premove piece
-        context.set_source_rgb(*fgM)
+        context.set_source_rgb(*fg_m)
         if self.premove_piece and self.premove_piece.x is None and self.premove0 and self.premove1:
             self.__drawPiece(context, self.premove_piece, self.premove1.x, self.premove1.y)
 
@@ -1064,8 +1068,8 @@ class BoardView(Gtk.DrawingArea):
                     found, color = sc.lookup_color("p_dark" + state)
                 if not found:
                     print("color not found in boardview.py:", "p_dark" + state)
-                r, g, b, a = color.red, color.green, color.blue, color.alpha
-                context.set_source_rgba(r, g, b, a)
+                red, green, blue, alpha = color.red, color.green, color.blue, color.alpha
+                context.set_source_rgba(red, green, blue, alpha)
             context.fill()
 
     ###############################
@@ -1180,9 +1184,9 @@ class BoardView(Gtk.DrawingArea):
     def __drawArrow(self, context, cords, aw, ahw, ahh, asw, fillc, strkc):
         context.save()
 
-        lvx = cords[1].x-cords[0].x
-        lvy = cords[0].y-cords[1].y
-        l = float((lvx**2+lvy**2)**.5)
+        lvx = cords[1].x - cords[0].x
+        lvy = cords[0].y - cords[1].y
+        l = float((lvx**2 + lvy**2)**.5)
         vx = lvx/l
         vy = lvy/l
         v1x = -vy
@@ -1222,13 +1226,13 @@ class BoardView(Gtk.DrawingArea):
     def drawArrows(self, context):
         # TODO: Only redraw when intersecting with the redrawn area
 
-        aw = 0.3 # Arrow width
-        ahw = 0.72 # Arrow head width
-        ahh = 0.64 # Arrow head height
-        asw = 0.08 # Arrow stroke width
+        arw = 0.3 # Arrow width
+        arhw = 0.72 # Arrow head width
+        arhh = 0.64 # Arrow head height
+        arsw = 0.08 # Arrow stroke width
 
         if self.bluearrow:
-            self.__drawArrow(context, self.bluearrow, aw, ahw, ahh, asw,
+            self.__drawArrow(context, self.bluearrow, arw, arhw, arhh, arsw,
                              (.447, .624, .812, 0.9), (.204, .396, .643, 1))
 
 #         if self.shown != self.model.ply or \
@@ -1236,11 +1240,11 @@ class BoardView(Gtk.DrawingArea):
 #             return
 
         if self.greenarrow:
-            self.__drawArrow(context, self.greenarrow, aw, ahw, ahh, asw,
+            self.__drawArrow(context, self.greenarrow, arw, arhw, arhh, arsw,
                              (.54, .886, .2, 0.9), (.306, .604, .024, 1))
 
         if self.redarrow:
-            self.__drawArrow(context, self.redarrow, aw, ahw, ahh, asw,
+            self.__drawArrow(context, self.redarrow, arw, arhw, arhh, arsw,
                              (.937, .16, .16, 0.9), (.643, 0, 0, 1))
 
     ###############################
@@ -1256,19 +1260,19 @@ class BoardView(Gtk.DrawingArea):
 
         context.set_source_rgb(0, 0, 0)
         xc, yc, square, s = self.square
-        x, y = self.cord2Point(enpassant)
-        if not intersects(rect((x, y, s, s)), redrawn):
+        x_loc, y_loc = self.cord2Point(enpassant)
+        if not intersects(rect((x_loc, y_loc, s, s)), redrawn):
             return
 
-        x, y = self.cord2Point(enpassant)
+        x_loc, y_loc = self.cord2Point(enpassant)
         cr = context
         cr.set_font_size(s/2.)
         fascent, fdescent, fheight, fxadvance, fyadvance = cr.font_extents()
         chars = "en"
         xbearing, ybearing, width, height, xadvance, yadvance = \
                 cr.text_extents(chars)
-        cr.move_to(x + s / 2. - xbearing - width / 2.-1,
-                   s / 2. + y - fdescent + fheight / 2.)
+        cr.move_to(x_loc + s / 2. - xbearing - width / 2.-1,
+                   s / 2. + y_loc - fdescent + fheight / 2.)
         cr.show_text(chars)
 
     ###############################
@@ -1276,20 +1280,20 @@ class BoardView(Gtk.DrawingArea):
     ###############################
 
     def drawCross(self, context, redrawn):
-        xc, yc, square, s = self.square
+        xc_loc, yc_loc, square, side = self.square
 
-        context.move_to(xc, yc)
+        context.move_to(xc_loc, yc_loc)
         context.rel_line_to(square, square)
-        context.move_to(xc+square, yc)
+        context.move_to(xc_loc+square, yc_loc)
         context.rel_line_to(-square, square)
 
         context.set_line_cap(cairo.LINE_CAP_SQUARE)
         context.set_source_rgba(0, 0, 0, 0.65)
-        context.set_line_width(s)
+        context.set_line_width(side)
         context.stroke_preserve()
 
         context.set_source_rgba(1, 0, 0, 0.8)
-        context.set_line_width(s/2.)
+        context.set_line_width(side/2.)
         context.stroke()
 
     ############################################################################
@@ -1347,7 +1351,8 @@ class BoardView(Gtk.DrawingArea):
             return
         if self._active:
             rectangle = rect(self.cord2RectRelative(self._active))
-            if cord: rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
+            if cord:
+                rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         elif cord:
             rectangle = rect(self.cord2RectRelative(cord))
         self._active = cord
