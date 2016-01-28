@@ -127,7 +127,7 @@ class BoardControl (Gtk.EventBox):
                     promotion = self.getPromotion()
                     if promotion is None:
                         # Put back pawn moved be d'n'd
-                        self.view.runAnimation(redrawMisc = False)
+                        self.view.runAnimation(redraw_misc = False)
                         return
         if cord0.x < 0 or cord0.x > self.FILES-1:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
