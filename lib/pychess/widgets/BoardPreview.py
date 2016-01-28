@@ -115,7 +115,7 @@ class BoardPreview:
             self.gamemodel.boards = [Board(FEN_EMPTY)]
             del self.gamemodel.moves[:]
             self.boardview.shown = 0
-            self.boardview.redraw_canvas()
+            self.boardview.redrawCanvas()
             return
 
         path = self.list.get_model().get_path(iter)
@@ -158,7 +158,7 @@ class BoardPreview:
             last = self.gamemodel.ply
         finally:
             self.boardview.animation_lock.release()
-        self.boardview.redraw_canvas()
+        self.boardview.redrawCanvas()
         self.boardview.shown = last
         self.shown_changed(self.boardview, last)
 

@@ -154,13 +154,13 @@ class BoardView(Gtk.DrawingArea):
         self.model.connect("game_ended", self.gameEnded)
 
         self.connect("draw", self.expose)
-        self.connect_after("realize", self.on_realized)
-        conf.notify_add("showCords", self.on_show_cords)
-        conf.notify_add("showCaptured", self.on_show_captured)
-        conf.notify_add("faceToFace", self.on_face_to_face)
-        conf.notify_add("pieceTheme", self.on_set_piece_theme)
-        conf.notify_add("lightcolour", self.on_board_colour_theme)
-        conf.notify_add("darkcolour", self.on_board_colour_theme)
+        self.connect_after("realize", self.onRealized)
+        conf.notify_add("showCords", self.onShowCords)
+        conf.notify_add("showCaptured", self.onShowCaptured)
+        conf.notify_add("faceToFace", self.onFaceToFace)
+        conf.notify_add("pieceTheme", self.onSetPieceTheme)
+        conf.notify_add("lightcolour", self.onBoardColourTheme)
+        conf.notify_add("darkcolour", self.onBoardColourTheme)
 
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES
@@ -228,7 +228,7 @@ class BoardView(Gtk.DrawingArea):
     def gameStarted(self, model):
         if conf.get("noAnimation", False):
             self.got_started = True
-            self.redraw_canvas()
+            self.redrawCanvas()
         else:
             if model.moves:
                 self.lastMove = model.moves[-1]
@@ -279,7 +279,7 @@ class BoardView(Gtk.DrawingArea):
             self.shown = board.ply
             self.shown_variation_idx = 0
             self.shown = model.ply-moves
-        self.redraw_canvas()
+        self.redrawCanvas()
 
     def gameLoading(self, model, uri):
         self.auto_update_shown = False
@@ -289,7 +289,7 @@ class BoardView(Gtk.DrawingArea):
         self._shown = model.ply
 
     def gameEnded(self, model, reason):
-        self.redraw_canvas()
+        self.redrawCanvas()
 
         if self.model.players:
             sound = False
@@ -319,20 +319,20 @@ class BoardView(Gtk.DrawingArea):
             if sound:
                 preferencesDialog.SoundTab.playAction(sound)
 
-    def on_show_cords(self, *args):
+    def onShowCords(self, *args):
         self.showCords = conf.get("showCords", False)
 
-    def on_show_captured(self, *args):
+    def onShowCaptured(self, *args):
         self.showCaptured = conf.get("showCaptured", False)
 
-    def on_face_to_face(self, *args):
-        self.redraw_canvas()
+    def onFaceToFace(self, *args):
+        self.redrawCanvas()
 
-    def on_set_piece_theme(self, *args):
-        self.redraw_canvas()
+    def onSetPieceTheme(self, *args):
+        self.redrawCanvas()
 
-    def on_board_colour_theme(self, *args):
-        self.redraw_canvas()
+    def onBoardColourTheme(self, *args):
+        self.redrawCanvas()
 
 
     ###############################
@@ -391,10 +391,10 @@ class BoardView(Gtk.DrawingArea):
     def shownIsMainLine(self):
         return self.shown_variation_idx == 0
 
-    def _get_shown(self):
+    def _getShown(self):
         return self._shown
 
-    def _set_shown(self, shown):
+    def _setShown(self, shown):
         """Adjust the index in current variation board list."""
 
         # We don't do anything if we are already showing the right ply
@@ -412,7 +412,7 @@ class BoardView(Gtk.DrawingArea):
             if shown > self.model.lowply:
                 self.lastMove = self.model.getMoveAtPly(shown-1, self.shown_variation_idx)
             self.emit("shown_changed", self.shown)
-            self.redraw_canvas()
+            self.redrawCanvas()
             return
 
 
@@ -471,7 +471,7 @@ class BoardView(Gtk.DrawingArea):
         if self.lastMove:
             paint_box = self.paintBoxAround(self.lastMove)
             self.lastMove = None
-            self.redraw_canvas(rect(paint_box))
+            self.redrawCanvas(rect(paint_box))
         if self.shown > self.model.lowply:
             self.lastMove = self.model.getMoveAtPly(self.shown-1, self.shown_variation_idx)
         else:
@@ -486,7 +486,7 @@ class BoardView(Gtk.DrawingArea):
 
         do_set_shown()
 
-    shown = property(_get_shown, _set_shown)
+    shown = property(_getShown, _setShown)
 
     def runAnimation(self, redrawMisc=False):
         """
@@ -496,7 +496,7 @@ class BoardView(Gtk.DrawingArea):
         can set its x and y properties, to some cord(or part cord like 0.42 for
         42% right to file 0). Each time runAnimation is run, it will set those x
         and y properties a little closer to the location in the array. When it
-        has reached its final location, x and y will be set to None. _set_shown,
+        has reached its final location, x and y will be set to None. _setShown,
         which starts the animation, also sets a timestamp for the acceleration
         to work properply.
         """
@@ -597,7 +597,7 @@ class BoardView(Gtk.DrawingArea):
                 self.deadlist.remove(dead)
 
         if paint_box:
-            self.redraw_canvas(rect(paint_box))
+            self.redrawCanvas(rect(paint_box))
 
         if conf.get("noAnimation", False):
             self.animating = False
@@ -623,7 +623,7 @@ class BoardView(Gtk.DrawingArea):
     #          Drawing          #
     #############################
 
-    def on_realized(self, widget):
+    def onRealized(self, widget):
         p = (1-self.padding)
         alloc = self.get_allocation()
         square = float(min(alloc.width, alloc.height))*p
@@ -663,10 +663,10 @@ class BoardView(Gtk.DrawingArea):
     ############################################################################
 
     ###############################
-    #        redraw_canvas        #
+    #        redrawCanvas        #
     ###############################
 
-    def redraw_canvas(self, r=None):
+    def redrawCanvas(self, r=None):
         @idle_add
         def redraw(r):
             if self.get_window():
@@ -1294,7 +1294,7 @@ class BoardView(Gtk.DrawingArea):
     #          Cord vars          #
     ###############################
 
-    def _set_Selected(self, cord):
+    def _setSelected(self, cord):
         self._active = None
         if self._selected == cord:
             return
@@ -1305,12 +1305,13 @@ class BoardView(Gtk.DrawingArea):
         elif cord:
             r = rect(self.cord2RectRelative(cord))
         self._selected = cord
-        self.redraw_canvas(r)
-    def _get_selected(self):
-        return self._selected
-    selected = property(_get_selected, _set_Selected)
+        self.redrawCanvas(r)
 
-    def _set_Hover(self, cord):
+    def _getSelected(self):
+        return self._selected
+    selected = property(_getSelected, _setSelected)
+
+    def _setHover(self, cord):
         if self._hover == cord:
             return
         if self._hover:
@@ -1329,12 +1330,13 @@ class BoardView(Gtk.DrawingArea):
             #r = Gdk.Rectangle()
             #r.x, r.y, r.width, r.height = tmpr
         self._hover = cord
-        self.redraw_canvas(r)
-    def _get_hover(self):
-        return self._hover
-    hover = property(_get_hover, _set_Hover)
+        self.redrawCanvas(r)
 
-    def _set_Active(self, cord):
+    def _getHover(self):
+        return self._hover
+    hover = property(_getHover, _setHover)
+
+    def _setActive(self, cord):
         if self._active == cord:
             return
         if self._active:
@@ -1343,12 +1345,13 @@ class BoardView(Gtk.DrawingArea):
         elif cord:
             r = rect(self.cord2RectRelative(cord))
         self._active = cord
-        self.redraw_canvas(r)
-    def _get_active(self):
-        return self._active
-    active = property(_get_active, _set_Active)
+        self.redrawCanvas(r)
 
-    def _set_Premove0(self, cord):
+    def _getActive(self):
+        return self._active
+    active = property(_getActive, _setActive)
+
+    def _setPremove0(self, cord):
         if self._premove0 == cord:
             return
         if self._premove0:
@@ -1358,12 +1361,13 @@ class BoardView(Gtk.DrawingArea):
         elif cord:
             r = rect(self.cord2RectRelative(cord))
         self._premove0 = cord
-        self.redraw_canvas(r)
-    def _get_premove0(self):
-        return self._premove0
-    premove0 = property(_get_premove0, _set_Premove0)
+        self.redrawCanvas(r)
 
-    def _set_Premove1(self, cord):
+    def _getPremove0(self):
+        return self._premove0
+    premove0 = property(_getPremove0, _setPremove0)
+
+    def _setPremove1(self, cord):
         if self._premove1 == cord:
             return
         if self._premove1:
@@ -1373,16 +1377,17 @@ class BoardView(Gtk.DrawingArea):
         elif cord:
             r = rect(self.cord2RectRelative(cord))
         self._premove1 = cord
-        self.redraw_canvas(r)
-    def _get_premove1(self):
+        self.redrawCanvas(r)
+
+    def _getPremove1(self):
         return self._premove1
-    premove1 = property(_get_premove1, _set_Premove1)
+    premove1 = property(_getPremove1, _setPremove1)
 
     ################################
     #          Arrow vars          #
     ################################
 
-    def _set_Redarrow(self, cords):
+    def _setRedarrow(self, cords):
         if cords == self._redarrow:
             return
         paintCords = []
@@ -1394,13 +1399,13 @@ class BoardView(Gtk.DrawingArea):
         for cord in paintCords[1:]:
             r = union(r, rect(self.cord2RectRelative(cord)))
         self._redarrow = cords
-        self.redraw_canvas(r)
+        self.redrawCanvas(r)
 
-    def _get_Redarrow(self):
+    def _getRedarrow(self):
         return self._redarrow
-    redarrow = property(_get_Redarrow, _set_Redarrow)
+    redarrow = property(_getRedarrow, _setRedarrow)
 
-    def _set_greenarrow(self, cords):
+    def _setGreenarrow(self, cords):
         if cords == self._greenarrow:
             return
         paintCords = []
@@ -1412,12 +1417,13 @@ class BoardView(Gtk.DrawingArea):
         for cord in paintCords[1:]:
             r = union(r, rect(self.cord2RectRelative(cord)))
         self._greenarrow = cords
-        self.redraw_canvas(r)
-    def _get_greenarrow(self):
-        return self._greenarrow
-    greenarrow = property(_get_greenarrow, _set_greenarrow)
+        self.redrawCanvas(r)
 
-    def _set_bluearrow(self, cords):
+    def _getGreenarrow(self):
+        return self._greenarrow
+    greenarrow = property(_getGreenarrow, _setGreenarrow)
+
+    def _setBluearrow(self, cords):
         if cords == self._bluearrow:
             return
         paintCords = []
@@ -1429,22 +1435,22 @@ class BoardView(Gtk.DrawingArea):
         for cord in paintCords[1:]:
             r = union(r, rect(self.cord2RectRelative(cord)))
         self._bluearrow = cords
-        self.redraw_canvas(r)
-    def _get_bluearrow(self):
+        self.redrawCanvas(r)
+    def _getBluearrow(self):
         return self._bluearrow
-    bluearrow = property(_get_bluearrow, _set_bluearrow)
+    bluearrow = property(_getBluearrow, _setBluearrow)
 
     ################################
     #          Other vars          #
     ################################
 
-    def _set_Rotation(self, radians):
+    def _setRotation(self, radians):
         if not conf.get("fullAnimation", True):
             def rotate():
                 self._rotation = radians
                 self.next_rotation = radians
                 self.matrix = cairo.Matrix.init_rotate(radians)
-                self.redraw_canvas()
+                self.redrawCanvas()
             GLib.idle_add(rotate)
         else:
             if hasattr(self, "next_rotation") and \
@@ -1463,47 +1469,49 @@ class BoardView(Gtk.DrawingArea):
                 else: next = True
                 self._rotation = new = oldr + amount*(radians-oldr)
                 self.matrix = cairo.Matrix.init_rotate(new)
-                self.redraw_canvas()
+                self.redrawCanvas()
                 return next
 
             self.animating = True
             GLib.idle_add(rotate)
 
-    def _get_rotation(self):
+    def _getRotation(self):
         return self._rotation
-    rotation = property(_get_rotation, _set_Rotation)
+    rotation = property(_getRotation, _setRotation)
 
-    def _set_show_cords(self, showCords):
+    def _setShowCords(self, showCords):
         if not showCords:
             self.padding = 0
         else: self.padding = self.pad
         self._show_cords = showCords
-        self.redraw_canvas()
-    def _get_show_cords(self):
-        return self._show_cords
-    showCords = property(_get_show_cords, _set_show_cords)
+        self.redrawCanvas()
 
-    def _set_show_captured(self, showCaptured):
+    def _getShowCords(self):
+        return self._show_cords
+    showCords = property(_getShowCords, _setShowCords)
+
+    def _setShowCaptured(self, showCaptured):
         self._show_captured = showCaptured or self.model.variant.variant in DROP_VARIANTS
         files_for_holding = 6 if self._show_captured else 0
         self.set_size_request(int(30*(self.FILES + files_for_holding)), 30*self.RANKS)
-        self.redraw_canvas()
-    def _get_show_captured(self):
-        return False if self.preview else self._show_captured
-    showCaptured = property(_get_show_captured, _set_show_captured)
+        self.redrawCanvas()
 
-    def _set_show_enpassant(self, showEnpassant):
+    def _getShowCaptured(self):
+        return False if self.preview else self._show_captured
+    showCaptured = property(_getShowCaptured, _setShowCaptured)
+
+    def _setShowEnpassant(self, showEnpassant):
         if self._show_enpassant == showEnpassant:
             return
         if self.model:
             enpascord = self.model.boards[-1].enpassant
             if enpascord:
                 r = rect(self.cord2RectRelative(enpascord))
-                self.redraw_canvas(r)
+                self.redrawCanvas(r)
         self._show_enpassant = showEnpassant
-    def _get_show_enpassant(self):
+    def _getShowEnpassant(self):
         return self._show_enpassant
-    showEnpassant = property(_get_show_enpassant, _set_show_enpassant)
+    showEnpassant = property(_getShowEnpassant, _setShowEnpassant)
 
     ###########################
     #          Other          #
