@@ -128,8 +128,12 @@ SCALE_ROTATED_BOARD = False
 CORD_PADDING = 1.5
 
 class BoardView(Gtk.DrawingArea):
+    """ Description The BoardView instance is used to render the board to screen and supports
+        event updates associated with the game
+    """
 
-    __gsignals__ = {
+
+    __gsignals__ = { # Signals emitted by class
         'shown_changed' : (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
 
@@ -175,7 +179,7 @@ class BoardView(Gtk.DrawingArea):
 
         self.real_set_shown = True
         # only false when self.shown set temporarily(change shown variation)
-        # to avoid redrawMisc in animation
+        # to avoid redraw_misc in animation
 
         self.padding = 0 # Set to self.pad when setcords is active
         self.square = 0, 0, self.FILES, 1 # An object global variable with the current
@@ -193,7 +197,7 @@ class BoardView(Gtk.DrawingArea):
 
         self._shown = self.model.ply
         self._show_cords = False
-        self.showCords = conf.get("showCords", False)
+        self.show_cords = conf.get("showCords", False)
         self._show_captured = False
         if self.preview:
             self.showCaptured = False
@@ -320,7 +324,7 @@ class BoardView(Gtk.DrawingArea):
                 preferencesDialog.SoundTab.playAction(sound)
 
     def onShowCords(self, *args):
-        self.showCords = conf.get("showCords", False)
+        self.show_cords = conf.get("showCords", False)
 
     def onShowCaptured(self, *args):
         self.showCaptured = conf.get("showCaptured", False)
@@ -453,10 +457,11 @@ class BoardView(Gtk.DrawingArea):
                     piece.opacity = 0
 
         self.deadlist = []
-        for y, row in enumerate(self.model.getBoardAtPly(self.shown, self.shown_variation_idx).data):
-            for x, piece in row.items():
+        for y_loc, row in enumerate(self.model.getBoardAtPly(self.shown, \
+                                                             self.shown_variation_idx).data):
+            for x_loc, piece in row.items():
                 if piece in deadset:
-                    self.deadlist.append((piece, x, y))
+                    self.deadlist.append((piece, x_loc, y_loc))
 
         self._shown = shown
         if self.real_set_shown:
@@ -478,17 +483,17 @@ class BoardView(Gtk.DrawingArea):
             self.lastMove = None
 
         @idle_add
-        def do_set_shown():
-            self.runAnimation(redrawMisc=self.real_set_shown)
+        def doSetShown():
+            self.runAnimation(redraw_misc=self.real_set_shown)
             if not conf.get("noAnimation", False):
                 while self.animating:
                     self.animimation_id = self.runAnimation()
 
-        do_set_shown()
+        doSetShown()
 
     shown = property(_getShown, _setShown)
 
-    def runAnimation(self, redrawMisc=False):
+    def runAnimation(self, redraw_misc=False):
         """
         The animationsystem in pychess is very loosely inspired by the one of
         chessmonk. The idea is, that every piece has a place in an array(the
@@ -512,8 +517,8 @@ class BoardView(Gtk.DrawingArea):
             mod = min(1, (time()-self.animation_start)/ANIMATION_TIME)
             board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
 
-            for y, row in enumerate(board.data):
-                for x, piece in row.items():
+            for y_loc, row in enumerate(board.data):
+                for x_loc, piece in row.items():
                     if not piece:
                         continue
                     if piece == self.dragged_piece:
@@ -529,27 +534,28 @@ class BoardView(Gtk.DrawingArea):
                             continue
                         # otherwise, animate premove piece moving to the premove cord rather than the cord it actually exists on
                         elif self.premove0 and self.premove1:
-                            x = self.premove1.x
-                            y = self.premove1.y
+                            x_loc = self.premove1.x
+                            y_loc = self.premove1.y
 
                     if piece.x != None:
                         if not conf.get("noAnimation", False):
                             if piece.piece == KNIGHT:
-                                newx = piece.x + (x-piece.x)*mod**(1.5)
-                                newy = piece.y + (y-piece.y)*mod
+                                newx = piece.x + (x_loc - piece.x) * mod**(1.5)
+                                newy = piece.y + (y_loc - piece.y) * mod
                             else:
-                                newx = piece.x + (x-piece.x)*mod
-                                newy = piece.y + (y-piece.y)*mod
+                                newx = piece.x + (x_loc - piece.x) * mod
+                                newy = piece.y + (y_loc - piece.y) * mod
                         else:
-                            newx, newy = x, y
+                            newx, newy = x_loc, y_loc
 
-                        paint_box = join(paint_box, self.cord2RectRelative(piece.x, piece.y))
+                        paint_box = join(paint_box, self.cord2RectRelative(piece.x,\
+                                                                           piece.y))
                         paint_box = join(paint_box, self.cord2RectRelative(newx, newy))
 
-                        if (newx <= x <= piece.x or newx >= x >= piece.x) and \
-                           (newy <= y <= piece.y or newy >= y >= piece.y) or \
-                           abs(newx-x) < 0.005 and abs(newy-y) < 0.005:
-                            paint_box = join(paint_box, self.cord2RectRelative(x, y))
+                        if (newx <= x_loc <= piece.x or newx >= x_loc >= piece.x) and \
+                           (newy <= y_loc <= piece.y or newy >= y_loc >= piece.y) or \
+                           abs(newx-x_loc) < 0.005 and abs(newy-y_loc) < 0.005:
+                            paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
                             piece.x = None
                             piece.y = None
                         else:
@@ -558,40 +564,40 @@ class BoardView(Gtk.DrawingArea):
 
                     if piece.opacity < 1:
                         if piece.x != None:
-                            px = piece.x
-                            py = piece.y
+                            px_loc = piece.x
+                            py_loc = piece.y
                         else:
-                            px = x
-                            py = y
+                            px_loc = x_loc
+                            py_loc = y_loc
 
                         if paint_box:
-                            paint_box = join(paint_box, self.cord2RectRelative(px, py))
-                        else: paint_box = self.cord2RectRelative(px, py)
+                            paint_box = join(paint_box, self.cord2RectRelative(px_loc, py_loc))
+                        else: paint_box = self.cord2RectRelative(px_loc, py_loc)
 
                         if not conf.get("noAnimation", False):
-                            newOp = piece.opacity + (1-piece.opacity)*mod
+                            new_op = piece.opacity + (1 - piece.opacity) * mod
                         else:
-                            newOp = 1
+                            new_op = 1
 
-                        if newOp >= 1 >= piece.opacity or abs(1-newOp) < 0.005:
+                        if new_op >= 1 >= piece.opacity or abs(1 - new_op) < 0.005:
                             piece.opacity = 1
-                        else: piece.opacity = newOp
+                        else: piece.opacity = new_op
 
             ready = []
             for i, dead in enumerate(self.deadlist):
-                piece, x, y = dead
+                piece, x_loc, y_loc = dead
                 if not paint_box:
-                    paint_box = self.cord2RectRelative(x, y)
-                else: paint_box = join(paint_box, self.cord2RectRelative(x, y))
+                    paint_box = self.cord2RectRelative(x_loc, y_loc)
+                else: paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
 
                 if not conf.get("noAnimation", False):
-                    newOp = piece.opacity + (0-piece.opacity)*mod
+                    new_op = piece.opacity + (0 - piece.opacity) * mod
                 else:
-                    newOp = 0
+                    new_op = 0
 
-                if newOp <= 0 <= piece.opacity or abs(0-newOp) < 0.005:
+                if new_op <= 0 <= piece.opacity or abs(0 - new_op) < 0.005:
                     ready.append(dead)
-                else: piece.opacity = newOp
+                else: piece.opacity = new_op
 
             for dead in ready:
                 self.deadlist.remove(dead)
@@ -610,7 +616,7 @@ class BoardView(Gtk.DrawingArea):
     def startAnimation(self):
         @idle_add
         def do_start_animation():
-            self.runAnimation(redrawMisc=True)
+            self.runAnimation(redraw_misc=True)
             if not conf.get("noAnimation", False):
                 while self.animating:
                     self.animimation_id = self.runAnimation()
@@ -755,7 +761,7 @@ class BoardView(Gtk.DrawingArea):
         thickness = 0.01
         signsize = 0.04
 
-        if (not self.showCords) and (not self.setup_position):
+        if (not self.show_cords) and (not self.setup_position):
             return
 
         xc, yc, square, s = self.square
@@ -962,43 +968,43 @@ class BoardView(Gtk.DrawingArea):
             fgS = (col.red, col.green, col.blue)
 
         # Draw dying pieces(Found in self.deadlist)
-        for piece, x, y in self.deadlist:
+        for piece, x_loc, y_loc in self.deadlist:
             context.set_source_rgba(fgN[0], fgN[1], fgN[2], piece.opacity)
-            self.__drawPiece(context, piece, x, y)
+            self.__drawPiece(context, piece, x_loc, y_loc)
 
         # Draw pieces reincarnating(With opacity < 1)
-        for y, row in enumerate(pieces.data):
-            for x, piece in row.items():
+        for y_loc, row in enumerate(pieces.data):
+            for x_loc, piece in row.items():
                 if not piece or piece.opacity == 1:
                     continue
                 if piece.x:
-                    x, y = piece.x, piece.y
+                    x_loc, y_loc = piece.x, piece.y
                 context.set_source_rgba(fgN[0], fgN[1], fgN[2], piece.opacity)
-                self.__drawPiece(context, piece, x, y)
+                self.__drawPiece(context, piece, x_loc, y_loc)
 
         # Draw standing pieces(Only those who intersect drawn area)
-        for y, row in enumerate(pieces.data):
-            for x, piece in row.items():
+        for y_loc, row in enumerate(pieces.data):
+            for x_loc, piece in row.items():
                 if piece == self.premove_piece:
                     continue
                 if not piece or piece.x != None or piece.opacity < 1:
                     continue
-                if not intersects(rect(self.cord2RectRelative(x, y)), r):
+                if not intersects(rect(self.cord2RectRelative(x_loc, y_loc)), r):
                     continue
-                if Cord(x, y) == self.selected:
+                if Cord(x_loc, y_loc) == self.selected:
                     context.set_source_rgb(*fgS)
-                elif Cord(x, y) == self.active:
+                elif Cord(x_loc, y_loc) == self.active:
                     context.set_source_rgb(*fgA)
-                elif Cord(x, y) == self.hover:
+                elif Cord(x_loc, y_loc) == self.hover:
                     context.set_source_rgb(*fgP)
                 else: context.set_source_rgb(*fgN)
 
-                self.__drawPiece(context, piece, x, y)
+                self.__drawPiece(context, piece, x_loc, y_loc)
 
         # Draw moving or dragged pieces(Those with piece.x and piece.y != None)
         context.set_source_rgb(*fgP)
-        for y, row in enumerate(pieces.data):
-            for x, piece in row.items():
+        for y_loc, row in enumerate(pieces.data):
+            for x_loc, piece in row.items():
                 if not piece or piece.x is None or piece.opacity < 1:
                     continue
                 self.__drawPiece(context, piece, piece.x, piece.y)
@@ -1041,8 +1047,8 @@ class BoardView(Gtk.DrawingArea):
                 continue
 
             xc, yc, square, s = self.square
-            x, y = self.cord2Point(cord)
-            context.rectangle(x, y, s, s)
+            x_loc, y_loc = self.cord2Point(cord)
+            context.rectangle(x_loc, y_loc, s, s)
             if cord == self.premove0 or cord == self.premove1:
                 if self.isLight(cord):
                     context.set_source_rgba(*light_blue)
@@ -1479,16 +1485,16 @@ class BoardView(Gtk.DrawingArea):
         return self._rotation
     rotation = property(_getRotation, _setRotation)
 
-    def _setShowCords(self, showCords):
-        if not showCords:
+    def _setShowCords(self, show_cords):
+        if not show_cords:
             self.padding = 0
         else: self.padding = self.pad
-        self._show_cords = showCords
+        self._show_cords = show_cords
         self.redrawCanvas()
 
     def _getShowCords(self):
         return self._show_cords
-    showCords = property(_getShowCords, _setShowCords)
+    show_cords = property(_getShowCords, _setShowCords)
 
     def _setShowCaptured(self, showCaptured):
         self._show_captured = showCaptured or self.model.variant.variant in DROP_VARIANTS
