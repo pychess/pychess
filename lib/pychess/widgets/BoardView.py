@@ -1305,13 +1305,13 @@ class BoardView(Gtk.DrawingArea):
         if self._selected == cord:
             return
         if self._selected:
-            r = rect(self.cord2RectRelative(self._selected))
+            rectangle = rect(self.cord2RectRelative(self._selected))
             if cord:
-                r = union(r, rect(self.cord2RectRelative(cord)))
+                rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         elif cord:
-            r = rect(self.cord2RectRelative(cord))
+            rectangle = rect(self.cord2RectRelative(cord))
         self._selected = cord
-        self.redrawCanvas(r)
+        self.redrawCanvas(rectangle)
 
     def _getSelected(self):
         return self._selected
@@ -1321,22 +1321,22 @@ class BoardView(Gtk.DrawingArea):
         if self._hover == cord:
             return
         if self._hover:
-            r = rect(self.cord2RectRelative(self._hover))
+            rectangle = rect(self.cord2RectRelative(self._hover))
             # convert r from tuple to rect
             #tmpr = r
             #r = Gdk.Rectangle()
             #r.x, r.y, r.width, r.height = tmpr
             #if cord: r = r.union(rect(self.cord2RectRelative(cord)))
             if cord:
-                r = union(r, rect(self.cord2RectRelative(cord)))
+                rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         elif cord:
-            r = rect(self.cord2RectRelative(cord))
+            rectangle = rect(self.cord2RectRelative(cord))
             # convert r from tuple to rect
             #tmpr = r
             #r = Gdk.Rectangle()
             #r.x, r.y, r.width, r.height = tmpr
         self._hover = cord
-        self.redrawCanvas(r)
+        self.redrawCanvas(rectangle)
 
     def _getHover(self):
         return self._hover
@@ -1346,12 +1346,12 @@ class BoardView(Gtk.DrawingArea):
         if self._active == cord:
             return
         if self._active:
-            r = rect(self.cord2RectRelative(self._active))
-            if cord: r = union(r, rect(self.cord2RectRelative(cord)))
+            rectangle = rect(self.cord2RectRelative(self._active))
+            if cord: rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         elif cord:
-            r = rect(self.cord2RectRelative(cord))
+            rectangle = rect(self.cord2RectRelative(cord))
         self._active = cord
-        self.redrawCanvas(r)
+        self.redrawCanvas(rectangle)
 
     def _getActive(self):
         return self._active
@@ -1361,13 +1361,13 @@ class BoardView(Gtk.DrawingArea):
         if self._premove0 == cord:
             return
         if self._premove0:
-            r = rect(self.cord2RectRelative(self._premove0))
+            rectangle = rect(self.cord2RectRelative(self._premove0))
             if cord:
-                r = union(r, rect(self.cord2RectRelative(cord)))
+                rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         elif cord:
-            r = rect(self.cord2RectRelative(cord))
+            rectangle = rect(self.cord2RectRelative(cord))
         self._premove0 = cord
-        self.redrawCanvas(r)
+        self.redrawCanvas(rectangle)
 
     def _getPremove0(self):
         return self._premove0
@@ -1377,13 +1377,13 @@ class BoardView(Gtk.DrawingArea):
         if self._premove1 == cord:
             return
         if self._premove1:
-            r = rect(self.cord2RectRelative(self._premove1))
+            rectangle = rect(self.cord2RectRelative(self._premove1))
             if cord:
-                r = union(r, rect(self.cord2RectRelative(cord)))
+                rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         elif cord:
-            r = rect(self.cord2RectRelative(cord))
+            rectangle = rect(self.cord2RectRelative(cord))
         self._premove1 = cord
-        self.redrawCanvas(r)
+        self.redrawCanvas(rectangle)
 
     def _getPremove1(self):
         return self._premove1
@@ -1396,16 +1396,16 @@ class BoardView(Gtk.DrawingArea):
     def _setRedarrow(self, cords):
         if cords == self._redarrow:
             return
-        paintCords = []
+        paint_cords = []
         if cords:
-            paintCords += cords
+            paint_cords += cords
         if self._redarrow:
-            paintCords += self._redarrow
-        r = rect(self.cord2RectRelative(paintCords[0]))
-        for cord in paintCords[1:]:
-            r = union(r, rect(self.cord2RectRelative(cord)))
+            paint_cords += self._redarrow
+        rectangle = rect(self.cord2RectRelative(paint_cords[0]))
+        for cord in paint_cords[1:]:
+            rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         self._redarrow = cords
-        self.redrawCanvas(r)
+        self.redrawCanvas(rectangle)
 
     def _getRedarrow(self):
         return self._redarrow
@@ -1414,16 +1414,16 @@ class BoardView(Gtk.DrawingArea):
     def _setGreenarrow(self, cords):
         if cords == self._greenarrow:
             return
-        paintCords = []
+        paint_cords = []
         if cords:
-            paintCords += cords
+            paint_cords += cords
         if self._greenarrow:
-            paintCords += self._greenarrow
-        r = rect(self.cord2RectRelative(paintCords[0]))
-        for cord in paintCords[1:]:
-            r = union(r, rect(self.cord2RectRelative(cord)))
+            paint_cords += self._greenarrow
+        rectangle = rect(self.cord2RectRelative(paint_cords[0]))
+        for cord in paint_cords[1:]:
+            rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         self._greenarrow = cords
-        self.redrawCanvas(r)
+        self.redrawCanvas(rectangle)
 
     def _getGreenarrow(self):
         return self._greenarrow
@@ -1432,16 +1432,16 @@ class BoardView(Gtk.DrawingArea):
     def _setBluearrow(self, cords):
         if cords == self._bluearrow:
             return
-        paintCords = []
+        paint_cords = []
         if cords:
-            paintCords += cords
+            paint_cords += cords
         if self._bluearrow:
-            paintCords += self._bluearrow
-        r = rect(self.cord2RectRelative(paintCords[0]))
-        for cord in paintCords[1:]:
-            r = union(r, rect(self.cord2RectRelative(cord)))
+            paint_cords += self._bluearrow
+        rectangle = rect(self.cord2RectRelative(paint_cords[0]))
+        for cord in paint_cords[1:]:
+            rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         self._bluearrow = cords
-        self.redrawCanvas(r)
+        self.redrawCanvas(rectangle)
     def _getBluearrow(self):
         return self._bluearrow
     bluearrow = property(_getBluearrow, _setBluearrow)
@@ -1523,40 +1523,44 @@ class BoardView(Gtk.DrawingArea):
     #          Other          #
     ###########################
 
-    def cord2Rect(self, cord, y=None):
-        if y is None:
-            x, y = cord.x, cord.y
-        else: x = cord
+    def cord2Rect(self, cord, y_loc=None):
+        if y_loc is None:
+            x_loc, y_loc = cord.x, cord.y
+        else: x_loc = cord
 
-        xc, yc, square, s = self.square
-        r = (xc+x*s, yc+(self.RANKS-1-y)*s, s)
-        return r
+        xc_loc, yc_loc, square, s_int = self.square
+        return  ((xc_loc + (x_loc * s_int)), (yc_loc + (self.RANKS - 1 - y_loc) * s_int), s_int)
+#        return r
 
-    def cord2Point(self, cord, y=None):
-        r = self.cord2Rect(cord, y)
-        return r[:2]
+    def cord2Point(self, cord, y_loc=None):
+        point = self.cord2Rect(cord, y_loc)
+        return point[:2]
 
-    def cord2RectRelative(self, cord, y=None):
+    def cord2RectRelative(self, cord, y_loc=None):
         """ Like cord2Rect, but gives you bounding rect in case board is beeing
             Rotated """
         if isinstance(cord, tuple):
-            cx, cy, s = cord
+            cx_loc, cy_loc, square = cord
         else:
-            cx, cy, s = self.cord2Rect(cord, y)
-        x0, y0 = self.matrix.transform_point(cx, cy)
-        x1, y1 = self.matrix.transform_point(cx+s, cy)
-        x2, y2 = self.matrix.transform_point(cx, cy+s)
-        x3, y3 = self.matrix.transform_point(cx+s, cy+s)
-        x = min(x0, x1, x2, x3)
-        y = min(y0, y1, y2, y3)
-        s = max(y0, y1, y2, y3) - y
-        return (x, y, s)
+            cx_loc, cy_loc, square = self.cord2Rect(cord, y_loc)
+        x_zero, y_zero = self.matrix.transform_point(cx_loc, cy_loc)
+        x_one, y_one = self.matrix.transform_point(cx_loc + square, cy_loc)
+        x_two, y_two = self.matrix.transform_point(cx_loc, cy_loc + square)
+        x_three, y_three = self.matrix.transform_point(cx_loc + square, cy_loc + square)
+        x_loc = min(x_zero, x_one, x_two, x_three)
+        y_loc = min(y_zero, y_one, y_two, y_three)
+        square = max(y_zero, y_one, y_two, y_three) - y_loc
+        return (x_loc, y_loc, square)
 
     def isLight(self, cord):
+        """ Description: Given a board co-ordinate it returns True
+            if the square at that co-ordinate is light
+            Return : Boolean
+        """
         if self.model.variant.variant in ASEAN_VARIANTS:
             return False
-        x, y = cord.cords
-        return x % 2 + y % 2 == 1
+        x_loc, y_loc = cord.cords
+        return (x_loc % 2 + y_loc % 2) == 1
 
     def showFirst(self):
         if self.model.examined and self.model.noTD:
