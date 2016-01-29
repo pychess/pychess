@@ -676,18 +676,18 @@ class BoardView(Gtk.DrawingArea):
     #        redrawCanvas        #
     ###############################
 
-    def redrawCanvas(self, rect=None):
+    def redrawCanvas(self, rectangle=None):
         @idle_add
-        def redraw(rect):
+        def redraw(rectangle):
             if self.get_window():
-                if not rect:
+                if not rectangle:
                     alloc = self.get_allocation()
-                    rect = Gdk.Rectangle()
-                    rect.x, rect.y, rect.width, rect.height = (0, 0, alloc.width, alloc.height)
+                    rectangle = Gdk.rectangleangle()
+                    rectangle.x, rectangle.y, rectangle.width, rectangle.height = (0, 0, alloc.width, alloc.height)
 #                    self.queue_draw_area(r.x, r.y, r.width, r.height)
-                self.get_window().invalidate_rect(rect, True)
+                self.get_window().invalidate_rectangle(rectangle, True)
                 self.get_window().process_updates(True)
-        redraw(rect)
+        redraw(rectangle)
 
     ###############################
     #            draw             #
@@ -854,7 +854,7 @@ class BoardView(Gtk.DrawingArea):
                         context.rectangle(xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
             context.fill()
 
-        found, col = style_ctxt.lookup_color("p_dark_color")
+        col = style_ctxt.lookup_color("p_dark_color")[1]
         col = Gdk.RGBA()
         col.parse(conf.get("darkcolour", "#000000000000"))
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
@@ -888,8 +888,8 @@ class BoardView(Gtk.DrawingArea):
     ###############################
 
     def getCordMatrices(self, x_loc, y_loc, inv=False):
-        xc, yc, square, side = self.square
-        square_, rot_ = self.cord_matrices_state
+        square, side = self.square[2], self.square[3]
+        rot_ = self.cord_matrices_state[1]
         if square != self.square or rot_ != self.rotation:
             self.cord_matrices = [None] * self.FILES * self.RANKS + [None] * self.FILES*4
             self.cord_matrices_state = (self.square, self.rotation)
@@ -921,7 +921,7 @@ class BoardView(Gtk.DrawingArea):
         if piece.captured and not self.showCaptured:
             return
 
-        xc, yc, square, side = self.square
+        side = self.square[3]
 
         if not conf.get("faceToFace", False):
             matrix, invmatrix, cx_loc, cy_loc = self.getCordMatrices(x_loc, y_loc)
@@ -940,18 +940,17 @@ class BoardView(Gtk.DrawingArea):
 
     def drawPieces(self, context, rectangle):
         pieces = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
-        xc, yc, square, side = self.square
 
         style_ctxt = self.get_style_context()
 
-        found, col = style_ctxt.lookup_color("p_fg_color")
+        col = style_ctxt.lookup_color("p_fg_color")[1]
         fg_n = (col.red, col.green, col.blue)
         fg_s = fg_n
 
-        found, col = style_ctxt.lookup_color("p_fg_active")
+        col = style_ctxt.lookup_color("p_fg_active")[1]
         fg_a = (col.red, col.green, col.blue)
 
-        found, col = style_ctxt.lookup_color("p_fg_prelight")
+        col = style_ctxt.lookup_color("p_fg_prelight")[1]
         fg_p = (col.red, col.green, col.blue)
 
         fg_m = fg_n
@@ -961,15 +960,15 @@ class BoardView(Gtk.DrawingArea):
         # similar to the selected background, that we have to use the selected
         # foreground.
 
-        found, col = style_ctxt.lookup_color("p_bg_selected")
+        col = style_ctxt.lookup_color("p_bg_selected")[1]
         bg_sl = (col.red, col.green, col.blue)
 
-        found, col = style_ctxt.lookup_color("p_dark_selected")
+        col = style_ctxt.lookup_color("p_dark_selected")[1]
         bg_sd = (col.red, col.green, col.blue)
 
         if min((fg_n[0]-bg_sl[0])**2+(fg_n[1]-bg_sl[1])**2+(fg_n[2]-bg_sl[2])**2,
                (fg_n[0]-bg_sd[0])**2+(fg_n[1]-bg_sd[1])**2+(fg_n[2]-bg_sd[2])**2) < 0.2:
-            found, col = style_ctxt.lookup_color("p_fg_selected")
+            col = style_ctxt.lookup_color("p_fg_selected")[1]
             fg_s = (col.red, col.green, col.blue)
 
         # Draw dying pieces(Found in self.deadlist)
@@ -1051,7 +1050,7 @@ class BoardView(Gtk.DrawingArea):
             if board[cord] is None and (cord.x < 0 or cord.x > self.FILES-1):
                 continue
 
-            xc_loc, yc_loc, square, side = self.square
+            side = self.square[3]
             x_loc, y_loc = self.cord2Point(cord)
             context.rectangle(x_loc, y_loc, side, side)
             if cord == self.premove0 or cord == self.premove1:
@@ -1091,7 +1090,7 @@ class BoardView(Gtk.DrawingArea):
         padding_curr = 0.085 # Padding on current cord
         stroke_width = 0.02 # Stroke width
 
-        xc, yc, square, side = self.square
+        side = self.square[3]
 
         context.save()
         context.set_line_width(stroke_width * side)
@@ -1261,7 +1260,7 @@ class BoardView(Gtk.DrawingArea):
             return
 
         context.set_source_rgb(0, 0, 0)
-        xc, yc, square, side = self.square
+        side = self.square[3]
         x_loc, y_loc = self.cord2Point(enpassant)
         if not intersects(rect((x_loc, y_loc, side, side)), redrawn):
             return
@@ -1269,10 +1268,9 @@ class BoardView(Gtk.DrawingArea):
         x_loc, y_loc = self.cord2Point(enpassant)
         crr = context
         crr.set_font_size(side/2.)
-        fascent, fdescent, fheight, fxadvance, fyadvance = crr.font_extents()
+        fdescent, fheight = crr.font_extents()[1], crr.font_extents()[2]
         chars = "en"
-        xbearing, ybearing, width, height, xadvance, yadvance = \
-                crr.text_extents(chars)
+        xbearing, width = crr.text_extents(chars)[0], crr.text_extents(chars)[2]
         crr.move_to(x_loc + side / 2. - xbearing - width / 2.-1, \
                     side / 2. + y_loc - fdescent + fheight / 2.)
         crr.show_text(chars)
@@ -1494,7 +1492,7 @@ class BoardView(Gtk.DrawingArea):
 
     def _setShowCords(self, show_cords):
         if not show_cords:
-            self.padding = 0
+            self.padding = 0.
         else: self.padding = self.pad
         self._show_cords = show_cords
         self.redrawCanvas()
@@ -1519,8 +1517,8 @@ class BoardView(Gtk.DrawingArea):
         if self.model:
             enpascord = self.model.boards[-1].enpassant
             if enpascord:
-                r = rect(self.cord2RectRelative(enpascord))
-                self.redrawCanvas(r)
+                rectangle = rect(self.cord2RectRelative(enpascord))
+                self.redrawCanvas(rectangle)
         self._show_enpassant = showEnpassant
     def _getShowEnpassant(self):
         return self._show_enpassant
@@ -1533,11 +1531,10 @@ class BoardView(Gtk.DrawingArea):
     def cord2Rect(self, cord, y_loc=None):
         if y_loc is None:
             x_loc, y_loc = cord.x, cord.y
-        else: x_loc = cord
-
-        xc_loc, yc_loc, square, s_int = self.square
-        return  ((xc_loc + (x_loc * s_int)), (yc_loc + (self.RANKS - 1 - y_loc) * s_int), s_int)
-#        return r
+        else:
+            x_loc = cord
+        xc_loc, yc_loc, side = self.square[0], self.square[1], self.square[3]
+        return  ((xc_loc + (x_loc * side)), (yc_loc + (self.RANKS - 1 - y_loc) * side), side)
 
     def cord2Point(self, cord, y_loc=None):
         point = self.cord2Rect(cord, y_loc)
