@@ -415,7 +415,7 @@ class GameModel (GObject.GObject, Thread):
             opPlayer.hurry()
 
         elif offer.type == CHAT_ACTION:
-            print("GameModel.offerreceived(player, offer)", player.name, offer.param)
+            #print("GameModel.offerreceived(player, offer)", player.name, offer.param)
             opPlayer.putMessage(offer.param)
 
         elif offer.type == RESIGNATION:

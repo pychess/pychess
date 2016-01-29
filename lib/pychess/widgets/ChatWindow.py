@@ -788,9 +788,9 @@ class ChatWindow (object):
         self.window.set_border_width(12)
         self.window.set_icon_name("pychess")
         self.window.set_title("PyChess - Internet Chess Chat")
-        self.window.connect("delete-event", lambda w,e: w.hide() or True)
+        self.window.connect_after("delete-event", lambda w,e: w.hide() or True)
 
-        uistuff.keepWindowSize("chatwindow", self.window, defaultSize=(650,400))
+        uistuff.keepWindowSize("chat", self.window, defaultSize=(650,400))
 
         dock = PyDockTop("icchat")
         dock.show()
