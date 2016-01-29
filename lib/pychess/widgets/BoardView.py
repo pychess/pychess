@@ -654,9 +654,9 @@ class BoardView(Gtk.DrawingArea):
             import profile
             profile.runctx("self.draw(context, rectangle)", locals(), globals(), "/tmp/pychessprofile")
             from pstats import Stats
-            s = Stats("/tmp/pychessprofile")
-            s.sort_stats('cumulative')
-            s.print_stats()
+            stats = Stats("/tmp/pychessprofile")
+            stats.sort_stats('cumulative')
+            stats.print_stats()
         else:
             with self.animation_lock:
                 self.draw(context, rectangle)
@@ -676,18 +676,18 @@ class BoardView(Gtk.DrawingArea):
     #        redrawCanvas        #
     ###############################
 
-    def redrawCanvas(self, r=None):
+    def redrawCanvas(self, rect=None):
         @idle_add
-        def redraw(r):
+        def redraw(rect):
             if self.get_window():
-                if not r:
+                if not rect:
                     alloc = self.get_allocation()
-                    r = Gdk.Rectangle()
-                    r.x, r.y, r.width, r.height = (0, 0, alloc.width, alloc.height)
+                    rect = Gdk.Rectangle()
+                    rect.x, rect.y, rect.width, rect.height = (0, 0, alloc.width, alloc.height)
 #                    self.queue_draw_area(r.x, r.y, r.width, r.height)
-                self.get_window().invalidate_rect(r, True)
+                self.get_window().invalidate_rect(rect, True)
                 self.get_window().process_updates(True)
-        redraw(r)
+        redraw(rect)
 
     ###############################
     #            draw             #
@@ -714,10 +714,10 @@ class BoardView(Gtk.DrawingArea):
         square = float(min(alloc.width - holding_size, alloc.height))*(1-self.padding)
         if SCALE_ROTATED_BOARD:
             square /= abs(cos_)+abs(sin_)
-        xc = alloc.width/2. - square/2
-        yc = alloc.height/2. - square/2
-        s = square/self.FILES
-        self.square = (xc, yc, square, s)
+        xc_loc = alloc.width/2. - square/2
+        yc_loc = alloc.height/2. - square/2
+        side = square/self.FILES
+        self.square = (xc_loc, yc_loc, square, side)
 
         self.drawBoard(context, r)
 
@@ -761,70 +761,70 @@ class BoardView(Gtk.DrawingArea):
     #          drawCords          #
     ###############################
 
-    def drawCords(self, context, r):
+    def drawCords(self, context, rectangle):
         thickness = 0.01
         signsize = 0.04
 
         if (not self.show_cords) and (not self.setup_position):
             return
 
-        xc, yc, square, s = self.square
+        xc_loc, yc_loc, square, side = self.square
 
-        if contains(rect((xc, yc, square)), r):
+        if contains(rect((xc_loc, yc_loc, square)), rectangle):
             return
 
-        t = thickness*square
-        ss = signsize*square
+        thick = thickness*square
+        sign_size = signsize*square
 
-        context.rectangle(xc-t*1.5, yc-t*1.5, square+t*3, square+t*3)
+        context.rectangle(xc_loc-thick*1.5, yc_loc-thick*1.5, square+thick*3, square+thick*3)
 
-        sc = self.get_style_context()
-        bool1, dcolor = sc.lookup_color("p_dark_color")
+        style_ctxt = self.get_style_context()
+        bool1, dcolor = style_ctxt.lookup_color("p_dark_color")
         dcolor = Gdk.RGBA()
         dcolor.parse(conf.get("darkcolour", "#000000000000"))
         context.set_source_rgba(dcolor.red, dcolor.green, dcolor.blue, dcolor.alpha)
 
-        context.set_line_width(t)
+        context.set_line_width(thick)
         context.set_line_join(cairo.LINE_JOIN_ROUND)
         context.stroke()
 
         pangoScale = float(Pango.SCALE)
 
         def paint(inv):
-            for n in range(self.RANKS):
-                rank = inv and n+1 or self.RANKS-n
+            for num in range(self.RANKS):
+                rank = inv and num+1 or self.RANKS-num
                 layout = self.create_pango_layout("%d" % rank)
                 layout.set_font_description(
-                    Pango.FontDescription("bold %d" % ss))
-                w = layout.get_extents()[1].width/pangoScale
-                h = layout.get_extents()[0].height/pangoScale
+                    Pango.FontDescription("bold %d" % sign_size))
+                width = layout.get_extents()[1].width/pangoScale
+                height = layout.get_extents()[0].height/pangoScale
 
                 # Draw left side
-                context.move_to(xc-t*2.5-w, s*n+yc+h/2+t)
+                context.move_to(xc_loc - thick * 2.5 - width, side * num + yc_loc + height/2 +thick)
                 PangoCairo.show_layout(context, layout)
 
                 # Draw right side
-                #context.move_to(xc+square+t*2.5, s*n+yc+h/2+t)
+                #context.move_to(xc_loc+square+thick*2.5, side*num+yc_loc+h/2+thick)
                 #context.show_layout(layout)
 
-                file = inv and self.FILES-n or n+1
+                file = inv and self.FILES-num or num+1
                 layout = self.create_pango_layout(chr(file+ord("A")-1))
                 layout.set_font_description(
-                    Pango.FontDescription("bold %d" % ss))
+                    Pango.FontDescription("bold %d" % sign_size))
 
-                w = layout.get_pixel_size()[0]
-                h = layout.get_pixel_size()[1]
-                y = layout.get_extents()[1].y/pangoScale
+                width = layout.get_pixel_size()[0]
+                height = layout.get_pixel_size()[1]
+                y_attr = layout.get_extents()[1].y/pangoScale
 
                 # Draw top
-                #context.move_to(xc+s*n+s/2.-w/2., yc-h-t*1.5)
+                #context.move_to(xc_loc+side*num+side/2.-width/2., yc_loc-height-thick*1.5)
                 #context.show_layout(layout)
 
                 # Draw bottom
-                context.move_to(xc+s*n+s/2.-w/2., yc+square+t*1.5+abs(y))
+                context.move_to(xc_loc+side*num+side/2.-width/2., yc_loc+square+thick*1.5+abs(y_attr))
                 PangoCairo.show_layout(context, layout)
 
-        matrix, invmatrix = matrixAround(self.matrix_pi, xc+square/2., yc+square/2.)
+        matrix, invmatrix = matrixAround(self.matrix_pi, xc_loc+square/2., yc_loc+square/2.)
         paint(False)
 
         context.transform(matrix)
@@ -937,7 +937,7 @@ class BoardView(Gtk.DrawingArea):
             s - CORD_PADDING * 2, allwhite=self.allwhite, asean=self.asean)
         context.transform(matrix)
 
-    def drawPieces(self, context, r):
+    def drawPieces(self, context, rectangle):
         pieces = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
         xc, yc, square, s = self.square
 
@@ -993,7 +993,7 @@ class BoardView(Gtk.DrawingArea):
                     continue
                 if not piece or piece.x != None or piece.opacity < 1:
                     continue
-                if not intersects(rect(self.cord2RectRelative(x_loc, y_loc)), r):
+                if not intersects(rect(self.cord2RectRelative(x_loc, y_loc)), rectangle):
                     continue
                 if Cord(x_loc, y_loc) == self.selected:
                     context.set_source_rgb(*fg_s)
@@ -1050,22 +1050,22 @@ class BoardView(Gtk.DrawingArea):
             if board[cord] is None and (cord.x < 0 or cord.x > self.FILES-1):
                 continue
 
-            xc, yc, square, s = self.square
+            xc, yc, square, side = self.square
             x_loc, y_loc = self.cord2Point(cord)
-            context.rectangle(x_loc, y_loc, s, s)
+            context.rectangle(x_loc, y_loc, side, side)
             if cord == self.premove0 or cord == self.premove1:
                 if self.isLight(cord):
                     context.set_source_rgba(*light_blue)
                 else:
                     context.set_source_rgba(*dark_blue)
             else:
-                sc = self.get_style_context()
+                style_ctxt = self.get_style_context()
                 if self.isLight(cord):
                     # bg
-                    found, color = sc.lookup_color("p_bg" + state)
+                    found, color = style_ctxt.lookup_color("p_bg" + state)
                 else:
                     # dark
-                    found, color = sc.lookup_color("p_dark" + state)
+                    found, color = style_ctxt.lookup_color("p_dark" + state)
                 if not found:
                     print("color not found in boardview.py:", "p_dark" + state)
                 red, green, blue, alpha = color.red, color.green, color.blue, color.alpha
