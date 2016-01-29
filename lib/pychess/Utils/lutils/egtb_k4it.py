@@ -14,7 +14,11 @@ PROMOTION_FLAGS = {
     2: QUEEN_PROMOTION,
     3: ROOK_PROMOTION,
     4: BISHOP_PROMOTION,
-    5: KNIGHT_PROMOTION
+    5: KNIGHT_PROMOTION,
+    8: QUEEN_PROMOTION,
+    9: ROOK_PROMOTION,
+    10: BISHOP_PROMOTION,
+    11: KNIGHT_PROMOTION
 }
 
 class egtb_k4it:
@@ -42,7 +46,7 @@ class egtb_k4it:
             log.warning("Unable to read endgame tablebase from the Internet: %s" % repr(e))
             return []
         data = f.read()
-        
+
         # Parse
         for color, move_data in enumerate(data.split(b"\nNEXTCOLOR\n")):
             try:
