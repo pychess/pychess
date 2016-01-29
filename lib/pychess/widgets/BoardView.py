@@ -676,18 +676,18 @@ class BoardView(Gtk.DrawingArea):
     #        redrawCanvas        #
     ###############################
 
-    def redrawCanvas(self, rectangle=None):
+    def redrawCanvas(self, rect=None):
         @idle_add
-        def redraw(rectangle):
+        def redraw(rect):
             if self.get_window():
-                if not rectangle:
+                if not rect:
                     alloc = self.get_allocation()
-                    rectangle = Gdk.rectangleangle()
-                    rectangle.x, rectangle.y, rectangle.width, rectangle.height = (0, 0, alloc.width, alloc.height)
+                    rect = Gdk.Rectangle()
+                    rect.x, rect.y, rect.width, rect.height = (0, 0, alloc.width, alloc.height)
 #                    self.queue_draw_area(r.x, r.y, r.width, r.height)
-                self.get_window().invalidate_rectangle(rectangle, True)
+                self.get_window().invalidate_rect(rect, True)
                 self.get_window().process_updates(True)
-        redraw(rectangle)
+        redraw(rect)
 
     ###############################
     #            draw             #
