@@ -218,7 +218,7 @@ class ICLounge (GObject.GObject):
         ionest.generalStart(gamemodel, player0tup, player1tup,
                             (StringIO(ficsgame.board.pgn), pgn, 0, -1))
         if ficsgame.relation == IC_POS_OBSERVING_EXAMINATION:
-            if int(self.connection.lvm.variablesBackup["kibitz"]) == 0:
+            if 1:#int(self.connection.lvm.variablesBackup["kibitz"]) == 0:
                 self.connection.cm.whisper(_("You have to set kibitz on to see bot messages here."))
             self.connection.fm.finger(bplayer.name)
             self.connection.fm.finger(wplayer.name)

@@ -5,7 +5,6 @@ from gi.repository import Gdk
 from gi.repository import GObject
 from gi.repository import Pango
 
-from .BorderBox import BorderBox
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
 from pychess.widgets import insert_formatted
@@ -23,11 +22,11 @@ class ConsoleWindow (object):
         self.window.set_icon_name("pychess")
 
         self.window.set_title("%s Console" % connection.ics_name)
-        self.window.connect("delete-event", lambda w,e: w.hide() or True)
+        self.window.connect_after("delete-event", lambda w,e: w.hide() or True)
 
-        uistuff.keepWindowSize("consolewindow", self.window, defaultSize=(700,400))
+        uistuff.keepWindowSize("console", self.window, defaultSize=(700,400))
 
-        self.consoleView = ConsoleView(self.connection)
+        self.consoleView = ConsoleView(self.window, self.connection)
         self.window.add(self.consoleView)
 
         widgets["show_console_button"].connect("clicked", self.showConsole)
@@ -63,14 +62,15 @@ class ConsoleWindow (object):
                 self.consoleView.addMessage(line, False)
 
 
-class ConsoleView (Gtk.VPaned):
+class ConsoleView (Gtk.Box):
     __gsignals__ = {
         'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
         'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
     }
 
-    def __init__ (self, connection):
-        GObject.GObject.__init__(self)
+    def __init__ (self, window, connection):
+        Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.window = window
         self.connection = connection
 
         # Inits the read view
@@ -85,29 +85,22 @@ class ConsoleView (Gtk.VPaned):
         self.textbuffer.create_tag("text")
         self.textbuffer.create_tag("mytext", weight=Pango.Weight.BOLD)
 
-        self.sw = sw = Gtk.ScrolledWindow()
-        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        sw.set_shadow_type(Gtk.ShadowType.NONE)
-        uistuff.keepDown(sw)
-        sw.add(self.readView)
+        self.sw = Gtk.ScrolledWindow()
+        self.sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+        uistuff.keepDown(self.sw)
+        self.sw.add(self.readView)
         self.readView.set_editable(False)
         self.readView.set_cursor_visible(False)
         self.readView.props.wrap_mode = Gtk.WrapMode.WORD
-        self.pack1(sw, resize=True, shrink=True)
+        self.pack_start(self.sw, True, True, 0)
 
         # Inits the write view
         self.history = []
         self.pos = 0
         self.writeView = Gtk.Entry()
         #self.writeView.set_width_chars(80)
-        self.pack2(self.writeView, resize=True, shrink=True)
-
-        # Forces are reasonable position for the panner.
-        def callback (widget, context):
-            widget.disconnect(handle_id)
-            allocation = widget.get_allocation()
-            self.set_position(int(max(0.79*allocation.height, allocation.height-60)))
-        handle_id = self.connect("draw", callback)
+        self.pack_start(self.writeView, False, True, 0)
 
         self.writeView.connect("key-press-event", self.onKeyPress)
 
@@ -119,7 +112,6 @@ class ConsoleView (Gtk.VPaned):
         # messages
         if tb.props.text:
             tb.insert(iter, "\n")
-        tb = self.readView.get_buffer()
         tag = "mytext" if my else "text"
         insert_formatted(self.readView, iter, text, tag=tag)
 

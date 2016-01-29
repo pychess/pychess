@@ -96,7 +96,7 @@ class GladeHandlers:
             for panel in gmwidg.panels:
                 focused = panel.get_focus_child()
                 # Do nothing in chat panel
-                if focused is not None and isinstance(focused, BorderBox):
+                if focused is not None and isinstance(focused, Gtk.Entry):
                     return False
 
             # Navigate on boardview with arrow keys
