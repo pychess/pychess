@@ -137,6 +137,7 @@ uistuff.no_gettext = no_gettext
 
 if no_gettext:
     os.environ['LANG'] = "C"
+    locale.setlocale(locale.LC_ALL, '')
 else:
     locale.setlocale(locale.LC_ALL, '')
     # http://stackoverflow.com/questions/3678174/python-gettext-doesnt-load-translations-on-windows
