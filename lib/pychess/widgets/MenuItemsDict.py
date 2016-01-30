@@ -54,8 +54,8 @@ class GtkMenuItem (object):
             def do_set_menu_item_prop():
                 gamewidget.getWidgets()[self.name].set_property(prop, value)
             do_set_menu_item_prop()
-            #print " success (%s = \"%s\")" % \
-            #    (prop, gamewidget.getWidgets()[self.name].get_property(prop))
+            #print " success (%s %s = \"%s\")" % \
+            #    (self.name, prop, gamewidget.getWidgets()[self.name].get_property(prop))
             
     def update (self):
         self._set_widget("sensitive", self._sensitive)
@@ -90,14 +90,17 @@ class MenuItemsDict (dict):
     the GUI if we are encapsulated in the gamewidget that's focused/infront
     """
     
+    ANAL_MENU_ITEMS = ("analyze_game1", "analyzer_check", "inv_analyzer_check", "ana_combobox", "inv_ana_combobox")
     VIEW_MENU_ITEMS = ("hint_mode", "spy_mode")
-    
+
     class ReadOnlyDictException (Exception): pass
 
     def __init__ (self, gamewidget):
         dict.__init__(self)
         for item in ACTION_MENU_ITEMS:
             dict.__setitem__(self, item, GtkMenuItem(item, gamewidget))
+        for item in self.ANAL_MENU_ITEMS:
+            dict.__setitem__(self, item, GtkMenuItem(item, gamewidget, sensitive=True))
         for item in self.VIEW_MENU_ITEMS:
             dict.__setitem__(self, item, GtkMenuToggleButton(item, gamewidget,
                              active = conf.get(item, False)))

@@ -336,6 +336,11 @@ class GameWidget (GObject.GObject):
         self._update_menu_undo()
         self._update_menu_ask_to_move()
 
+        if isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame():
+            for item in self.menuitems:
+                if item in self.menuitems.ANAL_MENU_ITEMS:
+                    self.menuitems[item].sensitive = False
+
         if not gamemodel.timed and not gamemodel.timemodel.hasTimes:
             try:
                 self.boardvbox.remove(self.clock.get_parent())
@@ -345,7 +350,9 @@ class GameWidget (GObject.GObject):
 
     def game_ended (self, gamemodel, reason):
         for item in self.menuitems:
-            if item not in self.menuitems.VIEW_MENU_ITEMS:
+            if item in self.menuitems.ANAL_MENU_ITEMS:
+                self.menuitems[item].sensitive = True
+            elif item not in self.menuitems.VIEW_MENU_ITEMS:
                 self.menuitems[item].sensitive = False
         self._update_menu_undo()
         self._set_arrow(HINT, None)
