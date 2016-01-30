@@ -456,16 +456,19 @@ def initTexviewLinks (textview, text):
     textview.connect("button_release_event", on_release_in_textview)
 
 
+no_gettext = False
+
 class GladeWidgets:
     """ A simple class that wraps a the glade get_widget function
         into the python __getitem__ version """
     def __init__ (self, filename):
         self.builder = Gtk.Builder()
-        self.builder.set_translation_domain("pychess")
+        if not no_gettext:
+            self.builder.set_translation_domain("pychess")
         self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
 
         # TODO: remove this when upstream fixes translations with Python3+Windows
-        if PY3 and sys.platform == "win32":
+        if PY3 and sys.platform == "win32" and not no_gettext:
             for obj in self.builder.get_objects():
                 if (not isinstance(obj, Gtk.SeparatorMenuItem)) and hasattr(obj, "get_label"):
                     label = obj.get_label()

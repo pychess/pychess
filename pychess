@@ -7,6 +7,7 @@
 from __future__ import print_function
 import argparse
 import os, sys
+import gettext, locale
 
 # faulthandler will be in Python 3.3; for 2.x you can download it from pypi
 if not getattr(sys, 'frozen', False):
@@ -82,42 +83,6 @@ if PY2:
     sys.setdefaultencoding("utf-8")
 
 ###############################################################################
-# Set up translations
-
-import gettext, locale
-
-# http://stackoverflow.com/questions/3678174/python-gettext-doesnt-load-translations-on-windows
-if sys.platform.startswith('win'):
-    if os.getenv('LANG') is None:
-        lang, enc = locale.getdefaultlocale()
-        os.environ['LANG'] = lang
-
-locale.setlocale(locale.LC_ALL, '')
-
-domain = "pychess"
-if isInstalled():
-    if sys.platform == "win32":
-        locale_dir = os.path.join(os.path.dirname(getDataPrefix()), "locale")
-    else:
-        locale_dir = None
-else:
-    locale_dir = addDataPrefix("lang")
-
-if PY2:
-    gettext.install(domain, localedir=locale_dir, unicode=1, names=('ngettext',))
-else:
-    gettext.install(domain, localedir=locale_dir, names=('ngettext',))
-
-# http://stackoverflow.com/questions/10094335/how-to-bind-a-text-domain-to-a-local-folder-for-gettext-under-gtk3
-if sys.platform == "win32":
-    from ctypes import cdll
-    libintl = cdll.LoadLibrary("libintl-8")
-    libintl.bindtextdomain(domain, locale_dir)
-    libintl.bind_textdomain_codeset(domain, 'UTF-8')
-else:
-    locale.bindtextdomain(domain, locale_dir)
-
-###############################################################################
 # Parse command line arguments
 
 import pychess
@@ -141,6 +106,8 @@ parser.add_argument('--idle-add-debug', action='store_true',
     help='turn on idle-add debugging output')
 parser.add_argument('--thread-debug', action='store_true',
     help='turn on thread debugging output')
+parser.add_argument('--no-gettext', action='store_true',
+    help='turn off locale translations')
 parser.add_argument('--log-viewer', action='store_true',
     help='enable Log Viewer menu')
 parser.add_argument('--purge-recent', action='store_true',
@@ -156,12 +123,53 @@ args = parser.parse_args()
 no_debug = args.no_debug
 idle_add_debug = args.idle_add_debug
 thread_debug = args.thread_debug
+no_gettext = args.no_gettext
 log_viewer = args.log_viewer
 purge_recent = args.purge_recent
 chess_file = args.chess_file
 ics_host = args.ics_host
 ics_port = args.ics_port
-    
+
+###############################################################################
+# Set up translations
+from pychess.System import uistuff
+uistuff.no_gettext = no_gettext
+
+if no_gettext:
+    os.environ['LANG'] = "C"
+else:
+    locale.setlocale(locale.LC_ALL, '')
+    # http://stackoverflow.com/questions/3678174/python-gettext-doesnt-load-translations-on-windows
+    if sys.platform.startswith('win'):
+        if os.getenv('LANG') is None:
+            lang, enc = locale.getdefaultlocale()
+            os.environ['LANG'] = lang
+
+    locale.setlocale(locale.LC_ALL, '')
+
+    domain = "pychess"
+    if isInstalled():
+        if sys.platform == "win32":
+            locale_dir = os.path.join(os.path.dirname(getDataPrefix()), "locale")
+        else:
+            locale_dir = None
+    else:
+        locale_dir = addDataPrefix("lang")
+
+    if PY2:
+        gettext.install(domain, localedir=locale_dir, unicode=1, names=('ngettext',))
+    else:
+        gettext.install(domain, localedir=locale_dir, names=('ngettext',))
+
+    # http://stackoverflow.com/questions/10094335/how-to-bind-a-text-domain-to-a-local-folder-for-gettext-under-gtk3
+    if sys.platform == "win32":
+        from ctypes import cdll
+        libintl = cdll.LoadLibrary("libintl-8")
+        libintl.bindtextdomain(domain, locale_dir)
+        libintl.bind_textdomain_codeset(domain, 'UTF-8')
+    else:
+        locale.bindtextdomain(domain, locale_dir)
+   
 ###############################################################################
 # Let's rumble!
 
