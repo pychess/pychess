@@ -561,10 +561,10 @@ class ActiveState(BoardState):
             return True
         return self.validate(self.view.active, cord)
 
-    def release(self, x, y):
-        cord = self.point2Cord(x, y)
-        if cord != self.view.active and not self.validate(self.view.selected,
-                                                          cord):
+    def release (self, x, y):
+        cord = self.point2Cord(x,y)
+        if self.view.selected and cord != self.view.active and \
+            not self.validate(self.view.selected, cord):
             if not self.parent.setup_position:
                 preferencesDialog.SoundTab.playAction("invalidMove")
         if not cord:
