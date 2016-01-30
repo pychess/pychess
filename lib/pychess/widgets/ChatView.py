@@ -72,7 +72,8 @@ class ChatView (Gtk.Box):
             anchor1 = tb.create_child_anchor(iter)
             self.obsView.add_child_at_anchor(self.obs_btn, anchor1)
             self.button_tag = tb.create_tag("observers")
-            tb.insert_with_tags_by_name(iter, '\n', "observers")
+            tb.insert_with_tags_by_name(iter, " ", "observers")
+            tb.insert(iter, "\n")
 
             vbox.pack_start(self.obsView, False, True, 0)
             vbox.pack_start(self.sw, True, True, 0)
@@ -100,7 +101,6 @@ class ChatView (Gtk.Box):
     @idle_add
     def update_observers(self, other, observers):
         """ Rebuilds observers list text """
-
         tb = self.obsView.get_buffer()
         start_iter = tb.get_end_iter()
         start_iter.backward_to_tag_toggle(self.button_tag)

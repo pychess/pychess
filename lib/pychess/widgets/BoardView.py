@@ -324,18 +324,33 @@ class BoardView(Gtk.DrawingArea):
                 preferencesDialog.SoundTab.playAction(sound)
 
     def onShowCords(self, *args):
+        """ Checks the configuration / preferences to see if the board
+            co-ordinates should be displayed.
+        """
         self.show_cords = conf.get("showCords", False)
 
     def onShowCaptured(self, *args):
+        """ Check the configuration / preferences to see if
+            cthe captured pieces should be displayed
+        """
         self.showCaptured = conf.get("showCaptured", False)
 
     def onFaceToFace(self, *args):
+        """ If the preference for pieces to be displayed facing each other
+            has been set then refresh the board
+        """
         self.redrawCanvas()
 
     def onSetPieceTheme(self, *args):
+        """ If the preference to display another chess set has been
+            selected then refresh the board
+        """
         self.redrawCanvas()
 
     def onBoardColourTheme(self, *args):
+        """ If the preference to display another set of board colours has been
+            selected then refresh the board
+        """
         self.redrawCanvas()
 
 
@@ -365,10 +380,10 @@ class BoardView(Gtk.DrawingArea):
         return paint_box
 
     def setShownBoard(self, board):
-        """Set shown to the index of the given board in board list.
-        If the board belongs to a different variationd,
-        adjust the shown variation index too.
-        If board is in the main line, reset the shown variation idx to 0(the main line).
+        """ Set shown to the index of the given board in board list.
+            If the board belongs to a different variationd,
+            adjust the shown variation index too.
+            If board is in the main line, reset the shown variation idx to 0(the main line).
         """
 
         if board in self.model.variations[self.shown_variation_idx]:
@@ -497,15 +512,15 @@ class BoardView(Gtk.DrawingArea):
 
     def runAnimation(self, redraw_misc=False):
         """
-        The animationsystem in pychess is very loosely inspired by the one of
-        chessmonk. The idea is, that every piece has a place in an array(the
-        board.data one) for where to be drawn. If a piece is to be animated, it
-        can set its x and y properties, to some cord(or part cord like 0.42 for
-        42% right to file 0). Each time runAnimation is run, it will set those x
-        and y properties a little closer to the location in the array. When it
-        has reached its final location, x and y will be set to None. _setShown,
-        which starts the animation, also sets a timestamp for the acceleration
-        to work properply.
+            The animationsystem in pychess is very loosely inspired by the one of
+            chessmonk. The idea is, that every piece has a place in an array(the
+            board.data one) for where to be drawn. If a piece is to be animated, it
+            can set its x and y properties, to some cord(or part cord like 0.42 for
+            42% right to file 0). Each time runAnimation is run, it will set those x
+            and y properties a little closer to the location in the array. When it
+            has reached its final location, x and y will be set to None. _setShown,
+            which starts the animation, also sets a timestamp for the acceleration
+            to work properply.
         """
 
         if self._do_stop:
@@ -618,7 +633,7 @@ class BoardView(Gtk.DrawingArea):
 
     def startAnimation(self):
         @idle_add
-        def do_start_animation():
+        def doStartAnimation():
             self.runAnimation(redraw_misc=True)
             if not conf.get("noAnimation", False):
                 while self.animating:
@@ -626,7 +641,7 @@ class BoardView(Gtk.DrawingArea):
 
         self.animation_start = time()
         self.animating = True
-        do_start_animation()
+        doStartAnimation()
 
     #############################
     #          Drawing          #
@@ -779,7 +794,7 @@ class BoardView(Gtk.DrawingArea):
         context.rectangle(xc_loc-thick*1.5, yc_loc-thick*1.5, square+thick*3, square+thick*3)
 
         style_ctxt = self.get_style_context()
-        bool1, dcolor = style_ctxt.lookup_color("p_dark_color")
+        dcolor = style_ctxt.lookup_color("p_dark_color")[1]
         dcolor = Gdk.RGBA()
         dcolor.parse(conf.get("darkcolour", "#000000000000"))
         context.set_source_rgba(dcolor.red, dcolor.green, dcolor.blue, dcolor.alpha)
@@ -821,7 +836,8 @@ class BoardView(Gtk.DrawingArea):
                 #context.show_layout(layout)
 
                 # Draw bottom
-                context.move_to(xc_loc+side*num+side/2.-width/2., yc_loc+square+thick*1.5+abs(y_attr))
+                context.move_to(xc_loc + side * num + side/2. - width/2., \
+                                yc_loc + square + thick * 1.5 + abs(y_attr))
                 PangoCairo.show_layout(context, layout)
 
         matrix, invmatrix = matrixAround(self.matrix_pi, xc_loc+square/2., yc_loc+square/2.)
