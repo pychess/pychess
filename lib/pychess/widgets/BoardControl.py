@@ -55,7 +55,7 @@ class BoardControl (Gtk.EventBox):
             if menuitem == None: print(key)
             self.connections[menuitem] = menuitem.connect("activate", self.actionActivate, key)
 
-        self.view.connect("shown_changed", self.shown_changed)
+        self.view.connect("shownChanged", self.shownChanged)
         gamemodel.connect("moves_undoing", self.moves_undone)
         gamemodel.connect("game_ended", self.game_ended)
         self.connect("button_press_event", self.button_press)
@@ -181,7 +181,7 @@ class BoardControl (Gtk.EventBox):
         elif key == "resume1":
             self.emit("action", RESUME_OFFER, None)
 
-    def shown_changed (self, view, shown):
+    def shownChanged (self, view, shown):
         def do_shown_changed():
             self.lockedPly = self.view.shown
             self.possibleBoards[self.lockedPly] = self._genPossibleBoards(self.lockedPly)

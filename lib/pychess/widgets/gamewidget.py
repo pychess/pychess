@@ -163,7 +163,7 @@ class GameWidget (GObject.GObject):
         if isinstance(gamemodel, ICGameModel):
             gamemodel.connection.bm.connect("player_lagged", self.player_lagged)
             gamemodel.connection.bm.connect("opp_not_out_of_time", self.opp_not_out_of_time)
-        board.view.connect("shown_changed", self.shown_changed)
+        board.view.connect("shownChanged", self.shownChanged)
 
         def do_load_panels(event):
             self.panels = [panel.Sidepanel().load(self) for panel in sidePanels]
@@ -301,7 +301,7 @@ class GameWidget (GObject.GObject):
                 figurines[color] += " " if count==0 else FAN_PIECES[color][piece]*count
         self.status(figurines[BLACK] + "   " + figurines[WHITE])
 
-    def shown_changed (self, boardview, shown):
+    def shownChanged (self, boardview, shown):
         # Help crazyhouse testing
         #if self.gamemodel.boards[-1].variant == CRAZYHOUSECHESS:
         #    holding = self.gamemodel.getBoardAtPly(shown, boardview.variation).board.holding

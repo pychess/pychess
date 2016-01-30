@@ -30,7 +30,7 @@ class Sidepanel:
         self.givenTips = {}
 
     def load (self, gmwidg):
-        
+
         self.gamemodel = gmwidg.board.view.model
         self.gmhandlers = [
             self.gamemodel.connect_after("game_changed", self.game_changed),
@@ -51,7 +51,7 @@ class Sidepanel:
 
         self.tv.get_selection().connect_after('changed', self.select_cursor_row)
         self.boardview = gmwidg.board.view
-        self.boardview.connect("shown_changed", self.shown_changed)
+        self.boardview.connect("shownChanged", self.shownChanged)
 
         self.frozen = Switch()
 
@@ -67,8 +67,8 @@ class Sidepanel:
             row = indices[0]
             board = self.gamemodel.boards[row]
             self.boardview.setShownBoard(board)
-    
-    def shown_changed (self, boardview, shown):
+
+    def shownChanged (self, boardview, shown):
         if not boardview.shownIsMainLine():
             return
         row = shown - self.gamemodel.lowply
@@ -81,13 +81,13 @@ class Sidepanel:
             except ValueError:
                 pass
                 # deleted variations by moves_undoing
-    
+
     @idle_add
     def moves_undone (self, game, moves):
         model = self.tv.get_model()
         for i in range(moves):
             model.remove(model.get_iter( (len(model)-1,) ))
-    
+
     def game_started (self, model):
         self.game_changed(model, model.ply)
 
@@ -95,11 +95,11 @@ class Sidepanel:
     def game_changed (self, model, ply):
         for i in range(len(self.store)+model.lowply, ply+1):
             self.addComment(model, self.__chooseComment(model, i))
-        self.shown_changed (self.boardview, ply)
-    
+        self.shownChanged (self.boardview, ply)
+
     def addComment (self, model, comment):
         self.store.append([comment])
-        
+
         # If latest ply is shown, we select the new latest
         iter = self.tv.get_selection().get_selected()[1]
         if iter:
@@ -109,25 +109,25 @@ class Sidepanel:
                 row = indices[0]
                 if row < self.boardview.shown-1:
                     return
-        
+
         if self.boardview.shown >= model.ply:
             iter = self.store.get_iter(len(self.store)-1)
             with self.frozen:
                 self.tv.get_selection().select_iter(iter)
-    
+
     def __chooseComment(self, model, ply):
-        
+
         if ply == model.lowply:
             return _("Initial position")
-        
+
         ########################################################################
         # Set up variables
         ########################################################################
-        
+
         color = model.getBoardAtPly(ply-1).board.color
         s, phase = evalMaterial (model.getBoardAtPly(ply).board,
                                  model.getBoardAtPly(ply-1).color)
-        
+
         #   * Final: Will be shown alone: "mates", "draws"
         #   * Prefix: Will always be shown: "castles", "promotes"
         #   * Attack: Will always be shown: "threaten", "preassures", "defendes"
@@ -253,5 +253,5 @@ class Sidepanel:
             piece = model.getBoardAtPly(ply).board.arBoard[tcord]
             strings.append( _("%(color)s moves a %(piece)s to %(cord)s") % {
                 'color': reprColor[color], 'piece': reprPiece[piece], 'cord': reprCord[tcord]})
-        
+
         return ";\n".join(strings)
