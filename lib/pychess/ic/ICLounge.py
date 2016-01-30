@@ -1657,7 +1657,8 @@ class AdjournedTabSection (ParrentListSection):
         except KeyError:
             pass
 
-        if player.online and player.adjournment:
+        if self.connection.stored_owner == self.connection.username and \
+            player.online and player.adjournment:
             self._infobar_adjourned_message(game, player)
         elif not player.online and player in self.messages:
             self.messages[player].dismiss()
@@ -1697,7 +1698,8 @@ class AdjournedTabSection (ParrentListSection):
             self.games[game]["status_cid"] = game.opponent.connect(
                 "notify::status", self.status_changed, game)
 
-        if game.opponent.online:
+        if self.connection.stored_owner == self.connection.username and \
+            game.opponent.online:
             self._infobar_adjourned_message(game, game.opponent)
 
         return False
