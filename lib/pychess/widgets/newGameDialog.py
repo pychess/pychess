@@ -172,7 +172,7 @@ class _GameInitializationMode:
             else:
                 variant = conf.get("ngvariant2", LOSERSCHESS)
             variant1 = conf.get("ngvariant1", FISCHERRANDOMCHESS)
-            cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)            
+            cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)
             variant2 = conf.get("ngvariant2", LOSERSCHESS)
             cls.widgets["playVariant2Radio"].set_tooltip_text(variants[variant2].__desc__)
             data = [(item[0], item[1]) for item in playerItems[variant]]
@@ -268,8 +268,8 @@ class _GameInitializationMode:
                       VARIANTS_OTHER_NONSTANDARD: _("Other (non standard rules)"),
                       VARIANTS_ASEAN: _("Asian variants"),
                       }
-        
-        specialVariants = [v for v in variants.values() if v != NormalBoard and 
+
+        specialVariants = [v for v in variants.values() if v != NormalBoard and
                                         v.variant not in UNSUPPORTED]
         specialVariants = sorted(specialVariants, key=attrgetter("variant_group"))
         groups = groupby(specialVariants, attrgetter("variant_group"))
@@ -281,22 +281,22 @@ class _GameInitializationMode:
                 subiter = model.append(iter, (variant.name,))
                 path = model.get_path(subiter)
                 pathToVariant[path.to_string()] = variant.variant
-                variantToPath[variant.variant] = path.to_string()                       
+                variantToPath[variant.variant] = path.to_string()
             treeview.expand_row(Gtk.TreePath(i), True)
 
         selection = treeview.get_selection()
         selection.set_mode(Gtk.SelectionMode.BROWSE)
 
-        def selfunc (selection, store, path, path_selected, data):                 
+        def selfunc (selection, store, path, path_selected, data):
             return path.get_depth() > 1
-        
+
         selection.set_select_function(selfunc, None)
         variant = conf.get(confid, default)
         if variant in variantToPath:
             selection.select_path(variantToPath[variant])
 
-        def callback (selection):            
-            model, iter = selection.get_selected()            
+        def callback (selection):
+            model, iter = selection.get_selected()
             if iter:
                 radiobutton.set_label("%s" % model.get(iter, 0) + _(" chess"))
                 path = model.get_path(iter)
@@ -343,7 +343,7 @@ class _GameInitializationMode:
 
             if hasattr(cls, "board_control"):
                 cls.board_control.emit("action", "CLOSE", None)
-                
+
             # Find variant
             if cls.widgets["playNormalRadio"].get_active():
                 variant_index = NORMALCHESS
@@ -389,12 +389,12 @@ class _GameInitializationMode:
                         name = conf.get("firstName", _("You"))
                     else: name = conf.get("secondName", _("Guest"))
                     playertups.append((LOCAL, Human, (color, name), name))
-            
+
             # Set forcePonderOff initPlayerEngine param True in engine-engine games
             if playertups[0][0] == ARTIFICIAL and playertups[1][0] == ARTIFICIAL:
                 playertups[0][2].append(True)
                 playertups[1][2].append(True)
-            
+
             if secs > 0:
                 timemodel = TimeModel (secs, incr)
             else:
@@ -473,7 +473,7 @@ class LoadFileExtension (_GameInitializationMode):
             if not uri[uri.rfind(".")+1:] in ionest.enddir:
                 log.info("Ignoring strange file: %s" % uri)
                 return
-            cls.loadSidePanel.set_filename(uri)
+            cls.loadSidePanel.setFileName(uri)
             cls.filechooserbutton.emit("file-activated")
 
         cls._hideOthers()
@@ -482,13 +482,13 @@ class LoadFileExtension (_GameInitializationMode):
 
         def _validate(gamemodel):
             return True
-            
+
         def _callback (gamemodel, p0, p1):
-            if not cls.loadSidePanel.is_empty():
-                uri =  cls.loadSidePanel.get_filename()
+            if not cls.loadSidePanel.isEmpty():
+                uri =  cls.loadSidePanel.getFileName()
                 loader = ionest.enddir[uri[uri.rfind(".")+1:]]
                 position = cls.loadSidePanel.get_position()
-                gameno = cls.loadSidePanel.get_gameno()
+                gameno = cls.loadSidePanel.getGameno()
                 ionest.generalStart(gamemodel, p0, p1, (uri, loader, gameno, position))
             else:
                 ionest.generalStart(gamemodel, p0, p1)
@@ -558,7 +558,7 @@ class SetupPositionExtension (_GameInitializationMode):
     @classmethod
     def fifty_spin_changed(cls, spin):
         cls.fen_changed()
-        
+
     @classmethod
     def castl_toggled(cls, button, castl):
         if button.get_active():
@@ -615,7 +615,7 @@ class SetupPositionExtension (_GameInitializationMode):
         cls.widgets["newgamedialog"].set_title(_("Setup Position"))
         cls.widgets["setupPositionSidePanel"].show()
 
-        cls.setupmodel = SetupModel() 
+        cls.setupmodel = SetupModel()
         cls.board_control = BoardControl(cls.setupmodel, {}, setup_position=True)
         cls.setupmodel.curplayer = SetupPlayer(cls.board_control)
         cls.setupmodel.connect("game_changed", cls.game_changed)
@@ -643,7 +643,7 @@ class SetupPositionExtension (_GameInitializationMode):
                 d.connect("response", lambda d,a: d.hide())
                 d.show()
                 return False
-            
+
         def _callback (gamemodel, p0, p1):
             text = cls.get_fen()
             ionest.generalStart(gamemodel, p0, p1, (StringIO(text), fen, 0, -1))
@@ -749,9 +749,9 @@ class EnterNotationExtension (_GameInitializationMode):
                 loadType = fen
             else:
                 loadType = pgn
-            
+
             return text, loadType
-            
+
         def _validate(gamemodel):
             try:
                 text, loadType = _get_text()
@@ -766,7 +766,7 @@ class EnterNotationExtension (_GameInitializationMode):
                 d.connect("response", lambda d,a: d.hide())
                 d.show()
                 return False
-            
+
         def _callback (gamemodel, p0, p1):
             text, loadType = _get_text()
             ionest.generalStart(gamemodel, p0, p1, (StringIO(text), loadType, 0, -1))
@@ -785,14 +785,14 @@ class ImageButton(Gtk.Button):
         self.add(self.image)
 
         self.connect("clicked", self.on_clicked)
-        
+
     def on_clicked(self, button):
         self.current = (self.current + 1) % len(self.surfaces)
         self.remove(self.image)
         self.image = self.surfaces[self.current]
         self.image.show()
         self.add(self.image)
-        
+
 class xxxImageButton(Gtk.DrawingArea):
     def __init__ (self, imagePaths):
         GObject.GObject.__init__(self)
@@ -808,7 +808,7 @@ class xxxImageButton(Gtk.DrawingArea):
         self.size = (0, 0, width, height)
         self.set_size_request(width, height)
 
-    def draw (self, self_, context):       
+    def draw (self, self_, context):
         context.set_source_surface(self.surfaces[self.current], 0, 0)
         context.fill()
 
@@ -821,7 +821,7 @@ class xxxImageButton(Gtk.DrawingArea):
 def createRematch (gamemodel):
     """ If gamemodel contains only LOCAL or ARTIFICIAL players, this starts a
         new game, based on the info in gamemodel """
-    
+
     if gamemodel.timed:
         secs = gamemodel.timemodel.intervals[0][WHITE]
         gain = gamemodel.timemodel.gain
