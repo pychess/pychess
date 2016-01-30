@@ -473,7 +473,7 @@ class LoadFileExtension (_GameInitializationMode):
             if not uri[uri.rfind(".")+1:] in ionest.enddir:
                 log.info("Ignoring strange file: %s" % uri)
                 return
-            cls.loadSidePanel.setFileName(uri)
+            cls.loadSidePanel.set_filename(uri)
             cls.filechooserbutton.emit("file-activated")
 
         cls._hideOthers()
@@ -485,7 +485,7 @@ class LoadFileExtension (_GameInitializationMode):
 
         def _callback (gamemodel, p0, p1):
             if not cls.loadSidePanel.isEmpty():
-                uri =  cls.loadSidePanel.getFileName()
+                uri =  cls.loadSidePanel.get_filename()
                 loader = ionest.enddir[uri[uri.rfind(".")+1:]]
                 position = cls.loadSidePanel.get_position()
                 gameno = cls.loadSidePanel.getGameno()

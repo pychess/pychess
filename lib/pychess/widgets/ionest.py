@@ -235,7 +235,7 @@ def saveGameAs (game, position=None):
         if res != Gtk.ResponseType.ACCEPT:
             break
 
-        uri = savedialog.getFileName()
+        uri = savedialog.get_filename()
         ending = os.path.splitext(uri)[1]
         if ending.startswith("."): ending = ending[1:]
         append = False

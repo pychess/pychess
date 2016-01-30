@@ -166,7 +166,7 @@ class EnginesDialog():
             response = engine_chooser_dialog.run()
 
             if response == Gtk.ResponseType.OK:
-                new_engine = engine_chooser_dialog.getFileName()
+                new_engine = engine_chooser_dialog.get_filename()
                 if new_engine.lower().endswith(".exe") and sys.platform != "win32":
                     vm_name = "wine"
                     vmpath = searchPath(vm_name, access=os.R_OK|os.X_OK)
@@ -204,7 +204,7 @@ class EnginesDialog():
                             if not ok:
                                 # restore the original
                                 engine = discoverer.getEngineByName(self.cur_engine)
-                                engine_chooser_dialog.setFileName(engine["command"])
+                                engine_chooser_dialog.set_filename(engine["command"])
                                 d = Gtk.MessageDialog(
                                         type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
                                 d.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
@@ -239,7 +239,7 @@ class EnginesDialog():
                 else:
                     # restore the original
                     engine = discoverer.getEngineByName(self.cur_engine)
-                    engine_chooser_dialog.setFileName(engine["command"])
+                    engine_chooser_dialog.set_filename(engine["command"])
             engine_chooser_dialog.hide()
 
         self.widgets["add_engine_button"].connect("clicked", add)
@@ -271,7 +271,7 @@ class EnginesDialog():
         dir_chooser_button.show()
 
         def select_dir(button):
-            new_directory = dir_chooser_dialog.getFileName()
+            new_directory = dir_chooser_dialog.get_filename()
             engine = discoverer.getEngineByName(self.cur_engine)
             old_directory = engine.get("workingDirectory")
             if new_directory != old_directory and new_directory != self.default_workdir:
@@ -291,7 +291,7 @@ class EnginesDialog():
                 engine = discoverer.getEngineByName(self.cur_engine)
                 old_protocol = engine["protocol"]
                 if new_protocol != old_protocol:
-                    engine_command = engine_chooser_dialog.getFileName()
+                    engine_command = engine_chooser_dialog.get_filename()
                     # is the new protocol supported by the engine?
                     if new_protocol == "uci":
                         ok = is_uci(engine_command)
@@ -329,7 +329,7 @@ class EnginesDialog():
                 else:
                     self.widgets['remove_engine_button'].set_sensitive(True)
                 self.widgets["engine_command_entry"].set_text(engine["command"])
-                engine_chooser_dialog.setFileName(engine["command"])
+                engine_chooser_dialog.set_filename(engine["command"])
                 args = [] if engine.get("args") is None else engine.get("args")
                 self.widgets["engine_args_entry"].set_text(' '.join(args))
                 directory = engine.get("workingDirectory")
