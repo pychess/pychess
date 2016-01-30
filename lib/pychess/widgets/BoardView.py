@@ -134,7 +134,7 @@ class BoardView(Gtk.DrawingArea):
 
 
     __gsignals__ = { # Signals emitted by class
-        'shown_changed' : (GObject.SignalFlags.RUN_FIRST, None, (int,))
+        'shownChanged' : (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
 
     def __init__(self, gamemodel=None, preview=False, setup_position=False):
@@ -227,7 +227,7 @@ class BoardView(Gtk.DrawingArea):
     def gameStartedAfter(self, model):
         # reenable shrinking the board
         self.set_size_request(-1, -1)
-        self.emit("shown_changed", self.shown)
+        self.emit("shownChanged", self.shown)
 
     def gameStarted(self, model):
         if conf.get("noAnimation", False):
@@ -417,7 +417,7 @@ class BoardView(Gtk.DrawingArea):
             self._shown = shown
             if shown > self.model.lowply:
                 self.lastMove = self.model.getMoveAtPly(shown-1, self.shown_variation_idx)
-            self.emit("shown_changed", self.shown)
+            self.emit("shownChanged", self.shown)
             self.redrawCanvas()
             return
 
@@ -467,7 +467,7 @@ class BoardView(Gtk.DrawingArea):
 
         self._shown = shown
         if self.real_set_shown:
-            self.emit("shown_changed", self.shown)
+            self.emit("shownChanged", self.shown)
 
         if self.animimation_id != -1:
             self._do_stop = True

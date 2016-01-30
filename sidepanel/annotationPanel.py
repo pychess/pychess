@@ -112,7 +112,7 @@ class Sidepanel(Gtk.TextView):
 
         self.gamewidget = gmwidg
         self.boardview = gmwidg.board.view
-        self.boardview.connect("shown_changed", self.shown_changed)
+        self.boardview.connect("shownChanged", self.shownChanged)
 
         self.gamemodel = gmwidg.board.view.model
         self.gamemodel.connect_after("game_loaded", self.game_loaded)
@@ -958,7 +958,7 @@ class Sidepanel(Gtk.TextView):
         self.update_selected_node()
 
     @idle_add
-    def shown_changed(self, boardview, shown):
+    def shownChanged(self, boardview, shown):
         self.update_selected_node()
 
     @idle_add

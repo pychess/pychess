@@ -18,63 +18,63 @@ class Switch:
     def __exit__(self, *a): self.on = False
 
 class Sidepanel:
-    
+
     def __init__ (self):
         self.frozen = Switch()
-    
+
     def load (self, gmwidg):
-        
+
         widgets = Gtk.Builder()
         widgets.add_from_file(addDataPrefix("sidepanel/history.glade"))
         __widget__ = widgets.get_object("panel")
         __widget__.unparent()
-        
+
         self.boardview = gmwidg.board.view
-        
+
         self.boardview.model.connect_after("game_changed", self.game_changed)
         self.boardview.model.connect_after("game_started", self.game_started)
         self.boardview.model.connect_after("moves_undone", self.moves_undone)
-        self.boardview.connect("shown_changed", self.shown_changed)
-        
+        self.boardview.connect("shownChanged", self.shownChanged)
+
         # Initialize treeviews
-        
+
         self.numbers = widgets.get_object("treeview1")
         self.left = widgets.get_object("treeview2")
         self.right = widgets.get_object("treeview3")
-        
+
         def fixList (list, xalign=0):
             list.set_model(Gtk.ListStore(str))
             renderer = Gtk.CellRendererText()
             renderer.set_property("xalign",xalign)
             list.append_column(Gtk.TreeViewColumn(None, renderer, text=0))
             list.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-        
+
         fixList(self.numbers, 1)
         fixList(self.left, 0)
         fixList(self.right, 0)
-        
+
         self.left.get_selection().connect('changed', self.on_selection_changed,
                                           self.left, 0)
         self.right.get_selection().connect('changed', self.on_selection_changed,
                                            self.right, 1)
-        
+
         # Lock scrolling
-        
+
         scrollwin = widgets.get_object("panel")
-        
+
         def changed (vadjust):
             if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-                vadjust.set_value(vadjust.get_upper()-vadjust.get_page_size())                
+                vadjust.set_value(vadjust.get_upper()-vadjust.get_page_size())
                 vadjust.need_scroll = True
         scrollwin.get_vadjustment().connect("changed", changed)
-        
+
         def value_changed (vadjust):
             vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() - \
                         vadjust.get_upper()) < vadjust.get_step_increment()
         scrollwin.get_vadjustment().connect("value-changed", value_changed)
-        
+
         # Connect to preferences
-        
+
         def figuresInNotationCallback (none):
             game = self.boardview.model
             for board, move in zip(game.variations[0], game.moves):
@@ -85,11 +85,11 @@ class Sidepanel:
                 iter = col.get_model().get_iter((row,))
                 col.get_model().set(iter, 0, notat)
         conf.notify_add("figuresInNotation", figuresInNotationCallback)
-        
+
         # Return
-        
+
         return __widget__
-    
+
     def on_selection_changed (self, selection, tree, col):
         iter = selection.get_selected()[1]
         if iter == None: return
@@ -103,10 +103,10 @@ class Sidepanel:
             ply = row*2 + col
         else:
             ply = row*2 + col +1
-        
+
         board = self.boardview.model.boards[ply]
         self.boardview.setShownBoard(board)
-    
+
     @idle_add
     def moves_undone (self, game, moves):
         with self.frozen:
@@ -120,7 +120,7 @@ class Sidepanel:
                         model.remove(model.get_iter((row,)))
                 except ValueError:
                     continue
-    
+
     @idle_add
     def game_changed (self, game, ply):
         len_ = len(self.left.get_model()) + len(self.right.get_model()) + 1
@@ -128,34 +128,34 @@ class Sidepanel:
             len_ -= 1
         for i in range(len_+game.lowply, ply+1):
             self.__addMove(game, i)
-        self.shown_changed (self.boardview, ply)
+        self.shownChanged (self.boardview, ply)
 
     def game_started(self, game):
         self.game_changed(game, game.ply)
-    
+
     def __addMove(self, game, ply):
         #print "Am I doing anything?"
         row, view, other = self._ply_to_row_col_other(ply)
-        
+
         if conf.get("figuresInNotation", False):
             notat = toFAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1))
         else: notat = toSAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1),
                 localRepr=True)
-        
+
         # Test if the row is 'filled'
         if len(view.get_model()) == len(self.numbers.get_model()):
             num = str((ply+1)//2)+"."
             self.numbers.get_model().append([num])
-        
+
         # Test if the move is black first move. This will be the case if the
         # game was loaded from a fen/epd starting at black
         if view == self.right and len(view.get_model()) == len(other.get_model()):
             self.left.get_model().append([""])
-        
+
         view.get_model().append([notat])
-    
+
     @idle_add
-    def shown_changed (self, boardview, shown):
+    def shownChanged (self, boardview, shown):
         if not boardview.shownIsMainLine():
             return
         if shown <= boardview.model.lowply:
@@ -163,7 +163,7 @@ class Sidepanel:
             self.left.get_selection().unselect_all()
             self.right.get_selection().unselect_all()
             return
-            
+
         row, col, other = self._ply_to_row_col_other(shown)
 
         with self.frozen:
@@ -175,7 +175,7 @@ class Sidepanel:
             except ValueError:
                 pass
                 # deleted variations by moves_undoing
-    
+
     def _ply_to_row_col_other (self, ply):
         col = ply & 1 and self.left or self.right
         other = ply & 1 and self.right or self.left

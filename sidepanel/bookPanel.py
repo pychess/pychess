@@ -49,7 +49,7 @@ class Advisor (object):
             if row[4] == self.name:
                 return (i,)
 
-    def shown_changed (self, boardview, shown):
+    def shownChanged (self, boardview, shown):
         """ Update the suggestions to match a changed position. """
         pass
 
@@ -89,7 +89,7 @@ class OpeningAdvisor(Advisor):
 #        self.opening_names = []
         self.tv = tv
 
-    def shown_changed (self, boardview, shown):
+    def shownChanged (self, boardview, shown):
         m = boardview.model
         if m.isPlayingICSGame():
             return
@@ -160,7 +160,7 @@ class EngineAdvisor(Advisor):
         self.tv.expand_row(Gtk.TreePath(self.path), False)
         return parent
 
-    def shown_changed (self, boardview, shown):
+    def shownChanged (self, boardview, shown):
         m = boardview.model
         if m.isPlayingICSGame():
             return
@@ -189,7 +189,7 @@ class EngineAdvisor(Advisor):
         self.store.set_value(parent, 6, True)
         self.active = True
 
-        self.shown_changed(self.boardview, self.boardview.shown)
+        self.shownChanged(self.boardview, self.boardview.shown)
 
     @idle_add
     def on_analyze (self, engine, analysis):
@@ -252,7 +252,7 @@ class EngineAdvisor(Advisor):
         if not tb:
             self.active = True
             self.boardview.model.resume_analyzer(self.mode)
-            self.shown_changed(self.boardview, self.boardview.shown)
+            self.shownChanged(self.boardview, self.boardview.shown)
         else:
             self.active = False
             self.boardview.model.pause_analyzer(self.mode)
@@ -330,7 +330,7 @@ class EndgameAdvisor(Advisor, Thread):
                 self.egtb.scoreAllMoves(v)
             self.queue.task_done()
 
-    def shown_changed (self, boardview, shown):
+    def shownChanged (self, boardview, shown):
         m = boardview.model
         if m.isPlayingICSGame():
             return
@@ -453,7 +453,7 @@ class Sidepanel (object):
         ### header text, or analysis line
         uistuff.appendAutowrapColumn(self.tv, "Details", text=4)
 
-        self.boardview.connect("shown_changed", self.shown_changed)
+        self.boardview.connect("shownChanged", self.shownChanged)
         self.tv.connect("cursor_changed", self.selection_changed)
         self.tv.connect("select_cursor_row", self.selection_changed)
         self.tv.connect("row-activated", self.row_activated)
@@ -480,7 +480,7 @@ class Sidepanel (object):
             if conf.get("opening_check", 0):
                 advisor = OpeningAdvisor(self.store, self.tv)
                 self.advisors.append(advisor)
-                advisor.shown_changed(self.boardview, self.boardview.shown)
+                advisor.shownChanged(self.boardview, self.boardview.shown)
             else:
                 for advisor in self.advisors:
                     if advisor.mode == OPENING:
@@ -495,14 +495,14 @@ class Sidepanel (object):
             if os.path.isfile(path):
                 for advisor in self.advisors:
                     if advisor.mode == OPENING:
-                        advisor.shown_changed(self.boardview, self.boardview.shown)
+                        advisor.shownChanged(self.boardview, self.boardview.shown)
         conf.notify_add("opening_file_entry", on_opening_file_entry_changed)
 
         def on_endgame_check(none):
             if conf.get("endgame_check", 0):
                 advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
                 self.advisors.append(advisor)
-                advisor.shown_changed(self.boardview, self.boardview.shown)
+                advisor.shownChanged(self.boardview, self.boardview.shown)
                 gmwidg.connect("closed", advisor.gamewidget_closed)
             else:
                 for advisor in self.advisors:
@@ -542,10 +542,10 @@ class Sidepanel (object):
             if advisor.mode == analyzer_type:
                 self.store[advisor.path][5] = False
                 advisor.active = True
-                advisor.shown_changed(self.boardview, self.boardview.shown)
+                advisor.shownChanged(self.boardview, self.boardview.shown)
 
     @idle_add
-    def shown_changed (self, boardview, shown):
+    def shownChanged (self, boardview, shown):
         boardview.bluearrow = None
 
         if legalMoveCount(boardview.model.getBoardAtPly(shown, boardview.shown_variation_idx)) == 0:
@@ -559,11 +559,11 @@ class Sidepanel (object):
             return
 
         for advisor in self.advisors:
-            advisor.shown_changed(boardview, shown)
+            advisor.shownChanged(boardview, shown)
         self.tv.expand_all()
 
         if self.sw.get_child() != self.tv:
-            log.warning("bookPanel.Sidepanel.shown_changed: get_child() != tv")
+            log.warning("bookPanel.Sidepanel.shownChanged: get_child() != tv")
             self.sw.remove(self.sw.get_child())
             self.sw.add(self.tv)
 
