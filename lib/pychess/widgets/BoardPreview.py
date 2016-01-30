@@ -79,25 +79,25 @@ class BoardPreview:
         # Add the filechooserbutton
         self.widgets["fileChooserDock"].add(fcbutton)
 
-        def on_file_set(*args):
+        def onFileSet(*args):
             fcbutton = args[0]
-            self.on_file_activated(fcbutton.get_filename())
+            self.onFileActivated(fcbutton.getFileName())
 
-        fcbutton.connect("file-set", on_file_set)
+        fcbutton.connect("file-set", onFileSet)
         # This is needed for game files specified on the command line to work
-        fcbutton.connect("file-activated", on_file_set)
+        fcbutton.connect("file-activated", onFileSet)
 
-        def on_response(fcdialog, resp):
+        def onResponse(fcdialog, resp):
             if resp == Gtk.ResponseType.ACCEPT:
-                self.on_file_activated(opendialog.get_filename())
+                self.onFileActivated(opendialog.getFileName())
 
-        opendialog.connect("response", on_response)
+        opendialog.connect("response", onResponse)
 
-    def on_file_activated(self, filename):
+    def onFileActivated(self, filename):
         # filename is None if a non-existent file is passed as command line argument
         if filename is None:
             return
-        self.set_filename(filename)
+        self.setFileName(filename)
         if os.path.isdir(filename):
             return
 
@@ -187,34 +187,34 @@ class BoardPreview:
     def onLastButton(self, button):
         self.boardview.showLast()
 
-    def shownChanged(self, boardView, shown):
+    def shownChanged(self, board_view, shown):
         pos = "%d." % (shown / 2 + 1)
         if shown & 1:
             pos += ".."
         self.widgets["posLabel"].set_text(pos)
 
-    def set_filename(self, filename):
+    def setFileName(self, filename):
         as_path = splitUri(filename)[-1]
         if os.path.isfile(as_path):
             self.fcbutton.show()
             #if filename != self._retrieve_filename():
-            #    self.fcbutton.set_filename(os.path.abspath(as_path))
-            self.fcbutton.set_filename(os.path.abspath(as_path))
+            #    self.fcbutton.setFileName(os.path.abspath(as_path))
+            self.fcbutton.setFileName(os.path.abspath(as_path))
         else:
             self.fcbutton.set_uri("")
             self.fcbutton.hide()
         self.filename = filename
 
-    def get_filename(self):
+    def getFileName(self):
         return self.filename
 
-    def is_empty(self):
+    def isEmpty(self):
         return not self.chessfile or not len(self.chessfile)
 
-    def get_position(self):
+    def getPosition(self):
         return self.boardview.shown
 
-    def get_gameno(self):
+    def getGameno(self):
         iter = self.list.get_selection().get_selected()[1]
         if iter == None:
             return -1

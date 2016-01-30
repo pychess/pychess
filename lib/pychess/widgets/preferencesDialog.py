@@ -128,18 +128,18 @@ class HintTab:
         filter.set_name(_("Opening books"))
         filter.add_pattern("*.bin")
         book_chooser_dialog.add_filter(filter)
-        book_chooser_button.set_filename(path)
+        book_chooser_button.setFileName(path)
 
         self.widgets["bookChooserDock"].add(book_chooser_button)
         book_chooser_button.show()
 
         def select_new_book(button):
-            new_book = book_chooser_dialog.get_filename()
+            new_book = book_chooser_dialog.getFileName()
             if new_book:
                 conf.set("opening_file_entry", new_book)
             else:
                 # restore the original
-                book_chooser_dialog.set_filename(path)
+                book_chooser_dialog.setFileName(path)
 
         book_chooser_button.connect("file-set", select_new_book)
 
@@ -162,7 +162,7 @@ class HintTab:
         egtb_chooser_button.show()
 
         def select_egtb(button):
-            new_directory = egtb_chooser_dialog.get_filename()
+            new_directory = egtb_chooser_dialog.getFileName()
             if new_directory != egtb_path:
                 conf.set("egtb_path", new_directory)
 
@@ -684,7 +684,7 @@ class SaveTab:
         auto_save_chooser_button.show()
 
         def select_auto_save(button):
-            new_directory = auto_save_chooser_dialog.get_filename()
+            new_directory = auto_save_chooser_dialog.getFileName()
             if new_directory != autoSavePath:
                 conf.set("autoSavePath", new_directory)
 

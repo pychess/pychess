@@ -60,7 +60,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
             # issue tracker, we need to give human players special treatment
             player = func(gmwidg, *args)
             players.append(player)
-            
+
             # Connect to conf
             if i == 0 or (i == 1 and player0tup[0] != LOCAL):
                 key = "firstName"
@@ -80,7 +80,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
     log.debug("ionest.generalStart: -> gamemodel.setPlayers(): %s" % (gamemodel))
     gamemodel.setPlayers(players)
     log.debug("ionest.generalStart: <- gamemodel.setPlayers(): %s" % (gamemodel))
-    
+
     # Starting
     if loaddata:
         try:
@@ -102,7 +102,7 @@ def generalStart (gamemodel, player0tup, player1tup, loaddata=None):
         log.debug("ionest..generalStart: -> gamemodel.start(): %s" % (gamemodel))
         gamemodel.start()
         log.debug("ionest.generalStart: <- gamemodel.start(): %s" % (gamemodel))
-    
+
     log.debug("ionest.generalStart: returning gmwidg=%s\n gamemodel=%s" % \
         (gmwidg, gamemodel))
     return gmwidg, gamemodel
@@ -235,7 +235,7 @@ def saveGameAs (game, position=None):
         if res != Gtk.ResponseType.ACCEPT:
             break
 
-        uri = savedialog.get_filename()
+        uri = savedialog.getFileName()
         ending = os.path.splitext(uri)[1]
         if ending.startswith("."): ending = ending[1:]
         append = False
@@ -290,7 +290,7 @@ Please ensure that you have given the right path and try again."))
                 continue
         else:
             print(repr(uri))
-            
+
         try:
             game.save(uri, saver, append, position)
         except IOError as e:
@@ -327,7 +327,7 @@ def closeAllGames (pairs):
                 len(changedPairs)) % len(changedPairs) + \
                 " " + _("Save moves before closing?") + \
                 "</b></big>"
-                               
+
         if conf.get("autoSave", False):
             for gmwidg, game in changedPairs:
                 x = saveGamePGN(game)
@@ -432,7 +432,7 @@ def closeGame (gmwidg, game):
             d.set_markup(markup)
             d.format_secondary_text (_(
                 "It is not possible later to continue the game,\nif you don't save it."))
-            
+
             response = d.run()
             d.destroy()
 

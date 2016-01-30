@@ -41,12 +41,12 @@ class EnginesDialog():
         self.dialog = self.widgets["manage_engines_dialog"]
         self.cur_engine = None
         self.default_workdir = getEngineDataPrefix()
-        
+
         uistuff.keepWindowSize("engineswindow", self.dialog, defaultSize=(1, 500))
 
         # Put engines into tree store
         allstore = Gtk.ListStore(Pixbuf, str)
-        
+
         self.tv = self.widgets["engines_treeview"]
         self.tv.set_model(allstore)
         self.tv.append_column(Gtk.TreeViewColumn(
@@ -64,7 +64,7 @@ class EnginesDialog():
                         engine["name"] = new_name
                         discoverer.save()
                         self.cur_engine = new_name
-                        update_store()                        
+                        update_store()
                         # Notify playerCombos in NewGameTasker
                         discoverer.emit("all_engines_discovered")
         name_renderer.connect("edited", name_edited)
@@ -75,7 +75,7 @@ class EnginesDialog():
         protocol_combo.pack_start(cell, True)
         protocol_combo.add_attribute(cell, "text", 0)
 
-        # Add columns and cell renderers to options treeview 
+        # Add columns and cell renderers to options treeview
         self.options_store = Gtk.ListStore(str, GObject.TYPE_PYOBJECT)
         optv = self.widgets["options_treeview"]
         optv.set_model(self.options_store)
@@ -124,7 +124,7 @@ class EnginesDialog():
         def do_update_store(*args):
             GLib.idle_add(update_store)
         discoverer.connect_after("engine_discovered", do_update_store)
-        
+
         ################################################################
         # remove button
         ################################################################
@@ -166,9 +166,9 @@ class EnginesDialog():
             response = engine_chooser_dialog.run()
 
             if response == Gtk.ResponseType.OK:
-                new_engine = engine_chooser_dialog.get_filename()
+                new_engine = engine_chooser_dialog.getFileName()
                 if new_engine.lower().endswith(".exe") and sys.platform != "win32":
-                    vm_name = "wine" 
+                    vm_name = "wine"
                     vmpath = searchPath(vm_name, access=os.R_OK|os.X_OK)
                     if vmpath is None:
                         d = Gtk.MessageDialog(
@@ -183,7 +183,7 @@ class EnginesDialog():
                 else:
                     vm_name = None
                     vmpath = ""
-                
+
                 if new_engine:
                     try:
                         # Some engines support CECP and UCI, but variant engines are CECP,
@@ -204,7 +204,7 @@ class EnginesDialog():
                             if not ok:
                                 # restore the original
                                 engine = discoverer.getEngineByName(self.cur_engine)
-                                engine_chooser_dialog.set_filename(engine["command"])
+                                engine_chooser_dialog.setFileName(engine["command"])
                                 d = Gtk.MessageDialog(
                                         type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
                                 d.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
@@ -221,10 +221,10 @@ class EnginesDialog():
                         self.widgets["engine_command_entry"].set_text(new_engine)
                         self.widgets["engine_protocol_combo"].set_active(0 if uci else 1)
                         self.widgets["engine_args_entry"].set_text("")
-                        
+
                         active = self.widgets["engine_protocol_combo"].get_active()
                         protocol = "uci" if uci else "xboard"
-                        
+
                         discoverer.addEngine(binname, new_engine, protocol, vm_name)
                         self.cur_engine = binname
                         self.add = False
@@ -239,9 +239,9 @@ class EnginesDialog():
                 else:
                     # restore the original
                     engine = discoverer.getEngineByName(self.cur_engine)
-                    engine_chooser_dialog.set_filename(engine["command"])
+                    engine_chooser_dialog.setFileName(engine["command"])
             engine_chooser_dialog.hide()
-            
+
         self.widgets["add_engine_button"].connect("clicked", add)
 
 
@@ -271,7 +271,7 @@ class EnginesDialog():
         dir_chooser_button.show()
 
         def select_dir(button):
-            new_directory = dir_chooser_dialog.get_filename()
+            new_directory = dir_chooser_dialog.getFileName()
             engine = discoverer.getEngineByName(self.cur_engine)
             old_directory = engine.get("workingDirectory")
             if new_directory != old_directory and new_directory != self.default_workdir:
@@ -291,7 +291,7 @@ class EnginesDialog():
                 engine = discoverer.getEngineByName(self.cur_engine)
                 old_protocol = engine["protocol"]
                 if new_protocol != old_protocol:
-                    engine_command = engine_chooser_dialog.get_filename()
+                    engine_command = engine_chooser_dialog.getFileName()
                     # is the new protocol supported by the engine?
                     if new_protocol == "uci":
                         ok = is_uci(engine_command)
@@ -329,7 +329,7 @@ class EnginesDialog():
                 else:
                     self.widgets['remove_engine_button'].set_sensitive(True)
                 self.widgets["engine_command_entry"].set_text(engine["command"])
-                engine_chooser_dialog.set_filename(engine["command"])
+                engine_chooser_dialog.setFileName(engine["command"])
                 args = [] if engine.get("args") is None else engine.get("args")
                 self.widgets["engine_args_entry"].set_text(' '.join(args))
                 directory = engine.get("workingDirectory")
@@ -338,7 +338,7 @@ class EnginesDialog():
                 self.widgets["engine_protocol_combo"].set_active(0 if engine["protocol"]=="uci" else 1)
                 update_options()
                 self.selection = False
-                    
+
         tree_selection = self.tv.get_selection()
         tree_selection.connect('changed', selection_changed)
         tree_selection.select_path((0,))
@@ -358,9 +358,9 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
             ('Clear Hash', {'name': 'Clear Hash', 'type': 'button'})
     """
     __gproperties__ = {"data": (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.PARAM_READWRITE)}
-    
+
     def __init__(self, model):
-        GObject.GObject.__init__(self)       
+        GObject.GObject.__init__(self)
         self.data = None
 
         self.text_renderer = Gtk.CellRendererText()
@@ -398,7 +398,7 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
         model[path][1]["value"] = not model[path][1]["value"]
         discoverer.save()
         return
-        
+
     def spin_edited_cb(self, cell, path, new_text, model):
         model[path][1]["value"] = new_text
         discoverer.save()
@@ -419,7 +419,7 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
         elif self.data["type"] == "button":
             return self.button_renderer
     renderer = property(_get_renderer)
-    
+
     def do_set_property(self, pspec, value):
         if value["type"] == "check":
             self.toggle_renderer.set_active(value["value"])
@@ -443,19 +443,19 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
             self.button_renderer.set_property("text", "")
 
         setattr(self, pspec.name, value)
-        
+
     def do_get_property(self, pspec):
         return getattr(self, pspec.name)
 
     def do_get_size(self, widget, cell_area=None):
         return self.renderer.get_size(widget, cell_area=cell_area)
-        
-    def do_render(self, ctx, widget, background_area, cell_area, flags):      
+
+    def do_render(self, ctx, widget, background_area, cell_area, flags):
         self.renderer.render(ctx, widget, background_area, cell_area, flags)
-        
+
     def do_activate(self, event, widget, path, background_area, cell_area, flags):
         return self.renderer.activate(event, widget, path, background_area, cell_area, flags)
-        
+
     def do_start_editing(self, event, widget, path, background_area, cell_area, flags):
         return self.renderer.start_editing(event, widget, path, background_area, cell_area, flags)
 
