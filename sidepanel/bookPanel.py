@@ -113,7 +113,7 @@ class OpeningAdvisor(Advisor):
         for move, weight, games, score in openings:
             if totalWeight != 0:
                 weight /= totalWeight
-            goodness = min(weight * len(openings), 1.0)
+            goodness = min(float(weight * len(openings)), 1.0)
             weight = "%0.1f%%" % (100 * weight)
 
             opening = get_eco(b.move(Move(move)).board.hash)
