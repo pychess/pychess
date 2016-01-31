@@ -487,7 +487,7 @@ class LoadFileExtension (_GameInitializationMode):
             if not cls.loadSidePanel.isEmpty():
                 uri =  cls.loadSidePanel.get_filename()
                 loader = ionest.enddir[uri[uri.rfind(".")+1:]]
-                position = cls.loadSidePanel.get_position()
+                position = cls.loadSidePanel.getPosition()
                 gameno = cls.loadSidePanel.getGameno()
                 ionest.generalStart(gamemodel, p0, p1, (uri, loader, gameno, position))
             else:
