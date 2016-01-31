@@ -561,8 +561,8 @@ class ActiveState(BoardState):
             return True
         return self.validate(self.view.active, cord)
 
-    def release (self, x, y):
-        cord = self.point2Cord(x,y)
+    def release(self, x, y):
+        cord = self.point2Cord(x, y)
         if self.view.selected and cord != self.view.active and \
             not self.validate(self.view.selected, cord):
             if not self.parent.setup_position:
@@ -635,8 +635,8 @@ class ActiveState(BoardState):
 
         self.parent.selected_last = self.view.selected
 
-    def motion(self, x, y):
-        BoardState.motion(self, x, y)
+    def motion(self, x_loc, y_loc):
+        BoardState.motion(self, x_loc, y_loc)
         fcord = self.view.active
         if not fcord:
             return
@@ -647,21 +647,23 @@ class ActiveState(BoardState):
             if not self.parent.setup_position:
                 return
 
-        xc, yc, square, s = self.view.square
-        co, si = self.view.matrix[0], self.view.matrix[1]
-        point = self.transPoint(x - s * (co + si) / 2., y + s * (co - si) / 2.)
-        if not point: return
-        x, y = point
+        side = self.view.square[3]
+        co_loc, si_loc = self.view.matrix[0], self.view.matrix[1]
+        point = self.transPoint(x_loc - side * (co_loc + si_loc) / 2., \
+                                y_loc + side * (co_loc - si_loc) / 2.)
+        if not point:
+            return
+        x_loc, y_loc = point
 
-        if piece.x != x or piece.y != y:
-            if piece.x:
-                paintBox = self.view.cord2RectRelative(piece.x, piece.y)
+        if piece.x_loc != x_loc or piece.y_loc != y_loc:
+            if piece.x_loc:
+                paintbox = self.view.cord2RectRelative(piece.x_loc, piece.y_loc)
             else:
-                paintBox = self.view.cord2RectRelative(self.view.active)
-            paintBox = join(paintBox, self.view.cord2RectRelative(x, y))
-            piece.x = x
-            piece.y = y
-            self.view.redrawCanvas(rect(paintBox))
+                paintbox = self.view.cord2RectRelative(self.view.active)
+            paintbox = join(paintbox, self.view.cord2RectRelative(x_loc, y_loc))
+            piece.x_loc = x_loc
+            piece.y_loc = y_loc
+            self.view.redrawCanvas(rect(paintbox))
 
 
 class SelectedState(BoardState):
