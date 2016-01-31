@@ -81,7 +81,7 @@ class BoardPreview:
 
         def onFileSet(*args):
             fcbutton = args[0]
-            self.onFileActivated(fcbutton.getFileName())
+            self.onFileActivated(fcbutton.get_filename())
 
         fcbutton.connect("file-set", onFileSet)
         # This is needed for game files specified on the command line to work
@@ -89,7 +89,7 @@ class BoardPreview:
 
         def onResponse(fcdialog, resp):
             if resp == Gtk.ResponseType.ACCEPT:
-                self.onFileActivated(opendialog.getFileName())
+                self.onFileActivated(opendialog.get_filename())
 
         opendialog.connect("response", onResponse)
 
@@ -97,7 +97,7 @@ class BoardPreview:
         # filename is None if a non-existent file is passed as command line argument
         if filename is None:
             return
-        self.setFileName(filename)
+        self.set_filename(filename)
         if os.path.isdir(filename):
             return
 
@@ -193,19 +193,19 @@ class BoardPreview:
             pos += ".."
         self.widgets["posLabel"].set_text(pos)
 
-    def setFileName(self, filename):
+    def set_filename(self, filename):
         as_path = splitUri(filename)[-1]
         if os.path.isfile(as_path):
             self.fcbutton.show()
             #if filename != self._retrieve_filename():
-            #    self.fcbutton.setFileName(os.path.abspath(as_path))
-            self.fcbutton.setFileName(os.path.abspath(as_path))
+            #    self.fcbutton.set_filename(os.path.abspath(as_path))
+            self.fcbutton.set_filename(os.path.abspath(as_path))
         else:
             self.fcbutton.set_uri("")
             self.fcbutton.hide()
         self.filename = filename
 
-    def getFileName(self):
+    def get_filename(self):
         return self.filename
 
     def isEmpty(self):
