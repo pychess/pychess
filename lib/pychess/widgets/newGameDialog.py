@@ -209,7 +209,7 @@ class _GameInitializationMode:
     def __initTimeRadio (cls, name, id, radiobutton, configImage, defmin, defgain):
         #minSpin = Gtk.SpinButton(Gtk.Adjustment(1,1,240,1))
         minSpin = Gtk.SpinButton()
-        minSpin.set_adjustment(Gtk.Adjustment(1,1,240,1))
+        minSpin.set_adjustment(Gtk.Adjustment(1,0,240,1))
         #gainSpin = Gtk.SpinButton(Gtk.Adjustment(0,-60,60,1))
         gainSpin = Gtk.SpinButton()
         gainSpin.set_adjustment(Gtk.Adjustment(0,-60,60,1))
@@ -395,11 +395,7 @@ class _GameInitializationMode:
                 playertups[0][2].append(True)
                 playertups[1][2].append(True)
 
-            if secs > 0:
-                timemodel = TimeModel (secs, incr)
-            else:
-                timemodel = TimeModel()
-
+            timemodel = TimeModel (secs, incr)
             gamemodel = GameModel (timemodel, variant)
 
             if not validate(gamemodel):

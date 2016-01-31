@@ -155,8 +155,7 @@ class GameModel (GObject.GObject, Thread):
         }
 
         self.endstatus = None
-        self.timed = self.timemodel.secs!=0 or self.timemodel.gain!=0
-
+        self.timed = self.timemodel.minutes!=0 or self.timemodel.gain!=0
         if self.timed:
             self.timemodel.connect('zero_reached', self.zero_reached)
 

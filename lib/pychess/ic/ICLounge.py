@@ -157,10 +157,7 @@ class ICLounge (GObject.GObject):
             message.dismiss()
         del self.messages[:]
 
-        if ficsgame.minutes == 0:
-            timemodel = TimeModel()
-        else:
-            timemodel = TimeModel (ficsgame.minutes*60, ficsgame.inc)
+        timemodel = TimeModel (ficsgame.minutes*60, ficsgame.inc)
         
         gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
         gamemodel.connect("game_started", lambda gamemodel:
@@ -195,10 +192,8 @@ class ICLounge (GObject.GObject):
     @idle_add
     def onObserveGameCreated (self, bm, ficsgame):
         log.debug("ICLounge.onObserveGameCreated: %s" % ficsgame)
-        if ficsgame.minutes == 0:
-            timemodel = TimeModel()
-        else:
-            timemodel = TimeModel (ficsgame.minutes*60, ficsgame.inc)
+
+        timemodel = TimeModel (ficsgame.minutes*60, ficsgame.inc)
 
         gamemodel = ICGameModel (self.connection, ficsgame, timemodel)
         gamemodel.connect("game_started", lambda gamemodel:
@@ -1808,10 +1803,8 @@ class AdjournedTabSection (ParrentListSection):
     @idle_add
     def onGamePreview (self, adm, ficsgame):
         log.debug("ICLounge.onGamePreview: %s" % ficsgame)
-        if ficsgame.minutes ==0:
-            timemodel = TimeModel()
-        else:
-            timemodel = TimeModel(ficsgame.minutes*60, ficsgame.inc)
+
+        timemodel = TimeModel(ficsgame.minutes*60, ficsgame.inc)
 
         gamemodel = ICGameModel(self.connection, ficsgame, timemodel)
 

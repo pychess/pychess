@@ -88,7 +88,7 @@ class TimeModel (GObject.GObject):
                 self.zero_listener_source = default_context.find_source_by_id(self.zero_listener_id)
     
     def __checkzero(self, color):
-        if self.getPlayerTime(color) <= 0:
+        if self.getPlayerTime(color) <= 0 and self.started:
             self.emit('zero_reached', color)
             return False
         return True
@@ -111,7 +111,7 @@ class TimeModel (GObject.GObject):
             self.intervals[self.movingColor].append(t)
         else:
             self.intervals[self.movingColor].append (
-                    self.intervals[self.movingColor][-1] )
+                    self.intervals[self.movingColor][-1] + self.gain )
             # FICS rule
             if self.ply >= 2:
                 self.started = True
