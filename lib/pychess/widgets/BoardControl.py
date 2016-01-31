@@ -657,14 +657,14 @@ class ActiveState(BoardState):
             return
         x_loc, y_loc = point
 
-        if piece.x_loc != x_loc or piece.y_loc != y_loc:
-            if piece.x_loc:
-                paintbox = self.view.cord2RectRelative(piece.x_loc, piece.y_loc)
+        if piece.x != x_loc or piece.y != y_loc:
+            if piece.x:
+                paintbox = self.view.cord2RectRelative(piece.x, piece.y)
             else:
                 paintbox = self.view.cord2RectRelative(self.view.active)
             paintbox = join(paintbox, self.view.cord2RectRelative(x_loc, y_loc))
-            piece.x_loc = x_loc
-            piece.y_loc = y_loc
+            piece.x = x_loc
+            piece.y = y_loc
             self.view.redrawCanvas(rect(paintbox))
 
 
