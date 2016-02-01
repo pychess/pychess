@@ -1,27 +1,25 @@
 from __future__ import absolute_import
-from time import strftime, gmtime, localtime
+from time import strftime, localtime
 import random
 
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import Pango
-from gi.repository import GObject
+from gi.repository import Gtk, Gdk, Pango, GObject
 
 from pychess.System.idle_add import idle_add
 from pychess.System import uistuff
 from pychess.widgets import insert_formatted
 from pychess.widgets.Background import set_textview_color
-from pychess.Utils.IconLoader import load_icon, get_pixbuf
+from pychess.Utils.IconLoader import load_icon
 from pychess.ic.ICGameModel import ICGameModel
 
 
-class ChatView (Gtk.Box):
+class ChatView(Gtk.Box):
     __gsignals__ = {
-        'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
-        'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        'messageAdded': (GObject.SignalFlags.RUN_FIRST, None,
+                         (str, str, object)),
+        'messageTyped': (GObject.SignalFlags.RUN_FIRST, None, (str, )),
     }
 
-    def __init__ (self, gamemodel=None):
+    def __init__(self, gamemodel=None):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL)
         self.gamemodel = gamemodel
 
@@ -47,7 +45,8 @@ class ChatView (Gtk.Box):
 
         if isinstance(self.gamemodel, ICGameModel):
             self.refresh = Gtk.Image()
-            self.refresh.set_from_pixbuf(load_icon(16, "view-refresh", "stock-refresh"))
+            self.refresh.set_from_pixbuf(load_icon(16, "view-refresh",
+                                                   "stock-refresh"))
             label = _("Observers")
             self.obs_btn = Gtk.Button()
             self.obs_btn.set_image(self.refresh)
@@ -67,13 +66,13 @@ class ChatView (Gtk.Box):
             self.obsView.props.pixels_above_lines = 2
             self.obsView.props.left_margin = 2
 
-            tb = self.obsView.get_buffer()
-            iter = tb.get_end_iter()
-            anchor1 = tb.create_child_anchor(iter)
+            text_buffer = self.obsView.get_buffer()
+            iter = text_buffer.get_end_iter()
+            anchor1 = text_buffer.create_child_anchor(iter)
             self.obsView.add_child_at_anchor(self.obs_btn, anchor1)
-            self.button_tag = tb.create_tag("observers")
-            tb.insert_with_tags_by_name(iter, " ", "observers")
-            tb.insert(iter, "\n")
+            self.button_tag = text_buffer.create_tag("observers")
+            text_buffer.insert_with_tags_by_name(iter, " ", "observers")
+            text_buffer.insert(iter, "\n")
 
             vbox.pack_start(self.obsView, False, True, 0)
             vbox.pack_start(self.sw, True, True, 0)
@@ -101,45 +100,47 @@ class ChatView (Gtk.Box):
     @idle_add
     def update_observers(self, other, observers):
         """ Rebuilds observers list text """
-        tb = self.obsView.get_buffer()
-        start_iter = tb.get_end_iter()
+        text_buf = self.obsView.get_buffer()
+        start_iter = text_buf.get_end_iter()
         start_iter.backward_to_tag_toggle(self.button_tag)
         start_iter.forward_char()
-        end_iter = tb.get_end_iter()
-        tb.delete(start_iter, end_iter)
-        iter = tb.get_end_iter()
+        end_iter = text_buf.get_end_iter()
+        text_buf.delete(start_iter, end_iter)
+        iter = text_buf.get_end_iter()
 
         obs_list = observers.split()
         for player in obs_list:
             # Colourize only players able to interact with chat View
             if player.endswith("(U)"):
-                tb.insert(iter, "%s " % player[:-3])
+                text_buf.insert(iter, "%s " % player[:-3])
             elif "(" in player:
-                pref,rest = player.split('(',1)
+                pref = player.split('(', 1)[0]
                 self._ensureColor(pref)
-                tb.insert_with_tags_by_name(iter, "%s " % player, pref+"_bold")
+                text_buf.insert_with_tags_by_name(iter, "%s " % player, \
+                                                  pref + "_bold")
             else:
-                tb.insert(iter, "%s " % player)
+                text_buf.insert(iter, "%s " % player)
         self.obsView.show_all()
-
 
     def _ensureColor(self, pref):
         """ Ensures that the tags for pref_normal and pref_bold are set in the text buffer """
-        tb = self.readView.get_buffer()
+        text_buf = self.readView.get_buffer()
         if not pref in self.colors:
             color = uistuff.genColor(len(self.colors) + 1, self.startpoint)
             self.colors[pref] = color
             color = [int(c * 255) for c in color]
             color = "#" + "".join([hex(v)[2:].zfill(2) for v in color])
-            tb.create_tag(pref + "_normal", foreground=color)
-            tb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
+            text_buf.create_tag(pref + "_normal", foreground=color)
+            text_buf.create_tag(pref + "_bold", foreground=color, \
+                                weight=Pango.Weight.BOLD)
             if isinstance(self.gamemodel, ICGameModel):
                 otb = self.obsView.get_buffer()
                 otb.create_tag(pref + "_normal", foreground=color)
-                otb.create_tag(pref + "_bold", foreground=color, weight=Pango.Weight.BOLD)
+                otb.create_tag(pref + "_bold",
+                               foreground=color,
+                               weight=Pango.Weight.BOLD)
 
-
-    def clear (self):
+    def clear(self):
         self.writeView.get_buffer().props.text = ""
         self.readView.get_buffer().props.text = ""
         tagtable = self.readView.get_buffer().get_tag_table()
@@ -148,56 +149,58 @@ class ChatView (Gtk.Box):
             tagtable.remove("%d_bold" % i)
         self.colors.clear()
 
-    def __addMessage (self, iter, time, sender, text):
+    def __addMessage(self, iter, time, sender, text):
         pref = sender.lower()
-        tb = self.readView.get_buffer()
-        iter = tb.get_end_iter()
-        tb.create_mark("end", iter, False)
-        if tb.props.text:
-            tb.insert(iter, "\n")
+        text_buffer = self.readView.get_buffer()
+        iter = text_buffer.get_end_iter()
+        text_buffer.create_mark("end", iter, False)
+        if text_buffer.props.text:
+            text_buffer.insert(iter, "\n")
 
         # Calculate a color for the sender
         self._ensureColor(pref)
         # Insert time, name and text with different stylesd
-        tb.insert_with_tags_by_name(iter, "(%s) "%time, pref+"_normal")
-        tb.insert_with_tags_by_name(iter, sender+": ", pref+"_bold")
+        text_buffer.insert_with_tags_by_name(iter, "(%s) " % time, pref + "_normal")
+        text_buffer.insert_with_tags_by_name(iter, sender + ": ", pref + "_bold")
         insert_formatted(self.readView, iter, text)
 
         # Scroll the mark onscreen.
-        mark = tb.get_mark("end")
-        tb.move_mark(mark, iter)
+        mark = text_buffer.get_mark("end")
+        text_buffer.move_mark(mark, iter)
         self.readView.scroll_mark_onscreen(mark)
 
         # This is used to buzz the user and add senders to a list of active participants
         self.emit("messageAdded", sender, text, self.colors[pref])
 
-    def insertLogMessage (self, timestamp, sender, text):
+    def insertLogMessage(self, timestamp, sender, text):
         """ Takes a list of (timestamp, sender, text) pairs, and inserts them in
             the beginning of the document.
-            All text will be in a gray color """
-        tb = self.readView.get_buffer()
-        iter = tb.get_iter_at_mark(tb.get_mark("logMark"))
+            All text will be in a gray color
+        """
+        text_buffer = self.readView.get_buffer()
+        iter = text_buffer.get_iter_at_mark(text_buffer.get_mark("logMark"))
         time = strftime("%H:%M:%S", localtime(timestamp))
         self.__addMessage(iter, time, sender, text)
 
-    def addMessage (self, sender, text):
-        tb = self.readView.get_buffer()
-        iter = tb.get_end_iter()
+    def addMessage(self, sender, text):
+        text_buffer = self.readView.get_buffer()
+        iter = text_buffer.get_end_iter()
         self.__addMessage(iter, strftime("%H:%M:%S"), sender, text)
 
-    def disable (self, message):
+    def disable(self, message):
         """ Sets the write field insensitive, in cases where the channel is
             read only. Use the message to give the user a propriate
             exlpanation """
         self.writeView.set_sensitive(False)
         self.writeView.set_text(message)
 
-    def enable (self):
+    def enable(self):
         self.writeView.set_text("")
         self.writeView.set_sensitive(True)
 
-    def onKeyPress (self, widget, event):
-        if event.keyval in list(map(Gdk.keyval_from_name,("Return", "KP_Enter"))):
+    def onKeyPress(self, widget, event):
+        if event.keyval in list(map(Gdk.keyval_from_name, \
+                                    ("Return", "KP_Enter"))):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
                 if buffer.props.text:
