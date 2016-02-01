@@ -1,58 +1,58 @@
-from gi.repository import Gtk
-from gi.repository import GObject
-class BorderBox (Gtk.Alignment):
-    def __init__ (self, widget=None, top=False, right=False,
-                                     bottom=False, left=False):
+from gi.repository import Gtk, GObject
+
+
+class BorderBox(Gtk.Alignment):
+    def __init__(self,
+                 widget=None,
+                 top=False,
+                 right=False,
+                 bottom=False,
+                 left=False):
         GObject.GObject.__init__(self)
         self.connect("draw", self._onExpose)
 
         if widget:
             self.add(widget)
-        
+
         self.__top = top
         self.__right = right
         self.__bottom = bottom
         self.__left = left
         self._updateBorders()
-    
-    
+
     def _onExpose(self, area, ctx):
         context = self.get_window().cairo_create()
 
-        sc = self.get_style_context()
-        found, color = sc.lookup_color("p_dark_color")
-        r, g, b, a = color.red, color.green, color.blue, color.alpha
-        context.set_source_rgba(r, g, b, a)
+        style_ctxt = self.get_style_context()
+        color = style_ctxt.lookup_color("p_dark_color")[1]
+        red, green, blue, alpha = color.red, color.green, color.blue, color.alpha
+        context.set_source_rgba(red, green, blue, alpha)
 
-        r = self.get_allocation()
-        x = r.x + .5
-        y = r.y + .5
-        width = r.width - 1
-        height = r.height - 1
-        
+        allocation = self.get_allocation()
+        x_loc = allocation.x + .5
+        y_loc = allocation.y + .5
+        width = allocation.width - 1
+        height = allocation.height - 1
+
         if self.top:
-            context.move_to(x, y)
-            context.line_to(x+width, y)
+            context.move_to(x_loc, y_loc)
+            context.line_to(x_loc + width, y_loc)
         if self.right:
-            context.move_to(x+width, y)
-            context.line_to(x+width, y+height)
+            context.move_to(x_loc + width, y_loc)
+            context.line_to(x_loc + width, y_loc + height)
         if self.bottom:
-            context.move_to(x+width, y+height)
-            context.line_to(x, y+height)
+            context.move_to(x_loc + width, y_loc + height)
+            context.line_to(x_loc, y_loc + height)
         if self.left:
-            context.move_to(x, y+height)
-            context.line_to(x, y)
+            context.move_to(x_loc, y_loc + height)
+            context.line_to(x_loc, y_loc)
         context.set_line_width(1)
         context.stroke()
-    
-    
-    def _updateBorders (self):
-        self.set_padding(self.top and 1 or 0,
-                         self.bottom and 1 or 0,
-                         self.right and 1 or 0,
-                         self.left and 1 or 0)
-    
-    
+
+    def _updateBorders(self):
+        self.set_padding(self.top and 1 or 0, self.bottom and 1 or 0,
+                         self.right and 1 or 0, self.left and 1 or 0)
+
     def isTop(self):
         return self.__top
 
@@ -80,7 +80,7 @@ class BorderBox (Gtk.Alignment):
     def setLeft(self, value):
         self.__left = value
         self._updateBorders()
-    
+
     top = property(isTop, setTop, None, None)
 
     right = property(isRight, setRight, None, None)

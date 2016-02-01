@@ -2,8 +2,7 @@
 
 from os import path
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk, Gdk
 import cairo
 
 from pychess.System.prefix import addDataPrefix, addUserCachePrefix
@@ -17,7 +16,7 @@ doldcolor = None
 
 def giveBackground(widget):
     widget.connect("draw", expose)
-    widget.connect("style-updated", newtheme)
+    widget.connect("style-updated", newTheme)
 
 
 def expose(widget, context):
@@ -29,14 +28,14 @@ def expose(widget, context):
     height = widget.get_allocation().height
     cairo_create.rectangle(x_loc, y_loc, width, height)
     if not surface:
-        newtheme(widget)
+        newTheme(widget)
     cairo_create.set_source_surface(surface, 0, 0)
     pattern = cairo_create.get_source()
     pattern.set_extend(cairo.EXTEND_REPEAT)
     cairo_create.fill()
 
 
-def newtheme(widget):
+def newTheme(widget):
     global surface, provider, loldcolor, doldcolor
 
     style_ctxt = widget.get_style_context()
@@ -122,7 +121,6 @@ def newtheme(widget):
                 (basecol.green + textcol.green) / 2., 1.0), min(
                     (basecol.blue + textcol.blue) / 2., 1.0))  # text_aa
 
-    # return hex string #rrggbb
     def hexcol(color):
         """ Description : Takes a colour tuple(rgb) and returns a hex based string #rrggbb
             Returns : (str)
