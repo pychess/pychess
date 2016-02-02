@@ -125,6 +125,9 @@ class ConsoleView (Gtk.Box):
         if event.keyval in map(Gdk.keyval_from_name,("Return", "KP_Enter")):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
+                if buffer.props.text.startswith("pas"):
+                    # don't log password changes
+                    self.connection.client.telnet.sensitive = True
                 self.connection.client.run_command(buffer.props.text, show_reply=True)
                 self.emit("messageTyped", buffer.props.text)
                 self.addMessage(buffer.props.text, True)

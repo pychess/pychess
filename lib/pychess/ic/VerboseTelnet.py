@@ -2,7 +2,7 @@ import collections
 import re
 
 from pychess.System.Log import log
-from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
+from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END, BLKCMD_PASSWORD
 
 class ConsoleHandler (object):
     def __init__ (self, callback):
@@ -212,14 +212,17 @@ class TelnetLines (object):
                 line = self.telnet.readline()
             lines.append(TelnetLine(line[:-1], code))
             
-            log.debug("%s %s %s" %
-                      (id, code, "\n".join(line.line for line in lines).strip()),
-                      extra={"task": (self.telnet.name, "command_reply")})
+            if code != BLKCMD_PASSWORD:
+                log.debug("%s %s %s" %
+                          (id, code, "\n".join(line.line for line in lines).strip()),
+                          extra={"task": (self.telnet.name, "command_reply")})
         else:
+            code = 0
             lines.append(TelnetLine(line, None))
         
-        log.debug("\n".join(line.line for line in lines).strip(),
-                  extra={"task": (self.telnet.name, "lines")})
+        if code != BLKCMD_PASSWORD:
+            log.debug("\n".join(line.line for line in lines).strip(),
+                      extra={"task": (self.telnet.name, "lines")})
         if self.consolehandler:
             if id == 0 or id in self.show_reply:
                 self.consolehandler.handle(lines)
@@ -249,7 +252,8 @@ class PredictionsTelnet (object):
                 log.debug("\n".join(p.matches), extra={"task": (self.telnet.name, p.name)})
                 break
         else:
-            log.debug(line.line, extra={"task": (self.telnet.name, "nonmatched")})
+            if line.code != BLKCMD_PASSWORD:
+                log.debug(line.line, extra={"task": (self.telnet.name, "nonmatched")})
     
     def test_prediction (self, prediction, line):
         lines = []
@@ -267,7 +271,8 @@ class PredictionsTelnet (object):
         return answer
         
     def run_command(self, text, show_reply=False):
-        log.debug(text, extra={"task": (self.telnet.name, "run_command")})
+        logtext = "*"*len(text) if self.telnet.sensitive else text
+        log.debug(logtext, extra={"task": (self.telnet.name, "run_command")})
         if self.lines.block_mode:
             # TODO: reuse id after command reply handled
             self.__command_id += 1

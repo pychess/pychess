@@ -189,7 +189,6 @@ class FICSConnection (Connection):
                 if got == 0:
                     self.client.sensitive = True
                     print(self.password, file=self.client)
-                    self.client.sensitive = False
                 # No such name
                 elif got == 1:
                     raise LogOnException(NOTREG % self.username)

@@ -148,6 +148,7 @@ class TimeSeal (object):
         self.writebuf = self.writebuf[i+1:]
         
         logstr = "*"*len(str) if self.sensitive else str
+        self.sensitive = False
         log.info(logstr, extra={"task": (self.name, "raw")})
         str = self.encode(str)
         try:
@@ -189,7 +190,8 @@ class TimeSeal (object):
         else:
             recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
             recv = recv.replace(b"\r", b"")
-            log.debug(recv, extra={"task": (self.name, "raw")})
+            # enable this only for temporary debugging
+            #log.debug(recv, extra={"task": (self.name, "raw")})
             
             for i in range(g_count):
                 print(G_RESPONSE, file=self)
