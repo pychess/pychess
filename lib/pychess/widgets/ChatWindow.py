@@ -39,12 +39,13 @@ class BulletCellRenderer(Gtk.CellRenderer):
         return getattr(self, pspec.name)
 
     def do_render(self, context, widget, bg_area, cell_area, flags):
-        if not self.color:
+        if self.color is None:
             return
+        else:
+            red, green, blue = self.color
 
         x_loc, y_loc = self.get_size(widget, cell_area)[:2]
 
-        red, green, blue = self.color
         context.set_source_rgb(red, green, blue)
         context.rectangle(x_loc, y_loc, self.width, self.height)
         context.fill()
@@ -125,33 +126,42 @@ class TextImageTree(Gtk.TreeView):
         self.get_selection().connect("changed", self.selection_changed)
 
     @idle_add
-    def addRow(self, id, text, type):
-        if id in self.id2iter: return
+    def addRow(self, grp_id, text, grp_type):
+        """ Description: Takes a player or a channel identified by grp_id and adds
+            them to the correct group defined by grp_type
+            Return : None
+        """
+        if grp_id in self.id2iter:
+            return
         model = self.sort_model.get_model()
-        iter = model.append([id, text, type, GObject.markup_escape_text(text)])
-        self.id2iter[id] = iter
-        self.idSet.add(id)
+        m_iter = model.append([grp_id, text, grp_type, GObject.markup_escape_text(text)])
+        self.id2iter[grp_id] = m_iter
+        self.idSet.add(grp_id)
 
     @idle_add
-    def removeRow(self, id):
+    def removeRow(self, grp_id):
+        """ Description: Takes a player or channel identified by grp_id and removes them from
+            the data model.
+            Return : None
+        """
         try:
-            iter = self.id2iter[id]
+            m_iter = self.id2iter[grp_id]
         except KeyError:
             return
         model = self.sort_model.get_model()
-        model.remove(iter)
-        del self.id2iter[id]
-        self.idSet.remove(id)
+        model.remove(m_iter)
+        del self.id2iter[grp_id]
+        self.idSet.remove(grp_id)
 
     @idle_add
-    def selectRow(self, id):
-        iter = self.id2iter[id]
-        iter = self.sort_model.convert_child_iter_to_iter(iter)[1]
+    def selectRow(self, grp_id):
+        m_iter = self.id2iter[grp_id]
+        m_iter = self.sort_model.convert_child_iter_to_iter(m_iter)[1]
         sel = self.get_selection()
-        sel.select_iter(iter)
+        sel.select_iter(m_iter)
 
-    def __contains__(self, id):
-        return id in self.idSet
+    def __contains__(self, grp_id):
+        return grp_id in self.idSet
 
     def button_press(self, widget, event):
         path_col_pos = self.get_path_at_pos(int(event.x), int(event.y))
@@ -163,11 +173,11 @@ class TextImageTree(Gtk.TreeView):
         if path_col_pos and path_col_pos[1] == self.rightcol:
             if self.pressed == path_col_pos[0]:
                 model = self.sort_model
-                iter = model.get_iter(self.pressed)
-                id = model.get_value(iter, 0)
-                text = model.get_value(iter, 1)
-                type = model.get_value(iter, 2)
-                self.emit("activated", id, text, type)
+                m_iter = model.get_iter(self.pressed)
+                grp_id = model.get_value(m_iter, 0)
+                text = model.get_value(m_iter, 1)
+                grp_type = model.get_value(m_iter, 2)
+                self.emit("activated", grp_id, text, grp_type)
         self.pressed = None
 
     def motion_notify(self, widget, event):
@@ -181,11 +191,11 @@ class TextImageTree(Gtk.TreeView):
         self.get_window().set_cursor(self.stdcursor)
 
     def selection_changed(self, selection):
-        model, iter = selection.get_selected()
-        if iter:
-            id = model.get_value(iter, 0)
-            type = model.get_value(iter, 2)
-            self.emit("selected", id, type)
+        model, m_iter = selection.get_selected()
+        if m_iter:
+            grp_id = model.get_value(m_iter, 0)
+            grp_type = model.get_value(m_iter, 2)
+            self.emit("selected", grp_id, grp_type)
 
     def compareFunction(self, treemodel, iter0, iter1, column):
         val0 = treemodel.get_value(iter0, column).split(":")[0]
@@ -251,45 +261,45 @@ class ViewsPanel(Gtk.Notebook, Panel):
 
         self.connection.cm.connect("privateMessage", globalPersonalMessage)
 
-    def addItem(self, id, name, type, chatView):
-        chatView.connect("messageTyped", self.onMessageTyped, id, name, type)
-        self.connection.cm.connect("channelMessage", self.onChannelMessage, id,
+    def addItem(self, grp_id, name, grp_type, chatView):
+        chatView.connect("messageTyped", self.onMessageTyped, grp_id, name, grp_type)
+        self.connection.cm.connect("channelMessage", self.onChannelMessage, grp_id,
                                    chatView)
         self.connection.cm.connect("privateMessage", self.onPersonMessage,
                                    get_playername(name), chatView)
 
-        if type == TYPE_CHANNEL:
-            self.connection.cm.connect("channelLog", self.onChannelLog, id,
+        if grp_type == TYPE_CHANNEL:
+            self.connection.cm.connect("channelLog", self.onChannelLog, grp_id,
                                        chatView)
-            self.connection.cm.getChannelLog(id)
-            if not self.connection.cm.mayTellChannel(id):
+            self.connection.cm.getChannelLog(grp_id)
+            if not self.connection.cm.mayTellChannel(grp_id):
                 chatView.disable(_(
                     "Only registered users may talk to this channel"))
 
-        elif type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, TYPE_ADMIN,
+        elif grp_type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, TYPE_ADMIN,
                       TYPE_BLINDFOLD):
             if name in self.messageBuffer:
                 for title, isadmin, messagetext in self.messageBuffer[name]:
                     chatView.addMessage(name, messagetext)
                 del self.messageBuffer[name]
 
-        self.addPage(chatView, id)
+        self.addPage(chatView, grp_id)
 
-    def removeItem(self, id):
-        self.removePage(id)
+    def removeItem(self, grp_id):
+        self.removePage(grp_id)
 
-    def selectItem(self, id):
-        child = self.id2Widget[id]
+    def selectItem(self, grp_id):
+        child = self.id2Widget[grp_id]
         self.set_current_page(self.page_num(child))
 
     def onChannelLog(self, cm, channel, time, handle, text, name_, chatView):
         if channel.lower() == name_.lower():
             chatView.insertLogMessage(time, handle, text)
 
-    def onMessageTyped(self, chatView, text, id, name, type):
-        if type == TYPE_CHANNEL:
-            self.connection.cm.tellChannel(id, text)
-        elif type == TYPE_PERSONAL:
+    def onMessageTyped(self, chatView, text, grp_id, name, grp_type):
+        if grp_type == TYPE_CHANNEL:
+            self.connection.cm.tellChannel(grp_id, text)
+        elif grp_type == TYPE_PERSONAL:
             self.connection.cm.tellPlayer(get_playername(name), text)
         chatView.addMessage(self.connection.getUsername(), text)
 
@@ -304,13 +314,13 @@ class ViewsPanel(Gtk.Notebook, Panel):
             chatView.addMessage(name, text)
             self.emit('channel_content_Changed', channel, TYPE_CHANNEL)
 
-    def addPage(self, widget, id):
-        self.id2Widget[id] = widget
+    def addPage(self, widget, grp_id):
+        self.id2Widget[grp_id] = widget
         self.append_page(widget, None)
         widget.show_all()
 
-    def removePage(self, id):
-        child = self.id2Widget.pop(id)
+    def removePage(self, grp_id):
+        child = self.id2Widget.pop(grp_id)
         self.remove_page(self.page_num(child))
 
 
@@ -332,30 +342,30 @@ class InfoPanel(Gtk.Notebook, Panel):
 
         self.connection = connection
 
-    def addItem(self, id, text, type, chatView):
-        if type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, TYPE_ADMIN,
+    def addItem(self, id, text, grp_type, chatView):
+        if grp_type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, TYPE_ADMIN,
                     TYPE_BLINDFOLD):
             infoItem = self.PlayerInfoItem(id, text, chatView, self.connection)
-        elif type == TYPE_CHANNEL:
+        elif grp_type == TYPE_CHANNEL:
             infoItem = self.ChannelInfoItem(id, text, chatView,
                                             self.connection)
         self.addPage(infoItem, id)
 
-    def removeItem(self, id):
-        self.removePage(id)
+    def removeItem(self, grp_id):
+        self.removePage(grp_id)
 
-    def selectItem(self, id):
-        child = self.id2Widget.get(id)
+    def selectItem(self, grp_id):
+        child = self.id2Widget.get(grp_id)
         if child is not None:
             self.set_current_page(self.page_num(child))
 
-    def addPage(self, widget, id):
-        self.id2Widget[id] = widget
+    def addPage(self, widget, grp_id):
+        self.id2Widget[grp_id] = widget
         self.append_page(widget, None)
         widget.show_all()
 
-    def removePage(self, id):
-        child = self.id2Widget.pop(id)
+    def removePage(self, grp_id):
+        child = self.id2Widget.pop(grp_id)
         self.remove_page(self.page_num(child))
 
     class PlayerInfoItem(Gtk.Alignment):
