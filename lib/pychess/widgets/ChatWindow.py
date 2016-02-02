@@ -77,7 +77,7 @@ remove_icon = load_icon(16, "gtk-remove", "list-remove")
 
 
 class TextImageTree(Gtk.TreeView):
-    """ :Description : Defines a tree with two columns.
+    """ :Description: Defines a tree with two columns.
         The first one has text. The second one a clickable stock_icon
     """
 
@@ -130,7 +130,7 @@ class TextImageTree(Gtk.TreeView):
     def addRow(self, grp_id, text, grp_type):
         """ :Description: Takes a player or a channel identified by grp_id and adds
             them to the correct group defined by grp_type
-            :Return : None
+            :return: None
         """
         if grp_id in self.id2iter:
             return
@@ -143,7 +143,7 @@ class TextImageTree(Gtk.TreeView):
     def removeRow(self, grp_id):
         """ :Description: Takes a player or channel identified by grp_id and removes them from
             the data model.
-            :Return : None
+            :return: None
         """
         try:
             m_iter = self.id2iter[grp_id]
@@ -156,6 +156,11 @@ class TextImageTree(Gtk.TreeView):
 
     @idle_add
     def selectRow(self, grp_id):
+        """ :Description: Takes a grp_id and finds the row associated with this id then
+            sets this row to be the focus ie selected
+
+            :returns: None
+        """
         m_iter = self.id2iter[grp_id]
         m_iter = self.sort_model.convert_child_iter_to_iter(m_iter)[1]
         sel = self.get_selection()
@@ -163,7 +168,7 @@ class TextImageTree(Gtk.TreeView):
 
     def __contains__(self, grp_id):
         """ :Description: Checks to see if a grp_id in a member of the id set
-            :Returns: boolean
+            :returns: boolean
         """
         return grp_id in self.idSet
 
@@ -228,6 +233,9 @@ class Panel(object):
 
 
 class ViewsPanel(Gtk.Notebook, Panel):
+    """ :Description: This panel is used to display the main chat text for each of the channel or
+        private communication
+    """
 
     __gsignals__ = {
         'channel_content_Changed': (GObject.SignalFlags.RUN_FIRST, None,
@@ -280,8 +288,8 @@ class ViewsPanel(Gtk.Notebook, Panel):
                 chatView.disable(_(
                     "Only registered users may talk to this channel"))
 
-        elif grp_type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, TYPE_ADMIN, \
-                          TYPE_BLINDFOLD):
+        elif grp_type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, \
+                          TYPE_ADMIN, TYPE_BLINDFOLD):
             if name in self.messageBuffer:
                 for title, isadmin, messagetext in self.messageBuffer[name]:
                     chatView.addMessage(name, messagetext)
@@ -385,11 +393,11 @@ class InfoPanel(Gtk.Notebook, Panel):
             self.fm.finger(playername)
 
         @idle_add
-        def onFingeringFinished(self, finger_mgr, finger, playername):
+        def onFingeringFinished(self, fm, finger, playername):
             if not isinstance(self.get_child(), Gtk.Label) or \
                     finger.getName().lower() != playername.lower():
                 return
-            self.finger_mgr.disconnect(self.handle_id)
+            self.fm.disconnect(self.handle_id)
 
             label = Gtk.Label()
             label.set_markup("<b>%s</b>" % playername)
