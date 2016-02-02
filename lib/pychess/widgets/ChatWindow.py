@@ -397,20 +397,20 @@ class InfoPanel(Gtk.Notebook, Panel):
             alignment.set_padding(3, 0, 12, 0)
             widget.add(alignment)
 
-            tv = Gtk.TextView()
-            tv.set_editable(False)
-            tv.set_cursor_visible(False)
-            tv.props.wrap_mode = Gtk.WrapMode.WORD
+            text_view = Gtk.TextView()
+            text_view.set_editable(False)
+            text_view.set_cursor_visible(False)
+            text_view.props.wrap_mode = Gtk.WrapMode.WORD
 
-            iter = tv.get_buffer().get_end_iter()
+            tb_iter = text_view.get_buffer().get_end_iter()
             for i, note in enumerate(finger.getNotes()):
                 if note:
-                    insert_formatted(tv, iter, "%s\n" % note)
-            tv.show_all()
-            sw = Gtk.ScrolledWindow()
-            sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-            sw.add(tv)
-            alignment.add(sw)
+                    insert_formatted(text_view, tb_iter, "%s\n" % note)
+            text_view.show_all()
+            scroll_win = Gtk.ScrolledWindow()
+            scroll_win.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+            scroll_win.add(text_view)
+            alignment.add(scroll_win)
 
             self.remove(self.get_child())
             self.add(widget)
@@ -452,30 +452,30 @@ class InfoPanel(Gtk.Notebook, Panel):
                 return
             cm.disconnect(self.handle_id)
 
-            sw = Gtk.ScrolledWindow()
-            sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+            scroll_win = Gtk.ScrolledWindow()
+            scroll_win.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 
-            list = Gtk.TreeView()
-            list.set_headers_visible(False)
-            list.set_tooltip_column(1)
-            list.set_model(self.store)
-            list.append_column(Gtk.TreeViewColumn("",
+            tv_list = Gtk.TreeView()
+            tv_list.set_headers_visible(False)
+            tv_list.set_tooltip_column(1)
+            tv_list.set_model(self.store)
+            tv_list.append_column(Gtk.TreeViewColumn("",
                                                   BulletCellRenderer(),
                                                   color=0))
             cell = Gtk.CellRendererText()
             cell.props.ellipsize = Pango.EllipsizeMode.END
-            list.append_column(Gtk.TreeViewColumn("", cell, text=1))
-            list.fixed_height_mode = True
+            tv_list.append_column(Gtk.TreeViewColumn("", cell, text=1))
+            tv_list.fixed_height_mode = True
 
             self.separatorIter = self.store.append([(), "", True])
 
-            list.set_row_separator_func(lambda m, i, d: m.get_value(i, 2),
+            tv_list.set_row_separator_func(lambda m, i, d: m.get_value(i, 2),
                                         None)
-            sw.add(list)
+            scroll_win.add(tv_list)
 
             self.store.connect("row-inserted",
-                               lambda w, p, i: list.queue_resize())
-            self.store.connect("row-deleted", lambda w, i: list.queue_resize())
+                               lambda w, p, i: tv_list.queue_resize())
+            self.store.connect("row-deleted", lambda w, i: tv_list.queue_resize())
 
             # Add those names. If this is not the first namesReceive, we only
             # add the new names
@@ -486,42 +486,42 @@ class InfoPanel(Gtk.Notebook, Panel):
                 self.names.add(name)
 
             self.remove(self.get_child())
-            self.add(sw)
+            self.add(scroll_win)
             self.show_all()
 
         @idle_add
         def onMessageAdded(self, chatView, sender, text, color):
-            iter = self.store.get_iter_first()
+            s_iter = self.store.get_iter_first()
 
             # If the names list hasn't been retrieved yet, we have to skip this
-            if not iter:
+            if not s_iter:
                 return
 
-            while self.store.get_path(iter) != self.store.get_path(
+            while self.store.get_path(s_iter) != self.store.get_path(
                     self.separatorIter):
-                person = self.store.get_value(iter, 1)
+                person = self.store.get_value(s_iter, 1)
                 # If the person is already in the area before the separator, we
                 # don't have to do anything
                 if person.lower() == sender.lower():
                     return
-                iter = self.store.iter_next(iter)
+                s_iter = self.store.iter_next(s_iter)
 
-            # Go to iter after separator
-            iter = self.store.iter_next(iter)
+            # Go to s_iter after separator
+            s_iter = self.store.iter_next(s_iter)
 
-            while iter and self.store.iter_is_valid(iter):
-                person = self.store.get_value(iter, 1)
+            while s_iter and self.store.iter_is_valid(s_iter):
+                person = self.store.get_value(s_iter, 1)
                 if person.lower() == sender.lower():
-                    self.store.set_value(iter, 0, color)
-                    self.store.move_before(iter, self.separatorIter)
+                    self.store.set_value(s_iter, 0, color)
+                    self.store.move_before(s_iter, self.separatorIter)
                     return
-                iter = self.store.iter_next(iter)
+                s_iter = self.store.iter_next(s_iter)
 
             # If the person was not in the area under the separator of the
             # store, it must be a new person, who has joined the channel, and we
             # simply add him before the separator
-            self.store.insert_before(self.separatorIter, [color, sender, False
-                                                          ])
+            self.store.insert_before(self.separatorIter, \
+                                     [color, sender, False])
 
 
 class ChannelsPanel(Gtk.ScrolledWindow, Panel):
@@ -620,7 +620,7 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         self.channels = {}
         self.highlighted = {}
 
-    def change_fg_colour(self, lc, cell, model, iter, data):
+    def change_fg_colour(self, lc, cell, model, m_iter, data):
         """
         :Description: Changes the foreground colour of a cell
 
@@ -633,70 +633,68 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         """
 
         for chan in data:
-            if model[iter][0] == chan:
+            if model[m_iter][0] == chan:
                 if data[chan]:
-                    cell.set_property('foreground_rgba', Gdk.RGBA(0.8, 0.3,
-                                                                  0.3, 1))
+                    cell.set_property('foreground_rgba', \
+                                      Gdk.RGBA(0.9, 0.2, 0.2, 1))
                 else:
                     cell.set_property('foreground_rgba', Gdk.RGBA(0, 0, 0, 1))
 
-    def channel_Highlight(self, a, channel, type, b):
+    def channel_Highlight(self, a, channel, grp_type, b):
         """
         :Description: Highlights a channel ( that is **not** in focus ) that has received an update and
         changes it's foreground colour to represent change in contents
 
         :param a: not used
         :param channel: **(str)** The channel the message is intended for
-        :param type: either TYPE_CHANNEL or TYPE_PERSONAL
+        :param grp_type: either TYPE_CHANNEL or TYPE_PERSONAL
         :param b:  not used
         :return: None
         """
-        jList = self.joinedList
-        lc = jList.leftcol  # treeViewColumn
+        j_list = self.joinedList
+        leftcol = j_list.leftcol  # treeViewColumn
 
-        model, cur_iter = jList.get_selection().get_selected()  #Selected iter
-        if type == TYPE_PERSONAL:
+        cur_iter = j_list.get_selection().get_selected()[1]  #Selected iter
+        if grp_type == TYPE_PERSONAL:
             channel = "person" + channel.lower()
-        temp_iter = jList.id2iter[channel]
-        temp_iter = jList.sort_model.convert_child_iter_to_iter(temp_iter)[
-            1
-        ]  #channel iter
-        jList.get_selection().select_iter(temp_iter)
-        cell = lc.get_cells()[0]
-        jList.get_selection().select_iter(cur_iter)
+        tmp_iter = j_list.id2iter[channel]
+        tmp_iter = j_list.sort_model.convert_child_iter_to_iter(tmp_iter)[1]  #channel iter
+        j_list.get_selection().select_iter(tmp_iter)
+        cell = leftcol.get_cells()[0]
+        j_list.get_selection().select_iter(cur_iter)
         self.highlighted[channel] = True
-        if cur_iter != temp_iter:
-            iter = temp_iter
-            lc.set_cell_data_func(cell,
-                                  self.change_fg_colour,
-                                  func_data=self.highlighted)
+        if cur_iter != tmp_iter:
+            iter = tmp_iter
+            leftcol.set_cell_data_func(cell,\
+                                       self.change_fg_colour,\
+                                       func_data=self.highlighted)
 
     def start(self):
         self.channels = self.connection.cm.getChannels()
         if self.channels:
             self._addChannels(self.channels)
         for player in list(self.connection.players.values()):
-            id = self.compileId(player.name, TYPE_PERSONAL)
-            if (str(player.name) in self.connection.notify_users):
+            grp_id = self.compileId(player.name, TYPE_PERSONAL)
+            if str(player.name) in self.connection.notify_users:
                 self.friendsList.addRow(
-                    id, player.name + player.display_titles(), TYPE_PERSONAL)
-            elif ((player.online) and ('(B)' in player.display_titles())):
+                    grp_id, player.name + player.display_titles(), TYPE_PERSONAL)
+            elif player.online and ('(B)' in player.display_titles()):
                 self.blindList.addRow(
-                    id, player.name + player.display_titles(), TYPE_BLINDFOLD)
-            elif ((player.online) and ('(C)' in player.display_titles())):
-                self.compList.addRow(id, player.name + player.display_titles(),
+                    grp_id, player.name + player.display_titles(), TYPE_BLINDFOLD)
+            elif player.online and ('(C)' in player.display_titles()):
+                self.compList.addRow(grp_id, player.name + player.display_titles(),
                                      TYPE_COMP)
-            elif ((player.online) and ('Guest' in str(player.name))):
+            elif player.online and ('Guest' in str(player.name)):
                 self.guestList.addRow(
-                    id, player.name + player.display_titles(), TYPE_GUEST)
+                    grp_id, player.name + player.display_titles(), TYPE_GUEST)
             elif player.online:
                 self.playersList.addRow(
-                    id, player.name + player.display_titles(), TYPE_PERSONAL)
+                    grp_id, player.name + player.display_titles(), TYPE_PERSONAL)
 
         def addPlayer(players, new_players):
             for player in new_players:
                 #print("Player : %s : %s" % (str(player.name),player.display_titles()))
-                if (str(player.name) in self.connection.notify_users):
+                if str(player.name) in self.connection.notify_users:
                     self.friendsList.addRow(
                         self.compileId(player.name, TYPE_PERSONAL),
                         player.name + player.display_titles(), TYPE_PERSONAL)
@@ -732,18 +730,18 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         self.connection.players.connect("FICSPlayerExited", removePlayer)
 
     def _addChannels(self, channels):
-        for id, name in channels:
-            id = self.compileId(id, TYPE_CHANNEL)
-            self.channelsList.addRow(id, str(id) + ": " + name, TYPE_CHANNEL)
+        for grp_id, name in channels:
+            grp_id = self.compileId(grp_id, TYPE_CHANNEL)
+            self.channelsList.addRow(grp_id, str(grp_id) + ": " + name, TYPE_CHANNEL)
 
-        for id, name in channels:
-            if id in self.connection.cm.getJoinedChannels():
-                id = self.compileId(id, TYPE_CHANNEL)
-                if id.isdigit():
-                    self.onAdd(self.channelsList, id, str(id) + ": " + name,
+        for grp_id, name in channels:
+            if grp_id in self.connection.cm.getJoinedChannels():
+                grp_id = self.compileId(grp_id, TYPE_CHANNEL)
+                if grp_id.isdigit():
+                    self.onAdd(self.channelsList, grp_id, str(grp_id) + ": " + name,
                                TYPE_CHANNEL)
                 else:
-                    self.onAdd(self.channelsList, id, name, TYPE_CHANNEL)
+                    self.onAdd(self.channelsList, grp_id, name, TYPE_CHANNEL)
 
     @idle_add
     def onChannelsListed(self, cm, channels):
