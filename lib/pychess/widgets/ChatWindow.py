@@ -283,7 +283,7 @@ class ViewsPanel(Gtk.Notebook, Panel):
         elif grp_type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, TYPE_ADMIN, \
                           TYPE_BLINDFOLD):
             if name in self.messageBuffer:
-                for title, isadmin, messagetext in self.messageBuffer[name][2]:
+                for title, isadmin, messagetext in self.messageBuffer[name]:
                     chatView.addMessage(name, messagetext)
                 del self.messageBuffer[name]
 
