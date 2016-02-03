@@ -241,7 +241,7 @@ def game_unended(gamemodel, gmwidg):
 
 # Connect game_loaded, game_saved and game_ended to statusbar
 def game_loaded(gamemodel, uri, gmwidg):
-    if isinstance(uri) in (str, unicode):
+    if type(uri) in (str, unicode):
         str_out = "%s: %s" % (_("Loaded game"), str(uri))
     else:
         str_out = _("Loaded game")
