@@ -1,9 +1,6 @@
 from __future__ import absolute_import
 
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import GObject
-from gi.repository import Pango
+from gi.repository import Gtk, Gdk, GObject, Pango
 
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
@@ -11,8 +8,8 @@ from pychess.widgets import insert_formatted
 from pychess.widgets.Background import set_textview_color
 
 
-class ConsoleWindow (object):
-    def __init__ (self, widgets, connection):
+class ConsoleWindow(object):
+    def __init__(self, widgets, connection):
         self.connection = connection
 
         self.window = Gtk.Window()
@@ -22,9 +19,10 @@ class ConsoleWindow (object):
         self.window.set_icon_name("pychess")
 
         self.window.set_title("%s Console" % connection.ics_name)
-        self.window.connect_after("delete-event", lambda w,e: w.hide() or True)
+        self.window.connect_after("delete-event",
+                                  lambda w, e: w.hide() or True)
 
-        uistuff.keepWindowSize("console", self.window, defaultSize=(700,400))
+        uistuff.keepWindowSize("console", self.window, defaultSize=(700, 400))
 
         self.consoleView = ConsoleView(self.window, self.connection)
         self.window.add(self.consoleView)
@@ -62,13 +60,14 @@ class ConsoleWindow (object):
                 self.consoleView.addMessage(line, False)
 
 
-class ConsoleView (Gtk.Box):
+class ConsoleView(Gtk.Box):
     __gsignals__ = {
-        'messageAdded' : (GObject.SignalFlags.RUN_FIRST, None, (str,str,object)),
-        'messageTyped' : (GObject.SignalFlags.RUN_FIRST, None, (str,))
+        'messageAdded': (GObject.SignalFlags.RUN_FIRST, None,
+                         (str, str, object)),
+        'messageTyped': (GObject.SignalFlags.RUN_FIRST, None, (str, ))
     }
 
-    def __init__ (self, window, connection):
+    def __init__(self, window, connection):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.window = window
         self.connection = connection
@@ -105,30 +104,31 @@ class ConsoleView (Gtk.Box):
         self.writeView.connect("key-press-event", self.onKeyPress)
 
     @idle_add
-    def addMessage (self, text, my):
-        tb = self.readView.get_buffer()
-        iter = tb.get_end_iter()
+    def addMessage(self, text, my):
+        text_buffer = self.readView.get_buffer()
+        tb_iter = text_buffer.get_end_iter()
         # Messages have linebreak before the text. This is opposite to log
         # messages
-        if tb.props.text:
-            tb.insert(iter, "\n")
+        if text_buffer.props.text:
+            text_buffer.insert(tb_iter, "\n")
         tag = "mytext" if my else "text"
-        insert_formatted(self.readView, iter, text, tag=tag)
+        insert_formatted(self.readView, tb_iter, text, tag=tag)
 
         # scroll to the bottom but only if we are not scrolled up to read back
         adj = self.sw.get_vadjustment()
         if adj.get_value() >= adj.get_upper() - adj.get_page_size() - 1e-12:
-            iter = tb.get_end_iter()
-            self.readView.scroll_to_iter(iter, 0.00, False, 1.00, 1.00)
+            tb_iter = text_buffer.get_end_iter()
+            self.readView.scroll_to_iter(tb_iter, 0.00, False, 1.00, 1.00)
 
-    def onKeyPress (self, widget, event):
-        if event.keyval in map(Gdk.keyval_from_name,("Return", "KP_Enter")):
+    def onKeyPress(self, widget, event):
+        if event.keyval in map(Gdk.keyval_from_name, ("Return", "KP_Enter")):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
                 if buffer.props.text.startswith("pas"):
                     # don't log password changes
                     self.connection.client.telnet.sensitive = True
-                self.connection.client.run_command(buffer.props.text, show_reply=True)
+                self.connection.client.run_command(buffer.props.text,
+                                                   show_reply=True)
                 self.emit("messageTyped", buffer.props.text)
                 self.addMessage(buffer.props.text, True)
 
@@ -147,7 +147,7 @@ class ConsoleView (Gtk.Box):
 
         elif event.keyval == Gdk.keyval_from_name("Down"):
             buffer = self.writeView.get_buffer()
-            if self.pos == len(self.history)-1:
+            if self.pos == len(self.history) - 1:
                 self.pos += 1
                 buffer.props.text = ""
             elif self.pos < len(self.history):
