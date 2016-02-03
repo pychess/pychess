@@ -888,10 +888,14 @@ class ChatWindow(object):
 
     def onConversationAdded(self, panel, grp_id, text, grp_type):
         chatView = ChatView()
+        plus_channel = '+channel ' + str(grp_id)
+        self.connection.cm.connection.client.run_command(plus_channel)
         for panel in self.panels:
             panel.addItem(grp_id, text, grp_type, chatView)
 
     def onConversationRemoved(self, panel, grp_id):
+        minus_channel = '-channel ' + str(grp_id)
+        self.connection.cm.connection.client.run_command(minus_channel)
         for panel in self.panels:
             panel.removeItem(grp_id)
 
