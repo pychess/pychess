@@ -1,8 +1,7 @@
-from gi.repository import GObject
-from gi.repository import Gtk
+from gi.repository import GObject, Gtk
 
 
-def get_message_content (heading_text, message_text, image_stock_id):
+def get_message_content(heading_text, message_text, image_stock_id):
     # TODO: If you try to fix this first read issue #958 and 1018
     #hbox = Gtk.HBox()
     #image = Gtk.Image()
@@ -26,7 +25,8 @@ def get_message_content (heading_text, message_text, image_stock_id):
     #return vbox
     return label
 
-class InfoBarMessageButton (GObject.GObject):
+
+class InfoBarMessageButton(GObject.GObject):
     def __init__(self, text, response_id, sensitive=True, tooltip_text=""):
         GObject.GObject.__init__(self)
         self.text = text
@@ -35,57 +35,65 @@ class InfoBarMessageButton (GObject.GObject):
         self.tooltip_text = tooltip_text
         self._button = None
 
-    def get_sensitive (self):
+    def get_sensitive(self):
         return self._sensitive
-    def set_sensitive (self, sensitive):
+
+    def set_sensitive(self, sensitive):
         self._sensitive = sensitive
+
     sensitive = GObject.property(get_sensitive, set_sensitive)
 
-    def get_tooltip_text (self):
+    def get_tooltip_text(self):
         return self._tooltip_text
-    def set_tooltip_text (self, tooltip_text):
+
+    def set_tooltip_text(self, tooltip_text):
         self._tooltip_text = tooltip_text
+
     tooltip_text = GObject.property(get_tooltip_text, set_tooltip_text)
 
-class InfoBarMessage (Gtk.InfoBar):
-    __gsignals__ = {
-        "dismissed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
-    }
 
-    def __init__ (self, message_type, content, callback):
+class InfoBarMessage(Gtk.InfoBar):
+    __gsignals__ = {"dismissed": (GObject.SignalFlags.RUN_FIRST, None, ()), }
+
+    def __init__(self, message_type, content, callback):
         GObject.GObject.__init__(self)
         self.callback = callback
         self.buttons = []
 
         self.get_content_area().add(content)
 
-    def add_button (self, button):
+    def add_button(self, button):
         """
         All buttons must be added before doing InfoBarNotebook.push_message()
         """
         if not isinstance(button, InfoBarMessageButton):
             raise TypeError("Not an InfoBarMessageButton: %s" % repr(button))
         self.buttons.append(button)
-        button._button = Gtk.InfoBar.add_button(self, button.text, button.response_id)
+        button._button = Gtk.InfoBar.add_button(self, button.text,
+                                                button.response_id)
 
         def set_sensitive(button, property):
             if self.get_children():
-                self.set_response_sensitive(button.response_id, button.sensitive)
+                self.set_response_sensitive(button.response_id,
+                                            button.sensitive)
+
         button.connect("notify::sensitive", set_sensitive)
 
         def set_tooltip_text(button, property):
             button._button.set_property("tooltip-text", button.tooltip_text)
+
         button.connect("notify::tooltip-text", set_tooltip_text)
 
-    def dismiss (self):
+    def dismiss(self):
         self.hide()
         self.emit("dismissed")
 
-    def update_content (self, content):
+    def update_content(self, content):
         for widget in self.get_content_area():
             self.get_content_area().remove(widget)
         self.get_content_area().add(content)
         self.show_all()
+
 
 class InfoBarNotebook(Gtk.Notebook):
     """
@@ -96,33 +104,32 @@ class InfoBarNotebook(Gtk.Notebook):
     anymore can be removed from anywhere in the InfoBar message stack by calling
     message.dismiss()
     """
-    def __init__ (self):
+
+    def __init__(self):
         Gtk.Notebook.__init__(self)
         self.set_show_tabs(False)
 
-    def push_message (self, message):
-
+    def push_message(self, message):
         def on_dismissed(mesage):
-            pn = self.page_num(message)
-            if pn != -1:
-                self.remove_page(pn)
+            page_num = self.page_num(message)
+            if page_num != -1:
+                self.remove_page(page_num)
 
         def onResponse(message, response_id):
             if callable(message.callback):
                 message.callback(self, response_id, message)
-            pn = self.page_num(message)
-            if pn != -1:
-                self.remove_page(pn)
+            page_num = self.page_num(message)
+            if page_num != -1:
+                self.remove_page(page_num)
 
-        cp = self.get_current_page()
-        if cp > 0:
-            self.remove_page(cp)
+        current_page = self.get_current_page()
+        if current_page > 0:
+            self.remove_page(current_page)
         self.append_page(message, None)
         message.connect("response", onResponse)
         message.connect("dismissed", on_dismissed)
         self.show_all()
 
-    def clear_messages (self):
+    def clear_messages(self):
         for child in self.get_children():
             self.remove(child)
-
