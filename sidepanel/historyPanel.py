@@ -53,10 +53,8 @@ class Sidepanel:
         fixList(self.left, 0)
         fixList(self.right, 0)
 
-        self.left.get_selection().connect('changed', self.on_selection_changed,
-                                          self.left, 0)
-        self.right.get_selection().connect('changed', self.on_selection_changed,
-                                           self.right, 1)
+        self.left.connect('cursor_changed', self.cursorChanged, self.left, 0)
+        self.right.connect('cursor_changed', self.cursorChanged, self.right, 1)
 
         # Lock scrolling
 
@@ -90,12 +88,10 @@ class Sidepanel:
 
         return __widget__
 
-    def on_selection_changed (self, selection, tree, col):
-        iter = selection.get_selected()[1]
-        if iter == None: return
+    def cursorChanged (self, widget, tree, col):
         if self.frozen.on: return
 
-        path = tree.get_model().get_path(iter)
+        path, focus_column = tree.get_cursor()
         indices = path.get_indices()
         row = indices[0]
 
@@ -170,7 +166,6 @@ class Sidepanel:
             other.get_selection().unselect_all()
             try:
                 col.get_selection().select_iter(col.get_model().get_iter(row))
-                col.set_cursor((row,))
                 col.scroll_to_cell((row,), None, False)
             except ValueError:
                 pass

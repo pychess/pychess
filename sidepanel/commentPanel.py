@@ -49,7 +49,7 @@ class Sidepanel:
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         uistuff.appendAutowrapColumn(self.tv, "Comment", text=0)
 
-        self.tv.get_selection().connect_after('changed', self.select_cursor_row)
+        self.tv.connect('cursor_changed', self.cursorChanged)
         self.boardview = gmwidg.board.view
         self.boardview.connect("shownChanged", self.shownChanged)
 
@@ -57,11 +57,9 @@ class Sidepanel:
 
         return scrollwin
 
-    def select_cursor_row (self, selection):
-        iter = selection.get_selected()[1]
-        if iter == None: return
+    def cursorChanged(self, tv):
         if self.frozen.on: return
-        path = self.tv.get_model().get_path(iter)
+        path, focus_column = tv.get_cursor()
         indices = path.get_indices()
         if indices:
             row = indices[0]
