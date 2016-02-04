@@ -1,8 +1,9 @@
 import math
-ceil = lambda f: int(math.ceil(f))
 
 from gi.repository import GObject, Gtk, Gdk, Pango, PangoCairo
 import cairo
+
+ceil = lambda f: int(math.ceil(f))
 
 line = 10
 curve = 60
@@ -238,7 +239,7 @@ class SpotGraph(Gtk.EventBox):
         spot = (x_loc1, y_loc1, colour_type, name, text)
         self.spots[name] = spot
         if not self.hovered and self.cords and \
-                self.pointIsOnSpot (self.cords[0], self.cords[1], spot):
+                self.pointIsOnSpot(self.cords[0], self.cords[1], spot):
             self.hovered = spot
         self.redraw_canvas(self.getBounds(spot))
 
@@ -272,7 +273,7 @@ class SpotGraph(Gtk.EventBox):
 
         alloc = self.get_allocation()
         width = alloc.width
-        height = alloc.height
+#        height = alloc.height
 
         extends = self.create_pango_layout(text).get_extents()
         scale = float(Pango.SCALE)
@@ -280,15 +281,15 @@ class SpotGraph(Gtk.EventBox):
                                                  extends[1].y / scale,
                                                  extends[1].width / scale,
                                                  extends[1].height / scale]
-        tx = x_loc - x_bearing + dotLarge / 2.
-        ty = y_loc - y_bearing - theight - dotLarge / 2.
+        tx_loc = x_loc - x_bearing + dotLarge / 2.
+        ty_loc = y_loc - y_bearing - theight - dotLarge / 2.
 
-        if tx + twidth > width and x_loc - x_bearing - twidth - dotLarge / 2. > alloc.x:
-            tx = x_loc - x_bearing - twidth - dotLarge / 2.
-        if ty < alloc.y:
-            ty = y_loc - y_bearing + dotLarge / 2.
+        if tx_loc + twidth > width and x_loc - x_bearing - twidth - dotLarge / 2. > alloc.x:
+            tx_loc = x_loc - x_bearing - twidth - dotLarge / 2.
+        if ty_loc < alloc.y:
+            ty_loc = y_loc - y_bearing + dotLarge / 2.
 
-        return (tx, ty, twidth, theight)
+        return (tx_loc, ty_loc, twidth, theight)
 
     def join(self, r0, r1):
         x_loc1 = min(r0[0], r1[0])
@@ -472,9 +473,9 @@ class SpotGraph(Gtk.EventBox):
 
 
 if __name__ == "__main__":
-    w = Gtk.Window()
+    window = Gtk.Window()
 
-    sc = w.get_style_context()
+    style_ctx = window.get_style_context()
     data = "@define-color p_bg_color #ededed; \
             @define-color p_light_color #ffffff; \
             @define-color p_dark_color #a6a6a6; \
@@ -485,18 +486,18 @@ if __name__ == "__main__":
 
     provider = Gtk.CssProvider.new()
     provider.load_from_data(data)
-    sc.add_provider_for_screen(Gdk.Screen.get_default(), provider,
-                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+    style_ctx.add_provider_for_screen(Gdk.Screen.get_default(), provider, \
+                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-    nb = Gtk.Notebook()
-    w.add(nb)
-    vb = Gtk.VBox()
-    nb.append_page(vb, None)
+    note_book = Gtk.Notebook()
+    window.add(note_book)
+    v_box = Gtk.VBox()
+    note_book.append_page(v_box, None)
 
-    sg = SpotGraph()
-    sg.addXMark(.5, "Center")
-    sg.addYMark(.5, "Center")
-    vb.pack_start(sg, True, True, 0)
+    spot_graph = SpotGraph()
+    spot_graph.addXMark(.5, "Center")
+    spot_graph.addYMark(.5, "Center")
+    v_box.pack_start(spot_graph, True, True, 0)
 
     button = Gtk.Button("New Spot")
 
@@ -505,12 +506,12 @@ if __name__ == "__main__":
             button.nextnum = 0
         else:
             button.nextnum += 1
-        sg.addSpot(str(button.nextnum), "Blablabla", 1, 1, 0)
+        spot_graph.addSpot(str(button.nextnum), "Blablabla", 1, 1, 0)
 
     button.connect("clicked", callback)
-    vb.pack_start(button, False, True, 0)
+    v_box.pack_start(button, False, True, 0)
 
-    w.connect("delete-event", Gtk.main_quit)
-    w.show_all()
-    w.resize(400, 400)
+    window.connect("delete-event", Gtk.main_quit)
+    window.show_all()
+    window.resize(400, 400)
     Gtk.main()
