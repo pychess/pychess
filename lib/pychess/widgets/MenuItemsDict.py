@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-from . import gamewidget
 from pychess.System import conf
 from pychess.System.idle_add import idle_add
 from pychess.Utils.const import ACTION_MENU_ITEMS
@@ -49,6 +48,7 @@ class GtkMenuItem(object):
     def tooltip(self):
         return self._tooltip
 
+
     @tooltip.setter
     def tooltip(self, tooltip):
         assert isinstance(tooltip, str) or isinstance(tooltip, unicode)
@@ -58,6 +58,7 @@ class GtkMenuItem(object):
     def _set_widget(self, prop, value):
         if not self.gamewidget.isInFront():
             return
+        from . import gamewidget
         if gamewidget.getWidgets()[self.name].get_property(prop) != value:
             #print "setting %s property %s to %s.." % (self.name, prop, str(value)),
             @idle_add
