@@ -291,28 +291,28 @@ class SpotGraph(Gtk.EventBox):
         return (tx, ty, twidth, theight)
 
     def join(self, r0, r1):
-        x1 = min(r0[0], r1[0])
-        x2 = max(r0[0] + r0[2], r1[0] + r1[2])
-        y1 = min(r0[1], r1[1])
-        y2 = max(r0[1] + r0[3], r1[1] + r1[3])
-        return (x1, y1, x2 - x1, y2 - y1)
+        x_loc1 = min(r0[0], r1[0])
+        x_loc2 = max(r0[0] + r0[2], r1[0] + r1[2])
+        y_loc1 = min(r0[1], r1[1])
+        y_loc2 = max(r0[1] + r0[3], r1[1] + r1[3])
+        return (x_loc1, y_loc1, x_loc2 - x_loc1, y_loc2 - y_loc1)
 
     def getBounds(self, spot):
 
-        x, y, type, name, text = spot
-        x, y = self.prcToPix(x, y)
+        x_loc, y_loc, = spot[0], spot[1]
+        x_loc, y_loc = self.prcToPix(x_loc, y_loc)
 
         if spot == self.hovered:
             size = dotLarge
         else:
             size = dotSmall
 
-        bounds = (x - size / 2. - 1, y - size / 2. - 1, size + 2, size + 2)
+        bounds = (x_loc - size / 2. - 1, y_loc - size / 2. - 1, size + 2, size + 2)
 
         if spot == self.hovered:
-            x, y, w, h = self.getTextBounds(spot)
-            tbounds = (x - hpadding, y - vpadding, w + hpadding * 2 + 1,
-                       h + vpadding * 2 + 1)
+            x_loc, y_loc, width, height = self.getTextBounds(spot)
+            tbounds = (x_loc - hpadding, y_loc - vpadding, width + hpadding * 2 + 1,
+                       height + vpadding * 2 + 1)
             return self.join(bounds, tbounds)
 
         return bounds
@@ -321,9 +321,9 @@ class SpotGraph(Gtk.EventBox):
         """ This method performs an hexigon search for an empty place to put a
             new dot. """
 
-        x, y = self.prcToPix(xorg, yorg)
+        x_loc, y_loc = self.prcToPix(xorg, yorg)
         # Start by testing current spot
-        if self.isEmpty(x, y):
+        if self.isEmpty(x_loc, y_loc):
             return xorg, yorg
 
         directions = [(math.cos((i + 2) * math.pi / 3),
@@ -331,13 +331,13 @@ class SpotGraph(Gtk.EventBox):
 
         level = 1
         while True:
-            x += dotSmall
-            for dx, dy in directions:
+            x_loc += dotSmall
+            for delta_x, delta_y in directions:
                 for i in range(level):
-                    if self.isEmpty(x, y):
-                        return self.pixToPrc(x, y)
-                    x += dx * dotSmall
-                    y += dy * dotSmall
+                    if self.isEmpty(x_loc, y_loc):
+                        return self.pixToPrc(x_loc, y_loc)
+                    x_loc += delta_x * dotSmall
+                    y_loc += delta_y * dotSmall
             level += 1
 
     def getNearestFreeNeighbourArchi(self, xorg, yorg):
@@ -350,19 +350,19 @@ class SpotGraph(Gtk.EventBox):
         if self.isEmpty(xorg, yorg):
             return self.pixToPrc(xorg, yorg)
 
-        r = 0
+        radius = 0
         while True:
             # This is an approx to the equation
-            # cos((r-s)/(2pi)) = (r^2+s^2-1)/(2*r*s)
+            # cos((radius-s)/(2pi)) = (radius^2+s^2-1)/(2*radius*s)
             # which gives the next point on the spiral 1 away.
-            r = (4 * math.pi**3 * r + r**2 +
-                 math.sqrt(16 * math.pi**6 + 8 * math.pi**3 * r + r**4)) / (
-                     4 * math.pi**3 + 2 * r)
+            radius = (4 * math.pi**3 * radius + radius**2 + \
+                      math.sqrt(16 * math.pi**6 + 8 * math.pi**3 * radius + radius**4)) / \
+                (4 * math.pi**3 + 2 * radius)
 
-            x = r * math.cos(r) / (4 * math.pi) * dotSmall + xorg
-            y = r * math.sin(r) / (4 * math.pi) * dotSmall + yorg
-            if self.isEmpty(x, y):
-                return self.pixToPrc(x, y)
+            x_loc = radius * math.cos(radius) / (4 * math.pi) * dotSmall + xorg
+            y_loc = radius * math.sin(radius) / (4 * math.pi) * dotSmall + yorg
+            if self.isEmpty(x_loc, y_loc):
+                return self.pixToPrc(x_loc, y_loc)
 
     def getNearestFreeNeighbourSquare(self, xorg, yorg):
         """ This method performs a spircal search for an empty square to put a
@@ -373,33 +373,33 @@ class SpotGraph(Gtk.EventBox):
         down = 1
         left = 2
 
-        x, y = self.prcToPix(xorg, yorg)
+        x_loc, y_loc = self.prcToPix(xorg, yorg)
 
         # Start by testing current spot
-        if self.isEmpty(x, y):
-            return self.pixToPrc(x, y)
+        if self.isEmpty(x_loc, y_loc):
+            return self.pixToPrc(x_loc, y_loc)
 
         while True:
 
             for i in range(right):
-                x += dotSmall
-                if self.isEmpty(x, y):
-                    return self.pixToPrc(x, y)
+                x_loc += dotSmall
+                if self.isEmpty(x_loc, y_loc):
+                    return self.pixToPrc(x_loc, y_loc)
 
             for i in range(down):
-                y += dotSmall
-                if self.isEmpty(x, y):
-                    return self.pixToPrc(x, y)
+                y_loc += dotSmall
+                if self.isEmpty(x_loc, y_loc):
+                    return self.pixToPrc(x_loc, y_loc)
 
             for i in range(left):
-                x -= dotSmall
-                if self.isEmpty(x, y):
-                    return self.pixToPrc(x, y)
+                x_loc -= dotSmall
+                if self.isEmpty(x_loc, y_loc):
+                    return self.pixToPrc(x_loc, y_loc)
 
             for i in range(up):
-                y -= dotSmall
-                if self.isEmpty(x, y):
-                    return self.pixToPrc(x, y)
+                y_loc -= dotSmall
+                if self.isEmpty(x_loc, y_loc):
+                    return self.pixToPrc(x_loc, y_loc)
 
             # Grow spiral bounds
             right += 2
@@ -413,16 +413,16 @@ class SpotGraph(Gtk.EventBox):
             x and y should be in pixels, not percent """
 
         # Make sure spiral search don't put dots outside the graph
-        x, y = self.prcToPix(0, 0)
-        w, h = self.prcToPix(1, 1)
+        x_loc, y_loc = self.prcToPix(0, 0)
+        width, height = self.prcToPix(1, 1)
 
-        if not x <= x0 <= w or not y <= y0 <= h:
+        if not x_loc <= x0 <= width or not y_loc <= y0 <= height:
             return False
 
         # Tests if the spot intersects any other spots
-        for x1, y1, type, name, text in self.spots.values():
-            x1, y1 = self.prcToPix(x1, y1)
-            if (x1 - x0)**2 + (y1 - y0)**2 < dotSmall**2 - 0.1:
+        for x_loc1, y_loc1, type, name, text in self.spots.values():
+            x_loc1, y_loc1 = self.prcToPix(x_loc1, y_loc1)
+            if (x_loc1 - x0)**2 + (y_loc1 - y0)**2 < dotSmall**2 - 0.1:
                 return False
 
         return True
@@ -437,9 +437,9 @@ class SpotGraph(Gtk.EventBox):
         else:
             size = dotSmall
 
-        x1, y1, type, name, text = spot
-        x1, y1 = self.prcToPix(x1, y1)
-        if (x1 - x0)**2 + (y1 - y0)**2 <= (size / 2.)**2:
+        x_loc1, y_loc1, type, name, text = spot
+        x_loc1, y_loc1 = self.prcToPix(x_loc1, y_loc1)
+        if (x_loc1 - x0)**2 + (y_loc1 - y0)**2 <= (size / 2.)**2:
             return True
         return False
 
