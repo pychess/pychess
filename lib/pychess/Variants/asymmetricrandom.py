@@ -73,6 +73,7 @@ class AsymmetricRandomBoard(Board):
                 else:
                     randomindex = self.randomindexstack.pop()
                     return randomindex, self.pieces[randomindex]
+
         while (whitedarkbishops != blackdarkbishops) or \
               (whitelightbishops != blacklightbishops):
             bishopindex = blackbishoprandomindexstack.pop()

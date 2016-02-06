@@ -64,7 +64,7 @@ def iterBits (bitboard):
 def toString (bitboard):
     s = []
     last = -1
-    
+
     while bitboard:
         cord = firstBit (bitboard)
         bitboard = clearBit (bitboard, cord)
