@@ -1,9 +1,11 @@
-from pychess.Utils.const import *
+""" Queen Odds Variant"""
+from pychess.Utils.const import QUEENODDSCHESS, VARIANTS_ODDS
 from pychess.Utils.Board import Board
 
 QUEENODDSSTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
 
 class QueenOddsBoard(Board):
+    """ :Description: Standard chess rules but one side starts without a queen"""
     variant = QUEENODDSCHESS
     __desc__ = _("One player starts with one less queen piece")
     name = _("Queen odds")
