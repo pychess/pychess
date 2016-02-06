@@ -3,8 +3,9 @@ from __future__ import print_function
 
 import random
 
-from pychess.Utils.const import *
+from pychess.Utils.const import VARIANTS_SHUFFLE, CORNERCHESS
 from pychess.Utils.Board import Board
+
 
 class CornerBoard(Board):
     variant = CORNERCHESS
@@ -21,23 +22,25 @@ class CornerBoard(Board):
     standard_rules = True
     variant_group = VARIANTS_SHUFFLE
 
-    def __init__ (self, setup=False, lboard=None):
+    def __init__(self, setup=False, lboard=None):
         if setup is True:
             Board.__init__(self, setup=self.shuffle_start(), lboard=lboard)
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
 
     def shuffle_start(self):
-        b1 = b2 = 0
-        tmp = ['r', 'n', 'b', 'q', 'b', 'n', 'r']
-        while (b1%2 == b2%2):
-            random.shuffle(tmp)
-            b1 = tmp.index('b')
-            b2 = tmp.index('b', b1+1)
-        tmp = ''.join(tmp)
-        tmp = 'k' + tmp + '/pppppppp/8/8/8/8/PPPPPPPP/' + tmp[::-1].upper() + 'K w - - 0 1'
-        
-        return tmp
+        set1 = set2 = 0
+        back_rank = ['r', 'n', 'b', 'q', 'b', 'n', 'r']
+        while set1 % 2 == set2 % 2:
+            random.shuffle(back_rank)
+            set1 = back_rank.index('b')
+            set2 = back_rank.index('b', set1 + 1)
+        fen = ''.join(back_rank)
+        fen = 'k' + fen + '/pppppppp/8/8/8/8/PPPPPPPP/' + fen[::-1].upper(
+        ) + 'K w - - 0 1'
+
+        return fen
+
 
 if __name__ == '__main__':
     Board = CornerBoard(True)

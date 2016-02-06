@@ -1,4 +1,5 @@
-from pychess.Utils.const import *
+from pychess.Utils.const import VARIANTS_BLINDFOLD, BLINDFOLDCHESS, HIDDENPAWNSCHESS, \
+    HIDDENPIECESCHESS, ALLWHITECHESS
 from pychess.Utils.Board import Board
 
 
