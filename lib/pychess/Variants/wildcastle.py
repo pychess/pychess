@@ -1,6 +1,6 @@
-# Wildcastle Chess
+""" Wildcastle Chess variant """
 
-from pychess.Utils.const import *
+from pychess.Utils.const import WILDCASTLECHESS, VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.Board import Board
 
 WILDCASTLESTART = "rnbkqbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -20,7 +20,7 @@ class WildcastleBoard(Board):
     standard_rules = False
     variant_group = VARIANTS_OTHER_NONSTANDARD
 
-    def __init__ (self, setup=False, lboard=None):
+    def __init__(self, setup=False, lboard=None):
         if setup is True:
             Board.__init__(self, setup=WILDCASTLESTART, lboard=lboard)
         else:
