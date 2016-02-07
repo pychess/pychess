@@ -1,9 +1,9 @@
-from pychess.Utils.const import *
+from pychess.Utils.const import SETUPCHESS, VARIANTS_OTHER, BLACK, reprSign
 from pychess.Utils.Board import Board
 from pychess.Utils.Piece import Piece
 
-
 SETUPSTART = "4k3/8/8/8/8/8/8/4K3 w - - 0 1"
+
 
 class SetupBoard(Board):
     variant = SETUPCHESS
@@ -16,7 +16,7 @@ class SetupBoard(Board):
     PROMOTION_ZONE = ((), ())
     PROMOTIONS = ()
 
-    def __init__ (self, setup=True):
+    def __init__(self, setup=True):
         fen = SETUPSTART if setup is True else setup
         # add all kind if piece to holdings (except king)
         parts = fen.split()
@@ -25,8 +25,9 @@ class SetupBoard(Board):
         Board.__init__(self, setup=fen)
         self._ply = 0
 
-    def _get_ply (self):
+    def _get_ply(self):
         return self._ply
+
     ply = property(_get_ply)
 
     def simulateMove(self, board, move):
@@ -35,7 +36,7 @@ class SetupBoard(Board):
         dead = []
 
         cord0, cord1 = move.cord0, move.cord1
-        if cord1.x < 0 or cord1.x > self.FILES-1:
+        if cord1.x < 0 or cord1.x > self.FILES - 1:
             dead.append(self[cord0])
         else:
             moved.append((self[cord0], cord0))
@@ -50,7 +51,7 @@ class SetupBoard(Board):
             (cord1.x>=0 and cord1.x<=7):
             new_board[cord1] = new_board[cord0]
             new_board[cord0] = Piece(color, self[cord0].sign)
-        elif cord1.x < 0 or cord1.x > self.FILES-1:
+        elif cord1.x < 0 or cord1.x > self.FILES - 1:
             new_board[cord0] = None
         else:
             new_board[cord1] = new_board[cord0]
@@ -80,6 +81,6 @@ class SetupBoard(Board):
             if r != 7:
                 fenstr.append("/")
         return "".join(fenstr)
-        
-    def __repr__ (self):
+
+    def __repr__(self):
         return self.as_fen()
