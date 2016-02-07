@@ -1,6 +1,6 @@
-# Upside-down Chess
+"""  Upside-down Chess variant"""
 
-from pychess.Utils.const import *
+from pychess.Utils.const import UPSIDEDOWNCHESS, VARIANTS_OTHER
 from pychess.Utils.Board import Board
 
 UPSIDEDOWNSTART = "RNBQKBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbqkbnr w - - 0 1"
@@ -16,7 +16,7 @@ class UpsideDownBoard(Board):
     standard_rules = True
     variant_group = VARIANTS_OTHER
 
-    def __init__ (self, setup=False, lboard=None):
+    def __init__(self, setup=False, lboard=None):
         if setup is True:
             Board.__init__(self, setup=UPSIDEDOWNSTART, lboard=lboard)
         else:
