@@ -10,7 +10,7 @@ from pychess.System.prefix import addDataPrefix, isInstalled
 
 db_path = os.path.join(addDataPrefix("eco.db"))
 if os.path.exists(db_path):
-    conn = sqlite3.connect(db_path, check_same_thread = False)
+    conn = sqlite3.connect(db_path, check_same_thread=False)
     atexit.register(conn.close)
     ECO_OK = True
 else:
@@ -30,6 +30,7 @@ else:
 # big-endian, unsigned long long (uint64)
 hash_struct = struct.Struct('>Q')
 
+
 def get_eco(hash):
     if not ECO_OK:
         return None
@@ -37,4 +38,3 @@ def get_eco(hash):
     select = "select eco, opening, variation from openings where hash=? and lang=?"
     cur.execute(select, (memoryview(hash_struct.pack(hash)), lang))
     return cur.fetchone()
-    
