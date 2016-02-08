@@ -12,17 +12,27 @@ from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
 from pychess.System import conf, fident
 from pychess.System.protoopen import protoopen, protosave, isWriteable
 from pychess.System.Log import log
-from pychess.Utils.Move import Move, toSAN
+from pychess.Utils.Move import Move
 from pychess.Utils.eco import get_eco
 from pychess.Utils.Offer import Offer
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants.normal import NormalBoard
-from pychess.Variants import variants
 
 from .logic import getStatus, isClaimableDraw, playerHasMatingMaterial
-from .const import *
+from .const import WAITING_TO_START, UNKNOWN_REASON, WHITE, ARTIFICIAL, RUNNING, \
+    FLAG_CALL, BLACK, KILLED, ANALYZING, LOCAL, REMOTE, PAUSED, HURRY_ACTION, \
+    CHAT_ACTION, RESIGNATION, BLACKWON, WHITEWON, DRAW_CALLFLAG, WON_RESIGN, DRAW, \
+    WON_CALLFLAG, DRAW_WHITEINSUFFICIENTANDBLACKTIME, DRAW_OFFER, TAKEBACK_OFFER, \
+    DRAW_BLACKINSUFFICIENTANDWHITETIME, ACTION_ERROR_NOT_OUT_OF_TIME, OFFERS, \
+    ACTION_ERROR_TOO_LARGE_UNDO, ACTION_ERROR_NONE_TO_WITHDRAW, DRAW_AGREE, \
+    ACTION_ERROR_NONE_TO_DECLINE, ADJOURN_OFFER, ADJOURNED, ABORT_OFFER, ABORTED, \
+    ADJOURNED_AGREEMENT, PAUSE_OFFER, RESUME_OFFER, ACTION_ERROR_NONE_TO_ACCEPT, \
+    ABORTED_AGREEMENT, WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, WON_ADJUDICATION, \
+    UNDOABLE_STATES, DRAW_REPITITION, UNDOABLE_REASONS, UNFINISHED_STATES, \
+    DRAW_50MOVES
 
-def undolocked (f):
+
+def undolocked(f):
     def newFunction(*args, **kw):
         self = args[0]
         log.debug("undolocked: adding func to queue: %s %s %s" % \
@@ -42,79 +52,87 @@ def undolocked (f):
                         break
             finally:
                 self.undoLock.release()
+
     return newFunction
 
-def inthread (f):
+
+def inthread(f):
     def newFunction(*args, **kwargs):
-        t = Thread(target=f, name=fident(f), args=args, kwargs=kwargs)
-        t.daemon = True
-        t.start()
+        thread = Thread(target=f, name=fident(f), args=args, kwargs=kwargs)
+        thread.daemon = True
+        thread.start()
+
     return newFunction
 
-class GameModel (GObject.GObject, Thread):
 
+class GameModel(GObject.GObject, Thread):
     """ GameModel contains all available data on a chessgame.
         It also has the task of controlling players actions and moves """
 
     __gsignals__ = {
         # game_started is emitted when control is given to the players for the
         # first time. Notice this is after players.start has been called.
-        "game_started":  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "game_started": (GObject.SignalFlags.RUN_FIRST, None, ()),
         # game_changed is emitted when a move has been made.
-        "game_changed":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "game_changed": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
         # moves_undoig is emitted when a undoMoves call has been accepted, but
         # before anywork has been done to execute it.
-        "moves_undoing": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "moves_undoing": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
         # moves_undone is emitted after n moves have been undone in the
         # gamemodel and the players.
-        "moves_undone":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "moves_undone": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
         # game_unended is emitted if moves have been undone, such that the game
         # which had previously ended, is now again active.
-        "game_unended":  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "game_unended": (GObject.SignalFlags.RUN_FIRST, None, ()),
         # game_loading is emitted if the GameModel is about to load in a chess
         # game from a file.
-        "game_loading":  (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "game_loading": (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         # game_loaded is emitted after the chessformat handler has loaded in
         # all the moves from a file to the game model.
-        "game_loaded":   (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        "game_loaded": (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         # game_saved is emitted in the end of model.save()
-        "game_saved":    (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "game_saved": (GObject.SignalFlags.RUN_FIRST, None, (str, )),
         # game_ended is emitted if the models state has been changed to an
         # "ended state"
-        "game_ended":    (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "game_ended": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
         # game_terminated is emitted if the game was terminated. That is all
         # players and clocks were stopped, and it is no longer possible to
         # resume the game, even by undo.
-        "game_terminated":    (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "game_terminated": (GObject.SignalFlags.RUN_FIRST, None, ()),
         # game_paused is emitted if the game was successfully paused.
-        "game_paused":   (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "game_paused": (GObject.SignalFlags.RUN_FIRST, None, ()),
         # game_paused is emitted if the game was successfully resumed from a
         # pause.
-        "game_resumed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "game_resumed": (GObject.SignalFlags.RUN_FIRST, None, ()),
         # action_error is currently only emitted by ICGameModel, in the case
         # the "web model" didn't accept the action you were trying to do.
-        "action_error":  (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
+        "action_error": (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
         # players_changed is emitted if the players list was changed.
-        "players_changed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "players_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
         "analyzer_added": (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
-        "analyzer_removed": (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
-        "analyzer_paused": (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
-        "analyzer_resumed": (GObject.SignalFlags.RUN_FIRST, None, (object, str)),
+        "analyzer_removed": (GObject.SignalFlags.RUN_FIRST, None,
+                             (object, str)),
+        "analyzer_paused": (GObject.SignalFlags.RUN_FIRST, None,
+                            (object, str)),
+        "analyzer_resumed": (GObject.SignalFlags.RUN_FIRST, None,
+                             (object, str)),
         # opening_changed is emitted if the move changed the opening.
-        "opening_changed":  (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "opening_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
         # variation_added is emitted if a variation was added.
-        "variation_added":  (GObject.SignalFlags.RUN_FIRST, None, (object, object, str, str)),
+        "variation_added": (GObject.SignalFlags.RUN_FIRST, None,
+                            (object, object, str, str)),
         # variation_extended is emitted if a new move was added to a variation.
-        "variation_extended":  (GObject.SignalFlags.RUN_FIRST, None, (object, object)),
+        "variation_extended": (GObject.SignalFlags.RUN_FIRST, None,
+                               (object, object)),
         # scores_changed is emitted if the analyzing scores was changed.
-        "analysis_changed":  (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "analysis_changed": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
         # FICS games can get kibitz/whisper messages
-        "message_received":    (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        "message_received": (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
         # FICS games can have observers
-        "observers_received":    (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "observers_received": (GObject.SignalFlags.RUN_FIRST, None, (str, )),
     }
 
-    def __init__ (self, timemodel=None, variant=NormalBoard):
+    def __init__(self, timemodel=None, variant=NormalBoard):
         GObject.GObject.__init__(self)
         Thread.__init__(self, name=fident(self.run))
         self.daemon = True
@@ -145,17 +163,17 @@ class GameModel (GObject.GObject, Thread):
         now = datetime.datetime.now()
         self.tags = {
             "Event": _("Local Event"),
-            "Site":  _("Local Site"),
+            "Site": _("Local Site"),
             "Round": 1,
-            "Year":  now.year,
+            "Year": now.year,
             "Month": now.month,
-            "Day":   now.day,
-            "Time":  "%02d:%02d:00" % (now.hour, now.minute),
+            "Day": now.day,
+            "Time": "%02d:%02d:00" % (now.hour, now.minute),
             "Result": "*",
         }
 
         self.endstatus = None
-        self.timed = self.timemodel.minutes!=0 or self.timemodel.gain!=0
+        self.timed = self.timemodel.minutes != 0 or self.timemodel.gain != 0
         if self.timed:
             self.timemodel.connect('zero_reached', self.zero_reached)
 
@@ -166,7 +184,7 @@ class GameModel (GObject.GObject, Thread):
             # loading from pgn. If you want to know the time left for a player,
             # check the time model.
 
-        # Keeps track of offers, so that accepts can be spotted
+            # Keeps track of offers, so that accepts can be spotted
         self.offers = {}
         # True if the game has been changed since last save
         self.needsSave = False
@@ -179,47 +197,53 @@ class GameModel (GObject.GObject, Thread):
         self.undoLock = RLock()
         self.undoQueue = Queue()
 
-    def zero_reached (self, timemodel, color):
+    def zero_reached(self, timemodel, color):
         if conf.get('autoCallFlag', False) and \
             self.players[1-color].__type__ == ARTIFICIAL:
             if self.status == RUNNING and timemodel.getPlayerTime(color) <= 0:
-                log.info('Automatically sending flag call on behalf of player %s.' % self.players[1-color].name)
-                self.players[1-color].emit("offer", Offer(FLAG_CALL))
+                log.info(
+                    'Automatically sending flag call on behalf of player %s.' %
+                    self.players[1 - color].name)
+                self.players[1 - color].emit("offer", Offer(FLAG_CALL))
 
-    def __repr__ (self):
-        s = "<GameModel at %s" % id(self)
-        s += " (ply=%s" % self.ply
+    def __repr__(self):
+        string = "<GameModel at %s" % id(self)
+        string += " (ply=%s" % self.ply
         if len(self.moves) > 0:
-            s += ", move=%s" % self.moves[-1]
-        s += ", variant=%s" % self.variant.name.encode('utf-8')
-        s += ", status=%s, reason=%s" % (str(self.status), str(self.reason))
-        s += ", players=%s" % str(self.players)
-        s += ", tags=%s" % str(self.tags)
+            string += ", move=%s" % self.moves[-1]
+        string += ", variant=%s" % self.variant.name.encode('utf-8')
+        string += ", status=%s, reason=%s" % (str(self.status), str(self.reason))
+        string += ", players=%s" % str(self.players)
+        string += ", tags=%s" % str(self.tags)
         if len(self.boards) > 0:
-            s += "\nboard=%s" % self.boards[-1]
-        return s + ")>"
+            string += "\nboard=%s" % self.boards[-1]
+        return string + ")>"
 
     @property
-    def display_text (self):
+    def display_text(self):
         if self.variant == NormalBoard and not self.timed:
             return "[ " + _("Untimed") + " ]"
         else:
-            t = "[ "
+            text = "[ "
             if self.variant != NormalBoard:
-                t += self.variant.name + " "
+                text += self.variant.name + " "
             if self.timed:
-                t += self.timemodel.display_text + " "
-            return t + "]"
+                text += self.timemodel.display_text + " "
+            return text + "]"
 
-    def setPlayers (self, players):
+    def setPlayers(self, players):
         log.debug("GameModel.setPlayers: starting")
         assert self.status == WAITING_TO_START
         self.players = players
         for player in self.players:
-            self.connections[player].append(player.connect("offer", self.offerReceived))
-            self.connections[player].append(player.connect("withdraw", self.withdrawReceived))
-            self.connections[player].append(player.connect("decline", self.declineReceived))
-            self.connections[player].append(player.connect("accept", self.acceptReceived))
+            self.connections[player].append(player.connect("offer",
+                                                           self.offerReceived))
+            self.connections[player].append(player.connect(
+                "withdraw", self.withdrawReceived))
+            self.connections[player].append(player.connect(
+                "decline", self.declineReceived))
+            self.connections[player].append(player.connect(
+                "accept", self.acceptReceived))
         self.tags["White"] = str(self.players[WHITE])
         self.tags["Black"] = str(self.players[BLACK])
         log.debug("GameModel.setPlayers: -> emit players_changed")
@@ -227,13 +251,13 @@ class GameModel (GObject.GObject, Thread):
         log.debug("GameModel.setPlayers: <- emit players_changed")
         log.debug("GameModel.setPlayers: returning")
 
-    def color (self, player):
+    def color(self, player):
         if player is self.players[0]:
             return WHITE
         else:
             return BLACK
 
-    def start_analyzer (self, analyzer_type):
+    def start_analyzer(self, analyzer_type):
         from pychess.Players.engineNest import init_engine
         analyzer = init_engine(analyzer_type, self)
         if analyzer is None: return
@@ -244,7 +268,7 @@ class GameModel (GObject.GObject, Thread):
         analyzer.connect("analyze", self.on_analyze)
         return analyzer
 
-    def remove_analyzer (self, analyzer_type):
+    def remove_analyzer(self, analyzer_type):
         try:
             analyzer = self.spectators[analyzer_type]
         except KeyError:
@@ -254,7 +278,7 @@ class GameModel (GObject.GObject, Thread):
         self.emit("analyzer_removed", analyzer, analyzer_type)
         del self.spectators[analyzer_type]
 
-    def resume_analyzer (self, analyzer_type):
+    def resume_analyzer(self, analyzer_type):
         try:
             analyzer = self.spectators[analyzer_type]
         except KeyError:
@@ -265,7 +289,7 @@ class GameModel (GObject.GObject, Thread):
         analyzer.setOptionInitialBoard(self)
         self.emit("analyzer_resumed", analyzer, analyzer_type)
 
-    def pause_analyzer (self, analyzer_type):
+    def pause_analyzer(self, analyzer_type):
         try:
             analyzer = self.spectators[analyzer_type]
         except KeyError:
@@ -274,7 +298,7 @@ class GameModel (GObject.GObject, Thread):
         analyzer.pause()
         self.emit("analyzer_paused", analyzer, analyzer_type)
 
-    def restart_analyzer (self, analyzer_type):
+    def restart_analyzer(self, analyzer_type):
         self.remove_analyzer(analyzer_type)
         self.start_analyzer(analyzer_type)
         if self.isPlayingICSGame():
@@ -311,76 +335,89 @@ class GameModel (GObject.GObject, Thread):
     # Board stuff                                                              #
     ############################################################################
 
-    def _get_ply (self):
+    def _get_ply(self):
         return self.boards[-1].ply
+
     ply = property(_get_ply)
 
-    def _get_lowest_ply (self):
+    def _get_lowest_ply(self):
         return self.boards[0].ply
+
     lowply = property(_get_lowest_ply)
 
-    def _get_curplayer (self):
+    def _get_curplayer(self):
         try:
             return self.players[self.getBoardAtPly(self.ply).color]
         except IndexError:
-            log.error("%s %s" % (self.players, self.getBoardAtPly(self.ply).color))
+            log.error("%s %s" %
+                      (self.players, self.getBoardAtPly(self.ply).color))
             raise
+
     curplayer = property(_get_curplayer)
 
-    def _get_waitingplayer (self):
+    def _get_waitingplayer(self):
         try:
             return self.players[1 - self.getBoardAtPly(self.ply).color]
         except IndexError:
-            log.error("%s %s" % (self.players, 1 - self.getBoardAtPly(self.ply).color))
+            log.error("%s %s" %
+                      (self.players, 1 - self.getBoardAtPly(self.ply).color))
             raise
+
     waitingplayer = property(_get_waitingplayer)
 
-    def _plyToIndex (self, ply):
+    def _plyToIndex(self, ply):
         index = ply - self.lowply
         if index < 0:
             raise IndexError("%s < %s\n" % (ply, self.lowply))
         return index
 
-    def getBoardAtPly (self, ply, variation=0):
+    def getBoardAtPly(self, ply, variation=0):
         # Losing on time in FICS game will undo our last move if it was taken too late
         if variation == 0 and ply > self.ply:
             ply = self.ply
         try:
             return self.variations[variation][self._plyToIndex(ply)]
         except IndexError:
-            log.error("%d\t%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply, variation, len(self.variations)))
+            log.error("%d\t%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply,
+                                              variation, len(self.variations)))
             raise
 
-    def getMoveAtPly (self, ply, variation=0):
+    def getMoveAtPly(self, ply, variation=0):
         try:
-            return Move(self.variations[variation][self._plyToIndex(ply)+1].board.lastMove)
+            return Move(self.variations[variation][self._plyToIndex(ply) +
+                                                   1].board.lastMove)
         except IndexError:
-            log.error("%d\t%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply, variation, len(self.variations)))
+            log.error("%d\t%d\t%d\t%d\t%d" % (self.lowply, ply, self.ply,
+                                              variation, len(self.variations)))
             raise
 
-    def hasLocalPlayer (self):
-        if self.players[0].__type__ == LOCAL or self.players[1].__type__ == LOCAL:
+    def hasLocalPlayer(self):
+        if self.players[0].__type__ == LOCAL or self.players[
+                1].__type__ == LOCAL:
             return True
         else:
             return False
 
-    def hasEnginePlayer (self):
-        if self.players[0].__type__ == ARTIFICIAL or self.players[1].__type__ == ARTIFICIAL:
+    def hasEnginePlayer(self):
+        if self.players[0].__type__ == ARTIFICIAL or self.players[
+                1].__type__ == ARTIFICIAL:
             return True
         else:
             return False
 
-    def isLocalGame (self):
-        if self.players[0].__type__ != REMOTE and self.players[1].__type__ != REMOTE:
+    def isLocalGame(self):
+        if self.players[0].__type__ != REMOTE and self.players[
+                1].__type__ != REMOTE:
             return True
         else:
             return False
 
-    def isObservationGame (self):
+    def isObservationGame(self):
         return not self.hasLocalPlayer()
 
-    def isEngine2EngineGame (self):
-        if self.players[0].__type__ == ARTIFICIAL and self.players[1].__type__ == ARTIFICIAL:
+    def isEngine2EngineGame(self):
+        if self.players[0].__type__ == ARTIFICIAL and self.players[
+                1].__type__ == ARTIFICIAL:
             return True
         else:
             return False
@@ -399,17 +436,18 @@ class GameModel (GObject.GObject, Thread):
     # Offer management                                                         #
     ############################################################################
 
-    def offerReceived (self, player, offer):
-        log.debug("GameModel.offerReceived: offerer=%s %s" % (repr(player), offer))
+    def offerReceived(self, player, offer):
+        log.debug("GameModel.offerReceived: offerer=%s %s" %
+                  (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
         elif player == self.players[BLACK]:
             opPlayer = self.players[WHITE]
         else:
             # Player comments echoed to opponent if the player started a conversation
-            # with you prior to observing a game the player is in #1113 
+            # with you prior to observing a game the player is in #1113
             return
-            
+
         if offer.type == HURRY_ACTION:
             opPlayer.hurry()
 
@@ -420,14 +458,16 @@ class GameModel (GObject.GObject, Thread):
         elif offer.type == RESIGNATION:
             if player == self.players[WHITE]:
                 self.end(BLACKWON, WON_RESIGN)
-            else: self.end(WHITEWON, WON_RESIGN)
+            else:
+                self.end(WHITEWON, WON_RESIGN)
 
         elif offer.type == FLAG_CALL:
             assert self.timed
-            if self.timemodel.getPlayerTime(1-player.color) <= 0:
+            if self.timemodel.getPlayerTime(1 - player.color) <= 0:
                 if self.timemodel.getPlayerTime(player.color) <= 0:
                     self.end(DRAW, DRAW_CALLFLAG)
-                elif not playerHasMatingMaterial(self.boards[-1], player.color):
+                elif not playerHasMatingMaterial(self.boards[-1],
+                                                 player.color):
                     if player.color == WHITE:
                         self.end(DRAW, DRAW_WHITEINSUFFICIENTANDBLACKTIME)
                     else:
@@ -458,12 +498,13 @@ class GameModel (GObject.GObject, Thread):
                 if offer.type == offer_.type and offer != offer_:
                     del self.offers[offer_]
 
-    def withdrawReceived (self, player, offer):
+    def withdrawReceived(self, player, offer):
         log.debug("GameModel.withdrawReceived: withdrawer=%s %s" % \
             (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
-        else: opPlayer = self.players[WHITE]
+        else:
+            opPlayer = self.players[WHITE]
 
         if offer in self.offers and self.offers[offer] == player:
             del self.offers[offer]
@@ -471,11 +512,13 @@ class GameModel (GObject.GObject, Thread):
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_WITHDRAW)
 
-    def declineReceived (self, player, offer):
-        log.debug("GameModel.declineReceived: decliner=%s %s" % (repr(player), offer))
+    def declineReceived(self, player, offer):
+        log.debug("GameModel.declineReceived: decliner=%s %s" %
+                  (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
-        else: opPlayer = self.players[WHITE]
+        else:
+            opPlayer = self.players[WHITE]
 
         if offer in self.offers and self.offers[offer] == opPlayer:
             del self.offers[offer]
@@ -484,11 +527,13 @@ class GameModel (GObject.GObject, Thread):
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_DECLINE)
 
-    def acceptReceived (self, player, offer):
-        log.debug("GameModel.acceptReceived: accepter=%s %s" % (repr(player), offer))
+    def acceptReceived(self, player, offer):
+        log.debug("GameModel.acceptReceived: accepter=%s %s" %
+                  (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
-        else: opPlayer = self.players[WHITE]
+        else:
+            opPlayer = self.players[WHITE]
 
         if offer in self.offers and self.offers[offer] == opPlayer:
             if offer.type == DRAW_OFFER:
@@ -513,7 +558,7 @@ class GameModel (GObject.GObject, Thread):
     # Data stuff                                                               #
     ############################################################################
 
-    def loadAndStart (self, uri, loader, gameno, position, first_time=True):
+    def loadAndStart(self, uri, loader, gameno, position, first_time=True):
         if first_time:
             assert self.status == WAITING_TO_START
 
@@ -530,7 +575,8 @@ class GameModel (GObject.GObject, Thread):
         #Postpone error raising to make games loadable to the point of the error
         except LoadingError as e:
             error = e
-        else: error = None
+        else:
+            error = None
         if self.players:
             self.players[WHITE].setName(self.tags["White"])
             self.players[BLACK].setName(self.tags["Black"])
@@ -539,7 +585,8 @@ class GameModel (GObject.GObject, Thread):
         self.needsSave = False
         if not uriIsFile:
             self.uri = uri
-        else: self.uri = None
+        else:
+            self.uri = None
 
         # Even if the game "starts ended", the players should still be moved
         # to the last position, so analysis is correct, and a possible "undo"
@@ -565,7 +612,7 @@ class GameModel (GObject.GObject, Thread):
         if error:
             raise error
 
-    def save (self, uri, saver, append, position=None):
+    def save(self, uri, saver, append, position=None):
         if isinstance(uri, basestring):
             fileobj = protosave(uri, append)
             self.uri = uri
@@ -580,7 +627,7 @@ class GameModel (GObject.GObject, Thread):
     # Run stuff                                                                #
     ############################################################################
 
-    def run (self):
+    def run(self):
         log.debug("GameModel.run: Starting. self=%s" % self)
         # Avoid racecondition when self.start is called while we are in self.end
         if self.status != WAITING_TO_START:
@@ -604,17 +651,18 @@ class GameModel (GObject.GObject, Thread):
             if self.timed:
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time" % \
                     (id(self), str(self.players), str(self.ply), str(curPlayer)))
-                curPlayer.updateTime(self.timemodel.getPlayerTime(self.curColor),
-                                     self.timemodel.getPlayerTime(1-self.curColor))
+                curPlayer.updateTime(
+                    self.timemodel.getPlayerTime(self.curColor),
+                    self.timemodel.getPlayerTime(1 - self.curColor))
 
             try:
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: calling %s.makeMove()" % \
                     (id(self), str(self.players), self.ply, str(curPlayer)))
                 if self.ply > self.lowply:
-                    move = curPlayer.makeMove(self.boards[-1],
-                                              self.moves[-1],
+                    move = curPlayer.makeMove(self.boards[-1], self.moves[-1],
                                               self.boards[-2])
-                else: move = curPlayer.makeMove(self.boards[-1], None, None)
+                else:
+                    move = curPlayer.makeMove(self.boards[-1], None, None)
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s" % \
                     (id(self), str(self.players), self.ply, move, str(curPlayer)))
             except PlayerIsDead as e:
@@ -622,10 +670,13 @@ class GameModel (GObject.GObject, Thread):
                     stringio = StringIO()
                     traceback.print_exc(file=stringio)
                     error = stringio.getvalue()
-                    log.error("GameModel.run: A Player died: player=%s error=%s\n%s" % (curPlayer, error, e))
+                    log.error(
+                        "GameModel.run: A Player died: player=%s error=%s\n%s"
+                        % (curPlayer, error, e))
                     if self.curColor == WHITE:
                         self.kill(WHITE_ENGINE_DIED)
-                    else: self.kill(BLACK_ENGINE_DIED)
+                    else:
+                        self.kill(BLACK_ENGINE_DIED)
                 break
             except InvalidMove as e:
                 if self.curColor == WHITE:
@@ -652,7 +703,8 @@ class GameModel (GObject.GObject, Thread):
 
                 # Variation on next move can exist from the hint panel...
                 if self.boards[-1].board.next is not None:
-                    newBoard.board.children = self.boards[-1].board.next.children
+                    newBoard.board.children = self.boards[
+                        -1].board.next.children
 
                 self.boards = self.variations[0]
                 self.boards[-1].board.next = newBoard.board
@@ -678,7 +730,7 @@ class GameModel (GObject.GObject, Thread):
                 log.debug("GameModel.run: releasing self.applyingMoveLock")
                 self.applyingMoveLock.release()
 
-    def checkStatus (self):
+    def checkStatus(self):
         """ Updates self.status so it fits with what getStatus(boards[-1])
             would return. That is, if the game is e.g. check mated this will
             call mode.end(), or if moves have been undone from an otherwise
@@ -696,7 +748,8 @@ class GameModel (GObject.GObject, Thread):
             self.end(self.endstatus, reason)
             return
 
-        if status != RUNNING and self.status in (WAITING_TO_START, PAUSED, RUNNING):
+        if status != RUNNING and self.status in (WAITING_TO_START, PAUSED,
+                                                 RUNNING):
             if status == DRAW and reason in (DRAW_REPITITION, DRAW_50MOVES):
                 if self.isEngine2EngineGame():
                     self.end(status, reason)
@@ -712,7 +765,7 @@ class GameModel (GObject.GObject, Thread):
             self.reason = UNKNOWN_REASON
             self.emit("game_unended")
 
-    def __pause (self):
+    def __pause(self):
         log.debug("GameModel.__pause: %s" % self)
         if self.isEngine2EngineGame():
             for player in self.players:
@@ -726,7 +779,7 @@ class GameModel (GObject.GObject, Thread):
                 self.timemodel.pause()
 
     @inthread
-    def pause (self):
+    def pause(self):
         """ Players will raise NotImplementedError if they doesn't support
             pause. Spectators will be ignored. """
 
@@ -738,7 +791,7 @@ class GameModel (GObject.GObject, Thread):
             self.applyingMoveLock.release()
         self.emit("game_paused")
 
-    def __resume (self):
+    def __resume(self):
         for player in self.players:
             player.resume()
         if self.timed:
@@ -746,7 +799,7 @@ class GameModel (GObject.GObject, Thread):
         self.emit("game_resumed")
 
     @inthread
-    def resume (self):
+    def resume(self):
         self.applyingMoveLock.acquire()
         try:
             self.status = RUNNING
@@ -754,9 +807,11 @@ class GameModel (GObject.GObject, Thread):
         finally:
             self.applyingMoveLock.release()
 
-    def end (self, status, reason):
+    def end(self, status, reason):
         if self.status not in UNFINISHED_STATES:
-            log.info("GameModel.end: Can't end a game that's already ended: %s %s" % (status, reason))
+            log.info(
+                "GameModel.end: Can't end a game that's already ended: %s %s" %
+                (status, reason))
             return
         if self.status not in (WAITING_TO_START, PAUSED, RUNNING):
             self.needsSave = True
@@ -772,7 +827,7 @@ class GameModel (GObject.GObject, Thread):
 
         self.__pause()
 
-    def kill (self, reason):
+    def kill(self, reason):
         log.debug("GameModel.kill: players=%s, self.ply=%s: Killing a game for reason %d\n%s" % \
             (repr(self.players), str(self.ply), reason,
              "".join(traceback.format_list(traceback.extract_stack())).strip()))
@@ -791,7 +846,7 @@ class GameModel (GObject.GObject, Thread):
 
         self.emit("game_ended", reason)
 
-    def terminate (self):
+    def terminate(self):
         log.debug("GameModel.terminate: %s" % self)
 
         if self.status != KILLED:
@@ -805,7 +860,8 @@ class GameModel (GObject.GObject, Thread):
             if self.timed:
                 log.debug("GameModel.terminate: -> timemodel.end()")
                 self.timemodel.end()
-                log.debug("GameModel.terminate: <- timemodel.end() %s" % repr(self.timemodel))
+                log.debug("GameModel.terminate: <- timemodel.end() %s" %
+                          repr(self.timemodel))
 
         self.emit("game_terminated")
 
@@ -815,10 +871,11 @@ class GameModel (GObject.GObject, Thread):
 
     @inthread
     @undolocked
-    def undoMoves (self, moves):
+    def undoMoves(self, moves):
         """ Undo and remove moves number of moves from the game history from
             the GameModel, players, and any spectators """
-        if self.ply < 1 or moves < 1: return
+        if self.ply < 1 or moves < 1:
+            return
         if self.ply - moves < 0:
             # There is no way in the current threaded/asynchronous design
             # for the GUI to know that the number of moves it requests to takeback
@@ -858,12 +915,12 @@ class GameModel (GObject.GObject, Thread):
 
         self.emit("moves_undone", moves)
 
-    def isChanged (self):
+    def isChanged(self):
         if self.ply == 0:
             return False
         if self.needsSave:
             return True
-        if not self.uri or not isWriteable (self.uri):
+        if not self.uri or not isWriteable(self.uri):
             return True
         return False
 
@@ -903,9 +960,10 @@ class GameModel (GObject.GObject, Thread):
                 break
 
         variation[0] = board0
-        self.variations.append(head[:board0.ply-self.lowply] + variation)
+        self.variations.append(head[:board0.ply - self.lowply] + variation)
         self.needsSave = True
-        self.emit("variation_added", board0.board.next.children[-1], board0.board.next, comment, score)
+        self.emit("variation_added", board0.board.next.children[-1],
+                  board0.board.next, comment, score)
         return self.variations[-1]
 
     def add_move2variation(self, board, move, variationIdx):
