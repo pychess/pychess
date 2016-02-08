@@ -1,5 +1,5 @@
-from pychess.Utils.const import KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN
-from pychess.Utils.repr import reprSign, reprColor, reprPiece
+from pychess.Utils.const import KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN, reprSign
+from pychess.Utils.repr import reprColor, reprPiece
 
 
 class Piece:
