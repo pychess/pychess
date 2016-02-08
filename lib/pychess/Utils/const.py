@@ -42,8 +42,10 @@ WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS, \
 ASEANCHESS, MAKRUKCHESS, SITTUYINCHESS, CAMBODIANCHESS, AIWOKCHESS, \
 EUROSHOGICHESS, SETUPCHESS = range(34)
 
-ASEAN_VARIANTS = (ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, AIWOKCHESS, SITTUYINCHESS)
-DROP_VARIANTS = (BUGHOUSECHESS, CRAZYHOUSECHESS, EUROSHOGICHESS, SITTUYINCHESS, SETUPCHESS)
+ASEAN_VARIANTS = (ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, AIWOKCHESS,
+                  SITTUYINCHESS)
+DROP_VARIANTS = (BUGHOUSECHESS, CRAZYHOUSECHESS, EUROSHOGICHESS, SITTUYINCHESS,
+                 SETUPCHESS)
 UNSUPPORTED = (BUGHOUSECHESS, AIWOKCHESS, EUROSHOGICHESS, SETUPCHESS)
 
 # Chess variant groups
@@ -131,10 +133,24 @@ sliders = [ False, False, False, True, True, True, False, False, \
 reprSign = ["", "P", "N", "B", "R", "Q", "K"]
 reprSignMakruk = ["", "P", "N", "S", "R", "M", "K"]
 reprSignSittuyin = ["", "P", "N", "S", "R", "F", "K"]
-chr2Sign = {"k":KING, "q": QUEEN, "r": ROOK, "b": BISHOP, "n": KNIGHT, "p":PAWN,
-            "m": QUEEN, "s": BISHOP, "f": QUEEN}
-chrU2Sign = {"K":KING, "Q": QUEEN, "R": ROOK, "B": BISHOP, "N": KNIGHT, "P":PAWN,
-            "M": QUEEN, "S": BISHOP, "F": QUEEN}
+chr2Sign = {"k": KING,
+            "q": QUEEN,
+            "r": ROOK,
+            "b": BISHOP,
+            "n": KNIGHT,
+            "p": PAWN,
+            "m": QUEEN,
+            "s": BISHOP,
+            "f": QUEEN}
+chrU2Sign = {"K": KING,
+             "Q": QUEEN,
+             "R": ROOK,
+             "B": BISHOP,
+             "N": KNIGHT,
+             "P": PAWN,
+             "M": QUEEN,
+             "S": BISHOP,
+             "F": QUEEN}
 
 ################################################################################
 # Move values                                                                  #
@@ -142,7 +158,8 @@ chrU2Sign = {"K":KING, "Q": QUEEN, "R": ROOK, "B": BISHOP, "N": KNIGHT, "P":PAWN
 
 NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
 KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, KING_PROMOTION, NULL_MOVE, DROP = range(11)
-PROMOTIONS = (KING_PROMOTION, QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION)
+PROMOTIONS = (KING_PROMOTION, QUEEN_PROMOTION, ROOK_PROMOTION,
+              BISHOP_PROMOTION, KNIGHT_PROMOTION)
 
 # Algebraic notation types: Short, Long, Figure and Simpe
 SAN, LAN, FAN, AN = range(4)
@@ -158,7 +175,7 @@ FAN_PIECES = [
 # Castling values                                                              #
 ################################################################################
 W_OO, W_OOO, B_OO, B_OOO = [2**i for i in range(4)]
-CAS_FLAGS = ((W_OOO,W_OO),(B_OOO,B_OO))
+CAS_FLAGS = ((W_OOO, W_OO), (B_OOO, B_OO))
 W_CASTLED, B_CASTLED = [2**i for i in range(2)]
 
 ################################################################################
@@ -175,14 +192,12 @@ A7, B7, C7, D7, E7, F7, G7, H7, \
 A8, B8, C8, D8, E8, F8, G8, H8 = range (64)
 
 reprCord = [
-    "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
-    "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
-    "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
-    "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
-    "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
-    "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
-    "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
-    "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"
+    "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "a2", "b2", "c2", "d2",
+    "e2", "f2", "g2", "h2", "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
+    "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", "a5", "b5", "c5", "d5",
+    "e5", "f5", "g5", "h5", "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
+    "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", "a8", "b8", "c8", "d8",
+    "e8", "f8", "g8", "h8"
 ]
 
 reprFile = ["a", "b", "c", "d", "e", "f", "g", "h"]
@@ -206,12 +221,13 @@ SOUND_MUTE, SOUND_BEEP, SOUND_SELECT, SOUND_URI = range(4)
 CLEAR, ENPAS = range(2)
 
 # Main menu items
-GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "share_game", "export_position1",
-                    "analyze_game1", "properties1", "close1")
-ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1", 
+GAME_MENU_ITEMS = ("save_game1", "save_game_as1", "share_game",
+                   "export_position1", "analyze_game1", "properties1",
+                   "close1")
+ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1",
                      "call_flag", "resign", "ask_to_move")
 VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
-EDIT_MENU_ITEMS = ("copy_pgn", "copy_fen",)
+EDIT_MENU_ITEMS = ("copy_pgn", "copy_fen", )
 MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS + EDIT_MENU_ITEMS
 
 ################################################################################
