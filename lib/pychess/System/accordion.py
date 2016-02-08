@@ -21,6 +21,7 @@ class Accordion(Gtk.TreeView):
             else:
                 cell.set_property('foreground', "black")
                 cell.set_property('background', "white")
+
         column.set_cell_data_func(renderer, top_level)
 
         self.append_column(column)
@@ -40,7 +41,7 @@ class Accordion(Gtk.TreeView):
 
         selected_item = model.get_value(iter, 0)
         print(selected_item)
-        
+
 
 if __name__ == "__main__":
     window = Gtk.Window(Gtk.WindowType.TOPLEVEL)
@@ -52,8 +53,8 @@ if __name__ == "__main__":
     for parent in range(4):
         piter = treestore.append(None, ['parent %i' % parent])
         for child in range(3):
-            treestore.append(piter, ['child %i of parent %i' %
-                                          (child, parent)])
+            treestore.append(piter,
+                             ['child %i of parent %i' % (child, parent)])
     accordion = Accordion(treestore)
     window.add(accordion)
     window.show_all()
