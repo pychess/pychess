@@ -36,7 +36,9 @@ class Command(object):
             kwargs['stderr'] = subprocess.PIPE
 
         try:
-            self.process = subprocess.Popen(self.command, universal_newlines=True, **kwargs)
+            self.process = subprocess.Popen(self.command,
+                                            universal_newlines=True,
+                                            **kwargs)
         except OSError:
             return self.status, self.output, self.error
         except ValueError:
@@ -44,16 +46,20 @@ class Command(object):
 
         if sys.version_info >= (3, 3, 0):
             try:
-                self.output, self.error = self.process.communicate(input=self.inputstr, timeout=timeout)
+                self.output, self.error = self.process.communicate(
+                    input=self.inputstr,
+                    timeout=timeout)
             except subprocess.TimeoutExpired:
                 self.process.kill()
                 self.output, self.error = self.process.communicate()
             self.status = self.process.returncode
             return self.status, self.output, self.error
         else:
+
             def target(**kwargs):
                 try:
-                    self.output, self.error = self.process.communicate(input=self.inputstr)
+                    self.output, self.error = self.process.communicate(
+                        input=self.inputstr)
                     self.status = self.process.returncode
                 except:
                     self.error = traceback.format_exc()
@@ -66,6 +72,7 @@ class Command(object):
                 self.process.kill()
                 thread.join()
             return self.status, self.output, self.error
+
 
 if __name__ == "__main__":
     command = Command("DC", "xboard\nprotover 2\n")
