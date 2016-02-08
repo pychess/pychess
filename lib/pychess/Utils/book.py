@@ -5,12 +5,11 @@ import sys
 from struct import Struct
 from collections import namedtuple
 
-from pychess.Utils.const import *
+#from pychess.Utils.const import WHITE
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.lmove import parsePolyglot
 from pychess.System.Log import log
-
 
 if getattr(sys, 'frozen', False):
     # pyinstaller specific!
@@ -22,12 +21,12 @@ if getattr(sys, 'frozen', False):
 else:
     default_path = os.path.join(addDataPrefix("pychess_book.bin"))
 
-path = conf.get("opening_file_entry", default_path) 
+path = conf.get("opening_file_entry", default_path)
 
 if os.path.isfile(path):
     bookfile = True
 else:
-    bookfile= False
+    bookfile = False
     log.warning("Could not find %s" % path)
 
 # The book probing code is based on that of PolyGlot by Fabien Letouzey.
@@ -44,7 +43,8 @@ BookEntry = namedtuple('BookEntry', 'key move weight games score')
 entrystruct = Struct(">QHHHH")
 entrysize = entrystruct.size
 
-def getOpenings (board):
+
+def getOpenings(board):
     """ Return a tuple (move, weight, games, score) for each opening move
         in the given position. The weight is proportional to the probability
         that a move should be played. By convention, games is the number of
@@ -55,27 +55,27 @@ def getOpenings (board):
     openings = []
     if not bookfile:
         return openings
-    
+
     with open(path, "rb") as bookFile:
         key = board.hash
         # Find the first entry whose key is >= the position's hash
         bookFile.seek(0, os.SEEK_END)
-        lo, hi = 0, bookFile.tell() // 16 - 1
-        if hi < 0:
+        low, high = 0, bookFile.tell() // 16 - 1
+        if high < 0:
             return openings
-        while lo < hi:
-            mid = (lo + hi) // 2
+        while low < high:
+            mid = (low + high) // 2
             bookFile.seek(mid * 16)
             entry = bookFile.read(entrysize)
             if len(entry) != entrysize:
                 return openings
             entry = BookEntry._make(entrystruct.unpack(entry))
             if entry.key < key:
-                lo = mid + 1
+                low = mid + 1
             else:
-                hi = mid
+                high = mid
 
-        bookFile.seek(lo * 16)
+        bookFile.seek(low * 16)
         while True:
             entry = bookFile.read(entrysize)
             if len(entry) != entrysize:
@@ -83,6 +83,6 @@ def getOpenings (board):
             entry = BookEntry._make(entrystruct.unpack(entry))
             if entry.key != key:
                 break
-            mv = parsePolyglot(board, entry.move)
-            openings.append( ( mv, entry.weight, entry.games, entry.score ) )
+            move = parsePolyglot(board, entry.move)
+            openings.append((move, entry.weight, entry.games, entry.score))
     return openings
