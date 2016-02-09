@@ -51,9 +51,13 @@ def createAlignment(top, right, bottom, left):
 
 
 def cleanNotebook(name=None):
+    def customGetTabLabelText(child):
+        return name
+        
     notebook = Gtk.Notebook()
     if name is not None:
         notebook.set_name(name)
+    notebook.get_tab_label_text = customGetTabLabelText
     notebook.set_show_tabs(False)
     notebook.set_show_border(False)
     return notebook
@@ -1110,11 +1114,18 @@ def cur_gmwidg():
     return key2gmwidg[notebookKey]
 
 
+def customGetTabLabelText(child):
+    gmwidg = key2gmwidg[child]
+    return gmwidg.display_text
+
 def getheadbook():
     if len(widgets["mainvbox"].get_children()) == 2:
         # If the headbook hasn't been added yet
         return None
-    return widgets["mainvbox"].get_children()[1].get_child()
+    headbook = widgets["mainvbox"].get_children()[1].get_child()
+    # to help StoryText create widget description
+    headbook.get_tab_label_text = customGetTabLabelText
+    return headbook
 
 
 def zoomToBoard(viewZoomed):

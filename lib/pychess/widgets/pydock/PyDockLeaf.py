@@ -17,7 +17,16 @@ class PyDockLeaf(DockLeaf):
         DockLeaf.__init__(self)
         self.set_no_show_all(True)
 
+        def customGetTabLabelText(child):
+            try:
+                name = self.book.get_tab_label(child).get_text()
+            except:
+                name = child.get_name()
+            return name
+            
         self.book = Gtk.Notebook()
+        self.book.set_name(id)
+        self.book.get_tab_label_text = customGetTabLabelText
         self.book.connect("drag-begin", self.__onDragBegin)
         self.book.connect("drag-end", self.__onDragEnd)
         self.book.connect_after("switch-page", self.__onPageSwitched)
