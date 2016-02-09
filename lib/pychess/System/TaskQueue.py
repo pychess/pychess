@@ -5,13 +5,14 @@
 import threading
 from pychess.compat import Queue
 
-def TaskQueue ():
+
+def TaskQueue():
     if hasattr(Queue, "task_done"):
         return Queue()
     return _TaskQueue()
 
-class _TaskQueue(Queue):
 
+class _TaskQueue(Queue):
     def __init__(self):
         Queue.__init__(self)
         self.all_tasks_done = threading.Condition(self.mutex)
