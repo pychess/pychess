@@ -105,8 +105,10 @@ class InfoBarNotebook(Gtk.Notebook):
     message.dismiss()
     """
 
-    def __init__(self):
+    def __init__(self, name=None):
         Gtk.Notebook.__init__(self)
+        if name is not None:
+            self.set_name(name)
         self.set_show_tabs(False)
 
     def push_message(self, message):

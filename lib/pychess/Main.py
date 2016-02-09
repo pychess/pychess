@@ -425,18 +425,18 @@ class PyChess:
         with open(prefix.addDataPrefix("LICENSE"), encoding="utf-8") as f:
             self.aboutdialog.set_license(f.read())
 
-        def on_about_response(dialog, response, *args):
-            # system-defined GtkDialog responses are always negative, in which    
-            # case we want to hide it
-            if response < 0:
-                self.aboutdialog.hide()
-                self.aboutdialog.emit_stop_by_name('response')
+        #def on_about_response(dialog, response, *args):
+            ## system-defined GtkDialog responses are always negative, in which    
+            ## case we want to hide it
+            #if response < 0:
+                #self.aboutdialog.hide()
+                #self.aboutdialog.emit_stop_by_name('response')
 
         def on_about_close(widget, event=None):
             self.aboutdialog.hide()
             return True
 
-        self.aboutdialog.connect("response", on_about_response)
+        #self.aboutdialog.connect("response", on_about_response)
         self.aboutdialog.connect("close", on_about_close)
         self.aboutdialog.connect("delete-event", on_about_close)
 

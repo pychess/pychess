@@ -189,8 +189,8 @@ class HintTab:
         # Analyzing engines
         from pychess.widgets import newGameDialog
         data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
-        uistuff.createCombo(widgets["ana_combobox"], data)
-        uistuff.createCombo(widgets["inv_ana_combobox"], data)
+        uistuff.createCombo(widgets["ana_combobox"], data, name="ana_combobox")
+        uistuff.createCombo(widgets["inv_ana_combobox"], data, name="inv_ana_combobox")
 
         @idle_add
         def update_analyzers_store(discoverer):
@@ -407,7 +407,7 @@ class SoundTab:
 
         for i in range(self.COUNT_OF_SOUNDS):
             combo = widgets["soundcombo%d" % i]
-            uistuff.createCombo(combo, items)
+            uistuff.createCombo(combo, items, name="soundcombo%d" % i)
             combo.set_active(0)
             combo.connect("changed", callback, i)
 

@@ -50,8 +50,10 @@ def createAlignment(top, right, bottom, left):
     return align
 
 
-def cleanNotebook():
+def cleanNotebook(name=None):
     notebook = Gtk.Notebook()
+    if name is not None:
+        notebook.set_name(name)
     notebook.set_show_tabs(False)
     notebook.set_show_border(False)
     return notebook
@@ -97,11 +99,11 @@ def getWidgets():
 
 
 key2gmwidg = {}
-notebooks = {"board": cleanNotebook(),
-             "statusbar": cleanNotebook(),
-             "messageArea": cleanNotebook()}
+notebooks = {"board": cleanNotebook("board"),
+             "statusbar": cleanNotebook("statusbar"),
+             "messageArea": cleanNotebook("messageArea")}
 for panel in sidePanels:
-    notebooks[panel.__name__] = cleanNotebook()
+    notebooks[panel.__name__] = cleanNotebook(panel.__name__)
 
 docks = {"board": (Gtk.Label(label="Board"), notebooks["board"])}
 
@@ -646,7 +648,7 @@ class GameWidget(GObject.GObject):
     def initBoardAndClock(self, gamemodel):
         boardvbox = Gtk.VBox()
         boardvbox.set_spacing(2)
-        infobar = InfoBarNotebook()
+        infobar = InfoBarNotebook("gamewidget_infobar")
 
         ccalign = createAlignment(0, 0, 0, 0)
         cclock = ChessClock()

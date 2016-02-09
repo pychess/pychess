@@ -17,7 +17,9 @@ from pychess.System.prefix import addDataPrefix
 from pychess.widgets.ToggleComboBox import ToggleComboBox
 
 
-def createCombo (combo, data=[]):
+def createCombo (combo, data=[], name=None):
+    if name is not None:
+        combo.set_name(name)
     ls = Gtk.ListStore(Pixbuf, str)
     for row in data:
         ls.append(row)
