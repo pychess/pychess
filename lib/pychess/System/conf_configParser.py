@@ -1,33 +1,36 @@
-import os, atexit
+import os
+import atexit
 
 from pychess.compat import RawConfigParser
 from pychess.System.Log import log
 
-configParser = RawConfigParser()
 from pychess.System.prefix import addUserConfigPrefix
 
+configParser = RawConfigParser()
 section = "General"
 path = addUserConfigPrefix("config")
 if os.path.isfile(path):
     configParser.readfp(open(path))
 if not configParser.has_section(section):
     configParser.add_section(section)
-atexit.register(lambda: configParser.write(open(path,"w")))
+atexit.register(lambda: configParser.write(open(path, "w")))
 
 idkeyfuncs = {}
 conid = 0
 
 
-def notify_add (key, func, args):
+def notify_add(key, func, args):
     global conid
     idkeyfuncs[conid] = (key, func, args)
     conid += 1
     return conid
 
-def notify_remove (conid):
+
+def notify_remove(conid):
     del idkeyfuncs[conid]
 
-def get (key):
+
+def get(key):
     try:
         return configParser.getint(section, key)
     except ValueError:
@@ -45,15 +48,19 @@ def get (key):
 
     return configParser.get(section, key)
 
-def set (key, value):
+
+def set(key, value):
     try:
-        configParser.set (section, key, str(value))
-    except Exception as e:
-        log.error("Unable to save configuration '%s'='%s' because of error: %s %s"%
-                (repr(key), repr(value), e.__class__.__name__, ", ".join(str(a) for a in e.args)))
+        configParser.set(section, key, str(value))
+    except Exception as err:
+        log.error(
+            "Unable to save configuration '%s'='%s' because of error: %s %s" %
+            (repr(key), repr(value), err.__class__.__name__, ", ".join(
+                str(a) for a in err.args)))
     for key_, func, args in idkeyfuncs.values():
         if key_ == key:
-            func (None, *args)
+            func(None, *args)
 
-def hasKey (key):
+
+def hasKey(key):
     return configParser.has_option(section, key)
