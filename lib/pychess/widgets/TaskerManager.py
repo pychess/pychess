@@ -223,7 +223,6 @@ class NewGameTasker(Gtk.Alignment):
             ionest.generalStart(gamemodel, player0tup, player1tup)
         else:
             ionest.generalStart(gamemodel, player1tup, player0tup)
-        usecase.applicationEvent("startClicked")
 
 big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
 
