@@ -41,7 +41,7 @@ def initialize(gameDic):
     uistuff.keep(widgets["variation_threshold_spin"], "variation_threshold_spin", first_value=50)
 
     # Analyzing engines
-    uistuff.createCombo(widgets["ana_combobox"])
+    uistuff.createCombo(widgets["ana_combobox"], name="ana_combobox")
 
     from pychess.widgets import newGameDialog
     @idle_add

@@ -79,6 +79,7 @@ class EnginesDialog():
 
         # Add cell renderer to protocol combo column
         protocol_combo = self.widgets["engine_protocol_combo"]
+        protocol_combo.set_name("engine_protocol_combo")
         cell = Gtk.CellRendererText()
         protocol_combo.pack_start(cell, True)
         protocol_combo.add_attribute(cell, "text", 0)

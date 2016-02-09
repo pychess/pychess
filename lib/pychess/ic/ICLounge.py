@@ -63,7 +63,7 @@ class ICLounge (GObject.GObject):
         lounge = self.widgets["fics_lounge"]
         uistuff.keepWindowSize("fics_lounge", lounge)
         lounge.set_title("PyChess - Internet Chess: %s" % connection.ics_name)
-        self.infobar = InfoBarNotebook()
+        self.infobar = InfoBarNotebook("fics_lounge_infobar")
         self.infobar.hide()
         self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar, False, False, 0)
 
@@ -1887,7 +1887,9 @@ class SeekChallengeSection (Section):
 
         self.widgets["noVariantRadio"].connect("toggled", self.onVariantRadioChanged)
         self.widgets["variantRadio"].connect("toggled", self.onVariantRadioChanged)
-        variantComboGetter, variantComboSetter = self.__initVariantCombo(self.widgets["variantCombo"])
+        variantcombo = self.widgets["variantCombo"]
+        variantcombo.set_name("variantcombo")
+        variantComboGetter, variantComboSetter = self.__initVariantCombo(variantcombo)
         self.seekEditorWidgetGettersSetters["variantCombo"] = (variantComboGetter, variantComboSetter)
         self.widgets["variantCombo"].connect("changed", self.onVariantComboChanged)
 

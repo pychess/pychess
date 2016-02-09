@@ -167,6 +167,7 @@ def getOpenAndSaveDialogs():
 
         # Add widgets to the savedialog
         savecombo = Gtk.ComboBox()
+        savecombo.set_name("savecombo")
         crt = Gtk.CellRendererText()
         savecombo.pack_start(crt, True)
         savecombo.add_attribute(crt, 'text', 0)

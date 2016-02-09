@@ -39,7 +39,6 @@ from pychess.widgets import BoardPreview
 from pychess.widgets import ionest
 from pychess.widgets import ImageMenu
 from pychess.widgets.BoardControl import BoardControl
-from pychess.widgets.gamewidget import createAlignment
 from pychess.Savers import fen, pgn
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Variants import variants
@@ -123,8 +122,8 @@ class _GameInitializationMode:
     def _init (cls):
         cls.widgets = uistuff.GladeWidgets ("newInOut.glade")
 
-        uistuff.createCombo(cls.widgets["whitePlayerCombobox"])
-        uistuff.createCombo(cls.widgets["blackPlayerCombobox"])
+        uistuff.createCombo(cls.widgets["whitePlayerCombobox"], name="whitePlayerCombobox")
+        uistuff.createCombo(cls.widgets["blackPlayerCombobox"], name="blackPlayerCombobox")
 
         cls.widgets["playersIcon"].set_from_pixbuf(big_people)
         cls.widgets["timeIcon"].set_from_pixbuf(big_time)
@@ -520,7 +519,9 @@ class SetupPositionExtension (_GameInitializationMode):
         ep_store.append(["-"])
         for f in reprFile:
             ep_store.append([f])
-        cls.widgets["ep_combo"].set_model(ep_store)
+        epcombo = cls.widgets["ep_combo"]
+        epcombo.set_name("ep_combo")
+        epcombo.set_model(ep_store)
         renderer_text = Gtk.CellRendererText()
         cls.widgets["ep_combo"].pack_start(renderer_text, True)
         cls.widgets["ep_combo"].add_attribute(renderer_text, "text", 0)

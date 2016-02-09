@@ -146,6 +146,8 @@ class NewGameTasker(Gtk.Alignment):
         tasker.unparent()
         self.add(tasker)
 
+        startButton = self.widgets["startButton"]
+        startButton.set_name("startButton")
         combo = ToggleComboBox()
         combo.addItem(_("White"), get_pixbuf("glade/white.png"))
         combo.addItem(_("Black"), get_pixbuf("glade/black.png"))
@@ -221,7 +223,6 @@ class NewGameTasker(Gtk.Alignment):
             ionest.generalStart(gamemodel, player0tup, player1tup)
         else:
             ionest.generalStart(gamemodel, player1tup, player0tup)
-
 
 big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
 
