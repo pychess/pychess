@@ -6,9 +6,10 @@ from gi.repository import GObject
 
 class LogEmitter(GObject.GObject):
     __gsignals__ = {
-        "logged": (GObject.SignalFlags.RUN_FIRST, None, (object,))
-    }                                              # list of (str, float, str, int)
-    def __init__ (self):
+        "logged": (GObject.SignalFlags.RUN_FIRST, None, (object, ))
+    }  # list of (str, float, str, int)
+
+    def __init__(self):
         GObject.GObject.__init__(self)
 
         # We store everything in this list, so that the LogDialog, which is
@@ -19,15 +20,18 @@ class LogEmitter(GObject.GObject):
 
 
 class GLogHandler(logging.Handler):
-    def __init__ (self, emitter):
+    def __init__(self, emitter):
         logging.Handler.__init__(self)
         self.emitter = emitter
-        
+
     def emit(self, record):
         message = self.format(record)
         if self.emitter.messages != None:
-            self.emitter.messages.append((record.task, time.time(), message, record.levelno))
-        
-        self.emitter.emit("logged", (record.task, time.time(), message, record.levelno))
+            self.emitter.messages.append((record.task, time.time(), message,
+                                          record.levelno))
+
+        self.emitter.emit("logged",
+                          (record.task, time.time(), message, record.levelno))
+
 
 logemitter = LogEmitter()
