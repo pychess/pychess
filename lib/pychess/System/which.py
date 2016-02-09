@@ -3,7 +3,6 @@
 ###
 # Generators are not thread safe, so reduced which_files() to return the first match only !!!
 ###
-
 """ Which - locate a command
 
     * adapted from proposal__ by Erik Demaine and patch__ by Brian Curtin, which adds this feature__ to shutil
@@ -65,6 +64,7 @@ from pychess.compat import basestring
 _windows = sys.platform.startswith('win')
 
 if _windows:
+
     def _getwinpathext(*winver):
         """ Return the default PATHEXT value for a particular Windows version.
 
@@ -88,8 +88,9 @@ if _windows:
         if not winver:
             winver = sys.getwindowsversion()
 
-        return os.pathsep.join('.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC'.split(';')[:(
-            winver[0] < 5 and 4 or winver[0] < 6 and -1 or None )])
+        return os.pathsep.join(
+            '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC'.split(
+                ';')[:(winver[0] < 5 and 4 or winver[0] < 6 and -1 or None)])
 
 
 def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
@@ -206,29 +207,34 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
     filepath, file = os.path.split(file)
 
     if filepath:
-        path = (filepath,)
+        path = (filepath, )
     elif path is None:
         path = os.environ.get('PATH', os.defpath).split(os.pathsep)
         if _windows and not os.curdir in path:
-            path.insert(0, os.curdir) # current directory is always searched first on Windows
+            path.insert(
+                0, os.curdir
+            )  # current directory is always searched first on Windows
     elif isinstance(path, basestring):
         path = path.split(os.pathsep)
 
     if pathext is None:
         pathext = ['']
         if _windows:
-            pathext += (os.environ.get('PATHEXT', '') or _getwinpathext()).lower().split(os.pathsep)
+            pathext += (os.environ.get('PATHEXT', '') or
+                        _getwinpathext()).lower().split(os.pathsep)
     elif isinstance(pathext, basestring):
         pathext = pathext.split(os.pathsep)
 
     if not '' in pathext:
-        pathext.insert(0, '') # always check command without extension, even for an explicitly passed pathext
+        pathext.insert(
+            0, ''
+        )  # always check command without extension, even for an explicitly passed pathext
 
     seen = set()
     for dir in path:
-        if dir: # only non-empty directories are searched
+        if dir:  # only non-empty directories are searched
             id = os.path.normcase(os.path.abspath(dir))
-            if not id in seen: # each directory is searched only once
+            if not id in seen:  # each directory is searched only once
                 seen.add(id)
                 woex = os.path.join(dir, file)
                 for ext in pathext:
@@ -237,6 +243,7 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
                         return name
 #                        yield name
     return None
+
 
 def which(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
     """ Return the first full path matched by which_files(), or raise IOError(errno.ENOENT).
@@ -252,7 +259,6 @@ def which(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
 #        except ImportError:
 #            ENOENT = 2
 #        raise IOError(ENOENT, '%s not found' % (mode & os.X_OK and 'command' or 'file'), file)
-
 
 if __name__ == '__main__':
     import doctest
