@@ -519,7 +519,9 @@ class SetupPositionExtension (_GameInitializationMode):
         ep_store.append(["-"])
         for f in reprFile:
             ep_store.append([f])
-        cls.widgets["ep_combo"].set_model(ep_store)
+        epcombo = cls.widgets["ep_combo"]
+        epcombo.set_name("ep_combo")
+        epcombo.set_model(ep_store)
         renderer_text = Gtk.CellRendererText()
         cls.widgets["ep_combo"].pack_start(renderer_text, True)
         cls.widgets["ep_combo"].add_attribute(renderer_text, "text", 0)

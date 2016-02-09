@@ -1887,7 +1887,9 @@ class SeekChallengeSection (Section):
 
         self.widgets["noVariantRadio"].connect("toggled", self.onVariantRadioChanged)
         self.widgets["variantRadio"].connect("toggled", self.onVariantRadioChanged)
-        variantComboGetter, variantComboSetter = self.__initVariantCombo(self.widgets["variantCombo"])
+        variantcombo = self.widgets["variantCombo"]
+        variantcombo.set_name("variantcombo")
+        variantComboGetter, variantComboSetter = self.__initVariantCombo(variantcombo)
         self.seekEditorWidgetGettersSetters["variantCombo"] = (variantComboGetter, variantComboSetter)
         self.widgets["variantCombo"].connect("changed", self.onVariantComboChanged)
 
