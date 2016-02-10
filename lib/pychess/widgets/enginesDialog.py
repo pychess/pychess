@@ -404,35 +404,29 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
         self.data = None
 
         self.text_renderer = Gtk.CellRendererText()
-        self.text_renderer.set_name("key_value_textrenderer")
         self.text_renderer.set_property("editable", True)
         self.text_renderer.connect("edited", self.text_edited_cb, model)
 
         self.toggle_renderer = Gtk.CellRendererToggle()
-        self.text_renderer.set_name("key_value_togglerenderer")
         self.toggle_renderer.set_property("activatable", True)
         self.toggle_renderer.set_property("xalign", 0)
         self.toggle_renderer.connect("toggled", self.toggled_cb, model)
 
         self.ro_toggle_renderer = Gtk.CellRendererToggle()
-        self.text_renderer.set_name("key_value_ro_togglerenderer")
         self.ro_toggle_renderer.set_property("activatable", False)
         self.ro_toggle_renderer.set_property("xalign", 0)
 
         self.spin_renderer = Gtk.CellRendererSpin()
-        self.text_renderer.set_name("key_value_spinrenderer")
         self.spin_renderer.set_property("editable", True)
         self.spin_renderer.connect("edited", self.spin_edited_cb, model)
 
         self.combo_renderer = Gtk.CellRendererCombo()
-        self.text_renderer.set_name("key_value_comborenderer")
         self.combo_renderer.set_property("has_entry", False)
         self.combo_renderer.set_property("editable", True)
         self.combo_renderer.set_property("text_column", 0)
         self.combo_renderer.connect("edited", self.text_edited_cb, model)
 
         self.button_renderer = Gtk.CellRendererText()
-        self.text_renderer.set_name("key_value_buttontextrenderer")
         self.button_renderer.set_property("editable", False)
 
     def text_edited_cb(self, cell, path, new_text, model):
