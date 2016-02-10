@@ -1,0 +1,10 @@
+#!/bin/sh
+
+cd ~/pychess
+LANG=C PYTHONPATH=~/storytext/lib ~/storytext/bin/storytext \
+	--interface=gtk3 \
+	--mapfiles=testing/storytext/ui_map.conf \
+	--record=testing/storytext/"$1" \
+./pychess
+
+
