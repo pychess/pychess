@@ -148,7 +148,7 @@ class NewGameTasker(Gtk.Alignment):
 
         startButton = self.widgets["startButton"]
         startButton.set_name("startButton")
-        combo = ToggleComboBox()
+        combo = ToggleComboBox("colortoggle")
         combo.addItem(_("White"), get_pixbuf("glade/white.png"))
         combo.addItem(_("Black"), get_pixbuf("glade/black.png"))
         combo.addItem(_("Random"), get_pixbuf("glade/random.png"))
@@ -160,7 +160,7 @@ class NewGameTasker(Gtk.Alignment):
         # We need to wait until after engines have been discovered, to init the
         # playerCombos. We use connect_after to make sure, that newGameDialog
         # has also had time to init the constants we share with them.
-        self.playerCombo = ToggleComboBox()
+        self.playerCombo = ToggleComboBox("playertoggle")
         widgets["opponentDock"].add(self.playerCombo)
         discoverer.connect_after("all_engines_discovered",
                                  self.__initPlayerCombo, widgets)

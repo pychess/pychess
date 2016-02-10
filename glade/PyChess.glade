@@ -1156,23 +1156,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="liststore2">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Beep</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Select sound file...</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">No sound</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkWindow" id="preferences">
     <property name="can_focus">False</property>
     <property name="border_width">7</property>
@@ -2701,13 +2684,6 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkComboBox" id="soundcombo0">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="model">liststore2</property>
-                                    <child>
-                                      <object class="GtkCellRendererText" id="cellrenderertext2"/>
-                                      <attributes>
-                                        <attribute name="text">0</attribute>
-                                      </attributes>
-                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>

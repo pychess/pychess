@@ -11,8 +11,9 @@ class ToggleComboBox(Gtk.ToggleButton):
     __gsignals__ = {'changed': (GObject.SignalFlags.RUN_FIRST, None,
                                 (GObject.TYPE_INT, ))}
 
-    def __init__(self):
+    def __init__(self, name):
         GObject.GObject.__init__(self)
+        self.set_name(name)
         self.set_relief(Gtk.ReliefStyle.NONE)
 
         self.label = label = Gtk.Label()
