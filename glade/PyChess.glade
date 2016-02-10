@@ -765,7 +765,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="preferences1">
+                      <object class="GtkImageMenuItem" id="preferences_menu">
                         <property name="label">gtk-preferences</property>
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
@@ -1156,7 +1156,7 @@
       </row>
     </data>
   </object>
-  <object class="GtkWindow" id="preferences">
+  <object class="GtkWindow" id="preferences_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">7</property>
     <property name="title" translatable="yes">Preferences</property>
@@ -1167,8 +1167,7 @@
         <property name="can_focus">False</property>
         <property name="spacing">8</property>
         <child>
-          <object class="GtkNotebook" id="notebook1">
-            <property name="name">preferences_notebook</property>
+          <object class="GtkNotebook" id="preferences_notebook">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
@@ -2135,7 +2134,7 @@ It will search positions from http://www.k4it.de/</property>
                                 <property name="can_focus">True</property>
                                 <property name="shadow_type">in</property>
                                 <child>
-                                  <object class="GtkTreeView" id="treeview1">
+                                  <object class="GtkTreeView" id="panels_treeview">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="headers_visible">False</property>
@@ -2658,7 +2657,7 @@ It will search positions from http://www.k4it.de/</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="frame23">
+                      <object class="GtkFrame" id="sounds_frame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label_xalign">0</property>
@@ -2681,7 +2680,7 @@ It will search positions from http://www.k4it.de/</property>
                                   <placeholder/>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo0">
+                                  <object class="GtkComboBox" id="sound0combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -2692,7 +2691,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo1">
+                                  <object class="GtkComboBox" id="sound1combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -2706,7 +2705,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo2">
+                                  <object class="GtkComboBox" id="sound2combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -2720,7 +2719,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo4">
+                                  <object class="GtkComboBox" id="sound4combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -2734,7 +2733,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo5">
+                                  <object class="GtkComboBox" id="sound5combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -2748,7 +2747,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo6">
+                                  <object class="GtkComboBox" id="sound6combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -2762,7 +2761,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton0">
+                                  <object class="GtkButton" id="sound0button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -2783,7 +2782,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton1">
+                                  <object class="GtkButton" id="sound1button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -2806,7 +2805,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton2">
+                                  <object class="GtkButton" id="sound2button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -2829,7 +2828,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton4">
+                                  <object class="GtkButton" id="sound4button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -2852,7 +2851,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton5">
+                                  <object class="GtkButton" id="sound5button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -2875,7 +2874,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton6">
+                                  <object class="GtkButton" id="sound6button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -3015,7 +3014,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo3">
+                                  <object class="GtkComboBox" id="sound3combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -3029,7 +3028,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton3">
+                                  <object class="GtkButton" id="sound3button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -3082,7 +3081,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo7">
+                                  <object class="GtkComboBox" id="sound7combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -3096,7 +3095,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo8">
+                                  <object class="GtkComboBox" id="sound8combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -3110,7 +3109,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton7">
+                                  <object class="GtkButton" id="sound7button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -3133,7 +3132,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton8">
+                                  <object class="GtkButton" id="sound8button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -3196,7 +3195,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo9">
+                                  <object class="GtkComboBox" id="sound9combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -3210,7 +3209,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton9">
+                                  <object class="GtkButton" id="sound9button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -3248,7 +3247,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="soundcombo10">
+                                  <object class="GtkComboBox" id="sound10combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                   </object>
@@ -3262,7 +3261,7 @@ It will search positions from http://www.k4it.de/</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="soundbutton10">
+                                  <object class="GtkButton" id="sound10button">
                                     <property name="use_action_appearance">False</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>

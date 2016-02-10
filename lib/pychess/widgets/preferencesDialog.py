@@ -25,8 +25,8 @@ def run(widgets):
     if firstRun:
         initialize(widgets)
         firstRun = False
-    widgets["preferences"].show()
-    widgets["preferences"].present()
+    widgets["preferences_dialog"].show()
+    widgets["preferences_dialog"].present()
 
 
 def initialize(widgets):
@@ -37,14 +37,15 @@ def initialize(widgets):
     ThemeTab(widgets)
     SaveTab(widgets)
 
-    uistuff.keepWindowSize("preferencesdialog", widgets["preferences"])
+    widgets["preferences_notebook"].set_name("preferences_notebook")
+    uistuff.keepWindowSize("preferencesdialog", widgets["preferences_dialog"])
 
     def delete_event(widget, *args):
-        widgets["preferences"].hide()
+        widgets["preferences_dialog"].hide()
         return True
 
-    widgets["preferences"].connect("delete-event", delete_event)
-    widgets["preferences"].connect(
+    widgets["preferences_dialog"].connect("delete-event", delete_event)
+    widgets["preferences_dialog"].connect(
         "key-press-event",
         lambda w, e: w.event(Gdk.Event(Gdk.EventType.DELETE)) if e.keyval == Gdk.KEY_Escape else None)
 
@@ -406,7 +407,7 @@ class SoundTab:
                 opendialog.hide()
 
         for i in range(self.COUNT_OF_SOUNDS):
-            combo = widgets["soundcombo%d" % i]
+            combo = widgets["sound%dcombo" % i]
             uistuff.createCombo(combo, items, name="soundcombo%d" % i)
             #combo.set_active(0)
             combo.connect("changed", callback, i)
@@ -424,7 +425,7 @@ class SoundTab:
             if conf.get("soundcombo%d"%i, SOUND_MUTE) == SOUND_URI and \
                     not os.path.isfile(url2pathname(conf.get("sounduri%d"%i,"")[5:])):
                 conf.set("soundcombo%d" % i, SOUND_MUTE)
-            uistuff.keep(widgets["soundcombo%d" % i], "soundcombo%d" % i)
+            uistuff.keep(widgets["sound%dcombo" % i], "soundcombo%d" % i)
 
         # Init play button
 
@@ -432,14 +433,14 @@ class SoundTab:
             SoundTab.playAction(index)
 
         for i in range(self.COUNT_OF_SOUNDS):
-            button = widgets["soundbutton%d" % i]
+            button = widgets["sound%dbutton" % i]
             button.connect("clicked", playCallback, i)
 
         # Init 'use sound" checkbutton
 
         def checkCallBack(*args):
             checkbox = widgets["useSounds"]
-            widgets["frame23"].set_property("sensitive", checkbox.get_active())
+            widgets["sounds_frame"].set_property("sensitive", checkbox.get_active())
 
         conf.notify_add("useSounds", checkCallBack)
         widgets["useSounds"].set_active(True)
@@ -478,7 +479,7 @@ class PanelTab:
             text = "<b>%s</b>\n%s" % (panel.__title__, panel.__desc__)
             store.append((checked, panel_icon, text, panel))
 
-        self.tv = widgets["treeview1"]
+        self.tv = widgets["panels_treeview"]
         self.tv.set_model(store)
 
         self.widgets['panel_about_button'].connect('clicked', self.panel_about)
@@ -497,9 +498,9 @@ class PanelTab:
 
         uistuff.appendAutowrapColumn(self.tv, "Name", markup=2, sensitive=0)
 
-        widgets['notebook1'].connect("switch-page", self.__on_switch_page)
-        widgets["preferences"].connect("show", self.__on_show_window)
-        widgets["preferences"].connect("hide", self.__on_hide_window)
+        widgets['preferences_notebook'].connect("switch-page", self.__on_switch_page)
+        widgets["preferences_dialog"].connect("show", self.__on_show_window)
+        widgets["preferences_dialog"].connect("hide", self.__on_hide_window)
 
     def selection_changed(self, treeselection):
         store, iter = self.tv.get_selection().get_selected()
@@ -569,7 +570,7 @@ class PanelTab:
             self.hideit()
 
     def __on_show_window(self, widget):
-        notebook = self.widgets['notebook1']
+        notebook = self.widgets['preferences_notebook']
         page_num = notebook.get_current_page()
         if notebook.get_nth_page(page_num) == self.widgets['sidepanels']:
             self.showit()
