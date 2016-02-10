@@ -1,16 +1,9 @@
 # -*- coding: UTF-8 -*-
 
-import os
-
-from gi.repository import Gtk
 import cairo
 
-from pychess.Utils.const import *
 from pychess.gfx import Pieces
 from pychess.widgets.BoardView import BoardView
-from pychess.widgets import gamewidget
-from pychess.System.prefix import addDataPrefix
-
 
 __label__ = _("Png image")
 __ending__ = "png"
@@ -25,7 +18,7 @@ def save(file, model, position=None):
 
     d = Diagram(model)
 
-    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, SQUARE*8, SQUARE*8)
+    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, SQUARE * 8, SQUARE * 8)
     context = cairo.Context(surface)
 
     d.shown = position
@@ -37,22 +30,23 @@ def save(file, model, position=None):
 class Diagram(BoardView):
     def draw_position(self, context):
         context.set_source_rgb(0.5, 0.5, 0.5)
-        self.__drawBoard (context)
+        self.__drawBoard(context)
 
         pieces = self.model.getBoardAtPly(self.shown)
         context.set_source_rgb(0, 0, 0)
-        for y, row in enumerate(pieces.data):
-            for x, piece in row.items():
+        for y_loc, row in enumerate(pieces.data):
+            for x_loc, piece in row.items():
                 if piece is not None:
-                    Pieces.drawPiece(piece, context, x*SQUARE, (7-y)*SQUARE, SQUARE)
+                    Pieces.drawPiece(piece, context, x_loc * SQUARE,
+                                     (7 - y_loc) * SQUARE, SQUARE)
 
     def __drawBoard(self, context):
-        for x in range(8):
-            for y in range(8):
-                if (x+y) % 2 == 1:
-                    context.rectangle(x*SQUARE, y*SQUARE, SQUARE, SQUARE)
+        for x_loc in range(8):
+            for y_loc in range(8):
+                if (x_loc + y_loc) % 2 == 1:
+                    context.rectangle(x_loc * SQUARE, y_loc * SQUARE, SQUARE, SQUARE)
         context.fill()
 
         if not self.showCords:
-            context.rectangle(0, 0, 8*SQUARE, 8*SQUARE)
+            context.rectangle(0, 0, 8 * SQUARE, 8 * SQUARE)
             context.stroke()
