@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the pychess package.
 # 
 # Translators:
-# Andi Chandler <andi@gowling.com>, 2013-2015
+# Andi Chandler <andi@gowling.com>, 2013-2016
 # gbtami <gbtami@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-27 13:28+0100\n"
-"PO-Revision-Date: 2016-01-28 08:56+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2016-02-06 18:04+0000\n"
+"Last-Translator: Andi Chandler <andi@gowling.com>\n"
 "Language-Team: English (United Kingdom) (http://www.transifex.com/gbtami/pychess/language/en_GB/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -353,7 +353,7 @@ msgstr "_Game List"
 
 #: glade/fics_lounge.glade:2847
 msgid "_My games"
-msgstr ""
+msgstr "_My games"
 
 #: glade/fics_lounge.glade:2904 glade/PyChess.glade:841
 msgid "Offer _Resume"
@@ -377,11 +377,11 @@ msgstr "Pre_view"
 
 #: glade/fics_lounge.glade:3151
 msgid "Examine"
-msgstr ""
+msgstr "Examine"
 
 #: glade/fics_lounge.glade:3208
 msgid "_Archived"
-msgstr ""
+msgstr "_Archived"
 
 #: glade/fics_lounge.glade:3313
 msgid "<b>News</b>"
@@ -823,11 +823,11 @@ msgstr "If set, the board will turn after each move, to show the natural view fo
 
 #: glade/PyChess.glade:1364
 msgid "Auto _promote to  queen"
-msgstr ""
+msgstr "Auto _promote to  queen"
 
 #: glade/PyChess.glade:1369
 msgid "If set, pawn promotes to queen without promotion dialog selection."
-msgstr ""
+msgstr "If set, Pawn promotes to Queen without promotion dialogue selection."
 
 #: glade/PyChess.glade:1383
 msgid "Face _to Face display mode"
@@ -885,7 +885,7 @@ msgstr "If set, the hint analyser engine evaluation value is shown."
 
 #: glade/PyChess.glade:1526
 msgid "<b>General Options</b>"
-msgstr ""
+msgstr "<b>General Options</b>"
 
 #: glade/PyChess.glade:1560
 msgid "F_ull board animation"
@@ -1214,7 +1214,7 @@ msgstr "Ha_ndle:"
 
 #: glade/taskers.glade:469
 msgid "<b>_Connect to server</b>"
-msgstr ""
+msgstr "<b>_Connect to server</b>"
 
 #: glade/tipoftheday.glade:7
 msgid "Tip Of The day"
@@ -1495,7 +1495,7 @@ msgstr "You may only have 3 outstanding seeks at the same time. If you want to a
 
 #: lib/pychess/ic/ICLounge.py:258
 msgid "You can't touch this! You are examining a game."
-msgstr ""
+msgstr "You can't touch this! You are examining a game."
 
 #: lib/pychess/ic/ICLounge.py:270
 msgid " has declined your offer for a match"
@@ -1617,11 +1617,11 @@ msgstr "Accept"
 
 #: lib/pychess/ic/ICLounge.py:728
 msgid "Assess"
-msgstr ""
+msgstr "Assess"
 
 #: lib/pychess/ic/ICLounge.py:734
 msgid "Archived"
-msgstr ""
+msgstr "Archived"
 
 #: lib/pychess/ic/ICLounge.py:848
 #, python-format
@@ -1700,7 +1700,7 @@ msgstr "Challenge: "
 
 #: lib/pychess/ic/ICLounge.py:2044
 msgid "If set you can refuse players accepting your seek"
-msgstr ""
+msgstr "If set, you can refuse players accepting your seek"
 
 #: lib/pychess/ic/ICLounge.py:2048 lib/pychess/ic/ICLounge.py:2051
 msgid "This option is not applicable because you're challenging a player"
@@ -1906,19 +1906,19 @@ msgstr "D"
 
 #: lib/pychess/ic/__init__.py:195
 msgid "H"
-msgstr ""
+msgstr "H"
 
 #: lib/pychess/ic/__init__.py:195
 msgid "CM"
-msgstr ""
+msgstr "CM"
 
 #: lib/pychess/ic/__init__.py:195
 msgid "FA"
-msgstr ""
+msgstr "FA"
 
 #: lib/pychess/ic/__init__.py:195
 msgid "NM"
-msgstr ""
+msgstr "NM"
 
 #: lib/pychess/Players/CECPEngine.py:857
 #, python-format
@@ -2768,7 +2768,7 @@ msgstr "Abort"
 
 #: lib/pychess/widgets/ChatView.py:125
 msgid "Observers"
-msgstr ""
+msgstr "Observers"
 
 #: lib/pychess/widgets/ChatWindow.py:222
 msgid "You have opened no conversations yet"
@@ -2796,7 +2796,7 @@ msgstr "Friends"
 
 #: lib/pychess/widgets/ChatWindow.py:529
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: lib/pychess/widgets/ChatWindow.py:540
 msgid "More channels"
@@ -2808,15 +2808,15 @@ msgstr "More players"
 
 #: lib/pychess/widgets/ChatWindow.py:558
 msgid "Computers"
-msgstr ""
+msgstr "Computers"
 
 #: lib/pychess/widgets/ChatWindow.py:568
 msgid "BlindFold"
-msgstr ""
+msgstr "BlindFold"
 
 #: lib/pychess/widgets/ChatWindow.py:578
 msgid "Guests"
-msgstr ""
+msgstr "Guests"
 
 #: lib/pychess/widgets/ChatWindow.py:805
 msgid "Conversations"
@@ -3014,7 +3014,7 @@ msgstr "Step back one move"
 
 #: lib/pychess/widgets/gamewidget.py:658
 msgid "Go back to the main line"
-msgstr ""
+msgstr "Go back to the main line"
 
 #: lib/pychess/widgets/gamewidget.py:664
 msgid "Step forward one move"
