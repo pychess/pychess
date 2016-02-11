@@ -6,15 +6,17 @@ from pychess.compat import StringIO
 from pychess.System.Log import log
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Offer import Offer
-from pychess.Utils.const import *
+from pychess.Utils.const import REMOTE, DRAW, WHITE, BLACK, RUNNING, WHITEWON, KILLED, \
+    TAKEBACK_OFFER, WON_CALLFLAG, WAITING_TO_START, BLACKWON, PAUSE_OFFER, PAUSED, \
+    RESUME_OFFER, DISCONNECTED, CHAT_ACTION, RESIGNATION, FLAG_CALL, OFFERS, LOCAL, \
+    ACTION_ERROR_NONE_TO_ACCEPT, UNFINISHED_STATES, ABORT_OFFER
 from pychess.Players.Human import Human
-from pychess.Players.Player import TurnInterrupt
 from pychess.Savers import fen as fen_loader
-from pychess.ic import *
-from pychess.ic.FICSObjects import FICSPlayer
+from pychess.ic import GAME_TYPES, TYPE_TOURNAMENT_DIRECTOR
 
-class ICGameModel (GameModel):
-    def __init__ (self, connection, ficsgame, timemodel):
+
+class ICGameModel(GameModel):
+    def __init__(self, connection, ficsgame, timemodel):
         assert ficsgame.game_type in GAME_TYPES.values()
         GameModel.__init__(self, timemodel, ficsgame.game_type.variant)
         self.connection = connection
@@ -23,42 +25,55 @@ class ICGameModel (GameModel):
         self.gmwidg_ready = threading.Event()
 
         connections = self.connections
-        connections[connection.bm].append(connection.bm.connect("boardUpdate", self.onBoardUpdate))
-        connections[connection.bm].append(connection.bm.connect("obsGameEnded", self.onGameEnded))
-        connections[connection.bm].append(connection.bm.connect("curGameEnded", self.onGameEnded))
-        connections[connection.bm].append(connection.bm.connect("gamePaused", self.onGamePaused))
-        connections[connection.bm].append(connection.bm.connect("madeExamined", self.onMadeExamined))
-        connections[connection.bm].append(connection.bm.connect("madeUnExamined", self.onMadeUnExamined))
-        connections[connection.om].append(connection.om.connect("onActionError", self.onActionError))
-        connections[connection.cm].append(connection.cm.connect("kibitzMessage", self.onKibitzMessage))
-        connections[connection.cm].append(connection.cm.connect("whisperMessage", self.onWhisperMessage))
-        connections[connection.cm].append(connection.cm.connect("observers_received", self.onObserversReceived))
-        connections[connection].append(connection.connect("disconnected", self.onDisconnected))
+        connections[connection.bm].append(connection.bm.connect(
+            "boardUpdate", self.onBoardUpdate))
+        connections[connection.bm].append(connection.bm.connect(
+            "obsGameEnded", self.onGameEnded))
+        connections[connection.bm].append(connection.bm.connect(
+            "curGameEnded", self.onGameEnded))
+        connections[connection.bm].append(connection.bm.connect(
+            "gamePaused", self.onGamePaused))
+        connections[connection.bm].append(connection.bm.connect(
+            "madeExamined", self.onMadeExamined))
+        connections[connection.bm].append(connection.bm.connect(
+            "madeUnExamined", self.onMadeUnExamined))
+        connections[connection.om].append(connection.om.connect(
+            "onActionError", self.onActionError))
+        connections[connection.cm].append(connection.cm.connect(
+            "kibitzMessage", self.onKibitzMessage))
+        connections[connection.cm].append(connection.cm.connect(
+            "whisperMessage", self.onWhisperMessage))
+        connections[connection.cm].append(connection.cm.connect(
+            "observers_received", self.onObserversReceived))
+        connections[connection].append(connection.connect("disconnected",
+                                                          self.onDisconnected))
 
         rated = "rated" if ficsgame.rated else "unrated"
         # This is in the format that ficsgames.org writes these PGN headers
-        self.tags["Event"] = "FICS %s %s game" % (rated, ficsgame.game_type.fics_name)
+        self.tags["Event"] = "FICS %s %s game" % (rated,
+                                                  ficsgame.game_type.fics_name)
         self.tags["Site"] = "freechess.org"
 
-    def __repr__ (self):
-        s = GameModel.__repr__(self)
-        s = s.replace("<GameModel", "<ICGameModel")
-        fg = repr(self.ficsgame)
-        s = s.replace(", players=", ", ficsgame=%s, players=" % fg)
-        return s
+    def __repr__(self):
+        string = GameModel.__repr__(self)
+        string = string.replace("<GameModel", "<ICGameModel")
+        fics_game = repr(self.ficsgame)
+        string = string.replace(", players=", ", ficsgame=%s, players=" % fics_game)
+        return string
 
     @property
-    def display_text (self):
-        t = "[ "
+    def display_text(self):
+        text = "[ "
         if self.timed:
-            t += self.timemodel.display_text + " "
-        t += self.ficsgame.display_rated.lower() + " "
+            text += self.timemodel.display_text + " "
+        text += self.ficsgame.display_rated.lower() + " "
         if self.ficsgame.game_type.display_text:
-            t += self.ficsgame.game_type.display_text + " "
-        return t + "]"
+            text += self.ficsgame.game_type.display_text + " "
+        return text + "]"
 
-    def __disconnect (self):
-        if self.connections is None: return
+    def __disconnect(self):
+        if self.connections is None:
+            return
         for obj in self.connections:
             # Humans need to stay connected post-game so that "GUI > Actions" works
             if isinstance(obj, Human):
@@ -71,24 +86,24 @@ class ICGameModel (GameModel):
                     obj.disconnect(handler_id)
         self.connections = None
 
-    def ficsplayer (self, player):
+    def ficsplayer(self, player):
         if player.ichandle == self.ficsplayers[0].name:
             return self.ficsplayers[0]
         else:
             return self.ficsplayers[1]
 
     @property
-    def remote_player (self):
+    def remote_player(self):
         if self.players[0].__type__ == REMOTE:
             return self.players[0]
         else:
             return self.players[1]
 
     @property
-    def remote_ficsplayer (self):
+    def remote_ficsplayer(self):
         return self.ficsplayer(self.remote_player)
 
-    def hasGuestPlayers (self):
+    def hasGuestPlayers(self):
         for player in self.ficsplayers:
             if player.isGuest():
                 return True
@@ -101,7 +116,8 @@ class ICGameModel (GameModel):
                 return False
         return True
 
-    def onBoardUpdate (self, bm, gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms):
+    def onBoardUpdate(self, bm, gameno, ply, curcol, lastmove, fen, wname,
+                      bname, wms, bms):
         log.debug(("ICGameModel.onBoardUpdate: id=%s self.ply=%s self.players=%s gameno=%s " + \
                   "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s") % \
                   (str(id(self)), str(self.ply), repr(self.players), str(gameno), str(wname), str(bname), \
@@ -123,26 +139,34 @@ class ICGameModel (GameModel):
                     self.timemodel.tap()
                     self.timemodel.paused = True
 
-            self.timemodel.updatePlayer (WHITE, wms/1000.)
-            self.timemodel.updatePlayer (BLACK, bms/1000.)
+            self.timemodel.updatePlayer(WHITE, wms / 1000.)
+            self.timemodel.updatePlayer(BLACK, bms / 1000.)
 
         if lastmove is None:
             if bname != self.tags["Black"]:
-                self.tags["Black"] = self.players[BLACK].name = self.ficsplayers[BLACK].name = bname
+                self.tags["Black"] = self.players[
+                    BLACK].name = self.ficsplayers[BLACK].name = bname
                 self.emit("players_changed")
             if wname != self.tags["White"]:
-                self.tags["White"] = self.players[WHITE].name = self.ficsplayers[WHITE].name = wname
+                self.tags["White"] = self.players[
+                    WHITE].name = self.ficsplayers[WHITE].name = wname
                 self.emit("players_changed")
             if self.boards[-1].asFen() != fen:
                 self.status = RUNNING
-                self.loadAndStart(StringIO(fen), fen_loader, 0, -1, first_time=False)
+                self.loadAndStart(
+                    StringIO(fen),
+                    fen_loader,
+                    0,
+                    -1,
+                    first_time=False)
                 self.emit("game_started")
                 curPlayer = self.players[self.curColor]
                 curPlayer.resetPosition()
 
         elif ply < self.ply:
-            log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s self.ply=%d ply=%d: TAKEBACK" % \
-                (id(self), str(self.players), self.ply, ply))
+            log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s \
+                      self.ply=%d ply=%d: TAKEBACK" % \
+                      (id(self), str(self.players), self.ply, ply))
             for offer in list(self.offers.keys()):
                 if offer.type == TAKEBACK_OFFER:
                     # There can only be 1 outstanding takeback offer for both players on FICS,
@@ -153,46 +177,57 @@ class ICGameModel (GameModel):
             # In some cases (like lost on time) the last move is resent
             # or we just observing an examined game
             if self.reason != WON_CALLFLAG:
-                if len(self.moves) >= self.ply-ply:
-                    self.undoMoves(self.ply-ply)
+                if len(self.moves) >= self.ply - ply:
+                    self.undoMoves(self.ply - ply)
                 else:
                     self.status = RUNNING
-                    self.loadAndStart(StringIO(fen), fen_loader, 0, -1, first_time=False)
+                    self.loadAndStart(
+                        StringIO(fen),
+                        fen_loader,
+                        0,
+                        -1,
+                        first_time=False)
                     self.emit("game_started")
                     curPlayer = self.players[self.curColor]
                     curPlayer.resetPosition()
 
-        elif ply > self.ply+1:
+        elif ply > self.ply + 1:
             self.status = RUNNING
-            self.loadAndStart(StringIO(fen), fen_loader, 0, -1, first_time=False)
+            self.loadAndStart(
+                StringIO(fen),
+                fen_loader,
+                0,
+                -1,
+                first_time=False)
             self.emit("game_started")
             curPlayer = self.players[self.curColor]
             curPlayer.resetPosition()
 
-    def onMadeExamined (self, bm, gameno):
+    def onMadeExamined(self, bm, gameno):
         self.examined = True
 
-    def onMadeUnExamined (self, bm, gameno):
+    def onMadeUnExamined(self, bm, gameno):
         self.examined = False
 
-    def onGameEnded (self, bm, ficsgame):
+    def onGameEnded(self, bm, ficsgame):
         if ficsgame == self.ficsgame and len(self.players) >= 2:
             log.debug(
                 "ICGameModel.onGameEnded: self.players=%s ficsgame=%s" % \
                 (repr(self.players), repr(ficsgame)))
             self.end(ficsgame.result, ficsgame.reason)
 
-    def setPlayers (self, players):
+    def setPlayers(self, players):
         GameModel.setPlayers(self, players)
         if self.players[WHITE].icrating:
             self.tags["WhiteElo"] = self.players[WHITE].icrating
         if self.players[BLACK].icrating:
             self.tags["BlackElo"] = self.players[BLACK].icrating
 
-    def onGamePaused (self, bm, gameno, paused):
+    def onGamePaused(self, bm, gameno, paused):
         if paused:
             self.pause()
-        else: self.resume()
+        else:
+            self.resume()
 
         # we have to do this here rather than in acceptReceived(), because
         # sometimes FICS pauses/unpauses a game clock without telling us that the
@@ -202,22 +237,22 @@ class ICGameModel (GameModel):
             if offer.type in (PAUSE_OFFER, RESUME_OFFER):
                 del self.offers[offer]
 
-    def onDisconnected (self, connection):
+    def onDisconnected(self, connection):
         if self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            self.end (KILLED, DISCONNECTED)
+            self.end(KILLED, DISCONNECTED)
 
     ############################################################################
     # Chat management                                                          #
     ############################################################################
 
-    def onKibitzMessage (self, cm, name, gameno, text):
+    def onKibitzMessage(self, cm, name, gameno, text):
         if not self.gmwidg_ready.is_set():
             self.gmwidg_ready.wait()
         if gameno != self.ficsgame.gameno:
             return
         self.emit("message_received", name, text)
 
-    def onWhisperMessage (self, cm, name, gameno, text):
+    def onWhisperMessage(self, cm, name, gameno, text):
         if gameno != self.ficsgame.gameno:
             return
         self.emit("message_received", name, text)
@@ -227,16 +262,17 @@ class ICGameModel (GameModel):
             return
         self.emit("observers_received", observers)
 
-
     ############################################################################
     # Offer management                                                         #
     ############################################################################
 
-    def offerReceived (self, player, offer):
-        log.debug("ICGameModel.offerReceived: offerer=%s %s" % (repr(player), offer))
+    def offerReceived(self, player, offer):
+        log.debug("ICGameModel.offerReceived: offerer=%s %s" %
+                  (repr(player), offer))
         if player == self.players[WHITE]:
             opPlayer = self.players[BLACK]
-        else: opPlayer = self.players[WHITE]
+        else:
+            opPlayer = self.players[WHITE]
 
         if offer.type == CHAT_ACTION:
             opPlayer.putMessage(offer.param)
@@ -246,7 +282,8 @@ class ICGameModel (GameModel):
 
         elif offer.type in OFFERS:
             if offer not in self.offers:
-                log.debug("ICGameModel.offerReceived: %s.offer(%s)" % (repr(opPlayer), offer))
+                log.debug("ICGameModel.offerReceived: %s.offer(%s)" %
+                          (repr(opPlayer), offer))
                 self.offers[offer] = player
                 opPlayer.offer(offer)
             # If the offer was an update to an old one, like a new takebackvalue
@@ -255,13 +292,16 @@ class ICGameModel (GameModel):
                 if offer.type == offer_.type and offer != offer_:
                     del self.offers[offer_]
 
-    def acceptReceived (self, player, offer):
-        log.debug("ICGameModel.acceptReceived: accepter=%s %s" % (repr(player), offer))
+    def acceptReceived(self, player, offer):
+        log.debug("ICGameModel.acceptReceived: accepter=%s %s" %
+                  (repr(player), offer))
         if player.__type__ == LOCAL:
             if offer not in self.offers or self.offers[offer] == player:
                 player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
             else:
-                log.debug("ICGameModel.acceptReceived: connection.om.accept(%s)" % offer)
+                log.debug(
+                    "ICGameModel.acceptReceived: connection.om.accept(%s)" %
+                    offer)
                 self.connection.om.accept(offer)
                 del self.offers[offer]
 
@@ -269,17 +309,17 @@ class ICGameModel (GameModel):
         # know automatically if he/she accepts an offer, and will simply send
         # us the result.
 
-    def checkStatus (self):
+    def checkStatus(self):
         pass
 
-    def onActionError (self, om, offer, error):
+    def onActionError(self, om, offer, error):
         self.emit("action_error", offer, error)
 
     #
     # End
     #
 
-    def end (self, status, reason):
+    def end(self, status, reason):
         if self.examined:
             self.connection.bm.unexamine()
 
@@ -297,16 +337,16 @@ class ICGameModel (GameModel):
         else:
             GameModel.end(self, status, reason)
 
-    def goFirst (self):
+    def goFirst(self):
         self.connection.client.run_command("backward 999")
 
-    def goPrev (self, step=1):
+    def goPrev(self, step=1):
         self.connection.client.run_command("backward %s" % step)
 
-    def goNext (self, step=1):
+    def goNext(self, step=1):
         self.connection.client.run_command("forward %s" % step)
 
-    def goLast (self):
+    def goLast(self):
         self.connection.client.run_command("forward 999")
 
     def backToMainLine(self):
