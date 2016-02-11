@@ -13,7 +13,7 @@ import pychess
 from pychess.System import fident
 from pychess.System.Log import log
 
-from pychess.ic import NAMES_RE, TITLES_RE
+from pychess.ic import NAMES_RE, TITLES_RE, NAME
 from .managers.SeekManager import SeekManager
 from .managers.FingerManager import FingerManager
 from .managers.NewsManager import NewsManager
@@ -27,7 +27,7 @@ from .managers.AutoLogOutManager import AutoLogOutManager
 from .managers.ErrorManager import ErrorManager
 from .managers.AdjournManager import AdjournManager
 
-from .FICSObjects import FICSPlayers, FICSGames, FICSSeeks, FICSChallenges, NAME
+from .FICSObjects import FICSPlayers, FICSGames, FICSSeeks, FICSChallenges
 from .TimeSeal import TimeSeal, CanceledException
 from .VerboseTelnet import LinePrediction, FromPlusPrediction, FromABPlusPrediction, \
     FromToPrediction, PredictionsTelnet, NLinesPrediction
