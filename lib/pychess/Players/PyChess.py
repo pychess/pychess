@@ -202,7 +202,6 @@ class PyChess(object):
 if __name__ == "__main__":
     import logging
     from pychess.Players.PyChessCECP import PyChessCECP
-    from pychess.System.Log import log
     if len(sys.argv) == 1 or sys.argv[1:] == ["debug"]:
         if "debug" in sys.argv[1:]:
             log.logger.setLevel(logging.DEBUG)
