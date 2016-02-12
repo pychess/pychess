@@ -117,19 +117,19 @@ class TimeSeal(object):
         lenb = len(buf)
         idx = 0
         while idx < lenb:
-            buffer_idx = buf[idx]
+            buffer_item = buf[idx]
             expected = expected_table[state]
-            if buffer_idx == expected:
+            if buffer_item == expected:
                 state += 1
                 if state == final_state:
                     g_count += 1
                     lookahead = []
                     state = 0
                 else:
-                    lookahead.append(buffer_idx)
+                    lookahead.append(buffer_item)
                 idx += 1
             elif state == 0:
-                result.append(buffer_idx)
+                result.append(buffer_item)
                 idx += 1
             else:
                 result.extend(lookahead)
