@@ -4,13 +4,16 @@ import datetime
 from gi.repository import GObject
 
 from .BoardManager import names, months, dates
+
 from pychess.ic import GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_OFFLINE, BLKCMD_STORED, \
     BLKCMD_HISTORY, BLKCMD_JOURNAL
 from pychess.ic.FICSObjects import FICSAdjournedGame, FICSHistoryGame, FICSJournalGame, FICSPlayer
+
 from pychess.Utils.const import WON_ADJUDICATION, DRAW_AGREE, WON_DISCONNECTION, WON_CALLFLAG, \
     WON_MATE, DRAW_INSUFFICIENT, DRAW_REPITITION, WON_RESIGN, DRAW_STALEMATE, \
     DRAW_BLACKINSUFFICIENTANDWHITETIME, WON_NOMATERIAL, DRAW_50MOVES, WHITEWON, DRAW, \
     BLACK, WHITE, BLACKWON, reprResult, ADJOURNED
+
 from pychess.System.Log import log
 
 reasons_dict = {
