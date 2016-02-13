@@ -400,18 +400,8 @@ class ChatManager(GObject.GObject):
         self.connection.client.run_command("ptell %s" % message)
 
     def tellUser(self, player, message):
-        IS_TD = False
-        if IS_TD:
-            MAX_COM_SIZE = 1024  # TODO: Get from limits
-            for i in range(0, len(message), MAX_COM_SIZE):
-                chunk = message[i:i + MAX_COM_SIZE]
-                chunk = chunk.replace("\n", "\\n")
-                chunk = self.entityEncode(chunk)
-                self.connection.client.run_command("qell %s %s" %
-                                                   (player, chunk))
-        else:
-            for line in message.strip().split("\n"):
-                self.tellPlayer(player, line)
+        for line in message.strip().split("\n"):
+            self.tellPlayer(player, line)
 
     def whisper(self, message):
         message = self.entityEncode(message)
