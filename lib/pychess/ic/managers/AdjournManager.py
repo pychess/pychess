@@ -2,7 +2,6 @@ from __future__ import absolute_import
 import datetime
 
 from gi.repository import GObject
-
 from .BoardManager import names, months, dates
 
 from pychess.ic import GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_OFFLINE, BLKCMD_STORED, \
