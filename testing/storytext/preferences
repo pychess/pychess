@@ -1,0 +1,26 @@
+wait for all_engines_discovered
+edit_menu
+first_name tamas
+second_name Guest
+auto_rotate_on
+show_blunder_on
+ana_combo PyChess.py
+inv_ana_como PyChess.py
+max_ana 3
+sound0 move1.ogg
+sound1 check1.ogg
+sound2 capture1.ogg
+sound3 start1.ogg
+sound4 win1.ogg
+sound5 lose1.ogg
+sound6 draw1.ogg
+sound7 obs_mov.ogg
+sound8 obs_end.ogg
+sound9 alarm.ogg
+sound10 invalid.ogg
+use_sounds_on
+alarm_spin 15
+auto_save_format pychess
+preferences_menu
+preferences_close
+pychess_window_close
