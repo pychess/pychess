@@ -17,6 +17,13 @@ cd testing
 $ PYTHONPATH=lib/ python run_tests.py
 
 -------------
+Developers shoud install some linters:
+pip install flake8
+pip install pep8-naming
+flake8 --install-hook
+git config flake8.strict true
+
+-------------
 Dependencies for Ubuntu/Debian:
 gnome-icon-theme
 python >= 2.7   (or python3)
