@@ -24,3 +24,11 @@ def prettyPrintScore(s, depth):
         return "%s#%s" % (pp, MATE_VALUE)
     else:
         return "%s%0.2f%s" % (pp, s / 100.0, depth)
+
+def createStoryTextAppEvent(text):
+    try:
+        import storytext
+        storytext.applicationEvent(text)
+    except ImportError:
+        pass
+

@@ -37,7 +37,6 @@ def initialize(widgets):
     ThemeTab(widgets)
     SaveTab(widgets)
 
-    widgets["preferences_notebook"].set_name("preferences_notebook")
     uistuff.keepWindowSize("preferencesdialog", widgets["preferences_dialog"])
 
     def delete_event(widget, *args):

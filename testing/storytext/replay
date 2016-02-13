@@ -1,5 +1,8 @@
 #!/bin/sh
 
+cp ~/.config/pychess/config ~/.config/pychess/config.saved
+rm ~/.config/pychess/config
+
 cd ~/pychess
 LANG=C PYTHONPATH=~/storytext/lib ~/storytext/bin/storytext \
 	--interface=gtk3 \
@@ -7,3 +10,5 @@ LANG=C PYTHONPATH=~/storytext/lib ~/storytext/bin/storytext \
 	--mapfiles=testing/storytext/ui_map.conf \
 	--replay=testing/storytext/"$1" \
 ./pychess
+
+cp ~/.config/pychess/config.saved ~/.config/pychess/config

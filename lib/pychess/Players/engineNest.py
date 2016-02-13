@@ -18,6 +18,7 @@ from pychess.System.command import Command
 from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
 from pychess.System.prefix import addUserConfigPrefix, getDataPrefix, getEngineDataPrefix
 from pychess.Players.Player import PlayerIsDead
+from pychess.Utils import createStoryTextAppEvent
 from pychess.Utils.const import BLACK, UNKNOWN_REASON, SUBPROCESS_SUBPROCESS, WHITE, \
     HINT, ANALYZING, INVERSE_ANALYZING
 from .CECPEngine import CECPEngine
@@ -420,6 +421,7 @@ class EngineDiscoverer(GObject.GObject):
                 if all([elem[1] for elem in self.toBeRechecked.values()]):
                     self.engines.sort(key=lambda x: x["name"])
                     self.emit("all_engines_discovered")
+                    createStoryTextAppEvent("all_engines_discovered")
 
         self.connect("engine_discovered", count, True)
         self.connect("engine_failed", count, False)
@@ -431,6 +433,7 @@ class EngineDiscoverer(GObject.GObject):
                     self.__discoverE(engine)
         else:
             self.emit("all_engines_discovered")
+            createStoryTextAppEvent("all_engines_discovered")
 
     ############################################################################
     # Interaction                                                              #
