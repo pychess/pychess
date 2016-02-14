@@ -2,7 +2,7 @@
 [![Documentation Status](https://readthedocs.org/projects/pychess/badge/?version=latest)](http://pychess.readthedocs.org/en/latest/?badge=latest)
 [![bountysource](https://api.bountysource.com/badge/team?team_id=62285)](https://salt.bountysource.com/checkout/amount?team=pychess)
 
-PyChess - a free chess client for Linux
+PyChess - a free chess client for Linux/Windows
 
 The mission of PyChess is to create a free, pleasant, pygtk chess game for the
 Linux desktop that does everything you require from an advanced chess client.
