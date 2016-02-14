@@ -32,7 +32,7 @@ def create_test(o, n):
             elif (orig == "0-0" and new == "O-O") or (orig == "0-0-0" and new == "O-O-O"):
                 continue
 
-#            self.assertEqual(orig, new)
+            self.assertEqual(orig, new)
 
     return test_expected
 
