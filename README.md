@@ -1,5 +1,4 @@
-[![Build Status](https://drone.io/github.com/pychess/pychess/status.png)](https://drone.io/github.com/pychess/pychess/latest)
-[![Documentation Status](https://readthedocs.org/projects/pychess/badge/?version=latest)](http://pychess.readthedocs.org/en/latest/?badge=latest)
+[![Build Status](https://travis-ci.org/pychess/pychess.svg?branch=master)](https://travis-ci.org/pychess/pychess)[![Documentation Status](https://readthedocs.org/projects/pychess/badge/?version=latest)](http://pychess.readthedocs.org/en/latest/?badge=latest)
 [![bountysource](https://api.bountysource.com/badge/team?team_id=62285)](https://salt.bountysource.com/checkout/amount?team=pychess)
 
 PyChess - a free chess client for Linux
