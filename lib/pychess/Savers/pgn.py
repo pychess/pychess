@@ -86,8 +86,8 @@ def save(file, model, position=None):
 
     print('[Event "%s"]' % model.tags["Event"], file=file)
     print('[Site "%s"]' % model.tags["Site"], file=file)
-    print('[Date "%04d.%02d.%02d"]' % \
-        (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])), file=file)
+    print('[Date "%04d.%02d.%02d"]' %
+          (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])), file=file)
     print('[Round "%s"]' % model.tags["Round"], file=file)
     print('[White "%s"]' % repr(model.players[WHITE]), file=file)
     print('[Black "%s"]' % repr(model.players[BLACK]), file=file)
@@ -103,10 +103,10 @@ def save(file, model, position=None):
     if "Time" in model.tags:
         print('[Time "%s"]' % str(model.tags["Time"]), file=file)
     if model.timed:
-        print('[WhiteClock "%s"]' % \
-            msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)), file=file)
-        print('[BlackClock "%s"]' % \
-            msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)), file=file)
+        print('[WhiteClock "%s"]' %
+              msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)), file=file)
+        print('[BlackClock "%s"]' %
+              msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)), file=file)
 
     if model.variant.variant != NORMALCHESS:
         print('[Variant "%s"]' % model.variant.cecp_name.capitalize(),
@@ -233,8 +233,10 @@ def move_count(node, black_periods=False):
         ply = node.plyCount
         if ply % 2 == 1:
             mvcount = "%d." % (ply // 2 + 1)
-        elif node.prev.prev is None or node != node.prev.next or black_periods:
-            # initial game move, or initial variation move
+        # initial game move, or initial variation move
+        # it can be the same position as the main line! this is the reason using id()
+        elif node.prev.prev is None or id(node) != id(
+                node.prev.next) or black_periods:
             mvcount = "%d..." % (ply // 2)
         elif node.prev.children:
             # move after real(not [%foo bar]) comment
@@ -322,7 +324,7 @@ class PGNFile(PgnBase):
                         ) / 1000. if millisec > 23 * 60 * 60 * 1000 else millisec / 1000.
                         model.timemodel.intervals[color][0] = start_sec
                     except ValueError:
-                        raise LoadingError( \
+                        raise LoadingError(
                             "Error parsing '%s' Header for gameno %s" % (tag, gameno))
 
         fenstr = self._getTag(gameno, "FEN")
