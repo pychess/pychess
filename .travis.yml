@@ -5,12 +5,12 @@ matrix:
     - os: linux
       sudo: required
       dist: trusty
-      language: generic
+      language: python
       env: PYTHON="python2" PACKAGES="python-cairo python-gi python-gi-cairo python-sqlalchemy"
     - os: linux
       sudo: required
       dist: trusty
-      language: generic
+      language: python
       env: PYTHON="python3" PACKAGES="python3-cairo python3-gi python3-gi-cairo python3-sqlalchemy"
 
 install:
