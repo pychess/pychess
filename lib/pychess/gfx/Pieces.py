@@ -3,7 +3,8 @@ import re
 import cairo
 from gi.repository import Rsvg
 
-from pychess.Utils.const import BLACK, WHITE, KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN
+from pychess.Utils.const import BLACK, WHITE, KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN, \
+    reprSign
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.System.cairoextras import create_cairo_font_face_for_file
