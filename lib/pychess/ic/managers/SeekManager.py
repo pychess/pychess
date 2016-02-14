@@ -2,10 +2,11 @@ import re
 
 from gi.repository import GObject
 
-from pychess.Utils.const import *
-from pychess.ic import *
-from pychess.ic.FICSObjects import *
-from pychess.ic.managers.HelperManager import HelperManager
+from pychess.Utils.const import WHITE, FISCHERRANDOMCHESS
+from pychess.ic import BLKCMD_ASSESS, VariantGameType, DEVIATION, GAME_TYPES, \
+    parse_title_hex, BLKCMD_UNSEEK, BLKCMD_SEEK, UNSUPPORTED, type_to_display_text, \
+    Variants
+from pychess.ic.FICSObjects import FICSPlayer, FICSSeek
 from pychess.System.Log import log
 
 rated = "(rated|unrated)"
@@ -22,73 +23,71 @@ rating_re = re.compile("[0-9]{2,}")
 type_re = "(Lightning|Blitz|Standard|Suicide|Wild|Crazyhouse|Bughouse|Losers|Atomic)"
 
 
-class SeekManager (GObject.GObject):
-    
+class SeekManager(GObject.GObject):
+
     __gsignals__ = {
-        'addSeek' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
-        'removeSeek' : (GObject.SignalFlags.RUN_FIRST, None, (int,)),
-        'clearSeeks' : (GObject.SignalFlags.RUN_FIRST, None, ()),
-        'our_seeks_removed' : (GObject.SignalFlags.RUN_FIRST, None, ()),
-        'seek_updated' : (GObject.SignalFlags.RUN_FIRST, None, (str,)),
-        'assessReceived' : (GObject.SignalFlags.RUN_FIRST, None, (object,)),
+        'addSeek': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+        'removeSeek': (GObject.SignalFlags.RUN_FIRST, None, (int, )),
+        'clearSeeks': (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'our_seeks_removed': (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'seek_updated': (GObject.SignalFlags.RUN_FIRST, None, (str, )),
+        'assessReceived': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
     }
-    
-    def __init__ (self, connection):
+
+    def __init__(self, connection):
         GObject.GObject.__init__(self)
         self.connection = connection
-        
-        self.connection.expect_line (self.on_seek_clear, "<sc>")
-        self.connection.expect_line (self.on_seek_add, "<s(?:n?)> (.+)")
-        self.connection.expect_line (self.on_seek_remove, "<sr> ([\d ]+)")
-        self.connection.expect_n_lines (self.on_our_seeks_removed,
-            "<sr> ([\d ]+)",
-            "Your seeks have been removed\.")
-        self.connection.expect_n_lines (self.on_seek_updated,
-            "Updating seek ad (\d+)(?:;?) (.*)\.",
-            "",
-            "<sr> (\d+)",
-            "",
-            "<sn> (.+)")
-        self.connection.expect_n_lines (self.on_seek_updated,
-            "Updating seek ad (\d+)(?:;?) (.*)\.",
-            "Updating seek ad \d+(?:;?) (.*)\.",
-            "",
-            "<sr> (\d+)",
-            "",
-            "<sn> (.+)")
 
-        self.connection.expect_n_lines (self.on_assess,
-            "\s*%s\s*" % type_re,
-            "\s*(\w+)\s+(\w+)\s*",
-            "\s*(\(.+\))\s+(\(.+\))\s*",
-            "\s*Win: .+",
-            "\s*Draw: .+",
-            "\s*Loss: .+",
-            "\s*New RD: .+")
+        self.connection.expect_line(self.on_seek_clear, "<sc>")
+        self.connection.expect_line(self.on_seek_add, "<s(?:n?)> (.+)")
+        self.connection.expect_line(self.on_seek_remove, "<sr> ([\d ]+)")
+        self.connection.expect_n_lines(self.on_our_seeks_removed,
+                                       "<sr> ([\d ]+)",
+                                       "Your seeks have been removed\.")
+        self.connection.expect_n_lines(self.on_seek_updated,
+                                       "Updating seek ad (\d+)(?:;?) (.*)\.",
+                                       "", "<sr> (\d+)", "", "<sn> (.+)")
+        self.connection.expect_n_lines(self.on_seek_updated,
+                                       "Updating seek ad (\d+)(?:;?) (.*)\.",
+                                       "Updating seek ad \d+(?:;?) (.*)\.", "",
+                                       "<sr> (\d+)", "", "<sn> (.+)")
+
+        self.connection.expect_n_lines(
+            self.on_assess, "\s*%s\s*" % type_re, "\s*(\w+)\s+(\w+)\s*",
+            "\s*(\(.+\))\s+(\(.+\))\s*", "\s*Win: .+", "\s*Draw: .+",
+            "\s*Loss: .+", "\s*New RD: .+")
 
         self.connection.client.run_command("iset seekinfo 1")
         self.connection.client.run_command("iset seekremove 1")
         self.connection.client.run_command("iset showownseek 1")
-        
-    def seek (self, startmin, incsec, game_type, rated, ratings=(0, 9999),
-              color=None, manual=False):
-        log.debug("SeekManager.seek: %s %s %s %s %s %s %s" % \
-            (startmin, incsec, game_type, rated, str(ratings), color, manual))
+
+    def seek(self,
+             startmin,
+             incsec,
+             game_type,
+             rated,
+             ratings=(0, 9999),
+             color=None,
+             manual=False):
+        log.debug("SeekManager.seek: %s %s %s %s %s %s %s" %
+                  (startmin, incsec, game_type, rated, str(ratings), color, manual))
         rchar = "r" if rated else "u"
-        if color != None:
+        if color is not None:
             cchar = color == WHITE and "w" or "b"
-        else: cchar = ""
+        else:
+            cchar = ""
         manual = "m" if manual else ""
         s = "seek %d %d %s %s %s" % (startmin, incsec, rchar, cchar, manual)
         if isinstance(game_type, VariantGameType):
             s += " " + game_type.seek_text
         if not self.connection.FatICS:
             s += " %d-%d" % (ratings[0], ratings[1])
-        
+
         self.connection.client.run_command(s, show_reply=True)
 
     def assess(self, player1, player2, type):
-        self.connection.client.run_command("assess %s %s /%s" % (player1, player2, type))
+        self.connection.client.run_command("assess %s %s /%s" %
+                                           (player1, player2, type))
 
     def on_assess(self, matchlist):
         assess = {}
@@ -100,9 +99,10 @@ class SeekManager (GObject.GObject):
         assess["loss"] = matchlist[5].string.split()[1:]
         assess["newRD"] = matchlist[6].string.split()[2:]
         self.emit("assessReceived", assess)
+
     on_assess.BLKCMD = BLKCMD_ASSESS
 
-    def on_seek_add (self, match):
+    def on_seek_add(self, match):
         # The <s> message looks like:
         # <s> index w=name_from ti=titles rt=rating t=time i=increment
         #     r=rated('r')/unrated('u') tp=type("wild/fr", "wild/4","blitz")
@@ -112,7 +112,7 @@ class SeekManager (GObject.GObject):
         seek = {}
         for key, value in [p.split("=") for p in parts[1:] if p]:
             seek[key] = value
-        
+
         try:
             index = int(parts[0])
             player = self.connection.players.get(FICSPlayer(seek['w']))
@@ -136,13 +136,13 @@ class SeekManager (GObject.GObject):
         except KeyError as e:
             log.warning("on_seek_add: KeyError: %s %s" % (repr(e), repr(seek)))
             return
-        
+
         try:
             gametype = GAME_TYPES[seek["tp"]]
         except KeyError:
             if self.connection.FatICS and seek["tp"] == "chess":
                 # TODO: remove when fixed in FatICS
-                expected_time = minutes + increment*2/3
+                expected_time = minutes + increment * 2 / 3
                 if expected_time == 0:
                     gametype = "untimed"
                 elif expected_time < 3:
@@ -163,42 +163,57 @@ class SeekManager (GObject.GObject):
             ratingobj.deviation = deviation
         except KeyError:
             pass
-        
-        seek = FICSSeek(index, player, minutes, increment, rated, color,
-                        gametype, rmin=rmin, rmax=rmax, automatic=automatic)
+
+        seek = FICSSeek(index,
+                        player,
+                        minutes,
+                        increment,
+                        rated,
+                        color,
+                        gametype,
+                        rmin=rmin,
+                        rmax=rmax,
+                        automatic=automatic)
         self.emit("addSeek", seek)
+
     on_seek_add.BLKCMD = BLKCMD_SEEK
-    
-    def on_seek_clear (self, *args):
+
+    def on_seek_clear(self, *args):
         self.emit("clearSeeks")
-    
-    def on_seek_remove (self, match):
+
+    def on_seek_remove(self, match):
         for key in match.groups()[0].split(" "):
-            if not key: continue
+            if not key:
+                continue
             self.emit("removeSeek", int(key))
+
     on_seek_remove.BLKCMD = BLKCMD_UNSEEK
-    
-    def on_our_seeks_removed (self, matchlist):
+
+    def on_our_seeks_removed(self, matchlist):
         self.on_seek_remove(matchlist[0])
         self.emit("our_seeks_removed")
+
     on_our_seeks_removed.BLKCMD = BLKCMD_UNSEEK
-    
-    def on_seek_updated (self, matchlist):
+
+    def on_seek_updated(self, matchlist):
         text = matchlist[0].groups()[1]
         i = 0
         if "Updating seek ad" in matchlist[1].string:
             text += '; ' + matchlist[1].groups()[0]
             i = 1
-        self.on_seek_remove(matchlist[i+2])
-        self.on_seek_add(matchlist[i+4])
+        self.on_seek_remove(matchlist[i + 2])
+        self.on_seek_add(matchlist[i + 4])
         self.emit("seek_updated", text)
+
     on_seek_updated.BLKCMD = BLKCMD_SEEK
 
-    def refresh_seeks (self):
+    def refresh_seeks(self):
         self.connection.client.run_command("iset seekinfo 1")
 
 
 if __name__ == "__main__":
-    assert type_to_display_text("Loaded from eco/a00") == type_to_display_text("eco/a00") == "Eco A00"
-    assert type_to_display_text("wild/fr") == Variants.variants[FISCHERRANDOMCHESS].name
+    assert type_to_display_text("Loaded from eco/a00") == type_to_display_text(
+        "eco/a00") == "Eco A00"
+    assert type_to_display_text("wild/fr") == Variants.variants[
+        FISCHERRANDOMCHESS].name
     assert type_to_display_text("blitz") == GAME_TYPES["blitz"].display_text
