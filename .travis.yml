@@ -5,20 +5,19 @@ matrix:
     - os: linux
       sudo: required
       dist: trusty
-      language: python
+      language: generic
       env: PYTHON="python2" PACKAGES="python-cairo python-gi python-gi-cairo python-sqlalchemy"
     - os: linux
       sudo: required
       dist: trusty
-      language: python
+      language: generic
       env: PYTHON="python3" PACKAGES="python3-cairo python3-gi python3-gi-cairo python3-sqlalchemy"
 
 install:
  - sudo apt-get update -q
- - sudo apt-get install gobject-introspection gir1.2-glib-2.0  gir1.2-gtk-3.0 gir1.2-rsvg-2.0 $(echo $PACKAGES)
- - deactivate
- - python -c "import gi"
- - sudo start xvfb
+ - sudo apt-get install -y xvfb gobject-introspection gir1.2-glib-2.0  gir1.2-gtk-3.0 gir1.2-rsvg-2.0 $(echo $PACKAGES)
+ - virtualenv --python=$PYTHON --system-site-packages _venv
+ - source _venv/bin/activate
 
 script:
  - xvfb-run -a $PYTHON ./setup.py build sdist
