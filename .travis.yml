@@ -14,11 +14,11 @@ matrix:
       env: PYTHON="python3" PACKAGES="python3-cairo python3-gi python3-gi-cairo python3-sqlalchemy"
 
 install:
+ - sudo apt-get update -q
+ - sudo apt-get install gobject-introspection gir1.2-glib-2.0  gir1.2-gtk-3.0 gir1.2-rsvg-2.0 $(echo $PACKAGES)
  - deactivate
  - python -c "import gi"
  - sudo start xvfb
- - sudo apt-get update -q
- - sudo apt-get install gobject-introspection gir1.2-glib-2.0  gir1.2-gtk-3.0 gir1.2-rsvg-2.0 $(echo $PACKAGES)
 
 script:
  - xvfb-run -a $PYTHON ./setup.py build sdist
