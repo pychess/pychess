@@ -122,7 +122,7 @@ class BoardPreview:
 
     def onSelectionChanged(self, selection):
         iter = selection.get_selected()[1]
-        if iter == None:
+        if iter is None:
             self.gamemodel.boards = [Board(FEN_EMPTY)]
             del self.gamemodel.moves[:]
             self.boardview.shown = 0
@@ -141,8 +141,8 @@ class BoardPreview:
             try:
                 self.chessfile.loadToModel(sel, -1, self.gamemodel)
             except LoadingError as err:
-                dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING, \
-                                             buttons=Gtk.ButtonsType.OK, \
+                dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
+                                             buttons=Gtk.ButtonsType.OK,
                                              message_format=err.args[0])
                 dialogue.format_secondary_text(err.args[1])
                 dialogue.connect("response", lambda dialogue, a: dialogue.hide())
@@ -197,7 +197,7 @@ class BoardPreview:
         as_path = splitUri(filename)[-1]
         if os.path.isfile(as_path):
             self.fcbutton.show()
-            #if filename != self._retrieve_filename():
+            # if filename != self._retrieve_filename():
             #    self.fcbutton.set_filename(os.path.abspath(as_path))
             self.fcbutton.set_filename(os.path.abspath(as_path))
         else:
@@ -216,7 +216,7 @@ class BoardPreview:
 
     def getGameno(self):
         iter = self.list.get_selection().get_selected()[1]
-        if iter == None:
+        if iter is None:
             return -1
         path = self.list.get_model().get_path(iter)
         indices = path.get_indices()
