@@ -116,7 +116,7 @@ class ChatView(Gtk.Box):
             elif "(" in player:
                 pref = player.split('(', 1)[0]
                 self._ensureColor(pref)
-                text_buf.insert_with_tags_by_name(iter, "%s " % player, \
+                text_buf.insert_with_tags_by_name(iter, "%s " % player,
                                                   pref + "_bold")
             else:
                 text_buf.insert(iter, "%s " % player)
@@ -125,13 +125,13 @@ class ChatView(Gtk.Box):
     def _ensureColor(self, pref):
         """ Ensures that the tags for pref_normal and pref_bold are set in the text buffer """
         text_buf = self.readView.get_buffer()
-        if not pref in self.colors:
+        if pref not in self.colors:
             color = uistuff.genColor(len(self.colors) + 1, self.startpoint)
             self.colors[pref] = color
             color = [int(c * 255) for c in color]
             color = "#" + "".join([hex(v)[2:].zfill(2) for v in color])
             text_buf.create_tag(pref + "_normal", foreground=color)
-            text_buf.create_tag(pref + "_bold", foreground=color, \
+            text_buf.create_tag(pref + "_bold", foreground=color,
                                 weight=Pango.Weight.BOLD)
             if isinstance(self.gamemodel, ICGameModel):
                 otb = self.obsView.get_buffer()
@@ -199,7 +199,7 @@ class ChatView(Gtk.Box):
         self.writeView.set_sensitive(True)
 
     def onKeyPress(self, widget, event):
-        if event.keyval in list(map(Gdk.keyval_from_name, \
+        if event.keyval in list(map(Gdk.keyval_from_name,
                                     ("Return", "KP_Enter"))):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
