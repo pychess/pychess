@@ -105,16 +105,16 @@ def newTheme(widget):
             return Gdk.RGBA(red, green, blue, 1.0)
 
     # derive other colors
-    bgacol = get_col(bgcol, 0.9)            # bg_active
-    dcol = get_col(bgcol, 0.7)              # dark
-    darksel = get_col(bgsel, 0.71)          # dark selected
-    dpcol = get_col(bgcol, 0.71)            # dark prelight
-    dacol = get_col(dcol, 0.9)              # dark_active
-    lcol = get_col(bgcol, 1.3)              # light color
-    lightsel = get_col(bgsel, 1.3)          # light selected
-    fgsel = Gdk.RGBA(0.99, 0.99, 0.99, 1.0) # fg selected
-    fgpcol = get_col(fgcol, 1.054)          # fg prelight
-    fgacol = Gdk.RGBA(0.0, 0.0, 0.0, 1.0)   # fg active
+    bgacol = get_col(bgcol, 0.9)                # bg_active
+    dcol = get_col(bgcol, 0.7)                  # dark
+    darksel = get_col(bgsel, 0.71)              # dark selected
+    dpcol = get_col(bgcol, 0.71)                # dark prelight
+    dacol = get_col(dcol, 0.9)                  # dark_active
+    lcol = get_col(bgcol, 1.3)                  # light color
+    lightsel = get_col(bgsel, 1.3)              # light selected
+    fgsel = Gdk.RGBA(0.99, 0.99, 0.99, 1.0)     # fg selected
+    fgpcol = get_col(fgcol, 1.054)              # fg prelight
+    fgacol = Gdk.RGBA(0.0, 0.0, 0.0, 1.0)       # fg active
     textaacol = Gdk.RGBA(
         min(
             (basecol.red + textcol.red) / 2., 1.0), min(
@@ -128,30 +128,30 @@ def newTheme(widget):
         return "#%02X%02X%02X" % (int(color.red * 255), int(color.green * 255),
                                   int(color.blue * 255))
 
-    data = "@define-color p_bg_color "          + hexcol(bgcol) + ";" \
-           "@define-color p_bg_prelight "       + hexcol(bgcol) + ";" \
-           "@define-color p_bg_active "         + hexcol(bgacol) + ";" \
-           "@define-color p_bg_selected "       + hexcol(bgsel) + ";" \
-           "@define-color p_bg_insensitive "    + hexcol(bgcol) + ";" \
-           "@define-color p_base_color "        + hexcol(basecol) + ";" \
-           "@define-color p_dark_color "        + hexcol(dcol) + ";" \
-           "@define-color p_dark_prelight "     + hexcol(dpcol) + ";" \
-           "@define-color p_dark_active "       + hexcol(dacol) + ";" \
-           "@define-color p_dark_selected "     + hexcol(darksel) + ";" \
-           "@define-color p_text_aa "           + hexcol(textaacol) + ";" \
-           "@define-color p_light_color "       + hexcol(lcol) + ";" \
-           "@define-color p_light_selected "    + hexcol(lightsel) + ";" \
-           "@define-color p_fg_color "          + hexcol(fgcol) + ";" \
-           "@define-color p_fg_prelight "       + hexcol(fgpcol) + ";" \
-           "@define-color p_fg_selected "       + hexcol(fgsel) + ";" \
-           "@define-color p_fg_active "         + hexcol(fgacol) + ";"
+    data = "@define-color p_bg_color " + hexcol(bgcol) + ";" \
+        "@define-color p_bg_prelight " + hexcol(bgcol) + ";" \
+        "@define-color p_bg_active " + hexcol(bgacol) + ";" \
+        "@define-color p_bg_selected " + hexcol(bgsel) + ";" \
+        "@define-color p_bg_insensitive " + hexcol(bgcol) + ";" \
+        "@define-color p_base_color " + hexcol(basecol) + ";" \
+        "@define-color p_dark_color " + hexcol(dcol) + ";" \
+        "@define-color p_dark_prelight " + hexcol(dpcol) + ";" \
+        "@define-color p_dark_active " + hexcol(dacol) + ";" \
+        "@define-color p_dark_selected " + hexcol(darksel) + ";" \
+        "@define-color p_text_aa " + hexcol(textaacol) + ";" \
+        "@define-color p_light_color " + hexcol(lcol) + ";" \
+        "@define-color p_light_selected " + hexcol(lightsel) + ";" \
+        "@define-color p_fg_color " + hexcol(fgcol) + ";" \
+        "@define-color p_fg_prelight " + hexcol(fgpcol) + ";" \
+        "@define-color p_fg_selected " + hexcol(fgsel) + ";" \
+        "@define-color p_fg_active " + hexcol(fgacol) + ";"
 
     if provider is not None:
         style_ctxt.remove_provider_for_screen(Gdk.Screen.get_default(), provider)
 
     provider = Gtk.CssProvider.new()
     provider.load_from_data(data.encode())
-    style_ctxt.add_provider_for_screen(Gdk.Screen.get_default(), provider, \
+    style_ctxt.add_provider_for_screen(Gdk.Screen.get_default(), provider,
                                        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     lnewcolor = bgcol
@@ -219,7 +219,7 @@ def set_textview_color(textview):
     # TODO: breaks text selection visibility
     style_ctxt = textview.get_style_context()
     bg_color = style_ctxt.lookup_color("p_light_color")[1]
-    #textview.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
+    # textview.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
     fg_color = style_ctxt.lookup_color("p_fg_color")[1]
-    #textview.override_color(Gtk.StateFlags.NORMAL, fg_color)
+    # textview.override_color(Gtk.StateFlags.NORMAL, fg_color)
     return (bg_color, fg_color)
