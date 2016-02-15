@@ -15,11 +15,12 @@ from pychess.gfx import Pieces
 from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import ASEAN_VARIANTS, DROP_VARIANTS, WAITING_TO_START, REMOTE, \
-                                LOCAL, DRAW, WHITEWON, BLACKWON, ABORTED, KILLED, DROP, \
-                                KING_CASTLE, QUEEN_CASTLE, WILDCASTLESHUFFLECHESS, \
-                                WILDCASTLECHESS, PAWN, KNIGHT, SITTUYINCHESS, BLACK
+    LOCAL, DRAW, WHITEWON, BLACKWON, ABORTED, KILLED, DROP, \
+    KING_CASTLE, QUEEN_CASTLE, WILDCASTLESHUFFLECHESS, \
+    WILDCASTLECHESS, PAWN, KNIGHT, SITTUYINCHESS, BLACK
 from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
-                                       HiddenPiecesBoard, AllWhiteBoard
+    HiddenPiecesBoard, AllWhiteBoard
+
 from . import preferencesDialog
 
 
@@ -31,10 +32,11 @@ def intersects(r_zero, r_one):
     h_zero = r_zero.height + r_zero.y
     w_one = r_one.width + r_one.x
     h_one = r_one.height + r_one.y
-    return  (w_one < r_one.x or w_one > r_zero.x) and \
-            (h_one < r_one.y or h_one > r_zero.y) and \
-            (w_zero < r_zero.x or w_zero > r_one.x) and \
-            (h_zero < r_zero.y or h_zero > r_one.y)
+    return (w_one < r_one.x or w_one > r_zero.x) and \
+        (h_one < r_one.y or h_one > r_zero.y) and \
+        (w_zero < r_zero.x or w_zero > r_one.x) and \
+        (h_zero < r_zero.y or h_zero > r_one.y)
+
 
 def contains(r_zero, r_one):
     """ Takes two squares and determines if square one is contained
@@ -46,7 +48,8 @@ def contains(r_zero, r_one):
     w_one = r_one.width + r_one.x
     h_one = r_one.height + r_one.y
     return r_zero.x <= r_one.x and w_zero >= w_one and \
-           r_zero.y <= r_one.y and h_zero >= h_one
+        r_zero.y <= r_one.y and h_zero >= h_one
+
 
 def union(r_zero, r_one):
     """ Takes 2 rectangles and returns a rectangle that represents
@@ -55,11 +58,12 @@ def union(r_zero, r_one):
     """
     x_min = min(r_zero.x, r_one.x)
     y_min = min(r_zero.y, r_one.y)
-    w_max = max(r_zero.x+r_zero.width, r_one.x+r_one.width) - x_min
-    h_max = max(r_zero.y+r_zero.height, r_one.y+r_one.height) - y_min
+    w_max = max(r_zero.x + r_zero.width, r_one.x + r_one.width) - x_min
+    h_max = max(r_zero.y + r_zero.height, r_one.y + r_one.height) - y_min
     rct = Gdk.Rectangle()
     rct.x, rct.y, rct.width, rct.height = (x_min, y_min, w_max, h_max)
     return rct
+
 
 def join(r_zero, r_one):
     """ Take(x, y, w, [h]) squares """
@@ -77,11 +81,12 @@ def join(r_zero, r_one):
         r_one = (r_one[0], r_one[1], r_one[2], r_one[2])
 
     x_one = min(r_zero[0], r_one[0])
-    x_two = max(r_zero[0]+r_zero[2], r_one[0]+r_one[2])
+    x_two = max(r_zero[0] + r_zero[2], r_one[0] + r_one[2])
     y_one = min(r_zero[1], r_one[1])
-    y_two = max(r_zero[1]+r_zero[3], r_one[1]+r_one[3])
+    y_two = max(r_zero[1] + r_zero[3], r_one[1] + r_one[3])
 
     return (x_one, y_one, x_two - x_one, y_two - y_one)
+
 
 def rect(rectangle):
     """
@@ -93,10 +98,12 @@ def rect(rectangle):
     width = int(ceil(rectangle[2]))
     if len(rectangle) == 4:
         height = int(ceil(rectangle[3]))
-    else: height = width
+    else:
+        height = width
     rct = Gdk.Rectangle()
     rct.x, rct.y, rct.width, rct.height = (x_size, y_size, width, height)
     return rct
+
 
 def matrixAround(rotated_matrix, anchor_x, anchor_y):
     """
@@ -107,16 +114,16 @@ def matrixAround(rotated_matrix, anchor_x, anchor_y):
     """
     corner = rotated_matrix[0]
     side = rotated_matrix[1]
-    anchor_yside = anchor_y*side
-    anchor_xside = anchor_x*side
-    anchor_ycorner = anchor_y*(1-corner)
-    anchor_xcorner = anchor_x*(1-corner)
-    matrix = cairo.Matrix(corner, side, -side, corner, \
-                          anchor_xcorner+anchor_yside, \
-                          anchor_ycorner-anchor_xside)
-    invmatrix = cairo.Matrix(corner, -side, side, corner, \
-                             anchor_xcorner-anchor_yside, \
-                             anchor_ycorner+anchor_xside)
+    anchor_yside = anchor_y * side
+    anchor_xside = anchor_x * side
+    anchor_ycorner = anchor_y * (1 - corner)
+    anchor_xcorner = anchor_x * (1 - corner)
+    matrix = cairo.Matrix(corner, side, -side, corner,
+                          anchor_xcorner + anchor_yside,
+                          anchor_ycorner - anchor_xside)
+    invmatrix = cairo.Matrix(corner, -side, side, corner,
+                             anchor_xcorner - anchor_yside,
+                             anchor_ycorner + anchor_xside)
     return matrix, invmatrix
 
 ANIMATION_TIME = 0.5
@@ -127,14 +134,14 @@ SCALE_ROTATED_BOARD = False
 
 CORD_PADDING = 1.5
 
+
 class BoardView(Gtk.DrawingArea):
     """ Description The BoardView instance is used to render the board to screen and supports
         event updates associated with the game
     """
 
-
-    __gsignals__ = { # Signals emitted by class
-        'shownChanged' : (GObject.SignalFlags.RUN_FIRST, None, (int,))
+    __gsignals__ = {  # Signals emitted by class
+        'shownChanged': (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
 
     def __init__(self, gamemodel=None, preview=False, setup_position=False):
@@ -147,7 +154,7 @@ class BoardView(Gtk.DrawingArea):
         self.asean = self.model.variant.variant in ASEAN_VARIANTS
         self.preview = preview
         self.setup_position = setup_position
-        self.shown_variation_idx = 0 # the main variation is the first in gamemodel.variations list
+        self.shown_variation_idx = 0  # the main variation is the first in gamemodel.variations list
 
         self.model.connect("game_started", self.gameStarted)
         self.model.connect("game_started", self.gameStartedAfter)
@@ -181,10 +188,10 @@ class BoardView(Gtk.DrawingArea):
         # only false when self.shown set temporarily(change shown variation)
         # to avoid redraw_misc in animation
 
-        self.padding = 0 # Set to self.pad when setcords is active
-        self.square = 0, 0, self.FILES, 1 # An object global variable with the current
-                                 # board size
-        self.pad = 0.13 # Padding applied only when setcords is active
+        self.padding = 0  # Set to self.pad when setcords is active
+        self.square = 0, 0, self.FILES, 1  # An object global variable with the current
+        # board size
+        self.pad = 0.13  # Padding applied only when setcords is active
 
         self._selected = None
         self._hover = None
@@ -203,7 +210,7 @@ class BoardView(Gtk.DrawingArea):
             self.showCaptured = False
         else:
             self.showCaptured = conf.get("showCaptured", False) or \
-                                self.model.variant.variant in DROP_VARIANTS
+                self.model.variant.variant in DROP_VARIANTS
         self._show_enpassant = False
         self.lastMove = None
         self.matrix = cairo.Matrix()
@@ -238,7 +245,7 @@ class BoardView(Gtk.DrawingArea):
                 self.lastMove = model.moves[-1]
             with self.animation_lock:
                 for row in self.model.boards[-1].data:
-                    for piece in row.values(): #row:
+                    for piece in row.values():  # row:
                         if piece:
                             piece.opacity = 0
             self.got_started = True
@@ -250,7 +257,8 @@ class BoardView(Gtk.DrawingArea):
             move = model.moves[-1]
             if move.is_capture(model.boards[-2]):
                 sound = "aPlayerCaptures"
-            else: sound = "aPlayerMoves"
+            else:
+                sound = "aPlayerMoves"
 
             if model.boards[-1].board.isChecked():
                 sound = "aPlayerChecks"
@@ -264,7 +272,7 @@ class BoardView(Gtk.DrawingArea):
         # Auto updating self.shown can be disabled. Useful for loading games.
         # If we are not at the latest game we are probably browsing the history,
         # and we won't like auto updating.
-        if self.auto_update_shown and self.shown+1 >= ply and self.shownIsMainLine():
+        if self.auto_update_shown and self.shown + 1 >= ply and self.shownIsMainLine():
             self.shown = ply
 
             # Rotate board
@@ -274,15 +282,15 @@ class BoardView(Gtk.DrawingArea):
 
     def movesUndoing(self, model, moves):
         if self.shownIsMainLine():
-            self.shown = model.ply-moves
+            self.shown = model.ply - moves
         else:
             # Go back to the mainline to let animation system work
             board = model.getBoardAtPly(self.shown, self.shown_variation_idx)
             while board not in model.variations[0]:
-                board = model.variations[self.shown_variation_idx][board.ply-model.lowply-1]
+                board = model.variations[self.shown_variation_idx][board.ply - model.lowply - 1]
             self.shown = board.ply
             self.shown_variation_idx = 0
-            self.shown = model.ply-moves
+            self.shown = model.ply - moves
         self.redrawCanvas()
 
     def gameLoading(self, model, uri):
@@ -296,7 +304,7 @@ class BoardView(Gtk.DrawingArea):
         self.redrawCanvas()
 
         if self.model.players:
-            sound =  ""
+            sound = ""
 
             if model.status == DRAW:
                 sound = "gameIsDrawn"
@@ -353,7 +361,6 @@ class BoardView(Gtk.DrawingArea):
         """
         self.redrawCanvas()
 
-
     ###############################
     #          Animation          #
     ###############################
@@ -399,7 +406,7 @@ class BoardView(Gtk.DrawingArea):
                     # Go back to the common board of variations to let animation system work
                     board_in_vari = board
                     while board_in_vari not in self.model.variations[self.shown_variation_idx]:
-                        board_in_vari = vari[board_in_vari.ply-self.model.lowply-1]
+                        board_in_vari = vari[board_in_vari.ply - self.model.lowply - 1]
                     self.real_set_shown = False
                     self.shown = board_in_vari.ply
                     break
@@ -431,11 +438,10 @@ class BoardView(Gtk.DrawingArea):
         if len(self.model.boards) == 1 or self.shown < self.model.lowply:
             self._shown = shown
             if shown > self.model.lowply:
-                self.lastMove = self.model.getMoveAtPly(shown-1, self.shown_variation_idx)
+                self.lastMove = self.model.getMoveAtPly(shown - 1, self.shown_variation_idx)
             self.emit("shownChanged", self.shown)
             self.redrawCanvas()
             return
-
 
         step = shown > self.shown and 1 or -1
 
@@ -448,7 +454,7 @@ class BoardView(Gtk.DrawingArea):
                     move = self.model.getMoveAtPly(i, self.shown_variation_idx)
                     moved, new, dead = board.simulateMove(board1, move)
                 else:
-                    move = self.model.getMoveAtPly(i-1, self.shown_variation_idx)
+                    move = self.model.getMoveAtPly(i - 1, self.shown_variation_idx)
                     moved, new, dead = board.simulateUnmove(board1, move)
 
                 # We need to ensure, that the piece coordinate is saved in the
@@ -474,7 +480,7 @@ class BoardView(Gtk.DrawingArea):
                     piece.opacity = 0
 
         self.deadlist = []
-        for y_loc, row in enumerate(self.model.getBoardAtPly(self.shown, \
+        for y_loc, row in enumerate(self.model.getBoardAtPly(self.shown,
                                                              self.shown_variation_idx).data):
             for x_loc, piece in row.items():
                 if piece in deadset:
@@ -495,7 +501,7 @@ class BoardView(Gtk.DrawingArea):
             self.lastMove = None
             self.redrawCanvas(rect(paint_box))
         if self.shown > self.model.lowply:
-            self.lastMove = self.model.getMoveAtPly(self.shown-1, self.shown_variation_idx)
+            self.lastMove = self.model.getMoveAtPly(self.shown - 1, self.shown_variation_idx)
         else:
             self.lastMove = None
 
@@ -525,13 +531,13 @@ class BoardView(Gtk.DrawingArea):
 
         if self._do_stop:
             self._do_stop = False
-            self.animimation_id = -1
+            self.animimation_id = - 1
             return False
 
         with self.animation_lock:
             paint_box = None
 
-            mod = min(1, (time()-self.animation_start)/ANIMATION_TIME)
+            mod = min(1, (time() - self.animation_start) / ANIMATION_TIME)
             board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
 
             for y_loc, row in enumerate(board.data):
@@ -542,7 +548,7 @@ class BoardView(Gtk.DrawingArea):
                         continue
                     if piece == self.premove_piece:
                         # if premove move is being made, the piece will already be
-                        #sitting on the cord it needs to move to-
+                        # sitting on the cord it needs to move to-
                         # do not animate and reset premove to None
                         if self.shown == self.premove_ply:
                             piece.x = None
@@ -555,7 +561,7 @@ class BoardView(Gtk.DrawingArea):
                             x_loc = self.premove1.x
                             y_loc = self.premove1.y
 
-                    if piece.x != None:
+                    if piece.x is not None:
                         if not conf.get("noAnimation", False):
                             if piece.piece == KNIGHT:
                                 newx = piece.x + (x_loc - piece.x) * mod**(1.5)
@@ -566,13 +572,13 @@ class BoardView(Gtk.DrawingArea):
                         else:
                             newx, newy = x_loc, y_loc
 
-                        paint_box = join(paint_box, self.cord2RectRelative(piece.x,\
+                        paint_box = join(paint_box, self.cord2RectRelative(piece.x,
                                                                            piece.y))
                         paint_box = join(paint_box, self.cord2RectRelative(newx, newy))
 
                         if (newx <= x_loc <= piece.x or newx >= x_loc >= piece.x) and \
                            (newy <= y_loc <= piece.y or newy >= y_loc >= piece.y) or \
-                           abs(newx-x_loc) < 0.005 and abs(newy-y_loc) < 0.005:
+                           abs(newx - x_loc) < 0.005 and abs(newy - y_loc) < 0.005:
                             paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
                             piece.x = None
                             piece.y = None
@@ -581,7 +587,7 @@ class BoardView(Gtk.DrawingArea):
                             piece.y = newy
 
                     if piece.opacity < 1:
-                        if piece.x != None:
+                        if piece.x is not None:
                             px_loc = piece.x
                             py_loc = piece.y
                         else:
@@ -590,7 +596,8 @@ class BoardView(Gtk.DrawingArea):
 
                         if paint_box:
                             paint_box = join(paint_box, self.cord2RectRelative(px_loc, py_loc))
-                        else: paint_box = self.cord2RectRelative(px_loc, py_loc)
+                        else:
+                            paint_box = self.cord2RectRelative(px_loc, py_loc)
 
                         if not conf.get("noAnimation", False):
                             new_op = piece.opacity + (1 - piece.opacity) * mod
@@ -599,14 +606,16 @@ class BoardView(Gtk.DrawingArea):
 
                         if new_op >= 1 >= piece.opacity or abs(1 - new_op) < 0.005:
                             piece.opacity = 1
-                        else: piece.opacity = new_op
+                        else:
+                            piece.opacity = new_op
 
             ready = []
             for i, dead in enumerate(self.deadlist):
                 piece, x_loc, y_loc = dead
                 if not paint_box:
                     paint_box = self.cord2RectRelative(x_loc, y_loc)
-                else: paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
+                else:
+                    paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
 
                 if not conf.get("noAnimation", False):
                     new_op = piece.opacity + (0 - piece.opacity) * mod
@@ -615,7 +624,8 @@ class BoardView(Gtk.DrawingArea):
 
                 if new_op <= 0 <= piece.opacity or abs(0 - new_op) < 0.005:
                     ready.append(dead)
-                else: piece.opacity = new_op
+                else:
+                    piece.opacity = new_op
 
             for dead in ready:
                 self.deadlist.remove(dead)
@@ -648,12 +658,12 @@ class BoardView(Gtk.DrawingArea):
     #############################
 
     def onRealized(self, widget):
-        padding = (1-self.padding)
+        padding = (1 - self.padding)
         alloc = self.get_allocation()
         square = float(min(alloc.width, alloc.height)) * padding
-        xc_loc = alloc.width/2. - square/2
-        yc_loc = alloc.height/2. - square/2
-        size = square/self.FILES
+        xc_loc = alloc.width / 2. - square / 2
+        yc_loc = alloc.height / 2. - square / 2
+        size = square / self.FILES
         self.square = (xc_loc, yc_loc, square, size)
 
     def expose(self, widget, ctx):
@@ -675,9 +685,9 @@ class BoardView(Gtk.DrawingArea):
         else:
             with self.animation_lock:
                 self.draw(context, rectangle)
-            #self.drawcount += 1
-            #self.drawtime += time() - start
-            #if self.drawcount % 100 == 0:
+            # self.drawcount += 1
+            # self.drawtime += time() - start
+            # if self.drawcount % 100 == 0:
             #    print( "Average FPS: %0.3f - %d / %d" % \
             #     (self.drawcount/self.drawtime, self.drawcount, self.drawtime))
 
@@ -709,7 +719,7 @@ class BoardView(Gtk.DrawingArea):
     ###############################
 
     def draw(self, context, r):
-        #context.set_antialias(cairo.ANTIALIAS_NONE)
+        # context.set_antialias(cairo.ANTIALIAS_NONE)
 
         if self.shown < self.model.lowply:
             print("exiting cause to lowlpy", self.shown, self.model.lowply)
@@ -718,20 +728,20 @@ class BoardView(Gtk.DrawingArea):
         alloc = self.get_allocation()
 
         self.matrix, self.invmatrix = matrixAround(
-            self.matrix, alloc.width/2., alloc.height/2.)
+            self.matrix, alloc.width / 2., alloc.height / 2.)
         cos_, sin_ = self.matrix[0], self.matrix[1]
         context.transform(self.matrix)
 
         if self.showCaptured:
-            holding_size = (alloc.width/(self.FILES+6))*6
+            holding_size = (alloc.width / (self.FILES + 6)) * 6
         else:
             holding_size = 0
-        square = float(min(alloc.width - holding_size, alloc.height))*(1-self.padding)
+        square = float(min(alloc.width - holding_size, alloc.height)) * (1 - self.padding)
         if SCALE_ROTATED_BOARD:
-            square /= abs(cos_)+abs(sin_)
-        xc_loc = alloc.width/2. - square/2
-        yc_loc = alloc.height/2. - square/2
-        side = square/self.FILES
+            square /= abs(cos_) + abs(sin_)
+        xc_loc = alloc.width / 2. - square / 2
+        yc_loc = alloc.height / 2. - square / 2
+        side = square / self.FILES
         self.square = (xc_loc, yc_loc, square, side)
 
         self.drawBoard(context, r)
@@ -750,27 +760,27 @@ class BoardView(Gtk.DrawingArea):
 
         if self.model.status == KILLED:
             pass
-            #self.drawCross(context, r)
+            # self.drawCross(context, r)
 
         # Unselect to mark redrawn areas - for debugging purposes
-        #context.transform(self.invmatrix)
-        #context.rectangle(r.x,r.y,r.width,r.height)
-        #dc = self.drawcount*50
-        #dc = dc % 1536
-        #c = dc % 256 / 255.
-        #if dc < 256:
+        # context.transform(self.invmatrix)
+        # context.rectangle(r.x,r.y,r.width,r.height)
+        # dc = self.drawcount*50
+        # dc = dc % 1536
+        # c = dc % 256 / 255.
+        # if dc < 256:
         #    context.set_source_rgb(1, ,c,0)
-        #elif dc < 512:
+        # elif dc < 512:
         #    context.set_source_rgb(1-c,1, 0)
-        #elif dc < 768:
+        # elif dc < 768:
         #    context.set_source_rgb(0, 1,c)
-        #elif dc < 1024:
+        # elif dc < 1024:
         #    context.set_source_rgb(0, 1-c,1)
-        #elif dc < 1280:
+        # elif dc < 1280:
         #    context.set_source_rgb(c,0, 1)
-        #elif dc < 1536:
+        # elif dc < 1536:
         #    context.set_source_rgb(1, 0, 1-c)
-        #context.stroke()
+        # context.stroke()
 
     ###############################
     #          drawCords          #
@@ -788,10 +798,11 @@ class BoardView(Gtk.DrawingArea):
         if contains(rect((xc_loc, yc_loc, square)), rectangle):
             return
 
-        thick = thickness*square
-        sign_size = signsize*square
+        thick = thickness * square
+        sign_size = signsize * square
 
-        context.rectangle(xc_loc-thick*1.5, yc_loc-thick*1.5, square+thick*3, square+thick*3)
+        context.rectangle(xc_loc - thick * 1.5, yc_loc - thick * 1.5,
+                          square + thick * 3, square + thick * 3)
 
         style_ctxt = self.get_style_context()
         dcolor = style_ctxt.lookup_color("p_dark_color")[1]
@@ -807,40 +818,40 @@ class BoardView(Gtk.DrawingArea):
 
         def paint(inv):
             for num in range(self.RANKS):
-                rank = inv and num+1 or self.RANKS-num
+                rank = inv and num + 1 or self.RANKS - num
                 layout = self.create_pango_layout("%d" % rank)
                 layout.set_font_description(
                     Pango.FontDescription("bold %d" % sign_size))
-                width = layout.get_extents()[1].width/pangoScale
-                height = layout.get_extents()[0].height/pangoScale
+                width = layout.get_extents()[1].width / pangoScale
+                height = layout.get_extents()[0].height / pangoScale
 
                 # Draw left side
-                context.move_to(xc_loc - thick * 2.5 - width, side * num + yc_loc + height/2 +thick)
+                context.move_to(xc_loc - thick * 2.5 - width, side * num + yc_loc + height / 2 + thick)
                 PangoCairo.show_layout(context, layout)
 
                 # Draw right side
-                #context.move_to(xc_loc+square+thick*2.5, side*num+yc_loc+h/2+thick)
-                #context.show_layout(layout)
+                # context.move_to(xc_loc+square+thick*2.5, side*num+yc_loc+h/2+thick)
+                # context.show_layout(layout)
 
-                file = inv and self.FILES-num or num+1
-                layout = self.create_pango_layout(chr(file+ord("A")-1))
+                file = inv and self.FILES - num or num + 1
+                layout = self.create_pango_layout(chr(file + ord("A") - 1))
                 layout.set_font_description(
                     Pango.FontDescription("bold %d" % sign_size))
 
                 width = layout.get_pixel_size()[0]
                 height = layout.get_pixel_size()[1]
-                y_attr = layout.get_extents()[1].y/pangoScale
+                y_attr = layout.get_extents()[1].y / pangoScale
 
                 # Draw top
-                #context.move_to(xc_loc+side*num+side/2.-width/2., yc_loc-height-thick*1.5)
-                #context.show_layout(layout)
+                # context.move_to(xc_loc+side*num+side/2.-width/2., yc_loc-height-thick*1.5)
+                # context.show_layout(layout)
 
                 # Draw bottom
-                context.move_to(xc_loc + side * num + side/2. - width/2., \
+                context.move_to(xc_loc + side * num + side / 2. - width / 2.,
                                 yc_loc + square + thick * 1.5 + abs(y_attr))
                 PangoCairo.show_layout(context, layout)
 
-        matrix, invmatrix = matrixAround(self.matrix_pi, xc_loc+square/2., yc_loc+square/2.)
+        matrix, invmatrix = matrixAround(self.matrix_pi, xc_loc + square / 2., yc_loc + square / 2.)
         paint(False)
 
         context.transform(matrix)
@@ -884,7 +895,7 @@ class BoardView(Gtk.DrawingArea):
             if self.model.variant.variant == SITTUYINCHESS:
                 context.move_to(xc_loc, yc_loc)
                 context.rel_line_to(square, square)
-                context.move_to(xc_loc+square, yc_loc)
+                context.move_to(xc_loc + square, yc_loc)
                 context.rel_line_to(-square, square)
                 context.stroke()
         else:
@@ -892,11 +903,11 @@ class BoardView(Gtk.DrawingArea):
             for x_loc in range(self.FILES):
                 for y_loc in range(self.RANKS):
                     if x_loc % 2 + y_loc % 2 == 1:
-                        context.rectangle((xc_loc + x_loc * side), \
+                        context.rectangle((xc_loc + x_loc * side),
                                           (yc_loc + y_loc * side), side, side)
             context.fill()
 
-        context.rectangle(xc_loc, yc_loc, self.FILES*side, self.RANKS*side)
+        context.rectangle(xc_loc, yc_loc, self.FILES * side, self.RANKS * side)
         context.stroke()
 
     ###############################
@@ -907,14 +918,14 @@ class BoardView(Gtk.DrawingArea):
         square, side = self.square[2], self.square[3]
         rot_ = self.cord_matrices_state[1]
         if square != self.square or rot_ != self.rotation:
-            self.cord_matrices = [None] * self.FILES * self.RANKS + [None] * self.FILES*4
+            self.cord_matrices = [None] * self.FILES * self.RANKS + [None] * self.FILES * 4
             self.cord_matrices_state = (self.square, self.rotation)
         c_loc = x_loc * self.FILES + y_loc
         if isinstance(c_loc, int) and self.cord_matrices[c_loc]:
             matrices = self.cord_matrices[c_loc]
         else:
             cx_loc, cy_loc = self.cord2Point(x_loc, y_loc)
-            matrices = matrixAround(self.matrix, cx_loc + side/2., cy_loc + side/2.)
+            matrices = matrixAround(self.matrix, cx_loc + side / 2., cy_loc + side / 2.)
             matrices += (cx_loc, cy_loc)
             if isinstance(c_loc, int):
                 self.cord_matrices[c_loc] = matrices
@@ -944,14 +955,14 @@ class BoardView(Gtk.DrawingArea):
         else:
             cx_loc, cy_loc = self.cord2Point(x_loc, y_loc)
             if piece.color == BLACK:
-                matrix, invmatrix = matrixAround((-1, 0), cx_loc + side/2., cy_loc + side/2.)
+                matrix, invmatrix = matrixAround((-1, 0), cx_loc + side / 2., cy_loc + side / 2.)
             else:
                 matrix = invmatrix = cairo.Matrix(1, 0, 0, 1, 0, 0)
 
         context.transform(invmatrix)
-        Pieces.drawPiece(piece, context, \
-            cx_loc + CORD_PADDING, cy_loc + CORD_PADDING,\
-            side - CORD_PADDING * 2, allwhite=self.allwhite, asean=self.asean)
+        Pieces.drawPiece(piece, context,
+                         cx_loc + CORD_PADDING, cy_loc + CORD_PADDING,
+                         side - CORD_PADDING * 2, allwhite=self.allwhite, asean=self.asean)
         context.transform(matrix)
 
     def drawPieces(self, context, rectangle):
@@ -982,8 +993,8 @@ class BoardView(Gtk.DrawingArea):
         col = style_ctxt.lookup_color("p_dark_selected")[1]
         bg_sd = (col.red, col.green, col.blue)
 
-        if min((fg_n[0]-bg_sl[0])**2+(fg_n[1]-bg_sl[1])**2+(fg_n[2]-bg_sl[2])**2,
-               (fg_n[0]-bg_sd[0])**2+(fg_n[1]-bg_sd[1])**2+(fg_n[2]-bg_sd[2])**2) < 0.2:
+        if min((fg_n[0] - bg_sl[0])**2 + (fg_n[1] - bg_sl[1])**2 + (fg_n[2] - bg_sl[2])**2,
+               (fg_n[0] - bg_sd[0])**2 + (fg_n[1] - bg_sd[1])**2 + (fg_n[2] - bg_sd[2])**2) < 0.2:
             col = style_ctxt.lookup_color("p_fg_selected")[1]
             fg_s = (col.red, col.green, col.blue)
 
@@ -1007,7 +1018,7 @@ class BoardView(Gtk.DrawingArea):
             for x_loc, piece in row.items():
                 if piece == self.premove_piece:
                     continue
-                if not piece or piece.x != None or piece.opacity < 1:
+                if not piece or piece.x is not None or piece.opacity < 1:
                     continue
                 if not intersects(rect(self.cord2RectRelative(x_loc, y_loc)), rectangle):
                     continue
@@ -1017,7 +1028,8 @@ class BoardView(Gtk.DrawingArea):
                     context.set_source_rgb(*fg_a)
                 elif Cord(x_loc, y_loc) == self.hover:
                     context.set_source_rgb(*fg_p)
-                else: context.set_source_rgb(*fg_n)
+                else:
+                    context.set_source_rgb(*fg_n)
 
                 self.__drawPiece(context, piece, x_loc, y_loc)
 
@@ -1033,7 +1045,6 @@ class BoardView(Gtk.DrawingArea):
         context.set_source_rgb(*fg_m)
         if self.premove_piece and self.premove_piece.x is None and self.premove0 and self.premove1:
             self.__drawPiece(context, self.premove_piece, self.premove1.x, self.premove1.y)
-
 
     ###############################
     #         drawSpecial         #
@@ -1063,7 +1074,7 @@ class BoardView(Gtk.DrawingArea):
                 continue
 
             board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
-            if board[cord] is None and (cord.x < 0 or cord.x > self.FILES-1):
+            if board[cord] is None and (cord.x < 0 or cord.x > self.FILES - 1):
                 continue
 
             side = self.square[3]
@@ -1101,18 +1112,18 @@ class BoardView(Gtk.DrawingArea):
         last_board = self.model.getBoardAtPly(self.shown - 1, self.shown_variation_idx)
         capture = self.lastMove.is_capture(last_board)
 
-        mark_width = 0.27 # Width of marker
-        padding_last = 0.155 # Padding on last cord
-        padding_curr = 0.085 # Padding on current cord
-        stroke_width = 0.02 # Stroke width
+        mark_width = 0.27  # Width of marker
+        padding_last = 0.155  # Padding on last cord
+        padding_curr = 0.085  # Padding on current cord
+        stroke_width = 0.02  # Stroke width
 
         side = self.square[3]
 
         context.save()
         context.set_line_width(stroke_width * side)
 
-        dic0 = {-1:1-padding_last, 1:padding_last}
-        dic1 = {-1:1-padding_curr, 1:padding_curr}
+        dic0 = {-1: 1 - padding_last, 1: padding_last}
+        dic1 = {-1: 1 - padding_curr, 1: padding_curr}
         matrix_scaler = ((1, 1), (-1, 1), (-1, -1), (1, -1))
 
         light_yellow = (.929, .831, 0, 0.8)
@@ -1126,7 +1137,7 @@ class BoardView(Gtk.DrawingArea):
             ksq0 = last_board.board.kings[last_board.color]
             ksq1 = show_board.board.kings[last_board.color]
             wildcastle = Cord(last_board.board.ini_kings[last_board.color]).x == 3 and \
-                         last_board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
+                last_board.variant in (WILDCASTLECHESS, WILDCASTLESHUFFLECHESS)
             if self.lastMove.flag == KING_CASTLE:
                 side = 0 if wildcastle else 1
                 rsq0 = show_board.board.ini_rooks[last_board.color][side]
@@ -1146,15 +1157,15 @@ class BoardView(Gtk.DrawingArea):
                     rectangle = self.cord2Rect(cord0)
                     for scaler in matrix_scaler:
                         context.move_to(
-                            rectangle[0]+(dic0[scaler[0]]+mark_width*scaler[0])*rectangle[2],
-                            rectangle[1]+(dic0[scaler[1]]+mark_width*scaler[1])*rectangle[2])
+                            rectangle[0] + (dic0[scaler[0]] + mark_width * scaler[0]) * rectangle[2],
+                            rectangle[1] + (dic0[scaler[1]] + mark_width * scaler[1]) * rectangle[2])
                         context.rel_line_to(
-                            0, -mark_width*rectangle[2]*scaler[1])
-                        context.rel_curve_to(0, mark_width*rectangle[2]*scaler[1]/2.0, \
-                                             -mark_width*rectangle[2]*scaler[0]/2.0, \
-                                             mark_width*rectangle[2]*scaler[1], \
-                                             -mark_width*rectangle[2]*scaler[0], \
-                                             mark_width*rectangle[2]*scaler[1])
+                            0, -mark_width * rectangle[2] * scaler[1])
+                        context.rel_curve_to(0, mark_width * rectangle[2] * scaler[1] / 2.0,
+                                             -mark_width * rectangle[2] * scaler[0] / 2.0,
+                                             mark_width * rectangle[2] * scaler[1],
+                                             -mark_width * rectangle[2] * scaler[0],
+                                             mark_width * rectangle[2] * scaler[1])
                         context.close_path()
 
                     context.set_source_rgba(*light_yellow)
@@ -1168,14 +1179,14 @@ class BoardView(Gtk.DrawingArea):
 
                 for scaler in matrix_scaler:
                     context.move_to(
-                        rectangle[0]+dic1[scaler[0]]*rectangle[2],
-                        rectangle[1]+dic1[scaler[1]]*rectangle[2])
+                        rectangle[0] + dic1[scaler[0]] * rectangle[2],
+                        rectangle[1] + dic1[scaler[1]] * rectangle[2])
                     context.rel_line_to(
-                        mark_width*rectangle[2]*scaler[0], 0)
+                        mark_width * rectangle[2] * scaler[0], 0)
                     context.rel_curve_to(
-                        -mark_width*rectangle[2]*scaler[0]/2.0, 0,
-                        -mark_width*rectangle[2]*scaler[0], mark_width*rectangle[2]*scaler[1]/2.0,
-                        -mark_width*rectangle[2]*scaler[0], mark_width*rectangle[2]*scaler[1])
+                        -mark_width * rectangle[2] * scaler[0] / 2.0, 0,
+                        -mark_width * rectangle[2] * scaler[0], mark_width * rectangle[2] * scaler[1] / 2.0,
+                        -mark_width * rectangle[2] * scaler[0], mark_width * rectangle[2] * scaler[1])
                     context.close_path()
 
                 if capture:
@@ -1183,7 +1194,7 @@ class BoardView(Gtk.DrawingArea):
                     context.fill_preserve()
                     context.set_source_rgba(*dark_orange)
                     context.stroke()
-                elif cord0 is None: # DROP move
+                elif cord0 is None:  # DROP move
                     context.set_source_rgba(*light_green)
                     context.fill_preserve()
                     context.set_source_rgba(*dark_green)
@@ -1204,25 +1215,25 @@ class BoardView(Gtk.DrawingArea):
         lvx = cords[1].x - cords[0].x
         lvy = cords[0].y - cords[1].y
         hypotenuse = float((lvx**2 + lvy**2)**.5)
-        vec_x = lvx/hypotenuse
-        vec_y = lvy/hypotenuse
+        vec_x = lvx / hypotenuse
+        vec_y = lvy / hypotenuse
         v1x = -vec_y
         v1y = vec_x
 
         rectangle = self.cord2Rect(cords[0])
 
-        px_loc = rectangle[0] + rectangle[2]/2.0
-        py_loc = rectangle[1] + rectangle[2]/2.0
-        ax_loc = v1x * rectangle[2] * aw/2
-        ay_loc = v1y * rectangle[2] * aw/2
+        px_loc = rectangle[0] + rectangle[2] / 2.0
+        py_loc = rectangle[1] + rectangle[2] / 2.0
+        ax_loc = v1x * rectangle[2] * aw / 2
+        ay_loc = v1y * rectangle[2] * aw / 2
         context.move_to(px_loc + ax_loc, py_loc + ay_loc)
 
         p1x = px_loc + (lvx - vec_x * ahh) * rectangle[2]
         p1y = py_loc + (lvy - vec_y * ahh) * rectangle[2]
         context.line_to(p1x + ax_loc, p1y + ay_loc)
 
-        lax = v1x * rectangle[2] * ahw/2
-        lay = v1y * rectangle[2] * ahw/2
+        lax = v1x * rectangle[2] * ahw / 2
+        lay = v1y * rectangle[2] * ahw / 2
         context.line_to(p1x + lax, p1y + lay)
 
         context.line_to(px_loc + lvx * rectangle[2], py_loc + lvy * rectangle[2])
@@ -1234,7 +1245,7 @@ class BoardView(Gtk.DrawingArea):
         context.set_source_rgba(*fillc)
         context.fill_preserve()
         context.set_line_join(cairo.LINE_JOIN_ROUND)
-        context.set_line_width(asw*rectangle[2])
+        context.set_line_width(asw * rectangle[2])
         context.set_source_rgba(*strkc)
         context.stroke()
 
@@ -1243,10 +1254,10 @@ class BoardView(Gtk.DrawingArea):
     def drawArrows(self, context):
         # TODO: Only redraw when intersecting with the redrawn area
 
-        arw = 0.3 # Arrow width
-        arhw = 0.72 # Arrow head width
-        arhh = 0.64 # Arrow head height
-        arsw = 0.08 # Arrow stroke width
+        arw = 0.3  # Arrow width
+        arhw = 0.72  # Arrow head width
+        arhh = 0.64  # Arrow head height
+        arsw = 0.08  # Arrow stroke width
 
         if self.bluearrow:
             self.__drawArrow(context, self.bluearrow, arw, arhw, arhh, arsw,
@@ -1283,11 +1294,11 @@ class BoardView(Gtk.DrawingArea):
 
         x_loc, y_loc = self.cord2Point(enpassant)
         crr = context
-        crr.set_font_size(side/2.)
+        crr.set_font_size(side / 2.)
         fdescent, fheight = crr.font_extents()[1], crr.font_extents()[2]
         chars = "en"
         xbearing, width = crr.text_extents(chars)[0], crr.text_extents(chars)[2]
-        crr.move_to(x_loc + side / 2. - xbearing - width / 2.-1, \
+        crr.move_to(x_loc + side / 2. - xbearing - width / 2.0 - 1,
                     side / 2. + y_loc - fdescent + fheight / 2.)
         crr.show_text(chars)
 
@@ -1300,7 +1311,7 @@ class BoardView(Gtk.DrawingArea):
 
         context.move_to(xc_loc, yc_loc)
         context.rel_line_to(square, square)
-        context.move_to(xc_loc+square, yc_loc)
+        context.move_to(xc_loc + square, yc_loc)
         context.rel_line_to(-square, square)
 
         context.set_line_cap(cairo.LINE_CAP_SQUARE)
@@ -1309,7 +1320,7 @@ class BoardView(Gtk.DrawingArea):
         context.stroke_preserve()
 
         context.set_source_rgba(1, 0, 0, 0.8)
-        context.set_line_width(side/2.)
+        context.set_line_width(side / 2.)
         context.stroke()
 
     ############################################################################
@@ -1343,18 +1354,18 @@ class BoardView(Gtk.DrawingArea):
         if self._hover:
             rectangle = rect(self.cord2RectRelative(self._hover))
             # convert r from tuple to rect
-            #tmpr = r
-            #r = Gdk.Rectangle()
-            #r.x, r.y, r.width, r.height = tmpr
-            #if cord: r = r.union(rect(self.cord2RectRelative(cord)))
+            # tmpr = r
+            # r = Gdk.Rectangle()
+            # r.x, r.y, r.width, r.height = tmpr
+            # if cord: r = r.union(rect(self.cord2RectRelative(cord)))
             if cord:
                 rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         elif cord:
             rectangle = rect(self.cord2RectRelative(cord))
             # convert r from tuple to rect
-            #tmpr = r
-            #r = Gdk.Rectangle()
-            #r.x, r.y, r.width, r.height = tmpr
+            # tmpr = r
+            # r = Gdk.Rectangle()
+            # r.x, r.y, r.width, r.height = tmpr
         self._hover = cord
         self.redrawCanvas(rectangle)
 
@@ -1463,6 +1474,7 @@ class BoardView(Gtk.DrawingArea):
             rectangle = union(rectangle, rect(self.cord2RectRelative(cord)))
         self._bluearrow = cords
         self.redrawCanvas(rectangle)
+
     def _getBluearrow(self):
         return self._bluearrow
     bluearrow = property(_getBluearrow, _setBluearrow)
@@ -1486,15 +1498,15 @@ class BoardView(Gtk.DrawingArea):
             self.next_rotation = radians
             oldr = self.rotation
             start = time()
-            next = True
 
             def rotate():
-                amount = (time()-start)/ANIMATION_TIME
+                amount = (time() - start) / ANIMATION_TIME
                 if amount > 1:
                     amount = 1
                     next = False
-                else: next = True
-                self._rotation = new = oldr + amount*(radians-oldr)
+                else:
+                    next = True
+                self._rotation = new = oldr + amount * (radians - oldr)
                 self.matrix = cairo.Matrix.init_rotate(new)
                 self.redrawCanvas()
                 return next
@@ -1509,7 +1521,8 @@ class BoardView(Gtk.DrawingArea):
     def _setShowCords(self, show_cords):
         if not show_cords:
             self.padding = 0.
-        else: self.padding = self.pad
+        else:
+            self.padding = self.pad
         self._show_cords = show_cords
         self.redrawCanvas()
 
@@ -1517,25 +1530,26 @@ class BoardView(Gtk.DrawingArea):
         return self._show_cords
     show_cords = property(_getShowCords, _setShowCords)
 
-    def _setShowCaptured(self, showCaptured):
-        self._show_captured = showCaptured or self.model.variant.variant in DROP_VARIANTS
+    def _setShowCaptured(self, show_captured):
+        self._show_captured = show_captured or self.model.variant.variant in DROP_VARIANTS
         files_for_holding = 6 if self._show_captured else 0
-        self.set_size_request(int(30*(self.FILES + files_for_holding)), 30*self.RANKS)
+        self.set_size_request(int(30 * (self.FILES + files_for_holding)), 30 * self.RANKS)
         self.redrawCanvas()
 
     def _getShowCaptured(self):
         return False if self.preview else self._show_captured
     showCaptured = property(_getShowCaptured, _setShowCaptured)
 
-    def _setShowEnpassant(self, showEnpassant):
-        if self._show_enpassant == showEnpassant:
+    def _setShowEnpassant(self, show_enpassant):
+        if self._show_enpassant == show_enpassant:
             return
         if self.model:
             enpascord = self.model.boards[-1].enpassant
             if enpascord:
                 rectangle = rect(self.cord2RectRelative(enpascord))
                 self.redrawCanvas(rectangle)
-        self._show_enpassant = showEnpassant
+        self._show_enpassant = show_enpassant
+
     def _getShowEnpassant(self):
         return self._show_enpassant
     showEnpassant = property(_getShowEnpassant, _setShowEnpassant)
@@ -1550,7 +1564,7 @@ class BoardView(Gtk.DrawingArea):
         else:
             x_loc = cord
         xc_loc, yc_loc, side = self.square[0], self.square[1], self.square[3]
-        return  ((xc_loc + (x_loc * side)), (yc_loc + (self.RANKS - 1 - y_loc) * side), side)
+        return ((xc_loc + (x_loc * side)), (yc_loc + (self.RANKS - 1 - y_loc) * side), side)
 
     def cord2Point(self, cord, y_loc=None):
         point = self.cord2Rect(cord, y_loc)
