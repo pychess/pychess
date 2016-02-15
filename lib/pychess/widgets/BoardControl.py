@@ -11,9 +11,8 @@ from pychess.System import conf
 from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move, parseAny, toAN
 from pychess.Utils.const import ARTIFICIAL, FLAG_CALL, ABORT_OFFER, LOCAL, TAKEBACK_OFFER, \
-                                ADJOURN_OFFER, DRAW_OFFER, RESIGNATION, HURRY_ACTION, PAUSE_OFFER, \
-                                RESUME_OFFER, RUNNING, KING, DROP, DROP_VARIANTS, PAWN, QUEEN, \
-                                SITTUYINCHESS, QUEEN_PROMOTION
+    ADJOURN_OFFER, DRAW_OFFER, RESIGNATION, HURRY_ACTION, PAUSE_OFFER, RESUME_OFFER, RUNNING, \
+    KING, DROP, DROP_VARIANTS, PAWN, QUEEN, SITTUYINCHESS, QUEEN_PROMOTION
 
 from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmove, lmovegen
@@ -35,7 +34,7 @@ class BoardControl(Gtk.EventBox):
         'action': (GObject.SignalFlags.RUN_FIRST, None, (str, object))
     }
 
-    def __init__(self, gamemodel, actionMenuItems, setup_position=False):
+    def __init__(self, gamemodel, action_menu_items, setup_position=False):
         GObject.GObject.__init__(self)
         self.setup_position = setup_position
         self.view = BoardView(gamemodel, setup_position=setup_position)
@@ -46,9 +45,9 @@ class BoardControl(Gtk.EventBox):
         self.RANKS = gamemodel.boards[0].RANKS
         self.FILES = gamemodel.boards[0].FILES
 
-        self.actionMenuItems = actionMenuItems
+        self.action_menu_items = action_menu_items
         self.connections = {}
-        for key, menuitem in self.actionMenuItems.items():
+        for key, menuitem in self.action_menu_items.items():
             if menuitem is None:
                 print(key)
             self.connections[menuitem] = menuitem.connect(
@@ -141,9 +140,9 @@ class BoardControl(Gtk.EventBox):
             move = Move(cord0, cord1, board, promotion)
 
         if (self.view.model.curplayer.__type__ == LOCAL or self.view.model.examined) and \
-            self.view.shownIsMainLine() and \
-            self.view.model.boards[-1] == board and \
-            self.view.model.status == RUNNING:
+                self.view.shownIsMainLine() and \
+                self.view.model.boards[-1] == board and \
+                self.view.model.status == RUNNING:
             if self.setup_position:
                 self.emit("piece_moved", (cord0, cord1), board[cord0].color)
             else:
@@ -176,10 +175,10 @@ class BoardControl(Gtk.EventBox):
         elif key == "undo1":
             curplayer = self.view.model.curplayer
             waitingplayer = self.view.model.waitingplayer
-            if curplayer.__type__ == LOCAL \
-                and (waitingplayer.__type__ == ARTIFICIAL or \
-                     self.view.model.isPlayingICSGame()) \
-                and self.view.model.ply - self.view.model.lowply > 1:
+            if curplayer.__type__ == LOCAL and \
+                    (waitingplayer.__type__ == ARTIFICIAL or
+                     self.view.model.isPlayingICSGame()) and \
+                    self.view.model.ply - self.view.model.lowply > 1:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply - 2)
             else:
                 self.emit("action", TAKEBACK_OFFER, self.view.model.ply - 1)
@@ -408,12 +407,11 @@ class BoardState:
         if self.parent.setup_position:
             to_piece = self.getBoard()[cord1]
             # prevent moving pieces inside holding
-            if (cord0.x < 0 or cord0.x > self.FILES-1) and \
-                (cord1.x < 0 or cord1.x > self.FILES-1):
+            if (cord0.x < 0 or cord0.x > self.FILES - 1) and \
+                    (cord1.x < 0 or cord1.x > self.FILES - 1):
                 return False
             # prevent moving kings off board
-            elif self.getBoard()[cord0].piece == KING and \
-                (cord1.x < 0 or cord1.x > self.FILES-1):
+            elif self.getBoard()[cord0].piece == KING and (cord1.x < 0 or cord1.x > self.FILES - 1):
                 return False
             # prevent taking enemy king
             elif to_piece is not None and to_piece.piece == KING:
@@ -433,7 +431,7 @@ class BoardState:
 
     def transPoint(self, x_loc, y_loc):
         xc_loc, yc_loc, side = self.view.square[0], self.view.square[1], \
-                               self.view.square[3]
+            self.view.square[3]
         x_loc, y_loc = self.view.invmatrix.transform_point(x_loc, y_loc)
         y_loc -= yc_loc
         x_loc -= xc_loc
@@ -512,7 +510,7 @@ class LockedBoardState(BoardState):
             but view.shown and BoardControl.lockedPly haven't been updated yet """
         if cord0 is None or cord1 is None:
             return False
-        if not self.parent.lockedPly in self.parent.possibleBoards:
+        if self.parent.lockedPly not in self.parent.possibleBoards:
             return False
         for board in self.parent.possibleBoards[self.parent.lockedPly]:
             if not board[cord0]:
@@ -565,8 +563,8 @@ class ActiveState(BoardState):
 
     def release(self, x_loc, y_loc):
         cord = self.point2Cord(x_loc, y_loc)
-        if self.view.selected and cord != self.view.active and \
-            not self.validate(self.view.selected, cord):
+        if self.view.selected and cord != self.view.active and not \
+                self.validate(self.view.selected, cord):
             if not self.parent.setup_position:
                 preferencesDialog.SoundTab.playAction("invalidMove")
         if not cord:
@@ -613,8 +611,7 @@ class ActiveState(BoardState):
             self.parent.setStateNormal()
             self.view.dragged_piece = None
             # removig piece from board
-            if self.parent.setup_position and \
-                (cord.x < 0 or cord.x > self.FILES-1):
+            if self.parent.setup_position and (cord.x < 0 or cord.x > self.FILES - 1):
                 self.view.startAnimation()
             self.parent.emit_move_signal(self.view.active, cord)
             self.view.active = None
@@ -651,7 +648,7 @@ class ActiveState(BoardState):
 
         side = self.view.square[3]
         co_loc, si_loc = self.view.matrix[0], self.view.matrix[1]
-        point = self.transPoint(x_loc - side * (co_loc + si_loc) / 2., \
+        point = self.transPoint(x_loc - side * (co_loc + si_loc) / 2.,
                                 y_loc + side * (co_loc - si_loc) / 2.)
         if not point:
             return
@@ -680,7 +677,7 @@ class SelectedState(BoardState):
             return True
         try:
             board = self.getBoard()
-            if board[cord] != None and board[cord].color == board.color:
+            if board[cord] is not None and board[cord].color == board.color:
                 return True  # Select another piece
         except IndexError:
             return False
@@ -695,7 +692,7 @@ class SelectedState(BoardState):
             if self.parent.setup_position:
                 color_ok = True
             else:
-                color_ok = self.getBoard()[cord] != None and \
+                color_ok = self.getBoard()[cord] is not None and \
                     self.getBoard()[cord].color == self.getBoard().color
             if self.view.selected and self.view.selected != cord and \
                color_ok and not self.validate(self.view.selected, cord):
@@ -729,7 +726,7 @@ class LockedNormalState(LockedBoardState):
             return False  # Don't allow premove if neither player is human
         try:
             board = self.getBoard()
-            if board[cord] == None:
+            if board[cord] is None:
                 return False  # We don't want empty cords
             elif board[cord].color == board.color:
                 return False  # We shouldn't be able to select an opponent piece
@@ -746,7 +743,7 @@ class LockedNormalState(LockedBoardState):
             self.parent.setStateActive()
 
         # reset premove if mouse right-clicks or clicks one of the premove cords
-        if button == 3:  #right-click
+        if button == 3:  # right-click
             self.view.setPremove(None, None, None, None)
             self.view.startAnimation()
         elif cord == self.view.premove0 or cord == self.view.premove1:
@@ -835,7 +832,7 @@ class LockedActiveState(LockedBoardState):
 
         side = self.view.square[3]
         co_loc, si_loc = self.view.matrix[0], self.view.matrix[1]
-        point = self.transPoint(x_loc - side * (co_loc + si_loc) / 2., \
+        point = self.transPoint(x_loc - side * (co_loc + si_loc) / 2.,
                                 y_loc + side * (co_loc - si_loc) / 2.)
         if not point:
             return
@@ -862,7 +859,7 @@ class LockedSelectedState(LockedBoardState):
             return False
         try:
             board = self.getBoard()
-            if board[cord] != None and board[cord].color != board.color:
+            if board[cord] is not None and board[cord].color != board.color:
                 return True  # Select another piece
         except IndexError:
             return False
@@ -887,7 +884,7 @@ class LockedSelectedState(LockedBoardState):
         # things correctly
         if self.isSelectable(cord):
             if self.view.selected and self.view.selected != cord and \
-               self.getBoard()[cord] != None and \
+               self.getBoard()[cord] is not None and \
                self.getBoard()[cord].color != self.getBoard().color and \
                not self.isAPotentiallyLegalNextMove(self.view.selected, cord):
                 # corner-case encountered (see comment in SelectedState.press)
@@ -902,10 +899,9 @@ class LockedSelectedState(LockedBoardState):
             self.parent.setStateNormal()
 
         # reset premove if mouse right-clicks or clicks one of the premove cords
-        if button == 3:  #right-click
+        if button == 3:  # right-click
             self.view.setPremove(None, None, None, None)
             self.view.startAnimation()
         elif cord == self.view.premove0 or cord == self.view.premove1:
             self.view.setPremove(None, None, None, None)
             self.view.startAnimation()
-
