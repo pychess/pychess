@@ -81,10 +81,10 @@ class ChainLine(Gtk.Alignment):
         if self.get_window():
             allocation = self.get_allocation()
             rect = Gdk.Rectangle()
-            rect.x, rect.y, rect.width, rect.height = (allocation.x, allocation.y, \
+            rect.x, rect.y, rect.width, rect.height = (allocation.x, allocation.y,
                                                        allocation.width, allocation.height)
             unionrect = union(self.lastRectangle,
-                              rect) if self.lastRectangle != None else rect
+                              rect) if self.lastRectangle is not None else rect
             self.get_window().invalidate_rect(unionrect, True)
             self.get_window().process_updates(True)
             self.lastRectangle = rect
@@ -94,11 +94,11 @@ class ChainLine(Gtk.Alignment):
         return False
 
 ###
-### the original Gtk.Style.paint_polygon() way to draw, like The GIMP does it
+# the original Gtk.Style.paint_polygon() way to draw, like The GIMP does it
 ###
 #    def draw (self, widget, event):
 #        a = self.get_allocation()
-##        print a.x, a.y, a.width, a.height
+#        print a.x, a.y, a.width, a.height
 #        points = [None, None, None]
 #        points[0] = (a.x + a.width/2 - SHORT_LINE, a.y + a.height/2)
 #        points[1] = (points[0][0] + SHORT_LINE, points[0][1])
@@ -107,7 +107,7 @@ class ChainLine(Gtk.Alignment):
 #            t = points[0]
 #            points[0] = points[2]
 #            points[2] = t
-##        print points
+#        print points
 #        self.points = points
 #
 #        style = widget.get_style()
@@ -155,8 +155,8 @@ class ChainLine(Gtk.Alignment):
 
     def __str__(self):
         allocation = self.get_allocation()
-        chain_str = "ChainLine(%s, %s, %s, %s" % (allocation.x, allocation.y, \
-                                          allocation.width, allocation.height)
+        chain_str = "ChainLine(%s, %s, %s, %s" % (allocation.x, allocation.y,
+                                                  allocation.width, allocation.height)
         chain_str += (self.position == CHAIN_TOP and ", CHAIN_TOP" or ", CHAIN_BOTTOM")
         return chain_str + ")"
 
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     table.set_row_spacings(2)
 
     def onChainBoxClicked(*whatever):
-        if chainvbox.active == False:
+        if chainvbox.active is False:
             label.set_label("Unlocked")
         else:
             label.set_label("Locked")
