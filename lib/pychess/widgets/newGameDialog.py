@@ -153,19 +153,19 @@ class _GameInitializationMode:
 
         cls.__initTimeRadio(
             _("Blitz"), "ngblitz", cls.widgets["blitzRadio"],
-            cls.widgets["config_imageBlitz"], 5, 0)
+            cls.widgets["configImageBlitz"], 5, 0)
         cls.__initTimeRadio(
             _("Rapid"), "ngrapid", cls.widgets["rapidRadio"],
-            cls.widgets["config_imageRapid"], 15, 5)
+            cls.widgets["configImageRapid"], 15, 5)
         cls.__initTimeRadio(
             _("Normal"), "ngnormal", cls.widgets["normalRadio"],
-            cls.widgets["config_imageNormal"], 40, 15)
+            cls.widgets["configImageNormal"], 40, 15)
 
         cls.__initVariantRadio("ngvariant1", cls.widgets["playVariant1Radio"],
-                               cls.widgets["config_imageVariant1"],
+                               cls.widgets["configImageVariant1"],
                                FISCHERRANDOMCHESS)
         cls.__initVariantRadio("ngvariant2", cls.widgets["playVariant2Radio"],
-                               cls.widgets["config_imageVariant2"], LOSERSCHESS)
+                               cls.widgets["configImageVariant2"], LOSERSCHESS)
 
         # @idle_add
         def updateCombos(*args):
@@ -216,7 +216,7 @@ class _GameInitializationMode:
         cls.widgets["newgamedialog"].connect("delete_event", lambda *a: True)
 
     @classmethod
-    def __initTimeRadio(cls, name, id, radiobutton, config_image, defmin,
+    def __initTimeRadio(cls, name, id, radiobutton, configImage, defmin,
                         defgain):
         # minSpin = Gtk.SpinButton(Gtk.Adjustment(1,1,240,1))
         minSpin = Gtk.SpinButton()
@@ -243,7 +243,7 @@ class _GameInitializationMode:
         alignment = Gtk.Alignment.new(1, 1, 1, 1)
         alignment.set_padding(6, 6, 12, 12)
         alignment.add(table)
-        ImageMenu.switchWithImage(config_image, alignment)
+        ImageMenu.switchWithImage(configImage, alignment)
 
         def updateString(spin):
             minutes = minSpin.get_value_as_int()
@@ -273,7 +273,7 @@ class _GameInitializationMode:
         updateString(None)
 
     @classmethod
-    def __initVariantRadio(cls, confid, radiobutton, config_image, default):
+    def __initVariantRadio(cls, confid, radiobutton, configImage, default):
         model = Gtk.TreeStore(str)
         treeview = Gtk.TreeView(model)
         treeview.set_headers_visible(False)
@@ -283,7 +283,7 @@ class _GameInitializationMode:
         alignment = Gtk.Alignment.new(1, 1, 1, 1)
         alignment.set_padding(6, 6, 12, 12)
         alignment.add(treeview)
-        ImageMenu.switchWithImage(config_image, alignment)
+        ImageMenu.switchWithImage(configImage, alignment)
 
         groupNames = {VARIANTS_BLINDFOLD: _("Blindfold"),
                       VARIANTS_ODDS: _("Odds"),
