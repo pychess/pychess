@@ -3,7 +3,6 @@
 from __future__ import print_function
 
 import os
-import gettext
 from gi.repository import Gtk
 from gi.repository import GObject
 
@@ -354,9 +353,9 @@ def closeAllGames(pairs):
     elif len(changedPairs) == 1:
         response = closeGame(*changedPairs[0])
     else:
-        markup = "<big><b>" + gettext.ngettext("There is %d game with unsaved moves.",
-                                               "There are %d games with unsaved moves.",
-                                               len(changedPairs)) % len(changedPairs) + " " + \
+        markup = "<big><b>" + ngettext("There is %d game with unsaved moves.",
+                                       "There are %d games with unsaved moves.",
+                                       len(changedPairs)) % len(changedPairs) + " " + \
             _("Save moves before closing?") + "</b></big>"
 
         if conf.get("autoSave", False):
@@ -394,7 +393,7 @@ def closeAllGames(pairs):
                 if path:
                     liststore[path][0] = not liststore[path][0]
                 saves = len(tuple(row for row in liststore if row[0]))
-                saveLabel.set_text(gettext.ngettext(
+                saveLabel.set_text(ngettext(
                     "_Save %d document", "_Save %d documents", saves) % saves)
                 saveLabel.set_use_underline(True)
 
