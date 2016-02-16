@@ -7,9 +7,8 @@ from gi.repository import Gtk
 from gi.repository import GObject
 
 
-from pychess import Savers
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Savers import pgn
+from pychess.Savers import chessalpha2, epd, fen, pgn
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
@@ -132,7 +131,7 @@ def getOpenAndSaveDialogs():
     global opendialog, savedialog, enddir, savecombo, savers, saveformats, exportformats
 
     if not opendialog:
-        savers = [getattr(Savers, s) for s in Savers.__all__]
+        savers = (chessalpha2, epd, fen, pgn)
         for saver in savers:
             enddir[saver.__ending__] = saver
 
@@ -407,14 +406,14 @@ def closeAllGames(pairs):
                     for i in range(len(liststore) - 1, -1, -1):
                         checked, name = liststore[i]
                         if checked:
-                            gmwidg, game = changedPairs[i]
-                            if saveGame(game) == Gtk.ResponseType.ACCEPT:
+                            cgmwidg, cgame = changedPairs[i]
+                            if saveGame(cgame) == Gtk.ResponseType.ACCEPT:
                                 liststore.remove(liststore.get_iter((i, )))
                                 del changedPairs[i]
-                                if game.status in UNFINISHED_STATES:
-                                    game.end(ABORTED, ABORTED_AGREEMENT)
-                                game.terminate()
-                                gamewidget.delGameWidget(gmwidg)
+                                if cgame.status in UNFINISHED_STATES:
+                                    cgame.end(ABORTED, ABORTED_AGREEMENT)
+                                cgame.terminate()
+                                gamewidget.delGameWidget(cgmwidg)
                             else:
                                 break
                     else:
