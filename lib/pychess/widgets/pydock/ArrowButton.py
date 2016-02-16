@@ -26,7 +26,7 @@ class ArrowButton(OverlayWindow):
         self.svgPath = svgPath
         self.connect_after("draw", self.__onExposeEvent)
 
-        #targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
+        # targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
         targets = [Gtk.TargetEntry.new("GTK_NOTEBOOK_TAB",
                                        Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
         self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
@@ -46,7 +46,7 @@ class ArrowButton(OverlayWindow):
         parentAlloc = self.myparent.get_allocation()
         width, height = self.getSizeOfSvg(self.svgPath)
 
-        if self.myparentAlloc == None:
+        if self.myparentAlloc is None:
             self.resize(width, height)
 
         if self.get_window() and not self.hasHole:
@@ -82,11 +82,11 @@ class ArrowButton(OverlayWindow):
             context.set_operator(cairo.OPERATOR_OVER)
 
         # FIXME
-        #mask = Gdk.Pixmap(None, width, height, 1)
-        #mcontext = mask.cairo_create()
-        #mcontext.set_source_surface(surface, 0, 0)
-        #mcontext.paint()
-        #self.window.shape_combine_mask(mask, 0, 0)
+        # mask = Gdk.Pixmap(None, width, height, 1)
+        # mcontext = mask.cairo_create()
+        # mcontext.set_source_surface(surface, 0, 0)
+        # mcontext.paint()
+        # self.window.shape_combine_mask(mask, 0, 0)
 
         context.set_source_surface(surface, 0, 0)
         context.paint()

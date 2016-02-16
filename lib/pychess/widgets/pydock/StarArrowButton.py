@@ -1,14 +1,18 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-from math import ceil as float_ceil
+from math import ceil as float_ceil, pi
 import cairo
 
 from gi.repository import Gtk, Gdk, GObject
 
 from .OverlayWindow import OverlayWindow
 
-ceil = lambda f: int(float_ceil(f))
+# ceil = lambda f: int(float_ceil(f))
+
+
+def ceil(num):
+    return int(float_ceil(num))
 
 
 POSITIONS_COUNT = 5
@@ -37,7 +41,7 @@ class StarArrowButton(OverlayWindow):
         self.connect_after("draw", self.__onExposeEvent)
         self.currentHovered = -1
 
-        #targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
+        # targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
         targets = [Gtk.TargetEntry.new("GTK_NOTEBOOK_TAB",
                                        Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
         self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
@@ -55,7 +59,7 @@ class StarArrowButton(OverlayWindow):
     def _calcSize(self):
         parentAlloc = self.myparent.get_allocation()
 
-        if self.myparentAlloc == None or \
+        if self.myparentAlloc is None or \
                 parentAlloc.width != self.myparentAlloc.width or \
                 parentAlloc.height != self.myparentAlloc.height:
 
@@ -109,9 +113,9 @@ class StarArrowButton(OverlayWindow):
         buttonWidth = buttonWidth * self.size[0] / float(starWidth)
         buttonHeight = buttonHeight * self.size[1] / float(starHeight)
         dx_loc, dy_loc = DX_DY[position]
-        x_loc = ceil(dx_loc * (1 + PADDING_X) * buttonWidth - buttonWidth / 2. + \
+        x_loc = ceil(dx_loc * (1 + PADDING_X) * buttonWidth - buttonWidth / 2. +
                      self.size[0] / 2.)
-        y_loc = ceil(dy_loc * (1 + PADDING_Y) * buttonHeight - buttonHeight / 2. + \
+        y_loc = ceil(dy_loc * (1 + PADDING_Y) * buttonHeight - buttonHeight / 2. +
                      self.size[1] / 2.)
 
         rect = Gdk.Rectangle()
@@ -174,16 +178,16 @@ if __name__ == "__main__":
         cairo_win = widget.window.cairo_create()
         cx_loc = cy_loc = 100
         radius = 50
-        cairo_win.arc(cx_loc, cy_loc, radius - 1, 0, 2 * math.pi)
+        cairo_win.arc(cx_loc, cy_loc, radius - 1, 0, 2 * pi)
         cairo_win.set_source_rgba(1.0, 0.0, 0.0, 1.0)
         cairo_win.set_operator(cairo.OPERATOR_OVER)
         cairo_win.fill()
-    #w.connect("e)
+    # w.connect("e)
     w.show_all()
     sab.show_all()
     Gtk.main()
 
-#if __name__ != "__main__":
+# if __name__ != "__main__":
 #    w = Gtk.Window()
 #    w.connect("delete-event", Gtk.main_quit)
 #    hbox = Gtk.HBox()
