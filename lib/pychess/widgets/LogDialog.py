@@ -1,16 +1,12 @@
 # -*- coding: UTF-8 -*-
 
-import os.path
 import time
-import codecs
 import logging
 
-from gi.repository import Gtk, Gdk, Pango, GObject, GLib
+from gi.repository import Gtk, Gdk, Pango, GLib
 
-from pychess.compat import unicode
 from pychess.System import uistuff
 from pychess.System.LogEmitter import logemitter
-from pychess.System.prefix import addDataPrefix
 
 
 class InformationWindow:
@@ -70,7 +66,7 @@ class InformationWindow:
         def _newMessage(cls, tag, timestamp, message, importance):
             textview = cls._getPageFromTag(tag)["textview"]
 
-            if not tag in cls.tagToTime or timestamp - cls.tagToTime[tag] >= 1:
+            if tag not in cls.tagToTime or timestamp - cls.tagToTime[tag] >= 1:
                 t = time.strftime("%H:%M:%S", time.localtime(timestamp))
                 textview.get_buffer().insert_with_tags_by_name(
                     textview.get_buffer().get_end_iter(),
@@ -85,11 +81,11 @@ class InformationWindow:
         GLib.idle_add(_newMessage, cls, tag, timestamp, message, importance)
 
     @classmethod
-    def _createPage(cls, parrentIter, tag):
+    def _createPage(cls, parent_iter, tag):
         name = tag[-1]
         if isinstance(name, int):
             name = str(name)
-        iter = cls.treeview.get_model().append(parrentIter, (name, ))
+        iter = cls.treeview.get_model().append(parent_iter, (name, ))
         cls.tagToIter[tag] = iter
 
         widgets = uistuff.GladeWidgets("findbar.glade")
@@ -170,8 +166,8 @@ class InformationWindow:
         return cls._getPageFromTag(tag)
 
     @classmethod
-    def onSearchChanged(cls, searchEntry, widgets):
-        pattern = searchEntry.get_text().lower()
+    def onSearchChanged(cls, search_entry, widgets):
+        pattern = search_entry.get_text().lower()
         widgets["outofLabel"].props.visible = bool(pattern)
         if not pattern:
             return

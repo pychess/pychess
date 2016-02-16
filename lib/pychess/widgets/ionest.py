@@ -3,18 +3,18 @@
 from __future__ import print_function
 
 import os
-
 from gi.repository import Gtk
 from gi.repository import GObject
 
+
 from pychess import Savers
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Savers import pgn, ngettext, res
+from pychess.Savers import pgn
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
 from pychess.System.uistuff import GladeWidgets
-from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT
+from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT, LOCAL, ARTIFICIAL
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamenanny, gamewidget
 
@@ -368,7 +368,7 @@ def closeAllGames(pairs):
                     markup = "<b><big>" + _("Unable to save to configured file. \
                                             Save the games before closing?") + "</big></b>"
                     break
-                    res
+#                    res
         if response is None:
             widgets = GladeWidgets("saveGamesDialog.glade")
             dialog = widgets["saveGamesDialog"]
