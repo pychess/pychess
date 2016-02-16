@@ -6,7 +6,6 @@ from pychess.compat import cmp
 from pychess.Utils.IconLoader import load_icon
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
-#from pychess.System.Log import log
 from pychess.widgets import insert_formatted
 from pychess.widgets.ChatView import ChatView
 from pychess.widgets.pydock.PyDockTop import PyDockTop
@@ -218,7 +217,7 @@ class Panel(object):
     def start(self):
         pass
 
-    def addItem(self, id, text, type, chatView):
+    def addItem(self, id, text, type, chat_view):
         pass
 
     def removeItem(self, id):
@@ -227,9 +226,9 @@ class Panel(object):
     def selectItem(self, id):
         pass
 
-#===============================================================================
+# ===============================================================================
 # Panels
-#===============================================================================
+# ===============================================================================
 
 
 class ViewsPanel(Gtk.Notebook, Panel):
@@ -267,35 +266,35 @@ class ViewsPanel(Gtk.Notebook, Panel):
         self.messageBuffer = {}
 
         def globalPersonalMessage(cm, name, title, isadmin, text):
-            if not name in self.messageBuffer:
+            if name not in self.messageBuffer:
                 self.messageBuffer[name] = []
             self.messageBuffer[name].append((title, isadmin, text))
 
         self.connection.cm.connect("privateMessage", globalPersonalMessage)
 
-    def addItem(self, grp_id, name, grp_type, chatView):
-        chatView.connect("messageTyped", self.onMessageTyped, grp_id, name, grp_type)
+    def addItem(self, grp_id, name, grp_type, chat_view):
+        chat_view.connect("messageTyped", self.onMessageTyped, grp_id, name, grp_type)
         self.connection.cm.connect("channelMessage", self.onChannelMessage, grp_id,
-                                   chatView)
+                                   chat_view)
         self.connection.cm.connect("privateMessage", self.onPersonMessage,
-                                   get_playername(name), chatView)
+                                   get_playername(name), chat_view)
 
         if grp_type == TYPE_CHANNEL:
             self.connection.cm.connect("channelLog", self.onChannelLog, grp_id,
-                                       chatView)
+                                       chat_view)
             self.connection.cm.getChannelLog(grp_id)
             if not self.connection.cm.mayTellChannel(grp_id):
-                chatView.disable(_(
+                chat_view.disable(_(
                     "Only registered users may talk to this channel"))
 
-        elif grp_type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, \
+        elif grp_type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST,
                           TYPE_ADMIN, TYPE_BLINDFOLD):
             if name in self.messageBuffer:
                 for title, isadmin, messagetext in self.messageBuffer[name]:
-                    chatView.addMessage(name, messagetext)
+                    chat_view.addMessage(name, messagetext)
                 del self.messageBuffer[name]
 
-        self.addPage(chatView, grp_id)
+        self.addPage(chat_view, grp_id)
 
     def removeItem(self, grp_id):
         self.removePage(grp_id)
@@ -304,26 +303,26 @@ class ViewsPanel(Gtk.Notebook, Panel):
         child = self.id2Widget[grp_id]
         self.set_current_page(self.page_num(child))
 
-    def onChannelLog(self, cm, channel, time, handle, text, name_, chatView):
+    def onChannelLog(self, cm, channel, time, handle, text, name_, chat_view):
         if channel.lower() == name_.lower():
-            chatView.insertLogMessage(time, handle, text)
+            chat_view.insertLogMessage(time, handle, text)
 
-    def onMessageTyped(self, chatView, text, grp_id, name, grp_type):
+    def onMessageTyped(self, chat_view, text, grp_id, name, grp_type):
         if grp_type == TYPE_CHANNEL:
             self.connection.cm.tellChannel(grp_id, text)
         elif grp_type == TYPE_PERSONAL:
             self.connection.cm.tellPlayer(get_playername(name), text)
-        chatView.addMessage(self.connection.getUsername(), text)
+        chat_view.addMessage(self.connection.getUsername(), text)
 
-    def onPersonMessage(self, cm, name, title, isadmin, text, name_, chatView):
+    def onPersonMessage(self, cm, name, title, isadmin, text, name_, chat_view):
         if name.lower() == name_.lower():
-            chatView.addMessage(name, text)
+            chat_view.addMessage(name, text)
             self.emit('channel_content_Changed', name_, TYPE_PERSONAL)
 
     def onChannelMessage(self, cm, name, isadmin, isme, channel, text, name_,
-                         chatView):
+                         chat_view):
         if channel.lower() == name_.lower() and not isme:
-            chatView.addMessage(name, text)
+            chat_view.addMessage(name, text)
             self.emit('channel_content_Changed', channel, TYPE_CHANNEL)
 
     def addPage(self, widget, grp_id):
@@ -354,12 +353,12 @@ class InfoPanel(Gtk.Notebook, Panel):
 
         self.connection = connection
 
-    def addItem(self, grp_id, text, grp_type, chatView):
-        if grp_type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, TYPE_ADMIN, \
+    def addItem(self, grp_id, text, grp_type, chat_view):
+        if grp_type in (TYPE_PERSONAL, TYPE_COMP, TYPE_GUEST, TYPE_ADMIN,
                         TYPE_BLINDFOLD):
-            infoItem = self.PlayerInfoItem(grp_id, text, chatView, self.connection)
+            infoItem = self.PlayerInfoItem(grp_id, text, chat_view, self.connection)
         elif grp_type == TYPE_CHANNEL:
-            infoItem = self.ChannelInfoItem(grp_id, text, chatView,
+            infoItem = self.ChannelInfoItem(grp_id, text, chat_view,
                                             self.connection)
         self.addPage(infoItem, grp_id)
 
@@ -381,7 +380,7 @@ class InfoPanel(Gtk.Notebook, Panel):
         self.remove_page(self.page_num(child))
 
     class PlayerInfoItem(Gtk.Alignment):
-        def __init__(self, id, text, chatView, connection):
+        def __init__(self, id, text, chat_view, connection):
             GObject.GObject.__init__(self, xscale=1, yscale=1)
             self.add(Gtk.Label(label=_("Loading player data")))
 
@@ -429,17 +428,17 @@ class InfoPanel(Gtk.Notebook, Panel):
             widget.show_all()
 
     class ChannelInfoItem(Gtk.Alignment):
-        def __init__(self, grp_id, text, chatView, connection):
+        def __init__(self, grp_id, text, chat_view, connection):
             GObject.GObject.__init__(self, xscale=1, yscale=1)
             self.cm = connection.cm
             self.add(Gtk.Label(label=_("Receiving list of players")))
 
             self.names = set()
-            chatView.connect("messageAdded", self.onMessageAdded)
+            chat_view.connect("messageAdded", self.onMessageAdded)
             self.store = Gtk.ListStore(object,  # (r,g,b) Color tuple
                                        str,  # name string
                                        bool  # is separator
-                                      )
+                                       )
 
             connection.players.connect("FICSPlayerExited",
                                        self.onPlayerRemoved)
@@ -471,8 +470,8 @@ class InfoPanel(Gtk.Notebook, Panel):
             tv_list.set_headers_visible(False)
             tv_list.set_tooltip_column(1)
             tv_list.set_model(self.store)
-            tv_list.append_column(Gtk.TreeViewColumn("", \
-                                                     BulletCellRenderer(), \
+            tv_list.append_column(Gtk.TreeViewColumn("",
+                                                     BulletCellRenderer(),
                                                      color=0))
             cell = Gtk.CellRendererText()
             cell.props.ellipsize = Pango.EllipsizeMode.END
@@ -481,7 +480,7 @@ class InfoPanel(Gtk.Notebook, Panel):
 
             self.separatorIter = self.store.append([(), "", True])
 
-            tv_list.set_row_separator_func(lambda m, i, d: m.get_value(i, 2), \
+            tv_list.set_row_separator_func(lambda m, i, d: m.get_value(i, 2),
                                            None)
             scroll_win.add(tv_list)
 
@@ -503,7 +502,7 @@ class InfoPanel(Gtk.Notebook, Panel):
             self.show_all()
 
         @idle_add
-        def onMessageAdded(self, chatView, sender, text, color):
+        def onMessageAdded(self, chat_view, sender, text, color):
             s_iter = self.store.get_iter_first()
 
             # If the names list hasn't been retrieved yet, we have to skip this
@@ -533,7 +532,7 @@ class InfoPanel(Gtk.Notebook, Panel):
             # If the person was not in the area under the separator of the
             # store, it must be a new person, who has joined the channel, and we
             # simply add him before the separator
-            self.store.insert_before(self.separatorIter, \
+            self.store.insert_before(self.separatorIter,
                                      [color, sender, False])
 
 
@@ -648,7 +647,7 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         for chan in data:
             if model[m_iter][0] == chan:
                 if data[chan]:
-                    cell.set_property('foreground_rgba', \
+                    cell.set_property('foreground_rgba',
                                       Gdk.RGBA(0.9, 0.2, 0.2, 1))
                 else:
                     cell.set_property('foreground_rgba', Gdk.RGBA(0, 0, 0, 1))
@@ -667,19 +666,19 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         j_list = self.joinedList
         leftcol = j_list.leftcol  # treeViewColumn
 
-        cur_iter = j_list.get_selection().get_selected()[1]  #Selected iter
+        cur_iter = j_list.get_selection().get_selected()[1]  # Selected iter
         if grp_type == TYPE_PERSONAL:
             channel = "person" + channel.lower()
         tmp_iter = j_list.id2iter[channel]
-        tmp_iter = j_list.sort_model.convert_child_iter_to_iter(tmp_iter)[1]  #channel iter
+        tmp_iter = j_list.sort_model.convert_child_iter_to_iter(tmp_iter)[1]  # channel iter
         j_list.get_selection().select_iter(tmp_iter)
         cell = leftcol.get_cells()[0]
         j_list.get_selection().select_iter(cur_iter)
         self.highlighted[channel] = True
         if cur_iter != tmp_iter:
-            iter = tmp_iter
-            leftcol.set_cell_data_func(cell,\
-                                       self.change_fg_colour,\
+            # iter = tmp_iter
+            leftcol.set_cell_data_func(cell,
+                                       self.change_fg_colour,
                                        func_data=self.highlighted)
 
     def start(self):
@@ -706,7 +705,7 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
 
         def addPlayer(players, new_players):
             for player in new_players:
-                #print("Player : %s : %s" % (str(player.name),player.display_titles()))
+                # print("Player : %s : %s" % (str(player.name),player.display_titles()))
                 if str(player.name) in self.connection.notify_users:
                     self.friendsList.addRow(
                         self.compileId(player.name, TYPE_PERSONAL),
@@ -780,8 +779,8 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
             self.connection.cm.joinChannel(grp_id)
         self.joinedList.selectRow(grp_id)
 
-    def onRemove(self, joinedList, grp_id, text, grp_type):
-        joinedList.removeRow(grp_id)
+    def onRemove(self, joined_list, grp_id, text, grp_type):
+        joined_list.removeRow(grp_id)
         if grp_type == TYPE_CHANNEL:
             self.channelsList.addRow(grp_id, text, grp_type)
         elif grp_type == TYPE_PERSONAL:
@@ -799,14 +798,14 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
         if grp_type == TYPE_CHANNEL:
             self.connection.cm.removeChannel(grp_id)
 
-    def onSelect(self, joinedList, grp_id, grp_type):
+    def onSelect(self, joined_list, grp_id, grp_type):
         self.emit('conversationSelected', grp_id)
-        iter = joinedList.get_selection().get_selected()[1]  #Selected iter
-        cell = joinedList.leftcol.get_cells()[0]
+        joined_list.get_selection().get_selected()[1]  # Selected iter
+        cell = joined_list.leftcol.get_cells()[0]
         self.highlighted[grp_id] = False
-        joinedList.leftcol.set_cell_data_func(cell,
-                                              self.change_fg_colour,
-                                              func_data=self.highlighted)
+        joined_list.leftcol.set_cell_data_func(cell,
+                                               self.change_fg_colour,
+                                               func_data=self.highlighted)
 
     @idle_add
     def onPersonMessage(self, cm, name, title, isadmin, text):
@@ -814,9 +813,9 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
             grp_id = self.compileId(name, TYPE_PERSONAL)
             self.onAdd(self.playersList, grp_id, name, TYPE_PERSONAL)
 
-#===============================================================================
+# ===============================================================================
 # /Panels
-#===============================================================================
+# ===============================================================================
 
 
 class ChatWindow(object):

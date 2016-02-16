@@ -11,8 +11,6 @@ from pychess.widgets.Background import set_textview_color
 from pychess.Utils.IconLoader import load_icon
 from pychess.ic.ICGameModel import ICGameModel
 
-# test line will remove next commit
-
 
 class ChatView(Gtk.Box):
     __gsignals__ = {
