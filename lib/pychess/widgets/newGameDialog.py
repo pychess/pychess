@@ -216,7 +216,7 @@ class _GameInitializationMode:
         cls.widgets["newgamedialog"].connect("delete_event", lambda *a: True)
 
     @classmethod
-    def __initTimeRadio(cls, name, id, radiobutton, config_image, defmin,
+    def __initTimeRadio(cls, name, id, radiobutton, configImage, defmin,
                         defgain):
         # minSpin = Gtk.SpinButton(Gtk.Adjustment(1,1,240,1))
         minSpin = Gtk.SpinButton()
@@ -243,7 +243,7 @@ class _GameInitializationMode:
         alignment = Gtk.Alignment.new(1, 1, 1, 1)
         alignment.set_padding(6, 6, 12, 12)
         alignment.add(table)
-        ImageMenu.switchWithImage(config_image, alignment)
+        ImageMenu.switchWithImage(configImage, alignment)
 
         def updateString(spin):
             minutes = minSpin.get_value_as_int()
