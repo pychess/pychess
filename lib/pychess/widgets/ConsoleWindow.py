@@ -98,7 +98,7 @@ class ConsoleView(Gtk.Box):
         self.history = []
         self.pos = 0
         self.writeView = Gtk.Entry()
-        #self.writeView.set_width_chars(80)
+        # self.writeView.set_width_chars(80)
         self.pack_start(self.writeView, False, True, 0)
 
         self.writeView.connect("key-press-event", self.onKeyPress)

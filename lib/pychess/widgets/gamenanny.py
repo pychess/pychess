@@ -65,9 +65,9 @@ def on_disconnected(fics_connection, gamewidget):
         disable_buttons()
 
 
-#===============================================================================
+# ===============================================================================
 # Gamewidget signals
-#===============================================================================
+# ===============================================================================
 @idle_add
 def on_gmwidg_infront(gmwidg):
     for widget in MENU_ITEMS:
@@ -92,21 +92,21 @@ def on_gmwidg_closed(gmwidg):
 
 @idle_add
 def on_gmwidg_title_changed(gmwidg, new_title):
-    #log.debug("gamenanny.on_gmwidg_title_changed: starting %s" % repr(gmwidg))
+    # log.debug("gamenanny.on_gmwidg_title_changed: starting %s" % repr(gmwidg))
     if gmwidg.isInFront():
         getWidgets()['window1'].set_title('%s - PyChess' % new_title)
-    #log.debug("gamenanny.on_gmwidg_title_changed: returning")
+    # log.debug("gamenanny.on_gmwidg_title_changed: returning")
     return False
 
-#===============================================================================
+# ===============================================================================
 # Gamemodel signals
-#===============================================================================
+# ===============================================================================
 
 
 @idle_add
 def game_ended(gamemodel, reason, gmwidg):
-    log.debug("gamenanny.game_ended: reason=%s gmwidg=%s\ngamemodel=%s" % \
-        (reason, gmwidg, gamemodel))
+    log.debug("gamenanny.game_ended: reason=%s gmwidg=%s\ngamemodel=%s" %
+              (reason, gmwidg, gamemodel))
     nameDic = {"white": gamemodel.players[WHITE],
                "black": gamemodel.players[BLACK],
                "mover": gamemodel.curplayer}
@@ -283,7 +283,7 @@ def on_game_started(gamemodel, gmwidg):
 
     # Start analyzers if any
     gamemodel.connect("analyzer_added", analyzer_added, gmwidg)
-    if not (isinstance(gamemodel, ICGameModel) and \
+    if not (isinstance(gamemodel, ICGameModel) and
             gamemodel.isObservationGame() is False) and \
        not gamemodel.isEngine2EngineGame():
         gamemodel.start_analyzer(HINT)
@@ -294,9 +294,9 @@ def on_game_started(gamemodel, gmwidg):
             gamemodel.pause_analyzer(SPY)
     return False
 
-#===============================================================================
+# ===============================================================================
 # Player signals
-#===============================================================================
+# ===============================================================================
 
 
 def offer_callback(player, offer, gamemodel, gmwidg):
@@ -324,14 +324,14 @@ def offer_callback(player, offer, gamemodel, gmwidg):
     _set_statusbar(gmwidg, message)
     return False
 
-#===============================================================================
+# ===============================================================================
 # Subfunctions
-#===============================================================================
+# ===============================================================================
 
 
 def engineDead(engine, gmwidg):
     gmwidg.bringToFront()
-    dialog = Gtk.MessageDialog(type=Gtk.MessageType.ERROR, \
+    dialog = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
                                buttons=Gtk.ButtonsType.OK)
     dialog.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
     dialog.format_secondary_text(_(
