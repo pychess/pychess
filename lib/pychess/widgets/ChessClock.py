@@ -92,15 +92,15 @@ class ChessClock(Gtk.DrawingArea):
             rec = rect.height / 2. - 3.5
 
             context.arc(clock_x, clock_y, rec - 1, 0, 2 * pi)
-            linear = cairo.LinearGradient(clock_x - rec * 2, clock_y - rec * 2, \
+            linear = cairo.LinearGradient(clock_x - rec * 2, clock_y - rec * 2,
                                           clock_x + rec * 2, clock_y + rec * 2)
             linear.add_color_stop_rgba(0, 1, 1, 1, 0.3)
             linear.add_color_stop_rgba(1, 0, 0, 0, 0.3)
-            #context.set_source_rgba( 0, 0, 0, .3)
+            # context.set_source_rgba( 0, 0, 0, .3)
             context.set_source(linear)
             context.fill()
 
-            linear = cairo.LinearGradient(clock_x - rec, clock_y - rec, \
+            linear = cairo.LinearGradient(clock_x - rec, clock_y - rec,
                                           clock_x + rec, clock_y + rec)
             linear.add_color_stop_rgba(0, 0, 0, 0, 0.5)
             linear.add_color_stop_rgba(1, 1, 1, 1, 0.5)
@@ -123,11 +123,11 @@ class ChessClock(Gtk.DrawingArea):
 
                 radial = cairo.RadialGradient(clock_x, clock_y, 3, clock_x, clock_y, rec)
                 if player == 0:
-                    #radial.add_color_stop_rgb(0, .73, .74, .71)
+                    # radial.add_color_stop_rgb(0, .73, .74, .71)
                     radial.add_color_stop_rgb(0, .93, .93, .92)
                     radial.add_color_stop_rgb(1, 1, 1, 1)
                 else:
-                    #radial.add_color_stop_rgb(0, .53, .54, .52)
+                    # radial.add_color_stop_rgb(0, .53, .54, .52)
                     radial.add_color_stop_rgb(0, .18, .20, .21)
                     radial.add_color_stop_rgb(1, 0, 0, 0)
                 context.set_source(radial)
@@ -153,8 +153,8 @@ class ChessClock(Gtk.DrawingArea):
         else:
             context.set_source_rgba(self.dark.red, self.dark.green,
                                     self.dark.blue, self.dark.alpha)
-        y_loc = rect.height/2. - layout0.get_extents()[0].height/pangoScale/2 \
-                           - layout0.get_extents()[0].y/pangoScale
+        y_loc = rect.height / 2. - layout0.get_extents()[0].height / pangoScale / 2 \
+            - layout0.get_extents()[0].y / pangoScale
         context.move_to(rect.height - 7, y_loc)
         PangoCairo.show_layout(context, layout0)
 
@@ -166,8 +166,8 @@ class ChessClock(Gtk.DrawingArea):
         else:
             context.set_source_rgba(self.dark.red, self.dark.green,
                                     self.dark.blue, self.dark.alpha)
-        y_loc = rect.height/2. - layout0.get_extents()[0].height/pangoScale/2 \
-                           - layout0.get_extents()[0].y/pangoScale
+        y_loc = rect.height / 2. - layout0.get_extents()[0].height / pangoScale / 2 \
+            - layout0.get_extents()[0].y / pangoScale
         context.move_to(rect.width / 2. + rect.height - 7, y_loc)
         PangoCairo.show_layout(context, layout1)
 
@@ -203,7 +203,7 @@ class ChessClock(Gtk.DrawingArea):
         if self.model.getPlayerTime(self.model.movingColor) <= alarm_time and \
             self.model.gamemodel.players[self.model.movingColor].__type__ == LOCAL and \
             self.model.gamemodel.status in UNFINISHED_STATES and \
-            not self.short_on_time[self.model.movingColor]:
+                not self.short_on_time[self.model.movingColor]:
             self.short_on_time[self.model.movingColor] = True
             preferencesDialog.SoundTab.playAction("shortOnTime")
 

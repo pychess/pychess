@@ -6,7 +6,6 @@ from gi.repository import Gtk, Gdk, GLib, GObject
 from gi.repository.GdkPixbuf import Pixbuf
 
 from pychess.System import uistuff
-#from pychess.System.idle_add import idle_add
 from pychess.System.prefix import getEngineDataPrefix
 from pychess.System.SubProcess import searchPath
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
@@ -144,7 +143,7 @@ class EnginesDialog():
         def remove(button):
             if self.cur_engine is not None:
                 self.widgets['remove_engine_button'].set_sensitive(False)
-                engine = discoverer.getEngineByName(self.cur_engine)
+                # engine = discoverer.getEngineByName(self.cur_engine)
                 discoverer.removeEngine(self.cur_engine)
                 discoverer.save()
 
@@ -187,9 +186,9 @@ class EnginesDialog():
                     vm_name = "wine"
                     vmpath = searchPath(vm_name, access=os.R_OK | os.X_OK)
                     if vmpath is None:
-                        msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR, \
+                        msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
                                                     buttons=Gtk.ButtonsType.OK)
-                        msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" % \
+                        msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
                                              new_engine))
                         msg_dia.format_secondary_text(_("wine not installed"))
                         msg_dia.run()
@@ -249,8 +248,7 @@ class EnginesDialog():
                             0 if uci else 1)
                         self.widgets["engine_args_entry"].set_text("")
 
-                        active = self.widgets[
-                            "engine_protocol_combo"].get_active()
+                        # active = self.widgets["engine_protocol_combo"].get_active()
                         protocol = "uci" if uci else "xboard"
 
                         discoverer.addEngine(binname, new_engine, protocol,
@@ -259,9 +257,9 @@ class EnginesDialog():
                         self.add = False
                         discoverer.discover()
                     except:
-                        msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR, \
+                        msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
                                                     buttons=Gtk.ButtonsType.OK)
-                        msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" % \
+                        msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
                                              new_engine))
                         msg_dia.format_secondary_text(_(
                             "There is something wrong with this executable"))
