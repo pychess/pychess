@@ -14,9 +14,9 @@ class ImageMenu(Gtk.EventBox):
         self.subwindow.add(child)
         self.subwindow.connect_after("draw", self.__sub_onExpose)
         self.subwindow.connect("button_press_event", self.__sub_onPress)
-        #self.subwindow.connect("motion_notify_event", self.__sub_onMotion)
-        #self.subwindow.connect("leave_notify_event", self.__sub_onMotion)
-        #self.subwindow.connect("delete-event", self.__sub_onDelete)
+        # self.subwindow.connect("motion_notify_event", self.__sub_onMotion)
+        # self.subwindow.connect("leave_notify_event", self.__sub_onMotion)
+        # self.subwindow.connect("delete-event", self.__sub_onDelete)
         self.subwindow.connect("focus-out-event", self.__sub_onFocusOut)
         child.show_all()
 
@@ -46,9 +46,9 @@ class ImageMenu(Gtk.EventBox):
     def __sub_setGrabbed(self, grabbed):
         if grabbed and not Gdk.pointer_is_grabbed():
             Gdk.pointer_grab(self.subwindow.get_window(), True,
-                             Gdk.EventMask.LEAVE_NOTIFY_MASK
-                             | Gdk.EventMask.POINTER_MOTION_MASK
-                             | Gdk.EventMask.BUTTON_PRESS_MASK, None, None,
+                             Gdk.EventMask.LEAVE_NOTIFY_MASK |
+                             Gdk.EventMask.POINTER_MOTION_MASK |
+                             Gdk.EventMask.BUTTON_PRESS_MASK, None, None,
                              Gdk.CURRENT_TIME)
             Gdk.keyboard_grab(self.subwindow.get_window(), True,
                               Gdk.CURRENT_TIME)
@@ -71,14 +71,14 @@ class ImageMenu(Gtk.EventBox):
         allocation = subwindow.get_allocation()
         context = subwindow.get_window().cairo_create()
         context.set_line_width(2)
-        context.rectangle(allocation.x, allocation.y, \
+        context.rectangle(allocation.x, allocation.y,
                           allocation.width, allocation.height)
         style_ctxt = self.get_style_context()
         color = style_ctxt.lookup_color("p_dark_color")[1]
         red, green, blue, alpha = color.red, color.green, color.blue, color.alpha
         context.set_source_rgba(red, green, blue, alpha)
         context.stroke()
-        #self.__sub_setGrabbed(self.isopen)
+        # self.__sub_setGrabbed(self.isopen)
 
     def __sub_onDelete(self, subwindow, event):
         self.setOpen(False)
