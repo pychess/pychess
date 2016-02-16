@@ -3,18 +3,19 @@
 from __future__ import print_function
 
 import os
-
+import gettext
 from gi.repository import Gtk
 from gi.repository import GObject
 
+
 from pychess import Savers
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Savers import pgn, ngettext, res
+from pychess.Savers import pgn
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
 from pychess.System.uistuff import GladeWidgets
-from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT
+from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT, LOCAL, ARTIFICIAL
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamenanny, gamewidget
 
@@ -353,9 +354,9 @@ def closeAllGames(pairs):
     elif len(changedPairs) == 1:
         response = closeGame(*changedPairs[0])
     else:
-        markup = "<big><b>" + ngettext("There is %d game with unsaved moves.",
-                                       "There are %d games with unsaved moves.",
-                                       len(changedPairs)) % len(changedPairs) + " " + \
+        markup = "<big><b>" + gettext.ngettext("There is %d game with unsaved moves.",
+                                               "There are %d games with unsaved moves.",
+                                               len(changedPairs)) % len(changedPairs) + " " + \
             _("Save moves before closing?") + "</b></big>"
 
         if conf.get("autoSave", False):
@@ -368,7 +369,7 @@ def closeAllGames(pairs):
                     markup = "<b><big>" + _("Unable to save to configured file. \
                                             Save the games before closing?") + "</big></b>"
                     break
-                    res
+#                    res
         if response is None:
             widgets = GladeWidgets("saveGamesDialog.glade")
             dialog = widgets["saveGamesDialog"]
@@ -393,7 +394,7 @@ def closeAllGames(pairs):
                 if path:
                     liststore[path][0] = not liststore[path][0]
                 saves = len(tuple(row for row in liststore if row[0]))
-                saveLabel.set_text(ngettext(
+                saveLabel.set_text(gettext.ngettext(
                     "_Save %d document", "_Save %d documents", saves) % saves)
                 saveLabel.set_use_underline(True)
 
