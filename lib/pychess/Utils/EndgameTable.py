@@ -2,8 +2,8 @@ from __future__ import absolute_import
 from gi.repository import GObject
 
 from .Move import Move
-from .lutils.egtb_k4it import egtb_k4it
-from .lutils.egtb_gaviota import egtb_gaviota
+from .lutils.egtb_k4it import EgtbK4kit
+from .lutils.egtb_gaviota import EgtbGaviota
 
 providers = []
 
@@ -20,7 +20,7 @@ class EndgameTable(GObject.GObject):
 
         global providers
         if not providers:
-            providers = [egtb_gaviota(), egtb_k4it()]
+            providers = [EgtbGaviota(), EgtbK4kit()]
         self.providers = providers
 
     def _pieceCounts(self, board):

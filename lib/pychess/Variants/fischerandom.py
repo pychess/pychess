@@ -5,8 +5,7 @@ import random
 
 from pychess.Utils.const import FISCHERRANDOMCHESS, VARIANTS_SHUFFLE
 from pychess.Utils.Board import Board
-#from pychess.Utils.lutils.bitboard import *
-from pychess.Utils.lutils.attack import reprFile
+from pychess.Utils.const import reprFile
 
 
 class FischerandomBoard(Board):
@@ -21,7 +20,7 @@ class FischerandomBoard(Board):
     variant_group = VARIANTS_SHUFFLE
 
     def __init__(self, setup=False, lboard=None):
-        if setup == True:
+        if setup is True:
             Board.__init__(self, setup=self.shuffle_start(), lboard=lboard)
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
