@@ -1,4 +1,3 @@
-import os
 from pychess.System import conf
 from pychess.System import uistuff
 from random import randrange
@@ -40,9 +39,12 @@ class TipOfTheDay:
 
     @classmethod
     def set_currentIndex(cls, value):
-        if len(tips) == 0: return
-        if value < 0: value = len(tips) - 1
-        elif value >= len(tips): value = 0
+        if len(tips) == 0:
+            return
+        if value < 0:
+            value = len(tips) - 1
+        elif value >= len(tips):
+            value = 0
         cls.currentIndex = value
         cls.widgets["tipfield"].set_markup(tips[value])
 

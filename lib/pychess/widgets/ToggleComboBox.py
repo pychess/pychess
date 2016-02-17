@@ -1,9 +1,11 @@
 import gi
-gi.require_version("Gtk", "3.0")
+
 from gi.repository import Gdk, Gtk, GObject
 
 from pychess.System.Log import log
 from pychess.Utils.IconLoader import load_icon
+
+gi.require_version("Gtk", "3.0")
 
 
 class ToggleComboBox(Gtk.ToggleButton):
@@ -32,7 +34,8 @@ class ToggleComboBox(Gtk.ToggleButton):
         self.connect("scroll_event", self.scroll_event)
 
         self.menu = menu = Gtk.Menu()
-        deactivate = lambda w: self.set_active(False)
+#        deactivate = lambda w: self.set_active(False)
+        deactivate = self.deactive()
         menu.connect("deactivate", deactivate)
         menu.attach_to_widget(self, None)
 
@@ -41,13 +44,17 @@ class ToggleComboBox(Gtk.ToggleButton):
         self._active = -1
         self._items = []
 
+    def deactive(self):
+        return self.set_active(False)
+
     def _get_active(self):
         return self._active
 
     def _set_active(self, active):
         if not isinstance(active, int):
             raise TypeError
-        if active == self._active: return
+        if active == self._active:
+            return
         if active >= len(self._items):
             log.warning(
                 "Tried to set combobox to %d, but it has only got %d items" %
@@ -59,7 +66,7 @@ class ToggleComboBox(Gtk.ToggleButton):
         self.emit("changed", oldactive)
         text, icon = self._items[self._active]
         self.label.set_markup(self.markup[0] + text + self.markup[1])
-        if icon != None:
+        if icon is not None:
             self.hbox.set_spacing(6)
             self.image.set_from_pixbuf(icon)
         else:
@@ -138,13 +145,14 @@ class ToggleComboBox(Gtk.ToggleButton):
         self.set_active(True)
         self.menu.popup(None, None, self.menuPos, 1, 1, event.time)
 
-    #from Gtk.gdk import keyval_from_name
-    #keys = map(keyval_from_name,("space", "KP_Space", "Return", "KP_Enter"))
+    # from Gtk.gdk import keyval_from_name
+    # keys = map(keyval_from_name,("space", "KP_Space", "Return", "KP_Enter"))
     keys = list(map(Gdk.keyval_from_name, ("space", "KP_Space", "Return",
                                            "KP_Enter")))
 
     def key_press(self, widget, event):
-        if not event.keyval in self.keys: return
+        if event.keyval not in self.keys:
+            return
         self.set_active(True)
         self.menu.popup(None, None, self.menuPos, 1, 1, event.time)
         return True

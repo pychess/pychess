@@ -408,7 +408,7 @@ class SoundTab:
         for i in range(self.COUNT_OF_SOUNDS):
             combo = widgets["sound%dcombo" % i]
             uistuff.createCombo(combo, items, name="soundcombo%d" % i)
-            #combo.set_active(0)
+            # combo.set_active(0)
             combo.connect("changed", callback, i)
 
             label = widgets["soundlabel%d" % i]
@@ -418,11 +418,11 @@ class SoundTab:
             if os.path.isfile(url2pathname(uri[5:])):
                 model = combo.get_model()
                 model.append([audioIco, unquote(os.path.split(uri)[1])])
-                #combo.set_active(3)
+                # combo.set_active(3)
 
         for i in range(self.COUNT_OF_SOUNDS):
-            if conf.get("soundcombo%d"%i, SOUND_MUTE) == SOUND_URI and \
-                    not os.path.isfile(url2pathname(conf.get("sounduri%d"%i,"")[5:])):
+            if conf.get("soundcombo%d" % i, SOUND_MUTE) == SOUND_URI and \
+                    not os.path.isfile(url2pathname(conf.get("sounduri%d" % i, "")[5:])):
                 conf.set("soundcombo%d" % i, SOUND_MUTE)
             uistuff.keep(widgets["sound%dcombo" % i], "soundcombo%d" % i)
 

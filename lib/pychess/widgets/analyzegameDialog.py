@@ -5,7 +5,7 @@ import threading
 from gi.repository import Gtk
 
 from . import gamewidget
-from pychess.Utils.const import *
+from pychess.Utils.const import HINT, SPY, BLACK, WHITE
 from pychess.System import conf, fident
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
@@ -22,6 +22,8 @@ widgets = uistuff.GladeWidgets("analyze_game.glade")
 stop_event = threading.Event()
 
 firstRun = True
+
+
 def run(gameDic):
     global firstRun
     if firstRun:
@@ -31,8 +33,9 @@ def run(gameDic):
     widgets["analyze_game"].show()
     widgets["analyze_game"].present()
 
+
 def initialize(gameDic):
-    
+
     uistuff.keep(widgets["fromCurrent"], "fromCurrent", first_value=True)
     uistuff.keep(widgets["threatPV"], "threatPV")
     uistuff.keep(widgets["showEval"], "showEval")
@@ -44,6 +47,7 @@ def initialize(gameDic):
     uistuff.createCombo(widgets["ana_combobox"], name="ana_combobox")
 
     from pychess.widgets import newGameDialog
+
     @idle_add
     def update_analyzers_store(discoverer):
         data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
@@ -52,17 +56,17 @@ def initialize(gameDic):
     update_analyzers_store(discoverer)
 
     uistuff.keep(widgets["ana_combobox"], "ana_combobox", anal_combo_get_value,
-        lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode",
-                                              "analyzer_check", HINT))
- 
+                 lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode",
+                                                              "analyzer_check", HINT))
+
     def hide_window(button, *args):
         widgets["analyze_game"].hide()
         return True
-    
-    def abort ():
+
+    def abort():
         stop_event.set()
         widgets["analyze_game"].hide()
-        
+
     def run_analyze(button, *args):
         gmwidg = gamewidget.cur_gmwidg()
         gamemodel = gameDic[gmwidg]
@@ -85,7 +89,8 @@ def initialize(gameDic):
         title = _("Game analyzing in progress...")
         text = _("Do you want to abort it?")
         content = InfoBar.get_message_content(title, text, Gtk.STOCK_DIALOG_QUESTION)
-        def response_cb (infobar, response, message):
+
+        def response_cb(infobar, response, message):
             conf.set("analyzer_check", old_check_value)
             if threat_PV:
                 conf.set("inv_analyzer_check", old_inv_check_value)
@@ -103,6 +108,7 @@ def initialize(gameDic):
             for board in gamemodel.boards[start_ply:]:
                 if stop_event.is_set():
                     break
+
                 @idle_add
                 def do():
                     gmwidg.board.view.setShownBoard(board)
@@ -110,39 +116,40 @@ def initialize(gameDic):
                 analyzer.setBoard(board)
                 if threat_PV:
                     inv_analyzer.setBoard(board)
-                time.sleep(move_time+0.1)
+                time.sleep(move_time + 0.1)
 
                 ply = board.ply
-                if ply-1 in gamemodel.scores and ply in gamemodel.scores: 
-                    color = (ply-1) % 2
-                    oldmoves, oldscore, olddepth = gamemodel.scores[ply-1]
+                if ply - 1 in gamemodel.scores and ply in gamemodel.scores:
+                    color = (ply - 1) % 2
+                    oldmoves, oldscore, olddepth = gamemodel.scores[ply - 1]
                     oldscore = oldscore * -1 if color == BLACK else oldscore
                     score_str = prettyPrintScore(oldscore, olddepth)
                     moves, score, depth = gamemodel.scores[ply]
                     score = score * -1 if color == WHITE else score
-                    diff = score-oldscore
-                    if (diff > threshold and color==BLACK) or (diff < -1*threshold and color==WHITE):
+                    diff = score - oldscore
+                    if (diff > threshold and color == BLACK) or (diff < -1 * threshold and color == WHITE):
                         if threat_PV:
                             try:
-                                if ply-1 in gamemodel.spy_scores:
-                                    oldmoves0, oldscore0, olddepth0 = gamemodel.spy_scores[ply-1]
+                                if ply - 1 in gamemodel.spy_scores:
+                                    oldmoves0, oldscore0, olddepth0 = gamemodel.spy_scores[ply - 1]
                                     score_str0 = prettyPrintScore(oldscore0, olddepth0)
-                                    pv0 = listToMoves(gamemodel.boards[ply-1], ["--"] + oldmoves0, validate=True)
+                                    pv0 = listToMoves(gamemodel.boards[ply - 1], ["--"] + oldmoves0, validate=True)
                                     if len(pv0) > 2:
-                                        gamemodel.add_variation(gamemodel.boards[ply-1], pv0, comment="Treatening", score=score_str0)
+                                        gamemodel.add_variation(gamemodel.boards[ply - 1], pv0,
+                                                                comment="Treatening", score=score_str0)
                             except ParsingError as e:
                                 # ParsingErrors may happen when parsing "old" lines from
                                 # analyzing engines, which haven't yet noticed their new tasks
-                                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
-                                    (' '.join(oldmoves),e))
+                                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" %
+                                          (' '.join(oldmoves), e))
                         try:
-                            pv = listToMoves(gamemodel.boards[ply-1], oldmoves, validate=True)
-                            gamemodel.add_variation(gamemodel.boards[ply-1], pv, comment="Better is", score=score_str)
+                            pv = listToMoves(gamemodel.boards[ply - 1], oldmoves, validate=True)
+                            gamemodel.add_variation(gamemodel.boards[ply - 1], pv, comment="Better is", score=score_str)
                         except ParsingError as e:
                             # ParsingErrors may happen when parsing "old" lines from
                             # analyzing engines, which haven't yet noticed their new tasks
-                            log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
-                                (' '.join(oldmoves),e))
+                            log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" %
+                                      (' '.join(oldmoves), e))
 
             widgets["analyze_game"].hide()
             widgets["analyze_ok_button"].set_sensitive(True)
@@ -150,14 +157,14 @@ def initialize(gameDic):
             if threat_PV:
                 conf.set("inv_analyzer_check", old_inv_check_value)
             message.dismiss()
-                        
+
         t = threading.Thread(target=analyse_moves, name=fident(analyse_moves))
         t.daemon = True
         t.start()
         hide_window(None)
 
         return True
-    
+
     widgets["analyze_game"].connect("delete-event", hide_window)
     widgets["analyze_cancel_button"].connect("clicked", hide_window)
     widgets["analyze_ok_button"].connect("clicked", run_analyze)
