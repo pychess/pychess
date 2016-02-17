@@ -1,11 +1,7 @@
-import gi
-
 from gi.repository import Gdk, Gtk, GObject
 
 from pychess.System.Log import log
 from pychess.Utils.IconLoader import load_icon
-
-gi.require_version("Gtk", "3.0")
 
 
 class ToggleComboBox(Gtk.ToggleButton):
@@ -34,9 +30,7 @@ class ToggleComboBox(Gtk.ToggleButton):
         self.connect("scroll_event", self.scroll_event)
 
         self.menu = menu = Gtk.Menu()
-#        deactivate = lambda w: self.set_active(False)
-        deactivate = self.deactive()
-        menu.connect("deactivate", deactivate)
+        menu.connect("deactivate", self.deactivate)
         menu.attach_to_widget(self, None)
 
         self.markup = "", ""
@@ -44,7 +38,7 @@ class ToggleComboBox(Gtk.ToggleButton):
         self._active = -1
         self._items = []
 
-    def deactive(self):
+    def deactivate(self, widget):
         return self.set_active(False)
 
     def _get_active(self):
