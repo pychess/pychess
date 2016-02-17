@@ -3,6 +3,7 @@
 from pychess.Utils.const import LOSERSCHESS, VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.Board import Board
 
+
 class LosersBoard(Board):
     """:Description: The Losers variant is a game where the concept is to get rid of all your
         pieces before you opponent does. On a players turn if a piece can be taken it must be taken

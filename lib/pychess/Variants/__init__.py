@@ -1,6 +1,13 @@
 from __future__ import absolute_import
 
-from pychess.Utils.const import *
+from pychess.Utils.const import NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERRANDOMCHESS, \
+    RANDOMCHESS, ASYMMETRICRANDOMCHESS, UPSIDEDOWNCHESS, PAWNSPUSHEDCHESS, THEBANCHESS, \
+    BUGHOUSECHESS, PAWNSPASSEDCHESS, ATOMICCHESS, CRAZYHOUSECHESS, LOSERSCHESS, SUICIDECHESS, \
+    PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS, ALLWHITECHESS, BLINDFOLDCHESS, \
+    HIDDENPIECESCHESS, HIDDENPAWNSCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, THREECHECKCHESS, \
+    AIWOKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, CAMBODIANCHESS, SITTUYINCHESS, EUROSHOGICHESS, \
+    MAKRUKCHESS, SETUPCHESS
+
 from .normal import NormalBoard
 from .corner import CornerBoard
 from .shuffle import ShuffleBoard
@@ -22,39 +29,37 @@ from .rookodds import RookOddsBoard
 from .queenodds import QueenOddsBoard
 from .wildcastle import WildcastleBoard
 from .wildcastleshuffle import WildcastleShuffleBoard
-from .blindfold import BlindfoldBoard, HiddenPawnsBoard, \
-                    HiddenPiecesBoard, AllWhiteBoard
+from .blindfold import BlindfoldBoard, HiddenPawnsBoard, HiddenPiecesBoard, AllWhiteBoard
 from .kingofthehill import KingOfTheHillBoard
 from .threecheck import ThreeCheckBoard
-from .asean import AiWokBoard, AseanBoard, CambodianBoard, \
-                    MakrukBoard, SittuyinBoard
+from .asean import AiWokBoard, AseanBoard, CambodianBoard, MakrukBoard, SittuyinBoard
 from .euroshogi import EuroShogiBoard
 from .setupposition import SetupBoard
 
 
-variants = {NORMALCHESS : NormalBoard,
-            CORNERCHESS : CornerBoard,
-            SHUFFLECHESS : ShuffleBoard,
-            FISCHERRANDOMCHESS : FischerandomBoard,
+variants = {NORMALCHESS: NormalBoard,
+            CORNERCHESS: CornerBoard,
+            SHUFFLECHESS: ShuffleBoard,
+            FISCHERRANDOMCHESS: FischerandomBoard,
             RANDOMCHESS: RandomBoard,
             ASYMMETRICRANDOMCHESS: AsymmetricRandomBoard,
-            UPSIDEDOWNCHESS : UpsideDownBoard,
-            PAWNSPUSHEDCHESS : PawnsPushedBoard,
-            PAWNSPASSEDCHESS : PawnsPassedBoard,
-            THEBANCHESS : ThebanBoard,
+            UPSIDEDOWNCHESS: UpsideDownBoard,
+            PAWNSPUSHEDCHESS: PawnsPushedBoard,
+            PAWNSPASSEDCHESS: PawnsPassedBoard,
+            THEBANCHESS: ThebanBoard,
             ATOMICCHESS: AtomicBoard,
             BUGHOUSECHESS: BughouseBoard,
             CRAZYHOUSECHESS: CrazyhouseBoard,
-            LOSERSCHESS : LosersBoard,
+            LOSERSCHESS: LosersBoard,
             SUICIDECHESS: SuicideBoard,
-            PAWNODDSCHESS : PawnOddsBoard,
-            KNIGHTODDSCHESS : KnightOddsBoard,
-            ROOKODDSCHESS : RookOddsBoard,
-            QUEENODDSCHESS : QueenOddsBoard,
-            ALLWHITECHESS : AllWhiteBoard,
-            BLINDFOLDCHESS : BlindfoldBoard,
-            HIDDENPAWNSCHESS : HiddenPawnsBoard,
-            HIDDENPIECESCHESS : HiddenPiecesBoard,
+            PAWNODDSCHESS: PawnOddsBoard,
+            KNIGHTODDSCHESS: KnightOddsBoard,
+            ROOKODDSCHESS: RookOddsBoard,
+            QUEENODDSCHESS: QueenOddsBoard,
+            ALLWHITECHESS: AllWhiteBoard,
+            BLINDFOLDCHESS: BlindfoldBoard,
+            HIDDENPAWNSCHESS: HiddenPawnsBoard,
+            HIDDENPIECESCHESS: HiddenPiecesBoard,
             WILDCASTLECHESS: WildcastleBoard,
             WILDCASTLESHUFFLECHESS: WildcastleShuffleBoard,
             KINGOFTHEHILLCHESS: KingOfTheHillBoard,

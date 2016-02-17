@@ -19,7 +19,7 @@ class PawnsPassedBoard(Board):
     standard_rules = True
     variant_group = VARIANTS_OTHER
 
-    def __init__ (self, setup=False, lboard=None):
+    def __init__(self, setup=False, lboard=None):
         if setup is True:
             Board.__init__(self, setup=PAWNSPASSEDSTART, lboard=lboard)
         else:
