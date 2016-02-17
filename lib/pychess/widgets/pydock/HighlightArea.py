@@ -7,7 +7,13 @@ from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER
 from .OverlayWindow import OverlayWindow
 
 from math import ceil as fceil
-ceil = lambda f: int(fceil(f))
+
+# ceil = lambda f: int(fceil(f))
+
+
+def ceil(f):
+    return int(fceil(f))
+
 
 class HighlightArea(OverlayWindow):
     """ An entirely blue widget """
