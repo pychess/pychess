@@ -48,9 +48,7 @@ class Player(GObject.GObject):
     def time(self):
         pass  # Optional
 
-    #===========================================================================
-    #    Starting the game
-    #===========================================================================
+    # Starting the game
 
     def prestart(self):
         pass  # Optional
@@ -61,9 +59,7 @@ class Player(GObject.GObject):
     def setOptionInitialBoard(self, model):
         pass  # Optional. Further defined in Engine.py
 
-    #===========================================================================
-    #    Ending the game
-    #===========================================================================
+    # Ending the game
 
     def end(self, status, reason):
         """ Called when the game ends in a normal way. Use this for shutting
@@ -75,9 +71,7 @@ class Player(GObject.GObject):
             errors and stuff. Use for closing connections etc. """
         raise NotImplementedError
 
-    #===========================================================================
-    #    Send the player move updates
-    #===========================================================================
+    # Send the player move updates
 
     def makeMove(self, board1, move, board2):
         """ Takes a board object, and if ply>lowply the latest move object and
@@ -88,16 +82,14 @@ class Player(GObject.GObject):
     def putMove(self, board1, move, board2):
         """ Like makeMove, but doesn't block and doesn't return anything.
             putMove is only used when the player is spectatctor to a game """
-        #Optional
+        # Optional
 
     def updateTime(self, secs, opsecs):
         """ Updates the player with the current remaining time as a float of
             seconds """
-        #Optional
+        # Optional
 
-        #===========================================================================
-        #    Interacting with the player
-        #===========================================================================
+    # nteracting with the player
 
     def pause(self):
         """ Should stop the player from thinking until resume is called """
@@ -110,32 +102,30 @@ class Player(GObject.GObject):
     def hurry(self):
         """ Forces engines to move now, and sends a hurry message to nonlocal
             human players """
-        #Optional
+        # Optional
 
     def undoMoves(self, moves, gamemodel):
         """ Undo 'moves' moves and makes the latest board in gamemodel the
             current """
-        #Optional
+        # Optional
 
     def playerUndoMoves(self, moves, gamemodel):
         """ Some players undo different depending on whether they are players or
             spectators. This is a convenient way to handle that. """
-        #Optional
+        # Optional
         return self.undoMoves(moves, gamemodel)
 
     def spectatorUndoMoves(self, moves, gamemodel):
         """ Some players undo different depending on whether they are players or
             spectators. This is a convenient way to handle that. """
-        #Optional
+        # Optional
         return self.undoMoves(moves, gamemodel)
 
     def putMessage(self, message):
         """ Sends the player a chatmessage """
-        #Optional
+        # Optional
 
-        #===========================================================================
-        #    Offer handling
-        #===========================================================================
+    # Offer handling
 
     def offer(self, offer):
         """ The players opponent has offered the player offer. If the player
@@ -147,13 +137,13 @@ class Player(GObject.GObject):
     def offerDeclined(self, offer):
         """ An offer sent by the player was responded negative by the
             opponent """
-        #Optional
+        # Optional
 
     def offerWithdrawn(self, offer):
         """ An offer earlier offered to the player has been withdrawn """
-        #Optional
+        # Optional
 
     def offerError(self, offer, error):
         """ An offer, accept or action made by the player has been refused by
             the game model. """
-        #Optional
+        # Optional

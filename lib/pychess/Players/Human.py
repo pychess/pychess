@@ -110,14 +110,12 @@ class Human(Player):
         if self.gamemodel.timed:
             self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
 
-    #===========================================================================
-    #    Handle signals from the board
-    #===========================================================================
+    # Handle signals from the board
 
     def zero_reached(self, timemodel, color):
         if conf.get('autoCallFlag', False) and \
                 self.gamemodel.status == RUNNING and \
-                timemodel.getPlayerTime(1-self.color) <= 0:
+                timemodel.getPlayerTime(1 - self.color) <= 0:
             log.info('Automatically sending flag call on behalf of player %s.'
                      % self.name)
             self.emit("offer", Offer(FLAG_CALL))
@@ -146,13 +144,11 @@ class Human(Player):
                     return
         self.emit("offer", Offer(action, param=param))
 
-    #===========================================================================
-    #    Send the player move updates
-    #===========================================================================
+    # Send the player move updates
 
     def makeMove(self, board1, move, board2):
-        log.debug("Human.makeMove: move=%s, board1=%s board2=%s" % \
-            (move, board1, board2))
+        log.debug("Human.makeMove: move=%s, board1=%s board2=%s" % (
+            move, board1, board2))
         if self.board.view.premove_piece and self.board.view.premove0 and \
                 self.board.view.premove1 and \
                 self.color == self.board.view.premove_piece.color:
@@ -161,8 +157,8 @@ class Human(Player):
                              self.board.view.premove1,
                              board1,
                              promotion=self.board.view.premove_promotion)):
-                log.debug("Human.makeMove: Setting move to premove %s %s" % \
-                    (self.board.view.premove0, self.board.view.premove1))
+                log.debug("Human.makeMove: Setting move to premove %s %s" % (
+                    self.board.view.premove0, self.board.view.premove1))
                 self.board.emit_move_signal(
                     self.board.view.premove0,
                     self.board.view.premove1,
@@ -179,9 +175,7 @@ class Human(Player):
             raise TurnInterrupt
         return item
 
-    #===========================================================================
-    #    Ending the game
-    #===========================================================================
+    # Ending the game
 
     def end(self, status, reason):
         self.queue.put("del")
@@ -193,9 +187,7 @@ class Human(Player):
                 self.board.disconnect(num)
         self.queue.put("del")
 
-    #===========================================================================
-    #    Interacting with the player
-    #===========================================================================
+    # Interacting with the player
 
     @idle_add
     def hurry(self):
@@ -225,7 +217,7 @@ class Human(Player):
     def playerUndoMoves(self, movecount, gamemodel):
         log.debug("Human.playerUndoMoves:  movecount=%s self=%s" %
                   (movecount, self))
-        #If the movecount is odd, the player has changed, and we have to interupt
+        # If the movecount is odd, the player has changed, and we have to interupt
         if movecount % 2 == 1:
             # If it is no longer us to move, we raise TurnInterruprt in order to
             # let GameModel continue the game.
@@ -249,9 +241,7 @@ class Human(Player):
     def sendMessage(self, text):
         self.emit("offer", Offer(CHAT_ACTION, param=text))
 
-    #===========================================================================
-    #    Offer handling
-    #===========================================================================
+    # Offer handling
 
     @idle_add
     def offer(self, offer):
@@ -266,7 +256,7 @@ class Human(Player):
         if takes_param:
             param = offer.param
             if offer.type == TAKEBACK_OFFER and \
-                    self.gamemodel.players[1-self.color].__type__ is not REMOTE:
+                    self.gamemodel.players[1 - self.color].__type__ is not REMOTE:
                 param = self.gamemodel.ply - offer.param
             heading = heading % param
             text = text % param
@@ -340,7 +330,7 @@ class Human(Player):
             heading = _("Unable to accept %s") % actionName.lower()
             text = _("Probably because it has been withdrawn.")
         elif error == ACTION_ERROR_NONE_TO_DECLINE or \
-             error == ACTION_ERROR_NONE_TO_WITHDRAW:
+                error == ACTION_ERROR_NONE_TO_WITHDRAW:
             # If the offer was not there, it has probably already been either
             # declined or withdrawn.
             return

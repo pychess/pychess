@@ -45,7 +45,7 @@ class PyChessFICS(PyChess):
         self.colors = (WHITE, BLACK, None)
         # The amount of random challenges, that PyChess sends with each seek
         self.challenges = 10
-        enableEGTB()
+        # enableEGTB()
 
         self.sudos = set()
         self.ownerOnline = False
@@ -91,31 +91,31 @@ class PyChessFICS(PyChess):
                       (0.99319644938247, 6, 0), (0.99675879556023, 3, 12),
                       (1, 5, 3))
 
-        #n = random.random()
-        #for culminativeChance, minute, gain in statsbased:
+        # n = random.random()
+        # for culminativeChance, minute, gain in statsbased:
         #    if n < culminativeChance:
         #        break
 
         culminativeChance, minute, gain = random.choice(statsbased)
 
-        #type = random.choice((TYPE_LIGHTNING, TYPE_BLITZ, TYPE_STANDARD))
-        #if type == TYPE_LIGHTNING:
+        # type = random.choice((TYPE_LIGHTNING, TYPE_BLITZ, TYPE_STANDARD))
+        # if type == TYPE_LIGHTNING:
         #    minute = self.__triangular(0,2+1,1)
         #    mingain = not minute and 1 or 0
         #    maxgain = int((3-minute)*3/2)
         #    gain = random.randint(mingain, maxgain)
-        #elif type == TYPE_BLITZ:
+        # elif type == TYPE_BLITZ:
         #    minute = self.__triangular(0,14+1,5)
         #    mingain = max(int((3-minute)*3/2+1), 0)
         #    maxgain = int((15-minute)*3/2)
         #    gain = random.randint(mingain, maxgain)
-        #elif type == TYPE_STANDARD:
+        # elif type == TYPE_STANDARD:
         #    minute = self.__triangular(0,20+1,12)
         #    mingain = max(int((15-minute)*3/2+1), 0)
         #    maxgain = int((20-minute)*3/2)
         #    gain = self.__triangular(mingain, maxgain, mingain)
 
-        #color = random.choice(self.colors)
+        # color = random.choice(self.colors)
         self.extendlog(["Seeking %d %d" % (minute, gain)])
         self.connection.glm.seek(minute, gain, True)
         opps = random.sample(self.connection.players.get_online_playernames(),
@@ -167,22 +167,20 @@ class PyChessFICS(PyChess):
 
         self.connection.fm.setFingerNote(
             3,
-            "PyChess runs on an elderly AMD Sempron(tm) Processor 3200+, 512 "
-            +
-            "MB DDR2 Ram, but is built to take use of 64bit calculating when "
-            + "accessible, through the gpm library.")
+            "PyChess runs on an elderly AMD Sempron(tm) Processor 3200+, 512 " +
+            "MB DDR2 Ram, but is built to take use of 64bit calculating when " +
+            "accessible, through the gpm library.")
 
         self.connection.fm.setFingerNote(
             4,
-            "PyChess uses a small 500 KB openingbook based solely on Kasparov "
-            +
-            "games. The engine doesn't have much endgame knowledge, but might "
-            + "in some cases access an online endgamedatabase.")
+            "PyChess uses a small 500 KB openingbook based solely on Kasparov " +
+            "games. The engine doesn't have much endgame knowledge, but might " +
+            "in some cases access an online endgamedatabase.")
 
         self.connection.fm.setFingerNote(
             5,
-            "PyChess will allow any pause/resume and adjourn wishes, but will "
-            + "deny takebacks. Draw, abort and switch offers are accepted, " +
+            "PyChess will allow any pause/resume and adjourn wishes, but will " +
+            "deny takebacks. Draw, abort and switch offers are accepted, " +
             "if they are found to be an advance. Flag is auto called, but " +
             "PyChess never resigns. We don't want you to forget your basic " +
             "mating skills.")
@@ -200,16 +198,14 @@ class PyChessFICS(PyChess):
         Gdk.threads_init()
         Gtk.main()
 
-    #===========================================================================
     # General
-    #===========================================================================
 
     def __showConnectLog(self, connection, message):
         print(message)
 
     def __onLogOut(self, autoLogoutManager):
         self.connection.close()
-        #sys.exit()
+        # sys.exit()
 
     def __onAddPlayer(self, gameListManager, player):
         if player["name"] in self.sudos:
@@ -230,7 +226,7 @@ class PyChessFICS(PyChess):
     def __usage(self):
         return "|| PyChess bot help file || " +\
                "# help 'Displays this help file' " +\
-               "# sudo <password> <command> 'Lets PyChess execute the given command' "+\
+               "# sudo <password> <command> 'Lets PyChess execute the given command' " +\
                "# sendlog 'Makes PyChess send you its current log'"
 
     def __onTell(self, chatManager, name, title, isadmin, text):
@@ -249,7 +245,7 @@ class PyChessFICS(PyChess):
 
         args = text.split()
 
-        #if args == ["help"]:
+        # if args == ["help"]:
         #    chatManager.tellPlayer(name, self.__usage())
 
         if args[0] == "sudo":
@@ -278,8 +274,7 @@ class PyChessFICS(PyChess):
                     data = urlopen(
                         "http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
                         urlencode({"message": message,
-                                   "botcust2": "x"}).encode("utf-8")).read(
-                                   ).decode('utf-8')
+                                   "botcust2": "x"}).encode("utf-8")).read().decode('utf-8')
                     bold_ss = "<b>DMPGirl:</b>"
                     break_es = "<br>"
                     answer = data[data.find(bold_ss) + len(bold_ss):data.find(
@@ -291,15 +286,13 @@ class PyChessFICS(PyChess):
                                 args=(text, ))
                 thread.daemon = True
                 thread.start()
-            #chatManager.tellPlayer(name, "Sorry, your request was nonsense.\n"+\
-            #                           "Please read my help file for more info")
+            # chatManager.tellPlayer(name, "Sorry, your request was nonsense.\n"+\
+            # "Please read my help file for more info")
 
-            #===========================================================================
             # Challenges and other offers
-            #===========================================================================
 
     def __onChallengeAdd(self, offerManager, index, match):
-        #match = {"tp": type, "w": fname, "rt": rating, "color": color,
+        # match = {"tp": type, "w": fname, "rt": rating, "color": color,
         #         "r": rated, "t": mins, "i": incr}
         offerManager.acceptIndex(index)
 
@@ -314,9 +307,7 @@ class PyChessFICS(PyChess):
             else:
                 offerManager.decline(offer)
 
-    #===========================================================================
     # Playing
-    #===========================================================================
 
     def __onGameCreated(self, boardManager, ficsgame):
 
@@ -346,11 +337,11 @@ class PyChessFICS(PyChess):
         if self.worker:
             self.worker.cancel()
         # TODO: fix it
-        self.worker = GtkWorker(
-            lambda worker: PyChess._PyChess__go(self, worker))
-        self.worker.connect("published", lambda w, msg: self.extendlog(msg))
-        self.worker.connect("done", self.__onMoveCalculated)
-        self.worker.execute()
+        # self.worker = GtkWorker(
+        #     lambda worker: PyChess._PyChess__go(self, worker))
+        # self.worker.connect("published", lambda w, msg: self.extendlog(msg))
+        # self.worker.connect("done", self.__onMoveCalculated)
+        # self.worker.execute()
 
     def __willingToDraw(self):
         return self.scr <= 0  # FIXME: this misbehaves in all but the simplest use cases
@@ -400,9 +391,7 @@ class PyChessFICS(PyChess):
                 "so you can win")
             self.connection.bm.resign()
 
-    #===========================================================================
     # Utils
-    #===========================================================================
 
     def extendlog(self, messages):
         [log.info(m + "\n") for m in messages]
@@ -437,17 +426,14 @@ class PyChessFICS(PyChess):
         pipe.stdin.close()
         pipe.wait()
 
-################################################################################
-# main                                                                         #
-################################################################################
 
 if __name__ == "__main__":
 
     if len(sys.argv) == 5 and sys.argv[1] == "fics":
-        pychess = PyChessFICS(*sys.argv[2:])
+        pychess_fics = PyChessFICS(*sys.argv[2:])
     else:
         print("Unknown argument(s):", repr(sys.argv))
         sys.exit(0)
 
-    pychess.makeReady()
-    pychess.run()
+    pychess_fics.makeReady()
+    pychess_fics.run()

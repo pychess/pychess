@@ -59,35 +59,29 @@ class ICPlayer(Player):
     def time(self):
         return self.gamemodel.timemodel.getPlayerTime(self.color)
 
-    #===========================================================================
-    #    Handle signals from the connection
-    #===========================================================================
+    # Handle signals from the connection
 
     def __playGameCreated(self, bm, ficsgame):
         if self.gamemodel.ficsplayers[0] == ficsgame.wplayer and \
             self.gamemodel.ficsplayers[1] == ficsgame.bplayer and \
-            self.gameno == ficsgame.gameno:
-            log.debug("ICPlayer.__playGameCreated: gameno reappeared: \
-                      gameno=%s white=%s black=%s" % (ficsgame.gameno, \
-                                                      ficsgame.wplayer.name, \
-                                                      ficsgame.bplayer.name))
+                self.gameno == ficsgame.gameno:
+            log.debug("ICPlayer.__playGameCreated: gameno reappeared: gameno=%s white=%s black=%s" % (
+                ficsgame.gameno, ficsgame.wplayer.name, ficsgame.bplayer.name))
             self.current = False
 
     def __obsGameCreated(self, bm, ficsgame):
         if self.gamemodel.ficsplayers[0] == ficsgame.wplayer and \
             self.gamemodel.ficsplayers[1] == ficsgame.bplayer and \
-            self.gameno == ficsgame.gameno:
-            log.debug("ICPlayer.__obsGameCreated: gameno reappeared: \
-                      gameno=%s white=%s black=%s" % (ficsgame.gameno, \
-                                                      ficsgame.wplayer.name, \
-                                                      ficsgame.bplayer.name))
+                self.gameno == ficsgame.gameno:
+            log.debug("ICPlayer.__obsGameCreated: gameno reappeared: gameno=%s white=%s black=%s" % (
+                ficsgame.gameno, ficsgame.wplayer.name, ficsgame.bplayer.name))
             self.current = False
 
     def __onOfferAdd(self, om, offer):
         if self.gamemodel.status in UNFINISHED_STATES and not self.gamemodel.isObservationGame(
         ):
-            log.debug("ICPlayer.__onOfferAdd: emitting offer: self.gameno=%s self.name=%s %s" % \
-                (self.gameno, self.name, offer))
+            log.debug("ICPlayer.__onOfferAdd: emitting offer: self.gameno=%s self.name=%s %s" % (
+                self.gameno, self.name, offer))
             self.offers[offer.index] = offer
             self.emit("offer", offer)
 
@@ -112,16 +106,15 @@ class ICPlayer(Player):
 
     def __boardUpdate(self, bm, gameno, ply, curcol, lastmove, fen, wname,
                       bname, wms, bms):
-        log.debug("ICPlayer.__boardUpdate: id(self)=%d self=%s %s %s %s %d %d %s %s %d %d" % \
-            (id(self), self, gameno, wname, bname, ply, curcol, lastmove, fen, wms, bms))
+        log.debug("ICPlayer.__boardUpdate: id(self)=%d self=%s %s %s %s %d %d %s %s %d %d" % (
+            id(self), self, gameno, wname, bname, ply, curcol, lastmove, fen, wms, bms))
 
-        if gameno == self.gameno and len(self.gamemodel.players) >= 2 \
-            and self.current:
+        if gameno == self.gameno and len(self.gamemodel.players) >= 2 and self.current:
             # LectureBot allways uses gameno 1 for many games in one lecture
-            #and wname == self.gamemodel.players[0].ichandle \
-            #and bname == self.gamemodel.players[1].ichandle \
-            log.debug("ICPlayer.__boardUpdate: id=%d self=%s gameno=%s: this is my move" % \
-                (id(self), self, gameno))
+            # and wname == self.gamemodel.players[0].ichandle \
+            # and bname == self.gamemodel.players[1].ichandle \
+            log.debug("ICPlayer.__boardUpdate: id=%d self=%s gameno=%s: this is my move" % (
+                id(self), self, gameno))
 
             # In some cases (like lost on time) the last move is resent
             if ply <= self.gamemodel.ply:
@@ -137,9 +130,7 @@ class ICPlayer(Player):
                 # game before our last move is received
                 self.okqueue.get(block=True)
 
-    #===========================================================================
-    #    Ending the game
-    #===========================================================================
+    # Ending the game
 
     def __disconnect(self):
         if self.connections is None:
@@ -158,13 +149,11 @@ class ICPlayer(Player):
         self.__disconnect()
         self.queue.put("del")
 
-    #===========================================================================
-    #    Send the player move updates
-    #===========================================================================
+    # Send the player move updates
 
     def makeMove(self, board1, move, board2):
-        log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s" % \
-                (id(self), self, move, board1, board2))
+        log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s" % (
+            id(self), self, move, board1, board2))
         if board2 and not self.gamemodel.isObservationGame():
             # TODO: Will this work if we just always use CASTLE_SAN?
             castle_notation = CASTLE_KK
@@ -183,24 +172,22 @@ class ICPlayer(Player):
             if ply < board1.ply:
                 # This should only happen in an observed game
                 board1 = self.gamemodel.getBoardAtPly(max(ply - 1, 0))
-            log.debug("ICPlayer.makemove: id(self)=%d self=%s from queue got: ply=%d sanmove=%s" % \
-                (id(self), self, ply, sanmove))
+            log.debug("ICPlayer.makemove: id(self)=%d self=%s from queue got: ply=%d sanmove=%s" % (
+                id(self), self, ply, sanmove))
 
             try:
                 move = parseSAN(board1, sanmove)
-                log.debug("ICPlayer.makemove: id(self)=%d self=%s parsed move=%s" % \
-                    (id(self), self, move))
-            except ParsingError as err:
+                log.debug("ICPlayer.makemove: id(self)=%d self=%s parsed move=%s" % (
+                    id(self), self, move))
+            except ParsingError:
                 raise
             return move
         finally:
-            log.debug("ICPlayer.makemove: id(self)=%d self=%s returning move=%s" % \
-                (id(self), self, move))
+            log.debug("ICPlayer.makemove: id(self)=%d self=%s returning move=%s" % (
+                id(self), self, move))
             self.okqueue.put("ok")
 
-    #===========================================================================
-    #    Interacting with the player
-    #===========================================================================
+    # Interacting with the player
 
     def pause(self):
         pass
@@ -215,8 +202,8 @@ class ICPlayer(Player):
         pass
 
     def playerUndoMoves(self, movecount, gamemodel):
-        log.debug("ICPlayer.playerUndoMoves: id(self)=%d self=%s, undoing movecount=%d" % \
-            (id(self), self, movecount))
+        log.debug("ICPlayer.playerUndoMoves: id(self)=%d self=%s, undoing movecount=%d" % (
+            id(self), self, movecount))
         # If current player has changed so that it is no longer us to move,
         # We raise TurnInterruprt in order to let GameModel continue the game
         if movecount % 2 == 1 and gamemodel.curplayer != self:
@@ -229,9 +216,7 @@ class ICPlayer(Player):
     def putMessage(self, text):
         self.connection.cm.tellPlayer(self.ichandle, text)
 
-    #===========================================================================
-    #    Offer handling
-    #===========================================================================
+    # Offer handling
 
     def offerRematch(self):
         if self.gamemodel.timed:
@@ -267,4 +252,3 @@ class ICPlayer(Player):
 
     def observe(self):
         self.connection.client.run_command("observe %s" % self.ichandle)
-

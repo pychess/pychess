@@ -14,9 +14,7 @@ class ProtocolEngine(Engine):
         "readyForMoves": (GObject.SignalFlags.RUN_FIRST, None, ())
     }
 
-    #===========================================================================
-    #    Setting engine options
-    #===========================================================================
+    # Setting engine options
 
     def __init__(self, subprocess, color, protover, md5):
         Engine.__init__(self, md5)

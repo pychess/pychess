@@ -72,9 +72,7 @@ class UCIEngine(ProtocolEngine):
     def __die(self, subprocess):
         self.returnQueue.put("die")
 
-    #===========================================================================
-    #    Starting the game
-    #===========================================================================
+    # Starting the game
 
     def prestart(self):
         print("uci", file=self.engine)
@@ -93,8 +91,8 @@ class UCIEngine(ProtocolEngine):
         if return_queue == 'die':
             raise PlayerIsDead
         assert return_queue == "ready" or return_queue == 'del'
-        #self.emit("readyForOptions")
-        #self.emit("readyForMoves")
+        # self.emit("readyForOptions")
+        # self.emit("readyForMoves")
 
     def __onReadyForOptions_before(self, self_):
         self.readyOptions = True
@@ -125,9 +123,7 @@ class UCIEngine(ProtocolEngine):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
             self._searchNow()
 
-    #===========================================================================
-    #    Ending the game
-    #===========================================================================
+    # Ending the game
 
     def end(self, status, reason):
         # UCI doens't care about reason, so we just kill
@@ -163,9 +159,7 @@ class UCIEngine(ProtocolEngine):
                 # Clear the analyzed data, if any
                 self.emit("analyze", [])
 
-    #===========================================================================
-    #    Send the player move updates
-    #===========================================================================
+    # Send the player move updates
 
     def _moveToUCI(self, board, move):
         castle_notation = CASTLE_KK
@@ -210,8 +204,8 @@ class UCIEngine(ProtocolEngine):
         self._searchNow()
 
     def putMove(self, board1, move, board2):
-        log.debug("putMove: board1=%s move=%s board2=%s self.board=%s" % \
-            (board1, move, board2, self.board), extra={"task":self.defname})
+        log.debug("putMove: board1=%s move=%s board2=%s self.board=%s" % (
+            board1, move, board2, self.board), extra={"task": self.defname})
         self._recordMove(board1, move, board2)
 
         if not self.readyMoves:
@@ -219,8 +213,8 @@ class UCIEngine(ProtocolEngine):
         self._searchNow()
 
     def makeMove(self, board1, move, board2):
-        log.debug("makeMove: move=%s self.pondermove=%s board1=%s board2=%s self.board=%s" % \
-            (move, self.pondermove, board1, board2, self.board), extra={"task":self.defname})
+        log.debug("makeMove: move=%s self.pondermove=%s board1=%s board2=%s self.board=%s" % (
+            move, self.pondermove, board1, board2, self.board), extra={"task": self.defname})
         assert self.readyMoves
 
         with self.moveLock:
@@ -265,9 +259,7 @@ class UCIEngine(ProtocolEngine):
             self.btime = int(secs * 1000 * self.timeHandicap)
             self.wtime = int(opsecs * 1000)
 
-    #===========================================================================
-    #    Standard options
-    #===========================================================================
+    # Standard options
 
     def setOptionAnalyzing(self, mode):
         self.mode = mode
@@ -275,8 +267,8 @@ class UCIEngine(ProtocolEngine):
             self.board = self.gameBoard.switchColor()
 
     def setOptionInitialBoard(self, model):
-        log.debug("setOptionInitialBoard: self=%s, model=%s" % \
-            (self, model), extra={"task":self.defname})
+        log.debug("setOptionInitialBoard: self=%s, model=%s" % (
+            self, model), extra={"task": self.defname})
         self._recordMoveList(model)
 
     def setOptionVariant(self, variant):
@@ -304,7 +296,7 @@ class UCIEngine(ProtocolEngine):
             self.setOption('Skill Level', strength)
 
         if ((not self.hasOption('UCI_Elo')) and
-            (not self.hasOption('Skill Level'))) or strength <= 19:
+                (not self.hasOption('Skill Level'))) or strength <= 19:
             self.timeHandicap = t_hcap = 0.01 * 10**(strength / 10.)
             self.wtime = int(max(self.wtime * t_hcap, 1))
             self.btime = int(max(self.btime * t_hcap, 1))
@@ -315,9 +307,8 @@ class UCIEngine(ProtocolEngine):
 
         if self.hasOption('GaviotaTbPath') and strength == 20:
             self.setOption('GaviotaTbPath', conf.get("egtb_path", ""))
-    #===========================================================================
-    #    Interacting with the player
-    #===========================================================================
+
+    # Interacting with the player
 
     def pause(self):
         log.debug("pause: self=%s" % self, extra={"task": self.defname})
@@ -343,8 +334,8 @@ class UCIEngine(ProtocolEngine):
             self._searchNow()
 
     def hurry(self):
-        log.debug("hurry: self.waitingForMove=%s self.readyForStop=%s" % \
-            (self.waitingForMove, self.readyForStop), extra={"task":self.defname})
+        log.debug("hurry: self.waitingForMove=%s self.readyForStop=%s" % (
+            self.waitingForMove, self.readyForStop), extra={"task": self.defname})
         # sending this more than once per move will crash most engines
         # so we need to send only the first one, and then ignore every "hurry" request
         # after that until there is another outstanding "position..go"
@@ -357,9 +348,9 @@ class UCIEngine(ProtocolEngine):
         log.debug("playerUndoMoves: moves=%s \
                   gamemodel.ply=%s \
                   gamemodel.boards[-1]=%s \
-                  self.board=%s" % (moves, gamemodel.ply, \
-                                    gamemodel.boards[-1], \
-                                    self.board), extra={"task":self.defname})
+                  self.board=%s" % (moves, gamemodel.ply,
+                                    gamemodel.boards[-1],
+                                    self.board), extra={"task": self.defname})
 
         self._recordMoveList(gamemodel)
 
@@ -368,26 +359,23 @@ class UCIEngine(ProtocolEngine):
             # Interrupt if we were searching but should no longer do so, or
             # if it is was our move before undo and it is still our move after undo
             # since we need to send the engine the new FEN in makeMove()
-            log.debug("playerUndoMoves: putting 'int' into self.returnQueue=%s" % \
-                self.returnQueue.queue, extra={"task":self.defname})
+            log.debug("playerUndoMoves: putting 'int' into self.returnQueue=%s" %
+                      self.returnQueue.queue, extra={"task": self.defname})
             self.returnQueue.put("int")
 
     def spectatorUndoMoves(self, moves, gamemodel):
         log.debug("spectatorUndoMoves: moves=%s \
                   gamemodel.ply=%s \
                   gamemodel.boards[-1]=%s \
-                  self.board=%s" % (moves, gamemodel.ply, \
-                                    gamemodel.boards[-1], \
-                                    self.board), extra={"task":self.defname})
+                  self.board=%s" % (moves, gamemodel.ply, gamemodel.boards[-1],
+                                    self.board), extra={"task": self.defname})
 
         self._recordMoveList(gamemodel)
 
         if self.readyMoves:
             self._searchNow()
 
-    #===========================================================================
-    #    Offer handling
-    #===========================================================================
+    # Offer handling
 
     def offer(self, offer):
         if offer.type == DRAW_OFFER:
@@ -395,9 +383,7 @@ class UCIEngine(ProtocolEngine):
         else:
             self.emit("accept", offer)
 
-    #===========================================================================
-    #    Option handling
-    #===========================================================================
+    # Option handling
 
     def setOption(self, key, value):
         """ Set an option, which will be sent to the engine, after the
@@ -426,16 +412,14 @@ class UCIEngine(ProtocolEngine):
         assert self.readyOptions
         return key in self.options
 
-    #===========================================================================
-    #    Internal
-    #===========================================================================
+    # Internal
 
     def _newGame(self):
         print("ucinewgame", file=self.engine)
 
     def _searchNow(self, ponderhit=False):
-        log.debug("_searchNow: self.needBestmove=%s ponderhit=%s self.board=%s" % \
-            (self.needBestmove, ponderhit, self.board), extra={"task":self.defname})
+        log.debug("_searchNow: self.needBestmove=%s ponderhit=%s self.board=%s" % (
+            self.needBestmove, ponderhit, self.board), extra={"task": self.defname})
 
         with self.moveLock:
             commands = []
@@ -448,8 +432,8 @@ class UCIEngine(ProtocolEngine):
                 if self.strength <= 3:
                     commands.append("go depth %d" % self.strength)
                 else:
-                    commands.append("go wtime %d winc %d btime %d binc %d" % \
-                                    (self.wtime, self.incr, self.btime, self.incr))
+                    commands.append("go wtime %d winc %d btime %d binc %d" % (
+                                    self.wtime, self.incr, self.btime, self.incr))
 
             else:
                 print("stop", file=self.engine)
@@ -460,14 +444,13 @@ class UCIEngine(ProtocolEngine):
                         # king. Therefore we just return the "kill king" move
                         # automaticaly
                         self.emit("analyze", [([toAN(
-                            self.board, getMoveKillingKing(self.board))],
-                                               MATE_VALUE - 1, "")])
+                            self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, "")])
                         return
                     commands.append("position fen %s" % self.board.asFen())
                 else:
                     commands.append("position %s" % self.uciPosition)
 
-                #commands.append("go infinite")
+                # commands.append("go infinite")
                 move_time = int(conf.get("max_analysis_spin", 3)) * 1000
                 commands.append("go movetime %s" % move_time)
 
@@ -480,8 +463,8 @@ class UCIEngine(ProtocolEngine):
 
             if self.needBestmove:
                 self.commands.append(commands)
-                log.debug("_searchNow: self.needBestmove==True, appended to self.commands=%s" % \
-                    self.commands, extra={"task":self.defname})
+                log.debug("_searchNow: self.needBestmove==True, appended to self.commands=%s" %
+                          self.commands, extra={"task": self.defname})
             else:
                 for command in commands:
                     print(command, file=self.engine)
@@ -494,14 +477,11 @@ class UCIEngine(ProtocolEngine):
         uciPos = self.uciPosition
         if not self.uciPositionListsMoves:
             uciPos += " moves"
-        print("position", uciPos, \
-                                self._moveToUCI(self.board, self.pondermove), file=self.engine)
-        print("go ponder wtime", self.wtime, \
-            "winc", self.incr, "btime", self.btime, "binc", self.incr, file=self.engine)
+        print("position", uciPos, self._moveToUCI(self.board, self.pondermove), file=self.engine)
+        print("go ponder wtime", self.wtime, "winc", self.incr, "btime", self.btime, "binc",
+              self.incr, file=self.engine)
 
-    #===========================================================================
-    #    Parsing from engine
-    #===========================================================================
+    # Parsing from engine
 
     def parseLine(self, engine, line):
         if not self.connected:
@@ -509,7 +489,7 @@ class UCIEngine(ProtocolEngine):
         parts = line.split()
         if not parts:
             return
-        #---------------------------------------------------------- Initializing
+        # Initializing
         if parts[0] == "id":
             if parts[1] == "name":
                 self.ids[parts[1]] = " ".join(parts[2:])
@@ -524,7 +504,7 @@ class UCIEngine(ProtocolEngine):
             self.emit("readyForMoves")
             return
 
-        #------------------------------------------------------- Options parsing
+        # Options parsing
         if parts[0] == "option":
             dic = {}
             last = 1
@@ -550,30 +530,31 @@ class UCIEngine(ProtocolEngine):
             self.options[dic["name"]] = dic
             return
 
-        #---------------------------------------------------------------- A Move
+        # A Move
         if self.mode == NORMAL and parts[0] == "bestmove":
             with self.moveLock:
                 self.needBestmove = False
                 self.__sendQueuedGo()
 
                 if self.ignoreNext:
-                    log.debug("__parseLine: line='%s' self.ignoreNext==True, returning" % \
-                        line.strip(), extra={"task":self.defname})
+                    log.debug(
+                    "__parseLine: line='%s' self.ignoreNext==True, returning" % line.strip(),
+                        extra={"task": self.defname})
                     self.ignoreNext = False
                     self.readyForStop = True
                     return
 
                 movestr = parts[1]
                 if not self.waitingForMove:
-                    log.warning("__parseLine: self.waitingForMove==False, ignoring move=%s" % \
-                        movestr, extra={"task":self.defname})
+                    log.warning("__parseLine: self.waitingForMove==False, ignoring move=%s" % movestr,
+                                extra={"task": self.defname})
                     self.pondermove = None
                     return
                 self.waitingForMove = False
 
                 try:
                     move = parseAny(self.board, movestr)
-                except ParsingError as err:
+                except ParsingError:
                     self.invalid_move = movestr
                     self.end(WHITEWON if self.board.color == BLACK else
                              BLACKWON, WON_ADJUDICATION)
@@ -583,16 +564,16 @@ class UCIEngine(ProtocolEngine):
                     # This is critical. To avoid game stalls, we need to resign on
                     # behalf of the engine.
                     log.error("__parseLine: move=%s didn't validate, putting 'del' \
-                              in returnQueue. self.board=%s" % \
-                        (repr(move), self.board), extra={"task":self.defname})
+                              in returnQueue. self.board=%s" % (
+                        repr(move), self.board), extra={"task": self.defname})
                     self.invalid_move = movestr
                     self.end(WHITEWON if self.board.color == BLACK else
                              BLACKWON, WON_ADJUDICATION)
                     return
 
                 self._recordMove(self.board.move(move), move, self.board)
-                log.debug("__parseLine: applied move=%s to self.board=%s" % \
-                    (move, self.board), extra={"task":self.defname})
+                log.debug("__parseLine: applied move=%s to self.board=%s" % (
+                    move, self.board), extra={"task": self.defname})
 
                 if self.ponderOn:
                     self.pondermove = None
@@ -612,11 +593,11 @@ class UCIEngine(ProtocolEngine):
                                 self._startPonder()
 
                 self.returnQueue.put(move)
-                log.debug("__parseLine: put move=%s into self.returnQueue=%s" % \
-                    (move, self.returnQueue.queue), extra={"task":self.defname})
+                log.debug("__parseLine: put move=%s into self.returnQueue=%s" % (
+                    move, self.returnQueue.queue), extra={"task": self.defname})
                 return
 
-        #----------------------------------------------------------- An Analysis
+        # An Analysis
         if self.mode != NORMAL and parts[0] == "info" and "pv" in parts:
             multipv = 1
             if "multipv" in parts:
@@ -645,16 +626,16 @@ class UCIEngine(ProtocolEngine):
             self.emit("analyze", self.analysis)
             return
 
-        #-----------------------------------------------  An Analyzer bestmove
+        # An Analyzer bestmove
         if self.mode != NORMAL and parts[0] == "bestmove":
             with self.moveLock:
-                log.debug("__parseLine: processing analyzer bestmove='%s'" % \
-                    line.strip(), extra={"task":self.defname})
+                log.debug("__parseLine: processing analyzer bestmove='%s'" % line.strip(),
+                          extra={"task": self.defname})
                 self.needBestmove = False
                 self.__sendQueuedGo(sendlast=True)
                 return
 
-        #  Stockfish complaining it received a 'stop' without a corresponding 'position..go'
+        # Stockfish complaining it received a 'stop' without a corresponding 'position..go'
         if line.strip() == "Unknown command: stop":
             with self.moveLock:
                 log.debug("__parseLine: processing '%s'" % line.strip(),
@@ -665,15 +646,15 @@ class UCIEngine(ProtocolEngine):
                 self.__sendQueuedGo()
                 return
 
-        #* score
-        #* cp <x>
+        # * score
+        # * cp <x>
         #    the score from the engine's point of view in centipawns.
-        #* mate <y>
+        # * mate <y>
         #    mate in y moves, not plies.
         #    If the engine is getting mated use negative values for y.
-        #* lowerbound
+        # * lowerbound
         #  the score is just a lower bound.
-        #* upperbound
+        # * upperbound
         #   the score is just an upper bound.
 
     def __sendQueuedGo(self, sendlast=False):
@@ -697,9 +678,7 @@ class UCIEngine(ProtocolEngine):
                 log.debug("__sendQueuedGo: sent queued go=%s" % commands,
                           extra={"task": self.defname})
 
-    #===========================================================================
     #    Info
-    #===========================================================================
 
     def maxAnalysisLines(self):
         try:

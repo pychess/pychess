@@ -35,25 +35,21 @@ class Engine(Player):
 
         self.connect('analyze', on_analysis)
 
-    #===========================================================================
-    #    Offer handling
-    #===========================================================================
+    # Offer handling
 
     def offer(self, offer):
         raise NotImplementedError
 
     def offerDeclined(self, offer):
-        pass  #Ignore
+        pass  # Ignore
 
     def offerWithdrawn(self, offer):
-        pass  #Ignore
+        pass  # Ignore
 
     def offerError(self, offer, error):
-        pass  #Ignore
+        pass  # Ignore
 
-    #===========================================================================
-    #    General Engine Options
-    #===========================================================================
+    # General Engine Options
 
     def setOptionAnalyzing(self, mode):
         self.mode = mode
@@ -80,9 +76,7 @@ class Engine(Player):
         self.strength = strength
         raise NotImplementedError
 
-    #===========================================================================
-    #    Engine specific methods
-    #===========================================================================
+    # Engine specific methods
 
     def canAnalyze(self):
         raise NotImplementedError
@@ -104,9 +98,7 @@ class Engine(Player):
             analysis """
         return self.currentAnalysis
 
-    #===========================================================================
-    #    General chat handling
-    #===========================================================================
+    # General chat handling
 
     def putMessage(self, message):
         def answer(message):
@@ -114,8 +106,7 @@ class Engine(Player):
                 data = urlopen(
                     "http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
                     urlencode({"message": message,
-                               "botcust2": "x"}).encode("utf-8")).read(
-                               ).decode('utf-8')
+                               "botcust2": "x"}).encode("utf-8")).read().decode('utf-8')
             except IOError as err:
                 log.warning("Couldn't answer message from online bot: '%s'" %
                             err,
@@ -129,4 +120,3 @@ class Engine(Player):
         thread = Thread(target=answer, name=fident(answer), args=(message, ))
         thread.daemon = True
         thread.start()
-

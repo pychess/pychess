@@ -1,8 +1,4 @@
-###!/usr/bin/pypy -u
 from __future__ import print_function
-
-#if __name__ == "__main__":
-#    print("feature done=0")
 
 import os
 import random
@@ -22,7 +18,6 @@ from pychess.System.Log import log
 this_dir = os.path.dirname(os.path.abspath(__file__))
 if os.path.join(this_dir, "../..") not in sys.path:
     sys.path = [os.path.join(this_dir, "../..")] + sys.path
-
 
 
 class PyChess(object):
@@ -46,20 +41,18 @@ class PyChess(object):
         sys.stdout.flush()
         log.debug(text, extra={"task": "stdout"})
 
-    #===========================================================================
     # Play related
-    #===========================================================================
 
     def __remainingMovesA(self):
         # Based on regression of a 180k games pgn
         ply_count = self.board.plyCount
-        return -1.71086e-12*ply_count**6 \
-               +1.69103e-9*ply_count**5 \
-               -6.00801e-7*ply_count**4 \
-               +8.17741e-5*ply_count**3 \
-               +2.91858e-4*ply_count**2 \
-               -0.94497*ply_count \
-               +78.8979
+        return -1.71086e-12 * ply_count**6 \
+        + 1.69103e-9 * ply_count**5 \
+        - 6.00801e-7 * ply_count**4 \
+        + 8.17741e-5 * ply_count**3 \
+        + 2.91858e-4 * ply_count**2 \
+        - 0.94497 * ply_count \
+        + 78.8979
 
     def __remainingMovesB(self):
         # We bet a game will be around 80 moves
@@ -69,8 +62,8 @@ class PyChess(object):
     def __getBestOpening(self):
         totalWeight = 0
         choice = None
-        if self.board.variant not in (ASEANCHESS, CAMBODIANCHESS, MAKRUKCHESS, \
-                                      SITTUYINCHESS, LOSERSCHESS, SUICIDECHESS,\
+        if self.board.variant not in (ASEANCHESS, CAMBODIANCHESS, MAKRUKCHESS,
+                                      SITTUYINCHESS, LOSERSCHESS, SUICIDECHESS,
                                       ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS):
             for move, weight, histGames, histScore in getOpenings(self.board):
                 totalWeight += weight
@@ -171,7 +164,8 @@ class PyChess(object):
 
         move = mvs[0]
         sanmove = toSAN(self.board, move)
-        if ondone: ondone(sanmove)
+        if ondone:
+            ondone(sanmove)
         return sanmove
 
     def __analyze(self):
@@ -195,9 +189,6 @@ class PyChess(object):
 
             lsearch.nodes = 0
 
-################################################################################
-# main                                                                         #
-################################################################################
 
 if __name__ == "__main__":
     import logging
@@ -215,4 +206,3 @@ if __name__ == "__main__":
 
     pychess.makeReady()
     pychess.run()
-

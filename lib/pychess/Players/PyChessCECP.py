@@ -5,9 +5,6 @@ import signal
 import sys
 from threading import Thread
 
-if sys.platform != "win32":
-    import readline
-
 import pychess
 from pychess.compat import raw_input
 from pychess.Players.PyChess import PyChess
@@ -27,6 +24,10 @@ from pychess.Utils.lutils.lmovegen import genAllMoves, genCaptures, genCheckEvas
 from pychess.Utils.lutils.validator import validateMove
 from pychess.System.Log import log
 from pychess.Variants.asean import ASEANSTART, MAKRUKSTART, KAMBODIANSTART, SITTUYINSTART
+
+if sys.platform != "win32":
+    import readline
+    readline.clear_history()
 
 ASCII = sys.platform == "win32"
 
@@ -56,16 +57,16 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic," + \
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic," +
                         "kingofthehill,3check,asean,cambodian,makruk,sittuyin",
             "colors": 0,
             "ics": 0,
             "name": 0,
-            "pause": 0, # Unimplemented
-            "nps": 0, # Unimplemented
+            "pause": 0,  # Unimplemented
+            "nps": 0,  # Unimplemented
             "debug": 1,
-            "memory": 0, # Unimplemented
-            "smp": 0, # Unimplemented
+            "memory": 0,  # Unimplemented
+            "smp": 0,  # Unimplemented
             "egt": "gaviota",
             "option": "skipPruneChance -slider 0 0 100"
         }
@@ -96,7 +97,7 @@ class PyChessCECP(PyChess):
 
                 log.debug(line, extra={"task": "xboard"})
 
-                ########## CECP commands ##########
+                # CECP commands
                 # See http://home.hccnet.nl/h.g.muller/engine-intf.html
 
                 if lines[0] == "xboard":
@@ -104,8 +105,7 @@ class PyChessCECP(PyChess):
 
                 elif lines[0] == "protover":
                     stringPairs = ["=".join([k, '"%s"' % v if isinstance(
-                        v, str) else str(v)])
-                                   for k, v in self.features.items()]
+                        v, str) else str(v)]) for k, v in self.features.items()]
                     self.print("feature %s" % " ".join(stringPairs))
                     self.print("feature done=1")
 
@@ -321,7 +321,7 @@ class PyChessCECP(PyChess):
                 elif lines[0] in ("name", "rating", "ics", "computer"):
                     pass  # We don't care.
 
-    # Unimplemented: pause, resume
+                # Unimplemented: pause, resume
 
                 elif lines[0] == "memory":
                     # FIXME: this is supposed to control the *total* memory use.
@@ -334,7 +334,7 @@ class PyChessCECP(PyChess):
                         else:
                             pass
                             # TODO implement
-                            #lsearch.setHashSize(limit)
+                            # lsearch.setHashSize(limit)
 
                 elif lines[0] == "cores":
                     pass  # We aren't SMP-capable.
@@ -359,17 +359,17 @@ class PyChessCECP(PyChess):
                                 "Error (argument must be an integer 0..100): %s"
                                 % line)
 
-    ########## CECP analyze mode commands ##########
-    # See http://www.gnu.org/software/xboard/engine-intf.html#11
+                # CECP analyze mode commands
+                # See http://www.gnu.org/software/xboard/engine-intf.html#11
 
                 elif lines[0] == "exit":
                     if self.analyzing:
                         self.__stopSearching()
                         self.analyzing = False
 
-    # Periodic updates (".") are not implemented.
+                # Periodic updates (".") are not implemented.
 
-    ########## Custom commands ##########
+                # Custom commands
 
                 elif lines[0] == "moves":
                     self.print(self.board.prepr(ascii=ASCII))
@@ -456,4 +456,3 @@ class PyChessCECP(PyChess):
 
     def __willingToDraw(self):
         return self.scr <= 0  # FIXME: this misbehaves in all but the simplest use cases
-

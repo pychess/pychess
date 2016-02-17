@@ -350,8 +350,8 @@ class EngineDiscoverer(GObject.GObject):
                 c for c in backup if c["name"] == engine["name"]))
             engine["country"] = backup_engine["country"]
         except StopIteration:
-            log.warning("Engine '%s' has not been tested and verified to work with PyChess" % \
-                engine.get('name'))
+            log.warning(
+                "Engine '%s' has not been tested and verified to work with PyChess" % engine.get('name'))
             engine['recheck'] = True
 
         ######
@@ -374,7 +374,7 @@ class EngineDiscoverer(GObject.GObject):
             with open(self.jsonpath, "w") as file_handle:
                 json.dump(self._engines, file_handle, indent=1, sort_keys=True)
         except IOError as err:
-            log.error("Saving engines.json raised exception: %s" % \
+            log.error("Saving engines.json raised exception: %s" %
                       ", ".join(str(a) for a in err.args))
 
     def discover(self):
@@ -487,7 +487,7 @@ class EngineDiscoverer(GObject.GObject):
                             yield variantClass.variant
                         elif option["name"] == "UCI_Variant":
                             if variantClass.cecp_name in option["choices"] or \
-                                variantClass.cecp_name.lower().replace("-", "") in option["choices"]:
+                                    variantClass.cecp_name.lower().replace("-", "") in option["choices"]:
                                 yield variantClass.variant
 
     def getName(self, engine=None):
@@ -666,8 +666,7 @@ if __name__ == "__main__":
     GObject.threads_init()
     mainloop = GLib.MainLoop()
 
-    #    discoverer = EngineDiscoverer()
-
+    # discoverer = EngineDiscoverer()
 
     def discovering_started(discoverer, names):
         print("discovering_started", names)
