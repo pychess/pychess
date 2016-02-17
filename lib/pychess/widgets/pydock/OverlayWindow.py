@@ -24,9 +24,9 @@ class OverlayWindow(Gtk.Window):
             self.set_visual(visual)
         self.myparent = parent
 
-    #===========================================================================
+    # ===========================================================================
     #   The overlay stuff
-    #===========================================================================
+    # ===========================================================================
 
     def paintTransparent(self, cairoContext):
         if self.is_composited():
@@ -70,15 +70,15 @@ class OverlayWindow(Gtk.Window):
     def translateCoords(self, x, y):
         top_level = self.myparent.get_toplevel()
         x_loc1, y_loc1 = top_level.get_window().get_position()
-        translate_x = self.myparent.translate_coordinates(self.myparent.get_toplevel(), \
+        translate_x = self.myparent.translate_coordinates(self.myparent.get_toplevel(),
                                                           x, y)
         x = x_loc1 + translate_x[0]
         y = y_loc1 + translate_x[1]
         return x, y
 
-    #===========================================================================
+    # ===========================================================================
     #   The SVG stuff
-    #===========================================================================
+    # ===========================================================================
 
     def getSurfaceFromSvg(self, svgPath, width, height):
         path = os.path.abspath(svgPath)
@@ -96,7 +96,7 @@ class OverlayWindow(Gtk.Window):
 
     def getSizeOfSvg(self, svgPath):
         path = os.path.abspath(svgPath)
-        if not path in self.cache:
+        if path not in self.cache:
             svg = self.__loadNativeColoredSvg(path)
             self.cache[path] = svg
         svg = self.cache[path]
@@ -114,7 +114,8 @@ class OverlayWindow(Gtk.Window):
         def getcol(col):
             found, color = sytle_ctxt.lookup_color(col)
             # not found colors are black
-            if not found: print("color not found in overlaywindow.py:", col)
+            if not found:
+                print("color not found in overlaywindow.py:", col)
             return "#%02X%02X%02X" % (int(color.red * 255), int(
                 color.green * 255), int(color.blue * 255))
 

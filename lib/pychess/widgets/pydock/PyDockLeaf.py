@@ -23,7 +23,7 @@ class PyDockLeaf(DockLeaf):
             except:
                 name = child.get_name()
             return name
-            
+
         self.book = Gtk.Notebook()
         self.book.set_name(id)
         self.book.get_tab_label_text = customGetTabLabelText
@@ -32,11 +32,11 @@ class PyDockLeaf(DockLeaf):
         self.book.connect_after("switch-page", self.__onPageSwitched)
         self.add(self.book)
         self.book.show()
-        #self.book.props.tab_vborder = 0
-        #self.book.props.tab_hborder = 1
+        # self.book.props.tab_vborder = 0
+        # self.book.props.tab_hborder = 1
 
         self.highlightArea = HighlightArea(self)
-        #self.put(self.highlightArea, 0, 0)
+        # self.put(self.highlightArea, 0, 0)
 
         self.starButton = StarArrowButton(
             self, addDataPrefix("glade/dock_top.svg"),
@@ -45,7 +45,7 @@ class PyDockLeaf(DockLeaf):
             addDataPrefix("glade/dock_left.svg"),
             addDataPrefix("glade/dock_center.svg"),
             addDataPrefix("glade/dock_star.svg"))
-        #self.put(self.starButton, 0, 0)
+        # self.put(self.starButton, 0, 0)
         self.starButton.connect("dropped", self.__onDrop)
         self.starButton.connect("hovered", self.__onHover)
         self.starButton.connect("left", self.__onLeave)
@@ -57,22 +57,22 @@ class PyDockLeaf(DockLeaf):
         self.realtop = None
         self.zoomed = False
 
-        #assert isinstance(widget, Gtk.Notebook)
+        # assert isinstance(widget, Gtk.Notebook)
 
         self.__add(widget, title, id)
 
     def __repr__(self):
-        s = "leaf"  #DockLeaf.__repr__(self)
+        s = "leaf"  # DockLeaf.__repr__(self)
         panels = []
         for widget, title, id in self.getPanels():
             panels.append(id)
         return s + " (" + ", ".join(panels) + ")"
 
     def __add(self, widget, title, id):
-        #widget = BorderBox(widget, top=True)
+        # widget = BorderBox(widget, top=True)
         self.panels.append((widget, title, id))
         self.book.append_page(widget, title)
-        #self.book.set_tab_label_packing(widget, True, True, Gtk.PACK_START)
+        # self.book.set_tab_label_packing(widget, True, True, Gtk.PACK_START)
         self.book.set_tab_detachable(widget, True)
         self.book.set_tab_reorderable(widget, True)
         widget.show_all()
@@ -179,7 +179,7 @@ class PyDockLeaf(DockLeaf):
 
     def setDockable(self, dockable):
         self.book.set_show_tabs(dockable)
-        #self.book.set_show_border(dockable)
+        # self.book.set_show_border(dockable)
         self.dockable = dockable
 
     def showArrows(self):
@@ -210,7 +210,7 @@ class PyDockLeaf(DockLeaf):
         if self.dockable:
             if sender.get_parent() == self and self.book.get_n_pages() == 1:
                 return
-            cp = sender.get_current_page()
+            # cp = sender.get_current_page()
             child = sender.get_nth_page(sender.get_current_page())
             title, id = sender.get_parent().undock(child)
             self.dock(child, position, title, id)
