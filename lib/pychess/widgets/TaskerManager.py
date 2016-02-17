@@ -27,7 +27,7 @@ class TaskerManager(Gtk.Table):
         self.border = 20
         giveBackground(self)
         self.connect("draw", self.expose)
-        #self.set_homogeneous(True)
+        # self.set_homogeneous(True)
 
     def expose(self, widget, ctx):
         cairo_win = widget.get_window().cairo_create()
@@ -39,33 +39,33 @@ class TaskerManager(Gtk.Table):
             height = widget.get_allocation().height
 
             cairo_win.move_to(x_loc - self.border, y_loc)
-            cairo_win.curve_to(x_loc - self.border, y_loc - self.border / 2., \
-                               x_loc - self.border / 2., y_loc - self.border, x_loc, \
+            cairo_win.curve_to(x_loc - self.border, y_loc - self.border / 2.,
+                               x_loc - self.border / 2., y_loc - self.border, x_loc,
                                y_loc - self.border)
             cairo_win.line_to(x_loc + width, y_loc - self.border)
-            cairo_win.curve_to(x_loc + width + self.border / 2., y_loc - self.border, \
-                               x_loc + width + self.border, y_loc - self.border / 2., \
+            cairo_win.curve_to(x_loc + width + self.border / 2., y_loc - self.border,
+                               x_loc + width + self.border, y_loc - self.border / 2.,
                                x_loc + width + self.border, y_loc)
             cairo_win.line_to(x_loc + width + self.border, y_loc + height)
-            cairo_win.curve_to(x_loc + width + self.border, y_loc + height + self.border / 2., \
-                               x_loc + width + self.border / 2., y_loc + height + self.border, \
+            cairo_win.curve_to(x_loc + width + self.border, y_loc + height + self.border / 2.,
+                               x_loc + width + self.border / 2., y_loc + height + self.border,
                                x_loc + width, y_loc + height + self.border)
             cairo_win.line_to(x_loc, y_loc + height + self.border)
-            cairo_win.curve_to(x_loc - self.border / 2., y_loc + height + self.border, \
-                               x_loc - self.border, y_loc + height + self.border / 2., \
+            cairo_win.curve_to(x_loc - self.border / 2., y_loc + height + self.border,
+                               x_loc - self.border, y_loc + height + self.border / 2.,
                                x_loc - self.border, y_loc + height)
 
             style_ctxt = self.get_style_context()
             bgcolor = style_ctxt.lookup_color("p_bg_color")[1]
             darkcolor = style_ctxt.lookup_color("p_dark_color")[1]
 
-            cairo_win.set_source_rgba(bgcolor.red, bgcolor.green, bgcolor.blue, \
+            cairo_win.set_source_rgba(bgcolor.red, bgcolor.green, bgcolor.blue,
                                       bgcolor.alpha)
             cairo_win.fill()
 
-            cairo_win.rectangle(x_loc - self.border, y_loc + height - 30, \
+            cairo_win.rectangle(x_loc - self.border, y_loc + height - 30,
                                 width + self.border * 2, 30)
-            cairo_win.set_source_rgba(darkcolor.red, darkcolor.green, darkcolor.blue, \
+            cairo_win.set_source_rgba(darkcolor.red, darkcolor.green, darkcolor.blue,
                                       darkcolor.alpha)
             cairo_win.fill()
 
@@ -139,7 +139,6 @@ class TaskerManager(Gtk.Table):
 
 class NewGameTasker(Gtk.Alignment):
     def __init__(self):
-        #GObject.GObject.__init__(self,0,0,0,0)
         GObject.GObject.__init__(self)
         self.widgets = widgets = uistuff.GladeWidgets("taskers.glade")
         tasker = widgets["newGameTasker"]
@@ -229,7 +228,6 @@ big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
 
 class InternetGameTasker(Gtk.Alignment):
     def __init__(self):
-        #GObject.GObject.__init__(self,0,0,0,0)
         GObject.GObject.__init__(self)
         self.widgets = uistuff.GladeWidgets("taskers.glade")
         tasker = self.widgets["internetGameTasker"]
@@ -238,7 +236,7 @@ class InternetGameTasker(Gtk.Alignment):
 
         def asGuestCallback(check):
             names = ICLogon.get_user_names()
-            self.widgets["usernameEntry"].set_text(names[1] \
+            self.widgets["usernameEntry"].set_text(names[1]
                                                    if check.get_active() else names[0])
             self.widgets["passwordLabel"].set_sensitive(not check.get_active())
             self.widgets["passwordEntry"].set_sensitive(not check.get_active())
@@ -264,8 +262,8 @@ class InternetGameTasker(Gtk.Alignment):
             else:
                 entry.set_text(names[0])
 
-        uistuff.keep(self.widgets["usernameEntry"], "usernameEntry", \
-                    user_name_get_value, user_name_set_value)
+        uistuff.keep(self.widgets["usernameEntry"], "usernameEntry",
+                     user_name_get_value, user_name_set_value)
         uistuff.keep(self.widgets["passwordEntry"], "passwordEntry")
 
         self.widgets["connectButton"].connect("clicked", self.connectClicked)

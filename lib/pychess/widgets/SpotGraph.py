@@ -3,7 +3,11 @@ import math
 from gi.repository import GObject, Gtk, Gdk, Pango, PangoCairo
 import cairo
 
-ceil = lambda f: int(math.ceil(f))
+# ceil = lambda f: int(math.ceil(f))
+
+
+def ceil(f):
+    return int(math.ceil(f))
 
 line = 10
 curve = 60
@@ -83,7 +87,7 @@ class SpotGraph(Gtk.EventBox):
         width = alloc.width
         height = alloc.height
 
-        #------------------------------------------------------ Paint side ruler
+        # ------------------------------------------------------ Paint side ruler
         context.move_to(alloc.x + line, alloc.y + line)
         context.rel_line_to(0, height - line * 2 - curve)
         context.rel_curve_to(0, curve, 0, curve, curve, curve)
@@ -96,12 +100,12 @@ class SpotGraph(Gtk.EventBox):
 
         context.set_line_width(line)
         context.set_line_cap(cairo.LINE_CAP_ROUND)
-        state = self.state == Gtk.StateType.NORMAL and Gtk.StateType.PRELIGHT or self.state
+        # state = self.state == Gtk.StateType.NORMAL and Gtk.StateType.PRELIGHT or self.state
         context.set_source_rgba(dark_prelight.red, dark_prelight.green,
                                 dark_prelight.blue, dark_prelight.alpha)
         context.stroke()
 
-        #------------------------------------------------ Paint horizontal marks
+        # ------------------------------------------------ Paint horizontal marks
         for x_loc, title in self.xmarks:
             context.set_source_rgba(fg_prelight.red, fg_prelight.green,
                                     fg_prelight.blue, fg_prelight.alpha)
@@ -120,7 +124,7 @@ class SpotGraph(Gtk.EventBox):
             context.close_path()
             context.fill()
 
-        #-------------------------------------------------- Paint vertical marks
+        # -------------------------------------------------- Paint vertical marks
         for y_loc, title in self.ymarks:
             context.set_source_rgba(fg_prelight.red, fg_prelight.green,
                                     fg_prelight.blue, fg_prelight.alpha)
@@ -137,7 +141,7 @@ class SpotGraph(Gtk.EventBox):
             context.close_path()
             context.fill()
 
-        #----------------------------------------------------------- Paint spots
+        # ----------------------------------------------------------- Paint spots
         context.set_line_width(dotSmall * lineprc)
         for x_loc, y_loc, col_type, name, text in self.spots.values():
             context.set_source_rgb(*self.typeColors[col_type][0])
@@ -150,7 +154,7 @@ class SpotGraph(Gtk.EventBox):
             context.set_source_rgb(*self.typeColors[col_type][1])
             context.stroke()
 
-        #--------------------------------------------------- Paint hovered spots
+        # --------------------------------------------------- Paint hovered spots
         context.set_line_width(dotLarge * lineprc)
         if self.hovered:
             x_loc, y_loc, col_type, name, text = self.hovered
@@ -244,7 +248,7 @@ class SpotGraph(Gtk.EventBox):
         self.redraw_canvas(self.getBounds(spot))
 
     def removeSpot(self, name):
-        if not name in self.spots:
+        if name not in self.spots:
             return
         spot = self.spots.pop(name)
         bounds = self.getBounds(spot)
@@ -356,7 +360,7 @@ class SpotGraph(Gtk.EventBox):
             # This is an approx to the equation
             # cos((radius-s)/(2pi)) = (radius^2+s^2-1)/(2*radius*s)
             # which gives the next point on the spiral 1 away.
-            radius = (4 * math.pi**3 * radius + radius**2 + \
+            radius = (4 * math.pi**3 * radius + radius**2 +
                       math.sqrt(16 * math.pi**6 + 8 * math.pi**3 * radius + radius**4)) / \
                 (4 * math.pi**3 + 2 * radius)
 
@@ -462,14 +466,14 @@ class SpotGraph(Gtk.EventBox):
     def prcToPix(self, x, y):
         """ Translates from 0-1 cords to real world cords """
         alloc = self.get_allocation()
-        return x*(alloc.width - line*1.5-dotLarge*0.5) + line*1.5 + alloc.x, \
-               y*(alloc.height - line*1.5-dotLarge*0.5) + dotLarge*0.5 + alloc.y
+        return x * (alloc.width - line * 1.5 - dotLarge * 0.5) + line * 1.5 + alloc.x, \
+            y * (alloc.height - line * 1.5 - dotLarge * 0.5) + dotLarge * 0.5 + alloc.y
 
     def pixToPrc(self, x, y):
         """ Translates from real world cords to 0-1 cords """
         alloc = self.get_allocation()
-        return (x - line*1.5 - alloc.x)/(alloc.width - line*1.5-dotLarge*0.5), \
-               (y - dotLarge*0.5 - alloc.y)/(alloc.height - line*1.5-dotLarge*0.5)
+        return (x - line * 1.5 - alloc.x) / (alloc.width - line * 1.5 - dotLarge * 0.5), \
+               (y - dotLarge * 0.5 - alloc.y) / (alloc.height - line * 1.5 - dotLarge * 0.5)
 
 
 if __name__ == "__main__":
@@ -486,7 +490,7 @@ if __name__ == "__main__":
 
     provider = Gtk.CssProvider.new()
     provider.load_from_data(data)
-    style_ctx.add_provider_for_screen(Gdk.Screen.get_default(), provider, \
+    style_ctx.add_provider_for_screen(Gdk.Screen.get_default(), provider,
                                       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     note_book = Gtk.Notebook()

@@ -3,7 +3,6 @@ from gi.repository import Gtk, Gdk, GObject
 from math import floor
 
 from pychess.widgets.BoardView import BoardView
-#from pychess.Utils.const import WHITE
 from pychess.Utils.Cord import Cord
 
 ALL = 0
@@ -81,7 +80,8 @@ class SetupBoard(Gtk.EventBox):
 
     def motion_notify(self, widget, event):
         cord = self.point2Cord(event.x, event.y)
-        if cord == None: return
+        if cord is None:
+            return
         if self.legalCords == ALL or cord in self.legalCords:
             self.view.hover = cord
         else:
