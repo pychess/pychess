@@ -26,7 +26,7 @@ class GLogHandler(logging.Handler):
 
     def emit(self, record):
         message = self.format(record)
-        if self.emitter.messages != None:
+        if self.emitter.messages is not None:
             self.emitter.messages.append((record.task, time.time(), message,
                                           record.levelno))
 

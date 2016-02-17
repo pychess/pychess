@@ -12,10 +12,10 @@ from threading import currentThread, Thread
 from gi.repository import GObject
 from gi.repository import GLib
 
-#from pychess.Utils.const import *
 from pychess.System import fident
 from .Log import log
 from .which import which
+# import subprocess
 
 
 class SubProcessError(Exception):
@@ -41,11 +41,11 @@ subprocesses = []
 
 
 def finishAllSubprocesses():
-    for subprocess in subprocesses:
-        if subprocess.subprocExitCode[0] == None:
-            subprocess.gentleKill(0, 0.3)
-    for subprocess in subprocesses:
-        subprocess.subprocFinishedEvent.wait()
+    for sub_process in subprocesses:
+        if sub_process.subprocExitCode[0] is None:
+            sub_process.gentleKill(0, 0.3)
+    for sub_process in subprocesses:
+        sub_process.subprocFinishedEvent.wait()
 
 
 class SubProcess(GObject.GObject):
@@ -93,7 +93,7 @@ class SubProcess(GObject.GObject):
                       extra={"task": self.defname})
             self.__channelTags = []
             self.inChannel = self._initChannel(stdin, None, None, False)
-            readFlags = GObject.IO_IN | GObject.IO_HUP  #|GObject.IO_ERR
+            readFlags = GObject.IO_IN | GObject.IO_HUP  # |GObject.IO_ERR
             self.outChannel = self._initChannel(stdout, readFlags,
                                                 self.__io_cb, False)
             self.errChannel = self._initChannel(stderr, readFlags,
@@ -144,7 +144,7 @@ class SubProcess(GObject.GObject):
     def _closeChannels(self):
         self.channelsClosedLock.acquire()
         try:
-            if self.channelsClosed == True:
+            if self.channelsClosed is True:
                 return
             self.channelsClosed = True
         finally:
@@ -155,7 +155,7 @@ class SubProcess(GObject.GObject):
         for channel in (self.inChannel, self.outChannel, self.errChannel):
             try:
                 channel.close()
-            except GObject.GError as error:
+            except:
                 pass
 
     def __setup(self):
@@ -220,15 +220,15 @@ class SubProcess(GObject.GObject):
                 os.kill(self.pid, sign)
         except OSError as e:
             if e.errno in (errno.ESRCH, errno.EACCES, errno.EINVAL):
-                #No such process, Permission denied, Invalid argument
+                # No such process, Permission denied, Invalid argument
                 pass
             else:
                 raise OSError(e.errno, os.strerror(e.errno))
 
     def gentleKill(self, first=1, second=1):
         thread = Thread(target=self.__gentleKill_inner,
-                   name=fident(self.__gentleKill_inner),
-                   args=(first, second))
+                        name=fident(self.__gentleKill_inner),
+                        args=(first, second))
         thread.daemon = True
         thread.start()
 
@@ -273,138 +273,138 @@ class SubProcess(GObject.GObject):
         self.sendSignal(signal.SIGINT)
 
 ################################################################################
-import subprocess
 
-if sys.platform == "win32":
 
-    class SubProcess(GObject.GObject):
-        __gsignals__ = {
-            "line": (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-            "died": (GObject.SignalFlags.RUN_FIRST, None, ())
-        }
+# if sys.platform == "win32":
 
-        def __init__(self, path, args=[], warnwords=[], env=None, chdir="."):
-            GObject.GObject.__init__(self)
-
-            self.defname = os.path.split(path)[1]
-            self.defname = self.defname[:1].upper() + self.defname[1:].lower()
-            cur_time = time.time()
-            self.defname = (self.defname,
-                            time.strftime("%H:%m:%%.3f", time.localtime(cur_time)) %
-                            (cur_time % 60))
-            log.debug(path, extra={"task": self.defname})
-
-            argv = [str(u) for u in [path] + args]
-            log.debug("SubProcess.__init__: popen ...",
-                      extra={"task": self.defname})
-
-            def start_subprocess(event):
-                if sys.platform == "win32":
-                    # To prevent engines opening console window
-                    startupinfo = subprocess.STARTUPINFO()
-                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                    preexec_fn = None
-                else:
-                    startupinfo = None
-                    preexec_fn = self.__setup
-
-                self.subprocess = subprocess.Popen(argv,
-                                                   shell=False,
-                                                   stdin=subprocess.PIPE,
-                                                   stdout=subprocess.PIPE,
-                                                   preexec_fn=preexec_fn,
-                                                   cwd=chdir,
-                                                   universal_newlines=True,
-                                                   startupinfo=startupinfo)
-                self.pid = self.subprocess.pid
-                log.debug("SubProcess.__init__: pid=%s" % self.pid,
-                          extra={"task": self.defname})
-
-                self.stop_reading = threading.Event()
-                thread = Thread(target=self.__stdout_reader, name=self.defname[0])
-                thread.start()
-
-                if event is not None:
-                    event.set()
-
-            if currentThread().name == "MainThread":
-                start_subprocess(None)
-            else:
-                event = threading.Event()
-                GLib.idle_add(start_subprocess, event)
-                event.wait()
-
-            self.subprocExitCode = (None, None)
-            self.subprocFinishedEvent = threading.Event()
-            subprocesses.append(self)
-
-        def __setup(self):
-            os.nice(15)
-
-        def __stdout_reader(self):
-            while True:
-                if self.stop_reading.is_set():
-                    break
-                else:
-                    if self.subprocess.poll() is not None:
-                        GLib.idle_add(self.emit, "died")
-                        break
-                    elif self.subprocess.stdout.closed:
-                        GLib.idle_add(self.emit, "died")
-                        self.gentleKill()
-                        break
-                    else:
-                        line = self.subprocess.stdout.readline()
-                        if line:
-                            GLib.idle_add(self.emit, "line", line)
-
-        def gentleKill(self, first=1, second=1):
-            self.sigterm()
-            self.stop_reading.set()
-            self.subprocFinishedEvent.set()
-
-        def sendSignal(self, sign):
-            try:
-                if sys.platform != "win32":
-                    os.kill(self.pid, signal.SIGCONT)
-                os.kill(self.pid, sign)
-            except OSError as e:
-                if e.errno in (errno.ESRCH, errno.EACCES, errno.EINVAL):
-                    #No such process, Permission denied, Invalid argument
-                    pass
-                else:
-                    raise OSError(e.errno, os.strerror(e.errno))
-
-        def pause(self):
-            if sys.platform != "win32":
-                self.sendSignal(signal.SIGSTOP)
-
-        def resume(self):
-            if sys.platform != "win32":
-                self.sendSignal(signal.SIGCONT)
-
-        def sigkill(self):
-            if sys.platform == "win32":
-                self.sendSignal(signal.SIGABRT)
-            else:
-                self.sendSignal(signal.SIGKILL)
-
-        def sigterm(self):
-            self.sendSignal(signal.SIGTERM)
-
-        def sigint(self):
-            self.sendSignal(signal.SIGINT)
-
-        def write(self, data):
-            if self.subprocess.poll() is not None:
-                GLib.idle_add(self.emit, "died")
-            elif self.subprocess.stdin.closed:
-                GLib.idle_add(self.emit, "died")
-                self.gentleKill()
-            else:
-                self.subprocess.stdin.write(data)
-                self.subprocess.stdin.flush()
-
+#     class SubProcess(GObject.GObject):
+#         __gsignals__ = {
+#             "line": (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+#             "died": (GObject.SignalFlags.RUN_FIRST, None, ())
+#         }
+#
+#         def __init__(self, path, args=[], warnwords=[], env=None, chdir="."):
+#             GObject.GObject.__init__(self)
+#
+#             self.defname = os.path.split(path)[1]
+#             self.defname = self.defname[:1].upper() + self.defname[1:].lower()
+#             cur_time = time.time()
+#             self.defname = (self.defname,
+#                             time.strftime("%H:%m:%%.3f", time.localtime(cur_time)) %
+#                             (cur_time % 60))
+#             log.debug(path, extra={"task": self.defname})
+#
+#             argv = [str(u) for u in [path] + args]
+#             log.debug("SubProcess.__init__: popen ...",
+#                       extra={"task": self.defname})
+#
+#             def start_subprocess(event):
+#                 if sys.platform == "win32":
+#                     # To prevent engines opening console window
+#                     startupinfo = subprocess.STARTUPINFO()
+#                     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+#                     preexec_fn = None
+#                 else:
+#                     startupinfo = None
+#                     preexec_fn = self.__setup
+#
+#                 self.subprocess = subprocess.Popen(argv,
+#                                                    shell=False,
+#                                                    stdin=subprocess.PIPE,
+#                                                    stdout=subprocess.PIPE,
+#                                                    preexec_fn=preexec_fn,
+#                                                    cwd=chdir,
+#                                                    universal_newlines=True,
+#                                                    startupinfo=startupinfo)
+#                 self.pid = self.subprocess.pid
+#                 log.debug("SubProcess.__init__: pid=%s" % self.pid,
+#                           extra={"task": self.defname})
+#
+#                 self.stop_reading = threading.Event()
+#                 thread = Thread(target=self.__stdout_reader, name=self.defname[0])
+#                 thread.start()
+#
+#                 if event is not None:
+#                     event.set()
+#
+#             if currentThread().name == "MainThread":
+#                 start_subprocess(None)
+#             else:
+#                 event = threading.Event()
+#                 GLib.idle_add(start_subprocess, event)
+#                 event.wait()
+#
+#             self.subprocExitCode = (None, None)
+#             self.subprocFinishedEvent = threading.Event()
+#             subprocesses.append(self)
+#
+#         def __setup(self):
+#             os.nice(15)
+#
+#         def __stdout_reader(self):
+#             while True:
+#                 if self.stop_reading.is_set():
+#                     break
+#                 else:
+#                     if self.subprocess.poll() is not None:
+#                         GLib.idle_add(self.emit, "died")
+#                         break
+#                     elif self.subprocess.stdout.closed:
+#                         GLib.idle_add(self.emit, "died")
+#                         self.gentleKill()
+#                         break
+#                     else:
+#                         line = self.subprocess.stdout.readline()
+#                         if line:
+#                             GLib.idle_add(self.emit, "line", line)
+#
+#         def gentleKill(self, first=1, second=1):
+#             self.sigterm()
+#             self.stop_reading.set()
+#             self.subprocFinishedEvent.set()
+#
+#         def sendSignal(self, sign):
+#             try:
+#                 if sys.platform != "win32":
+#                     os.kill(self.pid, signal.SIGCONT)
+#                 os.kill(self.pid, sign)
+#             except OSError as e:
+#                 if e.errno in (errno.ESRCH, errno.EACCES, errno.EINVAL):
+#                     # No such process, Permission denied, Invalid argument
+#                     pass
+#                 else:
+#                     raise OSError(e.errno, os.strerror(e.errno))
+#
+#         def pause(self):
+#             if sys.platform != "win32":
+#                 self.sendSignal(signal.SIGSTOP)
+#
+#         def resume(self):
+#             if sys.platform != "win32":
+#                 self.sendSignal(signal.SIGCONT)
+#
+#         def sigkill(self):
+#             if sys.platform == "win32":
+#                 self.sendSignal(signal.SIGABRT)
+#             else:
+#                 self.sendSignal(signal.SIGKILL)
+#
+#         def sigterm(self):
+#             self.sendSignal(signal.SIGTERM)
+#
+#         def sigint(self):
+#             self.sendSignal(signal.SIGINT)
+#
+#         def write(self, data):
+#             if self.subprocess.poll() is not None:
+#                 GLib.idle_add(self.emit, "died")
+#             elif self.subprocess.stdin.closed:
+#                 GLib.idle_add(self.emit, "died")
+#                 self.gentleKill()
+#             else:
+#                 self.subprocess.stdin.write(data)
+#                 self.subprocess.stdin.flush()
+#
 ################################################################################
 
 if __name__ == "__main__":

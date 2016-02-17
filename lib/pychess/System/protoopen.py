@@ -59,4 +59,3 @@ def isWriteable(uri):
         return os.access(splitted[0], os.W_OK)
 
     return False
-

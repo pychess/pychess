@@ -4,8 +4,6 @@ from __future__ import print_function
 import re
 import sys
 
-_ = lambda s: s
-
 from gi.repository import GObject
 
 from pychess.System.Log import log
@@ -80,7 +78,7 @@ class Pinger(GObject.GObject):
     def stop(self):
         if not self.subproc:
             return
-        exitCode = self.subproc.gentleKill()
+        # exitCode = self.subproc.gentleKill()
         self.subproc.disconnect(self.conid1)
         self.subproc.disconnect(self.conid2)
         self.subproc = None

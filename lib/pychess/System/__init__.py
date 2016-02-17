@@ -4,7 +4,7 @@ import sys
 from pychess.compat import basestring
 
 
-def fident (f):
+def fident(f):
     '''
     Get an identifier for a function or method
     '''
@@ -20,11 +20,12 @@ def fident (f):
         lineno = 0
     else:
         lineno = inspect.getsourcelines(f)[1]
-        
+
     fullname = joinchar.join((fparent, f.__name__))
     return ':'.join((fullname, str(lineno)))
 
-def get_threadname (thread_namer):
+
+def get_threadname(thread_namer):
     if isinstance(thread_namer, basestring):
         return thread_namer
     else:

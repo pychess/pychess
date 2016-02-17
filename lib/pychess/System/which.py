@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+import sys
+import os.path
+
+from pychess.compat import basestring
+
+
 ###
 # Generators are not thread safe, so reduced which_files() to return the first match only !!!
 ###
@@ -56,11 +62,6 @@
 """
 __docformat__ = 'restructuredtext en'
 __all__ = 'which which_files'.split()
-
-import sys, os, os.path
-
-from pychess.compat import basestring
-
 _windows = sys.platform.startswith('win')
 
 if _windows:
@@ -210,7 +211,7 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
         path = (filepath, )
     elif path is None:
         path = os.environ.get('PATH', os.defpath).split(os.pathsep)
-        if _windows and not os.curdir in path:
+        if _windows and os.curdir not in path:
             path.insert(
                 0, os.curdir
             )  # current directory is always searched first on Windows
@@ -225,7 +226,7 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
     elif isinstance(pathext, basestring):
         pathext = pathext.split(os.pathsep)
 
-    if not '' in pathext:
+    if '' not in pathext:
         pathext.insert(
             0, ''
         )  # always check command without extension, even for an explicitly passed pathext
@@ -234,7 +235,7 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
     for dir in path:
         if dir:  # only non-empty directories are searched
             id = os.path.normcase(os.path.abspath(dir))
-            if not id in seen:  # each directory is searched only once
+            if id not in seen:  # each directory is searched only once
                 seen.add(id)
                 woex = os.path.join(dir, file)
                 for ext in pathext:

@@ -27,8 +27,7 @@ if sys.platform == "win32":
             try:
                 winsound.PlaySound(None, 0)
                 winsound.PlaySound(
-                    url2pathname(uri[5:]), winsound.SND_FILENAME
-                    | winsound.SND_ASYNC)
+                    url2pathname(uri[5:]), winsound.SND_FILENAME | winsound.SND_ASYNC)
             except RuntimeError:
                 log.error("ERROR: RuntimeError while playing %s." %
                           url2pathname(uri[5:]))

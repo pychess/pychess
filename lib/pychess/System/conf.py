@@ -5,39 +5,39 @@ from __future__ import absolute_import
 import sys
 import os
 
-from . import conf_configParser as confmodule
+from . import conf_configParser as conf_Module
 """Module for using gconf without having to care about types"""
 
 
 def notify_add(key, func, *args):
     """The signature for func must be self, client, *args, **kwargs"""
     assert isinstance(key, str)
-    return confmodule.notify_add(key, func, args)
+    return conf_Module.notify_add(key, func, args)
 
 
 def notify_remove(conid):
-    confmodule.notify_remove(conid)
+    conf_Module.notify_remove(conid)
 
 
 def getStrict(key):
     assert hasKey(key)
-    return confmodule.get(key)
+    return conf_Module.get(key)
 
 
 def get(key, alternative):
     if hasKey(key):
-        return confmodule.get(key)
+        return conf_Module.get(key)
     if callable(alternative):
         alternative = alternative()
     return alternative
 
 
 def set(key, value):
-    confmodule.set(key, value)
+    conf_Module.set(key, value)
 
 
 def hasKey(key):
-    return confmodule.hasKey(key)
+    return conf_Module.hasKey(key)
 
 
 if sys.platform == "win32":
