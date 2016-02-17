@@ -5,6 +5,7 @@ from pychess.Utils.Board import Board
 
 UPSIDEDOWNSTART = "RNBQKBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbqkbnr w - - 0 1"
 
+
 class UpsideDownBoard(Board):
     variant = UPSIDEDOWNCHESS
     __desc__ = _("FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n" +

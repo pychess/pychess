@@ -13,8 +13,8 @@ class ShuffleBoard(Board):
     """
     variant = SHUFFLECHESS
     __desc__ = _(
-        "xboard nocastle: http://home.hccnet.nl/h.g.muller/engine-intf.html#8\n"
-        + "FICS wild/2: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
+        "xboard nocastle: http://home.hccnet.nl/h.g.muller/engine-intf.html#8\n" +
+        "FICS wild/2: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
         "* Random arrangement of the pieces behind the pawns\n" +
         "* No castling\n" + "* Black's arrangement mirrors white's")
     name = _("Shuffle")

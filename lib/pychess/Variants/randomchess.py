@@ -6,6 +6,7 @@ import random
 from pychess.Utils.const import RANDOMCHESS, VARIANTS_SHUFFLE
 from pychess.Utils.Board import Board
 
+
 class RandomBoard(Board):
     """ :Description:
     * Randomly chosen pieces (two queens or three rooks possible)
@@ -28,20 +29,20 @@ class RandomBoard(Board):
     standard_rules = True
     variant_group = VARIANTS_SHUFFLE
 
-    def __init__ (self, setup=False, lboard=None):
+    def __init__(self, setup=False, lboard=None):
         if setup is True:
             Board.__init__(self, setup=self.random_start(), lboard=lboard)
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
 
     def random_start(self):
-        back_rank = random.sample(('r', 'n', 'b', 'q')*16, 7)
+        back_rank = random.sample(('r', 'n', 'b', 'q') * 16, 7)
         back_rank.append('k')
         random.shuffle(back_rank)
         fen = ''.join(back_rank)
         fen = fen + '/pppppppp/8/8/8/8/PPPPPPPP/' + fen.upper() + ' w - - 0 1'
 
-        return tmp
+#        return tmp
 
 
 if __name__ == '__main__':

@@ -41,7 +41,7 @@ def piecesAround(board, cord):
 
 def kingExplode(board, move, color):
     tcord = move & 63
-    #fcord = (move >> 6) & 63
+    # fcord = (move >> 6) & 63
     flag = move >> 12
     if board.arBoard[tcord] or flag == ENPASSANT:
         for acord, apiece, acolor in piecesAround(board, tcord):
@@ -68,4 +68,3 @@ if __name__ == '__main__':
     atomic_board.board.popMove()
     print(atomic_board.board.__repr__())
     print(atomic_board.board.pieceCount)
-

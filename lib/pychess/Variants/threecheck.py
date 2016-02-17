@@ -5,6 +5,7 @@ from __future__ import print_function
 from pychess.Utils.const import THREECHECKCHESS, VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.Board import Board
 
+
 class ThreeCheckBoard(Board):
     variant = THREECHECKCHESS
     __desc__ = _("Win by giving check 3 times")

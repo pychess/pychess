@@ -4,6 +4,7 @@ from pychess.Utils.Board import Board
 
 QUEENODDSSTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
 
+
 class QueenOddsBoard(Board):
     """ :Description: Standard chess rules but one side starts without a queen"""
     variant = QUEENODDSCHESS
@@ -14,7 +15,7 @@ class QueenOddsBoard(Board):
     standard_rules = True
     variant_group = VARIANTS_ODDS
 
-    def __init__ (self, setup=False, lboard=None):
+    def __init__(self, setup=False, lboard=None):
         if setup is True:
             Board.__init__(self, setup=QUEENODDSSTART, lboard=lboard)
         else:

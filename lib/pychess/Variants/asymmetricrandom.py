@@ -79,15 +79,14 @@ class AsymmetricRandomBoard(Board):
             bishopindex = blackbishoprandomindexstack.pop()
             for index, piece in RandomEnumeratePieces(black):
                 if piece != 'b':
-                    if ((blackdarkbishops > whitedarkbishops) and \
-                        (bishopindex % 2 == 1) and (index % 2 == 0)):
+                    if ((blackdarkbishops > whitedarkbishops) and (bishopindex % 2 == 1) and (index % 2 == 0)):
                         black[bishopindex] = piece
                         black[index] = 'b'
                         blacklightbishops += 1
                         blackdarkbishops = blackdarkbishops > 0 and (
                             blackdarkbishops - 1) or 0
                         break
-                    elif ((blacklightbishops > whitelightbishops) and \
+                    elif ((blacklightbishops > whitelightbishops) and
                           (bishopindex % 2 == 0) and (index % 2 == 1)):
                         black[bishopindex] = piece
                         black[index] = 'b'

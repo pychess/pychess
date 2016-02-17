@@ -4,6 +4,7 @@ from pychess.Utils.Board import Board
 
 ROOKODDSSTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/1NBQKBNR w Kkq - 0 1"
 
+
 class RookOddsBoard(Board):
     """:Description: Standard chess rules apply, but one side starts with one less rook"""
     variant = ROOKODDSCHESS

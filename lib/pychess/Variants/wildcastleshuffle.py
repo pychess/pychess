@@ -8,15 +8,15 @@ from pychess.Utils.Board import Board
 
 class WildcastleShuffleBoard(Board):
     variant = WILDCASTLESHUFFLECHESS
-    __desc__ = _("xboard wildcastle http://home.hccnet.nl/h.g.muller/engine-intf.html#8\n"+
-                 "FICS wild/1: http://www.freechess.org/Help/HelpFiles/wild.html\n"+
-                 "* In this variant both sides have the same set of pieces as in normal chess.\n"+
-                 "* The white king starts on d1 or e1 and the black king starts on d8 or e8,\n"+
-                 "* and the rooks are in their usual positions.\n"+
-                 "* Bishops are always on opposite colors.\n"+
+    __desc__ = _("xboard wildcastle http://home.hccnet.nl/h.g.muller/engine-intf.html#8\n" +
+                 "FICS wild/1: http://www.freechess.org/Help/HelpFiles/wild.html\n" +
+                 "* In this variant both sides have the same set of pieces as in normal chess.\n" +
+                 "* The white king starts on d1 or e1 and the black king starts on d8 or e8,\n" +
+                 "* and the rooks are in their usual positions.\n" +
+                 "* Bishops are always on opposite colors.\n" +
                  "* Subject to these constraints the position of the \
-                 pieces on their first ranks is random.\n"+
-                 "* Castling is done similarly to normal chess:\n"+
+                 pieces on their first ranks is random.\n" +
+                 "* Castling is done similarly to normal chess:\n" +
                  "* o-o-o indicates long castling and o-o short castling.")
     name = _("Wildcastle shuffle")
     cecp_name = "wildcastle"
@@ -36,28 +36,28 @@ class WildcastleShuffleBoard(Board):
             back_rank = ['r'] + ([''] * 6) + ['r']
 
             king = random.choice((4, 5))
-            back_rank[king-1] = 'k'
+            back_rank[king - 1] = 'k'
             positions.remove(king)
 
             bishop = random.choice(positions)
-            back_rank[bishop-1] = 'b'
+            back_rank[bishop - 1] = 'b'
             positions.remove(bishop)
-            color = bishop%2
+            color = bishop % 2
 
-            bishop = random.choice([i for i in positions if i%2 != color])
-            back_rank[bishop-1] = 'b'
+            bishop = random.choice([i for i in positions if i % 2 != color])
+            back_rank[bishop - 1] = 'b'
             positions.remove(bishop)
 
             queen = random.choice(positions)
-            back_rank[queen-1] = 'q'
+            back_rank[queen - 1] = 'q'
             positions.remove(queen)
 
             knight = random.choice(positions)
-            back_rank[knight-1] = 'n'
+            back_rank[knight - 1] = 'n'
             positions.remove(knight)
 
             knight = random.choice(positions)
-            back_rank[knight-1] = 'n'
+            back_rank[knight - 1] = 'n'
             positions.remove(knight)
 
             return ''.join(back_rank)
