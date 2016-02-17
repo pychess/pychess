@@ -1,4 +1,3 @@
-from pychess.Utils.const import KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN, reprSign
 from pychess.Utils.repr import reprColor, reprPiece
 
 
@@ -28,12 +27,12 @@ class Piece:
         represen = "<%s %s" % (reprColor[self.color], reprPiece[self.piece])
         if self.opacity != 1.0:
             represen += " Op:%0.1f" % self.opacity
-        if self.x != None or self.y != None:
-            if self.x != None:
+        if self.x is not None or self.y is not None:
+            if self.x is not None:
                 represen += " X:%0.1f" % self.x
             else:
                 represen += " X:None"
-            if self.y != None:
+            if self.y is not None:
                 represen += " Y:%0.1f" % self.y
             else:
                 represen += " Y:None"

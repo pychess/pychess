@@ -155,7 +155,7 @@ def standard_validate(board, move):
 
 def validate(board, move):
     if board.variant == LOSERSCHESS:
-        capture = move.flag == ENPASSANT or board[move.cord1] != None
+        capture = move.flag == ENPASSANT or board[move.cord1] is not None
         if capture:
             return standard_validate(board, move)
         else:
@@ -178,15 +178,13 @@ def validate(board, move):
             else:
                 return standard_validate(board, move)
     elif board.variant == SUICIDECHESS:
-        capture = move.flag == ENPASSANT or board[move.cord1] != None
+        capture = move.flag == ENPASSANT or board[move.cord1] is not None
         if capture:
             return standard_validate(board, move)
         else:
             can_capture = False
             for c in lmovegen.genCaptures(board.board):
-#                from pychess.Utils.Move import Move
                 can_capture = True
-                #break
             if can_capture:
                 return False
             else:

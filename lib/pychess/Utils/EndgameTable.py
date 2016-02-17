@@ -40,7 +40,7 @@ class EndgameTable(GObject.GObject):
         piece_count = self._pieceCounts(lBoard)
         for provider in self.providers:
             if provider.supports(piece_count):
-                result, depth = provider.scoreGame(lBoard, needDepth,
+                result, depth = provider.scoreGame(lBoard, omitDepth,
                                                    probeSoft)
                 if result is not None:
                     return result, depth

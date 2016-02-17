@@ -1,8 +1,9 @@
 from pychess.Utils.lutils.ldata import MATE_VALUE
 
+
 def prettyPrintScore(s, depth):
     """The score parameter is an eval value form White point of view"""
-    
+
     if s is None:
         return "?"
 
@@ -10,20 +11,21 @@ def prettyPrintScore(s, depth):
         return "0.00/%s" % depth
 
     if s > 0:
-       pp = "+"
+        pp = "+"
     else:
         pp = "-"
         s = -s
-    
+
     if depth:
         depth = "/" + depth
     else:
         depth = ""
-        
+
     if abs(s) == MATE_VALUE:
         return "%s#%s" % (pp, MATE_VALUE)
     else:
         return "%s%0.2f%s" % (pp, s / 100.0, depth)
+
 
 def createStoryTextAppEvent(text):
     try:
@@ -31,4 +33,3 @@ def createStoryTextAppEvent(text):
         storytext.applicationEvent(text)
     except ImportError:
         pass
-

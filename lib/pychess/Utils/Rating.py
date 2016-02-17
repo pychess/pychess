@@ -35,7 +35,7 @@ class Rating(GObject.GObject):
 
     def __repr__(self):
         r = "type=%s, elo=%s" % (self.type, self.elo)
-        if self.deviation != None:
+        if self.deviation is not None:
             r += ", deviation=%s" % str(self.deviation)
         if self.wins > 0:
             r += ", wins=%s" % str(self.wins)

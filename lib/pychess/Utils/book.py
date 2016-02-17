@@ -5,7 +5,6 @@ import sys
 from struct import Struct
 from collections import namedtuple
 
-#from pychess.Utils.const import WHITE
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.lmove import parsePolyglot

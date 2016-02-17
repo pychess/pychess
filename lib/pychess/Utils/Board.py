@@ -31,7 +31,7 @@ class Board:
     RANKS = 8
     FILES = 8
     HOLDING_FILES = ((FILES + 3, FILES + 2, FILES + 1), (-4, -3, -2))
-    PROMOTION_ZONE = ((A8, B8, C8, D8, E8, F8, G8, H8), \
+    PROMOTION_ZONE = ((A8, B8, C8, D8, E8, F8, G8, H8),
                       (A1, B1, C1, D1, E1, F1, G1, H1))
     PROMOTIONS = (QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION,
                   KNIGHT_PROMOTION)
@@ -308,7 +308,7 @@ class Board:
         cord0, cord1 = move.cords
 
         if (self[move.cord1] is not None or flag == ENPASSANT) and \
-            not (self.variant == FISCHERRANDOMCHESS and flag in (QUEEN_CASTLE, KING_CASTLE)):
+                not (self.variant == FISCHERRANDOMCHESS and flag in (QUEEN_CASTLE, KING_CASTLE)):
             if self.variant == CRAZYHOUSECHESS:
                 piece = PAWN if flag == ENPASSANT or self[
                     move.cord1].promoted else self[move.cord1].piece
@@ -395,7 +395,7 @@ class Board:
         return new_board
 
     def _get_enpassant(self):
-        if self.board.enpassant != None:
+        if self.board.enpassant is not None:
             return Cord(self.board.enpassant)
         return None
 
@@ -448,7 +448,8 @@ class Board:
         return newBoard
 
     def __eq__(self, other):
-        if not isinstance(self, type(other)): return False
+        if not isinstance(self, type(other)):
+            return False
         return self.board == other.board
 
     def printPieces(self):

@@ -21,7 +21,8 @@ class TimeModel(GObject.GObject):
 
     def __init__(self, secs=0, gain=0, bsecs=-1, minutes=-1):
         GObject.GObject.__init__(self)
-        if bsecs < 0: bsecs = secs
+        if bsecs < 0:
+            bsecs = secs
         if minutes < 0:
             minutes = secs / 60
         self.minutes = minutes  # The number of minutes for the original starting
@@ -55,10 +56,6 @@ class TimeModel(GObject.GObject):
              str(self.getPlayerTime(BLACK)), self.ended)
         return text
 
-    @property
-    def ply(self):
-        return len(self.intervals[0]) + len(self.intervals[1]) - 2
-
     def __zerolistener(self, *args):
         if self.ended:
             return False
@@ -77,7 +74,7 @@ class TimeModel(GObject.GObject):
         if remaining_time > 0 and remaining_time != self.zero_listener_time:
             if (self.zero_listener_id is not None) and \
                 (self.zero_listener_source is not None) and \
-                not self.zero_listener_source.is_destroyed():
+                    not self.zero_listener_source.is_destroyed():
                 GLib.source_remove(self.zero_listener_id)
             self.zero_listener_time = remaining_time
             self.zero_listener_id = GLib.timeout_add(10, self.__checkzero,
@@ -108,7 +105,7 @@ class TimeModel(GObject.GObject):
 
         if self.started:
             ticker = self.intervals[self.movingColor][-1] + self.gain
-            if self.counter != None:
+            if self.counter is not None:
                 ticker -= time() - self.counter
             self.intervals[self.movingColor].append(ticker)
         else:
@@ -139,7 +136,7 @@ class TimeModel(GObject.GObject):
         self.ended = True
         if (self.zero_listener_id is not None) and \
             (self.zero_listener_source is not None) and \
-            not self.zero_listener_source.is_destroyed():
+                not self.zero_listener_source.is_destroyed():
             GLib.source_remove(self.zero_listener_id)
 
     def pause(self):
@@ -148,7 +145,7 @@ class TimeModel(GObject.GObject):
             return
         self.paused = True
 
-        if self.counter != None:
+        if self.counter is not None:
             self.pauseInterval = time() - self.counter
 
         self.counter = None

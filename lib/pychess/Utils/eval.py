@@ -1,5 +1,5 @@
-### DEPRECATED
-### SHOULD ONLY BE USED AS A REFERENCE TO MAKE leval
+# DEPRECATED
+# SHOULD ONLY BE USED AS A REFERENCE TO MAKE leval
 
 
 from array import array
@@ -270,15 +270,15 @@ def evalMaterial(board):
         # Black leading
         matDiff = materialValue[BLACK] - materialValue[WHITE]
         val = min(2400, matDiff) + \
-                (matDiff * (12000 - matTotal) * numPawns[BLACK]) \
-                / (6400 * (numPawns[BLACK] + 1))
+            (matDiff * (12000 - matTotal) * numPawns[BLACK]) \
+            / (6400 * (numPawns[BLACK] + 1))
         return -val
     else:
         # White leading
         matDiff = materialValue[WHITE] - materialValue[BLACK]
         val = min(2400, matDiff) + \
-                (matDiff * (12000 - matTotal) * numPawns[WHITE]) \
-                / (6400 * (numPawns[WHITE] + 1))
+            (matDiff * (12000 - matTotal) * numPawns[WHITE]) \
+            / (6400 * (numPawns[WHITE] + 1))
         return val
 
 
@@ -366,7 +366,7 @@ def evalDevelopment(board):
         for x_loc, piece in enumerate(row):
             if not piece:
                 continue
-            #s = pos[piece.sign][piece.color][y*8+x]
+            # s = pos[piece.sign][piece.color][y*8+x]
             if piece.color == WHITE:
                 if piece.sign == PAWN:
                     score += whitepawn[x_loc + y_loc * 8]
@@ -484,16 +484,16 @@ def evalPawnStructure(board):
             score -= 15
         elif x_loc == 7 and whitePawnFileBins[x_loc] > 0 and whitePawnFileBins[6] == 0:
             score -= 15
-        elif whitePawnFileBins[x_loc] > 0 and whitePawnFileBins[x_loc-1] == 0 and \
-                whitePawnFileBins[x_loc+1] == 0:
+        elif whitePawnFileBins[x_loc] > 0 and whitePawnFileBins[x_loc - 1] == 0 and \
+                whitePawnFileBins[x_loc + 1] == 0:
             score -= 15
 
         if x_loc == 0 and blackPawnFileBins[x_loc] > 0 and blackPawnFileBins[1] == 0:
             score += 15
         elif x_loc == 7 and blackPawnFileBins[x_loc] > 0 and blackPawnFileBins[6] == 0:
             score += 15
-        elif blackPawnFileBins[x_loc] > 0 and blackPawnFileBins[x_loc-1] == 0 and \
-                blackPawnFileBins[x_loc+1] == 0:
+        elif blackPawnFileBins[x_loc] > 0 and blackPawnFileBins[x_loc - 1] == 0 and \
+                blackPawnFileBins[x_loc + 1] == 0:
             score += 15
 
         # Penalize pawn rams, because they restrict movement
@@ -526,7 +526,8 @@ def analyzePawnStructure(board):
     data = board.data
     for y, row in enumerate(data[::-1]):
         for x, piece in enumerate(row):
-            if not piece: continue
+            if not piece:
+                continue
             if piece.sign == PAWN and y not in (0, 7):
                 if piece.color == WHITE:
                     whitePawnFileBins[x] += 1

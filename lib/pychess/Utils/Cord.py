@@ -48,7 +48,7 @@ class Cord:
     cy = property(_get_cy)
 
     def intToChar(self, x):
-        #assert 0 <= x <= 7
+        # assert 0 <= x <= 7
         return chr(x + ord('a'))
 
     def charToInt(self, char):
@@ -79,7 +79,7 @@ class Cord:
         return 0
 
     def __eq__(self, other):
-        return other != None and other.x == self.x and other.y == self.y
+        return other is not None and other.x == self.x and other.y == self.y
 
     def __ne__(self, other):
         return not self.__eq__(other)

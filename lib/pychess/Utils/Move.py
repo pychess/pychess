@@ -24,9 +24,9 @@ class Move:
             self.cord1 = Cord(lmove.TCORD(self.move))
 
         else:
-            assert cord0 != None and cord1 != None, "cord0=%s, cord1=%s, board=%s" % (
+            assert cord0 is not None and cord1 is not None, "cord0=%s, cord1=%s, board=%s" % (
                 cord0, cord1, board)
-            assert board[cord0] != None, "cord0=%s, cord1=%s, board=%s" % (
+            assert board[cord0] is not None, "cord0=%s, cord1=%s, board=%s" % (
                 cord0, cord1, board)
             self.cord0 = cord0
             self.cord1 = cord1
@@ -38,7 +38,7 @@ class Move:
             if board[
                     self.cord0].piece == PAWN and self.cord1.cord in board.PROMOTION_ZONE[
                         board.board.color]:
-                if promotion == None:
+                if promotion is None:
                     if board.variant == SITTUYINCHESS:
                         if cord0 == cord1:
                             self.flag = lmove.FLAG_PIECE(QUEEN)
@@ -51,15 +51,15 @@ class Move:
                 if self.cord0 == self.cord1:
                     self.flag = NULL_MOVE
                 elif board.variant == FISCHERRANDOMCHESS:
-                    if (abs(self.cord0.x - self.cord1.x) > 1 and self.cord1.x == C1) or \
-                        (board.board.ini_rooks[board.color][0] == self.cord1.cord and \
-                        ((board.board.color == WHITE and board.board.castling & W_OOO) or \
-                        (board.board.color == BLACK and board.board.castling & B_OOO))):
+                    if (abs(self.cord0.x - self.cord1.x) > 1 and self.cord1.x == C1) or (
+                            board.board.ini_rooks[board.color][0] == self.cord1.cord and (
+                        (board.board.color == WHITE and board.board.castling & W_OOO) or (
+                            board.board.color == BLACK and board.board.castling & B_OOO))):
                         self.flag = QUEEN_CASTLE
-                    elif (abs(self.cord0.x - self.cord1.x) > 1 and self.cord1.x == G1) or \
-                        (board.board.ini_rooks[board.color][1] == self.cord1.cord and \
-                        ((board.board.color == WHITE and board.board.castling & W_OO) or \
-                        (board.board.color == BLACK and board.board.castling & B_OO))):
+                    elif (abs(self.cord0.x - self.cord1.x) > 1 and self.cord1.x == G1) or (
+                            board.board.ini_rooks[board.color][1] == self.cord1.cord and (
+                        (board.board.color == WHITE and board.board.castling & W_OO) or (
+                            board.board.color == BLACK and board.board.castling & B_OO))):
                         self.flag = KING_CASTLE
                 elif board.variant != CAMBODIANCHESS:
                     if self.cord0.x - self.cord1.x == 2:
@@ -68,7 +68,7 @@ class Move:
                         self.flag = KING_CASTLE if self.cord0.x == 4 else QUEEN_CASTLE
 
             elif board[self.cord0].piece == PAWN and \
-                    board[self.cord1] == None and \
+                    board[self.cord1] is None and \
                     self.cord0.x != self.cord1.x and \
                     self.cord0.y != self.cord1.y:
                 self.flag = ENPASSANT
@@ -88,7 +88,7 @@ class Move:
     promotion = property(_get_promotion)
 
     def __repr__(self):
-        promotion = "="+reprSign[lmove.PROMOTE_PIECE(self.flag)] \
+        promotion = "=" + reprSign[lmove.PROMOTE_PIECE(self.flag)] \
                     if self.flag in PROMOTIONS else ""
 
         if self.flag == DROP:
@@ -106,8 +106,8 @@ class Move:
 
     def is_capture(self, board):
         return self.flag == ENPASSANT or \
-               board[self.cord1] != None and \
-               self.flag != QUEEN_CASTLE and self.flag != KING_CASTLE
+            board[self.cord1] is not None and \
+            self.flag != QUEEN_CASTLE and self.flag != KING_CASTLE
 
 ################################################################################
 # Parsers                                                                      #

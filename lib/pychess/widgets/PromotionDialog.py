@@ -3,8 +3,8 @@ from gi.repository import Gtk
 
 from pychess.System import uistuff
 
-from pychess.Utils.Piece import Piece, KING, QUEEN, ROOK, BISHOP, KNIGHT
-from pychess.Utils.const import WHITE, SUICIDECHESS, SITTUYINCHESS
+from pychess.Utils.Piece import Piece
+from pychess.Utils.const import WHITE, SUICIDECHESS, SITTUYINCHESS, KING, QUEEN, ROOK, BISHOP, KNIGHT
 
 from .PieceWidget import PieceWidget
 

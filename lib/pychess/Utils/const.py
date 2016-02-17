@@ -74,12 +74,12 @@ WON_ADJUDICATION, WON_CALLFLAG, WON_DISCONNECTION, WON_MATE, WON_RESIGN, \
 WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, DISCONNECTED, UNKNOWN_REASON = range(39)
 
 UNDOABLE_REASONS = (DRAW_50MOVES, DRAW_INSUFFICIENT, DRAW_LENGTH,
-                    DRAW_REPITITION, DRAW_STALEMATE, DRAW_AGREE, DRAW_CALLFLAG, \
-                    DRAW_BLACKINSUFFICIENTANDWHITETIME, \
-                    DRAW_WHITEINSUFFICIENTANDBLACKTIME, \
+                    DRAW_REPITITION, DRAW_STALEMATE, DRAW_AGREE, DRAW_CALLFLAG,
+                    DRAW_BLACKINSUFFICIENTANDWHITETIME,
+                    DRAW_WHITEINSUFFICIENTANDBLACKTIME,
                     WON_MATE, WON_NOMATERIAL, WON_CALLFLAG, WON_RESIGN)
 
-UNRESUMEABLE_REASONS = (DRAW_50MOVES, DRAW_INSUFFICIENT, DRAW_LENGTH, \
+UNRESUMEABLE_REASONS = (DRAW_50MOVES, DRAW_INSUFFICIENT, DRAW_LENGTH,
                         DRAW_REPITITION, DRAW_STALEMATE, WON_MATE, WON_NOMATERIAL)
 
 # Player actions
@@ -96,12 +96,12 @@ MATCH_OFFER = "match offer"
 HURRY_ACTION = "hurry action"
 CHAT_ACTION = "chat action"
 
-ACTIONS = (RESIGNATION, FLAG_CALL, DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, \
-           PAUSE_OFFER, RESUME_OFFER, SWITCH_OFFER, TAKEBACK_OFFER, \
+ACTIONS = (RESIGNATION, FLAG_CALL, DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER,
+           PAUSE_OFFER, RESUME_OFFER, SWITCH_OFFER, TAKEBACK_OFFER,
            MATCH_OFFER, HURRY_ACTION, CHAT_ACTION)
-OFFERS = (DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, PAUSE_OFFER, \
+OFFERS = (DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, PAUSE_OFFER,
           RESUME_OFFER, SWITCH_OFFER, TAKEBACK_OFFER, MATCH_OFFER)
-INGAME_ACTIONS = (RESIGNATION, FLAG_CALL, DRAW_OFFER, ABORT_OFFER, \
+INGAME_ACTIONS = (RESIGNATION, FLAG_CALL, DRAW_OFFER, ABORT_OFFER,
                   ADJOURN_OFFER, PAUSE_OFFER, SWITCH_OFFER, HURRY_ACTION)
 
 # A few nice to have boards
@@ -126,8 +126,8 @@ EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN, \
 ASEAN_WBISHOP, ASEAN_BBISHOP, ASEAN_QUEEN = range(11)
 
 # Is sliding piece
-sliders = [ False, False, False, True, True, True, False, False, \
-            False, False, False ]
+sliders = [False, False, False, True, True, True, False, False, False, False,
+           False]
 
 # Piece signs
 reprSign = ["", "P", "N", "B", "R", "Q", "K"]
@@ -182,14 +182,14 @@ W_CASTLED, B_CASTLED = [2**i for i in range(2)]
 # Cords types                                                                  #
 ################################################################################
 
-A1, B1, C1, D1, E1, F1, G1, H1, \
-A2, B2, C2, D2, E2, F2, G2, H2, \
-A3, B3, C3, D3, E3, F3, G3, H3, \
-A4, B4, C4, D4, E4, F4, G4, H4, \
-A5, B5, C5, D5, E5, F5, G5, H5, \
-A6, B6, C6, D6, E6, F6, G6, H6, \
-A7, B7, C7, D7, E7, F7, G7, H7, \
-A8, B8, C8, D8, E8, F8, G8, H8 = range (64)
+A1, B1, C1, D1, E1, F1, G1, H1,\
+A2, B2, C2, D2, E2, F2, G2, H2,\
+A3, B3, C3, D3, E3, F3, G3, H3,\
+A4, B4, C4, D4, E4, F4, G4, H4,\
+A5, B5, C5, D5, E5, F5, G5, H5,\
+A6, B6, C6, D6, E6, F6, G6, H6,\
+A7, B7, C7, D7, E7, F7, G7, H7,\
+A8, B8, C8, D8, E8, F8, G8, H8 = range(64)
 
 reprCord = [
     "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "a2", "b2", "c2", "d2",
