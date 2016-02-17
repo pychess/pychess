@@ -33,7 +33,7 @@ def createCombo(combo, data=[], name=None):
     crt.set_property('xpad', 4)
     combo.pack_start(crt, True)
     combo.add_attribute(crt, 'text', 1)
-    #crt.set_property('ellipsize', Pango.EllipsizeMode.MIDDLE)
+    # crt.set_property('ellipsize', Pango.EllipsizeMode.MIDDLE)
 
 
 def updateCombo(combo, data):
@@ -87,8 +87,8 @@ def keepDown(scrolledWindow):
     scrolledWindow.get_vadjustment().connect("changed", changed)
 
     def value_changed(vadjust):
-        vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() - \
-                vadjust.get_upper()) < vadjust.get_step_increment()
+        vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() -
+                                  vadjust.get_upper()) < vadjust.get_step_increment()
 
     scrolledWindow.get_vadjustment().connect("value-changed", value_changed)
 
@@ -97,7 +97,7 @@ def keepDown(scrolledWindow):
 # http://www.islascruz.org/html/index.php?blog/show/Wrap-text-in-a-TreeView-column.html
 def appendAutowrapColumn(treeview, name, **kvargs):
     cell = Gtk.CellRendererText()
-    #cell.props.wrap_mode = Pango.WrapMode.WORD
+    # cell.props.wrap_mode = Pango.WrapMode.WORD
     # TODO:
     # changed to ellipsize instead until "never ending grow" bug gets fixed
     # see https://github.com/pychess/pychess/issues/1054
@@ -123,7 +123,7 @@ def appendAutowrapColumn(treeview, name, **kvargs):
             store.row_changed(store.get_path(store_iter), store_iter)
             store_iter = store.iter_next(store_iter)
         treeview.set_size_request(0, -1)
-    #treeview.connect_after("size-allocate", callback, column, cell)
+    # treeview.connect_after("size-allocate", callback, column, cell)
 
     scroll = treeview.get_parent()
     if isinstance(scroll, Gtk.ScrolledWindow):
@@ -150,7 +150,7 @@ METHODS = (
 
 
 def keep(widget, key, get_value_=None, set_value_=None, first_value=None):
-    if widget == None:
+    if widget is None:
         raise AttributeError("key '%s' isn't in widgets" % key)
 
     for class_, methods_ in METHODS:
@@ -162,12 +162,14 @@ def keep(widget, key, get_value_=None, set_value_=None, first_value=None):
                              widget)
 
     if get_value_:
-        get_value = lambda: get_value_(widget)
+        def get_value():
+            return get_value_(widget)
     else:
         get_value = getattr(widget, getter)
 
     if set_value_:
-        set_value = lambda v: set_value_(widget, v)
+        def set_value(v):
+            return set_value_(widget, v)
     else:
         set_value = getattr(widget, setter)
 
@@ -175,9 +177,9 @@ def keep(widget, key, get_value_=None, set_value_=None, first_value=None):
         try:
             v = conf.getStrict(key)
         except TypeError:
-            log.warning("uistuff.keep.setFromConf: Key '%s' from conf had the wrong type '%s', ignored" % \
-                     (key, type(conf.getStrict(key))))
-            if first_value != None:
+            log.warning("uistuff.keep.setFromConf: Key '%s' from conf had the wrong type '%s', ignored" %
+                        (key, type(conf.getStrict(key))))
+            if first_value is not None:
                 conf.set(key, first_value)
             else:
                 conf.set(key, get_value())
@@ -193,7 +195,7 @@ def keep(widget, key, get_value_=None, set_value_=None, first_value=None):
 
     if conf.hasKey(key):
         setFromConf()
-    elif first_value != None:
+    elif first_value is not None:
         conf.set(key, first_value)
 
 
@@ -210,7 +212,7 @@ def loadDialogWidget(widget,
                      first_value=None):
     key = widget_name + "-" + str(config_number)
 
-    if widget == None:
+    if widget is None:
         raise AttributeError("key '%s' isn't in widgets" % widget_name)
 
     for class_, methods_ in METHODS:
@@ -218,17 +220,19 @@ def loadDialogWidget(widget,
             getter, setter, signal = methods_
             break
     else:
-        if set_value_ == None:
+        if set_value_ is None:
             raise AttributeError("I don't have any knowledge of type: '%s'" %
                                  widget)
 
     if get_value_:
-        get_value = lambda: get_value_(widget)
+        def get_value():
+            return get_value_(widget)
     else:
         get_value = getattr(widget, getter)
 
     if set_value_:
-        set_value = lambda v: set_value_(widget, v)
+        def set_value(v):
+            return set_value_(widget, v)
     else:
         set_value = getattr(widget, setter)
 
@@ -236,26 +240,25 @@ def loadDialogWidget(widget,
         try:
             v = conf.getStrict(key)
         except TypeError:
-            log.warning("uistuff.loadDialogWidget: Key '%s' from conf had the wrong type '%s', ignored" % \
-                     (key, type(conf.getStrict(key))))
-            if first_value != None:
+            log.warning("uistuff.loadDialogWidget: Key '%s' from conf had the wrong type '%s', ignored" %
+                        (key, type(conf.getStrict(key))))
+            if first_value is not None:
                 conf.set(key, first_value)
             else:
                 conf.set(key, get_value())
         else:
             set_value(v)
-    elif first_value != None:
+    elif first_value is not None:
         conf.set(key, first_value)
         set_value(conf.getStrict(key))
     else:
-        log.warning("Didn't load widget \"%s\": no conf value and no first_value arg" % \
-                 widget_name)
+        log.warning("Didn't load widget \"%s\": no conf value and no first_value arg" % widget_name)
 
 
 def saveDialogWidget(widget, widget_name, config_number, get_value_=None):
     key = widget_name + "-" + str(config_number)
 
-    if widget == None:
+    if widget is None:
         raise AttributeError("key '%s' isn't in widgets" % widget_name)
 
     for class_, methods_ in METHODS:
@@ -263,12 +266,13 @@ def saveDialogWidget(widget, widget_name, config_number, get_value_=None):
             getter, setter, signal = methods_
             break
     else:
-        if get_value_ == None:
+        if get_value_ is None:
             raise AttributeError("I don't have any knowledge of type: '%s'" %
                                  widget)
 
     if get_value_:
-        get_value = lambda: get_value_(widget)
+        def get_value():
+            return get_value_(widget)
     else:
         get_value = getattr(widget, getter)
 
@@ -310,7 +314,7 @@ def keepWindowSize(key,
     window.connect("delete-event", savePosition, "delete-event")
 
     def loadPosition(window):
-        #log.debug("keepWindowSize.loadPosition: %s" % window.title)
+        # log.debug("keepWindowSize.loadPosition: %s" % window.title)
         width, height = window.get_size_request()
 
         if conf.hasKey(key + "_width") and conf.hasKey(key + "_height"):
@@ -394,7 +398,7 @@ tooltipStyle = tooltip.get_style()
 
 def makeYellow(box):
     def on_box_expose_event(box, context):
-        #box.style.paint_flat_box (box.window,
+        # box.style.paint_flat_box (box.window,
         #    Gtk.StateType.NORMAL, Gtk.ShadowType.NONE, None, box, "tooltip",
         #    box.allocation.x, box.allocation.y,
         #    box.allocation.width, box.allocation.height)
@@ -422,8 +426,7 @@ def initTexviewLinks(textview, text):
             textbuffer.insert(textbuffer.get_end_iter(), text)
             break
 
-        if emailmatch and (not linkmatch or \
-                emailmatch.start() < linkmatch.start()):
+        if emailmatch and (not linkmatch or emailmatch.start() < linkmatch.start()):
             e_start = emailmatch.start()
             e_end = emailmatch.end()
             msg_type = "email"
@@ -472,9 +475,10 @@ def initTexviewLinks(textview, text):
     linkcursor = Gdk.Cursor(Gdk.CursorType.HAND2)
 
     def on_motion_in_textview(textview, event):
-        #textview.get_window().get_pointer()
+        # textview.get_window().get_pointer()
         tv_iter = textview.get_iter_at_location(int(event.x), int(event.y))
-        if not tv_iter: return
+        if not tv_iter:
+            return
         for tag, link, msg_type, s, e in tags:
             if tv_iter.has_tag(tag):
                 textview.get_window(Gtk.TextWindowType.TEXT).set_cursor(

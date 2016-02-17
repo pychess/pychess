@@ -1,5 +1,3 @@
-from array import array
-
 
 class MultiArray:
     def __init__(self, oneLineData, *lengths):

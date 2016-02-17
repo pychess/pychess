@@ -109,4 +109,3 @@ for directory in (getUserDataPrefix(), getEngineDataPrefix(),
                   getUserConfigPrefix(), getUserCachePrefix()):
     if not os.path.isdir(directory):
         os.makedirs(directory, mode=0o700)
-

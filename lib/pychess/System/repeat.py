@@ -41,9 +41,9 @@ def repeat_sleep(func, sleeptime, recur=False):
                 val = func(val)
             else:
                 val = func()
-            if not val: break
+            if not val:
+                break
 
     thread = Thread(target=run, name=fident(func))
     thread.daemon = True
     thread.start()
-
