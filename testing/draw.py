@@ -5,7 +5,6 @@ from pychess.Utils.lutils import ldraw
 
 
 class DrawTestCase(unittest.TestCase):
-    
     def setUp(self):
         with open('gamefiles/3fold.pgn') as f1:
             self.PgnFile1 = pgn.load(f1)
@@ -48,6 +47,7 @@ class DrawTestCase(unittest.TestCase):
 
             lboard = model.boards[-1].board
             self.assertEqual(ldraw.testMaterial(lboard), True)
-    
+
+
 if __name__ == '__main__':
     unittest.main()

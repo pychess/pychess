@@ -2,10 +2,10 @@
 
 from __future__ import print_function
 
-import sys
 import unittest
 
-from pychess.Utils.const import *
+from pychess.Utils.const import BLACKWON, DRAW, WHITEWON, ATOMICCHESS, WON_KINGEXPLODE, WON_MATE, \
+    DRAW_STALEMATE
 from pychess.Utils.logic import validate, getStatus
 from pychess.Utils.Move import Move, parseSAN
 from pychess.Variants.atomic import AtomicBoard
@@ -32,7 +32,7 @@ FEN4 = "r4bn1/4p2r/2n2pp1/p2p2Pk/1p4Qp/2P1P3/PP1P3P/R1B1K2R b KQ - 0 1"
 class AtomicTestCase(unittest.TestCase):
     def test_validate1(self):
         """Testing castling rights lose in explosion in Atomic variant"""
-        
+
         board = AtomicBoard(setup=FEN1)
         board = board.move(parseSAN(board, 'Nxa7'))
         print(board)
@@ -44,7 +44,7 @@ class AtomicTestCase(unittest.TestCase):
 
     def test_validate2(self):
         """Testing explode king vs mate in Atomic variant"""
-        
+
         board = AtomicBoard(setup=FEN1)
         board = board.move(parseSAN(board, 'Nc7+'))
         print(board)
@@ -56,7 +56,7 @@ class AtomicTestCase(unittest.TestCase):
 
     def test_getstatus1(self):
         """Testing bare black king is not draw in Atomic variant"""
-        
+
         board = AtomicBoard(setup=FEN2)
         board = board.move(parseSAN(board, 'Qxc2'))
         print(board)
@@ -74,7 +74,7 @@ class AtomicTestCase(unittest.TestCase):
 
     def test_getstatus3(self):
         """Testing possible to mate with the queen unaided in Atomic variant"""
-        
+
         board = AtomicBoard(setup=FEN4)
         print(board)
         self.assertEqual(getStatus(board), (WHITEWON, WON_MATE))
@@ -91,42 +91,56 @@ class AtomicTestCase(unittest.TestCase):
         for lmove1 in genAllMoves(board):
             board.applyMove(lmove1)
             if board.opIsChecked():
-                if print_apply_pop: print("popMove1 (invalid)", Move(lmove1))
+                if print_apply_pop:
+                    print("popMove1 (invalid)", Move(lmove1))
                 board.popMove()
                 continue
-                
-            hist_exploding_around1 = [a[:] for a in board.hist_exploding_around]
+
+            hist_exploding_around1 = [a[:]
+                                      for a in board.hist_exploding_around]
             for lmove2 in genAllMoves(board):
                 board.applyMove(lmove2)
-                if print_apply_pop: print("   applyMove2", Move(lmove2))
+                if print_apply_pop:
+                    print("   applyMove2", Move(lmove2))
                 if board.opIsChecked():
-                    if print_apply_pop: print("   popMove2 (invalid)", Move(lmove2))
+                    if print_apply_pop:
+                        print("   popMove2 (invalid)", Move(lmove2))
                     board.popMove()
                     continue
 
-                hist_exploding_around2 = [a[:] for a in board.hist_exploding_around]
+                hist_exploding_around2 = [a[:]
+                                          for a in board.hist_exploding_around]
                 for lmove3 in genAllMoves(board):
                     board.applyMove(lmove3)
-                    if print_apply_pop: print("      applyMove3", Move(lmove3))
+                    if print_apply_pop:
+                        print("      applyMove3", Move(lmove3))
                     if board.opIsChecked():
-                        if print_apply_pop: print("      popMove3 (invalid)", Move(lmove3))
+                        if print_apply_pop:
+                            print("      popMove3 (invalid)", Move(lmove3))
                         board.popMove()
                         continue
 
                     board.popMove()
-                    if print_apply_pop: print("      popMove3", Move(lmove3))
+                    if print_apply_pop:
+                        print("      popMove3", Move(lmove3))
 
-                    self.assertEqual(hist_exploding_around2, board.hist_exploding_around)
+                    self.assertEqual(hist_exploding_around2,
+                                     board.hist_exploding_around)
 
                 board.popMove()
-                if print_apply_pop: print("   popMove2", Move(lmove2))
+                if print_apply_pop:
+                    print("   popMove2", Move(lmove2))
 
-                self.assertEqual(hist_exploding_around1, board.hist_exploding_around)
-                
+                self.assertEqual(hist_exploding_around1,
+                                 board.hist_exploding_around)
+
             board.popMove()
-            if print_apply_pop: print("popMove1", Move(lmove1))
+            if print_apply_pop:
+                print("popMove1", Move(lmove1))
 
-            self.assertEqual(hist_exploding_around0, board.hist_exploding_around)
+            self.assertEqual(hist_exploding_around0,
+                             board.hist_exploding_around)
+
 
 if __name__ == '__main__':
     unittest.main()

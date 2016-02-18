@@ -20,7 +20,7 @@ modules_to_test = (
     "polyglot",
     'ficsmanagers',
     'analysis',
-    ) 
+    )
 
 def suite():
     tests = unittest.TestSuite()
