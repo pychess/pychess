@@ -104,7 +104,7 @@ class TimeSeal(object):
     def decode(self, buf, stateinfo=None):
         expected_table = b"[G]\n\r"
         # TODO: add support to FatICS's new zipseal protocol when it finalizes
-        #expected_table = "[G]\n\r" if not self.FatICS else "[G]\r\n"
+        # expected_table = "[G]\n\r" if not self.FatICS else "[G]\r\n"
         final_state = len(expected_table)
         g_count = 0
         result = []
@@ -193,7 +193,7 @@ class TimeSeal(object):
             recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
             recv = recv.replace(b"\r", b"")
             # enable this only for temporary debugging
-            #log.debug(recv, extra={"task": (self.name, "raw")})
+            # log.debug(recv, extra={"task": (self.name, "raw")})
 
             for i in range(g_count):
                 print(G_RESPONSE, file=self)

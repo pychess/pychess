@@ -42,8 +42,8 @@ def make_sensitive_if_available(button, player):
         button.set_property("tooltip-text", "")
     else:
         button.set_property("sensitive", False)
-        button.set_property("tooltip-text", _("%(player)s is %(status)s") % \
-            {"player": player.name, "status": player.display_status.lower()})
+        button.set_property("tooltip-text", _("%(player)s is %(status)s") %
+                            {"player": player.name, "status": player.display_status.lower()})
 
 
 @idle_add
@@ -55,8 +55,8 @@ def make_sensitive_if_playing(button, player):
         button.set_property("sensitive", False)
         if player.status != IC_STATUS_OFFLINE:
             status = _("not playing")
-    button.set_property("tooltip-text", _("%(player)s is %(status)s") % \
-        {"player": player.name, "status": status})
+    button.set_property("tooltip-text", _("%(player)s is %(status)s") %
+                        {"player": player.name, "status": status})
 
 
 def get_player_tooltip_text(player, show_status=True):
@@ -257,7 +257,7 @@ class FICSPlayer(GObject.GObject):
         rep += ", adjournment=%s" % repr(self.adjournment)
         rep += ", status=%i" % self.status
         game = self.game
-        if game != None:
+        if game is not None:
             rep += ", game.gameno=%d" % game.gameno
             rep += ", game.rated=%s" % game.rated
             rep += ", game.private=" + repr(game.private)
@@ -280,10 +280,9 @@ class FICSPlayer(GObject.GObject):
             return True
 
     def isObservable(self):
-        return self.status == IC_STATUS_EXAMINING \
-                or \
-              (self.status == IC_STATUS_PLAYING and \
-                self.game is not None and not self.game.private and self.game.supported)
+        return self.status == IC_STATUS_EXAMINING or \
+            (self.status == IC_STATUS_PLAYING and
+             self.game is not None and not self.game.private and self.game.supported)
 
     def isGuest(self):
         return TYPE_UNREGISTERED in self.titles
@@ -493,7 +492,7 @@ class FICSPlayers(GObject.GObject):
         return player
 
     def player_disconnected(self, player):
-        #log.debug("%s" % player,
+        # log.debug("%s" % player,
         #    extra={"task": (self.connection.username, "player_disconnected")})
         if player in self:
             player = self[player]
@@ -555,7 +554,7 @@ class FICSMatch(GObject.GObject):
 
     @property
     def sortable_time(self):
-        #http://www.freechess.org/Help/HelpFiles/etime.html
+        # http://www.freechess.org/Help/HelpFiles/etime.html
         etime = self.minutes + int(round(self.inc * 2. / 3.))
         return etime
 
@@ -885,13 +884,13 @@ class FICSGame(FICSMatch):
             rep += ", gameno=%d" % self.gameno
         rep += ", game_type=%s" % self.game_type
         rep += self.rated and ", rated=True" or ", rated=False"
-        if self.minutes != None:
+        if self.minutes is not None:
             rep += ", minutes=%i" % self.minutes
-        if self.inc != None:
+        if self.inc is not None:
             rep += ", inc=%i" % self.inc
-        if self.result != None:
+        if self.result is not None:
             rep += ", result=%i" % self.result
-        if self.reason != None:
+        if self.reason is not None:
             rep += ", reason=%i" % self.reason
         rep += ", private=%s>" % repr(self.private)
         return rep
@@ -925,7 +924,7 @@ class FICSGame(FICSMatch):
             self.inc = game.inc
         if game.game_type is not None and \
                 self.game_type != game.game_type and not \
-                (self.game_type is not None and \
+                (self.game_type is not None and
                  game.game_type is GAME_TYPES_BY_FICS_NAME["wild"]):
             self.game_type = game.game_type
         if game.result is not None and self.result != game.result:
@@ -988,11 +987,11 @@ class FICSAdjournedGame(FICSGame):
     def __repr__(self):
         rep = FICSGame.__repr__(self)[0:-1]
         rep = rep.replace("<FICSGame", "<FICSAdjournedGame")
-        if self.our_color != None:
+        if self.our_color is not None:
             rep += ", our_color=%i" % self.our_color
-        if self.length != None:
+        if self.length is not None:
             rep += ", length=%i" % self.length
-        if self.time != None:
+        if self.time is not None:
             rep += ", time=%s" % self.display_time
         return rep + ">"
 
