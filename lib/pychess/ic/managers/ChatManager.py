@@ -139,7 +139,7 @@ class ChatManager(GObject.GObject):
         self.connection.client.run_command("help channel_list")
         self.channels = {}
 
-        #Observing 112 [DrStupp vs. hajaK]: pgg (1 user)
+        # Observing 112 [DrStupp vs. hajaK]: pgg (1 user)
         self.connection.expect_line(
             self.get_allob_list,
             '(?:Observing|Examining)\s+(\d+) \[[A-Za-z]+ vs. [A-Za-z]+\]: (.+) \(')
@@ -168,7 +168,7 @@ class ChatManager(GObject.GObject):
                         GAME_TYPES['standard'])
                 except KeyError:
                     obs_dic[player] = 0
-                    #print("player %s is not in self.connection.players" % player)
+                    # print("player %s is not in self.connection.players" % player)
             else:
                 obs_dic[player] = 0
         obs_sorted = sorted(obs_dic.items(),
@@ -203,10 +203,11 @@ class ChatManager(GObject.GObject):
     def onChannelList(self, matchlist):
         self.channels = [(CHANNEL_SHOUT, _("Shout")),
                          (CHANNEL_CSHOUT, _("Chess Shout"))]
-        numbers = set(range(256))  #TODO: Use limits->Server->Channels
+        numbers = set(range(256))  # TODO: Use limits->Server->Channels
         for line in matchlist[1:-1]:
             match = self.channelListItem.match(line)
-            if not match: continue
+            if not match:
+                continue
             ids, desc = match.groups()
             for id in ids.split(","):
                 numbers.remove(int(id))

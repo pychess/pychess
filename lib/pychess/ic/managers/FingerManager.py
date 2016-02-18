@@ -242,7 +242,7 @@ class FingerManager(GObject.GObject):
         # We don't use this. Rather we use BoardManagers "gameEnded", after
         # which we do a refinger. This is to ensure not only rating, but also
         # wins/looses/draws are updated
-        #self.connection.expect(self.onRatingAdjust,
+        # self.connection.expect(self.onRatingAdjust,
         #        "%s rating adjustment: (\d+) --> (\d+)" % types
         # Notice if you uncomment this: The expression has to be compiled with
         # re.IGNORECASE, or the first letter of 'type' must be capital
@@ -270,18 +270,18 @@ class FingerManager(GObject.GObject):
             if not match.group():
                 continue
             groupdict = match.groupdict()
-            if groupdict["never"] != None:
+            if groupdict["never"] is not None:
                 finger.setStatus(IC_STATUS_OFFLINE)
-            elif groupdict["last"] != None:
+            elif groupdict["last"] is not None:
                 finger.setStatus(IC_STATUS_OFFLINE)
                 finger.setLastSeen(self.parseDate(groupdict["last"]))
-            elif groupdict["uptime"] != None:
+            elif groupdict["uptime"] is not None:
                 finger.setStatus(IC_STATUS_ACTIVE)
                 finger.setUpTime(self.parseTime(groupdict["uptime"]))
                 finger.setIdleTime(self.parseTime(groupdict["idletime"]))
-            elif groupdict["silence"] != None:
+            elif groupdict["silence"] is not None:
                 finger.setSilence(True)
-            elif groupdict["gameno"] != None:
+            elif groupdict["gameno"] is not None:
                 finger.setStatus(IC_STATUS_PLAYING)
                 finger.setGameno(groupdict["gameno"])
                 if groupdict["p1"].lower() == self.connection.getUsername(
@@ -291,10 +291,10 @@ class FingerManager(GObject.GObject):
                 else:
                     finger.setColor(BLACK)
                     finger.setOpponent(groupdict["p1"])
-            elif groupdict["busymessage"] != None:
+            elif groupdict["busymessage"] is not None:
                 finger.setStatus(IC_STATUS_BUSY)
                 finger.setBusyMessage(groupdict["busymessage"])
-            elif groupdict["gametype"] != None:
+            elif groupdict["gametype"] is not None:
                 gametype = GAME_TYPES_BY_FICS_NAME[groupdict["gametype"].lower(
                 )]
                 ratings = groupdict["ratings"].split()
@@ -308,19 +308,19 @@ class FingerManager(GObject.GObject):
                     args = list(map(int, ratings[:6])) + [bestTime]
                     rating = Rating(gametype.rating_type, *args)
                 finger.setRating(gametype.rating_type, rating)
-            elif groupdict["email"] != None:
+            elif groupdict["email"] is not None:
                 finger.setEmail(groupdict["email"])
-            elif groupdict["sanctions"] != None:
+            elif groupdict["sanctions"] is not None:
                 finger.setSanctions(groupdict["sanctions"])
-            elif groupdict["tto"] != None:
+            elif groupdict["tto"] is not None:
                 finger.setTotalTimeOnline(self.parseTime(groupdict["tto"]))
-            elif groupdict["created"] != None:
+            elif groupdict["created"] is not None:
                 finger.setTotalTimeOnline(self.parseDate(groupdict["created"]))
-            elif groupdict["timeseal"] != None:
+            elif groupdict["timeseal"] is not None:
                 finger.setTimeseal(groupdict["timeseal"] == "On")
-            elif groupdict["adminlevel"] != None:
+            elif groupdict["adminlevel"] is not None:
                 finger.setAdminLevel(groupdict["adminlevel"])
-            elif groupdict["noteno"] != None:
+            elif groupdict["noteno"] is not None:
                 finger.setNote(int(groupdict["noteno"]) - 1, groupdict["note"])
             else:
                 log.debug("Ignored fingerline: %s" % repr(match.group()))
