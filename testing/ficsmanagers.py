@@ -3,21 +3,13 @@ import datetime
 import random
 
 from pychess.compat import Queue, Empty
-<<<<<<< Updated upstream
-from pychess.Utils.const import *
-from pychess.Utils.TimeModel import TimeModel
-from pychess.ic import *
-from pychess.ic.FICSObjects import *
-from pychess.ic.ICGameModel import ICGameModel
-=======
-from pychess.Utils.const import WHITE
-# from pychess.ic import *
+from pychess.Utils.const import WHITE, FEN_START, DRAW_BLACKINSUFFICIENTANDWHITETIME, \
+    DRAW_WHITEINSUFFICIENTANDBLACKTIME, ADJOURNED_COURTESY_WHITE, ADJOURNED_COURTESY_BLACK
 from pychess.ic.FICSObjects import FICSPlayer, FICSGames, FICSSeeks, FICSChallenges, FICSPlayers, \
     FICSAdjournedGame, GAME_TYPES_BY_FICS_NAME, GAME_TYPES, TYPE_BLITZ, FICSSeek, DEVIATION_ESTIMATED, \
-    TYPE_COMPUTER, BLOCK_START, BLOCK_END, BLOCK_SEPARATOR, FICSBoard, FICSGame, FEN_START, \
-    DRAW_WHITEINSUFFICIENTANDBLACKTIME, DRAW_BLACKINSUFFICIENTANDWHITETIME, ADJOURNED_COURTESY_WHITE, \
-    ADJOURNED_COURTESY_BLACK, TYPE_WILD, FICSChallenge
->>>>>>> Stashed changes
+    TYPE_COMPUTER, FICSBoard, FICSGame, TYPE_WILD, FICSChallenge
+
+from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 from pychess.ic.FICSConnection import Connection
 from pychess.ic.VerboseTelnet import PredictionsTelnet, TelnetLine
 from pychess.ic.managers.AdjournManager import AdjournManager

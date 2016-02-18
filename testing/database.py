@@ -5,8 +5,8 @@ from pychess.Utils.const import LOCAL
 from pychess.Savers.database import save, load
 from pychess.Savers.pgn import load as pgnload
 from pychess.Savers.pgn import walk
-# from pychess.Database import model
-# from pychess.Database.model import metadata
+from pychess.Database import model
+from pychess.Database.model import metadata
 
 
 class TestPlayer():
