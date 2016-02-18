@@ -538,8 +538,7 @@ class UserInfoSection(Section):
             row += 1
 
             for rating_type, rating in finger.getRating().items():
-                ratinglabel = label(
-                    GAME_TYPES_BY_RATING_TYPE[rating_type].display_text + ":")
+                ratinglabel = label(GAME_TYPES_BY_RATING_TYPE[rating_type].display_text + ":")
                 table.attach(ratinglabel, 0, 1, row, row + 1)
                 if rating_type is TYPE_WILD:
                     ratinglabel.set_tooltip_text(_(
@@ -549,13 +548,7 @@ class UserInfoSection(Section):
                 table.attach(label(rating.elo, xalign=1), 1, 2, row, row + 1)
                 table.attach(label(rating.wins, xalign=1), 2, 3, row, row + 1)
                 table.attach(label(rating.draws, xalign=1), 3, 4, row, row + 1)
-                table.attach(
-                    label(rating.losses,
-                          xalign=1),
-                    4,
-                    5,
-                    row,
-                    row + 1)
+                table.attach(label(rating.losses, xalign=1), 4, 5, row, row + 1)
                 row += 1
 
             table.attach(Gtk.HSeparator(), 0, 6, row, row + 1, ypadding=2)
