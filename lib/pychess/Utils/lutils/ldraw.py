@@ -77,6 +77,6 @@ def testPlayerMatingMaterial(board, color):
 
 def test(board):
     """ Test if the position is drawn. Two-fold repetitions are counted. """
-    return board.repetitionCount(drawThreshold=2) > 1 or \
+    return board.repetitionCount(draw_threshold=2) > 1 or \
         testFifty(board) or \
         testMaterial(board)
