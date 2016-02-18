@@ -6,7 +6,7 @@ from heapq import heappush, heappop
 from .lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from .egtb_gaviota import EgtbGaviota
 from pychess.Utils.const import ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS,\
-    DROP_VARIANTS, LOSERSCHESS, SUICIDECHESS, EMPTY, PROMOTIONS, DROP,\
+    DROP_VARIANTS, LOSERSCHESS, SUICIDECHESS, EMPTY, PROMOTIONS, DROP, KING,\
     hashfALPHA, hashfBETA, hashfEXACT, hashfBAD
 from .leval import evaluateComplete
 from .lsort import getCaptureValue, getMoveValue
