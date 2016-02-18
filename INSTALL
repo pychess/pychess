@@ -39,6 +39,7 @@ gir1.2-gdkpixbuf-2.0
 gir1.2-gtksource-3.0
 gir1.2-gstreamer-1.0
 gir1.2-gst-plugins-base-1.0
+(If you have no sound in pychess try to install gstreamer1.0-pulseaudio)
 
 Dependencies for CentOS/RHEL7 and Fedora 20:
 python
