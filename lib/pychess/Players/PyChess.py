@@ -5,19 +5,19 @@ import random
 import sys
 from time import time
 
-from pychess.Utils.book import getOpenings
-from pychess.Utils.const import WHITE, ASEANCHESS, SITTUYINCHESS, ATOMICCHESS, reprResult, \
-    CAMBODIANCHESS, LOSERSCHESS, KINGOFTHEHILLCHESS, DRAW, BLACKWON, WHITEWON, MAKRUKCHESS, \
-    SUICIDECHESS, THREECHECKCHESS
-from pychess.Utils.lutils import lsearch
-from pychess.Utils.lutils.ldata import MAXPLY
-from pychess.Utils.lutils.lsearch import alphaBeta
-from pychess.Utils.lutils.lmove import listToSan, toSAN
-from pychess.System.Log import log
-
 this_dir = os.path.dirname(os.path.abspath(__file__))
 if os.path.join(this_dir, "../..") not in sys.path:
     sys.path = [os.path.join(this_dir, "../..")] + sys.path
+
+from pychess.Utils.book import getOpenings  # nopep8
+from pychess.Utils.const import WHITE, ASEANCHESS, SITTUYINCHESS, ATOMICCHESS, reprResult, \
+    CAMBODIANCHESS, LOSERSCHESS, KINGOFTHEHILLCHESS, DRAW, BLACKWON, WHITEWON, MAKRUKCHESS, \
+    SUICIDECHESS, THREECHECKCHESS  # nopep8
+from pychess.Utils.lutils import lsearch  # nopep8
+from pychess.Utils.lutils.ldata import MAXPLY  # nopep8
+from pychess.Utils.lutils.lsearch import alphaBeta  # nopep8
+from pychess.Utils.lutils.lmove import listToSan, toSAN  # nopep8
+from pychess.System.Log import log  # nopep8
 
 
 class PyChess(object):
