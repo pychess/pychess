@@ -25,7 +25,7 @@ from pychess.ic import IC_POS_INITIAL, IC_POS_ISOLATED, IC_POS_OP_TO_MOVE, IC_PO
     BLKCMD_SEEK, BLKCMD_OBSERVE, BLKCMD_MATCH, TYPE_WILD, BLKCMD_SMOVES, BLKCMD_UNOBSERVE, BLKCMD_MOVES, \
     BLKCMD_FLAG
 
-from pychess.ic.FICSObjects import  FICSPlayer, FICSGame, FICSBoard, FICSHistoryGame, \
+from pychess.ic.FICSObjects import FICSPlayer, FICSGame, FICSBoard, FICSHistoryGame, \
     FICSAdjournedGame, FICSJournalGame
 
 names = "(\w+)"
@@ -52,8 +52,8 @@ moveListHeader2Str = "%s ([^ ]+) match, initial time: (\d+) minutes, increment: 
 moveListHeader2 = re.compile(moveListHeader2Str, re.IGNORECASE)
 sanmove = "([a-hx@OoPKQRBN0-8+#=-]{2,7})"
 movetime = "\((\d:)?(\d{1,2}):(\d\d)(?:\.(\d\d\d))?\)"
-moveListMoves = re.compile("\s*(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" % \
-    (sanmove, movetime, sanmove, movetime))
+moveListMoves = re.compile("\s*(\d+)\. +(?:%s|\.\.\.) +%s *(?:%s +%s)?" %
+                           (sanmove, movetime, sanmove, movetime))
 
 creating0 = re.compile(
     "Creating: %s %s %s %s %s ([^ ]+) (\d+) (\d+)(?: \(adjourned\))?" %
@@ -418,7 +418,7 @@ class BoardManager(GObject.GObject):
         else:
             castleSigns = ("k", "q")
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                self.parseStyle12(style12, castleSigns)
+            self.parseStyle12(style12, castleSigns)
 
         # examine starts with a <12> line only
         if lastmove is None and relation == IC_POS_EXAMINATING:
@@ -451,12 +451,12 @@ class BoardManager(GObject.GObject):
                 game = self.connection.examined_game
                 game.gameno = int(gameno)
                 game.relation = relation
-                #game.game_type = GAME_TYPES["examined"]
+                # game.game_type = GAME_TYPES["examined"]
             game = self.connection.games.get(game)
 
             # don't start new game in puzzlebot/endgamebot when they just reuse gameno
             if game.relation == IC_POS_OBSERVING_EXAMINATION or \
-                (game.board is not None and game.board.pgn == pgn):
+                    (game.board is not None and game.board.pgn == pgn):
                 self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen,
                           wname, bname, wms, bms)
                 return
@@ -559,7 +559,7 @@ class BoardManager(GObject.GObject):
         castleSigns = self.generateCastleSigns(style12, game_type)
         self.castleSigns[gameno] = castleSigns
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                self.parseStyle12(style12, castleSigns)
+            self.parseStyle12(style12, castleSigns)
 
         game = FICSGame(wplayer,
                         bplayer,
@@ -614,7 +614,7 @@ class BoardManager(GObject.GObject):
         in_progress - should be True for an observed game matchlist, and False
         for stored/adjourned games
         """
-        #################   observed game movelist example:
+        # ################   observed game movelist example:
         #        Movelist for game 64:
         #
         #        Ajido (2281) vs. IMgooeyjim (2068) --- Thu Oct 14, 20:36 PDT 2010
@@ -627,7 +627,7 @@ class BoardManager(GObject.GObject):
         #          3.  Nc3     (0:13.280)      Bg7     (0:06.422)
         #              {Still in progress} *
         #
-        ##################   stored game example:
+        # #################   stored game example:
         #        BwanaSlei (1137) vs. mgatto (1336) --- Wed Nov  5, 20:56 PST 2008
         #        Rated blitz match, initial time: 5 minutes, increment: 0 seconds.
         #
@@ -639,7 +639,7 @@ class BoardManager(GObject.GObject):
         #        23.  Qxf3    (1:05.500)
         #             {White lost connection; game adjourned} *
         #
-        ################## stored wild/3 game with style12:
+        # ################# stored wild/3 game with style12:
         #        kurushi (1626) vs. mgatto (1627) --- Thu Nov  4, 10:33 PDT 2010
         #        Rated wild/3 match, initial time: 3 minutes, increment: 0 seconds.
         #
@@ -653,7 +653,7 @@ class BoardManager(GObject.GObject):
         #         28.  Rxd5    (0:00.412)
         #              {Black lost connection; game adjourned} *
         #
-        ##################  stored game movelist following stored game(s):
+        # #################  stored game movelist following stored game(s):
         #        Stored games for mgatto:
         #        C Opponent       On Type          Str  M    ECO Date
         #        1: W BabyLurking     Y [ br  5   0] 29-13 W27  D37 Fri Nov  5, 04:41 PDT 2010
@@ -669,10 +669,10 @@ class BoardManager(GObject.GObject):
         #        3.  c4      (0:03)     e6      (0:00)
         #        {White lost connection; game adjourned} *
         #
-        ################### stored game movelist following stored game(s):
-        ###   Note: A wild stored game in this format won't be parseable into a board because
-        ###   it doesn't come with a style12 that has the start position, so we warn and return
-        ###################
+        # ################## stored game movelist following stored game(s):
+        # ##   Note: A wild stored game in this format won't be parseable into a board because
+        # ##   it doesn't come with a style12 that has the start position, so we warn and return
+        # ##################
         #        Stored games for mgatto:
         #        C Opponent       On Type          Str  M    ECO Date
         #        1: W gbtami          N [ wr  5   0] 32-34 W14  --- Thu Oct 21, 00:14 PDT 2010
@@ -697,7 +697,7 @@ class BoardManager(GObject.GObject):
         #        13.  Bxa8    (0:03)     Rxa8    (0:14)
         #        {White lost connection; game adjourned} *
         #
-        ##################   other reasons the game could be stored/adjourned:
+        # #################   other reasons the game could be stored/adjourned:
         #        Game courtesyadjourned by (Black|White)
         #        Still in progress                    # This one must be a FICS bug
         #        Game adjourned by mutual agreement
@@ -722,7 +722,7 @@ class BoardManager(GObject.GObject):
         wrating = self.parseRating(wrating)
         brating = self.parseRating(brating)
         rated, game_type, minutes, increment = \
-            moveListHeader2.match(matchlist[index+1]).groups()
+            moveListHeader2.match(matchlist[index + 1]).groups()
         minutes = int(minutes)
         increment = int(increment)
         game_type = GAME_TYPES[game_type]
@@ -771,10 +771,9 @@ class BoardManager(GObject.GObject):
         wms = bms = minutes * 60 * 1000
         for line in matchlist[movesstart:-1]:
             if not moveListMoves.match(line):
-                log.error("BoardManager.parseGame: unmatched line: \"%s\"" % \
+                log.error("BoardManager.parseGame: unmatched line: \"%s\"" %
                           repr(line))
-                raise Exception("BoardManager.parseGame: unmatched line: \"%s\"" % \
-                          repr(line))
+                raise Exception("BoardManager.parseGame: unmatched line: \"%s\"" % repr(line))
             moveno, wmove, whour, wmin, wsec, wmsec, bmove, bhour, bmin, bsec, bmsec = \
                 moveListMoves.match(line).groups()
             whour = 0 if whour is None else int(whour[0])
@@ -808,7 +807,7 @@ class BoardManager(GObject.GObject):
             # Apply queued board updates
             for style12 in self.queuedStyle12s[gameno]:
                 gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                        self.parseStyle12(style12, castleSigns)
+                    self.parseStyle12(style12, castleSigns)
                 if lastmove is None:
                     continue
                 moves[ply - 1] = lastmove
@@ -913,7 +912,7 @@ class BoardManager(GObject.GObject):
 
         castleSigns = self.generateCastleSigns(style12, game_type)
         gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
-                self.parseStyle12(style12, castleSigns)
+            self.parseStyle12(style12, castleSigns)
         gameno = int(gameno)
         self.castleSigns[gameno] = castleSigns
 
@@ -1106,7 +1105,7 @@ class BoardManager(GObject.GObject):
         player, gameno = match.groups()
         gameno = int(gameno)
         try:
-            game = self.connection.games.get_game_by_gameno(gameno)
+            self.connection.games.get_game_by_gameno(gameno)
         except KeyError:
             return
         self.emit("madeExamined", gameno)
@@ -1117,7 +1116,7 @@ class BoardManager(GObject.GObject):
         gameno, = match.groups()
         gameno = int(gameno)
         try:
-            game = self.connection.games.get_game_by_gameno(gameno)
+            self.connection.games.get_game_by_gameno(gameno)
         except KeyError:
             return
         self.emit("madeUnExamined", gameno)
