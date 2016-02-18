@@ -501,7 +501,7 @@ class UserInfoSection(Section):
 
     @idle_add
     def onFinger(self, fm, finger):
-        if finger.getName().lower() is not self.connection.getUsername().lower():
+        if finger.getName().lower() != self.connection.getUsername().lower():
             #            print (finger.getName(), self.connection.getUsername())
             return
 
