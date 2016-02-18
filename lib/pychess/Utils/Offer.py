@@ -1,3 +1,4 @@
+from pychess.compat import cmp
 from pychess.Utils.const import ACTIONS
 
 
