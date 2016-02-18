@@ -4,7 +4,7 @@ from random import random
 from heapq import heappush, heappop
 
 from .lmovegen import genAllMoves, genCheckEvasions, genCaptures
-from .EgtbGaviota import EgtbGaviota
+from .egtb_gaviota import EgtbGaviota
 from pychess.Utils.const import ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS,\
     DROP_VARIANTS, LOSERSCHESS, SUICIDECHESS, EMPTY, PROMOTIONS
 from .leval import evaluateComplete
