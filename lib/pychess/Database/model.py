@@ -1,35 +1,42 @@
 # -*- coding: utf-8 -*-
 
 import os
-from sqlalchemy import create_engine, MetaData, Table, Column, Sequence, Integer, String, SmallInteger, CHAR, LargeBinary, UnicodeText
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
+    String, SmallInteger, CHAR, LargeBinary, UnicodeText
 
 from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
-from pychess.System.prefix import addUserDataPrefix 
+from pychess.System.prefix import addUserDataPrefix
 
 engine = None
+
+
 def set_engine(url, echo=False):
     global engine
     engine = create_engine(url, echo=echo)
 
 metadata = MetaData()
 
-event = Table('event', metadata,
+event = Table(
+    'event', metadata,
     Column('id', Integer, primary_key=True),
     Column('name', String(256))
-    )
+)
 
-site = Table('site', metadata,
+site = Table(
+    'site', metadata,
     Column('id', Integer, primary_key=True),
     Column('name', String(256))
-    )
+)
 
-annotator = Table('annotator', metadata,
+annotator = Table(
+    'annotator', metadata,
     Column('id', Integer, primary_key=True),
     Column('name', String(256))
-    )
+)
 
-player = Table('player', metadata,
+player = Table(
+    'player', metadata,
     Column('id', Integer, primary_key=True),
     Column('name', String(256), index=True),
     Column('fideid', Integer),
@@ -37,18 +44,20 @@ player = Table('player', metadata,
     Column('title', CHAR(3)),
     Column('elo', SmallInteger),
     Column('born', Integer),
-    )
+)
 
 pl1 = player.alias()
 pl2 = player.alias()
 
-collection = Table('collection', metadata,
+collection = Table(
+    'collection', metadata,
     Column('id', Integer, primary_key=True),
     Column('name', String(256)),
     Column('source', String(256))
-    )
+)
 
-game = Table('game', metadata,
+game = Table(
+    'game', metadata,
     Column('id', Integer, primary_key=True),
     Column('event_id', Integer),
     Column('site_id', Integer),
@@ -70,7 +79,8 @@ game = Table('game', metadata,
     Column('collection_id', Integer),
     Column('movelist', LargeBinary),
     Column('comments', UnicodeText)
-    )
+)
+
 
 def ini_collection():
     conn = engine.connect()
@@ -78,7 +88,7 @@ def ini_collection():
         {"id": LOCAL, "name": unicode("Local game")},
         {"id": ARTIFICIAL, "name": unicode("Chess engine(s)")},
         {"id": REMOTE, "name": unicode("ICS game")},
-        ]
+    ]
     conn.execute(collection.insert(), new_values)
     conn.close()
 

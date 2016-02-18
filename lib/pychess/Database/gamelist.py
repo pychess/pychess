@@ -3,12 +3,12 @@ from __future__ import print_function
 
 from gi.repository import Gtk, GObject
 
-from sqlalchemy import select, func, and_, or_
+from sqlalchemy import select, func, or_
 
-from pychess.Database.model import engine, game, player, pl1, pl2, pychess_pdb
+from pychess.Database.model import engine, game, pl1, pl2, pychess_pdb
 from pychess.Savers.database import load
-from pychess.Utils.const import *
-from pychess.System.prefix import addDataPrefix
+from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK,\
+    WAITING_TO_START, reprResult
 from pychess.Players.Human import Human
 from pychess.widgets import ionest
 from pychess.Utils.GameModel import GameModel
@@ -20,25 +20,27 @@ class GameList(Gtk.TreeView):
 
     def __init__(self):
         GObject.GObject.__init__(self)
-        
+
         self.offset = 0
         self.orderby = None
         self.where = None
         self.count = 0
         self.conn = engine.connect()
-        
-        self.liststore = Gtk.ListStore(int, str, str, str, str, str, str, str, str, str, str)
+
+        self.liststore = Gtk.ListStore(int, str, str, str, str, str, str, str,
+                                       str, str, str)
         self.modelsort = Gtk.TreeModelSort(self.liststore)
-        
+
         self.modelsort.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.set_model(self.modelsort)
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         self.set_headers_visible(True)
         self.set_rules_hint(True)
         self.set_search_column(1)
-        
+
         cols = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
-                _("Result"), _("Event"), _("Site"), _("Round"), _("Date"), _("ECO"))
+                _("Result"), _("Event"), _("Site"), _("Round"), _("Date"),
+                _("ECO"))
         for i, col in enumerate(cols):
             r = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(col, r, text=i)
@@ -73,17 +75,17 @@ class GameList(Gtk.TreeView):
 
         for player in self.chessfile.players:
             self.playerlist.append(player)
-            
+
         entry = Gtk.Entry()
         entry.set_completion(completion)
         entry.connect('activate', self.activate_entry)
-        
+
         hbox.pack_start(entry, False, False, 0)
 
         toolbar = Gtk.Toolbar()
         hbox.pack_start(toolbar, True, True, 0)
 
-        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS);
+        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
         toolbar.insert(firstButton, -1)
 
         prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
@@ -92,7 +94,7 @@ class GameList(Gtk.TreeView):
         nextButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_FORWARD)
         toolbar.insert(nextButton, -1)
 
-        lastButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_NEXT);
+        lastButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_NEXT)
         toolbar.insert(lastButton, -1)
 
         firstButton.connect("clicked", self.on_first_clicked)
@@ -112,24 +114,24 @@ class GameList(Gtk.TreeView):
 
     def build_query(self):
         self.query = self.chessfile.select
-        
+
         if self.where is None:
             self.count = self.chessfile.count
         else:
-            s = select([func.count(game.c.id)],\
-                from_obj=[
-                    game.outerjoin(pl1, game.c.white_id==pl1.c.id)\
-                        .outerjoin(pl2, game.c.black_id==pl2.c.id)])
+            s = select([func.count(game.c.id)], from_obj=[
+                game.outerjoin(pl1, game.c.white_id == pl1.c.id)
+                .outerjoin(pl2, game.c.black_id == pl2.c.id)])
             self.count = self.conn.execute(s.where(self.where)).scalar()
             self.query = self.query.where(self.where)
         print("%s game(s) match to query" % self.count)
 
         if self.orderby is not None:
             self.query = self.query.order_by(self.orderby)
-        
+
     def activate_entry(self, entry):
         text = entry.get_text()
-        self.where = or_(pl1.c.name.startswith(text), pl2.c.name.startswith(text))
+        self.where = or_(
+            pl1.c.name.startswith(text), pl2.c.name.startswith(text))
         self.offset = 0
         self.build_query()
         self.load_games()
@@ -151,10 +153,10 @@ class GameList(Gtk.TreeView):
     def on_last_clicked(self, widget):
         self.offset = (self.count // self.STEP) * self.STEP
         self.load_games()
-        
+
     def column_clicked(self, col, data):
         self.set_search_column(data)
-        
+
     def load_games(self):
         self.liststore.clear()
 
@@ -164,7 +166,7 @@ class GameList(Gtk.TreeView):
         add = self.liststore.append
 
         query = self.query.offset(self.offset).limit(self.STEP)
-        
+
         result = self.conn.execute(query)
         self.chessfile.games = result.fetchall()
         print("%s selected" % len(self.chessfile.games))
@@ -176,22 +178,23 @@ class GameList(Gtk.TreeView):
             welo = getTag(i, "WhiteElo")
             belo = getTag(i, "BlackElo")
             result = getResult(i)
-            result = "½-½" if result==DRAW else reprResult[result]
+            result = "½-½" if result == DRAW else reprResult[result]
             event = getTag(i, 'Event')
             site = getTag(i, 'Site')
             round_ = getTag(i, "Round")
             date = getTag(i, "Date")
             eco = getTag(i, "ECO")
-            add([game_id, wname, welo, bname, belo, result, event, site, round_, date, eco])
+            add([game_id, wname, welo, bname, belo, result, event, site,
+                 round_, date, eco])
         self.set_cursor(0)
-    
-    def row_activated (self, widget, path, col):
+
+    def row_activated(self, widget, path, col):
         print(self.modelsort.convert_path_to_child_path(path)[0])
-        game_id = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
+        game_id = self.liststore[self.modelsort.convert_path_to_child_path(
+            path)[0]][0]
         print("game_id=%s" % game_id)
         gameno = self.id_list.index(game_id)
         print("gameno=%s" % gameno)
-        position = -1
 
         gamemodel = GameModel()
         wp, bp = self.chessfile.get_player_names(gameno)
