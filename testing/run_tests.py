@@ -20,7 +20,8 @@ modules_to_test = (
     "polyglot",
     'ficsmanagers',
     'analysis',
-    )
+)
+
 
 def suite():
     tests = unittest.TestSuite()
@@ -30,4 +31,3 @@ def suite():
 
 if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())
-
