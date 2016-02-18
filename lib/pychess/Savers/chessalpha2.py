@@ -7,13 +7,15 @@ from pychess.Utils.Move import toFAN
 from pychess.Utils.const import FAN_PIECES, BLACK, ROOK, WHITE, KING, BISHOP, \
     KNIGHT, QUEEN, DRAW, EMPTY, reprResult, WHITEWON, BLACKWON
 
-group = lambda l, s: [l[i:i + s] for i in range(0, len(l), s)]
+
+def group(l, s):
+    return [l[i:i + s] for i in range(0, len(l), s)]
 
 __label__ = _("Chess Alpha 2 Diagram")
 __ending__ = "html"
 __append__ = True
 
-#table[background][color][piece]
+# table[background][color][piece]
 diaPieces = ((('\'', 'Ê', 'Â', 'À', 'Ä', 'Æ', 'È'),
               ('\'', 'ê', 'â', 'à', 'ä', 'æ', 'è')),
              (('#', 'Ë', 'Ã', 'Á', 'Å', 'Ç', 'É'),
@@ -102,7 +104,8 @@ def writeMoves(file, move1, movepair1, move2, movepair2):
 
 def writeDiagram(file, model, border=True, whitetop=False):
     data = model.boards[-1].data[:]
-    if not whitetop: data.reverse()
+    if not whitetop:
+        data.reverse()
 
     if border:
         print("[&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;]", file=file)

@@ -33,8 +33,8 @@ def paste(gamemodel):
         link = "http://www.chesspastebin.com/?p=%s" % int(ID)
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(link, -1)
-        #print(text)
-        #print(clipboard.wait_for_text())
+        # print(text)
+        # print(clipboard.wait_for_text())
         msg_dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
                                        buttons=Gtk.ButtonsType.OK)
         msg = _(

@@ -122,20 +122,22 @@ def load(file):
     players = result.fetchall()
     print("Database contains %s players" % len(players))
 
-    selection = select([game.c.id.label("Id"), pl1.c.name.label('White'), \
-                        pl2.c.name.label('Black'), game.c.result.label('Result'), \
-                        event.c.name.label('Event'), site.c.name.label('Site'), \
-                        game.c.round.label('Round'), game.c.date_year.label('Year'), \
-                        game.c.date_month.label('Month'), game.c.date_day.label('Day'), \
-                        game.c.white_elo.label('WhiteElo'), game.c.black_elo.label('BlackElo'), \
-                        game.c.eco.label('ECO'), game.c.fen.label('Board'), \
-                        game.c.fen.label('FEN'), game.c.variant.label('Variant'), \
-                        annotator.c.name.label('Annotator')], \
-                       from_obj=[game.outerjoin(pl1, game.c.white_id == pl1.c.id)\
-                        .outerjoin(pl2, game.c.black_id == pl2.c.id)\
-                        .outerjoin(event, game.c.event_id == event.c.id)\
-                        .outerjoin(site, game.c.site_id == site.c.id)\
-                        .outerjoin(annotator, game.c.annotator_id == annotator.c.id)])
+    selection = select([
+        game.c.id.label("Id"), pl1.c.name.label('White'),
+        pl2.c.name.label('Black'), game.c.result.label('Result'),
+        event.c.name.label('Event'), site.c.name.label('Site'),
+        game.c.round.label('Round'), game.c.date_year.label('Year'),
+        game.c.date_month.label('Month'), game.c.date_day.label('Day'),
+        game.c.white_elo.label('WhiteElo'), game.c.black_elo.label('BlackElo'),
+        game.c.eco.label('ECO'), game.c.fen.label('Board'),
+        game.c.fen.label('FEN'), game.c.variant.label('Variant'),
+        annotator.c.name.label('Annotator')],
+        from_obj=[
+            game.outerjoin(pl1, game.c.white_id == pl1.c.id)
+            .outerjoin(pl2, game.c.black_id == pl2.c.id)
+            .outerjoin(event, game.c.event_id == event.c.id)
+            .outerjoin(site, game.c.site_id == site.c.id)
+            .outerjoin(annotator, game.c.annotator_id == annotator.c.id)])
 
     result = conn.execute(selection)
     colnames = result.keys()
@@ -154,7 +156,7 @@ class Database(PGNFile):
         self.comment_idx = 0
 
     def get_movetext(self, gameno):
-        selection = select([game.c.movelist, game.c.comments], \
+        selection = select([game.c.movelist, game.c.comments],
                            game.c.id == self.games[gameno][0])
         conn = dbmodel.engine.connect()
         result = conn.execute(selection).first()
@@ -203,6 +205,7 @@ class Database(PGNFile):
         error = None
         parenthesis = 0
         v_array = array("H")
+        v_last_board = None
         for elem in movetext:
             if parenthesis > 0:
                 v_array.append(elem)

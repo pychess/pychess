@@ -29,8 +29,6 @@ def load(file):
     return FenFile([line.strip() for line in file if line])
 
 
-
-
 class FenFile(ChessFile):
     def loadToModel(self, gameno, position, model=None):
         if not model:
@@ -38,8 +36,8 @@ class FenFile(ChessFile):
 
         # We have to set full move number to 1 to make sure LBoard and GameModel
         # are synchronized.
-        #fenlist = self.games[gameno].split(" ")
-        #if len(fenlist) == 6:
+        # fenlist = self.games[gameno].split(" ")
+        # if len(fenlist) == 6:
         #    fen = " ".join(fenlist[:5]) + " 1"
         fen = self.games[gameno]
         try:
@@ -58,4 +56,3 @@ class FenFile(ChessFile):
             if status in (BLACKWON, WHITEWON, DRAW):
                 model.status, model.reason = status, reason
         return model
-

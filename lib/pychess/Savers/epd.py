@@ -79,7 +79,8 @@ def load(file):
 
 class EpdFile(ChessFile):
     def loadToModel(self, gameno, position, model=None):
-        if not model: model = GameModel()
+        if not model:
+            model = GameModel()
 
         fieldlist = self.games[gameno].split(" ")
         if len(fieldlist) == 4:
@@ -116,7 +117,7 @@ class EpdFile(ChessFile):
         model.status = WAITING_TO_START
 
         # rc is kinda broken
-        #if "rc" in opcodes:
+        # if "rc" in opcodes:
         #    model.boards[0].board.rc = int(opcodes["rc"])
 
         if "resign" in opcodes:

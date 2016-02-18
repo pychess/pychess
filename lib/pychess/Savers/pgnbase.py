@@ -5,7 +5,7 @@ from __future__ import print_function
 import re
 import datetime
 
-from pychess.Utils.const import reprResult, RUNNING, DRAW, WHITEWON, BLACKWON
+from pychess.Utils.const import RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import parseSAN, ParsingError
 from pychess.Savers.ChessFile import ChessFile, LoadingError
@@ -13,7 +13,7 @@ from pychess.Savers.ChessFile import ChessFile, LoadingError
 # token categories
 COMMENT_REST, COMMENT_BRACE, COMMENT_NAG, \
 VARIATION_START, VARIATION_END, \
-RESULT, FULL_MOVE, MOVE, MOVE_COMMENT = range(1,10)
+RESULT, FULL_MOVE, MOVE, MOVE_COMMENT = range(1, 10)
 
 pattern = re.compile(r"""
     (\;.*?[\n\r])        # comment, rest of line style
@@ -59,9 +59,10 @@ class PgnBase(ChessFile):
             # initial game board
             boards_append(board)
 
-        status = None
+        # status = None
         parenthesis = 0
         v_string = ""
+        v_last_board = None
         for m in re.finditer(pattern, string):
             group, text = m.lastindex, m.group(m.lastindex)
             if parenthesis > 0:
@@ -104,8 +105,7 @@ class PgnBase(ChessFile):
                         errstr1 = _(
                             "The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
                                 'moveno': moveno,
-                                'notation': notation
-                            }
+                                'notation': notation}
                         errstr2 = _("The move failed because %s.") % reason
                         self.error = LoadingError(errstr1, errstr2)
                         break
@@ -118,8 +118,7 @@ class PgnBase(ChessFile):
                         errstr1 = _(
                             "Error parsing move %(moveno)s %(mstr)s") % {
                                 "moveno": moveno,
-                                "mstr": mstr
-                            }
+                                "mstr": mstr}
                         self.error = LoadingError(errstr1, "")
                         break
 
@@ -157,17 +156,18 @@ class PgnBase(ChessFile):
                 elif group == COMMENT_NAG:
                     last_board.nags.append(text)
 
+                # TODO
                 elif group == RESULT:
-                    if text == "1/2":
-                        status = reprResult.index("1/2-1/2")
-                    else:
-                        status = reprResult.index(text)
+                    # if text == "1/2":
+                    #    status = reprResult.index("1/2-1/2")
+                    # else:
+                    #    status = reprResult.index(text)
                     break
 
                 else:
                     print("Unknown:", text)
 
-        return boards  #, status
+        return boards  # , status
 
     def _getTag(self, gameno, tagkey):
         if gameno in self.tagcache:
@@ -232,8 +232,8 @@ class PgnBase(ChessFile):
         today = datetime.date.today()
         if not the_date:
             return today.timetuple()[:3]
-        return [ s.isdigit() and int(s) or today.timetuple()[i] \
-                 for i,s in enumerate(the_date.split(".")) ]
+        return [s.isdigit() and int(s) or today.timetuple()[i]
+                for i, s in enumerate(the_date.split("."))]
 
     def get_site(self, no):
         return self._getTag(no, "Site") and self._getTag(no, "Site") or "?"
