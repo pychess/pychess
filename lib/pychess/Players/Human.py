@@ -256,7 +256,7 @@ class Human(Player):
         if takes_param:
             param = offer.param
             if offer.type == TAKEBACK_OFFER and \
-                    self.gamemodel.players[1 - self.color].__type__ is not REMOTE:
+                    self.gamemodel.players[1 - self.color].__type__ != REMOTE:
                 param = self.gamemodel.ply - offer.param
             heading = heading % param
             text = text % param

@@ -1129,9 +1129,9 @@ class SeekTabSection(ParrentListSection):
             return
         sought = model.get_value(sel_iter, 0)
         if self.lastSeekSelected is None or \
-        sought.index is not self.lastSeekSelected.index:
+        sought.index != self.lastSeekSelected.index:
             return
-        if path is not model.get_path(sel_iter):
+        if path != model.get_path(sel_iter):
             return
         self.onAcceptClicked(None)
 
@@ -1418,7 +1418,7 @@ class PlayerTabSection(ParrentListSection):
                 "private" not in self.players[player]:
             self.players[player]["private"] = player.game.connect(
                 "notify::private", self.private_changed, player)
-        elif player.status is not IC_STATUS_PLAYING and \
+        elif player.status != IC_STATUS_PLAYING and \
                 "private" in self.players[player]:
             game = player.game
             if game and game.handler_is_connected(self.players[player][
@@ -1509,7 +1509,7 @@ class PlayerTabSection(ParrentListSection):
         self.widgets["challengeButton"].set_sensitive(
             player is not None and
             player.isAvailableForGame() and
-            player.name is not user_name)
+            player.name != user_name)
 
 ########################################################################
 # Initialize Games List                                                #
@@ -2314,7 +2314,7 @@ class SeekChallengeSection(Section):
 
     def onChallengeDialogResponse(self, dialog, response):
         self.widgets["challengeDialog"].hide()
-        if response is not 5:
+        if response != 5:
             return True
 
         if self.widgets["challenge3Radio"].get_active():
@@ -2620,7 +2620,7 @@ class SeekChallengeSection(Section):
         rating = self.__clamp(rating)
         difference = rating - center
         if self.loading_seek_editor is False and self.chainbox.active and \
-                difference is not self.lastdifference:
+                difference != self.lastdifference:
             newcenter = rating - self.lastdifference
             self.widgets["ratingCenterSlider"].set_value(newcenter //
                                                          RATING_SLIDER_STEP)
