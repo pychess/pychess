@@ -43,4 +43,3 @@ else:
     from urllib2 import Request, urlopen, HTTPError, URLError
 
     from io import open
-

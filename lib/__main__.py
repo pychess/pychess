@@ -17,6 +17,6 @@ if len(sys.argv) == 1 or sys.argv[1:] == ["debug"]:
 else:
     print("Unknown argument(s):", repr(sys.argv))
     sys.exit(0)
-    
+
 pychess.makeReady()
 pychess.run()

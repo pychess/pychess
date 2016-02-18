@@ -3,7 +3,7 @@ import datetime
 import random
 
 from pychess.compat import Queue, Empty
-from pychess.Utils.const import WHITE
+from pychess.Utils.const import *
 from pychess.Utils.TimeModel import TimeModel
 from pychess.ic import *
 from pychess.ic.FICSObjects import *
