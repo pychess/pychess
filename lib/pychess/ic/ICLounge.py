@@ -554,7 +554,7 @@ class UserInfoSection(Section):
             table.attach(Gtk.HSeparator(), 0, 6, row, row + 1, ypadding=2)
             row += 1
 
-        if finger.getSanctions() is not "":
+        if finger.getSanctions() != "":
             table.attach(
                 label(
                     _("Sanctions") + ":",
@@ -813,7 +813,7 @@ class SeekTabSection(ParrentListSection):
             return identity
 
         def set_sort_order(modelsort, value):
-            if value is not 0:
+            if value != 0:
                 order = Gtk.SortType.ASCENDING if value > 0 else Gtk.SortType.DESCENDING
                 modelsort.set_sort_column_id(abs(value) - 1, order)
 
@@ -2336,7 +2336,7 @@ class SeekChallengeSection(Section):
 
     def onEditSeekDialogResponse(self, dialog, response):
         self.widgets["editSeekDialog"].hide()
-        if response is not Gtk.ResponseType.OK:
+        if response != Gtk.ResponseType.OK:
             return
         self.__saveSeekEditor(self.seeknumber)
         self.__writeSavedSeeks(self.seeknumber)
