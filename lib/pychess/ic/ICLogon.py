@@ -93,14 +93,14 @@ class ICLogon(object):
             else:
                 entry.set_text(names[0])
 
-        uistuff.keep(self.widgets["nameEntry"], "usernameEntry", \
-                    user_name_get_value, user_name_set_value)
+        uistuff.keep(self.widgets["nameEntry"], "usernameEntry",
+                     user_name_get_value, user_name_set_value)
         uistuff.keep(self.widgets["passEntry"], "passwordEntry")
         uistuff.keep(self.widgets["hostEntry"], "hostEntry")
         uistuff.keep(self.widgets["autoLogin"], "autoLogin")
         self.infobar = Gtk.InfoBar()
         self.infobar.set_message_type(Gtk.MessageType.WARNING)
-        #self.widgets["messagePanelHBox"].pack_start(self.infobar,
+        # self.widgets["messagePanelHBox"].pack_start(self.infobar,
         #    expand=False, fill=False)
         self.widgets["messagePanelHBox"].pack_start(self.infobar, False, False,
                                                     0)
@@ -235,9 +235,9 @@ class ICLogon(object):
         else:
             ports = self.widgets["portsEntry"].get_text()
             ports = list(map(int, re.findall("\d+", ports)))
-            if not 5000 in ports:
+            if 5000 not in ports:
                 ports.append(5000)
-            if not 23 in ports:
+            if 23 not in ports:
                 ports.append(23)
         alternate_host = self.widgets["hostEntry"].get_text()
 

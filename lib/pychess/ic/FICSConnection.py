@@ -136,14 +136,14 @@ class Connection(GObject.GObject, Thread):
 
 EOF = _("The connection was broken - got \"end of file\" message")
 NOTREG = _("'%s' is not a registered name")
-BADPAS = _("The entered password was invalid.\n" + \
-           "If you forgot your password, go to " + \
-           "<a href=\"http://www.freechess.org/password\">" + \
+BADPAS = _("The entered password was invalid.\n" +
+           "If you forgot your password, go to " +
+           "<a href=\"http://www.freechess.org/password\">" +
            "http://www.freechess.org/password</a> to request a new one over email.")
 ALREADYIN = _("Sorry '%s' is already logged in")
 REGISTERED = _(
     "'%s' is a registered name.  If it is yours, type the password.")
-PREVENTED = _("Due to abuse problems, guest connections have been prevented.\n" + \
+PREVENTED = _("Due to abuse problems, guest connections have been prevented.\n" +
               "You can still register on http://www.freechess.org")
 
 
@@ -204,7 +204,7 @@ class FICSConnection(Connection):
                 got = self.client.read_until(
                     "Press return", "If it is yours, type the password.",
                     "guest connections have been prevented")
-                #got = 2
+                # got = 2
                 if got == 1:
                     raise LogOnException(REGISTERED % self.username)
                 elif got == 2:

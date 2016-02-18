@@ -241,7 +241,7 @@ class TelnetLines(object):
         if self.consolehandler:
             if identifier == 0 or identifier in self.show_reply:
                 self.consolehandler.handle(lines)
-                #self.show_reply.discard(identifier)
+                # self.show_reply.discard(identifier)
 
         return lines
 
@@ -261,8 +261,7 @@ class PredictionsTelnet(object):
             return  # TODO: necessary?
 
         for pred in self.reply_cmd_dict[line.code] \
-                  if line.code and line.code in self.reply_cmd_dict \
-                  else self.predictions:
+                if line.code and line.code in self.reply_cmd_dict else self.predictions:
             #            print "parse_line: trying prediction %s for line '%s'" % (pred.name, line)
             answer = self.test_prediction(pred, line)
             if answer in (RETURN_MATCH, RETURN_MATCH_END):

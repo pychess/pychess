@@ -81,8 +81,8 @@ class ICGameModel(GameModel):
 
             for handler_id in self.connections[obj]:
                 if obj.handler_is_connected(handler_id):
-                    log.debug("ICGameModel.__disconnect: object=%s handler_id=%s" % \
-                        (repr(obj), repr(handler_id)))
+                    log.debug("ICGameModel.__disconnect: object=%s handler_id=%s" %
+                              (repr(obj), repr(handler_id)))
                     obj.disconnect(handler_id)
         self.connections = None
 
@@ -118,19 +118,19 @@ class ICGameModel(GameModel):
 
     def onBoardUpdate(self, bm, gameno, ply, curcol, lastmove, fen, wname,
                       bname, wms, bms):
-        log.debug(("ICGameModel.onBoardUpdate: id=%s self.ply=%s self.players=%s gameno=%s " + \
-                  "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s") % \
-                  (str(id(self)), str(self.ply), repr(self.players), str(gameno), str(wname), str(bname), \
+        log.debug(("ICGameModel.onBoardUpdate: id=%s self.ply=%s self.players=%s gameno=%s " +
+                  "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s") %
+                  (str(id(self)), str(self.ply), repr(self.players), str(gameno), str(wname), str(bname),
                    str(ply), str(curcol), str(lastmove), str(fen), str(wms), str(bms)))
         if gameno != self.ficsgame.gameno or len(self.players) < 2:
             # LectureBot allways uses gameno 1 for many games in one lecture
             # or wname != self.players[0].ichandle or bname != self.players[1].ichandle:
             return
-        log.debug("ICGameModel.onBoardUpdate: id=%d, self.players=%s: updating time and/or ply" % \
-            (id(self), str(self.players)))
+        log.debug("ICGameModel.onBoardUpdate: id=%d, self.players=%s: updating time and/or ply" %
+                  (id(self), str(self.players)))
         if self.timed:
-            log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s: updating timemodel" % \
-                (id(self), str(self.players)))
+            log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s: updating timemodel" %
+                      (id(self), str(self.players)))
             # If game end coming from helper connection before last move made
             # we have to tap() ourselves
             if self.status in (DRAW, WHITEWON, BLACKWON):
@@ -165,7 +165,7 @@ class ICGameModel(GameModel):
 
         elif ply < self.ply:
             log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s \
-                      self.ply=%d ply=%d: TAKEBACK" % \
+                      self.ply=%d ply=%d: TAKEBACK" %
                       (id(self), str(self.players), self.ply, ply))
             for offer in list(self.offers.keys()):
                 if offer.type == TAKEBACK_OFFER:
@@ -212,7 +212,7 @@ class ICGameModel(GameModel):
     def onGameEnded(self, bm, ficsgame):
         if ficsgame == self.ficsgame and len(self.players) >= 2:
             log.debug(
-                "ICGameModel.onGameEnded: self.players=%s ficsgame=%s" % \
+                "ICGameModel.onGameEnded: self.players=%s ficsgame=%s" %
                 (repr(self.players), repr(ficsgame)))
             self.end(ficsgame.result, ficsgame.reason)
 
