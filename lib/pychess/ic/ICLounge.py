@@ -12,9 +12,10 @@ from gi.repository import GLib, Gtk, Gdk, GdkPixbuf, GObject, Pango
 from pychess.ic import IC_POS_EXAMINATING, IC_POS_OBSERVING_EXAMINATION, \
     TYPE_BLITZ, get_infobarmessage_content, get_infobarmessage_content2, \
     TYPE_LIGHTNING, GAME_TYPES_BY_RATING_TYPE, TYPE_WILD, WildGameType, \
-    TYPE_STANDARD, TITLES, GAME_TYPES, VARIANT_GAME_TYPES, VARIANTS_SHUFFLE, \
-    RATING_TYPES, IC_STATUS_PLAYING, VARIANTS_OTHER, VARIANTS_OTHER_NONSTANDARD, \
+    TYPE_STANDARD, TITLES, GAME_TYPES, VARIANT_GAME_TYPES, \
+    RATING_TYPES, IC_STATUS_PLAYING, \
     VariantGameType, time_control_to_gametype
+
 from pychess.compat import cmp, StringIO
 from pychess.System import conf, uistuff
 from pychess.System.prefix import addDataPrefix
@@ -29,7 +30,8 @@ from pychess.widgets.preferencesDialog import SoundTab
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarNotebook, InfoBarMessageButton
 
 from pychess.Utils.const import LOCAL, WHITE, BLACK, REMOTE, reprResult, RANDOMCHESS, \
-    FISCHERRANDOMCHESS, LOSERSCHESS, UNSUPPORTED
+    FISCHERRANDOMCHESS, LOSERSCHESS, UNSUPPORTED, VARIANTS_SHUFFLE, VARIANTS_OTHER, \
+    VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.ICPlayer import ICPlayer

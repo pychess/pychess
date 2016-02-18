@@ -2,9 +2,9 @@ import re
 
 from gi.repository import GObject
 
-from pychess.Utils.const import WHITE, FISCHERRANDOMCHESS
+from pychess.Utils.const import WHITE, FISCHERRANDOMCHESS, UNSUPPORTED
 from pychess.ic import BLKCMD_ASSESS, VariantGameType, DEVIATION, GAME_TYPES, \
-    parse_title_hex, BLKCMD_UNSEEK, BLKCMD_SEEK, UNSUPPORTED, type_to_display_text, \
+    parse_title_hex, BLKCMD_UNSEEK, BLKCMD_SEEK, type_to_display_text, \
     Variants
 from pychess.ic.FICSObjects import FICSPlayer, FICSSeek
 from pychess.System.Log import log
