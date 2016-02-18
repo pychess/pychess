@@ -1,10 +1,10 @@
-import re
-
 from gi.repository import Gtk
 
 from pychess import Variants
-from pychess.Utils.const import *
-
+from pychess.Utils.const import NORMALCHESS, ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, \
+    LOSERSCHESS, SUICIDECHESS, FISCHERRANDOMCHESS, WILDCASTLESHUFFLECHESS, \
+    SHUFFLECHESS, RANDOMCHESS, ASYMMETRICRANDOMCHESS, WILDCASTLECHESS, UPSIDEDOWNCHESS, \
+    PAWNSPUSHEDCHESS, PAWNSPASSEDCHESS
 
 IC_CONNECTED, IC_DISCONNECTED = range(2)
 
@@ -16,10 +16,15 @@ TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, \
 TYPE_BUGHOUSE, TYPE_CRAZYHOUSE, TYPE_SUICIDE, TYPE_LOSERS, TYPE_ATOMIC, \
 TYPE_UNTIMED, TYPE_EXAMINED, TYPE_OTHER = range(12)
 
-RATING_TYPES = (
-    TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_ATOMIC, TYPE_BUGHOUSE,
-    TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, TYPE_WILD,
-)
+RATING_TYPES = (TYPE_BLITZ,
+                TYPE_STANDARD,
+                TYPE_LIGHTNING,
+                TYPE_ATOMIC,
+                TYPE_BUGHOUSE,
+                TYPE_CRAZYHOUSE,
+                TYPE_LOSERS,
+                TYPE_SUICIDE,
+                TYPE_WILD, )
 
 # Rating deviations
 DEVIATION_NONE, DEVIATION_ESTIMATED, DEVIATION_PROVISIONAL = range(3)
@@ -36,7 +41,7 @@ DEVIATION = {
     "E": DEVIATION_ESTIMATED,
     "P": DEVIATION_PROVISIONAL,
     " ": DEVIATION_NONE,
-    "" : DEVIATION_NONE,
+    "": DEVIATION_NONE,
 }
 
 STATUS = {
@@ -49,61 +54,87 @@ STATUS = {
     "&": IC_STATUS_IN_TOURNAMENT,
 }
 
-class GameType (object):
-    def __init__ (self, fics_name, short_fics_name, rating_type,
-                  display_text=None, variant_type=NORMALCHESS):
+
+class GameType(object):
+    def __init__(self,
+                 fics_name,
+                 short_fics_name,
+                 rating_type,
+                 display_text=None,
+                 variant_type=NORMALCHESS):
         self.fics_name = fics_name
         self.short_fics_name = short_fics_name
         self.rating_type = rating_type
         if display_text:
-            self.display_text=display_text
+            self.display_text = display_text
         self.variant_type = variant_type
+
     @property
-    def variant (self):
+    def variant(self):
         return Variants.variants[self.variant_type]
-    def __repr__ (self):
+
+    def __repr__(self):
         s = "<GameType "
         s += "fics_name='%s', " % self.fics_name
         s += "display_text='%s'>" % self.display_text
         return s
-    
-class NormalGameType (GameType):
-    def __init__ (self, fics_name, short_fics_name, rating_type, display_text):
-        GameType.__init__(self, fics_name, short_fics_name, rating_type,
+
+
+class NormalGameType(GameType):
+    def __init__(self, fics_name, short_fics_name, rating_type, display_text):
+        GameType.__init__(self,
+                          fics_name,
+                          short_fics_name,
+                          rating_type,
                           display_text=display_text)
-        
-class VariantGameType (GameType):
-    def __init__ (self, fics_name, short_fics_name, rating_type, variant_type):
-        GameType.__init__(self, fics_name, short_fics_name, rating_type,
+
+
+class VariantGameType(GameType):
+    def __init__(self, fics_name, short_fics_name, rating_type, variant_type):
+        GameType.__init__(self,
+                          fics_name,
+                          short_fics_name,
+                          rating_type,
                           variant_type=variant_type)
+
     @property
-    def display_text (self):
-        assert self.variant_type != None
+    def display_text(self):
+        assert self.variant_type is not None
         return Variants.variants[self.variant_type].name
+
     @property
-    def seek_text (self):
+    def seek_text(self):
         return self.fics_name.replace("/", " ")
 
-class WildGameType (VariantGameType):
+
+class WildGameType(VariantGameType):
     _instances = []
-    def __init__ (self, fics_name, variant_type):
-        VariantGameType.__init__(self, fics_name, "w", TYPE_WILD,
+
+    def __init__(self, fics_name, variant_type):
+        VariantGameType.__init__(self,
+                                 fics_name,
+                                 "w",
+                                 TYPE_WILD,
                                  variant_type=variant_type)
         WildGameType._instances.append(self)
+
     @classmethod
-    def instances (cls):
+    def instances(cls):
         return cls._instances
+
 
 GAME_TYPES = {
     "blitz": NormalGameType("blitz", "b", TYPE_BLITZ, _("Blitz")),
     "standard": NormalGameType("standard", "s", TYPE_STANDARD, _("Standard")),
-    "lightning": NormalGameType("lightning", "l", TYPE_LIGHTNING, _("Lightning")),
+    "lightning":
+    NormalGameType("lightning", "l", TYPE_LIGHTNING, _("Lightning")),
     "untimed": NormalGameType("untimed", "u", TYPE_UNTIMED, _("Untimed")),
     "examined": NormalGameType("examined", "e", TYPE_EXAMINED, _("Examined")),
     "nonstandard": NormalGameType("nonstandard", "n", TYPE_OTHER, _("Other")),
     "atomic": VariantGameType("atomic", "x", TYPE_ATOMIC, ATOMICCHESS),
     "bughouse": VariantGameType("bughouse", "B", TYPE_BUGHOUSE, BUGHOUSECHESS),
-    "crazyhouse": VariantGameType("crazyhouse", "z", TYPE_CRAZYHOUSE, CRAZYHOUSECHESS),
+    "crazyhouse":
+    VariantGameType("crazyhouse", "z", TYPE_CRAZYHOUSE, CRAZYHOUSECHESS),
     "losers": VariantGameType("losers", "L", TYPE_LOSERS, LOSERSCHESS),
     "suicide": VariantGameType("suicide", "S", TYPE_SUICIDE, SUICIDECHESS),
     "wild/fr": WildGameType("wild/fr", FISCHERRANDOMCHESS),
@@ -126,7 +157,10 @@ for key in GAME_TYPES:
 # for the WildGameType's in GAME_TYPES above, and instead use
 # a dummy type for the all-encompassing "Wild" FICS rating for wild/* games
 GAME_TYPES_BY_SHORT_FICS_NAME = {
-    "w": GameType("wild", "w", TYPE_WILD, display_text=_("Wild"))
+    "w": GameType("wild",
+                  "w",
+                  TYPE_WILD,
+                  display_text=_("Wild"))
 }
 for key in GAME_TYPES:
     if not isinstance(GAME_TYPES[key], WildGameType):
@@ -136,14 +170,15 @@ for key in GAME_TYPES:
 GAME_TYPES_BY_RATING_TYPE = {}
 for key in GAME_TYPES_BY_SHORT_FICS_NAME:
     GAME_TYPES_BY_RATING_TYPE[GAME_TYPES_BY_SHORT_FICS_NAME[key].rating_type] = \
-         GAME_TYPES_BY_SHORT_FICS_NAME[key]
+        GAME_TYPES_BY_SHORT_FICS_NAME[key]
 
 GAME_TYPES_BY_FICS_NAME = {}
 for key in GAME_TYPES_BY_SHORT_FICS_NAME:
     GAME_TYPES_BY_FICS_NAME[GAME_TYPES_BY_SHORT_FICS_NAME[key].fics_name] = \
-         GAME_TYPES_BY_SHORT_FICS_NAME[key]
+        GAME_TYPES_BY_SHORT_FICS_NAME[key]
 
-def type_to_display_text (typename):
+
+def type_to_display_text(typename):
     if "loaded from" in typename.lower():
         typename = typename.split()[-1]
     if typename in GAME_TYPES:
@@ -158,15 +193,16 @@ def type_to_display_text (typename):
         # Otherwise forget about it
         return typename[0].upper() + typename[1:]
 
-def time_control_to_gametype (minutes, gain):
+
+def time_control_to_gametype(minutes, gain):
     assert isinstance(minutes, int) and isinstance(gain, int)
     assert minutes >= 0 and gain >= 0
-    gainminutes = gain > 0 and (gain*60)-1 or 0
+    gainminutes = gain > 0 and (gain * 60) - 1 or 0
     if minutes == 0 and gain == 0:
         return GAME_TYPES["untimed"]
-    elif (minutes*60) + gainminutes >= (15*60):
+    elif (minutes * 60) + gainminutes >= (15 * 60):
         return GAME_TYPES["standard"]
-    elif (minutes*60) + gainminutes >= (3*60):
+    elif (minutes * 60) + gainminutes >= (3 * 60):
         return GAME_TYPES["blitz"]
     else:
         return GAME_TYPES["lightning"]
@@ -178,22 +214,27 @@ TYPE_ADMINISTRATOR, TYPE_BLINDFOLD, TYPE_COMPUTER, \
     TYPE_WOMAN_GRAND_MASTER, TYPE_WOMAN_INTERNATIONAL_MASTER, TYPE_WOMAN_FIDE_MASTER,\
     TYPE_DUMMY_ACCOUNT, TYPE_CANDIDATE_MASTER, TYPE_FIDE_ARBEITER, TYPE_NATIONAL_MASTER = range(19)
 
-TITLE_TYPE_DISPLAY_TEXTS = (
-    _("Administrator"), _("Blindfold Account"), _("Computer"),
-    _("Team Account"), _("Unregistered"), _("Chess Advisor"),
-    _("Service Representative"), _("Tournament Director"), _("Mamer Manager"),
-    _("Grand Master"), _("International Master"), _("FIDE Master"),
-    _("Woman Grand Master"), _("Woman International Master"), _("Woman FIDE Master"),
-    _("Dummy Account"),
-)
+TITLE_TYPE_DISPLAY_TEXTS = (_("Administrator"),
+                            _("Blindfold Account"),
+                            _("Computer"),
+                            _("Team Account"),
+                            _("Unregistered"),
+                            _("Chess Advisor"),
+                            _("Service Representative"),
+                            _("Tournament Director"),
+                            _("Mamer Manager"),
+                            _("Grand Master"),
+                            _("International Master"),
+                            _("FIDE Master"),
+                            _("Woman Grand Master"),
+                            _("Woman International Master"),
+                            _("Woman FIDE Master"),
+                            _("Dummy Account"), )
 
 TITLE_TYPE_DISPLAY_TEXTS_SHORT = (
-    _("*"), _("B"), _("C"),
-    _("T"), _("U"), _("CA"),
-    _("SR"), _("TD"), _("TM"),
-    _("GM"), _("IM"), _("FM"),
-    _("WGM"), _("WIM"), _("WFM"), _("D"), _("H"), _("CM"), _("FA"), _("NM")
-)
+    _("*"), _("B"), _("C"), _("T"), _("U"), _("CA"), _("SR"), _("TD"), _("TM"),
+    _("GM"), _("IM"), _("FM"), _("WGM"), _("WIM"), _("WFM"), _("D"), _("H"),
+    _("CM"), _("FA"), _("NM"))
 
 TITLES = {  # From FICS 'help who'
     "*": TYPE_ADMINISTRATOR,
@@ -211,7 +252,7 @@ TITLES = {  # From FICS 'help who'
     "WFM": TYPE_WOMAN_FIDE_MASTER,
     "WIM": TYPE_WOMAN_INTERNATIONAL_MASTER,
     "WGM": TYPE_WOMAN_GRAND_MASTER,
-    "D":   TYPE_DUMMY_ACCOUNT,
+    "D": TYPE_DUMMY_ACCOUNT,
     "H": TYPE_SERVICE_REPRESENTATIVE,
     "CM": TYPE_CANDIDATE_MASTER,
     "FA": TYPE_FIDE_ARBEITER,
@@ -219,24 +260,26 @@ TITLES = {  # From FICS 'help who'
 }
 
 HEX_TO_TITLE = {
-    0x1 : TYPE_UNREGISTERED,
-    0x2 : TYPE_COMPUTER,
-    0x4 : TYPE_GRAND_MASTER,
-    0x8 : TYPE_INTERNATIONAL_MASTER,
-    0x10 : TYPE_FIDE_MASTER,
-    0x20 : TYPE_WOMAN_GRAND_MASTER,
-    0x40 : TYPE_WOMAN_INTERNATIONAL_MASTER,
-    0x80 : TYPE_WOMAN_FIDE_MASTER,
+    0x1: TYPE_UNREGISTERED,
+    0x2: TYPE_COMPUTER,
+    0x4: TYPE_GRAND_MASTER,
+    0x8: TYPE_INTERNATIONAL_MASTER,
+    0x10: TYPE_FIDE_MASTER,
+    0x20: TYPE_WOMAN_GRAND_MASTER,
+    0x40: TYPE_WOMAN_INTERNATIONAL_MASTER,
+    0x80: TYPE_WOMAN_FIDE_MASTER,
 }
 
-def parse_title_hex (titlehex):
+
+def parse_title_hex(titlehex):
     titles = set()
     for key in HEX_TO_TITLE:
         if int(titlehex, 16) & key:
             titles.add(HEX_TO_TITLE[key])
     return titles
 
-def get_infobarmessage_content (player, text, gametype=None):
+
+def get_infobarmessage_content(player, text, gametype=None):
     content = Gtk.HBox()
     icon = Gtk.Image()
     icon.set_from_pixbuf(player.getIcon(size=32, gametype=gametype))
@@ -249,8 +292,11 @@ def get_infobarmessage_content (player, text, gametype=None):
     content.pack_start(label, False, False, 0)
     return content
 
-def get_infobarmessage_content2 (player, heading_text, message_text,
-                                 gametype=None):
+
+def get_infobarmessage_content2(player,
+                                heading_text,
+                                message_text,
+                                gametype=None):
     hbox = Gtk.HBox()
     image = Gtk.Image()
     image.set_from_pixbuf(player.getIcon(size=24, gametype=gametype))
@@ -270,7 +316,8 @@ def get_infobarmessage_content2 (player, heading_text, message_text,
     label.set_text(message_text)
     vbox.pack_start(label, False, False, 5)
     return vbox
-    
+
+
 """
 Internal command codes used in FICS block mode
 (see "help block_codes" and "help iv_block").
@@ -281,11 +328,11 @@ BLOCK_ variables are message boundary markers.
 BLKCMD_ variables are command codes.
 """
 
-BLOCK_START = chr(21)        # \U
-BLOCK_SEPARATOR = chr(22)    # \V
-BLOCK_END = chr(23)          # \W
-BLOCK_POSE_START = chr(24)   # \X
-BLOCK_POSE_END = chr(25)     # \Y
+BLOCK_START = chr(21)  # \U
+BLOCK_SEPARATOR = chr(22)  # \V
+BLOCK_END = chr(23)  # \W
+BLOCK_POSE_START = chr(24)  # \X
+BLOCK_POSE_END = chr(25)  # \Y
 
 BLKCMD_NULL = 0
 BLKCMD_GAME_MOVE = 1
@@ -343,7 +390,7 @@ BLKCMD_JOURNAL = 60
 BLKCMD_JSAVE = 61
 BLKCMD_KIBITZ = 62
 BLKCMD_LIMITS = 63
-BLKCMD_LINE = 64 # Not on FICS
+BLKCMD_LINE = 64  # Not on FICS
 BLKCMD_LLOGONS = 65
 BLKCMD_LOGONS = 66
 BLKCMD_MAILHELP = 67
@@ -431,7 +478,7 @@ BLKCMD_XKIBITZ = 149
 BLKCMD_XTELL = 150
 BLKCMD_XWHISPER = 151
 BLKCMD_ZNOTIFY = 152
-BLKCMD_REPLY = 153 # Not on FICS
+BLKCMD_REPLY = 153  # Not on FICS
 BLKCMD_SUMMON = 154
 BLKCMD_SEEK = 155
 BLKCMD_UNSEEK = 156
@@ -479,4 +526,4 @@ BLKCMD_ERROR_NOTPLAYING = 518
 BLKCMD_ERROR_NOSEQUENCE = 519
 BLKCMD_ERROR_LENGTH = 520
 
-LIMIT_BLKCMD_ERRORS=500
+LIMIT_BLKCMD_ERRORS = 500
