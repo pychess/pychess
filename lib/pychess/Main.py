@@ -173,11 +173,11 @@ class GladeHandlers:
                          timestamp):
         if target_type == TARGET_TYPE_URI_LIST:
             uris = selection.get_uris()
-            if len(uris) > 1:
-                newGameDialog.loadFilesAndRun(uris)
-            else:
+            if len(uris) == 1 and uris[0].lower().endswith(".pgn"):
                 uri = uris[0]
                 newGameDialog.LoadFileExtension.run(uri)
+            else:
+                newGameDialog.loadFilesAndRun(uris)
 
     # Game Menu
 
