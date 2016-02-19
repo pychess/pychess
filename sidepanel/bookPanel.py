@@ -6,7 +6,7 @@ from threading import Thread
 from pychess.compat import Queue, Full
 from pychess.System import conf, fident, uistuff
 from pychess.Utils import prettyPrintScore
-from pychess.Utils.const import *
+from pychess.Utils.const import HINT, OPENING, SPY, BLACK, NULL_MOVE, ENDGAME, DRAW, WHITEWON, WHITE
 from pychess.Utils.book import getOpenings
 from pychess.Utils.eco import get_eco
 from pychess.Utils.logic import legalMoveCount
@@ -17,18 +17,20 @@ from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
 from pychess.System.idle_add import idle_add
+from math import ceil
 
 __title__ = _("Hints")
 
 __icon__ = addDataPrefix("glade/panel_book.svg")
 
-__desc__ = _("The hint panel will provide computer advice during each stage of the game")
+__desc__ = _(
+    "The hint panel will provide computer advice during each stage of the game")
 
 __about__ = _("Official PyChess panel.")
 
 
-class Advisor (object):
-    def __init__ (self, store, name, mode):
+class Advisor(object):
+    def __init__(self, store, name, mode):
         """ The tree store's columns are:
             (Board, Move, pv)           Indicate the suggested move
             text or barWidth or goodness  Indicate its strength (last 2 are 0 to 1.0)
@@ -47,30 +49,30 @@ class Advisor (object):
     def path(self):
         for i, row in enumerate(self.store):
             if row[4] == self.name:
-                return (i,)
+                return (i, )
 
-    def shownChanged (self, boardview, shown):
+    def shownChanged(self, boardview, shown):
         """ Update the suggestions to match a changed position. """
         pass
 
-    def gamewidget_closed (self, gamewidget):
+    def gamewidget_closed(self, gamewidget):
         pass
 
-    def child_tooltip (self, i):
+    def child_tooltip(self, i):
         """ Return a tooltip (or empty) string for the given child row. """
         return ""
 
-    def row_activated (self, path, model):
+    def row_activated(self, path, model):
         """ Act on a double-clicked child row other than a move suggestion. """
         pass
 
-    def query_tooltip (self, path):
+    def query_tooltip(self, path):
         indices = path.get_indices()
         if not indices[1:]:
             return self.tooltip
         return self.child_tooltip(indices[1])
 
-    def empty_parent (self):
+    def empty_parent(self):
         while True:
             parent = self.store.get_iter(self.path)
             child = self.store.iter_children(parent)
@@ -79,17 +81,19 @@ class Advisor (object):
             self.store.remove(child)
 
     def textOnlyRow(self, text, mode=None):
-        return [(None, None, None), ("", 0, None), 0, False, text, False, mode in (HINT, SPY)]
+        return [(None, None, None),
+                ("", 0, None), 0, False, text, False, mode in (HINT, SPY)]
 
 
 class OpeningAdvisor(Advisor):
-    def __init__ (self, store, tv):
+    def __init__(self, store, tv):
         Advisor.__init__(self, store, _("Opening Book"), OPENING)
-        self.tooltip = _("The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
-#        self.opening_names = []
+        self.tooltip = _(
+            "The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
+        #        self.opening_names = []
         self.tv = tv
 
-    def shownChanged (self, boardview, shown):
+    def shownChanged(self, boardview, shown):
         m = boardview.model
         if m.isPlayingICSGame():
             return
@@ -124,7 +128,8 @@ class OpeningAdvisor(Advisor):
                 eco = "%s - %s %s" % (opening[0], opening[1], opening[2])
 #                self.opening_names.append("%s %s" % (opening[1], opening[2]))
 
-            self.store.append(parent, [(b, Move(move), None), (weight, 1, goodness), 0, False, eco, False, False])
+            self.store.append(parent, [(b, Move(move), None), (
+                weight, 1, goodness), 0, False, eco, False, False])
         tp = Gtk.TreePath(self.path)
         self.tv.expand_row(tp, False)
 
@@ -134,23 +139,26 @@ class OpeningAdvisor(Advisor):
 
 class EngineAdvisor(Advisor):
     # An EngineAdvisor always has self.linesExpected rows reserved for analysis.
-    def __init__ (self, store, engine, mode, tv, boardview):
+    def __init__(self, store, engine, mode, tv, boardview):
         if mode == HINT:
             Advisor.__init__(self, store, _("Analysis by %s") % engine, HINT)
-            self.tooltip = _("%s will try to predict which move is best and which side has the advantage") % engine
+            self.tooltip = _(
+                "%s will try to predict which move is best and which side has the advantage") % engine
         else:
-            Advisor.__init__(self, store, _("Threat analysis by %s") % engine, SPY)
-            self.tooltip = _("%s will identify what threats would exist if it were your opponent's turn to move") % engine
+            Advisor.__init__(self, store, _("Threat analysis by %s") % engine,
+                             SPY)
+            self.tooltip = _(
+                "%s will identify what threats would exist if it were your opponent's turn to move") % engine
         self.engine = engine
         self.tv = tv
         self.active = False
-        self.linesExpected   = 1
+        self.linesExpected = 1
         self.boardview = boardview
 
         self.connection = engine.connect("analyze", self.on_analyze)
         engine.connect("readyForOptions", self.on_ready_for_options)
 
-    def _del (self):
+    def _del(self):
         self.engine.disconnect(self.connection)
 
     def _create_new_expected_lines(self):
@@ -160,7 +168,7 @@ class EngineAdvisor(Advisor):
         self.tv.expand_row(Gtk.TreePath(self.path), False)
         return parent
 
-    def shownChanged (self, boardview, shown):
+    def shownChanged(self, boardview, shown):
         m = boardview.model
         if m.isPlayingICSGame():
             return
@@ -168,12 +176,13 @@ class EngineAdvisor(Advisor):
         if not self.active:
             return
 
-        self.engine.setBoard(boardview.model.getBoardAtPly(shown, boardview.shown_variation_idx))
+        self.engine.setBoard(boardview.model.getBoardAtPly(
+            shown, boardview.shown_variation_idx))
         self._create_new_expected_lines()
 
-    def on_ready_for_options (self, engine):
+    def on_ready_for_options(self, engine):
         engineMax = self.engine.maxAnalysisLines()
-        self.linesExpected   = min(conf.get("multipv", 1), engineMax)
+        self.linesExpected = min(conf.get("multipv", 1), engineMax)
 
         m = self.boardview.model
         if m.isPlayingICSGame():
@@ -182,9 +191,10 @@ class EngineAdvisor(Advisor):
         parent = self._create_new_expected_lines()
 
         # set pvlines, but set it 0 if engine max is only 1
-        self.store.set_value(parent, 2, 0 if engineMax==1 else self.linesExpected)
+        self.store.set_value(parent, 2, 0
+                             if engineMax == 1 else self.linesExpected)
         # set it editable
-        self.store.set_value(parent, 3, engineMax>1)
+        self.store.set_value(parent, 3, engineMax > 1)
         # set start/stop cb visible
         self.store.set_value(parent, 6, True)
         self.active = True
@@ -192,7 +202,7 @@ class EngineAdvisor(Advisor):
         self.shownChanged(self.boardview, self.boardview.shown)
 
     @idle_add
-    def on_analyze (self, engine, analysis):
+    def on_analyze(self, engine, analysis):
         if self.boardview.animating:
             return
 
@@ -207,7 +217,7 @@ class EngineAdvisor(Advisor):
 
         for i, line in enumerate(analysis):
             if line is None:
-                self.store[self.path + (i,)] = self.textOnlyRow("")
+                self.store[self.path + (i, )] = self.textOnlyRow("")
                 continue
 
             board0 = self.engine.board
@@ -219,8 +229,8 @@ class EngineAdvisor(Advisor):
             except ParsingError as e:
                 # ParsingErrors may happen when parsing "old" lines from
                 # analyzing engines, which haven't yet noticed their new tasks
-                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" % \
-                    (' '.join(movstrs),e))
+                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" %
+                          (' '.join(movstrs), e))
                 return
             except:
                 return
@@ -229,24 +239,30 @@ class EngineAdvisor(Advisor):
             if pv:
                 move = pv[0]
 
-            ply0 = board.ply if self.mode == HINT else board.ply+1
+            ply0 = board.ply if self.mode == HINT else board.ply + 1
             counted_pv = []
             for j, pvmove in enumerate(pv):
                 ply = ply0 + j
                 if ply % 2 == 0:
-                    mvcount = "%d." % (ply/2+1)
-                elif j==0:
-                    mvcount = "%d..." % (ply/2+1)
+                    mvcount = "%d." % (ply / 2 + 1)
+                elif j == 0:
+                    mvcount = "%d..." % (ply / 2 + 1)
                 else:
                     mvcount = ""
-                counted_pv.append("%s%s" % (mvcount, toFAN(board, pvmove) if is_FAN else toSAN(board, pvmove, True)))
+                counted_pv.append("%s%s" %
+                                  (mvcount, toFAN(board, pvmove)
+                                   if is_FAN else toSAN(board, pvmove, True)))
                 board = board.move(pvmove)
 
             goodness = (min(max(score, -250), 250) + 250) / 500.0
             if self.engine.board.color == BLACK:
                 score = -score
 
-            self.store[self.path + (i,)] = [(board0, move, pv), (prettyPrintScore(score, depth), 1, goodness), 0, False, " ".join(counted_pv), False, False]
+            self.store[self.path + (i, )] = [
+                (board0, move, pv),
+                (prettyPrintScore(score, depth), 1, goodness), 0, False,
+                " ".join(counted_pv), False, False
+            ]
 
     def start_stop(self, tb):
         if not tb:
@@ -266,7 +282,8 @@ class EngineAdvisor(Advisor):
             parent = self.store.get_iter(self.path)
             if value > self.linesExpected:
                 while self.linesExpected < value:
-                    self.store.append(parent, self.textOnlyRow(_("Calculating...")))
+                    self.store.append(parent,
+                                      self.textOnlyRow(_("Calculating...")))
                     self.linesExpected += 1
             else:
                 while self.linesExpected > value:
@@ -275,36 +292,46 @@ class EngineAdvisor(Advisor):
                         self.store.remove(child)
                     self.linesExpected -= 1
 
-    def row_activated (self, iter, model):
-        if self.mode == HINT and self.store.get_path(iter) != Gtk.TreePath(self.path):
+    def row_activated(self, iter, model):
+        if self.mode == HINT and self.store.get_path(iter) != Gtk.TreePath(
+                self.path):
             moves = self.store[iter][0][2]
             if moves is not None:
                 score = self.store[iter][1][0]
-                model.add_variation(self.engine.board, moves, comment="", score=score)
+                model.add_variation(self.engine.board,
+                                    moves,
+                                    comment="",
+                                    score=score)
 
-        if self.mode == SPY and self.store.get_path(iter) != Gtk.TreePath(self.path):
+        if self.mode == SPY and self.store.get_path(iter) != Gtk.TreePath(
+                self.path):
             moves = self.store[iter][0][2]
             if moves is not None:
                 score = self.store[iter][1][0]
                 board = self.engine.board.board
                 # SPY analyzer has inverted color boards
                 # we need to chage it to get the board in gamemodel variations board list later
-                board.setColor(1-board.color)
+                board.setColor(1 - board.color)
                 king = board.kings[board.color]
                 null_move = Move(newMove(king, king, NULL_MOVE))
-                model.add_variation(self.engine.board, [null_move] + moves, comment="", score=score)
+                model.add_variation(self.engine.board,
+                                    [null_move] + moves,
+                                    comment="",
+                                    score=score)
 
-    def child_tooltip (self, i):
+    def child_tooltip(self, i):
         if self.active:
             if i < self.linesExpected:
-                return _("Engine scores are in units of pawns, from White's point of view. Double clicking on analysis lines you can insert them into Annotation panel as variations.")
+                return _(
+                    "Engine scores are in units of pawns, from White's point of view. Double clicking on analysis lines you can insert them into Annotation panel as variations.")
             else:
-                return _("Adding suggestions can help you find ideas, but slows down the computer's analysis.")
+                return _(
+                    "Adding suggestions can help you find ideas, but slows down the computer's analysis.")
         return ""
 
 
 class EndgameAdvisor(Advisor, Thread):
-    def __init__ (self, store, tv, boardview):
+    def __init__(self, store, tv, boardview):
         Thread.__init__(self, name=fident(self.run))
         self.daemon = True
         # FIXME 'Advisor.name = ...' in Advisor.__init__ overwrites Thread.name
@@ -312,16 +339,19 @@ class EndgameAdvisor(Advisor, Thread):
         self.egtb = EndgameTable()
         self.tv = tv
         self.boardview = boardview
-        self.tooltip = _("The endgame table will show exact analysis when there are few pieces on the board.")
+        self.tooltip = _(
+            "The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
 
         self.egtb.connect("scored", self.on_scored)
         self.queue = Queue()
         self.start()
 
-    class StopNow (Exception): pass
+    class StopNow(Exception):
 
-    def run (self):
+        pass
+
+    def run(self):
         while True:
             v = self.queue.get()
             if v == self.StopNow:
@@ -330,7 +360,7 @@ class EndgameAdvisor(Advisor, Thread):
                 self.egtb.scoreAllMoves(v)
             self.queue.task_done()
 
-    def shownChanged (self, boardview, shown):
+    def shownChanged(self, boardview, shown):
         m = boardview.model
         if m.isPlayingICSGame():
             return
@@ -339,7 +369,7 @@ class EndgameAdvisor(Advisor, Thread):
         self.board = m.getBoardAtPly(shown, boardview.shown_variation_idx)
         self.queue.put(self.board.board)
 
-    def gamewidget_closed (self, gamewidget):
+    def gamewidget_closed(self, gamewidget):
         try:
             self.queue.put_nowait(self.StopNow)
         except Full:
@@ -365,11 +395,13 @@ class EndgameAdvisor(Advisor, Thread):
             else:
                 result = (_("Win"), 1, 1.0)
                 details = _("Mate in %d") % depth
-            self.store.append(self.parent, [(self.board, move, None), result, 0, False, details, False, False])
+            self.store.append(self.parent, [(self.board, move, None), result,
+                                            0, False, details, False, False])
         self.tv.expand_row(Gtk.TreePath(self.path), False)
 
-class Sidepanel (object):
-    def load (self, gmwidg):
+
+class Sidepanel(object):
+    def load(self, gmwidg):
         self.boardcontrol = gmwidg.board
         self.boardview = self.boardcontrol.view
 
@@ -378,10 +410,12 @@ class Sidepanel (object):
         self.tv = widgets.get_object("treeview")
         self.sw = widgets.get_object("scrolledwindow")
         self.sw.unparent()
-        self.store = Gtk.TreeStore(GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT, int, bool, str, bool, bool)
+        self.store = Gtk.TreeStore(GObject.TYPE_PYOBJECT,
+                                   GObject.TYPE_PYOBJECT, int, bool, str, bool,
+                                   bool)
         self.tv.set_model(self.store)
 
-        ### move suggested
+        # ## move suggested
         moveRenderer = Gtk.CellRendererText()
         moveRenderer.set_property("xalign", 1.0)
         moveRenderer.set_property("yalign", 0)
@@ -396,14 +430,18 @@ class Sidepanel (object):
                     cell.set_property("text", toFAN(board, move))
                 else:
                     cell.set_property("text", toSAN(board, move, True))
+
         c0.set_cell_data_func(moveRenderer, getMoveText)
 
-        ### strength of the move
+        # ## strength of the move
         c1 = Gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)
 
-        ### multipv (number of analysis lines)
+        # ## multipv (number of analysis lines)
         multipvRenderer = Gtk.CellRendererSpin()
-        adjustment = Gtk.Adjustment(value=conf.get("multipv", 1), lower=1, upper=9, step_incr=1)
+        adjustment = Gtk.Adjustment(value=conf.get("multipv", 1),
+                                    lower=1,
+                                    upper=9,
+                                    step_incr=1)
         multipvRenderer.set_property("adjustment", adjustment)
         multipvRenderer.set_property("editable", True)
         multipvRenderer.set_property("width_chars", 1)
@@ -416,15 +454,17 @@ class Sidepanel (object):
             else:
                 cell.set_property("text", str(store[iter][2]))
                 cell.set_property('visible', True)
+
         c2.set_cell_data_func(multipvRenderer, spin_visible)
 
         def multipv_edited(renderer, path, text):
             iter = self.store.get_iter(path)
             self.store.set_value(iter, 2, int(text))
             self.advisors[int(path[0])].multipv_edited(int(text))
+
         multipvRenderer.connect('edited', multipv_edited)
 
-        ### start/stop button for analysis engines
+        # ## start/stop button for analysis engines
         toggleRenderer = CellRendererPixbufXt()
         toggleRenderer.set_property("stock-id", "gtk-add")
         c4 = Gtk.TreeViewColumn("StartStop", toggleRenderer)
@@ -439,18 +479,20 @@ class Sidepanel (object):
                 cell.set_property("stock-id", "gtk-add")
             else:
                 cell.set_property("stock-id", "gtk-remove")
+
         c4.set_cell_data_func(toggleRenderer, cb_visible)
 
         def toggled_cb(cell, path):
             self.store[path][5] = not self.store[path][5]
             self.advisors[int(path[0])].start_stop(self.store[path][5])
+
         toggleRenderer.connect('clicked', toggled_cb)
 
         self.tv.append_column(c4)
         self.tv.append_column(c0)
         self.tv.append_column(c1)
         self.tv.append_column(c2)
-        ### header text, or analysis line
+        # ## header text, or analysis line
         uistuff.appendAutowrapColumn(self.tv, "Details", text=4)
 
         self.boardview.connect("shownChanged", self.shownChanged)
@@ -487,6 +529,7 @@ class Sidepanel (object):
                         parent = advisor.empty_parent()
                         self.store.remove(parent)
                         self.advisors.remove(advisor)
+
         conf.notify_add("opening_check", on_opening_check)
 
         def on_opening_file_entry_changed(none):
@@ -495,7 +538,9 @@ class Sidepanel (object):
             if os.path.isfile(path):
                 for advisor in self.advisors:
                     if advisor.mode == OPENING:
-                        advisor.shownChanged(self.boardview, self.boardview.shown)
+                        advisor.shownChanged(self.boardview,
+                                             self.boardview.shown)
+
         conf.notify_add("opening_file_entry", on_opening_file_entry_changed)
 
         def on_endgame_check(none):
@@ -511,16 +556,18 @@ class Sidepanel (object):
                         parent = advisor.empty_parent()
                         self.store.remove(parent)
                         self.advisors.remove(advisor)
+
         conf.notify_add("endgame_check", on_endgame_check)
 
         return self.sw
 
-
     def on_analyzer_added(self, gamemodel, analyzer, analyzer_type):
         if analyzer_type == HINT:
-            self.advisors.append(EngineAdvisor(self.store, analyzer, HINT, self.tv, self.boardview))
+            self.advisors.append(EngineAdvisor(self.store, analyzer, HINT,
+                                               self.tv, self.boardview))
         if analyzer_type == SPY:
-            self.advisors.append(EngineAdvisor(self.store, analyzer, SPY, self.tv, self.boardview))
+            self.advisors.append(EngineAdvisor(self.store, analyzer, SPY,
+                                               self.tv, self.boardview))
 
     def on_analyzer_removed(self, gamemodel, analyzer, analyzer_type):
         for advisor in self.advisors:
@@ -545,14 +592,16 @@ class Sidepanel (object):
                 advisor.shownChanged(self.boardview, self.boardview.shown)
 
     @idle_add
-    def shownChanged (self, boardview, shown):
+    def shownChanged(self, boardview, shown):
         boardview.bluearrow = None
 
-        if legalMoveCount(boardview.model.getBoardAtPly(shown, boardview.shown_variation_idx)) == 0:
+        if legalMoveCount(boardview.model.getBoardAtPly(
+                shown, boardview.shown_variation_idx)) == 0:
             if self.sw.get_child() == self.tv:
                 self.sw.remove(self.tv)
-                label = Gtk.Label(_("In this position,\nthere is no legal move."))
-                label.set_property("yalign",0.1)
+                label = Gtk.Label(_(
+                    "In this position,\nthere is no legal move."))
+                label.set_property("yalign", 0.1)
                 self.sw.add_with_viewport(label)
                 self.sw.get_child().set_shadow_type(Gtk.ShadowType.NONE)
                 self.sw.show_all()
@@ -567,7 +616,7 @@ class Sidepanel (object):
             self.sw.remove(self.sw.get_child())
             self.sw.add(self.tv)
 
-    def selection_changed (self, widget, *args):
+    def selection_changed(self, widget, *args):
         iter = self.tv.get_selection().get_selected()[1]
         if iter:
             board, move, pv = self.store[iter][0]
@@ -576,7 +625,7 @@ class Sidepanel (object):
                 return
         self.boardview.bluearrow = None
 
-    def row_activated (self, widget, *args):
+    def row_activated(self, widget, *args):
         iter = self.tv.get_selection().get_selected()[1]
         if iter is None:
             return
@@ -589,7 +638,7 @@ class Sidepanel (object):
 
     def query_tooltip(self, treeview, x, y, keyboard_mode, tooltip):
         # First, find out where the pointer is:
-        path_col_x_y = treeview.get_path_at_pos (x, y)
+        path_col_x_y = treeview.get_path_at_pos(x, y)
 
         # If we're not pointed at a row, then return FALSE to say
         # "don't show a tip".
@@ -614,8 +663,8 @@ class Sidepanel (object):
                 label.props.max_width_chars = 60
                 label.set_text(text)
                 tooltip.set_custom(label)
-                #tooltip.set_markup(text)
-                return True # Show the tip.
+                # tooltip.set_markup(text)
+                return True  # Show the tip.
 
         return False
 
@@ -624,9 +673,12 @@ class Sidepanel (object):
 ################################################################################
 
 width, height = 80, 23
-class StrengthCellRenderer (Gtk.CellRenderer):
+
+
+class StrengthCellRenderer(Gtk.CellRenderer):
     __gproperties__ = {
-        "data": (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.PARAM_READWRITE),
+        "data":
+        (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.PARAM_READWRITE),
     }
 
     def __init__(self):
@@ -640,7 +692,8 @@ class StrengthCellRenderer (Gtk.CellRenderer):
         return getattr(self, pspec.name)
 
     def do_render(self, context, widget, background_area, cell_area, flags):
-        if not self.data: return
+        if not self.data:
+            return
         text, widthfrac, goodness = self.data
         if widthfrac:
             paintGraph(context, widthfrac, stoplightColor(goodness), cell_area)
@@ -648,17 +701,18 @@ class StrengthCellRenderer (Gtk.CellRenderer):
             layout = PangoCairo.create_layout(context)
             layout.set_text(text, -1)
 
-            fd = Pango.font_description_from_string ("Sans 10")
+            fd = Pango.font_description_from_string("Sans 10")
             layout.set_font_description(fd)
 
             w, h = layout.get_pixel_size()
-            context.move_to (cell_area.x, cell_area.y)
-            context.rel_move_to( 70 - w, (height - h) / 2)
+            context.move_to(cell_area.x, cell_area.y)
+            context.rel_move_to(70 - w, (height - h) / 2)
 
             PangoCairo.show_layout(context, layout)
 
     def do_get_size(self, widget, cell_area=None):
         return (0, 0, width, height)
+
 
 GObject.type_register(StrengthCellRenderer)
 
@@ -666,28 +720,29 @@ GObject.type_register(StrengthCellRenderer)
 # StrengthCellRenderer functions                                               #
 ################################################################################
 
-from math import ceil
 
-def stoplightColor (x):
-    interp = lambda y0, yh, y1 : y0 + (y1+4*yh-3*y0) * x  + (-4*yh+2*y0) * x*x
+def stoplightColor(x):
+    def interp(y0, yh, y1):
+        return y0 + (y1 + 4 * yh - 3 * y0) * x + (-4 * yh + 2 * y0) * x * x
     r = interp(239, 252, 138) / 255
-    g = interp( 41, 233, 226) / 255
-    b = interp( 41,  79,  52) / 255
+    g = interp(41, 233, 226) / 255
+    b = interp(41, 79, 52) / 255
     return r, g, b
 
-def paintGraph (cairo, widthfrac, rgb, rect):
-    x,y,w0,h = rect.x, rect.y, rect.width, rect.height
+
+def paintGraph(cairo, widthfrac, rgb, rect):
+    x, y, w0, h = rect.x, rect.y, rect.width, rect.height
     w = ceil(widthfrac * w0)
 
     cairo.save()
-    cairo.rectangle(x,y,w,h)
+    cairo.rectangle(x, y, w, h)
     cairo.clip()
-    cairo.move_to(x+10, y)
-    cairo.rel_line_to(w-20, 0)
+    cairo.move_to(x + 10, y)
+    cairo.rel_line_to(w - 20, 0)
     cairo.rel_curve_to(10, 0, 10, 0, 10, 10)
     cairo.rel_line_to(0, 3)
     cairo.rel_curve_to(0, 10, 0, 10, -10, 10)
-    cairo.rel_line_to(-w+20, 0)
+    cairo.rel_line_to(-w + 20, 0)
     cairo.rel_curve_to(-10, 0, -10, 0, -10, -10)
     cairo.rel_line_to(0, -3)
     cairo.rel_curve_to(0, -10, 0, -10, 10, -10)
@@ -695,36 +750,39 @@ def paintGraph (cairo, widthfrac, rgb, rect):
     cairo.fill()
     cairo.restore()
 
+
 # cell renderer for start-stop putton
 class CellRendererPixbufXt(Gtk.CellRendererPixbuf):
-    __gproperties__ = { 'active-state' :
-                        (GObject.TYPE_STRING, 'pixmap/active widget state',
+    __gproperties__ = {'active-state':
+                       (GObject.TYPE_STRING, 'pixmap/active widget state',
                         'stock-icon name representing active widget state',
-                        None, GObject.PARAM_READWRITE) }
-    __gsignals__    = { 'clicked' :
-                        (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING,)) , }
+                        None, GObject.PARAM_READWRITE)}
+    __gsignals__ = {'clicked': (GObject.SignalFlags.RUN_LAST, None,
+                                (GObject.TYPE_STRING, )), }
 
-    def __init__( self ):
-        GObject.GObject.__init__( self )
-        self.set_property( 'mode', Gtk.CellRendererMode.ACTIVATABLE )
+    def __init__(self):
+        GObject.GObject.__init__(self)
+        self.set_property('mode', Gtk.CellRendererMode.ACTIVATABLE)
 
-    def do_get_property( self, property ):
+    def do_get_property(self, property):
         if property.name == 'active-state':
             return self.active_state
         else:
             raise AttributeError('unknown property %s' % property.name)
 
-    def do_set_property( self, property, value ):
+    def do_set_property(self, property, value):
         if property.name == 'active-state':
             self.active_state = value
         else:
             raise AttributeError('unknown property %s' % property.name)
 
-    def do_activate( self, event, widget, path,  background_area, cell_area, flags ):
+    def do_activate(self, event, widget, path, background_area, cell_area,
+                    flags):
         if event.type == Gdk.EventType.BUTTON_PRESS:
             self.emit('clicked', path)
 
-    #def do_clicked(self, path):
-        #print "do_clicked", path
+    # def do_clicked(self, path):
+    # print "do_clicked", path
+
 
 GObject.type_register(CellRendererPixbufXt)

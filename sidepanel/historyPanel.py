@@ -1,28 +1,33 @@
-from gi.repository import Gtk, GObject
-from gi.repository import Gdk
+from gi.repository import Gtk
 
 from pychess.System import conf
 from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Move import toSAN, toFAN
 
-
 __title__ = _("Move History")
 __active__ = True
 __icon__ = addDataPrefix("glade/panel_moves.svg")
-__desc__ = _("The moves sheet keeps track of the players' moves and lets you navigate through the game history")
+__desc__ = _(
+    "The moves sheet keeps track of the players' moves and lets you navigate through the game history")
+
 
 class Switch:
-    def __init__(self): self.on = False
-    def __enter__(self): self.on = True
-    def __exit__(self, *a): self.on = False
+    def __init__(self):
+        self.on = False
+
+    def __enter__(self):
+        self.on = True
+
+    def __exit__(self, *a):
+        self.on = False
+
 
 class Sidepanel:
-
-    def __init__ (self):
+    def __init__(self):
         self.frozen = Switch()
 
-    def load (self, gmwidg):
+    def load(self, gmwidg):
 
         widgets = Gtk.Builder()
         widgets.add_from_file(addDataPrefix("sidepanel/history.glade"))
@@ -42,10 +47,10 @@ class Sidepanel:
         self.left = widgets.get_object("treeview2")
         self.right = widgets.get_object("treeview3")
 
-        def fixList (list, xalign=0):
+        def fixList(list, xalign=0):
             list.set_model(Gtk.ListStore(str))
             renderer = Gtk.CellRendererText()
-            renderer.set_property("xalign",xalign)
+            renderer.set_property("xalign", xalign)
             list.append_column(Gtk.TreeViewColumn(None, renderer, text=0))
             list.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
 
@@ -60,102 +65,114 @@ class Sidepanel:
 
         scrollwin = widgets.get_object("panel")
 
-        def changed (vadjust):
+        def changed(vadjust):
             if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
-                vadjust.set_value(vadjust.get_upper()-vadjust.get_page_size())
+                vadjust.set_value(vadjust.get_upper() - vadjust.get_page_size(
+                ))
                 vadjust.need_scroll = True
+
         scrollwin.get_vadjustment().connect("changed", changed)
 
-        def value_changed (vadjust):
-            vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() - \
-                        vadjust.get_upper()) < vadjust.get_step_increment()
+        def value_changed(vadjust):
+            vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() -
+                                      vadjust.get_upper()) < vadjust.get_step_increment()
+
         scrollwin.get_vadjustment().connect("value-changed", value_changed)
 
         # Connect to preferences
 
-        def figuresInNotationCallback (none):
+        def figuresInNotationCallback(none):
             game = self.boardview.model
             for board, move in zip(game.variations[0], game.moves):
                 if conf.get("figuresInNotation", False):
                     notat = toFAN(board, move)
-                else: notat = toSAN(board, move, True)
-                row, col, other = self._ply_to_row_col_other(board.ply+1)
-                iter = col.get_model().get_iter((row,))
+                else:
+                    notat = toSAN(board, move, True)
+                row, col, other = self._ply_to_row_col_other(board.ply + 1)
+                iter = col.get_model().get_iter((row, ))
                 col.get_model().set(iter, 0, notat)
+
         conf.notify_add("figuresInNotation", figuresInNotationCallback)
 
         # Return
 
         return __widget__
 
-    def cursorChanged (self, widget, tree, col):
-        if self.frozen.on: return
+    def cursorChanged(self, widget, tree, col):
+        if self.frozen.on:
+            return
 
         path, focus_column = tree.get_cursor()
         indices = path.get_indices()
         row = indices[0]
 
         if self.boardview.model.lowply & 1:
-            ply = row*2 + col
+            ply = row * 2 + col
         else:
-            ply = row*2 + col +1
+            ply = row * 2 + col + 1
 
         board = self.boardview.model.boards[ply]
         self.boardview.setShownBoard(board)
 
     @idle_add
-    def moves_undone (self, game, moves):
+    def moves_undone(self, game, moves):
         with self.frozen:
             for i in reversed(range(moves)):
                 try:
-                    row, view, other = self._ply_to_row_col_other(game.variations[0][-1].ply+moves-i)
+                    row, view, other = self._ply_to_row_col_other(
+                        game.variations[0][-1].ply + moves - i)
                     model = view.get_model()
-                    model.remove(model.get_iter((row,)))
+                    model.remove(model.get_iter((row, )))
                     if view == self.left:
                         model = self.numbers.get_model()
-                        model.remove(model.get_iter((row,)))
+                        model.remove(model.get_iter((row, )))
                 except ValueError:
                     continue
 
     @idle_add
-    def game_changed (self, game, ply):
+    def game_changed(self, game, ply):
         len_ = len(self.left.get_model()) + len(self.right.get_model()) + 1
         if len(self.left.get_model()) and not self.left.get_model()[0][0]:
             len_ -= 1
-        for i in range(len_+game.lowply, ply+1):
+        for i in range(len_ + game.lowply, ply + 1):
             self.__addMove(game, i)
-        self.shownChanged (self.boardview, ply)
+        self.shownChanged(self.boardview, ply)
 
     def game_started(self, game):
         self.game_changed(game, game.ply)
 
     def __addMove(self, game, ply):
-        #print "Am I doing anything?"
+        # print "Am I doing anything?"
         row, view, other = self._ply_to_row_col_other(ply)
 
         if conf.get("figuresInNotation", False):
-            notat = toFAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1))
-        else: notat = toSAN(game.getBoardAtPly(ply-1), game.getMoveAtPly(ply-1),
+            notat = toFAN(
+                game.getBoardAtPly(ply - 1), game.getMoveAtPly(ply - 1))
+        else:
+            notat = toSAN(
+                game.getBoardAtPly(ply - 1),
+                game.getMoveAtPly(ply - 1),
                 localRepr=True)
 
         # Test if the row is 'filled'
         if len(view.get_model()) == len(self.numbers.get_model()):
-            num = str((ply+1)//2)+"."
+            num = str((ply + 1) // 2) + "."
             self.numbers.get_model().append([num])
 
         # Test if the move is black first move. This will be the case if the
         # game was loaded from a fen/epd starting at black
-        if view == self.right and len(view.get_model()) == len(other.get_model()):
+        if view == self.right and len(view.get_model()) == len(other.get_model(
+        )):
             self.left.get_model().append([""])
 
         view.get_model().append([notat])
 
     @idle_add
-    def shownChanged (self, boardview, shown):
+    def shownChanged(self, boardview, shown):
         if not boardview.shownIsMainLine():
             return
         if shown <= boardview.model.lowply:
-            #print "Or is it me?"
+            # print "Or is it me?"
             self.left.get_selection().unselect_all()
             self.right.get_selection().unselect_all()
             return
@@ -166,15 +183,16 @@ class Sidepanel:
             other.get_selection().unselect_all()
             try:
                 col.get_selection().select_iter(col.get_model().get_iter(row))
-                col.scroll_to_cell((row,), None, False)
+                col.scroll_to_cell((row, ), None, False)
             except ValueError:
                 pass
                 # deleted variations by moves_undoing
 
-    def _ply_to_row_col_other (self, ply):
+    def _ply_to_row_col_other(self, ply):
         col = ply & 1 and self.left or self.right
         other = ply & 1 and self.right or self.left
         if self.boardview.model.lowply & 1:
-            row = (ply-self.boardview.model.lowply) // 2
-        else: row = (ply-self.boardview.model.lowply-1) // 2
+            row = (ply - self.boardview.model.lowply) // 2
+        else:
+            row = (ply - self.boardview.model.lowply - 1) // 2
         return row, col, other

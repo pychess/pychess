@@ -1,35 +1,39 @@
 # -*- coding: UTF-8 -*-
 
-from gi.repository import Gtk, Pango
+from gi.repository import Gtk
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.System.idle_add import idle_add
-from pychess.Utils.const import *
+from pychess.Utils.const import reprCord
 from pychess.Utils.repr import reprColor, reprPiece
-from pychess.Utils.lutils.lsort import staticExchangeEvaluate
-from pychess.Utils.lutils.lmove import FLAG, TCORD, FCORD, toSAN
-from pychess.Utils.lutils.lmovegen import genCaptures
+from pychess.Utils.lutils.lmove import TCORD
 from pychess.Utils.lutils.leval import evalMaterial
-from pychess.Utils.lutils import ldata
 from pychess.Utils.lutils import strateval
 
 __title__ = _("Comments")
 
 __icon__ = addDataPrefix("glade/panel_comments.svg")
 
-__desc__ = _("The comments panel will try to analyze and explain the moves played")
+__desc__ = _(
+    "The comments panel will try to analyze and explain the moves played")
+
 
 class Switch:
-    def __init__(self): self.on = False
-    def __enter__(self): self.on = True
-    def __exit__(self, *a): self.on = False
+    def __init__(self):
+        self.on = False
+
+    def __enter__(self):
+        self.on = True
+
+    def __exit__(self, *a):
+        self.on = False
+
 
 class Sidepanel:
-
-    def __init__ (self):
+    def __init__(self):
         self.givenTips = {}
 
-    def load (self, gmwidg):
+    def load(self, gmwidg):
 
         self.gamemodel = gmwidg.board.view.model
         self.gmhandlers = [
@@ -58,7 +62,8 @@ class Sidepanel:
         return scrollwin
 
     def cursorChanged(self, tv):
-        if self.frozen.on: return
+        if self.frozen.on:
+            return
         path, focus_column = tv.get_cursor()
         indices = path.get_indices()
         if indices:
@@ -66,7 +71,7 @@ class Sidepanel:
             board = self.gamemodel.boards[row]
             self.boardview.setShownBoard(board)
 
-    def shownChanged (self, boardview, shown):
+    def shownChanged(self, boardview, shown):
         if not boardview.shownIsMainLine():
             return
         row = shown - self.gamemodel.lowply
@@ -81,21 +86,21 @@ class Sidepanel:
                 # deleted variations by moves_undoing
 
     @idle_add
-    def moves_undone (self, game, moves):
+    def moves_undone(self, game, moves):
         model = self.tv.get_model()
         for i in range(moves):
-            model.remove(model.get_iter( (len(model)-1,) ))
+            model.remove(model.get_iter((len(model) - 1, )))
 
-    def game_started (self, model):
+    def game_started(self, model):
         self.game_changed(model, model.ply)
 
     @idle_add
-    def game_changed (self, model, ply):
-        for i in range(len(self.store)+model.lowply, ply+1):
+    def game_changed(self, model, ply):
+        for i in range(len(self.store) + model.lowply, ply + 1):
             self.addComment(model, self.__chooseComment(model, i))
-        self.shownChanged (self.boardview, ply)
+        self.shownChanged(self.boardview, ply)
 
-    def addComment (self, model, comment):
+    def addComment(self, model, comment):
         self.store.append([comment])
 
         # If latest ply is shown, we select the new latest
@@ -105,11 +110,11 @@ class Sidepanel:
             indices = path.get_indices()
             if indices:
                 row = indices[0]
-                if row < self.boardview.shown-1:
+                if row < self.boardview.shown - 1:
                     return
 
         if self.boardview.shown >= model.ply:
-            iter = self.store.get_iter(len(self.store)-1)
+            iter = self.store.get_iter(len(self.store) - 1)
             with self.frozen:
                 self.tv.get_selection().select_iter(iter)
 
@@ -122,9 +127,9 @@ class Sidepanel:
         # Set up variables
         ########################################################################
 
-        color = model.getBoardAtPly(ply-1).board.color
-        s, phase = evalMaterial (model.getBoardAtPly(ply).board,
-                                 model.getBoardAtPly(ply-1).color)
+        color = model.getBoardAtPly(ply - 1).board.color
+        s, phase = evalMaterial(
+            model.getBoardAtPly(ply).board, model.getBoardAtPly(ply - 1).color)
 
         #   * Final: Will be shown alone: "mates", "draws"
         #   * Prefix: Will always be shown: "castles", "promotes"
@@ -138,22 +143,23 @@ class Sidepanel:
         # Call strategic evaluation functions
         ########################################################################
 
-        def getMessages (prefix):
+        def getMessages(prefix):
             messages = []
             for functionName in dir(strateval):
-                if not functionName.startswith(prefix+"_"): continue
+                if not functionName.startswith(prefix + "_"):
+                    continue
                 function = getattr(strateval, functionName)
-                messages.extend(function (model, ply, phase))
+                messages.extend(function(model, ply, phase))
             return messages
 
-        #move = model.moves[-1].move
-        #print "----- %d - %s -----" % (model.ply/2, toSAN(oldboard, move))
+        # move = model.moves[-1].move
+        # print "----- %d - %s -----" % (model.ply/2, toSAN(oldboard, move))
 
         # ----------------------------------------------------------------------
         # Final
         # ----------------------------------------------------------------------
 
-        messages = getMessages ("final")
+        messages = getMessages("final")
         if messages:
             return "%s %s" % (reprColor[color], messages[0])
 
@@ -165,7 +171,7 @@ class Sidepanel:
         # Attacks
         # ----------------------------------------------------------------------
 
-        messages = getMessages ("attack")
+        messages = getMessages("attack")
         for message in messages:
             strings.append("%s %s" % (reprColor[color], message))
 
@@ -173,20 +179,21 @@ class Sidepanel:
         # Check for prefixes
         # ----------------------------------------------------------------------
 
-        messages = getMessages ("prefix")
+        messages = getMessages("prefix")
         if messages:
             prefix = messages[0]
-        else: prefix = ""
+        else:
+            prefix = ""
 
         # ----------------------------------------------------------------------
         # Check for special move stuff. All of which accept prefixes
         # ----------------------------------------------------------------------
 
-        for message in getMessages("offencive_moves") \
-                       + getMessages("defencive_moves"):
+        for message in getMessages("offencive_moves") + getMessages("defencive_moves"):
             if prefix:
-                strings.append("%s %s %s %s" %
-                              (reprColor[color], prefix, _("and")+"\n", message))
+                strings.append(
+                    "%s %s %s %s" %
+                    (reprColor[color], prefix, _("and") + "\n", message))
                 prefix = ""
             else:
                 strings.append("%s %s" % (reprColor[color], message))
@@ -197,13 +204,14 @@ class Sidepanel:
 
         # We only add simples if there hasn't been too much stuff to say
         if not strings:
-            messages = getMessages ("simple")
+            messages = getMessages("simple")
             if messages:
                 messages.sort(reverse=True)
                 score, message = messages[0]
                 if prefix:
-                    strings.append("%s %s %s %s" %
-                                  (reprColor[color], prefix, _("and")+"\n", message))
+                    strings.append(
+                        "%s %s %s %s" %
+                        (reprColor[color], prefix, _("and") + "\n", message))
                     prefix = ""
 
         # ----------------------------------------------------------------------
@@ -235,7 +243,7 @@ class Sidepanel:
         for (score, tip) in tips:
             if tip in self.givenTips:
                 oldscore, oldply = self.givenTips[tip]
-                if score < oldscore*1.3 or model.ply < oldply+10:
+                if score < oldscore * 1.3 or model.ply < oldply + 10:
                     continue
 
             self.givenTips[tip] = (score, model.ply)
@@ -247,9 +255,12 @@ class Sidepanel:
         # ----------------------------------------------------------------------
 
         if not strings:
-            tcord = TCORD(model.getMoveAtPly(ply-1).move)
+            tcord = TCORD(model.getMoveAtPly(ply - 1).move)
             piece = model.getBoardAtPly(ply).board.arBoard[tcord]
-            strings.append( _("%(color)s moves a %(piece)s to %(cord)s") % {
-                'color': reprColor[color], 'piece': reprPiece[piece], 'cord': reprCord[tcord]})
+            strings.append(_("%(color)s moves a %(piece)s to %(cord)s") % {
+                'color': reprColor[color],
+                'piece': reprPiece[piece],
+                'cord': reprCord[tcord]
+            })
 
         return ";\n".join(strings)
