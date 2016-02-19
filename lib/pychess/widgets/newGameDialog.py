@@ -913,3 +913,15 @@ def createRematch(gamemodel):
                        gain), repr(wp))
 
     ionest.generalStart(newgamemodel, player0tup, player1tup)
+
+
+def loadFilesAndRun(uris):
+    for uri in uris:
+        loader = ionest.enddir[uri[uri.rfind(".") + 1:]]
+        timemodel = TimeModel(0, 0)
+        gamemodel = GameModel(timemodel)
+        white_name = _("White")
+        black_name = _("Black")
+        p0 = (LOCAL, Human, (WHITE, white_name), white_name)
+        p1 = (LOCAL, Human, (BLACK, black_name), black_name)
+        ionest.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1))

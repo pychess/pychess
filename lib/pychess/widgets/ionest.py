@@ -126,15 +126,15 @@ enddir = {}
 saveformats = None
 exportformats = None
 
+savers = (chessalpha2, epd, fen, pgn)
+for saver in savers:
+    enddir[saver.__ending__] = saver
+
 
 def getOpenAndSaveDialogs():
     global opendialog, savedialog, enddir, savecombo, savers, saveformats, exportformats
 
     if not opendialog:
-        savers = (chessalpha2, epd, fen, pgn)
-        for saver in savers:
-            enddir[saver.__ending__] = saver
-
         opendialog = Gtk.FileChooserDialog(
             _("Open Game"), None, Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,

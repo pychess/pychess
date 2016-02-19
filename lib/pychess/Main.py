@@ -54,6 +54,11 @@ gameDic = {}
 
 recentManager = Gtk.RecentManager.get_default()
 
+TARGET_TYPE_URI_LIST = 0xbadbeef
+DRAG_ACTION = Gdk.DragAction.COPY
+DRAG_RESTRICT = Gtk.TargetFlags.OTHER_APP
+DND_LIST = [Gtk.TargetEntry.new("text/uri-list", DRAG_RESTRICT, TARGET_TYPE_URI_LIST)]
+
 
 class GladeHandlers:
     def on_window_key_press(window, event):
@@ -164,15 +169,15 @@ class GladeHandlers:
 
     #          Drag 'n' Drop          #
 
-    def on_drag_received(self, wi, context, x, y, selection, target_type,
+    def on_drag_received(self, widget, context, x, y, selection, target_type,
                          timestamp):
-        uri = selection.data.strip()
-        uris = uri.split()
-        if len(uris) > 1:
-            log.warning("%d files were dropped. Only loading the first" %
-                        len(uris))
-        uri = uris[0]
-        newGameDialog.LoadFileExtension.run(uri)
+        if target_type == TARGET_TYPE_URI_LIST:
+            uris = selection.get_uris()
+            if len(uris) > 1:
+                newGameDialog.loadFilesAndRun(uris)
+            else:
+                uri = uris[0]
+                newGameDialog.LoadFileExtension.run(uri)
 
     # Game Menu
 
@@ -314,11 +319,6 @@ class GladeHandlers:
         tipOfTheDay.TipOfTheDay.show()
 
 
-dnd_list = [('application/x-chess-pgn', 0, 0xbadbeef),
-            ('application/da-chess-pgn', 0, 0xbadbeef),
-            ('text/plain', 0, 0xbadbeef)]
-
-
 class PyChess:
     def __init__(self, log_viewer, chess_file):
         self.git_rev = ""
@@ -368,16 +368,11 @@ class PyChess:
         widgets["window1"].show()
         widgets["Background"].show_all()
 
-        # flags = Gtk.DestDefaults.MOTION | Gtk.DestDefaults.HIGHLIGHT | Gtk.DestDefaults.DROP
         # To get drag in the whole window, we add it to the menu and the
         # background. If it can be gotten to work, the drag_dest_set_proxy
         # method is very interesting.
-        # widgets["menubar1"].drag_dest_set(flags, dnd_list, Gdk.DragAction.COPY)
-        # widgets["Background"].drag_dest_set(flags, dnd_list, Gdk.DragAction.COPY)
-        # TODO: http://code.google.com/p/pychess/issues/detail?id=737
-        # The following two should really be set in the glade file
-        # widgets["menubar1"].set_events(widgets["menubar1"].get_events() | Gdk.DRAG_STATUS)
-        # widgets["Background"].set_events(widgets["Background"].get_events() | Gdk.DRAG_STATUS)
+        widgets["menubar1"].drag_dest_set(Gtk.DestDefaults.ALL, DND_LIST, DRAG_ACTION)
+        widgets["Background"].drag_dest_set(Gtk.DestDefaults.ALL, DND_LIST, DRAG_ACTION)
 
         # Init 'minor' dialogs
 
