@@ -584,48 +584,59 @@ class PanelTab:
 
 
 class ThemeTab:
+    """ :Description: Allows the setting of various user specific chess
+        sets and board colours
+    """
     def __init__(self, widgets):
 
         #################
         # Board Colours
         #################
 
-        def on_colour_set_light(color_btn):
+        def onColourSetLight(_):
+            """ :Description: Sets the light squares of the chess board
+                to the value selected in the colour picker
+            """
             conf.set('lightcolour',
                      widgets['light_cbtn'].get_color().to_string())
 
-        widgets["light_cbtn"].connect_after("color-set", on_colour_set_light)
+        widgets["light_cbtn"].connect_after("color-set", onColourSetLight)
 
-        def on_colour_set_dark(color_btn):
+        def onColourSetDark(_):
+            """ :Description: Sets the dark squares of the chess board
+                to the value selected in the colour picker
+            """
             conf.set('darkcolour',
                      widgets['dark_cbtn'].get_color().to_string())
 
-        widgets["dark_cbtn"].connect_after("color-set", on_colour_set_dark)
+        widgets["dark_cbtn"].connect_after("color-set", onColourSetDark)
 
-        def on_reset_colour_clicked(btn):
+        def onResetColourClicked(_):
+            """ :Description: Resets the chess board squares to factory default
+            """
             conf.set("lightcolour", "#ffffffffffff")
             conf.set("darkcolour", "#aaaaaaaaaaaa")
 
-        widgets["reset_btn"].connect("clicked", on_reset_colour_clicked)
+        widgets["reset_btn"].connect("clicked", onResetColourClicked)
 
         # Get the current board colours if set, if not set, set them to default
         conf.set("lightcolour", conf.get("lightcolour", "#ffffffffffff"))
         conf.set("darkcolour", conf.get("darkcolour", "#aaaaaaaaaaaa"))
 
         # Next 2 lines take a #hex str converts them to a color then to a RGBA representation
-        lightcolour = Gdk.RGBA()
-        lightcolour.parse(conf.get("lightcolour", "#ffffffffffff"))
-        darkcolour = Gdk.RGBA()
-        darkcolour.parse(conf.get("darkcolour", "#aaaaaaaaaaaa"))
+        self.lightcolour = Gdk.RGBA()
+        self.lightcolour.parse(conf.get("lightcolour", "#ffffffffffff"))
+        self.darkcolour = Gdk.RGBA()
+        self.darkcolour.parse(conf.get("darkcolour", "#aaaaaaaaaaaa"))
 
         # Set the color swatches in preference to stored values
-        widgets['light_cbtn'].set_rgba(lightcolour)
-        widgets['dark_cbtn'].set_rgba(darkcolour)
+        widgets['light_cbtn'].set_rgba(self.lightcolour)
+        widgets['dark_cbtn'].set_rgba(self.darkcolour)
 
         #############
         # Chess Sets
         #############
-        self.themes = self.discover_themes()
+        self.themes = self.discoverThemes()
         store = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
 
         for theme in self.themes:
@@ -636,28 +647,28 @@ class ThemeTab:
                 store.append((pixbuf, theme))
             else:
                 print(
-                    "WARNING: No piece theme preview icons found. Please run create_theme_preview.sh !")
+                    "WARNING: No piece theme preview icons found. Please run \
+                    create_theme_preview.sh !")
                 break
 
-        iconView = widgets["pieceTheme"]
-        iconView.set_model(store)
-        iconView.set_pixbuf_column(0)
-        iconView.set_text_column(1)
+        self.icon_view = widgets["pieceTheme"]
+        self.icon_view.set_model(store)
+        self.icon_view.set_pixbuf_column(0)
+        self.icon_view.set_text_column(1)
 
-        #############################################
-        # Hack to fix spacing problem in iconview
-        # http://stackoverflow.com/questions/14090094/what-causes-the-different-display-behaviour-for-a-gtkiconview-between-different
-        def keep_size(crt, *args):
+        def keepSize(crt, _):
+            """ :Description: Hack to fix spacing problem in iconview
+                http://stackoverflow.com/questions/14090094/what-causes-the-different-\
+                    display-behaviour-for-a-gtkiconview-between-different
+            """
             crt.handler_block(crt_notify)
             crt.set_property('width', 40)
             crt.handler_unblock(crt_notify)
 
-        crt, crp = iconView.get_cells()
-        crt_notify = crt.connect('notify', keep_size)
+        crt = self.icon_view.get_cells()[0]
+        crt_notify = crt.connect('notify', keepSize)
 
-        #############################################
-
-        def _get_active(iconview):
+        def _getActive(iconview):
             model = iconview.get_model()
             selected = iconview.get_selected_items()
 
@@ -671,17 +682,22 @@ class ThemeTab:
                 Pieces.set_piece_theme(theme)
                 return theme
 
-        def _set_active(iconview, value):
+        def _setActive(iconview, value):
             try:
                 index = self.themes.index(value)
             except ValueError:
                 index = 0
             iconview.select_path(Gtk.TreePath(index, ))
 
-        uistuff.keep(widgets["pieceTheme"], "pieceTheme", _get_active,
-                     _set_active, "Chessicons")
+        uistuff.keep(widgets["pieceTheme"], "pieceTheme", _getActive,
+                     _setActive, "Chessicons")
 
-    def discover_themes(self):
+    def discoverThemes(self):
+        """ :Description: Finds all the different chess sets that are present
+            in the pieces directory
+
+            :return: (a List) of themes
+        """
         themes = ['Pychess']
 
         pieces = addDataPrefix("pieces")
@@ -702,8 +718,9 @@ class ThemeTab:
 
 
 class SaveTab:
-    """ :Description: Allows the user  to configure the structure of saved game files name along with
-        various game attributes such as elapse time between moves and analysis engin evalutations
+    """ :Description: Allows the user to configure the structure of saved
+        game files name along with various game attributes such as elapse time
+        between moves and analysis engin evalutations
     """
     def __init__(self, widgets):
         # Init 'auto save" checkbutton
