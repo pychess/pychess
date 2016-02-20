@@ -1,15 +1,8 @@
 # -*- coding: UTF-8 -*-
 from __future__ import unicode_literals
 
-################################################################################
-# PyChess information                                                          #
-################################################################################
 
 NAME = "PyChess"
-
-################################################################################
-# Player info                                                                  #
-################################################################################
 
 # Player types
 LOCAL, ARTIFICIAL, REMOTE = range(3)
@@ -19,10 +12,6 @@ EASY, INTERMEDIATE, EXPERT = range(3)
 
 # Player colors
 WHITE, BLACK = range(2)
-
-################################################################################
-# Game values                                                                  #
-################################################################################
 
 # Game states
 WAITING_TO_START, PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON, KILLED, \
@@ -34,13 +23,13 @@ UNFINISHED_STATES = (WAITING_TO_START, PAUSED, RUNNING, UNKNOWN_STATE)
 
 # Chess variants
 NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERRANDOMCHESS, RANDOMCHESS, \
-ASYMMETRICRANDOMCHESS, UPSIDEDOWNCHESS, PAWNSPUSHEDCHESS, PAWNSPASSEDCHESS, \
-THEBANCHESS, PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS, \
-BLINDFOLDCHESS, HIDDENPAWNSCHESS, HIDDENPIECESCHESS, ALLWHITECHESS, \
-ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, LOSERSCHESS, SUICIDECHESS, \
-WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS, \
-ASEANCHESS, MAKRUKCHESS, SITTUYINCHESS, CAMBODIANCHESS, AIWOKCHESS, \
-EUROSHOGICHESS, SETUPCHESS = range(34)
+    ASYMMETRICRANDOMCHESS, UPSIDEDOWNCHESS, PAWNSPUSHEDCHESS, PAWNSPASSEDCHESS, \
+    THEBANCHESS, PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS, \
+    BLINDFOLDCHESS, HIDDENPAWNSCHESS, HIDDENPIECESCHESS, ALLWHITECHESS, \
+    ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, LOSERSCHESS, SUICIDECHESS, \
+    WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS, \
+    ASEANCHESS, MAKRUKCHESS, SITTUYINCHESS, CAMBODIANCHESS, AIWOKCHESS, \
+    EUROSHOGICHESS, SETUPCHESS = range(34)
 
 ASEAN_VARIANTS = (ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, AIWOKCHESS,
                   SITTUYINCHESS)
@@ -50,7 +39,7 @@ UNSUPPORTED = (BUGHOUSECHESS, AIWOKCHESS, EUROSHOGICHESS, SETUPCHESS)
 
 # Chess variant groups
 VARIANTS_BLINDFOLD, VARIANTS_ODDS, VARIANTS_SHUFFLE, VARIANTS_OTHER, \
-VARIANTS_OTHER_NONSTANDARD, VARIANTS_ASEAN = range(6)
+    VARIANTS_OTHER_NONSTANDARD, VARIANTS_ASEAN = range(6)
 
 # Action errors
 ACTION_ERROR_NOT_OUT_OF_TIME, \
@@ -62,16 +51,16 @@ ACTION_ERROR_NOT_OUT_OF_TIME, \
 # Game state reasons
 ABORTED_ADJUDICATION, ABORTED_AGREEMENT, ABORTED_COURTESY, ABORTED_EARLY, \
     ABORTED_SERVER_SHUTDOWN, ADJOURNED_COURTESY, ABORTED_DISCONNECTION, \
-ADJOURNED_AGREEMENT, ADJOURNED_LOST_CONNECTION, ADJOURNED_SERVER_SHUTDOWN, \
+    ADJOURNED_AGREEMENT, ADJOURNED_LOST_CONNECTION, ADJOURNED_SERVER_SHUTDOWN, \
     ADJOURNED_COURTESY_WHITE, ADJOURNED_COURTESY_BLACK, \
     ADJOURNED_LOST_CONNECTION_WHITE, ADJOURNED_LOST_CONNECTION_BLACK, \
-DRAW_50MOVES, DRAW_ADJUDICATION, DRAW_AGREE, DRAW_CALLFLAG, DRAW_INSUFFICIENT, \
+    DRAW_50MOVES, DRAW_ADJUDICATION, DRAW_AGREE, DRAW_CALLFLAG, DRAW_INSUFFICIENT, \
     DRAW_EQUALMATERIAL, DRAW_LENGTH, DRAW_REPITITION, DRAW_STALEMATE, \
     DRAW_BLACKINSUFFICIENTANDWHITETIME, DRAW_WHITEINSUFFICIENTANDBLACKTIME, \
-WON_ADJUDICATION, WON_CALLFLAG, WON_DISCONNECTION, WON_MATE, WON_RESIGN, \
+    WON_ADJUDICATION, WON_CALLFLAG, WON_DISCONNECTION, WON_MATE, WON_RESIGN, \
     WON_LESSMATERIAL, WON_NOMATERIAL, WON_KINGEXPLODE, WON_KINGINCENTER, \
     WON_THREECHECK, \
-WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, DISCONNECTED, UNKNOWN_REASON = range(39)
+    WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, DISCONNECTED, UNKNOWN_REASON = range(39)
 
 UNDOABLE_REASONS = (DRAW_50MOVES, DRAW_INSUFFICIENT, DRAW_LENGTH,
                     DRAW_REPITITION, DRAW_STALEMATE, DRAW_AGREE, DRAW_CALLFLAG,
@@ -108,22 +97,18 @@ INGAME_ACTIONS = (RESIGNATION, FLAG_CALL, DRAW_OFFER, ABORT_OFFER,
 FEN_EMPTY = "4k3/8/8/8/8/8/8/4K3 w - - 0 1"
 FEN_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
-################################################################################
-# Search values                                                                #
-################################################################################
+# Search values
 
 hashfALPHA, hashfBETA, hashfEXACT, hashfBAD = range(4)
 
 # Engine modes
 NORMAL, ANALYZING, INVERSE_ANALYZING = range(3)
 
-################################################################################
-# Piece types                                                                  #
-################################################################################
+# Piece types
 
 # BPAWN is a pawn that moves in the opposite direction
 EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, BPAWN, \
-ASEAN_WBISHOP, ASEAN_BBISHOP, ASEAN_QUEEN = range(11)
+    ASEAN_WBISHOP, ASEAN_BBISHOP, ASEAN_QUEEN = range(11)
 
 # Is sliding piece
 sliders = [False, False, False, True, True, True, False, False, False, False,
@@ -152,12 +137,10 @@ chrU2Sign = {"K": KING,
              "S": BISHOP,
              "F": QUEEN}
 
-################################################################################
-# Move values                                                                  #
-################################################################################
-
+# Move values
 NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT, \
-KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, KING_PROMOTION, NULL_MOVE, DROP = range(11)
+    KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, \
+    QUEEN_PROMOTION, KING_PROMOTION, NULL_MOVE, DROP = range(11)
 PROMOTIONS = (KING_PROMOTION, QUEEN_PROMOTION, ROOK_PROMOTION,
               BISHOP_PROMOTION, KNIGHT_PROMOTION)
 
@@ -171,33 +154,30 @@ FAN_PIECES = [
     ["", "♟", "♞", "♝", "♜", "♛", "♚", ""]
 ]
 
-################################################################################
-# Castling values                                                              #
-################################################################################
+# Castling values
 W_OO, W_OOO, B_OO, B_OOO = [2**i for i in range(4)]
 CAS_FLAGS = ((W_OOO, W_OO), (B_OOO, B_OO))
 W_CASTLED, B_CASTLED = [2**i for i in range(2)]
 
-################################################################################
-# Cords types                                                                  #
-################################################################################
-
+# Cords types
 A1, B1, C1, D1, E1, F1, G1, H1,\
-A2, B2, C2, D2, E2, F2, G2, H2,\
-A3, B3, C3, D3, E3, F3, G3, H3,\
-A4, B4, C4, D4, E4, F4, G4, H4,\
-A5, B5, C5, D5, E5, F5, G5, H5,\
-A6, B6, C6, D6, E6, F6, G6, H6,\
-A7, B7, C7, D7, E7, F7, G7, H7,\
-A8, B8, C8, D8, E8, F8, G8, H8 = range(64)
+    A2, B2, C2, D2, E2, F2, G2, H2,\
+    A3, B3, C3, D3, E3, F3, G3, H3,\
+    A4, B4, C4, D4, E4, F4, G4, H4,\
+    A5, B5, C5, D5, E5, F5, G5, H5,\
+    A6, B6, C6, D6, E6, F6, G6, H6,\
+    A7, B7, C7, D7, E7, F7, G7, H7,\
+    A8, B8, C8, D8, E8, F8, G8, H8 = range(64)
 
 reprCord = [
-    "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "a2", "b2", "c2", "d2",
-    "e2", "f2", "g2", "h2", "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
-    "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", "a5", "b5", "c5", "d5",
-    "e5", "f5", "g5", "h5", "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
-    "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", "a8", "b8", "c8", "d8",
-    "e8", "f8", "g8", "h8"
+    "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
+    "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
+    "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
+    "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
+    "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
+    "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
+    "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
+    "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"
 ]
 
 reprFile = ["a", "b", "c", "d", "e", "f", "g", "h"]
@@ -207,9 +187,7 @@ cordDic = {}
 for cord, name in enumerate(reprCord):
     cordDic[name] = cord
 
-################################################################################
-# User interface                                                               #
-################################################################################
+# User interface
 
 # Hint modes
 OPENING, ENDGAME, HINT, SPY = ["opening", "endgame", "hint", "spy"]
@@ -230,8 +208,5 @@ VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
 EDIT_MENU_ITEMS = ("copy_pgn", "copy_fen", )
 MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS + EDIT_MENU_ITEMS
 
-################################################################################
-# Subprocess                                                                   #
-################################################################################
-
+# Subprocess
 SUBPROCESS_PTY, SUBPROCESS_SUBPROCESS, SUBPROCESS_FORK = range(3)

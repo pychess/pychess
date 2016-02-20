@@ -188,7 +188,8 @@ class GameModel(GObject.GObject, Thread):
         self.offers = {}
         # True if the game has been changed since last save
         self.needsSave = False
-        # The uri the current game was loaded from, or None if not a loaded game
+        # The uri the current game was loaded from, or None if not a loaded
+        # game
         self.uri = None
 
         self.spectators = {}
@@ -332,9 +333,7 @@ class GameModel(GObject.GObject, Thread):
             self.tags["Variation"] = opening[2]
             self.emit("opening_changed")
 
-    ############################################################################
-    # Board stuff                                                              #
-    ############################################################################
+    # Board stuff
 
     def _get_ply(self):
         return self.boards[-1].ply
@@ -373,7 +372,8 @@ class GameModel(GObject.GObject, Thread):
         return index
 
     def getBoardAtPly(self, ply, variation=0):
-        # Losing on time in FICS game will undo our last move if it was taken too late
+        # Losing on time in FICS game will undo our last move if it was taken
+        # too late
         if variation == 0 and ply > self.ply:
             ply = self.ply
         try:
@@ -427,15 +427,13 @@ class GameModel(GObject.GObject, Thread):
         if self.players and self.status in (WAITING_TO_START, PAUSED, RUNNING):
             if self.players[0].__type__ == LOCAL and self.players[1].__type__ == REMOTE or \
                self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE:
-                    return True
+                return True
         return False
 
     def isLoadedGame(self):
         return self.gameno is not None
 
-    ############################################################################
-    # Offer management                                                         #
-    ############################################################################
+    # Offer management
 
     def offerReceived(self, player, offer):
         log.debug("GameModel.offerReceived: offerer=%s %s" %
@@ -555,9 +553,7 @@ class GameModel(GObject.GObject, Thread):
         else:
             player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
 
-    ############################################################################
-    # Data stuff                                                               #
-    ############################################################################
+    # Data stuff
 
     def loadAndStart(self, uri, loader, gameno, position, first_time=True):
         if first_time:
@@ -573,7 +569,8 @@ class GameModel(GObject.GObject, Thread):
         self.emit("game_loading", uri)
         try:
             chessfile.loadToModel(gameno, -1, self)
-        # Postpone error raising to make games loadable to the point of the error
+        # Postpone error raising to make games loadable to the point of the
+        # error
         except LoadingError as e:
             error = e
         else:
@@ -624,13 +621,12 @@ class GameModel(GObject.GObject, Thread):
         self.needsSave = False
         self.emit("game_saved", uri)
 
-    ############################################################################
-    # Run stuff                                                                #
-    ############################################################################
+    # Run stuff
 
     def run(self):
         log.debug("GameModel.run: Starting. self=%s" % self)
-        # Avoid racecondition when self.start is called while we are in self.end
+        # Avoid racecondition when self.start is called while we are in
+        # self.end
         if self.status != WAITING_TO_START:
             return
         self.status = RUNNING
@@ -829,7 +825,7 @@ class GameModel(GObject.GObject, Thread):
     def kill(self, reason):
         log.debug("GameModel.kill: players=%s, self.ply=%s: Killing a game for reason %d\n%s" % (
                   repr(self.players), str(self.ply), reason, "".join(
-                  traceback.format_list(traceback.extract_stack())).strip()))
+                      traceback.format_list(traceback.extract_stack())).strip()))
 
         self.status = KILLED
         self.reason = reason
@@ -863,9 +859,7 @@ class GameModel(GObject.GObject, Thread):
 
         self.emit("game_terminated")
 
-    ############################################################################
-    # Other stuff                                                              #
-    ############################################################################
+    # Other stuff
 
     @inthread
     @undolocked
@@ -949,7 +943,8 @@ class GameModel(GObject.GObject, Thread):
             null_board.prev = board0.board
             board0.board.next = null_board
 
-        board0.board.next.children.append([vboard.board for vboard in variation])
+        board0.board.next.children.append(
+            [vboard.board for vboard in variation])
 
         head = None
         for vari in self.variations:

@@ -12,8 +12,8 @@ from pychess.Savers.ChessFile import ChessFile, LoadingError
 
 # token categories
 COMMENT_REST, COMMENT_BRACE, COMMENT_NAG, \
-VARIATION_START, VARIATION_END, \
-RESULT, FULL_MOVE, MOVE, MOVE_COMMENT = range(1, 10)
+    VARIATION_START, VARIATION_END, \
+    RESULT, FULL_MOVE, MOVE, MOVE_COMMENT = range(1, 10)
 
 pattern = re.compile(r"""
     (\;.*?[\n\r])        # comment, rest of line style

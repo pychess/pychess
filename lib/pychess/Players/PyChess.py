@@ -21,6 +21,7 @@ from pychess.System.Log import log  # nopep8
 
 
 class PyChess(object):
+
     def __init__(self):
         self.sd = MAXPLY
         self.skipPruneChance = 0
@@ -47,12 +48,12 @@ class PyChess(object):
         # Based on regression of a 180k games pgn
         ply_count = self.board.plyCount
         return -1.71086e-12 * ply_count**6 \
-        + 1.69103e-9 * ply_count**5 \
-        - 6.00801e-7 * ply_count**4 \
-        + 8.17741e-5 * ply_count**3 \
-        + 2.91858e-4 * ply_count**2 \
-        - 0.94497 * ply_count \
-        + 78.8979
+            + 1.69103e-9 * ply_count**5 \
+            - 6.00801e-7 * ply_count**4 \
+            + 8.17741e-5 * ply_count**3 \
+            + 2.91858e-4 * ply_count**2 \
+            - 0.94497 * ply_count \
+            + 78.8979
 
     def __remainingMovesB(self):
         # We bet a game will be around 80 moves
@@ -113,7 +114,8 @@ class PyChess(object):
 
             for depth in range(1, self.sd + 1):
                 # Heuristic time saving
-                # Don't waste time, if the estimated isn't enough to complete next depth
+                # Don't waste time, if the estimated isn't enough to complete
+                # next depth
                 if timed and usetime <= prevtime * 4 and usetime > 1:
                     break
                 lsearch.timecheck_counter = lsearch.TIMECHECK_FREQ

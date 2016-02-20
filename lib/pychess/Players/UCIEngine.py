@@ -538,7 +538,7 @@ class UCIEngine(ProtocolEngine):
 
                 if self.ignoreNext:
                     log.debug(
-                    "__parseLine: line='%s' self.ignoreNext==True, returning" % line.strip(),
+                        "__parseLine: line='%s' self.ignoreNext==True, returning" % line.strip(),
                         extra={"task": self.defname})
                     self.ignoreNext = False
                     self.readyForStop = True

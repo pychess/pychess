@@ -48,6 +48,7 @@ from .ICGameModel import ICGameModel
 
 
 class PlayerNotificationMessage(InfoBarMessage):
+
     def __init__(self, message_type, content, callback, player, text):
         InfoBarMessage.__init__(self, message_type, content, callback)
         self.player = player
@@ -462,21 +463,15 @@ class ICLounge(GObject.GObject):
                     player, message.text))
         return False
 
-################################################################################
-# Initialize Sections                                                          #
-################################################################################
-
 
 class Section(object):
+
     def _del(self):
         pass
 
-############################################################################
-# Initialize User Information Section                                      #
-############################################################################
-
 
 class UserInfoSection(Section):
+
     def __init__(self, widgets, connection, host):
         self.widgets = widgets
         self.connection = connection
@@ -538,7 +533,8 @@ class UserInfoSection(Section):
             row += 1
 
             for rating_type, rating in finger.getRating().items():
-                ratinglabel = label(GAME_TYPES_BY_RATING_TYPE[rating_type].display_text + ":")
+                ratinglabel = label(GAME_TYPES_BY_RATING_TYPE[
+                                    rating_type].display_text + ":")
                 table.attach(ratinglabel, 0, 1, row, row + 1)
                 if rating_type is TYPE_WILD:
                     ratinglabel.set_tooltip_text(_(
@@ -548,7 +544,8 @@ class UserInfoSection(Section):
                 table.attach(label(rating.elo, xalign=1), 1, 2, row, row + 1)
                 table.attach(label(rating.wins, xalign=1), 2, 3, row, row + 1)
                 table.attach(label(rating.draws, xalign=1), 3, 4, row, row + 1)
-                table.attach(label(rating.losses, xalign=1), 4, 5, row, row + 1)
+                table.attach(label(rating.losses, xalign=1),
+                             4, 5, row, row + 1)
                 row += 1
 
             table.attach(Gtk.HSeparator(), 0, 6, row, row + 1, ypadding=2)
@@ -628,12 +625,9 @@ class UserInfoSection(Section):
         self.dock.add(table)
         self.dock.show_all()
 
-############################################################################
-# Initialize News Section                                                  #
-############################################################################
-
 
 class NewsSection(Section):
+
     def __init__(self, widgets, connection):
         self.widgets = widgets
         connection.nm.connect("readNews", self.onNewsItem)
@@ -668,10 +662,6 @@ class NewsSection(Section):
         expander.add(alignment)
         expander.show_all()
         self.widgets["newsVBox"].pack_end(expander, True, True, 0)
-
-############################################################################
-# Initialize Lists                                                         #
-############################################################################
 
 
 class ParrentListSection(Section):
@@ -723,12 +713,9 @@ class ParrentListSection(Section):
                               treemodel.get_value(iter1, 8))
         return cmp(minute0, minute1)
 
-########################################################################
-# Initialize Seek List                                                 #
-########################################################################
-
 
 class SeekTabSection(ParrentListSection):
+
     def __init__(self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
@@ -885,7 +872,8 @@ class SeekTabSection(ParrentListSection):
                                         assess["loss"][1])
             text6 = "%-8s%10s%10s\n" % ("New RD:", assess["newRD"][0],
                                         assess["newRD"][1])
-            dialog.format_secondary_text(text1 + text2 + text3 + text4 + text5 + text6)
+            dialog.format_secondary_text(
+                text1 + text2 + text3 + text4 + text5 + text6)
             dialog.run()
             dialog.destroy()
 
@@ -936,7 +924,7 @@ class SeekTabSection(ParrentListSection):
         row0 = list(model[model.get_path(iter0)])
         row1 = list(model[model.get_path(iter1)])
         is_ascending = True if self.tv.get_column(column - 1).get_sort_order() is \
-        Gtk.SortType.ASCENDING else False
+            Gtk.SortType.ASCENDING else False
         if self.__isAChallengeOrOurSeek(
                 row0) and not self.__isAChallengeOrOurSeek(row1):
             if is_ascending:
@@ -1012,8 +1000,8 @@ class SeekTabSection(ParrentListSection):
         if challenge.adjourned:
             text = _(" would like to resume your adjourned <b>%(time)s</b> " +
                      "<b>%(gametype)s</b> game.") % \
-            {"time": challenge.display_timecontrol,
-             "gametype": challenge.game_type.display_text}
+                {"time": challenge.display_timecontrol,
+                 "gametype": challenge.game_type.display_text}
         else:
             text = _(" challenges you to a <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> game") \
                 % {"time": challenge.display_timecontrol,
@@ -1021,8 +1009,8 @@ class SeekTabSection(ParrentListSection):
                    "gametype": challenge.game_type.display_text}
             if challenge.color:
                 text += _(" where <b>%(player)s</b> plays <b>%(color)s</b>.") \
-                % {"player": challenge.player.name,
-                   "color": _("white") if challenge.color == "white" else _("black")}
+                    % {"player": challenge.player.name,
+                       "color": _("white") if challenge.color == "white" else _("black")}
             else:
                 text += "."
         content = get_infobarmessage_content(challenge.player,
@@ -1129,7 +1117,7 @@ class SeekTabSection(ParrentListSection):
             return
         sought = model.get_value(sel_iter, 0)
         if self.lastSeekSelected is None or \
-        sought.index != self.lastSeekSelected.index:
+                sought.index != self.lastSeekSelected.index:
             return
         if path != model.get_path(sel_iter):
             return
@@ -1166,9 +1154,6 @@ class SeekTabSection(ParrentListSection):
     def onCurGameEnded(self, bm, game):
         self.widgets["seekListContent"].set_sensitive(True)
 
-########################################################################
-# Initialize Seek Graph                                                #
-########################################################################
 
 YMARKS = (800, 1600, 2400)
 # YLOCATION = lambda y: min(y / 3000., 3000)
@@ -1191,6 +1176,7 @@ GAME_LENGTH = 40
 
 
 class SeekGraphSection(ParrentListSection):
+
     def __init__(self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
@@ -1252,10 +1238,6 @@ class SeekGraphSection(ParrentListSection):
     @idle_add
     def onCurGameEnded(self, bm, game):
         self.widgets["seekGraphContent"].set_sensitive(True)
-
-########################################################################
-# Initialize Players List                                              #
-########################################################################
 
 
 class PlayerTabSection(ParrentListSection):
@@ -1325,10 +1307,12 @@ class PlayerTabSection(ParrentListSection):
         def do_onPlayerAdded(players, new_players, np):
             for player in new_players:
                 # log.debug("%s" % player,
-                #          extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
+                # extra={"task": (self.connection.username,
+                # "PTS.onPlayerAdded")})
                 if player in self.players:
                     # log.warning("%s already in self" % player,
-                    #    extra={"task": (self.connection.username, "PTS.onPlayerAdded")})
+                    # extra={"task": (self.connection.username,
+                    # "PTS.onPlayerAdded")})
                     continue
 
                 # player can leave before we finish processing "who IbslwBzSLx"
@@ -1378,12 +1362,13 @@ class PlayerTabSection(ParrentListSection):
                     if player.handler_is_connected(self.players[player][key]):
                         player.disconnect(self.players[player][key])
                 if player.game and "private" in self.players[player] and \
-                player.game.handler_is_connected(self.players[player]["private"]):
+                        player.game.handler_is_connected(self.players[player]["private"]):
                     player.game.disconnect(self.players[player]["private"])
                 for rating_type in RATING_TYPES:
                     if player.ratings[rating_type].handler_is_connected(self.players[
                             player][rating_type]):
-                        player.ratings[rating_type].disconnect(self.players[player][rating_type])
+                        player.ratings[rating_type].disconnect(
+                            self.players[player][rating_type])
                 del self.players[player]
             except KeyError:
                 pass
@@ -1511,12 +1496,9 @@ class PlayerTabSection(ParrentListSection):
             player.isAvailableForGame() and
             player.name != user_name)
 
-########################################################################
-# Initialize Games List                                                #
-########################################################################
-
 
 class GameTabSection(ParrentListSection):
+
     def __init__(self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
@@ -1673,7 +1655,7 @@ class GameTabSection(ParrentListSection):
                 if game not in game_store:
                     continue
                 # log.debug("%s" % game,
-                #          extra={"task": (self.connection.username, "GTS.onGameAdd")})
+                # extra={"task": (self.connection.username, "GTS.onGameAdd")})
                 ti = self.store.append(game_store[game])
                 self.games[game] = {"ti": ti}
                 self.games[game]["private_cid"] = game.connect(
@@ -1734,12 +1716,9 @@ class GameTabSection(ParrentListSection):
             treeiter = self.games[game]["ti"]
             self.store.set_value(treeiter, 1, self.clearpix)
 
-########################################################################
-# Initialize Adjourned List                                            #
-########################################################################
-
 
 class AdjournedTabSection(ParrentListSection):
+
     def __init__(self, widgets, connection, lounge):
         self.connection = connection
         self.widgets = widgets
@@ -2084,9 +2063,6 @@ class AdjournedTabSection(ParrentListSection):
             "game_started",
             lambda gamemodel: gamemodel.end(ficsgame.result, ficsgame.reason))
 
-############################################################################
-# Initialize "Create Seek" and "Challenge" panels, and "Edit Seek:" dialog #
-############################################################################
 
 RATING_SLIDER_STEP = 25
 
@@ -2307,7 +2283,8 @@ class SeekChallengeSection(Section):
         self.__updateSeekEditor(seeknumber, challengemode=True)
 
         self.widgets["challengeeNameLabel"].set_markup(player.getMarkup())
-        self.widgets["challengeeImage"].set_from_pixbuf(player.getIcon(size=32))
+        self.widgets["challengeeImage"].set_from_pixbuf(
+            player.getIcon(size=32))
         title = _("Challenge: ") + player.name
         self.widgets["challengeDialog"].set_title(title)
         self.widgets["challengeDialog"].present()
@@ -2541,7 +2518,8 @@ class SeekChallengeSection(Section):
         for i in range(3):
             if gameTypes[self.savedSeekRadioTexts[i]][0] > 1:
                 labelText = "%s #%d:" % \
-                    (self.savedSeekRadioTexts[i], gameTypes[self.savedSeekRadioTexts[i]][1])
+                    (self.savedSeekRadioTexts[i], gameTypes[
+                     self.savedSeekRadioTexts[i]][1])
                 self.widgets["seek%dRadio" % (i + 1)].set_label(labelText)
                 self.widgets["challenge%dRadio" % (i + 1)].set_label(labelText)
                 gameTypes[self.savedSeekRadioTexts[i]][1] += 1
@@ -2686,7 +2664,8 @@ class SeekChallengeSection(Section):
                 pathToVariant[path] = variant.variant
                 variantToPath[variant.variant] = path
 
-        # this stops group names (eg "Shuffle") from being displayed in submenus
+        # this stops group names (eg "Shuffle") from being displayed in
+        # submenus
         def cellFunc(combo, cell, model, sel_iter, data):
             isChildNode = not model.iter_has_child(sel_iter)
             cell.set_property("sensitive", isChildNode)

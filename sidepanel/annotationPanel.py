@@ -266,7 +266,7 @@ class Sidepanel(Gtk.TextView):
                         break
 
                 if len(self.gamemodel.boards) > 1 and board == self.gamemodel.boards[1].board and \
-                not self.gamemodel.boards[0].board.children:
+                        not self.gamemodel.boards[0].board.children:
                     menuitem = Gtk.MenuItem(_("Add start comment"))
                     menuitem.connect('activate', self.edit_comment,
                                      self.gamemodel.boards[0].board, 0)

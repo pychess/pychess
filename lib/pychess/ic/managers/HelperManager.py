@@ -204,8 +204,8 @@ class HelperManager(GObject.GObject):
         # bslwBzSLx
         # gbtami 001411E1663P1483P1720P0P1646P0P0P1679P
         name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
-        wild, wilddev, bughouse, bughousedev, crazyhouse, crazyhousedev, \
-        suicide, suicidedev, losers, losersdev, atomic, atomicdev = match.groups()
+            wild, wilddev, bughouse, bughousedev, crazyhouse, crazyhousedev, \
+            suicide, suicidedev, losers, losersdev, atomic, atomicdev = match.groups()
         player = self.connection.players.get(FICSPlayer(name))
         self.players.append(player)
         titles = parse_title_hex(titlehex)
