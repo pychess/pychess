@@ -1091,7 +1091,8 @@ class Sidepanel(Gtk.TextView):
         log.debug("annotationPanel.players_changed: returning")
 
     def game_loaded(self, model, uri):
-        for ply in range(min(40, model.ply)):
+        for ply in range(min(40, model.ply, len(model.boards))):
+            print(ply)
             model.setOpening(ply)
         self.update()
 
