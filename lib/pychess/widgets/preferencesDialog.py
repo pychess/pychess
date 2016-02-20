@@ -1,9 +1,10 @@
 from __future__ import print_function
 
 import os
-import sys
 from os import listdir
 from os.path import isdir, isfile, splitext
+
+import sys
 from xml.dom import minidom
 
 from gi.repository import Gtk, GdkPixbuf, Gdk
@@ -701,9 +702,16 @@ class ThemeTab:
 
 
 class SaveTab:
+    """ :Description: Allows to to confugure the structure of saved game files name along with
+        various game attributes such as elapse time between moves and analysis engin evalutations
+    """
     def __init__(self, widgets):
         # Init 'auto save" checkbutton
-        def checkCallBack(*args):
+        def checkCallBack():
+            """ :Description: Sets the various option based on user interaction with the
+                checkboxes in the gui
+            """
+
             checkbox = widgets["autoSave"]
             widgets["autosave_grid"].set_property("sensitive",
                                                   checkbox.get_active())
@@ -714,8 +722,8 @@ class SaveTab:
         checkCallBack()
 
         default_path = os.path.expanduser("~")
-        autoSavePath = conf.get("autoSavePath", default_path)
-        conf.set("autoSavePath", autoSavePath)
+        self.auto_save_path = conf.get("autoSavePath", default_path)
+        conf.set("autoSavePath", self.auto_save_path)
 
         auto_save_chooser_dialog = Gtk.FileChooserDialog(
             _("Select auto save path"), None,
@@ -724,18 +732,22 @@ class SaveTab:
              Gtk.ResponseType.OK))
         auto_save_chooser_button = Gtk.FileChooserButton.new_with_dialog(
             auto_save_chooser_dialog)
-        auto_save_chooser_button.set_current_folder(autoSavePath)
+        auto_save_chooser_button.set_current_folder(self.auto_save_path)
 
         widgets["savePathChooserDock"].add(auto_save_chooser_button)
         auto_save_chooser_button.show()
 
-        def select_auto_save(button):
+        def selectAutoSave(_):
+            """ :Description: Sets the auto save path for stored games if it
+                has changed since last time
+
+                :signal: Activated on receiving the 'current-folder-changed' signal
+            """
             new_directory = auto_save_chooser_dialog.get_filename()
-            if new_directory != autoSavePath:
+            if new_directory != self.auto_save_path:
                 conf.set("autoSavePath", new_directory)
 
-        auto_save_chooser_button.connect("current-folder-changed",
-                                         select_auto_save)
+        auto_save_chooser_button.connect("current-folder-changed", selectAutoSave)
 
         conf.set("autoSaveFormat", conf.get("autoSaveFormat", "pychess"))
         uistuff.keep(widgets["autoSaveFormat"], "autoSaveFormat")
