@@ -17,12 +17,12 @@ class SetupBoard(Board):
     PROMOTIONS = ()
 
     def __init__(self, setup=True):
-        fen = SETUPSTART if setup is True else setup
+        fenstr = SETUPSTART if setup is True else setup
         # add all kind if piece to holdings (except king)
-        parts = fen.split()
+        parts = fenstr.split()
         parts[0] += "/prnsqPRNSQ"
-        fen = " ".join(parts)
-        Board.__init__(self, setup=fen)
+        fenstr = " ".join(parts)
+        Board.__init__(self, setup=fenstr)
         self._ply = 0
 
     def _get_ply(self):

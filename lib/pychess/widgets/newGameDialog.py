@@ -645,7 +645,7 @@ class SetupPositionExtension(_GameInitializationMode):
         cls.widgets["booo"].set_active(lboard.castling & B_OOO)
 
     @classmethod
-    def run(cls):
+    def run(cls, fenstr):
         cls._ensureReady()
         if cls.widgets["newgamedialog"].props.visible:
             cls.widgets["newgamedialog"].present()
@@ -669,15 +669,21 @@ class SetupPositionExtension(_GameInitializationMode):
             cls.widgets["setupBoardDock"].remove(child)
         cls.widgets["setupBoardDock"].add(cls.board_control)
         cls.board_control.show_all()
-        cls.ini_widgets(True)
-        cls.widgets["fen_entry"].set_text(cls.get_fen())
+        if fenstr is not None:
+            cls.setupmodel.boards = [cls.setupmodel.variant(setup=fenstr)]
+            cls.setupmodel.variations = [cls.setupmodel.boards]
+            cls.ini_widgets(fenstr)
+        else:
+            fenstr = cls.get_fen()
+            cls.ini_widgets(True)
+        cls.widgets["fen_entry"].set_text(fenstr)
 
         cls.setupmodel.start()
 
         def _validate(gamemodel):
             try:
-                # text = cls.get_fen()
-                # lboard = cls.setupmodel.variant(setup=text).board
+                fenstr = cls.get_fen()
+                cls.setupmodel.variant(setup=fenstr)
                 return True
             except (AssertionError, LoadingError, SyntaxError) as e:
                 d = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,

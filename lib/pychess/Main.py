@@ -192,7 +192,16 @@ class GladeHandlers:
         newGameDialog.LoadFileExtension.run(None)
 
     def on_set_up_position_activate(self, widget):
-        newGameDialog.SetupPositionExtension.run()
+        gmwidg = gamewidget.cur_gmwidg()
+        if gmwidg is not None:
+            if len(gmwidg.gamemodel.boards) == 1:
+                ply = 0
+            else:
+                ply = gmwidg.board.view.shown
+            fen = gmwidg.gamemodel.boards[ply].asFen()
+        else:
+            fen = None
+        newGameDialog.SetupPositionExtension.run(fen)
 
     def on_open_database_activate(self, widget):
         # GameList().load_games()

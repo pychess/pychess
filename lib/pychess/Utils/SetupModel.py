@@ -85,8 +85,7 @@ class SetupModel(GObject.GObject, Thread):
     def run(self):
         self.emit("game_started")
         while True:
-            player0 = self.curplayer.make_move()[0]
-            player1 = self.curplayer.make_move()[1]
+            player0, player1 = self.curplayer.make_move()
 
             if isinstance(player0, SetupMove):
                 # print(player0.cord0, player0.cord1, player1)

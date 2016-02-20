@@ -1092,7 +1092,6 @@ class Sidepanel(Gtk.TextView):
 
     def game_loaded(self, model, uri):
         for ply in range(min(40, model.ply, len(model.boards))):
-            print(ply)
             model.setOpening(ply)
         self.update()
 
