@@ -724,7 +724,7 @@ class SaveTab:
     """
     def __init__(self, widgets):
         # Init 'auto save" checkbutton
-        def checkCallBack():
+        def checkCallBack(_):
             """ :Description: Sets the various option based on user interaction with the
                 checkboxes in the gui
             """
@@ -736,7 +736,7 @@ class SaveTab:
         conf.notify_add("autoSave", checkCallBack)
         widgets["autoSave"].set_active(False)
         uistuff.keep(widgets["autoSave"], "autoSave")
-        checkCallBack()
+        checkCallBack(_)
 
         default_path = os.path.expanduser("~")
         self.auto_save_path = conf.get("autoSavePath", default_path)
