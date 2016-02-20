@@ -649,7 +649,6 @@ class SetupPositionExtension(_GameInitializationMode):
         cls._ensureReady()
         if cls.widgets["newgamedialog"].props.visible:
             cls.widgets["newgamedialog"].present()
-            print("de return")
             return
 
         cls._hideOthers()

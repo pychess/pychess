@@ -22,6 +22,7 @@ from pychess.System.LogEmitter import GLogHandler, logemitter
 from pychess.System.debug import start_thread_dump
 from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
 from pychess.Utils.const import HINT, NAME, SPY, MENU_ITEMS
+from pychess.Utils.checkversion import checkversion
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
@@ -325,6 +326,7 @@ class PyChess:
 
         self.initGlade(log_viewer)
         self.handleArgs(chess_file)
+        checkversion()
 
     def initGlade(self, log_viewer):
         # Init glade and the 'GladeHandlers'
