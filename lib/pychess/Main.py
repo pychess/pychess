@@ -211,10 +211,14 @@ class GladeHandlers:
         newGameDialog.EnterNotationExtension.run()
 
     def on_save_game1_activate(self, widget):
-        ionest.saveGame(gameDic[gamewidget.cur_gmwidg()])
+        gmwidg = gamewidget.cur_gmwidg()
+        position = gmwidg.board.view.shown
+        ionest.saveGame(gameDic[gamewidget.cur_gmwidg()], position)
 
     def on_save_game_as1_activate(self, widget):
-        ionest.saveGameAs(gameDic[gamewidget.cur_gmwidg()])
+        gmwidg = gamewidget.cur_gmwidg()
+        position = gmwidg.board.view.shown
+        ionest.saveGameAs(gameDic[gamewidget.cur_gmwidg()], position)
 
     def on_share_game_activate(self, widget):
         chesspastebin.paste(gameDic[gamewidget.cur_gmwidg()])
@@ -222,7 +226,7 @@ class GladeHandlers:
     def on_export_position_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
         position = gmwidg.board.view.shown
-        ionest.saveGameAs(gameDic[gmwidg], position)
+        ionest.saveGameAs(gameDic[gmwidg], position, export=True)
 
     def on_analyze_game_activate(self, widget):
         analyzegameDialog.run(gameDic)

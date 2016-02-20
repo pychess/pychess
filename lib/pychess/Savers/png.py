@@ -47,6 +47,6 @@ class Diagram(BoardView):
                     context.rectangle(x_loc * SQUARE, y_loc * SQUARE, SQUARE, SQUARE)
         context.fill()
 
-        if not self.showCords:
+        if not self.show_cords:
             context.rectangle(0, 0, 8 * SQUARE, 8 * SQUARE)
             context.stroke()

@@ -8,7 +8,7 @@ from gi.repository import GObject
 
 
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Savers import chessalpha2, epd, fen, pgn
+from pychess.Savers import chessalpha2, epd, fen, pgn, png
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
@@ -126,7 +126,7 @@ enddir = {}
 saveformats = None
 exportformats = None
 
-savers = (chessalpha2, epd, fen, pgn)
+savers = (chessalpha2, epd, fen, pgn, png)
 for saver in savers:
     enddir[saver.__ending__] = saver
 
@@ -199,21 +199,21 @@ def getOpenAndSaveDialogs():
 ################################################################################
 
 
-def saveGame(game):
+def saveGame(game, position=None):
     if not game.isChanged():
         return
     if game.uri and isWriteable(game.uri):
-        saveGameSimple(game.uri, game)
+        saveGameSimple(game.uri, game, position=position)
     else:
-        return saveGameAs(game)
+        return saveGameAs(game, position=position)
 
 
-def saveGameSimple(uri, game):
+def saveGameSimple(uri, game, position=None):
     ending = os.path.splitext(uri)[1]
     if not ending:
         return
     saver = enddir[ending[1:]]
-    game.save(uri, saver, append=False)
+    game.save(uri, saver, append=False, position=position)
 
 
 def saveGamePGN(game):
@@ -236,10 +236,10 @@ def saveGamePGN(game):
         return False
 
 
-def saveGameAs(game, position=None):
+def saveGameAs(game, position=None, export=False):
     opendialog, savedialog, enddir, savecombo, savers = getOpenAndSaveDialogs()
 
-    if position is not None:
+    if export:
         savecombo.set_model(exportformats)
     else:
         savecombo.set_model(saveformats)
@@ -279,8 +279,7 @@ def saveGameAs(game, position=None):
                 saver = enddir[ending]
         else:
             index = savecombo.get_active()
-            format = saveformats[index] if position is None else exportformats[
-                index]
+            format = exportformats[index] if export else saveformats[index]
             saver = format[2]
             if ending not in enddir or not saver == enddir[ending]:
                 uri += ".%s" % saver.__ending__
