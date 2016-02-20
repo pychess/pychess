@@ -702,7 +702,7 @@ class ThemeTab:
 
 
 class SaveTab:
-    """ :Description: Allows to to confugure the structure of saved game files name along with
+    """ :Description: Allows the user  to configure the structure of saved game files name along with
         various game attributes such as elapse time between moves and analysis engin evalutations
     """
     def __init__(self, widgets):
