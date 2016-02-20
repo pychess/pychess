@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import ssl
 import json
+import codecs
 from threading import Thread
 
 from gi.repository import GLib, Gtk
@@ -19,8 +20,11 @@ def checkversion():
         new_version = None
         req = Request(URL)
         try:
-            context = ssl._create_unverified_context()
-            response = urlopen(req, context=context, timeout=1)
+            if hasattr(ssl, '_create_unverified_context'):
+                context = ssl._create_unverified_context()
+                response = urlopen(req, context=context, timeout=1)
+            else:
+                response = urlopen(req, timeout=1)
         except URLError as err:
             if hasattr(err, 'reason'):
                 print('We failed to reach the server.')
@@ -29,7 +33,8 @@ def checkversion():
                 print('The server couldn\'t fulfill the request.')
                 print('Error code: ', err.code)
         else:
-            new_version = json.loads(response.read())["name"]
+            reader = codecs.getreader("utf-8")
+            new_version = json.load(reader(response))["name"]
 
         if new_version is not None and VERSION.split(".") < new_version.split("."):
             GLib.idle_add(notify, new_version)
