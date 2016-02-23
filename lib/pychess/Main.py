@@ -278,7 +278,7 @@ class GladeHandlers:
     def on_about1_activate(self, widget):
         about_dialog = gamewidget.getWidgets()["aboutdialog1"]
         response = about_dialog.run()
-        if response == Gtk.ResponseType.DELETE_EVENT or response == Gtk.responseType.CANCEL:
+        if response == Gtk.ResponseType.DELETE_EVENT or response == Gtk.ResponseType.CANCEL:
             gamewidget.getWidgets()["aboutdialog1"].hide()
 
     def on_log_viewer1_activate(self, widget):
