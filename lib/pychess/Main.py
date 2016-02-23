@@ -276,7 +276,10 @@ class GladeHandlers:
         gamewidget.getWidgets()["fullscreen1"].show()
 
     def on_about1_activate(self, widget):
-        gamewidget.getWidgets()["aboutdialog1"].show()
+        about_dialog = gamewidget.getWidgets()["aboutdialog1"]
+        response = about_dialog.run()
+        if response == Gtk.ResponseType.DELETE_EVENT or response == Gtk.responseType.CANCEL:
+            gamewidget.getWidgets()["aboutdialog1"].hide()
 
     def on_log_viewer1_activate(self, widget):
         from pychess.widgets import LogDialog
@@ -425,13 +428,6 @@ class PyChess:
             self.aboutdialog.set_translator_credits(f.read())
         with open(prefix.addDataPrefix("LICENSE"), encoding="utf-8") as f:
             self.aboutdialog.set_license(f.read())
-
-        def on_about_close(widget, event=None):
-            self.aboutdialog.hide()
-            return True
-
-        self.aboutdialog.connect("close", on_about_close)
-        self.aboutdialog.connect("delete-event", on_about_close)
 
         # RecentChooser
         def recent_item_activated(self):
