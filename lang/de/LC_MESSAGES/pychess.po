@@ -15,14 +15,15 @@
 # Pilgrim <pilgrim@clovermail.net>, 2013
 # scuffi <scuffle@gmx.de>, 2014-2015
 # Steve <raccoon@gmx.at>, 2014
+# Thomas Worofsky <thomas.worofsky@gmail.com>, 2016
 # Valsu <valsu@hylia.de>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-27 13:28+0100\n"
-"PO-Revision-Date: 2016-01-28 08:56+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2016-02-22 16:00+0000\n"
+"Last-Translator: Thomas Worofsky <thomas.worofsky@gmail.com>\n"
 "Language-Team: German (http://www.transifex.com/gbtami/pychess/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -364,7 +365,7 @@ msgstr "_Spieleliste"
 
 #: glade/fics_lounge.glade:2847
 msgid "_My games"
-msgstr ""
+msgstr "_Meine Spiele"
 
 #: glade/fics_lounge.glade:2904 glade/PyChess.glade:841
 msgid "Offer _Resume"
@@ -834,7 +835,7 @@ msgstr "Wenn aktiviert, wird das Brett nach jedem Zug gedreht, sodass beide Spie
 
 #: glade/PyChess.glade:1364
 msgid "Auto _promote to  queen"
-msgstr ""
+msgstr "Automatisch in Dame umwandeln"
 
 #: glade/PyChess.glade:1369
 msgid "If set, pawn promotes to queen without promotion dialog selection."
@@ -896,7 +897,7 @@ msgstr "Wenn aktiviert, wird die Bewertung des Tipp-Analyseschachprogramm angeze
 
 #: glade/PyChess.glade:1526
 msgid "<b>General Options</b>"
-msgstr ""
+msgstr "<b>Allgemeine Optionen</b>"
 
 #: glade/PyChess.glade:1560
 msgid "F_ull board animation"
@@ -1017,11 +1018,11 @@ msgstr "Seiten_leisten"
 
 #: glade/PyChess.glade:2440
 msgid "Light Squares :"
-msgstr ""
+msgstr "helle Felder :"
 
 #: glade/PyChess.glade:2479
 msgid "Dark Squares :"
-msgstr ""
+msgstr "dunkle Felder :"
 
 #: glade/PyChess.glade:2515
 msgid "Reset Default Colours"
@@ -1225,7 +1226,7 @@ msgstr "Lo_gin:"
 
 #: glade/taskers.glade:469
 msgid "<b>_Connect to server</b>"
-msgstr ""
+msgstr "<b>_Zum Server verbinden</b>"
 
 #: glade/tipoftheday.glade:7
 msgid "Tip Of The day"
@@ -2779,7 +2780,7 @@ msgstr "Abbruch"
 
 #: lib/pychess/widgets/ChatView.py:125
 msgid "Observers"
-msgstr ""
+msgstr "Beobachter"
 
 #: lib/pychess/widgets/ChatWindow.py:222
 msgid "You have opened no conversations yet"
@@ -2807,7 +2808,7 @@ msgstr "Freunde"
 
 #: lib/pychess/widgets/ChatWindow.py:529
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: lib/pychess/widgets/ChatWindow.py:540
 msgid "More channels"

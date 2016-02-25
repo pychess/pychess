@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the pychess package.
 # 
 # Translators:
+# Peter Hansen <peterih@fastmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-27 13:28+0100\n"
-"PO-Revision-Date: 2016-01-28 08:56+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2016-02-20 15:54+0000\n"
+"Last-Translator: Peter Hansen <peterih@fastmail.com>\n"
 "Language-Team: Danish (http://www.transifex.com/gbtami/pychess/language/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,7 +21,7 @@ msgstr ""
 # "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 #: glade/analyze_game.glade:22
 msgid "Analyze game"
-msgstr ""
+msgstr "Spilanalyse"
 
 #: glade/analyze_game.glade:87
 msgid "Use analyzer:"
@@ -105,7 +106,7 @@ msgstr "Po_rte"
 
 #: glade/fics_logon.glade:271
 msgid "Auto login on startup"
-msgstr ""
+msgstr "Automatisk login ved programstart"
 
 #: glade/fics_logon.glade:385
 msgid "S_ign up"
@@ -281,7 +282,7 @@ msgstr "_Acceptér"
 
 #: glade/fics_lounge.glade:1871
 msgid "_Decline"
-msgstr ""
+msgstr "_Afvis"
 
 #: glade/fics_lounge.glade:2151
 msgid "2 min, Fischer Random, 1800↓, Black"
@@ -297,7 +298,7 @@ msgstr "5 min, 1200-1800, Manuel"
 
 #: glade/fics_lounge.glade:2247
 msgid "Send all seeks"
-msgstr ""
+msgstr "Send alle søgninger"
 
 #: glade/fics_lounge.glade:2301
 msgid "Send seek"
@@ -335,11 +336,11 @@ msgstr "Udfordring"
 
 #: glade/fics_lounge.glade:2549 glade/fics_lounge.glade:2735
 msgid "Observe"
-msgstr ""
+msgstr "Observer"
 
 #: glade/fics_lounge.glade:2602
 msgid "Start Private Chat"
-msgstr ""
+msgstr "Start Privat Chat"
 
 #: glade/fics_lounge.glade:2659
 msgid "_Player List"
@@ -351,7 +352,7 @@ msgstr "_Spilliste"
 
 #: glade/fics_lounge.glade:2847
 msgid "_My games"
-msgstr ""
+msgstr "_Mine partier"
 
 #: glade/fics_lounge.glade:2904 glade/PyChess.glade:841
 msgid "Offer _Resume"
@@ -375,11 +376,11 @@ msgstr "Forhånds_visning"
 
 #: glade/fics_lounge.glade:3151
 msgid "Examine"
-msgstr ""
+msgstr "Undersøg"
 
 #: glade/fics_lounge.glade:3208
 msgid "_Archived"
-msgstr ""
+msgstr "_Gemt"
 
 #: glade/fics_lounge.glade:3313
 msgid "<b>News</b>"
@@ -387,7 +388,7 @@ msgstr "<b>Nyheder</b>"
 
 #: glade/fics_lounge.glade:3345
 msgid "Show Console"
-msgstr ""
+msgstr "Vis Konsol"
 
 #: glade/fics_lounge.glade:3359
 msgid "Show _Chat"
@@ -467,11 +468,11 @@ msgstr ""
 
 #: glade/newInOut.glade:526
 msgid "Rapid:    15 min + 10 sec/move"
-msgstr ""
+msgstr "Hurtig: 15 min + 10 sek/træk"
 
 #: glade/newInOut.glade:575
 msgid "Normal:   40 min + 15 sec/move"
-msgstr ""
+msgstr "Normal: 40 min + 15 sek/træk"
 
 #: glade/newInOut.glade:684
 msgid "_Play Normal chess"
@@ -579,7 +580,7 @@ msgstr "Runde:"
 
 #: glade/PyChess.glade:237
 msgid "White:"
-msgstr ""
+msgstr "Hvid:"
 
 #: glade/PyChess.glade:249
 msgid "Black:"
@@ -755,7 +756,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1156
 msgid "Knights"
-msgstr ""
+msgstr "Springere"
 
 #: glade/PyChess.glade:1167 lib/pychess/widgets/preferencesDialog.py:349
 msgid "Beep"
@@ -919,7 +920,7 @@ msgstr "_Generelt"
 
 #: glade/PyChess.glade:1692
 msgid "Use opening _book"
-msgstr ""
+msgstr "Brug åbningsbog"
 
 #: glade/PyChess.glade:1697
 msgid "If set, PyChess will suggest best opening moves on hint panel."
@@ -1004,7 +1005,7 @@ msgstr "Side_paneler"
 
 #: glade/PyChess.glade:2440
 msgid "Light Squares :"
-msgstr ""
+msgstr "Hvide felter :"
 
 #: glade/PyChess.glade:2479
 msgid "Dark Squares :"
@@ -1248,7 +1249,7 @@ msgstr ""
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Result"
-msgstr ""
+msgstr "Resultat"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Event"
@@ -1264,7 +1265,7 @@ msgstr ""
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "Date"
-msgstr ""
+msgstr "Dato"
 
 #: lib/pychess/Database/gamelist.py:41
 msgid "ECO"
@@ -1392,7 +1393,7 @@ msgstr ""
 
 #: lib/pychess/ic/FICSObjects.py:147
 msgid "Not Available"
-msgstr ""
+msgstr "Ikke tilgængelig"
 
 #: lib/pychess/ic/FICSObjects.py:149
 msgid "Running Simul Match"
@@ -1430,11 +1431,11 @@ msgstr ""
 
 #: lib/pychess/ic/FICSObjects.py:519 lib/pychess/ic/ICLounge.py:909
 msgid "white"
-msgstr ""
+msgstr "hvid"
 
 #: lib/pychess/ic/FICSObjects.py:519 lib/pychess/ic/ICLounge.py:909
 msgid "black"
-msgstr ""
+msgstr "sort"
 
 #: lib/pychess/ic/FICSObjects.py:565
 msgid "This is a continuation of an adjourned match"
@@ -1442,7 +1443,7 @@ msgstr ""
 
 #: lib/pychess/ic/FICSObjects.py:654
 msgid "Opponent Rating"
-msgstr ""
+msgstr "Modstanders rating"
 
 #: lib/pychess/ic/FICSObjects.py:656
 msgid "Manual Accept"
@@ -1567,7 +1568,7 @@ msgstr "På FICS, omfatter din \"Wild\" rating alle de følgende varianter ved a
 
 #: lib/pychess/ic/ICLounge.py:494
 msgid "Sanctions"
-msgstr ""
+msgstr "Sanktioner"
 
 #: lib/pychess/ic/ICLounge.py:499
 msgid "Email"
@@ -1654,7 +1655,7 @@ msgstr " min"
 
 #: lib/pychess/ic/ICLounge.py:1137
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: lib/pychess/ic/ICLounge.py:1203 lib/pychess/ic/ICLounge.py:1233
 #, python-format
@@ -1784,7 +1785,7 @@ msgstr "Blindskakbruger"
 
 #: lib/pychess/ic/__init__.py:182
 msgid "Computer"
-msgstr ""
+msgstr "Computer"
 
 #: lib/pychess/ic/__init__.py:183
 msgid "Team Account"
@@ -1792,7 +1793,7 @@ msgstr "Holdbruger"
 
 #: lib/pychess/ic/__init__.py:183
 msgid "Unregistered"
-msgstr ""
+msgstr "Ikke registreret"
 
 #: lib/pychess/ic/__init__.py:183
 msgid "Chess Advisor"
@@ -1824,15 +1825,15 @@ msgstr "FIDE Mester"
 
 #: lib/pychess/ic/__init__.py:186
 msgid "Woman Grand Master"
-msgstr ""
+msgstr "Kvindelig Stormester"
 
 #: lib/pychess/ic/__init__.py:186
 msgid "Woman International Master"
-msgstr ""
+msgstr "Kvindelig Internatioal mester"
 
 #: lib/pychess/ic/__init__.py:186
 msgid "Woman FIDE Master"
-msgstr ""
+msgstr "Kvindelig FIDE mester"
 
 #: lib/pychess/ic/__init__.py:187
 msgid "Dummy Account"
@@ -2297,7 +2298,7 @@ msgstr "Fordi %(black)s løb tør for tid og %(white)s ikke har materiale til at
 
 #: lib/pychess/Utils/repr.py:36
 msgid "Because both players have the same amount of pieces"
-msgstr ""
+msgstr "Fordi begge spillere har det samme antal brikker"
 
 #: lib/pychess/Utils/repr.py:38
 #, python-format
@@ -2439,7 +2440,7 @@ msgstr ""
 
 #: lib/pychess/Utils/TimeModel.py:231
 msgid "sec"
-msgstr ""
+msgstr "sek"
 
 #: lib/pychess/Variants/asean.py:12
 msgid ""
@@ -2766,7 +2767,7 @@ msgstr ""
 
 #: lib/pychess/widgets/ChatView.py:125
 msgid "Observers"
-msgstr ""
+msgstr "Tilskuere"
 
 #: lib/pychess/widgets/ChatWindow.py:222
 msgid "You have opened no conversations yet"
@@ -2790,7 +2791,7 @@ msgstr ""
 
 #: lib/pychess/widgets/ChatWindow.py:518
 msgid "Friends"
-msgstr ""
+msgstr "Venner"
 
 #: lib/pychess/widgets/ChatWindow.py:529
 msgid "Admin"
@@ -2806,7 +2807,7 @@ msgstr "Flere spillere"
 
 #: lib/pychess/widgets/ChatWindow.py:558
 msgid "Computers"
-msgstr ""
+msgstr "Computere"
 
 #: lib/pychess/widgets/ChatWindow.py:568
 msgid "BlindFold"
@@ -2814,7 +2815,7 @@ msgstr ""
 
 #: lib/pychess/widgets/ChatWindow.py:578
 msgid "Guests"
-msgstr ""
+msgstr "Gæster"
 
 #: lib/pychess/widgets/ChatWindow.py:805
 msgid "Conversations"
@@ -2841,7 +2842,7 @@ msgstr ""
 
 #: lib/pychess/widgets/enginesDialog.py:177
 msgid "wine not installed"
-msgstr ""
+msgstr "wine er ikke installeret"
 
 #: lib/pychess/widgets/enginesDialog.py:211
 #: lib/pychess/widgets/enginesDialog.py:236
@@ -2996,7 +2997,7 @@ msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:575
 msgid "Wait"
-msgstr ""
+msgstr "Vent"
 
 #: lib/pychess/widgets/gamewidget.py:576
 msgid "Adjourn"
@@ -3221,7 +3222,7 @@ msgstr ""
 
 #: lib/pychess/widgets/newGameDialog.py:301
 msgid " chess"
-msgstr ""
+msgstr "skak"
 
 #: lib/pychess/widgets/newGameDialog.py:682
 msgid "Type or paste PGN game or FEN positions here"
@@ -3657,11 +3658,11 @@ msgstr ""
 
 #: sidepanel/annotationPanel.py:254
 msgid "Add comment"
-msgstr ""
+msgstr "Tilføj kommentar"
 
 #: sidepanel/annotationPanel.py:258 sidepanel/annotationPanel.py:316
 msgid "Edit comment"
-msgstr ""
+msgstr "Rediger kommentar"
 
 #: sidepanel/annotationPanel.py:269
 msgid "Forced move"
@@ -3764,7 +3765,7 @@ msgstr ""
 
 #: sidepanel/bookPanel.py:159 sidepanel/bookPanel.py:269
 msgid "Calculating..."
-msgstr ""
+msgstr "Beregner..."
 
 #: sidepanel/bookPanel.py:300
 msgid ""
@@ -3781,7 +3782,7 @@ msgstr ""
 
 #: sidepanel/bookPanel.py:311
 msgid "Endgame Table"
-msgstr ""
+msgstr "Slutspilstabel"
 
 #: sidepanel/bookPanel.py:315
 msgid ""
@@ -3792,7 +3793,7 @@ msgstr ""
 #: sidepanel/bookPanel.py:364 sidepanel/bookPanel.py:367
 #, python-format
 msgid "Mate in %d"
-msgstr ""
+msgstr "Mat i %d"
 
 #: sidepanel/bookPanel.py:554
 msgid ""

@@ -7,14 +7,14 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2007
 # fri, 2013-2014
 # fri, 2015
-# fri, 2013-2015
+# fri, 2013-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-27 13:28+0100\n"
-"PO-Revision-Date: 2016-01-28 08:56+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2016-02-18 17:52+0000\n"
+"Last-Translator: fri\n"
 "Language-Team: Czech (http://www.transifex.com/gbtami/pychess/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -356,7 +356,7 @@ msgstr "Seznam h_er"
 
 #: glade/fics_lounge.glade:2847
 msgid "_My games"
-msgstr ""
+msgstr "_Moje hry"
 
 #: glade/fics_lounge.glade:2904 glade/PyChess.glade:841
 msgid "Offer _Resume"
@@ -380,11 +380,11 @@ msgstr "_Náhled"
 
 #: glade/fics_lounge.glade:3151
 msgid "Examine"
-msgstr ""
+msgstr "Prohlédnout"
 
 #: glade/fics_lounge.glade:3208
 msgid "_Archived"
-msgstr ""
+msgstr "_Archivováno"
 
 #: glade/fics_lounge.glade:3313
 msgid "<b>News</b>"
@@ -826,11 +826,11 @@ msgstr "Když je zapnuta tato volba, šachovnice se otočí po každém tahu, ab
 
 #: glade/PyChess.glade:1364
 msgid "Auto _promote to  queen"
-msgstr ""
+msgstr "Automoticky _proměnit na královnu"
 
 #: glade/PyChess.glade:1369
 msgid "If set, pawn promotes to queen without promotion dialog selection."
-msgstr ""
+msgstr "Je-li nastaveno, pěšec je proměněn na královnu bez vybrání v dialogu pro proměnění."
 
 #: glade/PyChess.glade:1383
 msgid "Face _to Face display mode"
@@ -888,7 +888,7 @@ msgstr "Pokud je nastaveno, je ukázána hodnota vyhodnocení stroje poradního 
 
 #: glade/PyChess.glade:1526
 msgid "<b>General Options</b>"
-msgstr ""
+msgstr "<b>Obecné volby</b>"
 
 #: glade/PyChess.glade:1560
 msgid "F_ull board animation"
@@ -1217,7 +1217,7 @@ msgstr "Při_hlášení:"
 
 #: glade/taskers.glade:469
 msgid "<b>_Connect to server</b>"
-msgstr ""
+msgstr "<b>_Připojit k serveru</b>"
 
 #: glade/tipoftheday.glade:7
 msgid "Tip Of The day"
@@ -1498,7 +1498,7 @@ msgstr "Lze vytvořit jen 3 žádosti v tutéž dobu. Pokud chcete přidat novou
 
 #: lib/pychess/ic/ICLounge.py:258
 msgid "You can't touch this! You are examining a game."
-msgstr ""
+msgstr "Na toto nemůžete šahat! Prohlížíte si hru."
 
 #: lib/pychess/ic/ICLounge.py:270
 msgid " has declined your offer for a match"
@@ -1620,11 +1620,11 @@ msgstr "Přijmout"
 
 #: lib/pychess/ic/ICLounge.py:728
 msgid "Assess"
-msgstr ""
+msgstr "Posoudit"
 
 #: lib/pychess/ic/ICLounge.py:734
 msgid "Archived"
-msgstr ""
+msgstr "Archivováno"
 
 #: lib/pychess/ic/ICLounge.py:848
 #, python-format
@@ -1703,7 +1703,7 @@ msgstr "Výzva: "
 
 #: lib/pychess/ic/ICLounge.py:2044
 msgid "If set you can refuse players accepting your seek"
-msgstr ""
+msgstr "Pokud je nastaveno, můžete odmítnout hráče přijmuvší vaši žádost"
 
 #: lib/pychess/ic/ICLounge.py:2048 lib/pychess/ic/ICLounge.py:2051
 msgid "This option is not applicable because you're challenging a player"
@@ -2771,7 +2771,7 @@ msgstr "Přerušit"
 
 #: lib/pychess/widgets/ChatView.py:125
 msgid "Observers"
-msgstr ""
+msgstr "Pozorovatelé"
 
 #: lib/pychess/widgets/ChatWindow.py:222
 msgid "You have opened no conversations yet"
@@ -2799,7 +2799,7 @@ msgstr "Přátelé"
 
 #: lib/pychess/widgets/ChatWindow.py:529
 msgid "Admin"
-msgstr ""
+msgstr "Správce"
 
 #: lib/pychess/widgets/ChatWindow.py:540
 msgid "More channels"
@@ -2811,7 +2811,7 @@ msgstr "Více hráčů"
 
 #: lib/pychess/widgets/ChatWindow.py:558
 msgid "Computers"
-msgstr ""
+msgstr "Počítače"
 
 #: lib/pychess/widgets/ChatWindow.py:568
 msgid "BlindFold"
@@ -2819,7 +2819,7 @@ msgstr ""
 
 #: lib/pychess/widgets/ChatWindow.py:578
 msgid "Guests"
-msgstr ""
+msgstr "Hosté"
 
 #: lib/pychess/widgets/ChatWindow.py:805
 msgid "Conversations"
@@ -3017,7 +3017,7 @@ msgstr "O tah zpět"
 
 #: lib/pychess/widgets/gamewidget.py:658
 msgid "Go back to the main line"
-msgstr ""
+msgstr "Jít zpět do hlavního řádku"
 
 #: lib/pychess/widgets/gamewidget.py:664
 msgid "Step forward one move"
@@ -3403,7 +3403,7 @@ msgstr "Kráčející šňůra není dovolena.\n\n%s"
 
 #: lib/pychess/Utils/lutils/lmove.py:260
 msgid "invalid promoted piece"
-msgstr "neplatná povýšená figura"
+msgstr "neplatná proměněná figura"
 
 #: lib/pychess/Utils/lutils/lmove.py:272
 msgid "the move needs a piece and a cord"
@@ -3411,7 +3411,7 @@ msgstr "Tah vyžaduje figurku a pozici"
 
 #: lib/pychess/Utils/lutils/lmove.py:306 lib/pychess/Utils/lutils/lmove.py:556
 msgid "promotion move without promoted piece is incorrect"
-msgstr "Povyšovací tah bez povýšení figurky je nesprávný"
+msgstr "Proměňovací tah bez proměnění figurky je nesprávný"
 
 #: lib/pychess/Utils/lutils/lmove.py:312
 #, python-format
@@ -3467,7 +3467,7 @@ msgstr "přesunuje střelce do fianchetto: %s"
 #: lib/pychess/Utils/lutils/strateval.py:132
 #, python-format
 msgid "promotes a Pawn to a %s"
-msgstr "povyšuje pěšáka na %s"
+msgstr "proměňuje pěšce na %s"
 
 #: lib/pychess/Utils/lutils/strateval.py:135
 msgid "castles"

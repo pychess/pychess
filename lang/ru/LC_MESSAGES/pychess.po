@@ -4,13 +4,13 @@
 # 
 # Translators:
 # milssky <2furius@gmail.com>, 2012
-# Ilyas B Arinov <prot.tcpip@gmail.com>, 2014
+# Ilyas B Arinov <arinov.ilyas@gmail.com>, 2014
 # Daniel <Yellow2815@ya.ru>, 2015
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2007
 # gbtami <gbtami@gmail.com>, 2015
-# Ilyas B Arinov <prot.tcpip@gmail.com>, 2014
-# Ilyas B Arinov <prot.tcpip@gmail.com>, 2015
-# Ilyas B Arinov <prot.tcpip@gmail.com>, 2015
+# Ilyas B Arinov <arinov.ilyas@gmail.com>, 2014
+# Ilyas B Arinov <arinov.ilyas@gmail.com>, 2015
+# Ilyas B Arinov <arinov.ilyas@gmail.com>, 2015
 # milssky <2furius@gmail.com>, 2012
 # slav0nic <slav0nic0@gmail.com>, 2012
 # slav0nic <slav0nic0@gmail.com>, 2012
