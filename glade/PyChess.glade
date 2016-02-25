@@ -2433,7 +2433,6 @@ It will search positions from http://www.k4it.de/</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">True</property>
-                                                <property name="rgba">rgb(117,80,123)</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -2472,7 +2471,6 @@ It will search positions from http://www.k4it.de/</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">True</property>
-                                                <property name="rgba">rgb(186,189,182)</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>

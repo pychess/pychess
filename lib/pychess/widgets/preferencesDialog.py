@@ -23,6 +23,7 @@ from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SOUND_SELECT
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.gfx import Pieces
+from .Background import hexcol
 
 firstRun = True
 
@@ -57,9 +58,7 @@ def initialize(widgets):
         "key-press-event",
         lambda w, e: w.event(Gdk.Event(Gdk.EventType.DELETE)) if e.keyval == Gdk.KEY_Escape else None)
 
-################################################################################
-# General initing                                                              #
-################################################################################
+# General initing
 
 
 class GeneralTab:
@@ -80,9 +79,7 @@ class GeneralTab:
         for key in ("autoRotate", "fullAnimation", "showBlunder"):
             uistuff.keep(widgets[key], key, first_value=True)
 
-################################################################################
-# Hint initing                                                               #
-################################################################################
+# Hint initing
 
 
 def anal_combo_get_value(combobox):
@@ -268,9 +265,7 @@ class HintTab:
                      "max_analysis_spin",
                      first_value=3)
 
-################################################################################
-# Sound initing                                                                #
-################################################################################
+# Sound initing
 
 # Setup default sounds
 EXT = "wav" if sys.platform == "win32" else "ogg"
@@ -461,9 +456,7 @@ class SoundTab:
 
         uistuff.keep(widgets["alarm_spin"], "alarm_spin", first_value=15)
 
-################################################################################
-# Panel initing                                                               #
-################################################################################
+# Panel initing
 
 
 class PanelTab:
@@ -586,9 +579,8 @@ class PanelTab:
     def __on_hide_window(self, widget):
         self.hideit()
 
-#############################################################################
-# Theme initing                                                             #
-#############################################################################
+
+# Theme initing
 
 
 class ThemeTab:
@@ -597,9 +589,11 @@ class ThemeTab:
     """
     def __init__(self, widgets):
 
-        #################
         # Board Colours
-        #################
+
+        style_ctxt = widgets["window1"].get_style_context()
+        LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])
+        DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
 
         def onColourSetLight(_):
             """ :Description: Sets the light squares of the chess board
@@ -622,28 +616,27 @@ class ThemeTab:
         def onResetColourClicked(_):
             """ :Description: Resets the chess board squares to factory default
             """
-            conf.set("lightcolour", "#ffffffffffff")
-            conf.set("darkcolour", "#aaaaaaaaaaaa")
+            conf.set("lightcolour", LIGHT)
+            conf.set("darkcolour", DARK)
 
         widgets["reset_btn"].connect("clicked", onResetColourClicked)
 
         # Get the current board colours if set, if not set, set them to default
-        conf.set("lightcolour", conf.get("lightcolour", "#ffffffffffff"))
-        conf.set("darkcolour", conf.get("darkcolour", "#aaaaaaaaaaaa"))
+        conf.set("lightcolour", conf.get("lightcolour", LIGHT))
+        conf.set("darkcolour", conf.get("darkcolour", DARK))
 
         # Next 2 lines take a #hex str converts them to a color then to a RGBA representation
         self.lightcolour = Gdk.RGBA()
-        self.lightcolour.parse(conf.get("lightcolour", "#ffffffffffff"))
+        self.lightcolour.parse(conf.get("lightcolour", LIGHT))
         self.darkcolour = Gdk.RGBA()
-        self.darkcolour.parse(conf.get("darkcolour", "#aaaaaaaaaaaa"))
+        self.darkcolour.parse(conf.get("darkcolour", DARK))
 
         # Set the color swatches in preference to stored values
         widgets['light_cbtn'].set_rgba(self.lightcolour)
         widgets['dark_cbtn'].set_rgba(self.darkcolour)
 
-        #############
         # Chess Sets
-        #############
+
         self.themes = self.discoverThemes()
         store = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
 
@@ -720,9 +713,7 @@ class ThemeTab:
 
         return themes
 
-#############################################################################
-# Save initing                                                              #
-#############################################################################
+# Save initing
 
 
 class SaveTab:

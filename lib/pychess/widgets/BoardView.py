@@ -20,7 +20,7 @@ from pychess.Utils.const import ASEAN_VARIANTS, DROP_VARIANTS, WAITING_TO_START,
     WILDCASTLECHESS, PAWN, KNIGHT, SITTUYINCHESS, BLACK
 from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
     HiddenPiecesBoard, AllWhiteBoard
-
+from .Background import hexcol
 from . import preferencesDialog
 
 
@@ -805,9 +805,9 @@ class BoardView(Gtk.DrawingArea):
                           square + thick * 3, square + thick * 3)
 
         style_ctxt = self.get_style_context()
-        dcolor = style_ctxt.lookup_color("p_dark_color")[1]
+        DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
         dcolor = Gdk.RGBA()
-        dcolor.parse(conf.get("darkcolour", "#000000000000"))
+        dcolor.parse(conf.get("darkcolour", DARK))
         context.set_source_rgba(dcolor.red, dcolor.green, dcolor.blue, dcolor.alpha)
 
         context.set_line_width(thick)
@@ -865,8 +865,9 @@ class BoardView(Gtk.DrawingArea):
     def drawBoard(self, context, r):
         xc_loc, yc_loc, square, side = self.square
         style_ctxt = self.get_style_context()
+        LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])
         col = Gdk.RGBA()
-        col.parse(conf.get("lightcolour", "#ffffffffffff"))
+        col.parse(conf.get("lightcolour", LIGHT))
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
         if self.model.variant.variant in ASEAN_VARIANTS:
@@ -881,9 +882,10 @@ class BoardView(Gtk.DrawingArea):
                         context.rectangle(xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
             context.fill()
 
-        col = style_ctxt.lookup_color("p_dark_color")[1]
+        style_ctxt = self.get_style_context()
+        DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
         col = Gdk.RGBA()
-        col.parse(conf.get("darkcolour", "#000000000000"))
+        col.parse(conf.get("darkcolour", DARK))
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
         if self.model.variant.variant in ASEAN_VARIANTS:

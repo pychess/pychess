@@ -14,6 +14,14 @@ loldcolor = None
 doldcolor = None
 
 
+def hexcol(color):
+    """ Description : Takes a colour tuple(rgb) and returns a hex based string #rrggbb
+        Returns : (str)
+    """
+    return "#%02X%02X%02X" % (int(color.red * 255), int(color.green * 255),
+                              int(color.blue * 255))
+
+
 def giveBackground(widget):
     widget.connect("draw", expose)
     widget.connect("style-updated", newTheme)
@@ -120,13 +128,6 @@ def newTheme(widget):
             (basecol.red + textcol.red) / 2., 1.0), min(
                 (basecol.green + textcol.green) / 2., 1.0), min(
                     (basecol.blue + textcol.blue) / 2., 1.0))  # text_aa
-
-    def hexcol(color):
-        """ Description : Takes a colour tuple(rgb) and returns a hex based string #rrggbb
-            Returns : (str)
-        """
-        return "#%02X%02X%02X" % (int(color.red * 255), int(color.green * 255),
-                                  int(color.blue * 255))
 
     data = "@define-color p_bg_color " + hexcol(bgcol) + ";" \
         "@define-color p_bg_prelight " + hexcol(bgcol) + ";" \
