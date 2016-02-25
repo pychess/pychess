@@ -175,7 +175,10 @@ class Board:
             moved.append((board1[cord], cord0))
             new.append(board1[cord])
         else:
-            moved.append((self[cord0], cord0))
+            if move.flag in PROMOTIONS:
+                dead.append(self[cord0])
+            else:
+                moved.append((self[cord0], cord0))
 
         if self[cord1] and not (self.variant == FISCHERRANDOMCHESS and
                                 move.flag in (QUEEN_CASTLE, KING_CASTLE)):
