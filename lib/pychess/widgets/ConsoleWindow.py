@@ -121,7 +121,7 @@ class ConsoleView(Gtk.Box):
             self.readView.scroll_to_iter(tb_iter, 0.00, False, 1.00, 1.00)
 
     def onKeyPress(self, widget, event):
-        if event.keyval in map(Gdk.keyval_from_name, ("Return", "KP_Enter")):
+        if event.keyval in list(map(Gdk.keyval_from_name, ("Return", "KP_Enter"))):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 buffer = self.writeView.get_buffer()
                 if buffer.props.text.startswith("pas"):

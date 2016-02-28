@@ -139,8 +139,6 @@ class ToggleComboBox(Gtk.ToggleButton):
         self.set_active(True)
         self.menu.popup(None, None, self.menuPos, 1, 1, event.time)
 
-    # from Gtk.gdk import keyval_from_name
-    # keys = map(keyval_from_name,("space", "KP_Space", "Return", "KP_Enter"))
     keys = list(map(Gdk.keyval_from_name, ("space", "KP_Space", "Return",
                                            "KP_Enter")))
 

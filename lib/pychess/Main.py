@@ -40,12 +40,12 @@ from pychess.ic import ICLogon
 # from pychess.Database.gamelist import GameList
 from pychess import VERSION, VERSION_NAME
 
-leftkeys = map(Gdk.keyval_from_name, ("Left", "KP_Left"))
-rightkeys = map(Gdk.keyval_from_name, ("Right", "KP_Right"))
-upkeys = map(Gdk.keyval_from_name, ("Up", "KP_Up"))
-downkeys = map(Gdk.keyval_from_name, ("Down", "KP_Down"))
-homekeys = map(Gdk.keyval_from_name, ("Home", "KP_Home"))
-endkeys = map(Gdk.keyval_from_name, ("End", "KP_End"))
+leftkeys = list(map(Gdk.keyval_from_name, ("Left", "KP_Left")))
+rightkeys = list(map(Gdk.keyval_from_name, ("Right", "KP_Right")))
+upkeys = list(map(Gdk.keyval_from_name, ("Up", "KP_Up")))
+downkeys = list(map(Gdk.keyval_from_name, ("Down", "KP_Down")))
+homekeys = list(map(Gdk.keyval_from_name, ("Home", "KP_Home")))
+endkeys = list(map(Gdk.keyval_from_name, ("End", "KP_End")))
 functionkeys = [Gdk.keyval_from_name(k)
                 for k in ("F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9",
                           "F10", "F11")]
