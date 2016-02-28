@@ -37,6 +37,8 @@ def run(gameDic):
 def initialize(gameDic):
 
     uistuff.keep(widgets["fromCurrent"], "fromCurrent", first_value=True)
+    uistuff.keep(widgets["shouldBlack"], "shouldBlack", first_value=True)
+    uistuff.keep(widgets["shouldWhite"], "shouldWhite", first_value=True)
     uistuff.keep(widgets["threatPV"], "threatPV")
     uistuff.keep(widgets["showEval"], "showEval")
     uistuff.keep(widgets["showBlunder"], "showBlunder", first_value=True)
@@ -101,6 +103,8 @@ def initialize(gameDic):
         gmwidg.replaceMessages(message)
 
         def analyse_moves():
+            should_black = conf.get("shouldBlack", True)
+            should_white = conf.get("shouldWhite", True)
             from_current = conf.get("fromCurrent", True)
             start_ply = gmwidg.board.view.shown if from_current else 0
             move_time = int(conf.get("max_analysis_spin", 3))
@@ -108,7 +112,7 @@ def initialize(gameDic):
             for board in gamemodel.boards[start_ply:]:
                 if stop_event.is_set():
                     break
-
+                
                 @idle_add
                 def do():
                     gmwidg.board.view.setShownBoard(board)
@@ -119,8 +123,8 @@ def initialize(gameDic):
                 time.sleep(move_time + 0.1)
 
                 ply = board.ply
-                if ply - 1 in gamemodel.scores and ply in gamemodel.scores:
-                    color = (ply - 1) % 2
+                color = (ply - 1) % 2
+                if ply - 1 in gamemodel.scores and ply in gamemodel.scores and ((color == BLACK and should_black) or (color == WHITE and should_white)):
                     oldmoves, oldscore, olddepth = gamemodel.scores[ply - 1]
                     oldscore = oldscore * -1 if color == BLACK else oldscore
                     score_str = prettyPrintScore(oldscore, olddepth)
