@@ -112,7 +112,13 @@ def initialize(gameDic):
             for board in gamemodel.boards[start_ply:]:
                 if stop_event.is_set():
                     break
-                
+
+                ply = board.ply
+                color = (ply - 1) % 2
+
+                if (color == BLACK and not should_black) or (color == WHITE and not should_white):
+                    continue
+
                 @idle_add
                 def do():
                     gmwidg.board.view.setShownBoard(board)
@@ -122,9 +128,7 @@ def initialize(gameDic):
                     inv_analyzer.setBoard(board)
                 time.sleep(move_time + 0.1)
 
-                ply = board.ply
-                color = (ply - 1) % 2
-                if ply - 1 in gamemodel.scores and ply in gamemodel.scores and ((color == BLACK and should_black) or (color == WHITE and should_white)):
+                if ply - 1 in gamemodel.scores and ply in gamemodel.scores:
                     oldmoves, oldscore, olddepth = gamemodel.scores[ply - 1]
                     oldscore = oldscore * -1 if color == BLACK else oldscore
                     score_str = prettyPrintScore(oldscore, olddepth)
