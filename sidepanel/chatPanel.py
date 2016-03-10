@@ -68,12 +68,12 @@ class Sidepanel:
         if hasattr(self, "player"):
             if text.startswith('# '):
                 text = text[2:]
-                # name = self.gamemodel.connection.cm.whisper(text)
+                self.gamemodel.connection.cm.whisper(text)
             elif text.startswith('whisper '):
                 text = text[8:]
-                # name = self.gamemodel.connection.cm.whisper(text)
+                self.gamemodel.connection.cm.whisper(text)
             else:
                 self.player.sendMessage(text)
                 self.chatView.addMessage(repr(self.player), text)
-#        else:
-#            name = self.gamemodel.connection.cm.whisper(text)
+        else:
+            self.gamemodel.connection.cm.whisper(text)
