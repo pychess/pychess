@@ -210,4 +210,7 @@ class TimeSeal(object):
                 if start >= 0:
                     self.buf = self.buf[:start]
                     return i
+                else:
+                    not_find = "read_until:%s , got:'%s'" % (until, self.buf)
+                    log.debug(not_find, extra={"task": (self.name, "raw")})
             self.cook_some()
