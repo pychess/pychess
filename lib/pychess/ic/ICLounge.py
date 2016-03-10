@@ -1289,7 +1289,7 @@ class PlayerTabSection(ParrentListSection):
                                               self.onSelectionChanged)
         self.onSelectionChanged(None)
 
-        if self.connection.FatICS or self.connection.USCN:
+        if self.connection.FatICS or self.connection.USCN or self.lounge.helperconn is None:
             self.widgets["playersSpinner"].hide()
         else:
             self.widgets["playersSpinner"].start()
@@ -1502,6 +1502,7 @@ class GameTabSection(ParrentListSection):
     def __init__(self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
+        self.lounge = lounge
         self.games = {}
         self.recpix = load_icon(16, "media-record")
         self.clearpix = get_pixbuf("glade/board.png")
@@ -1556,7 +1557,7 @@ class GameTabSection(ParrentListSection):
         self.connection.bm.connect("obsGameCreated", self.onGameObserved)
         self.connection.bm.connect("obsGameUnobserved", self.onGameUnobserved)
 
-        if self.connection.FatICS or self.connection.USCN:
+        if self.connection.FatICS or self.connection.USCN or self.lounge.helperconn is None:
             self.widgets["gamesSpinner"].hide()
         else:
             self.widgets["gamesSpinner"].start()

@@ -263,6 +263,10 @@ class ICLogon(object):
             self.helperconn.close()
             self.helperconn = None
 
+            if not self.canceled:
+                self.showError(connection, error)
+                #self.present()
+
     @idle_add
     def onConnected(self, connection):
         self.lounge = ICLounge(connection, self.helperconn, self.host)

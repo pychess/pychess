@@ -204,11 +204,11 @@ class FICSConnection(Connection):
                     print("guest", file=self.client)
                 got = self.client.read_until(
                     "Press return", "If it is yours, type the password.",
-                    "guest connections have been prevented")
-                # got = 2
+                    "guest connections have been prevented",
+                    "Due to abusive behavior, nobody from your site may login without an account.")
                 if got == 1:
                     raise LogOnException(REGISTERED % self.username)
-                elif got == 2:
+                elif got == 2 or got == 3:
                     raise LogOnException(PREVENTED)
                 print(file=self.client)
 
