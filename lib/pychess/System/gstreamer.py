@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 import sys
 
+import gi
+
 from .Log import log
 from pychess.compat import url2pathname
 
@@ -35,11 +37,12 @@ if sys.platform == "win32":
     sound_player = WinsoundPlayer()
 else:
     try:
+        gi.require_version("Gst", "1.0")
         from gi.repository import Gst
-    except ImportError as err:
-        log.error(
-            "ERROR: Unable to import gstreamer. All sound will be mute.\n%s" %
-            err)
+    except (ImportError, ValueError) as err:
+            log.error(
+                "ERROR: Unable to import gstreamer. All sound will be mute.\n%s" %
+                err)
     else:
         if not Gst.init_check(None):
             log.error(
