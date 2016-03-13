@@ -245,10 +245,6 @@ class ICLogon(object):
         self.host = host if host is not None else alternate_host if alternate_host else "freechess.org"
         self.connection = FICSMainConnection(self.host, ports, username,
                                              password)
-        self.helperconn = FICSHelperConnection(self.connection, self.host,
-                                               ports)
-        self.helperconn.connect("error", self.onHelperConnectionError)
-        self.helperconn.start()
         for signal, callback in (("connected", self.onConnected),
                                  ("error", self.onConnectionError),
                                  ("connectingMsg", self.showMessage)):
@@ -256,16 +252,29 @@ class ICLogon(object):
                 signal, callback))
         self.connection.start()
 
+        self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
+        self.helperconn.connect("error", self.onHelperConnectionError)
+        self.helperconn.start()
+
     @idle_add
     def onHelperConnectionError(self, connection, error):
         if self.helperconn is not None:
+            dialog = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION,
+                                       buttons=Gtk.ButtonsType.YES_NO)
+            dialog.set_markup(_("Guest logins disabled by FICS server"))
+            text = "PyChess can maintain users status and games list only if it changes\n\
+            'open', 'gin' and 'availinfo' user variables.\n\
+            Do you enable to set these variables on?"
+            dialog.format_secondary_text(text)
+            response = dialog.run()
+            dialog.destroy()
+
             self.helperconn.cancel()
             self.helperconn.close()
             self.helperconn = None
 
-            if not self.canceled:
-                self.showError(connection, error)
-                #self.present()
+            set_user_vars = response == Gtk.ResponseType.YES
+            self.connection.start_helper_manager(set_user_vars)
 
     @idle_add
     def onConnected(self, connection):

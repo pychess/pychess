@@ -56,7 +56,11 @@ class ConsoleWindow(object):
 
         for line in lines:
             line = self.filter_unprintable(line.line)
-            if line and not line.startswith('<'):
+            if line and \
+                (not line.startswith('<')) and \
+                (not line.startswith("{Game")) and \
+                (not line.endswith("available for matches.")) and\
+                    line[-12:-5] != "), Bug(":
                 self.consoleView.addMessage(line, False)
 
 

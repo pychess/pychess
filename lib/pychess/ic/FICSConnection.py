@@ -203,9 +203,11 @@ class FICSConnection(Connection):
                 else:
                     print("guest", file=self.client)
                 got = self.client.read_until(
-                    "Press return", "If it is yours, type the password.",
+                    "Press return",
+                    "If it is yours, type the password.",
                     "guest connections have been prevented",
-                    "Due to abusive behavior, nobody from your site may login without an account.")
+                    "nobody from your site may login without an account.")
+                # got = 3
                 if got == 1:
                     raise LogOnException(REGISTERED % self.username)
                 elif got == 2 or got == 3:
@@ -324,6 +326,10 @@ class FICSMainConnection(FICSConnection):
         self.journal_owner = self.username
 
     def close(self):
+        if isinstance(self.client, PredictionsTelnet):
+            self.client.run_command("set open 0")
+            self.client.run_command("set gin 0")
+            self.client.run_command("set availinfo 0")
         try:
             self.lvm.stop()
         except AttributeError:
@@ -368,8 +374,22 @@ class FICSMainConnection(FICSConnection):
         self.seeks.start()
         self.challenges.start()
 
+        if self.FatICS or self.USCN:
+            self.client.run_command("set pin 1")
+        else:
+            self.client.run_command("iset allresults 1")
+            # ivar pin: http://www.freechess.org/Help/HelpFiles/new_features.html
+            self.client.run_command("iset pin 1")
+
         # disable setting iveriables from console
         self.client.run_command("iset lock 1")
+
+    def start_helper_manager(self, set_user_vars):
+        if set_user_vars:
+            self.client.run_command("set open 1")
+            self.client.run_command("set gin 1")
+            self.client.run_command("set availinfo 1")
+        self.hm = HelperManager(self, self)
 
 
 class FICSHelperConnection(FICSConnection):
@@ -382,16 +402,11 @@ class FICSHelperConnection(FICSConnection):
         self.main_conn.lounge_loaded.wait()
         # set open 1 is a requirement for availinfo notifications
         self.client.run_command("set open 1")
+        self.client.run_command("set seek 0")
         self.client.run_command("set shout 0")
         self.client.run_command("set cshout 0")
         self.client.run_command("set tell 0")
         self.client.run_command("set chanoff 1")
         self.client.run_command("set gin 1")
         self.client.run_command("set availinfo 1")
-        if self.FatICS or self.USCN:
-            self.client.run_command("set pin 1")
-        else:
-            self.client.run_command("iset allresults 1")
-            # ivar pin: http://www.freechess.org/Help/HelpFiles/new_features.html
-            self.client.run_command("iset pin 1")
         self.hm = HelperManager(self, self.main_conn)

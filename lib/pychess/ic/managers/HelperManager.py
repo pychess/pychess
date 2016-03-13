@@ -1,4 +1,5 @@
 import re
+from threading import Timer
 
 from gi.repository import GObject
 
@@ -82,7 +83,11 @@ class HelperManager(GObject.GObject):
         if self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.client.run_command("who")
         else:
-            self.helperconn.client.run_command("who IbslwBzSLx")
+            for rated in ("R", "U"):
+                for segment in range(1, 10):
+                    t = Timer(0.5 * segment, self.helperconn.client.run_command, args=[
+                        "who IbslwBzSLx%s%s9" % (rated, segment)])
+                    t.start()
 
         self.games = []
         if self.helperconn.FatICS or self.helperconn.USCN:
