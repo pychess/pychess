@@ -1626,7 +1626,7 @@ class GameTabSection(ParrentListSection):
     # https://github.com/metomi/rose/blob/master/lib/python/rose/gtk/util.py
     def on_sort_column_change(self, model):
         """ Store previous sorting information for multi-column sorts. """
-        id, order = model.get_sort_column_id()
+        id, order = self.tv.get_model().get_sort_column_id()
         if id is None and order is None:
             return False
         if (self.prev_sort_column_id and self.prev_sort_column_id[0][0] == id):
@@ -1642,7 +1642,7 @@ class GameTabSection(ParrentListSection):
         rval = cmp(val0, val1)
         # If rval is 1 or -1, no need for a multi-column sort.
         if rval == 0:
-            this_order = model.get_sort_column_id()[1]
+            this_order = self.tv.get_model().get_sort_column_id()[1]
             cmp_factor = 1
             if this_order == Gtk.SortType.DESCENDING:
                 # We need to de-invert the sort order for multi sorting.
