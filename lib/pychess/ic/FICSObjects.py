@@ -17,7 +17,8 @@ from pychess.ic import RATING_TYPES, IC_STATUS_PLAYING, IC_STATUS_OFFLINE, IC_ST
     TYPE_ATOMIC, TYPE_LIGHTNING, TYPE_BUGHOUSE, TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_SUICIDE, \
     TYPE_WILD, GAME_TYPES_BY_RATING_TYPE, TYPE_UNREGISTERED, TYPE_COMPUTER, TYPE_ADMINISTRATOR, \
     DEVIATION_NONE, DEVIATION_ESTIMATED, DEVIATION_PROVISIONAL, GAME_TYPES_BY_FICS_NAME, \
-    GAME_TYPES
+    GAME_TYPES, TYPE_GRAND_MASTER, TYPE_INTERNATIONAL_MASTER, TYPE_FIDE_MASTER, \
+    TYPE_WOMAN_GRAND_MASTER, TYPE_WOMAN_INTERNATIONAL_MASTER, TYPE_WOMAN_FIDE_MASTER
 
 
 class FICSRatings(dict):
@@ -292,6 +293,15 @@ class FICSPlayer(GObject.GObject):
 
     def isAdmin(self):
         return TYPE_ADMINISTRATOR in self.titles
+
+    def isTitled(self):
+        return (
+            TYPE_GRAND_MASTER in self.titles) or (
+            TYPE_INTERNATIONAL_MASTER in self.titles) or (
+            TYPE_FIDE_MASTER in self.titles) or (
+            TYPE_WOMAN_GRAND_MASTER in self.titles) or (
+            TYPE_WOMAN_INTERNATIONAL_MASTER in self.titles) or (
+            TYPE_WOMAN_FIDE_MASTER in self.titles)
 
     @classmethod
     def getIconByRating(cls, rating, size=16):

@@ -1254,8 +1254,21 @@ class PlayerTabSection(ParrentListSection):
         self.tv = widgets["playertreeview"]
         self.store = Gtk.ListStore(FICSPlayer, GdkPixbuf.Pixbuf, str, int, int,
                                    int, str, str)
-        self.model = Gtk.TreeModelSort(model=self.store)
+        self.player_filter = self.store.filter_new()
+        self.player_filter.set_visible_func(self.player_filter_func)
+
+        self.filter_toggles = {}
+        self.filter_buttons = ("registered_toggle", "guest_toggle", "computer_toggle", "titled_toggle")
+        for widget in self.filter_buttons:
+            uistuff.keep(self.widgets[widget], widget)
+            self.widgets[widget].connect("toggled", self.on_filter_button_toggled)
+            initial = conf.get(widget, True)
+            self.filter_toggles[widget] = initial
+            self.widgets[widget].set_active(initial)
+
+        self.model = self.player_filter.sort_new_with_model()
         self.tv.set_model(self.model)
+
         self.addColumns(self.tv,
                         "FICSPlayer",
                         "",
@@ -1293,6 +1306,23 @@ class PlayerTabSection(ParrentListSection):
             self.widgets["playersSpinner"].hide()
         else:
             self.widgets["playersSpinner"].start()
+
+    def player_filter_func(self, model, iter, data):
+        player = model[iter][0]
+        is_titled = player.isTitled()
+        is_computer = player.isComputer()
+        is_registered = (not is_titled) and (not is_computer) and (not player.isGuest())
+        is_guest = (not is_titled) and (not is_computer) and (player.isGuest())
+        return (
+            self.filter_toggles["computer_toggle"] and is_computer) or (
+            self.filter_toggles["registered_toggle"] and is_registered) or (
+            self.filter_toggles["guest_toggle"] and is_guest) or (
+            self.filter_toggles["titled_toggle"] and is_titled)
+
+    def on_filter_button_toggled(self, widget):
+        for button in self.filter_buttons:
+            self.filter_toggles[button] = self.widgets[button].get_active()
+        self.player_filter.refilter()
 
     def onPlayerAdded(self, players, new_players):
         # Let the hard work to be done in the helper connection thread
@@ -1509,7 +1539,20 @@ class GameTabSection(ParrentListSection):
         self.tv = self.widgets["gametreeview"]
         self.store = Gtk.ListStore(FICSGame, GdkPixbuf.Pixbuf, str, int, str,
                                    int, str, str)
-        self.model = Gtk.TreeModelSort(model=self.store)
+
+        self.game_filter = self.store.filter_new()
+        self.game_filter.set_visible_func(self.game_filter_func)
+
+        self.filter_toggles = {}
+        self.filter_buttons = ("standard_toggle", "blitz_toggle", "lightning_toggle", "variant_toggle")
+        for widget in self.filter_buttons:
+            uistuff.keep(self.widgets[widget], widget)
+            self.widgets[widget].connect("toggled", self.on_filter_button_toggled)
+            initial = conf.get(widget, True)
+            self.filter_toggles[widget] = initial
+            self.widgets[widget].set_active(initial)
+
+        self.model = self.game_filter.sort_new_with_model()
         self.tv.set_model(self.model)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
         self.addColumns(self.tv,
@@ -1524,9 +1567,9 @@ class GameTabSection(ParrentListSection):
                         hide=[0],
                         pix=[1])
         self.tv.get_column(0).set_sort_column_id(0)
-        self.model.set_sort_func(0, self.pixCompareFunction, 1)
+        self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         for i in range(1, 7):
-            self.model.set_sort_func(i, self.compareFunction, i)
+            self.tv.get_model().set_sort_func(i, self.compareFunction, i)
         self.prev_sort_column_id = []
         self.model.connect("sort-column-changed", self.on_sort_column_change)
 
@@ -1561,6 +1604,23 @@ class GameTabSection(ParrentListSection):
             self.widgets["gamesSpinner"].hide()
         else:
             self.widgets["gamesSpinner"].start()
+
+    def game_filter_func(self, model, iter, data):
+        game = model[iter][0]
+        is_standard = game.game_type.rating_type == TYPE_STANDARD
+        is_blitz = game.game_type.rating_type == TYPE_BLITZ
+        is_lightning = game.game_type.rating_type == TYPE_LIGHTNING
+        is_variant = game.game_type.rating_type in RATING_TYPES[3:]
+        return (
+            self.filter_toggles["standard_toggle"] and is_standard) or (
+            self.filter_toggles["blitz_toggle"] and is_blitz) or (
+            self.filter_toggles["lightning_toggle"] and is_lightning) or (
+            self.filter_toggles["variant_toggle"] and is_variant)
+
+    def on_filter_button_toggled(self, widget):
+        for button in self.filter_buttons:
+            self.filter_toggles[button] = self.widgets[button].get_active()
+        self.game_filter.refilter()
 
     # Multi-column sort based on TreeModelSortUtil from
     # https://github.com/metomi/rose/blob/master/lib/python/rose/gtk/util.py
