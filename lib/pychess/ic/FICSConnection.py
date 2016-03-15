@@ -374,6 +374,7 @@ class FICSMainConnection(FICSConnection):
         self.seeks.start()
         self.challenges.start()
 
+        # if guest accounts disabled we will handle players in the main connection
         if self.FatICS or self.USCN:
             self.client.run_command("set pin 1")
         else:
@@ -409,4 +410,10 @@ class FICSHelperConnection(FICSConnection):
         self.client.run_command("set chanoff 1")
         self.client.run_command("set gin 1")
         self.client.run_command("set availinfo 1")
+        if self.FatICS or self.USCN:
+            self.client.run_command("set pin 1")
+        else:
+            self.client.run_command("iset allresults 1")
+            # ivar pin: http://www.freechess.org/Help/HelpFiles/new_features.html
+            self.client.run_command("iset pin 1")
         self.hm = HelperManager(self, self.main_conn)
