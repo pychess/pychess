@@ -616,7 +616,7 @@ class UserInfoSection(Section):
             row += 1
 
         if not my_finger:
-            if self.lounge.seek_challenge.finger_sent:
+            if self.lounge.seek_list.finger_sent:
                 dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
                                            buttons=Gtk.ButtonsType.OK)
                 dialog.set_markup(_("Finger of %s" % finger.getName()))
@@ -624,7 +624,7 @@ class UserInfoSection(Section):
                 dialog.get_message_area().add(table)
                 dialog.run()
                 dialog.destroy()
-            self.lounge.seek_challenge.finger_sent = False
+            self.lounge.seek_list.finger_sent = False
             return
 
         if not self.connection.isRegistred():
