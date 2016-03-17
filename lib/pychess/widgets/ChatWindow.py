@@ -906,9 +906,11 @@ class ChatWindow(object):
     def onPersonMessage(self, cm, name, title, isadmin, text):
         console_active = False
         for window in Gtk.Window.list_toplevels():
-            if window.is_active() and "pychess" in window.get_icon_name():
-                console_active = True
-                break
+            if window.is_active():
+                window_icon_name = window.get_icon_name()
+                if window_icon_name is not None and "pychess" in window_icon_name:
+                    console_active = True
+                    break
 
         if self.connection.bm.isPlaying() or console_active:
             if not self.window:
