@@ -496,10 +496,10 @@ class UserInfoSection(Section):
 
     @idle_add
     def onFinger(self, fm, finger):
-        if finger.getName().lower() != self.connection.getUsername().lower():
-            #            print (finger.getName(), self.connection.getUsername())
-            return
-
+        # print(finger.getName(), self.connection.getUsername())
+        my_finger = finger.getName().lower() == self.connection.getUsername().lower()
+        if my_finger:
+            self.widgets["usernameLabel"].set_markup("<b>%s</b>" % finger.getName())
         rows = 1
         if finger.getRating():
             rows += len(finger.getRating()) + 1
@@ -604,6 +604,16 @@ class UserInfoSection(Section):
                 self.pinger.connect("error", callback)
             table.attach(self.ping_label, 1, 6, row, row + 1)
             row += 1
+
+        if not my_finger:
+            dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
+                                       buttons=Gtk.ButtonsType.OK)
+            dialog.set_markup(_("Finger of %s" % finger.getName()))
+            table.show_all()
+            dialog.get_message_area().add(table)
+            dialog.run()
+            dialog.destroy()
+            return
 
         if not self.connection.isRegistred():
             vbox = Gtk.VBox()
@@ -815,14 +825,14 @@ class SeekTabSection(ParrentListSection):
         self.assess_item.connect("activate", self.on_assess)
         self.challenge_item = Gtk.MenuItem(_("Challenge"))
         self.challenge_item.connect("activate", self.on_challenge)
-        # self.finger_item = Gtk.MenuItem(_("Finger"))
-        # self.finger_item.connect("activate", self.on_finger)
+        self.finger_item = Gtk.MenuItem(_("Finger"))
+        self.finger_item.connect("activate", self.on_finger)
         self.archived_item = Gtk.MenuItem(_("Archived"))
         self.archived_item.connect("activate", self.on_archived)
         self.menu.append(self.accept_item)
         self.menu.append(self.assess_item)
         self.menu.append(self.challenge_item)
-        # self.menu.append(self.finger_item)
+        self.menu.append(self.finger_item)
         self.menu.append(Gtk.SeparatorMenuItem())
         self.menu.append(self.archived_item)
         self.menu.attach_to_widget(self.tv, None)
@@ -866,24 +876,44 @@ class SeekTabSection(ParrentListSection):
             self.assess_sent = False
             dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
                                        buttons=Gtk.ButtonsType.OK)
-            dialog.set_markup(assess["type"])
-            text1 = "%-18s %18s\n" % (assess["names"][0], assess["names"][1])
-            text2 = "%-18s %18s\n" % (assess["oldRD"][0], assess["oldRD"][1])
-            text3 = "%-8s%13s%10s\n" % ("Win:", assess["win"][0],
-                                        assess["win"][1])
-            text4 = "%-8s%12s%10s\n" % ("Draw:", assess["draw"][0],
-                                        assess["draw"][1])
-            text5 = "%-8s%12s%10s\n" % ("Loss:", assess["loss"][0],
-                                        assess["loss"][1])
-            text6 = "%-8s%10s%10s\n" % ("New RD:", assess["newRD"][0],
-                                        assess["newRD"][1])
-            dialog.format_secondary_text(
-                text1 + text2 + text3 + text4 + text5 + text6)
+            dialog.set_markup(_("Effect on ratings by the possible outcomes"))
+            grid = Gtk.Grid()
+            grid.set_column_homogeneous(True)
+            grid.set_row_spacing(12)
+            grid.set_row_spacing(12)
+            name0 = Gtk.Label()
+            name0.set_markup("<b>%s</b>" % assess["names"][0])
+            name1 = Gtk.Label()
+            name1.set_markup("<b>%s</b>" % assess["names"][1])
+            grid.attach(Gtk.Label(""), 0, 0, 1, 1)
+            grid.attach(name0, 1, 0, 1, 1)
+            grid.attach(name1, 2, 0, 1, 1)
+            grid.attach(Gtk.Label(assess["type"]), 0, 1, 1, 1)
+            grid.attach(Gtk.Label(assess["oldRD"][0]), 1, 1, 1, 1)
+            grid.attach(Gtk.Label(assess["oldRD"][1]), 2, 1, 1, 1)
+            grid.attach(Gtk.Label(_("Win:")), 0, 2, 1, 1)
+            grid.attach(Gtk.Label(assess["win"][0]), 1, 2, 1, 1)
+            grid.attach(Gtk.Label(assess["win"][1]), 2, 2, 1, 1)
+            grid.attach(Gtk.Label(_("Draw:")), 0, 3, 1, 1)
+            grid.attach(Gtk.Label(assess["draw"][0]), 1, 3, 1, 1)
+            grid.attach(Gtk.Label(assess["draw"][1]), 2, 3, 1, 1)
+            grid.attach(Gtk.Label(_("Loss:")), 0, 4, 1, 1)
+            grid.attach(Gtk.Label(assess["loss"][0]), 1, 4, 1, 1)
+            grid.attach(Gtk.Label(assess["loss"][1]), 2, 4, 1, 1)
+            grid.attach(Gtk.Label(_("New RD:")), 0, 5, 1, 1)
+            grid.attach(Gtk.Label(assess["newRD"][0]), 1, 5, 1, 1)
+            grid.attach(Gtk.Label(assess["newRD"][1]), 2, 5, 1, 1)
+            grid.show_all()
+            dialog.get_message_area().add(grid)
             dialog.run()
             dialog.destroy()
 
     def on_finger(self, widget):
-        print("finger")
+        model, sel_iter = self.tv.get_selection().get_selected()
+        if sel_iter is None:
+            return
+        sought = model.get_value(sel_iter, 0)
+        self.connection.fm.finger(sought.player.name)
 
     def on_archived(self, widget):
         model, sel_iter = self.tv.get_selection().get_selected()
@@ -1139,19 +1169,19 @@ class SeekTabSection(ParrentListSection):
             if isinstance(sought, FICSChallenge):
                 selection_is_challenge = True
 
-            ## select sought owner on players tab to let challenge him using right click menu
-            #if sought.player in self.lounge.players_tab.players:
-                ## we have to undo the iter conversion that was introduced by the filter and sort model
-                #iter0 = self.lounge.players_tab.players[sought.player]["ti"]
-                #filtered_model = self.lounge.players_tab.player_filter
-                #is_ok, iter1 = filtered_model.convert_child_iter_to_iter(iter0)
-                #sorted_model = self.lounge.players_tab.model
-                #is_ok, iter2 = sorted_model.convert_child_iter_to_iter(iter1)
-                #players_selection = self.lounge.players_tab.tv.get_selection()
-                #players_selection.select_iter(iter2)
-                #self.lounge.players_tab.tv.scroll_to_cell(sorted_model.get_path(iter2))
-            #else:
-                #print(sought.player, "not in self.lounge.players_tab.players")
+            # # select sought owner on players tab to let challenge him using right click menu
+            # if sought.player in self.lounge.players_tab.players:
+                # # we have to undo the iter conversion that was introduced by the filter and sort model
+                # iter0 = self.lounge.players_tab.players[sought.player]["ti"]
+                # filtered_model = self.lounge.players_tab.player_filter
+                # is_ok, iter1 = filtered_model.convert_child_iter_to_iter(iter0)
+                # sorted_model = self.lounge.players_tab.model
+                # is_ok, iter2 = sorted_model.convert_child_iter_to_iter(iter1)
+                # players_selection = self.lounge.players_tab.tv.get_selection()
+                # players_selection.select_iter(iter2)
+                # self.lounge.players_tab.tv.scroll_to_cell(sorted_model.get_path(iter2))
+            # else:
+                # print(sought.player, "not in self.lounge.players_tab.players")
 
         self.lastSeekSelected = sought
         self.widgets["acceptButton"].set_sensitive(a_seek_is_selected)
