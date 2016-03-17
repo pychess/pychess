@@ -568,6 +568,15 @@ class UserInfoSection(Section):
             table.attach(label(finger.getEmail()), 1, 6, row, row + 1)
             row += 1
 
+        player = self.connection.players[FICSPlayer(finger.getName())]
+        if not player.isGuest():
+            table.attach(label(_("Games") + ":"), 0, 1, row, row + 1)
+            llabel = Gtk.Label()
+            link = "http://ficsgames.org/cgi-bin/search.cgi?player=%s" % finger.getName()
+            llabel.set_markup('<a href="%s">%s</a>' % (link, link))
+            table.attach(llabel, 1, 6, row, row + 1)
+            row += 1
+
         if finger.getCreated():
             table.attach(label(_("Spent") + ":"), 0, 1, row, row + 1)
             string = strftime("%Y %B %d ", localtime(time()))
@@ -576,7 +585,7 @@ class UserInfoSection(Section):
             row += 1
 
         # TODO: ping causes random crashes on Windows
-        if sys.platform is not "win32":
+        if my_finger and sys.platform is not "win32":
             table.attach(label(_("Ping") + ":"), 0, 1, row, row + 1)
             if self.ping_label:
                 if self.dock.get_children():
