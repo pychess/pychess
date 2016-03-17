@@ -130,7 +130,7 @@ class ICLounge(GObject.GObject):
             self.user_from_notify_list_is_present(user)
 
         self.userinfo = UserInfoSection(self.widgets, self.connection,
-                                        self.host)
+                                        self.host, self)
         self.news = NewsSection(self.widgets, self.connection)
         self.seek_challenge = SeekChallengeSection(self)
         self.seeks_list = SeekTabSection(self.widgets, self.connection, self)
@@ -472,10 +472,11 @@ class Section(object):
 
 class UserInfoSection(Section):
 
-    def __init__(self, widgets, connection, host):
+    def __init__(self, widgets, connection, host, lounge):
         self.widgets = widgets
         self.connection = connection
         self.host = host
+        self.lounge = lounge
         self.pinger = None
         self.ping_label = None
 
@@ -615,13 +616,15 @@ class UserInfoSection(Section):
             row += 1
 
         if not my_finger:
-            dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
-                                       buttons=Gtk.ButtonsType.OK)
-            dialog.set_markup(_("Finger of %s" % finger.getName()))
-            table.show_all()
-            dialog.get_message_area().add(table)
-            dialog.run()
-            dialog.destroy()
+            if self.lounge.seek_challenge.finger_sent:
+                dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
+                                           buttons=Gtk.ButtonsType.OK)
+                dialog.set_markup(_("Finger of %s" % finger.getName()))
+                table.show_all()
+                dialog.get_message_area().add(table)
+                dialog.run()
+                dialog.destroy()
+            self.lounge.seek_challenge.finger_sent = False
             return
 
         if not self.connection.isRegistred():
@@ -847,6 +850,7 @@ class SeekTabSection(ParrentListSection):
         self.menu.attach_to_widget(self.tv, None)
 
         self.assess_sent = False
+        self.finger_sent = False
 
     def button_press_event(self, treeview, event):
         if event.button == 3:  # right click
@@ -923,6 +927,7 @@ class SeekTabSection(ParrentListSection):
             return
         sought = model.get_value(sel_iter, 0)
         self.connection.fm.finger(sought.player.name)
+        self.finger_sent = True
 
     def on_archived(self, widget):
         model, sel_iter = self.tv.get_selection().get_selected()
