@@ -814,7 +814,7 @@ class SeekTabSection(ParrentListSection):
         self.assess_item = Gtk.MenuItem(_("Assess"))
         self.assess_item.connect("activate", self.on_assess)
         self.challenge_item = Gtk.MenuItem(_("Challenge"))
-        self.challenge_item.connect("activate", self.lounge.seek_challenge.onChallengeButtonClicked)
+        self.challenge_item.connect("activate", self.on_challenge)
         # self.finger_item = Gtk.MenuItem(_("Finger"))
         # self.finger_item.connect("activate", self.on_finger)
         self.archived_item = Gtk.MenuItem(_("Archived"))
@@ -841,6 +841,13 @@ class SeekTabSection(ParrentListSection):
                                 Gtk.get_current_event_time())
             return True
         return False
+
+    def on_challenge(self, widget):
+        model, sel_iter = self.tv.get_selection().get_selected()
+        if sel_iter is None:
+            return
+        sought = model.get_value(sel_iter, 0)
+        self.lounge.seek_challenge.onChallengeButtonClicked(widget, sought.player)
 
     def on_assess(self, widget):
         model, sel_iter = self.tv.get_selection().get_selected()
@@ -1132,19 +1139,19 @@ class SeekTabSection(ParrentListSection):
             if isinstance(sought, FICSChallenge):
                 selection_is_challenge = True
 
-            # select sought owner on players tab to let challenge him using right click menu
-            if sought.player in self.lounge.players_tab.players:
-                # we have to undo the iter conversion that was introduced by the filter and sort model
-                iter0 = self.lounge.players_tab.players[sought.player]["ti"]
-                filtered_model = self.lounge.players_tab.player_filter
-                is_ok, iter1 = filtered_model.convert_child_iter_to_iter(iter0)
-                sorted_model = self.lounge.players_tab.model
-                is_ok, iter2 = sorted_model.convert_child_iter_to_iter(iter1)
-                players_selection = self.lounge.players_tab.tv.get_selection()
-                players_selection.select_iter(iter2)
-                self.lounge.players_tab.tv.scroll_to_cell(sorted_model.get_path(iter2))
-            else:
-                print(sought.player, "not in self.lounge.players_tab.players")
+            ## select sought owner on players tab to let challenge him using right click menu
+            #if sought.player in self.lounge.players_tab.players:
+                ## we have to undo the iter conversion that was introduced by the filter and sort model
+                #iter0 = self.lounge.players_tab.players[sought.player]["ti"]
+                #filtered_model = self.lounge.players_tab.player_filter
+                #is_ok, iter1 = filtered_model.convert_child_iter_to_iter(iter0)
+                #sorted_model = self.lounge.players_tab.model
+                #is_ok, iter2 = sorted_model.convert_child_iter_to_iter(iter1)
+                #players_selection = self.lounge.players_tab.tv.get_selection()
+                #players_selection.select_iter(iter2)
+                #self.lounge.players_tab.tv.scroll_to_cell(sorted_model.get_path(iter2))
+            #else:
+                #print(sought.player, "not in self.lounge.players_tab.players")
 
         self.lastSeekSelected = sought
         self.widgets["acceptButton"].set_sensitive(a_seek_is_selected)
@@ -2329,10 +2336,11 @@ class SeekChallengeSection(Section):
             self.connection.glm.seek(minutes, incr, gametype, rated, ratingrange,
                                      color, manual)
 
-    def onChallengeButtonClicked(self, button):
-        player = self.lounge.players_tab.getSelectedPlayer()
+    def onChallengeButtonClicked(self, button, player=None):
         if player is None:
-            return
+            player = self.lounge.players_tab.getSelectedPlayer()
+            if player is None:
+                return
         self.challengee = player
         self.in_challenge_mode = True
 
