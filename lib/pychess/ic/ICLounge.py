@@ -132,8 +132,8 @@ class ICLounge(GObject.GObject):
         self.userinfo = UserInfoSection(self.widgets, self.connection,
                                         self.host)
         self.news = NewsSection(self.widgets, self.connection)
-        self.seeks_list = SeekTabSection(self.widgets, self.connection, self)
         self.seek_challenge = SeekChallengeSection(self)
+        self.seeks_list = SeekTabSection(self.widgets, self.connection, self)
         self.seeks_graph_tab = SeekGraphSection(self.widgets, self.connection,
                                                 self)
         self.players_tab = PlayerTabSection(self.widgets, self.connection,
@@ -719,6 +719,7 @@ class SeekTabSection(ParrentListSection):
     def __init__(self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
+        self.lounge = lounge
         self.infobar = lounge.infobar
         self.messages = {}
         self.seeks = {}
@@ -812,15 +813,15 @@ class SeekTabSection(ParrentListSection):
         self.accept_item.connect("activate", self.onAcceptClicked)
         self.assess_item = Gtk.MenuItem(_("Assess"))
         self.assess_item.connect("activate", self.on_assess)
-        # self.challenge_item = Gtk.MenuItem(_("Challenge"))
-        # self.challenge_item.connect("activate", self.on_challenge)
+        self.challenge_item = Gtk.MenuItem(_("Challenge"))
+        self.challenge_item.connect("activate", self.lounge.seek_challenge.onChallengeButtonClicked)
         # self.finger_item = Gtk.MenuItem(_("Finger"))
         # self.finger_item.connect("activate", self.on_finger)
         self.archived_item = Gtk.MenuItem(_("Archived"))
         self.archived_item.connect("activate", self.on_archived)
         self.menu.append(self.accept_item)
         self.menu.append(self.assess_item)
-        # self.menu.append(self.challenge_item)
+        self.menu.append(self.challenge_item)
         # self.menu.append(self.finger_item)
         self.menu.append(Gtk.SeparatorMenuItem())
         self.menu.append(self.archived_item)
@@ -840,9 +841,6 @@ class SeekTabSection(ParrentListSection):
                                 Gtk.get_current_event_time())
             return True
         return False
-
-    def on_challenge(self, widget):
-        print("challenge")
 
     def on_assess(self, widget):
         model, sel_iter = self.tv.get_selection().get_selected()
@@ -1133,6 +1131,20 @@ class SeekTabSection(ParrentListSection):
             sought = model.get_value(sel_iter, 0)
             if isinstance(sought, FICSChallenge):
                 selection_is_challenge = True
+
+            # select sought owner on players tab to let challenge him using right click menu
+            if sought.player in self.lounge.players_tab.players:
+                # we have to undo the iter conversion that was introduced by the filter and sort model
+                iter0 = self.lounge.players_tab.players[sought.player]["ti"]
+                filtered_model = self.lounge.players_tab.player_filter
+                is_ok, iter1 = filtered_model.convert_child_iter_to_iter(iter0)
+                sorted_model = self.lounge.players_tab.model
+                is_ok, iter2 = sorted_model.convert_child_iter_to_iter(iter1)
+                players_selection = self.lounge.players_tab.tv.get_selection()
+                players_selection.select_iter(iter2)
+                self.lounge.players_tab.tv.scroll_to_cell(sorted_model.get_path(iter2))
+            else:
+                print(sought.player, "not in self.lounge.players_tab.players")
 
         self.lastSeekSelected = sought
         self.widgets["acceptButton"].set_sensitive(a_seek_is_selected)
