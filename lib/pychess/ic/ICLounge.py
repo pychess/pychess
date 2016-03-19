@@ -150,6 +150,7 @@ class ICLounge(GObject.GObject):
 
         self.connection.com.onConsoleMessage("", self.connection.ini_messages)
 
+        self.finger_sent = False
         self.connection.lounge_loaded.set()
         log.debug("ICLounge.__init__: finished")
 
@@ -616,7 +617,7 @@ class UserInfoSection(Section):
             row += 1
 
         if not my_finger:
-            if self.lounge.seeks_list.finger_sent:
+            if self.lounge.finger_sent:
                 dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
                                            buttons=Gtk.ButtonsType.OK)
                 dialog.set_markup(_("Finger of %s" % finger.getName()))
@@ -624,7 +625,7 @@ class UserInfoSection(Section):
                 dialog.get_message_area().add(table)
                 dialog.run()
                 dialog.destroy()
-            self.lounge.seeks_list.finger_sent = False
+            self.lounge.finger_sent = False
             return
 
         if not self.connection.isRegistred():
@@ -844,13 +845,12 @@ class SeekTabSection(ParrentListSection):
         self.menu.append(self.accept_item)
         self.menu.append(self.assess_item)
         self.menu.append(self.challenge_item)
-        self.menu.append(self.finger_item)
         self.menu.append(Gtk.SeparatorMenuItem())
+        self.menu.append(self.finger_item)
         self.menu.append(self.archived_item)
         self.menu.attach_to_widget(self.tv, None)
 
         self.assess_sent = False
-        self.finger_sent = False
 
     def button_press_event(self, treeview, event):
         if event.button == 3:  # right click
@@ -927,7 +927,7 @@ class SeekTabSection(ParrentListSection):
             return
         sought = model.get_value(sel_iter, 0)
         self.connection.fm.finger(sought.player.name)
-        self.finger_sent = True
+        self.lounge.finger_sent = True
 
     def on_archived(self, widget):
         model, sel_iter = self.tv.get_selection().get_selected()
@@ -1351,24 +1351,59 @@ class PlayerTabSection(ParrentListSection):
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
+        self.tv.connect('button-press-event', self.button_press_event)
 
         connection.players.connect("FICSPlayerEntered", self.onPlayerAdded)
         connection.players.connect("FICSPlayerExited", self.onPlayerRemoved)
 
-        widgets["private_chat_button"].connect("clicked",
-                                               self.onPrivateChatClicked)
+        widgets["private_chat_button"].connect("clicked", self.on_chat)
         widgets["private_chat_button"].set_sensitive(False)
-        widgets["observe_button"].connect("clicked", self.onObserveClicked)
+        widgets["observe_button"].connect("clicked", self.on_observe)
         widgets["observe_button"].set_sensitive(False)
 
-        self.tv.get_selection().connect_after("changed",
-                                              self.onSelectionChanged)
+        self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
+
+        self.menu = Gtk.Menu()
+        self.observe_item = Gtk.MenuItem(_("Observe"))
+        self.observe_item.set_use_underline(True)
+        self.observe_item.connect("activate", self.on_observe)
+        self.follow_item = Gtk.MenuItem(_("Follow"))
+        self.follow_item.connect("activate", self.on_follow)
+        self.chat_item = Gtk.MenuItem(_("Chat"))
+        self.chat_item.connect("activate", self.on_chat)
+        self.challenge_item = Gtk.MenuItem(_("Challenge"))
+        self.challenge_item.connect("activate", self.on_challenge)
+        self.finger_item = Gtk.MenuItem(_("Finger"))
+        self.finger_item.connect("activate", self.on_finger)
+        self.archived_item = Gtk.MenuItem(_("Archived"))
+        self.archived_item.connect("activate", self.on_archived)
+        self.menu.append(self.observe_item)
+        self.menu.append(self.follow_item)
+        self.menu.append(self.chat_item)
+        self.menu.append(self.challenge_item)
+        self.menu.append(Gtk.SeparatorMenuItem())
+        self.menu.append(self.finger_item)
+        self.menu.append(self.archived_item)
+        self.menu.attach_to_widget(self.tv, None)
 
         if self.connection.FatICS or self.connection.USCN or self.lounge.helperconn is None:
             self.widgets["playersSpinner"].hide()
         else:
             self.widgets["playersSpinner"].start()
+
+    def button_press_event(self, treeview, event):
+        if event.button == 3:  # right click
+            pathinfo = treeview.get_path_at_pos(int(event.x), int(event.y))
+            if pathinfo is not None:
+                path, col = pathinfo[0], pathinfo[1]
+                treeview.grab_focus()
+                treeview.set_cursor(path, col, 0)
+                self.menu.show_all()
+                self.menu.popup(None, None, None, None, event.button,
+                                Gtk.get_current_event_time())
+            return True
+        return False
 
     def player_filter_func(self, model, iter, data):
         player = model[iter][0]
@@ -1553,20 +1588,47 @@ class PlayerTabSection(ParrentListSection):
         if sel_iter:
             return model.get_value(sel_iter, 0)
 
-    def onPrivateChatClicked(self, button):
+    def on_chat(self, button):
         player = self.getSelectedPlayer()
         if player is None:
             return
         self.lounge.chat.openChatWithPlayer(player.name)
         # TODO: isadmin og type
 
-    def onObserveClicked(self, button):
+    def on_challenge(self, widget):
+        player = self.getSelectedPlayer()
+        if player is not None:
+            self.lounge.seek_challenge.onChallengeButtonClicked(widget, player)
+
+    def on_observe(self, button):
         player = self.getSelectedPlayer()
         if player is not None:
             if player.game is not None:
                 self.connection.bm.observe(player.game)
             else:
                 self.connection.bm.observe(None, player=player)
+
+    def on_follow(self, button):
+        player = self.getSelectedPlayer()
+        if player is not None:
+            self.connection.bm.follow(player)
+
+    def on_finger(self, widget):
+        player = self.getSelectedPlayer()
+        if player is not None:
+            self.connection.fm.finger(player.name)
+            self.lounge.finger_sent = True
+
+    def on_archived(self, widget):
+        player = self.getSelectedPlayer()
+        if player is not None:
+            self.connection.adm.queryAdjournments(player.name)
+            self.connection.adm.queryHistory(player.name)
+            self.connection.adm.queryJournal(player.name)
+
+            notebook = self.widgets["notebook"]
+            archived = self.widgets["archiveListContent"]
+            notebook.set_current_page(notebook.page_num(archived))
 
     def onSelectionChanged(self, selection):
         player = self.getSelectedPlayer()
