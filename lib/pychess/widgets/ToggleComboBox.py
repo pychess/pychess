@@ -117,7 +117,7 @@ class ToggleComboBox(Gtk.ToggleButton):
                 new_active = i
         self.active = new_active
 
-    def menuPos(self, menu, data):
+    def menuPos(self, menu, x, y, data):
         ignore, x_loc, y_loc = self.get_window().get_origin()
         x_loc += self.get_allocation().x
         y_loc += self.get_allocation().y + self.get_allocation().height
