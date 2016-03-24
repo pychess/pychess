@@ -10,17 +10,17 @@ class Rating(GObject.GObject):
                  wins=0,
                  losses=0,
                  draws=0,
+                 total=0,
                  bestElo=0,
-                 bestTime=0):
+                 bestTime=""):
         GObject.GObject.__init__(self)
         self.type = ratingtype
-        for value in (elo, deviation, wins, losses, draws, bestElo, bestTime):
-            assert value is None or isinstance(value, int), value
-        self.elo = elo
+        self._elo = elo
         self.deviation = deviation
         self.wins = wins
         self.losses = losses
         self.draws = draws
+        self.total = total
         self.bestElo = bestElo
         self.bestTime = bestTime
 
@@ -56,5 +56,6 @@ class Rating(GObject.GObject):
                       wins=self.wins,
                       losses=self.losses,
                       draws=self.draws,
+                      total=self.total,
                       bestElo=self.bestElo,
                       bestTime=self.bestTime)

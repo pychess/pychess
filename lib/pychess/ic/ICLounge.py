@@ -510,13 +510,12 @@ class UserInfoSection(Section):
         if finger.getCreated():
             rows += 1
 
-        table = Gtk.Table(6, rows)
+        cols = 6 if my_finger else 9
+        table = Gtk.Table(cols, rows)
         table.props.column_spacing = 12
         table.props.row_spacing = 4
 
         def label(value, xalign=0, is_error=False):
-            if isinstance(value, float):
-                value = str(int(value))
             if is_error:
                 label = Gtk.Label()
                 label.set_markup('<span size="larger" foreground="red">' +
@@ -529,61 +528,70 @@ class UserInfoSection(Section):
         row = 0
 
         if finger.getRating():
-            for i, item in enumerate((_("Rating"), _("Win"), _("Draw"), _(
-                    "Loss"))):
+            if my_finger:
+                headers = (_("Rating"), _("Win"), _("Draw"), _("Loss"))
+            else:
+                headers = (_("Rating"), "RD", _("Win"), _("Draw"), _("Loss"), _("Best"))
+            for i, item in enumerate(headers):
                 table.attach(label(item, xalign=1), i + 1, i + 2, 0, 1)
             row += 1
-
             for rating_type, rating in finger.getRating().items():
+                col = 0
                 ratinglabel = label(GAME_TYPES_BY_RATING_TYPE[
                                     rating_type].display_text + ":")
-                table.attach(ratinglabel, 0, 1, row, row + 1)
+                table.attach(ratinglabel, col, col + 1, row, row + 1)
+                col += 1
                 if rating_type is TYPE_WILD:
                     ratinglabel.set_tooltip_text(_(
                         "On FICS, your \"Wild\" rating encompasses all of the \
                         following variants at all time controls:\n") +
                         ", ".join([gt.display_text for gt in WildGameType.instances()]))
-                table.attach(label(rating.elo, xalign=1), 1, 2, row, row + 1)
-                table.attach(label(rating.wins, xalign=1), 2, 3, row, row + 1)
-                table.attach(label(rating.draws, xalign=1), 3, 4, row, row + 1)
-                table.attach(label(rating.losses, xalign=1),
-                             4, 5, row, row + 1)
+                table.attach(label(rating.elo, xalign=1), col, col + 1, row, row + 1)
+                col += 1
+                if not my_finger:
+                    table.attach(label(rating.deviation, xalign=1), col, col + 1, row, row + 1)
+                    col += 1
+                table.attach(label(rating.wins, xalign=1), col, col + 1, row, row + 1)
+                col += 1
+                table.attach(label(rating.draws, xalign=1), col, col + 1, row, row + 1)
+                col += 1
+                table.attach(label(rating.losses, xalign=1), col, col + 1, row, row + 1)
+                col += 1
+                if not my_finger:
+                    best = rating.bestElo if rating.bestElo > 0 else ""
+                    table.attach(label(best, xalign=1), col, col + 1, row, row + 1)
+                    col += 1
+                    table.attach(label(rating.bestTime, xalign=1), col, col + 1, row, row + 1)
+                    col += 1
                 row += 1
 
-            table.attach(Gtk.HSeparator(), 0, 6, row, row + 1, ypadding=2)
+            table.attach(Gtk.HSeparator(), 0, cols, row, row + 1, ypadding=2)
             row += 1
 
         if finger.getSanctions() != "":
-            table.attach(
-                label(
-                    _("Sanctions") + ":",
-                    is_error=True),
-                0,
-                1,
-                row,
-                row + 1)
-            table.attach(label(finger.getSanctions()), 1, 6, row, row + 1)
+            table.attach(label(_("Sanctions") + ":", is_error=True), 0, 1, row, row + 1)
+            table.attach(label(finger.getSanctions()), 1, cols, row, row + 1)
             row += 1
 
         if finger.getEmail():
             table.attach(label(_("Email") + ":"), 0, 1, row, row + 1)
-            table.attach(label(finger.getEmail()), 1, 6, row, row + 1)
+            table.attach(label(finger.getEmail()), 1, cols, row, row + 1)
             row += 1
 
         player = self.connection.players[FICSPlayer(finger.getName())]
         if not player.isGuest():
             table.attach(label(_("Games") + ":"), 0, 1, row, row + 1)
             llabel = Gtk.Label()
+            llabel.props.xalign = 0
             link = "http://ficsgames.org/cgi-bin/search.cgi?player=%s" % finger.getName()
             llabel.set_markup('<a href="%s">%s</a>' % (link, link))
-            table.attach(llabel, 1, 6, row, row + 1)
+            table.attach(llabel, 1, cols, row, row + 1)
             row += 1
 
         if finger.getCreated():
             table.attach(label(_("Spent") + ":"), 0, 1, row, row + 1)
-            string = strftime("%Y %B %d ", localtime(time()))
-            string += _("online in total")
-            table.attach(label(string), 1, 6, row, row + 1)
+            string = "%s %s" % (finger.getTotalTimeOnline(), _("online in total"))
+            table.attach(label(string), 1, cols, row, row + 1)
             row += 1
 
         # TODO: ping causes random crashes on Windows
@@ -613,7 +621,7 @@ class UserInfoSection(Section):
                 self.pinger.start()
                 self.pinger.connect("received", callback)
                 self.pinger.connect("error", callback)
-            table.attach(self.ping_label, 1, 6, row, row + 1)
+            table.attach(self.ping_label, 1, cols, row, row + 1)
             row += 1
 
         if not my_finger:
@@ -630,7 +638,7 @@ class UserInfoSection(Section):
 
         if not self.connection.isRegistred():
             vbox = Gtk.VBox()
-            table.attach(vbox, 0, 6, row, row + 1)
+            table.attach(vbox, 0, cols, row, row + 1)
             label0 = Gtk.Label()
             label0.props.xalign = 0
             label0.props.wrap = True
@@ -1197,7 +1205,7 @@ class SeekTabSection(ParrentListSection):
             return
         if path != model.get_path(sel_iter):
             return
-        self.onAcceptClicked(None)
+        self.on_accept(None)
 
     def onSelectionChanged(self, selection):
         model, sel_iter = selection.get_selected()

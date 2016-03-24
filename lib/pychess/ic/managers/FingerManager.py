@@ -84,7 +84,7 @@ class FingerObject:
         """ Returns how many seconds the user has been on FICS since the account
             was created.
             This is not set, if the user has never logged on """
-        return self.__totalTimeOnline + time() - self.__fingerTime
+        return self.__totalTimeOnline
 
     def getCreated(self):
         """ Returns when the account was created """
@@ -249,15 +249,15 @@ class FingerManager(GObject.GObject):
 
     def parseDate(self, date):
         # Tue Mar 11, 10:56 PDT 2008
-        return 1
+        return date
 
     def parseShortDate(self, date):
         # 24-Oct-2007
-        return 1
+        return date
 
     def parseTime(self, time):
         # 3 days, 2 hrs, 53 mins
-        return 1
+        return time
 
     def onFinger(self, matchlist):
         finger = FingerObject()
@@ -298,15 +298,7 @@ class FingerManager(GObject.GObject):
                 gametype = GAME_TYPES_BY_FICS_NAME[groupdict["gametype"].lower(
                 )]
                 ratings = groupdict["ratings"].split()
-                del ratings[5]  # We don't need the totals field
-                ratings[1] = float(ratings[1])
-                if len(ratings) == 5:
-                    args = map(int, ratings)
-                    rating = Rating(gametype.rating_type, *args)
-                else:
-                    bestTime = self.parseShortDate(ratings[6][1:-1])
-                    args = list(map(int, ratings[:6])) + [bestTime]
-                    rating = Rating(gametype.rating_type, *args)
+                rating = Rating(gametype.rating_type, *ratings)
                 finger.setRating(gametype.rating_type, rating)
             elif groupdict["email"] is not None:
                 finger.setEmail(groupdict["email"])
@@ -315,7 +307,7 @@ class FingerManager(GObject.GObject):
             elif groupdict["tto"] is not None:
                 finger.setTotalTimeOnline(self.parseTime(groupdict["tto"]))
             elif groupdict["created"] is not None:
-                finger.setTotalTimeOnline(self.parseDate(groupdict["created"]))
+                finger.setCreated(self.parseDate(groupdict["created"]))
             elif groupdict["timeseal"] is not None:
                 finger.setTimeseal(groupdict["timeseal"] == "On")
             elif groupdict["adminlevel"] is not None:
