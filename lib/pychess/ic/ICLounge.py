@@ -812,7 +812,7 @@ class ParrentListSection(Section):
         self.connection.glm.assess(player1, player2, game_type)
         self.assess_sent = True
 
-    def on_observe(self, widget):
+    def on_observe(self, widget, *args):
         player = self.getSelectedPlayer()
         if player is not None:
             if player.game is not None:
