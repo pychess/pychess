@@ -2,7 +2,6 @@
 from __future__ import absolute_import, print_function
 
 import sys
-from time import strftime, localtime, time
 from math import e
 from operator import attrgetter
 from itertools import groupby
