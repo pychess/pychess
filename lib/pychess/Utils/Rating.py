@@ -45,7 +45,7 @@ class Rating(GObject.GObject):
             r += ", draws=%s" % str(self.draws)
         if self.bestElo > 0:
             r += ", bestElo=%s" % str(self.bestElo)
-        if self.bestTime > 0:
+        if self.bestTime:
             r += ", bestTime=%s" % str(self.bestTime)
         return "<Rating " + r + ">"
 
