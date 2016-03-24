@@ -687,8 +687,46 @@ class NewsSection(Section):
         self.widgets["newsVBox"].pack_end(expander, True, True, 0)
 
 
+SEPARATOR, ACCEPT, ASSESS, OBSERVE, FOLLOW, CHAT, CHALLENGE, FINGER, ARCHIVED = range(9)
+
+
 class ParrentListSection(Section):
     """ Parrent for sections mainly consisting of a large treeview """
+
+    def button_press_event(self, treeview, event):
+        if event.button == 3:  # right click
+            pathinfo = treeview.get_path_at_pos(int(event.x), int(event.y))
+            if pathinfo is not None:
+                path, col = pathinfo[0], pathinfo[1]
+                treeview.grab_focus()
+                treeview.set_cursor(path, col, 0)
+                self.menu.show_all()
+                self.menu.popup(None, None, None, None, event.button,
+                                Gtk.get_current_event_time())
+            return True
+        return False
+
+    def createLocalMenu(self, items):
+        ITEM_MAP = {
+            ACCEPT: (_("Accept"), self.on_accept),
+            ASSESS: (_("Assess"), self.on_assess),
+            OBSERVE: (_("Observe"), self.on_observe),
+            FOLLOW: (_("Follow"), self.on_follow),
+            CHAT: (_("Chat"), self.on_chat),
+            CHALLENGE: (_("Challenge"), self.on_challenge),
+            FINGER: (_("Finger"), self.on_finger),
+            ARCHIVED: (_("Archived"), self.on_archived), }
+
+        self.menu = Gtk.Menu()
+        for item in items:
+            if item == SEPARATOR:
+                menu_item = Gtk.SeparatorMenuItem()
+            else:
+                label, callback = ITEM_MAP[item]
+                menu_item = Gtk.MenuItem(label)
+                menu_item.connect("activate", callback)
+            self.menu.append(menu_item)
+        self.menu.attach_to_widget(self.tv, None)
 
     def addColumns(self, treeview, *columns, **keyargs):
         if "hide" in keyargs:
@@ -709,8 +747,10 @@ class ParrentListSection(Section):
             else:
                 crt = Gtk.CellRendererText()
                 column = Gtk.TreeViewColumn(name, crt, text=i)
-                column.set_sort_column_id(i)
                 column.set_resizable(True)
+            column.set_sort_column_id(i)
+            # prevent columns appear choppy
+            column.set_sizing(Gtk.TreeViewColumnSizing.GROW_ONLY)
 
             column.set_reorderable(True)
             treeview.append_column(column)
@@ -735,6 +775,77 @@ class ParrentListSection(Section):
         (minute0, minute1) = (treemodel.get_value(iter0, 8),
                               treemodel.get_value(iter1, 8))
         return cmp(minute0, minute1)
+
+    def on_accept(self, button):
+        model, sel_iter = self.tv.get_selection().get_selected()
+        if sel_iter is None:
+            return
+        sought = model.get_value(sel_iter, 0)
+        if isinstance(sought, FICSChallenge):
+            self.connection.om.acceptIndex(sought.index)
+        else:
+            self.connection.om.playIndex(sought.index)
+
+        try:
+            message = self.messages[hash(sought)]
+        except KeyError:
+            pass
+        else:
+            message.dismiss()
+            del self.messages[hash(sought)]
+
+    def on_assess(self, widget):
+        model, sel_iter = self.tv.get_selection().get_selected()
+        if sel_iter is None:
+            return
+        sought = model.get_value(sel_iter, 0)
+        player1 = self.connection.username
+        player2 = sought.player.name
+        game_type = sought.game_type.short_fics_name
+        self.connection.glm.assess(player1, player2, game_type)
+        self.assess_sent = True
+
+    def on_observe(self, widget):
+        player = self.getSelectedPlayer()
+        if player is not None:
+            if player.game is not None:
+                self.connection.bm.observe(player.game)
+            else:
+                self.connection.bm.observe(None, player=player)
+
+    def on_follow(self, widget):
+        player = self.getSelectedPlayer()
+        if player is not None:
+            self.connection.bm.follow(player)
+
+    def on_chat(self, button):
+        player = self.getSelectedPlayer()
+        if player is None:
+            return
+        self.lounge.chat.openChatWithPlayer(player.name)
+        # TODO: isadmin og type
+
+    def on_challenge(self, widget):
+        player = self.getSelectedPlayer()
+        if player is not None:
+            self.lounge.seek_challenge.onChallengeButtonClicked(widget, player)
+
+    def on_finger(self, widget):
+        player = self.getSelectedPlayer()
+        if player is not None:
+            self.connection.fm.finger(player.name)
+            self.lounge.finger_sent = True
+
+    def on_archived(self, widget):
+        player = self.getSelectedPlayer()
+        if player is not None:
+            self.connection.adm.queryAdjournments(player.name)
+            self.connection.adm.queryHistory(player.name)
+            self.connection.adm.queryJournal(player.name)
+
+            notebook = self.widgets["notebook"]
+            archived = self.widgets["archiveListContent"]
+            notebook.set_current_page(notebook.page_num(archived))
 
 
 class SeekTabSection(ParrentListSection):
@@ -776,7 +887,6 @@ class SeekTabSection(ParrentListSection):
         self.tv.set_search_column(3)
         self.tv.set_tooltip_column(10, )
         for i in range(0, 2):
-            self.tv.get_column(i).set_sort_column_id(i)
             self.tv.get_model().set_sort_func(i, self.pixCompareFunction,
                                               i + 1)
         for i in range(2, 8):
@@ -796,7 +906,7 @@ class SeekTabSection(ParrentListSection):
         self.selection.connect("changed", self.onSelectionChanged)
         self.widgets["clearSeeksButton"].connect("clicked",
                                                  self.onClearSeeksClicked)
-        self.widgets["acceptButton"].connect("clicked", self.onAcceptClicked)
+        self.widgets["acceptButton"].connect("clicked", self.on_accept)
         self.widgets["declineButton"].connect("clicked", self.onDeclineClicked)
         self.tv.connect("row-activated", self.row_activated)
         self.tv.connect('button-press-event', self.button_press_event)
@@ -831,57 +941,8 @@ class SeekTabSection(ParrentListSection):
         uistuff.keep(self.model, "seektreeview_sort_order_col", get_sort_order,
                      lambda modelsort, value: set_sort_order(modelsort, value))
 
-        self.menu = Gtk.Menu()
-        self.accept_item = Gtk.MenuItem(_("Accept"))
-        self.accept_item.connect("activate", self.onAcceptClicked)
-        self.assess_item = Gtk.MenuItem(_("Assess"))
-        self.assess_item.connect("activate", self.on_assess)
-        self.challenge_item = Gtk.MenuItem(_("Challenge"))
-        self.challenge_item.connect("activate", self.on_challenge)
-        self.finger_item = Gtk.MenuItem(_("Finger"))
-        self.finger_item.connect("activate", self.on_finger)
-        self.archived_item = Gtk.MenuItem(_("Archived"))
-        self.archived_item.connect("activate", self.on_archived)
-        self.menu.append(self.accept_item)
-        self.menu.append(self.assess_item)
-        self.menu.append(self.challenge_item)
-        self.menu.append(Gtk.SeparatorMenuItem())
-        self.menu.append(self.finger_item)
-        self.menu.append(self.archived_item)
-        self.menu.attach_to_widget(self.tv, None)
-
+        self.createLocalMenu((ACCEPT, ASSESS, CHALLENGE, CHAT, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
         self.assess_sent = False
-
-    def button_press_event(self, treeview, event):
-        if event.button == 3:  # right click
-            pathinfo = treeview.get_path_at_pos(int(event.x), int(event.y))
-            if pathinfo is not None:
-                path, col = pathinfo[0], pathinfo[1]
-                treeview.grab_focus()
-                treeview.set_cursor(path, col, 0)
-                self.menu.show_all()
-                self.menu.popup(None, None, None, None, event.button,
-                                Gtk.get_current_event_time())
-            return True
-        return False
-
-    def on_challenge(self, widget):
-        model, sel_iter = self.tv.get_selection().get_selected()
-        if sel_iter is None:
-            return
-        sought = model.get_value(sel_iter, 0)
-        self.lounge.seek_challenge.onChallengeButtonClicked(widget, sought.player)
-
-    def on_assess(self, widget):
-        model, sel_iter = self.tv.get_selection().get_selected()
-        if sel_iter is None:
-            return
-        sought = model.get_value(sel_iter, 0)
-        player1 = self.connection.username
-        player2 = sought.player.name
-        game_type = sought.game_type.short_fics_name
-        self.connection.glm.assess(player1, player2, game_type)
-        self.assess_sent = True
 
     @idle_add
     def onAssessReceived(self, glm, assess):
@@ -921,27 +982,11 @@ class SeekTabSection(ParrentListSection):
             dialog.run()
             dialog.destroy()
 
-    def on_finger(self, widget):
+    def getSelectedPlayer(self):
         model, sel_iter = self.tv.get_selection().get_selected()
-        if sel_iter is None:
-            return
-        sought = model.get_value(sel_iter, 0)
-        self.connection.fm.finger(sought.player.name)
-        self.lounge.finger_sent = True
-
-    def on_archived(self, widget):
-        model, sel_iter = self.tv.get_selection().get_selected()
-        if sel_iter is None:
-            return
-        sought = model.get_value(sel_iter, 0)
-        owner = sought.player.name
-        self.connection.adm.queryAdjournments(owner)
-        self.connection.adm.queryHistory(owner)
-        self.connection.adm.queryJournal(owner)
-
-        notebook = self.widgets["notebook"]
-        archived = self.widgets["archiveListContent"]
-        notebook.set_current_page(notebook.page_num(archived))
+        if sel_iter is not None:
+            sought = model.get_value(sel_iter, 0)
+            return sought.player
 
     def textcolor_normal(self):
         style_ctxt = self.tv.get_style_context()
@@ -1122,24 +1167,6 @@ class SeekTabSection(ParrentListSection):
     @idle_add
     def our_seeks_removed(self, glm):
         self.widgets["clearSeeksButton"].set_sensitive(False)
-
-    def onAcceptClicked(self, button):
-        model, sel_iter = self.tv.get_selection().get_selected()
-        if sel_iter is None:
-            return
-        sought = model.get_value(sel_iter, 0)
-        if isinstance(sought, FICSChallenge):
-            self.connection.om.acceptIndex(sought.index)
-        else:
-            self.connection.om.playIndex(sought.index)
-
-        try:
-            message = self.messages[hash(sought)]
-        except KeyError:
-            pass
-        else:
-            message.dismiss()
-            del self.messages[hash(sought)]
 
     def onDeclineClicked(self, button):
         model, sel_iter = self.tv.get_selection().get_selected()
@@ -1344,14 +1371,12 @@ class PlayerTabSection(ParrentListSection):
                         hide=[0, 7],
                         pix=[1])
         self.tv.set_tooltip_column(7, )
-        self.tv.get_column(0).set_sort_column_id(0)
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         try:
             self.tv.set_search_position_func(self.lowLeftSearchPosFunc, None)
         except AttributeError:
             # Unknow signal name is raised by gtk < 2.10
             pass
-        self.tv.connect('button-press-event', self.button_press_event)
 
         connection.players.connect("FICSPlayerEntered", self.onPlayerAdded)
         connection.players.connect("FICSPlayerExited", self.onPlayerRemoved)
@@ -1364,46 +1389,13 @@ class PlayerTabSection(ParrentListSection):
         self.tv.get_selection().connect_after("changed", self.onSelectionChanged)
         self.onSelectionChanged(None)
 
-        self.menu = Gtk.Menu()
-        self.observe_item = Gtk.MenuItem(_("Observe"))
-        self.observe_item.set_use_underline(True)
-        self.observe_item.connect("activate", self.on_observe)
-        self.follow_item = Gtk.MenuItem(_("Follow"))
-        self.follow_item.connect("activate", self.on_follow)
-        self.chat_item = Gtk.MenuItem(_("Chat"))
-        self.chat_item.connect("activate", self.on_chat)
-        self.challenge_item = Gtk.MenuItem(_("Challenge"))
-        self.challenge_item.connect("activate", self.on_challenge)
-        self.finger_item = Gtk.MenuItem(_("Finger"))
-        self.finger_item.connect("activate", self.on_finger)
-        self.archived_item = Gtk.MenuItem(_("Archived"))
-        self.archived_item.connect("activate", self.on_archived)
-        self.menu.append(self.observe_item)
-        self.menu.append(self.follow_item)
-        self.menu.append(self.chat_item)
-        self.menu.append(self.challenge_item)
-        self.menu.append(Gtk.SeparatorMenuItem())
-        self.menu.append(self.finger_item)
-        self.menu.append(self.archived_item)
-        self.menu.attach_to_widget(self.tv, None)
+        self.tv.connect('button-press-event', self.button_press_event)
+        self.createLocalMenu((CHALLENGE, CHAT, OBSERVE, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
 
         if self.connection.FatICS or self.connection.USCN or self.lounge.helperconn is None:
             self.widgets["playersSpinner"].hide()
         else:
             self.widgets["playersSpinner"].start()
-
-    def button_press_event(self, treeview, event):
-        if event.button == 3:  # right click
-            pathinfo = treeview.get_path_at_pos(int(event.x), int(event.y))
-            if pathinfo is not None:
-                path, col = pathinfo[0], pathinfo[1]
-                treeview.grab_focus()
-                treeview.set_cursor(path, col, 0)
-                self.menu.show_all()
-                self.menu.popup(None, None, None, None, event.button,
-                                Gtk.get_current_event_time())
-            return True
-        return False
 
     def player_filter_func(self, model, iter, data):
         player = model[iter][0]
@@ -1588,48 +1580,6 @@ class PlayerTabSection(ParrentListSection):
         if sel_iter:
             return model.get_value(sel_iter, 0)
 
-    def on_chat(self, button):
-        player = self.getSelectedPlayer()
-        if player is None:
-            return
-        self.lounge.chat.openChatWithPlayer(player.name)
-        # TODO: isadmin og type
-
-    def on_challenge(self, widget):
-        player = self.getSelectedPlayer()
-        if player is not None:
-            self.lounge.seek_challenge.onChallengeButtonClicked(widget, player)
-
-    def on_observe(self, button):
-        player = self.getSelectedPlayer()
-        if player is not None:
-            if player.game is not None:
-                self.connection.bm.observe(player.game)
-            else:
-                self.connection.bm.observe(None, player=player)
-
-    def on_follow(self, button):
-        player = self.getSelectedPlayer()
-        if player is not None:
-            self.connection.bm.follow(player)
-
-    def on_finger(self, widget):
-        player = self.getSelectedPlayer()
-        if player is not None:
-            self.connection.fm.finger(player.name)
-            self.lounge.finger_sent = True
-
-    def on_archived(self, widget):
-        player = self.getSelectedPlayer()
-        if player is not None:
-            self.connection.adm.queryAdjournments(player.name)
-            self.connection.adm.queryHistory(player.name)
-            self.connection.adm.queryJournal(player.name)
-
-            notebook = self.widgets["notebook"]
-            archived = self.widgets["archiveListContent"]
-            notebook.set_current_page(notebook.page_num(archived))
-
     def onSelectionChanged(self, selection):
         player = self.getSelectedPlayer()
         user_name = self.connection.getUsername()
@@ -1684,7 +1634,7 @@ class GameTabSection(ParrentListSection):
                         _("Rated"),
                         hide=[0],
                         pix=[1])
-        self.tv.get_column(0).set_sort_column_id(0)
+
         self.tv.get_model().set_sort_func(0, self.pixCompareFunction, 1)
         for i in range(1, 7):
             self.tv.get_model().set_sort_func(i, self.compareFunction, i)
@@ -1713,10 +1663,13 @@ class GameTabSection(ParrentListSection):
 
         self.connection.games.connect("FICSGameCreated", self.onGameAdd)
         self.connection.games.connect("FICSGameEnded", self.onGameRemove)
-        self.widgets["observeButton"].connect("clicked", self.onObserveClicked)
-        self.tv.connect("row-activated", self.onObserveClicked)
+        self.widgets["observeButton"].connect("clicked", self.on_observe)
+        self.tv.connect("row-activated", self.on_observe)
         self.connection.bm.connect("obsGameCreated", self.onGameObserved)
         self.connection.bm.connect("obsGameUnobserved", self.onGameUnobserved)
+
+        self.tv.connect('button-press-event', self.button_press_event)
+        self.createLocalMenu((OBSERVE, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
 
         if self.connection.FatICS or self.connection.USCN or self.lounge.helperconn is None:
             self.widgets["gamesSpinner"].hide()
@@ -1875,14 +1828,6 @@ class GameTabSection(ParrentListSection):
 
         GLib.idle_add(do_onGameRemove, games, game, priority=GLib.PRIORITY_LOW)
 
-    def onObserveClicked(self, widget, *args):
-        model, paths = self.tv.get_selection().get_selected_rows()
-        for path in paths:
-            rowiter = model.get_iter(path)
-            game = model.get_value(rowiter, 0)
-            if game.supported:
-                self.connection.bm.observe(game)
-
     @idle_add
     def onGameObserved(self, bm, game):
         if game in self.games:
@@ -1894,6 +1839,13 @@ class GameTabSection(ParrentListSection):
         if game in self.games:
             treeiter = self.games[game]["ti"]
             self.store.set_value(treeiter, 1, self.clearpix)
+
+    def getSelectedPlayer(self):
+        model = self.tv.get_model()
+        path, col = self.tv.get_cursor()
+        col_index = self.tv.get_columns().index(col)
+        game = model.get_value(model.get_iter(path), 0)
+        return game.bplayer if col_index >= 3 else game.wplayer
 
 
 class AdjournedTabSection(ParrentListSection):
@@ -1955,6 +1907,16 @@ class AdjournedTabSection(ParrentListSection):
                         lambda *args: self.onPreviewButtonClicked(None))
         self.connection.bm.connect("archiveGamePreview", self.onGamePreview)
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
+
+        self.tv.connect('button-press-event', self.button_press_event)
+        self.createLocalMenu((CHALLENGE, CHAT, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
+
+    def getSelectedPlayer(self):
+        model = self.tv.get_model()
+        path, col = self.tv.get_cursor()
+        col_index = self.tv.get_columns().index(col)
+        game = model.get_value(model.get_iter(path), 0)
+        return game.bplayer if col_index >= 3 else game.wplayer
 
     def onSelectionChanged(self, selection):
         model, treeiter = selection.get_selected()
