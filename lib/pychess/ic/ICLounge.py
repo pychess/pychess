@@ -414,23 +414,28 @@ class ICLounge(GObject.GObject):
         log.debug("%s" % player,
                   extra={"task": (self.connection.username,
                                   "onArrivalNotification")})
-        self._add_notification_message(player, _(" has arrived"), chat=True)
+        self._add_notification_message(player, _(" has arrived"), chat=True, replace=True)
         if player not in self.players:
             self.players.append(player)
             self._connect_to_player_changes(player)
 
     @idle_add
     def onDepartedNotification(self, cm, player):
-        self._add_notification_message(player, _(" has departed"))
+        self._add_notification_message(player, _(" has departed"), replace=True)
 
     @idle_add
     def user_from_notify_list_is_present(self, player):
-        self._add_notification_message(player, _(" is present"), chat=True)
+        self._add_notification_message(player, _(" is present"), chat=True, replace=True)
         if player not in self.players:
             self.players.append(player)
             self._connect_to_player_changes(player)
 
-    def _add_notification_message(self, player, text, chat=False):
+    def _add_notification_message(self, player, text, chat=False, replace=False):
+        if replace:
+            for message in self.messages:
+                if isinstance(message, PlayerNotificationMessage) and message.player == player:
+                    message.dismiss()
+
         content = get_infobarmessage_content(player, text)
 
         def response_cb(infobar, response, message):
