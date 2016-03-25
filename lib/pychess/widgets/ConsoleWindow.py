@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from time import strftime, localtime
 
 from gi.repository import Gtk, Gdk, GObject, Pango
 
@@ -22,7 +23,7 @@ class ConsoleWindow(object):
         self.window.connect_after("delete-event",
                                   lambda w, e: w.hide() or True)
 
-        uistuff.keepWindowSize("console", self.window, defaultSize=(700, 400))
+        uistuff.keepWindowSize("console", self.window, defaultSize=(800, 400))
 
         self.consoleView = ConsoleView(self.window, self.connection)
         self.window.add(self.consoleView)
@@ -109,13 +110,15 @@ class ConsoleView(Gtk.Box):
 
     @idle_add
     def addMessage(self, text, my):
+        tag = "mytext" if my else "text"
         text_buffer = self.readView.get_buffer()
         tb_iter = text_buffer.get_end_iter()
         # Messages have linebreak before the text. This is opposite to log
         # messages
         if text_buffer.props.text:
             text_buffer.insert(tb_iter, "\n")
-        tag = "mytext" if my else "text"
+        time = strftime("%H:%M:%S")
+        text_buffer.insert_with_tags_by_name(tb_iter, "(%s) " % time, tag)
         insert_formatted(self.readView, tb_iter, text, tag=tag)
 
         # scroll to the bottom but only if we are not scrolled up to read back
