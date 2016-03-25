@@ -627,7 +627,7 @@ class UserInfoSection(Section):
             if self.lounge.finger_sent:
                 dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
                                            buttons=Gtk.ButtonsType.OK)
-                dialog.set_markup(_("Finger of %s" % finger.getName()))
+                dialog.set_markup("<b>%s</b>" % finger.getName())
                 table.show_all()
                 dialog.get_message_area().add(table)
                 dialog.run()
