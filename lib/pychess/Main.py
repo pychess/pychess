@@ -510,6 +510,7 @@ def run(no_debug, idle_add_debug, thread_debug, log_viewer, purge_recent,
     signal.signal(signal.SIGTERM, Gtk.main_quit)
 
     def cleanup():
+        ICLogon.stop()
         SubProcess.finishAllSubprocesses()
 
     atexit.register(cleanup)

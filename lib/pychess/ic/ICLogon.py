@@ -32,6 +32,11 @@ def run():
         dialog.present()
 
 
+def stop():
+    global dialog
+    dialog._disconnect()
+
+
 class AutoLogoutException(Exception):
 
     pass
