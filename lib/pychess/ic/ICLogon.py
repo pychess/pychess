@@ -34,7 +34,8 @@ def run():
 
 def stop():
     global dialog
-    dialog._disconnect()
+    if dialog is not None:
+        dialog._disconnect()
 
 
 class AutoLogoutException(Exception):
