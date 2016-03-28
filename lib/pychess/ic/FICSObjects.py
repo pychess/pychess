@@ -510,7 +510,7 @@ class FICSPlayers(GObject.GObject):
             if not player.adjournment and player.name not in self.connection.notify_users:
                 del self[player]
             else:
-                print("Can't remove player %s" % player)
+                # print("Can't remove player %s" % player)
                 log.debug("Not removing %s" % player,
                           extra={"task": (self.connection.username,
                                           "player_disconnected")})
@@ -519,7 +519,10 @@ class FICSPlayers(GObject.GObject):
                           player,
                           priority=GLib.PRIORITY_LOW)
         else:
-            print("Player disconnected but not in self !!!")
+            # print("Player disconnected but not in self !!!")
+            log.debug("Not removing %s (it's not in FICSPlayers)" % player,
+                      extra={"task": (self.connection.username,
+                                      "player_disconnected")})
     #    def onFinger (self, fm, finger):
     #        player = FICSPlayer(finger.getName())
     #        if player in self:
