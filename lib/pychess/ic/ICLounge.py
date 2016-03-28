@@ -8,6 +8,12 @@ from itertools import groupby
 
 from gi.repository import GLib, Gtk, Gdk, GdkPixbuf, GObject, Pango
 
+# http://pythonhosted.org/Pympler/index.html
+# from pympler import muppy, summary
+
+# https://pypi.python.org/pypi/guppy/
+# import guppy
+
 from pychess.ic import IC_POS_EXAMINATING, IC_POS_OBSERVING_EXAMINATION, \
     TYPE_BLITZ, get_infobarmessage_content, get_infobarmessage_content2, \
     TYPE_LIGHTNING, GAME_TYPES_BY_RATING_TYPE, TYPE_WILD, WildGameType, \
@@ -151,6 +157,15 @@ class ICLounge(GObject.GObject):
 
         self.finger_sent = False
         self.connection.lounge_loaded.set()
+
+        # all_objects = muppy.get_objects()
+        # self.summ = summary.summarize(all_objects)
+        # summary.print_(self.summ)
+
+        # self.heapy = guppy.hpy()
+        # print(self.heapy.heap())
+        # self.heapy.setref()
+
         log.debug("ICLounge.__init__: finished")
 
     def show(self):
@@ -1404,11 +1419,6 @@ class PlayerTabSection(ParrentListSection):
         self.tv.connect('button-press-event', self.button_press_event)
         self.createLocalMenu((CHALLENGE, CHAT, OBSERVE, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
 
-        if self.connection.FatICS or self.connection.USCN or self.lounge.helperconn is None:
-            self.widgets["playersSpinner"].hide()
-        else:
-            self.widgets["playersSpinner"].start()
-
     def player_filter_func(self, model, iter, data):
         player = model[iter][0]
         is_titled = player.isTitled()
@@ -1425,6 +1435,13 @@ class PlayerTabSection(ParrentListSection):
         for button in self.filter_buttons:
             self.filter_toggles[button] = self.widgets[button].get_active()
         self.player_filter.refilter()
+
+        # sum2 = summary.summarize(muppy.get_objects())
+        # diff = summary.get_diff(self.lounge.summ, sum2)
+        # summary.print_(diff)
+
+        # print(self.lounge.heapy.heap().get_rp(40))
+        # self.lounge.heapy.setref()
 
     def onPlayerAdded(self, players, new_players):
         # Let the hard work to be done in the helper connection thread
@@ -1471,9 +1488,6 @@ class PlayerTabSection(ParrentListSection):
             self.widgets["playersOnlineLabel"].set_text(_("Players: %d") %
                                                         count)
 
-            if len(new_players) > 1:
-                self.widgets["playersSpinner"].stop()
-                self.widgets["playersSpinner"].hide()
             return False
 
         GLib.idle_add(do_onPlayerAdded,
@@ -1683,11 +1697,6 @@ class GameTabSection(ParrentListSection):
         self.tv.connect('button-press-event', self.button_press_event)
         self.createLocalMenu((OBSERVE, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
 
-        if self.connection.FatICS or self.connection.USCN or self.lounge.helperconn is None:
-            self.widgets["gamesSpinner"].hide()
-        else:
-            self.widgets["gamesSpinner"].start()
-
     def game_filter_func(self, model, iter, data):
         game = model[iter][0]
         is_standard = game.game_type.rating_type == TYPE_STANDARD
@@ -1805,9 +1814,6 @@ class GameTabSection(ParrentListSection):
                 self.games[game]["private_cid"] = game.connect(
                     "notify::private", self.private_changed)
                 self._update_gamesrunning_label()
-            if len(new_games) > 0:
-                self.widgets["gamesSpinner"].stop()
-                self.widgets["gamesSpinner"].hide()
 
         GLib.idle_add(do_onGameAdd,
                       games,

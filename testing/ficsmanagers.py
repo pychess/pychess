@@ -67,6 +67,7 @@ class DummyConnection(Connection):
         self.client.lines.block_mode = True
         self.client.lines.line_prefix = "fics%"
         self.examined_game = None
+        self.notify_users = []
 
     def getUsername(self):
         return self.username
@@ -131,7 +132,7 @@ class EmittingTestCase(unittest.TestCase):
         def handler(manager, *args):
             self.args = args
             # print(signal, args[0])
-            if signal == "obsGameCreated":
+            if signal in ("obsGameCreated", "playGameCreated"):
                 ficsgame = args[0]
                 self.connection.bm.onGameModelStarted(ficsgame.gameno)
 
@@ -1219,5 +1220,68 @@ class ConsoleManagerTests(EmittingTestCase):
                                 (expected_result, None))
 
 
+class FICSObjectsCleanupTest(EmittingTestCase):
+    def setUp(self):
+        EmittingTestCase.setUp(self)
+        self.manager = self.connection.bm
+
+    def test(self):
+        """ FICS objects clean up """
+
+        lines = [
+            '<wa> GuestRLJC 010P0P0P0P0P0P0P0P0P',
+            '<wa> GuestGTFC 010P0P0P0P0P0P0P0P0P',
+            '<pf> 20 w=GuestRLJC t=match p=GuestRLJC (----) [white] GuestGTFC (----) unrated blitz 2 12',
+            '<pr> 20',
+            '<s> 222 w=GuestRLJC ti=01 rt=0P t=5 i=0 r=u tp=blitz c=? rr=0-9999 a=t f=f',
+        ]
+
+        self.connection.process_lines(lines)
+
+        signal = 'playGameCreated'
+        lines = [
+            BLOCK_START + '111' + BLOCK_SEPARATOR + '155' + BLOCK_SEPARATOR,
+            "Your seek matches one already posted by GuestRLJC.", "",
+            "<sr> 222", "fics%",
+            "Creating: GuestGTFC (++++) GuestRLJC (++++) unrated blitz 5 0",
+            "{Game 111 (GuestGTFC vs. GuestRLJC) Creating unrated blitz match.}",
+            "",
+            "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 111 GuestGTFC GuestRLJC 1 5 0 39 39 300000 300000 1 none (0:00.000) none 0 0 0",
+            "", "Game 111: A disconnection will be considered a forfeit.",
+            BLOCK_END,
+        ]
+
+        self.connection.process_lines(lines)
+
+        lines == []
+        game = FICSGame(
+            FICSPlayer("GuestGTFC"),
+            FICSPlayer("GuestRLJC"),
+            gameno=111)
+        game = self.connection.games.get(game)
+        expectedResults = (game, )
+        self.runAndAssertEquals(signal, lines, expectedResults)
+
+        lines = [
+            "{Game 111 (GuestGTFC vs. GuestRLJC) Game aborted on move 1} *",
+            '<wd> GuestRLJC',
+            '<wd> GuestGTFC',
+        ]
+
+        self.connection.process_lines(lines)
+
+        self.assertEquals(self.connection.challenges.challenges, {})
+        self.assertEquals(self.connection.seeks.seeks, {})
+        self.assertEquals(self.connection.games.games, {})
+        self.assertEquals(self.connection.games.games_by_gameno, {})
+        self.assertEquals(self.connection.games.adjourned_games, {})
+        self.assertEquals(self.connection.games.history_games, {})
+        self.assertEquals(self.connection.games.journal_games, {})
+        self.assertEquals(self.connection.players.players, {})
+        self.assertEquals(self.connection.players.players_cids, {})
+
+
 if __name__ == '__main__':
     unittest.main()
+    # suite = unittest.TestLoader().loadTestsFromTestCase(NoMemoryLeakTests)
+    # unittest.TextTestRunner().run(suite)

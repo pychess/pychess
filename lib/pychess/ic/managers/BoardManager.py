@@ -579,7 +579,6 @@ class BoardManager(GObject.GObject):
                 player.status = IC_STATUS_PLAYING
             if player.game != game:
                 player.game = game
-            player.keep_after_logout = True
 
         self.theGameImPlaying = game
         self.gamemodelStartedEvents[gameno] = threading.Event()
@@ -871,7 +870,6 @@ class BoardManager(GObject.GObject):
             if game_type.rating_type in player.ratings and \
                     player.ratings[game_type.rating_type].elo != rating:
                 player.ratings[game_type.rating_type].elo = rating
-            player.keep_after_logout = True
         game = gameclass(wplayer,
                          bplayer,
                          game_type=game_type,

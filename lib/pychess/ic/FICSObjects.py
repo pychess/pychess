@@ -102,7 +102,6 @@ class FICSPlayer(GObject.GObject):
         self.status = status
         self.game = None
         self.adjournment = False
-        self.keep_after_logout = False  # Whether to remove from Players after they logout
         self.ratings = FICSRatings()
         if titles is None:
             self.titles = set()
@@ -240,10 +239,10 @@ class FICSPlayer(GObject.GObject):
         return self.ratings[TYPE_WILD].elo
 
     def __hash__(self):
-        """ Two players are equal if the first 10 characters of their name match.
+        """ Two players are equal if the first 11 characters of their name match.
             This is to facilitate matching players from output of commands like the 'games'
-            command which only return the first 10 characters of a player's name """
-        return hash(self.name[0:10].lower())
+            command which only return the first 11 characters of a player's name """
+        return hash(self.name[0:11].lower())
 
     def __eq__(self, player):
         if isinstance(self, type(player)) and hash(self) == hash(player):
@@ -442,8 +441,8 @@ class FICSPlayers(GObject.GObject):
         if key != value:
             raise Exception("Not the same: %s %s" % (repr(key), repr(value)))
         if hash(value) in self.players:
-            raise Exception("%s already exists in %s" %
-                            (repr(value), repr(self)))
+            raise Exception("%s already exists in self.players as %s" %
+                            (repr(value), hash(value)))
         self.players[hash(value)] = value
         self.players_cids[hash(value)] = value.connect("notify::online",
                                                        self.online_changed)
@@ -508,10 +507,10 @@ class FICSPlayers(GObject.GObject):
             player = self[player]
             player.online = False
             player.status = IC_STATUS_OFFLINE
-            if not player.adjournment and not player.keep_after_logout and \
-                    player.name not in self.connection.notify_users:
+            if not player.adjournment and player.name not in self.connection.notify_users:
                 del self[player]
             else:
+                print("Can't remove player %s" % player)
                 log.debug("Not removing %s" % player,
                           extra={"task": (self.connection.username,
                                           "player_disconnected")})
@@ -519,7 +518,8 @@ class FICSPlayers(GObject.GObject):
                           'FICSPlayerExited',
                           player,
                           priority=GLib.PRIORITY_LOW)
-
+        else:
+            print("Player disconnected but not in self !!!")
     #    def onFinger (self, fm, finger):
     #        player = FICSPlayer(finger.getName())
     #        if player in self:
@@ -878,8 +878,8 @@ class FICSGame(FICSMatch):
         self.relation = relation
 
     def __hash__(self):
-        return hash(":".join((self.wplayer.name[0:10].lower(
-        ), self.bplayer.name[0:10].lower(), str(self.gameno))))
+        return hash(":".join((self.wplayer.name[0:11].lower(
+        ), self.bplayer.name[0:11].lower(), str(self.gameno))))
 
     def __eq__(self, game):
         if isinstance(game, FICSGame) and hash(self) == hash(game):
@@ -1056,8 +1056,8 @@ class FICSHistoryGame(FICSGame):
         self.history_no = history_no
 
     def __hash__(self):
-        return hash(":".join((self.wplayer.name[0:10].lower(
-        ), self.bplayer.name[0:10].lower(), str(self.history_no), str(
+        return hash(":".join((self.wplayer.name[0:11].lower(
+        ), self.bplayer.name[0:11].lower(), str(self.history_no), str(
             self.time))))
 
     @property
@@ -1105,8 +1105,8 @@ class FICSJournalGame(FICSGame):
         self.journal_no = journal_no
 
     def __hash__(self):
-        return hash(":".join((self.wplayer.name[0:10].lower(),
-                              self.bplayer.name[0:10].lower(),
+        return hash(":".join((self.wplayer.name[0:11].lower(),
+                              self.bplayer.name[0:11].lower(),
                               str(self.journal_no), )))
 
     @property

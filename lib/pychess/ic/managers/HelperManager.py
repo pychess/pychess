@@ -22,6 +22,8 @@ names = "([a-zA-Z]+)%s" % titles
 mf = "(?:([mf]{1,2})\s?)?"
 whomatch = "(?:(?:([-0-9+]{1,4})([\^~:\#. &])%s))" % names
 whomatch_re = re.compile(whomatch)
+whoI = "([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)"
+re_whoI = re.compile(whoI)
 
 
 class HelperManager(GObject.GObject):
@@ -31,13 +33,13 @@ class HelperManager(GObject.GObject):
         self.helperconn = helperconn
         self.connection = connection
 
-        self.helperconn.expect_line(
+        # TODO: Examined games
+        self.helperconn.expect_fromto(
             self.on_game_list,
             "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d:)?(\d+):(\d+)\s*-\s*(\d:)?(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
             %
-            (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())))
-        self.helperconn.expect_line(self.on_game_list_end,
-                                    "(\d+) games displayed .*")
+            (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())),
+            "(\d+) games displayed.")
 
         if self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.expect_line(self.on_player_who, "%s(?:\s{2,}%s)+" %
@@ -49,17 +51,9 @@ class HelperManager(GObject.GObject):
         else:
             # New ivar pin
             # http://www.freechess.org/Help/HelpFiles/new_features.html
-            self.helperconn.expect_line(
-                self.on_player_whoI, "([A-Za-z]+)([\^~:\#. &])(\\d{2})" +
-                "(\d{1,4})([P E])" * 8 + "(\d{1,4})([PE]?)")
-            self.helperconn.expect_line(self.on_player_whoI_end,
-                                        "(\d+) Players Displayed.")
-            self.helperconn.expect_line(
-                self.on_player_connectI,
-                "<wa> ([A-Za-z]+)([\^~:\#. &])(\\d{2})" + "(\d{1,4})([P E])" *
-                8 + "(\d{1,4})([PE]?)")
-            self.helperconn.expect_line(self.on_player_disconnectI,
-                                        "<wd> ([A-Za-z]+)")
+            self.helperconn.expect_fromto(self.on_player_whoI, whoI, "(\d+) Players Displayed.")
+            self.helperconn.expect_line(self.on_player_connectI, "<wa> %s" % whoI)
+            self.helperconn.expect_line(self.on_player_disconnectI, "<wd> ([A-Za-z]+)")
 
         self.helperconn.expect_line(
             self.on_game_add,
@@ -76,7 +70,6 @@ class HelperManager(GObject.GObject):
             % (names, ratings, ratings, ratings, ratings, ratings),
             "is now available for matches.")
 
-        self.players = []
         # b: blitz      l: lightning   u: untimed      e: examined game
         # s: standard   w: wild        x: atomic       z: crazyhouse
         # B: Bughouse   L: losers      S: Suicide
@@ -89,49 +82,59 @@ class HelperManager(GObject.GObject):
                         "who IbslwBzSLx%s%s9" % (rated, segment)])
                     t.start()
 
-        self.games = []
         if self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.client.run_command("games")
         else:
             self.helperconn.client.run_command("games /bslwBzSLx")
 
-    def on_game_list(self, match):
-        gameno, wrating, wname, brating, bname, private, shorttype, rated, min, \
-            inc, whour, wmin, wsec, bhour, bmin, bsec, wmat, bmat, color, movno = match.groups()
-        try:
-            gametype = GAME_TYPES_BY_SHORT_FICS_NAME[shorttype]
-        except KeyError:
-            return
+    def on_game_list(self, matchlist):
+        games = []
+        for match in matchlist[:-1]:
+            if isinstance(match, str):
+                if match:
+                    parts0, parts1 = match.split("[")
+                    gameno, wrating, wname, brating, bname = parts0.split()
+                    private = parts1[0]
+                    shorttype = parts1[1]
+                    rated = parts1[2]
+                    min = parts1[3:6]
+                    inc = parts1[7:10]
+                else:
+                    continue
+            else:
+                gameno, wrating, wname, brating, bname, private, shorttype, rated, min, \
+                    inc, whour, wmin, wsec, bhour, bmin, bsec, wmat, bmat, color, movno = match.groups()
+            try:
+                gametype = GAME_TYPES_BY_SHORT_FICS_NAME[shorttype]
+            except KeyError:
+                return
 
-        wplayer = self.connection.players.get(FICSPlayer(wname))
-        bplayer = self.connection.players.get(FICSPlayer(bname))
-        game = FICSGame(wplayer,
-                        bplayer,
-                        gameno=int(gameno),
-                        rated=(rated == "r"),
-                        private=(private == "p"),
-                        minutes=int(min),
-                        inc=int(inc),
-                        game_type=gametype)
+            wplayer = self.connection.players.get(FICSPlayer(wname))
+            bplayer = self.connection.players.get(FICSPlayer(bname))
+            game = FICSGame(wplayer,
+                            bplayer,
+                            gameno=int(gameno),
+                            rated=(rated == "r"),
+                            private=(private == "p"),
+                            minutes=int(min),
+                            inc=int(inc),
+                            game_type=gametype)
 
-        for player, rating in ((wplayer, wrating), (bplayer, brating)):
-            if player.status != IC_STATUS_PLAYING:
-                player.status = IC_STATUS_PLAYING
-            if player.game != game:
-                player.game = game
-            rating = self.parseRating(rating)
-            if gametype.rating_type in player.ratings and \
-                    player.ratings[gametype.rating_type].elo != rating:
-                player.ratings[gametype.rating_type].elo = rating
-
-        self.games.append(self.connection.games.get(game, emit=False))
+            for player, rating in ((wplayer, wrating), (bplayer, brating)):
+                if player.status != IC_STATUS_PLAYING:
+                    player.status = IC_STATUS_PLAYING
+                if player.game != game:
+                    player.game = game
+                rating = self.parseRating(rating)
+                if gametype.rating_type in player.ratings and \
+                        player.ratings[gametype.rating_type].elo != rating:
+                    player.ratings[gametype.rating_type].elo = rating
+            game = self.connection.games.get(game, emit=False)
+            games.append(game)
+        self.connection.games.emit("FICSGameCreated", games)
+        # print(matchlist[-1].groups()[0], len(games))
 
     on_game_list.BLKCMD = BLKCMD_GAMES
-
-    def on_game_list_end(self, match):
-        self.connection.games.emit("FICSGameCreated", self.games)
-
-    on_game_list_end.BLKCMD = BLKCMD_GAMES
 
     def on_game_add(self, match):
         gameno, wname, bname, rated, game_type = match.groups()
@@ -212,7 +215,7 @@ class HelperManager(GObject.GObject):
             wild, wilddev, bughouse, bughousedev, crazyhouse, crazyhousedev, \
             suicide, suicidedev, losers, losersdev, atomic, atomicdev = match.groups()
         player = self.connection.players.get(FICSPlayer(name))
-        self.players.append(player)
+
         titles = parse_title_hex(titlehex)
         if not player.titles >= titles:
             player.titles |= titles
@@ -239,19 +242,27 @@ class HelperManager(GObject.GObject):
         if set_online and not player.online:
             player.online = True
 
+        return player
+
     def on_player_disconnectI(self, match):
         name = match.groups()[0]
         self.connection.players.player_disconnected(FICSPlayer(name))
 
-    def on_player_whoI(self, match):
-        self.on_player_connectI(match)
+    def on_player_whoI(self, matchlist):
+        players = []
+        for match in matchlist[:-1]:
+            if isinstance(match, str):
+                if match:
+                    players.append(self.on_player_connectI(re_whoI.match(match)))
+                else:
+                    continue
+            else:
+                players.append(self.on_player_connectI(match))
+
+        self.connection.players.emit("FICSPlayerEntered", players)
+        # print(matchlist[-1].groups()[0], len(players))
 
     on_player_whoI.BLKCMD = BLKCMD_WHO
-
-    def on_player_whoI_end(self, match):
-        self.connection.players.emit("FICSPlayerEntered", self.players)
-
-    on_player_whoI_end.BLKCMD = BLKCMD_WHO
 
     def on_player_who(self, match):
         for blitz, status, name, titles in whomatch_re.findall(match.string):
@@ -271,7 +282,6 @@ class HelperManager(GObject.GObject):
     def on_player_connect(self, match):
         name = match.groups()[0]
         player = self.connection.players.get(FICSPlayer(name))
-        self.players.append(player)
         player.online = True
 
     def on_player_disconnect(self, match):

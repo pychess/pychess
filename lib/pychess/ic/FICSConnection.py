@@ -374,6 +374,7 @@ class FICSMainConnection(FICSConnection):
         self.seeks.start()
         self.challenges.start()
 
+    def start_helper_manager(self, set_user_vars):
         # if guest accounts disabled we will handle players in the main connection
         if self.FatICS or self.USCN:
             self.client.run_command("set pin 1")
@@ -382,15 +383,14 @@ class FICSMainConnection(FICSConnection):
             # ivar pin: http://www.freechess.org/Help/HelpFiles/new_features.html
             self.client.run_command("iset pin 1")
 
-        # disable setting iveriables from console
-        self.client.run_command("iset lock 1")
-
-    def start_helper_manager(self, set_user_vars):
         if set_user_vars:
             self.client.run_command("set open 1")
             self.client.run_command("set gin 1")
             self.client.run_command("set availinfo 1")
         self.hm = HelperManager(self, self)
+
+        # disable setting iveriables from console
+        self.client.run_command("iset lock 1")
 
 
 class FICSHelperConnection(FICSConnection):
@@ -417,3 +417,6 @@ class FICSHelperConnection(FICSConnection):
             # ivar pin: http://www.freechess.org/Help/HelpFiles/new_features.html
             self.client.run_command("iset pin 1")
         self.hm = HelperManager(self, self.main_conn)
+
+        # disable setting iveriables from console
+        self.main_conn.client.run_command("iset lock 1")
