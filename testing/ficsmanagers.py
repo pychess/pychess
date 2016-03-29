@@ -195,9 +195,8 @@ class AdjournManagerTests(EmittingTestCase):
         ]
 
         gametime = datetime.datetime(2009, 12, 23, 6, 58)
-        us = self.connection.players.get(FICSPlayer(
-            self.connection.getUsername()))
-        gbtami = self.connection.players.get(FICSPlayer('gbtami'))
+        us = self.connection.players.get(self.connection.getUsername())
+        gbtami = self.connection.players.get('gbtami')
         game = FICSAdjournedGame(us,
                                  gbtami,
                                  our_color=WHITE,
@@ -449,9 +448,9 @@ class BoardManagerTests(EmittingTestCase):
             "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 55 mgatto Thegermain 1 4 0 39 39 240000 240000 1 none (0:00.000) none 0 0 0",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me = self.connection.players.get('mgatto')
         me.ratings[TYPE_BLITZ].elo = 1327
-        opponent = self.connection.players.get(FICSPlayer('Thegermain'))
+        opponent = self.connection.players.get('Thegermain')
         opponent.ratings[TYPE_BLITZ].elo = 1645
         game = FICSGame(me,
                         opponent,
@@ -480,9 +479,9 @@ class BoardManagerTests(EmittingTestCase):
             "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 442 mgatto GuestRLJC 1 5 0 39 39 300000 300000 1 none (0:00.000) none 0 0 0",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me = self.connection.players.get('mgatto')
         me.ratings[TYPE_BLITZ].elo = 1305
-        opponent = self.connection.players.get(FICSPlayer('GuestRLJC'))
+        opponent = self.connection.players.get('GuestRLJC')
         game = FICSGame(me,
                         opponent,
                         gameno=442,
@@ -514,9 +513,9 @@ class BoardManagerTests(EmittingTestCase):
             "", "Game 101: A disconnection will be considered a forfeit.",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me = self.connection.players.get('gbtami')
         me.ratings[TYPE_BLITZ].elo = 1529
-        opponent = self.connection.players.get(FICSPlayer('suugakusya'))
+        opponent = self.connection.players.get('suugakusya')
         opponent.ratings[TYPE_BLITZ].elo = 1425
         game = FICSGame(me,
                         opponent,
@@ -549,9 +548,9 @@ class BoardManagerTests(EmittingTestCase):
             "", "Game 101: A disconnection will be considered a forfeit.",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me = self.connection.players.get('gbtami')
         me.ratings[TYPE_BLITZ].elo = 1529
-        opponent = self.connection.players.get(FICSPlayer('suugakusya'))
+        opponent = self.connection.players.get('suugakusya')
         opponent.ratings[TYPE_BLITZ].elo = 1425
         game = FICSGame(me,
                         opponent,
@@ -582,9 +581,9 @@ class BoardManagerTests(EmittingTestCase):
             "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 512 chemo mgatto -1 1 0 39 39 60000 60000 1 none (0:00.000) none 1 0 0",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me = self.connection.players.get('mgatto')
         me.ratings[TYPE_BLITZ].elo = 1547
-        opponent = self.connection.players.get(FICSPlayer('chemo'))
+        opponent = self.connection.players.get('chemo')
         opponent.ratings[TYPE_BLITZ].elo = 1749
         game = FICSGame(opponent,
                         me,
@@ -615,9 +614,9 @@ class BoardManagerTests(EmittingTestCase):
             "", "Game 465: A disconnection will be considered a forfeit.",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me = self.connection.players.get('mgatto')
         me.ratings[TYPE_BLITZ].elo = 1470
-        opponent = self.connection.players.get(FICSPlayer('fabk'))
+        opponent = self.connection.players.get('fabk')
         opponent.ratings[TYPE_BLITZ].elo = 1155
         game = FICSGame(opponent,
                         me,
@@ -647,9 +646,9 @@ class BoardManagerTests(EmittingTestCase):
             "<12> knnrrrqn pppppppp -------- -------- -------- -------- PPPPPPPP NRNKNQRR W -1 0 0 0 0 0 54 antiseptic mgatto -1 5 2 41 41 300000 300000 1 none (0:00.000) none 1 0 0",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me = self.connection.players.get('mgatto')
         me.ratings[TYPE_BLITZ].elo = 1305
-        opponent = self.connection.players.get(FICSPlayer('antiseptic'))
+        opponent = self.connection.players.get('antiseptic')
         game = FICSGame(
             opponent,
             me,
@@ -679,8 +678,8 @@ class BoardManagerTests(EmittingTestCase):
             "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 107 opmentor mgatto -1 2 1 39 39 120000 120000 1 none (0:00.000) none 1 0 0",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('mgatto'))
-        opponent = self.connection.players.get(FICSPlayer('opmentor'))
+        me = self.connection.players.get('mgatto')
+        opponent = self.connection.players.get('opmentor')
         game = FICSGame(opponent,
                         me,
                         gameno=107,
@@ -710,8 +709,8 @@ class BoardManagerTests(EmittingTestCase):
             "", "Game 72: A disconnection will be considered a forfeit.",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('mgatto'))
-        opponent = self.connection.players.get(FICSPlayer('opmentor'))
+        me = self.connection.players.get('mgatto')
+        opponent = self.connection.players.get('opmentor')
         game = FICSGame(opponent,
                         me,
                         gameno=72,
@@ -743,9 +742,9 @@ class BoardManagerTests(EmittingTestCase):
             "", "Game 333: A disconnection will be considered a forfeit.",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me = self.connection.players.get('gbtami')
         me.ratings[TYPE_BLITZ].elo = 1626
-        opponent = self.connection.players.get(FICSPlayer('Strix'))
+        opponent = self.connection.players.get('Strix')
         opponent.ratings[TYPE_BLITZ].elo = 1581
         game = FICSGame(me,
                         opponent,
@@ -778,9 +777,9 @@ class BoardManagerTests(EmittingTestCase):
             "", "Game 501: A disconnection will be considered a forfeit.",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me = self.connection.players.get('gbtami')
         me.ratings[TYPE_BLITZ].elo = 1609
-        opponent = self.connection.players.get(FICSPlayer('coopnomaks'))
+        opponent = self.connection.players.get('coopnomaks')
         opponent.ratings[TYPE_BLITZ].elo = 1570
         game = FICSGame(opponent,
                         me,
@@ -810,9 +809,9 @@ class BoardManagerTests(EmittingTestCase):
             "", "Game 422: A disconnection will be considered a forfeit.",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('gbtami'))
+        me = self.connection.players.get('gbtami')
         me.ratings[TYPE_BLITZ].elo = 1475
-        opponent = self.connection.players.get(FICSPlayer('pianazo'))
+        opponent = self.connection.players.get('pianazo')
         opponent.ratings[TYPE_BLITZ].elo = 1520
         game = FICSGame(me,
                         opponent,
@@ -842,9 +841,9 @@ class BoardManagerTests(EmittingTestCase):
             "<12> rnbqkbnr pppppppp -------- -------- -------- -------- PPPPPPPP RNBQKBNR W -1 1 1 1 1 0 225 clisus mgatto -1 1 0 39 39 60000 60000 1 none (0:00.000) none 1 0 0",
             BLOCK_END
         ]
-        me = self.connection.players.get(FICSPlayer('mgatto'))
+        me = self.connection.players.get('mgatto')
         me.ratings[TYPE_BLITZ].elo = 1542
-        opponent = self.connection.players.get(FICSPlayer('clisus'))
+        opponent = self.connection.players.get('clisus')
         opponent.ratings[TYPE_BLITZ].elo = 1470
         game = FICSGame(opponent,
                         me,
@@ -1108,7 +1107,7 @@ class HelperManagerTests(EmittingTestCase):
             "Artmachine Blitz ( 819), Std (1276), Wild (----), Light(----), Bug(----)",
             "is now available for matches\."
         ]
-        player = self.connection.players.get(FICSPlayer('Artmachine'))
+        player = self.connection.players.get('Artmachine')
         self.runAndAssertEqualsNotify(player.ratings[TYPE_BLITZ], 'elo', lines,
                                       819)
 
