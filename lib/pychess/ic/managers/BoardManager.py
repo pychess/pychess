@@ -25,7 +25,7 @@ from pychess.ic import IC_POS_INITIAL, IC_POS_ISOLATED, IC_POS_OP_TO_MOVE, IC_PO
     BLKCMD_SEEK, BLKCMD_OBSERVE, BLKCMD_MATCH, TYPE_WILD, BLKCMD_SMOVES, BLKCMD_UNOBSERVE, BLKCMD_MOVES, \
     BLKCMD_FLAG
 
-from pychess.ic.FICSObjects import FICSPlayer, FICSGame, FICSBoard, FICSHistoryGame, \
+from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSHistoryGame, \
     FICSAdjournedGame, FICSJournalGame
 
 names = "(\w+)"
@@ -428,8 +428,8 @@ class BoardManager(GObject.GObject):
                 ("SetUp", "1"), ("FEN", fen)
             ]
             pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
-            wplayer = self.connection.players.get(FICSPlayer(wname))
-            bplayer = self.connection.players.get(FICSPlayer(bname))
+            wplayer = self.connection.players.get(wname)
+            bplayer = self.connection.players.get(bname)
 
             # examine from console or got mexamine in observed game
             if self.connection.examined_game is None:
@@ -512,9 +512,7 @@ class BoardManager(GObject.GObject):
 
     def matchDeclined(self, match):
         decliner, = match.groups()
-        decliner = self.connection.players.get(
-            FICSPlayer(decliner),
-            create=False)
+        decliner = self.connection.players.get(decliner)
         self.emit("matchDeclined", decliner)
 
     @classmethod
@@ -548,8 +546,8 @@ class BoardManager(GObject.GObject):
         rated = rated == "rated"
         game_type = GAME_TYPES[match_type]
 
-        wplayer = self.connection.players.get(FICSPlayer(wname))
-        bplayer = self.connection.players.get(FICSPlayer(bname))
+        wplayer = self.connection.players.get(wname)
+        bplayer = self.connection.players.get(bname)
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
             if game_type.rating_type in player.ratings and \
                     player.ratings[game_type.rating_type].elo != rating:
@@ -864,8 +862,8 @@ class BoardManager(GObject.GObject):
             pgn += "%s {[%%emt %s]} " % (move, time)
         pgn += "*\n"
 
-        wplayer = self.connection.players.get(FICSPlayer(wname))
-        bplayer = self.connection.players.get(FICSPlayer(bname))
+        wplayer = self.connection.players.get(wname)
+        bplayer = self.connection.players.get(bname)
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
             if game_type.rating_type in player.ratings and \
                     player.ratings[game_type.rating_type].elo != rating:
@@ -914,8 +912,8 @@ class BoardManager(GObject.GObject):
         gameno = int(gameno)
         self.castleSigns[gameno] = castleSigns
 
-        wplayer = self.connection.players.get(FICSPlayer(wname))
-        bplayer = self.connection.players.get(FICSPlayer(bname))
+        wplayer = self.connection.players.get(wname)
+        bplayer = self.connection.players.get(bname)
 
         if relation == IC_POS_OBSERVING_EXAMINATION:
             pgnHead = [
@@ -1069,7 +1067,7 @@ class BoardManager(GObject.GObject):
 
     def player_lagged(self, match):
         gameno, player, num_seconds = match.groups()
-        player = self.connection.players.get(FICSPlayer(player))
+        player = self.connection.players.get(player)
         self.emit("player_lagged", player)
 
     def opp_not_out_of_time(self, match):
@@ -1079,21 +1077,21 @@ class BoardManager(GObject.GObject):
 
     def req_not_fit_formula(self, matchlist):
         player, formula = matchlist[1].groups()
-        player = self.connection.players.get(FICSPlayer(player))
+        player = self.connection.players.get(player)
         self.emit("req_not_fit_formula", player, formula)
 
     req_not_fit_formula.BLKCMD = BLKCMD_MATCH
 
     def player_on_censor(self, match):
         player, = match.groups()
-        player = self.connection.players.get(FICSPlayer(player))
+        player = self.connection.players.get(player)
         self.emit("player_on_censor", player)
 
     player_on_censor.BLKCMD = BLKCMD_MATCH
 
     def player_on_noplay(self, match):
         player, = match.groups()
-        player = self.connection.players.get(FICSPlayer(player))
+        player = self.connection.players.get(player)
         self.emit("player_on_noplay", player)
 
     player_on_noplay.BLKCMD = BLKCMD_MATCH

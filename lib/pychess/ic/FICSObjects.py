@@ -21,6 +21,10 @@ from pychess.ic import RATING_TYPES, IC_STATUS_PLAYING, IC_STATUS_OFFLINE, IC_ST
     TYPE_WOMAN_GRAND_MASTER, TYPE_WOMAN_INTERNATIONAL_MASTER, TYPE_WOMAN_FIDE_MASTER
 
 
+class AlreadyExistException(Exception):
+    pass
+
+
 class FICSRatings(dict):
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
@@ -86,6 +90,10 @@ def get_player_tooltip_text(player, show_status=True):
     return text
 
 
+def player_id(name):
+    return name[0:11].lower()
+
+
 class FICSPlayer(GObject.GObject):
     def __init__(self,
                  name,
@@ -96,6 +104,7 @@ class FICSPlayer(GObject.GObject):
         assert isinstance(name, str), name
         assert isinstance(online, bool), online
         GObject.GObject.__init__(self)
+        self.player_id = player_id(name)
         self.name = name
         self.online = online
         self._status = status
@@ -238,14 +247,8 @@ class FICSPlayer(GObject.GObject):
     def wild(self):
         return self.ratings[TYPE_WILD].elo
 
-    def __hash__(self):
-        """ Two players are equal if the first 11 characters of their name match.
-            This is to facilitate matching players from output of commands like the 'games'
-            command which only return the first 11 characters of a player's name """
-        return hash(self.name[0:11].lower())
-
     def __eq__(self, player):
-        if isinstance(self, type(player)) and hash(self) == hash(player):
+        if isinstance(self, type(player)) and self.player_id == player.player_id:
             return True
         else:
             return False
@@ -424,43 +427,42 @@ class FICSPlayers(GObject.GObject):
         #        self.connection.fm.connect("fingeringFinished", self.onFinger)
         pass
 
-    def __getitem__(self, player):
-        if not isinstance(player, FICSPlayer):
-            raise TypeError("%s" % repr(player))
-        if hash(player) in self.players:
-            return self.players[hash(player)]
+    def __getitem__(self, name):
+        if not isinstance(name, str):
+            raise TypeError("%s" % name)
+        if name in self.players:
+            return self.players[name]
         else:
             raise KeyError
 
     def __setitem__(self, key, value):
-        """ key and value must be the same FICSPlayer object """
-        if not isinstance(key, FICSPlayer):
+        """ key must be str and value must be FICSPlayer object """
+        if not isinstance(key, str):
             raise TypeError
         if not isinstance(value, FICSPlayer):
             raise TypeError
-        if key != value:
-            raise Exception("Not the same: %s %s" % (repr(key), repr(value)))
-        if hash(value) in self.players:
-            raise Exception("%s already exists in self.players as %s" %
-                            (repr(value), hash(value)))
-        self.players[hash(value)] = value
-        self.players_cids[hash(value)] = value.connect("notify::online",
-                                                       self.online_changed)
+        if value.player_id in self.players:
+            raise AlreadyExistException
 
-    def __delitem__(self, player):
-        if not isinstance(player, FICSPlayer):
-            raise TypeError
-        if player in self:
-            del self.players[hash(player)]
-        if hash(player) in self.players_cids:
-            if player.handler_is_connected(self.players_cids[hash(player)]):
-                player.disconnect(self.players_cids[hash(player)])
-            del self.players_cids[hash(player)]
+        self.players[value.player_id] = value
+        self.players_cids[value.player_id] = value.connect(
+            "notify::online", self.online_changed)
 
-    def __contains__(self, player):
-        if not isinstance(player, FICSPlayer):
+    def __delitem__(self, name):
+        if not isinstance(name, str):
             raise TypeError
-        if hash(player) in self.players:
+        if name in self.players:
+            player = self.players[name]
+            if name in self.players_cids:
+                if player.handler_is_connected(self.players_cids[name]):
+                    player.disconnect(self.players_cids[name])
+                del self.players_cids[name]
+            del self.players[name]
+
+    def __contains__(self, name):
+        if not isinstance(name, str):
+            raise TypeError
+        if name in self.players:
             return True
         else:
             return False
@@ -491,26 +493,29 @@ class FICSPlayers(GObject.GObject):
                 names.append(player.name)
         return names
 
-    def get(self, player, create=True):
-        if player in self:
-            player = self[player]
-        elif create:
-            self[player] = player
+    def get(self, name):
+        key = player_id(name)
+        if key in self:
+            player = self[key]
         else:
-            raise KeyError
+            player = FICSPlayer(name)
+            try:
+                self[key] = player
+            except AlreadyExistException:
+                player = self[key]
         return player
 
-    def player_disconnected(self, player):
+    def player_disconnected(self, name):
         # log.debug("%s" % player,
         #    extra={"task": (self.connection.username, "player_disconnected")})
-        if player in self:
-            player = self[player]
+        key = player_id(name)
+        if key in self:
+            player = self[key]
             player.online = False
             player.status = IC_STATUS_OFFLINE
             if not player.adjournment and player.name not in self.connection.notify_users:
-                del self[player]
+                del self[player.player_id]
             else:
-                # print("Can't remove player %s" % player)
                 log.debug("Not removing %s" % player,
                           extra={"task": (self.connection.username,
                                           "player_disconnected")})
@@ -519,12 +524,11 @@ class FICSPlayers(GObject.GObject):
                           player,
                           priority=GLib.PRIORITY_LOW)
         else:
-            # print("Player disconnected but not in self !!!")
-            log.debug("Not removing %s (it's not in FICSPlayers)" % player,
+            log.debug("Not removing %s (it's not in FICSPlayers)" % name,
                       extra={"task": (self.connection.username,
                                       "player_disconnected")})
     #    def onFinger (self, fm, finger):
-    #        player = FICSPlayer(finger.getName())
+    #        player = player_id(finger.getName())
     #        if player in self:
     #            self[player].finger = finger
     #            # TODO: merge ratings and titles from finger object into ficsplayer object

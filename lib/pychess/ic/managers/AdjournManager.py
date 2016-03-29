@@ -6,7 +6,7 @@ from .BoardManager import names, months, dates
 
 from pychess.ic import GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_OFFLINE, BLKCMD_STORED, \
     BLKCMD_HISTORY, BLKCMD_JOURNAL
-from pychess.ic.FICSObjects import FICSAdjournedGame, FICSHistoryGame, FICSJournalGame, FICSPlayer
+from pychess.ic.FICSObjects import FICSAdjournedGame, FICSHistoryGame, FICSJournalGame
 
 from pychess.Utils.const import WON_ADJUDICATION, DRAW_AGREE, WON_DISCONNECTION, WON_CALLFLAG, \
     WON_MATE, DRAW_INSUFFICIENT, DRAW_REPITITION, WON_RESIGN, DRAW_STALEMATE, \
@@ -124,10 +124,9 @@ class AdjournManager(GObject.GObject):
             if next_color == "B":
                 length += 1
 
-            user = self.connection.players.get(FICSPlayer(
-                self.connection.stored_owner))
-            opponent = FICSPlayer(opponent_name, status=IC_STATUS_OFFLINE)
-            opponent = self.connection.players.get(opponent)
+            user = self.connection.players.get(self.connection.stored_owner)
+            opponent = self.connection.players.get(opponent_name)
+            opponent.status = IC_STATUS_OFFLINE
             wplayer, bplayer = (user, opponent) if our_color == WHITE else (opponent, user)
             game = FICSAdjournedGame(wplayer,
                                      bplayer,
@@ -196,12 +195,10 @@ class AdjournManager(GObject.GObject):
             minutes = int(minutes)
             gain = int(gain)
 
-            wplayer = self.connection.players.get(
-                FICSPlayer(white,
-                           status=IC_STATUS_OFFLINE))
-            bplayer = self.connection.players.get(
-                FICSPlayer(black,
-                           status=IC_STATUS_OFFLINE))
+            wplayer = self.connection.players.get(white)
+            wplayer.status = IC_STATUS_OFFLINE
+            bplayer = self.connection.players.get(black)
+            bplayer.status = IC_STATUS_OFFLINE
             game = FICSHistoryGame(wplayer,
                                    bplayer,
                                    game_type=gametype,
@@ -250,12 +247,10 @@ class AdjournManager(GObject.GObject):
             minutes = int(minutes)
             gain = int(gain)
 
-            wplayer = self.connection.players.get(
-                FICSPlayer(white,
-                           status=IC_STATUS_OFFLINE))
-            bplayer = self.connection.players.get(
-                FICSPlayer(black,
-                           status=IC_STATUS_OFFLINE))
+            wplayer = self.connection.players.get(white)
+            wplayer.status = IC_STATUS_OFFLINE
+            bplayer = self.connection.players.get(black)
+            bplayer.status = IC_STATUS_OFFLINE
             game = FICSJournalGame(wplayer,
                                    bplayer,
                                    game_type=gametype,

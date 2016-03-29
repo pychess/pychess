@@ -9,10 +9,7 @@ from itertools import groupby
 from gi.repository import GLib, Gtk, Gdk, GdkPixbuf, GObject, Pango
 
 # http://pythonhosted.org/Pympler/index.html
-# from pympler import muppy, summary
-
-# https://pypi.python.org/pypi/guppy/
-# import guppy
+from pympler import muppy, summary
 
 from pychess.ic import IC_POS_EXAMINATING, IC_POS_OBSERVING_EXAMINATION, \
     TYPE_BLITZ, get_infobarmessage_content, get_infobarmessage_content2, \
@@ -50,6 +47,9 @@ from .FICSObjects import FICSPlayer, FICSSoughtMatch, FICSChallenge, FICSGame, \
     get_rating_range_display_text, get_player_tooltip_text, \
     make_sensitive_if_available
 from .ICGameModel import ICGameModel
+
+
+DO_MUPPY_SUMMARY = False
 
 
 class PlayerNotificationMessage(InfoBarMessage):
@@ -131,7 +131,7 @@ class ICLounge(GObject.GObject):
         self.connection.cm.connect("departedNotification",
                                    self.onDepartedNotification)
         for user in self.connection.notify_users:
-            user = self.connection.players.get(FICSPlayer(user))
+            user = self.connection.players.get(user)
             self.user_from_notify_list_is_present(user)
 
         self.userinfo = UserInfoSection(self.widgets, self.connection,
@@ -158,13 +158,10 @@ class ICLounge(GObject.GObject):
         self.finger_sent = False
         self.connection.lounge_loaded.set()
 
-        # all_objects = muppy.get_objects()
-        # self.summ = summary.summarize(all_objects)
-        # summary.print_(self.summ)
-
-        # self.heapy = guppy.hpy()
-        # print(self.heapy.heap())
-        # self.heapy.setref()
+        if DO_MUPPY_SUMMARY:
+            all_objects = muppy.get_objects()
+            self.summ = summary.summarize(all_objects)
+            summary.print_(self.summ)
 
         log.debug("ICLounge.__init__: finished")
 
@@ -280,7 +277,7 @@ class ICLounge(GObject.GObject):
         titles = finger.getTitles()
         if titles is not None:
             name = finger.getName()
-            player = self.connection.players.get(FICSPlayer(name))
+            player = self.connection.players.get(name)
             for title in titles:
                 player.titles.add(TITLES[title])
 
@@ -597,7 +594,7 @@ class UserInfoSection(Section):
             table.attach(label(finger.getEmail()), 1, cols, row, row + 1)
             row += 1
 
-        player = self.connection.players[FICSPlayer(finger.getName())]
+        player = self.connection.players.get(finger.getName())
         if not player.isGuest():
             table.attach(label(_("Games") + ":"), 0, 1, row, row + 1)
             llabel = Gtk.Label()
@@ -1436,12 +1433,10 @@ class PlayerTabSection(ParrentListSection):
             self.filter_toggles[button] = self.widgets[button].get_active()
         self.player_filter.refilter()
 
-        # sum2 = summary.summarize(muppy.get_objects())
-        # diff = summary.get_diff(self.lounge.summ, sum2)
-        # summary.print_(diff)
-
-        # print(self.lounge.heapy.heap().get_rp(40))
-        # self.lounge.heapy.setref()
+        if DO_MUPPY_SUMMARY:
+            sum2 = summary.summarize(muppy.get_objects())
+            diff = summary.get_diff(self.lounge.summ, sum2)
+            summary.print_(diff)
 
     def onPlayerAdded(self, players, new_players):
         # Let the hard work to be done in the helper connection thread

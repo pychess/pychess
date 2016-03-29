@@ -6,7 +6,7 @@ from pychess.Utils.const import WHITE, FISCHERRANDOMCHESS, UNSUPPORTED
 from pychess.ic import BLKCMD_ASSESS, VariantGameType, DEVIATION, GAME_TYPES, \
     parse_title_hex, BLKCMD_UNSEEK, BLKCMD_SEEK, type_to_display_text, \
     Variants
-from pychess.ic.FICSObjects import FICSPlayer, FICSSeek
+from pychess.ic.FICSObjects import FICSSeek
 from pychess.System.Log import log
 
 rated = "(rated|unrated)"
@@ -115,7 +115,7 @@ class SeekManager(GObject.GObject):
 
         try:
             index = int(parts[0])
-            player = self.connection.players.get(FICSPlayer(seek['w']))
+            player = self.connection.players.get(seek['w'])
             player.titles |= parse_title_hex(seek['ti'])
             rated = seek['r'] == 'r'
             minutes = int(seek['t'])

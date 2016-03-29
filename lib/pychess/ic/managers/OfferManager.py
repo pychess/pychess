@@ -11,7 +11,7 @@ from pychess.Utils.const import DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, TAKEBACK
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
 from pychess.ic import GAME_TYPES, VariantGameType
-from pychess.ic.FICSObjects import FICSPlayer, FICSChallenge
+from pychess.ic.FICSObjects import FICSChallenge
 
 names = "\w+(?:\([A-Z\*]+\))*"
 
@@ -182,7 +182,7 @@ class OfferManager(GObject.GObject):
                     del self.offers[offer.index]
                     return
 
-            player = self.connection.players.get(FICSPlayer(fname))
+            player = self.connection.players.get(fname)
             rating = frating.strip()
             rating = int(rating) if rating.isdigit() else 0
             if gametype.rating_type in player.ratings and \

@@ -7,7 +7,6 @@ from gi.repository import GLib, GObject
 
 from pychess.compat import unichr
 from pychess.System.Log import log
-from pychess.ic.FICSObjects import FICSPlayer
 from pychess.ic import GAME_TYPES, BLKCMD_ALLOBSERVERS
 
 titles = "(?:\([A-Z*]+\))*"
@@ -163,7 +162,7 @@ class ChatManager(GObject.GObject):
                 try:
                     if '(' in player:  # deals with admin and multi titled players
                         player, rest = player.split('(', 1)
-                    ficsplayer = self.connection.players[FICSPlayer(player)]
+                    ficsplayer = self.connection.players.get(player)
                     obs_dic[player] = ficsplayer.getRatingByGameType(
                         GAME_TYPES['standard'])
                 except KeyError:
@@ -283,7 +282,7 @@ class ChatManager(GObject.GObject):
     def onArrivalNotification(self, match):
         name = match.groups()[0]
         try:
-            player = self.connection.players.get(FICSPlayer(name))
+            player = self.connection.players.get(name)
         except KeyError:
             return
         if player.name not in self.connection.notify_users:
@@ -293,7 +292,7 @@ class ChatManager(GObject.GObject):
     def onDepartedNotification(self, match):
         name = match.groups()[0]
         try:
-            player = self.connection.players.get(FICSPlayer(name))
+            player = self.connection.players.get(name)
         except KeyError:
             return
         GLib.idle_add(self.emit, "departedNotification", player)

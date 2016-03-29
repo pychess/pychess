@@ -109,8 +109,8 @@ class HelperManager(GObject.GObject):
             except KeyError:
                 return
 
-            wplayer = self.connection.players.get(FICSPlayer(wname))
-            bplayer = self.connection.players.get(FICSPlayer(bname))
+            wplayer = self.connection.players.get(wname)
+            bplayer = self.connection.players.get(bname)
             game = FICSGame(wplayer,
                             bplayer,
                             gameno=int(gameno),
@@ -140,8 +140,8 @@ class HelperManager(GObject.GObject):
         gameno, wname, bname, rated, game_type = match.groups()
         if game_type not in GAME_TYPES:
             return
-        wplayer = self.connection.players.get(FICSPlayer(wname))
-        bplayer = self.connection.players.get(FICSPlayer(bname))
+        wplayer = self.connection.players.get(wname)
+        bplayer = self.connection.players.get(bname)
         game = FICSGame(wplayer,
                         bplayer,
                         gameno=int(gameno),
@@ -163,21 +163,22 @@ class HelperManager(GObject.GObject):
             comment,
             wname=wname)
 
-        wplayer = FICSPlayer(wname)
         try:
-            wplayer = self.connection.players.get(wplayer, create=False)
+            wplayer = self.connection.players.get(wname)
             wplayer.restore_previous_status(
             )  # no status update will be sent by
             # FICS if the player doesn't become available, so we restore
             # previous status first (not necessarily true, but the best guess)
         except KeyError:
-            pass
-        bplayer = FICSPlayer(bname)
+            print("%s not in self.connections.players - creating" % wname)
+            wplayer = FICSPlayer(wname)
+
         try:
-            bplayer = self.connection.players.get(bplayer, create=False)
+            bplayer = self.connection.players.get(bname)
             bplayer.restore_previous_status()
         except KeyError:
-            pass
+            print("%s not in self.connections.players - creating" % bname)
+            bplayer = FICSPlayer(bname)
 
         game = FICSGame(wplayer,
                         bplayer,
@@ -214,7 +215,7 @@ class HelperManager(GObject.GObject):
         name, status, titlehex, blitz, blitzdev, std, stddev, light, lightdev, \
             wild, wilddev, bughouse, bughousedev, crazyhouse, crazyhousedev, \
             suicide, suicidedev, losers, losersdev, atomic, atomicdev = match.groups()
-        player = self.connection.players.get(FICSPlayer(name))
+        player = self.connection.players.get(name)
 
         titles = parse_title_hex(titlehex)
         if not player.titles >= titles:
@@ -246,7 +247,7 @@ class HelperManager(GObject.GObject):
 
     def on_player_disconnectI(self, match):
         name = match.groups()[0]
-        self.connection.players.player_disconnected(FICSPlayer(name))
+        self.connection.players.player_disconnected(name)
 
     def on_player_whoI(self, matchlist):
         players = []
@@ -266,7 +267,7 @@ class HelperManager(GObject.GObject):
 
     def on_player_who(self, match):
         for blitz, status, name, titles in whomatch_re.findall(match.string):
-            player = self.connection.players.get(FICSPlayer(name))
+            player = self.connection.players.get(name)
             if not player.online:
                 player.online = True
             status = STATUS[status]
@@ -281,16 +282,16 @@ class HelperManager(GObject.GObject):
 
     def on_player_connect(self, match):
         name = match.groups()[0]
-        player = self.connection.players.get(FICSPlayer(name))
+        player = self.connection.players.get(name)
         player.online = True
 
     def on_player_disconnect(self, match):
         name = match.groups()[0]
-        self.connection.players.player_disconnected(FICSPlayer(name))
+        self.connection.players.player_disconnected(name)
 
     def on_player_unavailable(self, match):
         name, titles = match.groups()
-        player = self.connection.players.get(FICSPlayer(name))
+        player = self.connection.players.get(name)
         titles = self.parseTitles(titles)
         if not player.titles >= titles:
             player.titles |= titles
@@ -302,7 +303,7 @@ class HelperManager(GObject.GObject):
 
     def on_player_available(self, matches):
         name, titles, blitz, std, wild, light, bughouse = matches[0].groups()
-        player = self.connection.players.get(FICSPlayer(name))
+        player = self.connection.players.get(name)
 
         if not player.online:
             player.online = True
