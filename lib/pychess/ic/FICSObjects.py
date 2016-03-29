@@ -91,6 +91,9 @@ def get_player_tooltip_text(player, show_status=True):
 
 
 def player_id(name):
+    """ Two players are equal if the first 11 characters of their name match.
+        This is to facilitate matching players from output of commands like the 'games'
+        command which only return the first 11 characters of a player's name """
     return name[0:11].lower()
 
 
