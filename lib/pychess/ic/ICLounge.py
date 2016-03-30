@@ -8,11 +8,6 @@ from itertools import groupby
 
 from gi.repository import GLib, Gtk, Gdk, GdkPixbuf, GObject, Pango
 
-# http://pythonhosted.org/Pympler/index.html
-from pympler import muppy, summary
-from pympler.classtracker import ClassTracker
-from pympler.classtracker_stats import HtmlStats
-
 from pychess.ic import IC_POS_EXAMINATING, IC_POS_OBSERVING_EXAMINATION, \
     TYPE_BLITZ, get_infobarmessage_content, get_infobarmessage_content2, \
     TYPE_LIGHTNING, GAME_TYPES_BY_RATING_TYPE, TYPE_WILD, WildGameType, \
@@ -52,6 +47,11 @@ from .ICGameModel import ICGameModel
 
 
 DO_MUPPY_SUMMARY = False
+# http://pythonhosted.org/Pympler/index.html
+if DO_MUPPY_SUMMARY:
+    from pympler import muppy, summary
+    from pympler.classtracker import ClassTracker
+    from pympler.classtracker_stats import HtmlStats
 
 
 class PlayerNotificationMessage(InfoBarMessage):
