@@ -10,6 +10,8 @@ from gi.repository import GLib, Gtk, Gdk, GdkPixbuf, GObject, Pango
 
 # http://pythonhosted.org/Pympler/index.html
 from pympler import muppy, summary
+from pympler.classtracker import ClassTracker
+from pympler.classtracker_stats import HtmlStats
 
 from pychess.ic import IC_POS_EXAMINATING, IC_POS_OBSERVING_EXAMINATION, \
     TYPE_BLITZ, get_infobarmessage_content, get_infobarmessage_content2, \
@@ -162,6 +164,9 @@ class ICLounge(GObject.GObject):
             all_objects = muppy.get_objects()
             self.summ = summary.summarize(all_objects)
             summary.print_(self.summ)
+
+            self.tracker = ClassTracker()
+            self.tracker.track_class(FICSPlayer, trace=1)
 
         log.debug("ICLounge.__init__: finished")
 
@@ -1437,6 +1442,9 @@ class PlayerTabSection(ParrentListSection):
             sum2 = summary.summarize(muppy.get_objects())
             diff = summary.get_diff(self.lounge.summ, sum2)
             summary.print_(diff)
+
+            self.lounge.tracker.create_snapshot('FICSPlayer usage')
+            HtmlStats(tracker=self.lounge.tracker).create_html('profile.html')
 
     def onPlayerAdded(self, players, new_players):
         # Let the hard work to be done in the helper connection thread
