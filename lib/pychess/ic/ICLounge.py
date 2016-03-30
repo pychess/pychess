@@ -649,6 +649,7 @@ class UserInfoSection(Section):
             if self.lounge.finger_sent:
                 dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
                                            buttons=Gtk.ButtonsType.OK)
+                dialog.set_title(_("Finger"))
                 dialog.set_markup("<b>%s</b>" % finger.getName())
                 table.show_all()
                 dialog.get_message_area().add(table)
@@ -979,6 +980,7 @@ class SeekTabSection(ParrentListSection):
             self.assess_sent = False
             dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
                                        buttons=Gtk.ButtonsType.OK)
+            dialog.set_title(_("Assess"))
             dialog.set_markup(_("Effect on ratings by the possible outcomes"))
             grid = Gtk.Grid()
             grid.set_column_homogeneous(True)
