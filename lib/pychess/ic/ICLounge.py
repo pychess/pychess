@@ -421,7 +421,7 @@ class ICLounge(GObject.GObject):
 
     def _connect_to_player_changes(self, player):
         player.connect("ratings_changed", self._replace_notification_message, player)
-        player.connect("notify::titles", self._replace_notification_message, player)
+        player.connect("notify::titles", self._replace_notification_message, None, player)
 
     @idle_add
     def onArrivalNotification(self, cm, player):
@@ -471,7 +471,7 @@ class ICLounge(GObject.GObject):
         self.infobar.push_message(message)
 
     @idle_add
-    def _replace_notification_message(self, obj, prop, player):
+    def _replace_notification_message(self, obj, prop, rating_type, player):
         log.debug("%s %s" % (repr(obj), player),
                   extra={"task": (self.connection.username,
                                   "_replace_notification_message")})
