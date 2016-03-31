@@ -6,7 +6,6 @@ from gi.repository import GObject
 from pychess.ic import IC_STATUS_OFFLINE, IC_STATUS_ACTIVE, IC_STATUS_PLAYING, IC_STATUS_BUSY, \
     GAME_TYPES_BY_FICS_NAME, BLKCMD_FINGER
 from pychess.Utils.const import WHITE, BLACK
-from pychess.Utils.Rating import Rating
 from pychess.System.Log import log
 
 types = "(?:blitz|standard|lightning|wild|bughouse|crazyhouse|suicide|losers|atomic)"
@@ -48,7 +47,7 @@ class FingerObject:
         self.__silence = False
         self.__titles = None
 
-        self.__rating = {}
+        self.__ratings = {}
 
     def getName(self):
         """ Returns the name of the user, without any title sufixes """
@@ -134,10 +133,14 @@ class FingerObject:
             This is only set when status == STATUS_PLAYING """
         return self.__silence
 
+    def getRatings(self):
+        return self.__ratings
+
     def getRating(self, type=None):
-        if type is None:
-            return self.__rating
-        return self.__rating[type]
+        return int(self.__ratings[type][0])
+
+    def getRatingsLen(self):
+        return len(self.__ratings)
 
     def getTitles(self):
         return self.__titles
@@ -199,8 +202,8 @@ class FingerObject:
     def setSilence(self, value):
         self.__silence = value
 
-    def setRating(self, rating_type, rating):
-        self.__rating[rating_type] = rating
+    def setRating(self, rating_type, rating_line):
+        self.__ratings[rating_type] = rating_line
 
     def setTitles(self, titles):
         self.__titles = titles
@@ -298,8 +301,7 @@ class FingerManager(GObject.GObject):
                 gametype = GAME_TYPES_BY_FICS_NAME[groupdict["gametype"].lower(
                 )]
                 ratings = groupdict["ratings"].split()
-                rating = Rating(gametype.rating_type, *ratings)
-                finger.setRating(gametype.rating_type, rating)
+                finger.setRating(gametype.rating_type, ratings)
             elif groupdict["email"] is not None:
                 finger.setEmail(groupdict["email"])
             elif groupdict["sanctions"] is not None:

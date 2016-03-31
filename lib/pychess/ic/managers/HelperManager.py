@@ -127,8 +127,9 @@ class HelperManager(GObject.GObject):
                     player.game = game
                 rating = self.parseRating(rating)
                 if gametype.rating_type in player.ratings and \
-                        player.ratings[gametype.rating_type].elo != rating:
-                    player.ratings[gametype.rating_type].elo = rating
+                        player.ratings[gametype.rating_type] != rating:
+                    player.ratings[gametype.rating_type] = rating
+                    player.emit("ratings_changed", gametype.rating_type, player)
             game = self.connection.games.get(game, emit=False)
             games.append(game)
         self.connection.games.emit("FICSGameCreated", games)
@@ -221,7 +222,7 @@ class HelperManager(GObject.GObject):
         if not player.titles >= titles:
             player.titles |= titles
 
-        for rtype, elo, dev in \
+        for rating_type, elo, dev in \
                 ((TYPE_BLITZ, blitz, blitzdev),
                  (TYPE_STANDARD, std, stddev),
                  (TYPE_LIGHTNING, light, lightdev),
@@ -232,9 +233,10 @@ class HelperManager(GObject.GObject):
                  (TYPE_LOSERS, losers, losersdev),
                  (TYPE_SUICIDE, suicide, suicidedev)):
             parse_rating = self.parseRating(elo)
-            if player.ratings[rtype].elo != parse_rating:
-                player.ratings[rtype].elo = parse_rating
-            player.ratings[rtype].deviation = DEVIATION[dev]
+            if player.ratings[rating_type] != parse_rating:
+                player.ratings[rating_type] = parse_rating
+                player.emit("ratings_changed", rating_type, player)
+            player.deviations[rating_type] = DEVIATION[dev]
 
         # do last so rating info is there when notifications are generated
         status = STATUS[status]
@@ -277,8 +279,9 @@ class HelperManager(GObject.GObject):
             if not player.titles >= titles:
                 player.titles |= titles
             blitz = self.parseRating(blitz)
-            if player.ratings[TYPE_BLITZ].elo != blitz:
-                player.ratings[TYPE_BLITZ].elo = blitz
+            if player.ratings[TYPE_BLITZ] != blitz:
+                player.ratings[TYPE_BLITZ] = blitz
+                player.emit("ratings_changed", TYPE_BLITZ, player)
 
     def on_player_connect(self, match):
         name = match.groups()[0]
@@ -313,9 +316,10 @@ class HelperManager(GObject.GObject):
         if not player.titles >= titles:
             player.titles |= titles
 
-        for rtype, rating in ((TYPE_BLITZ, blitz), (TYPE_STANDARD, std),
+        for rating_type, rating in ((TYPE_BLITZ, blitz), (TYPE_STANDARD, std),
                               (TYPE_LIGHTNING, light), (TYPE_WILD, wild),
                               (TYPE_BUGHOUSE, bughouse)):
             rating = self.parseRating(rating)
-            if player.ratings[rtype].elo != rating:
-                player.ratings[rtype].elo = rating
+            if player.ratings[rating_type] != rating:
+                player.ratings[rating_type] = rating
+                player.emit("ratings_changed", rating_type, player)

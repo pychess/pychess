@@ -186,8 +186,9 @@ class OfferManager(GObject.GObject):
             rating = frating.strip()
             rating = int(rating) if rating.isdigit() else 0
             if gametype.rating_type in player.ratings and \
-                    player.ratings[gametype.rating_type].elo != rating:
-                player.ratings[gametype.rating_type].elo = rating
+                    player.ratings[gametype.rating_type] != rating:
+                player.ratings[gametype.rating_type] = rating
+                player.emit("ratings_changed", gametype.rating_type, player)
             rated = rated != "unrated"
             challenge = FICSChallenge(index,
                                       player,

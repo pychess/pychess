@@ -7,7 +7,7 @@ from pychess.Utils.const import WHITE, FEN_START, DRAW_BLACKINSUFFICIENTANDWHITE
     DRAW_WHITEINSUFFICIENTANDBLACKTIME, ADJOURNED_COURTESY_WHITE, ADJOURNED_COURTESY_BLACK
 from pychess.ic.FICSObjects import FICSPlayer, FICSGames, FICSSeeks, FICSChallenges, FICSPlayers, \
     FICSAdjournedGame, GAME_TYPES_BY_FICS_NAME, GAME_TYPES, TYPE_BLITZ, FICSSeek, DEVIATION_ESTIMATED, \
-    TYPE_COMPUTER, FICSBoard, FICSGame, TYPE_WILD, FICSChallenge
+    TYPE_COMPUTER, FICSBoard, FICSGame, TYPE_WILD, FICSChallenge, TYPE_STANDARD
 
 from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 from pychess.ic.FICSConnection import Connection
@@ -274,7 +274,7 @@ class SeekManagerTests(EmittingTestCase):
             '<s> 10 w=warbly ti=00 rt=1291  t=3 i=0 r=r tp=blitz c=? rr=1200-1400 a=t f=t'
         ]
         player = FICSPlayer('warbly')
-        player.ratings[TYPE_BLITZ].elo = 1291
+        player.ratings[TYPE_BLITZ] = 1291
         expectedResult = FICSSeek(10,
                                   player,
                                   3,
@@ -292,8 +292,8 @@ class SeekManagerTests(EmittingTestCase):
             '<s> 124 w=leaderbeans ti=02 rt=1637E t=3 i=0 r=u tp=blitz c=B rr=0-9999 a=t f=f'
         ]
         player = FICSPlayer('leaderbeans')
-        player.ratings[TYPE_BLITZ].elo = 1637
-        player.ratings[TYPE_BLITZ].deviation = DEVIATION_ESTIMATED
+        player.ratings[TYPE_BLITZ] = 1637
+        player.deviations[TYPE_BLITZ] = DEVIATION_ESTIMATED
         player.titles |= set((TYPE_COMPUTER, ))
         expectedResult = FICSSeek(124, player, 3, 0, False, 'black',
                                   GAME_TYPES["blitz"])
@@ -304,7 +304,7 @@ class SeekManagerTests(EmittingTestCase):
             '<s> 14 w=microknight ti=00 rt=1294  t=15 i=0 r=u tp=standard c=? rr=1100-1450 a=f f=f'
         ]
         player = FICSPlayer('microknight')
-        player.ratings[TYPE_BLITZ].elo = 1294
+        player.ratings[TYPE_BLITZ] = 1294
         expectedResult = FICSSeek(14,
                                   player,
                                   15,
@@ -338,7 +338,7 @@ class SeekManagerTests(EmittingTestCase):
             '(9 player(s) saw the seek.)', BLOCK_END
         ]
         player = FICSPlayer('mgatto')
-        player.ratings[TYPE_BLITZ].elo = 1677
+        player.ratings[TYPE_BLITZ] = 1677
         expectedResult = FICSSeek(121,
                                   player,
                                   6,
@@ -403,7 +403,7 @@ class SeekManagerTests(EmittingTestCase):
             "(2 player(s) saw the seek.)", BLOCK_END
         ]
         player = FICSPlayer('gbtami')
-        player.ratings[TYPE_BLITZ].elo = 1671
+        player.ratings[TYPE_BLITZ] = 1671
         expectedResult = FICSSeek(46,
                                   player,
                                   1,
@@ -449,9 +449,9 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('mgatto')
-        me.ratings[TYPE_BLITZ].elo = 1327
+        me.ratings[TYPE_BLITZ] = 1327
         opponent = self.connection.players.get('Thegermain')
-        opponent.ratings[TYPE_BLITZ].elo = 1645
+        opponent.ratings[TYPE_BLITZ] = 1645
         game = FICSGame(me,
                         opponent,
                         gameno=55,
@@ -480,7 +480,7 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('mgatto')
-        me.ratings[TYPE_BLITZ].elo = 1305
+        me.ratings[TYPE_BLITZ] = 1305
         opponent = self.connection.players.get('GuestRLJC')
         game = FICSGame(me,
                         opponent,
@@ -514,9 +514,9 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('gbtami')
-        me.ratings[TYPE_BLITZ].elo = 1529
+        me.ratings[TYPE_BLITZ] = 1529
         opponent = self.connection.players.get('suugakusya')
-        opponent.ratings[TYPE_BLITZ].elo = 1425
+        opponent.ratings[TYPE_BLITZ] = 1425
         game = FICSGame(me,
                         opponent,
                         gameno=101,
@@ -549,9 +549,9 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('gbtami')
-        me.ratings[TYPE_BLITZ].elo = 1529
+        me.ratings[TYPE_BLITZ] = 1529
         opponent = self.connection.players.get('suugakusya')
-        opponent.ratings[TYPE_BLITZ].elo = 1425
+        opponent.ratings[TYPE_BLITZ] = 1425
         game = FICSGame(me,
                         opponent,
                         gameno=101,
@@ -582,9 +582,9 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('mgatto')
-        me.ratings[TYPE_BLITZ].elo = 1547
+        me.ratings[TYPE_BLITZ] = 1547
         opponent = self.connection.players.get('chemo')
-        opponent.ratings[TYPE_BLITZ].elo = 1749
+        opponent.ratings[TYPE_BLITZ] = 1749
         game = FICSGame(opponent,
                         me,
                         gameno=512,
@@ -615,9 +615,9 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('mgatto')
-        me.ratings[TYPE_BLITZ].elo = 1470
+        me.ratings[TYPE_BLITZ] = 1470
         opponent = self.connection.players.get('fabk')
-        opponent.ratings[TYPE_BLITZ].elo = 1155
+        opponent.ratings[TYPE_BLITZ] = 1155
         game = FICSGame(opponent,
                         me,
                         gameno=465,
@@ -647,7 +647,7 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('mgatto')
-        me.ratings[TYPE_BLITZ].elo = 1305
+        me.ratings[TYPE_BLITZ] = 1305
         opponent = self.connection.players.get('antiseptic')
         game = FICSGame(
             opponent,
@@ -743,9 +743,9 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('gbtami')
-        me.ratings[TYPE_BLITZ].elo = 1626
+        me.ratings[TYPE_BLITZ] = 1626
         opponent = self.connection.players.get('Strix')
-        opponent.ratings[TYPE_BLITZ].elo = 1581
+        opponent.ratings[TYPE_BLITZ] = 1581
         game = FICSGame(me,
                         opponent,
                         gameno=333,
@@ -778,9 +778,9 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('gbtami')
-        me.ratings[TYPE_BLITZ].elo = 1609
+        me.ratings[TYPE_BLITZ] = 1609
         opponent = self.connection.players.get('coopnomaks')
-        opponent.ratings[TYPE_BLITZ].elo = 1570
+        opponent.ratings[TYPE_BLITZ] = 1570
         game = FICSGame(opponent,
                         me,
                         gameno=501,
@@ -810,9 +810,9 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('gbtami')
-        me.ratings[TYPE_BLITZ].elo = 1475
+        me.ratings[TYPE_BLITZ] = 1475
         opponent = self.connection.players.get('pianazo')
-        opponent.ratings[TYPE_BLITZ].elo = 1520
+        opponent.ratings[TYPE_BLITZ] = 1520
         game = FICSGame(me,
                         opponent,
                         gameno=422,
@@ -842,9 +842,9 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('mgatto')
-        me.ratings[TYPE_BLITZ].elo = 1542
+        me.ratings[TYPE_BLITZ] = 1542
         opponent = self.connection.players.get('clisus')
-        opponent.ratings[TYPE_BLITZ].elo = 1470
+        opponent.ratings[TYPE_BLITZ] = 1470
         game = FICSGame(opponent,
                         me,
                         gameno=225,
@@ -906,8 +906,8 @@ class BoardManagerTests(EmittingTestCase):
             inc=0,
             board=FICSBoard(300000, 300000, expectedPgn),
             reason=11)
-        game.wplayer.ratings[TYPE_BLITZ].elo = 1137
-        game.bplayer.ratings[TYPE_BLITZ].elo = 1336
+        game.wplayer.ratings[TYPE_BLITZ] = 1137
+        game.bplayer.ratings[TYPE_BLITZ] = 1336
         expectedResults = (game, )
 
         self.runAndAssertEquals(signal, lines, expectedResults)
@@ -945,8 +945,8 @@ class BoardManagerTests(EmittingTestCase):
             inc=0,
             board=FICSBoard(294000, 300000, expectedPgn),
             reason=6)
-        game.wplayer.ratings[TYPE_BLITZ].elo = 1233
-        game.bplayer.ratings[TYPE_BLITZ].elo = 1455
+        game.wplayer.ratings[TYPE_BLITZ] = 1233
+        game.bplayer.ratings[TYPE_BLITZ] = 1455
         expectedResults = (game, )
         self.runAndAssertEquals(signal, lines, expectedResults)
 
@@ -1099,17 +1099,17 @@ class GamesTests(EmittingTestCase):
 class HelperManagerTests(EmittingTestCase):
     def setUp(self):
         EmittingTestCase.setUp(self)
-        self.manager = self.connection.hm
 
     def test1(self):
         """ Make sure ratings <1000 are caught """
         lines = [
-            "Artmachine Blitz ( 819), Std (1276), Wild (----), Light(----), Bug(----)",
+            "Artmachine Blitz (1276), Std ( 819), Wild (----), Light(----), Bug(----)",
             "is now available for matches\."
         ]
+        signal = "ratings_changed"
         player = self.connection.players.get('Artmachine')
-        self.runAndAssertEqualsNotify(player.ratings[TYPE_BLITZ], 'elo', lines,
-                                      819)
+        self.manager = player
+        self.runAndAssertEquals(signal, lines, (TYPE_STANDARD, player))
 
 
 class OfferManagerTests(EmittingTestCase):
@@ -1122,7 +1122,7 @@ class OfferManagerTests(EmittingTestCase):
             '<pf> 59 w=antiseptic t=match p=antiseptic (1945) mgatto (1729) rated wild 6 1 Loaded from wild/4 (adjourned)'
         ]
         player = FICSPlayer('antiseptic')
-        player.ratings[TYPE_WILD].elo = 1945
+        player.ratings[TYPE_WILD] = 1945
         expectedResult = FICSChallenge(59,
                                        player,
                                        6,
@@ -1138,7 +1138,7 @@ class OfferManagerTests(EmittingTestCase):
             '<pf> 71 w=joseph t=match p=joseph (1632) mgatto (1742) rated wild 5 1 Loaded from wild/fr (adjourned)'
         ]
         player = FICSPlayer('joseph')
-        player.ratings[TYPE_WILD].elo = 1632
+        player.ratings[TYPE_WILD] = 1632
         expectedResult = FICSChallenge(71,
                                        player,
                                        5,
@@ -1282,5 +1282,5 @@ class FICSObjectsCleanupTest(EmittingTestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # suite = unittest.TestLoader().loadTestsFromTestCase(NoMemoryLeakTests)
+    # suite = unittest.TestLoader().loadTestsFromTestCase(HelperManagerTests)
     # unittest.TextTestRunner().run(suite)

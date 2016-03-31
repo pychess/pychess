@@ -7,7 +7,6 @@ from pychess.compat import unicode
 from pychess.System.Log import log
 from pychess.System.idle_add import idle_add
 from pychess.Utils.IconLoader import load_icon
-from pychess.Utils.Rating import Rating
 from pychess.Utils.const import ADJOURNED, WHITE, BLACK, UNSUPPORTED
 
 from pychess.ic import RATING_TYPES, IC_STATUS_PLAYING, IC_STATUS_OFFLINE, IC_STATUS_UNKNOWN, \
@@ -23,21 +22,6 @@ from pychess.ic import RATING_TYPES, IC_STATUS_PLAYING, IC_STATUS_OFFLINE, IC_ST
 
 class AlreadyExistException(Exception):
     pass
-
-
-class FICSRatings(dict):
-    def __init__(self, *args, **kwargs):
-        dict.__init__(self, *args, **kwargs)
-
-        for ratingtype in RATING_TYPES:
-            self[ratingtype] = Rating(ratingtype, 0)
-
-    def __setitem__(self, key, val):
-        if key not in RATING_TYPES:
-            raise TypeError("bad key: %s %s" % (repr(key), type(key)))
-        elif not isinstance(val, Rating):
-            raise TypeError("bad val: %s %s" % (repr(val), type(val)))
-        dict.__setitem__(self, key, val)
 
 
 @idle_add
@@ -98,6 +82,8 @@ def player_id(name):
 
 
 class FICSPlayer(GObject.GObject):
+    __gsignals__ = {'ratings_changed': (GObject.SignalFlags.RUN_FIRST, None, (int, object))}
+
     def __init__(self,
                  name,
                  online=False,
@@ -114,7 +100,8 @@ class FICSPlayer(GObject.GObject):
         self.status = status
         self.game = None
         self.adjournment = False
-        self.ratings = FICSRatings()
+        self.ratings = [0 for ratingtype in RATING_TYPES]
+        self.deviations = [DEVIATION_NONE for ratingtype in RATING_TYPES]
         if titles is None:
             self.titles = set()
         else:
@@ -216,39 +203,39 @@ class FICSPlayer(GObject.GObject):
 
     @property
     def blitz(self):
-        return self.ratings[TYPE_BLITZ].elo
+        return self.ratings[TYPE_BLITZ]
 
     @property
     def standard(self):
-        return self.ratings[TYPE_STANDARD].elo
+        return self.ratings[TYPE_STANDARD]
 
     @property
     def lightning(self):
-        return self.ratings[TYPE_LIGHTNING].elo
+        return self.ratings[TYPE_LIGHTNING]
 
     @property
     def atomic(self):
-        return self.ratings[TYPE_ATOMIC].elo
+        return self.ratings[TYPE_ATOMIC]
 
     @property
     def bughouse(self):
-        return self.ratings[TYPE_BUGHOUSE].elo
+        return self.ratings[TYPE_BUGHOUSE]
 
     @property
     def crazyhouse(self):
-        return self.ratings[TYPE_CRAZYHOUSE].elo
+        return self.ratings[TYPE_CRAZYHOUSE]
 
     @property
     def losers(self):
-        return self.ratings[TYPE_LOSERS].elo
+        return self.ratings[TYPE_LOSERS]
 
     @property
     def suicide(self):
-        return self.ratings[TYPE_SUICIDE].elo
+        return self.ratings[TYPE_SUICIDE]
 
     @property
     def wild(self):
-        return self.ratings[TYPE_WILD].elo
+        return self.ratings[TYPE_WILD]
 
     def __eq__(self, player):
         if isinstance(self, type(player)) and self.player_id == player.player_id:
@@ -273,7 +260,7 @@ class FICSPlayer(GObject.GObject):
             if rating_type in self.ratings:
                 rep += ", %s=%s" % \
                     (GAME_TYPES_BY_RATING_TYPE[rating_type].display_text,
-                     repr(self.ratings[rating_type].elo))
+                     repr(self.ratings[rating_type]))
         return "<FICSPlayer " + rep + ">"
 
     def isAvailableForGame(self):
@@ -358,31 +345,20 @@ class FICSPlayer(GObject.GObject):
 
         return markup
 
-    def copy(self):
-        player = FICSPlayer(self.name,
-                            online=self.online,
-                            status=self.status,
-                            titles=self.titles.copy())
-        for ratingtype, rating in self.ratings.items():
-            player.ratings[ratingtype] = rating.copy()
-        player.game = self.game
-        player.adjournment = self.adjournment
-        return player
-
     def getRatingMean(self):
         ratingtotal = 0
         numratings = 0
-        for ratingtype in self.ratings:
-            if self.ratings[ratingtype].elo == 0:
+        for ratingtype in RATING_TYPES:
+            if self.ratings[ratingtype] == 0:
                 continue
-            if self.ratings[ratingtype].deviation == DEVIATION_NONE:
-                ratingtotal += self.ratings[ratingtype].elo * 3
+            if self.deviations[ratingtype] == DEVIATION_NONE:
+                ratingtotal += self.ratings[ratingtype] * 3
                 numratings += 3
-            elif self.ratings[ratingtype].deviation == DEVIATION_ESTIMATED:
-                ratingtotal += self.ratings[ratingtype].elo * 2
+            elif self.deviations[ratingtype] == DEVIATION_ESTIMATED:
+                ratingtotal += self.ratings[ratingtype] * 2
                 numratings += 2
-            elif self.ratings[ratingtype].deviation == DEVIATION_PROVISIONAL:
-                ratingtotal += self.ratings[ratingtype].elo * 1
+            elif self.deviations[ratingtype] == DEVIATION_PROVISIONAL:
+                ratingtotal += self.ratings[ratingtype] * 1
                 numratings += 1
         return numratings > 0 and ratingtotal // numratings or 0
 
@@ -390,21 +366,19 @@ class FICSPlayer(GObject.GObject):
     # and deflated lightning ratings and needs work
     # IDEA: use rank in addition to rating to determine strength
     def getStrength(self):
-        if TYPE_BLITZ in self.ratings and \
-                self.ratings[TYPE_BLITZ].deviation == DEVIATION_NONE:
-            return self.ratings[TYPE_BLITZ].elo
-        elif TYPE_LIGHTNING in self.ratings and \
-                self.ratings[TYPE_LIGHTNING].deviation == DEVIATION_NONE:
-            return self.ratings[TYPE_LIGHTNING].elo
+        if self.deviations[TYPE_BLITZ] == DEVIATION_NONE:
+            return self.ratings[TYPE_BLITZ]
+        elif self.deviations[TYPE_LIGHTNING] == DEVIATION_NONE:
+            return self.ratings[TYPE_LIGHTNING]
         else:
             return self.getRatingMean()
 
     def getRatingByGameType(self, game_type):
         try:
-            return self.ratings[game_type.rating_type].elo
+            return self.ratings[game_type.rating_type]
         except KeyError:
             return 0
-        except AttributeError:
+        except IndexError:
             return 0
 
     def getRatingForCurrentGame(self):

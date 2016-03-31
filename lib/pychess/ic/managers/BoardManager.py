@@ -550,8 +550,9 @@ class BoardManager(GObject.GObject):
         bplayer = self.connection.players.get(bname)
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
             if game_type.rating_type in player.ratings and \
-                    player.ratings[game_type.rating_type].elo != rating:
-                player.ratings[game_type.rating_type].elo = rating
+                    player.ratings[game_type.rating_type] != rating:
+                player.ratings[game_type.rating_type] = rating
+                player.emit("ratings_changed", game_type.rating_type, player)
 
         style12 = matchlist[-1].groups()[0]
         castleSigns = self.generateCastleSigns(style12, game_type)
@@ -866,8 +867,9 @@ class BoardManager(GObject.GObject):
         bplayer = self.connection.players.get(bname)
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
             if game_type.rating_type in player.ratings and \
-                    player.ratings[game_type.rating_type].elo != rating:
-                player.ratings[game_type.rating_type].elo = rating
+                    player.ratings[game_type.rating_type] != rating:
+                player.ratings[game_type.rating_type] = rating
+                player.emit("ratings_changed", game_type.rating_type, player)
         game = gameclass(wplayer,
                          bplayer,
                          game_type=game_type,

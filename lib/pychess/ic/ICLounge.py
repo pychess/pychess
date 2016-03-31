@@ -420,11 +420,8 @@ class ICLounge(GObject.GObject):
         self.infobar.push_message(message)
 
     def _connect_to_player_changes(self, player):
-        for rating in (TYPE_BLITZ, TYPE_LIGHTNING):
-            player.ratings[rating].connect(
-                "notify::elo", self._replace_notification_message, player)
-        player.connect("notify::titles", self._replace_notification_message,
-                       player)
+        player.connect("ratings_changed", self._replace_notification_message, player)
+        player.connect("notify::titles", self._replace_notification_message, player)
 
     @idle_add
     def onArrivalNotification(self, cm, player):
@@ -524,8 +521,8 @@ class UserInfoSection(Section):
         if my_finger:
             self.widgets["usernameLabel"].set_markup("<b>%s</b>" % finger.getName())
         rows = 1
-        if finger.getRating():
-            rows += len(finger.getRating()) + 1
+        if finger.getRatingsLen() > 0:
+            rows += finger.getRatingsLen() + 1
         if finger.getEmail():
             rows += 1
         if finger.getCreated():
@@ -548,7 +545,8 @@ class UserInfoSection(Section):
 
         row = 0
 
-        if finger.getRating():
+        ELO, DEVIATION, WINS, LOSSES, DRAWS, TOTAL, BESTELO, BESTTIME = range(8)
+        if finger.getRatingsLen() > 0:
             if my_finger:
                 headers = (_("Rating"), _("Win"), _("Draw"), _("Loss"))
             else:
@@ -556,7 +554,7 @@ class UserInfoSection(Section):
             for i, item in enumerate(headers):
                 table.attach(label(item, xalign=1), i + 1, i + 2, 0, 1)
             row += 1
-            for rating_type, rating in finger.getRating().items():
+            for rating_type, rating in finger.getRatings().items():
                 col = 0
                 ratinglabel = label(GAME_TYPES_BY_RATING_TYPE[
                                     rating_type].display_text + ":")
@@ -567,22 +565,22 @@ class UserInfoSection(Section):
                         "On FICS, your \"Wild\" rating encompasses all of the \
                         following variants at all time controls:\n") +
                         ", ".join([gt.display_text for gt in WildGameType.instances()]))
-                table.attach(label(rating.elo, xalign=1), col, col + 1, row, row + 1)
+                table.attach(label(rating[ELO], xalign=1), col, col + 1, row, row + 1)
                 col += 1
                 if not my_finger:
-                    table.attach(label(rating.deviation, xalign=1), col, col + 1, row, row + 1)
+                    table.attach(label(rating[DEVIATION], xalign=1), col, col + 1, row, row + 1)
                     col += 1
-                table.attach(label(rating.wins, xalign=1), col, col + 1, row, row + 1)
+                table.attach(label(rating[WINS], xalign=1), col, col + 1, row, row + 1)
                 col += 1
-                table.attach(label(rating.draws, xalign=1), col, col + 1, row, row + 1)
+                table.attach(label(rating[DRAWS], xalign=1), col, col + 1, row, row + 1)
                 col += 1
-                table.attach(label(rating.losses, xalign=1), col, col + 1, row, row + 1)
+                table.attach(label(rating[LOSSES], xalign=1), col, col + 1, row, row + 1)
                 col += 1
-                if not my_finger:
-                    best = rating.bestElo if rating.bestElo > 0 else ""
+                if not my_finger and len(rating) > BESTELO:
+                    best = rating[BESTELO] if rating[BESTELO] > 0 else ""
                     table.attach(label(best, xalign=1), col, col + 1, row, row + 1)
                     col += 1
-                    table.attach(label(rating.bestTime, xalign=1), col, col + 1, row, row + 1)
+                    table.attach(label(rating[BESTTIME], xalign=1), col, col + 1, row, row + 1)
                     col += 1
                 row += 1
 
@@ -1485,9 +1483,8 @@ class PlayerTabSection(ParrentListSection):
                 if player.game:
                     self.players[player]["private"] = player.game.connect(
                         "notify::private", self.private_changed, player)
-                for rt in RATING_TYPES:
-                    self.players[player][rt] = player.ratings[rt].connect(
-                        "notify::elo", self.elo_changed, player)
+                self.players[player]["ratings"] = player.connect(
+                    "ratings_changed", self.elo_changed, player)
 
             count = len(self.players)
             self.widgets["playersOnlineLabel"].set_text(_("Players: %d") %
@@ -1516,11 +1513,8 @@ class PlayerTabSection(ParrentListSection):
             if player.game and "private" in self.players[player] and \
                     player.game.handler_is_connected(self.players[player]["private"]):
                 player.game.disconnect(self.players[player]["private"])
-            for rating_type in RATING_TYPES:
-                if player.ratings[rating_type].handler_is_connected(self.players[
-                        player][rating_type]):
-                    player.ratings[rating_type].disconnect(
-                        self.players[player][rating_type])
+            if player.handler_is_connected(self.players[player]["ratings"]):
+                player.disconnect(self.players[player]["ratings"])
             del self.players[player]
             count = len(self.players)
             self.widgets["playersOnlineLabel"].set_text(_("Players: %d") % count)
@@ -1589,17 +1583,17 @@ class PlayerTabSection(ParrentListSection):
         return False
 
     @idle_add
-    def elo_changed(self, rating, prop, player):
+    def elo_changed(self, rating, prop, rating_type, player):
         log.debug(
-            "%s %s" % (rating.elo, player),
-            extra={"task": (self.connection.username, "PTS.elo_changed")})
+            "%s %s" % (rating, player),
+            extra={"task": (self.connection.username, "PTS_changed")})
 
         try:
             self.store.set(self.players[player]["ti"], 1, player.getIcon())
             self.store.set(self.players[player]["ti"], 7,
                            get_player_tooltip_text(player))
             self.store.set(self.players[player]["ti"],
-                           self.columns[rating.type], rating.elo)
+                           self.columns[rating_type], rating)
         except KeyError:
             pass
 
@@ -2853,8 +2847,7 @@ class SeekChallengeSection(Section):
         if self.finger is None:
             return None
         try:
-            ratingobj = self.finger.getRating(type=gametype)
-            rating = int(ratingobj.elo)
+            rating = self.finger.getRating(type=gametype)
         except KeyError:  # the user doesn't have a rating for this game type
             rating = None
         return rating

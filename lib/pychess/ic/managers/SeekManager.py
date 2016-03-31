@@ -157,10 +157,10 @@ class SeekManager(GObject.GObject):
         if gametype.variant_type in UNSUPPORTED:
             return
         try:
-            ratingobj = player.ratings[gametype.rating_type]
-            if ratingobj.elo != rating:
-                ratingobj.elo = rating
-            ratingobj.deviation = deviation
+            if player.ratings[gametype.rating_type] != rating:
+                player.ratings[gametype.rating_type] = rating
+                player.deviations[gametype.rating_type] = deviation
+                player.emit("ratings_changed", gametype.rating_type, player)
         except KeyError:
             pass
 
