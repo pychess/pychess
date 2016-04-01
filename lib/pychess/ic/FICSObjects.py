@@ -243,6 +243,9 @@ class FICSPlayer(GObject.GObject):
         else:
             return False
 
+    def __hash__(self):
+        return hash(self.player_id)
+
     def __repr__(self):
         rep = "name='%s'" % (self.name + self.display_titles())
         rep += ", id=%s" % (id(self))
