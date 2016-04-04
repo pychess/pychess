@@ -577,7 +577,7 @@ class UserInfoSection(Section):
                 table.attach(label(rating[LOSSES], xalign=1), col, col + 1, row, row + 1)
                 col += 1
                 if not my_finger and len(rating) > BESTELO:
-                    best = rating[BESTELO] if rating[BESTELO] > 0 else ""
+                    best = rating[BESTELO] if int(rating[BESTELO]) > 0 else ""
                     table.attach(label(best, xalign=1), col, col + 1, row, row + 1)
                     col += 1
                     table.attach(label(rating[BESTTIME], xalign=1), col, col + 1, row, row + 1)
