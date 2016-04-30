@@ -166,8 +166,8 @@ class HelperManager(GObject.GObject):
 
         try:
             wplayer = self.connection.players.get(wname)
-            wplayer.restore_previous_status(
-            )  # no status update will be sent by
+            wplayer.restore_previous_status()
+            # no status update will be sent by
             # FICS if the player doesn't become available, so we restore
             # previous status first (not necessarily true, but the best guess)
         except KeyError:

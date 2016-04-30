@@ -143,7 +143,6 @@ class FICSPlayer(GObject.GObject):
     def set_status(self, status):
         self._previous_status = self._status
         self._status = status
-
     status = GObject.property(get_status, set_status)
 
     def restore_previous_status(self):

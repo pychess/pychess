@@ -126,7 +126,6 @@ class AdjournManager(GObject.GObject):
 
             user = self.connection.players.get(self.connection.stored_owner)
             opponent = self.connection.players.get(opponent_name)
-            opponent.status = IC_STATUS_OFFLINE
             wplayer, bplayer = (user, opponent) if our_color == WHITE else (opponent, user)
             game = FICSAdjournedGame(wplayer,
                                      bplayer,
@@ -196,9 +195,7 @@ class AdjournManager(GObject.GObject):
             gain = int(gain)
 
             wplayer = self.connection.players.get(white)
-            wplayer.status = IC_STATUS_OFFLINE
             bplayer = self.connection.players.get(black)
-            bplayer.status = IC_STATUS_OFFLINE
             game = FICSHistoryGame(wplayer,
                                    bplayer,
                                    game_type=gametype,
@@ -248,9 +245,7 @@ class AdjournManager(GObject.GObject):
             gain = int(gain)
 
             wplayer = self.connection.players.get(white)
-            wplayer.status = IC_STATUS_OFFLINE
             bplayer = self.connection.players.get(black)
-            bplayer.status = IC_STATUS_OFFLINE
             game = FICSJournalGame(wplayer,
                                    bplayer,
                                    game_type=gametype,
