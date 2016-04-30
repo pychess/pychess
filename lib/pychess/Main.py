@@ -192,6 +192,8 @@ class GladeHandlers:
         newGameDialog.LoadFileExtension.run(None)
 
     def on_set_up_position_activate(self, widget):
+        rotate_menu = gamewidget.getWidgets()["rotate_board1"]
+        rotate_menu.set_sensitive(True)
         gmwidg = gamewidget.cur_gmwidg()
         if gmwidg is not None:
             if len(gmwidg.gamemodel.boards) == 1:
@@ -259,11 +261,17 @@ class GladeHandlers:
     # View Menu
 
     def on_rotate_board1_activate(self, widget):
-        gmwidg = gamewidget.cur_gmwidg()
-        if gmwidg.board.view.rotation:
-            gmwidg.board.view.rotation = 0
+        board_control = newGameDialog.SetupPositionExtension.board_control
+        if board_control is not None and board_control.view.is_visible():
+            view = newGameDialog.SetupPositionExtension.board_control.view
+        elif gamewidget.cur_gmwidg() is not None:
+            view = gamewidget.cur_gmwidg().board.view
         else:
-            gmwidg.board.view.rotation = math.pi
+            return
+        if view.rotation:
+            view.rotation = 0
+        else:
+            view.rotation = math.pi
 
     def on_fullscreen1_activate(self, widget):
         gamewidget.getWidgets()["window1"].fullscreen()

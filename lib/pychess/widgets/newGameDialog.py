@@ -33,6 +33,7 @@ from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
 from pychess.widgets import BoardPreview
+from pychess.widgets import gamewidget
 from pychess.widgets import ionest
 from pychess.widgets import ImageMenu
 from pychess.widgets.BoardControl import BoardControl
@@ -123,6 +124,7 @@ class _GameInitializationMode:
     @classmethod
     def _init(cls):
         cls.widgets = uistuff.GladeWidgets("newInOut.glade")
+        cls.widgets["newgamedialog"].set_transient_for(gamewidget.getWidgets()["window1"])
 
         uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
                             name="whitePlayerCombobox")
@@ -536,6 +538,8 @@ class LoadFileExtension(_GameInitializationMode):
 
 
 class SetupPositionExtension(_GameInitializationMode):
+    board_control = None
+
     @classmethod
     def _init(cls):
         def callback(widget, allocation):
