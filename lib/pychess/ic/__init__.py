@@ -126,15 +126,13 @@ class WildGameType(VariantGameType):
 GAME_TYPES = {
     "blitz": NormalGameType("blitz", "b", TYPE_BLITZ, _("Blitz")),
     "standard": NormalGameType("standard", "s", TYPE_STANDARD, _("Standard")),
-    "lightning":
-    NormalGameType("lightning", "l", TYPE_LIGHTNING, _("Lightning")),
+    "lightning": NormalGameType("lightning", "l", TYPE_LIGHTNING, _("Lightning")),
     "untimed": NormalGameType("untimed", "u", TYPE_UNTIMED, _("Untimed")),
     "examined": NormalGameType("examined", "e", TYPE_EXAMINED, _("Examined")),
     "nonstandard": NormalGameType("nonstandard", "n", TYPE_OTHER, _("Other")),
     "atomic": VariantGameType("atomic", "x", TYPE_ATOMIC, ATOMICCHESS),
     "bughouse": VariantGameType("bughouse", "B", TYPE_BUGHOUSE, BUGHOUSECHESS),
-    "crazyhouse":
-    VariantGameType("crazyhouse", "z", TYPE_CRAZYHOUSE, CRAZYHOUSECHESS),
+    "crazyhouse": VariantGameType("crazyhouse", "z", TYPE_CRAZYHOUSE, CRAZYHOUSECHESS),
     "losers": VariantGameType("losers", "L", TYPE_LOSERS, LOSERSCHESS),
     "suicide": VariantGameType("suicide", "S", TYPE_SUICIDE, SUICIDECHESS),
     "wild/fr": WildGameType("wild/fr", FISCHERRANDOMCHESS),
