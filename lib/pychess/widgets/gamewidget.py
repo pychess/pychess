@@ -24,7 +24,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.const import REMOTE, UNFINISHED_STATES, PAUSED, RUNNING, LOCAL, \
     WHITE, BLACK, ACTION_MENU_ITEMS, DRAW, UNDOABLE_STATES, HINT, SPY, WHITEWON, \
-    BLACKWON, DROP
+    BLACKWON, DROP, FAN_PIECES
 from pychess.Utils.Move import listToMoves
 from pychess.Utils.lutils import lmove
 from pychess.Utils.lutils.lmove import ParsingError
