@@ -5,7 +5,7 @@ from gi.repository import GObject
 from pychess.Utils.const import WHITE, FISCHERRANDOMCHESS, UNSUPPORTED
 from pychess.ic import BLKCMD_ASSESS, VariantGameType, DEVIATION, GAME_TYPES, \
     parse_title_hex, BLKCMD_UNSEEK, BLKCMD_SEEK, type_to_display_text, \
-    Variants
+    Variants, RATING_TYPES
 from pychess.ic.FICSObjects import FICSSeek
 from pychess.System.Log import log
 
@@ -156,13 +156,11 @@ class SeekManager(GObject.GObject):
                 return
         if gametype.variant_type in UNSUPPORTED:
             return
-        try:
-            if player.ratings[gametype.rating_type] != rating:
-                player.ratings[gametype.rating_type] = rating
-                player.deviations[gametype.rating_type] = deviation
-                player.emit("ratings_changed", gametype.rating_type, player)
-        except KeyError:
-            pass
+
+        if gametype.rating_type in RATING_TYPES and player.ratings[gametype.rating_type] != rating:
+            player.ratings[gametype.rating_type] = rating
+            player.deviations[gametype.rating_type] = deviation
+            player.emit("ratings_changed", gametype.rating_type, player)
 
         seek = FICSSeek(index,
                         player,
