@@ -22,29 +22,22 @@ from pychess.widgets import InfoBar
 OFFER_MESSAGES = {
     DRAW_OFFER:
     (_("Your opponent has offered you a draw."),
-     _("Your opponent has offered you a draw. If you accept this offer, the game will \
-       end with a score of 1/2 - 1/2."), False),
+     _("Your opponent has offered you a draw. If you accept this offer, the game will end with a score of 1/2 - 1/2."), False),
     ABORT_OFFER:
     (_("Your opponent wants to abort the game."),
-     _("Your opponent has asked that the game be aborted. If you accept this offer, \
-       the game will end with no rating change."), False),
+     _("Your opponent has asked that the game be aborted. If you accept this offer, the game will end with no rating change."), False),
     ADJOURN_OFFER:
     (_("Your opponent wants to adjourn the game."),
-     _("Your opponent has asked that the game be adjourned. If you accept this offer, \
-       the game will be adjourned and you can resume it later (when your opponent is \
-       online and both players agree to resume)."), False),
+     _("Your opponent has asked that the game be adjourned. If you accept this offer, the game will be adjourned and you can resume it later (when your opponent is online and both players agree to resume)."), False),
     TAKEBACK_OFFER:
     (_("Your opponent wants to undo %s move(s)."),
-     _("Your opponent has asked that the last %s move(s) be undone. If you accept this offer, \
-       the game will continue from the earlier position."), True),
+     _("Your opponent has asked that the last %s move(s) be undone. If you accept this offer, the game will continue from the earlier position."), True),
     PAUSE_OFFER:
     (_("Your opponent wants to pause the game."),
-     _("Your opponent has asked that the game be paused. If you accept this offer, \
-       the game clock will be paused until both players agree to resume the game."), False),
+     _("Your opponent has asked that the game be paused. If you accept this offer, the game clock will be paused until both players agree to resume the game."), False),
     RESUME_OFFER:
     (_("Your opponent wants to resume the game."),
-     _("Your opponent has asked that the game be resumed. If you accept this offer, \
-       the game clock will continue from where it was paused."), False)
+     _("Your opponent has asked that the game be resumed. If you accept this offer, the game clock will continue from where it was paused."), False)
 }
 
 ACTION_NAMES = {
