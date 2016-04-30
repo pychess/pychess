@@ -27,6 +27,7 @@ from pychess.Utils.repr import localReprSign
 from pychess.Utils.lutils.ldata import FILE
 from pychess.System import uistuff
 from pychess.System.Log import log
+from pychess.System.protoopen import splitUri
 from pychess.System import conf
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
@@ -922,6 +923,7 @@ def createRematch(gamemodel):
 
 def loadFilesAndRun(uris):
     for uri in uris:
+        uri = splitUri(uri)[1]
         loader = ionest.enddir[uri[uri.rfind(".") + 1:]]
         timemodel = TimeModel(0, 0)
         gamemodel = GameModel(timemodel)
