@@ -28,7 +28,7 @@ __append__ = True
 
 moveeval = re.compile(
     "\[%eval ([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?(?:/(\d{1,2}))?\]")
-movetime = re.compile("\[%emt (\d):(\d\d):(\d\d)(?:\.(\d\d\d))?\]")
+movetime = re.compile("\[%emt (\d:)?(\d{1,2}:)?(\d{1,4})(?:\.(\d{1,3}))?\]")
 
 
 def wrap(string, length):
@@ -415,7 +415,6 @@ class PGNFile(PgnBase):
         # which will be model.variations[0] when we are in the mainline.
         walk(boards[0], [])
         model.boards = model.variations[0]
-
         self.has_emt = self.has_emt and "TimeControl" in model.tags
         if self.has_emt or self.has_eval:
             if self.has_emt:
@@ -439,6 +438,8 @@ class PGNFile(PgnBase):
                                 hour, minute, sec, msec = match.groups()
                                 prev = model.timemodel.intervals[color][
                                     movecount - 1]
+                                hour = 0 if hour is None else int(hour[:-1])
+                                minute = 0 if minute is None else int(minute[:-1])
                                 msec = 0 if msec is None else int(msec)
                                 msec += int(sec) * 1000 + int(
                                     minute) * 60 * 1000 + int(
@@ -462,7 +463,6 @@ class PGNFile(PgnBase):
                                 model.scores[ply] = ("", value, depth)
             log.debug("pgn.loadToModel: intervals %s" %
                       model.timemodel.intervals)
-
         # Find the physical status of the game
         model.status, model.reason = getStatus(model.boards[-1])
 
