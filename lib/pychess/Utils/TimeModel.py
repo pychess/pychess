@@ -198,9 +198,9 @@ class TimeModel(GObject.GObject):
     ############################################################################
 
     def updatePlayer(self, color, secs):
+        self.intervals[color][-1] = secs
         if color == self.movingColor and self.started:
             self.counter = secs + time() - self.intervals[color][-1]
-        self.intervals[color][-1] = secs
         self.emit("time_changed")
 
     ############################################################################
