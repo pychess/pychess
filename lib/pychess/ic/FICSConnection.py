@@ -324,9 +324,10 @@ class FICSMainConnection(FICSConnection):
         self.stored_owner = self.username
         self.history_owner = self.username
         self.journal_owner = self.username
+        self.set_user_vars = False
 
     def close(self):
-        if isinstance(self.client, PredictionsTelnet):
+        if isinstance(self.client, PredictionsTelnet) and self.set_user_vars:
             self.client.run_command("set open 0")
             self.client.run_command("set gin 0")
             self.client.run_command("set availinfo 0")
@@ -383,7 +384,8 @@ class FICSMainConnection(FICSConnection):
             # ivar pin: http://www.freechess.org/Help/HelpFiles/new_features.html
             self.client.run_command("iset pin 1")
 
-        if set_user_vars:
+        self.set_user_vars = set_user_vars
+        if self.set_user_vars:
             self.client.run_command("set open 1")
             self.client.run_command("set gin 1")
             self.client.run_command("set availinfo 1")
