@@ -103,7 +103,6 @@ class TimeModel(GObject.GObject):
         self.emit("player_changed")
 
     def tap(self):
-        print("tap started= ply=", self.started, self.ply)
         if self.paused:
             return
 
