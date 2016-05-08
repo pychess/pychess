@@ -767,6 +767,7 @@ class BoardManager(GObject.GObject):
         moves = {}
         times = {}
         wms = bms = minutes * 60 * 1000
+
         for line in matchlist[movesstart:-1]:
             if not moveListMoves.match(line):
                 log.error("BoardManager.parseGame: unmatched line: \"%s\"" %
@@ -801,6 +802,7 @@ class BoardManager(GObject.GObject):
                     bms += (increment * 1000)
                 times[ply + 1] = "%01d:%02d:%02d.%03d" % (
                     int(bhour), int(bmin), int(bsec), int(bmsec))
+
         if in_progress and gameno in self.queuedStyle12s:
             # Apply queued board updates
             for style12 in self.queuedStyle12s[gameno]:
@@ -979,11 +981,15 @@ class BoardManager(GObject.GObject):
         game = self.parseGame(matchlist, FICSGame, in_progress=True)
         if game.gameno not in self.gamemodelStartedEvents:
             return
+        if game.gameno not in self.queuedEmits:
+            return
+
         self.emit("obsGameCreated", game)
         try:
             self.gamemodelStartedEvents[game.gameno].wait()
         except KeyError:
             pass
+
         for emit in self.queuedEmits[game.gameno]:
             emit()
         del self.queuedEmits[game.gameno]
