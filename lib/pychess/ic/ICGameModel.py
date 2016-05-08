@@ -28,6 +28,8 @@ class ICGameModel(GameModel):
         connections[connection.bm].append(connection.bm.connect(
             "boardUpdate", self.onBoardUpdate))
         connections[connection.bm].append(connection.bm.connect(
+            "timesUpdate", self.onTimesUpdate))
+        connections[connection.bm].append(connection.bm.connect(
             "obsGameEnded", self.onGameEnded))
         connections[connection.bm].append(connection.bm.connect(
             "curGameEnded", self.onGameEnded))
@@ -202,6 +204,13 @@ class ICGameModel(GameModel):
             self.emit("game_started")
             curPlayer = self.players[self.curColor]
             curPlayer.resetPosition()
+
+    def onTimesUpdate(self, bm, gameno, wms, bms):
+        if gameno != self.ficsgame.gameno:
+            return
+        if self.timed:
+            self.timemodel.updatePlayer(WHITE, wms / 1000.)
+            self.timemodel.updatePlayer(BLACK, bms / 1000.)
 
     def onMadeExamined(self, bm, gameno):
         self.examined = True

@@ -193,6 +193,8 @@ class BoardManager(GObject.GObject):
                                (object, )),
         'boardUpdate': (GObject.SignalFlags.RUN_FIRST, None,
                         (int, int, int, str, str, str, str, int, int)),
+        'timesUpdate': (GObject.SignalFlags.RUN_FIRST, None,
+                        (int, int, int,)),
         'obsGameEnded': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'curGameEnded': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'obsGameUnobserved': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
@@ -463,7 +465,7 @@ class BoardManager(GObject.GObject):
 
             game.relation = relation
             game.board = FICSBoard(0, 0, pgn=pgn)
-            self.gamesImObserving[game] = None
+            self.gamesImObserving[game] = wms, bms
 
             # start a new game now or after smoves
             self.gamemodelStartedEvents[game.gameno] = threading.Event()
@@ -938,7 +940,7 @@ class BoardManager(GObject.GObject):
                                             pgn=pgn),
                             relation=relation)
             game = self.connection.games.get(game)
-            self.gamesImObserving[game] = None
+            self.gamesImObserving[game] = wms, bms
 
             self.gamemodelStartedEvents[game.gameno] = threading.Event()
             self.emit("obsGameCreated", game)
@@ -964,7 +966,7 @@ class BoardManager(GObject.GObject):
                             game.gameno)
                 return
 
-            self.gamesImObserving[game] = None
+            self.gamesImObserving[game] = wms, bms
             self.queuedStyle12s[game.gameno] = []
             self.queuedEmits[game.gameno] = []
             self.gamemodelStartedEvents[game.gameno] = threading.Event()
@@ -993,6 +995,9 @@ class BoardManager(GObject.GObject):
         for emit in self.queuedEmits[game.gameno]:
             emit()
         del self.queuedEmits[game.gameno]
+
+        wms, bms = self.gamesImObserving[game]
+        self.emit("timesUpdate", game.gameno, wms, bms)
 
     onObserveGameMovesReceived.BLKCMD = BLKCMD_MOVES
 
