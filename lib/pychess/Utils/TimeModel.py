@@ -32,6 +32,9 @@ class TimeModel(GObject.GObject):
         self.gain = gain
         self.secs = secs
 
+        # in FICS games we don't count gain
+        self.handle_gain = True
+
         self.paused = False
         # The left number of secconds at the time pause was turned on
         self.pauseInterval = 0
@@ -100,20 +103,20 @@ class TimeModel(GObject.GObject):
         self.emit("player_changed")
 
     def tap(self):
+        print("tap started= ply=", self.started, self.ply)
         if self.paused:
             return
 
+        gain = self.gain if self.handle_gain else 0
+        ticker = self.intervals[self.movingColor][-1] + gain
         if self.started:
-            ticker = self.intervals[self.movingColor][-1] + self.gain
             if self.counter is not None:
                 ticker -= time() - self.counter
-            self.intervals[self.movingColor].append(ticker)
         else:
-            self.intervals[self.movingColor].append(self.intervals[
-                self.movingColor][-1] + self.gain)
             # FICS rule
-            if self.ply >= 2:
+            if self.ply >= 1:
                 self.started = True
+        self.intervals[self.movingColor].append(ticker)
 
         self.movingColor = 1 - self.movingColor
 
@@ -126,7 +129,6 @@ class TimeModel(GObject.GObject):
     def start(self):
         if self.started:
             return
-        self.started = True
         self.counter = time()
         self.emit("time_changed")
 

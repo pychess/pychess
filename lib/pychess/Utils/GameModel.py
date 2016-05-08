@@ -598,7 +598,7 @@ class GameModel(GObject.GObject, Thread):
 
         if first_time:
             if self.status == RUNNING:
-                if self.timed and self.ply >= 2:
+                if self.timed:
                     self.timemodel.start()
 
             # Store end status from Result tag
@@ -629,6 +629,10 @@ class GameModel(GObject.GObject, Thread):
         # self.end
         if self.status != WAITING_TO_START:
             return
+
+        if not self.isLocalGame():
+            self.timemodel.handle_gain = False
+
         self.status = RUNNING
 
         for player in self.players + list(self.spectators.values()):
