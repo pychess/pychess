@@ -76,11 +76,7 @@ class HelperManager(GObject.GObject):
         if self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.client.run_command("who")
         else:
-            for rated in ("R", "U"):
-                for segment in range(1, 10):
-                    t = Timer(0.5 * segment, self.helperconn.client.run_command, args=[
-                        "who IbslwBzSLx%s%s9" % (rated, segment)])
-                    t.start()
+            self.helperconn.client.run_command("who IbslwBzSLx")
 
         if self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.client.run_command("games")
