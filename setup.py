@@ -164,7 +164,7 @@ if sys.platform == "win32":
 else:
     DATA_FILES += [("share/pychess/sounds", glob('sounds/*.ogg'))]
 DATA_FILES += [('share/icons/hicolor/24x24/apps', ['pychess.png'])]
-DATA_FILES += [('share/gtksourceview-1.0/language-specs', ['gtksourceview-1.0/language-specs/pgn.lang'])]
+DATA_FILES += [('share/gtksourceview-3.0/language-specs', ['gtksourceview-3.0/language-specs/pgn.lang'])]
 
 # Piece sets
 DATA_FILES += [("share/pychess/pieces", glob('pieces/*.png'))]
@@ -198,16 +198,16 @@ PACKAGES = []
 if msi:
     # TODO: cx_freeze doesn't allow letters in version
     #VERSION = "0.12.0"
-    
+
     ## Get the site-package folder, not everybody will install
     ## Python into C:\PythonXX
     site_dir = site.getsitepackages()[1]
     include_dll_path = os.path.join(site_dir, "gnome")
     lang_path = os.path.join(site_dir, "gnome", "share", "locale")
-    
+
     ## gtk3.0 .mo files
     gtk_mo = [f + "/LC_MESSAGES/gtk30.mo" for f in os.listdir(lang_path) if f in pychess_langs]
-    
+
     ## Collect the list of missing dll when cx_freeze builds the app
     missing_dll = [f for f in os.listdir(include_dll_path) if \
                     (f.endswith(".dll") or (f.startswith("gspawn") and f.endswith(".exe")))]
@@ -250,11 +250,11 @@ if msi:
                             targetName="pychess-engine.exe",
                             base=base),
                             ]
-                            
+
     bdist_msi_options = {
         "upgrade_code": "{5167584f-c196-428f-be40-4c861025e90a}",
         "add_to_path": True}
-    
+
     build_exe_options = {
         "compressed": False,
         "include_msvcr": True,

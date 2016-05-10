@@ -753,7 +753,7 @@ class EnterNotationExtension(_GameInitializationMode):
         if hasattr(man.props, 'search_path'):
             try:
                 path = os.path.join(getDataPrefix(),
-                                    "gtksourceview-1.0/language-specs")
+                                    "gtksourceview-3.0/language-specs")
                 man.props.search_path = man.props.search_path + [path]
                 if 'pgn' in man.get_language_ids():
                     lang = man.get_language('pgn')

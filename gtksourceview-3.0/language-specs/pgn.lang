@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language id="pgn" _name="PGN" version="2.0" _section="Other">
+  <metadata>
+    <property name="mimetypes">application/x-chess-pgn</property>
+    <property name="globs">*.pgn</property>
+  </metadata>
+
+  <styles>
+    <style id="comment" _name="Comment" map-to="def:comment"/>
+    <style id="base-n-integer" _name="Base-N Integer" map-to="def:base-n-integer"/>
+    <style id="string" _name="String" map-to="def:string"/>
+    <style id="keyword" _name="Keyword" map-to="def:keyword"/>
+    <style id="preprocessor" _name="Preprocessor" map-to="def:preprocessor"/>
+    <style id="others" _name="Others"/>
+  </styles>
+
+  <definitions>
+    <context id="string" style-ref="string" end-at-line-end="true">
+      <start>"</start>
+      <end>"</end>
+    </context>
+    <context id="string-2" style-ref="string" end-at-line-end="true">
+      <start>'</start>
+      <end>'</end>
+    </context>
+    <context id="line-comment" style-ref="comment" end-at-line-end="true">
+      <start>;</start>
+    </context>
+    <context id="special-line" style-ref="others" end-at-line-end="true">
+      <start>^%</start>
+    </context>
+    <context id="block-comment" style-ref="comment">
+      <start>\{</start>
+      <end>\}</end>
+    </context>
+    <context id="standard-bracketed-fields" style-ref="keyword">
+      <keyword>Event</keyword>
+      <keyword>Site</keyword>
+      <keyword>Date</keyword>
+      <keyword>Round</keyword>
+      <keyword>White</keyword>
+      <keyword>Black</keyword>
+      <keyword>Result</keyword>
+    </context>
+    <context id="other-bracketed-fields" style-ref="keyword">
+      <keyword>WhiteTitle</keyword>
+      <keyword>BlackTitle</keyword>
+      <keyword>WhiteElo</keyword>
+      <keyword>BlackElo</keyword>
+      <keyword>WhiteUSCF</keyword>
+      <keyword>BlackUSCF</keyword>
+      <keyword>WhiteNA</keyword>
+      <keyword>BlackNA</keyword>
+      <keyword>WhiteType</keyword>
+      <keyword>BlackType</keyword>
+      <keyword>EventDate</keyword>
+      <keyword>EventSponsor</keyword>
+      <keyword>Section</keyword>
+      <keyword>Stage</keyword>
+      <keyword>Board</keyword>
+      <keyword>Opening</keyword>
+      <keyword>Variation</keyword>
+      <keyword>SubVariation</keyword>
+      <keyword>ECO</keyword>
+      <keyword>NIC</keyword>
+      <keyword>Time</keyword>
+      <keyword>UTCTime</keyword>
+      <keyword>UTCDate</keyword>
+      <keyword>TimeControl</keyword>
+      <keyword>SetUp</keyword>
+      <keyword>FEN</keyword>
+      <keyword>Termination</keyword>
+      <keyword>Annotator</keyword>
+      <keyword>Mode</keyword>
+      <keyword>PlyCount</keyword>
+    </context>
+    <context id="annotation-glyph-good-move" style-ref="comment">
+      <match>![^!]</match>
+    </context>
+    <context id="annotation-glyph-poor-move" style-ref="comment">
+      <match>\?[^\?]</match>
+    </context>
+    <context id="annotation-glyph-very-good-move" style-ref="comment">
+      <match>!!</match>
+    </context>
+    <context id="annotation-glyph-very-poor-move" style-ref="comment">
+      <match>\?\?</match>
+    </context>
+    <context id="annotation-glyph-speculative-move" style-ref="comment">
+      <match>!\?</match>
+    </context>
+    <context id="annotation-glyph-questionable-move" style-ref="comment">
+      <match>\?!</match>
+    </context>
+    <context id="numeric-annotation-glyph" style-ref="comment">
+      <match>\$[0-9]+</match>
+    </context>
+    <context id="variant" style-ref="preprocessor">
+      <start>\(</start>
+      <end>\)</end>
+    </context>
+    <context id="numeric" style-ref="base-n-integer">
+      <match>\b[0-9]+\s*\.</match>
+    </context>
+    <context id="pgn">
+      <include>
+        <context ref="string"/>
+        <context ref="string-2"/>
+        <context ref="line-comment"/>
+        <context ref="special-line"/>
+        <context ref="block-comment"/>
+        <context ref="standard-bracketed-fields"/>
+        <context ref="other-bracketed-fields"/>
+        <context ref="annotation-glyph-good-move"/>
+        <context ref="annotation-glyph-poor-move"/>
+        <context ref="annotation-glyph-very-good-move"/>
+        <context ref="annotation-glyph-very-poor-move"/>
+        <context ref="annotation-glyph-speculative-move"/>
+        <context ref="annotation-glyph-questionable-move"/>
+        <context ref="numeric-annotation-glyph"/>
+        <context ref="variant"/>
+        <context ref="numeric"/>
+      </include>
+    </context>
+  </definitions>
+</language>
