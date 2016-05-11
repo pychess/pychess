@@ -211,7 +211,13 @@ class Sidepanel(Gtk.TextView):
         (x, y) = self.textview.window_to_buffer_coords(
             Gtk.TextWindowType.WIDGET, int(x), int(y))
         it = self.textview.get_iter_at_location(x, y)
-        offset = it.get_offset()
+
+        # https://gramps-project.org/bugs/view.php?id=9335
+        if isinstance(it, Gtk.TextIter):
+            offset = it.get_offset()
+        else:
+            offset = it[1].get_offset()
+
         for node in self.nodelist:
             if offset >= node["start"] and offset < node["end"] and "vari" not in node:
                 event.window.set_cursor(self.cursor_hand)
