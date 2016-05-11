@@ -232,7 +232,12 @@ class Sidepanel(Gtk.TextView):
         (x, y) = self.textview.window_to_buffer_coords(
             Gtk.TextWindowType.WIDGET, int(wx), int(wy))
         it = self.textview.get_iter_at_location(x, y)
-        offset = it.get_offset()
+
+        # https://gramps-project.org/bugs/view.php?id=9335
+        if isinstance(it, Gtk.TextIter):
+            offset = it.get_offset()
+        else:
+            offset = it[1].get_offset()
 
         node = None
         for n in self.nodelist:

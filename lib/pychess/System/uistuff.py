@@ -446,6 +446,11 @@ def initTexviewLinks(textview, text):
         tv_iter = textview.get_iter_at_location(int(event.x), int(event.y))
         if not tv_iter:
             return
+
+        # https://gramps-project.org/bugs/view.php?id=9335
+        if not isinstance(tv_iter, Gtk.TextIter):
+            tv_iter = tv_iter[1]
+
         for tag, link, msg_type, s, e in tags:
             if tv_iter.has_tag(tag):
                 tag.props.foreground = "red"
@@ -455,6 +460,11 @@ def initTexviewLinks(textview, text):
         tv_iter = textview.get_iter_at_location(int(event.x), int(event.y))
         if not tv_iter:
             return
+
+        # https://gramps-project.org/bugs/view.php?id=9335
+        if not isinstance(tv_iter, Gtk.TextIter):
+            tv_iter = tv_iter[1]
+
         for tag, link, msg_type, s, e in tags:
             if tv_iter and tv_iter.has_tag(tag) and \
                     tag.props.foreground_Gdk.red == 0xffff:
@@ -472,6 +482,11 @@ def initTexviewLinks(textview, text):
         tv_iter = textview.get_iter_at_location(int(event.x), int(event.y))
         if not tv_iter:
             return
+
+        # https://gramps-project.org/bugs/view.php?id=9335
+        if not isinstance(tv_iter, Gtk.TextIter):
+            tv_iter = tv_iter[1]
+
         for tag, link, msg_type, s, e in tags:
             if tv_iter.has_tag(tag):
                 textview.get_window(Gtk.TextWindowType.TEXT).set_cursor(
