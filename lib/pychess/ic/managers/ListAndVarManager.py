@@ -83,7 +83,10 @@ class ListAndVarManager:
     def getList(self, list_name):
         if list_name in self.publicLists:
             return self.publicLists(list_name)
-        return self.personalLists[list_name]
+        elif list_name in self.personalLists:
+            return self.personalLists[list_name]
+        else:
+            return []
 
     def addToList(self, list_name, value):
         self.connection.client.run_command("+%s %s" % (list_name, value))
