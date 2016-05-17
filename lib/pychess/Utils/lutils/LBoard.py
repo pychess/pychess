@@ -384,6 +384,8 @@ class LBoard(object):
         elif self.variant == ATOMICCHESS:
             if not self.boards[self.color][KING]:
                 return False
+            if -2 < (self.kings[0] >> 3) - (self.kings[1] >> 3) < 2 and -2 < (self.kings[0] & 7) - (self.kings[1] & 7) < 2:
+                return False
         elif self.variant == SITTUYINCHESS and self.plyCount < 16:
             return False
         if self.checked is None:
@@ -399,6 +401,8 @@ class LBoard(object):
             return False
         elif self.variant == ATOMICCHESS:
             if not self.boards[1 - self.color][KING]:
+                return False
+            if -2 < (self.kings[0] >> 3) - (self.kings[1] >> 3) < 2 and -2 < (self.kings[0] & 7) - (self.kings[1] & 7) < 2:
                 return False
         elif self.variant == SITTUYINCHESS and self.plyCount < 16:
             return False
