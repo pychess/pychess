@@ -28,6 +28,16 @@ FEN3 = "7k/6R1/8/5K2/8/8/8/8 b - - 0 1"
 
 FEN4 = "r4bn1/4p2r/2n2pp1/p2p2Pk/1p4Qp/2P1P3/PP1P3P/R1B1K2R b KQ - 0 1"
 
+# ♜ ♞ ♝ ♛ . ♝ ♞ ♜
+# ♟ ♟ ♟ ♟ . ♟ ♟ ♟
+# . . . . . . ♚ .
+# . . . . ♟ . . .
+# . . . . ♙ . ♔ .
+# . . . . . . . .
+# ♙ ♙ ♙ ♙ . ♙ ♙ ♙
+# ♖ ♘ ♗ ♕ . ♗ ♘ ♖
+FEN5 = "rnbq1bnr/pppp1ppp/6k1/4p3/4P1K1/8/PPPP1PPP/RNBQ1BNR w - - 6 5"
+
 
 class AtomicTestCase(unittest.TestCase):
     def test_validate1(self):
@@ -78,6 +88,13 @@ class AtomicTestCase(unittest.TestCase):
         board = AtomicBoard(setup=FEN4)
         print(board)
         self.assertEqual(getStatus(board), (WHITEWON, WON_MATE))
+
+    def test_getstatus4(self):
+        """Testing possible move into check when king touch saves the king"""
+
+        board = AtomicBoard(setup=FEN5)
+        print(board)
+        self.assertTrue(validate(board, parseSAN(board, 'Kg5')))
 
     def test_apply_pop(self):
         """Testing Atomic applyMove popMove"""
