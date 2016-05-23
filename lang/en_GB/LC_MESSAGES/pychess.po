@@ -3527,8 +3527,8 @@ msgstr "takes back material"
 
 #: lib/pychess/Utils/lutils/strateval.py:175
 #: lib/pychess/Utils/lutils/strateval.py:183
-msgid "sacrifies material"
-msgstr "sacrifies material"
+msgid "sacrifices material"
+msgstr "sacrifices material"
 
 #: lib/pychess/Utils/lutils/strateval.py:177
 msgid "exchanges material"
