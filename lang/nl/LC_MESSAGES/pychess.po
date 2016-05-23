@@ -3526,7 +3526,7 @@ msgstr "verovert stukken terug"
 
 #: lib/pychess/Utils/lutils/strateval.py:175
 #: lib/pychess/Utils/lutils/strateval.py:183
-msgid "sacrifies material"
+msgid "sacrifices material"
 msgstr "offert stukken op"
 
 #: lib/pychess/Utils/lutils/strateval.py:177

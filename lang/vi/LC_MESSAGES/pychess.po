@@ -3524,7 +3524,7 @@ msgstr "gỡ lại quân"
 
 #: lib/pychess/Utils/lutils/strateval.py:175
 #: lib/pychess/Utils/lutils/strateval.py:183
-msgid "sacrifies material"
+msgid "sacrifices material"
 msgstr "thí quân"
 
 #: lib/pychess/Utils/lutils/strateval.py:177

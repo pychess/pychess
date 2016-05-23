@@ -3527,7 +3527,7 @@ msgstr "merr prapa materialin"
 
 #: lib/pychess/Utils/lutils/strateval.py:175
 #: lib/pychess/Utils/lutils/strateval.py:183
-msgid "sacrifies material"
+msgid "sacrifices material"
 msgstr "sakrifikon materialin"
 
 #: lib/pychess/Utils/lutils/strateval.py:177

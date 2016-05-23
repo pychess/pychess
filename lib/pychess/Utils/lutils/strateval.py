@@ -172,7 +172,7 @@ def attack_type(model, ply, phase):
             else:
                 see = staticExchangeEvaluate(oldboard, move)
                 if see < 0:
-                    yield _("sacrifies material")
+                    yield _("sacrifices material")
                 elif see == 0:
                     yield _("exchanges material")
                 elif see > 0:
@@ -180,7 +180,7 @@ def attack_type(model, ply, phase):
     else:
         see = staticExchangeEvaluate(oldboard, move)
         if see < 0:
-            yield _("sacrifies material")
+            yield _("sacrifices material")
 
     PIECE_VALUES[BISHOP] = bishopBackup
 

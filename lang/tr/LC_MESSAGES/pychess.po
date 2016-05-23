@@ -3533,7 +3533,7 @@ msgstr "kaybedilen materyalı geri alır"
 
 #: lib/pychess/Utils/lutils/strateval.py:175
 #: lib/pychess/Utils/lutils/strateval.py:183
-msgid "sacrifies material"
+msgid "sacrifices material"
 msgstr "taşı feda eder"
 
 #: lib/pychess/Utils/lutils/strateval.py:177

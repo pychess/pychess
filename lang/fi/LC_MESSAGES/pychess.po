@@ -3527,7 +3527,7 @@ msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:175
 #: lib/pychess/Utils/lutils/strateval.py:183
-msgid "sacrifies material"
+msgid "sacrifices material"
 msgstr "uhraa materiaalia"
 
 #: lib/pychess/Utils/lutils/strateval.py:177

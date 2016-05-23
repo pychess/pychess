@@ -3534,7 +3534,7 @@ msgstr "recuperam material"
 
 #: lib/pychess/Utils/lutils/strateval.py:175
 #: lib/pychess/Utils/lutils/strateval.py:183
-msgid "sacrifies material"
+msgid "sacrifices material"
 msgstr "sacrificam peça"
 
 #: lib/pychess/Utils/lutils/strateval.py:177

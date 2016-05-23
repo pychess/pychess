@@ -3534,7 +3534,7 @@ msgstr "uzima nazad materijal"
 
 #: lib/pychess/Utils/lutils/strateval.py:175
 #: lib/pychess/Utils/lutils/strateval.py:183
-msgid "sacrifies material"
+msgid "sacrifices material"
 msgstr "žrtvuje materijal"
 
 #: lib/pychess/Utils/lutils/strateval.py:177
