@@ -156,23 +156,25 @@ class BoardView(Gtk.DrawingArea):
         self.setup_position = setup_position
         self.shown_variation_idx = 0  # the main variation is the first in gamemodel.variations list
 
-        self.model.connect("game_started", self.gameStarted)
-        self.model.connect("game_started", self.gameStartedAfter)
-        self.model.connect("game_changed", self.gameChanged)
-        self.model.connect("moves_undoing", self.movesUndoing)
-        self.model.connect("game_loading", self.gameLoading)
-        self.model.connect("game_loaded", self.gameLoaded)
-        self.model.connect("game_ended", self.gameEnded)
+        self.model_cids = [
+            self.model.connect("game_started", self.gameStarted),
+            self.model.connect("game_changed", self.gameChanged),
+            self.model.connect("moves_undoing", self.movesUndoing),
+            self.model.connect("game_loading", self.gameLoading),
+            self.model.connect("game_loaded", self.gameLoaded),
+            self.model.connect("game_ended", self.gameEnded),
+        ]
 
-        self.connect("draw", self.expose)
-        self.connect_after("realize", self.onRealized)
-        conf.notify_add("showCords", self.onShowCords)
-        conf.notify_add("showCaptured", self.onShowCaptured)
-        conf.notify_add("faceToFace", self.onFaceToFace)
-        conf.notify_add("pieceTheme", self.onSetPieceTheme)
-        conf.notify_add("lightcolour", self.onBoardColourTheme)
-        conf.notify_add("darkcolour", self.onBoardColourTheme)
-
+        self.draw_cid = self.connect("draw", self.expose)
+        self.realize_cid = self.connect_after("realize", self.onRealized)
+        self.notify_cids = [
+            conf.notify_add("showCords", self.onShowCords),
+            conf.notify_add("showCaptured", self.onShowCaptured),
+            conf.notify_add("faceToFace", self.onFaceToFace),
+            conf.notify_add("pieceTheme", self.onSetPieceTheme),
+            conf.notify_add("lightcolour", self.onBoardColourTheme),
+            conf.notify_add("darkcolour", self.onBoardColourTheme),
+        ]
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES
 
@@ -230,11 +232,13 @@ class BoardView(Gtk.DrawingArea):
         self.premove_piece = None
         self.premove_promotion = None
 
-    @idle_add
-    def gameStartedAfter(self, model):
-        # reenable shrinking the board
-        self.set_size_request(-1, -1)
-        self.emit("shownChanged", self.shown)
+    def _del(self):
+        self.disconnect(self.draw_cid)
+        self.disconnect(self.realize_cid)
+        for cid in self.notify_cids:
+            conf.notify_remove(cid)
+        for cid in self.model_cids:
+            self.model.disconnect(cid)
 
     def gameStarted(self, model):
         if conf.get("noAnimation", False):
@@ -250,6 +254,7 @@ class BoardView(Gtk.DrawingArea):
                             piece.opacity = 0
             self.got_started = True
             self.startAnimation()
+        self.emit("shownChanged", self.shown)
 
     def gameChanged(self, model, ply):
         # Play sounds
@@ -528,6 +533,9 @@ class BoardView(Gtk.DrawingArea):
             which starts the animation, also sets a timestamp for the acceleration
             to work properply.
         """
+
+        if self.model is None:
+            return False
 
         if self._do_stop:
             self._do_stop = False
@@ -1254,8 +1262,6 @@ class BoardView(Gtk.DrawingArea):
         context.restore()
 
     def drawArrows(self, context):
-        # TODO: Only redraw when intersecting with the redrawn area
-
         arw = 0.3  # Arrow width
         arhw = 0.72  # Arrow head width
         arhh = 0.64  # Arrow head height
@@ -1264,10 +1270,6 @@ class BoardView(Gtk.DrawingArea):
         if self.bluearrow:
             self.__drawArrow(context, self.bluearrow, arw, arhw, arhh, arsw,
                              (.447, .624, .812, 0.9), (.204, .396, .643, 1))
-
-#         if self.shown != self.model.ply or \
-#            self.model.boards != self.model.variations[0]:
-#             return
 
         if self.greenarrow:
             self.__drawArrow(context, self.greenarrow, arw, arhw, arhh, arsw,

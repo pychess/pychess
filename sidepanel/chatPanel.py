@@ -18,15 +18,26 @@ __desc__ = _(
 class Sidepanel:
     def load(self, gmwidg):
         self.gamemodel = gmwidg.gamemodel
-        self.gamemodel.connect("game_started", self.onGameStarted)
+        self.model_cids = [
+            self.gamemodel.connect("game_started", self.onGameStarted),
+            self.gamemodel.connect_after("game_terminated", self.on_game_terminated),
+        ]
         self.chatView = ChatView(self.gamemodel)
         self.chatView.disable("Waiting for game to load")
-        self.chatView.connect("messageTyped", self.onMessageSent)
+        self.chatview_cid = self.chatView.connect("messageTyped", self.onMessageSent)
         if isinstance(self.gamemodel, ICGameModel):
-            self.gamemodel.connect("observers_received",
-                                   self.chatView.update_observers)
-            self.gamemodel.connect("message_received", self.onICMessageReieved)
+            self.model_cids.append(self.gamemodel.connect("observers_received",
+                                   self.chatView.update_observers))
+            self.model_cids.append(self.gamemodel.connect("message_received",
+                                   self.onICMessageReieved))
         return self.chatView
+
+    def on_game_terminated(self, model):
+        self.chatView.disconnect(self.chatview_cid)
+        if hasattr(self, "player"):
+            self.player.disconnect(self.player_cid)
+        for cid in self.model_cids:
+            self.gamemodel.disconnect(cid)
 
     @idle_add
     def onGameStarted(self, gamemodel):
@@ -50,7 +61,7 @@ class Sidepanel:
             gamemodel.connection.client.run_command(allob)
 
         if hasattr(self, "player"):
-            self.player.connect("messageReceived", self.onMessageReieved)
+            self.player_cid = self.player.connect("messageReceived", self.onMessageReieved)
 
         self.chatView.enable()
 

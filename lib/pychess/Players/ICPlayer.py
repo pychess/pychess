@@ -52,6 +52,11 @@ class ICPlayer(Player):
         connections[connection.cm].append(connection.cm.connect(
             "privateMessage", self.__onPrivateMessage))
 
+        self.cid = self.gamemodel.connect_after("game_terminated", self.on_game_terminated)
+
+    def on_game_terminated(self, model):
+        self.gamemodel.disconnect(self.cid)
+
     def getICHandle(self):
         return self.name
 

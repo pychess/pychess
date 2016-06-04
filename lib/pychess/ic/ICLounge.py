@@ -20,7 +20,7 @@ from pychess.System import conf, uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.System.ping import Pinger
 from pychess.System.Log import log
-from pychess.widgets import ionest
+from pychess.widgets.ionest import game_handler
 from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.ConsoleWindow import ConsoleWindow
 from pychess.widgets.SpotGraph import SpotGraph
@@ -50,8 +50,8 @@ DO_MUPPY_SUMMARY = False
 # http://pythonhosted.org/Pympler/index.html
 if DO_MUPPY_SUMMARY:
     from pympler import muppy, summary
-    from pympler.classtracker import ClassTracker
-    from pympler.classtracker_stats import HtmlStats
+    # from pympler.classtracker import ClassTracker
+    # from pympler.classtracker_stats import HtmlStats
 
 
 class PlayerNotificationMessage(InfoBarMessage):
@@ -76,6 +76,7 @@ class ICLounge(GObject.GObject):
         self.host = host
         self.messages = []
         self.players = []
+        self.game_cids = {}
         self.widgets = uistuff.GladeWidgets("fics_lounge.glade")
         lounge = self.widgets["fics_lounge"]
         uistuff.keepWindowSize("fics_lounge", lounge)
@@ -163,10 +164,11 @@ class ICLounge(GObject.GObject):
         if DO_MUPPY_SUMMARY:
             all_objects = muppy.get_objects()
             self.summ = summary.summarize(all_objects)
-            summary.print_(self.summ)
+            # summary.print_(self.summ)
 
-            self.tracker = ClassTracker()
-            self.tracker.track_class(FICSPlayer, trace=1)
+            # self.tracker = ClassTracker()
+            # self.tracker.track_class(FICSPlayer, trace=1)
+            # self.tracker.track_class(ICGameModel, resolution_level=2, trace=1)
 
         log.debug("ICLounge.__init__: finished")
 
@@ -204,9 +206,7 @@ class ICLounge(GObject.GObject):
         timemodel = TimeModel(ficsgame.minutes * 60, ficsgame.inc)
 
         gamemodel = ICGameModel(self.connection, ficsgame, timemodel)
-        gamemodel.connect(
-            "game_started",
-            lambda gamemodel: self.connection.bm.onGameModelStarted(ficsgame.gameno))
+        gamemodel.connect("game_started", self.onGameModelStarted, ficsgame)
 
         wplayer, bplayer = ficsgame.wplayer, ficsgame.bplayer
 
@@ -227,18 +227,19 @@ class ICLounge(GObject.GObject):
                           (BLACK, bplayer.long_name(), bplayer.name,
                            bplayer.getRatingForCurrentGame()),
                           bplayer.long_name())
-            # If the remote player is WHITE, we need to init her right now, so
-            # we can catch fast made moves. Sorry lazy loading.
-            player0 = ICPlayer(gamemodel, wplayer.name, ficsgame.gameno, WHITE,
-                               wplayer.long_name(),
-                               wplayer.getRatingForCurrentGame())
-            player0tup = (REMOTE, lambda: player0, (), wplayer.long_name())
+            player0tup = (REMOTE, ICPlayer, (
+                gamemodel, wplayer.name, ficsgame.gameno, WHITE,
+                wplayer.long_name(), wplayer.getRatingForCurrentGame()),
+                wplayer.long_name())
 
         if not ficsgame.board.fen:
-            ionest.generalStart(gamemodel, player0tup, player1tup)
+            game_handler.generalStart(gamemodel, player0tup, player1tup)
         else:
-            ionest.generalStart(gamemodel, player0tup, player1tup,
-                                (StringIO(ficsgame.board.fen), fen, 0, -1))
+            game_handler.generalStart(gamemodel, player0tup, player1tup, (
+                StringIO(ficsgame.board.fen), fen, 0, -1))
+
+    def onGameModelStarted(self, gamemodel, ficsgame):
+        self.connection.bm.onGameModelStarted(ficsgame.gameno)
 
     @idle_add
     def onObserveGameCreated(self, bm, ficsgame):
@@ -247,25 +248,24 @@ class ICLounge(GObject.GObject):
         timemodel = TimeModel(ficsgame.minutes * 60, ficsgame.inc)
 
         gamemodel = ICGameModel(self.connection, ficsgame, timemodel)
-        gamemodel.connect(
-            "game_started",
-            lambda gamemodel: self.connection.bm.onGameModelStarted(ficsgame.gameno))
+        gamemodel.connect("game_started", self.onGameModelStarted, ficsgame)
 
         # The players need to start listening for moves IN this method if they
         # want to be noticed of all moves the FICS server sends us from now on
         wplayer, bplayer = ficsgame.wplayer, ficsgame.bplayer
-        player0 = ICPlayer(gamemodel, wplayer.name, ficsgame.gameno, WHITE,
-                           wplayer.long_name(),
-                           wplayer.getRatingForCurrentGame())
-        player1 = ICPlayer(gamemodel, bplayer.name, ficsgame.gameno, BLACK,
-                           bplayer.long_name(),
-                           bplayer.getRatingForCurrentGame())
 
-        player0tup = (REMOTE, lambda: player0, (), wplayer.long_name())
-        player1tup = (REMOTE, lambda: player1, (), bplayer.long_name())
+        player0tup = (REMOTE, ICPlayer, (
+            gamemodel, wplayer.name, ficsgame.gameno, WHITE,
+            wplayer.long_name(), wplayer.getRatingForCurrentGame()),
+            wplayer.long_name())
+        player1tup = (REMOTE, ICPlayer, (
+            gamemodel, bplayer.name, ficsgame.gameno, BLACK,
+            bplayer.long_name(), bplayer.getRatingForCurrentGame()),
+            bplayer.long_name())
 
-        ionest.generalStart(gamemodel, player0tup, player1tup,
-                            (StringIO(ficsgame.board.pgn), pgn, 0, -1))
+        game_handler.generalStart(gamemodel, player0tup, player1tup, (
+            StringIO(ficsgame.board.pgn), pgn, 0, -1))
+
         if ficsgame.relation == IC_POS_OBSERVING_EXAMINATION:
             if 1:  # int(self.connection.lvm.variablesBackup["kibitz"]) == 0:
                 self.connection.cm.whisper(_(
@@ -1441,10 +1441,10 @@ class PlayerTabSection(ParrentListSection):
         if DO_MUPPY_SUMMARY:
             sum2 = summary.summarize(muppy.get_objects())
             diff = summary.get_diff(self.lounge.summ, sum2)
-            summary.print_(diff)
+            summary.print_(diff, limit=200)
 
-            self.lounge.tracker.create_snapshot('FICSPlayer usage')
-            HtmlStats(tracker=self.lounge.tracker).create_html('profile.html')
+            # self.lounge.tracker.create_snapshot('usage')
+            # HtmlStats(tracker=self.lounge.tracker).create_html('profile.html')
 
     def onPlayerAdded(self, players, new_players):
         # Let the hard work to be done in the helper connection thread
@@ -2198,29 +2198,21 @@ class AdjournedTabSection(ParrentListSection):
         # want to be noticed of all moves the FICS server sends us from now on.
         # Hence the lazy loading is skipped.
         wplayer, bplayer = ficsgame.wplayer, ficsgame.bplayer
-        player0 = ICPlayer(
-            gamemodel,
-            wplayer.name,
-            -1,
-            WHITE,
-            wplayer.long_name(game_type=ficsgame.game_type),
-            icrating=wplayer.getRatingByGameType(ficsgame.game_type))
-        player1 = ICPlayer(
-            gamemodel,
-            bplayer.name,
-            -1,
-            BLACK,
-            bplayer.long_name(game_type=ficsgame.game_type),
-            icrating=bplayer.getRatingByGameType(ficsgame.game_type))
+        player0tup = (REMOTE, ICPlayer, (
+            gamemodel, wplayer.name, -1, WHITE,
+            wplayer.long_name(), wplayer.getRatingByGameType(ficsgame.game_type)),
+            wplayer.long_name())
+        player1tup = (REMOTE, ICPlayer, (
+            gamemodel, bplayer.name, -1, BLACK,
+            bplayer.long_name(), bplayer.getRatingByGameType(ficsgame.game_type)),
+            bplayer.long_name())
 
-        player0tup = (REMOTE, lambda: player0, (), wplayer.long_name())
-        player1tup = (REMOTE, lambda: player1, (), bplayer.long_name())
-        ionest.generalStart(gamemodel, player0tup, player1tup,
-                            (StringIO(ficsgame.board.pgn), pgn, 0, -1))
-        gamemodel.connect(
-            "game_started",
-            lambda gamemodel: gamemodel.end(ficsgame.result, ficsgame.reason))
+        game_handler.generalStart(gamemodel, player0tup, player1tup, (
+            StringIO(ficsgame.board.pgn), pgn, 0, -1))
+        gamemodel.connect("game_started", self.on_game_start, ficsgame)
 
+    def on_game_start(self, gamemodel, ficsgame):
+        gamemodel.end(ficsgame.result, ficsgame.reason)
 
 RATING_SLIDER_STEP = 25
 

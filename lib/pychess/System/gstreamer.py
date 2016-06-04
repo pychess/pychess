@@ -71,7 +71,6 @@ else:
                         simpleMessage, advMessage = message.parse_error()
                         log.warning("Gstreamer error '%s': %s" %
                                     (simpleMessage, advMessage))
-                        self._del()
                     elif message.type == Gst.MessageType.EOS:
                         self.player.set_state(Gst.State.NULL)
                     return True

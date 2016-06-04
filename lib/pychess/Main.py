@@ -19,16 +19,16 @@ from pychess.System import conf, uistuff, prefix, SubProcess, idle_add
 from pychess.System.uistuff import POSITION_GOLDEN
 from pychess.System.Log import log, LogPipe
 from pychess.System.LogEmitter import GLogHandler, logemitter
-from pychess.System.debug import start_thread_dump
+from pychess.System.debug import start_thread_dump, print_obj_referrers
 from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
-from pychess.Utils.const import HINT, NAME, SPY, MENU_ITEMS
+from pychess.Utils.const import HINT, NAME, SPY
 from pychess.Utils.checkversion import checkversion
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
 from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.widgets import gamewidget
-from pychess.widgets import ionest
+from pychess.widgets.ionest import game_handler
 from pychess.widgets import analyzegameDialog
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import TaskerManager
@@ -50,9 +50,6 @@ functionkeys = [Gdk.keyval_from_name(k)
                 for k in ("F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9",
                           "F10", "F11")]
 
-# gameDic - containing the gamewidget:gamemodel of all open games
-gameDic = {}
-
 recentManager = Gtk.RecentManager.get_default()
 
 TARGET_TYPE_URI_LIST = 0xbadbeef
@@ -61,9 +58,12 @@ DRAG_RESTRICT = Gtk.TargetFlags.OTHER_APP
 DND_LIST = [Gtk.TargetEntry.new("text/uri-list", DRAG_RESTRICT, TARGET_TYPE_URI_LIST)]
 
 
-class GladeHandlers:
+class GladeHandlers(object):
     def on_window_key_press(window, event):
         log.debug('on_window_key_press: %s %s' % (window.get_title(), event))
+        if Gdk.keyval_name(event.keyval) == "F12":
+            print_obj_referrers()
+
         # Tabbing related shortcuts
         if not gamewidget.getheadbook():
             pagecount = 0
@@ -134,39 +134,15 @@ class GladeHandlers:
                 board_control = gmwidg.board
                 keyname = Gdk.keyval_name(event.keyval)
                 board_control.key_pressed(keyname)
-                gmwidg.status(board_control.keybuffer)
+                print(board_control.keybuffer)
                 return True
 
             return False
 
-    def on_gmwidg_created(self, gmwidg, gamemodel):
-        log.debug("GladeHandlers.on_gmwidg_created: starting")
-        gameDic[gmwidg] = gamemodel
-
-        # Bring playing window to the front
-        gamewidget.getWidgets()["window1"].present()
-
-        gamemodel.connect("game_loaded",
-                          GladeHandlers.__dict__["on_recent_game_activated"])
-        gamemodel.connect("game_saved",
-                          GladeHandlers.__dict__["on_recent_game_activated"])
-
-        # Make sure we can remove gamewidgets from gameDic later
-        gmwidg.connect("closed", GladeHandlers.__dict__["on_gmwidg_closed"])
-        log.debug("GladeHandlers.on_gmwidg_created: returning")
-
-    def on_recent_game_activated(gamemodel, uri):
+    def on_recent_game_activated(self, uri):
         if isinstance(uri, basestring):
             path = url2pathname(uri)
             recentManager.add_item("file:" + pathname2url(path))
-
-    def on_gmwidg_closed(gmwidg):
-        log.debug("GladeHandlers.on_gmwidg_closed")
-        del gameDic[gmwidg]
-        if not gameDic:
-            for widget in MENU_ITEMS:
-                gamewidget.getWidgets()[widget].set_property('sensitive',
-                                                             False)
 
     #          Drag 'n' Drop          #
 
@@ -215,45 +191,46 @@ class GladeHandlers:
     def on_save_game1_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
         position = gmwidg.board.view.shown
-        ionest.saveGame(gameDic[gamewidget.cur_gmwidg()], position)
+        game_handler.saveGame(gmwidg.gamemodel, position)
 
     def on_save_game_as1_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
         position = gmwidg.board.view.shown
-        ionest.saveGameAs(gameDic[gamewidget.cur_gmwidg()], position)
+        game_handler.saveGameAs(gmwidg.gamemodel, position)
 
     def on_share_game_activate(self, widget):
-        chesspastebin.paste(gameDic[gamewidget.cur_gmwidg()])
+        gmwidg = gamewidget.cur_gmwidg()
+        chesspastebin.paste(gmwidg.gamemodel)
 
     def on_export_position_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
         position = gmwidg.board.view.shown
-        ionest.saveGameAs(gameDic[gmwidg], position, export=True)
+        game_handler.saveGameAs(gmwidg.gamemodel, position, export=True)
 
     def on_analyze_game_activate(self, widget):
-        analyzegameDialog.run(gameDic)
+        analyzegameDialog.run()
 
     def on_properties1_activate(self, widget):
-        gameinfoDialog.run(gamewidget.getWidgets(), gameDic)
+        gameinfoDialog.run(gamewidget.getWidgets())
 
     def on_player_rating1_activate(self, widget):
         playerinfoDialog.run(gamewidget.getWidgets())
 
     def on_close1_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
-        ionest.closeGame(gmwidg, gameDic[gmwidg])
+        game_handler.closeGame(gmwidg)
 
     def on_quit1_activate(self, widget, *args):
         if isinstance(widget, Gdk.Event):
-            if len(gameDic) == 1 and conf.get("hideTabs", False):
+            if len(game_handler.gamewidgets) == 1 and conf.get("hideTabs", False):
                 gmwidg = gamewidget.cur_gmwidg()
-                ionest.closeGame(gmwidg, gameDic[gmwidg])
+                game_handler.closeGame(gmwidg, gmwidg.gamemodel)
                 return True
-            elif len(gameDic) >= 1 and conf.get("closeAll", False):
-                ionest.closeAllGames(gameDic.items())
+            elif len(game_handler.gamewidgets) >= 1 and conf.get("closeAll", False):
+                game_handler.closeAllGames(game_handler.gamewidgets)
                 return True
-        if ionest.closeAllGames(gameDic.items()) in (Gtk.ResponseType.OK,
-                                                     Gtk.ResponseType.YES):
+        if game_handler.closeAllGames(game_handler.gamewidgets) in (
+                Gtk.ResponseType.OK, Gtk.ResponseType.YES):
             Gtk.main_quit()
         else:
             return True
@@ -300,7 +277,7 @@ class GladeHandlers:
         gamewidget.zoomToBoard(not widget.get_active())
 
     def on_hint_mode_activate(self, widget):
-        for gmwidg in gameDic.keys():
+        for gmwidg in game_handler.gamewidgets:
             if gmwidg.isInFront():
                 if widget.get_active():
                     gmwidg.gamemodel.resume_analyzer(HINT)
@@ -308,7 +285,7 @@ class GladeHandlers:
                     gmwidg.gamemodel.pause_analyzer(HINT)
 
     def on_spy_mode_activate(self, widget):
-        for gmwidg in gameDic.keys():
+        for gmwidg in game_handler.gamewidgets:
             if gmwidg.isInFront():
                 if widget.get_active():
                     gmwidg.gamemodel.resume_analyzer(SPY)
@@ -344,13 +321,44 @@ class GladeHandlers:
         tipOfTheDay.TipOfTheDay.show()
 
 
-class PyChess:
+class PyChess(object):
     def __init__(self, log_viewer, chess_file):
         self.git_rev = ""
 
         self.initGlade(log_viewer)
         self.handleArgs(chess_file)
         checkversion()
+
+        self.loaded_cids = {}
+        self.saved_cids = {}
+        self.terminated_cids = {}
+
+    def on_gmwidg_created(self, gamehandler, gmwidg):
+        log.debug("GladeHandlers.on_gmwidg_created: starting")
+        # Bring playing window to the front
+        gamewidget.getWidgets()["window1"].present()
+
+        self.loaded_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect("game_loaded", self.update_recent)
+        self.saved_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect("game_saved", self.update_recent)
+        self.terminated_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect("game_terminated", self.on_terminated)
+
+        log.debug("GladeHandlers.on_gmwidg_created: returning")
+
+    def on_terminated(self, gamemodel):
+        if gamemodel.handler_is_connected(self.loaded_cids[gamemodel]):
+            gamemodel.disconnect(self.loaded_cids[gamemodel])
+            del self.loaded_cids[gamemodel]
+        if gamemodel.handler_is_connected(self.saved_cids[gamemodel]):
+            gamemodel.disconnect(self.saved_cids[gamemodel])
+            del self.saved_cids[gamemodel]
+        if gamemodel.handler_is_connected(self.terminated_cids[gamemodel]):
+            gamemodel.disconnect(self.terminated_cids[gamemodel])
+            del self.terminated_cids[gamemodel]
+
+    def update_recent(self, gamemodel, uri):
+        if isinstance(uri, basestring):
+            path = url2pathname(uri)
+            recentManager.add_item("file:" + pathname2url(path))
 
     def initGlade(self, log_viewer):
         # Init glade and the 'GladeHandlers'
@@ -367,8 +375,7 @@ class PyChess:
         gamewidget.setWidgets(widgets)
 
         # Main.py still needs a minimum of information
-        ionest.handler.connect("gmwidg_created",
-                               GladeHandlers.__dict__["on_gmwidg_created"])
+        game_handler.connect("gmwidg_created", self.on_gmwidg_created)
 
         # The only menuitems that need special initing
         for widget in ("hint_mode", "spy_mode"):
@@ -376,21 +383,15 @@ class PyChess:
 
         uistuff.keep(widgets["hint_mode"], "hint_mode", first_value=True)
         uistuff.keep(widgets["spy_mode"], "spy_mode", first_value=True)
-        uistuff.keep(widgets["show_sidepanels"],
-                     "show_sidepanels",
-                     first_value=True)
-        uistuff.keep(widgets["auto_call_flag"],
-                     "autoCallFlag",
-                     first_value=True)
+        uistuff.keep(widgets["show_sidepanels"], "show_sidepanels", first_value=True)
+        uistuff.keep(widgets["auto_call_flag"], "autoCallFlag", first_value=True)
 
         # Show main window and init d'n'd
         widgets["window1"].set_title('%s - PyChess' % _('Welcome'))
-        widgets["window1"].connect("delete-event",
-                                   GladeHandlers.__dict__["on_quit1_activate"])
-        widgets["window1"].connect(
-            "key-press-event", GladeHandlers.__dict__["on_window_key_press"])
-        uistuff.keepWindowSize("main", widgets["window1"], None,
-                               POSITION_GOLDEN)
+        widgets["window1"].connect("delete-event", GladeHandlers.__dict__["on_quit1_activate"])
+        widgets["window1"].connect("key-press-event", GladeHandlers.__dict__["on_window_key_press"])
+
+        uistuff.keepWindowSize("main", widgets["window1"], None, POSITION_GOLDEN)
         widgets["window1"].show()
         widgets["Background"].show_all()
 

@@ -1,7 +1,9 @@
 from __future__ import absolute_import
+
+from gi.repository import GLib
+
 from pychess.compat import unicode
 from pychess.System import conf
-from pychess.System.idle_add import idle_add
 from pychess.Utils.const import ACTION_MENU_ITEMS
 
 ################################################################################
@@ -12,14 +14,12 @@ from pychess.Utils.const import ACTION_MENU_ITEMS
 class GtkMenuItem(object):
     def __init__(self,
                  name,
-                 gamewidget,
                  sensitive=False,
                  label=None,
                  tooltip=None):
         assert isinstance(sensitive, bool)
         assert label is None or isinstance(label, str)
         self.name = name
-        self.gamewidget = gamewidget
         self._sensitive = sensitive
         self._label = label
         self._tooltip = tooltip
@@ -55,18 +55,16 @@ class GtkMenuItem(object):
         self._set_widget("tooltip-text", tooltip)
 
     def _set_widget(self, prop, value):
-        if not self.gamewidget.isInFront():
-            return
         from . import gamewidget
         if gamewidget.getWidgets()[self.name].get_property(prop) != value:
-            # print "setting %s property %s to %s.." % (self.name, prop, str(value)),
-            @idle_add
+            # print("setting %s property %s to %s.." % (self.name, prop, str(value)))
+
             def do_set_menu_item_prop():
                 gamewidget.getWidgets()[self.name].set_property(prop, value)
 
-            do_set_menu_item_prop()
-            # print " success (%s %s = \"%s\")" % \
-            #    (self.name, prop, gamewidget.getWidgets()[self.name].get_property(prop))
+            GLib.idle_add(do_set_menu_item_prop)
+            # print(" success (%s %s = \"%s\")" % (
+            #     self.name, prop, gamewidget.getWidgets()[self.name].get_property(prop)))
 
     def update(self):
         self._set_widget("sensitive", self._sensitive)
@@ -79,12 +77,11 @@ class GtkMenuItem(object):
 class GtkMenuToggleButton(GtkMenuItem):
     def __init__(self,
                  name,
-                 gamewidget,
                  sensitive=False,
                  active=False,
                  label=None):
         assert isinstance(active, bool)
-        GtkMenuItem.__init__(self, name, gamewidget, sensitive, label)
+        GtkMenuItem.__init__(self, name, sensitive, label)
         self._active = active
 
     @property
@@ -113,30 +110,11 @@ class MenuItemsDict(dict):
                        "ana_combobox", "inv_ana_combobox")
     VIEW_MENU_ITEMS = ("hint_mode", "spy_mode")
 
-    class ReadOnlyDictException(Exception):
-        pass
-
-    def __init__(self, gamewidget):
+    def __init__(self):
         dict.__init__(self)
         for item in ACTION_MENU_ITEMS:
-            dict.__setitem__(self, item, GtkMenuItem(item, gamewidget))
+            dict.__setitem__(self, item, GtkMenuItem(item))
         for item in self.ANAL_MENU_ITEMS:
-            dict.__setitem__(self,
-                             item,
-                             GtkMenuItem(item,
-                                         gamewidget,
-                                         sensitive=True))
+            dict.__setitem__(self, item, GtkMenuItem(item, sensitive=True))
         for item in self.VIEW_MENU_ITEMS:
-            dict.__setitem__(self,
-                             item,
-                             GtkMenuToggleButton(item,
-                                                 gamewidget,
-                                                 active=conf.get(item, False)))
-        gamewidget.connect("infront", self.on_gamewidget_infront)
-
-    def __setitem__(self, item, value):
-        raise self.ReadOnlyDictException()
-
-    def on_gamewidget_infront(self, gamewidget):
-        for menuitem in self:
-            self[menuitem].update()
+            dict.__setitem__(self, item, GtkMenuToggleButton(item, active=conf.get(item, False)))

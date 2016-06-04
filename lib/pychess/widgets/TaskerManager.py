@@ -15,7 +15,8 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE, BLACK, NORMALCHESS
 from pychess.Variants import variants
 from pychess.ic import ICLogon
-from pychess.widgets import ionest, newGameDialog
+from pychess.widgets.ionest import game_handler
+from pychess.widgets import newGameDialog
 
 from .Background import giveBackground
 from .ToggleComboBox import ToggleComboBox
@@ -219,9 +220,9 @@ class NewGameTasker(Gtk.Alignment):
                            variants[NORMALCHESS], 5 * 60, 0), name)
 
         if color == WHITE:
-            ionest.generalStart(gamemodel, player0tup, player1tup)
+            game_handler.generalStart(gamemodel, player0tup, player1tup)
         else:
-            ionest.generalStart(gamemodel, player1tup, player0tup)
+            game_handler.generalStart(gamemodel, player1tup, player0tup)
 
 big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
 

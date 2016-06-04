@@ -6,6 +6,7 @@ import os
 import sys
 import traceback
 import threading
+from collections import defaultdict
 from threading import currentThread
 
 from gi.repository import Gdk, Gtk, GLib, GObject
@@ -24,7 +25,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.const import REMOTE, UNFINISHED_STATES, PAUSED, RUNNING, LOCAL, \
     WHITE, BLACK, ACTION_MENU_ITEMS, DRAW, UNDOABLE_STATES, HINT, SPY, WHITEWON, \
-    BLACKWON, DROP, FAN_PIECES
+    MENU_ITEMS, BLACKWON, DROP, FAN_PIECES
 from pychess.Utils.Move import listToMoves
 from pychess.Utils.lutils import lmove
 from pychess.Utils.lutils.lmove import ParsingError
@@ -103,8 +104,10 @@ def getWidgets():
 
 
 key2gmwidg = {}
+key2cid = {}
+
 notebooks = {"board": cleanNotebook("board"),
-             "statusbar": cleanNotebook("statusbar"),
+             "buttons": cleanNotebook("buttons"),
              "messageArea": cleanNotebook("messageArea")}
 for panel in sidePanels:
     notebooks[panel.__name__] = cleanNotebook(panel.__name__)
@@ -120,7 +123,6 @@ class GameWidget(GObject.GObject):
 
     __gsignals__ = {
         'game_close_clicked': (GObject.SignalFlags.RUN_FIRST, None, ()),
-        'infront': (GObject.SignalFlags.RUN_FIRST, None, ()),
         'title_changed': (GObject.SignalFlags.RUN_FIRST, None, (str, )),
         'closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
@@ -131,58 +133,56 @@ class GameWidget(GObject.GObject):
         self.cids = {}
         self.closed = False
 
-        tabcontent, white_label, black_label, game_info_label = self.initTabcontents(
-        )
-        boardvbox, board, infobar, clock = self.initBoardAndClock(gamemodel)
-        statusbar, stat_hbox = self.initStatusbar(board)
-
-        self.tabcontent = tabcontent
-        self.player_name_labels = (white_label, black_label)
-        self.game_info_label = game_info_label
-        self.board = board
-        self.statusbar = statusbar
-        self.infobar = infobar
-        infobar.connect("hide", self.infobar_hidden)
+        # InfoBarMessage with rematch, undo or observe buttons
         self.game_ended_message = None
-        self.clock = clock
-        self.notebookKey = Gtk.Alignment()
-        self.boardvbox = boardvbox
-        self.stat_hbox = stat_hbox
-        self.menuitems = MenuItemsDict(self)
 
-        gamemodel.connect_after("game_started", self.game_started)
-        gamemodel.connect_after("game_ended", self.game_ended)
-        gamemodel.connect_after("game_changed", self.game_changed)
-        gamemodel.connect("game_paused", self.game_paused)
-        gamemodel.connect("game_resumed", self.game_resumed)
-        gamemodel.connect("moves_undone", self.moves_undone)
-        gamemodel.connect("game_unended", self.game_unended)
-        gamemodel.connect("game_saved", self.game_saved)
-        gamemodel.connect("players_changed", self.players_changed)
-        gamemodel.connect("analyzer_added", self.analyzer_added)
-        gamemodel.connect("analyzer_removed", self.analyzer_removed)
-        gamemodel.connect("analyzer_resumed", self.analyzer_resumed)
-        gamemodel.connect("analyzer_paused", self.analyzer_paused)
-        gamemodel.connect("message_received", self.message_received)
-        self.players_changed(gamemodel)
+        self.tabcontent, white_label, black_label, self.game_info_label = self.initTabcontents()
+        self.boardvbox, self.board, self.infobar, self.clock = self.initBoardAndClock(self.gamemodel)
+        self.stat_hbox = self.initButtons(self.board)
+
+        self.player_name_labels = (white_label, black_label)
+        self.infobar.connect("hide", self.infobar_hidden)
+
+        self.notebookKey = Gtk.Alignment()
+        self.menuitems = MenuItemsDict()
+
+        self.gamemodel_cids = [
+            self.gamemodel.connect_after("game_started", self.game_started),
+            self.gamemodel.connect_after("game_ended", self.game_ended),
+            self.gamemodel.connect_after("game_changed", self.game_changed),
+            self.gamemodel.connect("game_paused", self.game_paused),
+            self.gamemodel.connect("game_resumed", self.game_resumed),
+            self.gamemodel.connect("moves_undone", self.moves_undone),
+            self.gamemodel.connect("game_unended", self.game_unended),
+            self.gamemodel.connect("game_saved", self.game_saved),
+            self.gamemodel.connect("players_changed", self.players_changed),
+            self.gamemodel.connect("analyzer_added", self.analyzer_added),
+            self.gamemodel.connect("analyzer_removed", self.analyzer_removed),
+            self.gamemodel.connect("analyzer_resumed", self.analyzer_resumed),
+            self.gamemodel.connect("analyzer_paused", self.analyzer_paused),
+            self.gamemodel.connect("message_received", self.message_received),
+        ]
+        self.players_changed(self.gamemodel)
         if self.gamemodel.display_text:
-            if isinstance(gamemodel, ICGameModel):
+            if isinstance(self.gamemodel, ICGameModel):
                 self.game_info_label.set_text("%s [%s]" % (
                     self.display_text, self.gamemodel.ficsgame.gameno))
             else:
                 self.game_info_label.set_text(self.display_text)
-        if gamemodel.timed:
-            gamemodel.timemodel.connect("zero_reached", self.zero_reached)
-        if isinstance(gamemodel, ICGameModel):
-            gamemodel.connection.bm.connect("player_lagged",
-                                            self.player_lagged)
-            gamemodel.connection.bm.connect("opp_not_out_of_time",
-                                            self.opp_not_out_of_time)
-        board.view.connect("shownChanged", self.shownChanged)
+        if self.gamemodel.timed:
+            self.cids[self.gamemodel.timemodel] = self.gamemodel.timemodel.connect("zero_reached", self.zero_reached)
+
+        self.connections = defaultdict(list)
+        if isinstance(self.gamemodel, ICGameModel):
+            self.connections[self.gamemodel.connection.bm].append(
+                self.gamemodel.connection.bm.connect("player_lagged", self.player_lagged))
+            self.connections[self.gamemodel.connection.bm].append(
+                self.gamemodel.connection.bm.connect("opp_not_out_of_time", self.opp_not_out_of_time))
+        self.cids[self.board.view] = self.board.view.connect("shownChanged", self.shownChanged)
 
         def do_load_panels(event):
-            self.panels = [panel.Sidepanel().load(self)
-                           for panel in sidePanels]
+            # self.panels = [panel.Sidepanel().load(self) if panel.__name__ == "bookPanel" else Gtk.ScrolledWindow() for panel in sidePanels]
+            self.panels = [panel.Sidepanel().load(self) for panel in sidePanels]
             if event is not None:
                 event.set()
 
@@ -194,17 +194,45 @@ class GameWidget(GObject.GObject):
             GLib.idle_add(do_load_panels, event)
             event.wait()
 
-        if isinstance(gamemodel, ICGameModel):
-            gamemodel.gmwidg_ready.set()
+        if isinstance(self.gamemodel, ICGameModel):
+            self.gamemodel.gmwidg_ready.set()
 
     def _del(self):
-        self.board._del()
-
         for obj in self.cids:
             if obj.handler_is_connected(self.cids[obj]):
                 log.debug("GameWidget._del: disconnecting %s" % repr(obj))
                 obj.disconnect(self.cids[obj])
-        self.cids.clear()
+        self.cids = {}
+
+        for obj in self.connections:
+            for handler_id in self.connections[obj]:
+                if obj.handler_is_connected(handler_id):
+                    obj.disconnect(handler_id)
+        self.connections = {}
+
+        for cid in self.gamemodel_cids:
+            self.gamemodel.disconnect(cid)
+
+        self.board._del()
+
+        if self.game_ended_message is not None:
+            self.game_ended_message.callback = None
+
+    @idle_add
+    def infront(self):
+        for menuitem in self.menuitems:
+            self.menuitems[menuitem].update()
+
+        for widget in MENU_ITEMS:
+            if widget in self.menuitems:
+                continue
+            elif widget == 'show_sidepanels' and isDesignGWShown():
+                getWidgets()[widget].set_property('sensitive', False)
+            else:
+                getWidgets()[widget].set_property('sensitive', True)
+
+        # Change window title
+        getWidgets()['window1'].set_title('%s - PyChess' % self.display_text)
 
     def _update_menu_abort(self):
         if self.gamemodel.hasEnginePlayer():
@@ -316,7 +344,7 @@ class GameWidget(GObject.GObject):
                 count = holding[color][piece]
                 figurines[color] += " " if count == 0 else FAN_PIECES[color][
                     piece] * count
-        self.status(figurines[BLACK] + "   " + figurines[WHITE])
+        print(figurines[BLACK] + "   " + figurines[WHITE])
 
     def shownChanged(self, boardview, shown):
         # Help crazyhouse testing
@@ -386,8 +414,9 @@ class GameWidget(GObject.GObject):
         self._update_menu_undo()
         if isinstance(gamemodel,
                       ICGameModel):  # on FICS game board change update allob
-            allob = 'allob ' + str(gamemodel.ficsgame.gameno)
-            gamemodel.connection.client.run_command(allob)
+            if gamemodel.connection is not None:
+                allob = 'allob ' + str(gamemodel.ficsgame.gameno)
+                gamemodel.connection.client.run_command(allob)
 
         for analyzer_type in (HINT, SPY):
             # only clear arrows if analyzer is examining the last position
@@ -508,9 +537,15 @@ class GameWidget(GObject.GObject):
 
     def player_display_text(self, color=WHITE):
         if isinstance(self.gamemodel, ICGameModel):
-            return self.gamemodel.ficsplayers[color].name
+            if self.gamemodel.ficsplayers:
+                return self.gamemodel.ficsplayers[color].name
+            else:
+                return ""
         else:
-            return repr(self.gamemodel.players[color])
+            if self.gamemodel.players:
+                return repr(self.gamemodel.players[color])
+            else:
+                return ""
 
     @property
     def display_text(self):
@@ -528,15 +563,16 @@ class GameWidget(GObject.GObject):
             self.name_changed(player)
             # Notice that this may connect the same player many times. In
             # normal use that shouldn't be a problem.
-            player.connect("name_changed", self.name_changed)
+            self.cids[player] = player.connect("name_changed", self.name_changed)
         log.debug("GameWidget.players_changed: returning")
 
     def name_changed(self, player):
         log.debug("GameWidget.name_changed: starting %s" % repr(player))
         color = self.gamemodel.color(player)
 
-        @idle_add
         def do_name_changed():
+            if self.gamemodel is None:
+                return
             self.player_name_labels[color].set_text(self.player_display_text(
                 color=color))
             if isinstance(self.gamemodel, ICGameModel) and \
@@ -544,8 +580,8 @@ class GameWidget(GObject.GObject):
                 self.player_name_labels[color].set_tooltip_text(
                     get_player_tooltip_text(self.gamemodel.ficsplayers[color],
                                             show_status=False))
+        GLib.idle_add(do_name_changed)
 
-        do_name_changed()
         self.emit('title_changed', self.display_text)
         log.debug("GameWidget.name_changed: returning")
 
@@ -593,7 +629,7 @@ class GameWidget(GObject.GObject):
 
     @idle_add
     def opp_not_out_of_time(self, bm):
-        if self.gamemodel.remote_player.time <= 0:
+        if self.gamemodel is not None and self.gamemodel.remote_player.time <= 0:
             content = get_infobarmessage_content2(
                 self.gamemodel.remote_ficsplayer,
                 _(" is lagging heavily but hasn't disconnected"),
@@ -614,6 +650,10 @@ class GameWidget(GObject.GObject):
             self.showMessage(message)
         return False
 
+    def on_game_close_clicked(self, button):
+        log.debug("gamewidget.on_game_close_clicked %s" % button)
+        self.emit("game_close_clicked")
+
     def initTabcontents(self):
         tabcontent = createAlignment(0, 0, 0, 0)
         hbox = Gtk.HBox()
@@ -625,11 +665,7 @@ class GameWidget(GObject.GObject):
         close_button.set_relief(Gtk.ReliefStyle.NONE)
         close_button.set_size_request(20, 18)
 
-        def on_game_close_clicked(button):
-            log.debug("gamewidget.on_game_close_clicked %s" % button)
-            self.emit("game_close_clicked")
-
-        close_button.connect("clicked", on_game_close_clicked)
+        self.cids[close_button] = close_button.connect("clicked", self.on_game_close_clicked)
 
         hbox.pack_end(close_button, False, True, 0)
         text_hbox = Gtk.HBox()
@@ -666,7 +702,7 @@ class GameWidget(GObject.GObject):
         boardvbox.pack_start(board, True, True, 0)
         return boardvbox, board, infobar, cclock
 
-    def initStatusbar(self, board):
+    def initButtons(self, board):
         def tip(widget, x, y, keyboard_mode, tooltip, text):
             label = Gtk.Label(label=text)
             tooltip.set_custom(label)
@@ -674,11 +710,6 @@ class GameWidget(GObject.GObject):
             return True
 
         align = createAlignment(4, 0, 4, 0)
-        # stat_hbox = Gtk.HBox()
-        # page_vbox = Gtk.VBox()
-        # page_vbox.set_spacing(1)
-        # sep = Gtk.HSeparator()
-        # sep.set_size_request(-1, 2)
         page_hbox = Gtk.HBox()
         startbut = Gtk.Button()
         startbut.add(createImage(media_previous))
@@ -706,23 +737,21 @@ class GameWidget(GObject.GObject):
         endbut.set_relief(Gtk.ReliefStyle.NONE)
         endbut.props.has_tooltip = True
         endbut.connect("query-tooltip", tip, _("Jump to latest position"))
-        startbut.connect("clicked", lambda w: board.view.showFirst())
-        backbut.connect("clicked", lambda w: board.view.showPrev())
-        mainbut.connect("clicked", lambda w: board.view.backToMainLine())
-        forwbut.connect("clicked", lambda w: board.view.showNext())
-        endbut.connect("clicked", lambda w: board.view.showLast())
+
+        def on_clicked(button, func):
+            func()
+        self.cids[startbut] = startbut.connect("clicked", on_clicked, self.board.view.showFirst)
+        self.cids[backbut] = backbut.connect("clicked", on_clicked, self.board.view.showPrev)
+        self.cids[mainbut] = mainbut.connect("clicked", on_clicked, self.board.view.backToMainLine)
+        self.cids[forwbut] = forwbut.connect("clicked", on_clicked, self.board.view.showNext)
+        self.cids[endbut] = endbut.connect("clicked", on_clicked, self.board.view.showLast)
         page_hbox.pack_start(startbut, True, True, 0)
         page_hbox.pack_start(backbut, True, True, 0)
         page_hbox.pack_start(mainbut, True, True, 0)
         page_hbox.pack_start(forwbut, True, True, 0)
         page_hbox.pack_start(endbut, True, True, 0)
-        # page_vbox.pack_start(sep, True, True, 0)
-        # page_vbox.pack_start(page_hbox, True, True, 0)
-        statusbar = Gtk.Statusbar()
-        # stat_hbox.pack_start(page_vbox, False, True, 0)
-        # stat_hbox.pack_start(statusbar, True, True, 0)
         align.add(page_hbox)
-        return statusbar, align
+        return align
 
     @idle_add
     def light_on_off(self, on):
@@ -753,17 +782,6 @@ class GameWidget(GObject.GObject):
 
         log.debug("GameWidget.setLocked: %s: returning" %
                   self.gamemodel.players)
-
-    @idle_add
-    def status(self, message):
-        # Enable only moves entered by keyboard
-        # TODO: revise all statusbar messages, maybe some of them can be sent to infobar
-        if len(message) > 7:
-            return
-            self.statusbar.pop(0)
-            if message:
-                # print "Setting statusbar to \"%s\"" % str(message)
-                self.statusbar.push(0, message)
 
     def bringToFront(self):
         getheadbook().set_current_page(self.getPageNumber())
@@ -834,9 +852,14 @@ def delGameWidget(gmwidg):
             called_from_preferences = True
             break
 
-    del key2gmwidg[gmwidg.notebookKey]
+    if gmwidg.notebookKey in key2gmwidg:
+        del key2gmwidg[gmwidg.notebookKey]
     pageNum = gmwidg.getPageNumber()
     headbook = getheadbook()
+
+    if gmwidg.notebookKey in key2cid:
+        headbook.disconnect(key2cid[gmwidg.notebookKey])
+        del key2cid[gmwidg.notebookKey]
 
     headbook.remove_page(pageNum)
     for notebook in notebooks.values():
@@ -847,7 +870,6 @@ def delGameWidget(gmwidg):
 
     if headbook.get_n_pages() == 0:
         mainvbox = widgets["mainvbox"]
-
         centerVBox = mainvbox.get_children()[2]
         for child in centerVBox.get_children():
             centerVBox.remove(child)
@@ -865,7 +887,6 @@ def delGameWidget(gmwidg):
                 dialog.lounge.present()
             except AttributeError:
                 pass
-
     gmwidg._del()
 
 
@@ -873,7 +894,6 @@ def _ensureReadForGameWidgets():
     mainvbox = widgets["mainvbox"]
     if len(mainvbox.get_children()) == 3:
         return
-
     global background
     background = widgets["mainvbox"].get_children()[1]
     mainvbox.remove(background)
@@ -1003,9 +1023,9 @@ def _ensureReadForGameWidgets():
 
     hbox = Gtk.HBox()
 
-    # The status bar
-    notebooks["statusbar"].set_border_width(4)
-    hbox.pack_start(notebooks["statusbar"], False, True, 0)
+    # Buttons
+    notebooks["buttons"].set_border_width(4)
+    hbox.pack_start(notebooks["buttons"], False, True, 0)
 
     # The message area
     # TODO: If you try to fix this first read issue #958 and 1018
@@ -1073,15 +1093,15 @@ def attachGameWidget(gmwidg):
 
     def callback(notebook, gpointer, page_num, gmwidg):
         if notebook.get_nth_page(page_num) == gmwidg.notebookKey:
-            gmwidg.emit("infront")
+            gmwidg.infront()
             if gmwidg.gamemodel.players and gmwidg.gamemodel.isObservationGame():
                 gmwidg.light_on_off(False)
                 text = gmwidg.game_info_label.get_text()
                 gmwidg.game_info_label.set_markup(
                     '<span color="black" weight="bold">%s</span>' % text)
 
-    headbook.connect_after("switch-page", callback, gmwidg)
-    gmwidg.emit("infront")
+    key2cid[gmwidg.notebookKey] = headbook.connect_after("switch-page", callback, gmwidg)
+    gmwidg.infront()
 
     align = createAlignment(0, 0, 0, 0)
     align.show()
@@ -1092,7 +1112,7 @@ def attachGameWidget(gmwidg):
     for panel, instance in zip(sidePanels, gmwidg.panels):
         notebooks[panel.__name__].append_page(instance, None)
         instance.show_all()
-    notebooks["statusbar"].append_page(gmwidg.stat_hbox, None)
+    notebooks["buttons"].append_page(gmwidg.stat_hbox, None)
     gmwidg.stat_hbox.show_all()
 
     # We should always show tabs if more than one exists
@@ -1101,8 +1121,7 @@ def attachGameWidget(gmwidg):
 
     headbook.set_current_page(-1)
 
-    if headbook.get_n_pages() == 1 and not widgets[
-            "show_sidepanels"].get_active():
+    if headbook.get_n_pages() == 1 and not widgets["show_sidepanels"].get_active():
         zoomToBoard(True)
 
 

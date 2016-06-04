@@ -199,6 +199,8 @@ class ChessClock(Gtk.DrawingArea):
         self.redraw_canvas()
 
     def update(self, wmovecount=-1, bmovecount=-1):
+        if self.model.ended:
+            return False
         alarm_time = int(conf.get("alarm_spin", 15))
         if self.model.getPlayerTime(self.model.movingColor) <= alarm_time and \
             self.model.gamemodel.players[self.model.movingColor].__type__ == LOCAL and \

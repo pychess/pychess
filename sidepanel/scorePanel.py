@@ -32,17 +32,24 @@ class Sidepanel:
         __widget__.add(port)
         __widget__.show_all()
 
-        self.plot.connect("selected", self.plot_selected)
-        self.boardview.connect('shownChanged', self.shownChanged)
-        self.boardview.model.connect_after("game_changed", self.game_changed)
-        self.boardview.model.connect_after("moves_undone", self.moves_undone)
-        self.boardview.model.connect_after("analysis_changed",
-                                           self.analysis_changed)
-        self.boardview.model.connect_after("game_started", self.game_started)
-
+        self.plot_cid = self.plot.connect("selected", self.plot_selected)
+        self.cid = self.boardview.connect('shownChanged', self.shownChanged)
+        self.model_cids = [
+            self.boardview.model.connect_after("game_changed", self.game_changed),
+            self.boardview.model.connect_after("moves_undone", self.moves_undone),
+            self.boardview.model.connect_after("analysis_changed", self.analysis_changed),
+            self.boardview.model.connect_after("game_started", self.game_started),
+            self.boardview.model.connect_after("game_terminated", self.on_game_terminated),
+        ]
         uistuff.keepDown(__widget__)
 
         return __widget__
+
+    def on_game_terminated(self, model):
+        self.plot.disconnect(self.plot_cid)
+        for cid in self.model_cids:
+            self.boardview.model.disconnect(cid)
+        self.boardview.disconnect(self.cid)
 
     def moves_undone(self, model, moves):
         for i in range(moves):

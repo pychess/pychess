@@ -379,7 +379,7 @@ class PGNFile(PgnBase):
         self.has_emt = False
         self.has_eval = False
 
-        def walk(node, path):
+        def walk(model, node, path):
             if node.prev is None:
                 # initial game board
                 board = model.variant(setup=node.asFen(), lboard=node)
@@ -396,13 +396,13 @@ class PGNFile(PgnBase):
             if node.next is None:
                 model.variations.append(path + [board])
             else:
-                walk(node.next, path + [board])
+                walk(model, node.next, path + [board])
 
             for child in node.children:
                 if isinstance(child, list):
                     if len(child) > 1:
                         # non empty variation, go walk
-                        walk(child[1], list(path))
+                        walk(model, child[1], list(path))
                 else:
                     if not self.has_emt:
                         self.has_emt = child.find("%emt") >= 0
@@ -413,7 +413,7 @@ class PGNFile(PgnBase):
         # where the first one will be the boards of mainline game.
         # model.boards will allways point to the current shown variation
         # which will be model.variations[0] when we are in the mainline.
-        walk(boards[0], [])
+        walk(model, boards[0], [])
         model.boards = model.variations[0]
         self.has_emt = self.has_emt and "TimeControl" in model.tags
         if self.has_emt or self.has_eval:

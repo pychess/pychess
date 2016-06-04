@@ -5,8 +5,8 @@ from pychess.Utils.const import BLACK, WHITE
 firstRun = True
 
 
-def run(widgets, game_dic):
-    gamemodel = game_dic[gamewidget.cur_gmwidg()]
+def run(widgets):
+    gamemodel = gamewidget.cur_gmwidg().gamemodel
     widgets["event_entry"].set_text(gamemodel.tags["Event"])
     widgets["site_entry"].set_text(gamemodel.tags["Site"])
     widgets["round_spinbutton"].set_value(float(gamemodel.tags["Round"]))
@@ -22,18 +22,18 @@ def run(widgets, game_dic):
 
     global firstRun
     if firstRun:
-        initialize(widgets, game_dic)
+        initialize(widgets)
         firstRun = False
     widgets["game_info"].show()
 
 
-def initialize(widgets, game_dic):
+def initialize(widgets):
     def hide_window(button, *args):
         widgets["game_info"].hide()
         return True
 
     def accept_new_properties(button, *args):
-        gamemodel = game_dic[gamewidget.cur_gmwidg()]
+        gamemodel = gamewidget.cur_gmwidg().gamemodel
         gamemodel.tags["Event"] = widgets["event_entry"].get_text()
         gamemodel.tags["Site"] = widgets["site_entry"].get_text()
         gamemodel.tags["Round"] = int(widgets["round_spinbutton"].get_value())

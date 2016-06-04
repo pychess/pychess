@@ -50,18 +50,23 @@ class BoardControl(Gtk.EventBox):
         for key, menuitem in self.action_menu_items.items():
             if menuitem is None:
                 print(key)
+            # print("...connect to", key, menuitem)
             self.connections[menuitem] = menuitem.connect(
                 "activate", self.actionActivate, key)
+        self.view_cid = self.view.connect("shownChanged", self.shownChanged)
 
-        self.view.connect("shownChanged", self.shownChanged)
-        gamemodel.connect("moves_undoing", self.moves_undone)
-        gamemodel.connect("game_ended", self.game_ended)
-        self.connect("button_press_event", self.button_press)
-        self.connect("button_release_event", self.button_release)
+        self.gamemodel = gamemodel
+        self.gamemodel_cids = []
+        self.gamemodel_cids.append(gamemodel.connect("moves_undoing", self.moves_undone))
+        self.gamemodel_cids.append(gamemodel.connect("game_ended", self.game_ended))
+
+        self.cids = []
+        self.cids.append(self.connect("button_press_event", self.button_press))
+        self.cids.append(self.connect("button_release_event", self.button_release))
         self.add_events(Gdk.EventMask.LEAVE_NOTIFY_MASK |
                         Gdk.EventMask.POINTER_MOTION_MASK)
-        self.connect("motion_notify_event", self.motion_notify)
-        self.connect("leave_notify_event", self.leave_notify)
+        self.cids.append(self.connect("motion_notify_event", self.motion_notify))
+        self.cids.append(self.connect("leave_notify_event", self.leave_notify))
 
         self.selected_last = None
         self.stateLock = threading.Lock()
@@ -86,18 +91,38 @@ class BoardControl(Gtk.EventBox):
                     if player.__type__ == LOCAL:
                         self.allowPremove = True
 
-        gamemodel.connect("game_started", onGameStart)
+        self.gamemodel_cids.append(gamemodel.connect("game_started", onGameStart))
         self.keybuffer = ""
 
     def _del(self):
-        for menu, conid in self.connections.items():
-            menu.disconnect(conid)
+        self.view.disconnect(self.view_cid)
+        for cid in self.cids:
+            self.disconnect(cid)
+
+        for obj, conid in self.connections.items():
+            # print("...disconnect from ", obj)
+            obj.disconnect(conid)
         self.connections = {}
+        self.action_menu_items = {}
+
+        for cid in self.gamemodel_cids:
+            self.gamemodel.disconnect(cid)
+
+        self.view._del()
+
+        self.promotionDialog = None
+
+        self.normalState = None
+        self.selectedState = None
+        self.activeState = None
+        self.lockedNormalState = None
+        self.lockedSelectedState = None
+        self.lockedActiveState = None
+        self.currentState = None
 
     def getPromotion(self):
         color = self.view.model.boards[-1].color
         variant = self.view.model.boards[-1].variant
-        promotion = None
         promotion = self.promotionDialog.runAndHide(color, variant)
         return promotion
 
@@ -189,6 +214,8 @@ class BoardControl(Gtk.EventBox):
 
     def shownChanged(self, view, shown):
         def do_shown_changed():
+            if self.view is None:
+                return
             self.lockedPly = self.view.shown
             self.possibleBoards[self.lockedPly] = self._genPossibleBoards(
                 self.lockedPly)

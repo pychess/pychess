@@ -50,18 +50,24 @@ class Sidepanel:
 
         self.boardview = gmwidg.board.view
 
-        self.boardview.model.connect_after("game_changed", self.game_changed)
-        self.boardview.model.connect_after("players_changed",
-                                           self.players_changed)
-        self.boardview.model.connect_after("game_started", self.game_started)
-
+        self.model_cids = [
+            self.boardview.model.connect_after("game_changed", self.game_changed),
+            self.boardview.model.connect_after("players_changed", self.players_changed),
+            self.boardview.model.connect_after("game_started", self.game_started),
+            self.boardview.model.connect_after("game_terminated", self.on_game_terminated),
+        ]
         return __widget__
+
+    def on_game_terminated(self, model):
+        for cid in self.model_cids:
+            self.boardview.model.disconnect(cid)
 
     @idle_add
     def updateVisibleOutputs(self, model):
         # Check which players participate and update which views are visible
         # gotplayers = False
-
+        if model is None:
+            return
         # gotEnginePlayers = False
         gotWhiteEngine = False
         gotBlackEngine = False

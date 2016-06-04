@@ -86,7 +86,6 @@ class ICGameModel(GameModel):
                     log.debug("ICGameModel.__disconnect: object=%s handler_id=%s" %
                               (repr(obj), repr(handler_id)))
                     obj.disconnect(handler_id)
-        self.connections = None
 
     def ficsplayer(self, player):
         if player.ichandle == self.ficsplayers[0].name:
@@ -345,6 +344,15 @@ class ICGameModel(GameModel):
             GameModel.kill(self, reason)
         else:
             GameModel.end(self, status, reason)
+
+    def terminate(self):
+        for obj in self.connections:
+            for handler_id in self.connections[obj]:
+                if obj.handler_is_connected(handler_id):
+                    obj.disconnect(handler_id)
+
+        self.connections = None
+        GameModel.terminate(self)
 
     def goFirst(self):
         self.connection.client.run_command("backward 999")

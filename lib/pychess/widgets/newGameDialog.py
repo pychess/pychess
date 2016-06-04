@@ -33,8 +33,8 @@ from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
 from pychess.widgets import BoardPreview
+from pychess.widgets.ionest import game_handler
 from pychess.widgets import gamewidget
-from pychess.widgets import ionest
 from pychess.widgets import ImageMenu
 from pychess.widgets.BoardControl import BoardControl
 from pychess.Savers import fen, pgn
@@ -110,7 +110,7 @@ COPY, CLEAR, PASTE = 2, 3, 4
 # ===============================================================================
 
 
-class _GameInitializationMode:
+class _GameInitializationMode(object):
     @classmethod
     def _ensureReady(cls):
         if not hasattr(_GameInitializationMode, "superhasRunInit"):
@@ -476,7 +476,7 @@ class NewGameMode(_GameInitializationMode):
 
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("New Game"))
-        cls._generalRun(ionest.generalStart, _validate)
+        cls._generalRun(game_handler.generalStart, _validate)
 
 # ###############################################################################
 # LoadFileExtension                                                            #
@@ -486,7 +486,7 @@ class NewGameMode(_GameInitializationMode):
 class LoadFileExtension(_GameInitializationMode):
     @classmethod
     def _init(cls):
-        opendialog, savedialog, enddir, savecombo, savers = ionest.getOpenAndSaveDialogs(
+        opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs(
         )
         cls.filechooserbutton = Gtk.FileChooserButton.new_with_dialog(
             opendialog)
@@ -501,12 +501,12 @@ class LoadFileExtension(_GameInitializationMode):
             return
 
         if not uri:
-            res = ionest.opendialog.run()
-            ionest.opendialog.hide()
+            res = game_handler.opendialog.run()
+            game_handler.opendialog.hide()
             if res != Gtk.ResponseType.ACCEPT:
                 return
         else:
-            if not uri[uri.rfind(".") + 1:] in ionest.enddir:
+            if not uri[uri.rfind(".") + 1:] in game_handler.enddir:
                 log.info("Ignoring strange file: %s" % uri)
                 return
             cls.loadSidePanel.set_filename(uri)
@@ -522,13 +522,13 @@ class LoadFileExtension(_GameInitializationMode):
         def _callback(gamemodel, p0, p1):
             if not cls.loadSidePanel.isEmpty():
                 uri = cls.loadSidePanel.get_filename()
-                loader = ionest.enddir[uri[uri.rfind(".") + 1:]]
+                loader = game_handler.enddir[uri[uri.rfind(".") + 1:]]
                 position = cls.loadSidePanel.getPosition()
                 gameno = cls.loadSidePanel.getGameno()
-                ionest.generalStart(gamemodel, p0, p1,
-                                    (uri, loader, gameno, position))
+                game_handler.generalStart(
+                    gamemodel, p0, p1, (uri, loader, gameno, position))
             else:
-                ionest.generalStart(gamemodel, p0, p1)
+                game_handler.generalStart(gamemodel, p0, p1)
 
         cls._generalRun(_callback, _validate)
 
@@ -702,8 +702,8 @@ class SetupPositionExtension(_GameInitializationMode):
 
         def _callback(gamemodel, p0, p1):
             text = cls.get_fen()
-            ionest.generalStart(gamemodel, p0, p1,
-                                (StringIO(text), fen, 0, -1))
+            game_handler.generalStart(
+                gamemodel, p0, p1, (StringIO(text), fen, 0, -1))
 
         cls._generalRun(_callback, _validate)
 
@@ -833,8 +833,8 @@ class EnterNotationExtension(_GameInitializationMode):
 
         def _callback(gamemodel, p0, p1):
             text, loadType = _get_text()
-            ionest.generalStart(gamemodel, p0, p1,
-                                (StringIO(text), loadType, 0, -1))
+            game_handler.generalStart(
+                gamemodel, p0, p1, (StringIO(text), loadType, 0, -1))
 
         cls._generalRun(_callback, _validate)
 
@@ -922,17 +922,17 @@ def createRematch(gamemodel):
                       (engine, BLACK, wp.strength, gamemodel.variant, secs,
                        gain), repr(wp))
 
-    ionest.generalStart(newgamemodel, player0tup, player1tup)
+    game_handler.generalStart(newgamemodel, player0tup, player1tup)
 
 
 def loadFilesAndRun(uris):
     for uri in uris:
         uri = splitUri(uri)[1]
-        loader = ionest.enddir[uri[uri.rfind(".") + 1:]]
+        loader = game_handler.enddir[uri[uri.rfind(".") + 1:]]
         timemodel = TimeModel(0, 0)
         gamemodel = GameModel(timemodel)
         white_name = _("White")
         black_name = _("Black")
         p0 = (LOCAL, Human, (WHITE, white_name), white_name)
         p1 = (LOCAL, Human, (BLACK, black_name), black_name)
-        ionest.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1))
+        game_handler.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1))

@@ -5,7 +5,6 @@ import datetime
 
 from gi.repository import Gtk
 from gi.repository import Pango
-from gi.repository import GObject
 from gi.repository import Gdk
 
 from pychess.compat import basestring, unicode
@@ -49,30 +48,25 @@ index  = in comment nodes the index of comment if more exist for a move
 """
 
 
-class Sidepanel(Gtk.TextView):
-    def __init__(self):
-        GObject.GObject.__init__(self)
-
-        # self.set_editable(False)
-        # self.set_cursor_visible(False)
-        self.set_wrap_mode(Gtk.WrapMode.WORD)
+class Sidepanel:
+    def load(self, gmwidg):
+        self.textview = Gtk.TextView()
+        self.textview.set_wrap_mode(Gtk.WrapMode.WORD)
 
         self.cursor_standard = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
-        # self.cursor_hand = Gdk.Cursor.new(Gdk.HAND2)
         self.cursor_hand = Gdk.Cursor.new(Gdk.CursorType.HAND2)
-
-        self.textview = self
 
         self.nodelist = []
         self.oldWidth = 0
         self.autoUpdateSelected = True
 
-        self.connect("motion-notify-event", self.motion_notify_event)
-        self.connect("button-press-event", self.button_press_event)
-
+        self.textview_cids = [
+            self.textview.connect("motion-notify-event", self.motion_notify_event),
+            self.textview.connect("button-press-event", self.button_press_event),
+        ]
         bg_color, fg_color = set_textview_color(self.textview)
 
-        self.textbuffer = self.get_buffer()
+        self.textbuffer = self.textview.get_buffer()
 
         color0 = fg_color
         color1 = Gdk.RGBA(red=0.2, green=0.0, blue=0.0)
@@ -81,8 +75,8 @@ class Sidepanel(Gtk.TextView):
         color4 = Gdk.RGBA(red=0.8, green=0.0, blue=0.0)
         color5 = Gdk.RGBA(red=1.0, green=0.0, blue=0.0)
 
-        tag = self.textbuffer.create_tag("remove-variation")
-        tag.connect("event", self.tag_event_handler)
+        self.remove_vari_tag = self.textbuffer.create_tag("remove-variation")
+        self.rmv_cid = self.remove_vari_tag.connect("event", self.tag_event_handler)
 
         self.new_line_tag = self.textbuffer.create_tag("new_line")
 
@@ -115,35 +109,38 @@ class Sidepanel(Gtk.TextView):
         self.textbuffer.create_tag("variation-margin1", left_margin=36)
         self.textbuffer.create_tag("variation-margin2", left_margin=52)
 
-    def load(self, gmwidg):
         __widget__ = Gtk.ScrolledWindow()
         __widget__.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
         __widget__.add(self.textview)
 
-        self.gamewidget = gmwidg
         self.boardview = gmwidg.board.view
-        self.boardview.connect("shownChanged", self.shownChanged)
+        self.cid = self.boardview.connect("shownChanged", self.shownChanged)
 
-        self.gamemodel = gmwidg.board.view.model
-        self.gamemodel.connect_after("game_loaded", self.game_loaded)
-        self.gamemodel.connect_after("game_changed", self.game_changed)
-        self.gamemodel.connect_after("game_started", self.update)
-        self.gamemodel.connect_after("game_ended", self.update)
-        self.gamemodel.connect_after("moves_undone", self.moves_undone)
-        self.gamemodel.connect_after("opening_changed", self.update)
-        self.gamemodel.connect_after("players_changed", self.players_changed)
-        self.gamemodel.connect("variation_added", self.variation_added)
-        self.gamemodel.connect("variation_extended", self.variation_extended)
-        self.gamemodel.connect("analysis_changed", self.analysis_changed)
+        self.gamemodel = gmwidg.gamemodel
+        self.model_cids = [
+            self.gamemodel.connect_after("game_loaded", self.game_loaded),
+            self.gamemodel.connect_after("game_changed", self.game_changed),
+            self.gamemodel.connect_after("game_started", self.update),
+            self.gamemodel.connect_after("game_ended", self.update),
+            self.gamemodel.connect_after("moves_undone", self.moves_undone),
+            self.gamemodel.connect_after("opening_changed", self.update),
+            self.gamemodel.connect_after("players_changed", self.players_changed),
+            self.gamemodel.connect_after("game_terminated", self.on_game_terminated),
+            self.gamemodel.connect("variation_added", self.variation_added),
+            self.gamemodel.connect("variation_extended", self.variation_extended),
+            self.gamemodel.connect("analysis_changed", self.analysis_changed),
+        ]
 
         # Connect to preferences
+        self.conf_conids = []
+
         self.fan = conf.get("figuresInNotation", False)
 
         def figuresInNotationCallback(none):
             self.fan = conf.get("figuresInNotation", False)
             self.update()
 
-        conf.notify_add("figuresInNotation", figuresInNotationCallback)
+        self.conf_conids.append(conf.notify_add("figuresInNotation", figuresInNotationCallback))
 
         # Elapsed move time
         self.showEmt = conf.get("showEmt", False)
@@ -152,7 +149,7 @@ class Sidepanel(Gtk.TextView):
             self.showEmt = conf.get("showEmt", False)
             self.update()
 
-        conf.notify_add("showEmt", showEmtCallback)
+        self.conf_conids.append(conf.notify_add("showEmt", showEmtCallback))
 
         # Blunders
         self.showBlunder = conf.get("showBlunder", False)
@@ -161,7 +158,7 @@ class Sidepanel(Gtk.TextView):
             self.showBlunder = conf.get("showBlunder", False)
             self.update()
 
-        conf.notify_add("showBlunder", showBlunderCallback)
+        self.conf_conids.append(conf.notify_add("showBlunder", showBlunderCallback))
 
         # Eval values
         self.showEval = conf.get("showEval", False)
@@ -170,9 +167,19 @@ class Sidepanel(Gtk.TextView):
             self.showEval = conf.get("showEval", False)
             self.update()
 
-        conf.notify_add("showEval", showEvalCallback)
+        self.conf_conids.append(conf.notify_add("showEval", showEvalCallback))
 
         return __widget__
+
+    def on_game_terminated(self, model):
+        for cid in self.textview_cids:
+            self.textview.disconnect(cid)
+        for conid in self.conf_conids:
+            conf.notify_remove(conid)
+        self.remove_vari_tag.disconnect(self.rmv_cid)
+        for cid in self.model_cids:
+            self.gamemodel.disconnect(cid)
+        self.boardview.disconnect(self.cid)
 
     def tag_event_handler(self, tag, widget, event, iter):
         """ Calls variation remover when clicking on remove marker """
@@ -726,6 +733,9 @@ class Sidepanel(Gtk.TextView):
     def colorize_node(self, ply, start, end):
         """ Update the node color """
 
+        if self.gamemodel is None:
+            return
+
         self.textbuffer.remove_tag_by_name("emt", start, end)
         self.textbuffer.remove_tag_by_name("scored5", start, end)
         self.textbuffer.remove_tag_by_name("scored4", start, end)
@@ -814,6 +824,9 @@ class Sidepanel(Gtk.TextView):
 
     def update_selected_node(self):
         """ Update the selected node highlight """
+
+        if self.gamemodel is None:
+            return
 
         self.textbuffer.remove_tag_by_name("selected",
                                            self.textbuffer.get_start_iter(),
@@ -1031,6 +1044,9 @@ class Sidepanel(Gtk.TextView):
     @idle_add
     def update(self, *args):
         """ Update the entire notation tree """
+
+        if self.gamemodel is None:
+            return
 
         self.textbuffer.set_text('')
         self.nodelist = []

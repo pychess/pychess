@@ -23,7 +23,7 @@ def notify_add(key, func, args):
     global conid
     idkeyfuncs[conid] = (key, func, args)
     conid += 1
-    return conid
+    return conid-1
 
 
 def notify_remove(conid):

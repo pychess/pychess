@@ -51,7 +51,7 @@ class ChatView(Gtk.Box):
             self.obs_btn = Gtk.Button()
             self.obs_btn.set_image(self.refresh)
             self.obs_btn.set_label(label)
-            self.obs_btn.connect("clicked", self.on_obs_btn_clicked)
+            self.obs_btn_cid = self.obs_btn.connect("clicked", self.on_obs_btn_clicked)
 
             vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
@@ -91,7 +91,17 @@ class ChatView(Gtk.Box):
         self.writeView = Gtk.Entry()
         self.pack_start(self.writeView, False, False, 0)
 
-        self.writeView.connect("key-press-event", self.onKeyPress)
+        self.writeview_cid = self.writeView.connect("key-press-event", self.onKeyPress)
+        self.cid = None
+        if self.gamemodel is not None:
+            self.cid = self.gamemodel.connect_after("game_terminated", self.on_game_terminated)
+
+    def on_game_terminated(self, model):
+        if isinstance(self.gamemodel, ICGameModel):
+            self.obs_btn.disconnect(self.obs_btn_cid)
+        self.writeView.disconnect(self.writeview_cid)
+        if self.cid is not None:
+            self.gamemodel.disconnect(self.cid)
 
     def on_obs_btn_clicked(self, other):
         allob = 'allob ' + str(self.gamemodel.ficsgame.gameno)

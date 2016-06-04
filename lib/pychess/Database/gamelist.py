@@ -10,7 +10,7 @@ from pychess.Savers.database import load
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK,\
     WAITING_TO_START, reprResult
 from pychess.Players.Human import Human
-from pychess.widgets import ionest
+from pychess.widgets.ionest import game_handler
 from pychess.Utils.GameModel import GameModel
 
 
@@ -203,4 +203,4 @@ class GameList(Gtk.TreeView):
         self.chessfile.loadToModel(gameno, -1, gamemodel)
 
         gamemodel.status = WAITING_TO_START
-        ionest.generalStart(gamemodel, p0, p1)
+        game_handler.generalStart(gamemodel, p0, p1)

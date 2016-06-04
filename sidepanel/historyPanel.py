@@ -28,26 +28,46 @@ class Sidepanel:
         self.frozen = Switch()
 
     def load(self, gmwidg):
+        __widget__ = Gtk.ScrolledWindow()
+        __widget__.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
-        widgets = Gtk.Builder()
-        widgets.add_from_file(addDataPrefix("sidepanel/history.glade"))
-        __widget__ = widgets.get_object("panel")
-        __widget__.unparent()
+        self.numbers = Gtk.TreeView()
+        self.numbers.set_property("can_focus", False)
+        self.numbers.set_property("sensitive", False)
+        self.numbers.set_property("width_request", 35)
+        self.left = Gtk.TreeView()
+        self.numbers.set_property("width_request", 60)
+        self.right = Gtk.TreeView()
+        self.numbers.set_property("width_request", 60)
 
+        box = Gtk.Box(spacing=0)
+        box.pack_start(self.numbers, False, True, 0)
+        box.pack_start(self.left, True, True, 0)
+        box.pack_start(self.right, True, True, 0)
+
+        port = Gtk.Viewport()
+        port.add(box)
+        port.set_shadow_type(Gtk.ShadowType.NONE)
+
+        __widget__.add(port)
+        __widget__.show_all()
+
+        self.cids = {}
         self.boardview = gmwidg.board.view
 
-        self.boardview.model.connect_after("game_changed", self.game_changed)
-        self.boardview.model.connect_after("game_started", self.game_started)
-        self.boardview.model.connect_after("moves_undone", self.moves_undone)
-        self.boardview.connect("shownChanged", self.shownChanged)
+        self.model_cids = [
+            self.boardview.model.connect_after("game_changed", self.game_changed),
+            self.boardview.model.connect_after("game_started", self.game_started),
+            self.boardview.model.connect_after("moves_undone", self.moves_undone),
+            self.boardview.model.connect_after("game_terminated", self.on_game_terminated),
+        ]
+        self.cids[self.boardview] = self.boardview.connect("shownChanged", self.shownChanged)
 
         # Initialize treeviews
 
-        self.numbers = widgets.get_object("treeview1")
-        self.left = widgets.get_object("treeview2")
-        self.right = widgets.get_object("treeview3")
-
         def fixList(list, xalign=0):
+            list.set_property("headers_visible", False)
+            list.set_property("rules_hint", True)
             list.set_model(Gtk.ListStore(str))
             renderer = Gtk.CellRendererText()
             renderer.set_property("xalign", xalign)
@@ -58,12 +78,12 @@ class Sidepanel:
         fixList(self.left, 0)
         fixList(self.right, 0)
 
-        self.left.connect('cursor_changed', self.cursorChanged, self.left, 0)
-        self.right.connect('cursor_changed', self.cursorChanged, self.right, 1)
+        self.cids[self.left] = self.left.connect('cursor_changed', self.cursorChanged, self.left, 0)
+        self.cids[self.right] = self.right.connect('cursor_changed', self.cursorChanged, self.right, 1)
 
         # Lock scrolling
 
-        scrollwin = widgets.get_object("panel")
+        self.adjustment = __widget__.get_vadjustment()
 
         def changed(vadjust):
             if not hasattr(vadjust, "need_scroll") or vadjust.need_scroll:
@@ -71,13 +91,13 @@ class Sidepanel:
                 ))
                 vadjust.need_scroll = True
 
-        scrollwin.get_vadjustment().connect("changed", changed)
+        self.adj_cid1 = self.adjustment.connect("changed", changed)
 
         def value_changed(vadjust):
             vadjust.need_scroll = abs(vadjust.get_value() + vadjust.get_page_size() -
                                       vadjust.get_upper()) < vadjust.get_step_increment()
 
-        scrollwin.get_vadjustment().connect("value-changed", value_changed)
+        self.adj_cid2 = self.adjustment.connect("value-changed", value_changed)
 
         # Connect to preferences
 
@@ -92,11 +112,21 @@ class Sidepanel:
                 iter = col.get_model().get_iter((row, ))
                 col.get_model().set(iter, 0, notat)
 
-        conf.notify_add("figuresInNotation", figuresInNotationCallback)
+        self.conf_conid = conf.notify_add("figuresInNotation", figuresInNotationCallback)
 
         # Return
 
         return __widget__
+
+    def on_game_terminated(self, model):
+        conf.notify_remove(self.conf_conid)
+        self.adjustment.disconnect(self.adj_cid1)
+        self.adjustment.disconnect(self.adj_cid2)
+        for cid in self.model_cids:
+            self.boardview.model.disconnect(cid)
+        for obj in self.cids:
+            obj.disconnect(self.cids[obj])
+        self.cids = {}
 
     def cursorChanged(self, widget, tree, col):
         if self.frozen.on:
@@ -131,8 +161,15 @@ class Sidepanel:
 
     @idle_add
     def game_changed(self, game, ply):
-        len_ = len(self.left.get_model()) + len(self.right.get_model()) + 1
-        if len(self.left.get_model()) and not self.left.get_model()[0][0]:
+        if self.boardview is None or self.boardview.model is None:
+            return
+        left_model = self.left.get_model()
+        right_model = self.right.get_model()
+        if left_model is None or right_model is None:
+            return
+
+        len_ = len(left_model) + len(right_model) + 1
+        if len(left_model) and not left_model[0][0]:
             len_ -= 1
         for i in range(len_ + game.lowply, ply + 1):
             self.__addMove(game, i)
@@ -169,9 +206,11 @@ class Sidepanel:
 
     @idle_add
     def shownChanged(self, boardview, shown):
-        if not boardview.shownIsMainLine():
+        if self.boardview is None or self.boardview.model is None:
             return
-        if shown <= boardview.model.lowply:
+        if not self.boardview.shownIsMainLine():
+            return
+        if shown <= self.boardview.model.lowply:
             # print "Or is it me?"
             self.left.get_selection().unselect_all()
             self.right.get_selection().unselect_all()

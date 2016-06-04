@@ -36,30 +36,36 @@ class Sidepanel:
     def load(self, gmwidg):
 
         self.gamemodel = gmwidg.board.view.model
-        self.gmhandlers = [
+        self.model_cids = [
             self.gamemodel.connect_after("game_changed", self.game_changed),
             self.gamemodel.connect_after("game_started", self.game_started),
-            self.gamemodel.connect_after("moves_undone", self.moves_undone)
+            self.gamemodel.connect_after("moves_undone", self.moves_undone),
+            self.gamemodel.connect_after("game_terminated", self.on_game_terminated),
         ]
 
-        widgets = Gtk.Builder()
-        widgets.add_from_file(addDataPrefix("sidepanel/book.glade"))
-        self.tv = widgets.get_object("treeview")
-        scrollwin = widgets.get_object("scrolledwindow")
-        scrollwin.unparent()
+        scrollwin = Gtk.ScrolledWindow()
+        self.tv = Gtk.TreeView()
+        scrollwin.add(self.tv)
+        scrollwin.show_all()
 
         self.store = Gtk.ListStore(str)
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         uistuff.appendAutowrapColumn(self.tv, "Comment", text=0)
+        self.tv_cid = self.tv.connect('cursor_changed', self.cursorChanged)
 
-        self.tv.connect('cursor_changed', self.cursorChanged)
         self.boardview = gmwidg.board.view
-        self.boardview.connect("shownChanged", self.shownChanged)
+        self.cid = self.boardview.connect("shownChanged", self.shownChanged)
 
         self.frozen = Switch()
 
         return scrollwin
+
+    def on_game_terminated(self, model):
+        self.tv.disconnect(self.tv_cid)
+        for cid in self.model_cids:
+            self.gamemodel.disconnect(cid)
+        self.boardview.disconnect(self.cid)
 
     def cursorChanged(self, tv):
         if self.frozen.on:
@@ -72,6 +78,8 @@ class Sidepanel:
             self.boardview.setShownBoard(board)
 
     def shownChanged(self, boardview, shown):
+        if self.gamemodel is None:
+            return
         if not boardview.shownIsMainLine():
             return
         row = shown - self.gamemodel.lowply
@@ -79,8 +87,10 @@ class Sidepanel:
         with self.frozen:
             try:
                 iter = self.store.get_iter(row)
-                self.tv.get_selection().select_iter(iter)
-                self.tv.scroll_to_cell(row)
+                selection = self.tv.get_selection()
+                if selection is not None:
+                    selection.select_iter(iter)
+                    self.tv.scroll_to_cell(row)
             except ValueError:
                 pass
                 # deleted variations by moves_undoing
@@ -101,10 +111,15 @@ class Sidepanel:
         self.shownChanged(self.boardview, ply)
 
     def addComment(self, model, comment):
+        if self.gamemodel is None or self.tv is None:
+            return
         self.store.append([comment])
 
         # If latest ply is shown, we select the new latest
-        iter = self.tv.get_selection().get_selected()[1]
+        selection = self.tv.get_selection()
+        if selection is None:
+            return
+        iter = selection.get_selected()[1]
         if iter:
             path = self.tv.get_model().get_path(iter)
             indices = path.get_indices()

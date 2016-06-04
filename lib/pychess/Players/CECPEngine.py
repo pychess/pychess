@@ -180,8 +180,8 @@ class CECPEngine(ProtocolEngine):
         self.timeout = None
 
         self.returnQueue = Queue()
-        self.engine.connect("line", self.parseLine)
-        self.engine.connect("died", lambda e: self.returnQueue.put("del"))
+        self.line_cid = self.engine.connect("line", self.parseLine)
+        self.died_cid = self.engine.connect("died", lambda e: self.returnQueue.put("del"))
         self.invalid_move = None
 
         self.funcQueue = Queue()
@@ -191,9 +191,11 @@ class CECPEngine(ProtocolEngine):
 
         self.analysis_timer = None
 
-        self.connect("readyForOptions", self.__onReadyForOptions_before)
-        self.connect_after("readyForOptions", self.__onReadyForOptions)
-        self.connect_after("readyForMoves", self.__onReadyForMoves)
+        self.cids = [
+            self.connect("readyForOptions", self.__onReadyForOptions_before),
+            self.connect_after("readyForOptions", self.__onReadyForOptions),
+            self.connect_after("readyForMoves", self.__onReadyForMoves),
+        ]
 
     # Starting the game
 
@@ -281,6 +283,17 @@ class CECPEngine(ProtocolEngine):
 
     @semisynced
     def end(self, status, reason):
+        if self.engine.handler_is_connected(self.line_cid):
+            self.engine.disconnect(self.line_cid)
+        if self.engine.handler_is_connected(self.died_cid):
+            self.engine.disconnect(self.died_cid)
+        if self.handler_is_connected(self.analyze_cid):
+            self.disconnect(self.analyze_cid)
+        for cid in self.cids:
+            if self.handler_is_connected(cid):
+                self.disconnect(cid)
+        self.board = None
+
         if self.connected:
             # We currently can't fillout the comment "field" as the repr strings
             # for reasons and statuses lies in Main.py

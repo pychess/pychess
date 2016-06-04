@@ -24,17 +24,17 @@ stop_event = threading.Event()
 firstRun = True
 
 
-def run(gameDic):
+def run():
     global firstRun
     if firstRun:
-        initialize(gameDic)
+        initialize()
         firstRun = False
     stop_event.clear()
     widgets["analyze_game"].show()
     widgets["analyze_game"].present()
 
 
-def initialize(gameDic):
+def initialize():
 
     uistuff.keep(widgets["fromCurrent"], "fromCurrent", first_value=True)
     uistuff.keep(widgets["shouldBlack"], "shouldBlack", first_value=True)
@@ -71,7 +71,7 @@ def initialize(gameDic):
 
     def run_analyze(button, *args):
         gmwidg = gamewidget.cur_gmwidg()
-        gamemodel = gameDic[gmwidg]
+        gamemodel = gmwidg.gamemodel
 
         old_check_value = conf.get("analyzer_check", True)
         conf.set("analyzer_check", True)

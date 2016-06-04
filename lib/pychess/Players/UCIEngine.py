@@ -53,21 +53,22 @@ class UCIEngine(ProtocolEngine):
         self.multipvExpected = 1  # Number of PVs expected (limited by number of legal moves)
         self.commands = collections.deque()
 
-        self.gameBoard = Board(setup=True
-                               )  # board at the end of all moves played
+        self.gameBoard = Board(setup=True)  # board at the end of all moves played
         self.board = Board(setup=True)  # board to send the engine
         self.uciPosition = "startpos"
         self.uciPositionListsMoves = False
         self.analysis = [None]
 
         self.returnQueue = Queue()
-        self.engine.connect("line", self.parseLine)
-        self.engine.connect("died", self.__die)
+        self.line_cid = self.engine.connect("line", self.parseLine)
+        self.died_cid = self.engine.connect("died", self.__die)
         self.invalid_move = None
 
-        self.connect("readyForOptions", self.__onReadyForOptions_before)
-        self.connect_after("readyForOptions", self.__onReadyForOptions)
-        self.connect_after("readyForMoves", self.__onReadyForMoves)
+        self.cids = [
+            self.connect("readyForOptions", self.__onReadyForOptions_before),
+            self.connect_after("readyForOptions", self.__onReadyForOptions),
+            self.connect_after("readyForMoves", self.__onReadyForMoves),
+        ]
 
     def __die(self, subprocess):
         self.returnQueue.put("die")
@@ -126,10 +127,23 @@ class UCIEngine(ProtocolEngine):
     # Ending the game
 
     def end(self, status, reason):
-        # UCI doens't care about reason, so we just kill
-        if reason == WON_ADJUDICATION:
-            self.returnQueue.put("invalid")
-        self.kill(reason)
+        if self.engine.handler_is_connected(self.line_cid):
+            self.engine.disconnect(self.line_cid)
+        if self.engine.handler_is_connected(self.died_cid):
+            self.engine.disconnect(self.died_cid)
+        if self.handler_is_connected(self.analyze_cid):
+            self.disconnect(self.analyze_cid)
+        for cid in self.cids:
+            if self.handler_is_connected(cid):
+                self.disconnect(cid)
+        self.board = None
+        self.gameBoard = None
+
+        if self.connected:
+            # UCI doens't care about reason, so we just kill
+            if reason == WON_ADJUDICATION:
+                self.returnQueue.put("invalid")
+            self.kill(reason)
 
     def kill(self, reason):
         """ Kills the engine, starting with the 'stop' and 'quit' commands, then

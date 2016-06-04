@@ -147,6 +147,7 @@ class GameModel(GObject.GObject, Thread):
         self.gameno = None
         self.variations = [self.boards]
 
+        self.terminated = False
         self.status = WAITING_TO_START
         self.reason = UNKNOWN_REASON
         self.curColor = WHITE
@@ -158,6 +159,7 @@ class GameModel(GObject.GObject, Thread):
         self.timemodel.gamemodel = self
 
         self.connections = defaultdict(list)  # mainly for IC subclasses
+        self.analyzer_cids = {}
         self.examined = False
 
         now = datetime.datetime.now()
@@ -175,7 +177,7 @@ class GameModel(GObject.GObject, Thread):
         self.endstatus = None
         self.timed = self.timemodel.minutes != 0 or self.timemodel.gain != 0
         if self.timed:
-            self.timemodel.connect('zero_reached', self.zero_reached)
+            self.zero_reached_cid = self.timemodel.connect('zero_reached', self.zero_reached)
 
             self.tags["TimeControl"] = \
                 "%d+%d" % (self.timemodel.minutes * 60, self.timemodel.gain)
@@ -266,7 +268,7 @@ class GameModel(GObject.GObject, Thread):
         analyzer.setOptionInitialBoard(self)
         self.spectators[analyzer_type] = analyzer
         self.emit("analyzer_added", analyzer, analyzer_type)
-        analyzer.connect("analyze", self.on_analyze)
+        self.analyzer_cids[analyzer_type] = analyzer.connect("analyze", self.on_analyze)
         return analyzer
 
     def remove_analyzer(self, analyzer_type):
@@ -275,6 +277,7 @@ class GameModel(GObject.GObject, Thread):
         except KeyError:
             return
 
+        analyzer.disconnect(self.analyzer_cids[analyzer_type])
         analyzer.end(KILLED, UNKNOWN_REASON)
         self.emit("analyzer_removed", analyzer, analyzer_type)
         del self.spectators[analyzer_type]
@@ -493,7 +496,8 @@ class GameModel(GObject.GObject, Thread):
                 self.offers[offer] = player
                 opPlayer.offer(offer)
             # If we updated an older offer, we want to delete the old one
-            for offer_ in self.offers.keys():
+            keys = self.offers.keys()
+            for offer_ in keys:
                 if offer.type == offer_.type and offer != offer_:
                     del self.offers[offer_]
 
@@ -694,6 +698,7 @@ class GameModel(GObject.GObject, Thread):
             log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: acquiring self.applyingMoveLock" % (
                 id(self), str(self.players), self.ply))
             assert isinstance(move, Move), "%s" % repr(move)
+
             self.applyingMoveLock.acquire()
             try:
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: applying move=%s" % (
@@ -715,7 +720,8 @@ class GameModel(GObject.GObject, Thread):
                 if self.timed:
                     self.timemodel.tap()
 
-                self.emit("game_changed", self.ply)
+                if not self.terminated:
+                    self.emit("game_changed", self.ply)
 
                 for spectator in self.spectators.values():
                     if spectator.board == self.boards[-2]:
@@ -847,20 +853,32 @@ class GameModel(GObject.GObject, Thread):
 
     def terminate(self):
         log.debug("GameModel.terminate: %s" % self)
+        self.terminated = True
 
         if self.status != KILLED:
             for player in self.players:
                 player.end(self.status, self.reason)
 
-            for spectator in self.spectators.values():
-                spectator.end(self.status, self.reason)
+            analyzer_types = list(self.spectators.keys())
+            for analyzer_type in analyzer_types:
+                self.remove_analyzer(analyzer_type)
 
             if self.timed:
                 log.debug("GameModel.terminate: -> timemodel.end()")
                 self.timemodel.end()
                 log.debug("GameModel.terminate: <- timemodel.end() %s" %
                           repr(self.timemodel))
+                self.timemodel.disconnect(self.zero_reached_cid)
 
+        # ICGameModel may did this if game was a FICS game
+        if self.connections is not None:
+            for player in self.players:
+                for cid in self.connections[player]:
+                    player.disconnect(cid)
+        self.connections = {}
+
+        self.timemodel.gamemodel = None
+        self.players = []
         self.emit("game_terminated")
 
     # Other stuff

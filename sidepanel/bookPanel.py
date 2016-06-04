@@ -84,6 +84,9 @@ class Advisor(object):
         return [(None, None, None),
                 ("", 0, None), 0, False, text, False, mode in (HINT, SPY)]
 
+    def _del(self):
+        pass
+
 
 class OpeningAdvisor(Advisor):
     def __init__(self, store, tv):
@@ -95,6 +98,8 @@ class OpeningAdvisor(Advisor):
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
+        if m is None:
+            return
         if m.isPlayingICSGame():
             return
 
@@ -155,11 +160,12 @@ class EngineAdvisor(Advisor):
         self.linesExpected = 1
         self.boardview = boardview
 
-        self.connection = engine.connect("analyze", self.on_analyze)
-        engine.connect("readyForOptions", self.on_ready_for_options)
+        self.cid1 = self.engine.connect("analyze", self.on_analyze)
+        self.cid2 = self.engine.connect("readyForOptions", self.on_ready_for_options)
 
     def _del(self):
-        self.engine.disconnect(self.connection)
+        self.engine.disconnect(self.cid1)
+        self.engine.disconnect(self.cid2)
 
     def _create_new_expected_lines(self):
         parent = self.empty_parent()
@@ -170,9 +176,10 @@ class EngineAdvisor(Advisor):
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
+        if m is None:
+            return
         if m.isPlayingICSGame():
             return
-
         if not self.active:
             return
 
@@ -206,8 +213,7 @@ class EngineAdvisor(Advisor):
         if self.boardview.animating:
             return
 
-        m = self.boardview.model
-        if m.isPlayingICSGame():
+        if self.boardview.model.isPlayingICSGame():
             return
 
         if not self.active:
@@ -343,7 +349,7 @@ class EndgameAdvisor(Advisor, Thread):
             "The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
 
-        self.egtb.connect("scored", self.on_scored)
+        self.cid = self.egtb.connect("scored", self.on_scored)
         self.queue = Queue()
         self.start()
 
@@ -362,6 +368,8 @@ class EndgameAdvisor(Advisor, Thread):
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
+        if m is None:
+            return
         if m.isPlayingICSGame():
             return
 
@@ -369,7 +377,8 @@ class EndgameAdvisor(Advisor, Thread):
         self.board = m.getBoardAtPly(shown, boardview.shown_variation_idx)
         self.queue.put(self.board.board)
 
-    def gamewidget_closed(self, gamewidget):
+    def _del(self):
+        self.egtb.disconnect(self.cid)
         try:
             self.queue.put_nowait(self.StopNow)
         except Full:
@@ -402,14 +411,15 @@ class EndgameAdvisor(Advisor, Thread):
 
 class Sidepanel(object):
     def load(self, gmwidg):
-        self.boardcontrol = gmwidg.board
-        self.boardview = self.boardcontrol.view
+        self.gmwidg = gmwidg
+        self.boardview = gmwidg.board.view
 
-        widgets = Gtk.Builder()
-        widgets.add_from_file(addDataPrefix("sidepanel/book.glade"))
-        self.tv = widgets.get_object("treeview")
-        self.sw = widgets.get_object("scrolledwindow")
-        self.sw.unparent()
+        self.sw = Gtk.ScrolledWindow()
+        self.tv = Gtk.TreeView()
+        self.tv.set_property("headers_visible", False)
+        self.sw.add(self.tv)
+        self.sw.show_all()
+
         self.store = Gtk.TreeStore(GObject.TYPE_PYOBJECT,
                                    GObject.TYPE_PYOBJECT, int, bool, str, bool,
                                    bool)
@@ -437,15 +447,15 @@ class Sidepanel(object):
         c1 = Gtk.TreeViewColumn("Strength", StrengthCellRenderer(), data=1)
 
         # ## multipv (number of analysis lines)
-        multipvRenderer = Gtk.CellRendererSpin()
+        self.multipvRenderer = Gtk.CellRendererSpin()
         adjustment = Gtk.Adjustment(value=conf.get("multipv", 1),
                                     lower=1,
                                     upper=9,
                                     step_incr=1)
-        multipvRenderer.set_property("adjustment", adjustment)
-        multipvRenderer.set_property("editable", True)
-        multipvRenderer.set_property("width_chars", 1)
-        c2 = Gtk.TreeViewColumn("PV", multipvRenderer, editable=3)
+        self.multipvRenderer.set_property("adjustment", adjustment)
+        self.multipvRenderer.set_property("editable", True)
+        self.multipvRenderer.set_property("width_chars", 1)
+        c2 = Gtk.TreeViewColumn("PV", self.multipvRenderer, editable=3)
         c2.set_property("min_width", 80)
 
         def spin_visible(column, cell, store, iter, data):
@@ -455,19 +465,19 @@ class Sidepanel(object):
                 cell.set_property("text", str(store[iter][2]))
                 cell.set_property('visible', True)
 
-        c2.set_cell_data_func(multipvRenderer, spin_visible)
+        c2.set_cell_data_func(self.multipvRenderer, spin_visible)
 
         def multipv_edited(renderer, path, text):
             iter = self.store.get_iter(path)
             self.store.set_value(iter, 2, int(text))
             self.advisors[int(path[0])].multipv_edited(int(text))
 
-        multipvRenderer.connect('edited', multipv_edited)
+        self.multipv_cid = self.multipvRenderer.connect('edited', multipv_edited)
 
         # ## start/stop button for analysis engines
-        toggleRenderer = CellRendererPixbufXt()
-        toggleRenderer.set_property("stock-id", "gtk-add")
-        c4 = Gtk.TreeViewColumn("StartStop", toggleRenderer)
+        self.toggleRenderer = CellRendererPixbufXt()
+        self.toggleRenderer.set_property("stock-id", "gtk-add")
+        c4 = Gtk.TreeViewColumn("StartStop", self.toggleRenderer)
 
         def cb_visible(column, cell, store, iter, data):
             if not store[iter][6]:
@@ -480,13 +490,13 @@ class Sidepanel(object):
             else:
                 cell.set_property("stock-id", "gtk-remove")
 
-        c4.set_cell_data_func(toggleRenderer, cb_visible)
+        c4.set_cell_data_func(self.toggleRenderer, cb_visible)
 
         def toggled_cb(cell, path):
             self.store[path][5] = not self.store[path][5]
             self.advisors[int(path[0])].start_stop(self.store[path][5])
 
-        toggleRenderer.connect('clicked', toggled_cb)
+        self.toggle_cid = self.toggleRenderer.connect('clicked', toggled_cb)
 
         self.tv.append_column(c4)
         self.tv.append_column(c0)
@@ -495,31 +505,35 @@ class Sidepanel(object):
         # ## header text, or analysis line
         uistuff.appendAutowrapColumn(self.tv, "Details", text=4)
 
-        self.boardview.connect("shownChanged", self.shownChanged)
-        self.tv.connect("cursor_changed", self.selection_changed)
-        self.tv.connect("select_cursor_row", self.selection_changed)
-        self.tv.connect("row-activated", self.row_activated)
-        self.tv.connect("query-tooltip", self.query_tooltip)
-
+        self.cid = self.boardview.connect("shownChanged", self.shownChanged)
+        self.tv_cids = [
+            self.tv.connect("cursor_changed", self.selection_changed),
+            self.tv.connect("select_cursor_row", self.selection_changed),
+            self.tv.connect("row-activated", self.row_activated),
+            self.tv.connect("query-tooltip", self.query_tooltip),
+        ]
         self.tv.props.has_tooltip = True
         self.tv.set_property("show-expanders", False)
 
         self.advisors = []
+        self.conf_conids = []
 
         if conf.get("opening_check", 0):
             self.advisors.append(OpeningAdvisor(self.store, self.tv))
         if conf.get("endgame_check", 0):
             advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
             self.advisors.append(advisor)
-            gmwidg.connect("closed", advisor.gamewidget_closed)
 
-        gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added)
-        gmwidg.gamemodel.connect("analyzer_removed", self.on_analyzer_removed)
-        gmwidg.gamemodel.connect("analyzer_paused", self.on_analyzer_paused)
-        gmwidg.gamemodel.connect("analyzer_resumed", self.on_analyzer_resumed)
+        self.model_cids = [
+            gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added),
+            gmwidg.gamemodel.connect("analyzer_removed", self.on_analyzer_removed),
+            gmwidg.gamemodel.connect("analyzer_paused", self.on_analyzer_paused),
+            gmwidg.gamemodel.connect("analyzer_resumed", self.on_analyzer_resumed),
+            gmwidg.gamemodel.connect_after("game_terminated", self.on_game_terminated),
+        ]
 
         def on_opening_check(none):
-            if conf.get("opening_check", 0):
+            if conf.get("opening_check", 0) and self.boardview is not None:
                 advisor = OpeningAdvisor(self.store, self.tv)
                 self.advisors.append(advisor)
                 advisor.shownChanged(self.boardview, self.boardview.shown)
@@ -530,36 +544,48 @@ class Sidepanel(object):
                         self.store.remove(parent)
                         self.advisors.remove(advisor)
 
-        conf.notify_add("opening_check", on_opening_check)
+        self.conf_conids.append(conf.notify_add("opening_check", on_opening_check))
 
         def on_opening_file_entry_changed(none):
             default_path = os.path.join(addDataPrefix("pychess_book.bin"))
             path = conf.get("opening_file_entry", default_path)
             if os.path.isfile(path):
                 for advisor in self.advisors:
-                    if advisor.mode == OPENING:
+                    if advisor.mode == OPENING and self.boardview is not None:
                         advisor.shownChanged(self.boardview,
                                              self.boardview.shown)
 
-        conf.notify_add("opening_file_entry", on_opening_file_entry_changed)
+        self.conf_conids.append(conf.notify_add("opening_file_entry", on_opening_file_entry_changed))
 
         def on_endgame_check(none):
             if conf.get("endgame_check", 0):
                 advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
                 self.advisors.append(advisor)
                 advisor.shownChanged(self.boardview, self.boardview.shown)
-                gmwidg.connect("closed", advisor.gamewidget_closed)
             else:
                 for advisor in self.advisors:
                     if advisor.mode == ENDGAME:
-                        advisor.gamewidget_closed(gmwidg)
+                        advisor._del()
                         parent = advisor.empty_parent()
                         self.store.remove(parent)
                         self.advisors.remove(advisor)
 
-        conf.notify_add("endgame_check", on_endgame_check)
+        self.conf_conids.append(conf.notify_add("endgame_check", on_endgame_check))
 
         return self.sw
+
+    def on_game_terminated(self, model):
+        self.multipvRenderer.disconnect(self.multipv_cid)
+        self.toggleRenderer.disconnect(self.toggle_cid)
+        for cid in self.tv_cids:
+            self.tv.disconnect(cid)
+        for conid in self.conf_conids:
+            conf.notify_remove(conid)
+        for cid in self.model_cids:
+            self.gmwidg.gamemodel.disconnect(cid)
+        self.boardview.disconnect(self.cid)
+        for advisor in self.advisors:
+            advisor._del()
 
     def on_analyzer_added(self, gamemodel, analyzer, analyzer_type):
         if analyzer_type == HINT:
@@ -573,6 +599,7 @@ class Sidepanel(object):
         for advisor in self.advisors:
             if advisor.mode == analyzer_type:
                 advisor.active = False
+                advisor.engine = None
                 parent = advisor.empty_parent()
                 self.store.remove(parent)
                 self.advisors.remove(advisor)
@@ -593,6 +620,8 @@ class Sidepanel(object):
 
     @idle_add
     def shownChanged(self, boardview, shown):
+        if boardview.model is None:
+            return
         boardview.bluearrow = None
 
         if legalMoveCount(boardview.model.getBoardAtPly(

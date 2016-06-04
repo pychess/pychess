@@ -27,13 +27,11 @@ class Engine(Player):
     def __init__(self, md5=None):
         Player.__init__(self)
         self.md5 = md5
-
         self.currentAnalysis = []
+        self.analyze_cid = self.connect('analyze', self.on_analysis)
 
-        def on_analysis(self_, analysis):
-            self.currentAnalysis = analysis
-
-        self.connect('analyze', on_analysis)
+    def on_analysis(self, engine, analysis):
+        self.currentAnalysis = analysis
 
     # Offer handling
 

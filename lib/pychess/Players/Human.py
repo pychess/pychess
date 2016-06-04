@@ -87,21 +87,28 @@ class Human(Player):
         self.defname = "Human"
         self.board = gmwidg.board
         self.gmwidg = gmwidg
-        self.gamemodel = self.board.view.model
+        self.gamemodel = self.gmwidg.gamemodel
         self.queue = Queue()
         self.color = color
-        self.conid = [
+
+        self.board_cids = [
             self.board.connect("piece_moved", self.piece_moved),
-            self.board.connect(
-                "action",
-                lambda b, action, param: self.emit_action(action, param))
+            self.board.connect("action", self.emit_action)
         ]
         self.setName(name)
         self.ichandle = ichandle
         self.icrating = icrating
 
         if self.gamemodel.timed:
-            self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
+            self.timemodel_cid = self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
+        self.cid = self.gamemodel.connect_after("game_terminated", self.on_game_terminated)
+
+    def on_game_terminated(self, model):
+        for cid in self.board_cids:
+            self.board.disconnect(cid)
+        if self.gamemodel.timed:
+            self.gamemodel.timemodel.disconnect(self.timemodel_cid)
+        self.gamemodel.disconnect(self.cid)
 
     # Handle signals from the board
 
@@ -118,7 +125,7 @@ class Human(Player):
             return
         self.queue.put(move)
 
-    def emit_action(self, action, param):
+    def emit_action(self, board, action, param):
         # If there are two or more tabs open, we have to ensure us that it is
         # us who are in the active tab, and not the others
         if not self.gmwidg.isInFront():

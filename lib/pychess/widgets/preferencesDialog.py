@@ -102,9 +102,9 @@ def anal_combo_set_value(combobox, value, show_arrow_check, ana_check,
             index = 0
         combobox.set_active(index)
 
-    from pychess.Main import gameDic
+    from pychess.widgets.ionest import game_handler
     from pychess.widgets.gamewidget import widgets
-    for gmwidg in gameDic.keys():
+    for gmwidg in game_handler.gamewidgets:
         spectators = gmwidg.gamemodel.spectators
         md5 = engine.get('md5')
 
@@ -157,10 +157,10 @@ class HintTab:
         book_chooser_button.connect("file-set", select_new_book)
 
         def on_opening_check_toggled(check):
-            widgets["opening_hbox"].set_sensitive(check.get_active())
+            self.widgets["opening_hbox"].set_sensitive(check.get_active())
 
-        widgets["opening_check"].connect_after("toggled",
-                                               on_opening_check_toggled)
+        self.widgets["opening_check"].connect_after("toggled",
+                                                    on_opening_check_toggled)
 
         # Endgame
         default_path = os.path.join(getDataPrefix())
@@ -187,10 +187,10 @@ class HintTab:
         egtb_chooser_button.connect("current-folder-changed", select_egtb)
 
         def on_endgame_check_toggled(check):
-            widgets["endgame_hbox"].set_sensitive(check.get_active())
+            self.widgets["endgame_hbox"].set_sensitive(check.get_active())
 
-        widgets["endgame_check"].connect_after("toggled",
-                                               on_endgame_check_toggled)
+        self.widgets["endgame_check"].connect_after("toggled",
+                                                    on_endgame_check_toggled)
 
         # Analyzing engines
         from pychess.widgets import newGameDialog
@@ -216,54 +216,53 @@ class HintTab:
         conf.set("inv_ana_combobox", conf.get("inv_ana_combobox", default))
 
         def on_analyzer_check_toggled(check):
-            widgets["analyzers_vbox"].set_sensitive(check.get_active())
-            from pychess.Main import gameDic
-            if gameDic:
+            self.widgets["analyzers_vbox"].set_sensitive(check.get_active())
+            from pychess.widgets.ionest import game_handler
+            from pychess.widgets.gamewidget import widgets
+            if len(game_handler.gamewidgets) != 0:
                 if check.get_active():
-                    for gmwidg in gameDic.keys():
+                    for gmwidg in game_handler.gamewidgets:
                         gmwidg.gamemodel.restart_analyzer(HINT)
                         if not widgets["hint_mode"].get_active():
                             gmwidg.gamemodel.pause_analyzer(HINT)
                 else:
-                    for gmwidg in gameDic.keys():
+                    for gmwidg in game_handler.gamewidgets:
                         gmwidg.gamemodel.remove_analyzer(HINT)
 
-        widgets["analyzers_vbox"].set_sensitive(widgets[
+        self.widgets["analyzers_vbox"].set_sensitive(widgets[
             "analyzer_check"].get_active())
-        widgets["analyzer_check"].connect_after("toggled",
-                                                on_analyzer_check_toggled)
+        self.widgets["analyzer_check"].connect_after("toggled",
+                                                     on_analyzer_check_toggled)
 
         def on_invanalyzer_check_toggled(check):
-            widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
-            from pychess.Main import gameDic
-            if gameDic:
+            self.widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
+            from pychess.widgets.ionest import game_handler
+            if len(game_handler.gamewidgets) != 0:
                 if check.get_active():
-                    for gmwidg in gameDic.keys():
+                    for gmwidg in game_handler.gamewidgets:
                         gmwidg.gamemodel.restart_analyzer(SPY)
                         if not widgets["spy_mode"].get_active():
                             gmwidg.gamemodel.pause_analyzer(SPY)
                 else:
-                    for gmwidg in gameDic.keys():
+                    for gmwidg in game_handler.gamewidgets:
                         gmwidg.gamemodel.remove_analyzer(SPY)
 
-        widgets["inv_analyzers_vbox"].set_sensitive(widgets[
+        self.widgets["inv_analyzers_vbox"].set_sensitive(widgets[
             "inv_analyzer_check"].get_active())
-        widgets["inv_analyzer_check"].connect_after(
+        self.widgets["inv_analyzer_check"].connect_after(
             "toggled", on_invanalyzer_check_toggled)
 
         # Give widgets to keeper
 
         uistuff.keep(
-            widgets["ana_combobox"], "ana_combobox", anal_combo_get_value,
+            self.widgets["ana_combobox"], "ana_combobox", anal_combo_get_value,
             lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode", "analyzer_check", HINT))
         uistuff.keep(
-            widgets["inv_ana_combobox"], "inv_ana_combobox",
+            self.widgets["inv_ana_combobox"], "inv_ana_combobox",
             anal_combo_get_value,
             lambda combobox, value: anal_combo_set_value(combobox, value, "spy_mode", "inv_analyzer_check", SPY))
 
-        uistuff.keep(widgets["max_analysis_spin"],
-                     "max_analysis_spin",
-                     first_value=3)
+        uistuff.keep(self.widgets["max_analysis_spin"], "max_analysis_spin", first_value=3)
 
 # Sound initing
 
