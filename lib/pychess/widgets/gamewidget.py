@@ -106,13 +106,26 @@ def getWidgets():
 key2gmwidg = {}
 key2cid = {}
 
-notebooks = {"board": cleanNotebook("board"),
-             "buttons": cleanNotebook("buttons"),
-             "messageArea": cleanNotebook("messageArea")}
-for panel in sidePanels:
-    notebooks[panel.__name__] = cleanNotebook(panel.__name__)
+notebooks = {}
+docks = {}
 
-docks = {"board": (Gtk.Label(label="Board"), notebooks["board"])}
+
+def get_clean_notebooks(mainvbox):
+    """ This function is just a workaround to "Segfault on second match" issue
+        https://github.com/pychess/pychess/issues/1354
+        I think it's caused by Gtk+ 3.20 CSS theming changes
+    """
+    global notebooks, docks
+    if len(mainvbox.get_children()) == 3:
+        return notebooks
+    else:
+        notebooks = {"board": cleanNotebook("board"),
+                     "buttons": cleanNotebook("buttons"),
+                     "messageArea": cleanNotebook("messageArea")}
+        for panel in sidePanels:
+            notebooks[panel.__name__] = cleanNotebook(panel.__name__)
+        docks = {"board": (Gtk.Label(label="Board"), notebooks["board"])}
+        return notebooks
 
 # ###############################################################################
 # The holder class for tab releated widgets                                    #
@@ -895,6 +908,7 @@ def _ensureReadForGameWidgets():
     if len(mainvbox.get_children()) == 3:
         return
     global background
+    notebooks = get_clean_notebooks(mainvbox)
     background = widgets["mainvbox"].get_children()[1]
     mainvbox.remove(background)
 
@@ -1183,8 +1197,7 @@ designGW = None
 
 def showDesignGW():
     global designGW
-    if not designGW:
-        designGW = GameWidget(GameModel())
+    designGW = GameWidget(GameModel())
     if isDesignGWShown():
         return
     getWidgets()["show_sidepanels"].set_active(True)
