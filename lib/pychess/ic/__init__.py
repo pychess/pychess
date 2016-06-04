@@ -278,6 +278,8 @@ def parse_title_hex(titlehex):
 
 
 def parseRating(rating):
+    if rating[0] == " ":
+        rating = rating[1:]
     if rating[-1].isalpha():
         rating = rating[:-1]
     return int(rating) if rating.isdigit() else 0
