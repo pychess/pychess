@@ -277,6 +277,12 @@ def parse_title_hex(titlehex):
     return titles
 
 
+def parseRating(rating):
+    if rating[-1].isalpha():
+        rating = rating[:-1]
+    return int(rating) if rating.isdigit() else 0
+
+
 def get_infobarmessage_content(player, text, gametype=None):
     content = Gtk.HBox()
     icon = Gtk.Image()

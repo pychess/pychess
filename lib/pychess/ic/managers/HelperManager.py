@@ -8,7 +8,7 @@ from pychess.ic import GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_PLAYING, BLKCMD_
     GAME_TYPES, TITLES, TYPE_BLITZ, parse_title_hex, TYPE_ATOMIC, TYPE_WILD, \
     TYPE_STANDARD, TYPE_LIGHTNING, TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_BUGHOUSE, \
     TYPE_SUICIDE, DEVIATION, STATUS, BLKCMD_WHO, IC_STATUS_NOT_AVAILABLE, \
-    IC_STATUS_AVAILABLE
+    IC_STATUS_AVAILABLE, parseRating
 from pychess.ic.FICSObjects import FICSPlayer, FICSGame
 from pychess.ic.managers.BoardManager import parse_reason
 
@@ -121,7 +121,7 @@ class HelperManager(GObject.GObject):
                     player.status = IC_STATUS_PLAYING
                 if player.game != game:
                     player.game = game
-                rating = self.parseRating(rating)
+                rating = parseRating(rating)
                 if gametype.rating_type in player.ratings and \
                         player.ratings[gametype.rating_type] != rating:
                     player.ratings[gametype.rating_type] = rating
@@ -192,12 +192,6 @@ class HelperManager(GObject.GObject):
         bplayer.game = None
 
     @staticmethod
-    def parseRating(rating):
-        if rating[0] == " ":
-            rating = rating[1:]
-        return int(rating) if rating.isdigit() else 0
-
-    @staticmethod
     def parseTitles(titles):
         _titles = set()
         if titles:
@@ -228,9 +222,9 @@ class HelperManager(GObject.GObject):
                  (TYPE_BUGHOUSE, bughouse, bughousedev),
                  (TYPE_LOSERS, losers, losersdev),
                  (TYPE_SUICIDE, suicide, suicidedev)):
-            parse_rating = self.parseRating(elo)
-            if player.ratings[rating_type] != parse_rating:
-                player.ratings[rating_type] = parse_rating
+            rating = parseRating(elo)
+            if player.ratings[rating_type] != rating:
+                player.ratings[rating_type] = rating
                 player.emit("ratings_changed", rating_type, player)
             player.deviations[rating_type] = DEVIATION[dev]
 
@@ -274,7 +268,7 @@ class HelperManager(GObject.GObject):
             titles = self.parseTitles(titles)
             if not player.titles >= titles:
                 player.titles |= titles
-            blitz = self.parseRating(blitz)
+            blitz = parseRating(blitz)
             if player.ratings[TYPE_BLITZ] != blitz:
                 player.ratings[TYPE_BLITZ] = blitz
                 player.emit("ratings_changed", TYPE_BLITZ, player)
@@ -315,7 +309,7 @@ class HelperManager(GObject.GObject):
         for rating_type, rating in ((TYPE_BLITZ, blitz), (TYPE_STANDARD, std),
                               (TYPE_LIGHTNING, light), (TYPE_WILD, wild),
                               (TYPE_BUGHOUSE, bughouse)):
-            rating = self.parseRating(rating)
+            rating = parseRating(rating)
             if player.ratings[rating_type] != rating:
                 player.ratings[rating_type] = rating
                 player.emit("ratings_changed", rating_type, player)

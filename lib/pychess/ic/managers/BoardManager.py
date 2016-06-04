@@ -23,7 +23,7 @@ from pychess.Utils.const import WHITEWON, WON_RESIGN, WON_DISCONNECTION, WON_CAL
 from pychess.ic import IC_POS_INITIAL, IC_POS_ISOLATED, IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, \
     IC_POS_OBSERVING, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, GAME_TYPES, IC_STATUS_PLAYING, \
     BLKCMD_SEEK, BLKCMD_OBSERVE, BLKCMD_MATCH, TYPE_WILD, BLKCMD_SMOVES, BLKCMD_UNOBSERVE, BLKCMD_MOVES, \
-    BLKCMD_FLAG
+    BLKCMD_FLAG, parseRating
 
 from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSHistoryGame, \
     FICSAdjournedGame, FICSJournalGame
@@ -527,12 +527,6 @@ class BoardManager(GObject.GObject):
         else:
             return ("k", "q")
 
-    @staticmethod
-    def parseRating(rating):
-        if rating[-1].isalpha():
-            rating = rating[:-1]
-        return int(rating) if rating.isdigit() else 0
-
     def onPlayGameCreated(self, matchlist):
         log.debug(
             "'%s' '%s' '%s'" %
@@ -543,8 +537,8 @@ class BoardManager(GObject.GObject):
         item = 2 if self.connection.USCN else 1
         gameno, wname, bname, rated, match_type = matchlist[item].groups()
         gameno = int(gameno)
-        wrating = self.parseRating(wrating)
-        brating = self.parseRating(brating)
+        wrating = parseRating(wrating)
+        brating = parseRating(brating)
         rated = rated == "rated"
         game_type = GAME_TYPES[match_type]
 
@@ -719,8 +713,8 @@ class BoardManager(GObject.GObject):
             weekday, month, day, hour, minute, timezone, year = matches[4:11]
             month = months.index(month) + 1
 
-        wrating = self.parseRating(wrating)
-        brating = self.parseRating(brating)
+        wrating = parseRating(wrating)
+        brating = parseRating(brating)
         rated, game_type, minutes, increment = \
             moveListHeader2.match(matchlist[index + 1]).groups()
         minutes = int(minutes)
@@ -906,8 +900,8 @@ class BoardManager(GObject.GObject):
         else:
             gameno, wname, wrating, bname, brating, rated, gametype, minutes, inc = matchlist[
                 1].groups()
-            wrating = self.parseRating(wrating)
-            brating = self.parseRating(brating)
+            wrating = parseRating(wrating)
+            brating = parseRating(brating)
             game_type = GAME_TYPES[gametype]
 
         style12 = matchlist[-1].groups()[0]
