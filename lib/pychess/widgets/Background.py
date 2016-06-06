@@ -2,12 +2,14 @@
 
 from os import path
 
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GdkPixbuf
 import cairo
 
+from pychess.System import conf
 from pychess.System.prefix import addDataPrefix, addUserCachePrefix
 
-CLEARPATH = addDataPrefix("glade/clear.png")
+CLEARPATH = conf.get("welcome_image", addDataPrefix("glade/clear.png"))
+
 surface = None
 provider = None
 loldcolor = None
@@ -181,6 +183,13 @@ def newTheme(widget):
         int(lnewcolor.blue * 255), int(dnewcolor.red * 255),
         int(dnewcolor.green * 255), int(dnewcolor.blue * 255)
     ]
+
+    if not CLEARPATH.endswith("clear.png"):
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(CLEARPATH)
+        # for frmat in GdkPixbuf.Pixbuf.get_formats():
+        #     print(frmat.get_extensions())
+        surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, 0, None)
+        return
 
     # Check if a cache has been saved
     temppng = addUserCachePrefix("temp.png")
