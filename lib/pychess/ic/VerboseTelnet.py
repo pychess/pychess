@@ -307,5 +307,7 @@ class PredictionsTelnet(object):
         self.telnet.cancel()
 
     def close(self):
+        # save played game (if there is any) if no moves made
+        self.run_command("abort")
         self.run_command("quit")
         self.telnet.close()
