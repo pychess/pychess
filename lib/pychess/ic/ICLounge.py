@@ -46,7 +46,7 @@ from .FICSObjects import FICSPlayer, FICSSoughtMatch, FICSChallenge, FICSGame, \
 from .ICGameModel import ICGameModel
 
 
-DO_MUPPY_SUMMARY = False
+DO_MUPPY_SUMMARY = True
 # http://pythonhosted.org/Pympler/index.html
 if DO_MUPPY_SUMMARY:
     from pympler import muppy, summary

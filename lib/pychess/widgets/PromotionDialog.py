@@ -14,7 +14,8 @@ class PromotionDialog:
         for a pawn through the promotion rule
     """
     def __init__(self, variant):
-        self.widgets = uistuff.GladeWidgets("promotion.glade")
+        from .gamewidget import getWidgets
+        self.widgets = getWidgets()
         self.dialog = self.widgets["promotionDialog"]
 
         self.color = None
