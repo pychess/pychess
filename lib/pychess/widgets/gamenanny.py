@@ -259,6 +259,8 @@ class GameNanny(object):
             message = _("You sent an undo offer")
         elif offer.type == HURRY_ACTION:
             message = _("You asked your opponent to move")
+        else:
+            return
 
         def response_cb(infobar, response, message):
             message.dismiss()
