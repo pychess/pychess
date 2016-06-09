@@ -14,7 +14,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.const import WAITING_TO_START, WHITE, BLACK, WHITEWON, \
     BLACKWON, WON_ADJUDICATION, TAKEBACK_OFFER, LOCAL, UNDOABLE_STATES, WHITE_ENGINE_DIED, \
     UNDOABLE_REASONS, BLACK_ENGINE_DIED, HINT, SPY, RUNNING, ABORT_OFFER, ADJOURN_OFFER, \
-    DRAW_OFFER, PAUSE_OFFER, RESUME_OFFER, HURRY_ACTION
+    DRAW_OFFER, PAUSE_OFFER, RESUME_OFFER, HURRY_ACTION, FLAG_CALL
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.System import conf
 from pychess.System.idle_add import idle_add
@@ -259,6 +259,8 @@ class GameNanny(object):
             message = _("You sent an undo offer")
         elif offer.type == HURRY_ACTION:
             message = _("You asked your opponent to move")
+        elif offer.type == FLAG_CALL:
+            message = _("You sent flag call")
         else:
             return
 
