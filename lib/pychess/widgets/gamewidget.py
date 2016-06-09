@@ -1163,6 +1163,9 @@ def getheadbook():
 
 
 def zoomToBoard(view_zoomed):
+    if len(widgets["mainvbox"].get_children()) == 2:
+        # If the headbook hasn't been added yet
+        return None
     if not notebooks["board"].get_parent():
         return
     if view_zoomed:
