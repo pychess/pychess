@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-05-01 20:46+0200\n"
-"PO-Revision-Date: 2016-05-02 19:48+0000\n"
+"PO-Revision-Date: 2016-05-26 10:37+0000\n"
 "Last-Translator: gbtami <gbtami@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/gbtami/pychess/language/hu/)\n"
 "MIME-Version: 1.0\n"
@@ -3529,7 +3529,7 @@ msgstr "visszaveszi az anyagot"
 #: lib/pychess/Utils/lutils/strateval.py:175
 #: lib/pychess/Utils/lutils/strateval.py:183
 msgid "sacrifices material"
-msgstr "anyagot veszít"
+msgstr "anyagot áldoz"
 
 #: lib/pychess/Utils/lutils/strateval.py:177
 msgid "exchanges material"

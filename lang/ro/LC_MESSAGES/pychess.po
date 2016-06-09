@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-05-01 20:46+0200\n"
-"PO-Revision-Date: 2016-05-02 09:08+0000\n"
+"PO-Revision-Date: 2016-05-24 09:39+0000\n"
 "Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
 "Language-Team: Romanian (http://www.transifex.com/gbtami/pychess/language/ro/)\n"
 "MIME-Version: 1.0\n"
@@ -3531,7 +3531,7 @@ msgstr "ia înapoi material"
 #: lib/pychess/Utils/lutils/strateval.py:175
 #: lib/pychess/Utils/lutils/strateval.py:183
 msgid "sacrifices material"
-msgstr "sacrifică material"
+msgstr ""
 
 #: lib/pychess/Utils/lutils/strateval.py:177
 msgid "exchanges material"
