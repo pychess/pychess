@@ -11,13 +11,14 @@ from .PyDockLeaf import PyDockLeaf
 from .PyDockComposite import PyDockComposite
 from .ArrowButton import ArrowButton
 from .HighlightArea import HighlightArea
-from .__init__ import TopDock, DockLeaf, DockComponent, DockComposite
+from .__init__ import TabReceiver
 from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER
 
 
-class PyDockTop(TopDock):
+class PyDockTop(PyDockComposite, TabReceiver):
     def __init__(self, id):
-        TopDock.__init__(self, id)
+        TabReceiver.__init__(self)
+        self.id = id
         self.set_no_show_all(True)
 
         self.highlightArea = HighlightArea(self)
@@ -34,7 +35,11 @@ class PyDockTop(TopDock):
             button.connect("left", self.__onLeave)
 
     def _del(self):
-        TopDock._del(self)
+        TabReceiver._del(self)
+        PyDockComposite._del(self)
+
+    def getPosition(self):
+        return CENTER
 
     def __repr__(self):
         return "top (%s) % self.id"
@@ -55,8 +60,9 @@ class PyDockTop(TopDock):
         self.remove(widget)
 
     def getComponents(self):
-        if isinstance(self.get_child(), DockComponent):
-            return [self.get_child()]
+        child = self.get_child()
+        if isinstance(child, PyDockComposite) or isinstance(child, PyDockLeaf):
+            return [child]
         return []
 
     def dock(self, widget, position, title, id):
@@ -102,6 +108,26 @@ class PyDockTop(TopDock):
     # ===========================================================================
 
     def saveToXML(self, xmlpath):
+        """
+        <docks>
+            <dock id="x">
+                <v pos="200">
+                    <leaf current="x" dockable="False">
+                        <panel id="x" />
+                    </leaf>
+                    <h pos="200">
+                        <leaf current="y" dockable="True">
+                            <panel id="y" />
+                            <panel id="z" />
+                        </leaf>
+                        <leaf current="y" dockable="True">
+                            <panel id="y" />
+                        </leaf>
+                    </h>
+                </v>
+            </dock>
+        </docks>
+        """
         dockElem = None
 
         if os.path.isfile(xmlpath):
@@ -128,7 +154,7 @@ class PyDockTop(TopDock):
         doc.unlink()
 
     def __addToXML(self, component, parentElement, document):
-        if isinstance(component, DockComposite):
+        if isinstance(component, PyDockComposite):
             pos = component.paned.get_position()
             if component.getPosition() in (NORTH, SOUTH):
                 childElement = document.createElement("v")
@@ -144,7 +170,7 @@ class PyDockTop(TopDock):
             self.__addToXML(component.getComponents()[1], childElement,
                             document)
 
-        elif isinstance(component, DockLeaf):
+        elif isinstance(component, PyDockLeaf):
             childElement = document.createElement("leaf")
             childElement.setAttribute("current", component.getCurrentPanel())
             childElement.setAttribute("dockable", str(component.isDockable()))
@@ -156,6 +182,8 @@ class PyDockTop(TopDock):
         parentElement.appendChild(childElement)
 
     def loadFromXML(self, xmlpath, idToWidget):
+        """ idTowidget is a dictionary {id: (widget,title)}
+            asserts that self.id is in the xmlfile """
         doc = minidom.parse(xmlpath)
         for elem in doc.getElementsByTagName("dock"):
             if elem.getAttribute("id") == self.id:

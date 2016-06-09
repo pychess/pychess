@@ -3,10 +3,10 @@ from __future__ import print_function
 
 from gi.repository import Gtk, GObject
 
-from .__init__ import DockComposite, NORTH, EAST, SOUTH, WEST, CENTER, reprPos
+from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER, reprPos
 
 
-class PyDockComposite(Gtk.Alignment, DockComposite):
+class PyDockComposite(Gtk.Alignment):
     def __init__(self, position):
         GObject.GObject.__init__(self, xscale=1, yscale=1)
 
@@ -19,6 +19,10 @@ class PyDockComposite(Gtk.Alignment, DockComposite):
         self.add(self.paned)
         self.paned.show()
 
+    def _del(self):
+        for component in self.getComponents():
+            component._del()
+
     def __repr__(self):
         return "composite %s (%s, %s)" % (reprPos[self.position],
                                           repr(self.paned.get_child1()),
@@ -27,7 +31,7 @@ class PyDockComposite(Gtk.Alignment, DockComposite):
     def dock(self, widget, position, title, id):
         assert position != CENTER, "POSITION_CENTER only makes sense for leaves"
         parent = self.get_parent()
-        while not isinstance(parent, DockComposite):
+        while not isinstance(parent, PyDockComposite):
             parent = parent.get_parent()
         from .PyDockLeaf import PyDockLeaf
         leaf = PyDockLeaf(widget, title, id)
@@ -52,7 +56,7 @@ class PyDockComposite(Gtk.Alignment, DockComposite):
             new = self.paned.get_child1()
         self.paned.remove(new)
         parent = self.get_parent()
-        while not isinstance(parent, DockComposite):
+        while not isinstance(parent, PyDockComposite):
             parent = parent.get_parent()
         parent.changeComponent(self, new)
         component._del()  # TODO: is this necessary?
@@ -88,4 +92,7 @@ class PyDockComposite(Gtk.Alignment, DockComposite):
             conid = self.paned.connect("size-allocate", cb)
 
     def getPosition(self):
+        """ Returns NORTH or SOUTH if the children are packed vertically.
+            Returns WEST or EAST if the children are packed horizontally.
+            Returns CENTER if there is only one child """
         return self.position

@@ -5,16 +5,16 @@ from gi.repository import Gtk, GObject
 
 from pychess.System.prefix import addDataPrefix
 
-from .__init__ import CENTER, DockComposite, DockLeaf, TopDock
+from .__init__ import CENTER, TabReceiver
 
 from .PyDockComposite import PyDockComposite
 from .StarArrowButton import StarArrowButton
 from .HighlightArea import HighlightArea
 
 
-class PyDockLeaf(DockLeaf):
+class PyDockLeaf(TabReceiver):
     def __init__(self, widget, title, id):
-        DockLeaf.__init__(self)
+        TabReceiver.__init__(self)
         self.set_no_show_all(True)
 
         def customGetTabLabelText(child):
@@ -61,8 +61,11 @@ class PyDockLeaf(DockLeaf):
 
         self.__add(widget, title, id)
 
+    def _del(self):
+        TabReceiver._del(self)
+
     def __repr__(self):
-        s = "leaf"  # DockLeaf.__repr__(self)
+        s = "leaf"  # PyDockLeaf.__repr__(self)
         panels = []
         for widget, title, id in self.getPanels():
             panels.append(id)
@@ -86,7 +89,7 @@ class PyDockLeaf(DockLeaf):
             return self
         else:
             parent = self.get_parent()
-            while not isinstance(parent, DockComposite):
+            while not isinstance(parent, PyDockComposite):
                 parent = parent.get_parent()
 
             leaf = PyDockLeaf(widget, title, id)
@@ -112,7 +115,7 @@ class PyDockLeaf(DockLeaf):
 
             def cb():
                 parent = self.get_parent()
-                while not isinstance(parent, DockComposite):
+                while not isinstance(parent, PyDockComposite):
                     parent = parent.get_parent()
                 parent.removeComponent(self)
                 self._del()
@@ -126,14 +129,15 @@ class PyDockLeaf(DockLeaf):
         if self.zoomed:
             return
 
+        from .PyDockTop import PyDockTop
         parent = self.get_parent()
-        if not isinstance(parent, TopDock):
-            while not isinstance(parent, DockComposite):
+        if not isinstance(parent, PyDockTop):
+            while not isinstance(parent, PyDockComposite):
                 parent = parent.get_parent()
 
             parent.changeComponent(self, self.zoomPointer)
 
-            while not isinstance(parent, TopDock):
+            while not isinstance(parent, PyDockTop):
                 parent = parent.get_parent()
 
             self.realtop = parent.getComponents()[0]
@@ -150,7 +154,7 @@ class PyDockLeaf(DockLeaf):
             top_parent = self.get_parent()
             old_parent = self.zoomPointer.get_parent()
 
-            while not isinstance(old_parent, DockComposite):
+            while not isinstance(old_parent, PyDockComposite):
                 old_parent = old_parent.get_parent()
 
             top_parent.changeComponent(self, self.realtop)
@@ -161,6 +165,7 @@ class PyDockLeaf(DockLeaf):
         self.book.set_show_border(True)
 
     def getPanels(self):
+        """ Returns a list of (widget, title, id) tuples """
         return self.panels
 
     def getCurrentPanel(self):
@@ -169,6 +174,7 @@ class PyDockLeaf(DockLeaf):
                 return id
 
     def setCurrentPanel(self, id):
+        """ Returns the panel id currently shown """
         for i, (widget, title, id_) in enumerate(self.panels):
             if id == id_:
                 self.book.set_current_page(i)
@@ -178,6 +184,8 @@ class PyDockLeaf(DockLeaf):
         return self.dockable
 
     def setDockable(self, dockable):
+        """ If the leaf is not dockable it won't be moveable and won't accept
+            new panels """
         self.book.set_show_tabs(dockable)
         # self.book.set_show_border(dockable)
         self.dockable = dockable
