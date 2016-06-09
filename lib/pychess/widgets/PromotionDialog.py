@@ -20,19 +20,17 @@ class PromotionDialog:
 
         self.color = None
 
-        self.widgets["knightDock"].add(PieceWidget(
-            Piece(WHITE, KNIGHT), variant))
-        self.widgets["knightDock"].get_child().show()
-        self.widgets["bishopDock"].add(PieceWidget(
-            Piece(WHITE, BISHOP), variant))
-        self.widgets["bishopDock"].get_child().show()
-        self.widgets["rookDock"].add(PieceWidget(Piece(WHITE, ROOK), variant))
-        self.widgets["rookDock"].get_child().show()
-        self.widgets["queenDock"].add(PieceWidget(
-            Piece(WHITE, QUEEN), variant))
-        self.widgets["queenDock"].get_child().show()
-        self.widgets["kingDock"].add(PieceWidget(Piece(WHITE, KING), variant))
-        self.widgets["kingDock"].get_child().show()
+        if self.widgets["queenDock"].get_child() is None:
+            self.widgets["queenDock"].add(PieceWidget(Piece(WHITE, QUEEN), variant))
+            self.widgets["queenDock"].get_child().show()
+            self.widgets["rookDock"].add(PieceWidget(Piece(WHITE, ROOK), variant))
+            self.widgets["rookDock"].get_child().show()
+            self.widgets["bishopDock"].add(PieceWidget(Piece(WHITE, BISHOP), variant))
+            self.widgets["bishopDock"].get_child().show()
+            self.widgets["knightDock"].add(PieceWidget(Piece(WHITE, KNIGHT), variant))
+            self.widgets["knightDock"].get_child().show()
+            self.widgets["kingDock"].add(PieceWidget(Piece(WHITE, KING), variant))
+            self.widgets["kingDock"].get_child().show()
 
     def setColor(self, color):
         self.widgets["knightDock"].get_child().getPiece().color = color
