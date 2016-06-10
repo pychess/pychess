@@ -257,7 +257,7 @@ class GameHandler(GObject.GObject):
 
         # Keep running the dialog until the user has canceled it or made an error
         # free operation
-        title = _("Save Game") if position is None else _("Export position")
+        title = _("Save Game") if not export else _("Export position")
         self.savedialog.set_title(title)
         while True:
             self.savedialog.set_current_name(

@@ -18,7 +18,7 @@ __append__ = True
 def save(file, model, position=None):
     """Saves game to file in fen format"""
 
-    print("%s" % model.boards[-1 if position is None else position].asFen(),
+    print("%s" % model.boards[-1 if position is None or len(model.boards) == 1 else position].asFen(),
           file=file)
     output = file.getvalue() if isinstance(file, StringIO) else ""
     file.close()
