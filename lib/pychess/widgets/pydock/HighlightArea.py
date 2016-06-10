@@ -20,8 +20,7 @@ class HighlightArea(OverlayWindow):
 
     def __init__(self, parent):
         OverlayWindow.__init__(self, parent)
-        self.myparent = parent
-        self.connect_after("draw", self.__onExpose)
+        self.cid = self.connect_after("draw", self.__onExpose)
 
     def showAt(self, position):
         alloc = self.myparent.get_allocation()

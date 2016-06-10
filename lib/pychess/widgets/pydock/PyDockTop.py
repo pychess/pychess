@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import os
 from xml.dom import minidom
+from collections import defaultdict
 
 
 from pychess.System.prefix import addDataPrefix
@@ -20,8 +21,9 @@ class PyDockTop(PyDockComposite, TabReceiver):
         TabReceiver.__init__(self)
         self.id = id
         self.set_no_show_all(True)
-
         self.highlightArea = HighlightArea(self)
+
+        self.button_cids = defaultdict(list)
 
         self.buttons = (
             ArrowButton(self, addDataPrefix("glade/dock_top.svg"), NORTH),
@@ -30,11 +32,23 @@ class PyDockTop(PyDockComposite, TabReceiver):
             ArrowButton(self, addDataPrefix("glade/dock_left.svg"), WEST))
 
         for button in self.buttons:
-            button.connect("dropped", self.__onDrop)
-            button.connect("hovered", self.__onHover)
-            button.connect("left", self.__onLeave)
+            self.button_cids[button] += [
+                button.connect("dropped", self.__onDrop),
+                button.connect("hovered", self.__onHover),
+                button.connect("left", self.__onLeave),
+            ]
 
     def _del(self):
+        self.highlightArea.disconnect(self.highlightArea.cid)
+        for button in self.buttons:
+            for cid in self.button_cids[button]:
+                button.disconnect(cid)
+            button.myparent = None
+        self.button_cids = {}
+        self.highlightArea.myparent = None
+        #self.buttons = None
+        #self.highlightArea = None
+
         TabReceiver._del(self)
         PyDockComposite._del(self)
 
@@ -217,13 +231,12 @@ class PyDockTop(PyDockComposite, TabReceiver):
                 if parentElement.tagName == "h":
                     widget.set_position(int(allocation.width * pos))
                 else:
-                    #                     print "loading v position as %s out of %s (%s)" % \
-                    #                     (int(allocation.height * pos), str(allocation.height), str(pos))
+                    # print "loading v position as %s out of %s (%s)" % \
+                    # (int(allocation.height * pos), str(allocation.height), str(pos))
                     widget.set_position(int(allocation.height * pos))
                 widget.disconnect(conid)
 
-            conid = new.paned.connect("size-allocate", cb,
-                                      float(parentElement.getAttribute("pos")))
+            conid = new.paned.connect("size-allocate", cb, float(parentElement.getAttribute("pos")))
             return new
 
         elif parentElement.tagName == "leaf":

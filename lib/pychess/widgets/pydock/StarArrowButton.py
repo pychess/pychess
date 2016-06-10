@@ -34,11 +34,9 @@ class StarArrowButton(OverlayWindow):
                  bgSvg):
         OverlayWindow.__init__(self, parent)
 
-        self.myparent = parent
         self.svgs = (northSvg, eastSvg, southSvg, westSvg, centerSvg)
         self.bgSvg = bgSvg
         self.size = ()
-        self.connect_after("draw", self.__onExposeEvent)
         self.currentHovered = -1
 
         # targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
@@ -47,10 +45,12 @@ class StarArrowButton(OverlayWindow):
         self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
                            targets, Gdk.DragAction.MOVE)
         self.drag_dest_set_track_motion(True)
-        self.connect("drag-motion", self.__onDragMotion)
-        self.connect("drag-leave", self.__onDragLeave)
-        self.connect("drag-drop", self.__onDragDrop)
-
+        self.myparent.button_cids += [
+            self.connect("drag-motion", self.__onDragMotion),
+            self.connect("drag-leave", self.__onDragLeave),
+            self.connect("drag-drop", self.__onDragDrop),
+            self.connect_after("draw", self.__onExposeEvent),
+        ]
         self.myparentAlloc = None
         self.myparentPos = None
         self.hasHole = False

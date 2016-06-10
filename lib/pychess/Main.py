@@ -19,7 +19,7 @@ from pychess.System import conf, uistuff, prefix, SubProcess, idle_add
 from pychess.System.uistuff import POSITION_GOLDEN
 from pychess.System.Log import log, LogPipe
 from pychess.System.LogEmitter import GLogHandler, logemitter
-from pychess.System.debug import start_thread_dump, print_obj_referrers
+from pychess.System.debug import start_thread_dump, print_obj_referrers, print_muppy_sumary
 from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
 from pychess.Utils.const import HINT, NAME, SPY
 from pychess.Utils.checkversion import checkversion
@@ -61,8 +61,13 @@ DND_LIST = [Gtk.TargetEntry.new("text/uri-list", DRAG_RESTRICT, TARGET_TYPE_URI_
 class GladeHandlers(object):
     def on_window_key_press(window, event):
         log.debug('on_window_key_press: %s %s' % (window.get_title(), event))
+
+        # debug leaking memory
         if Gdk.keyval_name(event.keyval) == "F12":
-            print_obj_referrers()
+            if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
+                print_muppy_sumary()
+            else:
+                print_obj_referrers()
 
         # Tabbing related shortcuts
         if not gamewidget.getheadbook():

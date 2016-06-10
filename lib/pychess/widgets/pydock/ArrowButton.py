@@ -21,10 +21,8 @@ class ArrowButton(OverlayWindow):
 
     def __init__(self, parent, svgPath, position):
         OverlayWindow.__init__(self, parent)
-        self.myparent = parent
         self.myposition = position
         self.svgPath = svgPath
-        self.connect_after("draw", self.__onExposeEvent)
 
         # targets = [("GTK_NOTEBOOK_TAB", Gtk.TargetFlags.SAME_APP, 0xbadbeef)]
         targets = [Gtk.TargetEntry.new("GTK_NOTEBOOK_TAB",
@@ -32,10 +30,12 @@ class ArrowButton(OverlayWindow):
         self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
                            targets, Gdk.DragAction.MOVE)
         self.drag_dest_set_track_motion(True)
-        self.connect("drag-motion", self.__onDragMotion)
-        self.connect("drag-leave", self.__onDragLeave)
-        self.connect("drag-drop", self.__onDragDrop)
-
+        self.myparent.button_cids[self] += [
+            self.connect("drag-motion", self.__onDragMotion),
+            self.connect("drag-leave", self.__onDragLeave),
+            self.connect("drag-drop", self.__onDragDrop),
+            self.connect_after("draw", self.__onExposeEvent),
+        ]
         self.hovered = False
 
         self.myparentAlloc = None

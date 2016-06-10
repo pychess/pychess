@@ -853,6 +853,7 @@ def splitit(widget):
 
 def delGameWidget(gmwidg):
     """ Remove the widget from the GUI after the game has been terminated """
+    global dock, dockAlign
     log.debug("gamewidget.delGameWidget: starting %s" % repr(gmwidg))
     gmwidg.closed = True
     gmwidg.emit("closed")
@@ -882,6 +883,8 @@ def delGameWidget(gmwidg):
         show_tabs(False)
 
     if headbook.get_n_pages() == 0:
+        dock = None
+        dockAlign = None
         mainvbox = widgets["mainvbox"]
         centerVBox = mainvbox.get_children()[2]
         for child in centerVBox.get_children():
@@ -907,7 +910,7 @@ def _ensureReadForGameWidgets():
     mainvbox = widgets["mainvbox"]
     if len(mainvbox.get_children()) == 3:
         return
-    global background
+    global background, notebooks
     notebooks = get_clean_notebooks(mainvbox)
     background = widgets["mainvbox"].get_children()[1]
     mainvbox.remove(background)
@@ -1027,13 +1030,13 @@ def _ensureReadForGameWidgets():
         leaf = leaf.dock(docks["commentPanel"][1], CENTER,
                          docks["commentPanel"][0], "commentPanel")
 
-    def unrealize(dock):
+    def unrealize(dock, notebooks):
         # unhide the panel before saving so its configuration is saved correctly
         notebooks["board"].get_parent().get_parent().zoomDown()
         dock.saveToXML(dockLocation)
         dock._del()
 
-    dock.connect("unrealize", unrealize)
+    dock.connect("unrealize", unrealize, notebooks)
 
     hbox = Gtk.HBox()
 

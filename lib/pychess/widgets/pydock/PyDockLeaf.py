@@ -26,10 +26,12 @@ class PyDockLeaf(TabReceiver):
 
         self.book = Gtk.Notebook()
         self.book.set_name(id)
-        self.book.get_tab_label_text = customGetTabLabelText
-        self.book.connect("drag-begin", self.__onDragBegin)
-        self.book.connect("drag-end", self.__onDragEnd)
-        self.book.connect_after("switch-page", self.__onPageSwitched)
+        #self.book.get_tab_label_text = customGetTabLabelText
+        self.book_cids = [
+            self.book.connect("drag-begin", self.__onDragBegin),
+            self.book.connect("drag-end", self.__onDragEnd),
+            self.book.connect_after("switch-page", self.__onPageSwitched),
+        ]
         self.add(self.book)
         self.book.show()
         # self.book.props.tab_vborder = 0
@@ -37,6 +39,8 @@ class PyDockLeaf(TabReceiver):
 
         self.highlightArea = HighlightArea(self)
         # self.put(self.highlightArea, 0, 0)
+
+        self.button_cids = []
 
         self.starButton = StarArrowButton(
             self, addDataPrefix("glade/dock_top.svg"),
@@ -46,10 +50,11 @@ class PyDockLeaf(TabReceiver):
             addDataPrefix("glade/dock_center.svg"),
             addDataPrefix("glade/dock_star.svg"))
         # self.put(self.starButton, 0, 0)
-        self.starButton.connect("dropped", self.__onDrop)
-        self.starButton.connect("hovered", self.__onHover)
-        self.starButton.connect("left", self.__onLeave)
-
+        self.button_cids += [
+            self.starButton.connect("dropped", self.__onDrop),
+            self.starButton.connect("hovered", self.__onHover),
+            self.starButton.connect("left", self.__onLeave),
+        ]
         self.dockable = True
         self.panels = []
 
@@ -62,6 +67,20 @@ class PyDockLeaf(TabReceiver):
         self.__add(widget, title, id)
 
     def _del(self):
+        self.highlightArea.disconnect(self.highlightArea.cid)
+
+        for cid in self.button_cids:
+            self.starButton.disconnect(cid)
+        self.button_cids = []
+
+        for cid in self.book_cids:
+            self.book.disconnect(cid)
+
+        self.starButton.myparent = None
+        self.highlightArea.myparent = None
+        #self.starButton = None
+        #self.highlightArea = None
+
         TabReceiver._del(self)
 
     def __repr__(self):

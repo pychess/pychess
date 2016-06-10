@@ -15,6 +15,11 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.widgets.BoardView import BoardView
 from pychess.widgets.BoardControl import BoardControl
 from pychess.widgets.gamewidget import GameWidget
+from pychess.widgets.pydock.PyDockTop import PyDockTop
+from pychess.widgets.pydock.PyDockLeaf import PyDockLeaf
+from pychess.widgets.pydock.ArrowButton import ArrowButton
+from pychess.widgets.pydock.StarArrowButton import StarArrowButton
+from pychess.widgets.pydock.HighlightArea import HighlightArea
 from pychess.Players.CECPEngine import CECPEngine
 from pychess.Players.UCIEngine import UCIEngine
 from pychess.Players.Human import Human
@@ -82,7 +87,40 @@ def print_obj_referrers():
         UCIEngine,
         Human,
         ICPlayer,
+        PyDockTop,
+        PyDockLeaf,
+        # TODO:
+        # ArrowButton,
+        # StarArrowButton,
+        # HighlightArea,
         # Board,
         # LBoard,
     ):
         obj_referrers(klass)
+
+
+def print_muppy_sumary():
+    # http://pythonhosted.org/Pympler/index.html
+    from pympler import muppy, summary
+    # from pympler.classtracker import ClassTracker
+    # from pympler.classtracker_stats import HtmlStats
+    global all_objects, obj_summary, class_tracker
+    if all_objects is None:
+        all_objects = muppy.get_objects()
+        obj_summary = summary.summarize(all_objects)
+        # summary.print_(obj_summary)
+
+        # class_tracker = ClassTracker()
+        # class_tracker.track_class(FICSPlayer, trace=1)
+        # class_tracker.track_class(ICGameModel, resolution_level=2, trace=1)
+    else:
+        obj_summary2 = summary.summarize(muppy.get_objects())
+        diff = summary.get_diff(obj_summary, obj_summary2)
+        summary.print_(diff, limit=200)
+
+        # class_tracker.create_snapshot('usage')
+        # HtmlStats(tracker=class_tracker).create_html('profile.html')
+
+all_objects = None
+obj_summary = None
+class_tracker = None

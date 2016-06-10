@@ -46,14 +46,6 @@ from .FICSObjects import FICSPlayer, FICSSoughtMatch, FICSChallenge, FICSGame, \
 from .ICGameModel import ICGameModel
 
 
-DO_MUPPY_SUMMARY = False
-# http://pythonhosted.org/Pympler/index.html
-if DO_MUPPY_SUMMARY:
-    from pympler import muppy, summary
-    # from pympler.classtracker import ClassTracker
-    # from pympler.classtracker_stats import HtmlStats
-
-
 class PlayerNotificationMessage(InfoBarMessage):
 
     def __init__(self, message_type, content, callback, player, text):
@@ -161,15 +153,6 @@ class ICLounge(GObject.GObject):
         self.finger_sent = False
         self.connection.lounge_loaded.set()
 
-        if DO_MUPPY_SUMMARY:
-            all_objects = muppy.get_objects()
-            self.summ = summary.summarize(all_objects)
-            # summary.print_(self.summ)
-
-            # self.tracker = ClassTracker()
-            # self.tracker.track_class(FICSPlayer, trace=1)
-            # self.tracker.track_class(ICGameModel, resolution_level=2, trace=1)
-
         log.debug("ICLounge.__init__: finished")
 
     def show(self):
@@ -190,6 +173,9 @@ class ICLounge(GObject.GObject):
                 section._del()
             self.sections = None
             self.widgets = None
+            self.chat.dock._del()
+            self.chat.window.remove(self.chat.dock)
+            self.chat.dock = None
         except TypeError:
             pass
         except AttributeError:
@@ -1437,14 +1423,6 @@ class PlayerTabSection(ParrentListSection):
         for button in self.filter_buttons:
             self.filter_toggles[button] = self.widgets[button].get_active()
         self.player_filter.refilter()
-
-        if DO_MUPPY_SUMMARY:
-            sum2 = summary.summarize(muppy.get_objects())
-            diff = summary.get_diff(self.lounge.summ, sum2)
-            summary.print_(diff, limit=200)
-
-            # self.lounge.tracker.create_snapshot('usage')
-            # HtmlStats(tracker=self.lounge.tracker).create_html('profile.html')
 
     def onPlayerAdded(self, players, new_players):
         # Let the hard work to be done in the helper connection thread

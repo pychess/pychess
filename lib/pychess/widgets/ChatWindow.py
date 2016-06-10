@@ -855,11 +855,11 @@ class ChatWindow(object):
 
         uistuff.keepWindowSize("chat", self.window, defaultSize=(650, 400))
 
-        dock = PyDockTop("icchat")
-        dock.show()
-        self.window.add(dock)
+        self.dock = PyDockTop("icchat")
+        self.dock.show()
+        self.window.add(self.dock)
 
-        leaf = dock.dock(self.viewspanel,
+        leaf = self.dock.dock(self.viewspanel,
                          CENTER,
                          Gtk.Label(label="chat"),
                          "chat")
