@@ -101,14 +101,18 @@ def print_obj_referrers():
 
 def print_muppy_sumary():
     # http://pythonhosted.org/Pympler/index.html
-    from pympler import muppy, summary
+    try:
+        from pympler import muppy, summary
+    except ImportError:
+        print("WARNING: pympler not installed")
+        return
     # from pympler.classtracker import ClassTracker
     # from pympler.classtracker_stats import HtmlStats
     global all_objects, obj_summary, class_tracker
     if all_objects is None:
         all_objects = muppy.get_objects()
         obj_summary = summary.summarize(all_objects)
-        # summary.print_(obj_summary)
+        summary.print_(obj_summary)
 
         # class_tracker = ClassTracker()
         # class_tracker.track_class(FICSPlayer, trace=1)
