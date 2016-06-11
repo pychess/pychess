@@ -7,6 +7,7 @@ from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
 from pychess.widgets import insert_formatted
 from pychess.widgets.Background import set_textview_color
+from pychess.ic import FICS_COMMANDS, FICS_HELP
 
 
 class ConsoleWindow(object):
@@ -40,7 +41,7 @@ class ConsoleWindow(object):
     def showConsole(self, *widget):
         self.window.show_all()
         self.window.present()
-        self.consoleView.writeView.grab_focus()
+        self.consoleView.entry.grab_focus()
 
         # scroll to the bottom
         adj = self.consoleView.sw.get_vadjustment()
@@ -99,14 +100,28 @@ class ConsoleView(Gtk.Box):
         self.readView.props.wrap_mode = Gtk.WrapMode.WORD
         self.pack_start(self.sw, True, True, 0)
 
-        # Inits the write view
+        # Inits entry
         self.history = []
         self.pos = 0
-        self.writeView = Gtk.Entry()
-        # self.writeView.set_width_chars(80)
-        self.pack_start(self.writeView, False, True, 0)
 
-        self.writeView.connect("key-press-event", self.onKeyPress)
+        liststore = Gtk.ListStore(str)
+        for command in FICS_COMMANDS:
+            liststore.append([command])
+        for command in FICS_HELP:
+            liststore.append(["help %s" % command])
+
+        entrycompletion = Gtk.EntryCompletion()
+        entrycompletion.set_model(liststore)
+        entrycompletion.set_text_column(0)
+        entrycompletion.set_minimum_key_length(2)
+        entrycompletion.set_popup_set_width(False)
+
+        self.entry = Gtk.Entry()
+        self.entry.set_completion(entrycompletion)
+
+        self.pack_start(self.entry, False, True, 0)
+
+        self.entry.connect("key-press-event", self.onKeyPress)
 
     @idle_add
     def addMessage(self, text, my):
@@ -130,7 +145,7 @@ class ConsoleView(Gtk.Box):
     def onKeyPress(self, widget, event):
         if event.keyval in list(map(Gdk.keyval_from_name, ("Return", "KP_Enter"))):
             if not event.get_state() & Gdk.ModifierType.CONTROL_MASK:
-                buffer = self.writeView.get_buffer()
+                buffer = self.entry.get_buffer()
                 if buffer.props.text.startswith("pas"):
                     # don't log password changes
                     self.connection.client.telnet.sensitive = True
@@ -146,14 +161,14 @@ class ConsoleView(Gtk.Box):
 
         elif event.keyval == Gdk.keyval_from_name("Up"):
             if self.pos > 0:
-                buffer = self.writeView.get_buffer()
+                buffer = self.entry.get_buffer()
                 self.pos -= 1
                 buffer.props.text = self.history[self.pos]
             widget.grab_focus()
             return True
 
         elif event.keyval == Gdk.keyval_from_name("Down"):
-            buffer = self.writeView.get_buffer()
+            buffer = self.entry.get_buffer()
             if self.pos == len(self.history) - 1:
                 self.pos += 1
                 buffer.props.text = ""
