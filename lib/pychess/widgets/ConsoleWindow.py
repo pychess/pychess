@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from time import strftime, localtime
+from time import strftime
 
 from gi.repository import Gtk, Gdk, GObject, Pango
 
@@ -30,6 +30,7 @@ class ConsoleWindow(object):
         self.window.add(self.consoleView)
 
         widgets["show_console_button"].connect("clicked", self.showConsole)
+
         connection.com.connect("consoleMessage", self.onConsoleMessage)
         connection.connect("disconnected", self.onDisconnected)
 
@@ -66,6 +67,9 @@ class ConsoleWindow(object):
                 self.consoleView.addMessage(line, False)
 
 
+TYPE_COMMAND, TYPE_HELP, TYPE_USER = 0, 1, 2
+
+
 class ConsoleView(Gtk.Box):
     __gsignals__ = {
         'messageAdded': (GObject.SignalFlags.RUN_FIRST, None,
@@ -77,6 +81,8 @@ class ConsoleView(Gtk.Box):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.window = window
         self.connection = connection
+        self.connection.players.connect("FICSPlayerEntered", self.on_player_entered)
+        self.connection.players.connect("FICSPlayerExited", self.on_player_exited)
 
         # Inits the read view
         self.readView = Gtk.TextView()
@@ -104,24 +110,63 @@ class ConsoleView(Gtk.Box):
         self.history = []
         self.pos = 0
 
-        liststore = Gtk.ListStore(str)
+        self.liststore = Gtk.ListStore(str, int)
         for command in FICS_COMMANDS:
-            liststore.append([command])
+            self.liststore.append([command, TYPE_COMMAND])
         for command in FICS_HELP:
-            liststore.append(["help %s" % command])
+            self.liststore.append([command, TYPE_HELP])
 
-        entrycompletion = Gtk.EntryCompletion()
-        entrycompletion.set_model(liststore)
-        entrycompletion.set_text_column(0)
-        entrycompletion.set_minimum_key_length(2)
-        entrycompletion.set_popup_set_width(False)
+        completion = Gtk.EntryCompletion()
+        completion.set_model(self.liststore)
+        completion.set_text_column(0)
+
+        completion.set_minimum_key_length(2)
+        completion.set_popup_set_width(False)
+
+        def match(completion, entrystr, iter, data):
+            modelstr = completion.get_model()[iter][0].lower()
+            modeltype = completion.get_model()[iter][1]
+            parts = entrystr.split()
+            if len(parts) == 1 and modeltype == TYPE_COMMAND:
+                return modelstr.startswith(entrystr)
+            elif len(parts) == 2:
+                if parts[0] == "help":
+                    return modelstr.startswith(parts[1]) and modeltype == TYPE_HELP
+                else:
+                    return parts[0] in FICS_COMMANDS and modelstr.startswith(parts[1].lower()) and modeltype == TYPE_USER
+        completion.set_match_func(match, None)
+
+        def on_match_selected(completion, treemodel, treeiter):
+            modelstr = treemodel[treeiter][0]
+            modeltype = treemodel[treeiter][1]
+            entry = completion.get_entry()
+            parts = entry.get_text().split()
+            if len(parts) == 1 and modeltype == TYPE_COMMAND:
+                entry.set_text(modelstr)
+                entry.set_position(-1)
+                return True
+            elif len(parts) == 2:
+                entry.set_text("%s %s" % (parts[0], modelstr))
+                entry.set_position(-1)
+                return True
+        completion.connect('match-selected', on_match_selected)
 
         self.entry = Gtk.Entry()
-        self.entry.set_completion(entrycompletion)
+        self.entry.set_completion(completion)
 
         self.pack_start(self.entry, False, True, 0)
 
         self.entry.connect("key-press-event", self.onKeyPress)
+
+    def on_player_entered(self, players, new_players):
+        for player in new_players:
+            self.liststore.append([player.name, TYPE_USER])
+
+    def on_player_exited(self, players, player):
+        for row in self.liststore:
+            if row[0] == player.name:
+                self.liststore.remove(row.iter)
+                break
 
     @idle_add
     def addMessage(self, text, my):
