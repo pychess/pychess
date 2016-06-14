@@ -72,7 +72,8 @@ class GeneralTab:
         for key in ("firstName", "secondName", "showEmt", "showEval",
                     "autoPromote", "hideTabs", "closeAll", "faceToFace",
                     "showCords", "showCaptured", "figuresInNotation",
-                    "fullAnimation", "moveAnimation", "noAnimation"):
+                    "fullAnimation", "moveAnimation", "noAnimation",
+                    "showFICSgameno"):
             uistuff.keep(widgets[key], key)
 
         # Options on by default

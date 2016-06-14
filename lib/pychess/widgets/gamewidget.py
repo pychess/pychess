@@ -176,8 +176,11 @@ class GameWidget(GObject.GObject):
             self.gamemodel.connect("message_received", self.message_received),
         ]
         self.players_changed(self.gamemodel)
+
+        self.notify_cids = [conf.notify_add("showFICSgameno", self.on_show_fics_gameno), ]
+
         if self.gamemodel.display_text:
-            if isinstance(self.gamemodel, ICGameModel):
+            if isinstance(self.gamemodel, ICGameModel) and conf.get("showFICSgameno", False):
                 self.game_info_label.set_text("%s [%s]" % (
                     self.display_text, self.gamemodel.ficsgame.gameno))
             else:
@@ -226,10 +229,22 @@ class GameWidget(GObject.GObject):
         for cid in self.gamemodel_cids:
             self.gamemodel.disconnect(cid)
 
+        for cid in self.notify_cids:
+            conf.notify_remove(cid)
+
         self.board._del()
 
         if self.game_ended_message is not None:
             self.game_ended_message.callback = None
+
+    def on_show_fics_gameno(self, *args):
+        """ Checks the configuration / preferences to see if the FICS
+            game number should be displayed next to player names.
+        """
+        if isinstance(self.gamemodel, ICGameModel) and conf.get("showFICSgameno", False):
+            self.game_info_label.set_text(" [%s]" % self.gamemodel.ficsgame.gameno)
+        else:
+            self.game_info_label.set_text("")
 
     @idle_add
     def infront(self):
