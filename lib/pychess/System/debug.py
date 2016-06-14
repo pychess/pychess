@@ -12,6 +12,7 @@ from pychess.System.Log import log
 from pychess.Utils.Board import Board
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.lutils.LBoard import LBoard
+from pychess.widgets.ionest import game_handler
 from pychess.widgets.BoardView import BoardView
 from pychess.widgets.BoardControl import BoardControl
 from pychess.widgets.gamewidget import GameWidget
@@ -77,6 +78,9 @@ def obj_referrers(klass):
 
 
 def print_obj_referrers():
+    if len(game_handler.gamewidgets) > 0:
+        return
+
     for klass in (
         ICGameModel,
         GameModel,
@@ -97,6 +101,7 @@ def print_obj_referrers():
         # LBoard,
     ):
         obj_referrers(klass)
+    print("---------------------------------")
 
 
 def print_muppy_sumary():
