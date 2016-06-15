@@ -644,6 +644,7 @@ class Sidepanel:
                 node["start"] += diff
                 node["end"] += diff
 
+        self.boardview.setShownBoard(board.pieceBoard)
         self.gamemodel.needsSave = True
 
     @idle_add
@@ -728,6 +729,7 @@ class Sidepanel:
         # we want to jump into the first board in new vari
         if not comment:
             self.boardview.setShownBoard(boards[1].pieceBoard)
+
         self.gamemodel.needsSave = True
 
     def colorize_node(self, ply, start, end):

@@ -299,18 +299,13 @@ class EngineAdvisor(Advisor):
                     self.linesExpected -= 1
 
     def row_activated(self, iter, model):
-        if self.mode == HINT and self.store.get_path(iter) != Gtk.TreePath(
-                self.path):
+        if self.mode == HINT and self.store.get_path(iter) != Gtk.TreePath(self.path):
             moves = self.store[iter][0][2]
             if moves is not None:
                 score = self.store[iter][1][0]
-                model.add_variation(self.engine.board,
-                                    moves,
-                                    comment="",
-                                    score=score)
+                model.add_variation(self.engine.board, moves, comment="", score=score)
 
-        if self.mode == SPY and self.store.get_path(iter) != Gtk.TreePath(
-                self.path):
+        if self.mode == SPY and self.store.get_path(iter) != Gtk.TreePath(self.path):
             moves = self.store[iter][0][2]
             if moves is not None:
                 score = self.store[iter][1][0]
@@ -320,10 +315,7 @@ class EngineAdvisor(Advisor):
                 board.setColor(1 - board.color)
                 king = board.kings[board.color]
                 null_move = Move(newMove(king, king, NULL_MOVE))
-                model.add_variation(self.engine.board,
-                                    [null_move] + moves,
-                                    comment="",
-                                    score=score)
+                model.add_variation(self.engine.board, [null_move] + moves, comment="", score=score)
 
     def child_tooltip(self, i):
         if self.active:
@@ -407,6 +399,14 @@ class EndgameAdvisor(Advisor, Thread):
             self.store.append(self.parent, [(self.board, move, None), result,
                                             0, False, details, False, False])
         self.tv.expand_row(Gtk.TreePath(self.path), False)
+
+    def row_activated(self, iter, model):
+        if self.store.get_path(iter) != Gtk.TreePath(self.path):
+            board, move, moves = self.store[iter][0]
+            if board.board.next is None and not self.boardview.shownIsMainLine():
+                model.add_move2variation(board, move, self.boardview.shown_variation_idx)
+            else:
+                model.add_variation(board, (move, ))
 
 
 class Sidepanel(object):
