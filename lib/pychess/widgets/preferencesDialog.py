@@ -23,7 +23,8 @@ from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SOUND_SELECT
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.gfx import Pieces
-from .Background import hexcol
+from pychess.widgets import Background
+from pychess.widgets.Background import hexcol, newTheme
 
 firstRun = True
 
@@ -588,6 +589,43 @@ class ThemeTab:
         sets and board colours
     """
     def __init__(self, widgets):
+        self.widgets = widgets
+
+        # Background image
+        path = conf.get("welcome_image", addDataPrefix("glade/clear.png"))
+        conf.set("welcome_image", path)
+
+        image_chooser_dialog = Gtk.FileChooserDialog(
+            _("Select background image file"), None, Gtk.FileChooserAction.OPEN,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
+             Gtk.ResponseType.OK))
+        image_chooser_button = Gtk.FileChooserButton.new_with_dialog(
+            image_chooser_dialog)
+
+        filter = Gtk.FileFilter()
+        filter.set_name(_("Images"))
+        filter.add_pattern("*.bmp")
+        filter.add_pattern("*.jpg")
+        filter.add_pattern("*.png")
+        filter.add_pattern("*.svg")
+        image_chooser_dialog.add_filter(filter)
+        image_chooser_button.set_filename(path)
+
+        self.widgets["imageChooserDock"].add(image_chooser_button)
+        image_chooser_button.show()
+
+        def select_new_image(button):
+            new_image = image_chooser_dialog.get_filename()
+            if new_image:
+                conf.set("welcome_image", new_image)
+                from pychess.widgets.TaskerManager import tasker
+                newTheme(tasker, background=new_image)
+                tasker.queue_draw()
+            else:
+                # restore the original
+                image_chooser_dialog.set_filename(path)
+
+        image_chooser_button.connect("file-set", select_new_image)
 
         # Board Colours
 

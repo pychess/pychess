@@ -31,7 +31,7 @@ from pychess.widgets import gamewidget
 from pychess.widgets.ionest import game_handler
 from pychess.widgets import analyzegameDialog
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
-from pychess.widgets.TaskerManager import TaskerManager
+from pychess.widgets.TaskerManager import tasker
 from pychess.widgets.TaskerManager import NewGameTasker
 from pychess.widgets.TaskerManager import InternetGameTasker
 from pychess.Players.engineNest import discoverer
@@ -370,7 +370,6 @@ class PyChess(object):
         widgets = uistuff.GladeWidgets("PyChess.glade")
         widgets.getGlade().connect_signals(GladeHandlers())
 
-        tasker = TaskerManager()
         new_game_tasker, internet_game_tasker = NewGameTasker(
         ), InternetGameTasker()
         tasker.packTaskers(new_game_tasker, internet_game_tasker)

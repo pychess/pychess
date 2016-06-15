@@ -8,8 +8,6 @@ import cairo
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix, addUserCachePrefix
 
-CLEARPATH = conf.get("welcome_image", addDataPrefix("glade/clear.png"))
-
 surface = None
 provider = None
 loldcolor = None
@@ -45,7 +43,7 @@ def expose(widget, context):
     cairo_create.fill()
 
 
-def newTheme(widget):
+def newTheme(widget, background=None):
     global surface, provider, loldcolor, doldcolor
 
     style_ctxt = widget.get_style_context()
@@ -161,7 +159,7 @@ def newTheme(widget):
     dnewcolor = dcol
 
     # check if changed
-    if loldcolor:
+    if loldcolor and background is None:
         if lnewcolor.red == loldcolor.red and \
            lnewcolor.green == loldcolor.green and \
            lnewcolor.blue == loldcolor.blue and \
@@ -184,8 +182,11 @@ def newTheme(widget):
         int(dnewcolor.green * 255), int(dnewcolor.blue * 255)
     ]
 
-    if not CLEARPATH.endswith("clear.png"):
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file(CLEARPATH)
+    if background is None:
+        background = conf.get("welcome_image", addDataPrefix("glade/clear.png"))
+
+    if not background.endswith("clear.png"):
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(background)
         # for frmat in GdkPixbuf.Pixbuf.get_formats():
         #     print(frmat.get_extensions())
         surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, 0, None)
@@ -201,7 +202,7 @@ def newTheme(widget):
             return
 
     # Get mostly transparant shadowy image
-    imgsurface = cairo.ImageSurface.create_from_png(CLEARPATH)
+    imgsurface = cairo.ImageSurface.create_from_png(background)
     avgalpha = 108 / 255.
 
     surface = cairo.ImageSurface(cairo.FORMAT_RGB24, imgsurface.get_width(),

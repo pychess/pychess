@@ -137,6 +137,8 @@ class TaskerManager(Gtk.Table):
 
             self.attach(lastrow, 0, cols, rrows, rrows + 1)
 
+tasker = TaskerManager()
+
 
 class NewGameTasker(Gtk.Alignment):
     def __init__(self):
