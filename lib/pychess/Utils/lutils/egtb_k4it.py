@@ -30,7 +30,7 @@ class EgtbK4kit:
         self.table = {}
 
     def supports(self, size):
-        return size[0] < 5 and size[1] < 5 and sum(size) < 7
+        return sum(size) < 7
 
     def scoreAllMoves(self, board, probeSoft=False):
         global URL, expression, PROMOTION_FLAGS
