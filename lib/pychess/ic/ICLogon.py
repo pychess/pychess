@@ -60,6 +60,7 @@ def get_user_names(value=None):
 class ICLogon(object):
     def __init__(self):
         self.connection = None
+        self.helperconn = None
         self.lounge = None
         self.canceled = False
         self.cids = defaultdict(list)
