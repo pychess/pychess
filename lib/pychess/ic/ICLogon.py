@@ -103,7 +103,17 @@ class ICLogon(object):
         uistuff.keep(self.widgets["nameEntry"], "usernameEntry",
                      user_name_get_value, user_name_set_value)
         uistuff.keep(self.widgets["passEntry"], "passwordEntry")
-        uistuff.keep(self.widgets["hostEntry"], "hostEntry")
+
+        # workaround to Can't type IP to FICS login dialog
+        # https://github.com/pychess/pychess/issues/1360
+        def host_get_value(entry):
+            return entry.get_text().replace(".", "|")
+
+        def host_set_value(entry, value):
+            entry.set_text(str(value).replace("|", "."))
+
+        uistuff.keep(self.widgets["hostEntry"], "hostEntry", host_get_value, host_set_value)
+
         uistuff.keep(self.widgets["autoLogin"], "autoLogin")
         self.infobar = Gtk.InfoBar()
         self.infobar.set_message_type(Gtk.MessageType.WARNING)
