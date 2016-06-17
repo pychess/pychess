@@ -55,7 +55,7 @@ gstreamer1
 gstreamer1-plugins-base
 (python2 is used by default.
  To use python3 on Fedora 20 install python3, python3-gobject and python3-cairo
- These packages aren't available on CentOS/RHEL) 
+ These packages aren't available on CentOS/RHEL)
 
 Dependencies for Arch:
 python
@@ -81,3 +81,6 @@ PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
   GTKSourceView 3.x
   Pango
 (create engine: pyinstaller and pywin32)
+(create .msi installer: cx_freezee)
+
+Released .msi uses 32bit versions of Python 3.4.4 and pygi-aio-3.14.0_rev22
