@@ -335,6 +335,8 @@ class EndgameAdvisor(Advisor, Thread):
         # FIXME 'Advisor.name = ...' in Advisor.__init__ overwrites Thread.name
         Advisor.__init__(self, store, _("Endgame Table"), ENDGAME)
         self.egtb = EndgameTable()
+        # If mate in # was activated by double click let egtb do the rest
+        self.auto_activate = False
         self.tv = tv
         self.boardview = boardview
         self.tooltip = _(
@@ -346,7 +348,6 @@ class EndgameAdvisor(Advisor, Thread):
         self.start()
 
     class StopNow(Exception):
-
         pass
 
     def run(self):
@@ -400,9 +401,25 @@ class EndgameAdvisor(Advisor, Thread):
                                             0, False, details, False, False])
         self.tv.expand_row(Gtk.TreePath(self.path), False)
 
-    def row_activated(self, iter, model):
+        if self.auto_activate:
+            path = None
+            for i, row in enumerate(self.store):
+                if row[4] == self.name:
+                    path = Gtk.TreePath.new_from_indices((i, 0))
+                    break
+            if path is not None:
+                self.row_activated(self.tv.get_model().get_iter(path), m, from_gui=False)
+
+    def row_activated(self, iter, model, from_gui=True):
         if self.store.get_path(iter) != Gtk.TreePath(self.path):
             board, move, moves = self.store[iter][0]
+
+            if from_gui:
+                result = self.store[iter][1]
+                if result is not None and result[2] != 0.5:
+                    # double click on mate in #
+                    self.auto_activate = True
+
             if board.board.next is None and not self.boardview.shownIsMainLine():
                 model.add_move2variation(board, move, self.boardview.shown_variation_idx)
             else:
@@ -634,6 +651,10 @@ class Sidepanel(object):
                 self.sw.add_with_viewport(label)
                 self.sw.get_child().set_shadow_type(Gtk.ShadowType.NONE)
                 self.sw.show_all()
+
+                # stop egtb auto activation on mating lines
+                for advisor in self.advisors:
+                    advisor.auto_activate = False
             return
 
         for advisor in self.advisors:
