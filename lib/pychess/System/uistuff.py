@@ -517,7 +517,7 @@ class GladeWidgets:
             for node in tree.iter():
                 if 'translatable' in node.attrib:
                     node.text = _(node.text)
-                if node.get('name') == 'pixbuf':
+                if node.get('name') in ('pixbuf', 'logo'):
                     node.text = addDataPrefix("glade/%s" % node.text)
             temp_file = BytesIO()
             tree.write(temp_file, encoding='utf-8', xml_declaration=True)
