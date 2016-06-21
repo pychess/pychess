@@ -2,6 +2,8 @@ import colorsys
 import re
 import sys
 import webbrowser
+import xml.etree.ElementTree as ET
+from io import BytesIO
 
 from gi.repository import Gtk, Gdk, GObject, Pango
 from gi.repository.GdkPixbuf import Pixbuf
@@ -509,27 +511,23 @@ class GladeWidgets:
         into the python __getitem__ version """
 
     def __init__(self, filename):
-        self.builder = Gtk.Builder()
-        if not no_gettext:
-            self.builder.set_translation_domain("pychess")
-        self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
-
         # TODO: remove this when upstream fixes translations with Python3+Windows
         if PY3 and sys.platform == "win32" and not no_gettext:
-            for obj in self.builder.get_objects():
-                if (not isinstance(obj, Gtk.SeparatorMenuItem)) and hasattr(
-                        obj, "get_label"):
-                    label = obj.get_label()
-                    if label is not None:
-                        obj.set_label(_(label))
-                elif hasattr(obj, "get_title"):
-                    title = obj.get_title()
-                    if title is not None:
-                        obj.set_title(_(title))
-                if hasattr(obj, "get_tooltip_text"):
-                    text = obj.get_tooltip_text()
-                    if text is not None:
-                        obj.set_tooltip_text(_(text))
+            tree = ET.parse(addDataPrefix("glade/%s" % filename))
+            for node in tree.iter():
+                if 'translatable' in node.attrib:
+                    node.text = _(node.text)
+                if node.get('name') == 'pixbuf':
+                    node.text = addDataPrefix("glade/%s" % node.text)
+            temp_file = BytesIO()
+            tree.write(temp_file, encoding='utf-8', xml_declaration=True)
+            xml_text = temp_file.getvalue().decode()
+            self.builder = Gtk.Builder.new_from_string(xml_text, len(xml_text))
+        else:
+            self.builder = Gtk.Builder()
+            if not no_gettext:
+                self.builder.set_translation_domain("pychess")
+            self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
 
     def __getitem__(self, key):
         return self.builder.get_object(key)
