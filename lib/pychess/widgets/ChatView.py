@@ -7,7 +7,7 @@ from gi.repository import Gtk, Gdk, Pango, GObject
 from pychess.System.idle_add import idle_add
 from pychess.System import uistuff
 from pychess.widgets import insert_formatted
-from pychess.widgets.Background import set_textview_color
+from pychess.widgets.Background import hexcol, set_textview_color
 from pychess.Utils.IconLoader import load_icon
 from pychess.ic.ICGameModel import ICGameModel
 
@@ -138,8 +138,7 @@ class ChatView(Gtk.Box):
         if pref not in self.colors:
             color = uistuff.genColor(len(self.colors) + 1, self.startpoint)
             self.colors[pref] = color
-            color = [int(c * 255) for c in color]
-            color = "#" + "".join([hex(v)[2:].zfill(2) for v in color])
+            color = hexcol(color)
             text_buf.create_tag(pref + "_normal", foreground=color)
             text_buf.create_tag(pref + "_bold", foreground=color,
                                 weight=Pango.Weight.BOLD)

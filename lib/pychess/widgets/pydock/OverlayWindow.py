@@ -7,6 +7,8 @@ import tempfile
 import cairo
 from gi.repository import Gtk, Gdk, Rsvg
 
+from pychess.widgets.Background import hexcol
+
 
 class OverlayWindow(Gtk.Window):
     """ This class knows about being an overlaywindow and some svg stuff """
@@ -103,11 +105,6 @@ class OverlayWindow(Gtk.Window):
         return (svg.props.width, svg.props.height)
 
     def __loadNativeColoredSvg(self, svgPath):
-        def colorToHex(color, state):
-            color = getattr(self.myparent.get_style(), color)[state]
-            pixels = (color.red, color.green, color.blue)
-            return "#" + "".join(hex(c / 256)[2:].zfill(2) for c in pixels)
-
         TEMP_PATH = os.path.join(tempfile.gettempdir(), "pychess_theamed.svg")
 
         # return hex string #rrggbb
@@ -116,8 +113,7 @@ class OverlayWindow(Gtk.Window):
             # not found colors are black
             if not found:
                 print("color not found in overlaywindow.py:", col)
-            return "#%02X%02X%02X" % (int(color.red * 255), int(
-                color.green * 255), int(color.blue * 255))
+            return hexcol(color)
 
         sytle_ctxt = self.get_style_context()
 
