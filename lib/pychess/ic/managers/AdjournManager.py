@@ -4,7 +4,7 @@ import datetime
 from gi.repository import GObject
 from .BoardManager import names, months, dates
 
-from pychess.ic import GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_OFFLINE, BLKCMD_STORED, \
+from pychess.ic import GAME_TYPES_BY_SHORT_FICS_NAME, BLKCMD_STORED, \
     BLKCMD_HISTORY, BLKCMD_JOURNAL
 from pychess.ic.FICSObjects import FICSAdjournedGame, FICSHistoryGame, FICSJournalGame
 
@@ -73,7 +73,7 @@ class AdjournManager(GObject.GObject):
         self.connection.expect_fromABplus(
             self.__onHistoryResponseYES, "History for %s:" % names,
             "\s*Opponent\s+Type\s+ECO\s+End\s+Date",
-            "\s*(\d+): (-|\+|=) (\d+)\s+(W|B)\s+(\d+) %s\s+\[([a-z ]{3})\s+(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+%s"
+            "\s*(\d+): (-|\+|=) (\d+)\s+(W|B)\s+(\d+) %s\s+\[([a-z ]{3})\s*(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+%s"
             % (names, reasons, dates))
 
         self.connection.expect_fromABplus(
