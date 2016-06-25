@@ -26,6 +26,7 @@ from pychess.Players.UCIEngine import UCIEngine
 from pychess.Players.Human import Human
 from pychess.Players.ICPlayer import ICPlayer
 from pychess.ic.ICGameModel import ICGameModel
+from pychess.ic import ICLogon
 
 
 def dump_threads():
@@ -91,8 +92,6 @@ def print_obj_referrers():
         UCIEngine,
         Human,
         ICPlayer,
-        PyDockTop,
-        PyDockLeaf,
         # TODO:
         # ArrowButton,
         # StarArrowButton,
@@ -101,6 +100,14 @@ def print_obj_referrers():
         # LBoard,
     ):
         obj_referrers(klass)
+
+    if ICLogon.dialog is None or not hasattr(ICLogon.dialog, "lounge"):
+        for klass in (
+            PyDockTop,
+            PyDockLeaf,
+        ):
+            obj_referrers(klass)
+
     print("---------------------------------")
 
 
