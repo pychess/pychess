@@ -2,8 +2,8 @@ import colorsys
 import re
 import sys
 import webbrowser
-import xml.etree.ElementTree as ET
-from io import BytesIO
+import xml.etree.cElementTree as ET
+# from io import BytesIO
 
 from gi.repository import Gtk, Gdk, GObject, Pango
 from gi.repository.GdkPixbuf import Pixbuf
@@ -519,10 +519,13 @@ class GladeWidgets:
                     node.text = _(node.text)
                 if node.get('name') in ('pixbuf', 'logo'):
                     node.text = addDataPrefix("glade/%s" % node.text)
-            temp_file = BytesIO()
+            # temp_file = BytesIO()
+            temp_file = addDataPrefix("glade/%s.temp" % filename)
             tree.write(temp_file, encoding='utf-8', xml_declaration=True)
-            xml_text = temp_file.getvalue().decode()
-            self.builder = Gtk.Builder.new_from_string(xml_text, len(xml_text))
+            # xml_text = temp_file.getvalue().decode()
+            # self.builder = Gtk.Builder.new_from_string(xml_text, len(xml_text))
+            self.builder = Gtk.Builder()
+            self.builder.add_from_file(temp_file)
         else:
             self.builder = Gtk.Builder()
             if not no_gettext:
