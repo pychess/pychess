@@ -6,8 +6,13 @@
 
 from __future__ import print_function
 import argparse
-import os, sys
-import gettext, locale
+import os
+import sys
+import gettext
+import locale
+import atexit
+import logging
+import cgitb
 
 # faulthandler will be in Python 3.3; for 2.x you can download it from pypi
 if not getattr(sys, 'frozen', False):
@@ -18,7 +23,6 @@ if not getattr(sys, 'frozen', False):
         pass
 
 # enable detailed tracebacks
-import cgitb
 cgitb.enable(format='text')
 
 ###############################################################################
@@ -30,6 +34,7 @@ if sys.version_info < (2, 7, 0):
 
 try:
     import cairo
+    cairo.version
 except ImportError:
     print("ERROR: PyChess requires python-cairo to be installed.")
     sys.exit(1)
@@ -71,14 +76,13 @@ if os.path.isdir(os.path.join(this_dir, "lib/pychess")) and \
 # Ensure access to data store
 
 try:
+    import pychess
+    from pychess.compat import PY2
     from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
 except ImportError:
     print("ERROR: Could not import modules.")
     print("Please try to run pychess as stated in the INSTALL file")
     sys.exit(1)
-
-# now we can import from compat module
-from pychess.compat import PY2
 
 if PY2:
     # This hack fixes some UnicodDecode Errors caused pygi not making
@@ -89,7 +93,6 @@ if PY2:
 ###############################################################################
 # Parse command line arguments
 
-import pychess
 no_debug = False
 idle_add_debug = False
 no_thread_debug = False
@@ -103,25 +106,25 @@ description = "The PyChess chess client, version %s." % version
 
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument('--version', action='version',
-    version="%(prog)s" + " %s" % version)
+                    version="%(prog)s" + " %s" % version)
 parser.add_argument('--no-debug', action='store_true',
-    help='turn off debugging output')
+                    help='turn off debugging output')
 parser.add_argument('--idle-add-debug', action='store_true',
-    help='turn on idle-add debugging output')
+                    help='turn on idle-add debugging output')
 parser.add_argument('--thread-debug', action='store_true',
-    help='turn on thread debugging output')
+                    help='turn on thread debugging output')
 parser.add_argument('--no-gettext', action='store_true',
-    help='turn off locale translations')
+                    help='turn off locale translations')
 parser.add_argument('--log-viewer', action='store_true',
-    help='enable Log Viewer menu')
+                    help='enable Log Viewer menu')
 parser.add_argument('--purge-recent', action='store_true',
-    help='purge recent games menu')
+                    help='purge recent games menu')
 parser.add_argument('--ics-host', action='store',
-    help='the hostname of internet chess server (default is freechess.org)')
+                    help='the hostname of internet chess server (default is freechess.org)')
 parser.add_argument('--ics-port', action='store', type=int,
-    help='the connection port of internet chess server (default is 5000)')
+                    help='the connection port of internet chess server (default is 5000)')
 parser.add_argument('chess_file', nargs='?', metavar='chessfile',
-    help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
+                    help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
 
 args = parser.parse_args()
 no_debug = args.no_debug
@@ -136,7 +139,10 @@ ics_port = args.ics_port
 
 ###############################################################################
 # Set up translations
-from pychess.System import uistuff
+try:
+    from pychess.System import uistuff
+except:
+    pass
 uistuff.no_gettext = no_gettext
 
 if no_gettext:
@@ -175,9 +181,45 @@ else:
     else:
         locale.bindtextdomain(domain, locale_dir)
 
+try:
+    from pychess.System.Log import log, LogPipe
+    from pychess.System.LogEmitter import GLogHandler, logemitter
+    from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
+    from pychess.System import conf, SubProcess, idle_add
+    from pychess.System.debug import start_thread_dump
+    from pychess.Main import PyChess
+except ImportError:
+    pass
 ###############################################################################
-# Let's rumble!
+# Set debug stuff
+idle_add.debug = idle_add_debug
+if thread_debug:
+    start_thread_dump()
 
-import pychess.Main
-pychess.Main.run(no_debug, idle_add_debug, thread_debug, log_viewer,
-                 purge_recent, chess_file, ics_host, ics_port)
+###############################################################################
+# Start logging
+sys.stdout = LogPipe(sys.stdout, "stdout")
+sys.stderr = LogPipe(sys.stderr, "stdout")
+
+if log_viewer:
+    log.logger.addHandler(GLogHandler(logemitter))
+log.logger.setLevel(logging.WARNING if no_debug is True else logging.DEBUG)
+oldlogs = [l for l in os.listdir(getUserDataPrefix())
+           if l.endswith(".log")]
+conf.set("max_log_files", conf.get("max_log_files", 10))
+oldlogs.sort()
+l = len(oldlogs)
+while l > conf.get("max_log_files", 10):
+    try:
+        os.remove(addUserDataPrefix(oldlogs[0]))
+        del oldlogs[0]
+    except OSError:
+        pass
+    l -= 1
+
+###############################################################################
+# Just in case stop engine processes on exit
+atexit.register(SubProcess.finishAllSubprocesses)
+
+gtk_app = PyChess(log_viewer, purge_recent, chess_file, ics_host, ics_port)
+gtk_app.run()

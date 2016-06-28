@@ -3,24 +3,19 @@
 import os
 import webbrowser
 import math
-import atexit
-import logging
-import signal
-import subprocess
 import platform
 import sys
+import subprocess
 
 from gi.repository import Gdk
+from gi.repository import Gio
 from gi.repository import Gtk
 from gi.repository import GLib
 
 from pychess.compat import urlopen, basestring, open, pathname2url, url2pathname, unquote
-from pychess.System import conf, uistuff, prefix, SubProcess, idle_add
-from pychess.System.uistuff import POSITION_GOLDEN
-from pychess.System.Log import log, LogPipe
-from pychess.System.LogEmitter import GLogHandler, logemitter
-from pychess.System.debug import start_thread_dump, print_obj_referrers, print_muppy_sumary
-from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
+from pychess.System.Log import log
+from pychess.System import conf, uistuff, prefix
+from pychess.System.debug import print_obj_referrers, print_muppy_sumary
 from pychess.Utils.const import HINT, NAME, SPY
 from pychess.Utils.checkversion import checkversion
 from pychess.widgets import enginesDialog
@@ -236,7 +231,8 @@ class GladeHandlers(object):
                 return True
         if game_handler.closeAllGames(game_handler.gamewidgets) in (
                 Gtk.ResponseType.OK, Gtk.ResponseType.YES):
-            Gtk.main_quit()
+            ICLogon.stop()
+            return False
         else:
             return True
 
@@ -326,17 +322,50 @@ class GladeHandlers(object):
         tipOfTheDay.TipOfTheDay.show()
 
 
-class PyChess(object):
-    def __init__(self, log_viewer, chess_file):
+class PyChess(Gtk.Application):
+    def __init__(self, log_viewer, purge_recent, chess_file, ics_host, ics_port):
+        Gtk.Application.__init__(self,
+                                 application_id="org.pychess",
+                                 flags=Gio.ApplicationFlags.NON_UNIQUE)
+        if ics_host:
+            ICLogon.host = ics_host
+        if ics_port:
+            ICLogon.port = ics_port
+
+        self.log_viewer = log_viewer
+        self.purge_recent = purge_recent
+        self.chess_file = chess_file
+        self.window = None
+
+    def do_startup(self):
+        Gtk.Application.do_startup(self)
+
+        if self.purge_recent:
+            items = recentManager.get_items()
+            for item in items:
+                uri = item.get_uri()
+                if item.get_application_info("pychess"):
+                    recentManager.remove_item(uri)
+
         self.git_rev = ""
 
-        self.initGlade(log_viewer)
-        self.handleArgs(chess_file)
+        self.initGlade(self.log_viewer)
+        self.handleArgs(self.chess_file)
         checkversion()
 
         self.loaded_cids = {}
         self.saved_cids = {}
         self.terminated_cids = {}
+
+        log.info("PyChess %s %s git %s" % (VERSION_NAME, VERSION, self.git_rev))
+        log.info("Command line args: '%s'" % self.chess_file)
+        log.info("Platform: %s" % platform.platform())
+        log.info("Python version: %s.%s.%s" % sys.version_info[0:3])
+        log.info("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
+
+    def do_activate(self):
+        self.add_window(self.window)
+        self.window.show_all()
 
     def on_gmwidg_created(self, gamehandler, gmwidg):
         log.debug("GladeHandlers.on_gmwidg_created: starting")
@@ -369,6 +398,7 @@ class PyChess(object):
         # Init glade and the 'GladeHandlers'
         widgets = uistuff.GladeWidgets("PyChess.glade")
         widgets.getGlade().connect_signals(GladeHandlers())
+        self.window = widgets["window1"]
 
         new_game_tasker, internet_game_tasker = NewGameTasker(
         ), InternetGameTasker()
@@ -395,9 +425,7 @@ class PyChess(object):
         widgets["window1"].connect("delete-event", GladeHandlers.__dict__["on_quit1_activate"])
         widgets["window1"].connect("key-press-event", GladeHandlers.__dict__["on_window_key_press"])
 
-        uistuff.keepWindowSize("main", widgets["window1"], None, POSITION_GOLDEN)
-        widgets["window1"].show()
-        widgets["Background"].show_all()
+        uistuff.keepWindowSize("main", widgets["window1"], None, uistuff.POSITION_GOLDEN)
 
         # To get drag in the whole window, we add it to the menu and the
         # background. If it can be gotten to work, the drag_dest_set_proxy
@@ -491,58 +519,3 @@ class PyChess(object):
                 GLib.idle_add(newGameDialog.LoadFileExtension.run, chess_file)
 
             discoverer.connect_after("all_engines_discovered", do)
-
-
-def run(no_debug, idle_add_debug, thread_debug, log_viewer, purge_recent,
-        chess_file, ics_host, ics_port):
-    # Start logging
-    if log_viewer:
-        log.logger.addHandler(GLogHandler(logemitter))
-    log.logger.setLevel(logging.WARNING if no_debug is True else logging.DEBUG)
-    oldlogs = [l for l in os.listdir(getUserDataPrefix())
-               if l.endswith(".log")]
-    conf.set("max_log_files", conf.get("max_log_files", 10))
-    oldlogs.sort()
-    l = len(oldlogs)
-    while l > conf.get("max_log_files", 10):
-        try:
-            os.remove(addUserDataPrefix(oldlogs[0]))
-            del oldlogs[0]
-        except OSError:
-            pass
-        l -= 1
-
-    if purge_recent:
-        items = recentManager.get_items()
-        for item in items:
-            uri = item.get_uri()
-            if item.get_application_info("pychess"):
-                recentManager.remove_item(uri)
-
-    signal.signal(signal.SIGINT, Gtk.main_quit)
-    signal.signal(signal.SIGTERM, Gtk.main_quit)
-
-    def cleanup():
-        ICLogon.stop()
-        SubProcess.finishAllSubprocesses()
-
-    atexit.register(cleanup)
-
-    pychess = PyChess(log_viewer, chess_file)
-    idle_add.debug = idle_add_debug
-
-    sys.stdout = LogPipe(sys.stdout, "stdout")
-    sys.stderr = LogPipe(sys.stderr, "stdout")
-    log.info("PyChess %s %s git %s" % (VERSION_NAME, VERSION, pychess.git_rev))
-    log.info("Command line args: '%s'" % chess_file)
-    log.info("Platform: %s" % platform.platform())
-    log.info("Python version: %s.%s.%s" % sys.version_info[0:3])
-    log.info("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
-    if thread_debug:
-        start_thread_dump()
-    if ics_host:
-        ICLogon.host = ics_host
-    if ics_port:
-        ICLogon.port = ics_port
-
-    Gtk.main()
