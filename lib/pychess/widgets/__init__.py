@@ -17,8 +17,9 @@ def insert_formatted(text_view, iter, text, tag=None):
             if "://" in part or "www" in part:
                 if part.startswith('"'):
                     part = part[1:]
-                if part.endswith('"'):
-                    part = part[:-1]
+                    endpos = part.find('"')
+                    if endpos != -1:
+                        part = part[:endpos]
                 parts[i] = '<a href="%s">%s</a>' % (part, part)
                 position = i
                 break

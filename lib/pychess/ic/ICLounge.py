@@ -20,6 +20,7 @@ from pychess.System import conf, uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.System.ping import Pinger
 from pychess.System.Log import log
+from pychess.widgets import insert_formatted
 from pychess.widgets.ionest import game_handler
 from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.ConsoleWindow import ConsoleWindow
@@ -689,7 +690,9 @@ class NewsSection(Section):
         textview.props.pixels_below_lines = 4
         textview.props.right_margin = 2
         textview.props.left_margin = 6
-        uistuff.initTexviewLinks(textview, details)
+
+        tb_iter = textview.get_buffer().get_end_iter()
+        insert_formatted(textview, tb_iter, details)
 
         alignment = Gtk.Alignment()
         alignment.set_padding(3, 6, 12, 0)

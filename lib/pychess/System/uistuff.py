@@ -1,7 +1,5 @@
 import colorsys
-import re
 import sys
-import webbrowser
 import xml.etree.cElementTree as ET
 # from io import BytesIO
 
@@ -404,103 +402,6 @@ def makeYellow(box):
         box.connect("draw", on_box_expose_event)
 
     onceWhenReady(box, cb)
-
-
-linkre = re.compile("http://(?:www\.)?\w+\.\w{2,4}[^\s]+")
-emailre = re.compile("[\w\.]+@[\w\.]+\.\w{2,4}")
-
-
-def initTexviewLinks(textview, text):
-    tags = []
-    textbuffer = textview.get_buffer()
-
-    while True:
-        linkmatch = linkre.search(text)
-        emailmatch = emailre.search(text)
-        if not linkmatch and not emailmatch:
-            textbuffer.insert(textbuffer.get_end_iter(), text)
-            break
-
-        if emailmatch and (not linkmatch or emailmatch.start() < linkmatch.start()):
-            e_start = emailmatch.start()
-            e_end = emailmatch.end()
-            msg_type = "email"
-        else:
-            e_start = linkmatch.start()
-            e_end = linkmatch.end()
-            if text[e_end - 1] == ".":
-                e_end -= 1
-            msg_type = "link"
-        textbuffer.insert(textbuffer.get_end_iter(), text[:e_start])
-
-        tag = textbuffer.create_tag(None,
-                                    foreground="blue",
-                                    underline=Pango.Underline.SINGLE)
-        tags.append([tag, text[e_start:e_end], msg_type, textbuffer.get_end_iter()])
-
-        textbuffer.insert_with_tags(textbuffer.get_end_iter(), text[e_start:e_end], tag)
-
-        tags[-1].append(textbuffer.get_end_iter())
-
-        text = text[e_end:]
-
-    def on_press_in_textview(textview, event):
-        tv_iter = textview.get_iter_at_location(int(event.x), int(event.y))
-        if not tv_iter:
-            return
-
-        # https://gramps-project.org/bugs/view.php?id=9335
-        if not isinstance(tv_iter, Gtk.TextIter):
-            tv_iter = tv_iter[1]
-
-        for tag, link, msg_type, s, e in tags:
-            if tv_iter.has_tag(tag):
-                tag.props.foreground = "red"
-                break
-
-    def on_release_in_textview(textview, event):
-        tv_iter = textview.get_iter_at_location(int(event.x), int(event.y))
-        if not tv_iter:
-            return
-
-        # https://gramps-project.org/bugs/view.php?id=9335
-        if not isinstance(tv_iter, Gtk.TextIter):
-            tv_iter = tv_iter[1]
-
-        for tag, link, msg_type, s, e in tags:
-            if tv_iter and tv_iter.has_tag(tag) and \
-                    tag.props.foreground_Gdk.red == 0xffff:
-                if msg_type == "link":
-                    webbrowser.open(link)
-                else:
-                    webbrowser.open("mailto:" + link)
-            tag.props.foreground = "blue"
-
-    stcursor = Gdk.Cursor(Gdk.CursorType.XTERM)
-    linkcursor = Gdk.Cursor(Gdk.CursorType.HAND2)
-
-    def on_motion_in_textview(textview, event):
-        # textview.get_window().get_pointer()
-        tv_iter = textview.get_iter_at_location(int(event.x), int(event.y))
-        if not tv_iter:
-            return
-
-        # https://gramps-project.org/bugs/view.php?id=9335
-        if not isinstance(tv_iter, Gtk.TextIter):
-            tv_iter = tv_iter[1]
-
-        for tag, link, msg_type, s, e in tags:
-            if tv_iter.has_tag(tag):
-                textview.get_window(Gtk.TextWindowType.TEXT).set_cursor(
-                    linkcursor)
-                break
-        else:
-            textview.get_window(Gtk.TextWindowType.TEXT).set_cursor(stcursor)
-
-    textview.connect("motion-notify-event", on_motion_in_textview)
-    textview.connect("leave_notify_event", on_motion_in_textview)
-    textview.connect("button_press_event", on_press_in_textview)
-    textview.connect("button_release_event", on_release_in_textview)
 
 
 no_gettext = False
