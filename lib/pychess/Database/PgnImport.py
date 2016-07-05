@@ -16,7 +16,9 @@ from sqlalchemy.exc import ProgrammingError
 # from sqlalchemy.schema import DropIndex
 
 from pychess.compat import unicode
-from pychess.Utils.const import FEN_START, FISCHERRANDOMCHESS, reprResult
+from pychess.Utils.const import FEN_START, reprResult
+from pychess.Variants import name2variant
+from pychess.System.protoopen import protoopen
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import pgn_load
 from pychess.Database.dbwalk import walk
@@ -89,7 +91,8 @@ class PgnImport():
             # Some .pgn use country after player names
             if name[-4:-3] == " " and name[-3:].isupper():
                 name = name[:-4]
-            name = name.title().translate(removeDic)
+            # TODO
+            # name = name.title().translate(removeDic)
 
         if name in name_dict:
             return name_dict[name]
@@ -149,9 +152,9 @@ class PgnImport():
 
         for pgnfile in files:
             if zf is None:
-                cf = pgn_load(open(pgnfile, "rU"))
+                cf = pgn_load(protoopen(pgnfile))
             else:
-                cf = pgn_load(zf.open(pgnfile, "rU"))
+                cf = pgn_load(zf.protoopen(pgnfile))
 
             # use transaction to avoid autocommit slowness
             trans = self.conn.begin()
@@ -180,7 +183,7 @@ class PgnImport():
                         fenstr = " ".join(parts)
 
                     if variant:
-                        board = LBoard(FISCHERRANDOMCHESS)
+                        board = LBoard(name2variant[variant].variant)
                     else:
                         board = LBoard()
 
@@ -212,8 +215,7 @@ class PgnImport():
                             print("empty game")
                             continue
 
-                    event_id = self.get_id(
-                        cf._getTag(i, 'Event'), event, EVENT)
+                    event_id = self.get_id(cf._getTag(i, 'Event'), event, EVENT)
 
                     site_id = self.get_id(cf._getTag(i, 'Site'), site, SITE)
 
@@ -416,8 +418,7 @@ class PgnImport():
             and_(game.c.event_id == a1.c.id, game.c.site_id == a2.c.id,
                  game.c.white_id == a3.c.id,
                  game.c.black_id == a4.c.id)).where(and_(
-                     a3.c.name.startswith(unicode(
-                         "Réti")), a4.c.name.startswith(unicode("Van Nüss"))))
+                     a3.c.name.startswith(u"Réti"), a4.c.name.startswith(u"Van Nüss")))
 
         result = self.conn.execute(s)
         games = result.fetchall()
@@ -435,7 +436,7 @@ if __name__ == "__main__":
 
     imp = PgnImport()
 
-    from .timer import Timer
+    from timer import Timer
     if len(sys.argv) > 1:
         arg = sys.argv[1]
         with Timer() as t:
@@ -456,8 +457,6 @@ if __name__ == "__main__":
                                        "world_matches.pgn"))
             imp.do_import(os.path.join('../../../testing/gamefiles',
                                        "dortmund.pgn"))
-            imp.do_import(os.path.join('../../../testing/gamefiles',
-                                       "twic923.pgn"))
         print("Elapsed time (secs): %s" % t.elapsed_secs)
         print("Old: 28.68")
     imp.print_db()
