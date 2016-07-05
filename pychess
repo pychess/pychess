@@ -189,6 +189,7 @@ try:
     from pychess.System.debug import start_thread_dump
     from pychess.Main import PyChess
 except ImportError:
+    raise
     pass
 ###############################################################################
 # Set debug stuff
@@ -222,4 +223,4 @@ while l > conf.get("max_log_files", 10):
 atexit.register(SubProcess.finishAllSubprocesses)
 
 gtk_app = PyChess(log_viewer, purge_recent, chess_file, ics_host, ics_port)
-gtk_app.run()
+gtk_app.run(None)
