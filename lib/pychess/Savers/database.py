@@ -152,8 +152,6 @@ class Database(PGNFile):
         self.select = select
         self.count = count
         self.players = players
-        self.comments = []
-        self.comment_idx = 0
 
     def get_movetext(self, gameno):
         selection = select([game.c.movelist, game.c.comments],
@@ -166,6 +164,8 @@ class Database(PGNFile):
         return arr
 
     def loadToModel(self, gameno, position=-1, model=None):
+        self.comments = []
+        self.comment_idx = 0
         model = PGNFile.loadToModel(self,
                                     gameno,
                                     position=position,
