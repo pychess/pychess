@@ -99,6 +99,7 @@ class Human(Player):
         self.ichandle = ichandle
         self.icrating = icrating
 
+        self.timemodel_cid = None
         if self.gamemodel.timed:
             self.timemodel_cid = self.gamemodel.timemodel.connect('zero_reached', self.zero_reached)
         self.cid = self.gamemodel.connect_after("game_terminated", self.on_game_terminated)
@@ -106,7 +107,7 @@ class Human(Player):
     def on_game_terminated(self, model):
         for cid in self.board_cids:
             self.board.disconnect(cid)
-        if self.gamemodel.timed:
+        if self.gamemodel.timed and self.timemodel_cid is not None:
             self.gamemodel.timemodel.disconnect(self.timemodel_cid)
         self.gamemodel.disconnect(self.cid)
 

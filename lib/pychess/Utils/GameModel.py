@@ -175,6 +175,8 @@ class GameModel(GObject.GObject, Thread):
         }
 
         self.endstatus = None
+        self.zero_reached_cid = None
+
         self.timed = self.timemodel.minutes != 0 or self.timemodel.gain != 0
         if self.timed:
             self.zero_reached_cid = self.timemodel.connect('zero_reached', self.zero_reached)
@@ -868,7 +870,8 @@ class GameModel(GObject.GObject, Thread):
                 self.timemodel.end()
                 log.debug("GameModel.terminate: <- timemodel.end() %s" %
                           repr(self.timemodel))
-                self.timemodel.disconnect(self.zero_reached_cid)
+                if self.zero_reached_cid is not None:
+                    self.timemodel.disconnect(self.zero_reached_cid)
 
         # ICGameModel may did this if game was a FICS game
         if self.connections is not None:
