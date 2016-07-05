@@ -26,13 +26,15 @@ from pychess.widgets import gamewidget
 from pychess.widgets.ionest import game_handler
 from pychess.widgets import analyzegameDialog
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
-from pychess.widgets.TaskerManager import tasker
-from pychess.widgets.TaskerManager import NewGameTasker
-from pychess.widgets.TaskerManager import InternetGameTasker
+from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.Players.engineNest import discoverer
 from pychess.Savers import chesspastebin
 from pychess.ic import ICLogon
-# from pychess.Database.gamelist import GameList
+from pychess.perspectives import perspective_manager
+from pychess.perspectives.welcome import Welcome
+from pychess.perspectives.games import Games
+from pychess.perspectives.fics import FICS
+from pychess.perspectives.database import Database
 from pychess import VERSION, VERSION_NAME
 
 leftkeys = list(map(Gdk.keyval_from_name, ("Left", "KP_Left")))
@@ -54,7 +56,10 @@ DND_LIST = [Gtk.TargetEntry.new("text/uri-list", DRAG_RESTRICT, TARGET_TYPE_URI_
 
 
 class GladeHandlers(object):
-    def on_window_key_press(window, event):
+    def __init__(self, app):
+        self.app = app
+
+    def on_window_key_press(self, window, event):
         log.debug('on_window_key_press: %s %s' % (window.get_title(), event))
 
         # debug leaking memory
@@ -96,11 +101,10 @@ class GladeHandlers(object):
 
         gmwidg = gamewidget.cur_gmwidg()
         if gmwidg is not None:
-            for panel in gmwidg.panels:
-                focused = panel.get_focus_child()
-                # Do nothing in chat panel
-                if focused is not None and isinstance(focused, Gtk.Entry):
-                    return False
+            # Let default handler work if typing inside entry widgets
+            current_focused_widget = gamewidget.getWidgets()["window1"].get_focus()
+            if current_focused_widget is not None and isinstance(current_focused_widget, Gtk.Entry):
+                return False
 
             # Navigate on boardview with arrow keys
             if event.keyval in leftkeys:
@@ -146,8 +150,7 @@ class GladeHandlers(object):
 
     #          Drag 'n' Drop          #
 
-    def on_drag_received(self, widget, context, x, y, selection, target_type,
-                         timestamp):
+    def on_drag_received(self, widget, context, x, y, selection, target_type, timestamp):
         if target_type == TARGET_TYPE_URI_LIST:
             uris = selection.get_uris()
             if len(uris) == 1 and uris[0].lower().endswith(".pgn"):
@@ -182,8 +185,7 @@ class GladeHandlers(object):
         newGameDialog.SetupPositionExtension.run(fen)
 
     def on_open_database_activate(self, widget):
-        # GameList().load_games()
-        pass
+        perspective_manager.activate_perspective("database")
 
     def on_enter_game_notation_activate(self, widget):
         newGameDialog.EnterNotationExtension.run()
@@ -232,7 +234,7 @@ class GladeHandlers(object):
         if game_handler.closeAllGames(game_handler.gamewidgets) in (
                 Gtk.ResponseType.OK, Gtk.ResponseType.YES):
             ICLogon.stop()
-            return False
+            self.app.quit()
         else:
             return True
 
@@ -350,6 +352,7 @@ class PyChess(Gtk.Application):
         self.git_rev = ""
 
         self.initGlade(self.log_viewer)
+        self.addPerspectives()
         self.handleArgs(self.chess_file)
         checkversion()
 
@@ -366,6 +369,8 @@ class PyChess(Gtk.Application):
     def do_activate(self):
         self.add_window(self.window)
         self.window.show_all()
+        gamewidget.getWidgets()["player_rating1"].hide()
+        gamewidget.getWidgets()["leave_fullscreen1"].hide()
 
     def on_gmwidg_created(self, gamehandler, gmwidg):
         log.debug("GladeHandlers.on_gmwidg_created: starting")
@@ -396,14 +401,15 @@ class PyChess(Gtk.Application):
 
     def initGlade(self, log_viewer):
         # Init glade and the 'GladeHandlers'
-        widgets = uistuff.GladeWidgets("PyChess.glade")
-        widgets.getGlade().connect_signals(GladeHandlers())
+        self.widgets = widgets = uistuff.GladeWidgets("PyChess.glade")
+        glade_handlers = GladeHandlers(self)
+        widgets.getGlade().connect_signals(glade_handlers)
         self.window = widgets["window1"]
 
-        new_game_tasker, internet_game_tasker = NewGameTasker(
-        ), InternetGameTasker()
-        tasker.packTaskers(new_game_tasker, internet_game_tasker)
-        widgets["Background"].add(tasker)
+        # new_game_tasker, internet_game_tasker = NewGameTasker(
+        # ), InternetGameTasker()
+        # tasker.packTaskers(new_game_tasker, internet_game_tasker)
+        # widgets["Background"].add(tasker)
 
         # Redirect widgets
         gamewidget.setWidgets(widgets)
@@ -422,8 +428,8 @@ class PyChess(Gtk.Application):
 
         # Show main window and init d'n'd
         widgets["window1"].set_title('%s - PyChess' % _('Welcome'))
-        widgets["window1"].connect("delete-event", GladeHandlers.__dict__["on_quit1_activate"])
-        widgets["window1"].connect("key-press-event", GladeHandlers.__dict__["on_window_key_press"])
+        widgets["window1"].connect("delete-event", glade_handlers.on_quit1_activate)
+        widgets["window1"].connect("key-press-event", glade_handlers.on_window_key_press)
 
         uistuff.keepWindowSize("main", widgets["window1"], None, uistuff.POSITION_GOLDEN)
 
@@ -431,7 +437,8 @@ class PyChess(Gtk.Application):
         # background. If it can be gotten to work, the drag_dest_set_proxy
         # method is very interesting.
         widgets["menubar1"].drag_dest_set(Gtk.DestDefaults.ALL, DND_LIST, DRAG_ACTION)
-        widgets["Background"].drag_dest_set(Gtk.DestDefaults.ALL, DND_LIST, DRAG_ACTION)
+        widgets["box2"].drag_dest_set(Gtk.DestDefaults.ALL, DND_LIST, DRAG_ACTION)
+        widgets["perspectives_notebook"].drag_dest_set(Gtk.DestDefaults.ALL, DND_LIST, DRAG_ACTION)
 
         # Init 'minor' dialogs
 
@@ -511,6 +518,13 @@ class PyChess(Gtk.Application):
 
     def website(self, clb, link):
         webbrowser.open(link)
+
+    def addPerspectives(self):
+        perspective_manager.set_widgets(self.widgets)
+        perspective_manager.add_perspective(Welcome(), default=True)
+        perspective_manager.add_perspective(Games())
+        perspective_manager.add_perspective(FICS())
+        perspective_manager.add_perspective(Database())
 
     def handleArgs(self, chess_file):
         if chess_file:

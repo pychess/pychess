@@ -39,6 +39,7 @@ from pychess.Players.Human import Human
 from pychess.Savers import pgn, fen
 from pychess.System.idle_add import idle_add
 from pychess.Variants import variants
+from pychess.perspectives import perspective_manager
 
 from .FICSObjects import FICSPlayer, FICSSoughtMatch, FICSChallenge, FICSGame, \
     FICSAdjournedGame, get_seek_tooltip_text, get_challenge_tooltip_text, \
@@ -72,8 +73,9 @@ class ICLounge(GObject.GObject):
         self.game_cids = {}
         self.widgets = uistuff.GladeWidgets("fics_lounge.glade")
         lounge = self.widgets["fics_lounge"]
-        uistuff.keepWindowSize("fics_lounge", lounge)
-        lounge.set_title("PyChess - Internet Chess: %s" % connection.ics_name)
+        # uistuff.keepWindowSize("fics_lounge", lounge)
+        # lounge.set_title("PyChess - Internet Chess: %s" % connection.ics_name)
+        # lounge.set_label(_("PyChess - Internet Chess: FICS"))
         self.infobar = InfoBarNotebook("fics_lounge_infobar")
         self.infobar.hide()
         self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar,
@@ -154,13 +156,17 @@ class ICLounge(GObject.GObject):
         self.finger_sent = False
         self.connection.lounge_loaded.set()
 
+        perspective_manager.set_perspective_widget("fics", lounge)
+        perspective_manager.activate_perspective("fics")
+
         log.debug("ICLounge.__init__: finished")
 
     def show(self):
         self.widgets["fics_lounge"].show()
 
     def present(self):
-        self.widgets["fics_lounge"].present()
+        perspective_manager.activate_perspective("fics")
+#        self.widgets["fics_lounge"].present()
 
     def on_connection_error(self, connection, error):
         log.warning("ICLounge.on_connection_error: %s" % repr(error))
@@ -181,6 +187,11 @@ class ICLounge(GObject.GObject):
             pass
         except AttributeError:
             pass
+        perspective_manager.disable_perspective("fics")
+        if perspective_manager.get_perspective("games").sensitive:
+            perspective_manager.activate_perspective("games")
+        else:
+            perspective_manager.activate_perspective("welcome")
 
     @idle_add
     def onPlayGameCreated(self, bm, ficsgame):
@@ -2483,8 +2494,9 @@ class SeekChallengeSection(Section):
         self.widgets["editSeekDialog"].set_title(title)
 
     def __showSeekEditor(self, seeknumber, challengemode=False):
-        self.widgets["editSeekDialog"].set_transient_for(self.widgets[
-            "fics_lounge"])
+        # TODO
+        # self.widgets["editSeekDialog"].set_transient_for(self.widgets[
+        #     "fics_lounge"])
         self.__updateSeekEditor(seeknumber, challengemode)
         self.widgets["editSeekDialog"].present()
 

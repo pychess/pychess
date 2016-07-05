@@ -1,10 +1,11 @@
-from __future__ import print_function
 # -*- coding: UTF-8 -*-
+from __future__ import print_function
 
 from gi.repository import Gtk, GObject
 
 from sqlalchemy import select, func, or_
 
+from pychess.compat import unicode
 from pychess.Database.model import engine, game, pl1, pl2, pychess_pdb
 from pychess.Savers.database import load
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK,\
@@ -12,6 +13,7 @@ from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK,\
 from pychess.Players.Human import Human
 from pychess.widgets.ionest import game_handler
 from pychess.Utils.GameModel import GameModel
+from pychess.perspectives import perspective_manager
 
 
 class GameList(Gtk.TreeView):
@@ -60,10 +62,6 @@ class GameList(Gtk.TreeView):
         self.chessfile = load(open(self.uri))
         self.build_query()
 
-        w = Gtk.Window(Gtk.WindowType.TOPLEVEL)
-        w.set_title(_("PyChess Game Database"))
-        w.set_size_request(1000, 400)
-
         hbox = Gtk.HBox()
 
         self.playerlist = Gtk.ListStore(str)
@@ -102,15 +100,13 @@ class GameList(Gtk.TreeView):
         nextButton.connect("clicked", self.on_next_clicked)
         lastButton.connect("clicked", self.on_last_clicked)
 
-        vbox = Gtk.VBox()
-        vbox.pack_start(hbox, False, False, 0)
+        self.vbox = Gtk.VBox()
+        self.vbox.pack_start(hbox, False, False, 0)
 
         sw = Gtk.ScrolledWindow()
         sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         sw.add(self)
-        vbox.pack_start(sw, True, True, 0)
-        w.add(vbox)
-        w.show_all()
+        self.vbox.pack_start(sw, True, True, 0)
 
     def build_query(self):
         self.query = self.chessfile.select
@@ -131,7 +127,7 @@ class GameList(Gtk.TreeView):
     def activate_entry(self, entry):
         text = entry.get_text()
         self.where = or_(
-            pl1.c.name.startswith(text), pl2.c.name.startswith(text))
+            pl1.c.name.startswith(unicode(text)), pl2.c.name.startswith(unicode(text)))
         self.offset = 0
         self.build_query()
         self.load_games()
@@ -204,3 +200,5 @@ class GameList(Gtk.TreeView):
 
         gamemodel.status = WAITING_TO_START
         game_handler.generalStart(gamemodel, p0, p1)
+
+        perspective_manager.activate_perspective("games")

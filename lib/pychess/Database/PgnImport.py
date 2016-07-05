@@ -30,11 +30,11 @@ CHUNK = 1000
 EVENT, SITE, PLAYER, ANNOTATOR, COLLECTION = range(5)
 
 removeDic = {
-    ord(unicode("'")): None,
-    ord(unicode(",")): None,
-    ord(unicode(".")): None,
-    ord(unicode("-")): None,
-    ord(unicode(" ")): None,
+    ord(u"'"): None,
+    ord(u","): None,
+    ord(u"."): None,
+    ord(u"-"): None,
+    ord(u" "): None,
 }
 
 LBoard_FEN_START = LBoard()
@@ -91,8 +91,7 @@ class PgnImport():
             # Some .pgn use country after player names
             if name[-4:-3] == " " and name[-3:].isupper():
                 name = name[:-4]
-            # TODO
-            # name = name.title().translate(removeDic)
+            name = name.title().translate(removeDic)
 
         if name in name_dict:
             return name_dict[name]

@@ -33,6 +33,7 @@ from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic import get_infobarmessage_content, get_infobarmessage_content2
 from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
+from pychess.perspectives import perspective_manager
 from pychess.widgets.InfoBar import InfoBarNotebook, InfoBarMessage, InfoBarMessageButton
 from .pydock.PyDockTop import PyDockTop
 from .pydock.__init__ import CENTER, EAST, SOUTH
@@ -116,7 +117,7 @@ def get_clean_notebooks(mainvbox):
         I think it's caused by Gtk+ 3.20 CSS theming changes
     """
     global notebooks, docks
-    if len(mainvbox.get_children()) == 3:
+    if len(key2gmwidg) > 0:
         return notebooks
     else:
         notebooks = {"board": cleanNotebook("board"),
@@ -874,17 +875,17 @@ def delGameWidget(gmwidg):
     gmwidg.emit("closed")
 
     called_from_preferences = False
-    # wl = Gtk.window_list_toplevels()
     window_list = Gtk.Window.list_toplevels()
     for window in window_list:
         if window.is_active() and window == widgets["preferences"]:
             called_from_preferences = True
             break
 
-    if gmwidg.notebookKey in key2gmwidg:
-        del key2gmwidg[gmwidg.notebookKey]
     pageNum = gmwidg.getPageNumber()
     headbook = getheadbook()
+
+    if gmwidg.notebookKey in key2gmwidg:
+        del key2gmwidg[gmwidg.notebookKey]
 
     if gmwidg.notebookKey in key2cid:
         headbook.disconnect(key2cid[gmwidg.notebookKey])
@@ -900,44 +901,40 @@ def delGameWidget(gmwidg):
     if headbook.get_n_pages() == 0:
         dock = None
         dockAlign = None
-        mainvbox = widgets["mainvbox"]
-        centerVBox = mainvbox.get_children()[2]
-        for child in centerVBox.get_children():
-            centerVBox.remove(child)
-        mainvbox.remove(centerVBox)
-        mainvbox.remove(mainvbox.get_children()[1])
-
-        mainvbox.pack_end(background, True, True, 0)
-        background.show()
 
         if not called_from_preferences:
             # If the last (but not the designGW) gmwidg was closed
             # and we are FICS-ing, present the FICS lounge
-            from pychess.ic.ICLogon import dialog
-            try:
-                dialog.lounge.present()
-            except AttributeError:
-                pass
+            perspective_manager.disable_perspective("games")
+            if perspective_manager.get_perspective("fics").sensitive:
+                perspective_manager.activate_perspective("fics")
+            elif perspective_manager.get_perspective("database").sensitive:
+                perspective_manager.activate_perspective("database")
+            else:
+                perspective_manager.activate_perspective("welcome")
+
     gmwidg._del()
 
 
 def _ensureReadForGameWidgets():
-    mainvbox = widgets["mainvbox"]
-    if len(mainvbox.get_children()) == 3:
+    if len(key2gmwidg) > 0:
         return
-    global background, notebooks
-    notebooks = get_clean_notebooks(mainvbox)
-    background = widgets["mainvbox"].get_children()[1]
-    mainvbox.remove(background)
+    global notebooks
+    perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+    perspective_manager.set_perspective_widget("games", perspective_widget)
+    perspective = perspective_manager.get_perspective("games")
+    notebooks = get_clean_notebooks(perspective.widget)
 
     # Initing headbook
 
     align = createAlignment(4, 4, 0, 4)
     align.set_property("yscale", 0)
+
     headbook = Gtk.Notebook()
+    headbook.set_name("headbook")
     headbook.set_scrollable(True)
     align.add(headbook)
-    mainvbox.pack_start(align, False, True, 0)
+    perspective_widget.pack_start(align, False, True, 0)
     show_tabs(not conf.get("hideTabs", False))
 
     # Initing center
@@ -1077,9 +1074,9 @@ def _ensureReadForGameWidgets():
     notebooks["messageArea"].connect("switch-page", ma_switch_page)
     centerVBox.pack_start(hbox, False, True, 0)
 
-    mainvbox.pack_start(centerVBox, True, True, 0)
+    perspective_widget.pack_start(centerVBox, True, True, 0)
     centerVBox.show_all()
-    mainvbox.show()
+    perspective_widget.show_all()
 
     # Connecting headbook to other notebooks
 
@@ -1087,8 +1084,6 @@ def _ensureReadForGameWidgets():
         for notebook in notebooks.values():
             notebook.set_current_page(page_num)
 
-#        log.debug("HB_switch ficsgame no. %s , %s " % (key2gmwidg[getheadbook().\
-#           get_nth_page(page_num)].gamemodel.ficsgame.gameno,str(page_num)))
         gmwidg = key2gmwidg[getheadbook().get_nth_page(page_num)]
         if isinstance(gmwidg.gamemodel, ICGameModel):
             primary = "primary " + str(gmwidg.gamemodel.ficsgame.gameno)
@@ -1113,13 +1108,14 @@ def _ensureReadForGameWidgets():
 def attachGameWidget(gmwidg):
     log.debug("attachGameWidget: %s" % gmwidg)
     _ensureReadForGameWidgets()
-    headbook = getheadbook()
+    perspective_manager.activate_perspective("games")
 
     key2gmwidg[gmwidg.notebookKey] = gmwidg
+    headbook = getheadbook()
 
     headbook.append_page(gmwidg.notebookKey, gmwidg.tabcontent)
     gmwidg.notebookKey.show_all()
-    # headbook.set_tab_label_packing(gmwidg.notebookKey, True, True, Gtk.PACK_START)
+
     if hasattr(headbook, "set_tab_reorderable"):
         headbook.set_tab_reorderable(gmwidg.notebookKey, True)
 
@@ -1158,9 +1154,9 @@ def attachGameWidget(gmwidg):
 
 
 def cur_gmwidg():
-    headbook = getheadbook()
-    if headbook is None:
+    if len(key2gmwidg) == 0:
         return None
+    headbook = getheadbook()
     notebookKey = headbook.get_nth_page(headbook.get_current_page())
     return key2gmwidg[notebookKey]
 
@@ -1171,19 +1167,16 @@ def customGetTabLabelText(child):
 
 
 def getheadbook():
-    if len(widgets["mainvbox"].get_children()) == 2:
-        # If the headbook hasn't been added yet
+    if len(key2gmwidg) == 0:
         return None
-    headbook = widgets["mainvbox"].get_children()[1].get_child()
+    perspective = perspective_manager.get_perspective("games")
+    headbook = perspective.widget.get_children()[0].get_children()[0].get_child()
     # to help StoryText create widget description
     headbook.get_tab_label_text = customGetTabLabelText
     return headbook
 
 
 def zoomToBoard(view_zoomed):
-    if len(widgets["mainvbox"].get_children()) == 2:
-        # If the headbook hasn't been added yet
-        return None
     if not notebooks["board"].get_parent():
         return
     if view_zoomed:
@@ -1194,9 +1187,9 @@ def zoomToBoard(view_zoomed):
 
 def show_tabs(show):
     if show:
-        widgets["mainvbox"].get_children()[1].show_all()
+        widgets["mainvbox"].get_children()[2].show_all()
     else:
-        widgets["mainvbox"].get_children()[1].hide()
+        widgets["mainvbox"].get_children()[2].hide()
 
 
 def tabsCallback(none):

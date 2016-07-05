@@ -288,3 +288,7 @@ class InternetGameTasker(Gtk.Alignment):
             ICLogon.dialog.widgets["nameEntry"].set_text(username)
             ICLogon.dialog.widgets["passEntry"].set_text(password)
             ICLogon.dialog.widgets["connectButton"].clicked()
+
+
+new_game_tasker, internet_game_tasker = NewGameTasker(), InternetGameTasker()
+tasker.packTaskers(new_game_tasker, internet_game_tasker)
