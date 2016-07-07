@@ -855,7 +855,7 @@ class ChatWindow(object):
 
         uistuff.keepWindowSize("chat", self.window, defaultSize=(650, 400))
 
-        self.dock = PyDockTop("icchat")
+        self.dock = PyDockTop("icchat", "icchat")
         self.dock.show()
         self.window.add(self.dock)
 
