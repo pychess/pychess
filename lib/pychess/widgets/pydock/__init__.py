@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from gi.repository import Gtk, GObject
 
 
@@ -7,21 +9,21 @@ reprPos = ("NORTH", "EAST", "SOUTH", "WEST", "CENTER")
 
 
 class TabReceiver(Gtk.Alignment):
-    __instances = []
+    __instances = defaultdict(list)
 
-    def __init__(self):
+    def __init__(self, perspective):
         GObject.GObject.__init__(self)
-        self.__instances.append(self)
+        self.__instances[perspective].append(self)
 
     def _del(self):
         try:
-            index = TabReceiver.__instances.index(self)
+            index = TabReceiver.__instances[self.perspective].index(self)
         except ValueError:
             return
-        del TabReceiver.__instances[index]
+        del TabReceiver.__instances[self.perspective][index]
 
-    def getInstances(self):
-        return iter(self.__instances)
+    def getInstances(self, perspective):
+        return iter(self.__instances[perspective])
 
     def showArrows(self):
         raise NotImplementedError

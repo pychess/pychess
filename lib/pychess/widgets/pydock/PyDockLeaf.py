@@ -13,8 +13,9 @@ from .HighlightArea import HighlightArea
 
 
 class PyDockLeaf(TabReceiver):
-    def __init__(self, widget, title, id):
-        TabReceiver.__init__(self)
+    def __init__(self, widget, title, id, perspective):
+        TabReceiver.__init__(self, perspective)
+        self.perspective = perspective
         self.set_no_show_all(True)
 
         def customGetTabLabelText(child):
@@ -111,8 +112,8 @@ class PyDockLeaf(TabReceiver):
             while not isinstance(parent, PyDockComposite):
                 parent = parent.get_parent()
 
-            leaf = PyDockLeaf(widget, title, id)
-            new = PyDockComposite(position)
+            leaf = PyDockLeaf(widget, title, id, self.perspective)
+            new = PyDockComposite(position, self.perspective)
             parent.changeComponent(self, new)
             new.initChildren(self, leaf)
             new.show_all()
@@ -219,11 +220,11 @@ class PyDockLeaf(TabReceiver):
         self.highlightArea.hide()
 
     def __onDragBegin(self, widget, context):
-        for instance in self.getInstances():
+        for instance in self.getInstances(self.perspective):
             instance.showArrows()
 
     def __onDragEnd(self, widget, context):
-        for instance in self.getInstances():
+        for instance in self.getInstances(self.perspective):
             instance.hideArrows()
 
     def __onDrop(self, starButton, position, sender):
@@ -231,7 +232,7 @@ class PyDockLeaf(TabReceiver):
 
         # if the undocked leaf was alone, __onDragEnd may not triggered
         # because leaf was removed
-        for instance in self.getInstances():
+        for instance in self.getInstances(self.perspective):
             instance.hideArrows()
 
         if self.dockable:

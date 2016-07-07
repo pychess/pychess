@@ -7,7 +7,7 @@ from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER, reprPos
 
 
 class PyDockComposite(Gtk.Alignment):
-    def __init__(self, position):
+    def __init__(self, position, perspective):
         GObject.GObject.__init__(self, xscale=1, yscale=1)
 
         if position == NORTH or position == SOUTH:
@@ -15,6 +15,7 @@ class PyDockComposite(Gtk.Alignment):
         elif position == EAST or position == WEST:
             paned = Gtk.HPaned()
         self.position = position
+        self.perspective = perspective
         self.paned = paned
         self.add(self.paned)
         self.paned.show()
@@ -34,8 +35,8 @@ class PyDockComposite(Gtk.Alignment):
         while not isinstance(parent, PyDockComposite):
             parent = parent.get_parent()
         from .PyDockLeaf import PyDockLeaf
-        leaf = PyDockLeaf(widget, title, id)
-        new = PyDockComposite(position)
+        leaf = PyDockLeaf(widget, title, id, self.perspective)
+        new = PyDockComposite(position, self.perspective)
         parent.changeComponent(self, new)
         new.initChildren(self, leaf)
         return leaf

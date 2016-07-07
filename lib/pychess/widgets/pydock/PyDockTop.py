@@ -17,9 +17,10 @@ from .__init__ import NORTH, EAST, SOUTH, WEST, CENTER
 
 
 class PyDockTop(PyDockComposite, TabReceiver):
-    def __init__(self, id):
-        TabReceiver.__init__(self)
+    def __init__(self, id, perspective):
+        TabReceiver.__init__(self, perspective)
         self.id = id
+        self.perspective = perspective
         self.set_no_show_all(True)
         self.highlightArea = HighlightArea(self)
 
@@ -56,7 +57,7 @@ class PyDockTop(PyDockComposite, TabReceiver):
         return CENTER
 
     def __repr__(self):
-        return "top (%s) % self.id"
+        return "top (%s)" % self.id
 
     # ===========================================================================
     #    Component stuff
@@ -81,7 +82,7 @@ class PyDockTop(PyDockComposite, TabReceiver):
 
     def dock(self, widget, position, title, id):
         if not self.getComponents():
-            leaf = PyDockLeaf(widget, title, id)
+            leaf = PyDockLeaf(widget, title, id, self.perspective)
             self.addComponent(leaf)
             return leaf
         else:
@@ -218,9 +219,9 @@ class PyDockTop(PyDockComposite, TabReceiver):
         if parentElement.tagName in ("h", "v"):
             child1, child2 = children
             if parentElement.tagName == "h":
-                new = PyDockComposite(EAST)
+                new = PyDockComposite(EAST, self.perspective)
             else:
-                new = PyDockComposite(SOUTH)
+                new = PyDockComposite(SOUTH, self.perspective)
             new.initChildren(
                 self.__createWidgetFromXML(child1, idToWidget),
                 self.__createWidgetFromXML(child2, idToWidget),
@@ -242,7 +243,7 @@ class PyDockTop(PyDockComposite, TabReceiver):
         elif parentElement.tagName == "leaf":
             id = children[0].getAttribute("id")
             title, widget = idToWidget[id]
-            leaf = PyDockLeaf(widget, title, id)
+            leaf = PyDockLeaf(widget, title, id, self.perspective)
             for panelElement in children[1:]:
                 id = panelElement.getAttribute("id")
                 title, widget = idToWidget[id]

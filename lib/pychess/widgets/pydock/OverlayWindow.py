@@ -71,11 +71,15 @@ class OverlayWindow(Gtk.Window):
 
     def translateCoords(self, x, y):
         top_level = self.myparent.get_toplevel()
-        x_loc1, y_loc1 = top_level.get_window().get_position()
-        translate_x = self.myparent.translate_coordinates(self.myparent.get_toplevel(),
-                                                          x, y)
-        x = x_loc1 + translate_x[0]
-        y = y_loc1 + translate_x[1]
+        window = top_level.get_window()
+        if window is None:
+            print("   !!! get_window() returned None for", self.myparent, top_level)
+        else:
+            x_loc1, y_loc1 = window.get_position()
+            translate_x = self.myparent.translate_coordinates(self.myparent.get_toplevel(),
+                                                              x, y)
+            x = x_loc1 + translate_x[0]
+            y = y_loc1 + translate_x[1]
         return x, y
 
     # ===========================================================================

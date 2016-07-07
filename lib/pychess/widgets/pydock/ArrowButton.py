@@ -67,7 +67,11 @@ class ArrowButton(OverlayWindow):
             self.move(x_loc, y_loc)
 
         self.myparentAlloc = parentAlloc
-        self.myparentPos = self.myparent.get_window().get_position()
+        window = self.myparent.get_window()
+        if window is None:
+            print("   !!! get_window() returned None for", self.myparent)
+        else:
+            self.myparentPos = window.get_position()
 
     def __onExposeEvent(self, self_, ctx):
         self._calcSize()

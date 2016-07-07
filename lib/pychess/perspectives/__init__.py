@@ -6,6 +6,7 @@ class Perspective(object):
         self.name = name
         self.label = label
         self.widget = Gtk.Alignment()
+        self.widget.show()
 
     @property
     def sensitive(self):
