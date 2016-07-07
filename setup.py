@@ -259,8 +259,8 @@ if msi:
         "compressed": False,
         "include_msvcr": True,
         "path": sys.path + ["lib"],
-        "includes": ["gi"],
-        "packages": ["gi", "pychess"],
+        "includes": ["gi", "sqlalchemy.sql.default_comparator"],
+        "packages": ["gi", "sqlalchemy.dialects.sqlite", "pychess"],
         "include_files": include_files,
         }
 else:
