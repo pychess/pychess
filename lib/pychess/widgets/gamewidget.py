@@ -944,7 +944,7 @@ def _ensureReadForGameWidgets():
     # The dock
 
     global dock, dockAlign
-    dock = PyDockTop("main")
+    dock = PyDockTop("main", perspective)
     dockAlign = createAlignment(4, 4, 0, 4)
     dockAlign.add(dock)
     centerVBox.pack_start(dockAlign, True, True, 0)
