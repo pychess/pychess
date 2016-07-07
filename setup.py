@@ -267,6 +267,7 @@ else:
     PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
                 "pychess.Players", "pychess.Savers", "pychess.System",
                 "pychess.Utils", "pychess.Utils.lutils", "pychess.Variants",
+                "pychess.perspectives", "pychess.Database",
                 "pychess.widgets", "pychess.widgets.pydock" ]
 
     build_exe_options = {}
