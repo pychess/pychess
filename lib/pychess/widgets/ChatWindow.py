@@ -822,6 +822,14 @@ class ChatWindow(object):
         self.viewspanel = ViewsPanel(self.connection)
         self.channelspanel = ChannelsPanel(self.connection)
         self.infopanel = InfoPanel(self.connection)
+
+        self.chatbox = Gtk.Box()
+        self.chatbox.pack_start(self.channelspanel, True, True, 0)
+        notebook = Gtk.Notebook()
+        notebook.append_page(self.viewspanel, Gtk.Label(_("Chat")))
+        notebook.append_page(self.infopanel, Gtk.Label(_("Info")))
+        self.chatbox.pack_start(notebook, False, False, 0)
+
         self.panels = [self.viewspanel, self.channelspanel, self.infopanel]
         self.viewspanel.connect('channel_content_Changed',
                                 self.channelspanel.channel_Highlight, id)

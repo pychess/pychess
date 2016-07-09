@@ -183,9 +183,7 @@ class ICLounge(GObject.GObject):
             "playerlist": (Gtk.Label(label=_("Player List")), player_list),
             "gamelist": (Gtk.Label(label=_("Game List")), game_list),
             "archivelist": (Gtk.Label(label=_("Archived")), archive_list),
-            "conversations": (Gtk.Label(label=_("Conversations")), self.chat.channelspanel),
-            "chat": (Gtk.Label(label=_("Chat")), self.chat.viewspanel),
-            "info": (Gtk.Label(label=_("Conversation info")), self.chat.infopanel),
+            "chat": (Gtk.Label(label=_("Talking")), self.chat.chatbox),
             "console": (Gtk.Label(label=_("Console")), self.console.consoleView),
             "news": (Gtk.Label(label=_("News")), news),
         }
@@ -223,13 +221,10 @@ class ICLounge(GObject.GObject):
             seek_leaf.dock(docks["gamelist"][1], CENTER, docks["gamelist"][0], "gamelist")
             seek_leaf.dock(docks["archivelist"][1], CENTER, docks["archivelist"][0], "archivelist")
 
-            leaf = leaf.dock(docks["conversations"][1], SOUTH, docks["conversations"][0], "conversations")
+            leaf = leaf.dock(docks["chat"][1], SOUTH, docks["chat"][0], "chat")
 
             console_leaf = leaf.dock(docks["console"][1], SOUTH, docks["console"][0], "console")
             console_leaf.dock(docks["news"][1], CENTER, docks["news"][0], "news")
-
-            leaf = leaf.dock(docks["chat"][1], EAST, docks["chat"][0], "chat")
-            leaf.dock(docks["info"][1], CENTER, docks["info"][0], "info")
 
         def unrealize(dock):
             dock.saveToXML(dockLocation)
