@@ -856,7 +856,6 @@ class ChatWindow(object):
 
     def openChatWithPlayer(self, name):
         cm = self.connection.cm
-        self.onPersonMessage(cm, name, "", False, "")
         self.channelspanel.onPersonMessage(cm, name, "", False, "")
 
 
