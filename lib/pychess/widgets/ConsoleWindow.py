@@ -13,31 +13,8 @@ from pychess.ic import FICS_COMMANDS, FICS_HELP
 class ConsoleWindow(object):
     def __init__(self, widgets, connection):
         self.connection = connection
-
-        self.window = Gtk.Window()
-        self.window.set_border_width(12)
-
-        # ChatWindow uses this to check is_active() so don't touch this!
-        self.window.set_icon_name("pychess")
-
-        self.window.set_title("%s Console" % connection.ics_name)
-        self.window.connect_after("delete-event",
-                                  lambda w, e: w.hide() or True)
-
-        uistuff.keepWindowSize("console", self.window, defaultSize=(800, 400))
-
-        self.consoleView = ConsoleView(self.window, self.connection)
-        self.window.add(self.consoleView)
-
-        widgets["show_console_button"].connect("clicked", self.showConsole)
-
+        self.consoleView = ConsoleView(self.connection)
         connection.com.connect("consoleMessage", self.onConsoleMessage)
-        connection.connect("disconnected", self.onDisconnected)
-
-    @idle_add
-    def onDisconnected(self, conn):
-        if self.window:
-            self.window.hide()
 
     def showConsole(self, *widget):
         self.window.show_all()
@@ -77,9 +54,8 @@ class ConsoleView(Gtk.Box):
         'messageTyped': (GObject.SignalFlags.RUN_FIRST, None, (str, ))
     }
 
-    def __init__(self, window, connection):
+    def __init__(self, connection):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.window = window
         self.connection = connection
         self.connection.players.connect("FICSPlayerEntered", self.on_player_entered)
         self.connection.players.connect("FICSPlayerExited", self.on_player_exited)

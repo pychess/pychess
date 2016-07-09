@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function
 
+import os
 import sys
+import traceback
 from math import e
 from operator import attrgetter
 from itertools import groupby
@@ -17,7 +19,7 @@ from pychess.ic import IC_POS_EXAMINATING, IC_POS_OBSERVING_EXAMINATION, \
 
 from pychess.compat import cmp, StringIO
 from pychess.System import conf, uistuff
-from pychess.System.prefix import addDataPrefix
+from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.System.ping import Pinger
 from pychess.System.Log import log
 from pychess.widgets import insert_formatted
@@ -28,6 +30,9 @@ from pychess.widgets.SpotGraph import SpotGraph
 from pychess.widgets.ChainVBox import ChainVBox
 from pychess.widgets.preferencesDialog import SoundTab
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarNotebook, InfoBarMessageButton
+from pychess.widgets.pydock.PyDockTop import PyDockTop
+from pychess.widgets.pydock import EAST, SOUTH, WEST, CENTER
+
 
 from pychess.Utils.const import LOCAL, WHITE, BLACK, REMOTE, reprResult, RANDOMCHESS, \
     FISCHERRANDOMCHESS, LOSERSCHESS, UNSUPPORTED, VARIANTS_SHUFFLE, VARIANTS_OTHER, \
@@ -68,47 +73,44 @@ class ICLounge(GObject.GObject):
         self.connection = connection
         self.helperconn = helperconn
         self.host = host
+
+        self.finger_sent = False
         self.messages = []
         self.players = []
         self.game_cids = {}
+
         self.widgets = uistuff.GladeWidgets("fics_lounge.glade")
-        lounge = self.widgets["fics_lounge"]
-        # uistuff.keepWindowSize("fics_lounge", lounge)
-        # lounge.set_title("PyChess - Internet Chess: %s" % connection.ics_name)
-        # lounge.set_label(_("PyChess - Internet Chess: FICS"))
+        self.widgets["fics_lounge"].hide()
+
+        perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        perspective_manager.set_perspective_widget("fics", perspective_widget)
+
         self.infobar = InfoBarNotebook("fics_lounge_infobar")
         self.infobar.hide()
-        self.widgets["fics_lounge_infobar_vbox"].pack_start(self.infobar,
-                                                            False, False, 0)
+        perspective_widget.pack_start(self.infobar, False, False, 0)
 
-        def on_window_delete(window, event):
-            self.emit("logout")
-            self.close()
-            return True
-
-        self.widgets["fics_lounge"].connect("delete-event", on_window_delete)
-
-        def on_logoffButton_clicked(button):
+        def on_logoff_clicked(button):
             self.emit("logout")
             self.close()
 
-        self.widgets["logoffButton"].connect("clicked",
-                                             on_logoffButton_clicked)
+        logoff_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_DISCONNECT)
+        logoff_button.set_tooltip_text(_("Log Off"))
+        logoff_button.set_label("logoff")
+        logoff_button.connect("clicked", on_logoff_clicked)
+        perspective_manager.set_perspective_toobuttons("fics", [logoff_button, ])
 
         def on_autoLogout(alm):
             self.emit("autoLogout")
             self.close()
 
         self.connection.alm.connect("logOut", on_autoLogout)
-        self.connection.connect("disconnected",
-                                lambda connection: self.close())
+        self.connection.connect("disconnected", lambda connection: self.close())
         self.connection.connect("error", self.on_connection_error)
         if self.connection.isRegistred():
             numtimes = conf.get("numberOfTimesLoggedInAsRegisteredUser", 0) + 1
             conf.set("numberOfTimesLoggedInAsRegisteredUser", numtimes)
-        self.connection.em.connect(
-            "onCommandNotFound",
-            lambda em, cmd: log.error("Fics answered '%s': Command not found" % cmd))
+        self.connection.em.connect("onCommandNotFound", lambda em, cmd: log.error(
+            "Fics answered '%s': Command not found" % cmd))
         self.connection.bm.connect("playGameCreated", self.onPlayGameCreated)
         self.connection.bm.connect("obsGameCreated", self.onObserveGameCreated)
         self.connection.bm.connect("exGameCreated", self.onObserveGameCreated)
@@ -119,54 +121,134 @@ class ICLounge(GObject.GObject):
         self.connection.bm.connect("matchDeclined", self.matchDeclined)
         self.connection.bm.connect("player_on_censor", self.player_on_censor)
         self.connection.bm.connect("player_on_noplay", self.player_on_noplay)
-        self.connection.bm.connect("req_not_fit_formula",
-                                   self.req_not_fit_formula)
+        self.connection.bm.connect("req_not_fit_formula", self.req_not_fit_formula)
         self.connection.glm.connect("seek-updated", self.on_seek_updated)
-        self.connection.glm.connect("our-seeks-removed",
-                                    self.our_seeks_removed)
-        self.connection.cm.connect("arrivalNotification",
-                                   self.onArrivalNotification)
-        self.connection.cm.connect("departedNotification",
-                                   self.onDepartedNotification)
+        self.connection.glm.connect("our-seeks-removed", self.our_seeks_removed)
+        self.connection.cm.connect("arrivalNotification", self.onArrivalNotification)
+        self.connection.cm.connect("departedNotification", self.onDepartedNotification)
+
         for user in self.connection.notify_users:
             user = self.connection.players.get(user)
             self.user_from_notify_list_is_present(user)
 
-        self.userinfo = UserInfoSection(self.widgets, self.connection,
-                                        self.host, self)
+        self.userinfo = UserInfoSection(self.widgets, self.connection, self.host, self)
         self.news = NewsSection(self.widgets, self.connection)
         self.seek_challenge = SeekChallengeSection(self)
         self.seeks_list = SeekTabSection(self.widgets, self.connection, self)
-        self.seeks_graph_tab = SeekGraphSection(self.widgets, self.connection,
-                                                self)
-        self.players_tab = PlayerTabSection(self.widgets, self.connection,
-                                            self)
+        self.seeks_graph_tab = SeekGraphSection(self.widgets, self.connection, self)
+        self.players_tab = PlayerTabSection(self.widgets, self.connection, self)
         self.games_tab = GameTabSection(self.widgets, self.connection, self)
-        self.adjourned_games_tab = AdjournedTabSection(self.widgets,
-                                                       self.connection, self)
+        self.adjourned_games_tab = AdjournedTabSection(self.widgets, self.connection, self)
+
         self.sections = (self.userinfo, self.news, self.seeks_list,
                          self.seek_challenge, self.seeks_graph_tab,
                          self.players_tab, self.games_tab,
                          self.adjourned_games_tab)
+
         self.chat = ChatWindow(self.widgets, self.connection)
         self.console = ConsoleWindow(self.widgets, self.connection)
 
         self.connection.com.onConsoleMessage("", self.connection.ini_messages)
 
-        self.finger_sent = False
-        self.connection.lounge_loaded.set()
+        perspective = perspective_manager.get_perspective("fics")
 
-        perspective_manager.set_perspective_widget("fics", lounge)
-        perspective_manager.activate_perspective("fics")
+        self.dock = PyDockTop("fics", perspective)
+        align = Gtk.Alignment()
+        align.show()
+        align.add(self.dock)
+        self.dock.show()
+        perspective_widget.pack_start(align, True, True, 0)
+
+        fics_home = self.widgets["fics_home"]
+        self.widgets["fics_lounge_content_hbox"].remove(fics_home)
+        seek_list = self.widgets["seekListContent"]
+        self.widgets["fics_panels_notebook"].remove(seek_list)
+        seek_graph = self.widgets["seekGraphContent"]
+        self.widgets["fics_panels_notebook"].remove(seek_graph)
+        player_list = self.widgets["playersListContent"]
+        self.widgets["fics_panels_notebook"].remove(player_list)
+        game_list = self.widgets["gamesListContent"]
+        self.widgets["fics_panels_notebook"].remove(game_list)
+        archive_list = self.widgets["archiveListContent"]
+        self.widgets["fics_panels_notebook"].remove(archive_list)
+        news = self.widgets["news"]
+        self.widgets["fics_home"].remove(news)
+
+        dockLocation = addUserConfigPrefix("pydock-fics.xml")
+
+        docks = {
+            "ficshome": (Gtk.Label(label="fics"), fics_home),
+            "seeklist": (Gtk.Label(label=_("Seeks / Challenges")), seek_list),
+            "seekgraph": (Gtk.Label(label=_("Seek Graph")), seek_graph),
+            "playerlist": (Gtk.Label(label=_("Player List")), player_list),
+            "gamelist": (Gtk.Label(label=_("Game List")), game_list),
+            "archivelist": (Gtk.Label(label=_("Archived")), archive_list),
+            "conversations": (Gtk.Label(label=_("Conversations")), self.chat.channelspanel),
+            "chat": (Gtk.Label(label=_("Chat")), self.chat.viewspanel),
+            "info": (Gtk.Label(label=_("Conversation info")), self.chat.infopanel),
+            "console": (Gtk.Label(label=_("Console")), self.console.consoleView),
+            "news": (Gtk.Label(label=_("News")), news),
+        }
+
+        if os.path.isfile(dockLocation):
+            try:
+                self.dock.loadFromXML(dockLocation, docks)
+            except Exception as e:
+                stringio = StringIO()
+                traceback.print_exc(file=stringio)
+                error = stringio.getvalue()
+                log.error("Dock loading error: %s\n%s" % (e, error))
+                msg_dia = Gtk.MessageDialog(None,
+                                            type=Gtk.MessageType.ERROR,
+                                            buttons=Gtk.ButtonsType.CLOSE)
+                msg_dia.set_markup(_(
+                    "<b><big>PyChess was unable to load your panel settings</big></b>"))
+                msg_dia.format_secondary_text(_(
+                    "Your panel settings have been reset. If this problem repeats, \
+                    you should report it to the developers"))
+                msg_dia.run()
+                msg_dia.hide()
+                os.remove(dockLocation)
+                for title, panel in docks.values():
+                    title.unparent()
+                    panel.unparent()
+
+        if not os.path.isfile(dockLocation):
+            leaf = self.dock.dock(docks["ficshome"][1], CENTER, docks["ficshome"][0], "ficshome")
+            leaf.setDockable(False)
+
+            seek_leaf = leaf.dock(docks["seeklist"][1], WEST, docks["seeklist"][0], "seeklist")
+            seek_leaf.dock(docks["seekgraph"][1], CENTER, docks["seekgraph"][0], "seekgraph")
+            seek_leaf.dock(docks["playerlist"][1], CENTER, docks["playerlist"][0], "playerlist")
+            seek_leaf.dock(docks["gamelist"][1], CENTER, docks["gamelist"][0], "gamelist")
+            seek_leaf.dock(docks["archivelist"][1], CENTER, docks["archivelist"][0], "archivelist")
+
+            leaf = leaf.dock(docks["conversations"][1], SOUTH, docks["conversations"][0], "conversations")
+
+            console_leaf = leaf.dock(docks["console"][1], SOUTH, docks["console"][0], "console")
+            console_leaf.dock(docks["news"][1], CENTER, docks["news"][0], "news")
+
+            leaf = leaf.dock(docks["chat"][1], EAST, docks["chat"][0], "chat")
+            leaf.dock(docks["info"][1], CENTER, docks["info"][0], "info")
+
+        def unrealize(dock):
+            dock.saveToXML(dockLocation)
+            dock._del()
+
+        self.dock.connect("unrealize", unrealize)
+
+        self.dock.show_all()
+        perspective_widget.show_all()
+
+        self.connection.lounge_loaded.set()
 
         log.debug("ICLounge.__init__: finished")
 
     def show(self):
-        self.widgets["fics_lounge"].show()
+        perspective_manager.activate_perspective("fics")
 
     def present(self):
         perspective_manager.activate_perspective("fics")
-#        self.widgets["fics_lounge"].present()
 
     def on_connection_error(self, connection, error):
         log.warning("ICLounge.on_connection_error: %s" % repr(error))
@@ -175,19 +257,16 @@ class ICLounge(GObject.GObject):
     @idle_add
     def close(self):
         try:
-            self.widgets["fics_lounge"].hide()
             for section in self.sections:
                 section._del()
             self.sections = None
             self.widgets = None
-            self.chat.dock._del()
-            self.chat.window.remove(self.chat.dock)
-            self.chat.dock = None
         except TypeError:
             pass
         except AttributeError:
             pass
-        perspective_manager.disable_perspective("fics")
+        if perspective_manager.get_perspective("fics").sensitive:
+            perspective_manager.disable_perspective("fics")
         if perspective_manager.get_perspective("games").sensitive:
             perspective_manager.activate_perspective("games")
         else:
@@ -712,7 +791,7 @@ class NewsSection(Section):
 
         expander.add(alignment)
         expander.show_all()
-        self.widgets["newsVBox"].pack_end(expander, True, True, 0)
+        self.widgets["newsVBox"].pack_start(expander, False, False, 0)
 
 
 SEPARATOR, ACCEPT, ASSESS, OBSERVE, FOLLOW, CHAT, CHALLENGE, FINGER, ARCHIVED = range(9)

@@ -4,12 +4,9 @@ from gi.repository import Gtk, Gdk, GObject, Pango
 
 from pychess.compat import cmp
 from pychess.Utils.IconLoader import load_icon
-from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
 from pychess.widgets import insert_formatted
 from pychess.widgets.ChatView import ChatView
-from pychess.widgets.pydock.PyDockTop import PyDockTop
-from pychess.widgets.pydock import EAST, WEST, CENTER
 
 TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
     TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(6)
@@ -821,11 +818,6 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
 class ChatWindow(object):
     def __init__(self, widgets, connection):
         self.connection = connection
-        self.window = None
-
-        widgets["show_chat_button"].connect("clicked", self.showChat)
-        connection.cm.connect("privateMessage", self.onPersonMessage)
-        connection.connect("disconnected", self.onDisconnected)
 
         self.viewspanel = ViewsPanel(self.connection)
         self.channelspanel = ChannelsPanel(self.connection)
@@ -834,52 +826,12 @@ class ChatWindow(object):
         self.viewspanel.connect('channel_content_Changed',
                                 self.channelspanel.channel_Highlight, id)
 
-    @idle_add
-    def onDisconnected(self, conn):
-        if self.window:
-            self.window.hide()
-
-    def showChat(self, *widget):
-        if not self.window:
-            self.initUi()
-        self.window.show_all()
-        self.window.present()
-
-    def initUi(self):
-        self.window = Gtk.Window()
-        self.window.set_border_width(12)
-        self.window.set_icon_name("pychess")
-        self.window.set_title("PyChess - Internet Chess Chat")
-        self.window.connect_after("delete-event",
-                                  lambda w, e: w.hide() or True)
-
-        uistuff.keepWindowSize("chat", self.window, defaultSize=(650, 400))
-
-        self.dock = PyDockTop("icchat", "icchat")
-        self.dock.show()
-        self.window.add(self.dock)
-
-        leaf = self.dock.dock(self.viewspanel,
-                         CENTER,
-                         Gtk.Label(label="chat"),
-                         "chat")
-        leaf.setDockable(False)
-
         self.channelspanel.connect('conversationAdded',
                                    self.onConversationAdded)
         self.channelspanel.connect('conversationRemoved',
                                    self.onConversationRemoved)
         self.channelspanel.connect('conversationSelected',
                                    self.onConversationSelected)
-        leaf.dock(self.channelspanel,
-                  WEST,
-                  Gtk.Label(label=_("Conversations")),
-                  "conversations")
-
-        leaf.dock(self.infopanel,
-                  EAST,
-                  Gtk.Label(label=_("Conversation info")),
-                  "info")
 
         for panel in self.panels:
             panel.show_all()
@@ -902,33 +854,7 @@ class ChatWindow(object):
         for panel in self.panels:
             panel.selectItem(grp_id)
 
-    @idle_add
-    def onPersonMessage(self, cm, name, title, isadmin, text):
-        console_active = False
-        for window in Gtk.Window.list_toplevels():
-            if window.is_active():
-                window_icon_name = window.get_icon_name()
-                if window_icon_name is not None and "pychess" in window_icon_name:
-                    console_active = True
-                    break
-
-        if self.connection.bm.isPlaying() or console_active:
-            if not self.window:
-                self.initUi()
-        else:
-            self.showChat()
-            self.window.set_urgency_hint(True)
-            self.initial_focus_id = self.window.connect(
-                "focus-in-event", self.on_initial_focus_in)
-
-    def on_initial_focus_in(self, widget, event):
-        self.window.set_urgency_hint(False)
-        self.window.disconnect(self.initial_focus_id)
-        return False
-
     def openChatWithPlayer(self, name):
-        self.showChat()
-        self.window.get_window().raise_()
         cm = self.connection.cm
         self.onPersonMessage(cm, name, "", False, "")
         self.channelspanel.onPersonMessage(cm, name, "", False, "")

@@ -107,6 +107,7 @@ class GameList(Gtk.TreeView):
         sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         sw.add(self)
         self.vbox.pack_start(sw, True, True, 0)
+        self.vbox.show_all()
 
     def build_query(self):
         self.query = self.chessfile.select

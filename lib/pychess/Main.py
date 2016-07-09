@@ -30,6 +30,7 @@ from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.Players.engineNest import discoverer
 from pychess.Savers import chesspastebin
 from pychess.ic import ICLogon
+from pychess.Database.gamelist import GameList
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.welcome import Welcome
 from pychess.perspectives.games import Games
@@ -185,7 +186,18 @@ class GladeHandlers(object):
         newGameDialog.SetupPositionExtension.run(fen)
 
     def on_open_database_activate(self, widget):
+        game_list = GameList()
+        perspective_manager.set_perspective_widget("database", game_list.vbox)
+
+        #import_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CONVERT)
+        #import_button.set_tooltip_text(_("Import PGN file"))
+        #import_button.connect("clicked", self.on_import_clicked)
+        #perspective_manager.set_perspective_toobuttons("database", [import_button, ])
+
         perspective_manager.activate_perspective("database")
+
+    def on_import_clicked(self, widget):
+        print("import clicked")
 
     def on_enter_game_notation_activate(self, widget):
         newGameDialog.EnterNotationExtension.run()
@@ -402,8 +414,8 @@ class PyChess(Gtk.Application):
     def initGlade(self, log_viewer):
         # Init glade and the 'GladeHandlers'
         self.widgets = widgets = uistuff.GladeWidgets("PyChess.glade")
-        glade_handlers = GladeHandlers(self)
-        widgets.getGlade().connect_signals(glade_handlers)
+        self.glade_handlers = GladeHandlers(self)
+        widgets.getGlade().connect_signals(self.glade_handlers)
         self.window = widgets["window1"]
 
         # new_game_tasker, internet_game_tasker = NewGameTasker(
@@ -428,8 +440,8 @@ class PyChess(Gtk.Application):
 
         # Show main window and init d'n'd
         widgets["window1"].set_title('%s - PyChess' % _('Welcome'))
-        widgets["window1"].connect("delete-event", glade_handlers.on_quit1_activate)
-        widgets["window1"].connect("key-press-event", glade_handlers.on_window_key_press)
+        widgets["window1"].connect("delete-event", self.glade_handlers.on_quit1_activate)
+        widgets["window1"].connect("key-press-event", self.glade_handlers.on_window_key_press)
 
         uistuff.keepWindowSize("main", widgets["window1"], None, uistuff.POSITION_GOLDEN)
 
@@ -525,6 +537,18 @@ class PyChess(Gtk.Application):
         perspective_manager.add_perspective(Games())
         perspective_manager.add_perspective(FICS())
         perspective_manager.add_perspective(Database())
+
+        new_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
+        new_button.set_tooltip_text(_("New Game"))
+        new_button.connect("clicked", self.glade_handlers.on_new_game1_activate)
+        perspective_manager.toolbar.insert(new_button, 0)
+        new_button.show()
+
+        open_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_OPEN)
+        open_button.set_tooltip_text(_("Open Game"))
+        open_button.connect("clicked", self.glade_handlers.on_load_game1_activate)
+        perspective_manager.toolbar.insert(open_button, 1)
+        new_button.show()
 
     def handleArgs(self, chess_file):
         if chess_file:
