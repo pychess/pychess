@@ -12,6 +12,7 @@ from threading import currentThread
 from gi.repository import Gdk, Gtk, GLib, GObject
 
 from pychess.compat import StringIO
+from pychess.widgets import dock_panel_tab
 from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
@@ -22,7 +23,7 @@ from pychess.System.Log import log
 from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.IconLoader import load_icon, get_pixbuf
+from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.const import REMOTE, UNFINISHED_STATES, PAUSED, RUNNING, LOCAL, \
     WHITE, BLACK, ACTION_MENU_ITEMS, DRAW, UNDOABLE_STATES, HINT, SPY, WHITEWON, \
     MENU_ITEMS, BLACKWON, DROP, FAN_PIECES
@@ -952,42 +953,8 @@ def _ensureReadForGameWidgets():
     dock.show()
 
     for panel in sidePanels:
-        hbox = Gtk.HBox()
-        pixbuf = get_pixbuf(panel.__icon__, 16)
-        icon = Gtk.Image.new_from_pixbuf(pixbuf)
-        label = Gtk.Label(label=panel.__title__)
-        label.set_size_request(0, 0)
-        label.set_alignment(0, 1)
-        hbox.pack_start(icon, False, False, 0)
-        hbox.pack_start(label, True, True, 0)
-        hbox.set_spacing(2)
-        hbox.show_all()
-
-        def cb(widget, x, y, keyboard_mode, tooltip, title, desc, filename):
-            table = Gtk.Table(2, 2)
-            table.set_row_spacings(2)
-            table.set_col_spacings(6)
-            table.set_border_width(4)
-            pixbuf = get_pixbuf(filename, 56)
-            image = Gtk.Image.new_from_pixbuf(pixbuf)
-            image.set_alignment(0, 0)
-            table.attach(image, 0, 1, 0, 2)
-            titleLabel = Gtk.Label()
-            titleLabel.set_markup("<b>%s</b>" % title)
-            titleLabel.set_alignment(0, 0)
-            table.attach(titleLabel, 1, 2, 0, 1)
-            descLabel = Gtk.Label(label=desc)
-            descLabel.props.wrap = True
-            table.attach(descLabel, 1, 2, 1, 2)
-            tooltip.set_custom(table)
-            table.show_all()
-            return True
-
-        hbox.props.has_tooltip = True
-        hbox.connect("query-tooltip", cb, panel.__title__, panel.__desc__,
-                     panel.__icon__)
-
-        docks[panel.__name__] = (hbox, notebooks[panel.__name__])
+        box = dock_panel_tab(panel.__title__, panel.__desc__, panel.__icon__)
+        docks[panel.__name__] = (box, notebooks[panel.__name__])
 
     if os.path.isfile(dockLocation):
         try:

@@ -22,7 +22,7 @@ from pychess.System import conf, uistuff
 from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.System.ping import Pinger
 from pychess.System.Log import log
-from pychess.widgets import insert_formatted
+from pychess.widgets import insert_formatted, dock_panel_tab
 from pychess.widgets.ionest import game_handler
 from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.ConsoleWindow import ConsoleWindow
@@ -31,7 +31,7 @@ from pychess.widgets.ChainVBox import ChainVBox
 from pychess.widgets.preferencesDialog import SoundTab
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarNotebook, InfoBarMessageButton
 from pychess.widgets.pydock.PyDockTop import PyDockTop
-from pychess.widgets.pydock import EAST, SOUTH, WEST, CENTER
+from pychess.widgets.pydock import SOUTH, WEST, CENTER
 
 
 from pychess.Utils.const import LOCAL, WHITE, BLACK, REMOTE, reprResult, RANDOMCHESS, \
@@ -178,14 +178,14 @@ class ICLounge(GObject.GObject):
 
         docks = {
             "ficshome": (Gtk.Label(label="fics"), fics_home),
-            "seeklist": (Gtk.Label(label=_("Seeks / Challenges")), seek_list),
-            "seekgraph": (Gtk.Label(label=_("Seek Graph")), seek_graph),
-            "playerlist": (Gtk.Label(label=_("Player List")), player_list),
-            "gamelist": (Gtk.Label(label=_("Game List")), game_list),
-            "archivelist": (Gtk.Label(label=_("Archived")), archive_list),
-            "chat": (Gtk.Label(label=_("Talking")), self.chat.chatbox),
-            "console": (Gtk.Label(label=_("Console")), self.console.consoleView),
-            "news": (Gtk.Label(label=_("News")), news),
+            "seeklist": (dock_panel_tab(_("Seeks / Challenges"), "", addDataPrefix("glade/panel_book.svg")), seek_list),
+            "seekgraph": (dock_panel_tab(_("Seek Graph"), "", addDataPrefix("glade/panel_book.svg")), seek_graph),
+            "playerlist": (dock_panel_tab(_("Player List"), "", addDataPrefix("glade/panel_book.svg")), player_list),
+            "gamelist": (dock_panel_tab(_("Game List"), "", addDataPrefix("glade/panel_book.svg")), game_list),
+            "archivelist": (dock_panel_tab(_("Archived"), "", addDataPrefix("glade/panel_book.svg")), archive_list),
+            "chat": (dock_panel_tab(_("Talking"), "", addDataPrefix("glade/panel_book.svg")), self.chat.chatbox),
+            "console": (dock_panel_tab(_("Console"), "", addDataPrefix("glade/panel_book.svg")), self.console.consoleView),
+            "news": (dock_panel_tab(_("News"), "", addDataPrefix("glade/panel_book.svg")), news),
         }
 
         if os.path.isfile(dockLocation):
