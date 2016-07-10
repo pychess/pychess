@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import re
+from itertools import ifilter, islice
 
 from pychess.compat import basestring, StringIO
 from pychess.System import conf
@@ -266,6 +267,44 @@ class PGNFile(PgnBase):
     def __init__(self, games):
         PgnBase.__init__(self, games)
 
+        self.colnames = ['Id', 'White', 'Black', 'Result', 'Event', 'Site', 'Round',
+                         'Year', 'Month', 'Day', 'WhiteElo', 'BlackElo',
+                         'ECO', 'Board', 'FEN', 'Variant', 'Annotator']
+        self.players = []
+        self.where = None
+        self.all_games = self.games
+        self.count = len(self.all_games)
+        print("%s game(s) match to query" % self.count)
+        self.offset = 0
+
+    def build_query(self):
+        if self.where is None:
+            self.query = self.all_games
+        else:
+            self.query = ifilter(self.where, self.all_games)
+
+    def build_where(self, text):
+        if text:
+            def where(game):
+                return text.lower() in game[0].lower()
+            self.where = where
+        else:
+            self.where = None
+
+    def get_id(self, gameno):
+        return self.offset + gameno
+
+    def get_records(self, offset, limit):
+        if offset < self.offset:
+            # We have to recreate our ifilter query iterator
+            # because python iterators never go backwards!
+            self.build_query()
+        games = [game for game in islice(self.query, offset, offset + limit)]
+        if games:
+            self.tagcache = {}
+            self.games = games
+            self.offset = offset
+
     def loadToModel(self, gameno, position=-1, model=None):
         if not model:
             model = GameModel()
@@ -390,8 +429,7 @@ class PGNFile(PgnBase):
                 except:
                     raise LoadingError(
                         _("Invalid move."),
-                        "%s%s" % (move_count(node,
-                                             black_periods=True), move))
+                        "%s%s" % (move_count(node, black_periods=True), move))
 
             if node.next is None:
                 model.variations.append(path + [board])

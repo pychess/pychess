@@ -15,10 +15,23 @@ class ChessFile:
     def __init__(self, games):
         """ Games should be a list of the raw file data,
             split such that games[0] is used for game 0 etc.
-            SourceUri must be the
             """
         self.games = games
-        self.sourceUri = None
+
+    def build_query(self):
+        pass
+
+    def build_where(self, text):
+        pass
+
+    def get_id(self, gameno):
+        return gameno
+
+    def get_records(self, offset, limit):
+        return self.games
+
+    def _getTag(self, gameno, tagkey):
+        return ""
 
     def loadToModel(self, gameno, position, model=None):
         """ Load the data of game "gameno" into the gamemodel

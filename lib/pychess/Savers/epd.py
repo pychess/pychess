@@ -78,6 +78,12 @@ def load(file):
 
 
 class EpdFile(ChessFile):
+    def __init__(self, games):
+        ChessFile.__init__(self, games)
+        self.players = []
+        self.count = len(self.games)
+        print("%s game(s) match to query" % self.count)
+
     def loadToModel(self, gameno, position, model=None):
         if not model:
             model = GameModel()
@@ -158,3 +164,9 @@ class EpdFile(ChessFile):
             return (names["tcri"], names["tcsi"])
         else:
             return (names["tcsi"], names["tcri"])
+
+    def _getTag(self, gameno, tagkey):
+        if tagkey == "FEN":
+            return " ".join(self.games[gameno].split()[:4])
+        else:
+            return ""

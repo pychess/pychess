@@ -3,13 +3,9 @@ from __future__ import print_function
 
 from gi.repository import Gtk, GObject
 
-from sqlalchemy import select, func, or_
-
-from pychess.compat import unicode
-from pychess.Database.model import engine, game, pl1, pl2, pychess_pdb
-from pychess.Savers.database import load
-from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK,\
-    WAITING_TO_START, reprResult
+from pychess.Savers import database, pgn, fen, epd
+from pychess.System.protoopen import protoopen
+from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult
 from pychess.Players.Human import Human
 from pychess.widgets.ionest import game_handler
 from pychess.Utils.GameModel import GameModel
@@ -20,17 +16,13 @@ class GameList(Gtk.TreeView):
 
     STEP = 50
 
-    def __init__(self):
+    def __init__(self, uri):
         GObject.GObject.__init__(self)
 
         self.offset = 0
-        self.orderby = None
-        self.where = None
-        self.count = 0
-        self.conn = engine.connect()
 
         self.liststore = Gtk.ListStore(int, str, str, str, str, str, str, str,
-                                       str, str, str)
+                                       str, str, str, str)
         self.modelsort = Gtk.TreeModelSort(self.liststore)
 
         self.modelsort.set_sort_column_id(0, Gtk.SortType.ASCENDING)
@@ -42,7 +34,7 @@ class GameList(Gtk.TreeView):
 
         cols = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
                 _("Result"), _("Event"), _("Site"), _("Round"), _("Date"),
-                _("ECO"))
+                "ECO", "FEN")
         for i, col in enumerate(cols):
             r = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(col, r, text=i)
@@ -57,10 +49,19 @@ class GameList(Gtk.TreeView):
         self.set_cursor(0)
         self.columns_autosize()
         self.gameno = 0
-        self.uri = pychess_pdb
+        self.uri = uri
 
-        self.chessfile = load(open(self.uri))
-        self.build_query()
+        if self.uri.endswith(".pdb"):
+            self.chessfile = database.load(open(self.uri))
+        elif self.uri.endswith(".pgn"):
+            self.chessfile = pgn.load(protoopen(self.uri))
+        elif self.uri.endswith(".epd"):
+            self.chessfile = epd.load(open(self.uri))
+        elif self.uri.endswith(".fen"):
+            self.chessfile = fen.load(open(self.uri))
+
+        self.chessfile.build_query()
+        self.load_games()
 
         hbox = Gtk.HBox()
 
@@ -109,28 +110,11 @@ class GameList(Gtk.TreeView):
         self.vbox.pack_start(sw, True, True, 0)
         self.vbox.show_all()
 
-    def build_query(self):
-        self.query = self.chessfile.select
-
-        if self.where is None:
-            self.count = self.chessfile.count
-        else:
-            s = select([func.count(game.c.id)], from_obj=[
-                game.outerjoin(pl1, game.c.white_id == pl1.c.id)
-                .outerjoin(pl2, game.c.black_id == pl2.c.id)])
-            self.count = self.conn.execute(s.where(self.where)).scalar()
-            self.query = self.query.where(self.where)
-        print("%s game(s) match to query" % self.count)
-
-        if self.orderby is not None:
-            self.query = self.query.order_by(self.orderby)
-
     def activate_entry(self, entry):
         text = entry.get_text()
-        self.where = or_(
-            pl1.c.name.startswith(unicode(text)), pl2.c.name.startswith(unicode(text)))
+        self.chessfile.build_where(text)
         self.offset = 0
-        self.build_query()
+        self.chessfile.build_query()
         self.load_games()
 
     def on_first_clicked(self, widget):
@@ -143,12 +127,12 @@ class GameList(Gtk.TreeView):
             self.load_games()
 
     def on_next_clicked(self, widget):
-        if self.offset + self.STEP <= self.count:
+        if self.offset + self.STEP <= self.chessfile.count:
             self.offset = self.offset + self.STEP
             self.load_games()
 
     def on_last_clicked(self, widget):
-        self.offset = (self.count // self.STEP) * self.STEP
+        self.offset = (self.chessfile.count // self.STEP) * self.STEP
         self.load_games()
 
     def column_clicked(self, col, data):
@@ -162,14 +146,12 @@ class GameList(Gtk.TreeView):
         getPlayers = self.chessfile.get_player_names
         add = self.liststore.append
 
-        query = self.query.offset(self.offset).limit(self.STEP)
+        self.chessfile.get_records(self.offset, self.STEP)
+        print("got %s recors" % len(self.chessfile.games))
 
-        result = self.conn.execute(query)
-        self.chessfile.games = result.fetchall()
-        print("%s selected" % len(self.chessfile.games))
         self.id_list = []
         for i in range(len(self.chessfile.games)):
-            game_id = self.chessfile.games[i]["Id"]
+            game_id = self.chessfile.get_id(i)
             self.id_list.append(game_id)
             wname, bname = getPlayers(i)
             welo = getTag(i, "WhiteElo")
@@ -181,8 +163,9 @@ class GameList(Gtk.TreeView):
             round_ = getTag(i, "Round")
             date = getTag(i, "Date")
             eco = getTag(i, "ECO")
+            fen = getTag(i, "FEN")
             add([game_id, wname, welo, bname, belo, result, event, site,
-                 round_, date, eco])
+                 round_, date, eco, fen])
         self.set_cursor(0)
 
     def row_activated(self, widget, path, col):

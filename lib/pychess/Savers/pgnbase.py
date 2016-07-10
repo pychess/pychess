@@ -177,8 +177,7 @@ class PgnBase(ChessFile):
                 return ""
         else:
             if self.games:
-                self.tagcache[gameno] = dict(tagre.findall(self.games[gameno][
-                    0]))
+                self.tagcache[gameno] = dict(tagre.findall(self.games[gameno][0]))
                 return self._getTag(gameno, tagkey)
             else:
                 return ""
@@ -262,7 +261,7 @@ class PgnBase(ChessFile):
         return RUNNING
 
 
-tagre = re.compile(r"\[([a-zA-Z]+)[ \t]+['\"](.*?)['\"]\]")
+tagre = re.compile(r"\[([a-zA-Z0-9_]+)\s+\"(.*?)\"\]")
 
 
 def pgn_load(file, klass=PgnBase):

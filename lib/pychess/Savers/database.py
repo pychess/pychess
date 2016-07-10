@@ -5,19 +5,20 @@ from __future__ import print_function
 
 from array import array
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, or_
 
-from .pgn import PGNFile
+from pychess.compat import unicode
+from pychess.Savers.pgn import PGNFile
 from pychess.Utils.const import reprResult, WHITE, BLACK
 from pychess.Utils.const import FEN_START, REMOTE, ARTIFICIAL, LOCAL
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
-from pychess.Database.model import event, site, player, pl1, pl2, game, annotator
+from pychess.Database.model import engine, game, event, site, player, pl1, pl2, annotator
 from pychess.Variants.fischerandom import FischerandomBoard
 
 __label__ = _("PyChess database")
-__endings__ = "pdb",
+__ending__ = "pdb"
 __append__ = True
 
 
@@ -148,10 +149,46 @@ def load(file):
 class Database(PGNFile):
     def __init__(self, games, colnames, select, count, players):
         PGNFile.__init__(self, games)
+
+        self.conn = engine.connect()
+
         self.colnames = colnames
         self.select = select
+        self.query = None
+        self.orderby = None
+        self.where = None
         self.count = count
         self.players = players
+
+    def build_query(self):
+        self.query = self.select
+
+        if self.where is None:
+            self.count = self.count
+        else:
+            s = select([func.count(game.c.id)], from_obj=[
+                game.outerjoin(pl1, game.c.white_id == pl1.c.id)
+                .outerjoin(pl2, game.c.black_id == pl2.c.id)])
+            self.count = self.conn.execute(s.where(self.where)).scalar()
+            self.query = self.query.where(self.where)
+        print("%s game(s) match to query" % self.count)
+
+        if self.orderby is not None:
+            self.query = self.query.order_by(self.orderby)
+
+    def build_where(self, text):
+        if text:
+            self.where = or_(pl1.c.name.startswith(unicode(text)), pl2.c.name.startswith(unicode(text)))
+        else:
+            self.where = None
+
+    def get_records(self, offset, limit):
+        query = self.query.offset(offset).limit(limit)
+        result = self.conn.execute(query)
+        self.games = result.fetchall()
+
+    def get_id(self, gameno):
+        return self.games[gameno]["Id"]
 
     def get_movetext(self, gameno):
         selection = select([game.c.movelist, game.c.comments],

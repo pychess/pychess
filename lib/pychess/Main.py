@@ -169,7 +169,20 @@ class GladeHandlers(object):
         ICLogon.run()
 
     def on_load_game1_activate(self, widget):
-        newGameDialog.LoadFileExtension.run(None)
+        #newGameDialog.LoadFileExtension.run(None)
+        opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
+        response = opendialog.run()
+        if response == Gtk.ResponseType.ACCEPT:
+            filename = opendialog.get_filename()
+            print(filename)
+            game_list = GameList(filename)
+            perspective_manager.set_perspective_widget("database", game_list.vbox)
+            # import_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CONVERT)
+            # import_button.set_tooltip_text(_("Import PGN file"))
+            # import_button.connect("clicked", self.on_import_clicked)
+            # perspective_manager.set_perspective_toobuttons("database", [import_button, ])
+            perspective_manager.activate_perspective("database")
+        opendialog.hide()
 
     def on_set_up_position_activate(self, widget):
         rotate_menu = gamewidget.getWidgets()["rotate_board1"]
@@ -184,20 +197,6 @@ class GladeHandlers(object):
         else:
             fen = None
         newGameDialog.SetupPositionExtension.run(fen)
-
-    def on_open_database_activate(self, widget):
-        game_list = GameList()
-        perspective_manager.set_perspective_widget("database", game_list.vbox)
-
-        #import_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CONVERT)
-        #import_button.set_tooltip_text(_("Import PGN file"))
-        #import_button.connect("clicked", self.on_import_clicked)
-        #perspective_manager.set_perspective_toobuttons("database", [import_button, ])
-
-        perspective_manager.activate_perspective("database")
-
-    def on_import_clicked(self, widget):
-        print("import clicked")
 
     def on_enter_game_notation_activate(self, widget):
         newGameDialog.EnterNotationExtension.run()

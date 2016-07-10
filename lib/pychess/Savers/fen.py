@@ -30,6 +30,11 @@ def load(file):
 
 
 class FenFile(ChessFile):
+    def __init__(self, games):
+        ChessFile.__init__(self, games)
+        self.players = []
+        self.count = 1
+
     def loadToModel(self, gameno, position, model=None):
         if not model:
             model = GameModel()
@@ -56,3 +61,9 @@ class FenFile(ChessFile):
             if status in (BLACKWON, WHITEWON, DRAW):
                 model.status, model.reason = status, reason
         return model
+
+    def _getTag(self, gameno, tagkey):
+        if tagkey == "FEN":
+            return self.games[gameno]
+        else:
+            return ""

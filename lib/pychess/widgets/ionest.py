@@ -9,7 +9,7 @@ from gi.repository import Gtk
 from gi.repository import GObject
 
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Savers import chessalpha2, epd, fen, pgn, png
+from pychess.Savers import chessalpha2, epd, fen, pgn, png, database
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
@@ -40,7 +40,7 @@ class GameHandler(GObject.GObject):
         self.saveformats = None
         self.exportformats = None
 
-        self.savers = (chessalpha2, epd, fen, pgn, png)
+        self.savers = (chessalpha2, epd, fen, pgn, png, database)
         for saver in self.savers:
             self.enddir[saver.__ending__] = saver
 
@@ -151,7 +151,7 @@ class GameHandler(GObject.GObject):
     def getOpenAndSaveDialogs(self):
         if not self.opendialog:
             self.opendialog = Gtk.FileChooserDialog(
-                _("Open Game"), None, Gtk.FileChooserAction.OPEN,
+                _("Open chess file"), None, Gtk.FileChooserAction.OPEN,
                 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
                  Gtk.ResponseType.ACCEPT))
             self.savedialog = Gtk.FileChooserDialog(
@@ -163,10 +163,10 @@ class GameHandler(GObject.GObject):
             self.exportformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
 
             # All files filter
-            star = Gtk.FileFilter()
-            star.set_name(_("All Files"))
-            star.add_pattern("*")
-            self.opendialog.add_filter(star)
+            #star = Gtk.FileFilter()
+            #star.set_name(_("All Files"))
+            #star.add_pattern("*")
+            #self.opendialog.add_filter(star)
             auto = _("Detect type automatically")
             self.saveformats.append([auto, "", None])
             self.exportformats.append([auto, "", None])
@@ -188,7 +188,8 @@ class GameHandler(GObject.GObject):
                     f.add_pattern("*." + ending)
                     all_filter.add_pattern("*." + ending)
                     self.opendialog.add_filter(f)
-                    self.saveformats.append([label, endstr, saver])
+                    if ending != "pdb":
+                        self.saveformats.append([label, endstr, saver])
                     i += 1
                 else:
                     self.exportformats.append([label, endstr, saver])
