@@ -24,7 +24,7 @@ class RandomBoard(Board):
                  "* No castling\n" +
                  "* Black's arrangement mirrors white's")
     name = _("Random")
-    cecp_name = "unknown"
+    cecp_name = "wild/3"
     need_initial_board = True
     standard_rules = True
     variant_group = VARIANTS_SHUFFLE

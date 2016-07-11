@@ -1,8 +1,8 @@
 from pychess.compat import basestring
-from pychess.Utils.const import NULL_MOVE
+from pychess.Utils.const import DROP
 from pychess.Utils.lutils.lmovegen import newMove
 
-MAXMOVE = newMove(63, 63, NULL_MOVE)
+MAXMOVE = newMove(63, 63, DROP)
 COMMENT, VARI_START, VARI_END, NAG = (MAXMOVE + i + 1 for i in range(4))
 
 

@@ -195,7 +195,7 @@ class PgnBase(ChessFile):
         else:
             # FICS saves variant names in event tag
             event = self.get_event(no)
-            if "Chess960" in event:
+            if "Chess960" in event or "wild/fr" in event:
                 return "Fischerandom"
             elif "atomic" in event.lower():
                 return "Atomic"

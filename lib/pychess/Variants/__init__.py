@@ -74,3 +74,14 @@ variants = {NORMALCHESS: NormalBoard,
             }
 
 name2variant = dict([(v.cecp_name.capitalize(), v) for v in variants.values()])
+
+# FICS uses different names
+name2variant["Wild/0"] = WildcastleBoard
+name2variant["Wild/1"] = WildcastleShuffleBoard
+name2variant["Wild/2"] = ShuffleBoard
+name2variant["Wild/3"] = RandomBoard
+name2variant["Wild/4"] = AsymmetricRandomBoard
+name2variant["Wild/5"] = UpsideDownBoard
+name2variant["Wild/fr"] = FischerandomBoard
+name2variant["Wild/8"] = PawnsPushedBoard
+name2variant["Wild/8a"] = PawnsPassedBoard

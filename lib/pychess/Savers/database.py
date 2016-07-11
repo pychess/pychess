@@ -15,7 +15,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
 from pychess.Database.model import engine, game, event, site, player, pl1, pl2, annotator
-from pychess.Variants.fischerandom import FischerandomBoard
+from pychess.Variants import variants
 
 __label__ = _("PyChess database")
 __ending__ = "pdb"
@@ -39,7 +39,7 @@ def save(file, model, position=None):
     board = int(model.tags.get("Board")) if model.tags.get("Board") else None
     white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else None
     black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
-    variant = 1 if issubclass(model.variant, FischerandomBoard) else None
+    variant = model.variant.variant
     fen = model.boards[0].board.asFen()
     fen = fen if fen != FEN_START else None
     game_annotator = model.tags.get("Annotator")
@@ -214,7 +214,7 @@ class Database(PGNFile):
         if tagkey == "Result":
             return reprResult[self.games[gameno][tagkey]]
 
-        if tagkey == "Date":
+        elif tagkey == "Date":
             year = self.games[gameno]['Year']
             month = self.games[gameno]['Month']
             day = self.games[gameno]['Day']
@@ -222,9 +222,14 @@ class Database(PGNFile):
                                      if day else "??")
             return tag_date
 
-        if tagkey in self.colnames:
+        elif tagkey == "Variant":
+            variant = self.games[gameno]['Variant']
+            return variants[variant].cecp_name.capitalize() if variant else ""
+
+        elif tagkey in self.colnames:
             tag = self.games[gameno][tagkey]
             return "%s" % (tag if tag else "")
+
         else:
             return ""
 

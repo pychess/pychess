@@ -22,7 +22,7 @@ class GameList(Gtk.TreeView):
         self.offset = 0
 
         self.liststore = Gtk.ListStore(int, str, str, str, str, str, str, str,
-                                       str, str, str, str, str)
+                                       str, str, str, str, str, str)
         self.modelsort = Gtk.TreeModelSort(self.liststore)
 
         self.modelsort.set_sort_column_id(0, Gtk.SortType.ASCENDING)
@@ -34,7 +34,7 @@ class GameList(Gtk.TreeView):
 
         cols = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
                 _("Result"), _("Event"), _("Site"), _("Round"), _("Date"),
-                "ECO", "TC", "FEN")
+                "ECO", "TC", "Variant", "FEN")
         for i, col in enumerate(cols):
             r = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(col, r, text=i)
@@ -164,13 +164,14 @@ class GameList(Gtk.TreeView):
             date = getTag(i, "Date")
             eco = getTag(i, "ECO")
             tc = getTag(i, "TimeControl")
+            variant = getTag(i, "Variant")
             fen = getTag(i, "FEN")
             add([game_id, wname, welo, bname, belo, result, event, site,
-                 round_, date, eco, tc, fen])
+                 round_, date, eco, tc, variant, fen])
         self.set_cursor(0)
 
     def row_activated(self, widget, path, col):
-        print(self.modelsort.convert_path_to_child_path(path)[0])
+        # print(self.modelsort.convert_path_to_child_path(path)[0])
         game_id = self.liststore[self.modelsort.convert_path_to_child_path(
             path)[0]][0]
         print("game_id=%s" % game_id)
@@ -178,6 +179,11 @@ class GameList(Gtk.TreeView):
         print("gameno=%s" % gameno)
 
         gamemodel = GameModel()
+
+        variant = self.chessfile.get_variant(gameno)
+        if variant:
+            gamemodel.tags["Variant"] = variant
+
         wp, bp = self.chessfile.get_player_names(gameno)
         p0 = (LOCAL, Human, (WHITE, wp), wp)
         p1 = (LOCAL, Human, (BLACK, bp), bp)

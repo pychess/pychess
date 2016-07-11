@@ -37,9 +37,6 @@ removeDic = {
     ord(u" "): None,
 }
 
-LBoard_FEN_START = LBoard()
-LBoard_FEN_START.applyFen(FEN_START)
-
 
 class PgnImport():
     def __init__(self):
@@ -168,11 +165,8 @@ class PgnImport():
                     variant = cf.get_variant(i)
 
                     # Fixes for some non statndard Chess960 .pgn
-                    if variant == 0 and (
-                            fenstr is not None) and "Chess960" in cf._getTag(
-                                i, "Event"):
+                    if not variant and (fenstr is not None) and "Chess960" in cf._getTag(i, "Event"):
                         cf.tagcache[i]["Variant"] = "Fischerandom"
-                        variant = 1
                         parts = fenstr.split()
                         parts[0] = parts[0].replace(".", "/").replace("0", "")
                         if len(parts) == 1:
@@ -182,8 +176,10 @@ class PgnImport():
                         fenstr = " ".join(parts)
 
                     if variant:
-                        board = LBoard(name2variant[variant].variant)
+                        variant = name2variant[variant].variant
+                        board = LBoard(variant)
                     else:
+                        variant = 0
                         board = LBoard()
 
                     if fenstr:
@@ -195,7 +191,7 @@ class PgnImport():
                                 % (i + 1), e.args[0])
                             continue
                     else:
-                        board = LBoard_FEN_START.clone()
+                        board.applyFen(FEN_START)
 
                     boards = [board]
                     movetext = cf.get_movetext(i)
@@ -252,14 +248,10 @@ class PgnImport():
 
                     time_control = cf._getTag(i, "TimeControl")
 
-                    # event_date = cf._getTag(i, 'EventDate')
-
                     eco = cf._getTag(i, "ECO")
                     eco = eco[:3] if eco else None
 
                     fen = cf._getTag(i, "FEN")
-
-                    variant = cf.get_variant(i)
 
                     board = cf._getTag(i, "Board")
 

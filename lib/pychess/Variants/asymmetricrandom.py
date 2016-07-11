@@ -17,7 +17,7 @@ class AsymmetricRandomBoard(Board):
           "* No castling\n" +
           "* Black's arrangement DOES NOT mirrors white's")
     name = _("Asymmetric Random")
-    cecp_name = "unknown"
+    cecp_name = "wild/4"
     need_initial_board = True
     standard_rules = True
     variant_group = VARIANTS_SHUFFLE
