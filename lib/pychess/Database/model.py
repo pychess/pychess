@@ -72,6 +72,7 @@ game = Table(
     Column('black_elo', SmallInteger),
     Column('ply_count', SmallInteger),
     Column('eco', CHAR(3)),
+    Column('time_control', String(7)),
     Column('board', SmallInteger),
     Column('fen', String(128)),
     Column('variant', SmallInteger),

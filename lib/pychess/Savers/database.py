@@ -29,18 +29,16 @@ def save(file, model, position=None):
 
     game_event = model.tags["Event"]
     game_site = model.tags["Site"]
-    year, month, day = int(model.tags["Year"]), int(model.tags["Month"]), int(
-        model.tags["Day"])
+    year, month, day = int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])
     game_round = model.tags.get("Round")
     white = repr(model.players[WHITE])
     black = repr(model.players[BLACK])
     result = model.status
     eco = model.tags.get("ECO")
+    time_control = model.tags.get("TimeControl") if model.tags.get("TimeControl") else None
     board = int(model.tags.get("Board")) if model.tags.get("Board") else None
-    white_elo = int(model.tags.get("WhiteElo")) if model.tags.get(
-        "WhiteElo") else None
-    black_elo = int(model.tags.get("BlackElo")) if model.tags.get(
-        "BlackElo") else None
+    white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else None
+    black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
     variant = 1 if issubclass(model.variant, FischerandomBoard) else None
     fen = model.boards[0].board.asFen()
     fen = fen if fen != FEN_START else None
@@ -91,6 +89,7 @@ def save(file, model, position=None):
             'black_elo': black_elo,
             'ply_count': ply_count,
             'eco': eco,
+            'time_control': time_control,
             'board': board,
             'fen': fen,
             'variant': variant,
@@ -131,6 +130,7 @@ def load(file):
         game.c.date_month.label('Month'), game.c.date_day.label('Day'),
         game.c.white_elo.label('WhiteElo'), game.c.black_elo.label('BlackElo'),
         game.c.eco.label('ECO'), game.c.fen.label('Board'),
+        game.c.time_control.label('TC'),
         game.c.fen.label('FEN'), game.c.variant.label('Variant'),
         annotator.c.name.label('Annotator')],
         from_obj=[

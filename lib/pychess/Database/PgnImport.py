@@ -89,8 +89,8 @@ class PgnImport():
             name_data = self.player_data
 
             # Some .pgn use country after player names
-            if name[-4:-3] == " " and name[-3:].isupper():
-                name = name[:-4]
+            # if name[-4:-3] == " " and name[-3:].isupper():
+            #     name = name[:-4]
             name = name.title().translate(removeDic)
 
         if name in name_dict:
@@ -249,6 +249,8 @@ class PgnImport():
                         black_elo) if black_elo and black_elo.isdigit() else None
 
                     ply_count = cf._getTag(i, "PlyCount")
+
+                    time_control = cf._getTag(i, "TimeControl")
 
                     # event_date = cf._getTag(i, 'EventDate')
 

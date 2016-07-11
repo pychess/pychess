@@ -269,7 +269,7 @@ class PGNFile(PgnBase):
 
         self.colnames = ['Id', 'White', 'Black', 'Result', 'Event', 'Site', 'Round',
                          'Year', 'Month', 'Day', 'WhiteElo', 'BlackElo',
-                         'ECO', 'Board', 'FEN', 'Variant', 'Annotator']
+                         'ECO', 'TimeControl', 'Board', 'FEN', 'Variant', 'Annotator']
         self.players = []
         self.where = None
         self.all_games = self.games
