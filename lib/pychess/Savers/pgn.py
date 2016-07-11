@@ -281,7 +281,7 @@ class PGNFile(PgnBase):
         if self.where is None:
             self.query = self.all_games
         else:
-            self.query = ifilter(self.where, self.all_games)
+            self.query = filter(self.where, self.all_games)
 
     def build_where(self, text):
         if text:
