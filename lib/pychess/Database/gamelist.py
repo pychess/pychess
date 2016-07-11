@@ -127,12 +127,17 @@ class GameList(Gtk.TreeView):
             self.load_games()
 
     def on_next_clicked(self, widget):
-        if self.offset + self.STEP <= self.chessfile.count:
+        if self.offset + self.STEP < self.chessfile.count:
             self.offset = self.offset + self.STEP
             self.load_games()
 
     def on_last_clicked(self, widget):
-        self.offset = (self.chessfile.count // self.STEP) * self.STEP
+        if self.offset + self.STEP == self.chessfile.count:
+            return
+        if self.chessfile.count % self.STEP == 0:
+            self.offset = self.chessfile.count - self.STEP
+        else:
+            self.offset = (self.chessfile.count // self.STEP) * self.STEP
         self.load_games()
 
     def column_clicked(self, col, data):
