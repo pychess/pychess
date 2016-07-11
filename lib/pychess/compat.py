@@ -13,6 +13,7 @@ if PY3:
     unichr = chr
     unicode = lambda x: x
     raw_input = input
+    filter = filter
     strip = str.strip
 
     import builtins
@@ -32,7 +33,7 @@ else:
     unichr = unichr
     raw_input = raw_input
     strip = unicode.strip
-    
+
     import __builtin__ as builtins
     from htmlentitydefs import entitydefs
     from StringIO import StringIO
@@ -41,5 +42,6 @@ else:
     from Queue import Queue, Empty, Full
     from urllib import urlencode, url2pathname, pathname2url, unquote
     from urllib2 import Request, urlopen, HTTPError, URLError
+    from itertools import ifilter as filter
 
     from io import open

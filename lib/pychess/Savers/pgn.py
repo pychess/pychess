@@ -4,9 +4,9 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import re
-from itertools import ifilter, islice
+from itertools import islice
 
-from pychess.compat import basestring, StringIO
+from pychess.compat import filter, basestring, StringIO
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.Utils.lutils.LBoard import LBoard
