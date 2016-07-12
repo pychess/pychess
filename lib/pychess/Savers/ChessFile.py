@@ -12,11 +12,15 @@ class ChessFile:
         that the user don't request.
         It has no catching. """
 
-    def __init__(self, games):
+    def __init__(self, file, games):
         """ Games should be a list of the raw file data,
             split such that games[0] is used for game 0 etc.
             """
+        self.file = file
         self.games = games
+
+    def close(self):
+        self.file.close()
 
     def build_query(self):
         pass

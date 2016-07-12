@@ -35,8 +35,8 @@ pattern = re.compile(r"""
 
 
 class PgnBase(ChessFile):
-    def __init__(self, games):
-        ChessFile.__init__(self, games)
+    def __init__(self, file, games):
+        ChessFile.__init__(self, file, games)
         self.tagcache = {}
 
     def parse_string(self, string, board, position, variation=False):
@@ -265,7 +265,7 @@ tagre = re.compile(r"\[([a-zA-Z0-9_]+)\s+\"(.*?)\"\]")
 
 
 def pgn_load(file, klass=PgnBase):
-    files = []
+    games = []
     in_tags = False
 
     for line in file:
@@ -278,23 +278,23 @@ def pgn_load(file, klass=PgnBase):
         if line.startswith("["):
             if tagre.match(line) is not None:
                 if not in_tags:
-                    files.append(["", ""])
+                    games.append(["", ""])
                     in_tags = True
-                files[-1][0] += line
+                games[-1][0] += line
             else:
                 if not in_tags:
-                    files[-1][1] += line
+                    games[-1][1] += line
                 else:
                     print("Warning: ignored invalid tag pair %s" % line)
         else:
             in_tags = False
-            if not files:
+            if not games:
                 # In rare cases there might not be any tags at all. It's not
                 # legal, but we support it anyways.
-                files.append(["", ""])
-            files[-1][1] += line
+                games.append(["", ""])
+            games[-1][1] += line
 
-    return klass(files)
+    return klass(file, games)
 
 
 nag2symbolDict = {

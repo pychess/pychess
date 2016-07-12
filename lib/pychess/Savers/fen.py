@@ -26,12 +26,12 @@ def save(file, model, position=None):
 
 
 def load(file):
-    return FenFile([line.strip() for line in file if line])
+    return FenFile(file, [line.strip() for line in file if line])
 
 
 class FenFile(ChessFile):
-    def __init__(self, games):
-        ChessFile.__init__(self, games)
+    def __init__(self, file, games):
+        ChessFile.__init__(self, file, games)
         self.players = []
         self.count = 1
 

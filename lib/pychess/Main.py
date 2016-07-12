@@ -30,7 +30,6 @@ from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.Players.engineNest import discoverer
 from pychess.Savers import chesspastebin
 from pychess.ic import ICLogon
-from pychess.Database.gamelist import GameList
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.welcome import Welcome
 from pychess.perspectives.games import Games
@@ -169,19 +168,13 @@ class GladeHandlers(object):
         ICLogon.run()
 
     def on_load_game1_activate(self, widget):
-        #newGameDialog.LoadFileExtension.run(None)
+        # newGameDialog.LoadFileExtension.run(None)
         opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
         response = opendialog.run()
         if response == Gtk.ResponseType.ACCEPT:
             filename = opendialog.get_filename()
-            print(filename)
-            game_list = GameList(filename)
-            perspective_manager.set_perspective_widget("database", game_list.vbox)
-            # import_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CONVERT)
-            # import_button.set_tooltip_text(_("Import PGN file"))
-            # import_button.connect("clicked", self.on_import_clicked)
-            # perspective_manager.set_perspective_toobuttons("database", [import_button, ])
-            perspective_manager.activate_perspective("database")
+            perspective = perspective_manager.get_perspective("database")
+            perspective.open_chessfile(filename)
         opendialog.hide()
 
     def on_set_up_position_activate(self, widget):
@@ -230,8 +223,12 @@ class GladeHandlers(object):
         playerinfoDialog.run(gamewidget.getWidgets())
 
     def on_close1_activate(self, widget):
-        gmwidg = gamewidget.cur_gmwidg()
-        game_handler.closeGame(gmwidg)
+        persp = perspective_manager.current_perspective
+        if persp.name == "games":
+            gmwidg = gamewidget.cur_gmwidg()
+            game_handler.closeGame(gmwidg)
+        elif persp.name == "database":
+            persp.close()
 
     def on_quit1_activate(self, widget, *args):
         if isinstance(widget, Gdk.Event):
@@ -532,10 +529,10 @@ class PyChess(Gtk.Application):
 
     def addPerspectives(self):
         perspective_manager.set_widgets(self.widgets)
-        perspective_manager.add_perspective(Welcome(), default=True)
-        perspective_manager.add_perspective(Games())
-        perspective_manager.add_perspective(FICS())
-        perspective_manager.add_perspective(Database())
+        for persp in (Welcome, Games, FICS, Database):
+            perspective = persp()
+            perspective_manager.add_perspective(perspective)
+            perspective.create_toolbuttons()
 
         new_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
         new_button.set_tooltip_text(_("New Game"))
@@ -547,6 +544,12 @@ class PyChess(Gtk.Application):
         open_button.set_tooltip_text(_("Open Game"))
         open_button.connect("clicked", self.glade_handlers.on_load_game1_activate)
         perspective_manager.toolbar.insert(open_button, 1)
+        new_button.show()
+
+        close_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CLOSE)
+        close_button.set_tooltip_text(_("Close"))
+        close_button.connect("clicked", self.glade_handlers.on_close1_activate)
+        perspective_manager.toolbar.insert(close_button, 2)
         new_button.show()
 
     def handleArgs(self, chess_file):

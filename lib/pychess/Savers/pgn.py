@@ -264,8 +264,8 @@ def load(file):
 
 
 class PGNFile(PgnBase):
-    def __init__(self, games):
-        PgnBase.__init__(self, games)
+    def __init__(self, file, games):
+        PgnBase.__init__(self, file, games)
 
         self.colnames = ['Id', 'White', 'Black', 'Result', 'Event', 'Site', 'Round',
                          'Year', 'Month', 'Day', 'WhiteElo', 'BlackElo',

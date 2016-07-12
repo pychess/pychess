@@ -143,12 +143,12 @@ def load(file):
     result = conn.execute(selection)
     colnames = result.keys()
     result.close()
-    return Database([], colnames, selection, count, players)
+    return Database(file, [], colnames, selection, count, players)
 
 
 class Database(PGNFile):
-    def __init__(self, games, colnames, select, count, players):
-        PGNFile.__init__(self, games)
+    def __init__(self, file, games, colnames, select, count, players):
+        PGNFile.__init__(self, file, games)
 
         self.conn = engine.connect()
 
@@ -159,6 +159,9 @@ class Database(PGNFile):
         self.where = None
         self.count = count
         self.players = players
+
+    def close(self):
+        self.conn.close()
 
     def build_query(self):
         self.query = self.select

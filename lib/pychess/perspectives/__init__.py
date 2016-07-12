@@ -5,6 +5,7 @@ class Perspective(object):
     def __init__(self, name, label):
         self.name = name
         self.label = label
+        self.default = False
         self.widget = Gtk.Alignment()
         self.widget.show()
         self.toolbuttons = []
@@ -14,10 +15,17 @@ class Perspective(object):
         perspective, button, index = perspective_manager.perspectives[self.name]
         return button.get_sensitive()
 
+    def create_toolbuttons(self):
+        pass
+
+    def close(self):
+        pass
+
 
 class PerspectiveManager(object):
     def __init__(self):
         self.perspectives = {}
+        self.current_perspective = None
 
     def set_widgets(self, widgets):
         self.widgets = widgets
@@ -29,13 +37,16 @@ class PerspectiveManager(object):
             name = button.get_name()
             perspective, button, index = self.perspectives[name]
             self.widgets["perspectives_notebook"].set_current_page(index)
+            self.current_perspective = perspective
 
-    def add_perspective(self, perspective, default=False):
+    def add_perspective(self, perspective):
         box = self.widgets["persp_buttons"]
         children = box.get_children()
         widget = None if len(children) == 0 else children[0]
         button = Gtk.RadioButton.new_with_label_from_widget(widget, perspective.label)
-        if not default:
+        if perspective.default:
+            self.current_perspective = perspective
+        else:
             button.set_sensitive(False)
         button.set_name(perspective.name)
         button.set_mode(False)

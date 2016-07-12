@@ -74,12 +74,12 @@ def save(file, model, position=None):
 
 
 def load(file):
-    return EpdFile([line.strip() for line in file if line])
+    return EpdFile(file, [line.strip() for line in file if line])
 
 
 class EpdFile(ChessFile):
-    def __init__(self, games):
-        ChessFile.__init__(self, games)
+    def __init__(self, file, games):
+        ChessFile.__init__(self, file, games)
         self.players = []
         self.count = len(self.games)
         print("%s game(s) match to query" % self.count)
