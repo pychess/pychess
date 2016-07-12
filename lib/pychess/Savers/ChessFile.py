@@ -85,3 +85,6 @@ class ChessFile:
             Can be any of: RUNNING, DRAW, WHITEWON or BLACKWON
             Default is RUNNING if nothing is specified in the file """
         return RUNNING
+
+    def get_variant(self, gameno):
+        return 0
