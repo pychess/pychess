@@ -14,10 +14,14 @@ from pychess.perspectives import perspective_manager
 
 class GameList(Gtk.TreeView):
 
-    STEP = 50
+    STEP = 1000
 
     def __init__(self, uri):
         GObject.GObject.__init__(self)
+
+        self.handler_id_to_block = None
+        # GTK_SELECTION_BROWSE - exactly one item is always selected
+        self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
 
         self.offset = 0
 
@@ -30,14 +34,16 @@ class GameList(Gtk.TreeView):
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         self.set_headers_visible(True)
         self.set_rules_hint(True)
+        self.set_fixed_height_mode(True)
         self.set_search_column(1)
 
         cols = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
-                _("Result"), _("Event"), _("Site"), _("Round"), _("Date"),
+                _("Result"), _("Date"), _("Event"), _("Site"), _("Round"),
                 "ECO", "TC", "Variant", "FEN")
         for i, col in enumerate(cols):
             r = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(col, r, text=i)
+            column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
             column.set_resizable(True)
             column.set_reorderable(True)
             column.set_sort_column_id(i)
@@ -63,26 +69,8 @@ class GameList(Gtk.TreeView):
         self.chessfile.build_query()
         self.load_games()
 
-        hbox = Gtk.HBox()
-
-        self.playerlist = Gtk.ListStore(str)
-
-        self.match = set()
-        completion = Gtk.EntryCompletion()
-        completion.set_model(self.playerlist)
-        completion.set_text_column(0)
-
-        for player in self.chessfile.players:
-            self.playerlist.append(player)
-
-        entry = Gtk.Entry()
-        entry.set_completion(completion)
-        entry.connect('activate', self.activate_entry)
-
-        hbox.pack_start(entry, False, False, 0)
-
+        #  buttons
         toolbar = Gtk.Toolbar()
-        hbox.pack_start(toolbar, True, True, 0)
 
         firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
         toolbar.insert(firstButton, -1)
@@ -101,21 +89,15 @@ class GameList(Gtk.TreeView):
         nextButton.connect("clicked", self.on_next_clicked)
         lastButton.connect("clicked", self.on_last_clicked)
 
-        self.vbox = Gtk.VBox()
-        self.vbox.pack_start(hbox, False, False, 0)
-
         sw = Gtk.ScrolledWindow()
         sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         sw.add(self)
-        self.vbox.pack_start(sw, True, True, 0)
-        self.vbox.show_all()
 
-    def activate_entry(self, entry):
-        text = entry.get_text()
-        self.chessfile.build_where(text)
-        self.offset = 0
-        self.chessfile.build_query()
-        self.load_games()
+        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
+        self.box.pack_start(sw, True, True, 0)
+        self.box.pack_start(toolbar, False, True, 0)
+        self.box.show_all()
 
     def on_first_clicked(self, widget):
         self.offset = 0
@@ -144,7 +126,11 @@ class GameList(Gtk.TreeView):
         self.set_search_column(data)
 
     def load_games(self):
-        self.liststore.clear()
+        if self.handler_id_to_block is not None:
+            with GObject.signal_handler_block(self.get_selection(), self.handler_id_to_block):
+                self.liststore.clear()
+        else:
+            self.liststore.clear()
 
         getTag = self.chessfile._getTag
         getResult = self.chessfile.get_result
@@ -171,8 +157,8 @@ class GameList(Gtk.TreeView):
             tc = getTag(i, "TimeControl")
             variant = getTag(i, "Variant")
             fen = getTag(i, "FEN")
-            add([game_id, wname, welo, bname, belo, result, event, site,
-                 round_, date, eco, tc, variant, fen])
+            add([game_id, wname, welo, bname, belo, result, date, event, site,
+                 round_, eco, tc, variant, fen])
         self.set_cursor(0)
 
     def row_activated(self, widget, path, col):
