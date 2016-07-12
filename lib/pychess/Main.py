@@ -538,19 +538,11 @@ class PyChess(Gtk.Application):
         new_button.set_tooltip_text(_("New Game"))
         new_button.connect("clicked", self.glade_handlers.on_new_game1_activate)
         perspective_manager.toolbar.insert(new_button, 0)
-        new_button.show()
 
         open_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_OPEN)
         open_button.set_tooltip_text(_("Open Game"))
         open_button.connect("clicked", self.glade_handlers.on_load_game1_activate)
         perspective_manager.toolbar.insert(open_button, 1)
-        new_button.show()
-
-        close_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CLOSE)
-        close_button.set_tooltip_text(_("Close"))
-        close_button.connect("clicked", self.glade_handlers.on_close1_activate)
-        perspective_manager.toolbar.insert(close_button, 2)
-        new_button.show()
 
     def handleArgs(self, chess_file):
         if chess_file:
