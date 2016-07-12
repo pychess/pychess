@@ -260,12 +260,7 @@ class ICLounge(GObject.GObject):
             pass
         except AttributeError:
             pass
-        if perspective_manager.get_perspective("fics").sensitive:
-            perspective_manager.disable_perspective("fics")
-        if perspective_manager.get_perspective("games").sensitive:
-            perspective_manager.activate_perspective("games")
-        else:
-            perspective_manager.activate_perspective("welcome")
+        perspective_manager.disable_perspective("fics")
 
     @idle_add
     def onPlayGameCreated(self, bm, ficsgame):

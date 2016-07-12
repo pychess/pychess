@@ -907,12 +907,6 @@ def delGameWidget(gmwidg):
             # If the last (but not the designGW) gmwidg was closed
             # and we are FICS-ing, present the FICS lounge
             perspective_manager.disable_perspective("games")
-            if perspective_manager.get_perspective("fics").sensitive:
-                perspective_manager.activate_perspective("fics")
-            elif perspective_manager.get_perspective("database").sensitive:
-                perspective_manager.activate_perspective("database")
-            else:
-                perspective_manager.activate_perspective("welcome")
 
     gmwidg._del()
 

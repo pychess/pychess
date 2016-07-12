@@ -34,10 +34,16 @@ class PerspectiveManager(object):
     def on_persp_toggled(self, button):
         active = button.get_active()
         if active:
+            for toolbutton in self.current_perspective.toolbuttons:
+                toolbutton.hide()
+
             name = button.get_name()
             perspective, button, index = self.perspectives[name]
             self.widgets["perspectives_notebook"].set_current_page(index)
             self.current_perspective = perspective
+
+            for toolbutton in perspective.toolbuttons:
+                toolbutton.show()
 
     def add_perspective(self, perspective):
         box = self.widgets["persp_buttons"]
@@ -58,19 +64,26 @@ class PerspectiveManager(object):
 
     def activate_perspective(self, name):
         perspective, button, index = self.perspectives[name]
-        if not perspective.sensitive:
-            for toolbutton in perspective.toolbuttons:
-                if button not in self.toolbar:
-                    self.toolbar.add(toolbutton)
-                toolbutton.show()
         button.set_sensitive(True)
         button.set_active(True)
 
     def disable_perspective(self, name):
+        if not self.get_perspective(name).sensitive:
+            return
+
         perspective, button, index = self.perspectives[name]
         button.set_sensitive(False)
-        for toolbutton in perspective.toolbuttons:
-            self.toolbar.remove(toolbutton)
+        for button in perspective.toolbuttons:
+            button.hide()
+
+        if self.get_perspective("fics").sensitive:
+            self.activate_perspective("fics")
+        elif self.get_perspective("database").sensitive:
+            self.activate_perspective("database")
+        elif self.get_perspective("games").sensitive:
+            self.activate_perspective("games")
+        else:
+            self.activate_perspective("welcome")
 
     def get_perspective(self, name):
         perspective, button, index = self.perspectives[name]
@@ -85,11 +98,17 @@ class PerspectiveManager(object):
 
     def set_perspective_toobuttons(self, name, buttons):
         perspective, button, index = self.perspectives[name]
-        if len(perspective.toolbuttons) == 0:
-            separator = Gtk.SeparatorToolItem.new()
-            separator.set_draw(True)
-            perspective.toolbuttons.append(separator)
-            for button in buttons:
-                perspective.toolbuttons.append(button)
+        for button in perspective.toolbuttons:
+            if button in self.toolbar:
+                self.toolbar.remove(button)
+        perspective.toolbuttons = []
+
+        separator = Gtk.SeparatorToolItem.new()
+        separator.set_draw(True)
+        perspective.toolbuttons.append(separator)
+        for button in buttons:
+            perspective.toolbuttons.append(button)
+            self.toolbar.add(button)
+            button.show()
 
 perspective_manager = PerspectiveManager()

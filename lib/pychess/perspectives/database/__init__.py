@@ -22,7 +22,7 @@ class Database(Perspective):
         self.game_list = GameList(filename)
         perspective_manager.set_perspective_widget("database", self.game_list.vbox)
 
-        if 0:#filename.endswith(".pdb"):
+        if filename.endswith(".pdb"):
             perspective_manager.set_perspective_toobuttons("database", [self.import_button, self.close_button])
         else:
             perspective_manager.set_perspective_toobuttons("database", [self.close_button])
@@ -32,12 +32,6 @@ class Database(Perspective):
     def close(self, widget):
         self.game_list.chessfile.close()
         perspective_manager.disable_perspective("database")
-        if perspective_manager.get_perspective("games").sensitive:
-            perspective_manager.activate_perspective("games")
-        elif perspective_manager.get_perspective("fics").sensitive:
-            perspective_manager.activate_perspective("fics")
-        else:
-            perspective_manager.activate_perspective("welcome")
 
     def on_import_clicked(self, widget):
         print("import")
