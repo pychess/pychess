@@ -6,10 +6,10 @@ from gi.repository import Gtk
 from pychess.compat import StringIO
 from pychess.System.Log import log
 from pychess.perspectives import Perspective, perspective_manager
+from pychess.perspectives.database.gamelist import GameList
 from pychess.perspectives.database.FilterPanel import FilterPanel
 from pychess.perspectives.database.PreviewPanel import PreviewPanel
 from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
-from pychess.Database.gamelist import GameList
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import EAST, SOUTH, CENTER
 from pychess.widgets import dock_panel_tab
