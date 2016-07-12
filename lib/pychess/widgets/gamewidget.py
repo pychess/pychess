@@ -17,7 +17,7 @@ from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
 from pychess.Savers import pgn, fen
-from pychess.System import conf, prefix
+from pychess.System import conf
 
 from pychess.System.Log import log
 from pychess.System.idle_add import idle_add
@@ -82,7 +82,7 @@ media_forward = load_icon(24, "gtk-media-forward-ltr", "media-seek-forward")
 media_next = load_icon(24, "gtk-media-next-ltr", "media-skip-forward")
 media_eject = load_icon(24, "player-eject", "media-eject")
 
-path = prefix.addDataPrefix("sidepanel")
+path = os.path.dirname(__file__) + "/../perspectives/games/"
 postfix = "Panel.py"
 files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
 sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]

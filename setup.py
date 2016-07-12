@@ -148,10 +148,6 @@ DATA_FILES += [("share/pychess/glade", glob('glade/*.png'))]
 DATA_FILES += [("share/pychess/glade", glob('glade/*.svg'))]
 DATA_FILES += [("share/pychess/flags", glob('flags/*.png'))]
 
-# Sidepanel (not a package)
-DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.glade'))]
-DATA_FILES += [("share/pychess/sidepanel", glob('sidepanel/*.py'))]
-
 # Data
 DATA_FILES += [('share/appdata', ['pychess.appdata.xml'])]
 DATA_FILES += [('share/applications', ['pychess.desktop'])]
@@ -268,7 +264,10 @@ else:
                 "pychess.Players", "pychess.Savers", "pychess.System",
                 "pychess.Utils", "pychess.Utils.lutils", "pychess.Variants",
                 "pychess.perspectives", "pychess.Database",
-                "pychess.widgets", "pychess.widgets.pydock" ]
+                "pychess.widgets", "pychess.widgets.pydock",
+                "pychess.perspectives", "pychess.perspectives.welcome",
+                "pychess.perspectives.games", "pychess.perspectives.fics",
+                "pychess.perspectives.database",]
 
     build_exe_options = {}
     bdist_msi_options = {}
