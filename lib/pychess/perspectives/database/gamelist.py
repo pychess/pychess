@@ -58,13 +58,13 @@ class GameList(Gtk.TreeView):
         self.uri = uri
 
         if self.uri.endswith(".pdb"):
-            self.chessfile = database.load(open(self.uri))
+            self.chessfile = database.load(protoopen(self.uri))
         elif self.uri.endswith(".pgn"):
             self.chessfile = pgn.load(protoopen(self.uri))
         elif self.uri.endswith(".epd"):
-            self.chessfile = epd.load(open(self.uri))
+            self.chessfile = epd.load(protoopen(self.uri))
         elif self.uri.endswith(".fen"):
-            self.chessfile = fen.load(open(self.uri))
+            self.chessfile = fen.load(protoopen(self.uri))
 
         self.chessfile.build_query()
         self.load_games()

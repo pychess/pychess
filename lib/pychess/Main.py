@@ -153,9 +153,10 @@ class GladeHandlers(object):
     def on_drag_received(self, widget, context, x, y, selection, target_type, timestamp):
         if target_type == TARGET_TYPE_URI_LIST:
             uris = selection.get_uris()
-            if len(uris) == 1 and uris[0].lower().endswith(".pgn"):
+            if len(uris) == 1 and uris[0].lower()[-4:] in (".pgn", ".pdb", "epd"):
                 uri = uris[0]
-                newGameDialog.LoadFileExtension.run(uri)
+                perspective = perspective_manager.get_perspective("database")
+                perspective.open_chessfile(uri)
             else:
                 newGameDialog.loadFilesAndRun(uris)
 
@@ -168,7 +169,6 @@ class GladeHandlers(object):
         ICLogon.run()
 
     def on_load_game1_activate(self, widget):
-        # newGameDialog.LoadFileExtension.run(None)
         opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
         response = opendialog.run()
         if response == Gtk.ResponseType.ACCEPT:
@@ -490,7 +490,8 @@ class PyChess(Gtk.Application):
             uri = self.get_current_uri()
             try:
                 urlopen(unquote(uri)).close()
-                newGameDialog.LoadFileExtension.run(self.get_current_uri())
+                perspective = perspective_manager.get_perspective("database")
+                perspective.open_chessfile(self.get_current_uri())
             except (IOError, OSError):
                 # shomething wrong whit the uri
                 recentManager.remove_item(uri)
