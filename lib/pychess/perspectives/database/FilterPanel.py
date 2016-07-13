@@ -20,7 +20,7 @@ class FilterPanel:
         for player in self.gamelist.chessfile.players:
             self.playerlist.append(player)
 
-        entry = Gtk.Entry()
+        entry = Gtk.SearchEntry()
         entry.set_completion(completion)
         entry.connect('activate', self.activate_entry)
 
