@@ -26,7 +26,7 @@ class GameList(Gtk.TreeView):
         self.offset = 0
 
         self.liststore = Gtk.ListStore(int, str, str, str, str, str, str, str,
-                                       str, str, str, str, str, str)
+                                       str, str, str, str, str, str, str)
         self.modelsort = Gtk.TreeModelSort(self.liststore)
 
         self.modelsort.set_sort_column_id(0, Gtk.SortType.ASCENDING)
@@ -39,7 +39,7 @@ class GameList(Gtk.TreeView):
 
         cols = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
                 _("Result"), _("Date"), _("Event"), _("Site"), _("Round"),
-                "ECO", "TC", "Variant", "FEN")
+                _("Length"), "ECO", "TC", "Variant", "FEN")
         for i, col in enumerate(cols):
             r = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(col, r, text=i)
@@ -153,12 +153,14 @@ class GameList(Gtk.TreeView):
             site = getTag(i, 'Site')
             round_ = getTag(i, "Round")
             date = getTag(i, "Date")
+            ply = getTag(i, "PlyCount")
+            length = str(int(ply) // 2) if ply else ""
             eco = getTag(i, "ECO")
             tc = getTag(i, "TimeControl")
             variant = getTag(i, "Variant")
             fen = getTag(i, "FEN")
             add([game_id, wname, welo, bname, belo, result, date, event, site,
-                 round_, eco, tc, variant, fen])
+                 round_, length, eco, tc, variant, fen])
         self.set_cursor(0)
 
     def row_activated(self, widget, path, col):
