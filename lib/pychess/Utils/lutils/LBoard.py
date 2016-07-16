@@ -946,10 +946,9 @@ class LBoard(object):
 
         copy.friends = self.friends[:]
         copy.kings = self.kings[:]
-        copy.boards = [self.boards[WHITE][:], self.boards[BLACK][:]]
+        copy.boards = (self.boards[WHITE][:], self.boards[BLACK][:])
         copy.arBoard = self.arBoard[:]
-        copy.pieceCount = [self.pieceCount[WHITE][:],
-                           self.pieceCount[BLACK][:]]
+        copy.pieceCount = (self.pieceCount[WHITE][:], self.pieceCount[BLACK][:])
 
         copy.color = self.color
         copy.plyCount = self.plyCount
