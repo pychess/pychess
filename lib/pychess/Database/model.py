@@ -2,7 +2,7 @@
 
 import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
-    String, SmallInteger, CHAR, LargeBinary, UnicodeText
+    String, SmallInteger, BigInteger, LargeBinary, UnicodeText
 
 from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
@@ -40,8 +40,8 @@ player = Table(
     Column('id', Integer, primary_key=True),
     Column('name', String(256), index=True),
     Column('fideid', Integer),
-    Column('fed', CHAR(3)),
-    Column('title', CHAR(3)),
+    Column('fed', String(3)),
+    Column('title', String(3)),
     Column('elo', SmallInteger),
     Column('born', Integer),
 )
@@ -71,7 +71,7 @@ game = Table(
     Column('white_elo', SmallInteger),
     Column('black_elo', SmallInteger),
     Column('ply_count', SmallInteger),
-    Column('eco', CHAR(3)),
+    Column('eco', String(3)),
     Column('time_control', String(7)),
     Column('board', SmallInteger),
     Column('fen', String(128)),
@@ -80,6 +80,15 @@ game = Table(
     Column('collection_id', Integer),
     Column('movelist', LargeBinary),
     Column('comments', UnicodeText)
+)
+
+# bitboards stored as bb - 2**63 + 1 to fit into sqlite (8 byte) signed(!) integer range
+bitboard = Table(
+    'bitboard', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('game_id', Integer),
+    Column('ply', Integer),
+    Column('bitboard', BigInteger),
 )
 
 
@@ -94,7 +103,7 @@ def ini_collection():
     conn.close()
 
 pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
-set_engine("sqlite:///" + pychess_pdb)
+set_engine("sqlite:///" + pychess_pdb)  # , echo=True)
 if not os.path.isfile(pychess_pdb):
     metadata.create_all(engine)
     ini_collection()

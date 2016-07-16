@@ -55,6 +55,7 @@ class GameList(Gtk.TreeView):
         self.set_cursor(0)
         self.columns_autosize()
         self.gameno = 0
+        self.gamemodel = None
         self.uri = uri
 
         if self.uri.endswith(".pdb"):
@@ -89,6 +90,12 @@ class GameList(Gtk.TreeView):
         nextButton.connect("clicked", self.on_next_clicked)
         lastButton.connect("clicked", self.on_last_clicked)
 
+        tool_box = Gtk.Box()
+        tool_box.pack_start(toolbar, False, False, 0)
+
+        self.progress_dock = Gtk.Alignment()
+        tool_box.pack_start(self.progress_dock, True, True, 0)
+
         sw = Gtk.ScrolledWindow()
         sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         sw.add(self)
@@ -96,7 +103,7 @@ class GameList(Gtk.TreeView):
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         self.box.pack_start(sw, True, True, 0)
-        self.box.pack_start(toolbar, False, True, 0)
+        self.box.pack_start(tool_box, False, True, 0)
         self.box.show_all()
 
     def on_first_clicked(self, widget):
@@ -126,6 +133,7 @@ class GameList(Gtk.TreeView):
         self.set_search_column(data)
 
     def load_games(self):
+        print("load_games()")
         if self.handler_id_to_block is not None:
             with GObject.signal_handler_block(self.get_selection(), self.handler_id_to_block):
                 self.liststore.clear()
@@ -138,7 +146,7 @@ class GameList(Gtk.TreeView):
         add = self.liststore.append
 
         self.chessfile.get_records(self.offset, self.STEP)
-        print("got %s recors" % len(self.chessfile.games))
+        print("got %s records" % len(self.chessfile.games))
 
         self.id_list = []
         for i in range(len(self.chessfile.games)):
@@ -171,18 +179,18 @@ class GameList(Gtk.TreeView):
         gameno = self.id_list.index(game_id)
         print("gameno=%s" % gameno)
 
-        gamemodel = GameModel()
+        self.gamemodel = GameModel()
 
         variant = self.chessfile.get_variant(gameno)
         if variant:
-            gamemodel.tags["Variant"] = variant
+            self.gamemodel.tags["Variant"] = variant
 
         wp, bp = self.chessfile.get_player_names(gameno)
         p0 = (LOCAL, Human, (WHITE, wp), wp)
         p1 = (LOCAL, Human, (BLACK, bp), bp)
-        self.chessfile.loadToModel(gameno, -1, gamemodel)
+        self.chessfile.loadToModel(gameno, -1, self.gamemodel)
 
-        gamemodel.status = WAITING_TO_START
-        game_handler.generalStart(gamemodel, p0, p1)
+        self.gamemodel.status = WAITING_TO_START
+        game_handler.generalStart(self.gamemodel, p0, p1)
 
         perspective_manager.activate_perspective("games")

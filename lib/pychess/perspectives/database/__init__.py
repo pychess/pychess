@@ -1,18 +1,23 @@
 import os
+import threading
 import traceback
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GLib
 
 from pychess.compat import StringIO
 from pychess.System.Log import log
 from pychess.perspectives import Perspective, perspective_manager
 from pychess.perspectives.database.gamelist import GameList
+from pychess.perspectives.database.OpeningTreePanel import OpeningTreePanel
 from pychess.perspectives.database.FilterPanel import FilterPanel
 from pychess.perspectives.database.PreviewPanel import PreviewPanel
 from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import EAST, SOUTH, CENTER
 from pychess.widgets import dock_panel_tab
+from pychess.widgets.ionest import game_handler
+from pychess.Database.PgnImport import PgnImport
+from pychess.Database.model import engine, metadata
 
 
 class Database(Perspective):
@@ -33,8 +38,11 @@ class Database(Perspective):
         perspective_manager.set_perspective_widget("database", perspective_widget)
 
         self.gamelist = GameList(filename)
+        self.opening_tree_panel = OpeningTreePanel(self.gamelist)
         self.filter_panel = FilterPanel(self.gamelist)
         self.preview_panel = PreviewPanel(self.gamelist)
+
+        self.progressbar = Gtk.ProgressBar(show_text=False)
 
         perspective = perspective_manager.get_perspective("database")
 
@@ -49,6 +57,7 @@ class Database(Perspective):
 
         docks = {
             "gamelist": (Gtk.Label(label="gamelist"), self.gamelist.box),
+            "openingtree": (dock_panel_tab(_("Opening tree"), "", addDataPrefix("glade/panel_docker.svg")), self.opening_tree_panel.box),
             "filter": (dock_panel_tab(_("Filter"), "", addDataPrefix("glade/panel_docker.svg")), self.filter_panel.box),
             "preview": (dock_panel_tab(_("Preview"), "", addDataPrefix("glade/panel_docker.svg")), self.preview_panel.box),
         }
@@ -81,6 +90,7 @@ class Database(Perspective):
             leaf.setDockable(False)
 
             leaf = leaf.dock(docks["filter"][1], EAST, docks["filter"][0], "filter")
+            leaf = leaf.dock(docks["openingtree"][1], SOUTH, docks["openingtree"][0], "openingtree")
             leaf.dock(docks["preview"][1], SOUTH, docks["preview"][0], "preview")
 
         def unrealize(dock):
@@ -103,4 +113,27 @@ class Database(Perspective):
         perspective_manager.disable_perspective("database")
 
     def on_import_clicked(self, widget):
-        print("import")
+        opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
+        response = opendialog.run()
+        if response == Gtk.ResponseType.ACCEPT:
+            filename = opendialog.get_filename()
+            self.do_import(filename)
+        opendialog.hide()
+
+    def do_import(self, filename):
+        self.gamelist.progress_dock.add(self.progressbar)
+        self.gamelist.progress_dock.show_all()
+
+        def importing():
+            # TODO:
+            if 0:
+                metadata.drop_all(engine)
+                metadata.create_all(engine)
+            importer = PgnImport()
+            importer.do_import(filename, self.progressbar)
+            GLib.idle_add(self.gamelist.progress_dock.remove, self.progressbar)
+            GLib.idle_add(self.gamelist.load_games)
+
+        thread = threading.Thread(target=importing)
+        thread.daemon = True
+        thread.start()

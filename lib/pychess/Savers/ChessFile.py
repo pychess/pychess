@@ -88,3 +88,6 @@ class ChessFile:
 
     def get_variant(self, gameno):
         return 0
+
+    def get_bitboards(self, ply):
+        return []

@@ -10,18 +10,7 @@ class FilterPanel:
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
-        self.playerlist = Gtk.ListStore(str)
-
-        self.match = set()
-        completion = Gtk.EntryCompletion()
-        completion.set_model(self.playerlist)
-        completion.set_text_column(0)
-
-        for player in self.gamelist.chessfile.players:
-            self.playerlist.append(player)
-
         entry = Gtk.SearchEntry()
-        entry.set_completion(completion)
         entry.connect('activate', self.activate_entry)
 
         self.box.pack_start(entry, False, False, 0)

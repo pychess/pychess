@@ -268,7 +268,7 @@ def toSAN(board, move, localRepr=False):
 ################################################################################
 
 
-def parseSAN(board, san):
+def parseSAN(board, san, full=True):
     """ Parse a Short/Abbreviated Algebraic Notation string """
     notat = san
 
@@ -424,8 +424,8 @@ def parseSAN(board, san):
                         continue
                     if ffile is not None and ffile != FILE(f):
                         continue
-                    board_clone = board.clone()
-                    board_clone.applyMove(move)
+                    board_clone = board.clone(full)
+                    board_clone.applyMove(move, full)
                     if board_clone.opIsChecked():
                         continue
                     return move

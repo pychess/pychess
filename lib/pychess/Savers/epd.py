@@ -80,7 +80,6 @@ def load(file):
 class EpdFile(ChessFile):
     def __init__(self, file, games):
         ChessFile.__init__(self, file, games)
-        self.players = []
         self.count = len(self.games)
         print("%s game(s) match to query" % self.count)
 

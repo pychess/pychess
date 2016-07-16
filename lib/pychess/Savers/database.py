@@ -14,7 +14,7 @@ from pychess.Utils.const import FEN_START, REMOTE, ARTIFICIAL, LOCAL
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
-from pychess.Database.model import engine, game, event, site, player, pl1, pl2, annotator
+from pychess.Database.model import engine, game, event, site, player, pl1, pl2, annotator, bitboard
 from pychess.Variants import variants
 
 __label__ = _("PyChess database")
@@ -35,7 +35,7 @@ def save(file, model, position=None):
     black = repr(model.players[BLACK])
     result = model.status
     eco = model.tags.get("ECO")
-    time_control = model.tags.get("TimeControl") if model.tags.get("TimeControl") else None
+    time_control = model.tags.get("TimeControl")
     board = int(model.tags.get("Board")) if model.tags.get("Board") else None
     white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else None
     black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
@@ -105,6 +105,9 @@ def save(file, model, position=None):
         else:
             result = conn.execute(game.insert().values(new_values))
             model.game_id = result.inserted_primary_key[0]
+
+        # TODO: save bitboards!
+
         trans.commit()
     except:
         trans.rollback()
@@ -117,10 +120,6 @@ def load(file):
     selection = select([func.count(game.c.id)])
     count = conn.execute(selection).scalar()
     print("Database contains %s games" % count)
-    selection = select([player.c.name])
-    result = conn.execute(selection)
-    players = result.fetchall()
-    print("Database contains %s players" % len(players))
 
     selection = select([
         game.c.id.label("Id"), pl1.c.name.label('White'),
@@ -142,12 +141,13 @@ def load(file):
 
     result = conn.execute(selection)
     colnames = result.keys()
+    # print(colnames)
     result.close()
-    return Database(file, [], colnames, selection, count, players)
+    return Database(file, [], colnames, selection, count)
 
 
 class Database(PGNFile):
-    def __init__(self, file, games, colnames, select, count, players):
+    def __init__(self, file, games, colnames, select, count):
         PGNFile.__init__(self, file, games)
 
         self.conn = engine.connect()
@@ -158,7 +158,6 @@ class Database(PGNFile):
         self.orderby = None
         self.where = None
         self.count = count
-        self.players = players
 
     def close(self):
         self.conn.close()
@@ -202,6 +201,10 @@ class Database(PGNFile):
         arr = array("H")
         arr.fromstring(result[0])
         return arr
+
+    def get_bitboards(self, ply):
+        sel = select([bitboard.c.bitboard, func.count(bitboard.c.bitboard)]).where(bitboard.c.ply == ply).group_by(bitboard.c.bitboard)
+        return self.conn.execute(sel).fetchall()
 
     def loadToModel(self, gameno, position=-1, model=None):
         self.comments = []

@@ -39,7 +39,7 @@ class PgnBase(ChessFile):
         ChessFile.__init__(self, file, games)
         self.tagcache = {}
 
-    def parse_string(self, string, board, position, variation=False):
+    def parse_string(self, string, board, position, variation=False, pgn_import=False):
         """Recursive parses a movelist part of one game.
 
            Arguments:
@@ -75,7 +75,8 @@ class PgnBase(ChessFile):
                         self.parse_string(v_string[:-1],
                                           last_board.prev,
                                           position,
-                                          variation=True))
+                                          variation=True,
+                                          pgn_import=pgn_import))
                     v_string = ""
                     continue
 
@@ -92,7 +93,7 @@ class PgnBase(ChessFile):
 
                     mstr = m.group(MOVE)
                     try:
-                        lmove = parseSAN(last_board, mstr)
+                        lmove = parseSAN(last_board, mstr, full=not pgn_import)
                     except ParsingError as err:
                         # TODO: save the rest as comment
                         # last_board.children.append(string[m.start():])
@@ -122,8 +123,8 @@ class PgnBase(ChessFile):
                         self.error = LoadingError(errstr1, "")
                         break
 
-                    new_board = last_board.clone()
-                    new_board.applyMove(lmove)
+                    new_board = last_board.clone(full=not pgn_import)
+                    new_board.applyMove(lmove, full=not pgn_import)
 
                     if m.group(MOVE_COMMENT):
                         new_board.nags.append(symbol2nag(m.group(

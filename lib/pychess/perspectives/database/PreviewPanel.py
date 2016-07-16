@@ -71,7 +71,7 @@ class PreviewPanel:
         self.gamelist.set_cursor(0)
 
     def on_selection_changed(self, selection):
-        iter = selection.get_selected()[1]
+        model, iter = selection.get_selected()
         if iter is None:
             self.gamemodel.boards = [Board(FEN_EMPTY)]
             del self.gamemodel.moves[:]

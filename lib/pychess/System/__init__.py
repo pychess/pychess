@@ -1,5 +1,8 @@
-import inspect
 import sys
+import pstats
+import inspect
+import cProfile
+from timeit import default_timer
 
 from pychess.compat import basestring
 
@@ -64,3 +67,33 @@ def caller_name(skip=2):
         name.append(codename)   # function or a method
     del parentframe
     return ".".join(name)
+
+
+def profile_me(fn):
+    def profiled_fn(*args, **kwargs):
+        prof = cProfile.Profile()
+        ret = prof.runcall(fn, *args, **kwargs)
+        ps = pstats.Stats(prof)
+        ps.sort_stats('cumulative')
+        ps.print_stats(60)
+        return ret
+    return profiled_fn
+
+
+# Python Timer Class - Context Manager for Timing Code Blocks
+# Corey Goldberg - 2012
+class Timer(object):
+    def __init__(self, verbose=False):
+        self.verbose = verbose
+        self.timer = default_timer
+
+    def __enter__(self):
+        self.start = self.timer()
+        return self
+
+    def __exit__(self, *args):
+        end = self.timer()
+        self.elapsed_secs = end - self.start
+        self.elapsed = self.elapsed_secs * 1000  # millisecs
+        if self.verbose:
+            print('elapsed time: %f ms' % self.elapsed)

@@ -32,7 +32,6 @@ def load(file):
 class FenFile(ChessFile):
     def __init__(self, file, games):
         ChessFile.__init__(self, file, games)
-        self.players = []
         self.count = 1
 
     def loadToModel(self, gameno, position, model=None):

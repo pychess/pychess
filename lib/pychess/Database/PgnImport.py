@@ -8,7 +8,7 @@ import sys
 import zipfile
 from array import array
 
-# from .profilehooks import profile
+from gi.repository import GLib
 
 from sqlalchemy import select, func, and_
 from sqlalchemy.exc import ProgrammingError
@@ -18,16 +18,17 @@ from sqlalchemy.exc import ProgrammingError
 from pychess.compat import unicode
 from pychess.Utils.const import FEN_START, reprResult
 from pychess.Variants import name2variant
+from pychess.System import profile_me, Timer
 from pychess.System.protoopen import protoopen
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import pgn_load
 from pychess.Database.dbwalk import walk
 from pychess.Database.model import engine, metadata, collection, event,\
-    site, player, game, annotator
+    site, player, game, annotator, bitboard
 
-CHUNK = 1000
+CHUNK = 100
 
-EVENT, SITE, PLAYER, ANNOTATOR, COLLECTION = range(5)
+GAME, EVENT, SITE, PLAYER, ANNOTATOR, COLLECTION = range(6)
 
 removeDic = {
     ord(u"'"): None,
@@ -48,6 +49,7 @@ class PgnImport():
         self.ins_player = player.insert()
         self.ins_annotator = annotator.insert()
         self.ins_game = game.insert()
+        self.ins_bitboard = bitboard.insert()
 
         self.collection_dict = {}
         self.event_dict = {}
@@ -55,8 +57,9 @@ class PgnImport():
         self.player_dict = {}
         self.annotator_dict = {}
 
-        self.next_id = [0, 0, 0, 0, 0]
+        self.next_id = [0, 0, 0, 0, 0, 0]
 
+        self.next_id[GAME] = self.ini_names(game, GAME)
         self.next_id[COLLECTION] = self.ini_names(collection, COLLECTION)
         self.next_id[EVENT] = self.ini_names(event, EVENT)
         self.next_id[SITE] = self.ini_names(site, SITE)
@@ -85,9 +88,6 @@ class PgnImport():
             name_dict = self.player_dict
             name_data = self.player_data
 
-            # Some .pgn use country after player names
-            # if name[-4:-3] == " " and name[-3:].isupper():
-            #     name = name[:-4]
             name = name.title().translate(removeDic)
 
         if name in name_dict:
@@ -102,20 +102,21 @@ class PgnImport():
             return name_dict[name]
 
     def ini_names(self, name_table, field):
-        s = select([name_table])
-        name_dict = dict([(n.name.title().translate(removeDic), n.id)
-                          for n in self.conn.execute(s)])
+        if field != GAME:
+            s = select([name_table])
+            name_dict = dict([(n.name.title().translate(removeDic), n.id)
+                              for n in self.conn.execute(s)])
 
-        if field == COLLECTION:
-            self.collection_dict = name_dict
-        elif field == EVENT:
-            self.event_dict = name_dict
-        elif field == SITE:
-            self.site_dict = name_dict
-        elif field == PLAYER:
-            self.player_dict = name_dict
-        elif field == ANNOTATOR:
-            self.annotator_dict = name_dict
+            if field == COLLECTION:
+                self.collection_dict = name_dict
+            elif field == EVENT:
+                self.event_dict = name_dict
+            elif field == SITE:
+                self.site_dict = name_dict
+            elif field == PLAYER:
+                self.player_dict = name_dict
+            elif field == ANNOTATOR:
+                self.annotator_dict = name_dict
 
         s = select([func.max(name_table.c.id).label('maxid')])
         maxid = self.conn.execute(s).scalar()
@@ -126,9 +127,10 @@ class PgnImport():
 
         return next_id
 
-    # @profile
-    def do_import(self, filename):
-        print(filename)
+    # @profile_me
+    def do_import(self, filename, progressbar=None):
+        print("Starting to import %s" % filename, os.path.getsize(filename))
+
         # collect new names not in they dict yet
         self.collection_data = []
         self.event_data = []
@@ -138,6 +140,7 @@ class PgnImport():
 
         # collect new games and commit them in big chunks for speed
         self.game_data = []
+        self.bitboard_data = []
 
         if filename.lower().endswith(".zip") and zipfile.is_zipfile(filename):
             zf = zipfile.ZipFile(filename, "r")
@@ -152,6 +155,9 @@ class PgnImport():
             else:
                 cf = pgn_load(zf.protoopen(pgnfile))
 
+            all_games = float(len(cf.games))
+            get_tag = cf._getTag
+            get_id = self.get_id
             # use transaction to avoid autocommit slowness
             trans = self.conn.begin()
             try:
@@ -161,11 +167,11 @@ class PgnImport():
                     comments = []
                     cf.error = None
 
-                    fenstr = cf._getTag(i, "FEN")
+                    fenstr = get_tag(i, "FEN")
                     variant = cf.get_variant(i)
 
                     # Fixes for some non statndard Chess960 .pgn
-                    if not variant and (fenstr is not None) and "Chess960" in cf._getTag(i, "Event"):
+                    if not variant and (not fenstr) and "Chess960" in get_tag(i, "Event"):
                         cf.tagcache[i]["Variant"] = "Fischerandom"
                         parts = fenstr.split()
                         parts[0] = parts[0].replace(".", "/").replace("0", "")
@@ -195,71 +201,81 @@ class PgnImport():
 
                     boards = [board]
                     movetext = cf.get_movetext(i)
-                    boards = cf.parse_string(movetext, boards[0], -1)
+
+                    # parse movetext to create boards tree structure
+                    boards = cf.parse_string(movetext, boards[0], -1, pgn_import=True)
 
                     if cf.error is not None:
                         print("ERROR in game #%s" % (i + 1), cf.error.args[0])
                         continue
 
+                    # create movelist and comments from boards tree
                     walk(boards[0], movelist, comments)
 
+                    white = get_tag(i, 'White')
+                    black = get_tag(i, 'Black')
+
                     if not movelist:
-                        if (not comments) and (
-                                cf._getTag(i, 'White') is None) and (
-                                    cf._getTag(i, 'Black') is None):
+                        if (not comments) and (not white) and (not black):
                             print("empty game")
                             continue
 
-                    event_id = self.get_id(cf._getTag(i, 'Event'), event, EVENT)
+                    event_id = get_id(get_tag(i, 'Event'), event, EVENT)
 
-                    site_id = self.get_id(cf._getTag(i, 'Site'), site, SITE)
+                    site_id = get_id(get_tag(i, 'Site'), site, SITE)
 
-                    game_date = cf._getTag(i, 'Date')
+                    game_date = get_tag(i, 'Date')
                     if game_date and '?' not in game_date:
                         ymd = game_date.split('.')
                         if len(ymd) == 3:
                             game_year, game_month, game_day = map(int, ymd)
                         else:
-                            game_year, game_month, game_day = int(
-                                game_date[:4]), None, None
+                            game_year, game_month, game_day = int(game_date[:4]), None, None
                     elif game_date and '?' not in game_date[:4]:
-                        game_year, game_month, game_day = int(
-                            game_date[:4]), None, None
+                        game_year, game_month, game_day = int(game_date[:4]), None, None
                     else:
                         game_year, game_month, game_day = None, None, None
 
-                    game_round = cf._getTag(i, 'Round')
+                    game_round = get_tag(i, 'Round')
 
-                    white, black = cf.get_player_names(i)
-                    white_id = self.get_id(white, player, PLAYER)
-                    black_id = self.get_id(black, player, PLAYER)
+                    white_id = get_id(white, player, PLAYER)
+                    black_id = get_id(black, player, PLAYER)
 
                     result = cf.get_result(i)
 
-                    white_elo = cf._getTag(i, 'WhiteElo')
-                    white_elo = int(
-                        white_elo) if white_elo and white_elo.isdigit() else None
+                    white_elo = get_tag(i, 'WhiteElo')
+                    white_elo = int(white_elo) if white_elo and white_elo.isdigit() else None
 
-                    black_elo = cf._getTag(i, 'BlackElo')
-                    black_elo = int(
-                        black_elo) if black_elo and black_elo.isdigit() else None
+                    black_elo = get_tag(i, 'BlackElo')
+                    black_elo = int(black_elo) if black_elo and black_elo.isdigit() else None
 
-                    ply_count = cf._getTag(i, "PlyCount")
+                    ply_count = get_tag(i, "PlyCount")
 
-                    time_control = cf._getTag(i, "TimeControl")
+                    time_control = get_tag(i, "TimeControl")
 
-                    eco = cf._getTag(i, "ECO")
+                    eco = get_tag(i, "ECO")
                     eco = eco[:3] if eco else None
 
-                    fen = cf._getTag(i, "FEN")
+                    fen = get_tag(i, "FEN")
 
-                    board = cf._getTag(i, "Board")
+                    board_tag = get_tag(i, "Board")
 
-                    annotator = cf._getTag(i, "Annotator")
-                    annotator_id = self.get_id(annotator, annotator, ANNOTATOR)
+                    annotator_id = get_id(get_tag(i, "Annotator"), annotator, ANNOTATOR)
 
-                    collection_id = self.get_id(
-                        unicode(pgnfile), collection, COLLECTION)
+                    collection_id = get_id(unicode(pgnfile), collection, COLLECTION)
+
+                    game_id = self.next_id[GAME]
+                    self.next_id[GAME] += 1
+
+                    # store one bitboard for all ply to help  opening tree lookups
+                    # bitboards stored as bb - 2**63 + 1 to fit into sqlite (8 byte) signed(!) integer range
+                    for ply, board in enumerate(boards):
+                        bb = board.friends[0] | board.friends[1]
+                        self.bitboard_data.append({
+                            'game_id': game_id,
+                            'ply': ply,
+                            'bitboard': bb - 2**63 + 1,
+                        })
 
                     self.game_data.append({
                         'event_id': event_id,
@@ -277,7 +293,8 @@ class PgnImport():
                         'eco': eco,
                         'fen': fen,
                         'variant': variant,
-                        'board': board,
+                        'board': board_tag,
+                        'time_control': time_control,
                         'annotator_id': annotator_id,
                         'collection_id': collection_id,
                         'movelist': movelist.tostring(),
@@ -310,7 +327,16 @@ class PgnImport():
 
                         self.conn.execute(self.ins_game, self.game_data)
                         self.game_data = []
-                        print(pgnfile, i + 1)
+
+                        if self.bitboard_data:
+                            self.conn.execute(self.ins_bitboard, self.bitboard_data)
+                            self.bitboard_data = []
+
+                        if progressbar:
+                            GLib.idle_add(progressbar.set_fraction, (i + 1) / all_games)
+                            #GLib.idle_add(progressbar.set_text, "%s / %s games imported" % (i + 1, all_games))
+                        else:
+                            print(pgnfile, i + 1)
 
                 if self.collection_data:
                     self.conn.execute(self.ins_collection,
@@ -337,7 +363,15 @@ class PgnImport():
                     self.conn.execute(self.ins_game, self.game_data)
                     self.game_data = []
 
-                print(pgnfile, i + 1)
+                if self.bitboard_data:
+                    self.conn.execute(self.ins_bitboard, self.bitboard_data)
+                    self.bitboard_data = []
+
+                if progressbar:
+                    GLib.idle_add(progressbar.set_fraction, (i + 1) / all_games)
+                    #GLib.idle_add(progressbar.set_text, "%s / %s games imported" % (i + 1, all_games))
+                else:
+                    print(pgnfile, i + 1)
                 trans.commit()
 
             except ProgrammingError as e:
@@ -423,13 +457,12 @@ class PgnImport():
 
 
 if __name__ == "__main__":
-    if 1:
+    if 0:
         metadata.drop_all(engine)
         metadata.create_all(engine)
 
     imp = PgnImport()
 
-    from timer import Timer
     if len(sys.argv) > 1:
         arg = sys.argv[1]
         with Timer() as t:

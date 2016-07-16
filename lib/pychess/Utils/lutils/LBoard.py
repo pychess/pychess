@@ -75,10 +75,15 @@ class LBoard(object):
         # when we add a variation to last played board from hint panel
         self.fen_was_applied = False
 
+        self.last_move = None
+
     @property
     def lastMove(self):
-        return self.hist_move[-1] if self.fen_was_applied and len(
-            self.hist_move) > 0 else None
+        if self.last_move is not None:
+            return self.last_move if self.fen_was_applied else None
+        else:
+            return self.hist_move[-1] if self.fen_was_applied and len(
+                self.hist_move) > 0 else None
 
     def repetitionCount(self, draw_threshold=3):
         rc = 1
@@ -127,9 +132,9 @@ class LBoard(object):
         # Set board to empty on Black's turn (which Polyglot-hashes to 0)
         self.blocker = 0
 
-        self.friends = [0] * 2
-        self.kings = [-1] * 2
-        self.boards = [[0] * 7 for i in range(2)]
+        self.friends = [0, 0]
+        self.kings = [-1, -1]
+        self.boards = ([0] * 7, [0] * 7)
 
         self.enpassant = None  # cord which can be captured by enpassant or None
         self.color = BLACK
@@ -148,8 +153,8 @@ class LBoard(object):
 
         #  Data from the position's history:
         self.hist_move = []  # The move that was applied to get the position
-        self.hist_tpiece = [
-        ]  # The piece the move captured, == EMPTY for normal moves
+        self.hist_tpiece = []
+        # The piece the move captured, == EMPTY for normal moves
         self.hist_enpassant = []
         self.hist_castling = []
         self.hist_hash = []
@@ -158,7 +163,7 @@ class LBoard(object):
         self.hist_opchecked = []
 
         # piece counts
-        self.pieceCount = [[0] * 7, [0] * 7]
+        self.pieceCount = ([0] * 7, [0] * 7)
 
         # initial cords of rooks and kings for castling in Chess960
         if self.variant == FISCHERRANDOMCHESS:
@@ -490,7 +495,7 @@ class LBoard(object):
         self.enpassant = epcord
 
     # @profile
-    def applyMove(self, move):
+    def applyMove(self, move, full=True):
         flag = move >> 12
 
         fcord = (move >> 6) & 63
@@ -503,18 +508,21 @@ class LBoard(object):
         opcolor = 1 - self.color
         castling = self.castling
 
-        self.hist_move.append(move)
-        self.hist_enpassant.append(self.enpassant)
-        self.hist_castling.append(self.castling)
-        self.hist_hash.append(self.hash)
-        self.hist_fifty.append(self.fifty)
-        self.hist_checked.append(self.checked)
-        self.hist_opchecked.append(self.opchecked)
-        if self.variant in DROP_VARIANTS:
-            self.hist_capture_promoting.append(self.capture_promoting)
-        if self.variant == CAMBODIANCHESS:
-            self.hist_is_first_move.append({KING: self.is_first_move[KING][:],
-                                            QUEEN: self.is_first_move[QUEEN][:]})
+        if full:
+            self.hist_move.append(move)
+            self.hist_enpassant.append(self.enpassant)
+            self.hist_castling.append(self.castling)
+            self.hist_hash.append(self.hash)
+            self.hist_fifty.append(self.fifty)
+            self.hist_checked.append(self.checked)
+            self.hist_opchecked.append(self.opchecked)
+            if self.variant in DROP_VARIANTS:
+                self.hist_capture_promoting.append(self.capture_promoting)
+            if self.variant == CAMBODIANCHESS:
+                self.hist_is_first_move.append({KING: self.is_first_move[KING][:],
+                                                QUEEN: self.is_first_move[QUEEN][:]})
+        else:
+            self.last_move = move
 
         self.opchecked = None
         self.checked = None
@@ -569,9 +577,10 @@ class LBoard(object):
                             castling &= ~CAS_FLAGS[opcolor][0]
                         elif acord == self.ini_rooks[opcolor][1]:
                             castling &= ~CAS_FLAGS[opcolor][1]
-                self.hist_exploding_around.append(apieces)
-
-        self.hist_tpiece.append(tpiece)
+                if full:
+                    self.hist_exploding_around.append(apieces)
+        if full:
+            self.hist_tpiece.append(tpiece)
 
         # Remove moving piece(s), then add them at their destination.
         if flag == DROP:
@@ -601,7 +610,8 @@ class LBoard(object):
                         self._removePiece(acord, apiece, acolor)
                         self.pieceCount[acolor][apiece] -= 1
                         apieces.append((acord, apiece, acolor))
-                self.hist_exploding_around.append(apieces)
+                if full:
+                    self.hist_exploding_around.append(apieces)
         elif flag in PROMOTIONS:
             # Pretend the pawn changes into a piece before reaching its destination.
             fpiece = flag - 2
@@ -930,7 +940,7 @@ class LBoard(object):
 
         return "".join(fenstr)
 
-    def clone(self):
+    def clone(self, full=True):
         copy = LBoard(self.variant)
         copy.blocker = self.blocker
 
@@ -953,14 +963,17 @@ class LBoard(object):
         copy.checked = self.checked
         copy.opchecked = self.opchecked
 
-        copy.hist_move = self.hist_move[:]
-        copy.hist_tpiece = self.hist_tpiece[:]
-        copy.hist_enpassant = self.hist_enpassant[:]
-        copy.hist_castling = self.hist_castling[:]
-        copy.hist_hash = self.hist_hash[:]
-        copy.hist_fifty = self.hist_fifty[:]
-        copy.hist_checked = self.hist_checked[:]
-        copy.hist_opchecked = self.hist_opchecked[:]
+        if full:
+            copy.hist_move = self.hist_move[:]
+            copy.hist_tpiece = self.hist_tpiece[:]
+            copy.hist_enpassant = self.hist_enpassant[:]
+            copy.hist_castling = self.hist_castling[:]
+            copy.hist_hash = self.hist_hash[:]
+            copy.hist_fifty = self.hist_fifty[:]
+            copy.hist_checked = self.hist_checked[:]
+            copy.hist_opchecked = self.hist_opchecked[:]
+        else:
+            copy.last_move = self.last_move
 
         if self.variant == FISCHERRANDOMCHESS:
             copy.ini_kings = self.ini_kings[:]
@@ -973,16 +986,18 @@ class LBoard(object):
             copy.promoted = self.promoted[:]
             copy.holding = (self.holding[0].copy(), self.holding[1].copy())
             copy.capture_promoting = self.capture_promoting
-            copy.hist_capture_promoting = self.hist_capture_promoting[:]
+            if full:
+                copy.hist_capture_promoting = self.hist_capture_promoting[:]
         elif self.variant == ATOMICCHESS:
-            copy.hist_exploding_around = [a[:]
-                                          for a in self.hist_exploding_around]
+            if full:
+                copy.hist_exploding_around = [a[:] for a in self.hist_exploding_around]
         elif self.variant == CAMBODIANCHESS:
             copy.ini_kings = self.ini_kings
             copy.ini_queens = self.ini_queens
             copy.is_first_move = {KING: self.is_first_move[KING][:],
                                   QUEEN: self.is_first_move[QUEEN][:]}
-            copy.hist_is_first_move = self.hist_is_first_move[:]
+            if full:
+                copy.hist_is_first_move = self.hist_is_first_move[:]
 
         copy.fen_was_applied = self.fen_was_applied
         return copy
