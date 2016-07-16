@@ -126,7 +126,7 @@ class Database(Perspective):
 
         def importing():
             # TODO:
-            if 0:
+            if 1:
                 metadata.drop_all(engine)
                 metadata.create_all(engine)
             importer = PgnImport()

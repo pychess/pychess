@@ -267,15 +267,16 @@ class PgnImport():
                     game_id = self.next_id[GAME]
                     self.next_id[GAME] += 1
 
-                    # store one bitboard for all ply to help  opening tree lookups
-                    # bitboards stored as bb - 2**63 + 1 to fit into sqlite (8 byte) signed(!) integer range
-                    for ply, board in enumerate(boards):
-                        bb = board.friends[0] | board.friends[1]
-                        self.bitboard_data.append({
-                            'game_id': game_id,
-                            'ply': ply,
-                            'bitboard': bb - 2**63 + 1,
-                        })
+                    if not fen:
+                        # store one bitboard for all ply to help  opening tree lookups
+                        # bitboards stored as bb - 2**63 + 1 to fit into sqlite (8 byte) signed(!) integer range
+                        for ply, board in enumerate(boards):
+                            bb = board.friends[0] | board.friends[1]
+                            self.bitboard_data.append({
+                                'game_id': game_id,
+                                'ply': ply,
+                                'bitboard': bb - 2**63 + 1,
+                            })
 
                     self.game_data.append({
                         'event_id': event_id,
