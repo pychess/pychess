@@ -17,7 +17,6 @@ from pychess.widgets.pydock import EAST, SOUTH, CENTER
 from pychess.widgets import dock_panel_tab
 from pychess.widgets.ionest import game_handler
 from pychess.Database.PgnImport import PgnImport
-from pychess.Database.model import engine, metadata
 
 
 class Database(Perspective):
@@ -42,7 +41,7 @@ class Database(Perspective):
         self.filter_panel = FilterPanel(self.gamelist)
         self.preview_panel = PreviewPanel(self.gamelist)
 
-        self.progressbar = Gtk.ProgressBar(show_text=False)
+        self.progressbar = Gtk.ProgressBar(show_text=True)
 
         perspective = perspective_manager.get_perspective("database")
 
@@ -125,10 +124,6 @@ class Database(Perspective):
         self.gamelist.progress_dock.show_all()
 
         def importing():
-            # TODO:
-            if 1:
-                metadata.drop_all(engine)
-                metadata.create_all(engine)
             importer = PgnImport()
             importer.do_import(filename, self.progressbar)
             GLib.idle_add(self.gamelist.progress_dock.remove, self.progressbar)

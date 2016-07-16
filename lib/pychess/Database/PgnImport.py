@@ -8,7 +8,7 @@ import sys
 import zipfile
 from array import array
 
-from gi.repository import GLib
+from gi.repository import GLib, GObject
 
 from sqlalchemy import select, func, and_
 from sqlalchemy.exc import ProgrammingError
@@ -26,7 +26,6 @@ from pychess.Database.dbwalk import walk
 from pychess.Database.model import engine, metadata, collection, event,\
     site, player, game, annotator, bitboard
 
-CHUNK = 100
 
 GAME, EVENT, SITE, PLAYER, ANNOTATOR, COLLECTION = range(6)
 
@@ -42,6 +41,7 @@ removeDic = {
 class PgnImport():
     def __init__(self):
         self.conn = engine.connect()
+        self.CHUNK = 1000
 
         self.ins_collection = collection.insert()
         self.ins_event = event.insert()
@@ -127,9 +127,24 @@ class PgnImport():
 
         return next_id
 
+    def on_timeout(self, user_data):
+        if self.pulse:
+            self.progressbar.pulse()
+            return True
+        else:
+            return False
+
     # @profile_me
     def do_import(self, filename, progressbar=None):
+        self.progressbar = progressbar
+        if progressbar:
+            self.pulse = True
+            self.timeout_id = GObject.timeout_add(50, self.on_timeout, None)
+
         print("Starting to import %s" % filename, os.path.getsize(filename))
+        if 0:
+            metadata.drop_all(engine)
+            metadata.create_all(engine)
 
         # collect new names not in they dict yet
         self.collection_data = []
@@ -150,18 +165,29 @@ class PgnImport():
             files = [filename]
 
         for pgnfile in files:
+            basename = os.path.basename(pgnfile)
+            if progressbar:
+                GLib.idle_add(progressbar.set_text, "Reading %s ..." % basename)
+            else:
+                print("Reading %s ..." % pgnfile)
+
             if zf is None:
                 cf = pgn_load(protoopen(pgnfile))
             else:
                 cf = pgn_load(zf.protoopen(pgnfile))
 
-            all_games = float(len(cf.games))
+            if progressbar:
+                self.pulse = False
+
+            all_games = len(cf.games)
+            self.CHUNK = 1000 if all_games > 5000 else 100
+
             get_tag = cf._getTag
             get_id = self.get_id
             # use transaction to avoid autocommit slowness
             trans = self.conn.begin()
             try:
-                for i in range(len(cf.games)):
+                for i in range(all_games):
                     # print i+1#, cf.get_player_names(i)
                     movelist = array("H")
                     comments = []
@@ -302,7 +328,7 @@ class PgnImport():
                         'comments': unicode("|".join(comments)),
                     })
 
-                    if len(self.game_data) >= CHUNK:
+                    if len(self.game_data) >= self.CHUNK:
                         if self.collection_data:
                             self.conn.execute(self.ins_collection,
                                               self.collection_data)
@@ -334,8 +360,8 @@ class PgnImport():
                             self.bitboard_data = []
 
                         if progressbar:
-                            GLib.idle_add(progressbar.set_fraction, (i + 1) / all_games)
-                            #GLib.idle_add(progressbar.set_text, "%s / %s games imported" % (i + 1, all_games))
+                            GLib.idle_add(progressbar.set_fraction, (i + 1) / float(all_games))
+                            GLib.idle_add(progressbar.set_text, "%s / %s from %s imported" % (i + 1, all_games, basename))
                         else:
                             print(pgnfile, i + 1)
 
@@ -369,8 +395,8 @@ class PgnImport():
                     self.bitboard_data = []
 
                 if progressbar:
-                    GLib.idle_add(progressbar.set_fraction, (i + 1) / all_games)
-                    #GLib.idle_add(progressbar.set_text, "%s / %s games imported" % (i + 1, all_games))
+                    GLib.idle_add(progressbar.set_fraction, (i + 1) / float(all_games))
+                    GLib.idle_add(progressbar.set_text, "%s / %s from %s imported" % (i + 1, all_games, basename))
                 else:
                     print(pgnfile, i + 1)
                 trans.commit()
@@ -417,7 +443,7 @@ class PgnImport():
                         "born": born,
                     })
 
-                    if len(player_data) >= CHUNK:
+                    if len(player_data) >= self.CHUNK:
                         self.conn.execute(ins_player, player_data)
                         player_data = []
                         print(i)
