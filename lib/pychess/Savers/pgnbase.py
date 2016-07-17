@@ -299,6 +299,9 @@ def pgn_load(file, klass=PgnBase):
             in_tags = False
             moves.append(line)
 
+    if moves:
+        games.append(["".join(tags), "".join(moves)])
+
     return klass(file, games)
 
 
