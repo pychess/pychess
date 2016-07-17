@@ -22,8 +22,8 @@ class ChatWindow(object):
 
         self.viewspanel = ViewsPanel(self.connection)
         self.channelspanel = ChannelsPanel(self.connection)
+        self.adj = self.channelspanel.get_vadjustment()
         self.infopanel = InfoPanel(self.connection)
-
         self.chatbox = Gtk.Box()
         self.chatbox.pack_start(self.channelspanel, True, True, 0)
         notebook = Gtk.Notebook()
@@ -41,6 +41,7 @@ class ChatWindow(object):
                                    self.onConversationRemoved)
         self.channelspanel.connect('conversationSelected',
                                    self.onConversationSelected)
+        self.channelspanel.connect('focus_in_event', self.focus_in, self.adj)
 
         for panel in self.panels:
             panel.show_all()
@@ -67,6 +68,10 @@ class ChatWindow(object):
         cm = self.connection.cm
         self.channelspanel.onPersonMessage(cm, name, "", False, "")
 
+    def focus_in(widget, event, adj):
+        alloc = widget.get_allocation()
+        if alloc.y < adj.value or alloc.y > adj.value + adj.page_size:
+            adj.set_value(min(alloc.y, adj.upper - adj.page_size))
 
 if __name__ == "__main__":
     import random
