@@ -269,6 +269,9 @@ def pgn_load(file, klass=PgnBase):
     games = []
     in_tags = False
 
+    tags = []
+    moves = []
+
     for line in file:
         line = line.lstrip()
         if not line:
@@ -279,21 +282,22 @@ def pgn_load(file, klass=PgnBase):
         if line.startswith("["):
             if tagre.match(line) is not None:
                 if not in_tags:
-                    games.append(["", ""])
+                    # new game starting
+                    if moves:
+                        games.append(["".join(tags), "".join(moves)])
+                        tags = []
+                        moves = []
+
                     in_tags = True
-                games[-1][0] += line
+                tags.append(line)
             else:
                 if not in_tags:
-                    games[-1][1] += line
+                    moves.append(line)
                 else:
                     print("Warning: ignored invalid tag pair %s" % line)
         else:
             in_tags = False
-            if not games:
-                # In rare cases there might not be any tags at all. It's not
-                # legal, but we support it anyways.
-                games.append(["", ""])
-            games[-1][1] += line
+            moves.append(line)
 
     return klass(file, games)
 
