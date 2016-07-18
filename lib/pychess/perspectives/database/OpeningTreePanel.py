@@ -22,7 +22,6 @@ class OpeningTreePanel(Gtk.TreeView):
         self.modelsort.set_sort_column_id(3, Gtk.SortType.DESCENDING)
         self.set_model(self.modelsort)
 
-        self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         self.set_headers_visible(True)
 
         column = Gtk.TreeViewColumn(_("Move"), Gtk.CellRendererText(), text=1)
@@ -41,15 +40,12 @@ class OpeningTreePanel(Gtk.TreeView):
         column.connect("clicked", self.column_clicked, 3)
         self.append_column(column)
 
-        self.cid = None
-        selection = self.get_selection()
-        self.cid = selection.connect_after("changed", self.row_changed)
+        self.conid = self.connect_after("row-activated", self.row_activated)
 
         self.board = LBoard()
         self.board.applyFen(FEN_START)
-        self.update_tree(self.get_openings(0, self.board))
+        self.update_tree(self.get_openings(self.board))
 
-        # self.set_cursor(0)
         self.columns_autosize()
 
         sw = Gtk.ScrolledWindow()
@@ -63,16 +59,22 @@ class OpeningTreePanel(Gtk.TreeView):
         # print("column_clicked")
         self.set_search_column(data)
 
-    def row_changed(self, selection):
-        # print("row_changed")
-        model, iter = selection.get_selected()
-        if iter is not None:
-            lmove = self.liststore[self.modelsort.convert_iter_to_child_iter(iter)][0]
-            # print("move %s selected" % lmove)
-            self.board.applyMove(lmove)
-            self.update_tree(self.get_openings(0, self.board))
+    def row_activated(self, widget, path, col):
+        print("opening_tree row_activated")
+        lmove = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
+        # print("move %s selected" % lmove)
+        self.board.applyMove(lmove)
+        bb = self.board.friends[0] | self.board.friends[1]
 
-    def get_openings(self, ply, board):
+        self.gamelist.ply = self.board.plyCount
+        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb - 2**63 + 1)
+        self.gamelist.offset = 0
+        self.gamelist.chessfile.build_query()
+        self.gamelist.load_games()
+
+        self.update_tree(self.get_openings(self.board))
+
+    def get_openings(self, board):
         print("get_openings()")
         # print(board)
         result = []
@@ -91,11 +93,7 @@ class OpeningTreePanel(Gtk.TreeView):
 
     def update_tree(self, openings):
         # print("update_tree")
-        if self.cid is not None:
-            with GObject.signal_handler_block(self.get_selection(), self.cid):
-                self.liststore.clear()
-        else:
+        with GObject.signal_handler_block(self.get_selection(), self.conid):
             self.liststore.clear()
-
-        for lmove, count in openings:
-            self.liststore.append([lmove, toSAN(self.board, lmove), 45, count])
+            for lmove, count in openings:
+                self.liststore.append([lmove, toSAN(self.board, lmove), 50, count])

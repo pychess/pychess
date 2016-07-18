@@ -270,25 +270,27 @@ class PGNFile(PgnBase):
         self.colnames = ['Id', 'White', 'Black', 'Result', 'Event', 'Site', 'Round',
                          'Year', 'Month', 'Day', 'WhiteElo', 'BlackElo',
                          'ECO', 'TimeControl', 'Board', 'FEN', 'Variant', 'Annotator']
-        self.where = None
         self.all_games = self.games
+        self.where_tags = None
+        self.where_bitboards = None
+        self.query = self.all_games
         self.count = len(self.all_games)
-        print("%s game(s) match to query" % self.count)
+        # print("%s game(s) match to query" % self.count)
         self.offset = 0
 
     def build_query(self):
-        if self.where is None:
+        if self.where_tags is None:
             self.query = self.all_games
         else:
-            self.query = filter(self.where, self.all_games)
+            self.query = filter(self.where_tags, self.all_games)
 
-    def build_where(self, text):
+    def build_where_tags(self, text):
         if text:
             def where(game):
                 return text.lower() in game[0].lower()
-            self.where = where
+            self.where_tags = where
         else:
-            self.where = None
+            self.where_tags = None
 
     def get_id(self, gameno):
         return self.offset + gameno

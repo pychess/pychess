@@ -18,7 +18,7 @@ class FilterPanel:
 
     def activate_entry(self, entry):
         text = entry.get_text()
-        self.gamelist.chessfile.build_where(text)
-        self.offset = 0
+        self.gamelist.chessfile.build_where_tags(text)
+        self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
         self.gamelist.load_games()

@@ -29,7 +29,7 @@ class PreviewPanel:
 
         selection = self.gamelist.get_selection()
         self.conid = selection.connect_after('changed', self.on_selection_changed)
-        self.gamelist.handler_id_to_block = self.conid
+        self.gamelist.preview_cid = self.conid
 
         startbut = Gtk.Button()
         startbut.add(createImage(media_previous))
@@ -102,7 +102,7 @@ class PreviewPanel:
             self.boardview.animation_lock.release()
 
         self.boardview.redrawCanvas()
-        self.boardview.shown = last
+        self.boardview.shown = self.gamelist.ply
 
     def on_start_button(self, button):
         self.boardview.showFirst()

@@ -2,7 +2,7 @@
 
 import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
-    String, SmallInteger, BigInteger, LargeBinary, UnicodeText
+    String, SmallInteger, BigInteger, LargeBinary, UnicodeText, ForeignKey
 
 from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
@@ -59,14 +59,14 @@ collection = Table(
 game = Table(
     'game', metadata,
     Column('id', Integer, primary_key=True),
-    Column('event_id', Integer),
-    Column('site_id', Integer),
+    Column('event_id', Integer, ForeignKey('event.id')),
+    Column('site_id', Integer, ForeignKey('site.id')),
     Column('date_year', SmallInteger),
     Column('date_month', SmallInteger),
     Column('date_day', SmallInteger),
     Column('round', String(8)),
-    Column('white_id', Integer),
-    Column('black_id', Integer),
+    Column('white_id', Integer, ForeignKey('player.id')),
+    Column('black_id', Integer, ForeignKey('player.id')),
     Column('result', SmallInteger),
     Column('white_elo', SmallInteger),
     Column('black_elo', SmallInteger),
@@ -76,8 +76,8 @@ game = Table(
     Column('board', SmallInteger),
     Column('fen', String(128)),
     Column('variant', SmallInteger),
-    Column('annotator_id', Integer),
-    Column('collection_id', Integer),
+    Column('annotator_id', Integer, ForeignKey('annotator.id')),
+    Column('collection_id', Integer, ForeignKey('collection.id')),
     Column('movelist', LargeBinary),
     Column('comments', UnicodeText)
 )
@@ -86,7 +86,7 @@ game = Table(
 bitboard = Table(
     'bitboard', metadata,
     Column('id', Integer, primary_key=True),
-    Column('game_id', Integer),
+    Column('game_id', Integer, ForeignKey('game.id'), nullable=False),
     Column('ply', Integer),
     Column('bitboard', BigInteger),
 )

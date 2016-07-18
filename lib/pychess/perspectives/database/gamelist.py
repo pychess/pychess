@@ -4,6 +4,7 @@ from __future__ import print_function
 from gi.repository import Gtk, GObject
 
 from pychess.Savers import database, pgn, fen, epd
+from pychess.System import Timer
 from pychess.System.protoopen import protoopen
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult
 from pychess.Players.Human import Human
@@ -14,12 +15,14 @@ from pychess.perspectives import perspective_manager
 
 class GameList(Gtk.TreeView):
 
-    STEP = 1000
+    STEP = 500
 
     def __init__(self, uri):
         GObject.GObject.__init__(self)
 
-        self.handler_id_to_block = None
+        self.preview_cid = None
+        self.opening_tree_cid = None
+
         # GTK_SELECTION_BROWSE - exactly one item is always selected
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
 
@@ -57,17 +60,19 @@ class GameList(Gtk.TreeView):
         self.gameno = 0
         self.gamemodel = None
         self.uri = uri
+        self.ply = 0
 
         if self.uri.endswith(".pdb"):
             self.chessfile = database.load(protoopen(self.uri))
         elif self.uri.endswith(".pgn"):
-            self.chessfile = pgn.load(protoopen(self.uri))
+            with Timer() as t:
+                self.chessfile = pgn.load(protoopen(self.uri))
+            print("Elapsed time (secs): %s" % t.elapsed_secs)
         elif self.uri.endswith(".epd"):
             self.chessfile = epd.load(protoopen(self.uri))
         elif self.uri.endswith(".fen"):
             self.chessfile = fen.load(protoopen(self.uri))
 
-        self.chessfile.build_query()
         self.load_games()
 
         #  buttons
@@ -134,8 +139,8 @@ class GameList(Gtk.TreeView):
 
     def load_games(self):
         print("load_games()")
-        if self.handler_id_to_block is not None:
-            with GObject.signal_handler_block(self.get_selection(), self.handler_id_to_block):
+        if self.preview_cid is not None:
+            with GObject.signal_handler_block(self.get_selection(), self.preview_cid):
                 self.liststore.clear()
         else:
             self.liststore.clear()
@@ -169,12 +174,12 @@ class GameList(Gtk.TreeView):
             fen = getTag(i, "FEN")
             add([game_id, wname, welo, bname, belo, result, date, event, site,
                  round_, length, eco, tc, variant, fen])
+
         self.set_cursor(0)
 
     def row_activated(self, widget, path, col):
         # print(self.modelsort.convert_path_to_child_path(path)[0])
-        game_id = self.liststore[self.modelsort.convert_path_to_child_path(
-            path)[0]][0]
+        game_id = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
         print("game_id=%s" % game_id)
         gameno = self.id_list.index(game_id)
         print("gameno=%s" % gameno)
