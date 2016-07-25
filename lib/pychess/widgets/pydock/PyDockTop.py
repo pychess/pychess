@@ -47,8 +47,6 @@ class PyDockTop(PyDockComposite, TabReceiver):
             button.myparent = None
         self.button_cids = {}
         self.highlightArea.myparent = None
-        #self.buttons = None
-        #self.highlightArea = None
 
         TabReceiver._del(self)
         PyDockComposite._del(self)
@@ -108,6 +106,10 @@ class PyDockTop(PyDockComposite, TabReceiver):
     def __onDrop(self, arrowButton, sender):
         self.highlightArea.hide()
         child = sender.get_nth_page(sender.get_current_page())
+
+        for instance in sender.get_parent().getInstances(self.perspective):
+            instance.hideArrows()
+
         title, id = sender.get_parent().undock(child)
         self.dock(child, arrowButton.myposition, title, id)
 

@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
 
@@ -27,7 +27,7 @@ class PyDockLeaf(TabReceiver):
 
         self.book = Gtk.Notebook()
         self.book.set_name(id)
-        #self.book.get_tab_label_text = customGetTabLabelText
+
         self.book_cids = [
             self.book.connect("drag-begin", self.__onDragBegin),
             self.book.connect("drag-end", self.__onDragEnd),
@@ -35,11 +35,8 @@ class PyDockLeaf(TabReceiver):
         ]
         self.add(self.book)
         self.book.show()
-        # self.book.props.tab_vborder = 0
-        # self.book.props.tab_hborder = 1
 
         self.highlightArea = HighlightArea(self)
-        # self.put(self.highlightArea, 0, 0)
 
         self.button_cids = []
 
@@ -50,7 +47,7 @@ class PyDockLeaf(TabReceiver):
             addDataPrefix("glade/dock_left.svg"),
             addDataPrefix("glade/dock_center.svg"),
             addDataPrefix("glade/dock_star.svg"))
-        # self.put(self.starButton, 0, 0)
+
         self.button_cids += [
             self.starButton.connect("dropped", self.__onDrop),
             self.starButton.connect("hovered", self.__onHover),
@@ -79,8 +76,6 @@ class PyDockLeaf(TabReceiver):
 
         self.starButton.myparent = None
         self.highlightArea.myparent = None
-        #self.starButton = None
-        #self.highlightArea = None
 
         TabReceiver._del(self)
 
@@ -92,10 +87,8 @@ class PyDockLeaf(TabReceiver):
         return s + " (" + ", ".join(panels) + ")"
 
     def __add(self, widget, title, id):
-        # widget = BorderBox(widget, top=True)
         self.panels.append((widget, title, id))
         self.book.append_page(widget, title)
-        # self.book.set_tab_label_packing(widget, True, True, Gtk.PACK_START)
         self.book.set_tab_detachable(widget, True)
         self.book.set_tab_reorderable(widget, True)
         widget.show_all()
@@ -132,16 +125,11 @@ class PyDockLeaf(TabReceiver):
 
         self.book.remove_page(self.book.page_num(widget))
         if self.book.get_n_pages() == 0:
-
-            def cb():
-                parent = self.get_parent()
-                while not isinstance(parent, PyDockComposite):
-                    parent = parent.get_parent()
-                parent.removeComponent(self)
-                self._del()
-            # We need to idle_add this, as the widget won't emit drag-ended, if
-            # it is removed to early
-            GObject.idle_add(cb)
+            parent = self.get_parent()
+            while not isinstance(parent, PyDockComposite):
+                parent = parent.get_parent()
+            parent.removeComponent(self)
+            self._del()
 
         return title, id
 
