@@ -524,6 +524,10 @@ class ICLounge(GObject.GObject):
                 if player is None:
                     return
                 self.chat.openChatWithPlayer(player.name)
+            if response == 2:
+                if player is None:
+                    return
+                self.connection.client.run_command("follow %s" % player.name)
             message.dismiss()
             #             self.messages.remove(message)
             return False
@@ -532,6 +536,7 @@ class ICLounge(GObject.GObject):
                                             response_cb, player, text)
         if chat:
             message.add_button(InfoBarMessageButton(_("Chat"), 1))
+            message.add_button(InfoBarMessageButton(_("Follow"), 2))
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
                                                 Gtk.ResponseType.CANCEL))
         self.messages.append(message)
