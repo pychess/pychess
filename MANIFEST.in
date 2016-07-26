@@ -6,5 +6,5 @@ include manpages/pychess.1.gz
 include menu/pychess
 include gtksourceview-3.0/language-specs/pgn.lang
 include pychess_book.bin eco.db
-include pychess.desktop pychess.svg pychess.png pychess.xmp pychess.appdata.xml
+include pychess.desktop pychess.svg pychess.png pychess.xmp pychess.appdata.xml pychess.xml
 recursive-include lang *.po

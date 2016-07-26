@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+  <mime-type type="application/x-chess-pychess">
+    <comment>Binary chess database (PyChess format)</comment>
+    <glob pattern="*.pdb"/>
+  </mime-type>
+  <mime-type type="application/x-chess-pgn">
+    <comment>PGN chess game notation</comment>
+    <generic-icon name="application-x-chess-pgn"/>
+    <glob pattern="*.pgn"/>
+    <sub-class-of type="text/plain"/>
+    <magic priority="50">
+      <match value="[Event " type="string" offset="0"/>
+    </magic>
+  </mime-type>
+  <mime-type type="application/x-chess-epd">
+    <comment>EPD chess position</comment>
+    <generic-icon name="text-x-generic"/>
+    <glob pattern="*.epd"/>
+    <sub-class-of type="text/plain"/>
+  </mime-type>
+  <mime-type type="application/x-chess-fen">
+    <comment>FEN chess position</comment>
+    <generic-icon name="text-x-generic"/>
+    <glob pattern="*.fen"/>
+    <sub-class-of type="text/plain"/>
+  </mime-type>
+</mime-info>

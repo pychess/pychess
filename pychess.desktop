@@ -7,4 +7,4 @@ Icon=pychess
 Exec=env UBUNTU_MENUPROXY= pychess
 Terminal=false
 Categories=Game;BoardGame;
-MimeType=application/x-chess-pgn;
+MimeType=application/x-chess-pgn;application/x-chess-epd;application/x-chess-fen;application/x-chess-pychess;

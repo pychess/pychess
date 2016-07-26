@@ -504,6 +504,9 @@ class PyChess(Gtk.Application):
 
         self.file_filter = Gtk.RecentFilter()
         self.file_filter.add_mime_type("application/x-chess-pgn")
+        self.file_filter.add_mime_type("application/x-chess-epd")
+        self.file_filter.add_mime_type("application/x-chess-fen")
+        self.file_filter.add_mime_type("application/x-chess-pychess")
         self.menu_recent.set_filter(self.file_filter)
 
         self.menu_recent.connect("item-activated", recent_item_activated)

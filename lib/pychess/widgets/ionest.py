@@ -154,6 +154,8 @@ class GameHandler(GObject.GObject):
                 _("Open chess file"), None, Gtk.FileChooserAction.OPEN,
                 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
                  Gtk.ResponseType.ACCEPT))
+            self.opendialog.set_show_hidden(True)
+
             self.savedialog = Gtk.FileChooserDialog(
                 "", None, Gtk.FileChooserAction.SAVE,
                 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE,
