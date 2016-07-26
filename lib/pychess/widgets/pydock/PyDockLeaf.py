@@ -65,14 +65,17 @@ class PyDockLeaf(TabReceiver):
         self.__add(widget, title, id)
 
     def _del(self):
-        self.highlightArea.disconnect(self.highlightArea.cid)
+        if self.highlightArea.handler_is_connected(self.highlightArea.cid):
+            self.highlightArea.disconnect(self.highlightArea.cid)
 
         for cid in self.button_cids:
-            self.starButton.disconnect(cid)
+            if self.starButton.handler_is_connected(cid):
+                self.starButton.disconnect(cid)
         self.button_cids = []
 
         for cid in self.book_cids:
-            self.book.disconnect(cid)
+            if self.book.handler_is_connected(cid):
+                self.book.disconnect(cid)
 
         self.starButton.myparent = None
         self.highlightArea.myparent = None

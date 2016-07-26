@@ -40,11 +40,15 @@ class PyDockTop(PyDockComposite, TabReceiver):
             ]
 
     def _del(self):
-        self.highlightArea.disconnect(self.highlightArea.cid)
+        if self.highlightArea.handler_is_connected(self.highlightArea.cid):
+            self.highlightArea.disconnect(self.highlightArea.cid)
+
         for button in self.buttons:
             for cid in self.button_cids[button]:
-                button.disconnect(cid)
+                if button.handler_is_connected(cid):
+                    button.disconnect(cid)
             button.myparent = None
+
         self.button_cids = {}
         self.highlightArea.myparent = None
 
