@@ -53,14 +53,55 @@ class OpeningTreePanel(Gtk.TreeView):
         sw.add(self)
 
         self.box.pack_start(sw, True, True, 0)
+
+        #  buttons
+        toolbar = Gtk.Toolbar()
+
+        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
+        toolbar.insert(firstButton, -1)
+
+        prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
+        toolbar.insert(prevButton, -1)
+
+        firstButton.connect("clicked", self.on_first_clicked)
+        prevButton.connect("clicked", self.on_prev_clicked)
+
+        tool_box = Gtk.Box()
+        tool_box.pack_start(toolbar, False, False, 0)
+        self.box.pack_start(tool_box, False, False, 0)
+
         self.box.show_all()
+
+    def on_first_clicked(self, widget):
+        while self.board.hist_move:
+            self.board.popMove()
+        bb = self.board.friends[0] | self.board.friends[1]
+
+        self.gamelist.ply = self.board.plyCount
+        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb - 2**63 + 1)
+        self.gamelist.offset = 0
+        self.gamelist.chessfile.build_query()
+        self.gamelist.load_games()
+
+        self.update_tree(self.get_openings(self.board))
+
+    def on_prev_clicked(self, widget):
+        self.board.popMove()
+        bb = self.board.friends[0] | self.board.friends[1]
+
+        self.gamelist.ply = self.board.plyCount
+        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb - 2**63 + 1)
+        self.gamelist.offset = 0
+        self.gamelist.chessfile.build_query()
+        self.gamelist.load_games()
+
+        self.update_tree(self.get_openings(self.board))
 
     def column_clicked(self, col, data):
         # print("column_clicked")
         self.set_search_column(data)
 
     def row_activated(self, widget, path, col):
-        print("opening_tree row_activated")
         lmove = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
         # print("move %s selected" % lmove)
         self.board.applyMove(lmove)
