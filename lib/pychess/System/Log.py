@@ -13,14 +13,43 @@ logformat = "%(asctime)s.%(msecs)03d %(task)s %(levelname)s: %(message)s"
 
 # delay=True argument prevents creating empty .log files
 encoding = "utf-8" if sys.platform == "win32" and PY3 else None
-file_handle = logging.FileHandler(
+file_handler = logging.FileHandler(
     addUserDataPrefix(newName),
     delay=True,
     encoding=encoding)
-file_handle.setFormatter(logging.Formatter(fmt=logformat, datefmt='%H:%M:%S'))
+
+
+class TaskFormatter(logging.Formatter):
+    def __init__(self, fmt=None, datefmt=None):
+        logging.Formatter.__init__(self, fmt, datefmt)
+
+    def format(self, record):
+        if not hasattr(record, "task"):
+            record.task = "unknown"
+
+        record.message = record.getMessage()
+        record.asctime = self.formatTime(record, self.datefmt)
+
+        s = self._fmt % record.__dict__
+
+        if record.exc_info:
+            # Cache the traceback text to avoid converting it multiple times
+            # (it's constant anyway)
+            if not record.exc_text:
+                record.exc_text = self.formatException(record.exc_info)
+        if record.exc_text:
+            if s[-1:] != "\n":
+                s = s + "\n"
+            s = s + record.exc_text
+
+        return s
+
+
+formatter = TaskFormatter(fmt=logformat, datefmt='%H:%M:%S')
+file_handler.setFormatter(formatter)
 
 logger = logging.getLogger()
-logger.addHandler(file_handle)
+logger.addHandler(file_handler)
 
 
 class ExtraAdapter(logging.LoggerAdapter):
