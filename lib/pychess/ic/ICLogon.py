@@ -100,9 +100,14 @@ class ICLogon(object):
             else:
                 entry.set_text(names[0])
 
-        uistuff.keep(self.widgets["nameEntry"], "usernameEntry",
-                     user_name_get_value, user_name_set_value)
-        uistuff.keep(self.widgets["passEntry"], "passwordEntry")
+        uistuff.keep(self.widgets["nameEntry"], "usernameEntry", user_name_get_value, user_name_set_value)
+
+        # workaround to FICS Password input doesnt handle strings starting with a number
+        # https://github.com/pychess/pychess/issues/1375
+        def password_set_value(entry, value):
+            entry.set_text(str(value))
+
+        uistuff.keep(self.widgets["passEntry"], "passwordEntry", set_value_=password_set_value)
 
         # workaround to Can't type IP to FICS login dialog
         # https://github.com/pychess/pychess/issues/1360

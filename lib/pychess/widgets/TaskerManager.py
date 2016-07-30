@@ -267,7 +267,13 @@ class InternetGameTasker(Gtk.Alignment):
 
         uistuff.keep(self.widgets["usernameEntry"], "usernameEntry",
                      user_name_get_value, user_name_set_value)
-        uistuff.keep(self.widgets["passwordEntry"], "passwordEntry")
+
+        # workaround to FICS Password input doesnt handle strings starting with a number
+        # https://github.com/pychess/pychess/issues/1375
+        def password_set_value(entry, value):
+            entry.set_text(str(value))
+
+        uistuff.keep(self.widgets["passwordEntry"], "passwordEntry", set_value_=password_set_value)
 
         self.widgets["connectButton"].connect("clicked", self.connectClicked)
         self.widgets["opendialog2"].connect("clicked", self.openDialogClicked)
