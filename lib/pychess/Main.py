@@ -429,8 +429,8 @@ class PyChess(Gtk.Application):
         for widget in ("hint_mode", "spy_mode"):
             widgets[widget].set_sensitive(False)
 
-        uistuff.keep(widgets["hint_mode"], "hint_mode", first_value=True)
-        uistuff.keep(widgets["spy_mode"], "spy_mode", first_value=True)
+        uistuff.keep(widgets["hint_mode"], "hint_mode", first_value=False)
+        uistuff.keep(widgets["spy_mode"], "spy_mode", first_value=False)
         uistuff.keep(widgets["show_sidepanels"], "show_sidepanels", first_value=True)
         uistuff.keep(widgets["auto_call_flag"], "autoCallFlag", first_value=True)
 
