@@ -139,7 +139,9 @@ METHODS = (
     (Gtk.ToggleButton, ("get_active", "set_active", "toggled")),
     (Gtk.CheckMenuItem, ("get_active", "set_active", "toggled")),
     (Gtk.Range, ("get_value", "set_value", "value-changed")),
-    (Gtk.TreeSortable, ("get_value", "set_value", "sort-column-changed")), )
+    (Gtk.TreeSortable, ("get_value", "set_value", "sort-column-changed")),
+    (Gtk.Paned, ("get_position", "set_position", "notify::position")),
+)
 
 
 def keep(widget, key, get_value_=None, set_value_=None, first_value=None):

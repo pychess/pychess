@@ -2,10 +2,10 @@ import re
 
 from gi.repository import Gtk
 from pychess.widgets.ChatView import ChatView
-
 from pychess.widgets.ViewsPanel import ViewsPanel
 from pychess.widgets.InfoPanel import InfoPanel
 from pychess.widgets.ChannelsPanel import ChannelsPanel
+from pychess.System import uistuff
 
 TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
     TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(6)
@@ -24,12 +24,13 @@ class ChatWindow(object):
         self.channelspanel = ChannelsPanel(self.connection)
         self.adj = self.channelspanel.get_vadjustment()
         self.infopanel = InfoPanel(self.connection)
-        self.chatbox = Gtk.Box()
-        self.chatbox.pack_start(self.channelspanel, True, True, 0)
+        self.chatbox = Gtk.Paned()
+        self.chatbox.add1(self.channelspanel)
+
         notebook = Gtk.Notebook()
         notebook.append_page(self.viewspanel, Gtk.Label(_("Chat")))
         notebook.append_page(self.infopanel, Gtk.Label(_("Info")))
-        self.chatbox.pack_start(notebook, False, False, 0)
+        self.chatbox.add2(notebook)
 
         self.panels = [self.viewspanel, self.channelspanel, self.infopanel]
         self.viewspanel.connect('channel_content_Changed',
@@ -46,6 +47,8 @@ class ChatWindow(object):
         for panel in self.panels:
             panel.show_all()
             panel.start()
+
+        uistuff.keep(self.chatbox, "chat_paned_position", first_value=100)
 
     def onConversationAdded(self, panel, grp_id, text, grp_type):
         chatView = ChatView()
