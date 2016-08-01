@@ -86,6 +86,9 @@ class OpeningTreePanel(Gtk.TreeView):
         self.update_tree(self.get_openings(self.board))
 
     def on_prev_clicked(self, widget):
+        # TODO: disable buttons instead
+        if not self.board.hist_move:
+            return
         self.board.popMove()
         bb = self.board.friends[0] | self.board.friends[1]
 
