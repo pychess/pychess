@@ -25,7 +25,13 @@ class ChessFile:
     def build_query(self):
         pass
 
-    def build_where(self, text):
+    def update_count(self):
+        pass
+
+    def build_where_tags(self, text):
+        pass
+
+    def build_where_bitboards(self, ply, bb):
         pass
 
     def get_id(self, gameno):
@@ -89,5 +95,5 @@ class ChessFile:
     def get_variant(self, gameno):
         return 0
 
-    def get_bitboards(self, ply):
+    def get_bitboards(self, ply, prev_bb):
         return []
