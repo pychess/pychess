@@ -18,16 +18,17 @@ from sqlalchemy.exc import ProgrammingError
 from pychess.compat import unicode
 from pychess.Utils.const import FEN_START, reprResult
 from pychess.Variants import name2variant
-from pychess.System import profile_me, Timer
+# from pychess.System import profile_me
+from pychess.System import Timer
 from pychess.System.protoopen import protoopen
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import pgn_load
 from pychess.Database.dbwalk import walk
-from pychess.Database.model import engine, metadata, collection, event,\
-    site, player, game, annotator, bitboard
+from pychess.Database.model import engine, metadata, \
+    event, site, player, game, annotator, bitboard, tag_game
 
 
-GAME, EVENT, SITE, PLAYER, ANNOTATOR, COLLECTION = range(6)
+GAME, EVENT, SITE, PLAYER, ANNOTATOR = range(5)
 
 removeDic = {
     ord(u"'"): None,
@@ -43,24 +44,22 @@ class PgnImport():
         self.conn = engine.connect()
         self.CHUNK = 1000
 
-        self.ins_collection = collection.insert()
         self.ins_event = event.insert()
         self.ins_site = site.insert()
         self.ins_player = player.insert()
         self.ins_annotator = annotator.insert()
         self.ins_game = game.insert()
         self.ins_bitboard = bitboard.insert()
+        self.ins_tag_game = tag_game.insert()
 
-        self.collection_dict = {}
         self.event_dict = {}
         self.site_dict = {}
         self.player_dict = {}
         self.annotator_dict = {}
 
-        self.next_id = [0, 0, 0, 0, 0, 0]
+        self.next_id = [0, 0, 0, 0, 0]
 
         self.next_id[GAME] = self.ini_names(game, GAME)
-        self.next_id[COLLECTION] = self.ini_names(collection, COLLECTION)
         self.next_id[EVENT] = self.ini_names(event, EVENT)
         self.next_id[SITE] = self.ini_names(site, SITE)
         self.next_id[PLAYER] = self.ini_names(player, PLAYER)
@@ -71,11 +70,7 @@ class PgnImport():
             return None
 
         orig_name = name
-        if field == COLLECTION:
-            name_dict = self.collection_dict
-            name_data = self.collection_data
-            name = os.path.basename(name)[:-4]
-        elif field == EVENT:
+        if field == EVENT:
             name_dict = self.event_dict
             name_data = self.event_data
         elif field == SITE:
@@ -93,10 +88,7 @@ class PgnImport():
         if name in name_dict:
             return name_dict[name]
         else:
-            if field == COLLECTION:
-                name_data.append({'source': orig_name, 'name': name})
-            else:
-                name_data.append({'name': orig_name})
+            name_data.append({'name': orig_name})
             name_dict[name] = self.next_id[field]
             self.next_id[field] += 1
             return name_dict[name]
@@ -107,9 +99,7 @@ class PgnImport():
             name_dict = dict([(n.name.title().translate(removeDic), n.id)
                               for n in self.conn.execute(s)])
 
-            if field == COLLECTION:
-                self.collection_dict = name_dict
-            elif field == EVENT:
+            if field == EVENT:
                 self.event_dict = name_dict
             elif field == SITE:
                 self.site_dict = name_dict
@@ -147,7 +137,6 @@ class PgnImport():
             metadata.create_all(engine)
 
         # collect new names not in they dict yet
-        self.collection_data = []
         self.event_data = []
         self.site_data = []
         self.player_data = []
@@ -156,6 +145,7 @@ class PgnImport():
         # collect new games and commit them in big chunks for speed
         self.game_data = []
         self.bitboard_data = []
+        self.tag_game_data = []
 
         if filename.lower().endswith(".zip") and zipfile.is_zipfile(filename):
             zf = zipfile.ZipFile(filename, "r")
@@ -288,8 +278,6 @@ class PgnImport():
 
                     annotator_id = get_id(get_tag(i, "Annotator"), annotator, ANNOTATOR)
 
-                    collection_id = get_id(unicode(pgnfile), collection, COLLECTION)
-
                     game_id = self.next_id[GAME]
                     self.next_id[GAME] += 1
 
@@ -323,17 +311,11 @@ class PgnImport():
                         'board': board_tag,
                         'time_control': time_control,
                         'annotator_id': annotator_id,
-                        'collection_id': collection_id,
                         'movelist': movelist.tostring(),
                         'comments': unicode("|".join(comments)),
                     })
 
                     if len(self.game_data) >= self.CHUNK:
-                        if self.collection_data:
-                            self.conn.execute(self.ins_collection,
-                                              self.collection_data)
-                            self.collection_data = []
-
                         if self.event_data:
                             self.conn.execute(self.ins_event, self.event_data)
                             self.event_data = []
@@ -364,11 +346,6 @@ class PgnImport():
                             GLib.idle_add(progressbar.set_text, "%s / %s from %s imported" % (i + 1, all_games, basename))
                         else:
                             print(pgnfile, i + 1)
-
-                if self.collection_data:
-                    self.conn.execute(self.ins_collection,
-                                      self.collection_data)
-                    self.collection_data = []
 
                 if self.event_data:
                     self.conn.execute(self.ins_event, self.event_data)

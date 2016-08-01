@@ -110,10 +110,16 @@ class DbTestCase(unittest.TestCase):
         db.build_query()
         db.get_records(0, 100)
 
-        print()
+        print("==========")
+        games_count = 0
         for g in db.games:
             print(g["Id"], g["Event"], g["Result"])
+            games_count += 1
+        print("----------")
 
+        self.assertEqual(games_count, 3)
+
+        db.update_count()
         self.assertEqual(db.count, 3)
 
     def test_pdb_database_get_bitboards(self):

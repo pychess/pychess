@@ -49,13 +49,6 @@ player = Table(
 pl1 = player.alias()
 pl2 = player.alias()
 
-collection = Table(
-    'collection', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('name', String(256)),
-    Column('source', String(256))
-)
-
 game = Table(
     'game', metadata,
     Column('id', Integer, primary_key=True),
@@ -76,8 +69,8 @@ game = Table(
     Column('board', SmallInteger),
     Column('fen', String(128)),
     Column('variant', SmallInteger),
+    Column('termination', SmallInteger),
     Column('annotator_id', Integer, ForeignKey('annotator.id')),
-    Column('collection_id', Integer, ForeignKey('collection.id')),
     Column('movelist', LargeBinary),
     Column('comments', UnicodeText)
 )
@@ -91,19 +84,32 @@ bitboard = Table(
     Column('bitboard', BigInteger),
 )
 
+tag = Table(
+    'tag', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('name', String(256)),
+)
 
-def ini_collection():
+tag_game = Table(
+    'tags', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('game_id', Integer, ForeignKey('game.id'), nullable=False),
+    Column('tag_id', Integer, ForeignKey('tag.id'), nullable=False),
+)
+
+
+def ini_tag():
     conn = engine.connect()
     new_values = [
         {"id": LOCAL, "name": unicode("Local game")},
         {"id": ARTIFICIAL, "name": unicode("Chess engine(s)")},
         {"id": REMOTE, "name": unicode("ICS game")},
     ]
-    conn.execute(collection.insert(), new_values)
+    conn.execute(tag.insert(), new_values)
     conn.close()
 
 pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
 set_engine("sqlite:///" + pychess_pdb)  # , echo=True)
 if not os.path.isfile(pychess_pdb):
     metadata.create_all(engine)
-    ini_collection()
+    ini_tag()

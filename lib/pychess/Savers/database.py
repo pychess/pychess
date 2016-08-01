@@ -10,7 +10,7 @@ from sqlalchemy import select, func, or_, and_
 from pychess.compat import unicode
 from pychess.Savers.pgn import PGNFile
 from pychess.Utils.const import reprResult, WHITE, BLACK
-from pychess.Utils.const import FEN_START, REMOTE, ARTIFICIAL, LOCAL
+from pychess.Utils.const import FEN_START
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
@@ -67,15 +67,6 @@ def save(file, model, position=None):
         black_id = get_id(player, black)
         annotator_id = get_id(annotator, game_annotator)
 
-        white_type = model.players[WHITE].__type__
-        black_type = model.players[BLACK].__type__
-        if REMOTE in (white_type, black_type):
-            collection_id = REMOTE
-        elif ARTIFICIAL in (white_type, black_type):
-            collection_id = ARTIFICIAL
-        else:
-            collection_id = LOCAL
-
         new_values = {
             'event_id': event_id,
             'site_id': site_id,
@@ -95,7 +86,6 @@ def save(file, model, position=None):
             'fen': fen,
             'variant': variant,
             'annotator_id': annotator_id,
-            'collection_id': collection_id,
             'movelist': movelist.tostring(),
             'comments': "|".join(comments),
         }
@@ -253,10 +243,13 @@ class Database(PGNFile):
         arr.fromstring(result[0])
         return arr
 
-    def get_bitboards(self, ply, prev_bb):
+    def get_bitboards(self, ply, prev_bb=None):
         with Timer(True):
-            stmt = select([bitboard.c.game_id]).where(bitboard.c.bitboard == prev_bb)
-            where = and_(bitboard.c.ply == ply, bitboard.c.game_id.in_(stmt))
+            if prev_bb is not None:
+                stmt = select([bitboard.c.game_id]).where(bitboard.c.bitboard == prev_bb)
+                where = and_(bitboard.c.ply == ply, bitboard.c.game_id.in_(stmt))
+            else:
+                where = bitboard.c.ply == ply
             sel = select([bitboard.c.bitboard, func.count(bitboard.c.bitboard)]).group_by(bitboard.c.bitboard).where(where)
             print(sel)
             return dbmodel.engine.execute(sel).fetchall()
