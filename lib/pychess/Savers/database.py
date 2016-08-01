@@ -16,6 +16,7 @@ from pychess.Database import model as dbmodel
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
 from pychess.Database.model import game, event, site, player, pl1, pl2, annotator, bitboard
 from pychess.Variants import variants
+from pychess.System import Timer
 
 __label__ = _("PyChess database")
 __ending__ = "pdb"
@@ -163,7 +164,9 @@ class Database(PGNFile):
             .outerjoin(annotator, game.c.annotator_id == annotator.c.id)
             .outerjoin(bitboard, bitboard.c.game_id == game.c.id)]
 
-        self.count = dbmodel.engine.execute(select([func.count(game.c.id)])).scalar()
+        self.from_obj2 = [game.outerjoin(bitboard, bitboard.c.game_id == game.c.id)]
+
+        self.count = dbmodel.engine.execute(select([func.count()]).select_from(game)).scalar()
         print("Database contains %s games" % self.count)
 
         self.select0 = select(self.cols, from_obj=self.from_obj0)
@@ -184,26 +187,34 @@ class Database(PGNFile):
         print("build_query()")
         if self.where_tags is not None and self.where_bitboards is not None:
             self.query = self.select1.where(self.where_tags).where(self.where_bitboards)
-            stmt = select([func.count(game.c.id)], from_obj=self.from_obj1).where(self.where_tags).where(self.where_bitboards)
-            self.count = dbmodel.engine.execute(stmt).scalar()
         elif self.where_tags is not None:
             self.query = self.select0.where(self.where_tags)
-            stmt = select([func.count(game.c.id)], from_obj=self.from_obj0).where(self.where_tags)
-            self.count = dbmodel.engine.execute(stmt).scalar()
         elif self.where_bitboards is not None:
             self.query = self.select1.where(self.where_bitboards)
-            stmt = select([func.count(game.c.id)], from_obj=self.from_obj1).where(self.where_bitboards)
-            self.count = dbmodel.engine.execute(stmt).scalar()
         else:
             self.query = self.select0
-            self.count = self.count
-
-        print("%s game(s) match to query" % self.count)
 
         if self.orderby is not None:
             self.query = self.query.order_by(self.orderby)
 
+    def update_count(self):
+        print("update_count()")
+        if self.where_tags is not None and self.where_bitboards is not None:
+            stmt = select([func.count()], from_obj=self.from_obj1).where(self.where_tags).where(self.where_bitboards)
+            self.count = dbmodel.engine.execute(stmt).scalar()
+        elif self.where_tags is not None:
+            stmt = select([func.count()], from_obj=self.from_obj0).where(self.where_tags)
+            self.count = dbmodel.engine.execute(stmt).scalar()
+        elif self.where_bitboards is not None:
+            stmt = select([func.count()], from_obj=self.from_obj2).where(self.where_bitboards)
+            self.count = dbmodel.engine.execute(stmt).scalar()
+        else:
+            self.count = self.count
+
+        print("%s game(s) match to query" % self.count)
+
     def build_where_tags(self, text):
+        print("build_where_tags()")
         if text:
             text = unicode(text)
             self.where_tags = or_(
@@ -217,15 +228,18 @@ class Database(PGNFile):
             self.where_tags = None
 
     def build_where_bitboards(self, ply, bb):
+        print("build_where_bitboards()")
         if ply:
             self.where_bitboards = and_(bitboard.c.game_id == game.c.id, bitboard.c.ply == ply, bitboard.c.bitboard == bb)
         else:
             self.where_bitboars = None
 
     def get_records(self, offset, limit):
-        query = self.query.offset(offset).limit(limit)
-        result = dbmodel.engine.execute(query)
-        self.games = result.fetchall()
+        with Timer(True):
+            query = self.query.offset(offset).limit(limit)
+            print(query)
+            result = dbmodel.engine.execute(query)
+            self.games = result.fetchall()
 
     def get_id(self, gameno):
         return self.games[gameno]["Id"]
@@ -239,9 +253,13 @@ class Database(PGNFile):
         arr.fromstring(result[0])
         return arr
 
-    def get_bitboards(self, ply):
-        sel = select([bitboard.c.bitboard, func.count(bitboard.c.bitboard)]).group_by(bitboard.c.bitboard).where(bitboard.c.ply == ply)
-        return dbmodel.engine.execute(sel).fetchall()
+    def get_bitboards(self, ply, prev_bb):
+        with Timer(True):
+            stmt = select([bitboard.c.game_id]).where(bitboard.c.bitboard == prev_bb)
+            where = and_(bitboard.c.ply == ply, bitboard.c.game_id.in_(stmt))
+            sel = select([bitboard.c.bitboard, func.count(bitboard.c.bitboard)]).group_by(bitboard.c.bitboard).where(where)
+            print(sel)
+            return dbmodel.engine.execute(sel).fetchall()
 
     def loadToModel(self, gameno, position=-1, model=None):
         self.comments = []
