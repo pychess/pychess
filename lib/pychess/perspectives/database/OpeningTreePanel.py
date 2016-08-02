@@ -6,7 +6,7 @@ from gi.repository import Gtk, GObject
 from pychess.Utils.lutils.lmovegen import genAllMoves
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toSAN
-from pychess.Utils.const import FEN_START
+from pychess.Utils.const import FEN_START, WHITE
 
 
 class OpeningTreePanel(Gtk.TreeView):
@@ -16,10 +16,10 @@ class OpeningTreePanel(Gtk.TreeView):
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
-        self.liststore = Gtk.ListStore(int, str, int, int)
+        self.liststore = Gtk.ListStore(int, str, int, int, int)
         self.modelsort = Gtk.TreeModelSort(self.liststore)
 
-        self.modelsort.set_sort_column_id(3, Gtk.SortType.DESCENDING)
+        self.modelsort.set_sort_column_id(2, Gtk.SortType.DESCENDING)
         self.set_model(self.modelsort)
 
         self.set_headers_visible(True)
@@ -29,22 +29,27 @@ class OpeningTreePanel(Gtk.TreeView):
         column.connect("clicked", self.column_clicked, 1)
         self.append_column(column)
 
-        column = Gtk.TreeViewColumn(_("Score"), Gtk.CellRendererProgress(), value=2)
-        column.set_min_width(80)
+        column = Gtk.TreeViewColumn(_("Games"), Gtk.CellRendererText(), text=2)
         column.set_sort_column_id(2)
         column.connect("clicked", self.column_clicked, 2)
         self.append_column(column)
 
-        column = Gtk.TreeViewColumn(_("Count"), Gtk.CellRendererText(), text=3)
+        column = Gtk.TreeViewColumn(_("Result"), Gtk.CellRendererProgress(), value=3)
+        column.set_min_width(80)
         column.set_sort_column_id(3)
         column.connect("clicked", self.column_clicked, 3)
+        self.append_column(column)
+
+        column = Gtk.TreeViewColumn(_("Elo Avg"), Gtk.CellRendererText(), text=4)
+        column.set_sort_column_id(4)
+        column.connect("clicked", self.column_clicked, 4)
         self.append_column(column)
 
         self.conid = self.connect_after("row-activated", self.row_activated)
 
         self.board = LBoard()
         self.board.applyFen(FEN_START)
-        self.update_tree(self.get_openings(self.board))
+        self.update_tree(self.board)
 
         self.columns_autosize()
 
@@ -115,10 +120,11 @@ class OpeningTreePanel(Gtk.TreeView):
         self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
         self.gamelist.load_games()
-        self.update_tree(self.get_openings(self.board))
+        self.update_tree(self.board)
         self.gamelist.chessfile.update_count()
 
-    def get_openings(self, board):
+    def update_tree(self, board):
+        # print("update_tree")
         print("get_openings()")
         # print(board)
         bb_candidates = {}
@@ -133,15 +139,15 @@ class OpeningTreePanel(Gtk.TreeView):
         result = []
         bb_list = self.gamelist.chessfile.get_bitboards(board.plyCount + 1, bb_candidates)
         print("got %s bitboards" % len(bb_list))
-        for bb, count, white_won, blackwon, draw in bb_list:
-            result.append((bb_candidates[bb], count, white_won, blackwon, draw))
+        for row in bb_list:
+            print(row)
+        for bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in bb_list:
+            result.append((bb_candidates[bb], count, white_won, blackwon, draw, white_elo_avg, black_elo_avg))
 
         print("got %s moves" % len(result))
-        return result
-
-    def update_tree(self, openings):
-        # print("update_tree")
         with GObject.signal_handler_block(self.get_selection(), self.conid):
             self.liststore.clear()
-            for lmove, count, white_won, blackwon, draw in openings:
-                self.liststore.append([lmove, toSAN(self.board, lmove), (white_won*100.+draw*50.)/count, count])
+            for lmove, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in result:
+                perf = round((white_won * 100. + draw * 50.) / count)
+                elo_avg = white_elo_avg if board.color == WHITE else black_elo_avg
+                self.liststore.append([lmove, toSAN(self.board, lmove), count, perf, elo_avg])

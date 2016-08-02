@@ -255,13 +255,15 @@ class Database(PGNFile):
                 func.sum(case(value=game.c.result, whens={WHITEWON: 1}, else_=0)),
                 func.sum(case(value=game.c.result, whens={BLACKWON: 1}, else_=0)),
                 func.sum(case(value=game.c.result, whens={DRAW: 1}, else_=0)),
+                func.avg(game.c.white_elo),
+                func.avg(game.c.black_elo),
             ]
             sel = select(cols).group_by(bitboard.c.bitboard).where(where)
             print(sel)
             result = dbmodel.engine.execute(sel).fetchall()
             for row in result:
                 print(row)
-            return [(row[0] + DB_MAXINT_SHIFT, row[1], row[2], row[3], row[4]) for row in result]
+            return [(row[0] + DB_MAXINT_SHIFT, row[1], row[2], row[3], row[4], row[5], row[6]) for row in result]
 
     def loadToModel(self, gameno, position=-1, model=None):
         self.comments = []
