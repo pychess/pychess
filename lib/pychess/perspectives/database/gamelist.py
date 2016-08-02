@@ -4,7 +4,6 @@ from __future__ import print_function
 from gi.repository import Gtk, GObject
 
 from pychess.Savers import database, pgn, fen, epd
-from pychess.System import Timer
 from pychess.System.protoopen import protoopen
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult
 from pychess.Players.Human import Human
@@ -65,9 +64,7 @@ class GameList(Gtk.TreeView):
         if self.uri.endswith(".pdb"):
             self.chessfile = database.load(protoopen(self.uri))
         elif self.uri.endswith(".pgn"):
-            with Timer() as t:
-                self.chessfile = pgn.load(protoopen(self.uri))
-            print("Elapsed time (secs): %s" % t.elapsed_secs)
+            self.chessfile = pgn.load(protoopen(self.uri))
         elif self.uri.endswith(".epd"):
             self.chessfile = epd.load(protoopen(self.uri))
         elif self.uri.endswith(".fen"):
@@ -138,7 +135,6 @@ class GameList(Gtk.TreeView):
         self.set_search_column(data)
 
     def load_games(self):
-        print("load_games()")
         if self.preview_cid is not None:
             with GObject.signal_handler_block(self.get_selection(), self.preview_cid):
                 self.liststore.clear()
@@ -151,7 +147,6 @@ class GameList(Gtk.TreeView):
         add = self.liststore.append
 
         self.chessfile.get_records(self.offset, self.STEP)
-        print("got %s records" % len(self.chessfile.games))
 
         self.id_list = []
         for i in range(len(self.chessfile.games)):
@@ -178,11 +173,8 @@ class GameList(Gtk.TreeView):
         self.set_cursor(0)
 
     def row_activated(self, widget, path, col):
-        # print(self.modelsort.convert_path_to_child_path(path)[0])
         game_id = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
-        print("game_id=%s" % game_id)
         gameno = self.id_list.index(game_id)
-        print("gameno=%s" % gameno)
 
         self.gamemodel = GameModel()
 

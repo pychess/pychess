@@ -88,7 +88,7 @@ class OpeningTreePanel(Gtk.TreeView):
         self.gamelist.chessfile.build_query()
         self.gamelist.load_games()
 
-        self.update_tree(self.get_openings(self.board))
+        self.update_tree(self.board)
 
     def on_prev_clicked(self, widget):
         # TODO: disable buttons instead
@@ -103,15 +103,13 @@ class OpeningTreePanel(Gtk.TreeView):
         self.gamelist.chessfile.build_query()
         self.gamelist.load_games()
 
-        self.update_tree(self.get_openings(self.board))
+        self.update_tree(self.board)
 
     def column_clicked(self, col, data):
-        # print("column_clicked")
         self.set_search_column(data)
 
     def row_activated(self, widget, path, col):
         lmove = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
-        # print("move %s selected" % lmove)
         self.board.applyMove(lmove)
         bb = self.board.friends[0] | self.board.friends[1]
 
@@ -124,9 +122,6 @@ class OpeningTreePanel(Gtk.TreeView):
         self.gamelist.chessfile.update_count()
 
     def update_tree(self, board):
-        # print("update_tree")
-        print("get_openings()")
-        # print(board)
         bb_candidates = {}
         for lmove in genAllMoves(board):
             board.applyMove(lmove)
@@ -138,13 +133,10 @@ class OpeningTreePanel(Gtk.TreeView):
 
         result = []
         bb_list = self.gamelist.chessfile.get_bitboards(board.plyCount + 1, bb_candidates)
-        print("got %s bitboards" % len(bb_list))
-        for row in bb_list:
-            print(row)
+
         for bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in bb_list:
             result.append((bb_candidates[bb], count, white_won, blackwon, draw, white_elo_avg, black_elo_avg))
 
-        print("got %s moves" % len(result))
         with GObject.signal_handler_block(self.get_selection(), self.conid):
             self.liststore.clear()
             for lmove, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in result:
