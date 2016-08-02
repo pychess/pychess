@@ -78,7 +78,7 @@ class OpeningTreePanel(Gtk.TreeView):
         bb = self.board.friends[0] | self.board.friends[1]
 
         self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb - 2**63 + 1)
+        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
         self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
         self.gamelist.load_games()
@@ -93,7 +93,7 @@ class OpeningTreePanel(Gtk.TreeView):
         bb = self.board.friends[0] | self.board.friends[1]
 
         self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb - 2**63 + 1)
+        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
         self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
         self.gamelist.load_games()
@@ -111,7 +111,7 @@ class OpeningTreePanel(Gtk.TreeView):
         bb = self.board.friends[0] | self.board.friends[1]
 
         self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb - 2**63 + 1)
+        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
         self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
         self.gamelist.load_games()
@@ -121,17 +121,21 @@ class OpeningTreePanel(Gtk.TreeView):
     def get_openings(self, board):
         print("get_openings()")
         # print(board)
-        result = []
-        prev_bb = board.friends[0] | board.friends[1]
-        bb_list = self.gamelist.chessfile.get_bitboards(board.plyCount + 1, prev_bb - 2**63 + 1)
-        print("got %s bitboards" % len(bb_list))
+        bb_candidates = {}
         for lmove in genAllMoves(board):
             board.applyMove(lmove)
-            for bb, count in bb_list:
-                if bb + 2**63 - 1 == board.friends[0] | board.friends[1]:
-                    result.append((lmove, count))
-                    break
+            if board.opIsChecked():
+                board.popMove()
+                continue
+            bb_candidates[board.friends[0] | board.friends[1]] = lmove
             board.popMove()
+
+        result = []
+        bb_list = self.gamelist.chessfile.get_bitboards(board.plyCount + 1, bb_candidates)
+        print("got %s bitboards" % len(bb_list))
+        for bb, count, white_won, blackwon, draw in bb_list:
+            result.append((bb_candidates[bb], count, white_won, blackwon, draw))
+
         print("got %s moves" % len(result))
         return result
 
@@ -139,5 +143,5 @@ class OpeningTreePanel(Gtk.TreeView):
         # print("update_tree")
         with GObject.signal_handler_block(self.get_selection(), self.conid):
             self.liststore.clear()
-            for lmove, count in openings:
-                self.liststore.append([lmove, toSAN(self.board, lmove), 50, count])
+            for lmove, count, white_won, blackwon, draw in openings:
+                self.liststore.append([lmove, toSAN(self.board, lmove), (white_won*100.+draw*50.)/count, count])

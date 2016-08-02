@@ -24,7 +24,7 @@ from pychess.System.protoopen import protoopen
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import pgn_load
 from pychess.Database.dbwalk import walk
-from pychess.Database.model import engine, metadata, \
+from pychess.Database.model import DB_MAXINT_SHIFT, engine, metadata, \
     event, site, player, game, annotator, bitboard, tag_game
 
 
@@ -282,14 +282,12 @@ class PgnImport():
                     self.next_id[GAME] += 1
 
                     if not fen:
-                        # store one bitboard for all ply to help  opening tree lookups
-                        # bitboards stored as bb - 2**63 + 1 to fit into sqlite (8 byte) signed(!) integer range
                         for ply, board in enumerate(boards):
                             bb = board.friends[0] | board.friends[1]
                             self.bitboard_data.append({
                                 'game_id': game_id,
                                 'ply': ply,
-                                'bitboard': bb - 2**63 + 1,
+                                'bitboard': bb - DB_MAXINT_SHIFT,
                             })
 
                     self.game_data.append({

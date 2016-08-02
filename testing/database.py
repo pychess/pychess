@@ -3,7 +3,9 @@ from __future__ import print_function
 import unittest
 
 from pychess.compat import StringIO
-from pychess.Utils.const import LOCAL
+from pychess.Utils.const import FEN_START, LOCAL
+from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.lutils.lmovegen import genAllMoves
 from pychess.Savers.database import save, load
 from pychess.Savers.pgn import load as pgnload
 from pychess.Savers.pgn import walk
@@ -127,8 +129,24 @@ class DbTestCase(unittest.TestCase):
 
         db = self.load_test_pgn()
 
+        board = LBoard()
+        board.applyFen(FEN_START)
+
         for ply in range(4):
-            bitboards = db.get_bitboards(ply)
+            bb_candidates = {}
+            for lmove in genAllMoves(board):
+                board.applyMove(lmove)
+                if board.opIsChecked():
+                    board.popMove()
+                    continue
+                bb_candidates[board.friends[0] | board.friends[1]] = lmove
+                board.popMove()
+
+            bitboards = db.get_bitboards(ply, bb_candidates)
+            print("==========")
+            for row in bitboards:
+                print(row)
+            print("----------")
             self.assertEqual(len(bitboards), BITBOARD_COUNT[ply])
             self.assertEqual(sum([row[1] for row in bitboards]), GAME_COUNT)
 

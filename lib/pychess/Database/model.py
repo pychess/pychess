@@ -10,9 +10,15 @@ from pychess.System.prefix import addUserDataPrefix
 
 engine = None
 
+# If we use sqlite as db backend we have to store bitboards as
+# bb - DB_MAXINT_SHIFT to fit into sqlite (8 byte) signed(!) integer range
+DB_MAXINT_SHIFT = 2**63 - 1
+
 
 def set_engine(url, echo=False):
-    global engine
+    global DB_MAXINT_SHIFT, engine
+    if not url.startswith("sqlite"):
+        DB_MAXINT_SHIFT = 0
     engine = create_engine(url, echo=echo)
 
 metadata = MetaData()
@@ -75,7 +81,6 @@ game = Table(
     Column('comments', UnicodeText)
 )
 
-# bitboards stored as bb - 2**63 + 1 to fit into sqlite (8 byte) signed(!) integer range
 bitboard = Table(
     'bitboard', metadata,
     Column('id', Integer, primary_key=True),

@@ -31,7 +31,7 @@ class ChessFile:
     def build_where_tags(self, text):
         pass
 
-    def build_where_bitboards(self, ply, bb):
+    def build_where_bitboards(self, ply, bb_candidates):
         pass
 
     def get_id(self, gameno):

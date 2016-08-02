@@ -5,14 +5,15 @@ from __future__ import print_function
 
 from array import array
 
-from sqlalchemy import select, func, or_, and_
+from sqlalchemy import select, func, case, or_, and_
 
 from pychess.compat import unicode
 from pychess.Savers.pgn import PGNFile
-from pychess.Utils.const import reprResult, WHITE, BLACK
+from pychess.Utils.const import reprResult, WHITE, BLACK, WHITEWON, BLACKWON, DRAW
 from pychess.Utils.const import FEN_START
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
+from pychess.Database.model import DB_MAXINT_SHIFT
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
 from pychess.Database.model import game, event, site, player, pl1, pl2, annotator, bitboard
 from pychess.Variants import variants
@@ -102,14 +103,12 @@ def save(file, model, position=None):
 
             if not fen:
                 bitboard_data = []
-                # store one bitboard for all ply to help  opening tree lookups
-                # bitboards stored as bb - 2**63 + 1 to fit into sqlite (8 byte) signed(!) integer range
                 for ply, board in enumerate(model.boards):
                     bb = board.board.friends[0] | board.board.friends[1]
                     bitboard_data.append({
                         'game_id': game_id,
                         'ply': ply,
-                        'bitboard': bb - 2**63 + 1,
+                        'bitboard': bb - DB_MAXINT_SHIFT,
                     })
                 result = conn.execute(bitboard.insert(), bitboard_data)
 
@@ -220,7 +219,7 @@ class Database(PGNFile):
     def build_where_bitboards(self, ply, bb):
         print("build_where_bitboards()")
         if ply:
-            self.where_bitboards = and_(bitboard.c.game_id == game.c.id, bitboard.c.ply == ply, bitboard.c.bitboard == bb)
+            self.where_bitboards = and_(bitboard.c.game_id == game.c.id, bitboard.c.ply == ply, bitboard.c.bitboard == bb - DB_MAXINT_SHIFT)
         else:
             self.where_bitboars = None
 
@@ -243,16 +242,26 @@ class Database(PGNFile):
         arr.fromstring(result[0])
         return arr
 
-    def get_bitboards(self, ply, prev_bb=None):
+    def get_bitboards(self, ply, bb_candidates):
+        print("get_bitboards")
         with Timer(True):
-            if prev_bb is not None:
-                stmt = select([bitboard.c.game_id]).where(bitboard.c.bitboard == prev_bb)
-                where = and_(bitboard.c.ply == ply, bitboard.c.game_id.in_(stmt))
-            else:
-                where = bitboard.c.ply == ply
-            sel = select([bitboard.c.bitboard, func.count(bitboard.c.bitboard)]).group_by(bitboard.c.bitboard).where(where)
+            bb_list = [bb - DB_MAXINT_SHIFT for bb in bb_candidates]
+            stmt = select([bitboard.c.game_id]).where(bitboard.c.bitboard.in_(bb_list))
+            where = and_(bitboard.c.game_id == game.c.id, bitboard.c.ply == ply, bitboard.c.game_id.in_(stmt))
+
+            cols = [
+                bitboard.c.bitboard,
+                func.count(bitboard.c.bitboard),
+                func.sum(case(value=game.c.result, whens={WHITEWON: 1}, else_=0)),
+                func.sum(case(value=game.c.result, whens={BLACKWON: 1}, else_=0)),
+                func.sum(case(value=game.c.result, whens={DRAW: 1}, else_=0)),
+            ]
+            sel = select(cols).group_by(bitboard.c.bitboard).where(where)
             print(sel)
-            return dbmodel.engine.execute(sel).fetchall()
+            result = dbmodel.engine.execute(sel).fetchall()
+            for row in result:
+                print(row)
+            return [(row[0] + DB_MAXINT_SHIFT, row[1], row[2], row[3], row[4]) for row in result]
 
     def loadToModel(self, gameno, position=-1, model=None):
         self.comments = []
