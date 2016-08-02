@@ -198,6 +198,9 @@ class PgnImport():
                         fenstr = " ".join(parts)
 
                     if variant:
+                        if variant not in name2variant:
+                            print("Unknown variant: %s" % variant)
+                            continue
                         variant = name2variant[variant].variant
                         board = LBoard(variant)
                     else:

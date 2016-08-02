@@ -6,7 +6,7 @@ from pychess.Utils.const import NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERR
     PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS, ALLWHITECHESS, BLINDFOLDCHESS, \
     HIDDENPIECESCHESS, HIDDENPAWNSCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, THREECHECKCHESS, \
     AIWOKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, CAMBODIANCHESS, SITTUYINCHESS, EUROSHOGICHESS, \
-    MAKRUKCHESS, SETUPCHESS
+    RACINGKINGSCHESS, MAKRUKCHESS, SETUPCHESS
 
 from .normal import NormalBoard
 from .corner import CornerBoard
@@ -32,6 +32,7 @@ from .wildcastleshuffle import WildcastleShuffleBoard
 from .blindfold import BlindfoldBoard, HiddenPawnsBoard, HiddenPiecesBoard, AllWhiteBoard
 from .kingofthehill import KingOfTheHillBoard
 from .threecheck import ThreeCheckBoard
+from .racingkings import RacingKingsBoard
 from .asean import AiWokBoard, AseanBoard, CambodianBoard, MakrukBoard, SittuyinBoard
 from .euroshogi import EuroShogiBoard
 from .setupposition import SetupBoard
@@ -64,6 +65,7 @@ variants = {NORMALCHESS: NormalBoard,
             WILDCASTLESHUFFLECHESS: WildcastleShuffleBoard,
             KINGOFTHEHILLCHESS: KingOfTheHillBoard,
             THREECHECKCHESS: ThreeCheckBoard,
+            RACINGKINGSCHESS: RacingKingsBoard,
             AIWOKCHESS: AiWokBoard,
             ASEANCHESS: AseanBoard,
             CAMBODIANCHESS: CambodianBoard,
@@ -75,7 +77,7 @@ variants = {NORMALCHESS: NormalBoard,
 
 name2variant = dict([(v.cecp_name.capitalize(), v) for v in variants.values()])
 
-# FICS uses different names
+# FICS pgn export names
 name2variant["Wild/0"] = WildcastleBoard
 name2variant["Wild/1"] = WildcastleShuffleBoard
 name2variant["Wild/2"] = ShuffleBoard
@@ -85,3 +87,10 @@ name2variant["Wild/5"] = UpsideDownBoard
 name2variant["Wild/fr"] = FischerandomBoard
 name2variant["Wild/8"] = PawnsPushedBoard
 name2variant["Wild/8a"] = PawnsPassedBoard
+
+# Lichess pgn export names
+name2variant["Standard"] = NormalBoard
+name2variant["Antichess"] = SuicideBoard
+name2variant["King of the hill"] = KingOfTheHillBoard
+name2variant["Three-check"] = ThreeCheckBoard
+name2variant["Racing kings"] = RacingKingsBoard

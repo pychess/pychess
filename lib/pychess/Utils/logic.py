@@ -13,7 +13,7 @@ from .const import LOSERSCHESS, WHITE, WHITEWON, BLACKWON, WON_NOMATERIAL, KING,
     SUICIDECHESS, ATOMICCHESS, WON_KINGEXPLODE, KINGOFTHEHILLCHESS, BLACK, DRAW, \
     WON_KINGINCENTER, THREECHECKCHESS, WON_THREECHECK, WON_MATE, DRAW_STALEMATE, \
     DRAW_INSUFFICIENT, DRAW_EQUALMATERIAL, WON_LESSMATERIAL, DRAW_REPITITION, \
-    DRAW_50MOVES, RUNNING, ENPASSANT, UNKNOWN_REASON
+    WON_KINGINEIGHTROW, RACINGKINGSCHESS, DRAW_50MOVES, RUNNING, ENPASSANT, UNKNOWN_REASON
 
 from .lutils.bitboard import iterBits
 from .lutils.attack import getAttacks
@@ -22,6 +22,7 @@ from pychess.Variants.losers import testKingOnly
 from pychess.Variants.atomic import kingExplode
 from pychess.Variants.kingofthehill import testKingInCenter
 from pychess.Variants.threecheck import checkCount
+from pychess.Variants.racingkings import testKingInEightRow
 
 
 def getDestinationCords(board, cord):
@@ -85,6 +86,13 @@ def getStatus(board):
             else:
                 status = BLACKWON
             return status, WON_THREECHECK
+    elif board.variant == RACINGKINGSCHESS:
+        if testKingInEightRow(lboard):
+            if board.color == BLACK:
+                status = WHITEWON
+            else:
+                status = BLACKWON
+            return status, WON_KINGINEIGHTROW
     else:
         if ldraw.testMaterial(lboard):
             return DRAW, DRAW_INSUFFICIENT
