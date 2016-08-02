@@ -83,13 +83,16 @@ class TaskerManager(Gtk.Table):
             yield (next, 1 - next)
             next = first - (1 - next)
 
+    def on_size_allocate(self, widget, allocation):
+        window = self.get_window()
+        if window is not None:
+            window.invalidate_rect(self.get_allocation(), False)
+
     def packTaskers(self, *widgets):
         self.widgets = widgets
 
         for widget in widgets:
-            widget.connect(
-                "size-allocate",
-                lambda *a: self.get_window().invalidate_rect(self.get_allocation(), False))
+            widget.connect("size-allocate", self.on_size_allocate)
         root = math.sqrt(len(widgets))
         # Calculate number of rows
         rows = int(math.ceil(root))
