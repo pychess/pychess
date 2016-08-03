@@ -207,6 +207,12 @@ def validate(board, move):
             return True
         else:
             return standard_validate(board, move)
+    elif board.variant == RACINGKINGSCHESS:
+        # Giving check is forbidden
+        if board.board.willGiveCheck(move.move):
+            return False
+        else:
+            return standard_validate(board, move)
     else:
         return standard_validate(board, move)
 

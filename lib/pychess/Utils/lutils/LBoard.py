@@ -426,6 +426,11 @@ class LBoard(object):
         board_clone.applyMove(move)
         return board_clone.opIsChecked()
 
+    def willGiveCheck(self, move):
+        board_clone = self.clone()
+        board_clone.applyMove(move)
+        return board_clone.isChecked()
+
     def _addPiece(self, cord, piece, color):
         _setBit = setBit
         self.boards[color][piece] = _setBit(self.boards[color][piece], cord)
