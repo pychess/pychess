@@ -371,6 +371,9 @@ class PGNFile(PgnBase):
         variant = self.get_variant(gameno)
 
         if variant:
+            if variant not in name2variant:
+                raise LoadingError("Unknown variant %s for gameno %s" % (variant, gameno))
+
             model.tags["Variant"] = variant
             # Fixes for some non statndard Chess960 .pgn
             if (fenstr is not None) and variant == "Fischerandom":

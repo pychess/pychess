@@ -38,4 +38,4 @@ def testKingInEightRow(board):
     """ Test for a winning position """
     return board.kings[board.color - 1] in (A8, B8, C8, D8, E8, F8, G8, H8)
 
-# TODO: implementboth king goes to 8.row draw rule
+# TODO: implement both king goes to 8.row draw rule, and the no check rule

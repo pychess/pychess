@@ -91,7 +91,8 @@ class PreviewPanel:
                 dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
                                              buttons=Gtk.ButtonsType.OK,
                                              message_format=err.args[0])
-                dialogue.format_secondary_text(err.args[1])
+                if len(err.args) > 1:
+                    dialogue.format_secondary_text(err.args[1])
                 dialogue.connect("response", lambda dialogue, a: dialogue.hide())
                 dialogue.show()
 
