@@ -137,9 +137,13 @@ class OpeningTreePanel(Gtk.TreeView):
         for bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in bb_list:
             result.append((bb_candidates[bb], count, white_won, blackwon, draw, white_elo_avg, black_elo_avg))
 
-        with GObject.signal_handler_block(self.get_selection(), self.conid):
+        selection = self.get_selection()
+        if self.conid is not None and selection.handler_is_connected(self.conid):
+            with GObject.signal_handler_block(selection, self.conid):
+                self.liststore.clear()
+        else:
             self.liststore.clear()
-            for lmove, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in result:
-                perf = round((white_won * 100. + draw * 50.) / count)
-                elo_avg = white_elo_avg if board.color == WHITE else black_elo_avg
-                self.liststore.append([lmove, toSAN(self.board, lmove), count, perf, elo_avg])
+        for lmove, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in result:
+            perf = round((white_won * 100. + draw * 50.) / count)
+            elo_avg = white_elo_avg if board.color == WHITE else black_elo_avg
+            self.liststore.append([lmove, toSAN(self.board, lmove), count, perf, elo_avg])

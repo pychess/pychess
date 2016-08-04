@@ -135,8 +135,9 @@ class GameList(Gtk.TreeView):
         self.set_search_column(data)
 
     def load_games(self):
-        if self.preview_cid is not None:
-            with GObject.signal_handler_block(self.get_selection(), self.preview_cid):
+        selection = self.get_selection()
+        if self.preview_cid is not None and selection.handler_is_connected(self.preview_cid):
+            with GObject.signal_handler_block(selection, self.preview_cid):
                 self.liststore.clear()
         else:
             self.liststore.clear()
