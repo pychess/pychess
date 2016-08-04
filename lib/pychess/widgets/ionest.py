@@ -14,6 +14,7 @@ from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
 from pychess.System.uistuff import GladeWidgets
+from pychess.System.prefix import addUserDataPrefix
 from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT, LOCAL, ARTIFICIAL, MENU_ITEMS
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamewidget
@@ -165,10 +166,10 @@ class GameHandler(GObject.GObject):
             self.exportformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
 
             # All files filter
-            #star = Gtk.FileFilter()
-            #star.set_name(_("All Files"))
-            #star.add_pattern("*")
-            #self.opendialog.add_filter(star)
+            # star = Gtk.FileFilter()
+            # star.set_name(_("All Files"))
+            # star.add_pattern("*")
+            # self.opendialog.add_filter(star)
             auto = _("Detect type automatically")
             self.saveformats.append([auto, "", None])
             self.exportformats.append([auto, "", None])
@@ -246,6 +247,19 @@ class GameHandler(GObject.GObject):
         append = True
         try:
             game.save(uri, saver, append)
+            return True
+        except IOError:
+            return False
+
+    def saveGameDb(self, game):
+        if conf.get("saveOwnGames", False) and not game.hasLocalPlayer():
+            return True
+        pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
+        pychess_pdb = conf.get("autosave_db_file", pychess_pdb)
+        saver = database
+        append = True
+        try:
+            game.save(pychess_pdb, saver, append)
             return True
         except IOError:
             return False
@@ -379,7 +393,18 @@ class GameHandler(GObject.GObject):
                         markup = "<b><big>" + _("Unable to save to configured file. \
                                                 Save the games before closing?") + "</big></b>"
                         break
-    #                    res
+
+            if conf.get("autoSaveDb", True):
+                for gmwidg, game in changedPairs:
+                    x = self.saveGameDb(game)
+                    if x:
+                        response = Gtk.ResponseType.OK
+                    else:
+                        response = None
+                        markup = "<b><big>" + _("Unable to save to configured file. \
+                                                Save the games before closing?") + "</big></b>"
+                        break
+
             if response is None:
                 widgets = GladeWidgets("saveGamesDialog.glade")
                 dialog = widgets["saveGamesDialog"]
@@ -460,6 +485,15 @@ class GameHandler(GObject.GObject):
                 else:
                     markup = "<b><big>" + _("Unable to save to configured file. \
                                             Save the current game before you close it?") + "</big></b>"
+
+            if conf.get("autoSaveDb", True):
+                x = self.saveGameDb(gmwidg.gamemodel)
+                if x:
+                    response = Gtk.ResponseType.OK
+                else:
+                    markup = "<b><big>" + _("Unable to save to configured file. \
+                                            Save the current game before you close it?") + "</big></b>"
+
             if response is None:
                 d = Gtk.MessageDialog(type=Gtk.MessageType.WARNING)
                 d.add_button(_("Close _without Saving"), Gtk.ResponseType.OK)

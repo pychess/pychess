@@ -7,6 +7,7 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
 from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
 from pychess.System.prefix import addUserDataPrefix
+from pychess.System import conf
 
 engine = None
 
@@ -114,7 +115,10 @@ def ini_tag():
     conn.close()
 
 pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
+pychess_pdb = conf.get("autosave_db_file", pychess_pdb)
+
 set_engine("sqlite:///" + pychess_pdb)  # , echo=True)
+
 if not os.path.isfile(pychess_pdb):
     metadata.create_all(engine)
     ini_tag()
