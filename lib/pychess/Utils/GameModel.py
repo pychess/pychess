@@ -617,7 +617,7 @@ class GameModel(GObject.GObject, Thread):
             raise error
 
     def save(self, uri, saver, append, position=None):
-        if isinstance(uri, basestring):
+        if isinstance(uri, basestring) and not hasattr(saver, "Database"):
             fileobj = protosave(uri, append)
             self.uri = uri
         else:

@@ -404,27 +404,29 @@ class GameHandler(GObject.GObject):
                                            len(changedPairs)) % len(changedPairs) + " " + \
                 _("Save moves before closing?") + "</b></big>"
 
-            if conf.get("autoSave", False):
-                for gmwidg, game in changedPairs:
-                    x = self.saveGamePGN(game)
-                    if x:
-                        response = Gtk.ResponseType.OK
-                    else:
-                        response = None
-                        markup = "<b><big>" + _("Unable to save to configured file. \
-                                                Save the games before closing?") + "</big></b>"
-                        break
+            for gmwidg, game in changedPairs:
+                if not gmwidg.gamemodel.isChanged():
+                    response = Gtk.ResponseType.OK
+                else:
+                    if conf.get("autoSave", False):
+                        x = self.saveGamePGN(game)
+                        if x:
+                            response = Gtk.ResponseType.OK
+                        else:
+                            response = None
+                            markup = "<b><big>" + _("Unable to save to configured file. \
+                                                    Save the games before closing?") + "</big></b>"
+                            break
 
-            if conf.get("autoSaveDb", True):
-                for gmwidg, game in changedPairs:
-                    x = self.saveGameDb(game)
-                    if x:
-                        response = Gtk.ResponseType.OK
-                    else:
-                        response = None
-                        markup = "<b><big>" + _("Unable to save to configured file. \
-                                                Save the games before closing?") + "</big></b>"
-                        break
+                    if conf.get("autoSaveDb", True):
+                        x = self.saveGameDb(game)
+                        if x:
+                            response = Gtk.ResponseType.OK
+                        else:
+                            response = None
+                            markup = "<b><big>" + _("Unable to save to configured file. \
+                                                    Save the games before closing?") + "</big></b>"
+                            break
 
             if response is None:
                 widgets = GladeWidgets("saveGamesDialog.glade")
