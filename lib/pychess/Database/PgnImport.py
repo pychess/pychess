@@ -24,7 +24,7 @@ from pychess.System.protoopen import protoopen
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import pgn_load
 from pychess.Database.dbwalk import walk
-from pychess.Database.model import DB_MAXINT_SHIFT, engine, metadata, \
+from pychess.Database.model import DB_MAXINT_SHIFT, \
     event, site, player, game, annotator, bitboard, tag_game
 
 
@@ -40,8 +40,9 @@ removeDic = {
 
 
 class PgnImport():
-    def __init__(self):
-        self.conn = engine.connect()
+    def __init__(self, engine):
+        self.engine = engine
+        self.conn = self.engine.connect()
         self.CHUNK = 1000
 
         self.ins_event = event.insert()
@@ -132,9 +133,6 @@ class PgnImport():
             self.timeout_id = GObject.timeout_add(50, self.on_timeout, None)
 
         print("Starting to import %s" % filename, os.path.getsize(filename))
-        if 0:
-            metadata.drop_all(engine)
-            metadata.create_all(engine)
 
         # collect new names not in they dict yet
         self.event_data = []
@@ -462,10 +460,6 @@ class PgnImport():
 
 
 if __name__ == "__main__":
-    if 0:
-        metadata.drop_all(engine)
-        metadata.create_all(engine)
-
     imp = PgnImport()
 
     if len(sys.argv) > 1:

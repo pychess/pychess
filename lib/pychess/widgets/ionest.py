@@ -19,6 +19,7 @@ from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT, L
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamewidget
 from pychess.widgets.gamenanny import game_nanny
+from pychess.perspectives import perspective_manager
 
 
 class GameHandler(GObject.GObject):
@@ -38,6 +39,7 @@ class GameHandler(GObject.GObject):
         self.opendialog = None
         self.savedialog = None
         self.enddir = {}
+        self.createformats = None
         self.saveformats = None
         self.exportformats = None
 
@@ -162,6 +164,7 @@ class GameHandler(GObject.GObject):
                 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE,
                  Gtk.ResponseType.ACCEPT))
             self.savedialog.set_current_folder(os.path.expanduser("~"))
+            self.createformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
             self.saveformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
             self.exportformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
 
@@ -192,6 +195,7 @@ class GameHandler(GObject.GObject):
                     all_filter.add_pattern("*." + ending)
                     self.opendialog.add_filter(f)
                     if ending != "pdb":
+                        self.createformats.append([label, endstr, saver])
                         self.saveformats.append([label, endstr, saver])
                     i += 1
                 else:
@@ -212,6 +216,23 @@ class GameHandler(GObject.GObject):
             self.savedialog.set_extra_widget(self.savecombo)
 
         return self.opendialog, self.savedialog, self.enddir, self.savecombo, self.savers
+
+    ################################################################################
+    # Creating .pdb                                                                #
+    ################################################################################
+
+    def create_database(self):
+
+        opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
+        game_handler.savecombo.set_model(game_handler.createformats)
+        savedialog.set_title(_("Create New Database"))
+
+        response = savedialog.run()
+        if response == Gtk.ResponseType.ACCEPT:
+            pychess_pdb = savedialog.get_filename()
+            perspective = perspective_manager.get_perspective("database")
+            perspective.open_chessfile(pychess_pdb)
+        savedialog.hide()
 
     ################################################################################
     # Saving                                                                       #

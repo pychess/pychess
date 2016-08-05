@@ -9,18 +9,34 @@ from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
 from pychess.System.prefix import addUserDataPrefix
 from pychess.System import conf
 
-engine = None
+engines = {}
 
 # If we use sqlite as db backend we have to store bitboards as
 # bb - DB_MAXINT_SHIFT to fit into sqlite (8 byte) signed(!) integer range
 DB_MAXINT_SHIFT = 2**63 - 1
 
 
-def set_engine(url, echo=False):
-    global DB_MAXINT_SHIFT, engine
-    if not url.startswith("sqlite"):
+def get_engine(path=None, dialect="sqlite", echo=False):
+    global DB_MAXINT_SHIFT
+
+    if path is None:
+        url = "sqlite://"
+    elif dialect == "sqlite":
+        url = "%s:///%s" % (dialect, path)
+    else:
         DB_MAXINT_SHIFT = 0
-    engine = create_engine(url, echo=echo)
+        # TODO: embedded firebird/mysql
+
+    if url in engines:
+        return engines[url]
+    else:
+        engine = create_engine(url, echo=echo)
+        if path is None or not os.path.isfile(path):
+            metadata.create_all(engine)
+            ini_tag(engine)
+        engines[url] = engine
+        return engine
+
 
 metadata = MetaData()
 
@@ -104,7 +120,7 @@ tag_game = Table(
 )
 
 
-def ini_tag():
+def ini_tag(engine):
     conn = engine.connect()
     new_values = [
         {"id": LOCAL, "name": unicode("Local game")},
@@ -117,8 +133,5 @@ def ini_tag():
 pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
 pychess_pdb = conf.get("autosave_db_file", pychess_pdb)
 
-set_engine("sqlite:///" + pychess_pdb)  # , echo=True)
-
-if not os.path.isfile(pychess_pdb):
-    metadata.create_all(engine)
-    ini_tag()
+get_engine(None)  # in memory clipbase
+get_engine(pychess_pdb)

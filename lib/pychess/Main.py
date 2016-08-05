@@ -168,6 +168,9 @@ class GladeHandlers(object):
     def on_play_internet_chess_activate(self, widget):
         ICLogon.run()
 
+    def on_new_database1_activate(self, widget):
+        game_handler.create_database()
+
     def on_load_game1_activate(self, widget):
         opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
         response = opendialog.run()

@@ -23,7 +23,7 @@ __ending__ = "pdb"
 __append__ = True
 
 
-def save(file, model, position=None):
+def save(path, model, position=None):
     movelist = array("H")
     comments = []
     walk(model.boards[0].board, movelist, comments)
@@ -58,7 +58,7 @@ def save(file, model, position=None):
             id_ = result.inserted_primary_key[0]
         return id_
 
-    conn = dbmodel.engine.connect()
+    conn = dbmodel.get_engine(path).connect()
     trans = conn.begin()
     try:
         event_id = get_id(event, game_event)
@@ -115,15 +115,17 @@ def save(file, model, position=None):
     except:
         trans.rollback()
         raise
+    conn.close()
 
 
-def load(file):
-    return Database(file, [])
+def load(path):
+    return Database(path, [])
 
 
 class Database(PGNFile):
-    def __init__(self, file, games):
-        PGNFile.__init__(self, file, games)
+    def __init__(self, path, games):
+        PGNFile.__init__(self, path, games)
+        self.engine = dbmodel.get_engine(path)
 
         self.cols = [
             game.c.id.label("Id"), pl1.c.name.label('White'),
@@ -154,12 +156,12 @@ class Database(PGNFile):
 
         self.from_obj2 = [game.outerjoin(bitboard, bitboard.c.game_id == game.c.id)]
 
-        self.count = dbmodel.engine.execute(select([func.count()]).select_from(game)).scalar()
+        self.count = self.engine.execute(select([func.count()]).select_from(game)).scalar()
 
         self.select0 = select(self.cols, from_obj=self.from_obj0)
         self.select1 = select(self.cols, from_obj=self.from_obj1)
 
-        self.colnames = dbmodel.engine.execute(self.select0).keys()
+        self.colnames = self.engine.execute(self.select0).keys()
 
         self.query = self.select0
         self.orderby = None
@@ -167,7 +169,7 @@ class Database(PGNFile):
         self.where_bitboards = None
 
     def close(self):
-        dbmodel.engine.dispose()
+        self.engine.dispose()
 
     def build_query(self):
         if self.where_tags is not None and self.where_bitboards is not None:
@@ -185,13 +187,13 @@ class Database(PGNFile):
     def update_count(self):
         if self.where_tags is not None and self.where_bitboards is not None:
             stmt = select([func.count()], from_obj=self.from_obj1).where(self.where_tags).where(self.where_bitboards)
-            self.count = dbmodel.engine.execute(stmt).scalar()
+            self.count = self.engine.execute(stmt).scalar()
         elif self.where_tags is not None:
             stmt = select([func.count()], from_obj=self.from_obj0).where(self.where_tags)
-            self.count = dbmodel.engine.execute(stmt).scalar()
+            self.count = self.engine.execute(stmt).scalar()
         elif self.where_bitboards is not None:
             stmt = select([func.count()], from_obj=self.from_obj2).where(self.where_bitboards)
-            self.count = dbmodel.engine.execute(stmt).scalar()
+            self.count = self.engine.execute(stmt).scalar()
         else:
             self.count = self.count
 
@@ -216,7 +218,7 @@ class Database(PGNFile):
 
     def get_records(self, offset, limit):
         query = self.query.offset(offset).limit(limit)
-        result = dbmodel.engine.execute(query)
+        result = self.engine.execute(query)
         self.games = result.fetchall()
 
     def get_id(self, gameno):
@@ -225,7 +227,7 @@ class Database(PGNFile):
     def get_movetext(self, gameno):
         selection = select([game.c.movelist, game.c.comments],
                            game.c.id == self.games[gameno][0])
-        result = dbmodel.engine.execute(selection).first()
+        result = self.engine.execute(selection).first()
         self.comments = result[1].split("|")
         arr = array("H")
         arr.fromstring(result[0])
@@ -246,7 +248,7 @@ class Database(PGNFile):
             func.avg(game.c.black_elo),
         ]
         sel = select(cols).group_by(bitboard.c.bitboard).where(where)
-        result = dbmodel.engine.execute(sel).fetchall()
+        result = self.engine.execute(sel).fetchall()
         return [(row[0] + DB_MAXINT_SHIFT, row[1], row[2], row[3], row[4], row[5], row[6]) for row in result]
 
     def loadToModel(self, gameno, position=-1, model=None):

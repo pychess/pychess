@@ -3,8 +3,6 @@ from __future__ import print_function
 
 from gi.repository import Gtk, GObject
 
-from pychess.Savers import database, pgn, fen, epd
-from pychess.System.protoopen import protoopen
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult
 from pychess.Players.Human import Human
 from pychess.widgets.ionest import game_handler
@@ -16,9 +14,9 @@ class GameList(Gtk.TreeView):
 
     STEP = 500
 
-    def __init__(self, uri):
+    def __init__(self, chessfile):
         GObject.GObject.__init__(self)
-
+        self.chessfile = chessfile
         self.preview_cid = None
         self.opening_tree_cid = None
 
@@ -58,17 +56,7 @@ class GameList(Gtk.TreeView):
         self.columns_autosize()
         self.gameno = 0
         self.gamemodel = None
-        self.uri = uri
         self.ply = 0
-
-        if self.uri.endswith(".pdb"):
-            self.chessfile = database.load(protoopen(self.uri))
-        elif self.uri.endswith(".pgn"):
-            self.chessfile = pgn.load(protoopen(self.uri))
-        elif self.uri.endswith(".epd"):
-            self.chessfile = epd.load(protoopen(self.uri))
-        elif self.uri.endswith(".fen"):
-            self.chessfile = fen.load(protoopen(self.uri))
 
         self.load_games()
 

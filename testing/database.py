@@ -9,8 +9,7 @@ from pychess.Utils.lutils.lmovegen import genAllMoves
 from pychess.Savers.database import save, load
 from pychess.Savers.pgn import load as pgnload
 from pychess.Savers.pgn import walk
-from pychess.Database import model
-from pychess.Database.model import metadata
+from pychess.Database.model import get_engine, metadata
 
 
 class TestPlayer():
@@ -50,8 +49,11 @@ BITBOARD_COUNT = (1, 3, 3, 4)
 
 class DbTestCase(unittest.TestCase):
     def setUp(self):
-        model.set_engine("sqlite://")
-        metadata.create_all(model.engine)
+        self.engine = get_engine(None)
+
+    def tearDown(self):
+        metadata.drop_all(self.engine)
+        metadata.create_all(self.engine)
 
     def load_test_pgn(self):
         for gameno in range(GAME_COUNT):
@@ -79,7 +81,7 @@ class DbTestCase(unittest.TestCase):
 
         db = load(None)
 
-        result = model.engine.execute(db.select0)
+        result = self.engine.execute(db.select0)
         db.games = result.fetchall()
         print("%s selected" % len(db.games))
 

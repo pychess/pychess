@@ -17,6 +17,8 @@ from pychess.widgets.pydock import EAST, SOUTH, CENTER
 from pychess.widgets import dock_panel_tab
 from pychess.widgets.ionest import game_handler
 from pychess.Database.PgnImport import PgnImport
+from pychess.Savers import database, pgn, fen, epd
+from pychess.System.protoopen import protoopen
 
 
 class Database(Perspective):
@@ -36,7 +38,16 @@ class Database(Perspective):
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("database", perspective_widget)
 
-        self.gamelist = GameList(filename)
+        if filename.endswith(".pdb"):
+            self.chessfile = database.load(filename)
+        elif filename.endswith(".pgn"):
+            self.chessfile = pgn.load(protoopen(filename))
+        elif filename.endswith(".epd"):
+            self.chessfile = epd.load(protoopen(filename))
+        elif filename.endswith(".fen"):
+            self.chessfile = fen.load(protoopen(filename))
+
+        self.gamelist = GameList(self.chessfile)
         self.opening_tree_panel = OpeningTreePanel(self.gamelist)
         self.filter_panel = FilterPanel(self.gamelist)
         self.preview_panel = PreviewPanel(self.gamelist)
@@ -108,7 +119,7 @@ class Database(Perspective):
         perspective_manager.activate_perspective("database")
 
     def close(self, widget):
-        self.gamelist.chessfile.close()
+        #self.chessfile.close()
         perspective_manager.disable_perspective("database")
 
     def on_import_clicked(self, widget):
@@ -124,7 +135,7 @@ class Database(Perspective):
         self.gamelist.progress_dock.show_all()
 
         def importing():
-            importer = PgnImport()
+            importer = PgnImport(self.chessfile.engine)
             importer.do_import(filename, self.progressbar)
             GLib.idle_add(self.gamelist.progress_dock.remove, self.progressbar)
             GLib.idle_add(self.gamelist.load_games)
