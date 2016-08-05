@@ -195,7 +195,8 @@ class Database(PGNFile):
             stmt = select([func.count()], from_obj=self.from_obj2).where(self.where_bitboards)
             self.count = self.engine.execute(stmt).scalar()
         else:
-            self.count = self.count
+            self.count = self.engine.execute(select([func.count()]).select_from(game)).scalar()
+        # print("update_count()", self.count)
 
     def build_where_tags(self, text):
         if text:
