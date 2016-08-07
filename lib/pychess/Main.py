@@ -555,6 +555,7 @@ class PyChess(Gtk.Application):
         if chess_file:
 
             def do(discoverer):
-                GLib.idle_add(newGameDialog.LoadFileExtension.run, chess_file)
+                perspective = perspective_manager.get_perspective("database")
+                GLib.idle_add(perspective.open_chessfile, chess_file)
 
             discoverer.connect_after("all_engines_discovered", do)
