@@ -77,6 +77,7 @@ class PyDockComposite(Gtk.Alignment):
         new.show()
 
         def cb(widget, allocation):
+            # Set initial position of the divider between the two panes of Gtk.Paned
             if allocation.height != 1:
                 if self.position == NORTH:
                     pos = 0.381966011 * allocation.height
@@ -86,6 +87,16 @@ class PyDockComposite(Gtk.Alignment):
                     pos = 0.381966011 * allocation.width
                 elif self.position == EAST:
                     pos = 0.618033989 * allocation.width
+
+                #print(widget.get_children())
+                widgt, title, id = widget.get_children()[0].panels[0]
+                if id == "switcher":
+                    pos = 0.1 * allocation.height
+                elif id == "filter":
+                    pos = 0.1 * allocation.height
+                elif id == "gamelist":
+                    pos = 1.4 * allocation.height
+
                 widget.set_position(int(pos + .5))
                 widget.disconnect(conid)
 
