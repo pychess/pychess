@@ -275,7 +275,7 @@ class PGNFile(PgnBase):
         self.where_bitboards = None
         self.query = self.all_games
         self.count = len(self.all_games)
-        # print("%s game(s) match to query" % self.count)
+        print("%s game(s)" % self.count)
         self.offset = 0
 
     def build_query(self):

@@ -2,18 +2,19 @@ import os
 import threading
 import traceback
 
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, GObject
 
 from pychess.compat import StringIO
 from pychess.System.Log import log
 from pychess.perspectives import Perspective, perspective_manager
 from pychess.perspectives.database.gamelist import GameList
+from pychess.perspectives.database.SwitcherPanel import SwitcherPanel
 from pychess.perspectives.database.OpeningTreePanel import OpeningTreePanel
 from pychess.perspectives.database.FilterPanel import FilterPanel
 from pychess.perspectives.database.PreviewPanel import PreviewPanel
 from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.widgets.pydock.PyDockTop import PyDockTop
-from pychess.widgets.pydock import EAST, SOUTH, CENTER
+from pychess.widgets.pydock import EAST, SOUTH, CENTER, NORTH
 from pychess.widgets import dock_panel_tab
 from pychess.widgets.ionest import game_handler
 from pychess.Database.PgnImport import PgnImport
@@ -21,9 +22,16 @@ from pychess.Savers import database, pgn, fen, epd
 from pychess.System.protoopen import protoopen
 
 
-class Database(Perspective):
+class Database(GObject.GObject, Perspective):
+    __gsignals__ = {
+        'chessfile_opened': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+        'chessfile_closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
+    }
+
     def __init__(self):
+        GObject.GObject.__init__(self)
         Perspective.__init__(self, "database", _("Database"))
+        self.gamelist = None
 
     def create_toolbuttons(self):
         self.import_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CONVERT)
@@ -34,20 +42,12 @@ class Database(Perspective):
         self.close_button.set_tooltip_text(_("Close"))
         self.close_button.connect("clicked", self.close)
 
-    def open_chessfile(self, filename):
+    def init_layout(self):
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("database", perspective_widget)
 
-        if filename.endswith(".pdb"):
-            self.chessfile = database.load(filename)
-        elif filename.endswith(".pgn"):
-            self.chessfile = pgn.load(protoopen(filename))
-        elif filename.endswith(".epd"):
-            self.chessfile = epd.load(protoopen(filename))
-        elif filename.endswith(".fen"):
-            self.chessfile = fen.load(protoopen(filename))
-
-        self.gamelist = GameList(self.chessfile)
+        self.gamelist = GameList(database.load(None))
+        self.switcher_panel = SwitcherPanel(self.gamelist)
         self.opening_tree_panel = OpeningTreePanel(self.gamelist)
         self.filter_panel = FilterPanel(self.gamelist)
         self.preview_panel = PreviewPanel(self.gamelist)
@@ -67,6 +67,7 @@ class Database(Perspective):
 
         docks = {
             "gamelist": (Gtk.Label(label="gamelist"), self.gamelist.box),
+            "switcher": (dock_panel_tab(_("Database switcher"), "", addDataPrefix("glade/panel_docker.svg")), self.switcher_panel.alignment),
             "openingtree": (dock_panel_tab(_("Opening tree"), "", addDataPrefix("glade/panel_docker.svg")), self.opening_tree_panel.box),
             "filter": (dock_panel_tab(_("Filter"), "", addDataPrefix("glade/panel_docker.svg")), self.filter_panel.box),
             "preview": (dock_panel_tab(_("Preview"), "", addDataPrefix("glade/panel_docker.svg")), self.preview_panel.box),
@@ -99,6 +100,7 @@ class Database(Perspective):
             leaf = self.dock.dock(docks["gamelist"][1], CENTER, docks["gamelist"][0], "gamelist")
             leaf.setDockable(False)
 
+            leaf.dock(docks["switcher"][1], NORTH, docks["switcher"][0], "switcher")
             leaf = leaf.dock(docks["filter"][1], EAST, docks["filter"][0], "filter")
             leaf = leaf.dock(docks["openingtree"][1], SOUTH, docks["openingtree"][0], "openingtree")
             leaf.dock(docks["preview"][1], SOUTH, docks["preview"][0], "preview")
@@ -112,31 +114,48 @@ class Database(Perspective):
         self.dock.show_all()
         perspective_widget.show_all()
 
+    def open_chessfile(self, filename):
+        if self.gamelist is None:
+            self.init_layout()
+
         if filename.endswith(".pdb"):
             perspective_manager.set_perspective_toobuttons("database", [self.import_button, self.close_button])
         else:
             perspective_manager.set_perspective_toobuttons("database", [self.close_button])
         perspective_manager.activate_perspective("database")
 
+        if filename.endswith(".pdb"):
+            self.chessfile = database.load(filename)
+        elif filename.endswith(".pgn"):
+            self.chessfile = pgn.load(protoopen(filename))
+        elif filename.endswith(".epd"):
+            self.chessfile = epd.load(protoopen(filename))
+        elif filename.endswith(".fen"):
+            self.chessfile = fen.load(protoopen(filename))
+
+        self.gamelist.load_games()
+        self.emit("chessfile_opened", self.chessfile)
+
     def close(self, widget):
-        #self.chessfile.close()
-        perspective_manager.disable_perspective("database")
+        self.emit("chessfile_closed")
 
     def on_import_clicked(self, widget):
         opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
+        opendialog.set_select_multiple(True)
         response = opendialog.run()
         if response == Gtk.ResponseType.ACCEPT:
-            filename = opendialog.get_filename()
-            self.do_import(filename)
+            filenames = opendialog.get_filenames()
+            self.do_import(filenames)
         opendialog.hide()
 
-    def do_import(self, filename):
+    def do_import(self, filenames):
         self.gamelist.progress_dock.add(self.progressbar)
         self.gamelist.progress_dock.show_all()
 
         def importing():
             importer = PgnImport(self.chessfile.engine)
-            importer.do_import(filename, self.progressbar)
+            for filename in filenames:
+                importer.do_import(filename, self.progressbar)
             GLib.idle_add(self.gamelist.progress_dock.remove, self.progressbar)
             GLib.idle_add(self.gamelist.load_games)
 

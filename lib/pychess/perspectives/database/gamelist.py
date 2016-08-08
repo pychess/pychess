@@ -11,12 +11,17 @@ from pychess.perspectives import perspective_manager
 
 
 class GameList(Gtk.TreeView):
-
     STEP = 500
 
     def __init__(self, chessfile):
         GObject.GObject.__init__(self)
         self.chessfile = chessfile
+        self.chessfiles = [self.chessfile, ]
+
+        persp = perspective_manager.get_perspective("database")
+        persp.connect("chessfile_opened", self.on_chessfile_opened)
+        persp.connect("chessfile_closed", self.on_chessfile_closed)
+
         self.preview_cid = None
         self.opening_tree_cid = None
 
@@ -58,8 +63,6 @@ class GameList(Gtk.TreeView):
         self.gamemodel = None
         self.ply = 0
 
-        self.load_games()
-
         #  buttons
         toolbar = Gtk.Toolbar()
 
@@ -96,6 +99,21 @@ class GameList(Gtk.TreeView):
         self.box.pack_start(tool_box, False, True, 0)
         self.box.show_all()
 
+    def on_chessfile_opened(self, persp, chessfile):
+        self.chessfile = chessfile
+        self.chessfiles.append(self.chessfile)
+        self.load_games()
+
+    def on_chessfile_closed(self, persp):
+        if len(self.chessfiles) == 1:
+            self.chessfiles.remove(self.chessfile)
+            self.chessfile.close()
+            perspective_manager.disable_perspective("database")
+
+        elif self.chessfile.path is not None:
+            self.chessfiles.remove(self.chessfile)
+            self.chessfile.close()
+
     def on_first_clicked(self, widget):
         self.offset = 0
         self.load_games()
@@ -124,7 +142,8 @@ class GameList(Gtk.TreeView):
 
     def load_games(self):
         selection = self.get_selection()
-        if self.preview_cid is not None and selection.handler_is_connected(self.preview_cid):
+        if selection is not None and self.preview_cid is not None and \
+                selection.handler_is_connected(self.preview_cid):
             with GObject.signal_handler_block(selection, self.preview_cid):
                 self.liststore.clear()
         else:

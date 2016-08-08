@@ -2,14 +2,22 @@
 
 import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
-    String, SmallInteger, BigInteger, LargeBinary, UnicodeText, ForeignKey
+    String, SmallInteger, BigInteger, LargeBinary, UnicodeText, ForeignKey, event
+from sqlalchemy.engine import Engine
 
 from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
 from pychess.System.prefix import addUserDataPrefix
 from pychess.System import conf
 
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 engines = {}
+
 
 # If we use sqlite as db backend we have to store bitboards as
 # bb - DB_MAXINT_SHIFT to fit into sqlite (8 byte) signed(!) integer range

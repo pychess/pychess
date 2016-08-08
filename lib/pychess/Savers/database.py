@@ -125,6 +125,7 @@ def load(path):
 class Database(PGNFile):
     def __init__(self, path, games):
         PGNFile.__init__(self, path, games)
+        self.path = path
         self.engine = dbmodel.get_engine(path)
 
         self.cols = [
@@ -157,6 +158,7 @@ class Database(PGNFile):
         self.from_obj2 = [game.outerjoin(bitboard, bitboard.c.game_id == game.c.id)]
 
         self.count = self.engine.execute(select([func.count()]).select_from(game)).scalar()
+        print("%s game(s)" % self.count)
 
         self.select0 = select(self.cols, from_obj=self.from_obj0)
         self.select1 = select(self.cols, from_obj=self.from_obj1)
