@@ -50,7 +50,7 @@ def save(path, model, position=None):
         if not name:
             return None
 
-        selection = select([table.c.id], table.c.name == name)
+        selection = select([table.c.id], table.c.name == unicode(name))
         result = conn.execute(selection)
         id_ = result.scalar()
         if id_ is None:
