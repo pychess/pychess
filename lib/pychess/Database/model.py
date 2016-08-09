@@ -4,6 +4,7 @@ import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
     String, SmallInteger, BigInteger, LargeBinary, UnicodeText, ForeignKey, event
 from sqlalchemy.engine import Engine
+from sqlalchemy.pool import StaticPool
 
 from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
@@ -38,7 +39,12 @@ def get_engine(path=None, dialect="sqlite", echo=False):
     if url in engines:
         return engines[url]
     else:
-        engine = create_engine(url, echo=echo)
+        if path is None:
+            engine = create_engine(url, connect_args={'check_same_thread': False},
+                                   echo=echo, poolclass=StaticPool)
+        else:
+            engine = create_engine(url, echo=echo)
+
         if path is None or not os.path.isfile(path):
             metadata.create_all(engine)
             ini_tag(engine)

@@ -125,16 +125,15 @@ class Database(GObject.GObject, Perspective):
         perspective_manager.activate_perspective("database")
 
         if filename.endswith(".pdb"):
-            self.chessfile = database.load(filename)
+            chessfile = database.load(filename)
         elif filename.endswith(".pgn"):
-            self.chessfile = pgn.load(protoopen(filename))
+            chessfile = pgn.load(protoopen(filename))
         elif filename.endswith(".epd"):
-            self.chessfile = epd.load(protoopen(filename))
+            chessfile = epd.load(protoopen(filename))
         elif filename.endswith(".fen"):
-            self.chessfile = fen.load(protoopen(filename))
+            chessfile = fen.load(protoopen(filename))
 
-        self.gamelist.load_games()
-        self.emit("chessfile_opened", self.chessfile)
+        self.emit("chessfile_opened", chessfile)
 
     def close(self, widget):
         self.emit("chessfile_closed")
@@ -153,7 +152,7 @@ class Database(GObject.GObject, Perspective):
         self.gamelist.progress_dock.show_all()
 
         def importing():
-            importer = PgnImport(self.chessfile.engine)
+            importer = PgnImport(self.gamelist.chessfile.engine)
             for filename in filenames:
                 importer.do_import(filename, self.progressbar)
             GLib.idle_add(self.gamelist.progress_dock.remove, self.progressbar)

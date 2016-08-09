@@ -44,10 +44,8 @@ class SwitcherPanel(Gtk.IconView):
         self.select_path(treepath)
 
     def on_item_activated(self, iconview, path):
-        # print("on_item_activated", path)
         treeiter = self.liststore.get_iter(path)
         chessfile = self.liststore.get_value(treeiter, 0)
-        # print(chessfile.path)
         self.gamelist.chessfile = chessfile
         self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
