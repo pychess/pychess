@@ -7,12 +7,16 @@ from pychess.Utils.lutils.lmovegen import genAllMoves
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toSAN
 from pychess.Utils.const import FEN_START, WHITE
+from pychess.perspectives import perspective_manager
 
 
 class OpeningTreePanel(Gtk.TreeView):
     def __init__(self, gamelist):
         GObject.GObject.__init__(self)
         self.gamelist = gamelist
+
+        persp = perspective_manager.get_perspective("database")
+        persp.connect("chessfile_opened", self.on_chessfile_opened)
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
@@ -76,6 +80,9 @@ class OpeningTreePanel(Gtk.TreeView):
         self.box.pack_start(tool_box, False, False, 0)
 
         self.box.show_all()
+
+    def on_chessfile_opened(self, persp, chessfile):
+        self.on_first_clicked(None)
 
     def on_first_clicked(self, widget):
         while self.board.hist_move:
