@@ -114,14 +114,12 @@ class Database(GObject.GObject, Perspective):
         self.dock.show_all()
         perspective_widget.show_all()
 
+        perspective_manager.set_perspective_toolbuttons("database", [self.import_button, self.close_button])
+
     def open_chessfile(self, filename):
         if self.gamelist is None:
             self.init_layout()
 
-        if filename.endswith(".pdb"):
-            perspective_manager.set_perspective_toobuttons("database", [self.import_button, self.close_button])
-        else:
-            perspective_manager.set_perspective_toobuttons("database", [self.close_button])
         perspective_manager.activate_perspective("database")
 
         if filename.endswith(".pdb"):

@@ -8,6 +8,7 @@ from gi.repository.GdkPixbuf import Pixbuf
 
 from pychess.perspectives import perspective_manager
 from pychess.Utils.IconLoader import load_icon
+from pychess.Savers.database import Database
 
 pdb_icon = load_icon(32, "pychess")
 pgn_icon = load_icon(32, "application-x-chess-pgn", "pychess")
@@ -18,9 +19,9 @@ class SwitcherPanel(Gtk.IconView):
         GObject.GObject.__init__(self)
         self.gamelist = gamelist
 
-        persp = perspective_manager.get_perspective("database")
-        persp.connect("chessfile_opened", self.on_chessfile_opened)
-        persp.connect("chessfile_closed", self.on_chessfile_closed)
+        self.persp = perspective_manager.get_perspective("database")
+        self.persp.connect("chessfile_opened", self.on_chessfile_opened)
+        self.persp.connect("chessfile_closed", self.on_chessfile_closed)
 
         self.alignment = Gtk.Alignment()
 
@@ -51,6 +52,11 @@ class SwitcherPanel(Gtk.IconView):
         self.gamelist.chessfile.build_query()
         self.gamelist.load_games()
 
+        if isinstance(chessfile, Database):
+            self.persp.import_button.set_sensitive(True)
+        else:
+            self.persp.import_button.set_sensitive(False)
+
     def on_chessfile_opened(self, persp, chessfile):
         name, ext = os.path.splitext(chessfile.path)
         icon = pgn_icon if ext.lower() == ".pgn" else pdb_icon
@@ -59,6 +65,11 @@ class SwitcherPanel(Gtk.IconView):
         treeiter = self.liststore.append([chessfile, icon, info])
         treepath = self.liststore.get_path(treeiter)
         self.select_path(treepath)
+
+        if isinstance(chessfile, Database):
+            self.persp.import_button.set_sensitive(True)
+        else:
+            self.persp.import_button.set_sensitive(False)
 
     def on_chessfile_closed(self, persp):
         if self.gamelist.chessfile.path is not None:

@@ -96,7 +96,7 @@ class PerspectiveManager(object):
             container.remove(child)
         container.add(widget)
 
-    def set_perspective_toobuttons(self, name, buttons):
+    def set_perspective_toolbuttons(self, name, buttons):
         perspective, button, index = self.perspectives[name]
         for button in perspective.toolbuttons:
             if button in self.toolbar:
