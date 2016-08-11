@@ -97,7 +97,7 @@ class ICLounge(GObject.GObject):
         logoff_button.set_tooltip_text(_("Log Off"))
         logoff_button.set_label("logoff")
         logoff_button.connect("clicked", on_logoff_clicked)
-        perspective_manager.set_perspective_toobuttons("fics", [logoff_button, ])
+        perspective_manager.set_perspective_toolbuttons("fics", [logoff_button, ])
 
         def on_autoLogout(alm):
             self.emit("autoLogout")
