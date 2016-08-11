@@ -173,7 +173,16 @@ class PgnBase(ChessFile):
     def _getTag(self, gameno, tagkey):
         if gameno in self.tagcache:
             if tagkey in self.tagcache[gameno]:
-                return self.tagcache[gameno][tagkey]
+                tag = self.tagcache[gameno][tagkey]
+                if tagkey == "Date":
+                    if tag and '?' not in tag:
+                        return tag
+                    elif tag and '?' not in tag[:4]:
+                        return tag[:4]
+                    else:
+                        return ""
+                else:
+                    return "" if tag == "?" else tag
             else:
                 return ""
         else:

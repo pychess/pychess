@@ -17,7 +17,7 @@ from sqlalchemy.exc import ProgrammingError
 # from sqlalchemy.schema import DropIndex
 
 from pychess.compat import unicode
-from pychess.Utils.const import FEN_START, reprResult, FISCHERRANDOMCHESS
+from pychess.Utils.const import FEN_START, reprResult
 from pychess.Variants import name2variant
 # from pychess.System import profile_me
 from pychess.System import Timer

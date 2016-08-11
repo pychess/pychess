@@ -272,8 +272,14 @@ class Database(PGNFile):
             year = self.games[gameno]['Year']
             month = self.games[gameno]['Month']
             day = self.games[gameno]['Day']
-            tag_date = "%s.%s.%s" % (year if year else "????", month if month else "??", day
-                                     if day else "??")
+            if year and month and day:
+                tag_date = "%s.%02d.%02d" % (year, month, day)
+            elif year and month:
+                tag_date = "%s.%02d" % (year, month)
+            elif year:
+                tag_date = "%s" % year
+            else:
+                tag_date = ""
             return tag_date
 
         elif tagkey == "Variant":
