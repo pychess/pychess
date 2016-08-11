@@ -71,6 +71,11 @@ class PgnBase(ChessFile):
             if group == VARIATION_END:
                 parenthesis -= 1
                 if parenthesis == 0:
+                    if last_board.prev is None:
+                        errstr1 = _("Error parsing %(mstr)s") % {"mstr": string}
+                        self.error = LoadingError(errstr1, "")
+                        return boards  # , status
+
                     v_last_board.children.append(
                         self.parse_string(v_string[:-1],
                                           last_board.prev,
