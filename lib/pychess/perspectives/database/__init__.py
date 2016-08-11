@@ -25,6 +25,7 @@ class Database(GObject.GObject, Perspective):
     __gsignals__ = {
         'chessfile_opened': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'chessfile_closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
+        'chessfile_imported': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
     }
 
     def __init__(self):
@@ -167,8 +168,14 @@ class Database(GObject.GObject, Perspective):
             importer = PgnImport(self.gamelist.chessfile.engine)
             for filename in filenames:
                 importer.do_import(filename, self.progressbar)
+            self.gamelist.offset = 0
+            self.gamelist.chessfile.build_where_tags("")
+            self.gamelist.chessfile.build_where_bitboards(0, 0)
+            self.gamelist.chessfile.build_query()
+            self.gamelist.chessfile.update_count()
             GLib.idle_add(self.gamelist.progress_dock.remove, self.progressbar)
             GLib.idle_add(self.gamelist.load_games)
+            GLib.idle_add(self.emit, "chessfile_imported", self.gamelist.chessfile)
 
         thread = threading.Thread(target=importing)
         thread.daemon = True

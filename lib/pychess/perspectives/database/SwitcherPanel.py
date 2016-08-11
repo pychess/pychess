@@ -12,6 +12,7 @@ from pychess.Savers.database import Database
 
 pdb_icon = load_icon(32, "pychess")
 pgn_icon = load_icon(32, "application-x-chess-pgn", "pychess")
+CLIPBASE = "Clipbase"
 
 
 class SwitcherPanel(Gtk.IconView):
@@ -22,6 +23,7 @@ class SwitcherPanel(Gtk.IconView):
         self.persp = perspective_manager.get_perspective("database")
         self.persp.connect("chessfile_opened", self.on_chessfile_opened)
         self.persp.connect("chessfile_closed", self.on_chessfile_closed)
+        self.persp.connect("chessfile_imported", self.on_chessfile_imported)
 
         self.alignment = Gtk.Alignment()
 
@@ -34,7 +36,8 @@ class SwitcherPanel(Gtk.IconView):
         self.set_selection_mode(Gtk.SelectionMode.BROWSE)
 
         pixbuf = Gtk.IconTheme.get_default().load_icon("edit-paste", 32, 0)
-        self.liststore.append([self.gamelist.chessfile, pixbuf, "Clipbase"])
+        info = "%s\n%s  %s" % (CLIPBASE, "pdb", 0)
+        self.liststore.append([self.gamelist.chessfile, pixbuf, info])
 
         self.connect("item-activated", self.on_item_activated)
 
@@ -86,3 +89,17 @@ class SwitcherPanel(Gtk.IconView):
                     self.item_activated(treepath)
                     self.queue_draw()
                     break
+
+    def on_chessfile_imported(self, persp, chessfile):
+        if chessfile.path is None:
+            info = "%s\n%s  %s" % (CLIPBASE, "pdb", chessfile.count)
+        else:
+            name, ext = os.path.splitext(chessfile.path)
+            # basename = os.path.basename(name)
+            info = "%s\n%s  %s" % (name, ext[1:], chessfile.count)
+
+        for i, row in enumerate(self.liststore):
+            if row[0] == self.gamelist.chessfile:
+                treeiter = self.liststore.get_iter(Gtk.TreePath(i))
+                self.liststore[treeiter][2] = info
+                break
