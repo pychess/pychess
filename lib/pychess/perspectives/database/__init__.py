@@ -16,7 +16,6 @@ from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import EAST, SOUTH, CENTER, NORTH
 from pychess.widgets import dock_panel_tab
-from pychess.widgets.ionest import game_handler
 from pychess.Database.PgnImport import PgnImport
 from pychess.Savers import database, pgn, fen, epd
 from pychess.System.protoopen import protoopen
@@ -138,13 +137,27 @@ class Database(GObject.GObject, Perspective):
         self.emit("chessfile_closed")
 
     def on_import_clicked(self, widget):
-        opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
-        opendialog.set_select_multiple(True)
-        response = opendialog.run()
+        dialog = Gtk.FileChooserDialog(
+            _("Open chess file"), None, Gtk.FileChooserAction.OPEN,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
+             Gtk.ResponseType.ACCEPT))
+        dialog.set_select_multiple(True)
+
+        filter_text = Gtk.FileFilter()
+        filter_text.set_name(".pgn")
+        filter_text.add_mime_type("application/x-chess-pgn")
+        dialog.add_filter(filter_text)
+
+        filter_text = Gtk.FileFilter()
+        filter_text.set_name(".zip")
+        filter_text.add_mime_type("application/zip")
+        dialog.add_filter(filter_text)
+
+        response = dialog.run()
         if response == Gtk.ResponseType.ACCEPT:
-            filenames = opendialog.get_filenames()
+            filenames = dialog.get_filenames()
             self.do_import(filenames)
-        opendialog.hide()
+        dialog.destroy()
 
     def do_import(self, filenames):
         self.gamelist.progress_dock.add(self.progressbar)
