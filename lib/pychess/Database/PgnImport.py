@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import io
 import os
 import sys
 import zipfile
@@ -16,11 +17,11 @@ from sqlalchemy.exc import ProgrammingError
 # from sqlalchemy.schema import DropIndex
 
 from pychess.compat import unicode
-from pychess.Utils.const import FEN_START, reprResult
+from pychess.Utils.const import FEN_START, reprResult, FISCHERRANDOMCHESS
 from pychess.Variants import name2variant
 # from pychess.System import profile_me
 from pychess.System import Timer
-from pychess.System.protoopen import protoopen
+from pychess.System.protoopen import protoopen, PGN_ENCODING
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import pgn_load
 from pychess.Database.dbwalk import walk
@@ -162,7 +163,8 @@ class PgnImport():
             if zf is None:
                 cf = pgn_load(protoopen(pgnfile))
             else:
-                cf = pgn_load(zf.protoopen(pgnfile))
+                pgn_file = io.TextIOWrapper(zf.open(pgnfile), encoding=PGN_ENCODING, newline='')
+                cf = pgn_load(pgn_file)
 
             if progressbar:
                 self.pulse = False
@@ -185,8 +187,7 @@ class PgnImport():
                     variant = cf.get_variant(i)
 
                     # Fixes for some non statndard Chess960 .pgn
-                    if not variant and (not fenstr) and "Chess960" in get_tag(i, "Event"):
-                        cf.tagcache[i]["Variant"] = "Fischerandom"
+                    if fenstr and variant == "Fischerandom":
                         parts = fenstr.split()
                         parts[0] = parts[0].replace(".", "/").replace("0", "")
                         if len(parts) == 1:
