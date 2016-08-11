@@ -39,7 +39,6 @@ class GameHandler(GObject.GObject):
         self.opendialog = None
         self.savedialog = None
         self.enddir = {}
-        self.createformats = None
         self.saveformats = None
         self.exportformats = None
 
@@ -164,7 +163,7 @@ class GameHandler(GObject.GObject):
                 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE,
                  Gtk.ResponseType.ACCEPT))
             self.savedialog.set_current_folder(os.path.expanduser("~"))
-            self.createformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
+
             self.saveformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
             self.exportformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
 
@@ -195,7 +194,6 @@ class GameHandler(GObject.GObject):
                     all_filter.add_pattern("*." + ending)
                     self.opendialog.add_filter(f)
                     if ending != "pdb":
-                        self.createformats.append([label, endstr, saver])
                         self.saveformats.append([label, endstr, saver])
                     i += 1
                 else:
@@ -222,17 +220,23 @@ class GameHandler(GObject.GObject):
     ################################################################################
 
     def create_database(self):
+        dialog = Gtk.FileChooserDialog(
+            _("Create New Database"), None, Gtk.FileChooserAction.SAVE,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_NEW, Gtk.ResponseType.ACCEPT))
 
-        opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
-        game_handler.savecombo.set_model(game_handler.createformats)
-        savedialog.set_title(_("Create New Database"))
+        dialog.set_current_folder(os.path.expanduser("~"))
+        dialog.set_do_overwrite_confirmation(True)
+        dialog.set_current_name("new.pdb")
 
-        response = savedialog.run()
+        response = dialog.run()
         if response == Gtk.ResponseType.ACCEPT:
-            pychess_pdb = savedialog.get_filename()
+            pychess_pdb = dialog.get_filename()
+            if not pychess_pdb.endswith(".pdb"):
+                pychess_pdb = "%s.pdb" % pychess_pdb
             perspective = perspective_manager.get_perspective("database")
             perspective.open_chessfile(pychess_pdb)
-        savedialog.hide()
+
+        dialog.destroy()
 
     ################################################################################
     # Saving                                                                       #

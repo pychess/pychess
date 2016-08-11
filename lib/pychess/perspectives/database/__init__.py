@@ -117,11 +117,6 @@ class Database(GObject.GObject, Perspective):
         perspective_manager.set_perspective_toolbuttons("database", [self.import_button, self.close_button])
 
     def open_chessfile(self, filename):
-        if self.gamelist is None:
-            self.init_layout()
-
-        perspective_manager.activate_perspective("database")
-
         if filename.endswith(".pdb"):
             chessfile = database.load(filename)
         elif filename.endswith(".pgn"):
@@ -130,7 +125,13 @@ class Database(GObject.GObject, Perspective):
             chessfile = epd.load(protoopen(filename))
         elif filename.endswith(".fen"):
             chessfile = fen.load(protoopen(filename))
+        else:
+            return
 
+        if self.gamelist is None:
+            self.init_layout()
+
+        perspective_manager.activate_perspective("database")
         self.emit("chessfile_opened", chessfile)
 
     def close(self, widget):
