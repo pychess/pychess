@@ -54,7 +54,7 @@ def save(path, model, position=None):
         result = conn.execute(selection)
         id_ = result.scalar()
         if id_ is None:
-            result = conn.execute(table.insert().values(name=name))
+            result = conn.execute(table.insert().values(name=unicode(name)))
             id_ = result.inserted_primary_key[0]
         return id_
 
