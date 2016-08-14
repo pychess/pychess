@@ -137,15 +137,15 @@ class OpeningTreePanel(Gtk.TreeView):
             board.popMove()
 
         result = []
-        print("get_bitboards() for %s bb_candidates" % len(bb_candidates))
+        # print("get_bitboards() for %s bb_candidates" % len(bb_candidates))
         bb_list = self.gamelist.chessfile.get_bitboards(board.plyCount + 1, bb_candidates)
 
         for bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in bb_list:
             try:
                 result.append((bb_candidates[bb], count, white_won, blackwon, draw, white_elo_avg, black_elo_avg))
-                print("OK      ", bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg)
+                # print("OK      ", bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg)
             except KeyError:
-                print("KeyError", bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg)
+                # print("KeyError", bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg)
                 pass
 
         selection = self.get_selection()
