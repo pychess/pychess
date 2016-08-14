@@ -99,11 +99,9 @@ class OpeningTreePanel(Gtk.TreeView):
 
     def on_prev_clicked(self, widget):
         # TODO: disable buttons instead
-        if not self.board.hist_move:
-            return
-        self.board.popMove()
+        if self.board.hist_move:
+            self.board.popMove()
         bb = self.board.friends[0] | self.board.friends[1]
-
         self.gamelist.ply = self.board.plyCount
         self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
         self.gamelist.offset = 0
@@ -139,10 +137,16 @@ class OpeningTreePanel(Gtk.TreeView):
             board.popMove()
 
         result = []
+        print("get_bitboards() for %s bb_candidates" % len(bb_candidates))
         bb_list = self.gamelist.chessfile.get_bitboards(board.plyCount + 1, bb_candidates)
 
         for bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in bb_list:
-            result.append((bb_candidates[bb], count, white_won, blackwon, draw, white_elo_avg, black_elo_avg))
+            try:
+                result.append((bb_candidates[bb], count, white_won, blackwon, draw, white_elo_avg, black_elo_avg))
+                print("OK      ", bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg)
+            except KeyError:
+                print("KeyError", bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg)
+                pass
 
         selection = self.get_selection()
         if self.conid is not None and selection.handler_is_connected(self.conid):
@@ -150,6 +154,7 @@ class OpeningTreePanel(Gtk.TreeView):
                 self.liststore.clear()
         else:
             self.liststore.clear()
+
         for lmove, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in result:
             perf = round((white_won * 100. + draw * 50.) / count)
             elo_avg = white_elo_avg if board.color == WHITE else black_elo_avg

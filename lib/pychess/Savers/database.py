@@ -22,6 +22,8 @@ __label__ = _("PyChess database")
 __ending__ = "pdb"
 __append__ = True
 
+count_games = select([func.count()]).select_from(game)
+
 
 def save(path, model, position=None):
     movelist = array("H")
@@ -140,32 +142,21 @@ class Database(PGNFile):
             game.c.fen.label('FEN'), game.c.variant.label('Variant'),
             annotator.c.name.label('Annotator')]
 
-        self.from_obj0 = [
+        self.from_obj = [
             game.outerjoin(pl1, game.c.white_id == pl1.c.id)
             .outerjoin(pl2, game.c.black_id == pl2.c.id)
             .outerjoin(event, game.c.event_id == event.c.id)
             .outerjoin(site, game.c.site_id == site.c.id)
             .outerjoin(annotator, game.c.annotator_id == annotator.c.id)]
 
-        self.from_obj1 = [
-            game.outerjoin(pl1, game.c.white_id == pl1.c.id)
-            .outerjoin(pl2, game.c.black_id == pl2.c.id)
-            .outerjoin(event, game.c.event_id == event.c.id)
-            .outerjoin(site, game.c.site_id == site.c.id)
-            .outerjoin(annotator, game.c.annotator_id == annotator.c.id)
-            .outerjoin(bitboard, bitboard.c.game_id == game.c.id)]
+        self.count = self.engine.execute(count_games).scalar()
+        print("%s contains %s game(s)" % (self.path, self.count))
 
-        self.from_obj2 = [game.outerjoin(bitboard, bitboard.c.game_id == game.c.id)]
+        self.select = select(self.cols, from_obj=self.from_obj)
 
-        self.count = self.engine.execute(select([func.count()]).select_from(game)).scalar()
-        print("%s game(s)" % self.count)
+        self.colnames = self.engine.execute(self.select).keys()
 
-        self.select0 = select(self.cols, from_obj=self.from_obj0)
-        self.select1 = select(self.cols, from_obj=self.from_obj1)
-
-        self.colnames = self.engine.execute(self.select0).keys()
-
-        self.query = self.select0
+        self.query = self.select
         self.orderby = None
         self.where_tags = None
         self.where_bitboards = None
@@ -175,30 +166,26 @@ class Database(PGNFile):
 
     def build_query(self):
         if self.where_tags is not None and self.where_bitboards is not None:
-            self.query = self.select1.where(self.where_tags).where(self.where_bitboards)
+            self.query = self.select.where(self.where_tags).where(self.where_bitboards)
         elif self.where_tags is not None:
-            self.query = self.select0.where(self.where_tags)
+            self.query = self.select.where(self.where_tags)
         elif self.where_bitboards is not None:
-            self.query = self.select1.where(self.where_bitboards)
+            self.query = self.select.where(self.where_bitboards)
         else:
-            self.query = self.select0
-
+            self.query = self.select
         if self.orderby is not None:
             self.query = self.query.order_by(self.orderby)
 
     def update_count(self):
         if self.where_tags is not None and self.where_bitboards is not None:
-            stmt = select([func.count()], from_obj=self.from_obj1).where(self.where_tags).where(self.where_bitboards)
-            self.count = self.engine.execute(stmt).scalar()
+            stmt = select([func.count()], from_obj=self.from_obj).where(self.where_tags).where(self.where_bitboards)
         elif self.where_tags is not None:
-            stmt = select([func.count()], from_obj=self.from_obj0).where(self.where_tags)
-            self.count = self.engine.execute(stmt).scalar()
+            stmt = select([func.count()], from_obj=self.from_obj).where(self.where_tags)
         elif self.where_bitboards is not None:
-            stmt = select([func.count()], from_obj=self.from_obj2).where(self.where_bitboards)
-            self.count = self.engine.execute(stmt).scalar()
+            stmt = select([func.count()], from_obj=self.from_obj).where(self.where_bitboards)
         else:
-            self.count = self.engine.execute(select([func.count()]).select_from(game)).scalar()
-        # print("update_count()", self.count)
+            stmt = count_games
+        self.count = self.engine.execute(stmt).scalar()
 
     def build_where_tags(self, text):
         if text:
@@ -217,7 +204,7 @@ class Database(PGNFile):
         if ply:
             self.where_bitboards = and_(bitboard.c.game_id == game.c.id, bitboard.c.ply == ply, bitboard.c.bitboard == bb - DB_MAXINT_SHIFT)
         else:
-            self.where_bitboars = None
+            self.where_bitboards = None
 
     def get_records(self, offset, limit):
         query = self.query.offset(offset).limit(limit)
