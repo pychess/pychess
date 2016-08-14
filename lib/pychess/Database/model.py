@@ -57,19 +57,19 @@ metadata = MetaData()
 event = Table(
     'event', metadata,
     Column('id', Integer, primary_key=True),
-    Column('name', String(256))
+    Column('name', String(256), index=True)
 )
 
 site = Table(
     'site', metadata,
     Column('id', Integer, primary_key=True),
-    Column('name', String(256))
+    Column('name', String(256), index=True)
 )
 
 annotator = Table(
     'annotator', metadata,
     Column('id', Integer, primary_key=True),
-    Column('name', String(256))
+    Column('name', String(256), index=True)
 )
 
 player = Table(
@@ -88,15 +88,15 @@ pl2 = player.alias()
 
 game = Table(
     'game', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('event_id', Integer, ForeignKey('event.id')),
-    Column('site_id', Integer, ForeignKey('site.id')),
+    Column('id', Integer, primary_key=True, index=True),
+    Column('event_id', Integer, ForeignKey('event.id'), index=True),
+    Column('site_id', Integer, ForeignKey('site.id'), index=True),
     Column('date_year', SmallInteger),
     Column('date_month', SmallInteger),
     Column('date_day', SmallInteger),
     Column('round', String(8)),
-    Column('white_id', Integer, ForeignKey('player.id')),
-    Column('black_id', Integer, ForeignKey('player.id')),
+    Column('white_id', Integer, ForeignKey('player.id'), index=True),
+    Column('black_id', Integer, ForeignKey('player.id'), index=True),
     Column('result', SmallInteger),
     Column('white_elo', SmallInteger),
     Column('black_elo', SmallInteger),
@@ -107,7 +107,7 @@ game = Table(
     Column('fen', String(128)),
     Column('variant', SmallInteger),
     Column('termination', SmallInteger),
-    Column('annotator_id', Integer, ForeignKey('annotator.id')),
+    Column('annotator_id', Integer, ForeignKey('annotator.id'), index=True),
     Column('movelist', LargeBinary),
     Column('comments', UnicodeText)
 )
@@ -116,21 +116,21 @@ bitboard = Table(
     'bitboard', metadata,
     Column('id', Integer, primary_key=True),
     Column('game_id', Integer, ForeignKey('game.id'), nullable=False),
-    Column('ply', Integer),
-    Column('bitboard', BigInteger),
+    Column('ply', Integer, index=True),
+    Column('bitboard', BigInteger, index=True),
 )
 
 tag = Table(
     'tag', metadata,
     Column('id', Integer, primary_key=True),
-    Column('name', String(256)),
+    Column('name', String(256), index=True),
 )
 
 tag_game = Table(
     'tags', metadata,
     Column('id', Integer, primary_key=True),
     Column('game_id', Integer, ForeignKey('game.id'), nullable=False),
-    Column('tag_id', Integer, ForeignKey('tag.id'), nullable=False),
+    Column('tag_id', Integer, ForeignKey('tag.id'), nullable=False, index=True),
 )
 
 
