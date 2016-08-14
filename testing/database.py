@@ -81,7 +81,7 @@ class DbTestCase(unittest.TestCase):
 
         db = load(None)
 
-        result = self.engine.execute(db.select0)
+        result = self.engine.execute(db.select)
         db.games = result.fetchall()
         print("%s selected" % len(db.games))
 
