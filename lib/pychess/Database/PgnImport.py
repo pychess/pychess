@@ -283,14 +283,15 @@ class PgnImport():
                     game_id = self.next_id[GAME]
                     self.next_id[GAME] += 1
 
-                    if not fen:
-                        for ply, board in enumerate(boards):
-                            bb = board.friends[0] | board.friends[1]
-                            self.bitboard_data.append({
-                                'game_id': game_id,
-                                'ply': ply,
-                                'bitboard': bb - DB_MAXINT_SHIFT,
-                            })
+                    for ply, board in enumerate(boards):
+                        bb = board.friends[0] | board.friends[1]
+                        # Avoid to include mate in x .pgn collections in opening tree
+                        ply =  ply if (not fen) or "/pppppppp/8/8/8/8/PPPPPPPP/" in fen else -1:
+                        self.bitboard_data.append({
+                            'game_id': game_id,
+                            'ply': ply,
+                            'bitboard': bb - DB_MAXINT_SHIFT,
+                        })
 
                     self.game_data.append({
                         'event_id': event_id,
