@@ -394,6 +394,9 @@ class PyChess(Gtk.Application):
 
         log.debug("GladeHandlers.on_gmwidg_created: returning")
 
+    def on_chessfile_opened(self, persp, chessfile):
+        self.update_recent(None, chessfile.path)
+
     def on_terminated(self, gamemodel):
         if gamemodel.handler_is_connected(self.loaded_cids[gamemodel]):
             gamemodel.disconnect(self.loaded_cids[gamemodel])
@@ -540,6 +543,9 @@ class PyChess(Gtk.Application):
             perspective = persp()
             perspective_manager.add_perspective(perspective)
             perspective.create_toolbuttons()
+
+            if persp == Database:
+                perspective.connect("chessfile_opened", self.on_chessfile_opened)
 
         new_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
         new_button.set_tooltip_text(_("New Game"))
