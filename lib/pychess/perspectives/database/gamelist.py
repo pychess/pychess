@@ -220,5 +220,5 @@ class GameList(Gtk.TreeView):
 
     def update_count(self):
         self.chessfile.update_count()
-        self.label.set_text("%s - %s / %s" % (self.offset, self.offset + self.LIMIT, self.chessfile.count))
+        self.label.set_text("%s - %s / %s" % (self.offset, min(self.offset + self.LIMIT, self.chessfile.count), self.chessfile.count))
         self.label.show()
