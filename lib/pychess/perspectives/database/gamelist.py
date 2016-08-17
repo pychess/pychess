@@ -23,7 +23,7 @@ def createImage(pixbuf):
 
 
 class GameList(Gtk.TreeView):
-    LIMIT = 500
+    LIMIT = 1000
 
     def __init__(self, chessfile):
         GObject.GObject.__init__(self)
@@ -196,7 +196,7 @@ class GameList(Gtk.TreeView):
                  round_, length, eco, tc, variant, fen])
 
         self.set_cursor(0)
-        self.update_count()
+        self.update_counter()
 
     def row_activated(self, widget, path, col):
         game_id = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
@@ -218,7 +218,8 @@ class GameList(Gtk.TreeView):
 
         perspective_manager.activate_perspective("games")
 
-    def update_count(self):
-        self.chessfile.update_count()
+    def update_counter(self, with_select=False):
+        if with_select:
+            self.chessfile.update_count()
         self.label.set_text("%s - %s / %s" % (self.offset, min(self.offset + self.LIMIT, self.chessfile.count), self.chessfile.count))
         self.label.show()
