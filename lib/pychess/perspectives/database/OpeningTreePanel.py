@@ -53,7 +53,7 @@ class OpeningTreePanel(Gtk.TreeView):
 
         self.board = LBoard()
         self.board.applyFen(FEN_START)
-        self.update_tree(self.board)
+        self.update_tree()
 
         self.columns_autosize()
 
@@ -82,33 +82,18 @@ class OpeningTreePanel(Gtk.TreeView):
         self.box.show_all()
 
     def on_chessfile_opened(self, persp, chessfile):
-        self.on_first_clicked(None)
+        self.update_tree(load_games=False)
 
     def on_first_clicked(self, widget):
         while self.board.hist_move:
             self.board.popMove()
-        bb = self.board.friends[0] | self.board.friends[1]
-
-        self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
-        self.gamelist.offset = 0
-        self.gamelist.chessfile.build_query()
-        self.gamelist.load_games()
-
-        self.update_tree(self.board)
+        self.update_tree()
 
     def on_prev_clicked(self, widget):
         # TODO: disable buttons instead
         if self.board.hist_move:
             self.board.popMove()
-        bb = self.board.friends[0] | self.board.friends[1]
-        self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
-        self.gamelist.offset = 0
-        self.gamelist.chessfile.build_query()
-        self.gamelist.load_games()
-
-        self.update_tree(self.board)
+        self.update_tree()
 
     def column_clicked(self, col, data):
         self.set_search_column(data)
@@ -116,29 +101,30 @@ class OpeningTreePanel(Gtk.TreeView):
     def row_activated(self, widget, path, col):
         lmove = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
         self.board.applyMove(lmove)
-        bb = self.board.friends[0] | self.board.friends[1]
+        self.update_tree()
+        self.gamelist.chessfile.update_count()
 
+    def update_tree(self, load_games=True):
+        bb = self.board.friends[0] | self.board.friends[1]
         self.gamelist.ply = self.board.plyCount
         self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
         self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
-        self.gamelist.load_games()
-        self.update_tree(self.board)
-        self.gamelist.chessfile.update_count()
+        if load_games:
+            self.gamelist.load_games()
 
-    def update_tree(self, board):
         bb_candidates = {}
-        for lmove in genAllMoves(board):
-            board.applyMove(lmove)
-            if board.opIsChecked():
-                board.popMove()
+        for lmove in genAllMoves(self.board):
+            self.board.applyMove(lmove)
+            if self.board.opIsChecked():
+                self.board.popMove()
                 continue
-            bb_candidates[board.friends[0] | board.friends[1]] = lmove
-            board.popMove()
+            bb_candidates[self.board.friends[0] | self.board.friends[1]] = lmove
+            self.board.popMove()
 
         result = []
         # print("get_bitboards() for %s bb_candidates" % len(bb_candidates))
-        bb_list = self.gamelist.chessfile.get_bitboards(board.plyCount + 1, bb_candidates)
+        bb_list = self.gamelist.chessfile.get_bitboards(self.board.plyCount + 1, bb_candidates)
 
         for bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in bb_list:
             try:
@@ -157,5 +143,5 @@ class OpeningTreePanel(Gtk.TreeView):
 
         for lmove, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in result:
             perf = round((white_won * 100. + draw * 50.) / count)
-            elo_avg = white_elo_avg if board.color == WHITE else black_elo_avg
+            elo_avg = white_elo_avg if self.board.color == WHITE else black_elo_avg
             self.liststore.append([lmove, toSAN(self.board, lmove), count, perf, elo_avg])
