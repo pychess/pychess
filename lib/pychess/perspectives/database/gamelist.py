@@ -11,7 +11,7 @@ from pychess.perspectives import perspective_manager
 
 
 class GameList(Gtk.TreeView):
-    STEP = 500
+    LIMIT = 500
 
     def __init__(self, chessfile):
         GObject.GObject.__init__(self)
@@ -119,22 +119,22 @@ class GameList(Gtk.TreeView):
         self.load_games()
 
     def on_prev_clicked(self, widget):
-        if self.offset - self.STEP >= 0:
-            self.offset = self.offset - self.STEP
+        if self.offset - self.LIMIT >= 0:
+            self.offset = self.offset - self.LIMIT
             self.load_games()
 
     def on_next_clicked(self, widget):
-        if self.offset + self.STEP < self.chessfile.count:
-            self.offset = self.offset + self.STEP
+        if self.offset + self.LIMIT < self.chessfile.count:
+            self.offset = self.offset + self.LIMIT
             self.load_games()
 
     def on_last_clicked(self, widget):
-        if self.offset + self.STEP == self.chessfile.count:
+        if self.offset + self.LIMIT == self.chessfile.count:
             return
-        if self.chessfile.count % self.STEP == 0:
-            self.offset = self.chessfile.count - self.STEP
+        if self.chessfile.count % self.LIMIT == 0:
+            self.offset = self.chessfile.count - self.LIMIT
         else:
-            self.offset = (self.chessfile.count // self.STEP) * self.STEP
+            self.offset = (self.chessfile.count // self.LIMIT) * self.LIMIT
         self.load_games()
 
     def column_clicked(self, col, data):
@@ -154,7 +154,7 @@ class GameList(Gtk.TreeView):
         getPlayers = self.chessfile.get_player_names
         add = self.liststore.append
 
-        self.chessfile.get_records(self.offset, self.STEP)
+        self.chessfile.get_records(self.offset, self.LIMIT)
 
         self.id_list = []
         for i in range(len(self.chessfile.games)):
