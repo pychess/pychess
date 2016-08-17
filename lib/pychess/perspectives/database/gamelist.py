@@ -8,6 +8,18 @@ from pychess.Players.Human import Human
 from pychess.widgets.ionest import game_handler
 from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
+from pychess.Utils.IconLoader import load_icon
+
+media_previous = load_icon(16, "gtk-media-previous-ltr", "media-skip-backward")
+media_rewind = load_icon(16, "gtk-media-rewind-ltr", "media-seek-backward")
+media_forward = load_icon(16, "gtk-media-forward-ltr", "media-seek-forward")
+media_next = load_icon(16, "gtk-media-next-ltr", "media-skip-forward")
+
+
+def createImage(pixbuf):
+    image = Gtk.Image()
+    image.set_from_pixbuf(pixbuf)
+    return image
 
 
 class GameList(Gtk.TreeView):
@@ -64,30 +76,35 @@ class GameList(Gtk.TreeView):
         self.ply = 0
 
         #  buttons
-        toolbar = Gtk.Toolbar()
+        startbut = Gtk.Button()
+        startbut.add(createImage(media_previous))
 
-        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
-        toolbar.insert(firstButton, -1)
+        backbut = Gtk.Button()
+        backbut.add(createImage(media_rewind))
 
-        prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
-        toolbar.insert(prevButton, -1)
+        forwbut = Gtk.Button()
+        forwbut.add(createImage(media_forward))
 
-        nextButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_FORWARD)
-        toolbar.insert(nextButton, -1)
+        endbut = Gtk.Button()
+        endbut.add(createImage(media_next))
 
-        lastButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_NEXT)
-        toolbar.insert(lastButton, -1)
+        button_box = Gtk.Box()
 
-        firstButton.connect("clicked", self.on_first_clicked)
-        prevButton.connect("clicked", self.on_prev_clicked)
-        nextButton.connect("clicked", self.on_next_clicked)
-        lastButton.connect("clicked", self.on_last_clicked)
+        self.label = Gtk.Label(_("Empty"))
 
-        tool_box = Gtk.Box()
-        tool_box.pack_start(toolbar, False, False, 0)
+        button_box.pack_start(startbut, True, True, 0)
+        button_box.pack_start(backbut, True, True, 0)
+        button_box.pack_start(self.label, True, True, 0)
+        button_box.pack_start(forwbut, True, True, 0)
+        button_box.pack_start(endbut, True, True, 0)
+
+        startbut.connect("clicked", self.on_start_button)
+        backbut.connect("clicked", self.on_back_button)
+        forwbut.connect("clicked", self.on_forward_button)
+        endbut.connect("clicked", self.on_end_button)
 
         self.progress_dock = Gtk.Alignment()
-        tool_box.pack_start(self.progress_dock, True, True, 0)
+        button_box.pack_start(self.progress_dock, True, True, 0)
 
         sw = Gtk.ScrolledWindow()
         sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
@@ -96,7 +113,7 @@ class GameList(Gtk.TreeView):
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         self.box.pack_start(sw, True, True, 0)
-        self.box.pack_start(tool_box, False, True, 0)
+        self.box.pack_start(button_box, False, False, 0)
         self.box.show_all()
 
     def on_chessfile_opened(self, persp, chessfile):
@@ -114,21 +131,21 @@ class GameList(Gtk.TreeView):
             self.chessfiles.remove(self.chessfile)
             self.chessfile.close()
 
-    def on_first_clicked(self, widget):
+    def on_start_button(self, widget):
         self.offset = 0
         self.load_games()
 
-    def on_prev_clicked(self, widget):
+    def on_back_button(self, widget):
         if self.offset - self.LIMIT >= 0:
             self.offset = self.offset - self.LIMIT
             self.load_games()
 
-    def on_next_clicked(self, widget):
+    def on_forward_button(self, widget):
         if self.offset + self.LIMIT < self.chessfile.count:
             self.offset = self.offset + self.LIMIT
             self.load_games()
 
-    def on_last_clicked(self, widget):
+    def on_end_button(self, widget):
         if self.offset + self.LIMIT == self.chessfile.count:
             return
         if self.chessfile.count % self.LIMIT == 0:
@@ -179,6 +196,7 @@ class GameList(Gtk.TreeView):
                  round_, length, eco, tc, variant, fen])
 
         self.set_cursor(0)
+        self.update_count()
 
     def row_activated(self, widget, path, col):
         game_id = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
@@ -199,3 +217,8 @@ class GameList(Gtk.TreeView):
         game_handler.generalStart(self.gamemodel, p0, p1)
 
         perspective_manager.activate_perspective("games")
+
+    def update_count(self):
+        self.chessfile.update_count()
+        self.label.set_text("%s - %s / %s" % (self.offset, self.offset + self.LIMIT, self.chessfile.count))
+        self.label.show()

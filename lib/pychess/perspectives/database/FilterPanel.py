@@ -22,4 +22,4 @@ class FilterPanel:
         self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
         self.gamelist.load_games()
-        self.gamelist.chessfile.update_count()
+        self.gamelist.update_count()

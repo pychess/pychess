@@ -114,7 +114,7 @@ class OpeningTreePanel(Gtk.TreeView):
         lmove = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
         self.board.applyMove(lmove)
         self.update_tree()
-        self.gamelist.chessfile.update_count()
+        self.gamelist.update_count()
 
     def update_tree(self, load_games=True):
         bb = self.board.friends[0] | self.board.friends[1]

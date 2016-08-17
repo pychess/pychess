@@ -5,20 +5,8 @@ from gi.repository import Gtk
 
 from pychess.Utils.const import FEN_EMPTY
 from pychess.Utils.Board import Board
-from pychess.Utils.IconLoader import load_icon
 from pychess.widgets.BoardView import BoardView
 from pychess.Savers.ChessFile import LoadingError
-
-
-def createImage(pixbuf):
-    image = Gtk.Image()
-    image.set_from_pixbuf(pixbuf)
-    return image
-
-media_previous = load_icon(16, "gtk-media-previous-ltr", "media-skip-backward")
-media_rewind = load_icon(16, "gtk-media-rewind-ltr", "media-seek-backward")
-media_forward = load_icon(16, "gtk-media-forward-ltr", "media-seek-forward")
-media_next = load_icon(16, "gtk-media-next-ltr", "media-skip-forward")
 
 
 class PreviewPanel:
@@ -31,31 +19,30 @@ class PreviewPanel:
         self.conid = selection.connect_after('changed', self.on_selection_changed)
         self.gamelist.preview_cid = self.conid
 
-        startbut = Gtk.Button()
-        startbut.add(createImage(media_previous))
+        # buttons
+        toolbar = Gtk.Toolbar()
 
-        backbut = Gtk.Button()
-        backbut.add(createImage(media_rewind))
+        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
+        toolbar.insert(firstButton, -1)
 
-        forwbut = Gtk.Button()
-        forwbut.add(createImage(media_forward))
+        prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
+        toolbar.insert(prevButton, -1)
 
-        endbut = Gtk.Button()
-        endbut.add(createImage(media_next))
+        nextButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_FORWARD)
+        toolbar.insert(nextButton, -1)
 
-        button_hbox = Gtk.Box()
+        lastButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_NEXT)
+        toolbar.insert(lastButton, -1)
 
-        button_hbox.pack_start(startbut, True, True, 0)
-        button_hbox.pack_start(backbut, True, True, 0)
-        button_hbox.pack_start(forwbut, True, True, 0)
-        button_hbox.pack_start(endbut, True, True, 0)
+        firstButton.connect("clicked", self.on_first_clicked)
+        prevButton.connect("clicked", self.on_prev_clicked)
+        nextButton.connect("clicked", self.on_next_clicked)
+        lastButton.connect("clicked", self.on_last_clicked)
 
-        startbut.connect("clicked", self.on_start_button)
-        backbut.connect("clicked", self.on_back_button)
-        forwbut.connect("clicked", self.on_forward_button)
-        endbut.connect("clicked", self.on_end_button)
+        tool_box = Gtk.Box()
+        tool_box.pack_start(toolbar, False, False, 0)
 
-        # Add the board
+        # board
         self.boardview = BoardView(preview=True)
         self.boardview.set_size_request(170, 170)
 
@@ -64,7 +51,7 @@ class PreviewPanel:
         self.boardview.auto_update_shown = False
 
         self.box.pack_start(self.boardview, True, True, 0)
-        self.box.pack_start(button_hbox, False, False, 0)
+        self.box.pack_start(tool_box, False, True, 0)
         self.box.show_all()
 
         # force first game to show
@@ -98,21 +85,20 @@ class PreviewPanel:
 
             self.boardview.lastMove = None
             self.boardview._shown = self.gamemodel.lowply
-            last = self.gamemodel.ply
         finally:
             self.boardview.animation_lock.release()
 
         self.boardview.redrawCanvas()
         self.boardview.shown = self.gamelist.ply
 
-    def on_start_button(self, button):
+    def on_first_clicked(self, button):
         self.boardview.showFirst()
 
-    def on_back_button(self, button):
+    def on_prev_clicked(self, button):
         self.boardview.showPrev()
 
-    def on_forward_button(self, button):
+    def on_next_clicked(self, button):
         self.boardview.showNext()
 
-    def on_end_button(self, button):
+    def on_last_clicked(self, button):
         self.boardview.showLast()
