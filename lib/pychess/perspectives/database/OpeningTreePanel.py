@@ -8,6 +8,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toSAN
 from pychess.Utils.const import FEN_START, WHITE
 from pychess.perspectives import perspective_manager
+from pychess.Savers.database import Database
 
 
 class OpeningTreePanel(Gtk.TreeView):
@@ -15,8 +16,10 @@ class OpeningTreePanel(Gtk.TreeView):
         GObject.GObject.__init__(self)
         self.gamelist = gamelist
 
-        persp = perspective_manager.get_perspective("database")
-        persp.connect("chessfile_opened", self.on_chessfile_opened)
+        self.persp = perspective_manager.get_perspective("database")
+        self.persp.connect("chessfile_opened", self.on_chessfile_opened)
+        self.persp.connect("chessfile_switched", self.on_chessfile_switched)
+        self.persp.connect("chessfile_imported", self.on_chessfile_imported)
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
@@ -84,6 +87,15 @@ class OpeningTreePanel(Gtk.TreeView):
     def on_chessfile_opened(self, persp, chessfile):
         self.update_tree(load_games=False)
 
+    def on_chessfile_switched(self, switcher, chessfile):
+        if isinstance(chessfile, Database):
+            self.update_tree()
+        else:
+            self.clear_tree()
+
+    def on_chessfile_imported(self, persp, chessfile):
+            self.update_tree()
+
     def on_first_clicked(self, widget):
         while self.board.hist_move:
             self.board.popMove()
@@ -134,14 +146,17 @@ class OpeningTreePanel(Gtk.TreeView):
                 # print("KeyError", bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg)
                 pass
 
+        self.clear_tree()
+
+        for lmove, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in result:
+            perf = round((white_won * 100. + draw * 50.) / count)
+            elo_avg = white_elo_avg if self.board.color == WHITE else black_elo_avg
+            self.liststore.append([lmove, toSAN(self.board, lmove), count, perf, elo_avg])
+
+    def clear_tree(self):
         selection = self.get_selection()
         if self.conid is not None and selection.handler_is_connected(self.conid):
             with GObject.signal_handler_block(selection, self.conid):
                 self.liststore.clear()
         else:
             self.liststore.clear()
-
-        for lmove, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in result:
-            perf = round((white_won * 100. + draw * 50.) / count)
-            elo_avg = white_elo_avg if self.board.color == WHITE else black_elo_avg
-            self.liststore.append([lmove, toSAN(self.board, lmove), count, perf, elo_avg])

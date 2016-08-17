@@ -16,6 +16,10 @@ CLIPBASE = "Clipbase"
 
 
 class SwitcherPanel(Gtk.IconView):
+    __gsignals__ = {
+        'chessfile_switched': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+    }
+
     def __init__(self, gamelist):
         GObject.GObject.__init__(self)
         self.gamelist = gamelist
@@ -59,6 +63,7 @@ class SwitcherPanel(Gtk.IconView):
             self.persp.import_button.set_sensitive(True)
         else:
             self.persp.import_button.set_sensitive(False)
+        self.emit("chessfile_switched", chessfile)
 
     def on_chessfile_opened(self, persp, chessfile):
         name, ext = os.path.splitext(chessfile.path)

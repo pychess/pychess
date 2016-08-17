@@ -26,6 +26,7 @@ class Database(GObject.GObject, Perspective):
         'chessfile_opened': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'chessfile_closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
         'chessfile_imported': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+        'chessfile_switched': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
     }
 
     def __init__(self):
@@ -116,6 +117,8 @@ class Database(GObject.GObject, Perspective):
 
         perspective_manager.set_perspective_toolbuttons("database", [self.import_button, self.close_button])
 
+        self.switcher_panel.connect("chessfile_switched", self.on_chessfile_switched)
+
     def open_chessfile(self, filename):
         if filename.endswith(".pdb"):
             chessfile = database.load(filename)
@@ -136,6 +139,9 @@ class Database(GObject.GObject, Perspective):
 
     def close(self, widget):
         self.emit("chessfile_closed")
+
+    def on_chessfile_switched(self, switcher, chessfile):
+        self.emit("chessfile_switched", chessfile)
 
     def on_import_clicked(self, widget):
         dialog = Gtk.FileChooserDialog(
