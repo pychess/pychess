@@ -302,8 +302,8 @@ class PgnImport():
                     white_fide_id = get_tag(i, 'WhiteFideId')
                     black_fide_id = get_tag(i, 'BlackFideId')
 
-                    white_id = get_id(white, player, PLAYER, fide_id=white_fide_id)
-                    black_id = get_id(black, player, PLAYER, fide_id=black_fide_id)
+                    white_id = get_id(unicode(white), player, PLAYER, fide_id=white_fide_id)
+                    black_id = get_id(unicode(black), player, PLAYER, fide_id=black_fide_id)
 
                     result = cf.get_result(i)
 
