@@ -217,7 +217,10 @@ class Database(PGNFile):
     def get_info(self, gameno):
         where = and_(game.c.source_id == source.c.id, game.c.id == self.games[gameno][0])
         result = self.engine.execute(select([source.c.info]).where(where)).first()
-        return result[0]
+        if result is None:
+            return None
+        else:
+            return result[0]
 
     def get_movetext(self, gameno):
         selection = select([game.c.movelist, game.c.comments],

@@ -12,10 +12,8 @@ from array import array
 
 from gi.repository import GLib, GObject
 
-from sqlalchemy import select, func, and_
+from sqlalchemy import bindparam, select, func, and_
 from sqlalchemy.exc import ProgrammingError
-# from sqlalchemy import Index
-# from sqlalchemy.schema import DropIndex
 
 from pychess.compat import unicode, urlopen, HTTPError, URLError
 from pychess.Utils.const import FEN_START, reprResult
@@ -96,6 +94,8 @@ class PgnImport():
         s = select([player.c.fideid, player.c.id])
         self.fideid_dict = dict([(p[0], p[1]) for p in self.conn.execute(s)])
 
+        self.perfix_stmt = select([player.c.id]).where(player.c.name.startswith(bindparam('name')))
+
     def get_id(self, name, name_table, field, fide_id=None, info=None):
         if not name:
             return None
@@ -123,14 +123,24 @@ class PgnImport():
 
         if name in name_dict:
             return name_dict[name]
+        #elif field == PLAYER:
+            #result = None
+            #trans = self.conn.begin()
+            #try:
+                #result = self.engine.execute(self.perfix_stmt, name=name).first()
+                #trans.commit()
+            #except:
+                #trans.rollback()
+            #if result is not None:
+                #return result[0]
+
+        if field == SOURCE:
+            name_data.append({'name': orig_name, 'info': info})
         else:
-            if field == SOURCE:
-                name_data.append({'name': orig_name, 'info': info})
-            else:
-                name_data.append({'name': orig_name})
-            name_dict[name] = self.next_id[field]
-            self.next_id[field] += 1
-            return name_dict[name]
+            name_data.append({'name': orig_name})
+        name_dict[name] = self.next_id[field]
+        self.next_id[field] += 1
+        return name_dict[name]
 
     def ini_names(self, name_table, field):
         if field != GAME:

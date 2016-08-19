@@ -152,12 +152,14 @@ class Database(GObject.GObject, Perspective):
         twic = []
 
         pgn = "https://github.com/rozim/ChessData/raw/master/Twic/fix-twic%s.pgn"
-        for i in range(210, 920):
-            twic.append((htm % i, pgn % i),)
+        #for i in range(210, 920):
+            #twic.append((htm % i, pgn % i),)
 
         pgn = "http://www.theweekinchess.com/zips/twic%sg.zip"
-        for i in range(920, 1136 + 1):
-            twic.append((htm % i, pgn % i),)
+        #for i in range(920, 1136 + 1):
+            #twic.append((htm % i, pgn % i),)
+
+        twic = [htm % "1136", pgn % "1136"]
         self.do_import(twic)
 
     def on_update_players(self):
