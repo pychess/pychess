@@ -21,6 +21,7 @@ from pychess.Savers.pgn import move_count
 from pychess.Savers.pgnbase import nag2symbol
 from pychess.widgets.Background import set_textview_color
 from pychess.widgets.ChessClock import formatTime
+from pychess.widgets import insert_formatted
 
 __title__ = _("Annotation")
 __active__ = True
@@ -951,12 +952,16 @@ class Sidepanel:
         return node
 
     def insert_header(self, gm):
+        end_iter = self.textbuffer.get_end_iter
+
+        if gm.info is not None:
+            insert_formatted(self.textview, end_iter(), gm.info)
+            self.textbuffer.insert(end_iter(), "\n")
 
         if gm.players:
             text = repr(gm.players[0])
         else:
             return
-        end_iter = self.textbuffer.get_end_iter
 
         self.textbuffer.insert_with_tags_by_name(end_iter(), text, "head2")
         white_elo = gm.tags.get('WhiteElo')
@@ -1026,20 +1031,15 @@ class Sidepanel:
 
         eco = gm.tags.get('ECO')
         if eco:
-            self.textbuffer.insert_with_tags_by_name(end_iter(), "\n" + eco,
-                                                     "head2")
+            self.textbuffer.insert_with_tags_by_name(end_iter(), "\n" + eco, "head2")
             opening = gm.tags.get('Opening')
             if opening:
-                self.textbuffer.insert_with_tags_by_name(end_iter(), " - ",
-                                                         "head1")
-                self.textbuffer.insert_with_tags_by_name(end_iter(), opening,
-                                                         "head2")
+                self.textbuffer.insert_with_tags_by_name(end_iter(), " - ", "head1")
+                self.textbuffer.insert_with_tags_by_name(end_iter(), opening, "head2")
             variation = gm.tags.get('Variation')
             if variation:
-                self.textbuffer.insert_with_tags_by_name(end_iter(), ", ",
-                                                         "head1")
-                self.textbuffer.insert_with_tags_by_name(end_iter(), variation,
-                                                         "head2")
+                self.textbuffer.insert_with_tags_by_name(end_iter(), ", ", "head1")
+                self.textbuffer.insert_with_tags_by_name(end_iter(), variation, "head2")
 
         self.textbuffer.insert(end_iter(), "\n\n")
 

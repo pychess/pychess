@@ -17,6 +17,7 @@ from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import EAST, SOUTH, CENTER, NORTH
 from pychess.widgets import dock_panel_tab
 from pychess.Database.PgnImport import PgnImport
+from pychess.Database.JvR import JvR
 from pychess.Savers import database, pgn, fen, epd
 from pychess.System.protoopen import protoopen
 
@@ -143,6 +144,35 @@ class Database(GObject.GObject, Perspective):
     def on_chessfile_switched(self, switcher, chessfile):
         self.emit("chessfile_switched", chessfile)
 
+    def on_import_endgame_nl(self):
+        self.do_import(JvR)
+
+    def on_import_twic(self):
+        htm = "http://www.theweekinchess.com/html/twic%s.html"
+        twic = []
+
+        pgn = "https://github.com/rozim/ChessData/raw/master/Twic/fix-twic%s.pgn"
+        for i in range(210, 920):
+            twic.append((htm % i, pgn % i),)
+
+        pgn = "http://www.theweekinchess.com/zips/twic%sg.zip"
+        for i in range(920, 1136 + 1):
+            twic.append((htm % i, pgn % i),)
+        self.do_import(twic)
+
+    def on_update_players(self):
+        self.gamelist.progress_dock.add(self.progressbar)
+        self.gamelist.progress_dock.show_all()
+
+        def importing():
+            importer = PgnImport(self.gamelist.chessfile.engine)
+            importer.update_players(progressbar=self.progressbar)
+            GLib.idle_add(self.gamelist.progress_dock.remove, self.progressbar)
+
+        thread = threading.Thread(target=importing)
+        thread.daemon = True
+        thread.start()
+
     def on_import_clicked(self, widget):
         dialog = Gtk.FileChooserDialog(
             _("Open chess file"), None, Gtk.FileChooserAction.OPEN,
@@ -173,7 +203,11 @@ class Database(GObject.GObject, Perspective):
         def importing():
             importer = PgnImport(self.gamelist.chessfile.engine)
             for filename in filenames:
-                importer.do_import(filename, self.progressbar)
+                if isinstance(filename, tuple):
+                    info_link, pgn_link = filename
+                    importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar)
+                else:
+                    importer.do_import(filename, progressbar=self.progressbar)
             self.gamelist.offset = 0
             self.gamelist.chessfile.build_where_tags("")
             self.gamelist.chessfile.build_where_bitboards(0, 0)

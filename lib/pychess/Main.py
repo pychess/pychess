@@ -320,6 +320,20 @@ class GladeHandlers(object):
     def on_preferences_activate(self, widget):
         preferencesDialog.run(gamewidget.getWidgets())
 
+    # Tools menu
+
+    def on_import_endgame_nl_activate(self, widget):
+        perspective = perspective_manager.get_perspective("database")
+        perspective.on_import_endgame_nl()
+
+    def on_import_twic_activate(self, widget):
+        perspective = perspective_manager.get_perspective("database")
+        perspective.on_import_twic()
+
+    def on_update_players_activate(self, widget):
+        perspective = perspective_manager.get_perspective("database")
+        perspective.on_update_players()
+
     # Help menu
 
     def on_about_chess1_activate(self, widget):

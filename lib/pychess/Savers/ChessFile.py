@@ -98,3 +98,7 @@ class ChessFile:
 
     def get_bitboards(self, ply, prev_bb):
         return []
+
+    def get_info(self, gameno):
+        return None
+

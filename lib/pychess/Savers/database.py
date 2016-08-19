@@ -15,7 +15,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
 from pychess.Database.model import DB_MAXINT_SHIFT
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
-from pychess.Database.model import game, event, site, player, pl1, pl2, annotator, bitboard
+from pychess.Database.model import game, event, site, player, pl1, pl2, annotator, bitboard, source
 from pychess.Variants import variants
 
 __label__ = _("PyChess database")
@@ -213,6 +213,11 @@ class Database(PGNFile):
 
     def get_id(self, gameno):
         return self.games[gameno]["Id"]
+
+    def get_info(self, gameno):
+        where = and_(game.c.source_id == source.c.id, game.c.id == self.games[gameno][0])
+        result = self.engine.execute(select([source.c.info]).where(where)).first()
+        return result[0]
 
     def get_movetext(self, gameno):
         selection = select([game.c.movelist, game.c.comments],

@@ -9,6 +9,7 @@ from gi.repository.GdkPixbuf import Pixbuf
 from pychess.perspectives import perspective_manager
 from pychess.Utils.IconLoader import load_icon
 from pychess.Savers.database import Database
+from pychess.System import uistuff
 
 pdb_icon = load_icon(32, "pychess")
 pgn_icon = load_icon(32, "application-x-chess-pgn", "pychess")
@@ -23,6 +24,7 @@ class SwitcherPanel(Gtk.IconView):
     def __init__(self, gamelist):
         GObject.GObject.__init__(self)
         self.gamelist = gamelist
+        self.widgets = uistuff.GladeWidgets("PyChess.glade")
 
         self.persp = perspective_manager.get_perspective("database")
         self.persp.connect("chessfile_opened", self.on_chessfile_opened)
@@ -61,8 +63,13 @@ class SwitcherPanel(Gtk.IconView):
 
         if isinstance(chessfile, Database):
             self.persp.import_button.set_sensitive(True)
+            # TODO: fix it to work
+            self.widgets["import_endgame_nl"].set_property('sensitive', True)
+            self.widgets["import_twic"].set_property('sensitive', True)
         else:
             self.persp.import_button.set_sensitive(False)
+            self.widgets["import_endgame_nl"].set_property('sensitive', False)
+            self.widgets["import_twic"].set_property('sensitive', False)
         self.emit("chessfile_switched", chessfile)
 
     def on_chessfile_opened(self, persp, chessfile):

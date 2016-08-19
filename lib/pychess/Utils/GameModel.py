@@ -188,13 +188,17 @@ class GameModel(GObject.GObject, Thread):
             # loading from pgn. If you want to know the time left for a player,
             # check the time model.
 
-            # Keeps track of offers, so that accepts can be spotted
+        # Keeps track of offers, so that accepts can be spotted
         self.offers = {}
+
         # True if the game has been changed since last save
         self.needsSave = False
-        # The uri the current game was loaded from, or None if not a loaded
-        # game
+
+        # The uri the current game was loaded from, or None if not a loaded game
         self.uri = None
+
+        # Link to additiona info
+        self.info = None
 
         self.spectators = {}
 

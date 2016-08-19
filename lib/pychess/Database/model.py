@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
+from sqlalchemy import create_engine, MetaData, Table, Column, UniqueConstraint, Integer,\
     String, SmallInteger, BigInteger, LargeBinary, UnicodeText, ForeignKey, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.pool import StaticPool
@@ -54,6 +54,13 @@ def get_engine(path=None, dialect="sqlite", echo=False):
 
 metadata = MetaData()
 
+source = Table(
+    'source', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('name', String(256)),
+    Column('info', String(256))
+)
+
 event = Table(
     'event', metadata,
     Column('id', Integer, primary_key=True),
@@ -76,11 +83,13 @@ player = Table(
     'player', metadata,
     Column('id', Integer, primary_key=True),
     Column('name', String(256), index=True),
-    Column('fideid', Integer),
+    Column('fideid', String(14), index=True),
     Column('fed', String(3)),
+    Column('sex', String(1)),
     Column('title', String(3)),
     Column('elo', SmallInteger),
     Column('born', Integer),
+    UniqueConstraint('name', 'fideid', name='unique_1'),
 )
 
 pl1 = player.alias()
@@ -108,6 +117,7 @@ game = Table(
     Column('variant', SmallInteger),
     Column('termination', SmallInteger),
     Column('annotator_id', Integer, ForeignKey('annotator.id'), index=True),
+    Column('source_id', Integer, ForeignKey('source.id'), index=True),
     Column('movelist', LargeBinary),
     Column('comments', UnicodeText)
 )

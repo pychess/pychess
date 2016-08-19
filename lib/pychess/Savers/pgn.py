@@ -341,6 +341,8 @@ class PGNFile(PgnBase):
             else:
                 model.tags[tag] = ""
 
+        model.info = self.get_info(gameno)
+
         # TODO: enable this when NewGameDialog is altered to give user option of
         # whether to use PGN's clock time, or their own custom time. Also,
         # dialog should set+insensitize variant based on the variant of the

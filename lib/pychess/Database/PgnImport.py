@@ -6,6 +6,7 @@ from __future__ import print_function
 import io
 import os
 import sys
+import tempfile
 import zipfile
 from array import array
 
@@ -16,7 +17,7 @@ from sqlalchemy.exc import ProgrammingError
 # from sqlalchemy import Index
 # from sqlalchemy.schema import DropIndex
 
-from pychess.compat import unicode
+from pychess.compat import unicode, urlopen, HTTPError, URLError
 from pychess.Utils.const import FEN_START, reprResult
 from pychess.Variants import name2variant
 # from pychess.System import profile_me
@@ -26,10 +27,10 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import pgn_load
 from pychess.Database.dbwalk import walk
 from pychess.Database.model import DB_MAXINT_SHIFT, \
-    event, site, player, game, annotator, bitboard, tag_game
+    event, site, player, game, annotator, bitboard, tag_game, source
 
 
-GAME, EVENT, SITE, PLAYER, ANNOTATOR = range(5)
+GAME, EVENT, SITE, PLAYER, ANNOTATOR, SOURCE = range(6)
 
 removeDic = {
     ord(u"'"): None,
@@ -38,6 +39,28 @@ removeDic = {
     ord(u"-"): None,
     ord(u" "): None,
 }
+
+
+def download_file(url, progressbar=None):
+    temp_file = None
+    try:
+        if progressbar is not None:
+            GLib.idle_add(progressbar.set_text, "Downloading %s ..." % url)
+        else:
+            print("Downloading %s ..." % url)
+        f = urlopen(url)
+
+        temp_file = os.path.join(tempfile.gettempdir(), os.path.basename(url))
+        with open(temp_file, "wb") as local_file:
+            local_file.write(f.read())
+
+    except HTTPError as e:
+        print("HTTP Error:", e.code, url)
+
+    except URLError as e:
+        print("URL Error:", e.reason, url)
+
+    return temp_file
 
 
 class PgnImport():
@@ -50,6 +73,7 @@ class PgnImport():
         self.ins_site = site.insert()
         self.ins_player = player.insert()
         self.ins_annotator = annotator.insert()
+        self.ins_source = source.insert()
         self.ins_game = game.insert()
         self.ins_bitboard = bitboard.insert()
         self.ins_tag_game = tag_game.insert()
@@ -58,18 +82,26 @@ class PgnImport():
         self.site_dict = {}
         self.player_dict = {}
         self.annotator_dict = {}
+        self.source_dict = {}
 
-        self.next_id = [0, 0, 0, 0, 0]
+        self.next_id = [0, 0, 0, 0, 0, 0]
 
         self.next_id[GAME] = self.ini_names(game, GAME)
         self.next_id[EVENT] = self.ini_names(event, EVENT)
         self.next_id[SITE] = self.ini_names(site, SITE)
         self.next_id[PLAYER] = self.ini_names(player, PLAYER)
         self.next_id[ANNOTATOR] = self.ini_names(annotator, ANNOTATOR)
+        self.next_id[SOURCE] = self.ini_names(source, SOURCE)
 
-    def get_id(self, name, name_table, field):
+        s = select([player.c.fideid, player.c.id])
+        self.fideid_dict = dict([(p[0], p[1]) for p in self.conn.execute(s)])
+
+    def get_id(self, name, name_table, field, fide_id=None, info=None):
         if not name:
             return None
+
+        if fide_id is not None and fide_id in self.fideid_dict:
+            return self.fideid_dict[fide_id]
 
         orig_name = name
         if field == EVENT:
@@ -81,16 +113,21 @@ class PgnImport():
         elif field == ANNOTATOR:
             name_dict = self.annotator_dict
             name_data = self.annotator_data
+        elif field == SOURCE:
+            name_dict = self.source_dict
+            name_data = self.source_data
         elif field == PLAYER:
             name_dict = self.player_dict
             name_data = self.player_data
-
             name = name.title().translate(removeDic)
 
         if name in name_dict:
             return name_dict[name]
         else:
-            name_data.append({'name': orig_name})
+            if field == SOURCE:
+                name_data.append({'name': orig_name, 'info': info})
+            else:
+                name_data.append({'name': orig_name})
             name_dict[name] = self.next_id[field]
             self.next_id[field] += 1
             return name_dict[name]
@@ -109,6 +146,8 @@ class PgnImport():
                 self.player_dict = name_dict
             elif field == ANNOTATOR:
                 self.annotator_dict = name_dict
+            elif field == SOURCE:
+                self.ource_dict = name_dict
 
         s = select([func.max(name_table.c.id).label('maxid')])
         maxid = self.conn.execute(s).scalar()
@@ -127,24 +166,28 @@ class PgnImport():
             return False
 
     # @profile_me
-    def do_import(self, filename, progressbar=None):
+    def do_import(self, filename, info=None, progressbar=None):
         self.progressbar = progressbar
-        if progressbar:
+        if progressbar is not None:
             self.pulse = True
             self.timeout_id = GObject.timeout_add(50, self.on_timeout, None)
-
-        print("Starting to import %s" % filename, os.path.getsize(filename))
 
         # collect new names not in they dict yet
         self.event_data = []
         self.site_data = []
         self.player_data = []
         self.annotator_data = []
+        self.source_data = []
 
         # collect new games and commit them in big chunks for speed
         self.game_data = []
         self.bitboard_data = []
         self.tag_game_data = []
+
+        if filename.startswith("http://"):
+            filename = download_file(filename, progressbar=progressbar)
+            if filename is None:
+                return
 
         if filename.lower().endswith(".zip") and zipfile.is_zipfile(filename):
             zf = zipfile.ZipFile(filename, "r")
@@ -155,7 +198,7 @@ class PgnImport():
 
         for pgnfile in files:
             basename = os.path.basename(pgnfile)
-            if progressbar:
+            if progressbar is not None:
                 GLib.idle_add(progressbar.set_text, "Reading %s ..." % basename)
             else:
                 print("Reading %s ..." % pgnfile)
@@ -166,7 +209,7 @@ class PgnImport():
                 pgn_file = io.TextIOWrapper(zf.open(pgnfile), encoding=PGN_ENCODING, newline='')
                 cf = pgn_load(pgn_file)
 
-            if progressbar:
+            if progressbar is not None:
                 self.pulse = False
 
             all_games = len(cf.games)
@@ -256,8 +299,11 @@ class PgnImport():
 
                     game_round = get_tag(i, 'Round')
 
-                    white_id = get_id(white, player, PLAYER)
-                    black_id = get_id(black, player, PLAYER)
+                    white_fide_id = get_tag(i, 'WhiteFideId')
+                    black_fide_id = get_tag(i, 'BlackFideId')
+
+                    white_id = get_id(white, player, PLAYER, fide_id=white_fide_id)
+                    black_id = get_id(black, player, PLAYER, fide_id=black_fide_id)
 
                     result = cf.get_result(i)
 
@@ -279,6 +325,8 @@ class PgnImport():
                     board_tag = get_tag(i, "Board")
 
                     annotator_id = get_id(get_tag(i, "Annotator"), annotator, ANNOTATOR)
+
+                    source_id = get_id(unicode(pgnfile), source, SOURCE, info=info)
 
                     game_id = self.next_id[GAME]
                     self.next_id[GAME] += 1
@@ -313,6 +361,7 @@ class PgnImport():
                         'board': board_tag,
                         'time_control': time_control,
                         'annotator_id': annotator_id,
+                        'source_id': source_id,
                         'movelist': movelist.tostring(),
                         'comments': unicode("|".join(comments)),
                     })
@@ -336,6 +385,10 @@ class PgnImport():
                                               self.annotator_data)
                             self.annotator_data = []
 
+                        if self.source_data:
+                            self.conn.execute(self.ins_source, self.source_data)
+                            self.source_data = []
+
                         self.conn.execute(self.ins_game, self.game_data)
                         self.game_data = []
 
@@ -343,7 +396,7 @@ class PgnImport():
                             self.conn.execute(self.ins_bitboard, self.bitboard_data)
                             self.bitboard_data = []
 
-                        if progressbar:
+                        if progressbar is not None:
                             GLib.idle_add(progressbar.set_fraction, (i + 1) / float(all_games))
                             GLib.idle_add(progressbar.set_text, "%s / %s from %s imported" % (i + 1, all_games, basename))
                         else:
@@ -365,6 +418,10 @@ class PgnImport():
                     self.conn.execute(self.ins_annotator, self.annotator_data)
                     self.annotator_data = []
 
+                if self.source_data:
+                    self.conn.execute(self.ins_source, self.source_data)
+                    self.source_data = []
+
                 if self.game_data:
                     self.conn.execute(self.ins_game, self.game_data)
                     self.game_data = []
@@ -373,7 +430,7 @@ class PgnImport():
                     self.conn.execute(self.ins_bitboard, self.bitboard_data)
                     self.bitboard_data = []
 
-                if progressbar:
+                if progressbar is not None:
                     GLib.idle_add(progressbar.set_fraction, (i + 1) / float(all_games))
                     GLib.idle_add(progressbar.set_text, "%s / %s from %s imported" % (i + 1, all_games, basename))
                 else:
@@ -384,40 +441,52 @@ class PgnImport():
                 trans.rollback()
                 print("Importing %s failed! %s" % (file, e))
 
-    def import_FIDE_players(self):
-        # print 'drop index'
-        # idx = Index('ix_player_name', player.c.name)
-        # self.conn.execute(DropIndex(idx))
-        # print 'import FIDE players'
-        # import_players()
-        # print 'create index'
-        # idx = Index('ix_player_name', player.c.name)
-        # idx.create(engine)
+    def update_players(self, progressbar=None):
+        self.progressbar = progressbar
+        if progressbar is not None:
+            self.pulse = True
+            self.timeout_id = GObject.timeout_add(50, self.on_timeout, None)
 
-        ins_player = player.insert()
+        filename = "http://ratings.fide.com/download/players_list.zip"
+        filename = download_file(filename, progressbar=progressbar)
+        if filename is None:
+            return
+
+        # TODO: this is Sqlite specific !!!
+        # can't use "OR UPDATE" because it delete+insert records
+        # and breaks referential integrity
+        ins_player = player.insert().prefix_with("OR IGNORE")
         player_data = []
-        with open("players_list.txt") as f:
+
+        zf = zipfile.ZipFile(filename, "r")
+        with zf.open("players_list_foa.txt") as f:
+            basename = os.path.basename(filename)
+            if progressbar is not None:
+                GLib.idle_add(progressbar.set_text, "Pocessing %s ..." % basename)
+            else:
+                print("Processing %s ..." % basename)
             # use transaction to avoid autocommit slowness
             trans = self.conn.begin()
             try:
-                for i, line in enumerate(f):
-                    if i == 0:
+                for line in f:
+                    if line.startswith("ID"):
                         continue
 
-                    elo = line[53:58].rstrip()
-                    elo = int(elo) if elo else None
-
-                    born = line[64:68].rstrip()
-                    born = int(born) if born else None
-
-                    title = line[44:46].rstrip()
+                    title = line[84:88].rstrip()
                     title = title if title else None
 
+                    elo = line[113:117].rstrip()
+                    elo = int(elo) if elo else None
+
+                    born = line[152:156].rstrip()
+                    born = int(born) if born else None
+
                     player_data.append({
-                        "fideid": int(line[:8]),
-                        "name": line[10:42].rstrip(),
+                        "fideid": int(line[:14]),
+                        "name": line[15:75].rstrip(),
+                        "fed": line[76:79],
+                        "sex": line[80:81],
                         "title": title,
-                        "fed": line[48:51],
                         "elo": elo,
                         "born": born,
                     })
@@ -425,12 +494,10 @@ class PgnImport():
                     if len(player_data) >= self.CHUNK:
                         self.conn.execute(ins_player, player_data)
                         player_data = []
-                        print(i)
 
                 if player_data:
                     self.conn.execute(ins_player, player_data)
 
-                print(i + 1)
                 trans.commit()
 
             except:
