@@ -203,6 +203,11 @@ class Sidepanel:
     def motion_notify_event(self, widget, event):
         """ Handles mouse cursor changes (standard/hand) """
 
+        if self.textview.get_window_type(event.window) not in (
+           Gtk.TextWindowType.TEXT, Gtk.TextWindowType.PRIVATE):
+            event.window.set_cursor(self.cursor_standard)
+            return True
+
         if (event.is_hint):
             # (x, y, state) = event.window.get_pointer()
             (ign, x, y, state) = event.window.get_pointer()
@@ -211,13 +216,15 @@ class Sidepanel:
             y = event.y
             # state = event.get_state()
 
-        if self.textview.get_window_type(
-                event.window) != Gtk.TextWindowType.TEXT:
-            event.window.set_cursor(self.cursor_standard)
-            return True
-
         (x, y) = self.textview.window_to_buffer_coords(
             Gtk.TextWindowType.WIDGET, int(x), int(y))
+
+        it_at_pos, trailing = self.textview.get_iter_at_position(x, y)
+
+        if it_at_pos.get_child_anchor() is not None:
+            event.window.set_cursor(self.cursor_hand)
+            return True
+
         it = self.textview.get_iter_at_location(x, y)
 
         # https://gramps-project.org/bugs/view.php?id=9335
