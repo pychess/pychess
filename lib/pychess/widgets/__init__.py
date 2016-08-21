@@ -1,6 +1,7 @@
 from gi.repository import Gtk
 
 from pychess.Utils.IconLoader import get_pixbuf
+# from pychess.widgets.WebKitBrowser import open_link
 
 
 def dock_panel_tab(title, desc, icon):
@@ -65,6 +66,7 @@ def insert_formatted(text_view, iter, text, tag=None):
         insert("%s " % " ".join(parts[:position]))
         label = Gtk.Label()
         label.set_markup(parts[position])
+        # label.connect("activate-link", open_link)
         label.show()
         anchor = tb.create_child_anchor(iter)
         text_view.add_child_at_anchor(label, anchor)
