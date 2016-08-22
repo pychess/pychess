@@ -2,7 +2,7 @@ import os
 import threading
 import traceback
 
-from gi.repository import Gtk, GLib, GObject
+from gi.repository import Gtk, GObject, GLib
 
 from pychess.compat import StringIO
 from pychess.System.Log import log
@@ -16,7 +16,7 @@ from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import EAST, SOUTH, CENTER, NORTH
 from pychess.widgets import dock_panel_tab
-from pychess.Database.PgnImport import PgnImport
+from pychess.Database.PgnImport import PgnImport, FIDEPlayersImport, download_file
 from pychess.Database.JvR import JvR
 from pychess.Savers import database, pgn, fen, epd
 from pychess.System.protoopen import protoopen
@@ -54,7 +54,13 @@ class Database(GObject.GObject, Perspective):
         self.filter_panel = FilterPanel(self.gamelist)
         self.preview_panel = PreviewPanel(self.gamelist)
 
+        self.progressbar0 = Gtk.ProgressBar(show_text=True)
         self.progressbar = Gtk.ProgressBar(show_text=True)
+        self.progress_dialog = Gtk.Dialog("Import", None, 0, (
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
+        self.progress_dialog.get_content_area().pack_start(self.progressbar0, True, True, 0)
+        self.progress_dialog.get_content_area().pack_start(self.progressbar, True, True, 0)
+        self.progress_dialog.get_content_area().show_all()
 
         perspective = perspective_manager.get_perspective("database")
 
@@ -147,39 +153,57 @@ class Database(GObject.GObject, Perspective):
     def on_import_endgame_nl(self):
         self.do_import(JvR)
 
+        response = self.progress_dialog.run()
+        if response == Gtk.ResponseType.CANCEL:
+            self.importer.do_cancel()
+        self.progress_dialog.hide()
+
     def on_import_twic(self):
-        htm = "http://www.theweekinchess.com/html/twic%s.html"
+        LATEST = get_latest_twic()
+        if LATEST is None:
+            return
+
+        html = "http://www.theweekinchess.com/html/twic%s.html"
         twic = []
 
-        pgn = "https://github.com/rozim/ChessData/raw/master/Twic/fix-twic%s.pgn"
-        #for i in range(210, 920):
-            #twic.append((htm % i, pgn % i),)
+        pgn = "https://raw.githubusercontent.com/rozim/ChessData/master/Twic/fix-twic%s.pgn"
+        # pgn = "/home/tamas/PGN/twic/twic%sg.zip"
+        for i in range(210, 920):
+            twic.append((html % i, pgn % i))
 
         pgn = "http://www.theweekinchess.com/zips/twic%sg.zip"
-        #for i in range(920, 1136 + 1):
-            #twic.append((htm % i, pgn % i),)
+        # pgn = "/home/tamas/PGN/twic/twic%sg.zip"
+        for i in range(920, LATEST + 1):
+            twic.append((html % i, pgn % i))
 
-        twic = [htm % "1136", pgn % "1136"]
+        twic.append((html % LATEST, pgn % LATEST))
+
         self.do_import(twic)
+        response = self.progress_dialog.run()
+        if response == Gtk.ResponseType.CANCEL:
+            self.importer.do_cancel()
+        self.progress_dialog.hide()
 
     def on_update_players(self):
-        self.gamelist.progress_dock.add(self.progressbar)
-        self.gamelist.progress_dock.show_all()
-
         def importing():
-            importer = PgnImport(self.gamelist.chessfile.engine)
-            importer.update_players(progressbar=self.progressbar)
-            GLib.idle_add(self.gamelist.progress_dock.remove, self.progressbar)
+            self.importer = FIDEPlayersImport(self.gamelist.chessfile.engine)
+            self.importer.import_players(progressbar=self.progressbar)
+            GLib.idle_add(self.progress_dialog.hide)
 
         thread = threading.Thread(target=importing)
         thread.daemon = True
         thread.start()
 
+        response = self.progress_dialog.run()
+        if response == Gtk.ResponseType.CANCEL:
+            self.importer.do_cancel()
+        self.progress_dialog.hide()
+
     def on_import_clicked(self, widget):
         dialog = Gtk.FileChooserDialog(
             _("Open chess file"), None, Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
-             Gtk.ResponseType.ACCEPT))
+             Gtk.ResponseType.OK))
         dialog.set_select_multiple(True)
 
         filter_text = Gtk.FileFilter()
@@ -192,33 +216,77 @@ class Database(GObject.GObject, Perspective):
         filter_text.add_mime_type("application/zip")
         dialog.add_filter(filter_text)
 
-        response = dialog.run()
-        if response == Gtk.ResponseType.ACCEPT:
-            filenames = dialog.get_filenames()
+        dialog = NestedFileChooserDialog(dialog)
+        filenames = dialog.run()
+        if filenames is not None:
             self.do_import(filenames)
-        dialog.destroy()
+
+            response = self.progress_dialog.run()
+            if response == Gtk.ResponseType.CANCEL:
+                self.importer.do_cancel()
+            self.progress_dialog.hide()
 
     def do_import(self, filenames):
-        self.gamelist.progress_dock.add(self.progressbar)
-        self.gamelist.progress_dock.show_all()
-
         def importing():
-            importer = PgnImport(self.gamelist.chessfile.engine)
-            for filename in filenames:
+            GLib.idle_add(self.progressbar.set_text, "Preparing to start import...")
+
+            self.importer = PgnImport(self.gamelist.chessfile.engine)
+            for i, filename in enumerate(filenames):
+                GLib.idle_add(self.progressbar0.set_fraction, (i + 1) / float(len(filenames)))
+                # GLib.idle_add(self.progressbar0.set_text, filename)
+                if self.importer.cancel:
+                    break
                 if isinstance(filename, tuple):
                     info_link, pgn_link = filename
-                    importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar)
+                    self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar)
                 else:
-                    importer.do_import(filename, progressbar=self.progressbar)
+                    self.importer.do_import(filename, progressbar=self.progressbar)
+
             self.gamelist.offset = 0
             self.gamelist.chessfile.build_where_tags("")
             self.gamelist.chessfile.build_where_bitboards(0, 0)
             self.gamelist.chessfile.build_query()
             self.gamelist.chessfile.update_count()
-            GLib.idle_add(self.gamelist.progress_dock.remove, self.progressbar)
             GLib.idle_add(self.gamelist.load_games)
             GLib.idle_add(self.emit, "chessfile_imported", self.gamelist.chessfile)
+            GLib.idle_add(self.progress_dialog.hide)
 
         thread = threading.Thread(target=importing)
         thread.daemon = True
         thread.start()
+
+
+class NestedFileChooserDialog(object):
+    def __init__(self, dialog):
+        self.dialog = dialog
+        self.filenames = None
+
+    def run(self):
+        self._run()
+        return self.filenames
+
+    def _run(self):
+        self.dialog.show()
+        self.dialog.connect("response", self._response)
+        Gtk.main()
+
+    def _response(self, dialog, response):
+        self.filenames = self.dialog.get_filenames()
+        self.dialog.destroy()
+        Gtk.main_quit()
+
+
+def get_latest_twic():
+    filename = download_file("http://www.theweekinchess.com/twic")
+    latest = None
+
+    if filename is None:
+        return latest
+
+    PREFIX = 'href="http://www.theweekinchess.com/html/twic'
+    with open(filename) as f:
+        for line in f:
+            if line.lstrip().startswith(PREFIX):
+                latest = int(line.strip()[len(PREFIX):-6])
+                break
+    return latest

@@ -10,10 +10,10 @@ import tempfile
 import zipfile
 from array import array
 
-from gi.repository import GLib, GObject
+from gi.repository import GObject, GLib
 
 from sqlalchemy import bindparam, select, func, and_
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import SQLAlchemyError
 
 from pychess.compat import unicode, urlopen, HTTPError, URLError
 from pychess.Utils.const import FEN_START, reprResult
@@ -66,6 +66,7 @@ class PgnImport():
         self.engine = engine
         self.conn = self.engine.connect()
         self.CHUNK = 1000
+        self.cancel = False
 
         self.ins_event = event.insert()
         self.ins_site = site.insert()
@@ -123,16 +124,17 @@ class PgnImport():
 
         if name in name_dict:
             return name_dict[name]
-        #elif field == PLAYER:
-            #result = None
-            #trans = self.conn.begin()
-            #try:
-                #result = self.engine.execute(self.perfix_stmt, name=name).first()
-                #trans.commit()
-            #except:
-                #trans.rollback()
-            #if result is not None:
-                #return result[0]
+        elif 0:  # field == PLAYER:
+            result = None
+            trans = self.conn.begin()
+            try:
+                result = self.engine.execute(self.perfix_stmt, name=name).first()
+                trans.commit()
+            except SQLAlchemyError as e:
+                trans.rollback()
+                print("Importing %s failed! \n%s" % (file, e))
+            if result is not None:
+                return result[0]
 
         if field == SOURCE:
             name_data.append({'name': orig_name, 'info': info})
@@ -168,9 +170,13 @@ class PgnImport():
 
         return next_id
 
+    def do_cancel(self):
+        GLib.idle_add(self.progressbar.set_text, "")
+        self.cancel = True
+
     def on_timeout(self, user_data):
         if self.pulse:
-            self.progressbar.pulse()
+            GLib.idle_add(self.progressbar.pulse)
             return True
         else:
             return False
@@ -194,9 +200,13 @@ class PgnImport():
         self.bitboard_data = []
         self.tag_game_data = []
 
-        if filename.startswith("http://"):
+        if filename.startswith("http"):
             filename = download_file(filename, progressbar=progressbar)
             if filename is None:
+                return
+        else:
+            if not os.path.isfile(filename):
+                print("Can't open %s" % filename)
                 return
 
         if filename.lower().endswith(".zip") and zipfile.is_zipfile(filename):
@@ -232,6 +242,11 @@ class PgnImport():
             try:
                 for i in range(all_games):
                     # print i+1#, cf.get_player_names(i)
+
+                    if self.cancel:
+                        trans.rollback()
+                        return
+
                     movelist = array("H")
                     comments = []
                     cf.error = None
@@ -447,72 +462,9 @@ class PgnImport():
                     print(pgnfile, i + 1)
                 trans.commit()
 
-            except ProgrammingError as e:
+            except SQLAlchemyError as e:
                 trans.rollback()
-                print("Importing %s failed! %s" % (file, e))
-
-    def update_players(self, progressbar=None):
-        self.progressbar = progressbar
-        if progressbar is not None:
-            self.pulse = True
-            self.timeout_id = GObject.timeout_add(50, self.on_timeout, None)
-
-        filename = "http://ratings.fide.com/download/players_list.zip"
-        filename = download_file(filename, progressbar=progressbar)
-        if filename is None:
-            return
-
-        # TODO: this is Sqlite specific !!!
-        # can't use "OR UPDATE" because it delete+insert records
-        # and breaks referential integrity
-        ins_player = player.insert().prefix_with("OR IGNORE")
-        player_data = []
-
-        zf = zipfile.ZipFile(filename, "r")
-        with zf.open("players_list_foa.txt") as f:
-            basename = os.path.basename(filename)
-            if progressbar is not None:
-                GLib.idle_add(progressbar.set_text, "Pocessing %s ..." % basename)
-            else:
-                print("Processing %s ..." % basename)
-            # use transaction to avoid autocommit slowness
-            trans = self.conn.begin()
-            try:
-                for line in f:
-                    if line.startswith("ID"):
-                        continue
-
-                    title = line[84:88].rstrip()
-                    title = title if title else None
-
-                    elo = line[113:117].rstrip()
-                    elo = int(elo) if elo else None
-
-                    born = line[152:156].rstrip()
-                    born = int(born) if born else None
-
-                    player_data.append({
-                        "fideid": int(line[:14]),
-                        "name": line[15:75].rstrip(),
-                        "fed": line[76:79],
-                        "sex": line[80:81],
-                        "title": title,
-                        "elo": elo,
-                        "born": born,
-                    })
-
-                    if len(player_data) >= self.CHUNK:
-                        self.conn.execute(ins_player, player_data)
-                        player_data = []
-
-                if player_data:
-                    self.conn.execute(ins_player, player_data)
-
-                trans.commit()
-
-            except:
-                trans.rollback()
-                raise
+                print("Importing %s failed! \n%s" % (file, e))
 
     def print_db(self):
         a1 = event.alias()
@@ -537,6 +489,106 @@ class PgnImport():
                   (g['id'], g['event'], g['site'], g['white'], g['black'],
                    g[5], g[6], g[7], g['eco'], reprResult[g['result']],
                    g['white_elo'], g['black_elo']))
+
+
+class FIDEPlayersImport():
+    def __init__(self, engine):
+        self.engine = engine
+        self.conn = self.engine.connect()
+        self.CHUNK = 1000
+        self.cancel = False
+
+    def do_cancel(self):
+        GLib.idle_add(self.progressbar.set_text, "")
+        self.cancel = True
+
+    def on_timeout(self, user_data):
+        if self.pulse:
+            GLib.idle_add(self.progressbar.pulse)
+            return True
+        else:
+            return False
+
+    def import_players(self, progressbar=None):
+        self.progressbar = progressbar
+        if progressbar is not None:
+            self.pulse = True
+            self.timeout_id = GObject.timeout_add(50, self.on_timeout, None)
+
+        filename = "http://ratings.fide.com/download/players_list.zip"
+        filename = download_file(filename, progressbar=progressbar)
+        # filename = "/tmp/players_list.zip"
+        if filename is None:
+            return
+
+        # TODO: this is Sqlite specific !!!
+        # can't use "OR UPDATE" because it delete+insert records
+        # and breaks referential integrity
+        ins_player = player.insert().prefix_with("OR IGNORE")
+        player_data = []
+
+        zf = zipfile.ZipFile(filename, "r")
+        basename = "players_list_foa.txt"
+        size = zf.getinfo(basename).file_size
+
+        with zf.open(basename) as f:
+            if progressbar is not None:
+                self.pulse = False
+                GLib.idle_add(progressbar.set_text, "Pocessing %s ..." % basename)
+            else:
+                print("Processing %s ..." % basename)
+
+            # use transaction to avoid autocommit slowness
+            trans = self.conn.begin()
+            i = 0
+            try:
+                for line in f:
+                    if self.cancel:
+                        trans.rollback()
+                        return
+
+                    if line.startswith("ID"):
+                        all_players = size / len(line) - 1
+                        continue
+                    i += 1
+
+                    title = line[84:88].rstrip()
+                    title = title if title else None
+
+                    elo = line[113:117].rstrip()
+                    elo = int(elo) if elo else None
+
+                    born = line[152:156].rstrip()
+                    born = int(born) if born else None
+
+                    player_data.append({
+                        "fideid": int(line[:14]),
+                        "name": line[15:75].rstrip(),
+                        "fed": line[76:79],
+                        "sex": line[80:81],
+                        "title": title,
+                        "elo": elo,
+                        "born": born,
+                    })
+
+                    if len(player_data) >= self.CHUNK:
+                        self.conn.execute(ins_player, player_data)
+                        player_data = []
+
+                        if progressbar is not None:
+                            GLib.idle_add(progressbar.set_fraction, i / float(all_players))
+                            GLib.idle_add(progressbar.set_text, "%s / %s from %s imported" % (i, all_players, basename))
+                        else:
+                            print(basename, i)
+
+                if player_data:
+                    self.conn.execute(ins_player, player_data)
+
+                trans.commit()
+
+            except:
+                trans.rollback()
+                raise
 
 
 if __name__ == "__main__":

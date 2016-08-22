@@ -103,9 +103,6 @@ class GameList(Gtk.TreeView):
         forwbut.connect("clicked", self.on_forward_button)
         endbut.connect("clicked", self.on_end_button)
 
-        self.progress_dock = Gtk.Alignment()
-        button_box.pack_start(self.progress_dock, True, True, 0)
-
         sw = Gtk.ScrolledWindow()
         sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         sw.add(self)
