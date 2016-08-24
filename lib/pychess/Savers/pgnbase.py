@@ -177,8 +177,9 @@ class PgnBase(ChessFile):
 
     def simple_parse_movetext(self, string, board, movelist, bitboards):
         """Parses a movelist part of one game.
-           If find anything not being a move immediately returns None
-           else returns list of lmoves parsed with parseSAN()
+           If find anything not being a move immediately returns False
+           It fills list of lmoves parsed with parseSAN() and
+           list of integers representing a board with occupied fields bitboard
 
            Arguments:
            srting - str (movelist)
