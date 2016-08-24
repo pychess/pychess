@@ -247,10 +247,6 @@ class PgnImport():
                         trans.rollback()
                         return
 
-                    movelist = array("H")
-                    comments = []
-                    cf.error = None
-
                     fenstr = get_tag(i, "FEN")
                     variant = cf.get_variant(i)
 
@@ -285,18 +281,45 @@ class PgnImport():
                     else:
                         board.applyFen(FEN_START)
 
-                    boards = [board]
                     movetext = cf.get_movetext(i)
 
-                    # parse movetext to create boards tree structure
-                    boards = cf.parse_string(movetext, boards[0], -1, pgn_import=True)
+                    movelist = array("H")
+                    comments = []
+                    cf.error = None
 
-                    if cf.error is not None:
-                        print("ERROR in game #%s" % (i + 1), cf.error.args[0])
-                        continue
+                    # First we try to use simple_parse_movetext()
+                    # assuming most games in .pgn contains only moves
+                    # without any comments/variations
+                    simple = False
+                    if not fenstr and not variant:
+                        bitboards = []
+                        simple = cf.simple_parse_movetext(movetext, board, movelist, bitboards)
 
-                    # create movelist and comments from boards tree
-                    walk(boards[0], movelist, comments)
+                        if cf.error is not None:
+                            print("ERROR in game #%s" % (i + 1), cf.error.args[0])
+                            continue
+
+                    # If simple_parse_movetext() find any comments/variations
+                    # we restart parsing with full featured parse_movetext()
+                    if not simple:
+                        movelist = array("H")
+                        bitboards = None
+
+                        # in case simple_parse_movetext failed we have to reset our lboard
+                        if not fenstr and not variant:
+                            board = LBoard()
+                            board.applyFen(FEN_START)
+
+                        # parse movetext to create boards tree structure
+                        boards = [board]
+                        boards = cf.parse_movetext(movetext, boards[0], -1, pgn_import=True)
+
+                        if cf.error is not None:
+                            print("ERROR in game #%s" % (i + 1), cf.error.args[0])
+                            continue
+
+                        # create movelist and comments from boards tree
+                        walk(boards[0], movelist, comments)
 
                     white = get_tag(i, 'White')
                     black = get_tag(i, 'Black')
@@ -356,16 +379,26 @@ class PgnImport():
                     game_id = self.next_id[GAME]
                     self.next_id[GAME] += 1
 
-                    for ply, board in enumerate(boards):
-                        bb = board.friends[0] | board.friends[1]
-                        # Avoid to include mate in x .pgn collections and similar in opening tree
-                        if fen and "/pppppppp/8/8/8/8/PPPPPPPP/" not in fen:
-                            ply = -1
-                        self.bitboard_data.append({
-                            'game_id': game_id,
-                            'ply': ply,
-                            'bitboard': bb - DB_MAXINT_SHIFT,
-                        })
+                    # annotated game
+                    if bitboards is None:
+                        for ply, board in enumerate(boards):
+                            bb = board.friends[0] | board.friends[1]
+                            # Avoid to include mate in x .pgn collections and similar in opening tree
+                            if fen and "/pppppppp/8/8/8/8/PPPPPPPP/" not in fen:
+                                ply = -1
+                            self.bitboard_data.append({
+                                'game_id': game_id,
+                                'ply': ply,
+                                'bitboard': bb - DB_MAXINT_SHIFT,
+                            })
+                    # simple game
+                    else:
+                        for ply, bb in enumerate(bitboards):
+                            self.bitboard_data.append({
+                                'game_id': game_id,
+                                'ply': ply,
+                                'bitboard': bb - DB_MAXINT_SHIFT,
+                            })
 
                     self.game_data.append({
                         'event_id': event_id,

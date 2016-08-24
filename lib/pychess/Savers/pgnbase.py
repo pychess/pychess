@@ -39,7 +39,7 @@ class PgnBase(ChessFile):
         ChessFile.__init__(self, file, games)
         self.tagcache = {}
 
-    def parse_string(self, string, board, position, variation=False, pgn_import=False):
+    def parse_movetext(self, string, board, position, variation=False, pgn_import=False):
         """Recursive parses a movelist part of one game.
 
            Arguments:
@@ -77,11 +77,11 @@ class PgnBase(ChessFile):
                         return boards  # , status
 
                     v_last_board.children.append(
-                        self.parse_string(v_string[:-1],
-                                          last_board.prev,
-                                          position,
-                                          variation=True,
-                                          pgn_import=pgn_import))
+                        self.parse_movetext(v_string[:-1],
+                                            last_board.prev,
+                                            position,
+                                            variation=True,
+                                            pgn_import=pgn_import))
                     v_string = ""
                     continue
 
@@ -174,6 +174,70 @@ class PgnBase(ChessFile):
                     print("Unknown:", text)
 
         return boards  # , status
+
+    def simple_parse_movetext(self, string, board, movelist, bitboards):
+        """Parses a movelist part of one game.
+           If find anything not being a move immediately returns None
+           else returns list of lmoves parsed with parseSAN()
+
+           Arguments:
+           srting - str (movelist)
+           board - lboard (FEN_START)
+           movelist - an empty array("H") to fill
+
+           Return: True if parser find moves only."""
+
+        movelist_append = movelist.append
+
+        for m in re.finditer(pattern, string):
+            group, text = m.lastindex, m.group(m.lastindex)
+            if group in (COMMENT_BRACE, COMMENT_NAG, VARIATION_END, VARIATION_START, COMMENT_REST):
+                return False
+
+            elif group == FULL_MOVE:
+                if m.group(MOVE_COMMENT):
+                    return False
+
+                mstr = m.group(MOVE)
+                try:
+                    lmove = parseSAN(board, mstr, full=False)
+                except ParsingError as err:
+                    notation, reason, boardfen = err.args
+                    ply = board.plyCount
+                    if ply % 2 == 0:
+                        moveno = "%d." % (ply // 2 + 1)
+                    else:
+                        moveno = "%d..." % (ply // 2 + 1)
+                    errstr1 = _(
+                        "The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
+                            'moveno': moveno,
+                            'notation': notation}
+                    errstr2 = _("The move failed because %s.") % reason
+                    self.error = LoadingError(errstr1, errstr2)
+                    break
+                except:
+                    ply = board.plyCount
+                    if ply % 2 == 0:
+                        moveno = "%d." % (ply // 2 + 1)
+                    else:
+                        moveno = "%d..." % (ply // 2 + 1)
+                    errstr1 = _(
+                        "Error parsing move %(moveno)s %(mstr)s") % {
+                            "moveno": moveno,
+                            "mstr": mstr}
+                    self.error = LoadingError(errstr1, "")
+                    break
+
+                board.applyMove(lmove, full=False)
+                movelist_append(lmove)
+                bitboards.append(board.friends[0] | board.friends[1])
+
+            elif group == RESULT:
+                pass
+            else:
+                print("Unknown:", text)
+
+        return True
 
     def _getTag(self, gameno, tagkey):
         if gameno in self.tagcache:

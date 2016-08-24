@@ -288,7 +288,7 @@ class Database(PGNFile):
         else:
             return ""
 
-    def parse_string(self, movetext, board, position, variation=False):
+    def parse_movetext(self, movetext, board, position, variation=False):
         boards = []
 
         last_board = board
@@ -311,10 +311,10 @@ class Database(PGNFile):
                 parenthesis -= 1
                 if parenthesis == 0:
                     v_last_board.children.append(
-                        self.parse_string(v_array[:-1],
-                                          last_board.prev,
-                                          position,
-                                          variation=True))
+                        self.parse_movetext(v_array[:-1],
+                                            last_board.prev,
+                                            position,
+                                            variation=True))
                     v_array = array("H")
                     continue
 

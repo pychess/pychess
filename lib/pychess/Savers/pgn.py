@@ -412,7 +412,7 @@ class PGNFile(PgnBase):
         self.error = None
         movetext = self.get_movetext(gameno)
 
-        boards = self.parse_string(movetext, boards[0], position)
+        boards = self.parse_movetext(movetext, boards[0], position)
 
         # The parser built a tree of lboard objects, now we have to
         # create the high level Board and Move lists...
