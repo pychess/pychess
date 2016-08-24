@@ -185,6 +185,7 @@ class PgnBase(ChessFile):
            srting - str (movelist)
            board - lboard (FEN_START)
            movelist - an empty array("H") to fill
+           bitboards - an empty list to fill
 
            Return: True if parser find moves only."""
 
