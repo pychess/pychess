@@ -240,7 +240,15 @@ class Database(GObject.GObject, Perspective):
                     info_link, pgn_link = filename
                     self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar)
                 else:
+                    #import line_profiler
+                    #lprofiler = line_profiler.LineProfiler()
+                    #from pychess.Utils.lutils.lmove import parseSAN
+                    #lprofiler.add_function(parseSAN)
+                    #lprofiler.enable()
+
                     self.importer.do_import(filename, progressbar=self.progressbar)
+
+                    #lprofiler.print_stats()
 
             self.gamelist.offset = 0
             self.gamelist.chessfile.build_where_tags("")

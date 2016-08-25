@@ -17,6 +17,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from pychess.compat import unicode, urlopen, HTTPError, URLError
 from pychess.Utils.const import FEN_START, reprResult
+from pychess.Utils.lutils.LBoard import START_BOARD
 from pychess.Variants import name2variant
 # from pychess.System import profile_me
 from pychess.System import Timer
@@ -24,7 +25,7 @@ from pychess.System.protoopen import protoopen, PGN_ENCODING
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import pgn_load
 from pychess.Database.dbwalk import walk
-from pychess.Database.model import DB_MAXINT_SHIFT, \
+from pychess.Database.model import DB_MAXINT_SHIFT, get_engine, \
     event, site, player, game, annotator, bitboard, tag_game, source
 
 
@@ -268,7 +269,7 @@ class PgnImport():
                         board = LBoard(variant)
                     else:
                         variant = 0
-                        board = LBoard()
+                        board = START_BOARD.clone()
 
                     if fenstr:
                         try:
@@ -278,7 +279,7 @@ class PgnImport():
                                 "The game #%s can't be loaded, because of an error parsing FEN")
                                 % (i + 1), e.args[0])
                             continue
-                    else:
+                    elif variant:
                         board.applyFen(FEN_START)
 
                     movetext = cf.get_movetext(i)
@@ -307,8 +308,7 @@ class PgnImport():
 
                         # in case simple_parse_movetext failed we have to reset our lboard
                         if not fenstr and not variant:
-                            board = LBoard()
-                            board.applyFen(FEN_START)
+                            board = START_BOARD.clone()
 
                         # parse movetext to create boards tree structure
                         boards = [board]
@@ -625,7 +625,7 @@ class FIDEPlayersImport():
 
 
 if __name__ == "__main__":
-    imp = PgnImport()
+    imp = PgnImport(get_engine(None))
 
     if len(sys.argv) > 1:
         arg = sys.argv[1]

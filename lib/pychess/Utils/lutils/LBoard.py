@@ -5,7 +5,7 @@ from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, 
     ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, CAMBODIANCHESS, MAKRUKCHESS, \
     FISCHERRANDOMCHESS, SITTUYINCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, \
     SUICIDECHESS, DROP_VARIANTS, BLACK, WHITE, FAN_PIECES, NULL_MOVE, CAS_FLAGS, \
-    NORMALCHESS, \
+    NORMALCHESS, FEN_START, \
     chrU2Sign, cordDic, reprCord, reprFile, reprSign, reprSignMakruk, reprSignSittuyin, \
     A1, A8, B1, B8, \
     C1, C8, D1, D8, \
@@ -1005,3 +1005,6 @@ class LBoard(object):
 
         copy.fen_was_applied = self.fen_was_applied
         return copy
+
+START_BOARD = LBoard()
+START_BOARD.applyFen(FEN_START)
