@@ -20,7 +20,7 @@ from pychess.Database.PgnImport import PgnImport, FIDEPlayersImport, download_fi
 from pychess.Database.JvR import JvR
 from pychess.Savers import database, pgn, fen, epd
 from pychess.System.protoopen import protoopen
-from pychess.System import profile_me
+# from pychess.System import profile_me
 
 
 class Database(GObject.GObject, Perspective):
@@ -228,7 +228,7 @@ class Database(GObject.GObject, Perspective):
             self.progress_dialog.hide()
 
     def do_import(self, filenames):
-        @profile_me
+        # @profile_me
         def importing():
             GLib.idle_add(self.progressbar.set_text, "Preparing to start import...")
 
