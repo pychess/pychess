@@ -20,6 +20,7 @@ from pychess.Database.PgnImport import PgnImport, FIDEPlayersImport, download_fi
 from pychess.Database.JvR import JvR
 from pychess.Savers import database, pgn, fen, epd
 from pychess.System.protoopen import protoopen
+from pychess.System import profile_me
 
 
 class Database(GObject.GObject, Perspective):
@@ -227,6 +228,7 @@ class Database(GObject.GObject, Perspective):
             self.progress_dialog.hide()
 
     def do_import(self, filenames):
+        @profile_me
         def importing():
             GLib.idle_add(self.progressbar.set_text, "Preparing to start import...")
 
@@ -240,15 +242,7 @@ class Database(GObject.GObject, Perspective):
                     info_link, pgn_link = filename
                     self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar)
                 else:
-                    #import line_profiler
-                    #lprofiler = line_profiler.LineProfiler()
-                    #from pychess.Utils.lutils.lmove import parseSAN
-                    #lprofiler.add_function(parseSAN)
-                    #lprofiler.enable()
-
                     self.importer.do_import(filename, progressbar=self.progressbar)
-
-                    #lprofiler.print_stats()
 
             self.gamelist.offset = 0
             self.gamelist.chessfile.build_where_tags("")

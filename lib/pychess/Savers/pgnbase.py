@@ -9,6 +9,7 @@ from pychess.Utils.const import RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import parseSAN, ParsingError
 from pychess.Savers.ChessFile import ChessFile, LoadingError
+# from pychess.System import profile_me
 
 # token categories
 COMMENT_REST, COMMENT_BRACE, COMMENT_NAG, \
@@ -35,8 +36,9 @@ pattern = re.compile(r"""
 
 
 class PgnBase(ChessFile):
-    def __init__(self, file, games):
-        ChessFile.__init__(self, file, games)
+    def __init__(self, handle, games):
+        ChessFile.__init__(self, handle, games)
+        self.all_games = LazyGames(handle, games)
         self.tagcache = {}
 
     def parse_movetext(self, string, board, position, variation=False, pgn_import=False):
@@ -257,7 +259,7 @@ class PgnBase(ChessFile):
             else:
                 return ""
         else:
-            if self.games:
+            if self.all_games:
                 self.tagcache[gameno] = dict(tagre.findall(self.games[gameno][0]))
                 return self._getTag(gameno, tagkey)
             else:
@@ -345,44 +347,75 @@ class PgnBase(ChessFile):
 tagre = re.compile(r"\[([a-zA-Z0-9_]+)\s+\"(.*)\"\]")
 
 
-def pgn_load(file, klass=PgnBase):
-    games = []
-    in_tags = False
+class LazyGames:
+    """Loads games on demand
+    Initialized with games starting offset list"""
 
-    tags = []
-    moves = []
+    def __init__(self, handle, games):
+        self.handle = handle
+        self.games = games
+        self.high = len(self.games)
 
-    for line in file:
-        line = line.lstrip()
-        if not line:
-            continue
-        elif line.startswith("%"):
-            continue
+    def __len__(self):
+        return self.high
 
-        if line.startswith("["):
-            if tagre.match(line) is not None:
-                if not in_tags:
-                    # new game starting
-                    if moves:
-                        games.append(["".join(tags), "".join(moves)])
-                        tags = []
-                        moves = []
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            indices = item.indices(len(self))
+            return [self[i] for i in range(*indices)]
 
-                    in_tags = True
-                tags.append(line)
-            else:
-                if not in_tags:
-                    moves.append(line)
+        if item >= self.high:
+            raise IndexError
+
+        self.handle.seek(self.games[item])
+
+        in_tags = True
+        tags = []
+        moves = []
+
+        line = self.handle.readline()
+        while line:
+            line = line.lstrip()
+            if line.startswith("%"):
+                line = self.handle.readline()
+                continue
+
+            if line.startswith('['):
+                if tagre.match(line) is not None:
+                    if not in_tags:
+                        # new game starting
+                        break
+                    tags.append(line)
                 else:
-                    print("Warning: ignored invalid tag pair %s" % line)
-        else:
-            in_tags = False
-            moves.append(line)
+                    if not in_tags:
+                        moves.append(line)
+                    else:
+                        print("Warning: ignored invalid tag pair %s" % line)
+            else:
+                in_tags = False
+                moves.append(line)
+            line = self.handle.readline()
+        game = ("".join(tags), "".join(moves), item)
+        return game
 
-    if moves:
-        games.append(["".join(tags), "".join(moves)])
 
-    return klass(file, games)
+# @profile_me
+def pgn_load(handle, klass=PgnBase):
+    """Collects game starting offsets from an opened .pgn file"""
+    games = []
+    count = 0
+
+    last_pos = 0
+    line = handle.readline()
+    while line:
+        if line.startswith('[Event "'):
+            games.append(last_pos)
+            count += 1
+            if count % 100000 == 0:
+                print(count)
+        last_pos += len(line)
+        line = handle.readline()
+    return klass(handle, games)
 
 
 nag2symbolDict = {

@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import re
-from itertools import islice
+from itertools import islice, ifilter
 
 from pychess.compat import filter, basestring, StringIO
 from pychess.System import conf
@@ -259,18 +259,17 @@ def move_count(node, black_periods=False):
     return mvcount
 
 
-def load(file):
-    return pgn_load(file, klass=PGNFile)
+def load(handle):
+    return pgn_load(handle, klass=PGNFile)
 
 
 class PGNFile(PgnBase):
-    def __init__(self, file, games):
-        PgnBase.__init__(self, file, games)
+    def __init__(self, handle, games):
+        PgnBase.__init__(self, handle, games)
 
         self.colnames = ['Id', 'White', 'Black', 'Result', 'Event', 'Site', 'Round',
                          'Year', 'Month', 'Day', 'WhiteElo', 'BlackElo',
                          'ECO', 'TimeControl', 'Board', 'FEN', 'Variant', 'Annotator']
-        self.all_games = self.games
         self.where_tags = None
         self.where_bitboards = None
         self.query = self.all_games
@@ -282,7 +281,7 @@ class PGNFile(PgnBase):
         if self.where_tags is None:
             self.query = self.all_games
         else:
-            self.query = filter(self.where_tags, self.all_games)
+            self.query = ifilter(self.where_tags, self.all_games)
 
     def build_where_tags(self, text):
         if text:
@@ -293,14 +292,19 @@ class PGNFile(PgnBase):
             self.where_tags = None
 
     def get_id(self, gameno):
-        return self.offset + gameno
+        return self.games[gameno][2]
 
     def get_records(self, offset, limit):
         if offset < self.offset:
             # We have to recreate our ifilter query iterator
             # because python iterators never go backwards!
             self.build_query()
-        games = [game for game in islice(self.query, offset, offset + limit)]
+
+        if self.where_tags is None:
+            games = self.all_games[offset: offset + limit]
+        else:
+            games = [game for game in islice(self.query, offset, offset + limit)]
+
         if games:
             self.tagcache = {}
             self.games = games
