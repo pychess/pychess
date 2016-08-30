@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import re
-from itertools import islice, ifilter
+from itertools import islice
 
 from pychess.compat import filter, basestring, StringIO
 from pychess.System import conf
@@ -280,7 +280,7 @@ class PGNFile(PgnBase):
         if self.where_tags is None:
             self.query = self.games
         else:
-            self.query = ifilter(self.where_tags, self.games)
+            self.query = filter(self.where_tags, self.games)
 
     def build_where_tags(self, text):
         if text:
@@ -295,7 +295,7 @@ class PGNFile(PgnBase):
 
     def get_records(self, offset, limit):
         if offset < self.offset:
-            # We have to recreate our ifilter query iterator
+            # We have to recreate our filter query iterator
             # because python iterators never go backwards!
             self.build_query()
 
