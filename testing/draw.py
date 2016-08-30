@@ -2,18 +2,24 @@ import unittest
 
 from pychess.Savers import pgn
 from pychess.Utils.lutils import ldraw
+from pychess.System.protoopen import protoopen
 
 
 class DrawTestCase(unittest.TestCase):
     def setUp(self):
-        with open('gamefiles/3fold.pgn') as f1:
-            self.PgnFile1 = pgn.load(f1)
+        self.f1 = protoopen('gamefiles/3fold.pgn')
+        self.PgnFile1 = pgn.load(self.f1)
 
-        with open('gamefiles/bilbao.pgn') as f2:
-            self.PgnFile2 = pgn.load(f2)
+        self.f2 = protoopen('gamefiles/bilbao.pgn')
+        self.PgnFile2 = pgn.load(self.f2)
 
-        with open('gamefiles/material.pgn') as f3:
-            self.PgnFile3 = pgn.load(f3)
+        self.f3 = protoopen('gamefiles/material.pgn')
+        self.PgnFile3 = pgn.load(self.f3)
+
+    def tearDown(self):
+        self.f1.close()
+        self.f2.close()
+        self.f3.close()
 
     def test1(self):
         """Testing the same position, for the third time"""

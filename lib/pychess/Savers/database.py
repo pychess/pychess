@@ -210,6 +210,7 @@ class Database(PGNFile):
         query = self.query.offset(offset).limit(limit)
         result = self.engine.execute(query)
         self.games = result.fetchall()
+        return self.games
 
     def get_id(self, gameno):
         return self.games[gameno]["Id"]

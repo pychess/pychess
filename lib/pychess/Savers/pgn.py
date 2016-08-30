@@ -272,16 +272,15 @@ class PGNFile(PgnBase):
                          'ECO', 'TimeControl', 'Board', 'FEN', 'Variant', 'Annotator']
         self.where_tags = None
         self.where_bitboards = None
-        self.query = self.all_games
-        self.count = len(self.all_games)
+        self.query = self.games
+        self.count = len(self.games)
         print("%s game(s)" % self.count)
-        self.offset = 0
 
     def build_query(self):
         if self.where_tags is None:
-            self.query = self.all_games
+            self.query = self.games
         else:
-            self.query = ifilter(self.where_tags, self.all_games)
+            self.query = ifilter(self.where_tags, self.games)
 
     def build_where_tags(self, text):
         if text:
@@ -292,7 +291,7 @@ class PGNFile(PgnBase):
             self.where_tags = None
 
     def get_id(self, gameno):
-        return self.games[gameno][2]
+        return self.games[self.offset + gameno][2]
 
     def get_records(self, offset, limit):
         if offset < self.offset:
@@ -301,14 +300,16 @@ class PGNFile(PgnBase):
             self.build_query()
 
         if self.where_tags is None:
-            games = self.all_games[offset: offset + limit]
+            games = self.games[offset: offset + limit]
         else:
             games = [game for game in islice(self.query, offset, offset + limit)]
 
         if games:
             self.tagcache = {}
-            self.games = games
             self.offset = offset
+            return games
+        else:
+            return []
 
     def loadToModel(self, gameno, position=-1, model=None):
         if not model:

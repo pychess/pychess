@@ -101,9 +101,9 @@ class DbTestCase(unittest.TestCase):
 
         pgnfile1.build_where_tags("win")
         pgnfile1.build_query()
-        pgnfile1.get_records(0, 100)
+        records = pgnfile1.get_records(0, 100)
 
-        self.assertEqual(len(pgnfile1.games), 3)
+        self.assertEqual(len(records), 3)
 
     def test_pdb_database_get_records(self):
         """Testing .pdb database get_records"""

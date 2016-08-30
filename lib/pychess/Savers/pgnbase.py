@@ -38,8 +38,9 @@ pattern = re.compile(r"""
 class PgnBase(ChessFile):
     def __init__(self, handle, games):
         ChessFile.__init__(self, handle, games)
-        self.all_games = LazyGames(handle, games)
+        self.games = LazyGames(handle, games)
         self.tagcache = {}
+        self.offset = 0
 
     def parse_movetext(self, string, board, position, variation=False, pgn_import=False):
         """Recursive parses a movelist part of one game.
@@ -259,14 +260,11 @@ class PgnBase(ChessFile):
             else:
                 return ""
         else:
-            if self.all_games:
-                self.tagcache[gameno] = dict(tagre.findall(self.games[gameno][0]))
-                return self._getTag(gameno, tagkey)
-            else:
-                return ""
+            self.tagcache[gameno] = dict(tagre.findall(self.games[self.offset + gameno][0]))
+            return self._getTag(gameno, tagkey)
 
     def get_movetext(self, no):
-        return self.games[no][1]
+        return self.games[self.offset + no][1]
 
     def get_variant(self, no):
         variant = self._getTag(no, "Variant")

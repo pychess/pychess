@@ -168,10 +168,10 @@ class GameList(Gtk.TreeView):
         getPlayers = self.chessfile.get_player_names
         add = self.liststore.append
 
-        self.chessfile.get_records(self.offset, self.LIMIT)
+        records = self.chessfile.get_records(self.offset, self.LIMIT)
 
         self.id_list = []
-        for i in range(len(self.chessfile.games)):
+        for i in range(len(records)):
             game_id = self.chessfile.get_id(i)
             self.id_list.append(game_id)
             wname, bname = getPlayers(i)
