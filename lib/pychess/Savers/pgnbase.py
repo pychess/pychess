@@ -38,8 +38,8 @@ pattern = re.compile(r"""
 class PgnBase(ChessFile):
     def __init__(self, handle, games):
         ChessFile.__init__(self, handle, games)
-        self.games = LazyGames(handle, games)
-        self.tagcache = {}
+        self.handle = handle
+        self.filtered_games = games
         self.offset = 0
 
     def parse_movetext(self, string, board, position, variation=False, pgn_import=False):
@@ -245,26 +245,20 @@ class PgnBase(ChessFile):
         return True
 
     def _getTag(self, gameno, tagkey):
-        if gameno in self.tagcache:
-            if tagkey in self.tagcache[gameno]:
-                tag = self.tagcache[gameno][tagkey]
-                if tagkey == "Date":
-                    if tag and '?' not in tag:
-                        return tag
-                    elif tag and '?' not in tag[:4]:
-                        return tag[:4]
-                    else:
-                        return ""
-                else:
-                    return "" if tag == "?" else tag
-            else:
-                return ""
-        else:
-            self.tagcache[gameno] = dict(tagre.findall(self.games[self.offset + gameno][0]))
-            return self._getTag(gameno, tagkey)
+        tags = self.filtered_games[gameno][0].split("|")
+        return tags[TAG_MAP[tagkey]]
 
     def get_movetext(self, no):
-        return self.games[self.offset + no][1]
+        self.handle.seek(self.filtered_games[no][1])
+        lines = []
+        line = self.handle.readline()
+        while line:
+            if line.strip():
+                lines.append(line)
+                line = self.handle.readline()
+            else:
+                break
+        return "".join(lines)
 
     def get_variant(self, no):
         variant = self._getTag(no, "Variant")
@@ -344,75 +338,82 @@ class PgnBase(ChessFile):
 
 tagre = re.compile(r"\[([a-zA-Z0-9_]+)\s+\"(.*)\"\]")
 
-
-class LazyGames:
-    """Loads games on demand
-    Initialized with games starting offset list"""
-
-    def __init__(self, handle, games):
-        self.handle = handle
-        self.games = games
-        self.high = len(self.games)
-
-    def __len__(self):
-        return self.high
-
-    def __getitem__(self, item):
-        if isinstance(item, slice):
-            indices = item.indices(len(self))
-            return [self[i] for i in range(*indices)]
-
-        if item >= self.high:
-            raise IndexError
-
-        self.handle.seek(self.games[item])
-
-        in_tags = True
-        tags = []
-        moves = []
-
-        line = self.handle.readline()
-        while line:
-            line = line.lstrip()
-            if line.startswith("%"):
-                line = self.handle.readline()
-                continue
-
-            if line.startswith('['):
-                if tagre.match(line) is not None:
-                    if not in_tags:
-                        # new game starting
-                        break
-                    tags.append(line)
-                else:
-                    if not in_tags:
-                        moves.append(line)
-                    else:
-                        print("Warning: ignored invalid tag pair %s" % line)
-            else:
-                in_tags = False
-                moves.append(line)
-            line = self.handle.readline()
-        game = ("".join(tags), "".join(moves), item)
-        return game
+TAG_MAP = {
+    "Event": 0,
+    "Site": 1,
+    "Date": 2,
+    "Round": 3,
+    "White": 4,
+    "Black": 5,
+    "Result": 6,
+    "ECO": 7,
+    "FEN": 8,
+    "WhiteElo": 9,
+    "BlackElo": 10,
+    "PlyCount": 11,
+    "TimeControl": 12,
+    "WhiteFideId": 13,
+    "BlackFideId": 14,
+    "Board": 15,
+    "Annotator": 16,
+    "Variant": 17,
+    "WhiteClock": 18,
+    "BlackClock": 19,
+}
 
 
 # @profile_me
 def pgn_load(handle, klass=PgnBase):
-    """Collects game starting offsets from an opened .pgn file"""
     games = []
     count = 0
 
+    in_comment = False
+    in_tags = False
+    game_pos = None
     last_pos = 0
     line = handle.readline()
+
+    tags = [""] * 20
     while line:
-        if line.startswith('[Event "'):
-            games.append(last_pos)
+        if line.startswith("%"):
+            last_pos += len(line)
+            line = handle.readline()
+            continue
+
+        if not in_comment and line.startswith("["):
+            parts = line.split('"')
+            if len(parts) == 3:
+                in_tags = True
+                tag, value, _ = parts
+                pos = TAG_MAP.get(tag[1:-1])
+                if pos is not None:
+                    tags[pos] = value
+            last_pos += len(line)
+            line = handle.readline()
+            continue
+
+        if game_pos is None and in_tags and line.strip() and not in_comment:
+            game_pos = last_pos
+
+        if game_pos is not None:
+            games.append(("|".join(tags), game_pos, count))
+            game_pos = None
+            in_tags = False
+            tags = [""] * 20
+
             count += 1
             if count % 100000 == 0:
                 print(count)
+
+        if (not in_comment and "{" in line) or (in_comment and "}" in line):
+            in_comment = line.rfind("{") > line.rfind("}")
+
         last_pos += len(line)
         line = handle.readline()
+
+    if game_pos is not None:
+        games.append(("|".join(tags), game_pos, count))
+
     return klass(handle, games)
 
 

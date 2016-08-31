@@ -101,8 +101,6 @@ def save(file, model, position=None):
         print('[BlackElo "%s"]' % model.tags["BlackElo"], file=file)
     if "TimeControl" in model.tags:
         print('[TimeControl "%s"]' % model.tags["TimeControl"], file=file)
-    if "Time" in model.tags:
-        print('[Time "%s"]' % str(model.tags["Time"]), file=file)
     if model.timed:
         print('[WhiteClock "%s"]' %
               msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)), file=file)
@@ -117,8 +115,6 @@ def save(file, model, position=None):
         print('[SetUp "1"]', file=file)
         print('[FEN "%s"]' % model.boards[0].asFen(), file=file)
     print('[PlyCount "%s"]' % (model.ply - model.lowply), file=file)
-    if "EventDate" in model.tags:
-        print('[EventDate "%s"]' % model.tags["EventDate"], file=file)
     if "Annotator" in model.tags:
         print('[Annotator "%s"]' % model.tags["Annotator"], file=file)
     print("", file=file)
@@ -291,7 +287,7 @@ class PGNFile(PgnBase):
             self.where_tags = None
 
     def get_id(self, gameno):
-        return self.games[self.offset + gameno][2]
+        return self.filtered_games[gameno][2]
 
     def get_records(self, offset, limit):
         if offset < self.offset:
@@ -305,8 +301,8 @@ class PGNFile(PgnBase):
             games = [game for game in islice(self.query, offset, offset + limit)]
 
         if games:
-            self.tagcache = {}
             self.offset = offset
+            self.filtered_games = games
             return games
         else:
             return []
@@ -324,12 +320,7 @@ class PGNFile(PgnBase):
             gameno)
         model.tags['Result'] = reprResult[self.get_result(gameno)]
 
-        pgnHasYearMonthDay = True
-        for tag in ('Year', 'Month', 'Day'):
-            if not self._getTag(gameno, tag):
-                pgnHasYearMonthDay = False
-                break
-        if model.tags['Date'] and not pgnHasYearMonthDay:
+        if model.tags['Date']:
             date_match = re.match(".*(\d{4}).(\d{2}).(\d{2}).*",
                                   model.tags['Date'])
             if date_match:
@@ -339,8 +330,7 @@ class PGNFile(PgnBase):
                 model.tags['Day'] = day
 
                 # non-mandatory headers
-        for tag in ('Annotator', 'ECO', 'EventDate', 'Time', 'WhiteElo',
-                    'BlackElo', 'TimeControl'):
+        for tag in ('Annotator', 'ECO', 'WhiteElo', 'BlackElo', 'TimeControl'):
             if self._getTag(gameno, tag):
                 model.tags[tag] = self._getTag(gameno, tag)
             else:

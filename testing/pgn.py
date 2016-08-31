@@ -58,7 +58,7 @@ for filename in filenames:
         if i > 100:
             break
 
-        orig = normalize(game[1])
+        orig = normalize(pgnfile.get_movetext(i))
 
         model = pgnfile.loadToModel(i)
         new = []
