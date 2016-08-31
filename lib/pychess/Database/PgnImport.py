@@ -333,16 +333,17 @@ class PgnImport():
 
                     site_id = get_id(get_tag(i, 'Site'), site, SITE)
 
-                    game_date = get_tag(i, 'Date')
-                    if game_date and '?' not in game_date:
-                        ymd = game_date.split('.')
-                        if len(ymd) == 3:
-                            game_year, game_month, game_day = map(int, ymd)
-                        else:
+                    game_date = get_tag(i, 'Date').strip()
+                    try:
+                        if game_date and '?' not in game_date:
+                            ymd = game_date.split('.')
+                            if len(ymd) == 3:
+                                game_year, game_month, game_day = map(int, ymd)
+                            else:
+                                game_year, game_month, game_day = int(game_date[:4]), None, None
+                        elif game_date and '?' not in game_date[:4]:
                             game_year, game_month, game_day = int(game_date[:4]), None, None
-                    elif game_date and '?' not in game_date[:4]:
-                        game_year, game_month, game_day = int(game_date[:4]), None, None
-                    else:
+                    except:
                         game_year, game_month, game_day = None, None, None
 
                     game_round = get_tag(i, 'Round')

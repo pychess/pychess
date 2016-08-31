@@ -245,7 +245,7 @@ class PgnBase(ChessFile):
         return True
 
     def _getTag(self, gameno, tagkey):
-        tags = self.filtered_games[gameno][0].split("|")
+        tags = self.filtered_games[gameno][0].split("♥")
         return tags[TAG_MAP[tagkey]]
 
     def get_movetext(self, no):
@@ -359,6 +359,8 @@ TAG_MAP = {
     "Variant": 17,
     "WhiteClock": 18,
     "BlackClock": 19,
+    "Opening": 20,
+    "Variation": 21,
 }
 
 
@@ -373,7 +375,7 @@ def pgn_load(handle, klass=PgnBase):
     last_pos = 0
     line = handle.readline()
 
-    tags = [""] * 20
+    tags = [""] * 22
     while line:
         if line.startswith("%"):
             last_pos += len(line)
@@ -396,10 +398,10 @@ def pgn_load(handle, klass=PgnBase):
             game_pos = last_pos
 
         if game_pos is not None:
-            games.append(("|".join(tags), game_pos, count))
+            games.append(("♥".join(tags), game_pos, count))
             game_pos = None
             in_tags = False
-            tags = [""] * 20
+            tags = [""] * 22
 
             count += 1
             if count % 100000 == 0:
@@ -412,7 +414,7 @@ def pgn_load(handle, klass=PgnBase):
         line = handle.readline()
 
     if game_pos is not None:
-        games.append(("|".join(tags), game_pos, count))
+        games.append(("♥".join(tags), game_pos, count))
 
     return klass(handle, games)
 
