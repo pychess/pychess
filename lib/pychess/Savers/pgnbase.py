@@ -11,6 +11,8 @@ from pychess.Utils.lutils.lmove import parseSAN, ParsingError
 from pychess.Savers.ChessFile import ChessFile, LoadingError
 # from pychess.System import profile_me
 
+TAG_SEPARATOR = chr(3)
+
 # token categories
 COMMENT_REST, COMMENT_BRACE, COMMENT_NAG, \
     VARIATION_START, VARIATION_END, \
@@ -245,7 +247,7 @@ class PgnBase(ChessFile):
         return True
 
     def _getTag(self, gameno, tagkey):
-        tags = self.filtered_games[gameno][0].split("♥")
+        tags = self.filtered_games[gameno][0].split(TAG_SEPARATOR)
         return tags[TAG_MAP[tagkey]]
 
     def get_movetext(self, no):
@@ -398,7 +400,7 @@ def pgn_load(handle, klass=PgnBase):
             game_pos = last_pos
 
         if game_pos is not None:
-            games.append(("♥".join(tags), game_pos, count))
+            games.append((TAG_SEPARATOR.join(tags), game_pos, count))
             game_pos = None
             in_tags = False
             tags = [""] * 22
@@ -414,7 +416,7 @@ def pgn_load(handle, klass=PgnBase):
         line = handle.readline()
 
     if game_pos is not None:
-        games.append(("♥".join(tags), game_pos, count))
+        games.append((TAG_SEPARATOR.join(tags), game_pos, count))
 
     return klass(handle, games)
 
