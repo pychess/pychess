@@ -137,8 +137,8 @@ class Database(PGNFile):
             game.c.round.label('Round'), game.c.date_year.label('Year'),
             game.c.date_month.label('Month'), game.c.date_day.label('Day'),
             game.c.white_elo.label('WhiteElo'), game.c.black_elo.label('BlackElo'),
-            game.c.ply_count.label('PlyCount'), game.c.eco.label('ECO'), game.c.fen.label('Board'),
-            game.c.time_control.label('TC'),
+            game.c.ply_count.label('PlyCount'), game.c.eco.label('ECO'),
+            game.c.time_control.label('TimeControl'), game.c.fen.label('Board'),
             game.c.fen.label('FEN'), game.c.variant.label('Variant'),
             annotator.c.name.label('Annotator')]
 
