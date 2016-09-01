@@ -195,9 +195,13 @@ class GameList(Gtk.TreeView):
         self.set_cursor(0)
         self.update_counter()
 
-    def row_activated(self, widget, path, col):
+    def get_gameno(self, path):
         game_id = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
         gameno = self.id_list.index(game_id)
+        return gameno
+
+    def row_activated(self, widget, path, col):
+        gameno = self.get_gameno(path)
 
         self.gamemodel = GameModel()
 

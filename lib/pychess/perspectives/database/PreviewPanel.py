@@ -67,13 +67,13 @@ class PreviewPanel:
             return
 
         path = self.gamelist.get_model().get_path(iter)
-        indices = path.get_indices()
-        sel = indices[0]
+
+        gameno = self.gamelist.get_gameno(path)
 
         self.boardview.animation_lock.acquire()
         try:
             try:
-                self.gamelist.chessfile.loadToModel(sel, -1, self.gamemodel)
+                self.gamelist.chessfile.loadToModel(gameno, -1, self.gamemodel)
             except LoadingError as err:
                 dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
                                              buttons=Gtk.ButtonsType.OK,
