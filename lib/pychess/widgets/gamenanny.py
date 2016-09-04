@@ -222,9 +222,7 @@ class GameNanny(object):
                     "offer", self.offer_callback, gamemodel, gmwidg)
 
         # Start analyzers if any
-        if not (isinstance(gamemodel, ICGameModel) and
-                gamemodel.isObservationGame() is False) and \
-           not gamemodel.isEngine2EngineGame():
+        if not gamemodel.isEngine2EngineGame():
             gamemodel.start_analyzer(HINT)
             gamemodel.start_analyzer(SPY)
             if not conf.get("hint_mode", False):

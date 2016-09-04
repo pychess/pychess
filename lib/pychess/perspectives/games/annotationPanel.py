@@ -153,19 +153,19 @@ class Sidepanel:
         self.conf_conids.append(conf.notify_add("showEmt", showEmtCallback))
 
         # Blunders
-        self.showBlunder = conf.get("showBlunder", False)
+        self.showBlunder = conf.get("showBlunder", False) and not self.gamemodel.isPlayingICSGame()
 
         def showBlunderCallback(none):
-            self.showBlunder = conf.get("showBlunder", False)
+            self.showBlunder = conf.get("showBlunder", False) and not self.gamemodel.isPlayingICSGame()
             self.update()
 
         self.conf_conids.append(conf.notify_add("showBlunder", showBlunderCallback))
 
         # Eval values
-        self.showEval = conf.get("showEval", False)
+        self.showEval = conf.get("showEval", False) and not self.gamemodel.isPlayingICSGame()
 
         def showEvalCallback(none):
-            self.showEval = conf.get("showEval", False)
+            self.showEval = conf.get("showEval", False) and not self.gamemodel.isPlayingICSGame()
             self.update()
 
         self.conf_conids.append(conf.notify_add("showEval", showEvalCallback))
@@ -1056,6 +1056,13 @@ class Sidepanel:
 
         if self.gamemodel is None:
             return
+
+        if self.gamemodel.isPlayingICSGame():
+            self.showEval = False
+            self.showBlunder = False
+        else:
+            self.showEval = conf.get("showEval", False)
+            self.showBlunder = conf.get("showBlunder", False)
 
         self.textbuffer.set_text('')
         self.nodelist = []

@@ -312,8 +312,6 @@ class GameModel(GObject.GObject, Thread):
     def restart_analyzer(self, analyzer_type):
         self.remove_analyzer(analyzer_type)
         self.start_analyzer(analyzer_type)
-        if self.isPlayingICSGame():
-            self.pause_analyzer(analyzer_type)
 
     def on_analyze(self, analyzer, analysis):
         if analysis and analysis[0] is not None:
