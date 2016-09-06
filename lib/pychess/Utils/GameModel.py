@@ -432,8 +432,9 @@ class GameModel(GObject.GObject, Thread):
 
     def isPlayingICSGame(self):
         if self.players and self.status in (WAITING_TO_START, PAUSED, RUNNING):
-            if self.players[0].__type__ == LOCAL and self.players[1].__type__ == REMOTE or \
-               self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE:
+            if (self.players[0].__type__ == LOCAL and self.players[1].__type__ == REMOTE) or \
+               (self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE) or \
+               (self.players[1].__type__ == REMOTE and self.players[0].__type__ == REMOTE and self.examined):
                 return True
         return False
 
