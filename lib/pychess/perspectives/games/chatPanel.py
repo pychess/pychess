@@ -34,14 +34,21 @@ class Sidepanel:
 
     def on_game_terminated(self, model):
         self.chatView.disconnect(self.chatview_cid)
-        if hasattr(self, "player"):
+        if hasattr(self, "player") and not self.gamemodel.examined:
             self.player.disconnect(self.player_cid)
         for cid in self.model_cids:
             self.gamemodel.disconnect(cid)
 
     @idle_add
     def onGameStarted(self, gamemodel):
-        if gamemodel.isObservationGame() or gamemodel.examined:
+        if gamemodel.examined:
+            if gamemodel.players[0].name == gamemodel.connection.username:
+                self.player = gamemodel.players[0]
+                self.opplayer = gamemodel.players[1]
+            else:
+                self.player = gamemodel.players[1]
+                self.opplayer = gamemodel.players[0]
+        elif gamemodel.isObservationGame():
             # no local player but enable chat to send/receive whisper/kibitz
             pass
         elif gamemodel.players[0].__type__ == LOCAL:
@@ -60,7 +67,7 @@ class Sidepanel:
             allob = 'allob ' + str(gamemodel.ficsgame.gameno)
             gamemodel.connection.client.run_command(allob)
 
-        if hasattr(self, "player"):
+        if hasattr(self, "player") and not gamemodel.examined:
             self.player_cid = self.player.connect("messageReceived", self.onMessageReieved)
 
         self.chatView.enable()
@@ -84,7 +91,10 @@ class Sidepanel:
                 text = text[8:]
                 self.gamemodel.connection.cm.whisper(text)
             else:
-                self.player.sendMessage(text)
+                if self.gamemodel.examined:
+                    self.opplayer.putMessage(text)
+                else:
+                    self.player.sendMessage(text)
                 self.chatView.addMessage(repr(self.player), text)
         else:
             self.gamemodel.connection.cm.whisper(text)
