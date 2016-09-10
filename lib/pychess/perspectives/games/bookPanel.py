@@ -303,7 +303,7 @@ class EngineAdvisor(Advisor):
             moves = self.store[iter][0][2]
             if moves is not None:
                 score = self.store[iter][1][0]
-                model.add_variation(self.engine.board, moves, comment="", score=score)
+                model.add_variation(self.engine.board, moves)
 
         if self.mode == SPY and self.store.get_path(iter) != Gtk.TreePath(self.path):
             moves = self.store[iter][0][2]
@@ -315,7 +315,7 @@ class EngineAdvisor(Advisor):
                 board.setColor(1 - board.color)
                 king = board.kings[board.color]
                 null_move = Move(newMove(king, king, NULL_MOVE))
-                model.add_variation(self.engine.board, [null_move] + moves, comment="", score=score)
+                model.add_variation(self.engine.board, [null_move] + moves)
 
     def child_tooltip(self, i):
         if self.active:

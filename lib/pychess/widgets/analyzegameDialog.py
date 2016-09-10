@@ -11,7 +11,7 @@ from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.Utils import prettyPrintScore
-from pychess.Utils.Move import listToMoves
+from pychess.Utils.Move import listToMoves, parseAny
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Players.engineNest import discoverer
 from pychess.widgets.preferencesDialog import anal_combo_get_value, anal_combo_set_value
@@ -132,7 +132,8 @@ def initialize():
                     moves, score, depth = gamemodel.scores[ply]
                     score = score * -1 if color == WHITE else score
                     diff = score - oldscore
-                    if (diff > threshold and color == BLACK) or (diff < -1 * threshold and color == WHITE):
+                    if ((diff > threshold and color == BLACK) or (diff < -1 * threshold and color == WHITE)) and (
+                       gamemodel.moves[ply - 1] != parseAny(gamemodel.boards[ply - 1], oldmoves[0])):
                         if threat_PV:
                             try:
                                 if ply - 1 in gamemodel.spy_scores:
@@ -141,7 +142,7 @@ def initialize():
                                     pv0 = listToMoves(gamemodel.boards[ply - 1], ["--"] + oldmoves0, validate=True)
                                     if len(pv0) > 2:
                                         gamemodel.add_variation(gamemodel.boards[ply - 1], pv0,
-                                                                comment="Treatening", score=score_str0)
+                                                                comment="Treatening", score=score_str0, emit=False)
                             except ParsingError as e:
                                 # ParsingErrors may happen when parsing "old" lines from
                                 # analyzing engines, which haven't yet noticed their new tasks
@@ -149,7 +150,8 @@ def initialize():
                                           (' '.join(oldmoves), e))
                         try:
                             pv = listToMoves(gamemodel.boards[ply - 1], oldmoves, validate=True)
-                            gamemodel.add_variation(gamemodel.boards[ply - 1], pv, comment="Better is", score=score_str)
+                            gamemodel.add_variation(gamemodel.boards[ply - 1], pv,
+                                                    comment="Better is", score=score_str, emit=False)
                         except ParsingError as e:
                             # ParsingErrors may happen when parsing "old" lines from
                             # analyzing engines, which haven't yet noticed their new tasks
@@ -162,6 +164,8 @@ def initialize():
             if threat_PV:
                 conf.set("inv_analyzer_check", old_inv_check_value)
             message.dismiss()
+
+            gamemodel.emit("analysis_finished")
 
         t = threading.Thread(target=analyse_moves, name=fident(analyse_moves))
         t.daemon = True

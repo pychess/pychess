@@ -130,6 +130,7 @@ class Sidepanel:
             self.gamemodel.connect("variation_added", self.variation_added),
             self.gamemodel.connect("variation_extended", self.variation_extended),
             self.gamemodel.connect("analysis_changed", self.analysis_changed),
+            self.gamemodel.connect("analysis_finished", self.update),
         ]
 
         # Connect to preferences
@@ -656,7 +657,7 @@ class Sidepanel:
         self.gamemodel.needsSave = True
 
     @idle_add
-    def variation_added(self, gamemodel, boards, parent, comment, score):
+    def variation_added(self, gamemodel, boards, parent):
         # first find the iter where we will inset this new variation
         node = None
         for n in self.nodelist:
@@ -680,13 +681,9 @@ class Sidepanel:
         sdiff, opening_node = self.variation_start(end, next_node_index, level)
         diff += sdiff
 
-        ini_board = None
         for i, board in enumerate(boards):
             # do we have initial variation comment?
             if (board.prev is None):
-                if comment:
-                    board.children.append(comment)
-                    ini_board = board
                 continue
             else:
                 # insert variation move
@@ -694,35 +691,6 @@ class Sidepanel:
                     board, end, next_node_index + i, level + 1, parent)
                 diff += inserted_node["end"] - inserted_node["start"]
                 end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
-
-                if ini_board is not None:
-                    # insert initial variation comment
-                    inserted_comment = self.insert_comment(comment,
-                                                           board,
-                                                           parent,
-                                                           level=level + 1,
-                                                           ini_board=ini_board)
-                    comment_diff = inserted_comment["end"] - inserted_comment[
-                        "start"]
-                    inserted_node["start"] += comment_diff
-                    inserted_node["end"] += comment_diff
-                    end = self.textbuffer.get_iter_at_offset(inserted_node[
-                        "end"])
-                    diff += comment_diff
-                    # leading = False
-                    next_node_index += 1
-                    ini_board = None
-
-        if score:
-            # insert score of variation latest move as comment
-            board.children.append(score)
-            inserted_node = self.insert_comment(score,
-                                                board,
-                                                parent,
-                                                level=level + 1)
-            diff += inserted_node["end"] - inserted_node["start"]
-            end = self.textbuffer.get_iter_at_offset(inserted_node["end"])
-            next_node_index += 1
 
         diff += self.variation_end(end, next_node_index + len(boards), level,
                                    boards[1], parent, opening_node)
@@ -735,8 +703,7 @@ class Sidepanel:
 
         # if new variation is coming from clicking in book panel
         # we want to jump into the first board in new vari
-        if not comment:
-            self.boardview.setShownBoard(boards[1].pieceBoard)
+        self.boardview.setShownBoard(boards[1].pieceBoard)
 
         self.gamemodel.needsSave = True
 

@@ -120,12 +120,14 @@ class GameModel(GObject.GObject, Thread):
         "opening_changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
         # variation_added is emitted if a variation was added.
         "variation_added": (GObject.SignalFlags.RUN_FIRST, None,
-                            (object, object, str, str)),
+                            (object, object)),
         # variation_extended is emitted if a new move was added to a variation.
         "variation_extended": (GObject.SignalFlags.RUN_FIRST, None,
                                (object, object)),
         # scores_changed is emitted if the analyzing scores was changed.
         "analysis_changed": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
+        # analysis_finished is emitted if the game analyzing finished stepping on all moves.
+        "analysis_finished": (GObject.SignalFlags.RUN_FIRST, None, ()),
         # FICS games can get kibitz/whisper messages
         "message_received": (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
         # FICS games can have observers
@@ -944,10 +946,16 @@ class GameModel(GObject.GObject, Thread):
             return True
         return False
 
-    def add_variation(self, board, moves, comment="", score=""):
+    def add_variation(self, board, moves, comment="", score="", emit=True):
         board0 = board
         board = board0.clone()
         board.board.prev = None
+
+        # this prevents annotation panel node searches to find this instead of board0
+        board.board.hash = -1
+
+        if comment:
+            board.board.children.append(comment)
 
         variation = [board]
 
@@ -973,6 +981,8 @@ class GameModel(GObject.GObject, Thread):
 
         board0.board.next.children.append(
             [vboard.board for vboard in variation])
+        if score:
+            variation[-1].board.children.append(score)
 
         head = None
         for vari in self.variations:
@@ -983,8 +993,8 @@ class GameModel(GObject.GObject, Thread):
         variation[0] = board0
         self.variations.append(head[:board0.ply - self.lowply] + variation)
         self.needsSave = True
-        self.emit("variation_added", board0.board.next.children[-1],
-                  board0.board.next, comment, score)
+        if emit:
+            self.emit("variation_added", board0.board.next.children[-1], board0.board.next)
         return self.variations[-1]
 
     def add_move2variation(self, board, move, variationIdx):
