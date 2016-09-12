@@ -565,7 +565,7 @@ class FIDEPlayersImport():
         basename = "players_list_foa.txt"
         size = zf.getinfo(basename).file_size
 
-        with zf.open(basename) as f:
+        with io.TextIOWrapper(zf.open(basename)) as f:
             if progressbar is not None:
                 self.pulse = False
                 GLib.idle_add(progressbar.set_text, "Pocessing %s ..." % basename)
