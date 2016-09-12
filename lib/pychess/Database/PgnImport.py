@@ -9,6 +9,7 @@ import sys
 import tempfile
 import zipfile
 from array import array
+from collections import defaultdict
 
 from gi.repository import GObject, GLib
 
@@ -16,14 +17,14 @@ from sqlalchemy import bindparam, select, func, and_
 from sqlalchemy.exc import SQLAlchemyError
 
 from pychess.compat import unicode, urlopen, HTTPError, URLError
-from pychess.Utils.const import FEN_START, reprResult
+from pychess.Utils.const import FEN_START, reprResult, RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Utils.lutils.LBoard import START_BOARD
 from pychess.Variants import name2variant
 # from pychess.System import profile_me
 from pychess.System import Timer
 from pychess.System.protoopen import protoopen, PGN_ENCODING
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Savers.pgnbase import pgn_load
+from pychess.Savers.pgnbase import PgnBase, tagre
 from pychess.Database.dbwalk import walk
 from pychess.Database.model import DB_MAXINT_SHIFT, get_engine, \
     event, site, player, game, annotator, bitboard, tag_game, source
@@ -38,6 +39,12 @@ removeDic = {
     ord(u"-"): None,
     ord(u" "): None,
 }
+
+pgn2Const = {"*": RUNNING,
+             "1/2-1/2": DRAW,
+             "1/2": DRAW,
+             "1-0": WHITEWON,
+             "0-1": BLACKWON}
 
 
 def download_file(url, progressbar=None):
@@ -225,31 +232,38 @@ class PgnImport():
                 print("Reading %s ..." % pgnfile)
 
             if zf is None:
-                cf = pgn_load(protoopen(pgnfile))
+                handle = protoopen(pgnfile)
             else:
-                pgn_file = io.TextIOWrapper(zf.open(pgnfile), encoding=PGN_ENCODING, newline='')
-                cf = pgn_load(pgn_file)
+                handle = io.TextIOWrapper(zf.open(pgnfile), encoding=PGN_ENCODING, newline='')
+            cf = PgnBase(handle, [])
 
             if progressbar is not None:
                 self.pulse = False
 
-            all_games = len(cf.games)
+            # TODO
+            all_games = 1000
             self.CHUNK = 1000 if all_games > 5000 else 100
 
-            get_tag = cf._getTag
             get_id = self.get_id
             # use transaction to avoid autocommit slowness
             trans = self.conn.begin()
             try:
-                for i in range(all_games):
-                    # print i+1#, cf.get_player_names(i)
+                i = 0
+                for tagtext, movetext in read_games(handle):
+                    tags = defaultdict(str, tagre.findall(tagtext))
 
                     if self.cancel:
                         trans.rollback()
                         return
 
-                    fenstr = get_tag(i, "FEN")
-                    variant = cf.get_variant(i)
+                    fenstr = tags.get("FEN")
+
+                    variant = tags.get("Variant")
+                    if variant:
+                        if "fischer" in variant.lower() or "960" in variant:
+                            variant = "Fischerandom"
+                        else:
+                            variant = variant.lower().capitalize()
 
                     # Fixes for some non statndard Chess960 .pgn
                     if fenstr and variant == "Fischerandom":
@@ -267,6 +281,9 @@ class PgnImport():
                             continue
                         variant = name2variant[variant].variant
                         board = LBoard(variant)
+                    elif fenstr:
+                        variant = 0
+                        board = LBoard()
                     else:
                         variant = 0
                         board = START_BOARD.clone()
@@ -281,8 +298,6 @@ class PgnImport():
                             continue
                     elif variant:
                         board.applyFen(FEN_START)
-
-                    movetext = cf.get_movetext(i)
 
                     movelist = array("H")
                     comments = []
@@ -321,19 +336,19 @@ class PgnImport():
                         # create movelist and comments from boards tree
                         walk(boards[0], movelist, comments)
 
-                    white = get_tag(i, 'White')
-                    black = get_tag(i, 'Black')
+                    white = tags.get('White')
+                    black = tags.get('Black')
 
                     if not movelist:
                         if (not comments) and (not white) and (not black):
                             print("empty game")
                             continue
 
-                    event_id = get_id(get_tag(i, 'Event'), event, EVENT)
+                    event_id = get_id(tags.get('Event'), event, EVENT)
 
-                    site_id = get_id(get_tag(i, 'Site'), site, SITE)
+                    site_id = get_id(tags.get('Site'), site, SITE)
 
-                    game_date = get_tag(i, 'Date').strip()
+                    game_date = tags.get('Date').strip()
                     try:
                         if game_date and '?' not in game_date:
                             ymd = game_date.split('.')
@@ -346,34 +361,35 @@ class PgnImport():
                     except:
                         game_year, game_month, game_day = None, None, None
 
-                    game_round = get_tag(i, 'Round')
+                    game_round = tags.get('Round')
 
-                    white_fide_id = get_tag(i, 'WhiteFideId')
-                    black_fide_id = get_tag(i, 'BlackFideId')
+                    white_fide_id = tags.get('WhiteFideId')
+                    black_fide_id = tags.get('BlackFideId')
 
                     white_id = get_id(unicode(white), player, PLAYER, fide_id=white_fide_id)
                     black_id = get_id(unicode(black), player, PLAYER, fide_id=black_fide_id)
 
-                    result = cf.get_result(i)
+                    result = tags.get("Result")
+                    result = pgn2Const[result] if result in pgn2Const else None
 
-                    white_elo = get_tag(i, 'WhiteElo')
+                    white_elo = tags.get('WhiteElo')
                     white_elo = int(white_elo) if white_elo and white_elo.isdigit() else None
 
-                    black_elo = get_tag(i, 'BlackElo')
+                    black_elo = tags.get('BlackElo')
                     black_elo = int(black_elo) if black_elo and black_elo.isdigit() else None
 
-                    ply_count = get_tag(i, "PlyCount")
+                    ply_count = tags.get("PlyCount")
 
-                    time_control = get_tag(i, "TimeControl")
+                    time_control = tags.get("TimeControl")
 
-                    eco = get_tag(i, "ECO")
+                    eco = tags.get("ECO")
                     eco = eco[:3] if eco else None
 
-                    fen = get_tag(i, "FEN")
+                    fen = tags.get("FEN")
 
-                    board_tag = get_tag(i, "Board")
+                    board_tag = tags.get("Board")
 
-                    annotator_id = get_id(get_tag(i, "Annotator"), annotator, ANNOTATOR)
+                    annotator_id = get_id(tags.get("Annotator"), annotator, ANNOTATOR)
 
                     source_id = get_id(unicode(pgnfile), source, SOURCE, info=info)
 
@@ -424,6 +440,8 @@ class PgnImport():
                         'movelist': movelist.tostring(),
                         'comments': unicode("|".join(comments)),
                     })
+
+                    i += 1
 
                     if len(self.game_data) >= self.CHUNK:
                         if self.event_data:
@@ -623,6 +641,41 @@ class FIDEPlayersImport():
             except:
                 trans.rollback()
                 raise
+
+
+def read_games(handle):
+    in_tags = False
+
+    tags = []
+    moves = []
+
+    for line in handle:
+        line = line.lstrip()
+        if not line:
+            continue
+        elif line.startswith("%"):
+            continue
+
+        if line.startswith("["):
+            if tagre.match(line) is not None:
+                if not in_tags:
+                    # new game starting
+                    if moves:
+                        yield ("".join(tags), "".join(moves))
+                        tags = []
+                        moves = []
+
+                    in_tags = True
+                tags.append(line)
+            else:
+                if not in_tags:
+                    moves.append(line)
+                    print("Warning: ignored invalid tag pair %s" % line)
+        else:
+            in_tags = False
+            moves.append(line)
+    if moves:
+        yield ("".join(tags), "".join(moves))
 
 
 if __name__ == "__main__":
