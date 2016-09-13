@@ -235,9 +235,9 @@ class PgnBase(ChessFile):
                     self.error = LoadingError(errstr1, "")
                     break
 
+                bitboards.append(board.friends[0] | board.friends[1])
                 board.applyMove(lmove, full=False)
                 movelist_append(lmove)
-                bitboards.append(board.friends[0] | board.friends[1])
 
             elif group == RESULT:
                 pass
