@@ -209,11 +209,13 @@ class Database(GObject.GObject, Perspective):
 
         filter_text = Gtk.FileFilter()
         filter_text.set_name(".pgn")
+        filter_text.add_pattern("*.pgn")
         filter_text.add_mime_type("application/x-chess-pgn")
         dialog.add_filter(filter_text)
 
         filter_text = Gtk.FileFilter()
         filter_text.set_name(".zip")
+        filter_text.add_pattern("*.zip")
         filter_text.add_mime_type("application/zip")
         dialog.add_filter(filter_text)
 
@@ -228,13 +230,17 @@ class Database(GObject.GObject, Perspective):
             self.progress_dialog.hide()
 
     def do_import(self, filenames):
+        if len(filenames) == 1:
+            self.progressbar0.hide()
+        else:
+            self.progressbar0.show()
+        self.progressbar.set_text("Preparing to start import...")
         # @profile_me
         def importing():
-            GLib.idle_add(self.progressbar.set_text, "Preparing to start import...")
 
             self.importer = PgnImport(self.gamelist.chessfile.engine)
             for i, filename in enumerate(filenames):
-                GLib.idle_add(self.progressbar0.set_fraction, (i + 1) / float(len(filenames)))
+                GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
                 # GLib.idle_add(self.progressbar0.set_text, filename)
                 if self.importer.cancel:
                     break
