@@ -338,9 +338,7 @@ def parseSAN(board, san, full=True):
         notat = notat[1:]
     else:
         piece = PAWN
-        if notat[
-                -
-                1] in "18" and flag == NORMAL_MOVE and board.variant != SITTUYINCHESS:
+        if notat[-1] in "18" and flag == NORMAL_MOVE and board.variant != SITTUYINCHESS:
             raise ParsingError(
                 san, _("promotion move without promoted piece is incorrect"),
                 board.asFen())
@@ -356,7 +354,12 @@ def parseSAN(board, san, full=True):
         if piece == PAWN:
             # If a pawn is attacking an empty cord, we assue it an enpassant
             if board.arBoard[tcord] == EMPTY:
-                flag = ENPASSANT
+                if (color == BLACK and 2 * 8 <= tcord < 3 * 8) or (color == WHITE and 5 * 8 <= tcord < 6 * 8):
+                    flag = ENPASSANT
+                else:
+                    raise ParsingError(
+                        san, _("pawn capture without target piece is invalid"),
+                        board.asFen())
     else:
         if not notat[-2:] in cordDic:
             raise ParsingError(san, _("the end cord (%s) is incorrect") %
