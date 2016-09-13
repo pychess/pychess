@@ -411,7 +411,7 @@ class PgnImport():
 
                     ply_count = tags.get("PlyCount")
                     if not ply_count and not fen:
-                        ply_count = len(bitboards)
+                        ply_count = len(bitboards) if bitboards is not None else len(boards)
 
                     self.game_data.append({
                         'event_id': event_id,
