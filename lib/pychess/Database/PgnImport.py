@@ -372,8 +372,6 @@ class PgnImport():
                     black_elo = tags.get('BlackElo')
                     black_elo = int(black_elo) if black_elo and black_elo.isdigit() else None
 
-                    ply_count = tags.get("PlyCount")
-
                     time_control = tags.get("TimeControl")
 
                     eco = tags.get("ECO")
@@ -410,6 +408,10 @@ class PgnImport():
                                 'ply': ply,
                                 'bitboard': bb - DB_MAXINT_SHIFT,
                             })
+
+                    ply_count = tags.get("PlyCount")
+                    if not ply_count and not fen:
+                        ply_count = len(bitboards)
 
                     self.game_data.append({
                         'event_id': event_id,
