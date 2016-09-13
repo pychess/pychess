@@ -182,19 +182,9 @@ class PgnImport():
         GLib.idle_add(self.progressbar.set_text, "")
         self.cancel = True
 
-    def on_timeout(self, user_data):
-        if self.pulse:
-            GLib.idle_add(self.progressbar.pulse)
-            return True
-        else:
-            return False
-
     # @profile_me
     def do_import(self, filename, info=None, progressbar=None):
         self.progressbar = progressbar
-        if progressbar is not None:
-            self.pulse = True
-            self.timeout_id = GObject.timeout_add(50, self.on_timeout, None)
 
         # collect new names not in they dict yet
         self.event_data = []
@@ -232,16 +222,16 @@ class PgnImport():
                 print("Reading %s ..." % pgnfile)
 
             if zf is None:
+                size = os.path.getsize(pgnfile)
                 handle = protoopen(pgnfile)
             else:
+                size = zf.getinfo(pgnfile).file_size
                 handle = io.TextIOWrapper(zf.open(pgnfile), encoding=PGN_ENCODING, newline='')
+
             cf = PgnBase(handle, [])
 
-            if progressbar is not None:
-                self.pulse = False
-
-            # TODO
-            all_games = 1000
+            # estimated game count
+            all_games = size / 840
             self.CHUNK = 1000 if all_games > 5000 else 100
 
             get_id = self.get_id
@@ -341,7 +331,7 @@ class PgnImport():
 
                     if not movelist:
                         if (not comments) and (not white) and (not black):
-                            print("empty game")
+                            print("Empty game #%s" % (i + 1))
                             continue
 
                     event_id = get_id(tags.get('Event'), event, EVENT)
@@ -370,7 +360,11 @@ class PgnImport():
                     black_id = get_id(unicode(black), player, PLAYER, fide_id=black_fide_id)
 
                     result = tags.get("Result")
-                    result = pgn2Const[result] if result in pgn2Const else None
+                    if result in pgn2Const:
+                        result = pgn2Const[result]
+                    else:
+                        print("Invalid Result tag in game #%s: %s" % (i + 1, result))
+                        continue
 
                     white_elo = tags.get('WhiteElo')
                     white_elo = int(white_elo) if white_elo and white_elo.isdigit() else None
@@ -474,10 +468,10 @@ class PgnImport():
                             self.bitboard_data = []
 
                         if progressbar is not None:
-                            GLib.idle_add(progressbar.set_fraction, (i + 1) / float(all_games))
-                            GLib.idle_add(progressbar.set_text, "%s / %s from %s imported" % (i + 1, all_games, basename))
+                            GLib.idle_add(progressbar.set_fraction, i / float(all_games))
+                            GLib.idle_add(progressbar.set_text, "%s games from %s imported" % (i, basename))
                         else:
-                            print(pgnfile, i + 1)
+                            print(pgnfile, i)
 
                 if self.event_data:
                     self.conn.execute(self.ins_event, self.event_data)
@@ -508,10 +502,10 @@ class PgnImport():
                     self.bitboard_data = []
 
                 if progressbar is not None:
-                    GLib.idle_add(progressbar.set_fraction, (i + 1) / float(all_games))
-                    GLib.idle_add(progressbar.set_text, "%s / %s from %s imported" % (i + 1, all_games, basename))
+                    GLib.idle_add(progressbar.set_fraction, i / float(all_games))
+                    GLib.idle_add(progressbar.set_text, "%s games from %s imported" % (i, basename))
                 else:
-                    print(pgnfile, i + 1)
+                    print(pgnfile, i)
                 trans.commit()
 
             except SQLAlchemyError as e:
@@ -554,18 +548,8 @@ class FIDEPlayersImport():
         GLib.idle_add(self.progressbar.set_text, "")
         self.cancel = True
 
-    def on_timeout(self, user_data):
-        if self.pulse:
-            GLib.idle_add(self.progressbar.pulse)
-            return True
-        else:
-            return False
-
     def import_players(self, progressbar=None):
         self.progressbar = progressbar
-        if progressbar is not None:
-            self.pulse = True
-            self.timeout_id = GObject.timeout_add(50, self.on_timeout, None)
 
         filename = "http://ratings.fide.com/download/players_list.zip"
         filename = download_file(filename, progressbar=progressbar)
@@ -585,7 +569,6 @@ class FIDEPlayersImport():
 
         with io.TextIOWrapper(zf.open(basename)) as f:
             if progressbar is not None:
-                self.pulse = False
                 GLib.idle_add(progressbar.set_text, "Pocessing %s ..." % basename)
             else:
                 print("Processing %s ..." % basename)
@@ -670,7 +653,6 @@ def read_games(handle):
             else:
                 if not in_tags:
                     moves.append(line)
-                    print("Warning: ignored invalid tag pair %s" % line)
         else:
             in_tags = False
             moves.append(line)
