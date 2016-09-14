@@ -17,7 +17,7 @@ from sqlalchemy import bindparam, select, func, and_
 from sqlalchemy.exc import SQLAlchemyError
 
 from pychess.compat import unicode, urlopen, HTTPError, URLError
-from pychess.Utils.const import FEN_START, reprResult, RUNNING, DRAW, WHITEWON, BLACKWON
+from pychess.Utils.const import NORMALCHESS, FEN_START, reprResult, RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Utils.lutils.LBoard import START_BOARD
 from pychess.Variants import name2variant
 # from pychess.System import profile_me
@@ -271,7 +271,12 @@ class PgnImport():
                             print("Unknown variant: %s" % variant)
                             continue
                         variant = name2variant[variant].variant
-                        board = LBoard(variant)
+                        if variant == NORMALCHESS:
+                            # lichess uses tag [Variant "Standard"]
+                            variant = 0
+                            board = START_BOARD.clone()
+                        else:
+                            board = LBoard(variant)
                     elif fenstr:
                         variant = 0
                         board = LBoard()
