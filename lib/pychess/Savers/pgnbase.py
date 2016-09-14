@@ -329,6 +329,7 @@ class PgnBase(ChessFile):
 
     def get_result(self, no):
         pgn2Const = {"*": RUNNING,
+                     "?": RUNNING,
                      "1/2-1/2": DRAW,
                      "1/2": DRAW,
                      "1-0": WHITEWON,

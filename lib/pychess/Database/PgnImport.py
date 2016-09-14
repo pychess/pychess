@@ -41,6 +41,7 @@ removeDic = {
 }
 
 pgn2Const = {"*": RUNNING,
+             "?": RUNNING,
              "1/2-1/2": DRAW,
              "1/2": DRAW,
              "1-0": WHITEWON,
@@ -231,7 +232,7 @@ class PgnImport():
             cf = PgnBase(handle, [])
 
             # estimated game count
-            all_games = size / 840
+            all_games = max(size / 840, 1)
             self.CHUNK = 1000 if all_games > 5000 else 100
 
             get_id = self.get_id
@@ -302,7 +303,7 @@ class PgnImport():
                         simple = cf.simple_parse_movetext(movetext, board, movelist, bitboards)
 
                         if cf.error is not None:
-                            print("ERROR in game #%s" % (i + 1), cf.error.args[0])
+                            print("ERROR in %s game #%s" % (pgnfile, i + 1), cf.error.args[0])
                             continue
 
                     # If simple_parse_movetext() find any comments/variations
@@ -320,7 +321,7 @@ class PgnImport():
                         boards = cf.parse_movetext(movetext, boards[0], -1, pgn_import=True)
 
                         if cf.error is not None:
-                            print("ERROR in game #%s" % (i + 1), cf.error.args[0])
+                            print("ERROR in %s game #%s" % (pgnfile, i + 1), cf.error.args[0])
                             continue
 
                         # create movelist and comments from boards tree
@@ -348,6 +349,8 @@ class PgnImport():
                                 game_year, game_month, game_day = int(game_date[:4]), None, None
                         elif game_date and '?' not in game_date[:4]:
                             game_year, game_month, game_day = int(game_date[:4]), None, None
+                        else:
+                            game_year, game_month, game_day = None, None, None
                     except:
                         game_year, game_month, game_day = None, None, None
 
