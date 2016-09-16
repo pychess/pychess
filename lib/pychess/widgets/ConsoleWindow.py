@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from time import strftime
 
-from gi.repository import Gtk, Gdk, GObject, Pango
+from gi.repository import GLib, Gtk, Gdk, GObject, Pango
 
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
@@ -16,23 +16,20 @@ class ConsoleWindow(object):
         self.consoleView = ConsoleView(self.connection)
         connection.com.connect("consoleMessage", self.onConsoleMessage)
 
-    def showConsole(self, *widget):
-        self.window.show_all()
-        self.window.present()
-        self.consoleView.entry.grab_focus()
-
-        # scroll to the bottom
-        adj = self.consoleView.sw.get_vadjustment()
-        adj.set_value(adj.get_upper() - adj.get_page_size())
-
     @staticmethod
     def filter_unprintable(s):
         return ''.join([c for c in s if ord(c) > 31 or ord(c) == 9])
 
+    def scroll_to_bottom(self):
+        tb_iter = self.consoleView.textbuffer.get_end_iter()
+        self.consoleView.readView.scroll_to_iter(tb_iter, 0.00, True, 0.00, 1.00)
+
     def onConsoleMessage(self, com, lines, ini_lines=None):
+        need_scroll = False
         if ini_lines is not None:
             for line in ini_lines:
                 self.consoleView.addMessage(line, False)
+                need_scroll = True
 
         for line in lines:
             line = self.filter_unprintable(line.line)
@@ -42,7 +39,13 @@ class ConsoleWindow(object):
                 (not line.endswith("available for matches.")) and\
                     line[-12:-5] != "), Bug(":
                 self.consoleView.addMessage(line, False)
+                need_scroll = True
 
+        if need_scroll:
+            # scroll to the bottom but only if we are not scrolled up to read back
+            adj = self.consoleView.sw.get_vadjustment()
+            if adj.get_value() >= adj.get_upper() - adj.get_page_size() - 1e-12:
+                GLib.idle_add(self.scroll_to_bottom)
 
 TYPE_COMMAND, TYPE_HELP, TYPE_USER = 0, 1, 2
 
@@ -156,12 +159,6 @@ class ConsoleView(Gtk.Box):
         time = strftime("%H:%M:%S")
         text_buffer.insert_with_tags_by_name(tb_iter, "(%s) " % time, tag)
         insert_formatted(self.readView, tb_iter, text, tag=tag)
-
-        # scroll to the bottom but only if we are not scrolled up to read back
-        adj = self.sw.get_vadjustment()
-        if adj.get_value() >= adj.get_upper() - adj.get_page_size() - 1e-12:
-            tb_iter = text_buffer.get_end_iter()
-            self.readView.scroll_to_iter(tb_iter, 0.00, False, 1.00, 1.00)
 
     def onKeyPress(self, widget, event):
         if event.keyval in list(map(Gdk.keyval_from_name, ("Return", "KP_Enter"))):
