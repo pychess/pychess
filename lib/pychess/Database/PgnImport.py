@@ -242,6 +242,9 @@ class PgnImport():
                 i = 0
                 for tagtext, movetext in read_games(handle):
                     tags = defaultdict(str, tagre.findall(tagtext))
+                    if not tags:
+                        print("Empty game #%s" % (i + 1))
+                        continue
 
                     if self.cancel:
                         trans.rollback()
