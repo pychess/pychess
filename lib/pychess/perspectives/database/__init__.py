@@ -16,6 +16,7 @@ from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import EAST, SOUTH, CENTER, NORTH
 from pychess.widgets import dock_panel_tab
+from pychess.Database.model import create_indexes, drop_indexes
 from pychess.Database.PgnImport import PgnImport, FIDEPlayersImport, download_file
 from pychess.Database.JvR import JvR
 from pychess.Savers import database, pgn, fen, epd
@@ -235,8 +236,10 @@ class Database(GObject.GObject, Perspective):
         else:
             self.progressbar0.show()
         self.progressbar.set_text("Preparing to start import...")
+
         # @profile_me
         def importing():
+            drop_indexes(self.gamelist.chessfile.engine)
 
             self.importer = PgnImport(self.gamelist.chessfile.engine)
             for i, filename in enumerate(filenames):
@@ -249,6 +252,9 @@ class Database(GObject.GObject, Perspective):
                     self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar)
                 else:
                     self.importer.do_import(filename, progressbar=self.progressbar)
+
+            GLib.idle_add(self.progressbar.set_text, "Recreating indexes...")
+            create_indexes(self.gamelist.chessfile.engine)
 
             self.gamelist.offset = 0
             self.gamelist.chessfile.build_where_tags("")

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-from sqlalchemy import create_engine, MetaData, Table, Column, UniqueConstraint, Integer,\
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
     String, SmallInteger, BigInteger, LargeBinary, UnicodeText, ForeignKey, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.pool import StaticPool
+from sqlalchemy.exc import OperationalError
 
 from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
@@ -15,8 +16,15 @@ from pychess.System import conf
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
+    # www.sqlite.org/pragma.html
+    cursor.execute("PRAGMA page_size = 4096")
+    cursor.execute("PRAGMA cache_size=10000")
+    # cursor.execute("PRAGMA locking_mode=EXCLUSIVE")
+    cursor.execute("PRAGMA synchronous=NORMAL")
+    cursor.execute("PRAGMA journal_mode=WAL")
+    # cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
+
 engines = {}
 
 
@@ -83,13 +91,12 @@ player = Table(
     'player', metadata,
     Column('id', Integer, primary_key=True),
     Column('name', String(256), index=True),
-    Column('fideid', String(14), index=True),
+    Column('fideid', String(14), index=True, unique=True),
     Column('fed', String(3)),
     Column('sex', String(1)),
     Column('title', String(3)),
     Column('elo', SmallInteger),
     Column('born', Integer),
-    UniqueConstraint('name', 'fideid', name='unique_1'),
 )
 
 pl1 = player.alias()
@@ -142,6 +149,24 @@ tag_game = Table(
     Column('game_id', Integer, ForeignKey('game.id'), nullable=False),
     Column('tag_id', Integer, ForeignKey('tag.id'), nullable=False, index=True),
 )
+
+
+def drop_indexes(engine):
+    for table in metadata.tables.values():
+        for index in table.indexes:
+            try:
+                index.drop(bind=engine)
+            except OperationalError as e:
+                if e.orig.args[0].startswith("no such index"):
+                    print(e.orig.args[0])
+                else:
+                    raise
+
+
+def create_indexes(engine):
+    for table in metadata.tables.values():
+        for index in table.indexes:
+            index.create(bind=engine)
 
 
 def ini_tag(engine):
