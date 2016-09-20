@@ -11,7 +11,7 @@ import zipfile
 from array import array
 from collections import defaultdict
 
-from gi.repository import GObject, GLib
+from gi.repository import GLib
 
 from sqlalchemy import bindparam, select, func, and_
 from sqlalchemy.exc import SQLAlchemyError
@@ -76,6 +76,8 @@ class PgnImport():
         self.conn = self.engine.connect()
         self.CHUNK = 1000
         self.cancel = False
+
+        self.count_source = select([func.count()]).select_from(source)
 
         self.ins_event = event.insert()
         self.ins_site = site.insert()
@@ -186,6 +188,12 @@ class PgnImport():
     # @profile_me
     def do_import(self, filename, info=None, progressbar=None):
         self.progressbar = progressbar
+
+        orig_filename = filename
+        count_source = self.conn.execute(self.count_source.where(source.c.name == orig_filename)).scalar()
+        if count_source > 0:
+            print("%s is already imported" % filename)
+            return
 
         # collect new names not in they dict yet
         self.event_data = []
@@ -394,7 +402,7 @@ class PgnImport():
 
                     annotator_id = get_id(tags.get("Annotator"), annotator, ANNOTATOR)
 
-                    source_id = get_id(unicode(pgnfile), source, SOURCE, info=info)
+                    source_id = get_id(unicode(orig_filename), source, SOURCE, info=info)
 
                     game_id = self.next_id[GAME]
                     self.next_id[GAME] += 1

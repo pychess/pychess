@@ -137,6 +137,12 @@ chess_file = args.chess_file
 ics_host = args.ics_host
 ics_port = args.ics_port
 
+
+#####################################################
+# Set sqlite temp dir path
+os.environ["SQLITE_TMPDIR"] = os.path.expanduser("~")
+
+
 ###############################################################################
 # Set up translations
 try:
