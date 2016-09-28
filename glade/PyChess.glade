@@ -3182,18 +3182,6 @@ It will search positions from http://www.k4it.de/</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="new_database1">
-                        <property name="label" translatable="yes">New _Database</property>
-                        <property name="use_action_appearance">False</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="image">image18</property>
-                        <property name="use_stock">False</property>
-                        <signal name="activate" handler="on_new_database1_activate" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
                       <object class="GtkSeparatorMenuItem" id="skillelinje15">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -3677,14 +3665,26 @@ It will search positions from http://www.k4it.de/</property>
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem" id="tools1">
+              <object class="GtkMenuItem" id="database1">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Tools</property>
+                <property name="label" translatable="yes">Database</property>
                 <child type="submenu">
-                  <object class="GtkMenu" id="tools_menu1">
+                  <object class="GtkMenu" id="database_menu1">
                     <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="new_database1">
+                        <property name="label" translatable="yes">New _Database</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="image">image18</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_new_database1_activate" swapped="no"/>
+                      </object>
+                    </child>
                     <child>
                       <object class="GtkMenuItem" id="import_endgame_nl">
                         <property name="use_action_appearance">False</property>

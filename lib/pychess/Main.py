@@ -320,7 +320,7 @@ class GladeHandlers(object):
     def on_preferences_activate(self, widget):
         preferencesDialog.run(gamewidget.getWidgets())
 
-    # Tools menu
+    # Database menu
 
     def on_import_endgame_nl_activate(self, widget):
         perspective = perspective_manager.get_perspective("database")
