@@ -3082,7 +3082,7 @@ It will search positions from http://www.k4it.de/</property>
   <object class="GtkImage" id="image18">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-new</property>
+    <property name="stock">gtk-convert</property>
   </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
@@ -3604,8 +3604,8 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="Escape" signal="activate"/>
                         <accelerator key="F11" signal="activate"/>
+                        <accelerator key="Escape" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -3680,15 +3680,35 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
-                        <property name="image">image18</property>
+                        <property name="image">image1</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_new_database1_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="skillelinje3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="import_chessfile">
+                        <property name="label" translatable="yes">Import chessfile</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="image">image18</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_import_chessfile_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="import_endgame_nl">
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Import annotated games from endgame.nl</property>
                         <signal name="activate" handler="on_import_endgame_nl_activate" swapped="no"/>
@@ -3698,6 +3718,7 @@ It will search positions from http://www.k4it.de/</property>
                       <object class="GtkMenuItem" id="import_twic">
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Import games from theweekinchess.com</property>
                         <signal name="activate" handler="on_import_twic_activate" swapped="no"/>
@@ -3707,6 +3728,7 @@ It will search positions from http://www.k4it.de/</property>
                       <object class="GtkMenuItem" id="update_players">
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Update players from fide.com</property>
                         <signal name="activate" handler="on_update_players_activate" swapped="no"/>
@@ -4160,6 +4182,12 @@ If it can use both  you can set here which one you like.</property>
                             <property name="bottom_attach">2</property>
                             <property name="y_options">GTK_FILL</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>

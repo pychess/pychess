@@ -168,9 +168,6 @@ class GladeHandlers(object):
     def on_play_internet_chess_activate(self, widget):
         ICLogon.run()
 
-    def on_new_database1_activate(self, widget):
-        game_handler.create_database()
-
     def on_load_game1_activate(self, widget):
         opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
         response = opendialog.run()
@@ -321,6 +318,13 @@ class GladeHandlers(object):
         preferencesDialog.run(gamewidget.getWidgets())
 
     # Database menu
+
+    def on_new_database1_activate(self, widget):
+        game_handler.create_database()
+
+    def on_import_chessfile_activate(self, widget):
+        perspective = perspective_manager.get_perspective("database")
+        perspective.on_import_clicked(widget)
 
     def on_import_endgame_nl_activate(self, widget):
         perspective = perspective_manager.get_perspective("database")
