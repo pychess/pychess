@@ -105,6 +105,8 @@ class SwitcherPanel(Gtk.IconView):
                     self.item_activated(treepath)
                     self.queue_draw()
                     break
+        else:
+            self.set_sensitives(None)
 
     def on_chessfile_imported(self, persp, chessfile):
         if chessfile.path is None:
