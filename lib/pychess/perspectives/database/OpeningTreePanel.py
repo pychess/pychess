@@ -16,6 +16,8 @@ class OpeningTreePanel(Gtk.TreeView):
         GObject.GObject.__init__(self)
         self.gamelist = gamelist
 
+        self.filtered = False
+
         self.persp = perspective_manager.get_perspective("database")
         self.persp.connect("chessfile_opened", self.on_chessfile_opened)
         self.persp.connect("chessfile_switched", self.on_chessfile_switched)
@@ -75,8 +77,12 @@ class OpeningTreePanel(Gtk.TreeView):
         prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
         toolbar.insert(prevButton, -1)
 
+        filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        toolbar.insert(filterButton, -1)
+
         firstButton.connect("clicked", self.on_first_clicked)
         prevButton.connect("clicked", self.on_prev_clicked)
+        filterButton.connect("clicked", self.on_filter_clicked)
 
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, False, False, 0)
@@ -102,10 +108,12 @@ class OpeningTreePanel(Gtk.TreeView):
         self.update_tree()
 
     def on_prev_clicked(self, widget):
-        # TODO: disable buttons instead
         if self.board.hist_move:
             self.board.popMove()
         self.update_tree()
+
+    def on_filter_clicked(self, button):
+        self.filtered = button.get_active()
 
     def column_clicked(self, col, data):
         self.set_search_column(data)
@@ -122,7 +130,7 @@ class OpeningTreePanel(Gtk.TreeView):
         self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
         self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
-        if load_games:
+        if load_games and self.filtered:
             self.gamelist.load_games()
 
         bb_candidates = {}

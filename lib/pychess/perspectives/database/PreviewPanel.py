@@ -13,6 +13,8 @@ class PreviewPanel:
     def __init__(self, gamelist):
         self.gamelist = gamelist
 
+        self.filtered = False
+
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         selection = self.gamelist.get_selection()
@@ -34,10 +36,14 @@ class PreviewPanel:
         lastButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_NEXT)
         toolbar.insert(lastButton, -1)
 
+        filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        toolbar.insert(filterButton, -1)
+
         firstButton.connect("clicked", self.on_first_clicked)
         prevButton.connect("clicked", self.on_prev_clicked)
         nextButton.connect("clicked", self.on_next_clicked)
         lastButton.connect("clicked", self.on_last_clicked)
+        filterButton.connect("clicked", self.on_filter_clicked)
 
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, False, False, 0)
@@ -93,12 +99,33 @@ class PreviewPanel:
 
     def on_first_clicked(self, button):
         self.boardview.showFirst()
+        self.update_gamelist()
 
     def on_prev_clicked(self, button):
         self.boardview.showPrev()
+        self.update_gamelist()
 
     def on_next_clicked(self, button):
         self.boardview.showNext()
+        self.update_gamelist()
 
     def on_last_clicked(self, button):
         self.boardview.showLast()
+        self.update_gamelist()
+
+    def on_filter_clicked(self, button):
+        self.filtered = button.get_active()
+        self.update_gamelist()
+
+    def update_gamelist(self):
+        if not self.filtered:
+            return
+
+        self.board = self.gamemodel.boards[self.boardview.shown].board
+
+        bb = self.board.friends[0] | self.board.friends[1]
+        self.gamelist.ply = self.board.plyCount
+        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
+        self.gamelist.offset = 0
+        self.gamelist.chessfile.build_query()
+        self.gamelist.load_games()
