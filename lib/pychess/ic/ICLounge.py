@@ -178,12 +178,12 @@ class ICLounge(GObject.GObject):
 
         docks = {
             "ficshome": (Gtk.Label(label="fics"), fics_home),
-            "seeklist": (dock_panel_tab(_("Seeks / Challenges"), "", addDataPrefix("glade/panel_docker.svg")), seek_list),
+            "seeklist": (dock_panel_tab(_("Seeks / Challenges"), "", addDataPrefix("glade/manseek.svg")), seek_list),
             "seekgraph": (dock_panel_tab(_("Seek Graph"), "", addDataPrefix("glade/panel_docker.svg")), seek_graph),
             "playerlist": (dock_panel_tab(_("Player List"), "", addDataPrefix("glade/panel_docker.svg")), player_list),
             "gamelist": (dock_panel_tab(_("Game List"), "", addDataPrefix("glade/panel_docker.svg")), game_list),
             "archivelist": (dock_panel_tab(_("Archived"), "", addDataPrefix("glade/panel_docker.svg")), archive_list),
-            "chat": (dock_panel_tab(_("Talking"), "", addDataPrefix("glade/panel_docker.svg")), self.chat.chatbox),
+            "chat": (dock_panel_tab(_("Talking"), "", addDataPrefix("glade/panel_chat.svg")), self.chat.chatbox),
             "console": (dock_panel_tab(_("Console"), "", addDataPrefix("glade/panel_docker.svg")), self.console.consoleView),
             "news": (dock_panel_tab(_("News"), "", addDataPrefix("glade/panel_docker.svg")), news),
         }
