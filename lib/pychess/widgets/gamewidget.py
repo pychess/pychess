@@ -6,6 +6,8 @@ import os
 import sys
 import traceback
 import threading
+import zipfile
+import zipimport
 from collections import defaultdict
 from threading import currentThread
 
@@ -82,10 +84,33 @@ media_forward = load_icon(24, "gtk-media-forward-ltr", "media-seek-forward")
 media_next = load_icon(24, "gtk-media-next-ltr", "media-skip-forward")
 media_eject = load_icon(24, "player-eject", "media-eject")
 
-path = os.path.dirname(__file__) + "/../perspectives/games/"
-postfix = "Panel.py"
-files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
-sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
+if getattr(sys, 'frozen', False):
+    zip_path = os.path.join(os.path.dirname(sys.executable), "library.zip")
+    importer = zipimport.zipimporter(zip_path)
+
+    def load_module(name):
+        """http://stackoverflow.com/questions/29578210/zipimporter-cant-find-load-sub-modules"""
+        parts = name.split('/')
+        module = importer.load_module(parts[0])
+        full_name = parts[0]
+        for part in parts[1:]:
+            full_name += '.' + part
+            if not hasattr(module, '__path__'):
+                raise ImportError('%s' % full_name)
+            path = module.__path__[0]
+            module = zipimport.zipimporter(path).load_module(part)
+
+        return module
+
+    postfix = "Panel.pyc"
+    with zipfile.ZipFile(zip_path, 'r') as myzip:
+        names = [f[:-4] for f in myzip.namelist() if f.endswith(postfix) and "/games/" in f]
+    sidePanels = [load_module(name) for name in names]
+else:
+    path = os.path.dirname(__file__) + "/../perspectives/games/"
+    postfix = "Panel.py"
+    files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
+    sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
 
 dockLocation = addUserConfigPrefix("pydock.xml")
 
