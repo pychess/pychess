@@ -1,7 +1,7 @@
 # Chess Analyses by Jan van Reek
 # http://www.endgame.nl/index.html
 
-JvR = (
+JvR_links = (
     ("http://www.endgame.nl/match.htm", "http://www.endgame.nl/MATCHPGN.ZIP"),
     ("http://www.endgame.nl/bad1870.htm", "http://www.endgame.nl/bad1870.pgn"),
     ("http://www.endgame.nl/wfairs.htm", "http://www.endgame.nl/wfairs.pgn"),
@@ -83,3 +83,7 @@ JvR = (
     ("http://web.inter.nl.net/hcc/rekius/buckle.htm", "http://web.inter.nl.net/hcc/rekius/buckle.pgn"),
     ("http://web.inter.nl.net/hcc/rekius/euwe.htm", "http://web.inter.nl.net/hcc/rekius/euwem.pgn"),
 )
+
+JvR = []
+for item in JvR_links:
+    JvR.append((item[0], "https://raw.githubusercontent.com/gbtami/JvR-archive/master/%s" % item[1][7:]))
