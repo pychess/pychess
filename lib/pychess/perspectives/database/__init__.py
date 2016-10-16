@@ -180,6 +180,11 @@ class Database(GObject.GObject, Perspective):
 
         twic.append((html % LATEST, pgn % LATEST))
 
+        # TODO: importing all twic .pgn files creates a huge (~8Gb) .pdb
+        # and sqlite seems too slow to handle my current selects
+        # until I find better solution import will be limited to latest twic .pgn
+        twic = twic[-1:]
+
         self.do_import(twic)
         response = self.progress_dialog.run()
         if response == Gtk.ResponseType.CANCEL:
