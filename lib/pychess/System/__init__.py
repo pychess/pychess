@@ -83,8 +83,8 @@ def profile_me(fn):
 # Python Timer Class - Context Manager for Timing Code Blocks
 # Corey Goldberg - 2012
 class Timer(object):
-    def __init__(self, verbose=False):
-        self.verbose = verbose
+    def __init__(self, text):
+        self.text = text
         self.timer = default_timer
 
     def __enter__(self):
@@ -95,5 +95,4 @@ class Timer(object):
         end = self.timer()
         self.elapsed_secs = end - self.start
         self.elapsed = self.elapsed_secs * 1000  # millisecs
-        if self.verbose:
-            print('elapsed time: %f ms' % self.elapsed)
+        print('---- elapsed time: %f ms - %s' % (self.elapsed, self.text))
