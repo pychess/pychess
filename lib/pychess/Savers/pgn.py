@@ -289,7 +289,7 @@ class PGNFile(PgnBase):
     def get_id(self, gameno):
         return self.filtered_games[gameno][2]
 
-    def get_records(self, offset, limit):
+    def get_records(self, offset, limit, forward=True):
         if offset < self.offset:
             # We have to recreate our filter query iterator
             # because python iterators never go backwards!

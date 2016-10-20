@@ -5,7 +5,7 @@ from __future__ import print_function
 
 from array import array
 
-from sqlalchemy import select, func, case, or_, and_
+from sqlalchemy import select, func, case, desc, or_, and_
 
 from pychess.compat import unicode
 from pychess.Savers.pgn import PGNFile
@@ -191,11 +191,11 @@ class Database(PGNFile):
         if text:
             text = unicode(text)
             self.where_tags = or_(
-                pl1.c.name.contains(text),
-                pl2.c.name.contains(text),
-                event.c.name.contains(text),
-                site.c.name.contains(text),
-                annotator.c.name.contains(text),
+                pl1.c.name.startswith(text),
+                pl2.c.name.startswith(text),
+                event.c.name.startswith(text),
+                site.c.name.startswith(text),
+                annotator.c.name.startswith(text),
             )
         else:
             self.where_tags = None
@@ -206,8 +206,12 @@ class Database(PGNFile):
         else:
             self.where_bitboards = None
 
-    def get_records(self, offset, limit):
-        query = self.query.offset(offset).limit(limit)
+    def get_records(self, offset, limit, forward=True):
+        # we use .where() to implement pagination because .offset() doesn't scale on big tables
+        if forward:
+            query = self.query.where(game.c.id > offset).order_by(game.c.id).limit(limit)
+        else:
+            query = self.query.where(game.c.id < offset).order_by(desc(game.c.id)).limit(limit)
         result = self.engine.execute(query)
         self.games = result.fetchall()
         return self.games

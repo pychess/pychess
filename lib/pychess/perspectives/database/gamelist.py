@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 from __future__ import print_function
 
+import sys
+
 from gi.repository import Gtk, GObject
 
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult
@@ -9,6 +11,7 @@ from pychess.widgets.ionest import game_handler
 from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
 from pychess.Utils.IconLoader import load_icon
+from pychess.Savers.database import Database
 
 media_previous = load_icon(16, "gtk-media-previous-ltr", "media-skip-backward")
 media_rewind = load_icon(16, "gtk-media-rewind-ltr", "media-seek-backward")
@@ -133,28 +136,33 @@ class GameList(Gtk.TreeView):
         self.load_games()
 
     def on_back_button(self, widget):
-        if self.offset - self.LIMIT >= 0:
-            self.offset = self.offset - self.LIMIT
-            self.load_games()
+        if not isinstance(self.chessfile, Database):
+            if self.offset - self.LIMIT >= 0:
+                self.offset = self.offset - self.LIMIT
+        self.load_games(forward=False)
 
     def on_forward_button(self, widget):
-        if self.offset + self.LIMIT < self.chessfile.count:
-            self.offset = self.offset + self.LIMIT
-            self.load_games()
+        if not isinstance(self.chessfile, Database):
+            if self.offset + self.LIMIT < self.chessfile.count:
+                self.offset = self.offset + self.LIMIT
+        self.load_games()
 
     def on_end_button(self, widget):
-        if self.offset + self.LIMIT == self.chessfile.count:
-            return
-        if self.chessfile.count % self.LIMIT == 0:
-            self.offset = self.chessfile.count - self.LIMIT
+        if not isinstance(self.chessfile, Database):
+            if self.offset + self.LIMIT == self.chessfile.count:
+                return
+            if self.chessfile.count % self.LIMIT == 0:
+                self.offset = self.chessfile.count - self.LIMIT
+            else:
+                self.offset = (self.chessfile.count // self.LIMIT) * self.LIMIT
         else:
-            self.offset = (self.chessfile.count // self.LIMIT) * self.LIMIT
-        self.load_games()
+            self.offset = sys.maxsize
+        self.load_games(forward=False)
 
     def column_clicked(self, col, data):
         self.set_search_column(data)
 
-    def load_games(self):
+    def load_games(self, forward=True):
         selection = self.get_selection()
         if selection is not None and self.preview_cid is not None and \
                 selection.handler_is_connected(self.preview_cid):
@@ -168,7 +176,7 @@ class GameList(Gtk.TreeView):
         getPlayers = self.chessfile.get_player_names
         add = self.liststore.append
 
-        records = self.chessfile.get_records(self.offset, self.LIMIT)
+        records = self.chessfile.get_records(self.offset, self.LIMIT, forward)
 
         self.id_list = []
         for i in range(len(records)):
@@ -191,6 +199,11 @@ class GameList(Gtk.TreeView):
             fen = getTag(i, "FEN")
             add([game_id, wname, welo, bname, belo, result, date, event, site,
                  round_, length, eco, tc, variant, fen])
+
+        if isinstance(self.chessfile, Database) and len(self.id_list) > 0:
+            # set offset to last/first seen game id depending on direction
+            # it will be used in databese get_records() where clause
+            self.offset = self.id_list[-1 if forward else 0]
 
         self.set_cursor(0)
         self.update_counter()
