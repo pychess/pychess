@@ -270,7 +270,6 @@ class PGNFile(PgnBase):
         self.where_bitboards = None
         self.query = self.games
         self.count = len(self.games)
-        print("%s game(s)" % self.count)
 
     def build_query(self):
         if self.where_tags is None:

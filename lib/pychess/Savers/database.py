@@ -13,10 +13,11 @@ from pychess.Utils.const import reprResult, WHITE, BLACK, WHITEWON, BLACKWON, DR
 from pychess.Utils.const import FEN_START
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
-from pychess.Database.model import DB_MAXINT_SHIFT
+from pychess.Database.model import DB_MAXINT_SHIFT, Explain
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
 from pychess.Database.model import game, event, site, player, pl1, pl2, annotator, bitboard, source
 from pychess.Variants import variants
+from pychess.System.Log import log
 
 __label__ = _("PyChess database")
 __ending__ = "pdb"
@@ -150,7 +151,7 @@ class Database(PGNFile):
             .outerjoin(annotator, game.c.annotator_id == annotator.c.id)]
 
         self.count = self.engine.execute(count_games).scalar()
-        print("%s contains %s game(s)" % (self.path, self.count))
+        log.debug("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
 
         self.select = select(self.cols, from_obj=self.from_obj)
 
@@ -202,7 +203,9 @@ class Database(PGNFile):
 
     def build_where_bitboards(self, ply, bb):
         if ply:
-            self.where_bitboards = and_(bitboard.c.game_id == game.c.id, bitboard.c.ply == ply, bitboard.c.bitboard == bb - DB_MAXINT_SHIFT)
+            bb_where = and_(bitboard.c.ply == ply, bitboard.c.bitboard == bb - DB_MAXINT_SHIFT)
+            stmt = select([bitboard.c.game_id]).where(bb_where)
+            self.where_bitboards = and_(game.c.id.in_(stmt))
         else:
             self.where_bitboards = None
 
@@ -212,6 +215,7 @@ class Database(PGNFile):
             query = self.query.where(game.c.id > offset).order_by(game.c.id).limit(limit)
         else:
             query = self.query.where(game.c.id < offset).order_by(desc(game.c.id)).limit(limit)
+        log.debug(self.engine.execute(Explain(query)).fetchall(), extra={"task": "SQL"})
         result = self.engine.execute(query)
         self.games = result.fetchall()
         return self.games
@@ -251,6 +255,7 @@ class Database(PGNFile):
             func.avg(game.c.black_elo),
         ]
         sel = select(cols).group_by(bitboard.c.bitboard).where(where)
+        log.debug(self.engine.execute(Explain(sel)).fetchall(), extra={"task": "SQL"})
         result = self.engine.execute(sel).fetchall()
         return [(row[0] + DB_MAXINT_SHIFT, row[1], row[2], row[3], row[4], row[5], row[6]) for row in result]
 

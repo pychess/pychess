@@ -1,16 +1,47 @@
 # -*- coding: utf-8 -*-
 
 import os
+import time
+
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
     String, SmallInteger, BigInteger, LargeBinary, UnicodeText, ForeignKey, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.sql.expression import Executable, ClauseElement, _literal_as_text
 
 from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
 from pychess.System.prefix import addUserDataPrefix
 from pychess.System import conf
+from pychess.System.Log import log
+
+
+@event.listens_for(Engine, "before_cursor_execute")
+def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+    context._query_start_time = time.time()
+    log.debug("Start Query:\n%s" % statement, extra={"task": "SQL"})
+    log.debug("Parameters:\n%r" % (parameters,), extra={"task": "SQL"})
+
+
+@event.listens_for(Engine, "after_cursor_execute")
+def after_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+    total = time.time() - context._query_start_time
+    log.debug("Query Complete!", extra={"task": "SQL"})
+    log.debug("Total Time: %.02fms" % (total * 1000), extra={"task": "SQL"})
+
+
+class Explain(Executable, ClauseElement):
+    def __init__(self, stmt):
+        self.statement = _literal_as_text(stmt)
+
+
+@compiles(Explain, 'sqlite')
+def slite_explain(element, compiler, **kw):
+    text = "EXPLAIN QUERY PLAN "
+    text += compiler.process(element.statement, **kw)
+    return text
 
 
 @event.listens_for(Engine, "connect")
