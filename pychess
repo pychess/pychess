@@ -22,9 +22,6 @@ if not getattr(sys, 'frozen', False):
     except ImportError:
         pass
 
-# enable detailed tracebacks
-cgitb.enable(format='text')
-
 ###############################################################################
 # Check requirements
 
