@@ -151,7 +151,7 @@ class Database(PGNFile):
             .outerjoin(annotator, game.c.annotator_id == annotator.c.id)]
 
         self.count = self.engine.execute(count_games).scalar()
-        log.debug("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
+        log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
 
         self.select = select(self.cols, from_obj=self.from_obj)
 
