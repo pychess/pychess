@@ -266,6 +266,7 @@ class Database(GObject.GObject, Perspective):
             self.gamelist.chessfile.build_where_bitboards(0, 0)
             self.gamelist.chessfile.build_query()
             self.gamelist.chessfile.update_count()
+            self.gamelist.chessfile.update_count_stats()
             GLib.idle_add(self.gamelist.load_games)
             GLib.idle_add(self.emit, "chessfile_imported", self.gamelist.chessfile)
             GLib.idle_add(self.progress_dialog.hide)

@@ -26,11 +26,11 @@ from pychess.System.protoopen import protoopen, PGN_ENCODING
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import PgnBase, tagre
 from pychess.Database.dbwalk import walk
-from pychess.Database.model import DB_MAXINT_SHIFT, get_engine, \
-    event, site, player, game, annotator, bitboard, tag_game, source
+from pychess.Database.model import STAT_PLY_MAX, DB_MAXINT_SHIFT, get_engine, \
+    event, site, player, game, annotator, bitboard, tag_game, source, stat
 
 
-GAME, EVENT, SITE, PLAYER, ANNOTATOR, SOURCE = range(6)
+GAME, EVENT, SITE, PLAYER, ANNOTATOR, SOURCE, STAT = range(7)
 
 removeDic = {
     ord(u"'"): None,
@@ -88,6 +88,21 @@ class PgnImport():
         self.ins_bitboard = bitboard.insert()
         self.ins_tag_game = tag_game.insert()
 
+        self.ins_stat = stat.insert().prefix_with("OR IGNORE")
+
+        self.upd_stat = stat.update().where(
+            and_(
+                stat.c.ply == bindparam('_ply'),
+                stat.c.bitboard == bindparam("_bitboard"))).values({
+                    'count': stat.c.count + bindparam('_count'),
+                    'whitewon': stat.c.whitewon + bindparam('_whitewon'),
+                    'blackwon': stat.c.blackwon + bindparam('_blackwon'),
+                    'draw': stat.c.draw + bindparam('_draw'),
+                    # TODO
+                    'white_elo': bindparam('_white_elo'),
+                    'black_elo': bindparam('_black_elo'),
+                })
+
         self.event_dict = {}
         self.site_dict = {}
         self.player_dict = {}
@@ -106,7 +121,7 @@ class PgnImport():
         s = select([player.c.fideid, player.c.id])
         self.fideid_dict = dict([(p[0], p[1]) for p in self.conn.execute(s)])
 
-        self.perfix_stmt = select([player.c.id]).where(player.c.name.startswith(bindparam('name')))
+        self.prefix_stmt = select([player.c.id]).where(player.c.name.startswith(bindparam('name')))
 
     def get_id(self, name, name_table, field, fide_id=None, info=None):
         if not name:
@@ -139,7 +154,7 @@ class PgnImport():
             result = None
             trans = self.conn.begin()
             try:
-                result = self.engine.execute(self.perfix_stmt, name=name).first()
+                result = self.engine.execute(self.prefix_stmt, name=name).first()
                 trans.commit()
             except SQLAlchemyError as e:
                 trans.rollback()
@@ -156,7 +171,7 @@ class PgnImport():
         return name_dict[name]
 
     def ini_names(self, name_table, field):
-        if field != GAME:
+        if field != GAME and field != STAT:
             s = select([name_table])
             name_dict = dict([(n.name.title().translate(removeDic), n.id)
                               for n in self.conn.execute(s)])
@@ -170,7 +185,7 @@ class PgnImport():
             elif field == ANNOTATOR:
                 self.annotator_dict = name_dict
             elif field == SOURCE:
-                self.ource_dict = name_dict
+                self.source_dict = name_dict
 
         s = select([func.max(name_table.c.id).label('maxid')])
         maxid = self.conn.execute(s).scalar()
@@ -205,6 +220,8 @@ class PgnImport():
         # collect new games and commit them in big chunks for speed
         self.game_data = []
         self.bitboard_data = []
+        self.stat_ins_data = []
+        self.stat_upd_data = []
         self.tag_game_data = []
 
         if filename.startswith("http"):
@@ -419,6 +436,29 @@ class PgnImport():
                                 'ply': ply,
                                 'bitboard': bb - DB_MAXINT_SHIFT,
                             })
+
+                            if ply <= STAT_PLY_MAX:
+                                self.stat_ins_data.append({
+                                    'ply': ply,
+                                    'bitboard': bb - DB_MAXINT_SHIFT,
+                                    'count': 0,
+                                    'whitewon': 0,
+                                    'blackwon': 0,
+                                    'draw': 0,
+                                    'white_elo': 0,
+                                    'black_elo': 0,
+                                })
+                                self.stat_upd_data.append({
+                                    '_ply': ply,
+                                    '_bitboard': bb - DB_MAXINT_SHIFT,
+                                    '_count': 1,
+                                    '_whitewon': 1 if result == WHITEWON else 0,
+                                    '_blackwon': 1 if result == BLACKWON else 0,
+                                    '_draw': 1 if result == DRAW else 0,
+                                    '_white_elo': white_elo,
+                                    '_black_elo': black_elo,
+                                })
+
                     # simple game
                     else:
                         for ply, bb in enumerate(bitboards):
@@ -427,6 +467,28 @@ class PgnImport():
                                 'ply': ply,
                                 'bitboard': bb - DB_MAXINT_SHIFT,
                             })
+
+                            if ply <= STAT_PLY_MAX:
+                                self.stat_ins_data.append({
+                                    'ply': ply,
+                                    'bitboard': bb - DB_MAXINT_SHIFT,
+                                    'count': 0,
+                                    'whitewon': 0,
+                                    'blackwon': 0,
+                                    'draw': 0,
+                                    'white_elo': 0,
+                                    'black_elo': 0,
+                                })
+                                self.stat_upd_data.append({
+                                    '_ply': ply,
+                                    '_bitboard': bb - DB_MAXINT_SHIFT,
+                                    '_count': 1,
+                                    '_whitewon': 1 if result == WHITEWON else 0,
+                                    '_blackwon': 1 if result == BLACKWON else 0,
+                                    '_draw': 1 if result == DRAW else 0,
+                                    '_white_elo': white_elo,
+                                    '_black_elo': black_elo,
+                                })
 
                     ply_count = tags.get("PlyCount")
                     if not ply_count and not fen:
@@ -488,6 +550,11 @@ class PgnImport():
                             self.conn.execute(self.ins_bitboard, self.bitboard_data)
                             self.bitboard_data = []
 
+                            self.conn.execute(self.ins_stat, self.stat_ins_data)
+                            self.conn.execute(self.upd_stat, self.stat_upd_data)
+                            self.stat_ins_data = []
+                            self.stat_upd_data = []
+
                         if progressbar is not None:
                             GLib.idle_add(progressbar.set_fraction, i / float(all_games))
                             GLib.idle_add(progressbar.set_text, "%s games from %s imported" % (i, basename))
@@ -522,6 +589,11 @@ class PgnImport():
                     self.conn.execute(self.ins_bitboard, self.bitboard_data)
                     self.bitboard_data = []
 
+                    self.conn.execute(self.ins_stat, self.stat_ins_data)
+                    self.conn.execute(self.upd_stat, self.stat_upd_data)
+                    self.stat_ins_data = []
+                    self.stat_upd_data = []
+
                 if progressbar is not None:
                     GLib.idle_add(progressbar.set_fraction, i / float(all_games))
                     GLib.idle_add(progressbar.set_text, "%s games from %s imported" % (i, basename))
@@ -531,7 +603,7 @@ class PgnImport():
 
             except SQLAlchemyError as e:
                 trans.rollback()
-                print("Importing %s failed! \n%s" % (file, e))
+                print("Importing %s failed! \n%s" % (pgnfile, e))
 
     def print_db(self):
         a1 = event.alias()

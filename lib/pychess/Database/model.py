@@ -63,6 +63,12 @@ engines = {}
 # bb - DB_MAXINT_SHIFT to fit into sqlite (8 byte) signed(!) integer range
 DB_MAXINT_SHIFT = 2**63 - 1
 
+# Max ply aggregating data for opening tree stats
+STAT_PLY_MAX = 8
+
+# PyChess database schema version number
+SCHEMA_VERSION = 1
+
 
 def get_engine(path=None, dialect="sqlite", echo=False):
     global DB_MAXINT_SHIFT
@@ -87,6 +93,14 @@ def get_engine(path=None, dialect="sqlite", echo=False):
         if path is None or not os.path.isfile(path):
             metadata.create_all(engine)
             ini_tag(engine)
+            ini_schema_version(engine)
+        else:
+            if not engine.has_table('stat'):
+                metadata.create_all(engine, tables=[stat])
+            if not engine.has_table('schema_version'):
+                metadata.create_all(engine, tables=[schema_version])
+                ini_schema_version(engine)
+
         engines[url] = engine
         return engine
 
@@ -181,6 +195,24 @@ tag_game = Table(
     Column('tag_id', Integer, ForeignKey('tag.id'), nullable=False, index=True),
 )
 
+stat = Table(
+    'stat', metadata,
+    Column('ply', Integer, primary_key=True, index=True),
+    Column('bitboard', BigInteger, primary_key=True, index=True),
+    Column('count', Integer),
+    Column('whitewon', Integer),
+    Column('blackwon', Integer),
+    Column('draw', Integer),
+    Column('white_elo', Integer),
+    Column('black_elo', Integer),
+)
+
+schema_version = Table(
+    'schema_version', metadata,
+    Column('id', Integer, primary_key=True),
+    Column('version', SmallInteger),
+)
+
 
 def drop_indexes(engine):
     for table in metadata.tables.values():
@@ -209,6 +241,15 @@ def ini_tag(engine):
     ]
     conn.execute(tag.insert(), new_values)
     conn.close()
+
+
+def ini_schema_version(engine):
+    conn = engine.connect()
+    conn.execute(schema_version.insert(), [
+        {"id": 1, "version": SCHEMA_VERSION},
+    ])
+    conn.close()
+
 
 pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
 pychess_pdb = conf.get("autosave_db_file", pychess_pdb)

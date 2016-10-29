@@ -15,7 +15,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
 from pychess.Database.model import DB_MAXINT_SHIFT, Explain
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
-from pychess.Database.model import game, event, site, player, pl1, pl2, annotator, bitboard, source
+from pychess.Database.model import STAT_PLY_MAX, game, event, site, player, pl1, pl2, annotator, bitboard, source, stat
 from pychess.Variants import variants
 from pychess.System.Log import log
 
@@ -24,6 +24,7 @@ __ending__ = "pdb"
 __append__ = True
 
 count_games = select([func.count()]).select_from(game)
+count_stats = select([func.count()]).select_from(stat)
 
 
 def save(path, model, position=None):
@@ -153,6 +154,8 @@ class Database(PGNFile):
         self.count = self.engine.execute(count_games).scalar()
         log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
 
+        self.update_count_stats()
+
         self.select = select(self.cols, from_obj=self.from_obj)
 
         self.colnames = self.engine.execute(self.select).keys()
@@ -161,6 +164,7 @@ class Database(PGNFile):
         self.orderby = None
         self.where_tags = None
         self.where_bitboards = None
+        self.ply = None
 
     def close(self):
         self.engine.dispose()
@@ -177,16 +181,24 @@ class Database(PGNFile):
         if self.orderby is not None:
             self.query = self.query.order_by(self.orderby)
 
+    def update_count_stats(self):
+        self.count_stats = self.engine.execute(count_stats).scalar()
+        log.info("%s contains %s stat records" % (self.path, self.count_stats), extra={"task": "SQL"})
+
     def update_count(self):
-        if self.where_tags is not None and self.where_bitboards is not None:
-            stmt = select([func.count()], from_obj=self.from_obj).where(self.where_tags).where(self.where_bitboards)
-        elif self.where_tags is not None:
-            stmt = select([func.count()], from_obj=self.from_obj).where(self.where_tags)
-        elif self.where_bitboards is not None:
-            stmt = select([func.count()], from_obj=self.from_obj).where(self.where_bitboards)
+        if self.ply is not None and self.ply <= STAT_PLY_MAX:
+            # update self.count in get_bitboards()
+            pass
         else:
-            stmt = count_games
-        self.count = self.engine.execute(stmt).scalar()
+            if self.where_tags is not None and self.where_bitboards is not None:
+                stmt = select([func.count()], from_obj=self.from_obj).where(self.where_tags).where(self.where_bitboards)
+            elif self.where_tags is not None:
+                stmt = select([func.count()], from_obj=self.from_obj).where(self.where_tags)
+            elif self.where_bitboards is not None:
+                stmt = select([func.count()], from_obj=self.from_obj).where(self.where_bitboards)
+            else:
+                stmt = count_games
+            self.count = self.engine.execute(stmt).scalar()
 
     def build_where_tags(self, text):
         if text:
@@ -206,8 +218,10 @@ class Database(PGNFile):
             bb_where = and_(bitboard.c.ply == ply, bitboard.c.bitboard == bb - DB_MAXINT_SHIFT)
             stmt = select([bitboard.c.game_id]).where(bb_where)
             self.where_bitboards = and_(game.c.id.in_(stmt))
+            self.ply = ply
         else:
             self.where_bitboards = None
+            self.ply = None
 
     def get_records(self, offset, limit, forward=True):
         # we use .where() to implement pagination because .offset() doesn't scale on big tables
@@ -242,21 +256,42 @@ class Database(PGNFile):
 
     def get_bitboards(self, ply, bb_candidates):
         bb_list = [bb - DB_MAXINT_SHIFT for bb in bb_candidates]
-        stmt = select([bitboard.c.game_id]).where(bitboard.c.bitboard.in_(bb_list))
-        where = and_(bitboard.c.game_id == game.c.id, bitboard.c.ply == ply, bitboard.c.game_id.in_(stmt))
 
-        cols = [
-            bitboard.c.bitboard,
-            func.count(bitboard.c.bitboard),
-            func.sum(case(value=game.c.result, whens={WHITEWON: 1}, else_=0)),
-            func.sum(case(value=game.c.result, whens={BLACKWON: 1}, else_=0)),
-            func.sum(case(value=game.c.result, whens={DRAW: 1}, else_=0)),
-            func.avg(game.c.white_elo),
-            func.avg(game.c.black_elo),
-        ]
-        sel = select(cols).group_by(bitboard.c.bitboard).where(where)
+        if ply <= STAT_PLY_MAX:
+            if self.count_stats == 0:
+                return [(bb + DB_MAXINT_SHIFT, 1, 0, 0, 0, 0, 0) for bb in bb_list]
+
+            where = and_(stat.c.bitboard.in_(bb_list), stat.c.ply == ply)
+            cols = [
+                stat.c.bitboard,
+                stat.c.count,
+                stat.c.whitewon,
+                stat.c.blackwon,
+                stat.c.draw,
+                stat.c.white_elo,
+                stat.c.black_elo,
+            ]
+            sel = select(cols).where(where)
+        else:
+            stmt = select([bitboard.c.game_id]).where(bitboard.c.bitboard.in_(bb_list))
+            where = and_(bitboard.c.game_id == game.c.id, bitboard.c.ply == ply, bitboard.c.game_id.in_(stmt))
+            cols = [
+                bitboard.c.bitboard,
+                func.count(bitboard.c.bitboard),
+                func.sum(case(value=game.c.result, whens={WHITEWON: 1}, else_=0)),
+                func.sum(case(value=game.c.result, whens={BLACKWON: 1}, else_=0)),
+                func.sum(case(value=game.c.result, whens={DRAW: 1}, else_=0)),
+                func.avg(game.c.white_elo),
+                func.avg(game.c.black_elo),
+            ]
+            sel = select(cols).group_by(bitboard.c.bitboard).where(where)
+
         log.debug(self.engine.execute(Explain(sel)).fetchall(), extra={"task": "SQL"})
         result = self.engine.execute(sel).fetchall()
+
+        if ply <= STAT_PLY_MAX:
+            self.count = sum([row[1] for row in result if row[1] is not None])
+
         return [(row[0] + DB_MAXINT_SHIFT, row[1], row[2], row[3], row[4], row[5], row[6]) for row in result]
 
     def loadToModel(self, gameno, position=-1, model=None):
