@@ -63,7 +63,7 @@ class DbTestCase(unittest.TestCase):
             game_model.players = (TestPlayer("White"), TestPlayer("Black"))
             save(self.test_db, game_model)
 
-        return load("/home/tamas/test.pdb")
+        return load(self.test_db)
 
     def test_database_save_load(self):
         """Testing database save-load"""
