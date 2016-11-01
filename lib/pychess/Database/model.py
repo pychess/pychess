@@ -204,6 +204,8 @@ tag_game = Table(
     Column('tag_id', Integer, ForeignKey('tag.id'), nullable=False, index=True),
 )
 
+# Store precalculated (for some ply) opening tree data
+# to replace slow select in get_bitboards() on big databases
 stat = Table(
     'stat', metadata,
     Column('ply', SmallInteger, primary_key=True, index=True),

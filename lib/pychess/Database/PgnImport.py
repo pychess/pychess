@@ -98,9 +98,10 @@ class PgnImport():
                     'whitewon': stat.c.whitewon + bindparam('_whitewon'),
                     'blackwon': stat.c.blackwon + bindparam('_blackwon'),
                     'draw': stat.c.draw + bindparam('_draw'),
-                    # TODO
-                    'white_elo': bindparam('_white_elo'),
-                    'black_elo': bindparam('_black_elo'),
+                    'white_elo': ((stat.c.white_elo * stat.c.whitewon) + bindparam('_white_elo') / (
+                        stat.c.whitewon + 1)),
+                    'black_elo': ((stat.c.black_elo * stat.c.blackwon) + bindparam('_black_elo') / (
+                        stat.c.blackwon + 1)),
                 })
 
         self.event_dict = {}
