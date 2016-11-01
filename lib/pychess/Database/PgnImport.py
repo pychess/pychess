@@ -427,6 +427,8 @@ class PgnImport():
                     # annotated game
                     if bitboards is None:
                         for ply, board in enumerate(boards):
+                            if ply == 0:
+                                continue
                             bb = board.friends[0] | board.friends[1]
                             # Avoid to include mate in x .pgn collections and similar in opening tree
                             if fen and "/pppppppp/8/8/8/8/PPPPPPPP/" not in fen:
@@ -462,6 +464,8 @@ class PgnImport():
                     # simple game
                     else:
                         for ply, bb in enumerate(bitboards):
+                            if ply == 0:
+                                continue
                             self.bitboard_data.append({
                                 'game_id': game_id,
                                 'ply': ply,

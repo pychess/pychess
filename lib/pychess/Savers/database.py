@@ -5,7 +5,7 @@ from __future__ import print_function
 
 from array import array
 
-from sqlalchemy import select, func, case, desc, or_, and_
+from sqlalchemy import bindparam, select, func, case, desc, or_, and_
 
 from pychess.compat import unicode
 from pychess.Savers.pgn import PGNFile
@@ -25,6 +25,19 @@ __append__ = True
 
 count_games = select([func.count()]).select_from(game)
 count_stats = select([func.count()]).select_from(stat)
+
+upd_stat = stat.update().where(
+    and_(
+        stat.c.ply == bindparam('_ply'),
+        stat.c.bitboard == bindparam("_bitboard"))).values({
+            'count': stat.c.count + bindparam('_count'),
+            'whitewon': stat.c.whitewon + bindparam('_whitewon'),
+            'blackwon': stat.c.blackwon + bindparam('_blackwon'),
+            'draw': stat.c.draw + bindparam('_draw'),
+            # TODO
+            'white_elo': bindparam('_white_elo'),
+            'black_elo': bindparam('_black_elo'),
+        })
 
 
 def save(path, model, position=None):
@@ -98,6 +111,7 @@ def save(path, model, position=None):
             result = conn.execute(game.update().where(
                 game.c.id == model.game_id).values(new_values))
 
+            # TODO: ?
             result = conn.execute(bitboard.delete().where(
                 bitboard.c.game_id == model.game_id))
         else:
@@ -106,14 +120,46 @@ def save(path, model, position=None):
 
             if not fen:
                 bitboard_data = []
+                stat_ins_data = []
+                stat_upd_data = []
+
+                result = model.status
+
                 for ply, board in enumerate(model.boards):
+                    if ply == 0:
+                        continue
                     bb = board.board.friends[0] | board.board.friends[1]
                     bitboard_data.append({
                         'game_id': game_id,
                         'ply': ply,
                         'bitboard': bb - DB_MAXINT_SHIFT,
                     })
+
+                    if ply <= STAT_PLY_MAX:
+                        stat_ins_data.append({
+                            'ply': ply,
+                            'bitboard': bb - DB_MAXINT_SHIFT,
+                            'count': 0,
+                            'whitewon': 0,
+                            'blackwon': 0,
+                            'draw': 0,
+                            'white_elo': 0,
+                            'black_elo': 0,
+                        })
+                        stat_upd_data.append({
+                            '_ply': ply,
+                            '_bitboard': bb - DB_MAXINT_SHIFT,
+                            '_count': 1,
+                            '_whitewon': 1 if result == WHITEWON else 0,
+                            '_blackwon': 1 if result == BLACKWON else 0,
+                            '_draw': 1 if result == DRAW else 0,
+                            '_white_elo': white_elo,
+                            '_black_elo': black_elo,
+                        })
+
                 result = conn.execute(bitboard.insert(), bitboard_data)
+                conn.execute(stat.insert().prefix_with("OR IGNORE"), stat_ins_data)
+                conn.execute(upd_stat, stat_upd_data)
 
         trans.commit()
     except:

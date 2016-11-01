@@ -176,9 +176,8 @@ game = Table(
 
 bitboard = Table(
     'bitboard', metadata,
-    Column('id', Integer, primary_key=True),
     Column('game_id', Integer, ForeignKey('game.id'), nullable=False),
-    Column('ply', Integer, index=True),
+    Column('ply', SmallInteger, index=True),
     Column('bitboard', BigInteger, index=True),
 )
 
@@ -197,14 +196,14 @@ tag_game = Table(
 
 stat = Table(
     'stat', metadata,
-    Column('ply', Integer, primary_key=True, index=True),
+    Column('ply', SmallInteger, primary_key=True, index=True),
     Column('bitboard', BigInteger, primary_key=True, index=True),
     Column('count', Integer),
     Column('whitewon', Integer),
     Column('blackwon', Integer),
     Column('draw', Integer),
-    Column('white_elo', Integer),
-    Column('black_elo', Integer),
+    Column('white_elo', SmallInteger),
+    Column('black_elo', SmallInteger),
 )
 
 schema_version = Table(
