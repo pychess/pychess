@@ -13,9 +13,10 @@ from pychess.Utils.const import reprResult, WHITE, BLACK, WHITEWON, BLACKWON, DR
 from pychess.Utils.const import FEN_START
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Database import model as dbmodel
-from pychess.Database.model import DB_MAXINT_SHIFT, Explain
+from pychess.Database.model import Explain
 from pychess.Database.dbwalk import walk, COMMENT, VARI_START, VARI_END, NAG
-from pychess.Database.model import STAT_PLY_MAX, game, event, site, player, pl1, pl2, annotator, bitboard, source, stat
+from pychess.Database.model import STAT_PLY_MAX, get_maxint_shift, insert_or_ignore,\
+    game, event, site, player, pl1, pl2, annotator, bitboard, source, stat
 from pychess.Variants import variants
 from pychess.System.Log import log
 
@@ -75,7 +76,10 @@ def save(path, model, position=None):
             id_ = result.inserted_primary_key[0]
         return id_
 
-    conn = dbmodel.get_engine(path).connect()
+    engine = dbmodel.get_engine(path)
+    DB_MAXINT_SHIFT = get_maxint_shift(engine)
+
+    conn = engine.connect()
     trans = conn.begin()
     try:
         event_id = get_id(event, game_event)
@@ -158,7 +162,7 @@ def save(path, model, position=None):
                         })
 
                 result = conn.execute(bitboard.insert(), bitboard_data)
-                conn.execute(stat.insert().prefix_with("OR IGNORE"), stat_ins_data)
+                conn.execute(insert_or_ignore(engine, stat.insert()), stat_ins_data)
                 conn.execute(upd_stat, stat_upd_data)
 
         trans.commit()
@@ -177,6 +181,7 @@ class Database(PGNFile):
         PGNFile.__init__(self, path, games)
         self.path = path
         self.engine = dbmodel.get_engine(path)
+        self.DB_MAXINT_SHIFT = get_maxint_shift(self.engine)
 
         self.cols = [
             game.c.id.label("Id"), pl1.c.name.label('White'),
@@ -261,7 +266,7 @@ class Database(PGNFile):
 
     def build_where_bitboards(self, ply, bb):
         if ply:
-            bb_where = and_(bitboard.c.ply == ply, bitboard.c.bitboard == bb - DB_MAXINT_SHIFT)
+            bb_where = and_(bitboard.c.ply == ply, bitboard.c.bitboard == bb - self.DB_MAXINT_SHIFT)
             stmt = select([bitboard.c.game_id]).where(bb_where)
             self.where_bitboards = and_(game.c.id.in_(stmt))
             self.ply = ply
@@ -301,11 +306,11 @@ class Database(PGNFile):
         return arr
 
     def get_bitboards(self, ply, bb_candidates):
-        bb_list = [bb - DB_MAXINT_SHIFT for bb in bb_candidates]
+        bb_list = [bb - self.DB_MAXINT_SHIFT for bb in bb_candidates]
 
         if ply <= STAT_PLY_MAX:
             if self.count_stats == 0:
-                return [(bb + DB_MAXINT_SHIFT, 1, 0, 0, 0, 0, 0) for bb in bb_list]
+                return [(bb + self.DB_MAXINT_SHIFT, 1, 0, 0, 0, 0, 0) for bb in bb_list]
 
             where = and_(stat.c.bitboard.in_(bb_list), stat.c.ply == ply)
             cols = [
@@ -338,7 +343,7 @@ class Database(PGNFile):
         if ply <= STAT_PLY_MAX:
             self.count = sum([row[1] for row in result if row[1] is not None])
 
-        return [(row[0] + DB_MAXINT_SHIFT, row[1], row[2], row[3], row[4], row[5], row[6]) for row in result]
+        return [(row[0] + self.DB_MAXINT_SHIFT, row[1], row[2], row[3], row[4], row[5], row[6]) for row in result]
 
     def loadToModel(self, gameno, position=-1, model=None):
         self.comments = []

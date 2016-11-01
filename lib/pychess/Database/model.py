@@ -61,7 +61,7 @@ engines = {}
 
 # If we use sqlite as db backend we have to store bitboards as
 # bb - DB_MAXINT_SHIFT to fit into sqlite (8 byte) signed(!) integer range
-DB_MAXINT_SHIFT = 2**63 - 1
+SQLITE_MAXINT_SHIFT = 2**63 - 1
 
 # Max ply aggregating data for opening tree stats
 STAT_PLY_MAX = 8
@@ -70,16 +70,26 @@ STAT_PLY_MAX = 8
 SCHEMA_VERSION = 1
 
 
-def get_engine(path=None, dialect="sqlite", echo=False):
-    global DB_MAXINT_SHIFT
+def get_maxint_shift(engine):
+    return SQLITE_MAXINT_SHIFT if engine.name == "sqlite" else 0
 
+
+def insert_or_ignore(engine, stmt):
+    if engine.name == "sqlite":
+        # can't use "OR UPDATE" because it delete+insert records
+        # and breaks referential integrity
+        return stmt.prefix_with("OR IGNORE")
+    elif engine.name == "postgresql":
+        return stmt.prefix_with("ON CONFLICT DO NOTHING")
+    elif engine.name == "mysql":
+        return stmt.prefix_with("IGNORE")
+
+
+def get_engine(path=None, dialect="sqlite", echo=False):
     if path is None:
         url = "sqlite://"
     elif dialect == "sqlite":
         url = "%s:///%s" % (dialect, path)
-    else:
-        DB_MAXINT_SHIFT = 0
-        # TODO: embedded firebird/mysql
 
     if url in engines:
         return engines[url]

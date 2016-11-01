@@ -26,7 +26,7 @@ from pychess.System.protoopen import protoopen, PGN_ENCODING
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import PgnBase, tagre
 from pychess.Database.dbwalk import walk
-from pychess.Database.model import STAT_PLY_MAX, DB_MAXINT_SHIFT, get_engine, \
+from pychess.Database.model import STAT_PLY_MAX, get_maxint_shift, get_engine, insert_or_ignore,\
     event, site, player, game, annotator, bitboard, tag_game, source, stat
 
 
@@ -88,7 +88,7 @@ class PgnImport():
         self.ins_bitboard = bitboard.insert()
         self.ins_tag_game = tag_game.insert()
 
-        self.ins_stat = stat.insert().prefix_with("OR IGNORE")
+        self.ins_stat = insert_or_ignore(engine, stat.insert())
 
         self.upd_stat = stat.update().where(
             and_(
@@ -202,6 +202,7 @@ class PgnImport():
 
     # @profile_me
     def do_import(self, filename, info=None, progressbar=None):
+        DB_MAXINT_SHIFT = get_maxint_shift(self.engine)
         self.progressbar = progressbar
 
         orig_filename = filename
@@ -654,10 +655,7 @@ class FIDEPlayersImport():
         if filename is None:
             return
 
-        # TODO: this is Sqlite specific !!!
-        # can't use "OR UPDATE" because it delete+insert records
-        # and breaks referential integrity
-        ins_player = player.insert().prefix_with("OR IGNORE")
+        ins_player = insert_or_ignore(self.engine, player.insert())
         player_data = []
 
         zf = zipfile.ZipFile(filename, "r")
