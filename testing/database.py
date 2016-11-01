@@ -44,24 +44,26 @@ pgnfile1 = pgnload(StringIO(
 """))
 
 GAME_COUNT = len(pgnfile1.games)
-BITBOARD_COUNT = (1, 3, 3, 4)
+BITBOARD_COUNT = (0, 3, 3, 4, 4)
 
 
 class DbTestCase(unittest.TestCase):
     def setUp(self):
-        self.engine = get_engine(None)
+        self.test_db = None  # "/home/tamas/test.pdb"
+        self.engine = get_engine(self.test_db)
 
     def tearDown(self):
-        metadata.drop_all(self.engine)
-        metadata.create_all(self.engine)
+        if self.test_db is None:
+            metadata.drop_all(self.engine)
+            metadata.create_all(self.engine)
 
     def load_test_pgn(self):
         for gameno in range(GAME_COUNT):
             game_model = pgnfile1.loadToModel(gameno)
             game_model.players = (TestPlayer("White"), TestPlayer("Black"))
-            save(None, game_model)
+            save(self.test_db, game_model)
 
-        return load(None)
+        return load("/home/tamas/test.pdb")
 
     def test_database_save_load(self):
         """Testing database save-load"""
@@ -134,7 +136,7 @@ class DbTestCase(unittest.TestCase):
         board = LBoard()
         board.applyFen(FEN_START)
 
-        for ply in range(4):
+        def get_bb_candidates(board):
             bb_candidates = {}
             for lmove in genAllMoves(board):
                 board.applyMove(lmove)
@@ -143,14 +145,15 @@ class DbTestCase(unittest.TestCase):
                     continue
                 bb_candidates[board.friends[0] | board.friends[1]] = lmove
                 board.popMove()
+            return bb_candidates
 
-            bitboards = db.get_bitboards(ply, bb_candidates)
-            print("==========")
-            for row in bitboards:
-                print(row)
-            print("----------")
-            self.assertEqual(len(bitboards), BITBOARD_COUNT[ply])
-            self.assertEqual(sum([row[1] for row in bitboards]), GAME_COUNT)
+        bitboards = db.get_bitboards(1, get_bb_candidates(board))
+        print("==========")
+        for row in bitboards:
+            print(row)
+        print("----------")
+        self.assertEqual(len(bitboards), BITBOARD_COUNT[1])
+        self.assertEqual(sum([row[1] for row in bitboards]), GAME_COUNT)
 
 
 if __name__ == '__main__':
