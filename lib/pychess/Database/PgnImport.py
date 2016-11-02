@@ -25,6 +25,7 @@ from pychess.System import Timer
 from pychess.System.protoopen import protoopen, PGN_ENCODING
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Savers.pgnbase import PgnBase, tagre
+from pychess.Savers.database import upd_stat
 from pychess.Database.dbwalk import walk
 from pychess.Database.model import STAT_PLY_MAX, get_maxint_shift, get_engine, insert_or_ignore,\
     event, site, player, game, annotator, bitboard, tag_game, source, stat
@@ -89,20 +90,7 @@ class PgnImport():
         self.ins_tag_game = tag_game.insert()
 
         self.ins_stat = insert_or_ignore(engine, stat.insert())
-
-        self.upd_stat = stat.update().where(
-            and_(
-                stat.c.ply == bindparam('_ply'),
-                stat.c.bitboard == bindparam("_bitboard"))).values({
-                    'count': stat.c.count + bindparam('_count'),
-                    'whitewon': stat.c.whitewon + bindparam('_whitewon'),
-                    'blackwon': stat.c.blackwon + bindparam('_blackwon'),
-                    'draw': stat.c.draw + bindparam('_draw'),
-                    'white_elo': ((stat.c.white_elo * stat.c.whitewon) + bindparam('_white_elo') / (
-                        stat.c.whitewon + 1)),
-                    'black_elo': ((stat.c.black_elo * stat.c.blackwon) + bindparam('_black_elo') / (
-                        stat.c.blackwon + 1)),
-                })
+        self.upd_stat = upd_stat
 
         self.event_dict = {}
         self.site_dict = {}
@@ -405,10 +393,10 @@ class PgnImport():
                         continue
 
                     white_elo = tags.get('WhiteElo')
-                    white_elo = int(white_elo) if white_elo and white_elo.isdigit() else None
+                    white_elo = int(white_elo) if white_elo and white_elo.isdigit() else 0
 
                     black_elo = tags.get('BlackElo')
-                    black_elo = int(black_elo) if black_elo and black_elo.isdigit() else None
+                    black_elo = int(black_elo) if black_elo and black_elo.isdigit() else 0
 
                     time_control = tags.get("TimeControl")
 

@@ -64,7 +64,7 @@ engines = {}
 SQLITE_MAXINT_SHIFT = 2**63 - 1
 
 # Max ply aggregating data for opening tree stats
-STAT_PLY_MAX = 8
+STAT_PLY_MAX = 10
 
 # PyChess database schema version number
 SCHEMA_VERSION = 1

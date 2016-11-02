@@ -35,10 +35,8 @@ upd_stat = stat.update().where(
             'whitewon': stat.c.whitewon + bindparam('_whitewon'),
             'blackwon': stat.c.blackwon + bindparam('_blackwon'),
             'draw': stat.c.draw + bindparam('_draw'),
-            'white_elo': (stat.c.white_elo * stat.c.whitewon + bindparam('_white_elo') / (
-                stat.c.whitewon + 1)),
-            'black_elo': (stat.c.black_elo * stat.c.blackwon + bindparam('_black_elo') / (
-                stat.c.blackwon + 1)),
+            'white_elo': ((stat.c.white_elo * stat.c.count) + bindparam('_white_elo')) / (stat.c.count + 1),
+            'black_elo': ((stat.c.black_elo * stat.c.count) + bindparam('_black_elo')) / (stat.c.count + 1),
         })
 
 
@@ -57,8 +55,8 @@ def save(path, model, position=None):
     eco = model.tags.get("ECO")
     time_control = model.tags.get("TimeControl")
     board = int(model.tags.get("Board")) if model.tags.get("Board") else None
-    white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else None
-    black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
+    white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else 0
+    black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else 0
     variant = model.variant.variant
     fen = model.boards[0].board.asFen()
     fen = fen if fen != FEN_START else None
