@@ -157,7 +157,7 @@ class OpeningTreePanel(Gtk.TreeView):
         self.clear_tree()
 
         for lmove, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in result:
-            perf = round((white_won * 100. + draw * 50.) / count)
+            perf = 0 if not count else round((white_won * 100. + draw * 50.) / count)
             elo_avg = white_elo_avg if self.board.color == WHITE else black_elo_avg
             self.liststore.append([lmove, toSAN(self.board, lmove), count, perf, elo_avg])
 

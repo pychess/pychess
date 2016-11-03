@@ -309,7 +309,7 @@ class Database(PGNFile):
 
         if ply <= STAT_PLY_MAX:
             if self.count_stats == 0:
-                return [(bb + self.DB_MAXINT_SHIFT, 1, 0, 0, 0, 0, 0) for bb in bb_list]
+                return [(bb + self.DB_MAXINT_SHIFT, 0, 0, 0, 0, 0, 0) for bb in bb_list]
 
             where = and_(stat.c.bitboard.in_(bb_list), stat.c.ply == ply)
             cols = [
