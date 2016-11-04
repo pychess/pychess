@@ -393,10 +393,10 @@ class PgnImport():
                         continue
 
                     white_elo = tags.get('WhiteElo')
-                    white_elo = int(white_elo) if white_elo and white_elo.isdigit() else 0
+                    white_elo = int(white_elo) if white_elo and white_elo.isdigit() else None
 
                     black_elo = tags.get('BlackElo')
-                    black_elo = int(black_elo) if black_elo and black_elo.isdigit() else 0
+                    black_elo = int(black_elo) if black_elo and black_elo.isdigit() else None
 
                     time_control = tags.get("TimeControl")
 
@@ -437,6 +437,8 @@ class PgnImport():
                                     'whitewon': 0,
                                     'blackwon': 0,
                                     'draw': 0,
+                                    'white_elo_count': 0,
+                                    'black_elo_count': 0,
                                     'white_elo': 0,
                                     'black_elo': 0,
                                 })
@@ -447,8 +449,10 @@ class PgnImport():
                                     '_whitewon': 1 if result == WHITEWON else 0,
                                     '_blackwon': 1 if result == BLACKWON else 0,
                                     '_draw': 1 if result == DRAW else 0,
-                                    '_white_elo': white_elo,
-                                    '_black_elo': black_elo,
+                                    '_white_elo_count': 1 if white_elo is not None else 0,
+                                    '_black_elo_count': 1 if black_elo is not None else 0,
+                                    '_white_elo': white_elo if white_elo is not None else 0,
+                                    '_black_elo': black_elo if black_elo is not None else 0,
                                 })
 
                     # simple game
@@ -470,6 +474,8 @@ class PgnImport():
                                     'whitewon': 0,
                                     'blackwon': 0,
                                     'draw': 0,
+                                    'white_elo_count': 0,
+                                    'black_elo_count': 0,
                                     'white_elo': 0,
                                     'black_elo': 0,
                                 })
@@ -480,8 +486,10 @@ class PgnImport():
                                     '_whitewon': 1 if result == WHITEWON else 0,
                                     '_blackwon': 1 if result == BLACKWON else 0,
                                     '_draw': 1 if result == DRAW else 0,
-                                    '_white_elo': white_elo,
-                                    '_black_elo': black_elo,
+                                    '_white_elo_count': 1 if white_elo is not None else 0,
+                                    '_black_elo_count': 1 if black_elo is not None else 0,
+                                    '_white_elo': white_elo if white_elo is not None else 0,
+                                    '_black_elo': black_elo if black_elo is not None else 0,
                                 })
 
                     ply_count = tags.get("PlyCount")

@@ -214,6 +214,8 @@ stat = Table(
     Column('whitewon', Integer),
     Column('blackwon', Integer),
     Column('draw', Integer),
+    Column('white_elo_count', Integer),
+    Column('black_elo_count', Integer),
     Column('white_elo', SmallInteger),
     Column('black_elo', SmallInteger),
 )

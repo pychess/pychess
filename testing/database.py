@@ -3,9 +3,9 @@ from __future__ import print_function
 import unittest
 
 from pychess.compat import StringIO
-from pychess.Utils.const import FEN_START, LOCAL
+from pychess.Utils.const import FEN_START, LOCAL, E2, E4
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Utils.lutils.lmovegen import genAllMoves
+from pychess.Utils.lutils.lmovegen import genAllMoves, newMove
 from pychess.Savers.database import save, load
 from pychess.Savers.pgn import load as pgnload
 from pychess.Savers.pgn import walk
@@ -28,23 +28,29 @@ pgnfile1 = pgnload(StringIO(
     """
 [Event "win"]
 [Result "1-0"]
-1. e4 e5 2. Nf3 Nf6 3. Nc3 Nc6
+[WhiteElo "2700"]
+[BlackElo "1700"]
+1. e4 e5 2. Nf3 Nf6
 
 [Event "draw"]
 [Result "1/2-1/2"]
-1. d4 d5 2. Nf3 Nf6
+[WhiteElo "2726"]
+[BlackElo "1726"]
+1. e4 d5 2. Nf3 Nf6
 
 [Event "win"]
 [Result "1-0"]
-1. c4 c5 2. Nf3 Nf6
+[WhiteElo "2710"]
+[BlackElo "1710"]
+1. e4 c5 2. Nf3 Nf6
 
 [Event "win"]
 [Result "0-1"]
-1. c4 c5 2. Nc3 Nf6
+1. e4 c5 2. Nc3 Nf6
 """))
 
 GAME_COUNT = len(pgnfile1.games)
-BITBOARD_COUNT = (0, 3, 3, 4, 4)
+BITBOARD_COUNT = (0, 1, 3, 4, 4)
 
 
 class DbTestCase(unittest.TestCase):
@@ -147,12 +153,24 @@ class DbTestCase(unittest.TestCase):
                 board.popMove()
             return bb_candidates
 
+        # ply 1
         bitboards = db.get_bitboards(1, get_bb_candidates(board))
         print("==========")
         for row in bitboards:
             print(row)
         print("----------")
         self.assertEqual(len(bitboards), BITBOARD_COUNT[1])
+        self.assertEqual(sum([row[1] for row in bitboards]), GAME_COUNT)
+        self.assertEqual(bitboards[0][5], 2712)
+
+        # ply 2
+        board.applyMove(newMove(E2, E4))
+        bitboards = db.get_bitboards(2, get_bb_candidates(board))
+        print("==========")
+        for row in bitboards:
+            print(row)
+        print("----------")
+        self.assertEqual(len(bitboards), BITBOARD_COUNT[2])
         self.assertEqual(sum([row[1] for row in bitboards]), GAME_COUNT)
 
 

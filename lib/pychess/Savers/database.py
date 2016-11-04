@@ -35,8 +35,12 @@ upd_stat = stat.update().where(
             'whitewon': stat.c.whitewon + bindparam('_whitewon'),
             'blackwon': stat.c.blackwon + bindparam('_blackwon'),
             'draw': stat.c.draw + bindparam('_draw'),
-            'white_elo': ((stat.c.white_elo * stat.c.count) + bindparam('_white_elo')) / (stat.c.count + 1),
-            'black_elo': ((stat.c.black_elo * stat.c.count) + bindparam('_black_elo')) / (stat.c.count + 1),
+            'white_elo_count': stat.c.white_elo_count + bindparam('_white_elo_count'),
+            'black_elo_count': stat.c.black_elo_count + bindparam('_black_elo_count'),
+            'white_elo': case(value=bindparam('_white_elo'), whens={0: stat.c.white_elo}, else_=(
+                (stat.c.white_elo * stat.c.white_elo_count) + bindparam('_white_elo')) / (stat.c.white_elo_count + bindparam('_white_elo_count'))),
+            'black_elo': case(value=bindparam('_black_elo'), whens={0: stat.c.black_elo}, else_=(
+                (stat.c.black_elo * stat.c.black_elo_count) + bindparam('_black_elo')) / (stat.c.black_elo_count + bindparam('_black_elo_count'))),
         })
 
 
@@ -55,8 +59,8 @@ def save(path, model, position=None):
     eco = model.tags.get("ECO")
     time_control = model.tags.get("TimeControl")
     board = int(model.tags.get("Board")) if model.tags.get("Board") else None
-    white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else 0
-    black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else 0
+    white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else None
+    black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
     variant = model.variant.variant
     fen = model.boards[0].board.asFen()
     fen = fen if fen != FEN_START else None
@@ -146,6 +150,8 @@ def save(path, model, position=None):
                             'whitewon': 0,
                             'blackwon': 0,
                             'draw': 0,
+                            'white_elo_count': 0,
+                            'black_elo_count': 0,
                             'white_elo': 0,
                             'black_elo': 0,
                         })
@@ -156,8 +162,10 @@ def save(path, model, position=None):
                             '_whitewon': 1 if result == WHITEWON else 0,
                             '_blackwon': 1 if result == BLACKWON else 0,
                             '_draw': 1 if result == DRAW else 0,
-                            '_white_elo': white_elo,
-                            '_black_elo': black_elo,
+                            '_white_elo_count': 1 if white_elo is not None else 0,
+                            '_black_elo_count': 1 if black_elo is not None else 0,
+                            '_white_elo': white_elo if white_elo is not None else 0,
+                            '_black_elo': black_elo if black_elo is not None else 0,
                         })
 
                 result = conn.execute(bitboard.insert(), bitboard_data)
