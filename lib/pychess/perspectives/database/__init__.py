@@ -4,7 +4,7 @@ import traceback
 
 from gi.repository import Gtk, GObject, GLib
 
-from pychess.compat import StringIO
+from pychess.compat import StringIO, unicode
 from pychess.System.Log import log
 from pychess.perspectives import Perspective, perspective_manager
 from pychess.perspectives.database.gamelist import GameList
@@ -248,6 +248,7 @@ class Database(GObject.GObject, Perspective):
 
             self.importer = PgnImport(self.gamelist.chessfile.engine)
             for i, filename in enumerate(filenames):
+                filename = unicode(filename)
                 GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
                 # GLib.idle_add(self.progressbar0.set_text, filename)
                 if self.importer.cancel:
