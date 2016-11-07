@@ -62,6 +62,7 @@ class DummyConnection(Connection):
             def add(self, x):
                 self.append(x)
 
+        self.ICC = False
         self.predictions = FakeSet()  # make predictions able to be reordered
         self.client = self.DummyClient(self.predictions, self.reply_cmd_dict)
         self.client.lines.block_mode = True
