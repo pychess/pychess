@@ -31,6 +31,7 @@ class TimeSeal(object):
         self.canceled = False
         self.FatICS = False
         self.USCN = False
+        self.ICC = False
         self.buf = bytearray(b"")
         self.writebuf = bytearray(b"")
         self.stateinfo = None
@@ -52,7 +53,8 @@ class TimeSeal(object):
             if err.errno != errno.EINPROGRESS:
                 raise
         self.sock.settimeout(None)
-        print(self.get_init_string(), file=self)
+        if not self.host.startswith("chessclub.com"):
+            print(self.get_init_string(), file=self)
         self.cook_some()
 
     def cancel(self):
@@ -152,7 +154,8 @@ class TimeSeal(object):
         logstr = "*" * len(string) if self.sensitive else string
         self.sensitive = False
         log.info(logstr, extra={"task": (self.name, "raw")})
-        string = self.encode(string)
+        if not self.ICC:
+            string = self.encode(string)
         try:
             self.sock.send(string + b"\n")
         except:
@@ -187,16 +190,21 @@ class TimeSeal(object):
             elif b"puertorico.com" in self.buf:
                 self.USCN = True
                 self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
+            elif b"chessclub.com" in self.buf:
+                self.ICC = True
+                self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
             elif b"Starting FICS session" in self.buf:
                 self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
         else:
-            recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
+            if not self.ICC:
+                recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
             recv = recv.replace(b"\r", b"")
             # enable this only for temporary debugging
-            # log.debug(recv, extra={"task": (self.name, "raw")})
+            log.debug(recv, extra={"task": (self.name, "raw")})
 
-            for i in range(g_count):
-                print(G_RESPONSE, file=self)
+            if not self.ICC:
+                for i in range(g_count):
+                    print(G_RESPONSE, file=self)
 
             self.buf += recv
 

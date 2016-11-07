@@ -75,6 +75,8 @@ class Connection(GObject.GObject, Thread):
             return "FatICS"
         elif self.USCN:
             return "USCN"
+        elif self.ICC:
+            return "ICC"
         else:
             return "FICS"
 
@@ -228,16 +230,20 @@ class FICSConnection(Connection):
                     self.username = match.groups()[0]
                     break
 
-                    # USCN specific lines
-                match = re.search("Created temporary login '(%s)'" % NAMES_RE,
-                                  line)
+                # USCN specific line
+                match = re.search("Created temporary login '(%s)'" % NAMES_RE, line)
                 if match:
                     self.username = match.groups()[0]
                     break
-                match = re.search("answers to frequently asked questions",
-                                  line)
+
+                match = re.search("For a list of events, click here:", line)
                 if match:
                     break
+
+                match = re.search("answers to frequently asked questions", line)
+                if match:
+                    break
+
                 match = re.search("This is the admin message of the day", line)
                 if match:
                     break
@@ -247,11 +253,12 @@ class FICSConnection(Connection):
             self._post_connect_hook(lines)
             self.FatICS = self.client.FatICS
             self.USCN = self.client.USCN
+            self.ICC = self.client.ICC
             self.client.name = self.username
             self.client = PredictionsTelnet(self.client, self.predictions,
                                             self.reply_cmd_dict)
-            self.client.lines.line_prefix = "fics%"
-            if not self.USCN:
+            self.client.lines.line_prefix = "aics%" if self.ICC else "fics%"
+            if not self.USCN and not self.ICC:
                 self.client.run_command("iset block 1")
                 self.client.lines.block_mode = True
             self.client.run_command("iset defprompt 1")
@@ -377,7 +384,7 @@ class FICSMainConnection(FICSConnection):
 
     def start_helper_manager(self, set_user_vars):
         # if guest accounts disabled we will handle players in the main connection
-        if self.FatICS or self.USCN:
+        if self.FatICS or self.USCN or self.ICC:
             self.client.run_command("set pin 1")
         else:
             self.client.run_command("iset allresults 1")
@@ -412,7 +419,7 @@ class FICSHelperConnection(FICSConnection):
         self.client.run_command("set chanoff 1")
         self.client.run_command("set gin 1")
         self.client.run_command("set availinfo 1")
-        if self.FatICS or self.USCN:
+        if self.FatICS or self.USCN or self.ICC:
             self.client.run_command("set pin 1")
         else:
             self.client.run_command("iset allresults 1")

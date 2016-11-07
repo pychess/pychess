@@ -276,7 +276,7 @@ class BoardManager(GObject.GObject):
             self.onInterceptedChallenge,
             "Your challenge intercepts %s's challenge\." % names, "<12> (.+)")
 
-        if self.connection.USCN:
+        if self.connection.USCN or self.connection.ICC:
             self.connection.expect_n_lines(self.onObserveGameCreated,
                                            "You are now observing game \d+\.",
                                            '', "<12> (.+)")
@@ -893,10 +893,13 @@ class BoardManager(GObject.GObject):
         log.debug("'%s'" % (matchlist[1].string),
                   extra={"task": (self.connection.username,
                                   "BM.onObserveGameCreated")})
-        if self.connection.USCN:
+        if self.connection.USCN or self.connection.ICC:
             # TODO? is this ok?
             game_type = GAME_TYPES["blitz"]
             castleSigns = ("k", "q")
+            rated = ""
+            minutes = 0
+            inc = 0
         else:
             gameno, wname, wrating, bname, brating, rated, gametype, minutes, inc = matchlist[
                 1].groups()
