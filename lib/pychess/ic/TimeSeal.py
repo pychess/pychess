@@ -9,6 +9,7 @@ import platform
 import getpass
 
 from pychess.System.Log import log
+from pychess.ic import DTGR_END
 
 ENCODE = [ord(i) for i in "Timestamp (FICS) v1.0 - programmed by Henrik Gram."]
 ENCODELEN = len(ENCODE)
@@ -174,6 +175,12 @@ class TimeSeal(object):
                 stuff = self.buf[:i + len(until)]
                 self.buf = self.buf[i + len(until):]
                 return str(stuff.strip().decode("latin_1"))
+            elif self.ICC:
+                i = self.buf.find(DTGR_END)
+                if i >= 0:
+                    stuff = self.buf[:i + 2]
+                    self.buf = self.buf[i + 2:]
+                    return str(stuff.strip().decode("latin_1"))
             self.cook_some()
 
     def cook_some(self):

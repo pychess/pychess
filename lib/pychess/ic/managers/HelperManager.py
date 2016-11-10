@@ -1,5 +1,4 @@
 import re
-from threading import Timer
 
 from gi.repository import GObject
 
@@ -8,7 +7,8 @@ from pychess.ic import GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_PLAYING, BLKCMD_
     GAME_TYPES, TITLES, TYPE_BLITZ, parse_title_hex, TYPE_ATOMIC, TYPE_WILD, \
     TYPE_STANDARD, TYPE_LIGHTNING, TYPE_CRAZYHOUSE, TYPE_LOSERS, TYPE_BUGHOUSE, \
     TYPE_SUICIDE, DEVIATION, STATUS, BLKCMD_WHO, IC_STATUS_NOT_AVAILABLE, \
-    IC_STATUS_AVAILABLE, parseRating
+    IC_STATUS_AVAILABLE, parseRating, DG_EXAMINED_GAME_IS_GONE, \
+    DG_PLAYER_ARRIVED_SIMPLE, DG_PLAYER_LEFT, DG_GAME_STARTED, DG_GAME_RESULT, DG_RATING_TYPES
 from pychess.ic.FICSObjects import FICSPlayer, FICSGame
 from pychess.ic.managers.BoardManager import parse_reason
 
@@ -33,15 +33,19 @@ class HelperManager(GObject.GObject):
         self.helperconn = helperconn
         self.connection = connection
 
-        # TODO: Examined games
-        self.helperconn.expect_fromto(
-            self.on_game_list,
-            "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d:)?(\d+):(\d+)\s*-\s*(\d:)?(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
-            %
-            (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())),
-            "(\d+) games displayed.")
+        if not self.helperconn.ICC:
+            # TODO: Examined games
+            self.helperconn.expect_fromto(
+                self.on_game_list,
+                "(\d+) %s (\w+)\s+%s (\w+)\s+\[(p| )(%s)(u|r)\s*(\d+)\s+(\d+)\]\s*(\d:)?(\d+):(\d+)\s*-\s*(\d:)?(\d+):(\d+) \(\s*(\d+)-\s*(\d+)\) (W|B):\s*(\d+)"
+                %
+                (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())),
+                "(\d+) games displayed.")
 
-        if self.helperconn.FatICS or self.helperconn.USCN or self.helperconn.ICC:
+        if self.helperconn.ICC:
+            self.helperconn.expect_line(self.on_icc_player_arrived, "%s (.+)" % DG_PLAYER_ARRIVED_SIMPLE)
+            self.helperconn.expect_line(self.on_icc_player_left, "%s (.+)" % DG_PLAYER_LEFT)
+        elif self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.expect_line(self.on_player_who, "%s(?:\s{2,}%s)+" %
                                         (whomatch, whomatch))
             self.helperconn.expect_line(self.on_player_connect,
@@ -55,30 +59,46 @@ class HelperManager(GObject.GObject):
             self.helperconn.expect_line(self.on_player_connectI, "<wa> %s" % whoI)
             self.helperconn.expect_line(self.on_player_disconnectI, "<wd> ([A-Za-z]+)")
 
-        self.helperconn.expect_line(
-            self.on_game_add,
-            "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
-        self.helperconn.expect_line(
-            self.on_game_remove,
-            "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$")
-        self.helperconn.expect_line(self.on_player_unavailable,
-                                    "%s is no longer available for matches." %
-                                    names)
-        self.helperconn.expect_fromto(
-            self.on_player_available,
-            "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)"
-            % (names, ratings, ratings, ratings, ratings, ratings),
-            "is now available for matches.")
+        if self.helperconn.ICC:
+            self.helperconn.expect_line(self.on_icc_game_started, "%s (.+)" % DG_GAME_STARTED)
+            self.helperconn.expect_line(self.on_icc_game_result, "%s (.+)" % DG_GAME_RESULT)
+            # self.helperconn.expect_line(self.on_icc_examined_game_is_gone, "%s (.+)" % DG_EXAMINED_GAME_IS_GONE)
+        else:
+            self.helperconn.expect_line(
+                self.on_game_add,
+                "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) (?:Creating|Continuing) (u?n?rated) ([^ ]+) match\.\}$")
+            self.helperconn.expect_line(
+                self.on_game_remove,
+                "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$")
+            self.helperconn.expect_line(self.on_player_unavailable,
+                                        "%s is no longer available for matches." %
+                                        names)
+            self.helperconn.expect_fromto(
+                self.on_player_available,
+                "%s Blitz \(%s\), Std \(%s\), Wild \(%s\), Light\(%s\), Bug\(%s\)"
+                % (names, ratings, ratings, ratings, ratings, ratings),
+                "is now available for matches.")
 
+        # FICS game types
         # b: blitz      l: lightning   u: untimed      e: examined game
         # s: standard   w: wild        x: atomic       z: crazyhouse
         # B: Bughouse   L: losers      S: Suicide
-        if self.helperconn.FatICS or self.helperconn.USCN or self.helperconn.ICC:
+
+        if self.helperconn.ICC:
+            self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED_SIMPLE)
+            self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_LEFT)
+            for rating in DG_RATING_TYPES:
+                self.helperconn.client.run_command("set-2 %s 1" % rating)
+        elif self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.client.run_command("who")
         else:
             self.helperconn.client.run_command("who IbslwBzSLx")
 
-        if self.helperconn.FatICS or self.helperconn.USCN or self.helperconn.ICC:
+        if self.helperconn.ICC:
+            self.helperconn.client.run_command("set-2 %s 1" % DG_GAME_STARTED)
+            self.helperconn.client.run_command("set-2 %s 1" % DG_GAME_RESULT)
+            self.helperconn.client.run_command("set-2 %s 1" % DG_EXAMINED_GAME_IS_GONE)
+        elif self.helperconn.FatICS or self.helperconn.USCN:
             self.helperconn.client.run_command("games")
         else:
             self.helperconn.client.run_command("games /bslwBzSLx")
@@ -132,6 +152,24 @@ class HelperManager(GObject.GObject):
         # print(matchlist[-1].groups()[0], len(games))
 
     on_game_list.BLKCMD = BLKCMD_GAMES
+
+    def on_icc_game_started(self, match):
+        # gamenumber whitename blackname wild-number rating-type rated
+        # white-initial white-increment black-initial black-increment
+        # played-game {ex-string} white-rating black-rating game-id
+        # white-titles black-titles irregular-legality irregular-semantics
+        # uses-plunkers fancy-timecontrol promote-to-king
+        gameno = match.groups()[0].split(" ")[0]
+        print(gameno)
+
+    on_icc_game_started.BLKCMD = DG_GAME_STARTED
+
+    def on_icc_game_result(self, match):
+        # gamenumber become-examined game_result_code score_string2 description-string ECO
+        gameno = match.groups()[0].split(" ")[0]
+        print(gameno)
+
+    on_icc_game_result.BLKCMD = DG_GAME_RESULT
 
     def on_game_add(self, match):
         gameno, wname, bname, rated, game_type = match.groups()
@@ -282,6 +320,19 @@ class HelperManager(GObject.GObject):
         name = match.groups()[0]
         self.connection.players.player_disconnected(name)
 
+    def on_icc_player_arrived(self, match):
+        name = match.groups()[0].split(" ")[0]
+        player = self.connection.players.get(name)
+        player.online = True
+
+    on_icc_player_arrived.BLKCMD = DG_PLAYER_ARRIVED_SIMPLE
+
+    def on_icc_player_left(self, match):
+        name = match.groups()[0].split(" ")[0]
+        self.connection.players.player_disconnected(name)
+
+    on_icc_player_left.BLKCMD = DG_PLAYER_LEFT
+
     def on_player_unavailable(self, match):
         name, titles = match.groups()
         player = self.connection.players.get(name)
@@ -307,8 +358,8 @@ class HelperManager(GObject.GObject):
             player.titles |= titles
 
         for rating_type, rating in ((TYPE_BLITZ, blitz), (TYPE_STANDARD, std),
-                              (TYPE_LIGHTNING, light), (TYPE_WILD, wild),
-                              (TYPE_BUGHOUSE, bughouse)):
+                                    (TYPE_LIGHTNING, light), (TYPE_WILD, wild),
+                                    (TYPE_BUGHOUSE, bughouse)):
             rating = parseRating(rating)
             if player.ratings[rating_type] != rating:
                 player.ratings[rating_type] = rating

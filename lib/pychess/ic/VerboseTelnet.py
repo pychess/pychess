@@ -2,7 +2,7 @@ import collections
 import re
 
 from pychess.System.Log import log
-from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END, BLKCMD_PASSWORD
+from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END, BLKCMD_PASSWORD, DTGR_START, DTGR_END, DG_PASSWORD
 
 
 class ConsoleHandler(object):
@@ -166,6 +166,7 @@ class TelnetLines(object):
         self.telnet = telnet
         self.lines = collections.deque()
         self._block_mode = False
+        self.datagram_mode = False
         self._line_prefix = None
         self.consolehandler = None
         self.show_reply = show_reply
@@ -206,8 +207,24 @@ class TelnetLines(object):
 
         if line.startswith(self.line_prefix):
             line = line[len(self.line_prefix) + 1:]
+        if self.datagram_mode and line.startswith(DTGR_START):
+            identifier = -1
+            pos = line.rfind(DTGR_END)
+            if pos > 0:
+                parts = line.split(DTGR_END)
+                for part in parts:
+                    if part.startswith(DTGR_START):
+                        code, text = part[2:].split(" ", 1)
+                        lines.append(TelnetLine(part[2:], int(code)))
+                        if code != DG_PASSWORD:
+                            log.debug("%s %s" % (code, part[2:]),
+                                      extra={"task": (self.telnet.name, "datagram")})
+                    else:
+                        lines.append(TelnetLine(part, None))
+            else:
+                log.debug(line, extra={"task": (self.telnet.name, "unclosed_datagram")})
 
-        if self.block_mode and line.startswith(BLOCK_START):
+        elif self.block_mode and line.startswith(BLOCK_START):
             parts = line[1:].split(BLOCK_SEPARATOR)
             if len(parts) == 3:
                 identifier, code, text = parts
@@ -257,6 +274,7 @@ class PredictionsTelnet(object):
 
     def parse(self):
         line = self.lines.popleft()
+
         if not line.line:
             return  # TODO: necessary?
 

@@ -69,6 +69,8 @@ class Connection(GObject.GObject, Thread):
 
         self.USCN = False
 
+        self.ICC = False
+
     @property
     def ics_name(self):
         if self.FatICS:
@@ -258,9 +260,16 @@ class FICSConnection(Connection):
             self.client = PredictionsTelnet(self.client, self.predictions,
                                             self.reply_cmd_dict)
             self.client.lines.line_prefix = "aics%" if self.ICC else "fics%"
+
             if not self.USCN and not self.ICC:
                 self.client.run_command("iset block 1")
                 self.client.lines.block_mode = True
+
+            if self.ICC:
+                self.client.run_command("set style 12")
+                self.client.run_command("set prompt 0")
+                self.client.lines.datagram_mode = True
+
             self.client.run_command("iset defprompt 1")
             self.client.run_command("iset ms 1")
 
