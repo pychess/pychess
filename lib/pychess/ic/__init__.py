@@ -122,20 +122,6 @@ class WildGameType(VariantGameType):
     def instances(cls):
         return cls._instances
 
-# ICC game types
-# b blitz
-# B bullet
-# d bughouse
-# f five-minute
-# J 45-minute
-# K chess960 pool
-# L loser's
-# M 3-minute
-# o one-minute
-# s standard
-# z crazyhouse
-# or a wild number.
-
 # FICS game types
 GAME_TYPES = {
     "blitz": NormalGameType("blitz", "b", TYPE_BLITZ, _("Blitz")),

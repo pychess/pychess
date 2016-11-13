@@ -211,13 +211,14 @@ class FICSConnection(Connection):
                     print("guest", file=self.client)
                 got = self.client.read_until(
                     "Press return",
+                    "You are connected as a guest",
                     "If it is yours, type the password.",
                     "guest connections have been prevented",
                     "nobody from your site may login without an account.")
                 # got = 3
-                if got == 1:
+                if got == 2:
                     raise LogOnException(REGISTERED % self.username)
-                elif got == 2 or got == 3:
+                elif got == 3 or got == 4:
                     raise LogOnException(PREVENTED)
                 print(file=self.client)
 
@@ -245,7 +246,8 @@ class FICSConnection(Connection):
                 if match:
                     break
 
-                match = re.search("answers to frequently asked questions", line)
+                # ICC specific line
+                match = re.search("help anonymous", line)
                 if match:
                     break
 

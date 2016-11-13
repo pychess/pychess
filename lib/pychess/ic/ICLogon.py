@@ -274,6 +274,7 @@ class ICLogon(object):
                 signal, callback))
         self.connection.start()
 
+        # guest users are rather limited on ICC (helper connection is useless)
         if not self.host.startswith("chessclub.com"):
             self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
             self.helperconn.connect("error", self.onHelperConnectionError)
@@ -282,19 +283,15 @@ class ICLogon(object):
     @idle_add
     def onHelperConnectionError(self, connection, error):
         if self.helperconn is not None:
-            if self.helperconn.ICC:
-                # guest users are rather limited on ICC (helper connection is useless)
-                response = Gtk.ResponseType.YES
-            else:
-                dialog = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION,
-                                           buttons=Gtk.ButtonsType.YES_NO)
-                dialog.set_markup(_("Guest logins disabled by FICS server"))
-                text = "PyChess can maintain users status and games list only if it changes\n\
-                'open', 'gin' and 'availinfo' user variables.\n\
-                Do you enable to set these variables on?"
-                dialog.format_secondary_text(text)
-                response = dialog.run()
-                dialog.destroy()
+            dialog = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION,
+                                       buttons=Gtk.ButtonsType.YES_NO)
+            dialog.set_markup(_("Guest logins disabled by FICS server"))
+            text = "PyChess can maintain users status and games list only if it changes\n\
+            'open', 'gin' and 'availinfo' user variables.\n\
+            Do you enable to set these variables on?"
+            dialog.format_secondary_text(text)
+            response = dialog.run()
+            dialog.destroy()
 
             self.helperconn.cancel()
             self.helperconn.close()
