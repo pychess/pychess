@@ -15,13 +15,16 @@ from pychess.System.Log import log
 
 from pychess.ic import NAMES_RE, TITLES_RE
 from .managers.SeekManager import SeekManager
+from .managers.ICCSeekManager import ICCSeekManager
 from .managers.FingerManager import FingerManager
 from .managers.NewsManager import NewsManager
 from .managers.BoardManager import BoardManager
+from .managers.ICCBoardManager import ICCBoardManager
 from .managers.OfferManager import OfferManager
 from .managers.ChatManager import ChatManager
 from .managers.ConsoleManager import ConsoleManager
 from .managers.HelperManager import HelperManager
+from .managers.ICCHelperManager import ICCHelperManager
 from .managers.ListAndVarManager import ListAndVarManager
 from .managers.AutoLogOutManager import AutoLogOutManager
 from .managers.ErrorManager import ErrorManager
@@ -266,7 +269,6 @@ class FICSConnection(Connection):
                 self.client.lines.block_mode = True
 
             if self.ICC:
-                self.client.run_command("set style 12")
                 self.client.run_command("set prompt 0")
                 self.client.lines.datagram_mode = True
 
@@ -364,7 +366,7 @@ class FICSMainConnection(FICSConnection):
         notify_users = re.search("Present company includes: ((?:%s ?)+)\." %
                                  NAMES_RE, lines)
         if notify_users:
-            self.notify_users.extend(notify_users.groups()[0].split(" "))
+            self.notify_users.extend(notify_users.groups()[0].split())
 
     def _start_managers(self, lines):
         self.client.run_command("set interface %s %s" %
@@ -376,8 +378,12 @@ class FICSMainConnection(FICSConnection):
         # the connection object when they are called
         self.lvm = ListAndVarManager(self)
         self.em = ErrorManager(self)
-        self.glm = SeekManager(self)
-        self.bm = BoardManager(self)
+        if self.ICC:
+            self.glm = ICCSeekManager(self)
+            self.bm = ICCBoardManager(self)
+        else:
+            self.glm = SeekManager(self)
+            self.bm = BoardManager(self)
         self.fm = FingerManager(self)
         self.nm = NewsManager(self)
         self.om = OfferManager(self)
@@ -405,7 +411,10 @@ class FICSMainConnection(FICSConnection):
             self.client.run_command("set open 1")
             self.client.run_command("set gin 1")
             self.client.run_command("set availinfo 1")
-        self.hm = HelperManager(self, self)
+        if self.ICC:
+            self.hm = ICCHelperManager(self, self)
+        else:
+            self.hm = HelperManager(self, self)
 
         # disable setting iveriables from console
         self.client.run_command("iset lock 1")

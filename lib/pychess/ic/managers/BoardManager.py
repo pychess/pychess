@@ -23,8 +23,7 @@ from pychess.Utils.const import WHITEWON, WON_RESIGN, WON_DISCONNECTION, WON_CAL
 from pychess.ic import IC_POS_INITIAL, IC_POS_ISOLATED, IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, \
     IC_POS_OBSERVING, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, GAME_TYPES, IC_STATUS_PLAYING, \
     BLKCMD_SEEK, BLKCMD_OBSERVE, BLKCMD_MATCH, TYPE_WILD, BLKCMD_SMOVES, BLKCMD_UNOBSERVE, BLKCMD_MOVES, \
-    BLKCMD_FLAG, parseRating, \
-    DG_MY_GAME_STARTED, DG_MY_GAME_ENDED, DG_STARTED_OBSERVING, DG_STOP_OBSERVING
+    BLKCMD_FLAG, parseRating
 
 from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSHistoryGame, \
     FICSAdjournedGame, FICSJournalGame
@@ -277,12 +276,7 @@ class BoardManager(GObject.GObject):
             self.onInterceptedChallenge,
             "Your challenge intercepts %s's challenge\." % names, "<12> (.+)")
 
-        if self.connection.ICC:
-            self.connection.expect_line(self.on_icc_my_game_started, "%s (.+)" % DG_MY_GAME_STARTED)
-            self.connection.expect_line(self.on_icc_started_observing, "%s (.+)" % DG_STARTED_OBSERVING)
-            self.connection.expect_line(self.on_icc_stop_observing, "%s (.+)" % DG_STOP_OBSERVING)
-            self.connection.expect_line(self.on_icc_my_game_ended, "%s (.+)" % DG_MY_GAME_ENDED)
-        elif self.connection.USCN:
+        if self.connection.USCN:
             self.connection.expect_n_lines(self.onObserveGameCreated,
                                            "You are now observing game \d+\.",
                                            '', "<12> (.+)")
@@ -319,12 +313,6 @@ class BoardManager(GObject.GObject):
         self.gamemodelStartedEvents = {}
         self.theGameImPlaying = None
         self.gamesImObserving = {}
-
-        if self.connection.ICC:
-            self.connection.client.run_command("set-2 %s 1" % DG_MY_GAME_STARTED)
-            self.connection.client.run_command("set-2 %s 1" % DG_STARTED_OBSERVING)
-            self.connection.client.run_command("set-2 %s 1" % DG_STOP_OBSERVING)
-            self.connection.client.run_command("set-2 %s 1" % DG_MY_GAME_ENDED)
 
         # The ms ivar makes the remaining second fields in style12 use ms
         self.connection.client.run_command("iset ms 1")
@@ -538,37 +526,6 @@ class BoardManager(GObject.GObject):
             return (reprFile[rightside], reprFile[leftside])
         else:
             return ("k", "q")
-
-    def on_icc_my_game_started(self, match):
-        # gamenumber whitename blackname wild-number rating-type rated
-        # white-initial white-increment black-initial black-increment
-        # played-game {ex-string} white-rating black-rating game-id
-        # white-titles black-titles irregular-legality irregular-semantics
-        # uses-plunkers fancy-timecontrol promote-to-king
-        # 685 Salsicha MaxiBomb 0 Blitz 1 3 0 3 0 1 {} 2147 2197 1729752694 {} {} 0 0 0 {} 0
-        # 259 Rikikilord ARMH 0 Blitz 1 2 12 2 12 0 {Ex: Rikikilord 0} 1532 1406 1729752286 {} {} 0 0 0 {} 0
-        gameno = match.groups()[0].split(" ")[0]
-        print("my_game_started", gameno)
-
-    on_icc_my_game_started.BLKCMD = DG_MY_GAME_STARTED
-
-    def on_icc_started_observing(self, match):
-        gameno = match.groups()[0].split(" ")[0]
-        print("started_observing", gameno)
-
-    on_icc_started_observing.BLKCMD = DG_STARTED_OBSERVING
-
-    def on_icc_stop_observing(self, match):
-        gameno = match.groups()[0].split(" ")[0]
-        print("stop_observing", gameno)
-
-    on_icc_stop_observing.BLKCMD = DG_STOP_OBSERVING
-
-    def on_icc_my_game_ended(self, match):
-        gameno = match.groups()[0].split(" ")[0]
-        print("my_game_ended", gameno)
-
-    on_icc_my_game_ended.BLKCMD = DG_MY_GAME_ENDED
 
     def onPlayGameCreated(self, matchlist):
         log.debug(
@@ -936,13 +893,10 @@ class BoardManager(GObject.GObject):
         log.debug("'%s'" % (matchlist[1].string),
                   extra={"task": (self.connection.username,
                                   "BM.onObserveGameCreated")})
-        if self.connection.USCN or self.connection.ICC:
+        if self.connection.USCN:
             # TODO? is this ok?
             game_type = GAME_TYPES["blitz"]
             castleSigns = ("k", "q")
-            rated = ""
-            minutes = 0
-            inc = 0
         else:
             gameno, wname, wrating, bname, brating, rated, gametype, minutes, inc = matchlist[
                 1].groups()
