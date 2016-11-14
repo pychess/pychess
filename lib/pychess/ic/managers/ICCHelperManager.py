@@ -3,7 +3,7 @@ from gi.repository import GObject
 from pychess.ic.FICSObjects import FICSGame
 from pychess.ic.managers.HelperManager import HelperManager
 from pychess.ic import parseRating, GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_PLAYING, TYPE_BLITZ
-from pychess.ic.icc import DG_PLAYER_ARRIVED, DG_PLAYER_ARRIVED_SIMPLE, \
+from pychess.ic.icc import DG_PLAYER_ARRIVED_SIMPLE, \
     DG_PLAYER_LEFT, DG_MY_GAME_RESULT, DG_RATING_TYPES, DG_BLITZ
 
 ratings = "([\d\+\- ]{1,4})"
@@ -26,21 +26,21 @@ class ICCHelperManager(HelperManager):
         # 456 games displayed (282 played, 174 examined).
         self.helperconn.expect_fromto(
             self.on_icc_game_list,
-            "(\d+) %s (\w+)\s+%s (\w+)\s+(%s)(u|r)\s*(\d+)\s+(\d+)\s*(W|B):\s*(\d+)"
+            "(\d+) %s (\w+)(?:(.+))?\s+%s (\w+)(?:(.+))?\s+(%s)(u|r)\s*(\d+)\s+(\d+)\s*(W|B):\s*(\d+)"
             %
             (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())),
             "(\d+) games displayed \(.+\).")
 
-        self.helperconn.expect_line(self.on_icc_player_arrived, "%s (.+)" % DG_PLAYER_ARRIVED_SIMPLE)
+        self.helperconn.expect_line(self.on_icc_player_arrived_simple, "%s (.+)" % DG_PLAYER_ARRIVED_SIMPLE)
         self.helperconn.expect_line(self.on_icc_player_left, "%s (.+)" % DG_PLAYER_LEFT)
-        self.helperconn.expect_line(self.on_icc_blitz, "%s (.+)" % DG_BLITZ)
+        # self.helperconn.expect_line(self.on_icc_blitz, "%s (.+)" % DG_BLITZ)
 
         self.connection.expect_line(self.on_icc_my_game_result, "%s (.+)" % DG_MY_GAME_RESULT)
 
         self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED_SIMPLE)
-        self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED)
+        # self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED)
         self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_LEFT)
-        self.helperconn.client.run_command("set-2 %s 1" % DG_BLITZ)
+        # self.helperconn.client.run_command("set-2 %s 1" % DG_BLITZ)
         for rating in DG_RATING_TYPES:
             self.helperconn.client.run_command("set-2 %s 1" % rating)
 
@@ -145,12 +145,12 @@ class ICCHelperManager(HelperManager):
 
     on_icc_my_game_result.BLKCMD = DG_MY_GAME_RESULT
 
-    def on_icc_player_arrived(self, match):
+    def on_icc_player_arrived_simple(self, match):
         name = match.groups()[0].split()[0]
         player = self.connection.players.get(name)
         player.online = True
 
-    on_icc_player_arrived.BLKCMD = DG_PLAYER_ARRIVED_SIMPLE
+    on_icc_player_arrived_simple.BLKCMD = DG_PLAYER_ARRIVED_SIMPLE
 
     def on_icc_player_left(self, match):
         name = match.groups()[0].split()[0]

@@ -335,6 +335,8 @@ class BoardManager(GObject.GObject):
 
     @classmethod
     def parseStyle12(cls, line, castleSigns=None):
+        # <12> rnbqkb-r pppppppp -----n-- -------- ----P--- -------- PPPPKPPP RNBQ-BNR
+        # B -1 0 0 1 1 0 7 Newton Einstein 1 2 12 39 39 119 122 2 K/e1-e2 (0:06) Ke2 0
         fields = line.split()
 
         curcol = fields[8] == "B" and BLACK or WHITE
