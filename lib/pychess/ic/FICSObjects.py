@@ -351,7 +351,11 @@ class FICSPlayer(GObject.GObject):
         ratingtotal = 0
         numratings = 0
         for ratingtype in RATING_TYPES:
-            if self.ratings[ratingtype] == 0:
+            try:
+                if self.ratings[ratingtype] == 0:
+                    continue
+            except IndexError:
+                print(ratingtype, RATING_TYPES, self.ratings)
                 continue
             if self.deviations[ratingtype] == DEVIATION_NONE:
                 ratingtotal += self.ratings[ratingtype] * 3

@@ -15,6 +15,8 @@ from pychess.ic import IC_POS_EXAMINATING, IC_POS_OBSERVING_EXAMINATION, \
     TYPE_LIGHTNING, GAME_TYPES_BY_RATING_TYPE, TYPE_WILD, WildGameType, \
     TYPE_STANDARD, TITLES, GAME_TYPES, VARIANT_GAME_TYPES, \
     RATING_TYPES, IC_STATUS_PLAYING, \
+    TYPE_BULLET, TYPE_ONE_MINUTE, TYPE_THREE_MINUTE, TYPE_FIVE_MINUTE, \
+    TYPE_FIFTEEN_MINUTE, TYPE_FORTYFIVE_MINUTE, \
     VariantGameType, time_control_to_gametype
 
 from pychess.compat import cmp, StringIO
@@ -1764,10 +1766,10 @@ class GameTabSection(ParrentListSection):
 
     def game_filter_func(self, model, iter, data):
         game = model[iter][0]
-        is_standard = game.game_type.rating_type == TYPE_STANDARD
-        is_blitz = game.game_type.rating_type == TYPE_BLITZ
-        is_lightning = game.game_type.rating_type == TYPE_LIGHTNING
-        is_variant = game.game_type.rating_type in RATING_TYPES[3:]
+        is_standard = game.game_type.rating_type in (TYPE_STANDARD, TYPE_FIFTEEN_MINUTE, TYPE_FORTYFIVE_MINUTE)
+        is_blitz = game.game_type.rating_type in (TYPE_BLITZ, TYPE_THREE_MINUTE, TYPE_FIVE_MINUTE)
+        is_lightning = game.game_type.rating_type in (TYPE_LIGHTNING, TYPE_BULLET, TYPE_ONE_MINUTE)
+        is_variant = game.game_type.rating_type in RATING_TYPES[9:]
         return (
             self.filter_toggles["standard_toggle"] and is_standard) or (
             self.filter_toggles["blitz_toggle"] and is_blitz) or (

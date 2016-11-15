@@ -73,6 +73,7 @@ class Connection(GObject.GObject, Thread):
         self.USCN = False
 
         self.ICC = False
+        self.replay_dg_dict = {}
 
     @property
     def ics_name(self):
@@ -107,6 +108,9 @@ class Connection(GObject.GObject, Thread):
                     self.reply_cmd_dict[callback.BLKCMD].remove(prediction)
             if len(self.reply_cmd_dict[callback.BLKCMD]) == 0:
                 del self.reply_cmd_dict[callback.BLKCMD]
+
+    def expect_dg_line(self, number, callback):
+        self.replay_dg_dict[number] = callback
 
     def expect_line(self, callback, regexp):
         self.expect(LinePrediction(callback, regexp))
@@ -263,7 +267,7 @@ class FICSConnection(Connection):
             self.ICC = self.client.ICC
             self.client.name = self.username
             self.client = PredictionsTelnet(self.client, self.predictions,
-                                            self.reply_cmd_dict)
+                                            self.reply_cmd_dict, self.replay_dg_dict)
             self.client.lines.line_prefix = "aics%" if self.ICC else "fics%"
 
             if not self.USCN and not self.ICC:

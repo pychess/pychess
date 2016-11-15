@@ -14,17 +14,27 @@ IC_POS_ISOLATED, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, \
 # RatingType
 TYPE_BLITZ, TYPE_STANDARD, TYPE_LIGHTNING, TYPE_WILD, \
     TYPE_BUGHOUSE, TYPE_CRAZYHOUSE, TYPE_SUICIDE, TYPE_LOSERS, TYPE_ATOMIC, \
-    TYPE_UNTIMED, TYPE_EXAMINED, TYPE_OTHER = range(12)
+    TYPE_BULLET, TYPE_ONE_MINUTE, TYPE_THREE_MINUTE, TYPE_FIVE_MINUTE, \
+    TYPE_FIFTEEN_MINUTE, TYPE_FORTYFIVE_MINUTE, TYPE_CHESS960, \
+    TYPE_UNTIMED, TYPE_EXAMINED, TYPE_OTHER = range(19)
 
 RATING_TYPES = (TYPE_BLITZ,
                 TYPE_STANDARD,
                 TYPE_LIGHTNING,
+                TYPE_BULLET,
+                TYPE_ONE_MINUTE,
+                TYPE_THREE_MINUTE,
+                TYPE_FIVE_MINUTE,
+                TYPE_FIFTEEN_MINUTE,
+                TYPE_FORTYFIVE_MINUTE,
                 TYPE_ATOMIC,
                 TYPE_BUGHOUSE,
                 TYPE_CRAZYHOUSE,
                 TYPE_LOSERS,
                 TYPE_SUICIDE,
-                TYPE_WILD, )
+                TYPE_WILD,
+                TYPE_CHESS960,
+                )
 
 # Rating deviations
 DEVIATION_NONE, DEVIATION_ESTIMATED, DEVIATION_PROVISIONAL = range(3)
@@ -127,6 +137,13 @@ GAME_TYPES = {
     "blitz": NormalGameType("blitz", "b", TYPE_BLITZ, _("Blitz")),
     "standard": NormalGameType("standard", "s", TYPE_STANDARD, _("Standard")),
     "lightning": NormalGameType("lightning", "l", TYPE_LIGHTNING, _("Lightning")),
+    "bullet": NormalGameType("bullet", "B", TYPE_BULLET, _("Bullet")),
+    "1-minute": NormalGameType("1-minute", "o", TYPE_ONE_MINUTE, _("1-minute")),
+    "3-minute": NormalGameType("3-minute", "M", TYPE_THREE_MINUTE, _("3-minute")),
+    "5-minute": NormalGameType("5-minute", "f", TYPE_FIVE_MINUTE, _("5-minute")),
+    "15-minute": NormalGameType("15-minute", "F", TYPE_FIFTEEN_MINUTE, _("15-minute")),
+    "45-minute": NormalGameType("45-minute", "J", TYPE_FORTYFIVE_MINUTE, _("45-minute")),
+    "chess960": NormalGameType("chess960", "K", TYPE_CHESS960, _("Chess960")),
     "untimed": NormalGameType("untimed", "u", TYPE_UNTIMED, _("Untimed")),
     "examined": NormalGameType("examined", "e", TYPE_EXAMINED, _("Examined")),
     "nonstandard": NormalGameType("nonstandard", "n", TYPE_OTHER, _("Other")),

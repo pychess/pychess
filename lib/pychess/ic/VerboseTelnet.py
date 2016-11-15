@@ -214,10 +214,10 @@ class TelnetLines(object):
                 parts = line.split(DTGR_END)
                 for part in parts:
                     if part.startswith(DTGR_START):
-                        code, text = part[2:].split(" ", 1)
-                        lines.append(TelnetLine(part[2:], int(code)))
+                        code, data = part[2:].split(" ", 1)
+                        lines.append(TelnetLine(data, int(code)))
                         if code != DG_PASSWORD:
-                            log.debug("%s %s" % (code, part[2:]),
+                            log.debug("%s %s" % (code, data),
                                       extra={"task": (self.telnet.name, "datagram")})
                     else:
                         lines.append(TelnetLine(part, None))
@@ -264,10 +264,11 @@ class TelnetLines(object):
 
 
 class PredictionsTelnet(object):
-    def __init__(self, telnet, predictions, reply_cmd_dict):
+    def __init__(self, telnet, predictions, reply_cmd_dict, replay_dg_dict):
         self.telnet = telnet
         self.predictions = predictions
         self.reply_cmd_dict = reply_cmd_dict
+        self.replay_dg_dict = replay_dg_dict
         self.show_reply = set([])
         self.lines = TelnetLines(telnet, self.show_reply)
         self.__command_id = 1
@@ -278,8 +279,14 @@ class PredictionsTelnet(object):
         if not line.line:
             return  # TODO: necessary?
 
+        if self.lines.datagram_mode and line.code is not None:
+            callback = self.replay_dg_dict[line.code]
+            callback(line.line)
+            log.debug(line.line, extra={"task": (self.telnet.name, callback.__name__)})
+            return
+
         predictions = self.reply_cmd_dict[line.code] \
-            if line.code and line.code in self.reply_cmd_dict else self.predictions
+            if line.code is not None and line.code in self.reply_cmd_dict else self.predictions
         for pred in list(predictions):
             #            print "parse_line: trying prediction %s for line '%s'" % (pred.name, line)
             answer = self.test_prediction(pred, line)

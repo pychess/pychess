@@ -2,9 +2,8 @@ from gi.repository import GObject
 
 from pychess.ic.FICSObjects import FICSGame
 from pychess.ic.managers.HelperManager import HelperManager
-from pychess.ic import parseRating, GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_PLAYING, TYPE_BLITZ
-from pychess.ic.icc import DG_PLAYER_ARRIVED_SIMPLE, \
-    DG_PLAYER_LEFT, DG_MY_GAME_RESULT, DG_RATING_TYPES, DG_BLITZ
+from pychess.ic import parseRating, GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_PLAYING
+from pychess.ic.icc import DG_PLAYER_ARRIVED_SIMPLE, DG_PLAYER_LEFT
 
 ratings = "([\d\+\- ]{1,4})"
 
@@ -31,18 +30,11 @@ class ICCHelperManager(HelperManager):
             (ratings, ratings, "|".join(GAME_TYPES_BY_SHORT_FICS_NAME.keys())),
             "(\d+) games displayed \(.+\).")
 
-        self.helperconn.expect_line(self.on_icc_player_arrived_simple, "%s (.+)" % DG_PLAYER_ARRIVED_SIMPLE)
-        self.helperconn.expect_line(self.on_icc_player_left, "%s (.+)" % DG_PLAYER_LEFT)
-        # self.helperconn.expect_line(self.on_icc_blitz, "%s (.+)" % DG_BLITZ)
-
-        self.connection.expect_line(self.on_icc_my_game_result, "%s (.+)" % DG_MY_GAME_RESULT)
+        self.helperconn.expect_dg_line(DG_PLAYER_ARRIVED_SIMPLE, self.on_icc_player_arrived_simple)
+        self.helperconn.expect_dg_line(DG_PLAYER_LEFT, self.on_icc_player_left)
 
         self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED_SIMPLE)
-        # self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED)
         self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_LEFT)
-        # self.helperconn.client.run_command("set-2 %s 1" % DG_BLITZ)
-        for rating in DG_RATING_TYPES:
-            self.helperconn.client.run_command("set-2 %s 1" % rating)
 
         # Unfortunately we can't maintain a list of games
         # From https://www.chessclub.com/user/resources/formats/formats.txt
@@ -52,7 +44,6 @@ class ICCHelperManager(HelperManager):
         # DG_PEOPLE_IN_MY_CHANNEL DG_CHANNELS_SHARED DG_SEES_SHOUTS
         # Currently, only TDs like Tomato can use these.
         self.helperconn.client.run_command("games")
-        self.helperconn.client.run_command("set-2 %s 1" % DG_MY_GAME_RESULT)
 
     def on_icc_game_list(self, matchlist):
         games = []
@@ -106,9 +97,9 @@ class ICCHelperManager(HelperManager):
             try:
                 gametype = GAME_TYPES_BY_SHORT_FICS_NAME[shorttype]
             except KeyError:
-                continue
                 # TODO:
-                # return
+                print("key error in GAME_TYPES_BY_SHORT_FICS_NAME: %s" % shorttype)
+                continue
 
             wplayer = self.connection.players.get(wname)
             bplayer = self.connection.players.get(bname)
@@ -137,34 +128,11 @@ class ICCHelperManager(HelperManager):
         self.connection.games.emit("FICSGameCreated", games)
         # print(matchlist[-1].groups()[0], len(games))
 
-    def on_icc_my_game_result(self, match):
-        # gamenumber become-examined game_result_code score_string2 description-string ECO
-        # TODO:
-        parts = match.groups()[0].split()
-        print("my_game_result", parts)
-
-    on_icc_my_game_result.BLKCMD = DG_MY_GAME_RESULT
-
-    def on_icc_player_arrived_simple(self, match):
-        name = match.groups()[0].split()[0]
+    def on_icc_player_arrived_simple(self, data):
+        name = data.split()[0]
         player = self.connection.players.get(name)
         player.online = True
 
-    on_icc_player_arrived_simple.BLKCMD = DG_PLAYER_ARRIVED_SIMPLE
-
-    def on_icc_player_left(self, match):
-        name = match.groups()[0].split()[0]
+    def on_icc_player_left(self, data):
+        name = data.split()[0]
         self.connection.players.player_disconnected(name)
-
-    on_icc_player_left.BLKCMD = DG_PLAYER_LEFT
-
-    def on_icc_blitz(self, match):
-        # playername rating annotation
-        # 0 no rating, 1 provisional, 2 established
-        name, blitz, annotation = match.groups()[0].split()
-        player = self.connection.players.get(name)
-        if player.ratings[TYPE_BLITZ] != blitz:
-            player.ratings[TYPE_BLITZ] = blitz
-            player.emit("ratings_changed", TYPE_BLITZ, player)
-
-    on_icc_blitz.BLKCMD = DG_BLITZ

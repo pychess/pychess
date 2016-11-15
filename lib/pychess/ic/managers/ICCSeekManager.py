@@ -12,19 +12,18 @@ class ICCSeekManager(SeekManager):
         GObject.GObject.__init__(self)
         self.connection = connection
 
-        self.connection.expect_line(self.on_icc_seek_add, "%s (.+)" % DG_SEEK)
-        self.connection.expect_line(self.on_icc_seek_removed, "%s (.+)" % DG_SEEK_REMOVED)
+        self.connection.expect_dg_line(DG_SEEK, self.on_icc_seek_add)
+        self.connection.expect_dg_line(DG_SEEK_REMOVED, self.on_icc_seek_removed)
 
         self.connection.client.run_command("set-2 %s 1" % DG_SEEK)
         self.connection.client.run_command("set-2 %s 1" % DG_SEEK_REMOVED)
 
-    def on_icc_seek_add(self, match):
+    def on_icc_seek_add(self, data):
         # index name titles rating provisional-status wild rating-type time
         # inc rated color minrating maxrating autoaccept formula fancy-time-control
         # 195 Tinker {C} 2402 2 0 Blitz 5 3 1 -1 0 9999 1 1 {}
 
-        parts = match.groups()[0].split(" ", 2)
-        # print("ICC seek=", parts)
+        parts = data.split(" ", 2)
         index = int(parts[0])
         player = self.connection.players.get(parts[1])
 
@@ -58,6 +57,7 @@ class ICCSeekManager(SeekManager):
         # fancy_tc = parts[12]
 
         if gametype.variant_type in UNSUPPORTED:
+            print("unsupported variant in seek: %s" % data)
             return
 
         if gametype.rating_type in RATING_TYPES and player.ratings[gametype.rating_type] != rating:
@@ -77,10 +77,6 @@ class ICCSeekManager(SeekManager):
                         automatic=automatic)
         self.emit("addSeek", seek)
 
-    on_icc_seek_add.BLKCMD = DG_SEEK
-
-    def on_icc_seek_removed(self, match):
-        key = match.groups()[0].split()[0]
+    def on_icc_seek_removed(self, data):
+        key = data.split()[0]
         self.emit("removeSeek", int(key))
-
-    on_icc_seek_removed.BLKCMD = DG_SEEK_REMOVED
