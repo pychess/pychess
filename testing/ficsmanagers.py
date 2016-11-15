@@ -41,9 +41,9 @@ class DummyConnection(Connection):
             def readline(self):
                 return self.Q.get_nowait()
 
-        def __init__(self, predictions, reply_cmd_dict):
+        def __init__(self, predictions, reply_cmd_dict, replay_dg_dict):
             PredictionsTelnet.__init__(self, self.DummyTelnet(), predictions,
-                                       reply_cmd_dict)
+                                       reply_cmd_dict, replay_dg_dict)
             self.commands = []
 
         def putline(self, line):
@@ -63,7 +63,7 @@ class DummyConnection(Connection):
                 self.append(x)
 
         self.predictions = FakeSet()  # make predictions able to be reordered
-        self.client = self.DummyClient(self.predictions, self.reply_cmd_dict)
+        self.client = self.DummyClient(self.predictions, self.reply_cmd_dict, self.replay_dg_dict)
         self.client.lines.block_mode = True
         self.client.lines.line_prefix = "fics%"
         self.examined_game = None
