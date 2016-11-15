@@ -72,11 +72,21 @@ class ICCBoardManager(BoardManager):
     def on_icc_started_observing(self, data):
         gameno, wname, bname, wild, rtype, rated, wmin, winc, bmin, binc, played_game, rest = data.split(" ", 11)
 
+        parts = rest.split("}", 1)[1].split()
+        wrating = int(parts[0])
+        brating = int(parts[1])
+
         gameno = int(gameno)
         wplayer = self.connection.players.get(wname)
         bplayer = self.connection.players.get(bname)
-        # TODO: create ICC_GAME_TYPES; ICC game type letters can differ
         game_type = GAME_TYPES[rtype.lower()]
+
+        for player, rating in ((wplayer, wrating), (bplayer, brating)):
+            if game_type.rating_type in player.ratings and \
+                    player.ratings[game_type.rating_type] != rating:
+                player.ratings[game_type.rating_type] = rating
+                player.emit("ratings_changed", game_type.rating_type, player)
+
         relation = IC_POS_OBSERVING_EXAMINATION if played_game == "0" else IC_POS_OBSERVING
         wms = bms = int(wmin) * 60 * 1000 + int(winc) * 1000
 
@@ -206,13 +216,20 @@ class ICCBoardManager(BoardManager):
                 return
 
             pgnHead = [
-                ("Event", "ICC %s %s game" % (game.rated, game.game_type.fics_name)),
+                ("Event", "ICC %s %s game" % (game.display_rated.lower(), game.game_type.fics_name)),
                 ("Site", "chessclub.com"),
                 ("White", game.wplayer.name),
                 ("Black", game.bplayer.name),
                 ("Result", "*"),
                 ("TimeControl", "%d+%d" % (game.minutes * 60, game.inc)),
             ]
+            wrating = game.wplayer.ratings[game.game_type.rating_type]
+            brating = game.bplayer.ratings[game.game_type.rating_type]
+            if wrating != 0:
+                pgnHead += [("WhiteElo", wrating)]
+            if brating != 0:
+                pgnHead += [("BlackElo", brating)]
+
             pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
 
             moves = self.queued_send_moves[gameno]

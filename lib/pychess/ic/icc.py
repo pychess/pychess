@@ -1,24 +1,9 @@
-# ICC game types
-# b blitz
-# B bullet
-# d bughouse
-# f five-minute
-# J 45-minute
-# K chess960 pool
-# L loser's
-# M 3-minute
-# o one-minute
-# s standard
-# z crazyhouse
-# or a wild number.
-
-
 """
 Internal datagram codes used in ICC level 2. unit format
 see https://www.chessclub.com/user/resources/formats/formats.txt
 
 This is somewhat similar to fics block mode. The main difference is fics
-block mode works 'all or nothing' meaning when you switc to use it
+block mode works 'all or nothing' meaning when you switch to use it
 all commands you send and resposes you get have to (or will) use it.
 ICC datagram format are used for responses only and is more forgiving.
 You can set it for individual responses one by one or for all at once

@@ -50,43 +50,47 @@ class ICCHelperManager(HelperManager):
         for match in matchlist[:-1]:
             if isinstance(match, str):
                 if match:
-                    parts = match.split()
-                    index = 0
+                    try:
+                        parts = match.split()
+                        index = 0
 
-                    gameno = parts[index]
-                    index += 1
-
-                    if parts[index].isdigit():
-                        wrating = parts[index]
+                        gameno = parts[index]
                         index += 1
-                    else:
-                        wrating = "----"
 
-                    wname = parts[index]
-                    index += 1
+                        if parts[index].isdigit():
+                            wrating = parts[index]
+                            index += 1
+                        else:
+                            wrating = "----"
 
-                    if parts[index].isdigit():
-                        brating = parts[index]
+                        wname = parts[index]
                         index += 1
-                    else:
-                        brating = "----"
 
-                    bname = parts[index]
-                    index += 1
+                        if parts[index].isdigit():
+                            brating = parts[index]
+                            index += 1
+                        else:
+                            brating = "----"
 
-                    if parts[index] == "Ex:":
-                        shorttype = "e"
-                        rated = ""
-                        min = "0"
-                        inc = "0"
-                    else:
-                        rated = parts[index][-1]
-                        shorttype = parts[index][:-1]
+                        bname = parts[index]
                         index += 1
-                        min = parts[index]
-                        index += 1
-                        inc = parts[index]
-                    private = ""
+
+                        if parts[index] == "Ex:":
+                            shorttype = "e"
+                            rated = ""
+                            min = "0"
+                            inc = "0"
+                        else:
+                            rated = parts[index][-1]
+                            shorttype = parts[index][:-1]
+                            index += 1
+                            min = parts[index]
+                            index += 1
+                            inc = parts[index]
+                        private = ""
+                    except IndexError:
+                        # malformed game line
+                        continue
                 else:
                     continue
             else:
@@ -126,7 +130,6 @@ class ICCHelperManager(HelperManager):
             games.append(game)
 
         self.connection.games.emit("FICSGameCreated", games)
-        # print(matchlist[-1].groups()[0], len(games))
 
     def on_icc_player_arrived_simple(self, data):
         name = data.split()[0]
