@@ -8,7 +8,7 @@ import cairo
 from gi.repository import GLib, Gtk, Gdk, Pango, PangoCairo, GObject
 
 from pychess.System import conf
-from pychess.Utils.const import BLACK, WHITE, LOCAL, UNFINISHED_STATES
+from pychess.Utils.const import BLACK, WHITE, LOCAL, UNFINISHED_STATES, DRAW, WHITEWON, BLACKWON, UNKNOWN_STATE
 from . import preferencesDialog
 
 
@@ -205,6 +205,7 @@ class ChessClock(Gtk.DrawingArea):
         if self.model.getPlayerTime(self.model.movingColor) <= alarm_time and \
             self.model.gamemodel.players[self.model.movingColor].__type__ == LOCAL and \
             self.model.gamemodel.status in UNFINISHED_STATES and \
+            self.model.gamemodel.endstatus not in (DRAW, WHITEWON, BLACKWON, UNKNOWN_STATE) and \
                 not self.short_on_time[self.model.movingColor]:
             self.short_on_time[self.model.movingColor] = True
             preferencesDialog.SoundTab.playAction("shortOnTime")

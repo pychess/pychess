@@ -5,7 +5,8 @@ import sys
 
 from gi.repository import Gtk, GObject
 
-from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult
+from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult, \
+    UNKNOWN_STATE, UNDOABLE_STATES
 from pychess.Players.Human import Human
 from pychess.widgets.ionest import game_handler
 from pychess.Utils.GameModel import GameModel
@@ -227,6 +228,7 @@ class GameList(Gtk.TreeView):
         p1 = (LOCAL, Human, (BLACK, bp), bp)
         self.chessfile.loadToModel(gameno, -1, self.gamemodel)
 
+        self.gamemodel.endstatus = self.gamemodel.status if self.gamemodel.status in UNDOABLE_STATES else UNKNOWN_STATE
         self.gamemodel.status = WAITING_TO_START
         game_handler.generalStart(self.gamemodel, p0, p1)
 
