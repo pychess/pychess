@@ -644,7 +644,7 @@ def genCheckEvasions(board):
                     for piece in holding:
                         if holding[piece] > 0:
                             if piece == PAWN:
-                                if cord in promotion_zone:
+                                if cord >= 56 or cord <= 7:
                                     continue
                             yield newMove(piece, cord, DROP)
 

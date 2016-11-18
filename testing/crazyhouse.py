@@ -7,19 +7,29 @@ import unittest
 from pychess.Utils.logic import validate
 from pychess.Utils.Move import Move, parseSAN
 from pychess.Variants.crazyhouse import CrazyhouseBoard
-from pychess.Utils.lutils.lmovegen import genAllMoves
+from pychess.Utils.lutils.lmovegen import genAllMoves, genCheckEvasions
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.const import CRAZYHOUSECHESS
 
 # Black has a pawn and a rook in hes holding
-# ♚ . ♖ ♔ . . . .
+# ♚ . ♖ ♔ . . . . ♟ ♜
 # . . . . . . . .
 # . . . . . . . .
 # . . . . . . . .
 # . . . . . . . .
 # . . . . . . . .
-# . . . . . . . . ♟ ♜
+# . . . . . . . .
 FEN0 = "k1RK4/8/8/8/8/8/8/8/pr b - - 0 1"
+
+# ♜ . ♜ . . . . . ♝ ♝
+# ♟ ♟ . . . ♘ ♚ ♟
+# . . . . . ♝ ♟ .
+# . . ♟ ♙ ♟ . . ♞
+# . . . . ♙ . ♕ .
+# . . . . . ♙ . .
+# ♙ ♞ ♟ . ♖ . ♙ ♙
+# ♔ . . ♛ . ♗ ♘ ♖ ♕ ♙ ♙
+FEN1 = "r1r5/pp3Nkp/5bp1/2pPp2n/4P1Q1/5P2/Pnp1R1PP/K2q1BNR/bbPPQ w - - 3 25"
 
 # ♜ ♞ ♝ ♛ ♚ ♝ ♖ ♜
 # ♟ ♙ ♙ ♟ ♟ ♘ ♟ ♟
@@ -29,7 +39,7 @@ FEN0 = "k1RK4/8/8/8/8/8/8/8/pr b - - 0 1"
 # . . . . . . . .
 # ♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙
 # ♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖
-FEN1 = "rnbqkbRr/pPPppNpp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+FEN2 = "rnbqkbRr/pPPppNpp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 
 class CrazyhouseTestCase(unittest.TestCase):
@@ -45,11 +55,29 @@ class CrazyhouseTestCase(unittest.TestCase):
         self.assertTrue(not validate(board, parseSAN(board, 'P@b8')))
         self.assertTrue(not validate(board, parseSAN(board, 'Kb8')))
 
+    def test_check_evasions(self):
+        """Testing check evasions in Crazyhouse variant"""
+        board = CrazyhouseBoard(setup=FEN1)
+        print(board)
+        # invalid drop
+        self.assertTrue(validate(board, parseSAN(board, 'Q@b1')))
+        self.assertTrue(validate(board, parseSAN(board, 'Q@c1')))
+        self.assertTrue(validate(board, parseSAN(board, 'Kxb2')))
+        self.assertTrue(not validate(board, parseSAN(board, 'P@b1')))
+        self.assertTrue(not validate(board, parseSAN(board, 'P@c1')))
+
+        evasions = [move for move in genCheckEvasions(board.board)]
+        self.assertTrue(parseSAN(board, 'Q@b1').move in evasions)
+        self.assertTrue(parseSAN(board, 'Q@c1').move in evasions)
+        self.assertTrue(parseSAN(board, 'Kxb2').move in evasions)
+        self.assertTrue(parseSAN(board, 'P@b1').move not in evasions)
+        self.assertTrue(parseSAN(board, 'P@c1').move not in evasions)
+
     def test_apply_pop(self):
         """Testing Crazyhouse applyMove popMove"""
 
         board = LBoard(variant=CRAZYHOUSECHESS)
-        board.applyFen(FEN1)
+        board.applyFen(FEN2)
 
         holding0 = (board.holding[0].copy(), board.holding[1].copy())
         promoted0 = board.promoted[:]
