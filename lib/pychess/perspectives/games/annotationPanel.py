@@ -964,13 +964,16 @@ class Sidepanel:
         text = ""
         time_control = gm.tags.get('TimeControl')
         if time_control:
-            mins, inc = time_control.split('+')
-            mins = int(mins) / 60
-            mins = "{:.0f}".format(mins)
-            if inc != '0':
-                text += mins + ' mins + ' + inc + ' secs '
+            if "+" in time_control:
+                mins, inc = time_control.split('+')
+                mins = int(mins) / 60
+                mins = "{:.0f}".format(mins)
+                if inc != '0':
+                    text += mins + ' mins + ' + inc + ' secs '
+                else:
+                    text += mins + ' mins '
             else:
-                text += mins + ' mins '
+                text += time_control + ' '
 
         event = gm.tags['Event']
         if event and event != "?":
