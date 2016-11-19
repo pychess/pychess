@@ -3,7 +3,7 @@ from gi.repository import GObject
 from pychess.ic.FICSObjects import FICSGame
 from pychess.ic.managers.HelperManager import HelperManager
 from pychess.ic import parseRating, GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_PLAYING
-from pychess.ic.icc import DG_PLAYER_ARRIVED_SIMPLE, DG_PLAYER_LEFT
+from pychess.ic.icc import DG_PLAYER_ARRIVED_SIMPLE, DG_PLAYER_LEFT, DG_WHO_AM_I
 
 ratings = "([\d\+\- ]{1,4})"
 
@@ -32,9 +32,11 @@ class ICCHelperManager(HelperManager):
 
         self.helperconn.expect_dg_line(DG_PLAYER_ARRIVED_SIMPLE, self.on_icc_player_arrived_simple)
         self.helperconn.expect_dg_line(DG_PLAYER_LEFT, self.on_icc_player_left)
+        self.helperconn.expect_dg_line(DG_WHO_AM_I, self.on_icc_who_am_i)
 
         self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED_SIMPLE)
         self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_LEFT)
+        self.helperconn.client.run_command("set-2 %s 1" % DG_WHO_AM_I)
 
         # Unfortunately we can't maintain a list of games
         # From https://www.chessclub.com/user/resources/formats/formats.txt
@@ -139,3 +141,7 @@ class ICCHelperManager(HelperManager):
     def on_icc_player_left(self, data):
         name = data.split()[0]
         self.connection.players.player_disconnected(name)
+
+    def on_icc_who_am_i(self, data):
+        name, titles = data.split(" ", 1)
+        self.connection.username = name

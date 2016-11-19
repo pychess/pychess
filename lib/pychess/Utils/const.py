@@ -15,8 +15,8 @@ WHITE, BLACK = range(2)
 
 # Game states
 WAITING_TO_START, PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON, KILLED, \
-    ADJOURNED, ABORTED, UNKNOWN_STATE = range(10)
-reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "*", "*", "*", "*"]
+    ADJOURNED, ABORTED, UNKNOWN_STATE, ICC_ABORTED = range(11)
+reprResult = ["*", "*", "*", "1/2-1/2", "1-0", "0-1", "*", "*", "*", "*", "aborted"]
 
 UNDOABLE_STATES = (DRAW, WHITEWON, BLACKWON)
 UNFINISHED_STATES = (WAITING_TO_START, PAUSED, RUNNING, UNKNOWN_STATE)

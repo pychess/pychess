@@ -4,10 +4,10 @@ import threading
 
 from gi.repository import GObject
 
-from pychess.Utils.const import WHITE, reprResult
+from pychess.Utils.const import FEN_START, WHITE, reprResult
 from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSPlayer
 from pychess.ic.managers.BoardManager import BoardManager, parse_reason
-from pychess.ic import IC_POS_OBSERVING_EXAMINATION, IC_POS_OBSERVING, GAME_TYPES
+from pychess.ic import IC_POS_OBSERVING_EXAMINATION, IC_POS_OBSERVING, GAME_TYPES, IC_STATUS_PLAYING
 from pychess.ic.icc import DG_POSITION_BEGIN, DG_SEND_MOVES, DG_MOVE_ALGEBRAIC, DG_MOVE_SMITH, \
     DG_MOVE_TIME, DG_MOVE_CLOCK, DG_MY_GAME_STARTED, DG_MY_GAME_ENDED, DG_STARTED_OBSERVING, \
     DG_MY_GAME_RESULT, DG_STOP_OBSERVING, DG_IS_VARIATION
@@ -33,6 +33,7 @@ class ICCBoardManager(BoardManager):
         self.queuedEmits = {}
         self.gamemodelStartedEvents = {}
         self.theGameImPlaying = None
+        self.my_game_info = None
         self.gamesImObserving = {}
 
         # on observe game start, it stores number of moves we expect
@@ -66,8 +67,51 @@ class ICCBoardManager(BoardManager):
         # uses-plunkers fancy-timecontrol promote-to-king
         # 685 Salsicha MaxiBomb 0 Blitz 1 3 0 3 0 1 {} 2147 2197 1729752694 {} {} 0 0 0 {} 0
         # 259 Rikikilord ARMH 0 Blitz 1 2 12 2 12 0 {Ex: Rikikilord 0} 1532 1406 1729752286 {} {} 0 0 0 {} 0
-        parts = data.split()
-        print("my_game_started", parts)
+        gameno, wname, bname, wild, rtype, rated, wmin, winc, bmin, binc, played_game, rest = data.split(" ", 11)
+
+        parts = rest.split("}", 1)[1].split()
+        wrating = int(parts[0])
+        brating = int(parts[1])
+
+        gameno = int(gameno)
+        wplayer = self.connection.players.get(wname)
+        bplayer = self.connection.players.get(bname)
+        game_type = GAME_TYPES[rtype.lower()]
+
+        for player, rating in ((wplayer, wrating), (bplayer, brating)):
+            if game_type.rating_type in player.ratings and \
+                    player.ratings[game_type.rating_type] != rating:
+                player.ratings[game_type.rating_type] = rating
+                player.emit("ratings_changed", game_type.rating_type, player)
+
+        wms = bms = int(wmin) * 60 * 1000 + int(winc) * 1000
+        # TODO: maybe use DG_POSITION_BEGIN2 and DG_PAST_MOVE ?
+        fen = FEN_START
+
+        game = FICSGame(wplayer,
+                        bplayer,
+                        gameno=gameno,
+                        rated=rated == "1",
+                        game_type=game_type,
+                        minutes=int(wmin),
+                        inc=int(winc),
+                        board=FICSBoard(wms,
+                                        bms,
+                                        fen=fen))
+
+        game = self.connection.games.get(game)
+
+        for player in (wplayer, bplayer):
+            if player.status != IC_STATUS_PLAYING:
+                player.status = IC_STATUS_PLAYING
+            if player.game != game:
+                player.game = game
+
+        self.theGameImPlaying = game
+        self.my_game_info = (WHITE, 0, wms, bms)
+        self.gamemodelStartedEvents[gameno] = threading.Event()
+        self.connection.client.run_command("follow")
+        self.emit("playGameCreated", game)
 
     def on_icc_started_observing(self, data):
         gameno, wname, bname, wild, rtype, rated, wmin, winc, bmin, binc, played_game, rest = data.split(" ", 11)
@@ -170,17 +214,23 @@ class ICCBoardManager(BoardManager):
     def on_icc_position_begin(self, data):
         # gamenumber {initial-FEN} nmoves-to-follow
         gameno, right_part = data.split("{")
-        fen, moves_to_go = right_part.split("}")
         gameno = int(gameno)
-        self.moves_to_go = int(moves_to_go)
 
         game = self.connection.games.get_game_by_gameno(gameno)
 
-        curcol, ply, wms, bms = self.gamesImObserving[game]
-        # TODO: get ply, curcol from fen
-        ply = 0
-        curcol = WHITE
-        self.gamesImObserving[game] = (curcol, ply, wms, bms)
+        if game.relation in (IC_POS_OBSERVING_EXAMINATION, IC_POS_OBSERVING):
+            fen, moves_to_go = right_part.split("}")
+            self.moves_to_go = int(moves_to_go)
+            curcol, ply, wms, bms = self.gamesImObserving[game]
+            # TODO: get ply, curcol from fen
+            ply = 0
+            curcol = WHITE
+            self.gamesImObserving[game] = (curcol, ply, wms, bms)
+        else:
+            curcol, ply, wms, bms = self.my_game_info
+            self.emit("boardUpdate", gameno, 0, WHITE, None, FEN_START,
+                      game.wplayer.name, game.bplayer.name, wms, bms)
+#            self.emit("timesUpdate", gameno, wms, bms)
 
     def on_icc_send_moves(self, data):
         # gamenumber algebraic-move smith-move time clock
@@ -191,14 +241,24 @@ class ICCBoardManager(BoardManager):
         game = self.connection.games.get_game_by_gameno(gameno)
 
         fen = ""
-        curcol, ply, wms, bms = self.gamesImObserving[game]
+
+        if game.relation in (IC_POS_OBSERVING_EXAMINATION, IC_POS_OBSERVING):
+            curcol, ply, wms, bms = self.gamesImObserving[game]
+        else:
+            curcol, ply, wms, bms = self.my_game_info
+
         if curcol == WHITE:
             wms = int(clock) * 1000
         else:
             bms = int(clock) * 1000
+
         ply += 1
         curcol = 1 - curcol
-        self.gamesImObserving[game] = (curcol, ply, wms, bms)
+
+        if game.relation in (IC_POS_OBSERVING_EXAMINATION, IC_POS_OBSERVING):
+            self.gamesImObserving[game] = (curcol, ply, wms, bms)
+        else:
+            self.my_game_info = (curcol, ply, wms, bms)
 
         if gameno in self.queued_send_moves:
             self.queued_send_moves[gameno].append(send_moves)
