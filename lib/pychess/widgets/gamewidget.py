@@ -469,7 +469,7 @@ class GameWidget(GObject.GObject):
         self._update_menu_undo()
         if isinstance(gamemodel,
                       ICGameModel):  # on FICS game board change update allob
-            if gamemodel.connection is not None:
+            if gamemodel.connection is not None and not gamemodel.connection.ICC:
                 allob = 'allob ' + str(gamemodel.ficsgame.gameno)
                 gamemodel.connection.client.run_command(allob)
 

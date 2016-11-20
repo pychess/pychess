@@ -45,7 +45,7 @@ class ICCHelperManager(HelperManager):
         # DG_GAME_STARTED DG_GAME_RESULT DG_EXAMINED_GAME_IS_GONE
         # DG_PEOPLE_IN_MY_CHANNEL DG_CHANNELS_SHARED DG_SEES_SHOUTS
         # Currently, only TDs like Tomato can use these.
-        self.helperconn.client.run_command("games")
+        self.helperconn.client.run_command("games *19")
 
     def on_icc_game_list(self, matchlist):
         games = []

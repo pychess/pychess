@@ -14,22 +14,23 @@ from pychess.System import fident
 from pychess.System.Log import log
 
 from pychess.ic import NAMES_RE, TITLES_RE
+from pychess.Utils.const import NAME
 from .managers.SeekManager import SeekManager
-from .managers.ICCSeekManager import ICCSeekManager
 from .managers.FingerManager import FingerManager
 from .managers.NewsManager import NewsManager
 from .managers.BoardManager import BoardManager
-from .managers.ICCBoardManager import ICCBoardManager
 from .managers.OfferManager import OfferManager
 from .managers.ChatManager import ChatManager
 from .managers.ConsoleManager import ConsoleManager
 from .managers.HelperManager import HelperManager
-from .managers.ICCHelperManager import ICCHelperManager
 from .managers.ListAndVarManager import ListAndVarManager
 from .managers.AutoLogOutManager import AutoLogOutManager
 from .managers.ErrorManager import ErrorManager
 from .managers.AdjournManager import AdjournManager
-from pychess.Utils.const import NAME
+from .managers.ICCSeekManager import ICCSeekManager
+from .managers.ICCBoardManager import ICCBoardManager
+from .managers.ICCChatManager import ICCChatManager
+from .managers.ICCHelperManager import ICCHelperManager
 
 from .FICSObjects import FICSPlayers, FICSGames, FICSSeeks, FICSChallenges
 from .TimeSeal import TimeSeal, CanceledException
@@ -387,13 +388,14 @@ class FICSMainConnection(FICSConnection):
         if self.ICC:
             self.glm = ICCSeekManager(self)
             self.bm = ICCBoardManager(self)
+            self.cm = ICCChatManager(self)
         else:
             self.glm = SeekManager(self)
             self.bm = BoardManager(self)
+            self.cm = ChatManager(self)
         self.fm = FingerManager(self)
         self.nm = NewsManager(self)
         self.om = OfferManager(self)
-        self.cm = ChatManager(self)
         self.alm = AutoLogOutManager(self)
         self.adm = AdjournManager(self)
         self.com = ConsoleManager(self)

@@ -343,8 +343,9 @@ class ICLounge(GObject.GObject):
             self.connection.fm.finger(wplayer.name)
         elif ficsgame.relation == IC_POS_EXAMINATING:
             gamemodel.examined = True
-        allob = 'allob ' + str(ficsgame.gameno)
-        gamemodel.connection.client.run_command(allob)
+        if not self.connection.ICC:
+            allob = 'allob ' + str(ficsgame.gameno)
+            gamemodel.connection.client.run_command(allob)
 
     @idle_add
     def onFinger(self, fm, finger):
