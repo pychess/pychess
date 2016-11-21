@@ -3,7 +3,7 @@ from gi.repository import GObject
 from pychess.ic.FICSObjects import FICSGame
 from pychess.ic.managers.HelperManager import HelperManager
 from pychess.ic import parseRating, GAME_TYPES_BY_SHORT_FICS_NAME, IC_STATUS_PLAYING
-from pychess.ic.icc import DG_PLAYER_ARRIVED_SIMPLE, DG_PLAYER_LEFT, DG_WHO_AM_I
+from pychess.ic.icc import DG_PLAYER_ARRIVED_SIMPLE, DG_PLAYER_LEFT, DG_WHO_AM_I, DG_TOURNEY
 
 ratings = "([\d\+\- ]{1,4})"
 
@@ -33,10 +33,12 @@ class ICCHelperManager(HelperManager):
         self.helperconn.expect_dg_line(DG_PLAYER_ARRIVED_SIMPLE, self.on_icc_player_arrived_simple)
         self.helperconn.expect_dg_line(DG_PLAYER_LEFT, self.on_icc_player_left)
         self.helperconn.expect_dg_line(DG_WHO_AM_I, self.on_icc_who_am_i)
+        self.helperconn.expect_dg_line(DG_TOURNEY, self.on_icc_tourney)
 
         self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED_SIMPLE)
         self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_LEFT)
         self.helperconn.client.run_command("set-2 %s 1" % DG_WHO_AM_I)
+        self.helperconn.client.run_command("set-2 %s 1" % DG_TOURNEY)
 
         # Unfortunately we can't maintain a list of games
         # From https://www.chessclub.com/user/resources/formats/formats.txt
@@ -145,3 +147,18 @@ class ICCHelperManager(HelperManager):
     def on_icc_who_am_i(self, data):
         name, titles = data.split(" ", 1)
         self.connection.username = name
+
+    def on_icc_tourney(self, data):
+        # index bitfield description join-command watch-command info-command confirm-text
+        # 42 0 {Cooly Over 1500 Sunday Top Player Luton Blitz 5 0 rated Rating: 1500..3000 manager bigcol - 7 rounds Tournament Current round:1 Players:8, Latejoin allowed until round: 4} {tell Cooly latejoin & tell 224 Hi, i am in} {} {tell Cooly info} {Do you want to join the Cooly tournament}
+        # 59 0 {Tomato U1600 Scheduled Swiss Blitz 2 5 rated Rating: 0..1599 manager Duguesclin - 7 rounds Tournament Current round:1 Players:13, Latejoin allowed until round: 4} {tell Tomato latejoin & tell 46 Hi, i am in} {} {tell Tomato info} {Do you want to join the Tomato tournament}
+        # 64 0 {Yenta The STC Sunday Swiss Luton Standard 45 5 rated manager alonzob - 3 rounds Tournament Current round:2 Players:9, Latejoin allowed until round: 2} {tell Yenta latejoin & tell 232 Hi, i am in} {} {tell Yenta info} {Do you want to join the Yenta tournament}
+        # 96 6 {} {} {} {} {}
+        # 97 6 {[AUDIO] LIVE commentary with GM Ronen Har-Zvi and GM Alex Yermolinsky} {tell webcast listen} {} {} {}
+        # 98 6 {[AUDIO] LIVE Espanol con el GM Jordi Magem (ESP)} {tell webcast espanol} {} {} {}
+        # 99 6 {LIVE COVERAGE FIDE World Chess Championship 2016 - Game 7} {} {} {finger WorldChamp16} {}
+        # 101 6 {LIVE GM Sergey Karjakin(2772) - GM Magnus Carlsen(2853)} {} {observe 1} {} {}
+        # 319 6 {Nov 18-- [VIDEO] GM Ronen Har-Zvi analyzes game 6 of the World Chess Championship Match 2016} {} {https://webcast.chessclub.com/icc/i/WC16/Game5/GOTD.html} {https://www20.chessclub.com/article/fide-wc-match-2016-game-6} {}
+        # 320 6 {Nov 20 -- [VIDEO] Attack with LarryC! Making Book with the Rook} {https://webcast.chessclub.com/icc/i/LarryC/2011_09_21/Attack_LarryC.html} {} {http://www.chessclub.com/chessfm/index/larryc/index.html} {}
+
+        print(data)
