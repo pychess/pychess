@@ -31,6 +31,9 @@ from .managers.ICCSeekManager import ICCSeekManager
 from .managers.ICCBoardManager import ICCBoardManager
 from .managers.ICCChatManager import ICCChatManager
 from .managers.ICCHelperManager import ICCHelperManager
+from .managers.ICCAdjournManager import ICCAdjournManager
+from .managers.ICCErrorManager import ICCErrorManager
+from .managers.ICCFingerManager import ICCFingerManager
 
 from .FICSObjects import FICSPlayers, FICSGames, FICSSeeks, FICSChallenges
 from .TimeSeal import TimeSeal, CanceledException
@@ -384,20 +387,23 @@ class FICSMainConnection(FICSConnection):
         # be moved to a "start" function, so all managers would be in
         # the connection object when they are called
         self.lvm = ListAndVarManager(self)
-        self.em = ErrorManager(self)
         if self.ICC:
+            self.em = ICCErrorManager(self)
             self.glm = ICCSeekManager(self)
             self.bm = ICCBoardManager(self)
             self.cm = ICCChatManager(self)
+            self.adm = ICCAdjournManager(self)
+            self.fm = ICCFingerManager(self)
         else:
+            self.em = ErrorManager(self)
             self.glm = SeekManager(self)
             self.bm = BoardManager(self)
             self.cm = ChatManager(self)
-        self.fm = FingerManager(self)
+            self.adm = AdjournManager(self)
+            self.fm = FingerManager(self)
         self.nm = NewsManager(self)
         self.om = OfferManager(self)
         self.alm = AutoLogOutManager(self)
-        self.adm = AdjournManager(self)
         self.com = ConsoleManager(self)
         self.bm.start()
         self.players.start()
