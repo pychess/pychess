@@ -625,7 +625,7 @@ class UserInfoSection(Section):
             if my_finger:
                 headers = (_("Rating"), _("Win"), _("Draw"), _("Loss"))
             else:
-                headers = (_("Rating"), "RD", _("Win"), _("Draw"), _("Loss"), _("Best"))
+                headers = (_("Rating"), _("Need") if self.connection.ICC else "RD", _("Win"), _("Draw"), _("Loss"), _("Best"))
             for i, item in enumerate(headers):
                 table.attach(label(item, xalign=1), i + 1, i + 2, 0, 1)
             row += 1
@@ -673,7 +673,7 @@ class UserInfoSection(Section):
             row += 1
 
         player = self.connection.players.get(finger.getName())
-        if not player.isGuest():
+        if not self.connection.ICC and not player.isGuest():
             table.attach(label(_("Games") + ":"), 0, 1, row, row + 1)
             llabel = Gtk.Label()
             llabel.props.xalign = 0

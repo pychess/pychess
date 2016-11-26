@@ -13,7 +13,7 @@ import pychess
 from pychess.System import fident
 from pychess.System.Log import log
 
-from pychess.ic import NAMES_RE, TITLES_RE
+from pychess import ic
 from pychess.Utils.const import NAME
 from .managers.SeekManager import SeekManager
 from .managers.FingerManager import FingerManager
@@ -34,6 +34,7 @@ from .managers.ICCHelperManager import ICCHelperManager
 from .managers.ICCAdjournManager import ICCAdjournManager
 from .managers.ICCErrorManager import ICCErrorManager
 from .managers.ICCFingerManager import ICCFingerManager
+from .managers.ICCListAndVarManager import ICCListAndVarManager
 
 from .FICSObjects import FICSPlayers, FICSGames, FICSSeeks, FICSChallenges
 from .TimeSeal import TimeSeal, CanceledException
@@ -78,6 +79,7 @@ class Connection(GObject.GObject, Thread):
 
         self.ICC = False
         self.replay_dg_dict = {}
+        self.replay_cn_dict = {}
 
     @property
     def ics_name(self):
@@ -115,6 +117,9 @@ class Connection(GObject.GObject, Thread):
 
     def expect_dg_line(self, number, callback):
         self.replay_dg_dict[number] = callback
+
+    def expect_cn_line(self, number, callback):
+        self.replay_cn_dict[number] = callback
 
     def expect_line(self, callback, regexp):
         self.expect(LinePrediction(callback, regexp))
@@ -239,13 +244,13 @@ class FICSConnection(Connection):
 
                 match = re.search(
                     "\*\*\*\* Starting FICS session as " + "(%s)%s \*\*\*\*" %
-                    (NAMES_RE, TITLES_RE), line)
+                    (ic.NAMES_RE, ic.TITLES_RE), line)
                 if match:
                     self.username = match.groups()[0]
                     break
 
                 # USCN specific line
-                match = re.search("Created temporary login '(%s)'" % NAMES_RE, line)
+                match = re.search("Created temporary login '(%s)'" % ic.NAMES_RE, line)
                 if match:
                     self.username = match.groups()[0]
                     break
@@ -270,8 +275,8 @@ class FICSConnection(Connection):
             self.USCN = self.client.USCN
             self.ICC = self.client.ICC
             self.client.name = self.username
-            self.client = PredictionsTelnet(self.client, self.predictions,
-                                            self.reply_cmd_dict, self.replay_dg_dict)
+            self.client = PredictionsTelnet(self.client, self.predictions, self.reply_cmd_dict,
+                                            self.replay_dg_dict, self.replay_cn_dict)
             self.client.lines.line_prefix = "aics%" if self.ICC else "fics%"
 
             if not self.USCN and not self.ICC:
@@ -279,8 +284,13 @@ class FICSConnection(Connection):
                 self.client.lines.block_mode = True
 
             if self.ICC:
+                self.client.run_command("set level1 5")
                 self.client.run_command("set prompt 0")
                 self.client.lines.datagram_mode = True
+
+                ic.GAME_TYPES_BY_SHORT_FICS_NAME["B"] = ic.GAME_TYPES["bullet"]
+            else:
+                ic.GAME_TYPES_BY_SHORT_FICS_NAME["B"] = ic.GAME_TYPES["bughouse"]
 
             self.client.run_command("iset defprompt 1")
             self.client.run_command("iset ms 1")
@@ -374,7 +384,7 @@ class FICSMainConnection(FICSConnection):
     def _post_connect_hook(self, lines):
         self.ini_messages = lines.splitlines()
         notify_users = re.search("Present company includes: ((?:%s ?)+)\." %
-                                 NAMES_RE, lines)
+                                 ic.NAMES_RE, lines)
         if notify_users:
             self.notify_users.extend(notify_users.groups()[0].split())
 
@@ -386,8 +396,8 @@ class FICSMainConnection(FICSConnection):
         # avoid having to init the in a specific order, connect calls should
         # be moved to a "start" function, so all managers would be in
         # the connection object when they are called
-        self.lvm = ListAndVarManager(self)
         if self.ICC:
+            self.lvm = ICCListAndVarManager(self)
             self.em = ICCErrorManager(self)
             self.glm = ICCSeekManager(self)
             self.bm = ICCBoardManager(self)
@@ -395,6 +405,7 @@ class FICSMainConnection(FICSConnection):
             self.adm = ICCAdjournManager(self)
             self.fm = ICCFingerManager(self)
         else:
+            self.lvm = ListAndVarManager(self)
             self.em = ErrorManager(self)
             self.glm = SeekManager(self)
             self.bm = BoardManager(self)

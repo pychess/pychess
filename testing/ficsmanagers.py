@@ -11,7 +11,7 @@ from pychess.ic.FICSObjects import FICSPlayer, FICSGames, FICSSeeks, FICSChallen
 
 from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 from pychess.ic.FICSConnection import Connection
-from pychess.ic.VerboseTelnet import PredictionsTelnet, TelnetLine
+from pychess.ic.VerboseTelnet import PredictionsTelnet, TelnetLine, BL
 from pychess.ic.managers.AdjournManager import AdjournManager
 from pychess.ic.managers.SeekManager import SeekManager
 from pychess.ic.managers.BoardManager import BoardManager
@@ -41,9 +41,9 @@ class DummyConnection(Connection):
             def readline(self):
                 return self.Q.get_nowait()
 
-        def __init__(self, predictions, reply_cmd_dict, replay_dg_dict):
+        def __init__(self, predictions, reply_cmd_dict, replay_dg_dict, replay_cn_dict):
             PredictionsTelnet.__init__(self, self.DummyTelnet(), predictions,
-                                       reply_cmd_dict, replay_dg_dict)
+                                       reply_cmd_dict, replay_dg_dict, replay_cn_dict)
             self.commands = []
 
         def putline(self, line):
@@ -63,7 +63,7 @@ class DummyConnection(Connection):
                 self.append(x)
 
         self.predictions = FakeSet()  # make predictions able to be reordered
-        self.client = self.DummyClient(self.predictions, self.reply_cmd_dict, self.replay_dg_dict)
+        self.client = self.DummyClient(self.predictions, self.reply_cmd_dict, self.replay_dg_dict, self.replay_cn_dict)
         self.client.lines.block_mode = True
         self.client.lines.line_prefix = "fics%"
         self.examined_game = None
@@ -1213,8 +1213,8 @@ class ConsoleManagerTests(EmittingTestCase):
             "2: If you're using Linux check out pychess: http://www.pychess.org",
             BLOCK_END
         ]
-        expected_result = [TelnetLine(line, 37) for line in lines[1:-1]]
-        expected_result.append(TelnetLine('', 37))
+        expected_result = [TelnetLine(line, 37, BL) for line in lines[1:-1]]
+        expected_result.append(TelnetLine('', 37, BL))
         self.runAndAssertEquals("consoleMessage", lines,
                                 (expected_result, None))
 

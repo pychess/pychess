@@ -298,8 +298,7 @@ class FingerManager(GObject.GObject):
                 finger.setStatus(IC_STATUS_BUSY)
                 finger.setBusyMessage(groupdict["busymessage"])
             elif groupdict["gametype"] is not None:
-                gametype = GAME_TYPES_BY_FICS_NAME[groupdict["gametype"].lower(
-                )]
+                gametype = GAME_TYPES_BY_FICS_NAME[groupdict["gametype"].lower()]
                 ratings = groupdict["ratings"].split()
                 finger.setRating(gametype.rating_type, ratings)
             elif groupdict["email"] is not None:

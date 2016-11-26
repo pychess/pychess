@@ -137,7 +137,6 @@ GAME_TYPES = {
     "blitz": NormalGameType("blitz", "b", TYPE_BLITZ, _("Blitz")),
     "standard": NormalGameType("standard", "s", TYPE_STANDARD, _("Standard")),
     "lightning": NormalGameType("lightning", "l", TYPE_LIGHTNING, _("Lightning")),
-    "bullet": NormalGameType("bullet", "B", TYPE_BULLET, _("Bullet")),
     "1-minute": NormalGameType("1-minute", "o", TYPE_ONE_MINUTE, _("1-minute")),
     "3-minute": NormalGameType("3-minute", "M", TYPE_THREE_MINUTE, _("3-minute")),
     "5-minute": NormalGameType("5-minute", "f", TYPE_FIVE_MINUTE, _("5-minute")),
@@ -191,6 +190,13 @@ GAME_TYPES_BY_FICS_NAME = {}
 for key in GAME_TYPES_BY_SHORT_FICS_NAME:
     GAME_TYPES_BY_FICS_NAME[GAME_TYPES_BY_SHORT_FICS_NAME[key].fics_name] = \
         GAME_TYPES_BY_SHORT_FICS_NAME[key]
+
+
+# Finally add conflicting ICC game type
+GAME_TYPES["bullet"] = NormalGameType("bullet", "B", TYPE_BULLET, _("Bullet"))
+GAME_TYPES_BY_FICS_NAME["bullet"] = GAME_TYPES["bullet"]
+GAME_TYPES_BY_RATING_TYPE[TYPE_BULLET] = GAME_TYPES["bullet"]
+# GAME_TYPES_BY_SHORT_FICS_NAME["B"] will be fixed in FICSConnections.py
 
 
 def type_to_display_text(typename):

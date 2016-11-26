@@ -2,7 +2,8 @@ import collections
 import re
 
 from pychess.System.Log import log
-from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END, BLKCMD_PASSWORD, DTGR_START, DTGR_END, DG_PASSWORD
+from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END, BLKCMD_PASSWORD
+from pychess.ic.icc import UNIT_START, UNIT_END, DTGR_START, MY_ICC_PREFIX
 
 
 class ConsoleHandler(object):
@@ -38,6 +39,7 @@ class Prediction(object):
 
 
 RETURN_NO_MATCH, RETURN_MATCH, RETURN_NEED_MORE, RETURN_MATCH_END = range(4)
+BL, DG, CN = range(3)
 
 
 class LinePrediction(Prediction):
@@ -157,8 +159,8 @@ class FromToPrediction(MultipleLinesPrediction):
         return RETURN_NO_MATCH
 
 
-TelnetLine = collections.namedtuple('TelnetLine', ['line', 'code'])
-EmptyTelnetLine = TelnetLine("", None)
+TelnetLine = collections.namedtuple('TelnetLine', ['line', 'code', 'code_type'])
+EmptyTelnetLine = TelnetLine("", None, None)
 
 
 class TelnetLines(object):
@@ -200,6 +202,11 @@ class TelnetLines(object):
             self.lines.extend(self._get_lines())
             return self.lines.popleft() if self.lines else EmptyTelnetLine
 
+    def _handle_dg(self, line):
+        code, data = line[2:-2].split(" ", 1)
+        log.debug("%s %s" % (code, data), extra={"task": (self.telnet.name, "datagram")})
+        return [TelnetLine(data, int(code), DG)]
+
     def _get_lines(self):
         lines = []
         line = self.telnet.readline()
@@ -207,22 +214,36 @@ class TelnetLines(object):
 
         if line.startswith(self.line_prefix):
             line = line[len(self.line_prefix) + 1:]
-        if self.datagram_mode and line.startswith(DTGR_START):
+
+        if self.datagram_mode:
             identifier = -1
-            pos = line.rfind(DTGR_END)
-            if pos > 0:
-                parts = line.split(DTGR_END)
-                for part in parts:
-                    if part.startswith(DTGR_START):
-                        code, data = part[2:].split(" ", 1)
-                        lines.append(TelnetLine(data, int(code)))
-                        if code != DG_PASSWORD:
-                            log.debug("%s %s" % (code, data),
-                                      extra={"task": (self.telnet.name, "datagram")})
+            code = 0
+            unit = False
+            if line.startswith(UNIT_START):
+                unit = True
+                unit_lines = []
+                cn_code = int(line[2:line.find(" ")])
+                if MY_ICC_PREFIX in line:
+                    identifier = 0
+                line = self.telnet.readline()
+
+            if line.startswith(DTGR_START):
+                lines = self._handle_dg(line)
+            elif unit:
+                while UNIT_END not in line:
+                    if line.startswith(DTGR_START):
+                        lines += self._handle_dg(line)
+                    if line.endswith(UNIT_END):
+                        parts = line.split(UNIT_END)
+                        if parts[0]:
+                            unit_lines.append(parts[0])
                     else:
-                        lines.append(TelnetLine(part, None))
-            else:
-                log.debug(line, extra={"task": (self.telnet.name, "unclosed_datagram")})
+                        unit_lines.append(line)
+                    line = self.telnet.readline()
+                if len(unit_lines) > 0:
+                    text = "\n".join(unit_lines)
+                    lines.append(TelnetLine(text, cn_code, CN))
+                    log.debug(text, extra={"task": (self.telnet.name, "not datagram")})
 
         elif self.block_mode and line.startswith(BLOCK_START):
             parts = line[1:].split(BLOCK_SEPARATOR)
@@ -239,9 +260,9 @@ class TelnetLines(object):
             line = text if text else self.telnet.readline()
 
             while not line.endswith(BLOCK_END):
-                lines.append(TelnetLine(line, code))
+                lines.append(TelnetLine(line, code, BL))
                 line = self.telnet.readline()
-            lines.append(TelnetLine(line[:-1], code))
+            lines.append(TelnetLine(line[:-1], code, BL))
 
             if code != BLKCMD_PASSWORD:
                 log.debug("%s %s %s" %
@@ -250,11 +271,8 @@ class TelnetLines(object):
                           extra={"task": (self.telnet.name, "command_reply")})
         else:
             code = 0
-            lines.append(TelnetLine(line, None))
+            lines.append(TelnetLine(line, None, None))
 
-        if code != BLKCMD_PASSWORD:
-            log.debug("\n".join(line.line for line in lines).strip(),
-                      extra={"task": (self.telnet.name, "lines")})
         if self.consolehandler:
             if identifier == 0 or identifier in self.show_reply:
                 self.consolehandler.handle(lines)
@@ -264,11 +282,12 @@ class TelnetLines(object):
 
 
 class PredictionsTelnet(object):
-    def __init__(self, telnet, predictions, reply_cmd_dict, replay_dg_dict):
+    def __init__(self, telnet, predictions, reply_cmd_dict, replay_dg_dict, replay_cn_dict):
         self.telnet = telnet
         self.predictions = predictions
         self.reply_cmd_dict = reply_cmd_dict
         self.replay_dg_dict = replay_dg_dict
+        self.replay_cn_dict = replay_cn_dict
         self.show_reply = set([])
         self.lines = TelnetLines(telnet, self.show_reply)
         self.__command_id = 1
@@ -280,10 +299,16 @@ class PredictionsTelnet(object):
             return  # TODO: necessary?
 
         if self.lines.datagram_mode and line.code is not None:
-            callback = self.replay_dg_dict[line.code]
-            callback(line.line)
-            log.debug(line.line, extra={"task": (self.telnet.name, callback.__name__)})
-            return
+            if line.code_type == DG:
+                callback = self.replay_dg_dict[line.code]
+                callback(line.line)
+                log.debug(line.line, extra={"task": (self.telnet.name, callback.__name__)})
+                return
+            elif line.code_type == CN and line.code in self.replay_cn_dict:
+                callback = self.replay_cn_dict[line.code]
+                callback(line.line)
+                log.debug(line.line, extra={"task": (self.telnet.name, callback.__name__)})
+                return
 
         predictions = self.reply_cmd_dict[line.code] \
             if line.code is not None and line.code in self.reply_cmd_dict else self.predictions
@@ -324,6 +349,10 @@ class PredictionsTelnet(object):
             if show_reply:
                 self.show_reply.add(self.__command_id)
             return self.telnet.write(text)
+        elif self.lines.datagram_mode:
+            if show_reply:
+                text = "`%s`%s\n" % (MY_ICC_PREFIX, text)
+            return self.telnet.write("%s\n" % text)
         else:
             return self.telnet.write("%s\n" % text)
 
