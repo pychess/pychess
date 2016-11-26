@@ -24,13 +24,15 @@ class ICCHelperManager(HelperManager):
         self.helperconn.client.run_command("set-2 %s 1" % DG_TOURNEY)
         self.helperconn.client.run_command("set-2 %s 1" % DG_WILD_KEY)
 
-        # Unfortunately we can't maintain a list of games
         # From https://www.chessclub.com/user/resources/formats/formats.txt
         # Here is the list of verbose DGs:
         # DG_PLAYER_ARRIVED DG_PLAYER_LEFT
         # DG_GAME_STARTED DG_GAME_RESULT DG_EXAMINED_GAME_IS_GONE
         # DG_PEOPLE_IN_MY_CHANNEL DG_CHANNELS_SHARED DG_SEES_SHOUTS
         # Currently, only TDs like Tomato can use these.
+
+        # Unfortunately we can't maintain full list of ongoing games so we will
+        # only periodically update top games similar to other ICC clients
         def get_top_games():
             self.helperconn.client.run_command("games *19")
             return True
