@@ -18,7 +18,7 @@ class ICCHelperManager(HelperManager):
         self.connection.expect_dg_line(DG_WILD_KEY, self.on_icc_wild_key)
         self.connection.expect_cn_line(CN_GAMES, self.on_icc_games)
 
-        # self.connection.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED_SIMPLE)
+        self.connection.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED_SIMPLE)
         self.connection.client.run_command("set-2 %s 1" % DG_PLAYER_LEFT)
         self.connection.client.run_command("set-2 %s 1" % DG_TOURNEY)
         self.connection.client.run_command("set-2 %s 1" % DG_WILD_KEY)
