@@ -275,7 +275,7 @@ class ICLogon(object):
         self.connection.start()
 
         # guest users are rather limited on ICC (helper connection is useless)
-        if not self.host.startswith("chessclub.com"):
+        if not self.host in ("localhost", "chessclub.com"):
             self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
             self.helperconn.connect("error", self.onHelperConnectionError)
             self.helperconn.start()

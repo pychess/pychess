@@ -46,6 +46,9 @@ class TimeSeal(object):
         self.host = host
         self.name = host
 
+        if host in ("localhost", "chessclub.com"):
+            self.ICC = True
+
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.settimeout(10)
         try:
@@ -54,7 +57,7 @@ class TimeSeal(object):
             if err.errno != errno.EINPROGRESS:
                 raise
         self.sock.settimeout(None)
-        if not self.host.startswith("chessclub.com"):
+        if not self.ICC:
             print(self.get_init_string(), file=self)
         self.cook_some()
 
