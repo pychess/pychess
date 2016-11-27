@@ -201,6 +201,18 @@ class EnginesDialog():
                     vmpath = ""
 
                 if new_engine:
+                    if not os.access(new_engine, os.X_OK):
+                        print(new_engine)
+                        msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                                                    buttons=Gtk.ButtonsType.OK)
+                        msg_dia.set_markup(_("<big><b>%s is not marked executable in the filesystem</b></big>" %
+                                             new_engine))
+                        msg_dia.format_secondary_text(_("Try chmod a+x %s" % new_engine))
+                        msg_dia.run()
+                        msg_dia.hide()
+                        self.add = False
+                        engine_chooser_dialog.hide()
+                        return
                     try:
                         # Some engines support CECP and UCI, but variant engines are CECP,
                         # so we better to start with CECP this case
@@ -236,16 +248,18 @@ class EnginesDialog():
                                 msg_dia.run()
                                 msg_dia.hide()
                                 engine_chooser_dialog.hide()
+                                self.add = False
+                                engine_chooser_dialog.hide()
                                 return
+
                         binname = os.path.split(new_engine)[1]
                         for eng in discoverer.getEngines():
                             if eng["name"] == binname:
                                 binname = eng["name"] + "(1)"
                                 break
-                        self.widgets["engine_command_entry"].set_text(
-                            new_engine)
-                        self.widgets["engine_protocol_combo"].set_active(
-                            0 if uci else 1)
+
+                        self.widgets["engine_command_entry"].set_text(new_engine)
+                        self.widgets["engine_protocol_combo"].set_active(0 if uci else 1)
                         self.widgets["engine_args_entry"].set_text("")
 
                         # active = self.widgets["engine_protocol_combo"].get_active()
@@ -265,10 +279,14 @@ class EnginesDialog():
                             "There is something wrong with this executable"))
                         msg_dia.run()
                         msg_dia.hide()
+                        self.add = False
+                        engine_chooser_dialog.hide()
+                        return
                 else:
                     # restore the original
                     engine = discoverer.getEngineByName(self.cur_engine)
                     engine_chooser_dialog.set_filename(engine["command"])
+
             engine_chooser_dialog.hide()
 
         self.widgets["add_engine_button"].connect("clicked", add)
