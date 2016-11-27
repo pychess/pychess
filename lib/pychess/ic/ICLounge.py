@@ -956,10 +956,6 @@ class ParrentListSection(Section):
             self.connection.adm.queryHistory(player.name)
             self.connection.adm.queryJournal(player.name)
 
-            notebook = self.widgets["notebook"]
-            archived = self.widgets["archiveListContent"]
-            notebook.set_current_page(notebook.page_num(archived))
-
 
 class SeekTabSection(ParrentListSection):
 
