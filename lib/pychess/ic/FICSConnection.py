@@ -35,6 +35,8 @@ from .managers.ICCAdjournManager import ICCAdjournManager
 from .managers.ICCErrorManager import ICCErrorManager
 from .managers.ICCFingerManager import ICCFingerManager
 from .managers.ICCListAndVarManager import ICCListAndVarManager
+from .managers.ICCNewsManager import ICCNewsManager
+from .managers.ICCOfferManager import ICCOfferManager
 
 from .FICSObjects import FICSPlayers, FICSGames, FICSSeeks, FICSChallenges
 from .TimeSeal import TimeSeal, CanceledException
@@ -404,6 +406,8 @@ class FICSMainConnection(FICSConnection):
             self.cm = ICCChatManager(self)
             self.adm = ICCAdjournManager(self)
             self.fm = ICCFingerManager(self)
+            self.nm = ICCNewsManager(self)
+            self.om = ICCOfferManager(self)
         else:
             self.lvm = ListAndVarManager(self)
             self.em = ErrorManager(self)
@@ -412,9 +416,9 @@ class FICSMainConnection(FICSConnection):
             self.cm = ChatManager(self)
             self.adm = AdjournManager(self)
             self.fm = FingerManager(self)
-        self.nm = NewsManager(self)
-        self.om = OfferManager(self)
-        self.alm = AutoLogOutManager(self)
+            self.nm = NewsManager(self)
+            self.om = OfferManager(self)
+            self.alm = AutoLogOutManager(self)
         self.com = ConsoleManager(self)
         self.bm.start()
         self.players.start()
