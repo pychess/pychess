@@ -202,11 +202,6 @@ class TelnetLines(object):
             self.lines.extend(self._get_lines())
             return self.lines.popleft() if self.lines else EmptyTelnetLine
 
-    def _handle_dg(self, line):
-        code, data = line[2:-2].split(" ", 1)
-        log.debug("%s %s" % (code, data), extra={"task": (self.telnet.name, "datagram")})
-        return [TelnetLine(data, int(code), DG)]
-
     def _get_lines(self):
         lines = []
         line = self.telnet.readline()
@@ -227,18 +222,19 @@ class TelnetLines(object):
                     identifier = 0
                 line = self.telnet.readline()
 
-            if line.startswith(DTGR_START):
-                lines = self._handle_dg(line)
-            elif unit:
+            if unit:
                 while UNIT_END not in line:
                     if line.startswith(DTGR_START):
-                        lines += self._handle_dg(line)
-                    if line.endswith(UNIT_END):
-                        parts = line.split(UNIT_END)
-                        if parts[0]:
-                            unit_lines.append(parts[0])
+                        code, data = line[2:-2].split(" ", 1)
+                        log.debug("%s %s" % (code, data), extra={"task": (self.telnet.name, "datagram")})
+                        lines.append(TelnetLine(data, int(code), DG))
                     else:
-                        unit_lines.append(line)
+                        if line.endswith(UNIT_END):
+                            parts = line.split(UNIT_END)
+                            if parts[0]:
+                                unit_lines.append(parts[0])
+                        else:
+                            unit_lines.append(line)
                     line = self.telnet.readline()
                 if len(unit_lines) > 0:
                     text = "\n".join(unit_lines)

@@ -18,7 +18,7 @@ class ConsoleWindow(object):
 
     @staticmethod
     def filter_unprintable(s):
-        return ''.join([c for c in s if ord(c) > 31 or ord(c) == 9])
+        return ''.join([c for c in s if ord(c) > 31 or ord(c) == 9 or c == "\n"])
 
     def scroll_to_bottom(self):
         tb_iter = self.consoleView.textbuffer.get_end_iter()

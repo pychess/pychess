@@ -37,6 +37,7 @@ from .managers.ICCFingerManager import ICCFingerManager
 from .managers.ICCListAndVarManager import ICCListAndVarManager
 from .managers.ICCNewsManager import ICCNewsManager
 from .managers.ICCOfferManager import ICCOfferManager
+from .managers.ICCAutoLogOutManager import ICCAutoLogOutManager
 
 from .FICSObjects import FICSPlayers, FICSGames, FICSSeeks, FICSChallenges
 from .TimeSeal import TimeSeal, CanceledException
@@ -408,6 +409,7 @@ class FICSMainConnection(FICSConnection):
             self.fm = ICCFingerManager(self)
             self.nm = ICCNewsManager(self)
             self.om = ICCOfferManager(self)
+            self.alm = ICCAutoLogOutManager(self)
         else:
             self.lvm = ListAndVarManager(self)
             self.em = ErrorManager(self)
