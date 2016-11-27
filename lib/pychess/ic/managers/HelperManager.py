@@ -130,8 +130,7 @@ class HelperManager(GObject.GObject):
                 if player.game != game:
                     player.game = game
                 rating = parseRating(rating)
-                if gametype.rating_type in player.ratings and \
-                        player.ratings[gametype.rating_type] != rating:
+                if player.ratings[gametype.rating_type] != rating:
                     player.ratings[gametype.rating_type] = rating
                     player.emit("ratings_changed", gametype.rating_type, player)
             game = self.connection.games.get(game, emit=False)

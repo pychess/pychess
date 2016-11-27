@@ -79,8 +79,7 @@ class ICCBoardManager(BoardManager):
         game_type = GAME_TYPES[rtype.lower()]
 
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
-            if game_type.rating_type in player.ratings and \
-                    player.ratings[game_type.rating_type] != rating:
+            if player.ratings[game_type.rating_type] != rating:
                 player.ratings[game_type.rating_type] = rating
                 player.emit("ratings_changed", game_type.rating_type, player)
 
@@ -126,8 +125,7 @@ class ICCBoardManager(BoardManager):
         game_type = GAME_TYPES[rtype.lower()]
 
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
-            if game_type.rating_type in player.ratings and \
-                    player.ratings[game_type.rating_type] != rating:
+            if player.ratings[game_type.rating_type] != rating:
                 player.ratings[game_type.rating_type] = rating
                 player.emit("ratings_changed", game_type.rating_type, player)
 

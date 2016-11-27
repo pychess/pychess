@@ -547,8 +547,7 @@ class BoardManager(GObject.GObject):
         wplayer = self.connection.players.get(wname)
         bplayer = self.connection.players.get(bname)
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
-            if game_type.rating_type in player.ratings and \
-                    player.ratings[game_type.rating_type] != rating:
+            if player.ratings[game_type.rating_type] != rating:
                 player.ratings[game_type.rating_type] = rating
                 player.emit("ratings_changed", game_type.rating_type, player)
 
@@ -866,8 +865,7 @@ class BoardManager(GObject.GObject):
         wplayer = self.connection.players.get(wname)
         bplayer = self.connection.players.get(bname)
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
-            if game_type.rating_type in player.ratings and \
-                    player.ratings[game_type.rating_type] != rating:
+            if player.ratings[game_type.rating_type] != rating:
                 player.ratings[game_type.rating_type] = rating
                 player.emit("ratings_changed", game_type.rating_type, player)
         game = gameclass(wplayer,
