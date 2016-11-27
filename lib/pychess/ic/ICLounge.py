@@ -152,9 +152,9 @@ class ICLounge(GObject.GObject):
 
         self.connection.com.onConsoleMessage("", self.connection.ini_messages)
 
-        perspective = perspective_manager.get_perspective("fics")
+        fics_perspective = perspective_manager.get_perspective("fics")
 
-        self.dock = PyDockTop("fics", perspective)
+        self.dock = PyDockTop("fics", fics_perspective)
         align = Gtk.Alignment()
         align.show()
         align.add(self.dock)
@@ -227,6 +227,14 @@ class ICLounge(GObject.GObject):
 
             console_leaf = leaf.dock(docks["console"][1], SOUTH, docks["console"][0], "console")
             console_leaf.dock(docks["news"][1], CENTER, docks["news"][0], "news")
+
+        def get_top_games():
+            if perspective_manager.current_perspective == fics_perspective:
+                self.connection.client.run_command("games *19")
+            return True
+
+        if self.connection.ICC:
+            self.event_id = GLib.timeout_add_seconds(5, get_top_games)
 
         def unrealize(dock):
             dock.saveToXML(dockLocation)

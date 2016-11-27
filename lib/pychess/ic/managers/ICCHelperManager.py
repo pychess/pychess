@@ -1,4 +1,4 @@
-from gi.repository import GLib, GObject
+from gi.repository import GObject
 
 from pychess.ic.FICSObjects import FICSGame
 from pychess.ic.managers.HelperManager import HelperManager
@@ -10,19 +10,18 @@ class ICCHelperManager(HelperManager):
     def __init__(self, helperconn, connection):
         GObject.GObject.__init__(self)
 
-        self.helperconn = helperconn
         self.connection = connection
 
-        self.helperconn.expect_dg_line(DG_PLAYER_ARRIVED_SIMPLE, self.on_icc_player_arrived_simple)
-        self.helperconn.expect_dg_line(DG_PLAYER_LEFT, self.on_icc_player_left)
-        self.helperconn.expect_dg_line(DG_TOURNEY, self.on_icc_tourney)
-        self.helperconn.expect_dg_line(DG_WILD_KEY, self.on_icc_wild_key)
-        self.helperconn.expect_cn_line(CN_GAMES, self.on_icc_games)
+        self.connection.expect_dg_line(DG_PLAYER_ARRIVED_SIMPLE, self.on_icc_player_arrived_simple)
+        self.connection.expect_dg_line(DG_PLAYER_LEFT, self.on_icc_player_left)
+        self.connection.expect_dg_line(DG_TOURNEY, self.on_icc_tourney)
+        self.connection.expect_dg_line(DG_WILD_KEY, self.on_icc_wild_key)
+        self.connection.expect_cn_line(CN_GAMES, self.on_icc_games)
 
-        self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED_SIMPLE)
-        self.helperconn.client.run_command("set-2 %s 1" % DG_PLAYER_LEFT)
-        self.helperconn.client.run_command("set-2 %s 1" % DG_TOURNEY)
-        self.helperconn.client.run_command("set-2 %s 1" % DG_WILD_KEY)
+        # self.connection.client.run_command("set-2 %s 1" % DG_PLAYER_ARRIVED_SIMPLE)
+        self.connection.client.run_command("set-2 %s 1" % DG_PLAYER_LEFT)
+        self.connection.client.run_command("set-2 %s 1" % DG_TOURNEY)
+        self.connection.client.run_command("set-2 %s 1" % DG_WILD_KEY)
 
         # From https://www.chessclub.com/user/resources/formats/formats.txt
         # Here is the list of verbose DGs:
@@ -32,11 +31,8 @@ class ICCHelperManager(HelperManager):
         # Currently, only TDs like Tomato can use these.
 
         # Unfortunately we can't maintain full list of ongoing games so we will
-        # only periodically update top games similar to other ICC clients
-        def get_top_games():
-            self.helperconn.client.run_command("games *19")
-            return True
-        self.event_id = GLib.timeout_add_seconds(5, get_top_games)
+        # periodically update top games in ICLounge similar to other ICC clients
+        self.connection.client.run_command("games *19")
 
     def on_icc_games(self, data):
         # 1267      guest2504            1400 KQkr(C)              20u  5  12       W:  1
