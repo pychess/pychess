@@ -7,7 +7,7 @@ from pychess.Utils.const import WHITE, FEN_START, DRAW_BLACKINSUFFICIENTANDWHITE
     DRAW_WHITEINSUFFICIENTANDBLACKTIME, ADJOURNED_COURTESY_WHITE, ADJOURNED_COURTESY_BLACK
 from pychess.ic.FICSObjects import FICSPlayer, FICSGames, FICSSeeks, FICSChallenges, FICSPlayers, \
     FICSAdjournedGame, GAME_TYPES_BY_FICS_NAME, GAME_TYPES, TYPE_BLITZ, FICSSeek, DEVIATION_ESTIMATED, \
-    TYPE_COMPUTER, FICSBoard, FICSGame, TYPE_WILD, FICSChallenge, TYPE_STANDARD
+    TYPE_COMPUTER, FICSBoard, FICSGame, TYPE_WILD, FICSChallenge, TYPE_STANDARD, TYPE_LIGHTNING
 
 from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 from pychess.ic.FICSConnection import Connection
@@ -615,9 +615,9 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
         me = self.connection.players.get('mgatto')
-        me.ratings[TYPE_BLITZ] = 1470
+        me.ratings[TYPE_LIGHTNING] = 1470
         opponent = self.connection.players.get('fabk')
-        opponent.ratings[TYPE_BLITZ] = 1155
+        opponent.ratings[TYPE_LIGHTNING] = 1155
         game = FICSGame(opponent,
                         me,
                         gameno=465,

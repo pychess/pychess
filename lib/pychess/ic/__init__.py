@@ -34,6 +34,7 @@ RATING_TYPES = (TYPE_BLITZ,
                 TYPE_SUICIDE,
                 TYPE_WILD,
                 TYPE_CHESS960,
+                TYPE_UNTIMED,
                 )
 
 # Rating deviations
