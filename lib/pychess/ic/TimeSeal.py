@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import sys
 import errno
 import socket
 import telnetlib
@@ -9,7 +10,7 @@ import platform
 import getpass
 
 from pychess.System.Log import log
-from pychess.ic.icc import DTGR_END, UNIT_END
+from pychess.ic.icc import B_DTGR_END, B_UNIT_END
 
 ENCODE = [ord(i) for i in "Timestamp (FICS) v1.0 - programmed by Henrik Gram."]
 ENCODELEN = len(ENCODE)
@@ -175,16 +176,16 @@ class TimeSeal(object):
         while True:
             i = self.buf.find(until)
             if self.ICC:
-                l = None
+                l = sys.maxsize
                 if i >= 0:
                     l = i
-                j = self.buf.find(DTGR_END)
+                j = self.buf.find(B_DTGR_END)
                 if j >= 0:
                     l = min(l, j)
-                k = self.buf.find(UNIT_END)
+                k = self.buf.find(B_UNIT_END)
                 if k >= 0:
                     l = min(l, k)
-                if l is not None and l != i:
+                if l != sys.maxsize and l != i:
                     stuff = self.buf[:l + 2]
                     self.buf = self.buf[l + 2:]
                     return str(stuff.strip().decode("latin_1"))

@@ -43,7 +43,7 @@ class ICCHelperManager(HelperManager):
         # 117 2760 *GM_Topalov          2823 *GM_Caruana          Ex: StLouis16 %0 W: 29
         # 119 1919 stansai              2068 Agrimont             Ex: continuation W: 53
         # 456 games displayed (282 played, 174 examined).
-        previous_games = self.connection.games.values()
+        previous_games = list(self.connection.games.values())
         games = []
         games_got = []
         lines = data.split("\n")
