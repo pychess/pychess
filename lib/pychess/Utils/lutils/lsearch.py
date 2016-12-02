@@ -7,7 +7,7 @@ from .lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from .egtb_gaviota import EgtbGaviota
 from pychess.Utils.const import ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS,\
     DROP_VARIANTS, LOSERSCHESS, SUICIDECHESS, EMPTY, PROMOTIONS, DROP, KING,\
-    hashfALPHA, hashfBETA, hashfEXACT, hashfBAD
+    hashfALPHA, hashfBETA, hashfEXACT, hashfBAD, DRAW, WHITE, WHITEWON
 from .leval import evaluateComplete
 from .lsort import getCaptureValue, getMoveValue
 from .ldata import MATE_VALUE, VALUE_AT_PLY
@@ -268,6 +268,7 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
 
 
 def quiescent(board, alpha, beta, ply):
+    global searching, endtime, timecheck_counter
 
     if skipPruneChance and random() < skipPruneChance:
         return [], (alpha + beta) // 2
@@ -276,6 +277,23 @@ def quiescent(board, alpha, beta, ply):
 
     if ldraw.test(board):
         return [], 0
+
+    ############################################################################
+    # Cheking the time                                                         #
+    ############################################################################
+
+    timecheck_counter -= 1
+    if timecheck_counter == 0:
+        if time() > endtime:
+            searching = False
+        timecheck_counter = TIMECHECK_FREQ
+
+    ############################################################################
+    # Break itereation if interupted or if times up                            #
+    ############################################################################
+
+    if not searching:
+        return [], -evaluateComplete(board, 1 - board.color)
 
     isCheck = board.isChecked()
 
