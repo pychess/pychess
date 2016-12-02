@@ -156,13 +156,16 @@ class _GameInitializationMode(object):
 
         cls.__initTimeRadio(
             _("Blitz"), "ngblitz", cls.widgets["blitzRadio"],
-            cls.widgets["configImageBlitz"], 5, 0)
+            cls.widgets["configImageBlitz"], 5, 0, 0)
         cls.__initTimeRadio(
             _("Rapid"), "ngrapid", cls.widgets["rapidRadio"],
-            cls.widgets["configImageRapid"], 15, 5)
+            cls.widgets["configImageRapid"], 15, 5, 0)
         cls.__initTimeRadio(
             _("Normal"), "ngnormal", cls.widgets["normalRadio"],
-            cls.widgets["configImageNormal"], 40, 15)
+            cls.widgets["configImageNormal"], 40, 15, 0)
+        cls.__initTimeRadio(
+            _("Classical"), "ngclassical", cls.widgets["classicalRadio"],
+            cls.widgets["configImageClassical"], 3, 0, 40)
 
         cls.__initVariantRadio("ngvariant1", cls.widgets["playVariant1Radio"],
                                cls.widgets["configImageVariant1"],
@@ -209,7 +212,7 @@ class _GameInitializationMode(object):
         # in the user comboboxes can be different in different variants
         for key in ("whitePlayerCombobox", "blackPlayerCombobox",
                     "skillSlider1", "skillSlider2", "notimeRadio",
-                    "blitzRadio", "rapidRadio", "normalRadio",
+                    "blitzRadio", "rapidRadio", "normalRadio", "classicalRadio",
                     "playNormalRadio", "playVariant1Radio",
                     "playVariant2Radio"):
             uistuff.keep(cls.widgets[key], key)
@@ -220,16 +223,18 @@ class _GameInitializationMode(object):
 
     @classmethod
     def __initTimeRadio(cls, name, id, radiobutton, configImage, defmin,
-                        defgain):
-        # minSpin = Gtk.SpinButton(Gtk.Adjustment(1,1,240,1))
+                        defgain, defmoves):
         minSpin = Gtk.SpinButton()
         minSpin.set_adjustment(Gtk.Adjustment(1, 0, 240, 1))
-        # gainSpin = Gtk.SpinButton(Gtk.Adjustment(0,-60,60,1))
+        setattr(cls, "%s_min" % id, minSpin)
+        uistuff.keep(minSpin, "%s min" % id, first_value=defmin)
+        movesSpin = Gtk.SpinButton()
+        movesSpin.set_adjustment(Gtk.Adjustment(0, -60, 60, 1))
+        setattr(cls, "%s_moves" % id, movesSpin)
+        uistuff.keep(movesSpin, "%s moves" % id, first_value=defmoves)
         gainSpin = Gtk.SpinButton()
         gainSpin.set_adjustment(Gtk.Adjustment(0, -60, 60, 1))
-        setattr(cls, "%s_min" % id, minSpin)
         setattr(cls, "%s_gain" % id, gainSpin)
-        uistuff.keep(minSpin, "%s min" % id, first_value=defmin)
         uistuff.keep(gainSpin, "%s gain" % id, first_value=defgain)
 
         table = Gtk.Table(2, 2)
@@ -239,10 +244,13 @@ class _GameInitializationMode(object):
         label.props.xalign = 0
         table.attach(label, 0, 1, 0, 1)
         table.attach(minSpin, 1, 2, 0, 1)
-        label = Gtk.Label(label=_("Gain:"))
+        label = Gtk.Label(label=_("Moves:") if defmoves > 0 else _("Gain:"))
         label.props.xalign = 0
         table.attach(label, 0, 1, 1, 2)
-        table.attach(gainSpin, 1, 2, 1, 2)
+        if defmoves > 0:
+            table.attach(movesSpin, 1, 2, 1, 2)
+        else:
+            table.attach(gainSpin, 1, 2, 1, 2)
         alignment = Gtk.Alignment.new(1, 1, 1, 1)
         alignment.set_padding(6, 6, 12, 12)
         alignment.add(table)
@@ -251,6 +259,7 @@ class _GameInitializationMode(object):
         def updateString(spin):
             minutes = minSpin.get_value_as_int()
             gain = gainSpin.get_value_as_int()
+            moves = movesSpin.get_value_as_int()
             if gain > 0:
                 radiobutton.set_label(
                     _("%(name)s %(minutes)d min + %(gain)d sec/move") % {
@@ -265,6 +274,12 @@ class _GameInitializationMode(object):
                         'minutes': minutes,
                         'gain': gain
                     })
+            elif moves > 0:
+                radiobutton.set_label(_("%(name)s %(minutes)d min / %(moves)d moves") % {
+                    'name': name,
+                    'minutes': minutes,
+                    'moves': moves,
+                })
             else:
                 radiobutton.set_label(_("%(name)s %(minutes)d min") % {
                     'name': name,
@@ -272,6 +287,7 @@ class _GameInitializationMode(object):
                 })
 
         minSpin.connect("value-changed", updateString)
+        movesSpin.connect("value-changed", updateString)
         gainSpin.connect("value-changed", updateString)
         updateString(None)
 
@@ -389,15 +405,23 @@ class _GameInitializationMode(object):
             if cls.widgets["notimeRadio"].get_active():
                 secs = 0
                 incr = 0
+                moves = 0
             elif cls.widgets["blitzRadio"].get_active():
                 secs = cls.ngblitz_min.get_value_as_int() * 60
                 incr = cls.ngblitz_gain.get_value_as_int()
+                moves = 0
             elif cls.widgets["rapidRadio"].get_active():
                 secs = cls.ngrapid_min.get_value_as_int() * 60
                 incr = cls.ngrapid_gain.get_value_as_int()
+                moves = 0
             elif cls.widgets["normalRadio"].get_active():
                 secs = cls.ngnormal_min.get_value_as_int() * 60
                 incr = cls.ngnormal_gain.get_value_as_int()
+                moves = 0
+            elif cls.widgets["classicalRadio"].get_active():
+                secs = cls.ngclassical_min.get_value_as_int() * 60
+                incr = 0
+                moves = cls.ngclassical_moves.get_value_as_int()
 
             # Find players
             player0 = cls.widgets["whitePlayerCombobox"].get_active()
@@ -416,7 +440,7 @@ class _GameInitializationMode(object):
                     name = discoverer.getName(engine)
                     playertups.append((ARTIFICIAL, discoverer.initPlayerEngine,
                                        [engine, color, diffi, variant, secs,
-                                        incr], name))
+                                        incr, moves], name))
                 else:
                     if not playertups or playertups[0][0] != LOCAL:
                         name = conf.get("firstName", _("You"))
@@ -430,7 +454,7 @@ class _GameInitializationMode(object):
                 playertups[0][2].append(True)
                 playertups[1][2].append(True)
 
-            timemodel = TimeModel(secs, incr)
+            timemodel = TimeModel(secs, incr, moves=moves)
             gamemodel = GameModel(timemodel, variant)
 
             if not validate(gamemodel):
@@ -897,9 +921,11 @@ def createRematch(gamemodel):
     if gamemodel.timed:
         secs = gamemodel.timemodel.intervals[0][WHITE]
         gain = gamemodel.timemodel.gain
+        moves = gamemodel.timemodel.moves
     else:
         secs = 0
         gain = 0
+        moves = 0
     newgamemodel = GameModel(TimeModel(secs, gain), variant=gamemodel.variant)
 
     wp = gamemodel.players[WHITE]
@@ -914,7 +940,7 @@ def createRematch(gamemodel):
             engine = discoverer.getEngineByMd5(bp.md5)
             player0tup = (ARTIFICIAL, discoverer.initPlayerEngine,
                           (engine, WHITE, bp.strength, gamemodel.variant, secs,
-                           gain), repr(bp))
+                           gain, moves), repr(bp))
     else:
         player0tup = (bp.__type__, bp.__class__, (WHITE, repr(bp)), repr(bp))
         engine = discoverer.getEngineByMd5(wp.md5)

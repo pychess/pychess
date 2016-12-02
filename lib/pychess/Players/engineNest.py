@@ -552,6 +552,7 @@ class EngineDiscoverer(GObject.GObject):
                          variant,
                          secs=0,
                          incr=0,
+                         moves=0,
                          forcePonderOff=False):
         engine = self.initEngine(engine, color)
 
@@ -559,7 +560,7 @@ class EngineDiscoverer(GObject.GObject):
             engine.setOptionStrength(diffi, forcePonderOff)
             engine.setOptionVariant(variant)
             if secs > 0:
-                engine.setOptionTime(secs, incr)
+                engine.setOptionTime(secs, incr, moves)
 
         engine.connect("readyForOptions", optionsCallback)
         engine.prestart()

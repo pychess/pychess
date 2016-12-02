@@ -37,6 +37,7 @@ class UCIEngine(ProtocolEngine):
         self.wtime = 60000
         self.btime = 60000
         self.incr = 0
+        self.moves = 0
         self.timeHandicap = 1
 
         self.moveLock = RLock()
@@ -292,10 +293,11 @@ class UCIEngine(ProtocolEngine):
         elif self.hasOption("UCI_Variant") and not variant.standard_rules:
             self.setOption("UCI_Variant", variant.cecp_name)
 
-    def setOptionTime(self, secs, gain):
+    def setOptionTime(self, secs, gain, moves):
         self.wtime = int(max(secs * 1000 * self.timeHandicap, 1))
         self.btime = int(max(secs * 1000 * self.timeHandicap, 1))
         self.incr = int(gain * 1000 * self.timeHandicap)
+        self.moves = moves
 
     def setOptionStrength(self, strength, forcePonderOff):
         self.strength = strength
@@ -446,8 +448,12 @@ class UCIEngine(ProtocolEngine):
                 if self.strength <= 3:
                     commands.append("go depth %d" % self.strength)
                 else:
-                    commands.append("go wtime %d winc %d btime %d binc %d" % (
-                                    self.wtime, self.incr, self.btime, self.incr))
+                    if self.moves > 0:
+                        commands.append("go wtime %d winc %d btime %d binc %d movestogo %s" % (
+                                        self.wtime, self.incr, self.btime, self.incr, self.moves))
+                    else:
+                        commands.append("go wtime %d winc %d btime %d binc %d" % (
+                                        self.wtime, self.incr, self.btime, self.incr))
 
             else:
                 print("stop", file=self.engine)

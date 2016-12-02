@@ -19,13 +19,15 @@ class TimeModel(GObject.GObject):
     # Initing                                                                  #
     ############################################################################
 
-    def __init__(self, secs=0, gain=0, bsecs=-1, minutes=-1):
+    def __init__(self, secs=0, gain=0, bsecs=-1, minutes=-1, moves=0):
         GObject.GObject.__init__(self)
         if bsecs < 0:
             bsecs = secs
         if minutes < 0:
             minutes = secs / 60
         self.minutes = minutes  # The number of minutes for the original starting
+        self.moves = moves
+
         # time control (not necessarily where the game was resumed,
         # i.e. self.intervals[0][0])
         self.intervals = [[secs], [bsecs]]
@@ -115,7 +117,13 @@ class TimeModel(GObject.GObject):
             # FICS rule
             if self.ply >= 1:
                 self.started = True
-        self.intervals[self.movingColor].append(ticker)
+        if self.moves == 0:
+            self.intervals[self.movingColor].append(ticker)
+        else:
+            if len(self.intervals[self.movingColor]) % self.moves == 0:
+                self.intervals[self.movingColor].append(self.intervals[self.movingColor][0])
+            else:
+                self.intervals[self.movingColor].append(ticker)
 
         self.movingColor = 1 - self.movingColor
 

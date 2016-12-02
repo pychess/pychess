@@ -67,9 +67,11 @@ class PyChess(object):
             + 78.8979
 
     def __remainingMovesB(self):
-        # We bet a game will be around 80 moves
-        ply_count = self.board.plyCount
-        return max(80 - ply_count, 4)
+        # Classical timecontrol
+        ply = self.board.plyCount % (self.movestogo * 2)
+        remaining = self.movestogo - ply // 2
+        print("# remaining moves=%s" % remaining)
+        return remaining
 
     def __getBestOpening(self):
         totalWeight = 0
@@ -104,12 +106,18 @@ class PyChess(object):
             if self.searchtime > 0:
                 usetime = self.searchtime
             else:
-                usetime = self.clock[self.playingAs] / self.__remainingMovesA()
-                if self.clock[self.playingAs] > 10:
-                    # If we have time, we assume 40 moves rather than 80
-                    usetime *= 2
-                # The increment is a constant. We'll use this always
-                usetime += self.increment[self.playingAs]
+                if self.movestogo > 0:
+                    remaining_moves = self.__remainingMovesB()
+                    usetime = self.clock[self.playingAs] / remaining_moves
+                    if remaining_moves == 1:
+                        usetime -= 0.01
+                else:
+                    usetime = self.clock[self.playingAs] / self.__remainingMovesA()
+                    if self.clock[self.playingAs] > 10:
+                        # If we have time, we assume 40 moves rather than 80
+                        usetime *= 2
+                    # The increment is a constant. We'll use this always
+                    usetime += self.increment[self.playingAs]
 
             prevtime = 0
             starttime = time()

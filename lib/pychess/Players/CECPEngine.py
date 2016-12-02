@@ -507,7 +507,7 @@ class CECPEngine(ProtocolEngine):
             self.optionQueue.append("hard")
             self.optionQueue.append("easy")
 
-    def setOptionTime(self, secs, gain):
+    def setOptionTime(self, secs, gain, moves):
         # Notice: In CECP we apply time handicap in updateTime, not in
         #         setOptionTime.
 
@@ -517,7 +517,7 @@ class CECPEngine(ProtocolEngine):
         if secs:
             mins += ":" + str(secs)
 
-        self.optionQueue.append("level 0 %s %d" % (mins, gain))
+        self.optionQueue.append("level %s %s %d" % (moves, mins, gain))
 
     # Option handling
 
