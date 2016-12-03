@@ -110,7 +110,7 @@ class PyChess(object):
                     remaining_moves = self.__remainingMovesB()
                     usetime = self.clock[self.playingAs] / remaining_moves
                     if remaining_moves == 1:
-                        usetime -= 0.01
+                        usetime -= 0.05
                 else:
                     usetime = self.clock[self.playingAs] / self.__remainingMovesA()
                     if self.clock[self.playingAs] > 10:
