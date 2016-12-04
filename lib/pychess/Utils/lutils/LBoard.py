@@ -17,7 +17,7 @@ from .ldata import FILE, fileBits
 from .attack import isAttacked
 from .bitboard import clearBit, setBit, bitPosArray
 from .PolyglotHash import pieceHashes, epHashes, \
-    W_OOHash, W_OOOHash, B_OOHash, B_OOOHash, colorHash
+    W_OOHash, W_OOOHash, B_OOHash, B_OOOHash, colorHash, holdingHash
 
 ################################################################################
 # FEN                                                                          #
@@ -254,6 +254,7 @@ class LBoard(object):
                         color = char.islower() and BLACK or WHITE
                         piece = chrU2Sign[char.upper()]
                         self.holding[color][piece] += 1
+                        self.hash ^= holdingHash[color][piece][self.holding[color][piece]]
                         continue
                     else:
                         break
@@ -564,10 +565,12 @@ class LBoard(object):
                 if self.promoted[tcord]:
                     if self.variant == CRAZYHOUSECHESS:
                         self.holding[color][PAWN] += 1
+                        self.hash ^= holdingHash[color][PAWN][self.holding[color][PAWN]]
                     self.capture_promoting = True
                 else:
                     if self.variant == CRAZYHOUSECHESS:
                         self.holding[color][tpiece] += 1
+                        self.hash ^= holdingHash[color][tpiece][self.holding[color][tpiece]]
                     self.capture_promoting = False
             elif self.variant == ATOMICCHESS:
                 from pychess.Variants.atomic import piecesAround
@@ -592,6 +595,7 @@ class LBoard(object):
             if self.variant in DROP_VARIANTS:
                 assert self.holding[color][fpiece] > 0
             self.holding[color][fpiece] -= 1
+            self.hash ^= holdingHash[color][fpiece][self.holding[color][fpiece]]
             self.pieceCount[color][fpiece] += 1
         else:
             self._removePiece(fcord, fpiece, color)
@@ -607,6 +611,7 @@ class LBoard(object):
             self.pieceCount[opcolor][PAWN] -= 1
             if self.variant == CRAZYHOUSECHESS:
                 self.holding[color][PAWN] += 1
+                self.hash ^= holdingHash[color][PAWN][self.holding[color][PAWN]]
             elif self.variant == ATOMICCHESS:
                 from pychess.Variants.atomic import piecesAround
                 apieces = [(fcord, fpiece, color), ]
@@ -723,9 +728,11 @@ class LBoard(object):
                 if self.capture_promoting:
                     assert self.holding[color][PAWN] > 0
                     self.holding[color][PAWN] -= 1
+                    self.hash ^= holdingHash[color][PAWN][self.holding[color][PAWN]]
                 else:
                     assert self.holding[color][cpiece] > 0
                     self.holding[color][cpiece] -= 1
+                    self.hash ^= holdingHash[color][cpiece][self.holding[color][cpiece]]
             elif self.variant == ATOMICCHESS:
                 apieces = self.hist_exploding_around.pop()
                 for acord, apiece, acolor in apieces:
@@ -740,6 +747,7 @@ class LBoard(object):
             if self.variant == CRAZYHOUSECHESS:
                 assert self.holding[color][PAWN] > 0
                 self.holding[color][PAWN] -= 1
+                self.hash ^= holdingHash[color][PAWN][self.holding[color][PAWN]]
             elif self.variant == ATOMICCHESS:
                 apieces = self.hist_exploding_around.pop()
                 for acord, apiece, acolor in apieces:
@@ -755,6 +763,7 @@ class LBoard(object):
         # Put back moved piece
         if flag == DROP:
             self.holding[color][tpiece] += 1
+            self.hash ^= holdingHash[color][tpiece][self.holding[color][tpiece]]
             self.pieceCount[color][tpiece] -= 1
         else:
             if not (self.variant == ATOMICCHESS and

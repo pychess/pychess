@@ -6,7 +6,7 @@ from heapq import heappush, heappop
 from .lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from .egtb_gaviota import EgtbGaviota
 from pychess.Utils.const import ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS,\
-    DROP_VARIANTS, LOSERSCHESS, SUICIDECHESS, EMPTY, PROMOTIONS, DROP, KING,\
+    LOSERSCHESS, SUICIDECHESS, EMPTY, PROMOTIONS, DROP, KING,\
     hashfALPHA, hashfBETA, hashfEXACT, hashfBAD, DRAW, WHITE, WHITEWON
 from .leval import evaluateComplete
 from .lsort import getCaptureValue, getMoveValue
@@ -106,27 +106,25 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     ############################################################################
     # Look up transposition table                                              #
     ############################################################################
-    # TODO: add holder to hash
-    if board.variant not in DROP_VARIANTS:
-        if ply == 0:
-            table.newSearch()
+    if ply == 0:
+        table.newSearch()
 
-        table.setHashMove(depth, -1)
-        probe = table.probe(board, depth, alpha, beta)
-        if probe:
-            move, score, hashf = probe
-            score = VALUE_AT_PLY(score, ply)
-            table.setHashMove(depth, move)
+    table.setHashMove(depth, -1)
+    probe = table.probe(board, depth, alpha, beta)
+    if probe:
+        move, score, hashf = probe
+        score = VALUE_AT_PLY(score, ply)
+        table.setHashMove(depth, move)
 
-            if hashf == hashfEXACT:
-                return [move], score
-            elif hashf == hashfBETA:
-                beta = min(score, beta)
-            elif hashf == hashfALPHA:
-                alpha = score
+        if hashf == hashfEXACT:
+            return [move], score
+        elif hashf == hashfBETA:
+            beta = min(score, beta)
+        elif hashf == hashfALPHA:
+            alpha = score
 
-            if hashf != hashfBAD and alpha >= beta:
-                return [move], score
+        if hashf != hashfBAD and alpha >= beta:
+            return [move], score
 
     ############################################################################
     # Cheking the time                                                         #

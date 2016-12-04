@@ -1,4 +1,7 @@
 # -*- coding: UTF-8 -*-
+import random
+
+from pychess.Utils.const import WHITE, BLACK, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
 
 # Polyglot opening books are indexed by 64-bit Zobrist hash keys.
 # The standard specifies the following Zobrist seed values.
@@ -792,3 +795,11 @@ B_OOHash = 0xa57e6339dd2cf3a0
 B_OOOHash = 0x1ef6e6dbb1961ec9
 
 colorHash = 0xf8d626aaaf278509
+
+holdingHash = [[[0, ], [0, ], [0, ], [0, ], [0, ], [0, ], [0, ]],
+               [[0, ], [0, ], [0, ], [0, ], [0, ], [0, ], [0, ]]]
+
+for color in (WHITE, BLACK):
+    for pt in (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING):
+        for i in range(16):
+            holdingHash[color][pt].append(random.getrandbits(64))
