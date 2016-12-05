@@ -193,6 +193,18 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             moves = [(-getMoveValue(board, table, depth, m), m)
                      for m in genAllMoves(board)]
 
+    # King can not enter a check
+    checks = 0
+    for _, move in moves:
+        board.applyMove(move)
+        if board.opIsChecked():
+            checks += 1
+        board.popMove()
+
+    if len(moves) == checks:
+        moves = [(-getMoveValue(board, table, depth, m), m)
+         for m in genAllMoves(board)]
+
     moves.sort()
 
     # This is needed on checkmate
