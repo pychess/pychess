@@ -92,6 +92,9 @@ class PyChess(object):
     def __go(self, ondone=None):
         """ Finds and prints the best move from the current position """
 
+        # Don't allow openings (since it might prevent a capture)
+        self.outOfBook = True
+        
         mv = False if self.outOfBook else self.__getBestOpening()
         if mv:
             mvs = [mv]
