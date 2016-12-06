@@ -99,7 +99,51 @@ class ICLounge(GObject.GObject):
         logoff_button.set_tooltip_text(_("Log Off"))
         logoff_button.set_label("logoff")
         logoff_button.connect("clicked", on_logoff_clicked)
-        perspective_manager.set_perspective_toolbuttons("fics", [logoff_button, ])
+
+        def on_minute_1_clicked(button):
+            self.connection.client.run_command("1-minute")
+
+        def on_minute_3_clicked(button):
+            self.connection.client.run_command("3-minute")
+
+        def on_minute_5_clicked(button):
+            self.connection.client.run_command("5-minute")
+
+        def on_minute_15_clicked(button):
+            self.connection.client.run_command("15-minute")
+
+        def on_minute_45_clicked(button):
+            self.connection.client.run_command("45-minute")
+
+        minute_1_button = Gtk.ToolButton()
+        minute_1_button.set_label("1")
+        minute_1_button.set_tooltip_text(_("New game from 1-minute playing pool"))
+        minute_1_button.connect("clicked", on_minute_1_clicked)
+
+        minute_3_button = Gtk.ToolButton()
+        minute_3_button.set_label("3")
+        minute_3_button.set_tooltip_text(_("New game from 3-minute playing pool"))
+        minute_3_button.connect("clicked", on_minute_3_clicked)
+
+        minute_5_button = Gtk.ToolButton()
+        minute_5_button.set_label("5")
+        minute_5_button.set_tooltip_text(_("New game from 5-minute playing pool"))
+        minute_5_button.connect("clicked", on_minute_5_clicked)
+
+        minute_15_button = Gtk.ToolButton()
+        minute_15_button.set_label("15")
+        minute_15_button.set_tooltip_text(_("New game from 15-minute playing pool"))
+        minute_15_button.connect("clicked", on_minute_15_clicked)
+
+        minute_45_button = Gtk.ToolButton()
+        minute_45_button.set_label("45")
+        minute_45_button.set_tooltip_text(_("New game from 45-minute playing pool"))
+        minute_45_button.connect("clicked", on_minute_45_clicked)
+
+        tool_buttons = [logoff_button, ]
+        if self.connection.ICC:
+            tool_buttons += [minute_1_button, minute_3_button, minute_5_button, minute_15_button, minute_45_button]
+        perspective_manager.set_perspective_toolbuttons("fics", tool_buttons)
 
         def on_autoLogout(alm):
             self.emit("autoLogout")

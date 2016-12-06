@@ -239,7 +239,10 @@ class ICLogon(object):
         self.widgets["messagePanel"].show_all()
 
     def onCreateNew(self, button):
-        webbrowser.open("http://www.freechess.org/Register/index.html")
+        if self.widgets["hostEntry"].get_text() == "chessclub.com":
+            webbrowser.open("https://store.chessclub.com/customer/account/create/")
+        else:
+            webbrowser.open("http://www.freechess.org/Register/index.html")
 
     def onConnectClicked(self, button):
         self.canceled = False
