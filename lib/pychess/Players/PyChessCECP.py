@@ -44,19 +44,6 @@ class PyChessCECP(PyChess):
 
         self.basetime = 0
 
-        self.movestogo = 0
-        inc = 0
-        minutes = "3".split(":")
-        # Per protocol spec, strip off any non-numeric suffixes.
-        for i in range(len(minutes)):
-            minutes[i] = re.match(r'\d*', minutes[i]).group()
-        self.basetime = int(minutes[0]) * 60
-        if len(minutes) > 1 and minutes[1]:
-            self.basetime += int(minutes[1])
-        self.clock[:] = self.basetime, self.basetime
-        self.increment = inc, inc
-
-
         self.features = {
             "ping": 1,
             "setboard": 1,
