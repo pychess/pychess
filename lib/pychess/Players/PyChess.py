@@ -16,7 +16,7 @@ from pychess.Utils.const import WHITE, ASEANCHESS, SITTUYINCHESS, ATOMICCHESS, r
 from pychess.Utils.lutils import lsearch  # nopep8
 from pychess.Utils.lutils.ldata import MAXPLY  # nopep8
 from pychess.Utils.lutils.lsearch import alphaBeta  # nopep8
-from pychess.Utils.lutils.lmove import listToSan, toSAN  # nopep8
+from pychess.Utils.lutils.lmove import listToSan, toSAN, toAN  # nopep8
 from pychess.System.Log import log  # nopep8
 
 
@@ -187,7 +187,7 @@ class PyChess(object):
         move = mvs[0]
         sanmove = toSAN(self.board, move)
         if ondone:
-            ondone(sanmove)
+            ondone(toAN(self.board, move))
         return sanmove
 
     def __analyze(self):
