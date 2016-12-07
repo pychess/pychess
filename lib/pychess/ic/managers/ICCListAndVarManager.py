@@ -6,6 +6,10 @@ class ICCListAndVarManager(ListAndVarManager):
     def __init__(self, connection):
         self.connection = connection
 
+        self.publicLists = {}
+        self.personalLists = {}
+        self.personalBackup = {}
+
         # Auto flag
         conf.notify_add('autoCallFlag', self.autoFlagNotify)
 
