@@ -1021,7 +1021,22 @@ class SeekTabSection(ParrentListSection):
         self.store = Gtk.ListStore(FICSSoughtMatch, GdkPixbuf.Pixbuf,
                                    GdkPixbuf.Pixbuf, str, int, str, str, str,
                                    int, Gdk.RGBA, str)
-        self.model = Gtk.TreeModelSort(model=self.store)
+
+        self.seek_filter = self.store.filter_new()
+        self.seek_filter.set_visible_func(self.seek_filter_func)
+
+        self.filter_toggles = {}
+        self.filter_buttons = ("standard_toggle1", "blitz_toggle1", "lightning_toggle1", "variant_toggle1", "computer_toggle1")
+        for widget in self.filter_buttons:
+            uistuff.keep(self.widgets[widget], widget)
+            self.widgets[widget].connect("toggled", self.on_filter_button_toggled)
+            initial = conf.get(widget, True)
+            self.filter_toggles[widget] = initial
+            self.widgets[widget].set_active(initial)
+
+        self.model = self.seek_filter.sort_new_with_model()
+        self.tv.set_model(self.model)
+
         self.tv.set_model(self.model)
         self.addColumns(self.tv,
                         "FICSSoughtMatch",
@@ -1096,6 +1111,25 @@ class SeekTabSection(ParrentListSection):
 
         self.createLocalMenu((ACCEPT, ASSESS, CHALLENGE, CHAT, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
         self.assess_sent = False
+
+    def seek_filter_func(self, model, iter, data):
+        sought_match = model[iter][0]
+        is_computer = sought_match.player.isComputer()
+        is_standard = sought_match.game_type.rating_type in (TYPE_STANDARD, TYPE_FIFTEEN_MINUTE, TYPE_FORTYFIVE_MINUTE) and not is_computer
+        is_blitz = sought_match.game_type.rating_type in (TYPE_BLITZ, TYPE_THREE_MINUTE, TYPE_FIVE_MINUTE) and not is_computer
+        is_lightning = sought_match.game_type.rating_type in (TYPE_LIGHTNING, TYPE_BULLET, TYPE_ONE_MINUTE) and not is_computer
+        is_variant = sought_match.game_type.rating_type in RATING_TYPES[9:] and not is_computer
+        return (
+            self.filter_toggles["computer_toggle1"] and is_computer) or (
+            self.filter_toggles["standard_toggle1"] and is_standard) or (
+            self.filter_toggles["blitz_toggle1"] and is_blitz) or (
+            self.filter_toggles["lightning_toggle1"] and is_lightning) or (
+            self.filter_toggles["variant_toggle1"] and is_variant)
+
+    def on_filter_button_toggled(self, widget):
+        for button in self.filter_buttons:
+            self.filter_toggles[button] = self.widgets[button].get_active()
+        self.seek_filter.refilter()
 
     @idle_add
     def onAssessReceived(self, glm, assess):
