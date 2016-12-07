@@ -508,7 +508,7 @@ def parseLAN(board, lan):
 ################################################################################
 
 
-def toAN(board, move, short=False, castleNotation=CASTLE_SAN):
+def toAN(board, move, short=True, castleNotation=CASTLE_SAN):
     """ Returns a Algebraic Notation string of a move
         board should be prior to the move
         short -- returns the short variant, e.g. f7f8q rather than f7f8=Q
