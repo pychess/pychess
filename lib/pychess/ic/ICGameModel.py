@@ -28,6 +28,8 @@ class ICGameModel(GameModel):
         connections[connection.bm].append(connection.bm.connect(
             "boardUpdate", self.onBoardUpdate))
         connections[connection.bm].append(connection.bm.connect(
+            "exGameBackward", self.onExGameBackward))
+        connections[connection.bm].append(connection.bm.connect(
             "timesUpdate", self.onTimesUpdate))
         connections[connection.bm].append(connection.bm.connect(
             "obsGameEnded", self.onGameEnded))
@@ -116,6 +118,10 @@ class ICGameModel(GameModel):
             if TYPE_TOURNAMENT_DIRECTOR in player.titles:
                 return False
         return True
+
+    def onExGameBackward(self, bm, gameno, ply):
+        if gameno == self.ficsgame.gameno:
+            self.undoMoves(ply)
 
     def onBoardUpdate(self, bm, gameno, ply, curcol, lastmove, fen, wname,
                       bname, wms, bms):

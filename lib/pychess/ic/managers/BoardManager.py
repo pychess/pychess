@@ -189,6 +189,7 @@ class BoardManager(GObject.GObject):
         'playGameCreated': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'obsGameCreated': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'exGameCreated': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+        'exGameBackward': (GObject.SignalFlags.RUN_FIRST, None, (int, int)),
         'archiveGamePreview': (GObject.SignalFlags.RUN_FIRST, None,
                                (object, )),
         'boardUpdate': (GObject.SignalFlags.RUN_FIRST, None,

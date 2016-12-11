@@ -7,10 +7,10 @@ from gi.repository import GObject
 from pychess.Utils.const import FEN_START, WHITE, reprResult
 from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSPlayer
 from pychess.ic.managers.BoardManager import BoardManager, parse_reason
-from pychess.ic import IC_POS_OBSERVING, GAME_TYPES, IC_STATUS_PLAYING
+from pychess.ic import IC_POS_OBSERVING, GAME_TYPES, IC_STATUS_PLAYING, IC_POS_EXAMINATING
 from pychess.ic.icc import DG_POSITION_BEGIN, DG_SEND_MOVES, DG_MOVE_ALGEBRAIC, DG_MOVE_SMITH, \
     DG_MOVE_TIME, DG_MOVE_CLOCK, DG_MY_GAME_STARTED, DG_MY_GAME_ENDED, DG_STARTED_OBSERVING, \
-    DG_MY_GAME_RESULT, DG_STOP_OBSERVING, DG_IS_VARIATION, DG_ISOLATED_BOARD, CN_SPGN
+    DG_MY_GAME_RESULT, DG_STOP_OBSERVING, DG_IS_VARIATION, DG_ISOLATED_BOARD, CN_SPGN, DG_BACKWARD
 
 
 class ICCBoardManager(BoardManager):
@@ -30,6 +30,7 @@ class ICCBoardManager(BoardManager):
         self.connection.expect_dg_line(DG_POSITION_BEGIN, self.on_icc_position_begin)
         self.connection.expect_dg_line(DG_SEND_MOVES, self.on_icc_send_moves)
         self.connection.expect_dg_line(DG_ISOLATED_BOARD, self.on_icc_isolated_board)
+        self.connection.expect_dg_line(DG_BACKWARD, self.on_icc_backward)
 
         self.connection.expect_cn_line(CN_SPGN, self.on_icc_spgn)
 
@@ -57,6 +58,7 @@ class ICCBoardManager(BoardManager):
 
         self.connection.client.run_command("set-2 %s 1" % DG_SEND_MOVES)
         self.connection.client.run_command("set-2 %s 1" % DG_ISOLATED_BOARD)
+        self.connection.client.run_command("set-2 %s 1" % DG_BACKWARD)
         self.connection.client.run_command("set style 13")
 
         # don't unobserve games when we start a new game, or new observe
@@ -75,6 +77,23 @@ class ICCBoardManager(BoardManager):
 
     def on_icc_isolated_board(self, data):
         print(data)
+
+    def on_icc_backward(self, data):
+        # gamenumber backup-count
+        gameno, backup_count = data.split()
+        gameno = int(gameno)
+        backup_count = int(backup_count)
+
+        game = self.connection.games.get_game_by_gameno(gameno)
+
+        if game == self.theGameImPlaying:
+            curcol, ply, wms, bms = self.my_game_info
+            for i in range(backup_count):
+                ply -= 1
+                curcol = 1 - curcol
+            self.my_game_info = (curcol, ply, wms, bms)
+
+            self.emit("exGameBackward", gameno, backup_count)
 
     def on_icc_my_game_started(self, data):
         # gamenumber whitename blackname wild-number rating-type rated
@@ -115,6 +134,18 @@ class ICCBoardManager(BoardManager):
                                         bms,
                                         fen=fen))
 
+        if self.connection.examined_game is not None:
+            pgnHead = [
+                ("Event", "ICC examined game"), ("Site", "chessclub.com"),
+                ("White", wname), ("Black", bname), ("Result", "*"),
+                ("SetUp", "1"), ("FEN", fen)
+            ]
+            pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
+
+            game.relation = IC_POS_EXAMINATING
+            game.game_type = GAME_TYPES["examined"]
+            game.board.pgn = pgn
+
         game = self.connection.games.get(game)
 
         for player in (wplayer, bplayer):
@@ -127,7 +158,11 @@ class ICCBoardManager(BoardManager):
         self.my_game_info = (WHITE, 0, wms, bms)
         self.gamemodelStartedEvents[gameno] = threading.Event()
         self.connection.client.run_command("follow")
-        self.emit("playGameCreated", game)
+
+        if self.connection.examined_game is not None:
+            self.emit("exGameCreated", game)
+        else:
+            self.emit("playGameCreated", game)
 
     def on_icc_started_observing(self, data):
         gameno, wname, bname, wild, rtype, rated, wmin, winc, bmin, binc, played_game, rest = data.split(" ", 11)
