@@ -64,6 +64,8 @@ class ICCAdjournManager(AdjournManager):
         self.queryHistory()
         self.queryJournal()
 
+        self.connection.query_game = None
+
     def on_icc_rating_type_key(self, data):
         key, value = data.split()
         self.RATING_TYPES[key] = value.lower()
@@ -192,3 +194,15 @@ class ICCAdjournManager(AdjournManager):
             self.connection.client.run_command("liblist")
         else:
             self.connection.client.run_command("liblist %s" % owner)
+
+    def queryMoves(self, game):
+        self.connection.query_game = game
+        if isinstance(game, FICSHistoryGame):
+            self.connection.client.run_command("spgn %s %s" % (
+                self.connection.history_owner, game.history_no))
+        elif isinstance(game, FICSJournalGame):
+            self.connection.client.run_command("spgn %s %%%s" % (
+                self.connection.journal_owner, game.journal_no))
+        else:
+            self.connection.client.run_command("spgn %s %s" % (
+                self.connection.stored_owner, game.opponent.name))

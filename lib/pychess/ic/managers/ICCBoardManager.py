@@ -10,7 +10,7 @@ from pychess.ic.managers.BoardManager import BoardManager, parse_reason
 from pychess.ic import IC_POS_OBSERVING, GAME_TYPES, IC_STATUS_PLAYING
 from pychess.ic.icc import DG_POSITION_BEGIN, DG_SEND_MOVES, DG_MOVE_ALGEBRAIC, DG_MOVE_SMITH, \
     DG_MOVE_TIME, DG_MOVE_CLOCK, DG_MY_GAME_STARTED, DG_MY_GAME_ENDED, DG_STARTED_OBSERVING, \
-    DG_MY_GAME_RESULT, DG_STOP_OBSERVING, DG_IS_VARIATION
+    DG_MY_GAME_RESULT, DG_STOP_OBSERVING, DG_IS_VARIATION, DG_ISOLATED_BOARD, CN_SPGN
 
 
 class ICCBoardManager(BoardManager):
@@ -29,6 +29,9 @@ class ICCBoardManager(BoardManager):
 
         self.connection.expect_dg_line(DG_POSITION_BEGIN, self.on_icc_position_begin)
         self.connection.expect_dg_line(DG_SEND_MOVES, self.on_icc_send_moves)
+        self.connection.expect_dg_line(DG_ISOLATED_BOARD, self.on_icc_isolated_board)
+
+        self.connection.expect_cn_line(CN_SPGN, self.on_icc_spgn)
 
         self.queuedEmits = {}
         self.gamemodelStartedEvents = {}
@@ -53,11 +56,25 @@ class ICCBoardManager(BoardManager):
         self.connection.client.run_command("set-2 %s 0" % DG_IS_VARIATION)
 
         self.connection.client.run_command("set-2 %s 1" % DG_SEND_MOVES)
+        self.connection.client.run_command("set-2 %s 1" % DG_ISOLATED_BOARD)
         self.connection.client.run_command("set style 13")
 
         # don't unobserve games when we start a new game, or new observe
         self.connection.client.run_command("set unobserve 0")
         self.connection.lvm.autoFlagNotify()
+
+    def on_icc_spgn(self, data):
+        if self.connection.query_game is None:
+            return
+
+        game = self.connection.query_game
+        game.board = FICSBoard(0, 0, pgn=data)
+        game = self.connection.games.get(game)
+
+        self.emit("archiveGamePreview", game)
+
+    def on_icc_isolated_board(self, data):
+        print(data)
 
     def on_icc_my_game_started(self, data):
         # gamenumber whitename blackname wild-number rating-type rated
