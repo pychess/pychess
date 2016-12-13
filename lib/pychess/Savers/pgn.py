@@ -3,9 +3,9 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import ast
-# import json
+import json
 import os
+from os.path import getmtime
 import re
 import subprocess
 from itertools import islice
@@ -16,10 +16,10 @@ from pychess.System.Log import log
 from pychess.System.SubProcess import searchPath
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.lutils.lmove import toSAN, parseAN
+from pychess.Utils.lutils.lmove import toSAN, toAN
 from pychess.Utils.Move import Move
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, WHITEWON, \
-    WON_RESIGN, DRAW, BLACKWON, NORMALCHESS, DRAW_AGREE
+    WON_RESIGN, DRAW, BLACKWON, NORMALCHESS, DRAW_AGREE, CASTLE_KR
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Variants import name2variant, NormalBoard
@@ -278,28 +278,37 @@ class PGNFile(PgnBase):
         self.where_bitboards = None
         self.query = self.games
         self.count = len(self.games)
+
+        self.bin_path = None
+        # Create polyglot .bin file with extra win/loss/draw stats
+        # using chess_db parser from https://github.com/mcostalba/chess_db
         if chess_db_parser is not None and self.path:
-            args = [chess_db_parser, "book", self.path, "full"]
-            subprocess.call(args)
+            bin_path = self.path.replace(".pgn", ".bin")
+            if not os.path.isfile(bin_path) or getmtime(self.path) > getmtime(bin_path):
+                args = [chess_db_parser, "book", self.path, "full"]
+                output = subprocess.check_output(args, stderr=subprocess.STDOUT)
+                print(output)
+                if output.find("Writing Polygot book...done") > 0:
+                    self.bin_path = bin_path
+            else:
+                self.bin_path = bin_path
 
     def get_bitboards(self, ply, bb_candidates, fen):
         rows = []
-        if chess_db_parser is not None and self.path:
-            args = [chess_db_parser, "find", self.path.replace(".pgn", ".bin"), fen]
+        if chess_db_parser is not None and self.bin_path is not None:
+            args = [chess_db_parser, "find", self.bin_path, fen]
             output = subprocess.check_output(args, stderr=subprocess.STDOUT)
-            # print(output)
-            # TODO:
-            # move_stat = json.loads(output)
-            move_stat = ast.literal_eval(output)
+            move_stat = json.loads(output)
             board = LBoard()
             board.applyFen(fen)
             for stat in move_stat["moves"]:
-                move = parseAN(board, stat["move"])
-                for key, value in bb_candidates.items():
-                    if value == move:
-                        bb = key
+                bb = None
+                for bitboard, move in bb_candidates.items():
+                    if toAN(board, move, castleNotation=CASTLE_KR) == stat["move"]:
+                        bb = bitboard
                         break
-                rows.append((bb, int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"]), 0, 0))
+                if bb is not None:
+                    rows.append((bb, int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"]), 0, 0))
         return rows
 
     def build_query(self):

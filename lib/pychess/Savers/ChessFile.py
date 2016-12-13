@@ -17,7 +17,7 @@ class ChessFile:
             split such that games[0] is used for game 0 etc.
             """
         self.file = file
-        self.path = file.name if hasattr(file, "name") else ""
+        self.path = file.name if hasattr(file, "name") else None
         self.games = games
 
     def close(self):
@@ -96,7 +96,7 @@ class ChessFile:
     def get_variant(self, gameno):
         return 0
 
-    def get_bitboards(self, ply, bb_candidates, fen):
+    def get_bitboards(self, ply, bb_candidates, fen=None):
         return []
 
     def get_info(self, gameno):
