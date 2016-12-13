@@ -115,11 +115,11 @@ class OpeningAdvisor(Advisor):
         # Polyglot-formatted books have space for learning data.
         # See version ac31dc37ec89 for an attempt to parse it.
         # In this version, we simply ignore it. (Most books don't have it.)
-        for move, weight, games, score in openings:
+        for move, weight, learn in openings:
             totalWeight += weight
 
         self.opening_names = []
-        for move, weight, games, score in openings:
+        for move, weight, learn in openings:
             if totalWeight != 0:
                 weight /= totalWeight
             goodness = min(float(weight * len(openings)), 1.0)
@@ -302,13 +302,13 @@ class EngineAdvisor(Advisor):
         if self.mode == HINT and self.store.get_path(iter) != Gtk.TreePath(self.path):
             moves = self.store[iter][0][2]
             if moves is not None:
-                score = self.store[iter][1][0]
+                # score = self.store[iter][1][0]
                 model.add_variation(self.engine.board, moves)
 
         if self.mode == SPY and self.store.get_path(iter) != Gtk.TreePath(self.path):
             moves = self.store[iter][0][2]
             if moves is not None:
-                score = self.store[iter][1][0]
+                # score = self.store[iter][1][0]
                 board = self.engine.board.board
                 # SPY analyzer has inverted color boards
                 # we need to chage it to get the board in gamemodel variations board list later

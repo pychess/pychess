@@ -96,9 +96,8 @@ class ChessFile:
     def get_variant(self, gameno):
         return 0
 
-    def get_bitboards(self, ply, prev_bb):
+    def get_bitboards(self, ply, bb_candidates, fen):
         return []
 
     def get_info(self, gameno):
         return None
-

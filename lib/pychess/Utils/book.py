@@ -31,20 +31,20 @@ else:
 # The book probing code is based on that of PolyGlot by Fabien Letouzey.
 # PolyGlot is available under the GNU GPL from http://wbec-ridderkerk.nl
 
-BookEntry = namedtuple('BookEntry', 'key move weight games score')
+BookEntry = namedtuple('BookEntry', 'key move weight learn')
 # 'key' c_uint64      the position's hash
 # 'move' c_uint16     the candidate move
 # 'weight' c_uint16   proportional to prob. we should play it
 # The following terms are not always available:
-# 'games' c_uint16    the number of times it's been tried
-# 'score' c_uint16    2 for each win, 1 for each draw
+# 'learn' c_uint32    we use this NOT the polyglot way but as in
+#                     https://github.com/mcostalba/chess_db
 
-entrystruct = Struct(">QHHHH")
+entrystruct = Struct(">QHHI")
 entrysize = entrystruct.size
 
 
 def getOpenings(board):
-    """ Return a tuple (move, weight, games, score) for each opening move
+    """ Return a tuple (move, weight, learn) for each opening move
         in the given position. The weight is proportional to the probability
         that a move should be played. By convention, games is the number of
         times a move has been tried, and score the number of points it has
@@ -83,5 +83,5 @@ def getOpenings(board):
             if entry.key != key:
                 break
             move = parsePolyglot(board, entry.move)
-            openings.append((move, entry.weight, entry.games, entry.score))
+            openings.append((move, entry.weight, entry.learn))
     return openings

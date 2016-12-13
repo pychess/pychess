@@ -3,15 +3,20 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import ast
+# import json
+import os
 import re
+import subprocess
 from itertools import islice
 
 from pychess.compat import filter, basestring, StringIO
 from pychess.System import conf
 from pychess.System.Log import log
+from pychess.System.SubProcess import searchPath
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.lutils.lmove import toSAN
+from pychess.Utils.lutils.lmove import toSAN, parseAN
 from pychess.Utils.Move import Move
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, WHITEWON, \
     WON_RESIGN, DRAW, BLACKWON, NORMALCHESS, DRAW_AGREE
@@ -259,6 +264,9 @@ def load(handle):
     return pgn_load(handle, klass=PGNFile)
 
 
+chess_db_parser = searchPath("parser", access=os.X_OK)
+
+
 class PGNFile(PgnBase):
     def __init__(self, handle, games):
         PgnBase.__init__(self, handle, games)
@@ -270,6 +278,29 @@ class PGNFile(PgnBase):
         self.where_bitboards = None
         self.query = self.games
         self.count = len(self.games)
+        if chess_db_parser is not None and self.path:
+            args = [chess_db_parser, "book", self.path, "full"]
+            subprocess.call(args)
+
+    def get_bitboards(self, ply, bb_candidates, fen):
+        rows = []
+        if chess_db_parser is not None and self.path:
+            args = [chess_db_parser, "find", self.path.replace(".pgn", ".bin"), fen]
+            output = subprocess.check_output(args, stderr=subprocess.STDOUT)
+            # print(output)
+            # TODO:
+            # move_stat = json.loads(output)
+            move_stat = ast.literal_eval(output)
+            board = LBoard()
+            board.applyFen(fen)
+            for stat in move_stat["moves"]:
+                move = parseAN(board, stat["move"])
+                for key, value in bb_candidates.items():
+                    if value == move:
+                        bb = key
+                        break
+                rows.append((bb, int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"]), 0, 0))
+        return rows
 
     def build_query(self):
         if self.where_tags is None:

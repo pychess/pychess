@@ -312,7 +312,7 @@ class Database(PGNFile):
         arr.fromstring(result[0])
         return arr
 
-    def get_bitboards(self, ply, bb_candidates):
+    def get_bitboards(self, ply, bb_candidates, fen):
         bb_list = [bb - self.DB_MAXINT_SHIFT for bb in bb_candidates]
 
         if ply <= STAT_PLY_MAX:

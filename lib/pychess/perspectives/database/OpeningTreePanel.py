@@ -144,7 +144,7 @@ class OpeningTreePanel(Gtk.TreeView):
 
         result = []
         # print("get_bitboards() for %s bb_candidates" % len(bb_candidates))
-        bb_list = self.gamelist.chessfile.get_bitboards(self.board.plyCount + 1, bb_candidates)
+        bb_list = self.gamelist.chessfile.get_bitboards(self.board.plyCount + 1, bb_candidates, self.board.asFen())
 
         for bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in bb_list:
             try:
