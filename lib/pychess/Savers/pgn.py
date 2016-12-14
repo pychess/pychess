@@ -10,6 +10,8 @@ import re
 import subprocess
 from itertools import islice
 
+from scoutfish import Scoutfish
+
 from pychess.compat import filter, basestring, StringIO
 from pychess.System import conf
 from pychess.System.Log import log
@@ -264,6 +266,7 @@ def load(handle):
     return pgn_load(handle, klass=PGNFile)
 
 
+scoutfish_path = searchPath("scoutfish", access=os.X_OK)
 chess_db_parser = searchPath("parser", access=os.X_OK)
 
 
@@ -279,6 +282,18 @@ class PGNFile(PgnBase):
         self.query = self.games
         self.count = len(self.games)
 
+        self.scoutfish = None
+
+        self.scout_path = None
+        # Create .scout database index file to help querying
+        # using scoutfish from https://github.com/mcostalba/scoutfish
+        if scoutfish_path is not None and self.path:
+            self.scoutfish = Scoutfish(engine=scoutfish_path)
+            self.scoutfish.open(self.path)
+            scout_path = self.path.replace(".pgn", ".scout")
+            if getmtime(self.path) > getmtime(scout_path):
+                self.scoutfish.make(self.path)
+
         self.bin_path = None
         # Create polyglot .bin file with extra win/loss/draw stats
         # using chess_db parser from https://github.com/mcostalba/chess_db
@@ -286,10 +301,12 @@ class PGNFile(PgnBase):
             bin_path = self.path.replace(".pgn", ".bin")
             if not os.path.isfile(bin_path) or getmtime(self.path) > getmtime(bin_path):
                 args = [chess_db_parser, "book", self.path, "full"]
-                output = subprocess.check_output(args, stderr=subprocess.STDOUT)
-                print(output)
-                if output.find("Writing Polygot book...done") > 0:
+                try:
+                    output = subprocess.check_output(args, stderr=subprocess.STDOUT)
+                    print(output)
                     self.bin_path = bin_path
+                except subprocess.CalledProcessError as err:
+                    print("Command %s returned non-zero exit status %s" % (" ".join(args), err.returncode))
             else:
                 self.bin_path = bin_path
 
@@ -297,25 +314,34 @@ class PGNFile(PgnBase):
         rows = []
         if chess_db_parser is not None and self.bin_path is not None:
             args = [chess_db_parser, "find", self.bin_path, fen]
-            output = subprocess.check_output(args, stderr=subprocess.STDOUT)
-            move_stat = json.loads(output)
-            board = LBoard()
-            board.applyFen(fen)
-            for stat in move_stat["moves"]:
-                bb = None
-                for bitboard, move in bb_candidates.items():
-                    if toAN(board, move, castleNotation=CASTLE_KR) == stat["move"]:
-                        bb = bitboard
-                        break
-                if bb is not None:
-                    rows.append((bb, int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"]), 0, 0))
+            try:
+                output = subprocess.check_output(args, stderr=subprocess.STDOUT)
+                move_stat = json.loads(output)
+                board = LBoard()
+                board.applyFen(fen)
+                for stat in move_stat["moves"]:
+                    # print(stat)
+                    bb = None
+                    for bitboard, move in bb_candidates.items():
+                        if toAN(board, move, castleNotation=CASTLE_KR) == stat["move"]:
+                            bb = bitboard
+                            break
+                    if bb is not None:
+                        rows.append((bb, int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"]), 0, 0))
+            except subprocess.CalledProcessError as err:
+                print("Command %s returned non-zero exit status %s" % (" ".join(args), err.returncode))
         return rows
 
     def build_query(self):
-        if self.where_tags is None:
-            self.query = self.games
-        else:
+        if self.where_tags is not None and self.where_bitboards is not None:
+            filters = (self.where_tags, self.where_bitboards)
+            self.query = filter(lambda x: all(f(x) for f in filters), self.games)
+        elif self.where_tags is not None:
             self.query = filter(self.where_tags, self.games)
+        elif self.where_bitboards is not None:
+            self.query = filter(self.where_bitboards, self.games)
+        else:
+            self.query = self.games
 
     def build_where_tags(self, text):
         if text:
@@ -324,6 +350,20 @@ class PGNFile(PgnBase):
             self.where_tags = where
         else:
             self.where_tags = None
+
+    def build_where_bitboards(self, ply, bitboard, fen):
+        if ply and self.scoutfish is not None and fen is not None:
+            result = self.scoutfish.scout({"sub-fen": fen})
+            offsets = {match["ofs"] for match in result["matches"]}
+
+            def where(game):
+                return game[3] in offsets
+
+            self.where_bitboards = where
+            self.ply = ply
+        else:
+            self.where_bitboards = None
+            self.ply = None
 
     def get_id(self, gameno):
         return self.filtered_games[gameno][2]
@@ -334,10 +374,7 @@ class PGNFile(PgnBase):
             # because python iterators never go backwards!
             self.build_query()
 
-        if self.where_tags is None:
-            games = self.games[offset: offset + limit]
-        else:
-            games = [game for game in islice(self.query, offset, offset + limit)]
+        games = [game for game in islice(self.query, offset, offset + limit)]
 
         if games:
             self.offset = offset

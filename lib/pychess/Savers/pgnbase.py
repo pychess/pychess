@@ -376,6 +376,7 @@ def pgn_load(handle, klass=PgnBase):
     in_tags = False
     game_pos = None
     last_pos = 0
+    game_offset = 0
     line = handle.readline()
 
     tags = [""] * 22
@@ -393,6 +394,8 @@ def pgn_load(handle, klass=PgnBase):
                 pos = TAG_MAP.get(tag[1:-1])
                 if pos is not None:
                     tags[pos] = value
+                if pos == 0:
+                    game_offset = max(0, last_pos -2)
             last_pos += len(line)
             line = handle.readline()
             continue
@@ -401,7 +404,7 @@ def pgn_load(handle, klass=PgnBase):
             game_pos = last_pos
 
         if game_pos is not None:
-            games.append((TAG_SEPARATOR.join(tags), game_pos, count))
+            games.append((TAG_SEPARATOR.join(tags), game_pos, count, game_offset))
             game_pos = None
             in_tags = False
             tags = [""] * 22
@@ -417,7 +420,7 @@ def pgn_load(handle, klass=PgnBase):
         line = handle.readline()
 
     if game_pos is not None:
-        games.append((TAG_SEPARATOR.join(tags), game_pos, count))
+        games.append((TAG_SEPARATOR.join(tags), game_pos, count, game_offset))
 
     return klass(handle, games)
 

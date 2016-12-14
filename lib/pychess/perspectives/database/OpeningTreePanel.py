@@ -127,7 +127,7 @@ class OpeningTreePanel(Gtk.TreeView):
     def update_tree(self, load_games=True):
         bb = self.board.friends[0] | self.board.friends[1]
         self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
+        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb, fen=self.board.asFen())
         self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
         if load_games and self.filtered:

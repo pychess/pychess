@@ -125,7 +125,7 @@ class PreviewPanel:
 
         bb = self.board.friends[0] | self.board.friends[1]
         self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb)
+        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb, fen=self.board.asFen())
         self.gamelist.offset = 0
         self.gamelist.chessfile.build_query()
         self.gamelist.load_games()
