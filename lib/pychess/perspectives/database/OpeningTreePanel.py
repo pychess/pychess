@@ -94,13 +94,10 @@ class OpeningTreePanel(Gtk.TreeView):
         self.update_tree(load_games=False)
 
     def on_chessfile_switched(self, switcher, chessfile):
-        if isinstance(chessfile, Database):
-            self.update_tree()
-        else:
-            self.clear_tree()
+        self.update_tree()
 
     def on_chessfile_imported(self, persp, chessfile):
-            self.update_tree()
+        self.update_tree()
 
     def on_first_clicked(self, widget):
         while self.board.hist_move:
