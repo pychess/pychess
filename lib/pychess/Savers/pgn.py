@@ -10,7 +10,12 @@ import re
 import subprocess
 from itertools import islice
 
-from scoutfish import Scoutfish
+try:
+    from scoutfish import Scoutfish
+    use_scoutfish = True
+except ImportError:
+    use_scoutfish = False
+    print("Can't find scoutfish.py See https://github.com/mcostalba/scoutfish")
 
 from pychess.compat import filter, basestring, StringIO
 from pychess.System import conf
@@ -266,7 +271,10 @@ def load(handle):
     return pgn_load(handle, klass=PGNFile)
 
 
-scoutfish_path = searchPath("scoutfish", access=os.X_OK)
+if use_scoutfish:
+    scoutfish_path = searchPath("scoutfish", access=os.X_OK)
+else:
+    scoutfish_path = None
 chess_db_parser = searchPath("parser", access=os.X_OK)
 
 
