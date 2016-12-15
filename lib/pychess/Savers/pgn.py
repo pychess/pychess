@@ -296,11 +296,15 @@ class PGNFile(PgnBase):
         # Create .scout database index file to help querying
         # using scoutfish from https://github.com/mcostalba/scoutfish
         if scoutfish_path is not None and self.path:
-            self.scoutfish = Scoutfish(engine=scoutfish_path)
-            self.scoutfish.open(self.path)
-            scout_path = self.path.replace(".pgn", ".scout")
-            if getmtime(self.path) > getmtime(scout_path):
-                self.scoutfish.make(self.path)
+            try:
+                self.scoutfish = Scoutfish(engine=scoutfish_path)
+                self.scoutfish.setoption('Max Matches', 100)
+                self.scoutfish.open(self.path)
+                scout_path = self.path.replace(".pgn", ".scout")
+                if getmtime(self.path) > getmtime(scout_path):
+                    self.scoutfish.make(self.path)
+            except OSError as err:
+                print("Failed to sart scoutfish. OSError %s %s" % (err.errno, err.strerror))
 
         self.bin_path = None
         # Create polyglot .bin file with extra win/loss/draw stats
@@ -315,6 +319,8 @@ class PGNFile(PgnBase):
                     self.bin_path = bin_path
                 except subprocess.CalledProcessError as err:
                     print("Command %s returned non-zero exit status %s" % (" ".join(args), err.returncode))
+                except OSError as err:
+                    print("Failed to run parser book command. OSError %s %s" % (err.errno, err.strerror))
             else:
                 self.bin_path = bin_path
 
@@ -338,6 +344,8 @@ class PGNFile(PgnBase):
                         rows.append((bb, int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"]), 0, 0))
             except subprocess.CalledProcessError as err:
                 print("Command %s returned non-zero exit status %s" % (" ".join(args), err.returncode))
+            except OSError as err:
+                print("Failed to run parser fing command. OSError %s %s" % (err.errno, err.strerror))
         return rows
 
     def build_query(self):
