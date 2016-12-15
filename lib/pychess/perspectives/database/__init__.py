@@ -248,7 +248,6 @@ class Database(GObject.GObject, Perspective):
 
             self.importer = PgnImport(self.gamelist.chessfile.engine)
             for i, filename in enumerate(filenames):
-                filename = unicode(filename)
                 GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
                 # GLib.idle_add(self.progressbar0.set_text, filename)
                 if self.importer.cancel:
@@ -257,6 +256,7 @@ class Database(GObject.GObject, Perspective):
                     info_link, pgn_link = filename
                     self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar)
                 else:
+                    filename = unicode(filename)
                     self.importer.do_import(filename, progressbar=self.progressbar)
 
             GLib.idle_add(self.progressbar.set_text, "Recreating indexes...")
@@ -307,7 +307,8 @@ def get_latest_twic():
     PREFIX = 'href="http://www.theweekinchess.com/html/twic'
     with open(filename) as f:
         for line in f:
-            if line.lstrip().startswith(PREFIX):
-                latest = int(line.strip()[len(PREFIX):-6])
+            position = line.find(PREFIX)
+            if position >= 0:
+                latest = int(line[position + len(PREFIX):][:4])
                 break
     return latest
