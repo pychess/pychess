@@ -24,6 +24,12 @@ flake8 --install-hook=git
 git config flake8.strict true
 
 -------------
+Optional dependencies to query .pgn databases
+(no Linux packages yet)
+https://github.com/mcostalba/chess_db
+https://github.com/mcostalba/scoutfish
+
+-------------
 Dependencies for Ubuntu/Debian:
 gnome-icon-theme
 python >= 2.7   (or python3)
@@ -31,6 +37,7 @@ python-cairo    (or python3-cairo)
 python-gi       (or python3-gi)
 python-gi-cairo (or python3-gi-cairo)
 python-sqlalchemy (or python3-sqlalchemy)
+python-pexpect (or python3-pexpect)
 gobject-introspection
 gir1.2-glib-2.0
 gir1.2-gtk-3.0
@@ -55,9 +62,10 @@ gtksourceview3
 gstreamer1
 gstreamer1-plugins-base
 python-sqlalchemy
+python-pexpect
 (python2 is used by default.
  To use python3 on Fedora 20 install python3, python3-gobject,
- python3-cairo and python3-sqlalchemy
+ python3-cairo python3-sqlalchemy python3-pexpect
  These packages aren't available on CentOS/RHEL)
 
 Dependencies for Arch:
@@ -65,6 +73,7 @@ python
 python-gobject
 python-cairo
 python-sqlalchemy
+python-pexpect
 gobject-introspection
 glib2
 gtk3
@@ -74,11 +83,12 @@ gtksourceview3
 gstreamer
 gst-plugins-base
 (Arch uses python3 by default. To use python2 install python2,
- python2-gobject and python2-cairo and python2-sqlalchemy)
+ python2-gobject and python2-cairo python2-sqlalchemy python2-pexpect)
 
 Dependencies for Windows:
 python >= 2.7
 sqlalchemy
+pexpect
 PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
   Base packages
   GDK-Pixbuf
