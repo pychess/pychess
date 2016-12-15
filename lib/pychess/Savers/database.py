@@ -272,7 +272,7 @@ class Database(PGNFile):
             self.where_tags = None
 
     def build_where_bitboards(self, ply, bb, fen=None):
-        if ply:
+        if ply and bb > 0:
             bb_where = and_(bitboard.c.ply == ply, bitboard.c.bitboard == bb - self.DB_MAXINT_SHIFT)
             stmt = select([bitboard.c.game_id]).where(bb_where)
             self.where_bitboards = and_(game.c.id.in_(stmt))
