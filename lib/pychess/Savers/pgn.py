@@ -330,7 +330,7 @@ class PGNFile(PgnBase):
             args = [chess_db_parser, "find", self.bin_path, fen]
             try:
                 output = subprocess.check_output(args, stderr=subprocess.STDOUT)
-                move_stat = json.loads(output)
+                move_stat = json.loads(output.decode("ascii"))
                 board = LBoard()
                 board.applyFen(fen)
                 for stat in move_stat["moves"]:
