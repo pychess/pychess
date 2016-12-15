@@ -395,7 +395,7 @@ def pgn_load(handle, klass=PgnBase):
                 if pos is not None:
                     tags[pos] = value
                 if pos == 0:
-                    game_offset = max(0, last_pos -2)
+                    game_offset = max(0, last_pos - (2 if line.endswith("\r\n") else 1))
             last_pos += len(line)
             line = handle.readline()
             continue

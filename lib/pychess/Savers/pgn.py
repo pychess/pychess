@@ -345,7 +345,7 @@ class PGNFile(PgnBase):
             except subprocess.CalledProcessError as err:
                 print("Command %s returned non-zero exit status %s" % (" ".join(args), err.returncode))
             except OSError as err:
-                print("Failed to run parser fing command. OSError %s %s" % (err.errno, err.strerror))
+                print("Failed to run parser find command. OSError %s %s" % (err.errno, err.strerror))
         return rows
 
     def build_query(self):
