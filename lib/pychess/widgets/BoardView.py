@@ -232,6 +232,7 @@ class BoardView(Gtk.DrawingArea):
         self.premove_piece = None
         self.premove_promotion = None
 
+        self.arrows = set()
         self.circles = set()
 
     def _del(self):
@@ -1122,6 +1123,14 @@ class BoardView(Gtk.DrawingArea):
             x_loc, y_loc = self.cord2Point(cord)
             context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
             context.stroke()
+
+        arw = 0.15  # Arrow width
+        arhw = 0.6  # Arrow head width
+        arhh = 0.6  # Arrow head height
+        arsw = 0.0  # Arrow stroke width
+        for arrow_cords in self.arrows:
+            self.__drawArrow(context, arrow_cords, arw, arhw, arhh, arsw,
+                             light_green, light_green)
 
     ###############################
     #        drawLastMove         #

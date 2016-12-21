@@ -96,6 +96,8 @@ class BoardControl(Gtk.EventBox):
         self.gamemodel_cids.append(gamemodel.connect("game_started", onGameStart))
         self.keybuffer = ""
 
+        self.arrow_start = None
+
     def _del(self):
         self.view.disconnect(self.view_cid)
         for cid in self.cids:
@@ -334,9 +336,16 @@ class BoardControl(Gtk.EventBox):
             self.stateLock.release()
 
     def button_press(self, widget, event):
-        if event.button != 3 and self.view.circles:
-            self.view.circles.clear()
-            self.view.redrawCanvas()
+        if event.button == 3:
+            cord = self.currentState.point2Cord(event.x, event.y)
+            self.arrow_start = cord
+        else:
+            if self.view.arrows:
+                self.view.arrows.clear()
+                self.view.redrawCanvas()
+            if self.view.circles:
+                self.view.circles.clear()
+                self.view.redrawCanvas()
         if self.game_preview:
             return
         return self.currentState.press(event.x, event.y, event.button)
@@ -344,10 +353,20 @@ class BoardControl(Gtk.EventBox):
     def button_release(self, widget, event):
         if event.button == 3:
             cord = self.currentState.point2Cord(event.x, event.y)
-            if cord in self.view.circles:
-                self.view.circles.remove(cord)
+            if self.arrow_start is not None and cord != self.arrow_start:
+                from_to = self.arrow_start, cord
+                to_from = cord, self.arrow_start
+                if from_to in self.view.arrows:
+                    self.view.arrows.remove(from_to)
+                elif to_from in self.view.arrows:
+                    self.view.arrows.remove(to_from)
+                else:
+                    self.view.arrows.add(from_to)
             else:
-                self.view.circles.add(cord)
+                if cord in self.view.circles:
+                    self.view.circles.remove(cord)
+                else:
+                    self.view.circles.add(cord)
             self.view.redrawCanvas()
         if self.game_preview:
             return
