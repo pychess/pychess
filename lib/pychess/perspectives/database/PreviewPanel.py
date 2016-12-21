@@ -5,7 +5,8 @@ from gi.repository import Gtk
 
 from pychess.Utils.const import FEN_EMPTY
 from pychess.Utils.Board import Board
-from pychess.widgets.BoardView import BoardView
+from pychess.Utils.GameModel import GameModel
+from pychess.widgets.BoardControl import BoardControl
 from pychess.Savers.ChessFile import LoadingError
 
 
@@ -49,14 +50,15 @@ class PreviewPanel:
         tool_box.pack_start(toolbar, False, False, 0)
 
         # board
-        self.boardview = BoardView(preview=True)
+        self.gamemodel = GameModel()
+        self.boardcontrol = BoardControl(self.gamemodel, {}, game_preview=True)
+        self.boardview = self.boardcontrol.view
         self.boardview.set_size_request(170, 170)
 
-        self.gamemodel = self.boardview.model
         self.boardview.got_started = True
         self.boardview.auto_update_shown = False
 
-        self.box.pack_start(self.boardview, True, True, 0)
+        self.box.pack_start(self.boardcontrol, True, True, 0)
         self.box.pack_start(tool_box, False, True, 0)
         self.box.show_all()
 

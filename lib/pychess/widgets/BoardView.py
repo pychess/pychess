@@ -232,6 +232,8 @@ class BoardView(Gtk.DrawingArea):
         self.premove_piece = None
         self.premove_promotion = None
 
+        self.circles = set()
+
     def _del(self):
         self.disconnect(self.draw_cid)
         self.disconnect(self.realize_cid)
@@ -760,6 +762,7 @@ class BoardView(Gtk.DrawingArea):
         if self.got_started:
             self.drawSpecial(context, r)
             self.drawEnpassant(context, r)
+            self.drawCircles(context)
             self.drawArrows(context)
             with self.animation_lock:
                 self.drawPieces(context, r)
@@ -1108,6 +1111,17 @@ class BoardView(Gtk.DrawingArea):
                 red, green, blue, alpha = color.red, color.green, color.blue, color.alpha
                 context.set_source_rgba(red, green, blue, alpha)
             context.fill()
+
+    def drawCircles(self, context):
+        radius = self.square[3] / 2.0
+        context.set_line_width(4)
+        light_green = (0.337, 0.612, 0.117, 0.8)
+        context.set_source_rgb(*light_green[:3])
+
+        for cord in self.circles:
+            x_loc, y_loc = self.cord2Point(cord)
+            context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
+            context.stroke()
 
     ###############################
     #        drawLastMove         #

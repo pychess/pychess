@@ -27,6 +27,7 @@ class BoardControl(Gtk.EventBox):
         action menu selection and emits signals to let Human player
         make moves and emit offers.
         SetuPositionDialog uses setup_position=True to disable most validation.
+        When game_preview=True just do circles and arrows
     """
 
     __gsignals__ = {
@@ -34,9 +35,10 @@ class BoardControl(Gtk.EventBox):
         'action': (GObject.SignalFlags.RUN_FIRST, None, (str, object))
     }
 
-    def __init__(self, gamemodel, action_menu_items, setup_position=False):
+    def __init__(self, gamemodel, action_menu_items, setup_position=False, game_preview=False):
         GObject.GObject.__init__(self)
         self.setup_position = setup_position
+        self.game_preview = game_preview
         self.view = BoardView(gamemodel, setup_position=setup_position)
         self.add(self.view)
         self.variant = gamemodel.variant
@@ -332,9 +334,23 @@ class BoardControl(Gtk.EventBox):
             self.stateLock.release()
 
     def button_press(self, widget, event):
+        if event.button != 3 and self.view.circles:
+            self.view.circles.clear()
+            self.view.redrawCanvas()
+        if self.game_preview:
+            return
         return self.currentState.press(event.x, event.y, event.button)
 
     def button_release(self, widget, event):
+        if event.button == 3:
+            cord = self.currentState.point2Cord(event.x, event.y)
+            if cord in self.view.circles:
+                self.view.circles.remove(cord)
+            else:
+                self.view.circles.add(cord)
+            self.view.redrawCanvas()
+        if self.game_preview:
+            return
         return self.currentState.release(event.x, event.y)
 
     def motion_notify(self, widget, event):
