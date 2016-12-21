@@ -79,7 +79,7 @@ class PyChess(object):
         if self.board.variant not in (ASEANCHESS, CAMBODIANCHESS, MAKRUKCHESS,
                                       SITTUYINCHESS, LOSERSCHESS, SUICIDECHESS,
                                       ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS):
-            for move, weight, histGames, histScore in getOpenings(self.board):
+            for move, weight, learn in getOpenings(self.board):
                 totalWeight += weight
                 if totalWeight == 0:
                     break
