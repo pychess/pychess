@@ -64,7 +64,6 @@ JvR_links = (
     ("http://www.endgame.nl/gambits.htm", "http://www.endgame.nl/gambit.pgn"),
     ("http://www.endgame.nl/trebitsch.htm", "http://www.endgame.nl/Trebitsch.pgn"),
     ("http://www.endgame.nl/cloister.htm", "http://www.endgame.nl/TerApel.pgn"),
-    ("http://www.endgame.nl/wbm.htm", "http://www.endgame.nl/wbm.pgn"),
     ("http://www.endgame.nl/Biel.html", "http://www.endgame.nl/Biel.pgn"),
     ("http://www.endgame.nl/USA.html", "http://www.endgame.nl/USA.pgn"),
     ("http://www.endgame.nl/uk.html", "http://www.endgame.nl/UK.pgn"),
