@@ -73,7 +73,7 @@ class AdjournManager(GObject.GObject):
         self.connection.expect_fromABplus(
             self.__onHistoryResponseYES, "History for %s:" % names,
             "\s*Opponent\s+Type\s+ECO\s+End\s+Date",
-            "\s*(\d+): (-|\+|=) (\d+)\s+(W|B)\s+(\d+) %s\s+\[([a-z ]{3})\s*(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+%s"
+            "\s*(\d+): (-|\+|=)\s+(\d+)\s+(W|B)\s+(\d+) %s\s+\[([a-z ]{3})\s*(\d+)\s+(\d+)\]\s+(---|\?\?\?|\*\*\*|[A-Z]\d+)\s+%s\s+%s"
             % (names, reasons, dates))
 
         self.connection.expect_fromABplus(
