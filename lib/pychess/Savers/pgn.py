@@ -342,8 +342,7 @@ class PGNFile(ChessFile):
             self.query = {}
 
             # Build .sqlite database from .pgn header tags
-            size = os.path.getsize(self.path)
-            if size > 0 and self.tag_database.count == 0:
+            if self.size > 0 and self.tag_database.count == 0:
                 drop_indexes(self.engine)
                 importer = PgnImport(self)
                 importer.do_import(self.path)
@@ -354,33 +353,43 @@ class PGNFile(ChessFile):
             log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
 
             self.scoutfish = None
-            # Create .scout database index file to help querying
-            # using scoutfish from https://github.com/mcostalba/scoutfish
-            if scoutfish_path is not None and self.path and self.count > 0:
-                try:
-                    self.scoutfish = Scoutfish(engine=scoutfish_path)
-                    self.scoutfish.open(self.path)
-                    scout_path = os.path.splitext(self.path)[0] + '.scout'
-                    if getmtime(self.path) > getmtime(scout_path):
-                        self.scoutfish.make()
-                except OSError as err:
-                    log.debug("Failed to sart scoutfish. OSError %s %s" % (err.errno, err.strerror))
+            self.init_scoutfish()
 
             self.chess_db = None
-            # Create polyglot .bin file with extra win/loss/draw stats
-            # using chess_db parser from https://github.com/mcostalba/chess_db
-            if chess_db_path is not None and self.path and self.count > 0:
-                try:
-                    self.chess_db = Parser(engine=chess_db_path)
-                    self.chess_db.open(self.path)
-                    bin_path = os.path.splitext(self.path)[0] + '.bin'
-                    if not os.path.isfile(bin_path):
-                        log.debug("No valid games found in %s" % self.path)
-                        self.chess_db = None
-                    elif getmtime(self.path) > getmtime(bin_path):
-                        self.chess_db.make()
-                except OSError as err:
-                    log.debug("Failed to sart chess_db parser. OSError %s %s" % (err.errno, err.strerror))
+            self.init_chess_db()
+
+    def get_size(self):
+        return os.path.getsize(self.path)
+    size = property(get_size)
+
+    def init_chess_db(self):
+        # Create polyglot .bin file with extra win/loss/draw stats
+        # using chess_db parser from https://github.com/mcostalba/chess_db
+        if chess_db_path is not None and self.path and self.size > 0:
+            try:
+                self.chess_db = Parser(engine=chess_db_path)
+                self.chess_db.open(self.path)
+                bin_path = os.path.splitext(self.path)[0] + '.bin'
+                if not os.path.isfile(bin_path):
+                    log.debug("No valid games found in %s" % self.path)
+                    self.chess_db = None
+                elif getmtime(self.path) > getmtime(bin_path):
+                    self.chess_db.make()
+            except OSError as err:
+                log.debug("Failed to sart chess_db parser. OSError %s %s" % (err.errno, err.strerror))
+
+    def init_scoutfish(self):
+        # Create .scout database index file to help querying
+        # using scoutfish from https://github.com/mcostalba/scoutfish
+        if scoutfish_path is not None and self.path and self.size > 0:
+            try:
+                self.scoutfish = Scoutfish(engine=scoutfish_path)
+                self.scoutfish.open(self.path)
+                scout_path = os.path.splitext(self.path)[0] + '.scout'
+                if getmtime(self.path) > getmtime(scout_path):
+                    self.scoutfish.make()
+            except OSError as err:
+                log.debug("Failed to sart scoutfish. OSError %s %s" % (err.errno, err.strerror))
 
     def get_book_moves(self, fen):
         rows = []

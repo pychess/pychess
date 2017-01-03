@@ -16,12 +16,12 @@ class FilterPanel:
         grid.set_column_homogeneous(True)
         grid.set_row_spacing(3)
 
-        tag_label = Gtk.Label(_("Tag prefix:"))
+        tag_label = Gtk.Label(_("Game headers:"))
         tag_entry = Gtk.SearchEntry()
         tag_entry.connect('activate', self.activate_tag_entry)
         tag_entry.connect('search-changed', self.search_tag_changed)
 
-        scout_label = Gtk.Label(_("Scoutfish:"))
+        scout_label = Gtk.Label(_("Game data:"))
         scout_entry = Gtk.SearchEntry()
         scout_entry.connect('activate', self.activate_scout_entry)
         scout_entry.connect('search-changed', self.search_scout_changed)
