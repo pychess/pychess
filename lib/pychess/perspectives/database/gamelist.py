@@ -56,6 +56,8 @@ class GameList(Gtk.TreeView):
                 _("Result"), _("Date"), _("Event"), _("Site"), _("Round"),
                 _("Length"), "ECO", "TC", _("Variant"), "FEN")
         for i, col in enumerate(cols):
+            if col in ("offs", "offs8"):
+                continue
             r = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(col, r, text=i)
             column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
