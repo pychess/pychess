@@ -52,7 +52,7 @@ filenames = ("atomic", "chess960rwch", "world_matches", "zh")
 for filename in filenames:
     print("Creating test methods for %s" % filename)
     pgnfile = load(protoopen('gamefiles/%s.pgn' % filename))
-    pgnfile.get_records(0, 101)
+    pgnfile.get_records()
     for i, game in enumerate(pgnfile.games):
         print("%s/%s" % (i + 1, len(pgnfile.games)))
         if i > 100:

@@ -9,15 +9,15 @@ class DrawTestCase(unittest.TestCase):
     def setUp(self):
         self.f1 = protoopen('gamefiles/3fold.pgn')
         self.PgnFile1 = pgn.load(self.f1)
-        self.PgnFile1.get_records(0, 2)
+        self.PgnFile1.get_records()
 
         self.f2 = protoopen('gamefiles/bilbao.pgn')
         self.PgnFile2 = pgn.load(self.f2)
-        self.PgnFile2.get_records(0, 1)
+        self.PgnFile2.get_records()
 
         self.f3 = protoopen('gamefiles/material.pgn')
         self.PgnFile3 = pgn.load(self.f3)
-        self.PgnFile3.get_records(0, 1)
+        self.PgnFile3.get_records()
 
     def tearDown(self):
         self.f1.close()

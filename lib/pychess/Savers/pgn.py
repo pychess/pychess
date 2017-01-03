@@ -447,7 +447,7 @@ class PGNFile(ChessFile):
 
         return off8
 
-    def get_records(self, direction):
+    def get_records(self, direction=0):
         if direction == 0:
             self.skip = 0
             self.last_seen_offs = [-1]
