@@ -76,7 +76,7 @@ class PreviewPanel:
 
         path = self.gamelist.get_model().get_path(iter)
 
-        rec = self.gamelist.get_record(path)
+        rec, ply = self.gamelist.get_record(path)
 
         self.boardview.animation_lock.acquire()
         try:
@@ -91,13 +91,13 @@ class PreviewPanel:
                 dialogue.connect("response", lambda dialogue, a: dialogue.hide())
                 dialogue.show()
 
-            self.boardview.lastMove = None
-            self.boardview._shown = self.gamemodel.lowply
+            self.boardview.lastMove = self.gamemodel.getMoveAtPly(ply - 1) if ply > 0 else None
+            self.boardview._shown = ply if ply > 0 else self.gamemodel.lowply
         finally:
             self.boardview.animation_lock.release()
 
         self.boardview.redrawCanvas()
-        self.boardview.shown = self.gamelist.ply
+        self.boardview.shown = ply + 1 if ply > 0 else self.gamelist.ply
 
     def on_first_clicked(self, button):
         self.boardview.showFirst()

@@ -146,9 +146,8 @@ class GameList(Gtk.TreeView):
         add = self.liststore.append
 
         self.records = []
-        records = self.chessfile.get_records(direction)
+        records, plys = self.chessfile.get_records(direction)
         for i, rec in enumerate(records):
-            self.records.append(rec)
             game_id = rec["Id"]
             offs = rec["Offset"]
             offs8 = rec["Offset8"]
@@ -169,8 +168,12 @@ class GameList(Gtk.TreeView):
             variant = rec["Variant"]
             variant = variants[variant].cecp_name.capitalize() if variant else ""
             fen = rec["FEN"]
+
             add([game_id, offs, offs8, wname, welo, bname, belo, result, date, event, site,
                  round_, length, eco, tc, variant, fen])
+
+            ply = plys.get(offs) if offs in plys else 0
+            self.records.append((rec, ply))
 
         self.set_cursor(0)
 
@@ -178,7 +181,7 @@ class GameList(Gtk.TreeView):
         return self.records[self.modelsort.convert_path_to_child_path(path)[0]]
 
     def row_activated(self, widget, path, col):
-        rec = self.get_record(path)
+        rec, ply = self.get_record(path)
 
         self.gamemodel = GameModel()
 

@@ -341,6 +341,8 @@ class PGNFile(ChessFile):
             self.fen = ""
             self.query = {}
 
+            self.offs_ply = {}
+
             # Build .sqlite database from .pgn header tags
             if self.size > 0 and self.tag_database.count == 0:
                 drop_indexes(self.engine)
@@ -424,6 +426,7 @@ class PGNFile(ChessFile):
             offsets = []
             for stat in move_stat["matches"]:
                 offsets.append(stat["ofs"])
+                self.offs_ply[stat["ofs"]] = stat["ply"][0]
             off = sorted(off + offsets)[:self.limit]
 
             self.tag_database.build_where_offs(off)
@@ -431,6 +434,7 @@ class PGNFile(ChessFile):
         else:
             self.tag_database.build_where_offs(None)
             self.has_more_where_offs = False
+            self.offs_ply = {}
 
         return off
 
@@ -502,9 +506,9 @@ class PGNFile(ChessFile):
 
         if records:
             self.last_seen_offs.append(records[-1]["Offset"])
-            return records
+            return records, self.offs_ply
         else:
-            return []
+            return [], {}
 
     def load_game_tags(self):
         """ Reads header tags from pgn if pgn is a one game only StringIO object """
