@@ -4,7 +4,7 @@ import os
 import time
 
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
-    String, SmallInteger, BigInteger, LargeBinary, UnicodeText, ForeignKey, event
+    String, SmallInteger, ForeignKey, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.exc import OperationalError
@@ -13,8 +13,6 @@ from sqlalchemy.sql.expression import Executable, ClauseElement, _literal_as_tex
 
 from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
-from pychess.System.prefix import addUserDataPrefix
-from pychess.System import conf
 from pychess.System.Log import log
 
 
@@ -56,23 +54,6 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     # cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 
-engines = {}
-
-
-# If we use sqlite as db backend we have to store bitboards as
-# bb - DB_MAXINT_SHIFT to fit into sqlite (8 byte) signed(!) integer range
-SQLITE_MAXINT_SHIFT = 2**63 - 1
-
-# Max ply aggregating data for opening tree stats
-STAT_PLY_MAX = 10
-
-# PyChess database schema version number
-SCHEMA_VERSION = 1
-
-
-def get_maxint_shift(engine):
-    return SQLITE_MAXINT_SHIFT if engine.name == "sqlite" else 0
-
 
 def insert_or_ignore(engine, stmt):
     if engine.name == "sqlite":
@@ -83,6 +64,12 @@ def insert_or_ignore(engine, stmt):
         return stmt.prefix_with("ON CONFLICT DO NOTHING")
     elif engine.name == "mysql":
         return stmt.prefix_with("IGNORE")
+
+
+engines = {}
+
+# PyChess database schema version number
+SCHEMA_VERSION = 1
 
 
 def get_engine(path=None, dialect="sqlite", echo=False):
@@ -105,8 +92,6 @@ def get_engine(path=None, dialect="sqlite", echo=False):
             ini_tag(engine)
             ini_schema_version(engine)
         else:
-            if not engine.has_table('stat'):
-                metadata.create_all(engine, tables=[stat])
             if not engine.has_table('schema_version'):
                 metadata.create_all(engine, tables=[schema_version])
                 ini_schema_version(engine)
@@ -146,12 +131,6 @@ player = Table(
     'player', metadata,
     Column('id', Integer, primary_key=True),
     Column('name', String(256), index=True),
-    Column('fideid', String(14), index=True, unique=True),
-    Column('fed', String(3)),
-    Column('sex', String(1)),
-    Column('title', String(3)),
-    Column('elo', SmallInteger),
-    Column('born', Integer),
 )
 
 pl1 = player.alias()
@@ -160,6 +139,8 @@ pl2 = player.alias()
 game = Table(
     'game', metadata,
     Column('id', Integer, primary_key=True, index=True),
+    Column('offset', Integer, index=True),
+    Column('offset8', Integer, index=True),
     Column('event_id', Integer, ForeignKey('event.id'), index=True),
     Column('site_id', Integer, ForeignKey('site.id'), index=True),
     Column('date_year', SmallInteger),
@@ -180,15 +161,6 @@ game = Table(
     Column('termination', SmallInteger),
     Column('annotator_id', Integer, ForeignKey('annotator.id'), index=True),
     Column('source_id', Integer, ForeignKey('source.id'), index=True),
-    Column('movelist', LargeBinary),
-    Column('comments', UnicodeText)
-)
-
-bitboard = Table(
-    'bitboard', metadata,
-    Column('game_id', Integer, ForeignKey('game.id'), nullable=False),
-    Column('ply', SmallInteger, index=True),
-    Column('bitboard', BigInteger, index=True),
 )
 
 tag = Table(
@@ -202,22 +174,6 @@ tag_game = Table(
     Column('id', Integer, primary_key=True),
     Column('game_id', Integer, ForeignKey('game.id'), nullable=False),
     Column('tag_id', Integer, ForeignKey('tag.id'), nullable=False, index=True),
-)
-
-# Store precalculated (for some ply) opening tree data
-# to replace slow select in get_bitboards() on big databases
-stat = Table(
-    'stat', metadata,
-    Column('ply', SmallInteger, primary_key=True, index=True),
-    Column('bitboard', BigInteger, primary_key=True, index=True),
-    Column('count', Integer),
-    Column('whitewon', Integer),
-    Column('blackwon', Integer),
-    Column('draw', Integer),
-    Column('white_elo_count', Integer),
-    Column('black_elo_count', Integer),
-    Column('white_elo', SmallInteger),
-    Column('black_elo', SmallInteger),
 )
 
 schema_version = Table(
@@ -234,7 +190,8 @@ def drop_indexes(engine):
                 index.drop(bind=engine)
             except OperationalError as e:
                 if e.orig.args[0].startswith("no such index"):
-                    print(e.orig.args[0])
+                    pass
+                    # print(e.orig.args[0])
                 else:
                     raise
 
@@ -262,10 +219,3 @@ def ini_schema_version(engine):
         {"id": 1, "version": SCHEMA_VERSION},
     ])
     conn.close()
-
-
-pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
-pychess_pdb = conf.get("autosave_db_file", pychess_pdb)
-
-get_engine(None)  # in memory clipbase
-get_engine(pychess_pdb)

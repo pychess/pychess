@@ -76,12 +76,12 @@ class PreviewPanel:
 
         path = self.gamelist.get_model().get_path(iter)
 
-        gameno = self.gamelist.get_gameno(path)
+        rec = self.gamelist.get_record(path)
 
         self.boardview.animation_lock.acquire()
         try:
             try:
-                self.gamelist.chessfile.loadToModel(gameno, -1, self.gamemodel)
+                self.gamelist.chessfile.loadToModel(rec, -1, self.gamemodel)
             except LoadingError as err:
                 dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
                                              buttons=Gtk.ButtonsType.OK,
@@ -125,9 +125,6 @@ class PreviewPanel:
 
         self.board = self.gamemodel.boards[self.boardview.shown].board
 
-        bb = self.board.friends[0] | self.board.friends[1]
         self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb, fen=self.board.asFen())
-        self.gamelist.offset = 0
-        self.gamelist.chessfile.build_query()
+        self.gamelist.chessfile.set_fen_filter(self.board.asFen())
         self.gamelist.load_games()

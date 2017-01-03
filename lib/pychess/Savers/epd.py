@@ -2,6 +2,8 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import collections
+
 from pychess.compat import strip
 from .ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
@@ -14,7 +16,7 @@ __ending__ = "epd"
 __append__ = True
 
 
-def save(file, model, position=None):
+def save(handle, model, position=None):
     """Saves game to file in fen format"""
 
     color = model.boards[-1].color
@@ -22,7 +24,7 @@ def save(file, model, position=None):
     fen = model.boards[-1].asFen().split(" ")
 
     # First four parts of fen are the same in epd
-    file.write(" ".join(fen[:4]))
+    handle.write(" ".join(fen[:4]))
 
     ############################################################################
     # Repetition count                                                         #
@@ -61,33 +63,41 @@ def save(file, model, position=None):
         ("rc", rep_count), )
 
     for key, value in opcodes:
-        file.write(" %s %s;" % (key, value))
+        handle.write(" %s %s;" % (key, value))
 
     ############################################################################
     # Resign opcode                                                            #
     ############################################################################
     if model.status in (WHITEWON, BLACKWON) and model.reason == WON_RESIGN:
-        file.write(" resign;")
+        handle.write(" resign;")
 
-    print("", file=file)
-    file.close()
+    print("", file=handle)
+    handle.close()
 
 
-def load(file):
-    return EpdFile(file, [line.strip() for line in file if line])
+def load(handle):
+    return EpdFile(handle)
 
 
 class EpdFile(ChessFile):
-    def __init__(self, file, games):
-        ChessFile.__init__(self, file, games)
-        self.count = len(self.games)
-        print("%s game(s) match to query" % self.count)
+    def __init__(self, handle):
+        ChessFile.__init__(self, handle)
 
-    def loadToModel(self, gameno, position, model=None):
+        self.games = [self.create_rec(line.strip()) for line in handle if line]
+        self.count = len(self.games)
+
+    def create_rec(self, line):
+        rec = collections.defaultdict(str)
+        rec["Id"] = 0
+        rec["Offset"] = 0
+        rec["FEN"] = line
+        return rec
+
+    def loadToModel(self, rec, position, model=None):
         if not model:
             model = GameModel()
 
-        fieldlist = self.games[gameno].split(" ")
+        fieldlist = rec["FEN"].split(" ")
         if len(fieldlist) == 4:
             fen = self.games[gameno]
             opcodestr = ""
@@ -139,8 +149,8 @@ class EpdFile(ChessFile):
 
         return model
 
-    def get_player_names(self, gameno):
-        data = self.games[gameno]
+    def get_player_names(self, rec):
+        data = rec["FEN"]
 
         names = {}
 
@@ -163,9 +173,3 @@ class EpdFile(ChessFile):
             return (names["tcri"], names["tcsi"])
         else:
             return (names["tcsi"], names["tcri"])
-
-    def _getTag(self, gameno, tagkey):
-        if tagkey == "FEN":
-            return " ".join(self.games[gameno].split()[:4])
-        else:
-            return ""

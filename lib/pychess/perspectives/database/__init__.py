@@ -17,11 +17,11 @@ from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import EAST, SOUTH, CENTER, NORTH
 from pychess.widgets import dock_panel_tab
 from pychess.Database.model import create_indexes, drop_indexes
-from pychess.Database.PgnImport import PgnImport, FIDEPlayersImport, download_file
+from pychess.Database.PgnImport import PgnImport, download_file
 from pychess.Database.JvR import JvR
-from pychess.Savers import database, pgn, fen, epd
+from pychess.Savers import pgn, fen, epd
 from pychess.System.protoopen import protoopen
-# from pychess.System import profile_me
+from pychess.Utils.const import FEN_START
 
 
 class Database(GObject.GObject, Perspective):
@@ -50,7 +50,7 @@ class Database(GObject.GObject, Perspective):
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("database", perspective_widget)
 
-        self.gamelist = GameList(database.load(None))
+        self.gamelist = GameList()
         self.switcher_panel = SwitcherPanel(self.gamelist)
         self.opening_tree_panel = OpeningTreePanel(self.gamelist)
         self.filter_panel = FilterPanel(self.gamelist)
@@ -129,9 +129,7 @@ class Database(GObject.GObject, Perspective):
         self.switcher_panel.connect("chessfile_switched", self.on_chessfile_switched)
 
     def open_chessfile(self, filename):
-        if filename.endswith(".pdb"):
-            chessfile = database.load(filename)
-        elif filename.endswith(".pgn"):
+        if filename.endswith(".pgn"):
             chessfile = pgn.load(protoopen(filename))
         elif filename.endswith(".epd"):
             chessfile = epd.load(protoopen(filename))
@@ -180,27 +178,10 @@ class Database(GObject.GObject, Perspective):
 
         twic.append((html % LATEST, pgn % LATEST))
 
-        # TODO: importing all twic .pgn files creates a huge (~8Gb) .pdb
-        # and sqlite seems too slow to handle my current selects
-        # until I find better solution import will be limited to latest twic .pgn
+        # import limited to latest twic .pgn for now
         twic = twic[-1:]
 
         self.do_import(twic)
-        response = self.progress_dialog.run()
-        if response == Gtk.ResponseType.CANCEL:
-            self.importer.do_cancel()
-        self.progress_dialog.hide()
-
-    def on_update_players(self):
-        def importing():
-            self.importer = FIDEPlayersImport(self.gamelist.chessfile.engine)
-            self.importer.import_players(progressbar=self.progressbar)
-            GLib.idle_add(self.progress_dialog.hide)
-
-        thread = threading.Thread(target=importing)
-        thread.daemon = True
-        thread.start()
-
         response = self.progress_dialog.run()
         if response == Gtk.ResponseType.CANCEL:
             self.importer.do_cancel()
@@ -246,7 +227,7 @@ class Database(GObject.GObject, Perspective):
         def importing():
             drop_indexes(self.gamelist.chessfile.engine)
 
-            self.importer = PgnImport(self.gamelist.chessfile.engine)
+            self.importer = PgnImport(self.gamelist.chessfile, append_pgn=True)
             for i, filename in enumerate(filenames):
                 GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
                 # GLib.idle_add(self.progressbar0.set_text, filename)
@@ -260,14 +241,21 @@ class Database(GObject.GObject, Perspective):
                     self.importer.do_import(filename, progressbar=self.progressbar)
 
             GLib.idle_add(self.progressbar.set_text, "Recreating indexes...")
+
+            # .sqlite
             create_indexes(self.gamelist.chessfile.engine)
 
-            self.gamelist.offset = 0
-            self.gamelist.chessfile.build_where_tags("")
-            self.gamelist.chessfile.build_where_bitboards(0, 0)
-            self.gamelist.chessfile.build_query()
-            self.gamelist.chessfile.update_count()
-            self.gamelist.chessfile.update_count_stats()
+            # .scout
+            if self.gamelist.chessfile.scoutfish is not None:
+                self.gamelist.chessfile.scoutfish.make()
+
+            # .bin
+            if self.gamelist.chessfile.chess_db is not None:
+                self.gamelist.chessfile.chess_db.make()
+
+            self.gamelist.chessfile.set_tags_filter("")
+            self.gamelist.chessfile.set_fen_filter(FEN_START)
+            self.gamelist.chessfile.set_scout_filter("")
             GLib.idle_add(self.gamelist.load_games)
             GLib.idle_add(self.emit, "chessfile_imported", self.gamelist.chessfile)
             GLib.idle_add(self.progress_dialog.hide)

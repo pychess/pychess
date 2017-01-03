@@ -759,46 +759,6 @@ class SaveTab:
         between moves and analysis engin evalutations
     """
     def __init__(self, widgets):
-        # autosave pychess database
-        default_path = os.path.join(addDataPrefix("pychess.pdb"))
-        path = conf.get("autosave_db_file", default_path)
-        conf.set("autosave_db_file", path)
-
-        pdb_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select pychess database"), None, Gtk.FileChooserAction.OPEN,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
-             Gtk.ResponseType.OK))
-        pdb_chooser_button = Gtk.FileChooserButton.new_with_dialog(
-            pdb_chooser_dialog)
-
-        filter = Gtk.FileFilter()
-        filter.set_name(_("PyChess database"))
-        filter.add_pattern("*.pdb")
-        pdb_chooser_dialog.add_filter(filter)
-        pdb_chooser_button.set_filename(path)
-
-        widgets["saveDbPathChooserDock"].add(pdb_chooser_button)
-        pdb_chooser_button.show()
-
-        def select_new_pdb(button):
-            new_pdb = pdb_chooser_dialog.get_filename()
-            if new_pdb:
-                conf.set("autosave_db_file", new_pdb)
-            else:
-                # restore the original
-                pdb_chooser_dialog.set_filename(path)
-
-        pdb_chooser_button.connect("file-set", select_new_pdb)
-
-        def on_autosavedb_check_toggled(check):
-            checkbox = widgets["autoSaveDb"]
-            widgets["autosavedb_box"].set_property("sensitive", checkbox.get_active())
-
-        conf.notify_add("autoSaveDb", on_autosavedb_check_toggled)
-        widgets["autoSaveDb"].set_active(True)
-        uistuff.keep(widgets["autoSaveDb"], "autoSaveDb")
-        on_autosavedb_check_toggled(_)
-
         # Init 'auto save" checkbutton
         def checkCallBack(_):
             """ :Description: Sets the various option based on user interaction with the

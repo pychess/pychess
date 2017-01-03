@@ -3,41 +3,73 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import json
+import collections
 import os
 from os.path import getmtime
 import re
-import subprocess
-from itertools import islice
 
 try:
-    from scoutfish import Scoutfish
+    from pychess.external.scoutfish import Scoutfish
     use_scoutfish = True
 except ImportError:
     use_scoutfish = False
     print("Can't find scoutfish.py See https://github.com/mcostalba/scoutfish")
 
-from pychess.compat import filter, basestring, StringIO
+try:
+    from pychess.external.chess_db import Parser
+    use_chess_db = True
+except ImportError:
+    use_chess_db = False
+    print("Can't find chess_db.py See https://github.com/mcostalba/chess_db")
+
+from pychess.compat import basestring, StringIO
+from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
+    WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.SubProcess import searchPath
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.lutils.lmove import toSAN, toAN
+from pychess.Utils.lutils.lmove import toSAN, parseSAN, ParsingError
 from pychess.Utils.Move import Move
-from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, WHITEWON, \
-    WON_RESIGN, DRAW, BLACKWON, NORMALCHESS, DRAW_AGREE, CASTLE_KR
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.ldata import MATE_VALUE
-from pychess.Variants import name2variant, NormalBoard
+from pychess.Variants import name2variant, NormalBoard, variants
 from pychess.widgets.ChessClock import formatTime
+from pychess.Savers.ChessFile import ChessFile, LoadingError
+from pychess.Savers.database import TagDatabase
+from pychess.Database import model as dbmodel
+from pychess.Database.PgnImport import PgnImport, TAG_REGEX
+from pychess.Database.model import create_indexes, drop_indexes
 
-from .pgnbase import PgnBase, pgn_load
-from .ChessFile import LoadingError
 
 __label__ = _("Chess Game")
 __ending__ = "pgn"
 __append__ = True
+
+
+# token categories
+COMMENT_REST, COMMENT_BRACE, COMMENT_NAG, \
+    VARIATION_START, VARIATION_END, \
+    RESULT, FULL_MOVE, MOVE, MOVE_COMMENT = range(1, 10)
+
+pattern = re.compile(r"""
+    (\;.*?[\n\r])        # comment, rest of line style
+    |(\{.*?\})           # comment, between {}
+    |(\$[0-9]+)          # comment, Numeric Annotation Glyph
+    |(\()                # variation start
+    |(\))                # variation end
+    |(\*|1-0|0-1|1/2)    # result (spec requires 1/2-1/2 for draw, but we want to tolerate simple 1/2 too)
+    |(
+    ([a-hKQRBNMSF][a-hxKQRBNMSF1-8+#=\-]{1,6}
+    |[PNBRQMSFK]@[a-h][1-8][+#]?  # drop move
+    |o\-o(?:\-o)?
+    |O\-O(?:\-O)?
+    |0\-0(?:\-0)?
+    |\-\-)               # non standard '--' is used for null move inside variations
+    ([\?!]{1,2})*
+    )    # move (full, count, move with ?!, ?!)
+    """, re.VERBOSE | re.DOTALL)
 
 moveeval = re.compile(
     "\[%eval ([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?(?:/(\d{1,2}))?\]")
@@ -93,43 +125,44 @@ def parseTimeControlTag(tag):
         return int(secs), int(gain) if gain is not None else 0
 
 
-def save(file, model, position=None):
+def save(handle, model, position=None):
+    """ Saves the game from GameModel to .pgn """
 
     status = "%s" % reprResult[model.status]
 
-    print('[Event "%s"]' % model.tags["Event"], file=file)
-    print('[Site "%s"]' % model.tags["Site"], file=file)
+    print('[Event "%s"]' % model.tags["Event"], file=handle)
+    print('[Site "%s"]' % model.tags["Site"], file=handle)
     print('[Date "%04d.%02d.%02d"]' %
-          (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])), file=file)
-    print('[Round "%s"]' % model.tags["Round"], file=file)
-    print('[White "%s"]' % repr(model.players[WHITE]), file=file)
-    print('[Black "%s"]' % repr(model.players[BLACK]), file=file)
-    print('[Result "%s"]' % status, file=file)
+          (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])), file=handle)
+    print('[Round "%s"]' % model.tags["Round"], file=handle)
+    print('[White "%s"]' % repr(model.players[WHITE]), file=handle)
+    print('[Black "%s"]' % repr(model.players[BLACK]), file=handle)
+    print('[Result "%s"]' % status, file=handle)
     if "ECO" in model.tags:
-        print('[ECO "%s"]' % model.tags["ECO"], file=file)
+        print('[ECO "%s"]' % model.tags["ECO"], file=handle)
     if "WhiteElo" in model.tags:
-        print('[WhiteElo "%s"]' % model.tags["WhiteElo"], file=file)
+        print('[WhiteElo "%s"]' % model.tags["WhiteElo"], file=handle)
     if "BlackElo" in model.tags:
-        print('[BlackElo "%s"]' % model.tags["BlackElo"], file=file)
+        print('[BlackElo "%s"]' % model.tags["BlackElo"], file=handle)
     if "TimeControl" in model.tags:
-        print('[TimeControl "%s"]' % model.tags["TimeControl"], file=file)
+        print('[TimeControl "%s"]' % model.tags["TimeControl"], file=handle)
     if model.timed:
         print('[WhiteClock "%s"]' %
-              msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)), file=file)
+              msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)), file=handle)
         print('[BlackClock "%s"]' %
-              msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)), file=file)
+              msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)), file=handle)
 
     if model.variant.variant != NORMALCHESS:
         print('[Variant "%s"]' % model.variant.cecp_name.capitalize(),
-              file=file)
+              file=handle)
 
     if model.boards[0].asFen() != FEN_START:
-        print('[SetUp "1"]', file=file)
-        print('[FEN "%s"]' % model.boards[0].asFen(), file=file)
-    print('[PlyCount "%s"]' % (model.ply - model.lowply), file=file)
+        print('[SetUp "1"]', file=handle)
+        print('[FEN "%s"]' % model.boards[0].asFen(), file=handle)
+    print('[PlyCount "%s"]' % (model.ply - model.lowply), file=handle)
     if "Annotator" in model.tags:
-        print('[Annotator "%s"]' % model.tags["Annotator"], file=file)
-    print("", file=file)
+        print('[Annotator "%s"]' % model.tags["Annotator"], file=handle)
+    print("", file=handle)
 
     save_emt = conf.get("saveEmt", False)
     save_eval = conf.get("saveEval", False)
@@ -139,10 +172,10 @@ def save(file, model, position=None):
 
     result = " ".join(result)
     result = wrap(result, 80)
-    print(result, status, file=file)
-    print("", file=file)
-    output = file.getvalue() if isinstance(file, StringIO) else ""
-    file.close()
+    print(result, status, file=handle)
+    print("", file=handle)
+    output = handle.getvalue() if isinstance(handle, StringIO) else ""
+    handle.close()
     return output
 
 
@@ -268,149 +301,240 @@ def move_count(node, black_periods=False):
 
 
 def load(handle):
-    return pgn_load(handle, klass=PGNFile)
+    return PGNFile(handle)
 
+
+this_dir = os.path.dirname(os.path.abspath(__file__))
+external = os.path.join(this_dir, "../external/")
 
 if use_scoutfish:
-    scoutfish_path = searchPath("scoutfish", access=os.X_OK)
+    scoutfish_path = searchPath("scoutfish", access=os.X_OK, altpath=external + "scoutfish")
 else:
     scoutfish_path = None
-chess_db_parser = searchPath("parser", access=os.X_OK)
+
+if use_chess_db:
+    chess_db_path = searchPath("parser", access=os.X_OK, altpath=external + "parser")
+else:
+    chess_db_path = None
 
 
-class PGNFile(PgnBase):
-    def __init__(self, handle, games):
-        PgnBase.__init__(self, handle, games)
+class PGNFile(ChessFile):
+    def __init__(self, handle):
+        ChessFile.__init__(self, handle)
+        self.handle = handle
+        self.pgn_is_string = isinstance(handle, StringIO)
 
-        self.colnames = ['Id', 'White', 'Black', 'Result', 'Event', 'Site', 'Round',
-                         'Year', 'Month', 'Day', 'WhiteElo', 'BlackElo',
-                         'ECO', 'TimeControl', 'Board', 'FEN', 'Variant', 'Annotator']
-        self.where_tags = None
-        self.where_bitboards = None
-        self.query = self.games
-        self.count = len(self.games)
+        if self.pgn_is_string:
+            self.games = [self.load_game_tags(), ]
+            self.count = len(self.games)
+        else:
+            sqlite_path = os.path.splitext(self.path)[0] + '.sqlite'
+            self.engine = dbmodel.get_engine(sqlite_path)
+            self.tag_database = TagDatabase(self.engine)
 
-        self.scoutfish = None
+            self.skip = 0
+            self.limit = 100
+            self.last_seen_offs = [-1]
 
-        self.scout_path = None
-        # Create .scout database index file to help querying
-        # using scoutfish from https://github.com/mcostalba/scoutfish
-        if scoutfish_path is not None and self.path:
-            try:
-                self.scoutfish = Scoutfish(engine=scoutfish_path)
-                self.scoutfish.setoption('Max Matches', 100)
-                self.scoutfish.open(self.path)
-                scout_path = self.path.replace(".pgn", ".scout")
-                if getmtime(self.path) > getmtime(scout_path):
-                    self.scoutfish.make(self.path)
-            except OSError as err:
-                print("Failed to sart scoutfish. OSError %s %s" % (err.errno, err.strerror))
+            # filter expressions to .sqlite .bin .scout
+            self.text = ""
+            self.fen = ""
+            self.query = {}
 
-        self.bin_path = None
-        # Create polyglot .bin file with extra win/loss/draw stats
-        # using chess_db parser from https://github.com/mcostalba/chess_db
-        if chess_db_parser is not None and self.path:
-            bin_path = self.path.replace(".pgn", ".bin")
-            if not os.path.isfile(bin_path) or getmtime(self.path) > getmtime(bin_path):
-                args = [chess_db_parser, "book", self.path, "full"]
+            # Build .sqlite database from .pgn header tags
+            size = os.path.getsize(self.path)
+            if size > 0 and self.tag_database.count == 0:
+                drop_indexes(self.engine)
+                importer = PgnImport(self)
+                importer.do_import(self.path)
+                create_indexes(self.engine)
+
+            self.games = self.get_records(0)
+            self.count = self.tag_database.count
+            log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
+
+            self.scoutfish = None
+            # Create .scout database index file to help querying
+            # using scoutfish from https://github.com/mcostalba/scoutfish
+            if scoutfish_path is not None and self.path and self.count > 0:
                 try:
-                    output = subprocess.check_output(args, stderr=subprocess.STDOUT)
-                    print(output)
-                    self.bin_path = bin_path
-                except subprocess.CalledProcessError as err:
-                    print("Command %s returned non-zero exit status %s" % (" ".join(args), err.returncode))
+                    self.scoutfish = Scoutfish(engine=scoutfish_path)
+                    self.scoutfish.open(self.path)
+                    scout_path = os.path.splitext(self.path)[0] + '.scout'
+                    if getmtime(self.path) > getmtime(scout_path):
+                        self.scoutfish.make()
                 except OSError as err:
-                    print("Failed to run parser book command. OSError %s %s" % (err.errno, err.strerror))
-            else:
-                self.bin_path = bin_path
+                    log.debug("Failed to sart scoutfish. OSError %s %s" % (err.errno, err.strerror))
 
-    def get_bitboards(self, ply, bb_candidates, fen):
+            self.chess_db = None
+            # Create polyglot .bin file with extra win/loss/draw stats
+            # using chess_db parser from https://github.com/mcostalba/chess_db
+            if chess_db_path is not None and self.path and self.count > 0:
+                try:
+                    self.chess_db = Parser(engine=chess_db_path)
+                    self.chess_db.open(self.path)
+                    bin_path = os.path.splitext(self.path)[0] + '.bin'
+                    if not os.path.isfile(bin_path):
+                        log.debug("No valid games found in %s" % self.path)
+                        self.chess_db = None
+                    elif getmtime(self.path) > getmtime(bin_path):
+                        self.chess_db.make()
+                except OSError as err:
+                    log.debug("Failed to sart chess_db parser. OSError %s %s" % (err.errno, err.strerror))
+
+    def get_book_moves(self, fen):
         rows = []
-        if chess_db_parser is not None and self.bin_path is not None:
-            args = [chess_db_parser, "find", self.bin_path, fen]
-            try:
-                output = subprocess.check_output(args, stderr=subprocess.STDOUT)
-                move_stat = json.loads(output.decode("ascii"))
-                board = LBoard()
-                board.applyFen(fen)
-                for stat in move_stat["moves"]:
-                    # print(stat)
-                    bb = None
-                    for bitboard, move in bb_candidates.items():
-                        if toAN(board, move, castleNotation=CASTLE_KR) == stat["move"]:
-                            bb = bitboard
-                            break
-                    if bb is not None:
-                        rows.append((bb, int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"]), 0, 0))
-            except subprocess.CalledProcessError as err:
-                print("Command %s returned non-zero exit status %s" % (" ".join(args), err.returncode))
-            except OSError as err:
-                print("Failed to run parser find command. OSError %s %s" % (err.errno, err.strerror))
+        if self.chess_db is not None:
+            move_stat = self.chess_db.find("limit %s skip %s %s" % (1, 0, fen))
+            for stat in move_stat["moves"]:
+                rows.append((stat["move"], int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"])))
         return rows
 
-    def build_query(self):
-        if self.where_tags is not None and self.where_bitboards is not None:
-            filters = (self.where_tags, self.where_bitboards)
-            self.query = filter(lambda x: all(f(x) for f in filters), self.games)
-        elif self.where_tags is not None:
-            self.query = filter(self.where_tags, self.games)
-        elif self.where_bitboards is not None:
-            self.query = filter(self.where_bitboards, self.games)
+    def set_tags_filter(self, text):
+        self.text = text
+        self.tag_database.build_where_tags(text)
+
+    def set_fen_filter(self, fen):
+        if self.chess_db is not None and fen != FEN_START:
+            self.fen = fen
         else:
-            self.query = self.games
+            self.fen = ""
 
-    def build_where_tags(self, text):
-        if text:
-            def where(game):
-                return text.lower() in game[0].lower()
-            self.where_tags = where
+    def set_scout_filter(self, query):
+        if self.scoutfish is not None and query:
+            self.query = query
         else:
-            self.where_tags = None
+            self.query = {}
 
-    def build_where_bitboards(self, ply, bitboard, fen):
-        if ply and self.scoutfish is not None and fen is not None:
-            result = self.scoutfish.scout({"sub-fen": fen})
-            offsets = {match["ofs"] for match in result["matches"]}
+    def get_offs(self, off, skip):
+        if self.query:
+            self.query["skip"] = skip
+            self.query["limit"] = self.limit + 1
+            move_stat = self.scoutfish.scout(self.query)
 
-            def where(game):
-                return game[3] in offsets
+            offsets = []
+            for stat in move_stat["matches"]:
+                offsets.append(stat["ofs"])
+            off = sorted(off + offsets)[:self.limit]
 
-            self.where_bitboards = where
-            self.ply = ply
+            self.tag_database.build_where_offs(off)
+            self.has_more_where_offs = len(offsets) == self.limit + 1
         else:
-            self.where_bitboards = None
-            self.ply = None
+            self.tag_database.build_where_offs(None)
+            self.has_more_where_offs = False
 
-    def get_id(self, gameno):
-        return self.filtered_games[gameno][2]
+        return off
 
-    def get_records(self, offset, limit, forward=True):
-        if offset < self.offset:
-            # We have to recreate our filter query iterator
-            # because python iterators never go backwards!
-            self.build_query()
+    def get_offs8(self, off8, skip):
+        # TODO: how pagination of offsets from .sqlite and .bin and .csout will work together?
+        # "find" gives offsets in random order because
+        # entries in .bin are stored in polyglot key order while
+        # entries in .scout are stored in offset order
 
-        games = [game for game in islice(self.query, offset, offset + limit)]
+        if self.fen:
+            move_stat = self.chess_db.find("limit %s skip %s %s" % (self.limit + 1, skip, self.fen))
 
-        if games:
-            self.offset = offset
-            self.filtered_games = games
-            return games
+            offsets = []
+            for stat in move_stat["moves"]:
+                offsets += stat["pgn offsets"]
+            off8 = sorted(off8 + offsets)[:self.limit]
+
+            self.tag_database.build_where_offs8(off8)
+            self.has_more_where_offs8 = len(offsets) == self.limit + 1
+        else:
+            self.tag_database.build_where_offs8(None)
+            self.has_more_where_offs8 = False
+
+        return off8
+
+    def get_records(self, direction):
+        if direction == 0:
+            self.skip = 0
+            self.last_seen_offs = [-1]
+        elif direction == 1:
+            if not self.text:
+                self.skip += self.limit
+        elif direction == -1:
+            if len(self.last_seen_offs) == 2:
+                self.last_seen_offs = [-1]
+            elif len(self.last_seen_offs) > 2:
+                self.last_seen_offs = self.last_seen_offs[:-2]
+
+            if not self.text and self.skip >= self.limit:
+                self.skip -= self.limit
+
+        off = self.get_offs([], self.skip)
+        off8 = self.get_offs8([], self.skip)
+
+        if self.fen:
+            self.last_seen_offs = [-1]
+
+        records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
+        count_records = len(records)
+
+        if count_records < self.limit and direction >= 0:
+            if self.text:
+                while count_records < self.limit and self.has_more_where_offs:
+                    self.skip += self.limit
+
+                    off = self.get_offs(off, self.skip)
+
+                    records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
+                    count_records = len(records)
+            else:
+                if self.fen and self.has_more_where_offs8:
+                    off8 = []
+                    self.get_offs8(off8, self.skip)
+                    records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
+                elif self.query and self.has_more_where_offs:
+                    off = []
+                    self.get_offs(off, self.skip)
+                    records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
+
+        if records:
+            self.last_seen_offs.append(records[-1]["Offset"])
+            return records
         else:
             return []
 
-    def loadToModel(self, gameno, position=-1, model=None):
+    def load_game_tags(self):
+        """ Reads header tags from pgn if pgn is a one game only StringIO object """
+        header = collections.defaultdict(str)
+        header["Id"] = 0
+        header["Offset"] = 0
+        for line in self.handle.readlines():
+            line = line.strip()
+            if line.startswith('[') and line.endswith(']'):
+                tag_match = TAG_REGEX.match(line)
+                if tag_match:
+                    header[tag_match.group(1)] = tag_match.group(2)
+            else:
+                break
+        return header
+
+    def loadToModel(self, rec, position=-1, model=None):
+        """ Parse game text and load game record header tags to a GameModel object """
         if not model:
             model = GameModel()
 
+        if self.pgn_is_string:
+            rec = self.games[0]
+            game_date = rec["Date"]
+            result = rec["Result"]
+            variant = rec["Variant"]
+        else:
+            game_date = self.get_date(rec)
+            result = reprResult[rec["Result"]]
+            variant = self.get_variant(rec)
+
         # the seven mandatory PGN headers
-        model.tags['Event'] = self._getTag(gameno, 'Event')
-        model.tags['Site'] = self._getTag(gameno, 'Site')
-        model.tags['Date'] = self._getTag(gameno, 'Date')
-        model.tags['Round'] = self.get_round(gameno)
-        model.tags['White'], model.tags['Black'] = self.get_player_names(
-            gameno)
-        model.tags['Result'] = reprResult[self.get_result(gameno)]
+        model.tags['Event'] = rec["Event"]
+        model.tags['Site'] = rec["Site"]
+        model.tags['Date'] = game_date
+        model.tags['Round'] = rec["Round"]
+        model.tags['White'] = rec["White"]
+        model.tags['Black'] = rec["Black"]
+        model.tags['Result'] = result
 
         if model.tags['Date']:
             date_match = re.match(".*(\d{4}).(\d{2}).(\d{2}).*",
@@ -421,19 +545,17 @@ class PGNFile(PgnBase):
                 model.tags['Month'] = month
                 model.tags['Day'] = day
 
-                # non-mandatory headers
+        # non-mandatory tags
         for tag in ('Annotator', 'ECO', 'WhiteElo', 'BlackElo', 'TimeControl'):
-            if self._getTag(gameno, tag):
-                model.tags[tag] = self._getTag(gameno, tag)
+            value = rec[tag]
+            if value:
+                model.tags[tag] = value
             else:
                 model.tags[tag] = ""
 
-        model.info = self.get_info(gameno)
+        if not self.pgn_is_string:
+            model.info = self.tag_database.get_info(rec)
 
-        # TODO: enable this when NewGameDialog is altered to give user option of
-        # whether to use PGN's clock time, or their own custom time. Also,
-        # dialog should set+insensitize variant based on the variant of the
-        # game selected in the dialog
         if model.tags['TimeControl']:
             secs, gain = parseTimeControlTag(model.tags['TimeControl'])
             model.timed = True
@@ -441,9 +563,9 @@ class PGNFile(PgnBase):
             model.timemodel.gain = gain
             model.timemodel.minutes = secs / 60
             for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
-                if self._getTag(gameno, tag):
+                if hasattr(rec, tag):
                     try:
-                        millisec = parseClockTimeTag(self._getTag(gameno, tag))
+                        millisec = parseClockTimeTag(rec[tag])
                         # We need to fix when FICS reports negative clock time like this
                         # [TimeControl "180+0"]
                         # [WhiteClock "0:00:15.867"]
@@ -454,14 +576,13 @@ class PGNFile(PgnBase):
                         model.timemodel.intervals[color][0] = start_sec
                     except ValueError:
                         raise LoadingError(
-                            "Error parsing '%s' Header for gameno %s" % (tag, gameno))
+                            "Error parsing '%s'" % tag)
 
-        fenstr = self._getTag(gameno, "FEN")
-        variant = self.get_variant(gameno)
+        fenstr = rec["FEN"]
 
         if variant:
             if variant not in name2variant:
-                raise LoadingError("Unknown variant %s for gameno %s" % (variant, gameno))
+                raise LoadingError("Unknown variant %s" % variant)
 
             model.tags["Variant"] = variant
             # Fixes for some non statndard Chess960 .pgn
@@ -497,7 +618,7 @@ class PGNFile(PgnBase):
         del model.variations[:]
 
         self.error = None
-        movetext = self.get_movetext(gameno)
+        movetext = self.get_movetext(rec)
 
         boards = self.parse_movetext(movetext, boards[0], position)
 
@@ -594,12 +715,13 @@ class PGNFile(PgnBase):
                                 model.scores[ply] = ("", value, depth)
             log.debug("pgn.loadToModel: intervals %s" %
                       model.timemodel.intervals)
+
         # Find the physical status of the game
         model.status, model.reason = getStatus(model.boards[-1])
 
         # Apply result from .pgn if the last position was loaded
         if position == -1 or len(model.moves) == position - model.lowply:
-            status = self.get_result(gameno)
+            status = rec["Result"]
             if status in (WHITEWON, BLACKWON) and status != model.status:
                 model.status = status
                 model.reason = WON_RESIGN
@@ -613,3 +735,239 @@ class PGNFile(PgnBase):
             raise self.error
 
         return model
+
+    def parse_movetext(self, string, board, position, variation=False):
+        """Recursive parses a movelist part of one game.
+
+           Arguments:
+           srting - str (movelist)
+           board - lboard (initial position)
+           position - int (maximum ply to parse)
+           variation- boolean (True if the string is a variation)"""
+
+        boards = []
+        boards_append = boards.append
+
+        last_board = board
+        if variation:
+            # this board used only to hold initial variation comments
+            boards_append(LBoard(board.variant))
+        else:
+            # initial game board
+            boards_append(board)
+
+        # status = None
+        parenthesis = 0
+        v_string = ""
+        v_last_board = None
+        for m in re.finditer(pattern, string):
+            group, text = m.lastindex, m.group(m.lastindex)
+            if parenthesis > 0:
+                v_string += ' ' + text
+
+            if group == VARIATION_END:
+                parenthesis -= 1
+                if parenthesis == 0:
+                    if last_board.prev is None:
+                        errstr1 = _("Error parsing %(mstr)s") % {"mstr": string}
+                        self.error = LoadingError(errstr1, "")
+                        return boards  # , status
+
+                    v_last_board.children.append(
+                        self.parse_movetext(v_string[:-1], last_board.prev, position, variation=True))
+                    v_string = ""
+                    continue
+
+            elif group == VARIATION_START:
+                parenthesis += 1
+                if parenthesis == 1:
+                    v_last_board = last_board
+
+            if parenthesis == 0:
+                if group == FULL_MOVE:
+                    if not variation:
+                        if position != -1 and last_board.plyCount >= position:
+                            break
+
+                    mstr = m.group(MOVE)
+                    try:
+                        lmove = parseSAN(last_board, mstr)
+                    except ParsingError as err:
+                        # TODO: save the rest as comment
+                        # last_board.children.append(string[m.start():])
+                        notation, reason, boardfen = err.args
+                        ply = last_board.plyCount
+                        if ply % 2 == 0:
+                            moveno = "%d." % (ply // 2 + 1)
+                        else:
+                            moveno = "%d..." % (ply // 2 + 1)
+                        errstr1 = _(
+                            "The game can't be read to end, because of an error parsing move %(moveno)s '%(notation)s'.") % {
+                                'moveno': moveno,
+                                'notation': notation}
+                        errstr2 = _("The move failed because %s.") % reason
+                        self.error = LoadingError(errstr1, errstr2)
+                        break
+                    except:
+                        ply = last_board.plyCount
+                        if ply % 2 == 0:
+                            moveno = "%d." % (ply // 2 + 1)
+                        else:
+                            moveno = "%d..." % (ply // 2 + 1)
+                        errstr1 = _(
+                            "Error parsing move %(moveno)s %(mstr)s") % {
+                                "moveno": moveno,
+                                "mstr": mstr}
+                        self.error = LoadingError(errstr1, "")
+                        break
+
+                    new_board = last_board.clone()
+                    new_board.applyMove(lmove)
+
+                    if m.group(MOVE_COMMENT):
+                        new_board.nags.append(symbol2nag(m.group(
+                            MOVE_COMMENT)))
+
+                    new_board.prev = last_board
+
+                    # set last_board next, except starting a new variation
+                    if variation and last_board == board:
+                        boards[0].next = new_board
+                    else:
+                        last_board.next = new_board
+
+                    boards_append(new_board)
+                    last_board = new_board
+
+                elif group == COMMENT_REST:
+                    last_board.children.append(text[1:])
+
+                elif group == COMMENT_BRACE:
+                    comm = text.replace('{\r\n', '{').replace('\r\n}', '}')
+                    comm = comm[1:-1].splitlines()
+                    comment = ' '.join([line.strip() for line in comm])
+                    if variation and last_board == board:
+                        # initial variation comment
+                        boards[0].children.append(comment)
+                    else:
+                        last_board.children.append(comment)
+
+                elif group == COMMENT_NAG:
+                    last_board.nags.append(text)
+
+                # TODO
+                elif group == RESULT:
+                    # if text == "1/2":
+                    #    status = reprResult.index("1/2-1/2")
+                    # else:
+                    #    status = reprResult.index(text)
+                    break
+
+                else:
+                    print("Unknown:", text)
+
+        return boards  # , status
+
+    def get_movetext(self, rec):
+        self.handle.seek(rec["Offset"])
+        lines = []
+        line = self.handle.readline()
+        if not line.strip():
+            line = self.handle.readline()
+
+        while line:
+            if line.startswith("["):
+                line = self.handle.readline()
+            elif line.startswith("%"):
+                line = self.handle.readline()
+            elif line.strip():
+                lines.append(line)
+                line = self.handle.readline()
+            elif len(lines) == 0:
+                line = self.handle.readline()
+            else:
+                break
+        return "".join(lines)
+
+    def get_variant(self, rec):
+        variant = rec["Variant"]
+        return variants[variant].cecp_name.capitalize() if variant else ""
+
+    def get_date(self, rec):
+        year = rec['Year']
+        month = rec['Month']
+        day = rec['Day']
+        if year and month and day:
+            tag_date = "%s.%02d.%02d" % (year, month, day)
+        elif year and month:
+            tag_date = "%s.%02d" % (year, month)
+        elif year:
+            tag_date = "%s" % year
+        else:
+            tag_date = ""
+        return tag_date
+
+
+nag2symbolDict = {
+    "$0": "",
+    "$1": "!",
+    "$2": "?",
+    "$3": "!!",
+    "$4": "??",
+    "$5": "!?",
+    "$6": "?!",
+    "$7": "□",  # forced move
+    "$8": "□",
+    "$9": "??",
+    "$10": "=",
+    "$11": "=",
+    "$12": "=",
+    "$13": "∞",  # unclear
+    "$14": "+=",
+    "$15": "=+",
+    "$16": "±",
+    "$17": "∓",
+    "$18": "+-",
+    "$19": "-+",
+    "$20": "+--",
+    "$21": "--+",
+    "$22": "⨀",  # zugzwang
+    "$23": "⨀",
+    "$24": "◯",  # space
+    "$25": "◯",
+    "$26": "◯",
+    "$27": "◯",
+    "$28": "◯",
+    "$29": "◯",
+    "$32": "⟳",  # development
+    "$33": "⟳",
+    "$36": "↑",  # initiative
+    "$37": "↑",
+    "$40": "→",  # attack
+    "$41": "→",
+    "$44": "~=",  # compensation
+    "$45": "=~",
+    "$132": "⇆",  # counterplay
+    "$133": "⇆",
+    "$136": "⨁",  # time
+    "$137": "⨁",
+    "$138": "⨁",
+    "$139": "⨁",
+    "$140": "∆",  # with the idea
+    "$141": "∇",  # aimed against
+    "$142": "⌓",  # better is
+    "$146": "N",  # novelty
+}
+
+symbol2nagDict = {}
+for k, v in nag2symbolDict.items():
+    if v not in symbol2nagDict:
+        symbol2nagDict[v] = k
+
+
+def nag2symbol(nag):
+    return nag2symbolDict.get(nag, nag)
+
+
+def symbol2nag(symbol):
+    return symbol2nagDict[symbol]

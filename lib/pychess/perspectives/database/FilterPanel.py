@@ -1,12 +1,9 @@
 # -*- coding: UTF-8 -*-
 from __future__ import print_function
 
-import re
+import ast
 
 from gi.repository import Gtk
-
-SUB_FEN_REGEX = re.compile(r'\"sub-fen\": \"(.*)\"')
-# "sub-fen": "1nbqkb1r/pppp1ppp/5n2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R"
 
 
 class FilterPanel:
@@ -15,31 +12,57 @@ class FilterPanel:
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
-        entry = Gtk.SearchEntry()
-        entry.connect('activate', self.activate_entry)
-        entry.connect('search-changed', self.search_changed)
+        grid = Gtk.Grid()
+        grid.set_column_homogeneous(True)
+        grid.set_row_spacing(3)
 
-        self.box.pack_start(entry, False, False, 0)
+        tag_label = Gtk.Label(_("Tag prefix:"))
+        tag_entry = Gtk.SearchEntry()
+        tag_entry.connect('activate', self.activate_tag_entry)
+        tag_entry.connect('search-changed', self.search_tag_changed)
+
+        scout_label = Gtk.Label(_("Scoutfish:"))
+        scout_entry = Gtk.SearchEntry()
+        scout_entry.connect('activate', self.activate_scout_entry)
+        scout_entry.connect('search-changed', self.search_scout_changed)
+
+        grid.add(tag_label)
+        grid.attach(tag_entry, 1, 0, 2, 1)
+        grid.attach_next_to(scout_label, tag_label, Gtk.PositionType.BOTTOM, 1, 2)
+        grid.attach_next_to(scout_entry, scout_label, Gtk.PositionType.RIGHT, 2, 1)
+
+        self.box.pack_start(grid, False, False, 0)
         self.box.show_all()
 
-    def new_filter(self, text):
-        if text.find('"sub-fen"') >= 0:
-            sub_fen_match = SUB_FEN_REGEX.search(text)
-            if sub_fen_match:
-                sub_fen = sub_fen_match.group(1)
-                self.gamelist.chessfile.build_where_bitboards(1, 0, fen=sub_fen)
-        else:
-            self.gamelist.chessfile.build_where_tags(text)
-        self.gamelist.offset = 0
-        self.gamelist.chessfile.build_query()
+    def new_tag_filter(self, text):
+        self.gamelist.chessfile.set_tags_filter(text)
         self.gamelist.load_games()
-        self.gamelist.update_counter(with_select=True)
 
-    def activate_entry(self, entry):
+    def activate_tag_entry(self, entry):
         text = entry.get_text()
-        self.new_filter(text)
+        self.new_tag_filter(text)
 
-    def search_changed(self, entry):
+    def search_tag_changed(self, entry):
         text = entry.get_text()
         if not text:
-            self.new_filter("")
+            self.new_tag_filter("")
+
+    def new_scout_filter(self, text):
+        try:
+            if text:
+                q = ast.literal_eval(text)
+            else:
+                q = ""
+            self.gamelist.chessfile.set_scout_filter(q)
+            self.gamelist.load_games()
+        except ValueError:
+            print("Malformed scoutfish query (Python dict)")
+
+    def activate_scout_entry(self, entry):
+        text = entry.get_text()
+        self.new_scout_filter(text)
+
+    def search_scout_changed(self, entry):
+        text = entry.get_text()
+        if not text:
+            self.new_scout_filter("")

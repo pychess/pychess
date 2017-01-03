@@ -12,13 +12,10 @@ class ChessFile:
         that the user don't request.
         It has no catching. """
 
-    def __init__(self, file, games):
-        """ Games should be a list of the raw file data,
-            split such that games[0] is used for game 0 etc.
-            """
+    def __init__(self, file):
         self.file = file
         self.path = file.name if hasattr(file, "name") else None
-        self.games = games
+        self.games = []
 
     def close(self):
         self.file.close()
@@ -32,13 +29,13 @@ class ChessFile:
     def build_where_tags(self, text):
         pass
 
-    def build_where_bitboards(self, ply, bb, fen=None):
+    def find_offs_positions(self, fen=None):
         pass
 
     def get_id(self, gameno):
         return gameno
 
-    def get_records(self, offset, limit):
+    def get_records(self, offset, limit, forward=True):
         return self.games
 
     def _getTag(self, gameno, tagkey):
@@ -96,7 +93,7 @@ class ChessFile:
     def get_variant(self, gameno):
         return 0
 
-    def get_bitboards(self, ply, bb_candidates, fen=None):
+    def get_book_moves(self, fen=None):
         return []
 
     def get_info(self, gameno):

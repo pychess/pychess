@@ -14,7 +14,6 @@ from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
 from pychess.System.uistuff import GladeWidgets
-from pychess.System.prefix import addUserDataPrefix
 from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT, LOCAL, ARTIFICIAL, MENU_ITEMS
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamewidget
@@ -42,7 +41,7 @@ class GameHandler(GObject.GObject):
         self.saveformats = None
         self.exportformats = None
 
-        self.savers = (chessalpha2, epd, fen, pgn, png, database)
+        self.savers = (chessalpha2, epd, fen, pgn, png)
         for saver in self.savers:
             self.enddir[saver.__ending__] = saver
 
@@ -193,8 +192,7 @@ class GameHandler(GObject.GObject):
                     f.add_pattern("*." + ending)
                     all_filter.add_pattern("*." + ending)
                     self.opendialog.add_filter(f)
-                    if ending != "pdb":
-                        self.saveformats.append([label, endstr, saver])
+                    self.saveformats.append([label, endstr, saver])
                     i += 1
                 else:
                     self.exportformats.append([label, endstr, saver])
@@ -216,25 +214,33 @@ class GameHandler(GObject.GObject):
         return self.opendialog, self.savedialog, self.enddir, self.savecombo, self.savers
 
     ################################################################################
-    # Creating .pdb                                                                #
+    # Creating .pgn                                                                #
     ################################################################################
 
     def create_database(self):
         dialog = Gtk.FileChooserDialog(
-            _("Create New Database"), None, Gtk.FileChooserAction.SAVE,
+            _("Create New Pgn Database"), None, Gtk.FileChooserAction.SAVE,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_NEW, Gtk.ResponseType.ACCEPT))
 
         dialog.set_current_folder(os.path.expanduser("~"))
         dialog.set_do_overwrite_confirmation(True)
-        dialog.set_current_name("new.pdb")
+        dialog.set_current_name("new.pgn")
 
         response = dialog.run()
         if response == Gtk.ResponseType.ACCEPT:
-            pychess_pdb = dialog.get_filename()
-            if not pychess_pdb.endswith(".pdb"):
-                pychess_pdb = "%s.pdb" % pychess_pdb
-            perspective = perspective_manager.get_perspective("database")
-            perspective.open_chessfile(pychess_pdb)
+            new_pgn = dialog.get_filename()
+            if not new_pgn.endswith(".pgn"):
+                new_pgn = "%s.pgn" % new_pgn
+
+            if not os.path.isfile(new_pgn):
+                perspective = perspective_manager.get_perspective("database")
+                # create new file
+                with open(new_pgn, "w"):
+                    pass
+                perspective.open_chessfile(new_pgn)
+            else:
+                # TODO: message box
+                print("%s allready exist." % new_pgn)
 
         dialog.destroy()
 
@@ -266,25 +272,20 @@ class GameHandler(GObject.GObject):
         filename = filename.replace("#y", "%s" % game.tags["Year"])
         filename = filename.replace("#m", "%s" % game.tags["Month"])
         filename = filename.replace("#d", "%s" % game.tags["Day"])
-        uri = conf.get("autoSavePath", os.path.expanduser("~")) + \
+        path = conf.get("autoSavePath", os.path.expanduser("~")) + \
             "/" + filename + ".pgn"
-        saver = pgn
         append = True
         try:
-            game.save(uri, saver, append)
-            return True
-        except IOError:
-            return False
+            if not os.path.isfile(path):
+                # create new file
+                with open(path, "w"):
+                    pass
+            offset = os.path.getsize(path)
+            database_path = os.path.splitext(path)[0] + '.sqlite'
+            database.save(database_path, game, offset)
+            # TODO: update .bin and .scout databases
 
-    def saveGameDb(self, game):
-        if conf.get("saveOwnGames", False) and not game.hasLocalPlayer():
-            return True
-        pychess_pdb = os.path.join(addUserDataPrefix("pychess.pdb"))
-        pychess_pdb = conf.get("autosave_db_file", pychess_pdb)
-        saver = database
-        append = True
-        try:
-            game.save(pychess_pdb, saver, append)
+            game.save(path, pgn, append)
             return True
         except IOError:
             return False
@@ -422,16 +423,6 @@ class GameHandler(GObject.GObject):
                                                     Save the games before closing?") + "</big></b>"
                             break
 
-                    if conf.get("autoSaveDb", True):
-                        x = self.saveGameDb(game)
-                        if x:
-                            response = Gtk.ResponseType.OK
-                        else:
-                            response = None
-                            markup = "<b><big>" + _("Unable to save to configured file. \
-                                                    Save the games before closing?") + "</big></b>"
-                            break
-
             if response is None:
                 widgets = GladeWidgets("saveGamesDialog.glade")
                 dialog = widgets["saveGamesDialog"]
@@ -507,14 +498,6 @@ class GameHandler(GObject.GObject):
             markup = "<b><big>" + _("Save the current game before you close it?") + "</big></b>"
             if conf.get("autoSave", False):
                 x = self.saveGamePGN(gmwidg.gamemodel)
-                if x:
-                    response = Gtk.ResponseType.OK
-                else:
-                    markup = "<b><big>" + _("Unable to save to configured file. \
-                                            Save the current game before you close it?") + "</big></b>"
-
-            if conf.get("autoSaveDb", True):
-                x = self.saveGameDb(gmwidg.gamemodel)
                 if x:
                     response = Gtk.ResponseType.OK
                 else:

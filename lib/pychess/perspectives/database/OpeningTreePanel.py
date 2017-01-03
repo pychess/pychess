@@ -3,12 +3,10 @@ from __future__ import print_function
 
 from gi.repository import Gtk, GObject
 
-from pychess.Utils.lutils.lmovegen import genAllMoves
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Utils.lutils.lmove import toSAN
-from pychess.Utils.const import FEN_START, WHITE
+from pychess.Utils.lutils.lmove import toSAN, parseAN
+from pychess.Utils.const import FEN_START
 from pychess.perspectives import perspective_manager
-from pychess.Savers.database import Database
 
 
 class OpeningTreePanel(Gtk.TreeView):
@@ -25,7 +23,7 @@ class OpeningTreePanel(Gtk.TreeView):
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
-        self.liststore = Gtk.ListStore(int, str, int, int, int)
+        self.liststore = Gtk.ListStore(int, str, int, int)
         self.modelsort = Gtk.TreeModelSort(self.liststore)
 
         self.modelsort.set_sort_column_id(2, Gtk.SortType.DESCENDING)
@@ -49,16 +47,10 @@ class OpeningTreePanel(Gtk.TreeView):
         column.connect("clicked", self.column_clicked, 3)
         self.append_column(column)
 
-        column = Gtk.TreeViewColumn(_("Elo Avg"), Gtk.CellRendererText(), text=4)
-        column.set_sort_column_id(4)
-        column.connect("clicked", self.column_clicked, 4)
-        self.append_column(column)
-
         self.conid = self.connect_after("row-activated", self.row_activated)
 
         self.board = LBoard()
         self.board.applyFen(FEN_START)
-        self.update_tree()
 
         self.columns_autosize()
 
@@ -119,44 +111,19 @@ class OpeningTreePanel(Gtk.TreeView):
         lmove = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
         self.board.applyMove(lmove)
         self.update_tree()
-        self.gamelist.update_counter(with_select=True)
 
     def update_tree(self, load_games=True):
-        bb = self.board.friends[0] | self.board.friends[1]
         self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.build_where_bitboards(self.board.plyCount, bb, fen=self.board.asFen())
-        self.gamelist.offset = 0
-        self.gamelist.chessfile.build_query()
+        self.gamelist.chessfile.set_fen_filter(self.board.asFen())
         if load_games and self.filtered:
             self.gamelist.load_games()
 
-        bb_candidates = {}
-        for lmove in genAllMoves(self.board):
-            self.board.applyMove(lmove)
-            if self.board.opIsChecked():
-                self.board.popMove()
-                continue
-            bb_candidates[self.board.friends[0] | self.board.friends[1]] = lmove
-            self.board.popMove()
-
-        result = []
-        # print("get_bitboards() for %s bb_candidates" % len(bb_candidates))
-        bb_list = self.gamelist.chessfile.get_bitboards(self.board.plyCount + 1, bb_candidates, fen=self.board.asFen())
-
-        for bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in bb_list:
-            try:
-                result.append((bb_candidates[bb], count, white_won, blackwon, draw, white_elo_avg, black_elo_avg))
-                # print("OK      ", bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg)
-            except KeyError:
-                # print("KeyError", bb, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg)
-                pass
-
+        result = self.gamelist.chessfile.get_book_moves(self.board.asFen())
         self.clear_tree()
-
-        for lmove, count, white_won, blackwon, draw, white_elo_avg, black_elo_avg in result:
+        for move, count, white_won, blackwon, draw in result:
+            lmove = parseAN(self.board, move)
             perf = 0 if not count else round((white_won * 100. + draw * 50.) / count)
-            elo_avg = white_elo_avg if self.board.color == WHITE else black_elo_avg
-            self.liststore.append([lmove, toSAN(self.board, lmove), count, perf, elo_avg])
+            self.liststore.append([lmove, toSAN(self.board, lmove), count, perf])
 
     def clear_tree(self):
         selection = self.get_selection()

@@ -3,33 +3,25 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import io
+import collections
 import os
-import sys
+import re
 import tempfile
 import zipfile
-from array import array
-from collections import defaultdict
 
 from gi.repository import GLib
 
-from sqlalchemy import bindparam, select, func, and_
+from sqlalchemy import select, func
 from sqlalchemy.exc import SQLAlchemyError
 
 from pychess.compat import unicode, urlopen, HTTPError, URLError
-from pychess.Utils.const import NORMALCHESS, FEN_START, reprResult, RUNNING, DRAW, WHITEWON, BLACKWON
-from pychess.Utils.lutils.LBoard import START_BOARD
+from pychess.Utils.const import NORMALCHESS, RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Variants import name2variant
-# from pychess.System import profile_me
-from pychess.System import Timer
-from pychess.System.protoopen import protoopen, PGN_ENCODING
-from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Savers.pgnbase import PgnBase, tagre
-from pychess.Savers.database import upd_stat
-from pychess.Database.dbwalk import walk
-from pychess.Database.model import STAT_PLY_MAX, get_maxint_shift, get_engine, insert_or_ignore,\
-    event, site, player, game, annotator, bitboard, tag_game, source, stat
+from pychess.System.protoopen import protoopen, protosave
+from pychess.Database.model import event, site, player, game, annotator, tag_game, source
 
+
+TAG_REGEX = re.compile(r"\[([a-zA-Z0-9_]+)\s+\"(.*)\"\]")
 
 GAME, EVENT, SITE, PLAYER, ANNOTATOR, SOURCE, STAT = range(7)
 
@@ -72,8 +64,11 @@ def download_file(url, progressbar=None):
 
 
 class PgnImport():
-    def __init__(self, engine):
-        self.engine = engine
+    def __init__(self, chessfile, append_pgn=False):
+        self.chessfile = chessfile
+        self.append_pgn = append_pgn
+        self.db_handle = chessfile.handle
+        self.engine = chessfile.engine
         self.conn = self.engine.connect()
         self.CHUNK = 1000
         self.cancel = False
@@ -86,11 +81,7 @@ class PgnImport():
         self.ins_annotator = annotator.insert()
         self.ins_source = source.insert()
         self.ins_game = game.insert()
-        self.ins_bitboard = bitboard.insert()
         self.ins_tag_game = tag_game.insert()
-
-        self.ins_stat = insert_or_ignore(engine, stat.insert())
-        self.upd_stat = upd_stat
 
         self.event_dict = {}
         self.site_dict = {}
@@ -107,17 +98,9 @@ class PgnImport():
         self.next_id[ANNOTATOR] = self.ini_names(annotator, ANNOTATOR)
         self.next_id[SOURCE] = self.ini_names(source, SOURCE)
 
-        s = select([player.c.fideid, player.c.id])
-        self.fideid_dict = dict([(p[0], p[1]) for p in self.conn.execute(s)])
-
-        self.prefix_stmt = select([player.c.id]).where(player.c.name.startswith(bindparam('name')))
-
-    def get_id(self, name, name_table, field, fide_id=None, info=None):
+    def get_id(self, name, name_table, field, info=None):
         if not name:
             return None
-
-        if fide_id is not None and fide_id in self.fideid_dict:
-            return self.fideid_dict[fide_id]
 
         orig_name = name
         if field == EVENT:
@@ -139,17 +122,6 @@ class PgnImport():
 
         if name in name_dict:
             return name_dict[name]
-        elif 0:  # field == PLAYER:
-            result = None
-            trans = self.conn.begin()
-            try:
-                result = self.engine.execute(self.prefix_stmt, name=name).first()
-                trans.commit()
-            except SQLAlchemyError as e:
-                trans.rollback()
-                print("Importing %s failed! \n%s" % (file, e))
-            if result is not None:
-                return result[0]
 
         if field == SOURCE:
             name_data.append({'name': orig_name, 'info': info})
@@ -189,9 +161,7 @@ class PgnImport():
         GLib.idle_add(self.progressbar.set_text, "")
         self.cancel = True
 
-    # @profile_me
     def do_import(self, filename, info=None, progressbar=None):
-        DB_MAXINT_SHIFT = get_maxint_shift(self.engine)
         self.progressbar = progressbar
 
         orig_filename = filename
@@ -209,9 +179,6 @@ class PgnImport():
 
         # collect new games and commit them in big chunks for speed
         self.game_data = []
-        self.bitboard_data = []
-        self.stat_ins_data = []
-        self.stat_upd_data = []
         self.tag_game_data = []
 
         if filename.startswith("http"):
@@ -224,10 +191,11 @@ class PgnImport():
                 return
 
         if filename.lower().endswith(".zip") and zipfile.is_zipfile(filename):
-            zf = zipfile.ZipFile(filename, "r")
-            files = [f for f in zf.namelist() if f.lower().endswith(".pgn")]
+            with zipfile.ZipFile(filename, "r") as zf:
+                path = os.path.dirname(filename)
+                files = [os.path.join(path, f) for f in zf.namelist() if f.lower().endswith(".pgn")]
+                zf.extractall(path)
         else:
-            zf = None
             files = [filename]
 
         for pgnfile in files:
@@ -237,26 +205,18 @@ class PgnImport():
             else:
                 print("Reading %s ..." % pgnfile)
 
-            if zf is None:
-                size = os.path.getsize(pgnfile)
-                handle = protoopen(pgnfile)
-            else:
-                size = zf.getinfo(pgnfile).file_size
-                handle = io.TextIOWrapper(zf.open(pgnfile), encoding=PGN_ENCODING, newline='')
-
-            cf = PgnBase(handle, [])
+            size = os.path.getsize(pgnfile)
+            handle = protoopen(pgnfile)
 
             # estimated game count
             all_games = max(size / 840, 1)
-            self.CHUNK = 1000 if all_games > 5000 else 100
 
             get_id = self.get_id
             # use transaction to avoid autocommit slowness
             trans = self.conn.begin()
             try:
                 i = 0
-                for tagtext, movetext in read_games(handle):
-                    tags = defaultdict(str, tagre.findall(tagtext))
+                for offs, tags in read_games(handle):
                     if not tags:
                         print("Empty game #%s" % (i + 1))
                         continue
@@ -292,77 +252,17 @@ class PgnImport():
                         if variant == NORMALCHESS:
                             # lichess uses tag [Variant "Standard"]
                             variant = 0
-                            board = START_BOARD.clone()
-                        else:
-                            board = LBoard(variant)
-                    elif fenstr:
-                        variant = 0
-                        board = LBoard()
                     else:
                         variant = 0
-                        board = START_BOARD.clone()
-
-                    if fenstr:
-                        try:
-                            board.applyFen(fenstr)
-                        except SyntaxError as e:
-                            print(_(
-                                "The game #%s can't be loaded, because of an error parsing FEN")
-                                % (i + 1), e.args[0])
-                            continue
-                    elif variant:
-                        board.applyFen(FEN_START)
-
-                    movelist = array("H")
-                    comments = []
-                    cf.error = None
-
-                    # First we try to use simple_parse_movetext()
-                    # assuming most games in .pgn contains only moves
-                    # without any comments/variations
-                    simple = False
-                    if not fenstr and not variant:
-                        bitboards = []
-                        simple = cf.simple_parse_movetext(movetext, board, movelist, bitboards)
-
-                        if cf.error is not None:
-                            print("ERROR in %s game #%s" % (pgnfile, i + 1), cf.error.args[0])
-                            continue
-
-                    # If simple_parse_movetext() find any comments/variations
-                    # we restart parsing with full featured parse_movetext()
-                    if not simple:
-                        movelist = array("H")
-                        bitboards = None
-
-                        # in case simple_parse_movetext failed we have to reset our lboard
-                        if not fenstr and not variant:
-                            board = START_BOARD.clone()
-
-                        # parse movetext to create boards tree structure
-                        boards = [board]
-                        boards = cf.parse_movetext(movetext, boards[0], -1, pgn_import=True)
-
-                        if cf.error is not None:
-                            print("ERROR in %s game #%s" % (pgnfile, i + 1), cf.error.args[0])
-                            continue
-
-                        # create movelist and comments from boards tree
-                        walk(boards[0], movelist, comments)
 
                     white = tags.get('White')
                     black = tags.get('Black')
-
-                    if not movelist:
-                        if (not comments) and (not white) and (not black):
-                            print("Empty game #%s" % (i + 1))
-                            continue
 
                     event_id = get_id(tags.get('Event'), event, EVENT)
 
                     site_id = get_id(tags.get('Site'), site, SITE)
 
-                    game_date = tags.get('Date').strip()
+                    game_date = tags['Date'].strip()
                     try:
                         if game_date and '?' not in game_date:
                             ymd = game_date.split('.')
@@ -379,11 +279,8 @@ class PgnImport():
 
                     game_round = tags.get('Round')
 
-                    white_fide_id = tags.get('WhiteFideId')
-                    black_fide_id = tags.get('BlackFideId')
-
-                    white_id = get_id(unicode(white), player, PLAYER, fide_id=white_fide_id)
-                    black_id = get_id(unicode(black), player, PLAYER, fide_id=black_fide_id)
+                    white_id = get_id(unicode(white), player, PLAYER)
+                    black_id = get_id(unicode(black), player, PLAYER)
 
                     result = tags.get("Result")
                     if result in pgn2Const:
@@ -411,92 +308,13 @@ class PgnImport():
 
                     source_id = get_id(unicode(orig_filename), source, SOURCE, info=info)
 
-                    game_id = self.next_id[GAME]
                     self.next_id[GAME] += 1
 
-                    # annotated game
-                    if bitboards is None:
-                        for ply, board in enumerate(boards):
-                            if ply == 0:
-                                continue
-                            bb = board.friends[0] | board.friends[1]
-                            # Avoid to include mate in x .pgn collections and similar in opening tree
-                            if fen and "/pppppppp/8/8/8/8/PPPPPPPP/" not in fen:
-                                ply = -1
-                            self.bitboard_data.append({
-                                'game_id': game_id,
-                                'ply': ply,
-                                'bitboard': bb - DB_MAXINT_SHIFT,
-                            })
-
-                            if ply <= STAT_PLY_MAX:
-                                self.stat_ins_data.append({
-                                    'ply': ply,
-                                    'bitboard': bb - DB_MAXINT_SHIFT,
-                                    'count': 0,
-                                    'whitewon': 0,
-                                    'blackwon': 0,
-                                    'draw': 0,
-                                    'white_elo_count': 0,
-                                    'black_elo_count': 0,
-                                    'white_elo': 0,
-                                    'black_elo': 0,
-                                })
-                                self.stat_upd_data.append({
-                                    '_ply': ply,
-                                    '_bitboard': bb - DB_MAXINT_SHIFT,
-                                    '_count': 1,
-                                    '_whitewon': 1 if result == WHITEWON else 0,
-                                    '_blackwon': 1 if result == BLACKWON else 0,
-                                    '_draw': 1 if result == DRAW else 0,
-                                    '_white_elo_count': 1 if white_elo is not None else 0,
-                                    '_black_elo_count': 1 if black_elo is not None else 0,
-                                    '_white_elo': white_elo if white_elo is not None else 0,
-                                    '_black_elo': black_elo if black_elo is not None else 0,
-                                })
-
-                    # simple game
-                    else:
-                        for ply, bb in enumerate(bitboards):
-                            if ply == 0:
-                                continue
-                            self.bitboard_data.append({
-                                'game_id': game_id,
-                                'ply': ply,
-                                'bitboard': bb - DB_MAXINT_SHIFT,
-                            })
-
-                            if ply <= STAT_PLY_MAX:
-                                self.stat_ins_data.append({
-                                    'ply': ply,
-                                    'bitboard': bb - DB_MAXINT_SHIFT,
-                                    'count': 0,
-                                    'whitewon': 0,
-                                    'blackwon': 0,
-                                    'draw': 0,
-                                    'white_elo_count': 0,
-                                    'black_elo_count': 0,
-                                    'white_elo': 0,
-                                    'black_elo': 0,
-                                })
-                                self.stat_upd_data.append({
-                                    '_ply': ply,
-                                    '_bitboard': bb - DB_MAXINT_SHIFT,
-                                    '_count': 1,
-                                    '_whitewon': 1 if result == WHITEWON else 0,
-                                    '_blackwon': 1 if result == BLACKWON else 0,
-                                    '_draw': 1 if result == DRAW else 0,
-                                    '_white_elo_count': 1 if white_elo is not None else 0,
-                                    '_black_elo_count': 1 if black_elo is not None else 0,
-                                    '_white_elo': white_elo if white_elo is not None else 0,
-                                    '_black_elo': black_elo if black_elo is not None else 0,
-                                })
-
                     ply_count = tags.get("PlyCount")
-                    if not ply_count and not fen:
-                        ply_count = len(bitboards) if bitboards is not None else len(boards)
 
                     self.game_data.append({
+                        'offset': int(offs),
+                        'offset8': (int(offs) >> 3) << 3,
                         'event_id': event_id,
                         'site_id': site_id,
                         'date_year': game_year,
@@ -516,8 +334,6 @@ class PgnImport():
                         'time_control': time_control,
                         'annotator_id': annotator_id,
                         'source_id': source_id,
-                        'movelist': movelist.tostring(),
-                        'comments': unicode("|".join(comments)),
                     })
 
                     i += 1
@@ -547,15 +363,6 @@ class PgnImport():
 
                         self.conn.execute(self.ins_game, self.game_data)
                         self.game_data = []
-
-                        if self.bitboard_data:
-                            self.conn.execute(self.ins_bitboard, self.bitboard_data)
-                            self.bitboard_data = []
-
-                            self.conn.execute(self.ins_stat, self.stat_ins_data)
-                            self.conn.execute(self.upd_stat, self.stat_upd_data)
-                            self.stat_ins_data = []
-                            self.stat_upd_data = []
 
                         if progressbar is not None:
                             GLib.idle_add(progressbar.set_fraction, i / float(all_games))
@@ -587,15 +394,6 @@ class PgnImport():
                     self.conn.execute(self.ins_game, self.game_data)
                     self.game_data = []
 
-                if self.bitboard_data:
-                    self.conn.execute(self.ins_bitboard, self.bitboard_data)
-                    self.bitboard_data = []
-
-                    self.conn.execute(self.ins_stat, self.stat_ins_data)
-                    self.conn.execute(self.upd_stat, self.stat_upd_data)
-                    self.stat_ins_data = []
-                    self.stat_upd_data = []
-
                 if progressbar is not None:
                     GLib.idle_add(progressbar.set_fraction, i / float(all_games))
                     GLib.idle_add(progressbar.set_text, "%s games from %s imported" % (i, basename))
@@ -603,178 +401,75 @@ class PgnImport():
                     print(pgnfile, i)
                 trans.commit()
 
+                if self.append_pgn:
+                    # reopen database to write
+                    self.db_handle.close()
+                    self.db_handle = protosave(self.chessfile.path, self.append_pgn)
+
+                    print("Append from %s to %s" % (pgnfile, self.chessfile.path))
+                    handle.seek(0)
+                    all_lines = handle.readlines()
+                    for line in all_lines:
+                        line = line.rstrip()
+                        self.db_handle.write(line)
+                        self.db_handle.write(u"\n")
+                    self.db_handle.close()
+
+                self.chessfile.handle = protoopen(self.chessfile.path)
+
             except SQLAlchemyError as e:
                 trans.rollback()
                 print("Importing %s failed! \n%s" % (pgnfile, e))
 
-    def print_db(self):
-        a1 = event.alias()
-        a2 = site.alias()
-        a3 = player.alias()
-        a4 = player.alias()
-
-        s = select(
-            [game.c.id, a1.c.name.label('event'), a2.c.name.label('site'),
-             a3.c.name.label('white'), a4.c.name.label('black'),
-             game.c.date_year, game.c.date_month, game.c.date_day, game.c.eco,
-             game.c.result, game.c.white_elo, game.c.black_elo],
-            and_(game.c.event_id == a1.c.id, game.c.site_id == a2.c.id,
-                 game.c.white_id == a3.c.id,
-                 game.c.black_id == a4.c.id)).where(and_(
-                     a3.c.name.startswith(u"Réti"), a4.c.name.startswith(u"Van Nüss")))
-
-        result = self.conn.execute(s)
-        games = result.fetchall()
-        for g in games:
-            print("%s %s %s %s %s %s %s %s %s %s %s %s" %
-                  (g['id'], g['event'], g['site'], g['white'], g['black'],
-                   g[5], g[6], g[7], g['eco'], reprResult[g['result']],
-                   g['white_elo'], g['black_elo']))
-
-
-class FIDEPlayersImport():
-    def __init__(self, engine):
-        self.engine = engine
-        self.conn = self.engine.connect()
-        self.CHUNK = 1000
-        self.cancel = False
-
-    def do_cancel(self):
-        GLib.idle_add(self.progressbar.set_text, "")
-        self.cancel = True
-
-    def import_players(self, progressbar=None):
-        self.progressbar = progressbar
-
-        filename = "http://ratings.fide.com/download/players_list.zip"
-        filename = download_file(filename, progressbar=progressbar)
-        # filename = "/tmp/players_list.zip"
-        if filename is None:
-            return
-
-        ins_player = insert_or_ignore(self.engine, player.insert())
-        player_data = []
-
-        zf = zipfile.ZipFile(filename, "r")
-        basename = "players_list_foa.txt"
-        size = zf.getinfo(basename).file_size
-
-        with io.TextIOWrapper(zf.open(basename)) as f:
-            if progressbar is not None:
-                GLib.idle_add(progressbar.set_text, "Pocessing %s ..." % basename)
-            else:
-                print("Processing %s ..." % basename)
-
-            # use transaction to avoid autocommit slowness
-            trans = self.conn.begin()
-            i = 0
-            try:
-                for line in f:
-                    if self.cancel:
-                        trans.rollback()
-                        return
-
-                    if line.startswith("ID"):
-                        all_players = size / len(line) - 1
-                        continue
-                    i += 1
-
-                    title = line[84:88].rstrip()
-                    title = title if title else None
-
-                    elo = line[113:117].rstrip()
-                    elo = int(elo) if elo else None
-
-                    born = line[152:156].rstrip()
-                    born = int(born) if born else None
-
-                    player_data.append({
-                        "fideid": int(line[:14]),
-                        "name": line[15:75].rstrip(),
-                        "fed": line[76:79],
-                        "sex": line[80:81],
-                        "title": title,
-                        "elo": elo,
-                        "born": born,
-                    })
-
-                    if len(player_data) >= self.CHUNK:
-                        self.conn.execute(ins_player, player_data)
-                        player_data = []
-
-                        if progressbar is not None:
-                            GLib.idle_add(progressbar.set_fraction, i / float(all_players))
-                            GLib.idle_add(progressbar.set_text, "%s / %s from %s imported" % (i, all_players, basename))
-                        else:
-                            print(basename, i)
-
-                if player_data:
-                    self.conn.execute(ins_player, player_data)
-
-                trans.commit()
-
-            except:
-                trans.rollback()
-                raise
-
 
 def read_games(handle):
-    in_tags = False
+    """Based on chess.pgn.scan_headers() from Niklas Fiekas python-chess"""
+    in_comment = False
 
-    tags = []
-    moves = []
+    game_headers = None
+    game_pos = None
 
-    for line in handle:
-        line = line.lstrip()
-        if not line:
+    last_pos = 0
+    line = handle.readline()
+
+    # scoutfish creates game offsets at previous game end
+    line_end_fix = 2 if line.endswith("\r\n") else 1
+
+    while line:
+        # Skip single line comments.
+        if line.startswith("%"):
+            last_pos += len(line)
+            line = handle.readline()
             continue
-        elif line.startswith("%"):
-            continue
 
-        if line.startswith("["):
-            if tagre.match(line) is not None:
-                if not in_tags:
-                    # new game starting
-                    if moves:
-                        yield ("".join(tags), "".join(moves))
-                        tags = []
-                        moves = []
+        # Reading a header tag. Parse it and add it to the current headers.
+        if not in_comment and line.startswith("["):
+            tag_match = TAG_REGEX.match(line)
+            if tag_match:
+                if game_pos is None:
+                    game_headers = collections.defaultdict(str)
+                    game_pos = last_pos
 
-                    in_tags = True
-                tags.append(line)
-            else:
-                if not in_tags:
-                    moves.append(line)
-        else:
-            in_tags = False
-            moves.append(line)
-    if moves:
-        yield ("".join(tags), "".join(moves))
+                game_headers[tag_match.group(1)] = tag_match.group(2)
 
+                last_pos += len(line)
+                line = handle.readline()
+                continue
 
-if __name__ == "__main__":
-    imp = PgnImport(get_engine(None))
+        # Reading movetext. Update parser state in_comment in order to skip
+        # comments that look like header tags.
+        if (not in_comment and "{" in line) or (in_comment and "}" in line):
+            in_comment = line.rfind("{") > line.rfind("}")
 
-    if len(sys.argv) > 1:
-        arg = sys.argv[1]
-        with Timer() as t:
-            if arg[-4:].lower() in (".pgn", ".zip"):
-                if os.path.isfile(arg):
-                    imp.do_import(arg)
-            elif os.path.exists(arg):
-                for file in sorted(os.listdir(arg)):
-                    if file[-4:].lower() in (".pgn", ".zip"):
-                        imp.do_import(os.path.join(arg, file))
-        print("Elapsed time (secs): %s" % t.elapsed_secs)
-    else:
-        path = os.path.abspath(os.path.dirname(__file__))
-        with Timer() as t:
-            imp.do_import(os.path.join('../../../testing/gamefiles',
-                                       "annotated.pgn"))
-            imp.do_import(os.path.join('../../../testing/gamefiles',
-                                       "world_matches.pgn"))
-            imp.do_import(os.path.join('../../../testing/gamefiles',
-                                       "dortmund.pgn"))
-        print("Elapsed time (secs): %s" % t.elapsed_secs)
-        print("Old: 28.68")
-    imp.print_db()
+        # Reading movetext. If there were headers, previously, those are now
+        # complete and can be yielded.
+        if game_pos is not None:
+            yield max(0, game_pos - line_end_fix), game_headers
+            game_pos = None
+
+        last_pos += len(line)
+        line = handle.readline()
+
+    # Yield the headers of the last game.
+    if game_pos is not None:
+        yield max(0, game_pos - line_end_fix), game_headers

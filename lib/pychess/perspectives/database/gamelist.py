@@ -1,8 +1,6 @@
 # -*- coding: UTF-8 -*-
 from __future__ import print_function
 
-import sys
-
 from gi.repository import Gtk, GObject
 
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult, \
@@ -12,7 +10,7 @@ from pychess.widgets.ionest import game_handler
 from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
 from pychess.Utils.IconLoader import load_icon
-from pychess.Savers.database import Database
+from pychess.Variants import variants
 
 media_previous = load_icon(16, "gtk-media-previous-ltr", "media-skip-backward")
 media_rewind = load_icon(16, "gtk-media-rewind-ltr", "media-seek-backward")
@@ -27,12 +25,10 @@ def createImage(pixbuf):
 
 
 class GameList(Gtk.TreeView):
-    LIMIT = 1000
-
-    def __init__(self, chessfile):
+    def __init__(self):
         GObject.GObject.__init__(self)
-        self.chessfile = chessfile
-        self.chessfiles = [self.chessfile, ]
+        self.chessfile = None
+        self.chessfiles = []
 
         persp = perspective_manager.get_perspective("database")
         persp.connect("chessfile_opened", self.on_chessfile_opened)
@@ -44,9 +40,7 @@ class GameList(Gtk.TreeView):
         # GTK_SELECTION_BROWSE - exactly one item is always selected
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
 
-        self.offset = 0
-
-        self.liststore = Gtk.ListStore(int, str, str, str, str, str, str, str,
+        self.liststore = Gtk.ListStore(int, int, int, str, str, str, str, str, str, str,
                                        str, str, str, str, str, str, str)
         self.modelsort = Gtk.TreeModelSort(self.liststore)
 
@@ -58,9 +52,9 @@ class GameList(Gtk.TreeView):
         self.set_fixed_height_mode(True)
         self.set_search_column(1)
 
-        cols = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
+        cols = (_("Id"), "offs", "offs8", _("White"), _("W Elo"), _("Black"), _("B Elo"),
                 _("Result"), _("Date"), _("Event"), _("Site"), _("Round"),
-                _("Length"), "ECO", "TC", "Variant", "FEN")
+                _("Length"), "ECO", "TC", _("Variant"), "FEN")
         for i, col in enumerate(cols):
             r = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(col, r, text=i)
@@ -75,7 +69,6 @@ class GameList(Gtk.TreeView):
 
         self.set_cursor(0)
         self.columns_autosize()
-        self.gameno = 0
         self.gamemodel = None
         self.ply = 0
 
@@ -89,23 +82,17 @@ class GameList(Gtk.TreeView):
         forwbut = Gtk.Button()
         forwbut.add(createImage(media_forward))
 
-        endbut = Gtk.Button()
-        endbut.add(createImage(media_next))
-
         button_box = Gtk.Box()
 
         self.label = Gtk.Label(_("Empty"))
 
         button_box.pack_start(startbut, True, True, 0)
         button_box.pack_start(backbut, True, True, 0)
-        button_box.pack_start(self.label, True, True, 0)
         button_box.pack_start(forwbut, True, True, 0)
-        button_box.pack_start(endbut, True, True, 0)
 
         startbut.connect("clicked", self.on_start_button)
         backbut.connect("clicked", self.on_back_button)
         forwbut.connect("clicked", self.on_forward_button)
-        endbut.connect("clicked", self.on_end_button)
 
         sw = Gtk.ScrolledWindow()
         sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
@@ -133,37 +120,18 @@ class GameList(Gtk.TreeView):
             self.chessfile.close()
 
     def on_start_button(self, widget):
-        self.offset = 0
-        self.load_games()
+        self.load_games(direction=0)
 
     def on_back_button(self, widget):
-        if not isinstance(self.chessfile, Database):
-            if self.offset - self.LIMIT >= 0:
-                self.offset = self.offset - self.LIMIT
-        self.load_games(forward=False)
+        self.load_games(direction=-1)
 
     def on_forward_button(self, widget):
-        if not isinstance(self.chessfile, Database):
-            if self.offset + self.LIMIT < self.chessfile.count:
-                self.offset = self.offset + self.LIMIT
-        self.load_games()
-
-    def on_end_button(self, widget):
-        if not isinstance(self.chessfile, Database):
-            if self.offset + self.LIMIT == self.chessfile.count:
-                return
-            if self.chessfile.count % self.LIMIT == 0:
-                self.offset = self.chessfile.count - self.LIMIT
-            else:
-                self.offset = (self.chessfile.count // self.LIMIT) * self.LIMIT
-        else:
-            self.offset = sys.maxsize
-        self.load_games(forward=False)
+        self.load_games(direction=1)
 
     def column_clicked(self, col, data):
         self.set_search_column(data)
 
-    def load_games(self, forward=True):
+    def load_games(self, direction=0):
         selection = self.get_selection()
         if selection is not None and self.preview_cid is not None and \
                 selection.handler_is_connected(self.preview_cid):
@@ -172,70 +140,57 @@ class GameList(Gtk.TreeView):
         else:
             self.liststore.clear()
 
-        getTag = self.chessfile._getTag
-        getResult = self.chessfile.get_result
-        getPlayers = self.chessfile.get_player_names
+        get_date = self.chessfile.get_date
         add = self.liststore.append
 
-        records = self.chessfile.get_records(self.offset, self.LIMIT, forward)
-
-        self.id_list = []
-        for i in range(len(records)):
-            game_id = self.chessfile.get_id(i)
-            self.id_list.append(game_id)
-            wname, bname = getPlayers(i)
-            welo = getTag(i, "WhiteElo")
-            belo = getTag(i, "BlackElo")
-            result = getResult(i)
+        self.records = []
+        records = self.chessfile.get_records(direction)
+        for i, rec in enumerate(records):
+            self.records.append(rec)
+            game_id = rec["Id"]
+            offs = rec["Offset"]
+            offs8 = rec["Offset8"]
+            wname = rec["White"]
+            bname = rec["Black"]
+            welo = "" if rec["WhiteElo"] == 0 else str(rec["WhiteElo"])
+            belo = "" if rec["BlackElo"] == 0 else str(rec["BlackElo"])
+            result = rec["Result"]
             result = "½-½" if result == DRAW else reprResult[result]
-            event = getTag(i, 'Event')
-            site = getTag(i, 'Site')
-            round_ = getTag(i, "Round")
-            date = getTag(i, "Date")
-            ply = getTag(i, "PlyCount")
+            event = rec["Event"]
+            site = rec["Site"]
+            round_ = rec["Round"]
+            date = str(get_date(rec))
+            ply = rec["PlyCount"]
             length = str(int(ply) // 2) if ply else ""
-            eco = getTag(i, "ECO")
-            tc = getTag(i, "TimeControl")
-            variant = getTag(i, "Variant")
-            fen = getTag(i, "FEN")
-            add([game_id, wname, welo, bname, belo, result, date, event, site,
+            eco = rec["ECO"]
+            tc = rec["TimeControl"]
+            variant = rec["Variant"]
+            variant = variants[variant].cecp_name.capitalize() if variant else ""
+            fen = rec["FEN"]
+            add([game_id, offs, offs8, wname, welo, bname, belo, result, date, event, site,
                  round_, length, eco, tc, variant, fen])
 
-        if isinstance(self.chessfile, Database) and len(self.id_list) > 0:
-            # set offset to last/first seen game id depending on direction
-            # it will be used in databese get_records() where clause
-            self.offset = self.id_list[-1 if forward else 0]
-
         self.set_cursor(0)
-        self.update_counter()
 
-    def get_gameno(self, path):
-        game_id = self.liststore[self.modelsort.convert_path_to_child_path(path)[0]][0]
-        gameno = self.id_list.index(game_id)
-        return gameno
+    def get_record(self, path):
+        return self.records[self.modelsort.convert_path_to_child_path(path)[0]]
 
     def row_activated(self, widget, path, col):
-        gameno = self.get_gameno(path)
+        rec = self.get_record(path)
 
         self.gamemodel = GameModel()
 
-        variant = self.chessfile.get_variant(gameno)
+        variant = rec[13]
         if variant:
             self.gamemodel.tags["Variant"] = variant
 
-        wp, bp = self.chessfile.get_player_names(gameno)
+        wp, bp = rec["White"], rec["Black"]
         p0 = (LOCAL, Human, (WHITE, wp), wp)
         p1 = (LOCAL, Human, (BLACK, bp), bp)
-        self.chessfile.loadToModel(gameno, -1, self.gamemodel)
+        self.chessfile.loadToModel(rec, -1, self.gamemodel)
 
         self.gamemodel.endstatus = self.gamemodel.status if self.gamemodel.status in UNDOABLE_STATES else UNKNOWN_STATE
         self.gamemodel.status = WAITING_TO_START
         game_handler.generalStart(self.gamemodel, p0, p1)
 
         perspective_manager.activate_perspective("games")
-
-    def update_counter(self, with_select=False):
-        if with_select:
-            self.chessfile.update_count()
-        self.label.set_text("%s - %s / %s" % (self.offset, min(self.offset + self.LIMIT, self.chessfile.count), self.chessfile.count))
-        self.label.show()

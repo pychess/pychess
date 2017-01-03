@@ -2,6 +2,8 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import collections
+
 from pychess.compat import StringIO
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WAITING_TO_START, BLACKWON, WHITEWON, DRAW
@@ -15,35 +17,36 @@ __ending__ = "fen"
 __append__ = True
 
 
-def save(file, model, position=None):
+def save(handle, model, position=None):
     """Saves game to file in fen format"""
 
     print("%s" % model.boards[-1 if position is None or len(model.boards) == 1 else position].asFen(),
-          file=file)
-    output = file.getvalue() if isinstance(file, StringIO) else ""
-    file.close()
+          file=handle)
+    output = handle.getvalue() if isinstance(handle, StringIO) else ""
+    handle.close()
     return output
 
 
-def load(file):
-    return FenFile(file, [line.strip() for line in file if line])
+def load(handle):
+    return FenFile(handle)
 
 
 class FenFile(ChessFile):
-    def __init__(self, file, games):
-        ChessFile.__init__(self, file, games)
+    def __init__(self, handle):
+        ChessFile.__init__(self, handle)
+        rec = collections.defaultdict(str)
+        line = handle.readline().strip()
+        rec["Id"] = 0
+        rec["Offset"] = 0
+        rec["FEN"] = line
+        self.games = [rec, ]
         self.count = 1
 
-    def loadToModel(self, gameno, position, model=None):
+    def loadToModel(self, rec, position, model=None):
         if not model:
             model = GameModel()
 
-        # We have to set full move number to 1 to make sure LBoard and GameModel
-        # are synchronized.
-        # fenlist = self.games[gameno].split(" ")
-        # if len(fenlist) == 6:
-        #    fen = " ".join(fenlist[:5]) + " 1"
-        fen = self.games[gameno]
+        fen = self.games[0]["FEN"]
         try:
             board = model.variant(setup=fen)
         except SyntaxError as err:
@@ -60,9 +63,3 @@ class FenFile(ChessFile):
             if status in (BLACKWON, WHITEWON, DRAW):
                 model.status, model.reason = status, reason
         return model
-
-    def _getTag(self, gameno, tagkey):
-        if tagkey == "FEN":
-            return self.games[gameno]
-        else:
-            return ""

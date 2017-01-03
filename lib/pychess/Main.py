@@ -153,7 +153,7 @@ class GladeHandlers(object):
     def on_drag_received(self, widget, context, x, y, selection, target_type, timestamp):
         if target_type == TARGET_TYPE_URI_LIST:
             uris = selection.get_uris()
-            if len(uris) == 1 and uris[0].lower()[-4:] in (".pgn", ".pdb", "epd"):
+            if len(uris) == 1 and uris[0].lower()[-4:] in (".pgn", "epd"):
                 uri = uris[0]
                 perspective = perspective_manager.get_perspective("database")
                 perspective.open_chessfile(uri)

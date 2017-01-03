@@ -18,7 +18,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toSAN, toFAN
 from pychess.Savers.pgn import move_count
-from pychess.Savers.pgnbase import nag2symbol
+from pychess.Savers.pgn import nag2symbol
 from pychess.widgets.Background import set_textview_color
 from pychess.widgets.ChessClock import formatTime
 from pychess.widgets import insert_formatted

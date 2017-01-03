@@ -2,8 +2,7 @@ from __future__ import print_function
 
 import unittest
 
-from pychess.Savers.pgn import load, walk
-from pychess.Savers.pgnbase import pattern, MOVE
+from pychess.Savers.pgn import load, walk, pattern, MOVE
 from pychess.System.protoopen import protoopen
 
 
@@ -48,19 +47,20 @@ def normalize(text):
     text = text.replace('{  ', '{').replace('{ ', '{')
     return text
 
-filenames = ("atomic", "chess960rwch", "world_matches", "zh2200plus")
+filenames = ("atomic", "chess960rwch", "world_matches", "zh")
 
 for filename in filenames:
     print("Creating test methods for %s" % filename)
     pgnfile = load(protoopen('gamefiles/%s.pgn' % filename))
+    pgnfile.get_records(0, 101)
     for i, game in enumerate(pgnfile.games):
         print("%s/%s" % (i + 1, len(pgnfile.games)))
         if i > 100:
             break
 
-        orig = normalize(pgnfile.get_movetext(i))
+        orig = normalize(pgnfile.get_movetext(game))
 
-        model = pgnfile.loadToModel(i)
+        model = pgnfile.loadToModel(game)
         new = []
         walk(model.boards[0].board, new, model)
         new = normalize(" ".join(new))
