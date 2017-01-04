@@ -326,7 +326,6 @@ class PGNFile(ChessFile):
 
         if self.pgn_is_string:
             self.games = [self.load_game_tags(), ]
-            self.count = len(self.games)
         else:
             sqlite_path = os.path.splitext(self.path)[0] + '.sqlite'
             self.engine = dbmodel.get_engine(sqlite_path)
@@ -349,7 +348,6 @@ class PGNFile(ChessFile):
                 create_indexes(self.engine)
 
             self.games, self.offs_ply = self.get_records(0)
-            self.count = self.tag_database.count
             log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
 
             self.scoutfish = None
@@ -357,6 +355,13 @@ class PGNFile(ChessFile):
 
             self.chess_db = None
             self.init_chess_db()
+
+    def get_count(self):
+        if self.pgn_is_string:
+            return len(self.games)
+        else:
+            return self.tag_database.count
+    count = property(get_count)
 
     def get_size(self):
         return os.path.getsize(self.path)

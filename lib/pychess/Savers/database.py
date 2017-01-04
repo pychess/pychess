@@ -126,8 +126,6 @@ class TagDatabase:
             .outerjoin(site, game.c.site_id == site.c.id)
             .outerjoin(annotator, game.c.annotator_id == annotator.c.id)]
 
-        self.count = self.engine.execute(count_games).scalar()
-
         self.select = select(self.cols, from_obj=self.from_obj)
 
         self.colnames = self.engine.execute(self.select).keys()
@@ -137,6 +135,10 @@ class TagDatabase:
         self.where_tags = None
         self.where_offs = None
         self.where_offs8 = None
+
+    def get_count(self):
+        return self.engine.execute(count_games).scalar()
+    count = property(get_count)
 
     def close(self):
         self.engine.dispose()
