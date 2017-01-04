@@ -408,11 +408,8 @@ class PgnImport():
 
                     print("Append from %s to %s" % (pgnfile, self.chessfile.path))
                     handle.seek(0)
-                    all_lines = handle.readlines()
-                    for line in all_lines:
-                        line = line.rstrip()
+                    for line in handle:
                         self.db_handle.write(line)
-                        self.db_handle.write(u"\n")
                     self.db_handle.close()
 
                 self.chessfile.handle = protoopen(self.chessfile.path)
