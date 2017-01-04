@@ -41,7 +41,7 @@ class OpeningTreePanel(Gtk.TreeView):
         column.connect("clicked", self.column_clicked, 2)
         self.append_column(column)
 
-        column = Gtk.TreeViewColumn(_("Result"), Gtk.CellRendererProgress(), value=3)
+        column = Gtk.TreeViewColumn(_("Winning %"), Gtk.CellRendererProgress(), value=3)
         column.set_min_width(80)
         column.set_sort_column_id(3)
         column.connect("clicked", self.column_clicked, 3)

@@ -16,27 +16,25 @@ class ChessFile:
         self.file = file
         self.path = file.name if hasattr(file, "name") else None
         self.games = []
+        self.offs_ply = {}
 
     def close(self):
         self.file.close()
 
-    def build_query(self):
+    def set_tags_filter(self, text):
         pass
 
-    def update_count(self):
+    def set_fen_filter(self, fen):
         pass
 
-    def build_where_tags(self, text):
-        pass
-
-    def find_offs_positions(self, fen=None):
+    def set_scout_filter(self, query):
         pass
 
     def get_id(self, gameno):
         return gameno
 
-    def get_records(self, offset, limit, forward=True):
-        return self.games
+    def get_records(self, direction=0):
+        return self.games, self.offs_ply
 
     def _getTag(self, gameno, tagkey):
         return ""

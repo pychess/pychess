@@ -341,8 +341,6 @@ class PGNFile(ChessFile):
             self.fen = ""
             self.query = {}
 
-            self.offs_ply = {}
-
             # Build .sqlite database from .pgn header tags
             if self.size > 0 and self.tag_database.count == 0:
                 drop_indexes(self.engine)
@@ -350,7 +348,7 @@ class PGNFile(ChessFile):
                 importer.do_import(self.path)
                 create_indexes(self.engine)
 
-            self.games = self.get_records(0)
+            self.games, self.offs_ply = self.get_records(0)
             self.count = self.tag_database.count
             log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
 

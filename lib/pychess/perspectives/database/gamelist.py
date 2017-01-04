@@ -40,7 +40,7 @@ class GameList(Gtk.TreeView):
         # GTK_SELECTION_BROWSE - exactly one item is always selected
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
 
-        self.liststore = Gtk.ListStore(int, int, int, str, str, str, str, str, str, str,
+        self.liststore = Gtk.ListStore(int, str, str, str, str, str, str, str,
                                        str, str, str, str, str, str, str)
         self.modelsort = Gtk.TreeModelSort(self.liststore)
 
@@ -52,12 +52,10 @@ class GameList(Gtk.TreeView):
         self.set_fixed_height_mode(True)
         self.set_search_column(1)
 
-        cols = (_("Id"), "offs", "offs8", _("White"), _("W Elo"), _("Black"), _("B Elo"),
+        cols = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
                 _("Result"), _("Date"), _("Event"), _("Site"), _("Round"),
                 _("Length"), "ECO", "TC", _("Variant"), "FEN")
         for i, col in enumerate(cols):
-            if col in ("offs", "offs8"):
-                continue
             r = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(col, r, text=i)
             column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
@@ -150,13 +148,12 @@ class GameList(Gtk.TreeView):
         for i, rec in enumerate(records):
             game_id = rec["Id"]
             offs = rec["Offset"]
-            offs8 = rec["Offset8"]
             wname = rec["White"]
             bname = rec["Black"]
             welo = "" if rec["WhiteElo"] == 0 else str(rec["WhiteElo"])
             belo = "" if rec["BlackElo"] == 0 else str(rec["BlackElo"])
             result = rec["Result"]
-            result = "½-½" if result == DRAW else reprResult[result]
+            result = "½-½" if result == DRAW else reprResult[result] if result else "*"
             event = rec["Event"]
             site = rec["Site"]
             round_ = rec["Round"]
@@ -169,7 +166,7 @@ class GameList(Gtk.TreeView):
             variant = variants[variant].cecp_name.capitalize() if variant else ""
             fen = rec["FEN"]
 
-            add([game_id, offs, offs8, wname, welo, bname, belo, result, date, event, site,
+            add([game_id, wname, welo, bname, belo, result, date, event, site,
                  round_, length, eco, tc, variant, fen])
 
             ply = plys.get(offs) if offs in plys else 0

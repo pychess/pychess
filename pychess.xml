@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
-  <mime-type type="application/x-chess-pychess">
-    <comment>Binary chess database (PyChess format)</comment>
-    <glob pattern="*.pdb"/>
-  </mime-type>
   <mime-type type="application/x-chess-pgn">
     <comment>PGN chess game notation</comment>
     <generic-icon name="application-x-chess-pgn"/>
