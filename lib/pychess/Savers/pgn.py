@@ -24,7 +24,7 @@ except ImportError:
 
 from pychess.compat import basestring, StringIO
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
-    WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE
+    WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.SubProcess import searchPath
@@ -458,14 +458,14 @@ class PGNFile(ChessFile):
 
         return off8
 
-    def get_records(self, direction=0):
-        if direction == 0:
+    def get_records(self, direction=FIRST_PAGE):
+        if direction == FIRST_PAGE:
             self.skip = 0
             self.last_seen_offs = [-1]
-        elif direction == 1:
+        elif direction == NEXT_PAGE:
             if not self.text:
                 self.skip += self.limit
-        elif direction == -1:
+        elif direction == PREV_PAGE:
             if len(self.last_seen_offs) == 2:
                 self.last_seen_offs = [-1]
             elif len(self.last_seen_offs) > 2:
@@ -483,7 +483,7 @@ class PGNFile(ChessFile):
         records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
         count_records = len(records)
 
-        if count_records < self.limit and direction >= 0:
+        if count_records < self.limit and direction in (FIRST_PAGE, NEXT_PAGE):
             if self.text:
                 while count_records < self.limit and self.has_more_where_offs:
                     self.skip += self.limit

@@ -4,13 +4,14 @@ from __future__ import print_function
 from gi.repository import Gtk, GObject
 
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult, \
-    UNKNOWN_STATE, UNDOABLE_STATES
+    UNKNOWN_STATE, UNDOABLE_STATES, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
 from pychess.Players.Human import Human
 from pychess.widgets.ionest import game_handler
 from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
 from pychess.Utils.IconLoader import load_icon
 from pychess.Variants import variants
+
 
 media_previous = load_icon(16, "gtk-media-previous-ltr", "media-skip-backward")
 media_rewind = load_icon(16, "gtk-media-rewind-ltr", "media-seek-backward")
@@ -120,18 +121,18 @@ class GameList(Gtk.TreeView):
             self.chessfile.close()
 
     def on_start_button(self, widget):
-        self.load_games(direction=0)
+        self.load_games(direction=FIRST_PAGE)
 
     def on_back_button(self, widget):
-        self.load_games(direction=-1)
+        self.load_games(direction=PREV_PAGE)
 
     def on_forward_button(self, widget):
-        self.load_games(direction=1)
+        self.load_games(direction=NEXT_PAGE)
 
     def column_clicked(self, col, data):
         self.set_search_column(data)
 
-    def load_games(self, direction=0):
+    def load_games(self, direction=FIRST_PAGE):
         selection = self.get_selection()
         if selection is not None and self.preview_cid is not None and \
                 selection.handler_is_connected(self.preview_cid):

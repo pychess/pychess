@@ -189,6 +189,11 @@ for cord, name in enumerate(reprCord):
 
 # User interface
 
+# pagination in database game list
+FIRST_PAGE = 0
+PREV_PAGE = -1
+NEXT_PAGE = 1
+
 # Hint modes
 OPENING, ENDGAME, HINT, SPY = ["opening", "endgame", "hint", "spy"]
 
