@@ -223,7 +223,6 @@ class GameHandler(GObject.GObject):
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_NEW, Gtk.ResponseType.ACCEPT))
 
         dialog.set_current_folder(os.path.expanduser("~"))
-        dialog.set_do_overwrite_confirmation(True)
         dialog.set_current_name("new.pgn")
 
         response = dialog.run()
@@ -239,7 +238,11 @@ class GameHandler(GObject.GObject):
                     pass
                 perspective.open_chessfile(new_pgn)
             else:
-                # TODO: message box
+                d = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                                      buttons=Gtk.ButtonsType.OK)
+                d.set_markup(_("<big><b>File '%s' already exists.</b></big>") % new_pgn)
+                d.run()
+                d.hide()
                 print("%s allready exist." % new_pgn)
 
         dialog.destroy()
