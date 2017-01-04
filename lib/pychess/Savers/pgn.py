@@ -327,10 +327,6 @@ class PGNFile(ChessFile):
         if self.pgn_is_string:
             self.games = [self.load_game_tags(), ]
         else:
-            sqlite_path = os.path.splitext(self.path)[0] + '.sqlite'
-            self.engine = dbmodel.get_engine(sqlite_path)
-            self.tag_database = TagDatabase(self.engine)
-
             self.skip = 0
             self.limit = 100
             self.last_seen_offs = [-1]
@@ -340,21 +336,16 @@ class PGNFile(ChessFile):
             self.fen = ""
             self.query = {}
 
-            # Build .sqlite database from .pgn header tags
-            if self.size > 0 and self.tag_database.count == 0:
-                drop_indexes(self.engine)
-                importer = PgnImport(self)
-                importer.do_import(self.path)
-                create_indexes(self.engine)
-
-            self.games, self.offs_ply = self.get_records(0)
-            log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
+            self.init_tag_database()
 
             self.scoutfish = None
             self.init_scoutfish()
 
             self.chess_db = None
             self.init_chess_db()
+
+            self.games, self.offs_ply = self.get_records(0)
+            log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
 
     def get_count(self):
         if self.pgn_is_string:
@@ -367,8 +358,20 @@ class PGNFile(ChessFile):
         return os.path.getsize(self.path)
     size = property(get_size)
 
+    def init_tag_database(self):
+        sqlite_path = os.path.splitext(self.path)[0] + '.sqlite'
+        self.engine = dbmodel.get_engine(sqlite_path)
+        self.tag_database = TagDatabase(self.engine)
+
+        # Import .pgn header tags to .sqlite database
+        if self.size > 0 and self.tag_database.count == 0:
+            drop_indexes(self.engine)
+            importer = PgnImport(self)
+            importer.do_import(self.path)
+            create_indexes(self.engine)
+
     def init_chess_db(self):
-        # Create polyglot .bin file with extra win/loss/draw stats
+        # Create/open polyglot .bin file with extra win/loss/draw stats
         # using chess_db parser from https://github.com/mcostalba/chess_db
         if chess_db_path is not None and self.path and self.size > 0:
             try:
@@ -384,7 +387,7 @@ class PGNFile(ChessFile):
                 log.debug("Failed to sart chess_db parser. OSError %s %s" % (err.errno, err.strerror))
 
     def init_scoutfish(self):
-        # Create .scout database index file to help querying
+        # Create/open .scout database index file to help querying
         # using scoutfish from https://github.com/mcostalba/scoutfish
         if scoutfish_path is not None and self.path and self.size > 0:
             try:
@@ -515,6 +518,7 @@ class PGNFile(ChessFile):
 
     def load_game_tags(self):
         """ Reads header tags from pgn if pgn is a one game only StringIO object """
+
         header = collections.defaultdict(str)
         header["Id"] = 0
         header["Offset"] = 0
@@ -530,6 +534,7 @@ class PGNFile(ChessFile):
 
     def loadToModel(self, rec, position=-1, model=None):
         """ Parse game text and load game record header tags to a GameModel object """
+
         if not model:
             model = GameModel()
 
