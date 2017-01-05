@@ -199,7 +199,7 @@ class PgnImport():
             files = [filename]
 
         for pgnfile in files:
-            base_offset = self.chessfile.size
+            base_offset = self.chessfile.size if self.append_pgn else 0
 
             basename = os.path.basename(pgnfile)
             if progressbar is not None:
