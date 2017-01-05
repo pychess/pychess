@@ -104,8 +104,8 @@ description = "The PyChess chess client, version %s." % version
 parser = argparse.ArgumentParser(description=description)
 parser.add_argument('--version', action='version',
                     version="%(prog)s" + " %s" % version)
-parser.add_argument('--no-debug', action='store_true',
-                    help='turn off debugging output')
+parser.add_argument('--log-debug', action='store_true',
+                    help='change default logging level from INFO to DEBUG')
 parser.add_argument('--idle-add-debug', action='store_true',
                     help='turn on idle-add debugging output')
 parser.add_argument('--thread-debug', action='store_true',
@@ -124,7 +124,7 @@ parser.add_argument('chess_file', nargs='?', metavar='chessfile',
                     help='a chess file in PGN, EPD, FEN, or HTML (Chess Alpha 2 Diagram) format')
 
 args = parser.parse_args()
-no_debug = args.no_debug
+log_debug = args.log_debug
 idle_add_debug = args.idle_add_debug
 thread_debug = args.thread_debug
 no_gettext = args.no_gettext
@@ -207,7 +207,7 @@ sys.stderr = LogPipe(sys.stderr, "stdout")
 
 if log_viewer:
     log.logger.addHandler(GLogHandler(logemitter))
-log.logger.setLevel(logging.WARNING if no_debug is True else logging.DEBUG)
+log.logger.setLevel(logging.DEBUG if log_debug is True else logging.INFO)
 oldlogs = [l for l in os.listdir(getUserDataPrefix())
            if l.endswith(".log")]
 conf.set("max_log_files", conf.get("max_log_files", 10))
