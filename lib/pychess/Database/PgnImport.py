@@ -199,6 +199,8 @@ class PgnImport():
             files = [filename]
 
         for pgnfile in files:
+            base_offset = self.chessfile.size
+
             basename = os.path.basename(pgnfile)
             if progressbar is not None:
                 GLib.idle_add(progressbar.set_text, "Reading %s ..." % basename)
@@ -313,7 +315,7 @@ class PgnImport():
                     ply_count = tags.get("PlyCount")
 
                     self.game_data.append({
-                        'offset': int(offs),
+                        'offset': base_offset + int(offs),
                         'offset8': (int(offs) >> 3) << 3,
                         'event_id': event_id,
                         'site_id': site_id,
