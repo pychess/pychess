@@ -8,6 +8,8 @@ import os
 from os.path import getmtime
 import re
 
+import pexpect
+
 try:
     from pychess.external.scoutfish import Scoutfish
     use_scoutfish = True
@@ -300,8 +302,8 @@ def move_count(node, black_periods=False):
     return mvcount
 
 
-def load(handle):
-    return PGNFile(handle)
+def load(handle, progressbar=None):
+    return PGNFile(handle, progressbar)
 
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
@@ -319,9 +321,10 @@ else:
 
 
 class PGNFile(ChessFile):
-    def __init__(self, handle):
+    def __init__(self, handle, progressbar):
         ChessFile.__init__(self, handle)
         self.handle = handle
+        self.progressbar = progressbar
         self.pgn_is_string = isinstance(handle, StringIO)
 
         if self.pgn_is_string:
@@ -367,7 +370,7 @@ class PGNFile(ChessFile):
         if self.size > 0 and self.tag_database.count == 0:
             drop_indexes(self.engine)
             importer = PgnImport(self)
-            importer.do_import(self.path)
+            importer.do_import(self.path, progressbar=self.progressbar)
             create_indexes(self.engine)
 
     def init_chess_db(self):
@@ -375,6 +378,8 @@ class PGNFile(ChessFile):
         # using chess_db parser from https://github.com/mcostalba/chess_db
         if chess_db_path is not None and self.path and self.size > 0:
             try:
+                if self.progressbar is not None:
+                    self.progressbar.set_text("Creating .bin index file...")
                 self.chess_db = Parser(engine=chess_db_path)
                 self.chess_db.open(self.path)
                 bin_path = os.path.splitext(self.path)[0] + '.bin'
@@ -384,20 +389,30 @@ class PGNFile(ChessFile):
                 elif getmtime(self.path) > getmtime(bin_path):
                     self.chess_db.make()
             except OSError as err:
+                self.chess_db = None
                 log.debug("Failed to sart chess_db parser. OSError %s %s" % (err.errno, err.strerror))
+            except pexpect.EOF:
+                self.chess_db = None
+                print("chess_db parser failed (pexpect.EOF)")
 
     def init_scoutfish(self):
         # Create/open .scout database index file to help querying
         # using scoutfish from https://github.com/mcostalba/scoutfish
         if scoutfish_path is not None and self.path and self.size > 0:
             try:
+                if self.progressbar is not None:
+                    self.progressbar.set_text("Creating .scout index file...")
                 self.scoutfish = Scoutfish(engine=scoutfish_path)
                 self.scoutfish.open(self.path)
                 scout_path = os.path.splitext(self.path)[0] + '.scout'
                 if getmtime(self.path) > getmtime(scout_path):
                     self.scoutfish.make()
             except OSError as err:
+                self.scoutfish = None
                 log.debug("Failed to sart scoutfish. OSError %s %s" % (err.errno, err.strerror))
+            except pexpect.EOF:
+                self.scoutfish = None
+                print("scoutfish failed (pexpect.EOF)")
 
     def get_book_moves(self, fen):
         rows = []

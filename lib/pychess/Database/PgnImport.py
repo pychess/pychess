@@ -368,7 +368,7 @@ class PgnImport():
 
                         if progressbar is not None:
                             GLib.idle_add(progressbar.set_fraction, i / float(all_games))
-                            GLib.idle_add(progressbar.set_text, "%s games from %s imported" % (i, basename))
+                            GLib.idle_add(progressbar.set_text, "%s game headers from %s imported" % (i, basename))
                         else:
                             print(pgnfile, i)
 
@@ -398,7 +398,7 @@ class PgnImport():
 
                 if progressbar is not None:
                     GLib.idle_add(progressbar.set_fraction, i / float(all_games))
-                    GLib.idle_add(progressbar.set_text, "%s games from %s imported" % (i, basename))
+                    GLib.idle_add(progressbar.set_text, "%s game headers from %s imported" % (i, basename))
                 else:
                     print(pgnfile, i)
                 trans.commit()

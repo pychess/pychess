@@ -23,7 +23,7 @@ from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
 from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.widgets import gamewidget
-from pychess.widgets.ionest import game_handler
+from pychess.widgets.ionest import game_handler, get_open_dialog
 from pychess.widgets import analyzegameDialog
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import internet_game_tasker
@@ -34,7 +34,7 @@ from pychess.perspectives import perspective_manager
 from pychess.perspectives.welcome import Welcome
 from pychess.perspectives.games import Games
 from pychess.perspectives.fics import FICS
-from pychess.perspectives.database import Database
+from pychess.perspectives.database import Database, NestedFileChooserDialog
 from pychess import VERSION, VERSION_NAME
 
 leftkeys = list(map(Gdk.keyval_from_name, ("Left", "KP_Left")))
@@ -169,13 +169,15 @@ class GladeHandlers(object):
         ICLogon.run()
 
     def on_load_game1_activate(self, widget):
-        opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs()
-        response = opendialog.run()
-        if response == Gtk.ResponseType.ACCEPT:
-            filename = opendialog.get_filename()
+        opendialog = get_open_dialog()
+
+        d = NestedFileChooserDialog(opendialog)
+        filenames = d.run()
+        opendialog.destroy()
+        if filenames is not None:
+            filename = filenames[0]
             perspective = perspective_manager.get_perspective("database")
             perspective.open_chessfile(filename)
-        opendialog.hide()
 
     def on_set_up_position_activate(self, widget):
         rotate_menu = gamewidget.getWidgets()["rotate_board1"]

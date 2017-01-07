@@ -56,12 +56,15 @@ class Database(GObject.GObject, Perspective):
         self.filter_panel = FilterPanel(self.gamelist)
         self.preview_panel = PreviewPanel(self.gamelist)
 
+        self.spinner = Gtk.Spinner()
+        self.spinner.set_size_request(50, 50)
         self.progressbar0 = Gtk.ProgressBar(show_text=True)
-        self.progressbar = Gtk.ProgressBar(show_text=True)
-        self.progress_dialog = Gtk.Dialog("Import", None, 0, (
+        self.progressbar1 = Gtk.ProgressBar(show_text=True)
+        self.progress_dialog = Gtk.Dialog("", None, 0, (
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
+        self.progress_dialog.get_content_area().pack_start(self.spinner, True, True, 0)
         self.progress_dialog.get_content_area().pack_start(self.progressbar0, True, True, 0)
-        self.progress_dialog.get_content_area().pack_start(self.progressbar, True, True, 0)
+        self.progress_dialog.get_content_area().pack_start(self.progressbar1, True, True, 0)
         self.progress_dialog.get_content_area().show_all()
 
         perspective = perspective_manager.get_perspective("database")
@@ -129,20 +132,40 @@ class Database(GObject.GObject, Perspective):
         self.switcher_panel.connect("chessfile_switched", self.on_chessfile_switched)
 
     def open_chessfile(self, filename):
-        if filename.endswith(".pgn"):
-            chessfile = pgn.load(protoopen(filename))
-        elif filename.endswith(".epd"):
-            chessfile = epd.load(protoopen(filename))
-        elif filename.endswith(".fen"):
-            chessfile = fen.load(protoopen(filename))
-        else:
-            return
-
         if self.gamelist is None:
             self.init_layout()
-
         perspective_manager.activate_perspective("database")
-        self.emit("chessfile_opened", chessfile)
+
+        self.progress_dialog.set_title(_("Open"))
+        self.progressbar0.hide()
+        self.progressbar1.show()
+        self.progressbar1.set_text("Importing game headers...")
+        self.spinner.show()
+        self.spinner.start()
+
+        def opening():
+            if filename.endswith(".pgn"):
+                chessfile = pgn.load(protoopen(filename), self.progressbar1)
+            elif filename.endswith(".epd"):
+                chessfile = epd.load(protoopen(filename))
+            elif filename.endswith(".fen"):
+                chessfile = fen.load(protoopen(filename))
+            else:
+                chessfile = None
+
+            GLib.idle_add(self.spinner.stop)
+            GLib.idle_add(self.progress_dialog.hide)
+            if chessfile is not None:
+                GLib.idle_add(self.emit, "chessfile_opened", chessfile)
+
+        thread = threading.Thread(target=opening)
+        thread.daemon = True
+        thread.start()
+
+        response = self.progress_dialog.run()
+        if response == Gtk.ResponseType.CANCEL:
+            self.importer.do_cancel()
+        self.progress_dialog.hide()
 
     def close(self, widget):
         self.emit("chessfile_closed")
@@ -217,11 +240,14 @@ class Database(GObject.GObject, Perspective):
             self.progress_dialog.hide()
 
     def do_import(self, filenames):
+        self.progress_dialog.set_title(_("Import"))
+        self.spinner.hide()
         if len(filenames) == 1:
             self.progressbar0.hide()
         else:
             self.progressbar0.show()
-        self.progressbar.set_text("Preparing to start import...")
+        self.progressbar1.show()
+        self.progressbar1.set_text("Preparing to start import...")
 
         # @profile_me
         def importing():
@@ -235,12 +261,12 @@ class Database(GObject.GObject, Perspective):
                     break
                 if isinstance(filename, tuple):
                     info_link, pgn_link = filename
-                    self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar)
+                    self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar1)
                 else:
                     filename = unicode(filename)
-                    self.importer.do_import(filename, progressbar=self.progressbar)
+                    self.importer.do_import(filename, progressbar=self.progressbar1)
 
-            GLib.idle_add(self.progressbar.set_text, "Recreating indexes...")
+            GLib.idle_add(self.progressbar1.set_text, "Recreating indexes...")
 
             # .sqlite
             create_indexes(self.gamelist.chessfile.engine)

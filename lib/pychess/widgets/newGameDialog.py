@@ -32,7 +32,6 @@ from pychess.System import conf
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
-from pychess.widgets import BoardPreview
 from pychess.widgets.ionest import game_handler
 from pychess.widgets import gamewidget
 from pychess.widgets import ImageMenu
@@ -501,60 +500,6 @@ class NewGameMode(_GameInitializationMode):
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("New Game"))
         cls._generalRun(game_handler.generalStart, _validate)
-
-# ###############################################################################
-# LoadFileExtension                                                            #
-# ###############################################################################
-
-
-class LoadFileExtension(_GameInitializationMode):
-    @classmethod
-    def _init(cls):
-        opendialog, savedialog, enddir, savecombo, savers = game_handler.getOpenAndSaveDialogs(
-        )
-        cls.filechooserbutton = Gtk.FileChooserButton.new_with_dialog(
-            opendialog)
-        cls.loadSidePanel = BoardPreview.BoardPreview(
-            cls.widgets, cls.filechooserbutton, opendialog, enddir)
-
-    @classmethod
-    def run(cls, uri=None):
-        cls._ensureReady()
-        if cls.widgets["newgamedialog"].props.visible:
-            cls.widgets["newgamedialog"].present()
-            return
-
-        if not uri:
-            res = game_handler.opendialog.run()
-            game_handler.opendialog.hide()
-            if res != Gtk.ResponseType.ACCEPT:
-                return
-        else:
-            if not uri[uri.rfind(".") + 1:] in game_handler.enddir:
-                log.info("Ignoring strange file: %s" % uri)
-                return
-            cls.loadSidePanel.set_filename(uri)
-            cls.filechooserbutton.emit("file-activated")
-
-        cls._hideOthers()
-        cls.widgets["newgamedialog"].set_title(_("Open Game"))
-        cls.widgets["loadsidepanel"].show()
-
-        def _validate(gamemodel):
-            return True
-
-        def _callback(gamemodel, p0, p1):
-            if not cls.loadSidePanel.isEmpty():
-                uri = cls.loadSidePanel.get_filename()
-                loader = game_handler.enddir[uri[uri.rfind(".") + 1:]]
-                position = cls.loadSidePanel.getPosition()
-                gameno = cls.loadSidePanel.getGameno()
-                game_handler.generalStart(
-                    gamemodel, p0, p1, (uri, loader, gameno, position))
-            else:
-                game_handler.generalStart(gamemodel, p0, p1)
-
-        cls._generalRun(_callback, _validate)
 
 # ###############################################################################
 # SetupPositionExtension                                                       #
