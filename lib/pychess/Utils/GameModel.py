@@ -10,7 +10,7 @@ from pychess.compat import basestring, Queue, Empty, StringIO
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
 from pychess.System import conf, fident
-from pychess.System.protoopen import protoopen, protosave, isWriteable
+from pychess.System.protoopen import protoopen, protosave
 from pychess.System.Log import log
 from pychess.Utils.Move import Move
 from pychess.Utils.eco import get_eco
@@ -942,8 +942,9 @@ class GameModel(GObject.GObject, Thread):
             return False
         if self.needsSave:
             return True
-        if not self.uri or not isWriteable(self.uri):
-            return True
+        # what was this for?
+        # if not self.uri or not isWriteable(self.uri):
+            # return True
         return False
 
     def add_variation(self, board, moves, comment="", score="", emit=True):
