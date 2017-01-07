@@ -532,6 +532,7 @@ def get_open_dialog():
         (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
          Gtk.ResponseType.ACCEPT))
     opendialog.set_show_hidden(True)
+    opendialog.set_select_multiple(True)
 
     # All chess files filter
     all_filter = Gtk.FileFilter()

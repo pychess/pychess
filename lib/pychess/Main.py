@@ -148,17 +148,17 @@ class GladeHandlers(object):
             path = url2pathname(uri)
             recentManager.add_item("file:" + pathname2url(path))
 
-    #          Drag 'n' Drop          #
+    # Drag 'n' Drop
 
     def on_drag_received(self, widget, context, x, y, selection, target_type, timestamp):
         if target_type == TARGET_TYPE_URI_LIST:
             uris = selection.get_uris()
-            if len(uris) == 1 and uris[0].lower()[-4:] in (".pgn", ".epd"):
-                uri = uris[0]
-                perspective = perspective_manager.get_perspective("database")
-                perspective.open_chessfile(uri)
-            else:
-                newGameDialog.loadFilesAndRun(uris)
+            for uri in uris:
+                if uri.lower().endswith(".fen"):
+                    newGameDialog.loadFileAndRun(uri)
+                else:
+                    perspective = perspective_manager.get_perspective("database")
+                    perspective.open_chessfile(uri)
 
     # Game Menu
 
@@ -175,9 +175,12 @@ class GladeHandlers(object):
         filenames = d.run()
         opendialog.destroy()
         if filenames is not None:
-            filename = filenames[0]
-            perspective = perspective_manager.get_perspective("database")
-            perspective.open_chessfile(filename)
+            for filename in filenames:
+                if filename.lower().endswith(".fen"):
+                    newGameDialog.loadFileAndRun(filename)
+                else:
+                    perspective = perspective_manager.get_perspective("database")
+                    perspective.open_chessfile(filename)
 
     def on_set_up_position_activate(self, widget):
         rotate_menu = gamewidget.getWidgets()["rotate_board1"]

@@ -8,9 +8,6 @@ from operator import attrgetter
 from itertools import groupby
 
 from gi.repository import Gdk, Gtk, GLib, GObject
-
-from cairo import ImageSurface
-
 from gi.repository import GtkSource
 
 from pychess.compat import StringIO
@@ -830,35 +827,6 @@ class ImageButton(Gtk.Button):
         self.add(self.image)
 
 
-class XXXImageButton(Gtk.DrawingArea):
-    def __init__(self, image_paths):
-        GObject.GObject.__init__(self)
-        self.set_events(Gdk.EventMask.EXPOSURE_MASK |
-                        Gdk.EventMask.BUTTON_PRESS_MASK)
-
-        self.connect("draw", self.draw)
-        self.connect("button_press_event", self.buttonPress)
-
-        self.surfaces = [ImageSurface.create_from_png(path)
-                         for path in image_paths]
-        self.current = 0
-
-        width, height = self.surfaces[0].get_width(), self.surfaces[
-            0].get_height()
-        self.size = (0, 0, width, height)
-        self.set_size_request(width, height)
-
-    def draw(self, self_, context):
-        context.set_source_surface(self.surfaces[self.current], 0, 0)
-        context.fill()
-
-    def buttonPress(self, self_, event):
-        if event.button == 1 and event.type == Gdk.EventType.BUTTON_PRESS:
-            self.current = (self.current + 1) % len(self.surfaces)
-            self.window.invalidate_rect(self.size, True)
-            self.window.process_updates(True)
-
-
 def createRematch(gamemodel):
     """ If gamemodel contains only LOCAL or ARTIFICIAL players, this starts a
         new game, based on the info in gamemodel """
@@ -896,14 +864,14 @@ def createRematch(gamemodel):
     game_handler.generalStart(newgamemodel, player0tup, player1tup)
 
 
-def loadFilesAndRun(uris):
-    for uri in uris:
-        uri = splitUri(uri)[1]
-        loader = enddir[uri[uri.rfind(".") + 1:]]
-        timemodel = TimeModel(0, 0)
-        gamemodel = GameModel(timemodel)
-        white_name = _("White")
-        black_name = _("Black")
-        p0 = (LOCAL, Human, (WHITE, white_name), white_name)
-        p1 = (LOCAL, Human, (BLACK, black_name), black_name)
-        game_handler.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1))
+def loadFileAndRun(uri):
+    parts = splitUri(uri)
+    uri = parts[1] if len(parts) == 2 else parts[0]
+    loader = enddir[uri[uri.rfind(".") + 1:]]
+    timemodel = TimeModel(0, 0)
+    gamemodel = GameModel(timemodel)
+    white_name = _("White")
+    black_name = _("Black")
+    p0 = (LOCAL, Human, (WHITE, white_name), white_name)
+    p1 = (LOCAL, Human, (BLACK, black_name), black_name)
+    game_handler.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1))
