@@ -394,6 +394,9 @@ class PGNFile(ChessFile):
             except OSError as err:
                 self.chess_db = None
                 log.debug("Failed to sart chess_db parser. OSError %s %s" % (err.errno, err.strerror))
+            except pexpect.TIMEOUT:
+                self.chess_db = None
+                print("chess_db parser failed (pexpect.TIMEOUT)")
             except pexpect.EOF:
                 self.chess_db = None
                 print("chess_db parser failed (pexpect.EOF)")
@@ -413,6 +416,9 @@ class PGNFile(ChessFile):
             except OSError as err:
                 self.scoutfish = None
                 log.debug("Failed to sart scoutfish. OSError %s %s" % (err.errno, err.strerror))
+            except pexpect.TIMEOUT:
+                self.scoutfish = None
+                print("scoutfish failed (pexpect.TIMEOUT)")
             except pexpect.EOF:
                 self.scoutfish = None
                 print("scoutfish failed (pexpect.EOF)")
