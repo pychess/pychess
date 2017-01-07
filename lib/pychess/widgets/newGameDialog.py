@@ -32,7 +32,7 @@ from pychess.System import conf
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
-from pychess.widgets.ionest import game_handler
+from pychess.widgets.ionest import game_handler, enddir
 from pychess.widgets import gamewidget
 from pychess.widgets import ImageMenu
 from pychess.widgets.BoardControl import BoardControl
@@ -899,7 +899,7 @@ def createRematch(gamemodel):
 def loadFilesAndRun(uris):
     for uri in uris:
         uri = splitUri(uri)[1]
-        loader = game_handler.enddir[uri[uri.rfind(".") + 1:]]
+        loader = enddir[uri[uri.rfind(".") + 1:]]
         timemodel = TimeModel(0, 0)
         gamemodel = GameModel(timemodel)
         white_name = _("White")
