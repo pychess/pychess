@@ -88,6 +88,11 @@ class SwitcherPanel(Gtk.IconView):
                         treepath = Gtk.TreePath(i - 1)
                         self.select_path(treepath)
                         self.item_activated(treepath)
+                    else:
+                        if len(self.liststore) > 0:
+                            treepath = Gtk.TreePath(0)
+                            self.select_path(treepath)
+                            self.item_activated(treepath)
                     self.queue_draw()
                     break
         else:

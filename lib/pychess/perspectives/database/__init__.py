@@ -308,7 +308,8 @@ class NestedFileChooserDialog(object):
         Gtk.main()
 
     def _response(self, dialog, response):
-        self.filenames = self.dialog.get_filenames()
+        if response != Gtk.ResponseType.CANCEL:
+            self.filenames = self.dialog.get_filenames()
         self.dialog.destroy()
         Gtk.main_quit()
 
