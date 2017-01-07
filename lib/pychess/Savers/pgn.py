@@ -367,11 +367,14 @@ class PGNFile(ChessFile):
         self.tag_database = TagDatabase(self.engine)
 
         # Import .pgn header tags to .sqlite database
-        if self.size > 0 and self.tag_database.count == 0:
-            drop_indexes(self.engine)
+        size = self.size
+        if size > 0 and self.tag_database.count == 0:
+            if size > 10000000:
+                drop_indexes(self.engine)
             importer = PgnImport(self)
             importer.do_import(self.path, progressbar=self.progressbar)
-            create_indexes(self.engine)
+            if size > 10000000:
+                create_indexes(self.engine)
 
     def init_chess_db(self):
         # Create/open polyglot .bin file with extra win/loss/draw stats

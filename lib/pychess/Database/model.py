@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 import time
 
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
@@ -14,6 +15,7 @@ from sqlalchemy.sql.expression import Executable, ClauseElement, _literal_as_tex
 from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
 from pychess.System.Log import log
+from pychess.System.prefix import addUserCachePrefix
 
 
 @event.listens_for(Engine, "before_cursor_execute")
@@ -68,8 +70,8 @@ def insert_or_ignore(engine, stmt):
 
 engines = {}
 
-# PyChess database schema version number
-SCHEMA_VERSION = 1
+# PyChess database schema version
+SCHEMA_VERSION = "20170107"
 
 
 def get_engine(path=None, dialect="sqlite", echo=False):
@@ -85,16 +87,14 @@ def get_engine(path=None, dialect="sqlite", echo=False):
             engine = create_engine(url, connect_args={'check_same_thread': False},
                                    echo=echo, poolclass=StaticPool)
         else:
+            if path != empty_db and not os.path.isfile(path):
+                shutil.copyfile(empty_db, path)
             engine = create_engine(url, echo=echo)
 
         if path is None or not os.path.isfile(path):
             metadata.create_all(engine)
             ini_tag(engine)
             ini_schema_version(engine)
-        else:
-            if not engine.has_table('schema_version'):
-                metadata.create_all(engine, tables=[schema_version])
-                ini_schema_version(engine)
 
         engines[url] = engine
         return engine
@@ -179,7 +179,7 @@ tag_game = Table(
 schema_version = Table(
     'schema_version', metadata,
     Column('id', Integer, primary_key=True),
-    Column('version', SmallInteger),
+    Column('version', String(8)),
 )
 
 
@@ -219,3 +219,10 @@ def ini_schema_version(engine):
         {"id": 1, "version": SCHEMA_VERSION},
     ])
     conn.close()
+
+
+# create an empty database to use as skeleton
+empty_db = os.path.join(addUserCachePrefix("%s.sqlite" % SCHEMA_VERSION))
+if not os.path.isfile(empty_db):
+    engine = get_engine(empty_db)
+    engine.dispose()
