@@ -41,12 +41,12 @@ def protosave(uri, append=False):
 
     if splitted[0] == "file":
         if append:
-            return open(splitted[1], "a", encoding=PGN_ENCODING)
-        return open(splitted[1], "w")
+            return open(splitted[1], "a", encoding=PGN_ENCODING, newline="")
+        return open(splitted[1], "w", newline="")
     elif len(splitted) == 1:
         if append:
-            return open(splitted[0], "a", encoding=PGN_ENCODING)
-        return open(splitted[0], "w", encoding=PGN_ENCODING)
+            return open(splitted[0], "a", encoding=PGN_ENCODING, newline="")
+        return open(splitted[0], "w", encoding=PGN_ENCODING, newline="")
 
     raise IOError("PyChess doesn't support writing to protocol")
 
