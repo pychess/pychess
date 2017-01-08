@@ -497,8 +497,9 @@ game_handler = GameHandler()
 
 
 def get_save_dialog(export=False):
+    mainwindow = gamewidget.getWidgets()["window1"]
     savedialog = Gtk.FileChooserDialog(
-        "", None, Gtk.FileChooserAction.SAVE,
+        "", mainwindow, Gtk.FileChooserAction.SAVE,
         (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE,
          Gtk.ResponseType.ACCEPT))
     savedialog.set_current_folder(os.path.expanduser("~"))
@@ -527,8 +528,9 @@ def get_save_dialog(export=False):
 
 
 def get_open_dialog():
+    mainwindow = gamewidget.getWidgets()["window1"]
     opendialog = Gtk.FileChooserDialog(
-        _("Open chess file"), None, Gtk.FileChooserAction.OPEN,
+        _("Open chess file"), mainwindow, Gtk.FileChooserAction.OPEN,
         (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
          Gtk.ResponseType.ACCEPT))
     opendialog.set_show_hidden(True)

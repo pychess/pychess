@@ -15,6 +15,7 @@ from pychess.perspectives.database.PreviewPanel import PreviewPanel
 from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import EAST, SOUTH, CENTER, NORTH
+from pychess.widgets import gamewidget
 from pychess.widgets import dock_panel_tab
 from pychess.Database.model import create_indexes, drop_indexes
 from pychess.Database.PgnImport import PgnImport, download_file
@@ -60,7 +61,9 @@ class Database(GObject.GObject, Perspective):
         self.spinner.set_size_request(50, 50)
         self.progressbar0 = Gtk.ProgressBar(show_text=True)
         self.progressbar1 = Gtk.ProgressBar(show_text=True)
-        self.progress_dialog = Gtk.Dialog("", None, 0, (
+
+        mainwindow = gamewidget.getWidgets()["window1"]
+        self.progress_dialog = Gtk.Dialog("", mainwindow, 0, (
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
         self.progress_dialog.get_content_area().pack_start(self.spinner, True, True, 0)
         self.progress_dialog.get_content_area().pack_start(self.progressbar0, True, True, 0)
