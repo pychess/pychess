@@ -20,3 +20,10 @@ cd chess_db; git pull
 cd parser; make build ARCH=x86-64-modern; cd ../..
 cp chess_db/parser/parser ./lib/pychess/external
 cp chess_db/parser/chess_db.py ./lib/pychess/external
+
+if [ ! -d pgnextractor ]; then
+    git clone https://github.com/sshivaji/pgnextractor
+fi
+cd pgnextractor; git pull
+cd parser; make build ARCH=x86-64-modern; cd ../..
+cp pgnextractor/parser/pgnextractor ./lib/pychess/external

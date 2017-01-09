@@ -28,7 +28,7 @@ except ImportError:
 from pychess.compat import basestring, StringIO
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
     WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
-from pychess.System import conf
+from pychess.System import conf, Timer
 from pychess.System.Log import log
 from pychess.System.SubProcess import searchPath
 from pychess.Utils.lutils.LBoard import LBoard
@@ -375,7 +375,8 @@ class PGNFile(ChessFile):
             if size > 10000000:
                 drop_indexes(self.engine)
             importer = PgnImport(self)
-            importer.do_import(self.path, progressbar=self.progressbar)
+            with Timer("import") as t:
+                importer.do_import(self.path, progressbar=self.progressbar)
             if size > 10000000:
                 create_indexes(self.engine)
 

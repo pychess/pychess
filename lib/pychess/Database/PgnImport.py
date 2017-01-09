@@ -4,8 +4,11 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import collections
+import json
 import os
 import re
+import sys
+import subprocess
 import tempfile
 import zipfile
 
@@ -17,8 +20,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from pychess.compat import unicode, urlopen, HTTPError, URLError
 from pychess.Utils.const import NORMALCHESS, RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Variants import name2variant
+from pychess.System.SubProcess import searchPath
 from pychess.System.protoopen import protoopen, protosave
 from pychess.Database.model import event, site, player, game, annotator, tag_game, source
+# from pychess.System import profile_me
 
 
 TAG_REGEX = re.compile(r"\[([a-zA-Z0-9_]+)\s+\"(.*)\"\]")
@@ -39,6 +44,12 @@ pgn2Const = {"*": RUNNING,
              "1/2": DRAW,
              "1-0": WHITEWON,
              "0-1": BLACKWON}
+
+
+this_dir = os.path.dirname(os.path.abspath(__file__))
+external = os.path.join(this_dir, "..", "external")
+executable = "pgnextractor.exe" if sys.platform == "win32" else "pgnextractor"
+pgnextractor = searchPath(executable, access=os.X_OK, altpath=os.path.join(external, executable))
 
 
 def download_file(url, progressbar=None):
@@ -161,6 +172,7 @@ class PgnImport():
         GLib.idle_add(self.progressbar.set_text, "")
         self.cancel = True
 
+    # @profile_me
     def do_import(self, filename, info=None, progressbar=None):
         self.progressbar = progressbar
 
@@ -213,12 +225,25 @@ class PgnImport():
             # estimated game count
             all_games = max(size / 840, 1)
 
+            handle_json = None
+            if pgnextractor is not None:
+                try:
+                    output = subprocess.check_output([pgnextractor, "headers", pgnfile])
+                    print("pgnextractor output=", output)
+                    for line in output:
+                        if line.satrtswith("Games"):
+                            all_games = line.split()[1]
+                    headers_json = os.path.splitext(pgnfile)[0] + ".headers.json"
+                    handle_json = protoopen(headers_json)
+                except subprocess.CalledProcessError:
+                    print("pgnextractor failed")
+
             get_id = self.get_id
             # use transaction to avoid autocommit slowness
             trans = self.conn.begin()
             try:
                 i = 0
-                for offs, tags in read_games(handle):
+                for tags in read_games(handle, handle_json):
                     if not tags:
                         print("Empty game #%s" % (i + 1))
                         continue
@@ -314,9 +339,11 @@ class PgnImport():
 
                     ply_count = tags.get("PlyCount")
 
+                    offset = int(tags["offset"])
+
                     self.game_data.append({
-                        'offset': base_offset + int(offs),
-                        'offset8': (int(offs) >> 3) << 3,
+                        'offset': base_offset + offset,
+                        'offset8': (offset >> 3) << 3,
                         'event_id': event_id,
                         'site_id': site_id,
                         'date_year': game_year,
@@ -420,8 +447,17 @@ class PgnImport():
                 print("Importing %s failed! \n%s" % (pgnfile, e))
 
 
-def read_games(handle):
+def read_games(handle, handle_json=None):
     """Based on chess.pgn.scan_headers() from Niklas Fiekas python-chess"""
+
+    if handle_json is not None:
+        for line in handle_json:
+            try:
+                yield json.loads(line)
+            except:
+                print(line)
+        return
+
     in_comment = False
 
     game_headers = None
@@ -462,7 +498,8 @@ def read_games(handle):
         # Reading movetext. If there were headers, previously, those are now
         # complete and can be yielded.
         if game_pos is not None:
-            yield max(0, game_pos - line_end_fix), game_headers
+            game_headers["offset"] = max(0, game_pos - line_end_fix)
+            yield game_headers
             game_pos = None
 
         last_pos += len(line)
@@ -470,4 +507,5 @@ def read_games(handle):
 
     # Yield the headers of the last game.
     if game_pos is not None:
-        yield max(0, game_pos - line_end_fix), game_headers
+        game_headers["offset"] = max(0, game_pos - line_end_fix)
+        yield game_headers
