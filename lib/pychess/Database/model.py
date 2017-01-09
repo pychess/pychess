@@ -28,8 +28,8 @@ def before_cursor_execute(conn, cursor, statement, parameters, context, executem
 @event.listens_for(Engine, "after_cursor_execute")
 def after_cursor_execute(conn, cursor, statement, parameters, context, executemany):
     total = time.time() - context._query_start_time
-    log.info("Query Complete!", extra={"task": "SQL"})
-    log.info("Total Time: %.02fms" % (total * 1000), extra={"task": "SQL"})
+    log.debug("Query Complete!", extra={"task": "SQL"})
+    log.debug("Total Time: %.02fms" % (total * 1000), extra={"task": "SQL"})
 
 
 class Explain(Executable, ClauseElement):
