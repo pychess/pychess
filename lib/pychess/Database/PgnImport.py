@@ -339,10 +339,10 @@ class PgnImport():
 
                     ply_count = tags.get("PlyCount")
 
-                    offset = int(tags["offset"])
+                    offset = base_offset + int(tags["offset"])
 
                     self.game_data.append({
-                        'offset': base_offset + offset,
+                        'offset': offset,
                         'offset8': (offset >> 3) << 3,
                         'event_id': event_id,
                         'site_id': site_id,
