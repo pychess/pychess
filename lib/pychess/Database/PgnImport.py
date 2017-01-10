@@ -231,7 +231,7 @@ class PgnImport():
                     output = subprocess.check_output([pgnextractor, "headers", pgnfile])
                     print("pgnextractor output=", output)
                     for line in output:
-                        if line.satrtswith("Games"):
+                        if line.startswith("Games"):
                             all_games = line.split()[1]
                     headers_json = os.path.splitext(pgnfile)[0] + ".headers.json"
                     handle_json = protoopen(headers_json)
