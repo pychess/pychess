@@ -232,8 +232,11 @@ class BoardView(Gtk.DrawingArea):
         self.premove_piece = None
         self.premove_promotion = None
 
+        # right click circles and arrows
         self.arrows = set()
         self.circles = set()
+        self.pre_arrow = None
+        self.pre_circle = None
 
     def _del(self):
         self.disconnect(self.draw_cid)
@@ -1123,6 +1126,10 @@ class BoardView(Gtk.DrawingArea):
             x_loc, y_loc = self.cord2Point(cord)
             context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
             context.stroke()
+        if self.pre_circle is not None:
+            x_loc, y_loc = self.cord2Point(self.pre_circle)
+            context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
+            context.stroke()
 
         arw = 0.15  # Arrow width
         arhw = 0.6  # Arrow head width
@@ -1130,6 +1137,9 @@ class BoardView(Gtk.DrawingArea):
         arsw = 0.0  # Arrow stroke width
         for arrow_cords in self.arrows:
             self.__drawArrow(context, arrow_cords, arw, arhw, arhh, arsw,
+                             light_green, light_green)
+        if self.pre_arrow is not None:
+            self.__drawArrow(context, self.pre_arrow, arw, arhw, arhh, arsw,
                              light_green, light_green)
 
     ###############################

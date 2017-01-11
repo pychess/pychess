@@ -96,7 +96,8 @@ class BoardControl(Gtk.EventBox):
         self.gamemodel_cids.append(gamemodel.connect("game_started", onGameStart))
         self.keybuffer = ""
 
-        self.arrow_start = None
+        self.pre_arrow_from = None
+        self.pre_arrow_to = None
 
     def _del(self):
         self.view.disconnect(self.view_cid)
@@ -337,42 +338,83 @@ class BoardControl(Gtk.EventBox):
 
     def button_press(self, widget, event):
         if event.button == 3:
+            # first we will draw a circle
             cord = self.currentState.point2Cord(event.x, event.y)
-            self.arrow_start = cord
+            self.pre_arrow_from = cord
+            self.view.pre_circle = cord
+            self.view.redrawCanvas()
         else:
+            # remove all circles and arrows
+            need_redraw = False
             if self.view.arrows:
                 self.view.arrows.clear()
-                self.view.redrawCanvas()
+                need_redraw = True
             if self.view.circles:
                 self.view.circles.clear()
+                need_redraw = True
+            if self.view.pre_arrow is not None:
+                self.view.pre_arrow = None
+                need_redraw = True
+            if self.view.pre_circle is not None:
+                self.view.pre_circle = None
+                need_redraw = True
+            if need_redraw:
                 self.view.redrawCanvas()
+
         if self.game_preview:
             return
         return self.currentState.press(event.x, event.y, event.button)
 
     def button_release(self, widget, event):
         if event.button == 3:
+            # remove or finalize circle/arrow as needed
             cord = self.currentState.point2Cord(event.x, event.y)
-            if self.arrow_start is not None and cord != self.arrow_start:
-                from_to = self.arrow_start, cord
-                to_from = cord, self.arrow_start
-                if from_to in self.view.arrows:
-                    self.view.arrows.remove(from_to)
-                elif to_from in self.view.arrows:
-                    self.view.arrows.remove(to_from)
-                else:
-                    self.view.arrows.add(from_to)
-            else:
+            if self.view.pre_circle == cord:
                 if cord in self.view.circles:
                     self.view.circles.remove(cord)
                 else:
                     self.view.circles.add(cord)
+                self.view.pre_circle = None
+
+            if self.view.pre_arrow is not None:
+                if self.view.pre_arrow in self.view.arrows:
+                    self.view.arrows.remove(self.view.pre_arrow)
+                else:
+                    self.view.arrows.add(self.view.pre_arrow)
+                self.view.pre_arrow = None
+
+            self.pre_arrow_from = None
+            self.pre_arrow_to = None
             self.view.redrawCanvas()
+
         if self.game_preview:
             return
         return self.currentState.release(event.x, event.y)
 
     def motion_notify(self, widget, event):
+        to = self.currentState.point2Cord(event.x, event.y)
+        if self.pre_arrow_from is not None:
+            if to != self.pre_arrow_from:
+                # this will be an arrow
+                if self.pre_arrow_to is not None and to != self.pre_arrow_to:
+                    # first remove the old one
+                    self.view.pre_arrow = None
+                    self.view.redrawCanvas()
+
+                arrow = self.pre_arrow_from, to
+                if arrow != self.view.pre_arrow:
+                    # draw the new arrow
+                    self.view.pre_arrow = arrow
+                    self.view.pre_circle = None
+                    self.view.redrawCanvas()
+                    self.pre_arrow_to = to
+
+            elif self.view.pre_circle is None:
+                # back to circle
+                self.view.pre_arrow = None
+                self.view.pre_circle = to
+                self.view.redrawCanvas()
+
         return self.currentState.motion(event.x, event.y)
 
     def leave_notify(self, widget, event):
