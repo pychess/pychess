@@ -31,10 +31,11 @@ class SwitcherPanel(Gtk.IconView):
 
         self.alignment = Gtk.Alignment()
 
-        self.liststore = Gtk.ListStore(object, Pixbuf, str)
+        self.liststore = Gtk.ListStore(object, Pixbuf, str, str)
         self.set_model(self.liststore)
         self.set_pixbuf_column(1)
         self.set_text_column(2)
+        self.set_tooltip_column(3)
         self.set_item_orientation(Gtk.Orientation.HORIZONTAL)
         self.set_activate_on_single_click(True)
         self.set_selection_mode(Gtk.SelectionMode.BROWSE)
@@ -66,9 +67,10 @@ class SwitcherPanel(Gtk.IconView):
     def on_chessfile_opened(self, persp, chessfile):
         name, ext = os.path.splitext(chessfile.path)
         icon = pgn_icon
-        # basename = os.path.basename(name)
-        info = "%s\n%s  %s" % (name, ext[1:], chessfile.count)
-        treeiter = self.liststore.append([chessfile, icon, info])
+        basename = os.path.basename(name)
+        info = "%s\n%s  %s" % (basename, ext[1:], chessfile.count)
+        tooltip = chessfile.path
+        treeiter = self.liststore.append([chessfile, icon, info, tooltip])
         treepath = self.liststore.get_path(treeiter)
         self.select_path(treepath)
 
