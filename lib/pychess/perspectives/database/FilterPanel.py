@@ -22,14 +22,14 @@ class FilterPanel:
         tag_entry.connect('search-changed', self.search_tag_changed)
 
         scout_label = Gtk.Label(_("Game data:"))
-        scout_entry = Gtk.SearchEntry()
-        scout_entry.connect('activate', self.activate_scout_entry)
-        scout_entry.connect('search-changed', self.search_scout_changed)
+        self.scout_entry = Gtk.SearchEntry()
+        self.scout_entry.connect('activate', self.activate_scout_entry)
+        self.scout_entry.connect('search-changed', self.search_scout_changed)
 
         grid.add(tag_label)
         grid.attach(tag_entry, 1, 0, 2, 1)
         grid.attach_next_to(scout_label, tag_label, Gtk.PositionType.BOTTOM, 1, 2)
-        grid.attach_next_to(scout_entry, scout_label, Gtk.PositionType.RIGHT, 2, 1)
+        grid.attach_next_to(self.scout_entry, scout_label, Gtk.PositionType.RIGHT, 2, 1)
 
         self.box.pack_start(grid, False, False, 0)
         self.box.show_all()

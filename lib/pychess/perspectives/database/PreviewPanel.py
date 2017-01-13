@@ -3,11 +3,13 @@ from __future__ import print_function
 
 from gi.repository import Gtk
 
-from pychess.Utils.const import FEN_EMPTY
+from pychess.Utils.const import EMPTY, FEN_EMPTY, FEN_START
 from pychess.Utils.Board import Board
+from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
 from pychess.widgets.BoardControl import BoardControl
 from pychess.Savers.ChessFile import LoadingError
+from pychess.perspectives import perspective_manager
 
 
 class PreviewPanel:
@@ -40,11 +42,15 @@ class PreviewPanel:
         filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
         toolbar.insert(filterButton, -1)
 
+        addButton = Gtk.ToolButton(Gtk.STOCK_ADD)
+        toolbar.insert(addButton, -1)
+
         firstButton.connect("clicked", self.on_first_clicked)
         prevButton.connect("clicked", self.on_prev_clicked)
         nextButton.connect("clicked", self.on_next_clicked)
         lastButton.connect("clicked", self.on_last_clicked)
         filterButton.connect("clicked", self.on_filter_clicked)
+        addButton.connect("clicked", self.on_add_clicked)
 
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, False, False, 0)
@@ -53,6 +59,7 @@ class PreviewPanel:
         self.gamemodel = GameModel()
         self.boardcontrol = BoardControl(self.gamemodel, {}, game_preview=True)
         self.boardview = self.boardcontrol.view
+        self.board = self.gamemodel.boards[self.boardview.shown].board
         self.boardview.set_size_request(170, 170)
 
         self.boardview.got_started = True
@@ -118,6 +125,27 @@ class PreviewPanel:
     def on_filter_clicked(self, button):
         self.filtered = button.get_active()
         self.update_gamelist()
+
+    def on_add_clicked(self, button):
+        self.board = self.gamemodel.boards[self.boardview.shown].board
+        board = self.board.clone()
+        fen = board.asFen()
+
+        for cord in range(64):
+            kord = Cord(cord)
+            if kord not in self.boardview.circles:
+                board.arBoard[cord] = EMPTY
+
+        persp = perspective_manager.get_perspective("database")
+
+        sub_fen = board.asFen().split()[0]
+        if sub_fen == "8/8/8/8/8/8/8/8":
+            if fen == FEN_START:
+                return
+            else:
+                sub_fen = fen.split()[0]
+
+        persp.filter_panel.scout_entry.set_text('{"sub-fen": "%s"}' % sub_fen)
 
     def update_gamelist(self):
         if not self.filtered:

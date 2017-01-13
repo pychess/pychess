@@ -83,9 +83,9 @@ class Database(GObject.GObject, Perspective):
 
         docks = {
             "gamelist": (Gtk.Label(label="gamelist"), self.gamelist.box),
-            "switcher": (dock_panel_tab(_("Database switcher"), "", addDataPrefix("glade/panel_docker.svg")), self.switcher_panel.alignment),
-            "openingtree": (dock_panel_tab(_("Opening tree"), "", addDataPrefix("glade/panel_docker.svg")), self.opening_tree_panel.box),
-            "filter": (dock_panel_tab(_("Filter"), "", addDataPrefix("glade/panel_docker.svg")), self.filter_panel.box),
+            "switcher": (dock_panel_tab(_("Databases"), "", addDataPrefix("glade/panel_docker.svg")), self.switcher_panel.alignment),
+            "openingtree": (dock_panel_tab(_("Openings"), "", addDataPrefix("glade/panel_docker.svg")), self.opening_tree_panel.box),
+            "filter": (dock_panel_tab(_("Filters"), "", addDataPrefix("glade/panel_docker.svg")), self.filter_panel.box),
             "preview": (dock_panel_tab(_("Preview"), "", addDataPrefix("glade/panel_docker.svg")), self.preview_panel.box),
         }
 
