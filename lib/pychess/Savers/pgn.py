@@ -28,7 +28,7 @@ except ImportError:
 from pychess.compat import basestring, StringIO
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
     WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
-from pychess.System import conf, Timer
+from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.SubProcess import searchPath
 from pychess.Utils.lutils.LBoard import LBoard
@@ -354,6 +354,7 @@ class PGNFile(ChessFile):
             log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
 
     def get_count(self):
+        """ Number of games in .pgn database """
         if self.pgn_is_string:
             return len(self.games)
         else:
@@ -361,10 +362,13 @@ class PGNFile(ChessFile):
     count = property(get_count)
 
     def get_size(self):
+        """ Size of .pgn file in bytes """
         return os.path.getsize(self.path)
     size = property(get_size)
 
     def init_tag_database(self):
+        """ Create/open .sqlite database of game header tags """
+
         sqlite_path = os.path.splitext(self.path)[0] + '.sqlite'
         self.engine = dbmodel.get_engine(sqlite_path)
         self.tag_database = TagDatabase(self.engine)
@@ -375,14 +379,14 @@ class PGNFile(ChessFile):
             if size > 10000000:
                 drop_indexes(self.engine)
             importer = PgnImport(self)
-            with Timer("import") as t:
-                importer.do_import(self.path, progressbar=self.progressbar)
+            importer.do_import(self.path, progressbar=self.progressbar)
             if size > 10000000:
                 create_indexes(self.engine)
 
     def init_chess_db(self):
-        # Create/open polyglot .bin file with extra win/loss/draw stats
-        # using chess_db parser from https://github.com/mcostalba/chess_db
+        """ Create/open polyglot .bin file with extra win/loss/draw stats
+            using chess_db parser from https://github.com/mcostalba/chess_db
+        """
         if chess_db_path is not None and self.path and self.size > 0:
             try:
                 if self.progressbar is not None:
@@ -406,8 +410,9 @@ class PGNFile(ChessFile):
                 log.warning("chess_db parser failed (pexpect.EOF)")
 
     def init_scoutfish(self):
-        # Create/open .scout database index file to help querying
-        # using scoutfish from https://github.com/mcostalba/scoutfish
+        """ Create/open .scout database index file to help querying
+            using scoutfish from https://github.com/mcostalba/scoutfish
+        """
         if scoutfish_path is not None and self.path and self.size > 0:
             try:
                 if self.progressbar is not None:
@@ -428,6 +433,7 @@ class PGNFile(ChessFile):
                 log.warning("scoutfish failed (pexpect.EOF)")
 
     def get_book_moves(self, fen):
+        """ Get move-games-win-loss-draw stat of fen position """
         rows = []
         if self.chess_db is not None:
             move_stat = self.chess_db.find("limit %s skip %s %s" % (1, 0, fen))
@@ -436,65 +442,61 @@ class PGNFile(ChessFile):
         return rows
 
     def set_tags_filter(self, text):
+        """ Set (now prefixing) text and
+            create where clause we will use to query header tag .sqlite database
+        """
         self.text = text
         self.tag_database.build_where_tags(text)
 
     def set_fen_filter(self, fen):
+        """ Set fen string we will use to get game offsets from .bin database """
         if self.chess_db is not None and fen != FEN_START:
             self.fen = fen
         else:
             self.fen = ""
+            self.tag_database.build_where_offs8(None)
 
     def set_scout_filter(self, query):
+        """ Set json string we will use to get game offsets from  .scout database """
         if self.scoutfish is not None and query:
             self.query = query
         else:
             self.query = {}
+            self.tag_database.build_where_offs(None)
+            self.offs_ply = {}
 
-    def get_offs(self, off, skip):
+    def get_offs(self, skip):
+        """ Get offsets from .scout database and
+            create where clause we will use to query header tag .sqlite database
+        """
         if self.query:
             self.query["skip"] = skip
-            self.query["limit"] = self.limit + 1
+            self.query["limit"] = self.limit
             move_stat = self.scoutfish.scout(self.query)
 
             offsets = []
             for stat in move_stat["matches"]:
                 offsets.append(stat["ofs"])
                 self.offs_ply[stat["ofs"]] = stat["ply"][0]
-            off = sorted(off + offsets)[:self.limit]
 
-            self.tag_database.build_where_offs(off)
-            self.has_more_where_offs = len(offsets) == self.limit + 1
-        else:
-            self.tag_database.build_where_offs(None)
-            self.has_more_where_offs = False
-            self.offs_ply = {}
+            self.tag_database.build_where_offs(offsets)
 
-        return off
-
-    def get_offs8(self, off8, skip):
-        # TODO: how pagination of offsets from .sqlite and .bin and .csout will work together?
-        # "find" gives offsets in random order because
-        # entries in .bin are stored in polyglot key order while
-        # entries in .scout are stored in offset order
-
+    def get_offs8(self, skip):
+        """ Get offsets from .bin database and
+            create where clause we will use to query header tag .sqlite database
+        """
         if self.fen:
-            move_stat = self.chess_db.find("limit %s skip %s %s" % (self.limit + 1, skip, self.fen))
+            move_stat = self.chess_db.find("limit %s skip %s %s" % (self.limit, skip, self.fen))
 
             offsets = []
             for stat in move_stat["moves"]:
                 offsets += stat["pgn offsets"]
-            off8 = sorted(off8 + offsets)[:self.limit]
+            off8 = sorted(offsets)
 
             self.tag_database.build_where_offs8(off8)
-            self.has_more_where_offs8 = len(offsets) == self.limit + 1
-        else:
-            self.tag_database.build_where_offs8(None)
-            self.has_more_where_offs8 = False
-
-        return off8
 
     def get_records(self, direction=FIRST_PAGE):
+        """ Get game header tag records from .sqlite database in paginated way """
         if direction == FIRST_PAGE:
             self.skip = 0
             self.last_seen_offs = [-1]
@@ -510,33 +512,14 @@ class PGNFile(ChessFile):
             if not self.text and self.skip >= self.limit:
                 self.skip -= self.limit
 
-        off = self.get_offs([], self.skip)
-        off8 = self.get_offs8([], self.skip)
-
         if self.fen:
             self.last_seen_offs = [-1]
+            self.get_offs8(self.skip)
+
+        if self.query:
+            self.get_offs(self.skip)
 
         records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
-        count_records = len(records)
-
-        if count_records < self.limit and direction in (FIRST_PAGE, NEXT_PAGE):
-            if self.text:
-                while count_records < self.limit and self.has_more_where_offs:
-                    self.skip += self.limit
-
-                    off = self.get_offs(off, self.skip)
-
-                    records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
-                    count_records = len(records)
-            else:
-                if self.fen and self.has_more_where_offs8:
-                    off8 = []
-                    self.get_offs8(off8, self.skip)
-                    records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
-                elif self.query and self.has_more_where_offs:
-                    off = []
-                    self.get_offs(off, self.skip)
-                    records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
 
         if records:
             self.last_seen_offs.append(records[-1]["Offset"])

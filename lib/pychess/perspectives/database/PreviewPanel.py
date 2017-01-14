@@ -40,9 +40,11 @@ class PreviewPanel:
         toolbar.insert(lastButton, -1)
 
         filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        filterButton.set_tooltip_text(_("Filter game list by current game moves"))
         toolbar.insert(filterButton, -1)
 
         addButton = Gtk.ToolButton(Gtk.STOCK_ADD)
+        addButton.set_tooltip_text(_("Add sub-fen filter from position/circles"))
         toolbar.insert(addButton, -1)
 
         firstButton.connect("clicked", self.on_first_clicked)
@@ -124,7 +126,13 @@ class PreviewPanel:
 
     def on_filter_clicked(self, button):
         self.filtered = button.get_active()
-        self.update_gamelist()
+        if not self.filtered:
+            self.boardview.showFirst()
+            self.filtered = True
+            self.update_gamelist()
+            self.filtered = False
+        else:
+            self.update_gamelist()
 
     def on_add_clicked(self, button):
         self.board = self.gamemodel.boards[self.boardview.shown].board

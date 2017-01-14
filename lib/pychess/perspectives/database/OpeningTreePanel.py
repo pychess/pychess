@@ -70,6 +70,7 @@ class OpeningTreePanel(Gtk.TreeView):
         toolbar.insert(prevButton, -1)
 
         filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        filterButton.set_tooltip_text(_("Filter game list by opening moves"))
         toolbar.insert(filterButton, -1)
 
         firstButton.connect("clicked", self.on_first_clicked)
@@ -103,6 +104,14 @@ class OpeningTreePanel(Gtk.TreeView):
 
     def on_filter_clicked(self, button):
         self.filtered = button.get_active()
+        if not self.filtered:
+            self.filtered = True
+            while self.board.hist_move:
+                self.board.popMove()
+            self.update_tree()
+            self.filtered = False
+        else:
+            self.update_tree()
 
     def column_clicked(self, col, data):
         self.set_search_column(data)
