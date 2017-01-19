@@ -128,6 +128,8 @@ class TagDatabase:
 
         self.select = select(self.cols, from_obj=self.from_obj)
 
+        self.select_offsets = select([game.c.offset,], from_obj=self.from_obj)
+
         self.colnames = self.engine.execute(self.select).keys()
 
         self.query = self.select
@@ -192,6 +194,11 @@ class TagDatabase:
         records = result.fetchall()
 
         return records
+
+    def get_offsets_for_tags(self, last_seen_offs):
+        query = self.select_offsets.where(self.where_tags).where(game.c.offset > last_seen_offs)
+        result = self.engine.execute(query)
+        return [rec[0] for rec in result.fetchall()]
 
     def get_info(self, rec):
         where = and_(game.c.source_id == source.c.id, game.c.id == rec["Id"])

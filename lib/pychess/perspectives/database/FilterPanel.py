@@ -16,7 +16,7 @@ class FilterPanel:
         grid.set_column_homogeneous(True)
         grid.set_row_spacing(3)
 
-        tag_label = Gtk.Label(_("Game headers:"))
+        tag_label = Gtk.Label(_("Header data:"))
         tag_entry = Gtk.SearchEntry()
         tag_entry.connect('activate', self.activate_tag_entry)
         tag_entry.connect('search-changed', self.search_tag_changed)

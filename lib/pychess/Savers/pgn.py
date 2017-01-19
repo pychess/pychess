@@ -465,23 +465,50 @@ class PGNFile(ChessFile):
             self.tag_database.build_where_offs(None)
             self.offs_ply = {}
 
-    def get_offs(self, skip):
+    def get_offs(self, skip, filtered_offs_list=None):
         """ Get offsets from .scout database and
             create where clause we will use to query header tag .sqlite database
         """
         if self.query:
+            limit = (10000 if self.text else self.limit) + 1
             self.query["skip"] = skip
-            self.query["limit"] = self.limit
+            self.query["limit"] = limit
             move_stat = self.scoutfish.scout(self.query)
 
             offsets = []
             for stat in move_stat["matches"]:
-                offsets.append(stat["ofs"])
-                self.offs_ply[stat["ofs"]] = stat["ply"][0]
+                offs = stat["ofs"]
+                if filtered_offs_list is None:
+                    offsets.append(offs)
+                    self.offs_ply[offs] = stat["ply"][0]
+                elif offs in filtered_offs_list:
+                    offsets.append(offs)
+                    self.offs_ply[offs] = stat["ply"][0]
 
-            self.tag_database.build_where_offs(offsets)
+            if filtered_offs_list is not None:
+                # Continue scouting until we get enough good offset if needed
+                print("Need more scouting...")
+                print(0, move_stat["match count"], len(offsets))
+                i = 1
+                while len(offsets) < self.limit and move_stat["match count"] == limit:
+                    self.query["skip"] = i * limit - 1
+                    move_stat = self.scoutfish.scout(self.query)
 
-    def get_offs8(self, skip):
+                    for stat in move_stat["matches"]:
+                        offs = stat["ofs"]
+                        if offs in filtered_offs_list:
+                            offsets.append(offs)
+                            self.offs_ply[offs] = stat["ply"][0]
+
+                    print(i, move_stat["match count"], len(offsets))
+                    i += 1
+
+            if len(offsets) > self.limit:
+                self.tag_database.build_where_offs(offsets[:self.limit])
+            else:
+                self.tag_database.build_where_offs(offsets)
+
+    def get_offs8(self, skip, filtered_offs_list=None):
         """ Get offsets from .bin database and
             create where clause we will use to query header tag .sqlite database
         """
@@ -490,10 +517,13 @@ class PGNFile(ChessFile):
 
             offsets = []
             for stat in move_stat["moves"]:
-                offsets += stat["pgn offsets"]
-            off8 = sorted(offsets)
+                offs = stat["pgn offsets"]
+                if filtered_offs_list is None:
+                    offsets += offs
+                elif offs in filtered_offs_list:
+                    offsets += offs
 
-            self.tag_database.build_where_offs8(off8)
+            self.tag_database.build_where_offs8(sorted(offsets))
 
     def get_records(self, direction=FIRST_PAGE):
         """ Get game header tag records from .sqlite database in paginated way """
@@ -514,10 +544,16 @@ class PGNFile(ChessFile):
 
         if self.fen:
             self.last_seen_offs = [-1]
-            self.get_offs8(self.skip)
+
+        filtered_offs_list = None
+        if self.text and (self.fen or self.query):
+            filtered_offs_list = self.tag_database.get_offsets_for_tags(self.last_seen_offs[-1])
+
+        if self.fen:
+            self.get_offs8(self.skip, filtered_offs_list=filtered_offs_list)
 
         if self.query:
-            self.get_offs(self.skip)
+            self.get_offs(self.skip, filtered_offs_list=filtered_offs_list)
 
         records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
 
