@@ -99,6 +99,8 @@ class PreviewPanel:
                     dialogue.format_secondary_text(err.args[1])
                 dialogue.connect("response", lambda dialogue, a: dialogue.hide())
                 dialogue.show()
+            self.boardview.lastMove = None
+            self.boardview._shown = self.gamemodel.lowply
         finally:
             self.boardview.animation_lock.release()
 
