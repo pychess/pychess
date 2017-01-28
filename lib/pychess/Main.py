@@ -102,7 +102,7 @@ class GladeHandlers(object):
         gmwidg = gamewidget.cur_gmwidg()
         if gmwidg is not None:
             # Let default handler work if typing inside entry widgets
-            current_focused_widget = gamewidget.getWidgets()["window1"].get_focus()
+            current_focused_widget = gamewidget.getWidgets()["main_window"].get_focus()
             if current_focused_widget is not None and isinstance(current_focused_widget, Gtk.Entry):
                 return False
 
@@ -267,12 +267,12 @@ class GladeHandlers(object):
             view.rotation = math.pi
 
     def on_fullscreen1_activate(self, widget):
-        gamewidget.getWidgets()["window1"].fullscreen()
+        gamewidget.getWidgets()["main_window"].fullscreen()
         gamewidget.getWidgets()["fullscreen1"].hide()
         gamewidget.getWidgets()["leave_fullscreen1"].show()
 
     def on_leave_fullscreen1_activate(self, widget):
-        gamewidget.getWidgets()["window1"].unfullscreen()
+        gamewidget.getWidgets()["main_window"].unfullscreen()
         gamewidget.getWidgets()["leave_fullscreen1"].hide()
         gamewidget.getWidgets()["fullscreen1"].show()
 
@@ -409,7 +409,7 @@ class PyChess(Gtk.Application):
     def on_gmwidg_created(self, gamehandler, gmwidg):
         log.debug("GladeHandlers.on_gmwidg_created: starting")
         # Bring playing window to the front
-        gamewidget.getWidgets()["window1"].present()
+        gamewidget.getWidgets()["main_window"].present()
 
         self.loaded_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect("game_loaded", self.update_recent)
         self.saved_cids[gmwidg.gamemodel] = gmwidg.gamemodel.connect("game_saved", self.update_recent)
@@ -441,7 +441,7 @@ class PyChess(Gtk.Application):
         self.widgets = widgets = uistuff.GladeWidgets("PyChess.glade")
         self.glade_handlers = GladeHandlers(self)
         widgets.getGlade().connect_signals(self.glade_handlers)
-        self.window = widgets["window1"]
+        self.window = widgets["main_window"]
 
         # new_game_tasker, internet_game_tasker = NewGameTasker(
         # ), InternetGameTasker()
@@ -464,11 +464,11 @@ class PyChess(Gtk.Application):
         uistuff.keep(widgets["auto_call_flag"], "autoCallFlag", first_value=True)
 
         # Show main window and init d'n'd
-        widgets["window1"].set_title('%s - PyChess' % _('Welcome'))
-        widgets["window1"].connect("delete-event", self.glade_handlers.on_quit1_activate)
-        widgets["window1"].connect("key-press-event", self.glade_handlers.on_window_key_press)
+        widgets["main_window"].set_title('%s - PyChess' % _('Welcome'))
+        widgets["main_window"].connect("delete-event", self.glade_handlers.on_quit1_activate)
+        widgets["main_window"].connect("key-press-event", self.glade_handlers.on_window_key_press)
 
-        uistuff.keepWindowSize("main", widgets["window1"], None, uistuff.POSITION_GOLDEN)
+        uistuff.keepWindowSize("main", widgets["main_window"], None, uistuff.POSITION_GOLDEN)
 
         # To get drag in the whole window, we add it to the menu and the
         # background. If it can be gotten to work, the drag_dest_set_proxy
@@ -543,7 +543,7 @@ class PyChess(Gtk.Application):
         # Discoverer dialog
         def discovering_started(discoverer, binnames):
             GLib.idle_add(DiscovererDialog.show, discoverer,
-                          widgets["window1"], binnames)
+                          widgets["main_window"], binnames)
 
         discoverer.connect("discovering_started", discovering_started)
         DiscovererDialog.init(discoverer)

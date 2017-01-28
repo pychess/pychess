@@ -3,11 +3,10 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-from sqlalchemy import select, func, or_, and_
+from sqlalchemy import select, func, and_, or_
 
 from pychess.compat import unicode
-from pychess.Utils.const import WHITE, BLACK
-from pychess.Utils.const import FEN_START
+from pychess.Utils.const import FEN_START, WHITE, BLACK, reprResult
 from pychess.Database import model as dbmodel
 from pychess.Database.model import game, event, site, player, pl1, pl2, annotator, source
 
@@ -128,7 +127,7 @@ class TagDatabase:
 
         self.select = select(self.cols, from_obj=self.from_obj)
 
-        self.select_offsets = select([game.c.offset,], from_obj=self.from_obj)
+        self.select_offsets = select([game.c.offset, ], from_obj=self.from_obj)
 
         self.colnames = self.engine.execute(self.select).keys()
 
@@ -145,16 +144,56 @@ class TagDatabase:
     def close(self):
         self.engine.dispose()
 
-    def build_where_tags(self, text):
-        if text:
-            text = unicode(text)
-            self.where_tags = or_(
-                pl1.c.name.startswith(text),
-                pl2.c.name.startswith(text),
-                event.c.name.startswith(text),
-                site.c.name.startswith(text),
-                annotator.c.name.startswith(text),
-            )
+    def build_where_tags(self, tag_query):
+        if tag_query is not None:
+            tags = []
+            if "white" in tag_query:
+                if "ignore_colors" in tag_query:
+                    tags.append(or_(pl1.c.name.startswith(tag_query["white"]),
+                                    pl2.c.name.startswith(tag_query["white"])))
+                else:
+                    tags.append(pl1.c.name.startswith(tag_query["white"]))
+
+            if "black" in tag_query:
+                if "ignore_colors" in tag_query:
+                    tags.append(or_(pl1.c.name.startswith(tag_query["black"]),
+                                    pl2.c.name.startswith(tag_query["black"])))
+                else:
+                    tags.append(pl2.c.name.startswith(tag_query["black"]))
+
+            if "event" in tag_query:
+                tags.append(event.c.name.startswith(tag_query["event"])),
+
+            if "site" in tag_query:
+                tags.append(site.c.name.startswith(tag_query["site"])),
+
+            if "eco_from" in tag_query:
+                tags.append(game.c.eco >= tag_query["eco_from"])
+
+            if "eco_to" in tag_query:
+                tags.append(game.c.eco <= tag_query["eco_to"])
+
+            if "annotator" in tag_query:
+                tags.append(annotator.c.name.startswith(tag_query["annotator"])),
+
+            if "result" in tag_query:
+                tags.append(game.c.result == reprResult.index(tag_query["result"])),
+
+            if "year_from" in tag_query:
+                tags.append(game.c.date_year >= tag_query["year_from"])
+
+            if "year_to" in tag_query:
+                tags.append(game.c.date_year <= tag_query["year_to"])
+
+            if "elo_from" in tag_query:
+                tags.append(game.c.white_elo >= tag_query["elo_from"])
+                tags.append(game.c.black_elo >= tag_query["elo_from"])
+
+            if "elo_to" in tag_query:
+                tags.append(game.c.white_elo <= tag_query["elo_to"])
+                tags.append(game.c.black_elo <= tag_query["elo_to"])
+
+            self.where_tags = and_(*tags)
         else:
             self.where_tags = None
 

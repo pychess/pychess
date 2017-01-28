@@ -77,14 +77,14 @@ class GameNanny(object):
     @idle_add
     def on_gmwidg_closed(self, gmwidg):
         if len(key2gmwidg) == 1:
-            getWidgets()['window1'].set_title('%s - PyChess' % _('Welcome'))
+            getWidgets()['main_window'].set_title('%s - PyChess' % _('Welcome'))
         return False
 
     @idle_add
     def on_gmwidg_title_changed(self, gmwidg, new_title):
         # log.debug("gamenanny.on_gmwidg_title_changed: starting %s" % repr(gmwidg))
         if gmwidg.isInFront():
-            getWidgets()['window1'].set_title('%s - PyChess' % new_title)
+            getWidgets()['main_window'].set_title('%s - PyChess' % new_title)
         # log.debug("gamenanny.on_gmwidg_title_changed: returning")
         return False
 

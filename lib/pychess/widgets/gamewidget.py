@@ -287,7 +287,7 @@ class GameWidget(GObject.GObject):
                 getWidgets()[widget].set_property('sensitive', True)
 
         # Change window title
-        getWidgets()['window1'].set_title('%s - PyChess' % self.display_text)
+        getWidgets()['main_window'].set_title('%s - PyChess' % self.display_text)
 
     def _update_menu_abort(self):
         if self.gamemodel.hasEnginePlayer():
@@ -983,7 +983,7 @@ def _ensureReadForGameWidgets():
             traceback.print_exc(file=stringio)
             error = stringio.getvalue()
             log.error("Dock loading error: %s\n%s" % (e, error))
-            msg_dia = Gtk.MessageDialog(widgets["window1"],
+            msg_dia = Gtk.MessageDialog(widgets["main_window"],
                                         type=Gtk.MessageType.ERROR,
                                         buttons=Gtk.ButtonsType.CLOSE)
             msg_dia.set_markup(_(

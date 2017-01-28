@@ -134,6 +134,8 @@ class PreviewPanel:
             self.update_gamelist()
 
     def on_add_clicked(self, button):
+        """ Create sub-fen from current FEN removing pieces not marked with circles """
+
         self.board = self.gamemodel.boards[self.boardview.shown].board
         board = self.board.clone()
         fen = board.asFen()
@@ -146,6 +148,8 @@ class PreviewPanel:
         persp = perspective_manager.get_perspective("database")
 
         sub_fen = board.asFen().split()[0]
+
+        # If all pieces removed (no circles at all) use the original FEN
         if sub_fen == "8/8/8/8/8/8/8/8":
             if fen == FEN_START:
                 return

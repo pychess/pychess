@@ -22,7 +22,6 @@ from pychess.Database.PgnImport import PgnImport, download_file
 from pychess.Database.JvR import JvR
 from pychess.Savers import pgn, fen, epd
 from pychess.System.protoopen import protoopen
-from pychess.Utils.const import FEN_START
 
 
 class Database(GObject.GObject, Perspective):
@@ -62,7 +61,7 @@ class Database(GObject.GObject, Perspective):
         self.progressbar0 = Gtk.ProgressBar(show_text=True)
         self.progressbar1 = Gtk.ProgressBar(show_text=True)
 
-        mainwindow = gamewidget.getWidgets()["window1"]
+        mainwindow = gamewidget.getWidgets()["main_window"]
         self.progress_dialog = Gtk.Dialog("", mainwindow, 0, (
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
         self.progress_dialog.get_content_area().pack_start(self.spinner, True, True, 0)
@@ -284,9 +283,9 @@ class Database(GObject.GObject, Perspective):
             if self.gamelist.chessfile.chess_db is not None:
                 self.gamelist.chessfile.chess_db.make()
 
-            self.gamelist.chessfile.set_tags_filter("")
-            self.gamelist.chessfile.set_fen_filter(FEN_START)
-            self.gamelist.chessfile.set_scout_filter("")
+            self.gamelist.chessfile.set_tag_filter(None)
+            self.gamelist.chessfile.set_fen_filter(None)
+            self.gamelist.chessfile.set_scout_filter(None)
             GLib.idle_add(self.gamelist.load_games)
             GLib.idle_add(self.emit, "chessfile_imported", self.gamelist.chessfile)
             GLib.idle_add(self.progress_dialog.hide)

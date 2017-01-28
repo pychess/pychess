@@ -628,7 +628,7 @@ class ThemeTab:
 
         # Board Colours
 
-        style_ctxt = widgets["window1"].get_style_context()
+        style_ctxt = widgets["main_window"].get_style_context()
         LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])
         DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
 

@@ -120,7 +120,7 @@ class _GameInitializationMode(object):
     @classmethod
     def _init(cls):
         cls.widgets = uistuff.GladeWidgets("newInOut.glade")
-        cls.widgets["newgamedialog"].set_transient_for(gamewidget.getWidgets()["window1"])
+        cls.widgets["newgamedialog"].set_transient_for(gamewidget.getWidgets()["main_window"])
 
         uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
                             name="whitePlayerCombobox")

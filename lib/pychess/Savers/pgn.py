@@ -338,9 +338,9 @@ class PGNFile(ChessFile):
             self.last_seen_offs = [-1]
 
             # filter expressions to .sqlite .bin .scout
-            self.text = ""
-            self.fen = ""
-            self.query = {}
+            self.tag_query = None
+            self.fen = None
+            self.scout_query = None
 
             self.init_tag_database()
 
@@ -441,27 +441,27 @@ class PGNFile(ChessFile):
                 rows.append((stat["move"], int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"])))
         return rows
 
-    def set_tags_filter(self, text):
+    def set_tag_filter(self, query):
         """ Set (now prefixing) text and
             create where clause we will use to query header tag .sqlite database
         """
-        self.text = text
-        self.tag_database.build_where_tags(text)
+        self.tag_query = query
+        self.tag_database.build_where_tags(self.tag_query)
 
     def set_fen_filter(self, fen):
         """ Set fen string we will use to get game offsets from .bin database """
-        if self.chess_db is not None and fen != FEN_START:
+        if self.chess_db is not None and fen is not None:
             self.fen = fen
         else:
-            self.fen = ""
+            self.fen = None
             self.tag_database.build_where_offs8(None)
 
     def set_scout_filter(self, query):
         """ Set json string we will use to get game offsets from  .scout database """
         if self.scoutfish is not None and query:
-            self.query = query
+            self.scout_query = query
         else:
-            self.query = {}
+            self.scout_query = None
             self.tag_database.build_where_offs(None)
             self.offs_ply = {}
 
@@ -469,11 +469,11 @@ class PGNFile(ChessFile):
         """ Get offsets from .scout database and
             create where clause we will use to query header tag .sqlite database
         """
-        if self.query:
-            limit = (10000 if self.text else self.limit) + 1
-            self.query["skip"] = skip
-            self.query["limit"] = limit
-            move_stat = self.scoutfish.scout(self.query)
+        if self.scout_query:
+            limit = (10000 if self.tag_query else self.limit) + 1
+            self.scout_query["skip"] = skip
+            self.scout_query["limit"] = limit
+            move_stat = self.scoutfish.scout(self.scout_query)
 
             offsets = []
             for stat in move_stat["matches"]:
@@ -491,8 +491,8 @@ class PGNFile(ChessFile):
                 print(0, move_stat["match count"], len(offsets))
                 i = 1
                 while len(offsets) < self.limit and move_stat["match count"] == limit:
-                    self.query["skip"] = i * limit - 1
-                    move_stat = self.scoutfish.scout(self.query)
+                    self.scout_query["skip"] = i * limit - 1
+                    move_stat = self.scoutfish.scout(self.scout_query)
 
                     for stat in move_stat["matches"]:
                         offs = stat["ofs"]
@@ -531,7 +531,7 @@ class PGNFile(ChessFile):
             self.skip = 0
             self.last_seen_offs = [-1]
         elif direction == NEXT_PAGE:
-            if not self.text:
+            if not self.tag_query:
                 self.skip += self.limit
         elif direction == PREV_PAGE:
             if len(self.last_seen_offs) == 2:
@@ -539,20 +539,20 @@ class PGNFile(ChessFile):
             elif len(self.last_seen_offs) > 2:
                 self.last_seen_offs = self.last_seen_offs[:-2]
 
-            if not self.text and self.skip >= self.limit:
+            if not self.tag_query and self.skip >= self.limit:
                 self.skip -= self.limit
 
         if self.fen:
             self.last_seen_offs = [-1]
 
         filtered_offs_list = None
-        if self.text and (self.fen or self.query):
+        if self.tag_query and (self.fen or self.scout_query):
             filtered_offs_list = self.tag_database.get_offsets_for_tags(self.last_seen_offs[-1])
 
         if self.fen:
             self.get_offs8(self.skip, filtered_offs_list=filtered_offs_list)
 
-        if self.query:
+        if self.scout_query:
             self.get_offs(self.skip, filtered_offs_list=filtered_offs_list)
 
         records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
