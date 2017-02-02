@@ -487,8 +487,7 @@ class PGNFile(ChessFile):
 
             if filtered_offs_list is not None:
                 # Continue scouting until we get enough good offset if needed
-                print("Need more scouting...")
-                print(0, move_stat["match count"], len(offsets))
+                # print(0, move_stat["match count"], len(offsets))
                 i = 1
                 while len(offsets) < self.limit and move_stat["match count"] == limit:
                     self.scout_query["skip"] = i * limit - 1
@@ -500,7 +499,7 @@ class PGNFile(ChessFile):
                             offsets.append(offs)
                             self.offs_ply[offs] = stat["ply"][0]
 
-                    print(i, move_stat["match count"], len(offsets))
+                    # print(i, move_stat["match count"], len(offsets))
                     i += 1
 
             if len(offsets) > self.limit:

@@ -35,10 +35,11 @@ class BoardControl(Gtk.EventBox):
         'action': (GObject.SignalFlags.RUN_FIRST, None, (str, object))
     }
 
-    def __init__(self, gamemodel, action_menu_items, setup_position=False, game_preview=False):
+    def __init__(self, gamemodel, action_menu_items, setup_position=False, game_preview=False, setup_sub_fen=False):
         GObject.GObject.__init__(self)
         self.setup_position = setup_position
         self.game_preview = game_preview
+        self.setup_sub_fen = setup_sub_fen
         self.view = BoardView(gamemodel, setup_position=setup_position)
         self.add(self.view)
         self.variant = gamemodel.variant
@@ -516,7 +517,8 @@ class BoardState:
                 return False
             # prevent moving kings off board
             elif self.getBoard()[cord0].piece == KING and (cord1.x < 0 or cord1.x > self.FILES - 1):
-                return False
+                if not self.setup_sub_fen:
+                    return False
             # prevent taking enemy king
             elif to_piece is not None and to_piece.piece == KING:
                 return False

@@ -10,6 +10,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.widgets.BoardControl import BoardControl
 from pychess.Savers.ChessFile import LoadingError
 from pychess.perspectives import perspective_manager
+from pychess.perspectives.database.FilterPanel import PATTERN_FILTER, formatted
 
 
 class PreviewPanel:
@@ -156,7 +157,9 @@ class PreviewPanel:
             else:
                 sub_fen = fen.split()[0]
 
-        persp.filter_panel.scout_entry.set_text('{"sub-fen": "%s"}' % sub_fen)
+        query = {"sub-fen": sub_fen}
+        persp.filter_panel.liststore.append([formatted(query), query, PATTERN_FILTER])
+        persp.filter_panel.update_filters()
 
     def update_gamelist(self):
         if not self.filtered:

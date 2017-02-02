@@ -148,14 +148,14 @@ class TagDatabase:
         if tag_query is not None:
             tags = []
             if "white" in tag_query:
-                if "ignore_colors" in tag_query:
+                if "ignore_tag_colors" in tag_query:
                     tags.append(or_(pl1.c.name.startswith(tag_query["white"]),
                                     pl2.c.name.startswith(tag_query["white"])))
                 else:
                     tags.append(pl1.c.name.startswith(tag_query["white"]))
 
             if "black" in tag_query:
-                if "ignore_colors" in tag_query:
+                if "ignore_tag_colors" in tag_query:
                     tags.append(or_(pl1.c.name.startswith(tag_query["black"]),
                                     pl2.c.name.startswith(tag_query["black"])))
                 else:

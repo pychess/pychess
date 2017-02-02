@@ -1,11 +1,11 @@
 from gi.repository import Gtk, GObject
 
-from pychess.Utils.const import ASEAN_VARIANTS
+from pychess.Utils.const import ASEAN_VARIANTS, NORMALCHESS
 from pychess.gfx import Pieces
 
 
 class PieceWidget(Gtk.DrawingArea):
-    def __init__(self, piece, variant):
+    def __init__(self, piece, variant=NORMALCHESS):
         GObject.GObject.__init__(self)
         self.connect("draw", self.expose)
         self.piece = piece
