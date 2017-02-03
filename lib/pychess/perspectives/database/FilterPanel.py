@@ -10,7 +10,7 @@ from pychess.System import uistuff
 from pychess.widgets.BoardControl import BoardControl
 from pychess.widgets.PieceWidget import PieceWidget
 
-TAG_FILTER, MATERIAL_FILTER, PATTERN_FILTER = 0, 1, 2
+TAG_FILTER, MATERIAL_FILTER, PATTERN_FILTER, NONE, RULE, SEQUENCE, STREAK = range(7)
 
 
 def formatted(q):
@@ -53,12 +53,14 @@ class FilterPanel(Gtk.TreeView):
         # We will store our filtering queries in a ListStore
         # column 0: query as text
         # column 1: query dict
-        # column 2: query type (TAG_FILTER or MATERIAL_FILTER or PATTERN_FILTER)
-        self.liststore = Gtk.ListStore(str, object, int)
+        # column 2: filter type (NONE, TAG_FILTER or MATERIAL_FILTER or PATTERN_FILTER)
+        # column 3: row type (RULE, SEQUENCE, STREAK)
+        self.treestore = Gtk.TreeStore(str, object, int, int)
 
-        self.set_model(self.liststore)
+        self.set_model(self.treestore)
 
         self.set_headers_visible(True)
+        self.set_grid_lines(Gtk.TreeViewGridLines.HORIZONTAL)
 
         column = Gtk.TreeViewColumn("filter", Gtk.CellRendererText(), text=0)
         column.set_min_width(80)
@@ -82,14 +84,26 @@ class FilterPanel(Gtk.TreeView):
         toolbar.insert(editButton, -1)
 
         delButton = Gtk.ToolButton(Gtk.STOCK_REMOVE)
-        delButton.set_tooltip_text(_("Delete selected filter"))
+        delButton.set_tooltip_text(_("Remove selected filter"))
         delButton.connect("clicked", self.on_del_clicked)
         toolbar.insert(delButton, -1)
 
         addButton = Gtk.ToolButton(Gtk.STOCK_ADD)
-        addButton.set_tooltip_text(_("Create new filter"))
+        addButton.set_tooltip_text(_("Add new filter"))
         addButton.connect("clicked", self.on_add_clicked)
         toolbar.insert(addButton, -1)
+
+        addSeqButton = Gtk.ToolButton()
+        addSeqButton.set_label(_("Seq"))
+        addSeqButton.set_tooltip_text(_("Create new squence where listed conditions may be satisfied at different times in a game"))
+        addSeqButton.connect("clicked", self.on_add_sequence_clicked)
+        toolbar.insert(addSeqButton, -1)
+
+        addStreakButton = Gtk.ToolButton()
+        addStreakButton.set_label(_("Str"))
+        addStreakButton.set_tooltip_text(_("Create new streak sequence where listed conditions have to be satisfied in consecutive (half)moves"))
+        addStreakButton.connect("clicked", self.on_add_streak_clicked)
+        toolbar.insert(addStreakButton, -1)
 
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, False, False, 0)
@@ -103,9 +117,37 @@ class FilterPanel(Gtk.TreeView):
         if treeiter is None:
             return
 
-        self.liststore.remove(treeiter)
+        self.treestore.remove(treeiter)
 
         self.update_filters()
+
+    def on_add_sequence_clicked(self, button):
+        selection = self.get_selection()
+        model, treeiter = selection.get_selected()
+        if treeiter is None:
+            it = self.treestore.append(None, [_("Sequence"), {}, NONE, SEQUENCE])
+            self.get_selection().select_iter(it)
+        else:
+            text, query, query_type, row_type = self.treestore[treeiter]
+            if row_type == RULE:
+                it = self.treestore.append(None, [_("Sequence"), {}, NONE, SEQUENCE])
+                self.get_selection().select_iter(it)
+
+    def on_add_streak_clicked(self, button):
+        selection = self.get_selection()
+        model, treeiter = selection.get_selected()
+        if treeiter is None:
+            it = self.treestore.append(None, [_("Streak"), {}, NONE, STREAK])
+            self.get_selection().select_iter(it)
+        else:
+            text, query, query_type, row_type = self.treestore[treeiter]
+            if row_type == RULE:
+                it = self.treestore.append(None, [_("Streak"), {}, NONE, STREAK])
+                self.get_selection().select_iter(it)
+            elif row_type == SEQUENCE:
+                it = self.treestore.append(treeiter, [_("Streak"), {}, NONE, STREAK])
+                self.get_selection().select_iter(it)
+                self.expand_all()
 
     def on_add_clicked(self, button):
         self.widgets["tag_filter"].set_sensitive(True)
@@ -116,19 +158,32 @@ class FilterPanel(Gtk.TreeView):
 
         self.ini_widgets_from_query({})
 
+        selection = self.get_selection()
+        model, treeiter = selection.get_selected()
+
+        if treeiter is not None:
+            text, query, query_type, row_type = self.treestore[treeiter]
+            if row_type == RULE:
+                treeiter = None
+
         response = self.dialog.run()
 
         if response == Gtk.ResponseType.OK:
             tag_query, material_query, pattern_query = self.get_queries_from_widgets()
 
             if tag_query:
-                self.liststore.append([formatted(tag_query), tag_query, TAG_FILTER])
+                it = self.treestore.append(treeiter, [formatted(tag_query), tag_query, TAG_FILTER, RULE])
+                self.get_selection().select_iter(it)
 
             if material_query:
-                self.liststore.append([formatted(material_query), material_query, MATERIAL_FILTER])
+                it = self.treestore.append(treeiter, [formatted(material_query), material_query, MATERIAL_FILTER, RULE])
+                self.get_selection().select_iter(it)
 
             if pattern_query:
-                self.liststore.append([formatted(pattern_query), pattern_query, PATTERN_FILTER])
+                it = self.treestore.append(treeiter, [formatted(pattern_query), pattern_query, PATTERN_FILTER, RULE])
+                self.get_selection().select_iter(it)
+
+            self.expand_all()
 
             self.update_filters()
 
@@ -143,7 +198,9 @@ class FilterPanel(Gtk.TreeView):
         if treeiter is None:
             return
 
-        text, query, query_type = self.liststore[treeiter]
+        text, query, query_type, row_type = self.treestore[treeiter]
+        if row_type != RULE:
+            return
 
         self.ini_widgets_from_query(query)
 
@@ -171,13 +228,13 @@ class FilterPanel(Gtk.TreeView):
             tag_query, material_query, pattern_query = self.get_queries_from_widgets()
 
             if tag_query and query_type == TAG_FILTER:
-                self.liststore[treeiter] = [formatted(tag_query), tag_query, TAG_FILTER]
+                self.treestore[treeiter] = [formatted(tag_query), tag_query, TAG_FILTER, RULE]
 
             if material_query and query_type == MATERIAL_FILTER:
-                self.liststore[treeiter] = [formatted(material_query), material_query, MATERIAL_FILTER]
+                self.treestore[treeiter] = [formatted(material_query), material_query, MATERIAL_FILTER, RULE]
 
             if pattern_query and query_type == PATTERN_FILTER:
-                self.liststore[treeiter] = [formatted(pattern_query), pattern_query, PATTERN_FILTER]
+                self.treestore[treeiter] = [formatted(pattern_query), pattern_query, PATTERN_FILTER, RULE]
 
             self.update_filters()
 
@@ -190,11 +247,46 @@ class FilterPanel(Gtk.TreeView):
         tag_query = {}
         scout_query = {}
 
-        for item in self.liststore:
-            if item[2] == TAG_FILTER:
-                tag_query.update(item[1])
-            else:
-                scout_query.update(item[1])
+        # level 0
+        for row in self.treestore:
+            text, query, filter_type, row_type = row
+
+            if row_type == RULE:
+                if filter_type == TAG_FILTER:
+                    tag_query.update(query)
+                else:
+                    scout_query.update(query)
+
+            elif row_type == SEQUENCE:
+                scout_query["sequence"] = []
+
+                # level 1
+                for sub_row in row.iterchildren():
+                    stext, squery, sfilter_type, srow_type = sub_row
+
+                    if srow_type == RULE:
+                        scout_query["sequence"].append(squery)
+
+                    elif srow_type == STREAK:
+                        sub_streak = {"streak": []}
+
+                        # level 2
+                        for sub_sub_row in sub_row.iterchildren():
+                            sstext, ssquery, ssfilter_type, ssrow_type = sub_sub_row
+                            if ssrow_type == RULE:
+                                sub_streak["streak"].append(ssquery)
+
+                        scout_query["sequence"].append(sub_streak)
+
+            elif row_type == STREAK:
+                scout_query["streak"] = []
+
+                # level 1
+                for sub_row in row.iterchildren():
+                    stext, squery, sfilter_type, srow_type = sub_row
+
+                    if srow_type == RULE:
+                        scout_query["streak"].append(squery)
 
         need_update = False
         if tag_query != self.gamelist.chessfile.tag_query:
@@ -294,9 +386,14 @@ class FilterPanel(Gtk.TreeView):
             self.widgets["moved_%s" % piece].set_active(active)
 
         captured = "captured" in query
-        for piece in "pnbrq0":
+        for piece in "pnbrq":
             active = captured and piece.upper() in query["captured"]
             self.widgets["captured_%s" % piece].set_active(active)
+
+        if captured and query["captured"] == "":
+            self.widgets["captured_0"].set_active(True)
+        else:
+            self.widgets["captured_0"].set_active(False)
 
         if "stm" in query:
             self.widgets["stm"].set_active(True)
@@ -405,7 +502,7 @@ class FilterPanel(Gtk.TreeView):
             if self.widgets["captured_%s" % piece].get_active():
                 captured += piece.upper()
         if captured:
-            material_query["captured"] = "%s" % captured
+            material_query["captured"] = "%s" % captured.replace("0", "")
 
         if self.widgets["stm"].get_active():
             if self.widgets["stm_white"].get_active():
