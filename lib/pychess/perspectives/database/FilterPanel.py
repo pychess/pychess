@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from __future__ import print_function
+import ast
 
 from gi.repository import GLib, Gtk, GObject
 
@@ -297,6 +298,17 @@ class FilterPanel(Gtk.TreeView):
             self.gamelist.chessfile.set_scout_filter(scout_query)
             need_update = True
 
+        textbuffer = self.widgets["scout_textbuffer"]
+        (iter_first, iter_last) = textbuffer.get_bounds()
+        text = textbuffer.get_text(iter_first, iter_last, False)
+        if text:
+            try:
+                q = ast.literal_eval(text)
+                self.gamelist.chessfile.set_scout_filter(q)
+                need_update = True
+            except:
+                pass
+
         if need_update:
             self.gamelist.load_games()
 
@@ -431,6 +443,9 @@ class FilterPanel(Gtk.TreeView):
         self.setupmodel.variations = [self.setupmodel.boards]
 
         self.setupmodel.start()
+
+        textbuffer = self.widgets["scout_textbuffer"]
+        textbuffer.set_text("")
 
     def get_queries_from_widgets(self):
         """ Build tag and scout query dict from filter dialog widget names and values """

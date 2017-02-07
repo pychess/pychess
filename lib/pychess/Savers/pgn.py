@@ -450,7 +450,7 @@ class PGNFile(ChessFile):
 
     def set_fen_filter(self, fen):
         """ Set fen string we will use to get game offsets from .bin database """
-        if self.chess_db is not None and fen is not None:
+        if self.chess_db is not None and fen is not None and fen != FEN_START:
             self.fen = fen
         else:
             self.fen = None
@@ -553,6 +553,9 @@ class PGNFile(ChessFile):
 
         if self.scout_query:
             self.get_offs(self.skip, filtered_offs_list=filtered_offs_list)
+            # No game satisfied scout_query
+            if self.tag_database.where_offs is None:
+                return [], {}
 
         records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
 
