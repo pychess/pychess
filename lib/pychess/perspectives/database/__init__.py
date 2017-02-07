@@ -275,13 +275,9 @@ class Database(GObject.GObject, Perspective):
 
             # .scout
             self.gamelist.chessfile.init_scoutfish()
-            if self.gamelist.chessfile.scoutfish is not None:
-                self.gamelist.chessfile.scoutfish.make()
 
             # .bin
             self.gamelist.chessfile.init_chess_db()
-            if self.gamelist.chessfile.chess_db is not None:
-                self.gamelist.chessfile.chess_db.make()
 
             self.gamelist.chessfile.set_tag_filter(None)
             self.gamelist.chessfile.set_fen_filter(None)
