@@ -446,7 +446,6 @@ class PgnImport():
                         from pychess.Savers.pgn import scoutfish_path
                         args = [scoutfish_path, "make", pgnfile, "%s" % base_offset]
                         output = subprocess.check_output(args, stderr=subprocess.STDOUT)
-                        print(output)
 
                         # append it to our existing one
                         if output.find("Processing...done") > 0:

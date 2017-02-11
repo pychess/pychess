@@ -3,11 +3,14 @@
 from __future__ import print_function
 
 import os
+import subprocess
+import tempfile
 from collections import defaultdict
 
 from gi.repository import Gtk
 from gi.repository import GObject
 
+from pychess.compat import StringIO
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Savers import chessalpha2, epd, fen, pgn, png, database
 from pychess.System import conf
@@ -217,20 +220,47 @@ class GameHandler(GObject.GObject):
         filename = filename.replace("#y", "%s" % game.tags["Year"])
         filename = filename.replace("#m", "%s" % game.tags["Month"])
         filename = filename.replace("#d", "%s" % game.tags["Day"])
-        path = conf.get("autoSavePath", os.path.expanduser("~")) + \
+        pgn_path = conf.get("autoSavePath", os.path.expanduser("~")) + \
             "/" + filename + ".pgn"
         append = True
         try:
-            if not os.path.isfile(path):
+            if not os.path.isfile(pgn_path):
                 # create new file
-                with open(path, "w"):
+                with open(pgn_path, "w"):
                     pass
-            offset = os.path.getsize(path)
-            database_path = os.path.splitext(path)[0] + '.sqlite'
-            database.save(database_path, game, offset)
-            # TODO: update .bin and .scout databases
+            base_offset = os.path.getsize(pgn_path)
 
-            game.save(path, pgn, append)
+            # save to .sqlite
+            database_path = os.path.splitext(pgn_path)[0] + '.sqlite'
+            database.save(database_path, game, base_offset)
+
+            # save to .scout
+            from pychess.Savers.pgn import scoutfish_path
+            if scoutfish_path is not None:
+                pgn_text = pgn.save(StringIO(), game)
+
+                tmp = tempfile.NamedTemporaryFile(delete=False)
+                pgnfile = tmp.name
+                with tmp.file as f:
+                    f.write(pgn_text)
+
+                # create new .scout from pgnfile we are importing
+                args = [scoutfish_path, "make", pgnfile, "%s" % base_offset]
+                output = subprocess.check_output(args, stderr=subprocess.STDOUT)
+
+                # append it to our existing one
+                if output.find("Processing...done") > 0:
+                    old_scout = os.path.splitext(pgn_path)[0] + '.scout'
+                    new_scout = os.path.splitext(pgnfile)[0] + '.scout'
+
+                    with open(old_scout, "ab") as file1, open(new_scout, "rb") as file2:
+                        file1.write(file2.read())
+
+            # TODO: do we realy want to update .bin ? It can be huge/slow!
+
+            # save to .pgn
+            game.save(pgn_path, pgn, append)
+
             return True
         except IOError:
             return False
