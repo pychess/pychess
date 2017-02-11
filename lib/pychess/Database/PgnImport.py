@@ -439,6 +439,22 @@ class PgnImport():
                     handle.seek(0)
                     self.db_handle.writelines(handle)
                     self.db_handle.close()
+                    handle.close()
+
+                    if self.chessfile.scoutfish is not None:
+                        # create new .scout from pgnfile we are importing
+                        from pychess.Savers.pgn import scoutfish_path
+                        args = [scoutfish_path, "make", pgnfile, "%s" % base_offset]
+                        output = subprocess.check_output(args, stderr=subprocess.STDOUT)
+                        print(output)
+
+                        # append it to our existing one
+                        if output.find("Processing...done") > 0:
+                            old_scout = self.chessfile.scoutfish.db
+                            new_scout = os.path.splitext(pgnfile)[0] + '.scout'
+
+                            with open(old_scout, "ab") as file1, open(new_scout, "rb") as file2:
+                                file1.write(file2.read())
 
                 self.chessfile.handle = protoopen(self.chessfile.path)
 
