@@ -239,7 +239,7 @@ class GameHandler(GObject.GObject):
             if scoutfish_path is not None:
                 pgn_text = pgn.save(StringIO(), game)
 
-                tmp = tempfile.NamedTemporaryFile(delete=False)
+                tmp = tempfile.NamedTemporaryFile(mode="w", delete=False)
                 pgnfile = tmp.name
                 with tmp.file as f:
                     f.write(pgn_text)
@@ -249,7 +249,7 @@ class GameHandler(GObject.GObject):
                 output = subprocess.check_output(args, stderr=subprocess.STDOUT)
 
                 # append it to our existing one
-                if output.find("Processing...done") > 0:
+                if output.decode().find(u"Processing...done") > 0:
                     old_scout = os.path.splitext(pgn_path)[0] + '.scout'
                     new_scout = os.path.splitext(pgnfile)[0] + '.scout'
 
