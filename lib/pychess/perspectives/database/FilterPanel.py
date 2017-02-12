@@ -27,7 +27,7 @@ class FilterPanel(Gtk.TreeView):
 
         # Add piece widgets to dialog *_dock containers on material tab
         self.widgets = uistuff.GladeWidgets("PyChess.glade")
-        self.dialog = self.widgets["filter_dialog"]
+        self.dialog = NestedDialog(self.widgets["filter_dialog"])
 
         for piece in "qrbnp":
             dock = "w%s_dock" % piece
@@ -191,8 +191,6 @@ class FilterPanel(Gtk.TreeView):
         if hasattr(self, "board_control"):
             self.board_control.emit("action", "CLOSE", None)
 
-        self.dialog.hide()
-
     def on_edit_clicked(self, button):
         selection = self.get_selection()
         model, treeiter = selection.get_selected()
@@ -241,8 +239,6 @@ class FilterPanel(Gtk.TreeView):
 
         if hasattr(self, "board_control"):
             self.board_control.emit("action", "CLOSE", None)
-
-        self.dialog.hide()
 
     def update_filters(self):
         tag_query = {}
@@ -383,12 +379,12 @@ class FilterPanel(Gtk.TreeView):
             self.widgets["b%s" % piece.lower()].set_value(b if b > 0 else 0)
 
         if "white-move" in query:
-            self.widgets["white_move"].set_text(query["white-move"])
+            self.widgets["white_move"].set_text(", ".join(query["white-move"]))
         else:
             self.widgets["white_move"].set_text("")
 
         if "black-move" in query:
-            self.widgets["black_move"].set_text(query["black-move"])
+            self.widgets["black_move"].set_text(", ".join(query["black-move"]))
         else:
             self.widgets["black_move"].set_text("")
 
@@ -500,10 +496,12 @@ class FilterPanel(Gtk.TreeView):
                                                   "K%sK%s" % (b_material, w_material)]
 
         if self.widgets["white_move"].get_text():
-            material_query["white-move"] = self.widgets["white_move"].get_text()
+            moves = [move.strip() for move in self.widgets["white_move"].get_text().split(",")]
+            material_query["white-move"] = moves
 
         if self.widgets["black_move"].get_text():
-            material_query["black-move"] = self.widgets["black_move"].get_text()
+            moves = [move.strip() for move in self.widgets["black_move"].get_text().split(",")]
+            material_query["black-move"] = moves
 
         moved = ""
         for piece in "pnbrqk":
@@ -538,3 +536,23 @@ class FilterPanel(Gtk.TreeView):
 
     def get_fen(self):
         return self.setupmodel.boards[-1].as_fen()
+
+
+class NestedDialog(object):
+    def __init__(self, dialog):
+        self.dialog = dialog
+        self.response = None
+
+    def run(self):
+        self._run()
+        return self.response
+
+    def _run(self):
+        self.dialog.show()
+        self.dialog.connect("response", self._response)
+        Gtk.main()
+
+    def _response(self, dialog, response):
+        self.response = response
+        self.dialog.hide()
+        Gtk.main_quit()
