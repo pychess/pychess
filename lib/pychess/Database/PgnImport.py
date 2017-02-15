@@ -228,8 +228,7 @@ class PgnImport():
             handle_json = None
             if pgnextractor is not None:
                 try:
-                    output = subprocess.check_output([pgnextractor, "headers", pgnfile])
-                    print("pgnextractor output=", output)
+                    output = subprocess.check_output([pgnextractor, "headers", pgnfile]).decode()
                     for line in output:
                         if line.startswith("Games"):
                             all_games = line.split()[1]
@@ -289,7 +288,7 @@ class PgnImport():
 
                     site_id = get_id(tags.get('Site'), site, SITE)
 
-                    game_date = tags['Date'].strip()
+                    game_date = tags.get('Date')
                     try:
                         if game_date and '?' not in game_date:
                             ymd = game_date.split('.')
@@ -445,7 +444,7 @@ class PgnImport():
                         # create new .scout from pgnfile we are importing
                         from pychess.Savers.pgn import scoutfish_path
                         args = [scoutfish_path, "make", pgnfile, "%s" % base_offset]
-                        output = subprocess.check_output(args, stderr=subprocess.STDOUT)
+                        output = subprocess.check_output(args, stderr=subprocess.STDOUT).decode()
 
                         # append it to our existing one
                         if output.find("Processing...done") > 0:
