@@ -228,11 +228,12 @@ class PgnImport():
             handle_json = None
             if pgnextractor is not None:
                 try:
-                    output = subprocess.check_output([pgnextractor, "headers", pgnfile]).decode()
-                    for line in output:
-                        if line.startswith("Games"):
-                            all_games = line.split()[1]
                     headers_json = os.path.splitext(pgnfile)[0] + ".headers.json"
+                    if not os.path.isfile(headers_json):
+                        output = subprocess.check_output([pgnextractor, "headers", pgnfile]).decode()
+                        for line in output:
+                            if line.startswith("Games"):
+                                all_games = line.split()[1]
                     handle_json = protoopen(headers_json)
                 except subprocess.CalledProcessError:
                     print("pgnextractor failed")
@@ -468,8 +469,41 @@ def read_games(handle, handle_json=None):
         for line in handle_json:
             try:
                 yield json.loads(line)
+            except ValueError as e:
+                try:
+                    if "\\" in line:
+                        line = line.replace("\\", "")
+                        yield json.loads(line)
+                    elif e.message.startswith("Expecting ',' delimiter"):
+                        if '"Date":' in line and '"Site":' in line and '"Event":' in line:
+                            left, date = line.split(', "Date":')
+                            left, site = left.split(', "Site":')
+                            left, event = left.split('"Event":')
+                            event = event.replace('"', '')
+                            site = site.replace('"', '')
+                            line = '{"Event":"%s", "Site":"%s", "Date":%s' % (event, site, date)
+                            yield json.loads(line)
+                        else:
+                            continue
+                    elif e.message.startswith("Invalid control character"):
+                        stripped = []
+                        for char in line:
+                            if ord(char) >= 32:
+                                stripped.append(char)
+                        line = "".join(stripped)
+                        yield json.loads(line)
+                    elif e.message.startswith("No JSON object could be decoded"):
+                        if line.startswith("[Date"):
+                            line = line.replace("[Date", '{"Date')
+                            yield json.loads(line)
+                        else:
+                            continue
+                    else:
+                        continue
+                except:
+                    continue
             except:
-                print(line)
+                continue
         return
 
     in_comment = False
