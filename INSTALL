@@ -28,6 +28,7 @@ Optional dependencies to query .pgn databases
 (no Linux packages yet)
 https://github.com/mcostalba/chess_db
 https://github.com/mcostalba/scoutfish
+https://github.com/sshivaji/pgnextractor
 Run install_externals.sh to build and copy needed files to lib/pychess/externals/
 
 -------------
