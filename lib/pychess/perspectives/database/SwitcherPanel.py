@@ -6,9 +6,7 @@ import os
 from gi.repository import Gtk, GObject
 from gi.repository.GdkPixbuf import Pixbuf
 
-from pychess.perspectives import perspective_manager
 from pychess.Utils.IconLoader import load_icon
-from pychess.widgets import gamewidget
 
 pgn_icon = load_icon(32, "application-x-chess-pgn", "pychess")
 CLIPBASE = "Clipbase"
@@ -19,12 +17,10 @@ class SwitcherPanel(Gtk.IconView):
         'chessfile_switched': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
     }
 
-    def __init__(self, gamelist):
+    def __init__(self, persp):
         GObject.GObject.__init__(self)
-        self.gamelist = gamelist
-        self.widgets = gamewidget.getWidgets()
+        self.persp = persp
 
-        self.persp = perspective_manager.get_perspective("database")
         self.persp.connect("chessfile_opened", self.on_chessfile_opened)
         self.persp.connect("chessfile_closed", self.on_chessfile_closed)
         self.persp.connect("chessfile_imported", self.on_chessfile_imported)
@@ -48,20 +44,9 @@ class SwitcherPanel(Gtk.IconView):
         treepath = Gtk.TreePath(0)
         self.select_path(treepath)
 
-    def set_sensitives(self, chessfile):
-        self.persp.import_button.set_sensitive(True)
-        self.widgets["import_chessfile"].set_sensitive(True)
-        self.widgets["import_endgame_nl"].set_sensitive(True)
-        self.widgets["import_twic"].set_sensitive(True)
-
     def on_item_activated(self, iconview, path):
         treeiter = self.liststore.get_iter(path)
         chessfile = self.liststore.get_value(treeiter, 0)
-        self.gamelist.chessfile = chessfile
-        self.gamelist.load_games()
-
-        self.set_sensitives(chessfile)
-
         self.emit("chessfile_switched", chessfile)
 
     def on_chessfile_opened(self, persp, chessfile):
@@ -74,31 +59,26 @@ class SwitcherPanel(Gtk.IconView):
         treepath = self.liststore.get_path(treeiter)
         self.select_path(treepath)
 
-        self.set_sensitives(chessfile)
-
     def on_chessfile_closed(self, persp):
-        if self.gamelist.chessfile.path is not None:
-            for i, row in enumerate(self.liststore):
-                if row[0] == self.gamelist.chessfile:
-                    # print("removing %s" % self.gamelist.chessfile.path)
-                    # first remove the closed
-                    treeiter = self.liststore.get_iter(Gtk.TreePath(i))
-                    self.liststore.remove(treeiter)
+        for i, row in enumerate(self.liststore):
+            if row[0] == self.persp.chessfile:
+                # print("removing %s" % self.persp.chessfile.path)
+                # first remove the closed
+                treeiter = self.liststore.get_iter(Gtk.TreePath(i))
+                self.liststore.remove(treeiter)
 
-                    # then select the previous
-                    if i > 0:
-                        treepath = Gtk.TreePath(i - 1)
+                # then select the previous
+                if i > 0:
+                    treepath = Gtk.TreePath(i - 1)
+                    self.select_path(treepath)
+                    self.item_activated(treepath)
+                else:
+                    if len(self.liststore) > 0:
+                        treepath = Gtk.TreePath(0)
                         self.select_path(treepath)
                         self.item_activated(treepath)
-                    else:
-                        if len(self.liststore) > 0:
-                            treepath = Gtk.TreePath(0)
-                            self.select_path(treepath)
-                            self.item_activated(treepath)
-                    self.queue_draw()
-                    break
-        else:
-            self.set_sensitives(None)
+                self.queue_draw()
+                break
 
     def on_chessfile_imported(self, persp, chessfile):
         name, ext = os.path.splitext(chessfile.path)
@@ -106,7 +86,7 @@ class SwitcherPanel(Gtk.IconView):
         info = "%s\n%s  %s" % (name, ext[1:], chessfile.count)
 
         for i, row in enumerate(self.liststore):
-            if row[0] == self.gamelist.chessfile:
+            if row[0] == self.persp.chessfile:
                 treeiter = self.liststore.get_iter(Gtk.TreePath(i))
                 self.liststore[treeiter][2] = info
                 break

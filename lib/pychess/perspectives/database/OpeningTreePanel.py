@@ -6,19 +6,14 @@ from gi.repository import Gtk, GObject
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toSAN, parseAN
 from pychess.Utils.const import FEN_START
-from pychess.perspectives import perspective_manager
 
 
 class OpeningTreePanel(Gtk.TreeView):
-    def __init__(self, gamelist):
+    def __init__(self, persp):
         GObject.GObject.__init__(self)
-        self.gamelist = gamelist
-
+        self.persp = persp
         self.filtered = False
 
-        self.persp = perspective_manager.get_perspective("database")
-        self.persp.connect("chessfile_opened", self.on_chessfile_opened)
-        self.persp.connect("chessfile_switched", self.on_chessfile_switched)
         self.persp.connect("chessfile_imported", self.on_chessfile_imported)
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -83,12 +78,6 @@ class OpeningTreePanel(Gtk.TreeView):
 
         self.box.show_all()
 
-    def on_chessfile_opened(self, persp, chessfile):
-        self.update_tree(load_games=False)
-
-    def on_chessfile_switched(self, switcher, chessfile):
-        self.update_tree()
-
     def on_chessfile_imported(self, persp, chessfile):
         self.update_tree()
 
@@ -122,12 +111,12 @@ class OpeningTreePanel(Gtk.TreeView):
         self.update_tree()
 
     def update_tree(self, load_games=True):
-        self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.set_fen_filter(self.board.asFen())
+        self.persp.gamelist.ply = self.board.plyCount
+        self.persp.chessfile.set_fen_filter(self.board.asFen())
         if load_games and self.filtered:
-            self.gamelist.load_games()
+            self.persp.gamelist.load_games()
 
-        result = self.gamelist.chessfile.get_book_moves(self.board.asFen())
+        result = self.persp.chessfile.get_book_moves(self.board.asFen())
         self.clear_tree()
         for move, count, white_won, blackwon, draw in result:
             lmove = parseAN(self.board, move)

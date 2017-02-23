@@ -24,18 +24,37 @@ from pychess.Savers import pgn, fen, epd
 from pychess.System.protoopen import protoopen
 
 
+def new_notebook():
+    notebook = Gtk.Notebook()
+    notebook.set_show_tabs(False)
+    notebook.set_show_border(False)
+    return notebook
+
+
 class Database(GObject.GObject, Perspective):
     __gsignals__ = {
+        'chessfile_opened0': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'chessfile_opened': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'chessfile_closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
         'chessfile_imported': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
-        'chessfile_switched': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
     }
 
     def __init__(self):
         GObject.GObject.__init__(self)
         Perspective.__init__(self, "database", _("Database"))
-        self.gamelist = None
+        self.widgets = gamewidget.getWidgets()
+        self.chessfile = None
+        self.chessfiles = []
+        self.gamelists = []
+        self.notebooks = {}
+        self.connect("chessfile_opened0", self.on_chessfile_opened0)
+
+    @property
+    def gamelist(self):
+        if self.chessfile is None:
+            return None
+        else:
+            return self.gamelists[self.chessfiles.index(self.chessfile)]
 
     def create_toolbuttons(self):
         self.import_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CONVERT)
@@ -50,11 +69,11 @@ class Database(GObject.GObject, Perspective):
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("database", perspective_widget)
 
-        self.gamelist = GameList()
-        self.switcher_panel = SwitcherPanel(self.gamelist)
-        self.opening_tree_panel = OpeningTreePanel(self.gamelist)
-        self.filter_panel = FilterPanel(self.gamelist)
-        self.preview_panel = PreviewPanel(self.gamelist)
+        self.switcher_panel = SwitcherPanel(self)
+        self.notebooks["gamelist"] = new_notebook()
+        self.notebooks["opening_tree"] = new_notebook()
+        self.notebooks["filter"] = new_notebook()
+        self.notebooks["preview"] = new_notebook()
 
         self.spinner = Gtk.Spinner()
         self.spinner.set_size_request(50, 50)
@@ -81,11 +100,11 @@ class Database(GObject.GObject, Perspective):
         dockLocation = addUserConfigPrefix("pydock-database.xml")
 
         docks = {
-            "gamelist": (Gtk.Label(label="gamelist"), self.gamelist.box),
+            "gamelist": (Gtk.Label(label="gamelist"), self.notebooks["gamelist"]),
             "switcher": (dock_panel_tab(_("Databases"), "", addDataPrefix("glade/panel_docker.svg")), self.switcher_panel.alignment),
-            "openingtree": (dock_panel_tab(_("Openings"), "", addDataPrefix("glade/panel_docker.svg")), self.opening_tree_panel.box),
-            "filter": (dock_panel_tab(_("Filters"), "", addDataPrefix("glade/panel_docker.svg")), self.filter_panel.box),
-            "preview": (dock_panel_tab(_("Preview"), "", addDataPrefix("glade/panel_docker.svg")), self.preview_panel.box),
+            "openingtree": (dock_panel_tab(_("Openings"), "", addDataPrefix("glade/panel_docker.svg")), self.notebooks["opening_tree"]),
+            "filter": (dock_panel_tab(_("Filters"), "", addDataPrefix("glade/panel_docker.svg")), self.notebooks["filter"]),
+            "preview": (dock_panel_tab(_("Preview"), "", addDataPrefix("glade/panel_docker.svg")), self.notebooks["preview"]),
         }
 
         if os.path.isfile(dockLocation):
@@ -133,9 +152,16 @@ class Database(GObject.GObject, Perspective):
 
         self.switcher_panel.connect("chessfile_switched", self.on_chessfile_switched)
 
+    def set_sensitives(self, on):
+        self.import_button.set_sensitive(on)
+        self.widgets["import_chessfile"].set_sensitive(on)
+        self.widgets["import_endgame_nl"].set_sensitive(on)
+        self.widgets["import_twic"].set_sensitive(on)
+
     def open_chessfile(self, filename):
-        if self.gamelist is None:
+        if self.chessfile is None:
             self.init_layout()
+
         perspective_manager.activate_perspective("database")
 
         self.progress_dialog.set_title(_("Open"))
@@ -158,7 +184,9 @@ class Database(GObject.GObject, Perspective):
             GLib.idle_add(self.spinner.stop)
             GLib.idle_add(self.progress_dialog.hide)
             if chessfile is not None:
-                GLib.idle_add(self.emit, "chessfile_opened", chessfile)
+                self.chessfile = chessfile
+                self.chessfiles.append(chessfile)
+                GLib.idle_add(self.emit, "chessfile_opened0", chessfile)
 
         thread = threading.Thread(target=opening)
         thread.daemon = True
@@ -169,11 +197,51 @@ class Database(GObject.GObject, Perspective):
             self.importer.do_cancel()
         self.progress_dialog.hide()
 
+    def on_chessfile_opened0(self, persp, chessfile):
+        gamelist = GameList(self)
+        self.gamelists.append(gamelist)
+        opening_tree_panel = OpeningTreePanel(self)
+        filter_panel = FilterPanel(self)
+        preview_panel = PreviewPanel(self)
+
+        self.notebooks["gamelist"].append_page(gamelist.box)
+        self.notebooks["opening_tree"].append_page(opening_tree_panel.box)
+        self.notebooks["filter"].append_page(filter_panel.box)
+        self.notebooks["preview"].append_page(preview_panel.box)
+
+        self.on_chessfile_switched(None, self.chessfile)
+
+        gamelist.load_games()
+        opening_tree_panel.update_tree(load_games=False)
+
+        self.set_sensitives(True)
+        self.emit("chessfile_opened", chessfile)
+
     def close(self, widget):
+        i = self.chessfiles.index(self.chessfile)
+        if self.chessfile.path is not None:
+            self.notebooks["gamelist"].remove_page(i)
+            self.notebooks["opening_tree"].remove_page(i)
+            self.notebooks["filter"].remove_page(i)
+            self.notebooks["preview"].remove_page(i)
+            del self.gamelists[i]
+            del self.chessfiles[i]
+            self.chessfile.close()
+
+        if len(self.chessfiles) == 0:
+            self.set_sensitives(False)
+            perspective_manager.disable_perspective("database")
+
         self.emit("chessfile_closed")
 
     def on_chessfile_switched(self, switcher, chessfile):
-        self.emit("chessfile_switched", chessfile)
+        self.chessfile = chessfile
+        i = self.chessfiles.index(chessfile)
+
+        self.notebooks["gamelist"].set_current_page(i)
+        self.notebooks["opening_tree"].set_current_page(i)
+        self.notebooks["filter"].set_current_page(i)
+        self.notebooks["preview"].set_current_page(i)
 
     def on_import_endgame_nl(self):
         self.do_import(JvR)
@@ -253,9 +321,9 @@ class Database(GObject.GObject, Perspective):
 
         # @profile_me
         def importing():
-            drop_indexes(self.gamelist.chessfile.engine)
+            drop_indexes(self.chessfile.engine)
 
-            self.importer = PgnImport(self.gamelist.chessfile, append_pgn=True)
+            self.importer = PgnImport(self.chessfile, append_pgn=True)
             for i, filename in enumerate(filenames):
                 GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
                 # GLib.idle_add(self.progressbar0.set_text, filename)
@@ -271,19 +339,19 @@ class Database(GObject.GObject, Perspective):
             GLib.idle_add(self.progressbar1.set_text, "Recreating indexes...")
 
             # .sqlite
-            create_indexes(self.gamelist.chessfile.engine)
+            create_indexes(self.chessfile.engine)
 
             # .scout
-            self.gamelist.chessfile.init_scoutfish()
+            self.chessfile.init_scoutfish()
 
             # .bin
-            self.gamelist.chessfile.init_chess_db()
+            self.chessfile.init_chess_db()
 
-            self.gamelist.chessfile.set_tag_filter(None)
-            self.gamelist.chessfile.set_fen_filter(None)
-            self.gamelist.chessfile.set_scout_filter(None)
+            self.chessfile.set_tag_filter(None)
+            self.chessfile.set_fen_filter(None)
+            self.chessfile.set_scout_filter(None)
             GLib.idle_add(self.gamelist.load_games)
-            GLib.idle_add(self.emit, "chessfile_imported", self.gamelist.chessfile)
+            GLib.idle_add(self.emit, "chessfile_imported", self.chessfile)
             GLib.idle_add(self.progress_dialog.hide)
 
         thread = threading.Thread(target=importing)

@@ -21,9 +21,9 @@ def formatted(q):
 
 
 class FilterPanel(Gtk.TreeView):
-    def __init__(self, gamelist):
+    def __init__(self, persp):
         GObject.GObject.__init__(self)
-        self.gamelist = gamelist
+        self.persp = persp
 
         # Add piece widgets to dialog *_dock containers on material tab
         self.widgets = uistuff.GladeWidgets("PyChess.glade")
@@ -240,6 +240,20 @@ class FilterPanel(Gtk.TreeView):
         if hasattr(self, "board_control"):
             self.board_control.emit("action", "CLOSE", None)
 
+    def add_sub_fen(self, sub_fen):
+        selection = self.get_selection()
+        model, treeiter = selection.get_selected()
+
+        if treeiter is not None:
+            text, query, query_type, row_type = self.treestore[treeiter]
+            if row_type == RULE:
+                treeiter = None
+
+        query = {"sub-fen": sub_fen}
+        self.treestore.append(treeiter, [formatted(query), query, PATTERN_FILTER, RULE])
+        self.expand_all()
+        self.update_filters()
+
     def update_filters(self):
         tag_query = {}
         scout_query = {}
@@ -286,12 +300,12 @@ class FilterPanel(Gtk.TreeView):
                         scout_query["streak"].append(squery)
 
         need_update = False
-        if tag_query != self.gamelist.chessfile.tag_query:
-            self.gamelist.chessfile.set_tag_filter(tag_query)
+        if tag_query != self.persp.chessfile.tag_query:
+            self.persp.chessfile.set_tag_filter(tag_query)
             need_update = True
 
-        if scout_query != self.gamelist.chessfile.scout_query:
-            self.gamelist.chessfile.set_scout_filter(scout_query)
+        if scout_query != self.persp.chessfile.scout_query:
+            self.persp.chessfile.set_scout_filter(scout_query)
             need_update = True
 
         textbuffer = self.widgets["scout_textbuffer"]
@@ -300,13 +314,13 @@ class FilterPanel(Gtk.TreeView):
         if text:
             try:
                 q = ast.literal_eval(text)
-                self.gamelist.chessfile.set_scout_filter(q)
+                self.persp.chessfile.set_scout_filter(q)
                 need_update = True
             except:
                 pass
 
         if need_update:
-            self.gamelist.load_games()
+            self.persp.gamelist.load_games()
 
     def ini_widgets_from_query(self, query):
         """ Set filter dialog widget values based on query dict key-value pairs """

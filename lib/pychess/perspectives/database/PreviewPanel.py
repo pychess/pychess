@@ -6,24 +6,16 @@ from gi.repository import Gtk
 from pychess.Utils.const import EMPTY, FEN_EMPTY, FEN_START
 from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
-from pychess.Utils.GameModel import GameModel
 from pychess.widgets.BoardControl import BoardControl
 from pychess.Savers.ChessFile import LoadingError
-from pychess.perspectives import perspective_manager
-from pychess.perspectives.database.FilterPanel import RULE, PATTERN_FILTER, formatted
 
 
 class PreviewPanel:
-    def __init__(self, gamelist):
-        self.gamelist = gamelist
-
+    def __init__(self, persp):
+        self.persp = persp
         self.filtered = False
 
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-
-        selection = self.gamelist.get_selection()
-        self.conid = selection.connect_after('changed', self.on_selection_changed)
-        self.gamelist.preview_cid = self.conid
 
         # buttons
         toolbar = Gtk.Toolbar()
@@ -59,7 +51,7 @@ class PreviewPanel:
         tool_box.pack_start(toolbar, False, False, 0)
 
         # board
-        self.gamemodel = GameModel()
+        self.gamemodel = self.persp.gamelist.gamemodel
         self.boardcontrol = BoardControl(self.gamemodel, {}, game_preview=True)
         self.boardview = self.boardcontrol.view
         self.board = self.gamemodel.boards[self.boardview.shown].board
@@ -72,8 +64,12 @@ class PreviewPanel:
         self.box.pack_start(tool_box, False, True, 0)
         self.box.show_all()
 
+        selection = self.persp.gamelist.get_selection()
+        self.conid = selection.connect_after('changed', self.on_selection_changed)
+        self.persp.gamelist.preview_cid = self.conid
+
         # force first game to show
-        self.gamelist.set_cursor(0)
+        self.persp.gamelist.set_cursor(0)
 
     def on_selection_changed(self, selection):
         model, iter = selection.get_selected()
@@ -84,14 +80,16 @@ class PreviewPanel:
             self.boardview.redrawCanvas()
             return
 
-        path = self.gamelist.get_model().get_path(iter)
+        path = self.persp.gamelist.get_model().get_path(iter)
 
-        rec, ply = self.gamelist.get_record(path)
+        rec, ply = self.persp.gamelist.get_record(path)
+        if rec is None:
+            return
 
         self.boardview.animation_lock.acquire()
         try:
             try:
-                self.gamelist.chessfile.loadToModel(rec, -1, self.gamemodel)
+                self.persp.chessfile.loadToModel(rec, -1, self.gamemodel)
             except LoadingError as err:
                 dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
                                              buttons=Gtk.ButtonsType.OK,
@@ -106,7 +104,7 @@ class PreviewPanel:
             self.boardview.animation_lock.release()
 
         self.boardview.redrawCanvas()
-        self.boardview.shown = ply if ply > 0 else self.gamelist.ply
+        self.boardview.shown = ply if ply > 0 else self.persp.gamelist.ply
 
     def on_first_clicked(self, button):
         self.boardview.showFirst()
@@ -146,8 +144,6 @@ class PreviewPanel:
             if kord not in self.boardview.circles:
                 board.arBoard[cord] = EMPTY
 
-        persp = perspective_manager.get_perspective("database")
-
         sub_fen = board.asFen().split()[0]
 
         # If all pieces removed (no circles at all) use the original FEN
@@ -157,18 +153,8 @@ class PreviewPanel:
             else:
                 sub_fen = fen.split()[0]
 
-        selection = persp.filter_panel.get_selection()
-        model, treeiter = selection.get_selected()
-
-        if treeiter is not None:
-            text, query, query_type, row_type = persp.filter_panel.treestore[treeiter]
-            if row_type == RULE:
-                treeiter = None
-
-        query = {"sub-fen": sub_fen}
-        persp.filter_panel.treestore.append(treeiter, [formatted(query), query, PATTERN_FILTER, RULE])
-        persp.filter_panel.expand_all()
-        persp.filter_panel.update_filters()
+        # TODO:
+        # self.persp.filter_panel.add_sub_fen(sub_fen)
 
     def update_gamelist(self):
         if not self.filtered:
@@ -176,6 +162,6 @@ class PreviewPanel:
 
         self.board = self.gamemodel.boards[self.boardview.shown].board
 
-        self.gamelist.ply = self.board.plyCount
-        self.gamelist.chessfile.set_fen_filter(self.board.asFen())
-        self.gamelist.load_games()
+        self.persp.gamelist.ply = self.board.plyCount
+        self.persp.chessfile.set_fen_filter(self.board.asFen())
+        self.persp.gamelist.load_games()

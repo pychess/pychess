@@ -26,17 +26,12 @@ def createImage(pixbuf):
 
 
 class GameList(Gtk.TreeView):
-    def __init__(self):
+    def __init__(self, persp):
         GObject.GObject.__init__(self)
-        self.chessfile = None
-        self.chessfiles = []
+        self.persp = persp
 
-        persp = perspective_manager.get_perspective("database")
-        persp.connect("chessfile_opened", self.on_chessfile_opened)
-        persp.connect("chessfile_closed", self.on_chessfile_closed)
-
+        self.records = []
         self.preview_cid = None
-        self.opening_tree_cid = None
 
         # GTK_SELECTION_BROWSE - exactly one item is always selected
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -70,7 +65,7 @@ class GameList(Gtk.TreeView):
 
         self.set_cursor(0)
         self.columns_autosize()
-        self.gamemodel = None
+        self.gamemodel = GameModel()
         self.ply = 0
 
         #  buttons
@@ -105,21 +100,6 @@ class GameList(Gtk.TreeView):
         self.box.pack_start(button_box, False, False, 0)
         self.box.show_all()
 
-    def on_chessfile_opened(self, persp, chessfile):
-        self.chessfile = chessfile
-        self.chessfiles.append(self.chessfile)
-        self.load_games()
-
-    def on_chessfile_closed(self, persp):
-        if len(self.chessfiles) == 1:
-            self.chessfiles.remove(self.chessfile)
-            self.chessfile.close()
-            perspective_manager.disable_perspective("database")
-
-        elif self.chessfile.path is not None:
-            self.chessfiles.remove(self.chessfile)
-            self.chessfile.close()
-
     def on_start_button(self, widget):
         self.load_games(direction=FIRST_PAGE)
 
@@ -141,11 +121,13 @@ class GameList(Gtk.TreeView):
         else:
             self.liststore.clear()
 
-        get_date = self.chessfile.get_date
+        self.liststore.clear()
+
+        get_date = self.persp.chessfile.get_date
         add = self.liststore.append
 
         self.records = []
-        records, plys = self.chessfile.get_records(direction)
+        records, plys = self.persp.chessfile.get_records(direction)
         for i, rec in enumerate(records):
             game_id = rec["Id"]
             offs = rec["Offset"]
@@ -176,10 +158,15 @@ class GameList(Gtk.TreeView):
         self.set_cursor(0)
 
     def get_record(self, path):
-        return self.records[self.modelsort.convert_path_to_child_path(path)[0]]
+        if path is None:
+            return None, None
+        else:
+            return self.records[self.modelsort.convert_path_to_child_path(path)[0]]
 
     def row_activated(self, widget, path, col):
         rec, ply = self.get_record(path)
+        if rec is None:
+            return
 
         self.gamemodel = GameModel()
 
@@ -190,7 +177,7 @@ class GameList(Gtk.TreeView):
         wp, bp = rec["White"], rec["Black"]
         p0 = (LOCAL, Human, (WHITE, wp), wp)
         p1 = (LOCAL, Human, (BLACK, bp), bp)
-        self.chessfile.loadToModel(rec, -1, self.gamemodel)
+        self.persp.chessfile.loadToModel(rec, -1, self.gamemodel)
 
         self.gamemodel.endstatus = self.gamemodel.status if self.gamemodel.status in UNDOABLE_STATES else UNKNOWN_STATE
         self.gamemodel.status = WAITING_TO_START
