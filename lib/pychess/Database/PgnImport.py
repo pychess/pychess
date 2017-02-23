@@ -176,7 +176,7 @@ class PgnImport():
     def do_import(self, filename, info=None, progressbar=None):
         self.progressbar = progressbar
 
-        orig_filename = filename
+        orig_filename = unicode(filename)
         count_source = self.conn.execute(self.count_source.where(source.c.name == orig_filename)).scalar()
         if count_source > 0:
             print("%s is already imported" % filename)
