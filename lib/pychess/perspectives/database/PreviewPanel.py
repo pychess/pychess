@@ -153,8 +153,7 @@ class PreviewPanel:
             else:
                 sub_fen = fen.split()[0]
 
-        # TODO:
-        # self.persp.filter_panel.add_sub_fen(sub_fen)
+        self.persp.filter_panel.add_sub_fen(sub_fen)
 
     def update_gamelist(self):
         if not self.filtered:
