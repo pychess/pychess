@@ -24,6 +24,7 @@ class FilterPanel(Gtk.TreeView):
     def __init__(self, persp):
         GObject.GObject.__init__(self)
         self.persp = persp
+        self.filtered = False
 
         # Add piece widgets to dialog *_dock containers on material tab
         self.widgets = uistuff.GladeWidgets("PyChess.glade")
@@ -106,11 +107,23 @@ class FilterPanel(Gtk.TreeView):
         addStreakButton.connect("clicked", self.on_add_streak_clicked)
         toolbar.insert(addStreakButton, -1)
 
+        filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        filterButton.set_tooltip_text(_("Filter game list by various conditions"))
+        filterButton.connect("clicked", self.on_filter_clicked)
+        toolbar.insert(filterButton, -1)
+
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, False, False, 0)
         self.box.pack_start(tool_box, False, False, 0)
 
         self.box.show_all()
+
+    def on_filter_clicked(self, button):
+        self.filtered = button.get_active()
+        if not self.filtered:
+            self.clear_filters()
+        else:
+            self.update_filters()
 
     def on_del_clicked(self, button):
         selection = self.get_selection()
@@ -254,6 +267,11 @@ class FilterPanel(Gtk.TreeView):
         self.expand_all()
         self.update_filters()
 
+    def clear_filters(self):
+        self.persp.chessfile.set_tag_filter(None)
+        self.persp.chessfile.set_scout_filter(None)
+        self.persp.gamelist.load_games()
+
     def update_filters(self):
         tag_query = {}
         scout_query = {}
@@ -319,7 +337,7 @@ class FilterPanel(Gtk.TreeView):
             except:
                 pass
 
-        if need_update:
+        if need_update and self.filtered:
             self.persp.gamelist.load_games()
 
     def ini_widgets_from_query(self, query):
