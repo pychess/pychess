@@ -121,8 +121,6 @@ class GameList(Gtk.TreeView):
         else:
             self.liststore.clear()
 
-        self.liststore.clear()
-
         get_date = self.persp.chessfile.get_date
         add = self.liststore.append
 
