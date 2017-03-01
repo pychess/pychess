@@ -141,9 +141,8 @@ class BoardControl(Gtk.EventBox):
                                               self.view.shown_variation_idx)
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
-        if promotion is None and board[
-                cord0].sign == PAWN and cord1.cord in board.PROMOTION_ZONE[
-                    color]:
+        if promotion is None and board[cord0].sign == PAWN and \
+                cord1.cord in board.PROMOTION_ZONE[color]:
             if self.variant.variant == SITTUYINCHESS:
                 # no promotion allowed if we have queen
                 if board.board.boards[color][QUEEN]:
@@ -880,10 +879,12 @@ class LockedActiveState(LockedBoardState):
                 self.view.selected, cord):
             # In mixed locked selected/active state and user selects a valid premove cord
             board = self.getBoard()
-            if board[
-                    self.view.selected].sign == PAWN and cord.cord in board.PROMOTION_ZONE[
-                        1 - board.color]:
-                promotion = self.parent.getPromotion()
+            if board[self.view.selected].sign == PAWN and \
+                    cord.cord in board.PROMOTION_ZONE[1 - board.color]:
+                if conf.get("autoPromote", False):
+                    promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
+                else:
+                    promotion = self.parent.getPromotion()
             else:
                 promotion = None
             self.view.setPremove(board[self.view.selected], self.view.selected,
@@ -897,10 +898,12 @@ class LockedActiveState(LockedBoardState):
                 self.view.active, cord):
             # User drags a piece to a valid premove square
             board = self.getBoard()
-            if board[
-                    self.view.active].sign == PAWN and cord.cord in board.PROMOTION_ZONE[
-                        1 - board.color]:
-                promotion = self.parent.getPromotion()
+            if board[self.view.active].sign == PAWN and \
+                    cord.cord in board.PROMOTION_ZONE[1 - board.color]:
+                if conf.get("autoPromote", False):
+                    promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
+                else:
+                    promotion = self.parent.getPromotion()
             else:
                 promotion = None
             self.view.setPremove(self.getBoard()[self.view.active],
