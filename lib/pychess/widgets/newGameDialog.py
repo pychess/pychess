@@ -365,7 +365,7 @@ class _GameInitializationMode(object):
                 clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
                 text = clipboard.wait_for_text()
                 # print("got clipboard:", text)
-                if len(text.split()) < 2:
+                if text is None or len(text.split()) < 2:
                     return
                 try:
                     lboard = cls.setupmodel.variant(setup=text).board

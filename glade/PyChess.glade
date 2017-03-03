@@ -4136,7 +4136,7 @@ It will search positions from http://www.k4it.de/</property>
       <action-widget response="1">button2</action-widget>
       <action-widget response="2">button3</action-widget>
       <action-widget response="3">button4</action-widget>
-      <action-widget response="0">button5</action-widget>
+      <action-widget response="4">button5</action-widget>
     </action-widgets>
   </object>
   <object class="GtkImage" id="image_stock_folder1">
