@@ -516,7 +516,7 @@ class BoardState:
                 return False
             # prevent moving kings off board
             elif self.getBoard()[cord0].piece == KING and (cord1.x < 0 or cord1.x > self.FILES - 1):
-                if not self.setup_sub_fen:
+                if not self.parent.setup_sub_fen:
                     return False
             # prevent taking enemy king
             elif to_piece is not None and to_piece.piece == KING:
