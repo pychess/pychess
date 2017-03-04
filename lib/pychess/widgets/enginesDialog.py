@@ -172,6 +172,7 @@ class EnginesDialog():
         filter.add_mime_type("application/x-ms-dos-executable")
         filter.add_mime_type("application/x-msdownload")
         filter.add_pattern("*.exe")
+        filter.add_pattern("*.js")
         engine_chooser_dialog.add_filter(filter)
         self.add = False
 
@@ -181,8 +182,7 @@ class EnginesDialog():
 
             if response == Gtk.ResponseType.OK:
                 new_engine = engine_chooser_dialog.get_filename()
-                if new_engine.lower().endswith(
-                        ".exe") and sys.platform != "win32":
+                if new_engine.lower().endswith(".exe") and sys.platform != "win32":
                     vm_name = "wine"
                     vmpath = searchPath(vm_name, access=os.R_OK | os.X_OK)
                     if vmpath is None:
@@ -196,13 +196,25 @@ class EnginesDialog():
                         new_engine = ""
                     else:
                         vmpath += " "
+                elif new_engine.lower().endswith(".js"):
+                    vm_name = "node"
+                    vmpath = searchPath(vm_name, access=os.R_OK | os.X_OK)
+                    if vmpath is None:
+                        msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                                                    buttons=Gtk.ButtonsType.OK)
+                        msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
+                                             new_engine))
+                        msg_dia.format_secondary_text(_("node.js is not installed"))
+                        msg_dia.run()
+                        msg_dia.hide()
+                        new_engine = ""
                 else:
                     vm_name = None
                     vmpath = ""
 
                 if new_engine:
-                    if not os.access(new_engine, os.X_OK):
-                        print(new_engine)
+                    if not new_engine.lower().endswith(".js") and \
+                       not os.access(new_engine, os.X_OK):
                         msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
                                                     buttons=Gtk.ButtonsType.OK)
                         msg_dia.set_markup(_("<big><b>%s is not marked executable in the filesystem</b></big>" %
@@ -214,7 +226,7 @@ class EnginesDialog():
                         engine_chooser_dialog.hide()
                         return
                     try:
-                        # Some engines support CECP and UCI, but variant engines are CECP,
+                        # Some engines support CECP and UCI, but main variant engines are CECP,
                         # so we better to start with CECP this case
                         variant_engines = ("fmax", "sjaakii", "sjeng")
                         if any((True
@@ -225,7 +237,8 @@ class EnginesDialog():
                             checkers = [is_uci, is_cecp]
                         uci = False
                         for checker in checkers:
-                            check_ok = checker(vmpath + new_engine)
+                            engine_command = (vmpath, new_engine) if vmpath else new_engine
+                            check_ok = checker(engine_command)
                             if check_ok:
                                 uci = checker is is_uci
                                 break
@@ -292,6 +305,20 @@ class EnginesDialog():
         self.widgets["add_engine_button"].connect("clicked", add)
 
         ################################################################
+        # vm args
+        ################################################################
+        def vm_args_changed(widget):
+            if self.cur_engine is not None:
+                new_args = self.widgets["vm_args_entry"].get_text().strip()
+                engine = discoverer.getEngineByName(self.cur_engine)
+                old_args = engine.get("vm_args")
+                if new_args != old_args:
+                    engine["vm_args"] = new_args.split()
+                    discoverer.save()
+
+        self.widgets["vm_args_entry"].connect("changed", vm_args_changed)
+
+        ################################################################
         # engine args
         ################################################################
         def args_changed(widget):
@@ -340,11 +367,16 @@ class EnginesDialog():
                 old_protocol = engine["protocol"]
                 if new_protocol != old_protocol:
                     engine_command = engine_chooser_dialog.get_filename()
+                    vm_command = engine.get("vm_command")
+                    if vm_command is not None:
+                        engine_command = (vm_command, engine_command)
+
                     # is the new protocol supported by the engine?
                     if new_protocol == "uci":
                         check_ok = is_uci(engine_command)
                     else:
                         check_ok = is_cecp(engine_command)
+
                     if check_ok:
                         # discover engine options for new protocol
                         engine["protocol"] = new_protocol
@@ -378,16 +410,20 @@ class EnginesDialog():
                     self.widgets['remove_engine_button'].set_sensitive(False)
                 else:
                     self.widgets['remove_engine_button'].set_sensitive(True)
-                self.widgets["engine_command_entry"].set_text(engine[
-                    "command"])
+                self.widgets["engine_command_entry"].set_text(engine["command"])
                 engine_chooser_dialog.set_filename(engine["command"])
                 args = [] if engine.get("args") is None else engine.get("args")
                 self.widgets["engine_args_entry"].set_text(' '.join(args))
+
+                vm = engine.get("vm_command")
+                self.widgets["vm_command_entry"].set_text(vm if vm is not None else "")
+                args = [] if engine.get("vm_args") is None else engine.get("vm_args")
+                self.widgets["vm_args_entry"].set_text(' '.join(args))
+
                 directory = engine.get("workingDirectory")
                 dir_choice = directory if directory is not None else self.default_workdir
                 dir_chooser_dialog.set_current_folder(dir_choice)
-                self.widgets["engine_protocol_combo"].set_active(0 if engine[
-                    "protocol"] == "uci" else 1)
+                self.widgets["engine_protocol_combo"].set_active(0 if engine["protocol"] == "uci" else 1)
                 update_options()
                 self.selection = False
 
