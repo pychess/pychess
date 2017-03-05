@@ -338,9 +338,10 @@ def keepWindowSize(key,
             window.resize(1, 1)
 
         if conf.hasKey(key + "_x") and conf.hasKey(key + "_y"):
-            log.debug("Moving window to x=%s y=%s" %
-                      (conf.getStrict(key + "_x"), conf.getStrict(key + "_y")))
-            window.move(conf.getStrict(key + "_x"), conf.getStrict(key + "_y"))
+            x = max(0, conf.getStrict(key + "_x"))
+            y = max(0, conf.getStrict(key + "_y"))
+            log.debug("Moving window to x=%s y=%s" % (x, y))
+            window.move(x, y)
 
         elif defaultPosition in (POSITION_CENTER, POSITION_GOLDEN):
             monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds(
