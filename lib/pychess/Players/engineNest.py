@@ -234,8 +234,7 @@ class EngineDiscoverer(GObject.GObject):
 
             if vmpath and path:
                 return vmpath, path
-            elif path and sys.platform == "win32" and engine.get(
-                    "vm_name") == "wine":
+            elif path and sys.platform == "win32" and engine.get("vm_name") == "wine":
                 return None, path
 
         else:
@@ -577,13 +576,15 @@ class EngineDiscoverer(GObject.GObject):
         engine.prestart()
         return engine
 
-    def addEngine(self, name, new_engine, protocol, vm_name):
+    def addEngine(self, name, new_engine, protocol, vm_name, vm_args):
         engine = {"name": name,
                   "protocol": protocol,
                   "command": new_engine,
                   "recheck": True}
         if vm_name is not None:
             engine["vm_name"] = vm_name
+        if vm_args is not None:
+            engine["vm_args"] = vm_args
         self._engines.append(engine)
 
     def removeEngine(self, name):

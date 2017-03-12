@@ -1,6 +1,7 @@
 from __future__ import print_function
 import os
 import sys
+from collections import namedtuple
 
 from gi.repository import Gtk, Gdk, GLib, GObject
 from gi.repository.GdkPixbuf import Pixbuf
@@ -12,6 +13,12 @@ from pychess.Players.engineNest import discoverer, is_uci, is_cecp
 from pychess.widgets import newGameDialog
 
 firstRun = True
+
+VM = namedtuple('VM', 'name, ext, args')
+VM_LIST = [
+    VM("node", ".js", None),
+    VM("java", ".jar", "-jar"),
+    VM("python", ".py", "-u")]
 
 
 def run(widgets):
@@ -172,7 +179,9 @@ class EnginesDialog():
         filter.add_mime_type("application/x-ms-dos-executable")
         filter.add_mime_type("application/x-msdownload")
         filter.add_pattern("*.exe")
-        filter.add_pattern("*.js")
+        for vm in VM_LIST:
+            filter.add_pattern("*%s" % vm.ext)
+
         engine_chooser_dialog.add_filter(filter)
         self.add = False
 
@@ -182,6 +191,9 @@ class EnginesDialog():
 
             if response == Gtk.ResponseType.OK:
                 new_engine = engine_chooser_dialog.get_filename()
+                vm_name = None
+                vm_args = None
+                vmpath = ""
                 if new_engine.lower().endswith(".exe") and sys.platform != "win32":
                     vm_name = "wine"
                     vmpath = searchPath(vm_name, access=os.R_OK | os.X_OK)
@@ -196,25 +208,27 @@ class EnginesDialog():
                         new_engine = ""
                     else:
                         vmpath += " "
-                elif new_engine.lower().endswith(".js"):
-                    vm_name = "node"
-                    vmpath = searchPath(vm_name, access=os.R_OK | os.X_OK)
-                    if vmpath is None:
-                        msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
-                                                    buttons=Gtk.ButtonsType.OK)
-                        msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
-                                             new_engine))
-                        msg_dia.format_secondary_text(_("node.js is not installed"))
-                        msg_dia.run()
-                        msg_dia.hide()
-                        new_engine = ""
-                else:
-                    vm_name = None
-                    vmpath = ""
+
+                for vm in VM_LIST:
+                    ext = os.path.splitext(new_engine)[1]
+                    if ext == vm.ext:
+                        vm_name = vm.name
+                        vm_args = vm.args
+                        vmpath = searchPath(vm_name, access=os.R_OK | os.X_OK)
+                        if vmpath is None:
+                            msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                                                        buttons=Gtk.ButtonsType.OK)
+                            msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
+                                                 new_engine))
+                            msg_dia.format_secondary_text(vm_name + _(" is not installed"))
+                            msg_dia.run()
+                            msg_dia.hide()
+                            new_engine = ""
+                        break
 
                 if new_engine:
-                    if not new_engine.lower().endswith(".js") and \
-                       not os.access(new_engine, os.X_OK):
+                    vm_ext_list = [vm.ext for vm in VM_LIST]
+                    if ext not in vm_ext_list and not os.access(new_engine, os.X_OK):
                         msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
                                                     buttons=Gtk.ButtonsType.OK)
                         msg_dia.set_markup(_("<big><b>%s is not marked executable in the filesystem</b></big>" %
@@ -225,7 +239,15 @@ class EnginesDialog():
                         self.add = False
                         engine_chooser_dialog.hide()
                         return
+
                     try:
+                        engine_command = []
+                        if vmpath is not None:
+                            engine_command.append(vmpath)
+                        if vm_args is not None:
+                            engine_command.append(vm_args)
+                        engine_command.append(new_engine)
+
                         # Some engines support CECP and UCI, but main variant engines are CECP,
                         # so we better to start with CECP this case
                         variant_engines = ("fmax", "sjaakii", "sjeng")
@@ -235,9 +257,9 @@ class EnginesDialog():
                             checkers = [is_cecp, is_uci]
                         else:
                             checkers = [is_uci, is_cecp]
+
                         uci = False
                         for checker in checkers:
-                            engine_command = (vmpath, new_engine) if vmpath else new_engine
                             check_ok = checker(engine_command)
                             if check_ok:
                                 uci = checker is is_uci
@@ -278,8 +300,10 @@ class EnginesDialog():
                         # active = self.widgets["engine_protocol_combo"].get_active()
                         protocol = "uci" if uci else "xboard"
 
-                        discoverer.addEngine(binname, new_engine, protocol,
-                                             vm_name)
+                        if vm_args is not None:
+                            vm_args = vm_args.split(",")
+                        print(binname, new_engine, protocol, vm_name, vm_args)
+                        discoverer.addEngine(binname, new_engine, protocol, vm_name, vm_args)
                         self.cur_engine = binname
                         self.add = False
                         discoverer.discover()
@@ -366,10 +390,15 @@ class EnginesDialog():
                 engine = discoverer.getEngineByName(self.cur_engine)
                 old_protocol = engine["protocol"]
                 if new_protocol != old_protocol:
-                    engine_command = engine_chooser_dialog.get_filename()
+                    command = engine.get("command")
+                    engine_command = []
                     vm_command = engine.get("vm_command")
                     if vm_command is not None:
-                        engine_command = (vm_command, engine_command)
+                        engine_command.append(vm_command)
+                        vm_args = engine.get("vm_args")
+                        if vm_args is not None:
+                            engine_command.append(", ".join(vm_args))
+                    engine_command.append(command)
 
                     # is the new protocol supported by the engine?
                     if new_protocol == "uci":
