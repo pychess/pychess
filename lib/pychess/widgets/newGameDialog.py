@@ -225,7 +225,7 @@ class _GameInitializationMode(object):
         setattr(cls, "%s_min" % id, minSpin)
         uistuff.keep(minSpin, "%s min" % id, first_value=defmin)
         movesSpin = Gtk.SpinButton()
-        movesSpin.set_adjustment(Gtk.Adjustment(0, 20, 60, 1))
+        movesSpin.set_adjustment(Gtk.Adjustment(0, 0, 60, 20))
         setattr(cls, "%s_moves" % id, movesSpin)
         uistuff.keep(movesSpin, "%s moves" % id, first_value=defmoves)
         gainSpin = Gtk.SpinButton()
