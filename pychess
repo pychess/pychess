@@ -6,13 +6,13 @@
 
 from __future__ import print_function
 import argparse
+import asyncio
 import os
 import sys
 import gettext
 import locale
 import atexit
 import logging
-import cgitb
 
 # faulthandler will be in Python 3.3; for 2.x you can download it from pypi
 if not getattr(sys, 'frozen', False):
@@ -25,8 +25,8 @@ if not getattr(sys, 'frozen', False):
 ###############################################################################
 # Check requirements
 
-if sys.version_info < (2, 7, 0):
-    print('ERROR: PyChess requires Python >= 2.7')
+if sys.version_info < (3, 4, 0):
+    print('ERROR: PyChess requires Python >= 3.4')
     sys.exit(1)
 
 try:
@@ -56,6 +56,13 @@ try:
 except ValueError as e:
     print("ERROR: Not all dependencies installed! You can find them in INSTALL")
     print(e)
+    sys.exit(1)
+
+try:
+    import gbulb
+    gbulb.install(gtk=True)
+except ImportError:
+    print("ERROR: PyChess requires gbulb to be installed.")
     sys.exit(1)
 
 ###############################################################################
@@ -125,7 +132,6 @@ parser.add_argument('chess_file', nargs='?', metavar='chessfile',
 
 args = parser.parse_args()
 log_debug = args.log_debug
-idle_add_debug = args.idle_add_debug
 thread_debug = args.thread_debug
 no_gettext = args.no_gettext
 log_viewer = args.log_viewer
@@ -188,17 +194,11 @@ try:
     from pychess.System.Log import log, LogPipe
     from pychess.System.LogEmitter import GLogHandler, logemitter
     from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
-    from pychess.System import conf, SubProcess, idle_add
-    from pychess.System.debug import start_thread_dump
+    from pychess.System import conf, SubProcess
     from pychess.Main import PyChess
 except ImportError:
     raise
     pass
-###############################################################################
-# Set debug stuff
-idle_add.debug = idle_add_debug
-if thread_debug:
-    start_thread_dump()
 
 ###############################################################################
 # Start logging
@@ -226,4 +226,6 @@ while l > conf.get("max_log_files", 10):
 atexit.register(SubProcess.finishAllSubprocesses)
 
 gtk_app = PyChess(log_viewer, purge_recent, chess_file, ics_host, ics_port)
-gtk_app.run(None)
+
+loop = asyncio.get_event_loop()
+loop.run_forever(application=gtk_app)

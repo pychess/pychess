@@ -5,12 +5,11 @@ from __future__ import print_function
 
 from math import floor, ceil, pi
 from time import time
-from threading import RLock
 
 import cairo
-from gi.repository import Gtk, Gdk, GLib, GObject, Pango, PangoCairo
+from gi.repository import Gtk, Gdk, GObject, Pango, PangoCairo
+
 from pychess.System import conf
-from pychess.System.idle_add import idle_add
 from pychess.gfx import Pieces
 from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
@@ -225,7 +224,6 @@ class BoardView(Gtk.DrawingArea):
         self.drawtime = 0
 
         self.got_started = False
-        self.animation_lock = RLock()
         self.animating = False
 
         self.dragged_piece = None  # a piece being dragged by the user
@@ -253,11 +251,12 @@ class BoardView(Gtk.DrawingArea):
         else:
             if model.moves:
                 self.lastMove = model.moves[-1]
-            with self.animation_lock:
-                for row in self.model.boards[-1].data:
-                    for piece in row.values():  # row:
-                        if piece:
-                            piece.opacity = 0
+
+            for row in self.model.boards[-1].data:
+                for piece in row.values():  # row:
+                    if piece:
+                        piece.opacity = 0
+
             self.got_started = True
             self.startAnimation()
         self.emit("shownChanged", self.shown)
@@ -456,39 +455,38 @@ class BoardView(Gtk.DrawingArea):
 
         step = shown > self.shown and 1 or -1
 
-        with self.animation_lock:
-            deadset = set()
-            for i in range(self.shown, shown, step):
-                board = self.model.getBoardAtPly(i, self.shown_variation_idx)
-                board1 = self.model.getBoardAtPly(i + step, self.shown_variation_idx)
-                if step == 1:
-                    move = self.model.getMoveAtPly(i, self.shown_variation_idx)
-                    moved, new, dead = board.simulateMove(board1, move)
-                else:
-                    move = self.model.getMoveAtPly(i - 1, self.shown_variation_idx)
-                    moved, new, dead = board.simulateUnmove(board1, move)
+        deadset = set()
+        for i in range(self.shown, shown, step):
+            board = self.model.getBoardAtPly(i, self.shown_variation_idx)
+            board1 = self.model.getBoardAtPly(i + step, self.shown_variation_idx)
+            if step == 1:
+                move = self.model.getMoveAtPly(i, self.shown_variation_idx)
+                moved, new, dead = board.simulateMove(board1, move)
+            else:
+                move = self.model.getMoveAtPly(i - 1, self.shown_variation_idx)
+                moved, new, dead = board.simulateUnmove(board1, move)
 
-                # We need to ensure, that the piece coordinate is saved in the
-                # piece
-                for piece, cord0 in moved:
-                    # Test if the piece already has a realcoord(has been dragged)
-                    if (piece is not None) and piece.x is None:
-                        # We don't want newly restored pieces to flew from their
-                        # deadspot to their old position, as it doesn't work
-                        # vice versa
-                        if piece.opacity == 1:
-                            piece.x = cord0.x
-                            piece.y = cord0.y
+            # We need to ensure, that the piece coordinate is saved in the
+            # piece
+            for piece, cord0 in moved:
+                # Test if the piece already has a realcoord(has been dragged)
+                if (piece is not None) and piece.x is None:
+                    # We don't want newly restored pieces to flew from their
+                    # deadspot to their old position, as it doesn't work
+                    # vice versa
+                    if piece.opacity == 1:
+                        piece.x = cord0.x
+                        piece.y = cord0.y
 
-                for piece in dead:
-                    deadset.add(piece)
-                    # Reset the location of the piece to avoid a small visual
-                    # jump, when it is at some other time waken to life.
-                    piece.x = None
-                    piece.y = None
+            for piece in dead:
+                deadset.add(piece)
+                # Reset the location of the piece to avoid a small visual
+                # jump, when it is at some other time waken to life.
+                piece.x = None
+                piece.y = None
 
-                for piece in new:
-                    piece.opacity = 0
+            for piece in new:
+                piece.opacity = 0
 
         self.deadlist = []
         for y_loc, row in enumerate(self.model.getBoardAtPly(self.shown,
@@ -516,7 +514,6 @@ class BoardView(Gtk.DrawingArea):
         else:
             self.lastMove = None
 
-        @idle_add
         def doSetShown():
             self.runAnimation(redraw_misc=self.real_set_shown)
             if not conf.get("noAnimation", False):
@@ -548,101 +545,100 @@ class BoardView(Gtk.DrawingArea):
             self.animimation_id = - 1
             return False
 
-        with self.animation_lock:
-            paint_box = None
+        paint_box = None
 
-            mod = min(1, (time() - self.animation_start) / ANIMATION_TIME)
-            board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
+        mod = min(1, (time() - self.animation_start) / ANIMATION_TIME)
+        board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
 
-            for y_loc, row in enumerate(board.data):
-                for x_loc, piece in row.items():
-                    if not piece:
+        for y_loc, row in enumerate(board.data):
+            for x_loc, piece in row.items():
+                if not piece:
+                    continue
+                if piece == self.dragged_piece:
+                    continue
+                if piece == self.premove_piece:
+                    # if premove move is being made, the piece will already be
+                    # sitting on the cord it needs to move to-
+                    # do not animate and reset premove to None
+                    if self.shown == self.premove_ply:
+                        piece.x = None
+                        piece.y = None
+                        self.setPremove(None, None, None, None)
                         continue
-                    if piece == self.dragged_piece:
-                        continue
-                    if piece == self.premove_piece:
-                        # if premove move is being made, the piece will already be
-                        # sitting on the cord it needs to move to-
-                        # do not animate and reset premove to None
-                        if self.shown == self.premove_ply:
-                            piece.x = None
-                            piece.y = None
-                            self.setPremove(None, None, None, None)
-                            continue
-                        # otherwise, animate premove piece moving to the premove cord
-                        # rather than the cord it actually exists on
-                        elif self.premove0 and self.premove1:
-                            x_loc = self.premove1.x
-                            y_loc = self.premove1.y
+                    # otherwise, animate premove piece moving to the premove cord
+                    # rather than the cord it actually exists on
+                    elif self.premove0 and self.premove1:
+                        x_loc = self.premove1.x
+                        y_loc = self.premove1.y
 
+                if piece.x is not None:
+                    if not conf.get("noAnimation", False):
+                        if piece.piece == KNIGHT:
+                            newx = piece.x + (x_loc - piece.x) * mod**(1.5)
+                            newy = piece.y + (y_loc - piece.y) * mod
+                        else:
+                            newx = piece.x + (x_loc - piece.x) * mod
+                            newy = piece.y + (y_loc - piece.y) * mod
+                    else:
+                        newx, newy = x_loc, y_loc
+
+                    paint_box = join(paint_box, self.cord2RectRelative(piece.x,
+                                                                       piece.y))
+                    paint_box = join(paint_box, self.cord2RectRelative(newx, newy))
+
+                    if (newx <= x_loc <= piece.x or newx >= x_loc >= piece.x) and \
+                       (newy <= y_loc <= piece.y or newy >= y_loc >= piece.y) or \
+                       abs(newx - x_loc) < 0.005 and abs(newy - y_loc) < 0.005:
+                        paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
+                        piece.x = None
+                        piece.y = None
+                    else:
+                        piece.x = newx
+                        piece.y = newy
+
+                if piece.opacity < 1:
                     if piece.x is not None:
-                        if not conf.get("noAnimation", False):
-                            if piece.piece == KNIGHT:
-                                newx = piece.x + (x_loc - piece.x) * mod**(1.5)
-                                newy = piece.y + (y_loc - piece.y) * mod
-                            else:
-                                newx = piece.x + (x_loc - piece.x) * mod
-                                newy = piece.y + (y_loc - piece.y) * mod
-                        else:
-                            newx, newy = x_loc, y_loc
+                        px_loc = piece.x
+                        py_loc = piece.y
+                    else:
+                        px_loc = x_loc
+                        py_loc = y_loc
 
-                        paint_box = join(paint_box, self.cord2RectRelative(piece.x,
-                                                                           piece.y))
-                        paint_box = join(paint_box, self.cord2RectRelative(newx, newy))
+                    if paint_box:
+                        paint_box = join(paint_box, self.cord2RectRelative(px_loc, py_loc))
+                    else:
+                        paint_box = self.cord2RectRelative(px_loc, py_loc)
 
-                        if (newx <= x_loc <= piece.x or newx >= x_loc >= piece.x) and \
-                           (newy <= y_loc <= piece.y or newy >= y_loc >= piece.y) or \
-                           abs(newx - x_loc) < 0.005 and abs(newy - y_loc) < 0.005:
-                            paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
-                            piece.x = None
-                            piece.y = None
-                        else:
-                            piece.x = newx
-                            piece.y = newy
+                    if not conf.get("noAnimation", False):
+                        new_op = piece.opacity + (1 - piece.opacity) * mod
+                    else:
+                        new_op = 1
 
-                    if piece.opacity < 1:
-                        if piece.x is not None:
-                            px_loc = piece.x
-                            py_loc = piece.y
-                        else:
-                            px_loc = x_loc
-                            py_loc = y_loc
+                    if new_op >= 1 >= piece.opacity or abs(1 - new_op) < 0.005:
+                        piece.opacity = 1
+                    else:
+                        piece.opacity = new_op
 
-                        if paint_box:
-                            paint_box = join(paint_box, self.cord2RectRelative(px_loc, py_loc))
-                        else:
-                            paint_box = self.cord2RectRelative(px_loc, py_loc)
+        ready = []
+        for i, dead in enumerate(self.deadlist):
+            piece, x_loc, y_loc = dead
+            if not paint_box:
+                paint_box = self.cord2RectRelative(x_loc, y_loc)
+            else:
+                paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
 
-                        if not conf.get("noAnimation", False):
-                            new_op = piece.opacity + (1 - piece.opacity) * mod
-                        else:
-                            new_op = 1
+            if not conf.get("noAnimation", False):
+                new_op = piece.opacity + (0 - piece.opacity) * mod
+            else:
+                new_op = 0
 
-                        if new_op >= 1 >= piece.opacity or abs(1 - new_op) < 0.005:
-                            piece.opacity = 1
-                        else:
-                            piece.opacity = new_op
+            if new_op <= 0 <= piece.opacity or abs(0 - new_op) < 0.005:
+                ready.append(dead)
+            else:
+                piece.opacity = new_op
 
-            ready = []
-            for i, dead in enumerate(self.deadlist):
-                piece, x_loc, y_loc = dead
-                if not paint_box:
-                    paint_box = self.cord2RectRelative(x_loc, y_loc)
-                else:
-                    paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
-
-                if not conf.get("noAnimation", False):
-                    new_op = piece.opacity + (0 - piece.opacity) * mod
-                else:
-                    new_op = 0
-
-                if new_op <= 0 <= piece.opacity or abs(0 - new_op) < 0.005:
-                    ready.append(dead)
-                else:
-                    piece.opacity = new_op
-
-            for dead in ready:
-                self.deadlist.remove(dead)
+        for dead in ready:
+            self.deadlist.remove(dead)
 
         if paint_box:
             self.redrawCanvas(rect(paint_box))
@@ -656,7 +652,6 @@ class BoardView(Gtk.DrawingArea):
             return paint_box and True or False
 
     def startAnimation(self):
-        @idle_add
         def doStartAnimation():
             self.runAnimation(redraw_misc=True)
             if not conf.get("noAnimation", False):
@@ -697,8 +692,7 @@ class BoardView(Gtk.DrawingArea):
             stats.sort_stats('cumulative')
             stats.print_stats()
         else:
-            with self.animation_lock:
-                self.draw(context, rectangle)
+            self.draw(context, rectangle)
             # self.drawcount += 1
             # self.drawtime += time() - start
             # if self.drawcount % 100 == 0:
@@ -716,7 +710,7 @@ class BoardView(Gtk.DrawingArea):
     ###############################
 
     def redrawCanvas(self, rect=None):
-        @idle_add
+
         def redraw(rect):
             if self.get_window():
                 if not rect:
@@ -768,8 +762,7 @@ class BoardView(Gtk.DrawingArea):
             self.drawEnpassant(context, r)
             self.drawCircles(context)
             self.drawArrows(context)
-            with self.animation_lock:
-                self.drawPieces(context, r)
+            self.drawPieces(context, r)
             if not self.setup_position:
                 self.drawLastMove(context, r)
 
@@ -1527,7 +1520,7 @@ class BoardView(Gtk.DrawingArea):
                 self.next_rotation = radians
                 self.matrix = cairo.Matrix.init_rotate(radians)
                 self.redrawCanvas()
-            GLib.idle_add(rotate)
+            rotate
         else:
             if hasattr(self, "next_rotation") and \
                     self.next_rotation != self.rotation:
@@ -1549,7 +1542,7 @@ class BoardView(Gtk.DrawingArea):
                 return next
 
             self.animating = True
-            GLib.idle_add(rotate)
+            rotate
 
     def _getRotation(self):
         return self._rotation

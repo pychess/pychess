@@ -8,7 +8,6 @@ from gi.repository import Gtk, Pango, GObject
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff, conf
-from pychess.System.idle_add import idle_add
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.TimeModel import TimeModel
@@ -181,7 +180,6 @@ class NewGameTasker(Gtk.Alignment):
         widgets["startButton"].connect("clicked", self.startClicked)
         self.widgets["opendialog1"].connect("clicked", self.openDialogClicked)
 
-    @idle_add
     def __initPlayerCombo(self, discoverer, widgets):
         combo = self.playerCombo
         combo.update(newGameDialog.smallPlayerItems[0])

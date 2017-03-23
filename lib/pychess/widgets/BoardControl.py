@@ -3,9 +3,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-from gi.repository import GLib, Gtk, Gdk, GObject
-
-import threading
+from gi.repository import Gtk, Gdk, GObject
 
 from pychess.System import conf
 from pychess.Utils.Cord import Cord
@@ -72,7 +70,6 @@ class BoardControl(Gtk.EventBox):
         self.cids.append(self.connect("leave_notify_event", self.leave_notify))
 
         self.selected_last = None
-        self.stateLock = threading.Lock()
         self.normalState = NormalState(self)
         self.selectedState = SelectedState(self)
         self.activeState = ActiveState(self)
@@ -227,33 +224,25 @@ class BoardControl(Gtk.EventBox):
             if self.view.shown - 2 in self.possibleBoards:
                 del self.possibleBoards[self.view.shown - 2]
 
-        GLib.idle_add(do_shown_changed)
+        do_shown_changed
 
     def moves_undone(self, gamemodel, moves):
-        self.stateLock.acquire()
-        try:
-            self.view.selected = None
-            self.view.active = None
-            self.view.hover = None
-            self.view.dragged_piece = None
-            self.view.setPremove(None, None, None, None)
-            if not self.view.model.examined:
-                self.currentState = self.lockedNormalState
-        finally:
-            self.stateLock.release()
+        self.view.selected = None
+        self.view.active = None
+        self.view.hover = None
+        self.view.dragged_piece = None
+        self.view.setPremove(None, None, None, None)
+        if not self.view.model.examined:
+            self.currentState = self.lockedNormalState
 
     def game_ended(self, gamemodel, reason):
-        self.stateLock.acquire()
-        try:
-            self.selected_last = None
-            self.view.selected = None
-            self.view.active = None
-            self.view.hover = None
-            self.view.dragged_piece = None
-            self.view.setPremove(None, None, None, None)
-            self.currentState = self.normalState
-        finally:
-            self.stateLock.release()
+        self.selected_last = None
+        self.view.selected = None
+        self.view.active = None
+        self.view.hover = None
+        self.view.dragged_piece = None
+        self.view.setPremove(None, None, None, None)
+        self.currentState = self.normalState
 
         self.view.startAnimation()
 
@@ -267,74 +256,58 @@ class BoardControl(Gtk.EventBox):
     def setLocked(self, locked):
         do_animation = False
 
-        self.stateLock.acquire()
-        try:
-            if locked and self.isLastPlayed(self.getBoard()) and \
-                    self.view.model.status == RUNNING:
-                if self.view.model.status != RUNNING:
-                    self.view.selected = None
-                    self.view.active = None
-                    self.view.hover = None
-                    self.view.dragged_piece = None
-                    do_animation = True
+        if locked and self.isLastPlayed(self.getBoard()) and \
+                self.view.model.status == RUNNING:
+            if self.view.model.status != RUNNING:
+                self.view.selected = None
+                self.view.active = None
+                self.view.hover = None
+                self.view.dragged_piece = None
+                do_animation = True
 
-                if self.currentState == self.selectedState:
-                    self.currentState = self.lockedSelectedState
-                elif self.currentState == self.activeState:
-                    self.currentState = self.lockedActiveState
-                else:
-                    self.currentState = self.lockedNormalState
+            if self.currentState == self.selectedState:
+                self.currentState = self.lockedSelectedState
+            elif self.currentState == self.activeState:
+                self.currentState = self.lockedActiveState
             else:
-                if self.currentState == self.lockedSelectedState:
-                    self.currentState = self.selectedState
-                elif self.currentState == self.lockedActiveState:
-                    self.currentState = self.activeState
-                else:
-                    self.currentState = self.normalState
-        finally:
-            self.stateLock.release()
+                self.currentState = self.lockedNormalState
+        else:
+            if self.currentState == self.lockedSelectedState:
+                self.currentState = self.selectedState
+            elif self.currentState == self.lockedActiveState:
+                self.currentState = self.activeState
+            else:
+                self.currentState = self.normalState
 
         if do_animation:
             self.view.startAnimation()
 
     def setStateSelected(self):
-        self.stateLock.acquire()
-        try:
-            if self.currentState in (self.lockedNormalState,
-                                     self.lockedSelectedState,
-                                     self.lockedActiveState):
-                self.currentState = self.lockedSelectedState
-            else:
-                self.view.setPremove(None, None, None, None)
-                self.currentState = self.selectedState
-        finally:
-            self.stateLock.release()
+        if self.currentState in (self.lockedNormalState,
+                                 self.lockedSelectedState,
+                                 self.lockedActiveState):
+            self.currentState = self.lockedSelectedState
+        else:
+            self.view.setPremove(None, None, None, None)
+            self.currentState = self.selectedState
 
     def setStateActive(self):
-        self.stateLock.acquire()
-        try:
-            if self.currentState in (self.lockedNormalState,
-                                     self.lockedSelectedState,
-                                     self.lockedActiveState):
-                self.currentState = self.lockedActiveState
-            else:
-                self.view.setPremove(None, None, None, None)
-                self.currentState = self.activeState
-        finally:
-            self.stateLock.release()
+        if self.currentState in (self.lockedNormalState,
+                                 self.lockedSelectedState,
+                                 self.lockedActiveState):
+            self.currentState = self.lockedActiveState
+        else:
+            self.view.setPremove(None, None, None, None)
+            self.currentState = self.activeState
 
     def setStateNormal(self):
-        self.stateLock.acquire()
-        try:
-            if self.currentState in (self.lockedNormalState,
-                                     self.lockedSelectedState,
-                                     self.lockedActiveState):
-                self.currentState = self.lockedNormalState
-            else:
-                self.view.setPremove(None, None, None, None)
-                self.currentState = self.normalState
-        finally:
-            self.stateLock.release()
+        if self.currentState in (self.lockedNormalState,
+                                 self.lockedSelectedState,
+                                 self.lockedActiveState):
+            self.currentState = self.lockedNormalState
+        else:
+            self.view.setPremove(None, None, None, None)
+            self.currentState = self.normalState
 
     def button_press(self, widget, event):
         if event.button == 3:

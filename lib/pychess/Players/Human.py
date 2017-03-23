@@ -1,8 +1,8 @@
 from __future__ import print_function
+import asyncio
 
 from gi.repository import Gtk, GObject
 
-from pychess.compat import Queue
 from pychess.Utils.const import DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, TAKEBACK_OFFER, \
     PAUSE_OFFER, RESUME_OFFER, RESIGNATION, FLAG_CALL, SWITCH_OFFER, HURRY_ACTION, \
     ACTION_ERROR_NOT_OUT_OF_TIME, ACTION_ERROR_CLOCK_NOT_STARTED, ACTION_ERROR_SWITCH_UNDERWAY, \
@@ -11,7 +11,6 @@ from pychess.Utils.const import DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, TAKEBACK
 from pychess.Utils.logic import validate
 from pychess.Utils.Move import Move
 from pychess.Utils.Offer import Offer
-from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.System import conf
 
@@ -88,7 +87,7 @@ class Human(Player):
         self.board = gmwidg.board
         self.gmwidg = gmwidg
         self.gamemodel = self.gmwidg.gamemodel
-        self.queue = Queue()
+        self.queue = asyncio.Queue()
         self.color = color
 
         self.board_cids = [
@@ -124,7 +123,7 @@ class Human(Player):
     def piece_moved(self, board, move, color):
         if color != self.color:
             return
-        self.queue.put(move)
+        self.queue.put_nowait(move)
 
     def emit_action(self, board, action, param):
         # If there are two or more tabs open, we have to ensure us that it is
@@ -146,7 +145,7 @@ class Human(Player):
         self.emit("offer", Offer(action, param=param))
 
     # Send the player move updates
-
+    @asyncio.coroutine
     def makeMove(self, board1, move, board2):
         log.debug("Human.makeMove: move=%s, board1=%s board2=%s" % (
             move, board1, board2))
@@ -167,7 +166,7 @@ class Human(Player):
             # reset premove
             self.board.view.setPremove(None, None, None, None)
         self.gmwidg.setLocked(False)
-        item = self.queue.get(block=True)
+        item = yield from self.queue.get()
         self.gmwidg.setLocked(True)
         if item == "del":
             raise PlayerIsDead("Killed by foreign forces")
@@ -179,18 +178,17 @@ class Human(Player):
     # Ending the game
 
     def end(self, status, reason):
-        self.queue.put("del")
+        self.queue.put_nowait("del")
 
     def kill(self, reason):
         print("I am killed", self)
         for num in self.conid:
             if self.board.handler_is_connected(num):
                 self.board.disconnect(num)
-        self.queue.put("del")
+        self.queue.put_nowait("del")
 
     # Interacting with the player
 
-    @idle_add
     def hurry(self):
         title = _("Your opponent asks you to hurry!")
         text = _(
@@ -225,7 +223,7 @@ class Human(Player):
             if gamemodel.curplayer != self:
                 log.debug(
                     "Human.playerUndoMoves: putting TurnInterrupt into self.queue")
-                self.queue.put("int")
+                self.queue.put_nowait("int")
 
         # If the movecount is even, we have to ensure the board is unlocked.
         # This is because it might have been locked by the game ending, but
@@ -244,7 +242,6 @@ class Human(Player):
 
     # Offer handling
 
-    @idle_add
     def offer(self, offer):
         log.debug("Human.offer: self=%s %s" % (self, offer))
         assert offer.type in OFFER_MESSAGES
@@ -281,7 +278,6 @@ class Human(Player):
                                                 Gtk.ResponseType.CANCEL))
         self.gmwidg.showMessage(message)
 
-    @idle_add
     def offerDeclined(self, offer):
         log.debug("Human.offerDeclined: self=%s %s" % (self, offer))
         assert offer.type in ACTION_NAMES
@@ -303,7 +299,6 @@ class Human(Player):
                                                 Gtk.ResponseType.CANCEL))
         self.gmwidg.showMessage(message)
 
-    @idle_add
     def offerWithdrawn(self, offer):
         log.debug("Human.offerWithdrawn: self=%s %s" % (self, offer))
         assert offer.type in ACTION_NAMES
@@ -321,7 +316,6 @@ class Human(Player):
                                                 Gtk.ResponseType.CANCEL))
         self.gmwidg.showMessage(message)
 
-    @idle_add
     def offerError(self, offer, error):
         log.debug("Human.offerError: self=%s error=%s %s" %
                   (self, error, offer))

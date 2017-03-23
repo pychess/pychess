@@ -1,15 +1,15 @@
 from __future__ import absolute_import
 from collections import defaultdict
-from threading import RLock, Thread
+import asyncio
 import traceback
 import datetime
 
 from gi.repository import GObject
 
-from pychess.compat import basestring, Queue, Empty, StringIO
+from pychess.compat import basestring, Queue, StringIO
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
-from pychess.System import conf, fident
+from pychess.System import conf
 from pychess.System.protoopen import protoopen, protosave
 from pychess.System.Log import log
 from pychess.Utils.Move import Move
@@ -32,40 +32,7 @@ from .const import WAITING_TO_START, UNKNOWN_REASON, WHITE, ARTIFICIAL, RUNNING,
     DRAW_50MOVES
 
 
-def undolocked(f):
-    def newFunction(*args, **kw):
-        self = args[0]
-        log.debug("undolocked: adding func to queue: %s %s %s" % (
-            repr(f), repr(args), repr(kw)))
-        self.undoQueue.put((f, args, kw))
-
-        locked = self.undoLock.acquire(blocking=False)
-        if locked:
-            try:
-                while True:
-                    try:
-                        func, args, kw = self.undoQueue.get_nowait()
-                        log.debug("undolocked: running queued func: %s %s %s" % (
-                            repr(func), repr(args), repr(kw)))
-                        func(*args, **kw)
-                    except Empty:
-                        break
-            finally:
-                self.undoLock.release()
-
-    return newFunction
-
-
-def inthread(f):
-    def newFunction(*args, **kwargs):
-        thread = Thread(target=f, name=fident(f), args=args, kwargs=kwargs)
-        thread.daemon = True
-        thread.start()
-
-    return newFunction
-
-
-class GameModel(GObject.GObject, Thread):
+class GameModel(GObject.GObject):
     """ GameModel contains all available data on a chessgame.
         It also has the task of controlling players actions and moves """
 
@@ -136,7 +103,6 @@ class GameModel(GObject.GObject, Thread):
 
     def __init__(self, timemodel=None, variant=NormalBoard):
         GObject.GObject.__init__(self)
-        Thread.__init__(self, name=fident(self.run))
         self.daemon = True
         self.variant = variant
         self.boards = [variant(setup=True)]
@@ -204,8 +170,6 @@ class GameModel(GObject.GObject, Thread):
 
         self.spectators = {}
 
-        self.applyingMoveLock = RLock()
-        self.undoLock = RLock()
         self.undoQueue = Queue()
 
     def zero_reached(self, timemodel, color):
@@ -634,80 +598,78 @@ class GameModel(GObject.GObject, Thread):
 
     # Run stuff
 
-    def run(self):
-        log.debug("GameModel.run: Starting. self=%s" % self)
-        # Avoid racecondition when self.start is called while we are in
-        # self.end
-        if self.status != WAITING_TO_START:
-            return
+    def start(self):
 
-        if not self.isLocalGame():
-            self.timemodel.handle_gain = False
+        def coro():
+            log.debug("GameModel.run: Starting. self=%s" % self)
+            # Avoid racecondition when self.start is called while we are in
+            # self.end
+            if self.status != WAITING_TO_START:
+                return
 
-        self.status = RUNNING
+            if not self.isLocalGame():
+                self.timemodel.handle_gain = False
 
-        for player in self.players + list(self.spectators.values()):
-            player.start()
+            self.status = RUNNING
 
-        log.debug("GameModel.run: emitting 'game_started' self=%s" % self)
-        self.emit("game_started")
+            for player in self.players + list(self.spectators.values()):
+                player.start()
 
-        # Let GameModel end() itself on games started with loadAndStart()
-        self.checkStatus()
+            log.debug("GameModel.run: emitting 'game_started' self=%s" % self)
+            self.emit("game_started")
 
-        self.curColor = self.boards[-1].color
+            # Let GameModel end() itself on games started with loadAndStart()
+            self.checkStatus()
 
-        while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
-            curPlayer = self.players[self.curColor]
+            self.curColor = self.boards[-1].color
 
-            if self.timed:
-                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time" % (
-                    id(self), str(self.players), str(self.ply), str(curPlayer)))
-                curPlayer.updateTime(
-                    self.timemodel.getPlayerTime(self.curColor),
-                    self.timemodel.getPlayerTime(1 - self.curColor))
+            while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
+                curPlayer = self.players[self.curColor]
 
-            try:
-                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: calling %s.makeMove()" % (
-                    id(self), str(self.players), self.ply, str(curPlayer)))
-                if self.ply > self.lowply:
-                    move = curPlayer.makeMove(self.boards[-1], self.moves[-1],
-                                              self.boards[-2])
-                else:
-                    move = curPlayer.makeMove(self.boards[-1], None, None)
-                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s" % (
-                    id(self), str(self.players), self.ply, move, str(curPlayer)))
-            except PlayerIsDead as e:
-                if self.status in (WAITING_TO_START, PAUSED, RUNNING):
-                    stringio = StringIO()
-                    traceback.print_exc(file=stringio)
-                    error = stringio.getvalue()
-                    log.error(
-                        "GameModel.run: A Player died: player=%s error=%s\n%s"
-                        % (curPlayer, error, e))
-                    if self.curColor == WHITE:
-                        self.kill(WHITE_ENGINE_DIED)
+                if self.timed:
+                    log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time" % (
+                        id(self), str(self.players), str(self.ply), str(curPlayer)))
+                    curPlayer.updateTime(
+                        self.timemodel.getPlayerTime(self.curColor),
+                        self.timemodel.getPlayerTime(1 - self.curColor))
+                # TODO: wait for gamewidget/board to initialize
+                yield from asyncio.sleep(1)
+                try:
+                    log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: calling %s.makeMove()" % (
+                        id(self), str(self.players), self.ply, str(curPlayer)))
+                    if self.ply > self.lowply:
+                        move = yield from curPlayer.makeMove(self.boards[-1], self.moves[-1], self.boards[-2])
                     else:
-                        self.kill(BLACK_ENGINE_DIED)
-                break
-            except InvalidMove as e:
-                if self.curColor == WHITE:
-                    self.end(BLACKWON, WON_ADJUDICATION)
-                else:
-                    self.end(WHITEWON, WON_ADJUDICATION)
-                break
-            except TurnInterrupt:
-                log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: TurnInterrupt" % (
-                    id(self), str(self.players), self.ply))
-                self.curColor = self.boards[-1].color
-                continue
+                        move = yield from curPlayer.makeMove(self.boards[-1], None, None)
+                    log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s" % (
+                        id(self), str(self.players), self.ply, move, str(curPlayer)))
+                except PlayerIsDead as e:
+                    if self.status in (WAITING_TO_START, PAUSED, RUNNING):
+                        stringio = StringIO()
+                        traceback.print_exc(file=stringio)
+                        error = stringio.getvalue()
+                        log.error(
+                            "GameModel.run: A Player died: player=%s error=%s\n%s"
+                            % (curPlayer, error, e))
+                        if self.curColor == WHITE:
+                            self.kill(WHITE_ENGINE_DIED)
+                        else:
+                            self.kill(BLACK_ENGINE_DIED)
+                    break
+                except InvalidMove as e:
+                    if self.curColor == WHITE:
+                        self.end(BLACKWON, WON_ADJUDICATION)
+                    else:
+                        self.end(WHITEWON, WON_ADJUDICATION)
+                    break
+                except TurnInterrupt:
+                    log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: TurnInterrupt" % (
+                        id(self), str(self.players), self.ply))
+                    self.curColor = self.boards[-1].color
+                    continue
 
-            log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: acquiring self.applyingMoveLock" % (
-                id(self), str(self.players), self.ply))
-            assert isinstance(move, Move), "%s" % repr(move)
+                assert isinstance(move, Move), "%s" % repr(move)
 
-            self.applyingMoveLock.acquire()
-            try:
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: applying move=%s" % (
                     id(self), str(self.players), self.ply, str(move)))
                 self.needsSave = True
@@ -740,9 +702,7 @@ class GameModel(GObject.GObject, Thread):
                 self.checkStatus()
                 self.curColor = 1 - self.curColor
 
-            finally:
-                log.debug("GameModel.run: releasing self.applyingMoveLock")
-                self.applyingMoveLock.release()
+        asyncio.async(coro())
 
     def checkStatus(self):
         """ Updates self.status so it fits with what getStatus(boards[-1])
@@ -792,17 +752,12 @@ class GameModel(GObject.GObject, Thread):
             if self.timed:
                 self.timemodel.pause()
 
-    @inthread
     def pause(self):
         """ Players will raise NotImplementedError if they doesn't support
             pause. Spectators will be ignored. """
 
-        self.applyingMoveLock.acquire()
-        try:
-            self.__pause()
-            self.status = PAUSED
-        finally:
-            self.applyingMoveLock.release()
+        self.__pause()
+        self.status = PAUSED
         self.emit("game_paused")
 
     def __resume(self):
@@ -812,14 +767,9 @@ class GameModel(GObject.GObject, Thread):
             self.timemodel.resume()
         self.emit("game_resumed")
 
-    @inthread
     def resume(self):
-        self.applyingMoveLock.acquire()
-        try:
-            self.status = RUNNING
-            self.__resume()
-        finally:
-            self.applyingMoveLock.release()
+        self.status = RUNNING
+        self.__resume()
 
     def end(self, status, reason):
         if self.status not in UNFINISHED_STATES:
@@ -891,8 +841,6 @@ class GameModel(GObject.GObject, Thread):
 
     # Other stuff
 
-    @inthread
-    @undolocked
     def undoMoves(self, moves):
         """ Undo and remove moves number of moves from the game history from
             the GameModel, players, and any spectators """
@@ -908,32 +856,25 @@ class GameModel(GObject.GObject, Thread):
 
         log.debug("GameModel.undoMoves: players=%s, self.ply=%s, moves=%s, board=%s" % (
                   repr(self.players), self.ply, moves, self.boards[-1]))
-        log.debug("GameModel.undoMoves: acquiring self.applyingMoveLock")
-        self.applyingMoveLock.acquire()
-        log.debug("GameModel.undoMoves: self.applyingMoveLock acquired")
-        try:
-            self.emit("moves_undoing", moves)
-            self.needsSave = True
+        self.emit("moves_undoing", moves)
+        self.needsSave = True
 
-            self.boards = self.variations[0]
-            del self.boards[-moves:]
-            del self.moves[-moves:]
-            self.boards[-1].board.next = None
+        self.boards = self.variations[0]
+        del self.boards[-moves:]
+        del self.moves[-moves:]
+        self.boards[-1].board.next = None
 
-            for player in self.players:
-                player.playerUndoMoves(moves, self)
-            for spectator in self.spectators.values():
-                spectator.spectatorUndoMoves(moves, self)
+        for player in self.players:
+            player.playerUndoMoves(moves, self)
+        for spectator in self.spectators.values():
+            spectator.spectatorUndoMoves(moves, self)
 
-            log.debug("GameModel.undoMoves: undoing timemodel")
-            if self.timed:
-                self.timemodel.undoMoves(moves)
+        log.debug("GameModel.undoMoves: undoing timemodel")
+        if self.timed:
+            self.timemodel.undoMoves(moves)
 
-            self.checkStatus()
-            self.setOpening()
-        finally:
-            log.debug("GameModel.undoMoves: releasing self.applyingMoveLock")
-            self.applyingMoveLock.release()
+        self.checkStatus()
+        self.setOpening()
 
         self.emit("moves_undone", moves)
 

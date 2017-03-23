@@ -5,13 +5,11 @@ import imp
 import os
 import sys
 import traceback
-import threading
 import zipfile
 import zipimport
 from collections import defaultdict
-from threading import currentThread
 
-from gi.repository import Gdk, Gtk, GLib, GObject
+from gi.repository import Gdk, Gtk, GObject
 
 from pychess.compat import StringIO
 from pychess.widgets import dock_panel_tab
@@ -22,7 +20,6 @@ from pychess.Savers import pgn, fen
 from pychess.System import conf
 
 from pychess.System.Log import log
-from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon
@@ -229,13 +226,7 @@ class GameWidget(GObject.GObject):
             if event is not None:
                 event.set()
 
-        thread = currentThread()
-        if thread.name == "MainThread":
-            do_load_panels(None)
-        else:
-            event = threading.Event()
-            GLib.idle_add(do_load_panels, event)
-            event.wait()
+        do_load_panels(None)
 
         if isinstance(self.gamemodel, ICGameModel):
             self.gamemodel.gmwidg_ready.set()
@@ -273,7 +264,6 @@ class GameWidget(GObject.GObject):
         else:
             self.game_info_label.set_text("")
 
-    @idle_add
     def infront(self):
         for menuitem in self.menuitems:
             self.menuitems[menuitem].update()
@@ -635,7 +625,7 @@ class GameWidget(GObject.GObject):
                 self.player_name_labels[color].set_tooltip_text(
                     get_player_tooltip_text(self.gamemodel.ficsplayers[color],
                                             show_status=False))
-        GLib.idle_add(do_name_changed)
+        do_name_changed
 
         self.emit('title_changed', self.display_text)
         log.debug("GameWidget.name_changed: returning")
@@ -664,7 +654,6 @@ class GameWidget(GObject.GObject):
                 self.menuitems["call_flag"].sensitive = True
                 break
 
-    @idle_add
     def player_lagged(self, bm, player):
         if player in self.gamemodel.ficsplayers:
             content = get_infobarmessage_content(
@@ -682,7 +671,6 @@ class GameWidget(GObject.GObject):
             self.showMessage(message)
         return False
 
-    @idle_add
     def opp_not_out_of_time(self, bm):
         if self.gamemodel is not None and self.gamemodel.remote_player.time <= 0:
             content = get_infobarmessage_content2(
@@ -808,7 +796,6 @@ class GameWidget(GObject.GObject):
         align.add(page_hbox)
         return align
 
-    @idle_add
     def light_on_off(self, on):
         child = self.tabcontent.get_child()
         if child:

@@ -151,6 +151,7 @@ class GameHandler(GObject.GObject):
                     player.setOptionInitialBoard(gamemodel)
             log.debug("ionest..generalStart: -> gamemodel.start(): %s" %
                       (gamemodel))
+
             gamemodel.start()
             log.debug("ionest.generalStart: <- gamemodel.start(): %s" %
                       (gamemodel))

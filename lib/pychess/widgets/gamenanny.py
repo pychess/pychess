@@ -6,7 +6,7 @@ from __future__ import absolute_import
 import math
 from collections import defaultdict
 
-from gi.repository import GLib, Gtk
+from gi.repository import Gtk
 
 from pychess.ic.FICSObjects import make_sensitive_if_available, make_sensitive_if_playing
 from pychess.ic.ICGameModel import ICGameModel
@@ -17,7 +17,6 @@ from pychess.Utils.const import WAITING_TO_START, WHITE, BLACK, WHITEWON, \
     DRAW_OFFER, PAUSE_OFFER, RESUME_OFFER, HURRY_ACTION, FLAG_CALL
 from pychess.Utils.repr import reprResult_long, reprReason_long
 from pychess.System import conf
-from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.widgets import preferencesDialog
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
@@ -68,19 +67,17 @@ class GameNanny(object):
                 button.set_property("tooltip-text", "")
 
         if gamewidget.game_ended_message:
-            GLib.idle_add(disable_buttons)
+            disable_buttons
 
     # ===============================================================================
     # Gamewidget signals
     # ===============================================================================
 
-    @idle_add
     def on_gmwidg_closed(self, gmwidg):
         if len(key2gmwidg) == 1:
             getWidgets()['main_window'].set_title('%s - PyChess' % _('Welcome'))
         return False
 
-    @idle_add
     def on_gmwidg_title_changed(self, gmwidg, new_title):
         # log.debug("gamenanny.on_gmwidg_title_changed: starting %s" % repr(gmwidg))
         if gmwidg.isInFront():
@@ -92,7 +89,6 @@ class GameNanny(object):
     # Gamemodel signals
     # ===============================================================================
 
-    @idle_add
     def game_ended(self, gamemodel, reason, gmwidg):
         log.debug("gamenanny.game_ended: reason=%s gmwidg=%s\ngamemodel=%s" %
                   (reason, gmwidg, gamemodel))
@@ -235,7 +231,6 @@ class GameNanny(object):
     # Player signals
     # ===============================================================================
 
-    @idle_add
     def offer_callback(self, player, offer, gamemodel, gmwidg):
         if gamemodel.status != RUNNING:
             # If the offer has already been handled by Gamemodel and the game was

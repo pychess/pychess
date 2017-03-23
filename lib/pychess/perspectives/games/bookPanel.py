@@ -16,7 +16,6 @@ from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
-from pychess.System.idle_add import idle_add
 from math import ceil
 
 __title__ = _("Hints")
@@ -208,7 +207,6 @@ class EngineAdvisor(Advisor):
 
         self.shownChanged(self.boardview, self.boardview.shown)
 
-    @idle_add
     def on_analyze(self, engine, analysis):
         if self.boardview.animating:
             return
@@ -377,7 +375,6 @@ class EndgameAdvisor(Advisor, Thread):
         except Full:
             log.warning("EndgameAdvisor.gamewidget_closed: Queue.Full")
 
-    @idle_add
     def on_scored(self, w, ret):
         m = self.boardview.model
         if m.isPlayingICSGame():
@@ -635,7 +632,6 @@ class Sidepanel(object):
                 advisor.active = True
                 advisor.shownChanged(self.boardview, self.boardview.shown)
 
-    @idle_add
     def shownChanged(self, boardview, shown):
         if boardview.model is None:
             return
