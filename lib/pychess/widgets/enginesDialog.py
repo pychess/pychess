@@ -8,7 +8,7 @@ from gi.repository.GdkPixbuf import Pixbuf
 
 from pychess.System import uistuff
 from pychess.System.prefix import getEngineDataPrefix
-from pychess.System.SubProcess import searchPath
+from pychess.System import searchPath
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
 from pychess.widgets import newGameDialog
 

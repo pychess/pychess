@@ -613,7 +613,9 @@ class GameModel(GObject.GObject):
             self.status = RUNNING
 
             for player in self.players + list(self.spectators.values()):
-                player.start()
+                event = asyncio.Event()
+                player.start(event)
+                yield from event.wait()
 
             log.debug("GameModel.run: emitting 'game_started' self=%s" % self)
             self.emit("game_started")
@@ -632,8 +634,6 @@ class GameModel(GObject.GObject):
                     curPlayer.updateTime(
                         self.timemodel.getPlayerTime(self.curColor),
                         self.timemodel.getPlayerTime(1 - self.curColor))
-                # TODO: wait for gamewidget/board to initialize
-                yield from asyncio.sleep(1)
                 try:
                     log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: calling %s.makeMove()" % (
                         id(self), str(self.players), self.ply, str(curPlayer)))
@@ -702,7 +702,7 @@ class GameModel(GObject.GObject):
                 self.checkStatus()
                 self.curColor = 1 - self.curColor
 
-        asyncio.async(coro())
+        asyncio.ensure_future(coro())
 
     def checkStatus(self):
         """ Updates self.status so it fits with what getStatus(boards[-1])

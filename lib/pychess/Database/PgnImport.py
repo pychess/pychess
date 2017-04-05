@@ -20,7 +20,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from pychess.compat import unicode, urlopen, HTTPError, URLError
 from pychess.Utils.const import NORMALCHESS, RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Variants import name2variant
-from pychess.System.SubProcess import searchPath
+from pychess.System import searchPath
 from pychess.System.protoopen import protoopen, protosave
 from pychess.Database.model import event, site, player, game, annotator, tag_game, source
 # from pychess.System import profile_me

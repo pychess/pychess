@@ -6,8 +6,9 @@ import sys
 
 from gi.repository import GObject
 
+from pychess.System import searchPath
 from pychess.System.Log import log
-from pychess.System.SubProcess import SubProcess, searchPath
+from pychess.System.SubProcess import SubProcess
 
 
 class Pinger(GObject.GObject):

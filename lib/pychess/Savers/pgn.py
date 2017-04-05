@@ -30,7 +30,7 @@ from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, 
     WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
 from pychess.System import conf
 from pychess.System.Log import log
-from pychess.System.SubProcess import searchPath
+from pychess.System import searchPath
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.lutils.lmove import toSAN, parseSAN, ParsingError

@@ -388,7 +388,7 @@ class PyChess(Gtk.Application):
         self.initGlade(self.log_viewer)
         self.addPerspectives()
         self.handleArgs(self.chess_file)
-        checkversion()
+        ### checkversion()
 
         self.loaded_cids = {}
         self.saved_cids = {}
@@ -542,8 +542,7 @@ class PyChess(Gtk.Application):
 
         # Discoverer dialog
         def discovering_started(discoverer, binnames):
-            GLib.idle_add(DiscovererDialog.show, discoverer,
-                          widgets["main_window"], binnames)
+            DiscovererDialog.show(discoverer, widgets["main_window"], binnames)
 
         discoverer.connect("discovering_started", discovering_started)
         DiscovererDialog.init(discoverer)
@@ -584,6 +583,6 @@ class PyChess(Gtk.Application):
 
             def do(discoverer):
                 perspective = perspective_manager.get_perspective("database")
-                GLib.idle_add(perspective.open_chessfile, chess_file)
+                perspective.open_chessfile(chess_file)
 
             discoverer.connect_after("all_engines_discovered", do)

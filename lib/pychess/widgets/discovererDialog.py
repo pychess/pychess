@@ -3,7 +3,6 @@ from __future__ import absolute_import
 from gi.repository import Gtk
 
 from pychess.System import uistuff
-from pychess.System.idle_add import idle_add
 
 
 class DiscovererDialog:
@@ -63,14 +62,12 @@ class DiscovererDialog:
         cls.throbber.start()
 
     @classmethod
-    @idle_add
     def _onEngineDiscovered(cls, discoverer, binname, xmlenginevalue):
         if binname in cls.nameToBar:
             bar = cls.nameToBar[binname]
             bar.props.fraction = 1
 
     @classmethod
-    @idle_add
     def _onAllEnginesDiscovered(cls, discoverer):
         cls.finished = True
         if cls.throbber:

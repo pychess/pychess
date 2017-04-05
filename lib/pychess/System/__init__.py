@@ -1,3 +1,4 @@
+import os
 import sys
 import pstats
 import inspect
@@ -5,6 +6,18 @@ import cProfile
 from timeit import default_timer
 
 from pychess.compat import basestring
+from pychess.System.Log import log
+from pychess.System.which import which
+
+
+def searchPath(file, access=os.R_OK, altpath=None):
+    if altpath and os.path.isfile(altpath):
+        if not os.access(altpath, access):
+            log.warning("Not enough permissions on %s" % altpath)
+        else:
+            return altpath
+
+    return which(file, mode=access)
 
 
 def fident(f):

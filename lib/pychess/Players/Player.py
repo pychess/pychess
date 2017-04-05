@@ -53,8 +53,8 @@ class Player(GObject.GObject):
     def prestart(self):
         pass  # Optional
 
-    def start(self):
-        pass  # Optional
+    def start(self, event):
+        event.set()
 
     def setOptionInitialBoard(self, model):
         pass  # Optional. Further defined in Engine.py

@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
+import asyncio
 import os
 from os.path import join, dirname, abspath
 import sys
@@ -7,22 +8,22 @@ import json
 import platform
 from functools import partial
 from hashlib import md5
-from threading import Thread, Lock
 from copy import deepcopy
+
+import gbulb
 
 from gi.repository import GObject
 
-from pychess.System import conf, fident
+from pychess.System import conf, searchPath
 from pychess.System.Log import log
 from pychess.System.command import Command
-from pychess.System.SubProcess import SubProcess, searchPath, SubProcessError
+from pychess.System.SubProcess import SubProcess
 from pychess.System.prefix import addUserConfigPrefix, getDataPrefix, getEngineDataPrefix
 from pychess.Players.Player import PlayerIsDead
 from pychess.Utils import createStoryTextAppEvent
-from pychess.Utils.const import BLACK, UNKNOWN_REASON, SUBPROCESS_SUBPROCESS, WHITE, \
-    HINT, ANALYZING, INVERSE_ANALYZING
-from .CECPEngine import CECPEngine
-from .UCIEngine import UCIEngine
+from pychess.Utils.const import BLACK, UNKNOWN_REASON, WHITE, HINT, ANALYZING, INVERSE_ANALYZING
+from pychess.Players.CECPEngine import CECPEngine
+from pychess.Players.UCIEngine import UCIEngine
 from pychess.Variants import variants
 
 attrToProtocol = {"uci": UCIEngine, "xboard": CECPEngine}
@@ -133,6 +134,10 @@ else:
          "country": "ru",
          "vm_name": "wine"},
     ]
+
+
+class SubProcessError(Exception):
+    pass
 
 
 def md5_sum(filename):
@@ -377,19 +382,6 @@ class EngineDiscoverer(GObject.GObject):
                       ", ".join(str(a) for a in err.args))
 
     def discover(self):
-        class Discoverer(Thread):
-            def __init__(self, parent):
-                Thread.__init__(self, name=fident(self.run))
-                self.daemon = True
-                self.parent = parent
-
-            def run(self):
-                self.parent.do_discover()
-
-        dis_coverer = Discoverer(self)
-        dis_coverer.start()
-
-    def do_discover(self):
         self.engines = []
         # List available engines
         for engine in self._engines:
@@ -411,16 +403,14 @@ class EngineDiscoverer(GObject.GObject):
         ######
         self.toBeRechecked = dict((c["name"], [c, False])
                                   for c in self._engines if c.get('recheck'))
-        self.all_done_lock = Lock()
 
         def count(self_, name, engine, wentwell):
-            with self.all_done_lock:
-                if wentwell:
-                    self.toBeRechecked[name][1] = True
-                if all([elem[1] for elem in self.toBeRechecked.values()]):
-                    self.engines.sort(key=lambda x: x["name"])
-                    self.emit("all_engines_discovered")
-                    createStoryTextAppEvent("all_engines_discovered")
+            if wentwell:
+                self.toBeRechecked[name][1] = True
+            if all([elem[1] for elem in self.toBeRechecked.values()]):
+                self.engines.sort(key=lambda x: x["name"])
+                self.emit("all_engines_discovered")
+                createStoryTextAppEvent("all_engines_discovered")
 
         self.connect("engine_discovered", count, True)
         self.connect("engine_failed", count, False)
@@ -490,9 +480,6 @@ class EngineDiscoverer(GObject.GObject):
                                 yield variantClass.variant
 
     def getName(self, engine=None):
-        # Test if the call was to get the name of the thread
-        if engine is None:
-            return Thread.getName(self)
         return engine["name"]
 
     def getCountry(self, engine):
@@ -521,15 +508,14 @@ class EngineDiscoverer(GObject.GObject):
         else:
             workdir = getEngineDataPrefix()
         warnwords = ("illegal", "error", "exception")
-        subprocess = SubProcess(path, args, warnwords, SUBPROCESS_SUBPROCESS,
-                                workdir)
+        subprocess = SubProcess(path, args, warnwords, workdir)
         engine_proc = attrToProtocol[protocol](subprocess, color, protover,
                                                md5_engine)
-
         engine_proc.setName(name)
 
         # If the user has configured special options for this engine, here is
         # where they should be set.
+
         def optionsCallback(set_option):
             if engine.get("options"):
                 for option in engine["options"]:
@@ -663,12 +649,8 @@ def is_cecp(engine_command):
 
 
 if __name__ == "__main__":
-    from gi.repository import GLib
-    from gi.repository import GObject
-    GObject.threads_init()
-    mainloop = GLib.MainLoop()
-
-    # discoverer = EngineDiscoverer()
+    gbulb.install()
+    loop = asyncio.get_event_loop()
 
     def discovering_started(discoverer, names):
         print("discovering_started", names)
@@ -683,10 +665,10 @@ if __name__ == "__main__":
     def all_engines_discovered(discoverer):
         print("all_engines_discovered")
         print([engine["name"] for engine in discoverer.getEngines()])
-        mainloop.quit()
+        loop.stop()
 
     discoverer.connect("all_engines_discovered", all_engines_discovered)
 
-    discoverer.start()
+    discoverer.discover()
 
-    mainloop.run()
+    loop.run_forever()

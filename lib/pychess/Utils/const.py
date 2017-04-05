@@ -212,6 +212,3 @@ ACTION_MENU_ITEMS = ("abort", "adjourn", "draw", "pause1", "resume1", "undo1",
 VIEW_MENU_ITEMS = ("rotate_board1", "show_sidepanels", "hint_mode", "spy_mode")
 EDIT_MENU_ITEMS = ("copy_pgn", "copy_fen", )
 MENU_ITEMS = GAME_MENU_ITEMS + ACTION_MENU_ITEMS + VIEW_MENU_ITEMS + EDIT_MENU_ITEMS
-
-# Subprocess
-SUBPROCESS_PTY, SUBPROCESS_SUBPROCESS, SUBPROCESS_FORK = range(3)

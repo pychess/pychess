@@ -223,7 +223,7 @@ while l > conf.get("max_log_files", 10):
 
 ###############################################################################
 # Just in case stop engine processes on exit
-atexit.register(SubProcess.finishAllSubprocesses)
+# atexit.register(SubProcess.finishAllSubprocesses)
 
 gtk_app = PyChess(log_viewer, purge_recent, chess_file, ics_host, ics_port)
 
