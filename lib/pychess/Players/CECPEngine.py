@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from threading import Timer
 
 import asyncio
 import itertools
@@ -149,8 +148,6 @@ class CECPEngine(ProtocolEngine):
         self.undoQueue = []
         self.ready_moves_event = asyncio.Event()
 
-        self.analysis_timer = None
-
         self.cids = [
             self.connect("readyForOptions", self.__onReadyForOptions_before),
             self.connect_after("readyForOptions", self.__onReadyForOptions),
@@ -282,10 +279,6 @@ class CECPEngine(ProtocolEngine):
             finally:
                 # Clear the analyzed data, if any
                 self.emit("analyze", [])
-
-                if self.analysis_timer is not None:
-                    self.analysis_timer.cancel()
-                    self.analysis_timer.join()
 
     # Send the player move updates
 
@@ -601,13 +594,8 @@ class CECPEngine(ProtocolEngine):
         print("analyze", file=self.engine)
         self.engineIsAnalyzing = True
 
-        if self.analysis_timer is not None:
-            self.analysis_timer.cancel()
-            self.analysis_timer.join()
-
-        self.analysis_timer = Timer(
-            conf.get("max_analysis_spin", 3), stop_analyze)
-        self.analysis_timer.start()
+        loop = asyncio.get_event_loop()
+        loop.call_later(conf.get("max_analysis_spin", 3), stop_analyze)
 
     def __printColor(self):
         if self.features["colors"]:  # or self.mode == INVERSE_ANALYZING:
