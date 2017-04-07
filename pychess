@@ -11,7 +11,6 @@ import os
 import sys
 import gettext
 import locale
-import atexit
 import logging
 
 # faulthandler will be in Python 3.3; for 2.x you can download it from pypi
@@ -97,9 +96,6 @@ if PY2:
 ###############################################################################
 # Parse command line arguments
 
-no_debug = False
-idle_add_debug = False
-no_thread_debug = False
 log_viewer = False
 chess_file = sys.argv[1] if len(sys.argv) > 1 else None
 ics_host = None
@@ -113,10 +109,6 @@ parser.add_argument('--version', action='version',
                     version="%(prog)s" + " %s" % version)
 parser.add_argument('--log-debug', action='store_true',
                     help='change default logging level from INFO to DEBUG')
-parser.add_argument('--idle-add-debug', action='store_true',
-                    help='turn on idle-add debugging output')
-parser.add_argument('--thread-debug', action='store_true',
-                    help='turn on thread debugging output')
 parser.add_argument('--no-gettext', action='store_true',
                     help='turn off locale translations')
 parser.add_argument('--log-viewer', action='store_true',
@@ -132,7 +124,6 @@ parser.add_argument('chess_file', nargs='?', metavar='chessfile',
 
 args = parser.parse_args()
 log_debug = args.log_debug
-thread_debug = args.thread_debug
 no_gettext = args.no_gettext
 log_viewer = args.log_viewer
 purge_recent = args.purge_recent
@@ -194,7 +185,7 @@ try:
     from pychess.System.Log import log, LogPipe
     from pychess.System.LogEmitter import GLogHandler, logemitter
     from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
-    from pychess.System import conf, SubProcess
+    from pychess.System import conf
     from pychess.Main import PyChess
 except ImportError:
     raise
@@ -228,4 +219,6 @@ while l > conf.get("max_log_files", 10):
 gtk_app = PyChess(log_viewer, purge_recent, chess_file, ics_host, ics_port)
 
 loop = asyncio.get_event_loop()
+if log_debug:
+    loop.set_debug(enabled=True)
 loop.run_forever(application=gtk_app)
