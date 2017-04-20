@@ -1,6 +1,6 @@
 include glade/*.glade glade/*.png glade/*.svg flags/*.png
 recursive-include pieces *
-include README AUTHORS ARTISTS DOCUMENTERS LICENSE INSTALL TRANSLATORS
+include README.md AUTHORS ARTISTS DOCUMENTERS LICENSE INSTALL TRANSLATORS
 include sounds/*.ogg
 include manpages/pychess.1.gz
 include menu/pychess
