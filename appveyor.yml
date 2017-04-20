@@ -1,0 +1,40 @@
+version: build-{build}-{branch}
+
+environment:
+  matrix:
+    # http://www.appveyor.com/docs/installed-software#python lists available
+    # versions
+    - PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4.x" # currently 3.4.4
+      PYTHON_ARCH: "32"
+
+init:
+  - "echo %PYTHON%"
+
+install:
+  - "set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+
+  # Check that we have the expected version and architecture for Python  - "python --version"
+  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+
+  # Upgrade to the latest version of pip to avoid it displaying warnings
+  # about it being out of date.
+  - "pip install --disable-pip-version-check --user --upgrade pip"
+
+  - "pip install sqlalchemy"
+
+ # Download pygobjectwin32
+ - appveyor DownloadFile https://sourceforge.net/projects/pygobjectwin32/files/pygi-aio-3.18.2_rev12-setup_549872deadabb77a91efbc56c50fe15f969e5681.exe
+ - pygi-aio-3.18.2_rev12-setup_549872deadabb77a91efbc56c50fe15f969e5681.exe GDKPixbuf GTK GTKSourceView Pango
+
+cache:
+ - pygi-aio-3.18.2_rev12-setup_549872deadabb77a91efbc56c50fe15f969e5681.exe
+
+build_script:
+  # Build the compiled extension
+  - "python setup.py build sdist"
+
+test_script:
+ - cd testing
+ - set PYTHONPATH=../lib
+ - python -m unittest discover -p "*.py"
