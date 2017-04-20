@@ -32,7 +32,7 @@ install:
 
 cache:
   - "%AIO%"
-  - "%PYTHON%\\lib\\site-packages" -> appveyor.yml
+  - "%PYTHON%\\lib\\site-packages"
 
 build_script:
   # Build the compiled extension
