@@ -30,6 +30,10 @@ install:
   - "if not exist %AIO% appveyor DownloadFile https://sourceforge.net/projects/pygobjectwin32/files/%AIO%"
   - "%AIO% GDKPixbuf GTK GTKSourceView Pango"
 
+cache:
+  - "%PYTHON%"\lib\site-packages\gi
+  - "%PYTHON%"\lib\site-packages\gnome
+
 build_script:
   # Build the compiled extension
   - "python setup.py build sdist"
