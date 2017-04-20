@@ -31,8 +31,8 @@ install:
   - "%AIO% %PYTHON% GDKPixbuf GTK GTKSourceView Pango"
 
 cache:
-  - "%PYTHON%"\lib\site-packages\gi
-  - "%PYTHON%"\lib\site-packages\gnome
+  - "%PYTHON%\lib\site-packages\gi"
+  - "%PYTHON%\lib\site-packages\gnome"
 
 build_script:
   # Build the compiled extension
