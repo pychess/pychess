@@ -41,5 +41,7 @@ build_script:
 
 test_script:
  - cd testing
+ # print(board) needs this in Windows console (before Python 3.6)
+ - set PYTHONIOENCODING=utf8
  - set PYTHONPATH=../lib
  - python -m unittest discover -p "*.py"
