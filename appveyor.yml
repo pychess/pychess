@@ -32,8 +32,7 @@ install:
 
 cache:
   - "%AIO%"
-  - "%PYTHON%\\lib\\site-packages\\gi"
-  - "%PYTHON%\\lib\\site-packages\\gnome"
+  - "%PYTHON%\\lib\\site-packages" -> appveyor.yml
 
 build_script:
   # Build the compiled extension
