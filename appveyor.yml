@@ -28,7 +28,7 @@ install:
 
   # Download pygobjectwin32
   - "if not exist %AIO% appveyor DownloadFile https://sourceforge.net/projects/pygobjectwin32/files/%AIO%"
-  - "%AIO% %PYTHON% GDKPixbuf GTK GTKSourceView Pango"
+  - "if not exist %PYTHON%\\lib\\site-packages\\gi %AIO% %PYTHON% GDKPixbuf GTK GTKSourceView Pango"
 
 cache:
   - "%AIO%"
