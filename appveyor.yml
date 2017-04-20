@@ -27,7 +27,7 @@ install:
   - "pip install sqlalchemy"
 
  # Download pygobjectwin32
-  - "if not exist %AIO% appveyor DownloadFile https://sourceforge.net/projects/pygobjectwin32/files/%AIO%"
+  - cmd: "if not exist %AIO% appveyor DownloadFile https://sourceforge.net/projects/pygobjectwin32/files/%AIO%"
   - "%AIO% GDKPixbuf GTK GTKSourceView Pango"
 
 build_script:
