@@ -31,6 +31,7 @@ install:
   - "%AIO% %PYTHON% GDKPixbuf GTK GTKSourceView Pango"
 
 cache:
+  - "%AIO%"
   - "%PYTHON%\\lib\\site-packages\\gi"
   - "%PYTHON%\\lib\\site-packages\\gnome"
 
