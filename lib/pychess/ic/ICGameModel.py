@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import threading
+import asyncio
 
 from pychess.compat import StringIO
 from pychess.System.Log import log
@@ -22,7 +22,7 @@ class ICGameModel(GameModel):
         self.connection = connection
         self.ficsgame = ficsgame
         self.ficsplayers = (ficsgame.wplayer, ficsgame.bplayer)
-        self.gmwidg_ready = threading.Event()
+        self.gmwidg_ready = asyncio.Event()
 
         connections = self.connections
         connections[connection.bm].append(connection.bm.connect(
@@ -55,8 +55,7 @@ class ICGameModel(GameModel):
         rated = "rated" if ficsgame.rated else "unrated"
         # This is in the format that ficsgames.org writes these PGN headers
         ics = "ICC" if self.connection.ICC else "FICS"
-        self.tags["Event"] = "%s %s %s game" % (ics, rated,
-                                                  ficsgame.game_type.fics_name)
+        self.tags["Event"] = "%s %s %s game" % (ics, rated, ficsgame.game_type.fics_name)
         self.tags["Site"] = "chessclub.com" if self.connection.ICC else "freechess.org"
 
     def __repr__(self):
@@ -261,11 +260,13 @@ class ICGameModel(GameModel):
     ############################################################################
 
     def onKibitzMessage(self, cm, name, gameno, text):
-        if not self.gmwidg_ready.is_set():
-            self.gmwidg_ready.wait()
-        if gameno != self.ficsgame.gameno:
-            return
-        self.emit("message_received", name, text)
+        def coro():
+            if not self.gmwidg_ready.is_set():
+                yield from self.gmwidg_ready.wait()
+            if gameno != self.ficsgame.gameno:
+                return
+            self.emit("message_received", name, text)
+        asyncio.ensure_future(coro())
 
     def onWhisperMessage(self, cm, name, gameno, text):
         if gameno != self.ficsgame.gameno:

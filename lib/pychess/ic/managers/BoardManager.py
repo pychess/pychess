@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import re
-import threading
+import asyncio
 
 from gi.repository import GObject
 
@@ -471,7 +471,7 @@ class BoardManager(GObject.GObject):
             self.gamesImObserving[game] = wms, bms
 
             # start a new game now or after smoves
-            self.gamemodelStartedEvents[game.gameno] = threading.Event()
+            self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
             if no_smoves:
                 self.emit("exGameCreated", game)
                 self.gamemodelStartedEvents[game.gameno].wait()
@@ -578,7 +578,7 @@ class BoardManager(GObject.GObject):
                 player.game = game
 
         self.theGameImPlaying = game
-        self.gamemodelStartedEvents[gameno] = threading.Event()
+        self.gamemodelStartedEvents[gameno] = asyncio.Event()
         self.connection.client.run_command("follow")
         self.emit("playGameCreated", game)
 
@@ -937,7 +937,7 @@ class BoardManager(GObject.GObject):
             game = self.connection.games.get(game)
             self.gamesImObserving[game] = wms, bms
 
-            self.gamemodelStartedEvents[game.gameno] = threading.Event()
+            self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
             self.emit("obsGameCreated", game)
             self.gamemodelStartedEvents[game.gameno].wait()
         else:
@@ -964,7 +964,7 @@ class BoardManager(GObject.GObject):
             self.gamesImObserving[game] = wms, bms
             self.queuedStyle12s[game.gameno] = []
             self.queuedEmits[game.gameno] = []
-            self.gamemodelStartedEvents[game.gameno] = threading.Event()
+            self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
 
             # FICS doesn't send the move list after 'observe' and 'follow' commands
             self.connection.client.run_command("moves %d" % game.gameno)

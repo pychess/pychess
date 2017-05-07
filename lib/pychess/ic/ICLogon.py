@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import asyncio
 import re
 import socket
 import webbrowser
@@ -10,7 +11,6 @@ from gi.repository import Gtk
 from gi.repository import GObject
 
 from pychess.System import uistuff, conf
-from pychess.System.idle_add import idle_add
 from .FICSConnection import FICSMainConnection, FICSHelperConnection, LogOnException
 from .ICLounge import ICLounge
 
@@ -275,15 +275,14 @@ class ICLogon(object):
                                  ("connectingMsg", self.showMessage)):
             self.cids[self.connection].append(self.connection.connect(
                 signal, callback))
-        self.connection.start()
+        asyncio.ensure_future(self.connection.start())
 
         # guest users are rather limited on ICC (helper connection is useless)
         if not self.host in ("localhost", "chessclub.com"):
             self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
             self.helperconn.connect("error", self.onHelperConnectionError)
-            self.helperconn.start()
+            asyncio.ensure_future(self.helperconn.start())
 
-    @idle_add
     def onHelperConnectionError(self, connection, error):
         if self.helperconn is not None:
             dialog = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION,
@@ -303,7 +302,6 @@ class ICLogon(object):
             set_user_vars = response == Gtk.ResponseType.YES
             self.connection.start_helper_manager(set_user_vars)
 
-    @idle_add
     def onConnected(self, connection):
         if connection.ICC:
             self.connection.start_helper_manager(True)
@@ -319,7 +317,6 @@ class ICLogon(object):
         self.showNormal()
         self.widgets["messagePanel"].hide()
 
-    @idle_add
     def onCancel(self, widget, hide):
         self.canceled = True
 
@@ -329,18 +326,15 @@ class ICLogon(object):
         if hide:
             self.widgets["fics_logon"].hide()
 
-    @idle_add
     def onConnectionError(self, connection, error):
         self._disconnect()
         if not self.canceled:
             self.showError(connection, error)
             self.present()
 
-    @idle_add
     def onLogout(self, connection):
         self._disconnect()
 
-    @idle_add
     def onAutologout(self, connection):
         self._disconnect()
         self.showError(connection, AutoLogoutException())

@@ -1,3 +1,4 @@
+import asyncio
 import collections
 import re
 
@@ -167,27 +168,11 @@ class TelnetLines(object):
     def __init__(self, telnet, show_reply):
         self.telnet = telnet
         self.lines = collections.deque()
-        self._block_mode = False
+        self.block_mode = False
         self.datagram_mode = False
-        self._line_prefix = None
+        self.line_prefix = None
         self.consolehandler = None
         self.show_reply = show_reply
-
-    @property
-    def block_mode(self):
-        return self._block_mode
-
-    @block_mode.setter
-    def block_mode(self, x):
-        self._block_mode = x
-
-    @property
-    def line_prefix(self):
-        return self._line_prefix
-
-    @line_prefix.setter
-    def line_prefix(self, x):
-        self._line_prefix = x
 
     def appendleft(self, x):
         self.lines.appendleft(x)
@@ -195,16 +180,19 @@ class TelnetLines(object):
     def extendleft(self, iterable):
         self.lines.extendleft(iterable)
 
+    @asyncio.coroutine
     def popleft(self):
         try:
             return self.lines.popleft()
         except IndexError:
-            self.lines.extend(self._get_lines())
+            lines = yield from self._get_lines()
+            self.lines.extend(lines)
             return self.lines.popleft() if self.lines else EmptyTelnetLine
 
+    @asyncio.coroutine
     def _get_lines(self):
         lines = []
-        line = self.telnet.readline()
+        line = yield from self.telnet.readline()
         identifier = 0
 
         if line.startswith(self.line_prefix):
@@ -220,7 +208,7 @@ class TelnetLines(object):
                 cn_code = int(line[2:line.find(" ")])
                 if MY_ICC_PREFIX in line:
                     identifier = 0
-                line = self.telnet.readline()
+                line = yield from self.telnet.readline()
 
             if unit:
                 while UNIT_END not in line:
@@ -235,7 +223,7 @@ class TelnetLines(object):
                                 unit_lines.append(parts[0])
                         else:
                             unit_lines.append(line)
-                    line = self.telnet.readline()
+                    line = yield from self.telnet.readline()
                 if len(unit_lines) > 0:
                     text = "\n".join(unit_lines)
                     lines.append(TelnetLine(text, cn_code, CN))
@@ -253,11 +241,14 @@ class TelnetLines(object):
                 return lines
             code = int(code)
             identifier = int(identifier)
-            line = text if text else self.telnet.readline()
+            if text:
+                line = text
+            else:
+                line = yield from self.telnet.readline()
 
             while not line.endswith(BLOCK_END):
                 lines.append(TelnetLine(line, code, BL))
-                line = self.telnet.readline()
+                line = yield from self.telnet.readline()
             lines.append(TelnetLine(line[:-1], code, BL))
 
             if code != BLKCMD_PASSWORD:
@@ -288,8 +279,9 @@ class PredictionsTelnet(object):
         self.lines = TelnetLines(telnet, self.show_reply)
         self.__command_id = 1
 
+    @asyncio.coroutine
     def parse(self):
-        line = self.lines.popleft()
+        line = yield from self.lines.popleft()
 
         if not line.line:
             return  # TODO: necessary?
@@ -310,7 +302,7 @@ class PredictionsTelnet(object):
             if line.code is not None and line.code in self.reply_cmd_dict else self.predictions
         for pred in list(predictions):
             #            print "parse_line: trying prediction %s for line '%s'" % (pred.name, line)
-            answer = self.test_prediction(pred, line)
+            answer = yield from self.test_prediction(pred, line)
             if answer in (RETURN_MATCH, RETURN_MATCH_END):
                 log.debug("\n".join(pred.matches),
                           extra={"task": (self.telnet.name, pred.name)})
@@ -320,11 +312,12 @@ class PredictionsTelnet(object):
                 log.debug(line.line,
                           extra={"task": (self.telnet.name, "nonmatched")})
 
+    @asyncio.coroutine
     def test_prediction(self, prediction, line):
         lines = []
         answer = prediction.handle(line.line)
         while answer is RETURN_NEED_MORE:
-            line = self.lines.popleft()
+            line = yield from self.lines.popleft()
             lines.append(line)
             answer = prediction.handle(line.line)
 
@@ -336,21 +329,23 @@ class PredictionsTelnet(object):
         return answer
 
     def run_command(self, text, show_reply=False):
-        logtext = "*" * len(text) if self.telnet.sensitive else text
-        log.debug(logtext, extra={"task": (self.telnet.name, "run_command")})
-        if self.lines.block_mode:
-            # TODO: reuse id after command reply handled
-            self.__command_id += 1
-            text = "%s %s\n" % (self.__command_id, text)
-            if show_reply:
-                self.show_reply.add(self.__command_id)
-            return self.telnet.write(text)
-        elif self.lines.datagram_mode:
-            if show_reply:
-                text = "`%s`%s\n" % (MY_ICC_PREFIX, text)
-            return self.telnet.write("%s\n" % text)
-        else:
-            return self.telnet.write("%s\n" % text)
+        def coro(text, show_reply):
+            logtext = "*" * len(text) if self.telnet.sensitive else text
+            log.debug(logtext, extra={"task": (self.telnet.name, "run_command")})
+            if self.lines.block_mode:
+                # TODO: reuse id after command reply handled
+                self.__command_id += 1
+                text = "%s %s" % (self.__command_id, text)
+                if show_reply:
+                    self.show_reply.add(self.__command_id)
+                yield from self.telnet.write(text)
+            elif self.lines.datagram_mode:
+                if show_reply:
+                    text = "`%s`%s" % (MY_ICC_PREFIX, text)
+                yield from self.telnet.write("%s" % text)
+            else:
+                yield from self.telnet.write("%s" % text)
+        asyncio.ensure_future(coro(text, show_reply))
 
     def cancel(self):
         self.run_command("quit")

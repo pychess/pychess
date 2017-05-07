@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import threading
+import asyncio
 
 from gi.repository import GObject
 
@@ -156,7 +156,7 @@ class ICCBoardManager(BoardManager):
 
         self.theGameImPlaying = game
         self.my_game_info = (WHITE, 0, wms, bms)
-        self.gamemodelStartedEvents[gameno] = threading.Event()
+        self.gamemodelStartedEvents[gameno] = asyncio.Event()
         self.connection.client.run_command("follow")
 
         if self.connection.examined_game is not None:
@@ -198,7 +198,7 @@ class ICCBoardManager(BoardManager):
         self.gamesImObserving[game] = (WHITE, 0, wms, bms)
         self.queued_send_moves[game.gameno] = []
         self.queuedEmits[game.gameno] = []
-        self.gamemodelStartedEvents[game.gameno] = threading.Event()
+        self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
 
     def on_icc_stop_observing(self, data):
         gameno = int(data.split()[0])

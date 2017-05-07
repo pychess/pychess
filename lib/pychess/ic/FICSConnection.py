@@ -1,16 +1,14 @@
 from __future__ import absolute_import, print_function
 
+import asyncio
 import re
 import socket
 import time
-import threading
-from threading import Event, Thread
 from collections import defaultdict
 
 from gi.repository import GObject
 
 import pychess
-from pychess.System import fident
 from pychess.System.Log import log
 
 from pychess import ic
@@ -40,7 +38,7 @@ from .managers.ICCOfferManager import ICCOfferManager
 from .managers.ICCAutoLogOutManager import ICCAutoLogOutManager
 
 from .FICSObjects import FICSPlayers, FICSGames, FICSSeeks, FICSChallenges
-from .TimeSeal import TimeSeal, CanceledException
+from .TimeSeal import CanceledException, ICSTelnet
 from .VerboseTelnet import LinePrediction, FromPlusPrediction, FromABPlusPrediction, \
     FromToPrediction, PredictionsTelnet, NLinesPrediction
 
@@ -49,7 +47,7 @@ class LogOnException(Exception):
     pass
 
 
-class Connection(GObject.GObject, Thread):
+class Connection(GObject.GObject):
 
     __gsignals__ = {
         'connecting': (GObject.SignalFlags.RUN_FIRST, None, ()),
@@ -61,7 +59,6 @@ class Connection(GObject.GObject, Thread):
 
     def __init__(self, host, ports, username, password):
         GObject.GObject.__init__(self)
-        Thread.__init__(self, name=fident(self.run))
         self.daemon = True
         self.host = host
         self.ports = ports
@@ -181,18 +178,21 @@ class FICSConnection(Connection):
     def _start_managers(self):
         pass
 
+    @asyncio.coroutine
     def _connect(self):
         self.connecting = True
         self.emit("connecting")
         try:
-            self.client = TimeSeal()
 
             self.emit('connectingMsg', _("Connecting to server"))
             for i, port in enumerate(self.ports):
                 log.debug("Trying port %d" % port,
                           extra={"task": (self.host, "raw")})
                 try:
-                    self.client.open(self.host, port)
+                    connected_event = asyncio.Event()
+                    self.client = ICSTelnet(self.host, 5000, connected_event)
+                    asyncio.ensure_future(self.client.start())
+                    yield from connected_event.wait()
                 except socket.error as err:
                     log.debug("Failed to open port %d %s" % (port, err),
                               extra={"task": (self.host, "raw")})
@@ -203,17 +203,17 @@ class FICSConnection(Connection):
                 else:
                     break
 
-            self.client.read_until("login: ")
+            yield from self.client.read_until("login: ")
             self.emit('connectingMsg', _("Logging on to server"))
 
             # login with registered handle
             if self.password:
-                print(self.username, file=self.client)
-                got = self.client.read_until(
+                yield from self.client.write(self.username)
+                got = yield from self.client.read_until(
                     "password:", "enter the server as", "Try again.")
                 if got == 0:
                     self.client.sensitive = True
-                    print(self.password, file=self.client)
+                    yield from self.client.write(self.password)
                 # No such name
                 elif got == 1:
                     raise LogOnException(NOTREG % self.username)
@@ -222,10 +222,10 @@ class FICSConnection(Connection):
                     raise LogOnException(NOTREG % self.username)
             else:
                 if self.username:
-                    print(self.username, file=self.client)
+                    yield from self.client.write(self.username)
                 else:
-                    print("guest", file=self.client)
-                got = self.client.read_until(
+                    yield from self.client.write("guest")
+                got = yield from self.client.read_until(
                     "Press return",
                     "You are connected as a guest",
                     "If it is yours, type the password.",
@@ -236,10 +236,10 @@ class FICSConnection(Connection):
                     raise LogOnException(REGISTERED % self.username)
                 elif got == 3 or got == 4:
                     raise LogOnException(PREVENTED)
-                print(file=self.client)
+                yield from self.client.write("")
 
             while True:
-                line = self.client.readline()
+                line = yield from self.client.readline()
                 if "Invalid password" in line:
                     raise LogOnException(BADPAS)
                 elif "is already logged in" in line:
@@ -272,7 +272,7 @@ class FICSConnection(Connection):
                     break
 
             self.emit('connectingMsg', _("Setting up environment"))
-            lines = self.client.readuntil(b"ics%")
+            lines = yield from self.client.readuntil(b"ics%")
             self._post_connect_hook(lines)
             self.FatICS = self.client.FatICS
             self.USCN = self.client.USCN
@@ -284,6 +284,8 @@ class FICSConnection(Connection):
 
             if not self.USCN and not self.ICC:
                 self.client.run_command("iset block 1")
+                # TODO:
+                yield from asyncio.sleep(2)
                 self.client.lines.block_mode = True
 
             if self.ICC:
@@ -303,17 +305,15 @@ class FICSConnection(Connection):
             self.connected = True
             self.emit("connected")
 
+            @asyncio.coroutine
             def keep_alive():
                 last = time.time()
                 while self.isConnected():
                     if time.time() - last > 59 * 60:
                         self.client.run_command("date")
                         last = time.time()
-                    time.sleep(30)
-
-            thread = threading.Thread(target=keep_alive, name=fident(keep_alive))
-            thread.daemon = True
-            thread.start()
+                    yield from asyncio.sleep(30)
+            asyncio.ensure_future(keep_alive())
 
         except CanceledException as err:
             log.info("FICSConnection._connect: %s" % repr(err),
@@ -321,13 +321,14 @@ class FICSConnection(Connection):
         finally:
             self.connecting = False
 
-    def run(self):
+    @asyncio.coroutine
+    def start(self):
         try:
             try:
                 if not self.isConnected():
-                    self._connect()
+                    yield from self._connect()
                 while self.isConnected():
-                    self.client.parse()
+                    yield from self.client.parse()
             except Exception as err:
                 log.info("FICSConnection.run: %s" % repr(err),
                          extra={"task": (self.host, "raw")})
@@ -356,7 +357,7 @@ class FICSMainConnection(FICSConnection):
         self.lvm = None
         self.notify_users = []
         self.ini_messages = []
-        self.lounge_loaded = Event()
+        self.lounge_loaded = asyncio.Event()
         self.players = FICSPlayers(self)
         self.games = FICSGames(self)
         self.seeks = FICSSeeks(self)
@@ -392,6 +393,7 @@ class FICSMainConnection(FICSConnection):
             self.notify_users.extend(notify_users.groups()[0].split())
 
     def _start_managers(self, lines):
+        #yield from self.lounge_loaded.wait()
         self.client.run_command("set interface %s %s" %
                                 (NAME, pychess.VERSION))
 
@@ -429,6 +431,7 @@ class FICSMainConnection(FICSConnection):
         self.challenges.start()
 
     def start_helper_manager(self, set_user_vars):
+        #yield from self.main_conn.lounge_loaded.wait()
         # if guest accounts disabled we will handle players in the main connection
         if self.FatICS or self.USCN or self.ICC:
             self.client.run_command("set pin 1")
@@ -458,7 +461,7 @@ class FICSHelperConnection(FICSConnection):
 
     def _start_managers(self, lines):
         # The helper just wants only player and game notifications
-        self.main_conn.lounge_loaded.wait()
+        # yield from self.main_conn.lounge_loaded.wait()
         # set open 1 is a requirement for availinfo notifications
         self.client.run_command("set open 1")
         self.client.run_command("set seek 0")
@@ -478,3 +481,5 @@ class FICSHelperConnection(FICSConnection):
 
         # disable setting iveriables from console
         self.main_conn.client.run_command("iset lock 1")
+
+        #yield from self.emit_connected()

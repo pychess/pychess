@@ -741,7 +741,8 @@ class UserInfoSection(Section):
             row += 1
 
         # TODO: ping causes random crashes on Windows
-        if my_finger and sys.platform != "win32":
+        # TODO: asyncio
+        if 0: #my_finger and sys.platform != "win32":
             table.attach(label(_("Ping") + ":"), 0, 1, row, row + 1)
             if self.ping_label:
                 if self.dock.get_children():

@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import asyncio
 import sys
 import errno
 import socket
@@ -241,3 +242,75 @@ class TimeSeal(object):
                     not_find = "read_until:%s , got:'%s'" % (until, self.buf)
                     log.debug(not_find, extra={"task": (self.name, "raw")})
             self.cook_some()
+
+
+class ICSProtocol(asyncio.StreamReaderProtocol):
+    def __init__(self):
+        super().__init__(asyncio.StreamReader(limit=1024 * 8), self.client_connected)
+        self.reader, self.writer = None, None
+
+    def client_connected(self, reader, writer):
+        self.reader, self.writer = reader, writer
+
+    @asyncio.coroutine
+    def send(self, data):
+        self.writer.write(data.encode("ascii") + b"\n")
+        yield from self.writer.drain()
+
+
+class ICSTelnet():
+    def __init__(self, host, port, connected_event):
+        self.host = host
+        self.port = port
+        self.connected_event = connected_event
+        self.connected = False
+        self.canceled = False
+        self.FatICS = False
+        self.USCN = False
+        self.ICC = False
+        self.sensitive = False
+        self.name = host
+
+    @asyncio.coroutine
+    def start(self):
+        loop = asyncio.get_event_loop()
+        coro = loop.create_connection(ICSProtocol, self.host, self.port)
+        self.transport, self.protocol = yield from coro
+        self.connected_event.set()
+
+    @asyncio.coroutine
+    def readline(self):
+        line = yield from self.protocol.reader.readline()
+        line = line.replace(b"\r", b"")
+        line = line.decode("latin_1").strip()
+        log.debug(line, extra={"task": (self.name, "raw")})
+        return line
+
+    @asyncio.coroutine
+    def readuntil(self, until):
+        data = yield from self.protocol.reader.readuntil(until)
+        return data.decode("ascii", "ignore")
+
+    @asyncio.coroutine
+    def read_until(self, *untils):
+        for i, until in enumerate(untils):
+            try:
+                data = yield from self.protocol.reader.readuntil(until.encode("ascii"))
+                log.debug(data, extra={"task": (self.name, "raw")})
+                return i
+            except asyncio.LimitOverrunError:
+                continue
+
+    @asyncio.coroutine
+    def write(self, string):
+        yield from self.protocol.send(string)
+        logstr = "*" * len(string) if self.sensitive else string
+        self.sensitive = False
+        log.info(logstr, extra={"task": (self.name, "raw")})
+
+    def cancel(self):
+        self.canceled = True
+        self.close()
+
+    def close(self):
+        self.connected = False

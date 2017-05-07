@@ -1,3 +1,4 @@
+import asyncio
 from collections import defaultdict
 
 from pychess.compat import Queue
@@ -22,8 +23,8 @@ class ICPlayer(Player):
                  icrating=None):
         Player.__init__(self)
         self.offers = {}
-        self.queue = Queue()
-        self.okqueue = Queue()
+        self.queue = asyncio.Queue()
+        self.okqueue = asyncio.Queue()
         self.setName(name)
         self.ichandle = ichandle
         self.icrating = icrating
@@ -128,12 +129,14 @@ class ICPlayer(Player):
             if 1 - curcol == self.color and ply == self.gamemodel.ply + 1 and lastmove is not None:
                 log.debug("ICPlayer.__boardUpdate: id=%d self=%s ply=%d: \
                           putting move=%s in queue" % (id(self), self, ply, lastmove))
-                self.queue.put((ply, lastmove))
+                self.queue.put_nowait((ply, lastmove))
                 # Ensure the fics thread doesn't continue parsing, before the
                 # game/player thread has received the move.
                 # Specifically this ensures that we aren't killed due to end of
                 # game before our last move is received
-                self.okqueue.get(block=True)
+
+                # TODO: (asyncio) do we really need this?
+                ### yield from self.okqueue.get()
 
     # Ending the game
 
@@ -148,14 +151,15 @@ class ICPlayer(Player):
 
     def end(self, status, reason):
         self.__disconnect()
-        self.queue.put("del")
+        self.queue.put_nowait("del")
 
     def kill(self, reason):
         self.__disconnect()
-        self.queue.put("del")
+        self.queue.put_nowait("del")
 
     # Send the player move updates
 
+    @asyncio.coroutine
     def makeMove(self, board1, move, board2):
         log.debug("ICPlayer.makemove: id(self)=%d self=%s move=%s board1=%s board2=%s" % (
             id(self), self, move, board1, board2))
@@ -166,7 +170,7 @@ class ICPlayer(Player):
                 castle_notation = CASTLE_SAN
             self.connection.bm.sendMove(toAN(board2, move, castleNotation=castle_notation))
 
-        item = self.queue.get(block=True)
+        item = yield from self.queue.get()
         try:
             if item == "del":
                 raise PlayerIsDead
@@ -190,7 +194,7 @@ class ICPlayer(Player):
         finally:
             log.debug("ICPlayer.makemove: id(self)=%d self=%s returning move=%s" % (
                 id(self), self, move))
-            self.okqueue.put("ok")
+            self.okqueue.put_nowait("ok")
 
     # Interacting with the player
 
@@ -212,11 +216,11 @@ class ICPlayer(Player):
         # If current player has changed so that it is no longer us to move,
         # We raise TurnInterruprt in order to let GameModel continue the game
         if movecount % 2 == 1 and gamemodel.curplayer != self:
-            self.queue.put("int")
+            self.queue.put_nowait("int")
 
     def resetPosition(self):
         """ Used in observed examined games f.e. when LectureBot starts another example"""
-        self.queue.put("int")
+        self.queue.put_nowait("int")
 
     def putMessage(self, text):
         self.connection.cm.tellPlayer(self.ichandle, text)
