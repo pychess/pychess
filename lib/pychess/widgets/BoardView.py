@@ -7,7 +7,7 @@ from math import floor, ceil, pi
 from time import time
 
 import cairo
-from gi.repository import Gtk, Gdk, GObject, Pango, PangoCairo
+from gi.repository import GLib, Gtk, Gdk, GObject, Pango, PangoCairo
 
 from pychess.System import conf
 from pychess.gfx import Pieces
@@ -1515,12 +1515,10 @@ class BoardView(Gtk.DrawingArea):
 
     def _setRotation(self, radians):
         if not conf.get("fullAnimation", True):
-            def rotate():
-                self._rotation = radians
-                self.next_rotation = radians
-                self.matrix = cairo.Matrix.init_rotate(radians)
-                self.redrawCanvas()
-            rotate
+            self._rotation = radians
+            self.next_rotation = radians
+            self.matrix = cairo.Matrix.init_rotate(radians)
+            self.redrawCanvas()
         else:
             if hasattr(self, "next_rotation") and \
                     self.next_rotation != self.rotation:
@@ -1542,7 +1540,7 @@ class BoardView(Gtk.DrawingArea):
                 return next
 
             self.animating = True
-            rotate
+            GLib.idle_add(rotate)
 
     def _getRotation(self):
         return self._rotation
