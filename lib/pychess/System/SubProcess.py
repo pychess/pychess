@@ -17,12 +17,13 @@ class SubProcess(GObject.GObject):
         "died": (GObject.SignalFlags.RUN_FIRST, None, ())
     }
 
-    def __init__(self, path, args=[], warnwords=[], chdir="."):
+    def __init__(self, path, args=[], warnwords=[], env=None, chdir="."):
         GObject.GObject.__init__(self)
 
         self.path = path
         self.args = args
         self.warnwords = warnwords
+        self.env = env or os.environ
 
         self.defname = os.path.split(path)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
@@ -35,18 +36,21 @@ class SubProcess(GObject.GObject):
         argv = [str(u) for u in [self.path] + self.args]
 
         loop = asyncio.get_event_loop()
-        f = asyncio.ensure_future(self.start(argv, loop))
+        f = asyncio.ensure_future(self.start(argv, env, chdir, loop))
         loop.run()
         self.proc = f.result()
         self.pid = self.proc.pid
         asyncio.ensure_future(self.read_stdout(self.proc.stdout))
 
     @asyncio.coroutine
-    def start(self, argv, loop):
+    def start(self, argv, env, chdir, loop):
         log.debug("SubProcess.start(): create_subprocess_exec...", extra={"task": self.defname})
         create = asyncio.create_subprocess_exec(* argv,
                                                 stdin=asyncio.subprocess.PIPE,
-                                                stdout=asyncio.subprocess.PIPE)
+                                                stdout=asyncio.subprocess.PIPE,
+                                                env=env,
+                                                chdir=chdir,
+                                                )
         proc = yield from create
         loop.stop()
         return proc
