@@ -615,17 +615,15 @@ class GameWidget(GObject.GObject):
         log.debug("GameWidget.name_changed: starting %s" % repr(player))
         color = self.gamemodel.color(player)
 
-        def do_name_changed():
-            if self.gamemodel is None:
-                return
-            self.player_name_labels[color].set_text(self.player_display_text(
-                color=color))
-            if isinstance(self.gamemodel, ICGameModel) and \
-                    player.__type__ == REMOTE:
-                self.player_name_labels[color].set_tooltip_text(
-                    get_player_tooltip_text(self.gamemodel.ficsplayers[color],
-                                            show_status=False))
-        do_name_changed
+        if self.gamemodel is None:
+            return
+        self.player_name_labels[color].set_text(self.player_display_text(
+            color=color))
+        if isinstance(self.gamemodel, ICGameModel) and \
+                player.__type__ == REMOTE:
+            self.player_name_labels[color].set_tooltip_text(
+                get_player_tooltip_text(self.gamemodel.ficsplayers[color],
+                                        show_status=False))
 
         self.emit('title_changed', self.display_text)
         log.debug("GameWidget.name_changed: returning")
