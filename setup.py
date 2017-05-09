@@ -52,8 +52,8 @@ else:
 
 from distutils.command.register import register
 
-if sys.version_info < (2, 7, 0):
-    print('ERROR: PyChess requires Python >= 2.7')
+if sys.version_info < (3, 4, 0):
+    print('ERROR: PyChess requires Python >= 3.4')
     sys.exit(1)
 
 if sys.platform == "win32":
@@ -118,7 +118,6 @@ CLASSIFIERS = [
     'Intended Audience :: End Users/Desktop',
     'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
     'Operating System :: POSIX',
-    'Programming Language :: Python',
     'Programming Language :: Python :: 3',
     'Topic :: Games/Entertainment :: Board Games',
     ]
