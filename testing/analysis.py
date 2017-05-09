@@ -1,3 +1,4 @@
+import asyncio
 import unittest
 
 from pychess.Utils.const import WHITE, ANALYZING, INVERSE_ANALYZING
@@ -21,8 +22,10 @@ class DummyCECPAnalyzerEngine(GObject.GObject):
         self.defname = 'Dummy'
         self.Q = Queue()
 
+    @asyncio.coroutine
     def putline(self, line):
         self.emit('line', line)
+        yield from asyncio.sleep(0)
 
     def write(self, text):
         if text.strip() == 'protover 2':
@@ -63,16 +66,20 @@ class CECPTests(EmittingTestCase):
         analyzer.connect("readyForOptions", optionsCallback)
         analyzer.prestart()
         analyzer.start()
+
         return engine, analyzer
 
+    @asyncio.coroutine
     def _testLine(self, engine, analyzer, board, analine, moves, score, depth):
         self.traceSignal(analyzer, 'analyze')
-        engine.putline(analine)
+        yield from engine.putline(analine)
         results = self.getSignalResults(analyzer)
         self.assertNotEqual(results, None, "signal wasn't sent")
         self.assertEqual(results, ([(moves, score, depth)], ))
 
     def setUp(self):
+        self.loop = asyncio.get_event_loop()
+
         self.engineA, self.analyzerA = self._setupengine(ANALYZING)
         self.engineI, self.analyzerI = self._setupengine(INVERSE_ANALYZING)
 
@@ -84,15 +91,18 @@ class CECPTests(EmittingTestCase):
         self.analyzerA.setBoardList([board], [])
         self.analyzerI.setBoardList([board], [])
 
-        self._testLine(self.engineA, self.analyzerA, board,
-                       "1. Mat1 0 1     Bxb7#", ['Bxb7#'], MATE_VALUE, "1.")
+        @asyncio.coroutine
+        def coro():
+            yield from self._testLine(self.engineA, self.analyzerA, board,
+                           "1. Mat1 0 1     Bxb7#", ['Bxb7#'], MATE_VALUE, "1.")
 
-        # Notice, in the opposite situation there is no forced mate. Black can
-        # do Bxe3 or Ne7+, but we just emulate a stupid analyzer not
-        # recognizing this.
-        self._testLine(self.engineI, self.analyzerI, board.switchColor(),
-                       "10. -Mat 2 35 64989837     Bd4 Bxb7#",
-                       ['Bd4', 'Bxb7#'], -MATE_VALUE, "10.")
+            # Notice, in the opposite situation there is no forced mate. Black can
+            # do Bxe3 or Ne7+, but we just emulate a stupid analyzer not
+            # recognizing this.
+            yield from self._testLine(self.engineI, self.analyzerI, board.switchColor(),
+                           "10. -Mat 2 35 64989837     Bd4 Bxb7#",
+                           ['Bd4', 'Bxb7#'], -MATE_VALUE, "10.")
+        self.loop.run_until_complete(coro())
 
     def test2(self):
         """ Test analyzing in promotion situations """
@@ -101,15 +111,18 @@ class CECPTests(EmittingTestCase):
         self.analyzerA.setBoardList([board], [])
         self.analyzerI.setBoardList([board], [])
 
-        self._testLine(
-            self.engineA, self.analyzerA, board,
-            "9. 1833 23 43872584     a8=Q+ Kf7 Qa2+ Kf6 Qd2 Kf5 g4+",
-            ['a8=Q+', 'Kf7', 'Qa2+', 'Kf6', 'Qd2', 'Kf5', 'g4+'], 1833, "9.")
+        @asyncio.coroutine
+        def coro():
+            yield from self._testLine(
+                self.engineA, self.analyzerA, board,
+                "9. 1833 23 43872584     a8=Q+ Kf7 Qa2+ Kf6 Qd2 Kf5 g4+",
+                ['a8=Q+', 'Kf7', 'Qa2+', 'Kf6', 'Qd2', 'Kf5', 'g4+'], 1833, "9.")
 
-        self._testLine(
-            self.engineI, self.analyzerI, board.switchColor(),
-            "10. -1883 59 107386433     Kf7 a8=Q Ke6 Qa6+ Ke5 Qd6+ Kf5",
-            ['Kf7', 'a8=Q', 'Ke6', 'Qa6+', 'Ke5', 'Qd6+', 'Kf5'], -1883, "10.")
+            yield from self._testLine(
+                self.engineI, self.analyzerI, board.switchColor(),
+                "10. -1883 59 107386433     Kf7 a8=Q Ke6 Qa6+ Ke5 Qd6+ Kf5",
+                ['Kf7', 'a8=Q', 'Ke6', 'Qa6+', 'Ke5', 'Qd6+', 'Kf5'], -1883, "10.")
+        self.loop.run_until_complete(coro())
 
 
 if __name__ == '__main__':

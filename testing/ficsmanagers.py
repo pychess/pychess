@@ -1,8 +1,8 @@
+import asyncio
 import unittest
 import datetime
 import random
 
-from pychess.compat import Queue, Empty
 from pychess.Utils.const import WHITE, FEN_START, DRAW_BLACKINSUFFICIENTANDWHITETIME, \
     DRAW_WHITEINSUFFICIENTANDBLACKTIME, ADJOURNED_COURTESY_WHITE, ADJOURNED_COURTESY_BLACK
 from pychess.ic.FICSObjects import FICSPlayer, FICSGames, FICSSeeks, FICSChallenges, FICSPlayers, \
@@ -29,17 +29,21 @@ class DummyConnection(Connection):
     class DummyClient(PredictionsTelnet):
         class DummyTelnet():
             def __init__(self):
-                self.Q = Queue()
+                self.queue = asyncio.Queue()
                 self.name = "dummytelnet"
 
             def putline(self, line):
-                self.Q.put(line)
+                self.queue.put_nowait(line)
 
             def write(self, text):
                 pass
 
+            @asyncio.coroutine
             def readline(self):
-                return self.Q.get_nowait()
+                if self.queue.empty():
+                    raise asyncio.QueueEmpty
+                line = yield from self.queue.get()
+                return line
 
         def __init__(self, predictions, reply_cmd_dict, replay_dg_dict, replay_cn_dict):
             PredictionsTelnet.__init__(self, self.DummyTelnet(), predictions,
@@ -75,16 +79,14 @@ class DummyConnection(Connection):
     def putline(self, line):
         self.client.putline(line)
 
-    def process_line(self):
-        self.client.parse()
-
+    @asyncio.coroutine
     def process_lines(self, lines):
         for line in lines:
             self.putline(line)
         while True:
             try:
-                self.process_line()
-            except Empty:
+                yield from self.client.parse()
+            except asyncio.QueueEmpty:
                 break
 
 
@@ -101,6 +103,8 @@ class EmittingTestCase(unittest.TestCase):
         Warning: Strong connection to fics managers '''
 
     def setUp(self):
+        self.loop = asyncio.get_event_loop()
+
         self.connection = DummyConnection()
         self.connection.players = FICSPlayers(self.connection)
         self.connection.games = FICSGames(self.connection)
@@ -139,7 +143,11 @@ class EmittingTestCase(unittest.TestCase):
         self.manager.connect(signal, handler)
 
         random.shuffle(self.connection.client.predictions)
-        self.connection.process_lines(lines)
+
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
+
         self.assertNotEqual(self.args, None, "%s signal wasn't sent" % signal)
         self.assertEqual(self.args, expectedResults)
 
@@ -153,7 +161,11 @@ class EmittingTestCase(unittest.TestCase):
 
         obj.connect('notify::' + prop, handler)
         random.shuffle(self.connection.client.predictions)
-        self.connection.process_lines(lines)
+
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
+
         self.assertNotEqual(self.args, None,
                             "no \'%s\' property change notification for %s" %
                             (prop, repr(obj)))
@@ -167,7 +179,11 @@ class EmittingTestCase(unittest.TestCase):
 
         self.manager.connect(signal, handler)
         random.shuffle(self.connection.client.predictions)
-        self.connection.process_lines(lines)
+
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
+
         self.assertNotEqual(self.prop_value, None, "%s signal wasn't sent" %
                             signal)
         self.assertEqual(self.prop_value, expectedResult)
@@ -873,7 +889,11 @@ class BoardManagerTests(EmittingTestCase):
             "<12> -------r pbp--p-- -pn-k--p -Q------ -----qP- -------- PPP--n-- -K-RR--- B -1 0 0 0 0 1 12 electricbenj antonymelvin 0 7 8 23 28 346573 428761 22 R/h1-e1 (0:11.807) Rhe1+ 0 1 0",
             BLOCK_END
         ]
-        self.connection.process_lines(lines)
+
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
+
         self.assertEqual(self.connection.client.commands[-1], "moves 12")
 
     def test15(self):
@@ -963,7 +983,10 @@ class BoardManagerTests(EmittingTestCase):
             BLOCK_END
         ]
 
-        self.connection.process_lines(lines)
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
+
         self.assertEqual(self.connection.client.commands[-1], "moves 463")
 
         signal = 'obsGameCreated'
@@ -1235,7 +1258,9 @@ class FICSObjectsCleanupTest(EmittingTestCase):
             '<s> 222 w=GuestRLJC ti=01 rt=0P t=5 i=0 r=u tp=blitz c=? rr=0-9999 a=t f=f',
         ]
 
-        self.connection.process_lines(lines)
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
 
         signal = 'playGameCreated'
         lines = [
@@ -1250,7 +1275,9 @@ class FICSObjectsCleanupTest(EmittingTestCase):
             BLOCK_END,
         ]
 
-        self.connection.process_lines(lines)
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
 
         lines == []
         game = FICSGame(
@@ -1267,17 +1294,19 @@ class FICSObjectsCleanupTest(EmittingTestCase):
             '<wd> GuestGTFC',
         ]
 
-        self.connection.process_lines(lines)
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
 
-        self.assertEquals(self.connection.challenges.challenges, {})
-        self.assertEquals(self.connection.seeks.seeks, {})
-        self.assertEquals(self.connection.games.games, {})
-        self.assertEquals(self.connection.games.games_by_gameno, {})
-        self.assertEquals(self.connection.games.adjourned_games, {})
-        self.assertEquals(self.connection.games.history_games, {})
-        self.assertEquals(self.connection.games.journal_games, {})
-        self.assertEquals(self.connection.players.players, {})
-        self.assertEquals(self.connection.players.players_cids, {})
+        self.assertEqual(self.connection.challenges.challenges, {})
+        self.assertEqual(self.connection.seeks.seeks, {})
+        self.assertEqual(self.connection.games.games, {})
+        self.assertEqual(self.connection.games.games_by_gameno, {})
+        self.assertEqual(self.connection.games.adjourned_games, {})
+        self.assertEqual(self.connection.games.history_games, {})
+        self.assertEqual(self.connection.games.journal_games, {})
+        self.assertEqual(self.connection.players.players, {})
+        self.assertEqual(self.connection.players.players_cids, {})
 
 
 if __name__ == '__main__':
