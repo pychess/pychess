@@ -345,7 +345,7 @@ class PredictionsTelnet(object):
                 yield from self.telnet.write("%s" % text)
             else:
                 yield from self.telnet.write("%s" % text)
-        asyncio.ensure_future(coro(text, show_reply))
+        asyncio.async(coro(text, show_reply))
 
     def cancel(self):
         self.run_command("quit")

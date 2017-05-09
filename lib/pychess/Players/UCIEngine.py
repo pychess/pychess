@@ -61,7 +61,7 @@ class UCIEngine(ProtocolEngine):
         self.analysis = [None]
 
         self.queue = asyncio.Queue()
-        asyncio.ensure_future(self.parseLine(self.engine))
+        asyncio.async(self.parseLine(self.engine))
         self.died_cid = self.engine.connect("died", self.__die)
         self.invalid_move = None
 
@@ -80,7 +80,7 @@ class UCIEngine(ProtocolEngine):
         print("uci", file=self.engine)
 
     def start(self, event=None):
-        asyncio.ensure_future(self.__startBlocking(event))
+        asyncio.async(self.__startBlocking(event))
 
     @asyncio.coroutine
     def __startBlocking(self, event):

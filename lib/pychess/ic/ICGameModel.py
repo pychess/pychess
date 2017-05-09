@@ -266,7 +266,7 @@ class ICGameModel(GameModel):
             if gameno != self.ficsgame.gameno:
                 return
             self.emit("message_received", name, text)
-        asyncio.ensure_future(coro())
+        asyncio.async(coro())
 
     def onWhisperMessage(self, cm, name, gameno, text):
         if gameno != self.ficsgame.gameno:

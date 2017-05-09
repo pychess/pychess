@@ -702,7 +702,7 @@ class GameModel(GObject.GObject):
                 self.checkStatus()
                 self.curColor = 1 - self.curColor
 
-        asyncio.ensure_future(coro())
+        asyncio.async(coro())
 
     def checkStatus(self):
         """ Updates self.status so it fits with what getStatus(boards[-1])

@@ -275,13 +275,13 @@ class ICLogon(object):
                                  ("connectingMsg", self.showMessage)):
             self.cids[self.connection].append(self.connection.connect(
                 signal, callback))
-        asyncio.ensure_future(self.connection.start())
+        asyncio.async(self.connection.start())
 
         # guest users are rather limited on ICC (helper connection is useless)
         if not self.host in ("localhost", "chessclub.com"):
             self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
             self.helperconn.connect("error", self.onHelperConnectionError)
-            asyncio.ensure_future(self.helperconn.start())
+            asyncio.async(self.helperconn.start())
 
     def onHelperConnectionError(self, connection, error):
         if self.helperconn is not None:

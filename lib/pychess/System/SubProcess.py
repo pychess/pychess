@@ -36,11 +36,11 @@ class SubProcess(GObject.GObject):
         argv = [str(u) for u in [self.path] + self.args]
 
         loop = asyncio.get_event_loop()
-        f = asyncio.ensure_future(self.start(argv, env, cwd, loop))
+        f = asyncio.async(self.start(argv, env, cwd, loop))
         loop.run()
         self.proc = f.result()
         self.pid = self.proc.pid
-        asyncio.ensure_future(self.read_stdout(self.proc.stdout))
+        asyncio.async(self.read_stdout(self.proc.stdout))
 
     @asyncio.coroutine
     def start(self, argv, env, cwd, loop):
@@ -55,7 +55,7 @@ class SubProcess(GObject.GObject):
         return proc
 
     def write(self, line):
-        asyncio.ensure_future(self.write_stdin(self.proc.stdin, line))
+        asyncio.async(self.write_stdin(self.proc.stdin, line))
 
     @asyncio.coroutine
     def write_stdin(self, writer, line):
@@ -151,7 +151,7 @@ class Application(Gtk.Application):
 
     def on_subprocess(self, action, param):
         proc = SubProcess("python", [os.path.expanduser("~") + "/pychess/lib/pychess/Players/PyChess.py", ])
-        asyncio.ensure_future(self.parse_line(proc))
+        asyncio.async(self.parse_line(proc))
         print("xboard", file=proc)
         print("protover 2", file=proc)
 

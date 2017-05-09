@@ -191,7 +191,7 @@ class FICSConnection(Connection):
                 try:
                     connected_event = asyncio.Event()
                     self.client = ICSTelnet(self.host, 5000, connected_event)
-                    asyncio.ensure_future(self.client.start())
+                    asyncio.async(self.client.start())
                     yield from connected_event.wait()
                 except socket.error as err:
                     log.debug("Failed to open port %d %s" % (port, err),
@@ -313,7 +313,7 @@ class FICSConnection(Connection):
                         self.client.run_command("date")
                         last = time.time()
                     yield from asyncio.sleep(30)
-            asyncio.ensure_future(keep_alive())
+            asyncio.async(keep_alive())
 
         except CanceledException as err:
             log.info("FICSConnection._connect: %s" % repr(err),

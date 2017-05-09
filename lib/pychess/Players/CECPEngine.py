@@ -140,7 +140,7 @@ class CECPEngine(ProtocolEngine):
         self.lastpong = 0
 
         self.queue = asyncio.Queue()
-        asyncio.ensure_future(self.parseLine(self.engine))
+        asyncio.async(self.parseLine(self.engine))
         self.died_cid = self.engine.connect("died", lambda e: self.queue.put_nowait("del"))
         self.invalid_move = None
 
@@ -172,7 +172,7 @@ class CECPEngine(ProtocolEngine):
             # we will do it after feature accept/reject is completed.
 
     def start(self, event=None):
-        asyncio.ensure_future(self.__startBlocking(event))
+        asyncio.async(self.__startBlocking(event))
 
     @asyncio.coroutine
     def __startBlocking(self, event):
@@ -360,7 +360,7 @@ class CECPEngine(ProtocolEngine):
             # We don't use the optionQueue here, as set board prints a whole lot of
             # stuff. Instead we just call it.
             self.setBoardList(model.boards[:], model.moves[:])
-        asyncio.ensure_future(coro())
+        asyncio.async(coro())
 
     def setBoardList(self, boards, moves):
         # Notice: If this method is to be called while playing, the engine will
