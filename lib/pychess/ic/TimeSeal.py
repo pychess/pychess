@@ -13,6 +13,11 @@ import getpass
 from pychess.System.Log import log
 from pychess.ic.icc import B_DTGR_END, B_UNIT_END
 
+if hasattr(asyncio, "LimitOverrunError"):
+    from asyncio import LimitOverrunError
+else:
+    from pychess.System.readuntil import LimitOverrunError
+
 ENCODE = [ord(i) for i in "Timestamp (FICS) v1.0 - programmed by Henrik Gram."]
 ENCODELEN = len(ENCODE)
 G_RESPONSE = "\x029"
@@ -298,7 +303,7 @@ class ICSTelnet():
                 data = yield from self.protocol.reader.readuntil(until.encode("ascii"))
                 log.debug(data, extra={"task": (self.name, "raw")})
                 return i
-            except asyncio.LimitOverrunError:
+            except LimitOverrunError:
                 continue
 
     @asyncio.coroutine
