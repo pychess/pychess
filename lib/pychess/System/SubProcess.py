@@ -17,7 +17,7 @@ class SubProcess(GObject.GObject):
         "died": (GObject.SignalFlags.RUN_FIRST, None, ())
     }
 
-    def __init__(self, path, args=[], warnwords=[], env=None, chdir="."):
+    def __init__(self, path, args=[], warnwords=[], env=None, cwd="."):
         GObject.GObject.__init__(self)
 
         self.path = path
@@ -36,21 +36,20 @@ class SubProcess(GObject.GObject):
         argv = [str(u) for u in [self.path] + self.args]
 
         loop = asyncio.get_event_loop()
-        f = asyncio.ensure_future(self.start(argv, env, chdir, loop))
+        f = asyncio.ensure_future(self.start(argv, env, cwd, loop))
         loop.run()
         self.proc = f.result()
         self.pid = self.proc.pid
         asyncio.ensure_future(self.read_stdout(self.proc.stdout))
 
     @asyncio.coroutine
-    def start(self, argv, env, chdir, loop):
+    def start(self, argv, env, cwd, loop):
         log.debug("SubProcess.start(): create_subprocess_exec...", extra={"task": self.defname})
         create = asyncio.create_subprocess_exec(* argv,
                                                 stdin=asyncio.subprocess.PIPE,
                                                 stdout=asyncio.subprocess.PIPE,
                                                 env=env,
-                                                chdir=chdir,
-                                                )
+                                                cwd=cwd)
         proc = yield from create
         loop.stop()
         return proc
@@ -175,4 +174,5 @@ if __name__ == "__main__":
     app = Application()
 
     loop = asyncio.get_event_loop()
+    loop.set_debug(enabled=True)
     loop.run_forever(application=app)

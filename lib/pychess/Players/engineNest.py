@@ -508,7 +508,7 @@ class EngineDiscoverer(GObject.GObject):
         else:
             workdir = getEngineDataPrefix()
         warnwords = ("illegal", "error", "exception")
-        subprocess = SubProcess(path, args, warnwords, workdir)
+        subprocess = SubProcess(path, args=args, warnwords=warnwords, cwd=workdir)
         engine_proc = attrToProtocol[protocol](subprocess, color, protover,
                                                md5_engine)
         engine_proc.setName(name)
