@@ -215,16 +215,14 @@ class BoardControl(Gtk.EventBox):
             self.emit("action", RESUME_OFFER, None)
 
     def shownChanged(self, view, shown):
-        def do_shown_changed():
-            if self.view is None:
-                return
-            self.lockedPly = self.view.shown
-            self.possibleBoards[self.lockedPly] = self._genPossibleBoards(
-                self.lockedPly)
-            if self.view.shown - 2 in self.possibleBoards:
-                del self.possibleBoards[self.view.shown - 2]
+        if self.view is None:
+            return
+        self.lockedPly = self.view.shown
+        self.possibleBoards[self.lockedPly] = self._genPossibleBoards(
+            self.lockedPly)
+        if self.view.shown - 2 in self.possibleBoards:
+            del self.possibleBoards[self.view.shown - 2]
 
-        do_shown_changed
 
     def moves_undone(self, gamemodel, moves):
         self.view.selected = None
