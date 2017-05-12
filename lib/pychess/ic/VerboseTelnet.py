@@ -329,23 +329,21 @@ class PredictionsTelnet(object):
         return answer
 
     def run_command(self, text, show_reply=False):
-        def coro(text, show_reply):
-            logtext = "*" * len(text) if self.telnet.sensitive else text
-            log.debug(logtext, extra={"task": (self.telnet.name, "run_command")})
-            if self.lines.block_mode:
-                # TODO: reuse id after command reply handled
-                self.__command_id += 1
-                text = "%s %s" % (self.__command_id, text)
-                if show_reply:
-                    self.show_reply.add(self.__command_id)
-                yield from self.telnet.write(text)
-            elif self.lines.datagram_mode:
-                if show_reply:
-                    text = "`%s`%s" % (MY_ICC_PREFIX, text)
-                yield from self.telnet.write("%s" % text)
-            else:
-                yield from self.telnet.write("%s" % text)
-        asyncio.async(coro(text, show_reply))
+        logtext = "*" * len(text) if self.telnet.sensitive else text
+        log.debug(logtext, extra={"task": (self.telnet.name, "run_command")})
+        if self.lines.block_mode:
+            # TODO: reuse id after command reply handled
+            self.__command_id += 1
+            text = "%s %s" % (self.__command_id, text)
+            if show_reply:
+                self.show_reply.add(self.__command_id)
+            self.telnet.write(text)
+        elif self.lines.datagram_mode:
+            if show_reply:
+                text = "`%s`%s" % (MY_ICC_PREFIX, text)
+            self.telnet.write("%s" % text)
+        else:
+            self.telnet.write("%s" % text)
 
     def cancel(self):
         self.run_command("quit")

@@ -289,8 +289,6 @@ class ICLounge(GObject.GObject):
         self.dock.show_all()
         perspective_widget.show_all()
 
-        self.connection.lounge_loaded.set()
-
         log.debug("ICLounge.__init__: finished")
 
     def show(self):

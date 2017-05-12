@@ -2,8 +2,6 @@ from __future__ import print_function
 
 import asyncio
 import sys
-import errno
-import socket
 import telnetlib
 import random
 import time
@@ -13,10 +11,6 @@ import getpass
 from pychess.System.Log import log
 from pychess.ic.icc import B_DTGR_END, B_UNIT_END
 
-if hasattr(asyncio, "LimitOverrunError"):
-    from asyncio import LimitOverrunError
-else:
-    from pychess.System.readuntil import LimitOverrunError
 
 ENCODE = [ord(i) for i in "Timestamp (FICS) v1.0 - programmed by Henrik Gram."]
 ENCODELEN = len(ENCODE)
@@ -29,8 +23,15 @@ class CanceledException(Exception):
     pass
 
 
-class TimeSeal(object):
-    BUFFER_SIZE = 4096
+class ICSTelnetProtocol(asyncio.Protocol):
+    def __init__(self, telnet):
+        self.telnet = telnet
+
+    def data_received(self, data):
+        self.telnet.cook_some(data)
+
+
+class ICSTelnet():
     sensitive = False
 
     def __init__(self):
@@ -41,32 +42,30 @@ class TimeSeal(object):
         self.USCN = False
         self.ICC = False
         self.buf = bytearray(b"")
-        self.writebuf = bytearray(b"")
         self.stateinfo = None
-        self.sock = None
+        self.timeseal = False
 
-    def open(self, host, port):
+    @asyncio.coroutine
+    def start(self, host, port, connected_event, timeseal=True):
         if self.canceled:
             raise CanceledException()
 
         self.port = port
         self.host = host
+        self.connected_event = connected_event
+        self.timeseal = timeseal
+
         self.name = host
 
         if host in ("localhost", "chessclub.com"):
             self.ICC = True
+            self.timeseal = False
 
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.settimeout(10)
-        try:
-            self.sock.connect((host, port))
-        except socket.error as err:
-            if err.errno != errno.EINPROGRESS:
-                raise
-        self.sock.settimeout(None)
-        if not self.ICC:
-            print(self.get_init_string(), file=self)
-        self.cook_some()
+        loop = asyncio.get_event_loop()
+        coro = loop.create_connection(lambda: ICSTelnetProtocol(self), host, port)
+        self.transport, self.protocol = yield from coro
+        if self.timeseal:
+            self.write(self.get_init_string())
 
     def cancel(self):
         self.canceled = True
@@ -74,10 +73,7 @@ class TimeSeal(object):
 
     def close(self):
         self.connected = False
-        try:
-            self.sock.close()
-        except AttributeError:
-            pass
+        self.transport.close()
 
     def encode(self, inbuf, timestamp=None):
         assert inbuf == b"" or inbuf[-1] != b"\n"
@@ -152,29 +148,21 @@ class TimeSeal(object):
         return bytearray(result), g_count, (state, lookahead)
 
     def write(self, string):
-        self.writebuf += bytearray(string, "utf-8")
-        if b"\n" not in self.writebuf:
-            return
-        if not self.connected:
-            return
-
-        i = self.writebuf.rfind(b"\n")
-        string = self.writebuf[:i]
-        self.writebuf = self.writebuf[i + 1:]
-
         logstr = "*" * len(string) if self.sensitive else string
         self.sensitive = False
         log.info(logstr, extra={"task": (self.name, "raw")})
-        if not self.ICC:
-            string = self.encode(string)
-        try:
-            self.sock.send(string + b"\n")
-        except:
-            pass
 
+        if self.timeseal:
+            self.transport.write(self.encode(bytearray(string, "utf-8")) + b"\n")
+        else:
+            self.transport.write(string.encode() + b"\n")
+
+    @asyncio.coroutine
     def readline(self):
-        return self.readuntil(b"\n")
+        line = yield from self.readuntil(b"\n")
+        return line
 
+    @asyncio.coroutine
     def readuntil(self, until):
         if self.canceled:
             raise CanceledException()
@@ -199,10 +187,10 @@ class TimeSeal(object):
                 stuff = self.buf[:i + len(until)]
                 self.buf = self.buf[i + len(until):]
                 return str(stuff.strip().decode("latin_1"))
-            self.cook_some()
+            yield from asyncio.sleep(0.01)
 
-    def cook_some(self):
-        recv = self.sock.recv(self.BUFFER_SIZE)
+    def cook_some(self, data):
+        recv = data
         if len(recv) == 0:
             return
 
@@ -220,19 +208,21 @@ class TimeSeal(object):
                 self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
             elif b"Starting FICS session" in self.buf:
                 self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
+            self.connected_event.set()
         else:
-            if not self.ICC:
+            if self.timeseal:
                 recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
             recv = recv.replace(b"\r", b"")
             # enable this only for temporary debugging
             log.debug(recv, extra={"task": (self.name, "raw")})
 
-            if not self.ICC:
+            if self.timeseal:
                 for i in range(g_count):
-                    print(G_RESPONSE, file=self)
+                    self.write(G_RESPONSE)
 
             self.buf += recv
 
+    @asyncio.coroutine
     def read_until(self, *untils):
         if self.canceled:
             raise CanceledException()
@@ -241,81 +231,9 @@ class TimeSeal(object):
             for i, until in enumerate(untils):
                 start = self.buf.find(bytearray(until, "ascii"))
                 if start >= 0:
-                    self.buf = self.buf[:start]
+                    self.buf = self.buf[start:]
                     return i
                 else:
                     not_find = "read_until:%s , got:'%s'" % (until, self.buf)
                     log.debug(not_find, extra={"task": (self.name, "raw")})
-            self.cook_some()
-
-
-class ICSProtocol(asyncio.StreamReaderProtocol):
-    def __init__(self):
-        super().__init__(asyncio.StreamReader(limit=1024 * 8), self.client_connected)
-        self.reader, self.writer = None, None
-
-    def client_connected(self, reader, writer):
-        self.reader, self.writer = reader, writer
-
-    @asyncio.coroutine
-    def send(self, data):
-        self.writer.write(data.encode("ascii") + b"\n")
-        yield from self.writer.drain()
-
-
-class ICSTelnet():
-    def __init__(self, host, port, connected_event):
-        self.host = host
-        self.port = port
-        self.connected_event = connected_event
-        self.connected = False
-        self.canceled = False
-        self.FatICS = False
-        self.USCN = False
-        self.ICC = False
-        self.sensitive = False
-        self.name = host
-
-    @asyncio.coroutine
-    def start(self):
-        loop = asyncio.get_event_loop()
-        coro = loop.create_connection(ICSProtocol, self.host, self.port)
-        self.transport, self.protocol = yield from coro
-        self.connected_event.set()
-
-    @asyncio.coroutine
-    def readline(self):
-        line = yield from self.protocol.reader.readline()
-        line = line.replace(b"\r", b"")
-        line = line.decode("latin_1").strip()
-        log.debug(line, extra={"task": (self.name, "raw")})
-        return line
-
-    @asyncio.coroutine
-    def readuntil(self, until):
-        data = yield from self.protocol.reader.readuntil(until)
-        return data.decode("ascii", "ignore")
-
-    @asyncio.coroutine
-    def read_until(self, *untils):
-        for i, until in enumerate(untils):
-            try:
-                data = yield from self.protocol.reader.readuntil(until.encode("ascii"))
-                log.debug(data, extra={"task": (self.name, "raw")})
-                return i
-            except LimitOverrunError:
-                continue
-
-    @asyncio.coroutine
-    def write(self, string):
-        yield from self.protocol.send(string)
-        logstr = "*" * len(string) if self.sensitive else string
-        self.sensitive = False
-        log.info(logstr, extra={"task": (self.name, "raw")})
-
-    def cancel(self):
-        self.canceled = True
-        self.close()
-
-    def close(self):
-        self.connected = False
+            yield from asyncio.sleep(1)
