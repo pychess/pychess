@@ -86,22 +86,18 @@ class PreviewPanel:
         if rec is None:
             return
 
-        self.boardview.animation_lock.acquire()
         try:
-            try:
-                self.persp.chessfile.loadToModel(rec, -1, self.gamemodel)
-            except LoadingError as err:
-                dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
-                                             buttons=Gtk.ButtonsType.OK,
-                                             message_format=err.args[0])
-                if len(err.args) > 1:
-                    dialogue.format_secondary_text(err.args[1])
-                dialogue.connect("response", lambda dialogue, a: dialogue.hide())
-                dialogue.show()
-            self.boardview.lastMove = None
-            self.boardview._shown = self.gamemodel.lowply
-        finally:
-            self.boardview.animation_lock.release()
+            self.persp.chessfile.loadToModel(rec, -1, self.gamemodel)
+        except LoadingError as err:
+            dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
+                                         buttons=Gtk.ButtonsType.OK,
+                                         message_format=err.args[0])
+            if len(err.args) > 1:
+                dialogue.format_secondary_text(err.args[1])
+            dialogue.connect("response", lambda dialogue, a: dialogue.hide())
+            dialogue.show()
+        self.boardview.lastMove = None
+        self.boardview._shown = self.gamemodel.lowply
 
         self.boardview.redrawCanvas()
         self.boardview.shown = ply if ply > 0 else self.persp.gamelist.ply
