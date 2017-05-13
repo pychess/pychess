@@ -75,7 +75,7 @@ class ICSTelnet():
             altpath = os.path.join(getEngineDataPrefix(), timestamp)
             path = searchPath(timestamp, os.X_OK, altpath=altpath)
             if path:
-                self.host = "localhost"
+                self.host = "127.0.0.1"
                 self.port = 5500
                 try:
                     self.timestamp_proc = subprocess.Popen(["%s" % path, "-p", "%s" % self.port])
