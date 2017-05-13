@@ -99,6 +99,10 @@ class Engine(Player):
     # General chat handling
 
     def putMessage(self, message):
+        # TODO: use pandorabots API
+        # https://developer.pandorabots.com/docs
+        return
+
         def answer(message):
             try:
                 data = urlopen(
