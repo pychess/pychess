@@ -6,9 +6,13 @@ import telnetlib
 import random
 import time
 import platform
+import subprocess
 import getpass
+import os
 
 from pychess.System.Log import log
+from pychess.System import searchPath
+from pychess.System.prefix import getEngineDataPrefix
 from pychess.ic.icc import B_DTGR_END, B_UNIT_END
 
 
@@ -57,12 +61,34 @@ class ICSTelnet():
 
         self.name = host
 
-        if host in ("localhost", "chessclub.com"):
+        if host == "chessclub.com":
             self.ICC = True
             self.timeseal = False
 
+            # You can get ICC timestamp from
+            # https://www.chessclub.com/user/resources/icc/timestamp/
+            if sys.platform == "win32":
+                timestamp = "timestamp_win32.exe"
+            else:
+                timestamp = "timestamp_linux_2.6.8"
+
+            altpath = os.path.join(getEngineDataPrefix(), timestamp)
+            path = searchPath(timestamp, os.X_OK, altpath=altpath)
+            if path:
+                self.host = "localhost"
+                self.port = 5500
+                try:
+                    self.timestamp_proc = subprocess.Popen(["%s" % path, "-p", "%s" % self.port])
+                    log.info("%s started OK" % path)
+                except OSError as err:
+                    log.info("Can't start %s OSError: %s %s" % (err.errno, err.strerror, path))
+                    self.port = port
+                    self.host = host
+            else:
+                log.info("%s not found" % altpath)
+
         loop = asyncio.get_event_loop()
-        coro = loop.create_connection(lambda: ICSTelnetProtocol(self), host, port)
+        coro = loop.create_connection(lambda: ICSTelnetProtocol(self), self.host, self.port)
         self.transport, self.protocol = yield from coro
         if self.timeseal:
             self.write(self.get_init_string())
