@@ -93,8 +93,6 @@ class SubProcess(GObject.GObject):
 
     def terminate(self):
         self.proc.terminate()
-        if self.proc.returncode is None:
-            self.proc.kill()
 
     def pause(self):
         if sys.platform != "win32":
