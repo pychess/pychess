@@ -1,12 +1,12 @@
 from __future__ import absolute_import
-import time
-import threading
+
+import asyncio
 
 from gi.repository import Gtk
 
 from . import gamewidget
 from pychess.Utils.const import HINT, SPY, BLACK, WHITE
-from pychess.System import conf, fident
+from pychess.System import conf
 from pychess.System import uistuff
 from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
@@ -19,7 +19,7 @@ from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
 from pychess.widgets import InfoBar
 
 widgets = uistuff.GladeWidgets("analyze_game.glade")
-stop_event = threading.Event()
+stop_event = asyncio.Event()
 
 firstRun = True
 
@@ -102,6 +102,7 @@ def initialize():
         message.add_button(InfoBarMessageButton(_("Abort"), Gtk.ResponseType.CANCEL))
         gmwidg.replaceMessages(message)
 
+        @asyncio.coroutine
         def analyse_moves():
             should_black = conf.get("shouldBlack", True)
             should_white = conf.get("shouldWhite", True)
@@ -120,7 +121,7 @@ def initialize():
                 analyzer.setBoard(board)
                 if threat_PV:
                     inv_analyzer.setBoard(board)
-                time.sleep(move_time + 0.1)
+                yield from asyncio.sleep(move_time + 0.1)
 
                 ply = board.ply
                 color = (ply - 1) % 2
@@ -167,9 +168,7 @@ def initialize():
 
             gamemodel.emit("analysis_finished")
 
-        t = threading.Thread(target=analyse_moves, name=fident(analyse_moves))
-        t.daemon = True
-        t.start()
+        asyncio.async(analyse_moves())
         hide_window(None)
 
         return True
