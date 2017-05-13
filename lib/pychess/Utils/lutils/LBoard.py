@@ -74,6 +74,7 @@ class LBoard(object):
         # null_board act as parent of the variation
         # when we add a variation to last played board from hint panel
         self.fen_was_applied = False
+        self.plyCount = 0
 
         self.last_move = None
 
