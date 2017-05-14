@@ -302,7 +302,7 @@ class EnginesDialog():
 
                         if vm_args is not None:
                             vm_args = vm_args.split(",")
-                        print(binname, new_engine, protocol, vm_name, vm_args)
+                        # print(binname, new_engine, protocol, vm_name, vm_args)
                         discoverer.addEngine(binname, new_engine, protocol, vm_name, vm_args)
                         self.cur_engine = binname
                         self.add = False

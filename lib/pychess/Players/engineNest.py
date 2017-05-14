@@ -381,7 +381,7 @@ class EngineDiscoverer(GObject.GObject):
             log.error("Saving engines.json raised exception: %s" %
                       ", ".join(str(a) for a in err.args))
 
-    def discover(self):
+    def pre_discover(self):
         self.engines = []
         # List available engines
         for engine in self._engines:
@@ -403,6 +403,9 @@ class EngineDiscoverer(GObject.GObject):
         ######
         self.toBeRechecked = dict((c["name"], [c, False])
                                   for c in self._engines if c.get('recheck'))
+
+    def discover(self):
+        self.pre_discover()
 
         def count(self_, name, engine, wentwell):
             if wentwell:

@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 
+import asyncio
 import os
 import webbrowser
 import math
@@ -406,6 +407,9 @@ class PyChess(Gtk.Application):
         gamewidget.getWidgets()["player_rating1"].hide()
         gamewidget.getWidgets()["leave_fullscreen1"].hide()
 
+        dd = DiscovererDialog(discoverer)
+        asyncio.async(dd.start())
+
     def on_gmwidg_created(self, gamehandler, gmwidg):
         log.debug("GladeHandlers.on_gmwidg_created: starting")
         # Bring playing window to the front
@@ -539,14 +543,6 @@ class PyChess(Gtk.Application):
 
         self.menu_recent.connect("item-activated", recent_item_activated)
         widgets["load_recent_game1"].set_submenu(self.menu_recent)
-
-        # Discoverer dialog
-        def discovering_started(discoverer, binnames):
-            DiscovererDialog.show(discoverer, widgets["main_window"], binnames)
-
-        discoverer.connect("discovering_started", discovering_started)
-        DiscovererDialog.init(discoverer)
-        discoverer.discover()
 
         # Tip of the day dialog
         if conf.get("show_tip_at_startup", False):
