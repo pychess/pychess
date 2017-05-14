@@ -123,6 +123,7 @@ class PyDockLeaf(TabReceiver):
         pn = self.book.page_num(widget)
         print(pn)
         print(self.book.get_nth_page(pn))
+        ref = widget
         print(widget)
         self.book.remove_page(pn)
 
