@@ -5,12 +5,6 @@ import subprocess
 
 
 class Command(object):
-    """
-    Enables to run subprocess commands in a different thread with TIMEOUT option.
-
-    Based on jcollado's solution:
-    http://stackoverflow.com/questions/1191374/subprocess-with-timeout/4825933#4825933
-    """
     command = None
     inputstr = None
     process = None
