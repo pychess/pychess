@@ -119,6 +119,8 @@ class PyDockLeaf(TabReceiver):
         """ remove the widget from the leaf-notebook
             if this was the only widget, remove this leaf from its owner """
 
+        self.book.remove_page(self.book.page_num(widget))
+
         for i, (widget_, title, id) in enumerate(self.panels):
             if widget_ == widget:
                 break
@@ -126,9 +128,6 @@ class PyDockLeaf(TabReceiver):
             raise KeyError("No %s in %s" % (widget, self))
         del self.panels[i]
 
-        pn = self.book.page_num(widget)
-        print(3, pn)
-        self.book.remove_page(pn)
         if self.book.get_n_pages() == 0:
             parent = self.get_parent()
             while not isinstance(parent, PyDockComposite):
@@ -231,10 +230,8 @@ class PyDockLeaf(TabReceiver):
         if self.dockable:
             if sender.get_parent() == self and self.book.get_n_pages() == 1:
                 return
-            cp = sender.get_current_page()
-            print(1, cp)
-            child = sender.get_nth_page(cp)
-            print(2,  child)
+            # cp = sender.get_current_page()
+            child = sender.get_nth_page(sender.get_current_page())
             title, id = sender.get_parent().undock(child)
             self.dock(child, position, title, id)
 
