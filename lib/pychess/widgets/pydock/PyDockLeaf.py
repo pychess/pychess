@@ -120,8 +120,10 @@ class PyDockLeaf(TabReceiver):
             if this was the only widget, remove this leaf from its owner """
         print(self.book)
         print(self.book.get_n_pages())
-        print(self.book.get_nth_page(0))
         pn = self.book.page_num(widget)
+        print(pn)
+        print(self.book.get_nth_page(pn))
+        print(widget)
         self.book.remove_page(pn)
 
         for i, (widget_, title, id) in enumerate(self.panels):
