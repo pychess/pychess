@@ -1,10 +1,7 @@
 #! /usr/bin/env python
 from __future__ import print_function
 
-import sys
-import threading
 import subprocess
-import traceback
 
 
 class Command(object):
@@ -44,34 +41,16 @@ class Command(object):
         except ValueError:
             return self.status, self.output, self.error
 
-        if sys.version_info >= (3, 3, 0):
-            try:
-                self.output, self.error = self.process.communicate(
-                    input=self.inputstr,
-                    timeout=timeout)
-            except subprocess.TimeoutExpired:
-                self.process.kill()
-                self.output, self.error = self.process.communicate()
-            self.status = self.process.returncode
-            return self.status, self.output, self.error
-        else:
+        try:
+            self.output, self.error = self.process.communicate(
+                input=self.inputstr,
+                timeout=timeout)
+        except subprocess.TimeoutExpired:
+            self.process.kill()
+            self.output, self.error = self.process.communicate()
+        self.status = self.process.returncode
 
-            def target(**kwargs):
-                try:
-                    self.output, self.error = self.process.communicate(
-                        input=self.inputstr)
-                    self.status = self.process.returncode
-                except:
-                    self.error = traceback.format_exc()
-                    self.status = -1
-            # thread
-            thread = threading.Thread(target=target, kwargs=kwargs)
-            thread.start()
-            thread.join(timeout)
-            if thread.is_alive():
-                self.process.kill()
-                thread.join()
-            return self.status, self.output, self.error
+        return self.status, self.output, self.error
 
 
 if __name__ == "__main__":
