@@ -126,7 +126,9 @@ class PyDockLeaf(TabReceiver):
             raise KeyError("No %s in %s" % (widget, self))
         del self.panels[i]
 
-        self.book.remove_page(self.book.page_num(widget))
+        pn = self.book.page_num(widget)
+        print(3, pn)
+        self.book.remove_page(pn)
         if self.book.get_n_pages() == 0:
             parent = self.get_parent()
             while not isinstance(parent, PyDockComposite):
@@ -229,8 +231,10 @@ class PyDockLeaf(TabReceiver):
         if self.dockable:
             if sender.get_parent() == self and self.book.get_n_pages() == 1:
                 return
-            # cp = sender.get_current_page()
-            child = sender.get_nth_page(sender.get_current_page())
+            cp = sender.get_current_page()
+            print(1, cp)
+            child = sender.get_nth_page(cp)
+            print(2,  child)
             title, id = sender.get_parent().undock(child)
             self.dock(child, position, title, id)
 
