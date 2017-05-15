@@ -59,6 +59,7 @@ else:
                                                            "fakesink")
                         self.player.set_property("video-sink", fakesink)
                         bus = self.player.get_bus()
+                        bus.add_signal_watch()
                         bus.connect("message", self.onMessage)
 
                 def onMessage(self, bus, message):
@@ -75,7 +76,7 @@ else:
 
                 def play(self, uri):
                     if self.player is not None:
-                        self.player.set_state(Gst.State.READY)
+                        # self.player.set_state(Gst.State.READY)
                         self.player.set_property("uri", uri)
                         self.player.set_state(Gst.State.PLAYING)
 
