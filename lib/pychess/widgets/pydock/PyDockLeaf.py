@@ -118,14 +118,9 @@ class PyDockLeaf(TabReceiver):
     def undock(self, widget):
         """ remove the widget from the leaf-notebook
             if this was the only widget, remove this leaf from its owner """
-        print(self.book)
-        print(self.book.get_n_pages())
-        pn = self.book.page_num(widget)
-        print(pn)
-        print(self.book.get_nth_page(pn))
-        ref = widget
-        print(widget)
-        self.book.remove_page(pn)
+
+        # self.book.remove_page(self.book.page_num(widget))
+        self.book.detach_tab(widget)
 
         for i, (widget_, title, id) in enumerate(self.panels):
             if widget_ == widget:
