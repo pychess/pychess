@@ -1,7 +1,6 @@
 from gi.repository import Gtk
 
 from pychess.System import conf
-from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Move import toSAN, toFAN
 
@@ -149,7 +148,6 @@ class Sidepanel:
         board = self.boardview.model.boards[ply]
         self.boardview.setShownBoard(board)
 
-    @idle_add
     def moves_undone(self, game, moves):
         with self.frozen:
             for i in reversed(range(moves)):
@@ -164,7 +162,6 @@ class Sidepanel:
                 except ValueError:
                     continue
 
-    @idle_add
     def game_changed(self, game, ply):
         if self.boardview is None or self.boardview.model is None:
             return
@@ -209,7 +206,6 @@ class Sidepanel:
 
         view.get_model().append([notat])
 
-    @idle_add
     def shownChanged(self, boardview, shown):
         if self.boardview is None or self.boardview.model is None:
             return

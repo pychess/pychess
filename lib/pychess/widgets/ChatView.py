@@ -4,7 +4,6 @@ import random
 
 from gi.repository import Gtk, Gdk, Pango, GObject
 
-from pychess.System.idle_add import idle_add
 from pychess.System import uistuff
 from pychess.widgets import insert_formatted
 from pychess.widgets.Background import set_textview_color
@@ -108,7 +107,6 @@ class ChatView(Gtk.Box):
             allob = 'allob ' + str(self.gamemodel.ficsgame.gameno)
             self.gamemodel.connection.client.run_command(allob)
 
-    @idle_add
     def update_observers(self, other, observers):
         """ Rebuilds observers list text """
         text_buf = self.obsView.get_buffer()

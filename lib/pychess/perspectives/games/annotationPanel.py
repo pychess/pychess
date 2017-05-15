@@ -12,7 +12,6 @@ from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import WHITE, BLACK, FEN_EMPTY, reprResult
 
 from pychess.System import conf
-from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.LBoard import LBoard
@@ -633,7 +632,6 @@ class Sidepanel:
             self.nodelist.insert(index, node)
         return node
 
-    @idle_add
     def variation_extended(self, gamemodel, prev_board, board):
         node = None
         for n in self.nodelist:
@@ -656,7 +654,6 @@ class Sidepanel:
         self.boardview.setShownBoard(board.pieceBoard)
         self.gamemodel.needsSave = True
 
-    @idle_add
     def variation_added(self, gamemodel, boards, parent):
         # first find the iter where we will inset this new variation
         node = None
@@ -746,7 +743,6 @@ class Sidepanel:
         else:
             self.textbuffer.apply_tag_by_name("scored0", start, end)
 
-    @idle_add
     def analysis_changed(self, gamemodel, ply):
         if self.boardview.animating:
             return
@@ -1020,7 +1016,6 @@ class Sidepanel:
 
         self.textbuffer.insert(end_iter(), "\n\n")
 
-    @idle_add
     def update(self, *args):
         """ Update the entire notation tree """
 
@@ -1047,11 +1042,9 @@ class Sidepanel:
         self.insert_nodes(self.gamemodel.boards[0].board, result=result)
         self.update_selected_node()
 
-    @idle_add
     def shownChanged(self, boardview, shown):
         self.update_selected_node()
 
-    @idle_add
     def moves_undone(self, game, moves):
         start = self.textbuffer.get_start_iter()
         end = self.textbuffer.get_end_iter()
@@ -1064,7 +1057,6 @@ class Sidepanel:
 
         self.textbuffer.delete(start, end)
 
-    @idle_add
     def game_changed(self, game, ply):
         board = game.getBoardAtPly(ply, variation=0).board
         # if self.update() insterted all nodes before (f.e opening_changed), do nothing

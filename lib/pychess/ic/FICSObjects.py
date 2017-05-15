@@ -5,7 +5,6 @@ from gi.repository import GLib, GObject
 
 from pychess.compat import unicode
 from pychess.System.Log import log
-from pychess.System.idle_add import idle_add
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.const import ADJOURNED, WHITE, BLACK, UNSUPPORTED
 
@@ -24,7 +23,6 @@ class AlreadyExistException(Exception):
     pass
 
 
-@idle_add
 def make_sensitive_if_available(button, player):
     if player.isAvailableForGame():
         button.set_property("sensitive", True)
@@ -35,7 +33,6 @@ def make_sensitive_if_available(button, player):
                             {"player": player.name, "status": player.display_status.lower()})
 
 
-@idle_add
 def make_sensitive_if_playing(button, player):
     status = player.display_status.lower()
     if player.status == IC_STATUS_PLAYING:

@@ -8,7 +8,6 @@ from . import gamewidget
 from pychess.Utils.const import HINT, SPY, BLACK, WHITE
 from pychess.System import conf
 from pychess.System import uistuff
-from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.Move import listToMoves, parseAny
@@ -50,7 +49,6 @@ def initialize():
 
     from pychess.widgets import newGameDialog
 
-    @idle_add
     def update_analyzers_store(discoverer):
         data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
         uistuff.updateCombo(widgets["ana_combobox"], data)
@@ -114,10 +112,7 @@ def initialize():
                 if stop_event.is_set():
                     break
 
-                @idle_add
-                def do():
-                    gmwidg.board.view.setShownBoard(board)
-                do()
+                gmwidg.board.view.setShownBoard(board)
                 analyzer.setBoard(board)
                 if threat_PV:
                     inv_analyzer.setBoard(board)

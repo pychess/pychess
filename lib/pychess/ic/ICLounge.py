@@ -44,7 +44,6 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.ICPlayer import ICPlayer
 from pychess.Players.Human import Human
 from pychess.Savers import pgn, fen
-from pychess.System.idle_add import idle_add
 from pychess.Variants import variants
 from pychess.perspectives import perspective_manager
 
@@ -301,7 +300,6 @@ class ICLounge(GObject.GObject):
         log.warning("ICLounge.on_connection_error: %s" % repr(error))
         self.close()
 
-    @idle_add
     def close(self):
         try:
             for section in self.sections:
@@ -314,7 +312,6 @@ class ICLounge(GObject.GObject):
             pass
         perspective_manager.disable_perspective("fics")
 
-    @idle_add
     def onPlayGameCreated(self, bm, ficsgame):
         log.debug("ICLounge.onPlayGameCreated: %s" % ficsgame)
 
@@ -360,7 +357,6 @@ class ICLounge(GObject.GObject):
     def onGameModelStarted(self, gamemodel, ficsgame):
         self.connection.bm.onGameModelStarted(ficsgame.gameno)
 
-    @idle_add
     def onObserveGameCreated(self, bm, ficsgame):
         log.debug("ICLounge.onObserveGameCreated: %s" % ficsgame)
 
@@ -397,7 +393,6 @@ class ICLounge(GObject.GObject):
             allob = 'allob ' + str(ficsgame.gameno)
             gamemodel.connection.client.run_command(allob)
 
-    @idle_add
     def onFinger(self, fm, finger):
         titles = finger.getTitles()
         if titles is not None:
@@ -406,7 +401,6 @@ class ICLounge(GObject.GObject):
             for title in titles:
                 player.titles.add(TITLES[title])
 
-    @idle_add
     def tooManySeeks(self, bm):
         label = Gtk.Label(label=_(
             "You may only have 3 outstanding seeks at the same time. If you want \
@@ -429,7 +423,6 @@ class ICLounge(GObject.GObject):
         self.messages.append(message)
         self.infobar.push_message(message)
 
-    @idle_add
     def nonoWhileExamine(self, bm):
         label = Gtk.Label(_("You can't touch this! You are examining a game."))
 
@@ -443,7 +436,6 @@ class ICLounge(GObject.GObject):
         self.messages.append(message)
         self.infobar.push_message(message)
 
-    @idle_add
     def matchDeclined(self, bm, player):
         text = _(" has declined your offer for a match")
         content = get_infobarmessage_content(player, text)
@@ -458,7 +450,6 @@ class ICLounge(GObject.GObject):
         self.messages.append(message)
         self.infobar.push_message(message)
 
-    @idle_add
     def player_on_censor(self, bm, player):
         text = _(" is censoring you")
         content = get_infobarmessage_content(player, text)
@@ -473,7 +464,6 @@ class ICLounge(GObject.GObject):
         self.messages.append(message)
         self.infobar.push_message(message)
 
-    @idle_add
     def player_on_noplay(self, bm, player):
         text = _(" noplay listing you")
         content = get_infobarmessage_content(player, text)
@@ -488,7 +478,6 @@ class ICLounge(GObject.GObject):
         self.messages.append(message)
         self.infobar.push_message(message)
 
-    @idle_add
     def req_not_fit_formula(self, bm, player, formula):
         content = get_infobarmessage_content2(
             player, _(" uses a formula not fitting your match request:"),
@@ -504,7 +493,6 @@ class ICLounge(GObject.GObject):
         self.messages.append(message)
         self.infobar.push_message(message)
 
-    @idle_add
     def on_seek_updated(self, glm, message_text):
         if "manual accept" in message_text:
             message_text.replace("to manual accept", _("to manual accept"))
@@ -525,7 +513,6 @@ class ICLounge(GObject.GObject):
         self.messages.append(message)
         self.infobar.push_message(message)
 
-    @idle_add
     def our_seeks_removed(self, glm):
         label = Gtk.Label(label=_("Your seeks have been removed"))
 
@@ -543,7 +530,6 @@ class ICLounge(GObject.GObject):
         player.connect("ratings_changed", self._replace_notification_message, player)
         player.connect("notify::titles", self._replace_notification_message, None, player)
 
-    @idle_add
     def onArrivalNotification(self, cm, player):
         log.debug("%s" % player,
                   extra={"task": (self.connection.username,
@@ -553,11 +539,9 @@ class ICLounge(GObject.GObject):
             self.players.append(player)
             self._connect_to_player_changes(player)
 
-    @idle_add
     def onDepartedNotification(self, cm, player):
         self._add_notification_message(player, _(" has departed"), replace=True)
 
-    @idle_add
     def user_from_notify_list_is_present(self, player):
         self._add_notification_message(player, _(" is present"), chat=True, replace=True)
         if player not in self.players:
@@ -595,7 +579,6 @@ class ICLounge(GObject.GObject):
         self.messages.append(message)
         self.infobar.push_message(message)
 
-    @idle_add
     def _replace_notification_message(self, obj, prop, rating_type, player):
         log.debug("%s %s" % (repr(obj), player),
                   extra={"task": (self.connection.username,
@@ -639,7 +622,6 @@ class UserInfoSection(Section):
         if self.pinger is not None:
             self.pinger.stop()
 
-    @idle_add
     def onFinger(self, fm, finger):
         # print(finger.getName(), self.connection.getUsername())
         my_finger = finger.getName().lower() == self.connection.getUsername().lower()
@@ -748,7 +730,6 @@ class UserInfoSection(Section):
                 self.ping_label = Gtk.Label(label=_("Connecting") + "...")
                 self.ping_label.props.xalign = 0
 
-            @idle_add
             def callback(pinger, pingtime):
                 log.debug("'%s' '%s'" % (str(self.pinger), str(pingtime)),
                           extra={"task": (self.connection.username,
@@ -808,7 +789,6 @@ class NewsSection(Section):
         self.widgets = widgets
         connection.nm.connect("readNews", self.onNewsItem)
 
-    @idle_add
     def onNewsItem(self, nm, news):
         weekday, month, day, title, details = news
 
@@ -1129,7 +1109,6 @@ class SeekTabSection(ParrentListSection):
             self.filter_toggles[button] = self.widgets[button].get_active()
         self.seek_filter.refilter()
 
-    @idle_add
     def onAssessReceived(self, glm, assess):
         if self.assess_sent:
             self.assess_sent = False
@@ -1231,7 +1210,6 @@ class SeekTabSection(ParrentListSection):
         self.widgets["activeSeeksLabel"].set_text(_("Active seeks: %d") %
                                                   count)
 
-    @idle_add
     def onAddSeek(self, seeks, seek):
         log.debug("%s" % seek,
                   extra={"task": (self.connection.username, "onAddSeek")})
@@ -1253,7 +1231,6 @@ class SeekTabSection(ParrentListSection):
         self.seeks[hash(seek)] = txi
         self.__updateActiveSeeksLabel()
 
-    @idle_add
     def onRemoveSeek(self, seeks, seek):
         log.debug("%s" % seek,
                   extra={"task": (self.connection.username, "onRemoveSeek")})
@@ -1268,7 +1245,6 @@ class SeekTabSection(ParrentListSection):
         del self.seeks[hash(seek)]
         self.__updateActiveSeeksLabel()
 
-    @idle_add
     def onChallengeAdd(self, challenges, challenge):
         log.debug("%s" % challenge,
                   extra={"task": (self.connection.username, "onChallengeAdd")})
@@ -1297,7 +1273,6 @@ class SeekTabSection(ParrentListSection):
                                              text,
                                              gametype=challenge.game_type)
 
-        @idle_add
         def callback(infobar, response, message):
             if response == Gtk.ResponseType.ACCEPT:
                 self.connection.om.acceptIndex(challenge.index)
@@ -1327,7 +1302,6 @@ class SeekTabSection(ParrentListSection):
         self.__updateActiveSeeksLabel()
         self.widgets["seektreeview"].scroll_to_cell(self.store.get_path(txi))
 
-    @idle_add
     def onChallengeRemove(self, challenges, challenge):
         log.debug(
             "%s" % challenge,
@@ -1350,7 +1324,6 @@ class SeekTabSection(ParrentListSection):
             del self.messages[hash(challenge)]
         self.__updateActiveSeeksLabel()
 
-    @idle_add
     def our_seeks_removed(self, glm):
         self.widgets["clearSeeksButton"].set_sensitive(False)
 
@@ -1419,14 +1392,12 @@ class SeekTabSection(ParrentListSection):
             message.dismiss()
         self.messages.clear()
 
-    @idle_add
     def onPlayingGame(self, bm, game):
         self._clear_messages()
         self.widgets["seekListContent"].set_sensitive(False)
         self.widgets["clearSeeksButton"].set_sensitive(False)
         self.__updateActiveSeeksLabel()
 
-    @idle_add
     def onCurGameEnded(self, bm, game):
         self.widgets["seekListContent"].set_sensitive(True)
 
@@ -1479,7 +1450,6 @@ class SeekGraphSection(ParrentListSection):
     def onSpotClicked(self, graph, name):
         self.connection.bm.play(name)
 
-    @idle_add
     def onAddSought(self, manager, sought):
         log.debug("%s" % sought,
                   extra={"task": (self.connection.username, "onAddSought")})
@@ -1501,17 +1471,14 @@ class SeekGraphSection(ParrentListSection):
             tooltip_text = get_seek_tooltip_text(sought)
         self.graph.addSpot(sought.index, tooltip_text, x_loc, y_loc, type_)
 
-    @idle_add
     def onRemoveSought(self, manager, sought):
         log.debug("%s" % sought,
                   extra={"task": (self.connection.username, "onRemoveSought")})
         self.graph.removeSpot(sought.index)
 
-    @idle_add
     def onPlayingGame(self, bm, game):
         self.widgets["seekGraphContent"].set_sensitive(False)
 
-    @idle_add
     def onCurGameEnded(self, bm, game):
         self.widgets["seekGraphContent"].set_sensitive(True)
 
@@ -1670,7 +1637,6 @@ class PlayerTabSection(ParrentListSection):
 
         GLib.idle_add(do_onPlayerRemoved, players, player, priority=GLib.PRIORITY_LOW)
 
-    @idle_add
     def status_changed(self, player, prop):
         log.debug(
             "%s" % player,
@@ -1703,7 +1669,6 @@ class PlayerTabSection(ParrentListSection):
 
         return False
 
-    @idle_add
     def titles_changed(self, player, prop):
         log.debug(
             "%s" % player,
@@ -1724,14 +1689,9 @@ class PlayerTabSection(ParrentListSection):
             "%s" % player,
             extra={"task": (self.connection.username, "PTS.private_changed")})
         self.status_changed(player, prop)
-
-        def update_gui():
-            self.onSelectionChanged(self.tv.get_selection())
-
-        idle_add(update_gui)
+        self.onSelectionChanged(self.tv.get_selection())
         return False
 
-    @idle_add
     def elo_changed(self, rating, prop, rating_type, player):
         log.debug(
             "%s %s" % (rating, player),
@@ -1969,7 +1929,6 @@ class GameTabSection(ParrentListSection):
                       game_store,
                       priority=GLib.PRIORITY_LOW)
 
-    @idle_add
     def private_changed(self, game, prop):
         try:
             self.store.set(self.games[game]["ti"], 6, game.display_text)
@@ -1994,13 +1953,11 @@ class GameTabSection(ParrentListSection):
 
         GLib.idle_add(do_onGameRemove, games, game, priority=GLib.PRIORITY_LOW)
 
-    @idle_add
     def onGameObserved(self, bm, game):
         if game in self.games:
             treeiter = self.games[game]["ti"]
             self.store.set_value(treeiter, 1, self.recpix)
 
-    @idle_add
     def onGameUnobserved(self, bm, game):
         if game in self.games:
             treeiter = self.games[game]["ti"]
@@ -2108,7 +2065,6 @@ class AdjournedTabSection(ParrentListSection):
         self.widgets["previewButton"].set_sensitive(a_row_is_selected)
         self.widgets["examineButton"].set_sensitive(a_row_is_selected)
 
-    @idle_add
     def onPlayGameCreated(self, bm, board):
         for message in self.messages.values():
             message.dismiss()
@@ -2160,7 +2116,6 @@ class AdjournedTabSection(ParrentListSection):
                               treemodel.get_value(iter1, 10))
         return cmp(minute0, minute1)
 
-    @idle_add
     def online_changed(self, player, prop, game):
         log.debug("AdjournedTabSection.online_changed: %s %s" %
                   (repr(player), repr(game)))
@@ -2183,7 +2138,6 @@ class AdjournedTabSection(ParrentListSection):
 
         return False
 
-    @idle_add
     def status_changed(self, player, prop, game):
         log.debug("AdjournedTabSection.status_changed: %s %s" %
                   (repr(player), repr(game)))
@@ -2197,7 +2151,6 @@ class AdjournedTabSection(ParrentListSection):
         self.onSelectionChanged(self.selection)
         return False
 
-    @idle_add
     def onAdjournedGameAdded(self, adm, game):
         if game not in self.games:
             partner = game.bplayer if game.wplayer.name == game.opponent.name else game.wplayer
@@ -2220,7 +2173,6 @@ class AdjournedTabSection(ParrentListSection):
 
         return False
 
-    @idle_add
     def onHistoryGameAdded(self, adm, game):
         if game not in self.games:
             ti = self.store.append(
@@ -2234,7 +2186,6 @@ class AdjournedTabSection(ParrentListSection):
 
         return False
 
-    @idle_add
     def onJournalGameAdded(self, adm, game):
         if game not in self.games:
             ti = self.store.append(
@@ -2248,7 +2199,6 @@ class AdjournedTabSection(ParrentListSection):
 
         return False
 
-    @idle_add
     def onAdjournedGameRemoved(self, adm, game):
         if game in self.games:
             if self.store.iter_is_valid(self.games[game]["ti"]):
@@ -2267,7 +2217,6 @@ class AdjournedTabSection(ParrentListSection):
 
         return False
 
-    @idle_add
     def onHistoryGameRemoved(self, adm, game):
         if game in self.games:
             if self.store.iter_is_valid(self.games[game]["ti"]):
@@ -2276,7 +2225,6 @@ class AdjournedTabSection(ParrentListSection):
 
         return False
 
-    @idle_add
     def onJournalGameRemoved(self, adm, game):
         if game in self.games:
             if self.store.iter_is_valid(self.games[game]["ti"]):
@@ -2335,7 +2283,6 @@ class AdjournedTabSection(ParrentListSection):
         self.connection.adm.queryHistory()
         self.connection.adm.queryJournal()
 
-    @idle_add
     def onGamePreview(self, adm, ficsgame):
         log.debug("ICLounge.onGamePreview: %s" % ficsgame)
 
@@ -2991,7 +2938,6 @@ class SeekChallengeSection(Section):
             rating = None
         return rating
 
-    @idle_add
     def onFinger(self, fm, finger):
         if not finger.getName() == self.connection.getUsername():
             return

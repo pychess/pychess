@@ -17,7 +17,6 @@ from gi.repository import Gtk, GdkPixbuf, Gdk
 
 from pychess.compat import pathname2url, url2pathname, unquote
 from pychess.System.prefix import addDataPrefix, getDataPrefix
-from pychess.System.idle_add import idle_add
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SOUND_SELECT
@@ -199,7 +198,6 @@ class HintTab:
         uistuff.createCombo(widgets["ana_combobox"], data, name="ana_combobox")
         uistuff.createCombo(widgets["inv_ana_combobox"], data, name="inv_ana_combobox")
 
-        @idle_add
         def update_analyzers_store(discoverer):
             data = [(item[0], item[1]) for item in newGameDialog.analyzerItems]
             uistuff.updateCombo(widgets["ana_combobox"], data)

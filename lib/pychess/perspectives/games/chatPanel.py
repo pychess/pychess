@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-from pychess.System.idle_add import idle_add
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import LOCAL
@@ -40,7 +39,6 @@ class Sidepanel:
         for cid in self.model_cids:
             self.gamemodel.disconnect(cid)
 
-    @idle_add
     def onGameStarted(self, gamemodel):
         if gamemodel.examined:
             if gamemodel.players[0].name == gamemodel.connection.username:
@@ -76,7 +74,6 @@ class Sidepanel:
 
         self.chatView.enable()
 
-    @idle_add
     def onMessageReieved(self, player, text):
         self.chatView.addMessage(repr(self.opplayer), text)
 

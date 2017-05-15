@@ -4,7 +4,6 @@ from time import strftime
 from gi.repository import GLib, Gtk, Gdk, GObject, Pango
 
 from pychess.System import uistuff
-from pychess.System.idle_add import idle_add
 from pychess.widgets import insert_formatted
 from pychess.widgets.Background import set_textview_color
 from pychess.ic import FICS_COMMANDS, FICS_HELP
@@ -147,7 +146,6 @@ class ConsoleView(Gtk.Box):
                 self.liststore.remove(row.iter)
                 break
 
-    @idle_add
     def addMessage(self, text, my):
         tag = "mytext" if my else "text"
         text_buffer = self.readView.get_buffer()

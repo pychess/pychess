@@ -4,7 +4,6 @@ import cairo
 from gi.repository import Gtk, Gdk, GObject
 
 from pychess.System.prefix import addDataPrefix
-from pychess.System.idle_add import idle_add
 from pychess.widgets.BoardView import union
 from .BorderBox import BorderBox
 
@@ -76,7 +75,6 @@ class ChainLine(Gtk.Alignment):
         self.set_size_request(10, 10)
         self.lastRectangle = None
 
-    @idle_add
     def on_size_allocate(self, widget, requisition):
         if self.get_window():
             allocation = self.get_allocation()

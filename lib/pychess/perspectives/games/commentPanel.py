@@ -3,7 +3,6 @@
 from gi.repository import Gtk
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
-from pychess.System.idle_add import idle_add
 from pychess.Utils.const import reprCord
 from pychess.Utils.repr import reprColor, reprPiece
 from pychess.Utils.lutils.lmove import TCORD
@@ -95,7 +94,6 @@ class Sidepanel:
                 pass
                 # deleted variations by moves_undoing
 
-    @idle_add
     def moves_undone(self, game, moves):
         model = self.tv.get_model()
         for i in range(moves):
@@ -104,7 +102,6 @@ class Sidepanel:
     def game_started(self, model):
         self.game_changed(model, model.ply)
 
-    @idle_add
     def game_changed(self, model, ply):
         for i in range(len(self.store) + model.lowply, ply + 1):
             self.addComment(model, self.__chooseComment(model, i))

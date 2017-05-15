@@ -1,7 +1,6 @@
 import re
 from gi.repository import Gtk, GObject, Pango
 from pychess.widgets import insert_formatted
-from pychess.System.idle_add import idle_add
 
 TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
     TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(6)
@@ -134,7 +133,6 @@ class InfoPanel(Gtk.Notebook, Panel):
 
             self.fm.finger(playername)
 
-        @idle_add
         def onFingeringFinished(self, fm, finger, playername):
             if not isinstance(self.get_child(), Gtk.Label) or \
                     finger.getName().lower() != playername.lower():
@@ -190,7 +188,6 @@ class InfoPanel(Gtk.Notebook, Panel):
                                              self.onNamesReceived, grp_id)
             self.cm.getPeopleInChannel(grp_id)
 
-        @idle_add
         def onPlayerRemoved(self, players, player):
             if player.name in self.names:
                 for row in self.store:
@@ -199,7 +196,6 @@ class InfoPanel(Gtk.Notebook, Panel):
                         break
                 self.names.remove(player.name)
 
-        @idle_add
         def onNamesReceived(self, cm, channel, people, channel_):
             if not isinstance(self.get_child(),
                               Gtk.Label) or channel != channel_:
@@ -244,7 +240,6 @@ class InfoPanel(Gtk.Notebook, Panel):
             self.add(scroll_win)
             self.show_all()
 
-        @idle_add
         def onMessageAdded(self, chat_view, sender, text, color):
             s_iter = self.store.get_iter_first()
 

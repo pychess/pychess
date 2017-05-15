@@ -2,7 +2,6 @@ from gi.repository import Gtk, GObject, Gdk, Pango
 from pychess.Utils.IconLoader import load_icon
 from pychess.widgets.InfoPanel import Panel
 from pychess.compat import cmp
-from pychess.System.idle_add import idle_add
 
 TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
     TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(6)
@@ -61,7 +60,6 @@ class TextImageTree(Gtk.TreeView):
         # Selection
         self.get_selection().connect("changed", self.selection_changed)
 
-    @idle_add
     def addRow(self, grp_id, text, grp_type):
         """ :Description: Takes a player or a channel identified by grp_id and adds
             them to the correct group defined by grp_type
@@ -74,7 +72,6 @@ class TextImageTree(Gtk.TreeView):
         self.id2iter[grp_id] = m_iter
         self.idSet.add(grp_id)
 
-    @idle_add
     def removeRow(self, grp_id):
         """ :Description: Takes a player or channel identified by grp_id and removes them from
             the data model.
@@ -89,7 +86,6 @@ class TextImageTree(Gtk.TreeView):
         del self.id2iter[grp_id]
         self.idSet.remove(grp_id)
 
-    @idle_add
     def selectRow(self, grp_id):
         """ :Description: Takes a grp_id and finds the row associated with this id then
             sets this row to be the focus ie selected
@@ -368,7 +364,6 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
                 else:
                     self.onAdd(self.channelsList, grp_id, name, TYPE_CHANNEL)
 
-    @idle_add
     def onChannelsListed(self, cm, channels):
         if not self.channels:
             self.channels = channels
@@ -420,7 +415,6 @@ class ChannelsPanel(Gtk.ScrolledWindow, Panel):
                                                self.change_fg_colour,
                                                func_data=self.highlighted)
 
-    @idle_add
     def onPersonMessage(self, cm, name, title, isadmin, text):
         if not self.compileId(name, TYPE_PERSONAL) in self.joinedList:
             grp_id = self.compileId(name, TYPE_PERSONAL)

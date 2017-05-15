@@ -7,7 +7,6 @@ from gi.repository import Gtk, GObject
 from gi.repository import Gdk
 
 from pychess.System import uistuff
-from pychess.System.idle_add import idle_add
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, DRAW, WHITEWON, BLACKWON
 from pychess.Utils.lutils import leval
@@ -201,7 +200,6 @@ class ScorePlot(Gtk.DrawingArea):
     def clear(self):
         del self.scores[:]
 
-    @idle_add
     def redraw(self):
         if self.get_window():
             a = self.get_allocation()
