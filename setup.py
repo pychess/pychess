@@ -55,7 +55,7 @@ if sys.version_info < (3, 4, 0):
 if sys.platform == "win32":
     try:
         from gi.repository import Gtk
-        print("Gtk verion is %s.%s.%s", (Gtk.VERSION_MAJOR, Gtk.VERSION_MINOR, Gtk.VERSION_MICRO))
+        print("Gtk verion is %s.%s.%s", (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION, Gtk.MICRO_VERSION))
     except ImportError:
         print('ERROR: PyChess in Windows Platform requires to install PyGObject.')
         print('Installing from http://sourceforge.net/projects/pygobjectwin32')
