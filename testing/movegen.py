@@ -1,4 +1,3 @@
-from __future__ import print_function
 import unittest
 
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCheckEvasions

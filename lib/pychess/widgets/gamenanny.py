@@ -1,7 +1,6 @@
 """ This module intends to work as glue between the gamemodel and the gamewidget
     taking care of stuff that is neither very offscreen nor very onscreen
     like bringing up dialogs and """
-from __future__ import absolute_import
 
 import math
 from collections import defaultdict

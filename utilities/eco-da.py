@@ -1,4 +1,3 @@
-from __future__ import print_function
 # -*- coding: UTF-8 -*-
 
 # http://da.wikipedia.org/wiki/Skak%C3%A5bninger
@@ -22,7 +21,7 @@ if __name__ == '__main__':
     ecofile = open("eco.pgn", "w")
 
     rows = [c for c in tree.findall(".//%sli" % ns) if c.text and c.text[0] in "ABCDE"]
-    
+
     eco_count = 0
 
     # row.text is empty for A00
@@ -43,10 +42,10 @@ if __name__ == '__main__':
             continue
 
         names = []
-        
+
         if len(row.text) > 4:
             names.append(row.text[4:])
-        
+
         refs = row.findall("%sa" % ns)
         for ref in refs:
             names.append(ref.text)
@@ -54,16 +53,16 @@ if __name__ == '__main__':
                 names.append(ref.tail)
         data.append(''.join(names))
 
-            
+
         print(data)
-        
+
         if data:
             print('[ECO "%s"]' % data[0], file=ecofile)
             print('[Opening "%s"]' % data[1].replace(u"\u2026", "...").encode("latin_1"), file=ecofile)
             print(file=ecofile)
             print('*', file=ecofile)
             print(file=ecofile)
-            
+
             eco_count += 1
 
         # row.text is empty for C11
@@ -78,7 +77,7 @@ if __name__ == '__main__':
 
         if data[0] == "E99":
             break
-    
+
     print("%s lines" % eco_count)
-    
+
     ecofile.close()

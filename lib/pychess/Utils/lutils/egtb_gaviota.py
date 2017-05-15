@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import os
 import re
 from ctypes import byref, c_byte, c_char_p, c_int, c_uint, c_ulong, c_size_t, c_double, Structure,\

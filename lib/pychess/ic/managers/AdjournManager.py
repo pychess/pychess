@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import datetime
 
 from gi.repository import GObject

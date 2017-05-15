@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from .ldata import BLACK_SQUARES
 from pychess.Utils.const import WHITE, BLACK, KNIGHT, BISHOP, ROOK, QUEEN, PAWN

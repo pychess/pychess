@@ -5,10 +5,9 @@
     PyChess blunder finder script.
     This scripts allows you to analyze a played pgn file for blunders, using
     the engine of your choice.
-    
+
     PYTHONPATH=lib/ python blunders.py game.pgn
 '''
-from __future__ import print_function
 
 ###############################################################################
 # Set up important things
@@ -46,7 +45,7 @@ def queryGameno(path):
         print("The file is empty.")
         sys.exit()
     print()
-    
+
     print("The file contains the following games:")
     for i in range(len(pgnfile)):
         name1, name2 = pgnfile.get_player_names(i)
@@ -58,7 +57,7 @@ def queryGameno(path):
     else:
         gameno = int(raw_input("Select game number to be analyzed. [n]: "))
     print()
-    
+
     return pgnfile, gameno
 
 def queryAnalyzer(analyzers):
@@ -100,7 +99,7 @@ def start(discoverer):
     print("%s will now analyze the game between %s and %s with %d seconds per move." % \
             (discoverer.getName(analyzer), name1, name2, secs))
     print()
-    
+
     global game, values
     values = {}
     game = GameModel()
@@ -109,7 +108,7 @@ def start(discoverer):
     analyzer.connect('analyze', onAnalyze)
     game.spectators[HINT] = analyzer
     game.loadAndStart(sys.argv[1], pgn, gameno, -1)
-    
+
     def cb():
         if game.ply == game.lowply:
             on_finish()
@@ -124,7 +123,7 @@ def on_finish():
 
 def check_blund():
     print()
-    
+
     if game.ply+1 in values and game.ply in values:
         color = game.ply % 2
         oldmoves, oldscore = values[game.ply]
@@ -138,7 +137,7 @@ def check_blund():
             print("Black blunder", dif)
             print("Should have done:", ", ".join(listToSan(game.getBoardAtPly(game.ply),oldmoves)))
             print()
-    
+
     movename = toSAN(game.getBoardAtPly(game.ply-1),game.getMoveAtPly(game.ply-1))
     if game.ply % 2 == 1:
         move_suffix = ""
@@ -157,7 +156,7 @@ def onAnalyze(analyzer, analysis):
             values[game.ply] = (pv, score*(-1)**game.ply)
 
 ###############################################################################
-# Slightly validate arguments 
+# Slightly validate arguments
 
 if len(sys.argv) != 2 or sys.argv[1] == "--help":
     print("Usage: python blunders.py FILENAME   Analyze the specified pgn file")

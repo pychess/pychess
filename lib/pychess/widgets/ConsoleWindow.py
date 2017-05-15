@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from time import strftime
 
 from gi.repository import GLib, Gtk, Gdk, GObject, Pango

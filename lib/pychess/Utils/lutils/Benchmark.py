@@ -1,4 +1,3 @@
-from __future__ import print_function
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.leval import clearPawnTable
 from pychess.Utils.lutils.lmove import listToSan

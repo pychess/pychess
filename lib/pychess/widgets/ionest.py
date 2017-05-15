@@ -1,6 +1,5 @@
 """ The task of this module, is to save, load and init new games """
 
-from __future__ import print_function
 
 import os
 import subprocess

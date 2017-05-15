@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from pychess.compat import PY3
 from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, \

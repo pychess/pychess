@@ -1,6 +1,4 @@
 """ Three-check Chess Variant """
-from __future__ import absolute_import
-from __future__ import print_function
 
 from pychess.Utils.const import THREECHECKCHESS, VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.Board import Board

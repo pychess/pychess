@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
 from getpass import getpass
 from smtplib import SMTP, SMTPConnectError, SMTPAuthenticationError, SMTPRecipientsRefused
 from email.mime.text import MIMEText

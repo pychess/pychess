@@ -1,5 +1,4 @@
 """ This module handles the tabbed layout in PyChess """
-from __future__ import absolute_import
 
 import imp
 import os

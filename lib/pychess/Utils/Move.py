@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-from __future__ import print_function
 
 from pychess.compat import PY2
 from pychess.Utils.Cord import Cord

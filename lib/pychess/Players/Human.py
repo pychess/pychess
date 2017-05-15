@@ -1,4 +1,3 @@
-from __future__ import print_function
 import asyncio
 
 from gi.repository import Gtk, GObject

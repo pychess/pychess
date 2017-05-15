@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from gi.repository import Gtk
 
 from pychess.System import uistuff

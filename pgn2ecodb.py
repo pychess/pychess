@@ -1,4 +1,3 @@
-from __future__ import print_function
 # English eco.pgn was converted from
 # http://www.chessville.com/downloads_files/instructional_materials/ECO_Codes_With_Names_and_Moves.zip
 # others from wikipedia

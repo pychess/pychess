@@ -1,4 +1,3 @@
-from __future__ import print_function
 import unittest
 
 from pychess.Utils.const import A1, A8, C1, C8, E1, E8, G1, G8, H1, H8,\

@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from .bitboard import bitPosArray, iterBits, clearBit, firstBit
 from .attack import isAttacked, pinnedOnKing, getAttacks

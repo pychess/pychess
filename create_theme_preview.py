@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 
 from os import listdir
@@ -32,14 +31,14 @@ themes.sort()
 for theme in themes:
     pngfile = "%s/%s.png" % (pieces, theme)
     print('Creating %s' % pngfile)
-    
+
     Pieces.set_piece_theme(theme)
 
     surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, SQUARE*4, SQUARE*4)
-    
+
     context = cairo.Context(surface)
     context.set_source_rgb(0.5, 0.5, 0.5)
-    
+
     for x in range(4):
         for y in range(4):
             if (x+y) % 2 == 1:

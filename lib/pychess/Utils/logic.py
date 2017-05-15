@@ -1,7 +1,6 @@
 """ This module contains chess logic functins for the pychess client. They are
     based upon the lutils modules, but supports standard object types and is
     therefore not as fast. """
-from __future__ import absolute_import
 
 from .lutils import lmovegen
 from .lutils.validator import validateMove

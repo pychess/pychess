@@ -6,7 +6,6 @@
     This script executes a tournament between the engines installed on your
     system. The script is executed from a terminal with the usual environment.
 '''
-from __future__ import print_function
 
 import os
 import sys
@@ -51,10 +50,10 @@ from pychess.Variants import variants
 # Look up engines
 def prepare():
     print("Discovering engines", end=' ')
-    discoverer.connect('discovering_started', cb_started)   
-    discoverer.connect('engine_discovered', cb_gotone)  
-    discoverer.connect('all_engines_discovered', start)   
-    discoverer.discover()   
+    discoverer.connect('discovering_started', cb_started)
+    discoverer.connect('engine_discovered', cb_gotone)
+    discoverer.connect('all_engines_discovered', start)
+    discoverer.discover()
 
 def cb_started(discoverer, binnames):
     print("Wait a moment while we discover %d engines" % len(binnames))
@@ -75,7 +74,7 @@ def start(discoverer):
     n = len(engines)
     for i in range(n):
         results.append([None]*n)
-    
+
     print()
     print("Your installed engines are:")
     for i, engine in enumerate(engines):
@@ -87,7 +86,7 @@ def start(discoverer):
     print("The games will last up to %d minutes." % (2*n*(n-1)*minutes))
     print("You will be informed of the progress as the games finish.")
     print()
-    
+
     runGame()
 
 ###############################################################################
@@ -101,7 +100,7 @@ def runGame():
         return
     current[0] = a
     current[1] = b
-    
+
     game = GameModel(TimeModel(minutes*60,0))
     game.connect('game_started', cb_gamestarted)
     game.connect('game_ended', cb_gameended)
@@ -123,10 +122,10 @@ def cb_gameended(game, reason):
         print("The current scores are:")
     printScoreboard()
     print()
-    
+
     f = open("arena.pgn", "a+")
     save(f, game)
-    
+
     runGame()
 
 ###############################################################################

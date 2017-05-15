@@ -1,5 +1,4 @@
 """ Suicide Variation"""
-from __future__ import print_function
 
 from pychess.Utils.const import SUICIDECHESS, VARIANTS_OTHER_NONSTANDARD, KING_PROMOTION, \
     QUEEN_PROMOTION, ROOK_PROMOTION, BISHOP_PROMOTION, KNIGHT_PROMOTION

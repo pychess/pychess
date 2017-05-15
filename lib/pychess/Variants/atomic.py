@@ -1,4 +1,3 @@
-from __future__ import print_function
 # Atomic Chess
 
 from pychess.Utils.const import VARIANTS_OTHER_NONSTANDARD, KING, ATOMICCHESS, ENPASSANT, \

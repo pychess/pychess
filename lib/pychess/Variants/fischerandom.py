@@ -1,4 +1,3 @@
-from __future__ import print_function
 # Chess960 (Fischer Random Chess)
 
 import random

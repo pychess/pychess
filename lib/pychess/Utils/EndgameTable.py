@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from gi.repository import GObject
 
 from .Move import Move

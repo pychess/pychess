@@ -4,7 +4,6 @@
     scores, but strings describing the differences.
     Can be used for commenting on board changes.
 """
-from __future__ import absolute_import
 
 from .ldata import brank48, brank67, bitPosArray, left, right,\
     stonewall, distance, isolaniMask, fileBits, passedScores, passedPawnMask,\

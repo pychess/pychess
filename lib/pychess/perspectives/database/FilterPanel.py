@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-from __future__ import print_function
 import ast
 
 from gi.repository import GLib, Gtk, GObject

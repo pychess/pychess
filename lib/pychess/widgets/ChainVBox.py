@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import cairo
 
 from gi.repository import Gtk, Gdk, GObject

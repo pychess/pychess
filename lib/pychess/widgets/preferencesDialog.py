@@ -4,7 +4,6 @@
     the user to setup and use customised sounds or no sounds at all for a variety of in game
     events such as running out of time or piece movement events etc.
 """
-from __future__ import print_function
 
 import os
 from os import listdir

@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from .lutils.lmove import FILE, RANK
 from pychess.compat import cmp

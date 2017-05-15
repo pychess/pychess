@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from .bitboard import bitPosArray, notBitPosArray, lastBit, firstBit, clearBit, lsb
 from .ldata import moveArray, rays, directions, fromToRay, PIECE_VALUES, PAWN_VALUE

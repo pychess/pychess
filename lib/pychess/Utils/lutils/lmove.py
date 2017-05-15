@@ -1,6 +1,4 @@
 # -*- coding: UTF-8 -*-
-from __future__ import absolute_import
-from __future__ import unicode_literals
 
 from .ldata import bitPosArray, fileBits, rankBits
 from .bitboard import firstBit
