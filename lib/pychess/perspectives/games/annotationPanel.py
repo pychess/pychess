@@ -7,7 +7,6 @@ from gi.repository import Gtk
 from gi.repository import Pango
 from gi.repository import Gdk
 
-from pychess.compat import basestring, unicode
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import WHITE, BLACK, FEN_EMPTY, reprResult
 
@@ -287,7 +286,7 @@ class Sidepanel:
             if node is not None:
                 position = -1
                 for index, child in enumerate(board.children):
-                    if isinstance(child, basestring):
+                    if isinstance(child, str):
                         position = index
                         break
 
@@ -364,7 +363,7 @@ class Sidepanel:
         textbuffer = textedit.get_buffer()
         if not board.children:
             board.children.append("")
-        elif not isinstance(board.children[index], basestring):
+        elif not isinstance(board.children[index], str):
             board.children.insert(index, "")
         textbuffer.set_text(board.children[index])
 
@@ -542,8 +541,7 @@ class Sidepanel:
             self.textbuffer.insert_with_tags_by_name(
                 iter, ")", "variation-uneven", "variation-margin2")
 
-        self.textbuffer.insert_with_tags_by_name(iter, unicode("✖ "),
-                                                 "remove-variation")
+        self.textbuffer.insert_with_tags_by_name(iter, u"✖ ", "remove-variation")
         # chr = iter.get_char()
 
         # somehow iter.begins_tag() doesn't work, so we use get_char() instead
@@ -832,7 +830,7 @@ class Sidepanel:
             # Initial game or variation comment
             if board.prev is None:
                 for index, child in enumerate(board.children):
-                    if isinstance(child, basestring):
+                    if isinstance(child, str):
                         self.insert_comment(child,
                                             board,
                                             parent,
@@ -859,7 +857,7 @@ class Sidepanel:
                     end_iter(), "%s " % prettyPrintScore(score, depth), "emt")
 
             for index, child in enumerate(board.children):
-                if isinstance(child, basestring):
+                if isinstance(child, str):
                     # comment
                     self.insert_comment(child,
                                         board,
@@ -1103,10 +1101,10 @@ class Sidepanel:
     def __movestr(self, board):
         move = board.lastMove
         if self.fan:
-            movestr = unicode(toFAN(board.prev, move))
+            movestr = toFAN(board.prev, move)
         else:
-            movestr = unicode(toSAN(board.prev, move, True))
+            movestr = toSAN(board.prev, move, True)
         nagsymbols = "".join([nag2symbol(nag) for nag in board.nags])
         # To prevent wrap castling we will use hyphen bullet (U+2043)
         return "%s%s%s" % (move_count(board), movestr.replace(
-            '-', unicode('⁃')), nagsymbols)
+            '-', u'⁃'), nagsymbols)

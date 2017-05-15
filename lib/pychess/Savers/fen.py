@@ -1,7 +1,6 @@
-
 import collections
+from io import StringIO
 
-from pychess.compat import StringIO
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WAITING_TO_START, BLACKWON, WHITEWON, DRAW
 from pychess.Utils.logic import getStatus

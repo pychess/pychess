@@ -3,7 +3,6 @@
 
 from sqlalchemy import select, func, and_, or_
 
-from pychess.compat import unicode
 from pychess.Utils.const import FEN_START, WHITE, BLACK, reprResult
 from pychess.Database import model as dbmodel
 from pychess.Database.model import game, event, site, player, pl1, pl2, annotator, source
@@ -43,11 +42,11 @@ def save(path, model, offset):
         if not name:
             return None
 
-        selection = select([table.c.id], table.c.name == unicode(name))
+        selection = select([table.c.id], table.c.name == name)
         result = conn.execute(selection)
         id_ = result.scalar()
         if id_ is None:
-            result = conn.execute(table.insert().values(name=unicode(name)))
+            result = conn.execute(table.insert().values(name=name))
             id_ = result.inserted_primary_key[0]
         return id_
 

@@ -5,11 +5,11 @@ import os
 import subprocess
 import tempfile
 from collections import defaultdict
+from io import StringIO
 
 from gi.repository import Gtk
 from gi.repository import GObject
 
-from pychess.compat import StringIO
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Savers import chessalpha2, epd, fen, pgn, png, database
 from pychess.System import conf

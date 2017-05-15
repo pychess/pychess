@@ -5,11 +5,11 @@ import locale
 
 from operator import attrgetter
 from itertools import groupby
+from io import StringIO
 
 from gi.repository import Gdk, Gtk, GLib, GObject
 from gi.repository import GtkSource
 
-from pychess.compat import StringIO
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.SetupModel import SetupModel, SetupPlayer

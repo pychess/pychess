@@ -1,7 +1,5 @@
-
 import collections
 
-from pychess.compat import strip
 from .ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import WHITE, BLACK, WON_RESIGN, WAITING_TO_START, BLACKWON, WHITEWON, DRAW
@@ -96,7 +94,7 @@ class EpdFile(ChessFile):
 
         fieldlist = rec["FEN"].split(" ")
         if len(fieldlist) == 4:
-            fen = self.games[gameno]
+            fen = rec["FEN"]
             opcodestr = ""
 
         elif len(fieldlist) > 4:
@@ -107,7 +105,7 @@ class EpdFile(ChessFile):
             raise LoadingError("EPD string can not have less than 4 field")
 
         opcodes = {}
-        for opcode in map(strip, opcodestr.split(";")):
+        for opcode in map(str.strip, opcodestr.split(";")):
             space = opcode.find(" ")
             if space == -1:
                 opcodes[opcode] = True

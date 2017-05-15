@@ -6,6 +6,7 @@ import traceback
 from math import e
 from operator import attrgetter
 from itertools import groupby
+from io import StringIO
 
 from gi.repository import GLib, Gtk, Gdk, GdkPixbuf, GObject, Pango
 
@@ -18,7 +19,6 @@ from pychess.ic import IC_POS_EXAMINATING, IC_POS_OBSERVING_EXAMINATION, \
     TYPE_FIFTEEN_MINUTE, TYPE_FORTYFIVE_MINUTE, \
     VariantGameType, time_control_to_gametype
 
-from pychess.compat import cmp, StringIO
 from pychess.System import conf, uistuff
 from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.System.ping import Pinger
@@ -51,6 +51,10 @@ from .FICSObjects import FICSPlayer, FICSSoughtMatch, FICSChallenge, FICSGame, \
     get_rating_range_display_text, get_player_tooltip_text, \
     make_sensitive_if_available
 from .ICGameModel import ICGameModel
+
+
+def cmp(x, y):
+    return (x > y) - (x < y)
 
 
 class PlayerNotificationMessage(InfoBarMessage):

@@ -1,10 +1,10 @@
 import os
 import threading
 import traceback
+from io import StringIO
 
 from gi.repository import Gtk, GObject, GLib
 
-from pychess.compat import StringIO, unicode
 from pychess.System.Log import log
 from pychess.perspectives import Perspective, perspective_manager
 from pychess.perspectives.database.gamelist import GameList
@@ -343,7 +343,6 @@ class Database(GObject.GObject, Perspective):
                     info_link, pgn_link = filename
                     self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar1)
                 else:
-                    filename = unicode(filename)
                     self.importer.do_import(filename, progressbar=self.progressbar1)
 
             GLib.idle_add(self.progressbar1.set_text, "Recreating indexes...")

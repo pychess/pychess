@@ -1,6 +1,8 @@
-
 from .lutils.lmove import FILE, RANK
-from pychess.compat import cmp
+
+
+def cmp(x, y):
+    return (x > y) - (x < y)
 
 
 class CordFormatException(Exception):

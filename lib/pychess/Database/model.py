@@ -12,7 +12,6 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql.expression import Executable, ClauseElement, _literal_as_text
 
-from pychess.compat import unicode
 from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
 from pychess.System.Log import log
 from pychess.System.prefix import addUserCachePrefix
@@ -205,9 +204,9 @@ def create_indexes(engine):
 def ini_tag(engine):
     conn = engine.connect()
     new_values = [
-        {"id": LOCAL, "name": unicode("Local game")},
-        {"id": ARTIFICIAL, "name": unicode("Chess engine(s)")},
-        {"id": REMOTE, "name": unicode("ICS game")},
+        {"id": LOCAL, "name": "Local game"},
+        {"id": ARTIFICIAL, "name": "Chess engine(s)"},
+        {"id": REMOTE, "name": "ICS game"},
     ]
     conn.execute(tag.insert(), new_values)
     conn.close()

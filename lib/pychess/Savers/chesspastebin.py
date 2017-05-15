@@ -1,8 +1,11 @@
+from io import StringIO
+from urllib.error import URLError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 from gi.repository import Gdk, Gtk
 
 from pychess.Savers import pgn
-from pychess.compat import Request, urlencode, urlopen, URLError, StringIO
 
 URL = "http://www.chesspastebin.com/api/add/"
 APIKEY = "a137d919b75c8766b082367610189358cfb1ba70"

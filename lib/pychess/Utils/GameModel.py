@@ -2,10 +2,11 @@ from collections import defaultdict
 import asyncio
 import traceback
 import datetime
+from queue import Queue
+from io import StringIO
 
 from gi.repository import GObject
 
-from pychess.compat import basestring, Queue, StringIO
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
 from pychess.System import conf
@@ -585,7 +586,7 @@ class GameModel(GObject.GObject):
             raise error
 
     def save(self, uri, saver, append, position=None):
-        if isinstance(uri, basestring):
+        if isinstance(uri, str):
             fileobj = protosave(uri, append)
             self.uri = uri
         else:

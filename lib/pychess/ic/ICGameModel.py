@@ -1,7 +1,6 @@
-
 import asyncio
+from io import StringIO
 
-from pychess.compat import StringIO
 from pychess.System.Log import log
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Offer import Offer

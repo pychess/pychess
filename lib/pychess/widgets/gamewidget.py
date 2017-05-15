@@ -7,10 +7,10 @@ import traceback
 import zipfile
 import zipimport
 from collections import defaultdict
+from io import StringIO
 
 from gi.repository import Gdk, Gtk, GObject
 
-from pychess.compat import StringIO
 from pychess.widgets import dock_panel_tab
 from .BoardControl import BoardControl
 from .ChessClock import ChessClock

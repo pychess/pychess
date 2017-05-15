@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+from html.entities import entitydefs
 
-from pychess.compat import unichr, entitydefs
 from pychess.Utils.Move import toFAN
 from pychess.Utils.const import FAN_PIECES, BLACK, ROOK, WHITE, KING, BISHOP, \
     KNIGHT, QUEEN, DRAW, EMPTY, reprResult, WHITEWON, BLACKWON
@@ -34,7 +34,7 @@ def fanconv(fan):
     return fan
 
 # Dictionaries and expressions for parsing diagrams
-entitydefs = dict(("&%s;" % a, unichr(ord(b)).encode('utf-8'))
+entitydefs = dict(("&%s;" % a, chr(ord(b)).encode('utf-8'))
                   for a, b in entitydefs.items() if len(b) == 1)
 def2entity = dict((b, a) for a, b in entitydefs.items())
 

@@ -1,7 +1,6 @@
 
 from gi.repository import GLib
 
-from pychess.compat import unicode
 from pychess.System import conf
 from pychess.Utils.const import ACTION_MENU_ITEMS
 
@@ -39,7 +38,7 @@ class GtkMenuItem(object):
 
     @label.setter
     def label(self, label):
-        assert isinstance(label, str) or isinstance(label, unicode)
+        assert isinstance(label, str)
         self._label = label
         self._set_widget("label", label)
 
@@ -49,7 +48,7 @@ class GtkMenuItem(object):
 
     @tooltip.setter
     def tooltip(self, tooltip):
-        assert isinstance(tooltip, str) or isinstance(tooltip, unicode)
+        assert isinstance(tooltip, str)
         self._tooltip = tooltip
         self._set_widget("tooltip-text", tooltip)
 

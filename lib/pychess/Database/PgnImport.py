@@ -9,13 +9,14 @@ import sys
 import subprocess
 import tempfile
 import zipfile
+from urllib.error import HTTPError, URLError
+from urllib.request import urlopen
 
 from gi.repository import GLib
 
 from sqlalchemy import select, func
 from sqlalchemy.exc import SQLAlchemyError
 
-from pychess.compat import unicode, urlopen, HTTPError, URLError
 from pychess.Utils.const import NORMALCHESS, RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Variants import name2variant
 from pychess.System import searchPath
@@ -174,7 +175,7 @@ class PgnImport():
     def do_import(self, filename, info=None, progressbar=None):
         self.progressbar = progressbar
 
-        orig_filename = unicode(filename)
+        orig_filename = filename
         count_source = self.conn.execute(self.count_source.where(source.c.name == orig_filename)).scalar()
         if count_source > 0:
             print("%s is already imported" % filename)
@@ -304,8 +305,8 @@ class PgnImport():
 
                     game_round = tags.get('Round')
 
-                    white_id = get_id(unicode(white), player, PLAYER)
-                    black_id = get_id(unicode(black), player, PLAYER)
+                    white_id = get_id(white, player, PLAYER)
+                    black_id = get_id(black, player, PLAYER)
 
                     result = tags.get("Result")
                     if result in pgn2Const:
@@ -332,7 +333,7 @@ class PgnImport():
 
                     annotator_id = get_id(tags.get("Annotator"), annotator, ANNOTATOR)
 
-                    source_id = get_id(unicode(orig_filename), source, SOURCE, info=info)
+                    source_id = get_id(orig_filename, source, SOURCE, info=info)
 
                     self.next_id[GAME] += 1
 

@@ -3,7 +3,6 @@
 import datetime
 from gi.repository import GLib, GObject
 
-from pychess.compat import unicode
 from pychess.System.Log import log
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.const import ADJOURNED, WHITE, BLACK, UNSUPPORTED
@@ -708,11 +707,11 @@ def get_rating_range_display_text(rmin=0, rmax=9999):
     if rmin > 0:
         text = "%d" % rmin
         if rmax == 9999:
-            text += unicode("↑")
+            text += u"↑"
         else:
             text += "-%d" % rmax
     elif rmax != 9999:
-        text = unicode("%d↓" % rmax)
+        text = u"%d↓" % rmax
     else:
         text = None
     return text

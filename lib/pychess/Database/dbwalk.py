@@ -1,4 +1,3 @@
-from pychess.compat import basestring
 from pychess.Utils.const import DROP
 from pychess.Utils.lutils.lmovegen import newMove
 
@@ -23,7 +22,7 @@ def walk(node, arr, txt):
         # Initial game or variation comment
         if node.prev is None:
             for child in node.children:
-                if isinstance(child, basestring):
+                if isinstance(child, str):
                     arr_append(COMMENT)
                     txt.append(child)
             node = node.next
@@ -36,7 +35,7 @@ def walk(node, arr, txt):
                 arr_append(NAG + int(nag[1:]))
 
         for child in node.children:
-            if isinstance(child, basestring):
+            if isinstance(child, str):
                 # comment
                 arr_append(COMMENT)
                 txt.append(child)

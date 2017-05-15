@@ -20,7 +20,7 @@ mainloop = GLib.MainLoop()
 # Do the rest of the imports
 import atexit
 import sys
-from pychess.compat import Queue, raw_input
+from queue import Queue
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Player import Player, TurnInterrupt, PlayerIsDead
 from pychess.System.protoopen import protoopen
@@ -50,7 +50,7 @@ def queryGameno(path):
         print("Autoselecting game 0.")
         gameno = 0
     else:
-        gameno = int(raw_input("Select game number to be analyzed. [n]: "))
+        gameno = int(input("Select game number to be analyzed. [n]: "))
     print()
 
     return pgnfile, gameno
@@ -60,12 +60,12 @@ def queryAnalyzer(analyzers):
     for i, engine in enumerate(analyzers):
         print("[%d] %s" % (i, discoverer.getName(engine)))
     print()
-    n = int(raw_input("What engine should be your analyzer? [n] "))
+    n = int(input("What engine should be your analyzer? [n] "))
     print()
     return analyzers[n]
 
 def queryTime():
-    secs = int(raw_input("Enter how many seconds we should use for each move [n]: "))
+    secs = int(input("Enter how many seconds we should use for each move [n]: "))
     print()
     return secs
 

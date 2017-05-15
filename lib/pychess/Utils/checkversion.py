@@ -3,11 +3,12 @@ import ssl
 import json
 import codecs
 from threading import Thread
+from urllib.error import URLError
+from urllib.request import Request, urlopen
 
 from gi.repository import GLib, Gtk
 
 from pychess import VERSION
-from pychess.compat import Request, urlopen, URLError
 
 URL = "https://api.github.com/repos/pychess/pychess/releases/latest"
 LINK = "https://github.com/pychess/pychess/releases"

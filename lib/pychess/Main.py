@@ -7,13 +7,14 @@ import math
 import platform
 import sys
 import subprocess
+from urllib.request import urlopen, url2pathname, pathname2url
+from urllib.parse import unquote
 
 from gi.repository import Gdk
 from gi.repository import Gio
 from gi.repository import Gtk
 from gi.repository import GLib
 
-from pychess.compat import urlopen, basestring, open, pathname2url, url2pathname, unquote
 from pychess.System.Log import log
 from pychess.System import conf, uistuff, prefix
 from pychess.System.debug import print_obj_referrers, print_muppy_sumary
@@ -145,7 +146,7 @@ class GladeHandlers(object):
             return False
 
     def on_recent_game_activated(self, uri):
-        if isinstance(uri, basestring):
+        if isinstance(uri, str):
             path = url2pathname(uri)
             recentManager.add_item("file:" + pathname2url(path))
 
@@ -436,7 +437,7 @@ class PyChess(Gtk.Application):
             del self.terminated_cids[gamemodel]
 
     def update_recent(self, gamemodel, uri):
-        if isinstance(uri, basestring):
+        if isinstance(uri, str):
             path = url2pathname(uri)
             recentManager.add_item("file:" + pathname2url(path))
 

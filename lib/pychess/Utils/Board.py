@@ -1,5 +1,4 @@
 
-from pychess.compat import basestring
 from .lutils.bitboard import iterBits
 from .lutils.LBoard import LBoard
 from .lutils.lmove import RANK, FILE, FCORD, FLAG, PROMOTE_PIECE
@@ -47,7 +46,7 @@ class Board:
             if lboard is None:
                 if setup is True:
                     self.board.applyFen(FEN_START)
-                elif isinstance(setup, basestring):
+                elif isinstance(setup, str):
                     self.board.applyFen(setup)
 
             wpieces = self.board.boards[WHITE]

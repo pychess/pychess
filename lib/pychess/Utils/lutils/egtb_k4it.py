@@ -1,6 +1,6 @@
 import re
+from urllib.request import urlopen
 
-from pychess.compat import urlopen
 from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.lutils.lmove import FILE, RANK
 from pychess.Utils.const import WHITE, DRAW, NORMAL_MOVE, ENPASSANT, \
@@ -115,21 +115,3 @@ class EgtbK4kit:
         if scores:
             return scores[0][1], scores[0][2]
         return None, None
-
-
-if __name__ == "__main__":
-    from pychess.Utils.lutils.LBoard import LBoard
-    from pychess.Utils.lutils.lmove import listToSan
-    board = LBoard(NORMALCHESS)
-
-    board.applyFen("8/k2P4/8/8/8/8/8/4K2R w - - 0 1")
-    moves = probeEndGameTable(board)
-    assert len(moves) == 18, listToSan(board, (move[0] for move in moves))
-
-    board.applyFen("8/p7/6kp/3K4/6PP/8/8/8 b - - 0 1")
-    moves = probeEndGameTable(board)
-    assert len(moves) == 7, listToSan(board, (move[0] for move in moves))
-
-    board.applyFen("8/p6k/2K5/7R/6PP/8/8/8 b - - 0 66")
-    moves = probeEndGameTable(board)
-    assert len(moves) == 3, listToSan(board, (move[0] for move in moves))

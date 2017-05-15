@@ -1,4 +1,3 @@
-
 import sys
 import email.utils
 import math
@@ -6,10 +5,12 @@ import random
 import signal
 import subprocess
 from threading import Thread
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 from gi.repository import Gtk, Gdk
+
 import pychess
-from pychess.compat import urlopen, urlencode
 from pychess.Players.PyChess import PyChess
 from pychess.System.repeat import repeat_sleep
 from pychess.System import fident

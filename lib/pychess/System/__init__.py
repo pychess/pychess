@@ -5,7 +5,6 @@ import inspect
 import cProfile
 from timeit import default_timer
 
-from pychess.compat import basestring
 from pychess.System.Log import log
 from pychess.System.which import which
 
@@ -42,7 +41,7 @@ def fident(f):
 
 
 def get_threadname(thread_namer):
-    if isinstance(thread_namer, basestring):
+    if isinstance(thread_namer, str):
         return thread_namer
     else:
         return fident(thread_namer)

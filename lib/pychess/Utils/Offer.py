@@ -1,5 +1,8 @@
-from pychess.compat import cmp
 from pychess.Utils.const import ACTIONS
+
+
+def cmp(x, y):
+    return (x > y) - (x < y)
 
 
 class Offer:

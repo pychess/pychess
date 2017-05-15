@@ -11,10 +11,11 @@ from os.path import isdir, isfile, splitext
 
 import sys
 from xml.dom import minidom
+from urllib.request import url2pathname, pathname2url
+from urllib.parse import unquote
 
 from gi.repository import Gtk, GdkPixbuf, Gdk
 
-from pychess.compat import pathname2url, url2pathname, unquote
 from pychess.System.prefix import addDataPrefix, getDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer

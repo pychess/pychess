@@ -4,7 +4,6 @@ from .ldata import bitPosArray, fileBits, rankBits
 from .bitboard import firstBit
 from .validator import validateMove
 
-from pychess.compat import unichr, unicode
 from pychess.Utils.const import SAN, AN, LAN, ENPASSANT, EMPTY, PAWN, KING_CASTLE, QUEEN_CASTLE,\
     reprFile, reprRank, chr2Sign, cordDic, reprSign, reprCord, reprSignSittuyin, reprSignMakruk,\
     QUEEN, KNIGHT, BISHOP, ROOK, KING, NORMALCHESS, NORMAL_MOVE, PROMOTIONS, WHITE, BLACK, DROP,\
@@ -643,7 +642,7 @@ san2BlackFanDic = {
 def toFAN(board, move):
     """ Returns a Figurine Algebraic Notation string of a move """
 
-    san = unicode(toSAN(board, move))
+    san = toSAN(board, move)
     if board.color == WHITE:
         return san.translate(san2WhiteFanDic)
     else:
@@ -655,9 +654,9 @@ def toFAN(board, move):
 
 fan2SanDic = {}
 for k, v in san2WhiteFanDic.items():
-    fan2SanDic[ord(v)] = unichr(k)
+    fan2SanDic[ord(v)] = chr(k)
 for k, v in san2BlackFanDic.items():
-    fan2SanDic[ord(v)] = unichr(k)
+    fan2SanDic[ord(v)] = chr(k)
 
 
 def parseFAN(board, fan):

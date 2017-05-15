@@ -2,8 +2,8 @@ import os
 
 from gi.repository import Gdk, Gtk, GObject, Pango, PangoCairo
 from threading import Thread
+from queue import Queue, Full
 
-from pychess.compat import Queue, Full
 from pychess.System import conf, fident, uistuff
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import HINT, OPENING, SPY, BLACK, NULL_MOVE, ENDGAME, DRAW, WHITEWON, WHITE

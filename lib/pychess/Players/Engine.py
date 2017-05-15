@@ -1,9 +1,10 @@
-
 from threading import Thread
+from urllib.parse import urlencode
+from urllib.request import urlopen
+
 from gi.repository import GObject
 
 
-from pychess.compat import urlopen, urlencode
 from pychess.System import fident
 from pychess.System.Log import log
 from pychess.Utils.Offer import Offer

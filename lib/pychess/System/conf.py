@@ -4,8 +4,8 @@
 import sys
 import os
 import atexit
+from configparser import RawConfigParser
 
-from pychess.compat import RawConfigParser
 from pychess.System.Log import log
 from pychess.System.prefix import addUserConfigPrefix
 

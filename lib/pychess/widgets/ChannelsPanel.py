@@ -1,13 +1,17 @@
 from gi.repository import Gtk, GObject, Gdk, Pango
+
 from pychess.Utils.IconLoader import load_icon
 from pychess.widgets.InfoPanel import Panel
-from pychess.compat import cmp
 
 TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
     TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(6)
 
 add_icon = load_icon(16, "gtk-add", "list-add")
 remove_icon = load_icon(16, "gtk-remove", "list-remove")
+
+
+def cmp(x, y):
+    return (x > y) - (x < y)
 
 
 class TextImageTree(Gtk.TreeView):

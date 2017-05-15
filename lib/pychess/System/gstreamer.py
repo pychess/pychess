@@ -1,10 +1,9 @@
-
 import sys
+from urllib.request import url2pathname
 
 import gi
 
 from .Log import log
-from pychess.compat import url2pathname
 
 
 class Player():

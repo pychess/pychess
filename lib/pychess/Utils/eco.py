@@ -4,7 +4,6 @@ import gettext
 import sqlite3
 import struct
 
-from pychess.compat import memoryview
 from pychess.System.prefix import addDataPrefix, isInstalled
 
 db_path = os.path.join(addDataPrefix("eco.db"))

@@ -1,7 +1,8 @@
 import os
 import sys
+from urllib.request import urlopen
+from urllib.parse import unquote
 
-from pychess.compat import open, urlopen, unquote
 
 PGN_ENCODING = "latin_1"
 

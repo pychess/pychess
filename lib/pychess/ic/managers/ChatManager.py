@@ -5,7 +5,6 @@ import operator
 
 from gi.repository import GLib, GObject
 
-from pychess.compat import unichr
 from pychess.System.Log import log
 from pychess.ic import GAME_TYPES, BLKCMD_ALLOBSERVERS
 
@@ -331,7 +330,7 @@ class ChatManager(GObject.GObject):
     entityExpr = re.compile("&#x([a-f0-9]+);")
 
     def entityDecode(self, text):
-        return self.entityExpr.sub(lambda m: unichr(int(m.groups()[0], 16)),
+        return self.entityExpr.sub(lambda m: chr(int(m.groups()[0], 16)),
                                    text)
 
     def entityEncode(self, text):

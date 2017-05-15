@@ -2,6 +2,7 @@
 
 import collections
 import os
+from io import StringIO
 from os.path import getmtime
 import re
 import sys
@@ -22,7 +23,6 @@ except ImportError:
     use_chess_db = False
     print("Can't find chess_db.py See https://github.com/mcostalba/chess_db")
 
-from pychess.compat import basestring, StringIO
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
     WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
 from pychess.System import conf
@@ -203,7 +203,7 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
         # Initial game or variation comment
         if node.prev is None:
             for child in node.children:
-                if isinstance(child, basestring):
+                if isinstance(child, str):
                     store("{%s}" % child)
             node = node.next
             continue
@@ -235,7 +235,7 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
                 store(nag)
 
         for child in node.children:
-            if isinstance(child, basestring):
+            if isinstance(child, str):
                 child = re.sub("\[%.*?\]", "", child)
                 # comment
                 if child:
@@ -284,7 +284,7 @@ def move_count(node, black_periods=False):
             # move after real(not [%foo bar]) comment
             need_mvcount = False
             for child in node.prev.children:
-                if isinstance(child, basestring):
+                if isinstance(child, str):
                     if not child.startswith("[%"):
                         need_mvcount = True
                         break
@@ -749,7 +749,7 @@ class PGNFile(ChessFile):
                 model.timemodel.intervals[1][0] = secs
             for ply, board in enumerate(boards):
                 for child in board.children:
-                    if isinstance(child, basestring):
+                    if isinstance(child, str):
                         if self.has_emt:
                             match = movetime.search(child)
                             if match:

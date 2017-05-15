@@ -5,7 +5,6 @@ import sys
 from threading import Thread
 
 import pychess
-from pychess.compat import raw_input
 from pychess.Players.PyChess import PyChess
 from pychess.System import conf, fident
 from pychess.Utils.book import getOpenings
@@ -85,7 +84,7 @@ class PyChessCECP(PyChess):
     def run(self):
         while True:
             try:
-                line = raw_input()
+                line = input()
             except EOFError:
                 line = "quit"
             lines = line.split()

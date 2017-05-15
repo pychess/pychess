@@ -3,7 +3,6 @@
 import sys
 import os.path
 
-from pychess.compat import basestring
 
 
 ###
@@ -215,7 +214,7 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
             path.insert(
                 0, os.curdir
             )  # current directory is always searched first on Windows
-    elif isinstance(path, basestring):
+    elif isinstance(path, str):
         path = path.split(os.pathsep)
 
     if pathext is None:
@@ -223,7 +222,7 @@ def which_files(file, mode=os.F_OK | os.X_OK, path=None, pathext=None):
         if _windows:
             pathext += (os.environ.get('PATHEXT', '') or
                         _getwinpathext()).lower().split(os.pathsep)
-    elif isinstance(pathext, basestring):
+    elif isinstance(pathext, str):
         pathext = pathext.split(os.pathsep)
 
     if '' not in pathext:

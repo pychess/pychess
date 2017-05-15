@@ -4,7 +4,7 @@ from threading import Thread
 
 from gi.repository import GObject
 
-from pychess.compat import Queue
+from queue import Queue
 from pychess.Utils.const import LOCAL, RUNNING
 from pychess.Variants.setupposition import SetupBoard
 from pychess.System import fident

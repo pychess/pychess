@@ -1,7 +1,7 @@
 import asyncio
 from collections import defaultdict
 
-from pychess.compat import Queue
+from queue import Queue
 from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Move import parseSAN, toAN
 from pychess.Utils.lutils.lmove import ParsingError

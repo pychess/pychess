@@ -10,8 +10,6 @@
 import os
 import sys
 
-from pychess.compat import raw_input
-
 ###############################################################################
 # Set up important things
 from gi.repository import GLib
@@ -76,7 +74,7 @@ def start(discoverer):
         print("[%s] %s" % (name[:3], name))
     print("The total amount of fights will be %d" % (n*(n-1)))
     print()
-    minutes = int(raw_input("Please enter the clock minutes for each game [n]: "))
+    minutes = int(input("Please enter the clock minutes for each game [n]: "))
     print("The games will last up to %d minutes." % (2*n*(n-1)*minutes))
     print("You will be informed of the progress as the games finish.")
     print()

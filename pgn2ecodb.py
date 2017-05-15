@@ -3,11 +3,8 @@
 # others from wikipedia
 
 import os
-import sys
 import sqlite3
-import struct
 
-from pychess.compat import memoryview, unicode
 from pychess.Savers.pgn import load
 from pychess.System.protoopen import protoopen
 from pychess.System.prefix import addDataPrefix
@@ -55,7 +52,7 @@ if __name__ == '__main__':
                 hash = memoryview(hash_struct.pack(model.boards[-1].board.hash))
 
             if opening:
-                rows.append((hash, base, unicode(eco), unicode(lang), unicode(opening), unicode(variation)))
+                rows.append((hash, base, eco, lang, opening, variation))
 
             old_eco = eco
 
@@ -67,7 +64,7 @@ if __name__ == '__main__':
     print("processing en eco.pgn")
     feed("lang/en/eco.pgn", "en")
 
-    for lang in [d for d in os.listdir("lang") if os.path.isdir("lang/"+d)]:
+    for lang in [d for d in os.listdir("lang") if os.path.isdir("lang/" + d)]:
         if lang == "en":
             continue
 
