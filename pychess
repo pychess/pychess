@@ -13,7 +13,6 @@ import gettext
 import locale
 import logging
 
-# faulthandler will be in Python 3.3; for 2.x you can download it from pypi
 if not getattr(sys, 'frozen', False):
     try:
         import faulthandler
@@ -80,18 +79,11 @@ if os.path.isdir(os.path.join(this_dir, "lib/pychess")) and \
 
 try:
     import pychess
-    from pychess.compat import PY2
     from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
 except ImportError:
     print("ERROR: Could not import modules.")
     print("Please try to run pychess as stated in the INSTALL file")
     sys.exit(1)
-
-if PY2:
-    # This hack fixes some UnicodDecode Errors caused pygi not making
-    # magic hidden automatic unicode conversion pygtk did
-    reload(sys)
-    sys.setdefaultencoding("utf-8")
 
 ###############################################################################
 # Parse command line arguments
@@ -167,10 +159,7 @@ else:
     else:
         locale_dir = addDataPrefix("lang")
 
-    if PY2:
-        gettext.install(domain, localedir=locale_dir, unicode=1, names=('ngettext',))
-    else:
-        gettext.install(domain, localedir=locale_dir, names=('ngettext',))
+    gettext.install(domain, localedir=locale_dir, names=('ngettext',))
 
     # http://stackoverflow.com/questions/10094335/how-to-bind-a-text-domain-to-a-local-folder-for-gettext-under-gtk3
     if sys.platform == "win32":

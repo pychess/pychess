@@ -1,5 +1,3 @@
-
-from pychess.compat import PY2
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import DROP, NORMAL_MOVE, PAWN, SITTUYINCHESS, QUEEN, KING, \
     NULL_MOVE, FISCHERRANDOMCHESS, WHITE, BLACK, W_OOO, W_OO, B_OOO, B_OO, QUEEN_CASTLE, \
@@ -100,10 +98,6 @@ class Move:
     def __eq__(self, other):
         if isinstance(other, Move):
             return self.move == other.move
-
-    if PY2:
-        def __ne__(self, other):
-            return not self.__eq__(other)
 
     def __hash__(self):
         return hash(self.cords)

@@ -20,7 +20,7 @@ mainloop = GLib.MainLoop()
 # Do the rest of the imports
 import atexit
 import sys
-from pychess.compat import Queue, raw_input, PY2
+from pychess.compat import Queue, raw_input
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Player import Player, TurnInterrupt, PlayerIsDead
 from pychess.System.protoopen import protoopen
@@ -30,11 +30,6 @@ from pychess.Utils.const import *
 from pychess.Utils.Move import listToSan, toSAN
 from pychess.Savers import pgn
 
-if PY2:
-    # This hack fixes some UnicodDecode Errors caused pygi not making
-    # magic hidden automatic unicode conversion pygtk did
-    reload(sys)
-    sys.setdefaultencoding("utf-8")
 
 ###############################################################################
 # Ask the user for details

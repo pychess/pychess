@@ -6,7 +6,6 @@ import xml.etree.cElementTree as ET
 from gi.repository import Gtk, Gdk, GObject, Pango
 from gi.repository.GdkPixbuf import Pixbuf
 
-from pychess.compat import PY3
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
@@ -416,7 +415,7 @@ class GladeWidgets:
 
     def __init__(self, filename):
         # TODO: remove this when upstream fixes translations with Python3+Windows
-        if PY3 and sys.platform == "win32" and not no_gettext:
+        if sys.platform == "win32" and not no_gettext:
             tree = ET.parse(addDataPrefix("glade/%s" % filename))
             for node in tree.iter():
                 if 'translatable' in node.attrib:

@@ -1,5 +1,3 @@
-
-from pychess.compat import PY3
 from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, \
     ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, CAMBODIANCHESS, MAKRUKCHESS, \
     FISCHERRANDOMCHESS, SITTUYINCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, \
@@ -856,8 +854,7 @@ class LBoard(object):
         return b
 
     def __repr__(self):
-        b = self.prepr()
-        return b if PY3 else b.encode('utf8')
+        return self.prepr()
 
     def asFen(self, enable_bfen=True):
         fenstr = []
