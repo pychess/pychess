@@ -3,8 +3,8 @@ import asyncio
 import collections
 from copy import copy
 
-import gbulb
 
+from pychess.external import gbulb
 from pychess.Utils.Move import parseAny
 from pychess.Utils.Board import Board
 from pychess.Utils.Move import toAN

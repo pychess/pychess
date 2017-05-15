@@ -25,7 +25,6 @@ install:
   - "pip install --disable-pip-version-check --user --upgrade pip"
   - "pip install pexpect"
   - "pip install sqlalchemy"
-  - "pip install gbulb"
 
   # Download pygobjectwin32
   - "if not exist %AIO% appveyor DownloadFile https://sourceforge.net/projects/pygobjectwin32/files/%AIO%"

@@ -8,10 +8,10 @@ from functools import partial
 from hashlib import md5
 from copy import deepcopy
 
-import gbulb
 
 from gi.repository import GObject
 
+from pychess.external import gbulb
 from pychess.System import conf, searchPath
 from pychess.System.Log import log
 from pychess.System.command import Command

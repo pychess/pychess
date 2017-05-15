@@ -5,8 +5,8 @@ import re
 
 from gi.repository import Gtk, GObject
 
-import gbulb
 
+from pychess.external import gbulb
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.Utils.Move import Move

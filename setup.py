@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-
+from distutils.command.register import register
 from glob import glob
 from os import listdir
 from os.path import isdir, isfile
@@ -9,9 +9,9 @@ import site
 import sys
 
 from imp import load_module, find_module
-pychess = load_module("pychess", *find_module("pychess",["lib"]))
+pychess = load_module("pychess", *find_module("pychess", ["lib"]))
 
-msi =False
+msi = False
 if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
     try:
         from cx_Freeze import setup, Executable
@@ -28,15 +28,14 @@ if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
         def add_properties(self):
             metadata = self.distribution.metadata
             props = [
-                    ('DistVersion', metadata.get_version()),
-                    ('DefaultUIFont', 'DlgFont8'),
-                    ('ErrorDialog', 'ErrorDlg'),
-                    ('Progress1', 'Install'),
-                    ('Progress2', 'installs'),
-                    ('MaintenanceForm_Action', 'Repair'),
-                    ('ALLUSERS', '2'),
-                    ('MSIINSTALLPERUSER','1')
-            ]
+                ('DistVersion', metadata.get_version()),
+                ('DefaultUIFont', 'DlgFont8'),
+                ('ErrorDialog', 'ErrorDlg'),
+                ('Progress1', 'Install'),
+                ('Progress2', 'installs'),
+                ('MaintenanceForm_Action', 'Repair'),
+                ('ALLUSERS', '2'),
+                ('MSIINSTALLPERUSER', '1')]
             email = metadata.author_email or metadata.maintainer_email
             if email:
                 props.append(("ARPCONTACT", email))
@@ -49,8 +48,6 @@ if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
 else:
     from distutils.core import setup
 
-from distutils.command.register import register
-
 if sys.version_info < (3, 4, 0):
     print('ERROR: PyChess requires Python >= 3.4')
     sys.exit(1)
@@ -58,6 +55,7 @@ if sys.version_info < (3, 4, 0):
 if sys.platform == "win32":
     try:
         from gi.repository import Gtk
+        print("Gtk verion is %s.%s.%s", (Gtk.VERSION_MAJOR, Gtk.VERSION_MINOR, Gtk.VERSION_MICRO))
     except ImportError:
         print('ERROR: PyChess in Windows Platform requires to install PyGObject.')
         print('Installing from http://sourceforge.net/projects/pygobjectwin32')
@@ -69,6 +67,8 @@ NAME = "pychess"
 
 # We have to subclass register command because
 # PyChess from another author already exist on pypi.
+
+
 class RegisterCommand(register):
     def run(self):
         self.distribution.metadata.name = "PyChess-%s" % pychess.VERSION_NAME
@@ -118,8 +118,7 @@ CLASSIFIERS = [
     'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
     'Operating System :: POSIX',
     'Programming Language :: Python :: 3',
-    'Topic :: Games/Entertainment :: Board Games',
-    ]
+    'Topic :: Games/Entertainment :: Board Games']
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
@@ -138,7 +137,8 @@ sys.stderr = stderr
 sys.stdout = stdout
 
 DATA_FILES = [("share/pychess",
-    ["README.md", "AUTHORS", "ARTISTS", "DOCUMENTERS", "LICENSE", "TRANSLATORS", "pychess_book.bin", "eco.db"])]
+               ["README.md", "AUTHORS", "ARTISTS", "DOCUMENTERS",
+                "LICENSE", "TRANSLATORS", "pychess_book.bin", "eco.db"])]
 
 # UI
 DATA_FILES += [("share/pychess/glade", glob('glade/*.glade'))]
@@ -166,7 +166,7 @@ DATA_FILES += [("share/pychess/pieces", glob('pieces/*.png'))]
 DATA_FILES += [("share/pychess/pieces/ttf", glob('pieces/ttf/*.ttf'))]
 
 for dir in [d for d in listdir('pieces') if isdir(os.path.join('pieces', d)) and d != 'ttf']:
-    DATA_FILES += [("share/pychess/pieces/"+dir, glob('pieces/'+dir+'/*.svg'))]
+    DATA_FILES += [("share/pychess/pieces/" + dir, glob('pieces/' + dir + '/*.svg'))]
 
 # Manpages
 DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
@@ -179,45 +179,44 @@ if sys.platform == "win32":
     import msgfmt
 
 pychess_langs = []
-for dir in [d for d in listdir("lang") if isdir("lang/"+d) and d != "en"]:
+for dir in [d for d in listdir("lang") if isdir("lang/" + d) and d != "en"]:
     if sys.platform == "win32":
-        file = "lang/%s/%s" % (dir,pofile)
-        msgfmt.make(file+".po", file+".mo")
+        file = "lang/%s/%s" % (dir, pofile)
+        msgfmt.make(file + ".po", file + ".mo")
     else:
-        os.popen("msgfmt lang/%s/%s.po -o lang/%s/%s.mo" % (dir,pofile,dir,pofile))
-    DATA_FILES += [("share/locale/"+dir+"/LC_MESSAGES", ["lang/"+dir+"/"+pofile+".mo"])]
+        os.popen("msgfmt lang/%s/%s.po -o lang/%s/%s.mo" % (dir, pofile, dir, pofile))
+    DATA_FILES += [("share/locale/" + dir + "/LC_MESSAGES", ["lang/" + dir + "/" + pofile + ".mo"])]
     pychess_langs.append(dir)
 
 PACKAGES = []
 
 if msi:
     # TODO: cx_freeze doesn't allow letters in version
-    #VERSION = "0.12.0"
+    # VERSION = "0.12.0"
 
-    ## Get the site-package folder, not everybody will install
-    ## Python into C:\PythonXX
+    # Get the site-package folder, not everybody will install
+    # Python into C:\PythonXX
     site_dir = site.getsitepackages()[1]
     include_dll_path = os.path.join(site_dir, "gnome")
     lang_path = os.path.join(site_dir, "gnome", "share", "locale")
 
-    ## gtk3.0 .mo files
+    # gtk3.0 .mo files
     gtk_mo = [f + "/LC_MESSAGES/gtk30.mo" for f in os.listdir(lang_path) if f in pychess_langs]
 
-    ## Collect the list of missing dll when cx_freeze builds the app
-    missing_dll = [f for f in os.listdir(include_dll_path) if \
-                    (f.endswith(".dll") or (f.startswith("gspawn") and f.endswith(".exe")))]
+    # Collect the list of missing dll when cx_freeze builds the app
+    missing_dll = [f for f in os.listdir(include_dll_path) if
+                   (f.endswith(".dll") or (f.startswith("gspawn") and f.endswith(".exe")))]
 
-    ## We need to add all the libraries too (for themes, etc..)
+    # We need to add all the libraries too (for themes, etc..)
     gtk_libs = ['etc',
                 'share/icons/adwaita',
                 'share/themes/adwaita',
                 'lib/gio',
                 'lib/gdk-pixbuf-2.0',
                 'lib/girepository-1.0',
-                'share/glib-2.0'
-    ]
+                'share/glib-2.0']
 
-    ## Create the list of includes as cx_freeze likes
+    # Create the list of includes as cx_freeze likes
     include_files = []
     for mo in gtk_mo:
         mofile = os.path.join(lang_path, mo)
@@ -227,24 +226,23 @@ if msi:
     for dll in missing_dll:
         include_files.append((os.path.join(include_dll_path, dll), dll))
 
-    ## Let's add gtk libraries folders and files
+    # Let's add gtk libraries folders and files
     for lib in gtk_libs:
         include_files.append((os.path.join(include_dll_path, lib), lib))
 
     base = None
-    ## Lets not open the console while running the app
+    # Lets not open the console while running the app
     if sys.platform == "win32":
         base = "Win32GUI"
 
     executables = [Executable("pychess",
-                            base=base,
-                            icon="pychess.ico",
-                            shortcutName="PyChess",
-                            shortcutDir="DesktopFolder"),
-                    Executable(script="lib/__main__.py",
-                            targetName="pychess-engine.exe",
-                            base=base),
-                            ]
+                              base=base,
+                              icon="pychess.ico",
+                              shortcutName="PyChess",
+                              shortcutDir="DesktopFolder"),
+                   Executable(script="lib/__main__.py",
+                              targetName="pychess-engine.exe",
+                              base=base)]
 
     bdist_msi_options = {
         "upgrade_code": "{5167584f-c196-428f-be40-4c861025e90a}",
@@ -256,42 +254,40 @@ if msi:
         "path": sys.path + ["lib"],
         "includes": ["gi", "sqlalchemy.sql.default_comparator"],
         "packages": ["gi", "sqlalchemy.dialects.sqlite", "pychess"],
-        "include_files": include_files,
-        }
+        "include_files": include_files}
 else:
     PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
                 "pychess.Players", "pychess.Savers", "pychess.System",
                 "pychess.Utils", "pychess.Utils.lutils", "pychess.Variants",
-                "pychess.perspectives", "pychess.Database",
-                "pychess.widgets", "pychess.widgets.pydock",
+                "pychess.Database", "pychess.widgets", "pychess.widgets.pydock",
                 "pychess.perspectives", "pychess.perspectives.welcome",
                 "pychess.perspectives.games", "pychess.perspectives.fics",
-                "pychess.perspectives.database",]
+                "pychess.perspectives.database",
+                "pychess.external", "pychess.external.gbulb"]
 
     build_exe_options = {}
     bdist_msi_options = {}
     executables = {}
 
-setup (
-    cmdclass         = {"register": RegisterCommand},
-    name             = NAME,
-    version          = VERSION,
-    author           = 'Pychess team',
-    author_email     = 'pychess-people@googlegroups.com',
-    maintainer       = 'Thomas Dybdahl Ahle',
-    classifiers      = CLASSIFIERS,
-    keywords         = 'python gtk chess xboard gnuchess game pgn epd board linux',
-    description      = DESC,
-    long_description = LONG_DESC,
-    license          = 'GPL3',
-    url              = 'http://pychess.org',
-    download_url     = 'http://pychess.org/download/',
-    package_dir      = {'': 'lib'},
-    packages         = PACKAGES,
-    data_files       = DATA_FILES,
-    scripts          = ['pychess'],
-    options          = {"build_exe": build_exe_options,
-                        "bdist_msi": bdist_msi_options
-                        },
-    executables      = executables
+setup(
+    cmdclass={"register": RegisterCommand},
+    name=NAME,
+    version=VERSION,
+    author='Pychess team',
+    author_email='pychess-people@googlegroups.com',
+    maintainer='Thomas Dybdahl Ahle',
+    classifiers=CLASSIFIERS,
+    keywords='python gtk chess xboard gnuchess game pgn epd board linux',
+    description=DESC,
+    long_description=LONG_DESC,
+    license='GPL3',
+    url='http://pychess.org',
+    download_url='http://pychess.org/download/',
+    package_dir={'': 'lib'},
+    packages=PACKAGES,
+    data_files=DATA_FILES,
+    scripts=['pychess'],
+    options={"build_exe": build_exe_options,
+             "bdist_msi": bdist_msi_options},
+    executables=executables
 )

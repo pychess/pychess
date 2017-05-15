@@ -6,9 +6,8 @@ import time
 
 from gi.repository import GObject, Gtk, Gio
 
+from pychess.external import gbulb
 from pychess.System.Log import log
-
-import gbulb
 
 
 class SubProcess(GObject.GObject):

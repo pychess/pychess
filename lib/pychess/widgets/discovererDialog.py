@@ -1,8 +1,8 @@
 import asyncio
 
-import gbulb
 from gi.repository import Gtk
 
+from pychess.external import gbulb
 from pychess.System import uistuff
 
 

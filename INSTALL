@@ -50,7 +50,6 @@ gir1.2-gtksource-3.0
 gir1.2-gstreamer-1.0
 gir1.2-gst-plugins-base-1.0
 
-pip3 install gbulb
 (If you have no sound in pychess try to install gstreamer1.0-pulseaudio)
 
 Dependencies for CentOS/RHEL7 and Fedora 20:
@@ -67,7 +66,6 @@ gstreamer1
 gstreamer1-plugins-base
 python3-sqlalchemy
 python3-pexpect
-pip3 install gbulb
 
 Dependencies for Arch:
 python
@@ -83,13 +81,11 @@ gdk-pixbuf2
 gtksourceview3
 gstreamer
 gst-plugins-base
-pip install gbulb
 
 Dependencies for Windows:
 python >= 3.4
 sqlalchemy
 pexpect
-gbulb
 PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
   Base packages
   GDK-Pixbuf
