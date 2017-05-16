@@ -1,13 +1,11 @@
 # -*- coding: UTF-8 -*-
 
-from threading import Thread
+import asyncio
 
 from gi.repository import GObject
 
-from queue import Queue
 from pychess.Utils.const import LOCAL, RUNNING
 from pychess.Variants.setupposition import SetupBoard
-from pychess.System import fident
 
 
 class SetupMove:
@@ -24,26 +22,27 @@ class SetupPlayer:
     __type__ = LOCAL
 
     def __init__(self, board_control):
-        self.queue = Queue()
+        self.queue = asyncio.Queue()
         self.board_control = board_control
         self.board_control.connect("action", self.on_action)
         self.board_control.connect("piece_moved", self.piece_moved)
 
     def on_action(self, bc, action, param):
-        self.queue.put((action, param))
+        self.queue.put_nowait((action, param))
         if action == "SETUP":
             # force both virtual player to make_move()
-            self.queue.put((action, param))
+            self.queue.put_nowait((action, param))
 
+    @asyncio.coroutine
     def make_move(self):
-        item = self.queue.get(block=True)
+        item = yield from self.queue.get()
         return item
 
     def piece_moved(self, board, move, color):
-        self.queue.put((SetupMove(move), color))
+        self.queue.put_nowait((SetupMove(move), color))
 
 
-class SetupModel(GObject.GObject, Thread):
+class SetupModel(GObject.GObject):
     __gsignals__ = {
         "game_started": (GObject.SignalFlags.RUN_FIRST, None, ()),
         "game_changed": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
@@ -55,8 +54,6 @@ class SetupModel(GObject.GObject, Thread):
 
     def __init__(self):
         GObject.GObject.__init__(self)
-        Thread.__init__(self, name=fident(self.run))
-        self.daemon = True
         self.stop = False
         self.lowply = 0
         self.status = RUNNING
@@ -81,25 +78,28 @@ class SetupModel(GObject.GObject, Thread):
         # prevent hovering over fields
         return True
 
-    def run(self):
-        self.emit("game_started")
-        while True:
-            player0, player1 = self.curplayer.make_move()
+    def start(self):
+        def coro():
+            self.emit("game_started")
+            while True:
+                player0, player1 = yield from self.curplayer.make_move()
 
-            if isinstance(player0, SetupMove):
-                # print(player0.cord0, player0.cord1, player1)
-                new_board = self.boards[-1].move(player0, player1)
-                self.moves.append(player0)
-                self.boards.append(new_board)
-                self.emit("game_changed", self.ply)
-            elif player0 == "SETUP":
-                # print("SETUP", player0, player1)
-                self.emit("game_ended", 0)
-                self.boards = [self.variant(setup=player1)]
-                self.variations = [self.boards]
-                self.emit("game_loaded", 0)
-                self.emit("game_started")
-                self.emit("game_changed", 0)
-            elif player0 == "CLOSE":
-                # print("CLOSE")
-                break
+                if isinstance(player0, SetupMove):
+                    # print(player0.cord0, player0.cord1, player1)
+                    new_board = self.boards[-1].move(player0, player1)
+                    self.moves.append(player0)
+                    self.boards.append(new_board)
+                    self.emit("game_changed", self.ply)
+                elif player0 == "SETUP":
+                    # print("SETUP", player0, player1)
+                    self.emit("game_ended", 0)
+                    self.boards = [self.variant(setup=player1)]
+                    self.variations = [self.boards]
+                    self.emit("game_loaded", 0)
+                    self.emit("game_started")
+                    self.emit("game_changed", 0)
+                elif player0 == "CLOSE":
+                    # print("CLOSE")
+                    break
+
+        asyncio.async(coro())
