@@ -5,7 +5,9 @@ if [ ! -d ./lib/pychess/external ]; then
 fi
 
 if [ ! -d scoutfish ]; then
-    git clone https://github.com/mcostalba/scoutfish
+#    git clone https://github.com/mcostalba/scoutfish
+# use my fork with fixed issue #41 and #33
+    git clone https://github.com/gbtami/scoutfish
 fi
 cd scoutfish; git pull
 cd src; make build ARCH=x86-64-modern; cd ../..
