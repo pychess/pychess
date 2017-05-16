@@ -1,3 +1,4 @@
 #!/bin/sh
 
-python3 setup.py --command-packages=stdeb.command sdist_dsc --with-python2=True --with-python3=True bdist_deb
+export DEB_BUILD_OPTIONS=nocheck
+python3 setup.py --command-packages=stdeb.command bdist_deb
