@@ -1,10 +1,9 @@
+import asyncio
 import os
 
 from gi.repository import Gdk, Gtk, GObject, Pango, PangoCairo
-from threading import Thread
-from queue import Queue, Full
 
-from pychess.System import conf, fident, uistuff
+from pychess.System import conf, uistuff
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import HINT, OPENING, SPY, BLACK, NULL_MOVE, ENDGAME, DRAW, WHITEWON, WHITE
 from pychess.Utils.book import getOpenings
@@ -326,11 +325,8 @@ class EngineAdvisor(Advisor):
         return ""
 
 
-class EndgameAdvisor(Advisor, Thread):
+class EndgameAdvisor(Advisor):
     def __init__(self, store, tv, boardview):
-        Thread.__init__(self, name=fident(self.run))
-        self.daemon = True
-        # FIXME 'Advisor.name = ...' in Advisor.__init__ overwrites Thread.name
         Advisor.__init__(self, store, _("Endgame Table"), ENDGAME)
         self.egtb = EndgameTable()
         # If mate in # was activated by double click let egtb do the rest
@@ -342,20 +338,23 @@ class EndgameAdvisor(Advisor, Thread):
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
 
         self.cid = self.egtb.connect("scored", self.on_scored)
-        self.queue = Queue()
+        self.queue = asyncio.Queue()
         self.start()
 
     class StopNow(Exception):
         pass
 
-    def run(self):
-        while True:
-            v = self.queue.get()
-            if v == self.StopNow:
-                break
-            elif v == self.board.board:
-                self.egtb.scoreAllMoves(v)
-            self.queue.task_done()
+    def start(self):
+        @asyncio.coroutine
+        def coro():
+            while True:
+                v = yield from self.queue.get()
+                if v == self.StopNow:
+                    break
+                elif v == self.board.board:
+                    self.egtb.scoreAllMoves(v)
+                self.queue.task_done()
+        asyncio.async(coro())
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
@@ -366,13 +365,13 @@ class EndgameAdvisor(Advisor, Thread):
 
         self.parent = self.empty_parent()
         self.board = m.getBoardAtPly(shown, boardview.shown_variation_idx)
-        self.queue.put(self.board.board)
+        self.queue.put_nowait(self.board.board)
 
     def _del(self):
         self.egtb.disconnect(self.cid)
         try:
             self.queue.put_nowait(self.StopNow)
-        except Full:
+        except asyncio.QueueFull:
             log.warning("EndgameAdvisor.gamewidget_closed: Queue.Full")
 
     def on_scored(self, w, ret):
@@ -717,6 +716,7 @@ class Sidepanel(object):
 ################################################################################
 # StrengthCellRenderer                                                         #
 ################################################################################
+
 
 width, height = 80, 23
 
