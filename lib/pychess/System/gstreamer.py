@@ -76,7 +76,12 @@ else:
 
                 def play(self, uri):
                     if self.player is not None:
-                        # self.player.set_state(Gst.State.READY)
+                        # For elements that performed an ASYNC state change,
+                        # as reported by Gst.Element.set_state(),
+                        # this function will block up to the specified timeout value
+                        # for the state change to complete.
+                        self.player.get_state(10) #Gst.CLOCK_TIME_NONE)
+
                         self.player.set_property("uri", uri)
                         self.player.set_state(Gst.State.PLAYING)
 
