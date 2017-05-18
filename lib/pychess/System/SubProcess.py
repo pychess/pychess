@@ -91,7 +91,10 @@ class SubProcess(GObject.GObject):
                 break
 
     def terminate(self):
-        self.proc.terminate()
+        try:
+            self.proc.terminate()
+        except ProcessLookupError:
+            print("ProcessLookupError")
 
     def pause(self):
         if sys.platform != "win32":

@@ -80,9 +80,17 @@ else:
                         # as reported by Gst.Element.set_state(),
                         # this function will block up to the specified timeout value
                         # for the state change to complete.
-                        self.player.get_state(10) #Gst.CLOCK_TIME_NONE)
-
-                        self.player.set_property("uri", uri)
-                        self.player.set_state(Gst.State.PLAYING)
+                        ret, state, pending = self.player.get_state(10)
+                        if ret == Gst.StateChangeReturn.FAILURE:
+                            return
+                        else:
+                            if state != Gst.State.NULL:
+                                self.player.set_state(Gst.State.NULL)
+                                ret, state, pending = self.player.get_state(10)
+                                if ret == Gst.StateChangeReturn.FAILURE:
+                                    return
+                            if state == Gst.State.NULL:
+                                self.player.set_property("uri", uri)
+                                self.player.set_state(Gst.State.PLAYING)
 
             sound_player = GstPlayer()
