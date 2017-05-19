@@ -26,7 +26,10 @@ class Unbuffered(object):
 
     def write(self, data):
         self.stream.write(data)
-        self.stream.flush()
+        try:
+            self.stream.flush()
+        except BrokenPipeError:
+            log.debug("BrokenPipeError on flush() !!!", extra={"task": "stdout"})
         log.debug(data, extra={"task": "stdout"})
 
     def __getattr__(self, attr):
