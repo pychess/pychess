@@ -35,9 +35,7 @@ class SubProcess(GObject.GObject):
         argv = [str(u) for u in [self.path] + self.args]
 
         loop = asyncio.get_event_loop()
-        f = asyncio.async(self.start(argv, env, cwd, loop))
-        loop.run()
-        self.proc = f.result()
+        self.proc = loop.run_until_complete(self.start(argv, env, cwd, loop))
         self.pid = self.proc.pid
         asyncio.async(self.read_stdout(self.proc.stdout))
 
@@ -50,7 +48,6 @@ class SubProcess(GObject.GObject):
                                                 env=env,
                                                 cwd=cwd)
         proc = yield from create
-        loop.stop()
         return proc
 
     def write(self, line):
@@ -63,9 +60,9 @@ class SubProcess(GObject.GObject):
             writer.write(line.encode())
             yield from writer.drain()
         except BrokenPipeError:
-            print('stdin: broken pipe error')
+            print(self.defname, 'SubProcess.write_stdin(): BrokenPipeError')
         except ConnectionResetError:
-            print('stdin: connection reset error')
+            print(self.defname, 'SubProcess.write_stdin(): ConnectionResetError')
 
     @asyncio.coroutine
     def read_stdout(self, reader):
@@ -94,7 +91,7 @@ class SubProcess(GObject.GObject):
         try:
             self.proc.terminate()
         except ProcessLookupError:
-            print("ProcessLookupError")
+            print(self.defname, "SubProcess.terminate(): ProcessLookupError")
 
     def pause(self):
         if sys.platform != "win32":
