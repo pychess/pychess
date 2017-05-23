@@ -89,7 +89,13 @@ else:
                                 ret, state, pending = self.player.get_state(10)
                                 if ret == Gst.StateChangeReturn.FAILURE:
                                     return
-                            if state == Gst.State.NULL:
+                                else:
+                                    if state == Gst.State.NULL:
+                                        self.player.set_property("uri", uri)
+                                        self.player.set_state(Gst.State.PLAYING)
+                                    else:
+                                        return
+                            else:
                                 self.player.set_property("uri", uri)
                                 self.player.set_state(Gst.State.PLAYING)
 
