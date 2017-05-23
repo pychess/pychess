@@ -64,9 +64,8 @@ class UCIEngine(ProtocolEngine):
         self.invalid_move = None
 
         self.cids = [
-            self.connect("readyForOptions", self.__onReadyForOptions_before),
-            self.connect_after("readyForOptions", self.__onReadyForOptions),
-            self.connect_after("readyForMoves", self.__onReadyForMoves),
+            self.connect("readyForOptions", self.__onReadyForOptions),
+            self.connect("readyForMoves", self.__onReadyForMoves),
         ]
 
     def __die(self, subprocess):
@@ -89,9 +88,6 @@ class UCIEngine(ProtocolEngine):
         if event is not None:
             event.set()
         return(return_value)
-
-    def __onReadyForOptions_before(self, self_):
-        self.readyOptions = True
 
     def __onReadyForOptions(self, self_):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
@@ -386,17 +382,14 @@ class UCIEngine(ProtocolEngine):
         self.ponderOn = key == "Ponder" and value is True
 
     def getOption(self, option):
-        assert self.readyOptions
         if option in self.options:
             return self.options[option]["default"]
         return None
 
     def getOptions(self):
-        assert self.readyOptions
         return copy(self.options)
 
     def hasOption(self, key):
-        assert self.readyOptions
         return key in self.options
 
     # Internal

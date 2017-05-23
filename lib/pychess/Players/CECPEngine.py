@@ -147,7 +147,6 @@ class CECPEngine(ProtocolEngine):
         self.ready_moves_event = asyncio.Event()
 
         self.cids = [
-            self.connect("readyForOptions", self.__onReadyForOptions_before),
             self.connect_after("readyForOptions", self.__onReadyForOptions),
             self.connect_after("readyForMoves", self.__onReadyForMoves),
         ]
@@ -198,9 +197,6 @@ class CECPEngine(ProtocolEngine):
         if event is not None:
             event.set()
         return(return_value)
-
-    def __onReadyForOptions_before(self, self_):
-        self.readyOptions = True
 
     def __onReadyForOptions(self, self_):
         # We always want post turned on so the Engine Output sidebar can
