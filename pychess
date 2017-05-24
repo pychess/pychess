@@ -4,7 +4,6 @@
 # This script is to check package requirements, and set up system/enviroment
 # stuff, to make the PyChess Main class run smoothly.
 
-from __future__ import print_function
 import argparse
 import asyncio
 import os
