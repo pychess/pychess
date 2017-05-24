@@ -1,7 +1,6 @@
 import asyncio
 import re
 import socket
-import time
 from collections import defaultdict
 
 from gi.repository import GObject
@@ -303,11 +302,8 @@ class FICSConnection(Connection):
 
             @asyncio.coroutine
             def keep_alive():
-                last = time.time()
                 while self.isConnected():
-                    if time.time() - last > 59 * 60:
-                        self.client.run_command("date")
-                        last = time.time()
+                    self.client.run_command("date")
                     yield from asyncio.sleep(30)
             asyncio.async(keep_alive())
 
