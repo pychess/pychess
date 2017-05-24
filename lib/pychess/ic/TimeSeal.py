@@ -97,8 +97,9 @@ class ICSTelnet():
         self.close()
 
     def close(self):
-        self.connected = False
-        self.transport.close()
+        if self.connected:
+            self.transport.close()
+            self.connected = False
 
     def encode(self, inbuf, timestamp=None):
         assert inbuf == b"" or inbuf[-1] != b"\n"
