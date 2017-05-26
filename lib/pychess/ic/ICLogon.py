@@ -60,6 +60,8 @@ class ICLogon(object):
     def __init__(self):
         self.connection = None
         self.helperconn = None
+        self.connection_task = None
+        self.helperconn_task = None
         self.lounge = None
         self.canceled = False
         self.cids = defaultdict(list)
@@ -141,9 +143,11 @@ class ICLogon(object):
 
         if self.connection is not None:
             self.connection.close()
+            self.connection_task.cancel()
             self.connection = None
         if self.helperconn is not None:
             self.helperconn.close()
+            self.helperconn_task.cancel()
             self.helperconn = None
         self.lounge = None
 
@@ -274,13 +278,13 @@ class ICLogon(object):
                                  ("connectingMsg", self.showMessage)):
             self.cids[self.connection].append(self.connection.connect(
                 signal, callback))
-        asyncio.async(self.connection.start())
+        self.connection_task = asyncio.async(self.connection.start())
 
         # guest users are rather limited on ICC (helper connection is useless)
         if not self.host in ("localhost", "chessclub.com"):
             self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
             self.helperconn.connect("error", self.onHelperConnectionError)
-            asyncio.async(self.helperconn.start())
+            self.helperconn_task = asyncio.async(self.helperconn.start())
 
     def onHelperConnectionError(self, connection, error):
         if self.helperconn is not None:

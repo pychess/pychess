@@ -59,7 +59,7 @@ class UCIEngine(ProtocolEngine):
         self.analysis = [None]
 
         self.queue = asyncio.Queue()
-        asyncio.async(self.parseLine(self.engine))
+        self.parse_line_task = asyncio.async(self.parseLine(self.engine))
         self.died_cid = self.engine.connect("died", self.__die)
         self.invalid_move = None
 
@@ -116,6 +116,7 @@ class UCIEngine(ProtocolEngine):
     # Ending the game
 
     def end(self, status, reason):
+        self.parse_line_task.cancel()
         if self.engine.handler_is_connected(self.died_cid):
             self.engine.disconnect(self.died_cid)
         if self.handler_is_connected(self.analyze_cid):

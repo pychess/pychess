@@ -64,6 +64,7 @@ class Connection(GObject.GObject):
 
         self.connected = False
         self.connecting = False
+        self.keep_alive_task = None
 
         self.predictions = set()
         self.predictionsDict = {}
@@ -304,8 +305,8 @@ class FICSConnection(Connection):
             def keep_alive():
                 while self.isConnected():
                     self.client.run_command("date")
-                    yield from asyncio.sleep(30)
-            asyncio.async(keep_alive())
+                    yield from asyncio.sleep(30 * 60)
+            self.keep_alive_task = asyncio.async(keep_alive())
 
         except CanceledException as err:
             log.info("FICSConnection._connect: %s" % repr(err),
@@ -332,7 +333,8 @@ class FICSConnection(Connection):
                 else:
                     raise
         finally:
-            self.emit("disconnected")
+            if isinstance(self, FICSMainConnection):
+                self.emit("disconnected")
 
     def cancel(self):
         self.close()
@@ -341,6 +343,8 @@ class FICSConnection(Connection):
     def close(self):
         self.connected = False
         self.client.close()
+        if self.keep_alive_task is not None:
+            self.keep_alive_task.cancel()
 
 
 class FICSMainConnection(FICSConnection):

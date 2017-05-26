@@ -37,7 +37,8 @@ class SubProcess(GObject.GObject):
         loop = asyncio.get_event_loop()
         self.proc = loop.run_until_complete(self.start(argv, env, cwd, loop))
         self.pid = self.proc.pid
-        asyncio.async(self.read_stdout(self.proc.stdout))
+        self.read_stdout_task = asyncio.async(self.read_stdout(self.proc.stdout))
+        self.write_task = None
 
     @asyncio.coroutine
     def start(self, argv, env, cwd, loop):
@@ -51,7 +52,7 @@ class SubProcess(GObject.GObject):
         return proc
 
     def write(self, line):
-        asyncio.async(self.write_stdin(self.proc.stdin, line))
+        self.write_task = asyncio.async(self.write_stdin(self.proc.stdin, line))
 
     @asyncio.coroutine
     def write_stdin(self, writer, line):
@@ -88,6 +89,9 @@ class SubProcess(GObject.GObject):
                 break
 
     def terminate(self):
+        if self.write_task is not None:
+            self.write_task.cancel()
+        self.read_stdout_task.cancel()
         try:
             self.proc.terminate()
         except ProcessLookupError:

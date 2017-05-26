@@ -138,7 +138,7 @@ class CECPEngine(ProtocolEngine):
         self.lastpong = 0
 
         self.queue = asyncio.Queue()
-        asyncio.async(self.parseLine(self.engine))
+        self.parse_line_task = asyncio.async(self.parseLine(self.engine))
         self.died_cid = self.engine.connect("died", lambda e: self.queue.put_nowait("del"))
         self.invalid_move = None
 
@@ -220,6 +220,7 @@ class CECPEngine(ProtocolEngine):
     # Ending the game
 
     def end(self, status, reason):
+        self.parse_line_task.cancel()
         if self.engine.handler_is_connected(self.died_cid):
             self.engine.disconnect(self.died_cid)
         if self.handler_is_connected(self.analyze_cid):

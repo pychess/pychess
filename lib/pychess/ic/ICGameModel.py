@@ -21,6 +21,7 @@ class ICGameModel(GameModel):
         self.ficsgame = ficsgame
         self.ficsplayers = (ficsgame.wplayer, ficsgame.bplayer)
         self.gmwidg_ready = asyncio.Event()
+        self.kibitz_task = None
 
         connections = self.connections
         connections[connection.bm].append(connection.bm.connect(
@@ -264,7 +265,7 @@ class ICGameModel(GameModel):
             if gameno != self.ficsgame.gameno:
                 return
             self.emit("message_received", name, text)
-        asyncio.async(coro())
+        self.kibitz_task = asyncio.async(coro())
 
     def onWhisperMessage(self, cm, name, gameno, text):
         if gameno != self.ficsgame.gameno:
@@ -359,6 +360,8 @@ class ICGameModel(GameModel):
 
         self.connections = None
         GameModel.terminate(self)
+        if self.kibitz_task is not None:
+            self.kibitz_task.cancel()
 
     def goFirst(self):
         self.connection.client.run_command("backward 999")

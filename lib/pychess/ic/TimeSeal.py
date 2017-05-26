@@ -1,4 +1,3 @@
-
 import asyncio
 import sys
 import telnetlib
@@ -21,85 +20,71 @@ G_RESPONSE = "\x029"
 FILLER = b"1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 IAC_WONT_ECHO = b''.join([telnetlib.IAC, telnetlib.WONT, telnetlib.ECHO])
 
+_DEFAULT_LIMIT = 2 ** 16
+
 
 class CanceledException(Exception):
     pass
 
 
-class ICSTelnetProtocol(asyncio.Protocol):
-    def __init__(self, telnet):
-        self.telnet = telnet
-
-    def data_received(self, data):
-        self.telnet.cook_some(data)
-
-
-class ICSTelnet():
-    sensitive = False
-
-    def __init__(self):
-        self.name = ""
-        self.connected = False
-        self.canceled = False
-        self.FatICS = False
-        self.USCN = False
-        self.ICC = False
-        self.buf = bytearray(b"")
-        self.stateinfo = None
-        self.timeseal = False
+class ICSStreamReader(asyncio.StreamReader):
+    def __init__(self, limit, loop, connected_event, name):
+        asyncio.StreamReader.__init__(self, limit=limit, loop=loop)
+        self.connected_event = connected_event
+        self.name = name
 
     @asyncio.coroutine
-    def start(self, host, port, connected_event, timeseal=True):
-        if self.canceled:
-            raise CanceledException()
+    def read_until(self, *untils):
+        while True:
+            for i, until in enumerate(untils):
+                start = self._buffer.find(bytearray(until, "ascii"))
+                if start >= 0:
+                    self._buffer = self._buffer[start:]
+                    return i
+                else:
+                    not_find = "read_until:%s , got:'%s'" % (until, self._buffer)
+                    log.debug(not_find, extra={"task": (self.name, "raw")})
 
-        self.port = port
-        self.host = host
-        self.connected_event = connected_event
+            yield from self._wait_for_data('read_until')
+
+
+class ICSStreamReaderProtocol(asyncio.StreamReaderProtocol):
+    def __init__(self, stream_reader, client_connected_cb, loop, name, timeseal):
+        asyncio.StreamReaderProtocol.__init__(self, stream_reader, client_connected_cb=client_connected_cb, loop=loop)
+        self.name = name
         self.timeseal = timeseal
+        self.connected = False
+        self.stateinfo = None
 
-        self.name = host
+    def data_received(self, data):
+        cooked = self.cook_some(data)
+        self._stream_reader.feed_data(cooked)
 
-        if host == "chessclub.com":
-            self.ICC = True
-            self.timeseal = False
+    def cook_some(self, data):
+        if not self.connected:
+            log.debug(data, extra={"task": (self.name, "raw")})
+            self.connected = True
+            if b"FatICS" in data:
+                self.FatICS = True
+            elif b"puertorico.com" in data:
+                self.USCN = True
+                data = data.replace(IAC_WONT_ECHO, b"")
+            elif b"chessclub.com" in data:
+                self.ICC = True
+                data = data.replace(IAC_WONT_ECHO, b"")
+            elif b"Starting FICS session" in data:
+                data = data.replace(IAC_WONT_ECHO, b"")
+        else:
+            if self.timeseal:
+                data, g_count, self.stateinfo = self.decode(data, self.stateinfo)
+            data = data.replace(b"\r", b"")
+            # enable this only for temporary debugging
+            log.debug(data, extra={"task": (self.name, "raw")})
 
-            # You can get ICC timestamp from
-            # https://www.chessclub.com/user/resources/icc/timestamp/
-            if sys.platform == "win32":
-                timestamp = "timestamp_win32.exe"
-            else:
-                timestamp = "timestamp_linux_2.6.8"
-
-            altpath = os.path.join(getEngineDataPrefix(), timestamp)
-            path = searchPath(timestamp, os.X_OK, altpath=altpath)
-            if path:
-                self.host = "127.0.0.1"
-                self.port = 5500
-                try:
-                    self.timestamp_proc = subprocess.Popen(["%s" % path, "-p", "%s" % self.port])
-                    log.info("%s started OK" % path)
-                except OSError as err:
-                    log.info("Can't start %s OSError: %s %s" % (err.errno, err.strerror, path))
-                    self.port = port
-                    self.host = host
-            else:
-                log.info("%s not found" % altpath)
-
-        loop = asyncio.get_event_loop()
-        coro = loop.create_connection(lambda: ICSTelnetProtocol(self), self.host, self.port)
-        self.transport, self.protocol = yield from coro
-        if self.timeseal:
-            self.write(self.get_init_string())
-
-    def cancel(self):
-        self.canceled = True
-        self.close()
-
-    def close(self):
-        if self.connected:
-            self.transport.close()
-            self.connected = False
+            if self.timeseal:
+                for i in range(g_count):
+                    self._stream_writer.write(self.encode(bytearray(G_RESPONSE, "utf-8")) + b"\n")
+        return data
 
     def encode(self, inbuf, timestamp=None):
         assert inbuf == b"" or inbuf[-1] != b"\n"
@@ -127,14 +112,6 @@ class ICSTelnet():
 
         buf += bytearray([0x80 | encode_offset])
         return buf
-
-    def get_init_string(self):
-        """ timeseal header: TIMESTAMP|bruce|Linux gruber 2.6.15-gentoo-r1 #9
-            PREEMPT Thu Feb 9 20:09:47 GMT 2006 i686 Intel(R) Celeron(R) CPU
-            2.00GHz GenuineIntel GNU/Linux| 93049 """
-        user = getpass.getuser()
-        uname = ' '.join(list(platform.uname()))
-        return "TIMESTAMP|" + user + "|" + uname + "|"
 
     def decode(self, buf, stateinfo=None):
         expected_table = b"[G]\n\r"
@@ -173,93 +150,147 @@ class ICSTelnet():
 
         return bytearray(result), g_count, (state, lookahead)
 
+
+class ICSTelnet():
+    sensitive = False
+
+    def __init__(self):
+        self.name = ""
+        self.connected = False
+        self.canceled = False
+        self.FatICS = False
+        self.USCN = False
+        self.ICC = False
+        self.timeseal = False
+        self.ICC_buffer = ""
+
+    @asyncio.coroutine
+    def start(self, host, port, connected_event, timeseal=True):
+        if self.canceled:
+            raise CanceledException()
+        self.port = port
+        self.host = host
+        self.connected_event = connected_event
+        self.timeseal = timeseal
+
+        self.name = host
+
+        if host == "chessclub.com":
+            self.ICC = True
+            self.timeseal = False
+
+            # You can get ICC timestamp from
+            # https://www.chessclub.com/user/resources/icc/timestamp/
+            if sys.platform == "win32":
+                timestamp = "timestamp_win32.exe"
+            else:
+                timestamp = "timestamp_linux_2.6.8"
+
+            altpath = os.path.join(getEngineDataPrefix(), timestamp)
+            path = searchPath(timestamp, os.X_OK, altpath=altpath)
+            if path:
+                self.host = "127.0.0.1"
+                self.port = 5500
+                try:
+                    self.timestamp_proc = subprocess.Popen(["%s" % path, "-p", "%s" % self.port])
+                    log.info("%s started OK" % path)
+                except OSError as err:
+                    log.info("Can't start %s OSError: %s %s" % (err.errno, err.strerror, path))
+                    self.port = port
+                    self.host = host
+            else:
+                log.info("%s not found" % altpath)
+
+        def cb(reader, writer):
+            reader.stream_writer = writer
+            reader.connected_event.set()
+
+        loop = asyncio.get_event_loop()
+        self.reader = ICSStreamReader(_DEFAULT_LIMIT, loop, self.connected_event, self.name)
+        self.protocol = ICSStreamReaderProtocol(self.reader, cb, loop, self.name, self.timeseal)
+        coro = loop.create_connection(lambda: self.protocol, self.host, self.port)
+        self.transport, _protocol = yield from coro
+        # writer = asyncio.StreamWriter(transport, protocol, reader, loop)
+
+        if self.timeseal:
+            self.write(self.get_init_string())
+
+    def cancel(self):
+        self.canceled = True
+        self.close()
+
+    def close(self):
+        if self.protocol.connected:
+            self.protocol.connected = False
+            self.transport.close()
+
+    def get_init_string(self):
+        """ timeseal header: TIMESTAMP|bruce|Linux gruber 2.6.15-gentoo-r1 #9
+            PREEMPT Thu Feb 9 20:09:47 GMT 2006 i686 Intel(R) Celeron(R) CPU
+            2.00GHz GenuineIntel GNU/Linux| 93049 """
+        user = getpass.getuser()
+        uname = ' '.join(list(platform.uname()))
+        return "TIMESTAMP|" + user + "|" + uname + "|"
+
     def write(self, string):
         logstr = "*" * len(string) if self.sensitive else string
         self.sensitive = False
         log.info(logstr, extra={"task": (self.name, "raw")})
 
         if self.timeseal:
-            self.transport.write(self.encode(bytearray(string, "utf-8")) + b"\n")
+            self.transport.write(self.protocol.encode(bytearray(string, "utf-8")) + b"\n")
         else:
             self.transport.write(string.encode() + b"\n")
 
     @asyncio.coroutine
     def readline(self):
-        line = yield from self.readuntil(b"\n")
-        return line
+        if self.canceled:
+            raise CanceledException()
+
+        if self.ICC:
+            line = yield from self.readuntil(b"\n")
+            return line.strip()
+        else:
+            line = yield from self.reader.readline()
+            return line.decode("latin_1").strip()
 
     @asyncio.coroutine
     def readuntil(self, until):
         if self.canceled:
             raise CanceledException()
 
-        while True:
-            i = self.buf.find(until)
-            if self.ICC:
-                l = sys.maxsize
-                if i >= 0:
-                    l = i
-                j = self.buf.find(B_DTGR_END)
-                if j >= 0:
-                    l = min(l, j)
-                k = self.buf.find(B_UNIT_END)
-                if k >= 0:
-                    l = min(l, k)
-                if l != sys.maxsize and l != i:
-                    stuff = self.buf[:l + 2]
-                    self.buf = self.buf[l + 2:]
-                    return str(stuff.strip().decode("latin_1"))
+        if self.ICC:
+            if len(self.ICC_buffer) == 0:
+                self.ICC_buffer = yield from self.reader.readuntil(until)
+            i = self.ICC_buffer.find(until)
+            l = sys.maxsize
             if i >= 0:
-                stuff = self.buf[:i + len(until)]
-                self.buf = self.buf[i + len(until):]
-                return str(stuff.strip().decode("latin_1"))
-            yield from asyncio.sleep(0.01)
-
-    def cook_some(self, data):
-        recv = data
-        if len(recv) == 0:
-            return
-
-        if not self.connected:
-            log.debug(recv, extra={"task": (self.name, "raw")})
-            self.buf += recv
-            self.connected = True
-            if b"FatICS" in self.buf:
-                self.FatICS = True
-            elif b"puertorico.com" in self.buf:
-                self.USCN = True
-                self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
-            elif b"chessclub.com" in self.buf:
-                self.ICC = True
-                self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
-            elif b"Starting FICS session" in self.buf:
-                self.buf = self.buf.replace(IAC_WONT_ECHO, b"")
-            self.connected_event.set()
+                l = i
+            j = self.ICC_buffer.find(B_DTGR_END)
+            if j >= 0:
+                l = min(l, j)
+            k = self.ICC_buffer.find(B_UNIT_END)
+            if k >= 0:
+                l = min(l, k)
+            if l != sys.maxsize:
+                if l == i:
+                    stuff = self.ICC_buffer[:l + len(until)]
+                    self.ICC_buffer = self.ICC_buffer[l + len(until):]
+                    return stuff.decode("latin_1")
+                else:
+                    stuff = self.ICC_buffer[:l + 2]
+                    self.ICC_buffer = self.ICC_buffer[l + 2:]
+                    return stuff.decode("latin_1")
+            else:
+                return ""
         else:
-            if self.timeseal:
-                recv, g_count, self.stateinfo = self.decode(recv, self.stateinfo)
-            recv = recv.replace(b"\r", b"")
-            # enable this only for temporary debugging
-            log.debug(recv, extra={"task": (self.name, "raw")})
-
-            if self.timeseal:
-                for i in range(g_count):
-                    self.write(G_RESPONSE)
-
-            self.buf += recv
+            data = yield from self.reader.readuntil(until)
+            return data.decode("latin_1")
 
     @asyncio.coroutine
     def read_until(self, *untils):
         if self.canceled:
             raise CanceledException()
 
-        while True:
-            for i, until in enumerate(untils):
-                start = self.buf.find(bytearray(until, "ascii"))
-                if start >= 0:
-                    self.buf = self.buf[start:]
-                    return i
-                else:
-                    not_find = "read_until:%s , got:'%s'" % (until, self.buf)
-                    log.debug(not_find, extra={"task": (self.name, "raw")})
-            yield from asyncio.sleep(1)
+        ret = yield from self.reader.read_until(*untils)
+        return ret

@@ -339,22 +339,20 @@ class EndgameAdvisor(Advisor):
 
         self.cid = self.egtb.connect("scored", self.on_scored)
         self.queue = asyncio.Queue()
-        self.start()
+        self.egtb_task = asyncio.async(self.start())
 
     class StopNow(Exception):
         pass
 
+    @asyncio.coroutine
     def start(self):
-        @asyncio.coroutine
-        def coro():
-            while True:
-                v = yield from self.queue.get()
-                if v == self.StopNow:
-                    break
-                elif v == self.board.board:
-                    self.egtb.scoreAllMoves(v)
-                self.queue.task_done()
-        asyncio.async(coro())
+        while True:
+            v = yield from self.queue.get()
+            if v == self.StopNow:
+                break
+            elif v == self.board.board:
+                self.egtb.scoreAllMoves(v)
+            self.queue.task_done()
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
@@ -373,6 +371,7 @@ class EndgameAdvisor(Advisor):
             self.queue.put_nowait(self.StopNow)
         except asyncio.QueueFull:
             log.warning("EndgameAdvisor.gamewidget_closed: Queue.Full")
+        self.egtb_task.cancel()
 
     def on_scored(self, w, ret):
         m = self.boardview.model

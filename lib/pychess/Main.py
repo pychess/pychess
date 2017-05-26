@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import asyncio
+import datetime
 import os
 import webbrowser
 import math
@@ -19,7 +20,7 @@ from pychess.System.Log import log
 from pychess.System import conf, uistuff, prefix
 from pychess.System.debug import print_obj_referrers, print_muppy_sumary
 from pychess.Utils.const import HINT, NAME, SPY
-from pychess.Utils.checkversion import checkversion
+# from pychess.Utils.checkversion import checkversion
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
@@ -390,7 +391,7 @@ class PyChess(Gtk.Application):
         self.initGlade(self.log_viewer)
         self.addPerspectives()
         self.handleArgs(self.chess_file)
-        ### checkversion()
+        # checkversion()
 
         self.loaded_cids = {}
         self.saved_cids = {}
@@ -402,14 +403,26 @@ class PyChess(Gtk.Application):
         log.info("Python version: %s.%s.%s" % sys.version_info[0:3])
         log.info("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
 
+    @asyncio.coroutine
+    def print_tasks(self):
+        while True:
+            print(datetime.datetime.now().time())
+            loop = asyncio.get_event_loop()
+            tasks = asyncio.Task.all_tasks(loop)
+            for task in tasks:
+                print(task)
+            print("------------")
+            yield from asyncio.sleep(10)
+
     def do_activate(self):
+        # asyncio.async(self.print_tasks())
         self.add_window(self.window)
         self.window.show_all()
         gamewidget.getWidgets()["player_rating1"].hide()
         gamewidget.getWidgets()["leave_fullscreen1"].hide()
 
         dd = DiscovererDialog(discoverer)
-        asyncio.async(dd.start())
+        self.dd_task = asyncio.async(dd.start())
 
     def on_gmwidg_created(self, gamehandler, gmwidg):
         log.debug("GladeHandlers.on_gmwidg_created: starting")
@@ -581,5 +594,6 @@ class PyChess(Gtk.Application):
             def do(discoverer):
                 perspective = perspective_manager.get_perspective("database")
                 perspective.open_chessfile(chess_file)
+                self.dd_task.cancel()
 
             discoverer.connect_after("all_engines_discovered", do)

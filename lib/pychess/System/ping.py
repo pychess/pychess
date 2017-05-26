@@ -81,6 +81,7 @@ class Pinger(GObject.GObject):
         # exitCode = self.subproc.gentleKill()
         self.subproc.disconnect(self.conid1)
         self.subproc.disconnect(self.conid2)
+        self.subproc.terminate()
         self.subproc = None
 
 
