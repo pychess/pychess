@@ -17,7 +17,7 @@ from pychess.Utils.const import WHITEWON, WON_RESIGN, WON_DISCONNECTION, WON_CAL
     ABORTED, ABORTED_AGREEMENT, ABORTED_DISCONNECTION, ABORTED_EARLY, ABORTED_SERVER_SHUTDOWN, \
     ABORTED_ADJUDICATION, ABORTED_COURTESY, UNKNOWN_STATE, BLACK, WHITE, reprFile, \
     FISCHERRANDOMCHESS, CRAZYHOUSECHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, ATOMICCHESS, \
-    LOSERSCHESS, SUICIDECHESS
+    LOSERSCHESS, SUICIDECHESS, reprResult
 
 from pychess.ic import IC_POS_INITIAL, IC_POS_ISOLATED, IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, \
     IC_POS_OBSERVING, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, GAME_TYPES, IC_STATUS_PLAYING, \
@@ -25,7 +25,7 @@ from pychess.ic import IC_POS_INITIAL, IC_POS_ISOLATED, IC_POS_OP_TO_MOVE, IC_PO
     BLKCMD_FLAG, parseRating
 
 from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSHistoryGame, \
-    FICSAdjournedGame, FICSJournalGame
+    FICSAdjournedGame, FICSJournalGame, FICSPlayer
 
 names = "(\w+)"
 titles = "((?:\((?:GM|IM|FM|WGM|WIM|WFM|TM|SR|TD|SR|CA|C|U|D|B|T|\*)\))+)?"
@@ -244,6 +244,10 @@ class BoardManager(GObject.GObject):
             self.req_not_fit_formula,
             "Match request does not fit formula for %s:" % names,
             "%s's formula: (.+)" % names)
+
+        self.connection.expect_line(
+            self.on_game_remove,
+            "\{Game (\d+) \(([A-Za-z]+) vs\. ([A-Za-z]+)\) ([A-Za-z']+ .+)\} (\*|1/2-1/2|1-0|0-1)$")
 
         if self.connection.USCN:
             self.connection.expect_n_lines(
@@ -888,6 +892,44 @@ class BoardManager(GObject.GObject):
         game = self.connection.games.get(game, emit=False)
 
         return game
+
+    def on_game_remove(self, match):
+        gameno, wname, bname, comment, result = match.groups()
+        result, reason = parse_reason(
+            reprResult.index(result),
+            comment,
+            wname=wname)
+
+        try:
+            wplayer = self.connection.players.get(wname)
+            wplayer.restore_previous_status()
+            # no status update will be sent by
+            # FICS if the player doesn't become available, so we restore
+            # previous status first (not necessarily true, but the best guess)
+        except KeyError:
+            print("%s not in self.connections.players - creating" % wname)
+            wplayer = FICSPlayer(wname)
+
+        try:
+            bplayer = self.connection.players.get(bname)
+            bplayer.restore_previous_status()
+        except KeyError:
+            print("%s not in self.connections.players - creating" % bname)
+            bplayer = FICSPlayer(bname)
+
+        game = FICSGame(wplayer,
+                        bplayer,
+                        gameno=int(gameno),
+                        result=result,
+                        reason=reason)
+        if wplayer.game is not None:
+            game.rated = wplayer.game.rated
+        game = self.connection.games.get(game, emit=False)
+        self.connection.games.game_ended(game)
+        # Do this last to give anybody connected to the game's signals a chance
+        # to disconnect from them first
+        wplayer.game = None
+        bplayer.game = None
 
     def onObserveGameCreated(self, matchlist):
         log.debug("'%s'" % (matchlist[1].string),
