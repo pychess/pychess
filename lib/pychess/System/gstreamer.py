@@ -66,12 +66,12 @@ else:
                     if message.type == Gst.MessageType.ERROR:
                         # Sound seams sometimes to work, even though errors are dropped.
                         # Therefore we really can't do anything to test.
-                        self.player.set_state(Gst.State.NULL)
+                        self.set_state(Gst.State.NULL)
                         simpleMessage, advMessage = message.parse_error()
                         log.warning("Gstreamer error '%s': %s" %
                                     (simpleMessage, advMessage))
                     elif message.type == Gst.MessageType.EOS:
-                        self.player.set_state(Gst.State.NULL)
+                        self.set_state(Gst.State.NULL)
                     return True
 
                 def play(self, uri):
@@ -85,18 +85,17 @@ else:
                             return
                         else:
                             if state != Gst.State.NULL:
-                                self.player.set_state(Gst.State.NULL)
-                                ret, state, pending = self.player.get_state(10)
-                                if ret == Gst.StateChangeReturn.FAILURE:
-                                    return
-                                else:
-                                    if state == Gst.State.NULL:
-                                        self.player.set_property("uri", uri)
-                                        self.player.set_state(Gst.State.PLAYING)
-                                    else:
-                                        return
-                            else:
-                                self.player.set_property("uri", uri)
-                                self.player.set_state(Gst.State.PLAYING)
+                                self.set_state(Gst.State.NULL)
+
+                            self.player.set_property("uri", uri)
+                            self.set_state(Gst.State.PLAYING)
+
+                def set_state(self, new_state):
+                    ret, state, pending = self.player.get_state(10)
+                    if ret == Gst.StateChangeReturn.FAILURE:
+                        return
+                    else:
+                        if new_state != state:
+                            self.player.set_state(new_state)
 
             sound_player = GstPlayer()
