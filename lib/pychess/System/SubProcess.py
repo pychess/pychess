@@ -61,9 +61,13 @@ class SubProcess(GObject.GObject):
             writer.write(line.encode())
             yield from writer.drain()
         except BrokenPipeError:
-            print(self.defname, 'SubProcess.write_stdin(): BrokenPipeError')
+            log.debug('SubProcess.write_stdin(): BrokenPipeError', extra={"task": self.defname})
+            self.emit("died")
+            self.terminate()
         except ConnectionResetError:
-            print(self.defname, 'SubProcess.write_stdin(): ConnectionResetError')
+            log.debug('SubProcess.write_stdin(): ConnectionResetError', extra={"task": self.defname})
+            self.emit("died")
+            self.terminate()
 
     @asyncio.coroutine
     def read_stdout(self, reader):
@@ -87,6 +91,7 @@ class SubProcess(GObject.GObject):
             else:
                 self.emit("died")
                 break
+        self.terminate()
 
     def terminate(self):
         if self.write_task is not None:
@@ -95,7 +100,7 @@ class SubProcess(GObject.GObject):
         try:
             self.proc.terminate()
         except ProcessLookupError:
-            print(self.defname, "SubProcess.terminate(): ProcessLookupError")
+            log.debug("SubProcess.terminate(): ProcessLookupError", extra={"task": self.defname})
 
     def pause(self):
         if sys.platform != "win32":
