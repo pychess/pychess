@@ -19,7 +19,10 @@ class ChessFile:
         self.offs_ply = {}
 
     def close(self):
-        self.file.close()
+        try:
+            self.file.close()
+        exept OSError:
+            pass
 
     def set_tags_filter(self, text):
         pass
