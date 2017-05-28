@@ -1,2 +1,2 @@
-python -3 -W ignore create_theme_preview.py
+python3 create_theme_preview.py
 @pause

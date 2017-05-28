@@ -1,3 +1,3 @@
 #!/bin/sh
 
-PYTHONPATH=./lib python -3 -W ignore pgn2ecodb.py
+PYTHONPATH=./lib python3 pgn2ecodb.py

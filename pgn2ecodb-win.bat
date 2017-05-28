@@ -1,2 +1,2 @@
-python -3 -W ignore pgn2ecodb.py
+python3 pgn2ecodb.py
 @pause
