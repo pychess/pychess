@@ -1,7 +1,8 @@
+import io
+import os
 import sys
+import subprocess
 from urllib.request import url2pathname
-
-import gi
 
 from .Log import log
 
@@ -34,68 +35,30 @@ if sys.platform == "win32":
 
     sound_player = WinsoundPlayer()
 else:
-    try:
-        gi.require_version("Gst", "1.0")
-        from gi.repository import Gst
-    except (ImportError, ValueError) as err:
-            log.error(
-                "ERROR: Unable to import gstreamer. All sound will be mute.\n%s" %
-                err)
-    else:
-        if not Gst.init_check(None):
-            log.error(
-                "ERROR: Unable to initialize gstreamer. All sound will be mute.")
-        else:
+    class GstPlayer(Player):
+        def __init__(self):
+            PYTHONBIN = sys.executable.split("/")[-1]
+            try:
+                if getattr(sys, 'frozen', False):
+                    gst_player = os.path.join(os.path.abspath(os.path.dirname(sys.executable)), "gst_player.py")
+                else:
+                    gst_player = os.path.join(os.path.abspath(os.path.dirname(__file__)), "gst_player.py")
+                self.player = subprocess.Popen([PYTHONBIN, gst_player],
+                                               stdin=subprocess.PIPE,
+                                               stdout=subprocess.PIPE,)
 
-            class GstPlayer(Player):
-                def __init__(self):
-                    self.player = Gst.ElementFactory.make("playbin", "player")
-                    if self.player is None:
-                        log.error(
-                            'ERROR: Gst.ElementFactory.make("playbin", "player") failed')
-                    else:
-                        self.ready = True
-                        fakesink = Gst.ElementFactory.make("fakesink",
-                                                           "fakesink")
-                        self.player.set_property("video-sink", fakesink)
-                        bus = self.player.get_bus()
-                        bus.add_signal_watch()
-                        bus.connect("message", self.onMessage)
+                self.stdin = io.TextIOWrapper(self.player.stdin, encoding='utf-8', line_buffering=True)
+                self.ready = True
+            except:
+                self.player = None
+                log.error('ERROR: starting gst_player failed')
+                raise
 
-                def onMessage(self, bus, message):
-                    if message.type == Gst.MessageType.ERROR:
-                        # Sound seams sometimes to work, even though errors are dropped.
-                        # Therefore we really can't do anything to test.
-                        self.set_state(Gst.State.NULL)
-                        simpleMessage, advMessage = message.parse_error()
-                        log.warning("Gstreamer error '%s': %s" %
-                                    (simpleMessage, advMessage))
-                    elif message.type == Gst.MessageType.EOS:
-                        self.set_state(Gst.State.NULL)
-                    return True
+        def play(self, uri):
+            if self.player is not None:
+                try:
+                    self.stdin.write(url2pathname(uri[5:]) + "\n")
+                except BrokenPipeError:
+                    pass
 
-                def play(self, uri):
-                    if self.player is not None:
-                        # For elements that performed an ASYNC state change,
-                        # as reported by Gst.Element.set_state(),
-                        # this function will block up to the specified timeout value
-                        # for the state change to complete.
-                        ret, state, pending = self.player.get_state(10)
-                        if ret == Gst.StateChangeReturn.FAILURE:
-                            return
-                        else:
-                            if state != Gst.State.NULL:
-                                self.set_state(Gst.State.NULL)
-
-                            self.player.set_property("uri", uri)
-                            self.set_state(Gst.State.PLAYING)
-
-                def set_state(self, new_state):
-                    ret, state, pending = self.player.get_state(10)
-                    if ret == Gst.StateChangeReturn.FAILURE:
-                        return
-                    else:
-                        if new_state != state:
-                            self.player.set_state(new_state)
-
-            sound_player = GstPlayer()
+    sound_player = GstPlayer()
