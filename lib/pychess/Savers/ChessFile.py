@@ -21,7 +21,7 @@ class ChessFile:
     def close(self):
         try:
             self.file.close()
-        exept OSError:
+        except OSError:
             pass
 
     def set_tags_filter(self, text):
