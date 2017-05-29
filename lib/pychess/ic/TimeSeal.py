@@ -13,6 +13,9 @@ from pychess.System import searchPath
 from pychess.System.prefix import getEngineDataPrefix
 from pychess.ic.icc import B_DTGR_END, B_UNIT_END
 
+if not hasattr(asyncio.StreamReader, 'readuntil'):
+    from pychess.System.readuntil import readuntil
+    asyncio.StreamReader.readuntil = readuntil
 
 ENCODE = [ord(i) for i in "Timestamp (FICS) v1.0 - programmed by Henrik Gram."]
 ENCODELEN = len(ENCODE)
