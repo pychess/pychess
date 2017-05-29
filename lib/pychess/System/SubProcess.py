@@ -4,7 +4,7 @@ import signal
 import sys
 import time
 
-from gi.repository import GObject, Gtk, Gio
+from gi.repository import GObject, Gtk, Gio, GLib
 
 from pychess.external import gbulb
 from pychess.System.Log import log
@@ -66,6 +66,10 @@ class SubProcess(GObject.GObject):
             self.terminate()
         except ConnectionResetError:
             log.debug('SubProcess.write_stdin(): ConnectionResetError', extra={"task": self.defname})
+            self.emit("died")
+            self.terminate()
+        except GLib.GError:
+            log.debug("GLib.GError", extra={"task": self.defname})
             self.emit("died")
             self.terminate()
 

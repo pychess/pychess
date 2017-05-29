@@ -227,6 +227,12 @@ class EngineDiscoverer(GObject.GObject):
             if engine["name"] == "PyChess.py" and not getattr(sys, 'frozen',
                                                               False):
                 path = join(abspath(dirname(__file__)), "PyChess.py")
+                if not vmpath.endswith(PYTHONBIN):
+                    # from python to python3
+                    engine["vm_name"] = PYTHONBIN
+                    vmpath = searchPath(PYTHONBIN,
+                                        access=os.R_OK | os.X_OK,
+                                        altpath=None)
                 if not os.access(path, os.R_OK):
                     path = None
             else:
