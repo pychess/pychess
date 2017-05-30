@@ -7,7 +7,7 @@ import platform
 from functools import partial
 from hashlib import md5
 from copy import deepcopy
-
+from collections import OrderedDict
 
 from gi.repository import GObject
 
@@ -282,8 +282,8 @@ class EngineDiscoverer(GObject.GObject):
         return engine
 
     def __discoverE(self, engine):
-        subproc = self.initEngine(engine, BLACK)
         try:
+            subproc = self.initEngine(engine, BLACK)
             subproc.connect('readyForOptions', self.__discoverE2, engine)
             subproc.prestart()  # Sends the 'start line'
             subproc.start()
@@ -405,8 +405,9 @@ class EngineDiscoverer(GObject.GObject):
         ######
         # Runs all the engines in toBeRechecked, in order to gather information
         ######
-        self.toBeRechecked = dict((c["name"], [c, False])
-                                  for c in self._engines if c.get('recheck'))
+        self.toBeRechecked = sorted([(c["name"], [c, False])
+                                    for c in self._engines if c.get('recheck')])
+        self.toBeRechecked = OrderedDict(self.toBeRechecked)
 
     def discover(self):
         self.pre_discover()
@@ -515,7 +516,11 @@ class EngineDiscoverer(GObject.GObject):
         else:
             workdir = getEngineDataPrefix()
         warnwords = ("illegal", "error", "exception")
-        subprocess = SubProcess(path, args=args, warnwords=warnwords, cwd=workdir)
+        try:
+            subprocess = SubProcess(path, args=args, warnwords=warnwords, cwd=workdir)
+        except OSError:
+            raise PlayerIsDead
+
         engine_proc = attrToProtocol[protocol](subprocess, color, protover,
                                                md5_engine)
         engine_proc.setName(name)
