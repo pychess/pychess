@@ -74,6 +74,9 @@ class LogPipe:
             else:
                 log.error("Could not write data '%s' to pipe '%s'" %
                           (data, repr(self.to)))
+        except BrokenPipeError:
+            pass
+
         if log:
             for line in data.splitlines():
                 if line:
