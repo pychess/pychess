@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import subprocess
+import asyncio
 
 
 class Command(object):
@@ -14,39 +14,25 @@ class Command(object):
         self.command = command
         self.inputstr = inputstr
 
-    def run(self, timeout=None, **kwargs):
-        """ Run a command then return: (status, output, error). """
+    def run(self, timeout=None):
 
-        # default stdin, stdout and stderr
-        if 'stdin' not in kwargs:
-            kwargs['stdin'] = subprocess.PIPE
-        if 'stdout' not in kwargs:
-            kwargs['stdout'] = subprocess.PIPE
-        if 'stderr' not in kwargs:
-            kwargs['stderr'] = subprocess.PIPE
+        def coro(timeout):
+            p = yield from asyncio.create_subprocess_exec(*self.command,
+                                                          stdin=asyncio.subprocess.PIPE,
+                                                          stdout=asyncio.subprocess.PIPE)
+            task = asyncio.async(p.communicate(input=self.inputstr))
+            done, pending = yield from asyncio.wait([task], timeout=timeout)
+            if pending:
+                print("timeout!", task._state)
+            res = yield from task  # Note: It is OK to await a task more than once
+            return p.returncode, res[0].decode(), res[1]
 
-        try:
-            self.process = subprocess.Popen(self.command,
-                                            universal_newlines=True,
-                                            **kwargs)
-        except OSError:
-            return self.status, self.output, self.error
-        except ValueError:
-            return self.status, self.output, self.error
-
-        try:
-            self.output, self.error = self.process.communicate(
-                input=self.inputstr,
-                timeout=timeout)
-        except subprocess.TimeoutExpired:
-            self.process.kill()
-            self.output, self.error = self.process.communicate()
-        self.status = self.process.returncode
-
-        return self.status, self.output, self.error
+        loop = asyncio.get_event_loop()
+        ret = loop.run_until_complete(coro(timeout))
+        return ret
 
 
 if __name__ == "__main__":
-    command = Command("DC", "xboard\nprotover 2\n")
-    command = Command("DC", "uci\n")
+    command = Command("DC", "xboard\nprotover 2\nquit\n")
+    command = Command("DC", "uci\nquit\n")
     print(command.run(timeout=3))

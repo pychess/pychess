@@ -205,8 +205,6 @@ class EnginesDialog():
                         msg_dia.run()
                         msg_dia.hide()
                         new_engine = ""
-                    else:
-                        vmpath += " "
 
                 for vm in VM_LIST:
                     ext = os.path.splitext(new_engine)[1]
@@ -241,12 +239,11 @@ class EnginesDialog():
 
                     try:
                         engine_command = []
-                        if vmpath is not None:
+                        if vmpath:
                             engine_command.append(vmpath)
                         if vm_args is not None:
                             engine_command.append(vm_args)
                         engine_command.append(new_engine)
-
                         # Some engines support CECP and UCI, but main variant engines are CECP,
                         # so we better to start with CECP this case
                         variant_engines = ("fmax", "sjaakii", "sjeng")

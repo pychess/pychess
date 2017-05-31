@@ -633,8 +633,8 @@ def init_engine(analyzer_type, gamemodel, force=False):
 
 
 def is_uci(engine_command):
-    command = Command(engine_command, "uci\n")
-    status, output, err = command.run(timeout=3)
+    command = Command(engine_command, b"uci\nquit\n")
+    status, output, err = command.run(timeout=5)
     uci = False
     for line in output.splitlines():
         line = line.rstrip()
@@ -647,8 +647,8 @@ def is_uci(engine_command):
 
 
 def is_cecp(engine_command):
-    command = Command(engine_command, "xboard\nprotover 2\n")
-    status, output, err = command.run(timeout=3)
+    command = Command(engine_command, b"xboard\nprotover 2\nquit\n")
+    status, output, err = command.run(timeout=5)
     cecp = False
     for line in output.splitlines():
         line = line.rstrip()
