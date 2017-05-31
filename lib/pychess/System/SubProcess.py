@@ -69,7 +69,7 @@ class SubProcess(GObject.GObject):
             self.emit("died")
             self.terminate()
         except GLib.GError:
-            log.debug("GLib.GError", extra={"task": self.defname})
+            log.debug("SubProcess.write_stdin(): GLib.GError", extra={"task": self.defname})
             self.emit("died")
             self.terminate()
 
@@ -103,6 +103,7 @@ class SubProcess(GObject.GObject):
         self.read_stdout_task.cancel()
         try:
             self.proc.terminate()
+            log.debug("SubProcess.terminate()", extra={"task": self.defname})
         except ProcessLookupError:
             log.debug("SubProcess.terminate(): ProcessLookupError", extra={"task": self.defname})
 
