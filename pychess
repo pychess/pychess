@@ -170,7 +170,7 @@ else:
         locale.bindtextdomain(domain, locale_dir)
 
 try:
-    from pychess.System.Log import log, LogPipe
+    from pychess.System.Log import log
     from pychess.System.LogEmitter import GLogHandler, logemitter
     from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
     from pychess.System import conf
@@ -181,8 +181,6 @@ except ImportError:
 
 ###############################################################################
 # Start logging
-sys.stdout = LogPipe(sys.stdout, "stdout")
-sys.stderr = LogPipe(sys.stderr, "stdout")
 
 if log_viewer:
     log.logger.addHandler(GLogHandler(logemitter))

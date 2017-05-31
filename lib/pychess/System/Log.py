@@ -56,34 +56,3 @@ class ExtraAdapter(logging.LoggerAdapter):
 
 
 log = ExtraAdapter(logger, {})
-
-
-class LogPipe:
-    def __init__(self, to, flag=""):
-        self.to = to
-        self.flag = flag
-
-    def write(self, data):
-        try:
-            self.to.write(data)
-            self.flush()
-        except IOError:
-            if self.flag == "stdout":
-                # Certainly hope we never end up here
-                pass
-            else:
-                log.error("Could not write data '%s' to pipe '%s'" %
-                          (data, repr(self.to)))
-        except BrokenPipeError:
-            pass
-
-        if log:
-            for line in data.splitlines():
-                if line:
-                    log.debug(line, extra={"task": self.flag})
-
-    def flush(self):
-        self.to.flush()
-
-    def fileno(self):
-        return self.to.fileno()
