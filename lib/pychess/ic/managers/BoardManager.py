@@ -1071,7 +1071,8 @@ class BoardManager(GObject.GObject):
                 self.gamemodelStartedEvents[game.gameno].wait()
             self.emit("curGameEnded", game)
             self.theGameImPlaying = None
-            del self.gamemodelStartedEvents[game.gameno]
+            if game.gameno in self.gamemodelStartedEvents:
+                del self.gamemodelStartedEvents[game.gameno]
 
         elif game in self.gamesImObserving:
             log.debug("BM.onGameEnd: %s: gamesImObserving" % game)
@@ -1080,13 +1081,8 @@ class BoardManager(GObject.GObject):
                 self.queuedEmits[game.gameno].append(
                     lambda: self.emit("obsGameEnded", game))
             else:
-                try:
-                    event = self.gamemodelStartedEvents[game.gameno]
-                except KeyError:
-                    pass
-                else:
-                    log.debug("BM.onGameEnd: %s: event.wait()" % game)
-                    event.wait()
+                if game.gameno in self.gamemodelStartedEvents:
+                    self.gamemodelStartedEvents[game.gameno].wait()
                 del self.gamesImObserving[game]
                 self.emit("obsGameEnded", game)
 
