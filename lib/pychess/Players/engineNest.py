@@ -9,7 +9,7 @@ from hashlib import md5
 from copy import deepcopy
 from collections import OrderedDict
 
-from gi.repository import GObject
+from gi.repository import GLib, GObject
 
 from pychess.external import gbulb
 from pychess.System import conf, searchPath
@@ -522,6 +522,8 @@ class EngineDiscoverer(GObject.GObject):
         try:
             subprocess = SubProcess(path, args=args, warnwords=warnwords, cwd=workdir)
         except OSError:
+            raise PlayerIsDead
+        except GLib.GError:
             raise PlayerIsDead
 
         engine_proc = attrToProtocol[protocol](subprocess, color, protover,

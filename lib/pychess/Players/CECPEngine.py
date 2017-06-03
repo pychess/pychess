@@ -169,13 +169,15 @@ class CECPEngine(ProtocolEngine):
             # we will do it after feature accept/reject is completed.
 
     def start(self, event=None):
-        asyncio.async(self.__startBlocking(event))
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.__startBlocking(event))
 
     @asyncio.coroutine
     def __startBlocking(self, event):
         if self.protover == 1:
             self.emit("readyForMoves")
             return_value = "ready"
+
         if self.protover == 2:
             try:
                 return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
@@ -184,19 +186,21 @@ class CECPEngine(ProtocolEngine):
                     # Gaviota sends done=0 after "xboard" and after "protover 2" too
                     if return_value == "not ready":
                         return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
-            except asyncio.TimeoutError:
-                log.warning("Got timeout error", extra={"task": self.defname})
                 self.emit("readyForOptions")
                 self.emit("readyForMoves")
+            except asyncio.TimeoutError:
+                log.warning("Got timeout error", extra={"task": self.defname})
+                raise PlayerIsDead
             except:
-                raise
+                log.warning("Unknown error", extra={"task": self.defname})
+                raise PlayerIsDead
             else:
                 if return_value == 'del':
                     raise PlayerIsDead
                 assert return_value == "ready"
+
         if event is not None:
             event.set()
-        return(return_value)
 
     def __onReadyForOptions(self, self_):
         # We always want post turned on so the Engine Output sidebar can

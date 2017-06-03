@@ -49,7 +49,6 @@ class DiscovererDialog:
         # =======================================================================
         self.widgets["discovererDialog"].set_position(
             Gtk.WindowPosition.CENTER_ON_PARENT)
-        self.widgets["discovererDialog"].set_modal(True)
         self.widgets["discovererDialog"].show_all()
         self.throbber.start()
 

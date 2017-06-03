@@ -35,10 +35,14 @@ class SubProcess(GObject.GObject):
         argv = [str(u) for u in [self.path] + self.args]
 
         loop = asyncio.get_event_loop()
-        self.proc = loop.run_until_complete(self.start(argv, env, cwd, loop))
-        self.pid = self.proc.pid
-        self.read_stdout_task = asyncio.async(self.read_stdout(self.proc.stdout))
-        self.write_task = None
+        try:
+            self.proc = loop.run_until_complete(self.start(argv, env, cwd, loop))
+        except GLib.GError:
+            self.emit("died")
+        else:
+            self.pid = self.proc.pid
+            self.read_stdout_task = asyncio.async(self.read_stdout(self.proc.stdout))
+            self.write_task = None
 
     @asyncio.coroutine
     def start(self, argv, env, cwd, loop):

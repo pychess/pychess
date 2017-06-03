@@ -77,17 +77,28 @@ class UCIEngine(ProtocolEngine):
         print("uci", file=self.engine)
 
     def start(self, event=None):
-        asyncio.async(self.__startBlocking(event))
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.__startBlocking(event))
 
     @asyncio.coroutine
     def __startBlocking(self, event):
-        return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
-        if return_value == 'die':
+        try:
+            return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
+            self.emit("readyForOptions")
+            self.emit("readyForMoves")
+        except asyncio.TimeoutError:
+            log.warning("Got timeout error", extra={"task": self.defname})
             raise PlayerIsDead
-        assert return_value == "ready" or return_value == 'del'
+        except:
+            log.warning("Unknown error", extra={"task": self.defname})
+            raise PlayerIsDead
+        else:
+            if return_value == 'del':
+                raise PlayerIsDead
+            assert return_value == "ready"
+
         if event is not None:
             event.set()
-        return(return_value)
 
     def __onReadyForOptions(self, self_):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
