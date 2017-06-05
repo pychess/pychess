@@ -581,7 +581,11 @@ def parseAN(board, an):
         # The a7a8=q variant
         flag = chr2Sign[an[5].lower()] + 2
     elif board.arBoard[fcord] == KING:
-        if board.variant == FISCHERRANDOMCHESS and board.arBoard[
+        if fcord - tcord == 2:
+            flag = QUEEN_CASTLE
+        elif fcord - tcord == -2:
+            flag = KING_CASTLE
+        elif board.arBoard[
                 tcord] == ROOK:
             color = board.color
             friends = board.friends[color]
@@ -591,10 +595,6 @@ def parseAN(board, an):
                 else:
                     flag = KING_CASTLE
 
-        elif fcord - tcord == 2:
-            flag = QUEEN_CASTLE
-        elif fcord - tcord == -2:
-            flag = KING_CASTLE
         else:
             flag = NORMAL_MOVE
     elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \
