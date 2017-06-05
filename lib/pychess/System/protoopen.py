@@ -23,7 +23,7 @@ def protoopen(uri):
         uri = uri[7:]
 
     try:
-        return open(uri, "rU", encoding=PGN_ENCODING, newline="")
+        return open(unquote(uri), "rU", encoding=PGN_ENCODING, newline="")
     except (IOError, OSError):
         pass
 
