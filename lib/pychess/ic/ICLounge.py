@@ -730,7 +730,10 @@ class UserInfoSection(Section):
                 if self.dock.get_children():
                     self.dock.get_children()[0].remove(self.ping_label)
             else:
-                self.ping_label = Gtk.Label(label=_("Connecting") + "...")
+                if self.connection.ICC:
+                    self.ping_label = Gtk.Label(label="")  # TODO
+                else:
+                    self.ping_label = Gtk.Label(label=_("Connecting") + "...")
                 self.ping_label.props.xalign = 0
 
             def callback(pinger, pingtime):
@@ -744,7 +747,7 @@ class UserInfoSection(Section):
                 else:
                     self.ping_label.set_text("%.0f ms" % pingtime)
 
-            if not self.pinger:
+            if (not self.pinger) and (not self.connection.ICC):
                 self.pinger = Pinger(self.host)
                 self.pinger.start()
                 self.pinger.connect("received", callback)
