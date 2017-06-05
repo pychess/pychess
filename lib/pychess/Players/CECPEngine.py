@@ -169,8 +169,9 @@ class CECPEngine(ProtocolEngine):
             # we will do it after feature accept/reject is completed.
 
     def start(self, event=None):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.__startBlocking(event))
+        # loop = asyncio.get_event_loop()
+        # loop.run_until_complete(self.__startBlocking(event))
+        asyncio.async(self.__startBlocking(event))
 
     @asyncio.coroutine
     def __startBlocking(self, event):
