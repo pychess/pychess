@@ -9,7 +9,7 @@ from pychess.Utils.const import SAN, AN, LAN, ENPASSANT, EMPTY, PAWN, KING_CASTL
     QUEEN, KNIGHT, BISHOP, ROOK, KING, NORMALCHESS, NORMAL_MOVE, PROMOTIONS, WHITE, BLACK, DROP,\
     FAN_PIECES, SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, MAKRUKCHESS, CAMBODIANCHESS,\
     ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS,\
-    chrU2Sign, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, NULL_MOVE, FAN
+    chrU2Sign, CASTLE_KK, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, NULL_MOVE, FAN
 from pychess.Utils.repr import reprPiece, localReprSign
 from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove
 
@@ -505,7 +505,7 @@ def parseLAN(board, lan):
 ################################################################################
 
 
-def toAN(board, move, short=False, castleNotation=CASTLE_SAN):
+def toAN(board, move, short=True, castleNotation=CASTLE_KK):
     """ Returns a Algebraic Notation string of a move
         board should be prior to the move
         short -- returns the short variant, e.g. f7f8q rather than f7f8=Q

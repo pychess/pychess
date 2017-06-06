@@ -17,7 +17,7 @@ from pychess.Utils.lutils.perft import perft
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.ldata import MAXPLY
 from pychess.Utils.lutils import lsearch, leval
-from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN, ParsingError
+from pychess.Utils.lutils.lmove import parseSAN, parseAN, parseAny, toSAN, toAN, ParsingError
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCaptures, genCheckEvasions
 from pychess.Utils.lutils.validator import validateMove
 from pychess.System.Log import log
@@ -70,8 +70,6 @@ class PyChessCECP(PyChess):
         }
         python = sys.executable.split("/")[-1]
         python_version = "%s.%s.%s" % sys.version_info[0:3]
-        print("# %s [%s %s]" %
-                   (self.features["myname"], python, python_version))
 
     def handle_sigterm(self, *args):
         self.__stopSearching()
@@ -290,7 +288,7 @@ class PyChessCECP(PyChess):
                         totalWeight = sum(entry[1] for entry in entries)
                         for entry in entries:
                             print("\t%s\t%02.2f%%" %
-                                       (toSAN(self.board, entry[0]), entry[1] *
+                                       (toAN(self.board, entry[0]), entry[1] *
                                         100.0 / totalWeight))
 
                 elif lines[0] == "undo":
@@ -371,17 +369,17 @@ class PyChessCECP(PyChess):
 
                 elif lines[0] == "moves":
                     print(self.board.prepr(ascii=ASCII))
-                    print([toSAN(self.board, move)
+                    print([toAN(self.board, move)
                                 for move in genAllMoves(self.board)])
 
                 elif lines[0] == "captures":
                     print(self.board.prepr(ascii=ASCII))
-                    print([toSAN(self.board, move)
+                    print([toAN(self.board, move)
                                 for move in genCaptures(self.board)])
 
                 elif lines[0] == "evasions":
                     print(self.board.prepr(ascii=ASCII))
-                    print([toSAN(self.board, move)
+                    print([toAN(self.board, move)
                                 for move in genCheckEvasions(self.board)])
 
                 elif lines[0] == "benchmark":
@@ -435,8 +433,8 @@ class PyChessCECP(PyChess):
     def __go(self):
         def ondone(result):
             if not self.forced:
-                self.board.applyMove(parseSAN(self.board, result))
-                print("move %s" % result)
+                self.board.applyMove(parseAN(self.board, result))
+                print(result)
             # TODO: start pondering, if enabled
 
         self.thread = Thread(target=PyChess._PyChess__go,

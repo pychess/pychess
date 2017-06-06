@@ -162,32 +162,38 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Find and sort moves                                                      #
     ############################################################################
 
-    if board.variant in (LOSERSCHESS, SUICIDECHESS):
-        mlist = [m for m in genCaptures(board)]
-        if board.variant == LOSERSCHESS and isCheck:
-            evasions = [m for m in genCheckEvasions(board)]
-            eva_cap = [m for m in evasions if m in mlist]
-            mlist = eva_cap if eva_cap else evasions
-        if not mlist and not isCheck:
-            mlist = [m for m in genAllMoves(board)]
-        moves = [(-getMoveValue(board, table, depth, m), m) for m in mlist]
-    elif board.variant == ATOMICCHESS:
-        if isCheck:
-            mlist = [m
-                     for m in genCheckEvasions(board)
-                     if not kingExplode(board, m, board.color)]
-        else:
-            mlist = [m
-                     for m in genAllMoves(board)
-                     if not kingExplode(board, m, board.color)]
+    # Generate all possible captures
+    mlist = [m for m in genCaptures(board)]
+    if isCheck:
+        # If isCheck, first priority is to evade check.
+        moves = [(-getMoveValue(board, table, depth, m), m)
+                 for m in genCheckEvasions(board)]
+    elif mlist:
+        # If capture is possible and not checked, force player to choose
+        # best capture. 
         moves = [(-getMoveValue(board, table, depth, m), m) for m in mlist]
     else:
-        if isCheck:
+        # If no captures available, just generate all possible moves.
+        moves = [(-getMoveValue(board, table, depth, m), m)
+                 for m in genAllMoves(board)]
+
+    # A capture should not lead to a check
+    checks = 0
+    if not isCheck and mlist:
+        # Determines if next move leads to a check. If so, increment
+        # checks and reverts move.
+        for _, move in moves:
+            board.applyMove(move)
+            if board.opIsChecked():
+                checks += 1
+            board.popMove()
+
+        # If all captures lead to check, generate all possible moves.
+        if len(moves) == checks:
             moves = [(-getMoveValue(board, table, depth, m), m)
-                     for m in genCheckEvasions(board)]
-        else:
-            moves = [(-getMoveValue(board, table, depth, m), m)
-                     for m in genAllMoves(board)]
+             for m in genAllMoves(board)]
+
+
     moves.sort()
 
     # This is needed on checkmate
