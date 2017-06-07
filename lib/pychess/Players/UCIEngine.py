@@ -60,16 +60,13 @@ class UCIEngine(ProtocolEngine):
 
         self.queue = asyncio.Queue()
         self.parse_line_task = asyncio.async(self.parseLine(self.engine))
-        self.died_cid = self.engine.connect("died", self.__die)
+        self.died_cid = self.engine.connect("died", lambda e: self.queue.put_nowait("del"))
         self.invalid_move = None
 
         self.cids = [
             self.connect("readyForOptions", self.__onReadyForOptions),
             self.connect("readyForMoves", self.__onReadyForMoves),
         ]
-
-    def __die(self, subprocess):
-        self.queue.put_nowait("die")
 
     # Starting the game
 
@@ -85,8 +82,6 @@ class UCIEngine(ProtocolEngine):
     def __startBlocking(self, event):
         try:
             return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
-            self.emit("readyForOptions")
-            self.emit("readyForMoves")
         except asyncio.TimeoutError:
             log.warning("Got timeout error", extra={"task": self.defname})
             raise PlayerIsDead
