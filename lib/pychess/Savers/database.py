@@ -16,26 +16,26 @@ def save(path, model, offset):
     game_site = model.tags["Site"]
 
     year, month, day = int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])
-    game_round = model.tags.get("Round")
+    game_round = model.tags["Round"] if "Round" in model.tags else ""
 
     white = repr(model.players[WHITE])
     black = repr(model.players[BLACK])
 
     result = model.status
-    eco = model.tags.get("ECO")
+    eco = model.tags["ECO"] if "ECO" in model.tags else ""
 
-    time_control = model.tags.get("TimeControl")
-    board = int(model.tags.get("Board")) if model.tags.get("Board") else None
+    time_control = model.tags["TimeControl"] if "TimeControl" in model.tags else ""
+    board = int(model.tags["Board"]) if "Board" in model.tags else 0
 
-    white_elo = int(model.tags.get("WhiteElo")) if model.tags.get("WhiteElo") else None
-    black_elo = int(model.tags.get("BlackElo")) if model.tags.get("BlackElo") else None
+    white_elo = int(model.tags["WhiteElo"]) if "WhiteElo" in model.tags else 0
+    black_elo = int(model.tags["BlackElo"]) if "BlackElo" in model.tags else 0
 
     variant = model.variant.variant
 
     fen = model.boards[0].board.asFen()
-    fen = fen if fen != FEN_START else None
+    fen = fen if fen != FEN_START else ""
 
-    game_annotator = model.tags.get("Annotator")
+    game_annotator = model.tags["Annotator"] if "Annotator" in model.tags else ""
     ply_count = model.ply - model.lowply
 
     def get_id(table, name):

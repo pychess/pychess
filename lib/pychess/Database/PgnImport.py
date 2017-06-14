@@ -251,9 +251,9 @@ class PgnImport():
                         trans.rollback()
                         return
 
-                    fenstr = tags.get("FEN")
+                    fenstr = tags["FEN"] if "FEN" in tags else ""
 
-                    variant = tags.get("Variant")
+                    variant = tags["Variant"] if "Varient" in tags else ""
                     if variant:
                         if "fischer" in variant.lower() or "960" in variant:
                             variant = "Fischerandom"
@@ -281,14 +281,14 @@ class PgnImport():
                     else:
                         variant = 0
 
-                    white = tags.get('White')
-                    black = tags.get('Black')
+                    white = tags["White"] if "White" in tags else ""
+                    black = tags["Black"] if "Black" in tags else ""
 
-                    event_id = get_id(tags.get('Event'), event, EVENT)
+                    event_id = get_id(tags["Event"] if "Event" in tags else "", event, EVENT)
 
-                    site_id = get_id(tags.get('Site'), site, SITE)
+                    site_id = get_id(tags["Site"] if "Site" in tags else "", site, SITE)
 
-                    game_date = tags.get('Date')
+                    game_date = tags["Date"] if "Date" in tags else ""
                     try:
                         if game_date and '?' not in game_date:
                             ymd = game_date.split('.')
@@ -303,12 +303,12 @@ class PgnImport():
                     except:
                         game_year, game_month, game_day = None, None, None
 
-                    game_round = tags.get('Round')
+                    game_round = tags['Round'] if "Round" in tags else ""
 
                     white_id = get_id(white, player, PLAYER)
                     black_id = get_id(black, player, PLAYER)
 
-                    result = tags.get("Result")
+                    result = tags["Result"] if "Result" in tags else ""
                     if result in pgn2Const:
                         result = pgn2Const[result]
                     else:
@@ -316,28 +316,27 @@ class PgnImport():
                             print("Invalid Result tag in game #%s: %s" % (i + 1, result))
                         continue
 
-                    white_elo = tags.get('WhiteElo')
-                    white_elo = int(white_elo) if white_elo and white_elo.isdigit() else None
+                    white_elo = tags['WhiteElo'] if "WhiteElo" in tags else "0"
+                    white_elo = int(white_elo) if white_elo and white_elo.isdigit() else 0
 
-                    black_elo = tags.get('BlackElo')
-                    black_elo = int(black_elo) if black_elo and black_elo.isdigit() else None
+                    black_elo = tags['BlackElo'] if "BlackElo" in tags else ""
+                    black_elo = int(black_elo) if black_elo and black_elo.isdigit() else 0
 
-                    time_control = tags.get("TimeControl")
+                    time_control = tags["TimeControl"] if "TimeControl" in tags else ""
 
-                    eco = tags.get("ECO")
-                    eco = eco[:3] if eco else None
+                    eco = tags["ECO"][:3] if "ECO" in tags else ""
 
-                    fen = tags.get("FEN")
+                    fen = tags["FEN"] if "FEN" in tags else ""
 
-                    board_tag = tags.get("Board")
+                    board_tag = int(tags["Board"]) if "Board" in tags else 0
 
-                    annotator_id = get_id(tags.get("Annotator"), annotator, ANNOTATOR)
+                    annotator_id = get_id(tags["Annotator"] if "Annotator" in tags else "", annotator, ANNOTATOR)
 
                     source_id = get_id(orig_filename, source, SOURCE, info=info)
 
                     self.next_id[GAME] += 1
 
-                    ply_count = tags.get("PlyCount")
+                    ply_count = tags["PlyCount"] if "PlyCount" in tags else 0
 
                     offset = base_offset + int(tags["offset"])
 

@@ -70,7 +70,7 @@ def insert_or_ignore(engine, stmt):
 engines = {}
 
 # PyChess database schema version
-SCHEMA_VERSION = "20170107"
+SCHEMA_VERSION = "20170109"
 
 
 def get_engine(path=None, dialect="sqlite", echo=False):
@@ -145,19 +145,19 @@ game = Table(
     Column('date_year', SmallInteger),
     Column('date_month', SmallInteger),
     Column('date_day', SmallInteger),
-    Column('round', String(8)),
+    Column('round', String(8), default=""),
     Column('white_id', Integer, ForeignKey('player.id'), index=True),
     Column('black_id', Integer, ForeignKey('player.id'), index=True),
-    Column('result', SmallInteger),
-    Column('white_elo', SmallInteger),
-    Column('black_elo', SmallInteger),
-    Column('ply_count', SmallInteger),
-    Column('eco', String(3)),
-    Column('time_control', String(7)),
-    Column('board', SmallInteger),
-    Column('fen', String(128)),
-    Column('variant', SmallInteger),
-    Column('termination', SmallInteger),
+    Column('result', SmallInteger, default=0),
+    Column('white_elo', SmallInteger, default=0),
+    Column('black_elo', SmallInteger, default=0),
+    Column('ply_count', SmallInteger, default=0),
+    Column('eco', String(3), default=""),
+    Column('time_control', String(7), default=""),
+    Column('board', SmallInteger, default=0),
+    Column('fen', String(128), default=""),
+    Column('variant', SmallInteger, default=0),
+    Column('termination', SmallInteger, default=0),
     Column('annotator_id', Integer, ForeignKey('annotator.id'), index=True),
     Column('source_id', Integer, ForeignKey('source.id'), index=True),
 )
