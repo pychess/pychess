@@ -9,6 +9,8 @@ import sys
 
 import pexpect
 
+from sqlalchemy import String
+
 try:
     from pychess.external.scoutfish import Scoutfish
     use_scoutfish = True
@@ -37,10 +39,10 @@ from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Variants import name2variant, NormalBoard, variants
 from pychess.widgets.ChessClock import formatTime
 from pychess.Savers.ChessFile import ChessFile, LoadingError
-from pychess.Savers.database import TagDatabase
+from pychess.Savers.database import col2label, TagDatabase
 from pychess.Database import model as dbmodel
 from pychess.Database.PgnImport import PgnImport, TAG_REGEX
-from pychess.Database.model import create_indexes, drop_indexes
+from pychess.Database.model import game, create_indexes, drop_indexes
 
 
 __label__ = _("Chess Game")
@@ -332,7 +334,9 @@ class PGNFile(ChessFile):
         else:
             self.skip = 0
             self.limit = 100
-            self.last_seen_offs = [-1]
+            self.order_col = game.c.offset
+            self.is_desc = False
+            self.reset_last_seen()
 
             # filter expressions to .sqlite .bin .scout
             self.tag_query = None
@@ -438,6 +442,19 @@ class PGNFile(ChessFile):
                 rows.append((stat["move"], int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"])))
         return rows
 
+    def set_tag_order(self, order_col, is_desc):
+        self.order_col = order_col
+        self.is_desc = is_desc
+        self.tag_database.build_order_by(self.order_col, self.is_desc)
+
+    def reset_last_seen(self):
+        col_max = "ZZZ" if isinstance(self.order_col.type, String) else 2**32
+        col_min = "" if isinstance(self.order_col.type, String) else -1
+        if self.is_desc:
+            self.last_seen = [(col_max, 2**32)]
+        else:
+            self.last_seen = [(col_min, -1)]
+
     def set_tag_filter(self, query):
         """ Set (now prefixing) text and
             create where clause we will use to query header tag .sqlite database
@@ -525,25 +542,25 @@ class PGNFile(ChessFile):
         """ Get game header tag records from .sqlite database in paginated way """
         if direction == FIRST_PAGE:
             self.skip = 0
-            self.last_seen_offs = [-1]
+            self.reset_last_seen()
         elif direction == NEXT_PAGE:
             if not self.tag_query:
                 self.skip += self.limit
         elif direction == PREV_PAGE:
-            if len(self.last_seen_offs) == 2:
-                self.last_seen_offs = [-1]
-            elif len(self.last_seen_offs) > 2:
-                self.last_seen_offs = self.last_seen_offs[:-2]
+            if len(self.last_seen) == 2:
+                self.reset_last_seen()
+            elif len(self.last_seen) > 2:
+                self.last_seen = self.last_seen[:-2]
 
             if not self.tag_query and self.skip >= self.limit:
                 self.skip -= self.limit
 
         if self.fen:
-            self.last_seen_offs = [-1]
+            self.reset_last_seen()
 
         filtered_offs_list = None
         if self.tag_query and (self.fen or self.scout_query):
-            filtered_offs_list = self.tag_database.get_offsets_for_tags(self.last_seen_offs[-1])
+            filtered_offs_list = self.tag_database.get_offsets_for_tags(self.last_seen[-1])
 
         if self.fen:
             self.get_offs8(self.skip, filtered_offs_list=filtered_offs_list)
@@ -554,10 +571,10 @@ class PGNFile(ChessFile):
             if self.tag_database.where_offs is None:
                 return [], {}
 
-        records = self.tag_database.get_records(self.last_seen_offs[-1], self.limit)
+        records = self.tag_database.get_records(self.last_seen[-1], self.limit)
 
         if records:
-            self.last_seen_offs.append(records[-1]["Offset"])
+            self.last_seen.append((records[-1][col2label[self.order_col]], records[-1]["Offset"]))
             return records, self.offs_ply
         else:
             return [], {}

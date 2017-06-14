@@ -98,22 +98,35 @@ def save(path, model, offset):
     conn.close()
 
 
+col2label = {game.c.id: "Id",
+             game.c.offset: "Offset",
+             game.c.offset8: "Offset8",
+             pl1.c.name: "White",
+             pl2.c.name: "Black",
+             game.c.result: "Result",
+             event.c.name: "Event",
+             site.c.name: "Site",
+             game.c.round: "Round",
+             game.c.date_year: "Year",
+             game.c.date_month: "Month",
+             game.c.date_day: "Day",
+             game.c.white_elo: "WhiteElo",
+             game.c.black_elo: "BlackElo",
+             game.c.ply_count: "PlyCount",
+             game.c.eco: "ECO",
+             game.c.time_control: "TimeControl",
+             game.c.board: "Board",
+             game.c.fen: "FEN",
+             game.c.variant: "Variant",
+             annotator.c.name: "Annotator",
+             }
+
+
 class TagDatabase:
     def __init__(self, engine):
         self.engine = engine
 
-        self.cols = [
-            game.c.id.label("Id"), game.c.offset.label("Offset"),
-            game.c.offset8.label("Offset8"), pl1.c.name.label('White'),
-            pl2.c.name.label('Black'), game.c.result.label('Result'),
-            event.c.name.label('Event'), site.c.name.label('Site'),
-            game.c.round.label('Round'), game.c.date_year.label('Year'),
-            game.c.date_month.label('Month'), game.c.date_day.label('Day'),
-            game.c.white_elo.label('WhiteElo'), game.c.black_elo.label('BlackElo'),
-            game.c.ply_count.label('PlyCount'), game.c.eco.label('ECO'),
-            game.c.time_control.label('TimeControl'), game.c.fen.label('Board'),
-            game.c.fen.label('FEN'), game.c.variant.label('Variant'),
-            annotator.c.name.label('Annotator')]
+        self.cols = [col.label(col2label[col]) for col in col2label]
 
         self.from_obj = [
             game.outerjoin(pl1, game.c.white_id == pl1.c.id)
@@ -129,7 +142,8 @@ class TagDatabase:
         self.colnames = self.engine.execute(self.select).keys()
 
         self.query = self.select
-        self.orderby = None
+        self.order_cols = (game.c.offset, game.c.offset)
+        self.is_desc = False
         self.where_tags = None
         self.where_offs = None
         self.where_offs8 = None
@@ -140,6 +154,10 @@ class TagDatabase:
 
     def close(self):
         self.engine.dispose()
+
+    def build_order_by(self, order_col, is_desc):
+        self.is_desc = is_desc
+        self.order_cols = (order_col, game.c.offset)
 
     def build_where_tags(self, tag_query):
         if tag_query is not None:
@@ -218,11 +236,21 @@ class TagDatabase:
         if self.where_offs is not None:
             self.query = self.query.where(self.where_offs)
 
-    def get_records(self, last_seen_offs, limit):
+    def get_records(self, last_seen, limit):
         self.build_query()
-
         # we use .where() to implement pagination because .offset() doesn't scale on big tables
-        query = self.query.where(game.c.offset > last_seen_offs).order_by(game.c.offset).limit(limit)
+        # http://sqlite.org/cvstrac/wiki?p=ScrollingCursor
+        # https://stackoverflow.com/questions/21082956/sqlite-scrolling-cursor-how-to-scroll-correctly-with-duplicate-names
+        if self.is_desc:
+            query = self.query.where(or_(self.order_cols[0] < last_seen[0],
+                                         and_(self.order_cols[0] == last_seen[0],
+                                              self.order_cols[1] < last_seen[1]))
+                                     ).order_by(self.order_cols[0].desc(), self.order_cols[1].desc()).limit(limit)
+        else:
+            query = self.query.where(or_(self.order_cols[0] > last_seen[0],
+                                         and_(self.order_cols[0] == last_seen[0],
+                                              self.order_cols[1] > last_seen[1]))
+                                     ).order_by(*self.order_cols).limit(limit)
 
         # log.debug(self.engine.execute(Explain(query)).fetchall(), extra={"task": "SQL"})
 
@@ -231,8 +259,8 @@ class TagDatabase:
 
         return records
 
-    def get_offsets_for_tags(self, last_seen_offs):
-        query = self.select_offsets.where(self.where_tags).where(game.c.offset > last_seen_offs)
+    def get_offsets_for_tags(self, last_seen):
+        query = self.select_offsets.where(self.where_tags).where(game.c.offset > last_seen[1])
         result = self.engine.execute(query)
         return [rec[0] for rec in result.fetchall()]
 

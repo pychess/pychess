@@ -10,7 +10,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
 from pychess.Utils.IconLoader import load_icon
 from pychess.Variants import variants
-
+from pychess.Database.model import game, event, site, pl1, pl2
 
 media_previous = load_icon(16, "gtk-media-previous-ltr", "media-skip-backward")
 media_rewind = load_icon(16, "gtk-media-rewind-ltr", "media-seek-backward")
@@ -22,6 +22,10 @@ def createImage(pixbuf):
     image = Gtk.Image()
     image.set_from_pixbuf(pixbuf)
     return image
+
+cols = (game.c.id, pl1.c.name, game.c.white_elo, pl2.c.name, game.c.black_elo,
+        game.c.result, game.c.date_year, event.c.name, site.c.name, game.c.round,
+        game.c.ply_count, game.c.eco, game.c.time_control, game.c.variant, game.c.fen)
 
 
 class GameList(Gtk.TreeView):
@@ -40,6 +44,7 @@ class GameList(Gtk.TreeView):
         self.modelsort = Gtk.TreeModelSort(self.liststore)
 
         self.modelsort.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+        self.modelsort.connect("sort-column-changed", self.sort_column_changed)
         self.set_model(self.modelsort)
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         self.set_headers_visible(True)
@@ -47,17 +52,17 @@ class GameList(Gtk.TreeView):
         self.set_fixed_height_mode(True)
         self.set_search_column(1)
 
-        cols = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
-                _("Result"), _("Date"), _("Event"), _("Site"), _("Round"),
-                _("Length"), "ECO", "TC", _("Variant"), "FEN")
-        for i, col in enumerate(cols):
+        titles = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
+                  _("Result"), _("Date"), _("Event"), _("Site"), _("Round"),
+                  _("Length"), "ECO", "TC", _("Variant"), "FEN")
+
+        for i, title in enumerate(titles):
             r = Gtk.CellRendererText()
-            column = Gtk.TreeViewColumn(col, r, text=i)
+            column = Gtk.TreeViewColumn(title, r, text=i)
             column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
             column.set_resizable(True)
             column.set_reorderable(True)
             column.set_sort_column_id(i)
-            column.connect("clicked", self.column_clicked, i)
             self.append_column(column)
 
         self.connect("row-activated", self.row_activated)
@@ -108,8 +113,16 @@ class GameList(Gtk.TreeView):
     def on_forward_button(self, widget):
         self.load_games(direction=NEXT_PAGE)
 
-    def column_clicked(self, col, data):
-        self.set_search_column(data)
+    def sort_column_changed(self, treesortable):
+        sort_column_id, order = treesortable.get_sort_column_id()
+        if sort_column_id is None:
+            self.modelsort.set_sort_column_id(0, Gtk.SortType.ASCENDING)
+            sort_column_id, order = 0, Gtk.SortType.ASCENDING
+
+        self.set_search_column(sort_column_id)
+        is_desc = order == Gtk.SortType.DESCENDING
+        self.persp.chessfile.set_tag_order(cols[sort_column_id], is_desc)
+        self.load_games(direction=FIRST_PAGE)
 
     def load_games(self, direction=FIRST_PAGE):
         selection = self.get_selection()
