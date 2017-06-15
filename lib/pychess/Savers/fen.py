@@ -2,8 +2,9 @@ import collections
 from io import StringIO
 
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.const import WAITING_TO_START, BLACKWON, WHITEWON, DRAW
+from pychess.Utils.const import WAITING_TO_START, BLACKWON, WHITEWON, DRAW, FISCHERRANDOMCHESS
 from pychess.Utils.logic import getStatus
+from pychess.Variants.fischerandom import FischerandomBoard
 
 from .ChessFile import ChessFile, LoadingError
 
@@ -35,12 +36,22 @@ class FenFile(ChessFile):
         rec["Id"] = 0
         rec["Offset"] = 0
         rec["FEN"] = line
+
+        castling = rec["FEN"].split()[2]
+        for letter in castling:
+            if letter in "ABCDEFGH":
+                rec["Variant"] = FISCHERRANDOMCHESS
+                break
+
         self.games = [rec, ]
         self.count = 1
 
     def loadToModel(self, rec, position, model=None):
         if not model:
             model = GameModel()
+
+        if "Variant" in rec:
+            model.variant = FischerandomBoard
 
         fen = self.games[0]["FEN"]
         try:

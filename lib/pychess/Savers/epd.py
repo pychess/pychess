@@ -2,9 +2,10 @@ import collections
 
 from .ChessFile import ChessFile, LoadingError
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.const import WHITE, BLACK, WON_RESIGN, WAITING_TO_START, BLACKWON, WHITEWON, DRAW
+from pychess.Utils.const import WHITE, BLACK, WON_RESIGN, WAITING_TO_START, BLACKWON, WHITEWON, DRAW, FISCHERRANDOMCHESS
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.leval import evaluateComplete
+from pychess.Variants.fischerandom import FischerandomBoard
 
 __label__ = _("Chess Position")
 __ending__ = "epd"
@@ -86,11 +87,21 @@ class EpdFile(ChessFile):
         rec["Id"] = 0
         rec["Offset"] = 0
         rec["FEN"] = line
+
+        castling = rec["FEN"].split()[2]
+        for letter in castling:
+            if letter in "ABCDEFGH":
+                rec["Variant"] = FISCHERRANDOMCHESS
+                break
+
         return rec
 
     def loadToModel(self, rec, position, model=None):
         if not model:
             model = GameModel()
+
+        if "Variant" in rec:
+            model.variant = FischerandomBoard
 
         fieldlist = rec["FEN"].split(" ")
         if len(fieldlist) == 4:
