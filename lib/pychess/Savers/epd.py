@@ -90,7 +90,7 @@ class EpdFile(ChessFile):
 
         castling = rec["FEN"].split()[2]
         for letter in castling:
-            if letter in "ABCDEFGH":
+            if letter.upper() in "ABCDEFGH":
                 rec["Variant"] = FISCHERRANDOMCHESS
                 break
 
