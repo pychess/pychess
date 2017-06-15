@@ -253,7 +253,7 @@ class PgnImport():
 
                     fenstr = tags["FEN"] if "FEN" in tags else ""
 
-                    variant = tags["Variant"] if "Varient" in tags else ""
+                    variant = tags["Variant"] if "Variant" in tags else ""
                     if variant:
                         if "fischer" in variant.lower() or "960" in variant:
                             variant = "Fischerandom"
