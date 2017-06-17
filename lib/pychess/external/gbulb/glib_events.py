@@ -727,7 +727,7 @@ class GLibEventLoop(GLibBaseEventLoop):
         future = tasks.async(future, loop=self)
         future.add_done_callback(stop)
         try:
-            self.run()
+            self.run_forever(**kw)
         finally:
             future.remove_done_callback(stop)
 
