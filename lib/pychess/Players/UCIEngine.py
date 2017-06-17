@@ -18,13 +18,11 @@ from pychess.System import conf
 from pychess.System.Log import log
 from pychess.Variants.fischerandom import FischerandomBoard
 
-from .ProtocolEngine import ProtocolEngine
+from .ProtocolEngine import ProtocolEngine, TIME_OUT_SECOND
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
 
 TYPEDIC = {"check": lambda x: x == "true", "spin": int}
 OPTKEYS = ("name", "type", "min", "max", "default", "var")
-
-TIME_OUT_SECOND = 10.
 
 
 class UCIEngine(ProtocolEngine):
@@ -74,8 +72,6 @@ class UCIEngine(ProtocolEngine):
         print("uci", file=self.engine)
 
     def start(self, event=None):
-        # loop = asyncio.get_event_loop()
-        # loop.run_until_complete(self.__startBlocking(event))
         asyncio.async(self.__startBlocking(event))
 
     @asyncio.coroutine

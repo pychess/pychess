@@ -1,6 +1,6 @@
 """ The task of this module, is to save, load and init new games """
 
-
+import asyncio
 import os
 import subprocess
 import tempfile
@@ -57,6 +57,7 @@ class GameHandler(GObject.GObject):
         self.board_cids = {}
         self.notify_cids = defaultdict(list)
 
+    @asyncio.coroutine
     def generalStart(self, gamemodel, player0tup, player1tup, loaddata=None):
         """ The player tuples are:
         (The type af player in a System.const value,
@@ -93,7 +94,11 @@ class GameHandler(GObject.GObject):
         for i, playertup in enumerate((player0tup, player1tup)):
             type, func, args, prename = playertup
             if type != LOCAL:
-                players.append(func(*args))
+                if type == ARTIFICIAL:
+                    player = yield from func(*args)
+                else:
+                    player = func(*args)
+                players.append(player)
                 # if type == ARTIFICIAL:
                 #    def readyformoves (player, color):
                 #        gmwidg.setTabText(gmwidg.display_text))

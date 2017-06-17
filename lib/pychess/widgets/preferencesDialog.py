@@ -5,6 +5,7 @@
     events such as running out of time or piece movement events etc.
 """
 
+import asyncio
 import os
 from os import listdir
 from os.path import isdir, isfile, splitext
@@ -111,7 +112,7 @@ def anal_combo_set_value(combobox, value, show_arrow_check, ana_check,
         if analyzer_type in spectators and \
                 spectators[analyzer_type].md5 != md5:
             gmwidg.gamemodel.remove_analyzer(analyzer_type)
-            gmwidg.gamemodel.start_analyzer(analyzer_type)
+            asyncio.async(gmwidg.gamemodel.start_analyzer(analyzer_type))
             if not widgets[show_arrow_check].get_active():
                 gmwidg.gamemodel.pause_analyzer(analyzer_type)
 
@@ -221,7 +222,7 @@ class HintTab:
             if len(game_handler.gamewidgets) != 0:
                 if check.get_active():
                     for gmwidg in game_handler.gamewidgets:
-                        gmwidg.gamemodel.restart_analyzer(HINT)
+                        asyncio.async(gmwidg.gamemodel.restart_analyzer(HINT))
                         if not widgets["hint_mode"].get_active():
                             gmwidg.gamemodel.pause_analyzer(HINT)
                 else:
@@ -239,7 +240,7 @@ class HintTab:
             if len(game_handler.gamewidgets) != 0:
                 if check.get_active():
                     for gmwidg in game_handler.gamewidgets:
-                        gmwidg.gamemodel.restart_analyzer(SPY)
+                        asyncio.async(gmwidg.gamemodel.restart_analyzer(SPY))
                         if not widgets["spy_mode"].get_active():
                             gmwidg.gamemodel.pause_analyzer(SPY)
                 else:

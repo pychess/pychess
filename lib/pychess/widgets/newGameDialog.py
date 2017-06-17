@@ -1,4 +1,4 @@
-
+import asyncio
 import os.path
 import gettext
 import locale
@@ -494,7 +494,11 @@ class NewGameMode(_GameInitializationMode):
 
         cls._hideOthers()
         cls.widgets["newgamedialog"].set_title(_("New Game"))
-        cls._generalRun(game_handler.generalStart, _validate)
+
+        def _callback(gamemodel, p0, p1):
+            asyncio.async(game_handler.generalStart(gamemodel, p0, p1))
+
+        cls._generalRun(_callback, _validate)
 
 # ###############################################################################
 # SetupPositionExtension                                                       #
@@ -666,8 +670,8 @@ class SetupPositionExtension(_GameInitializationMode):
 
         def _callback(gamemodel, p0, p1):
             text = cls.get_fen()
-            game_handler.generalStart(
-                gamemodel, p0, p1, (StringIO(text), fen, 0, -1))
+            asyncio.async(game_handler.generalStart(
+                gamemodel, p0, p1, (StringIO(text), fen, 0, -1)))
 
         cls._generalRun(_callback, _validate)
 
@@ -783,7 +787,7 @@ class EnterNotationExtension(_GameInitializationMode):
             try:
                 text, loadType = _get_text()
                 chessfile = loadType.load(StringIO(text))
-                chessfile.loadToModel(0, -1, model=gamemodel)
+                chessfile.loadToModel(chessfile.games[0], -1, model=gamemodel)
                 gamemodel.status = WAITING_TO_START
                 return True
             except LoadingError as e:
@@ -797,8 +801,8 @@ class EnterNotationExtension(_GameInitializationMode):
 
         def _callback(gamemodel, p0, p1):
             text, loadType = _get_text()
-            game_handler.generalStart(
-                gamemodel, p0, p1, (StringIO(text), loadType, 0, -1))
+            asyncio.async(game_handler.generalStart(
+                gamemodel, p0, p1, (StringIO(text), loadType, 0, -1)))
 
         cls._generalRun(_callback, _validate)
 
@@ -859,7 +863,7 @@ def createRematch(gamemodel):
                       (engine, BLACK, wp.strength, gamemodel.variant, secs,
                        gain), repr(wp))
 
-    game_handler.generalStart(newgamemodel, player0tup, player1tup)
+    asyncio.async(game_handler.generalStart(newgamemodel, player0tup, player1tup))
 
 
 def loadFileAndRun(uri):
@@ -872,4 +876,4 @@ def loadFileAndRun(uri):
     black_name = _("Black")
     p0 = (LOCAL, Human, (WHITE, white_name), white_name)
     p1 = (LOCAL, Human, (BLACK, black_name), black_name)
-    game_handler.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1))
+    asyncio.async(game_handler.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1)))

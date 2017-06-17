@@ -31,6 +31,7 @@ def load(handle):
 class FenFile(ChessFile):
     def __init__(self, handle):
         ChessFile.__init__(self, handle)
+        self.fen_is_string = isinstance(handle, StringIO)
         rec = collections.defaultdict(str)
         line = handle.readline().strip()
         rec["Id"] = 0
@@ -49,6 +50,9 @@ class FenFile(ChessFile):
     def loadToModel(self, rec, position, model=None):
         if not model:
             model = GameModel()
+
+        if self.fen_is_string:
+            rec = self.games[0]
 
         if "Variant" in rec:
             model.variant = FischerandomBoard

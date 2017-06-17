@@ -231,9 +231,10 @@ class GameModel(GObject.GObject):
         else:
             return BLACK
 
+    @asyncio.coroutine
     def start_analyzer(self, analyzer_type):
         from pychess.Players.engineNest import init_engine
-        analyzer = init_engine(analyzer_type, self)
+        analyzer = yield from init_engine(analyzer_type, self)
         if analyzer is None:
             return
 
@@ -241,7 +242,6 @@ class GameModel(GObject.GObject):
         self.spectators[analyzer_type] = analyzer
         self.emit("analyzer_added", analyzer, analyzer_type)
         self.analyzer_cids[analyzer_type] = analyzer.connect("analyze", self.on_analyze)
-        return analyzer
 
     def remove_analyzer(self, analyzer_type):
         try:
@@ -258,9 +258,7 @@ class GameModel(GObject.GObject):
         try:
             analyzer = self.spectators[analyzer_type]
         except KeyError:
-            analyzer = self.start_analyzer(analyzer_type)
-            if analyzer is None:
-                return
+            return
 
         analyzer.resume()
         analyzer.setOptionInitialBoard(self)
@@ -275,9 +273,10 @@ class GameModel(GObject.GObject):
         analyzer.pause()
         self.emit("analyzer_paused", analyzer, analyzer_type)
 
+    @asyncio.coroutine
     def restart_analyzer(self, analyzer_type):
         self.remove_analyzer(analyzer_type)
-        self.start_analyzer(analyzer_type)
+        yield from self.start_analyzer(analyzer_type)
 
     def on_analyze(self, analyzer, analysis):
         if analysis and analysis[0] is not None:

@@ -1,4 +1,4 @@
-
+import asyncio
 import math
 import random
 
@@ -222,9 +222,9 @@ class NewGameTasker(Gtk.Alignment):
                            variants[NORMALCHESS], 5 * 60, 0), name)
 
         if color == WHITE:
-            game_handler.generalStart(gamemodel, player0tup, player1tup)
+            asyncio.async(game_handler.generalStart(gamemodel, player0tup, player1tup))
         else:
-            game_handler.generalStart(gamemodel, player1tup, player0tup)
+            asyncio.async(game_handler.generalStart(gamemodel, player1tup, player0tup))
 
 big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
 

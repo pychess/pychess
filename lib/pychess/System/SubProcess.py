@@ -8,6 +8,7 @@ from gi.repository import GObject, Gtk, Gio, GLib
 
 from pychess.external import gbulb
 from pychess.System.Log import log
+from pychess.Players.ProtocolEngine import TIME_OUT_SECOND
 
 
 class SubProcess(GObject.GObject):
@@ -23,6 +24,7 @@ class SubProcess(GObject.GObject):
         self.args = args
         self.warnwords = warnwords
         self.env = env or os.environ
+        self.cwd = cwd
 
         self.defname = os.path.split(path)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
@@ -32,28 +34,32 @@ class SubProcess(GObject.GObject):
                         (cur_time % 60))
         log.debug(path, extra={"task": self.defname})
 
-        argv = [str(u) for u in [self.path] + self.args]
-
-        loop = asyncio.get_event_loop()
-        try:
-            self.proc = loop.run_until_complete(self.start(argv, env, cwd, loop))
-        except GLib.GError:
-            self.emit("died")
-        else:
-            self.pid = self.proc.pid
-            self.read_stdout_task = asyncio.async(self.read_stdout(self.proc.stdout))
-            self.write_task = None
+        self.argv = [str(u) for u in [self.path] + self.args]
 
     @asyncio.coroutine
-    def start(self, argv, env, cwd, loop):
-        log.debug("SubProcess.start(): create_subprocess_exec...", extra={"task": self.defname})
-        create = asyncio.create_subprocess_exec(* argv,
-                                                stdin=asyncio.subprocess.PIPE,
-                                                stdout=asyncio.subprocess.PIPE,
-                                                env=env,
-                                                cwd=cwd)
-        proc = yield from create
-        return proc
+    def start(self):
+            log.debug("SubProcess.start(): create_subprocess_exec...", extra={"task": self.defname})
+            create = asyncio.create_subprocess_exec(* self.argv,
+                                                    stdin=asyncio.subprocess.PIPE,
+                                                    stdout=asyncio.subprocess.PIPE,
+                                                    env=self.env,
+                                                    cwd=self.cwd)
+            try:
+                self.proc = yield from asyncio.wait_for(create, TIME_OUT_SECOND)
+                self.pid = self.proc.pid
+                # print(self.pid, self.path)
+                self.read_stdout_task = asyncio.async(self.read_stdout(self.proc.stdout))
+                self.write_task = None
+            except asyncio.TimeoutError:
+                log.warning("TimeoutError", extra={"task": self.defname})
+                raise
+            except GLib.GError:
+                log.warning("GLib.GError", extra={"task": self.defname})
+                raise
+            except:
+                e = sys.exc_info()[0]
+                log.warning("%s" % e, extra={"task": self.defname})
+                raise
 
     def write(self, line):
         self.write_task = asyncio.async(self.write_stdin(self.proc.stdin, line))

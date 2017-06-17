@@ -5,6 +5,8 @@ from pychess.Players.Engine import Engine
 from pychess.Utils.const import NORMAL
 from pychess.Utils.repr import reprColor
 
+TIME_OUT_SECOND = 10
+
 
 class ProtocolEngine(Engine):
 

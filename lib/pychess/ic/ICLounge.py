@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import asyncio
 import os
 import sys
 import traceback
@@ -352,10 +353,10 @@ class ICLounge(GObject.GObject):
                 wplayer.long_name())
 
         if not ficsgame.board.fen:
-            game_handler.generalStart(gamemodel, player0tup, player1tup)
+            asyncio.async(game_handler.generalStart(gamemodel, player0tup, player1tup))
         else:
-            game_handler.generalStart(gamemodel, player0tup, player1tup, (
-                StringIO(ficsgame.board.fen), fen, 0, -1))
+            asyncio.async(game_handler.generalStart(gamemodel, player0tup, player1tup, (
+                StringIO(ficsgame.board.fen), fen, 0, -1)))
 
     def onGameModelStarted(self, gamemodel, ficsgame):
         self.connection.bm.onGameModelStarted(ficsgame.gameno)
@@ -381,8 +382,8 @@ class ICLounge(GObject.GObject):
             bplayer.long_name(), bplayer.getRatingForCurrentGame()),
             bplayer.long_name())
 
-        game_handler.generalStart(gamemodel, player0tup, player1tup, (
-            StringIO(ficsgame.board.pgn), pgn, 0, -1))
+        asyncio.async(game_handler.generalStart(gamemodel, player0tup, player1tup, (
+            StringIO(ficsgame.board.pgn), pgn, 0, -1)))
 
         if ficsgame.relation == IC_POS_OBSERVING_EXAMINATION:
             if 1:  # int(self.connection.lvm.variablesBackup["kibitz"]) == 0:
@@ -2309,8 +2310,8 @@ class AdjournedTabSection(ParrentListSection):
             bplayer.long_name(), bplayer.getRatingByGameType(ficsgame.game_type)),
             bplayer.long_name())
 
-        game_handler.generalStart(gamemodel, player0tup, player1tup, (
-            StringIO(ficsgame.board.pgn), pgn, 0, -1))
+        asyncio.async(game_handler.generalStart(gamemodel, player0tup, player1tup, (
+            StringIO(ficsgame.board.pgn), pgn, 0, -1)))
         gamemodel.connect("game_started", self.on_game_start, ficsgame)
 
     def on_game_start(self, gamemodel, ficsgame):

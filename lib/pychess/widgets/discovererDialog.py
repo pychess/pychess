@@ -57,7 +57,9 @@ class DiscovererDialog:
         if self.finished:
             self.close()
 
+        # let dialog window draw itself
         yield from asyncio.sleep(0.1)
+
         asyncio.async(self.all_whatcher())
         asyncio.async(self.discovered_whatcher())
 

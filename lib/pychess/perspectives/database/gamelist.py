@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+import asyncio
+
 from gi.repository import Gtk, GObject
 
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult, \
@@ -191,6 +193,6 @@ class GameList(Gtk.TreeView):
 
         self.gamemodel.endstatus = self.gamemodel.status if self.gamemodel.status in UNDOABLE_STATES else UNKNOWN_STATE
         self.gamemodel.status = WAITING_TO_START
-        game_handler.generalStart(self.gamemodel, p0, p1)
 
         perspective_manager.activate_perspective("games")
+        asyncio.async(game_handler.generalStart(self.gamemodel, p0, p1))

@@ -284,21 +284,26 @@ class EngineDiscoverer(GObject.GObject):
 
         return engine
 
+    @asyncio.coroutine
     def __discoverE(self, engine):
         try:
-            subproc = self.initEngine(engine, BLACK)
+            subproc = yield from self.initEngine(engine, BLACK)
             subproc.connect('readyForOptions', self.__discoverE2, engine)
             subproc.prestart()  # Sends the 'start line'
-            subproc.start()
+
+            event = asyncio.Event()
+            subproc.start(event)
+            yield from event.wait()
         except SubProcessError as err:
             log.warning("Engine %s failed discovery: %s" % (engine["name"], err))
             self.emit("engine_failed", engine["name"], engine)
+            subproc.kill(UNKNOWN_REASON)
         except PlayerIsDead as err:
             # Check if the player died after engine_discovered by our own hands
             if not self.toBeRechecked[engine["name"]][1]:
-                log.warning("Engine %s failed discovery: %s" %
-                            (engine["name"], err))
+                log.warning("Engine %s failed discovery: %s" % (engine["name"], err))
                 self.emit("engine_failed", engine["name"], engine)
+            subproc.kill(UNKNOWN_REASON)
 
     def __discoverE2(self, subproc, engine):
         if engine.get("protocol") == "uci":
@@ -306,7 +311,6 @@ class EngineDiscoverer(GObject.GObject):
         elif engine.get("protocol") == "xboard":
             fresh = self.__fromCECPProcess(subproc)
         engine.update(fresh)
-
         exitcode = subproc.kill(UNKNOWN_REASON)
         if exitcode:
             log.debug("Engine failed %s" % engine["name"])
@@ -430,7 +434,7 @@ class EngineDiscoverer(GObject.GObject):
             self.connect("all_engines_discovered", self.save)
             for engine, done in self.toBeRechecked.values():
                 if not done:
-                    self.__discoverE(engine)
+                    asyncio.async(self.__discoverE(engine))
         else:
             self.emit("all_engines_discovered")
             createStoryTextAppEvent("all_engines_discovered")
@@ -496,6 +500,7 @@ class EngineDiscoverer(GObject.GObject):
     def getCountry(self, engine):
         return engine.get("country")
 
+    @asyncio.coroutine
     def initEngine(self, engine, color):
         name = engine['name']
         protocol = engine["protocol"]
@@ -521,9 +526,14 @@ class EngineDiscoverer(GObject.GObject):
         warnwords = ("illegal", "error", "exception")
         try:
             subprocess = SubProcess(path, args=args, warnwords=warnwords, cwd=workdir)
+            yield from subprocess.start()
         except OSError:
             raise PlayerIsDead
+        except asyncio.TimeoutError:
+            raise PlayerIsDead
         except GLib.GError:
+            raise PlayerIsDead
+        except:
             raise PlayerIsDead
 
         engine_proc = attrToProtocol[protocol](subprocess, color, protover,
@@ -547,6 +557,7 @@ class EngineDiscoverer(GObject.GObject):
 
         return engine_proc
 
+    @asyncio.coroutine
     def initPlayerEngine(self,
                          engine,
                          color,
@@ -556,7 +567,7 @@ class EngineDiscoverer(GObject.GObject):
                          incr=0,
                          moves=0,
                          forcePonderOff=False):
-        engine = self.initEngine(engine, color)
+        engine = yield from self.initEngine(engine, color)
 
         def optionsCallback(engine):
             engine.setOptionStrength(diffi, forcePonderOff)
@@ -568,8 +579,9 @@ class EngineDiscoverer(GObject.GObject):
         engine.prestart()
         return engine
 
+    @asyncio.coroutine
     def initAnalyzerEngine(self, engine, mode, variant):
-        engine = self.initEngine(engine, WHITE)
+        engine = yield from self.initEngine(engine, WHITE)
 
         def optionsCallback(engine):
             engine.setOptionAnalyzing(mode)

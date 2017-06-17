@@ -1,4 +1,3 @@
-
 import asyncio
 
 from gi.repository import Gtk
@@ -73,7 +72,7 @@ def initialize():
         old_check_value = conf.get("analyzer_check", True)
         conf.set("analyzer_check", True)
         if HINT not in gamemodel.spectators:
-            gamemodel.start_analyzer(HINT)
+            asyncio.async(gamemodel.start_analyzer(HINT))
         analyzer = gamemodel.spectators[HINT]
         gmwidg.menuitems["hint_mode"].active = True
         threat_PV = conf.get("ThreatPV", False)
@@ -81,7 +80,7 @@ def initialize():
             old_inv_check_value = conf.get("inv_analyzer_check", True)
             conf.set("inv_analyzer_check", True)
             if SPY not in gamemodel.spectators:
-                gamemodel.start_analyzer(SPY)
+                asyncio.async(gamemodel.start_analyzer(SPY))
             inv_analyzer = gamemodel.spectators[SPY]
             gmwidg.menuitems["spy_mode"].active = True
 

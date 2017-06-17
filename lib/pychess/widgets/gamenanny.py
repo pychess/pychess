@@ -2,6 +2,7 @@
     taking care of stuff that is neither very offscreen nor very onscreen
     like bringing up dialogs and """
 
+import asyncio
 import math
 from collections import defaultdict
 
@@ -188,8 +189,8 @@ class GameNanny(object):
 
         if (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()) or \
                 gamemodel.isEngine2EngineGame():
-            gamemodel.restart_analyzer(HINT)
-            gamemodel.restart_analyzer(SPY)
+            asyncio.async(gamemodel.restart_analyzer(HINT))
+            asyncio.async(gamemodel.restart_analyzer(SPY))
             if not conf.get("hint_mode", False):
                 gamemodel.pause_analyzer(HINT)
             if not conf.get("spy_mode", False):
@@ -218,8 +219,8 @@ class GameNanny(object):
 
         # Start analyzers if any
         if not gamemodel.isEngine2EngineGame():
-            gamemodel.start_analyzer(HINT)
-            gamemodel.start_analyzer(SPY)
+            asyncio.async(gamemodel.start_analyzer(HINT))
+            asyncio.async(gamemodel.start_analyzer(SPY))
             if not conf.get("hint_mode", False):
                 gamemodel.pause_analyzer(HINT)
             if not conf.get("spy_mode", False):

@@ -22,7 +22,7 @@ from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Variants import variants
 from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
-from .ProtocolEngine import ProtocolEngine
+from .ProtocolEngine import ProtocolEngine, TIME_OUT_SECOND
 
 
 movere = re.compile(r"""
@@ -75,7 +75,6 @@ whitespaces = re.compile(r"\s+")
 # the engines support the protocol, we can add more. We don't add
 # infinite time though, just in case.
 # The engine can get more time by sending done=0
-TIME_OUT_SECOND = 10.
 
 
 class CECPEngine(ProtocolEngine):
@@ -169,8 +168,6 @@ class CECPEngine(ProtocolEngine):
             # we will do it after feature accept/reject is completed.
 
     def start(self, event=None):
-        # loop = asyncio.get_event_loop()
-        # loop.run_until_complete(self.__startBlocking(event))
         asyncio.async(self.__startBlocking(event))
 
     @asyncio.coroutine
