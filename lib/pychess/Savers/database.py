@@ -27,8 +27,14 @@ def save(path, model, offset):
     time_control = model.tags["TimeControl"] if "TimeControl" in model.tags else ""
     board = int(model.tags["Board"]) if "Board" in model.tags else 0
 
-    white_elo = int(model.tags["WhiteElo"]) if "WhiteElo" in model.tags else 0
-    black_elo = int(model.tags["BlackElo"]) if "BlackElo" in model.tags else 0
+    if "WhiteElo" in model.tags:
+        white_elo = int(model.tags["WhiteElo"]) if model.tags["WhiteElo"] else 0
+    else:
+        white_elo = 0
+    if "BlackElo" in model.tags:
+        black_elo = int(model.tags["BlackElo"]) if model.tags["BlackElo"] else 0
+    else:
+        black_elo = 0
 
     variant = model.variant.variant
 
