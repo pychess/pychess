@@ -80,6 +80,9 @@ media_forward = load_icon(24, "gtk-media-forward-ltr", "media-seek-forward")
 media_next = load_icon(24, "gtk-media-next-ltr", "media-skip-forward")
 media_eject = load_icon(24, "player-eject", "media-eject")
 
+database_find = load_icon(24, "stock_find", "gtk-find")
+
+
 if getattr(sys, 'frozen', False):
     zip_path = os.path.join(os.path.dirname(sys.executable), "library.zip")
     importer = zipimport.zipimporter(zip_path)
@@ -751,16 +754,19 @@ class GameWidget(GObject.GObject):
 
         align = createAlignment(4, 0, 4, 0)
         page_hbox = Gtk.HBox()
+
         startbut = Gtk.Button()
         startbut.add(createImage(media_previous))
         startbut.set_relief(Gtk.ReliefStyle.NONE)
         startbut.props.has_tooltip = True
         startbut.connect("query-tooltip", tip, _("Jump to initial position"))
+
         backbut = Gtk.Button()
         backbut.add(createImage(media_rewind))
         backbut.set_relief(Gtk.ReliefStyle.NONE)
         backbut.props.has_tooltip = True
         backbut.connect("query-tooltip", tip, _("Step back one move"))
+
         mainbut = Gtk.Button()
         mainbut.add(createImage(media_eject))
         mainbut.set_relief(Gtk.ReliefStyle.NONE)
@@ -772,26 +778,60 @@ class GameWidget(GObject.GObject):
         forwbut.set_relief(Gtk.ReliefStyle.NONE)
         forwbut.props.has_tooltip = True
         forwbut.connect("query-tooltip", tip, _("Step forward one move"))
+
         endbut = Gtk.Button()
         endbut.add(createImage(media_next))
         endbut.set_relief(Gtk.ReliefStyle.NONE)
         endbut.props.has_tooltip = True
         endbut.connect("query-tooltip", tip, _("Jump to latest position"))
 
+        findbut = Gtk.Button()
+        findbut.add(createImage(database_find))
+        findbut.set_relief(Gtk.ReliefStyle.NONE)
+        findbut.props.has_tooltip = True
+        findbut.connect("query-tooltip", tip, _("Find postion in current database"))
+
         def on_clicked(button, func):
             func()
+
         self.cids[startbut] = startbut.connect("clicked", on_clicked, self.board.view.showFirst)
         self.cids[backbut] = backbut.connect("clicked", on_clicked, self.board.view.showPrev)
         self.cids[mainbut] = mainbut.connect("clicked", on_clicked, self.board.view.backToMainLine)
         self.cids[forwbut] = forwbut.connect("clicked", on_clicked, self.board.view.showNext)
         self.cids[endbut] = endbut.connect("clicked", on_clicked, self.board.view.showLast)
+        self.cids[findbut] = findbut.connect("clicked", on_clicked, self.find_in_database)
+
         page_hbox.pack_start(startbut, True, True, 0)
         page_hbox.pack_start(backbut, True, True, 0)
         page_hbox.pack_start(mainbut, True, True, 0)
         page_hbox.pack_start(forwbut, True, True, 0)
         page_hbox.pack_start(endbut, True, True, 0)
+        page_hbox.pack_start(findbut, True, True, 0)
+
         align.add(page_hbox)
         return align
+
+    def find_in_database(self):
+        persp = perspective_manager.get_perspective("database")
+        if persp.chessfile is None:
+            return
+
+        view = self.board.view
+        shown_board = self.gamemodel.getBoardAtPly(view.shown, view.shown_variation_idx)
+        fen = shown_board.asFen()
+
+        result = persp.chessfile.get_book_moves(fen)
+        if len(result) == 0:
+            dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
+                                         buttons=Gtk.ButtonsType.OK,
+                                         message_format=_("Position not in current database"))
+            dialogue.run()
+            dialogue.destroy()
+        else:
+            persp.chessfile.set_fen_filter(fen)
+            persp.gamelist.ply = view.shown
+            persp.gamelist.load_games()
+            perspective_manager.activate_perspective("database")
 
     def light_on_off(self, on):
         child = self.tabcontent.get_child()
