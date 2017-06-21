@@ -15,6 +15,7 @@ from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
+from pychess.widgets.BoardControl import play_or_add_move
 from math import ceil
 
 __title__ = _("Hints")
@@ -87,12 +88,13 @@ class Advisor(object):
 
 
 class OpeningAdvisor(Advisor):
-    def __init__(self, store, tv):
+    def __init__(self, store, tv, boardview):
         Advisor.__init__(self, store, _("Opening Book"), OPENING)
         self.tooltip = _(
             "The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
         #        self.opening_names = []
         self.tv = tv
+        self.boardview = boardview
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
@@ -138,6 +140,11 @@ class OpeningAdvisor(Advisor):
 
 #    def child_tooltip (self, i):
 #        return "" if len(self.opening_names)==0 else self.opening_names[i]
+
+    def row_activated(self, iter, model, from_gui=True):
+        if self.store.get_path(iter) != Gtk.TreePath(self.path):
+            board, move, moves = self.store[iter][0]
+            play_or_add_move(self.boardview, board, move)
 
 
 class EngineAdvisor(Advisor):
@@ -415,10 +422,7 @@ class EndgameAdvisor(Advisor):
                     # double click on mate in #
                     self.auto_activate = True
 
-            if board.board.next is None and not self.boardview.shownIsMainLine():
-                model.add_move2variation(board, move, self.boardview.shown_variation_idx)
-            else:
-                model.add_variation(board, (move, ))
+            play_or_add_move(self.boardview, board, move)
 
 
 class Sidepanel(object):
@@ -531,7 +535,8 @@ class Sidepanel(object):
         self.conf_conids = []
 
         if conf.get("opening_check", 0):
-            self.advisors.append(OpeningAdvisor(self.store, self.tv))
+            advisor = OpeningAdvisor(self.store, self.tv, self.boardview)
+            self.advisors.append(advisor)
         if conf.get("endgame_check", 0):
             advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
             self.advisors.append(advisor)
