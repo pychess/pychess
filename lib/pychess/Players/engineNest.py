@@ -615,6 +615,7 @@ class EngineDiscoverer(GObject.GObject):
 discoverer = EngineDiscoverer()
 
 
+@asyncio.coroutine
 def init_engine(analyzer_type, gamemodel, force=False):
     """
     Initializes and starts the engine analyzer of analyzer_type the user has
@@ -642,8 +643,8 @@ def init_engine(analyzer_type, gamemodel, force=False):
             engine = anaengines[-1]
 
         if gamemodel.variant.variant in discoverer.getEngineVariants(engine):
-            analyzer = discoverer.initAnalyzerEngine(engine, mode,
-                                                     gamemodel.variant)
+            analyzer = yield from discoverer.initAnalyzerEngine(engine, mode,
+                                                                gamemodel.variant)
             log.debug("%s analyzer: %s" % (analyzer_type, repr(analyzer)))
 
     return analyzer
