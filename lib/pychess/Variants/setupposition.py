@@ -20,7 +20,7 @@ class SetupBoard(Board):
         fenstr = SETUPSTART if setup is True else setup
         # add all kind if piece to holdings (except king)
         parts = fenstr.split()
-        parts[0] += "/prnsqPRNSQ"
+        parts[0] += "/prnsqkPRNSQK"
         fenstr = " ".join(parts)
         Board.__init__(self, setup=fenstr)
         self._ply = 0

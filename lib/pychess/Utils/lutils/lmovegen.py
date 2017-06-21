@@ -226,13 +226,14 @@ def genAllMoves(board, drops=True):
     # King
     if kings:
         kingMoves = moveArray[KING]
-        cord = firstBit(kings)
-        for c in iterBits(kingMoves[cord] & notfriends):
-            if board.variant == ATOMICCHESS:
-                if not board.arBoard[c]:
+        # cord = firstBit(kings)
+        for cord in iterBits(kings):
+            for c in iterBits(kingMoves[cord] & notfriends):
+                if board.variant == ATOMICCHESS:
+                    if not board.arBoard[c]:
+                        yield newMove(cord, c)
+                else:
                     yield newMove(cord, c)
-            else:
-                yield newMove(cord, c)
 
     if board.variant in ASEAN_VARIANTS:
         # Rooks
@@ -450,10 +451,11 @@ def genCaptures(board):
     # King
     if kings:
         kingMoves = moveArray[KING]
-        cord = firstBit(kings)
-        for c in iterBits(kingMoves[cord] & enemies):
-            if board.variant != ATOMICCHESS:
-                yield newMove(cord, c)
+        # cord = firstBit(kings)
+        for cord in iterBits(kings):
+            for c in iterBits(kingMoves[cord] & enemies):
+                if board.variant != ATOMICCHESS:
+                    yield newMove(cord, c)
 
     # Rooks and Queens
     if board.variant in ASEAN_VARIANTS:

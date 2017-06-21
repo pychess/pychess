@@ -49,34 +49,11 @@ class Board:
                 elif isinstance(setup, str):
                     self.board.applyFen(setup)
 
-            wpieces = self.board.boards[WHITE]
-            bpieces = self.board.boards[BLACK]
-
-            for cord in iterBits(wpieces[PAWN]):
-                self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, PAWN)
-            for cord in iterBits(wpieces[KNIGHT]):
-                self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, KNIGHT)
-            for cord in iterBits(wpieces[BISHOP]):
-                self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, BISHOP)
-            for cord in iterBits(wpieces[ROOK]):
-                self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, ROOK)
-            for cord in iterBits(wpieces[QUEEN]):
-                self.data[RANK(cord)][FILE(cord)] = Piece(WHITE, QUEEN)
-            if self.board.kings[WHITE] != -1:
-                self[Cord(self.board.kings[WHITE])] = Piece(WHITE, KING)
-
-            for cord in iterBits(bpieces[PAWN]):
-                self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, PAWN)
-            for cord in iterBits(bpieces[KNIGHT]):
-                self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, KNIGHT)
-            for cord in iterBits(bpieces[BISHOP]):
-                self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, BISHOP)
-            for cord in iterBits(bpieces[ROOK]):
-                self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, ROOK)
-            for cord in iterBits(bpieces[QUEEN]):
-                self.data[RANK(cord)][FILE(cord)] = Piece(BLACK, QUEEN)
-            if self.board.kings[BLACK] != -1:
-                self[Cord(self.board.kings[BLACK])] = Piece(BLACK, KING)
+            for color in (BLACK, WHITE):
+                pieces = self.board.boards[color]
+                for piece in (PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING):
+                    for cord in iterBits(pieces[piece]):
+                        self.data[RANK(cord)][FILE(cord)] = Piece(color, piece)
 
             if self.variant in DROP_VARIANTS:
                 for color in (BLACK, WHITE):

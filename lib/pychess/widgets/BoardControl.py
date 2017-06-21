@@ -8,7 +8,7 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.Move import Move, parseAny, toAN
 from pychess.Utils.const import ARTIFICIAL, FLAG_CALL, ABORT_OFFER, LOCAL, TAKEBACK_OFFER, \
     ADJOURN_OFFER, DRAW_OFFER, RESIGNATION, HURRY_ACTION, PAUSE_OFFER, RESUME_OFFER, RUNNING, \
-    KING, DROP, DROP_VARIANTS, PAWN, QUEEN, SITTUYINCHESS, QUEEN_PROMOTION
+    DROP, DROP_VARIANTS, PAWN, QUEEN, SITTUYINCHESS, QUEEN_PROMOTION
 
 from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmove, lmovegen
@@ -420,12 +420,16 @@ class BoardControl(Gtk.EventBox):
     def key_pressed(self, keyname):
         if keyname in "PNBRQKMFSOox12345678abcdefgh":
             self.keybuffer += keyname
+
         elif keyname == "minus":
             self.keybuffer += "-"
+
         elif keyname == "at":
             self.keybuffer += "@"
+
         elif keyname == "equal":
             self.keybuffer += "="
+
         elif keyname == "Return":
             color = self.view.model.boards[-1].color
             board = self.view.model.getBoardAtPly(
@@ -435,21 +439,20 @@ class BoardControl(Gtk.EventBox):
             except:
                 self.keybuffer = ""
                 return
+
             if validate(board, move):
-                if self.view.shownIsMainLine() and self.view.model.boards[
-                        -1] == board:
+                if (self.view.model.curplayer.__type__ == LOCAL or self.view.model.examined) and \
+                        self.view.shownIsMainLine() and \
+                        self.view.model.boards[-1] == board and \
+                        self.view.model.status == RUNNING:
+                    # emit move
                     self.emit("piece_moved", move, color)
+                    if self.view.model.examined:
+                        self.view.model.connection.bm.sendMove(toAN(board, move))
                 else:
-                    if board.board.next is None and not self.view.shownIsMainLine(
-                    ):
-                        self.view.model.add_move2variation(
-                            board, move, self.view.shown_variation_idx)
-                        self.view.shown += 1
-                    else:
-                        new_vari = self.view.model.add_variation(board,
-                                                                 (move, ))
-                        self.view.setShownBoard(new_vari[-1])
+                    play_or_add_move(self.view, board, move)
             self.keybuffer = ""
+
         elif keyname == "BackSpace":
             self.keybuffer = self.keybuffer[:-1] if self.keybuffer else ""
 
@@ -457,8 +460,7 @@ class BoardControl(Gtk.EventBox):
         possible_boards = []
         if self.setup_position:
             return possible_boards
-        if len(self.view.model.players) == 2 and self.view.model.isEngine2EngineGame(
-        ):
+        if len(self.view.model.players) == 2 and self.view.model.isEngine2EngineGame():
             return possible_boards
         curboard = self.view.model.getBoardAtPly(ply,
                                                  self.view.shown_variation_idx)
@@ -506,17 +508,9 @@ class BoardState:
             return False
 
         if self.parent.setup_position:
-            to_piece = self.getBoard()[cord1]
             # prevent moving pieces inside holding
             if (cord0.x < 0 or cord0.x > self.FILES - 1) and \
                     (cord1.x < 0 or cord1.x > self.FILES - 1):
-                return False
-            # prevent moving kings off board
-            elif self.getBoard()[cord0].piece == KING and (cord1.x < 0 or cord1.x > self.FILES - 1):
-                if not self.parent.setup_sub_fen:
-                    return False
-            # prevent taking enemy king
-            elif to_piece is not None and to_piece.piece == KING:
                 return False
             else:
                 return True
