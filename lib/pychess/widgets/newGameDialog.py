@@ -96,7 +96,7 @@ def createPlayerUIGlobals(discoverer):
 
 discoverer.connect("all_engines_discovered", createPlayerUIGlobals)
 
-COPY, CLEAR, PASTE = 2, 3, 4
+COPY, CLEAR, PASTE, INITIAL = 2, 3, 4, 5
 
 # ===============================================================================
 # GameInitializationMode is the super class of new game dialogs. Dialogs include
@@ -378,6 +378,11 @@ class _GameInitializationMode(object):
                     d.connect("response", lambda d, a: d.hide())
                     d.show()
                 return
+            elif response == INITIAL:
+                lboard = cls.setupmodel.variant(setup=FEN_START).board
+                cls.ini_widgets(lboard.asFen())
+                cls.board_control.emit("action", "SETUP", FEN_START)
+                return
             elif response != Gtk.ResponseType.OK:
                 cls.widgets["newgamedialog"].hide()
                 cls.widgets["newgamedialog"].disconnect(handlerId)
@@ -467,7 +472,7 @@ class _GameInitializationMode(object):
         for extension in ("loadsidepanel", "enterGameNotationSidePanel",
                           "setupPositionSidePanel"):
             cls.widgets[extension].hide()
-        for button in ("copy_button", "clear_button", "paste_button"):
+        for button in ("copy_button", "clear_button", "paste_button", "initial_button"):
             cls.widgets[button].hide()
 
 # ###############################################################################
@@ -625,7 +630,7 @@ class SetupPositionExtension(_GameInitializationMode):
             return
 
         cls._hideOthers()
-        for button in ("copy_button", "clear_button", "paste_button"):
+        for button in ("copy_button", "clear_button", "paste_button", "initial_button"):
             cls.widgets[button].show()
         cls.widgets["newgamedialog"].set_title(_("Setup Position"))
         cls.widgets["setupPositionSidePanel"].show()
