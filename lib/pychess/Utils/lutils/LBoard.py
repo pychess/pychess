@@ -73,15 +73,10 @@ class LBoard(object):
         self.fen_was_applied = False
         self.plyCount = 0
 
-        self.last_move = None
-
     @property
     def lastMove(self):
-        if self.last_move is not None:
-            return self.last_move if self.fen_was_applied else None
-        else:
-            return self.hist_move[-1] if self.fen_was_applied and len(
-                self.hist_move) > 0 else None
+        return self.hist_move[-1] if self.fen_was_applied and len(
+            self.hist_move) > 0 else None
 
     def repetitionCount(self, draw_threshold=3):
         rc = 1
