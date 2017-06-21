@@ -583,8 +583,12 @@ def parseAN(board, an):
     elif board.arBoard[fcord] == KING:
         if fcord - tcord == 2:
             flag = QUEEN_CASTLE
+            if board.variant == FISCHERRANDOMCHESS:
+                tcord = board.ini_rooks[board.color][0]
         elif fcord - tcord == -2:
             flag = KING_CASTLE
+            if board.variant == FISCHERRANDOMCHESS:
+                tcord = board.ini_rooks[board.color][1]
         elif board.arBoard[
                 tcord] == ROOK:
             color = board.color
@@ -594,7 +598,6 @@ def parseAN(board, an):
                     flag = QUEEN_CASTLE
                 else:
                     flag = KING_CASTLE
-
         else:
             flag = NORMAL_MOVE
     elif board.arBoard[fcord] == PAWN and board.arBoard[tcord] == EMPTY and \

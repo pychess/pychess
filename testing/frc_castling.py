@@ -3,6 +3,7 @@ import unittest
 from pychess.Utils.const import A1, A8, C1, C8, E1, E8, G1, G8, H1, H8,\
     FISCHERRANDOMCHESS, KING_CASTLE, QUEEN_CASTLE
 from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.lutils.lmove import parseAN
 from pychess.Utils.lutils.lmovegen import genCastles, newMove
 
 # TODO: add more test data
@@ -34,6 +35,17 @@ class FRCCastlingTestCase(unittest.TestCase):
                 kfrom, kto, flag = castle
                 self.assertEqual(moves[i], newMove(kfrom, kto, flag))
 
+    def testFRCCastlingUCI(self):
+        """Testing UCI engine FRC castling move"""
+        print()
+
+        fen = "rbq1krb1/pp1pp1pp/2p1n3/5p2/2PP1P1n/4B1N1/PP2P1PP/RBQNKR2 w FAfa - 2 6"
+        print(fen)
+        board = LBoard(FISCHERRANDOMCHESS)
+        board.applyFen(fen)
+        # print board
+        moves = [move for move in genCastles(board)]
+        self.assertTrue(parseAN(board, "e1g1") in moves)
 
 if __name__ == '__main__':
     unittest.main()
