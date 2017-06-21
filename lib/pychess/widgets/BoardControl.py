@@ -168,6 +168,7 @@ class BoardControl(Gtk.EventBox):
                 self.view.shownIsMainLine() and \
                 self.view.model.boards[-1] == board and \
                 self.view.model.status == RUNNING:
+            # emit move
             if self.setup_position:
                 self.emit("piece_moved", (cord0, cord1), board[cord0].color)
             else:
@@ -175,13 +176,37 @@ class BoardControl(Gtk.EventBox):
                 if self.view.model.examined:
                     self.view.model.connection.bm.sendMove(toAN(board, move))
         else:
-            if board.board.next is None and not self.view.shownIsMainLine():
-                self.view.model.add_move2variation(
-                    board, move, self.view.shown_variation_idx)
-                self.view.shown += 1
+            if board.board.next is None:
+                # at the end of variation or main line
+                if not self.view.shownIsMainLine():
+                    # add move to existing variation
+                    self.view.model.add_move2variation(
+                        board, move, self.view.shown_variation_idx)
+                    self.view.shown += 1
+                else:
+                    # create new variation
+                    new_vari = self.view.model.add_variation(board, (move, ))
+                    self.view.setShownBoard(new_vari[-1])
             else:
-                new_vari = self.view.model.add_variation(board, (move, ))
-                self.view.setShownBoard(new_vari[-1])
+                # inside variation or main line
+                if board.board.next.lastMove == move.move:
+                    # replay mainline move
+                    self.view.shown += 1
+                elif board.board.next.children:
+                    # try to find this move in variations
+                    for i, vari in enumerate(board.board.next.children):
+                        for node in vari:
+                            if type(node) != str and node.lastMove == move.move:
+                                # replay variation move
+                                self.view.setShownBoard(node.pieceBoard)
+                                return
+                    # create new variation
+                    new_vari = self.view.model.add_variation(board, (move, ))
+                    self.view.setShownBoard(new_vari[-1])
+                else:
+                    # create new variation
+                    new_vari = self.view.model.add_variation(board, (move, ))
+                    self.view.setShownBoard(new_vari[-1])
 
     def actionActivate(self, widget, key):
         """ Put actions from a menu or similar """
@@ -220,7 +245,6 @@ class BoardControl(Gtk.EventBox):
             self.lockedPly)
         if self.view.shown - 2 in self.possibleBoards:
             del self.possibleBoards[self.view.shown - 2]
-
 
     def moves_undone(self, gamemodel, moves):
         self.view.selected = None
