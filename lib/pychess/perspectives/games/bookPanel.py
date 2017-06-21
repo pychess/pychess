@@ -551,7 +551,7 @@ class Sidepanel(object):
 
         def on_opening_check(none):
             if conf.get("opening_check", 0) and self.boardview is not None:
-                advisor = OpeningAdvisor(self.store, self.tv)
+                advisor = OpeningAdvisor(self.store, self.tv, self.boardview)
                 self.advisors.append(advisor)
                 advisor.shownChanged(self.boardview, self.boardview.shown)
             else:
