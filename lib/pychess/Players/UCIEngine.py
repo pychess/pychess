@@ -62,8 +62,8 @@ class UCIEngine(ProtocolEngine):
         self.invalid_move = None
 
         self.cids = [
-            self.connect("readyForOptions", self.__onReadyForOptions),
-            self.connect("readyForMoves", self.__onReadyForMoves),
+            self.connect_after("readyForOptions", self.__onReadyForOptions),
+            self.connect_after("readyForMoves", self.__onReadyForMoves),
         ]
 
     # Starting the game
