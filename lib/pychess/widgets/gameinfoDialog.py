@@ -8,7 +8,7 @@ def run(widgets):
     gamemodel = gamewidget.cur_gmwidg().gamemodel
     widgets["event_entry"].set_text(gamemodel.tags["Event"])
     widgets["site_entry"].set_text(gamemodel.tags["Site"])
-    widgets["round_entry"].set_text(gamemodel.tags["Round"])
+    widgets["round_entry"].set_text(str(gamemodel.tags["Round"]))
     widgets["white_entry"].set_text(gamemodel.tags["White"])
     widgets["black_entry"].set_text(gamemodel.tags["Black"])
 
