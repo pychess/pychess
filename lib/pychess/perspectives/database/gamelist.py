@@ -10,14 +10,8 @@ from pychess.Players.Human import Human
 from pychess.widgets.ionest import game_handler
 from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
-from pychess.Utils.IconLoader import load_icon
 from pychess.Variants import variants
 from pychess.Database.model import game, event, site, pl1, pl2
-
-media_previous = load_icon(16, "gtk-media-previous-ltr", "media-skip-backward")
-media_rewind = load_icon(16, "gtk-media-rewind-ltr", "media-seek-backward")
-media_forward = load_icon(16, "gtk-media-forward-ltr", "media-seek-forward")
-media_next = load_icon(16, "gtk-media-next-ltr", "media-skip-forward")
 
 
 def createImage(pixbuf):
@@ -74,27 +68,21 @@ class GameList(Gtk.TreeView):
         self.gamemodel = GameModel()
         self.ply = 0
 
-        #  buttons
-        startbut = Gtk.Button()
-        startbut.add(createImage(media_previous))
+        # buttons
+        toolbar = Gtk.Toolbar()
 
-        backbut = Gtk.Button()
-        backbut.add(createImage(media_rewind))
+        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
+        toolbar.insert(firstButton, -1)
 
-        forwbut = Gtk.Button()
-        forwbut.add(createImage(media_forward))
+        prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
+        toolbar.insert(prevButton, -1)
 
-        button_box = Gtk.Box()
+        nextButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_FORWARD)
+        toolbar.insert(nextButton, -1)
 
-        self.label = Gtk.Label(_("Empty"))
-
-        button_box.pack_start(startbut, True, True, 0)
-        button_box.pack_start(backbut, True, True, 0)
-        button_box.pack_start(forwbut, True, True, 0)
-
-        startbut.connect("clicked", self.on_start_button)
-        backbut.connect("clicked", self.on_back_button)
-        forwbut.connect("clicked", self.on_forward_button)
+        firstButton.connect("clicked", self.on_first_clicked)
+        prevButton.connect("clicked", self.on_prev_clicked)
+        nextButton.connect("clicked", self.on_next_clicked)
 
         sw = Gtk.ScrolledWindow()
         sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
@@ -103,16 +91,16 @@ class GameList(Gtk.TreeView):
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         self.box.pack_start(sw, True, True, 0)
-        self.box.pack_start(button_box, False, False, 0)
+        self.box.pack_start(toolbar, False, False, 0)
         self.box.show_all()
 
-    def on_start_button(self, widget):
+    def on_first_clicked(self, button):
         self.load_games(direction=FIRST_PAGE)
 
-    def on_back_button(self, widget):
+    def on_prev_clicked(self, button):
         self.load_games(direction=PREV_PAGE)
 
-    def on_forward_button(self, widget):
+    def on_next_clicked(self, button):
         self.load_games(direction=NEXT_PAGE)
 
     def sort_column_changed(self, treesortable):

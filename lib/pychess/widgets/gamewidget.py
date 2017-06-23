@@ -74,14 +74,6 @@ light_on = load_icon(16, "stock_3d-light-on", "weather-clear")
 light_off = load_icon(16, "stock_3d-light-off", "weather-clear-night")
 gtk_close = load_icon(16, "gtk-close", "window-close")
 
-media_previous = load_icon(24, "gtk-media-previous-ltr", "media-skip-backward")
-media_rewind = load_icon(24, "gtk-media-rewind-ltr", "media-seek-backward")
-media_forward = load_icon(24, "gtk-media-forward-ltr", "media-seek-forward")
-media_next = load_icon(24, "gtk-media-next-ltr", "media-skip-forward")
-media_eject = load_icon(24, "player-eject", "media-eject")
-
-database_find = load_icon(24, "stock_find", "gtk-find")
-
 
 if getattr(sys, 'frozen', False):
     zip_path = os.path.join(os.path.dirname(sys.executable), "library.zip")
@@ -746,69 +738,47 @@ class GameWidget(GObject.GObject):
         return boardvbox, board, infobar, cclock
 
     def initButtons(self, board):
-        def tip(widget, x, y, keyboard_mode, tooltip, text):
-            label = Gtk.Label(label=text)
-            tooltip.set_custom(label)
-            label.show()
-            return True
-
         align = createAlignment(4, 0, 4, 0)
-        page_hbox = Gtk.HBox()
+        toolbar = Gtk.Toolbar()
 
-        startbut = Gtk.Button()
-        startbut.add(createImage(media_previous))
-        startbut.set_relief(Gtk.ReliefStyle.NONE)
-        startbut.props.has_tooltip = True
-        startbut.connect("query-tooltip", tip, _("Jump to initial position"))
+        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
+        firstButton.set_tooltip_text(_("Jump to initial position"))
+        toolbar.insert(firstButton, -1)
 
-        backbut = Gtk.Button()
-        backbut.add(createImage(media_rewind))
-        backbut.set_relief(Gtk.ReliefStyle.NONE)
-        backbut.props.has_tooltip = True
-        backbut.connect("query-tooltip", tip, _("Step back one move"))
+        prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
+        prevButton.set_tooltip_text(_("Step back one move"))
+        toolbar.insert(prevButton, -1)
 
-        mainbut = Gtk.Button()
-        mainbut.add(createImage(media_eject))
-        mainbut.set_relief(Gtk.ReliefStyle.NONE)
-        mainbut.props.has_tooltip = True
-        mainbut.connect("query-tooltip", tip, _("Go back to the main line"))
+        mainButton = Gtk.ToolButton(Gtk.STOCK_REDO)
+        mainButton.set_tooltip_text(_("Go back to the main line"))
+        toolbar.insert(mainButton, -1)
 
-        forwbut = Gtk.Button()
-        forwbut.add(createImage(media_forward))
-        forwbut.set_relief(Gtk.ReliefStyle.NONE)
-        forwbut.props.has_tooltip = True
-        forwbut.connect("query-tooltip", tip, _("Step forward one move"))
+        nextButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_FORWARD)
+        nextButton.set_tooltip_text(_("Step forward one move"))
+        toolbar.insert(nextButton, -1)
 
-        endbut = Gtk.Button()
-        endbut.add(createImage(media_next))
-        endbut.set_relief(Gtk.ReliefStyle.NONE)
-        endbut.props.has_tooltip = True
-        endbut.connect("query-tooltip", tip, _("Jump to latest position"))
+        lastButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_NEXT)
+        lastButton.set_tooltip_text(_("Jump to latest position"))
+        toolbar.insert(lastButton, -1)
 
-        findbut = Gtk.Button()
-        findbut.add(createImage(database_find))
-        findbut.set_relief(Gtk.ReliefStyle.NONE)
-        findbut.props.has_tooltip = True
-        findbut.connect("query-tooltip", tip, _("Find postion in current database"))
+        filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        filterButton.set_tooltip_text(_("Find postion in current database"))
+        toolbar.insert(filterButton, -1)
 
         def on_clicked(button, func):
             func()
 
-        self.cids[startbut] = startbut.connect("clicked", on_clicked, self.board.view.showFirst)
-        self.cids[backbut] = backbut.connect("clicked", on_clicked, self.board.view.showPrev)
-        self.cids[mainbut] = mainbut.connect("clicked", on_clicked, self.board.view.backToMainLine)
-        self.cids[forwbut] = forwbut.connect("clicked", on_clicked, self.board.view.showNext)
-        self.cids[endbut] = endbut.connect("clicked", on_clicked, self.board.view.showLast)
-        self.cids[findbut] = findbut.connect("clicked", on_clicked, self.find_in_database)
+        self.cids[firstButton] = firstButton.connect("clicked", on_clicked, self.board.view.showFirst)
+        self.cids[prevButton] = prevButton.connect("clicked", on_clicked, self.board.view.showPrev)
+        self.cids[mainButton] = mainButton.connect("clicked", on_clicked, self.board.view.backToMainLine)
+        self.cids[nextButton] = nextButton.connect("clicked", on_clicked, self.board.view.showNext)
+        self.cids[lastButton] = lastButton.connect("clicked", on_clicked, self.board.view.showLast)
+        self.cids[filterButton] = filterButton.connect("clicked", on_clicked, self.find_in_database)
 
-        page_hbox.pack_start(startbut, True, True, 0)
-        page_hbox.pack_start(backbut, True, True, 0)
-        page_hbox.pack_start(mainbut, True, True, 0)
-        page_hbox.pack_start(forwbut, True, True, 0)
-        page_hbox.pack_start(endbut, True, True, 0)
-        page_hbox.pack_start(findbut, True, True, 0)
+        tool_box = Gtk.Box()
+        tool_box.pack_start(toolbar, True, True, 0)
 
-        align.add(page_hbox)
+        align.add(tool_box)
         return align
 
     def find_in_database(self):
