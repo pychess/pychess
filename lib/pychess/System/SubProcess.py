@@ -119,11 +119,17 @@ class SubProcess(GObject.GObject):
 
     def pause(self):
         if sys.platform != "win32":
-            self.proc.send_signal(signal.SIGSTOP)
+            try:
+                self.proc.send_signal(signal.SIGSTOP)
+            except ProcessLookupError:
+                log.debug("SubProcess.pause(): ProcessLookupError", extra={"task": self.defname})
 
     def resume(self):
         if sys.platform != "win32":
-            self.proc.send_signal(signal.SIGCONT)
+            try:
+                self.proc.send_signal(signal.SIGCONT)
+            except ProcessLookupError:
+                log.debug("SubProcess.pause(): ProcessLookupError", extra={"task": self.defname})
 
 
 MENU_XML = """
