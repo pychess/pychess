@@ -218,7 +218,11 @@ class Sidepanel:
         (x, y) = self.textview.window_to_buffer_coords(
             Gtk.TextWindowType.WIDGET, int(x), int(y))
 
-        it_at_pos, trailing = self.textview.get_iter_at_position(x, y)
+        ret = self.textview.get_iter_at_position(x, y)
+        if len(ret) == 3:
+            pos_is_over_text, it_at_pos, trailing = ret
+        else:
+            it_at_pos, trailing = ret
 
         if it_at_pos.get_child_anchor() is not None:
             event.window.set_cursor(self.cursor_hand)
