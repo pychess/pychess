@@ -185,6 +185,10 @@ def newTheme(widget, background=None):
     if background is None:
         background = conf.get("welcome_image", addDataPrefix("glade/clear.png"))
 
+    if not path.isfile(background):
+        background = addDataPrefix("glade/clear.png")
+        conf.set("welcome_image", background)
+
     if not background.endswith("clear.png"):
         pixbuf = GdkPixbuf.Pixbuf.new_from_file(background)
         # for frmat in GdkPixbuf.Pixbuf.get_formats():
