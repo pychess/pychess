@@ -16,7 +16,9 @@ cp scoutfish/src/scoutfish.py ./lib/pychess/external
 
 
 if [ ! -d chess_db ]; then
-    git clone https://github.com/mcostalba/chess_db
+#    git clone https://github.com/mcostalba/chess_db
+# use my fork with fixed makefile for x86-32 target
+    git clone https://github.com/gbtami/chess_db
 fi
 cd chess_db; git pull
 cd parser; make build ARCH=x86-64; cd ../..
