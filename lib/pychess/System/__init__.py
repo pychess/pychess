@@ -3,10 +3,37 @@ import sys
 import pstats
 import inspect
 import cProfile
+import tempfile
 from timeit import default_timer
+from urllib.error import HTTPError, URLError
+from urllib.request import urlopen
+
+from gi.repository import GLib
 
 from pychess.System.Log import log
 from pychess.System.which import which
+
+
+def download_file(url, progressbar=None):
+    temp_file = None
+    try:
+        if progressbar is not None:
+            GLib.idle_add(progressbar.set_text, "Downloading %s ..." % url)
+        else:
+            print("Downloading %s ..." % url)
+        f = urlopen(url)
+
+        temp_file = os.path.join(tempfile.gettempdir(), os.path.basename(url))
+        with open(temp_file, "wb") as local_file:
+            local_file.write(f.read())
+
+    except HTTPError as e:
+        print("HTTP Error:", e.code, url)
+
+    except URLError as e:
+        print("URL Error:", e.reason, url)
+
+    return temp_file
 
 
 def searchPath(file, access=os.R_OK, altpath=None):

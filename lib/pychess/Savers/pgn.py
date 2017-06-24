@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
 
+import shutil
 import collections
 import os
 from io import StringIO
 from os.path import getmtime
+import platform
 import re
 import sys
 
@@ -11,25 +13,15 @@ import pexpect
 
 from sqlalchemy import String
 
-try:
-    from pychess.external.scoutfish import Scoutfish
-    use_scoutfish = True
-except ImportError:
-    use_scoutfish = False
-    print("Can't find scoutfish.py See https://github.com/mcostalba/scoutfish")
-
-try:
-    from pychess.external.chess_db import Parser
-    use_chess_db = True
-except ImportError:
-    use_chess_db = False
-    print("Can't find chess_db.py See https://github.com/mcostalba/chess_db")
+from pychess.external.scoutfish import Scoutfish
+from pychess.external.chess_db import Parser
 
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
     WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
 from pychess.System import conf
 from pychess.System.Log import log
-from pychess.System import searchPath
+from pychess.System import searchPath, download_file
+from pychess.System.prefix import getEngineDataPrefix
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.lutils.lmove import toSAN, parseSAN, ParsingError
@@ -43,7 +35,6 @@ from pychess.Savers.database import col2label, TagDatabase
 from pychess.Database import model as dbmodel
 from pychess.Database.PgnImport import PgnImport, TAG_REGEX
 from pychess.Database.model import game, create_indexes, drop_indexes
-
 
 __label__ = _("Chess Game")
 __ending__ = "pgn"
@@ -306,20 +297,31 @@ def load(handle, progressbar=None):
     return PGNFile(handle, progressbar)
 
 
-this_dir = os.path.dirname(os.path.abspath(__file__))
-external = os.path.join(this_dir, "..", "external")
+BITNESS = "64" if platform.machine().endswith('64') else "32"
+EXT = ".exe" if sys.platform == "win32" else ""
 
-if use_scoutfish:
-    executable = "scoutfish.exe" if sys.platform == "win32" else "scoutfish"
-    scoutfish_path = searchPath(executable, access=os.X_OK, altpath=os.path.join(external, executable))
-else:
-    scoutfish_path = None
+scoutfish = "scoutfish_20170624_x%s%s" % (BITNESS, EXT)
+altpath = os.path.join(getEngineDataPrefix(), scoutfish)
+scoutfish_path = searchPath(scoutfish, access=os.X_OK, altpath=altpath)
+print(scoutfish_path)
+if scoutfish_path is None:
+    tgz = "https://github.com/gbtami/scoutfish/releases/download/0.0/20170624_linux.tar.gz"
+    filename = download_file(tgz)
+    if filename is not None:
+        shutil.unpack_archive(filename, getEngineDataPrefix())
+        scoutfish_path = searchPath(scoutfish, access=os.X_OK, altpath=altpath)
 
-if use_chess_db:
-    executable = "parser.exe" if sys.platform == "win32" else "parser"
-    chess_db_path = searchPath(executable, access=os.X_OK, altpath=os.path.join(external, executable))
-else:
-    chess_db_path = None
+
+parser = "parser_20170624_x%s%s" % (BITNESS, EXT)
+altpath = os.path.join(getEngineDataPrefix(), parser)
+chess_db_path = searchPath(parser, access=os.X_OK, altpath=altpath)
+print(chess_db_path)
+if chess_db_path is None:
+    tgz = "https://github.com/gbtami/chess_db/releases/download/20170624/20170624_linux.tar.gz"
+    filename = download_file(tgz)
+    if filename is not None:
+        shutil.unpack_archive(filename, getEngineDataPrefix())
+        chess_db_path = searchPath(parser, access=os.X_OK, altpath=altpath)
 
 
 class PGNFile(ChessFile):

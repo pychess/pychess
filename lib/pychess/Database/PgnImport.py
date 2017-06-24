@@ -7,10 +7,7 @@ import os
 import re
 import sys
 import subprocess
-import tempfile
 import zipfile
-from urllib.error import HTTPError, URLError
-from urllib.request import urlopen
 
 from gi.repository import GLib
 
@@ -19,7 +16,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from pychess.Utils.const import NORMALCHESS, RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Variants import name2variant
-from pychess.System import searchPath
+from pychess.System import searchPath, download_file
 from pychess.System.protoopen import protoopen, protosave
 from pychess.Database.model import event, site, player, game, annotator, tag_game, source
 # from pychess.System import profile_me
@@ -49,28 +46,6 @@ this_dir = os.path.dirname(os.path.abspath(__file__))
 external = os.path.join(this_dir, "..", "external")
 executable = "pgnextractor.exe" if sys.platform == "win32" else "pgnextractor"
 pgnextractor = searchPath(executable, access=os.X_OK, altpath=os.path.join(external, executable))
-
-
-def download_file(url, progressbar=None):
-    temp_file = None
-    try:
-        if progressbar is not None:
-            GLib.idle_add(progressbar.set_text, "Downloading %s ..." % url)
-        else:
-            print("Downloading %s ..." % url)
-        f = urlopen(url)
-
-        temp_file = os.path.join(tempfile.gettempdir(), os.path.basename(url))
-        with open(temp_file, "wb") as local_file:
-            local_file.write(f.read())
-
-    except HTTPError as e:
-        print("HTTP Error:", e.code, url)
-
-    except URLError as e:
-        print("URL Error:", e.reason, url)
-
-    return temp_file
 
 
 class PgnImport():
