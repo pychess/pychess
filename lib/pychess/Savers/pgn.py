@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import shutil
+import stat
 import collections
 import os
 from io import StringIO
@@ -300,28 +301,26 @@ def load(handle, progressbar=None):
 BITNESS = "64" if platform.machine().endswith('64') else "32"
 EXT = ".exe" if sys.platform == "win32" else ""
 
-scoutfish = "scoutfish_20170624_x%s%s" % (BITNESS, EXT)
+scoutfish = "scoutfish_x%s%s" % (BITNESS, EXT)
 altpath = os.path.join(getEngineDataPrefix(), scoutfish)
 scoutfish_path = searchPath(scoutfish, access=os.X_OK, altpath=altpath)
-print(scoutfish_path)
 if scoutfish_path is None:
-    tgz = "https://github.com/gbtami/scoutfish/releases/download/0.0/20170624_linux.tar.gz"
-    filename = download_file(tgz)
+    binary = "https://github.com/gbtami/scoutfish/releases/download/20170627/%s" % scoutfish
+    filename = download_file(binary)
     if filename is not None:
-        shutil.unpack_archive(filename, getEngineDataPrefix())
-        scoutfish_path = searchPath(scoutfish, access=os.X_OK, altpath=altpath)
+        dest = shutil.move(filename, altpath)
+        os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
 
-parser = "parser_20170624_x%s%s" % (BITNESS, EXT)
+parser = "parser_x%s%s" % (BITNESS, EXT)
 altpath = os.path.join(getEngineDataPrefix(), parser)
 chess_db_path = searchPath(parser, access=os.X_OK, altpath=altpath)
-print(chess_db_path)
 if chess_db_path is None:
-    tgz = "https://github.com/gbtami/chess_db/releases/download/20170624/20170624_linux.tar.gz"
-    filename = download_file(tgz)
+    binary = "https://github.com/gbtami/chess_db/releases/download/20170627/%s" % parser
+    filename = download_file(binary)
     if filename is not None:
-        shutil.unpack_archive(filename, getEngineDataPrefix())
-        chess_db_path = searchPath(parser, access=os.X_OK, altpath=altpath)
+        dest = shutil.move(filename, altpath)
+        os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
 
 class PGNFile(ChessFile):
@@ -440,8 +439,8 @@ class PGNFile(ChessFile):
         rows = []
         if self.chess_db is not None:
             move_stat = self.chess_db.find("limit %s skip %s %s" % (1, 0, fen))
-            for stat in move_stat["moves"]:
-                rows.append((stat["move"], int(stat["games"]), int(stat["wins"]), int(stat["losses"]), int(stat["draws"])))
+            for mstat in move_stat["moves"]:
+                rows.append((mstat["move"], int(mstat["games"]), int(mstat["wins"]), int(mstat["losses"]), int(mstat["draws"])))
         return rows
 
     def set_tag_order(self, order_col, is_desc):
@@ -492,14 +491,14 @@ class PGNFile(ChessFile):
             move_stat = self.scoutfish.scout(self.scout_query)
 
             offsets = []
-            for stat in move_stat["matches"]:
-                offs = stat["ofs"]
+            for mstat in move_stat["matches"]:
+                offs = mstat["ofs"]
                 if filtered_offs_list is None:
                     offsets.append(offs)
-                    self.offs_ply[offs] = stat["ply"][0]
+                    self.offs_ply[offs] = mstat["ply"][0]
                 elif offs in filtered_offs_list:
                     offsets.append(offs)
-                    self.offs_ply[offs] = stat["ply"][0]
+                    self.offs_ply[offs] = mstat["ply"][0]
 
             if filtered_offs_list is not None:
                 # Continue scouting until we get enough good offset if needed
@@ -509,11 +508,11 @@ class PGNFile(ChessFile):
                     self.scout_query["skip"] = i * limit - 1
                     move_stat = self.scoutfish.scout(self.scout_query)
 
-                    for stat in move_stat["matches"]:
-                        offs = stat["ofs"]
+                    for mstat in move_stat["matches"]:
+                        offs = mstat["ofs"]
                         if offs in filtered_offs_list:
                             offsets.append(offs)
-                            self.offs_ply[offs] = stat["ply"][0]
+                            self.offs_ply[offs] = mstat["ply"][0]
 
                     # print(i, move_stat["match count"], len(offsets))
                     i += 1
@@ -531,8 +530,8 @@ class PGNFile(ChessFile):
             move_stat = self.chess_db.find("limit %s skip %s %s" % (self.limit, skip, self.fen))
 
             offsets = []
-            for stat in move_stat["moves"]:
-                offs = stat["pgn offsets"]
+            for mstat in move_stat["moves"]:
+                offs = mstat["pgn offsets"]
                 if filtered_offs_list is None:
                     offsets += offs
                 elif offs in filtered_offs_list:
