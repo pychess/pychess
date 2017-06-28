@@ -250,6 +250,7 @@ class GladeHandlers(object):
         if game_handler.closeAllGames(game_handler.gamewidgets) in (
                 Gtk.ResponseType.OK, Gtk.ResponseType.YES):
             ICLogon.stop()
+            self.app.loop.stop()
             self.app.quit()
         else:
             return True
@@ -362,10 +363,12 @@ class GladeHandlers(object):
 
 
 class PyChess(Gtk.Application):
-    def __init__(self, log_viewer, purge_recent, chess_file, ics_host, ics_port):
+    def __init__(self, log_viewer, purge_recent, chess_file, ics_host, ics_port, loop):
         Gtk.Application.__init__(self,
                                  application_id="org.pychess",
                                  flags=Gio.ApplicationFlags.NON_UNIQUE)
+        self.loop = loop
+
         if ics_host:
             ICLogon.host = ics_host
         if ics_port:
