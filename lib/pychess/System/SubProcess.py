@@ -35,6 +35,7 @@ class SubProcess(GObject.GObject):
         log.debug(path, extra={"task": self.defname})
 
         self.argv = [str(u) for u in [self.path] + self.args]
+        self.terminated = False
 
     @asyncio.coroutine
     def start(self):
@@ -66,6 +67,8 @@ class SubProcess(GObject.GObject):
 
     @asyncio.coroutine
     def write_stdin(self, writer, line):
+        if self.terminated:
+            return
         try:
             log.debug(line, extra={"task": self.defname})
             writer.write(line.encode())
@@ -116,6 +119,8 @@ class SubProcess(GObject.GObject):
             log.debug("SubProcess.terminate()", extra={"task": self.defname})
         except ProcessLookupError:
             log.debug("SubProcess.terminate(): ProcessLookupError", extra={"task": self.defname})
+
+        self.terminated = True
 
     def pause(self):
         if sys.platform != "win32":

@@ -1,9 +1,7 @@
 from gi.repository import GObject
 
-from pychess.System.Log import log
 from pychess.Players.Engine import Engine
 from pychess.Utils.const import NORMAL
-from pychess.Utils.repr import reprColor
 
 TIME_OUT_SECOND = 10
 
@@ -30,5 +28,3 @@ class ProtocolEngine(Engine):
 
         self.connected = True
         self.mode = NORMAL
-
-        log.debug(reprColor[color], extra={"task": self.defname})

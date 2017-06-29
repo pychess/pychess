@@ -366,7 +366,7 @@ class EngineDiscoverer(GObject.GObject):
             engine["country"] = backup_engine["country"]
         except StopIteration:
             log.warning(
-                "Engine '%s' has not been tested and verified to work with PyChess" % engine.get('name'))
+                "Engine '%s' is not in PyChess predefined known engines list" % engine.get('name'))
             engine['recheck'] = True
 
         ######

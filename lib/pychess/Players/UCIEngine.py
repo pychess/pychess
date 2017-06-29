@@ -58,7 +58,7 @@ class UCIEngine(ProtocolEngine):
 
         self.queue = asyncio.Queue()
         self.parse_line_task = asyncio.async(self.parseLine(self.engine))
-        self.died_cid = self.engine.connect("died", lambda e: self.queue.put_nowait("del"))
+        self.died_cid = self.engine.connect("died", lambda e: self.queue.put_nowait("die"))
         self.invalid_move = None
 
         self.cids = [
@@ -85,9 +85,9 @@ class UCIEngine(ProtocolEngine):
             log.warning("Unknown error", extra={"task": self.defname})
             raise PlayerIsDead
         else:
-            if return_value == 'del':
+            if return_value == 'die':
                 raise PlayerIsDead
-            assert return_value == "ready"
+            assert return_value == "ready" or return_value == "del"
 
         if event is not None:
             event.set()
