@@ -1123,8 +1123,10 @@ def attachGameWidget(gmwidg):
     notebooks["buttons"].append_page(gmwidg.stat_hbox, None)
     gmwidg.stat_hbox.show_all()
 
-    # We should always show tabs if more than one exists
-    if headbook.get_n_pages() == 2:
+    if headbook.get_n_pages() == 1:
+        show_tabs(not conf.get("hideTabs", False))
+    else:
+        # We should always show tabs if more than one exists
         show_tabs(True)
 
     headbook.set_current_page(-1)
@@ -1166,10 +1168,10 @@ def zoomToBoard(view_zoomed):
 
 
 def show_tabs(show):
-    if show:
-        widgets["mainvbox"].get_children()[2].show_all()
-    else:
-        widgets["mainvbox"].get_children()[2].hide()
+    head = getheadbook()
+    if head is None:
+        return
+    head.set_show_tabs(show)
 
 
 def tabsCallback(none):
