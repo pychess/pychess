@@ -211,8 +211,9 @@ def start(gtk_app):
 
 
 def glib_update(main_context, loop):
-    main_context.iteration(False)
-    loop.call_later(.001, glib_update, main_context, loop)
+    while main_context.pending():
+        main_context.iteration(False)
+    loop.call_later(.01, glib_update, main_context, loop)
 
 
 if gbulb_loop:
@@ -224,7 +225,7 @@ elif sys.platform == "win32":
 else:
     loop = asyncio.SelectorEventLoop()
     asyncio.set_event_loop(loop)
-print(loop)
+
 gtk_app = PyChess(log_viewer, purge_recent, chess_file, ics_host, ics_port, loop)
 
 if log_debug:
