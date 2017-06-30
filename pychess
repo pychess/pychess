@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 # PyChess startup script.
 # This script is to check package requirements, and set up system/enviroment
