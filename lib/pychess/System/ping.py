@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 
+import asyncio
 import re
 import sys
 import shutil
@@ -45,6 +46,7 @@ class Pinger(GObject.GObject):
         else:
             args = ["-i10", self.host]
         self.subproc = SubProcess(shutil.which("ping"), args, env={"LANG": "en"})
+        asyncio.async(self.subproc.start())
         self.conid1 = self.subproc.connect("line", self.__handleLines)
         self.conid2 = self.subproc.connect("died", self.__handleDead)
 

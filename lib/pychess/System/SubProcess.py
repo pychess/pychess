@@ -32,7 +32,7 @@ class SubProcess(GObject.GObject):
         self.defname = (self.defname,
                         time.strftime("%H:%m:%%.3f", time.localtime(cur_time)) %
                         (cur_time % 60))
-        log.debug(path, extra={"task": self.defname})
+        log.debug(path + " " + " ".join(self.args), extra={"task": self.defname})
 
         self.argv = [str(u) for u in [self.path] + self.args]
         self.terminated = False
