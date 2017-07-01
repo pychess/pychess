@@ -21,7 +21,7 @@ from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, 
     WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
 from pychess.System import conf
 from pychess.System.Log import log
-from pychess.System import searchPath, download_file
+from pychess.System import download_file
 from pychess.System.prefix import getEngineDataPrefix
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
@@ -302,24 +302,24 @@ BITNESS = "64" if platform.machine().endswith('64') else "32"
 EXT = ".exe" if sys.platform == "win32" else ""
 
 scoutfish = "scoutfish_x%s%s" % (BITNESS, EXT)
-altpath = os.path.join(getEngineDataPrefix(), scoutfish)
-scoutfish_path = searchPath(scoutfish, access=os.X_OK, altpath=altpath)
+altpath = getEngineDataPrefix()
+scoutfish_path = shutil.which(scoutfish, mode=os.X_OK, path=altpath)
 if scoutfish_path is None:
     binary = "https://github.com/gbtami/scoutfish/releases/download/20170627/%s" % scoutfish
     filename = download_file(binary)
     if filename is not None:
-        dest = shutil.move(filename, altpath)
+        dest = shutil.move(filename, os.path.join(altpath, scoutfish))
         os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
 
 parser = "parser_x%s%s" % (BITNESS, EXT)
-altpath = os.path.join(getEngineDataPrefix(), parser)
-chess_db_path = searchPath(parser, access=os.X_OK, altpath=altpath)
+altpath = getEngineDataPrefix()
+chess_db_path = shutil.which(parser, mode=os.X_OK, path=altpath)
 if chess_db_path is None:
     binary = "https://github.com/gbtami/chess_db/releases/download/20170627/%s" % parser
     filename = download_file(binary)
     if filename is not None:
-        dest = shutil.move(filename, altpath)
+        dest = shutil.move(filename, os.path.join(altpath, parser))
         os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
 

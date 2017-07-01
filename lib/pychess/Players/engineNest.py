@@ -2,6 +2,7 @@ import asyncio
 import os
 from os.path import join, dirname, abspath
 import sys
+import shutil
 import json
 import platform
 from functools import partial
@@ -12,7 +13,7 @@ from collections import OrderedDict
 from gi.repository import GLib, GObject
 
 from pychess.external import gbulb
-from pychess.System import conf, searchPath
+from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.command import Command
 from pychess.System.SubProcess import SubProcess
@@ -219,30 +220,25 @@ class EngineDiscoverer(GObject.GObject):
             PYTHONPATH as well as the directory from where the 'os' module is
             imported """
         if engine.get("vm_name") is not None:
-            altpath = engine.get("vm_command")
+            vm_command = engine.get("vm_command")
+            altpath = dirname(vm_command) if vm_command else None
             if getattr(sys, 'frozen', False) and engine["vm_name"] == "wine":
                 vmpath = None
             else:
-                vmpath = searchPath(engine["vm_name"],
-                                    access=os.R_OK | os.X_OK,
-                                    altpath=altpath)
+                vmpath = shutil.which(engine["vm_name"], mode=os.R_OK | os.X_OK, path=altpath)
 
-            if engine["name"] == "PyChess.py" and not getattr(sys, 'frozen',
-                                                              False):
+            if engine["name"] == "PyChess.py" and not getattr(sys, 'frozen', False):
                 path = join(abspath(dirname(__file__)), "PyChess.py")
                 if not vmpath.endswith(PYTHONBIN):
                     # from python to python3
                     engine["vm_name"] = PYTHONBIN
-                    vmpath = searchPath(PYTHONBIN,
-                                        access=os.R_OK | os.X_OK,
-                                        altpath=None)
+                    vmpath = shutil.which(PYTHONBIN, mode=os.R_OK | os.X_OK, path=None)
                 if not os.access(path, os.R_OK):
                     path = None
             else:
-                altpath = engine.get("command")
-                path = searchPath(engine["name"],
-                                  access=os.R_OK,
-                                  altpath=altpath)
+                command = engine.get("command")
+                altpath = dirname(command) if command else None
+                path = shutil.which(engine["name"], mode=os.R_OK, path=altpath)
 
             if vmpath and path:
                 return vmpath, path
@@ -250,13 +246,11 @@ class EngineDiscoverer(GObject.GObject):
                 return None, path
 
         else:
-            altpath = engine.get("command")
+            command = engine.get("command")
+            altpath = dirname(command) if command else None
             if sys.platform == "win32" and not altpath:
-                altpath = os.path.join(getDataPrefix(), "engines",
-                                       engine["name"])
-            path = searchPath(engine["name"],
-                              access=os.R_OK | os.X_OK,
-                              altpath=altpath)
+                altpath = os.path.join(getDataPrefix(), "engines")
+            path = shutil.which(engine["name"], mode=os.R_OK | os.X_OK, path=altpath)
             if path:
                 return None, path
         return False

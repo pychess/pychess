@@ -5,6 +5,7 @@ import collections
 import json
 import os
 import re
+import shutil
 import sys
 import subprocess
 import zipfile
@@ -16,7 +17,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from pychess.Utils.const import NORMALCHESS, RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Variants import name2variant
-from pychess.System import searchPath, download_file
+from pychess.System import download_file
 from pychess.System.protoopen import protoopen, protosave
 from pychess.Database.model import event, site, player, game, annotator, tag_game, source
 # from pychess.System import profile_me
@@ -45,7 +46,7 @@ pgn2Const = {"*": RUNNING,
 this_dir = os.path.dirname(os.path.abspath(__file__))
 external = os.path.join(this_dir, "..", "external")
 executable = "pgnextractor.exe" if sys.platform == "win32" else "pgnextractor"
-pgnextractor = searchPath(executable, access=os.X_OK, altpath=os.path.join(external, executable))
+pgnextractor = shutil.which(executable, mode=os.X_OK, path=external)
 
 
 class PgnImport():

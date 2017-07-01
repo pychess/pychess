@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 from collections import namedtuple
 
 from gi.repository import Gtk, Gdk, GLib, GObject
@@ -7,7 +8,6 @@ from gi.repository.GdkPixbuf import Pixbuf
 
 from pychess.System import uistuff
 from pychess.System.prefix import getEngineDataPrefix
-from pychess.System import searchPath
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
 from pychess.widgets import newGameDialog
 
@@ -195,7 +195,7 @@ class EnginesDialog():
                 vmpath = ""
                 if new_engine.lower().endswith(".exe") and sys.platform != "win32":
                     vm_name = "wine"
-                    vmpath = searchPath(vm_name, access=os.R_OK | os.X_OK)
+                    vmpath = shutil.which(vm_name, mode=os.R_OK | os.X_OK)
                     if vmpath is None:
                         msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
                                                     buttons=Gtk.ButtonsType.OK)
@@ -211,7 +211,7 @@ class EnginesDialog():
                     if ext == vm.ext:
                         vm_name = vm.name
                         vm_args = vm.args
-                        vmpath = searchPath(vm_name, access=os.R_OK | os.X_OK)
+                        vmpath = shutil.which(vm_name, mode=os.R_OK | os.X_OK)
                         if vmpath is None:
                             msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
                                                         buttons=Gtk.ButtonsType.OK)

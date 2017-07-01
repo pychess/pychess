@@ -10,9 +10,6 @@ from urllib.request import urlopen
 
 from gi.repository import GLib
 
-from pychess.System.Log import log
-from pychess.System.which import which
-
 
 def download_file(url, progressbar=None):
     temp_file = None
@@ -34,16 +31,6 @@ def download_file(url, progressbar=None):
         print("URL Error:", e.reason, url)
 
     return temp_file
-
-
-def searchPath(file, access=os.R_OK, altpath=None):
-    if altpath and os.path.isfile(altpath):
-        if not os.access(altpath, access):
-            log.warning("Not enough permissions on %s" % altpath)
-        else:
-            return altpath
-
-    return which(file, mode=access)
 
 
 def fident(f):

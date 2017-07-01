@@ -7,9 +7,11 @@ import platform
 import subprocess
 import getpass
 import os
+import shutil
+import stat
 
+from pychess.System import download_file
 from pychess.System.Log import log
-from pychess.System import searchPath
 from pychess.System.prefix import getEngineDataPrefix
 from pychess.ic.icc import B_DTGR_END, B_UNIT_END
 
@@ -189,8 +191,15 @@ class ICSTelnet():
             else:
                 timestamp = "timestamp_linux_2.6.8"
 
-            altpath = os.path.join(getEngineDataPrefix(), timestamp)
-            path = searchPath(timestamp, os.X_OK, altpath=altpath)
+            altpath = getEngineDataPrefix()
+            path = shutil.which(timestamp, os.X_OK, path=altpath)
+            if path is None:
+                binary = "https://www.chessclub.com/user/resources/icc/timestamp/%s" % timestamp
+                filename = download_file(binary)
+                if filename is not None:
+                    dest = shutil.move(filename, os.path.join(altpath, timestamp))
+                    os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+
             if path:
                 self.host = "127.0.0.1"
                 self.port = 5500
@@ -198,11 +207,11 @@ class ICSTelnet():
                     self.timestamp_proc = subprocess.Popen(["%s" % path, "-p", "%s" % self.port])
                     log.info("%s started OK" % path)
                 except OSError as err:
-                    log.info("Can't start %s OSError: %s %s" % (err.errno, err.strerror, path))
+                    log.info("Can't start %s OSError: %s %s" % (path, err.errno, err.strerror))
                     self.port = port
                     self.host = host
             else:
-                log.info("%s not found" % altpath)
+                log.info("%s not found, downloading..." % path)
 
         def cb(reader, writer):
             reader.stream_writer = writer
