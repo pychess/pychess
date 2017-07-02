@@ -117,8 +117,11 @@ class PyDockLeaf(TabReceiver):
         """ remove the widget from the leaf-notebook
             if this was the only widget, remove this leaf from its owner """
 
-        # self.book.remove_page(self.book.page_num(widget))
-        self.book.detach_tab(widget)
+        gtk_version = (Gtk.get_major_version(), Gtk.get_minor_version())
+        if gtk_version >= (3, 16):
+            self.book.detach_tab(widget)
+        else:
+            self.book.remove_page(self.book.page_num(widget))
 
         for i, (widget_, title, id) in enumerate(self.panels):
             if widget_ == widget:
