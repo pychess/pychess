@@ -298,10 +298,17 @@ def load(handle, progressbar=None):
     return PGNFile(handle, progressbar)
 
 
+try:
+    with open("/proc/cpuinfo") as f:
+        cpuinfo = f.read()
+except OSError:
+    cpuinfo = ""
+
 BITNESS = "64" if platform.machine().endswith('64') else "32"
+MODERN = "-modern" if "popcnt" in cpuinfo else ""
 EXT = ".exe" if sys.platform == "win32" else ""
 
-scoutfish = "scoutfish_x%s%s" % (BITNESS, EXT)
+scoutfish = "scoutfish_x%s%s%s" % (BITNESS, MODERN, EXT)
 altpath = getEngineDataPrefix()
 scoutfish_path = shutil.which(scoutfish, mode=os.X_OK, path=altpath)
 if scoutfish_path is None:
@@ -312,7 +319,7 @@ if scoutfish_path is None:
         os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
 
 
-parser = "parser_x%s%s" % (BITNESS, EXT)
+parser = "parser_x%s%s%s" % (BITNESS, MODERN, EXT)
 altpath = getEngineDataPrefix()
 chess_db_path = shutil.which(parser, mode=os.X_OK, path=altpath)
 if chess_db_path is None:
