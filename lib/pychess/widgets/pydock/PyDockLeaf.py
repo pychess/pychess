@@ -121,9 +121,10 @@ class PyDockLeaf(TabReceiver):
         if gtk_version >= (3, 16):
             self.book.detach_tab(widget)
         else:
-            # TODO: this segfaults
-            # self.book.remove_page(self.book.page_num(widget))
-            return
+            # To not destroy accidentally our panel widget we need to add a reference to it
+            # https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/Container.html#Gtk.Container.remove
+            widget._ref()
+            self.book.remove(widget)
 
         for i, (widget_, title, id) in enumerate(self.panels):
             if widget_ == widget:
