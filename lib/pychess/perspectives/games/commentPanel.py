@@ -44,6 +44,7 @@ class Sidepanel:
 
         scrollwin = Gtk.ScrolledWindow()
         self.tv = Gtk.TreeView()
+        self.tv.set_headers_visible(False)
         scrollwin.add(self.tv)
         scrollwin.show_all()
 
