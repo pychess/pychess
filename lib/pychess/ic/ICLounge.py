@@ -264,6 +264,9 @@ class ICLounge(GObject.GObject):
             leaf = self.dock.dock(docks["ficshome"][1], CENTER, docks["ficshome"][0], "ficshome")
             leaf.setDockable(False)
 
+            console_leaf = leaf.dock(docks["console"][1], SOUTH, docks["console"][0], "console")
+            console_leaf.dock(docks["news"][1], CENTER, docks["news"][0], "news")
+
             seek_leaf = leaf.dock(docks["seeklist"][1], WEST, docks["seeklist"][0], "seeklist")
             seek_leaf.dock(docks["seekgraph"][1], CENTER, docks["seekgraph"][0], "seekgraph")
             seek_leaf.dock(docks["playerlist"][1], CENTER, docks["playerlist"][0], "playerlist")
@@ -271,9 +274,6 @@ class ICLounge(GObject.GObject):
             seek_leaf.dock(docks["archivelist"][1], CENTER, docks["archivelist"][0], "archivelist")
 
             leaf = leaf.dock(docks["chat"][1], SOUTH, docks["chat"][0], "chat")
-
-            console_leaf = leaf.dock(docks["console"][1], SOUTH, docks["console"][0], "console")
-            console_leaf.dock(docks["news"][1], CENTER, docks["news"][0], "news")
 
         def get_top_games():
             if perspective_manager.current_perspective == fics_perspective:

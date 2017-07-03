@@ -143,8 +143,8 @@ class Database(GObject.GObject, Perspective):
             leaf.setDockable(False)
 
             leaf.dock(docks["switcher"][1], NORTH, docks["switcher"][0], "switcher")
-            leaf = leaf.dock(docks["filter"][1], EAST, docks["filter"][0], "filter")
-            leaf = leaf.dock(docks["openingtree"][1], SOUTH, docks["openingtree"][0], "openingtree")
+            leaf = leaf.dock(docks["openingtree"][1], EAST, docks["openingtree"][0], "openingtree")
+            leaf = leaf.dock(docks["filter"][1], CENTER, docks["filter"][0], "filter")
             leaf.dock(docks["preview"][1], SOUTH, docks["preview"][0], "preview")
 
         def unrealize(dock):
