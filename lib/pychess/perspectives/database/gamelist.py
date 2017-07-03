@@ -45,7 +45,6 @@ class GameList(Gtk.TreeView):
         self.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         self.set_headers_visible(True)
         self.set_rules_hint(True)
-        self.set_fixed_height_mode(True)
         self.set_search_column(1)
 
         titles = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
@@ -55,7 +54,6 @@ class GameList(Gtk.TreeView):
         for i, title in enumerate(titles):
             r = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(title, r, text=i)
-            column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
             column.set_resizable(True)
             column.set_reorderable(True)
             column.set_sort_column_id(i)
