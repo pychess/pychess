@@ -96,12 +96,14 @@ class FilterPanel(Gtk.TreeView):
 
         addSeqButton = Gtk.ToolButton()
         addSeqButton.set_label(_("Seq"))
+        addSeqButton.set_is_important(True)
         addSeqButton.set_tooltip_text(_("Create new squence where listed conditions may be satisfied at different times in a game"))
         addSeqButton.connect("clicked", self.on_add_sequence_clicked)
         toolbar.insert(addSeqButton, -1)
 
         addStreakButton = Gtk.ToolButton()
         addStreakButton.set_label(_("Str"))
+        addStreakButton.set_is_important(True)
         addStreakButton.set_tooltip_text(_("Create new streak sequence where listed conditions have to be satisfied in consecutive (half)moves"))
         addStreakButton.connect("clicked", self.on_add_streak_clicked)
         toolbar.insert(addStreakButton, -1)
