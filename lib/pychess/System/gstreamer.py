@@ -44,8 +44,7 @@ else:
                 else:
                     gst_player = os.path.join(os.path.abspath(os.path.dirname(__file__)), "gst_player.py")
                 self.player = subprocess.Popen([PYTHONBIN, gst_player],
-                                               stdin=subprocess.PIPE,
-                                               stdout=subprocess.PIPE,)
+                                               stdin=subprocess.PIPE)
 
                 self.stdin = io.TextIOWrapper(self.player.stdin, encoding='utf-8', line_buffering=True)
                 self.ready = True
