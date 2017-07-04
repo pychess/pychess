@@ -47,6 +47,7 @@ def play(loop):
     line = sys.stdin.readline().strip()
     if not line:
         loop.quit()
+        return
 
     if os.path.isfile(line):
         player.set_state(Gst.State.NULL)
