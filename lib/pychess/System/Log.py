@@ -58,6 +58,19 @@ class ExtraAdapter(logging.LoggerAdapter):
 log = ExtraAdapter(logger, {})
 
 
+class LoggerWriter:
+    def __init__(self, logger, level):
+        self.logger = logger
+        self.level = level
+
+    def write(self, message):
+        if message != '\n':
+            self.logger.log(self.level, message)
+
+    def flush(self):
+        pass
+
+
 def setup_glib_logging():
     """ Code from https://github.com/GNOME/meld/blob/master/bin/meld """
     from gi.repository import GLib
@@ -112,5 +125,6 @@ def setup_glib_logging():
     except AttributeError:
         # Only present in glib 2.50+
         pass
+
 
 setup_glib_logging()
