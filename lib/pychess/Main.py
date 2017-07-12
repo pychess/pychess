@@ -405,6 +405,9 @@ class PyChess(Gtk.Application):
         log.info("Platform: %s" % platform.platform())
         log.info("Python version: %s.%s.%s" % sys.version_info[0:3])
         log.info("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
+        log.info("Gtk version: %s.%s.%s" % (Gtk.get_major_version(),
+                                            Gtk.get_minor_version(),
+                                            Gtk.get_micro_version()))
 
     @asyncio.coroutine
     def print_tasks(self):
