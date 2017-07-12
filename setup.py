@@ -24,7 +24,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
     import msilib
 
     # Monkeypatching cx_freezee to do per user installer
-    class peruser_bdist_msi(bdist_msi):
+    class peruser_bdist_msi(bdist_msi):  # noqa
         def add_properties(self):
             metadata = self.distribution.metadata
             props = [
@@ -73,6 +73,7 @@ class RegisterCommand(register):
     def run(self):
         self.distribution.metadata.name = "PyChess-%s" % pychess.VERSION_NAME
         register.run(self)
+
 
 DESC = "Chess client"
 
@@ -253,7 +254,7 @@ if msi:
         "include_msvcr": True,
         "path": sys.path + ["lib"],
         "includes": ["gi", "sqlalchemy.sql.default_comparator"],
-        "packages": ["gi", "sqlalchemy.dialects.sqlite", "pychess"],
+        "packages": ["gi", "sqlalchemy.dialects.sqlite", "pexpect", "pychess"],
         "include_files": include_files}
 else:
     PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
