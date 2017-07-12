@@ -1,6 +1,7 @@
 import asyncio
 import os
 import signal
+import subprocess
 import sys
 import time
 
@@ -40,9 +41,20 @@ class SubProcess(GObject.GObject):
     @asyncio.coroutine
     def start(self):
             log.debug("SubProcess.start(): create_subprocess_exec...", extra={"task": self.defname})
+            if sys.platform == "win32":
+                # To prevent engines opening console window
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                preexec_fn = None
+            else:
+                startupinfo = None
+                preexec_fn = self.nice
+
             create = asyncio.create_subprocess_exec(* self.argv,
                                                     stdin=asyncio.subprocess.PIPE,
                                                     stdout=asyncio.subprocess.PIPE,
+                                                    preexec_fn=preexec_fn,
+                                                    startupinfo=startupinfo,
                                                     env=self.env,
                                                     cwd=self.cwd)
             try:
@@ -61,6 +73,9 @@ class SubProcess(GObject.GObject):
                 e = sys.exc_info()[0]
                 log.warning("%s" % e, extra={"task": self.defname})
                 raise
+
+    def nice(self):
+        os.nice(15)
 
     def write(self, line):
         self.write_task = asyncio.async(self.write_stdin(self.proc.stdin, line))
