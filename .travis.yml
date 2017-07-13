@@ -1,11 +1,11 @@
-language: generic
+language: python
 
 matrix:
   include:
     - os: linux
       sudo: required
       dist: trusty
-      language: generic
+      python: '3.4'
       env: PYTHON="python3" PACKAGES="python3-cairo python3-gi python3-gi-cairo python3-sqlalchemy python3-pip"
 
 install:
