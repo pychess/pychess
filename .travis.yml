@@ -12,7 +12,7 @@ install:
  - sudo apt-get update -q
  - sudo apt-get install -y xvfb gobject-introspection gir1.2-glib-2.0  gir1.2-gtk-3.0 gir1.2-rsvg-2.0 $(echo $PACKAGES)
  - sudo pip install pexpect
- - virtualenv --system-site-packages _venv
+ - virtualenv --python=python --system-site-packages _venv
  - source _venv/bin/activate
 
 script:
