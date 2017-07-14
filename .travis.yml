@@ -3,6 +3,7 @@ language: python
 matrix:
   include:
     - os: linux
+      group: deprecated-2017Q3
       sudo: required
       dist: trusty
       python: '3.4'
