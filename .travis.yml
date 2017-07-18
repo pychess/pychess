@@ -1,18 +1,18 @@
-language: python
+group: deprecated-2017Q2
+language: generic
 
 matrix:
   include:
     - os: linux
-      group: deprecated-2017Q3
       sudo: required
       dist: trusty
-      python: '3.4'
+      language: generic
       env: PYTHON="python3" PACKAGES="python3-cairo python3-gi python3-gi-cairo python3-sqlalchemy python3-pip"
 
 install:
  - sudo apt-get update -q
  - sudo apt-get install -y xvfb gobject-introspection gir1.2-glib-2.0  gir1.2-gtk-3.0 gir1.2-rsvg-2.0 $(echo $PACKAGES)
- - sudo pip install pexpect
+ - sudo pip3 install pexpect
  - virtualenv --python=$PYTHON --system-site-packages _venv
  - source _venv/bin/activate
 
