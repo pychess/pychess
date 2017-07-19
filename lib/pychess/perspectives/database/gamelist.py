@@ -7,7 +7,6 @@ from gi.repository import Gtk, GObject
 from pychess.Utils.const import DRAW, LOCAL, WHITE, BLACK, WAITING_TO_START, reprResult, \
     UNKNOWN_STATE, UNDOABLE_STATES, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
 from pychess.Players.Human import Human
-from pychess.widgets.ionest import game_handler
 from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
 from pychess.Variants import variants
@@ -181,4 +180,5 @@ class GameList(Gtk.TreeView):
         self.gamemodel.status = WAITING_TO_START
 
         perspective_manager.activate_perspective("games")
-        asyncio.async(game_handler.generalStart(self.gamemodel, p0, p1))
+        perspective = perspective_manager.get_perspective("games")
+        asyncio.async(perspective.generalStart(self.gamemodel, p0, p1))

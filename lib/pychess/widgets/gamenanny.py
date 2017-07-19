@@ -153,7 +153,7 @@ class GameNanny(object):
 
             def callback(infobar, response, message, gamemodel=gamemodel):
                 if response == 1:
-                    # newGameDialog uses ionest uses gamenanny uses newGameDialog...
+                    # newGameDialog uses perspectives.games uses gamenanny uses newGameDialog...
                     from pychess.widgets.newGameDialog import createRematch
                     createRematch(gamemodel)
                 elif response == 2:

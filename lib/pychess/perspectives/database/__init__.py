@@ -367,6 +367,36 @@ class Database(GObject.GObject, Perspective):
         thread.daemon = True
         thread.start()
 
+    def create_database(self):
+        dialog = Gtk.FileChooserDialog(
+            _("Create New Pgn Database"), None, Gtk.FileChooserAction.SAVE,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_NEW, Gtk.ResponseType.ACCEPT))
+
+        dialog.set_current_folder(os.path.expanduser("~"))
+        dialog.set_current_name("new.pgn")
+
+        response = dialog.run()
+        if response == Gtk.ResponseType.ACCEPT:
+            new_pgn = dialog.get_filename()
+            if not new_pgn.endswith(".pgn"):
+                new_pgn = "%s.pgn" % new_pgn
+
+            if not os.path.isfile(new_pgn):
+                perspective = perspective_manager.get_perspective("database")
+                # create new file
+                with open(new_pgn, "w"):
+                    pass
+                perspective.open_chessfile(new_pgn)
+            else:
+                d = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                                      buttons=Gtk.ButtonsType.OK)
+                d.set_markup(_("<big><b>File '%s' already exists.</b></big>") % new_pgn)
+                d.run()
+                d.hide()
+                print("%s allready exist." % new_pgn)
+
+        dialog.destroy()
+
 
 class NestedFileChooserDialog(object):
     def __init__(self, dialog):

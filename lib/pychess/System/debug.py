@@ -12,7 +12,6 @@ from pychess.System.Log import log
 from pychess.Utils.Board import Board
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.widgets.ionest import game_handler
 from pychess.widgets.BoardView import BoardView
 from pychess.widgets.BoardControl import BoardControl
 from pychess.widgets.gamewidget import GameWidget
@@ -27,6 +26,7 @@ from pychess.Players.Human import Human
 from pychess.Players.ICPlayer import ICPlayer
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.ic import ICLogon
+from pychess.perspectives import perspective_manager
 
 
 def dump_threads():
@@ -79,7 +79,8 @@ def obj_referrers(klass):
 
 
 def print_obj_referrers():
-    if len(game_handler.gamewidgets) > 0:
+    perspective = perspective_manager.get_perspective("games")
+    if len(perspective.gamewidgets) > 0:
         return
 
     for klass in (

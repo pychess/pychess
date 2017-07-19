@@ -26,7 +26,6 @@ from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
 from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.widgets import gamewidget
-from pychess.widgets.ionest import game_handler, get_open_dialog
 from pychess.widgets import analyzegameDialog
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import internet_game_tasker
@@ -35,7 +34,7 @@ from pychess.Savers import chesspastebin
 from pychess.ic import ICLogon
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.welcome import Welcome
-from pychess.perspectives.games import Games
+from pychess.perspectives.games import Games, get_open_dialog
 from pychess.perspectives.fics import FICS
 from pychess.perspectives.database import Database, NestedFileChooserDialog
 from pychess import VERSION, VERSION_NAME
@@ -205,12 +204,14 @@ class GladeHandlers(object):
     def on_save_game1_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
         position = gmwidg.board.view.shown
-        game_handler.saveGame(gmwidg.gamemodel, position)
+        perspective = perspective_manager.get_perspective("games")
+        perspective.saveGame(gmwidg.gamemodel, position)
 
     def on_save_game_as1_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
         position = gmwidg.board.view.shown
-        game_handler.saveGameAs(gmwidg.gamemodel, position)
+        perspective = perspective_manager.get_perspective("games")
+        perspective.saveGameAs(gmwidg.gamemodel, position)
 
     def on_share_game_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
@@ -219,7 +220,8 @@ class GladeHandlers(object):
     def on_export_position_activate(self, widget):
         gmwidg = gamewidget.cur_gmwidg()
         position = gmwidg.board.view.shown
-        game_handler.saveGameAs(gmwidg.gamemodel, position, export=True)
+        perspective = perspective_manager.get_perspective("games")
+        perspective.saveGameAs(gmwidg.gamemodel, position, export=True)
 
     def on_analyze_game_activate(self, widget):
         analyzegameDialog.run()
@@ -234,20 +236,21 @@ class GladeHandlers(object):
         persp = perspective_manager.current_perspective
         if persp.name == "games":
             gmwidg = gamewidget.cur_gmwidg()
-            game_handler.closeGame(gmwidg)
+            persp.closeGame(gmwidg)
         elif persp.name == "database":
             persp.close()
 
     def on_quit1_activate(self, widget, *args):
+        perspective = perspective_manager.get_perspective("games")
         if isinstance(widget, Gdk.Event):
-            if len(game_handler.gamewidgets) == 1 and conf.get("hideTabs", False):
+            if len(perspective.gamewidgets) == 1 and conf.get("hideTabs", False):
                 gmwidg = gamewidget.cur_gmwidg()
-                game_handler.closeGame(gmwidg, gmwidg.gamemodel)
+                perspective.closeGame(gmwidg, gmwidg.gamemodel)
                 return True
-            elif len(game_handler.gamewidgets) >= 1 and conf.get("closeAll", False):
-                game_handler.closeAllGames(game_handler.gamewidgets)
+            elif len(perspective.gamewidgets) >= 1 and conf.get("closeAll", False):
+                perspective.closeAllGames(perspective.gamewidgets)
                 return True
-        if game_handler.closeAllGames(game_handler.gamewidgets) in (
+        if perspective.closeAllGames(perspective.gamewidgets) in (
                 Gtk.ResponseType.OK, Gtk.ResponseType.YES):
             ICLogon.stop()
             self.app.loop.stop()
@@ -297,7 +300,8 @@ class GladeHandlers(object):
         gamewidget.zoomToBoard(not widget.get_active())
 
     def on_hint_mode_activate(self, widget):
-        for gmwidg in game_handler.gamewidgets:
+        perspective = perspective_manager.get_perspective("games")
+        for gmwidg in perspective.gamewidgets:
             if gmwidg.isInFront():
                 if widget.get_active():
                     gmwidg.gamemodel.resume_analyzer(HINT)
@@ -305,7 +309,8 @@ class GladeHandlers(object):
                     gmwidg.gamemodel.pause_analyzer(HINT)
 
     def on_spy_mode_activate(self, widget):
-        for gmwidg in game_handler.gamewidgets:
+        perspective = perspective_manager.get_perspective("games")
+        for gmwidg in perspective.gamewidgets:
             if gmwidg.isInFront():
                 if widget.get_active():
                     gmwidg.gamemodel.resume_analyzer(SPY)
@@ -329,7 +334,8 @@ class GladeHandlers(object):
     # Database menu
 
     def on_new_database1_activate(self, widget):
-        game_handler.create_database()
+        perspective = perspective_manager.get_perspective("database")
+        perspective.create_database()
 
     def on_import_chessfile_activate(self, widget):
         perspective = perspective_manager.get_perspective("database")
@@ -475,9 +481,6 @@ class PyChess(Gtk.Application):
         # Redirect widgets
         gamewidget.setWidgets(widgets)
 
-        # Main.py still needs a minimum of information
-        game_handler.connect("gmwidg_created", self.on_gmwidg_created)
-
         # The only menuitems that need special initing
         for widget in ("hint_mode", "spy_mode"):
             widgets[widget].set_sensitive(False)
@@ -583,6 +586,8 @@ class PyChess(Gtk.Application):
 
             if persp == Database:
                 perspective.connect("chessfile_opened", self.on_chessfile_opened)
+            elif persp == Games:
+                perspective.connect("gmwidg_created", self.on_gmwidg_created)
 
         new_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
         new_button.set_tooltip_text(_("New Game"))

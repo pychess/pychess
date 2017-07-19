@@ -28,7 +28,6 @@ from pychess.System import conf
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
-from pychess.widgets.ionest import game_handler, enddir
 from pychess.widgets import gamewidget
 from pychess.widgets import ImageMenu
 from pychess.widgets.BoardControl import BoardControl
@@ -36,6 +35,8 @@ from pychess.Savers import fen, pgn
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Variants import variants
 from pychess.Variants.normal import NormalBoard
+from pychess.perspectives import perspective_manager
+from pychess.perspectives.games import enddir
 
 # ===============================================================================
 # We init most dialog icons global to make them accessibly to the
@@ -430,7 +431,7 @@ class _GameInitializationMode(object):
             player1 = playerItems[0].index(playerItems[variant_index][player1])
             diffi1 = int(cls.widgets["skillSlider2"].get_value())
 
-            # Prepare players for ionest
+            # Prepare players
             playertups = []
             for i, playerno, diffi, color in ((0, player0, diffi0, WHITE),
                                               (1, player1, diffi1, BLACK)):
@@ -501,7 +502,8 @@ class NewGameMode(_GameInitializationMode):
         cls.widgets["newgamedialog"].set_title(_("New Game"))
 
         def _callback(gamemodel, p0, p1):
-            asyncio.async(game_handler.generalStart(gamemodel, p0, p1))
+            perspective = perspective_manager.get_perspective("games")
+            asyncio.async(perspective.generalStart(gamemodel, p0, p1))
 
         cls._generalRun(_callback, _validate)
 
@@ -675,7 +677,8 @@ class SetupPositionExtension(_GameInitializationMode):
 
         def _callback(gamemodel, p0, p1):
             text = cls.get_fen()
-            asyncio.async(game_handler.generalStart(
+            perspective = perspective_manager.get_perspective("games")
+            asyncio.async(perspective.generalStart(
                 gamemodel, p0, p1, (StringIO(text), fen, 0, -1)))
 
         cls._generalRun(_callback, _validate)
@@ -806,7 +809,8 @@ class EnterNotationExtension(_GameInitializationMode):
 
         def _callback(gamemodel, p0, p1):
             text, loadType = _get_text()
-            asyncio.async(game_handler.generalStart(
+            perspective = perspective_manager.get_perspective("games")
+            asyncio.async(perspective.generalStart(
                 gamemodel, p0, p1, (StringIO(text), loadType, 0, -1)))
 
         cls._generalRun(_callback, _validate)
@@ -868,7 +872,8 @@ def createRematch(gamemodel):
                       (engine, BLACK, wp.strength, gamemodel.variant, secs,
                        gain), repr(wp))
 
-    asyncio.async(game_handler.generalStart(newgamemodel, player0tup, player1tup))
+    perspective = perspective_manager.get_perspective("games")
+    asyncio.async(perspective.generalStart(newgamemodel, player0tup, player1tup))
 
 
 def loadFileAndRun(uri):
@@ -881,4 +886,5 @@ def loadFileAndRun(uri):
     black_name = _("Black")
     p0 = (LOCAL, Human, (WHITE, white_name), white_name)
     p1 = (LOCAL, Human, (BLACK, black_name), black_name)
-    asyncio.async(game_handler.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1)))
+    perspective = perspective_manager.get_perspective("games")
+    asyncio.async(perspective.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1)))

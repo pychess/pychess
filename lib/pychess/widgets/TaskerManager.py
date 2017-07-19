@@ -13,8 +13,8 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE, BLACK, NORMALCHESS
 from pychess.Variants import variants
 from pychess.ic import ICLogon
-from pychess.widgets.ionest import game_handler
 from pychess.widgets import newGameDialog
+from pychess.perspectives import perspective_manager
 
 from .Background import giveBackground
 from .ToggleComboBox import ToggleComboBox
@@ -221,10 +221,11 @@ class NewGameTasker(Gtk.Alignment):
                           (engine, 1 - color, difficulty,
                            variants[NORMALCHESS], 5 * 60, 0), name)
 
+        perspective = perspective_manager.get_perspective("games")
         if color == WHITE:
-            asyncio.async(game_handler.generalStart(gamemodel, player0tup, player1tup))
+            asyncio.async(perspective.generalStart(gamemodel, player0tup, player1tup))
         else:
-            asyncio.async(game_handler.generalStart(gamemodel, player1tup, player0tup))
+            asyncio.async(perspective.generalStart(gamemodel, player1tup, player0tup))
 
 big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
 

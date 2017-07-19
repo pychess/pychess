@@ -24,6 +24,7 @@ from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SO
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.gfx import Pieces
 from pychess.widgets.Background import hexcol, newTheme
+from pychess.perspectives import perspective_manager
 
 firstRun = True
 
@@ -103,9 +104,9 @@ def anal_combo_set_value(combobox, value, show_arrow_check, ana_check,
             index = 0
         combobox.set_active(index)
 
-    from pychess.widgets.ionest import game_handler
     from pychess.widgets.gamewidget import widgets
-    for gmwidg in game_handler.gamewidgets:
+    perspective = perspective_manager.get_perspective("games")
+    for gmwidg in perspective.gamewidgets:
         spectators = gmwidg.gamemodel.spectators
         md5 = engine.get('md5')
 
@@ -217,16 +218,16 @@ class HintTab:
 
         def on_analyzer_check_toggled(check):
             self.widgets["analyzers_vbox"].set_sensitive(check.get_active())
-            from pychess.widgets.ionest import game_handler
             from pychess.widgets.gamewidget import widgets
-            if len(game_handler.gamewidgets) != 0:
+            perspective = perspective_manager.get_perspective("games")
+            if len(perspective.gamewidgets) != 0:
                 if check.get_active():
-                    for gmwidg in game_handler.gamewidgets:
+                    for gmwidg in perspective.gamewidgets:
                         asyncio.async(gmwidg.gamemodel.restart_analyzer(HINT))
                         if not widgets["hint_mode"].get_active():
                             gmwidg.gamemodel.pause_analyzer(HINT)
                 else:
-                    for gmwidg in game_handler.gamewidgets:
+                    for gmwidg in perspective.gamewidgets:
                         gmwidg.gamemodel.remove_analyzer(HINT)
 
         self.widgets["analyzers_vbox"].set_sensitive(widgets[
@@ -236,15 +237,15 @@ class HintTab:
 
         def on_invanalyzer_check_toggled(check):
             self.widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
-            from pychess.widgets.ionest import game_handler
-            if len(game_handler.gamewidgets) != 0:
+            perspective = perspective_manager.get_perspective("games")
+            if len(perspective.gamewidgets) != 0:
                 if check.get_active():
-                    for gmwidg in game_handler.gamewidgets:
+                    for gmwidg in perspective.gamewidgets:
                         asyncio.async(gmwidg.gamemodel.restart_analyzer(SPY))
                         if not widgets["spy_mode"].get_active():
                             gmwidg.gamemodel.pause_analyzer(SPY)
                 else:
-                    for gmwidg in game_handler.gamewidgets:
+                    for gmwidg in perspective.gamewidgets:
                         gmwidg.gamemodel.remove_analyzer(SPY)
 
         self.widgets["inv_analyzers_vbox"].set_sensitive(widgets[

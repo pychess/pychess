@@ -25,7 +25,6 @@ from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.System.ping import Pinger
 from pychess.System.Log import log
 from pychess.widgets import insert_formatted, dock_panel_tab
-from pychess.widgets.ionest import game_handler
 from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.ConsoleWindow import ConsoleWindow
 from pychess.widgets.SpotGraph import SpotGraph
@@ -352,10 +351,11 @@ class ICLounge(GObject.GObject):
                 wplayer.long_name(), wplayer.getRatingForCurrentGame()),
                 wplayer.long_name())
 
+        perspective = perspective_manager.get_perspective("games")
         if not ficsgame.board.fen:
-            asyncio.async(game_handler.generalStart(gamemodel, player0tup, player1tup))
+            asyncio.async(perspective.generalStart(gamemodel, player0tup, player1tup))
         else:
-            asyncio.async(game_handler.generalStart(gamemodel, player0tup, player1tup, (
+            asyncio.async(perspective.generalStart(gamemodel, player0tup, player1tup, (
                 StringIO(ficsgame.board.fen), fen, 0, -1)))
 
     def onGameModelStarted(self, gamemodel, ficsgame):
@@ -382,7 +382,8 @@ class ICLounge(GObject.GObject):
             bplayer.long_name(), bplayer.getRatingForCurrentGame()),
             bplayer.long_name())
 
-        asyncio.async(game_handler.generalStart(gamemodel, player0tup, player1tup, (
+        perspective = perspective_manager.get_perspective("games")
+        asyncio.async(perspective.generalStart(gamemodel, player0tup, player1tup, (
             StringIO(ficsgame.board.pgn), pgn, 0, -1)))
 
         if ficsgame.relation == IC_POS_OBSERVING_EXAMINATION:
@@ -2310,7 +2311,8 @@ class AdjournedTabSection(ParrentListSection):
             bplayer.long_name(), bplayer.getRatingByGameType(ficsgame.game_type)),
             bplayer.long_name())
 
-        asyncio.async(game_handler.generalStart(gamemodel, player0tup, player1tup, (
+        perspective = perspective_manager.get_perspective("games")
+        asyncio.async(perspective.generalStart(gamemodel, player0tup, player1tup, (
             StringIO(ficsgame.board.pgn), pgn, 0, -1)))
         gamemodel.connect("game_started", self.on_game_start, ficsgame)
 
