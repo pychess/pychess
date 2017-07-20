@@ -70,26 +70,11 @@ def cleanNotebook(name=None):
 
 if getattr(sys, 'frozen', False):
     zip_path = os.path.join(os.path.dirname(sys.executable), "library.zip")
-    importer = zipimport.zipimporter(zip_path)
-
-    def load_module(name):
-        """http://stackoverflow.com/questions/29578210/zipimporter-cant-find-load-sub-modules"""
-        parts = name.split('/')
-        module = importer.load_module(parts[0])
-        full_name = parts[0]
-        for part in parts[1:]:
-            full_name += '.' + part
-            if not hasattr(module, '__path__'):
-                raise ImportError('%s' % full_name)
-            path = module.__path__[0]
-            module = zipimport.zipimporter(path).load_module(part)
-
-        return module
-
+    importer = zipimport.zipimporter(zip_path + "/pychess/perspectives/games")
     postfix = "Panel.pyc"
     with zipfile.ZipFile(zip_path, 'r') as myzip:
-        names = [f[:-4] for f in myzip.namelist() if f.endswith(postfix) and "/games/" in f]
-    sidePanels = [load_module(name) for name in names]
+        names = [f[:-4].split("/")[-1] for f in myzip.namelist() if f.endswith(postfix) and "/games/" in f]
+    sidePanels = [importer.load_module(name) for name in names]
 else:
     path = os.path.dirname(__file__)
     postfix = "Panel.py"
