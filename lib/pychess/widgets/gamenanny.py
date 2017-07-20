@@ -21,8 +21,8 @@ from pychess.System.Log import log
 from pychess.widgets import preferencesDialog
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
 from pychess.widgets import InfoBar
-
-from .gamewidget import getWidgets, key2gmwidg
+from pychess.widgets.gamewidget import getWidgets
+from pychess.perspectives import perspective_manager
 
 
 class GameNanny(object):
@@ -74,7 +74,8 @@ class GameNanny(object):
     # ===============================================================================
 
     def on_gmwidg_closed(self, gmwidg):
-        if len(key2gmwidg) == 1:
+        perspective = perspective_manager.get_perspective("games")
+        if len(perspective.key2gmwidg) == 1:
             getWidgets()['main_window'].set_title('%s - PyChess' % _('Welcome'))
         return False
 
@@ -179,7 +180,8 @@ class GameNanny(object):
         message.callback = callback
         gmwidg.game_ended_message = message
 
-        if len(key2gmwidg) > 0:
+        perspective = perspective_manager.get_perspective("games")
+        if len(perspective.key2gmwidg) > 0:
             gmwidg.replaceMessages(message)
 
         if reason == WHITE_ENGINE_DIED:

@@ -86,7 +86,10 @@ class PerspectiveManager(object):
             self.activate_perspective("welcome")
 
     def get_perspective(self, name):
-        perspective, button, index = self.perspectives[name]
+        if name in self.perspectives:
+            perspective, button, index = self.perspectives[name]
+        else:
+            perspective = None
         return perspective
 
     def set_perspective_widget(self, name, widget):

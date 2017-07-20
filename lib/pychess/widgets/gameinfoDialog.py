@@ -1,11 +1,12 @@
-from . import gamewidget
 from pychess.Utils.const import BLACK, WHITE
+from pychess.perspectives import perspective_manager
 
 firstRun = True
 
 
 def run(widgets):
-    gamemodel = gamewidget.cur_gmwidg().gamemodel
+    persp = perspective_manager.get_perspective("games")
+    gamemodel = persp.cur_gmwidg().gamemodel
     widgets["event_entry"].set_text(gamemodel.tags["Event"])
     widgets["site_entry"].set_text(gamemodel.tags["Site"])
     widgets["round_entry"].set_text(str(gamemodel.tags["Round"]))
@@ -32,7 +33,8 @@ def initialize(widgets):
         return True
 
     def accept_new_properties(button, *args):
-        gamemodel = gamewidget.cur_gmwidg().gamemodel
+        persp = perspective_manager.get_perspective("games")
+        gamemodel = persp.cur_gmwidg().gamemodel
         gamemodel.tags["Event"] = widgets["event_entry"].get_text()
         gamemodel.tags["Site"] = widgets["site_entry"].get_text()
         gamemodel.tags["Round"] = widgets["round_entry"].get_text()

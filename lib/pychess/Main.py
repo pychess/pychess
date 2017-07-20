@@ -72,36 +72,37 @@ class GladeHandlers(object):
                 print_obj_referrers()
 
         # Tabbing related shortcuts
-        if not gamewidget.getheadbook():
+        persp = perspective_manager.get_perspective("games")
+        if not persp.getheadbook():
             pagecount = 0
         else:
-            pagecount = gamewidget.getheadbook().get_n_pages()
+            pagecount = persp.getheadbook().get_n_pages()
         if pagecount > 1:
             if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
-                page_num = gamewidget.getheadbook().get_current_page()
+                page_num = persp.getheadbook().get_current_page()
                 # Move selected
                 if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
-                    child = gamewidget.getheadbook().get_nth_page(page_num)
+                    child = persp.getheadbook().get_nth_page(page_num)
                     if event.keyval == Gdk.KEY_Page_Up:
-                        gamewidget.getheadbook().reorder_child(child, (
+                        persp.getheadbook().reorder_child(child, (
                             page_num - 1) % pagecount)
                         return True
                     elif event.keyval == Gdk.KEY_Page_Down:
-                        gamewidget.getheadbook().reorder_child(child, (
+                        persp.getheadbook().reorder_child(child, (
                             page_num + 1) % pagecount)
                         return True
                 # Change selected
                 else:
                     if event.keyval == Gdk.KEY_Page_Up:
-                        gamewidget.getheadbook().set_current_page(
+                        persp.getheadbook().set_current_page(
                             (page_num - 1) % pagecount)
                         return True
                     elif event.keyval == Gdk.KEY_Page_Down:
-                        gamewidget.getheadbook().set_current_page(
+                        persp.getheadbook().set_current_page(
                             (page_num + 1) % pagecount)
                         return True
 
-        gmwidg = gamewidget.cur_gmwidg()
+        gmwidg = persp.cur_gmwidg()
         if gmwidg is not None:
             # Let default handler work if typing inside entry widgets
             current_focused_widget = gamewidget.getWidgets()["main_window"].get_focus()
@@ -187,7 +188,8 @@ class GladeHandlers(object):
     def on_set_up_position_activate(self, widget):
         rotate_menu = gamewidget.getWidgets()["rotate_board1"]
         rotate_menu.set_sensitive(True)
-        gmwidg = gamewidget.cur_gmwidg()
+        persp = perspective_manager.get_perspective("games")
+        gmwidg = persp.cur_gmwidg()
         if gmwidg is not None:
             if len(gmwidg.gamemodel.boards) == 1:
                 ply = 0
@@ -202,23 +204,25 @@ class GladeHandlers(object):
         newGameDialog.EnterNotationExtension.run()
 
     def on_save_game1_activate(self, widget):
-        gmwidg = gamewidget.cur_gmwidg()
-        position = gmwidg.board.view.shown
         perspective = perspective_manager.get_perspective("games")
+        gmwidg = perspective.cur_gmwidg()
+        position = gmwidg.board.view.shown
         perspective.saveGame(gmwidg.gamemodel, position)
 
     def on_save_game_as1_activate(self, widget):
-        gmwidg = gamewidget.cur_gmwidg()
-        position = gmwidg.board.view.shown
         perspective = perspective_manager.get_perspective("games")
+        gmwidg = perspective.cur_gmwidg()
+        position = gmwidg.board.view.shown
         perspective.saveGameAs(gmwidg.gamemodel, position)
 
     def on_share_game_activate(self, widget):
-        gmwidg = gamewidget.cur_gmwidg()
+        perspective = perspective_manager.get_perspective("games")
+        gmwidg = perspective.cur_gmwidg()
         chesspastebin.paste(gmwidg.gamemodel)
 
     def on_export_position_activate(self, widget):
-        gmwidg = gamewidget.cur_gmwidg()
+        perspective = perspective_manager.get_perspective("games")
+        gmwidg = perspective.cur_gmwidg()
         position = gmwidg.board.view.shown
         perspective = perspective_manager.get_perspective("games")
         perspective.saveGameAs(gmwidg.gamemodel, position, export=True)
@@ -235,7 +239,7 @@ class GladeHandlers(object):
     def on_close1_activate(self, widget):
         persp = perspective_manager.current_perspective
         if persp.name == "games":
-            gmwidg = gamewidget.cur_gmwidg()
+            gmwidg = persp.cur_gmwidg()
             persp.closeGame(gmwidg)
         elif persp.name == "database":
             persp.close()
@@ -244,7 +248,7 @@ class GladeHandlers(object):
         perspective = perspective_manager.get_perspective("games")
         if isinstance(widget, Gdk.Event):
             if len(perspective.gamewidgets) == 1 and conf.get("hideTabs", False):
-                gmwidg = gamewidget.cur_gmwidg()
+                gmwidg = perspective.cur_gmwidg()
                 perspective.closeGame(gmwidg, gmwidg.gamemodel)
                 return True
             elif len(perspective.gamewidgets) >= 1 and conf.get("closeAll", False):
@@ -262,10 +266,11 @@ class GladeHandlers(object):
 
     def on_rotate_board1_activate(self, widget):
         board_control = newGameDialog.SetupPositionExtension.board_control
+        persp = perspective_manager.get_perspective("games")
         if board_control is not None and board_control.view.is_visible():
             view = newGameDialog.SetupPositionExtension.board_control.view
-        elif gamewidget.cur_gmwidg() is not None:
-            view = gamewidget.cur_gmwidg().board.view
+        elif persp.cur_gmwidg() is not None:
+            view = persp.cur_gmwidg().board.view
         else:
             return
         if view.rotation:
@@ -297,10 +302,13 @@ class GladeHandlers(object):
             LogDialog.hide()
 
     def on_show_sidepanels_activate(self, widget):
-        gamewidget.zoomToBoard(not widget.get_active())
+        perspective = perspective_manager.get_perspective("games")
+        perspective.zoomToBoard(not widget.get_active())
 
     def on_hint_mode_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
+        if perspective is None:
+            return
         for gmwidg in perspective.gamewidgets:
             if gmwidg.isInFront():
                 if widget.get_active():
@@ -310,6 +318,8 @@ class GladeHandlers(object):
 
     def on_spy_mode_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
+        if perspective is None:
+            return
         for gmwidg in perspective.gamewidgets:
             if gmwidg.isInFront():
                 if widget.get_active():
@@ -320,10 +330,12 @@ class GladeHandlers(object):
     # Edit menu
 
     def on_copy_pgn_activate(self, widget):
-        gamewidget.cur_gmwidg().copy_pgn()
+        persp = perspective_manager.get_perspective("games")
+        persp.cur_gmwidg().copy_pgn()
 
     def on_copy_fen_activate(self, widget):
-        gamewidget.cur_gmwidg().copy_fen()
+        persp = perspective_manager.get_perspective("games")
+        persp.cur_gmwidg().copy_fen()
 
     def on_manage_engines_activate(self, widget):
         enginesDialog.run(gamewidget.getWidgets())

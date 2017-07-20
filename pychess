@@ -185,8 +185,9 @@ except ImportError:
 
 ###############################################################################
 # Start logging
-sys.stdout = LoggerWriter(logging.getLogger("STDOUT"), logging.INFO)
-sys.stderr = LoggerWriter(logging.getLogger("STDERR"), logging.ERROR)
+if getattr(sys, 'frozen', False):
+    sys.stdout = LoggerWriter(logging.getLogger("STDOUT"), logging.INFO)
+    sys.stderr = LoggerWriter(logging.getLogger("STDERR"), logging.ERROR)
 
 if log_viewer:
     log.logger.addHandler(GLogHandler(logemitter))

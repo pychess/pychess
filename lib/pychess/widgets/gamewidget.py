@@ -1,17 +1,11 @@
 """ This module handles the tabbed layout in PyChess """
 
-import imp
-import os
 import sys
-import traceback
-import zipfile
-import zipimport
 from collections import defaultdict
 from io import StringIO
 
 from gi.repository import Gdk, Gtk, GObject
 
-from pychess.widgets import dock_panel_tab
 from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
@@ -19,12 +13,11 @@ from pychess.Savers import pgn, fen
 from pychess.System import conf
 
 from pychess.System.Log import log
-from pychess.System.prefix import addUserConfigPrefix
-from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon
 from pychess.Utils.const import REMOTE, UNFINISHED_STATES, PAUSED, RUNNING, LOCAL, \
     WHITE, BLACK, ACTION_MENU_ITEMS, DRAW, UNDOABLE_STATES, HINT, SPY, WHITEWON, \
     MENU_ITEMS, BLACKWON, DROP, FAN_PIECES
+from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Move import listToMoves
 from pychess.Utils.lutils import lmove
 from pychess.Utils.lutils.lmove import ParsingError
@@ -32,10 +25,8 @@ from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic import get_infobarmessage_content, get_infobarmessage_content2
 from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
-from pychess.perspectives import perspective_manager
 from pychess.widgets.InfoBar import InfoBarNotebook, InfoBarMessage, InfoBarMessageButton
-from .pydock.PyDockTop import PyDockTop
-from .pydock.__init__ import CENTER, EAST, SOUTH
+from pychess.perspectives import perspective_manager
 
 # ###############################################################################
 # Initialize module constants, and a few worker functions                       #
@@ -51,19 +42,6 @@ def createAlignment(top, right, bottom, left):
     return align
 
 
-def cleanNotebook(name=None):
-    def customGetTabLabelText(child):
-        return name
-
-    notebook = Gtk.Notebook()
-    if name is not None:
-        notebook.set_name(name)
-    notebook.get_tab_label_text = customGetTabLabelText
-    notebook.set_show_tabs(False)
-    notebook.set_show_border(False)
-    return notebook
-
-
 def createImage(pixbuf):
     image = Gtk.Image()
     image.set_from_pixbuf(pixbuf)
@@ -74,36 +52,6 @@ light_on = load_icon(16, "stock_3d-light-on", "weather-clear")
 light_off = load_icon(16, "stock_3d-light-off", "weather-clear-night")
 gtk_close = load_icon(16, "gtk-close", "window-close")
 
-
-if getattr(sys, 'frozen', False):
-    zip_path = os.path.join(os.path.dirname(sys.executable), "library.zip")
-    importer = zipimport.zipimporter(zip_path)
-
-    def load_module(name):
-        """http://stackoverflow.com/questions/29578210/zipimporter-cant-find-load-sub-modules"""
-        parts = name.split('/')
-        module = importer.load_module(parts[0])
-        full_name = parts[0]
-        for part in parts[1:]:
-            full_name += '.' + part
-            if not hasattr(module, '__path__'):
-                raise ImportError('%s' % full_name)
-            path = module.__path__[0]
-            module = zipimport.zipimporter(path).load_module(part)
-
-        return module
-
-    postfix = "Panel.pyc"
-    with zipfile.ZipFile(zip_path, 'r') as myzip:
-        names = [f[:-4] for f in myzip.namelist() if f.endswith(postfix) and "/games/" in f]
-    sidePanels = [load_module(name) for name in names]
-else:
-    path = os.path.dirname(__file__) + "/../perspectives/games/"
-    postfix = "Panel.py"
-    files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
-    sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
-
-dockLocation = addUserConfigPrefix("pydock.xml")
 
 # ###############################################################################
 # Initialize module variables                                                  #
@@ -121,35 +69,6 @@ def getWidgets():
     return widgets
 
 
-key2gmwidg = {}
-key2cid = {}
-
-notebooks = {}
-docks = {}
-
-
-def get_clean_notebooks(mainvbox):
-    """ This function is just a workaround to "Segfault on second match" issue
-        https://github.com/pychess/pychess/issues/1354
-        I think it's caused by Gtk+ 3.20 CSS theming changes
-    """
-    global notebooks, docks
-    if len(key2gmwidg) > 0:
-        return notebooks
-    else:
-        notebooks = {"board": cleanNotebook("board"),
-                     "buttons": cleanNotebook("buttons"),
-                     "messageArea": cleanNotebook("messageArea")}
-        for panel in sidePanels:
-            notebooks[panel.__name__] = cleanNotebook(panel.__name__)
-        docks = {"board": (Gtk.Label(label="Board"), notebooks["board"])}
-        return notebooks
-
-# ###############################################################################
-# The holder class for tab releated widgets                                    #
-# ###############################################################################
-
-
 class GameWidget(GObject.GObject):
 
     __gsignals__ = {
@@ -158,9 +77,10 @@ class GameWidget(GObject.GObject):
         'closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
 
-    def __init__(self, gamemodel):
+    def __init__(self, gamemodel, perspective):
         GObject.GObject.__init__(self)
         self.gamemodel = gamemodel
+        self.perspective = perspective
         self.cids = {}
         self.closed = False
 
@@ -213,14 +133,6 @@ class GameWidget(GObject.GObject):
             self.connections[self.gamemodel.connection.bm].append(
                 self.gamemodel.connection.bm.connect("opp_not_out_of_time", self.opp_not_out_of_time))
         self.cids[self.board.view] = self.board.view.connect("shownChanged", self.shownChanged)
-
-        def do_load_panels(event):
-            # self.panels = [panel.Sidepanel().load(self) if panel.__name__ == "bookPanel" else Gtk.ScrolledWindow() for panel in sidePanels]
-            self.panels = [panel.Sidepanel().load(self) for panel in sidePanels]
-            if event is not None:
-                event.set()
-
-        do_load_panels(None)
 
         if isinstance(self.gamemodel, ICGameModel):
             self.gamemodel.gmwidg_ready.set()
@@ -833,24 +745,24 @@ class GameWidget(GObject.GObject):
                   self.gamemodel.players)
 
     def bringToFront(self):
-        getheadbook().set_current_page(self.getPageNumber())
+        self.perspective.getheadbook().set_current_page(self.getPageNumber())
 
     def isInFront(self):
-        if not getheadbook():
+        if not self.perspective.getheadbook():
             return False
-        return getheadbook().get_current_page() == self.getPageNumber()
+        return self.perspective.getheadbook().get_current_page() == self.getPageNumber()
 
     def getPageNumber(self):
-        return getheadbook().page_num(self.notebookKey)
+        return self.perspective.getheadbook().page_num(self.notebookKey)
 
     def infobar_hidden(self, infobar):
-        if self == cur_gmwidg():
-            notebooks["messageArea"].hide()
+        if self == self.perspective.cur_gmwidg():
+            self.perspective.notebooks["messageArea"].hide()
 
     def showMessage(self, message):
         self.infobar.push_message(message)
-        if self == cur_gmwidg():
-            notebooks["messageArea"].show()
+        if self == self.perspective.cur_gmwidg():
+            self.perspective.notebooks["messageArea"].show()
 
     def replaceMessages(self, message):
         """ Replace all messages with message """
@@ -860,8 +772,8 @@ class GameWidget(GObject.GObject):
 
     def clearMessages(self):
         self.infobar.clear_messages()
-        if self == cur_gmwidg():
-            notebooks["messageArea"].hide()
+        if self == self.perspective.cur_gmwidg():
+            self.perspective.notebooks["messageArea"].hide()
 
     def copy_pgn(self):
         output = StringIO()
@@ -875,316 +787,6 @@ class GameWidget(GObject.GObject):
             fen.save(output, self.gamemodel, self.board.view.shown), -1)
 
 # ###############################################################################
-# Main handling of gamewidgets                                                 #
-# ###############################################################################
-
-
-def splitit(widget):
-    if not hasattr(widget, 'get_children'):
-        return
-    for child in widget.get_children():
-        splitit(child)
-        widget.remove(child)
-
-
-def delGameWidget(gmwidg):
-    """ Remove the widget from the GUI after the game has been terminated """
-    global dock, dockAlign
-    log.debug("gamewidget.delGameWidget: starting %s" % repr(gmwidg))
-    gmwidg.closed = True
-    gmwidg.emit("closed")
-
-    called_from_preferences = False
-    window_list = Gtk.Window.list_toplevels()
-    for window in window_list:
-        if window.is_active() and window == widgets["preferences"]:
-            called_from_preferences = True
-            break
-
-    pageNum = gmwidg.getPageNumber()
-    headbook = getheadbook()
-
-    if gmwidg.notebookKey in key2gmwidg:
-        del key2gmwidg[gmwidg.notebookKey]
-
-    if gmwidg.notebookKey in key2cid:
-        headbook.disconnect(key2cid[gmwidg.notebookKey])
-        del key2cid[gmwidg.notebookKey]
-
-    headbook.remove_page(pageNum)
-    for notebook in notebooks.values():
-        notebook.remove_page(pageNum)
-
-    if headbook.get_n_pages() == 1 and conf.get("hideTabs", False):
-        show_tabs(False)
-
-    if headbook.get_n_pages() == 0:
-        dock = None
-        dockAlign = None
-
-        if not called_from_preferences:
-            # If the last (but not the designGW) gmwidg was closed
-            # and we are FICS-ing, present the FICS lounge
-            perspective_manager.disable_perspective("games")
-
-    gmwidg._del()
-
-
-def _ensureReadForGameWidgets():
-    if len(key2gmwidg) > 0:
-        return
-    global notebooks
-    perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-    perspective_manager.set_perspective_widget("games", perspective_widget)
-    perspective = perspective_manager.get_perspective("games")
-    notebooks = get_clean_notebooks(perspective.widget)
-
-    # Initing headbook
-
-    align = createAlignment(4, 4, 0, 4)
-    align.set_property("yscale", 0)
-
-    headbook = Gtk.Notebook()
-    headbook.set_name("headbook")
-    headbook.set_scrollable(True)
-    align.add(headbook)
-    perspective_widget.pack_start(align, False, True, 0)
-    show_tabs(not conf.get("hideTabs", False))
-
-    # Initing center
-
-    centerVBox = Gtk.VBox()
-
-    # The dock
-
-    global dock, dockAlign
-    dock = PyDockTop("main", perspective)
-    dockAlign = createAlignment(4, 4, 0, 4)
-    dockAlign.add(dock)
-    centerVBox.pack_start(dockAlign, True, True, 0)
-    dockAlign.show()
-    dock.show()
-
-    for panel in sidePanels:
-        box = dock_panel_tab(panel.__title__, panel.__desc__, panel.__icon__)
-        docks[panel.__name__] = (box, notebooks[panel.__name__])
-
-    if os.path.isfile(dockLocation):
-        try:
-            dock.loadFromXML(dockLocation, docks)
-        except Exception as e:
-            stringio = StringIO()
-            traceback.print_exc(file=stringio)
-            error = stringio.getvalue()
-            log.error("Dock loading error: %s\n%s" % (e, error))
-            msg_dia = Gtk.MessageDialog(widgets["main_window"],
-                                        type=Gtk.MessageType.ERROR,
-                                        buttons=Gtk.ButtonsType.CLOSE)
-            msg_dia.set_markup(_(
-                "<b><big>PyChess was unable to load your panel settings</big></b>"))
-            msg_dia.format_secondary_text(_(
-                "Your panel settings have been reset. If this problem repeats, \
-                you should report it to the developers"))
-            msg_dia.run()
-            msg_dia.hide()
-            os.remove(dockLocation)
-            for title, panel in docks.values():
-                title.unparent()
-                panel.unparent()
-
-    if not os.path.isfile(dockLocation):
-        leaf = dock.dock(docks["board"][1],
-                         CENTER,
-                         Gtk.Label(label=docks["board"][0]),
-                         "board")
-        docks["board"][1].show_all()
-        leaf.setDockable(False)
-
-        # S
-        epanel = leaf.dock(docks["bookPanel"][1], SOUTH, docks["bookPanel"][0],
-                           "bookPanel")
-        epanel.default_item_height = 45
-        epanel = epanel.dock(docks["engineOutputPanel"][1], CENTER,
-                             docks["engineOutputPanel"][0],
-                             "engineOutputPanel")
-
-        # NE
-        leaf = leaf.dock(docks["annotationPanel"][1], EAST,
-                         docks["annotationPanel"][0], "annotationPanel")
-        leaf = leaf.dock(docks["historyPanel"][1], CENTER,
-                         docks["historyPanel"][0], "historyPanel")
-        leaf = leaf.dock(docks["scorePanel"][1], CENTER,
-                         docks["scorePanel"][0], "scorePanel")
-
-        # SE
-        leaf = leaf.dock(docks["chatPanel"][1], SOUTH, docks["chatPanel"][0],
-                         "chatPanel")
-        leaf = leaf.dock(docks["commentPanel"][1], CENTER,
-                         docks["commentPanel"][0], "commentPanel")
-
-    def unrealize(dock, notebooks):
-        # unhide the panel before saving so its configuration is saved correctly
-        notebooks["board"].get_parent().get_parent().zoomDown()
-        dock.saveToXML(dockLocation)
-        dock._del()
-
-    dock.connect("unrealize", unrealize, notebooks)
-
-    hbox = Gtk.HBox()
-
-    # Buttons
-    notebooks["buttons"].set_border_width(4)
-    hbox.pack_start(notebooks["buttons"], False, True, 0)
-
-    # The message area
-    # TODO: If you try to fix this first read issue #958 and 1018
-    align = createAlignment(0, 0, 0, 0)
-    # sw = Gtk.ScrolledWindow()
-    # port = Gtk.Viewport()
-    # port.add(notebooks["messageArea"])
-    # sw.add(port)
-    # align.add(sw)
-    align.add(notebooks["messageArea"])
-    hbox.pack_start(align, True, True, 0)
-
-    def ma_switch_page(notebook, gpointer, page_num):
-        notebook.props.visible = notebook.get_nth_page(page_num).\
-            get_child().props.visible
-
-    notebooks["messageArea"].connect("switch-page", ma_switch_page)
-    centerVBox.pack_start(hbox, False, True, 0)
-
-    perspective_widget.pack_start(centerVBox, True, True, 0)
-    centerVBox.show_all()
-    perspective_widget.show_all()
-
-    # Connecting headbook to other notebooks
-
-    def hb_switch_page(notebook, gpointer, page_num):
-        for notebook in notebooks.values():
-            notebook.set_current_page(page_num)
-
-        gmwidg = key2gmwidg[getheadbook().get_nth_page(page_num)]
-        if isinstance(gmwidg.gamemodel, ICGameModel):
-            primary = "primary " + str(gmwidg.gamemodel.ficsgame.gameno)
-            gmwidg.gamemodel.connection.client.run_command(primary)
-
-    headbook.connect("switch-page", hb_switch_page)
-
-    if hasattr(headbook, "set_tab_reorderable"):
-
-        def page_reordered(widget, child, new_num, headbook):
-            old_num = notebooks["board"].page_num(key2gmwidg[child].boardvbox)
-            if old_num == -1:
-                log.error('Games and labels are out of sync!')
-            else:
-                for notebook in notebooks.values():
-                    notebook.reorder_child(
-                        notebook.get_nth_page(old_num), new_num)
-
-        headbook.connect("page-reordered", page_reordered, headbook)
-
-
-def attachGameWidget(gmwidg):
-    log.debug("attachGameWidget: %s" % gmwidg)
-    _ensureReadForGameWidgets()
-    perspective_manager.activate_perspective("games")
-
-    key2gmwidg[gmwidg.notebookKey] = gmwidg
-    headbook = getheadbook()
-
-    headbook.append_page(gmwidg.notebookKey, gmwidg.tabcontent)
-    gmwidg.notebookKey.show_all()
-
-    if hasattr(headbook, "set_tab_reorderable"):
-        headbook.set_tab_reorderable(gmwidg.notebookKey, True)
-
-    def callback(notebook, gpointer, page_num, gmwidg):
-        if notebook.get_nth_page(page_num) == gmwidg.notebookKey:
-            gmwidg.infront()
-            if gmwidg.gamemodel.players and gmwidg.gamemodel.isObservationGame():
-                gmwidg.light_on_off(False)
-                text = gmwidg.game_info_label.get_text()
-                gmwidg.game_info_label.set_markup(
-                    '<span color="black" weight="bold">%s</span>' % text)
-
-    key2cid[gmwidg.notebookKey] = headbook.connect_after("switch-page", callback, gmwidg)
-    gmwidg.infront()
-
-    align = createAlignment(0, 0, 0, 0)
-    align.show()
-    align.add(gmwidg.infobar)
-    notebooks["messageArea"].append_page(align, None)
-    notebooks["board"].append_page(gmwidg.boardvbox, None)
-    gmwidg.boardvbox.show_all()
-    for panel, instance in zip(sidePanels, gmwidg.panels):
-        notebooks[panel.__name__].append_page(instance, None)
-        instance.show_all()
-    notebooks["buttons"].append_page(gmwidg.stat_hbox, None)
-    gmwidg.stat_hbox.show_all()
-
-    if headbook.get_n_pages() == 1:
-        show_tabs(not conf.get("hideTabs", False))
-    else:
-        # We should always show tabs if more than one exists
-        show_tabs(True)
-
-    headbook.set_current_page(-1)
-
-    if headbook.get_n_pages() == 1 and not widgets["show_sidepanels"].get_active():
-        zoomToBoard(True)
-
-
-def cur_gmwidg():
-    if len(key2gmwidg) == 0:
-        return None
-    headbook = getheadbook()
-    notebookKey = headbook.get_nth_page(headbook.get_current_page())
-    return key2gmwidg[notebookKey]
-
-
-def customGetTabLabelText(child):
-    gmwidg = key2gmwidg[child]
-    return gmwidg.display_text
-
-
-def getheadbook():
-    if len(key2gmwidg) == 0:
-        return None
-    perspective = perspective_manager.get_perspective("games")
-    headbook = perspective.widget.get_children()[0].get_children()[0].get_child()
-    # to help StoryText create widget description
-    headbook.get_tab_label_text = customGetTabLabelText
-    return headbook
-
-
-def zoomToBoard(view_zoomed):
-    if not notebooks["board"].get_parent():
-        return
-    if view_zoomed:
-        notebooks["board"].get_parent().get_parent().zoomUp()
-    else:
-        notebooks["board"].get_parent().get_parent().zoomDown()
-
-
-def show_tabs(show):
-    head = getheadbook()
-    if head is None:
-        return
-    head.set_show_tabs(show)
-
-
-def tabsCallback(none):
-    head = getheadbook()
-    if not head:
-        return
-    if head.get_n_pages() == 1:
-        show_tabs(not conf.get("hideTabs", False))
-
-
-conf.notify_add("hideTabs", tabsCallback)
-
-# ###############################################################################
 # Handling of the special sidepanels-design-gamewidget used in preferences     #
 # ###############################################################################
 
@@ -1193,19 +795,22 @@ designGW = None
 
 def showDesignGW():
     global designGW
-    designGW = GameWidget(GameModel())
+    perspective = perspective_manager.get_perspective("games")
+    designGW = GameWidget(GameModel(), perspective)
     if isDesignGWShown():
         return
     getWidgets()["show_sidepanels"].set_active(True)
     getWidgets()["show_sidepanels"].set_sensitive(False)
-    attachGameWidget(designGW)
+    perspective.attachGameWidget(designGW)
 
 
 def hideDesignGW():
     if isDesignGWShown():
-        delGameWidget(designGW)
+        perspective = perspective_manager.get_perspective("games")
+        perspective.delGameWidget(designGW)
     getWidgets()["show_sidepanels"].set_sensitive(True)
 
 
 def isDesignGWShown():
-    return designGW in key2gmwidg.values()
+    perspective = perspective_manager.get_perspective("games")
+    return designGW in perspective.key2gmwidg.values()

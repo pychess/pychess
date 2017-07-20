@@ -96,9 +96,7 @@ class Database(GObject.GObject, Perspective):
         self.progress_dialog.get_content_area().pack_start(self.progressbar1, True, True, 0)
         self.progress_dialog.get_content_area().show_all()
 
-        perspective = perspective_manager.get_perspective("database")
-
-        self.dock = PyDockTop("database", perspective)
+        self.dock = PyDockTop("database", self)
         align = Gtk.Alignment()
         align.show()
         align.add(self.dock)
@@ -382,11 +380,10 @@ class Database(GObject.GObject, Perspective):
                 new_pgn = "%s.pgn" % new_pgn
 
             if not os.path.isfile(new_pgn):
-                perspective = perspective_manager.get_perspective("database")
                 # create new file
                 with open(new_pgn, "w"):
                     pass
-                perspective.open_chessfile(new_pgn)
+                self.open_chessfile(new_pgn)
             else:
                 d = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
                                       buttons=Gtk.ButtonsType.OK)

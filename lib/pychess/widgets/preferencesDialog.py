@@ -464,7 +464,7 @@ class PanelTab:
         # Put panels in trees
         self.widgets = widgets
 
-        from pychess.widgets.gamewidget import sidePanels, dockLocation
+        from pychess.perspectives.games import sidePanels, dockLocation
 
         saved_panels = []
         xmlOK = os.path.isfile(dockLocation)
@@ -541,20 +541,19 @@ class PanelTab:
     def __set_panel_active(self, panel, active):
         name = panel.__name__
 
-        from pychess.widgets.gamewidget import notebooks, docks
         from pychess.widgets.pydock import EAST
 
+        persp = perspective_manager.get_perspective("games")
         if active:
-            leaf = notebooks["board"].get_parent().get_parent()
-            leaf.dock(docks[name][1], EAST, docks[name][0], name)
+            leaf = persp.notebooks["board"].get_parent().get_parent()
+            leaf.dock(persp.docks[name][1], EAST, persp.docks[name][0], name)
         else:
             try:
-                notebooks[name].get_parent().get_parent().undock(notebooks[
-                    name])
+                persp.notebooks[name].get_parent().get_parent().undock(persp.notebooks[name])
             except AttributeError:
                 # A new panel appeared in the panels directory
-                leaf = notebooks["board"].get_parent().get_parent()
-                leaf.dock(docks[name][1], EAST, docks[name][0], name)
+                leaf = persp.notebooks["board"].get_parent().get_parent()
+                leaf.dock(persp.docks[name][1], EAST, persp.docks[name][0], name)
 
     def showit(self):
         from pychess.widgets.gamewidget import showDesignGW

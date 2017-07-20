@@ -110,6 +110,11 @@ class InformationWindow:
             family='Monospace',
             weight=Pango.Weight.BOLD,
             foreground="red")
+        tb.create_tag(
+            str(logging.CRITICAL),
+            family='Monospace',
+            weight=Pango.Weight.BOLD,
+            foreground="red")
 
         findbar = widgets["findbar"]
         findbar.hide()

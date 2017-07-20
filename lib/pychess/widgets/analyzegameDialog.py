@@ -2,7 +2,6 @@ import asyncio
 
 from gi.repository import Gtk
 
-from . import gamewidget
 from pychess.Utils.const import HINT, SPY, BLACK, WHITE
 from pychess.System import conf
 from pychess.System import uistuff
@@ -14,6 +13,7 @@ from pychess.Players.engineNest import discoverer
 from pychess.widgets.preferencesDialog import anal_combo_get_value, anal_combo_set_value
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
 from pychess.widgets import InfoBar
+from pychess.perspectives import perspective_manager
 
 widgets = uistuff.GladeWidgets("analyze_game.glade")
 stop_event = asyncio.Event()
@@ -66,7 +66,8 @@ def initialize():
         widgets["analyze_game"].hide()
 
     def run_analyze(button, *args):
-        gmwidg = gamewidget.cur_gmwidg()
+        persp = perspective_manager.get_perspective("games")
+        gmwidg = persp.cur_gmwidg()
         gamemodel = gmwidg.gamemodel
 
         old_check_value = conf.get("analyzer_check", True)
