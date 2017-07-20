@@ -489,7 +489,7 @@ class Games(GObject.GObject, Perspective):
                 if game.status in UNFINISHED_STATES:
                     game.end(ABORTED, ABORTED_AGREEMENT)
                 game.terminate()
-                if gmwidg.notebookKey in gamewidget.self.key2gmwidg:
+                if gmwidg.notebookKey in self.key2gmwidg:
                     gamewidget.delGameWidget(gmwidg)
 
         return response
