@@ -115,7 +115,13 @@ def setup_glib_logging():
     # redirection API became a no-op, so we need to hack both of these
     # handlers to get it to work.
     def structured_log_adapter(level, fields, field_count, user_data):
-        message = GLib.log_writer_format_fields(level, fields, True)
+        try:
+            message = GLib.log_writer_format_fields(level, fields, True)
+        except UnicodeDecodeError:
+            for field in fields:
+                print(field.key, field.value)
+            return GLib.LogWriterOutput.HANDLED
+
         if not silence(message):
             log.log(levels.get(level, logging.WARNING), message)
         return GLib.LogWriterOutput.HANDLED
