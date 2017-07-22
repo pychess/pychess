@@ -458,7 +458,7 @@ class Games(GObject.GObject, Perspective):
                                     if cgame.status in UNFINISHED_STATES:
                                         cgame.end(ABORTED, ABORTED_AGREEMENT)
                                     cgame.terminate()
-                                    gamewidget.delGameWidget(cgmwidg)
+                                    self.delGameWidget(cgmwidg)
                                 else:
                                     break
                         else:
@@ -475,7 +475,7 @@ class Games(GObject.GObject, Perspective):
                     game.end(ABORTED, ABORTED_AGREEMENT)
                 game.terminate()
                 if gmwidg.notebookKey in self.key2gmwidg:
-                    gamewidget.delGameWidget(gmwidg)
+                    self.delGameWidget(gmwidg)
 
         return response
 
@@ -545,7 +545,7 @@ class Games(GObject.GObject, Perspective):
 
     def delGameWidget(self, gmwidg):
         """ Remove the widget from the GUI after the game has been terminated """
-        log.debug("gamewidget.delGameWidget: starting %s" % repr(gmwidg))
+        log.debug("Games.delGameWidget: starting %s" % repr(gmwidg))
         gmwidg.closed = True
         gmwidg.emit("closed")
 
