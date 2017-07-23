@@ -448,6 +448,16 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkMenuItem" id="download_externals">
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Externals</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_download_externals_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="preferences_menu">
                         <property name="label">gtk-preferences</property>
                         <property name="use_action_appearance">False</property>

@@ -25,6 +25,7 @@ from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
 from pychess.widgets import tipOfTheDay
 from pychess.widgets.discovererDialog import DiscovererDialog
+from pychess.widgets.ExternalsDialog import externals_dialog
 from pychess.widgets import gamewidget
 from pychess.widgets import analyzegameDialog
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
@@ -340,6 +341,9 @@ class GladeHandlers(object):
     def on_manage_engines_activate(self, widget):
         enginesDialog.run(gamewidget.getWidgets())
 
+    def on_download_externals_activate(self, widget):
+        externals_dialog.show()
+
     def on_preferences_activate(self, widget):
         preferencesDialog.run(gamewidget.getWidgets())
 
@@ -444,6 +448,14 @@ class PyChess(Gtk.Application):
         self.window.show_all()
         gamewidget.getWidgets()["player_rating1"].hide()
         gamewidget.getWidgets()["leave_fullscreen1"].hide()
+
+        # Externals download dialog
+        if not conf.get("dont_show_externals_at_startup", False):
+            externals_dialog.show()
+
+        # Tip of the day dialog
+        if conf.get("show_tip_at_startup", False):
+            tipOfTheDay.TipOfTheDay.show()
 
         dd = DiscovererDialog(discoverer)
         self.dd_task = asyncio.async(dd.start())
@@ -578,10 +590,6 @@ class PyChess(Gtk.Application):
 
         self.menu_recent.connect("item-activated", recent_item_activated)
         widgets["load_recent_game1"].set_submenu(self.menu_recent)
-
-        # Tip of the day dialog
-        if conf.get("show_tip_at_startup", False):
-            tipOfTheDay.TipOfTheDay.show()
 
         if conf.get("autoLogin", False):
             internet_game_tasker.connectClicked(None)

@@ -36,6 +36,7 @@ class TipOfTheDay:
             cls._init()
         cls.set_currentIndex(randrange(len(tips)))
         cls.widgets["window1"].show()
+        cls.widgets["window1"].present()
 
     @classmethod
     def set_currentIndex(cls, value):
