@@ -37,7 +37,7 @@ from pychess.perspectives import perspective_manager
 from pychess.perspectives.welcome import Welcome
 from pychess.perspectives.games import Games, get_open_dialog
 from pychess.perspectives.fics import FICS
-from pychess.perspectives.database import Database, NestedFileChooserDialog
+from pychess.perspectives.database import Database
 from pychess import VERSION, VERSION_NAME
 
 leftkeys = list(map(Gdk.keyval_from_name, ("Left", "KP_Left")))
@@ -173,11 +173,16 @@ class GladeHandlers(object):
         ICLogon.run()
 
     def on_load_game1_activate(self, widget):
-        opendialog = get_open_dialog()
+        dialog = get_open_dialog()
 
-        d = NestedFileChooserDialog(opendialog)
-        filenames = d.run()
-        opendialog.destroy()
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            filenames = dialog.get_filenames()
+        else:
+            filenames = None
+
+        dialog.destroy()
+
         if filenames is not None:
             for filename in filenames:
                 if filename.lower().endswith(".fen"):

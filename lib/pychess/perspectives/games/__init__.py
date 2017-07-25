@@ -870,7 +870,7 @@ def get_open_dialog():
     opendialog = Gtk.FileChooserDialog(
         _("Open chess file"), mainwindow, Gtk.FileChooserAction.OPEN,
         (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
-         Gtk.ResponseType.ACCEPT))
+         Gtk.ResponseType.OK))
     opendialog.set_show_hidden(True)
     opendialog.set_select_multiple(True)
 

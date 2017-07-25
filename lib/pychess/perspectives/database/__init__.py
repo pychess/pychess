@@ -307,8 +307,14 @@ class Database(GObject.GObject, Perspective):
         filter_text.add_mime_type("application/zip")
         dialog.add_filter(filter_text)
 
-        dialog = NestedFileChooserDialog(dialog)
-        filenames = dialog.run()
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            filenames = dialog.get_filenames()
+        else:
+            filenames = None
+
+        dialog.destroy()
+
         if filenames is not None:
             self.do_import(filenames)
 
@@ -393,27 +399,6 @@ class Database(GObject.GObject, Perspective):
                 print("%s allready exist." % new_pgn)
 
         dialog.destroy()
-
-
-class NestedFileChooserDialog(object):
-    def __init__(self, dialog):
-        self.dialog = dialog
-        self.filenames = None
-
-    def run(self):
-        self._run()
-        return self.filenames
-
-    def _run(self):
-        self.dialog.show()
-        self.dialog.connect("response", self._response)
-        Gtk.main()
-
-    def _response(self, dialog, response):
-        if response != Gtk.ResponseType.CANCEL:
-            self.filenames = self.dialog.get_filenames()
-        self.dialog.destroy()
-        Gtk.main_quit()
 
 
 def get_latest_twic():
