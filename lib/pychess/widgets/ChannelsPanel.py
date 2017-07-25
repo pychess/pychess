@@ -40,17 +40,17 @@ class TextImageTree(Gtk.TreeView):
         self.sort_model.set_sort_func(1, self.compareFunction, 1)
 
         # First column
+        crp = Gtk.CellRendererPixbuf()
+        crp.props.pixbuf = icon
+        self.rightcol = Gtk.TreeViewColumn("", crp)
+        self.append_column(self.rightcol)
+
+        # Second column
         crt = Gtk.CellRendererText()
         crt.props.ellipsize = Pango.EllipsizeMode.END
         self.leftcol = Gtk.TreeViewColumn("", crt, text=1)
         self.leftcol.set_expand(True)
         self.append_column(self.leftcol)
-
-        # Second column
-        crp = Gtk.CellRendererPixbuf()
-        crp.props.pixbuf = icon
-        self.rightcol = Gtk.TreeViewColumn("", crp)
-        self.append_column(self.rightcol)
 
         # Mouse
         self.pressed = None
