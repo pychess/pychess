@@ -146,6 +146,10 @@ class ICPlayer(Player):
 
             if curcol == self.color and ply == self.gamemodel.ply:
                 item = yield from self.gamemodel.ficsgame.queue.get()
+
+                if item == "del":
+                    raise PlayerIsDead
+
                 gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms = item
                 self.gamemodel.onBoardUpdate(gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
 
