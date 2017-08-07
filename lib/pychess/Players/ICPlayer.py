@@ -1,7 +1,6 @@
 import asyncio
 from collections import defaultdict
 
-from queue import Queue
 from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
 from pychess.Utils.Move import parseSAN, toAN
 from pychess.Utils.lutils.lmove import ParsingError
@@ -23,23 +22,21 @@ class ICPlayer(Player):
                  icrating=None):
         Player.__init__(self)
         self.offers = {}
-        self.queue = asyncio.Queue()
-        self.okqueue = asyncio.Queue()
         self.setName(name)
         self.ichandle = ichandle
         self.icrating = icrating
         self.color = color
         self.gameno = gameno
         self.gamemodel = gamemodel
+        self.turn_interrupt = False
 
         # If some times later FICS creates another game with same wplayer,bplayer,gameno
         # this will change to False and boardUpdate messages will be ignored
         self.current = True
 
         self.connection = connection = self.gamemodel.connection
+
         self.connections = connections = defaultdict(list)
-        connections[connection.bm].append(connection.bm.connect_after(
-            "boardUpdate", self.__boardUpdate))
         connections[connection.bm].append(connection.bm.connect_after(
             "playGameCreated", self.__playGameCreated))
         connections[connection.bm].append(connection.bm.connect_after(
@@ -110,36 +107,6 @@ class ICPlayer(Player):
         if name == self.ichandle:
             self.emit("offer", Offer(CHAT_ACTION, param=text))
 
-    def __boardUpdate(self, bm, gameno, ply, curcol, lastmove, fen, wname,
-                      bname, wms, bms):
-        log.debug("ICPlayer.__boardUpdate: id(self)=%d self=%s %s %s %s %d %d %s %s %d %d" % (
-            id(self), self, gameno, wname, bname, ply, curcol, lastmove, fen, wms, bms))
-
-        if gameno == self.gameno and len(self.gamemodel.players) >= 2 and self.current:
-            # LectureBot allways uses gameno 1 for many games in one lecture
-            # and wname == self.gamemodel.players[0].ichandle \
-            # and bname == self.gamemodel.players[1].ichandle \
-            log.debug("ICPlayer.__boardUpdate: id=%d self=%s gameno=%s: this is my move" % (
-                id(self), self, gameno))
-
-            # In some cases (like lost on time) the last move is resent
-            if ply <= self.gamemodel.ply:
-                return
-
-            if 1 - curcol == self.color and ply == self.gamemodel.ply + 1 and lastmove is not None:
-                log.debug("ICPlayer.__boardUpdate: id=%d self=%s ply=%d: \
-                          putting move=%s in queue" % (id(self), self, ply, lastmove))
-                self.queue.put_nowait((ply, lastmove))
-                # Ensure the fics thread doesn't continue parsing, before the
-                # game/player thread has received the move.
-                # Specifically this ensures that we aren't killed due to end of
-                # game before our last move is received
-
-                # TODO: (asyncio) do we really need this?
-                ### yield from self.okqueue.get()
-
-    # Ending the game
-
     def __disconnect(self):
         if self.connections is None:
             return
@@ -151,11 +118,11 @@ class ICPlayer(Player):
 
     def end(self, status, reason):
         self.__disconnect()
-        self.queue.put_nowait("del")
+        self.gamemodel.ficsgame.queue.put_nowait("del")
 
     def kill(self, reason):
         self.__disconnect()
-        self.queue.put_nowait("del")
+        self.gamemodel.ficsgame.queue.put_nowait("del")
 
     # Send the player move updates
 
@@ -169,32 +136,38 @@ class ICPlayer(Player):
             if board2.variant == FISCHERRANDOMCHESS:
                 castle_notation = CASTLE_SAN
             self.connection.bm.sendMove(toAN(board2, move, castleNotation=castle_notation))
-
-        item = yield from self.queue.get()
+        item = yield from self.gamemodel.ficsgame.queue.get()
         try:
             if item == "del":
                 raise PlayerIsDead
-            if item == "int":
+
+            gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms = item
+            self.gamemodel.onBoardUpdate(gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
+
+            if curcol == self.color and ply == self.gamemodel.ply:
+                item = yield from self.gamemodel.ficsgame.queue.get()
+                gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms = item
+                self.gamemodel.onBoardUpdate(gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
+
+            if self.turn_interrupt:
+                self.turn_interrupt = False
                 raise TurnInterrupt
 
-            ply, sanmove = item
             if ply < board1.ply:
                 # This should only happen in an observed game
                 board1 = self.gamemodel.getBoardAtPly(max(ply - 1, 0))
             log.debug("ICPlayer.makemove: id(self)=%d self=%s from queue got: ply=%d sanmove=%s" % (
-                id(self), self, ply, sanmove))
+                id(self), self, ply, lastmove))
 
             try:
-                move = parseSAN(board1, sanmove)
+                move = parseSAN(board1, lastmove)
                 log.debug("ICPlayer.makemove: id(self)=%d self=%s parsed move=%s" % (
                     id(self), self, move))
             except ParsingError:
                 raise
             return move
         finally:
-            log.debug("ICPlayer.makemove: id(self)=%d self=%s returning move=%s" % (
-                id(self), self, move))
-            self.okqueue.put_nowait("ok")
+            log.debug("ICPlayer.makemove: id(self)=%d self=%s returning move=%s" % (id(self), self, move))
 
     # Interacting with the player
 
@@ -214,13 +187,13 @@ class ICPlayer(Player):
         log.debug("ICPlayer.playerUndoMoves: id(self)=%d self=%s, undoing movecount=%d" % (
             id(self), self, movecount))
         # If current player has changed so that it is no longer us to move,
-        # We raise TurnInterruprt in order to let GameModel continue the game
+        # We raise TurnInterrupt in order to let GameModel continue the game
         if movecount % 2 == 1 and gamemodel.curplayer != self:
-            self.queue.put_nowait("int")
+            self.turn_interrupt = True
 
     def resetPosition(self):
         """ Used in observed examined games f.e. when LectureBot starts another example"""
-        self.queue.put_nowait("int")
+        self.turn_interrupt = True
 
     def putMessage(self, text):
         self.connection.cm.tellPlayer(self.ichandle, text)

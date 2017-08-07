@@ -33,7 +33,7 @@ from pychess.perspectives import perspective_manager
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock.__init__ import CENTER, EAST, SOUTH
 from pychess.ic.ICGameModel import ICGameModel
-
+from pychess.ic import IC_POS_EXAMINATING
 
 enddir = {}
 savers = (pgn, epd, fen, png, chessalpha2)
@@ -182,6 +182,9 @@ class Games(GObject.GObject, Perspective):
         gamemodel.setPlayers(players)
         log.debug("Games.generalStart: <- gamemodel.setPlayers(): %s" %
                   (gamemodel))
+
+        if isinstance(gamemodel, ICGameModel) and not gamemodel.ficsgame.relation == IC_POS_EXAMINATING:
+            gamemodel.ficsgame.queue = asyncio.Queue()
 
         # Starting
         if loaddata:

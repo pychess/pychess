@@ -191,8 +191,6 @@ class BoardManager(GObject.GObject):
         'exGameBackward': (GObject.SignalFlags.RUN_FIRST, None, (int, int)),
         'archiveGamePreview': (GObject.SignalFlags.RUN_FIRST, None,
                                (object, )),
-        'boardUpdate': (GObject.SignalFlags.RUN_FIRST, None,
-                        (int, int, int, str, str, str, str, int, int)),
         'timesUpdate': (GObject.SignalFlags.RUN_FIRST, None,
                         (int, int, int,)),
         'obsGameEnded': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
@@ -462,11 +460,15 @@ class BoardManager(GObject.GObject):
                 # game.game_type = GAME_TYPES["examined"]
             game = self.connection.games.get(game)
 
+            # For examined games we have to create move queues here
+            # because game will be started later by generalStart()
+            if not hasattr(game, "queue"):
+                game.queue = asyncio.Queue()
+
             # don't start new game in puzzlebot/endgamebot when they just reuse gameno
             if game.relation == IC_POS_OBSERVING_EXAMINATION or \
                     (game.board is not None and game.board.pgn == pgn):
-                self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen,
-                          wname, bname, wms, bms)
+                game.queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
                 return
 
             game.relation = relation
@@ -490,8 +492,8 @@ class BoardManager(GObject.GObject):
                         self.connection.stored_owner, game.opponent.name))
                 self.connection.client.run_command("forward 999")
         else:
-            self.emit("boardUpdate", gameno, ply, curcol, lastmove, fen, wname,
-                      bname, wms, bms)
+            game = self.connection.games.get_game_by_gameno(gameno)
+            game.queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
 
     def onGameModelStarted(self, gameno):
         self.gamemodelStartedEvents[gameno].set()
