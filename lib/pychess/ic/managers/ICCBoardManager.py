@@ -275,8 +275,12 @@ class ICCBoardManager(BoardManager):
 
         if game == self.theGameImPlaying:
             curcol, ply, wms, bms = self.my_game_info
-            self.emit("boardUpdate", gameno, 0, WHITE, None, FEN_START,
-                      game.wplayer.name, game.bplayer.name, wms, bms)
+
+            if not hasattr(game, "queue"):
+                game.queue = asyncio.Queue()
+
+            game.queue.put_nowait((gameno, 0, WHITE, None, FEN_START,
+                                   game.wplayer.name, game.bplayer.name, wms, bms))
         else:
             fen, moves_to_go = right_part.split("}")
             self.moves_to_go = int(moves_to_go)
@@ -320,8 +324,8 @@ class ICCBoardManager(BoardManager):
                 return
 
         if self.moves_to_go is None:
-            self.emit("boardUpdate", gameno, ply, curcol, san_move, fen,
-                      game.wplayer.name, game.bplayer.name, wms, bms)
+            game.queue.put_nowait((gameno, ply, curcol, san_move, fen,
+                                   game.wplayer.name, game.bplayer.name, wms, bms))
             self.emit("timesUpdate", gameno, wms, bms)
         else:
             if game.gameno not in self.gamemodelStartedEvents:
