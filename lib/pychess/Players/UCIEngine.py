@@ -519,7 +519,8 @@ class UCIEngine(ProtocolEngine):
                     if varlist:
                         dic["choices"] = varlist
 
-                    self.options[dic["name"]] = dic
+                    if "name" in dic:
+                        self.options[dic["name"]] = dic
                     continue
 
                 # A Move

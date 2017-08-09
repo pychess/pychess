@@ -5,7 +5,6 @@ class Command():
     def __init__(self, command, inputstr):
         self.command = command
         self.inputstr = inputstr
-        print(command, inputstr)
 
     def run(self, timeout=None):
         """ Run a command then return: (status, output, error). """

@@ -110,8 +110,8 @@ class EnginesDialog():
                     self.cur_engine = engines[0]["name"]
                 engine = discoverer.getEngineByName(self.cur_engine)
                 options = engine.get("options")
+                self.options_store.clear()
                 if options:
-                    self.options_store.clear()
                     for option in options:
                         key = option["name"]
                         val = option
