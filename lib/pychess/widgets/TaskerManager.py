@@ -257,6 +257,7 @@ class InternetGameTasker(Gtk.Alignment):
 
         self.widgets["startIcon"].set_from_pixbuf(big_start)
 
+        uistuff.keep(self.widgets["ics_combo"], "icsCombo")
         uistuff.keep(self.widgets["autoLogin"], "autoLogin")
 
     def openDialogClicked(self, button):
