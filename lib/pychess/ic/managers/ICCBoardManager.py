@@ -10,7 +10,7 @@ from pychess.ic import IC_POS_OBSERVING, GAME_TYPES, IC_STATUS_PLAYING, IC_POS_E
 from pychess.ic.icc import DG_POSITION_BEGIN, DG_SEND_MOVES, DG_MOVE_ALGEBRAIC, DG_MOVE_SMITH, \
     DG_MOVE_TIME, DG_MOVE_CLOCK, DG_MY_GAME_STARTED, DG_MY_GAME_ENDED, DG_STARTED_OBSERVING, \
     DG_MY_GAME_RESULT, DG_STOP_OBSERVING, DG_IS_VARIATION, DG_ISOLATED_BOARD, CN_SPGN, DG_BACKWARD, \
-    DG_MOVE_LAG
+    DG_MOVE_LAG, DG_KNOWS_FISCHER_RANDOM, DG_SET_BOARD
 
 
 class ICCBoardManager(BoardManager):
@@ -32,6 +32,9 @@ class ICCBoardManager(BoardManager):
         self.connection.expect_dg_line(DG_ISOLATED_BOARD, self.on_icc_isolated_board)
         self.connection.expect_dg_line(DG_BACKWARD, self.on_icc_backward)
         self.connection.expect_dg_line(DG_MOVE_LAG, self.on_icc_move_lag)
+
+        self.connection.expect_dg_line(DG_KNOWS_FISCHER_RANDOM, self.on_icc_knows_fischer_random)
+        self.connection.expect_dg_line(DG_SET_BOARD, self.on_icc_set_board)
 
         self.connection.expect_cn_line(CN_SPGN, self.on_icc_spgn)
 
@@ -61,6 +64,10 @@ class ICCBoardManager(BoardManager):
         self.connection.client.run_command("set-2 %s 1" % DG_SEND_MOVES)
         self.connection.client.run_command("set-2 %s 1" % DG_ISOLATED_BOARD)
         self.connection.client.run_command("set-2 %s 1" % DG_BACKWARD)
+
+        self.connection.client.run_command("set-2 %s 1" % DG_KNOWS_FISCHER_RANDOM)
+        self.connection.client.run_command("set-2 %s 1" % DG_SET_BOARD)
+
         self.connection.client.run_command("set style 13")
 
         # don't unobserve games when we start a new game, or new observe
@@ -76,6 +83,12 @@ class ICCBoardManager(BoardManager):
         game = self.connection.games.get(game)
 
         self.emit("archiveGamePreview", game)
+
+    def on_icc_knows_fischer_random(self, data):
+        print(data)
+
+    def on_icc_set_board(self, data):
+        print(data)
 
     def on_icc_isolated_board(self, data):
         print(data)
