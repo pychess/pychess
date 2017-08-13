@@ -293,6 +293,7 @@ class ICLogon(object):
                                  ("connectingMsg", self.showMessage)):
             self.cids[self.connection].append(self.connection.connect(
                 signal, callback))
+        self.main_connected_event = asyncio.Event()
         self.connection_task = asyncio.async(self.connection.start())
 
         # guest users are rather limited on ICC (helper connection is useless)
@@ -318,9 +319,15 @@ class ICLogon(object):
             self.helperconn = None
 
             set_user_vars = response == Gtk.ResponseType.YES
-            self.connection.start_helper_manager(set_user_vars)
+
+            @asyncio.coroutine
+            def coro():
+                yield from self.main_connected_event.wait()
+                self.connection.start_helper_manager(set_user_vars)
+            asyncio.async(coro())
 
     def onConnected(self, connection):
+        self.main_connected_event.set()
         if connection.ICC:
             self.connection.start_helper_manager(True)
 
