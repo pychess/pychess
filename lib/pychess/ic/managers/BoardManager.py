@@ -493,6 +493,8 @@ class BoardManager(GObject.GObject):
                 self.connection.client.run_command("forward 999")
         else:
             game = self.connection.games.get_game_by_gameno(gameno)
+            if not hasattr(game, "queue"):
+                game.queue = asyncio.Queue()
             game.queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
 
     def onGameModelStarted(self, gameno):

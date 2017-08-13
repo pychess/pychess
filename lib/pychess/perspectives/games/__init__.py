@@ -184,6 +184,8 @@ class Games(GObject.GObject, Perspective):
                   (gamemodel))
 
         if isinstance(gamemodel, ICGameModel) and not gamemodel.ficsgame.relation == IC_POS_EXAMINATING:
+            if not hasattr(gamemodel.ficsgame, "queue"):
+                gamemodel.ficsgame.queue = asyncio.Queue()
             gamemodel.ficsgame.queue = asyncio.Queue()
 
         # Starting
