@@ -42,20 +42,6 @@ class AutoLogoutException(Exception):
     pass
 
 
-def get_user_names(value=None):
-    """ Split and return usernameEntry config item into registered and guest username
-    """
-    if value is not None:
-        names = value.split("|")
-    else:
-        names = conf.get("usernameEntry", "").split("|")
-    if len(names) == 0:
-        names = ["", ""]
-    elif len(names) < 2:
-        names.append(names[0])
-    return names
-
-
 class ICLogon(object):
     def __init__(self):
         self.connection = None
@@ -73,54 +59,23 @@ class ICLogon(object):
             'key-press-event',
             lambda w, e: e.keyval == Gdk.KEY_Escape and w.hide())
 
-        def on_logOnAsGuest_toggled(check):
-            names = get_user_names()
-            self.widgets["nameEntry"].set_text(names[1] if check.get_active()
-                                               else names[0])
-            self.widgets["passwordLabel"].set_sensitive(not check.get_active())
-            self.widgets["passEntry"].set_sensitive(not check.get_active())
+        self.ics = "FICS"
+        self.as_guest = self.widgets["logOnAsGuest"]
 
-        self.widgets["logOnAsGuest"].connect("toggled",
-                                             on_logOnAsGuest_toggled)
-        uistuff.keep(self.widgets["logOnAsGuest"], "asGuestCheck")
+        self.widgets["logOnAsGuest"].connect("toggled", self.on_logOnAsGuest_toggled)
 
-        as_guest = self.widgets["logOnAsGuest"]
+        def on_username_changed(widget):
+            conf.set("usernameEntry", self.user_name_get_value(widget), section=self.ics)
+        self.widgets["nameEntry"].connect("changed", on_username_changed)
 
-        def user_name_get_value(entry):
-            names = get_user_names()
-            if as_guest.get_active():
-                text = "%s|%s" % (names[0], entry.get_text())
-            else:
-                text = "%s|%s" % (entry.get_text(), names[1])
-            return text
+        def on_password_changed(widget):
+            conf.set("passwordEntry", widget.get_text(), section=self.ics)
+        self.widgets["passEntry"].connect("changed", on_password_changed)
 
-        def user_name_set_value(entry, value):
-            names = get_user_names(value=value)
-            if as_guest.get_active():
-                entry.set_text(names[1])
-            else:
-                entry.set_text(names[0])
+        def on_host_changed(widget):
+            conf.set("hostEntry", self.host_get_value(widget), section=self.ics)
+        self.widgets["hostEntry"].connect("changed", on_host_changed)
 
-        uistuff.keep(self.widgets["nameEntry"], "usernameEntry", user_name_get_value, user_name_set_value)
-
-        # workaround to FICS Password input doesnt handle strings starting with a number
-        # https://github.com/pychess/pychess/issues/1375
-        def password_set_value(entry, value):
-            entry.set_text(str(value))
-
-        uistuff.keep(self.widgets["passEntry"], "passwordEntry", set_value_=password_set_value)
-
-        # workaround to Can't type IP to FICS login dialog
-        # https://github.com/pychess/pychess/issues/1360
-        def host_get_value(entry):
-            return entry.get_text().replace(".", "|")
-
-        def host_set_value(entry, value):
-            entry.set_text(str(value).replace("|", "."))
-
-        uistuff.keep(self.widgets["hostEntry"], "hostEntry", host_get_value, host_set_value)
-
-        uistuff.keep(self.widgets["autoLogin"], "autoLogin")
         self.infobar = Gtk.InfoBar()
         self.infobar.set_message_type(Gtk.MessageType.WARNING)
         # self.widgets["messagePanelHBox"].pack_start(self.infobar,
@@ -133,6 +88,66 @@ class ICLogon(object):
         self.widgets["connectButton"].connect("clicked", self.onConnectClicked)
 
         self.widgets["progressbar"].set_show_text(True)
+
+    def get_user_names(self, value=None):
+        """ Split and return usernameEntry config item into registered and guest username
+        """
+        if value is not None:
+            names = value.split("|")
+        else:
+            names = conf.get("usernameEntry", "", section=self.ics).split("|")
+        if len(names) == 0:
+            names = ["", ""]
+        elif len(names) < 2:
+            names.append(names[0])
+        return names
+
+    def user_name_get_value(self, entry):
+        names = self.get_user_names()
+        if self.as_guest.get_active():
+            text = "%s|%s" % (names[0], entry.get_text())
+        else:
+            text = "%s|%s" % (entry.get_text(), names[1])
+        return text
+
+    def user_name_set_value(self, entry, value):
+        names = self.get_user_names(value=value)
+        if self.as_guest.get_active():
+            entry.set_text(names[1])
+        else:
+            entry.set_text(names[0])
+
+    # workaround to FICS Password input doesnt handle strings starting with a number
+    # https://github.com/pychess/pychess/issues/1375
+    def password_set_value(self, entry, value):
+        entry.set_text(str(value))
+
+    # workaround to Can't type IP to FICS login dialog
+    # https://github.com/pychess/pychess/issues/1360
+    def host_get_value(self, entry):
+        return entry.get_text().replace(".", "|")
+
+    def host_set_value(self, entry, value):
+        entry.set_text(str(value).replace("|", "."))
+
+    def on_logOnAsGuest_toggled(self, widget):
+        names = self.get_user_names()
+        self.widgets["nameEntry"].set_text(names[1] if widget.get_active() else names[0])
+        self.widgets["passwordLabel"].set_sensitive(not widget.get_active())
+        self.widgets["passEntry"].set_sensitive(not widget.get_active())
+        conf.set("asGuestCheck", widget.get_active(), section=self.ics)
+
+    def on_ics_combo_changed(self, combo):
+        tree_iter = combo.get_active_iter()
+        if tree_iter is not None:
+            model = combo.get_model()
+            self.ics = model[tree_iter][0]
+            # print("Selected: %s" % self.ics)
+            self.widgets["logOnAsGuest"].set_active(conf.get("asGuestCheck", False, section=self.ics))
+            self.user_name_set_value(self.widgets["nameEntry"], conf.get("usernameEntry", "", section=self.ics))
+            self.password_set_value(self.widgets["passEntry"], conf.get("passwordEntry", "", section=self.ics))
+            default_host = "freechess.org" if self.ics == "FICS" else "chessclub.com"
+            self.host_set_value(self.widgets["hostEntry"], conf.get("hostEntry", default_host, section=self.ics))
 
     def _disconnect(self):
         for obj in self.cids:
@@ -281,7 +296,7 @@ class ICLogon(object):
         self.connection_task = asyncio.async(self.connection.start())
 
         # guest users are rather limited on ICC (helper connection is useless)
-        if not self.host in ("localhost", "chessclub.com"):
+        if self.host not in ("localhost", "chessclub.com"):
             self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
             self.helperconn.connect("error", self.onHelperConnectionError)
             self.helperconn_task = asyncio.async(self.helperconn.start())

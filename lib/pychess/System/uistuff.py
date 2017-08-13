@@ -169,10 +169,10 @@ def keep(widget, key, get_value_=None, set_value_=None, first_value=None):
 
     def setFromConf():
         try:
-            v = conf.getStrict(key)
+            v = conf.get(key)
         except TypeError:
             log.warning("uistuff.keep.setFromConf: Key '%s' from conf had the wrong type '%s', ignored" %
-                        (key, type(conf.getStrict(key))))
+                        (key, type(conf.get(key))))
             if first_value is not None:
                 conf.set(key, first_value)
             else:
@@ -181,7 +181,7 @@ def keep(widget, key, get_value_=None, set_value_=None, first_value=None):
             set_value(v)
 
     def callback(*args):
-        if not conf.hasKey(key) or conf.getStrict(key) != get_value():
+        if not conf.hasKey(key) or conf.get(key) != get_value():
             conf.set(key, get_value())
 
     widget.connect(signal, callback)
@@ -232,10 +232,10 @@ def loadDialogWidget(widget,
 
     if conf.hasKey(key):
         try:
-            v = conf.getStrict(key)
+            v = conf.get(key)
         except TypeError:
             log.warning("uistuff.loadDialogWidget: Key '%s' from conf had the wrong type '%s', ignored" %
-                        (key, type(conf.getStrict(key))))
+                        (key, type(conf.get(key))))
             if first_value is not None:
                 conf.set(key, first_value)
             else:
@@ -244,7 +244,7 @@ def loadDialogWidget(widget,
             set_value(v)
     elif first_value is not None:
         conf.set(key, first_value)
-        set_value(conf.getStrict(key))
+        set_value(conf.get(key))
     else:
         log.warning("Didn't load widget \"%s\": no conf value and no first_value arg" % widget_name)
 
@@ -270,7 +270,7 @@ def saveDialogWidget(widget, widget_name, config_number, get_value_=None):
     else:
         get_value = getattr(widget, getter)
 
-    if not conf.hasKey(key) or conf.getStrict(key) != get_value():
+    if not conf.hasKey(key) or conf.get(key) != get_value():
         conf.set(key, get_value())
 
 
@@ -312,8 +312,8 @@ def keepWindowSize(key,
         width, height = window.get_size_request()
 
         if conf.hasKey(key + "_width") and conf.hasKey(key + "_height"):
-            width = conf.getStrict(key + "_width")
-            height = conf.getStrict(key + "_height")
+            width = conf.get(key + "_width")
+            height = conf.get(key + "_height")
             log.debug("Resizing window to width=%s height=%s" %
                       (width, height))
             window.resize(width, height)
@@ -337,8 +337,8 @@ def keepWindowSize(key,
             window.resize(1, 1)
 
         if conf.hasKey(key + "_x") and conf.hasKey(key + "_y"):
-            x = max(0, conf.getStrict(key + "_x"))
-            y = max(0, conf.getStrict(key + "_y"))
+            x = max(0, conf.get(key + "_x"))
+            y = max(0, conf.get(key + "_y"))
             log.debug("Moving window to x=%s y=%s" % (x, y))
             window.move(x, y)
 

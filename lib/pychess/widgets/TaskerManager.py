@@ -238,62 +238,33 @@ class InternetGameTasker(Gtk.Alignment):
         tasker.unparent()
         self.add(tasker)
 
-        def asGuestCallback(check):
-            names = ICLogon.get_user_names()
-            self.widgets["usernameEntry"].set_text(names[1]
-                                                   if check.get_active() else names[0])
-            self.widgets["passwordLabel"].set_sensitive(not check.get_active())
-            self.widgets["passwordEntry"].set_sensitive(not check.get_active())
+        if ICLogon.dialog is None:
+            ICLogon.dialog = ICLogon.ICLogon()
 
-        self.widgets["asGuestCheck"].connect("toggled", asGuestCallback)
-
-        uistuff.keep(self.widgets["asGuestCheck"], "asGuestCheck")
-
-        as_guest = self.widgets["asGuestCheck"]
-
-        def user_name_get_value(entry):
-            names = ICLogon.get_user_names()
-            if as_guest.get_active():
-                text = "%s|%s" % (names[0], entry.get_text())
-            else:
-                text = "%s|%s" % (entry.get_text(), names[1])
-            return text
-
-        def user_name_set_value(entry, value):
-            names = ICLogon.get_user_names(value=value)
-            if as_guest.get_active():
-                entry.set_text(names[1])
-            else:
-                entry.set_text(names[0])
-
-        uistuff.keep(self.widgets["usernameEntry"], "usernameEntry",
-                     user_name_get_value, user_name_set_value)
-
-        # workaround to FICS Password input doesnt handle strings starting with a number
-        # https://github.com/pychess/pychess/issues/1375
-        def password_set_value(entry, value):
-            entry.set_text(str(value))
-
-        uistuff.keep(self.widgets["passwordEntry"], "passwordEntry", set_value_=password_set_value)
+        liststore = Gtk.ListStore(str)
+        liststore.append(["FICS"])
+        liststore.append(["ICC"])
+        self.ics_combo = self.widgets["ics_combo"]
+        self.ics_combo.set_model(liststore)
+        renderer_text = Gtk.CellRendererText()
+        self.ics_combo.pack_start(renderer_text, True)
+        self.ics_combo.add_attribute(renderer_text, "text", 0)
+        self.ics_combo.connect("changed", ICLogon.dialog.on_ics_combo_changed)
+        self.ics_combo.set_active(conf.get("ics_combo", 0))
 
         self.widgets["connectButton"].connect("clicked", self.connectClicked)
         self.widgets["opendialog2"].connect("clicked", self.openDialogClicked)
 
         self.widgets["startIcon"].set_from_pixbuf(big_start)
 
+        uistuff.keep(self.widgets["autoLogin"], "autoLogin")
+
     def openDialogClicked(self, button):
         ICLogon.run()
 
     def connectClicked(self, button):
-        asGuest = self.widgets["asGuestCheck"].get_active()
-        username = self.widgets["usernameEntry"].get_text()
-        password = self.widgets["passwordEntry"].get_text()
-
         ICLogon.run()
         if not ICLogon.dialog.connection:
-            ICLogon.dialog.widgets["logOnAsGuest"].set_active(asGuest)
-            ICLogon.dialog.widgets["nameEntry"].set_text(username)
-            ICLogon.dialog.widgets["passEntry"].set_text(password)
             ICLogon.dialog.widgets["connectButton"].clicked()
 
 

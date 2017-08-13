@@ -9,24 +9,27 @@ from configparser import RawConfigParser
 from pychess.System.Log import log
 from pychess.System.prefix import addUserConfigPrefix
 
-configParser = RawConfigParser()
 section = "General"
+configParser = RawConfigParser(default_section=section)
+
+for sect in ("FICS", "ICC"):
+    if not configParser.has_section(sect):
+        configParser.add_section(sect)
+
 path = addUserConfigPrefix("config")
 if os.path.isfile(path):
     configParser.readfp(open(path))
-if not configParser.has_section(section):
-    configParser.add_section(section)
 atexit.register(lambda: configParser.write(open(path, "w")))
 
 idkeyfuncs = {}
 conid = 0
 
 
-def notify_add(key, func, *args):
+def notify_add(key, func, *args, section=section):
     """The signature for func must be self, client, *args, **kwargs"""
     assert isinstance(key, str)
     global conid
-    idkeyfuncs[conid] = (key, func, args)
+    idkeyfuncs[conid] = (key, func, args, section)
     conid += 1
     return conid - 1
 
@@ -35,48 +38,40 @@ def notify_remove(conid):
     del idkeyfuncs[conid]
 
 
-def getStrict(key):
-    assert hasKey(key)
-    return get(key)
+def get(key, fallback=None, section=section):
+    try:
+        return configParser.getint(section, key, fallback=fallback)
+    except ValueError:
+        pass
+
+    try:
+        return configParser.getboolean(section, key, fallback=fallback)
+    except ValueError:
+        pass
+
+    try:
+        return configParser.getfloat(section, key, fallback=fallback)
+    except ValueError:
+        pass
+
+    return configParser.get(section, key, fallback=fallback)
 
 
-def get(key, alternative=None):
-    if hasKey(key):
-        try:
-            return configParser.getint(section, key)
-        except ValueError:
-            pass
-
-        try:
-            return configParser.getboolean(section, key)
-        except ValueError:
-            pass
-
-        try:
-            return configParser.getfloat(section, key)
-        except ValueError:
-            pass
-
-        return configParser.get(section, key)
-    if callable(alternative):
-        alternative = alternative()
-    return alternative
-
-
-def set(key, value):
+def set(key, value, section=section):
     try:
         configParser.set(section, key, str(value))
+        configParser.write(open(path, "w"))
     except Exception as err:
         log.error(
             "Unable to save configuration '%s'='%s' because of error: %s %s" %
             (repr(key), repr(value), err.__class__.__name__, ", ".join(
                 str(a) for a in err.args)))
-    for key_, func, args in idkeyfuncs.values():
-        if key_ == key:
+    for key_, func, args, section_ in idkeyfuncs.values():
+        if key_ == key and section_ == section:
             func(None, *args)
 
 
-def hasKey(key):
+def hasKey(key, section=section):
     return configParser.has_option(section, key)
 
 
