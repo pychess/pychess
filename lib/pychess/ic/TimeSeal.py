@@ -197,7 +197,14 @@ class ICSTelnet():
                 self.host = "127.0.0.1"
                 self.port = 5500
                 try:
-                    self.timestamp_proc = subprocess.Popen(["%s" % timestamp_path, "-p", "%s" % self.port])
+                    if sys.platform == "win32":
+                        # To prevent engines opening console window
+                        startupinfo = subprocess.STARTUPINFO()
+                        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                    else:
+                        startupinfo = None
+                    create = asyncio.create_subprocess_exec(* ["%s" % timestamp_path, "-p", "%s" % self.port], startupinfo=startupinfo)
+                    self.timestamp_proc = yield from create
                     log.info("%s started OK" % timestamp_path)
                 except OSError as err:
                     log.info("Can't start %s OSError: %s %s" % (timestamp_path, err.errno, err.strerror))
