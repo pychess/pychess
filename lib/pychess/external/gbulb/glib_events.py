@@ -7,7 +7,7 @@ import socket
 import sys
 import threading
 import weakref
-from asyncio import events, futures, sslproto, tasks
+from asyncio import events, futures, tasks
 
 from gi.repository import GLib, Gio
 
@@ -281,6 +281,8 @@ class GLibBaseEventLoop(_BaseEventLoop, GLibBaseEventLoopPlatformExt):
                             *, server_side=False, server_hostname=None,
                             extra=None, server=None):
         """Create SSL transport."""
+        from asyncio import sslproto
+
         if not sslproto._is_sslproto_available():
             # Python 3.4.3 and below
             if hasattr(self, "_make_legacy_ssl_transport"):
