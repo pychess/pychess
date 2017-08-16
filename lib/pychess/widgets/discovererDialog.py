@@ -2,7 +2,7 @@ import asyncio
 
 from gi.repository import Gtk
 
-from pychess.external.gbulb.utils import wait_signal
+from pychess.Utils import wait_signal
 from pychess.System import uistuff
 
 

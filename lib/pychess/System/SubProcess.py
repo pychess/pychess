@@ -7,7 +7,7 @@ import time
 
 from gi.repository import GObject, Gtk, Gio, GLib
 
-from pychess.external.gbulb.utils import wait_signal
+from pychess.Utils import wait_signal
 from pychess.System.Log import log
 from pychess.Players.ProtocolEngine import TIME_OUT_SECOND
 

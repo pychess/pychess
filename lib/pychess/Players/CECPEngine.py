@@ -6,7 +6,7 @@ import re
 from gi.repository import Gtk, GObject
 
 
-from pychess.external.gbulb.utils import wait_signal
+from pychess.Utils import wait_signal
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.Utils.Move import Move

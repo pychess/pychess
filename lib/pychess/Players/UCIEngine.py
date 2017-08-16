@@ -4,7 +4,7 @@ import collections
 from copy import copy
 
 
-from pychess.external.gbulb.utils import wait_signal
+from pychess.Utils import wait_signal
 from pychess.Utils.Move import parseAny
 from pychess.Utils.Board import Board
 from pychess.Utils.Move import toAN
