@@ -292,8 +292,8 @@ class UCIEngine(ProtocolEngine):
             if self.hasOption('UCI_Elo'):
                 self.setOption('UCI_Elo', 150 * strength)
 
-        # Stockfish offers 20 skill levels
-        if self.hasOption('Skill Level') and strength <= 19:
+        # Stockfish and anticrux engines offer 20 skill levels
+        if self.hasOption('Skill Level'):
             self.setOption('Skill Level', strength)
 
         if ((not self.hasOption('UCI_Elo')) and
