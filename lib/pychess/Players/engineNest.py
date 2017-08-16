@@ -20,7 +20,7 @@ from pychess.System.SubProcess import SubProcess
 from pychess.System.prefix import addUserConfigPrefix, getDataPrefix, getEngineDataPrefix
 from pychess.Players.Player import PlayerIsDead
 from pychess.Utils import createStoryTextAppEvent
-from pychess.Utils.const import BLACK, UNKNOWN_REASON, WHITE, HINT, ANALYZING, INVERSE_ANALYZING
+from pychess.Utils.const import BLACK, UNKNOWN_REASON, WHITE, HINT, ANALYZING, INVERSE_ANALYZING, NORMALCHESS
 from pychess.Players.CECPEngine import CECPEngine
 from pychess.Players.UCIEngine import UCIEngine
 from pychess.Variants import variants
@@ -470,23 +470,29 @@ class EngineDiscoverer(GObject.GObject):
                 return engine
 
     def getEngineVariants(self, engine):
+        UCI_without_standard_variant = False
+        engine_variants = []
         for variantClass in variants.values():
             if variantClass.standard_rules:
-                yield variantClass.variant
+                engine_variants.append(variantClass.variant)
             else:
                 if engine.get("variants"):
                     if variantClass.cecp_name in engine.get("variants"):
-                        yield variantClass.variant
+                        engine_variants.append(variantClass.variant)
                 # UCI knows Chess960 only
                 if engine.get("options"):
                     for option in engine["options"]:
                         if option["name"] == "UCI_Chess960" and \
                                 variantClass.cecp_name == "fischerandom":
-                            yield variantClass.variant
+                            engine_variants.append(variantClass.variant)
                         elif option["name"] == "UCI_Variant":
+                            UCI_without_standard_variant = "chess" not in option["choices"]
                             if variantClass.cecp_name in option["choices"] or \
                                     variantClass.cecp_name.lower().replace("-", "") in option["choices"]:
-                                yield variantClass.variant
+                                engine_variants.append(variantClass.variant)
+        if UCI_without_standard_variant:
+            engine_variants.remove(NORMALCHESS)
+        return engine_variants
 
     def getName(self, engine=None):
         return engine["name"]
