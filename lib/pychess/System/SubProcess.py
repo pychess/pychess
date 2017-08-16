@@ -7,7 +7,7 @@ import time
 
 from gi.repository import GObject, Gtk, Gio, GLib
 
-from pychess.external import gbulb
+from pychess.external.gbulb.utils import wait_signal
 from pychess.System.Log import log
 from pychess.Players.ProtocolEngine import TIME_OUT_SECOND
 
@@ -205,7 +205,7 @@ class Application(Gtk.Application):
     @asyncio.coroutine
     def parse_line(self, proc):
         while True:
-            line = yield from gbulb.wait_signal(proc, 'line')
+            line = yield from wait_signal(proc, 'line')
             if line:
                 print('  parse_line:', line[1])
             else:
@@ -217,6 +217,7 @@ class Application(Gtk.Application):
 
 
 if __name__ == "__main__":
+    from pychess.external import gbulb
     gbulb.install(gtk=True)
     app = Application()
 

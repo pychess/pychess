@@ -4,7 +4,7 @@ import collections
 from copy import copy
 
 
-from pychess.external import gbulb
+from pychess.external.gbulb.utils import wait_signal
 from pychess.Utils.Move import parseAny
 from pychess.Utils.Board import Board
 from pychess.Utils.Move import toAN
@@ -473,7 +473,7 @@ class UCIEngine(ProtocolEngine):
     @asyncio.coroutine
     def parseLine(self, proc):
         while True:
-            line = yield from gbulb.wait_signal(proc, 'line')
+            line = yield from wait_signal(proc, 'line')
             if not line:
                 break
             else:

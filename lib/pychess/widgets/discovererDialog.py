@@ -2,7 +2,7 @@ import asyncio
 
 from gi.repository import Gtk
 
-from pychess.external import gbulb
+from pychess.external.gbulb.utils import wait_signal
 from pychess.System import uistuff
 
 
@@ -71,7 +71,7 @@ class DiscovererDialog:
             if self.finished:
                 return
 
-            _discoverer, binname, _xmlenginevalue = yield from gbulb.wait_signal(self.discoverer, "engine_discovered")
+            _discoverer, binname, _xmlenginevalue = yield from wait_signal(self.discoverer, "engine_discovered")
 
             if binname in self.nameToBar:
                 bar = self.nameToBar[binname]
@@ -80,7 +80,7 @@ class DiscovererDialog:
     @asyncio.coroutine
     def all_whatcher(self):
         while True:
-            yield from gbulb.wait_signal(self.discoverer, "all_engines_discovered")
+            yield from wait_signal(self.discoverer, "all_engines_discovered")
             break
 
         self.finished = True

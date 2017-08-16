@@ -6,7 +6,7 @@ import re
 from gi.repository import Gtk, GObject
 
 
-from pychess.external import gbulb
+from pychess.external.gbulb.utils import wait_signal
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.Utils.Move import Move
@@ -638,7 +638,7 @@ class CECPEngine(ProtocolEngine):
     @asyncio.coroutine
     def parseLine(self, proc):
         while True:
-            line = yield from gbulb.wait_signal(proc, 'line')
+            line = yield from wait_signal(proc, 'line')
             if not line:
                 break
             else:

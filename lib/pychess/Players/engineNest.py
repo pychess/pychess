@@ -12,7 +12,6 @@ from collections import OrderedDict
 
 from gi.repository import GLib, GObject
 
-from pychess.external import gbulb
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.command import Command
@@ -679,6 +678,7 @@ def is_cecp(engine_command):
 
 
 if __name__ == "__main__":
+    from pychess.external import gbulb
     gbulb.install()
     loop = asyncio.get_event_loop()
 
@@ -702,3 +702,4 @@ if __name__ == "__main__":
     discoverer.discover()
 
     loop.run_forever()
+
