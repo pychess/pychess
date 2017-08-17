@@ -28,6 +28,34 @@ class LimitOverrunError(Exception):
 
 
 @asyncio.coroutine
+def _wait_for_data(self, func_name):
+    """Wait until feed_data() or feed_eof() is called.
+
+    If stream was paused, automatically resume it.
+    """
+    # StreamReader uses a future to link the protocol feed_data() method
+    # to a read coroutine. Running two read coroutines at the same time
+    # would have an unexpected behaviour. It would not possible to know
+    # which coroutine would get the next data.
+    if self._waiter is not None:
+        raise RuntimeError('%s() called while another coroutine is '
+                           'already waiting for incoming data' % func_name)
+
+    assert not self._eof, '_wait_for_data after EOF'
+
+    # Waiting for data while paused will make deadlock, so prevent it.
+    if self._paused:
+        self._paused = False
+        self._transport.resume_reading()
+
+    self._waiter = asyncio.futures.Future(loop=self._loop)
+    try:
+        yield from self._waiter
+    finally:
+        self._waiter = None
+
+
+@asyncio.coroutine
 def readuntil(self, separator=b'\n'):
     """Read data from the stream until ``separator`` is found.
 
