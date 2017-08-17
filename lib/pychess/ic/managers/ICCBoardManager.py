@@ -292,8 +292,8 @@ class ICCBoardManager(BoardManager):
             if not hasattr(game, "queue"):
                 game.queue = asyncio.Queue()
 
-            game.queue.put_nowait((gameno, 0, WHITE, None, FEN_START,
-                                   game.wplayer.name, game.bplayer.name, wms, bms))
+            # game.queue.put_nowait((gameno, 0, WHITE, None, FEN_START,
+            #                        game.wplayer.name, game.bplayer.name, wms, bms))
         else:
             fen, moves_to_go = right_part.split("}")
             self.moves_to_go = int(moves_to_go)
