@@ -16,8 +16,13 @@ class ExternalsDialog():
     def __init__(self):
         self.window = Gtk.Window(Gtk.WindowType.TOPLEVEL, title=_("Ask for permissions"))
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        vbox.props.margin_start = 9
-        vbox.props.margin_end = 9
+        gtk_version = (Gtk.get_major_version(), Gtk.get_minor_version())
+        if gtk_version >= (3, 12):
+            vbox.props.margin_start = 9
+            vbox.props.margin_end = 9
+        else:
+            vbox.props.margin_left = 9
+            vbox.props.margin_right = 9
         vbox.props.margin_bottom = 9
         self.window.add(vbox)
         uistuff.keepWindowSize("externalsdialog", self.window, (320, 240), uistuff.POSITION_CENTER)
