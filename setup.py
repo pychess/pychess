@@ -254,7 +254,7 @@ if msi:
         "include_msvcr": True,
         "path": sys.path + ["lib"],
         "includes": ["gi", "sqlalchemy.sql.default_comparator"],
-        "packages": ["gi", "sqlalchemy.dialects.sqlite", "pexpect", "pychess"],
+        "packages": ["aiohttp", "gi", "sqlalchemy.dialects.sqlite", "pexpect", "pychess"],
         "include_files": include_files}
 else:
     PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
