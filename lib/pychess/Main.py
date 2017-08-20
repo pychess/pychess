@@ -546,7 +546,7 @@ class PyChess(Gtk.Application):
         # About dialog
         self.aboutdialog = widgets["aboutdialog1"]
         self.aboutdialog.set_program_name(NAME)
-        self.aboutdialog.set_copyright("Copyright © 2006-2016")
+        self.aboutdialog.set_copyright("Copyright © 2006-2017")
         self.aboutdialog.set_version(VERSION_NAME + " " + VERSION)
         if os.path.isdir(prefix.addDataPrefix(".git")):
             try:
