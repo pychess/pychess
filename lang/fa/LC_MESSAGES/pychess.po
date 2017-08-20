@@ -4,6 +4,7 @@
 # 
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008
+# SECOND AUTHOR <Ahgm1997@gmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
@@ -25,11 +26,11 @@ msgstr ""
 
 #: glade/PyChess.glade:43
 msgid "Game information"
-msgstr ""
+msgstr "اطلاعات بازی"
 
 #: glade/PyChess.glade:162
 msgid "Event:"
-msgstr ""
+msgstr "روخداد"
 
 #: glade/PyChess.glade:176
 msgid "Site:"
@@ -37,15 +38,15 @@ msgstr "پایگاه:"
 
 #: glade/PyChess.glade:202
 msgid "Round:"
-msgstr ""
+msgstr "دور"
 
 #: glade/PyChess.glade:235
 msgid "White:"
-msgstr ""
+msgstr "سپید"
 
 #: glade/PyChess.glade:247
 msgid "Black:"
-msgstr ""
+msgstr "سیاه"
 
 #: glade/PyChess.glade:301
 msgid "<b>Game data</b>"
@@ -53,7 +54,7 @@ msgstr ""
 
 #: glade/PyChess.glade:356
 msgid "<b>Date of game</b>"
-msgstr ""
+msgstr "<b>تاریخ بازی</b>"
 
 #: glade/PyChess.glade:400
 msgid "Preferences"
@@ -61,23 +62,23 @@ msgstr "تنظیمات‌"
 
 #: glade/PyChess.glade:438
 msgid "The displayed name of the first human player, e.g., John."
-msgstr ""
+msgstr "نمایش  دادن نام اولین بازیکن, e.g., امیر"
 
 #: glade/PyChess.glade:450
 msgid "<b>Name of _first human player:</b>"
-msgstr ""
+msgstr "<b>نام بازیکن اول:</b>"
 
 #: glade/PyChess.glade:479
 msgid "The displayed name of the guest player, e.g., Mary."
-msgstr ""
+msgstr "نمایش  دادن نام بازیکن مهمان, e.g., مریم"
 
 #: glade/PyChess.glade:491
 msgid "<b>Name of s_econd human player:</b>"
-msgstr ""
+msgstr "<b>نام بازیکن دوم:</b>"
 
 #: glade/PyChess.glade:527
 msgid "_Hide tabs when only one game is open"
-msgstr ""
+msgstr "پنهان کن تب ها رو موقعی که تنها یک بازی بازه"
 
 #: glade/PyChess.glade:532
 msgid ""
