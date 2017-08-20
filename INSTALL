@@ -24,16 +24,6 @@ flake8 --install-hook=git
 git config flake8.strict true
 
 -------------
-Optional dependencies to query .pgn databases
-(no Linux packages yet)
-https://github.com/gbtami/chess_db
-https://github.com/gbtami/scoutfish
-https://github.com/sshivaji/pgnextractor
-Run install_externals.sh to build and copy needed files to lib/pychess/externals/
-If you want to build 32bit executables don't forget:
-sudo apt-get install g++-multilib
-
--------------
 Dependencies for Ubuntu/Debian:
 gnome-icon-theme
 python3
