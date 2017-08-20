@@ -50,7 +50,7 @@ msgstr "سیاه"
 
 #: glade/PyChess.glade:301
 msgid "<b>Game data</b>"
-msgstr ""
+msgstr "<b>داده بازی</b>"
 
 #: glade/PyChess.glade:356
 msgid "<b>Date of game</b>"
