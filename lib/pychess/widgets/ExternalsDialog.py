@@ -1,3 +1,4 @@
+import asyncio
 import shutil
 import os
 import stat
@@ -8,7 +9,7 @@ from pychess.ic import TimeSeal
 from pychess.Savers import pgn
 from pychess.System import conf
 from pychess.System import uistuff
-from pychess.System import download_file
+from pychess.System import download_file_async
 from pychess.System.prefix import getEngineDataPrefix
 
 
@@ -77,30 +78,33 @@ class ExternalsDialog():
         self.window.present()
 
     def on_close_clicked(self, button):
-        altpath = getEngineDataPrefix()
-        if pgn.scoutfish_path is None and conf.get("download_scoutfish", False):
-            binary = "https://github.com/gbtami/scoutfish/releases/download/20170627/%s" % pgn.scoutfish
-            filename = download_file(binary)
-            if filename is not None:
-                dest = shutil.move(filename, os.path.join(altpath, pgn.scoutfish))
-                os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
-                pgn.scoutfish_path = dest
+        @asyncio.coroutine
+        def coro():
+            altpath = getEngineDataPrefix()
+            if pgn.scoutfish_path is None and conf.get("download_scoutfish", False):
+                binary = "https://github.com/gbtami/scoutfish/releases/download/20170627/%s" % pgn.scoutfish
+                filename = yield from download_file_async(binary)
+                if filename is not None:
+                    dest = shutil.move(filename, os.path.join(altpath, pgn.scoutfish))
+                    os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+                    pgn.scoutfish_path = dest
 
-        if pgn.chess_db_path is None and conf.get("download_chess_db", False):
-            binary = "https://github.com/gbtami/chess_db/releases/download/20170627/%s" % pgn.parser
-            filename = download_file(binary)
-            if filename is not None:
-                dest = shutil.move(filename, os.path.join(altpath, pgn.parser))
-                os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
-                pgn.chess_db_path = dest
+            if pgn.chess_db_path is None and conf.get("download_chess_db", False):
+                binary = "https://github.com/gbtami/chess_db/releases/download/20170627/%s" % pgn.parser
+                filename = yield from download_file_async(binary)
+                if filename is not None:
+                    dest = shutil.move(filename, os.path.join(altpath, pgn.parser))
+                    os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+                    pgn.chess_db_path = dest
 
-        if TimeSeal.timestamp_path is None and conf.get("download_timestamp", False):
-            binary = "https://www.chessclub.com/user/resources/icc/timestamp/%s" % TimeSeal.timestamp
-            filename = download_file(binary)
-            if filename is not None:
-                dest = shutil.move(filename, os.path.join(altpath, TimeSeal.timestamp))
-                os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
-                TimeSeal.timestamp_path = dest
+            if TimeSeal.timestamp_path is None and conf.get("download_timestamp", False):
+                binary = "https://www.chessclub.com/user/resources/icc/timestamp/%s" % TimeSeal.timestamp
+                filename = yield from download_file_async(binary)
+                if filename is not None:
+                    dest = shutil.move(filename, os.path.join(altpath, TimeSeal.timestamp))
+                    os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+                    TimeSeal.timestamp_path = dest
+        asyncio.async(coro())
 
         self.window.emit("delete-event", None)
 
