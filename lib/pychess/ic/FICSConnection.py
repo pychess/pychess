@@ -1,6 +1,8 @@
 import asyncio
 import re
+import sys
 import socket
+import traceback
 from collections import defaultdict
 
 from gi.repository import GObject
@@ -323,6 +325,8 @@ class FICSConnection(Connection):
                 while self.isConnected():
                     yield from self.client.parse()
             except Exception as err:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                traceback.print_exception(exc_type, exc_value, exc_traceback)
                 log.info("FICSConnection.run: %s" % repr(err),
                          extra={"task": (self.host, "raw")})
                 self.close()

@@ -492,10 +492,15 @@ class BoardManager(GObject.GObject):
                         self.connection.stored_owner, game.opponent.name))
                 self.connection.client.run_command("forward 999")
         else:
-            game = self.connection.games.get_game_by_gameno(gameno)
-            if not hasattr(game, "queue"):
-                game.queue = asyncio.Queue()
-            game.queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
+            if gameno in self.connection.games.games_by_gameno:
+                game = self.connection.games.get_game_by_gameno(gameno)
+                if not hasattr(game, "queue"):
+                    game.queue = asyncio.Queue()
+                game.queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
+            else:
+                # In some cases (like lost on time) the last move is resent by FICS
+                # but game was already removed from self.connection.games
+                log.debug("Got %s but %s not in connection.games" % (style12, gameno))
 
     def onGameModelStarted(self, gameno):
         self.gamemodelStartedEvents[gameno].set()
