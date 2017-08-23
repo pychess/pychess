@@ -95,7 +95,7 @@ class ICCChatManager(ChatManager):
         titles, rest = rest.split("}", 1)
         text, tell_type = rest[3:].split("}")
         isadmin = tell_type == "4"
-        GLib.idle_add(self.emit, "privateMessage", name, "title", isadmin, text)
+        GLib.idle_add(self.emit, "privateMessage", name, "title", isadmin, text[:-1])
 
     def on_icc_shout(self, data):
         # playername titles type ^Y{shout string^Y}
