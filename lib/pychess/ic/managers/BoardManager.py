@@ -934,11 +934,19 @@ class BoardManager(GObject.GObject):
         if wplayer.game is not None:
             game.rated = wplayer.game.rated
         game = self.connection.games.get(game, emit=False)
-        self.connection.games.game_ended(game)
-        # Do this last to give anybody connected to the game's signals a chance
-        # to disconnect from them first
-        wplayer.game = None
-        bplayer.game = None
+
+        def coro():
+            # sometimes the latest move of the game comes after on_game_remove
+            # we have wait a little here before removing game from connection.games
+            # to let pychess a chance to processed it
+            yield from asyncio.wait(0.1)
+            self.connection.games.game_ended(game)
+            # Do this last to give anybody connected to the game's signals a chance
+            # to disconnect from them first
+            wplayer.game = None
+            bplayer.game = None
+
+        asyncio.async(coro())
 
     def onObserveGameCreated(self, matchlist):
         log.debug("'%s'" % (matchlist[1].string),
