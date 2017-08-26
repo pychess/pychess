@@ -212,7 +212,7 @@ class _BaseEventLoop(asyncio.BaseEventLoop):
     `asyncio.BaseEventLoop`. This is necessary as the Unix implementation will also indirectly
     inherit from that class (thereby creating diamond inheritance).
     Python permits and fully supports diamond inheritance so this is not a problem. However it
-    is, on the other hand, not permitted to inherit from a class both directly *and* indirectly –
+    is, on the other hand, not permitted to inherit from a class both directly *and* indirectly -
     hence we add this intermediate class to make sure that can never happen (see
     https://stackoverflow.com/q/29214888 for a minimal example a forbidden inheritance tree) and
     https://www.python.org/download/releases/2.3/mro/ for some extensive documentation of the
