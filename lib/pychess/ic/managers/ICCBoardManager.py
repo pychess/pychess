@@ -101,8 +101,10 @@ class ICCBoardManager(BoardManager):
         gameno, backup_count = data.split()
         gameno = int(gameno)
         backup_count = int(backup_count)
-
-        game = self.connection.games.get_game_by_gameno(gameno)
+        try:
+            game = self.connection.games.get_game_by_gameno(gameno)
+        except KeyError:
+            return
 
         if game == self.theGameImPlaying:
             curcol, ply, wms, bms = self.my_game_info
@@ -239,7 +241,10 @@ class ICCBoardManager(BoardManager):
         gameno = int(gameno)
         comment, rest = rest[2:].split("}", 1)
 
-        game = self.connection.games.get_game_by_gameno(gameno)
+        try:
+            game = self.connection.games.get_game_by_gameno(gameno)
+        except KeyError:
+            return
         wname = game.wplayer.name
         bname = game.bplayer.name
 
@@ -284,7 +289,10 @@ class ICCBoardManager(BoardManager):
         gameno, right_part = data.split("{")
         gameno = int(gameno)
 
-        game = self.connection.games.get_game_by_gameno(gameno)
+        try:
+            game = self.connection.games.get_game_by_gameno(gameno)
+        except KeyError:
+            return
 
         if game == self.theGameImPlaying:
             curcol, ply, wms, bms = self.my_game_info
@@ -309,7 +317,10 @@ class ICCBoardManager(BoardManager):
         gameno, san_move, alg_move, time, clock = send_moves.split()
         gameno = int(gameno)
 
-        game = self.connection.games.get_game_by_gameno(gameno)
+        try:
+            game = self.connection.games.get_game_by_gameno(gameno)
+        except KeyError:
+            return
 
         fen = ""
 
