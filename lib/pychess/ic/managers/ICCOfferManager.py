@@ -28,7 +28,6 @@ class ICCOfferManager(OfferManager):
 
     def on_icc_offers_in_my_game(self, data):
         # gamenumber wdraw bdraw wadjourn badjourn wabort babort wtakeback btakeback
-        print(data)
         gamenumber, wdraw, bdraw, wadjourn, badjourn, wabort, babort, wtakeback, btakeback = map(int, data.split())
 
         if wdraw or bdraw:
@@ -39,6 +38,9 @@ class ICCOfferManager(OfferManager):
             offertype = ABORT_OFFER
         elif wtakeback or btakeback:
             offertype = TAKEBACK_OFFER
+        else:
+            log.debug("ICCOfferManager.on_icc_offers_in_my_game: unknown offer data: %s" % data)
+            return
 
         index = gamenumber * 100000 + OFFERS.index(offertype)
         if offertype == TAKEBACK_OFFER:
@@ -48,7 +50,7 @@ class ICCOfferManager(OfferManager):
             offer = Offer(offertype, index=index)
         self.offers[offer.index] = offer
 
-        log.debug("OfferManager.onOfferAdd: emitting onOfferAdd: %s" % offer)
+        log.debug("ICCOfferManager.on_icc_offers_in_my_game: emitting onOfferAdd: %s" % offer)
         self.emit("onOfferAdd", offer)
 
     def on_icc_match_add(self, data):
