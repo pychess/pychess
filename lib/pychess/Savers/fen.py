@@ -54,7 +54,7 @@ class FenFile(ChessFile):
         if self.fen_is_string:
             rec = self.games[0]
 
-        if "Variant" in rec:
+        if isinstance(rec, dict) and "Variant" in rec:
             model.variant = FischerandomBoard
 
         fen = self.games[0]["FEN"]
