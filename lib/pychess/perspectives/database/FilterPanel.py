@@ -27,7 +27,7 @@ class FilterPanel(Gtk.TreeView):
 
         # Add piece widgets to dialog *_dock containers on material tab
         self.widgets = uistuff.GladeWidgets("PyChess.glade")
-        self.dialog = NestedDialog(self.widgets["filter_dialog"])
+        self.dialog = self.widgets["filter_dialog"]
 
         for piece in "qrbnp":
             dock = "w%s_dock" % piece
@@ -202,6 +202,8 @@ class FilterPanel(Gtk.TreeView):
 
             self.update_filters()
 
+        self.dialog.hide()
+
         if hasattr(self, "board_control"):
             self.board_control.emit("action", "CLOSE", None)
 
@@ -250,6 +252,8 @@ class FilterPanel(Gtk.TreeView):
                 self.treestore[treeiter] = [formatted(pattern_query), pattern_query, PATTERN_FILTER, RULE]
 
             self.update_filters()
+
+        self.dialog.hide()
 
         if hasattr(self, "board_control"):
             self.board_control.emit("action", "CLOSE", None)
@@ -569,23 +573,3 @@ class FilterPanel(Gtk.TreeView):
 
     def get_fen(self):
         return self.setupmodel.boards[-1].as_fen()
-
-
-class NestedDialog(object):
-    def __init__(self, dialog):
-        self.dialog = dialog
-        self.response = None
-
-    def run(self):
-        self._run()
-        return self.response
-
-    def _run(self):
-        self.dialog.show()
-        self.dialog.connect("response", self._response)
-        Gtk.main()
-
-    def _response(self, dialog, response):
-        self.response = response
-        self.dialog.hide()
-        Gtk.main_quit()
