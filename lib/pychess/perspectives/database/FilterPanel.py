@@ -181,31 +181,34 @@ class FilterPanel(Gtk.TreeView):
             if row_type == RULE:
                 treeiter = None
 
-        response = self.dialog.run()
+        def on_response(dialog, response):
+            if response == Gtk.ResponseType.OK:
+                tag_query, material_query, pattern_query = self.get_queries_from_widgets()
 
-        if response == Gtk.ResponseType.OK:
-            tag_query, material_query, pattern_query = self.get_queries_from_widgets()
+                if tag_query:
+                    it = self.treestore.append(treeiter, [formatted(tag_query), tag_query, TAG_FILTER, RULE])
+                    self.get_selection().select_iter(it)
 
-            if tag_query:
-                it = self.treestore.append(treeiter, [formatted(tag_query), tag_query, TAG_FILTER, RULE])
-                self.get_selection().select_iter(it)
+                if material_query:
+                    it = self.treestore.append(treeiter, [formatted(material_query), material_query, MATERIAL_FILTER, RULE])
+                    self.get_selection().select_iter(it)
 
-            if material_query:
-                it = self.treestore.append(treeiter, [formatted(material_query), material_query, MATERIAL_FILTER, RULE])
-                self.get_selection().select_iter(it)
+                if pattern_query:
+                    it = self.treestore.append(treeiter, [formatted(pattern_query), pattern_query, PATTERN_FILTER, RULE])
+                    self.get_selection().select_iter(it)
 
-            if pattern_query:
-                it = self.treestore.append(treeiter, [formatted(pattern_query), pattern_query, PATTERN_FILTER, RULE])
-                self.get_selection().select_iter(it)
+                self.expand_all()
 
-            self.expand_all()
+                self.update_filters()
 
-            self.update_filters()
+            if hasattr(self, "board_control"):
+                self.board_control.emit("action", "CLOSE", None)
 
-        self.dialog.hide()
+            self.dialog.hide()
+            self.dialog.disconnect(handler_id)
 
-        if hasattr(self, "board_control"):
-            self.board_control.emit("action", "CLOSE", None)
+        handler_id = self.dialog.connect("response", on_response)
+        self.dialog.show()
 
     def on_edit_clicked(self, button):
         selection = self.get_selection()
@@ -237,26 +240,29 @@ class FilterPanel(Gtk.TreeView):
             self.widgets["material_filter"].set_sensitive(False)
             self.widgets["filter_notebook"].set_current_page(PATTERN_FILTER)
 
-        response = self.dialog.run()
+        def on_response(dialog, response):
+            if response == Gtk.ResponseType.OK:
+                tag_query, material_query, pattern_query = self.get_queries_from_widgets()
 
-        if response == Gtk.ResponseType.OK:
-            tag_query, material_query, pattern_query = self.get_queries_from_widgets()
+                if tag_query and query_type == TAG_FILTER:
+                    self.treestore[treeiter] = [formatted(tag_query), tag_query, TAG_FILTER, RULE]
 
-            if tag_query and query_type == TAG_FILTER:
-                self.treestore[treeiter] = [formatted(tag_query), tag_query, TAG_FILTER, RULE]
+                if material_query and query_type == MATERIAL_FILTER:
+                    self.treestore[treeiter] = [formatted(material_query), material_query, MATERIAL_FILTER, RULE]
 
-            if material_query and query_type == MATERIAL_FILTER:
-                self.treestore[treeiter] = [formatted(material_query), material_query, MATERIAL_FILTER, RULE]
+                if pattern_query and query_type == PATTERN_FILTER:
+                    self.treestore[treeiter] = [formatted(pattern_query), pattern_query, PATTERN_FILTER, RULE]
 
-            if pattern_query and query_type == PATTERN_FILTER:
-                self.treestore[treeiter] = [formatted(pattern_query), pattern_query, PATTERN_FILTER, RULE]
+                self.update_filters()
 
-            self.update_filters()
+            if hasattr(self, "board_control"):
+                self.board_control.emit("action", "CLOSE", None)
 
-        self.dialog.hide()
+            self.dialog.hide()
+            self.dialog.disconnect(handler_id)
 
-        if hasattr(self, "board_control"):
-            self.board_control.emit("action", "CLOSE", None)
+        handler_id = self.dialog.connect("response", on_response)
+        self.dialog.show()
 
     def add_sub_fen(self, sub_fen):
         selection = self.get_selection()
