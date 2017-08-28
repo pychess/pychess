@@ -330,11 +330,13 @@ class FilterPanel(Gtk.TreeView):
 
         need_update = False
         if tag_query != self.persp.chessfile.tag_query:
-            self.persp.chessfile.set_tag_filter(tag_query)
+            if self.filtered:
+                self.persp.chessfile.set_tag_filter(tag_query)
             need_update = True
 
         if scout_query != self.persp.chessfile.scout_query:
-            self.persp.chessfile.set_scout_filter(scout_query)
+            if self.filtered:
+                self.persp.chessfile.set_scout_filter(scout_query)
             need_update = True
 
         textbuffer = self.widgets["scout_textbuffer"]
