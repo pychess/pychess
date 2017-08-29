@@ -24,7 +24,6 @@ install:
   # about it being out of date.
   - "pip install --disable-pip-version-check --user --upgrade pip"
   - "pip install pexpect"
-  - "pip install aiohttp"
   - "pip install sqlalchemy"
 
   # Download pygobjectwin32

@@ -72,13 +72,6 @@ except ImportError:
     print("ERROR: PyChess requires pexpect to be installed")
     sys.exit(1)
 
-try:
-    import aiohttp
-    aiohttp.__version__
-except ImportError:
-    print("ERROR: PyChess requires aiohttp to be installed")
-    sys.exit(1)
-
 ###############################################################################
 # Fix environment
 

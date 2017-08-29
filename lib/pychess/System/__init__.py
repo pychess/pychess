@@ -5,28 +5,18 @@ import pstats
 import inspect
 import cProfile
 import tempfile
-from contextlib import closing
 from timeit import default_timer
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
-
-import aiohttp
 
 from gi.repository import GLib
 
 
 @asyncio.coroutine
 def download_file_async(url, progressbar=None):
-    if progressbar is not None:
-        GLib.idle_add(progressbar.set_text, "Downloading %s ..." % url)
-    else:
-        print("Downloading %s ..." % url)
-    session = aiohttp.ClientSession()
-    response = yield from session.get(url)
-    temp_file = os.path.join(tempfile.gettempdir(), os.path.basename(url))
-    with closing(response), open(temp_file, 'wb') as local_file:
-        data = yield from response.content.read()
-        local_file.write(data)
+    loop = asyncio.get_event_loop()
+    future = loop.run_in_executor(None, download_file, url)
+    temp_file = yield from future
     return temp_file
 
 
