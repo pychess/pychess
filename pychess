@@ -63,15 +63,6 @@ except ImportError:
     print("ERROR: PyChess requires sqlalchemy to be installed")
     sys.exit(1)
 
-try:
-    import pexpect
-    if pexpect.__version__ < "4.0":
-        print("ERROR: PyChess requires pexpect >= 4.0")
-        sys.exit(1)
-except ImportError:
-    print("ERROR: PyChess requires pexpect to be installed")
-    sys.exit(1)
-
 ###############################################################################
 # Fix environment
 

@@ -9,7 +9,10 @@ import platform
 import re
 import sys
 
-import pexpect
+try:
+    import pexpect
+except ImportError:
+    from pychess.external import pexpect
 
 from sqlalchemy import String
 
