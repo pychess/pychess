@@ -653,7 +653,7 @@
                                     <property name="can_focus">False</property>
                                     <child>
                                       <object class="GtkRadioButton" id="classicalRadio">
-                                        <property name="label" translatable="yes">Classical:    3 min / 40 move</property>
+                                        <property name="label" translatable="yes">Classical:    3 min / 40 moves</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
