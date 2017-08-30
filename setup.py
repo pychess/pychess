@@ -264,7 +264,7 @@ else:
                 "pychess.perspectives", "pychess.perspectives.welcome",
                 "pychess.perspectives.games", "pychess.perspectives.fics",
                 "pychess.perspectives.database",
-                "pychess.external", "pychess.external.gbulb"]
+                "pychess.external", "pychess.external.gbulb", "pychess.external.pexpect"]
 
     build_exe_options = {}
     bdist_msi_options = {}
