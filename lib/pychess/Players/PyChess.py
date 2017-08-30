@@ -19,27 +19,7 @@ from pychess.Utils.lutils.lmove import listToSan, toSAN  # nopep8
 from pychess.System.Log import log  # nopep8
 
 
-# Make print() unbuffered and logged
-class Unbuffered(object):
-    def __init__(self, stream):
-        self.stream = stream
-
-    def write(self, data):
-        try:
-            self.stream.write(data)
-            self.stream.flush()
-        except BrokenPipeError:
-            log.debug("BrokenPipeError in Unbuffered print() !!!", extra={"task": "stdout"})
-        log.debug(data, extra={"task": "stdout"})
-
-    def __getattr__(self, attr):
-        return getattr(self.stream, attr)
-
-sys.stdout = Unbuffered(sys.stdout)
-
-
 class PyChess(object):
-
     def __init__(self):
         self.sd = MAXPLY
         self.skipPruneChance = 0
@@ -54,6 +34,10 @@ class PyChess(object):
         self.post = False
         self.debug = True
         self.outOfBook = False
+
+    def print(self, text):
+        print(text, flush=True)
+        log.debug(text, extra={"task": "stdout"})
 
     # Play related
 
@@ -72,7 +56,7 @@ class PyChess(object):
         # Classical timecontrol
         ply = self.board.plyCount % (self.movestogo * 2)
         remaining = self.movestogo - ply // 2
-        print("# remaining moves=%s" % remaining)
+        self.print("# remaining moves=%s" % remaining)
         return remaining
 
     def __getBestOpening(self):
@@ -126,10 +110,10 @@ class PyChess(object):
             lsearch.endtime = starttime + usetime if timed else sys.maxsize
             if self.debug:
                 if timed:
-                    print("# Time left: %3.2f s; Planing to think for %3.2f s" %
+                    self.print("# Time left: %3.2f s; Planing to think for %3.2f s" %
                           (self.clock[self.playingAs], usetime))
                 else:
-                    print("# Searching to depth %d without timelimit" % self.sd)
+                    self.print("# Searching to depth %d without timelimit" % self.sd)
 
             for depth in range(1, self.sd + 1):
                 # Heuristic time saving
@@ -146,7 +130,7 @@ class PyChess(object):
                     if self.post:
                         pv1 = " ".join(listToSan(self.board, mvs))
                         time_cs = int(100 * (time() - starttime))
-                        print("%s %s %s %s %s" % (
+                        self.print("%s %s %s %s %s" % (
                             depth, self.scr, time_cs, lsearch.nodes, pv1))
                 else:
                     # We were interrupted
@@ -167,17 +151,17 @@ class PyChess(object):
                 # This should only happen in terminal mode
 
                 if self.scr == 0:
-                    print("result %s" % reprResult[DRAW])
+                    self.print("result %s" % reprResult[DRAW])
                 elif self.scr < 0:
                     if self.board.color == WHITE:
-                        print("result %s" % reprResult[BLACKWON])
+                        self.print("result %s" % reprResult[BLACKWON])
                     else:
-                        print("result %s" % reprResult[WHITEWON])
+                        self.print("result %s" % reprResult[WHITEWON])
                 else:
                     if self.board.color == WHITE:
-                        print("result %s" % reprResult[WHITEWON])
+                        self.print("result %s" % reprResult[WHITEWON])
                     else:
-                        print("result %s" % reprResult[BLACKWON])
+                        self.print("result %s" % reprResult[BLACKWON])
                 return
 
             lsearch.nodes = 0
@@ -205,7 +189,7 @@ class PyChess(object):
 
             pv1 = " ".join(listToSan(board, mvs))
             time_cs = int(100 * (time() - start))
-            print("%s %s %s %s %s" % (depth, scr, time_cs, lsearch.nodes, pv1))
+            self.print("%s %s %s %s %s" % (depth, scr, time_cs, lsearch.nodes, pv1))
 
             lsearch.nodes = 0
 
