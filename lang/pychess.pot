@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-26 11:43+0200\n"
+"POT-Creation-Date: 2017-08-30 21:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1279,7 +1279,7 @@ msgid "Normal:   40 min + 15 sec/move"
 msgstr ""
 
 #: glade/newInOut.glade:656
-msgid "Classical:    3 min / 40 move"
+msgid "Classical:    3 min / 40 moves"
 msgstr ""
 
 #: glade/newInOut.glade:767
@@ -1651,36 +1651,36 @@ msgstr ""
 msgid "Simple Chess Position"
 msgstr ""
 
-#: lib/pychess/Savers/fen.py:66 lib/pychess/Savers/pgn.py:687
+#: lib/pychess/Savers/fen.py:66 lib/pychess/Savers/pgn.py:693
 msgid "The game can't be loaded, because of an error parsing FEN"
 msgstr ""
 
-#: lib/pychess/Savers/pgn.py:38
+#: lib/pychess/Savers/pgn.py:41
 msgid "Chess Game"
 msgstr ""
 
-#: lib/pychess/Savers/pgn.py:722
+#: lib/pychess/Savers/pgn.py:728
 msgid "Invalid move."
 msgstr ""
 
-#: lib/pychess/Savers/pgn.py:849
+#: lib/pychess/Savers/pgn.py:855
 #, python-format
 msgid "Error parsing %(mstr)s"
 msgstr ""
 
-#: lib/pychess/Savers/pgn.py:882
+#: lib/pychess/Savers/pgn.py:888
 #, python-format
 msgid ""
 "The game can't be read to end, because of an error parsing move %(moveno)s "
 "'%(notation)s'."
 msgstr ""
 
-#: lib/pychess/Savers/pgn.py:885
+#: lib/pychess/Savers/pgn.py:891
 #, python-format
 msgid "The move failed because %s."
 msgstr ""
 
-#: lib/pychess/Savers/pgn.py:895
+#: lib/pychess/Savers/pgn.py:901
 #, python-format
 msgid "Error parsing move %(moveno)s %(mstr)s"
 msgstr ""
