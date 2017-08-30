@@ -532,7 +532,10 @@ class PGNFile(ChessFile):
                 elif offs in filtered_offs_list:
                     offsets += offs
 
-            self.tag_database.build_where_offs8(sorted(offsets))
+            if len(offsets) > self.limit:
+                self.tag_database.build_where_offs8(sorted(offsets)[:self.limit])
+            else:
+                self.tag_database.build_where_offs8(sorted(offsets))
 
     def get_records(self, direction=FIRST_PAGE):
         """ Get game header tag records from .sqlite database in paginated way """
