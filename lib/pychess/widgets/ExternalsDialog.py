@@ -69,7 +69,7 @@ class ExternalsDialog():
         buttonbox = Gtk.ButtonBox()
         close_button = Gtk.Button.new_from_stock(Gtk.STOCK_OK)
         close_button.connect("clicked", self.on_close_clicked)
-        self.window.connect("delete_event", lambda w, a: self.window.hide())
+        self.window.connect("delete_event", lambda w, a: self.window.destroy())
         buttonbox.add(close_button)
         vbox.pack_start(buttonbox, False, False, 0)
 
@@ -107,6 +107,3 @@ class ExternalsDialog():
         asyncio.async(coro())
 
         self.window.emit("delete-event", None)
-
-
-externals_dialog = ExternalsDialog()

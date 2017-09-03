@@ -4,50 +4,34 @@ from random import randrange
 
 
 class TipOfTheDay:
-    @classmethod
-    def _init(cls):
-        cls.widgets = uistuff.GladeWidgets("tipoftheday.glade")
+    def __init__(self):
+        self.widgets = uistuff.GladeWidgets("tipoftheday.glade")
 
-        uistuff.keepWindowSize("tipoftheday", cls.widgets["window1"],
-                               (320, 240), uistuff.POSITION_CENTER)
+        uistuff.keepWindowSize("tipoftheday", self.widgets["window1"], (320, 240), uistuff.POSITION_CENTER)
 
-        cls.widgets["checkbutton1"].set_active(conf.get("show_tip_at_startup",
-                                                        False))
-        cls.widgets["checkbutton1"].connect(
-            "toggled",
-            lambda w: conf.set("show_tip_at_startup", w.get_active()))
+        self.widgets["checkbutton1"].set_active(conf.get("show_tip_at_startup", False))
+        self.widgets["checkbutton1"].connect("toggled", lambda w: conf.set("show_tip_at_startup", w.get_active()))
+        self.widgets["close_button"].connect("clicked", lambda w: self.widgets["window1"].emit("delete-event", None))
+        self.widgets["window1"].connect("delete_event", lambda w, a: self.widgets["window1"].destroy())
+        self.widgets["back_button"].connect("clicked", lambda w: self.set_currentIndex(self.currentIndex - 1))
+        self.widgets["forward_button"].connect("clicked", lambda w: self.set_currentIndex(self.currentIndex + 1))
 
-        cls.widgets["close_button"].connect(
-            "clicked",
-            lambda w: cls.widgets["window1"].emit("delete-event", None))
-        cls.widgets["window1"].connect(
-            "delete_event", lambda w, a: cls.widgets["window1"].hide())
+        self.currentIndex = 0
 
-        cls.widgets["back_button"].connect(
-            "clicked", lambda w: cls.set_currentIndex(cls.currentIndex - 1))
-        cls.widgets["forward_button"].connect(
-            "clicked", lambda w: cls.set_currentIndex(cls.currentIndex + 1))
+    def show(self):
+        self.set_currentIndex(randrange(len(tips)))
+        self.widgets["window1"].show()
+        self.widgets["window1"].present()
 
-        cls.currentIndex = 0
-
-    @classmethod
-    def show(cls):
-        if not hasattr(cls, "widgets"):
-            cls._init()
-        cls.set_currentIndex(randrange(len(tips)))
-        cls.widgets["window1"].show()
-        cls.widgets["window1"].present()
-
-    @classmethod
-    def set_currentIndex(cls, value):
+    def set_currentIndex(self, value):
         if len(tips) == 0:
             return
         if value < 0:
             value = len(tips) - 1
         elif value >= len(tips):
             value = 0
-        cls.currentIndex = value
-        cls.widgets["tipfield"].set_markup(tips[value])
+        self.currentIndex = value
+        self.widgets["tipfield"].set_markup(tips[value])
 
 
 tips = (

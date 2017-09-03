@@ -23,11 +23,11 @@ from pychess.Utils.const import HINT, NAME, SPY
 # from pychess.Utils.checkversion import checkversion
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
-from pychess.widgets import tipOfTheDay
+from pychess.widgets.tipOfTheDay import TipOfTheDay
 from pychess.widgets.discovererDialog import DiscovererDialog
-from pychess.widgets.ExternalsDialog import externals_dialog
+from pychess.widgets.ExternalsDialog import ExternalsDialog
 from pychess.widgets import gamewidget
-from pychess.widgets import analyzegameDialog
+from pychess.widgets.analyzegameDialog import AnalyzeGameDialog
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.Players.engineNest import discoverer
@@ -234,7 +234,8 @@ class GladeHandlers(object):
         perspective.saveGameAs(gmwidg.gamemodel, position, export=True)
 
     def on_analyze_game_activate(self, widget):
-        analyzegameDialog.run()
+        analyze_game_dialog = AnalyzeGameDialog()
+        analyze_game_dialog.run()
 
     def on_properties1_activate(self, widget):
         gameinfoDialog.run(gamewidget.getWidgets())
@@ -347,6 +348,7 @@ class GladeHandlers(object):
         enginesDialog.run(gamewidget.getWidgets())
 
     def on_download_externals_activate(self, widget):
+        externals_dialog = ExternalsDialog()
         externals_dialog.show()
 
     def on_preferences_activate(self, widget):
@@ -386,7 +388,8 @@ class GladeHandlers(object):
         webbrowser.open("https://www.transifex.com/projects/p/pychess/")
 
     def on_TipOfTheDayMenuItem_activate(self, widget):
-        tipOfTheDay.TipOfTheDay.show()
+        tip_of_the_day = TipOfTheDay()
+        tip_of_the_day.show()
 
 
 class PyChess(Gtk.Application):
@@ -456,11 +459,13 @@ class PyChess(Gtk.Application):
 
         # Externals download dialog
         if not conf.get("dont_show_externals_at_startup", False):
+            externals_dialog = ExternalsDialog()
             externals_dialog.show()
 
         # Tip of the day dialog
         if conf.get("show_tip_at_startup", False):
-            tipOfTheDay.TipOfTheDay.show()
+            tip_of_the_day = TipOfTheDay()
+            tip_of_the_day.show()
 
         dd = DiscovererDialog(discoverer)
         self.dd_task = asyncio.async(dd.start())
