@@ -20,7 +20,7 @@ from pychess.System import conf
 from pychess.System.Log import log
 from pychess.widgets import preferencesDialog
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
-from pychess.widgets import InfoBar
+from pychess.widgets import InfoBar, mainwindow
 from pychess.widgets.gamewidget import getWidgets
 from pychess.perspectives import perspective_manager
 
@@ -274,7 +274,7 @@ class GameNanny(object):
 
     def engineDead(self, engine, gmwidg):
         gmwidg.bringToFront()
-        dialog = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+        dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                    buttons=Gtk.ButtonsType.OK)
         dialog.set_markup(_("<big><b>Engine, %s, has died</b></big>") % repr(engine))
         dialog.format_secondary_text(_(

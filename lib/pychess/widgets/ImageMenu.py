@@ -1,5 +1,7 @@
 from gi.repository import Gtk, Gdk, GObject
 
+from pychess.widgets import mainwindow
+
 
 class ImageMenu(Gtk.EventBox):
     def __init__(self, image, child):
@@ -7,6 +9,7 @@ class ImageMenu(Gtk.EventBox):
         self.add(image)
 
         self.subwindow = Gtk.Window()
+        self.subwindow.set_transient_for(mainwindow())
         self.subwindow.set_decorated(False)
         self.subwindow.set_resizable(False)
         self.subwindow.set_type_hint(Gdk.WindowTypeHint.DIALOG)

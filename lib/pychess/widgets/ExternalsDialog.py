@@ -11,11 +11,13 @@ from pychess.System import conf
 from pychess.System import uistuff
 from pychess.System import download_file_async
 from pychess.System.prefix import getEngineDataPrefix
+from pychess.widgets import mainwindow
 
 
 class ExternalsDialog():
     def __init__(self):
         self.window = Gtk.Window(Gtk.WindowType.TOPLEVEL, title=_("Ask for permissions"))
+        self.window.set_transient_for(mainwindow())
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         gtk_version = (Gtk.get_major_version(), Gtk.get_minor_version())
         if gtk_version >= (3, 12):

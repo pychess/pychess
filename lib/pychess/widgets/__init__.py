@@ -3,6 +3,12 @@ from gi.repository import Gtk
 from pychess.Utils.IconLoader import get_pixbuf
 # from pychess.widgets.WebKitBrowser import open_link
 
+main_window = None
+
+
+def mainwindow():
+    return main_window
+
 
 def dock_panel_tab(title, desc, icon):
     box = Gtk.Box()

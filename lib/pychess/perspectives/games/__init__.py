@@ -26,6 +26,7 @@ from pychess.System.prefix import addUserConfigPrefix
 from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT, LOCAL, ARTIFICIAL, MENU_ITEMS
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamewidget
+from pychess.widgets import mainwindow
 from pychess.widgets.gamenanny import game_nanny
 from pychess.widgets import dock_panel_tab
 from pychess.perspectives import Perspective
@@ -195,7 +196,7 @@ class Games(GObject.GObject, Perspective):
                 if position != gamemodel.ply:
                     gmwidg.board.view.shown = position
             except LoadingError as e:
-                d = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
+                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
                                       buttons=Gtk.ButtonsType.OK)
                 d.set_markup(_("<big><b>Error loading game</big></b>"))
                 d.format_secondary_text(", ".join(str(a) for a in e.args))
@@ -313,7 +314,7 @@ class Games(GObject.GObject, Perspective):
             index = savecombo.get_active()
             if index == 0:
                 if ending not in enddir:
-                    d = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                    d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                           buttons=Gtk.ButtonsType.OK)
                     folder, file = os.path.split(uri)
                     d.set_markup(_("<big><b>Unknown file type '%s'</b></big>") %
@@ -333,7 +334,7 @@ class Games(GObject.GObject, Perspective):
                     uri += ".%s" % saver.__ending__
 
             if os.path.isfile(uri) and not os.access(uri, os.W_OK):
-                d = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                       buttons=Gtk.ButtonsType.OK)
                 d.set_markup(_("<big><b>Unable to save file '%s'</b></big>") % uri)
                 d.format_secondary_text(_(
@@ -344,7 +345,7 @@ class Games(GObject.GObject, Perspective):
                 continue
 
             if os.path.isfile(uri):
-                d = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION)
+                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION)
                 d.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                               _("_Replace"), Gtk.ResponseType.ACCEPT)
                 if saver.__append__:
@@ -368,7 +369,7 @@ class Games(GObject.GObject, Perspective):
             try:
                 game.save(uri, saver, append, position)
             except IOError as e:
-                d = Gtk.MessageDialog(type=Gtk.MessageType.ERROR)
+                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR)
                 d.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK)
                 d.set_title(_("Could not save the file"))
                 d.set_markup(_(
@@ -499,7 +500,7 @@ class Games(GObject.GObject, Perspective):
                                             Save the current game before you close it?") + "</big></b>"
 
             if response is None:
-                d = Gtk.MessageDialog(type=Gtk.MessageType.WARNING)
+                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING)
                 d.add_button(_("Close _without Saving"), Gtk.ResponseType.OK)
                 d.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
                 if gmwidg.gamemodel.uri:
@@ -634,8 +635,7 @@ class Games(GObject.GObject, Perspective):
                 traceback.print_exc(file=stringio)
                 error = stringio.getvalue()
                 log.error("Dock loading error: %s\n%s" % (e, error))
-                widgets = gamewidget.getWidgets()
-                msg_dia = Gtk.MessageDialog(widgets["main_window"],
+                msg_dia = Gtk.MessageDialog(mainwindow(),
                                             type=Gtk.MessageType.ERROR,
                                             buttons=Gtk.ButtonsType.CLOSE)
                 msg_dia.set_markup(_(
@@ -839,9 +839,8 @@ class Games(GObject.GObject, Perspective):
 
 
 def get_save_dialog(export=False):
-    mainwindow = gamewidget.getWidgets()["main_window"]
     savedialog = Gtk.FileChooserDialog(
-        "", mainwindow, Gtk.FileChooserAction.SAVE,
+        "", mainwindow(), Gtk.FileChooserAction.SAVE,
         (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE,
          Gtk.ResponseType.ACCEPT))
     savedialog.set_current_folder(os.path.expanduser("~"))
@@ -870,9 +869,8 @@ def get_save_dialog(export=False):
 
 
 def get_open_dialog():
-    mainwindow = gamewidget.getWidgets()["main_window"]
     opendialog = Gtk.FileChooserDialog(
-        _("Open chess file"), mainwindow, Gtk.FileChooserAction.OPEN,
+        _("Open chess file"), mainwindow(), Gtk.FileChooserAction.OPEN,
         (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
          Gtk.ResponseType.OK))
     opendialog.set_show_hidden(True)

@@ -6,6 +6,7 @@ from io import StringIO
 
 from gi.repository import Gdk, Gtk, GObject
 
+import pychess
 from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
@@ -63,6 +64,7 @@ widgets = None
 def setWidgets(w):
     global widgets
     widgets = w
+    pychess.widgets.main_window = widgets["main_window"]
 
 
 def getWidgets():
@@ -704,7 +706,7 @@ class GameWidget(GObject.GObject):
 
         result = persp.chessfile.get_book_moves(fen)
         if len(result) == 0:
-            dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
+            dialogue = Gtk.MessageDialog(pychess.widgets.mainwindow(), type=Gtk.MessageType.WARNING,
                                          buttons=Gtk.ButtonsType.OK,
                                          message_format=_("Position not in current database"))
             dialogue.run()

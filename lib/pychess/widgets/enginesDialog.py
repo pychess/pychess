@@ -10,6 +10,7 @@ from pychess.System import uistuff
 from pychess.System.prefix import getEngineDataPrefix
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
 from pychess.widgets import newGameDialog
+from pychess.widgets import mainwindow
 
 firstRun = True
 
@@ -168,7 +169,7 @@ class EnginesDialog():
         # add button
         ################################################################
         engine_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select engine"), None, Gtk.FileChooserAction.OPEN,
+            _("Select engine"), mainwindow(), Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
              Gtk.ResponseType.OK))
 
@@ -197,7 +198,7 @@ class EnginesDialog():
                     vm_name = "wine"
                     vmpath = shutil.which(vm_name, mode=os.R_OK | os.X_OK)
                     if vmpath is None:
-                        msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                        msg_dia = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                                     buttons=Gtk.ButtonsType.OK)
                         msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
                                              new_engine))
@@ -213,7 +214,7 @@ class EnginesDialog():
                         vm_args = vm.args
                         vmpath = shutil.which(vm_name, mode=os.R_OK | os.X_OK)
                         if vmpath is None:
-                            msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                            msg_dia = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                                         buttons=Gtk.ButtonsType.OK)
                             msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
                                                  new_engine))
@@ -226,7 +227,7 @@ class EnginesDialog():
                 if new_engine:
                     vm_ext_list = [vm.ext for vm in VM_LIST]
                     if ext not in vm_ext_list and not os.access(new_engine, os.X_OK):
-                        msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                        msg_dia = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                                     buttons=Gtk.ButtonsType.OK)
                         msg_dia.set_markup(_("<big><b>%s is not marked executable in the filesystem</b></big>" %
                                              new_engine))
@@ -268,9 +269,9 @@ class EnginesDialog():
                                     self.cur_engine)
                                 engine_chooser_dialog.set_filename(engine[
                                     "command"])
-                                msg_dia = Gtk.MessageDialog(
-                                    type=Gtk.MessageType.ERROR,
-                                    buttons=Gtk.ButtonsType.OK)
+                                msg_dia = Gtk.MessageDialog(mainwindow(),
+                                                            type=Gtk.MessageType.ERROR,
+                                                            buttons=Gtk.ButtonsType.OK)
                                 msg_dia.set_markup(
                                     _("<big><b>Unable to add %s</b></big>" %
                                       new_engine))
@@ -304,7 +305,7 @@ class EnginesDialog():
                         self.add = False
                         discoverer.discover()
                     except:
-                        msg_dia = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                        msg_dia = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                                     buttons=Gtk.ButtonsType.OK)
                         msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
                                              new_engine))
@@ -356,7 +357,7 @@ class EnginesDialog():
         # engine working directory
         ################################################################
         dir_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select working directory"), None,
+            _("Select working directory"), mainwindow(),
             Gtk.FileChooserAction.SELECT_FOLDER,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
              Gtk.ResponseType.OK))

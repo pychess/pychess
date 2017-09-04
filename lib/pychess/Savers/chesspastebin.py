@@ -6,6 +6,7 @@ from urllib.request import Request, urlopen
 from gi.repository import Gdk, Gtk
 
 from pychess.Savers import pgn
+from pychess.widgets import mainwindow
 
 URL = "http://www.chesspastebin.com/api/add/"
 APIKEY = "a137d919b75c8766b082367610189358cfb1ba70"
@@ -37,7 +38,7 @@ def paste(gamemodel):
         clipboard.set_text(link, -1)
         # print(text)
         # print(clipboard.wait_for_text())
-        msg_dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
+        msg_dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.INFO,
                                        buttons=Gtk.ButtonsType.OK)
         msg = _(
             "Game shared at ") + '<a href="%s">chesspastebin.com</a>' % link

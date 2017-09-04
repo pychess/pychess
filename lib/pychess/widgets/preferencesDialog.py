@@ -23,6 +23,7 @@ from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SOUND_SELECT
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.gfx import Pieces
+from pychess.widgets import mainwindow
 from pychess.widgets.Background import hexcol, newTheme
 from pychess.perspectives import perspective_manager
 
@@ -133,7 +134,7 @@ class HintTab:
         conf.set("opening_file_entry", path)
 
         book_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select book file"), None, Gtk.FileChooserAction.OPEN,
+            _("Select book file"), mainwindow(), Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
              Gtk.ResponseType.OK))
         book_chooser_button = Gtk.FileChooserButton.new_with_dialog(
@@ -170,7 +171,7 @@ class HintTab:
         conf.set("egtb_path", egtb_path)
 
         egtb_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select Gaviota TB path"), None,
+            _("Select Gaviota TB path"), mainwindow(),
             Gtk.FileChooserAction.SELECT_FOLDER,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
              Gtk.ResponseType.OK))
@@ -362,7 +363,7 @@ class SoundTab:
         # Init open dialog
 
         opendialog = Gtk.FileChooserDialog(
-            _("Open Sound File"), None, Gtk.FileChooserAction.OPEN,
+            _("Open Sound File"), mainwindow(), Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
              Gtk.ResponseType.ACCEPT))
 
@@ -518,7 +519,7 @@ class PanelTab:
         path = store.get_path(iter)
         panel = store[path][3]
 
-        d = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
+        d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.INFO,
                               buttons=Gtk.ButtonsType.CLOSE)
         d.set_markup("<big><b>%s</b></big>" % panel.__title__)
         text = panel.__about__ if hasattr(
@@ -594,7 +595,7 @@ class ThemeTab:
         conf.set("welcome_image", path)
 
         image_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select background image file"), None, Gtk.FileChooserAction.OPEN,
+            _("Select background image file"), mainwindow(), Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
              Gtk.ResponseType.OK))
         image_chooser_button = Gtk.FileChooserButton.new_with_dialog(
@@ -777,7 +778,7 @@ class SaveTab:
         conf.set("autoSavePath", self.auto_save_path)
 
         auto_save_chooser_dialog = Gtk.FileChooserDialog(
-            _("Select auto save path"), None,
+            _("Select auto save path"), mainwindow(),
             Gtk.FileChooserAction.SELECT_FOLDER,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
              Gtk.ResponseType.OK))

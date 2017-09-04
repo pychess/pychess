@@ -7,6 +7,7 @@ from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
 from pychess.widgets.BoardControl import BoardControl
 from pychess.Savers.ChessFile import LoadingError
+from pychess.widgets import mainwindow
 
 
 class PreviewPanel:
@@ -88,7 +89,7 @@ class PreviewPanel:
         try:
             self.persp.chessfile.loadToModel(rec, -1, self.gamemodel)
         except LoadingError as err:
-            dialogue = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
+            dialogue = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
                                          buttons=Gtk.ButtonsType.OK,
                                          message_format=err.args[0])
             if len(err.args) > 1:

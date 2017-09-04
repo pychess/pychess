@@ -10,6 +10,7 @@ from gi.repository import Gtk
 from gi.repository import GObject
 
 from pychess.System import uistuff, conf
+from pychess.widgets import mainwindow
 from .FICSConnection import FICSMainConnection, FICSHelperConnection, LogOnException
 from .ICLounge import ICLounge
 
@@ -21,11 +22,9 @@ dialog = None
 
 def run():
     global dialog
+    dialog.widgets["fics_logon"].set_transient_for(mainwindow())
 
-    if not dialog:
-        dialog = ICLogon()
-        dialog.show()
-    elif dialog.lounge:
+    if dialog.lounge:
         dialog.lounge.present()
     else:
         dialog.present()
@@ -158,11 +157,13 @@ class ICLogon(object):
 
         if self.connection is not None:
             self.connection.close()
-            self.connection_task.cancel()
+            if not self.connection_task.cancelled():
+                self.connection_task.cancel()
             self.connection = None
         if self.helperconn is not None:
             self.helperconn.close()
-            self.helperconn_task.cancel()
+            if not self.helperconn_task.cancelled():
+                self.helperconn_task.cancel()
             self.helperconn = None
         self.lounge = None
 
@@ -304,7 +305,7 @@ class ICLogon(object):
 
     def onHelperConnectionError(self, connection, error):
         if self.helperconn is not None:
-            dialog = Gtk.MessageDialog(type=Gtk.MessageType.QUESTION,
+            dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION,
                                        buttons=Gtk.ButtonsType.YES_NO)
             dialog.set_markup(_("Guest logins disabled by FICS server"))
             text = "PyChess can maintain users status and games list only if it changes\n\

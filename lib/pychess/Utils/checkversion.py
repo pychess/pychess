@@ -9,6 +9,7 @@ from urllib.request import Request, urlopen
 from gi.repository import GLib, Gtk
 
 from pychess import VERSION
+from pychess.widgets import mainwindow
 
 URL = "https://api.github.com/repos/pychess/pychess/releases/latest"
 LINK = "https://github.com/pychess/pychess/releases"
@@ -40,7 +41,7 @@ def checkversion():
             GLib.idle_add(notify, new_version)
 
     def notify(new_version):
-        msg_dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
+        msg_dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.INFO,
                                        buttons=Gtk.ButtonsType.OK)
 
         msg = _("<b>New version %s is available!</b>" % new_version)

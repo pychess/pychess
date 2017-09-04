@@ -9,6 +9,7 @@ from pychess.Utils.SetupModel import SetupModel, SetupPlayer
 from pychess.System import uistuff
 from pychess.widgets.BoardControl import BoardControl
 from pychess.widgets.PieceWidget import PieceWidget
+from pychess.widgets import mainwindow
 
 TAG_FILTER, MATERIAL_FILTER, PATTERN_FILTER, NONE, RULE, SEQUENCE, STREAK = range(7)
 
@@ -28,6 +29,7 @@ class FilterPanel(Gtk.TreeView):
         # Add piece widgets to dialog *_dock containers on material tab
         self.widgets = uistuff.GladeWidgets("PyChess.glade")
         self.dialog = self.widgets["filter_dialog"]
+        self.dialog.set_transient_for(mainwindow())
 
         for piece in "qrbnp":
             dock = "w%s_dock" % piece

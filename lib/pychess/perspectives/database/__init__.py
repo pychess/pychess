@@ -16,6 +16,7 @@ from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import EAST, SOUTH, CENTER, NORTH
 from pychess.widgets import gamewidget
+from pychess.widgets import mainwindow
 from pychess.widgets import dock_panel_tab
 from pychess.Database.model import create_indexes, drop_indexes
 from pychess.Database.PgnImport import PgnImport, download_file
@@ -88,8 +89,7 @@ class Database(GObject.GObject, Perspective):
         self.progressbar0 = Gtk.ProgressBar(show_text=True)
         self.progressbar1 = Gtk.ProgressBar(show_text=True)
 
-        mainwindow = gamewidget.getWidgets()["main_window"]
-        self.progress_dialog = Gtk.Dialog("", mainwindow, 0, (
+        self.progress_dialog = Gtk.Dialog("", mainwindow(), 0, (
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
         self.progress_dialog.get_content_area().pack_start(self.spinner, True, True, 0)
         self.progress_dialog.get_content_area().pack_start(self.progressbar0, True, True, 0)
@@ -121,7 +121,7 @@ class Database(GObject.GObject, Perspective):
                 traceback.print_exc(file=stringio)
                 error = stringio.getvalue()
                 log.error("Dock loading error: %s\n%s" % (e, error))
-                msg_dia = Gtk.MessageDialog(None,
+                msg_dia = Gtk.MessageDialog(mainwindow(),
                                             type=Gtk.MessageType.ERROR,
                                             buttons=Gtk.ButtonsType.CLOSE)
                 msg_dia.set_markup(_(
@@ -290,7 +290,7 @@ class Database(GObject.GObject, Perspective):
 
     def on_import_clicked(self, widget):
         dialog = Gtk.FileChooserDialog(
-            _("Open chess file"), None, Gtk.FileChooserAction.OPEN,
+            _("Open chess file"), mainwindow(), Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
              Gtk.ResponseType.OK))
         dialog.set_select_multiple(True)
@@ -373,7 +373,7 @@ class Database(GObject.GObject, Perspective):
 
     def create_database(self):
         dialog = Gtk.FileChooserDialog(
-            _("Create New Pgn Database"), None, Gtk.FileChooserAction.SAVE,
+            _("Create New Pgn Database"), mainwindow(), Gtk.FileChooserAction.SAVE,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_NEW, Gtk.ResponseType.ACCEPT))
 
         dialog.set_current_folder(os.path.expanduser("~"))
@@ -391,7 +391,7 @@ class Database(GObject.GObject, Perspective):
                     pass
                 self.open_chessfile(new_pgn)
             else:
-                d = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                       buttons=Gtk.ButtonsType.OK)
                 d.set_markup(_("<big><b>File '%s' already exists.</b></big>") % new_pgn)
                 d.run()

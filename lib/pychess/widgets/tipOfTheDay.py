@@ -1,12 +1,14 @@
+from random import randrange
+
 from pychess.System import conf
 from pychess.System import uistuff
-from random import randrange
+from pychess.widgets import mainwindow
 
 
 class TipOfTheDay:
     def __init__(self):
         self.widgets = uistuff.GladeWidgets("tipoftheday.glade")
-
+        self.widgets["window1"].set_transient_for(mainwindow())
         uistuff.keepWindowSize("tipoftheday", self.widgets["window1"], (320, 240), uistuff.POSITION_CENTER)
 
         self.widgets["checkbutton1"].set_active(conf.get("show_tip_at_startup", False))

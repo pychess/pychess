@@ -28,8 +28,8 @@ from pychess.System import conf
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
-from pychess.widgets import gamewidget
 from pychess.widgets import ImageMenu
+from pychess.widgets import mainwindow
 from pychess.widgets.BoardControl import BoardControl
 from pychess.Savers import fen, pgn
 from pychess.Savers.ChessFile import LoadingError
@@ -120,7 +120,7 @@ class _GameInitializationMode(object):
     @classmethod
     def _init(cls):
         cls.widgets = uistuff.GladeWidgets("newInOut.glade")
-        cls.widgets["newgamedialog"].set_transient_for(gamewidget.getWidgets()["main_window"])
+        cls.widgets["newgamedialog"].set_transient_for(mainwindow())
 
         uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
                             name="whitePlayerCombobox")
@@ -371,7 +371,7 @@ class _GameInitializationMode(object):
                     cls.ini_widgets(lboard.asFen())
                     cls.board_control.emit("action", "SETUP", text)
                 except SyntaxError as e:
-                    d = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
+                    d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
                                           buttons=Gtk.ButtonsType.OK,
                                           message_format=e.args[0])
                     if len(e.args) > 1:
@@ -666,7 +666,7 @@ class SetupPositionExtension(_GameInitializationMode):
                 cls.setupmodel.variant(setup=fenstr)
                 return True
             except (AssertionError, LoadingError, SyntaxError) as e:
-                d = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
+                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
                                       buttons=Gtk.ButtonsType.OK,
                                       message_format=e.args[0])
                 if len(e.args) > 1:
@@ -799,7 +799,7 @@ class EnterNotationExtension(_GameInitializationMode):
                 gamemodel.status = WAITING_TO_START
                 return True
             except LoadingError as e:
-                d = Gtk.MessageDialog(type=Gtk.MessageType.WARNING,
+                d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
                                       buttons=Gtk.ButtonsType.OK,
                                       message_format=e.args[0])
                 d.format_secondary_text(e.args[1])

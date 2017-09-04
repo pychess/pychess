@@ -25,6 +25,7 @@ from pychess.System.prefix import addDataPrefix, addUserConfigPrefix
 from pychess.System.ping import Pinger
 from pychess.System.Log import log
 from pychess.widgets import insert_formatted, dock_panel_tab
+from pychess.widgets import mainwindow
 from pychess.widgets.ChatWindow import ChatWindow
 from pychess.widgets.ConsoleWindow import ConsoleWindow
 from pychess.widgets.SpotGraph import SpotGraph
@@ -244,7 +245,7 @@ class ICLounge(GObject.GObject):
                 traceback.print_exc(file=stringio)
                 error = stringio.getvalue()
                 log.error("Dock loading error: %s\n%s" % (e, error))
-                msg_dia = Gtk.MessageDialog(None,
+                msg_dia = Gtk.MessageDialog(mainwindow(),
                                             type=Gtk.MessageType.ERROR,
                                             buttons=Gtk.ButtonsType.CLOSE)
                 msg_dia.set_markup(_(
@@ -759,7 +760,7 @@ class UserInfoSection(Section):
 
         if not my_finger:
             if self.lounge.finger_sent:
-                dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
+                dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.INFO,
                                            buttons=Gtk.ButtonsType.OK)
                 dialog.set_title(_("Finger"))
                 dialog.set_markup("<b>%s</b>" % finger.getName())
@@ -1120,7 +1121,7 @@ class SeekTabSection(ParrentListSection):
     def onAssessReceived(self, glm, assess):
         if self.assess_sent:
             self.assess_sent = False
-            dialog = Gtk.MessageDialog(type=Gtk.MessageType.INFO,
+            dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.INFO,
                                        buttons=Gtk.ButtonsType.OK)
             dialog.set_title(_("Assess"))
             dialog.set_markup(_("Effect on ratings by the possible outcomes"))
@@ -2370,6 +2371,9 @@ class SeekChallengeSection(Section):
         self.lounge = lounge
         self.widgets = lounge.widgets
         self.connection = lounge.connection
+
+        self.widgets["editSeekDialog"].set_transient_for(mainwindow())
+        self.widgets["challengeDialog"].set_transient_for(mainwindow())
 
         self.finger = None
         conf.set("numberOfFingers", 0)

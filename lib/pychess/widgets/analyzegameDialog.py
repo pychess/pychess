@@ -12,6 +12,7 @@ from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Players.engineNest import discoverer
 from pychess.widgets.preferencesDialog import anal_combo_get_value, anal_combo_set_value
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
+from pychess.widgets import mainwindow
 from pychess.widgets import InfoBar
 from pychess.perspectives import perspective_manager
 
@@ -19,6 +20,7 @@ from pychess.perspectives import perspective_manager
 class AnalyzeGameDialog():
     def __init__(self):
         self.widgets = uistuff.GladeWidgets("analyze_game.glade")
+        self.widgets["analyze_game"].set_transient_for(mainwindow())
         self.stop_event = asyncio.Event()
 
         uistuff.keep(self.widgets["fromCurrent"], "fromCurrent", first_value=True)
