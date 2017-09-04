@@ -320,23 +320,24 @@ class FICSConnection(Connection):
     @asyncio.coroutine
     def start(self):
         try:
-            try:
-                if not self.isConnected():
-                    yield from self._connect()
-                while self.isConnected():
-                    yield from self.client.parse()
-            except Exception as err:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                traceback.print_exception(exc_type, exc_value, exc_traceback)
-                log.info("FICSConnection.run: %s" % repr(err),
-                         extra={"task": (self.host, "raw")})
-                self.close()
-                if isinstance(err,
-                              (IOError, LogOnException, EOFError, socket.error,
-                               socket.gaierror, socket.herror)):
-                    self.emit("error", err)
-                elif not isinstance(err, CancelledError):
-                    raise
+            if not self.isConnected():
+                yield from self._connect()
+            while self.isConnected():
+                yield from self.client.parse()
+        except CancelledError:
+            pass
+        except Exception as err:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_exception(exc_type, exc_value, exc_traceback)
+            log.info("FICSConnection.run: %s" % repr(err),
+                     extra={"task": (self.host, "raw")})
+            self.close()
+            if isinstance(err,
+                          (IOError, LogOnException, EOFError, socket.error,
+                           socket.gaierror, socket.herror)):
+                self.emit("error", err)
+            else:
+                raise
         finally:
             if isinstance(self, FICSMainConnection):
                 self.emit("disconnected")
