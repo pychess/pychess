@@ -4,6 +4,7 @@ import sys
 import socket
 import traceback
 from collections import defaultdict
+from concurrent.futures import CancelledError
 
 from gi.repository import GObject
 
@@ -334,7 +335,7 @@ class FICSConnection(Connection):
                               (IOError, LogOnException, EOFError, socket.error,
                                socket.gaierror, socket.herror)):
                     self.emit("error", err)
-                else:
+                elif not isinstance(err, CancelledError):
                     raise
         finally:
             if isinstance(self, FICSMainConnection):
