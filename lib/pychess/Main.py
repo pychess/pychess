@@ -364,6 +364,10 @@ class GladeHandlers(object):
         perspective = perspective_manager.get_perspective("database")
         perspective.on_import_clicked(widget)
 
+    def on_database_save_as_activate(self, widget):
+        perspective = perspective_manager.get_perspective("database")
+        perspective.on_save_as_clicked(widget)
+
     def on_import_endgame_nl_activate(self, widget):
         perspective = perspective_manager.get_perspective("database")
         perspective.on_import_endgame_nl()

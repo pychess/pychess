@@ -118,6 +118,11 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-convert</property>
   </object>
+  <object class="GtkImage" id="image19">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-save-as</property>
+  </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -727,6 +732,18 @@
                         <property name="image">image1</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_new_database1_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="database_save_as">
+                        <property name="label" translatable="yes">Save database as</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="image">image19</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_database_save_as_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>

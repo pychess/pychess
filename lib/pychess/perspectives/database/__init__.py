@@ -5,6 +5,7 @@ from io import StringIO
 
 from gi.repository import Gtk, GObject, GLib
 
+from pychess.Utils.const import FIRST_PAGE, NEXT_PAGE
 from pychess.System.Log import log
 from pychess.perspectives import Perspective, perspective_manager
 from pychess.perspectives.database.gamelist import GameList
@@ -69,6 +70,10 @@ class Database(GObject.GObject, Perspective):
         self.import_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CONVERT)
         self.import_button.set_tooltip_text(_("Import PGN file"))
         self.import_button.connect("clicked", self.on_import_clicked)
+
+        self.save_as_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_SAVE_AS)
+        self.save_as_button.set_tooltip_text(_("Save to PGN file as..."))
+        self.save_as_button.connect("clicked", self.on_save_as_clicked)
 
         self.close_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CLOSE)
         self.close_button.set_tooltip_text(_("Close"))
@@ -154,13 +159,15 @@ class Database(GObject.GObject, Perspective):
         self.dock.show_all()
         perspective_widget.show_all()
 
-        perspective_manager.set_perspective_toolbuttons("database", [self.import_button, self.close_button])
+        perspective_manager.set_perspective_toolbuttons("database", [
+            self.import_button, self.save_as_button, self.close_button])
 
         self.switcher_panel.connect("chessfile_switched", self.on_chessfile_switched)
 
     def set_sensitives(self, on):
         self.import_button.set_sensitive(on)
         self.widgets["import_chessfile"].set_sensitive(on)
+        self.widgets["database_save_as"].set_sensitive(on)
         self.widgets["import_endgame_nl"].set_sensitive(on)
         self.widgets["import_twic"].set_sensitive(on)
 
@@ -287,6 +294,49 @@ class Database(GObject.GObject, Perspective):
         if response == Gtk.ResponseType.CANCEL:
             self.importer.do_cancel()
         self.progress_dialog.hide()
+
+    def on_save_as_clicked(self, widget):
+        dialog = Gtk.FileChooserDialog(
+            "", mainwindow(), Gtk.FileChooserAction.SAVE,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE,
+             Gtk.ResponseType.ACCEPT))
+        dialog.set_current_folder(os.path.expanduser("~"))
+
+        response = dialog.run()
+        if response == Gtk.ResponseType.ACCEPT:
+            filename = dialog.get_filename()
+        else:
+            filename = None
+
+        dialog.destroy()
+
+        if filename is not None:
+            with open(filename, "w") as to_file:
+                records, plys = self.chessfile.get_records(FIRST_PAGE)
+                self.save_records(records, to_file)
+                while True:
+                    records, plys = self.chessfile.get_records(NEXT_PAGE)
+                    if records:
+                        self.save_records(records, to_file)
+                    else:
+                        break
+
+    def save_records(self, records, to_file):
+        f = self.chessfile.handle
+        for i, rec in enumerate(records):
+            offs = rec["Offset"]
+
+            f.seek(offs)
+            game = ''
+            for line in f:
+                if line.startswith('[Event "'):
+                    if game:
+                        break  # Second one, start of next game
+                    else:
+                        game = line  # First occurence
+                elif game:
+                    game += line
+            to_file.write(game)
 
     def on_import_clicked(self, widget):
         dialog = Gtk.FileChooserDialog(
