@@ -63,13 +63,13 @@ class OpeningTreePanel(Gtk.TreeView):
         prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
         toolbar.insert(prevButton, -1)
 
-        filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
-        filterButton.set_tooltip_text(_("Filter game list by opening moves"))
-        toolbar.insert(filterButton, -1)
+        self.filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        self.filterButton.set_tooltip_text(_("Filter game list by opening moves"))
+        toolbar.insert(self.filterButton, -1)
 
         firstButton.connect("clicked", self.on_first_clicked)
         prevButton.connect("clicked", self.on_prev_clicked)
-        filterButton.connect("clicked", self.on_filter_clicked)
+        self.filterButton.connect("clicked", self.on_filter_clicked)
 
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, False, False, 0)
@@ -93,12 +93,14 @@ class OpeningTreePanel(Gtk.TreeView):
     def on_filter_clicked(self, button):
         self.filtered = button.get_active()
         if not self.filtered:
+            self.persp.filter_panel.filterButton.set_sensitive(True)
             self.filtered = True
             while self.board.hist_move:
                 self.board.popMove()
             self.update_tree()
             self.filtered = False
         else:
+            self.persp.filter_panel.filterButton.set_sensitive(False)
             self.update_tree()
 
     def column_clicked(self, col, data):
@@ -111,8 +113,8 @@ class OpeningTreePanel(Gtk.TreeView):
 
     def update_tree(self, load_games=True):
         self.persp.gamelist.ply = self.board.plyCount
-        self.persp.chessfile.set_fen_filter(self.board.asFen())
         if load_games and self.filtered:
+            self.persp.chessfile.set_fen_filter(self.board.asFen())
             self.persp.gamelist.load_games()
 
         result = self.persp.chessfile.get_book_moves(self.board.asFen())

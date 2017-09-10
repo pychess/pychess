@@ -110,10 +110,10 @@ class FilterPanel(Gtk.TreeView):
         addStreakButton.connect("clicked", self.on_add_streak_clicked)
         toolbar.insert(addStreakButton, -1)
 
-        filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
-        filterButton.set_tooltip_text(_("Filter game list by various conditions"))
-        filterButton.connect("clicked", self.on_filter_clicked)
-        toolbar.insert(filterButton, -1)
+        self.filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        self.filterButton.set_tooltip_text(_("Filter game list by various conditions"))
+        self.filterButton.connect("clicked", self.on_filter_clicked)
+        toolbar.insert(self.filterButton, -1)
 
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, False, False, 0)
@@ -124,8 +124,12 @@ class FilterPanel(Gtk.TreeView):
     def on_filter_clicked(self, button):
         self.filtered = button.get_active()
         if not self.filtered:
+            self.persp.preview_panel.filterButton.set_sensitive(True)
+            self.persp.opening_tree_panel.filterButton.set_sensitive(True)
             self.clear_filters()
         else:
+            self.persp.preview_panel.filterButton.set_sensitive(False)
+            self.persp.opening_tree_panel.filterButton.set_sensitive(False)
             self.update_filters()
 
     def on_del_clicked(self, button):
@@ -278,7 +282,8 @@ class FilterPanel(Gtk.TreeView):
         query = {"sub-fen": sub_fen}
         self.treestore.append(treeiter, [formatted(query), query, PATTERN_FILTER, RULE])
         self.expand_all()
-        self.update_filters()
+        if self.filtered:
+            self.update_filters()
 
     def clear_filters(self):
         self.persp.chessfile.set_tag_filter(None)

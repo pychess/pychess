@@ -49,6 +49,8 @@ class Database(GObject.GObject, Perspective):
         self.chessfiles = []
         self.gamelists = []
         self.filter_panels = []
+        self.opening_tree_panels = []
+        self.preview_panels = []
         self.notebooks = {}
         self.connect("chessfile_opened0", self.on_chessfile_opened0)
 
@@ -65,6 +67,20 @@ class Database(GObject.GObject, Perspective):
             return None
         else:
             return self.filter_panels[self.chessfiles.index(self.chessfile)]
+
+    @property
+    def opening_tree_panel(self):
+        if self.chessfile is None:
+            return None
+        else:
+            return self.opening_tree_panels[self.chessfiles.index(self.chessfile)]
+
+    @property
+    def preview_panel(self):
+        if self.chessfile is None:
+            return None
+        else:
+            return self.preview_panels[self.chessfiles.index(self.chessfile)]
 
     def create_toolbuttons(self):
         self.import_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CONVERT)
@@ -214,9 +230,11 @@ class Database(GObject.GObject, Perspective):
         gamelist = GameList(self)
         self.gamelists.append(gamelist)
         opening_tree_panel = OpeningTreePanel(self)
+        self.opening_tree_panels.append(opening_tree_panel)
         filter_panel = FilterPanel(self)
         self.filter_panels.append(filter_panel)
         preview_panel = PreviewPanel(self)
+        self.preview_panels.append(preview_panel)
 
         self.notebooks["gamelist"].append_page(gamelist.box)
         self.notebooks["opening_tree"].append_page(opening_tree_panel.box)

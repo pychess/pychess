@@ -32,9 +32,9 @@ class PreviewPanel:
         lastButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_NEXT)
         toolbar.insert(lastButton, -1)
 
-        filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
-        filterButton.set_tooltip_text(_("Filter game list by current game moves"))
-        toolbar.insert(filterButton, -1)
+        self.filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        self.filterButton.set_tooltip_text(_("Filter game list by current game moves"))
+        toolbar.insert(self.filterButton, -1)
 
         addButton = Gtk.ToolButton(Gtk.STOCK_ADD)
         addButton.set_tooltip_text(_("Add sub-fen filter from position/circles"))
@@ -44,8 +44,9 @@ class PreviewPanel:
         prevButton.connect("clicked", self.on_prev_clicked)
         nextButton.connect("clicked", self.on_next_clicked)
         lastButton.connect("clicked", self.on_last_clicked)
-        filterButton.connect("clicked", self.on_filter_clicked)
+
         addButton.connect("clicked", self.on_add_clicked)
+        self.filterButton.connect("clicked", self.on_filter_clicked)
 
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, False, False, 0)
@@ -104,28 +105,34 @@ class PreviewPanel:
 
     def on_first_clicked(self, button):
         self.boardview.showFirst()
-        self.update_gamelist()
+        if self.filtered:
+            self.update_gamelist()
 
     def on_prev_clicked(self, button):
         self.boardview.showPrev()
-        self.update_gamelist()
+        if self.filtered:
+            self.update_gamelist()
 
     def on_next_clicked(self, button):
         self.boardview.showNext()
-        self.update_gamelist()
+        if self.filtered:
+            self.update_gamelist()
 
     def on_last_clicked(self, button):
         self.boardview.showLast()
-        self.update_gamelist()
+        if self.filtered:
+            self.update_gamelist()
 
     def on_filter_clicked(self, button):
         self.filtered = button.get_active()
         if not self.filtered:
+            self.persp.filter_panel.filterButton.set_sensitive(True)
             self.boardview.showFirst()
             self.filtered = True
             self.update_gamelist()
             self.filtered = False
         else:
+            self.persp.filter_panel.filterButton.set_sensitive(False)
             self.update_gamelist()
 
     def on_add_clicked(self, button):
