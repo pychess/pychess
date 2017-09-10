@@ -9,6 +9,8 @@ import platform
 import re
 import sys
 
+from gi.repository import GLib
+
 try:
     import pexpect
 except ImportError:
@@ -35,7 +37,7 @@ from pychess.widgets.ChessClock import formatTime
 from pychess.Savers.ChessFile import ChessFile, LoadingError
 from pychess.Savers.database import col2label, TagDatabase
 from pychess.Database import model as dbmodel
-from pychess.Database.PgnImport import PgnImport, TAG_REGEX
+from pychess.Database.PgnImport import TAG_REGEX
 from pychess.Database.model import game, create_indexes, drop_indexes
 
 __label__ = _("Chess Game")
@@ -339,13 +341,12 @@ class PGNFile(ChessFile):
             self.fen = None
             self.scout_query = None
 
-            self.init_tag_database()
-
             self.scoutfish = None
-            self.init_scoutfish()
-
             self.chess_db = None
-            self.init_chess_db()
+
+            self.sqlite_path = os.path.splitext(self.path)[0] + '.sqlite'
+            self.engine = dbmodel.get_engine(self.sqlite_path)
+            self.tag_database = TagDatabase(self.engine)
 
             self.games, self.offs_ply = self.get_records(0)
             log.info("%s contains %s game(s)" % (self.path, self.count), extra={"task": "SQL"})
@@ -363,21 +364,17 @@ class PGNFile(ChessFile):
         return os.path.getsize(self.path)
     size = property(get_size)
 
-    def init_tag_database(self):
+    def init_tag_database(self, importer):
         """ Create/open .sqlite database of game header tags """
-
-        sqlite_path = os.path.splitext(self.path)[0] + '.sqlite'
-        self.engine = dbmodel.get_engine(sqlite_path)
-        self.tag_database = TagDatabase(self.engine)
-
         # Import .pgn header tags to .sqlite database
         size = self.size
         if size > 0 and self.tag_database.count == 0:
             if size > 10000000:
                 drop_indexes(self.engine)
-            importer = PgnImport(self)
+            GLib.idle_add(self.progressbar.set_text, "Importing game headers...")
+            importer.initialize()
             importer.do_import(self.path, progressbar=self.progressbar)
-            if size > 10000000:
+            if size > 10000000 and not importer.cancel:
                 create_indexes(self.engine)
 
     def init_chess_db(self):
@@ -387,7 +384,7 @@ class PGNFile(ChessFile):
         if chess_db_path is not None and self.path and self.size > 0:
             try:
                 if self.progressbar is not None:
-                    self.progressbar.set_text("Creating .bin index file...")
+                    GLib.idle_add(self.progressbar.set_text, "Creating .bin index file...")
                 self.chess_db = Parser(engine=(chess_db_path, ))
                 self.chess_db.open(self.path)
                 bin_path = os.path.splitext(self.path)[0] + '.bin'
@@ -413,7 +410,7 @@ class PGNFile(ChessFile):
         if scoutfish_path is not None and self.path and self.size > 0:
             try:
                 if self.progressbar is not None:
-                    self.progressbar.set_text("Creating .scout index file...")
+                    GLib.idle_add(self.progressbar.set_text, "Creating .scout index file...")
                 self.scoutfish = Scoutfish(engine=(scoutfish_path, ))
                 self.scoutfish.open(self.path)
                 scout_path = os.path.splitext(self.path)[0] + '.scout'

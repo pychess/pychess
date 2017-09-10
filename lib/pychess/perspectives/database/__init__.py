@@ -22,7 +22,8 @@ from pychess.widgets import dock_panel_tab
 from pychess.Database.model import create_indexes, drop_indexes
 from pychess.Database.PgnImport import PgnImport, download_file
 from pychess.Database.JvR import JvR
-from pychess.Savers import pgn, fen, epd
+from pychess.Savers import fen, epd
+from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
 
 
@@ -47,6 +48,7 @@ class Database(GObject.GObject, Perspective):
         self.widgets = gamewidget.getWidgets()
         self.chessfile = None
         self.chessfiles = []
+        self.importer = None
         self.gamelists = []
         self.filter_panels = []
         self.opening_tree_panels = []
@@ -195,27 +197,44 @@ class Database(GObject.GObject, Perspective):
 
         self.progress_dialog.set_title(_("Open"))
         self.progressbar0.hide()
-        self.progressbar1.show()
-        self.progressbar1.set_text("Importing game headers...")
         self.spinner.show()
         self.spinner.start()
 
         def opening():
             if filename.endswith(".pgn"):
-                chessfile = pgn.load(protoopen(filename), self.progressbar1)
+                GLib.idle_add(self.progressbar1.show)
+                GLib.idle_add(self.progressbar1.set_text, "Opening chessfile...")
+                chessfile = PGNFile(protoopen(filename), self.progressbar1)
+                self.importer = PgnImport(chessfile)
+                chessfile.init_tag_database(self.importer)
+                if self.importer.cancel:
+                    chessfile.tag_database.close()
+                    if os.path.isfile(chessfile.sqlite_path):
+                        os.remove(chessfile.sqlite_path)
+                    chessfile = None
+                else:
+                    chessfile.init_scoutfish()
+                    chessfile.init_chess_db()
             elif filename.endswith(".epd"):
+                self.importer = None
                 chessfile = epd.load(protoopen(filename))
             elif filename.endswith(".fen"):
+                self.importer = None
                 chessfile = fen.load(protoopen(filename))
             else:
+                self.importer = None
                 chessfile = None
 
             GLib.idle_add(self.spinner.stop)
             GLib.idle_add(self.progress_dialog.hide)
+
             if chessfile is not None:
                 self.chessfile = chessfile
                 self.chessfiles.append(chessfile)
                 GLib.idle_add(self.emit, "chessfile_opened0", chessfile)
+            else:
+                if self.chessfile is None:
+                    self.close(None)
 
         thread = threading.Thread(target=opening)
         thread.daemon = True
@@ -223,7 +242,8 @@ class Database(GObject.GObject, Perspective):
 
         response = self.progress_dialog.run()
         if response == Gtk.ResponseType.CANCEL:
-            self.importer.do_cancel()
+            if self.importer is not None:
+                self.importer.do_cancel()
         self.progress_dialog.hide()
 
     def on_chessfile_opened0(self, persp, chessfile):
@@ -250,16 +270,17 @@ class Database(GObject.GObject, Perspective):
         self.emit("chessfile_opened", chessfile)
 
     def close(self, widget):
-        i = self.chessfiles.index(self.chessfile)
-        if self.chessfile.path is not None:
-            self.notebooks["gamelist"].remove_page(i)
-            self.notebooks["opening_tree"].remove_page(i)
-            self.notebooks["filter"].remove_page(i)
-            self.notebooks["preview"].remove_page(i)
-            del self.gamelists[i]
-            del self.filter_panels[i]
-            del self.chessfiles[i]
-            self.chessfile.close()
+        if self.chessfile is not None:
+            i = self.chessfiles.index(self.chessfile)
+            if self.chessfile.path is not None:
+                self.notebooks["gamelist"].remove_page(i)
+                self.notebooks["opening_tree"].remove_page(i)
+                self.notebooks["filter"].remove_page(i)
+                self.notebooks["preview"].remove_page(i)
+                del self.gamelists[i]
+                del self.filter_panels[i]
+                del self.chessfiles[i]
+                self.chessfile.close()
 
         if len(self.chessfiles) == 0:
             self.set_sensitives(False)
@@ -315,7 +336,7 @@ class Database(GObject.GObject, Perspective):
 
     def on_save_as_clicked(self, widget):
         dialog = Gtk.FileChooserDialog(
-            "", mainwindow(), Gtk.FileChooserAction.SAVE,
+            _("Save as"), mainwindow(), Gtk.FileChooserAction.SAVE,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE,
              Gtk.ResponseType.ACCEPT))
         dialog.set_current_folder(os.path.expanduser("~"))
@@ -406,6 +427,7 @@ class Database(GObject.GObject, Perspective):
             drop_indexes(self.chessfile.engine)
 
             self.importer = PgnImport(self.chessfile, append_pgn=True)
+            self.importer.initialize()
             for i, filename in enumerate(filenames):
                 GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
                 # GLib.idle_add(self.progressbar0.set_text, filename)

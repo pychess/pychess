@@ -53,11 +53,13 @@ class PgnImport():
     def __init__(self, chessfile, append_pgn=False):
         self.chessfile = chessfile
         self.append_pgn = append_pgn
-        self.db_handle = chessfile.handle
-        self.engine = chessfile.engine
+        self.cancel = False
+
+    def initialize(self):
+        self.db_handle = self.chessfile.handle
+        self.engine = self.chessfile.engine
         self.conn = self.engine.connect()
         self.CHUNK = 1000
-        self.cancel = False
 
         self.count_source = select([func.count()]).select_from(source)
 
@@ -214,7 +216,9 @@ class PgnImport():
                     print("pgnextractor failed")
 
             get_id = self.get_id
+
             # use transaction to avoid autocommit slowness
+            # and to let undo importing (rollback) if self.cancel was set
             trans = self.conn.begin()
             try:
                 i = 0
