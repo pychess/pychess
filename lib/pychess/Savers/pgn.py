@@ -371,7 +371,7 @@ class PGNFile(ChessFile):
         if size > 0 and self.tag_database.count == 0:
             if size > 10000000:
                 drop_indexes(self.engine)
-            GLib.idle_add(self.progressbar.set_text, "Importing game headers...")
+            GLib.idle_add(self.progressbar.set_text, _("Importing game headers..."))
             importer.initialize()
             importer.do_import(self.path, progressbar=self.progressbar)
             if size > 10000000 and not importer.cancel:
@@ -384,7 +384,7 @@ class PGNFile(ChessFile):
         if chess_db_path is not None and self.path and self.size > 0:
             try:
                 if self.progressbar is not None:
-                    GLib.idle_add(self.progressbar.set_text, "Creating .bin index file...")
+                    GLib.idle_add(self.progressbar.set_text, _("Creating .bin index file..."))
                 self.chess_db = Parser(engine=(chess_db_path, ))
                 self.chess_db.open(self.path)
                 bin_path = os.path.splitext(self.path)[0] + '.bin'
@@ -410,7 +410,7 @@ class PGNFile(ChessFile):
         if scoutfish_path is not None and self.path and self.size > 0:
             try:
                 if self.progressbar is not None:
-                    GLib.idle_add(self.progressbar.set_text, "Creating .scout index file...")
+                    GLib.idle_add(self.progressbar.set_text, _("Creating .scout index file..."))
                 self.scoutfish = Scoutfish(engine=(scoutfish_path, ))
                 self.scoutfish.open(self.path)
                 scout_path = os.path.splitext(self.path)[0] + '.scout'

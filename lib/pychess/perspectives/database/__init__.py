@@ -204,7 +204,7 @@ class Database(GObject.GObject, Perspective):
         def opening():
             if filename.endswith(".pgn"):
                 GLib.idle_add(self.progressbar1.show)
-                GLib.idle_add(self.progressbar1.set_text, "Opening chessfile...")
+                GLib.idle_add(self.progressbar1.set_text, _("Opening chessfile..."))
                 chessfile = PGNFile(protoopen(filename), self.progressbar1)
                 self.importer = PgnImport(chessfile)
                 chessfile.init_tag_database(self.importer)
@@ -271,7 +271,7 @@ class Database(GObject.GObject, Perspective):
         self.emit("chessfile_opened", chessfile)
 
     def close(self, widget):
-        if self.chessfile is not None:
+        if self.chessfile is not None and self.chessfile in self.chessfiles:
             i = self.chessfiles.index(self.chessfile)
             if self.chessfile.path is not None:
                 self.notebooks["gamelist"].remove_page(i)
@@ -421,7 +421,7 @@ class Database(GObject.GObject, Perspective):
         else:
             self.progressbar0.show()
         self.progressbar1.show()
-        self.progressbar1.set_text("Preparing to start import...")
+        self.progressbar1.set_text(_("Preparing to start import..."))
 
         # @profile_me
         def importing():
@@ -440,7 +440,7 @@ class Database(GObject.GObject, Perspective):
                 else:
                     self.importer.do_import(filename, progressbar=self.progressbar1)
 
-            GLib.idle_add(self.progressbar1.set_text, "Recreating indexes...")
+            GLib.idle_add(self.progressbar1.set_text, _("Recreating indexes..."))
 
             # .sqlite
             create_indexes(self.chessfile.engine)
