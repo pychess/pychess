@@ -1,2 +1,2 @@
-VERSION = "0.12.4"
-VERSION_NAME = "Anderssen"
+VERSION = "0.99.0"
+VERSION_NAME = "Morphy"
