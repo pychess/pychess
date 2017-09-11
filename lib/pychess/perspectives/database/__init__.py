@@ -114,6 +114,7 @@ class Database(GObject.GObject, Perspective):
 
         self.progress_dialog = Gtk.Dialog("", mainwindow(), 0, (
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
+        self.progress_dialog.set_deletable(False)
         self.progress_dialog.get_content_area().pack_start(self.spinner, True, True, 0)
         self.progress_dialog.get_content_area().pack_start(self.progressbar0, True, True, 0)
         self.progress_dialog.get_content_area().pack_start(self.progressbar1, True, True, 0)
