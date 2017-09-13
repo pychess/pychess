@@ -778,12 +778,16 @@ class UserInfoSection(Section):
             label0.props.xalign = 0
             label0.props.wrap = True
             label0.props.width_request = 300
+            if self.connection.ICC:
+                reg = "https://store.chessclub.com/customer/account/create/"
+            else:
+                reg = "http://www.freechess.org/Register/index.html"
+            link = '<a href="%s">%s</a>.' %(reg, reg)
             label0.set_markup(_("You are currently logged in as a guest.\n" +
                                 "A guest can't play rated games and therefore isn't " +
                                 "able to play as many of the types of matches offered as " +
-                                "a registered user. To register an account, go to " +
-                                "<a href=\"http://www.freechess.org/Register/index.html\">" +
-                                "http://www.freechess.org/Register/index.html</a>."))
+                                "a registered user. To register an account, go to ") + link)
+                                
             vbox.add(label0)
 
         if self.dock.get_children():
