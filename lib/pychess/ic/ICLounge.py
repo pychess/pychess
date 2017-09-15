@@ -2359,20 +2359,20 @@ class SeekChallengeSection(Section):
 
     seekEditorWidgetDefaults = {
         "untimedCheck": [False, False, False],
-        "minutesSpin": [15, 5, 2],
-        "gainSpin": [10, 0, 1],
-        "strengthCheck": [False, True, False],
+        "minutesSpin": [15, 10, 2],
+        "gainSpin": [10, 0, 12],
+        "strengthCheck": [True, True, True],
         "chainAlignment": [True, True, True],
         "ratingCenterSlider": [40, 40, 40],
         "toleranceSlider": [8, 8, 8],
         "toleranceHBox": [False, False, False],
         "variantCombo": [RANDOMCHESS, FISCHERRANDOMCHESS, LOSERSCHESS],
-        "noVariantRadio": [True, False, True],
-        "variantRadio": [False, True, False],
+        "noVariantRadio": [True, True, True],
+        "variantRadio": [False, False, False],
         "nocolorRadio": [True, True, True],
         "whitecolorRadio": [False, False, False],
         "blackcolorRadio": [False, False, False],
-        "ratedGameCheck": [False, True, True],
+        "ratedGameCheck": [False, False, False],
         "manualAcceptCheck": [False, False, False],
     }
 
