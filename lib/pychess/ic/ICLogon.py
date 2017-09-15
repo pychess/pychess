@@ -132,6 +132,12 @@ class ICLogon(object):
     def on_logOnAsGuest_toggled(self, widget):
         names = self.get_user_names()
         self.widgets["nameEntry"].set_text(names[1] if widget.get_active() else names[0])
+        if self.ics == "ICC":
+            self.widgets["nameLabel"].set_sensitive(not widget.get_active())
+            self.widgets["nameEntry"].set_sensitive(not widget.get_active())
+        else:
+            self.widgets["nameLabel"].set_sensitive(True)
+            self.widgets["nameEntry"].set_sensitive(True)
         self.widgets["passwordLabel"].set_sensitive(not widget.get_active())
         self.widgets["passEntry"].set_sensitive(not widget.get_active())
         conf.set("asGuestCheck", widget.get_active(), section=self.ics)
@@ -142,7 +148,8 @@ class ICLogon(object):
             model = combo.get_model()
             self.ics = model[tree_iter][0]
             # print("Selected: %s" % self.ics)
-            self.widgets["logOnAsGuest"].set_active(conf.get("asGuestCheck", False, section=self.ics))
+            self.widgets["logOnAsGuest"].set_active(conf.get("asGuestCheck", True, section=self.ics))
+            self.on_logOnAsGuest_toggled(self.widgets["logOnAsGuest"])
             self.user_name_set_value(self.widgets["nameEntry"], conf.get("usernameEntry", "", section=self.ics))
             self.password_set_value(self.widgets["passEntry"], conf.get("passwordEntry", "", section=self.ics))
             default_host = "freechess.org" if self.ics == "FICS" else "chessclub.com"
