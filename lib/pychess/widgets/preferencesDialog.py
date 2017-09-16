@@ -72,14 +72,14 @@ class GeneralTab:
         # Give to uistuff.keeper
 
         for key in ("firstName", "secondName", "showEmt", "showEval",
-                    "autoPromote", "hideTabs", "closeAll", "faceToFace",
+                    "hideTabs", "closeAll", "faceToFace",
                     "showCords", "showCaptured", "figuresInNotation",
                     "fullAnimation", "moveAnimation", "noAnimation",
                     "showFICSgameno"):
             uistuff.keep(widgets[key], key)
 
         # Options on by default
-        for key in ("autoRotate", "fullAnimation", "showBlunder"):
+        for key in ("autoPromote", "autoRotate", "fullAnimation", "showBlunder"):
             uistuff.keep(widgets[key], key, first_value=True)
 
 # Hint initing
@@ -265,6 +265,7 @@ class HintTab:
             lambda combobox, value: anal_combo_set_value(combobox, value, "spy_mode", "inv_analyzer_check", SPY))
 
         uistuff.keep(self.widgets["max_analysis_spin"], "max_analysis_spin", first_value=3)
+        uistuff.keep(self.widgets["infinite_analysis"], "infinite_analysis", first_value=False)
 
 # Sound initing
 

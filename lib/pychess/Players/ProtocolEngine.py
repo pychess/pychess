@@ -1,7 +1,7 @@
 from gi.repository import GObject
 
 from pychess.Players.Engine import Engine
-from pychess.Utils.const import NORMAL
+from pychess.Utils.const import NORMAL, ANALYZING, INVERSE_ANALYZING
 
 TIME_OUT_SECOND = 10
 
@@ -28,3 +28,7 @@ class ProtocolEngine(Engine):
 
         self.connected = True
         self.mode = NORMAL
+        self.analyzing_paused = False
+
+    def isAnalyzing(self):
+        return self.mode in (ANALYZING, INVERSE_ANALYZING)

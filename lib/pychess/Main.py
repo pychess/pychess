@@ -316,12 +316,17 @@ class GladeHandlers(object):
         perspective = perspective_manager.get_perspective("games")
         if perspective is None:
             return
+
         for gmwidg in perspective.gamewidgets:
             if gmwidg.isInFront():
+                try:
+                    analyzer = gmwidg.gamemodel.spectators[HINT]
+                except KeyError:
+                    continue
                 if widget.get_active():
-                    gmwidg.gamemodel.resume_analyzer(HINT)
+                    gmwidg.show_arrow(analyzer, HINT)
                 else:
-                    gmwidg.gamemodel.pause_analyzer(HINT)
+                    gmwidg.hide_arrow(analyzer, HINT)
 
     def on_spy_mode_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
@@ -329,10 +334,14 @@ class GladeHandlers(object):
             return
         for gmwidg in perspective.gamewidgets:
             if gmwidg.isInFront():
+                try:
+                    analyzer = gmwidg.gamemodel.spectators[HINT]
+                except KeyError:
+                    continue
                 if widget.get_active():
-                    gmwidg.gamemodel.resume_analyzer(SPY)
+                    gmwidg.show_arrow(analyzer, SPY)
                 else:
-                    gmwidg.gamemodel.pause_analyzer(SPY)
+                    gmwidg.hide_arrow(analyzer, SPY)
 
     # Edit menu
 
@@ -523,8 +532,8 @@ class PyChess(Gtk.Application):
         for widget in ("hint_mode", "spy_mode"):
             widgets[widget].set_sensitive(False)
 
-        uistuff.keep(widgets["hint_mode"], "hint_mode", first_value=False)
-        uistuff.keep(widgets["spy_mode"], "spy_mode", first_value=False)
+        uistuff.keep(widgets["hint_mode"], "hint_mode", first_value=True)
+        uistuff.keep(widgets["spy_mode"], "spy_mode", first_value=True)
         uistuff.keep(widgets["show_sidepanels"], "show_sidepanels", first_value=True)
         uistuff.keep(widgets["auto_call_flag"], "autoCallFlag", first_value=True)
 

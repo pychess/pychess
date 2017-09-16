@@ -111,8 +111,6 @@ class GameWidget(GObject.GObject):
             self.gamemodel.connect("players_changed", self.players_changed),
             self.gamemodel.connect("analyzer_added", self.analyzer_added),
             self.gamemodel.connect("analyzer_removed", self.analyzer_removed),
-            self.gamemodel.connect("analyzer_resumed", self.analyzer_resumed),
-            self.gamemodel.connect("analyzer_paused", self.analyzer_paused),
             self.gamemodel.connect("message_received", self.message_received),
         ]
         self.players_changed(self.gamemodel)
@@ -478,12 +476,12 @@ class GameWidget(GObject.GObject):
 
         return False
 
-    def analyzer_resumed(self, gamemodel, analyzer, analyzer_type):
+    def show_arrow(self, analyzer, analyzer_type):
         self.menuitems[analyzer_type + "_mode"].active = True
         self._on_analyze(analyzer, analyzer.getAnalysis(), analyzer_type)
         return False
 
-    def analyzer_paused(self, gamemodel, analyzer, analyzer_type):
+    def hide_arrow(self, analyzer, analyzer_type):
         self.menuitems[analyzer_type + "_mode"].active = False
         self._set_arrow(analyzer_type, None)
         return False

@@ -278,7 +278,6 @@ class EngineAdvisor(Advisor):
         if not tb:
             self.active = True
             self.boardview.model.resume_analyzer(self.mode)
-            self.shownChanged(self.boardview, self.boardview.shown)
         else:
             self.active = False
             self.boardview.model.pause_analyzer(self.mode)
@@ -502,9 +501,9 @@ class Sidepanel(object):
                 cell.set_property('visible', True)
 
             if store[iter][5]:
-                cell.set_property("stock-id", "gtk-add")
+                cell.set_property("stock-id", "gtk-media-play")
             else:
-                cell.set_property("stock-id", "gtk-remove")
+                cell.set_property("stock-id", "gtk-stop")
 
         c4.set_cell_data_func(self.toggleRenderer, cb_visible)
 
@@ -544,8 +543,6 @@ class Sidepanel(object):
         self.model_cids = [
             gmwidg.gamemodel.connect("analyzer_added", self.on_analyzer_added),
             gmwidg.gamemodel.connect("analyzer_removed", self.on_analyzer_removed),
-            gmwidg.gamemodel.connect("analyzer_paused", self.on_analyzer_paused),
-            gmwidg.gamemodel.connect("analyzer_resumed", self.on_analyzer_resumed),
             gmwidg.gamemodel.connect_after("game_terminated", self.on_game_terminated),
         ]
 
@@ -620,20 +617,6 @@ class Sidepanel(object):
                 parent = advisor.empty_parent()
                 self.store.remove(parent)
                 self.advisors.remove(advisor)
-
-    def on_analyzer_paused(self, gamemodel, analyzer, analyzer_type):
-        for advisor in self.advisors:
-            if advisor.mode == analyzer_type:
-                advisor.active = False
-                self.store[advisor.path][5] = True
-                advisor.empty_parent()
-
-    def on_analyzer_resumed(self, gamemodel, analyzer, analyzer_type):
-        for advisor in self.advisors:
-            if advisor.mode == analyzer_type:
-                self.store[advisor.path][5] = False
-                advisor.active = True
-                advisor.shownChanged(self.boardview, self.boardview.shown)
 
     def shownChanged(self, boardview, shown):
         if boardview.model is None:

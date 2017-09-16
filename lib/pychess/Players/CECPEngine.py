@@ -292,7 +292,8 @@ class CECPEngine(ProtocolEngine):
         """
 
         self.setBoardList([board1], [])
-        self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+        if not self.analyzing_paused:
+            self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
 
     @asyncio.coroutine
     def makeMove(self, board1, move, board2):
@@ -477,12 +478,20 @@ class CECPEngine(ProtocolEngine):
             force mode, but some of them do so anyways. """
 
         log.debug("pause: self=%s" % self, extra={"task": self.defname})
-        self.engine.pause()
+        if self.isAnalyzing():
+            self.__stop_analyze()
+            self.analyzing_paused = True
+        else:
+            self.engine.pause()
         return
 
     def resume(self):
         log.debug("resume: self=%s" % self, extra={"task": self.defname})
-        self.engine.resume()
+        if self.isAnalyzing():
+            self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+            self.analyzing_paused = False
+        else:
+            self.engine.resume()
         return
 
     def hurry(self):
@@ -570,8 +579,15 @@ class CECPEngine(ProtocolEngine):
         print("go", file=self.engine)
         self.engineIsInNotPlaying = False
 
-    def __sendAnalyze(self, inverse=False):
+    def __stop_analyze(self):
+        if self.engineIsAnalyzing:
+            print("exit", file=self.engine)
+            # Some engines (crafty, gnuchess) doesn't respond to exit command
+            # we try to force them to stop with an empty board fen
+            print("setboard 8/8/8/8/8/8/8/8 w - - 0 1", file=self.engine)
+            self.engineIsAnalyzing = False
 
+    def __sendAnalyze(self, inverse=False):
         if inverse and self.board.board.opIsChecked():
             # Many engines don't like positions able to take down enemy
             # king. Therefore we just return the "kill king" move
@@ -580,20 +596,13 @@ class CECPEngine(ProtocolEngine):
                 self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, "")])
             return
 
-        def stop_analyze():
-            if self.engineIsAnalyzing:
-                print("exit", file=self.engine)
-                # Some engines (crafty, gnuchess) doesn't respond to exit command
-                # we try to force them to stop with an empty board fen
-                print("setboard 8/8/8/8/8/8/8/8 w - - 0 1", file=self.engine)
-                self.engineIsAnalyzing = False
-
         print("post", file=self.engine)
         print("analyze", file=self.engine)
         self.engineIsAnalyzing = True
 
-        loop = asyncio.get_event_loop()
-        loop.call_later(conf.get("max_analysis_spin", 3), stop_analyze)
+        if not conf.get("infinite_analysis", False):
+            loop = asyncio.get_event_loop()
+            loop.call_later(conf.get("max_analysis_spin", 3), self.__stop_analyze)
 
     def __printColor(self):
         if self.features["colors"]:  # or self.mode == INVERSE_ANALYZING:
@@ -952,9 +961,6 @@ class CECPEngine(ProtocolEngine):
 
     def requestMultiPV(self, setting):
         return 1
-
-    def isAnalyzing(self):
-        return self.mode in (ANALYZING, INVERSE_ANALYZING)
 
     def __repr__(self):
         if self.name:

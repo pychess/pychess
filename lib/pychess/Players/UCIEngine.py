@@ -113,7 +113,7 @@ class UCIEngine(ProtocolEngine):
         self.queue.put_nowait("ready")
         self._newGame()
 
-        if self.mode in (ANALYZING, INVERSE_ANALYZING):
+        if self.isAnalyzing():
             self._searchNow()
 
     # Ending the game
@@ -214,7 +214,8 @@ class UCIEngine(ProtocolEngine):
 
         if not self.readyMoves:
             return
-        self._searchNow()
+        if not self.analyzing_paused:
+            self._searchNow()
 
     @asyncio.coroutine
     def makeMove(self, board1, move, board2):
@@ -313,12 +314,21 @@ class UCIEngine(ProtocolEngine):
 
     def pause(self):
         log.debug("pause: self=%s" % self, extra={"task": self.defname})
-        self.engine.pause()
+        if self.isAnalyzing():
+            print("stop", file=self.engine)
+            self.readyForStop = False
+            self.analyzing_paused = True
+        else:
+            self.engine.pause()
         return
 
     def resume(self):
         log.debug("resume: self=%s" % self, extra={"task": self.defname})
-        self.engine.resume()
+        if self.isAnalyzing():
+            self._searchNow()
+            self.analyzing_paused = False
+        else:
+            self.engine.resume()
         return
 
     def hurry(self):
@@ -437,9 +447,11 @@ class UCIEngine(ProtocolEngine):
             else:
                 commands.append("position %s" % self.uciPosition)
 
-            # commands.append("go infinite")
-            move_time = int(conf.get("max_analysis_spin", 3)) * 1000
-            commands.append("go movetime %s" % move_time)
+            if conf.get("infinite_analysis", False):
+                commands.append("go infinite")
+            else:
+                move_time = int(conf.get("max_analysis_spin", 3)) * 1000
+                commands.append("go movetime %s" % move_time)
 
         if self.hasOption("MultiPV") and self.multipvSetting > 1:
             self.multipvExpected = min(self.multipvSetting,
