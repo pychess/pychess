@@ -7,7 +7,7 @@ from pychess.Utils.const import WHITE, BLACK, LOSERSCHESS, SUICIDECHESS, GIVEAWA
     BPAWN, BISHOP, KNIGHT, QUEEN, KING, PAWN, ROOK, \
     CAS_FLAGS, H7, B6, A7, H2, G3, A2, B3, G6, D1, G8, B8, G1, B1
 from .bitboard import iterBits, firstBit, lsb
-from .ldata import fileBits, bitPosArray, PIECE_VALUES, FILE, RANK,\
+from .ldata import fileBits, bitPosArray, PIECE_VALUES, FILE, RANK, PAWN_VALUE,\
     WHITE_SQUARES, BLACK_SQUARES, ASEAN_PIECE_VALUES, ATOMIC_PIECE_VALUES, CRAZY_PIECE_VALUES,\
     kwingpawns1, kwingpawns2, qwingpawns1, qwingpawns2, frontWall, endingKing,\
     brank7, brank8, distance, isolaniMask, d2e2, passedScores, squarePawnMask,\
@@ -74,12 +74,12 @@ def evalMaterial(board, color):
                 BLACK][piece]
     elif board.variant == LOSERSCHESS:
         for piece in range(PAWN, KING):
-            material[WHITE] += pieceCount[WHITE][piece]
-            material[BLACK] += pieceCount[BLACK][piece]
+            material[WHITE] += pieceCount[WHITE][piece] * PAWN_VALUE
+            material[BLACK] += pieceCount[BLACK][piece] * PAWN_VALUE
     elif board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS:
         for piece in range(PAWN, KING + 1):
-            material[WHITE] += pieceCount[WHITE][piece]
-            material[BLACK] += pieceCount[BLACK][piece]
+            material[WHITE] += pieceCount[WHITE][piece] * PAWN_VALUE
+            material[BLACK] += pieceCount[BLACK][piece] * PAWN_VALUE
     elif board.variant == ATOMICCHESS:
         for piece in range(PAWN, KING + 1):
             material[WHITE] += ATOMIC_PIECE_VALUES[piece] * pieceCount[WHITE][
