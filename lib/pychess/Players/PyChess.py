@@ -11,7 +11,7 @@ if os.path.join(this_dir, "../..") not in sys.path:
 from pychess.Utils.book import getOpenings  # nopep8
 from pychess.Utils.const import WHITE, ASEANCHESS, SITTUYINCHESS, ATOMICCHESS, reprResult, \
     CAMBODIANCHESS, LOSERSCHESS, KINGOFTHEHILLCHESS, DRAW, BLACKWON, WHITEWON, MAKRUKCHESS, \
-    SUICIDECHESS, THREECHECKCHESS  # nopep8
+    SUICIDECHESS, GIVEAWAYCHESS, THREECHECKCHESS  # nopep8
 from pychess.Utils.lutils import lsearch  # nopep8
 from pychess.Utils.lutils.ldata import MAXPLY  # nopep8
 from pychess.Utils.lutils.lsearch import alphaBeta  # nopep8
@@ -63,7 +63,7 @@ class PyChess(object):
         totalWeight = 0
         choice = None
         if self.board.variant not in (ASEANCHESS, CAMBODIANCHESS, MAKRUKCHESS,
-                                      SITTUYINCHESS, LOSERSCHESS, SUICIDECHESS,
+                                      SITTUYINCHESS, LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS,
                                       ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS):
             for move, weight, learn in getOpenings(self.board):
                 totalWeight += weight
@@ -111,7 +111,7 @@ class PyChess(object):
             if self.debug:
                 if timed:
                     self.print("# Time left: %3.2f s; Planing to think for %3.2f s" %
-                          (self.clock[self.playingAs], usetime))
+                               (self.clock[self.playingAs], usetime))
                 else:
                     self.print("# Searching to depth %d without timelimit" % self.sd)
 

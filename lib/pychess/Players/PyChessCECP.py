@@ -11,7 +11,7 @@ from pychess.Utils.book import getOpenings
 from pychess.Utils.const import NORMALCHESS, FEN_START, BLACK, FISCHERRANDOMCHESS, \
     CRAZYHOUSECHESS, WILDCASTLESHUFFLECHESS, LOSERSCHESS, SUICIDECHESS, ATOMICCHESS, \
     THREECHECKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, \
-    SITTUYINCHESS, WHITE
+    SITTUYINCHESS, GIVEAWAYCHESS, WHITE
 from pychess.Utils.lutils.Benchmark import benchmark
 from pychess.Utils.lutils.perft import perft
 from pychess.Utils.lutils.LBoard import LBoard
@@ -55,7 +55,8 @@ class PyChessCECP(PyChess):
             "reuse": 1,
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
-            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse,losers,suicide,atomic," +
+            "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse," +
+                        "losers,suicide,giveaway,atomic," +
                         "kingofthehill,3check,asean,cambodian,makruk,sittuyin",
             "colors": 0,
             "ics": 0,
@@ -138,6 +139,8 @@ class PyChessCECP(PyChess):
                             self.board.variant = LOSERSCHESS
                         elif lines[1] == "suicide":
                             self.board.variant = SUICIDECHESS
+                        elif lines[1] == "giveaway":
+                            self.board.variant = GIVEAWAYCHESS
                         elif lines[1] == "atomic":
                             self.board.variant = ATOMICCHESS
                             self.board.iniAtomic()

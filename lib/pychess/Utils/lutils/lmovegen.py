@@ -5,7 +5,7 @@ from .ldata import fromToRay, moveArray, directions, fileBits, rankBits,\
     ray45, attack45, ray135, attack135, ray90, attack90, ray00, attack00, FILE, rays
 from pychess.Utils.const import EMPTY, PAWN,\
     QUEEN, KNIGHT, BISHOP, ROOK, KING, WHITE, BLACK,\
-    SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, CAMBODIANCHESS,\
+    SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, GIVEAWAYCHESS, CAMBODIANCHESS,\
     ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, CRAZYHOUSECHESS, ASEAN_VARIANTS,\
     BPAWN, sliders,\
     A8, A6, G6, F6, H1, C3, B2, B3, A3, D6, D8, E3, E1, E8, C7, F2, D1, E6, H3, D3, H2, G7, H6, H7,\
@@ -176,7 +176,7 @@ def genPieceMoves(board, piece, tcord):
                     moves.add(newMove(fcord, tcord))
             return moves
 
-    if board.variant == SUICIDECHESS and piece == KING:
+    if (board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS) and piece == KING:
         kings = board.boards[board.color][KING]
         if kings:
             kingMoves = moveArray[KING]
@@ -313,7 +313,7 @@ def genAllMoves(board, drops=True):
         for cord in iterBits(capLeftPawns):
             if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if board.variant == SUICIDECHESS or p != KING_PROMOTION:
+                    if (board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS) or p != KING_PROMOTION:
                         yield newMove(cord - 7, cord, p)
             elif cord == enpassant:
                 yield newMove(cord - 7, cord, ENPASSANT)
@@ -344,7 +344,7 @@ def genAllMoves(board, drops=True):
         for cord in iterBits(movedpawns):
             if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if board.variant == SUICIDECHESS or p != KING_PROMOTION:
+                    if (board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS) or p != KING_PROMOTION:
                         yield newMove(cord + 8, cord, p)
             else:
                 yield newMove(cord + 8, cord)

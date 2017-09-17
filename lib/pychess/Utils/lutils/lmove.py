@@ -8,7 +8,7 @@ from pychess.Utils.const import SAN, AN, LAN, ENPASSANT, EMPTY, PAWN, KING_CASTL
     reprFile, reprRank, chr2Sign, cordDic, reprSign, reprCord, reprSignSittuyin, reprSignMakruk,\
     QUEEN, KNIGHT, BISHOP, ROOK, KING, NORMALCHESS, NORMAL_MOVE, PROMOTIONS, WHITE, BLACK, DROP,\
     FAN_PIECES, SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, MAKRUKCHESS, CAMBODIANCHESS,\
-    ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS,\
+    GIVEAWAYCHESS, ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS,\
     chrU2Sign, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, NULL_MOVE, FAN
 from pychess.Utils.repr import reprPiece, localReprSign
 from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove
@@ -286,7 +286,7 @@ def parseSAN(board, san):
     c = notat[-1]
     if c in "KQRBNSMFkqrbnsmf.":
         c = c.lower()
-        if c == "k" and board.variant != SUICIDECHESS:
+        if c == "k" and board.variant != SUICIDECHESS and board.variant != GIVEAWAYCHESS:
             raise ParsingError(san, _("invalid promoted piece"), board.asFen())
         elif c == "." and board.variant in (CAMBODIANCHESS, MAKRUKCHESS,
                                             SITTUYINCHESS):
@@ -367,7 +367,7 @@ def parseSAN(board, san):
 
     # In suicide promoting to king is valid, so
     # more than 1 king per side can exist !
-    if board.variant != SUICIDECHESS and piece == KING:
+    if board.variant != SUICIDECHESS and board.variant != GIVEAWAYCHESS and piece == KING:
         return newMove(board.kings[color], tcord, flag)
 
     # If there is any extra location info, like in the move Bexd1 or Nh3f4 we
@@ -570,7 +570,8 @@ def parseAN(board, an):
     flag = NORMAL_MOVE
 
     if len(an) > 4 and not an[-1] in "QRBNMSFqrbnmsf":
-        if board.variant != SUICIDECHESS or board.variant == SUICIDECHESS and not an[
+        if (board.variant != SUICIDECHESS and board.variant != GIVEAWAYCHESS) or \
+            (board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS) and not an[
                 -1] in "Kk":
             raise ParsingError(an, "invalid promoted piece", board.asFen())
 

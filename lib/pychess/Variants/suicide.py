@@ -8,6 +8,11 @@ SUICIDESTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"
 
 
 class SuicideBoard(Board):
+    """:Description: This is the FICS version of Losing chess used on FICS as suicide chess.
+        You must capture if you can, and the object is to lose all your pieces or to have no moves left.
+        But in Suicide, the king is just like any other piece.
+        It can move into check and be captured, and you can even promote pawns to kings.
+    """
     variant = SUICIDECHESS
     __desc__ = _(
         "FICS suicide: http://www.freechess.org/Help/HelpFiles/suicide_chess.html")

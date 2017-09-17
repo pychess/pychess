@@ -5,7 +5,7 @@ from heapq import heappush, heappop
 from .lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from .egtb_gaviota import EgtbGaviota
 from pychess.Utils.const import ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS,\
-    LOSERSCHESS, SUICIDECHESS, EMPTY, PROMOTIONS, DROP, KING,\
+    LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, EMPTY, PROMOTIONS, DROP, KING,\
     hashfALPHA, hashfBETA, hashfEXACT, hashfBAD, DRAW, WHITE, WHITEWON
 from .leval import evaluateComplete
 from .lsort import getCaptureValue, getMoveValue
@@ -152,7 +152,7 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if isCheck:
             # Being in check is that serious, that we want to take a deeper look
             depth += 1
-        elif board.variant in (LOSERSCHESS, SUICIDECHESS, ATOMICCHESS):
+        elif board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, ATOMICCHESS):
             return [], evaluateComplete(board, board.color)
         else:
             mvs, val = quiescent(board, alpha, beta, ply)
@@ -162,7 +162,7 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     # Find and sort moves                                                      #
     ############################################################################
 
-    if board.variant in (LOSERSCHESS, SUICIDECHESS):
+    if board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS):
         mlist = [m for m in genCaptures(board)]
         if board.variant == LOSERSCHESS and isCheck:
             evasions = [m for m in genCheckEvasions(board)]

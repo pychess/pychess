@@ -9,7 +9,7 @@ from .lutils import ldraw
 from .Cord import Cord
 from .Move import Move
 from .const import LOSERSCHESS, WHITE, WHITEWON, BLACKWON, WON_NOMATERIAL, KING, \
-    SUICIDECHESS, ATOMICCHESS, WON_KINGEXPLODE, KINGOFTHEHILLCHESS, BLACK, DRAW, \
+    SUICIDECHESS, GIVEAWAYCHESS, ATOMICCHESS, WON_KINGEXPLODE, KINGOFTHEHILLCHESS, BLACK, DRAW, \
     WON_KINGINCENTER, THREECHECKCHESS, WON_THREECHECK, WON_MATE, DRAW_STALEMATE, \
     DRAW_INSUFFICIENT, DRAW_EQUALMATERIAL, WON_LESSMATERIAL, DRAW_REPITITION, \
     WON_KINGINEIGHTROW, RACINGKINGSCHESS, DRAW_50MOVES, RUNNING, ENPASSANT, UNKNOWN_REASON
@@ -57,7 +57,7 @@ def getStatus(board):
             else:
                 status = BLACKWON
             return status, WON_NOMATERIAL
-    elif board.variant == SUICIDECHESS:
+    elif board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS:
         if pieceCount(lboard, lboard.color) == 0:
             if board.color == WHITE:
                 status = WHITEWON
@@ -127,7 +127,7 @@ def getStatus(board):
                     status = WHITEWON
             return status, WON_MATE
         else:
-            if board.variant == LOSERSCHESS:
+            if board.variant == LOSERSCHESS or board.variant == GIVEAWAYCHESS:
                 if board.color == WHITE:
                     status = WHITEWON
                 else:

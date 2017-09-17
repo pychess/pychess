@@ -17,7 +17,7 @@ from pychess.Utils.const import WHITEWON, WON_RESIGN, WON_DISCONNECTION, WON_CAL
     ABORTED, ABORTED_AGREEMENT, ABORTED_DISCONNECTION, ABORTED_EARLY, ABORTED_SERVER_SHUTDOWN, \
     ABORTED_ADJUDICATION, ABORTED_COURTESY, UNKNOWN_STATE, BLACK, WHITE, reprFile, \
     FISCHERRANDOMCHESS, CRAZYHOUSECHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, ATOMICCHESS, \
-    LOSERSCHESS, SUICIDECHESS, reprResult
+    LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, reprResult
 
 from pychess.ic import IC_POS_INITIAL, IC_POS_ISOLATED, IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, \
     IC_POS_OBSERVING, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, GAME_TYPES, IC_STATUS_PLAYING, \
@@ -865,6 +865,8 @@ class BoardManager(GObject.GObject):
             pgnHead += [("Variant", "Losers")]
         elif game_type.variant_type == SUICIDECHESS:
             pgnHead += [("Variant", "Suicide")]
+        elif game_type.variant_type == GIVEAWAYCHESS:
+            pgnHead += [("Variant", "Giveaway")]
         pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n"
 
         moves = sorted(moves.items())

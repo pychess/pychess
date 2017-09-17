@@ -5,7 +5,7 @@ from pychess.Utils.const import NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERR
     PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS, ALLWHITECHESS, BLINDFOLDCHESS, \
     HIDDENPIECESCHESS, HIDDENPAWNSCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, THREECHECKCHESS, \
     AIWOKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, CAMBODIANCHESS, SITTUYINCHESS, EUROSHOGICHESS, \
-    RACINGKINGSCHESS, MAKRUKCHESS, SETUPCHESS
+    RACINGKINGSCHESS, MAKRUKCHESS, SETUPCHESS, GIVEAWAYCHESS
 
 from .normal import NormalBoard
 from .corner import CornerBoard
@@ -22,6 +22,7 @@ from .bughouse import BughouseBoard
 from .crazyhouse import CrazyhouseBoard
 from .losers import LosersBoard
 from .suicide import SuicideBoard
+from .giveaway import GiveawayBoard
 from .pawnodds import PawnOddsBoard
 from .knightodds import KnightOddsBoard
 from .rookodds import RookOddsBoard
@@ -52,6 +53,7 @@ variants = {NORMALCHESS: NormalBoard,
             CRAZYHOUSECHESS: CrazyhouseBoard,
             LOSERSCHESS: LosersBoard,
             SUICIDECHESS: SuicideBoard,
+            GIVEAWAYCHESS: GiveawayBoard,
             PAWNODDSCHESS: PawnOddsBoard,
             KNIGHTODDSCHESS: KnightOddsBoard,
             ROOKODDSCHESS: RookOddsBoard,

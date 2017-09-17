@@ -152,6 +152,8 @@ GAME_TYPES = {
     "crazyhouse": VariantGameType("crazyhouse", "z", TYPE_CRAZYHOUSE, CRAZYHOUSECHESS),
     "losers": VariantGameType("losers", "L", TYPE_LOSERS, LOSERSCHESS),
     "suicide": VariantGameType("suicide", "S", TYPE_SUICIDE, SUICIDECHESS),
+    # ICC Wild 26 https://www.chessclub.com/user/helpcenter/tips/wild.html
+    # "giveaway": VariantGameType("giveaway", "G", TYPE_GIVEAWAY, GIVEAWAYCHESS),
     "wild/fr": WildGameType("wild/fr", FISCHERRANDOMCHESS),
     "wild/0": WildGameType("wild/0", WILDCASTLECHESS),
     "wild/1": WildGameType("wild/1", WILDCASTLESHUFFLECHESS),

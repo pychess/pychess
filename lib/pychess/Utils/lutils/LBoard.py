@@ -1,7 +1,7 @@
 from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, \
     ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, CAMBODIANCHESS, MAKRUKCHESS, \
     FISCHERRANDOMCHESS, SITTUYINCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, \
-    SUICIDECHESS, DROP_VARIANTS, BLACK, WHITE, FAN_PIECES, NULL_MOVE, CAS_FLAGS, \
+    SUICIDECHESS, GIVEAWAYCHESS, DROP_VARIANTS, BLACK, WHITE, FAN_PIECES, NULL_MOVE, CAS_FLAGS, \
     NORMALCHESS, FEN_START, \
     chrU2Sign, cordDic, reprCord, reprFile, reprSign, reprSignMakruk, reprSignSittuyin, \
     A1, A8, B1, B8, \
@@ -378,7 +378,7 @@ class LBoard(object):
         self.fen_was_applied = True
 
     def isChecked(self):
-        if self.variant == SUICIDECHESS:
+        if self.variant == SUICIDECHESS or self.variant == GIVEAWAYCHESS:
             return False
         elif self.variant == ATOMICCHESS:
             if not self.boards[self.color][KING]:
@@ -396,7 +396,7 @@ class LBoard(object):
         return self.checked
 
     def opIsChecked(self):
-        if self.variant == SUICIDECHESS:
+        if self.variant == SUICIDECHESS or self.variant == GIVEAWAYCHESS:
             return False
         elif self.variant == ATOMICCHESS:
             if not self.boards[1 - self.color][KING]:
@@ -414,7 +414,7 @@ class LBoard(object):
         return self.opchecked
 
     def willLeaveInCheck(self, move):
-        if self.variant == SUICIDECHESS:
+        if self.variant == SUICIDECHESS or self.variant == GIVEAWAYCHESS:
             return False
         board_clone = self.clone()
         board_clone.applyMove(move)

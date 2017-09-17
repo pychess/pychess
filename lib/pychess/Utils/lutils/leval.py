@@ -2,7 +2,7 @@
 # The purpose of this module, is to give a certain position a score.
 # The greater the score, the better the position
 
-from pychess.Utils.const import WHITE, BLACK, LOSERSCHESS, SUICIDECHESS,\
+from pychess.Utils.const import WHITE, BLACK, LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS,\
     ASEAN_VARIANTS, ATOMICCHESS, CRAZYHOUSECHESS,\
     BPAWN, BISHOP, KNIGHT, QUEEN, KING, PAWN, ROOK, \
     CAS_FLAGS, H7, B6, A7, H2, G3, A2, B3, G6, D1, G8, B8, G1, B1
@@ -27,7 +27,7 @@ def evaluateComplete(board, color):
         several positional factors """
 
     s, phase = evalMaterial(board, color)
-    if board.variant in (LOSERSCHESS, SUICIDECHESS):
+    if board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS):
         return s
     s += evalBishops(board, color, phase) - evalBishops(board, 1 - color,
                                                         phase)
@@ -76,7 +76,7 @@ def evalMaterial(board, color):
         for piece in range(PAWN, KING):
             material[WHITE] += pieceCount[WHITE][piece]
             material[BLACK] += pieceCount[BLACK][piece]
-    elif board.variant == SUICIDECHESS:
+    elif board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS:
         for piece in range(PAWN, KING + 1):
             material[WHITE] += pieceCount[WHITE][piece]
             material[BLACK] += pieceCount[BLACK][piece]
@@ -111,7 +111,7 @@ def evalMaterial(board, color):
     else:
         leading = opcolor
 
-    if board.variant in (LOSERSCHESS, SUICIDECHESS):
+    if board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS):
         val = material[leading] - material[1 - leading]
         if leading == 1 - color:
             return val, phase
