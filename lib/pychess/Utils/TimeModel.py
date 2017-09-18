@@ -34,6 +34,9 @@ class TimeModel(GObject.GObject):
         self.gain = gain
         self.secs = secs
 
+        # to know if game is played on ICS or not
+        self.gamemodel = None
+
         # in FICS games we don't count gain
         self.handle_gain = True
 
@@ -115,7 +118,10 @@ class TimeModel(GObject.GObject):
                 ticker -= time() - self.counter
         else:
             # FICS rule
-            if self.ply >= 1:
+            if self.gamemodel.isPlayingICSGame():
+                if self.ply >= 1:
+                    self.started = True
+            else:
                 self.started = True
         if self.moves == 0:
             self.intervals[self.movingColor].append(ticker)
