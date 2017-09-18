@@ -340,6 +340,7 @@ class BoardControl(Gtk.EventBox):
             self.pre_arrow_from = cord
             self.view.pre_circle = cord
             self.view.redrawCanvas()
+            return
         else:
             # remove all circles and arrows
             need_redraw = False
@@ -383,6 +384,7 @@ class BoardControl(Gtk.EventBox):
             self.pre_arrow_from = None
             self.pre_arrow_to = None
             self.view.redrawCanvas()
+            return
 
         if self.game_preview:
             return
