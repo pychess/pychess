@@ -332,7 +332,7 @@ class CECPEngine(ProtocolEngine):
             status = yield from self.queue.get()
         if status == "invalid":
             raise InvalidMove
-        if status == "del":
+        if status == "del" or status == "die":
             raise PlayerIsDead("Killed by foreign forces")
         if status == "int":
             raise TurnInterrupt
