@@ -240,7 +240,7 @@ class UCIEngine(ProtocolEngine):
             return_queue = yield from self.queue.get()
             if return_queue == "invalid":
                 raise InvalidMove
-            if return_queue == "del" or status == "die":
+            if return_queue == "del" or return_queue == "die":
                 raise PlayerIsDead
             if return_queue == "int":
                 self.pondermove = None
