@@ -74,12 +74,12 @@ def evalMaterial(board, color):
                 BLACK][piece]
     elif board.variant == LOSERSCHESS:
         for piece in range(PAWN, KING):
-            material[WHITE] += pieceCount[WHITE][piece] * PAWN_VALUE
-            material[BLACK] += pieceCount[BLACK][piece] * PAWN_VALUE
+            material[WHITE] += pieceCount[WHITE][piece]
+            material[BLACK] += pieceCount[BLACK][piece]
     elif board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS:
         for piece in range(PAWN, KING + 1):
-            material[WHITE] += pieceCount[WHITE][piece] * PAWN_VALUE
-            material[BLACK] += pieceCount[BLACK][piece] * PAWN_VALUE
+            material[WHITE] += pieceCount[WHITE][piece]
+            material[BLACK] += pieceCount[BLACK][piece]
     elif board.variant == ATOMICCHESS:
         for piece in range(PAWN, KING + 1):
             material[WHITE] += ATOMIC_PIECE_VALUES[piece] * pieceCount[WHITE][
@@ -113,6 +113,7 @@ def evalMaterial(board, color):
 
     if board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS):
         val = material[leading] - material[1 - leading]
+        val = 100 * PAWN_VALUE * val / max(material[WHITE], material[BLACK])
         if leading == 1 - color:
             return val, phase
         return -val, phase
