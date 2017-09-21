@@ -280,9 +280,10 @@ class CECPEngine(ProtocolEngine):
 
     # Send the player move updates
 
-    def setBoard(self, board):
+    def setBoard(self, board, search=True):
         self.setBoardList([board], [])
-        self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+        if search:
+            self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
 
     def putMove(self, board1, move, board2):
         """ Sends the engine the last move made (for spectator engines).

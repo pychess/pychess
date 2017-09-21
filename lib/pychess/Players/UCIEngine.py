@@ -198,14 +198,15 @@ class UCIEngine(ProtocolEngine):
                                         model.boards[0:ply]):
             self._recordMove(board1, move, board2)
 
-    def setBoard(self, board):
+    def setBoard(self, board, search=True):
         log.debug("setBoardAtPly: board=%s" % board,
                   extra={"task": self.defname})
         self._recordMove(board, None, None)
 
         if not self.readyMoves:
             return
-        self._searchNow()
+        if search:
+            self._searchNow()
 
     def putMove(self, board1, move, board2):
         log.debug("putMove: board1=%s move=%s board2=%s self.board=%s" % (

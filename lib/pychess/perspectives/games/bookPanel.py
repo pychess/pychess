@@ -185,12 +185,12 @@ class EngineAdvisor(Advisor):
             return
         if m.isPlayingICSGame():
             return
-        if not self.active:
-            return
 
         self.engine.setBoard(boardview.model.getBoardAtPly(
-            shown, boardview.shown_variation_idx))
-        self._create_new_expected_lines()
+            shown, boardview.shown_variation_idx), search=self.active)
+
+        if self.active:
+            self._create_new_expected_lines()
 
     def on_ready_for_options(self, engine):
         engineMax = self.engine.maxAnalysisLines()
