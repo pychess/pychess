@@ -302,6 +302,9 @@ class EngineAdvisor(Advisor):
                     self.linesExpected -= 1
 
     def row_activated(self, iter, model):
+        if not self.active:
+            return
+
         if self.mode == HINT and self.store.get_path(iter) != Gtk.TreePath(self.path):
             moves = self.store[iter][0][2]
             if moves is not None:
