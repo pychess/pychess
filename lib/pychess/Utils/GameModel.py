@@ -261,7 +261,6 @@ class GameModel(GObject.GObject):
             return
 
         analyzer.resume()
-        analyzer.setOptionInitialBoard(self)
         self.emit("analyzer_resumed", analyzer, analyzer_type)
 
     def pause_analyzer(self, analyzer_type):
