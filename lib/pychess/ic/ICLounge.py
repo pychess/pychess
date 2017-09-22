@@ -78,6 +78,7 @@ class ICLounge(GObject.GObject, Perspective):
         self.connection = connection
         self.helperconn = helperconn
         self.host = host
+        self.dockLocation = addUserConfigPrefix("pydock-fics.xml")
 
         self.finger_sent = False
         self.messages = []
@@ -233,7 +234,6 @@ class ICLounge(GObject.GObject, Perspective):
             "news": (dock_panel_tab(_("News"), "", addDataPrefix("glade/panel_annotation.svg")), news, None),
         }
 
-        self.dockLocation = addUserConfigPrefix("pydock-fics.xml")
         self.load_from_xml()
 
         # Default layout of side panels

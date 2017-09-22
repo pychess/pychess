@@ -70,6 +70,7 @@ class Games(GObject.GObject, Perspective):
 
         self.dock = None
         self.dockAlign = None
+        self.dockLocation = addUserConfigPrefix("pydock.xml")
 
     @asyncio.coroutine
     def generalStart(self, gamemodel, player0tup, player1tup, loaddata=None):
@@ -590,7 +591,6 @@ class Games(GObject.GObject, Perspective):
         for panel in self.sidePanels:
             self.docks[panel.__name__][1] = self.notebooks[panel.__name__]
 
-        self.dockLocation = addUserConfigPrefix("pydock.xml")
         self.load_from_xml()
 
         # Default layout of side panels

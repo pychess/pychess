@@ -44,6 +44,7 @@ class Database(GObject.GObject, Perspective):
         self.preview_panels = []
         self.notebooks = {}
         self.connect("chessfile_opened0", self.on_chessfile_opened0)
+        self.dockLocation = addUserConfigPrefix("pydock-database.xml")
 
     @property
     def gamelist(self):
@@ -124,7 +125,6 @@ class Database(GObject.GObject, Perspective):
         for panel in self.sidePanels:
             self.docks[panel.__name__][1] = self.notebooks[panel.__name__]
 
-        self.dockLocation = addUserConfigPrefix("pydock-database.xml")
         self.load_from_xml()
 
         # Default layout of side panels
