@@ -7,7 +7,14 @@ from pychess.Utils.Board import Board
 from pychess.Utils.Cord import Cord
 from pychess.widgets.BoardControl import BoardControl
 from pychess.Savers.ChessFile import LoadingError
+from pychess.System.prefix import addDataPrefix
 from pychess.widgets import mainwindow
+
+__title__ = _("Preview")
+
+__icon__ = addDataPrefix("glade/panel_games.svg")
+
+__desc__ = _("Preview panel can filter game list by current game moves")
 
 
 class PreviewPanel:

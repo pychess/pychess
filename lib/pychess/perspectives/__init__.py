@@ -1,4 +1,15 @@
+import os
+import sys
+import imp
+import traceback
+import zipfile
+import zipimport
+from io import StringIO
+
 from gi.repository import Gtk
+
+from pychess.System.Log import log
+from pychess.widgets import createImage, dock_panel_tab, mainwindow
 
 
 class Perspective(object):
@@ -9,6 +20,97 @@ class Perspective(object):
         self.widget = Gtk.Alignment()
         self.widget.show()
         self.toolbuttons = []
+        self.menuitems = []
+        self.docks = {}
+
+        if getattr(sys, 'frozen', False):
+            zip_path = os.path.join(os.path.dirname(sys.executable), "library.zip")
+            importer = zipimport.zipimporter(zip_path + "/pychess/perspectives/%s" % name)
+            postfix = "Panel.pyc"
+            with zipfile.ZipFile(zip_path, 'r') as myzip:
+                names = [f[:-4].split("/")[-1] for f in myzip.namelist() if f.endswith(postfix) and "/%s/" % name in f]
+            self.sidePanels = [importer.load_module(name) for name in names]
+        else:
+            path = "%s/%s" % (os.path.dirname(__file__), name)
+            postfix = "Panel.py"
+            files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
+            self.sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
+
+        from pychess.widgets import gamewidget
+        for panel in self.sidePanels:
+            close_button = Gtk.Button()
+            close_button.set_property("can-focus", False)
+            close_button.add(createImage(gamewidget.gtk_close))
+            # close_button.set_relief(Gtk.ReliefStyle.NONE)
+            # close_button.set_size_request(20, 18)
+            close_button.connect("clicked", self.on_clicked, panel)
+
+            menu_item = Gtk.CheckMenuItem(label=panel.__title__)
+            menu_item.name = panel.__name__
+            menu_item.set_active(True)
+            menu_item.connect("toggled", self.on_toggled, panel)
+            self.menuitems.append(menu_item)
+            panel.menu_item = menu_item
+
+            box = dock_panel_tab(panel.__title__, panel.__desc__, panel.__icon__, close_button)
+            self.docks[panel.__name__] = [box, None, menu_item]
+
+    def on_clicked(self, button, panel):
+        """ Toggle show/hide side panel menu item in View menu """
+        panel.menu_item.set_active(not panel.menu_item.get_active())
+
+    def on_toggled(self, menu_item, panel):
+        """ Show/Hide side panel """
+        leaf = self.notebooks[panel.__name__].get_parent().get_parent()
+        parent = leaf.get_parent()
+        names = [p[2] for p in leaf.panels]
+
+        active = menu_item.get_active()
+        name = panel.__name__
+        shown = sum([1 for panel in self.sidePanels if panel.__name__ in names and self.notebooks[panel.__name__].is_visible()])
+
+        if active:
+            self.notebooks[name].show()
+            if shown == 0 and hasattr(leaf, "position"):
+                # If this is the first one, adjust Gtk.Paned divider handle
+                if leaf.position != 0:
+                    parent.set_position(leaf.position)
+                else:
+                    parent.set_position(parent.props.max_position / 2)
+        else:
+            self.notebooks[name].hide()
+            if shown == 1:
+                # If this is the last one, adjust Gtk.Paned divider handle
+                pos = parent.get_position()
+                leaf.position = pos if pos != parent.props.min_position and pos != parent.props.max_position else 0
+                if leaf == parent.get_child1():
+                    parent.set_position(parent.props.min_position)
+                else:
+                    parent.set_position(parent.props.max_position)
+
+    def load_from_xml(self):
+        if os.path.isfile(self.dockLocation):
+            try:
+                self.dock.loadFromXML(self.dockLocation, self.docks)
+            except Exception as e:
+                stringio = StringIO()
+                traceback.print_exc(file=stringio)
+                error = stringio.getvalue()
+                log.error("Dock loading error: %s\n%s" % (e, error))
+                msg_dia = Gtk.MessageDialog(mainwindow(),
+                                            type=Gtk.MessageType.ERROR,
+                                            buttons=Gtk.ButtonsType.CLOSE)
+                msg_dia.set_markup(_(
+                    "<b><big>PyChess was unable to load your panel settings</big></b>"))
+                msg_dia.format_secondary_text(_(
+                    "Your panel settings have been reset. If this problem repeats, \
+                    you should report it to the developers"))
+                msg_dia.run()
+                msg_dia.hide()
+                os.remove(self.dockLocation)
+                for title, panel, menu_item in self.docks.values():
+                    title.unparent()
+                    panel.unparent()
 
     @property
     def sensitive(self):
@@ -30,10 +132,13 @@ class PerspectiveManager(object):
     def set_widgets(self, widgets):
         self.widgets = widgets
         self.toolbar = self.widgets["toolbar1"]
+        self.viewmenu = self.widgets["vis1_menu"]
 
     def on_persp_toggled(self, button):
         active = button.get_active()
         if active:
+            for item in self.current_perspective.menuitems:
+                item.hide()
             for toolbutton in self.current_perspective.toolbuttons:
                 toolbutton.hide()
 
@@ -42,6 +147,8 @@ class PerspectiveManager(object):
             self.widgets["perspectives_notebook"].set_current_page(index)
             self.current_perspective = perspective
 
+            for item in perspective.menuitems:
+                item.show()
             for toolbutton in perspective.toolbuttons:
                 toolbutton.show()
 
@@ -113,5 +220,21 @@ class PerspectiveManager(object):
             perspective.toolbuttons.append(button)
             self.toolbar.add(button)
             button.show()
+
+    def set_perspective_menuitems(self, name, menuitems):
+        perspective, button, index = self.perspectives[name]
+        for item in perspective.menuitems:
+            if item in self.viewmenu:
+                self.viewmenu.remove(item)
+        perspective.menuitems = []
+
+        item = Gtk.SeparatorMenuItem()
+        perspective.menuitems.append(item)
+        self.viewmenu.append(item)
+        item.show()
+        for item in menuitems:
+            perspective.menuitems.append(item)
+            self.viewmenu.append(item)
+            item.show()
 
 perspective_manager = PerspectiveManager()

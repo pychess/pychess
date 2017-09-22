@@ -3,7 +3,6 @@
 import asyncio
 import os
 import sys
-import traceback
 from math import e
 from operator import attrgetter
 from itertools import groupby
@@ -45,7 +44,7 @@ from pychess.Players.ICPlayer import ICPlayer
 from pychess.Players.Human import Human
 from pychess.Savers import pgn, fen
 from pychess.Variants import variants
-from pychess.perspectives import perspective_manager
+from pychess.perspectives import Perspective, perspective_manager
 
 from .FICSObjects import FICSPlayer, FICSSoughtMatch, FICSChallenge, FICSGame, \
     FICSAdjournedGame, get_seek_tooltip_text, get_challenge_tooltip_text, \
@@ -66,7 +65,7 @@ class PlayerNotificationMessage(InfoBarMessage):
         self.text = text
 
 
-class ICLounge(GObject.GObject):
+class ICLounge(GObject.GObject, Perspective):
     __gsignals__ = {
         'logout': (GObject.SignalFlags.RUN_FIRST, None, ()),
         'autoLogout': (GObject.SignalFlags.RUN_FIRST, None, ()),
@@ -75,6 +74,7 @@ class ICLounge(GObject.GObject):
     def __init__(self, connection, helperconn, host):
         log.debug("ICLounge.__init__: starting")
         GObject.GObject.__init__(self)
+        Perspective.__init__(self, "fics", _("ICS"))
         self.connection = connection
         self.helperconn = helperconn
         self.host = host
@@ -199,9 +199,7 @@ class ICLounge(GObject.GObject):
 
         self.connection.com.onConsoleMessage("", self.connection.ini_messages)
 
-        fics_perspective = perspective_manager.get_perspective("fics")
-
-        self.dock = PyDockTop("fics", fics_perspective)
+        self.dock = PyDockTop("fics", self)
         align = Gtk.Alignment()
         align.show()
         align.add(self.dock)
@@ -223,60 +221,39 @@ class ICLounge(GObject.GObject):
         news = self.widgets["news"]
         self.widgets["fics_home"].remove(news)
 
-        dockLocation = addUserConfigPrefix("pydock-fics.xml")
-
-        docks = {
-            "ficshome": (Gtk.Label(label="fics"), fics_home),
-            "seeklist": (dock_panel_tab(_("Seeks / Challenges"), "", addDataPrefix("glade/manseek.svg")), seek_list),
-            "seekgraph": (dock_panel_tab(_("Seek Graph"), "", addDataPrefix("glade/manseek.svg")), seek_graph),
-            "playerlist": (dock_panel_tab(_("Player List"), "", addDataPrefix("glade/panel_players.svg")), player_list),
-            "gamelist": (dock_panel_tab(_("Top Games") if self.connection.ICC else _("Game List"), "", addDataPrefix("glade/panel_games.svg")), game_list),
-            "archivelist": (dock_panel_tab(_("Archived"), "", addDataPrefix("glade/panel_games.svg")), archive_list),
-            "chat": (dock_panel_tab(_("Talking"), "", addDataPrefix("glade/panel_chat.svg")), self.chat.chatbox),
-            "console": (dock_panel_tab(_("Console"), "", addDataPrefix("glade/panel_terminal.svg")), self.console.consoleView),
-            "news": (dock_panel_tab(_("News"), "", addDataPrefix("glade/panel_annotation.svg")), news),
+        self.docks = {
+            "ficshome": (Gtk.Label(label="fics"), fics_home, None),
+            "seeklist": (dock_panel_tab(_("Seeks / Challenges"), "", addDataPrefix("glade/manseek.svg")), seek_list, None),
+            "seekgraph": (dock_panel_tab(_("Seek Graph"), "", addDataPrefix("glade/manseek.svg")), seek_graph, None),
+            "playerlist": (dock_panel_tab(_("Player List"), "", addDataPrefix("glade/panel_players.svg")), player_list, None),
+            "gamelist": (dock_panel_tab(_("Top Games") if self.connection.ICC else _("Game List"), "", addDataPrefix("glade/panel_games.svg")), game_list, None),
+            "archivelist": (dock_panel_tab(_("Archived"), "", addDataPrefix("glade/panel_games.svg")), archive_list, None),
+            "chat": (dock_panel_tab(_("Talking"), "", addDataPrefix("glade/panel_chat.svg")), self.chat.chatbox, None),
+            "console": (dock_panel_tab(_("Console"), "", addDataPrefix("glade/panel_terminal.svg")), self.console.consoleView, None),
+            "news": (dock_panel_tab(_("News"), "", addDataPrefix("glade/panel_annotation.svg")), news, None),
         }
 
-        if os.path.isfile(dockLocation):
-            try:
-                self.dock.loadFromXML(dockLocation, docks)
-            except Exception as e:
-                stringio = StringIO()
-                traceback.print_exc(file=stringio)
-                error = stringio.getvalue()
-                log.error("Dock loading error: %s\n%s" % (e, error))
-                msg_dia = Gtk.MessageDialog(mainwindow(),
-                                            type=Gtk.MessageType.ERROR,
-                                            buttons=Gtk.ButtonsType.CLOSE)
-                msg_dia.set_markup(_(
-                    "<b><big>PyChess was unable to load your panel settings</big></b>"))
-                msg_dia.format_secondary_text(_(
-                    "Your panel settings have been reset. If this problem repeats, \
-                    you should report it to the developers"))
-                msg_dia.run()
-                msg_dia.hide()
-                os.remove(dockLocation)
-                for title, panel in docks.values():
-                    title.unparent()
-                    panel.unparent()
+        self.dockLocation = addUserConfigPrefix("pydock-fics.xml")
+        self.load_from_xml()
 
-        if not os.path.isfile(dockLocation):
-            leaf = self.dock.dock(docks["ficshome"][1], CENTER, docks["ficshome"][0], "ficshome")
+        # Default layout of side panels
+        if not os.path.isfile(self.dockLocation):
+            leaf = self.dock.dock(self.docks["ficshome"][1], CENTER, self.docks["ficshome"][0], "ficshome")
             leaf.setDockable(False)
 
-            console_leaf = leaf.dock(docks["console"][1], SOUTH, docks["console"][0], "console")
-            console_leaf.dock(docks["news"][1], CENTER, docks["news"][0], "news")
+            console_leaf = leaf.dock(self.docks["console"][1], SOUTH, self.docks["console"][0], "console")
+            console_leaf.dock(self.docks["news"][1], CENTER, self.docks["news"][0], "news")
 
-            seek_leaf = leaf.dock(docks["seeklist"][1], WEST, docks["seeklist"][0], "seeklist")
-            seek_leaf.dock(docks["seekgraph"][1], CENTER, docks["seekgraph"][0], "seekgraph")
-            seek_leaf.dock(docks["playerlist"][1], CENTER, docks["playerlist"][0], "playerlist")
-            seek_leaf.dock(docks["gamelist"][1], CENTER, docks["gamelist"][0], "gamelist")
-            seek_leaf.dock(docks["archivelist"][1], CENTER, docks["archivelist"][0], "archivelist")
+            seek_leaf = leaf.dock(self.docks["seeklist"][1], WEST, self.docks["seeklist"][0], "seeklist")
+            seek_leaf.dock(self.docks["seekgraph"][1], CENTER, self.docks["seekgraph"][0], "seekgraph")
+            seek_leaf.dock(self.docks["playerlist"][1], CENTER, self.docks["playerlist"][0], "playerlist")
+            seek_leaf.dock(self.docks["gamelist"][1], CENTER, self.docks["gamelist"][0], "gamelist")
+            seek_leaf.dock(self.docks["archivelist"][1], CENTER, self.docks["archivelist"][0], "archivelist")
 
-            leaf = leaf.dock(docks["chat"][1], SOUTH, docks["chat"][0], "chat")
+            leaf = leaf.dock(self.docks["chat"][1], SOUTH, self.docks["chat"][0], "chat")
 
         def get_top_games():
-            if perspective_manager.current_perspective == fics_perspective:
+            if perspective_manager.current_perspective == self:
                 self.connection.client.run_command("games *19")
             return True
 
@@ -284,7 +261,7 @@ class ICLounge(GObject.GObject):
             self.event_id = GLib.timeout_add_seconds(5, get_top_games)
 
         def unrealize(dock):
-            dock.saveToXML(dockLocation)
+            dock.saveToXML(self.dockLocation)
             dock._del()
 
         self.dock.connect("unrealize", unrealize)

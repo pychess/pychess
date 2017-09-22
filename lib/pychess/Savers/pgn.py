@@ -321,7 +321,7 @@ chess_db_path = shutil.which(parser, mode=os.X_OK, path=altpath)
 
 
 class PGNFile(ChessFile):
-    def __init__(self, handle, progressbar):
+    def __init__(self, handle, progressbar=None):
         ChessFile.__init__(self, handle)
         self.handle = handle
         self.progressbar = progressbar
@@ -371,7 +371,8 @@ class PGNFile(ChessFile):
         if size > 0 and self.tag_database.count == 0:
             if size > 10000000:
                 drop_indexes(self.engine)
-            GLib.idle_add(self.progressbar.set_text, _("Importing game headers..."))
+            if self.progressbar is not None:
+                GLib.idle_add(self.progressbar.set_text, _("Importing game headers..."))
             importer.initialize()
             importer.do_import(self.path, progressbar=self.progressbar)
             if size > 10000000 and not importer.cancel:

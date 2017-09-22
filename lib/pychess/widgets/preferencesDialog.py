@@ -465,8 +465,9 @@ class PanelTab:
     def __init__(self, widgets):
         # Put panels in trees
         self.widgets = widgets
-
-        from pychess.perspectives.games import sidePanels, dockLocation
+        persp = perspective_manager.get_perspective("games")
+        sidePanels = persp.sidePanels
+        dockLocation = persp.dockLocation
 
         saved_panels = []
         xmlOK = os.path.isfile(dockLocation)

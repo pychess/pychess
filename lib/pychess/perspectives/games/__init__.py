@@ -1,14 +1,9 @@
 """ The task of this perspective, is to save, load and init new games """
 
 import asyncio
-import imp
 import os
-import sys
 import subprocess
 import tempfile
-import traceback
-import zipfile
-import zipimport
 
 from collections import defaultdict
 from io import StringIO
@@ -25,10 +20,8 @@ from pychess.System.uistuff import GladeWidgets
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT, LOCAL, ARTIFICIAL, MENU_ITEMS
 from pychess.Utils.Offer import Offer
-from pychess.widgets import gamewidget
-from pychess.widgets import mainwindow
+from pychess.widgets import gamewidget, mainwindow, new_notebook
 from pychess.widgets.gamenanny import game_nanny
-from pychess.widgets import dock_panel_tab
 from pychess.perspectives import Perspective
 from pychess.perspectives import perspective_manager
 from pychess.widgets.pydock.PyDockTop import PyDockTop
@@ -54,35 +47,6 @@ for saver in savers:
         saveformats.append([label, endstr, saver])
     else:
         exportformats.append([label, endstr, saver])
-
-
-def cleanNotebook(name=None):
-    def customGetTabLabelText(child):
-        return name
-
-    notebook = Gtk.Notebook()
-    if name is not None:
-        notebook.set_name(name)
-    notebook.get_tab_label_text = customGetTabLabelText
-    notebook.set_show_tabs(False)
-    notebook.set_show_border(False)
-    return notebook
-
-
-if getattr(sys, 'frozen', False):
-    zip_path = os.path.join(os.path.dirname(sys.executable), "library.zip")
-    importer = zipimport.zipimporter(zip_path + "/pychess/perspectives/games")
-    postfix = "Panel.pyc"
-    with zipfile.ZipFile(zip_path, 'r') as myzip:
-        names = [f[:-4].split("/")[-1] for f in myzip.namelist() if f.endswith(postfix) and "/games/" in f]
-    sidePanels = [importer.load_module(name) for name in names]
-else:
-    path = os.path.dirname(__file__)
-    postfix = "Panel.py"
-    files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
-    sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
-
-dockLocation = addUserConfigPrefix("pydock.xml")
 
 
 class Games(GObject.GObject, Perspective):
@@ -591,11 +555,11 @@ class Games(GObject.GObject, Perspective):
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("games", perspective_widget)
 
-        self.notebooks = {"board": cleanNotebook("board"),
-                          "buttons": cleanNotebook("buttons"),
-                          "messageArea": cleanNotebook("messageArea")}
-        for panel in sidePanels:
-            self.notebooks[panel.__name__] = cleanNotebook(panel.__name__)
+        self.notebooks = {"board": new_notebook("board"),
+                          "buttons": new_notebook("buttons"),
+                          "messageArea": new_notebook("messageArea")}
+        for panel in self.sidePanels:
+            self.notebooks[panel.__name__] = new_notebook(panel.__name__)
 
         # Initing headbook
 
@@ -622,35 +586,15 @@ class Games(GObject.GObject, Perspective):
         self.dockAlign.show()
         self.dock.show()
 
-        self.docks = {"board": (Gtk.Label(label="Board"), self.notebooks["board"])}
-        for panel in sidePanels:
-            box = dock_panel_tab(panel.__title__, panel.__desc__, panel.__icon__)
-            self.docks[panel.__name__] = (box, self.notebooks[panel.__name__])
+        self.docks["board"] = (Gtk.Label(label="Board"), self.notebooks["board"], None)
+        for panel in self.sidePanels:
+            self.docks[panel.__name__][1] = self.notebooks[panel.__name__]
 
-        if os.path.isfile(dockLocation):
-            try:
-                self.dock.loadFromXML(dockLocation, self.docks)
-            except Exception as e:
-                stringio = StringIO()
-                traceback.print_exc(file=stringio)
-                error = stringio.getvalue()
-                log.error("Dock loading error: %s\n%s" % (e, error))
-                msg_dia = Gtk.MessageDialog(mainwindow(),
-                                            type=Gtk.MessageType.ERROR,
-                                            buttons=Gtk.ButtonsType.CLOSE)
-                msg_dia.set_markup(_(
-                    "<b><big>PyChess was unable to load your panel settings</big></b>"))
-                msg_dia.format_secondary_text(_(
-                    "Your panel settings have been reset. If this problem repeats, \
-                    you should report it to the developers"))
-                msg_dia.run()
-                msg_dia.hide()
-                os.remove(dockLocation)
-                for title, panel in self.docks.values():
-                    title.unparent()
-                    panel.unparent()
+        self.dockLocation = addUserConfigPrefix("pydock.xml")
+        self.load_from_xml()
 
-        if not os.path.isfile(dockLocation):
+        # Default layout of side panels
+        if not os.path.isfile(self.dockLocation):
             leaf = self.dock.dock(self.docks["board"][1],
                                   CENTER,
                                   Gtk.Label(label=self.docks["board"][0]),
@@ -683,7 +627,7 @@ class Games(GObject.GObject, Perspective):
         def unrealize(dock, notebooks):
             # unhide the panel before saving so its configuration is saved correctly
             self.notebooks["board"].get_parent().get_parent().zoomDown()
-            dock.saveToXML(dockLocation)
+            dock.saveToXML(self.dockLocation)
             dock._del()
 
         self.dock.connect("unrealize", unrealize, self.notebooks)
@@ -715,6 +659,8 @@ class Games(GObject.GObject, Perspective):
         perspective_widget.pack_start(centerVBox, True, True, 0)
         centerVBox.show_all()
         perspective_widget.show_all()
+
+        perspective_manager.set_perspective_menuitems("games", self.menuitems)
 
         conf.notify_add("hideTabs", self.tabsCallback)
 
@@ -791,7 +737,7 @@ class Games(GObject.GObject, Perspective):
             self.first_run = False
         perspective_manager.activate_perspective("games")
 
-        gmwidg.panels = [panel.Sidepanel().load(gmwidg) for panel in sidePanels]
+        gmwidg.panels = [panel.Sidepanel().load(gmwidg) for panel in self.sidePanels]
         self.key2gmwidg[gmwidg.notebookKey] = gmwidg
         headbook = self.getheadbook()
 
@@ -819,7 +765,7 @@ class Games(GObject.GObject, Perspective):
         self.notebooks["messageArea"].append_page(align, None)
         self.notebooks["board"].append_page(gmwidg.boardvbox, None)
         gmwidg.boardvbox.show_all()
-        for panel, instance in zip(sidePanels, gmwidg.panels):
+        for panel, instance in zip(self.sidePanels, gmwidg.panels):
             self.notebooks[panel.__name__].append_page(instance, None)
             instance.show_all()
         self.notebooks["buttons"].append_page(gmwidg.stat_hbox, None)

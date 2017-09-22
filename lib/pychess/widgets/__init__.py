@@ -10,7 +10,26 @@ def mainwindow():
     return main_window
 
 
-def dock_panel_tab(title, desc, icon):
+def createImage(pixbuf):
+    image = Gtk.Image()
+    image.set_from_pixbuf(pixbuf)
+    return image
+
+
+def new_notebook(name=None):
+    def customGetTabLabelText(child):
+        return name
+
+    notebook = Gtk.Notebook()
+    if name is not None:
+        notebook.set_name(name)
+    notebook.get_tab_label_text = customGetTabLabelText
+    notebook.set_show_tabs(False)
+    notebook.set_show_border(False)
+    return notebook
+
+
+def dock_panel_tab(title, desc, icon, button=None):
     box = Gtk.Box()
     pixbuf = get_pixbuf(icon, 16)
     image = Gtk.Image.new_from_pixbuf(pixbuf)
@@ -19,6 +38,9 @@ def dock_panel_tab(title, desc, icon):
     label.set_alignment(0, 1)
     box.pack_start(image, False, False, 0)
     box.pack_start(label, True, True, 0)
+    if button is not None:
+        box.pack_start(button, False, False, 0)
+
     box.set_spacing(2)
     box.show_all()
 

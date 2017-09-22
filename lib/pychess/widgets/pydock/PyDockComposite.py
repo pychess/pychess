@@ -42,10 +42,10 @@ class PyDockComposite(Gtk.Alignment):
     def changeComponent(self, old, new):
         if old == self.paned.get_child1():
             self.paned.remove(old)
-            self.paned.pack1(new, resize=True, shrink=False)
+            self.paned.pack1(new, resize=True, shrink=True)
         else:
             self.paned.remove(old)
-            self.paned.pack2(new, resize=True, shrink=False)
+            self.paned.pack2(new, resize=True, shrink=True)
         new.show()
 
     def removeComponent(self, component):
@@ -66,11 +66,11 @@ class PyDockComposite(Gtk.Alignment):
 
     def initChildren(self, old, new, preserve_dimensions=False):
         if self.position == NORTH or self.position == WEST:
-            self.paned.pack1(new, resize=True, shrink=False)
-            self.paned.pack2(old, resize=True, shrink=False)
+            self.paned.pack1(new, resize=True, shrink=True)
+            self.paned.pack2(old, resize=True, shrink=True)
         elif self.position == SOUTH or self.position == EAST:
-            self.paned.pack1(old, resize=True, shrink=False)
-            self.paned.pack2(new, resize=True, shrink=False)
+            self.paned.pack1(old, resize=True, shrink=True)
+            self.paned.pack2(new, resize=True, shrink=True)
         old.show()
         new.show()
 

@@ -196,6 +196,7 @@ class PyDockTop(PyDockComposite, TabReceiver):
             for panel, title, id in component.getPanels():
                 element = document.createElement("panel")
                 element.setAttribute("id", id)
+                element.setAttribute("visible", str(panel.get_visible()))
                 childElement.appendChild(element)
 
         parentElement.appendChild(childElement)
@@ -245,14 +246,31 @@ class PyDockTop(PyDockComposite, TabReceiver):
             return new
 
         elif parentElement.tagName == "leaf":
-            id = children[0].getAttribute("id")
-            title, widget = idToWidget[id]
+            id = self.old2new(children[0].getAttribute("id"))
+            title, widget, menu_item = idToWidget[id]
             leaf = PyDockLeaf(widget, title, id, self.perspective)
+            visible = children[0].getAttribute("visible")
+            visible = visible == "" or visible == "True"
+            widget.set_visible(visible)
+            if menu_item is not None:
+                menu_item.set_active(visible)
+
             for panelElement in children[1:]:
-                id = panelElement.getAttribute("id")
-                title, widget = idToWidget[id]
+                id = self.old2new(panelElement.getAttribute("id"))
+                title, widget, menu_item = idToWidget[id]
+                visible = panelElement.getAttribute("visible")
+                visible = visible == "" or visible == "True"
                 leaf.dock(widget, CENTER, title, id)
-            leaf.setCurrentPanel(parentElement.getAttribute("current"))
+                widget.set_visible(visible)
+                if menu_item is not None:
+                    menu_item.set_active(visible)
+
+            leaf.setCurrentPanel(self.old2new(parentElement.getAttribute("current")))
             if parentElement.getAttribute("dockable").lower() == "false":
                 leaf.setDockable(False)
             return leaf
+
+    def old2new(self, name):
+        """ After 0.99.0 database perspective panel names changed """
+        x = {"switcher": "SwitcherPanel", "openingtree": "OpeningTreePanel", "filter": "FilterPanel", "preview": "PreviewPanel"}
+        return x[name] if name in x else name

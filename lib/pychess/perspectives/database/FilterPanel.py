@@ -7,6 +7,7 @@ from pychess.Utils.const import chr2Sign, WHITE, BLACK
 from pychess.Utils.Piece import Piece
 from pychess.Utils.SetupModel import SetupModel, SetupPlayer
 from pychess.System import uistuff
+from pychess.System.prefix import addDataPrefix
 from pychess.widgets.BoardControl import BoardControl
 from pychess.widgets.PieceWidget import PieceWidget
 from pychess.widgets import mainwindow
@@ -18,6 +19,13 @@ def formatted(q):
     """ Simplified textual representation of query """
     q = "%s" % q
     return q[1:-1].replace("'", "")
+
+
+__title__ = _("Filters")
+
+__icon__ = addDataPrefix("glade/panel_filter.svg")
+
+__desc__ = _("Filters panel can filter game list by various conditions")
 
 
 class FilterPanel(Gtk.TreeView):

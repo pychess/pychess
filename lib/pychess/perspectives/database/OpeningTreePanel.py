@@ -5,6 +5,13 @@ from gi.repository import Gtk, GObject
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toSAN, parseAN
 from pychess.Utils.const import FEN_START
+from pychess.System.prefix import addDataPrefix
+
+__title__ = _("Openings")
+
+__icon__ = addDataPrefix("glade/panel_book.svg")
+
+__desc__ = _("Openings panel can filter game list by opening moves")
 
 
 class OpeningTreePanel(Gtk.TreeView):

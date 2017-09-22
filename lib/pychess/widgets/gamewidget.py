@@ -26,6 +26,7 @@ from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic import get_infobarmessage_content, get_infobarmessage_content2
 from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
+from pychess.widgets import createImage
 from pychess.widgets.InfoBar import InfoBarNotebook, InfoBarMessage, InfoBarMessageButton
 from pychess.perspectives import perspective_manager
 
@@ -41,12 +42,6 @@ def createAlignment(top, right, bottom, left):
     align.set_property("bottom-padding", bottom)
     align.set_property("left-padding", left)
     return align
-
-
-def createImage(pixbuf):
-    image = Gtk.Image()
-    image.set_from_pixbuf(pixbuf)
-    return image
 
 
 light_on = load_icon(16, "stock_3d-light-on", "weather-clear")

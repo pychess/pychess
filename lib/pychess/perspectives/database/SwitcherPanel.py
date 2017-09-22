@@ -6,9 +6,16 @@ from gi.repository import Gtk, GObject
 from gi.repository.GdkPixbuf import Pixbuf
 
 from pychess.Utils.IconLoader import load_icon
+from pychess.System.prefix import addDataPrefix
 
 pgn_icon = load_icon(32, "application-x-chess-pgn", "pychess")
 CLIPBASE = "Clipbase"
+
+__title__ = _("Databases")
+
+__icon__ = addDataPrefix("glade/panel_database.svg")
+
+__desc__ = _("Database panel keep track opened chessfiles")
 
 
 class SwitcherPanel(Gtk.IconView):
