@@ -550,9 +550,11 @@ class PanelTab:
         if active:
             leaf = persp.notebooks["board"].get_parent().get_parent()
             leaf.dock(persp.docks[name][1], EAST, persp.docks[name][0], name)
+            panel.menu_item.show()
         else:
             try:
                 persp.notebooks[name].get_parent().get_parent().undock(persp.notebooks[name])
+                panel.menu_item.hide()
             except AttributeError:
                 # A new panel appeared in the panels directory
                 leaf = persp.notebooks["board"].get_parent().get_parent()
