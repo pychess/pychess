@@ -26,13 +26,18 @@ __icon__ = addDataPrefix("glade/panel_games.svg")
 __desc__ = _("Adjourned, history and journal games list")
 
 
-class AdjournedTabSection(ParrentListSection):
+class Sidepanel(ParrentListSection):
 
-    def __init__(self, widgets, connection, lounge):
+    def load(self, widgets, connection, lounge):
         self.connection = connection
         self.widgets = widgets
         self.lounge = lounge
         self.infobar = lounge.infobar
+
+        archive_list = self.widgets["archiveListContent"]
+        self.widgets["fics_panels_notebook"].remove(archive_list)
+        __widget__ = archive_list
+
         self.games = {}
         self.messages = {}
         self.tv = widgets["adjournedtreeview"]
@@ -88,6 +93,8 @@ class AdjournedTabSection(ParrentListSection):
 
         self.tv.connect('button-press-event', self.button_press_event)
         self.createLocalMenu((CHALLENGE, CHAT, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
+
+        return __widget__
 
     def getSelectedPlayer(self):
         model = self.tv.get_model()

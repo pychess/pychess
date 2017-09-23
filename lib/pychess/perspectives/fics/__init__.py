@@ -10,15 +10,7 @@ from pychess.ic import IC_POS_EXAMINATING, IC_POS_OBSERVING_EXAMINATION, \
     get_infobarmessage_content, get_infobarmessage_content2, TITLES
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.perspectives.fics.FicsHome import UserInfoSection
-from pychess.perspectives.fics.ChatPanel import ChatWindow
-from pychess.perspectives.fics.ConsolePanel import ConsoleWindow
-from pychess.perspectives.fics.NewsPanel import NewsSection
-from pychess.perspectives.fics.SeekGraphPanel import SeekGraphSection
-from pychess.perspectives.fics.SeekListPanel import SeekTabSection
 from pychess.perspectives.fics.SeekChallenge import SeekChallengeSection
-from pychess.perspectives.fics.GameListPanel import GameTabSection
-from pychess.perspectives.fics.PlayerListPanel import PlayerTabSection
-from pychess.perspectives.fics.ArchiveListPanel import AdjournedTabSection
 from pychess.System import conf, uistuff
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.Log import log
@@ -159,23 +151,19 @@ class FICS(GObject.GObject, Perspective):
         self.connection.glm.connect("our-seeks-removed", self.our_seeks_removed)
         self.connection.cm.connect("arrivalNotification", self.onArrivalNotification)
         self.connection.cm.connect("departedNotification", self.onDepartedNotification)
+        self.connection.com.onConsoleMessage("", self.connection.ini_messages)
 
         for user in self.connection.notify_users:
             user = self.connection.players.get(user)
             self.user_from_notify_list_is_present(user)
 
-        self.userinfo = UserInfoSection(self.widgets, self.connection, self.host, self)
-        self.news = NewsSection(self.widgets, self.connection)
         self.seek_challenge = SeekChallengeSection(self)
-        self.seeks_list = SeekTabSection(self.widgets, self.connection, self)
-        self.seeks_graph_tab = SeekGraphSection(self.widgets, self.connection, self)
-        self.players_tab = PlayerTabSection(self.widgets, self.connection, self)
-        self.games_tab = GameTabSection(self.widgets, self.connection, self)
-        self.adjourned_games_tab = AdjournedTabSection(self.widgets, self.connection, self)
-        self.chat = ChatWindow(self.widgets, self.connection)
-        self.console = ConsoleWindow(self.widgets, self.connection)
 
-        self.connection.com.onConsoleMessage("", self.connection.ini_messages)
+        self.userinfo = UserInfoSection(self.widgets, self.connection, self.host, self)
+        fics_home = self.widgets["fics_home"]
+        self.widgets["fics_lounge_content_hbox"].remove(fics_home)
+
+        self.panels = [panel.Sidepanel().load(self.widgets, self.connection, self) for panel in self.sidePanels]
 
         self.dock = PyDockTop("fics", self)
         align = Gtk.Alignment()
@@ -184,30 +172,9 @@ class FICS(GObject.GObject, Perspective):
         self.dock.show()
         perspective_widget.pack_start(align, True, True, 0)
 
-        fics_home = self.widgets["fics_home"]
-        self.widgets["fics_lounge_content_hbox"].remove(fics_home)
-        seek_list = self.widgets["seekListContent"]
-        self.widgets["fics_panels_notebook"].remove(seek_list)
-        seek_graph = self.widgets["seekGraphContent"]
-        self.widgets["fics_panels_notebook"].remove(seek_graph)
-        player_list = self.widgets["playersListContent"]
-        self.widgets["fics_panels_notebook"].remove(player_list)
-        game_list = self.widgets["gamesListContent"]
-        self.widgets["fics_panels_notebook"].remove(game_list)
-        archive_list = self.widgets["archiveListContent"]
-        self.widgets["fics_panels_notebook"].remove(archive_list)
-        news = self.widgets["news"]
-        self.widgets["fics_home"].remove(news)
-
         self.notebooks = {"ficshome": fics_home}
-        self.notebooks["SeekListPanel"] = seek_list
-        self.notebooks["SeekGraphPanel"] = seek_graph
-        self.notebooks["PlayerListPanel"] = player_list
-        self.notebooks["GameListPanel"] = game_list
-        self.notebooks["ArchiveListPanel"] = archive_list
-        self.notebooks["ChatPanel"] = self.chat.chatbox
-        self.notebooks["ConsolePanel"] = self.console.consoleView
-        self.notebooks["NewsPanel"] = news
+        for panel, instance in zip(self.sidePanels, self.panels):
+            self.notebooks[panel.__name__] = instance
 
         self.docks["ficshome"] = (Gtk.Label(label="ficshome"), self.notebooks["ficshome"], None)
         for panel in self.sidePanels:

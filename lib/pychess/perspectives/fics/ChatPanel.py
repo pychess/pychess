@@ -24,15 +24,19 @@ __icon__ = addDataPrefix("glade/panel_chat.svg")
 __desc__ = _("List of server channels")
 
 
-class ChatWindow(object):
-    def __init__(self, widgets, connection):
+class Sidepanel():
+
+    def load(self, widgets, connection, lounge):
         self.connection = connection
 
         self.viewspanel = ViewsPanel(self.connection)
         self.channelspanel = ChannelsPanel(self.connection)
         self.adj = self.channelspanel.get_vadjustment()
         self.infopanel = InfoPanel(self.connection)
+
         self.chatbox = Gtk.Paned()
+        __widget__ = self.chatbox
+
         self.chatbox.add1(self.channelspanel)
 
         notebook = Gtk.Notebook()
@@ -57,6 +61,8 @@ class ChatWindow(object):
             panel.start()
 
         uistuff.keep(self.chatbox, "chat_paned_position", first_value=100)
+
+        return __widget__
 
     def onConversationAdded(self, panel, grp_id, text, grp_type):
         chatView = ChatView()
@@ -83,41 +89,3 @@ class ChatWindow(object):
         alloc = widget.get_allocation()
         if alloc.y < adj.value or alloc.y > adj.value + adj.page_size:
             adj.set_value(min(alloc.y, adj.upper - adj.page_size))
-
-if __name__ == "__main__":
-    import random
-
-    class LM:
-        def getPlayerlist(self):
-            for i in range(10):
-                chrs = map(chr, range(ord("a"), ord("z") + 1))
-                yield "".join(random.sample(chrs, random.randrange(20)))
-
-        def getChannels(self):
-            return [(str(i), n) for i, n in enumerate(self.getPlayerlist())]
-
-        def joinChannel(self, channel):
-            pass
-
-        def connect(self, *args):
-            pass
-
-        def getPeopleInChannel(self, name):
-            pass
-
-        def finger(self, name):
-            pass
-
-        def getJoinedChannels(self):
-            return []
-
-    class Con:
-        def __init__(self):
-            self.glm = LM()
-            self.cm = LM()
-            self.fm = LM()
-
-    chatwin = ChatWindow({}, Con())
-    globals()["_"] = lambda x: x
-    chatwin.window.connect("delete-event", Gtk.main_quit)
-    Gtk.main()

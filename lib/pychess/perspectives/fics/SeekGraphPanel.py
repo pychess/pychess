@@ -33,11 +33,16 @@ def XLOCATION(x):
 GAME_LENGTH = 40
 
 
-class SeekGraphSection(ParrentListSection):
+class Sidepanel(ParrentListSection):
 
-    def __init__(self, widgets, connection, lounge):
+    def load(self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
+
+        seek_graph = self.widgets["seekGraphContent"]
+        self.widgets["fics_panels_notebook"].remove(seek_graph)
+        __widget__ = seek_graph
+
         self.graph = SpotGraph()
 
         for rating in YMARKS:
@@ -57,6 +62,8 @@ class SeekGraphSection(ParrentListSection):
                                            self.onRemoveSought)
         self.connection.bm.connect("playGameCreated", self.onPlayingGame)
         self.connection.bm.connect("curGameEnded", self.onCurGameEnded)
+
+        return __widget__
 
     def onSpotClicked(self, graph, name):
         self.connection.bm.play(name)

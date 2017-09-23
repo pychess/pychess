@@ -23,13 +23,18 @@ __icon__ = addDataPrefix("glade/manseek.svg")
 __desc__ = _("Handle seeks and challenges")
 
 
-class SeekTabSection(ParrentListSection):
+class Sidepanel(ParrentListSection):
 
-    def __init__(self, widgets, connection, lounge):
+    def load(self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
         self.lounge = lounge
         self.infobar = lounge.infobar
+
+        seek_list = self.widgets["seekListContent"]
+        self.widgets["fics_panels_notebook"].remove(seek_list)
+        __widget__ = seek_list
+
         self.messages = {}
         self.seeks = {}
         self.challenges = {}
@@ -133,6 +138,8 @@ class SeekTabSection(ParrentListSection):
 
         self.createLocalMenu((ACCEPT, ASSESS, CHALLENGE, CHAT, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
         self.assess_sent = False
+
+        return __widget__
 
     def seek_filter_func(self, model, iter, data):
         sought_match = model[iter][0]

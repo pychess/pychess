@@ -16,11 +16,16 @@ __icon__ = addDataPrefix("glade/panel_terminal.svg")
 __desc__ = _("Command line interface to the chess server")
 
 
-class ConsoleWindow():
-    def __init__(self, widgets, connection):
+class Sidepanel():
+
+    def load(self, widgets, connection, lounge):
         self.connection = connection
         self.consoleView = ConsoleView(self.connection)
+        __widget__ = self.consoleView
+
         connection.com.connect("consoleMessage", self.onConsoleMessage)
+
+        return __widget__
 
     @staticmethod
     def filter_unprintable(s):

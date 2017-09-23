@@ -16,14 +16,17 @@ __icon__ = addDataPrefix("glade/panel_players.svg")
 __desc__ = _("List of players")
 
 
-class PlayerTabSection(ParrentListSection):
+class Sidepanel(ParrentListSection):
 
-    widgets = []
-
-    def __init__(self, widgets, connection, lounge):
-        PlayerTabSection.widgets = widgets
+    def load(self, widgets, connection, lounge):
+        self.widgets = widgets
         self.connection = connection
         self.lounge = lounge
+
+        players_list = self.widgets["playersListContent"]
+        self.widgets["fics_panels_notebook"].remove(players_list)
+        __widget__ = players_list
+
         self.players = {}
         self.columns = {TYPE_BLITZ: 3, TYPE_STANDARD: 4, TYPE_LIGHTNING: 5}
 
@@ -77,6 +80,8 @@ class PlayerTabSection(ParrentListSection):
 
         self.tv.connect('button-press-event', self.button_press_event)
         self.createLocalMenu((CHALLENGE, CHAT, OBSERVE, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
+
+        return __widget__
 
     def player_filter_func(self, model, iter, data):
         player = model[iter][0]

@@ -19,12 +19,17 @@ __icon__ = addDataPrefix("glade/panel_games.svg")
 __desc__ = _("List of ongoing games")
 
 
-class GameTabSection(ParrentListSection):
+class Sidepanel(ParrentListSection):
 
-    def __init__(self, widgets, connection, lounge):
+    def load(self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
         self.lounge = lounge
+
+        games_list = self.widgets["gamesListContent"]
+        self.widgets["fics_panels_notebook"].remove(games_list)
+        __widget__ = games_list
+
         self.games = {}
         self.recpix = load_icon(16, "media-record")
         self.clearpix = get_pixbuf("glade/board.png")
@@ -94,6 +99,8 @@ class GameTabSection(ParrentListSection):
 
         self.tv.connect('button-press-event', self.button_press_event)
         self.createLocalMenu((OBSERVE, FOLLOW, SEPARATOR, FINGER, ARCHIVED))
+
+        return __widget__
 
     def game_filter_func(self, model, iter, data):
         game = model[iter][0]

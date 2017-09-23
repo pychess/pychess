@@ -11,11 +11,18 @@ __icon__ = addDataPrefix("glade/panel_annotation.svg")
 __desc__ = _("List of server news")
 
 
-class NewsSection():
+class Sidepanel():
 
-    def __init__(self, widgets, connection):
+    def load(self, widgets, connection, lounge):
         self.widgets = widgets
+
+        news_list = self.widgets["news"]
+        self.widgets["fics_home"].remove(news_list)
+        __widget__ = news_list
+
         connection.nm.connect("readNews", self.onNewsItem)
+
+        return __widget__
 
     def onNewsItem(self, nm, news):
         weekday, month, day, title, details = news
