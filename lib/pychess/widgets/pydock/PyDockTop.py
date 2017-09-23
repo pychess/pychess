@@ -246,8 +246,13 @@ class PyDockTop(PyDockComposite, TabReceiver):
             return new
 
         elif parentElement.tagName == "leaf":
-            id = self.old2new(children[0].getAttribute("id"))
-            title, widget, menu_item = idToWidget[id]
+            id = children[0].getAttribute("id")
+            try:
+                title, widget, menu_item = idToWidget[id]
+            except KeyError:
+                id = self.old2new(id)
+                title, widget, menu_item = idToWidget[id]
+
             leaf = PyDockLeaf(widget, title, id, self.perspective)
             visible = children[0].getAttribute("visible")
             visible = visible == "" or visible == "True"
@@ -256,8 +261,13 @@ class PyDockTop(PyDockComposite, TabReceiver):
                 menu_item.set_active(visible)
 
             for panelElement in children[1:]:
-                id = self.old2new(panelElement.getAttribute("id"))
-                title, widget, menu_item = idToWidget[id]
+                id = panelElement.getAttribute("id")
+                try:
+                    title, widget, menu_item = idToWidget[id]
+                except KeyError:
+                    id = self.old2new(id)
+                    title, widget, menu_item = idToWidget[id]
+
                 visible = panelElement.getAttribute("visible")
                 visible = visible == "" or visible == "True"
                 leaf.dock(widget, CENTER, title, id)
@@ -272,5 +282,17 @@ class PyDockTop(PyDockComposite, TabReceiver):
 
     def old2new(self, name):
         """ After 0.99.0 database perspective panel names changed """
-        x = {"switcher": "SwitcherPanel", "openingtree": "OpeningTreePanel", "filter": "FilterPanel", "preview": "PreviewPanel"}
+        x = {"switcher": "SwitcherPanel",
+             "openingtree": "OpeningTreePanel",
+             "filter": "FilterPanel",
+             "preview": "PreviewPanel",
+             "chat": "ChatPanel",
+             "console": "ConsolePanel",
+             "news": "NewsPanel",
+             "seeklist": "SeekListPanel",
+             "seekgraph": "SeekGraphPanel",
+             "playerlist": "PlayerListPanel",
+             "gamelist": "GameListPanel",
+             "archivelist": "ArchiveListPanel",
+             }
         return x[name] if name in x else name

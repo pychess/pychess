@@ -11,8 +11,8 @@ from gi.repository import GObject
 
 from pychess.System import uistuff, conf
 from pychess.widgets import mainwindow
-from .FICSConnection import FICSMainConnection, FICSHelperConnection, LogOnException
-from .ICLounge import ICLounge
+from pychess.ic.FICSConnection import FICSMainConnection, FICSHelperConnection, LogOnException
+from pychess.perspectives import perspective_manager
 
 host = None
 port = None
@@ -339,7 +339,8 @@ class ICLogon(object):
         if connection.ICC:
             self.connection.start_helper_manager(True)
 
-        self.lounge = ICLounge(connection, self.helperconn, self.host)
+        self.lounge = perspective_manager.get_perspective("fics")
+        self.lounge.init_layout(connection, self.helperconn, self.host)
         self.hide()
         self.lounge.show()
         self.lounge.connect("logout",

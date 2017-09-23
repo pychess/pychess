@@ -3,12 +3,20 @@ from time import strftime
 from gi.repository import GLib, Gtk, Gdk, GObject, Pango
 
 from pychess.System import uistuff
+from pychess.System.prefix import addDataPrefix
 from pychess.widgets import insert_formatted
 from pychess.widgets.Background import set_textview_color
 from pychess.ic import FICS_COMMANDS, FICS_HELP
 
 
-class ConsoleWindow(object):
+__title__ = _("Console")
+
+__icon__ = addDataPrefix("glade/panel_terminal.svg")
+
+__desc__ = _("Command line interface to the chess server")
+
+
+class ConsoleWindow():
     def __init__(self, widgets, connection):
         self.connection = connection
         self.consoleView = ConsoleView(self.connection)

@@ -6,6 +6,7 @@ from pychess.widgets.ViewsPanel import ViewsPanel
 from pychess.widgets.InfoPanel import InfoPanel
 from pychess.widgets.ChannelsPanel import ChannelsPanel
 from pychess.System import uistuff
+from pychess.System.prefix import addDataPrefix
 
 TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
     TYPE_ADMIN, TYPE_COMP, TYPE_BLINDFOLD = range(6)
@@ -14,6 +15,13 @@ TYPE_PERSONAL, TYPE_CHANNEL, TYPE_GUEST, \
 def get_playername(playername):
     re_m = re.match("(\w+)\W*", playername)
     return re_m.groups()[0]
+
+
+__title__ = _("Talking")
+
+__icon__ = addDataPrefix("glade/panel_chat.svg")
+
+__desc__ = _("List of server channels")
 
 
 class ChatWindow(object):
