@@ -496,6 +496,9 @@ class BoardManager(GObject.GObject):
                 game = self.connection.games.get_game_by_gameno(gameno)
                 if not hasattr(game, "queue"):
                     game.queue = asyncio.Queue()
+                if wms < 0 or bms < 0:
+                    # fics resend latest style12 line again when one player lost on time
+                    return
                 game.queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
             else:
                 # In some cases (like lost on time) the last move is resent by FICS
