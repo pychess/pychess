@@ -653,8 +653,8 @@
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="Escape" signal="activate"/>
                         <accelerator key="F11" signal="activate"/>
+                        <accelerator key="Escape" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -2285,7 +2285,6 @@ It will search positions from http://www.k4it.de/</property>
             </child>
             <child>
               <object class="GtkAlignment" id="sidepanels">
-                <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="top_padding">3</property>
                 <child>

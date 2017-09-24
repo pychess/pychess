@@ -45,8 +45,12 @@ def initialize(widgets):
     GeneralTab(widgets)
     HintTab(widgets)
     SoundTab(widgets)
-    PanelTab(widgets)
+
+    # All side panels can be show/hide from View menu now, so no need to do the same from preferences
+    # We can re enable this after implementing install/uninstall functionality in the future...
+    # PanelTab(widgets)
     ThemeTab(widgets)
+
     SaveTab(widgets)
 
     uistuff.keepWindowSize("preferencesdialog", widgets["preferences_dialog"])
