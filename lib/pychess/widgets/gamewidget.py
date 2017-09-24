@@ -10,7 +10,7 @@ import pychess
 from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
-from pychess.Savers import pgn, fen
+from pychess.Savers import pgn
 from pychess.System import conf
 
 from pychess.System.Log import log
@@ -776,10 +776,11 @@ class GameWidget(GObject.GObject):
         clipboard.set_text(pgn.save(output, self.gamemodel), -1)
 
     def copy_fen(self):
-        output = StringIO()
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-        clipboard.set_text(
-            fen.save(output, self.gamemodel, self.board.view.shown), -1)
+        ply = self.board.view.shown
+        variation = self.board.view.shown_variation_idx
+        fen = self.gamemodel.getBoardAtPly(ply, variation).asFen()
+        clipboard.set_text(fen, -1)
 
 # ###############################################################################
 # Handling of the special sidepanels-design-gamewidget used in preferences     #

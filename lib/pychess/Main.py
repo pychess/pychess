@@ -197,11 +197,9 @@ class GladeHandlers(object):
         persp = perspective_manager.get_perspective("games")
         gmwidg = persp.cur_gmwidg()
         if gmwidg is not None:
-            if len(gmwidg.gamemodel.boards) == 1:
-                ply = 0
-            else:
-                ply = gmwidg.board.view.shown
-            fen = gmwidg.gamemodel.boards[ply].asFen()
+            ply = gmwidg.board.view.shown
+            variation = gmwidg.board.view.shown_variation_idx
+            fen = gmwidg.gamemodel.getBoardAtPly(ply, variation).asFen()
         else:
             fen = None
         newGameDialog.SetupPositionExtension.run(fen)
