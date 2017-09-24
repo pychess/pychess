@@ -249,7 +249,7 @@ class EngineDiscoverer(GObject.GObject):
             altpath = dirname(command) if command else None
             if sys.platform == "win32" and not altpath:
                 altpath = os.path.join(getDataPrefix(), "engines") + ";" + os.path.dirname(sys.executable)
-            path = shutil.which(engine["name"], mode=os.R_OK | os.X_OK, path=altpath)
+            path = shutil.which(command if command else engine["name"], mode=os.R_OK | os.X_OK, path=altpath)
             if path:
                 return None, path
         return False
