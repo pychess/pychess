@@ -373,6 +373,10 @@ class GameWidget(GObject.GObject):
 
         if gamemodel.isObservationGame() and not self.isInFront():
             self.light_on_off(True)
+
+        if not gamemodel.isPlayingICSGame():
+            self.clearMessages()
+
         return False
 
     def game_saved(self, gamemodel, uri):
