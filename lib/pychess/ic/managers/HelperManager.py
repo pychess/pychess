@@ -192,6 +192,13 @@ class HelperManager(GObject.GObject):
         if wplayer.game is not None:
             game.rated = wplayer.game.rated
         game = self.connection.games.get(game, emit=False)
+
+        # Our played/observed game ends are handled in main connection to prevent
+        # removing them by helper connection before latest move(style12) comes from server
+        if game == self.connection.bm.theGameImPlaying or \
+           game in self.connection.bm.gamesImObserving:
+            return
+
         self.connection.games.game_ended(game)
         # Do this last to give anybody connected to the game's signals a chance
         # to disconnect from them first

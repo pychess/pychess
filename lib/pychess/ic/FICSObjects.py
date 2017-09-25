@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import asyncio
 import datetime
 from gi.repository import GLib, GObject
 
@@ -1206,10 +1206,18 @@ class FICSGames(GObject.GObject):
         return game
 
     def game_ended(self, game):
-        if game in self:
-            game = self[game]
-            del self[game]
-            self.emit("FICSGameEnded", game)
+        def coro(game):
+            # we have to wait a little here to let
+            # pychess GUI process the latest move(style12) message
+            # and remove game from game list panel also
+            if game in self:
+                yield from asyncio.sleep(0.1)
+                game = self[game]
+                self.emit("FICSGameEnded", game)
+
+                yield from asyncio.sleep(0.1)
+                del self[game]
+        asyncio.async(coro(game))
 
     def onAdjournmentsList(self, adm, adjournments):
         for game in self.adjourned_games.values():
