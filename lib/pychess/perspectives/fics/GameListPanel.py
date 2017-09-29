@@ -26,9 +26,7 @@ class Sidepanel(ParrentListSection):
         self.connection = connection
         self.lounge = lounge
 
-        games_list = self.widgets["gamesListContent"]
-        self.widgets["fics_panels_notebook"].remove(games_list)
-        __widget__ = games_list
+        __widget__ = lounge.games_list
 
         self.games = {}
         self.recpix = load_icon(16, "media-record")

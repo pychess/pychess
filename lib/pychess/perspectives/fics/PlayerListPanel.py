@@ -23,9 +23,7 @@ class Sidepanel(ParrentListSection):
         self.connection = connection
         self.lounge = lounge
 
-        players_list = self.widgets["playersListContent"]
-        self.widgets["fics_panels_notebook"].remove(players_list)
-        __widget__ = players_list
+        __widget__ = lounge.players_list
 
         self.players = {}
         self.columns = {TYPE_BLITZ: 3, TYPE_STANDARD: 4, TYPE_LIGHTNING: 5}

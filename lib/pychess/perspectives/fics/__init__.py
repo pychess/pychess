@@ -14,6 +14,7 @@ from pychess.perspectives.fics.SeekChallenge import SeekChallengeSection
 from pychess.System import conf, uistuff
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.Log import log
+from pychess.widgets import new_notebook
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarNotebook, InfoBarMessageButton
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import SOUTH, WEST, CENTER
@@ -45,6 +46,7 @@ class FICS(GObject.GObject, Perspective):
         GObject.GObject.__init__(self)
         Perspective.__init__(self, "fics", _("ICS"))
         self.dockLocation = addUserConfigPrefix("pydock-fics.xml")
+        self.first_run = True
 
     def create_toolbuttons(self):
         def on_logoff_clicked(button):
@@ -96,7 +98,63 @@ class FICS(GObject.GObject, Perspective):
         self.minute_45_button.set_tooltip_text(_("New game from 45-minute playing pool"))
         self.minute_45_button.connect("clicked", on_minute_45_clicked)
 
-    def init_layout(self, connection, helperconn, host):
+    def init_layout(self):
+        perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        perspective_manager.set_perspective_widget("fics", perspective_widget)
+        perspective_manager.set_perspective_menuitems("fics", self.menuitems)
+
+        self.infobar = InfoBarNotebook("fics_lounge_infobar")
+        self.infobar.hide()
+        perspective_widget.pack_start(self.infobar, False, False, 0)
+
+        self.dock = PyDockTop("fics", self)
+        align = Gtk.Alignment()
+        align.show()
+        align.add(self.dock)
+        self.dock.show()
+        perspective_widget.pack_start(align, True, True, 0)
+
+        self.notebooks = {"ficshome": new_notebook()}
+        for panel in self.sidePanels:
+            self.notebooks[panel.__name__] = new_notebook(panel.__name__)
+
+        self.docks["ficshome"] = (Gtk.Label(label="ficshome"), self.notebooks["ficshome"], None)
+        for panel in self.sidePanels:
+            self.docks[panel.__name__][1] = self.notebooks[panel.__name__]
+
+        self.load_from_xml()
+
+        # Default layout of side panels
+        if not os.path.isfile(self.dockLocation):
+            leaf = self.dock.dock(self.docks["ficshome"][1], CENTER, self.docks["ficshome"][0], "ficshome")
+            leaf.setDockable(False)
+
+            console_leaf = leaf.dock(self.docks["ConsolePanel"][1], SOUTH, self.docks["ConsolePanel"][0], "ConsolePanel")
+            console_leaf.dock(self.docks["NewsPanel"][1], CENTER, self.docks["NewsPanel"][0], "NewsPanel")
+
+            seek_leaf = leaf.dock(self.docks["SeekListPanel"][1], WEST, self.docks["SeekListPanel"][0], "SeekListPanel")
+            seek_leaf.dock(self.docks["SeekGraphPanel"][1], CENTER, self.docks["SeekGraphPanel"][0], "SeekGraphPanel")
+            seek_leaf.dock(self.docks["PlayerListPanel"][1], CENTER, self.docks["PlayerListPanel"][0], "PlayerListPanel")
+            seek_leaf.dock(self.docks["GameListPanel"][1], CENTER, self.docks["GameListPanel"][0], "GameListPanel")
+            seek_leaf.dock(self.docks["ArchiveListPanel"][1], CENTER, self.docks["ArchiveListPanel"][0], "ArchiveListPanel")
+
+            leaf = leaf.dock(self.docks["ChatPanel"][1], SOUTH, self.docks["ChatPanel"][0], "ChatPanel")
+
+        def unrealize(dock):
+            dock.saveToXML(self.dockLocation)
+            dock._del()
+
+        self.dock.connect("unrealize", unrealize)
+
+        self.dock.show_all()
+        perspective_widget.show_all()
+
+        log.debug("FICS.__init__: finished")
+
+    def open_lounge(self, connection, helperconn, host):
+        if self.first_run:
+            self.init_layout()
+
         self.connection = connection
         self.helperconn = helperconn
         self.host = host
@@ -109,20 +167,28 @@ class FICS(GObject.GObject, Perspective):
         self.widgets = uistuff.GladeWidgets("fics_lounge.glade")
         self.widgets["fics_lounge"].hide()
 
-        perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        perspective_manager.set_perspective_widget("fics", perspective_widget)
+        fics_home = self.widgets["fics_home"]
+        self.widgets["fics_lounge_content_hbox"].remove(fics_home)
 
-        self.infobar = InfoBarNotebook("fics_lounge_infobar")
-        self.infobar.hide()
-        perspective_widget.pack_start(self.infobar, False, False, 0)
+        self.archive_list = self.widgets["archiveListContent"]
+        self.widgets["fics_panels_notebook"].remove(self.archive_list)
 
-        tool_buttons = [self.logoff_button, ]
-        if self.connection.ICC:
-            tool_buttons += [self.minute_1_button, self.minute_3_button, self.minute_5_button,
-                             self.minute_15_button, self.minute_45_button]
-        perspective_manager.set_perspective_toolbuttons("fics", tool_buttons)
+        self.games_list = self.widgets["gamesListContent"]
+        self.widgets["fics_panels_notebook"].remove(self.games_list)
 
-        perspective_manager.set_perspective_menuitems("fics", self.menuitems)
+        self.news_list = self.widgets["news"]
+        self.widgets["fics_home"].remove(self.news_list)
+
+        self.players_list = self.widgets["playersListContent"]
+        self.widgets["fics_panels_notebook"].remove(self.players_list)
+
+        self.seek_graph = self.widgets["seekGraphContent"]
+        self.widgets["fics_panels_notebook"].remove(self.seek_graph)
+
+        self.seek_list = self.widgets["seekListContent"]
+        self.widgets["fics_panels_notebook"].remove(self.seek_list)
+
+        self.seek_challenge = SeekChallengeSection(self)
 
         def on_autoLogout(alm):
             self.emit("autoLogout")
@@ -153,51 +219,6 @@ class FICS(GObject.GObject, Perspective):
         self.connection.cm.connect("departedNotification", self.onDepartedNotification)
         self.connection.com.onConsoleMessage("", self.connection.ini_messages)
 
-        for user in self.connection.notify_users:
-            user = self.connection.players.get(user)
-            self.user_from_notify_list_is_present(user)
-
-        self.seek_challenge = SeekChallengeSection(self)
-
-        self.userinfo = UserInfoSection(self.widgets, self.connection, self.host, self)
-        fics_home = self.widgets["fics_home"]
-        self.widgets["fics_lounge_content_hbox"].remove(fics_home)
-
-        self.panels = [panel.Sidepanel().load(self.widgets, self.connection, self) for panel in self.sidePanels]
-
-        self.dock = PyDockTop("fics", self)
-        align = Gtk.Alignment()
-        align.show()
-        align.add(self.dock)
-        self.dock.show()
-        perspective_widget.pack_start(align, True, True, 0)
-
-        self.notebooks = {"ficshome": fics_home}
-        for panel, instance in zip(self.sidePanels, self.panels):
-            self.notebooks[panel.__name__] = instance
-
-        self.docks["ficshome"] = (Gtk.Label(label="ficshome"), self.notebooks["ficshome"], None)
-        for panel in self.sidePanels:
-            self.docks[panel.__name__][1] = self.notebooks[panel.__name__]
-
-        self.load_from_xml()
-
-        # Default layout of side panels
-        if not os.path.isfile(self.dockLocation):
-            leaf = self.dock.dock(self.docks["ficshome"][1], CENTER, self.docks["ficshome"][0], "ficshome")
-            leaf.setDockable(False)
-
-            console_leaf = leaf.dock(self.docks["ConsolePanel"][1], SOUTH, self.docks["ConsolePanel"][0], "ConsolePanel")
-            console_leaf.dock(self.docks["NewsPanel"][1], CENTER, self.docks["NewsPanel"][0], "NewsPanel")
-
-            seek_leaf = leaf.dock(self.docks["SeekListPanel"][1], WEST, self.docks["SeekListPanel"][0], "SeekListPanel")
-            seek_leaf.dock(self.docks["SeekGraphPanel"][1], CENTER, self.docks["SeekGraphPanel"][0], "SeekGraphPanel")
-            seek_leaf.dock(self.docks["PlayerListPanel"][1], CENTER, self.docks["PlayerListPanel"][0], "PlayerListPanel")
-            seek_leaf.dock(self.docks["GameListPanel"][1], CENTER, self.docks["GameListPanel"][0], "GameListPanel")
-            seek_leaf.dock(self.docks["ArchiveListPanel"][1], CENTER, self.docks["ArchiveListPanel"][0], "ArchiveListPanel")
-
-            leaf = leaf.dock(self.docks["ChatPanel"][1], SOUTH, self.docks["ChatPanel"][0], "ChatPanel")
-
         def get_top_games():
             if perspective_manager.current_perspective == self:
                 self.connection.client.run_command("games *19")
@@ -206,16 +227,31 @@ class FICS(GObject.GObject, Perspective):
         if self.connection.ICC:
             self.event_id = GLib.timeout_add_seconds(5, get_top_games)
 
-        def unrealize(dock):
-            dock.saveToXML(self.dockLocation)
-            dock._del()
+        for user in self.connection.notify_users:
+            user = self.connection.players.get(user)
+            self.user_from_notify_list_is_present(user)
 
-        self.dock.connect("unrealize", unrealize)
+        self.userinfo = UserInfoSection(self.widgets, self.connection, self.host, self)
+        if not self.first_run:
+            self.notebooks["ficshome"].remove_page(-1)
+        self.notebooks["ficshome"].append_page(fics_home)
 
-        self.dock.show_all()
-        perspective_widget.show_all()
+        self.panels = [panel.Sidepanel().load(self.widgets, self.connection, self) for panel in self.sidePanels]
 
-        log.debug("FICS.__init__: finished")
+        for panel, instance in zip(self.sidePanels, self.panels):
+            if not self.first_run:
+                self.notebooks[panel.__name__].remove_page(-1)
+            self.notebooks[panel.__name__].append_page(instance)
+            instance.show()
+
+        tool_buttons = [self.logoff_button, ]
+        if self.connection.ICC:
+            tool_buttons += [self.minute_1_button, self.minute_3_button, self.minute_5_button,
+                             self.minute_15_button, self.minute_45_button]
+        perspective_manager.set_perspective_toolbuttons("fics", tool_buttons)
+
+        if self.first_run:
+            self.first_run = False
 
     def show(self):
         perspective_manager.activate_perspective("fics")

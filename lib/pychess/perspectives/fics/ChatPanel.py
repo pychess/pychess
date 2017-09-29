@@ -59,6 +59,7 @@ class Sidepanel():
         for panel in self.panels:
             panel.show_all()
             panel.start()
+        self.chatbox.show_all()
 
         uistuff.keep(self.chatbox, "chat_paned_position", first_value=100)
 

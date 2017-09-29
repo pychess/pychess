@@ -21,6 +21,7 @@ class Sidepanel():
     def load(self, widgets, connection, lounge):
         self.connection = connection
         self.consoleView = ConsoleView(self.connection)
+        self.consoleView.show_all()
         __widget__ = self.consoleView
 
         connection.com.connect("consoleMessage", self.onConsoleMessage)

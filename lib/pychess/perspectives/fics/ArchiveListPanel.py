@@ -34,9 +34,7 @@ class Sidepanel(ParrentListSection):
         self.lounge = lounge
         self.infobar = lounge.infobar
 
-        archive_list = self.widgets["archiveListContent"]
-        self.widgets["fics_panels_notebook"].remove(archive_list)
-        __widget__ = archive_list
+        __widget__ = lounge.archive_list
 
         self.games = {}
         self.messages = {}

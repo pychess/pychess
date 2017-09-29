@@ -39,9 +39,7 @@ class Sidepanel(ParrentListSection):
         self.widgets = widgets
         self.connection = connection
 
-        seek_graph = self.widgets["seekGraphContent"]
-        self.widgets["fics_panels_notebook"].remove(seek_graph)
-        __widget__ = seek_graph
+        __widget__ = lounge.seek_graph
 
         self.graph = SpotGraph()
 

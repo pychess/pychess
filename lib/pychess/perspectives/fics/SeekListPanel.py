@@ -31,9 +31,7 @@ class Sidepanel(ParrentListSection):
         self.lounge = lounge
         self.infobar = lounge.infobar
 
-        seek_list = self.widgets["seekListContent"]
-        self.widgets["fics_panels_notebook"].remove(seek_list)
-        __widget__ = seek_list
+        __widget__ = lounge.seek_list
 
         self.messages = {}
         self.seeks = {}

@@ -340,7 +340,7 @@ class ICLogon(object):
             self.connection.start_helper_manager(True)
 
         self.lounge = perspective_manager.get_perspective("fics")
-        self.lounge.init_layout(connection, self.helperconn, self.host)
+        self.lounge.open_lounge(connection, self.helperconn, self.host)
         self.hide()
         self.lounge.show()
         self.lounge.connect("logout",

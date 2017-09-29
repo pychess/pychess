@@ -16,9 +16,7 @@ class Sidepanel():
     def load(self, widgets, connection, lounge):
         self.widgets = widgets
 
-        news_list = self.widgets["news"]
-        self.widgets["fics_home"].remove(news_list)
-        __widget__ = news_list
+        __widget__ = lounge.news_list
 
         connection.nm.connect("readNews", self.onNewsItem)
 
