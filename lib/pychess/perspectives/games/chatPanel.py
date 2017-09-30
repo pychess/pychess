@@ -34,7 +34,7 @@ class Sidepanel:
 
     def on_game_terminated(self, model):
         self.chatView.disconnect(self.chatview_cid)
-        if hasattr(self, "player") and not self.gamemodel.examined:
+        if hasattr(self, "player") and hasattr(self, "player_cid") and not self.gamemodel.examined:
             self.player.disconnect(self.player_cid)
         for cid in self.model_cids:
             self.gamemodel.disconnect(cid)
