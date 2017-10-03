@@ -4,7 +4,7 @@ from pychess import Variants
 from pychess.Utils.const import NORMALCHESS, ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, \
     LOSERSCHESS, SUICIDECHESS, FISCHERRANDOMCHESS, WILDCASTLESHUFFLECHESS, \
     SHUFFLECHESS, RANDOMCHESS, ASYMMETRICRANDOMCHESS, WILDCASTLECHESS, UPSIDEDOWNCHESS, \
-    PAWNSPUSHEDCHESS, PAWNSPASSEDCHESS
+    PAWNSPUSHEDCHESS, PAWNSPASSEDCHESS, GIVEAWAYCHESS, THREECHECKCHESS
 
 IC_CONNECTED, IC_DISCONNECTED = range(2)
 
@@ -115,7 +115,10 @@ class VariantGameType(GameType):
 
     @property
     def seek_text(self):
-        return self.fics_name.replace("/", " ")
+        if "/" in self.fics_name:
+            return self.fics_name.replace("/", " ")
+        else:
+            return self.fics_name
 
 
 class WildGameType(VariantGameType):
@@ -147,13 +150,15 @@ GAME_TYPES = {
     "untimed": NormalGameType("untimed", "u", TYPE_UNTIMED, _("Untimed")),
     "examined": NormalGameType("examined", "e", TYPE_EXAMINED, _("Examined")),
     "nonstandard": NormalGameType("nonstandard", "n", TYPE_OTHER, _("Other")),
+    "w20": NormalGameType("loaded", "w20", TYPE_OTHER, _("Other")),  # loadfen/loadgame
+    "w21": NormalGameType("loaded", "w21", TYPE_OTHER, _("Other")),  # thematic tournaments
     "atomic": VariantGameType("atomic", "x", TYPE_ATOMIC, ATOMICCHESS),
     "bughouse": VariantGameType("bughouse", "B", TYPE_BUGHOUSE, BUGHOUSECHESS),
     "crazyhouse": VariantGameType("crazyhouse", "z", TYPE_CRAZYHOUSE, CRAZYHOUSECHESS),
     "losers": VariantGameType("losers", "L", TYPE_LOSERS, LOSERSCHESS),
     "suicide": VariantGameType("suicide", "S", TYPE_SUICIDE, SUICIDECHESS),
-    # ICC Wild 26 https://www.chessclub.com/user/helpcenter/tips/wild.html
-    # "giveaway": VariantGameType("giveaway", "G", TYPE_GIVEAWAY, GIVEAWAYCHESS),
+
+    # FICS http://www.freechess.org/Help/HelpFiles/wild.html
     "wild/fr": WildGameType("wild/fr", FISCHERRANDOMCHESS),
     "wild/0": WildGameType("wild/0", WILDCASTLECHESS),
     "wild/1": WildGameType("wild/1", WILDCASTLESHUFFLECHESS),
@@ -162,7 +167,28 @@ GAME_TYPES = {
     "wild/4": WildGameType("wild/4", ASYMMETRICRANDOMCHESS),
     "wild/5": WildGameType("wild/5", UPSIDEDOWNCHESS),
     "wild/8": WildGameType("wild/8", PAWNSPUSHEDCHESS),
-    "wild/8a": WildGameType("wild/8a", PAWNSPASSEDCHESS)
+    "wild/8a": WildGameType("wild/8a", PAWNSPASSEDCHESS),
+
+    # ICC https://www.chessclub.com/user/helpcenter/tips/wild.html
+    "w17": WildGameType("w17", LOSERSCHESS),
+    "w26": WildGameType("w26", GIVEAWAYCHESS),
+    "w24": WildGameType("w24", BUGHOUSECHESS),
+    "w23": WildGameType("w23", CRAZYHOUSECHESS),
+    # "w16": WildGameType("w16", KRIEGSPIELCHESS),
+    "w27": WildGameType("w27", ATOMICCHESS),
+    # "w28": WildGameType("w28", SHATRANJCHESS),
+    "w25": WildGameType("w25", THREECHECKCHESS),
+    "w1": WildGameType("w1", WILDCASTLESHUFFLECHESS),
+    "w2": WildGameType("w2", SHUFFLECHESS),
+    "w3": WildGameType("w3", RANDOMCHESS),
+    "w4": WildGameType("w4", ASYMMETRICRANDOMCHESS),
+    "w22": WildGameType("w22", FISCHERRANDOMCHESS),
+    "w5": WildGameType("w5", UPSIDEDOWNCHESS),
+    # "w7": WildGameType("w7", THREEPAWNSCHESS),
+    "w8": WildGameType("w8", PAWNSPUSHEDCHESS),
+    # "w9": WildGameType("w9", TWOKINGSCHESS),
+    # "w18": WildGameType("w18", EIGHTQUEENSCHESS),
+    # "w19": WildGameType("w19", KNNKPCHESS),
 }
 
 VARIANT_GAME_TYPES = {}
@@ -200,6 +226,7 @@ GAME_TYPES["bullet"] = NormalGameType("bullet", "B", TYPE_BULLET, _("Bullet"))
 GAME_TYPES_BY_FICS_NAME["bullet"] = GAME_TYPES["bullet"]
 GAME_TYPES_BY_RATING_TYPE[TYPE_BULLET] = GAME_TYPES["bullet"]
 # GAME_TYPES_BY_SHORT_FICS_NAME["B"] will be fixed in FICSConnections.py
+# and VARIANT_GAME_TYPES[FISCHERRANDOMCHESS] also
 
 
 def type_to_display_text(typename):

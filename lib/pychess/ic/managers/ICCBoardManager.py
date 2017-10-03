@@ -124,6 +124,7 @@ class ICCBoardManager(BoardManager):
         # 685 Salsicha MaxiBomb 0 Blitz 1 3 0 3 0 1 {} 2147 2197 1729752694 {} {} 0 0 0 {} 0
         # 259 Rikikilord ARMH 0 Blitz 1 2 12 2 12 0 {Ex: Rikikilord 0} 1532 1406 1729752286 {} {} 0 0 0 {} 0
         gameno, wname, bname, wild, rtype, rated, wmin, winc, bmin, binc, played_game, rest = data.split(" ", 11)
+        print("my_game_started", gameno, wname, bname, wild, rtype, rated)
 
         parts = rest.split("}", 1)[1].split()
         wrating = int(parts[0])
@@ -132,7 +133,10 @@ class ICCBoardManager(BoardManager):
         gameno = int(gameno)
         wplayer = self.connection.players.get(wname)
         bplayer = self.connection.players.get(bname)
-        game_type = GAME_TYPES[rtype.lower()]
+        if wild.isdigit():
+            game_type = GAME_TYPES["w%s" % wild]
+        else:
+            game_type = GAME_TYPES[rtype.lower()]
 
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
             if player.ratings[game_type.rating_type] != rating:
@@ -186,6 +190,7 @@ class ICCBoardManager(BoardManager):
 
     def on_icc_started_observing(self, data):
         gameno, wname, bname, wild, rtype, rated, wmin, winc, bmin, binc, played_game, rest = data.split(" ", 11)
+        print("started_observing", gameno, wname, bname, wild)
 
         parts = rest.split("}", 1)[1].split()
         wrating = int(parts[0])
@@ -285,6 +290,7 @@ class ICCBoardManager(BoardManager):
         bplayer.game = None
 
     def on_icc_position_begin(self, data):
+        print("position_begin", data)
         # gamenumber {initial-FEN} nmoves-to-follow
         gameno, right_part = data.split("{")
         gameno = int(gameno)
@@ -300,8 +306,10 @@ class ICCBoardManager(BoardManager):
             if not hasattr(game, "queue"):
                 game.queue = asyncio.Queue()
 
-            # game.queue.put_nowait((gameno, 0, WHITE, None, FEN_START,
-            #                        game.wplayer.name, game.bplayer.name, wms, bms))
+            fen = right_part.split("}")[0]
+            if fen != FEN_START:
+                game.queue.put_nowait((gameno, 0, WHITE, None, fen,
+                                       game.wplayer.name, game.bplayer.name, wms, bms))
         else:
             fen, moves_to_go = right_part.split("}")
             self.moves_to_go = int(moves_to_go)
@@ -312,6 +320,7 @@ class ICCBoardManager(BoardManager):
             self.gamesImObserving[game] = (curcol, ply, wms, bms)
 
     def on_icc_send_moves(self, data):
+        print("send_moves", data)
         # gamenumber algebraic-move smith-move time clock
         send_moves = data
         gameno, san_move, alg_move, time, clock = send_moves.split()
@@ -344,7 +353,7 @@ class ICCBoardManager(BoardManager):
 
         if gameno in self.queued_send_moves:
             self.queued_send_moves[gameno].append(send_moves)
-            if len(self.queued_send_moves[gameno]) < self.moves_to_go:
+            if self.moves_to_go and len(self.queued_send_moves[gameno]) < self.moves_to_go:
                 return
 
         if self.moves_to_go is None:

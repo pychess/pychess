@@ -145,7 +145,9 @@ class ICGameModel(GameModel):
 
             self.timemodel.updatePlayer(WHITE, wms / 1000.)
             self.timemodel.updatePlayer(BLACK, bms / 1000.)
+
         if lastmove is None:
+            # set up examined game players or position
             if bname != self.tags["Black"]:
                 self.tags["Black"] = self.players[
                     BLACK].name = self.ficsplayers[BLACK].name = bname

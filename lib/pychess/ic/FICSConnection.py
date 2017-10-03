@@ -12,7 +12,7 @@ import pychess
 from pychess.System.Log import log
 
 from pychess import ic
-from pychess.Utils.const import NAME
+from pychess.Utils.const import NAME, FISCHERRANDOMCHESS
 from .managers.SeekManager import SeekManager
 from .managers.FingerManager import FingerManager
 from .managers.NewsManager import NewsManager
@@ -293,8 +293,10 @@ class FICSConnection(Connection):
                 self.client.lines.datagram_mode = True
 
                 ic.GAME_TYPES_BY_SHORT_FICS_NAME["B"] = ic.GAME_TYPES["bullet"]
+                ic.VARIANT_GAME_TYPES[FISCHERRANDOMCHESS] = ic.GAME_TYPES["w22"]
             else:
                 ic.GAME_TYPES_BY_SHORT_FICS_NAME["B"] = ic.GAME_TYPES["bughouse"]
+                ic.VARIANT_GAME_TYPES[FISCHERRANDOMCHESS] = ic.GAME_TYPES["wild/fr"]
 
             self.client.run_command("iset defprompt 1")
             self.client.run_command("iset ms 1")
