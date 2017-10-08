@@ -193,8 +193,11 @@ class EngineAdvisor(Advisor):
             self._create_new_expected_lines()
 
     def on_ready_for_options(self, engine):
-        engineMax = self.engine.maxAnalysisLines()
-        self.linesExpected = min(conf.get("multipv", 1), engineMax)
+        engine_max = self.engine.maxAnalysisLines()
+        engine_value = self.engine.getAnalysisLines()
+        self.linesExpected = conf.get("multipv", 1)
+        if engine_value != self.linesExpected:
+            self.linesExpected = engine_value
 
         m = self.boardview.model
         if m.isPlayingICSGame():
@@ -203,10 +206,9 @@ class EngineAdvisor(Advisor):
         parent = self._create_new_expected_lines()
 
         # set pvlines, but set it 0 if engine max is only 1
-        self.store.set_value(parent, 2, 0
-                             if engineMax == 1 else self.linesExpected)
+        self.store.set_value(parent, 2, 0 if engine_max == 1 else self.linesExpected)
         # set it editable
-        self.store.set_value(parent, 3, engineMax > 1)
+        self.store.set_value(parent, 3, engine_max > 1)
         # set start/stop cb visible
         self.store.set_value(parent, 6, True)
         self.active = True

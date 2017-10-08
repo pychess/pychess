@@ -456,8 +456,8 @@ class CECPEngine(ProtocolEngine):
         """ Set an option, which will be sent to the engine, after the
             'readyForOptions' signal has passed.
             If you want to know the possible options, you should go to
-            engineDiscoverer or use the getOption, getOptions and hasOption
-            methods, while you are in your 'readyForOptions' signal handler """
+            engineDiscoverer or use the hasOption method
+            while you are in your 'readyForOptions' signal handler """
         if self.readyMoves:
             log.warning(
                 "Options set after 'readyok' are not sent to the engine",
@@ -956,6 +956,9 @@ class CECPEngine(ProtocolEngine):
     def canAnalyze(self):
         assert self.ready, "Still waiting for done=1"
         return self.features["analyze"]
+
+    def getAnalysisLines(self):
+        return 1
 
     def maxAnalysisLines(self):
         return 1

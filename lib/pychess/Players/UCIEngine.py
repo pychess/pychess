@@ -1,8 +1,5 @@
-
 import asyncio
 import collections
-from copy import copy
-
 
 from pychess.Utils import wait_signal
 from pychess.Utils.Move import parseAny
@@ -45,8 +42,7 @@ class UCIEngine(ProtocolEngine):
         self.waitingForMove = False
         self.needBestmove = False
         self.readyForStop = False  # keeps track of whether we already sent a 'stop' command
-        self.multipvSetting = conf.get("multipv", 1
-                                       )  # MultiPV option sent to the engine
+        self.multipvSetting = 1  # MultiPV option sent to the engine
         self.multipvExpected = 1  # Number of PVs expected (limited by number of legal moves)
         self.commands = collections.deque()
 
@@ -96,9 +92,6 @@ class UCIEngine(ProtocolEngine):
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
             if self.hasOption("Ponder"):
                 self.setOption('Ponder', False)
-
-            if self.hasOption("MultiPV") and self.multipvSetting > 1:
-                self.setOption('MultiPV', self.multipvSetting)
 
         for option, value in self.optionsToBeSent.items():
             if isinstance(value, bool):
@@ -387,22 +380,16 @@ class UCIEngine(ProtocolEngine):
         """ Set an option, which will be sent to the engine, after the
             'readyForOptions' signal has passed.
             If you want to know the possible options, you should go to
-            engineDiscoverer or use the getOption, getOptions and hasOption
-            methods, while you are in your 'readyForOptions' signal handler """
+            engineDiscoverer or use the hasOption method
+            while you are in your 'readyForOptions' signal handler """
         if self.readyMoves:
             log.warning(
                 "Options set after 'readyok' are not sent to the engine",
                 extra={"task": self.defname})
         self.optionsToBeSent[key] = value
         self.ponderOn = key == "Ponder" and value is True
-
-    def getOption(self, option):
-        if option in self.options:
-            return self.options[option]["default"]
-        return None
-
-    def getOptions(self):
-        return copy(self.options)
+        if key == "MultiPV":
+            self.multipvSetting = int(value)
 
     def hasOption(self, key):
         return key in self.options
@@ -681,6 +668,12 @@ class UCIEngine(ProtocolEngine):
                       extra={"task": self.defname})
 
     #    Info
+
+    def getAnalysisLines(self):
+        try:
+            return int(self.optionsToBeSent["MultiPV"])
+        except (KeyError, ValueError):
+            return 1  # Engine does not support the MultiPV option
 
     def maxAnalysisLines(self):
         try:
