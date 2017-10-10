@@ -79,6 +79,9 @@ class Engine(Player):
     def canAnalyze(self):
         raise NotImplementedError
 
+    def minAnalysisLines(self):
+        raise NotImplementedError
+
     def maxAnalysisLines(self):
         raise NotImplementedError
 

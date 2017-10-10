@@ -285,11 +285,8 @@ class EngineAdvisor(Advisor):
             self.boardview.model.pause_analyzer(self.mode)
 
     def multipv_edited(self, value):
-        if value > self.engine.maxAnalysisLines():
-            return
-
+        value = self.engine.requestMultiPV(value)
         if value != self.linesExpected:
-            self.engine.requestMultiPV(value)
             parent = self.store.get_iter(self.path)
             if value > self.linesExpected:
                 while self.linesExpected < value:
@@ -302,6 +299,7 @@ class EngineAdvisor(Advisor):
                     if child is not None:
                         self.store.remove(child)
                     self.linesExpected -= 1
+        return value
 
     def row_activated(self, iter, model):
         if not self.active:
@@ -489,8 +487,7 @@ class Sidepanel(object):
 
         def multipv_edited(renderer, path, text):
             iter = self.store.get_iter(path)
-            self.store.set_value(iter, 2, int(text))
-            self.advisors[int(path[0])].multipv_edited(int(text))
+            self.store.set_value(iter, 2, self.advisors[int(path[0])].multipv_edited(int(text)))
 
         self.multipv_cid = self.multipvRenderer.connect('edited', multipv_edited)
 
