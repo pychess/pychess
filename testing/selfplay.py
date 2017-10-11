@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import unittest
+import sys
 from io import StringIO
 
 from pychess.Savers.pgn import save
@@ -30,6 +31,14 @@ class CECPTests(unittest.TestCase):
 
     def test(self):
         """ Play PyChess-PyChess 1 min variant games """
+
+        if sys.platform == "win32":
+            from asyncio.windows_events import ProactorEventLoop
+            loop = ProactorEventLoop()
+            asyncio.set_event_loop(loop)
+        else:
+            loop = asyncio.SelectorEventLoop()
+            asyncio.set_event_loop(loop)
 
         loop = asyncio.get_event_loop()
         loop.set_debug(enabled=True)
