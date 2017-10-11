@@ -1,0 +1,78 @@
+import asyncio
+import logging
+import unittest
+from io import StringIO
+
+from pychess.Savers.pgn import save
+from pychess.Players.engineNest import discoverer
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.TimeModel import TimeModel
+from pychess.Utils.const import WHITE, BLACK, \
+    CRAZYHOUSECHESS, WILDCASTLESHUFFLECHESS, LOSERSCHESS, SUICIDECHESS, ATOMICCHESS, \
+    THREECHECKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, \
+    SITTUYINCHESS, GIVEAWAYCHESS, NORMALCHESS, FISCHERRANDOMCHESS, WILDCASTLECHESS, \
+    ASYMMETRICRANDOMCHESS, RANDOMCHESS, SHUFFLECHESS, CORNERCHESS
+from pychess.Variants import variants
+from pychess.System.Log import log
+log.logger.setLevel(logging.DEBUG)
+
+discoverer.discover()
+
+PYCHESS_VARIANTS = (NORMALCHESS, CRAZYHOUSECHESS, FISCHERRANDOMCHESS, LOSERSCHESS, SUICIDECHESS,
+                    THREECHECKCHESS, KINGOFTHEHILLCHESS, WILDCASTLESHUFFLECHESS, ASEANCHESS,
+                    MAKRUKCHESS, CAMBODIANCHESS, SITTUYINCHESS, GIVEAWAYCHESS, ATOMICCHESS,
+                    ASYMMETRICRANDOMCHESS, RANDOMCHESS, WILDCASTLECHESS, SHUFFLECHESS, CORNERCHESS)
+
+
+class CECPTests(unittest.TestCase):
+    def setUp(self):
+        self.engine = discoverer.getEngineByName("PyChess.py")
+
+    def test(self):
+        """ Play PyChess-PyChess 1 min variant games """
+
+        loop = asyncio.get_event_loop()
+        loop.set_debug(enabled=True)
+
+        for vari in PYCHESS_VARIANTS:
+            variant = variants[vari]
+
+            def coro():
+                self.p0 = yield from discoverer.initEngine(self.engine, WHITE)
+                self.p1 = yield from discoverer.initEngine(self.engine, BLACK)
+
+            loop.run_until_complete(coro())
+
+            def optionsCallback(engine):
+                engine.setOptionVariant(variant)
+                engine.setOptionStrength(1, False)
+                engine.setOptionTime(60, 0, 0)
+
+            self.p0.connect("readyForOptions", optionsCallback)
+            self.p1.connect("readyForOptions", optionsCallback)
+
+            def coro(variant):
+                self.game = GameModel(TimeModel(60, 0), variant)
+                self.game.setPlayers([self.p0, self.p1])
+
+                def on_game_end(game, state, event):
+                    event.set()
+
+                event = asyncio.Event()
+                self.game.connect("game_ended", on_game_end, event)
+
+                self.p0.prestart()
+                self.p1.prestart()
+
+                print(variant.name)
+                self.game.start()
+
+                yield from event.wait()
+
+                pgn = StringIO()
+                print(save(pgn, self.game))
+
+            loop.run_until_complete(coro(variant))
+
+if __name__ == '__main__':
+    unittest.main()
