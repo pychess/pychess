@@ -548,6 +548,10 @@ class UCIEngine(ProtocolEngine):
                         move = parseAny(self.board, movestr)
                     except ParsingError:
                         self.invalid_move = movestr
+                        log.info(
+                            "__parseLine: ParsingError engine move: %s %s"
+                            % (movestr, self.board),
+                            extra={"task": self.defname})
                         self.end(WHITEWON if self.board.color == BLACK else
                                  BLACKWON, WON_ADJUDICATION)
                         continue

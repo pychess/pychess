@@ -85,6 +85,9 @@ class CECPTests(unittest.TestCase):
                 pgn = StringIO()
                 print(save(pgn, self.game))
 
+                self.assertIsNone(self.p0.invalid_move)
+                self.assertIsNone(self.p1.invalid_move)
+
             loop.run_until_complete(coro(variant))
 
 if __name__ == '__main__':
