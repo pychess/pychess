@@ -61,10 +61,15 @@ class SubProcess(GObject.GObject):
                 self.pid = self.proc.pid
                 # print(self.pid, self.path)
                 if self.lowPriority:
+                    proc = psutil.Process(self.pid)
                     if sys.platform == "win32":
-                        psutil.Process(self.pid).nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
+                        niceness = psutil.BELOW_NORMAL_PRIORITY_CLASS
                     else:
-                        psutil.Process(self.pid).nice(15) # The higher, the lower the priority
+                        niceness = 15  # The higher, the lower the priority
+                    if psutil.__version__ >= "2.0.0":
+                        proc.nice(niceness)
+                    else:
+                        proc.set_nice(niceness)
                 self.read_stdout_task = asyncio.async(self.read_stdout(self.proc.stdout))
                 self.write_task = None
             except asyncio.TimeoutError:
