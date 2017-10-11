@@ -47,8 +47,8 @@ class CECPTests(unittest.TestCase):
             variant = variants[vari]
 
             def coro():
-                self.p0 = yield from discoverer.initEngine(self.engine, WHITE)
-                self.p1 = yield from discoverer.initEngine(self.engine, BLACK)
+                self.p0 = yield from discoverer.initEngine(self.engine, WHITE, False)
+                self.p1 = yield from discoverer.initEngine(self.engine, BLACK, False)
 
             loop.run_until_complete(coro())
 
