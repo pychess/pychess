@@ -1,5 +1,6 @@
 import asyncio
 import os
+import psutil
 import signal
 import subprocess
 import sys
@@ -18,7 +19,7 @@ class SubProcess(GObject.GObject):
         "died": (GObject.SignalFlags.RUN_FIRST, None, ())
     }
 
-    def __init__(self, path, args=[], warnwords=[], env=None, cwd="."):
+    def __init__(self, path, args=[], warnwords=[], env=None, cwd=".", lowPriority=False):
         GObject.GObject.__init__(self)
 
         self.path = path
@@ -26,6 +27,7 @@ class SubProcess(GObject.GObject):
         self.warnwords = warnwords
         self.env = env or os.environ
         self.cwd = cwd
+        self.lowPriority = lowPriority
 
         self.defname = os.path.split(path)[1]
         self.defname = self.defname[:1].upper() + self.defname[1:].lower()
@@ -45,15 +47,12 @@ class SubProcess(GObject.GObject):
                 # To prevent engines opening console window
                 startupinfo = subprocess.STARTUPINFO()
                 startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                preexec_fn = None
             else:
                 startupinfo = None
-                preexec_fn = self.nice
 
             create = asyncio.create_subprocess_exec(* self.argv,
                                                     stdin=asyncio.subprocess.PIPE,
                                                     stdout=asyncio.subprocess.PIPE,
-                                                    preexec_fn=preexec_fn,
                                                     startupinfo=startupinfo,
                                                     env=self.env,
                                                     cwd=self.cwd)
@@ -61,6 +60,11 @@ class SubProcess(GObject.GObject):
                 self.proc = yield from asyncio.wait_for(create, TIME_OUT_SECOND)
                 self.pid = self.proc.pid
                 # print(self.pid, self.path)
+                if self.lowPriority:
+                    if sys.platform == "win32":
+                        psutil.Process(self.pid).nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
+                    else:
+                        psutil.Process(self.pid).nice(15) # The higher, the lower the priority
                 self.read_stdout_task = asyncio.async(self.read_stdout(self.proc.stdout))
                 self.write_task = None
             except asyncio.TimeoutError:
@@ -73,9 +77,6 @@ class SubProcess(GObject.GObject):
                 e = sys.exc_info()[0]
                 log.warning("%s" % e, extra={"task": self.defname})
                 raise
-
-    def nice(self):
-        os.nice(15)
 
     def write(self, line):
         self.write_task = asyncio.async(self.write_stdin(self.proc.stdin, line))

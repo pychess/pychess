@@ -280,7 +280,7 @@ class EngineDiscoverer(GObject.GObject):
     @asyncio.coroutine
     def __discoverE(self, engine):
         try:
-            subproc = yield from self.initEngine(engine, BLACK)
+            subproc = yield from self.initEngine(engine, BLACK, False)
             subproc.connect('readyForOptions', self.__discoverE2, engine)
             subproc.prestart()  # Sends the 'start line'
 
@@ -504,7 +504,7 @@ class EngineDiscoverer(GObject.GObject):
         return engine.get("country")
 
     @asyncio.coroutine
-    def initEngine(self, engine, color):
+    def initEngine(self, engine, color, lowPriority):
         name = engine['name']
         protocol = engine["protocol"]
         protover = 2 if engine.get("protover") is None else engine.get(
@@ -528,7 +528,7 @@ class EngineDiscoverer(GObject.GObject):
             workdir = getEngineDataPrefix()
         warnwords = ("illegal", "error", "exception")
         try:
-            subprocess = SubProcess(path, args=args, warnwords=warnwords, cwd=workdir)
+            subprocess = SubProcess(path, args=args, warnwords=warnwords, cwd=workdir, lowPriority=lowPriority)
             yield from subprocess.start()
         except OSError:
             raise PlayerIsDead
@@ -570,7 +570,7 @@ class EngineDiscoverer(GObject.GObject):
                          incr=0,
                          moves=0,
                          forcePonderOff=False):
-        engine = yield from self.initEngine(engine, color)
+        engine = yield from self.initEngine(engine, color, False)
 
         def optionsCallback(engine):
             engine.setOptionStrength(diffi, forcePonderOff)
@@ -584,7 +584,7 @@ class EngineDiscoverer(GObject.GObject):
 
     @asyncio.coroutine
     def initAnalyzerEngine(self, engine, mode, variant):
-        engine = yield from self.initEngine(engine, WHITE)
+        engine = yield from self.initEngine(engine, WHITE, True)
 
         def optionsCallback(engine):
             engine.setOptionAnalyzing(mode)
