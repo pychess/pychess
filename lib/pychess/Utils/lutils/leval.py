@@ -113,7 +113,7 @@ def evalMaterial(board, color):
 
     if board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS):
         val = material[leading] - material[1 - leading]
-        val = 100 * PAWN_VALUE * val / max(material[WHITE], material[BLACK])
+        val = int(100 * PAWN_VALUE * val / max(material[WHITE], material[BLACK]))
         if leading == 1 - color:
             return val, phase
         return -val, phase
