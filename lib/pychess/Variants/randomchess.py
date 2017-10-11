@@ -40,8 +40,7 @@ class RandomBoard(Board):
         random.shuffle(back_rank)
         fen = ''.join(back_rank)
         fen = fen + '/pppppppp/8/8/8/8/PPPPPPPP/' + fen.upper() + ' w - - 0 1'
-
-#        return tmp
+        return fen
 
 
 if __name__ == '__main__':
