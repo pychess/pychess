@@ -66,7 +66,7 @@ class AsymmetricRandomBoard(Board):
             def __iter__(self):
                 return self
 
-            def next(self):
+            def __next__(self):
                 if not self.randomindexstack:
                     raise StopIteration
                 else:
