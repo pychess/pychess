@@ -22,7 +22,10 @@ from pychess.external.scoutfish import Scoutfish
 from pychess.external.chess_db import Parser
 
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
-    WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE
+    WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE, \
+    ABORTED_REASONS, ADJOURNED_REASONS, WON_CALLFLAG, DRAW_ADJUDICATION, WON_ADJUDICATION, \
+    WHITE_ENGINE_DIED, BLACK_ENGINE_DIED
+
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.prefix import getEngineDataPrefix
@@ -159,6 +162,24 @@ def save(handle, model, position=None):
     print('[PlyCount "%s"]' % (model.ply - model.lowply), file=handle)
     if "Annotator" in model.tags:
         print('[Annotator "%s"]' % model.tags["Annotator"], file=handle)
+    if model.reason == WON_CALLFLAG:
+        termination = "Time forfeit"
+    elif model.reason == WON_ADJUDICATION and model.isEngine2EngineGame():
+        termination = "Rules infraction"
+    elif model.reason in (DRAW_ADJUDICATION, WON_ADJUDICATION):
+        termination = "Adjudication"
+    elif model.reason == WHITE_ENGINE_DIED:
+        termination = "White engine died"
+    elif model.reason == BLACK_ENGINE_DIED:
+        termination = "Black engine died"
+    elif model.reason in ABORTED_REASONS:
+        termination = "Abandoned"
+    elif model.reason in ADJOURNED_REASONS:
+        termination = "Unterminated"
+    else:
+        termination = "Normal"
+    print('[Termination "%s"]' % termination, file=handle)
+
     print("", file=handle)
 
     save_emt = conf.get("saveEmt", False)
