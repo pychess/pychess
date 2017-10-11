@@ -151,7 +151,7 @@ class Sidepanel:
         score = gamemodel.scores[ply][1]
         score = score * -1 if color == WHITE else score
         self.plot.changeScore(ply - gamemodel.lowply, score)
-        self.plot.select(ply)
+        self.plot.select(ply - gamemodel.lowply)
         self.plot.redraw()
 
     def plot_selected(self, plot, selected):
