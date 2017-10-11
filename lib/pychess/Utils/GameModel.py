@@ -655,6 +655,12 @@ class GameModel(GObject.GObject):
                             self.kill(BLACK_ENGINE_DIED)
                     break
                 except InvalidMove as e:
+                    stringio = StringIO()
+                    traceback.print_exc(file=stringio)
+                    error = stringio.getvalue()
+                    log.error(
+                        "GameModel.run: InvalidMove by player=%s error=%s\n%s"
+                        % (curPlayer, error, e))
                     if self.curColor == WHITE:
                         self.end(BLACKWON, WON_ADJUDICATION)
                     else:

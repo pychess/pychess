@@ -34,6 +34,8 @@ def createStoryTextAppEvent(text):
     try:
         import storytext
         storytext.applicationEvent(text)
+    except AttributeError:
+        pass
     except ImportError:
         pass
 
