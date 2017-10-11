@@ -73,6 +73,10 @@ class CECPTests(unittest.TestCase):
                 self.p0.prestart()
                 self.p1.prestart()
 
+                if self.game.variant.need_initial_board:
+                    for player in self.game.players:
+                        player.setOptionInitialBoard(self.game)
+
                 print(variant.name)
                 self.game.start()
 
