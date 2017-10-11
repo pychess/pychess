@@ -675,6 +675,12 @@ class UCIEngine(ProtocolEngine):
         except (KeyError, ValueError):
             return 1  # Engine does not support the MultiPV option
 
+    def minAnalysisLines(self):
+        try:
+            return int(self.options["MultiPV"]["min"])
+        except (KeyError, ValueError):
+            return 1  # Engine does not support the MultiPV option
+
     def maxAnalysisLines(self):
         try:
             return int(self.options["MultiPV"]["max"])
@@ -682,16 +688,14 @@ class UCIEngine(ProtocolEngine):
             return 1  # Engine does not support the MultiPV option
 
     def requestMultiPV(self, n):
-        multipvMax = self.maxAnalysisLines()
-        n = min(n, multipvMax)
-
+        n = min(n, self.maxAnalysisLines())
+        n = max(n, self.minAnalysisLines())
         if n != self.multipvSetting:
             conf.set("multipv", n)
             self.multipvSetting = n
             print("stop", file=self.engine)
             print("setoption name MultiPV value", n, file=self.engine)
             self._searchNow()
-
         return n
 
     def __repr__(self):

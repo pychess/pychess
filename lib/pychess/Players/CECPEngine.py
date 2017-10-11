@@ -960,6 +960,9 @@ class CECPEngine(ProtocolEngine):
     def getAnalysisLines(self):
         return 1
 
+    def minAnalysisLines(self):
+        return 1
+
     def maxAnalysisLines(self):
         return 1
 
