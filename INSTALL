@@ -32,6 +32,7 @@ python3-gi
 python3-gi-cairo
 python3-sqlalchemy
 python3-pexpect
+python3-psutil
 gobject-introspection
 gir1.2-glib-2.0
 gir1.2-gtk-3.0
@@ -58,6 +59,7 @@ gstreamer1
 gstreamer1-plugins-base
 python3-sqlalchemy
 python3-pexpect
+python3-psutil
 
 Dependencies for Arch:
 python
@@ -65,6 +67,7 @@ python-gobject
 python-cairo
 python-sqlalchemy
 python-pexpect
+python-psutil
 gobject-introspection
 glib2
 gtk3
@@ -78,6 +81,7 @@ Dependencies for Windows:
 python >= 3.4
 sqlalchemy
 pexpect
+psutil
 PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
   Base packages
   GDK-Pixbuf
