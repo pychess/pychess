@@ -63,6 +63,13 @@ except ImportError:
     print("ERROR: PyChess requires sqlalchemy to be installed")
     sys.exit(1)
 
+try:
+    import psutil
+    psutil.__version__
+except ImportError:
+    print("ERROR: PyChess requires psutil to be installed")
+    sys.exit(1)
+
 ###############################################################################
 # Fix environment
 
