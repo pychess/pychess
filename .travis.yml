@@ -19,4 +19,4 @@ install:
 script:
  - xvfb-run -a $PYTHON ./setup.py build sdist
  - cd testing
- - PYTHONPATH=../lib python3-coverage -m unittest discover -p "*.py"
+ - PYTHONPATH=../lib python3-coverage run --source ../lib -m unittest discover -p "*.py"
