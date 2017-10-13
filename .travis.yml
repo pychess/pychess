@@ -7,7 +7,7 @@ matrix:
       sudo: required
       dist: trusty
       language: generic
-      env: PYTHON="python3" PACKAGES="python3-cairo python3-gi python3-gi-cairo python3-sqlalchemy python3-psutil python3-pip"
+      env: PYTHON="python3" PACKAGES="python3-cairo python3-gi python3-gi-cairo python3-sqlalchemy python3-psutil python3-coverage python3-pip"
 
 install:
  - sudo apt-get update -q
@@ -19,4 +19,4 @@ install:
 script:
  - xvfb-run -a $PYTHON ./setup.py build sdist
  - cd testing
- - PYTHONPATH=../lib $PYTHON -m unittest discover -p "*.py"
+ - PYTHONPATH=../lib python3-coverage -m unittest discover -p "*.py"
