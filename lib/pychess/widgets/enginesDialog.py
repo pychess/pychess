@@ -7,8 +7,10 @@ from gi.repository import Gtk, Gdk, GLib, GObject
 from gi.repository.GdkPixbuf import Pixbuf
 
 from pychess.System import uistuff
-from pychess.System.prefix import getEngineDataPrefix
+from pychess.System.prefix import getEngineDataPrefix, addDataPrefix
+from pychess.Utils.IconLoader import get_pixbuf
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
+from pychess.Utils.isoCountries import ISO3166_LIST
 from pychess.widgets import newGameDialog
 from pychess.widgets import mainwindow
 
@@ -24,6 +26,24 @@ VM_LIST = [
 def run(widgets):
     global firstRun
     if firstRun:
+        # Bubble sort for the translated countries
+        for i in range(len(ISO3166_LIST)-1, 1, -1):
+            for j in range(1, i-1):
+                if ISO3166_LIST[i].country < ISO3166_LIST[j].country:
+                    tmp = ISO3166_LIST[i]
+                    ISO3166_LIST[i] = ISO3166_LIST[j]
+                    ISO3166_LIST[j] = tmp
+        # Display of the countries
+        items = []
+        for iso in ISO3166_LIST:
+            path = addDataPrefix("flags/%s.png" % iso.iso2)
+            if not(iso.iso2 and os.path.isfile(path)):
+                path = addDataPrefix("flags/unknown.png")
+            items.append((get_pixbuf(path), iso.country))
+        uistuff.createCombo(widgets["engine_country_combo"], name="engine_country_combo")
+        data = [(item[0], item[1]) for item in items]
+        uistuff.updateCombo(widgets["engine_country_combo"], data)
+
         EnginesDialog(widgets)
 
         def delete_event(widget, *args):
@@ -293,6 +313,7 @@ class EnginesDialog():
                         self.widgets["engine_command_entry"].set_text(new_engine)
                         self.widgets["engine_protocol_combo"].set_active(0 if uci else 1)
                         self.widgets["engine_args_entry"].set_text("")
+                        self.widgets["engine_country_combo"].set_active(0)
 
                         # active = self.widgets["engine_protocol_combo"].get_active()
                         protocol = "uci" if uci else "xboard"
@@ -300,7 +321,7 @@ class EnginesDialog():
                         if vm_args is not None:
                             vm_args = vm_args.split(",")
                         # print(binname, new_engine, protocol, vm_name, vm_args)
-                        discoverer.addEngine(binname, new_engine, protocol, vm_name, vm_args)
+                        discoverer.addEngine(binname, new_engine, protocol, vm_name, vm_args, "unknown")
                         self.cur_engine = binname
                         self.add = False
                         discoverer.discover()
@@ -417,6 +438,30 @@ class EnginesDialog():
                                                       protocol_changed)
 
         ################################################################
+        # country
+        ################################################################
+        def country_changed(widget):
+            if self.cur_engine is not None and not self.selection:
+                engine = discoverer.getEngineByName(self.cur_engine)
+                old_country = discoverer.getCountry(engine)
+                new_country = ISO3166_LIST[widget.get_active()].iso2
+                if old_country != new_country:
+                    engine["country"] = new_country
+                    discoverer.save()
+
+                    # Refresh the flag in the tree view
+                    path = addDataPrefix("flags/%s.png" % new_country)
+                    if not os.path.isfile(path):
+                        path = addDataPrefix("flags/unknown.png")
+                    item = self.tv.get_selection().get_selected()
+                    if item is not None:
+                        model, ts_iter = item
+                        model[ts_iter][0] = get_pixbuf(path)
+
+        self.widgets["engine_country_combo"].connect("changed",
+                                                      country_changed)
+
+        ################################################################
         # engine tree
         ################################################################
         self.selection = False
@@ -450,6 +495,16 @@ class EnginesDialog():
                 dir_choice = directory if directory is not None else self.default_workdir
                 dir_chooser_dialog.set_current_folder(dir_choice)
                 self.widgets["engine_protocol_combo"].set_active(0 if engine["protocol"] == "uci" else 1)
+
+                self.widgets["engine_country_combo"].set_active(0)
+                country = discoverer.getCountry(engine)
+                idx = 0
+                for iso in ISO3166_LIST:
+                    if iso.iso2 == country:
+                        self.widgets["engine_country_combo"].set_active(idx)
+                        break
+                    idx += 1
+
                 update_options()
                 self.selection = False
 
