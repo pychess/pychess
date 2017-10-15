@@ -181,7 +181,7 @@ class NewGameTasker(Gtk.Alignment):
 
     def __initPlayerCombo(self, discoverer, widgets):
         combo = self.playerCombo
-        combo.update(newGameDialog.smallPlayerItems[0])
+        combo.update(newGameDialog.playerItems[0])
         if combo.active < 0:
             combo.label.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
             combo.setMarkup("<b>", "</b>")

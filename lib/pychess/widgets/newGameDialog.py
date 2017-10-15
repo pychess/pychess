@@ -47,8 +47,6 @@ big_people = load_icon(48, "stock_people", "system-users")
 iwheels = load_icon(24, "gtk-execute", "system-run")
 ipeople = load_icon(24, "stock_people", "system-users")
 inotebook = load_icon(24, "stock_notebook", "computer")
-speople = load_icon(16, "stock_people", "system-users")
-snotebook = load_icon(16, "stock_notebook", "computer")
 
 weather_icons = ("clear", "clear-night", "few-clouds", "few-clouds-night",
                  "fog", "overcast", "severe-alert", "showers-scattered",
@@ -63,22 +61,18 @@ for i, icon in enumerate(weather_icons, start=1):
     skillToIconLarge[2 * i] = load_icon(48, "weather-%s" % icon)
 
 playerItems = []
-smallPlayerItems = []
 analyzerItems = []
 
 
 def createPlayerUIGlobals(discoverer):
     global playerItems
-    global smallPlayerItems
     global analyzerItems
 
     playerItems = []
-    smallPlayerItems = []
     analyzerItems = []
 
     for variantClass in variants.values():
         playerItems += [[(ipeople, _("Human Being"))]]
-        smallPlayerItems += [[(speople, _("Human Being"))]]
     for engine in discoverer.getEngines():
         name = engine["name"]
         c = discoverer.getCountry(engine)
@@ -90,7 +84,6 @@ def createPlayerUIGlobals(discoverer):
             flag_icon = get_pixbuf(path)
         for variant in discoverer.getEngineVariants(engine):
             playerItems[variant] += [(flag_icon, name)]
-            smallPlayerItems[variant] += [(snotebook, name)]
         if discoverer.is_analyzer(engine):
             analyzerItems.append((flag_icon, name))
 
