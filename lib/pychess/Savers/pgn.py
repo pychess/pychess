@@ -138,7 +138,7 @@ def save(handle, model, position=None):
     print('[White "%s"]' % repr(model.players[WHITE]), file=handle)
     print('[Black "%s"]' % repr(model.players[BLACK]), file=handle)
     print('[Result "%s"]' % status, file=handle)
-    if "ECO" in model.tags:
+    if ("ECO" in model.tags) and (model.tags["ECO"] != ''):
         print('[ECO "%s"]' % model.tags["ECO"], file=handle)
     if "WhiteElo" in model.tags:
         print('[WhiteElo "%s"]' % model.tags["WhiteElo"], file=handle)
