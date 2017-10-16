@@ -261,8 +261,12 @@ class PgnImport():
                     else:
                         variant = 0
 
-                    white = tags["White"] if "White" in tags else ""
-                    black = tags["Black"] if "Black" in tags else ""
+                    if basename == "eco.pgn":
+                        white = tags["Opening"] if "Opening" in tags else ""
+                        black = tags["Variation"] if "Variation" in tags else ""
+                    else:
+                        white = tags["White"] if "White" in tags else ""
+                        black = tags["Black"] if "Black" in tags else ""
 
                     event_id = get_id(tags["Event"] if "Event" in tags else "", event, EVENT)
 
@@ -292,9 +296,11 @@ class PgnImport():
                     if result in pgn2Const:
                         result = pgn2Const[result]
                     else:
-                        if basename != "eco.pgn":
+                        if basename == "eco.pgn":
+                            result = RUNNING
+                        else:
                             print("Invalid Result tag in game #%s: %s" % (i + 1, result))
-                        continue
+                            continue
 
                     white_elo = tags['WhiteElo'] if "WhiteElo" in tags else "0"
                     white_elo = int(white_elo) if white_elo and white_elo.isdigit() else 0

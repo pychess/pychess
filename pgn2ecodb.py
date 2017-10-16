@@ -5,6 +5,7 @@
 import os
 import sqlite3
 
+from pychess.Database.PgnImport import PgnImport
 from pychess.Savers.pgn import load
 from pychess.System.protoopen import protoopen
 from pychess.System.prefix import addDataPrefix
@@ -24,18 +25,23 @@ if __name__ == '__main__':
 
     def feed(pgnfile, lang):
         cf = load(protoopen(pgnfile))
+        cf.limit = 5000
+        importer = PgnImport(cf)
+        cf.init_tag_database(importer)
+        records, plys = cf.get_records()
+
         rows = []
         old_eco = ""
-        for i, game in enumerate(cf.games):
-            model = cf.loadToModel(i)
+        for rec in records:
+            model = cf.loadToModel(rec)
 
-            eco = cf._getTag(i, "ECO")[:3]
+            eco = rec["ECO"]
 
-            opening = cf._getTag(i, "Opening")
+            opening = rec["White"]
             if opening is None:
                 opening = ""
 
-            variation = cf._getTag(i, "Variation")
+            variation = rec["Black"]
             if variation is None:
                 variation = ""
 

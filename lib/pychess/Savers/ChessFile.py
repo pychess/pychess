@@ -39,9 +39,6 @@ class ChessFile:
     def get_records(self, direction=0):
         return self.games, self.offs_ply
 
-    def _getTag(self, gameno, tagkey):
-        return ""
-
     def loadToModel(self, gameno, position, model=None):
         """ Load the data of game "gameno" into the gamemodel
             If no model is specified, a new one will be created, loaded and
