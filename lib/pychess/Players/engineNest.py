@@ -495,12 +495,10 @@ class EngineDiscoverer(GObject.GObject):
                             if variantClass.cecp_name in option["choices"] or \
                                     variantClass.cecp_name.lower().replace("-", "") in option["choices"]:
                                 engine_variants.append(variantClass.variant)
-        # Fix #1444 Unsupported variant on the home screen
+
         if UCI_without_standard_variant:
-            # this fix causes problems in TaskerManager and newGameDialog
-            # TODO: create correct fix
-            if 0:
-                engine_variants.remove(NORMALCHESS)
+            engine_variants.remove(NORMALCHESS)
+
         return engine_variants
 
     def getName(self, engine=None):

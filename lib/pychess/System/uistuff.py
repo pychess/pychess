@@ -9,7 +9,6 @@ from gi.repository.GdkPixbuf import Pixbuf
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
-from pychess.widgets.ToggleComboBox import ToggleComboBox
 
 
 def createCombo(combo, data=[], name=None):
@@ -131,9 +130,6 @@ METHODS = (
     (Gtk.Entry, ("get_text", "set_text", "changed")),
     (Gtk.Expander, ("get_expanded", "set_expanded", "notify::expanded")),
     (Gtk.ComboBox, ("get_active", "set_active", "changed")),
-    # Gtk.ToggleComboBox should be listed prior to Gtk.ToggleButton, as it is a
-    # subclass, but requires different handling
-    (ToggleComboBox, ("_get_active", "_set_active", "changed")),
     (Gtk.IconView, ("_get_active", "_set_active", "selection-changed")),
     (Gtk.ToggleButton, ("get_active", "set_active", "toggled")),
     (Gtk.CheckMenuItem, ("get_active", "set_active", "toggled")),

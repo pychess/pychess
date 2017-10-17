@@ -62,14 +62,17 @@ for i, icon in enumerate(weather_icons, start=1):
 
 playerItems = []
 analyzerItems = []
+allEngineItems = []
 
 
 def createPlayerUIGlobals(discoverer):
     global playerItems
     global analyzerItems
+    global allEngineItems
 
     playerItems = []
     analyzerItems = []
+    allEngineItems = []
 
     for variantClass in variants.values():
         playerItems += [[(ipeople, _("Human Being"))]]
@@ -77,13 +80,18 @@ def createPlayerUIGlobals(discoverer):
         name = engine["name"]
         c = discoverer.getCountry(engine)
         path = addDataPrefix("flags/%s.png" % c)
+
         if c and os.path.isfile(path):
             flag_icon = get_pixbuf(path)
         else:
             path = addDataPrefix("flags/unknown.png")
             flag_icon = get_pixbuf(path)
+
+        allEngineItems.append((flag_icon, name))
+
         for variant in discoverer.getEngineVariants(engine):
             playerItems[variant] += [(flag_icon, name)]
+
         if discoverer.is_analyzer(engine):
             analyzerItems.append((flag_icon, name))
 
@@ -417,20 +425,32 @@ class _GameInitializationMode(object):
                 moves = cls.ngclassical_moves.get_value_as_int()
 
             # Find players
-            player0 = cls.widgets["whitePlayerCombobox"].get_active()
-            player0 = playerItems[0].index(playerItems[variant_index][player0])
+            player0combo = cls.widgets["whitePlayerCombobox"]
+            player0 = player0combo.get_active()
+
+            tree_iter = player0combo.get_active_iter()
+            if tree_iter is not None:
+                model = player0combo.get_model()
+                name0 = model[tree_iter][1]
+
             diffi0 = int(cls.widgets["skillSlider1"].get_value())
-            player1 = cls.widgets["blackPlayerCombobox"].get_active()
-            player1 = playerItems[0].index(playerItems[variant_index][player1])
+
+            player1combo = cls.widgets["blackPlayerCombobox"]
+            player1 = player1combo.get_active()
+
+            tree_iter = player1combo.get_active_iter()
+            if tree_iter is not None:
+                model = player1combo.get_model()
+                name1 = model[tree_iter][1]
+
             diffi1 = int(cls.widgets["skillSlider2"].get_value())
 
             # Prepare players
             playertups = []
-            for i, playerno, diffi, color in ((0, player0, diffi0, WHITE),
-                                              (1, player1, diffi1, BLACK)):
+            for i, playerno, name, diffi, color in ((0, player0, name0, diffi0, WHITE),
+                                                    (1, player1, name1, diffi1, BLACK)):
                 if playerno > 0:
-                    engine = discoverer.getEngineN(playerno - 1)
-                    name = discoverer.getName(engine)
+                    engine = discoverer.getEngineByName(name)
                     playertups.append((ARTIFICIAL, discoverer.initPlayerEngine,
                                        [engine, color, diffi, variant, secs,
                                         incr, moves], name))

@@ -27,8 +27,8 @@ def run(widgets):
     global firstRun
     if firstRun:
         # Bubble sort for the translated countries
-        for i in range(len(ISO3166_LIST)-1, 1, -1):
-            for j in range(1, i-1):
+        for i in range(len(ISO3166_LIST) - 1, 1, - 1):
+            for j in range(1, i - 1):
                 if ISO3166_LIST[i].country < ISO3166_LIST[j].country:
                     tmp = ISO3166_LIST[i]
                     ISO3166_LIST[i] = ISO3166_LIST[j]
@@ -146,7 +146,7 @@ class EnginesDialog():
             engine_names = [row[1] for row in allstore]
             new_items = []
             # don't add the very first (Human) player to engine store
-            for item in newGameDialog.playerItems[0][1:]:
+            for item in newGameDialog.allEngineItems:
                 if item[1] not in engine_names:
                     new_items.append(item)
             ts_iter = None
@@ -313,7 +313,6 @@ class EnginesDialog():
                         self.widgets["engine_command_entry"].set_text(new_engine)
                         self.widgets["engine_protocol_combo"].set_active(0 if uci else 1)
                         self.widgets["engine_args_entry"].set_text("")
-                        self.widgets["engine_country_combo"].set_active(0)
 
                         # active = self.widgets["engine_protocol_combo"].get_active()
                         protocol = "uci" if uci else "xboard"
@@ -458,8 +457,10 @@ class EnginesDialog():
                         model, ts_iter = item
                         model[ts_iter][0] = get_pixbuf(path)
 
-        self.widgets["engine_country_combo"].connect("changed",
-                                                      country_changed)
+                        # Notify playerCombos in NewGameTasker
+                        discoverer.emit("all_engines_discovered")
+
+        self.widgets["engine_country_combo"].connect("changed", country_changed)
 
         ################################################################
         # engine tree

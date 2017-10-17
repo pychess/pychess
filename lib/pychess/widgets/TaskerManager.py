@@ -2,7 +2,7 @@ import asyncio
 import math
 import random
 
-from gi.repository import Gtk, Pango, GObject
+from gi.repository import Gtk, GObject
 
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
@@ -14,10 +14,8 @@ from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE, BLACK, NORMALCHESS
 from pychess.Variants import variants
 from pychess.ic import ICLogon
 from pychess.widgets import newGameDialog
+from pychess.widgets.Background import giveBackground
 from pychess.perspectives import perspective_manager
-
-from .Background import giveBackground
-from .ToggleComboBox import ToggleComboBox
 
 
 class TaskerManager(Gtk.Table):
@@ -138,6 +136,7 @@ class TaskerManager(Gtk.Table):
 
             self.attach(lastrow, 0, cols, rrows, rrows + 1)
 
+
 tasker = TaskerManager()
 
 
@@ -151,19 +150,21 @@ class NewGameTasker(Gtk.Alignment):
 
         startButton = self.widgets["startButton"]
         startButton.set_name("startButton")
-        combo = ToggleComboBox("colortoggle")
-        combo.addItem(_("White"), get_pixbuf("glade/white.png"))
-        combo.addItem(_("Black"), get_pixbuf("glade/black.png"))
-        combo.addItem(_("Random"), get_pixbuf("glade/random.png"))
-        combo.setMarkup("<b>", "</b>")
+        combo = Gtk.ComboBox()
+        uistuff.createCombo(combo, [
+            (get_pixbuf("glade/white.png"), _("White")),
+            (get_pixbuf("glade/black.png"), _("Black")),
+            (get_pixbuf("glade/random.png"), _("Random"))])
         widgets["colorDock"].add(combo)
+        if combo.get_active() < 0:
+            combo.set_active(0)
         uistuff.keep(combo, "newgametasker_colorcombo")
         widgets['yourColorLabel'].set_mnemonic_widget(combo)
 
         # We need to wait until after engines have been discovered, to init the
         # playerCombos. We use connect_after to make sure, that newGameDialog
         # has also had time to init the constants we share with them.
-        self.playerCombo = ToggleComboBox("playertoggle")
+        self.playerCombo = Gtk.ComboBox()
         widgets["opponentDock"].add(self.playerCombo)
         discoverer.connect_after("all_engines_discovered",
                                  self.__initPlayerCombo, widgets)
@@ -181,30 +182,35 @@ class NewGameTasker(Gtk.Alignment):
 
     def __initPlayerCombo(self, discoverer, widgets):
         combo = self.playerCombo
-        combo.update(newGameDialog.playerItems[0])
-        if combo.active < 0:
-            combo.label.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
-            combo.setMarkup("<b>", "</b>")
-            combo.active = 1
+        uistuff.createCombo(combo, newGameDialog.playerItems[0])
+        if combo.get_active() < 0:
+            combo.set_active(1)
             uistuff.keep(self.playerCombo, "newgametasker_playercombo")
 
-            def on_playerCombobox_changed(widget, event):
-                widgets["skillSlider"].props.visible = widget.active > 0
+            def on_playerCombobox_changed(widget):
+                widgets["skillSlider"].props.visible = widget.get_active() > 0
 
             combo.connect("changed", on_playerCombobox_changed)
 
             uistuff.keep(widgets["skillSlider"], "taskerSkillSlider")
             widgets["skillSlider"].set_no_show_all(True)
-            on_playerCombobox_changed(self.playerCombo, None)
+            on_playerCombobox_changed(self.playerCombo)
 
     def openDialogClicked(self, button):
         newGameDialog.NewGameMode.run()
 
     def startClicked(self, button):
-        color = self.widgets["colorDock"].get_child().active
+        color = self.widgets["colorDock"].get_child().get_active()
         if color == 2:
             color = random.choice([WHITE, BLACK])
-        opponent = self.widgets["opponentDock"].get_child().active
+
+        opp = self.widgets["opponentDock"].get_child()
+        tree_iter = opp.get_active_iter()
+        if tree_iter is not None:
+            model = opp.get_model()
+            engine = model[tree_iter][1]
+
+        opponent = self.widgets["opponentDock"].get_child().get_active()
         difficulty = int(self.widgets["skillSlider"].get_value())
 
         gamemodel = GameModel(TimeModel(5 * 60, 0))
@@ -215,7 +221,7 @@ class NewGameTasker(Gtk.Alignment):
             name = conf.get("secondName", _("Guest"))
             player1tup = (LOCAL, Human, (1 - color, name), name)
         else:
-            engine = discoverer.getEngineN(opponent - 1)
+            engine = discoverer.getEngineByName(engine)
             name = discoverer.getName(engine)
             player1tup = (ARTIFICIAL, discoverer.initPlayerEngine,
                           (engine, 1 - color, difficulty,
@@ -226,6 +232,7 @@ class NewGameTasker(Gtk.Alignment):
             asyncio.async(perspective.generalStart(gamemodel, player0tup, player1tup))
         else:
             asyncio.async(perspective.generalStart(gamemodel, player1tup, player0tup))
+
 
 big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
 
