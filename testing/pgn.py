@@ -59,9 +59,6 @@ for filename in filenames:
 
     for i, game in enumerate(games):
         print("%s/%s" % (i + 1, pgnfile.get_count()))
-        if i > 100:
-            break
-
         orig = normalize(pgnfile.get_movetext(game))
 
         model = pgnfile.loadToModel(game)

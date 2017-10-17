@@ -63,9 +63,9 @@ pattern = re.compile(r"""
     |(
     ([a-hKkQqRrBNnMmSsF][a-hxKQRBNMSF1-8+#=\-]{1,6}
     |[PNBRQMSFK]@[a-h][1-8][+#]?  # drop move
-    |o\-?o(?:\-?o)?
-    |O\-?O(?:\-?O)?
-    |0\-?0(?:\-?0)?
+    |o\-?o(?:\-?o)?      # castling notation using letter 'o' with or without '-'
+    |O\-?O(?:\-?O)?      # castling notation using letter 'O' with or without '-'
+    |0\-0(?:\-0)?        # castling notation using zero with required '-'
     |\-\-)               # non standard '--' is used for null move inside variations
     ([\?!]{1,2})*
     )    # move (full, count, move with ?!, ?!)
