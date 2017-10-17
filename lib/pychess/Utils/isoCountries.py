@@ -5,6 +5,7 @@ from collections import namedtuple
 ISO3166 = namedtuple('ISO3166', 'iso2, country')
 ISO3166_LIST = [
     ISO3166("unknown", _("Unknown")),
+    # Specific to pyChess: ISO3166("C", _("Computer")),
     ISO3166("ad", _("Andorra")),
     ISO3166("ae", _("United Arab Emirates")),
     ISO3166("af", _("Afghanistan")),
@@ -12,6 +13,7 @@ ISO3166_LIST = [
     ISO3166("ai", _("Anguilla")),
     ISO3166("al", _("Albania")),
     ISO3166("am", _("Armenia")),
+    # Discontinued: ISO3166("an", _("Netherlands Antilles")),
     ISO3166("ao", _("Angola")),
     ISO3166("aq", _("Antarctica")),
     ISO3166("ar", _("Argentina")),
@@ -229,6 +231,7 @@ ISO3166_LIST = [
     ISO3166("tm", _("Turkmenistan")),
     ISO3166("tn", _("Tunisia")),
     ISO3166("to", _("Tonga")),
+    # Discontinued: ISO3166("tp", _("East Timor")),
     ISO3166("tr", _("Turkey")),
     ISO3166("tt", _("Trinidad and Tobago")),
     ISO3166("tv", _("Tuvalu")),
@@ -251,6 +254,7 @@ ISO3166_LIST = [
     ISO3166("ws", _("Samoa")),
     ISO3166("ye", _("Yemen")),
     ISO3166("yt", _("Mayotte")),
+    # Discontinued: ISO3166("yu", _("Yugoslavia")),
     ISO3166("za", _("South Africa")),
     ISO3166("zm", _("Zambia")),
     ISO3166("zw", _("Zimbabwe"))
