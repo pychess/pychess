@@ -1,6 +1,7 @@
 
 import unittest
 
+from pychess.Database.PgnImport import PgnImport
 from pychess.Savers.pgn import load, walk, pattern, MOVE
 from pychess.System.protoopen import protoopen
 
@@ -51,9 +52,13 @@ filenames = ("atomic", "chess960rwch", "world_matches", "zh")
 for filename in filenames:
     print("Creating test methods for %s" % filename)
     pgnfile = load(protoopen('gamefiles/%s.pgn' % filename))
-    pgnfile.get_records()
-    for i, game in enumerate(pgnfile.games):
-        print("%s/%s" % (i + 1, len(pgnfile.games)))
+    pgnfile.limit = 1000
+    importer = PgnImport(pgnfile)
+    pgnfile.init_tag_database(importer)
+    games, plys = pgnfile.get_records()
+
+    for i, game in enumerate(games):
+        print("%s/%s" % (i + 1, pgnfile.get_count()))
         if i > 100:
             break
 
