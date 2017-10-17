@@ -66,7 +66,7 @@ def parseAny(board, algnot):
 
 def determineAlgebraicNotation(algnot):
     upnot = algnot.upper()
-    if upnot in ("O-O", "O-O-O", "0-0", "0-0-0"):
+    if upnot in ("O-O", "O-O-O", "0-0", "0-0-0", "OO", "OOO", "00", "000"):
         return SAN
 
     # Test for e2-e4
@@ -306,7 +306,7 @@ def parseSAN(board, san):
 
     if notat[0] in "O0o":
         fcord = board.ini_kings[color]
-        flag = KING_CASTLE if notat == "O-O" or notat == "0-0" or notat == "o-o" else QUEEN_CASTLE
+        flag = KING_CASTLE if notat in ("O-O", "0-0", "o-o", "OO", "00", "oo") else QUEEN_CASTLE
         side = flag - QUEEN_CASTLE
         if FILE(fcord) == 3 and board.variant in (WILDCASTLECHESS,
                                                   WILDCASTLESHUFFLECHESS):
@@ -330,9 +330,31 @@ def parseSAN(board, san):
             piece = chrU2Sign[notat[0]]
         return newMove(piece, tcord, DROP)
 
+    # standard piece letters
     if notat[0] in "QRBKNSMF":
         piece = chrU2Sign[notat[0]]
         notat = notat[1:]
+    # unambigious lowercase piece letters
+    elif notat[0] in "qrknsm":
+        piece = chr2Sign[notat[0]]
+        notat = notat[1:]
+    # a lowercase bishop letter or a pawn capture
+    elif notat[0] == "b" and len(notat) > 2:
+        tcord = cordDic[notat[-2:]]
+        trank = int(notat[-1])
+        # if from and to lines are not neighbours -> Bishop
+        if abs(ord(notat[0]) - ord(notat[-2])) > 1:
+            piece = chr2Sign[notat[0]]
+            notat = notat[1:]
+        # if from and to lines are neighbours but to is an empty square
+        # which can't be en-passant square target -> Bishop
+        elif board.arBoard[tcord] == EMPTY and ((color == BLACK and trank != 3) or (color == WHITE and trank != 6)):
+            piece = chr2Sign[notat[0]]
+            notat = notat[1:]
+        # elif "ba3", "bc3" ,"ba6", "bc6"
+        # these can be Bishop or Pawn moves, but we don't try to introspect them (sorry)
+        else:
+            piece = PAWN
     else:
         piece = PAWN
         if notat[-1] in "18" and flag == NORMAL_MOVE and board.variant != SITTUYINCHESS:

@@ -61,11 +61,11 @@ pattern = re.compile(r"""
     |(\))                # variation end
     |(\*|1-0|0-1|1/2)    # result (spec requires 1/2-1/2 for draw, but we want to tolerate simple 1/2 too)
     |(
-    ([a-hKQRBNMSF][a-hxKQRBNMSF1-8+#=\-]{1,6}
+    ([a-hKkQqRrBNnMmSsF][a-hxKQRBNMSF1-8+#=\-]{1,6}
     |[PNBRQMSFK]@[a-h][1-8][+#]?  # drop move
-    |o\-o(?:\-o)?
-    |O\-O(?:\-O)?
-    |0\-0(?:\-0)?
+    |o\-?o(?:\-?o)?
+    |O\-?O(?:\-?O)?
+    |0\-?0(?:\-?0)?
     |\-\-)               # non standard '--' is used for null move inside variations
     ([\?!]{1,2})*
     )    # move (full, count, move with ?!, ?!)

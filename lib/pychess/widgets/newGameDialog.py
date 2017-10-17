@@ -717,8 +717,10 @@ class EnterNotationExtension(_GameInitializationMode):
         else:
             path = gettext.find("pychess", localedir=addDataPrefix("lang"))
         if path:
-            loc = locale.getdefaultlocale()[0][-2:].lower()
-            flags.append(addDataPrefix("flags/%s.png" % loc))
+            default_locale = locale.getdefaultlocale()
+            if default_locale[0] is not None:
+                loc = locale.getdefaultlocale()[0][-2:].lower()
+                flags.append(addDataPrefix("flags/%s.png" % loc))
 
         flags.append(addDataPrefix("flags/us.png"))
 
