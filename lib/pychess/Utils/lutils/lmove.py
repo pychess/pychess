@@ -339,14 +339,14 @@ def parseSAN(board, san):
         piece = chr2Sign[notat[0]]
         notat = notat[1:]
     # a lowercase bishop letter or a pawn capture
-    elif notat[0] == "b" and len(notat) > 2:
+    elif notat[0] == "b" and len(notat) > 2 and board.variant == NORMALCHESS:
         tcord = cordDic[notat[-2:]]
         trank = int(notat[-1])
         # if from and to lines are not neighbours -> Bishop
         if abs(ord(notat[0]) - ord(notat[-2])) > 1:
             piece = chr2Sign[notat[0]]
             notat = notat[1:]
-        # if from and to lines are neighbours but to is an empty square
+        # if from and to lines are neighbours (or the same) but to is an empty square
         # which can't be en-passant square target -> Bishop
         elif board.arBoard[tcord] == EMPTY and ((color == BLACK and trank != 3) or (color == WHITE and trank != 6)):
             piece = chr2Sign[notat[0]]
