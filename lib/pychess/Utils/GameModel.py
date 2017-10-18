@@ -148,9 +148,10 @@ class GameModel(GObject.GObject):
         self.timed = self.timemodel.minutes != 0 or self.timemodel.gain != 0
         if self.timed:
             self.zero_reached_cid = self.timemodel.connect('zero_reached', self.zero_reached)
-
-            self.tags["TimeControl"] = \
-                "%d+%d" % (self.timemodel.minutes * 60, self.timemodel.gain)
+            if self.timemodel.moves == 0:
+                self.tags["TimeControl"] = "%d+%d" % (self.timemodel.minutes * 60, self.timemodel.gain)
+            else:
+                self.tags["TimeControl"] = "%d/%d" % (self.timemodel.moves, self.timemodel.minutes * 60)
             # Notice: tags["WhiteClock"] and tags["BlackClock"] are never set
             # on the gamemodel, but simply written or read during saving/
             # loading from pgn. If you want to know the time left for a player,

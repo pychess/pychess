@@ -122,7 +122,14 @@ def parseTimeControlTag(tag):
     match = re.match("(\d+)(?:\+(\d+))?", tag)
     if match:
         secs, gain = match.groups()
-        return int(secs), int(gain) if gain is not None else 0
+        return int(secs), int(gain) if gain is not None else 0, None
+    else:
+        match = re.match("(\d+)(?:\/(\d+))?", tag)
+        if match:
+            moves, secs = match.groups()
+            return int(secs), 0, int(moves)
+        else:
+            return None
 
 
 def save(handle, model, position=None):
@@ -623,7 +630,7 @@ class PGNFile(ChessFile):
             rec = self.games[0]
             game_date = rec["Date"]
             result = rec["Result"]
-            variant = rec["Variant"]
+            variant = rec["Variant"].capitalize()
         else:
             game_date = self.get_date(rec)
             result = reprResult[rec["Result"]]
@@ -659,26 +666,29 @@ class PGNFile(ChessFile):
             model.info = self.tag_database.get_info(rec)
 
         if model.tags['TimeControl']:
-            secs, gain = parseTimeControlTag(model.tags['TimeControl'])
-            model.timed = True
-            model.timemodel.secs = secs
-            model.timemodel.gain = gain
-            model.timemodel.minutes = secs / 60
-            for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
-                if hasattr(rec, tag):
-                    try:
-                        millisec = parseClockTimeTag(rec[tag])
-                        # We need to fix when FICS reports negative clock time like this
-                        # [TimeControl "180+0"]
-                        # [WhiteClock "0:00:15.867"]
-                        # [BlackClock "23:59:58.820"]
-                        start_sec = (
-                            millisec - 24 * 60 * 60 * 1000
-                        ) / 1000. if millisec > 23 * 60 * 60 * 1000 else millisec / 1000.
-                        model.timemodel.intervals[color][0] = start_sec
-                    except ValueError:
-                        raise LoadingError(
-                            "Error parsing '%s'" % tag)
+            tc = parseTimeControlTag(model.tags['TimeControl'])
+            if tc is not None:
+                secs, gain, moves = tc
+                model.timed = True
+                model.timemodel.secs = secs
+                model.timemodel.gain = gain
+                model.timemodel.minutes = secs / 60
+                model.timemodel.moves = moves
+                for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
+                    if hasattr(rec, tag):
+                        try:
+                            millisec = parseClockTimeTag(rec[tag])
+                            # We need to fix when FICS reports negative clock time like this
+                            # [TimeControl "180+0"]
+                            # [WhiteClock "0:00:15.867"]
+                            # [BlackClock "23:59:58.820"]
+                            start_sec = (
+                                millisec - 24 * 60 * 60 * 1000
+                            ) / 1000. if millisec > 23 * 60 * 60 * 1000 else millisec / 1000.
+                            model.timemodel.intervals[color][0] = start_sec
+                        except ValueError:
+                            raise LoadingError(
+                                "Error parsing '%s'" % tag)
 
         fenstr = rec["FEN"]
 
@@ -769,7 +779,7 @@ class PGNFile(ChessFile):
         # which will be model.variations[0] when we are in the mainline.
         walk(model, boards[0], [])
         model.boards = model.variations[0]
-        self.has_emt = self.has_emt and "TimeControl" in model.tags
+        self.has_emt = self.has_emt and model.timed
         if self.has_emt or self.has_eval:
             if self.has_emt:
                 blacks = len(model.moves) // 2
@@ -779,7 +789,6 @@ class PGNFile(ChessFile):
                     [model.timemodel.intervals[0][0]] * (whites + 1),
                     [model.timemodel.intervals[1][0]] * (blacks + 1),
                 ]
-                secs, gain = parseTimeControlTag(model.tags['TimeControl'])
                 model.timemodel.intervals[0][0] = secs
                 model.timemodel.intervals[1][0] = secs
             for ply, board in enumerate(boards):
