@@ -5,7 +5,7 @@ from gi.repository import Gdk, Gtk, GObject, Pango, PangoCairo
 
 from pychess.System import conf, uistuff
 from pychess.Utils import prettyPrintScore
-from pychess.Utils.const import HINT, OPENING, SPY, BLACK, NULL_MOVE, ENDGAME, DRAW, WHITEWON, WHITE
+from pychess.Utils.const import HINT, OPENING, SPY, BLACK, NULL_MOVE, ENDGAME, DRAW, WHITEWON, WHITE, NORMALCHESS
 from pychess.Utils.book import getOpenings
 from pychess.Utils.eco import get_eco
 from pychess.Utils.logic import legalMoveCount
@@ -98,9 +98,7 @@ class OpeningAdvisor(Advisor):
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
-        if m is None:
-            return
-        if m.isPlayingICSGame():
+        if m is None or m.variant != NORMALCHESS or m.isPlayingICSGame():
             return
 
         b = m.getBoardAtPly(shown, boardview.shown_variation_idx)
@@ -365,9 +363,7 @@ class EndgameAdvisor(Advisor):
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
-        if m is None:
-            return
-        if m.isPlayingICSGame():
+        if m is None or m.variant != NORMALCHESS or m.isPlayingICSGame():
             return
 
         self.parent = self.empty_parent()
