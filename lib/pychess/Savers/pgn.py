@@ -392,6 +392,10 @@ class PGNFile(ChessFile):
         return os.path.getsize(self.path)
     size = property(get_size)
 
+    def close(self):
+        self.tag_database.close()
+        ChessFile.close(self)
+
     def init_tag_database(self, importer):
         """ Create/open .sqlite database of game header tags """
         # Import .pgn header tags to .sqlite database

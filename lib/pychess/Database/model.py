@@ -79,14 +79,14 @@ def get_engine(path=None, dialect="sqlite", echo=False):
     elif dialect == "sqlite":
         url = "%s:///%s" % (dialect, path)
 
-    if url in engines:
+    if url in engines and os.path.isfile(path) and os.path.getsize(path) > 0:
         return engines[url]
     else:
         if path is None:
             engine = create_engine(url, connect_args={'check_same_thread': False},
                                    echo=echo, poolclass=StaticPool)
         else:
-            if path != empty_db and not os.path.isfile(path):
+            if path != empty_db and (not os.path.isfile(path) or os.path.getsize(path) == 0):
                 shutil.copyfile(empty_db, path)
             engine = create_engine(url, echo=echo)
 
