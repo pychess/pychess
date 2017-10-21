@@ -196,6 +196,7 @@ class EnginesDialog():
         filter = Gtk.FileFilter()
         filter.set_name(_("Executable files"))
         filter.add_mime_type("application/x-executable")
+        filter.add_mime_type("application/x-sharedlib")
         filter.add_mime_type("application/x-ms-dos-executable")
         filter.add_mime_type("application/x-msdownload")
         filter.add_pattern("*.exe")
