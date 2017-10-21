@@ -300,19 +300,20 @@ class ICCBoardManager(BoardManager):
         except KeyError:
             return
 
+        fen, moves_to_go = right_part.split("}")
+        self.moves_to_go = int(moves_to_go)
+
+        if fen != FEN_START:
+            self.emit("boardSetup", gameno, fen, game.wplayer.name, game.bplayer.name)
+
         if game == self.theGameImPlaying:
             curcol, ply, wms, bms = self.my_game_info
 
             if not hasattr(game, "queue"):
                 game.queue = asyncio.Queue()
-
-            fen = right_part.split("}")[0]
-            if fen != FEN_START:
                 game.queue.put_nowait((gameno, 0, WHITE, None, fen,
                                        game.wplayer.name, game.bplayer.name, wms, bms))
         else:
-            fen, moves_to_go = right_part.split("}")
-            self.moves_to_go = int(moves_to_go)
             curcol, ply, wms, bms = self.gamesImObserving[game]
             # TODO: get ply, curcol from fen
             ply = 0

@@ -8,7 +8,7 @@ from io import StringIO
 from gi.repository import GObject
 
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove
+from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove, GameEnded
 from pychess.System import conf
 from pychess.System.protoopen import protoopen, protosave
 from pychess.System.Log import log
@@ -672,6 +672,8 @@ class GameModel(GObject.GObject):
                         id(self), str(self.players), self.ply))
                     self.curColor = self.boards[-1].color
                     continue
+                except GameEnded:
+                    break
 
                 assert isinstance(move, Move), "%s" % repr(move)
 

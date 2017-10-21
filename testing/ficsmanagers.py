@@ -113,7 +113,6 @@ class EmittingTestCase(unittest.TestCase):
         # The real one freezes
         # self.connection.lvm = ListAndVarManager(self.connection)
         self.connection.lvm = DummyVarManager()
-        self.connection.hm = HelperManager(self.connection, self.connection)
         self.connection.em = ErrorManager(self.connection)
         self.connection.glm = SeekManager(self.connection)
         self.connection.bm = BoardManager(self.connection)
@@ -1049,6 +1048,10 @@ class BoardManagerTests(EmittingTestCase):
 class GamesTests(EmittingTestCase):
     def setUp(self):
         EmittingTestCase.setUp(self)
+        # We don't want to put HelperManager into EmittingTestCase.setUp()
+        # because BoardManeger and HelperManger both register on_game_remove regexp
+        # and we use only one connection in our tests
+        self.connection.hm = HelperManager(self.connection, self.connection)
         self.manager = self.connection.games
 
     def test1(self):
@@ -1072,7 +1075,7 @@ class GamesTests(EmittingTestCase):
         game = self.connection.games[game]
         self.runAndAssertEqualsNotify(game, 'private', lines, True)
 
-    def xtest2(self):
+    def test2(self):
         """ Make sure the correct draw reason was caught """
         lines = [
             "{Game 117 (Hevonen vs. narutochess) narutochess ran out of time and Hevonen has no material to mate} 1/2-1/2"
@@ -1080,7 +1083,7 @@ class GamesTests(EmittingTestCase):
         self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason',
                                         DRAW_WHITEINSUFFICIENTANDBLACKTIME)
 
-    def xtest3(self):
+    def test3(self):
         """ Make sure the correct draw reason was caught """
         lines = [
             "{Game 117 (Hevonen vs. narutochess) Hevonen ran out of time and narutochess has no material to mate} 1/2-1/2"
@@ -1088,7 +1091,7 @@ class GamesTests(EmittingTestCase):
         self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason',
                                         DRAW_BLACKINSUFFICIENTANDWHITETIME)
 
-    def xtest4(self):
+    def test4(self):
         """ Make sure the correct draw reason was caught """
         lines = [
             "{Game 117 (GuestBKKF vs. GuestTSNL) GuestBKKF ran out of time and GuestTSNL has no material to mate} 1/2-1/2"
@@ -1096,7 +1099,7 @@ class GamesTests(EmittingTestCase):
         self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason',
                                         DRAW_BLACKINSUFFICIENTANDWHITETIME)
 
-    def xtest5(self):
+    def test5(self):
         """ Make sure the correct draw reason was caught """
         lines = [
             "{Game 117 (GuestBKKF vs. GuestTSNL) GuestTSNL ran out of time and GuestBKKF has no material to mate} 1/2-1/2"
@@ -1104,14 +1107,14 @@ class GamesTests(EmittingTestCase):
         self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason',
                                         DRAW_WHITEINSUFFICIENTANDBLACKTIME)
 
-    def xtest6(self):
+    def test6(self):
         lines = [
             "{Game 84 (mgatto vs. JoseCapablanca) Game courtesyadjourned by mgatto} *"
         ]
         self.runAndAssertEqualPropValue("FICSGameEnded", lines, 'reason',
                                         ADJOURNED_COURTESY_WHITE)
 
-    def xtest7(self):
+    def test7(self):
         lines = [
             "{Game 84 (mgatto vs. JoseCapablanca) Game courtesyadjourned by JoseCapablanca} *"
         ]
@@ -1122,6 +1125,7 @@ class GamesTests(EmittingTestCase):
 class HelperManagerTests(EmittingTestCase):
     def setUp(self):
         EmittingTestCase.setUp(self)
+        self.connection.hm = HelperManager(self.connection, self.connection)
 
     def test1(self):
         """ Make sure ratings <1000 are caught """
@@ -1245,6 +1249,7 @@ class ConsoleManagerTests(EmittingTestCase):
 class FICSObjectsCleanupTest(EmittingTestCase):
     def setUp(self):
         EmittingTestCase.setUp(self)
+        self.connection.hm = HelperManager(self.connection, self.connection)
         self.manager = self.connection.bm
 
     def test(self):

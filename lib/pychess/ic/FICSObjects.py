@@ -863,6 +863,9 @@ class FICSGame(FICSMatch):
         self.private = private
         self.relation = relation
 
+        self.wmove_queue = asyncio.Queue()
+        self.bmove_queue = asyncio.Queue()
+
     def __hash__(self):
         return hash(":".join((self.wplayer.name[0:11].lower(
         ), self.bplayer.name[0:11].lower(), str(self.gameno))))
@@ -1206,18 +1209,21 @@ class FICSGames(GObject.GObject):
         return game
 
     def game_ended(self, game):
-        def coro(game):
-            # we have to wait a little here to let
-            # pychess GUI process the latest move(style12) message
-            # and remove game from game list panel also
-            if game in self:
-                yield from asyncio.sleep(0.1)
+        if game in self:
+            if not game.wmove_queue.empty() or not game.bmove_queue.empty():
+                def coro(game):
+                    # we have to give a chance to ICPlayer
+                    # to process the latest move(style12) message
+                    # and remove game from game list panel also
+                    yield from asyncio.sleep(0)
+                    game = self[game]
+                    self.emit("FICSGameEnded", game)
+                    del self[game]
+                asyncio.async(coro(game))
+            else:
                 game = self[game]
                 self.emit("FICSGameEnded", game)
-
-                yield from asyncio.sleep(0.1)
                 del self[game]
-        asyncio.async(coro(game))
 
     def onAdjournmentsList(self, adm, adjournments):
         for game in self.adjourned_games.values():

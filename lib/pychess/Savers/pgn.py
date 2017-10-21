@@ -122,7 +122,7 @@ def parseTimeControlTag(tag):
     match = re.match("(\d+)(?:\+(\d+))?", tag)
     if match:
         secs, gain = match.groups()
-        return int(secs), int(gain) if gain is not None else 0, None
+        return int(secs), int(gain) if gain is not None else 0, 0
     else:
         match = re.match("(\d+)(?:\/(\d+))?", tag)
         if match:

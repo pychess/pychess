@@ -19,6 +19,7 @@ modules_to_test = (
     "zobrist",
     "polyglot",
     'ficsmanagers',
+    'ficsplay',
     'analysis',
     'selfplay',
 )

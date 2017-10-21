@@ -285,7 +285,7 @@ class PredictionsTelnet(object):
 
         if not line.line:
             return  # TODO: necessary?
-
+        # print("line.line:", line.line)
         if self.lines.datagram_mode and line.code is not None:
             if line.code_type == DG:
                 callback = self.replay_dg_dict[line.code]
@@ -301,13 +301,14 @@ class PredictionsTelnet(object):
         predictions = self.reply_cmd_dict[line.code] \
             if line.code is not None and line.code in self.reply_cmd_dict else self.predictions
         for pred in list(predictions):
-            #            print "parse_line: trying prediction %s for line '%s'" % (pred.name, line)
             answer = yield from self.test_prediction(pred, line)
+            # print(answer, "  parse_line: trying prediction %s for line '%s'" % (pred.name, line.line[:80]))
             if answer in (RETURN_MATCH, RETURN_MATCH_END):
                 log.debug("\n".join(pred.matches),
                           extra={"task": (self.telnet.name, pred.name)})
                 break
         else:
+            # print("  NOT MATCHED:", line.line[:80])
             if line.code != BLKCMD_PASSWORD:
                 log.debug(line.line,
                           extra={"task": (self.telnet.name, "nonmatched")})

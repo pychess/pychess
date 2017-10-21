@@ -1,12 +1,12 @@
 import asyncio
 from collections import defaultdict
 
-from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt, GameEnded
 from pychess.Utils.Move import parseSAN, toAN
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import REMOTE, UNFINISHED_STATES, CHAT_ACTION, CASTLE_KK, \
-    FISCHERRANDOMCHESS, CASTLE_SAN, TAKEBACK_OFFER
+    FISCHERRANDOMCHESS, CASTLE_SAN, TAKEBACK_OFFER, WHITE
 from pychess.System.Log import log
 
 
@@ -61,6 +61,13 @@ class ICPlayer(Player):
     @property
     def time(self):
         return self.gamemodel.timemodel.getPlayerTime(self.color)
+
+    @property
+    def move_queue(self):
+        if self.color == WHITE:
+            return self.gamemodel.ficsgame.wmove_queue
+        else:
+            return self.gamemodel.ficsgame.bmove_queue
 
     # Handle signals from the connection
 
@@ -118,11 +125,11 @@ class ICPlayer(Player):
 
     def end(self, status, reason):
         self.__disconnect()
-        self.gamemodel.ficsgame.queue.put_nowait("del")
+        self.move_queue.put_nowait("end")
 
     def kill(self, reason):
         self.__disconnect()
-        self.gamemodel.ficsgame.queue.put_nowait("del")
+        self.move_queue.put_nowait("del")
 
     # Send the player move updates
 
@@ -136,22 +143,16 @@ class ICPlayer(Player):
             if board2.variant == FISCHERRANDOMCHESS:
                 castle_notation = CASTLE_SAN
             self.connection.bm.sendMove(toAN(board2, move, castleNotation=castle_notation))
-        item = yield from self.gamemodel.ficsgame.queue.get()
+
+        item = yield from self.move_queue.get()
         try:
-            if item == "del":
+            if item == "end":
+                raise GameEnded
+            elif item == "del":
                 raise PlayerIsDead
 
             gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms = item
             self.gamemodel.onBoardUpdate(gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
-
-            if curcol == self.color and ply == self.gamemodel.ply:
-                item = yield from self.gamemodel.ficsgame.queue.get()
-
-                if item == "del":
-                    raise PlayerIsDead
-
-                gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms = item
-                self.gamemodel.onBoardUpdate(gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
 
             if self.turn_interrupt:
                 self.turn_interrupt = False

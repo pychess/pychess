@@ -191,6 +191,8 @@ class BoardManager(GObject.GObject):
         'exGameBackward': (GObject.SignalFlags.RUN_FIRST, None, (int, int)),
         'archiveGamePreview': (GObject.SignalFlags.RUN_FIRST, None,
                                (object, )),
+        'boardSetup': (GObject.SignalFlags.RUN_FIRST, None,
+                       (int, str, str, str)),
         'timesUpdate': (GObject.SignalFlags.RUN_FIRST, None,
                         (int, int, int,)),
         'obsGameEnded': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
@@ -460,15 +462,10 @@ class BoardManager(GObject.GObject):
                 # game.game_type = GAME_TYPES["examined"]
             game = self.connection.games.get(game)
 
-            # For examined games we have to create move queues here
-            # because game will be started later by generalStart()
-            if not hasattr(game, "queue"):
-                game.queue = asyncio.Queue()
-
             # don't start new game in puzzlebot/endgamebot when they just reuse gameno
             if game.relation == IC_POS_OBSERVING_EXAMINATION or \
                     (game.board is not None and game.board.pgn == pgn):
-                game.queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
+                self.emit("boardSetup", gameno, fen, wname, bname)
                 return
 
             game.relation = relation
@@ -494,12 +491,14 @@ class BoardManager(GObject.GObject):
         else:
             if gameno in self.connection.games.games_by_gameno:
                 game = self.connection.games.get_game_by_gameno(gameno)
-                if not hasattr(game, "queue"):
-                    game.queue = asyncio.Queue()
                 if wms < 0 or bms < 0:
                     # fics resend latest style12 line again when one player lost on time
                     return
-                game.queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
+                if lastmove is None:
+                    self.emit("boardSetup", gameno, fen, wname, bname)
+                else:
+                    move_queue = game.wmove_queue if curcol == BLACK else game.bmove_queue
+                    move_queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
             else:
                 # In some cases (like lost on time) the last move is resent by FICS
                 # but game was already removed from self.connection.games

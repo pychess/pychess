@@ -25,6 +25,8 @@ class ICGameModel(GameModel):
 
         connections = self.connections
         connections[connection.bm].append(connection.bm.connect(
+            "boardSetup", self.onBoardSetup))
+        connections[connection.bm].append(connection.bm.connect(
             "exGameBackward", self.onExGameBackward))
         connections[connection.bm].append(connection.bm.connect(
             "timesUpdate", self.onTimesUpdate))
@@ -120,6 +122,34 @@ class ICGameModel(GameModel):
         if gameno == self.ficsgame.gameno:
             self.undoMoves(ply)
 
+    def onBoardSetup(self, bm, gameno, fen, wname, bname):
+        if gameno != self.ficsgame.gameno or len(self.players) != 2:
+            return
+        # set up start position or examined game players
+        if "Black" not in self.tags or bname != self.tags["Black"]:
+            self.tags["Black"] = self.players[BLACK].name = self.ficsplayers[BLACK].name = bname
+            self.emit("players_changed")
+            curPlayer = self.players[self.curColor]
+            curPlayer.resetPosition()
+
+        if "White" not in self.tags or wname != self.tags["White"]:
+            self.tags["White"] = self.players[WHITE].name = self.ficsplayers[WHITE].name = wname
+            self.emit("players_changed")
+            curPlayer = self.players[self.curColor]
+            curPlayer.resetPosition()
+
+        if self.boards[-1].asFen() != fen:
+            self.status = RUNNING
+            self.loadAndStart(
+                StringIO(fen),
+                fen_loader,
+                0,
+                -1,
+                first_time=False)
+            self.emit("game_started")
+            curPlayer = self.players[self.curColor]
+            curPlayer.resetPosition()
+
     def onBoardUpdate(self, gameno, ply, curcol, lastmove, fen, wname,
                       bname, wms, bms):
         log.debug(("ICGameModel.onBoardUpdate: id=%s self.ply=%s self.players=%s gameno=%s " +
@@ -146,35 +176,8 @@ class ICGameModel(GameModel):
             self.timemodel.updatePlayer(WHITE, wms / 1000.)
             self.timemodel.updatePlayer(BLACK, bms / 1000.)
 
-        if lastmove is None:
-            # set up examined game players or position
-            if bname != self.tags["Black"]:
-                self.tags["Black"] = self.players[
-                    BLACK].name = self.ficsplayers[BLACK].name = bname
-                self.emit("players_changed")
-                curPlayer = self.players[self.curColor]
-                curPlayer.resetPosition()
-
-            if wname != self.tags["White"]:
-                self.tags["White"] = self.players[
-                    WHITE].name = self.ficsplayers[WHITE].name = wname
-                self.emit("players_changed")
-                curPlayer = self.players[self.curColor]
-                curPlayer.resetPosition()
-
-            if self.boards[-1].asFen() != fen:
-                self.status = RUNNING
-                self.loadAndStart(
-                    StringIO(fen),
-                    fen_loader,
-                    0,
-                    -1,
-                    first_time=False)
-                self.emit("game_started")
-                curPlayer = self.players[self.curColor]
-                curPlayer.resetPosition()
-
-        elif ply < self.ply:
+        if ply < self.ply:
+            print("TAKEBACK")
             log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s \
                       self.ply=%d ply=%d: TAKEBACK" %
                       (id(self), str(self.players), self.ply, ply))
@@ -203,6 +206,10 @@ class ICGameModel(GameModel):
                     curPlayer.resetPosition()
 
         elif ply > self.ply + 1:
+            print("JUMP")
+            log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s \
+                      self.ply=%d ply=%d: FORWARD JUMP" %
+                      (id(self), str(self.players), self.ply, ply))
             self.status = RUNNING
             self.loadAndStart(
                 StringIO(fen),

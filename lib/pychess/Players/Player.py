@@ -20,6 +20,11 @@ class InvalidMove(Exception):
     pass
 
 
+class GameEnded(Exception):
+    """ Used instead of returning a move on game end """
+    pass
+
+
 class Player(GObject.GObject):
 
     __gsignals__ = {
