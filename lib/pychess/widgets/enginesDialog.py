@@ -439,7 +439,7 @@ class EnginesDialog():
                                                       protocol_changed)
 
         ################################################################
-        # country
+        # engine country
         ################################################################
         def country_changed(widget):
             if self.cur_engine is not None and not self.selection:
@@ -463,6 +463,17 @@ class EnginesDialog():
                         discoverer.emit("all_engines_discovered")
 
         self.widgets["engine_country_combo"].connect("changed", country_changed)
+
+        def country_keypressed(widget, event):
+            idx = 0
+            for iso in ISO3166_LIST:
+                if (ord(iso.country[0].lower()) == event.keyval) or \
+                   (ord(iso.country[0].upper()) == event.keyval):
+                    widget.set_active(idx)
+                    break
+                idx += 1
+
+        self.widgets["engine_country_combo"].connect("key-press-event", country_keypressed)
 
         ################################################################
         # engine tree
