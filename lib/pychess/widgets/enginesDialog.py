@@ -284,26 +284,27 @@ class EnginesDialog():
                                 break
                             else:
                                 continue
-                            if not check_ok:
-                                # restore the original
-                                engine = discoverer.getEngineByName(
-                                    self.cur_engine)
-                                engine_chooser_dialog.set_filename(engine[
-                                    "command"])
-                                msg_dia = Gtk.MessageDialog(mainwindow(),
-                                                            type=Gtk.MessageType.ERROR,
-                                                            buttons=Gtk.ButtonsType.OK)
-                                msg_dia.set_markup(
-                                    _("<big><b>Unable to add %s</b></big>" %
-                                      new_engine))
-                                msg_dia.format_secondary_text(_(
-                                    "There is something wrong with this executable"))
-                                msg_dia.run()
-                                msg_dia.hide()
-                                engine_chooser_dialog.hide()
-                                self.add = False
-                                engine_chooser_dialog.hide()
-                                return
+
+                        if not check_ok:
+                            # restore the original
+                            engine = discoverer.getEngineByName(
+                                self.cur_engine)
+                            engine_chooser_dialog.set_filename(engine[
+                                "command"])
+                            msg_dia = Gtk.MessageDialog(mainwindow(),
+                                                        type=Gtk.MessageType.ERROR,
+                                                        buttons=Gtk.ButtonsType.OK)
+                            msg_dia.set_markup(
+                                _("<big><b>Unable to add %s</b></big>" %
+                                  new_engine))
+                            msg_dia.format_secondary_text(_(
+                                "There is something wrong with this executable"))
+                            msg_dia.run()
+                            msg_dia.hide()
+                            engine_chooser_dialog.hide()
+                            self.add = False
+                            engine_chooser_dialog.hide()
+                            return
 
                         binname = os.path.split(new_engine)[1]
                         for eng in discoverer.getEngines():
