@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import sys
 from operator import attrgetter
 from itertools import groupby

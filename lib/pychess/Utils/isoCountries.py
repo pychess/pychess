@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 from collections import namedtuple
 
 # https://www.iso.org/obp/ui/#iso:pub:PUB500001:en
