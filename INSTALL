@@ -78,7 +78,7 @@ gstreamer
 gst-plugins-base
 
 Dependencies for Windows:
-python >= 3.4
+python 3.4
 sqlalchemy
 pexpect
 psutil
@@ -91,4 +91,4 @@ PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
 (create engine: pyinstaller and pywin32)
 (create .msi installer: cx_freezee)
 
-Released .msi uses 32bit versions of Python 3.4.4 and pygi-aio-3.14.0_rev22
+Released .msi uses 32bit versions of Python 3.4.4 and pygi-aio-3.24.1_rev1
