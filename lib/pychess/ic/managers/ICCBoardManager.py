@@ -3,7 +3,7 @@ import asyncio
 
 from gi.repository import GObject
 
-from pychess.Utils.const import FEN_START, WHITE, reprResult
+from pychess.Utils.const import FEN_START, WHITE, reprResult, BLACK
 from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSPlayer
 from pychess.ic.managers.BoardManager import BoardManager, parse_reason
 from pychess.ic import IC_POS_OBSERVING, GAME_TYPES, IC_STATUS_PLAYING, IC_POS_EXAMINATING
@@ -133,15 +133,18 @@ class ICCBoardManager(BoardManager):
         gameno = int(gameno)
         wplayer = self.connection.players.get(wname)
         bplayer = self.connection.players.get(bname)
-        if wild.isdigit():
+        if int(wild) > 0:
             game_type = GAME_TYPES["w%s" % wild]
         else:
             game_type = GAME_TYPES[rtype.lower()]
 
         for player, rating in ((wplayer, wrating), (bplayer, brating)):
-            if player.ratings[game_type.rating_type] != rating:
-                player.ratings[game_type.rating_type] = rating
-                player.emit("ratings_changed", game_type.rating_type, player)
+            try:
+                if player.ratings[game_type.rating_type] != rating:
+                    player.ratings[game_type.rating_type] = rating
+                    player.emit("ratings_changed", game_type.rating_type, player)
+            except IndexError:
+                print("game_type.rating_type %s is out of range in player.ratings %s" % (game_type.rating_type, player.ratings))
 
         wms = bms = int(wmin) * 60 * 1000 + int(winc) * 1000
         # TODO: maybe use DG_POSITION_BEGIN2 and DG_PAST_MOVE ?
@@ -308,11 +311,6 @@ class ICCBoardManager(BoardManager):
 
         if game == self.theGameImPlaying:
             curcol, ply, wms, bms = self.my_game_info
-
-            if not hasattr(game, "queue"):
-                game.queue = asyncio.Queue()
-                game.queue.put_nowait((gameno, 0, WHITE, None, fen,
-                                       game.wplayer.name, game.bplayer.name, wms, bms))
         else:
             curcol, ply, wms, bms = self.gamesImObserving[game]
             # TODO: get ply, curcol from fen
@@ -330,6 +328,7 @@ class ICCBoardManager(BoardManager):
         try:
             game = self.connection.games.get_game_by_gameno(gameno)
         except KeyError:
+            print("Game %s is not in self.connection.games" % gameno)
             return
 
         fen = ""
@@ -357,8 +356,9 @@ class ICCBoardManager(BoardManager):
             if self.moves_to_go and len(self.queued_send_moves[gameno]) < self.moves_to_go:
                 return
 
-        if self.moves_to_go is None:
-            game.queue.put_nowait((gameno, ply, curcol, san_move, fen,
+        if self.moves_to_go == 0 or self.moves_to_go is None:
+            move_queue = game.wmove_queue if curcol == BLACK else game.bmove_queue
+            move_queue.put_nowait((gameno, ply, curcol, san_move, fen,
                                    game.wplayer.name, game.bplayer.name, wms, bms))
             self.emit("timesUpdate", gameno, wms, bms)
         else:
