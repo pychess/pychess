@@ -1,7 +1,7 @@
 import time
 import logging
 
-from gi.repository import GObject
+from gi.repository import GObject, GLib
 
 
 class LogEmitter(GObject.GObject):
@@ -25,13 +25,14 @@ class GLogHandler(logging.Handler):
         self.emitter = emitter
 
     def emit(self, record):
-        message = self.format(record)
-        if self.emitter.messages is not None:
-            self.emitter.messages.append((record.task, time.time(), message,
-                                          record.levelno))
+        def _emit(record):
+            message = self.format(record)
+            if self.emitter.messages is not None:
+                self.emitter.messages.append((record.task, time.time(), message,
+                                              record.levelno))
 
-        self.emitter.emit("logged",
-                          (record.task, time.time(), message, record.levelno))
-
+            self.emitter.emit("logged",
+                              (record.task, time.time(), message, record.levelno))
+        GLib.idle_add(_emit, record)
 
 logemitter = LogEmitter()
