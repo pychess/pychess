@@ -312,10 +312,14 @@ class Sidepanel:
                     self.menu.append(menuitem)
 
                 symbol_menu1 = Gtk.Menu()
-                for nag, menutext in (("$1", "!"), ("$2", "?"), ("$3", "!!"),
-                                      ("$4", "??"), ("$5", "!?"), ("$6", "?!"),
+                for nag, menutext in (("$1", _("Good move")),
+                                      ("$2", _("Bad move")),
+                                      ("$3", _("Excellent move")),
+                                      ("$4", _("Very bad move")),
+                                      ("$5", _("Interesting move")),
+                                      ("$6", _("Suspicious move")),
                                       ("$7", _("Forced move"))):
-                    menuitem = Gtk.MenuItem(menutext)
+                    menuitem = Gtk.MenuItem("%s %s" % (nag2symbol(nag), menutext))
                     menuitem.connect('activate', self.symbol_menu1_activate,
                                      board, nag)
                     symbol_menu1.append(menuitem)
@@ -325,14 +329,20 @@ class Sidepanel:
                 self.menu.append(menuitem)
 
                 symbol_menu2 = Gtk.Menu()
-                for nag, menutext in (("$10", "="), ("$13", _("Unclear position")),
-                                      ("$14", "+="), ("$15", "=+"), ("$16", "±"), ("$17", "∓"),
-                                      ("$18", "+-"), ("$19", "-+"), ("$20", "+--"),
-                                      ("$21", "--+"), ("$22", _("Zugzwang")),
-                                      ("$32", _("Development adv.")), ("$36", _("Initiative")),
-                                      ("$40", _("With attack")), ("$44", _("Compensation")),
-                                      ("$132", _("Counterplay")), ("$138", _("Time pressure"))):
-                    menuitem = Gtk.MenuItem(menutext)
+                for nag, menutext in (("$10",  _("Drawish")),
+                                      ("$13",  _("Unclear position")),
+                                      ("$14",  _("Slight advantage")),
+                                      ("$16",  _("Moderate advantage")),
+                                      ("$18",  _("Decisive advantage")),
+                                      ("$20",  _("Crushing advantage")),
+                                      ("$22",  _("Zugzwang")),
+                                      ("$32",  _("Development advantage")),
+                                      ("$36",  _("Initiative")),
+                                      ("$40",  _("With attack")),
+                                      ("$44",  _("Compensation")),
+                                      ("$132", _("Counterplay")),
+                                      ("$138", _("Time pressure"))):
+                    menuitem = Gtk.MenuItem("%s %s" % (nag2symbol(nag), menutext))
                     menuitem.connect('activate', self.symbol_menu2_activate,
                                      board, nag)
                     symbol_menu2.append(menuitem)
@@ -410,8 +420,8 @@ class Sidepanel:
     # Add evaluation symbol menu
     def symbol_menu2_activate(self, widget, board, nag):
         color = board.color
-        if color == WHITE and nag in ("$22", "$32", "$36", "$40", "$44",
-                                      "$132", "$138"):
+        if color == WHITE and nag in ("$14", "$16", "$18", "$20", "$22", "$32",
+                                      "$36", "$40", "$44", "$132", "$138"):
             nag = "$%s" % (int(nag[1:]) + 1)
 
         if len(board.nags) == 0:
