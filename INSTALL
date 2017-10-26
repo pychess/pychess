@@ -81,7 +81,7 @@ Dependencies for Windows:
 python 3.4
 sqlalchemy
 pexpect
-psutil
+psutil 3.4.2 (later versions from pypi doesn't work on XP)
 PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
   Base packages
   GDK-Pixbuf
