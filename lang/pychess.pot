@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-22 22:12+0200\n"
+"POT-Creation-Date: 2017-10-26 14:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1265,7 +1265,7 @@ msgstr ""
 msgid "_Next"
 msgstr ""
 
-#: glade/newInOut.glade:45 lib/pychess/Main.py:634
+#: glade/newInOut.glade:45 lib/pychess/Main.py:635
 #: lib/pychess/widgets/newGameDialog.py:515
 msgid "New Game"
 msgstr ""
@@ -1421,20 +1421,20 @@ msgstr ""
 msgid "Show tips at startup"
 msgstr ""
 
-#: lib/pychess/Main.py:393
+#: lib/pychess/Main.py:394
 msgid "http://en.wikipedia.org/wiki/Chess"
 msgstr ""
 
-#: lib/pychess/Main.py:396
+#: lib/pychess/Main.py:397
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
 msgstr ""
 
-#: lib/pychess/Main.py:539 lib/pychess/widgets/gamenanny.py:79
+#: lib/pychess/Main.py:540 lib/pychess/widgets/gamenanny.py:79
 #: lib/pychess/perspectives/welcome/__init__.py:7
 msgid "Welcome"
 msgstr ""
 
-#: lib/pychess/Main.py:639
+#: lib/pychess/Main.py:640
 msgid "Open Game"
 msgstr ""
 
@@ -5326,59 +5326,103 @@ msgid "Add comment"
 msgstr ""
 
 #: lib/pychess/perspectives/games/annotationPanel.py:309
-#: lib/pychess/perspectives/games/annotationPanel.py:358
+#: lib/pychess/perspectives/games/annotationPanel.py:368
 msgid "Edit comment"
 msgstr ""
 
+#: lib/pychess/perspectives/games/annotationPanel.py:315
+msgid "Good move"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:316
+msgid "Bad move"
+msgstr ""
+
 #: lib/pychess/perspectives/games/annotationPanel.py:317
+msgid "Excellent move"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:318
+msgid "Very bad move"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:319
+msgid "Interesting move"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:320
+msgid "Suspicious move"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:321
 msgid "Forced move"
 msgstr ""
 
-#: lib/pychess/perspectives/games/annotationPanel.py:323
+#: lib/pychess/perspectives/games/annotationPanel.py:327
 msgid "Add move symbol"
 msgstr ""
 
-#: lib/pychess/perspectives/games/annotationPanel.py:328
+#: lib/pychess/perspectives/games/annotationPanel.py:332
+msgid "Drawish"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:333
 msgid "Unclear position"
 msgstr ""
 
-#: lib/pychess/perspectives/games/annotationPanel.py:331
+#: lib/pychess/perspectives/games/annotationPanel.py:334
+msgid "Slight advantage"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:335
+msgid "Moderate advantage"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:336
+msgid "Decisive advantage"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:337
+msgid "Crushing advantage"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:338
 msgid "Zugzwang"
 msgstr ""
 
-#: lib/pychess/perspectives/games/annotationPanel.py:332
-msgid "Development adv."
-msgstr ""
-
-#: lib/pychess/perspectives/games/annotationPanel.py:332
-msgid "Initiative"
-msgstr ""
-
-#: lib/pychess/perspectives/games/annotationPanel.py:333
-msgid "With attack"
-msgstr ""
-
-#: lib/pychess/perspectives/games/annotationPanel.py:333
-msgid "Compensation"
-msgstr ""
-
-#: lib/pychess/perspectives/games/annotationPanel.py:334
-msgid "Counterplay"
-msgstr ""
-
-#: lib/pychess/perspectives/games/annotationPanel.py:334
-msgid "Time pressure"
+#: lib/pychess/perspectives/games/annotationPanel.py:339
+msgid "Development advantage"
 msgstr ""
 
 #: lib/pychess/perspectives/games/annotationPanel.py:340
-msgid "Add evaluation symbol"
+msgid "Initiative"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:341
+msgid "With attack"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:342
+msgid "Compensation"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:343
+msgid "Counterplay"
 msgstr ""
 
 #: lib/pychess/perspectives/games/annotationPanel.py:344
+msgid "Time pressure"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:350
+msgid "Add evaluation symbol"
+msgstr ""
+
+#: lib/pychess/perspectives/games/annotationPanel.py:354
 msgid "Remove symbols"
 msgstr ""
 
-#: lib/pychess/perspectives/games/annotationPanel.py:990
+#: lib/pychess/perspectives/games/annotationPanel.py:1000
 #, python-format
 msgid "round %s"
 msgstr ""
