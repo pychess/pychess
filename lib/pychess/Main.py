@@ -308,7 +308,8 @@ class GladeHandlers(object):
 
     def on_show_sidepanels_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
-        perspective.zoomToBoard(not widget.get_active())
+        if perspective is not None:
+            perspective.zoomToBoard(not widget.get_active())
 
     def on_hint_mode_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
