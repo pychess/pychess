@@ -467,8 +467,8 @@ class EnginesDialog():
         def country_keypressed(widget, event):
             idx = 0
             for iso in ISO3166_LIST:
-                if (ord(iso.country[0].lower()) == event.keyval) or \
-                   (ord(iso.country[0].upper()) == event.keyval):
+                if (idx != 0) and ((ord(iso.country[0].lower()) == event.keyval) or
+                                   (ord(iso.country[0].upper()) == event.keyval)):
                     widget.set_active(idx)
                     break
                 idx += 1
