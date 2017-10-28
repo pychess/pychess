@@ -266,7 +266,11 @@ class PgnImport():
                         black = tags["Variation"] if "Variation" in tags else ""
                     else:
                         white = tags["White"] if "White" in tags else ""
+                        if white == "":
+                            white = "?"
                         black = tags["Black"] if "Black" in tags else ""
+                        if black == "":
+                            black = "?"
 
                     event_id = get_id(tags["Event"] if "Event" in tags else "", event, EVENT)
 
