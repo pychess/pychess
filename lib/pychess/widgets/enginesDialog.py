@@ -525,6 +525,7 @@ class EnginesDialog():
         tree_selection = self.tv.get_selection()
         tree_selection.connect('changed', selection_changed)
         tree_selection.select_path((0, ))
+        selection_changed(tree_selection)
 
 
 class KeyValueCellRenderer(Gtk.CellRenderer):
