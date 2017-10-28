@@ -641,12 +641,12 @@ class PGNFile(ChessFile):
             variant = self.get_variant(rec)
 
         # the seven mandatory PGN headers
-        model.tags['Event'] = rec["Event"]
-        model.tags['Site'] = rec["Site"]
+        model.tags['Event'] = rec["Event"] if rec["Event"] is not None else ""
+        model.tags['Site'] = rec["Site"] if rec["Site"] is not None else ""
         model.tags['Date'] = game_date
         model.tags['Round'] = rec["Round"]
-        model.tags['White'] = rec["White"]
-        model.tags['Black'] = rec["Black"]
+        model.tags['White'] = rec["White"] if rec["White"] is not None else "?"
+        model.tags['Black'] = rec["Black"] if rec["Black"] is not None else "?"
         model.tags['Result'] = result
 
         if model.tags['Date']:
