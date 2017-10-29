@@ -41,8 +41,8 @@ class Perspective(object):
             close_button = Gtk.Button()
             close_button.set_property("can-focus", False)
             close_button.add(createImage(gamewidget.gtk_close))
-            # close_button.set_relief(Gtk.ReliefStyle.NONE)
-            # close_button.set_size_request(20, 18)
+            close_button.set_relief(Gtk.ReliefStyle.NONE)
+            close_button.set_size_request(20, 18)
             close_button.connect("clicked", self.on_clicked, panel)
 
             menu_item = Gtk.CheckMenuItem(label=panel.__title__)

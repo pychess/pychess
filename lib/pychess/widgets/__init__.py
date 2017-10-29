@@ -34,12 +34,10 @@ def dock_panel_tab(title, desc, icon, button=None):
     pixbuf = get_pixbuf(icon, 16)
     image = Gtk.Image.new_from_pixbuf(pixbuf)
     label = Gtk.Label(label=title)
-    label.set_size_request(0, 0)
-    label.set_alignment(0, 1)
-    box.pack_start(image, False, False, 0)
-    box.pack_start(label, True, True, 0)
+    box.pack_start(image, False, True, 0)
+    box.pack_start(label, False, True, 0)
     if button is not None:
-        box.pack_start(button, False, False, 0)
+        box.pack_start(button, False, True, 0)
 
     box.set_spacing(2)
     box.show_all()
