@@ -4,22 +4,25 @@ import threading
 from gi.repository import Gtk, GObject, GLib
 
 from pychess.Utils.const import FIRST_PAGE, NEXT_PAGE
+from pychess.Utils.IconLoader import load_icon
 from pychess.perspectives import Perspective, perspective_manager
 from pychess.perspectives.database.gamelist import GameList
-from pychess.perspectives.database.SwitcherPanel import SwitcherPanel
 from pychess.perspectives.database.OpeningTreePanel import OpeningTreePanel
 from pychess.perspectives.database.FilterPanel import FilterPanel
 from pychess.perspectives.database.PreviewPanel import PreviewPanel
 from pychess.System.prefix import addUserConfigPrefix
 from pychess.widgets.pydock.PyDockTop import PyDockTop
-from pychess.widgets.pydock import EAST, SOUTH, CENTER, NORTH
-from pychess.widgets import gamewidget, mainwindow, new_notebook
+from pychess.widgets.pydock import EAST, SOUTH, CENTER
+from pychess.widgets import mainwindow, new_notebook, createImage, createAlignment, gtk_close
+from pychess.widgets import gamewidget
 from pychess.Database.model import create_indexes, drop_indexes
 from pychess.Database.PgnImport import PgnImport, download_file
 from pychess.Database.JvR import JvR
 from pychess.Savers import fen, epd
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
+
+pgn_icon = load_icon(24, "application-x-chess-pgn", "pychess")
 
 
 class Database(GObject.GObject, Perspective):
@@ -43,6 +46,7 @@ class Database(GObject.GObject, Perspective):
         self.opening_tree_panels = []
         self.preview_panels = []
         self.notebooks = {}
+        self.page_dict = {}
         self.connect("chessfile_opened0", self.on_chessfile_opened0)
         self.dockLocation = addUserConfigPrefix("pydock-database.xml")
 
@@ -83,10 +87,6 @@ class Database(GObject.GObject, Perspective):
         self.save_as_button.set_tooltip_text(_("Save to PGN file as..."))
         self.save_as_button.connect("clicked", self.on_save_as_clicked)
 
-        self.close_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_CLOSE)
-        self.close_button.set_tooltip_text(_("Close"))
-        self.close_button.connect("clicked", self.close)
-
     def init_layout(self):
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("database", perspective_widget)
@@ -94,12 +94,6 @@ class Database(GObject.GObject, Perspective):
         self.notebooks = {"gamelist": new_notebook()}
         for panel in self.sidePanels:
             self.notebooks[panel.__name__] = new_notebook(panel.__name__)
-
-        # Switcher panel is special
-        # instead of using one page per one database (as we do in games perspective headbook)
-        # this notebook will have only one page (containing an IconView) for all opened databases
-        self.switcher_panel = SwitcherPanel(self)
-        self.notebooks["SwitcherPanel"].append_page(self.switcher_panel.alignment)
 
         self.spinner = Gtk.Spinner()
         self.spinner.set_size_request(50, 50)
@@ -113,6 +107,20 @@ class Database(GObject.GObject, Perspective):
         self.progress_dialog.get_content_area().pack_start(self.progressbar0, True, True, 0)
         self.progress_dialog.get_content_area().pack_start(self.progressbar1, True, True, 0)
         self.progress_dialog.get_content_area().show_all()
+
+        # Initing headbook
+
+        align = createAlignment(4, 4, 0, 4)
+        align.set_property("yscale", 0)
+
+        self.headbook = Gtk.Notebook()
+        self.headbook.set_name("headbook")
+        self.headbook.set_scrollable(True)
+        align.add(self.headbook)
+        perspective_widget.pack_start(align, False, True, 0)
+        self.headbook.connect_after("switch-page", self.on_switch_page)
+
+        # The dock
 
         self.dock = PyDockTop("database", self)
         align = Gtk.Alignment()
@@ -132,7 +140,6 @@ class Database(GObject.GObject, Perspective):
             leaf = self.dock.dock(self.docks["gamelist"][1], CENTER, self.docks["gamelist"][0], "gamelist")
             leaf.setDockable(False)
 
-            leaf.dock(self.docks["SwitcherPanel"][1], NORTH, self.docks["SwitcherPanel"][0], "SwitcherPanel")
             leaf = leaf.dock(self.docks["OpeningTreePanel"][1], EAST, self.docks["OpeningTreePanel"][0], "OpeningTreePanel")
             leaf = leaf.dock(self.docks["FilterPanel"][1], CENTER, self.docks["FilterPanel"][0], "FilterPanel")
             leaf.dock(self.docks["PreviewPanel"][1], SOUTH, self.docks["PreviewPanel"][0], "PreviewPanel")
@@ -149,9 +156,17 @@ class Database(GObject.GObject, Perspective):
         perspective_manager.set_perspective_menuitems("database", self.menuitems)
 
         perspective_manager.set_perspective_toolbuttons("database", [
-            self.import_button, self.save_as_button, self.close_button])
+            self.import_button, self.save_as_button])
 
-        self.switcher_panel.connect("chessfile_switched", self.on_chessfile_switched)
+    def on_switch_page(self, notebook, page, page_num):
+        if page in self.page_dict:
+            self.chessfile = self.page_dict[page][0]
+            i = self.chessfiles.index(self.chessfile)
+
+            self.notebooks["gamelist"].set_current_page(i)
+            self.notebooks["OpeningTreePanel"].set_current_page(i)
+            self.notebooks["FilterPanel"].set_current_page(i)
+            self.notebooks["PreviewPanel"].set_current_page(i)
 
     def set_sensitives(self, on):
         self.import_button.set_sensitive(on)
@@ -219,6 +234,12 @@ class Database(GObject.GObject, Perspective):
         self.progress_dialog.hide()
 
     def on_chessfile_opened0(self, persp, chessfile):
+        page = Gtk.Alignment()
+        tabcontent, close_button = self.get_tabcontent(chessfile)
+        self.headbook.append_page(page, tabcontent)
+        self.page_dict[page] = (chessfile, close_button)
+        page.show_all()
+
         gamelist = GameList(self)
         self.gamelists.append(gamelist)
         opening_tree_panel = OpeningTreePanel(self)
@@ -233,7 +254,7 @@ class Database(GObject.GObject, Perspective):
         self.notebooks["FilterPanel"].append_page(filter_panel.box)
         self.notebooks["PreviewPanel"].append_page(preview_panel.box)
 
-        self.on_chessfile_switched(None, self.chessfile)
+        self.headbook.set_current_page(self.headbook.get_n_pages() - 1)
 
         gamelist.load_games()
         opening_tree_panel.update_tree(load_games=False)
@@ -241,10 +262,11 @@ class Database(GObject.GObject, Perspective):
         self.set_sensitives(True)
         self.emit("chessfile_opened", chessfile)
 
-    def close(self, widget):
-        if self.chessfile is not None and self.chessfile in self.chessfiles:
-            i = self.chessfiles.index(self.chessfile)
-            if self.chessfile.path is not None:
+    def close(self, close_button):
+        for page in list(self.page_dict.keys()):
+            if self.page_dict[page][1] == close_button:
+                chessfile = self.page_dict[page][0]
+                i = self.chessfiles.index(chessfile)
                 self.notebooks["gamelist"].remove_page(i)
                 self.notebooks["OpeningTreePanel"].remove_page(i)
                 self.notebooks["FilterPanel"].remove_page(i)
@@ -252,22 +274,17 @@ class Database(GObject.GObject, Perspective):
                 del self.gamelists[i]
                 del self.filter_panels[i]
                 del self.chessfiles[i]
-                self.chessfile.close()
+                chessfile.close()
+
+                del self.page_dict[page]
+                self.headbook.remove_page(self.headbook.page_num(page))
+                break
 
         if len(self.chessfiles) == 0:
             self.set_sensitives(False)
             perspective_manager.disable_perspective("database")
 
         self.emit("chessfile_closed")
-
-    def on_chessfile_switched(self, switcher, chessfile):
-        self.chessfile = chessfile
-        i = self.chessfiles.index(chessfile)
-
-        self.notebooks["gamelist"].set_current_page(i)
-        self.notebooks["OpeningTreePanel"].set_current_page(i)
-        self.notebooks["FilterPanel"].set_current_page(i)
-        self.notebooks["PreviewPanel"].set_current_page(i)
 
     def on_import_endgame_nl(self):
         self.do_import(JvR)
@@ -461,6 +478,33 @@ class Database(GObject.GObject, Perspective):
                 print("%s allready exist." % new_pgn)
 
         dialog.destroy()
+
+    def get_tabcontent(self, chessfile):
+        tabcontent = createAlignment(0, 0, 0, 0)
+        hbox = Gtk.HBox()
+        hbox.set_spacing(4)
+        hbox.pack_start(createImage(pgn_icon), False, True, 0)
+
+        close_button = Gtk.Button()
+        close_button.set_property("can-focus", False)
+        close_button.add(createImage(gtk_close))
+        close_button.set_relief(Gtk.ReliefStyle.NONE)
+        close_button.set_size_request(20, 18)
+        close_button.connect("clicked", self.close)
+        hbox.pack_end(close_button, False, True, 0)
+
+        name, ext = os.path.splitext(chessfile.path)
+        basename = os.path.basename(name)
+        info = "%s.%s" % (basename, ext[1:])
+        tooltip = "%s\ncontaining %s games" % (chessfile.path, chessfile.count)
+        tabcontent.set_tooltip_text(tooltip)
+
+        label = Gtk.Label(info)
+        hbox.pack_start(label, False, True, 0)
+
+        tabcontent.add(hbox)
+        tabcontent.show_all()
+        return tabcontent, close_button
 
 
 def get_latest_twic():

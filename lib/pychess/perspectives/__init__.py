@@ -9,7 +9,7 @@ from io import StringIO
 from gi.repository import Gtk
 
 from pychess.System.Log import log
-from pychess.widgets import createImage, dock_panel_tab, mainwindow
+from pychess.widgets import createImage, dock_panel_tab, mainwindow, gtk_close
 
 
 class Perspective(object):
@@ -36,11 +36,10 @@ class Perspective(object):
             files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
             self.sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
 
-        from pychess.widgets import gamewidget
         for panel in self.sidePanels:
             close_button = Gtk.Button()
             close_button.set_property("can-focus", False)
-            close_button.add(createImage(gamewidget.gtk_close))
+            close_button.add(createImage(gtk_close))
             close_button.set_relief(Gtk.ReliefStyle.NONE)
             close_button.set_size_request(20, 18)
             close_button.connect("clicked", self.on_clicked, panel)
@@ -93,20 +92,22 @@ class Perspective(object):
             try:
                 self.dock.loadFromXML(self.dockLocation, self.docks)
             except Exception as e:
-                stringio = StringIO()
-                traceback.print_exc(file=stringio)
-                error = stringio.getvalue()
-                log.error("Dock loading error: %s\n%s" % (e, error))
-                msg_dia = Gtk.MessageDialog(mainwindow(),
-                                            type=Gtk.MessageType.ERROR,
-                                            buttons=Gtk.ButtonsType.CLOSE)
-                msg_dia.set_markup(_(
-                    "<b><big>PyChess was unable to load your panel settings</big></b>"))
-                msg_dia.format_secondary_text(_(
-                    "Your panel settings have been reset. If this problem repeats, \
-                    you should report it to the developers"))
-                msg_dia.run()
-                msg_dia.hide()
+                # We don't send error message when error caused by no more existing SwitcherPanel
+                if e.args[0] != "SwitcherPanel":
+                    stringio = StringIO()
+                    traceback.print_exc(file=stringio)
+                    error = stringio.getvalue()
+                    log.error("Dock loading error: %s\n%s" % (e, error))
+                    msg_dia = Gtk.MessageDialog(mainwindow(),
+                                                type=Gtk.MessageType.ERROR,
+                                                buttons=Gtk.ButtonsType.CLOSE)
+                    msg_dia.set_markup(_(
+                        "<b><big>PyChess was unable to load your panel settings</big></b>"))
+                    msg_dia.format_secondary_text(_(
+                        "Your panel settings have been reset. If this problem repeats, \
+                        you should report it to the developers"))
+                    msg_dia.run()
+                    msg_dia.hide()
                 os.remove(self.dockLocation)
                 for title, panel, menu_item in self.docks.values():
                     title.unparent()

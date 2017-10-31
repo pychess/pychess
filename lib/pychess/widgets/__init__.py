@@ -1,9 +1,11 @@
 from gi.repository import Gtk
 
-from pychess.Utils.IconLoader import get_pixbuf
+from pychess.Utils.IconLoader import get_pixbuf, load_icon
 # from pychess.widgets.WebKitBrowser import open_link
 
 main_window = None
+
+gtk_close = load_icon(16, "gtk-close", "window-close")
 
 
 def mainwindow():
@@ -14,6 +16,15 @@ def createImage(pixbuf):
     image = Gtk.Image()
     image.set_from_pixbuf(pixbuf)
     return image
+
+
+def createAlignment(top, right, bottom, left):
+    align = Gtk.Alignment.new(.5, .5, 1, 1)
+    align.set_property("top-padding", top)
+    align.set_property("right-padding", right)
+    align.set_property("bottom-padding", bottom)
+    align.set_property("left-padding", left)
+    return align
 
 
 def new_notebook(name=None):

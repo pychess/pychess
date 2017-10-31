@@ -26,32 +26,13 @@ from pychess.Utils.logic import playerHasMatingMaterial, isClaimableDraw
 from pychess.ic import get_infobarmessage_content, get_infobarmessage_content2
 from pychess.ic.FICSObjects import get_player_tooltip_text
 from pychess.ic.ICGameModel import ICGameModel
-from pychess.widgets import createImage
+from pychess.widgets import createImage, createAlignment, gtk_close
 from pychess.widgets.InfoBar import InfoBarNotebook, InfoBarMessage, InfoBarMessageButton
 from pychess.perspectives import perspective_manager
-
-# ###############################################################################
-# Initialize module constants, and a few worker functions                       #
-# ###############################################################################
-
-
-def createAlignment(top, right, bottom, left):
-    align = Gtk.Alignment.new(.5, .5, 1, 1)
-    align.set_property("top-padding", top)
-    align.set_property("right-padding", right)
-    align.set_property("bottom-padding", bottom)
-    align.set_property("left-padding", left)
-    return align
 
 
 light_on = load_icon(16, "stock_3d-light-on", "weather-clear")
 light_off = load_icon(16, "stock_3d-light-off", "weather-clear-night")
-gtk_close = load_icon(16, "gtk-close", "window-close")
-
-
-# ###############################################################################
-# Initialize module variables                                                  #
-# ###############################################################################
 
 widgets = None
 
