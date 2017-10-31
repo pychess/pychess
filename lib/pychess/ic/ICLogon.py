@@ -308,7 +308,13 @@ class ICLogon(object):
         if self.host not in ("localhost", "chessclub.com"):
             self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
             self.helperconn.connect("error", self.onHelperConnectionError)
-            self.helperconn_task = asyncio.async(self.helperconn.start())
+
+            @asyncio.coroutine
+            def coro():
+                yield from self.main_connected_event.wait()
+                yield from self.helperconn.start()
+
+            self.helperconn_task = asyncio.async(coro())
 
     def onHelperConnectionError(self, connection, error):
         if self.helperconn is not None:
