@@ -55,10 +55,10 @@ skillToIcon = {}
 # Used by TaskerManager. Put here to help synchronization
 skillToIconLarge = {}
 for i, icon in enumerate(weather_icons, start=1):
-    skillToIcon[2 * i - 1] = load_icon(16, "weather-%s" % icon)
-    skillToIcon[2 * i] = load_icon(16, "weather-%s" % icon)
-    skillToIconLarge[2 * i - 1] = load_icon(48, "weather-%s" % icon)
-    skillToIconLarge[2 * i] = load_icon(48, "weather-%s" % icon)
+    skillToIcon[2 * i - 1] = get_pixbuf("glade/16x16/weather-%s.png" % icon)
+    skillToIcon[2 * i] = get_pixbuf("glade/16x16/weather-%s.png" % icon)
+    skillToIconLarge[2 * i - 1] = get_pixbuf("glade/48x48/weather-%s.png" % icon)
+    skillToIconLarge[2 * i] = get_pixbuf("glade/48x48/weather-%s.png" % icon)
 
 playerItems = []
 analyzerItems = []

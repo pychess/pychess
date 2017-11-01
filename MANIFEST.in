@@ -1,4 +1,4 @@
-include glade/*.glade glade/*.png glade/*.svg flags/*.png
+include glade/*.glade glade/*.png glade/*.svg glade/16x16/*.png glade/48x48/*.png flags/*.png
 recursive-include pieces *
 include README.md AUTHORS ARTISTS DOCUMENTERS LICENSE INSTALL TRANSLATORS
 include sounds/*.ogg
