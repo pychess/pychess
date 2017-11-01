@@ -14,7 +14,7 @@ from pychess.Savers import pgn
 from pychess.System import conf
 
 from pychess.System.Log import log
-from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.IconLoader import get_pixbuf
 from pychess.Utils.const import REMOTE, UNFINISHED_STATES, PAUSED, RUNNING, LOCAL, \
     WHITE, BLACK, ACTION_MENU_ITEMS, DRAW, UNDOABLE_STATES, HINT, SPY, WHITEWON, \
     MENU_ITEMS, BLACKWON, DROP, FAN_PIECES
@@ -31,8 +31,8 @@ from pychess.widgets.InfoBar import InfoBarNotebook, InfoBarMessage, InfoBarMess
 from pychess.perspectives import perspective_manager
 
 
-light_on = load_icon(16, "stock_3d-light-on", "weather-clear")
-light_off = load_icon(16, "stock_3d-light-off", "weather-clear-night")
+light_on = get_pixbuf("glade/16x16/weather-clear.png")
+light_off = get_pixbuf("glade/16x16/weather-clear-night.png")
 
 widgets = None
 
