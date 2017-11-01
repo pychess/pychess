@@ -120,8 +120,26 @@ class _GameInitializationMode(object):
 
     @classmethod
     def _init(cls):
+        cls.white = get_pixbuf("glade/white.png")
+        cls.black = get_pixbuf("glade/black.png")
+
         cls.widgets = uistuff.GladeWidgets("newInOut.glade")
         cls.widgets["newgamedialog"].set_transient_for(mainwindow())
+
+        def on_exchange_players(widget, button_event):
+            white = cls.widgets["whitePlayerCombobox"].get_active()
+            black = cls.widgets["blackPlayerCombobox"].get_active()
+            whiteLevel = cls.widgets["skillSlider1"].get_value()
+            blackLevel = cls.widgets["skillSlider2"].get_value()
+            cls.widgets["whitePlayerCombobox"].set_active(black)
+            cls.widgets["blackPlayerCombobox"].set_active(white)
+            cls.widgets["skillSlider1"].set_value(blackLevel)
+            cls.widgets["skillSlider2"].set_value(whiteLevel)
+
+        cls.widgets["whitePlayerButton"].set_image(Gtk.Image.new_from_pixbuf(cls.white))
+        cls.widgets["whitePlayerButton"].connect("button-press-event", on_exchange_players)
+        cls.widgets["blackPlayerButton"].set_image(Gtk.Image.new_from_pixbuf(cls.black))
+        cls.widgets["blackPlayerButton"].connect("button-press-event", on_exchange_players)
 
         uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
                             name="whitePlayerCombobox")
@@ -539,8 +557,8 @@ class SetupPositionExtension(_GameInitializationMode):
 
         cls.castl = set()
 
-        cls.white = Gtk.Image.new_from_pixbuf(get_pixbuf("glade/white.png"))
-        cls.black = Gtk.Image.new_from_pixbuf(get_pixbuf("glade/black.png"))
+        cls.white = Gtk.Image.new_from_pixbuf(cls.white)
+        cls.black = Gtk.Image.new_from_pixbuf(cls.black)
         cls.widgets["side_button"].set_image(cls.white)
 
         cls.widgets["side_button"].connect("toggled", cls.side_button_toggled)
