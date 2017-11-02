@@ -68,8 +68,8 @@ from ficsmanagers import EmittingTestCase
 class ObserveGameTests(EmittingTestCase):
     def setUp(self):
         EmittingTestCase.setUp(self)
-        log.logger.setLevel(logging.DEBUG)
-        self.loop.set_debug(enabled=True)
+        # log.logger.setLevel(logging.DEBUG)
+        # self.loop.set_debug(enabled=True)
         self.manager = self.connection.bm
 
         widgets = uistuff.GladeWidgets("PyChess.glade")
