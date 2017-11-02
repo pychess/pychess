@@ -20,6 +20,7 @@ modules_to_test = (
     "polyglot",
     'ficsmanagers',
     'ficsplay',
+    'ficsobserve',
     'analysis',
     'selfplay',
 )
