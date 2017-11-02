@@ -149,10 +149,6 @@ class Games(GObject.GObject, Perspective):
         log.debug("Games.generalStart: <- gamemodel.setPlayers(): %s" %
                   (gamemodel))
 
-        if isinstance(gamemodel, ICGameModel) and not gamemodel.ficsgame.relation == IC_POS_EXAMINATING:
-            if not hasattr(gamemodel.ficsgame, "queue"):
-                gamemodel.ficsgame.queue = asyncio.Queue()
-
         # Starting
         if loaddata:
             try:
