@@ -4,13 +4,13 @@ To run execute the following in this directory:
 $ ./pychess
 
 To install system wide run following as root
-# python setup.py install
+# python3 setup.py install
 
 To see other install options/formats:
-$ python setup.py --help-commands
+$ python3 setup.py --help-commands
 
 To run the pychess engine in text based mode
-$ PYTHONPATH=lib/ python lib/pychess/Players/PyChess.py
+$ PYTHONPATH=lib/ python3 lib/pychess/Players/PyChess.py
 
 To run unit tests for pychess:
 cd testing
@@ -95,7 +95,7 @@ PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
 Released .msi uses 32bit versions of Python 3.4.4 and pygi-aio-3.24.1_rev1
 
 ---------------------------------------------
-Alternativ install to use latest python3/gtk3/gobject on Windows (XP is not supported by msy2):
+Alternativ install to use latest python3/gtk3/gobject on Windows (XP is not supported by msys2):
 Go to https://msys2.github.io/ and download the x86_64 installer
 In C:\msys64\mingw32.exe terminal run:
 pacman -S mingw-w64-i686-gtk3 mingw-w64-i686-python3-gobject mingw-w64-i686-python3-pip mingw-w64-i686-python3-psutil
