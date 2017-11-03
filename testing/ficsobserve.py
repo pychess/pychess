@@ -6,11 +6,9 @@ try:
 except:
     pass
 
-from gi.repository import Gtk
-
-from pychess.Utils.const import ACTION_MENU_ITEMS, GAME_MENU_ITEMS, VIEW_MENU_ITEMS, EDIT_MENU_ITEMS
 from pychess.ic.FICSObjects import FICSPlayer, FICSGame
 from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
+from pychess.System import uistuff
 from pychess.widgets import gamewidget
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.fics import FICS
@@ -76,38 +74,8 @@ class ObserveGameTests(EmittingTestCase):
         EmittingTestCase.setUp(self)
         self.manager = self.connection.bm
 
-        # widgets = uistuff.GladeWidgets("PyChess.glade")
-        # coverage segfaults on builder.add_from_file()
-        # so we have to build our own widgets dict manualy
-        widgets = {
-            "persp_buttons": Gtk.Box(),
-            "perspectives_notebook": Gtk.Notebook(),
-            "main_window": Gtk.Window(),
-            "toolbar1": Gtk.Toolbar(),
-            "vis1_menu": Gtk.Menu(),
-            "promotionDialog": Gtk.Dialog(),
-            "analyzer_check": Gtk.CheckButton(),
-            "inv_analyzer_check": Gtk.CheckButton(),
-            "ana_combobox": Gtk.ComboBox(),
-            "inv_ana_combobox": Gtk.ComboBox()}
-
-        for item in GAME_MENU_ITEMS:
-            widgets[item] = Gtk.MenuItem()
-
-        for item in EDIT_MENU_ITEMS:
-            widgets[item] = Gtk.MenuItem()
-
-        for item in ACTION_MENU_ITEMS:
-            widgets[item] = Gtk.MenuItem()
-
-        for item in VIEW_MENU_ITEMS:
-            widgets[item] = Gtk.CheckMenuItem()
-
-        for piece in ("queen", "rook", "bishop", "knight", "king"):
-            widgets["%sDock" % piece] = Gtk.Alignment()
-
+        widgets = uistuff.GladeWidgets("PyChess.glade")
         gamewidget.setWidgets(widgets)
-
         perspective_manager.set_widgets(widgets)
 
         self.games_persp = Games()
