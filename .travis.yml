@@ -21,6 +21,5 @@ install:
 script:
  - xvfb-run -a $PYTHON ./setup.py build sdist
  - cd testing
-# - PYTHONPATH=../lib coverage run --source ../lib -m unittest discover -p "*.py"
-# - codecov
- - PYTHONPATH=../lib $PYTHON -m unittest discover -p "*.py"
+ - PYTHONPATH=../lib coverage run --source ../lib -m unittest discover -p "*.py"
+ - codecov
