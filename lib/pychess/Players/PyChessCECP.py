@@ -30,6 +30,10 @@ if sys.platform != "win32":
 ASCII = sys.platform == "win32"
 
 
+def get_input():
+    return input()
+
+
 class PyChessCECP(PyChess):
     def __init__(self):
         PyChess.__init__(self)
@@ -85,7 +89,7 @@ class PyChessCECP(PyChess):
     def run(self):
         while True:
             try:
-                line = input()
+                line = get_input()
             except EOFError:
                 line = "quit"
             lines = line.split()
@@ -388,7 +392,10 @@ class PyChessCECP(PyChess):
                                 for move in genCheckEvasions(self.board)])
 
                 elif lines[0] == "benchmark":
-                    benchmark()
+                    if len(lines) > 1:
+                        benchmark(int(lines[1]))
+                    else:
+                        benchmark()
 
                 elif lines[0] == "profile":
                     if len(lines) > 1:
@@ -405,6 +412,9 @@ class PyChessCECP(PyChess):
                         perft(self.board, int(depth), int(root))
                     else:
                         self.print("Error (arguments must be integer")
+
+                elif lines[0] == "stop_unittest":
+                    break
 
                 elif len(lines) == 1:
                     # A GUI without usermove support might try to send a move.

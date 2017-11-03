@@ -23,6 +23,7 @@ modules_to_test = (
     'ficsobserve',
     'analysis',
     'selfplay',
+    'engine',
 )
 
 
