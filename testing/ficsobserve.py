@@ -1,10 +1,16 @@
-import logging
+# import logging
 import unittest
+
+try:
+    import faulthandler
+    faulthandler.enable()
+except:
+    pass
 
 from pychess.ic.FICSObjects import FICSPlayer, FICSGame
 from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END
 from pychess.System import uistuff
-from pychess.System.Log import log
+# from pychess.System.Log import log
 from pychess.widgets import gamewidget
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.fics import FICS
