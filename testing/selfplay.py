@@ -15,7 +15,7 @@ from pychess.Utils.const import WHITE, BLACK, \
     ASYMMETRICRANDOMCHESS, RANDOMCHESS, SHUFFLECHESS, CORNERCHESS
 from pychess.Variants import variants
 from pychess.System.Log import log
-log.logger.setLevel(logging.DEBUG)
+log.logger.setLevel(logging.INFO)
 
 discoverer.discover()
 

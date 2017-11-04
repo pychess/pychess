@@ -24,6 +24,7 @@ modules_to_test = (
     'analysis',
     'selfplay',
     'engine',
+    'savegame',
 )
 
 
