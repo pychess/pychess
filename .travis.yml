@@ -11,7 +11,7 @@ matrix:
 
 install:
  - sudo apt-get update -q
- - sudo apt-get install -y xvfb gobject-introspection gir1.2-glib-2.0  gir1.2-gtk-3.0 gir1.2-rsvg-2.0 $(echo $PACKAGES)
+ - sudo apt-get install -y xvfb gobject-introspection gir1.2-glib-2.0  gir1.2-gtk-3.0 gir1.2-rsvg-2.0 gir1.2-gtksource-3.0 $(echo $PACKAGES)
  - sudo pip3 install pexpect
  - sudo pip3 install coverage
  - sudo pip3 install codecov
