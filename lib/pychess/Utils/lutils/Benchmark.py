@@ -48,7 +48,7 @@ def benchmark(maxdepth=6):
             pv = " ".join(listToSan(board, mvs))
             time_cs = int(100 * pos_time)
             print(depth, scr, time_cs, pos_nodes, pv)
-        print("Searched position", i, "at", int(pos_nodes / pos_time), "n/s")
+        print("Searched position", i, "at", int(pos_nodes / pos_time) if pos_time > 0 else pos_nodes, "n/s")
     suite_time = time() - suite_time
     suite_nodes = lsearch.nodes - suite_nodes
     print("Total:", suite_nodes, "nodes in", suite_time, "s: ", suite_nodes /
