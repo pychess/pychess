@@ -1,3 +1,4 @@
+import os
 import asyncio
 import logging
 import unittest
@@ -14,14 +15,27 @@ from pychess.perspectives import perspective_manager
 from pychess.perspectives.games import Games
 from pychess.perspectives.database import Database
 from pychess.perspectives.welcome import Welcome
+from pychess.perspectives.database.FilterPanel import formatted, TAG_FILTER, RULE
 from pychess.System.Log import log
 log.logger.setLevel(logging.INFO)
 
 
-class SaveGameTests(unittest.TestCase):
+base_name = "pychess_test"
+conf.set("saveOwnGames", True)
+conf.set("autoSaveFormat", base_name)
+default_path = os.path.expanduser("~")
+test_pgn = os.path.join(default_path, "%s.pgn" % base_name)
+test_bin = os.path.join(default_path, "%s.bin" % base_name)
+test_scout = os.path.join(default_path, "%s.scout" % base_name)
+test_sqlite = os.path.join(default_path, "%s.sqlite" % base_name)
 
-    def test(self):
-        """ Play and save Human-Human 1 min game """
+for f in (test_pgn, test_bin, test_scout, test_sqlite):
+    if os.path.isfile(f):
+        os.remove(f)
+
+
+class DatabaseTests(unittest.TestCase):
+    def setUp(self):
         widgets = uistuff.GladeWidgets("PyChess.glade")
         gamewidget.setWidgets(widgets)
         perspective_manager.set_widgets(widgets)
@@ -36,8 +50,11 @@ class SaveGameTests(unittest.TestCase):
         perspective_manager.add_perspective(self.database_persp)
         self.database_persp.create_toolbuttons()
 
-        self.loop = asyncio.get_event_loop()
-        self.loop.set_debug(enabled=True)
+    def test1(self):
+        """ Play and save Human-Human 1 min game """
+
+        loop = asyncio.get_event_loop()
+        loop.set_debug(enabled=True)
 
         def coro():
             gamemodel = GameModel(TimeModel(1, 0))
@@ -72,18 +89,45 @@ class SaveGameTests(unittest.TestCase):
             self.assertEqual(gamemodel.boards[-1].board.asFen(), fen)
 
             # Now save our game to pychess.pgn
-            def on_game_saved(game, uri):
-                self.database_persp.open_chessfile(uri)
-
-                self.database_persp.chessfile.games[0]
-                self.assertEqual(self.database_persp.chessfile.count, 1)
-
-            gamemodel.connect("game_saved", on_game_saved)
-
-            conf.set("saveOwnGames", True)
             self.games_persp.saveGamePGN(gamemodel)
 
-        self.loop.run_until_complete(coro())
+        loop.run_until_complete(coro())
+
+    def test2(self):
+        """ Import world_matches.pgn into pychess.pgn """
+
+        def on_chessfile_opened(persp, cf):
+            self.assertEqual(self.database_persp.chessfile.count, 1)
+
+            self.database_persp.importing(["gamefiles/world_matches.pgn", ])
+            # We saved 1 game in test1 and world_matches.pgn has 580 games
+            self.assertEqual(self.database_persp.chessfile.count, 581)
+
+        self.database_persp.connect("chessfile_opened", on_chessfile_opened)
+        self.database_persp.open_chessfile(test_pgn)
+
+    def test3(self):
+        """ Filter pychess.pgn by Kasparov as white """
+
+        def on_chessfile_opened(persp, cf):
+            self.assertEqual(self.database_persp.chessfile.count, 581)
+
+            fp = self.database_persp.filter_panel
+            name_filter = {"white": "Kasparov"}
+            fp.ini_widgets_from_query(name_filter)
+            tag_query, material_query, pattern_query = fp.get_queries_from_widgets()
+            self.assertEqual(tag_query, name_filter)
+
+            selection = fp.get_selection()
+            model, treeiter = selection.get_selected()
+            fp.treestore.append(treeiter, [formatted(tag_query), tag_query, TAG_FILTER, RULE])
+            fp.filtered = True
+            fp.update_filters()
+            # world_matches.pgn has 49 games where Kasparov was white
+            self.assertEqual(len(self.database_persp.gamelist.records), 49)
+
+        self.database_persp.connect("chessfile_opened", on_chessfile_opened)
+        self.database_persp.open_chessfile(test_pgn)
 
 
 if __name__ == '__main__':

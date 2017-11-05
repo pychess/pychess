@@ -401,6 +401,41 @@ class Database(GObject.GObject, Perspective):
                 self.importer.do_cancel()
             self.progress_dialog.hide()
 
+    # @profile_me
+    def importing(self, filenames):
+        drop_indexes(self.chessfile.engine)
+
+        self.importer = PgnImport(self.chessfile, append_pgn=True)
+        self.importer.initialize()
+        for i, filename in enumerate(filenames):
+            GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
+            # GLib.idle_add(self.progressbar0.set_text, filename)
+            if self.importer.cancel:
+                break
+            if isinstance(filename, tuple):
+                info_link, pgn_link = filename
+                self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar1)
+            else:
+                self.importer.do_import(filename, progressbar=self.progressbar1)
+
+        GLib.idle_add(self.progressbar1.set_text, _("Recreating indexes..."))
+
+        # .sqlite
+        create_indexes(self.chessfile.engine)
+
+        # .scout
+        self.chessfile.init_scoutfish()
+
+        # .bin
+        self.chessfile.init_chess_db()
+
+        self.chessfile.set_tag_filter(None)
+        self.chessfile.set_fen_filter(None)
+        self.chessfile.set_scout_filter(None)
+        GLib.idle_add(self.gamelist.load_games)
+        GLib.idle_add(self.emit, "chessfile_imported", self.chessfile)
+        GLib.idle_add(self.progress_dialog.hide)
+
     def do_import(self, filenames):
         self.progress_dialog.set_title(_("Import"))
         self.spinner.hide()
@@ -411,42 +446,7 @@ class Database(GObject.GObject, Perspective):
         self.progressbar1.show()
         self.progressbar1.set_text(_("Preparing to start import..."))
 
-        # @profile_me
-        def importing():
-            drop_indexes(self.chessfile.engine)
-
-            self.importer = PgnImport(self.chessfile, append_pgn=True)
-            self.importer.initialize()
-            for i, filename in enumerate(filenames):
-                GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
-                # GLib.idle_add(self.progressbar0.set_text, filename)
-                if self.importer.cancel:
-                    break
-                if isinstance(filename, tuple):
-                    info_link, pgn_link = filename
-                    self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar1)
-                else:
-                    self.importer.do_import(filename, progressbar=self.progressbar1)
-
-            GLib.idle_add(self.progressbar1.set_text, _("Recreating indexes..."))
-
-            # .sqlite
-            create_indexes(self.chessfile.engine)
-
-            # .scout
-            self.chessfile.init_scoutfish()
-
-            # .bin
-            self.chessfile.init_chess_db()
-
-            self.chessfile.set_tag_filter(None)
-            self.chessfile.set_fen_filter(None)
-            self.chessfile.set_scout_filter(None)
-            GLib.idle_add(self.gamelist.load_games)
-            GLib.idle_add(self.emit, "chessfile_imported", self.chessfile)
-            GLib.idle_add(self.progress_dialog.hide)
-
-        thread = threading.Thread(target=importing)
+        thread = threading.Thread(target=self.importing, args=(filenames, ))
         thread.daemon = True
         thread.start()
 
