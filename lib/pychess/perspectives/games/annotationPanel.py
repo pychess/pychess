@@ -355,6 +355,10 @@ class Sidepanel:
                 menuitem.connect('activate', self.remove_symbols, board)
                 self.menu.append(menuitem)
 
+                menuitem = Gtk.MenuItem(_("Reset the evaluations"))
+                menuitem.connect('activate', self.reset_evaluations)
+                self.menu.append(menuitem)
+
                 self.menu.show_all()
                 self.menu.popup(None, None, None, None, event.button,
                                 event.time)
@@ -444,6 +448,10 @@ class Sidepanel:
             board.nags = []
             self.update_node(board)
             self.gamemodel.needsSave = True
+
+    def reset_evaluations(self, widget):
+        self.gamemodel.scores = {}
+        self.update()
 
     def print_node(self, node):
         """ Just a debug helper """
@@ -577,7 +585,7 @@ class Sidepanel:
         return iter.get_offset() - start
 
     def update_node(self, board):
-        """ Called after adding/removing evaluation simbols """
+        """ Called after adding/removing evaluation symbols """
         node = None
         for n in self.nodelist:
             if n["board"] == board:
