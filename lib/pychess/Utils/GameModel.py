@@ -284,10 +284,12 @@ class GameModel(GObject.GObject):
             ply = analyzer.board.ply
             if score is not None:
                 if analyzer.mode == ANALYZING:
-                    self.scores[ply] = (pv, score, depth)
-                    self.emit("analysis_changed", ply)
+                    if (ply not in self.scores) or (self.scores[ply][2] <= depth):
+                        self.scores[ply] = (pv, score, depth)
+                        self.emit("analysis_changed", ply)
                 else:
-                    self.spy_scores[ply] = (pv, score, depth)
+                    if (ply not in self.spy_scores) or (self.spy_scores[ply][2] <= depth):
+                        self.spy_scores[ply] = (pv, score, depth)
 
     def setOpening(self, ply=None):
         if ply is None:
