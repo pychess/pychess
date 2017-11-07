@@ -173,10 +173,114 @@ class ObserveGameTests(EmittingTestCase):
             yield from self.connection.process_lines(lines)
         self.loop.run_until_complete(coro())
 
-        self.assertEqual(game.wmove_queue.qsize(), 0)
-        self.assertEqual(game.bmove_queue.qsize(), 0)
+        self.assertEqual(game.move_queue.qsize(), 0)
 
         self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 74)
+
+        print(self.games_persp.cur_gmwidg().gamemodel)
+
+    def test2(self):
+        """ Test observing lecturebot """
+
+        # ♜ ♛ . . ♚ . ♞ ♜
+        # ♟ ♟ . ♝ . ♟ ♟ ♟
+        # . . . ♝ ♟ . . .
+        # . . . ♘ . . . .
+        # . . . . . . ♕ .
+        # . . . ♗ . . . .
+        # ♙ ♙ . . . ♙ ♙ .
+        # ♖ . ♗ . ♖ . . ♔
+
+        lines = [
+            BLOCK_START + '53' + BLOCK_SEPARATOR + '80' + BLOCK_SEPARATOR,
+            'You are now observing game 1.',
+            'Game 1: LectureBot (0) LectureBot (0) unrated untimed 0 0',
+            '',
+            '<12> rq--k-nr pp-b-ppp ---bp--- ---N---- ------Q- ---B---- PP---PP- R-B-R--K W -1 0 0 1 1 2 1 LectureBot LectureBot -2 0 0 32 34 0 0 15 B/h2-d6 (0:00.000) Bd6 0 0 0',
+            BLOCK_END
+        ]
+
+        signal = 'obsGameCreated'
+
+        game = FICSGame(
+            FICSPlayer("LectureBot"),
+            FICSPlayer("LectureBot"),
+            gameno=1)
+        game = self.connection.games.get(game)
+        expectedResults = (game, )
+        self.runAndAssertEquals(signal, lines, expectedResults)
+
+        print(self.games_persp.cur_gmwidg().gamemodel)
+
+        lines = [
+            "<12> rq--k-nr pp-b-pQp ---bp--- ---N---- -------- ---B---- PP---PP- R-B-R--K B -1 0 0 1 1 0 1 LectureBot LectureBot -2 0 0 32 33 0 0 15 Q/g4-g7 (0:00.000) Qxg7 0 0 0",
+            "fics% ",
+            "Game 1: LectureBot moves: Qxg7",
+            "nfics% ",
+            "LectureBot(TD)(----)[1] kibitzes: Black is now going to drop a rook.  Therefore, Black must find an alternate to 13...Bxh2+.",
+            "fics% ",
+            "LectureBot(TD)(----)[1] kibitzes: Let\'s back up and find the right 13th move.",
+            "fics% "
+        ]
+
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
+
+        self.assertEqual(game.move_queue.qsize(), 0)
+
+        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 29)
+
+        print(self.games_persp.cur_gmwidg().gamemodel)
+
+        lines = [
+            "Game 1: LectureBot backs up 4 moves.",
+            "<12> rq--k-nr pp-b-ppp ---bp--- ---N---- ------Q- ---B---- PP---PPP R-B-R-K- B -1 0 0 1 1 2 1 LectureBot LectureBot -2 0 0 33 34 0 0 13 Q/d1-g4 (0:00.000) Qg4 0 0 0",
+            "fics% ",
+            "LectureBot(TD)(----)[1] kibitzes: Can you find Black\'s best move?",
+            "fics% "
+        ]
+
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
+
+        self.assertEqual(game.move_queue.qsize(), 0)
+
+        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 25)
+
+        print(self.games_persp.cur_gmwidg().gamemodel)
+
+        lines = [
+            "<12> rq---knr pp-b-ppp ---bp--- ---N---- ------Q- ---B---- PP---PPP R-B-R-K- W -1 0 0 0 0 3 1 LectureBot LectureBot -2 0 0 33 34 0 0 14 K/e8-f8 (0:00.000) Kf8 0 0 0",
+            "fics% ",
+            "Game 1: LectureBot moves: Kf8",
+            "fics% ",
+            "LectureBot(TD)(----)[1] kibitzes: Black needs to guard the g-pawn.  This also gets the king out of the pin.",
+            "fics% ",
+            "<12> rq---knr pp-b-ppp ---bp--- ---N---- ------Q- ---B---- PP-B-PPP R---R-K- B -1 0 0 0 0 4 1 LectureBot LectureBot -2 0 0 33 34 0 0 14 B/c1-d2 (0:00.000) Bd2 0 0 0",
+            "fics% ",
+            "Game 1: LectureBot moves: Bd2",
+            "fics% ",
+            "LectureBot(TD)(----)[1] kibitzes: White doesn\'t have to move the attacked knight because if 14. exd5, 15. Qxd7 is a trade.",
+            "fics% ",
+            "LectureBot(TD)(----)[1] kibitzes: Not to mention, it would be a trade favorable to White.",
+            "fics% ",
+            "<12> rq---knr pp-b-pp- ---bp--- ---N---p ------Q- ---B---- PP-B-PPP R---R-K- W 7 0 0 0 0 0 1 LectureBot LectureBot -2 0 0 33 34 0 0 15 P/h7-h5 (0:00.000) h5 0 0 0",
+            "fics% ",
+            "Game 1: LectureBot moves: h5",
+            "fics% ",
+            "LectureBot(TD)(----)[1] kibitzes: Here, Black attacks White\'s queen, and will try to open the h-file for his rook.",
+            "fics% "
+        ]
+
+        def coro():
+            yield from self.connection.process_lines(lines)
+        self.loop.run_until_complete(coro())
+
+        self.assertEqual(game.move_queue.qsize(), 0)
+
+        self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 28)
 
         print(self.games_persp.cur_gmwidg().gamemodel)
 

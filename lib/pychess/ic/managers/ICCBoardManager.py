@@ -3,7 +3,7 @@ import asyncio
 
 from gi.repository import GObject
 
-from pychess.Utils.const import FEN_START, WHITE, reprResult, BLACK
+from pychess.Utils.const import FEN_START, WHITE, reprResult
 from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSPlayer
 from pychess.ic.managers.BoardManager import BoardManager, parse_reason
 from pychess.ic import IC_POS_OBSERVING, GAME_TYPES, IC_STATUS_PLAYING, IC_POS_EXAMINATING
@@ -357,9 +357,8 @@ class ICCBoardManager(BoardManager):
                 return
 
         if self.moves_to_go == 0 or self.moves_to_go is None:
-            move_queue = game.wmove_queue if curcol == BLACK else game.bmove_queue
-            move_queue.put_nowait((gameno, ply, curcol, san_move, fen,
-                                   game.wplayer.name, game.bplayer.name, wms, bms))
+            game.move_queue.put_nowait((gameno, ply, curcol, san_move, fen,
+                                        game.wplayer.name, game.bplayer.name, wms, bms))
             self.emit("timesUpdate", gameno, wms, bms)
         else:
             if game.gameno not in self.gamemodelStartedEvents:

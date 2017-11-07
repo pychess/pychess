@@ -497,8 +497,7 @@ class BoardManager(GObject.GObject):
                 if lastmove is None:
                     self.emit("boardSetup", gameno, fen, wname, bname)
                 else:
-                    move_queue = game.wmove_queue if curcol == BLACK else game.bmove_queue
-                    move_queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
+                    game.move_queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
             else:
                 # In some cases (like lost on time) the last move is resent by FICS
                 # but game was already removed from self.connection.games

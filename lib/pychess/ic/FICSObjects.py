@@ -863,8 +863,8 @@ class FICSGame(FICSMatch):
         self.private = private
         self.relation = relation
 
-        self.wmove_queue = asyncio.Queue()
-        self.bmove_queue = asyncio.Queue()
+        # move(style12) message queue feeded by BoardManager, consumed by balck and white ICPlayer
+        self.move_queue = asyncio.Queue()
 
     def __hash__(self):
         return hash(":".join((self.wplayer.name[0:11].lower(
@@ -1210,7 +1210,7 @@ class FICSGames(GObject.GObject):
 
     def game_ended(self, game):
         if game in self:
-            if not game.wmove_queue.empty() or not game.bmove_queue.empty():
+            if not game.move_queue.empty():
                 def coro(game):
                     # we have to give a chance to ICPlayer
                     # to process the latest move(style12) message

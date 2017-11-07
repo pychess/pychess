@@ -5,7 +5,7 @@ from pychess.System.Log import log
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import REMOTE, DRAW, WHITE, BLACK, RUNNING, WHITEWON, KILLED, \
-    TAKEBACK_OFFER, WON_CALLFLAG, WAITING_TO_START, BLACKWON, PAUSE_OFFER, PAUSED, \
+    TAKEBACK_OFFER, WAITING_TO_START, BLACKWON, PAUSE_OFFER, PAUSED, \
     RESUME_OFFER, DISCONNECTED, CHAT_ACTION, RESIGNATION, FLAG_CALL, OFFERS, LOCAL, \
     ACTION_ERROR_NONE_TO_ACCEPT, UNFINISHED_STATES, ABORT_OFFER
 from pychess.Players.Human import Human
@@ -157,11 +157,8 @@ class ICGameModel(GameModel):
                   (str(id(self)), str(self.ply), repr(self.players), str(gameno), str(wname), str(bname),
                    str(ply), str(curcol), str(lastmove), str(fen), str(wms), str(bms)))
         if gameno != self.ficsgame.gameno or len(self.players) < 2:
-            # LectureBot allways uses gameno 1 for many games in one lecture
-            # or wname != self.players[0].ichandle or bname != self.players[1].ichandle:
             return
-        log.debug("ICGameModel.onBoardUpdate: id=%d, self.players=%s: updating time and/or ply" %
-                  (id(self), str(self.players)))
+
         if self.timed:
             log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s: updating timemodel" %
                       (id(self), str(self.players)))
@@ -177,7 +174,6 @@ class ICGameModel(GameModel):
             self.timemodel.updatePlayer(BLACK, bms / 1000.)
 
         if ply < self.ply:
-            print("TAKEBACK")
             log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s \
                       self.ply=%d ply=%d: TAKEBACK" %
                       (id(self), str(self.players), self.ply, ply))
@@ -188,25 +184,21 @@ class ICGameModel(GameModel):
                     # moves replaces the initial offer) so we can safely remove all of them
                     del self.offers[offer]
 
-            # In some cases (like lost on time) the last move is resent
-            # or we just observing an examined game
-            if self.reason != WON_CALLFLAG:
-                if len(self.moves) >= self.ply - ply:
-                    self.undoMoves(self.ply - ply)
-                else:
-                    self.status = RUNNING
-                    self.loadAndStart(
-                        StringIO(fen),
-                        fen_loader,
-                        0,
-                        -1,
-                        first_time=False)
-                    self.emit("game_started")
-                    curPlayer = self.players[self.curColor]
-                    curPlayer.resetPosition()
+            if len(self.moves) >= self.ply - ply:
+                self.undoMoves(self.ply - ply)
+            else:
+                self.status = RUNNING
+                self.loadAndStart(
+                    StringIO(fen),
+                    fen_loader,
+                    0,
+                    -1,
+                    first_time=False)
+                self.emit("game_started")
+                curPlayer = self.players[self.curColor]
+                curPlayer.resetPosition()
 
         elif ply > self.ply + 1:
-            print("JUMP")
             log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s \
                       self.ply=%d ply=%d: FORWARD JUMP" %
                       (id(self), str(self.players), self.ply, ply))

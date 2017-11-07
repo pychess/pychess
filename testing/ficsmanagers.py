@@ -72,6 +72,7 @@ class DummyConnection(Connection):
         self.client.lines.line_prefix = "fics%"
         self.examined_game = None
         self.notify_users = []
+        self.ini_messages = []
 
     def getUsername(self):
         return self.username

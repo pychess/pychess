@@ -6,7 +6,7 @@ from pychess.Utils.Move import parseSAN, toAN
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import REMOTE, UNFINISHED_STATES, CHAT_ACTION, CASTLE_KK, \
-    FISCHERRANDOMCHESS, CASTLE_SAN, TAKEBACK_OFFER, WHITE
+    FISCHERRANDOMCHESS, CASTLE_SAN, TAKEBACK_OFFER
 from pychess.System.Log import log
 
 
@@ -64,10 +64,7 @@ class ICPlayer(Player):
 
     @property
     def move_queue(self):
-        if self.color == WHITE:
-            return self.gamemodel.ficsgame.wmove_queue
-        else:
-            return self.gamemodel.ficsgame.bmove_queue
+        return self.gamemodel.ficsgame.move_queue
 
     # Handle signals from the connection
 
@@ -143,6 +140,8 @@ class ICPlayer(Player):
             if board2.variant == FISCHERRANDOMCHESS:
                 castle_notation = CASTLE_SAN
             self.connection.bm.sendMove(toAN(board2, move, castleNotation=castle_notation))
+            # wait for fics to send back our move we made
+            item = yield from self.move_queue.get()
 
         item = yield from self.move_queue.get()
         try:
