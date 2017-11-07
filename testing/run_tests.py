@@ -25,6 +25,7 @@ modules_to_test = (
     'selfplay',
     'engine',
     'savegame',
+    'dialogs',
 )
 
 
