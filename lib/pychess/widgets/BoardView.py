@@ -163,6 +163,8 @@ class BoardView(Gtk.DrawingArea):
             self.model.connect("game_ended", self.gameEnded),
         ]
 
+        self.board_style_name = None
+
         self.draw_cid = self.connect("draw", self.expose)
         self.realize_cid = self.connect_after("realize", self.onRealized)
         self.notify_cids = [
@@ -882,9 +884,8 @@ class BoardView(Gtk.DrawingArea):
             paint(True)
             context.transform(invmatrix)
 
-    def draw_image(self, context, image, left, top, width, height):
+    def draw_image(self, context, image_surface, left, top, width, height):
         """ Draw a scaled image on a given context. """
-        image_surface = cairo.ImageSurface.create_from_png(image)
 
         # calculate scale
         image_width = image_surface.get_width()
@@ -913,8 +914,12 @@ class BoardView(Gtk.DrawingArea):
         colors_only = board_style == 0
         if not colors_only:
             board_style_name = preferencesDialog.board_items[board_style][1]
-            dark_png = addDataPrefix("boards/%s_d.png" % board_style_name)
-            light_png = addDataPrefix("boards/%s_l.png" % board_style_name)
+            if self.board_style_name is None or self.board_style_name != board_style_name:
+                self.board_style_name = board_style_name
+                dark_png = addDataPrefix("boards/%s_d.png" % board_style_name)
+                light_png = addDataPrefix("boards/%s_l.png" % board_style_name)
+                self.dark_surface = cairo.ImageSurface.create_from_png(dark_png)
+                self.light_surface = cairo.ImageSurface.create_from_png(light_png)
 
         style_ctxt = self.get_style_context()
         LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])
@@ -934,7 +939,7 @@ class BoardView(Gtk.DrawingArea):
                         if colors_only:
                             context.rectangle(xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
                         else:
-                            self.draw_image(context, light_png, xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
+                            self.draw_image(context, self.light_surface, xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
             if colors_only:
                 context.fill()
 
@@ -964,7 +969,7 @@ class BoardView(Gtk.DrawingArea):
                         if colors_only:
                             context.rectangle((xc_loc + x_loc * side), (yc_loc + y_loc * side), side, side)
                         else:
-                            self.draw_image(context, dark_png, (xc_loc + x_loc * side), (yc_loc + y_loc * side), side, side)
+                            self.draw_image(context, self.dark_surface, (xc_loc + x_loc * side), (yc_loc + y_loc * side), side, side)
             if colors_only:
                 context.fill()
 
