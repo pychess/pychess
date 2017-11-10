@@ -166,6 +166,7 @@ class BoardView(Gtk.DrawingArea):
         self.draw_cid = self.connect("draw", self.expose)
         self.realize_cid = self.connect_after("realize", self.onRealized)
         self.notify_cids = [
+            conf.notify_add("drawGrid", self.onDrawGrid),
             conf.notify_add("showCords", self.onShowCords),
             conf.notify_add("showCaptured", self.onShowCaptured),
             conf.notify_add("faceToFace", self.onFaceToFace),
@@ -204,16 +205,24 @@ class BoardView(Gtk.DrawingArea):
         self._bluearrow = None
 
         self._shown = self.model.ply
+
         self._show_cords = False
         self.show_cords = conf.get("showCords", False)
+
+        self._draw_grid = False
+        self.draw_grid = conf.get("drawGrid", False)
+
         self._show_captured = False
         if self.preview:
             self.showCaptured = False
         else:
             self.showCaptured = conf.get("showCaptured", False) or \
                 self.model.variant.variant in DROP_VARIANTS
+
         self._show_enpassant = False
+
         self.lastMove = None
+
         self.matrix = cairo.Matrix()
         self.matrix_pi = cairo.Matrix.init_rotate(pi)
         self.invmatrix = cairo.Matrix().invert()
@@ -340,6 +349,12 @@ class BoardView(Gtk.DrawingArea):
             # something strange
             if sound != "":
                 preferencesDialog.SoundTab.playAction(sound)
+
+    def onDrawGrid(self, *args):
+        """ Checks the configuration / preferences to see if the board
+            grid should be displayed.
+        """
+        self.draw_grid = conf.get("drawGrid", False)
 
     def onShowCords(self, *args):
         """ Checks the configuration / preferences to see if the board
@@ -862,9 +877,10 @@ class BoardView(Gtk.DrawingArea):
         matrix, invmatrix = matrixAround(self.matrix_pi, xc_loc + square / 2., yc_loc + square / 2.)
         paint(False)
 
-        context.transform(matrix)
-        paint(True)
-        context.transform(invmatrix)
+        if conf.get("faceToFace", False):
+            context.transform(matrix)
+            paint(True)
+            context.transform(invmatrix)
 
     def draw_image(self, context, image, left, top, width, height):
         """ Draw a scaled image on a given context. """
@@ -952,8 +968,20 @@ class BoardView(Gtk.DrawingArea):
             if colors_only:
                 context.fill()
 
-        context.rectangle(xc_loc, yc_loc, self.FILES * side, self.RANKS * side)
-        context.stroke()
+        if self.draw_grid:
+            context.set_source_rgb(0.0, 0.0, 0.0)
+            context.set_line_width(1.0)
+
+            for loc in range(self.FILES):
+                context.move_to(xc_loc + side * loc, yc_loc)
+                context.line_to(xc_loc + side * loc, yc_loc + self.FILES * side)
+                context.move_to(xc_loc, yc_loc + side * loc)
+                context.line_to(xc_loc + self.FILES * side, yc_loc + side * loc)
+
+            context.rectangle(xc_loc, yc_loc, self.FILES * side, self.RANKS * side)
+            context.stroke()
+
+        context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
     ###############################
     #         drawPieces          #
@@ -1580,6 +1608,14 @@ class BoardView(Gtk.DrawingArea):
     def _getRotation(self):
         return self._rotation
     rotation = property(_getRotation, _setRotation)
+
+    def _setDrawGrid(self, draw_grid):
+        self._draw_grid = draw_grid
+        self.redrawCanvas()
+
+    def _getDrawGrid(self):
+        return self._draw_grid
+    draw_grid = property(_getDrawGrid, _setDrawGrid)
 
     def _setShowCords(self, show_cords):
         if not show_cords:
