@@ -590,6 +590,10 @@ class PanelTab:
 
 # Theme initing
 
+board_items = [(None, "colors only")]
+boards_path = addDataPrefix("boards")
+board_items += [(get_pixbuf(os.path.join(boards_path, b), 24), b[:-6]) for b in listdir(boards_path) if b.endswith("_d.png")]
+
 
 class ThemeTab:
     """ :Description: Allows the setting of various user specific chess
@@ -633,6 +637,15 @@ class ThemeTab:
                 image_chooser_dialog.set_filename(path)
 
         image_chooser_button.connect("file-set", select_new_image)
+
+        # Board style
+        uistuff.createCombo(widgets["board_style"], name="board_style")
+        data = [(item[0], item[1]) for item in board_items]
+
+        uistuff.createCombo(widgets["board_style"], data)
+        uistuff.keep(widgets["board_style"], "board_style")
+
+        conf.set("board_style", conf.get("board_style", 0))
 
         # Board Colours
 

@@ -148,6 +148,7 @@ DATA_FILES += [("share/pychess/glade/16x16", glob('glade/16x16/*.png'))]
 DATA_FILES += [("share/pychess/glade/48x48", glob('glade/48x48/*.png'))]
 DATA_FILES += [("share/pychess/glade", glob('glade/*.svg'))]
 DATA_FILES += [("share/pychess/flags", glob('flags/*.png'))]
+DATA_FILES += [("share/pychess/boards", glob('boards/*.png'))]
 
 # Data
 DATA_FILES += [('share/mime/packages', ['pychess.xml'])]

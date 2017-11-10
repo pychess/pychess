@@ -7,6 +7,7 @@ from time import time
 import cairo
 from gi.repository import GLib, Gtk, Gdk, GObject, Pango, PangoCairo
 
+from pychess.System.prefix import addDataPrefix
 from pychess.System import conf
 from pychess.gfx import Pieces
 from pychess.Utils.Cord import Cord
@@ -169,6 +170,7 @@ class BoardView(Gtk.DrawingArea):
             conf.notify_add("showCaptured", self.onShowCaptured),
             conf.notify_add("faceToFace", self.onFaceToFace),
             conf.notify_add("pieceTheme", self.onSetPieceTheme),
+            conf.notify_add("board_style", self.onBoardColourTheme),
             conf.notify_add("lightcolour", self.onBoardColourTheme),
             conf.notify_add("darkcolour", self.onBoardColourTheme),
         ]
@@ -864,12 +866,40 @@ class BoardView(Gtk.DrawingArea):
         paint(True)
         context.transform(invmatrix)
 
+    def draw_image(self, context, image, left, top, width, height):
+        """ Draw a scaled image on a given context. """
+        image_surface = cairo.ImageSurface.create_from_png(image)
+
+        # calculate scale
+        image_width = image_surface.get_width()
+        image_height = image_surface.get_height()
+        width_ratio = float(width) / float(image_width)
+        height_ratio = float(height) / float(image_height)
+        scale_xy = min(width_ratio, height_ratio)
+
+        # scale image and add it
+        context.save()
+        context.translate(left, top)
+        context.scale(scale_xy, scale_xy)
+        context.set_source_surface(image_surface)
+
+        context.paint()
+        context.restore()
+
     ###############################
     #          drawBoard          #
     ###############################
 
     def drawBoard(self, context, r):
         xc_loc, yc_loc, square, side = self.square
+
+        board_style = conf.get("board_style", 0)
+        colors_only = board_style == 0
+        if not colors_only:
+            board_style_name = preferencesDialog.board_items[board_style][1]
+            dark_png = addDataPrefix("boards/%s_d.png" % board_style_name)
+            light_png = addDataPrefix("boards/%s_l.png" % board_style_name)
+
         style_ctxt = self.get_style_context()
         LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])
         col = Gdk.RGBA()
@@ -885,8 +915,12 @@ class BoardView(Gtk.DrawingArea):
             for x_loc in range(self.FILES):
                 for y_loc in range(self.RANKS):
                     if x_loc % 2 + y_loc % 2 != 1:
-                        context.rectangle(xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
-            context.fill()
+                        if colors_only:
+                            context.rectangle(xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
+                        else:
+                            self.draw_image(context, light_png, xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
+            if colors_only:
+                context.fill()
 
         style_ctxt = self.get_style_context()
         DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
@@ -911,9 +945,12 @@ class BoardView(Gtk.DrawingArea):
             for x_loc in range(self.FILES):
                 for y_loc in range(self.RANKS):
                     if x_loc % 2 + y_loc % 2 == 1:
-                        context.rectangle((xc_loc + x_loc * side),
-                                          (yc_loc + y_loc * side), side, side)
-            context.fill()
+                        if colors_only:
+                            context.rectangle((xc_loc + x_loc * side), (yc_loc + y_loc * side), side, side)
+                        else:
+                            self.draw_image(context, dark_png, (xc_loc + x_loc * side), (yc_loc + y_loc * side), side, side)
+            if colors_only:
+                context.fill()
 
         context.rectangle(xc_loc, yc_loc, self.FILES * side, self.RANKS * side)
         context.stroke()
