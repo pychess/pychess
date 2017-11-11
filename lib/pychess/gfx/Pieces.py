@@ -28,21 +28,6 @@ def parse(n, psize):
             yield "c.rel_curve_to(%s)" % pstr
 
 
-# This has double speed at drawing, but when generating new functions, it
-# takes about ten times longer.
-def drawPiece1(piece, cc, x, y, psize, allwhite=False, asean=False):
-    cc.save()
-    cc.move_to(x, y)
-
-    if psize not in parsedPieces[piece.color][piece.sign]:
-        exec("\n    ".join(parse(parsedPieces[piece.color][piece.sign][size],
-                                 psize)))
-        parsedPieces[piece.color][piece.sign][psize] = f
-
-    cc.fill()
-    cc.restore()
-
-
 def drawPieceReal(piece, cc, psize, allwhite=False, asean=False):
     color = WHITE if allwhite else piece.color
 
@@ -165,7 +150,7 @@ def drawPiece5(piece, cc, x, y, psize, allwhite=False, asean=False):
     """Rendering pieces from cache instead of draw each time"""
 
     if asean:
-        drawPiece3(piece, context, x, y, psize, allwhite=allwhite, asean=True)
+        drawPiece3(piece, cc, x, y, psize, allwhite=allwhite, asean=True)
         return
 
     if piece not in surfaceCache:
