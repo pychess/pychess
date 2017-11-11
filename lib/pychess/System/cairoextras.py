@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+# from: http://cairographics.org/freetypepython/
 
 import ctypes as ct
 import cairo
