@@ -2,7 +2,7 @@ from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, 
     ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, CAMBODIANCHESS, MAKRUKCHESS, \
     FISCHERRANDOMCHESS, SITTUYINCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, \
     SUICIDECHESS, GIVEAWAYCHESS, DROP_VARIANTS, BLACK, WHITE, FAN_PIECES, NULL_MOVE, CAS_FLAGS, \
-    NORMALCHESS, FEN_START, \
+    HORDECHESS, NORMALCHESS, FEN_START, \
     chrU2Sign, cordDic, reprCord, reprFile, reprSign, reprSignMakruk, reprSignSittuyin, \
     A1, A8, B1, B8, \
     C1, C8, D1, D8, \
@@ -389,6 +389,8 @@ class LBoard(object):
             return False
         if self.checked is None:
             kingcord = self.kings[self.color]
+            if self.variant == HORDECHESS and kingcord == -1:
+                return False
             self.checked = isAttacked(self,
                                       kingcord,
                                       1 - self.color,
@@ -407,6 +409,8 @@ class LBoard(object):
             return False
         if self.opchecked is None:
             kingcord = self.kings[1 - self.color]
+            if self.variant == HORDECHESS and kingcord == -1:
+                return False
             self.opchecked = isAttacked(self,
                                         kingcord,
                                         self.color,

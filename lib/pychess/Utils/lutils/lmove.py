@@ -8,7 +8,7 @@ from pychess.Utils.const import SAN, AN, LAN, ENPASSANT, EMPTY, PAWN, KING_CASTL
     reprFile, reprRank, chr2Sign, cordDic, reprSign, reprCord, reprSignSittuyin, reprSignMakruk,\
     QUEEN, KNIGHT, BISHOP, ROOK, KING, NORMALCHESS, NORMAL_MOVE, PROMOTIONS, WHITE, BLACK, DROP,\
     FAN_PIECES, SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, MAKRUKCHESS, CAMBODIANCHESS,\
-    GIVEAWAYCHESS, ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS,\
+    GIVEAWAYCHESS, ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, HORDECHESS,\
     chrU2Sign, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, NULL_MOVE, FAN
 from pychess.Utils.repr import reprPiece, localReprSign
 from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove
@@ -418,8 +418,13 @@ def parseSAN(board, san):
         else:
             if color == WHITE:
                 pawns = board.boards[WHITE][PAWN]
-                fcord = tcord - 16 if RANK(tcord) == 3 and not (
-                    pawns & fileBits[FILE(tcord)] & rankBits[2]) else tcord - 8
+                # In horde white pawns on first rank may move two squares also
+                if board.variant == HORDECHESS and RANK(tcord) == 2 and not (
+                        pawns & fileBits[FILE(tcord)] & rankBits[1]):
+                    fcord = tcord - 16
+                else:
+                    fcord = tcord - 16 if RANK(tcord) == 3 and not (
+                        pawns & fileBits[FILE(tcord)] & rankBits[2]) else tcord - 8
             else:
                 pawns = board.boards[BLACK][PAWN]
                 fcord = tcord + 16 if RANK(tcord) == 4 and not (

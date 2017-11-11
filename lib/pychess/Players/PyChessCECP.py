@@ -11,7 +11,7 @@ from pychess.Utils.book import getOpenings
 from pychess.Utils.const import NORMALCHESS, FEN_START, BLACK, FISCHERRANDOMCHESS, \
     CRAZYHOUSECHESS, WILDCASTLESHUFFLECHESS, LOSERSCHESS, SUICIDECHESS, ATOMICCHESS, \
     THREECHECKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, \
-    SITTUYINCHESS, GIVEAWAYCHESS, WHITE
+    SITTUYINCHESS, GIVEAWAYCHESS, HORDECHESS, WHITE
 from pychess.Utils.lutils.Benchmark import benchmark
 from pychess.Utils.lutils.perft import perft
 from pychess.Utils.lutils.LBoard import LBoard
@@ -21,6 +21,7 @@ from pychess.Utils.lutils.lmove import parseSAN, parseAny, toSAN, ParsingError
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCaptures, genCheckEvasions
 from pychess.Utils.lutils.validator import validateMove
 from pychess.System.Log import log
+from pychess.Variants.horde import HORDESTART
 from pychess.Variants.asean import ASEANSTART, MAKRUKSTART, KAMBODIANSTART, SITTUYINSTART
 
 if sys.platform != "win32":
@@ -60,7 +61,7 @@ class PyChessCECP(PyChess):
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
             "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse," +
-                        "losers,suicide,giveaway,atomic," +
+                        "losers,suicide,giveaway,horde,atomic," +
                         "kingofthehill,3check,asean,cambodian,makruk,sittuyin",
             "colors": 0,
             "ics": 0,
@@ -154,6 +155,9 @@ class PyChessCECP(PyChess):
                             self.board.variant = KINGOFTHEHILLCHESS
                             self.print("setup (PNBRQKpnbrqk) 8x8+0_fairy %s" %
                                        FEN_START)
+                        elif lines[1] == "horde":
+                            self.board = LBoard(HORDECHESS)
+                            self.board.applyFen(HORDESTART)
                         elif lines[1] == "asean":
                             self.board = LBoard(ASEANCHESS)
                             self.board.applyFen(ASEANSTART)

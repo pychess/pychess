@@ -5,7 +5,7 @@ from pychess.Utils.const import NORMALCHESS, CORNERCHESS, SHUFFLECHESS, FISCHERR
     PAWNODDSCHESS, KNIGHTODDSCHESS, ROOKODDSCHESS, QUEENODDSCHESS, ALLWHITECHESS, BLINDFOLDCHESS, \
     HIDDENPIECESCHESS, HIDDENPAWNSCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, THREECHECKCHESS, \
     AIWOKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, CAMBODIANCHESS, SITTUYINCHESS, EUROSHOGICHESS, \
-    RACINGKINGSCHESS, MAKRUKCHESS, SETUPCHESS, GIVEAWAYCHESS
+    RACINGKINGSCHESS, MAKRUKCHESS, SETUPCHESS, GIVEAWAYCHESS, HORDECHESS
 
 from .normal import NormalBoard
 from .corner import CornerBoard
@@ -22,6 +22,7 @@ from .bughouse import BughouseBoard
 from .crazyhouse import CrazyhouseBoard
 from .losers import LosersBoard
 from .suicide import SuicideBoard
+from .horde import HordeBoard
 from .giveaway import GiveawayBoard
 from .pawnodds import PawnOddsBoard
 from .knightodds import KnightOddsBoard
@@ -54,6 +55,7 @@ variants = {NORMALCHESS: NormalBoard,
             LOSERSCHESS: LosersBoard,
             SUICIDECHESS: SuicideBoard,
             GIVEAWAYCHESS: GiveawayBoard,
+            HORDECHESS: HordeBoard,
             PAWNODDSCHESS: PawnOddsBoard,
             KNIGHTODDSCHESS: KnightOddsBoard,
             ROOKODDSCHESS: RookOddsBoard,
@@ -95,3 +97,4 @@ name2variant["Antichess"] = SuicideBoard
 name2variant["King of the hill"] = KingOfTheHillBoard
 name2variant["Three-check"] = ThreeCheckBoard
 name2variant["Racing kings"] = RacingKingsBoard
+name2variant["Horde"] = HordeBoard

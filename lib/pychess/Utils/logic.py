@@ -8,10 +8,10 @@ from .lutils.lmove import FCORD, TCORD
 from .lutils import ldraw
 from .Cord import Cord
 from .Move import Move
-from .const import LOSERSCHESS, WHITE, WHITEWON, BLACKWON, WON_NOMATERIAL, KING, \
+from .const import LOSERSCHESS, WHITE, WHITEWON, BLACKWON, WON_NOMATERIAL, KING, HORDECHESS, \
     SUICIDECHESS, GIVEAWAYCHESS, ATOMICCHESS, WON_KINGEXPLODE, KINGOFTHEHILLCHESS, BLACK, DRAW, \
     WON_KINGINCENTER, THREECHECKCHESS, WON_THREECHECK, WON_MATE, DRAW_STALEMATE, \
-    DRAW_INSUFFICIENT, DRAW_EQUALMATERIAL, WON_LESSMATERIAL, DRAW_REPITITION, \
+    DRAW_INSUFFICIENT, DRAW_EQUALMATERIAL, WON_LESSMATERIAL, WON_WIPEOUT, DRAW_REPITITION, \
     WON_KINGINEIGHTROW, RACINGKINGSCHESS, DRAW_50MOVES, RUNNING, ENPASSANT, UNKNOWN_REASON
 
 from .lutils.bitboard import iterBits
@@ -64,6 +64,10 @@ def getStatus(board):
             else:
                 status = BLACKWON
             return status, WON_NOMATERIAL
+    elif board.variant == HORDECHESS:
+        if pieceCount(lboard, lboard.color) == 0 and board.color == WHITE:
+            status = BLACKWON
+            return status, WON_WIPEOUT
     elif board.variant == ATOMICCHESS:
         if lboard.boards[board.color][KING] == 0:
             if board.color == WHITE:

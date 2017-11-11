@@ -7,7 +7,7 @@ from pychess.Utils.const import EMPTY, PAWN,\
     QUEEN, KNIGHT, BISHOP, ROOK, KING, WHITE, BLACK,\
     SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, GIVEAWAYCHESS, CAMBODIANCHESS,\
     ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, CRAZYHOUSECHESS, ASEAN_VARIANTS,\
-    BPAWN, sliders,\
+    HORDECHESS, BPAWN, sliders,\
     A8, A6, G6, F6, H1, C3, B2, B3, A3, D6, D8, E3, E1, E8, C7, F2, D1, E6, H3, D3, H2, G7, H6, H7,\
     ASEAN_QUEEN, ASEAN_BBISHOP, ASEAN_WBISHOP, NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT,\
     KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, KING_PROMOTION, NULL_MOVE,\
@@ -305,6 +305,16 @@ def genAllMoves(board, drops=True):
                       8) & notblocker  # ensuring middle cord is clear
         for cord in iterBits(movedpawns):
             yield newMove(cord - 16, cord)
+
+        # In horde white pawns on first rank may move two squares also
+        if board.variant == HORDECHESS:
+            firstrow = pawns & rankBits[0]  # Get first row pawns
+            movedpawns = (firstrow >>
+                          8) & notblocker  # Move two steps forward, while
+            movedpawns = (movedpawns >>
+                          8) & notblocker  # ensuring middle cord is clear
+            for cord in iterBits(movedpawns):
+                yield newMove(cord - 16, cord)
 
         # Capture left
 
