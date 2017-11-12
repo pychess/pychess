@@ -126,7 +126,7 @@ class AnalyzeGameDialog():
                                         pv0 = listToMoves(gamemodel.boards[ply - 1], ["--"] + oldmoves0, validate=True)
                                         if len(pv0) > 2:
                                             gamemodel.add_variation(gamemodel.boards[ply - 1], pv0,
-                                                                    comment="Treatening", score=score_str0, emit=False)
+                                                                    comment="Threatening", score=score_str0, emit=False)
                                 except ParsingError as e:
                                     # ParsingErrors may happen when parsing "old" lines from
                                     # analyzing engines, which haven't yet noticed their new tasks
