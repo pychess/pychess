@@ -647,6 +647,15 @@ class ThemeTab:
 
         conf.set("board_style", conf.get("board_style", 0))
 
+        # Board frame
+        uistuff.createCombo(widgets["board_frame"], name="board_frame")
+        data = [(item[0], item[1]) for item in [(None, "no frame")] + board_items[1:]]
+
+        uistuff.createCombo(widgets["board_frame"], data)
+        uistuff.keep(widgets["board_frame"], "board_frame")
+
+        conf.set("board_frame", conf.get("board_frame", 0))
+
         # Board Colours
 
         style_ctxt = widgets["main_window"].get_style_context()

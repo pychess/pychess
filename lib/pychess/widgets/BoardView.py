@@ -164,6 +164,7 @@ class BoardView(Gtk.DrawingArea):
         ]
 
         self.board_style_name = None
+        self.board_frame_name = None
 
         self.draw_cid = self.connect("draw", self.expose)
         self.realize_cid = self.connect_after("realize", self.onRealized)
@@ -173,6 +174,7 @@ class BoardView(Gtk.DrawingArea):
             conf.notify_add("showCaptured", self.onShowCaptured),
             conf.notify_add("faceToFace", self.onFaceToFace),
             conf.notify_add("pieceTheme", self.onSetPieceTheme),
+            conf.notify_add("board_frame", self.onBoardFrameTheme),
             conf.notify_add("board_style", self.onBoardColourTheme),
             conf.notify_add("lightcolour", self.onBoardColourTheme),
             conf.notify_add("darkcolour", self.onBoardColourTheme),
@@ -195,7 +197,7 @@ class BoardView(Gtk.DrawingArea):
         self.padding = 0  # Set to self.pad when setcords is active
         self.square = 0, 0, self.FILES, 1  # An object global variable with the current
         # board size
-        self.pad = 0.13  # Padding applied only when setcords is active
+        self.pad = 0.06  # Padding applied only when setcords is active
 
         self._selected = None
         self._hover = None
@@ -208,6 +210,7 @@ class BoardView(Gtk.DrawingArea):
 
         self._shown = self.model.ply
 
+        self.no_frame = False
         self._show_cords = False
         self.show_cords = conf.get("showCords", False)
 
@@ -220,6 +223,9 @@ class BoardView(Gtk.DrawingArea):
         else:
             self.showCaptured = conf.get("showCaptured", False) or \
                 self.model.variant.variant in DROP_VARIANTS
+
+        self.onBoardColourTheme()
+        self.onBoardFrameTheme()
 
         self._show_enpassant = False
 
@@ -386,6 +392,36 @@ class BoardView(Gtk.DrawingArea):
         """ If the preference to display another set of board colours has been
             selected then refresh the board
         """
+        board_style = conf.get("board_style", 0)
+        self.colors_only = board_style == 0
+        if not self.colors_only:
+            # create dark and light square surfaces
+            board_style_name = preferencesDialog.board_items[board_style][1]
+            if self.board_style_name is None or self.board_style_name != board_style_name:
+                self.board_style_name = board_style_name
+                dark_png = addDataPrefix("boards/%s_d.png" % board_style_name)
+                light_png = addDataPrefix("boards/%s_l.png" % board_style_name)
+                self.dark_surface = cairo.ImageSurface.create_from_png(dark_png)
+                self.light_surface = cairo.ImageSurface.create_from_png(light_png)
+
+        self.redrawCanvas()
+
+    def onBoardFrameTheme(self, *args):
+        board_frame = conf.get("board_frame", 0)
+        self.no_frame = board_frame == 0
+        if not self.no_frame:
+            # create board frame surface
+            board_frame_name = preferencesDialog.board_items[board_frame][1]
+            if self.board_frame_name is None or self.board_frame_name != board_frame_name:
+                self.board_frame_name = board_frame_name
+                frame_png = addDataPrefix("boards/%s_d.png" % board_frame_name)
+                self.frame_surface = cairo.ImageSurface.create_from_png(frame_png)
+
+        if not self.show_cords and self.no_frame:
+            self.padding = 0.
+        else:
+            self.padding = self.pad
+
         self.redrawCanvas()
 
     ###############################
@@ -813,7 +849,7 @@ class BoardView(Gtk.DrawingArea):
 
     def drawCords(self, context, rectangle):
         thickness = 0.01
-        signsize = 0.04
+        signsize = 0.02
 
         if (not self.show_cords) and (not self.setup_position):
             return
@@ -826,20 +862,11 @@ class BoardView(Gtk.DrawingArea):
         thick = thickness * square
         sign_size = signsize * square
 
-        context.rectangle(xc_loc - thick * 1.5, yc_loc - thick * 1.5,
-                          square + thick * 3, square + thick * 3)
-
-        style_ctxt = self.get_style_context()
-        DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
-        dcolor = Gdk.RGBA()
-        dcolor.parse(conf.get("darkcolour", DARK))
-        context.set_source_rgba(dcolor.red, dcolor.green, dcolor.blue, dcolor.alpha)
-
-        context.set_line_width(thick)
-        context.set_line_join(cairo.LINE_JOIN_ROUND)
-        context.stroke()
-
         pangoScale = float(Pango.SCALE)
+        if self.no_frame:
+            context.set_source_rgb(0.0, 0.0, 0.0)
+        else:
+            context.set_source_rgb(1.0, 1.0, 1.0)
 
         def paint(inv):
             for num in range(self.RANKS):
@@ -851,12 +878,8 @@ class BoardView(Gtk.DrawingArea):
                 height = layout.get_extents()[0].height / pangoScale
 
                 # Draw left side
-                context.move_to(xc_loc - thick * 2.5 - width, side * num + yc_loc + height / 2 + thick)
+                context.move_to(xc_loc - thick - width, side * num + yc_loc + height / 2 + thick * 3)
                 PangoCairo.show_layout(context, layout)
-
-                # Draw right side
-                # context.move_to(xc_loc+square+thick*2.5, side*num+yc_loc+h/2+thick)
-                # context.show_layout(layout)
 
                 file = inv and self.FILES - num or num + 1
                 layout = self.create_pango_layout(chr(file + ord("A") - 1))
@@ -865,18 +888,12 @@ class BoardView(Gtk.DrawingArea):
 
                 width = layout.get_pixel_size()[0]
                 height = layout.get_pixel_size()[1]
-                y_attr = layout.get_extents()[1].y / pangoScale
-
-                # Draw top
-                # context.move_to(xc_loc+side*num+side/2.-width/2., yc_loc-height-thick*1.5)
-                # context.show_layout(layout)
 
                 # Draw bottom
-                context.move_to(xc_loc + side * num + side / 2. - width / 2.,
-                                yc_loc + square + thick * 1.5 + abs(y_attr))
+                context.move_to(xc_loc + side * num + side / 2 - width / 2, yc_loc + square)
                 PangoCairo.show_layout(context, layout)
 
-        matrix, invmatrix = matrixAround(self.matrix_pi, xc_loc + square / 2., yc_loc + square / 2.)
+        matrix, invmatrix = matrixAround(self.matrix_pi, xc_loc + square / 2, yc_loc + square / 2)
         paint(False)
 
         if conf.get("faceToFace", False):
@@ -903,23 +920,23 @@ class BoardView(Gtk.DrawingArea):
         context.paint()
         context.restore()
 
+    def draw_frame(self, context, image_surface, left, top, width, height):
+        """ Draw a repeated image pattern on a given context. """
+
+        pat = cairo.SurfacePattern(image_surface)
+        pat.set_extend(cairo.EXTEND_REPEAT)
+
+        context.rectangle(left, top, width, height)
+        context.set_source(pat)
+
+        context.fill()
+
     ###############################
     #          drawBoard          #
     ###############################
 
     def drawBoard(self, context, r):
         xc_loc, yc_loc, square, side = self.square
-
-        board_style = conf.get("board_style", 0)
-        colors_only = board_style == 0
-        if not colors_only:
-            board_style_name = preferencesDialog.board_items[board_style][1]
-            if self.board_style_name is None or self.board_style_name != board_style_name:
-                self.board_style_name = board_style_name
-                dark_png = addDataPrefix("boards/%s_d.png" % board_style_name)
-                light_png = addDataPrefix("boards/%s_l.png" % board_style_name)
-                self.dark_surface = cairo.ImageSurface.create_from_png(dark_png)
-                self.light_surface = cairo.ImageSurface.create_from_png(light_png)
 
         style_ctxt = self.get_style_context()
         LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])
@@ -936,11 +953,11 @@ class BoardView(Gtk.DrawingArea):
             for x_loc in range(self.FILES):
                 for y_loc in range(self.RANKS):
                     if x_loc % 2 + y_loc % 2 != 1:
-                        if colors_only:
+                        if self.colors_only:
                             context.rectangle(xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
                         else:
                             self.draw_image(context, self.light_surface, xc_loc + x_loc * side, yc_loc + y_loc * side, side, side)
-            if colors_only:
+            if self.colors_only:
                 context.fill()
 
         style_ctxt = self.get_style_context()
@@ -966,14 +983,27 @@ class BoardView(Gtk.DrawingArea):
             for x_loc in range(self.FILES):
                 for y_loc in range(self.RANKS):
                     if x_loc % 2 + y_loc % 2 == 1:
-                        if colors_only:
+                        if self.colors_only:
                             context.rectangle((xc_loc + x_loc * side), (yc_loc + y_loc * side), side, side)
                         else:
                             self.draw_image(context, self.dark_surface, (xc_loc + x_loc * side), (yc_loc + y_loc * side), side, side)
-            if colors_only:
+            if self.colors_only:
                 context.fill()
 
+        if not self.no_frame:
+            # board frame
+            delta = side / 4
+            # top
+            self.draw_frame(context, self.frame_surface, xc_loc - delta, yc_loc - delta, self.FILES * side + delta * 2, delta)
+            # bottom
+            self.draw_frame(context, self.frame_surface, xc_loc - delta, yc_loc + self.RANKS * side, self.FILES * side + delta * 2, delta)
+            # left
+            self.draw_frame(context, self.frame_surface, xc_loc - delta, yc_loc, delta, self.FILES * side)
+            # right
+            self.draw_frame(context, self.frame_surface, xc_loc + self.FILES * side, yc_loc, delta, self.FILES * side)
+
         if self.draw_grid:
+            # grid lines between squares
             context.set_source_rgb(0.0, 0.0, 0.0)
             context.set_line_width(1.0)
 
@@ -1623,7 +1653,7 @@ class BoardView(Gtk.DrawingArea):
     draw_grid = property(_getDrawGrid, _setDrawGrid)
 
     def _setShowCords(self, show_cords):
-        if not show_cords:
+        if not show_cords and self.no_frame:
             self.padding = 0.
         else:
             self.padding = self.pad
