@@ -7,11 +7,18 @@ firstRun = True
 def run(widgets):
     persp = perspective_manager.get_perspective("games")
     gamemodel = persp.cur_gmwidg().gamemodel
-    widgets["event_entry"].set_text(gamemodel.tags["Event"])
-    widgets["site_entry"].set_text(gamemodel.tags["Site"])
-    widgets["round_entry"].set_text(str(gamemodel.tags["Round"]))
-    widgets["white_entry"].set_text(gamemodel.tags["White"])
-    widgets["black_entry"].set_text(gamemodel.tags["Black"])
+
+    def set_field_value(name, tag):
+        widgets[name].set_text(str(gamemodel.tags[tag] if tag in gamemodel.tags else ""))
+
+    set_field_value("event_entry", "Event")
+    set_field_value("site_entry", "Site")
+    set_field_value("round_entry", "Round")
+    set_field_value("white_entry", "White")
+    set_field_value("black_entry", "Black")
+    set_field_value("white_elo_entry", "WhiteElo")
+    set_field_value("black_elo_entry", "BlackElo")
+    set_field_value("annotator_entry", "Annotator")
 
     # Notice: GtkCalender month goes from 0 to 11, but gamemodel goes from
     # 1 to 12
@@ -40,6 +47,9 @@ def initialize(widgets):
         gamemodel.tags["Round"] = widgets["round_entry"].get_text()
         gamemodel.tags["White"] = widgets["white_entry"].get_text()
         gamemodel.tags["Black"] = widgets["black_entry"].get_text()
+        gamemodel.tags["WhiteElo"] = widgets["white_elo_entry"].get_text()
+        gamemodel.tags["BlackElo"] = widgets["black_elo_entry"].get_text()
+        gamemodel.tags["Annotator"] = widgets["annotator_entry"].get_text()
         gamemodel.tags["Year"] = widgets["game_info_calendar"].get_date()[0]
         gamemodel.tags["Month"] = widgets["game_info_calendar"].get_date()[
             1] + 1
