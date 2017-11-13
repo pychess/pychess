@@ -145,11 +145,11 @@ def save(handle, model, position=None):
     print('[White "%s"]' % repr(model.players[WHITE]), file=handle)
     print('[Black "%s"]' % repr(model.players[BLACK]), file=handle)
     print('[Result "%s"]' % status, file=handle)
-    if ("ECO" in model.tags) and (model.tags["ECO"] != ''):
+    if "ECO" in model.tags and model.tags["ECO"] != "":
         print('[ECO "%s"]' % model.tags["ECO"], file=handle)
-    if "WhiteElo" in model.tags:
+    if "WhiteElo" in model.tags and model.tags["WhiteElo"] != "":
         print('[WhiteElo "%s"]' % model.tags["WhiteElo"], file=handle)
-    if "BlackElo" in model.tags:
+    if "BlackElo" in model.tags and model.tags["BlackElo"] != "":
         print('[BlackElo "%s"]' % model.tags["BlackElo"], file=handle)
     if "TimeControl" in model.tags:
         print('[TimeControl "%s"]' % model.tags["TimeControl"], file=handle)
@@ -167,24 +167,24 @@ def save(handle, model, position=None):
         print('[SetUp "1"]', file=handle)
         print('[FEN "%s"]' % model.boards[0].asFen(), file=handle)
     print('[PlyCount "%s"]' % (model.ply - model.lowply), file=handle)
-    if "Annotator" in model.tags:
+    if "Annotator" in model.tags and model.tags["Annotator"] != "":
         print('[Annotator "%s"]' % model.tags["Annotator"], file=handle)
     if model.reason == WON_CALLFLAG:
-        termination = "Time forfeit"
+        termination = "time forfeit"
     elif model.reason == WON_ADJUDICATION and model.isEngine2EngineGame():
-        termination = "Rules infraction"
+        termination = "rules infraction"
     elif model.reason in (DRAW_ADJUDICATION, WON_ADJUDICATION):
-        termination = "Adjudication"
+        termination = "adjudication"
     elif model.reason == WHITE_ENGINE_DIED:
-        termination = "White engine died"
+        termination = "white engine died"
     elif model.reason == BLACK_ENGINE_DIED:
-        termination = "Black engine died"
+        termination = "black engine died"
     elif model.reason in ABORTED_REASONS:
-        termination = "Abandoned"
+        termination = "abandoned"
     elif model.reason in ADJOURNED_REASONS:
-        termination = "Unterminated"
+        termination = "unterminated"
     else:
-        termination = "Normal"
+        termination = "normal"
     print('[Termination "%s"]' % termination, file=handle)
 
     print("", file=handle)
