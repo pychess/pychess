@@ -124,6 +124,7 @@ class CECPEngine(ProtocolEngine):
         self.name = None
 
         self.board = Board(setup=True)
+        self.board_changing = False
 
         # if self.engineIsInNotPlaying == True, engine is in "force" mode,
         # i.e. not thinking or playing, but still verifying move legality
@@ -376,6 +377,7 @@ class CECPEngine(ProtocolEngine):
             self.__usermove(board, move)
 
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
+            self.board_changing = True
             self.board = boards[-1]
         if self.mode == INVERSE_ANALYZING:
             self.board = self.board.switchColor()
@@ -593,7 +595,7 @@ class CECPEngine(ProtocolEngine):
             # Many engines don't like positions able to take down enemy
             # king. Therefore we just return the "kill king" move
             # automaticaly
-            self.emit("analyze", [([toAN(
+            self.emit("analyze", [(self.board.ply, [toAN(
                 self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, "")])
             return
 
@@ -742,7 +744,10 @@ class CECPEngine(ProtocolEngine):
 
                         mvstrs = movere.findall(moves)
                         if mvstrs:
-                            self.emit("analyze", [(mvstrs, scoreval, depth.strip())])
+                            if self.board_changing:
+                                self.board_changing = False
+                            else:
+                                self.emit("analyze", [(self.board.ply, mvstrs, scoreval, depth.strip())])
 
                         continue
 

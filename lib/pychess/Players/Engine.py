@@ -16,10 +16,10 @@ from .Player import Player
 class Engine(Player):
 
     __type__ = ARTIFICIAL
-    ''' Argument is a vector of analysis lines.
-        The first element is the pv list of moves. The second is a score
+    ''' "analyze" signal emits list of analysis lines. Lines are 4 element tuples.
+        The first element is game ply. Second is pv string of moves. Third is a score
         relative to the engine. If no score is known, the value can be None,
-        but not 0, which is a draw. '''
+        but not 0, which is a draw. Fouth is the depth of the search '''
     __gsignals__ = {
         'analyze': (GObject.SignalFlags.RUN_FIRST, None, (object, ))
     }

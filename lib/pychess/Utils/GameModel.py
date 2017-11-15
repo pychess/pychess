@@ -280,8 +280,7 @@ class GameModel(GObject.GObject):
 
     def on_analyze(self, analyzer, analysis):
         if analysis and analysis[0] is not None:
-            pv, score, depth = analysis[0]
-            ply = analyzer.board.ply
+            ply, pv, score, depth = analysis[0]
             if score is not None:
                 if analyzer.mode == ANALYZING:
                     if (ply not in self.scores) or (int(self.scores[ply][2]) <= int(depth)):

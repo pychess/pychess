@@ -51,6 +51,7 @@ class UCIEngine(ProtocolEngine):
         self.uciPosition = "startpos"
         self.uciPositionListsMoves = False
         self.analysis = [None]
+        self.board_changing = False
 
         self.queue = asyncio.Queue()
         self.parse_line_task = asyncio.async(self.parseLine(self.engine))
@@ -179,6 +180,7 @@ class UCIEngine(ProtocolEngine):
                 self.uciPositionListsMoves = True
             self.uciPosition += " " + self._moveToUCI(board2, move)
 
+        self.board_changing = True
         self.board = self.gameBoard = board1
         if self.mode == INVERSE_ANALYZING:
             self.board = self.gameBoard.switchColor()
@@ -428,7 +430,7 @@ class UCIEngine(ProtocolEngine):
                     # Many engines don't like positions able to take down enemy
                     # king. Therefore we just return the "kill king" move
                     # automaticaly
-                    self.emit("analyze", [([toAN(
+                    self.emit("analyze", [(self.board.ply, [toAN(
                         self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, "")])
                     return
                 commands.append("position fen %s" % self.board.asFen())
@@ -617,9 +619,13 @@ class UCIEngine(ProtocolEngine):
                         depth = ""
 
                     if multipv <= len(self.analysis):
-                        self.analysis[multipv - 1] = (movstrs, score, depth)
+                        self.analysis[multipv - 1] = (self.board.ply, movstrs, score, depth)
 
-                    self.emit("analyze", self.analysis)
+                    # don't emit analysis line based on old bord with new board
+                    if self.board_changing:
+                        self.board_changing = False
+                    else:
+                        self.emit("analyze", self.analysis)
                     continue
 
                 # An Analyzer bestmove

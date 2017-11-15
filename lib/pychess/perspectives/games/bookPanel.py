@@ -230,16 +230,15 @@ class EngineAdvisor(Advisor):
                 self.store[self.path + (i, )] = self.textOnlyRow("")
                 continue
 
-            board0 = self.engine.board
+            ply, movstrs, score, depth = line
+            board0 = self.boardview.model.getBoardAtPly(ply)
             board = board0.clone()
-
-            movstrs, score, depth = line
             try:
                 pv = listToMoves(board, movstrs, validate=True)
             except ParsingError as e:
                 # ParsingErrors may happen when parsing "old" lines from
                 # analyzing engines, which haven't yet noticed their new tasks
-                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" %
+                log.debug("EngineAdvisor.on_analyze(): Ignored (%s) from analyzer: ParsingError%s" %
                           (' '.join(movstrs), e))
                 return
             except:

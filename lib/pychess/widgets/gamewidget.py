@@ -408,14 +408,14 @@ class GameWidget(GObject.GObject):
             return
 
         if len(analysis) >= 1 and analysis[0] is not None:
-            movstrs, score, depth = analysis[0]
-            board = analyzer.board
+            ply, movstrs, score, depth = analysis[0]
+            board = self.gamemodel.getBoardAtPly(ply)
             try:
                 moves = listToMoves(board, movstrs, validate=True)
             except ParsingError as e:
                 # ParsingErrors may happen when parsing "old" lines from
                 # analyzing engines, which haven't yet noticed their new tasks
-                log.debug("__parseLine: Ignored (%s) from analyzer: ParsingError%s" %
+                log.debug("GameWidget._on_analyze(): Ignored (%s) from analyzer: ParsingError%s" %
                           (' '.join(movstrs), e))
                 return
             except:
