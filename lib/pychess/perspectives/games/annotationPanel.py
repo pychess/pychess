@@ -74,6 +74,7 @@ class Sidepanel:
         color4 = Gdk.RGBA(red=0.8, green=0.0, blue=0.0)
         color5 = Gdk.RGBA(red=1.0, green=0.0, blue=0.0)
 
+        self.need_remove_variation = None
         self.remove_vari_tag = self.textbuffer.create_tag("remove-variation")
         self.rmv_cid = self.remove_vari_tag.connect("event", self.tag_event_handler)
 
@@ -195,7 +196,7 @@ class Sidepanel:
             if node is None:
                 return
 
-            self.remove_variation(node)
+            self.need_remove_variation = node
 
         return False
 
@@ -272,7 +273,9 @@ class Sidepanel:
         # left mouse click
         if event.button == 1:
             if "vari" in node:
-                # tag_event_handler() will handle
+                if self.need_remove_variation is not None:
+                    self.remove_variation(self.need_remove_variation)
+                    self.need_remove_variation = None
                 return True
             elif "comment" in node:
                 self.edit_comment(board=board, index=node["index"])
@@ -329,17 +332,17 @@ class Sidepanel:
                 self.menu.append(menuitem)
 
                 symbol_menu2 = Gtk.Menu()
-                for nag, menutext in (("$10",  _("Drawish")),
-                                      ("$13",  _("Unclear position")),
-                                      ("$14",  _("Slight advantage")),
-                                      ("$16",  _("Moderate advantage")),
-                                      ("$18",  _("Decisive advantage")),
-                                      ("$20",  _("Crushing advantage")),
-                                      ("$22",  _("Zugzwang")),
-                                      ("$32",  _("Development advantage")),
-                                      ("$36",  _("Initiative")),
-                                      ("$40",  _("With attack")),
-                                      ("$44",  _("Compensation")),
+                for nag, menutext in (("$10", _("Drawish")),
+                                      ("$13", _("Unclear position")),
+                                      ("$14", _("Slight advantage")),
+                                      ("$16", _("Moderate advantage")),
+                                      ("$18", _("Decisive advantage")),
+                                      ("$20", _("Crushing advantage")),
+                                      ("$22", _("Zugzwang")),
+                                      ("$32", _("Development advantage")),
+                                      ("$36", _("Initiative")),
+                                      ("$40", _("With attack")),
+                                      ("$44", _("Compensation")),
                                       ("$132", _("Counterplay")),
                                       ("$138", _("Time pressure"))):
                     menuitem = Gtk.MenuItem("%s %s" % (nag2symbol(nag), menutext))
