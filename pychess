@@ -95,6 +95,11 @@ except ImportError:
 ###############################################################################
 # Parse command line arguments
 
+from pychess.System.Log import log, LoggerWriter
+if getattr(sys, 'frozen', False):
+    sys.stdout = LoggerWriter(logging.getLogger("STDOUT"), logging.INFO)
+    sys.stderr = LoggerWriter(logging.getLogger("STDERR"), logging.ERROR)
+
 log_viewer = False
 chess_file = sys.argv[1] if len(sys.argv) > 1 else None
 ics_host = None
@@ -188,7 +193,6 @@ else:
         locale.bindtextdomain(domain, locale_dir)
 
 try:
-    from pychess.System.Log import log, LoggerWriter
     from pychess.System.LogEmitter import GLogHandler, logemitter
     from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
     from pychess.System import conf
@@ -199,9 +203,6 @@ except ImportError:
 
 ###############################################################################
 # Start logging
-if getattr(sys, 'frozen', False):
-    sys.stdout = LoggerWriter(logging.getLogger("STDOUT"), logging.INFO)
-    sys.stderr = LoggerWriter(logging.getLogger("STDERR"), logging.ERROR)
 
 if log_viewer:
     log.logger.addHandler(GLogHandler(logemitter))
