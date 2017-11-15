@@ -81,7 +81,7 @@ class EnginesDialog():
                                                  Gtk.CellRendererPixbuf(),
                                                  pixbuf=0))
         name_renderer = Gtk.CellRendererText()
-        name_renderer.set_property("editable", True)
+        name_renderer.set_property("editable", False)
         self.tv.append_column(Gtk.TreeViewColumn("Name",
                                                  name_renderer,
                                                  text=1))
