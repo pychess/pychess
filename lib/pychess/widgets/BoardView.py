@@ -1215,10 +1215,12 @@ class BoardView(Gtk.DrawingArea):
 
         for cord in self.circles:
             x_loc, y_loc = self.cord2Point(cord)
+            context.new_sub_path()
             context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
             context.stroke()
         if self.pre_circle is not None:
             x_loc, y_loc = self.cord2Point(self.pre_circle)
+            context.new_sub_path()
             context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
             context.stroke()
 
