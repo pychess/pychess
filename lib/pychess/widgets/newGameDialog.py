@@ -649,7 +649,6 @@ class SetupPositionExtension(_GameInitializationMode):
         cls.widgets["moveno_spin"].set_value(lboard.plyCount // 2 + 1)
         ep = lboard.enpassant
         cls.widgets["ep_combo"].set_active(0 if ep is None else FILE(ep) + 1)
-        cls.castl = set()
         cls.widgets["woo"].set_active(lboard.castling & W_OO)
         cls.widgets["wooo"].set_active(lboard.castling & W_OOO)
         cls.widgets["boo"].set_active(lboard.castling & B_OO)
