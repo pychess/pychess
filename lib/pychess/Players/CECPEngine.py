@@ -124,7 +124,6 @@ class CECPEngine(ProtocolEngine):
         self.name = None
 
         self.board = Board(setup=True)
-        self.board_changing = False
 
         # if self.engineIsInNotPlaying == True, engine is in "force" mode,
         # i.e. not thinking or playing, but still verifying move legality
@@ -282,9 +281,15 @@ class CECPEngine(ProtocolEngine):
     # Send the player move updates
 
     def setBoard(self, board, search=True):
-        self.setBoardList([board], [])
-        if search:
-            self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+        def coro():
+            if self.engineIsAnalyzing:
+                self.__stop_analyze()
+                yield from asyncio.sleep(0.1)
+
+            self.setBoardList([board], [])
+            if search:
+                self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+        asyncio.async(coro())
 
     def putMove(self, board1, move, board2):
         """ Sends the engine the last move made (for spectator engines).
@@ -292,10 +297,15 @@ class CECPEngine(ProtocolEngine):
             @param move: The last move made
             @param board2: The board before the last move was made
         """
+        def coro():
+            if self.engineIsAnalyzing:
+                self.__stop_analyze()
+                yield from asyncio.sleep(0.1)
 
-        self.setBoardList([board1], [])
-        if not self.analyzing_paused:
-            self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+            self.setBoardList([board1], [])
+            if not self.analyzing_paused:
+                self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
+        asyncio.async(coro())
 
     @asyncio.coroutine
     def makeMove(self, board1, move, board2):
@@ -377,7 +387,6 @@ class CECPEngine(ProtocolEngine):
             self.__usermove(board, move)
 
         if self.mode in (ANALYZING, INVERSE_ANALYZING):
-            self.board_changing = True
             self.board = boards[-1]
         if self.mode == INVERSE_ANALYZING:
             self.board = self.board.switchColor()
@@ -744,10 +753,7 @@ class CECPEngine(ProtocolEngine):
 
                         mvstrs = movere.findall(moves)
                         if mvstrs:
-                            if self.board_changing:
-                                self.board_changing = False
-                            else:
-                                self.emit("analyze", [(self.board.ply, mvstrs, scoreval, depth.strip())])
+                            self.emit("analyze", [(self.board.ply, mvstrs, scoreval, depth.strip())])
 
                         continue
 

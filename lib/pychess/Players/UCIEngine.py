@@ -41,6 +41,7 @@ class UCIEngine(ProtocolEngine):
         self.ignoreNext = False
         self.waitingForMove = False
         self.needBestmove = False
+        self.bestmove_event = asyncio.Event()
         self.readyForStop = False  # keeps track of whether we already sent a 'stop' command
         self.multipvSetting = 1  # MultiPV option sent to the engine
         self.multipvExpected = 1  # Number of PVs expected (limited by number of legal moves)
@@ -51,7 +52,6 @@ class UCIEngine(ProtocolEngine):
         self.uciPosition = "startpos"
         self.uciPositionListsMoves = False
         self.analysis = [None]
-        self.board_changing = False
 
         self.queue = asyncio.Queue()
         self.parse_line_task = asyncio.async(self.parseLine(self.engine))
@@ -180,7 +180,6 @@ class UCIEngine(ProtocolEngine):
                 self.uciPositionListsMoves = True
             self.uciPosition += " " + self._moveToUCI(board2, move)
 
-        self.board_changing = True
         self.board = self.gameBoard = board1
         if self.mode == INVERSE_ANALYZING:
             self.board = self.gameBoard.switchColor()
@@ -196,22 +195,38 @@ class UCIEngine(ProtocolEngine):
     def setBoard(self, board, search=True):
         log.debug("setBoardAtPly: board=%s" % board,
                   extra={"task": self.defname})
-        self._recordMove(board, None, None)
-
         if not self.readyMoves:
             return
-        if search:
-            self._searchNow()
+
+        @asyncio.coroutine
+        def coro():
+            if self.needBestmove:
+                self.bestmove_event.clear()
+                print("stop", file=self.engine)
+                yield from self.bestmove_event.wait()
+
+            self._recordMove(board, None, None)
+            if search:
+                self._searchNow()
+        asyncio.async(coro())
 
     def putMove(self, board1, move, board2):
         log.debug("putMove: board1=%s move=%s board2=%s self.board=%s" % (
             board1, move, board2, self.board), extra={"task": self.defname})
-        self._recordMove(board1, move, board2)
-
         if not self.readyMoves:
             return
-        if not self.analyzing_paused:
-            self._searchNow()
+
+        @asyncio.coroutine
+        def coro():
+            if self.needBestmove:
+                self.bestmove_event.clear()
+                print("stop", file=self.engine)
+                yield from self.bestmove_event.wait()
+
+            self._recordMove(board1, move, board2)
+            if not self.analyzing_paused:
+                self._searchNow()
+        asyncio.async(coro())
 
     @asyncio.coroutine
     def makeMove(self, board1, move, board2):
@@ -528,6 +543,7 @@ class UCIEngine(ProtocolEngine):
                 # A Move
                 if self.mode == NORMAL and parts[0] == "bestmove":
                     self.needBestmove = False
+                    self.bestmove_event.set()
                     self.__sendQueuedGo()
 
                     if self.ignoreNext:
@@ -620,12 +636,7 @@ class UCIEngine(ProtocolEngine):
 
                     if multipv <= len(self.analysis):
                         self.analysis[multipv - 1] = (self.board.ply, movstrs, score, depth)
-
-                    # don't emit analysis line based on old bord with new board
-                    if self.board_changing:
-                        self.board_changing = False
-                    else:
-                        self.emit("analyze", self.analysis)
+                    self.emit("analyze", self.analysis)
                     continue
 
                 # An Analyzer bestmove
@@ -633,6 +644,7 @@ class UCIEngine(ProtocolEngine):
                     log.debug("__parseLine: processing analyzer bestmove='%s'" % line.strip(),
                               extra={"task": self.defname})
                     self.needBestmove = False
+                    self.bestmove_event.set()
                     self.__sendQueuedGo(sendlast=True)
                     continue
 
