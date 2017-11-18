@@ -226,6 +226,19 @@ class GameModel(GObject.GObject):
         log.debug("GameModel.setPlayers: <- emit players_changed")
         log.debug("GameModel.setPlayers: returning")
 
+    def getTag(self, name, defaultValue):
+        if name in self.tags and self.tags[name] is not None:
+            return self.tags[name]
+        else:
+            return defaultValue
+
+    def getTagExport(self, name, defaultValue):
+        val = self.getTag(name, defaultValue)
+        if type(val) is str:
+            val = val.replace("\\", "\\\\")
+            val = val.replace("\"", "\\\"")
+        return val
+
     def color(self, player):
         if player is self.players[0]:
             return WHITE
@@ -299,7 +312,7 @@ class GameModel(GObject.GObject):
         if ply > 0:
             opening = get_eco(self.getBoardAtPly(ply).board.hash)
         else:
-            opening = ("", "", "")
+            opening = None
         if opening is not None:
             self.tags["ECO"] = opening[0]
             self.tags["Opening"] = opening[1]

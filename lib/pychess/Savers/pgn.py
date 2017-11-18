@@ -33,6 +33,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.lutils.lmove import toSAN, parseSAN, ParsingError
 from pychess.Utils.Move import Move
+from pychess.Utils.elo import get_elo_rating_change_pgn
 from pychess.Utils.logic import getStatus
 from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Variants import name2variant, NormalBoard, variants
@@ -137,22 +138,39 @@ def save(handle, model, position=None):
 
     status = "%s" % reprResult[model.status]
 
-    print('[Event "%s"]' % model.tags["Event"], file=handle)
-    print('[Site "%s"]' % model.tags["Site"], file=handle)
+    print('[Event "%s"]' % model.getTagExport("Event", ""), file=handle)
+    print('[Site "%s"]' % model.getTagExport("Site", ""), file=handle)
     print('[Date "%04d.%02d.%02d"]' %
           (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])), file=handle)
-    print('[Round "%s"]' % model.tags["Round"], file=handle)
+    print('[Round "%s"]' % model.getTagExport("Round", "?"), file=handle)
     print('[White "%s"]' % repr(model.players[WHITE]), file=handle)
     print('[Black "%s"]' % repr(model.players[BLACK]), file=handle)
     print('[Result "%s"]' % status, file=handle)
-    if "ECO" in model.tags and model.tags["ECO"] != "":
-        print('[ECO "%s"]' % model.tags["ECO"], file=handle)
-    if "WhiteElo" in model.tags and model.tags["WhiteElo"] != "":
-        print('[WhiteElo "%s"]' % model.tags["WhiteElo"], file=handle)
-    if "BlackElo" in model.tags and model.tags["BlackElo"] != "":
-        print('[BlackElo "%s"]' % model.tags["BlackElo"], file=handle)
-    if "TimeControl" in model.tags:
-        print('[TimeControl "%s"]' % model.tags["TimeControl"], file=handle)
+    tag = model.getTagExport("ECO", "")
+    if tag != "":
+        print('[ECO "%s"]' % tag, file=handle)
+        tag = model.getTagExport("Opening", "")
+        if tag != "":
+            print('[Opening "%s"]' % tag, file=handle)  # Unofficial
+            tag = model.getTagExport("Variation", "")
+            if tag != "":
+                print('[Variation "%s"]' % tag, file=handle)  # Unofficial
+    welo = model.getTagExport("WhiteElo", "")
+    if welo != "":
+        print('[WhiteElo "%s"]' % welo, file=handle)
+    belo = model.getTagExport("BlackElo", "")
+    if belo != "":
+        print('[BlackElo "%s"]' % belo, file=handle)
+    if welo != "" and belo != "":
+        diff = str(get_elo_rating_change_pgn(model, WHITE))
+        if diff != "":
+            print('[WhiteRatingDiff "%s"]' % diff, file=handle)  # Unofficial
+        diff = str(get_elo_rating_change_pgn(model, BLACK))
+        if diff != "":
+            print('[BlackRatingDiff "%s"]' % diff, file=handle)  # Unofficial
+    tag = model.getTagExport("TimeControl", "")
+    if tag != "":
+        print('[TimeControl "%s"]' % tag, file=handle)
     if model.timed:
         print('[WhiteClock "%s"]' %
               msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)), file=handle)
@@ -167,8 +185,9 @@ def save(handle, model, position=None):
         print('[SetUp "1"]', file=handle)
         print('[FEN "%s"]' % model.boards[0].asFen(), file=handle)
     print('[PlyCount "%s"]' % (model.ply - model.lowply), file=handle)
-    if "Annotator" in model.tags and model.tags["Annotator"] != "":
-        print('[Annotator "%s"]' % model.tags["Annotator"], file=handle)
+    tag = model.getTagExport("Annotator", "")
+    if tag != "":
+        print('[Annotator "%s"]' % tag, file=handle)
     if model.reason == WON_CALLFLAG:
         termination = "time forfeit"
     elif model.reason == WON_ADJUDICATION and model.isEngine2EngineGame():
