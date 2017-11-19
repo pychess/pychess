@@ -2,8 +2,7 @@ from pychess.Utils.const import WHITE, WHITEWON, BLACK, BLACKWON, DRAW
 
 
 def get_elo_rating_change(model, overridden_welo, overridden_belo):
-
-# http://www.fide.com/fide/handbook.html?id=197&view=article (§8.5, July 2017)
+    """ http://www.fide.com/fide/handbook.html?id=197&view=article (§8.5, July 2017) """
 
     def individual_elo_change(elo_player, elo_opponent, blitz):
         result = {}
@@ -21,7 +20,7 @@ def get_elo_rating_change(model, overridden_welo, overridden_belo):
         if pval == 0 or oval == 0:
             return None
 
-        # Development coefficient - We ignore the age of the player and we assume that
+        # Development coefficient - We ignore the age of the player and we assume that
         # he is already rated. The provisional flag '?' just denotes that he has not
         # played his first 30 games, but it may also denotes that he never had any
         # ranking. The calculation being based on the current game only, we can't
@@ -37,7 +36,7 @@ def get_elo_rating_change(model, overridden_welo, overridden_belo):
                 else:
                     k = 20
 
-        # Probability of gain
+        # Probability of gain
         d = pval - oval
         d = max(-400, d)
         d = min(400, d)
@@ -85,10 +84,11 @@ def get_elo_rating_change(model, overridden_welo, overridden_belo):
 
 
 def get_elo_rating_change_str(model, player, overridden_welo, overridden_belo):
-    # Determination of the ELO rating change
+    """ Determination of the ELO rating change """
+
     erc = get_elo_rating_change(model, overridden_welo, overridden_belo)
     if erc is None:
-        return "-"
+        return ""
     erc = erc[player]
 
     # Status of the game

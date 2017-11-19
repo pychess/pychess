@@ -1,3 +1,5 @@
+from gi.repository import Gtk, Gdk
+
 from pychess.Utils.const import BLACK, WHITE
 from pychess.perspectives import perspective_manager
 from pychess.Utils.elo import get_elo_rating_change_str
@@ -68,10 +70,26 @@ def initialize(widgets):
     widgets["game_info_ok_button"].connect("clicked", accept_new_properties)
 
 
+red = Gdk.RGBA(.643, 0, 0, 1)
+green = Gdk.RGBA(.306, .604, .024, 1)
+black = Gdk.RGBA(0.0, 0.0, 0.0, 1.0)
+
 def refresh_elo_rating_change(widgets):
     persp = perspective_manager.get_perspective("games")
     gamemodel = persp.cur_gmwidg().gamemodel
     welo = widgets["white_elo_entry"].get_text()
     belo = widgets["black_elo_entry"].get_text()
-    widgets["w_elo_change"].set_text(get_elo_rating_change_str(gamemodel, WHITE, welo, belo))
-    widgets["b_elo_change"].set_text(get_elo_rating_change_str(gamemodel, BLACK, welo, belo))
+
+    wchange = get_elo_rating_change_str(gamemodel, WHITE, welo, belo)
+    widgets["w_elo_change"].set_text(wchange)
+    if wchange.startswith("+") or wchange.startswith("-"):
+        widgets["w_elo_change"].override_color(Gtk.StateFlags.NORMAL, red if wchange.startswith("-") else green)
+    else:
+        widgets["w_elo_change"].override_color(Gtk.StateFlags.NORMAL, black)
+
+    bchange = get_elo_rating_change_str(gamemodel, BLACK, welo, belo)
+    widgets["b_elo_change"].set_text(bchange)
+    if bchange.startswith("+") or bchange.startswith("-"):
+        widgets["b_elo_change"].override_color(Gtk.StateFlags.NORMAL, red if bchange.startswith("-") else green)
+    else:
+        widgets["b_elo_change"].override_color(Gtk.StateFlags.NORMAL, black)
