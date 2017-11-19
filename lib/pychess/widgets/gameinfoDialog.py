@@ -74,9 +74,18 @@ red = Gdk.RGBA(.643, 0, 0, 1)
 green = Gdk.RGBA(.306, .604, .024, 1)
 black = Gdk.RGBA(0.0, 0.0, 0.0, 1.0)
 
+
 def refresh_elo_rating_change(widgets):
     persp = perspective_manager.get_perspective("games")
     gamemodel = persp.cur_gmwidg().gamemodel
+
+    site = gamemodel.tags["Site"]
+    if "lichess.org" in site or "chessclub.com" in site or "freechess.org" in site:
+        # TODO
+        widgets["w_elo_change"].set_text("")
+        widgets["b_elo_change"].set_text("")
+        return
+
     welo = widgets["white_elo_entry"].get_text()
     belo = widgets["black_elo_entry"].get_text()
 
