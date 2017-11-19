@@ -161,7 +161,7 @@ def save(handle, model, position=None):
     belo = model.getTagExport("BlackElo", "")
     if belo != "":
         print('[BlackElo "%s"]' % belo, file=handle)
-    if welo != "" and belo != "":
+    if welo != "" and belo != "" and conf.get("saveRatingChange", False):
         diff = str(get_elo_rating_change_pgn(model, WHITE))
         if diff != "":
             print('[WhiteRatingDiff "%s"]' % diff, file=handle)  # Unofficial
