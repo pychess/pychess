@@ -635,22 +635,30 @@ def init_engine(analyzer_type, gamemodel, force=False):
     if analyzer_type == HINT:
         combo_name = "ana_combobox"
         check_name = "analyzer_check"
+        default = True
         mode = ANALYZING
     else:
         combo_name = "inv_ana_combobox"
         check_name = "inv_analyzer_check"
+        default = False
         mode = INVERSE_ANALYZING
 
     analyzer = None
 
-    if conf.get(check_name, True):
+    if conf.get(check_name, default):
         anaengines = list(discoverer.getAnalyzers())
         if len(anaengines) == 0:
             return None
 
         engine = discoverer.getEngineByMd5(conf.get(combo_name, 0))
         if engine is None:
-            # Let Stockfish to be default analyzer in Windows installer
+            if sys.platform == "win32":
+                # Let Stockfish to be default analyzer in Windows installer
+                engine = discoverer.getEngineN(-1)
+            else:
+                engine = discoverer.getEngineByName("stockfish")
+
+        if engine is None:
             engine = anaengines[-1]
 
         if gamemodel.variant.variant in discoverer.getEngineVariants(engine):

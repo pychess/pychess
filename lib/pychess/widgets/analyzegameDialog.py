@@ -67,7 +67,7 @@ class AnalyzeGameDialog():
             gmwidg.menuitems["hint_mode"].active = True
             threat_PV = conf.get("ThreatPV", False)
             if threat_PV:
-                old_inv_check_value = conf.get("inv_analyzer_check", True)
+                old_inv_check_value = conf.get("inv_analyzer_check", False)
                 conf.set("inv_analyzer_check", True)
                 if SPY not in gamemodel.spectators:
                     asyncio.async(gamemodel.start_analyzer(SPY))

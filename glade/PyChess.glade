@@ -653,8 +653,8 @@
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="F11" signal="activate"/>
                         <accelerator key="Escape" signal="activate"/>
+                        <accelerator key="F11" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -1643,25 +1643,6 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="showCords">
-                                        <property name="label" translatable="yes">Sho_w cords</property>
-                                        <property name="use_action_appearance">False</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="tooltip_text" translatable="yes">If set, the playing board will display labels and ranks for each chess field. These are usable in chess notation.</property>
-                                        <property name="halign">start</property>
-                                        <property name="use_underline">True</property>
-                                        <property name="xalign">0.5</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">5</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkCheckButton" id="showCaptured">
                                         <property name="label" translatable="yes">Show _captured pieces</property>
                                         <property name="use_action_appearance">False</property>
@@ -1961,7 +1942,6 @@
                                         <property name="halign">start</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
-                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -2039,7 +2019,6 @@ http://www.olympuschess.com/egtb/gaviota/</property>
                                         <property name="halign">start</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
-                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -2113,7 +2092,6 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="halign">start</property>
                                     <property name="use_underline">True</property>
                                     <property name="xalign">0.5</property>
-                                    <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
@@ -2172,7 +2150,6 @@ It will search positions from http://www.k4it.de/</property>
                                         <property name="halign">start</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
-                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -2246,7 +2223,6 @@ It will search positions from http://www.k4it.de/</property>
                                         <property name="halign">start</property>
                                         <property name="use_underline">True</property>
                                         <property name="xalign">0.5</property>
-                                        <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                       <packing>
@@ -2969,7 +2945,22 @@ It will search positions from http://www.k4it.de/</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <placeholder/>
+                                              <object class="GtkCheckButton" id="showCords">
+                                                <property name="label" translatable="yes">Sho_w cords</property>
+                                                <property name="use_action_appearance">False</property>
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="tooltip_text" translatable="yes">If set, the playing board will display labels and ranks for each chess field. These are usable in chess notation.</property>
+                                                <property name="halign">start</property>
+                                                <property name="use_underline">True</property>
+                                                <property name="xalign">0</property>
+                                                <property name="draw_indicator">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="top_attach">2</property>
+                                              </packing>
                                             </child>
                                             <child>
                                               <placeholder/>

@@ -174,7 +174,7 @@ class GameModel(GObject.GObject):
         self.undoQueue = Queue()
 
     def zero_reached(self, timemodel, color):
-        if conf.get('autoCallFlag', False) and self.players[1 - color].__type__ == ARTIFICIAL:
+        if conf.get('autoCallFlag', True) and self.players[1 - color].__type__ == ARTIFICIAL:
             if self.status == RUNNING and timemodel.getPlayerTime(color) <= 0:
                 log.info(
                     'Automatically sending flag call on behalf of player %s.' %

@@ -76,14 +76,14 @@ class GeneralTab:
         # Give to uistuff.keeper
 
         for key in ("firstName", "secondName", "showEmt", "showEval",
-                    "hideTabs", "closeAll", "faceToFace", "drawGrid",
-                    "showCords", "showCaptured", "figuresInNotation",
-                    "fullAnimation", "moveAnimation", "noAnimation",
-                    "showFICSgameno"):
+                    "hideTabs", "closeAll", "faceToFace",
+                    "showCaptured", "figuresInNotation",
+                    "moveAnimation", "noAnimation",
+                    "autoRotate", "showFICSgameno"):
             uistuff.keep(widgets[key], key)
 
         # Options on by default
-        for key in ("autoPromote", "autoRotate", "fullAnimation", "showBlunder"):
+        for key in ("autoPromote", "fullAnimation", "showBlunder", "showCords", "drawGrid"):
             uistuff.keep(widgets[key], key, first_value=True)
 
 # Hint initing
@@ -128,9 +128,9 @@ class HintTab:
         self.widgets = widgets
 
         # Options on by default
-        for key in ("opening_check", "endgame_check", "online_egtb_check",
-                    "analyzer_check", "inv_analyzer_check"):
-            uistuff.keep(widgets[key], key, first_value=True)
+        for key in ("opening_check", "endgame_check", "online_egtb_check", "inv_analyzer_check"):
+            uistuff.keep(widgets[key], key, first_value=False)
+        uistuff.keep(widgets["analyzer_check"], "analyzer_check", first_value=True)
 
         # Opening book
         default_path = os.path.join(addDataPrefix("pychess_book.bin"))
@@ -216,8 +216,11 @@ class HintTab:
 
         # Save, load and make analyze combos active
 
-        # Let Stockfish to be default analyzer in Windows installer
-        default = discoverer.getEngineN(-1).get("md5")
+        if sys.platform == "win32":
+            # Let Stockfish to be default analyzer in Windows installer
+            default = discoverer.getEngineN(-1).get("md5")
+        else:
+            default = discoverer.getEngineByName("stockfish").get("md5")
         conf.set("ana_combobox", conf.get("ana_combobox", default))
         conf.set("inv_ana_combobox", conf.get("inv_ana_combobox", default))
 
@@ -235,10 +238,8 @@ class HintTab:
                     for gmwidg in perspective.gamewidgets:
                         gmwidg.gamemodel.remove_analyzer(HINT)
 
-        self.widgets["analyzers_vbox"].set_sensitive(widgets[
-            "analyzer_check"].get_active())
-        self.widgets["analyzer_check"].connect_after("toggled",
-                                                     on_analyzer_check_toggled)
+        self.widgets["analyzers_vbox"].set_sensitive(widgets["analyzer_check"].get_active())
+        self.widgets["analyzer_check"].connect_after("toggled", on_analyzer_check_toggled)
 
         def on_invanalyzer_check_toggled(check):
             self.widgets["inv_analyzers_vbox"].set_sensitive(check.get_active())
@@ -253,10 +254,8 @@ class HintTab:
                     for gmwidg in perspective.gamewidgets:
                         gmwidg.gamemodel.remove_analyzer(SPY)
 
-        self.widgets["inv_analyzers_vbox"].set_sensitive(widgets[
-            "inv_analyzer_check"].get_active())
-        self.widgets["inv_analyzer_check"].connect_after(
-            "toggled", on_invanalyzer_check_toggled)
+        self.widgets["inv_analyzers_vbox"].set_sensitive(widgets["inv_analyzer_check"].get_active())
+        self.widgets["inv_analyzer_check"].connect_after("toggled", on_invanalyzer_check_toggled)
 
         # Give widgets to keeper
 
@@ -643,18 +642,18 @@ class ThemeTab:
         data = [(item[0], item[1]) for item in board_items]
 
         uistuff.createCombo(widgets["board_style"], data)
-        uistuff.keep(widgets["board_style"], "board_style")
+        uistuff.keep(widgets["board_style"], "board_style", first_value=1)
 
-        conf.set("board_style", conf.get("board_style", 0))
+        # conf.set("board_style", conf.get("board_style", 1))
 
         # Board frame
         uistuff.createCombo(widgets["board_frame"], name="board_frame")
         data = [(item[0], item[1]) for item in [(None, "no frame")] + board_items[1:]]
 
         uistuff.createCombo(widgets["board_frame"], data)
-        uistuff.keep(widgets["board_frame"], "board_frame")
+        uistuff.keep(widgets["board_frame"], "board_frame", first_value=1)
 
-        conf.set("board_frame", conf.get("board_frame", 0))
+        # conf.set("board_frame", conf.get("board_frame", 1))
 
         # Board Colours
 
@@ -757,8 +756,7 @@ class ThemeTab:
                 index = 0
             iconview.select_path(Gtk.TreePath(index, ))
 
-        uistuff.keep(widgets["pieceTheme"], "pieceTheme", _getActive,
-                     _setActive, "Chessicons")
+        uistuff.keep(widgets["pieceTheme"], "pieceTheme", _getActive, _setActive, "Chessicons")
 
     def discoverThemes(self):
         """ :Description: Finds all the different chess sets that are present
@@ -799,8 +797,7 @@ class SaveTab:
             widgets["autosave_grid"].set_property("sensitive", checkbox.get_active())
 
         conf.notify_add("autoSave", checkCallBack)
-        widgets["autoSave"].set_active(False)
-        uistuff.keep(widgets["autoSave"], "autoSave")
+        uistuff.keep(widgets["autoSave"], "autoSave", first_value=True)
         checkCallBack(_)
 
         default_path = os.path.expanduser("~")
@@ -837,4 +834,4 @@ class SaveTab:
         uistuff.keep(widgets["saveEmt"], "saveEmt")
         uistuff.keep(widgets["saveEval"], "saveEval")
         uistuff.keep(widgets["saveRatingChange"], "saveRatingChange")
-        uistuff.keep(widgets["saveOwnGames"], "saveOwnGames")
+        uistuff.keep(widgets["saveOwnGames"], "saveOwnGames", first_value=True)

@@ -212,10 +212,10 @@ class BoardView(Gtk.DrawingArea):
 
         self.no_frame = False
         self._show_cords = False
-        self.show_cords = conf.get("showCords", False)
+        self.show_cords = conf.get("showCords", True)
 
         self._draw_grid = False
-        self.draw_grid = conf.get("drawGrid", False)
+        self.draw_grid = conf.get("drawGrid", True)
 
         self._show_captured = False
         if self.preview:
@@ -303,7 +303,7 @@ class BoardView(Gtk.DrawingArea):
             self.shown = ply
 
             # Rotate board
-            if conf.get("autoRotate", True):
+            if conf.get("autoRotate", False):
                 if self.model.players and self.model.curplayer.__type__ == LOCAL:
                     self.rotation = self.model.boards[-1].color * pi
 
@@ -362,13 +362,13 @@ class BoardView(Gtk.DrawingArea):
         """ Checks the configuration / preferences to see if the board
             grid should be displayed.
         """
-        self.draw_grid = conf.get("drawGrid", False)
+        self.draw_grid = conf.get("drawGrid", True)
 
     def onShowCords(self, *args):
         """ Checks the configuration / preferences to see if the board
             co-ordinates should be displayed.
         """
-        self.show_cords = conf.get("showCords", False)
+        self.show_cords = conf.get("showCords", True)
 
     def onShowCaptured(self, *args):
         """ Check the configuration / preferences to see if
@@ -392,7 +392,7 @@ class BoardView(Gtk.DrawingArea):
         """ If the preference to display another set of board colours has been
             selected then refresh the board
         """
-        board_style = conf.get("board_style", 0)
+        board_style = conf.get("board_style", 1)
         self.colors_only = board_style == 0
         if not self.colors_only:
             # create dark and light square surfaces
@@ -407,7 +407,7 @@ class BoardView(Gtk.DrawingArea):
         self.redrawCanvas()
 
     def onBoardFrameTheme(self, *args):
-        board_frame = conf.get("board_frame", 0)
+        board_frame = conf.get("board_frame", 1)
         self.no_frame = board_frame == 0
         if not self.no_frame:
             # create board frame surface

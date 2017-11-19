@@ -530,10 +530,10 @@ class Sidepanel(object):
         self.advisors = []
         self.conf_conids = []
 
-        if conf.get("opening_check", 0):
+        if conf.get("opening_check", False):
             advisor = OpeningAdvisor(self.store, self.tv, self.boardview)
             self.advisors.append(advisor)
-        if conf.get("endgame_check", 0):
+        if conf.get("endgame_check", False):
             advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
             self.advisors.append(advisor)
 
@@ -544,7 +544,7 @@ class Sidepanel(object):
         ]
 
         def on_opening_check(none):
-            if conf.get("opening_check", 0) and self.boardview is not None:
+            if conf.get("opening_check", False) and self.boardview is not None:
                 advisor = OpeningAdvisor(self.store, self.tv, self.boardview)
                 self.advisors.append(advisor)
                 advisor.shownChanged(self.boardview, self.boardview.shown)
@@ -569,7 +569,7 @@ class Sidepanel(object):
         self.conf_conids.append(conf.notify_add("opening_file_entry", on_opening_file_entry_changed))
 
         def on_endgame_check(none):
-            if conf.get("endgame_check", 0):
+            if conf.get("endgame_check", False):
                 advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
                 self.advisors.append(advisor)
                 advisor.shownChanged(self.boardview, self.boardview.shown)
