@@ -99,9 +99,9 @@ class TimeModel(GObject.GObject):
             return False
         return True
 
-        ############################################################################
-        # Interacting                                                              #
-        ############################################################################
+    ############################################################################
+    # Interacting                                                              #
+    ############################################################################
 
     def setMovingColor(self, movingColor):
         self.movingColor = movingColor
@@ -261,3 +261,7 @@ class TimeModel(GObject.GObject):
     def hasBWTimes(self, bmovecount, wmovecount):
         return len(self.intervals[BLACK]) > bmovecount and len(self.intervals[
             WHITE]) > wmovecount
+
+    def isBlitzFide(self):
+        val = 60 * self.minutes + 60 * (self.gain if self.handle_gain else 0)
+        return 300 <= val and val <= 600  # Between 5 and 10 minutes for 60 moves (estimation)

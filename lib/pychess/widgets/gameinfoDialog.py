@@ -1,5 +1,6 @@
 from pychess.Utils.const import BLACK, WHITE
 from pychess.perspectives import perspective_manager
+from pychess.Utils.elo import get_elo_rating_change_str
 
 firstRun = True
 
@@ -8,17 +9,15 @@ def run(widgets):
     persp = perspective_manager.get_perspective("games")
     gamemodel = persp.cur_gmwidg().gamemodel
 
-    def set_field_value(name, tag):
-        widgets[name].set_text(str(gamemodel.tags[tag] if tag in gamemodel.tags else ""))
-
-    set_field_value("event_entry", "Event")
-    set_field_value("site_entry", "Site")
-    set_field_value("round_entry", "Round")
-    set_field_value("white_entry", "White")
-    set_field_value("black_entry", "Black")
-    set_field_value("white_elo_entry", "WhiteElo")
-    set_field_value("black_elo_entry", "BlackElo")
-    set_field_value("annotator_entry", "Annotator")
+    widgets["event_entry"].set_text(str(gamemodel.getTag("Event", "")))
+    widgets["site_entry"].set_text(str(gamemodel.getTag("Site", "")))
+    widgets["round_entry"].set_text(str(gamemodel.getTag("Round", "")))
+    widgets["white_entry"].set_text(str(gamemodel.getTag("White", "")))
+    widgets["black_entry"].set_text(str(gamemodel.getTag("Black", "")))
+    widgets["white_elo_entry"].set_text(str(gamemodel.getTag("WhiteElo", "")))
+    widgets["black_elo_entry"].set_text(str(gamemodel.getTag("BlackElo", "")))
+    refresh_elo_rating_change(widgets)
+    widgets["annotator_entry"].set_text(str(gamemodel.getTag("Annotator", "")))
 
     # Notice: GtkCalender month goes from 0 to 11, but gamemodel goes from
     # 1 to 12
@@ -61,6 +60,18 @@ def initialize(widgets):
         gamemodel.emit("players_changed")
         return True
 
+    widgets["white_elo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
+    widgets["black_elo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
+
     widgets["game_info"].connect("delete-event", hide_window)
     widgets["game_info_cancel_button"].connect("clicked", hide_window)
     widgets["game_info_ok_button"].connect("clicked", accept_new_properties)
+
+
+def refresh_elo_rating_change(widgets):
+    persp = perspective_manager.get_perspective("games")
+    gamemodel = persp.cur_gmwidg().gamemodel
+    welo = widgets["white_elo_entry"].get_text()
+    belo = widgets["black_elo_entry"].get_text()
+    widgets["w_elo_change"].set_text(get_elo_rating_change_str(gamemodel, WHITE, welo, belo))
+    widgets["b_elo_change"].set_text(get_elo_rating_change_str(gamemodel, BLACK, welo, belo))
