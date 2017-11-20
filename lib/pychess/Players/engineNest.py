@@ -462,7 +462,7 @@ class EngineDiscoverer(GObject.GObject):
 
     def getEngineByName(self, name):
         names = [engine["name"] for engine in self.getEngines()]
-        return self.getEngines()[names.index(name)]
+        return self.getEngines()[names.index(name)] if name in names else None
 
     def getEngineByMd5(self, md5sum, list=[]):
         if not list:

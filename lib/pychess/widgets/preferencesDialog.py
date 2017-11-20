@@ -220,7 +220,10 @@ class HintTab:
             # Let Stockfish to be default analyzer in Windows installer
             default = discoverer.getEngineN(-1).get("md5")
         else:
-            default = discoverer.getEngineByName("stockfish").get("md5")
+            engine = discoverer.getEngineByName("stockfish")
+            if engine is None:
+                engine = discoverer.getEngineN(-1)
+            default = engine.get("md5")
         conf.set("ana_combobox", conf.get("ana_combobox", default))
         conf.set("inv_ana_combobox", conf.get("inv_ana_combobox", default))
 
