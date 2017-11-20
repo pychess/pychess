@@ -27,7 +27,6 @@ from pychess.perspectives import perspective_manager
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock.__init__ import CENTER, EAST, SOUTH
 from pychess.ic.ICGameModel import ICGameModel
-from pychess.ic import IC_POS_EXAMINATING
 
 enddir = {}
 savers = (pgn, epd, fen, png, chessalpha2)

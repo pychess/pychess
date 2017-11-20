@@ -11,7 +11,6 @@ from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
 from pychess.Variants import variants
 from pychess.Database.model import game, event, site, pl1, pl2
-from pychess.widgets import createImage
 
 
 cols = (game.c.id, pl1.c.name, game.c.white_elo, pl2.c.name, game.c.black_elo,

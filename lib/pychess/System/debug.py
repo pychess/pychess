@@ -9,17 +9,17 @@ from threading import Thread
 from pychess.System import fident
 from pychess.System.Log import log
 
-from pychess.Utils.Board import Board
+# from pychess.Utils.Board import Board
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.lutils.LBoard import LBoard
+# from pychess.Utils.lutils.LBoard import LBoard
 from pychess.widgets.BoardView import BoardView
 from pychess.widgets.BoardControl import BoardControl
 from pychess.widgets.gamewidget import GameWidget
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock.PyDockLeaf import PyDockLeaf
-from pychess.widgets.pydock.ArrowButton import ArrowButton
-from pychess.widgets.pydock.StarArrowButton import StarArrowButton
-from pychess.widgets.pydock.HighlightArea import HighlightArea
+# from pychess.widgets.pydock.ArrowButton import ArrowButton
+# from pychess.widgets.pydock.StarArrowButton import StarArrowButton
+# from pychess.widgets.pydock.HighlightArea import HighlightArea
 from pychess.Players.CECPEngine import CECPEngine
 from pychess.Players.UCIEngine import UCIEngine
 from pychess.Players.Human import Human
