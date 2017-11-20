@@ -1078,7 +1078,10 @@ class Sidepanel:
             else:
                 self.nodelist.remove(node)
 
-        self.textbuffer.delete(start, end)
+        if self.gamemodel.ply > 0:
+            self.textbuffer.delete(start, end)
+        else:
+            self.update()
 
     def game_changed(self, game, ply):
         board = game.getBoardAtPly(ply, variation=0).board
