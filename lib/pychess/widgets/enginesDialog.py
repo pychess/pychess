@@ -326,7 +326,7 @@ class EnginesDialog():
                         self.cur_engine = binname
                         self.add = False
                         discoverer.discover()
-                    except:
+                    except Exception:
                         msg_dia = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                                     buttons=Gtk.ButtonsType.OK)
                         msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %

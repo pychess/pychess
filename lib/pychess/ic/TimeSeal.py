@@ -276,23 +276,23 @@ class ICSTelnet():
             if len(self.ICC_buffer) == 0:
                 self.ICC_buffer = yield from self.reader.readuntil(until)
             i = self.ICC_buffer.find(until)
-            l = sys.maxsize
+            m = sys.maxsize
             if i >= 0:
-                l = i
+                m = i
             j = self.ICC_buffer.find(B_DTGR_END)
             if j >= 0:
-                l = min(l, j)
+                m = min(m, j)
             k = self.ICC_buffer.find(B_UNIT_END)
             if k >= 0:
-                l = min(l, k)
-            if l != sys.maxsize:
-                if l == i:
-                    stuff = self.ICC_buffer[:l + len(until)]
-                    self.ICC_buffer = self.ICC_buffer[l + len(until):]
+                m = min(m, k)
+            if m != sys.maxsize:
+                if m == i:
+                    stuff = self.ICC_buffer[:m + len(until)]
+                    self.ICC_buffer = self.ICC_buffer[m + len(until):]
                     return stuff.decode("latin_1")
                 else:
-                    stuff = self.ICC_buffer[:l + 2]
-                    self.ICC_buffer = self.ICC_buffer[l + 2:]
+                    stuff = self.ICC_buffer[:m + 2]
+                    self.ICC_buffer = self.ICC_buffer[m + 2:]
                     return stuff.decode("latin_1")
             else:
                 return ""

@@ -36,6 +36,7 @@ def on_message(bus, message):
         player.set_state(Gst.State.NULL)
     return True
 
+
 fakesink = Gst.ElementFactory.make("fakesink", "fakesink")
 player.set_property("video-sink", fakesink)
 bus = player.get_bus()
@@ -57,6 +58,7 @@ def play(loop):
         print("file not found:", line)
         player.set_state(Gst.State.NULL)
     return True
+
 
 loop = GLib.MainLoop()
 GLib.idle_add(play, loop)

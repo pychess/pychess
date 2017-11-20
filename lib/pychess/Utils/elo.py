@@ -11,11 +11,11 @@ def get_elo_rating_change(model, overridden_welo, overridden_belo):
         pprov = '?' in elo_player
         try:
             pval = int(elo_player.replace("?", ""))
-        except:
+        except ValueError:
             pval = 0
         try:
             oval = int(elo_opponent.replace("?", ""))
-        except:
+        except ValueError:
             oval = 0
         if pval == 0 or oval == 0:
             return None

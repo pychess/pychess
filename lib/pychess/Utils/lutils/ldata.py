@@ -17,6 +17,7 @@ def RANK(cord):
 def FILE(cord):
     return cord & 7
 
+
 # Evaluating constants
 
 PAWN_VALUE = 100
@@ -46,6 +47,7 @@ def VALUE_AT_PLY(val, ply):
     if val <= -32512:
         return val + ply
     return val
+
 
 # How many points does it give to have the piece standing i cords from the
 # opponent king
@@ -451,16 +453,16 @@ for i in range(1, 7):
 squarePawnMask = [[0] * 64, [0] * 64]
 for cord in range(64):
     # White mask
-    l = 7 - RANK(cord)
-    i = max(cord & 56, cord - l)
-    j = min(cord | 7, cord + l)
+    rank = 7 - RANK(cord)
+    i = max(cord & 56, cord - rank)
+    j = min(cord | 7, cord + rank)
     for k in range(i, j + 1):
         squarePawnMask[WHITE][cord] |= bitPosArray[k] | fromToRay[k][k | 56]
 
     # Black mask
-    l = RANK(cord)
-    i = max(cord & 56, cord - l)
-    j = min(cord | 7, cord + l)
+    rank = RANK(cord)
+    i = max(cord & 56, cord - rank)
+    j = min(cord | 7, cord + rank)
     for k in range(i, j + 1):
         squarePawnMask[BLACK][cord] |= bitPosArray[k] | fromToRay[k][k & 7]
 

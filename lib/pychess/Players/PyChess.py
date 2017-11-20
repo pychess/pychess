@@ -1,4 +1,3 @@
-
 import os
 import random
 import sys
@@ -8,15 +7,19 @@ this_dir = os.path.dirname(os.path.abspath(__file__))
 if os.path.join(this_dir, "../..") not in sys.path:
     sys.path = [os.path.join(this_dir, "../..")] + sys.path
 
-from pychess.Utils.book import getOpenings  # nopep8
-from pychess.Utils.const import WHITE, ASEANCHESS, SITTUYINCHESS, ATOMICCHESS, reprResult, \
-    CAMBODIANCHESS, LOSERSCHESS, KINGOFTHEHILLCHESS, DRAW, BLACKWON, WHITEWON, MAKRUKCHESS, \
-    SUICIDECHESS, GIVEAWAYCHESS, THREECHECKCHESS, HORDECHESS  # nopep8
-from pychess.Utils.lutils import lsearch  # nopep8
-from pychess.Utils.lutils.ldata import MAXPLY  # nopep8
-from pychess.Utils.lutils.lsearch import alphaBeta  # nopep8
-from pychess.Utils.lutils.lmove import listToSan, toSAN  # nopep8
-from pychess.System.Log import log  # nopep8
+try:
+    from pychess.Utils.book import getOpenings  # nopep8
+    from pychess.Utils.const import WHITE, ASEANCHESS, SITTUYINCHESS, ATOMICCHESS, reprResult, \
+        CAMBODIANCHESS, LOSERSCHESS, KINGOFTHEHILLCHESS, DRAW, BLACKWON, WHITEWON, MAKRUKCHESS, \
+        SUICIDECHESS, GIVEAWAYCHESS, THREECHECKCHESS, HORDECHESS  # nopep8
+    from pychess.Utils.lutils import lsearch  # nopep8
+    from pychess.Utils.lutils.ldata import MAXPLY  # nopep8
+    from pychess.Utils.lutils.lsearch import alphaBeta  # nopep8
+    from pychess.Utils.lutils.lmove import listToSan, toSAN  # nopep8
+    from pychess.System.Log import log  # nopep8
+except ImportError:
+    print("ERROR: failed to start PyChess.py engine")
+    sys.exit(1)
 
 
 class PyChess(object):

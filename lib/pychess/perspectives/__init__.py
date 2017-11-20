@@ -238,4 +238,5 @@ class PerspectiveManager(object):
             self.viewmenu.append(item)
             item.show()
 
+
 perspective_manager = PerspectiveManager()

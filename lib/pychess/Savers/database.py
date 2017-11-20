@@ -98,7 +98,7 @@ def save(path, model, offset):
             model.game_id = result.inserted_primary_key[0]
 
         trans.commit()
-    except:
+    except Exception:
         trans.rollback()
         raise
     conn.close()

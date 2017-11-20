@@ -78,7 +78,7 @@ class SubProcess(GObject.GObject):
             except GLib.GError:
                 log.warning("GLib.GError", extra={"task": self.defname})
                 raise
-            except:
+            except Exception:
                 e = sys.exc_info()[0]
                 log.warning("%s" % e, extra={"task": self.defname})
                 raise

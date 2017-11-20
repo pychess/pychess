@@ -358,12 +358,9 @@ class FilterPanel(Gtk.TreeView):
         (iter_first, iter_last) = textbuffer.get_bounds()
         text = textbuffer.get_text(iter_first, iter_last, False)
         if text:
-            try:
-                q = ast.literal_eval(text)
-                self.persp.chessfile.set_scout_filter(q)
-                need_update = True
-            except:
-                pass
+            q = ast.literal_eval(text)
+            self.persp.chessfile.set_scout_filter(q)
+            need_update = True
 
         if need_update and self.filtered:
             self.persp.gamelist.load_games()

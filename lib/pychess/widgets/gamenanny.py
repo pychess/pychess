@@ -283,4 +283,5 @@ class GameNanny(object):
         dialog.connect("response", lambda dialog, r: dialog.hide())
         dialog.show_all()
 
+
 game_nanny = GameNanny()

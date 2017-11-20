@@ -12,6 +12,7 @@ from pychess.Utils.const import ARTIFICIAL, FLAG_CALL, ABORT_OFFER, LOCAL, TAKEB
 
 from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmove, lmovegen
+from pychess.Utils.lutils.lmove import ParsingError
 
 from . import preferencesDialog
 from .PromotionDialog import PromotionDialog
@@ -438,7 +439,7 @@ class BoardControl(Gtk.EventBox):
                 self.view.shown, self.view.shown_variation_idx)
             try:
                 move = parseAny(board, self.keybuffer)
-            except:
+            except ParsingError:
                 self.keybuffer = ""
                 return
 

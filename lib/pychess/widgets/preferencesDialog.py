@@ -273,6 +273,7 @@ class HintTab:
         uistuff.keep(self.widgets["max_analysis_spin"], "max_analysis_spin", first_value=3)
         uistuff.keep(self.widgets["infinite_analysis"], "infinite_analysis", first_value=False)
 
+
 # Sound initing
 
 # Setup default sounds

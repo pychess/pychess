@@ -424,7 +424,7 @@ class PyChessCECP(PyChess):
                     # A GUI without usermove support might try to send a move.
                     try:
                         move = parseAny(self.board, line)
-                    except:
+                    except ParsingError:
                         self.print("Error (unknown command): %s" % line)
                         continue
                     if not validateMove(self.board, move):

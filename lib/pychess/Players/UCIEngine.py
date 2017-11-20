@@ -78,7 +78,7 @@ class UCIEngine(ProtocolEngine):
         except asyncio.TimeoutError:
             log.warning("Got timeout error", extra={"task": self.defname})
             raise PlayerIsDead
-        except:
+        except Exception:
             log.warning("Unknown error", extra={"task": self.defname})
             raise PlayerIsDead
         else:

@@ -124,6 +124,7 @@ class ICCChatManager(ChatManager):
         # playername channels
         print(data)
 
+
 ICC_CHANNELS = (
     (0, "Admins only"),
     (1, "Newbie Help"),

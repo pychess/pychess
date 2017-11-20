@@ -775,7 +775,7 @@ class PGNFile(ChessFile):
                 move = Move(node.lastMove)
                 try:
                     board = node.prev.pieceBoard.move(move, lboard=node)
-                except:
+                except Exception:
                     raise LoadingError(
                         _("Invalid move."),
                         "%s%s" % (move_count(node, black_periods=True), move))
@@ -942,7 +942,7 @@ class PGNFile(ChessFile):
                         errstr2 = _("The move failed because %s.") % reason
                         self.error = LoadingError(errstr1, errstr2)
                         break
-                    except:
+                    except Exception:
                         ply = last_board.plyCount
                         if ply % 2 == 0:
                             moveno = "%d." % (ply // 2 + 1)

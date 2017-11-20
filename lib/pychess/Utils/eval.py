@@ -292,7 +292,7 @@ def evalKingTropism(board):
         wking, bking = board.kings
         wky, wkx = wking.cords
         bky, bkx = bking.cords
-    except:
+    except AttributeError:
         return 0
 
     for py, row in enumerate(board.data):

@@ -136,6 +136,7 @@ class WildGameType(VariantGameType):
     def instances(cls):
         return cls._instances
 
+
 # FICS game types
 GAME_TYPES = {
     "blitz": NormalGameType("blitz", "b", TYPE_BLITZ, _("Blitz")),
@@ -257,6 +258,7 @@ def time_control_to_gametype(minutes, gain):
         return GAME_TYPES["blitz"]
     else:
         return GAME_TYPES["lightning"]
+
 
 TYPE_ADMINISTRATOR, TYPE_BLINDFOLD, TYPE_COMPUTER, \
     TYPE_TEAM, TYPE_UNREGISTERED, TYPE_CHESS_ADVISOR, \

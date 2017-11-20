@@ -999,5 +999,6 @@ class LBoard(object):
         copy.fen_was_applied = self.fen_was_applied
         return copy
 
+
 START_BOARD = LBoard()
 START_BOARD.applyFen(FEN_START)

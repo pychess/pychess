@@ -35,4 +35,5 @@ class GLogHandler(logging.Handler):
                               (record.task, time.time(), message, record.levelno))
         GLib.idle_add(_emit, record)
 
+
 logemitter = LogEmitter()

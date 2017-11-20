@@ -28,6 +28,7 @@ def firstBit(bitboard):
         return lzArray[bitboard >> 16] + 32
     return lzArray[bitboard] + 48
 
+
 # The bitCount array returns the leading non-zero bit in the 16 bit
 # input argument.
 

@@ -41,7 +41,7 @@ class HighlightArea(OverlayWindow):
         try:
             x_loc, y_loc = self.translateCoords(int(x_loc), int(y_loc))
             self.move(x_loc, y_loc)
-        except:
+        except ValueError:
             pass
             # Can't move to x,y, because top level parent has no window.
 

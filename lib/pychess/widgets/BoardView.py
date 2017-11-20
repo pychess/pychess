@@ -124,6 +124,7 @@ def matrixAround(rotated_matrix, anchor_x, anchor_y):
                              anchor_ycorner + anchor_xside)
     return matrix, invmatrix
 
+
 ANIMATION_TIME = 0.5
 
 # If this is true, the board is scaled so that everything fits inside the window

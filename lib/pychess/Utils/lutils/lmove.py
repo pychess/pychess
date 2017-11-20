@@ -639,6 +639,7 @@ def parseAN(board, an):
 
     return newMove(fcord, tcord, flag)
 
+
 ################################################################################
 # toFAN                                                                        #
 ################################################################################
@@ -678,6 +679,7 @@ def toFAN(board, move):
         return san.translate(san2WhiteFanDic)
     else:
         return san.translate(san2BlackFanDic)
+
 
 ################################################################################
 # parseFAN                                                                     #

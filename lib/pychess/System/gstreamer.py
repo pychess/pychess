@@ -48,7 +48,7 @@ else:
 
                 self.stdin = io.TextIOWrapper(self.player.stdin, encoding='utf-8', line_buffering=True)
                 self.ready = True
-            except:
+            except Exception:
                 self.player = None
                 log.error('ERROR: starting gst_player failed')
                 raise

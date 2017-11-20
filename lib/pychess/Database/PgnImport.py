@@ -288,7 +288,7 @@ class PgnImport():
                             game_year, game_month, game_day = int(game_date[:4]), None, None
                         else:
                             game_year, game_month, game_day = None, None, None
-                    except:
+                    except (ValueError, IndexError):
                         game_year, game_month, game_day = None, None, None
 
                     game_round = tags['Round'] if "Round" in tags else ""
@@ -491,9 +491,9 @@ def read_games(handle, handle_json=None):
                             continue
                     else:
                         continue
-                except:
+                except ValueError:
                     continue
-            except:
+            except ValueError:
                 continue
         return
 

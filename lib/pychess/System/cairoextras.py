@@ -12,6 +12,7 @@ class PycairoContext(ct.Structure):
             ("base", ct.c_void_p),
         ]
 
+
 _initialized = False
 
 
@@ -100,6 +101,7 @@ def create_cairo_font_face_for_file(filename, faceindex=0, loadoptions=0):
     # get back Cairo font face as a Python object
     face = cairo_ctx.get_font_face()
     return face
+
 
 if __name__ == '__main__':
     face = create_cairo_font_face_for_file("../../../pieces/ttf/harlequin.ttf",

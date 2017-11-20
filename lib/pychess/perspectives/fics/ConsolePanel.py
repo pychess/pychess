@@ -59,6 +59,7 @@ class Sidepanel():
             if adj.get_value() >= adj.get_upper() - adj.get_page_size() - 1e-12:
                 GLib.idle_add(self.scroll_to_bottom)
 
+
 TYPE_COMMAND, TYPE_HELP, TYPE_USER = 0, 1, 2
 
 

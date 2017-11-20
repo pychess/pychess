@@ -9,6 +9,7 @@ import cairo
 def ceil(f):
     return int(math.ceil(f))
 
+
 line = 10
 curve = 60
 dotSmall = 14

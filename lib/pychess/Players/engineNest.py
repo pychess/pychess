@@ -540,7 +540,7 @@ class EngineDiscoverer(GObject.GObject):
             raise PlayerIsDead
         except GLib.GError:
             raise PlayerIsDead
-        except:
+        except Exception:
             raise PlayerIsDead
 
         engine_proc = attrToProtocol[protocol](subprocess, color, protover,

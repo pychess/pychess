@@ -12,8 +12,6 @@ from pychess.System.cairoextras import create_cairo_font_face_for_file
 elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+|[z]\s+")
 spaceExpr = re.compile(r"[\s,]+")
 
-l = []
-
 
 def parse(n, psize):
     yield "def f(c):"
@@ -289,7 +287,7 @@ def set_piece_theme(piece_set):
         drawPiece = drawPiece4
         try:
             chess_font_face, piece2char = get_chess_font_face(piece_set)
-        except:
+        except Exception:
             drawPiece = drawPiece2
     elif piece_set in ('celtic', 'eyes', 'fantasy', 'fantasy_alt', 'freak',
                        'prmi', 'skulls', 'spatial'):
@@ -301,7 +299,7 @@ def set_piece_theme(piece_set):
         drawPiece = drawPiece3
         try:
             svg_pieces = get_svg_pieces(piece_set)
-        except:
+        except Exception:
             drawPiece = drawPiece2
 
 

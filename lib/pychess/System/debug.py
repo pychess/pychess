@@ -138,6 +138,7 @@ def print_muppy_sumary():
         # class_tracker.create_snapshot('usage')
         # HtmlStats(tracker=class_tracker).create_html('profile.html')
 
+
 all_objects = None
 obj_summary = None
 class_tracker = None

@@ -9,6 +9,7 @@ from pychess.Utils.const import FAN_PIECES, BLACK, ROOK, WHITE, KING, BISHOP, \
 def group(l, s):
     return [l[i:i + s] for i in range(0, len(l), s)]
 
+
 __label__ = _("Chess Alpha 2 Diagram")
 __ending__ = "html"
 __append__ = True
@@ -32,6 +33,7 @@ def fanconv(fan):
     for f, r in lisPieces:
         fan = fan.replace(f, r)
     return fan
+
 
 # Dictionaries and expressions for parsing diagrams
 entitydefs = dict(("&%s;" % a, chr(ord(b)).encode('utf-8'))

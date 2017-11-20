@@ -1,5 +1,6 @@
 from gi.repository import Gio
 from gi.repository import Gtk
+from gi.repository import GLib
 from gi.repository import GdkPixbuf
 
 from pychess.System.Log import log
@@ -13,7 +14,7 @@ def load_icon(size, *alternatives):
     name = alternatives.pop(0)
     try:
         return it.load_icon(name, size, Gtk.IconLookupFlags.USE_BUILTIN)
-    except:
+    except GLib.Error:
         if alternatives:
             return load_icon(size, *alternatives)
         log.warning("no %s icon in icon-theme-gnome" % name)

@@ -241,8 +241,6 @@ class EngineAdvisor(Advisor):
                 log.debug("EngineAdvisor.on_analyze(): Ignored (%s) from analyzer: ParsingError%s" %
                           (' '.join(movstrs), e))
                 return
-            except:
-                return
 
             move = None
             if pv:

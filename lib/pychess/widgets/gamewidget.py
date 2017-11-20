@@ -418,8 +418,6 @@ class GameWidget(GObject.GObject):
                 log.debug("GameWidget._on_analyze(): Ignored (%s) from analyzer: ParsingError%s" %
                           (' '.join(movstrs), e))
                 return
-            except:
-                return
 
             if moves and (self.gamemodel.curplayer.__type__ == LOCAL or
                [player.__type__ for player in self.gamemodel.players] == [REMOTE, REMOTE] or
@@ -766,6 +764,7 @@ class GameWidget(GObject.GObject):
         variation = self.board.view.shown_variation_idx
         fen = self.gamemodel.getBoardAtPly(ply, variation).asFen()
         clipboard.set_text(fen, -1)
+
 
 # ###############################################################################
 # Handling of the special sidepanels-design-gamewidget used in preferences     #

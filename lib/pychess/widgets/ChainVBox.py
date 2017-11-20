@@ -157,6 +157,7 @@ class ChainLine(Gtk.Alignment):
         chain_str += (self.position == CHAIN_TOP and ", CHAIN_TOP" or ", CHAIN_BOTTOM")
         return chain_str + ")"
 
+
 if __name__ == "__main__":
     win = Gtk.Window()
     chainvbox = ChainVBox()

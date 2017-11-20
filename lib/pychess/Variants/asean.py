@@ -30,6 +30,7 @@ class AseanBoard(Board):
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
 
+
 #######################
 # Makruk, or Thai chess
 #######################
@@ -54,6 +55,7 @@ class MakrukBoard(Board):
             Board.__init__(self, setup=MAKRUKSTART, lboard=lboard)
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
+
 
 ##################################
 # Ouk Chatrang, or Cambodian Makruk
@@ -82,6 +84,7 @@ class CambodianBoard(Board):
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
 
+
 ###############
 # Ai-Wok Makruk
 ###############
@@ -108,6 +111,7 @@ class AiWokBoard(Board):
             Board.__init__(self, setup=AIWOKSTART, lboard=lboard)
         else:
             Board.__init__(self, setup=setup, lboard=lboard)
+
 
 ############################
 # Sittuyin, or Myanmar Chess
