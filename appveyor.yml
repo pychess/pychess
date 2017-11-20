@@ -26,7 +26,6 @@ install:
   - "pip install pexpect"
   - "pip install psutil"
   - "pip install sqlalchemy"
-  - "pip install flake8"
 
   # Download pygobjectwin32
   - "if not exist %AIO% appveyor DownloadFile https://sourceforge.net/projects/pygobjectwin32/files/%AIO%"
@@ -37,7 +36,6 @@ cache:
   - "%PYTHON%\\lib\\site-packages"
 
 build_script:
-  - "flake8 --exclude=lib/pychess/external/ lib/pychess/"
   - "python setup.py build sdist"
 
 test_script:

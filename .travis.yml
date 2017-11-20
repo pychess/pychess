@@ -15,10 +15,12 @@ install:
  - sudo pip3 install pexpect
  - sudo pip3 install coverage
  - sudo pip3 install codecov
+ - sudo pip3 install flake8
  - virtualenv --python=$PYTHON --system-site-packages _venv
  - source _venv/bin/activate
 
 script:
+ - /usr/local/bin/flake8 --exclude=lib/pychess/external/ lib/pychess/
  - xvfb-run -a $PYTHON ./setup.py build sdist
  - cd testing
  - PYTHONPATH=../lib xvfb-run -a coverage run --omit=../lib/pychess/external/* --source ../lib -m unittest discover -p "*.py"
