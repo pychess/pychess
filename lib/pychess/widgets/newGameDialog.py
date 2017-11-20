@@ -3,6 +3,7 @@ import os.path
 import gettext
 import locale
 
+from math import pi
 from operator import attrgetter
 from itertools import groupby
 from io import StringIO
@@ -562,6 +563,7 @@ class SetupPositionExtension(_GameInitializationMode):
         cls.widgets["side_button"].set_image(cls.white)
 
         cls.widgets["side_button"].connect("toggled", cls.side_button_toggled)
+        cls.widgets["rotate_button"].connect("button-press-event", cls.rotate_button_pressed)
         cls.widgets["moveno_spin"].connect("value-changed",
                                            cls.moveno_spin_changed)
         cls.widgets["fifty_spin"].connect("value-changed",
@@ -591,6 +593,14 @@ class SetupPositionExtension(_GameInitializationMode):
         else:
             button.set_image(cls.white)
         cls.fen_changed()
+
+    @classmethod
+    def rotate_button_pressed(self, widget, button_event):
+        view = self.board_control.view
+        if view.rotation:
+            view.rotation = 0
+        else:
+            view.rotation = pi
 
     @classmethod
     def fen_changed(cls):
