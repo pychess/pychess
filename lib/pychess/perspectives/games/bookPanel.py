@@ -231,7 +231,7 @@ class EngineAdvisor(Advisor):
                 continue
 
             ply, movstrs, score, depth = line
-            board0 = self.boardview.model.getBoardAtPly(ply)
+            board0 = self.engine.board
             board = board0.clone()
             try:
                 pv = listToMoves(board, movstrs, validate=True)

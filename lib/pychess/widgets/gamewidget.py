@@ -409,7 +409,7 @@ class GameWidget(GObject.GObject):
 
         if len(analysis) >= 1 and analysis[0] is not None:
             ply, movstrs, score, depth = analysis[0]
-            board = self.gamemodel.getBoardAtPly(ply)
+            board = analyzer.board
             try:
                 moves = listToMoves(board, movstrs, validate=True)
             except ParsingError as e:
