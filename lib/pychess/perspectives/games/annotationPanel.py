@@ -371,10 +371,22 @@ class Sidepanel:
         self.gamewidget.copy_pgn()
 
     def edit_comment(self, widget=None, board=None, index=0):
-        dialog = Gtk.Dialog(
-            _("Edit comment"), None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, (
-                Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK,
-                Gtk.ResponseType.ACCEPT))
+        creation = True
+        if not board.children:
+            board.children.append("")
+        elif not isinstance(board.children[index], str):
+            board.children.insert(index, "")
+        else:
+            creation = False
+
+        buttons_list = () if creation else (Gtk.STOCK_CLEAR, Gtk.ResponseType.REJECT)
+        buttons_list = buttons_list + (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                       Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT)
+
+        dialog = Gtk.Dialog(_("Add comment") if creation else _("Edit comment"),
+                            None,
+                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                            buttons_list)
 
         textedit = Gtk.TextView()
         textedit.set_editable(True)
@@ -382,10 +394,6 @@ class Sidepanel:
         textedit.set_wrap_mode(Gtk.WrapMode.WORD)
 
         textbuffer = textedit.get_buffer()
-        if not board.children:
-            board.children.append("")
-        elif not isinstance(board.children[index], str):
-            board.children.insert(index, "")
         textbuffer.set_text(board.children[index])
 
         sw = Gtk.ScrolledWindow()
@@ -397,19 +405,22 @@ class Sidepanel:
         dialog.show_all()
 
         response = dialog.run()
-        if response == Gtk.ResponseType.ACCEPT:
-            dialog.destroy()
-            (iter_first, iter_last) = textbuffer.get_bounds()
-            comment = textbuffer.get_text(iter_first, iter_last, False)
-            if board.children[index] != comment:
-                if comment:
-                    board.children[index] = comment
-                else:
-                    del board.children[index]
+        dialog.destroy()
+
+        (iter_first, iter_last) = textbuffer.get_bounds()
+        comment = textbuffer.get_text(iter_first, iter_last, False)
+        update = response in [Gtk.ResponseType.REJECT, Gtk.ResponseType.ACCEPT]
+        drop = (response == Gtk.ResponseType.REJECT) or (creation and not update) or (update and len(comment) == 0)
+        if drop:
+            if not creation:
                 self.gamemodel.needsSave = True
-                self.update()
+            del board.children[index]
         else:
-            dialog.destroy()
+            if update:
+                if board.children[index] != comment:
+                    self.gamemodel.needsSave = True
+                board.children[index] = comment
+        self.update()
 
     # Add move symbol menu
     def symbol_menu1_activate(self, widget, board, nag):
