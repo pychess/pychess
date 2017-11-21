@@ -34,6 +34,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Detailed settings of players, time control and chess variant</property>
                     <property name="relief">none</property>
                     <child>
                       <object class="GtkTable" id="table17">
@@ -165,6 +166,7 @@
                         <property name="height_request">18</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="tooltip_text" translatable="yes">Engine playing strength (1=weakest, 20=strongest)</property>
                         <property name="adjustment">adjustment1</property>
                         <property name="digits">0</property>
                         <property name="value_pos">left</property>
@@ -280,6 +282,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Detailed connection settings</property>
                     <property name="relief">none</property>
                     <child>
                       <object class="GtkTable" id="table18">
@@ -334,6 +337,9 @@
                     <property name="n_columns">2</property>
                     <property name="column_spacing">6</property>
                     <property name="row_spacing">6</property>
+                    <child>
+                      <placeholder/>
+                    </child>
                     <child>
                       <object class="GtkComboBox" id="ics_combo">
                         <property name="visible">True</property>

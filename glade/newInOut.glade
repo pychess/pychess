@@ -272,6 +272,7 @@
                                         <property name="height_request">18</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">Engine playing strength (1=weakest, 20=strongest)</property>
                                         <property name="adjustment">adjustment1</property>
                                         <property name="digits">0</property>
                                         <property name="value_pos">right</property>
@@ -317,6 +318,7 @@
                                             <property name="height_request">18</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">Engine playing strength (1=weakest, 20=strongest)</property>
                                             <property name="adjustment">adjustment2</property>
                                             <property name="digits">0</property>
                                             <property name="value_pos">right</property>
