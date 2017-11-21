@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 from pychess.Utils.const import WHITE, WHITEWON, BLACK, BLACKWON, DRAW
 
 
