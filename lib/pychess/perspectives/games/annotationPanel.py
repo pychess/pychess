@@ -286,10 +286,6 @@ class Sidepanel:
         elif event.button == 3:
             self.menu = Gtk.Menu()
 
-            menuitem = Gtk.MenuItem(_("Copy PGN"))
-            menuitem.connect('activate', self.copy_pgn)
-            self.menu.append(menuitem)
-
             if node is not None:
                 position = -1
                 for index, child in enumerate(board.children):
@@ -354,21 +350,30 @@ class Sidepanel:
                 menuitem.set_submenu(symbol_menu2)
                 self.menu.append(menuitem)
 
-                menuitem = Gtk.MenuItem(_("Remove symbols"))
-                menuitem.connect('activate', self.remove_symbols, board)
-                self.menu.append(menuitem)
+                self.menu.append(Gtk.SeparatorMenuItem())
 
-                menuitem = Gtk.MenuItem(_("Reset the evaluations"))
+                removals_menu = Gtk.Menu()
+
+                menuitem = Gtk.MenuItem(_("Comment"))
+                menuitem.connect('activate', self.delete_comment, board, position)
+                removals_menu.append(menuitem)
+
+                menuitem = Gtk.MenuItem(_("Symbols"))
+                menuitem.connect('activate', self.remove_symbols, board)
+                removals_menu.append(menuitem)
+
+                menuitem = Gtk.MenuItem(_("All the evaluations"))
                 menuitem.connect('activate', self.reset_evaluations)
+                removals_menu.append(menuitem)
+
+                menuitem = Gtk.MenuItem(_("Remove"))
+                menuitem.set_submenu(removals_menu)
                 self.menu.append(menuitem)
 
                 self.menu.show_all()
                 self.menu.popup(None, None, None, None, event.button,
                                 event.time)
         return True
-
-    def copy_pgn(self, widget):
-        self.gamewidget.copy_pgn()
 
     def edit_comment(self, widget=None, board=None, index=0):
         creation = True
@@ -420,6 +425,15 @@ class Sidepanel:
                 if board.children[index] != comment:
                     self.gamemodel.needsSave = True
                 board.children[index] = comment
+        self.update()
+
+    def delete_comment(self, widget=None, board=None, index=0):
+        if index == -1 or not board.children:
+            return
+        elif not isinstance(board.children[index], str):
+            return
+        self.gamemodel.needsSave = True
+        del board.children[index]
         self.update()
 
     # Add move symbol menu
