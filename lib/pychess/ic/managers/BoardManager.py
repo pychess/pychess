@@ -19,8 +19,7 @@ from pychess.Utils.const import WHITEWON, WON_RESIGN, WON_DISCONNECTION, WON_CAL
     FISCHERRANDOMCHESS, CRAZYHOUSECHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, ATOMICCHESS, \
     LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, reprResult
 
-from pychess.ic import IC_POS_INITIAL, IC_POS_ISOLATED, IC_POS_OP_TO_MOVE, IC_POS_ME_TO_MOVE, \
-    IC_POS_OBSERVING, IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, GAME_TYPES, IC_STATUS_PLAYING, \
+from pychess.ic import IC_POS_OBSERVING_EXAMINATION, IC_POS_EXAMINATING, GAME_TYPES, IC_STATUS_PLAYING, \
     BLKCMD_SEEK, BLKCMD_OBSERVE, BLKCMD_MATCH, TYPE_WILD, BLKCMD_SMOVES, BLKCMD_UNOBSERVE, BLKCMD_MOVES, \
     BLKCMD_FLAG, parseRating
 
@@ -65,14 +64,6 @@ sr = re.compile("<sr> ([\d ]+)")
 
 fileToEpcord = (("a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"),
                 ("a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"))
-
-relations = {"-4": IC_POS_INITIAL,
-             "-3": IC_POS_ISOLATED,
-             "-2": IC_POS_OBSERVING_EXAMINATION,
-             "2": IC_POS_EXAMINATING,
-             "-1": IC_POS_OP_TO_MOVE,
-             "1": IC_POS_ME_TO_MOVE,
-             "0": IC_POS_OBSERVING}
 
 
 def parse_reason(result, reason, wname=None):
@@ -345,7 +336,7 @@ class BoardManager(GObject.GObject):
 
         curcol = fields[8] == "B" and BLACK or WHITE
         gameno = int(fields[15])
-        relation = relations[fields[18]]
+        relation = int(fields[18])
         ply = int(fields[25]) * 2 - (curcol == WHITE and 2 or 1)
         lastmove = fields[28] != "none" and fields[28] or None
         wname = fields[16]
@@ -453,6 +444,8 @@ class BoardManager(GObject.GObject):
                                                 pgn=pgn),
                                 relation=relation)
                 self.connection.examined_game = game
+                log.debug("Start new examine game by %s" % style12,
+                          extra={"task": (self.connection.username, "BM.onStyle12")})
             else:
                 # examine an archived game from GUI
                 no_smoves = False
@@ -460,11 +453,15 @@ class BoardManager(GObject.GObject):
                 game.gameno = int(gameno)
                 game.relation = relation
                 # game.game_type = GAME_TYPES["examined"]
+                log.debug("Start examine an archived game by %s" % style12,
+                          extra={"task": (self.connection.username, "BM.onStyle12")})
             game = self.connection.games.get(game)
 
             # don't start new game in puzzlebot/endgamebot when they just reuse gameno
             if game.relation == IC_POS_OBSERVING_EXAMINATION or \
                     (game.board is not None and game.board.pgn == pgn):
+                log.debug("emit('boardSetup') with %s %s %s %s" % (gameno, fen, wname, bname),
+                          extra={"task": (self.connection.username, "BM.onStyle12")})
                 self.emit("boardSetup", gameno, fen, wname, bname)
                 return
 
@@ -475,9 +472,13 @@ class BoardManager(GObject.GObject):
             # start a new game now or after smoves
             self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
             if no_smoves:
+                log.debug("emit('exGameCreated')",
+                          extra={"task": (self.connection.username, "BM.onStyle12")})
                 self.emit("exGameCreated", game)
                 self.gamemodelStartedEvents[game.gameno].wait()
             else:
+                log.debug("send 'smoves' command",
+                          extra={"task": (self.connection.username, "BM.onStyle12")})
                 if isinstance(game, FICSHistoryGame):
                     self.connection.client.run_command("smoves %s %s" % (
                         self.connection.history_owner, game.history_no))
@@ -495,8 +496,12 @@ class BoardManager(GObject.GObject):
                     # fics resend latest style12 line again when one player lost on time
                     return
                 if lastmove is None:
+                    log.debug("emit('boardSetup') with %s %s %s %s" % (gameno, fen, wname, bname),
+                              extra={"task": (self.connection.username, "BM.onStyle12")})
                     self.emit("boardSetup", gameno, fen, wname, bname)
                 else:
+                    log.debug("put move %s into game.move_queue" % lastmove,
+                              extra={"task": (self.connection.username, "BM.onStyle12")})
                     game.move_queue.put_nowait((gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms))
             else:
                 # In some cases (like lost on time) the last move is resent by FICS
