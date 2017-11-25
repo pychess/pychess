@@ -2,6 +2,7 @@
 
 import re
 import datetime
+from math import floor
 
 from gi.repository import Gtk
 from gi.repository import Pango
@@ -1008,19 +1009,24 @@ class Sidepanel:
         text = ""
         time_control = gm.tags.get('TimeControl')
         if time_control:
-            if "+" in time_control:
-                mins, inc = time_control.split('+')
-                mins = int(mins) / 60
-                mins = "{:.0f}".format(mins)
-                if inc != '0':
-                    text += mins + ' mins + ' + inc + ' secs '
-                else:
-                    text += mins + ' mins '
+            if re.match("^[0-9]+\+[0-9]+$", time_control) is None:
+                text += time_control
             else:
-                text += time_control + ' '
+                mins, inc = time_control.split('+')
+                tmin = int(floor(int(mins) / 60))
+                tsec = int(mins) - 60 * tmin
+                if tmin > 0:
+                    text += str(tmin) + " " + (_("mins") if tmin > 1 else _("min"))
+                if tsec > 0:
+                    text += " " if text != "" else ""
+                    text += str(tsec) + " " + (_("secs") if tsec > 1 else _("sec"))
+                if inc != "" and inc != "0":
+                    text += " + " + inc + " " + (_("secs") if int(inc) > 1 else _("sec")) + "/" + _("move")
 
         event = gm.tags['Event']
         if event and event != "?":
+            if len(text) > 0:
+                text += ', '
             text += event
 
         site = gm.tags['Site']
