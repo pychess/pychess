@@ -143,6 +143,7 @@ DATA_FILES = [("share/pychess",
 
 # UI
 DATA_FILES += [("share/pychess/glade", glob('glade/*.glade'))]
+DATA_FILES += [("share/pychess/glade", ['glade/background.jpg'])]
 DATA_FILES += [("share/pychess/glade", glob('glade/*.png'))]
 DATA_FILES += [("share/pychess/glade/16x16", glob('glade/16x16/*.png'))]
 DATA_FILES += [("share/pychess/glade/48x48", glob('glade/48x48/*.png'))]

@@ -5,7 +5,7 @@ from os import path
 from gi.repository import Gtk, Gdk, GdkPixbuf
 import cairo
 
-from pychess.System import conf
+from pychess.System import conf, uistuff
 from pychess.System.prefix import addDataPrefix, addUserCachePrefix
 
 surface = None
@@ -183,7 +183,7 @@ def newTheme(widget, background=None):
     ]
 
     if background is None:
-        background = conf.get("welcome_image", addDataPrefix("glade/clear.png"))
+        background = conf.get("welcome_image", addDataPrefix("glade/background.jpg"))
 
     if not path.isfile(background):
         background = addDataPrefix("glade/clear.png")
@@ -191,6 +191,8 @@ def newTheme(widget, background=None):
 
     if not background.endswith("clear.png"):
         pixbuf = GdkPixbuf.Pixbuf.new_from_file(background)
+        x, y, height, width = uistuff.getMonitorBounds()
+        pixbuf = pixbuf.scale_simple(height, width, GdkPixbuf.InterpType.BILINEAR)
         # for frmat in GdkPixbuf.Pixbuf.get_formats():
         #     print(frmat.get_extensions())
         surface = Gdk.cairo_surface_create_from_pixbuf(pixbuf, 0, None)
