@@ -416,6 +416,7 @@ class GladeWidgets:
             for node in tree.iter():
                 if 'translatable' in node.attrib:
                     node.text = _(node.text)
+                    del node.attrib['translatable']
                 if node.get('name') in ('pixbuf', 'logo'):
                     node.text = addDataPrefix("glade/%s" % node.text)
             xml_text = ET.tostring(tree.getroot(), encoding='unicode', method='xml')
