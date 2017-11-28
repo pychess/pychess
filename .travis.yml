@@ -1,11 +1,11 @@
-group: deprecated-2017Q2
+# group: deprecated-2017Q2
 language: generic
 
 matrix:
   include:
     - os: linux
       sudo: required
-      dist: trusty
+#      dist: trusty
       language: generic
       env: PYTHON="python3" PACKAGES="python3-cairo python3-gi python3-gi-cairo python3-sqlalchemy python3-psutil python3-pip"
 
@@ -16,8 +16,8 @@ install:
  - sudo pip3 install coverage
  - sudo pip3 install codecov
  - sudo pip3 install flake8
- - virtualenv --python=$PYTHON --system-site-packages _venv
- - source _venv/bin/activate
+# - virtualenv --python=$PYTHON --system-site-packages _venv
+# - source _venv/bin/activate
 
 script:
  - /usr/local/bin/flake8 --exclude=lib/pychess/external/ lib/pychess/
