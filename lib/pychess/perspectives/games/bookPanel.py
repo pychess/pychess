@@ -193,9 +193,7 @@ class EngineAdvisor(Advisor):
     def on_ready_for_options(self, engine):
         engine_max = self.engine.maxAnalysisLines()
         engine_value = self.engine.getAnalysisLines()
-        self.linesExpected = conf.get("multipv", 1)
-        if engine_value != self.linesExpected:
-            self.linesExpected = engine_value
+        self.linesExpected = engine_value if engine_value <= engine_max else engine_max
 
         m = self.boardview.model
         if m.isPlayingICSGame():
@@ -459,7 +457,7 @@ class Sidepanel(object):
 
         # ## multipv (number of analysis lines)
         self.multipvRenderer = Gtk.CellRendererSpin()
-        adjustment = Gtk.Adjustment(value=conf.get("multipv", 1),
+        adjustment = Gtk.Adjustment(value=1,
                                     lower=1,
                                     upper=9,
                                     step_incr=1)
@@ -480,7 +478,7 @@ class Sidepanel(object):
 
         def multipv_edited(renderer, path, text):
             iter = self.store.get_iter(path)
-            self.store.set_value(iter, 2, self.advisors[int(path[0])].multipv_edited(int(text)))
+            self.store.set_value(iter, 2, self.advisors[int(path[0])].multipv_edited(1 if text == "" else int(text)))
 
         self.multipv_cid = self.multipvRenderer.connect('edited', multipv_edited)
 

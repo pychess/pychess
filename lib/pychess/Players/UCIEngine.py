@@ -713,7 +713,6 @@ class UCIEngine(ProtocolEngine):
         n = min(n, self.maxAnalysisLines())
         n = max(n, self.minAnalysisLines())
         if n != self.multipvSetting:
-            conf.set("multipv", n)
             self.multipvSetting = n
             print("stop", file=self.engine)
             print("setoption name MultiPV value", n, file=self.engine)
