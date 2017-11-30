@@ -947,10 +947,6 @@ class Sidepanel:
         pos = len(self.nodelist)
         for n in self.nodelist:
             if n["board"] == board:
-                if ini_board is not None:
-                    end_iter = self.textbuffer.get_iter_at_offset(n["start"])
-                else:
-                    end_iter = self.textbuffer.get_iter_at_offset(n["end"])
                 pos = self.nodelist.index(n)
                 break
         start = end_iter.get_offset()
