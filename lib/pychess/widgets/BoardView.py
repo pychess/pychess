@@ -497,6 +497,10 @@ class BoardView(Gtk.DrawingArea):
         if not self.model.lowply <= shown <= self.model.variations[self.shown_variation_idx][-1].ply:
             return
 
+        self.redarrow = None
+        self.greenarrow = None
+        self.bluearrow = None
+
         # If there is only one board, we don't do any animation, but simply
         # redraw the entire board. Same if we are at first draw.
         if len(self.model.boards) == 1 or self.shown < self.model.lowply:
