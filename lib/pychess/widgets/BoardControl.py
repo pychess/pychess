@@ -40,7 +40,7 @@ def play_or_add_move(view, board, move):
             # try to find this move in variations
             for i, vari in enumerate(board.board.next.children):
                 for node in vari:
-                    if type(node) != str and node.lastMove == move.move:
+                    if type(node) != str and node.lastMove == move.move and node.plyCount == board.ply + 1:
                         # replay variation move
                         view.setShownBoard(node.pieceBoard)
                         return
