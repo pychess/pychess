@@ -159,7 +159,7 @@ class GameWidget(GObject.GObject):
                 getWidgets()[widget].set_property('sensitive', True)
 
         # Change window title
-        getWidgets()['main_window'].set_title('%s - PyChess' % self.display_text)
+        getWidgets()['main_window'].set_title(self.display_text + (" - " if self.display_text != "" else "") + "PyChess")
 
     def _update_menu_abort(self):
         if self.gamemodel.hasEnginePlayer():
@@ -464,17 +464,19 @@ class GameWidget(GObject.GObject):
         self._set_arrow(analyzer_type, None)
         return False
 
-    def player_display_text(self, color=WHITE):
+    def player_display_text(self, color, with_elo):
+        text = ""
         if isinstance(self.gamemodel, ICGameModel):
             if self.gamemodel.ficsplayers:
-                return self.gamemodel.ficsplayers[color].name
-            else:
-                return ""
+                text = self.gamemodel.ficsplayers[color].name
         else:
             if self.gamemodel.players:
-                return repr(self.gamemodel.players[color])
-            else:
-                return ""
+                text = repr(self.gamemodel.players[color])
+        if with_elo:
+            elo = self.gamemodel.tags.get("WhiteElo" if color == WHITE else "BlackElo")
+            if elo:
+                text += " (%s)" % str(elo)
+        return text
 
     @property
     def display_text(self):
@@ -482,8 +484,8 @@ class GameWidget(GObject.GObject):
             return ""
         '''This will give you the name of the game.'''
         vs = " - "
-        t = vs.join((self.player_display_text(color=WHITE),
-                     self.player_display_text(color=BLACK)))
+        t = vs.join((self.player_display_text(WHITE, True),
+                     self.player_display_text(BLACK, True)))
         return t
 
     def players_changed(self, gamemodel):
@@ -501,8 +503,9 @@ class GameWidget(GObject.GObject):
 
         if self.gamemodel is None:
             return
-        self.player_name_labels[color].set_text(self.player_display_text(
-            color=color))
+        name = self.player_display_text(color, False)
+        self.gamemodel.tags["White" if color == WHITE else "Black"] = name
+        self.player_name_labels[color].set_text(name)
         if isinstance(self.gamemodel, ICGameModel) and \
                 player.__type__ == REMOTE:
             self.player_name_labels[color].set_tooltip_text(
