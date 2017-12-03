@@ -754,7 +754,6 @@ class PGNFile(ChessFile):
 
         self.error = None
         movetext = self.get_movetext(rec)
-
         boards = self.parse_movetext(movetext, boards[0], position)
 
         # The parser built a tree of lboard objects, now we have to
@@ -1004,23 +1003,35 @@ class PGNFile(ChessFile):
 
     def get_movetext(self, rec):
         self.handle.seek(rec["Offset"])
+        in_comment = False
         lines = []
         line = self.handle.readline()
         if not line.strip():
             line = self.handle.readline()
 
         while line:
-            if line.startswith("["):
+            # escape non-PGN data line
+            if line.startswith("%"):
                 line = self.handle.readline()
-            elif line.startswith("%"):
+                continue
+
+            # header tag line
+            if not in_comment and line.startswith("["):
                 line = self.handle.readline()
-            elif line.strip():
+                continue
+
+            # update in_comment state
+            if (not in_comment and "{" in line) or (in_comment and "}" in line):
+                in_comment = line.rfind("{") > line.rfind("}")
+
+            if line.strip():
                 lines.append(line)
                 line = self.handle.readline()
             elif len(lines) == 0:
                 line = self.handle.readline()
             else:
                 break
+
         return "".join(lines)
 
     def get_variant(self, rec):
