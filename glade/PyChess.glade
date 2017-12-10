@@ -4049,7 +4049,32 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="left_padding">5</property>
                         <child>
                           <object class="GtkCheckButton" id="saveRatingChange">
-                            <property name="label" translatable="yes">Save rating change values</property>
+                            <property name="label" translatable="yes">Save _rating change values</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="halign">start</property>
+                            <property name="use_underline">True</property>
+                            <property name="xalign">0</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment29">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">5</property>
+                        <child>
+                          <object class="GtkCheckButton" id="indentPgn">
+                            <property name="label" translatable="yes">Indent _PGN file</property>
                             <property name="use_action_appearance">False</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
