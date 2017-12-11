@@ -136,6 +136,7 @@ def parseTimeControlTag(tag):
 def save(handle, model, position=None):
     """ Saves the game from GameModel to .pgn """
 
+    # Header
     status = "%s" % reprResult[model.status]
 
     print('[Event "%s"]' % model.getTagExport("Event", ""), file=handle)
@@ -206,18 +207,53 @@ def save(handle, model, position=None):
         termination = "normal"
     print('[Termination "%s"]' % termination, file=handle)
 
-    print("", file=handle)
-
     save_emt = conf.get("saveEmt", False)
     save_eval = conf.get("saveEval", False)
 
+    # Discovery of the moves and comments
     result = []
     walk(model.boards[0].board, result, model, save_emt, save_eval)
 
-    result = " ".join(result)
-    result = wrap(result, 80)
-    print(result, status, file=handle)
-    print("", file=handle)
+    # Alignment of the fetched elements
+    indented = conf.get("indentPgn", False)
+    buffer = ""
+    depth = 0
+    crlf = False
+    for text in result:
+        # De/Indentation
+        crlf = (buffer[-1:] if len(buffer) > 0 else "") in ["\r", "\n"]
+        if text == "(":
+            depth += 1
+            if indented and not crlf:
+                buffer += os.linesep
+                crlf = True
+        # Space between each term
+        last = buffer[-1:] if len(buffer) > 0 else ""
+        crlf = last in ["\r", "\n"]
+        if not crlf and last != " " and last != "\t" and last != "(" and not text.startswith("\r") and not text.startswith("\n") and text != ")" and len(buffer) > 0:
+            buffer += " "
+        # New line for a new main move
+        if len(buffer) == 0 or (indented and depth == 0 and last != "\r" and last != "\n" and re.match("^[0-9]+\.", text) is not None):
+            buffer += os.linesep
+            crlf = True
+        # Alignment
+        if crlf and depth > 0:
+            for j in range(0, depth):
+                buffer += "    "
+        # Term
+        buffer += text
+        if indented and text == ")":
+            buffer += os.linesep
+            crlf = True
+            depth -= 1
+
+    # Status of the game
+    buffer += ("" if crlf else (os.linesep if indented else " ")) + status
+    if not indented:
+        buffer = wrap(buffer, 80)
+
+    # Final
+    print(buffer, "", file=handle)
     output = handle.getvalue() if isinstance(handle, StringIO) else ""
     handle.close()
     return output
@@ -232,14 +268,6 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
        node - list (a tree of lboards created by the pgn parser)
        result - str (movetext strings)"""
 
-    def store(text):
-        if len(result) > 1 and result[-1] == "(":
-            result[-1] = "(%s" % text
-        elif text == ")":
-            result[-1] = "%s)" % result[-1]
-        else:
-            result.append(text)
-
     while True:
         if node is None:
             break
@@ -248,7 +276,7 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
         if node.prev is None:
             for child in node.children:
                 if isinstance(child, str):
-                    store("{%s}" % child)
+                    result.append("{%s}%s" % (child, os.linesep))
             node = node.next
             continue
 
@@ -257,9 +285,9 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
                                "TimeControl" in model.tags)
         if movecount is not None:
             if movecount:
-                store(movecount)
+                result.append(movecount)
             move = node.lastMove
-            store(toSAN(node.prev, move))
+            result.append(toSAN(node.prev, move))
             if (save_emt or save_eval) and not vari:
                 emt_eval = ""
                 if "TimeControl" in model.tags and save_emt:
@@ -272,40 +300,40 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
                         score = -score
                     emt_eval += "[%%eval %0.2f/%s]" % (score / 100.0, depth)
                 if emt_eval:
-                    store("{%s}" % emt_eval)
+                    result.append("{%s}" % emt_eval)
 
         for nag in node.nags:
             if nag:
-                store(nag)
+                result.append(nag)
 
         for child in node.children:
             if isinstance(child, str):
                 child = re.sub("\[%.*?\]", "", child)
                 # comment
                 if child:
-                    store("{%s}" % child)
+                    result.append("{%s}" % child)
             else:
                 # variations
                 if node.fen_was_applied:
-                    store("(")
+                    result.append("(")
                     walk(child[0],
                          result,
                          model,
                          save_emt,
                          save_eval,
                          vari=True)
-                    store(")")
+                    result.append(")")
                     # variation after last played move is not valid pgn
                     # but we will save it as in comment
                 else:
-                    store("{Analyzer's primary variation:")
+                    result.append("{%s:" % _("Analyzer's primary variation"))
                     walk(child[0],
                          result,
                          model,
                          save_emt,
                          save_eval,
                          vari=True)
-                    store("}")
+                    result.append("}")
 
         if node.next:
             node = node.next
