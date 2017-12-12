@@ -829,6 +829,19 @@ class EnterNotationExtension(_GameInitializationMode):
             elif parts_no > 0 and text.split()[0].count("/") == 7:
                 loadType = fen
             else:
+                # patch default human player names on demand...
+                player0combo = cls.widgets["whitePlayerCombobox"]
+                player0 = player0combo.get_active()
+                if player0 == 0 and '[White "' not in text:
+                    name = '[White "%s"]' % conf.get("firstName", _("You"))
+                    text = "%s\n%s" % (name, text)
+
+                player1combo = cls.widgets["blackPlayerCombobox"]
+                player1 = player1combo.get_active()
+                if player1 == 0 and '[Black "' not in text:
+                    name = '[Black "%s"]' % conf.get("secondName", _("Guest"))
+                    text = "%s\n%s" % (name, text)
+
                 loadType = pgn
 
             return text, loadType
