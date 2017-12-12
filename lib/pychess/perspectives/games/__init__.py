@@ -543,6 +543,7 @@ class Games(GObject.GObject, Perspective):
         self.notebooks = {"board": new_notebook("board"),
                           "buttons": new_notebook("buttons"),
                           "messageArea": new_notebook("messageArea")}
+        self.main_notebook = self.notebooks["board"]
         for panel in self.sidePanels:
             self.notebooks[panel.__name__] = new_notebook(panel.__name__)
 

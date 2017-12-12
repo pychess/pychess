@@ -1,0 +1,599 @@
+k Welcome to Knackie's Tactics Training. The examples are based on material of an Hungarian Chess School. They have been revised using Fritz and a bit of Knackie's brain.
+15
+k The 5th Lesson features the theme 'Pulling the king to the open'.
+10
+k In most middlegames, both sides try to hide their their king behind a pawn shelter.
+10
+k Sometimes, however, the attacking side finds a way to break through the shelter, pulling the king to the open.
+12
+l Let's start with a typical example.
+8
+k Example 1: Dominguez vs Bernard, Romania 1975
+3
+bsetup
+1
+bsetup fen 2r4r/pb3kb1/1p2pp2/q7/3P2NP/Q5R1/PP3PP1/4R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Dominguez
+1
+bname Bernard
+1
+k White's queen is under attack, but white found a better solution than moving the queen...
+15
+k Consider the position for yourself for a while.
+40
+g4e5
+k White opens the position around the black king...
+10
+f6e5
+g3g7
+k After the second sacrifice, the black king remains completely isolated.
+15
+f7g7
+a3e7
+k White finally 'saves' his queen.
+10
+g7g6
+e1e5
+k After the black king is isolated, white is in no hurry chasing it with checks.
+15
+a5e5
+k Black had no choice.
+7
+d4e5
+k Considering material, black is almost ok: 2 Rooks + Bishop versus white's Queen + 3 Pawns.
+10
+k Considering the isolated black king, black is completely lost.
+10
+b7a8
+e7f6
+g6h7
+f6f7
+h7h6
+g2g4
+k Black is helpless against the threat of g4-g5.
+12
+k Black resigned.
+8
+k Example 2: Mikenas vs Lebegyev, USSR 1941
+3
+bsetup
+1
+bsetup fen r1b1qr2/p4p2/1p2pk2/4N1bp/7P/2PQ2B1/P5P1/1B5K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Mikenas
+1
+bname Lebegyev
+1
+k Not much work to be done here to pull the king to the open.
+10
+k Can you find the quick mate?
+10
+k White moves, 45 seconds ...
+45
+e5g4
+k Kg7 now fails to Qh7 mate...
+10
+k and Ke7 fails to Qd6 mate.
+10
+k So, black must take the knight...
+8
+h5g4
+g3e5
+k Pulling the king further to the open.
+10
+f6e5
+d3d4
+k mate
+10
+k Example 3: Ivkov vs Ingerslev, Moskau 1956
+3
+bsetup
+1
+bsetup fen 2r3kr/5pp1/7p/3PQRb1/ppq1B3/8/PPP3PP/1K1R4
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Ivkov
+1
+bname Ingerslev
+1
+k Black's position already looks strange. (enclosed Rook at h8)
+10
+k How did white exploit his superior position?
+10
+k White moves, 45 seconds...
+45
+f5f7
+k Typically destroying the pawn shelter and pulling the king to the open.
+12
+g8f7
+e5e6
+f7f8
+k White ensured that the black king can't escape. Now he starts thinking about mate.
+10
+k How would you continue the attack?
+15
+e4g6
+c4c7
+k Black narrowly defends against immediate mate. How does white increase the pressure?
+20
+d1e1
+k After this powerful move, white threatens Qe8+ RxQe8 RxRe8 mate.
+12
+k The only defense against that mate would be Qd8, but that fails to Qf7 mate.
+15
+k Black resigned.
+8
+k Example 4: Marjasin vs Kapengut, USSR 1969
+3
+bsetup
+1
+bsetup fen r1b3r1/pp3kbQ/4pBp1/q1p1Pp2/3p4/2P1P3/1P1KB1P1/3R3R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Marjasin
+1
+bname Kapengut
+1
+k At first sight, it might seem that the white king is more in danger than the black one.
+12
+k What's your opinion?
+10
+k White moves, 60 seconds...
+60
+h7g6
+k A very bold method for pulling the king to the open.
+10
+f7g6
+k Having played the queen sacrifice you must have seen all the following...
+15
+e2h5
+g6h7
+h5f7
+g7h6
+k Black found some shelter, but...
+15
+h1h6
+h7h6
+d1h1
+k ate. You would like such a finish in one of your games, wouldn't you?
+12
+k Example 5: Miles vs Wedberg, Stockholm 1976
+3
+bsetup
+1
+bsetup fen rnbr4/1pq2pk1/p2p3p/2pP2pQ/2N5/2PB2P1/P5PP/R4RK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Miles
+1
+bname Wedberg
+1
+k This is a much more 'calm' example.
+10
+k How did white pull the black king to the open?
+10
+k White moves, 45 seconds...
+45
+f1f6
+k A calm move, but very strong. White simply threatens Qxh6.
+12
+k If black defends h6 by means of Rh8, white simply plays Ra-f1, when f7 cannot be protected.
+15
+k So, black has no choice: he must take the Rook.
+10
+g7f6
+k the rest is simple:
+10
+h5h6
+f6e7
+a1e1
+e7d7
+d3f5
+k mate
+8
+k Example 6: Keres vs Foldesepp, Correspondence 1932
+3
+bsetup
+1
+bsetup fen rn4qr/p1ppkp1p/bp1b1n2/4N3/2PPP1p1/2N3P1/PP2B1K1/R1B2Q1R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Keres
+1
+bname Foldesepp
+1
+k In this correspondence game, white worked out a brilliant finish.
+12
+k Can you calculate the variation through the end?
+12
+k White moves, 75 seconds...
+75
+f1f6
+k That looks nice, but you must have calculated until the end.
+e7f6
+k How does white continue?
+18
+c3d5
+k Kg7 now fails to the beautiful Bh6 mate, so black has no choice...
+15
+f6e6
+k White would like to play Bxg4 here, but the black Queen protects g4. How does white continue?
+18
+h1h6
+k f7-f6 now fails to Rxf6 mate, so black tries.
+g8g6
+k The black queen is now pinned, so white can play...
+e2g4
+f7f5
+g4f5
+k mate. That looks great, especially if you are on the white side :-)
+15
+k Example 7: Petrossian vs Pachmann, Bled 1961
+3
+bsetup
+1
+bsetup fen r1br4/1p2npkp/3Bpbp1/pqp5/2N1R3/1P1P1QP1/1PP2PBP/R5K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Petrosian
+1
+bname Pachmann
+1
+k Ex World-Champion Petrosian usually played slow strategical chess.
+12
+k This does not mean he was a bad tactician.
+10
+k Considering the previous examples, you'll probably guess the first move quickly. Do you also see move 3?
+15
+k White moves, 75 seconds...
+75
+f3f6
+k Business as usual.
+8
+g7f6
+d6e5
+k Preventing the king from going back to g7.
+10
+k Black can play Kf5 or Kg5 here; let's first consider Kf5:
+15
+f6f5
+k White now has a mate in 3 ...
+20
+e4f4
+f5g5
+e5f6
+g5h5
+f4h4
+k mate; let's now go back to the game.
+5
+back 6
+k Black tried Kg5 instead of Kf5.
+8
+f6g5
+k This is the crucial point of Petrosian's combination:
+10
+k White is now faced with the problem of preventing the king from going back behind the pawn shelter.
+15
+k What was Petrosian's idea?
+20
+e5g7
+k Extremely strong!! The bishop at g7 controls both the black king's escape squares: f6 and h6.
+15
+k The black king will soon be mated:
+e7f5
+h2h4
+f5h4
+g3h4
+k On Kf5, Bh3 mate follows, so black tries:
+g5h5
+g2f3
+k mate.
+5
+k You should remember this example, especially the move Bg7!!.
+10
+k Pulling the king to the open is not sufficient; you must ensure it stays there!
+15
+k Example 8: Unzicker vs Antoschin, Szocsi 1965
+3
+bsetup
+1
+bsetup fen 2r1r1k1/5ppp/pq3b2/2pB1P2/2p2B2/5Q1P/Pn3PP1/2R1R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Unzicker
+1
+bname Antoschin
+1
+k Things are getting a bit more difficult now...
+10
+k The first move might seem obvious, but do you see all the complications?
+15
+k White moves, 75 seconds...
+75
+d5f7
+k Everyone probably got that.
+g8f7
+f3d5
+f7f8
+k The next move should be easy...
+15
+f4d6
+k Black now has the choice of Re7 or Be7; let's first consider Be7...
+f6e7
+k The next move is very typical...
+12
+e1e7
+e8e7
+k Can you find white's next move?
+20
+d5e6
+k Very strong: white attacks both black rooks and prepares the following...
+15
+c8e8
+k There follows of course...
+10
+d6e7
+k Winning the Queen. Let's go back to the game.
+10
+back 6
+k Black tried Re7 instead of Be7.
+8
+e8e7
+k Which strong move now increases the pressure?
+20
+e1e6
+k Preparing Rc-e1 and threatening Bxe7+, winning the Queen.
+12
+k Let's look what happens if black tries to save his Queen:
+10
+b6a7
+e6f6
+k White eliminates a vital defender.
+8
+g7f6
+d5e6
+k Attacking both Rooks.
+c8e8
+c1e1
+k White now threatens Qxf6+ followed by taking on e7.
+12
+k Black is helpless, so let's go back to the game.
+10
+back 6
+k Instead of Qa7 black tried the ingenius Rd8.
+8
+c8d8
+k Black pins the Bishop at d6, but white nevertheless gets the better of it:
+15
+d6e7
+f6e7
+e6b6
+d8d5
+b6b2
+k Two Rooks versus Rook + Bishop should be no problem. Black resigned.
+12
+k Example 9: Pinter vs Arhipov, Balatonbereny 1983
+3
+bsetup
+1
+bsetup fen r1bqkb1r/pp1npppp/4n3/2p1N3/2B1P3/2N5/PP1P1PPP/R1BQ1K1R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Pinter
+1
+bname Arhipov
+1
+k If you plan some sacrifices here, you must ensure the black king won't escape.
+15
+k White moves, 75 seconds...
+75
+e5f7
+k The first sacrifice...
+e8f7
+c4e6
+k The second sacrifice...
+f7e6
+k How would you prevent the black king from escaping?
+20
+d1b3
+k Black now has the choice going to the Queenside or to the Kingside.
+10
+k Let's look what could happen if he heads for the Queenside.
+e6d6
+c3b5
+d6c6
+b3e6
+c6b5
+a2a4
+b5a5
+b2b4
+c5b4
+e6d5
+a5b6
+c1b2
+e7e5
+a4a5
+b6a6
+d5c4
+b7b5
+c4c6
+d7b6
+a5b6
+k mate. Let's go back to the game.
+8
+back 20
+k Black went to the kingside.
+8
+e6f6
+c3d5
+f6f7
+k How do you prevent Ke8?
+12
+d5c7
+f7g6
+k Should white grab on a8 or is there a better choice?
+20
+c7e6
+d8e8
+e6f4
+k Now the black king won't escape.
+8
+g6g5
+h2h4
+g5h6
+b3g3
+e8g6
+k White could, of course, win playing NxQ, but he wants more.
+20
+g3g5
+g6g5
+h4g5
+h6g5
+h1h5
+g5f4
+k Kf6 now fails to Rf5 mate, so black tried:
+10
+d2d3
+f4g4
+h5g5
+g4h4
+g2g3
+h4h3
+g5h5
+h3g4
+h5h4
+g4f3
+h4f4
+k mate.
+5
+k You might ask if one must calculate this whole 18-move variation on move 1? Of course not!
+15
+k You just need to ensure the king won't be able to go back behind his pawn shelter. The king won't survive in the long run.
+15
+k Example 10: Kolcov vs Nikiforov, USSR 1974
+3
+bsetup
+1
+bsetup fen r5k1/1p3p1p/p1pqrPp1/3bN3/8/P1P3Q1/1P4PP/4RRK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Kolcov
+1
+bname Nikiforov
+1
+k In this last example, white found a very imaginative way for using his Queen.
+15
+k White moves, 75 seconds...
+75
+e5f7
+k QxQ does not help here, because white plays Nh6+ before recapturing the Queen.
+15
+g8f7
+k How does white prepare the decisive attack of his Queen ?
+20
+e1e6
+k Again, QxQ does not help because of Re7+.
+10
+d6e6
+g3c7
+f7e8
+k How does white prepare further action of his Queen?
+20
+f6f7
+e8f8
+k White now finishes the game with a series of beautiful geometrical moves.
+12
+k Can you find the idea?
+20
+c7f4
+k Threatening Qh6.
+8
+g6g5
+k Which is the next Queen move ?
+15
+f4d4
+k Threatening Qh8.
+8
+f8e7
+k What is the final move?
+20
+d4c5
+k f7-f8Q cannot be prevented. Black resigned.
+15
+k That final manoeuvre Qc7-f4-d4-c5 shows why chess can be considered an art.
+15
+k I hope you enjoyed the lesson! These and many more examples can be downloaded in chessbase format at http://webplaza.pt.lu/public/ckaber
+20

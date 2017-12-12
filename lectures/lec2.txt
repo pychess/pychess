@@ -1,0 +1,530 @@
+k Welcome to Knackie's Tactics Training. The examples are based on material of a Hungarian Chess School. They have been revised using Fritz and a bit of Knackie's brain.
+15
+k Note that the time granted for finding the solutions might seem very short to beginners. That's because i had to find a compromise so that the advanced players are not too much bored by the time they have to wait. Don't be bothered if you don't find the solutions in time by yourself; you will learn as much by the explanations that follow.
+30
+k The first lesson features the theme 'Back rank weakness'.
+10
+k Example 1:  Honfi vs Sebestyen, Dunaujvaros 1952
+1
+bsetup
+1
+bsetup fen r1bq2k1/2p2p1p/p1pp2pB/2n4r/8/2N2Q2/PPP2PPP/4RRK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Honfi
+1
+bname Sebestyen
+1
+k Let's dive into the theme by looking at an easy example.
+7
+k The only piece which still defends black's back rank is the Queen. How does white exploit this? You have 25 seconds...
+35
+f3f6
+k A very powerful move: white threatens Qg7 mate, so black has no choice.
+8
+d8f6
+k But now black's Queen does not protect the back rank anymore.
+8
+e1e8
+8
+k Example 2: Dementyev vs Karpov, Riga 1971
+1
+bsetup
+1
+bsetup fen q3r1k1/4Rp1p/6p1/2Q1B3/P2P4/1r1b3P/5PP1/4R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Dementyev
+1
+bname Karpov
+1
+k Here is a similar example. Note that Karpov plays on the black side! What a pity if you had a chance to win against Karpov and could not find the winning move! Which move forced Karpov to resign immediately? 45 seconds...
+65
+c5d5
+k What a shot! White threatens Qxf7 and attacks the rook on b3. If black takes the Queen however...
+8
+a8d5
+k there follows of course...
+5
+e7e8
+k according to the back rank weakness theme.
+8
+k Example 3: Minic vs Honfi, Vranjacka Banja 1966
+1
+bsetup
+1
+bsetup fen r2r2k1/2q2ppp/8/pp1RP3/8/1pP1Q3/1P3PPP/3R2K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Minic
+1
+bname Honfi
+1
+k The first two examples already showed that the back rank theme allows some very surprising ideas. This example adds some more fun. How does white exploit black's back rank ? 60 seconds...
+45
+k Note that white's rooks are already well placed to give mate on d8 , so white would like to get his queen into action...
+40
+e3a7
+k What a surprise! One must like this move(especially as white). Both black pieces which protect d8 are now under attack.
+20
+k Let's first look what happens if black now takes on d5:
+8
+d8d5
+k Of course white does not take the Queen now, as he then gets mated on d1 himself (back rank weakness!)
+12
+a7a8
+c7d8
+a8d8
+d5d8
+d1d8
+k So taking on d5 was no help for black.
+8
+back 6
+k What else could black try?
+10
+c7c8
+k Trying to protect d8. White could now win easily by taking on d8, winning the Queen, but there's a more thematic solution:
+25
+a7a8
+d8f8
+a8c8
+k and so on.
+8
+k Example 4: Fuester vs Balogh, Budapest 1945
+1
+bsetup
+1
+bsetup fen 5rk1/5ppp/8/8/8/4PQ2/r1q2PPP/RR4K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Fuester
+1
+bname Balogh
+1
+k In this example black wins a rook in a very surprising way. Can you find the solution? 45 seconds...
+55
+c2b2
+k The Queen cannot, of course, be taken. Black now simply threatens Rxa1. The only way to avoid this would be :
+15
+f3d1
+k White succeeds in protecting his back rank, but now of course f2 is unprotected.
+15
+b2f2
+k With mate on g2.
+8
+k Example 5: ??? vs ???, Jugoslavia 1949
+1
+bsetup
+1
+bsetup fen 8/pQRq2pk/4p2p/3r1p2/3P4/4P3/PP3PPP/6K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Unknown
+1
+bname Unknown
+1
+k What about this position? Black seems in great trouble as his queen is under attack, and moving the queen would allow white to take on g7.
+20
+k How did the back rank theme help black to completely reverse the situation ? 60 seconds...
+67
+d5c5
+k Neither the Queen nor the rook can be taken, due to back rank mate. On the other hand, black threatens to take white's rook.
+25
+c7c5
+k This prevents immediate mate.
+8
+d7b7
+k With queen vs rook, the win is only a matter of time.
+8
+k Example 6: Maric vs Gligoric, Belgrad 1962
+1
+bsetup
+1
+bsetup fen 5rk1/1B2bp1p/p2p1p2/q4R2/8/2r5/P1PQ2PP/1R5K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Maric
+1
+bname Gligoric
+1
+k Having gained some experience, you should not be surprised by black's first move in this example. Can you find it quickly? 60 seconds...
+70
+c3b3
+k Very powerful: black threatens mate on b1 and attacks both white's Queen and the rook on f5!
+20
+d2d1
+k White protects his back rank.
+10
+b3b1
+k Black simplifies and gains material at the end.
+10
+d1b1
+a5f5
+8
+k Example 7: Najdorf vs Nunn, England 1983
+1
+bsetup
+1
+bsetup fen 6k1/4r3/2ppnQp1/8/1N4q1/1P5p/P4R1P/7K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Najdorf
+1
+bname Nunn
+1
+k In this position it seems at first sight that it is black who is under attack, but white's enclosed king on h1 gave black some ideas to reverse the situation. Do you have as much imagination as John Nunn ? 80 seconds...
+96
+e6f4
+k threatening Re1. Taking the knight would be no help for white as he then gets mated by Re1+ followed by Qg2 mate. So white must protect his back rank.
+25
+f6a1
+k Black now has two good ways to finish the game; can you find at least one of them? 60 seconds...
+67
+k Let's first look at Fritz's solution:
+8
+f4e2
+k threatening Qe4+
+8
+a1f1
+g4e4
+f2f3
+e7f7
+k The rook on f3 cannot be protected.
+10
+back 5
+5
+k Let's now see the other solution:
+8
+e7e2
+k White cannot take this the rook with RxR as there would follow Qf3+ Kg1 Nxe2  mate, so he must protect his rook.
+25
+a1g1
+k Now black has another back rank shot...
+30
+f4d3
+k Taking the Queen is not allowed, e.g:
+8
+g1g4
+e2e1
+g4g1
+d3f2
+k mate
+8
+back 4
+5
+k Instead of taking the Queen, white tries:
+8
+f2e2
+g4f3
+k Now white must put either his queen or his rook on g2, but he gets mated in either case. Let's first look at Qg2:
+15
+g1g2
+h3g2
+e2g2
+f3f1
+g2g1
+d3f2
+k mate
+8
+back 6
+5
+k Let's now look at Rg2:
+8
+e2g2
+d3f4
+g1f2
+h3g2
+h1g1
+f4h3
+k mate
+8
+k Example 8: Lippschuetz vs Schalopp, London 1886
+1
+bsetup
+1
+bsetup fen 2r1Rn1k/1p1q2pp/p7/5p2/3P4/1B4P1/P1P1QP1P/6K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Lippschuetz
+1
+bname Schalopp
+1
+k This is an example from the 'good old times'. This should be easy now. White to move. 45 seconds...
+50
+e2c4
+k Of course! White threatens Qg8 mate, so black has no choice
+20
+c8c4
+e8f8
+k mate.  Easy wasn't it?
+8
+k Example 9: Netto vs Abente, Paraguay 1983
+1
+bsetup
+1
+bsetup fen 2b1r3/1p2qpkp/2p3p1/4r3/R4Q2/2P2RP1/P1B2P1P/6K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Netto
+1
+bname Abente
+1
+k This is my favourite example in this lesson. Do you find the mate in 6 ? Black to move. 90 seconds...
+52
+k Note that if white's king stood on f1 instead of g1, there would be an easy mate with Bh3+ Kg1 Re1. Still having trouble to find the solution ?
+58
+e5e1
+g1g2
+e1g1
+k Oooops! Strange move, isn't it? (not quite so strange if you've found the solution)
+15
+g2g1
+e7e1
+g1g2
+k Remember that idea with Bh3+ ?... I hear the ah!'s and oh!'s coming...
+25
+e1f1
+k Of course!
+8
+g2f1
+c8h3
+f1g1
+e8e1
+k mate
+8
+k Example 10: Gheorghiu vs Kinmark, 1961
+1
+bsetup
+1
+bsetup fen r1b2r1k/2q2pp1/2pb3p/p1n1NB2/1pP5/1P5P/PBQ2PP1/3RR1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Gheorghiu
+1
+bname Kinmark
+1
+k This position is an 'attacker's dream'.All of white pieces are well placed for the final attack. How to start it? 90 seconds...
+100
+d1d6
+k Very good. White sees that he can generate back rank problems for black with Nxf7. Therefore he deflects the black queen which protects the f7-square.
+25
+k Black might think that it would be better to get rid of white's Bishop on f5 first, before taking the rook, so let's first look at Bxf5:
+15
+c8f5
+k White of course does not reply with Qxf5, but with...
+15
+d6h6
+k That's a much better way to 'lose' the rook. White's attack becomes irresistible:
+12
+g7h6
+c2f5
+f7f6
+k Black must close the long diagonal at all costs, otherwise he gets mated by Nxf7 double-check Kg8 Qg6.
+25
+e5g6
+h8g7
+g6e7
+k with Qg6 to come.  So, black's Bxf5 did not work well. Let's now look at what happens if black takes the rook on d6 first:
+20
+back 8
+5
+c7d6
+k Now white can show his back rank ideas. Remember: what was white's idea when deflecting the black queen?
+20
+e5f7
+f8f7
+e1e8
+k The back rank finally comes into action.
+8
+f7f8
+k Believe it or not, white now has an extremely strong move which forces immediate resignation. Can you find it? 60 seconds...
+70
+c2d2
+k That should become one of your all-time favourite tactical moves! The queen cannot, of course, be taken: QxQd2  RxRf8 mate. On the other hand, white threatens Qxh6!!, which could arise after:
+30
+c5d3
+k So that white cannot take black's queen, but of course...
+15
+d2h6
+k The pawn g7 is pinned by the Bishop on b2, so black must recapture with the queen...
+10
+d6h6
+e8f8
+k mate
+8
+back 4
+5
+k So, what else could black try here? He might just take white's rook, thinking that getting two rooks for the queen is not so bad after all.
+20
+f8e8
+d2d6
+k The problem for black is that white still threatens the horrible Qxh6!!
+15
+back 2
+5
+k Taking the rook did not work well. Black might want to improve with Kg8 instead:
+15
+h8g8
+d2d6
+f8e8
+d6g6
+k There is no help for black, e.g:
+8
+e8e1
+g1h2
+a8a7
+g6h7
+g8f8
+h7h8
+f8e7
+h8g7
+k Black loses at least his rook on a7.
+10
+back 12
+5
+k So, black is completely lost after the beautiful Qd2!!
+15
+k Example 11: Schmidt vs Abramovic, Nice 1983
+1
+bsetup
+1
+bsetup fen 3r2k1/5p2/p6p/q5pB/4P3/2R5/1nQ2PPP/6K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Schmidt
+1
+bname Abramovic
+1
+k It seems hard to believe that black might exploit white's back rank. After all, the d1 square is well protected by both white's queen and the bishop on h5. Black found, however, one of the strangest chess moves ever played... What do you think? 60 seconds...
+80
+b2d1
+k What could possibly be the idea of such a move? Well, besides threatening to take white's rook, the idea is very surprising: as long as white's bishop stands on h5, it protects d1. If it stands on the square d1 itself, it does not protect the square anymore!?
+30
+h5d1
+k Black now shows his back rank idea:
+12
+a5c3
+k So, white ran right into black's trap. What else could he have tried?
+8
+back 2
+5
+c2b3
+k White generates a counter attack on f7.
+10
+a5c3
+b3f7
+g8h8
+k It appears that black's queen and rook do a good job preventing further checks, so there was no help for white after the surprising Nd1!!
+8
+k Example 12: Sampouw vs Silalahi, Indonesia 1971
+1
+bsetup
+1
+bsetup fen 4rrk1/pp3ppp/2n5/3N3R/7q/8/PP2Q1PP/3R3K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Sampouw
+1
+bname Silalahi
+1
+k Let's look at the last example: Both queens are attacked, but white is on the move, so he has a move 'for free', as afterwards, black must still look after his queen. 60 seconds...
+85
+e2e8
+k Black cannot take white's queen now, as after RxQe8 RxQh5, white is simply a rook up, so black has no choice:
+25
+h4h5
+k White now had a very clever idea to make the closed back rank larger?! Can you see it?
+45
+d5e7
+c6e7
+k having put a further 'pawn' on black's 7th row, white showed his back rank idea:
+25
+e8f8
+g8f8
+d1d8
+k That's all folks, hope you enjoyed the show! These and many more examples can be downloaded in chessbase-format at:  http://webplaza.pt.lu/public/ckaber    (Tactic1.zip)
+30

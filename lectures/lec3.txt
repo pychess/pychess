@@ -1,0 +1,311 @@
+k Legendary GM Arnold Denker has had a very long and successful chess career. However, his favorite game came very early in this career. In this lecture we will analyse that game. Denker had white against Harold Feit in the 1929 New York Interscholastics.
+18
+wname Denker
+1
+bname Feit
+1
+d4
+f5
+k Black has chosen the double edged Dutch Defense. f5 leads to asymmetrical positions in which black gains an edge in kingside space and fights for the e4 square.
+15
+k However, black's king position is temporarily weak due to the open h5-e8 diagonal. Black must play carefully to avoid succumbing to one of the many traps and gambits that attempt to take advantage of this. Also, the move f5 doesn't contribute to the development of black's minor pieces.
+25
+Nf3
+e6
+k This move is the beginning of the classical Dutch, although black can still play a stonewall(with d5 soon). Black will try to gain control of the light squares. Watch how black's pieces and pawns work toward this goal.
+20
+g3
+k The bishop is best on the long diagonal because black's d7-e6-f5 pawn chain would limit its activity on a square like d3 or c4.
+10
+b6
+Bg2
+Bb7
+O-O
+Nf6
+c4
+k Both sides are following through with their plans. Notice how all of black's moves have tried to control central light squares.
+10
+k White plans to attack in the center, with an eventual d5 to attack black's pawn chain while being alert for opportunities to take advantage of black's king and dark square weaknesses.
+15
+Be7
+Nc3
+k White has now fully prepared the d5 break.
+d6
+k Black opens the d7 square for developing his queen's knight. He also prepares to meet d5 with e5, which is what happened in the game.
+15
+d5
+e5
+k This move avoids the pawn weakness that would have resulted from pawn exchanges. After e5, black's pawn structure is stronger than ever.
+15
+k However, his plan of controlling the light squares has taken a hit because the d5 square is blocked and the b7 bishop has little scope. Also the e6 square has been weakened. White takes advantage of this immediately.
+20
+Ng5
+k If this knight reaches e6 it will attack black's queen and/or g7 pawn and prevent black from castling. Black can't allow this, but the only way to stop it is to undevelop.
+15
+Bc8
+k Most of white's pieces are developed on good squares, whereas black is uncastled, and none of his queenside pieces are developed. White will now try to open the position to try to take advantage of his well developed pieces.
+20
+e4
+k A very strong move. White's plan is to play f4 next, forcing the center open. e4 also has a strong tactical point based on black's vulnerable a8 rook. The knight can't be kicked out by h6.
+15
+h6
+Ne6
+k Black must take this since it is attacking the queen and g7 pawn.
+7
+Bxe6
+dxe6
+k White now threatens exf5, attacking the a8 rook and winning a pawn. f4 does not work:
+10
+f4
+gxf4
+k Winning a pawn anyway, since after exf4...
+5
+exf4
+e5
+k White forks the knight and rook.
+6
+back 4
+k The only other defense to exf5 is for black to play fxe4.
+5
+fxe4
+Nxe4
+k Renewing the threat against black's rook with Nxf6+. Black is helpless against this threat, because white has an even more deadly threat.
+15
+c6
+k Saving the rook but allowing the more deadly threat.
+Nxf6
+Bxf6
+Qh5
+k And black will be mated by Qf7.
+8
+back 10
+k Black instead castles while he still can.
+5
+O-O
+f4
+k Following through with the plan to open the center.
+5
+exf4
+k Black thinks that several pairs of minor pieces will be traded off here when white recaptures his e and f pawns, which would lessen the problems resulting from being behind in development.
+15
+Bxf4
+fxe4
+Ncxe4
+Nxe4
+k However, tactics favor the player with the better position, and white begins a series of crushing tactical moves taking advantage of white's active pieces to attack the black king. First let's look at a mistake white could have made here.
+20
+Nxe4
+k After this, black has fully achieved his goals of trading off some pieces and removing white's pieces from the kingside. Black may be able to salvage this position.
+15
+back 1
+k Instead, white found a brilliant sacrifice.
+Bxe4
+k Black has no choice but to accept the sacrifice by Bxg5(winning the knight). All the other alternates are overwhelmed by white's mass of pieces on the kingside. Such as:
+15
+g6
+Nxh7
+Kxh7
+Qh5
+Kg8
+Qxg6
+Kh8
+Qh7
+10
+back 8
+h6
+Qh5
+k Intending an eventual Qh7+, driving black's king out or even mating if white can cover the f7 square. For example:
+10
+hxg5
+Bh7
+Kh8
+Bg6
+Kg8
+Qh7
+k A common mating pattern.
+6
+back 6
+Bxg5
+Bxg5
+Qxg5
+Rxf8
+Kxf8
+Rf1
+k Now Kg8 leads to a variation on the back rank mate.
+5
+Kg8
+Qe8
+5
+back 2
+k And Ke7 is also mated:
+Ke7
+Qf7
+Kd8
+Qf8
+Kd7
+Rf7
+Qe7
+Rxe7
+6
+back 14
+Bf5
+k Trying to cover the weak light squares.
+5
+Ne6
+Bxe6
+dxe6
+k However it is white who gains control of the light squares and also black's only escape for his king(f7).
+10
+k White is also attacking the rook on a8. If he tries to save the rook, he will be slaughtered by Qg6:
+10
+c6
+Qg6
+k And there is no good way to stop the threatened Qh7.
+5
+back 8
+k So, black must accept the sacrifice, as it is the only way to relieve some of the pressure against the black king.
+10
+Bxg5
+Qh5
+k White presses forward on the kingside, threatening mate beginning with Bxh7+ and Bxg5, regaining the material and continuing to threaten the black king.
+15
+k Black has several defensive attempts. h6 may look good at first glance, but that move merely transposes to the easy win for white that we just saw after black declined the knight sacrifice. Let's look at Bh6, defending the bishop and the h7 square.
+20
+Bh6
+k White now wins a pawn, and, more importantly, destroys the pawn protection of black's king.
+10
+Bxh6
+gxh6
+Qxh6
+k White is threatening mate with Qxh7, and attempts to defend h7 with the queen are met with the simple decoying move Rf8+. For example:
+15
+Rxf1
+Rxf1
+Qe7
+Rf8
+Qxf8
+Qxh7
+8
+back 10
+k Another defensive try is g6.
+g6
+k This move is more difficult to meet than it appears, but it loses nonetheless.
+10
+Bxg6
+k This natural sacrifice cannot be accepted.
+hxg6
+Qxg6
+Kh8
+Bxg5
+k Black will be crushed by Bf6+.
+8
+back 4
+h6
+k After this, it is difficult to crack black's defense, but there is a way.
+10
+Bf7
+k This bishop can't be taken.
+Rxf7
+Qxf7
+Kxf7
+Bxg5
+Kg6
+Bxd8
+k White is ahead an exchange and black's pieces still are not developed.
+10
+back 6
+k So black must move his king. If he does not move it to h8, white will force it to h8 anyway by playing Qg6+. Regardless of how the king reaches h8, white's play is the same.
+15
+Kh8
+h4
+k This is the point of forcing the king to h8. If the bishop is removed from the protection of h6, white will play Qxh6#. It costs black heavy material to stop this threat, thus white is winning.
+15
+back 6
+k So, g6, h6, and Bh6 all fail. The only other reasonable defense is Rxf4, giving the king an escape square(f8) and removing the threat on the g5 bishop.
+15
+Rxf4
+k White now drives the black king out in to the open.
+5
+Qxh7
+k After Kf8, black will lose his queen or be mated.
+Kf8
+Qh8
+k He is mated after Ke7...
+Ke7
+Qxg7
+Ke8
+Bg6
+Rf7
+Qxf7
+10
+back 6
+k and loses his queen after Kf7.
+Kf7
+Rxf4
+k If Bxf4 then white takes the free queen. Otherwise black is mated as before.
+10
+back 4
+k Black must play Kf7. However the king is further driven out now.
+6
+Kf7
+Bg6
+k Ke7 and Kf8 lead to the same devastation we just saw, so Kf6 is forced.
+10
+Kf6
+k Very often a wandering king cannot be mated by a series of checks and forced moves. Usually it is necessary to take away the king's escape squares first. This is called forming a mating net. Here white finds a brilliant way to create a mating net.
+20
+Rxf4
+Bxf4
+k White can also win with Rf1 here, but Denker chose to try to hunt the black king instead.
+10
+Qh4
+k If black does not play Bg5, he will lose his queen.
+5
+Bg5
+k What should white do now? After Rf1+, black can simply take the hanging bishop on g6.
+10
+k But white does not need a violent move. He simply creates a mating net.
+10
+Qe4
+k Black's king cannot move, so Rf1+ is a deadly threat.
+5
+Be3
+k Black tries to escape the net. Bad would be Qxe3:
+Qxe3
+Kxg6
+k White is down two pieces and doesn't have much of an attack left.
+10
+back 2
+Kh1
+k Black still must do something about the threatened Rf1+, forcing the black king closer to its doom.
+10
+Bh3
+Rf1
+k He plays it anyway! This sacrifice cannot be accepted:
+6
+Bxf1
+Qf5
+Ke7
+Qf7
+6
+back 4
+k Black has no choice but to move his king forward again.
+5
+Kg5
+k Hmm... it doesn't appear that white has any brutal checks and captures or mating combinations here. Surely there must be a way to take advantage of black's awful king position.
+15
+k Once again the answer lies in the construction of a mating net.
+7
+Bh7
+k This time there is no way out. Black is unable to stop white's two mate threats(Qg6# and Qh4#), so he resigned.
+10
+k Some points to remember from this game:
+6
+k The Dutch Defense is very double edged, gaining control of key squares at the cost of king safety and a small developmental lag.
+12
+k Try to develop your pieces so that they have as much scope as possible and work toward a common goal.
+10
+k Watch for tactics when your pieces are much more active than your opponents, especially when you have pieces swarming near the enemy king.
+15
+k Once you have forced your opponents king out in to the open, mate it with a forced series of moves if possible, but usually you will need to trap it in a mating net first.
+15

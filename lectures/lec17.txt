@@ -1,0 +1,292 @@
+k The line I will show you in this lecture comes from "Mastering the French With the Read and Play Method", Page 19.
+10
+k What I am going to give are my annotations to the moves in the line given.
+8
+e2e4
+2
+e7e6
+2
+k This is the French Defense.
+8
+d2d4
+2
+d7d5
+2
+e4e5
+2
+k This is the advance variation.
+8
+c7c5
+2
+k The first thing black should do in the advance variation is put pressure on White's d-pawn.
+8
+c2c3
+2
+k White adds protection to his d-pawn.
+8
+b8c6
+2
+k Black develops a piece, and adds another attacker on the d-pawn.
+8
+g1f3
+2
+k White also develops a piece, and adds a guard to his d-pawn.
+8
+d8b6
+2
+k Black develops another piece, and adds yet another attacker on the d-pawn.
+8
+f1d3
+4
+k This is the Milner-Barry Gambit.  Other options for white include 6. Be2 and 6. a3.
+8
+k Here, White blocks the queen from guarding the d-pawn, and now black can win the pawn.
+8
+k The idea being that white tries for a lead in development while black is busy taking the pawn.
+8
+c5d4
+4
+k Black starts off by trading pawns.
+8
+c3d4
+4
+k White takes the pawn back.
+8
+k Right here, there is a very common trap that Black can fall into.
+8
+c6d4
+4
+k This move is horrible; here's why:
+8
+f3d4
+2
+b6d4
+4
+k So far, this is what black expected.  It looks like black won a pawn, however ...
+8
+d3b5
+k This move puts Black in check, and White has a discovered attack and wins the black queen.
+8
+k Therefore, black must do something first to avoid this check.  Let's go back and find an answer.
+8
+back 4
+4
+k Instead, black should play ...
+8
+c8d7
+4
+k This move removes White's ability to check Black's king with Bb5.
+8
+e1g1
+4
+k Again, White doesn't worry about the d-pawn, and tries for a lead in development.
+8
+c6d4
+4
+k Here is where Black eats the pawn.
+8
+f3d4
+4
+b6d4
+4
+k Notice that now, Bb5 is no longer a check move, so White can't win Black's queen here.
+8
+k Both 10. Qe2 f6! and 10. Re1 Ne7 11. Nc3 a6 give Black a slight advantage.
+8
+b1c3
+4
+k Out of all White's Choices, this one is best.
+8
+d4e5
+4
+k Black eats another pawn, but White will soon get one back.
+8
+f1e1
+4
+k White attacks Black's queen.
+8
+e5b8
+4
+k This is the safest place for Black's queen.
+8
+c3d5
+4
+k White gets a pawn back.  Black can't capture the knight because the pawn is pinned.
+8
+f8d6
+4
+k Black develops a piece, and threatens to take the pawn on h2 with check.
+8
+d1g4
+4
+k White's solution to the threat is a threat of his own.
+8
+k Black has no time for Bxh2+; here's why:
+8
+d6h2
+4
+g1h1
+4
+k Black must now move his bishop again, or white will play g3 and win the bishop.
+8
+h2d6
+4
+g4g7
+4
+k Black is now going to drop a rook.  Therefore, Black must find an alternate to 13...Bxh2+.
+8
+k Let's back up and find the right 13th move.
+4
+back 4
+4
+k Can you find Black's best move?
+16
+e8f8
+4
+k Black needs to guard the g-pawn.  This also gets the king out of the pin.
+8
+c1d2
+4
+k White doesn't have to move the attacked knight because if 14. exd5, 15. Qxd7 is a trade.
+8
+k Not to mention, it would be a trade favorable to White.
+8
+h7h5
+4
+k Here, Black attacks White's queen, and will try to open the h-file for his rook.
+8
+g4h3
+4
+k Of course, White must move his queen. He must also maintain the pin on black's e-pawn, or else black will play exd5, winning a piece.
+8
+g8h6
+4
+k Black plays this move for a number of reasons.
+8
+k One reason is to try to get white to take the h-pawn with the queen, and open the h-file.
+8
+k Another is perhaps to eventually post the knight on f5.
+8
+k It should also be noted that taking the knight with the bishop is by no means White's best move.
+8
+d5e3
+4
+k White wishes to relocate his knight. This also relieves the queen from the responsibility to keep the e-pawn pinned.
+8
+f8g8
+4
+k Black gets his king onto a safer square.
+8
+k Black's king now guards his rook as well, which will be important if white takes the h-pawn.
+8
+e3c4
+4
+k White attacks black's bishop and threatens to trade.
+8
+d6c7
+4
+k Black must keep his dark-squared bishop, or his threats on h2 are gone.
+8
+h3h5
+4
+k White finally takes the h-pawn.
+8
+h6f5
+4
+k The king move on move 16 makes this move possible.
+8
+k Black has now got the knight on a better square, and is also attacking White's queen.
+8
+h5g5
+4
+k This move is considered best.
+8
+c7h2
+4
+k Only now does Black take the h-pawn with check.
+8
+g1f1
+4
+k If 20. Kh1??, 20...Bf4+ wins White's queen, and the game!
+8
+d7b5
+4
+k This crucial yet excellent move ties White's pieces down.
+8
+k Now, if the knight moves, white wins the bishop with check since 21. Ne5 isn't possible.
+8
+k Also, if 21. Bxf5, 21...Bxc4+!! would win material for Black.
+8
+k Therefore, White's next move is necessary.
+8
+b2b3
+4
+k This move at least frees the bishop, for now the pawn guards the knight.
+8
+b8d8
+4
+k Black is now ready to trade queens.  His queen was in a somewhat inactive spot anyway.
+8
+k He also now threatens to play 22...Qxd3+ if white doesn't do something about it.
+d3f5
+4
+k This move does 2 things.  It gets out of the threat of 22...Qxd3+, and it doubles Black's pawns.
+8
+e6f5
+4
+k Black, of course, must take back.
+8
+g5d8
+4
+k White can't take on f5.  If 23. Qxf5??, 23...Qxd2 wins the bishop.  The knight is pinned.
+8
+a8d8
+4
+k Of course, Black must take back.
+8
+d2c3
+4
+k Black was threatening 24...Rxd2, again because of the pinned knight.
+8
+b5a6
+4
+k Black keeps his bishop on that diagonal, but avoids harassment from moves like a4 by white.
+8
+a2a4
+4
+k White advances the pawn anyway.  This move is also useful because it prevents black's threat of b5, forcing the knight to move, followed by b4, a discovered check that would win white's bishop at c3.
+20
+h2c7
+4
+k Black puts the bishop on a better square, and threatens 26...Rh1+.
+8
+k Note that white is down a pawn, so trading pieces can't be good for white.
+8
+f1e2
+4
+k White tries to open up the back rank for his rooks, trying to get in Rh1 and take over the h-file.
+8
+h8h4
+4
+k This is an EXCELLENT move.
+8
+k White is already down a pawn.
+4
+k He will lose at least another pawn since he can't add another guard to the c4 square.
+8
+k Black's pieces are better placed.
+4
+k White's queenside rook isn't even developed, and his knight is pinned.
+8
+k Black also has the bishop pair.
+8
+k White also has no way to cover the e4-square, and the threat of ...Re4+ is also good for black.
+8
+k Overall, Black is winning (Neil McDonald & Andrew Harley give this position a -+).
+15
+k Well, this concludes my lecture on "Refuting the Milner-Barry Gambit."
+5
+k I hope all of you enjoyed it.
+5
+k And that all of you French Defenders can beat all of those that play the Milner-Barry Gambit!!!
+10

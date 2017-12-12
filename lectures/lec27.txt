@@ -1,0 +1,540 @@
+k Welcome to Knackie's Tactics Training. The examples are based on material of a Hungarian Chess School. They have been revised using Fritz and a bit of Knackie's brain.
+15
+k The 9th Lesson features the theme 'Long Diagonals'.
+10
+k Lesson 8 'Opening / Closing Diagonals' already showed some Bishops in Action.
+10
+k This lesson covers Bishop's on their 'most loved place': the long diagonals.
+10
+k Let's start with a typical example.
+8
+k Example 1: Larsson vs Andersson, Sweden 1971
+3
+bsetup
+1
+bsetup fen 2r2rk1/pbq2p2/1pp1p1p1/4R2p/2PP4/1P3Q1P/PB3PP1/3R2K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Larsson
+1
+bname Andersson
+1
+k A typical situation for the 'Long Diagonals' theme: white succeeded in exchanging Black's dark-squared fianchettoed bishop, leaving some ugly holes in black's kingside.
+28
+k White logically played:
+8
+d4d5
+k Opening the long diagonal for the Bb2.
+10
+c6d5
+f3f6
+k Black gets overwhelmed on the long diagonal, and white threatens Rxh5 with mate on h8 to come.
+18
+c7d8
+k Black defends against Rxh5 (e.g. Rxh5 QxQ), but white found a better solution:
+16
+f6h8
+k Play continues on the long diagonal.
+10
+g8h8
+e5h5
+k double-check
+6
+h8g8
+h5h8
+k mate
+8
+k Example 2: Novak vs Cabarkapa, Emerlo 1970
+3
+bsetup
+1
+bsetup fen 1r2r1k1/pbp3pp/3b1q2/2p5/2P1B3/6P1/PPQ2P1P/1RB1R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Novak
+1
+bname Cabarkapa
+1
+k How did black seize control of the long diagonal?
+12
+k 35 seconds...
+6
+35
+e8e4
+k Sacrificing the rook for the defending bishop, which is a common idea, even if there is no forcing combination.
+15
+e1e4
+k Black now increases pressure on the long diagonal.
+15
+f6f3
+k White resigned, as he will first lose his Re4 and then be mated on the
+long diagonal.
+17
+k Example 3: Flesch vs Vadasz, Budapest 1971
+3
+bsetup
+1
+bsetup fen 2b2r2/1rq2k2/3p1BR1/p1pP1Pn1/PpP2pP1/1P3B2/8/4Q2K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Flesch
+1
+bname Vadasz
+1
+k In this example you should NOT calculate long variations.
+13
+k White to move, 35 seconds ...
+7
+35
+g6g7
+k White surprisingly gives up his Bishop?! So, what about the long diagonal?
+12
+f7f6
+e1a1
+k mate!
+8
+k Example 4: Mecking vs Basman, Hastings 1965
+3
+bsetup
+1
+bsetup fen 8/5pkp/r2p2pq/2pP4/2n2P2/N7/PP1nQ2P/K4R1R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Mecking
+1
+bname Basman
+1
+k Basman is well-known for his strange opening ideas. Here he showed his fantasy in the middlegame.
+19
+k 45 seconds ...
+7
+45
+a6a3
+k Surprise! Let's see what happens if white takes the rook:
+13
+b2a3
+k You might wonder what the relationship between this example and the long diagonals theme is?
+18
+h6h4
+k There it is! The Queen now inevitably comes to f6, and white will be mated.
+15
+back 2
+k So instead of taking the rook, white tried:
+11
+h2h4
+k So that the black queen cannot play the strange manoeuvre Qh6-h4-f6.
+14
+d2b3
+a1b1
+c4d2
+b1c2
+b3d4
+c2d2
+d4e2
+b2a3
+e2g3
+k White resigned.
+8
+k Example 5: Root vs Starnes, Pasadena 1983
+3
+bsetup
+1
+bsetup fen 2rq1rk1/1p1b3p/p3p1p1/b2p2N1/3B4/P2n2R1/1PP2PPP/R2Q2K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Root
+1
+bname Starnes
+1
+k Black just took on d3. How did white reply?
+11
+k 50 seconds ...
+7
+50
+d1h5
+k If black now tries to defend h7 by means of Qe7, there follows:
+14
+d8e7
+g5h7
+k Disaster on g6 follows.
+10
+back 2
+k So, black took the Queen.
+8
+g6h5
+k The knight g5 now has a move 'for free', as the Rg3 will give discovered check.
+16
+k Which knight move would you choose?
+20
+g5e4
+g8f7
+g3g7
+f7e8
+e4d6
+k mate
+8
+k Example 6: Spiro vs Najdorf,  1932
+3
+bsetup
+1
+bsetup fen 3r2k1/pb3p1p/1q4p1/2b1P3/1Pp5/2P1p1P1/P3Q1BP/R1B4K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Spiro
+1
+bname Najdorf
+1
+k At the moment, white defends well on the long diagonal, and black's Bc5 is under attack.
+17
+k How did the great tactician Najdorf react?
+11
+k 60 seconds ...
+7
+60
+b6c6
+k Black surprisingly increases the pressure on the long diagonal.
+14
+k The queen cannot be taken:
+8
+g2c6
+b7c6
+h1g1
+d8d1
+e2d1
+e3e2
+c1e3
+c5e3
+k mate!
+8
+back 8
+k Instead of taking the Queen, white tried:
+10
+c1a3
+k White's rook now defends the first row, but what is the drawback of Ba3?
+15
+d8d2
+k The square d2 is no longer protected by white's bishop.
+12
+k White has nothing better than taking the Queen now.
+10
+g2c6
+b7c6
+h1g1
+d2e2
+b4c5
+e2g2
+k If white now plays Kh1 there follows:
+10
+g1h1
+g2g3
+k mate
+6
+back 2
+k So, white played:
+7
+g1f1
+e3e2
+f1e1
+g2g1
+k White resigned, as he loses his rook.
+10
+k Example 7: Nimzovich vs Nielsen, Koppenhagen 1930
+3
+bsetup
+1
+bsetup fen r4rk1/p1R2ppp/1p1bp3/3qB3/3PR3/5Q1P/PP3PP1/6K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Nimzovich
+1
+bname Nielssen
+1
+k Nimzovich's combinations were considered 'diabolical'.
+12
+k Here, the devil showed up on move 3.
+10
+k 50 seconds ...
+7
+c7d7
+k Preventing black from exchanging white's important Be5.
+12
+a8d8
+d7d6
+d8d6
+k Which was the crucial move of Nimzovich's combination?
+20
+f3f6
+k That looks nice.
+7
+g7f6
+e4g4
+g8h8
+e5f6
+k mate.
+8
+k Example 8: Uhlmann vs Liebart, 1976
+3
+bsetup
+1
+bsetup fen b2r2k1/p3pp1p/4n1p1/2P5/8/2P1Q1P1/P2NqP1P/2B2RK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Uhlmann
+1
+bname Liebert
+1
+k How did Black exploit the light-squared holes in white's kingside?
+14
+k 45 seconds ...
+7
+45
+d8d2
+k If white now answers QxR, there follows:
+10
+e3d2
+e2f3
+k With inevitable mate on the long diagonal.
+10
+back 2
+k White tried:
+6
+c1d2
+k Now follows the key-idea of black's combination:
+15
+e6g5
+k White cannot take the knight, as after Qxg5 there would follow Qf3 again.
+15
+k So, white played:
+7
+e3e2
+g5h3
+k mate.
+8
+k Example 9: Szaharov vs Cserepkov, Alma Ata 1969
+3
+bsetup
+1
+bsetup fen 4rbk1/1q3ppp/2Rr4/1p1P1B2/2b1PR2/p5P1/5P1P/B1Q3K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Szaharov
+1
+bname Cserepkov
+1
+k In this example, white launched a strong attack ending with a typical mating combination.
+17
+k 75 seconds ...
+7
+75
+f5h7
+g8h7
+c6d6
+k This very strong move not only prevents black from defending with Rh6, it also deflects the defender of square g7.
+21
+f8d6
+f4h4
+k If black now plays Kg6, there follows:
+10
+h7g6
+h4g4
+g6h7
+g4g7
+h7h8
+c1h6
+k mate
+5
+back 6
+k So, black played:
+7
+h7g8
+k Now follows a typical mating combination that you should try to keep in mind.
+15
+h4h8
+g8h8
+c1h6
+k The pawn g7 is pinned!
+8
+h8g8
+h6g7
+k mate
+8
+k Example 10: Spielman vs Hoenlinger,1929
+10
+bsetup
+1
+bsetup fen 2r1nrk1/pb2qp1p/1p2p1pQ/nP6/8/P2B2N1/1BP2PPP/3RR1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Spielman
+1
+bname Hoenlinger
+1
+k In this game, the great attacking player Spielman showed another typical mating combination.
+18
+k 75 seconds ...
+7
+75
+g3f5
+k Black cannot take the knight:
+9
+g6f5
+d3f5
+k Black is mated or loses the Queen.
+10
+back 2
+k In the game, black did not take the knight. He played:
+12
+e7c5
+k How did Spielman strengthen the attack?
+20
+e1e5
+k This move is extremely strong. It not only attacks black's Queen, it also prepares a nice mating combination.
+20
+k Black's problem here is that he cannot move his Queen off of the a3-f8 diagonal, as he must keep an eye on the e7-square. ( the white knight wants to give check on e7 )
+20
+b7d5
+k So, why was Re5 a very strong move?
+15
+f5e7
+k Clearing the way for the rook on it's way to h5.
+11
+c5e7
+k You should absolutely remember the following mating combination, which happens very often:
+17
+h6h7
+g8h7
+e5h5
+k Rhe pawn g6 is pinned!
+8
+h7g8
+h5h8
+k mate.
+8
+k Example 11: Tarrasch vs Walbrodt,  1895
+3
+bsetup
+1
+bsetup fen 3b2rk/7p/p7/2pbqNrn/Pp1p1R2/1P1Q2P1/1BPN1R1P/6K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Tarrasch
+1
+bname Walbrodt
+1
+k In the last example, we'll go back to the 19th century.
+12
+k In all the previous examples, the attacking side had a huge positional advantage right at the start.
+15
+k Things are much less clear in this position. Black has a dangerous counterattack on the g-file.
+15
+k Chess teacher Tarrasch proved that he was a great tactician.
+14
+k 90 seconds ...
+7
+90
+f4d4
+k Obviously opening the long diagonal for his Bb2, but isn't black's counterattack too strong?
+15
+h5g3
+k Black seizes his chance.
+8
+f5g3
+g5g3
+h2g3
+g8g3
+k Walbrodt must have been happy here; he wins Tarrasch's Queen.
+13
+g1f1
+g3d3
+k Did Tarrasch resign now?
+20
+d4g4
+k No! Walbrodt now resigned. If black plays QxB, there follows:
+13
+e5b2
+f2f8
+d5g8
+f8g8
+k mate
+8
+k That nicely concludes the Lesson; I hope you enjoyed it!
+10
+k These and many more examples can be downloaded in Chessbase or Pgn-Format at http://webplaza.pt.lu/public/ckaber
+20

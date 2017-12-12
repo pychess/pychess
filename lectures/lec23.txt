@@ -1,0 +1,470 @@
+k Welcome to Knackie's Tactics Training. The examples are based on material of a Hungarian Chess School. They have been revised using Fritz and a bit of Knackie's brain.
+15
+k The 8th Lesson features the theme 'Opening / Closing Diagonals'.
+12
+k After having seen Rooks in Action in Lesson 7 'Opening / Closing Files', it's now time for the Bishops.
+15
+k Let's first look at a few 'Opening Diagonals' examples:
+10
+k Example 1: Gereben vs Troianescu, Budapest 1952
+3
+bsetup
+1
+bsetup fen r1b1rqk1/5p2/5Pp1/ppp1B1Q1/8/1P1P3R/P5PP/5RK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Gereben
+1
+bname Troianescu
+1
+k If there were no pawn on f6, things would be easy: Rh8 mate.
+13
+k So how did white get rid of his own pawn f6?
+20
+g5g6
+f7g6
+f6f7
+k Opening the diagonal ...
+8
+f8f7
+h3h8
+k mate
+8
+k Example 2: Morales vs Lehman,  Lipcse 1960
+3
+bsetup
+1
+bsetup fen r4r1k/2p3qp/3p4/p1nPp1P1/1pP1Bp1P/1P3Pn1/P4KNR/1Q2R3
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Morales
+1
+bname Lehman
+1
+k In this example, it is hard to believe that black could make use of a diagonal, but it happened.
+19
+k You get 40 seconds ...
+8
+40
+c7c6
+k What is this?!
+7
+d5c6
+k Now you should see which diagonal black can use.
+15
+g7a7
+k The white king is fixed on the diagonal g1-a7, so he can't escape the following discovered attack:
+19
+g2f4
+c5e4
+k White resigned in view of a huge loss of material.
+12
+k Example 3: Mihaljcsisin vs Benko, Sarajevo 1970
+3
+bsetup
+1
+bsetup fen r2r2k1/1bq2pb1/6pp/2P1p3/1nBpN2N/6PP/2Q2P2/3RR1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Mihaljcsisin
+1
+bname Benko
+1
+k White has a nice Bc4 and a couple of threatening knights, but his Queen is under attack.
+17
+k How did white react? 50 seconds ...
+10
+50
+e4f6
+k Opening the b1-h7 diagonal for the Queen.
+10
+k On BxN there would follow:
+8
+g7f6
+c2g6
+k The pawn f7 is pinned.
+8
+f6g7
+h4f5
+k And Qxg7 mate follows.
+12
+back 4
+k playing Kh8 is no better:
+8
+g8h8
+c2g6
+f7g6
+h4g6
+k mate!
+8
+back 4
+k So, black tried:
+7
+g8f8
+h4g6
+f7g6
+f6h7
+f8e7
+c2g6
+c7c5
+g6e6
+k mate
+8
+k Example 4: Soto Larrea vs Ortega, Havanna 1955
+3
+bsetup
+1
+bsetup fen 1q3k2/4b3/2n1p3/p1PpPp2/P1bP1Pp1/2N1Q1P1/8/2N2BK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname SotoLarrea
+1
+bname Ortega
+1
+k This example is more difficult, because the final move is hard to forsee.
+15
+k Black surely wants to activate his poor Be7.
+11
+k 60 seconds ...
+7
+60
+c6d4
+k Weakening the c5 square.
+7
+e3d4
+k It is clear that black now attacks the pawn c5 with his queen.
+13
+k Is there a difference between playing Qa7 and Qc7?
+25
+k Let's first look at Qc7:
+8
+b8c7
+c5c6
+k You'll understand this strong defense only if you have seen the whole variation.
+16
+c7c6
+c1d3
+c4d3
+d4d3
+e7c5
+k Black hasn't achieved very much.
+9
+back 7
+k Let's now look at Qa7, which was played in the game. Does this really make a difference?
+16
+b8a7
+c1d3
+c4d3
+d4d3
+e7c5
+g1g2
+k So, what is the difference between the black Queen standing on c6 or a7?
+15
+a7h7
+k That's it! Qh3 mate cannot be prevented.
+10
+k Example 5: Botvinnik vs Judovics
+3
+bsetup
+1
+bsetup fen r1b2r2/1p1nq1bk/1np1p1pp/p7/3PN2N/1P2B3/2Q1BPPP/2RR2K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Botvinnik
+1
+bname Judovics
+1
+k Former World Champion Botvinnik in action.
+11
+k How did Botvinnik exploit his superior position? ( the first move is obvious, but what about the second one? )
+21
+k 40 seconds ...
+7
+40
+h4g6
+k Opening the threatening b1-h7 diagonal.
+10
+h7g6
+k Which move to play next? Some discovered check?
+20
+e2h5
+k Much better! Kh7 now loses after:
+6
+g6h7
+e4f6
+k Double-Check
+6
+h7h8
+c2h7
+k mate
+5
+back 4
+k So black played:
+7
+g6h5
+e4g3
+k The queen on the open diagonal now prevents the King from going back home.
+15
+h5g4
+h2h3
+g4h4
+c2e4
+k and mate
+8
+k Example 6: Radulescu vs Trojanescu, Romania 1950
+11
+bsetup
+1
+bsetup fen r1b1rbk1/ppqn1pnp/2p3p1/4p3/2P1N3/2N1B1PP/PP2PPB1/2QR1RK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Radulescu
+1
+bname Trojanescu
+1
+k Let's look at a last example of the 'Opening Diagonals' theme.
+13
+k Black's 'fianchettoed' knight on g7 looks somewhat strange. That square surely better suits a bishop.
+19
+k How did white exploit black's strange setup?
+11
+k 60 seconds ...
+7
+60
+d1d7
+k Taking away the defender of the f6 square.
+10
+c8d7
+e4f6
+k Logical ...
+6
+g8h8
+k White now showed the crucial idea of his combination:
+20
+e3b6
+k A desperado move, which opens the c1-h6 diagonal for the white Queen.
+14
+c7d6
+k A desperate try. Black wants to take on f6 when white plays Qh6, but of course, white does not play Qh6.
+19
+c3e4
+k Defending the Nf6, threatening Qh6 followed by Qh7 mate, and attacking the Queen!
+16
+k Too many threats, so black resigned.
+10
+k Example 7: Reshevski vs Persitz, Haifa 1958
+11
+bsetup
+1
+bsetup fen 2brnrk1/p1n2p1p/1pqp1PpQ/2p1p1P1/2P1P3/3PNR2/PP2N1BP/R5K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Reshevski
+1
+bname Persitz
+1
+k Let's now switch to the more rare 'Closing Diagonals' theme.
+10
+k Here's an easy example. White wants to play Rh3 followed by Qxh7 mate.
+15
+k But unfortunately, the Bishop c8 defends the square h3.
+12
+k White logically played:
+8
+e3f5
+k Closing the diagonal c8-h3.
+8
+k Rh3 followed by Qxh7 cannot be prevented, so black resigned.
+13
+k Example 8: Bachman vs Mayinger, Augsburg 1898
+11
+bsetup
+1
+bsetup fen 7k/3b4/1p5P/2p3K1/3pp1P1/1P2p3/P1P1B3/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Bachman
+1
+bname Mayinger
+1
+k This example from the last century nicely illustrates the closing diagonals theme.
+16
+k How did black succeed in promoting one of his pawns?
+12
+k 40 seconds ...
+7
+40
+d7b5
+e2b5
+d4d3
+k closing the diagonal a6-f1.
+10
+c2d3
+e3e2
+k The pawn will promote.
+10
+k Example 9: Saemisch vs Ahues, Hamburg 1946
+11
+bsetup
+1
+bsetup fen 1r5k/2q2p1p/p2p3B/5PQ1/n1p5/2b4P/PrB3P1/2R1R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Saemisch
+1
+bname Ahues
+1
+k Black's king is almost mated in this position. White just needs to cut off the Bc3 from protecting g7.
+19
+k How would you proceed?
+8
+k 35 seconds ...
+7
+35
+f5f6
+k The Bishop is cut off! Easy mate ...
+10
+c7c5
+k Oh No!!!!!!! Black exchanges Queens :-((
+10
+back 2
+k So white did of course NOT play f5-f6, but:
+11
+e1e5
+c3e5
+f5f6
+k Now the idea works, as after Qc5+, white's Queen is not attacked anymore.
+15
+k Mate on g7 follows.
+7
+k Example 10: Pala vs Beni, Austria 1971
+10
+bsetup
+1
+bsetup fen 1r3r1k/1p5p/2qp1P2/4p3/p3n1N1/P4Q2/1PP4P/5RRK
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Palda
+1
+bname Beni
+1
+k In the last example of the Lecture, white would like to launch an attack upon the black king.
+18
+k It seems black has serious counter chances on the c6-g2 diagonal.
+14
+k How did white prepare the attack? 60 seconds ...
+12
+60
+k If white tries to launch an attack with Nh6 immediately, there follows:
+15
+g4h6
+f8f6
+f3g2
+e4g3
+h2g3
+f6h6
+k and white is mated :-O
+8
+back 6
+k So, white played:
+7
+g1g2
+k Closing the c6-h1-diagonal.
+8
+e4g5
+k Black would like to exchange Queens. How would you react?
+25
+g4h6
+k If black now answers NxQ, there follows:
+10
+g5f3
+g2g8
+f8g8
+h6f7
+k mate!
+8
+back 4
+k So, black tried:
+7
+c6f3
+f1f3
+g5f3
+g2g8
+f8g8
+h6f7
+k Just the same.
+8
+k That's all folks, i hope you enjoyed the Lesson.
+11
+k These and many more examples can be downloaded in Chessbase or Pgn-Format at http://webplaza.pt.lu/public/ckaber
+21

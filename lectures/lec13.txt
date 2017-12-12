@@ -1,0 +1,477 @@
+k It was in the late 1970s that I first made the aquaintance of this provocative counter-attacking defence. Under the influence of Raymond Keene, a great many British players were playing it around that time and I decided to jump on the bandwagon. Later on it proved quite difficult to jump off again and play more classical openings, but then that's another story.
+30
+k With his first two moves, 1...g6 and 2...Bg7 Black makes no attempt whatsoever to follow the tried and trusted classical precept of occupying the center. Instead he calmly fianchettoes a bishop and argues the he can attend to things like development later in the game.
+25
+k Some practitioners of the Modern (Colin McNab and David Norwood for example) like to try and close the position up with ...c6 and possible ...d5. But I have my own interpretation involving a fierce counterattack against the d4 square.
+20
+k Above all I want that bishop on g7 to breathe fire, to strike terror along the h8-a1 diagonal. Sometimes I play ...c7-c5, sometimes ...e7-e5, but always something against the d4 square and with that long diagonal in mind.
+20
+k There isn't enough time to show all the ins and outs of this defence, but the following games show my interpretation in action against a variety of White set-ups and how this opening has served me faithfully in some critical games.
+20
+k Amongst my victims with this opening are the likes of Bent Larsen and Viswanathan Anand, but on this occasion I'll show you the real crushes! The first game was played in the last round of the student team Championships in Graz 1981 in which the England team was going for the silver medal....
+25
+k Polajzer-Davies, Student Team Ch., Graz (Austria), 1981
+wname Polajzer
+1
+bname Davies
+1
+d4
+g6
+c4
+Bg7
+Nc3
+d6
+e4
+k According to the late Mikhail Botvinnik, setting up the pawns on d4, c4 and e4 is the strongest answer to the Modern Defence. I have usually preferred my `stock' recipe; a counterattack against the d4 square.
+20
+Nc6
+Be3
+e5
+d5
+Nce7
+k Reaching a kind of King's Indian Defence in which the fact that Black's knight has not been developed on f6 yet means that he can sometimes play ...f7-f5 before bringing it out. White takes immediate measures against this.
+20
+g4
+c5
+h4
+7
+Nf6
+g5
+Nh5
+7
+Be2
+Nf4
+Bf3
+7
+O-O
+Nge2
+f5
+7
+Qd2
+Qa5
+O-O-O
+7
+Rb8
+k !! One of the best moves I have ever played. The idea, should White play quietly now, is to pry open the queenside with ....b5 followed by ....a6. And there are other points should White capture on f4.
+25
+Nxf4
+exf4
+7
+Bxf4
+fxe4
+k White, by the way, loses a piece after 17.Nxe4 Qxd2+.
+6
+Nxe4
+Qxd2
+10
+back 2
+k The line which most beautifully illustrates the power of 14...Rb8 is:
+10
+Bxe4
+Bxc3
+bxc3
+7
+Rxf4
+Qxf4
+Qxc3+
+7
+Kb1
+b5
+k Opening up the b-file. Or...
+7
+back 2
+Bc2
+Bf5
+7
+Rd2
+Qa1+
+back 10
+Bxd6
+Rxf3
+k !
+7
+Bxb8
+Rxc3+
+k !
+7
+k Now if 19.bxc3...
+bxc3
+Bxc3
+Qc2
+7
+Qa3+
+Kb1
+Bf5
+k followed by 22...e3.
+8
+back 6
+Kb1
+e3
+fxe3
+7
+Bf5+
+Ka1
+Rc2
+k !
+7
+k White lost on time but he could equally have resigned.
+Qxa5
+k This would have been met by:
+Bxb2+
+Kb1
+Rd2+
+k followed by mate.
+7
+k I still count this as my most artistic miniature.
+5
+revert
+k This next game was one of the wins which earned my first Grandmaster norm in Oslo 1988. After a few careless moves in the opening Black develops a murderous attack. White, by the way, is not a patzer. These days he has a rating of around 2500 and is on the verge of becoming a GM.
+25
+k Gausel,E-Davies,N, Oslo, 1988
+3
+wname Gausel
+1
+bname Davies
+1
+d4
+d6
+e4
+g6
+Nc3
+Bg7
+Bc4
+Nc6
+Be3
+Nf6
+h3
+k Preventing 6...Ng4 but losing time for development.
+7
+e5
+dxe5
+Nxe5
+7
+Bb3
+O-O
+Qd2
+7
+b5
+k !
+7
+k White's neglect of development allows Black to take the initiative.
+10
+f3
+b4
+Nd5
+7
+Nxd5
+Bxd5
+c6
+7
+Bb3
+a5
+a4
+7
+d5
+k Blasting open the center before White has got his king safe. If he had now tried to remedy this with 15.0-0-0 there would follow:
+12
+O-O-O
+Qf6
+k and after 16.Bd4 there is:
+5
+Bd4
+c5
+k ! distracting the bishop from the defence of b2.
+10
+back 4
+exd5
+Nc4
+7
+Bxc4
+Bxb2
+k Suddenly White is in desperate trouble; the threats include 17...Bxa1 and 17...Bc3, not to mention 17...Qh4+.
+17
+Ne2
+Qh4+
+k Even stronger than capturing the rook on a1, as that will remain a threat.
+12
+Bf2
+Qxc4
+Rb1
+7
+Bc3
+Nxc3
+bxc3
+7
+Qd3
+Re8+
+Kd1
+7
+Qa2
+k !
+7
+Rc1
+Ba6
+Qxc3
+7
+Qxd5+
+Qd2
+Rad8
+k ! The final position shows the true extent of White's misery.
+15
+revert
+k Engedal,N-Davies N, Gausdal Peer-Gynt , 1990
+3
+wname Engedal
+1
+bname Davies
+1
+e4
+g6
+d4
+Bg7
+Nc3
+d6
+f4
+Nc6
+k I was later to abandon this move after Dragan Velimirovic answered it with 5.Bb5 in a tournament in Vrnjacka Banja in 1991. Since then I have answered the Austrian Attack (4.f4) with 4...e6 followed by ...Ne7, ...Nd7, ...b6 and ...Bb7, obtaining a similar set-up to the game.
+25
+Be3
+Nf6
+Nf3
+7
+e6
+Be2
+O-O
+7
+O-O
+Ne7
+Nd2
+7
+b6
+a4
+a6
+7
+Qe1
+c5
+k Black's usual way of challenging White's set-up from this structure. Here it proves especially effective because White has played the rather artificial 9.Nd2.
+15
+Qf2
+Bb7
+Bf3
+7
+Qc7
+a5
+cxd4
+7
+Bxd4
+b5
+Bb6
+7
+Qc8
+Rac1
+Nd7
+7
+Bd4
+k 18.Be3 was better, as now Black rips apart what is left of White's center.
+10
+e5
+Be3
+f5
+k ! The opening of the position proves good for Black as his pieces are better placed. Note that White's king also proves weak, a consequence of 4.f4!
+15
+g3
+exf4
+gxf4
+7
+b4
+Nd1
+Nf6
+7
+Qg2
+fxe4
+Nxe4
+7
+Nxe4
+Bxe4
+Bxe4
+7
+Qxe4
+Qg4+
+Kh1
+k 27.Qg2 Qf5 would also have been unpleasant for White.
+10
+Nf5
+Qxb4
+k A suicidal pawn snatch but it is already rather difficult to give White good advice.
+12
+Ng3+
+k Taking the knight allows 29...Qh3+ :
+hxg3
+Qh3
+Kg1
+7
+Qg3
+Kh1
+Rf5
+k With Rh5 to come.
+10
+back 6
+Kg1
+Nxf1+
+Kxf1
+7
+Qf3+
+Kg1
+Rae8
+7
+Qd2
+Rxf4
+k ! White has had enough. 33.Bxf4 is answered by 33...Re2 threatening both mate and the queen.
+13
+revert
+k For a period of about 10 years I played nothing but the Modern, but in the late 1980s I started to branch out into other openings. Even eating caviar every day can become boring.
+15
+k Yet faced with the prospect of having to win my last round game for a GM norm in a tournament in Budapest, I could hardly answer 1.e4 with 1...e5, after which I would get a boring Four Knights or Ruy Lopez. The only chance was the Modern Defence, and this was it's finest hour.
+25
+k Godena,M-Davies,N, First Saturday Tournament, Budapest, May 1993
+5
+wname Godena
+1
+bname Davies
+1
+e4
+g6
+d4
+Bg7
+Nc3
+d6
+Nge2
+k The safe way of introducing the fianchetto line for White, as after the immediate 4.g3...
+10
+back 1
+g3
+k there is 4...Nc6...
+Nc6
+k and if 5.Nge2 then 5...Bg4.
+Nge2
+Bg4
+8
+back 4
+Nge2
+k After the text move I either play the immediate 4...Nc6, or sometimes 4...a6 5.a4 Nc6.
+10
+Nc6
+Be3
+Nf6
+7
+h3
+e5
+dxe5
+7
+Nxe5
+Ng3
+k The safe way to play it would have been:
+Be6
+Qd2
+Nc4
+8
+back 3
+k But given that I had to win this game I was not afraid of danger.
+7
+O-O
+Qd2
+Re8
+7
+O-O-O
+b5
+k !? A pawn for an open file - not a bad deal with opposite wing castling. If White doesn't capture Black gets the c4 square for his knight on e5.
+16
+Bxb5
+Bd7
+k After 12.f4 my opponent didn't like the look of:
+f4
+Bxb5
+fxe5
+7
+Rxe5
+Bd4
+Qe7
+k which he felt gave me good compensation for the sacrificed exchange.
+15
+back 6
+k In the post mortem we looked at 12.Ba6!? but then 12...Be6 wasn't clear.
+10
+Be2
+Qb8
+f4
+7
+Nc6
+Bf3
+Qb4
+7
+k Preparing to move a rook to b8 and threaten mate on b2.
+7
+a3
+Qb7
+e5
+7
+Rab8
+k An alternative way to defend b2 was with 17.Na4.
+5
+Na4
+k But then Black has...
+dxe5
+fxe5
+Qb5
+k !
+7
+exf6
+Bxf6
+b3
+7
+Rxe3
+Qxd7
+Bg5
+k and if 22.Kb1 then 22...Rxb3+.
+12
+back 10
+b3
+dxe5
+fxe5
+Rxe5
+7
+Nge4
+Qa6
+k ! It is less good to play this move after a preliminary exchange of knights on e4. Thus:
+back 1
+Nxe4
+Nxe4
+7
+Qa6
+a4
+k White's defences hold.
+10
+back 4
+Qa6
+a4
+k ? The decisive mistake. White should take this opportunity to exchange on f6, as for the time being Black is forced to recapture with the bishop. After Black's next move it becomes possible to take back on f6 with the queen.
+20
+Na5
+Nxf6+
+Qxf6
+k ! The point, after which the latent threats along the long h8-a1 diagonal prove decisive. Perhaps White thought that his next move made the capture with the queen impossible, but a serious disappointment is waiting.
+20
+Bd4
+Qd6
+k ! Ouch! Only now did he see that the intended capture of my rook on e5 is met by 23...Qa3+ followed by 24...Nxb3.
+15
+Nb1
+Rxb3
+k ! KAPOW! White must kiss his castled position goodbye.
+6
+Bxe5
+Qb6
+k White has had enough. The threat is 25...Rb1+, the rook is immune to capture because of the knight fork picking up White's queen and after 25.Nc3 there is either 25...Nc4 or 25...Ra3, depending on Black's mood.
+30
+k This event was brought to you by Warwick chess club (England)
+5

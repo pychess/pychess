@@ -7,10 +7,15 @@ class PlayerIsDead(Exception):
     pass
 
 
+class PassInterrupt(Exception):
+    """ Used instead of returning a move, when a players turn is interrupted but not changed.
+        This may happen when undoMoves doesn't changes the current player """
+    pass
+
+
 class TurnInterrupt(Exception):
     """ Used instead of returning a move, when a players turn is interrupted.
-        Currently this will only happen when undoMoves changes the current
-        player """
+        This may happen when undoMoves changes the current player """
     pass
 
 

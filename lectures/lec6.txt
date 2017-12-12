@@ -1,0 +1,344 @@
+k This lecture is one in a series that will review the moves and ideas behind the King's Indian Attack (KIA). The KIA is a flexible opening system used by many of the world's top players including Fischer, Stein & Tal. It has been successfully played against the French, the Sicilian and the Caro-Kann. This opening lends itself to players who can't spend a great deal of time memorizing openings as White can reach the basic position regardless of what Black does.
+44
+k The KIA vs. the French
+k Bobby Fischer played the KIA early in his career against both the French and Sicilian (after an early ...e6). White's plan is to establish a pawn on e5 effectively cutting Black's defenses off from the K-side and attack the dark squares around Black's king.
+24
+k Black's Plan is to attack on the Q-side with a pawn storm and distract White's K-side attack. The play for both sides tends to be very tactical.
+14
+e2e4
+k Although the KIA can be reached by starting with 1.Nf3 it is more often reached after 1.e4. May e4 players use the KIA as an alternative to the semi-open games.
+16
+e7e6
+d2d3
+k By playing d3 (instead of d4) White has less space but more options. More importantly White is avoiding Black's opening preparation and playing the opening on his(her) terms.
+17
+d7d5
+b1d2
+k Protecting e4 and shielding the Queen from being exchanged in case of an exchange on e4.
+9
+g8f6
+k Hitting the pawn on e4.
+6
+g1f3
+k Attacking the important e5 square.
+6
+f8e7
+k Preparing to castle.
+6
+g2g3
+k The basic setup begins to show itself. The KIA is really nothing more than the King's Indian Defense with the colors reversed!
+12
+e8g8
+k Getting the King to safety.
+6
+f1g2
+k Getting the White squared Bishop on the long diagonal (h1 - a8).
+6
+c7c5
+k Controlling the d4 square.
+6
+e1g1
+b8c6
+k Hitting d4 again.
+6
+e4e5
+k Black's forces are now (effectively) cut in half. After an inevitable Nd7 White should support the e5 pawn and continue the attack on the dark squares around Black's king.
+17
+f6d7
+k Hitting e5 again.
+6
+f1e1
+k Supporting the e5 pawn. On ...Qc7, White has Qe2.
+6
+b7b5
+k Here they come like a swarm of ants. Blacks pawns will flood the Q-side and attempt to open a file for Black's heavy pieces.
+12
+d2f1
+k Getting the Q-Knight to the K-side via e3 or h2.
+6
+b5b4
+h2h4
+k A very important move in the KIA. White plays to control g5 (a dark square) and open up a square for the N on f1.
+12
+k The KIA can also be reached via the Sicilian move order.
+6
+revert
+e2e4
+c7c5
+g1f3
+e7e6
+d2d3
+d7d5
+b1d2
+b8c6
+g2g3
+k Here Black varies and fianchettos the K-Bishop.
+6
+g7g6
+f1g2
+f8g7
+e1g1
+g8e7
+k Black play his K-Knight to a potentially more useful square. This allows the option of ...Nf5 hitting h4, e3 and protecting the sensitive h6 square.
+15
+k White's plan however, has not changed. Occupy e5 with a pawn and attack the dark squares around Black's King. Of course this means trading off the dark square Bishop.
+22
+f1e1
+e8g8
+e4e5
+k ...Qc7 being met by Qe2
+6
+e7f5
+k Occupying a key square. Black's setup is much more solid than in the French variation.
+8
+d2f1
+k Planning to play Ne3, trading off Black's well placed Knight.
+7
+d8c7
+k Now Qe2 gives Black Nd4 but White has another move...
+7
+c1f4
+k This move prepares to exchange Black's dark square Bishop as well as protecting the critical e5 pawn.
+10
+k The best wasy to learn an opening is to play through some games.
+revert
+1
+wname Bobby_Fischer
+1
+bname L_Miagmasuren
+1
+e2e4
+e7e6
+d2d3
+d7d5
+b1d2
+g8f6
+g2g3
+c7c5
+f1g2
+b8c6
+g1f3
+f8e7
+e1g1
+e8g8
+e4e5
+f6d7
+f1e1
+b7b5
+d2f1
+b5b4
+h2h4
+a7a5
+c1f4
+a5a4
+a2a3
+b4a3
+b2a3
+c6a5
+k More usual is ...Nd4 or ...Ba6
+6
+f1e3
+c8a6
+g2h3
+d5d4
+e3f1
+d7b6
+k More pieces leaving the defense of their King.
+6
+f3g5
+b6d5
+f4d2
+e7g5
+k This move further weakens Black's grip on the dark squares around the Black King.
+8
+d2g5
+d8d7
+d1h5
+f8c8
+f1d2
+d5c3
+k Now comes a shot....I'll give you 60 seconds to find it.
+66
+g5f6
+k If gxf6 then...
+g7f6
+e5f6
+k Black's King is in serious trouble. If ...Kf8
+6
+g8f8
+k then...
+h5h7
+k and mate is unavoidable. or ...
+6
+back 2
+g8h8
+h5h6
+c8g8
+h3f5
+k ...Rg7 loses to Qxg7 mate, so ...
+6
+e6f5
+e1e7
+k with a dominating position. Black actually played ...
+6
+back 8
+d7e8
+d2e4
+g7g6
+h5g5
+c3e4
+e1e4
+c5c4
+h4h5
+c4d3
+e4h4
+a8a7
+Bg2
+d3c2
+g5h6
+e8f8
+h6h7
+k Black resigned here. Because Kxh7 then...
+6
+g8h7
+h5g6
+h7g8
+h4h8
+k or ...
+back 2
+h7g6
+g2e4
+k Here's what happens when Black is not careful...
+revert
+1
+wname D_Bronstein
+1
+bname W_Uhlmann
+1
+e2e4
+e7e6
+d2d3
+d7d5
+b1d2
+g8f6
+g1f3
+c7c5
+g2g3
+b8c6
+f1g2
+f8e7
+e1g1
+e8g8
+f1e1
+b7b5
+e4e5
+f6d7
+d2f1
+a7a5
+h2h4
+b5b4
+c1f4
+c8a6
+f3g5
+d8e8
+d1g4
+a5a4
+k Oooops...
+g5e6
+k Just in case you thought White won all the time...
+revert
+1
+wname W_Brown
+1
+bname W_Uhlmann
+1
+e2e4
+e7e6
+d2d3
+d7d5
+b1d2
+g8f6
+g1f3
+c7c5
+g2g3
+b8c6
+f1g2
+f8e7
+e1g1
+e8g8
+e4e5
+f6d7
+f1e1
+b7b5
+d2f1
+a7a5
+h2h4
+b5b4
+c1f4
+c8a6
+f3g5
+d8e8
+d1h5
+e7g5
+h5g5
+a5a4
+f1e3
+g8h8
+a1d1
+h7h6
+g5h5
+f7f5
+h5e8
+a8e8
+e3c4
+c6d4
+c4d6
+d4c2
+d6e8
+f8e8
+e1e2
+b4b3
+a2b3
+a4b3
+e2d2
+a6b5
+d1c1
+e8a8
+g2f3
+a8a2
+f3d1
+b5a4
+c1b1
+h8g8
+g3g4
+f5g4
+d1g4
+g8f7
+g1g2
+a4b5
+f4g3
+d7b6
+g4d1
+b5d3
+d2d3
+c2e1
+g2f1
+e1d3
+d1b3
+a2b2
+b1b2
+d3b2
+f1e2
+c5c4
+b3c2
+d5d4
+c2e4
+d4d3
+e2d2
+b6a4
+d2e3
+a4c5
+e4f3
+c5b3
+k I hope you enjoyed this lecture. If you have any feedback, drop me an email at cissmjg@hotmail.com. Recommended book on the KIA: "The ChessBase University Bluebook Guide to Winning with the KIA by IGM Henley and Maddox. ISBN 1-883358-00-0"
+23

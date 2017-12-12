@@ -1,0 +1,236 @@
+kibitz Welcome to the Closed Sicilian opening survey, part 1.
+5
+kibitz During the last 50 years, the Sicilian defense has been one of the most common openings in the top level. Maybe the most played one of all times!
+2
+e4
+c5
+5
+kibitz Before starting examining the opening, let's talk a bit about why playing Closed Sicilian at all. Please do not fall asleep - this is going to be a bit long but it's very important :) I promise to show many chess moves later! :-)
+5
+kibitz Today, a grandmaster which plays a Sicilian game must know, memorize and have experience with many variations. This refers to the "normal" Sicilian lines we all know or heard of, like the Dragon, Schweningen, Najdorf, Kan systems.
+10
+kibitz However, a player which prepares his opening repertoire usually chooses lines which do not require a lot of memorizing. Rather, opening lines which guarantee a stable position, yet alive and full of tactics, are preferred.
+10
+kibitz Explaining more, a modern chess player would like to control the game, leading it to his favorite and known opening lines - especially if he has the white pieces, where he has more choice!
+5
+kibitz In this lecture (and possibly its successors) I will present to you my favorite line against the Sicilian defense - the Closed Sicilian, characterized by the following move:
+2
+Nc3
+5
+kibitz This move is played by many inexperienced players, not knowing of the usual opening strategy in the Sicilian. However, 2.Nc3 has a deep strategical meaning.
+1
+back
+3
+kibitz In all open Sicilian lines, white exchanges his d-pawn with black's c-pawn. e.g.:
+3
+Nf3
+d6
+d4
+cxd4
+Nxd4
+kibitz In this position, white has hopes for a strong center holding: his d4 knight is already developed and centralized, and he will occupy the d5 square (probably with a knight too), later in the game.
+7
+kibitz An attempt of black to prevent this control (by e6) will be followed by white pressing the weak d6 pawn, using his queen and rooks along the d-file.
+7
+kibitz Black, however, will try to benefit from the half-open c-file, which is a "long-term weapon". It is well known that if white does not use his centralized pieces for launching a fast mating attack, black will have a favorable ending.
+10
+kibitz Always remember, when playing the open Sicilian as white, that on each game in which white has won in a crushing attacking manner after 25-30 moves, there exists another Sicilian game in which black won in the ending, using his pressure along the c-file.
+10
+kibitz To be frank, I love the open Sicilian and I play it myself, from time to time. A series of lectures can be given on many tactical ideas in the open Sicilian.
+5
+kibitz However, when I have to play and win as white against Sicilian, I prefer the closed variation. White can certainly get an advantage in many lines, without getting worried about hard-to-find middlegame tactics.
+10
+kibitz Ok, almost end of the boring talks :) Let's see now the main opening lines in Closed Sicilian (called also CS):
+5
+back 5
+Nc3
+Nc6
+kibitz Ok, what happened so far? Black saw that white is NOT going to exchange the c5 pawn for his d4. So c-file remains closed!
+5
+kibitz And black cannot utilize it in the foreseeable future... one point in favor of CS already :)
+5
+kibitz Can you spot another problem the c5 pawn gives for black's development? Take 30 seconds to think...
+30
+kibitz So...
+1
+kibitz Black's dark square bishop is blocked too, hence in most CS lines, black will prefer to develop it to g7 using the fianchetto, rather than play e6 and Be7, leaving this bishop quite poor and closed there...
+3
+g3
+g6
+Bg2
+Bg7
+d3
+kibitz Ok, so we more or less understand the starting position of the CS. You may have wondered why white played g3 and Bg2 as well. The reason is similar:
+5
+kibitz Since white wants to leave the center closed, he plays d3 instead of d4, and to make his f1 bishop useful, he occupies the long h1-a8 diagonal. This g2 bishop can really fire like a Dragon... :-)
+10
+kibitz White's play depends now on how black continues here. There are 2 main lines in this position: 5. .. e6 and 5. .. d6. Most of the other lines later transpose to these two lines.
+5
+kibitz In this lecture we will talk about the 5. .. e6 line.
+1
+e6
+2
+kibitz White's best move in this position is the sharp 6.Be3.
+2
+Be3
+4
+kibitz Most of the people reject the CS as boring and giving no advantage because of the well known and analyzed 6.f4 lines (after 5. .. d6 mostly). Black usually gets a comfortable position. E.g.:
+10
+back
+f4
+Nge7
+Nf3
+o-o
+o-o
+5
+kibitz Black controls the key square f5 with many pieces and does not let white launch a pawn storm immediately with f5. White will have to play first g4, and black can then strike back in the center with d5!
+5
+back 5
+Be3
+kibitz However, the Be3 are much sharper and risky for BLACK. That's the neat point about this opening.
+5
+kibitz White threatens the c5 pawn. Let's see to what a WRONG move of black can lead to.
+5
+Nd4
+2
+kibitz White replies with the stunning
+3
+Nce2
+2
+kibitz ! This can lead to a pawn sacrifice. Suppose black takes:
+3
+Nxe2
+Nxe2
+Bxb2
+3
+kibitz It seems black just won a pawn...
+3
+Rb1
+2
+kibitz Black can get really greedy now and take another pawn, protecting the bishop as well:
+2
+Qa5+
+Bd2
+2
+kibitz ! you will see why the ! in a moment.
+2
+Qxa2
+4
+kibitz White is much more developed, black has eaten 2 pawns in the opening - standard strategical error. How can white utilize it with one winning move? take 60 seconds to think about it...
+60
+b1b2
+3
+kibitz This motif is well known: enticement.
+3
+Qxb2
+Bc3
+3
+kibitz and white wins the h8 rook. Gives him a figure for the 2 pawns and an excellent position. +-.
+10
+Qa3
+Bxh8
+10
+back 8
+2
+kibitz Black can chicken out and try to retreat the bishop AND keep the pawn. Here's a try:
+4
+Ba3
+Rb3
+5
+kibitz I've analyzed this position with a friend of mine who is a very strong chess player (at least FM strength). We think white has advantage in this position - much better development although a pawn down.
+10
+Bb4+
+c3
+Ba5
+o-o
+10
+back 4
+1
+kibitz Or:
+2
+Qa5+
+Bd2
+Qa6
+o-o
+5
+back 4
+2
+kibitz Black should rather stay on the long black diagonal, instead of Ba3:
+2
+back 2
+2
+Bg7
+3
+kibitz The main line here is actually 10.Bxc5, again with large white plus (I just though it was worth to mention the variations where black refuses to return the pawn).
+5
+Bxc5
+10
+back 4
+2
+kibitz Instead of taking the poisoned b2 pawn, black sometimes plays
+2
+d6
+c3
+4
+kibitz And now white has a standard formation of this opening: c3, d4, e4 and the g2 bishop. Playing d4 next will guarantee him good starting point of the middle game - strong pawn center and space for his pieces.
+8
+Ne7
+o-o
+o-o
+d4
+5
+back 8
+2
+kibitz Some people prefer 7. .. d6 here, which is answered by the same plan:
+2
+d6
+2
+c3
+2
+kibitz Gaining an important tempo.
+2
+Nc6
+3
+kibitz And now d4 or f4, Nf3 and o-o.
+8
+kibitz As you see, white has a lot of development ideas. He's not stuck without a plan. Almost any move you do is a good one! :-)
+10
+back 5
+3
+kibitz Certainly, 6. .. Nd4? is a mistake. Much better is 6. .. d6:
+5
+d6
+4
+kibitz Which we will cover next time. Other moves like 6. .. b6? have failed even for some great Grandmasters like Benko. 6. .. Qa5 is a very interesting line, and 6. .. Nge7...
+2
+back
+2
+Nge7
+2
+kibitz Which I encountered in many 1 0 games... ( :-) ) is answered
+by...
+2
+Bxc5
+2
+kibitz No kidding, I've won 100 lightning games with this :-) Don't forget to look if the c5 pawn is protected. Note here that the rather nasty move:
+5
+Qa5
+2
+kibitz ...Threatening to win the pawn back:...
+2
+Be3
+Bxc3+
+bxc3
+Qxc3
+Bd2
+5
+kibitz ... is answered by the strong move (take 20 seconds before I show it):
+2
+back 5
+20
+d4
+2
+kibitz And now white is a safe pawn up (8... b6 9. Bxe7 Nxe7 10. Ne2 defends the d-pawn)
+25
+kibitz Let's stop here for now. I will show many more exciting lines in the 5. .. e6 and 5. .. d6 next time. I hope you enjoyed. :-)
+

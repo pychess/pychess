@@ -1,0 +1,483 @@
+k This is the LectureBot's Bughouse lecture. We will focus on the differences between Bughouse and 'normal' chess concerning 'Starting a game', 'Strategy', 'Openings', 'Time Usage', and other topics. "Why play (standard) chess when you can have fun?"
+24
+k Chapter *I* Basics
+1
+k Some special server commands for Bughouse are: "partner [someone]" to offer to be someone's Bughouse partner and "ptell [blabla]" tells 'blabla' to only your partner.
+16
+k Since Bughouse is played on two boards (see also "help Bughouse") it is important to closely watch your partner's position. For that you need to observe your partners board. If you are using Winboard or XBoard as Interface, start the interface a second time, log in as unregistered user and enter "follow [name of your partner]" in the terminal window. The interfaces CClient and Fixation do that automatically.
+39
+k Now if you want to challenge someone simply add Bughouse to the end of the line ("match [someone] 3 0 rated Bughouse").
+12
+k Also, make sure you are in channel 24, the Bughouse (plus discussion ;-) ) channel. And you ought to have the bugopen variable set to 1 ( "+ch 24" and "set bugopen 1" )
+16
+k When you've set bugopen to 1 your handle will appear in the "bugwho" list, you'll be open to receive partnership requests, and other Bughouse players will know that you're ready for action.
+18
+t 24 LectureBot's Bughouse lecture for players from 0 -> 1600 has just started. "observe LectureBot" to join.
+30
+k Chapter *II.* Strategy
+1
+bsetup b bughouse
+1
+bsetup fen rnbqkb1r/ppp2ppp/3ppn2/6N1/3PP3/8/PPP2PPP/RNBQKB1R
+1
+tomove black
+1
+wname A
+1
+bname B
+1
+bsetup wcastle both
+1
+bsetup bcastle both
+1
+bsetup done
+1
+k Bughouse is a chess variant where controlling important squares (especially around the Kings) is vitally important. In this position (as it often is in Bughouse) f7 is such a weak square. It is only defended by the black King, and white could consider sacking his Knight to make the King move out.
+28
+Nc6
+3
+Nxf7
+3
+Kxf7
+3
+k As we can see, the black King can only be further attacked with a Knight to drop. So, white should have looked at his partners board to make sure that he could get a Knight BEFORE sacking his other Knight on f7. If he gets his Knight, black could be in difficulties.
+26
+N@g5
+3
+f7e8
+3
+k A Queen would mate already. Another piece to place on f7 would be very good, too. With 'stuff' coming for the next few moves, white has an attack.
+14
+d5
+3
+k Remember, there are always 4 Knights, 4 Bishops, 4 Rooks, 2 Queens, and 16 Pawns of one color in Bughouse. So, since all pieces lost or traded on your partners board come to yours and vice versa, it is clear that you HAVE to make sure that your King is safe; a walking King almost always gets mated.
+28
+K So obviously, black made a mistake here. Lets see what he should have done instead in our starting position.
+11
+back 6
+1
+k Black moved Nc6 ?! here. It would have been better to protect the f7-square a second time. Here are a few alternatives:
+11
+Qe7
+1
+K If he does not have a piece to drop. Or ...
+3
+back
+1
+B@g8
+3
+back
+1
+B@g6
+3
+back
+1
+B@h5
+3
+back
+1
+N@h6
+3
+k Ok, let's look at another position and find the important/weak squares there.
+15
+bsetup b bughouse
+1
+bsetup fen r3kr2/pppqbppp/2n1p3/8/1n1P4/2NPBN2/PPPQ1PPP/R3KB1R
+1
+tomove white
+1
+wname A
+1
+bname B
+1
+bsetup wcastle none
+1
+bsetup bcastle qside
+1
+bsetup done
+1
+k We are looking for weak squares again. White to move; where can he attack? f7 is obviously well enough defended, but the Knight-pawns can be very weak, too.
+15
+P@h6
+3
+gxh6
+3
+K Good for black that he hasn't castled (0-0 ?). This weakness of the g-pawns is one of the main reasons why you only castle in Bughouse to get out of immediate danger (or if your kingside is protected by enough of your own pieces or if your opponent will not get pieces to attack). So black could consider castling (0-0-0) now !
+32
+K White will continue his attack by placing pawns, Bishops or Knights on the weak black squares e5/f6/g7. Often a Knight is placed on h5 to support the attack.
+15
+P@g7
+3
+Rg8
+3
+N@h5
+3
+k Of course this is only one of the many positions white's attack could lead us to.
+10
+O-O-O
+3
+P@g6
+3
+k Nice move, huh?
+3
+hxg6
+3
+P@h7
+3
+k One of the nice things about the h6/g7 attack is that you don't need to sack too many pieces.
+10
+revert
+1
+bsetup
+1
+tomove black
+1
+bsetup done
+1
+k Black to move here can also TRY to attack, but he has to sack at least a Knight.
+8
+Nxc2+
+3
+Qxc2
+3
+Nb4
+3
+Qd2
+3
+N@c2
+3
+Ke2
+3
+Nxa1
+3
+B@a4
+3
+k This, B@a4!, is one of the 'special' Bughouse moves. The Bishop at a4 (or a5 for black) is at the same time attacking (the Queen) and defending (white's weak square: c2)
+18
+k Oh, and, speaking of Bishops, there is another thing to say about them before I forget: Bishops aren't worth less than Knights in Bughouse. No matter what some people tell you. If a Pawn is worth 1 "Pawn-unit", Knight and Bishop and Rooks are worth 2, and a Queen 4.
+25
+c6
+3
+k ... White can play Ne5, and maybe he will have some advantage. One can only repeat it over and over again: Bughouse is played on BOTH boards! Sacking pieces without getting real advantage is the most common mistake made by players up to a bughouse rating of about 2000.
+25
+k Next position.
+3
+bsetup b bughouse
+1
+bsetup fen r2qkbnr/ppp2ppp/3p1P2/3Np1PN/1p1nP3/7b/PPP1BKPP/R1BQ3R
+1
+tomove white
+1
+wname A
+1
+bname B
+1
+bsetup wcastle none
+1
+bsetup bcastle both
+1
+bsetup done
+1
+k This is a position from an actual game, and it is a bit more complicated. Black just took a Knight on h3 with his Bishop. White played gxh3 automatically, which was a mistake. We will see what happened to him later.
+21
+K In an open position, where both players are attacking, especially when they are holding many pieces 'in hand', INITIATIVE is very very very important. So, give checks if you can; action is better than REaction.
+20
+K So what should white have done?
+3
+fxg7
+3
+K Ignoring black's lousy Bishop.
+3
+Bxg7
+3
+Nxg7+
+3
+Kd7
+3
+K I don't know who will win this position; it depends a lot on the other board, of course, but White has a fair chance now since both Kings are out in the open.
+15
+K A few moves back to what white actually did.
+3
+back 4
+1
+gxh3
+3
+P@f4
+3
+Bxf4
+3
+exf4
+3
+fxg7
+3
+B@e3+
+3
+Kg2
+3
+K This was white's last mistake.
+3
+K It's your move now. You are holding a Knight and a Pawn and your opponent holds a Rook and a Bishop. Can you see how many moves you'll need to mate?
+60
+K --> 5 . Got it, right?
+3
+N@h4+
+3
+Kf1
+3
+P@g2+
+3
+Ke1
+3
+gxh1=Q
+3
+R@g1
+3
+Qxg1
+3
+Bf1
+3
+Ng2
+15
+K So, with this nice mate, we are finished with Chapter II. The main thing I wanted you to learn was the importance of King safety, weak squares in your position, and how to 'sack' pieces if and ONLY if you get a strong attack.
+30
+k Chapter *III.* Openings
+1
+k From what you have learned in Chapter II, it should be clear that you can forget about some of the standard chess openings in Bughouse.
+15
+bsetup b bughouse
+1
+bsetup start
+1
+wname A
+1
+bname B
+1
+bsetup done
+1
+e4
+3
+e5
+3
+K This is not a great idea. Play e5 with black only if you are really good and know what you are doing. We know that f7 (and f2 for white of course) can be weak, and now it's even easier for white to attack that point.
+21
+Bc4
+15
+back 2
+3
+c5
+3
+K Useless, and creates an extra weak point on c7.
+15
+back
+3
+K You should only move your d and e pawns in the Bughouse opening, and, if possible, in the whole game.
+15
+K So, what I would suggest for all our small Gnejses and ChaseSrs among us is:
+3
+k A.) e6/d6 as a black opening.
+15
+e6
+3
+d4
+3
+d6
+3
+Nc3
+3
+Nf6
+3
+K White will want to play d5 at one point to attack e6 (and f7).
+15
+d5
+3
+P@d7
+3
+K Now white can move Bc4. Before d5, black would have played d5 himself.
+15
+Bc4
+3
+Qe7
+3
+K And so on. This was only one of a great number of possibilities of course.
+15
+back 4
+3
+Nf3
+3
+K Black's idea can be to try to put some pressure on e4. For example:
+8
+P@b4
+3
+K And so on.
+3
+K Other common bughouse openings for black ( white's idea remains the same : create a strong centre. The first-move advantage is much greater in bughouse than in standard chess. )
+17
+K B.) 1..e6 2..d5
+3
+bsetup b bughouse
+1
+bsetup start
+1
+wname A
+1
+bname B
+1
+bsetup done
+1
+e4
+1
+e6
+1
+d4
+3
+d5
+3
+k And now white has a choice. White can take exd which leads to a very complicated line. ( both white and black Knights can get pinned, Queens are very often moved to e2/e7 and with pawn-drops on e5/e4.)
+19
+exd5
+3
+exd5
+15
+back 2
+3
+K The other option for white is to play e5. Black will be ok here as long as white doesn't get too many pieces in the beginning.
+10
+e5
+15
+K h6 !? is a not necessarily bad move for black here. It can support the idea of playing Ne7-f5 (no Bg5 for white) and overtaking white's exposed centre.
+15
+bsetup b bughouse
+1
+bsetup start
+1
+wname A
+1
+bname B
+1
+bsetup done
+1
+K C.) 1..d5 ?!
+e4
+1
+d5
+3
+K I remember some time ago I asked a real top-notch bugger about the value of this opening and he said "Well -- u lost a pawn". The idea is to sack a pawn for development like in any standard gambit :
+19
+exd5
+3
+e6
+3
+dxe6
+3
+Bxe6
+3
+K White should play 4.d4 or 4.Nf3 now to keep d4 under control (no Bc5 for black).
+15
+back 2
+1
+Bb5+
+1
+K This the other line. Play Bb5+ to weaken black's queenside.
+c6
+3
+dxc6
+3
+bxc6
+1
+K You can play Be2 here or 5.Nc3 !? or 5.d4 !? sacking the bishop to attack black's weak queenside. There are many interesting lines here, another example is to play 4.Bxc6 ?! after 3..c6. But on to the next opening.
+20
+bsetup b bughouse
+1
+bsetup start
+1
+wname A
+1
+bname B
+1
+bsetup done
+1
+K 1..Nf6 ( 2..d5 )
+3
+e4
+3
+Nf6
+3
+Nc3
+1
+K I personally like 2.e5 !? better, instead of Nc3 played by most people. But you need to know how to defend after 2..Ne4 3.Nc3 3..Nxf2 .
+30
+d5
+3
+exd5
+3
+Nxd5
+3
+K After 4.Bc4 here black plays 4..e6 and has equal chances.
+15
+Nxd5
+3
+Qxd5
+3
+d4
+3
+Nc6
+3
+Nf3
+1
+K 6.Be3 can sometimes be stronger than Nf3. We are on move 6 now! Don't forget to look at your partners board from time to time.
+15
+Bg4
+3
+Be2
+1
+k No- black can't win a pawn here ;-) ... enough about this, you will learn from experience.
+30
+k Chapter *IV.* Partner Communication, Time (and lag)
+k This is a position after a long game.
+1
+bsetup b bughouse
+1
+bsetup fen r3kb1r/p1pb1ppp/2P5/3p2q1/B1nPp1N1/2N2P1b/PPP1QP1P/R3K2R
+1
+tomove black
+1
+wname A
+1
+bname B
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+bsetup done
+15
+k Everyone can see how nice a pawn or even a Bishop to place on d2 would be ("m2" = mate in 2).
+15
+K Unfortunately, black doesn't have any 'diags' (diagonally moving pieces) right now. So he will want to 'sit' (= not move) and wait until his partner takes a Bishop or Pawn he could then place on d2.
+21
+K His partner's opponent will notice that, and since he probably can't move in a way so that none of his Pawns can be taken, he will 'sit', too.
+15
+K So, both players with black are sitting now, and, clearly enough, the one with less time will have to move first.
+15
+K Because of this, SPEED is so important in Bughouse. If Team A played very fast, Player B will have to move now, can't mate (maybe play Bh3xg4) and could be in serious trouble if white has many pieces to drop.
+21
+K My advice is to play fast whenever you can, especially when in trouble! If you play fast when in trouble your partner can sit, and since your opponent will not get any additional pieces, you'll become safe again. Slow down while attacking, not only to try to find mate but also to wait for pieces or advice from your partner.
+31
+K So the 5 extra seconds the one playing black for Team A has over the one playing white for Team B made all the difference. It is obvious, then, that already a small amount of 'lag' can change the outcome of the whole game. Most good players will abort a game when the time difference between both boards (black and white's clock added up on every board) is more than 10 seconds in a 3 0 game or maybe 5 seconds in 1 0.
+39
+K You can test your lag by entering "ping freechess.org -t" in a dos-box and let in run in the background. If more than 1 or 2 out of 10 lines say "Request timed out" you probably lag too much for bughouse.
+15
+bsetup start
+1
+bsetup done
+1
+K Many players communicate a lot to their partners during the game. They "ptell ++" while they are attacking to show that trades/'stuff' is good for them, "ptell --" when they are defending. Or "+n" when a Knight would be good, "++n" when a Knight would be very good, "+++n" when a Knight would mate. The same with "- [piece]" vice versa. Or tell their partners "q exchange" or "q coming". This communication can be very helpful. But also be aware that it costs some time to write this or press your hot-key. So, good players do not talk too much during game, but instead watch their partner's game closely to see for themselves what pieces their partner needs.
+63
+k Chapter *VI.* How to annoy your partner ;-)
+5
+k Ahhm, the best way to really annoy your partner is to start an all-out attack from move 1 on. Sack all your Knights and other pieces and then -- Oops, where is my attack? Begin to sit for stuff. While your partner tries to handle his opponent's overflow, you keep telling him "++N", "I need a Queen", "and a Rook, two Pawns", "a Bishop mates!". So, your partner gets you all this, but suddenly you notice -- it wasn't mate, and your opponent starts to attack. Then when you are m1(mated in 1), you wisely decide to 'sit' and let your partner win. He does that and finally has his opponent mated in 1. At this point you disconnect, which forfeits the game in Bughouse. ;-)
+65
+k HAVE FUN !
+5
+k ... PS : Suggestions and corrections are always appreciated. message Tecumseh. Two very good bughouse webpages are www.tasunder.com/bughouse (bughouse game archives and link to FErrants cool Bughouse problems) and www.bughouse.net (bughouse discussion forum).
+30

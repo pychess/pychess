@@ -1,4 +1,3 @@
-
 import re
 import asyncio
 
@@ -304,6 +303,10 @@ class BoardManager(GObject.GObject):
         self.connection.expect_line(self.made_unexamined,
                                     "You are no longer examining game (\d+)\.")
 
+        self.connection.expect_n_lines(
+            self.onExamineGameCreated, "Starting a game in examine \(scratch\) mode\.",
+            '', "<12> (.+)")
+
         self.queuedEmits = {}
         self.gamemodelStartedEvents = {}
         self.theGameImPlaying = None
@@ -337,8 +340,11 @@ class BoardManager(GObject.GObject):
         curcol = fields[8] == "B" and BLACK or WHITE
         gameno = int(fields[15])
         relation = int(fields[18])
-        ply = int(fields[25]) * 2 - (curcol == WHITE and 2 or 1)
         lastmove = fields[28] != "none" and fields[28] or None
+        if lastmove is None:
+            ply = 0
+        else:
+            ply = int(fields[25]) * 2 - (curcol == WHITE and 2 or 1)
         wname = fields[16]
         bname = fields[17]
         wms = int(fields[23])
@@ -430,36 +436,37 @@ class BoardManager(GObject.GObject):
             wplayer = self.connection.players.get(wname)
             bplayer = self.connection.players.get(bname)
 
-            # examine from console or got mexamine in observed game
             if self.connection.examined_game is None:
-                no_smoves = True
-                game = FICSGame(wplayer,
-                                bplayer,
-                                gameno=int(gameno),
-                                game_type=GAME_TYPES["examined"],
-                                minutes=0,
-                                inc=0,
-                                board=FICSBoard(0,
-                                                0,
-                                                pgn=pgn),
-                                relation=relation)
-                self.connection.examined_game = game
-                log.debug("Start new examine game by %s" % style12,
-                          extra={"task": (self.connection.username, "BM.onStyle12")})
-            else:
                 # examine an archived game from GUI
-                no_smoves = False
-                game = self.connection.examined_game
-                game.gameno = int(gameno)
-                game.relation = relation
-                # game.game_type = GAME_TYPES["examined"]
-                log.debug("Start examine an archived game by %s" % style12,
-                          extra={"task": (self.connection.username, "BM.onStyle12")})
-            game = self.connection.games.get(game)
+                if self.connection.archived_examine is not None:
+                    no_smoves = False
+                    game = self.connection.archived_examine
+                    game.gameno = int(gameno)
+                    game.relation = relation
+                    # game.game_type = GAME_TYPES["examined"]
+                    log.debug("Start examine an existing game by %s" % style12,
+                              extra={"task": (self.connection.username, "BM.onStyle12")})
+                else:
+                    # examine from console or got mexamine in observed game
+                    no_smoves = True
+                    game = FICSGame(wplayer,
+                                    bplayer,
+                                    gameno=int(gameno),
+                                    game_type=GAME_TYPES["examined"],
+                                    minutes=0,
+                                    inc=0,
+                                    board=FICSBoard(0,
+                                                    0,
+                                                    pgn=pgn),
+                                    relation=relation)
+                    log.debug("Start new examine game by %s" % style12,
+                              extra={"task": (self.connection.username, "BM.onStyle12")})
+
+                game = self.connection.games.get(game)
+                self.connection.examined_game = game
 
             # don't start new game in puzzlebot/endgamebot when they just reuse gameno
-            if game.relation == IC_POS_OBSERVING_EXAMINATION or \
-                    (game.board is not None and game.board.pgn == pgn):
+            else:
                 log.debug("emit('boardSetup') with %s %s %s %s" % (gameno, fen, wname, bname),
                           extra={"task": (self.connection.username, "BM.onStyle12")})
                 self.emit("boardSetup", gameno, fen, wname, bname)
@@ -507,6 +514,50 @@ class BoardManager(GObject.GObject):
                 # In some cases (like lost on time) the last move is resent by FICS
                 # but game was already removed from self.connection.games
                 log.debug("Got %s but %s not in connection.games" % (style12, gameno))
+
+    def onExamineGameCreated(self, matchlist):
+        style12 = matchlist[-1].groups()[0]
+        gameno = int(style12.split()[15])
+
+        castleSigns = self.generateCastleSigns(style12, GAME_TYPES["examined"])
+        self.castleSigns[gameno] = castleSigns
+        gameno, relation, curcol, ply, wname, bname, wms, bms, gain, lastmove, fen = \
+            self.parseStyle12(style12, castleSigns)
+
+        pgnHead = [
+            ("Event", "FICS examined game"), ("Site", "freechess.org"),
+            ("White", wname), ("Black", bname), ("Result", "*"),
+            ("SetUp", "1"), ("FEN", fen)
+        ]
+        pgn = "\n".join(['[%s "%s"]' % line for line in pgnHead]) + "\n*\n"
+        wplayer = self.connection.players.get(wname)
+        bplayer = self.connection.players.get(bname)
+
+        game = FICSGame(wplayer,
+                        bplayer,
+                        gameno=int(gameno),
+                        game_type=GAME_TYPES["examined"],
+                        minutes=0,
+                        inc=0,
+                        board=FICSBoard(0,
+                                        0,
+                                        pgn=pgn),
+                        relation=relation)
+        log.debug("Starting a game in examine (scratch) mode.",
+                  extra={"task": (self.connection.username, "BM.onExamineGameCreated")})
+        self.connection.examined_game = game
+        game = self.connection.games.get(game)
+
+        game.relation = relation
+        game.board = FICSBoard(0, 0, pgn=pgn)
+        self.gamesImObserving[game] = wms, bms
+
+        # start a new game now
+        self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
+        log.debug("emit('exGameCreated')",
+                  extra={"task": (self.connection.username, "BM.onExamineGameCreated")})
+        self.emit("exGameCreated", game)
+        self.gamemodelStartedEvents[game.gameno].wait()
 
     def onGameModelStarted(self, gameno):
         self.gamemodelStartedEvents[gameno].set()
@@ -1038,7 +1089,6 @@ class BoardManager(GObject.GObject):
             return
         if game.gameno not in self.queuedEmits:
             return
-
         self.emit("obsGameCreated", game)
         try:
             self.gamemodelStartedEvents[game.gameno].wait()

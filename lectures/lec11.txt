@@ -1,0 +1,382 @@
+ki In this lecture I would like to show you a game of mine which I played last year against Byelorussian Grandmaster Viktor Kupreichik (2550 FIDE). It was played in Ter Apel, Holland, in 1997.
+13
+wname Kupreichik
+1
+bname talpa
+1
+ki I will give some analysis of the game and try to share with you some of my feelings that I had during this game.
+10
+ki The game was played in the first round of the tournament, and I was obviously a bit nervous to play against such a famous player.
+12
+ki I played with the Black pieces.
+5
+e4
+c5
+ki Of course I was aiming for a complicated game, so I chose the sharp Sicilian Defence.
+10
+Nf3
+d6
+Nc3
+Nc6
+d4
+cd4
+Nd4
+Nf6
+f4
+ki This slightly unusual line is often played by Kupreichik.
+10
+e5
+Nf3
+Be7
+Bc4
+O-O
+f5
+ki The Grandmaster played all this very quickly, while it took me some time to find the right move-order.
+10
+ki But here I began to think that maybe I had done something wrong.
+7
+ki Surely, White would very soon start to attack my king and I would lose without a real fight. So I had to think of a way to prevent this.
+15
+b5
+ki !? I was a bit ashamed to play this crazy move against such a big name, but it is really a very interesting move!
+15
+ki The idea is to disrupt the normal developement of the White pieces by attacking the centre with my own pieces.
+12
+ki The Black plans are quite clear now: play Qb6, Bb7, Rc8 and Nd4 and start an attack against the White king which is still in the centre.
+20
+ki Some time after this game, the move 9...Na5! was found, which is probably even better than the move I played.
+10
+ki But during the game it was not at all easy for White to react in the right way to my novelty.
+10
+Bb5
+ki Now Black has two possibilities. In the end I opted for Bb7, but now I think Qb6 was better.
+10
+ki Let's see what might have happened then:
+Qb6
+Bg5
+Ne4
+ki Now Be7 is not possible because of Qf2 mate.
+10
+Ne4
+Qb5
+Be7
+7
+Qb4
+Nfd2
+Ne7
+7
+f6
+Nf5
+ki with an unclear position, or, instead of 11.Bg5:
+5
+back 10
+Bc6
+Qc6
+Bg5
+Qc5
+ki Unfortunately, stuff like Nxe4 doesn't really work here. However, O-O is prevented.
+15
+Bf6
+Bf6
+Nd5
+7
+Bb7
+Nf6
+gf6
+7
+Qe2
+Rac8
+c3
+7
+d5
+ki with dangerous counter chances.
+10
+ki Now, let's get back to the game.
+back 15
+Bb7
+Bg5
+ki This was played rather quickly, but it is not the best.
+5
+ki Probably White didn't see the point of Black's play and he was just trying to win as fast as possible against this patzer !
+10
+ki This, however, gave me the opportunity to create a very dangerous initiative.
+10
+ki Instead of the text, White should have gone for either 0-0 or Be3.
+10
+Qb6
+Qd2
+ki Again, this is too optimistic. White wants to castle queenside, but in the game I showed that this is too risky.
+10
+ki After the game, we looked at the following line:
+5
+back 1
+Bf6
+Bf6
+Bc6
+7
+Bc6
+Nd5
+Bd5
+7
+Qd5
+k Pinning the b5 bishop.
+6
+Qb2
+O-O
+7
+Qc2
+ki with chances for both sides.
+10
+ki Back now to the game.
+back 10
+Qd2
+Nd4
+Bd3
+Rac8
+ki Black's play has clearly worked out even better than expected.
+10
+O-O-O
+ki Consistent, but very dangerous! The alternative was Nxd4, with the following forced line:
+10
+back 1
+Nd4
+ed4
+Na4
+7
+Qc6
+Qa5
+ki The only move, on b3 there follows Nxe4.
+7
+Ne4
+ki ! White's king is so badly placed in the centre that this piece sac is fully justified.
+10
+ki for example:
+Be7
+Rfe8
+Bb5
+7
+Qd5
+c4
+7
+dc3
+Rd1
+Qe5
+7
+O-O
+c2
+ki and Black wins, because if the Rd1 moves, Black has, amongst others, Qd4+
+17
+ki Back to the position after Black's 13th move...
+5
+back 16
+ki If White tries to protect the pawn on b2 with Rb1, he will also be in big trouble:
+10
+Rb1
+Nf3
+gf3
+7
+d5
+k ! Opening the centre for the pair of bishops
+8
+Bf6
+Bf6
+7
+ed5
+Rc3
+ki ! Again, this is possible because the White king is still in the centre.
+14
+Qc3
+e4
+ki and wins.
+8
+ki If White captures the pawn with his Knight on the 17th move, he will lose in similar fashion:
+10
+back 4
+Nd5
+Bd5
+ed5
+7
+e4
+ki !
+7
+fe4
+Bc3
+ki ! and Black is winning since after 20.bxc3 Qxb1+ he remains the exchange up.
+17
+ki In the game Black had another combination, which gave me a winning advantage.
+10
+back 12
+O-O-O
+Rc3
+ki I was very happy to play this move, because now my pieces were so active that I almost didn't have to calculate anything.
+15
+ki if now bxc3, then 15...d5! with the idea of Ba3 wins on the spot.
+12
+Qc3
+Ne4
+k This was the point of the previous move. The White centre is destroyed.
+10
+Qa3
+ki again, the only move, as is easy to see:
+10
+back 1
+Be4
+Ne2
+k wins the Queen, and
+back 2
+Qe1
+Nf3
+gf3
+7
+Bg5
+Kb1
+Nf2
+ki is also winning for Black.
+ki Back to the game.
+back 6
+Qa3
+Ng5
+ki Here I started to make some minor mistakes. Easiest was Bxg5, winning.
+10
+ki The capture with the Knight is less good, because in many lines the Knight will be trapped on g5 with the move h4.
+13
+ki But I wanted to keep the pair of bishops and underestimated White's counter-chances.
+10
+Ne5
+k Winning back an important pawn, because of 17...dxe5 18.Qxe7.
+8
+Nb5
+k Unfortunately, I now realised that I couldn't swap Queens with the planned Qc5, because White then has a nice trap:
+10
+back 1
+Qc5
+Qc5
+dc5
+c3
+ki !
+7
+Nc6
+Nc6
+7
+Bc6
+h4
+ki !
+7
+Ne4
+Be4
+Be4
+Rhe1
+ki and White wins back the piece !
+8
+ki So I had to go for very complicated tactics, which made me quite nervous.
+10
+back 12
+Nb5
+Qb4
+Qe3
+7
+ki I guess Nd4 was better, but it is so complicated that I am still not completely sure about it. I will show you one sample line:
+10
+back 1
+Nd4
+Qb6
+ab6
+7
+Nd7
+Bg2
+Rhe1
+7
+Re8
+ki The threat is Ngf3.
+7
+f6
+Bc6
+ki !
+7
+fe7
+Bd7
+Bh7
+7
+Kh7
+Rd4
+Nf3
+7
+Rd6
+Ne1
+Rd7
+7
+Nf3
+ki and Black wins.
+ki Still, I have the feeling White can improve on some point.
+ki Now, let's see what happened in the game.
+back 19
+Qe3
+Kb1
+ki I think objectively Black has lost his advantage here.
+5
+Qe5
+Rhe1
+ki ! Suddenly White seizes the initiative ! Black must be very careful not to lose a piece.
+10
+Qf6
+ki Defending the bishop. But now the Ng5 has no squares. Now get ready for some forced tactics.
+13
+h4
+ki !
+7
+Nf3
+ki ! All pieces seem to be hanging, but after all, Black had a material lead.
+12
+ki The game reaches its climax.
+gf3
+Bf3
+7
+Qb5
+Bd1
+ki The forced line is over, and the result is a very muddy position. White can win back the piece with Rxd1, but h4 is still hanging. That is why White decided to play another intermediate move.
+18
+ki At this point during the game, I was not very optimistic anymore.
+10
+ki I realized all too well that truly strong players show their true strength after you have failed to surprise them earlier in the game.
+15
+Qb7
+ki After 24.Rxd1 Qh4 Black is slightly better, but maybe he should have gone for it.
+13
+Qh4
+ki It is possible that Bxc2+ was better, but how could I resist a cheapo against a Grandmaster in timetrouble ?
+10
+Re7
+ki ?? ... And he falls for it !
+ki Of course, 25. Qe7 Qxe7 26. Rxe7 would have led to an unclear, probably drawn endgame.
+14
+ki But now, even though I was in big time trouble as well, I quickly played:
+10
+Bf3
+ki ! The winning move. Because of the mate-threat on h1, White can't take on a7.
+12
+ki In mutual time-trouble there now followed:
+Qf3
+Qe7
+a4
+7
+Rb8
+b3
+Qf6
+k I just made some safe moves because I didn't really see how I could win the game in a forced way.
+12
+Ka2
+h6
+k The idea of just walking with the h-pawn (h5-h4-h3) was obviously the right plan for Black to exploit his advantage.
+12
+Qc6
+Qd4
+ki And here, with less than 1 minute on the clock, I offered a draw.
+8
+ki Of course, this was a very insipid thing to do. Black must still be winning.
+10
+ki But I was so exhausted by all the complications earlier in the game that I felt very uncertain at this point.
+10
+ki My opponent literally grabbed my hand and accepted my offer.
+5
+ki Well, at least I can see this gesture as a compliment for my play during this game.
+10

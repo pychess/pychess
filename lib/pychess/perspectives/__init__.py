@@ -10,6 +10,7 @@ from gi.repository import Gtk
 
 from pychess.System.Log import log
 from pychess.widgets import createImage, dock_panel_tab, mainwindow, gtk_close
+from pychess.widgets.pydock import SOUTH
 
 
 class Perspective(object):
@@ -22,6 +23,7 @@ class Perspective(object):
         self.toolbuttons = []
         self.menuitems = []
         self.docks = {}
+        self.main_notebook = None
 
         if getattr(sys, 'frozen', False):
             zip_path = os.path.join(os.path.dirname(sys.executable), "library.zip")
@@ -46,7 +48,8 @@ class Perspective(object):
 
             menu_item = Gtk.CheckMenuItem(label=panel.__title__)
             menu_item.name = panel.__name__
-            menu_item.set_active(True)
+            if menu_item.name != "LecturesPanel":
+                menu_item.set_active(True)
             menu_item.connect("toggled", self.on_toggled, panel)
             self.menuitems.append(menu_item)
             panel.menu_item = menu_item
@@ -60,7 +63,14 @@ class Perspective(object):
 
     def on_toggled(self, menu_item, panel):
         """ Show/Hide side panel """
-        leaf = self.notebooks[panel.__name__].get_parent().get_parent()
+        try:
+            leaf = self.notebooks[panel.__name__].get_parent().get_parent()
+        except AttributeError:
+            # new sidepanel appeared (not in saved layout .xml file)
+            name = panel.__name__
+            leaf = self.main_notebook.get_parent().get_parent()
+            leaf.dock(self.docks[name][1], SOUTH, self.docks[name][0], name)
+
         parent = leaf.get_parent()
         names = [p[2] for p in leaf.panels]
 

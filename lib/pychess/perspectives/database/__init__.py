@@ -92,6 +92,7 @@ class Database(GObject.GObject, Perspective):
         perspective_manager.set_perspective_widget("database", perspective_widget)
 
         self.notebooks = {"gamelist": new_notebook()}
+        self.main_notebook = self.notebooks["gamelist"]
         for panel in self.sidePanels:
             self.notebooks[panel.__name__] = new_notebook(panel.__name__)
 

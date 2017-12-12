@@ -1,0 +1,235 @@
+k You are about to see 5 positions that occurred in Patrick McCartney's (Kabal's) first 200 USCF rated games over the board, and 2 positions from games on the ICC.  In each case, you will be given the position, the number of moves needed to mate, and the time alloted for each problem, as they do vary in difficulty.  You can expect them to get more difficult as the lecture goes on.
+10
+bsetup
+1
+bsetup wname McCartney
+1
+bsetup bname Singleton
+1
+bsetup tomove White
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+bsetup fen 5rk1/1pp4p/p1q1pB2/2b5/4P3/2N5/PPP1Q1PP/3R3K
+1
+bsetup done
+3
+k Problem 1:  This was a game I had in round 3 of a local tournament in the summer of 1998.  White to move and mate in 3.  Time Limit:  1 Minute
+60
+e2g4
+4
+g8f7
+4
+g4g7
+4
+f7e8
+4
+d1d8
+1
+k Mate!!
+10
+bsetup
+1
+bsetup tomove White
+1
+bsetup bname Ascher
+1
+bsetup fen r6k/pp4pp/8/1qpQN3/4P3/8/PP3PPP/1K5R
+1
+bsetup done
+3
+k Problem 2:  This game comes from Round 1 of the same tournament as the prior problem.  White to move and mate in 4.  Time Limit:  1 Minute
+60
+e5f7
+4
+h8g8
+4
+f7h6
+4
+g8h8
+4
+k Or ...Kf8 Qf7 Mate
+4
+d5g8
+4
+a8g8
+4
+h6f7
+1
+k Smothered mate!!
+10
+bsetup
+1
+bsetup tomove White
+1
+bsetup bname Daw
+1
+bsetup fen r3r2k/pp2BP1p/2n3pN/q1p2b2/2Pb4/7P/PP2B1P1/1R1Q1R1K
+1
+bsetup done
+3
+k Problem 3: This was my first USCF rated game played in 1998.  I had White.  White to move and mate in 2.  Time Limit:  1 1/2 Minutes.
+90
+d1d4
+4
+c5d4
+4
+k ...Ne5 doesn't alter the result.
+4
+e7f6
+1
+k Mate!!
+10
+bsetup
+1
+bsetup tomove Black
+1
+bsetup wname Plummer
+1
+bsetup bname McCartney
+1
+bsetup fen 3r1rk1/p5pp/1p4q1/2p1p3/2P1Nn2/1N3P2/P1Q2KPP/3RR3
+1
+bsetup done
+3
+k Problem 4:  I played this game back around mid-August 1998.  I had Black.  Black to move and mate in 4.  Time Limit:  2 Minutes.
+120
+g6g2
+4
+f2e3
+4
+kibitz Incorrect would be Rd3:
+Rd3
+Qxd3
+Nd5
+Qd5
+k Check!
+back 4
+f4d5
+4
+k No use taking the queen when you have a forced mate instead.
+4
+e3d3
+4
+k Or cxd5 Rxf3 Mate
+4
+f8f3
+4
+e1e3
+4
+f3e3
+1
+k Mate!!
+10
+bsetup
+1
+bsetup tomove White
+1
+bsetup wname Flanker
+1
+bsetup bname StickyQuagmire
+1
+bsetup fen r1bq3r/p1p1k1pp/2p2b2/3pN2Q/3Pp3/6N1/PPP2PPP/R3K2R
+1
+bsetup wcastle both
+1
+bsetup bcastle none
+1
+bsetup done
+3
+k Problem 5: (Note:  White can still castle in either direction for this problem)  Flanker (McCartney) did a major spanking against Philidor's Defense in this game on the ICC.  After only 12 moves each, White is dominating.  He can win the queen with 13.Nxc6+, but even better, he has mate in 3.  Can you find it?  Time Limit:  2 Minutes
+120
+h5f7
+4
+e7d6
+4
+e5c4
+4
+d5c4
+4
+g3e4
+1
+k Mate!!
+back 3
+k Sacrificing the other knight is just as effective:
+Ne4
+dxe4
+Nc4
+bsetup
+1
+bsetup tomove White
+1
+bsetup wcastle none
+1
+bsetup wname McCartney
+1
+bsetup bname Oxman
+1
+bsetup fen 4r3/2R4p/pp4p1/2p2k2/2P2PN1/1P2PK2/7P/2n5
+1
+bsetup done
+3
+k Problem 6: I won this USCF rated game played at the Charlotte Chess Club back in May 1998 by finding the key move that gives white the win.  White to move and mate in 3.  Time Limit:  2 1/2 Minutes.
+150
+c7c6
+4
+k Here Black resigned due to the triple threat of Rf6 Mate, e4 Mate, and Nh6 Mate.
+4
+e8e6
+4
+k The only move that temporarily stops all 3 of White's mates, but it only prolongs it by 1 move.  If ...Rf8, then e4 (or Nh6) is mate.  If Rxe3+, then Nxe3 is mate.
+4
+e3e4
+4
+e6e4
+4
+c6f6
+1
+k Mate!!  (or Nh6 Mate!!)
+10
+bsetup
+1
+bsetup wname les3
+1
+bsetup bname Flanker
+1
+bsetup tomove Black
+1
+bsetup fen rq5k/1p2pBbp/6p1/pNP1n3/1P6/P3P2P/3r1P1P/1RQ2RK1
+1
+bsetup done
+3
+k Problem 7:  This was a wild game.  Black has already sacrificed a piece, and yet he has mate in 5.  Can you find it?  Time Limit:  3 Minutes
+180
+e5f3
+4
+g1g2
+4
+k Or Kh1 Qxh2 mate
+4
+b8h2
+4
+g2f3
+4
+k Black sacrifices yet another piece!!
+4
+h2h3
+4
+f3f4
+4
+k The game actually went Ke4 Qf5 mate, but it can be prolonged another move.
+4
+g7h6
+4
+f4e4
+4
+k Ke5 Qf5 is also mate.
+4
+h3f5
+1
+k Mate!!
+10
+k That concludes this lecture.  Hopefully I'll have a "Mating Attacks II" after I get done playing another 200 games!!
+5

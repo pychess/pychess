@@ -1,0 +1,442 @@
+k This lecture is one in a series that will review the moves and ideas behind the King's Indian Attack (KIA). The KIA is a flexible opening system used by many of the world's top players including Fischer, Stein & Tal. It has been successfully played against the French, the Sicilian and the Caro-Kann. This opening lends itself to players who can't spend a great deal of time memorizing openings as White can reach the basic position regardless of what Black does.
+44
+k The KIA vs. the Caro Kann
+6
+k Bobby Fischer and Leonid Stein played the KIA vs. the solid Caro Kann defense. White's plan is to attack the e5 square (usually occupied by a pawn and attack on the Q-side) or favorably break up Black's center. We shall see examples of each.
+23
+k Black's plan is to solidify his center position and suppress White's Q-side play.
+8
+wname Stein
+1
+bname Hort
+1
+e2e4
+k Although the KIA can be reached by starting with 1.Nf3 it is more often reached after 1.e4. May e4 players use the KIA as an alternative to the semi-open games.
+16
+c7c6
+d2d3
+k By playing d3 (instead of d4) White has less space but more options. More importantly White is avoiding Black's opening preparation and playing the opening on his(her) terms.
+17
+d7d5
+b1d2
+k Shielding the queen from exchange in case of an exchange on e4.
+8
+g7g6
+k Since White has not played d4, Black decides to occupy the long diagonal with his dark squared Bishop.
+10
+g1f3
+k Attacking the e5 square.
+6
+f8g7
+g2g3
+k The basic setup begins to show itself. The KIA is really nothing more than the King's Indian Defense with the colors reversed!
+12
+e7e5
+k Grabbing space in the center.
+6
+f1g2
+g8e7
+k Leaving the long diagonal clear and protecting d5.
+6
+c2c3
+e8g8
+e1g1
+k Controlling the d4 square and preparing to expand on the Q-side.
+7
+b8d7
+b2b4
+k Gaining space on the Q-side and preparing to oppose the Bishop on g7.
+8
+k This is the basic setup for the KIA vs. the Caro Kann with ...g6 and ...e5. To see it in action, we will continue by showing Stein-Hort Los Angeles, 1968.
+15
+b7b6
+c1b2
+c8b7
+f1e1
+f8e8
+g2h3
+d8c7
+e4d5
+c6d5
+c3c4
+d5d4
+a1c1
+f7f5
+h3g2
+g7f6
+c4c5
+b6b5
+d2b3
+b7d5
+a2a4
+a7a6
+b3a5
+e7c6
+a4b5
+a6b5
+k Now comes a shot .... I'll give you 60 seconds to find it!
+65
+f3e5
+c6b4
+e5d7
+c7d7
+c5c6
+d7f7
+e1e8
+a8e8
+a5b7
+f6e5
+g2d5
+f7d5
+c1c5
+d5f7
+d1f3
+g6g5
+c6c7
+g5g4
+f3d1
+e5c7
+d1d2
+c7b6
+c5b5
+b4d3
+b7d6
+f7d7
+d2g5
+g8h8
+g5f6
+h8g8
+f6g5
+g8h8
+d6e8
+d7e8
+g5f5
+d3e1
+b5b6
+e1f3
+g1g2
+e8a8
+f5f6
+h8g8
+f6e6
+g8h8
+e6c6
+k And Black resigned here.
+6
+k Another black strategy is an early ...Bg4 with the idea of trading the N on f3 to relieve some of the pressure on the e5 pawn.
+12
+revert
+1
+wname Fischer
+1
+bname Ibrahimoglu
+1
+e2e4
+c7c6
+d2d3
+d7d5
+b1d2
+g7g6
+g1f3
+f8g7
+g2g3
+g8f6
+f1g2
+e8g8
+e1g1
+c8g4
+h2h3
+k Forcing Black to commit to either Bxf3 or Bd7. Bh5 looses a piece to g4.
+8
+g4f3
+d1f3
+b8d7
+f3e2
+d5e4
+d3e4
+d8c7
+a2a4
+k Here Fischer gains space on the Q-side and challenges Black for control of the b5 square.
+9
+k So far we have been following Fischer-Ibrahimoglu Seigen Olympiad, 1970. The rest of the game shows how Fischer makes use of the b5 square to tie up Black.
+15
+a8d8
+d2b3
+k Looking to occupy the c5 square.
+6
+b7b6
+k Black denies the Knight c5 but weakens the b5 square in the process.
+8
+c1e3
+c6c5
+a4a5
+e7e5
+b3d2
+k The Knight starts the long journey to b5.
+6
+f6e8
+a5b6
+a7b6
+d2b1
+c7b7
+b1c3
+e8c7
+k To challenge the Knight when it arrives at b5.
+6
+c3b5
+b7c6
+b5c7
+c6c7
+e2b5
+k b5 is still a problem for Black.
+6
+d8a8
+c2c3
+a8a1
+f1a1
+k White now adds control of the open a-file to his list of positional pluses.
+8
+f8b8
+a1a6
+g7f8
+g2f1
+k Relocating the Bishop to a more useful diagonal.
+6
+g8g7
+b5a4
+b8b7
+f1b5
+d7b8
+k Black's pieces are very passive.
+6
+a6a8
+f8d6
+a4d1
+b8c6
+d1d2
+k Having tied Black up on the K-side Bobby now shifts his focus to the Black King.
+8
+h7h5
+e3h6
+g7h7
+h6g5
+b7b8
+a8b8
+c6b8
+g5f6
+b8c6
+d2d5
+c6a7
+b5e8
+h7g8
+k A small combination winning a pawn..can you spot it? 30 seconds....
+36
+e8f7
+c7f7
+d5d6
+k Black resigns
+6
+revert
+1
+wname Stein
+1
+bname Portisch
+1
+e2e4
+c7c6
+d2d3
+d7d5
+b1d2
+g7g6
+g1f3
+f8g7
+g2g3
+g8f6
+f1g2
+d5e4
+k Black prematurely releases the central tension. This allows White's pieces some more breathing room.
+10
+d3e4
+b8a6
+e4e5
+k Establishing a cramping pawn on e5.
+6
+f6d5
+d2b3
+c8g4
+d1e2
+d8c8
+e1g1
+e8g8
+f1e1
+a6c7
+c1d2
+f7f6
+k It's ugly, but there is no other way to undermine the White's e5 pawn.
+8
+e5f6
+g7f6
+c2c3
+k Blunting the dark squared Bishop's activity.
+6
+f8f7
+e2e4
+g4f5
+e4c4
+d5b6
+c4f1
+b6a4
+d2c1
+c8d7
+f3e5
+f6e5
+e1e5
+c7b5
+c1f4
+a8d8
+b3c5
+a4c5
+e5c5
+b5c7
+c5e5
+c7e6
+f4h6
+d7d6
+f1e2
+e6g7
+a1e1
+f5d3
+e2g4
+d3f5
+g4c4
+k Here Black miscalculates...the idea behind this is attempting to trap White Rook and Bishop in a mating trap. White shows us how to proceed correctly.
+15
+d6e5
+e1e5
+d8d1
+g2f1
+f5h3
+k Winning a very important pawn.
+6
+e5e7
+d1f1
+c4f1
+h3f1
+e7f7
+g8f7
+k With a Bishop versus Knight in and endgame with pawns on both sides of the board (as well as being a pawn up), White has a won game.
+12
+g1f1
+g7f5
+h6e3
+a7a6
+f1e2
+h7h5
+e2d3
+b7b5
+d3e4
+f7e6
+h2h3
+a6a5
+e3c5
+a5a4
+c5f8
+k Black resigns.
+6
+k This game is a good illustration of White's use of the long diagonal (h1-a8)
+8
+revert
+1
+wname Stein
+1
+bname deLange
+1
+e2e4
+c7c6
+d2d3
+d7d5
+b1d2
+e7e5
+g1f3
+f8d6
+g2g3
+g8e7
+f1g2
+f7f6
+k A clumsy way to support the e5 pawn. This also weakens the a2 - g8 diagonal.
+8
+d3d4
+k Stein is quick to open up the center to get at the Black King.
+8
+c8g4
+c2c4
+k Hitting the weak diagonal again!
+6
+e5d4
+c4d5
+c6d5
+e4d5
+b8d7
+e1g1
+e8g8
+d2b3
+k Stein wants to get his Knight to c5 where it controls some key White squares (i.e. e6 and d7).
+9
+d7b6
+d1d4
+g4f3
+g2f3
+d6e5
+d4d3
+e7d5
+b3c5
+d5c7
+d3b3
+g8h8
+c5b7
+d8e8
+b7a5
+a8c8
+c1e3
+k A solid pawn up ... the rest is just good technique on Stein's part.
+8
+c7e6
+a1c1
+e5d4
+c1c8
+e8c8
+f1c1
+c8e8
+a5c6
+d4e3
+b3e3
+e6g5
+f3g2
+e8e3
+f2e3
+f8f7
+c1d1
+g7g6
+b2b3
+h8g7
+a2a4
+f7c7
+a4a5
+b6c8
+b3b4
+f6f5
+b4b5
+g5e4
+g2e4
+f5e4
+d1d8
+c8e7
+c6e7
+c7e7
+d8b8
+e7e5
+a5a6
+k and Black resigned here.
+6
+k I hope you enjoyed this lecture. If you have any feedback, drop me an email at cissmjg@hotmail.com. Recommended book on the KIA "The ChessBase University Bluebook Guide to Winning with the KIA by IGM Henley and Maddox. ISBN 1-883358-00-0"
+37

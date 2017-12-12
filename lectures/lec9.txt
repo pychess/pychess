@@ -1,0 +1,429 @@
+k Welcome to Knackie's Tactics Training. The examples are based on material of a Hungarian Chess School. They have been revised using Fritz and a bit of Knackie's brain.
+15
+k In this lesson you will learn how to mate an enclosed king.
+10
+k Example 1: Zoller vs Heywood
+1
+bsetup
+1
+bsetup fen 3n1r1k/1pp2p1p/1r3p1N/p4N1Q/4P1R1/1Pq3P1/P4PKP/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Zoller
+1
+bname Heywood
+1
+k To introduce the theme, let's look at a nice mating combination:
+10
+k Half of the work is already done here: the black king has nowhere to go. The only task which remains to be done is to give checkmate.
+12
+k White would like to play something like Nxf7 mate, but unfortunatly the square f7 is protected twice by the Rf8 and the Nd8.
+12
+k This means it is white's plan to deflect the two protectors of the f7 square. You have 60 seconds to figure it out by yourself...
+70
+h5f7
+d8f7
+k The knight does not protect f7 anymore.
+8
+g4g8
+f8g8
+k The rook does not protect f7 anymore, so the stage is set for:
+8
+h6f7
+k mate.  The final position is very typical. The black king is enclosed by his own pieces, while the mate is given by a white knight.
+12
+k Example 2: Kurajca vs Ujtelky, Wijk aan Zee 1969
+1
+bsetup
+1
+bsetup fen 4Q3/2p2pbk/rn3qNp/3p1P1P/pp1n2R1/1P4N1/P1P3P1/1K3R2
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Kurajca
+1
+bname Ujtelky
+1
+k The combinations in this lesson tend to be very pretty. Do you see the mate in 2? 45 seconds...
+52
+e8h8
+g7h8
+g6f8
+k One must like these knight mates!
+10
+k Example 3: Larsen vs Najdorf, Lugano 1968
+1
+bsetup
+1
+bsetup fen 8/6pk/pN5p/4Rp1q/4nP2/2r4P/Q5P1/6RK
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Larsen
+1
+bname Najdorf
+1
+k In the 'clash of the western champions', Najdorf found an easy mate in 3. 45 seconds...
+52
+c3h3
+g2h3
+h5h3
+a2h2
+e4f2
+k The knight did it again!
+8
+k Example 4: Lechtynsky vs Pachman, CSSR 1968
+1
+bsetup
+1
+bsetup fen r1bq2rk/1p1p4/p1n1pPQp/3n4/4N3/1N1Bb3/PPP3PP/R4R1K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Lechtynsky
+1
+bname Pachman
+1
+k This example would also be suited for the discovered attack theme. Do you see how the knight strikes again? 60 seconds.
+68
+g6h7
+h8h7
+e4g5
+h7h8
+g5f7
+k mate. There's definitely not much scope for these poor enclosed kings!
+10
+k Example 5: Atkinson vs N.N., Manchester 1929
+1
+bsetup
+1
+bsetup fen r5rk/1pp1n1pp/p1n1b1q1/3p1p2/7R/2QB1N2/PB3PPP/4R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Atkinson
+1
+bname N.N.
+1
+k After these 'easy' mates, let's increase the difficulty level.
+8
+k In this position, the black king is completely enclosed, so white 'only' needs to play Nf7 mate, but the black queen defends the position quite well, and the white knight is still far away from f7.  75 seconds...
+90
+e1e6
+k White first deflects the black queen from its good defensive position.
+10
+g6e6
+f3g5
+k The knight comes with tempo to the threatening square g5. Black has not much choice here, as white threatens both NxQe6 and Rxh7 mate.
+15
+e6g6
+k White would still like to play Nf7. Therefore, he deflects the black queen again...
+15
+h4h7
+g6h7
+g5f7
+k White has achieved his goal, Nf7 mate.
+10
+k Example 6: Ribli vs Chandler, Indonesia 1982
+1
+bsetup
+1
+bsetup fen 2r3k1/p5bp/2p3p1/3bN2q/1P3p2/P2QP1B1/5PPP/2R1K3
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Ribli
+1
+bname Chandler
+1
+k In this example, black's position seems quite solid, especially the formation pawn c6 and Bishop d5.
+12
+k White started a little combination, having a very typical mate in mind. 120 seconds...
+126
+c1c6
+k A huge blow, right into the heart of black's position.
+8
+k Black cannot take the rook as after RxRc6 QxBd5+ Kh8 black gets mated with Qd8+ in a few moves
+20
+c8d8
+k Black protects the vital square d5. How did white attack d5 again?
+25
+c6c8
+d8c8
+k The mate combination which follows is very typical and arises quite often in the middlegame. If you don't know the idea already, i strongly recommend you memorize the following moves:
+15
+d3d5
+k Black cannot play Kf8 here because of Qf7 mate.
+12
+g8h8
+e5f7
+h8g8
+f7h6
+g8h8
+k Now follows a move you should absolutely remember:
+10
+d5g8
+c8g8
+h6f7
+k mate. Keeping this mating idea in mind will help you win many games (or avoid many losses).
+12
+k Example 7: Balogh vs Troianescu, Brasso 1947
+1
+bsetup
+1
+bsetup fen 2r3rk/3qbppp/8/ppnpPP2/5P2/4BNR1/PP5P/2RQ3K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Balogh
+1
+bname Troianescu
+1
+k The black king is already enclosed by his own teammates, but how could the white knight find a way to mate? 75 seconds...
+83
+e5e6
+k A powerful multi-purpose attacking move. Besides freeing the square e5 for the knight, the pawn takes away one of the defenders of the vital square g6. (the pawn f7)
+20
+f7e6
+f3e5
+d7e8
+k Black defends against the obvious Nf7 mate, but there's another way for white...
+20
+e5g6
+h7g6
+g3h3
+e7h4
+h3h4
+k mate
+8
+k Example 8: Vaccaroni vs Mazzochi, Rome 1891
+1
+bsetup
+1
+bsetup fen 8/6p1/4b1Rp/4q2k/7b/1B6/2PB2Q1/2K5
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Vaccaroni
+1
+bname Mazzochi
+1
+k Usually such a position would not be worth looking at. White is already a rook up so he should win easily. However, the mate in 3 white found here is certainly worth more than just a look. 60 seconds...
+76
+g2g4
+e6g4
+k Can you find the finish now?
+20
+g6h6
+g7h6
+b3f7
+k You would like to see this mate in one of your games, wouldn't you?
+10
+k Example 9: Unzicker vs Sarapu, Siegen 1970
+1
+bsetup
+1
+bsetup fen r1b2rk1/pp3ppp/1q1bn3/3Q4/2B1N3/8/PPP3PP/R1BK1R2
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Unzicker
+1
+bname Sarapu
+1
+k In this position, white asked himself if he could just grab black's bishop on d6. What do you think? 75 seconds...
+83
+e4d6
+k Unzicker decided: yes!
+8
+f8d8
+k So what now? Black threatens to regain the piece on d6, when white has trouble on the d-file. It seems that white has no way to protect d6. Do you agree?
+20
+c1f4
+k Ooops, white protects it after all! So let's look what happens if black takes away that Bishop f4:
+15
+e6f4
+d5f7
+g8h8
+k Do you remember the mate that happens often in the middlegame?
+15
+f7g8
+d8g8
+d6f7
+k mate
+8
+k Example 10: Najdorf vs N.N., Simul. 1942
+1
+bsetup
+1
+bsetup fen r2qrk2/1b2bppB/p7/1p1PN3/1n6/8/1B2QPPP/2RR2K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Najdorf
+1
+bname N.N.
+1
+k What's the difference between the ordinary chessplayer and a Grandmaster?
+10
+k While the ordinary chessplayer would be very glad to find the following combination at all, Najdorf however found it during a simultaneous exhibition! 90 seconds...
+102
+e2h5
+k This move is quite obvious, threatening mate on f7.
+10
+b7d5
+k Black seems to defend well, but Najdorf found a way to mate the enclosed king.
+20
+d1d5
+d8d5
+k So, what was Najdorf's idea?
+12
+h5f7
+d5f7
+e5d7
+k Would you have found this in a simultaneous exhibition? :)
+10
+k Example 11: Nykitin+Sakarov vs Kasparov
+1
+bsetup
+1
+bsetup fen 1qB1r1k1/5pp1/1Bb4p/2P4n/1P1p4/P4n2/1N3QPP/2R2N1K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Nykitin,Sakarov
+1
+bname Kasparov
+1
+k Kasparov is not only today's best chess player, he is also one of the greatest tacticians of all-time. The champion saw that white's king is enclosed. Black just needs to play 'Ng3 mate'. Unfortunately the square g3 is well protected. 75 seconds...
+93
+e8e2
+k Deflecting the queen from protecting g3.
+10
+f2e2
+b8h2
+k Deflecting the knight f1.
+10
+f1h2
+h5g3
+k mate
+8
+k Example 12: Horvath vs Eperjesi, Ungarn 1971
+1
+bsetup
+1
+bsetup fen r3n1r1/1pq2ppk/1p2p2p/1b2N2N/8/6Q1/PPP2P1P/1K1R2R1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Horvath
+1
+bname Eperjesi
+1
+k This last example is a bit more difficult. White had a very surprising move to prepare a mating attack. 120 seconds...
+67
+k Note that a move like Qxg7 might work, if well prepared...
+67
+d1d7
+k This move makes no sense at first sight. The idea is to cut black's queen off from protecting the f7 square.
+15
+b5d7
+k Now comes white's mating combination.
+25
+g3g7
+k Black has a choice here: let's first look at Nxg7:
+8
+e8g7
+h5f6
+h7h8
+e5f7
+k mate
+5
+back 4
+k Let's now look at Rxg7, which lasts just one move longer:
+10
+g8g7
+g1g7
+e8g7
+h5f6
+h7h8
+e5f7
+k You see why the first move Rd7 was necessary. Without it black could just capture the knight with Qxf7.
+15
+k I hope you enjoyed the lesson, keep looking for such mates in your own games, they happen quite often!
+15
+k These and some more examples can be downloaded in chessbase format at http://webplaza.pt.lu/public/ckaber    (Tactic3.zip)
+30

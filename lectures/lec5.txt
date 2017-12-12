@@ -1,0 +1,485 @@
+k Welcome to Knackie's Tactics Training. The examples are based on material of a Hungarian Chess School. They have been revised using Fritz and a bit of Knackie's brain.
+15
+k In this lesson I will introduce one of the most powerful tactical elements: the discovered attack.
+10
+k Example 1: Schrancz vs Honfi, Hungary 1971
+1
+bsetup
+1
+bsetup fen r4rk1/2q1bppp/4b3/p2p3R/3B4/1NnP3Q/1P4PP/4R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Schrancz
+1
+bname Honfi
+1
+k To demonstrate the power of discovered attacks, especially discovered checks, let's look at this example:
+30
+h5h7
+k White does not worry about his queen. He has seen a series of discovered checks.
+12
+e6h3
+h7g7
+g8h8
+g7f7
+h8g8
+f7g7
+k that's like taking new fuel
+7
+g8h8
+g7e7
+h8g8
+e7c7
+k Winning easily.
+8
+k Example 2: Reti vs Tartakower, Vienna 1910
+1
+bsetup
+1
+bsetup fen rnb1kb1r/pp3ppp/2p5/4q3/4n3/3Q4/PPPB1PPP/2KR1BNR
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Reti
+1
+bname Tartakower
+1
+k This is a classic example you will find in many books. How does white force the black king into a double check? You get 45 seconds...
+55
+d3d8
+k Again the discovered attack is worth more than a queen.
+8
+e8d8
+d2g5
+k That's the most powerful type of discovered check: the double check.
+8
+d8e8
+d1d8
+k mate.
+5
+k Black could have chosen to go to c7 instead of e8, but this leads to the same result:
+8
+back 2
+d8c7
+g5d8
+k that mate looks even better!
+8
+k Example 3: Mocsai vs Barati, Budapest 1961
+1
+bsetup
+1
+bsetup fen 2r2rk1/pb4pp/1p1bN3/3n1p2/1P6/PQ1BP1Pq/1BP2P1P/4RRK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Mocsai
+1
+bname Barati
+1
+k The discovered check on the d-file worked well in the previous example, but of course it also works on diagonals. Can you find black's nice mate in 3?   45 seconds...
+58
+h3g2
+g1g2
+k Now, of course, black must choose the right discovered check.
+15
+d5f4
+g2g1
+f4h3
+k Another nice mate position to remember.
+10
+k Example 4: Tanacskozok vs Pillsbury, Chicago
+1
+bsetup
+1
+bsetup fen r7/1p2Pk2/p4Pr1/4Q3/8/1P6/b1P3P1/6K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Tanacskozok
+1
+bname Pillsbury
+1
+k Discovered checks do not only arise in the middlegame. In this example white found a very clever way to use his advanced pawns. Do you see the variation with a surprising discovered check on move 3?  90 seconds...
+105
+e5d5
+k White now intends Qd8 and promoting his pawn e7.
+8
+k Black must play Kxf6 here, since after Ke8, white plays Qe6, with the deadly f6-f7 to come.
+18
+f7f6
+d5d8
+k Threatening e7-e8Q
+7
+g6g8
+k Ooooops! Black protects everything. Even the discovered check e7e8Q does not help here, as black then plays RxQd8. But remember: which is the most powerful type of discovered attacks?
+25
+e7e8=N
+k The double check!
+10
+k Example 5: Kraiko vs Ray, Svajc 1958
+1
+bsetup
+1
+bsetup fen r1b1k2r/4ppbp/p5p1/Qp2q3/3N4/4BP1P/PPP3P1/1K1R3R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Kraiko
+1
+bname Ray
+1
+k This example shows a slight variation of a well-known theme. White to move. 45 seconds...
+52
+a5d8
+e8d8
+k And now not, of course, Nc6+, when the black king escapes to c7, but...
+15
+d4e6
+d8e8
+d1d8
+k mate
+8
+k Example 6: Banfalvi vs Marussi, Correspondence game  1966
+1
+bsetup
+1
+bsetup fen r4r1k/pQB1qp1p/4pp2/8/1PnP4/5P2/1P2KP1P/R5R1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Banfalvi
+1
+bname Marussi
+1
+k At first sight this position looks rather unclear, but a discovered attack makes the difference. White to move. 60 seconds...
+68
+c7e5
+k Threatening Bxf6 mate and unleashing a discovered attack on black's queen.
+20
+e7d8
+k After recovering from the shock black seems to have found a convenient defense. White's next move, however, shows that black's queen is overloaded with defensive tasks:
+20
+b7a8
+k Simply winning a rook, as black's queen must keep the f6-square protected.
+15
+k Example 7: Janowski vs Nardus, 1912
+1
+bsetup
+1
+bsetup fen 3rr1k1/ppp2ppp/8/5Q2/4n3/1B5R/PPP1qPP1/5RK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Janowski
+1
+bname Nardus
+1
+k In this example black found an elegant way to 'exchange queens', winning a rook on the road. To find the solution you must try to get white's king into a discovered check.  120 seconds...
+135
+e2f1
+k That's the first part of the 'queen exchange'.
+8
+g1f1
+e4d2
+f1g1
+e8e1
+g1h2
+d2f1
+k This forces white's king to run into a discovered check. Look how nicely the knight prevents the king from escaping to g3.
+15
+h2g1
+f1e3
+g1h2
+e3f5
+k The work is done.
+8
+k Example 8: Reshevsky vs Gligoric, New York 1952
+5
+bsetup
+1
+bsetup fen 1k1r3r/ppq2pnp/1npbb1p1/3p4/3P1NP1/2NBP2P/PPQ2P1B/1KR4R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Reshevsky
+1
+bname Gligoric
+1
+k Ok, those were the 'easy' examples. At the grandmaster level, you won't find many examples of mate in 3 or similar, but look how the discovered check theme helped Reshevsky to find a great combination against Gligoric.
+20
+k Reshevsky saw that black's king was on the same diagonal as white's Bishop on h2. Meanwhile, the knight on f4 could be the piece that generates the discovered attack.
+20
+k If you keep that in mind, you'll understand the following white moves, where white systematically frees the crucial diagonal of black pieces. You get 120 seconds to try to figure it out by yourself...
+135
+c3b5
+k Refusing the sacrifice does not help. Let's see this first:
+8
+c7e7
+b5d6
+d8d6
+f4e6
+k The diagonal h2-b7 already comes into action.
+10
+k Let's go back and look what happens in the game.
+back 4
+c6b5
+c2c7
+k This eliminates the first black piece standing on the diagonal h2-b7.
+10
+d6c7
+k Keeping our idea in mind, you'll find the next move easily.
+20
+c1c7
+k One more black piece eliminated on the diagonal.
+10
+b8c7
+k The work is done; the black king now faces the discovered check on the 'naked' diagonal:
+20
+f4e6
+c7d7
+e6d8
+h8d8
+d3b5
+d7e6
+h2c7
+k Keeping the discovered attack theme in mind, this rather complicated combination suddenly became easy to understand.
+15
+k Example 9: Kapu vs Benko, Budapest 1955
+1
+bsetup
+1
+bsetup fen 8/6bk/8/2R2p1p/pp5P/4pPP1/P2r4/2N2K2
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Kapu
+1
+bname Benko
+1
+k This example is outstanding. With only a rook and a bishop, Benko generated a firework of tactical ideas, using the discovered attack theme. This is a great example to study. 120 seconds...
+135
+d2f2
+k White now has two possibilities. Let's first look at Ke1:
+8
+f1e1
+k Black's play is now rather easy.
+8
+g7c3
+e1d1
+f2d2
+d1e1
+d2d5
+k A discovered check, which gains material.
+12
+back 6
+k Let's now see Kg1:
+8
+f1g1
+k Black's following move is extremely strong, featuring discovered check ideas. Can you find it?
+45
+g7d4
+k Black now threatens e3e2.  White must now attack black's bishop so that he can take it when it gives check. We will consider Rd5 and Rc4, let's look at Rd5 first:
+24
+c5d5
+e3e2
+c1e2
+k So, what now? RxNe2 RxBe4 leads to absolutely nothing, but black keeps thinking about discoverd checks:
+15
+d4e3
+k Fantastic! White's knight has nowhere to go. (e.g. Nc1 Rc2 discovered check)
+20
+e2f4
+f2d2
+g1f1
+e3f4
+k Black has won a piece!
+8
+back 8
+k Let's now consider Rc4:
+8
+c5c4
+k Do you find black's next blow?
+30
+f2c2
+k Another incredible move. White cannot play RxBd4 now, as after RxNc1+ Kg2 e2 the pawn proves decisive, so black tries:
+25
+c4c2
+e3e2
+k The e-pawn promotes with the help of a last discovered check!
+10
+k The tactical richness of this seemingly easy position was amazing!
+10
+k Example 10: Salwe vs Marco, Ostende 1907
+1
+bsetup
+1
+bsetup fen r5k1/2pN2p1/pp1q3p/3b4/6B1/5PR1/1P5P/3R2K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Salwe
+1
+bname Marco
+1
+k Let's go back to easier stuff. In this old example white saw a little combination which gained material. 90 seconds...
+98
+d1d5
+k If black had seen the following moves, he would have refused to take on d5 now and would have played Qc6 instead, for example. Then, the position is rather unclear.
+25
+d6d5
+d7f6
+g7f6
+g4e6
+k The double-check in action. White should win, although some work still remains to be done.
+12
+k Example 11: Neumann vs Bergmann, Prag 1913
+1
+bsetup
+1
+bsetup fen 3r1rk1/ppp2ppp/2n2b2/8/2B2Q2/6Bq/PP3P1P/3R2RK
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Neumann
+1
+bname Bergmann
+1
+k Another old example. How did white make use of the discovered check theme? 90 seconds...
+97
+f4f6
+k If black takes the queen, this leads to a quick mate:
+10
+g7f6
+g3e5
+k Discovered check
+8
+g8h8
+e5f6
+k mate
+8
+back 4
+k What else could black try?
+25
+d8d1
+k Very clever! Black now really threatens to take the quuen on f6, as the discovered check won't work now (black would simply play RxRg1).  However, if the simple discovered check does not work, you must use something more powerful...
+30
+f6g7
+k Preparing, of course, a double check!
+8
+g8g7
+g3e5
+k The double check forces the king into the open, where it won't escape:
+10
+g7h6
+e5g7
+h6h5
+c4e2
+h5h4
+g7f6
+k mate
+8
+k Example 12: Jerostrom vs Bergman, Ljusdal 1950
+1
+bsetup
+1
+bsetup fen r1b1rk2/3n1pbQ/2qp2p1/p2N2P1/2Bp3N/4P3/PP3PP1/2KR3R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Jerostrom
+1
+bname Bergman
+1
+k Let's conclude the lesson with a nice mate in 4. You will find it if you think of a discovered check on the a2-g8 diagonal. 90 seconds...
+100
+h4g6
+k Taking away the pawn f7 on the a2-g8 diagonal.
+15
+f7g6
+h7g8
+k Forcing the king on the diagonal.
+15
+f8g8
+k Now you must choose the right discovered check...
+25
+d5e7
+g8f8
+e7g6
+k mate.  That looks good!
+10
+k I hope you enjoyed the lesson. These examples (and more) can be downloaded in chessbase format at http://webplaza.pt.lu/public/ckaber   (Tactic2.zip)  If you don't have Chessbase, maybe one of your friends could convert the database to PGN format for ex
+ample. If you are runing Windows, you might as well download Chessbase Light for free on the Chessbase homepage at http://www.chessbase.com.
+45

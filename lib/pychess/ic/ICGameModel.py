@@ -125,20 +125,24 @@ class ICGameModel(GameModel):
     def onBoardSetup(self, bm, gameno, fen, wname, bname):
         if gameno != self.ficsgame.gameno or len(self.players) != 2:
             return
-        # set up start position or examined game players
+
+        # Set up examined game black player
         if "Black" not in self.tags or bname != self.tags["Black"]:
             self.tags["Black"] = self.players[BLACK].name = self.ficsplayers[BLACK].name = bname
             self.emit("players_changed")
-            curPlayer = self.players[self.curColor]
-            curPlayer.resetPosition()
 
+        # Set up examined game white player
         if "White" not in self.tags or wname != self.tags["White"]:
             self.tags["White"] = self.players[WHITE].name = self.ficsplayers[WHITE].name = wname
             self.emit("players_changed")
-            curPlayer = self.players[self.curColor]
-            curPlayer.resetPosition()
 
+        # Set up examined game position, side to move, castling rights
         if self.boards[-1].asFen() != fen:
+            new_position = self.boards[-1].asFen().split()[0] != fen.split()[0]
+
+            # side to move change
+            stm_change = self.boards[-1].asFen().split()[1] != fen.split()[1]
+
             self.status = RUNNING
             self.loadAndStart(
                 StringIO(fen),
@@ -146,9 +150,12 @@ class ICGameModel(GameModel):
                 0,
                 -1,
                 first_time=False)
-            self.emit("game_started")
-            curPlayer = self.players[self.curColor]
-            curPlayer.resetPosition()
+
+            if new_position:
+                self.ficsgame.move_queue.put_nowait("fen")
+                self.emit("game_started")
+            elif stm_change:
+                self.ficsgame.move_queue.put_nowait("stm")
 
     def onBoardUpdate(self, gameno, ply, curcol, lastmove, fen, wname,
                       bname, wms, bms):

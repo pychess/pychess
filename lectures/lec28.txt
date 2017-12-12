@@ -1,0 +1,511 @@
+k Good afternoon and welcome to 'Secrets of the Flank Attack.'
+6
+k This lecture is designed to give the viewer some interesting ideas on how to attack on the wings when the center becomes locked up.
+13
+k Since this topic is relevant only to closed openings (an oxymoron!?), it is safe to say that this lecture is written for players of an intermediate strength (1200-1600), as those below this range are probably interested in more 'popular' opening strategies such as those behind the Ruy Lopez and Sicilian Dragon, and those above this range are probably familiar with the themes that will be presented.  Not that players outside the range can't pick up anything, though :)
+45
+k Note: all games presented in this lecture come from OTB play.
+wname Shidinov,M
+1
+bname Amir,A
+1
+k Instructive Game 1- The half-closed center.
+g1f3
+d7d5
+g2g3
+g8f6
+f1g2
+b8c6
+o-o
+e7e5
+k Black sets up a classical pawn duo, which White sets to undermine immediately.
+8
+c2c4
+d5d4
+k Black closes the position, releasing the tension white placed on the center.
+7
+back
+k Black's other good options were 5...Be6 6.cxd with a Sicilian game, or 5...dxc 6.Qa4 with a reversed Pterodactyl.  5...e4, overextending, is a dubious way to play:
+18
+e4
+Ng5
+h6
+cxd
+k !
+Qxd5
+Nxe4
+Nxe4
+d3
+k += (Schiller)
+10
+back 8
+d5d4
+k White must be careful: 6.e3 d3 and White has problems, with the threats of ...e4 and ...Nc6-b4-c2.
+12
+d2d3
+f8d6
+a2a3
+c6e7
+k ?! Correct was ...a5.  Whenever black pushes ...d5-d4, he must be prepared to play a reversed Benoni.
+10
+b2b4
+k Grabbing Q-side space.
+c7c5
+b1d2
+k Black can't grab the b4 pawn since:
+cxb
+axb
+Bxb4
+Qa4
+Nc6
+Nxe5
+k +-
+10
+back 6
+a8b8
+a1b1
+e7g6
+k The following maneuver should be remembered and repeated in similar Benoni-ish positions where king 4 is an available pivot square:
+10
+f3g5
+o-o
+g5e4
+f6e4
+d2e4
+k The pressure on c5 yields the Bishop pair to White.
+6
+d8c7
+b4c5
+d6c5
+e4c5
+c7c5
+b1b5
+k The square b5 (or b4 for Black) is an ideal post for a rook during a queenside invasion--that's the rank where all of Black's fixed center pawns stand!
+15
+c5e7
+e2e3
+k White plans to open up the e-file and isolate black's queen pawn, so...
+7
+d4e3
+f2e3
+k And White's rolling center combined with his Bishop pair brought him victory 46 moves later.
+15
+revert
+1
+bname Gordon,J
+1
+k Instructive Game 2- The early N-a3.
+g1f3
+c7c5
+g2g3
+d7d5
+f1g2
+b8c6
+c2c4
+k Entering the Reti Opening.  When Black has played an early ...c5 the Reti should be handled exactly like a reversed Benoni.
+12
+d5d4
+d2d3
+g8f6
+o-o
+e7e5
+e2e4
+k The center has become closed, and (provided Black chooses not to invoke en passant on this move) both parties will continue with their flank strategies.
+15
+f8e7
+b1a3
+k The formation taken in this game is that of the Czech Benoni (reversed). The focus of this instructive episode is the Benoni player's immediate plan of na3-c2,Bd2,Qe1,Rb1,a3, and then b4 to open the Q-side.  In this game his plan is contrasted with the crude K-side bludgeon of Black.
+26
+o-o
+a3c2
+c8g4
+d1e1
+k A crafty move, freeing the KN from its pin while hitting the square b4. Note this move was in White's plan anyway; it just happened to be a good move on the other side of the board as well! :)
+18
+d8d7
+c1d2
+a7a5
+k To hold up White's b2-b4 advance.  It is a general rule that in positions with closed centers, the Knight Pawns (b or g) can be advanced to create tension on the wings.
+16
+a1b1
+g4h3
+k If 13.a3? then ...a4! ties White's hands, as b2-b4 will always be met with ...axb3 en passant.  So that rule is important, after all! :)
+13
+b2b3
+h3g2
+g1g2
+f6e8
+k Freeing the f pawn.
+5
+f3g1
+k White pauses his Q-side play to defend.
+6
+f7f5
+f2f3
+e8d6
+a2a3
+f5e4
+f3e4
+f8f1
+e1f1
+a8f8
+f1e1
+d6f7
+d2a5
+k White could have played his b3-b4 push on that move, but he decided to steal a pawn first.  He will then defend for a few moves, and play b3-b4 after resetting his pieces to their natural squares.
+19
+f7g5
+a5d2
+d7g4
+e1d1
+g4e6
+d1e2
+e6g6
+b3b4
+k Finally!! :)
+c5b4
+c2b4
+k A disadvantage of the Na3-c2 Reti lines is that this Knight gets into play only by taking on b4 or using e1, a square which should be occupied by a major piece: the Queen in closed systems or the f-Rook in half-open systems.
+22
+c6b4
+d2b4
+e7b4
+b1b4
+g6a6
+e2b2
+a6c6
+k The threat of ...Nxe4 is dangerous.
+6
+b2e2
+f8a8
+b4b5
+k We have yet another recurring theme to look at- the importance of b5 (or b4 for Black) during a Q-side invasion.  Great rook square, b5 is! :)
+14
+c6c7
+e2b2
+c7e7
+k The game concludes nicely:
+b5b7
+e7a3
+b7b8
+g8f7
+b2b7
+k Followed by Rxa8.  1-0.
+10
+revert
+1
+bname Mody,A
+1
+k Instructive Game 3-Expanding on both wings.
+k You know what they say about advancing on both wings:  either you end up looking like a grandmaster, or you end up looking confused :)
+12
+g1f3
+k Don't worry, they're not all Retis! :) We have a King's Indian Defense and a Modern coming up next.
+9
+e7e6
+g2g3
+d7d5
+f1g2
+g8f6
+o-o
+c7c5
+c2c4
+b8c6
+b2b3
+k More prudent was e3 first, so that on ...d5-d4 white can open a file.  But we already know from Game 1 that White does not fear closed positions!
+14
+d5d4
+k Well timed.
+d2d3
+e6e5
+e2e4
+f8e7
+k The center has become closed, and White begins Q-side play.  Note that b2-b3 is NOT a waste of time, as this move is often needed to keep Black from 'jamming' White (advancing a5-a4).  Black's e7-e6-e5, on the other hand, CAN be referred to as a waste of time.
+24
+b1a3
+k We will see the same pattern that we saw White use in Game 2: Na3-c2,Bd2,Qe1,Rb1,a3,etc.
+10
+o-o
+c1d2
+c8g4
+k This looks familiar.  Can you guess how White might respond to this?
+7
+d1e1
+k Deja Vu! White evades the pin in a most unexpected manner.
+6
+f6d7
+a3c2
+a7a5
+k Black attempts to restrain White.
+6
+h2h3
+k What!?? This is a horrible move that takes away all chances of an easy Q-side attack.  It was imperative for him to play a2-a3.  Black stuffs White in the following manner:
+16
+g4f3
+g2f3
+c6b4
+k Stuffing the b-pawn!!
+6
+d2b4
+k Another mistake!! White should take with the Nc2 (his worst placed piece at this moment) and then pry open the a-file with a2-a3.  After the text White may miss his good bishop.
+17
+a5b4
+a2a3
+b4a3
+c2a3
+d8b6
+a3b5
+k White's queenside is completely stuffed! Whatever will he do!?
+6
+f8d8
+a1a4
+k Trying to take the a-file.  If Black takes off the rooks, he will cure White's little problem on b3.
+9
+a8a6
+e1d2
+k It is easy to see White's plan has failed.  Thus, he reorganizes his forces. In closed games, time is not as critical as in the sharper openings, like, say, the Dragon.
+16
+d7b8
+f3e2
+k It looks like the long diagonal shall never become open again, so White relocates the 'modern' bishop, to a different post where it overprotects White's structure and...
+16
+b8c6
+f2f4
+k ...frees the f-pawn!! Now white grabs space on the other wing.
+7
+e7f6
+g3g4
+e5f4
+d2f4
+h7h6
+f4c7
+k Penetration.  White forces an ending with a knight posted on d5.
+7
+b6c7
+b5c7
+a6a4
+b3a4
+f6e5
+c7d5
+d8a8
+f1b1
+a8a7
+b1b5
+k Fine rook square, b5 is! :)
+6
+e5d6
+k White has recovered from his opening errors, though he only has a minimal advantage.  The rest of this ending is long, drawn out, and filled with mutual error.  It is not important to the lecture and will not be included.
+21
+k What IS important, though, is seeing how White shifted his attack to the kingside when his queenside became stuffed in order to obtain acceptable play. Even though his K-side attack was not dangerous, it threw Black off-balance to the point where White was able to come back into the game (and eventually win a complex Bishop ending).
+32
+revert
+1
+wname Cobia,P
+1
+bname Shidinov,M
+1
+k Let's root for Black this time, shall we?
+k Instructional Game 4- The Stock Kingside Attack
+k Most of you, I bet, have heard of the King's Indian Defense.  This defense, as it seems, is notorious for half-closed positions with wild attacks on both wings.
+16
+k The following is a perfect example of how to run a K-side attack in a half-closed position.
+9
+d2d4
+g8f6
+c2c4
+g7g6
+b1c3
+f8g7
+e2e4
+d7d6
+g1f3
+o-o
+f1e2
+e7e5
+o-o
+b8c6
+d4d5
+k White closes the center and intends to attack on the Q-side.
+6
+k Black, in the meantime, will play for mate by storming the K-side.
+6
+c6e7
+d1c2
+k One of white's quieter 9th moves.  Black is out of his opening book now but can still play 'automatic' KID moves.
+10
+k These 'automatic' moves qualify as a 'Stock' attack, or a series of moves that can be played in a certain formation that the opponent cannot possibly prevent.  These moves are memorized before the game to save time, so that all the protagonist needs to think about during the game is the move order.
+28
+k Different players have different arsenals of 'Stock' attacks.  For example, some players will prefer playing a King's Indian with moves like ...Nd7(or e8),...f5-f4 while some players like the system with ...c6,...a5,...Na6(or d7)-c5.
+k The former attack was played in this game:
+26
+f6d7
+c1e3
+f7f5
+f3g5
+k A trick! White threatens Ne6.  Note that this move would not be a great threat had Black played ...Ne8 instead of ...Nd7.  Some move orders are better than others, apparently! :)
+17
+d7f6
+a1d1
+h7h6
+g5f3
+k Chicken! If white wanted to play the line like this, he should have followed up with the sac' on e6.  White's line is far too passive.
+12
+f5f4
+e3c1
+b7b6
+k Stopping for a moment to defend... Hey! could that be another theme?? :)
+6
+b2b4
+a7a5
+a2a3
+g6g5
+k Back to the Kingside!
+6
+c1b2
+e7g6
+k "My play was far too quiet, I should have played c4-c5 earlier, the move doesn't need this much preparation.  I was doing nothing, and [Shidinov] was just sitting there playing Bobby-Fischer moves" (Cobia)
+19
+k "Bobby Fischer's games were all the same.  The same openings, the same attacks, the same sacrifices.  Very simple." (Geller)
+11
+h2h3
+g5g4
+h3g4
+f6g4
+g2g3
+f4g3
+f2g3
+g4e3
+k Winning the exchange.  In this example White's last few moves were very poor.
+8
+revert
+1
+wname Dixon,J
+1
+k Instructive Game 5-Another double-flank attack.
+k One last example, a very modern game, shows how Black can achieve a maneuvering game against a king-pawn opening.  Though White does not show much skill in handling the position, this game is still instructive.
+19
+e2e4
+g7g6
+d2d4
+f8g7
+f2f4
+k The Three Pawns' Attack.  Black can now transpose to the Austrian Attack of the Pirc, or he can try this new line:
+11
+d7d5
+k Suggested in ECO, but only now receiving practical tests. (Schiller)
+6
+e4e5
+h7h5
+g1f3
+g8h6
+f1d3
+k 6.Be3 Bg4 7.Nbd2 Nc6 8.Bf2 Nf5 9.h3 Bxf3 10.Nxf3 h4= was Borkowski-Campbell, St.John Open 2, 1988.
+10
+c8f5
+b1c3
+c7c6
+f3h4
+e7e6
+h4f5
+h6f5
+d3f5
+g6f5
+c1e3
+d8h4
+g2g3
+h4h3
+d1f3
+h3g4
+f3e2
+g4e2
+c3e2
+h5h4
+o-o-o
+g7f8
+k In closed positions, development (or lack thereof) is not as critical as in the sharper openings.  Not that it isn't important or anything...
+13
+c2c3
+b8d7
+c1c2
+c6c5
+e2c1
+k ?! Now Black can take on g3 without giving white a passed pawn.
+7
+h4g3
+h2g3
+h8g8
+k Shying away from allowing a lone White R access to Black's Kingside.
+7
+c1e2
+a8c8
+c2b1
+b7b5
+k There it is!
+d1c1
+c5c4
+a2a3
+e8e7
+k !? Black transfers his Rooks to the g file.
+6
+c1g1
+g8g6
+g1g2
+f8g7
+e3f2
+c8g8
+h1g1
+g7f8
+k But Black has plans for the Bishop on the Q-side.
+6
+g1h1
+k Looks unprofessional, yes?
+6
+d7b8
+e2g1
+b8c6
+g1f3
+c6a5
+f3d2
+f8h6
+h1h4
+h6f8
+b1a2
+e7e8
+h4h2
+a5c6
+h2h1
+k Holding for laughter...
+a7a5
+g2h2
+k Ok, this time he has it right!
+b5b4
+k Too bad Black is smashing through!
+h1b1
+k Otherwise Black would take a pawn and then move his Nc6 into b3 via a5.
+8
+g6h6
+b1h1
+k Aha! White's rook that guards the b file gets distracted!
+6
+h6h2
+h1h2
+b4c3
+b2c3
+a5a4
+k Making room for the N.
+6
+h2h1
+c6a5
+h1b1
+k Too late!
+6
+a5b3
+k Black has achieved a substantial advantage and is certainly winning.  Note the center is still completely shut.
+11
+k White probably relaxed because he felt there was no way his structure could be undermined.  Boy, was he wrong! :)
+15
+revert
+1
+k I certainly hope you know more about playing in closed positions than you did before you watched this lecture.
+11
+k Happy hunting! :)

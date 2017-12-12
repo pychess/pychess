@@ -1,0 +1,539 @@
+kib This lecture is intended to show you how to play the Stonewall attack, an age-old white opening that requires little effort to learn and often makes for exciting attacks on the castled black position.
+20
+Kib Now the disclaimer - This lecture was written by MBDil, a 1500-ish player and a self-proclaimed expert on the stonewall. This lecture is intended for players of up to about 1300 strength, though stronger players may benefit from it.
+20
+kib Why play the Stonewall? It follows standard opening principles such as control of the center and rapid development. The theory on this opening hasn't changed much in the last hundred years,  so once you learn it, you don't have to spend a lot of time keeping current on theory. It's also very helpful for learning concepts such as pawn storms, strong knights and bad bishops, and sacrificial kingside attacks.
+35
+kib The stonewall also has minor psychological advantages. Many developing players (<1300) are more comfortable answering e4 than d4.  In addition, the stonewall typically leads to closed positions, which are usually more intimidating for your opponents that may not be familiar with the "full looking" chessboard that often results.
+30
+kib So that we can see the basic concepts and ideas of the Stonewall, let's first look at a game where black doesn't put up much of a defense.
+15
+d4
+d5
+e3
+kib This announces your intentions. White chooses to put a bishop on d3 and set up pawns at d4 and f4 to hold the e5 square. The queen bishop is intentionally locked in to allow better movement for the other pieces. It's not a huge drawback. In many cases, it gets to join in the attack anyway.
+25
+Nf6
+Bd3
+e6
+Nd2
+c5
+kib Black, wisely, decided to put his queen knight behind his cpawn and also attempts to break up the wall of strong pawns.
+kib White doesn't need to worry about cxd, since exd frees his queen bishop without giving up the e5 square.  He does need to be concerned with the c4 push, since it would drive his well-placed bishop off of the b1-h7 diagonal. Thus:
+30
+c3
+kib Then, if black plays c4, white can bring his bishop back to c2
+7
+c4
+Bc2
+Nc6
+f4
+kib White has set up the main pawn structure. He wants to put a knight at e5 to hit deep into black's position and also prevent black from playing e5.
+15
+Bd6
+Ngf3
+Ng4
+kib This move merely wastes time. It's a one-move threat on the undefended e-pawn.
+8
+Qe2
+kib White doesn't mind playing this move at all... Not only does it defend the pawn, it prepares the queen to swing over to g2 or h2 after the pawns begin storming. It makes room for the rooks to move over as well, and it indirectly supports b2 in the event of a queenside attack by black, which frequently occurs in the Stonewall.
+25
+Bd7
+o-o
+Nf6
+kib Avoiding O-O?, where white wins a pawn and continues his attack with Bxh7+, and if Kxh7, Ng5+ wins the g4 knight.
+18
+h3
+o-o
+g4
+kib The storm is afoot! White's plan is to drive the knight from f6 with g5 and pile his forces against the weakened h7 pawn.
+13
+Qb6
+kib Black stumbles onto the correct plan. The idea is a queenside attack, taking advantage of the somewhat cramped white queenside. Better is b5 followed by Qb6.
+15
+Ne5
+kib Its best square. Note that Nxe5 fxe5 forks the bishop and knight. It also opens the f-file and strengthens the attack by white.
+10
+Nxe5
+fxe5
+6
+back 2
+kib Black is also threatened by g5, since moving the knight away will hang the d7 bishop to the knight, which will then fork the Queen and Rook.
+15
+Qd8
+g5
+Ne8
+kib At this point, the h7 square is weakened and the Queen has freedom to go to h5. Note that an immediate attack is likely to fail, primarily because of the relatively strong pawns in front of the king and the lack of sufficient force to sustain a sacrificial attack.
+30
+Kib for instance:
+2
+Qh5
+g6
+Nxg6
+fxg6
+Bxg6
+hxg6
+Qxg6+
+Kh8
+Qh6+
+Kg8
+g6
+Qe7
+kib And white cannot further the attack.
+10
+back 12
+kib a different move order is called for, but that isn't sound either...
+8
+Bxh7+
+Kxh7
+Qh5+
+Kg8
+g6
+kib Threatening mate on h7.
+5
+fxg
+Nxg6
+kib And white will have trouble making progress because the king can slip out of the attack at f7. Black could also organize a strong defense before white's currently dormant pieces could move in to intensify the attack.
+20
+back 7
+kib Note that this line wins only if black refuses the free bishop. The extra piece is just too much to fight.
+10
+Bxh7
+Kh8
+Qh5
+Nf6
+gxf6
+kib any black move leads to the same result here.
+5
+gxf6
+Bg6+
+Kg7
+Qh7 ++
+8
+back 9
+kib Since it's rarely a good idea to play unsound sacrifices, white decides to make room for his rook to come to g1 and strengthen his attack.
+15
+Kh2
+f6
+kib Black doesn't like being cramped in this way. He hopes for gxf6, Nxf6. Unfortunately, his move breaks apart the king's last defense.
+12
+Bxh7+
+Kxh7
+Qh5+
+Kg8
+g6
+kib This is the proverbial nail in the coffin. Qh7 ++ is white's next move.
+8
+back 999
+kib You may be thinking now that black put up a lousy defense. This is true. There were many better moves, but the game is instructive in showing the ideal setup of the white pieces during the stonewall attack.
+20
+kib the attack would not have succeeded without the combination of several white pieces bearing down on the kingside castled position and the huge space advantage held by white.
+15
+kib Now we'll look at three other games where the basics ring true although the moves change.
+8
+Kib E. Horowitz vs. an amateur, Milwaukee, 1950. Courtesy of "How to think ahead in chess" by I.A. Horowitz and Fred Reinfeld.
+6
+wname Horowitz
+1
+bname Amateur
+1
+d4
+d5
+e3
+Nf6
+Bd3
+kib One of the characteristic moves of the stonewall.
+5
+e6
+Nd2
+kib White must prevent Ne4. Otherwise, black will almost literally turn the tables and "Stonewall" white.
+10
+c5
+c3
+kib The only response. White's dxc is ludicrous, since it gives away control of e5, and gaining e5 is half the point of the stonewall.
+12
+Nc6
+kib Note that after this move, black threatens to take the initiative with e5. White CAN'T let that happen.
+10
+f4
+kib This prevents it nicely.
+5
+Be7
+Ngf3
+Kg8
+Ne5
+Qc7
+Kg1
+b6
+kib White is playing according to plan. He's set up the strong knight at e5 while preventing black from doing the same at e4. He's taken a commanding lead over the b1-h7 diagonal, and has lines open for Qh5 and the rook maneuver R-f3-h3.
+20
+kib The pawns cover the dark squares of the center and are formidably placed to keep the necessary lines open for attack.
+10
+kib These are the defining moves of the Stonewall. See why it's so easy to learn?
+10
+g4
+kib Threatening to follow through with the plan to drive the king knight away with g5.
+10
+Bb7
+kib Here, black could actually gain lots of freedom with NxN. For instance:
+10
+a3
+kib The equivalent of doing nothing.
+5
+Nxe5
+fxe5
+Ne4
+kib The bishop provides enough support to e4 to make this possible. The diagonal is blocked, and black has a strong hold on the center. That's an awful way to end what would have been a strong attack by white.
+20
+back 4
+kib So then what?
+6
+Qf3
+kib Now NxN followed by Ne4 loses a pawn while white's attack is sustained.
+10
+a6
+kib This doesn't look like much, but it's the precursor to a queenside attack by black. Since the kingside couldn't be defended much more than it is, this is probably the correct plan for black.
+15
+g5
+Ne8
+Bxh7+
+kib When you look at this position, you'll notice the similarity to the previous game in which white had to wait for black to attempt f6 for the bishop sacrifice to work. Why does it work here when it didn't work there?
+20
+kib The position of black's kingside is identical with the exception of the bishop on e7 instead of d6. White's entire camp is identical to the previous game with the exception of the queen on  f3 instead of e2 and the pawn on h2 instead of h3.
+20
+kib So how does this work?
+10
+kib The h-pawn is the key. In this second game, white has the opportunity to bottle up black's kingside and then leisurely play Rf3 and Rh3, with mate to follow.
+20
+kib This implies that the h3 push in the previous game was premature. Perhaps another action was needed, such as allowing the queen to do the honors of driving the knight away.
+15
+kib Can you say "Instructive?" Now might be a good time.
+4
+Kxh7
+kib Kh8 sends black down in flames as in the previous example with Qh5/Bg6+/Qh7++
+10
+Qh5
+Kg8
+Rf3
+g6
+kib Black puts up a fight.
+6
+Qh6
+Ng7
+Rh3
+Nh5
+Kib Aha! Black appears to have halted the attack by blocking the file. Could it be that the attack has died? Is there nothing left for our hero with the white pieces? Isn't there something else he can give away to bring black to a halt?
+20
+Nxg6
+kib Black has to deal with the attack on his own knight and mate on h8.
+6
+fxg6
+Qxg6+
+Ng7
+Kib The only defense. Kh8 fails to RxN mate.
+5
+kib According to Reinfeld and Horowitz, white can win here with a beautiful sacrifice.
+10
+Rh8
+Kxh8
+Qh6+
+Kg8
+g6
+kib and mate is unavoidable.
+9
+back 5
+kib But not to worry. It isn't necessary to see all of the sacs to win with the Stonewall attack. It just takes a bit longer.
+10
+Rh7
+Bd6
+kib This brings the queen into the game. Note that the king can no longer slip out via f7 since Rxg7 wins the queen.
+10
+Qh6
+Kib Threatening g6 and Rh8 mate.
+5
+Kib Black finds a novel answer to that threat:
+5
+Bxf4
+Kib Pinning the g pawn and delaying the inevitable.
+5
+kib Here Horowitz missed a crushing win:
+5
+Rh8
+Kf7
+Qf6
+Ke8
+Rxf8
+Kd7
+Rf7
+kib White will finish ahead a whole queen.
+10
+back 7
+kib However, Horowitz's strong position allowed him to win after the less violent exf4.
+10
+exf4
+Rxf4
+g6
+kib Now what? Reinfeld's and Horowitz's analysis is that the king cannot escape unscathed via f8.
+10
+Kf8
+Rh8
+Ke7
+Qxg7+
+Kd6
+Nc4+
+dxc4
+Bxf4+
+kib "... and it's all over," they say.
+12
+back 8
+6
+Rg4+
+Kh1
+kib Kf1 would be a mistake since it allows black to exchange queens via Qf4+. The pressure would be off and black would win eventually with his extra piece.
+15
+Rxg6
+kib Black really has no other choice than to return the extra material.
+12
+Qxg6
+Rf8
+kib To prevent Nf3. Note that Qf7 loses.
+6
+back 1
+Qf7
+Rh8+
+Kxh8
+Qxf7
+8
+back 4
+Rf8
+Nf3
+Kib He plays it anyway! Another sac!
+Rxf3
+Bh6
+Rf7
+Rg1
+kib ... and black resigns. Can you blame him? Look at it on your own. Go ahead. I'll give you 20 seconds.
+28
+back 999
+Kib Another?
+Kib Kujoth vs. Crittenden, Milwaukee, 1949. Courtesy of "How to think ahead in chess" by I.A. Horowitz and Fred Reinfeld.
+8
+wname Kujoth
+1
+bname Crittenden
+1
+d4
+d5
+e3
+Nf6
+Bd3
+e6
+f4
+kib Better is Nd2 first, preventing the knight from intruding at e4.
+6
+Nbd7
+Nd2
+c5
+c3
+kib  As before, giving the bishop a free escape square in the event of c4.
+8
+cxd
+kib an error... it allows the bishop to gain freedom and does nothing to relax white's hold on the center. White should be able to attack more strongly when the time to attack comes.
+15
+exd
+kib The only drawback for white is the currently undefended fpawn.
+6
+Be7
+kib Black decides not to make the fpawn an issue. Had he played Bd6, Ndf3 would have sufficed, since it clears the way for the c1 bishop to guard f4, though it has the drawback of weakening white's hold on e4. g3 is another possibility, but it has the possible drawback of delaying the 0-0 - Rf3 - Rh3 maneuver until g4 is played.
+25
+g1f3
+b6
+Ne5
+kib The pattern is there...
+Nxe5
+kib This is another inaccuracy. White merely has to take with the f-pawn and proceed with a devastating attack that includes the force of the c1 bishop and the open f-file.
+15
+fxe5
+kib A word of advice...  anytime the knight on e5 is taken, it is necessary to take back with the f-pawn. This assures white's control of the kingside by locking up any potential attacks by black along the a7-g1 diagonal and opening the lines for the rook on the f-file and the c1 bishop. It also negates the need for g2-g4-g5, since the e5 pawn is enough to drive away the knight on f6.
+30
+Nd7
+Kg1
+a5
+kib Black's plan is to exchange white's strong d3 bishop by playing Ba6. The guiding principle is that when you're defending, any exchanges you can force will usually ease your pressures.
+15
+Qg4
+kib attacking the undefended gpawn. Castling would usually be the simplest cure, but the castled position would be rather weak here. For instance...
+15
+O-O
+Qh5
+h6
+Nf3
+kib threatening the sac Bxh6 and breaking through. White could finish the job with a rook maneuver to g3.
+10
+back 2
+g6
+Qh6
+kib and white has a strong position with threats of N-f3-g5 and R-f3-h3.
+10
+back 2
+f5
+exf
+Nxf6
+Rxf6
+Rxf6
+Qxh7+
+Kf8
+Nf3
+Rxf3
+gxf3
+kib and white is up a pawn with more potential attacks to follow.
+8
+back 12
+g6
+Bc2
+kib ... dodging the simplification by black's Ba6.
+5
+Bg5
+kib trying to muster some defense. Black realizes that castling is dangerous due to 14 Nf3 and 15 Bh6.
+15
+Nc4
+kib a discovered attack that, if unrealized, leads to mate!
+7
+Bxc1
+Nd6+
+Kf8
+Rxf7
+Kg8
+Bxg6
+h5
+Bh7++
+kib Horowitz and Reinfeld's analysis shows this as the only line, but black also has Bg5 as a defense.
+10
+back 2
+Bg5
+kib Black can avoid mate, but it's not much fun.
+5
+Qxe6
+kib Note that the bishop is immune because of hxg Qxg++. White also threatens Rxh7 dis.ch, Kf8, Qf7++.
+10
+Ra7
+Rxh7
+Kf8
+Qf7
+10
+back 12
+kib So....
+5
+dxc4
+Bxg5
+Qc7
+Rxf7
+kib !! This sac is made possible by White's stranglehold on the f-file and his monopoly on the black squares.
+12
+Kxf7
+Rf1+
+Kg7
+kib Ke8 fails because of Qxe6 mate. Kg8 isn't much better. Qxe6 Kg7 Qf7++ .
+18
+Bh6+
+kib another sac that reduces the black king's mobility to nothing.
+4
+Kxh6
+Rf7
+kib The threat is Qh4 mate. Black's next move covers it, but there's another sacrificial threat of mate in two. Can you find it? You've got 10 seconds.
+20
+Qd8
+10
+Rxh7+
+Kxh7
+Qxg6 ++
+kib This is reason enough to enjoy playing the Stonewall. White is down two rooks and a knight, but wins the game from his consistent planned play.
+15
+back 999
+kib Here's a bonus game, played by myself about a year ago. I commit two basic inaccuracies that black luckily did not exploit. See if you can spot them.
+15
+kib I call this a bonus game because it only serves to reinforce the points already mentioned, and since I'll avoid using more commentary than necessary. If you'd like to analyze this game on your own, it's in MBDil's journal, entry A.
+18
+wname MBDil
+1
+bname shannu
+1
+d4
+d5
+e3
+e6
+Bd3
+Nf6
+ f4
+c5
+ c3
+c4
+Bc2
+Bd6
+Nf3
+O-O
+ O-O
+Ng4
+ Qe2
+Nc6
+h3
+Nf6
+ Nbd2
+b5
+Ne5
+ Bb7
+g4
+b4
+kib Black has been moving right along with his relatively strong plan. You'll notice as you play this system that the queenside frequently is attacked in this manner.
+15
+g5
+Nd7
+ h4
+ bxc3
+bxc3
+ f6
+Ng4
+kib Bxh7! instead would have lead to a winning attack as we have seen earlier.
+8
+ fxg5
+hxg5
+ Qa5
+ Qh2
+g6
+Bb2
+Ba3
+kib At this point my development is as good as I'm going to get it, and because of my less than perfect play on the queenside, I'm just about to lose material. So, what else? I've gotta do something to keep him occupied.
+20
+Bxg6
+hxg6
+ Qh6
+kib I don't believe this line is entirely sound, but I continue to win with my overall good position anyhow.
+10
+ Rf7
+ Qxg6+
+Rg7
+ Qxe6+
+Kh8
+Kf2
+Nf8
+Rh1+
+Rh7
+ Rxh7+
+Nxh7
+Rh1
+Be7
+kib And now the heat is off of my queenside!
+5
+Qh6
+kib ... and black ran out of time.
+8
+kib Time for the quiz... with regard to the points mentioned in this lecture, what were my two opening inaccuracies? You have 10 seconds.
+20
+kib For one, I failed to prevent Ne4 with Nd2. Secondly, I played an early h3. Luckily, neither became a major drawback in the game.
+10
+kib Give yourself partial credit if you claimed that my first mistake was playing d4. :)
+8
+kib Thank you for listening to my lecture. I hope that you learned something and can now employ the stonewall attack with confidence.
+8
+kib Though I'm sure there are several good books on this attack, I recommend the classic "How to think ahead in chess" by Horowitz and Reinfeld for a more somewhat more complete understanding of this opening.
+20

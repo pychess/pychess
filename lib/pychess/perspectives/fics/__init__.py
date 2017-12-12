@@ -115,6 +115,7 @@ class FICS(GObject.GObject, Perspective):
         perspective_widget.pack_start(align, True, True, 0)
 
         self.notebooks = {"ficshome": new_notebook()}
+        self.main_notebook = self.notebooks["ficshome"]
         for panel in self.sidePanels:
             self.notebooks[panel.__name__] = new_notebook(panel.__name__)
 
@@ -139,6 +140,7 @@ class FICS(GObject.GObject, Perspective):
             seek_leaf.dock(self.docks["ArchiveListPanel"][1], CENTER, self.docks["ArchiveListPanel"][0], "ArchiveListPanel")
 
             leaf = leaf.dock(self.docks["ChatPanel"][1], SOUTH, self.docks["ChatPanel"][0], "ChatPanel")
+            # leaf.dock(self.docks["LecturesPanel"][1], CENTER, self.docks["LecturesPanel"][0], "LecturesPanel")
 
         def unrealize(dock):
             dock.saveToXML(self.dockLocation)

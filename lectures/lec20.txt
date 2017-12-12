@@ -1,0 +1,135 @@
+k Aaron Nimzowitsch, in the years of 1925-1931, was considered to be one of the worlds strongest players.  Most famous not only for his writings, but his *style* of writings, Nimzowitsch is most remembered today for his strategic contributions to chess.
+20
+k His support of the "Hypermodern" system of play is perhaps the only reason it is so popular today.  Nimzowitsch also pioneered the once cryptic ideas of "prophylaxis" and "over-protection" which have won me a great deal of games. :-)
+20
+k The game we will be studying today was played between Aaron Nimzowitsch and A. Hakansson in Kristianstad, 1922. It is a game that greatly describes the idea of a pawn sacrifice in the opening that is not used to obtain an attack, but to overprotect a strategic point with the idea of cramping enemy forces.
+23
+wname Nimzowitsch
+1
+bname Hakansson
+1
+e4
+e6
+d4
+d5
+e5
+c5
+Qg4
+k An innovation of Nimzowitsch's.  White intends to reduce the support of the bishop on f8 by putting pressure on g7.
+10
+cxd4
+k  Of course not...
+Qxd4
+Nc6
+k ... where black gains all sorts of time on White's queen, and the e-pawn is an easy target.
+10
+back 2
+Nf3
+Nc6
+k The cramping effect is already becoming obvious.  Nxd4 only loosens white's grip.  The bishop on f8 cannot move, and to move the knight on g8 would either result in a horrible kingside pawn structure (Nh6 Bxh6) or the blocking of the already half-dead bishop (Ne7).
+25
+Bd3
+f5
+7
+k White is in no hurry to recapture the pawn.  A few other possibilities:
+10
+exf6
+Nxf6
+k This doesnt cut it.  Black has total central control, and will gain a lead in development.
+10
+back 2
+Qf4
+Nge7
+k And Ng6 follows.  A good waste of a move.
+6
+back 2
+Qg3
+Nge7
+O-O
+7
+Ng6
+h4
+k This is not a move that is meant for attack, but rather to try to remove some of the pressure on the e5 pawn, which is the pride of white's position.
+15
+Qc7
+k The e-pawn needs more support.
+5
+Re1
+Bd7
+k Bc5 should have been played instead.  Later in the game, Nimzowitsch will play h5, driving the knight back, when Bc5 would have left f8 open as a retreat square.
+18
+a3
+O-O-O
+k If he wanted to, white could have won the exchange with the following neat combination:
+10
+h5
+Nge7
+Ng5
+7
+Re8
+Nf7
+Rg8
+7
+Nd6+
+Kb8
+Nxe8
+7
+Bxe8
+k We hand Nimzowitsch the microphone: "With his undeveloped Queenside and his unprotected pawn on h5, he would have had some difficulties to contend with.  The text move (b4) is the logical continuation."  Aye, black has too many threats.
+20
+back 10
+b4
+a6
+h5
+7
+Nge7
+Bd2
+h6
+7
+a4
+g5
+b5
+7
+f4
+Qg4
+k See how he is preparing?  The e5 and d4 pawns both contribute to a restricted and closed center.  Black is severely cramped.  This leaves white with enough time to finish development and take control before black can get anything going.  Despite being a pawn down, White has a sizeable advantage.
+25
+Nb8
+c3
+Re8
+k The only move.  You should note that the c-file will soon be open for the taking of white's Re1.  This leaves black with the unfortunate necessity of scrambling his pieces even further to avoid loss of material.
+24
+cxd4
+Kd8
+k White has now regained the pawn.  He has complete control over the center, an open C-file, well organized pieces, high mobility, and a pawn storm on the queenside.  Both of his bishops have good scope.
+20
+k Meanwhile, what is black doing?  His queen is going to be kicked all the way back to a8.  The Nb8 is stuck with nothing to do.  He is severely cramped, and his control over the center is restricted to his d-pawn, which isnt doing much.  The king is sitting next to the open c-file, and is held in the center by his own pieces.
+25
+k A grim situation, indeed.  White has a strategically won game.  The rest is just a mop-up operation.
+10
+Rc1
+Qb6
+a5
+7
+Qa7
+b6
+Qa8
+k Nimzowitsch begins a boa-constrictor like strategy.
+8
+Rc7
+Nf5
+Nc3
+7
+Be7
+Nxd5
+Nxd4
+7
+Nxd4
+exd5
+Qxd7
+7
+k And black resigns, because of..
+Nxd7
+Ne6
+k A beautiful finish to a most fascinating game.
+10

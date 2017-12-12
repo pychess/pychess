@@ -1,0 +1,136 @@
+e2e4
+5
+e7e6
+5
+d2d4
+5
+d7d5
+k The French Defense has been used by every World Champion since Steinitz except Fischer.
+10
+k Black's main weakness in the French is the light-squared bishop.
+8
+k In the French, black usually looks for play on the queenside (since that is the direction that his central pawn chain points to).
+12
+b1c3
+k White's has other good options here,
+8
+back 1
+k such as 3. Nd2 (the Tarrasch Variation)
+b1d2
+8
+back 1
+k and 3. e5 (the Advance Variation).
+e4e5
+8
+back 1
+k But in this lecture we will use Nc3.  :)
+b1c3
+6
+g8f6
+k Black brings out his knight to add an attacker on the e4-pawn.
+8
+e4e5
+k This move is the beginning to the Steinitz Variation.
+8
+k The other main option for white would be 4. Bg5 (the Classical Variation).
+8
+k However, the Classical Variation became somewhat unpopular for white after Korchnoj often won with the black pieces in the mid-1980s.
+12
+f6d7
+k Black saves his knight and prepares to push c5 next.
+8
+f2f4
+5
+k This solidifies the e5-pawn.  Otherwise, e5 could become very weak after black plays c5 and cxd4.
+12
+c7c5
+k Now both sides battle for the d4 square.
+8
+g1f3
+5
+b8c6
+5
+c1e3
+5
+k Black has two main options here.
+8
+k He can either continue with 7...Qb6
+5
+k or the quieter 7...cxd4.
+8
+k Let's take a little look at both of these options.
+8
+d8b6
+6
+c3a4
+k This is the best way to defend b2.
+8
+b6a5
+5
+c2c3
+k Notice that the queen now protects the knight on a4.
+8
+c5d4
+5
+b2b4
+k The play becomes a bit wild now.
+8
+c6b4
+5
+c3b4
+5
+f8b4
+k Black now has three pawns for a knight.
+8
+e3d2
+5
+b4d2
+5
+k Now white must take back with the knight since Qxd2 would lose the knight on a4.
+5
+f3d2
+5
+b7b6
+k This move aims to free the light-squared bishop.
+8
+k After 14. Qb3 or Bd3, white has a slight advantage.
+10
+k Let's go back and look at the other option, 7...cxd4.
+10
+back 13
+8
+c5d4
+k As I mentioned earlier, this move is quieter than 7...Qb6.
+8
+f3d4
+k Now black can choose between Bc5 and Nxd4.
+8
+f8c5
+6
+d1d2
+6
+e8g8
+6
+e1c1
+k Chances are now roughly even.
+10
+back 4
+5
+k Nxd4 is also fine for black.
+c6d4
+5
+e3d4
+5
+d7b8
+k Black now looks to reposition his other knight to c6.
+8
+d1d2
+4
+b8c6
+5
+e1c1
+7
+k Now either Qa5 or a6 leads to roughly even chances.
+10
+k I hope you now have a better understanding of the Steinitz Variation of the French Defense.
+10

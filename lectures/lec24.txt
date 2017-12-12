@@ -1,0 +1,472 @@
+k This lecture is one in a series that will review the moves and ideas behind the King's Indian Attack (KIA). The KIA is a flexible opening system used by many of the world's top players including Fischer, Stein & Tal. It has been successfully played against the French, the Sicilian and the Caro-Kann. This opening lends itself to players who can't spend a great deal of time memorizing openings as White can reach the basic position regardless of what Black does.
+55
+k The KIA vs. other defenses.
+8
+k In this lecture we will be looking at 4 black formations.
+6
+k (1) KIA vs. a Queen's Indian formation.
+k (2) A full KID with the colors reversed.
+k (3) The symmetrical variation.
+k (4) KIA vs. the Sicilian where Black plays ...d6.
+5
+k Let's start with the KIA vs. the Queen's Indian formation.
+5
+wname Henley
+1
+bname Browne
+1
+g1f3
+k There are many ways of getting into the KIA. Here white chooses to keep other options open.
+9
+c7c5
+k Inviting a standard Sicilian after 2. e4.
+5
+g2g3
+k Preparing to fianchetto the K-Bishop.
+5
+b7b6
+k Heading for a Queen's Indian defense with ...b6 and ...Bb7.
+6
+f1g2
+k Preparing to castle.
+c8b7
+e1g1
+k With the King safe, White will make his intentions on the center clear.
+8
+g8f6
+d2d3
+k Preparing e4.
+6
+d7d5
+k Black is also fighting for the e4 square.
+6
+b1d2
+k Still preparing e4.
+6
+e7e6
+k Black decides to reinforce his strong point (d5).
+6
+e2e4
+k In some ways this system resembles the KIA vs. the French. As we will see later many of the ideas involved in playing the KIA vs. the French are also valid against the QID.
+17
+f8e7
+f1e1
+k Protecting the valuable e4 pawn and preparing to push to e5.
+7
+b8c6
+k Hitting the d4 square.
+8
+c2c3
+k Keeping the Black Knight out of d4.
+6
+d5e4
+k Black tries to ease the pressure by exchanging the e4 pawn. As we shall see, this doesn't work out as planned.
+11
+d3e4
+k The Knight on d2 is shielding the Queen from being exchanged (as in the French).
+8
+e8g8
+e4e5
+k White plays e5 anyway. This effectively cuts Black's defenses in half.
+7
+f6d5
+d1e2
+k Overprotecting the e5 pawn.
+6
+a8c8
+k Up to this point we have been following Henley-Browne, WBCA Caissa Memorial Blitz Tournament, 1992.
+10
+k We shall show the rest of the game so you can see how to follow White's plan through.
+9
+h2h4
+c5c4
+d2e4
+d8c7
+e4g5
+h7h6
+g5h3
+c8d8
+e2c4
+f7f6
+k An ugly way to undermine the e5 pawn, but what else is Black to do?
+7
+e5f6
+f8f6
+h3f4
+c7d7
+f4d5
+e6d5
+c4d3
+d8f8
+e1e2
+g8h8
+c1f4
+a7a5
+f3e5
+k e5 still is a problem for Black.
+9
+c6e5
+f4e5
+f6f7
+a1d1
+e7c5
+e5d4
+d7g4
+d1e1
+b7c6
+d4c5
+b6c5
+g2d5
+f7f3
+d5f3
+c6f3
+e2e8
+k And Black resigned here.
+5
+k Now we will examine a variation where Black floods the center with pawns. This variation is the Fianchetto variation King's Indian Defense with the colors reversed.
+16
+revert
+1
+wname Petrosian
+1
+bname Donner
+1
+g1f3
+d7d5
+g2g3
+g7g6
+f1g2
+f8g7
+e1g1
+e7e5
+k Black will attempt to smother White with his center pawns.
+6
+d2d3
+g8e7
+b1d2
+e8g8
+k Preparing e4.
+6
+e2e4
+k Achieving the basic KIA setup.
+6
+c7c5
+k We now have a full KID with the colors reversed.
+6
+e4d5
+k White immediately attacks the Black center attempting to show that it is weak.
+8
+e7d5
+d2b3
+k Wasting no time. White wants to pressure the Black center as much as possible.
+8
+b8d7
+k Also possible is ...b6 but this leaves the long diagonal (h1 - a8) very weak.
+8
+f1e1
+k Now pressuring the e-pawn.
+6
+a8b8
+k Getting off the long diagonal and preparing ...b5.
+6
+k Up until now we have been following Petrosian-Donner, Piatgorski Cup, 1966. The rest of the game is a lesson on how to contort your opponent.
+13
+f3d2
+d5c7
+b3a5
+c7e6
+a5c4
+k Bouncing from weakness to weakness, Tigran slowly improves his position and worsens his opponent's.
+10
+d8c7
+d2e4
+d7b6
+e4c3
+c8d7
+a2a4
+d7c6
+c3b5
+c6b5
+a4b5
+b6c4
+d3c4
+b7b6
+c2c3
+f8e8
+a1a6
+e8e7
+d1a4
+b8c8
+g2d5
+c7b8
+d5e6
+f7e6
+a4d1
+c8d8
+d1g4
+e7e8
+h2h4
+d8d7
+h4h5
+g6h5
+g4h5
+e8f8
+h5g4
+f8f6
+c1e3
+f6g6
+g4e4
+g7f8
+a6a1
+f8d6
+e1d1
+g6g7
+d1d2
+d6f8
+d2d7
+g7d7
+e4g4
+g8f7
+g4h3
+f7f6
+a1f1
+b8e8
+h3h4
+f6g7
+e3h6
+g7g8
+h6f8
+g8f8
+f1e1
+e8f7
+e1e5
+f7g6
+g1g2
+g6f7
+e5e4
+f8e8
+e4f4
+f7e7
+h4h5
+e8d8
+h5e5
+d8c8
+e5e4
+c8b8
+f4h4
+e7f7
+h4f4
+f7e7
+e4f3
+e7d6
+f4f8
+d7d8
+f8f6
+k and Black resigned here.
+k Just to show how flexible the KIA can be, the following game shows a symmetrical variation of the KIA.
+10
+revert
+1
+wname Levitan
+1
+bname Shaked
+1
+g1f3
+g8f6
+g2g3
+g7g6
+f1g2
+f8g7
+d2d3
+d7d6
+e2e4
+e7e5
+k This game is Levitan-Shaked, US Junior Ch. 1993.
+6
+h2h3
+b8c6
+b1c3
+e8g8
+e1g1
+f6e8
+c1e3
+f7f5
+e4f5
+g6f5
+f3g5
+c6e7
+d3d4
+h7h6
+d4e5
+h6g5
+e3g5
+c7c6
+k And now comes a great shot. I'll give you 45 seconds to find it.
+51
+c3d5
+k If Black takes the Knight...
+5
+c6d5
+k Then...
+5
+g2d5
+f8f7
+k This is forced because...
+8
+back 1
+g8h8
+k walks into...
+6
+d1h5
+g7h6
+h5h6
+k Mate! The same variation holds for 16... Kh7.
+6
+back 4
+f8f7
+d1h5
+k And the Rf7 falls giving White an overwhelming position.
+6
+back 4
+f8f7
+d5e7
+f7e7
+e5d6
+e8d6
+c2c3
+d8d7
+g5e7
+d7e7
+f1e1
+e7f6
+d1b3
+g8h8
+a1d1
+c8d7
+b3b4
+g7f8
+c3c4
+a8d8
+c4c5
+d6e4
+b4b7
+e4c5
+b7a7
+f6g7
+b2b4
+c5e4
+g2e4
+f5e4
+e1e4
+k Black resigns.
+k The final Black formation we will examine is the Sicilian defense where Black plays ...d6.
+9
+k The obvious advantage is that it prevents White from maintaining a pawn on e5. The KIA is not quite as effective in these variations but is still very playable.
+16
+revert
+1
+wname Smyslov
+1
+bname Botvinnik
+1
+g1f3
+g8f6
+g2g3
+g7g6
+f1g2
+f8g7
+d2d3
+c7c5
+e2e4
+b8c6
+b1d2
+e8g8
+e1g1
+d7d6
+k With a pawn on d6 a King-side attack (prevalent in some variations of the KIA) is unlikely.
+9
+k White has other resources however.
+6
+a2a4
+k Gaining Q-side space and securing c4 for the Nd2.
+6
+k At this point there are two variations to consider. Here Black can play this position two ways. (1) Mutual expansion of the Q-side by playing ...Rb8 ...Bb7 and (2) central expansion by ...Ne8 and ...f5.
+19
+k First, Q-side expansion.
+6
+a8b8
+d2c4
+b7b6
+k Please note that 9. ... a6 is met by 10. a5 tying up Black's Q-side.
+7
+e4e5
+d6e5
+f3e5
+c6e5
+c4e5
+k With some initiative for White. Analysis by GM Henley.
+6
+back 8
+k Black's other alternative is to expand in the center.
+6
+f6e8
+k Preparing ...f5.
+6
+d2c4
+k Pressuring the e5 square.
+6
+e7e5
+k Gaining central space and controlling the d4 square.
+6
+c2c3
+k Keeping the Knight out of d4.
+6
+f7f5
+k Attacking the e4 pawn. Capturing would allow Black to play ...gxf5.
+7
+b2b4
+k Following through with the idea of Q-side expansion.
+6
+k Smyslov-Botvinnik, USSR Ch. 1955 is the game being played here. We present the rest of the game to show how each sides plans are followed through.
+14
+c5b4
+c3b4
+f5e4
+d3e4
+c8e6
+c4e3
+c6b4
+a1b1
+a7a5
+c1a3
+e8c7
+a3b4
+a5b4
+b1b4
+g7h6
+b4b6
+h6e3
+f2e3
+e6c4
+b6d6
+d8e8
+f1e1
+f8f7
+f3g5
+f7e7
+g2f1
+k A very important theme in the KIA is relocating the White squared Bishop to a more active post if the long diagonal is blocked.
+12
+c4f1
+e1f1
+e8a4
+d6d8
+e7e8
+k Rxd8 fails to Qxd8+ followed by Qxc7.
+6
+d1f3
+a4c4
+d8d7
+k Black resigns.
+k I hope you enjoyed this lecture. If you have any feedback, drop me an email at cissmjg@hotmail.com. Recommended book on the KIA "The ChessBase University Bluebook Guide to Winning with the KIA by IGM Henley and Maddox. ISBN 1-883358-00-0"
+39

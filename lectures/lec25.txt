@@ -1,0 +1,587 @@
+kibitz Pawn endings? What could be simpler? Only a few men on the board. Easy to calculate. It's all about pushing the pawn, making a queen and mating. Isn't that right?
+15
+kibitz A beginner would be forgiven for thinking this. The actual answer is although many pawn endings are basic and can be won without much thought, there are a whole variety of cases where one wrong move can turn a won game into a draw, or even worse a loss.
+20
+kibitz What's more, any endgame or middlegame with both pawns and pieces may liquidate in a pawn ending. Because of this, it is vital to know if the ending gives the desired result, before pieces are traded.
+20
+kibitz An extra pawn sometimes leads to win, but not always. It depends on other factors of the position. The idea of this lecture is to give some guidance on how to win / draw simple pawn endings.
+15
+kibitz We will take some imaginary games, although I have seen and played such games many times.
+2
+bsetup
+1
+bsetup fen 8/3k4/8/8/3KP3/8/8/8
+1
+bsetup tomove white
+1
+bsetup standard
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+bsetup done
+1
+kibitz Here white is a pawn up. He can smell victory, all he needs to do is push the pawn to the end and get a queen. Overconfident white misplays e5.
+15
+e5
+kibitz Ok, it looks like white is following the right plan. He pushes the pawn one square closer to queendom. But, unfortunately the black king is too close and can easily block the pawn's path. White should have played Kd5! (as we will see soon). Black now plays Ke6! The game will now be drawn.
+25
+Ke6
+kibitz The pawn's path is firmly blocked. White has no way of breaking this blockade.
+10
+Ke4
+Ke7
+kibitz This is a critical idea. The king stays blocking the pawn and gets ready to keep out the white king.
+10
+kibitz Other moves don't lose, but if you move the position one rank up (White King e5, Pawn e6 and Black King e7) anything other than Ke8 loses.
+15
+Kd5
+Kd7
+kibitz Black blocks out the entry of the king. Any other move loses as white gets in front of his pawn and assures a safe road for it.
+15
+e6
+kibitz Retreating the king won't help things either.
+5
+Ke7
+Ke5
+kibitz Ok, here's the the critical idea. If Kd8 white plays Kd6 and wins, same with Kf8, Kf6. Black therefore continues to block the pawn and waits for the white king to advance.
+15
+Ke8
+kibitz The only move to draw. A beginner moving without thinking might miss this important move.
+10
+Kd6
+Kd8
+kibitz Black can now keep out the king, there is nothing else but to push the pawn again.
+10
+e7
+Ke8
+kibitz And now white must play Ke6 which is stalemate, or give up the pawn.
+30
+kibitz To the uninitiated this may seem like a strange dance. We will now look at the basics behind this, why the king was dancing back and forth.
+15
+kibitz Winning pawn endings is all about square control. If you control the key squares and hang on to them you are guaranteed a win. One false step and it's half a point as in poor white's case. Hopefully with a little tutoring you won't be a good defenders next victim. You won't win tournaments by drawing in winning positions.
+25
+kibitz The final position is where to begin. This type of position is known as a zugzwang. This a German word meaning that it is a disadvantage to have the move.
+15
+kibitz White to move is a draw because the choice is to give up the pawn, or stalemate with the king.
+10
+kibitz Now what if it was black's turn? Black can move to the side of the pawn by Kf7 which is his only move.
+10
+bsetup
+1
+bsetup tomove black
+1
+bsetup done
+1
+Kf7
+kibitz White now can control the queening square with Kd7 and e8 = Q is assured.
+10
+Kd7
+kibitz The important feature is that if the king is on the seventh rank, on an adjacent file to the pawn, and the pawn is on the fifth, sixth or seventh with white to move the pawn can be shepherded home.
+20
+kibitz With black to move as long as the pawn cannot be captured, queening is also ensured.
+10
+kibitz If the king is on the same file as the pawn, it depends on the situation.
+10
+kibitz For example, if the pawn is not on a rook (a or h) file, then winning is also assured.
+10
+kibitz However, if the pawn is a rook pawn, and the king is on the same file, the king may become trapped by the opponent's king, as we will see later (since it can't escape out the other side in this case).
+20
+kibitz Let's remove the pawn for a second and look at the two kings alone. Please disregard the "no mating material" messages, as FICS does not expect a position with only two kings to be played out :)
+17
+bsetup
+1
+bsetup fen 8/8/4k3/8/4K3/8/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz Imagine white has to get past the center line, ie. by the king reaching the 5th rank. If it is white to move he can try to dodge the black king by playing either Kf4 or Kd4
+15
+Kd4
+kibitz However the black king can now move to stop him making any progress.
+10
+Kd6
+kibitz Now suppose it's black's turn.
+5
+back 2
+1
+bsetup
+1
+bsetup tomove black
+1
+bsetup done
+kibitz Black would love to pass, but he must move. Whichever way he goes, white can 'outflank' him by going the opposite way.
+10
+Kd6
+Kf5
+kibitz Did you think to yourself that this is another example of zugzwang? If you did you are right. In fact this example is known as opposition.
+15
+kibitz Opposition is where the two kings stand one square apart facing each other as in the initial position.
+10
+kibitz Now suppose white wants to make a 'touchdown' on the d8 or f8 square. Black could defend if white tries to run to the right as far up the board as possible and then try to get back to the left. The correct procedure is as follows:
+20
+Ke7
+kibitz Guarding both squares.
+5
+kibitz Black cuts off white by blocking on the next rank up. So quick quiz? What does white play? Your clock is ticking, instant reply needed...
+15
+Ke5
+kibitz That's right, he goes for the opposition again with Ke5. If it worked once it will work again. Poor black must yet again give up ground...
+15
+Kd7
+Kf6
+Ke8
+kibitz Same again
+Ke6
+Kd8
+Kf7
+Kd7
+Kf8
+kibitz And touchdown!! The white team wins!!
+10
+kibitz The kings don't necessarily have to be one rank apart. (vertical)
+5
+bsetup
+1
+bsetup fen 8/3k1K2/8/8/8/8/8/8
+1
+bsetup done
+kibitz They can be separated by file (horizontal opposition). After all it's a fight for key squares.
+11
+bsetup
+1
+bsetup fen 8/3k4/8/5K2/8/8/8/8
+1
+bsetup done
+1
+kibitz Diagonal opposition. Here the fight is for the e6 square, and it will become horizontal or vertical opposition next move.
+10
+kibitz What if they are far away?
+bsetup
+1
+bsetup fen 8/3k4/8/8/8/3K4/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz Yes we can see opposition from a distance too. This is called distant opposition. When the kings are separated on a file, rank or diagonal with and odd number of squares betweens they are in opposition.
+20
+kibitz Here the fight is for the c5, d5 and e5 squares.
+5
+kibitz If white's goal is to get to those squares....
+5
+Kc3
+kibitz Black just keeps distant opposition
+Kc7
+kibitz Note: Ke7 is also an opposition, but only when the key square is d5, since after Kc4   Ke6 gains diagonal opposition and keeps white out of d5. Sometimes there is a choice of oppositions and it will then depend on what are the key squares, and the pawn formation.
+25
+kibitz For example there may be a position a few moves later where opposition cannot be maintained by one side, because of the pawns. This must be taken into consideration when there is a choice of plans and not when it's too late!
+20
+kibitz White has nothing better than to approach the key squares and black will take up close opposition as in earlier examples. (Moving on the same rank black just moves on the same rank, on the same file).
+20
+kibitz What if white tries to be sneaky and moves back a rank instead?
+10
+Kc2
+kibitz Black now has a choice. He can keep distant opposition by Kc6, or step back himself into a long distant form (5 squares apart).
+10
+Kc8
+kibitz Again if white moves forward again we transpose to an earlier position, and if white stays on the same rank, so does black.
+10
+kibitz What about Kc1 though?
+5
+Kc1
+kibitz Black now cannot move back as he's out of board space. He must therefore move forward with Kc7. Anything else allows white an opposition.
+15
+Kc7
+kibitz There are examples where the kings don't have to be on a file, rank or diagonal and yet they will still be in opposition due to it transposing later.
+15
+bsetup
+1
+bsetup fen 2k5/8/8/8/K7/8/8/8
+1
+bsetup done
+kibitz If we use the two kings to make a rectangle, each king being an opposite corner, if the corners are all the same color (a8-a4-c4-c8), they are in opposition, and it can be maintained as before.
+20
+kibitz For example, with white to move, any move to the b file will be countered with a black king move to the b file (the square at the center of the rectangle is the key square, that white needs) (b6).
+20
+kibitz If we pair up squares (known as corresponding squares), we can see that if white goes to b3, black goes to b7 (both white squares so opposition (as all four corners of the rectangle are white)).
+20
+kibitz similarly white to b4 pairs with b8
+5
+kibitz And b5 to b7
+5
+kibitz So our corresponding squares on the b file (to be technical) are b3-b7 b4-b8 b5-b7
+10
+kibitz On the a file we have a3-c7 (all corners black) and a5-c7
+5
+kibitz Ok let's formulate a rule. The book 'The Final Countdown' which details a corresponding square theory is a good source to follow this up with (although it is quite complicated and will probably need some knowledge of common study positions).
+20
+kibitz Let's put the kings on the same file again.
+2
+bsetup
+1
+bsetup fen 8/3k4/8/8/8/8/8/3K4
+1
+bsetup tomove white
+1
+bsetup done
+kibitz ok. This theory is called the three file theory. (It can also work with three adjacent ranks, as described in the book). This is where there are three key squares (same rank on three adjacent files).
+15
+kibitz Let's define our axis as the center of the three ranks of interest. Here white is trying to progress up the d file to the three key squares (say c7, d7 and e7). So the d file is our axis.
+15
+kibitz Rule 1: When ever the one king is on the axis, the other king must be able to give vertical opposition of some sort, to prevent or make progress.
+15
+kibitz If the defender has opposition (attacker to move) on the axis, the attacker will not penetrate. If the attacker has the opposition (defender to move) he will penetrate.
+15
+kibitz Rule 2: When ever the defending king leaves the axis while the attacker is on the axis, or the opposite side of the axis, the attacker should progress on the other side of the axis to the defending king (which is called outflanking).
+20
+kibitz Let's see this in practice. White is going for c7, d7 or e7.
+7
+kibitz White tries to proceed up the axis.
+5
+Kd2
+kibitz Rule is black must give opposition while on the axis.
+5
+Kd8
+kibitz Kd6 was just as good.
+5
+kibitz Now, if white tries to go up the axis, he'll be stopped, eg Kd3 Kd7   Kd4 Kd6 (opposition).
+10
+kibitz So white tries leaving the axis.
+5
+Ke3
+Ke7
+Kd3
+kibitz Back to the axis, so black must follow as this is the only way to keep out the white king and maintain opposition.
+10
+Kd7
+Ke4
+Ke6
+Kd4
+Kd6
+kibitz Keeping opposition
+5
+kibitz And there is no way to get to the seventh rank.
+10
+kibitz Now back to the starting position with black to move
+1
+bsetup
+1
+bsetup fen 8/3k4/8/8/8/8/8/3K4
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz So if black moves up or down the axis, white will keep opposition and will eventually penetrate as shown in an earlier example.
+15
+kibitz So black tries a trap
+Ke7
+kibitz If white moves on the axis, black will get opposition next move and draw (Kd2 Kd6! draws).
+10
+kibitz Ke2 invites Ke6 drawing, since when white returns to the axis, black will have opposition and a draw.
+10
+kibitz Ke1 doesn't make any progress, since after Kd7 Kd1 is forced, repeating the position (another time and it will be drawn).
+10
+kibitz So Kc1 or Kc2 are the only moves. Kc1 makes no progress, since Kd7 (one king is now on the axis, so the other must return there with opposition) forces Kd1 repeating.
+15
+kibitz Therefore Kc2 is the only move to make progress
+5
+Kc2
+kibitz See how easy it is?
+Kd7
+kibitz One king on the axis, other must return. Kd1 doesn't make any progress, Kd2 is not opposition, Kd3 is and does make progress.
+13
+Kd3
+Kc8
+Ke4
+kibitz Again, defender leaves the axis, so attacker advances on the other side attempting outflanking.
+10
+Kd8
+Kd4
+kibitz As before
+Ke8
+Kc5
+Kd7
+Kd5
+Kc7
+Ke6
+Kd8
+Kd6
+Kc8
+Ke7
+kibitz White has the goal of the e7 square
+10
+kibitz This may seem a little abstract since two kings is drawn, but now we start to look at the situation with pawns on.
+10
+kibitz Ok, back to the pawns.
+1
+bsetup
+1
+bsetup fen 3k4/8/3K4/3P4/8/8/8/8
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz Look at this position. It was discussed earlier that if white can get his king to the seventh when the pawn is on the fifth, sixth or seventh of an adjacent file, he can shepherd the pawn home. Does the three file theory apply? You bet it does.
+20
+kibitz With black to move, black must leave the d file axis (white king on c7, d7 or e7 wins), so white outflanks and wins.
+10
+Kc8
+Ke7
+kibitz The pawn can march home.
+6
+bsetup
+1
+bsetup fen 3k4/8/3K4/3P4/8/8/8/8
+1
+bsetup tomove white
+1
+bsetup done
+kibitz Here it's white to move. The three ranks theory suggests that without the pawn, white cannot get to e7 because black can maintain opposition. But here we have a pawn.
+15
+Ke6
+Ke8
+kibitz White clears a path for the pawn, black has to block the king's entry onto the seventh.
+10
+d6
+kibitz The pawn goes forward and we see the position we discussed earlier.
+10
+kibitz When the pawn was on the sixth in the earlier example, we said that when the defending king must stay in front of the pawn, until the attacking king reaches the sixth. (So the defender has opposition).
+20
+kibitz The defender did have opposition, but on playing d6, it's black's turn now, so white has the opposition.
+10
+Kd8
+d7
+kibitz Now it's black to move in this critical position.
+5
+Kc7
+Ke7
+kibitz The pawn will queen.
+kibitz Thus a rule can be stated. When the pawn is not a rook pawn, if they pawn is on the fifth, and the king reaches the sixth rank on either the file of the pawn, or an adjacent file, then white will win no matter who to move.
+20
+kibitz In addition, if the king is on the seventh it will also win as long as the pawn cannot be captured.
+10
+kibitz Let's shift it down a rank.
+1
+bsetup
+1
+bsetup fen 8/3k4/8/3K4/3P4/8/8/8
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz Now it depends on who has the move. If it is black to move he will have to give up opposition on the axis, and white's king will penetrate to the seventh.
+15
+Kc7
+Ke6
+Kc6
+kibitz Black's only hope is to try and win the pawn. Ke7 from white would be careless because Kd5 wins the pawn.
+10
+d5
+kibitz And now white wins because the king is on the sixth when the pawn is on the fifth.
+10
+Kc7
+Ke7
+kibitz And the pawn can walk home.
+6
+bsetup
+1
+bsetup fen 8/3k4/8/3K4/3P4/8/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz With white to move black can keep the opposition, and force the pawn to advance.
+10
+Ke5
+Ke7
+d5
+kibitz Remember to win the white king must be on the sixth or seventh.
+10
+Kd7
+kibitz And black just blocks the king's entry and the pawn's advance.
+10
+d6
+Kd8
+kibitz Remembering not to go to the e file because opposition is needed after Ke6 from white.
+10
+Ke6
+Ke8
+d7
+Kd8
+kd6
+kibitz Stalemate
+6
+bsetup
+1
+bsetup fen 8/3k4/8/3K4/8/3P4/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz What about this? The difference is the pawn is moved down one rank.
+10
+kibitz Black to move and white goes to the sixth, advances the pawn to the fifth and wins as before.
+10
+kibitz White to move, and white passes the move to black.
+5
+d4
+kibitz And now it's black's move, and white wins as in the last example.
+10
+kibitz The rule here is when the pawn is on the second, third or fourth ranks, the king must be two ranks in front (4th, 5th, 6th respectively) on either the same or adjacent files.
+15
+kibitz This is to transfer the move to black when it is white to move.
+10
+kibitz If it is black to move, white will be able to get two ranks in front using opposition and outflanking as before.
+15
+kibitz This is why it is wise to get your king into the action rather than pushing pawns too early. If they create a diversion fine, but your king will find it harder to get to the key squares the further away the pawn is.
+20
+kibitz This can sometimes be a theme in obtaining a draw. Take this position:
+6
+bsetup
+1
+bsetup fen 8/3k4/8/4p3/2K5/3P4/8/8
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz White threatens Kd5 getting the key squares and Kxe5 winning the pawn. But black throws a spanner in the works.
+10
+e4
+kibitz Now ed is threatened with a draw. If white captures the pawn the key squares move up a rank to the sixth rank and black can stop white getting at those. If d4, Kd6 or Kc6 draws.
+16
+bsetup
+1
+bsetup fen 8/3k4/8/4p3/2K5/3P4/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz With white to move, Kd5 occupies the critical squares
+5
+Kd5
+kibitz But now black forces white to capture the pawn. If white captures with the king Ke6 gets opposition and white cannot get to the fifth rank again.
+15
+kibitz If white captures with the pawn white can win, as after de Ke7, Ke5 gives white the opposition.
+10
+kibitz Of course d4 is a blunder, due to e3 and it's black who will promote.
+10
+kibitz The primary special case is the rook's pawn. The enemy king can hide in the corner and cannot be forced out, because pushing the pawn ends in stalemate.
+16
+bsetup
+1
+bsetup fen 6k1/8/6KP/8/8/8/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz The key square is g8 as the pawn attacks g7. If black can get there then he can hide in the corner. If the black king was on f8 then h7 would win since black cannot then get to g8 and the white king stops access to g7. But the king is already there.
+20
+h7
+Kh8
+kibitz Now white must give up his pawn or play Kh6 stalemate.
+6
+bsetup
+1
+bsetup fen 7K/5k2/8/7P/8/8/8/8
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz Here white has become trapped, black seals the tomb.
+5
+Kf8
+kibitz If white plays Kh7-h6 black follows with Kf7-f6 and draws.
+5
+kibitz White has a way of getting out of the corner though.
+5
+Kh7
+Kf7
+h6
+kibitz Now white has the opposition. Unfortunately although white can get out, black gets in.
+10
+Kf8
+kibitz Anything else allows white to gain the critical g8 square winning.
+10
+Kg6
+Kg8
+h7
+Kh8
+kibitz And a draw as before.
+kibitz Always beware of ending up with rook pawns, they often draw.
+10
+kibitz Note even a light squared bishop, or a whole army of them here, is ineffective, as the bishop controls the wrong colored corner. What a difference a dark squared bishop would make!
+15
+kibitz Right so that's the basics. Let's attempt to confuse you.
+5
+kibitz What about this one?
+1
+bsetup
+1
+bsetup fen 6k1/8/8/8/3P4/8/4K3/8
+1
+bsetup white
+1
+bsetup done
+1
+kibitz Here's a classical example. There's a way to win and a way to draw. You've got 1 minute to work out how to produce a won position with white.
+75
+kibitz Ok. Let's analyze the position. Notice black's king is two files to the right of white's. If white simply plays up the board, black's king may close this two file gap. Instead of saying I go here he goes there (you'll probably confuse yourself) let's count the moves.
+25
+kibitz To win, white needs to get to the sixth rank, or ensure opposition on the fifth. Unfortunately, black can get to e6 while white is on e4, and shuts him out.
+15
+kibitz Note also moving around on the eighth rank until white gets to the fifth and then opposing also works.
+10
+kibitz The correct strategy is to use the two files to an advantage.
+10
+Kd3
+kibitz The only move. White uses an underpass maneuver. That is he goes behind the pawn.
+10
+Kf8
+Kc4
+Ke7
+kibitz Note maintenance of the two files.
+Kc5
+kibitz This wins. Note the only way to stop Kc6 getting the pawn's critical square is to play Kd7 and notice the d file is the axis (critical squares c6, d6, e6)
+15
+kibitz After Kd7 black is on the axis, and white can return to the axis with Kd5 getting opposition, winning one of the critical square c6 or e6, which will allow an advance of the pawn to d5, winning as shown earlier.
+30
+kibitz Ok a summary of what we have learned.
+5
+kibitz Pawn endings aren't as simple as they seem. They need care.
+5
+kibitz Two kings an odd number of squares apart horizontally, vertically or diagonally are said to be in opposition. Also when they form a rectangle (opposite corners) and all the corners are the same color, they are in opposition too.
+20
+kibitz The three file theory states the following:
+5
+kibitz When three key squares lie on adjacent files, the center file is said to be the axis, and the following two rules apply.
+10
+kibitz Rule 1: When ever the one king is on the axis, the other king must be able to give vertical opposition of some sort, to prevent or make progress.
+15
+kibitz If the defender has opposition on the axis, the attacker will not penetrate. If the attacker has the opposition he will penetrate.
+15
+kibitz Rule 2: When ever the defending king leaves the axis while the attacker is on the axis, or the opposite side of the axis, the attacker should progress on the other side of the axis to the defending king (which is called outflanking).
+20
+kibitz When we have a K + P vs K situation, usually white can win if he's on a square two ranks ahead of the pawn, on either the axis or adjacent files. If the pawn in on the fifth rank, key squares also exist on the sixth rank.
+20
+kibitz The winning procedure is to either outflank and get to the sixth or seventh and shepherd the pawn home, or to transfer the move to the opponent if he has opposition and then proceed.
+15
+kibitz Once the king is on the sixth and the pawn is on the fifth there is no need to transfer the move. Either outflanking or pushing the pawn through will win, depending on who has the move.
+15
+kibitz Rook pawns are an exception. Both sides try to control g8 or g7 (or b8 and b7 if the pawn is on the other side). If the attacker controls those squares the pawn will promote, if the defender has them a draw will result.
+20
+kibitz K + rook P + B vs K, where the bishop is not of the color of the queening square draws if the defending king gets in front of the pawn and can't be dislodged or if it reaches the corner.
+15

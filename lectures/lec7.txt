@@ -1,0 +1,443 @@
+k Endgames with a rook against pawns are quite common.  They usually arise when one side has promoted a pawn in a rook ending. Since support from both the king and rook is usually needed to promote a pawn, these pieces are left far from the opponent's pawns, making them difficult or even impossible to stop.
+25
+k These endings are often misplayed because one or both players don't know the important strategies used by the side with the rook to round up the pawns.
+15
+bsetup
+1
+bsetup fen 3r4/8/1PK2p2/5k2/8/8/8/1R6
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Alekhine
+1
+bname Bogolyubov
+1
+k This position is a famous and good example of how a rook vs pawn endgame can come about and how even some of the best can go wrong in a simple endgame.
+15
+f5g4
+b6b7
+f6f5
+b7b8=Q
+d8b8
+b1b8
+k White went on to win this endgame, but earlier, black could have drawn. You probably didn't spot the draw, but we'll return to this position later, and by then you may be able to find the correct move.
+18
+bsetup
+1
+bsetup fen 8/K7/8/8/3R4/4pk2/8/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname LectureBot
+1
+bname LectureBot
+1
+k We will begin by examining the few cases where black(the side with the pawn unless noted) has a chance to win. Black can only win if he is able to prevent white from controlling the queening square and any square in front of the pawn.
+20
+k Black can do just that in this position.
+5
+e2
+k The poor white rook is on an awful square. It can't get behind the pawn or control the queening square. All white can do is check.
+10
+d4d3
+k Black must be very careful where he moves his king. Moving to the g-file allows black to get behind the pawn.
+10
+f3g2
+d3e3
+back 2
+k Moving to the 2nd rank allows a pin.
+5
+f3f2
+d3d2
+back 2
+k And Ke4 allows white to gain control of the e-file.
+5
+f3e4
+d3d8
+k White will play Re8 next, which even wins for white if black promotes now.
+10
+back 2
+k Black must play Kf4! keeping control of all the rook's useful squares.
+7
+f3f4
+7
+k All white can do is keep checking.
+5
+d3d4
+f4f5
+d4d5
+k Now black can escape the checks and still control all of the rook's useful squares.
+8
+f5e6
+k Now Rd8 is not a problem:
+d5d8
+e6e7
+k And the pawn will queen.
+bsetup
+1
+bsetup fen 8/8/7K/8/6R1/4k3/5p2/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+k However, there is sometimes a defense even if the rook is badly placed.
+7
+g4g3
+e3e4
+g3g4
+e4e5
+g4g5
+e5e6
+g5g6
+e6f7
+k Now white has a clever defense. This defense also works if black's king is on f8.
+8
+g6g5
+f2f1=Q
+g5f5
+f1f5
+k Stalemate!
+6
+bsetup
+1
+bsetup fen 8/8/1KP5/3r4/8/8/8/k7
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+k In this famous study by Saavedra, black has the same stalemate resource, but white has an amazing way to win. The first several moves should be obvious now.
+15
+c6c7
+d5d6
+b6b5
+d6d5
+b5b4
+d5d4
+b4b3
+d4d3
+b3c2
+d3d4
+k Setting up the stalemate,but white still has a win here. Can you find it? Take 30 seconds.
+30
+c7c8=R
+k Mate is threatened, so black must cover the a-file with his rook.
+10
+d4a4
+c2b3
+k White again threatens mate with Rc1 and is also attacking black's rook!
+10
+bsetup
+1
+bsetup fen KR6/8/5k2/8/6p1/8/8/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+k The rest of this lecture focuses on positions where white has winning attempts. There are two ways white can win the pawn. The first is to attack a pawn far from its king, winning it, and the other is to attack the pawn with both the king and the rook at the same time.
+25
+k There is only one way to force the king and pawn to become separated when they aren't already separated: Cut off the black king on one of its first 3 ranks.
+15
+b8b5
+k Now if black advances his pawn, it can be shown to have wandered too far from its king.
+10
+g4g3
+b5b3
+g3g2
+b3g3
+k Winning the pawn and the game.
+5
+back 4
+k If black doesn't advance his pawn, white can use the other method of winning: attacking the pawn with both his king and rook. White has all the time in the world to simply move his king near the pawn.
+20
+f6g6
+a8a7
+g6f6
+a7a6
+f6g6
+a6a5
+g6f6
+a5a4
+f6g6
+a4a3
+k Moving the king around the edge of the board like this probably isn't the fastest way to win, but it demonstrates an important endgame principle: if your opponent can't do anything, take your time and win safely!
+20
+k By moving the king around the edge of the board like this, white is not interfering with the rook's cutting off of the black king and is not blocking the squares which the rook attacks the pawn on if the pawn advances.
+20
+k White will eventually move his king near the pawn, winning it.
+5
+bsetup
+1
+bsetup fen 7K/R7/8/3kp3/8/8/8/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+k This type of situation is the most common. White and black are in a race. White is attempting to attack the pawn with his king and rook before black can promote it.
+15
+k Generally, it only takes one move to attack the pawn with the rook, so the position of the white king is very important. White has an important advantage in all of these races: He can move his king twice as quickly as black is moving forward.
+20
+k This is so because we have already seen that black needs to keep his king and pawn close to each other. White can move his king twice while black moves his king once and pawn once.
+15
+k This position is an easy win for white if you know that you must quickly improve your king position.
+10
+h8g7
+e5e4
+g7f6
+d5d4
+f6f5
+k Notice how white's king is using the side of the pawn that black's king is not covering.
+10
+e4e3
+f5f4
+e3e2
+k Now white can put his rook in position to stop and attack the pawn.
+7
+a7e7
+d4d3
+f4f3
+k The pawn is lost.
+bsetup
+1
+bsetup fen 7K/R7/4k3/4p3/8/8/8/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+k If black moved 1...Kd5?? here, white would win as we have just seen. However, if black knows that white's king must usually approach the pawn on the opposite side as black's, he will find this move.
+20
+e6f5
+k It will take white a long time to bring his king to the d-file and near the pawn. In fact, white doesn't have enough time to win:
+10
+h8g7
+e5e4
+k Keeping the white king away from the pawn is the only way to draw.
+6
+g7f7
+e4e3
+k The black king is too far advanced to win by cutting it off.
+5
+a7a4
+e3e2
+a4a1
+f5e4
+a1e1
+e4e3
+6
+back 8
+k If white waits for black to move his king by improving his rook's position, he falls a tempo short with his own king.
+10
+a7e7
+f5f4
+g7f6
+e4e3
+k Again keeping the king out.
+f6e6
+e3e2
+e6d5
+f4f3
+d5d4
+f3f2
+6
+bsetup
+1
+bsetup fen 8/4K3/8/3pk3/3R4/8/8/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+k Sometimes white must take the opposition in order to get on the correct side of the pawn with his king. That is the case in the study by Fine.
+15
+k White wants to put his rook on d1 to maintain its pressure on the pawn while also delaying a loss of tempo from the king attacking the rook as long as possible.
+15
+k However, the immediate Rd1 is incorrect.
+d4d1
+d5d4
+e7d7
+e5d5
+k Black has the opposition and white is unable to get to the right side of the pawn without worsening his rook's position.
+10
+back 4
+k The correct plan is to lose a tempo, an awful idea in most other rook vs pawn endgames. Here it leads to white gaining the opposition, though.
+15
+d4d2
+d5d4
+d2d1
+e5d5
+e7d7
+k The same position has arisen, but it is black to move! White will simply move his king to the opposite side of the pawn that black's king goes to.
+15
+bsetup
+1
+bsetup fen 3r4/8/1PK2p2/5k2/8/8/8/1R6
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Alekhine
+1
+bname Bogolyubov
+k Let's return to this game now. Black played Kg4?? here and lost. See if you can find the right move.
+28
+f5e4
+k Excellent! Now when white promotes his pawn, he won't be able to win since black's king is keeping white's king away from the pawn.
+12
+bsetup
+1
+bsetup fen 2R5/8/8/8/2K3p1/6k1/8/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname LectureBot
+1
+bname LectureBot
+1
+k White should look for every chance he can get to gain a tempo, especially in a close race like this one.
+10
+g3f2
+k It would appear that black has a draw here, but white to play can gain one decisive tempo.
+10
+c8f8
+k Now if black returns to the g-file, he blocks his pawn, giving white enough time to move his king in.
+10
+f2e2
+f8g8
+k Now black is forced to put his king on f3 to defend the pawn as opposed to f2, where it was when black played 1...Kf2. This one tempo turns out to be decisive.
+15
+e2f3
+c4d3
+g4g3
+g8f8
+f3g2
+d3e2
+g2h2
+f8g8
+k White will move his king in next and either mate or win the pawn.
+10
+bsetup
+1
+bsetup fen 8/8/8/8/3K4/7R/3pk3/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+k Sometimes underpromotion can save black.
+h3h2
+e2e1
+d4e3
+k White is threatening the pawn and also mate. However, black can save himself.
+8
+d2d1=N
+k Black can draw here if he keeps his knight and king close to each other and remains tactically alert. This position is worth analysing in your spare time to convince yourself that black draws.
+16
+bsetup
+1
+bsetup fen 8/8/8/8/8/1K6/p6R/1k6
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+k With a rook pawn, not even underpromotion works.
+4
+a2a1=N
+b3c3
+k Black is in zugzwang. If the knight moves, it is lost, and if the king moves, it's mate in one.
+18
+bsetup
+1
+bsetup fen 8/8/8/8/8/1K6/1p4R1/1k6
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+k Another defense that black sometimes has with a rook or knight pawn is stalemate.
+8
+b1a1
+k Rxb2 is stalemate, and otherwise the pawn promotes.
+8
+bsetup
+1
+bsetup fen 8/1R6/8/8/8/8/p2K4/k7
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+k Black is stalemated here. Look at this position for a moment and convince yourself that after white moves the rook(lifting the stalemate), he can't make progress after 1...Kb1.
+27
+k You have now seen examples of all of the common motifs that occur in the rook vs pawn endgame. However, there is one more thing you need to know about this type of endgame.
+15
+k In any position where the outcome is not immediately obvious, there is no substitute for calculating until the outcome is clear. Knowing all of the motifs greatly simplifies the calculation, but the calculation still must be done.
+20
+k Also, many of these motifs also apply in positions where the rook is fighting against more than one pawn. Watch for opportunites to apply them and also use your knowledge of rook vs pawn to determine when you should, for example, capture a pawn in a rook vs two pawns endgame.
+25

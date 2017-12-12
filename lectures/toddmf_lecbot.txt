@@ -1,0 +1,140 @@
+
+Writing a LectureBot lecture
+I'm glad that you are interested in writing a lecture for LectureBot. Writing a lecture can be a very good experience, as you often learn more about the lecture's topic while also teaching others about it.
+
+Guidelines
+Your lecture should be as original as possible. Quote other lectures/books/magazines/etc. if you feel it will strongly contribute to the lecture, but always give credit to the source and keep quotes to a minimum.
+The majority of the lectures are aimed at improving chess skills. Hence common topics are openings, analysis of a GM game, planning, endgames, etc. However, lectures on any topic that can be easily displayed using examine mode on FICS are welcome. For example, lectures on chess variants(suicide, bughouse-- but only one board, etc.), the lighter side of chess(horrible GM blunders, miniatures, etc.), and tactics to run your opponent out of time would all be acceptable lecture topics.
+There is no guarantee that your lecture will be used, but if your lecture is not acceptable, I will try to work with you so that eventually a good lecture results.
+Your lecture will not be changed without your permission except in the case of spelling and/or grammar errors. You will be sent email if I would like to change anything else and asked if the changes are acceptable.
+Don't make lectures extremely short or long. Anywhere between 10 and 60 minutes is good.
+
+How to write a lecture
+There are 4 "levels" of lecture writing. Each one is more time consuming than the last to write but gives you more control over how LectureBot presents the lecture. Please write the lectures in plain ASCII format, and get right to the chess part of the le cture, since LectureBot handles the greetings and goodbyes already.
+Topic only
+If you don't want to write a whole lecture but have a good idea for a topic, you may message the topic to toddmf at FICS or email him at tmfreita@uiuc.edu.
+Book-style lecture
+A lecture as it might appear in a book. LectureBot will present the content of this type of lecture, but you won't have any control over how much information it sends out at a time or how long it pauses between moves, kibitzes, etc. With this style and th e next two, the first line should contain the topic then the author's FICS handle in parentheses.
+
+Sample:
+
+Scholar's Mate(toddmf)
+e4
+An aggressive opening move that dates back hundreds of years.
+e5
+Black replies in kind.
+Bc4
+White develops a minor piece.
+Nc6
+As does black.
+Qh5
+This is a weak move, as it leaves the queen in a vulnerable position.
+Nf6
+Black takes advantage of the vulnerability, but misses white's threat!
+Qxf7
+A mate that is still seen today in many scholastic events. Black could have played 3...g6 to stop this.
+FICS commands
+This is very similar to the book style lecture, except you must use one FICS command on each line. This gives you complete control over how side variations are handled and how information(kibitzes) is broken up. It is best to use long algebraic in order t o avoid confusing the server(i.e. g1f3, e1g1). You can save time by using "k" as short for kibitz. Also the commands "examine" and "unexamine" are not necessary, as LectureBot does this automatically at the beginning and end of each lecture.
+
+Sample:
+
+Scholar's Mate(toddmf)
+e2e4
+k An aggressive opening move that dates back hundreds of years.
+e7e5
+k Black replies in kind.
+f1c4
+k White develops a minor piece.
+b8c6
+k As does black.
+d1h5
+k This is a weak move, as it leaves the queen in a vulnerable position.
+g8f6
+k Black takes advantage of the vulnerability, but misses white's threat!
+h5f7
+k A mate that is still seen today in many scholastic events. Black could have played 3...g6 to stop this.
+back 2
+g7g6
+FICS commands and pauses
+This is exactly the same as before, except you can specify how long of a delay there is between each command. To specify the length of a delay, use a line with only a number in it. Delays can only be specified in whole numbers(1,2,3...) of seconds, and th e default delay time is 4 seconds if none is specified. This method gives you total control over the lecture.
+
+Sample(waits 4 seconds after each move and 8 seconds after kibitzes):
+
+Scholar's Mate(toddmf)
+e2e4
+k An aggressive opening move that dates back hundreds of years.
+8
+e7e5
+k Black replies in kind.
+8
+f1c4
+k White develops a minor piece.
+8
+b8c6
+k As does black.
+8
+d1h5
+k This is a weak move, as it leaves the queen in a vulnerable position.
+8
+g8f6
+k Black takes advantage of the vulnerability, but misses white's threat!
+8
+h5f7
+k A mate that is still seen today in many scholastic events. Black could have played 3...g6 to stop this.
+8
+back 2
+g6
+Useful FICS commands for lectures
+Remember, you do not need to use examine and unexamine. See each command's respective FICS help file for more information.
+
+c2c4, h1e1, etc. - Moves in long algebraic notation.
+back - Moves back a specified number of moves.
+bsetup - Sets up a board position and/or specifies game type.
+kibitz - Sends text to everyone watching the lecture.
+revert - A quick way to get to the last set up position.
+tomove - Sets the side to move.
+wname - Sets white's name.
+bname - Sets black's name.
+I've written a lecture. What do I do now?
+Send it to toddmf. The easiest way to do this is to use your text editor to write and save the lecture then email it as a file attachment.
+
+Send a lecture to tmfreita@uiuc.edu
+Download LectureBot and/or the lectures
+LectureBot(written by toddmf) and the lectures(by various authors named below) are copyrighted by their respective authors. You are free to use them on any non-commercially involved server/web page and for personal(not for profit) use. For a book or magaz ine article, you will need to ask permission. In any case this message and the credit to the author must remain. The authors reserve all other rights to LectureBot and the lectures. The author names given represent handles on the Free Internet Chess Server. If you have further questions, Send email to tmfreita@uiuc.edu.
+
+LectureBot package(perl source code, related files, and lectures - Unix systems only)
+
+Lecture package (all of the lectures only)
+
+Lectures:
+2...Qh4 against the King's Gambit by toddmf
+Rook vs Pawn endgames by toddmf
+The Steinitz Variation of the French Defense by Seipman
+The Stonewall Attack by MBDil
+Introduction to the 2.Nc3 Caro-Kann by KayhiKing
+Basic Pawn Endings I by DAV
+Denker's Favorite Game by toddmf
+A draw against a Grandmaster by talpa
+The Modern Defense by GMDavies
+Hypermodern Magic - A study of the central blockade by Bahamut
+Tactics Training lesson 1: 'Back rank weakness' by knackie
+Tactics Training lesson 2: 'Discovered attack' by knackie
+Tactics Training lesson 3: 'Enclosed kings' by knackie
+Closed Sicilian Survey by Oren
+Giuoco Piano by afw
+Tactics Training lesson 4: 'King in the centre' by knackie
+Refuting the Milner-Barry Gambit in the French Defense by Kabal
+Introduction to Bughouse by Tecumseh
+Tactics Training lesson 5: 'Pulling the king to the open' by knackie
+Thoughts on the Refutation of the Milner-Barry by knackie
+Tactics Training lesson 6: 'Mating Attack' by knackie
+Tactics Training lesson 7: 'Opening / Closing Files' by knackie
+Tactics Training lesson 8: 'Opening / Closing Diagonals' by knackie
+Tactics Training lesson 9: 'Long Diagonals' by knackie
+King's Indian Attack vs. the French by cissmjg
+King's Indian Attack vs. the Caro-Kann by cissmjg
+King's Indian Attack vs. Other Defenses by cissmjg
+Secrets of the Flank Attack by Shidinov
+Mating Combinations by Kabal
+Basic Pawn Endings II by DAV
+Grandmaster Knezevic's first FICS lecture by toddmf

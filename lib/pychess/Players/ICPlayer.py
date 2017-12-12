@@ -1,7 +1,7 @@
 import asyncio
 from collections import defaultdict
 
-from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt, GameEnded
+from pychess.Players.Player import Player, PlayerIsDead, PassInterrupt, TurnInterrupt, GameEnded
 from pychess.Utils.Move import parseSAN, toAN
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.Utils.Offer import Offer
@@ -28,6 +28,7 @@ class ICPlayer(Player):
         self.color = color
         self.gameno = gameno
         self.gamemodel = gamemodel
+        self.pass_interrupt = False
         self.turn_interrupt = False
 
         # If some times later FICS creates another game with same wplayer,bplayer,gameno
@@ -149,6 +150,10 @@ class ICPlayer(Player):
                 raise GameEnded
             elif item == "del":
                 raise PlayerIsDead
+            elif item == "stm":
+                raise TurnInterrupt
+            elif item == "fen":
+                raise TurnInterrupt
 
             gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms = item
             self.gamemodel.onBoardUpdate(gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
@@ -156,6 +161,10 @@ class ICPlayer(Player):
             if self.turn_interrupt:
                 self.turn_interrupt = False
                 raise TurnInterrupt
+
+            if self.pass_interrupt:
+                self.pass_interrupt = False
+                raise PassInterrupt
 
             if ply < board1.ply:
                 # This should only happen in an observed game
@@ -194,6 +203,8 @@ class ICPlayer(Player):
         # We raise TurnInterrupt in order to let GameModel continue the game
         if movecount % 2 == 1 and gamemodel.curplayer != self:
             self.turn_interrupt = True
+        if movecount % 2 == 0 and gamemodel.curplayer == self:
+            self.pass_interrupt = True
 
     def resetPosition(self):
         """ Used in observed examined games f.e. when LectureBot starts another example"""

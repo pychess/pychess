@@ -1,0 +1,146 @@
+k Although the Caro-Kann is played fairly often at the 1700-1300 level there are very few players that have a firm grasp on the theory. Many of the others just "move" the next piece no matter what the response. White can get away with doing just that for a few moves in the 2.Nc3 Caro-Kann.
+25
+k The Caro-Kann I believe should be responded to by developing the knights in order to control the center. Such as:
+10
+e4
+c6
+Nc3
+d5
+Nf3
+k This is the basic setup in which white has some very strong possibilities.
+10
+k If black then captures:
+5
+dxe4
+Nxe4
+k Most moves here for black transpose back in to lines that can be reached after 2.d4. However, Bf5 does not.
+10
+Bf5
+k This line for black can lead to some terrible problems. Play would continue as:
+Ng3
+Bg6
+h4
+k Threatening to trap the bishop with h5.
+7
+h6
+Ne5
+k Threatening to take the Bishop and weaken the King side pawn structure.
+10
+k Therefore black responds with:
+5
+Bh7
+Qh5
+k Which threatens mate and nearly forces g6.
+g6
+k This move, though, blocks in Black's light colored bishop and renders it almost totally useless at the moment.
+10
+Bc4
+k If gxQh5 then Bf7 and mate.  Therefore black is forced to make another uncomfortable move and play:
+10
+e6
+k White is now forced to retreat the Queen to e2. The Queen could also return to f3, but I find this move not as sound for it blocks the Knight's return to its most promising square.
+15
+k In this position material is even, but white has an outstanding lead in development and should have great chances for a winning game.
+15
+back 13
+1
+k Now lets say that Black decides to push his pawns to force some action:
+10
+d4
+Ne2
+c5
+c3
+dxc3
+bxc3
+k This is now setting up a total take over by white of the middle when he plays the powerful move d4.
+10
+k White will have a good lead in development and a strangle hold on the center.
+10
+back 2
+1
+k A big mistake would be for Black to keep pushing these pawns such as:
+10
+d3
+Ng3
+c4
+k In this position White can play the slick move Qa4+ and grab both pawns.
+10
+Qa4+
+Bd7
+Qxc4
+Nc6
+Qxd3
+k White having good development and being up two pawns should have a winning game.
+10
+back 12
+1
+dxe4
+Nxe4
+k Lets say that after Black plays Nd7 which is a fairly common response hoping to follow up with Ngf6.
+Nd7
+Qe2
+Ngf6
+Nd6
+k This is a wonderful opening that would make your opponent cry. However black can make white's queen look silly by playing Ndf6.
+10
+back 2
+Ndf6
+k Threatening to gain a tempo on the queen with Nxe4 then Nf6.
+7
+back 5
+1
+Nf6
+k Lets now take a look at the Nf6 response which can led to some very interesting play:
+e5
+Ne4
+Qe2
+k Which threatens to win a pawn.
+6
+Nxc3
+dxc3
+k Which opens up the Bishop for quick development.
+5
+k White can complete his development quickly here and can also create threats against the black king if black his not careful. For example:
+15
+b6
+Nd4
+c5
+e6
+k Now if Black takes this Knight they are in for a nasty surprise:
+5
+cxd4
+Qb5+
+Nd7
+exf7+
+Kxf7
+Qxd5+
+k This forks the Rook and King and gives White a 3 point lead in material which should lead to an easy win.
+10
+revert
+e4
+c6
+Nc3
+d5
+Nf3
+k Black does have one other good alternative here that does not transpose in to the 2.d4 Caro-Kann.
+Bg4
+k Black intends to trade off this bishop and then play all of his center pawns to light squares. Black will also try to prevent the center from opening, which would favor white's bishops.
+18
+k Here is a sample of the play that results from this line.
+5
+h3
+Bxf3
+Qxf3
+e6
+8
+d3
+Nf6
+Be2
+Nbd7
+8
+Qg3
+g6
+O-O
+Bg7
+8
+k Hopefully, this will give you some ideas on how to play the 2.Nc3 Caro-Kann and led you to some easy victories against opponents who aren't prepared for it.

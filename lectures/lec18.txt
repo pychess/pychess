@@ -1,0 +1,511 @@
+k Welcome to Knackie's Tactics Training. The examples are based on material of a Hungarian Chess School. They have been revised using Fritz and a bit of Knackie's brain.
+15
+k The 6th Lesson features the theme 'Mating attack'.
+12
+k In the previous Lessons, you've already encountered many mating combinations.
+16
+k In this Lesson we'll dive into the Mating-Attack theme for good. We will also view some more difficult examples.
+20
+k Example 1: Spasski vs Kozma, Lyon 1955
+3
+bsetup
+1
+bsetup fen r4k2/4b2p/q3Pp2/1p1p4/3B4/2PB4/rP3Q1P/1K1R2R1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Spasski
+1
+bname Kozma
+1
+k Let's start with an example of former World-Champion Spasski.
+13
+k White is a piece up, but black seems to have a threatening attack on the a-file.
+16
+k How did Spasski react?
+8
+25
+f2f6
+k nice sacrifice !!
+7
+e7f6
+d4c5
+k If black now answers Ke8, he is mated immediately by Rg8, so he tried:
+15
+f6e7
+d1f1
+f8e8
+g1g8
+e7f8
+g8f8
+k mate
+5
+k Example 2: Szabo vs Bakonyi, Budapest 1951
+3
+bsetup
+1
+bsetup fen r5k1/r4pb1/2p1p1p1/p1q1P1P1/1p1p1Q2/1P1B3R/P2B1P2/6KR
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Szabo
+1
+bname Bakonyi
+1
+k In this example, white has two strong rooks on the h-file, but the black Bg7 seems to defend well.
+19
+k How did white break the defense?
+9
+k You get 50 seconds...
+8
+50
+f4f6
+k What a surprise!!
+7
+k Black must take the queen. Otherwise, he gets mated by: Rh8+ Bxh8 Rxh8 mate.
+16
+g7f6
+g5f6
+k The black king is enclosed! Rh8 mate cannot be prevented.
+13
+k Example 3: Barcza vs Trojanescu, 1951
+3
+bsetup
+1
+bsetup fen r6k/1q1n1prp/p3pN2/1p1b4/6RQ/6P1/PP2PP1P/3R2K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Barcza
+1
+bname Trojanescu
+1
+k In this example, it seems hard to believe that white has an easy mate, as the Rg7 defends well.
+18
+k 60 seconds...
+6
+30
+k note that the black Ra8 plays an important role in defending the 8th row...
+30
+h4h6
+k white simply threatens Qxg7 mate.
+9
+k black cannot answer RxRg4 because of Qxh7 mate, so he must defend his rook..
+15
+a8g8
+k It seems white has not achieved much, but there's a considerable difference between the black rook standing on a8 and g8...
+21
+h6h7
+g7h7
+g4g8
+k mate
+5
+k Example 4: Adams vs Siminson, USA 1940
+3
+bsetup
+1
+bsetup fen r3r1k1/pp3ppp/3b4/3q4/1n1B1P2/3B1P2/PP2Q2P/1K1R2R1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Adams
+1
+bname Siminson
+1
+k The first move is surely not difficult to find here.
+12
+k But then, white must show very precise and forcing play, as black threatens both Qxa2+ and RxQ.
+18
+k 75 seconds...
+6
+g1g7
+k Let's look what happens if the black king moves to h8 now:
+13
+g8h8
+g7h7
+h8g8
+h7h8
+k mate. That was easy!
+8
+back 4
+k In the game black moved the king to f8 instead.
+11
+g8f8
+k What now? Black still threatens Qxa2+ and RxQ, so white must continue to play forcing moves...
+18
+g7g8
+f8g8
+k White will now obviously give check on the g-file.
+12
+k What is best: Qg2+ or Rg1+ ?
+9
+30
+d1g1
+k Did you get it? The white queen is needed on e2 for preventing the black king from escaping via the e-file.
+20
+g8f8
+k White now decisively improves the position of his Bd4.
+12
+d4g7
+f8g8
+k White now has a move 'for free' with his bishop g7, as the rook on g1 will give a discovered check.
+19
+k Which is the best position for the bishop to prepare a typical mating combination?
+25
+g7f6
+g8f8
+k Now follows a mating combination you should try to memorize, as it happens quite often:
+17
+g1g8
+f8g8
+k The black king steps on the deadly g-file again.
+11
+e2g2
+g8f8
+g2g7
+k mate.
+k Example 5: Sokolov vs Rusnikov, 1967
+3
+5
+bsetup
+1
+bsetup fen r1bk1r2/pp2R1p1/3p3p/2p3Q1/3N4/8/PPP2PPP/6K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Sokolov
+1
+bname Rusnikov
+1
+k White is already some material up, but his Queen and knight are under attack.
+16
+k How would you react?  40 seconds...
+10
+40
+e7b7
+k Surprise... If black now tries Rf6, there follows:
+12
+f8f6
+d4c6
+d8e8
+b7e7
+e8f8
+g5g7
+5
+back 6
+k So, black took the Queen instead...
+9
+h6g5
+d4c6
+d8e8
+b7e7
+k mate !
+5
+k Example 6: Uhlmann vs Smyslov, Hastings 1972
+3
+bsetup
+1
+bsetup fen r5k1/pp4p1/2p1q1p1/4P1B1/2nn2P1/5Q2/P4RK1/5R2
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Uhlmann
+1
+bname Smyslov
+1
+k This is the chance of your life!! You're playing against World-Champion Smyslov...
+16
+k But you are running out of time... 30 seconds left.
+11
+30
+f3f8
+a8f8
+f2f8
+g8h7
+f1h1
+k mate ! You did it :-))
+8
+k Example 7: Osvath vs Ortel, Budapest 1970
+3
+bsetup
+1
+bsetup fen 3r1r2/p1q1npkp/1p1pp1p1/2p1b1B1/6N1/2PP2P1/PP2QPbP/R3R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Osvath
+1
+bname Ortel
+1
+k Easy mate?  40 seconds...
+8
+40
+e2e5
+k That looks good.
+7
+d6e5
+k So what was the idea behind the Queen sacrifice?
+12
+g5f6
+g7g8
+g4h6
+k A mate position to remember!
+9
+k Example 8: Van den Enden vs Prasak, Lublin 1974
+3
+bsetup
+1
+bsetup fen r1bq4/p4rkp/2p2p1n/2Pp1PpQ/3P4/3B2NP/P3R1P1/4R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname VanDenEnden
+1
+bname Prasak
+1
+k The first move is not very spectacular, but the second move is...
+14
+k 50 seconds...
+6
+50
+e2e8
+d8c7
+k With his first move, white took some squares away from the black king. Now he showed his mating idea...
+18
+h5g5
+k What a blow !!
+10
+f6g5
+g3h5
+k A fantastic mate position !
+9
+k Example 9: Bernstein vs Kotov, Groningen 1946
+3
+bsetup
+1
+bsetup fen R7/1r3ppk/4p1qp/3pP3/1r3PP1/7P/1P1Q3K/2R5
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Bernstein
+1
+bname Kotov
+1
+k How did the old master Bernstein beat the young Kotov?
+12
+k Do you see the whole variation?  75 seconds...
+11
+75
+c1c8
+k threatening Rh8 mate.
+8
+g6e4
+c8h8
+h7g6
+f4f5
+e6f5
+k The black king seems safe, but now follows the main idea of the combination:
+20
+d2h6
+g7h6
+a8g8
+k mate !
+5
+k Example 10: Elwekkawi vs Frank, Nigeria 1976
+3
+bsetup
+1
+bsetup fen 8/2R2ppk/3p1q1p/3PpP1Q/r7/6PK/5R1P/6r1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Elwekkawi
+1
+bname Frank
+1
+k The white king looks somewhat unhappy on h3.
+11
+k How did black exploit this, having a great mating position in mind?
+14
+k 75 seconds...
+75
+f6g5
+k What's this? Black exchanges Queens!?
+10
+h5g5
+h6g5
+k Maybe white was not unhappy with his position here.
+12
+f5f6
+k So what was the idea of black's combination?
+15
+a4h4
+g3h4
+g5g4
+k k mate!  Did you ever mate by moving pawn g5-g4? :-))
+13
+k Example 11: Palatnik vs Kruppa, Kiew 1984
+3
+bsetup
+1
+bsetup fen 5r2/1p4r1/3kp1b1/1Pp1p2p/2PpP3/q2B1PP1/3Q2K1/1R5R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Palatnik
+1
+bname Kruppa
+1
+k Do you think all these examples were too easy?
+11
+k Ok, in this last example we'll increase the difficulty level.
+13
+k Black started a mind-dazzling combination.
+11
+k You get 120 seconds  (one probably needs 15 minutes for working it all out, but we can't wait that long.. :-))
+20
+120
+f8f3
+k Here comes the first blow!!
+9
+g2f3
+k Now comes...
+15
+g6e4
+k the second blow !
+7
+k White has a choice here: Kxe4 or Ke2. Let's first look what happens if he plays Ke2:
+17
+f3e2
+e4h1
+b1h1
+g7g3
+k Threatening Rg2+
+12
+h1h2
+g3e3
+e2f2
+e3d3
+k And so on.
+10
+back 8
+k In the game White took on e4:
+9
+f3e4
+g7g3
+k In the game white now played Ra1, trying to chase the Queen. Let's look what happens if he tries to get rid of the Rg3 instead:
+23
+h1g1
+k Can you find black's next shot?
+20
+a3a2
+k Fantastic! White cannot take QxQ because of Re3 mate!
+15
+d2e1
+k Now follows the nicest move of the combination:
+20
+b7b6
+k Great!! After this little move black suddenly threatens Qa8 mate!
+14
+b1a1
+k Now the Queen cannot go to a8, but...
+15
+a2a1
+k the fun continues...
+7
+e1a1
+g3e3
+k mate!
+8
+back 8
+k Now before looking at the game, let's see what happens if white tries to prevent Re3 by means of Rh-e1:
+19
+h1e1
+k White seems to defend everything. How would you continue?
+20
+a3a8
+k Incredible!!!  Black comes 'around the corner' to the other side of the board.
+16
+b1a1
+a8g8
+k White is helpless against the mating threats.
+11
+back 4
+k In the game, white tried:
+10
+b1a1
+a3b2
+k Again, the black Queen cannot be taken because of Re3 mate.
+13
+k On the other hand, black threatens QxQ himself, followed by Re3 mate. There is no defense. White resigned.
+19
+k That's all folks, i hope you enjoyed the Lesson.
+11
+k These and many more examples can be downloaded in Chessbase or Pgn-Format at http://webplaza.pt.lu/public/ckaber
+21

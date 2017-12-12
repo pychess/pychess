@@ -1,0 +1,531 @@
+k Welcome to Knackie's Tactics Training. The examples are based on material of a Hungarian Chess School. They have been revised using Fritz and a bit of Knackie's brain.
+15
+k The 4th Lesson features the theme 'King in the centre'.
+10
+k In the middlegame, a king in the centre is, of course, subject to sharp attacks.
+15
+k The attacking side should not fear making big sacrifices to hold the king in the centre; mate will be almost inevitable.
+15
+k Let's start with a famous example:
+8
+k Example 1: Lilienthal vs Capablanca, Hastings 1934
+3
+bsetup
+1
+bsetup fen 2r1k2r/2pn1pp1/1p3n1p/p3PP2/4q2B/P1P5/2Q1N1PP/R4RK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Lilienthal
+1
+bname Capablanca
+1
+k Capablanca was considered an unbeatable chess machine (an ancestor of Deep Blue)
+15
+k Watch how Lilienthal sacrified his queen to hold Capablanca's king in the centre, scoring a sensational win:
+30
+e5f6
+e4c2
+f6g7
+k That was Lilienthal's idea. This pawn not only attacks black's rook but it also prevents black's king from escaping out of the centre via f8.
+20
+h8g8
+e2d4
+k Black must play Qe4, giving back the queen. Let's look what happens if he plays Qxc3 instead:
+15
+c2c3
+a1e1
+d7e5
+e1e5
+e8d7
+e5e7
+d7d6
+d4b5
+k Winning the queen.
+5
+k Let's now look at the game continuation:
+8
+back 8
+8
+c2e4
+a1e1
+d7c5
+e1e4
+c5e4
+f1e1
+g8g7
+e1e4
+k Bishop+knight vs rook guarantee an easy win.
+10
+k Example 2: Filipowics vs Skrobek, 1975
+3
+bsetup
+1
+bsetup fen 5rk1/p2bp1bp/3p1npB/8/2pNP1P1/2P2P2/PqPK3Q/R6R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Filipowics
+1
+bname Skrobek
+1
+k White threatens BxBg7 followed by Qxh7+. How did Black reverse the situation?
+15
+k 75 seconds...
+75
+f6e4
+k When the centre is open, the white king is helpless...
+10
+f3e4
+k How does black open the position around white's king still further?
+15
+g7d4
+k If white now plays BxRf8, he will soon be mated by Qxc3, etc., so he takes the bishop.
+12
+c3d4
+b2d4
+k The white King cannot escape: if he moves to e2 black plays Bxg4+ followed by Qxc2, whereas if he moves to the first row there comes Qxa1 etc.
+30
+k Example 3: Tapaszto vs Kossik, Budapest 1951
+3
+bsetup
+1
+bsetup fen rn2kb1r/p3pppp/b7/1p1qN3/2pP4/2P1PP2/6PP/1RBQKB1R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Tapaszto
+1
+bname Kossik
+1
+k In this position both kings are still in the centre, but neither side has launched an attack yet. How can white start an attack?
+15
+k 75 seconds...
+75
+f1c4
+b5c4
+d1a4
+k If black now plays Nb8-d7 there comes NxNd7! Qxd7 QxBa6 when white quickly develops with 0-0, whereas the black king remains in the centre.
+25
+k So black has no choice...
+10
+e8d8
+k White would like to exploit the loose position of black's piece, but RxNb8 RxRb8 QxBa6 Rb8-B1 is unclear. How can white improve on this?
+35
+e3e4
+k This opens a diagonal for white's bishop.
+8
+d5e6
+b1b8
+a8b8
+e5c6
+d8c7
+c1f4
+c7b7
+a4b4
+k Winning easily, e.g. KxNc6 d4-d5 +-
+15
+k Example 4: Andersson vs Mecking, Wijk aan Zee 1971
+3
+bsetup
+1
+bsetup fen 4R3/1p2r2p/1P1qk1p1/8/4PQ2/5P2/5PKP/8
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Andersson
+1
+bname Mecking
+1
+k In this example we've almost reached the endgame. How does white exploit the central position of black's king?
+20
+k 75 seconds...
+75
+e4e5
+d6c5
+f4f6
+e6d7
+e5e6
+k Winning the rook at e7. The e-pawn has done a fine job.
+15
+k Example 5: Zeitlin vs Krutanski, Leningrad 1971
+3
+bsetup
+1
+bsetup fen r3k2r/4n1pp/p2b1p2/Q7/2Bp4/5P1q/PP1B1P1P/R3R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Zeitlin
+1
+bname Krutanski
+1
+k In this position white must play with great energy, as black threatens Bxh2+ with mate to follow.
+20
+k 75 seconds...
+75
+e1e7
+k White forces the king to the open. Let's first look what happens if black recaptures with the Bishop:
+15
+d6e7
+a5d5
+k White now has time for this simple move, as black doesn't threaten mate on h2 anymore.
+10
+a8d8
+d5f7
+e8d7
+a1e1
+h8e8
+c4e6
+d7c6
+e6h3
+k So capturing with the bishop was bad. Let's now look at the game:
+back 10
+e8e7
+a1e1
+k Black played Kf8 here, so let's first look what happens if black plays Be5 instead:
+15
+d6e5
+e1e5
+k In the open position, the black king is helpless.
+10
+f6e5
+a5e5
+e7d7
+e5d5
+d7c7
+d2a5
+c7b8
+d5d6
+b8b7
+d6c7
+k So Be5 didn't help. Let's look at the game:
+10
+back 12
+e7f8
+k Black still threatens Bxh2, but white has a powerful reply...
+35
+d2f4
+k Very strong!! Black cannot capture the Bishop because the white Queen then gives check on c5, with mate.
+25
+g7g6
+a5d5
+k White threatens Qf7 mate and attacks the Ra8 and the Bd6, which is a bit too much for the defense...
+25
+k Example 6: Sibarevic vs Bukic, Banja Luka 1976
+3
+bsetup
+1
+bsetup fen r1b1kb1r/1q1n1p2/2Np4/1p1Np1pp/5P2/7Q/PPP3PP/2KRR3
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Sibarevic
+1
+bname Bukic
+1
+k White has sacrified a piece for a big development advantage, but the centre is still closed. How can white reach the black king?
+25
+k 75 seconds...
+75
+e1e5
+k That looks good! But it needs some calculation...
+15
+k Let's look at the easiest variation first:
+10
+d7e5
+k well..., what would you play?
+15
+d5f6
+k Oh! that that was quick! Let's go back:
+back 2
+5
+d6e5
+k This should cause no problem either...
+20
+d5f6
+d7f6
+d1d8
+k Surprisingly, mate does not come on the e-file, but on the d-file. Let's go back to the game:
+15
+back 4
+5
+f8e7
+e5e7
+e8f8
+h3f5
+d7e5
+f5f6
+h8h7
+k Do you see the finish?
+20
+e7e8
+f8e8
+f6d8
+k mate
+8
+k Example 7: Friedman vs Thornblom, Stockholm 1974
+3
+bsetup
+1
+bsetup fen r3r3/p1p2p1k/3p2pp/2p5/2P2n2/2N2B2/PPR1PP1q/3RQK2
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Friedman
+1
+bname Thornblom
+1
+k Black has sacrified a piece for the attack. He would like to play Nf4-h3, threatening Qg1 mate, but black then escapes with e2-e3 Qg1+ Ke2.
+20
+k This is a kind of anti-example to our theme. The question is: How can black prevent the white king escaping to the centre?
+15
+k 75 seconds...
+75
+e8e3
+k Very nice! white now has no defense against the simple Nf4-h3 followed by Qg1 mate
+20
+f2e3
+f4h3
+e1g3
+h2g3
+f3a8
+g3f2
+k mate
+8
+k Example 8: Csiszar vs Ban, Budapest 1945
+3
+bsetup
+1
+bsetup fen q1r2k2/p4ppB/1p1bp2p/3bN3/P2P1n2/1P3P2/1B4PP/1Q2R1K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Csiszar
+1
+bname Ban
+1
+k The Bishop h7 nicely prevents the black king from escaping to the corner, but how can white attack?
+15
+k White could try to find a way to attack f7 with his queen, but how could he achieve this?
+15
+k 75 seconds...
+75
+b1f5
+k White attacks f7. Simple isn't it? The Queen cannot be captured:
+15
+e6f5
+k There follows...
+8
+e5d7
+k mate. So let's go back to the game:
+10
+back 2
+5
+d6e5
+k What is the drawback of this defense?
+20
+b2a3
+f8e8
+f5e5
+k Black resigned in view of the numerous threats: Qe5-d6-e7 mate, or Qe5-g7-f8, or simply QxNf4.
+8
+k Example 9: Horn vs Jacobsen, Meldorf 1968
+3
+bsetup
+1
+bsetup fen r3k2r/1bqnbpp1/p3pn1p/1p2p3/3N1P1B/2NB3Q/PPP3PP/2KR3R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Horn
+1
+bname Jacobsen
+1
+k The position of black's king looks quite secure here. How would you launch an attack in the middle? (Some calculation is needed here)
+20
+k 90 seconds...
+90
+d4e6
+k A typical sacrifice.
+10
+f7e6
+d3g6
+k Black cannot play Kf8 here, as white then plays Qe6 followed by Qf7 mate.
+15
+e8d8
+h3e6
+b5b4
+f4e5
+f6g8
+k How can the rook at h1 participate?
+h1f1
+k Very strong! White threatens Rf8 mate.
+20
+c7c6
+k Should white be impressed by black's queen?
+20
+d1d6
+e7h4
+k White could take black's queen here, but that would not be enough for such a nice position.
+30
+f1f8
+d8c7
+k The finish is easy...
+15
+c3d5
+c6d5
+e6d7
+k mate
+8
+k Example 10: Aljechin vs Junge, Prag 1942
+3
+bsetup
+1
+bsetup fen 1r2k2r/5pp1/1q3n1p/1pb1p3/3p4/6P1/1PQ1PPBP/R1BR2K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Aljechin
+1
+bname Junge
+1
+k In the final example we will see how a World Champion uses the 'king in the centre' theme.
+20
+k At first sight it seems impossible to prevent black from castling next move. Show some imagination like Aljechin...
+20
+k 90 seconds...
+90
+a1a6
+k That looks strange...
+10
+b6a6
+c2c5
+k That was Aljechin's idea: the Queen prevents the black king from castling and threatens Qxe5+.
+15
+a6e6
+g2c6
+k Black played Nf6-d7 here; Kd8 is no better:
+10
+e8d8
+c1d2
+k The second bishop comes into action...
+10
+b5b4
+c5a5
+d8e7
+d2b4
+b8b4
+a5b4
+e6d6
+b4b7
+e7e6
+c6a4
+k White now threatens Ba4-b3+ followed by Qxf7.
+15
+f6d5
+a4b3
+h8d8
+e2e4
+k Winning the knight. Let's now look at the game:
+10
+back 16
+5
+f6d7
+c6d7
+k Black cannot recapture with the Queen, as after Qe6xd7 Qc5xe5+, white wins the rook at b8.
+20
+e8d7
+c5a7
+k On Kc8, white would answer Bc1-d2 followed by Rc1+.
+15
+d7c6
+c1d2
+h8c8
+k How does Aljechin take more squares away from the black king?
+30
+e2e4
+k Very strong!
+8
+e6b3
+k How does Aljechin bring his rook into action?
+30
+d1a1
+b5b4
+a1a6
+c6b5
+a6a5
+b5c6
+a7c5
+c6d7
+a5a7
+k Mate follows. This was a very typical example:
+10
+k White first played energetically to prevent the black king from castling (sacrifice Ra6!)
+15
+k Play then slowed down and Aljechin took his time to activate his pieces (Bc1-d2), and took away squares from the king (e2-e4!)
+15
+k The black king in the centre proved a LONG TERM ADVANTAGE for white; there was no need to look for a quick mate.
+15
+k I hope you enjoyed the lesson. Many more examples can be found at http://webplaza.pt.lu/public/ckaber  in chessbase-format (download file Tactic4.zip)
+20

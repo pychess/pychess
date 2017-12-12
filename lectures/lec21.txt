@@ -1,0 +1,524 @@
+k Welcome to Knackie's Tactics Training. The examples are based on material of a Hungarian Chess School. They have been revised using Fritz and a bit of Knackie's brain.
+15
+k The 7th Lesson features the theme 'Opening / Closing Files'.
+12
+k While opening files for the heavy pieces is a common idea, closing files is much rarer and thus very surprising.
+15
+k Let's first see a few examples of the more common theme 'Opening files'.
+10
+k Example 1: Siegers vs Amilibia, Correspondence 1973
+3
+bsetup
+1
+bsetup fen r1b2bQ1/p3k1pp/8/3n4/4p3/7P/PPPP1qP1/R1BK3R
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Siegers
+1
+bname Amilibia
+1
+k Watch how black freed the 8th rank for his rook and opened the d-file to mate the white king.
+20
+c8g4
+h3g4
+d5e3
+d2e3
+a8d8
+k There it is.
+6
+c1d2
+f2d2
+k mate
+5
+k Example 2: Letelier vs Smyslow, Havanna 1967
+3
+bsetup
+1
+bsetup fen 8/5k2/p3pp2/2B5/1P1P2p1/5bPp/1r3P2/5RK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Letelier
+1
+bname Smyslov
+1
+k Here's an example of former World Champion Smyslov.
+12
+k The position looks more like a dull endgame, but Smyslov found a better opportunity...
+15
+k 45 seconds...
+6
+45
+a6a5
+k Throwing away a pawn?
+8
+b4a5
+h3h2
+k Another pawn...
+7
+g1h2
+b2b8
+k That's it! The rook comes around the corner to the h-file, mating the white king. ( Rb8-h8-h1 )
+16
+k White resigned.
+7
+k Example 3: Benko vs Jenei, Budapest 1949
+3
+bsetup
+1
+bsetup fen r2r4/1b3pk1/5qp1/pP1p3p/2pN3P/3nP1P1/PQR2PB1/3R2K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Benko
+1
+bname Jenei
+1
+k Do you see how white wins material?
+10
+k 50 seconds...
+6
+50
+d1d3
+k opening the c-file ...
+8
+c4d3
+k So, what was white's idea?
+15
+d4e6
+k This nice move forces black to play fxe6, thus opening the 7th row.
+14
+k Black cannot move his king because of QxQ.
+10
+f7e6
+k White now uses the freshly opened c-file and 7th row:
+12
+c2c7
+k Black loses his Queen.
+12
+k Example 4: Rautenberg vs Schlenker,  1948
+3
+bsetup
+1
+bsetup fen 2r4k/rR2b2p/5p1B/3Bp3/q1Pn2b1/P5P1/7P/2Q1NR1K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Rautenberg
+1
+bname Schlenker
+1
+k How did white launch a mating attack?
+10
+k 75 seconds...
+6
+75
+f1f6
+k This fine move opens the 7th row for white's Rb7. It also frees the g5-square for the white queen.
+19
+k Let's first look at what happens if black tries to get rid of the Rb7:
+14
+a7b7
+c1g5
+k Threatening mate on g7 ...
+8
+e7c5
+k Black's rook b7 now defends the square g7.
+10
+f6f8
+k This move frees the e5-h8 diagonal for white's Queen.
+12
+c8f8
+g5e5
+b7g7
+e5g7
+k mate
+5
+k Let's go back to the game.
+8
+back 8
+k Black took the Rf6.
+7
+e7f6
+k Now comes the crucial point of the combination:
+15
+c1g5
+k That looks nice. If black takes the queen there follows:
+13
+f6g5
+h6g7
+k mate!
+5
+back 2
+k So black tried:
+7
+g4f3
+h1g1
+a7b7
+g5f6
+b7g7
+f6g7
+k mate
+5
+k Example 5: Wexler vs Bronstein,  1973
+10
+bsetup
+1
+bsetup fen 4r1k1/3n1pbp/p2p1np1/rp1P4/2q1PP2/1RN3B1/1PQ1B1PP/4R2K
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Wexler
+1
+bname Bronstein
+1
+k Here is a more difficult example of the great tactician Bronstein.
+14
+k 75 seconds...
+6
+75
+f6e4
+k What is this?! The black queen is hanging ...
+11
+e2c4
+e4g3
+k The e-file is opened.
+7
+h2g3
+e8e1
+h1h2
+a5a1
+k Threatening mate on h1.
+8
+g3g4
+a1c1
+c2f2
+b5c4
+b3b7
+k It seems black has not achieved very much, but...
+12
+g7c3
+b2c3
+e1h1
+h2g3
+c1c3
+k White loses his queen.
+8
+k Example 6: Tietz vs Judd, Karlsbad 1898
+10
+bsetup
+1
+bsetup fen r2q1n1k/1p5p/2p1p1p1/1b6/5BN1/6P1/4r1PK/1RR3Q1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Tietz
+1
+bname Judd
+1
+k Before switching to the 'closing files' theme, let's view a last example of 'opening files'.
+18
+k This example from the last century is surely one of the greatest pieces of tactics ever played.
+18
+k You get 90 seconds to try to figure out some of the ideas...
+13
+90
+b1b5
+k Hmm.. white opens the c-file.
+9
+c6b5
+k So, why did white open the c-file?
+20
+c1c8
+k No, not a mouseslip :-))
+5
+k Let's first see what happens if black plays QxR:
+12
+d8c8
+g1d4
+h8g8
+g4h6
+k mate!
+8
+back 4
+k Now we will see what happens if black tries RxR instead:
+13
+a8c8
+k What is the drawback of this move?
+15
+g1a1
+k The square a1 isn't protected anymore!
+10
+e6e5
+a1e5
+e2e5
+f4e5
+h8g8
+g4h6
+k mate!
+8
+back 8
+k So, black cannot take the rook. Therefore, he tried:
+12
+d8d5
+k What was white's next blow?
+20
+g1a1
+k Ooops! Can't black take the queen now? Let's see:
+12
+a8a1
+c8f8
+h8g7
+f4h6
+k mate!
+8
+back 4
+k So instead of taking the queen, black tried:
+11
+e6e5
+k And now, white did not play Qxa8?? Qxg2 mate :-(( , but:
+13
+f4e5
+k Black cannot answer with Rxe5 here, because white then answers with RxRa8, and the black rook at e5 remains pinned and is lost.
+20
+k Therefore, black played:
+8
+d5e5
+k What is white's next move?
+15
+k of course not QxRa8 Qh5+ -/+, but:
+9
+c8f8
+h8g7
+f8f7
+k If black doesn't take the rook, there follows:
+16
+g7g8
+g4h6
+g8h8
+a1a8
+e5e8
+f7f8
+e8f8
+a8f8
+back 8
+g7f7
+g4e5
+k White takes the Queen with check and then wins the rook a8. Black resigned.
+15
+k Example 7: Kaminski vs Osznosz , USSR 1968
+10
+bsetup
+1
+bsetup fen 1r1r2k1/p4p1p/bqp1pbp1/4N3/4BP2/1PQ1R3/P1P3PP/R5K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Kaminski
+1
+bname Osznosz
+1
+k We now switch to the opposite theme 'Closing Files'.
+12
+k While the reason for opening files is obvious, it is hard to figure out what closing files could possibly achieve.
+21
+k Let's start with an easy example: The white Re3 is pinned. How did black exploit this?
+25
+d8d3
+k Black closes the 3rd rank, thus cutting off the queen from protecting the Re3.
+20
+k White resigned, as he loses material.
+10
+k Example 8: Reti vs Bogoljubov,  1924
+10
+bsetup
+1
+bsetup fen 3r1bk1/ppq3pp/2p5/2P2Q1B/8/1P4P1/P6P/5RK1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Reti
+1
+bname Bogoljubov
+1
+k Here is a famous example from the New York 1924 Tourney:
+12
+k Black seems to defend well, but Reti found a nice manoeuvre to exploit black's back rank.
+17
+k 40 seconds...
+6
+40
+h5f7
+g8h8
+k Ok, now the Bf8 is protected only once, but unfortunately it is not attacked anymore.
+17
+k How did Reti proceed?
+15
+f7e8
+k This fine move closes the 8th row. The square f8 is attacked twice, but not protected anymore.
+18
+k As black cannot find two defenders in one move, he resigned.
+13
+k Example 9: Csahojan vs Turkvenisvili, USSR 1971
+11
+bsetup
+1
+bsetup fen 3Q4/p7/7p/5b2/2P1p1P1/1Rq4k/P2p1P2/6K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove black
+1
+bsetup done
+1
+wname Csahojan
+1
+bname Turkvenisvili
+1
+k Black seems completely lost here, as his Queen is pinned.
+13
+k Can black get rid of his trouble?
+9
+k 45 seconds...
+6
+45
+c3d3
+k Here we see one of the most common reasons for closing a file: freeing the way for a passed pawn.
+18
+k If white now plays RxQ there follows:
+10
+b3d3
+e4d3
+k d2d1Q cannot be prevented.
+12
+back 2
+k So, white tried:
+7
+d8d3
+e4d3
+b3b1
+f5g4
+k d2d1Q follows. White will lose his rook, so he resigned.
+12
+k Example 10: Tarrasch vs Consulting Team, Naples 1914
+12
+bsetup
+1
+bsetup fen 2r3r1/3q3p/p6b/Pkp1B3/1p1p1P2/1P1P1Q2/2R3PP/2R3K1
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+tomove white
+1
+bsetup done
+1
+wname Tarrasch
+1
+bname ConsultingTeam
+1
+k In the last example we follow Tarrasch, who was well known as a chess teacher.
+11
+k In this example, he found a very instructive idea.
+12
+k 60 seconds...
+6
+60
+k Note that the definsive tasks of black's Rc8 and Qd7 are clear-cut:
+14
+k The rook c8 defends against Rxc5+ ...
+10
+k and the Qd7 defends against Qb7+.
+9
+k Tarrasch's next move disturbs the coordination of black's pieces.
+20
+e5c7
+k This move shows a key tactical technique.
+10
+k White places a piece right into the crossway of black's defensive files ( 7th rank: cutting off the queen  and  c-file: cutting off the Rc8 )
+25
+k Let's see what happens if black plays RxB now:
+11
+c8c7
+k Remember: the role of the Rc8 was to defend c5, so white plays:
+14
+f3b7
+k Forcing the rook to take over the Queen's task of protecting b7.
+17
+c7b7
+c2c5
+k mate
+5
+back 4
+k In the game, black tried:
+8
+d7c7
+k Remember: it is the queens task to protect b7, so Tarrasch logically replied:
+16
+c2c5
+k Forcing the Queen to take over the Rook's task of protecting c5.
+13
+c7c5
+f3b7
+b5a5
+c1a1
+k mate
+5
+k You should try to remember the technique used in this example: Placing a piece into the crossway of two defensive files.
+20
+k That's all folks, i hope you enjoyed the Lesson.
+11
+k These and many more examples can be downloaded in Chessbase or Pgn-Format at http://webplaza.pt.lu/public/ckaber
+21

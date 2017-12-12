@@ -1,0 +1,721 @@
+k In the 19th Century, there was great appeal for this opening. It allowed for immediate attack by White usually by crashing his King Bishop into the f7 Pawn like a Kamikaze.
+15
+k Today this opening is not always characterized by the same fireworks as our 19th century counterparts. Instead the game is played tending to a more lasting initiative and positional edge.
+15
+k Many times this opening transposes into other openings, and the beginner often gets confused when book moves are not played. In these cases, I suggest the beginner develop, dig-in, and trade equally before complications can arise.
+10
+k Cases where this opening is defended with the Two Knights Defense will not be addressed in this lecture, and nor will the Evans Gambit be discussed.
+8
+k ***********************
+2
+k Part I The Basic Setup
+6
+e2e4
+e7e5
+g1f3
+b8c6
+f1c4
+f8c5
+c2c3
+k With 4. c3, White aims to build a strong center, preparing for the plan of 5. d4.
+12
+k The next move by Black develops the character of this game. Generally, the book move Nf6 is the best response. Although other continuations may lead to equality in pieces, their positional merit is unclear.
+15
+g8f6
+6
+back 1
+k Other responses are:
+4
+k The Quiet continuation 4...d6, the Center-Holding Variation 4...Qe7, and sometimes 4...Qf6.
+10
+k First, the Quiet continuation.
+6
+d7d6
+k The plan of 5. d4 continues.
+4
+d2d4
+e5d4
+k 5...Bb6 costs Black a pawn.
+4
+c3d4
+c5b4
+c1d2
+k White maintians the center.
+8
+back 6
+4
+k Another continuation, The Center-Holding Variation.
+6
+d8e7
+4
+k With this move Black intends to hold the center. Whether this set-up is ultimately satisfactory remains to be determined. However, If Black trades his King Pawn, the position of the Queen may be compromised.
+18
+d2d4
+k The plan of d4 continues.
+4
+e5d4
+e1g1
+d4c3
+b1c3
+d7d6
+c3d5
+e7d8
+b2b4
+k ...with good chances for White
+6
+k ...for example:
+6
+c6b4
+d5b4
+c5b4
+d1a4
+k ... winning the bishop at b4 because the queen attacks both the king and bishop.
+10
+k Another plausible variation:
+4
+back 10
+3
+d4d3
+e4e5
+h7h6
+b2b4
+c5b6
+a2a4
+a7a5
+c1a3
+a5b4
+c3b4
+c6b4
+d1b3
+b6c5
+b1c3
+k ...with advantage for White.
+15
+k Note the long diagonals of which White can take advantage.
+8
+back 18
+4
+k Other moves less commendable than 4...Nf6 are: 4...f5
+6
+f7f5
+d2d4
+4
+k Please note that carrying out the plan 5. d4 usually should not be delayed.
+6
+f5e4
+f3e5
+c6e5
+d1h5
+k with advantage for White.
+8
+back 6
+k Another move less commendable: 4...Qf6
+6
+d8f6
+d2d4
+e5d4
+e4e5
+k 6...Nxe5 7. Qe2 and White wins a piece.
+10
+f6g6
+c3d4
+c5b4
+b1c3
+g6g2
+h1g1
+g2h3
+c4f7
+k A difficult position for Black. His King and queen will be forked on g5 if the Bishop is taken.
+8
+back 12
+k Back to the book move: 4...Nf6
+4
+g8f6
+k In attacking the King Pawn, Black actually meets White's plans.
+d2d4
+4
+k Moving the Bishop to b6 loses a pawn. For example:
+6
+c5b6
+f3e5
+c6e5
+d4e5
+4
+k Nxe4?
+6
+f6e4
+d1d5
+k Or...
+back 1
+c4f7
+back 6
+e5d4
+e4e5
+k This leads to an unclear struggle.
+6
+k But if Black is careless with his knight...
+4
+f6e4
+c4d5
+k ... he will surely lose a piece.
+10
+back 3
+c3d4
+c5b4
+k The black Bishop retreating to b6 again concedes the center to White, with a well known trick.
+10
+back 1
+c5b6
+d4d5
+c6e7
+6
+k If Black placed the knight to a5 then...
+back 1
+c6a5
+4
+k then...
+4
+c4d3
+k threatening 9. b4!
+6
+back 2
+4
+c6e7
+e4e5
+f6g4
+d5d6
+c7d6
+e5d6
+b6f2
+e1e2
+e7f5
+d1d5
+k Winning a piece.
+12
+k Return to Black moving the bishop 6...Bb4+
+4
+back 12
+4
+c5b4
+8
+k White's next move will 'Part the Waters' on theory and this will be discussed next in Parts 2 & 3.
+8
+k In many ways, this will depend on the style of the player.
+4
+k 7. Nc3 loses a pawn at first, but white's advantage in the center may be greater.
+10
+k 7. Bd2 ususally ends up in trading Bishops. White avoids a material sacrifice, but the advantage in the center is substantially diminished.
+15
+k *************************************
+2
+k Part 2 The Moller Variation. 7. Nc3
+6
+k Sometimes called the Moller Attack. The combinative nature of the position usually appeals to aggressive players.
+8
+b1c3
+k A self-pinning move.
+f6e4
+k Black must take the e4 pawn or face difficulties:
+4
+back 1
+2
+k 7...d6 may be too timid.
+4
+d7d6
+d4d5
+b4c3
+b2c3
+c6e7
+O-O
+f6e4
+f1e1
+e4c3
+d1d4
+k ...and White wins a piece.
+12
+back 2
+e4f6
+c1g5
+k Black's development is deterred.
+6
+k ...and Black should not castle.
+6
+O-O
+g5f6
+g7f6
+2
+k White's pending attack will be hard to neutralize.
+8
+back 13
+k 8...0-0 may not be better.
+6
+O-O
+c1g5
+h7h6
+g5f6
+d8f6
+O-O
+k ...and White is for choice.
+2
+back 6
+k 8...d5 is another difficult situation.
+1
+d7d5
+e4d5
+f6d5
+O-O
+k 9...Nxc3 10.bxc3 Be7 11. Bf4 White has a pull.
+12
+c8e6
+c1g5
+b4e7
+k 11. Bxe7 Ncxe7 12. Ne4 0-0 13. Qb3 White has a pull.
+12
+c4d5
+e6d5
+c3d5
+d8d5
+g5e7
+c6e7
+f1e1
+f7f6
+d1e2
+d5d7
+a1c1
+e8f7
+k ...yet White has a tiny edge, or at least the initiative rests with White.
+15
+back 19
+k The consistent continuation is 7...Nxe4
+4
+f6e4
+4
+k A wild position. Black is a Pawn to the good, but White has an advantage in development while the position is open. White therefore must depend on energetic play, regardless of the loss of additional pawns or even greater material.
+18
+k Black's aim is consolidation; he especially needs safety for his King. His task is anything but simple, often requiring radical methods. Black must not forsake this aim on behalf of merely retaining a material advantage.
+18
+O-O
+e4c3
+k The Greco variation of The Moller Attack, which is not quite satisfactory for Black. However, it is Black who chooses to go this way.
+10
+b2c3
+k After Bxc3, either Qb3 or Ba3 give White excellent play.
+8
+b4c3
+d1b3
+c3a1
+c4f7
+e8f8
+c1g5
+c6e7
+f3e5
+a1d4
+f7g6
+d7d5
+b3f3
+c8f5
+g6f5
+d4e5
+f5e6
+e5f6
+g5f6
+k ... and White wins.
+6
+g7f6
+f3f6
+k However, Black can have a satisfactory game along the same lines if he didn't take the pawn c3, and continues with a counter-thrust
+d5
+12
+back 22
+6
+e4c3
+b2c3
+k 9...d5
+d7d5
+c3b4
+d5c4
+f1e1
+c6e7
+k Black's key move!
+6
+d1e2
+c8e6
+f3g5
+d8d7
+g5e6
+d7e6
+c1g5
+e6e2
+e1e2
+f7f6
+a1e1
+O-O-O
+k ...and Black has a satisfactory game.
+10
+k ...another way this could play out:
+4
+back 12
+4
+c1g5
+f7f6
+d1e2
+4
+k 13...f6xg5? 14. Qxc4!
+10
+c8g4
+k ...or...
+2
+k 13...0-0 14. Qxe7 and after trading, White can scoop up some pawns.
+10
+back 1
+O-O
+e2e7
+d8e7
+e1e7
+f6g5
+e7c7
+k ...favoring White.
+8
+back 6
+k another alternative:
+4
+c8g4
+g5f4
+e8f7
+e2c4
+e7d5
+f3d2
+g4e6
+f4g3
+k ...and Black can equalize.
+8
+back 18
+4
+k Back to 8...Bxc3
+4
+b4c3
+d4d5
+k The Moller Variation Proper.
+4
+k 9.bxc3 is simply met by 9...d5!
+6
+back 1
+b2c3
+d7d5
+c1a3
+d5c4
+f1e1
+c8e6
+e1e4
+d8d5
+d1e2
+O-O-O
+k Better for Black.
+10
+back 10
+d4d5
+c6e5
+k Of other alternatives by Black should White take the Bishop at c3, d5 would probably be best.
+10
+b2c3
+e5c4
+d1d4
+c4d6
+k 11...f5! (We'll come back to this in a minute.)
+10
+d4g7
+d8f6
+g7f6
+e4f6
+f1e1
+e8f8
+c1h6
+f8g8
+e1e5
+d6e4
+f3d2
+d7d6
+d2e4
+d6e5
+e4f6
+k Mate!
+k Back to 11...f5!
+4
+back 17
+4
+k This probably Black's best way to equalize.
+d1d4
+f7f5
+d4c4
+d7d6
+f3d4
+O-O
+f2f3
+e4f6
+c1g5
+h7h6
+k With roughly equal chances.
+10
+back 9
+4
+k Another example for 11...f5.
+f7f5
+d4c4
+O-O
+d5d6
+g8h8
+d6c7
+d8f6
+c1b2
+k With roughly equal chances.
+6
+k What if 9...Bf6? Here's a pretty example for White.
+6
+back 12
+2
+c3f6
+f1e1
+k Please note this rook move.
+5
+c6e7
+e1e4
+O-O
+d5d6
+c7d6
+d1d6
+e7f5
+d6d5
+d7d6
+f3g5
+f6g5
+c1g5
+d8g5
+k ...?
+4
+k Can you see mate? 20 seconds.
+20
+d5f7
+k ...and mate follows.
+f8f7
+e4e8
+k Sweet! ( ...or as in chan 10: Moist! )
+6
+back 18
+k Here is another example:
+c3f6
+f1e1
+c6e7
+e1e4
+d7d6
+c1g5
+f6g5
+f3g5
+O-O
+g5h7
+g8h7
+d1h5
+h7g8
+e4h4
+f7f5
+h4h3
+k Preventing 17...Ng6
+4
+f5f4
+g2g4
+f4g3
+h5h7
+g8f7
+h7h5
+f7g8
+4
+k ...not Ng6.
+back 1
+6
+e7g6
+h3g3
+d8f6
+c4d3
+k ...and White will win a piece.
+4
+back 4
+f7g8
+h5h7
+k with perpetual check.
+8
+k This is the end of part 2, The Moller variations. The next part will now focus on the move 7.Bd2, a quiet continuation that enables White to avoid a material sacrifice, but his advantage in the center is substantially diminished.
+18
+k **********************
+k Part 3 Move 7. Bd2
+4
+k This next move is considered a quiet continuation. It does rather seem to have no spark, but note that Black moved his Bishop three times before trading; and by trading, White developes a piece by taking it.
+15
+back 29
+6
+c1d2
+b4d2
+4
+k Nxe4 is a  bold course, The risk, however, is all Black's.
+6
+b1d2
+d7d5
+k The counter-thrust.
+5
+e4d5
+f6d5
+d1b3
+c6e7
+k Be6 is answered by Qxb7.
+2
+O-O
+O-O
+f1e1
+c7c6
+k White has an isolated Queen Pawn, but he enjoys greater freedom of movement. A situation like like this may become dangerous for either side.
+15
+k Failure to act energetically may hurt White in that his isolated Queen pawn becomes a liability. On the other hand, even a slight inaccuracy may cause serious damage to black.
+15
+k Here is a nice variation for White:
+2
+d2e4
+d5b6
+e4c5
+b6c4
+b3c4
+b7b6
+c5d3
+c8e6
+k ?
+4
+k ...Bb7 gives Black an even game.
+6
+e1e6
+f7e6
+c4e6
+g8h8
+d3e5
+d8e8
+f3g5
+k and White wins.
+4
+k The next example will show a slightly more even game.
+6
+back 27
+c1d2
+b4d2
+b1d2
+d7d5
+e4d5
+f6d5
+d1b3
+c6e7
+O-O
+O-O
+f1e1
+c7c6
+k Here's the change:
+a2a4
+d8b6
+a4a5
+b6b3
+d2b3
+c8f5
+f3e5
+d5b4
+a1c1
+b4d5
+a5a6
+k Changing into a game of position more than tactics.
+5
+back 11
+d2e4
+d8b6
+e4c3
+b6b3
+c4b3
+c8e6
+f3g5
+e6d7
+e1e5
+k ... and White for choice.
+6
+k Let's go back to move 10 Qb3
+4
+back 15
+2
+k The response by Black can shape the game in many different ways. We will now look at a three different responses by Black.
+6
+d1b3
+6
+k We'll look at 10...Be6, 10...Na5, 10...0-0.
+4
+k First 10...Be6.
+5
+c8e6
+b3b7
+c6a5
+c4b5
+k 12...c6?
+e8f8
+b7a6
+c7c6
+b5a4
+4
+k Black has little direction from here.
+8
+back 8
+4
+k Now look at 10...Na5.
+4
+k Modern Chess Openings (MCO) lists the next position as equal and could be agreed drawn; for example:
+6
+c6a5
+b3a4
+k MCO says this position is drawn because Nb6 is threatened.
+6
+a5c6
+k White played to win in Sveshnikov-Mortensen, Leningrad 1984,  with 14. Bb5.
+6
+a4b3
+k 12...Nb6 was threatened.
+8
+c6a5
+b3a4
+a5c6
+c4b5
+c8d7
+a4b3
+k ?! ...15. 0-0 is equal.
+10
+d8e7
+e1f1
+d7e6
+k ...and Black ended up with advantage.
+12
+back 13
+k Here another example shows 10...Na5 as unfavorable for Black when the pawn at c7 is moved.
+16
+c6a5
+b3a4
+c7c6
+c4d5
+d8d5
+O-O
+4
+k ...and Black's Knight is ill-placed.
+8
+back 6
+4
+k Finally, 10...0-0 ?! Which deserves consideration.
+6
+O-O
+c4d5
+c6a5
+k A tricky situation here.
+14
+back 22
+k Though modern masters have devoted relatively little attention to the Giuoco, its variations continue to pose many intriguing problems.
+10
+k This lecture was compiled by Art Watkins; Fics handle: afw
+8
+k I hope this lecture was informative. It was written using combinations of ideas from many of the books in my Chess library simply melded together. Please message me if you have any comments or questions.
+12

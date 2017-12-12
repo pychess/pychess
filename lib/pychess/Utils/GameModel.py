@@ -8,7 +8,7 @@ from io import StringIO
 from gi.repository import GObject
 
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Players.Player import PlayerIsDead, TurnInterrupt, InvalidMove, GameEnded
+from pychess.Players.Player import PlayerIsDead, PassInterrupt, TurnInterrupt, InvalidMove, GameEnded
 from pychess.System import conf
 from pychess.System.protoopen import protoopen, protosave
 from pychess.System.Log import log
@@ -640,7 +640,6 @@ class GameModel(GObject.GObject):
 
             while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
                 curPlayer = self.players[self.curColor]
-
                 if self.timed:
                     log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: updating %s's time" % (
                         id(self), str(self.players), str(self.ply), str(curPlayer)))
@@ -681,6 +680,10 @@ class GameModel(GObject.GObject):
                     else:
                         self.end(WHITEWON, WON_ADJUDICATION)
                     break
+                except PassInterrupt:
+                    log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: PassInterrupt" % (
+                        id(self), str(self.players), self.ply))
+                    continue
                 except TurnInterrupt:
                     log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: TurnInterrupt" % (
                         id(self), str(self.players), self.ply))
@@ -690,7 +693,6 @@ class GameModel(GObject.GObject):
                     break
 
                 assert isinstance(move, Move), "%s" % repr(move)
-
                 log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: applying move=%s" % (
                     id(self), str(self.players), self.ply, str(move)))
                 self.needsSave = True

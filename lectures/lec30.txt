@@ -1,0 +1,731 @@
+kibitz This is the second lecture in this series. In the first lecture we looked at opposition and key squares of K+P vs K. Most of this lecture does not require knowledge of that, but the third lecture in this series 'Basic Pawn Endings III: Pattern training' will require knowledge of this and the previous lecture.
+30
+kibitz In this lecture we will focus a bit more on the role of the kings in pawn endings, the case where king chases a pawn, connected, separated, doubled and outside passed pawns.
+20
+kibitz In essence this lecture is to provide the rest of the skills to handle king + pawn(s) vs king endings, and to give a grounds for applying to more complicated endings. The next lecture will focus on more examples to provide a base for recognizing features in more complicated pawn endings.
+23
+bsetup
+1
+bsetup fen k7/8/8/8/8/8/8/4K3
+1
+bsetup tomove white
+1
+bsetup standard
+1
+bsetup wcastle none
+1
+bsetup bcastle none
+1
+bsetup done
+1
+kibitz This is a quick demonstration of "Einstein's" king. Ignore the black king.
+8
+kibitz Suppose the white king has to travel to e8. Normally (since this is the way we are conditioned to believe so) we'd think the quickest route is a straight line. (e1-e2-...-e8).
+20
+kibitz However there are a huge number of ways to get to e8 in seven moves. As long as the white king moves forward a rank each time, it may move to the left or the right, assuming it is still possible to get back to e8 in the quotaed number of moves. Remember when we are talking about the number of moves the king has to make, not the mathematical distance.
+35
+kibitz Assuming no obstacles, the number of moves to get from one square to another is the maximum of the horizontal and vertical distances (in squares).
+15
+kibitz To put that mathematically: If H = number of horizontal moves needed to get the to the desired file and V = the number of vertical moves needed to get to the desired rank then M (the number of moves needed to get to the desired square) = MAX (H, V) assuming the path is clear.
+27
+kibitz Hence going from a4 to a8 (H = 0 horizontal squares, V = 4 vertical) takes 4 moves, as does going from c4 to a8 (H = 2 horizontal, V = 4 vertical) as does e7 to a8 (H = 4 horizontal, V = 1 vertical).
+19
+kibitz Let's take a look at two different routes from a1 to e1.  The route a1 -> b1 -> c1 -> d1 -> e1 (a straight line) requires 4 moves.  The route a1 -> b2 -> c3 -> d2 -> e1 (a diagonal path) also requires 4 moves.  Keep this in mind when we look at the rule of the square later.
+26
+kibitz Have a look at this example which shows the direct path is not always the best.
+6
+bsetup
+1
+bsetup fen 8/p5K1/P7/8/8/8/8/k7
+1
+bsetup done
+1
+kibitz Black has no hope of protecting his pawn (or capturing the white one).
+8
+Kf7
+Kb2
+Ke7
+Kc3
+Kd7
+Kd4
+Kc7
+Kd5
+Kb7
+Kd6
+Kxa7
+Kc7
+kibitz But, stalemate. White's king is entombed.
+5
+revert
+Kf6
+Kb2
+Ke5
+kibitz Since the direct route didn't work, white attempts another route. As shown it will take the same amount of moves, but it will 'shoulder-barge' (take away useful squares from) the black king who will lose a move because the pawn cannot be approached on one of the moves.
+25
+Kc3
+Kd5
+kibitz Already Kd4 is no longer playable. What if Kd3 instead?
+Kd3
+Kc6
+kibitz Kd6 would let the black king back in with enough moves to stop the pawn (Ke4).
+9
+Kd4
+kibitz What else?
+Kb7
+Kd5
+Kxa7
+Kc6
+Kb8
+kibitz Black is too late, thanks to the shoulder barge at d5.
+7
+back 8
+kibitz Just for completeness, here is what happens if black plays to b4 instead of d3...
+9
+Kb4
+Kc6
+Ka5
+kb7
+Kb5
+Kxa7
+Kc6
+Kb8
+kibitz Same as before.
+bsetup
+1
+bsetup fen 8/8/8/8/P4k2/8/8/K7
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz The rule of the square:
+4
+kibitz Can black stop the pawn here? White's king cannot stop the black king's entry into the position, since black's king would ignore the pawn and grab the key square b8, blockading the pawn with a draw. (If you don't know about this type of ending, see the first lecture).
+27
+kibitz Therefore it's up to the pawn to run as fast as possible before it's gobbled up by a hungry king.
+7
+bsetup
+1
+bsetup fen 8/Pk6/8/8/8/8/8/K7
+1
+bsetup done
+1
+kibitz Ignoring the white king, if the black king is on b7 while the pawn is on a7, the king can capture the pawn whoever to move. Even if it queens, black can capture the new born queen.
+14
+bsetup
+1
+bsetup fen 8/P7/2k5/8/8/8/8/K7
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz If the king is to stop the pawn it must get to either a8, a7 or b7 on this move.
+8
+Kb7
+a8=Q
+Kxa8
+bsetup
+1
+bsetup fen 2k5/P7/8/8/8/8/8/K7
+1
+bsetup tomove black
+1
+bsetup done
+kibitz Note that it doesn't matter that with the pawn on a7 the b8 square is taken away, since b7 is reachable from both c8 and c7. (Note an exception: with the pawn on a7 and black king on c6/c7/c8 what difference a white king on a6 would make!)
+21
+bsetup
+1
+bsetup fen 2k5/P7/K7/8/8/8/8/8
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz Chess's equivalent of the 'shut out'.
+4
+bsetup
+1
+bsetup fen 8/8/P7/3k4/8/8/8/K7
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz So taking another step back, if the pawn is on a6, black must be able to reach one of the squares within the perimeter around a6-c6-c8-a8.
+15
+Kc6
+a7
+Kb7
+a8=Q
+Kxa8
+1
+bsetup
+1
+bsetup fen 1N4N1/8/8/8/8/1P4N1/8/K5k1
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz What's being described here is the rule of the square. Going from where the pawn is, make a diagonal line to the eighth rank. Those two points are used to form a square (opposite corners). The perimeter of the pawn's square is drawn around the corner squares (like an rubber band on a nail board).
+1
+kibitz Here I've marked the other corners of the square with knights.
+35
+kibitz If the king can get inside this square then the pawn can be stopped, if it can't the pawn moves, making the square one smaller and so the king cannot catch it. Here the king cannot get to one of the squares inside the perimeter around b3-g3-g8-b8.
+28
+Kf2
+1
+bsetup
+1
+bsetup fen 1N3N2/8/8/8/1P3N2/8/5k2/K7
+1
+bsetup tomove black
+1
+bsetup done
+10
+kibitz Note if the pawn is not a rook pawn, the square can be extended on both sides of the pawn (symmetry). So a 'truncated' square of the pawn b4-a4-a8-b8 exists too.
+15
+bsetup
+1
+bsetup fen 8/8/8/8/P4k2/8/8/K7
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz It should be easy now...
+kibitz In the position it's white to move. To draw black must be able to step into the pawn's square (a4-e4-e8-a8). If it was black to move he could. As it is now, black will miss the pawn and it will queen first. If black chases after it, it will be like chasing a rainbow.
+27
+a5
+Ke5
+a6
+Kd6
+a7
+Kc7
+a8=Q
+kibitz Too late!
+2
+bsetup
+1
+bsetup fen 8/8/8/8/8/8/P5k1/K7
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz Black to move plays Kf3 and can stop the pawn. (... Kf3   a4 Ke4    and black is inside the square).
+10
+kibitz But, it's white's move. By the rule of the square it would appear black can stop the pawn, and indeed after white plays a3 he can. The problem is the pawn may move two squares on its first move (a4).
+20
+kibitz This is an extension to the rule; with the pawn on the second rank we make the square as if the pawn was on the third (a3). Black cannot get into the square after white plays a4 so the pawn queens.
+17
+bsetup
+1
+bsetup fen 8/4p3/8/3P4/1P6/6k1/8/K7
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz With more material on the board there are some tricks.
+6
+kibitz White's king is too far away to be of much use. Black threatens to capture or block the b pawn and with the e pawn blocking the pawn of the d pawn a draw should result.
+17
+Kf4
+kibitz If white tries to advance the b pawn, black can catch it as he's now in the square. However, the presence of other pawns makes a neat tactical trick available.
+16
+d6
+kibitz d6!! is the only winning move here.
+6
+kibitz White threatens to capture black's pawn, and if it moves he'll queen with d7-d8=Q. Black is forced to accept the sacrifice. A move later and black would capture with his king (hence it is needed now).
+20
+exd
+b5
+Ke5
+b6
+kibitz The white pawn advances. Unfortunately the traitor pawn is stopping his own king from entering the square of the enemy pawn.
+11
+kibitz Black now must either waste a move to move the pawn or take an extra move to move his king round it via d5-c6-c7 or e6-d7-c7
+12
+kibitz Either way the pawn gets home first.
+Ke6
+b7
+Kd7
+b8=Q
+kibitz It's all over now. The queen or king can stop the pawn without problems , and black will soon be mated.
+11
+kibitz This example brings an important point home. Concepts such as the square, corresponding squares and key/critical squares which are discussed in most textbook examples, should not be thoughtlessly followed. Sometimes there is an exception to a rule, a special trick or a defense that needs a careful reply.
+30
+kibitz The concepts are only guidelines. They may not always work. Think before you plan to simplify into a 'technically' won endgame, as there might be a hidden resource for the defender. Never use autopilot unless the clock demands it.
+20
+bsetup
+1
+bsetup fen 7K/7p/k1P5/8/8/8/8/8
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz Here's a famous example by Reti that proves that mindlessly following a rule cannot predict the result. The rest of the position must be looked at.
+15
+kibitz Black's king is too close to white's pawn, and if it advances black can capture it. Black's pawn is about to advance too far away for white to capture. He needs two extra moves (black is moving first) to get into the square.
+22
+kibitz Looking at this and remembering the rule of the square, white could have easily resigned. But there is a hidden resource!
+11
+h5
+Kg7
+kibitz Off goes the hare pawn, and the tortoise king follows...
+6
+h4
+Kf6
+kibitz Still he has no chance of wining the race.
+h3
+Ke6
+kibitz White gives up chasing the pawn and goes to protect his own.
+6
+h2
+c7
+kibitz huh? What is this? That pawn that couldn't move, for fear of capture, suddenly moves! Now h1=Q c8=Q+ is a draw.
+11
+Kb7
+kibitz Black is forced to stop c8.
+Kd7
+kibitz Now c8 is assured and h1=Q c8=Q+ is a draw.
+6
+kibitz So if black mindlessly pushes the pawn, white can queen straight afterwards. The maneuver is called the feint. White's king appears to be moving down the board, but then it suddenly changes direction.
+21
+revert
+kibitz For completeness, let's see what happens if black threatens to execute white's pawn at an earlier stage.
+10
+h5
+Kg7
+h4
+Kf6
+Kb6
+kibitz Dagger poised, the king approaches the pawn.
+Ke5
+kibitz Ke5! is the key move. Since black has invested a tempo on closing in on the white pawn, he hasn't had a chance to advance his own. Now if black captures the pawn, white plays Kf4 and is inside the square of the h4 pawn. If the pawn advances, Kd6 protects the pawn and c7-c8=Q is assured with a draw.
+29
+h3
+Kd6
+h2
+c7
+Kb7
+Kd7
+h1=Q
+c8=Q
+kibitz That is a neat example. Bravo Reti! (It is also a revisitation of the Einstein's king idea.)
+9
+kibitz (Note: A passed pawn is a pawn that does not have enemy pawns blocking the path either on the same or adjacent files).
+7
+bsetup
+1
+bsetup fen 8/2k1p3/2P4K/1P6/8/8/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz Connected passed pawns are a pain to have to deal with. They are usually a winning advantage if they cannot be blockaded. The blockading piece has to give up duties elsewhere. It's almost like being a piece up.
+20
+kibitz Black cannot capture white's pawns, the back one protects the front one and if the back one is captured the front one cannot be caught. If the king moves away they'll queen, so the black king cannot provide assistance to his pawn.
+23
+kibitz White just comes in and eats the black pawn, then assists the pawns in queening. While connected pawns (where the front one is a passed pawn) can look after themselves against a king, they cannot queen by themselves.
+21
+bsetup
+1
+bsetup fen 2k5/2P5/1P6/3K4/8/8/4p3/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz Here white cannot catch the black pawn and it threatens to queen next move, but he has another trick up his sleeve.
+11
+Kc6
+e1=Q
+kibitz Forced; no other move was available.
+6
+b7
+kibitz And white mates. All white had to do was ensure his king couldn't be checked when black queened. Note this mating pattern can also be reused further down the board if a rook, queen or other pieces combined are stopping the enemy king's retreat.
+21
+bsetup
+1
+bsetup fen 8/Pk6/1P6/1K6/8/8/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz Here is an example that ties our first lecture together with this one. Black's king blocks both pawns. The white king cannot get any closer due to stalemate. Eg:
+17
+Ka5
+Ka8
+Ka6
+kibitz And a draw. But is it really drawn?
+back 3
+kibitz Answer: no. If the pawn on a7 didn't exist then we showed in the previous lecture that if we can get the king onto the sixth rank gaining opposition then we can win. So let's get rid of the a pawn...
+18
+a8=Q
+Kxa8
+kibitz And now opposition.
+Ka6
+kibitz And wins as shown previously.
+Kb8
+b7
+Kc7
+Ka7
+kibitz etc...
+1
+bsetup
+1
+bsetup fen 1k6/8/P1P5/8/8/4p3/5p2/5K2
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz Passed pawns that are separated by a file can take care of themselves and queen without the aid of the king if they are on the sixth or seventh rank.
+15
+kibitz White's pawns are too close and the black king is too far away for black to try moving his king to f3 for a mating trick.
+12
+kibitz Blacks pawns cannot be captured, but they cannot queen, where as white's can.
+8
+Ke2
+kibitz Giving the move to black and zugzwang (a position where one doesn't want the move).
+9
+Kc7
+a7
+kibitz While they are on the same rank, the pawns cannot be touched, black threatens one pawn, but the other advances.
+10
+kibitz There is no way to stop the a-pawn due to both b7 and b8 being covered by the pawns.
+6
+bsetup
+1
+bsetup fen 1k6/8/P1P5/5ppp/8/8/6K1/8
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz These pawns are so strong they can beat three connected pawns with careful play.
+9
+kibitz Black's king must not move otherwise one of white's pawns will advance and it cannot be stopped as before.
+10
+f4
+kibitz A pawn moves instead.
+Kf3
+kibitz And wins, since g4 loses the f4 pawn and after h4, Kg4! means that the f or h pawn will have to advance and it will be captured. The two remaining pawns can be stopped as before.
+17
+kibitz The same idea would win for black with h4 being played first (white would respond with Kh3).
+10
+back 2
+kibitz and now with g4 instead of f4.
+g4
+Kg3
+kibitz This again forces a pawn loss.
+kibitz The winning technique if the pawns are on the same rank is to keep on the file that is in the center of the pawns. This way the king can react no matter which of the three pawns is pushed.
+19
+bsetup
+1
+bsetup fen 1k6/8/P1P4p/6p1/5p2/8/6K1/8
+1
+bsetup tomove white
+1
+bsetup done
+kibitz If they form a chain the defense is as follows...
+6
+Kf3
+h5
+kibitz The only move.
+Kf2
+kibitz Staying in front of the most advanced pawn...
+5
+h4
+Kg2
+kibitz If Kf3?? then h3 and it will be impossible to stop the pawns.
+7
+g4
+Kg1
+kibitz Keeping on the file in the middle of the pawns so that it is possible to react to all three pawn moves. This wins before as shown.
+12
+back 4
+kibitz With g4 instead of h4 there is no difference.
+5
+g4
+Kg2
+f3
+kibitz h4 would just be a transposition to the previous line.
+5
+Kg3
+kibitz Kf1 staying in front of the pawn would be wrong, since after g4 Kg1, h4 then the king is forced to commit to one side and the pawn on the other side will queen.
+18
+h4
+kibitz The pawn on h4 cannot be captured as the king moves out of the square of the f3 pawn and it will queen.
+Kf2
+h3
+Kg3
+kibitz And the pawns get eaten.
+f2
+Kxf2
+h2
+Kg2
+g3
+Kh1
+kibitz And now black is forced to give up the pawns and let white queen.
+7
+kibitz If the separated pawns have not reached the sixth rank then black's king can block one of them and the other cannot advance more than one square without being lost. However black cannot capture the pawns as before.
+21
+kibitz Pawns with two files between them can also queen without aid of their king as long as they are on the 5th rank (assuming if it's black to move one cannot be captured).
+15
+bsetup
+1
+bsetup fen 8/1k6/8/P2P4/8/8/8/7K
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz Imagine the pawns form a square (4 x 4). If it touches or is over the 8th rank the king cannot stop them.
+11
+kibitz In this position the white king is too far away to assist.
+6
+Ka6
+kibitz The king approaches one of the pawns...
+5
+d6
+kibitz And the other one advances. The king must enter the square of that pawn.
+8
+Kb7
+a6
+kibitz A decoy. If the king captures, then it steps outside the square of the other pawn and will not be able to catch it.
+12
+Kb8
+d7
+kibitz Often the pawn furthest away advances, but here it doesn't matter.
+7
+Kc7
+a7
+kibitz And black is unable to stop both pawns.
+kibitz If the pawns are further apart and the king is not about to capture one of them, then the win is trivial.
+11
+kibitz Doubled pawns can be a bit trickier.
+kibitz First there is nothing to be said about doubled rook pawns. They are to be treated the same as single rook pawns.
+12
+kibitz The extra pawn provides a way of giving the move back to the opponent (wasting a tempo) when it is needed, but with rook pawns that is not the issue. The issue is getting a 'buried' king out of the corner and is a draw whoever to play once either king is buried.
+26
+kibitz However with other pawns, the second pawn gives more winning chances. For example:
+5
+bsetup
+1
+bsetup fen 4k3/8/4P3/4K3/4P3/8/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz Without the pawn on e4 this is drawn as shown in the first lecture. However, here the pawn can be used to waste a tempo, giving the move to black.
+14
+Kd6
+Kd8
+e7
+Ke8
+kibitz A draw? No.
+e5
+Kf7
+Kd7
+kibitz White wins.
+kibitz A little care is needed. Shift the final position over two files to the right and it is stalemate. In this case the white king would go to the right-hand-side of the pawn.
+17
+kibitz There are stalemate cases and knowledge of them does help.
+3
+kibitz First the obvious one:
+bsetup
+1
+bsetup fen 4k3/4P3/4K3/4P3/8/8/8/8
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz Ok, it looks like sheer carelessness, but there are other stalemates here.
+bsetup
+1
+bsetup fen 4k3/4P3/3KP3/8/8/8/8/8
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz Instead of the previous stalemate, white chose to advance the pawn.
+4
+bsetup
+1
+bsetup fen 4k3/4P3/3K4/4P3/8/8/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz This was the 'parent' position. Giving up the pawn is no good and the two other moves lead to one of the stalemate possibilities above.
+12
+kibitz Remember the second pawn is needed for tempo losing purposes. Therefore if the opponent can capture the front pawn a draw will result if the pawns are bunched together, or the other king is too far away to help the remaining pawn by gaining its critical squares.
+26
+kibitz Here is an example:
+1
+bsetup
+1
+bsetup fen 8/4k3/4P3/3KP3/8/8/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+kibitz Here white loses the front pawn (zugzwang). The critical squares (d7, e7, f7, d6, d6, d6) of the rear pawn will be controlled by the black king. This is a draw.
+13
+bsetup
+1
+bsetup tomove black
+1
+bsetup done
+1
+kibitz Giving the move to black, this is draw again, but only with the right moves. It is just like playing with a single pawn, since one of the stalemate possibilities will arise.
+17
+Ke8
+Kd6
+kibitz Throwing the pawn is no good.
+Kd8
+e7
+Ke8
+kibitz And draw as earlier.
+kibitz Shifting it down a rank...
+1
+bsetup
+1
+bsetup fen 8/8/4k3/4P3/3KP3/8/8/8
+1
+bsetup tomove black
+1
+bsetup done
+kibitz (note with white to move he draws again due to having to give up the front pawn).
+9
+kibitz The winning technique is to leave the pawn on e4 alone until white needs to give a move to black at the normal stalemating position.
+12
+Ke7
+Kd5
+Kd7
+e6
+Ke7
+Ke5
+Ke8
+Kd6
+Kd8
+e7
+kibitz e5 also worked since it would be black's turn not white's.
+6
+Ke8
+e5
+Kf7
+Kd7
+kibitz An outside passed pawn is another winning advantage. While the enemy king is trying to stop it, the pawns (in the center or side of the board) can be eaten up.
+16
+kibitz Usually as both players castle on the kingside it's an extra pawn on the queenside (a majority) becomes the outside passer. If both castle queenside then the opposite is true.
+17
+kibitz There are many examples of this. I will only show one. This is to highlight the advantage of having such a pawn.
+8
+bsetup
+1
+bsetup fen 8/8/6p1/k4pPp/P4P1P/1K6/8/8
+1
+bsetup tomove white
+1
+bsetup done
+1
+Kc4
+kibitz White gives up the pawn, and while black is capturing the white pawn, the white king will eat the kingside pawns.
+10
+kibitz Black's king even if on e8 would not be able to keep out the white king from the kingside. White would just advance the pawn making its square smaller to lure black out of the way.
+18
+Kxa4
+Kd5
+Kb3
+Ke6
+Kc4
+Kf6
+Kd4
+Kxg6
+Ke4
+Kh7
+Kxf4
+g6
+Ke4
+g7
+f4
+g8=Q
+kibitz And the queen will stop the pawn.
+kibitz Note that the outside pawn may not be enough if its king has to babysit enemy connected pawns, those separated by a rank, or protected passed pawns.
+15
+kibitz Since the outside pawn may be an advantage it is sometimes advisable to capture towards the outside of the board with pawns later in the game. (In the opening the advice is often capture towards the center to aid in central control).
+23
+kibitz So what did we learn:
+kibitz Einstein's king. The shortest path in distance is not the only shortest path in moves. Alternate routes may be available. The number of moves needed is the maximum of the horizontal and vertical distances (in squares).
+21
+kibitz The shortest path in distance may not always be the best. Watch out for opportunities to shoulder barge, or threaten something else on your way.
+14
+kibitz The rule of the square is: If we make a diagonal line from the pawn to the back rank and we make that square and the square the pawn is on as opposite corners of a square (with the perimeter outside) then if the enemy king can get inside that square the pawn can be captured.
+1
+bsetup
+1
+bsetup fen 1N4N1/8/8/8/8/1P4N1/8/K5k1
+1
+bsetup tomove black
+1
+bsetup done
+23
+kibitz As the pawn moves the square gets smaller. And beware that when the pawn is on the second rank the square should be constructed as if the pawn was on the third rank. The square can be made on both sides of the pawn. Also look for ways to block the approaching king.
+26
+kibitz The feint is where we pretend to do one thing, but then end up doing another. Using a route that doesn't commit our king to either plan (as in Reti's position) we can then chose at the appropriate moment what to do.
+21
+kibitz Connected passed pawns can look after themselves against a king, but cannot queen alone. Watch out for using them to get checkmate if they are on the 6th and 7th ranks.
+1
+bsetup
+1
+bsetup fen 2k5/2P5/1P6/3K4/8/8/4p3/8
+1
+bsetup tomove white
+1
+bsetup done
+13
+kibitz Passed pawns separated by a file can also look after themselves when they are on the same file although they too cannot queen unless on the sixth or seventh ranks. In this case they will beat two or even three connected pawns.
+1
+bsetup
+1
+bsetup fen 1k6/8/P1P4p/6p1/5p2/8/6K1/8
+1
+bsetup tomove white
+1
+bsetup done
+18
+kibitz Passed pawns separated by two files can queen alone as long as they are on the fifth rank at least (will form a square that touches or crosses the eighth rank). Before that they are prone to capture unless the king can assist.
+22
+kibitz Doubled passed pawns can give winning chances when they aren't rook pawns and there are spare tempos available to the back pawn. Be careful of the stalemate possibilities.
+1
+bsetup
+1
+bsetup fen 4k3/8/4P3/4K3/4P3/8/8/8
+1
+bsetup tomove white
+1
+bsetup done
+13
+kibitz An outside passed pawn can be an winning advantage. The pawn is left as bait while all the pawns on the other side are munched. If the king has to babysit enemy pawns that would otherwise advance there may be no advantage in it.
+1
+bsetup
+1
+bsetup fen 8/8/6p1/k4pPp/P4P1P/1K6/8/8
+1
+bsetup tomove white
+1
+bsetup done
+18

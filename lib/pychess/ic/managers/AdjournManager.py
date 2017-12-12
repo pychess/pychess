@@ -325,7 +325,7 @@ class AdjournManager(GObject.GObject):
 
     def examine(self, game):
         game.board = None
-        self.connection.examined_game = game
+        self.connection.archived_examine = game
         if isinstance(game, FICSAdjournedGame):
             self.connection.client.run_command("examine %s %s" % (
                 self.connection.stored_owner, game.opponent.name))

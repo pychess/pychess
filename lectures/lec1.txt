@@ -1,0 +1,253 @@
+e4
+e5
+f4
+kibitz The King's Gambit, an opening that strikes fear in the hearts of many 1...e5 players. White starts a fight as early as move 2, trading off king safety for pressure on the center and easy development in most lines.
+20
+exf4
+Nf3
+g5
+h4
+kibitz Variations like this, where both sides have thrown their kingside pawns forward and sacrificial attacks against the kings are the norm, are very common after 2...exf4. You have probably seen many examples of this if you have examined the games of 19th century masters.
+35
+back 2
+d6
+d4
+Nf6
+Nc3
+Be7
+Bxf4
+kibitz And if black tries to calmly give back the pawn and develop, white often simply takes control of the center and gains a slight lead in development, leaving black cramped.
+33
+back 8
+kibitz However, you don't have to accept a cramped position or be willing to go in to a mutual king hunt to play against the King's Gambit! There are other possibilities, one of which is the topic of this lecture:
+20
+Qh4
+kibitz This move attempts to take advantage of the 2.f4's weakness: the weakening of the e1-h4 diagonal. If Ke2 here, black has the pleasant choice between grabbing the f4 pawn and generating threats with Bc5. So white must play g3.
+25
+g3
+Qe7
+kibitz First black lost a tempo with Qh4+, now he is blocking his bishop on f8! What is going on here?
+10
+kibitz Qh4+ forced white's pawn to g3, and Qe7 pressures whites e-pawn. The position of the pawn on g3 is important. If white ever recaptures on f4 with it, the e1-h4 diagonal will be opened again. Also the move g3 has increased the vulnerability of the h1 rook! Let's look at a line where this comes in to play.
+30
+fxe5
+kibitz White hopes to gain a tempo when the black queen captures on e5. However, black doesn't need to allow that to happen!
+10
+d6
+kibitz If white does not take on d6 now, black will simply play dxe5.
+8
+exd6
+Qxe4
+kibitz Taking advantage of the queen's presence on the e-file and the weakness of the h1 rook! Now white can't block with a minor piece and then attack the queen with Nc3, because black will simply take the rook.
+25
+Qe2
+Qxe2
+Nxe2
+Bxd6
+kibitz Black has regained his pawns and reached a roughly even endgame. The g3 pawn is still a liability even at this stage. h5 and h4 is often part of black's plans in the positions that result.
+20
+Bg2
+Nc6
+kibitz Intending to complete development and begin attacking white's kingside(Bd7, O-O-O, Ne7, and h5-h4 is a plan). White can choose a plan of bringing his pieces and pawns to the center with c3, d4, O-O, and Bf4, or he can try...
+35
+Bxc6
+bxc6
+kibitz Play might proceed as follows:
+5
+b3
+5
+Ne7
+5
+Bb2
+5
+f6
+5
+c4
+5
+c5
+5
+Nbc3
+5
+Bb7
+5
+Rf1
+5
+Ng6
+5
+Nb5
+5
+Ne5
+kibitz Black has achieved a good position, and he also threatens Nd3+, picking up the b2 bishop.
+20
+back 24
+kibitz White has another try here that black can also meet with threats against white's e-pawn.
+10
+d3
+kibitz Can you guess what black can try here to take advantage of the pin on the e-file?
+20
+d5
+kibitz Threatening to win a pawn by exf4(opening the e-file), and then grabbing the e-pawn. If white tries this,
+10
+exd5
+exf4
+5
+kibitz it is white who must be careful! Now Ne2 loses the knight to f3. Black has an interesting counter to Be2.
+15
+Be2
+fxg3
+hxg3
+Qe5
+kibitz Hitting on the d5 pawn, the g3 pawn, and also b2 if the bishop on c1 is developed to f4 now.
+15
+back 4
+kibitz Thus white should play Qe2.
+5
+Qe2
+kibitz Black can gain an advantage like this:
+5
+fxg3
+hxg3
+Bg4
+kibitz Black is ahead in development and, more importantly since the queens will be traded, white has several weak pawns.
+10
+back 6
+kibitz White has a better move here that causes much less damage to his pawn structure.
+10
+Nc3
+kibitz Black now plays to isolate white's e4 pawn.
+5
+dxe4
+dxe4
+Nf6
+5
+kibitz This move pressures, but does not threaten white's e4 pawn. For example:
+10
+Nf3
+kibitz Grabbing the pawn fails badly for black.
+5
+exf4
+Bxf4
+Nxe4
+Nd5
+5
+kibitz If black moves the queen, Nxc7+ is crushing.
+10
+Nc3
+Nxe7
+Nxd1
+Nd5
+10
+kibitz The dual threats of Nxc7+ and taking the d1 knight are decisive.
+6
+back 8
+kibitz Black should instead play this:
+Nc6
+5
+kibitz White has a hard time pressing any attack based on the weakness of the e5 pawn. For example:
+10
+Bb5
+Bd7
+5
+Bxc6
+d7c6
+5
+Nxe5
+Bxe4
+5
+Nxe4
+Nxe4
+5
+Qd5
+Nd6
+5
+kibitz And black can follow up with O-O-O.
+5
+back 12
+kibitz White can also attempt to gain a lead in development here.
+5
+fxe5
+Qxe5
+Nf3
+5
+kibitz Black can create a haven for his queen with a method often seen in the Scandinavian defense(1.e4 d5).
+10
+Qa5
+Bd2
+c6
+5
+kibitz White can continue to chase black's pieces around for a few more moves, but it doesn't lead to anything substantial.
+10
+Nd5
+Qd8
+Nxf6
+Qxf6
+Bg5
+5
+Qd6
+Qxd6
+Bxd6
+O-O-O
+Bc7
+10
+kibitz Black has no weaknesses, and it is difficult to stop him from developing normally and pressuring the isolated e4 pawn.
+20
+back 22
+kibitz Another try for white here is Nc3.
+Nc3
+kibitz Black can attempt to reopen the e1-h4 diagonal with exf4!? here but white can soundly sacrifice a pawn with 4.d4 to shake up the position. More along the lines of our solid play is d6.
+20
+d6
+kibitz After this, both sides develop naturally. Here is one possibility.
+8
+Nf3
+Bg4
+5
+h3
+Bxf3
+Qxf3
+5
+Nf6
+Bc4
+5
+Nc6
+d3
+kibitz Nd4 isn't necessarily good here.
+5
+Nd4
+Qf2
+kibitz White will gain a tempo back on the knight by playing Be3, and playing c5 is very risky for black because of the already piled up on weakness on d5 that it would create.
+25
+back 2
+Qd7
+kibitz After this, black can choose between castling kingside(after Be7) with a solid position or castling queenside and attacking white's kingside.
+17
+back 12
+kibitz White has one more interesting try here.
+5
+Qe2
+kibitz The idea is to get off of the pin on the e-file and develop the bishop on g2. After this move, black's development is similar to the way development proceeded after 3.Nc3.
+15
+d6
+kibitz In order to meet fxe5 with dxe5.
+5
+Nf3
+Nc6
+5
+Bg2
+Nf6
+5
+kibitz With the familiar threat of exf4.
+5
+d3
+Bg4
+5
+c3
+kibitz Preventing Nd4. Again, black will soon unblock his bishop with Qd7, and decide where he wants to castle.
+12
+back 9
+kibitz As you may have already figured out, most of white's other moves in this position drop material without much compensation to exf4.
+15
+kibitz Now you can face the King's Gambit with confidence and no fear of getting a completely passive position or starting a hack and slash fight out of the opening!
+15
+kibitz Not only is this opening sound for black, but the moves Qh4+ and Qe7 and the positions that result also have good shock value against many people who are accustomed to 2...exf4.
+15

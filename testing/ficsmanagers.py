@@ -70,9 +70,12 @@ class DummyConnection(Connection):
         self.client = self.DummyClient(self.predictions, self.reply_cmd_dict, self.replay_dg_dict, self.replay_cn_dict)
         self.client.lines.block_mode = True
         self.client.lines.line_prefix = "fics%"
+        self.archived_examine = None
         self.examined_game = None
         self.notify_users = []
         self.ini_messages = []
+
+        self.offline_lecture = False
 
     def getUsername(self):
         return self.username
@@ -136,7 +139,7 @@ class EmittingTestCase(unittest.TestCase):
         def handler(manager, *args):
             self.args = args
             # print(signal, args[0])
-            if signal in ("obsGameCreated", "playGameCreated"):
+            if signal in ("obsGameCreated", "playGameCreated", "exGameCreated"):
                 ficsgame = args[0]
                 self.connection.bm.onGameModelStarted(ficsgame.gameno)
 

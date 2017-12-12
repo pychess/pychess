@@ -72,7 +72,8 @@ class ChatView(Gtk.Box):
             text_buffer.insert_with_tags_by_name(iter, " ", "observers")
             text_buffer.insert(iter, "\n")
 
-            vbox.pack_start(self.obsView, False, True, 0)
+            if not self.gamemodel.connection.offline_lecture:
+                vbox.pack_start(self.obsView, False, True, 0)
             vbox.pack_start(self.sw, True, True, 0)
 
             self.pack_start(vbox, True, True, 0)
@@ -87,7 +88,28 @@ class ChatView(Gtk.Box):
 
         # Inits the write view
         self.writeView = Gtk.Entry()
+
+        box = Gtk.Box()
         self.pack_start(self.writeView, False, False, 0)
+        box.add(self.writeView)
+
+        if isinstance(self.gamemodel, ICGameModel) and \
+                self.gamemodel.connection.offline_lecture:
+            label = _("Go on")
+            self.go_on_btn = Gtk.Button()
+            self.go_on_btn.set_label(label)
+            self.go_on_btn_cid = self.go_on_btn.connect(
+                "clicked", lambda btn: self.gamemodel.connection.skip_event.set())
+            box.add(self.go_on_btn)
+
+            label = _("Exit")
+            self.exit_btn = Gtk.Button()
+            self.exit_btn.set_label(label)
+            self.exit_btn_cid = self.exit_btn.connect(
+                "clicked", lambda btn: self.gamemodel.connection.exit_event.set())
+            box.add(self.exit_btn)
+
+        self.pack_start(box, False, False, 0)
 
         self.writeview_cid = self.writeView.connect("key-press-event", self.onKeyPress)
         self.cid = None

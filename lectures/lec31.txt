@@ -1,0 +1,284 @@
+k This lecture is an edited version of a transcript of a live lecture given by Grandmaster Milorad Knezevic (FICS handle Knez) on April 15, 1999.
+10
+k Many extraneous comments were eliminated, and the order in which some comments appear were changed so that they appear right before or after the move(s) being discussed.
+15
+k For consistency, all moves within kibitzes and whispers were changed to standard algebraic notation.
+8
+k Spelling errors were fixed. Punctuation and grammar were only fixed when what was being said was difficult to understand otherwise.
+12
+k Now, on with the show :)
+k GM Knezevic: hi
+k GM Knezevic: the main idea of our lecture today is open lines as strategic element
+8
+k GM Knezevic: experienced players perfectly know the meaning of open lines in chess game
+8
+k GM Knezevic: in general their main use should be the ways to infiltrate in opponent's camp
+k GM Knezevic: but apart from the abstract meaning of open line , we must find some moment supporting its use , for example better coordination of pieces , more space and so on
+17
+k GM Knezevic: I will start showing my game against GM Kypreichic , played in Czechoslovakia 1975
+9
+bname Kypreichic
+1
+k GM Knezevic: i have white pieces
+d4
+d5
+c4
+c6
+Nc3
+e6
+Nf3
+Nf6
+e3
+Nbd7
+Qc2
+Bd6
+e4
+k dfgordon(CA): e4 is very aggressive
+k GM Knezevic: 7.e4 , with idea to open game as much as possible , and also trying to open some central lines , at the same time developing well
+30
+dxe4
+Nxe4
+Nxe4
+Qxe4
+Bb4+
+Bd2
+Bxd2+
+Nxd2
+O-O
+O-O-O
+k dfgordon(CA): 0-0-0 is interesting
+k GM Knezevic: For the moment white could be satisfied with opening as he got more space and better development!
+30
+e5
+k GM Knezevic: 12...e5 Black is in danger to be too much cramped , and he started fighting for centre
+30
+dxe5
+Qa5
+Bd3
+g6
+Bb1
+k GM Knezevic: 15.Bb1! Solving whites problems and with good prospect to control both central lines
+30
+Nxe5
+Rhe1
+f6
+k dfgordon(CA): f6 is a sign that things are not going well
+k GM Knezevic: 16 ...f6 , With idea next move Bf5
+15
+Qh4
+k Alias: Why not Be6
+k dfgordon(CA): Be6 loses a piece to f4
+15
+Qc5
+k GM Knezevic: 17...Qc5  Trying some counter play with pressure on c4 pawn.But white is perfectly coordinated and tactical complications are serving to him
+15
+f4
+k GM Knezevic: 18 f4! If now black takes on c4 he is immediately lost!
+20
+Nxc4
+Ne4
+k Obliviax: why can't Qe7 be played to avoid Nxf6+?
+k dfgordon(CA): on Qe7 Nd6 looks strong
+15
+Qb4
+Nxf6+
+Kg7
+Qxh7+
+Kxf6
+Qxg6
+15
+back 8
+Ng4
+k GM Knezevic: he played Ng4
+Re2
+k GM Knezevic: Re2! Now you will see the main way of using open line : Occupy it with both rooks , come to 7th or 8th rank and try to finish game in direct attack
+16
+k GM Knezevic: Of course such things do not happen often , just in the case as here when everything works in our favor!
+30
+Kg7
+Rde1
+Rf7
+Re8
+k GM Knezevic: 21.Re8 , That's it!
+12
+b5
+k GM Knezevic: 21... b5?, mistake , losing immediately , but anyway black position is hopeless
+20
+Bxg6
+k GM Knezevic: Bxg6!!
+k Obliviax: threats: Qxh7 and Bxf7, or if hxg6 then Qh8++
+20
+Kxg6
+Rxc8
+k GM Knezevic: of course it is not necessary to say after 23...Rxc8 24. Qxg4 and Qxc8
+16
+Nf2
+Rxa8
+Nd3+
+Kb1
+Qf5
+g4
+Qxf4
+Rg8+
+k GM Knezevic: 27. Rg8 And black resigned , as after Rg7 he gets mated with Qh5
+10
+Rg7
+Qh5
+k GM Knezevic: This was just extreme case where white had all conditions for attack
+8
+k GM Knezevic: but it is anywhere good to know technique of occupying one of last ranks
+8
+k GM Knezevic: now we will see another game also about lines and ranks.It is my game against Russian GM Alexander Zaitzev(Not related with GM Igor Zaitzev)
+14
+k GM Knezevic: Alexander was even champion of USSR , but unfortunately died in the best age.
+8
+revert
+1
+bname A.Zaitzev
+1
+e4
+c6
+d4
+d5
+exd5
+cxd5
+c4
+Nf6
+Nc3
+e6
+Nf3
+Be7
+k GM Knezevic: Panov Botvinik line of Caro Kann
+6
+cxd5
+Nxd5
+k Knightnite: what is current theory on isolated pawn, a bonus, or a weakness
+8
+k GM Knezevic: (about isolated pawn)This is a non stop discussion about this matter and it is not possible to give direct answer
+12
+Bb5+
+k GM Knezevic: almost forgotten move but deserving serious attention.In this line Alekhine won against Eliskases on Olympiad in Buenos Aires 1939
+13
+Bd7
+Bxd7+
+Qxd7
+Ne5
+Nxc3
+bxc3
+Qd5
+O-O
+Nc6
+Re1
+k Knightnite: what about b5 any good?
+k GM Knezevic: black has no time for such moves like b5, he must finish developing
+20
+Rc8
+k dfgordon(CA): not 0-0 yet? hmmm that might cost
+k GM Knezevic: 13...Rc8 more simple is 13...o-o
+15
+Bb2
+O-O
+k GM Knezevic: 14...0-0?
+k GM Knezevic: black ignored the critical moment of all position -- danger to his position from whites Ne5
+15
+k GM Knezevic: it was the last moment to change that knight taking it with N from c6
+15
+k Knightnite: is c4 good for white
+k GM Knezevic: yes
+k GM Knezevic: it is the next move
+10
+c4
+Qd8
+Ng4
+k GM Knezevic: 16.Ng4 extremely important move , after that white gets strong attack!
+k dfgordon(CA): d5 is crushing
+25
+Na5
+c5
+Nc6
+k GM Knezevic: 17...Nc6 , Black likes to install his N on d5 , afterward he would have clear advantage.But white will not allow it!
+18
+Re3
+k GM Knezevic: 18.Re3! If now 18...Nb4
+6
+Nb4
+Rb3
+k GM Knezevic: and b7 pawn is hanging
+8
+back 2
+Qd7
+k GM Knezevic: 18...Qd7 Now he likes Nb4, as b7 pawn is protected, but white turns on direct attack on blacks king
+15
+Rg3
+f6
+k solochess: was the f6 to let the Q protect the g7 pawn?
+k dfgordon(CA): yes, and block long diagonal
+15
+Nh6+
+Kh8
+Qg4
+Bd8
+k GM Knezevic: 21... Bd8 for the moment looks black managed with defense, but
+10
+d5
+k GM Knezevic: d5!
+15
+k GM Knezevic: 22...gxh6 No other moves
+k Obliviax: Ne5 wasn't possible?
+k dfgordon(CA): if Ne5 then Bxe5 and dxe6
+20
+gxh6
+k dfgordon(CA): theme of open lines again
+12
+dxc6
+Rxc6
+k GM Knezevic: For the moment I almost thought "what have i managed , no attack anymore and he even has a pawn more?" But after that I immediately "recognized" d-line and 7th rank!
+18
+Rd1
+Qf7
+Rgd3
+Be7
+k Knightnite: black is very disorganized
+Rd7
+Rxc5
+Ba3
+Rg5
+Qf3
+Re8
+Qxb7
+Qh5
+k GM Knezevic: 29...Qh5 , the last black attempt , in some lines the Rd1 is hanging
+15
+Bxe7
+Rxe7
+Rd8+
+Re8
+Qf3
+k dfgordon(CA): !!
+k Ricci: wow
+k Psycho: I would love to play such a move in a tourney....
+k DAV: Q looks like it's overloaded.
+6
+k Obliviax: sweetest variation is RxR then Qxf6+
+10
+k Knightnite: what if black did qf7?
+k Obliviax: then RxR+ followed by Qxf6+ and Rd8!
+15
+k GM Knezevic: Qf3!! And here black resigned , as after 32...Qxf3
+8
+Qxf3
+Rxe8+
+Kg7
+Rd7+
+Kg6
+Rg8+
+Kf5
+Rxg5+
+hxg5
+gxf3
+k GM Knezevic: And white as you see stays with R more
+6
+k GM Knezevic: it was the most important in using open lines on a direct way.Of course there are many moments with maneuvering and positional playing in different positions , but it is something what needs much experience and practice!
+23
+k GM Knezevic: That was all for today.Thanks very much for attention!
+6

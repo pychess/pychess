@@ -1,0 +1,279 @@
+k The Milner-Barry Gambit is one of the sharpest white weapons against the French Defense.
+15
+k Over the years there have been found many suitable ways for black to face the Gambit.
+15
+k One of these ways is shown in LectureBot's 'Refuting the Milner-Barry Gambit in the French Defense', written by Kabal.
+15
+k I recommend to anyone who plays the french, viewing that lecture. You will take by surprise many Milner-Barry fans with that secret weapon.
+15
+k Let's revisit the proposed variation:
+8
+e2e4
+e7e6
+d2d4
+d7d5
+e4e5
+k The Advance Variation of the French.
+8
+c7c5
+c2c3
+b8c6
+g1f3
+d8b6
+k All the fight is about the d4 square.
+8
+f1d3
+k This move introduces the Milner-Barry Gambit.
+8
+k d3 is the Bishop's dream-square, but the drawback is that d4 is now insufficiently protected, so white will have to sacrifice his d4 pawn.
+15
+c5d4
+c3d4
+k Black must now avoid the well known trap: Nxd4 Nxd4 Qxd4 Bb5+, winning the Queen.
+12
+c8d7
+b1c3
+c6d4
+f3d4
+b6d4
+e1g1
+k This is the crucial position of the Milner-Barry.
+8
+k Black's most secure move is now a6, preventing ideas of Nc3-b5.
+8
+k However, accepting the second pawn sacrifice has become increasingly popular.
+10
+d4e5
+f1e1
+e5b8
+c3d5
+f8d6
+d1g4
+e8f8
+c1d2
+h7h5
+k This is black's new idea, which is explained in detail in LectureBot's 'Refuting the Milner-Barry Gambit in the French Defense' by Kabal. Again, I recommend that lecture to anyone who plays the French as black.
+10
+k White's Queen must now go to the ugly square h3, as otherwise he loses his Nd5. Black will develop his knight with Nh6 or Nf6, with the idea of going to g4. Practice proved that black has the advantage.
+15
+k Having played the Milner-Barry for many years, the author (knackie) made up his mind how white could react against this new threat to his favourite weapon.
+15
+back 8
+k The result of this search can be seen right at the start of the variation:
+12
+f1e1
+e5b8
+k And now, instead of playing the usual Nxd5, I propose:
+d1f3
+k White intends to take on d5 with his Queen. He also threatens to play Bf4 in some variations.
+8
+k This might seem illogical at first sight; white needs two moves to take on d5 instead of one.
+10
+k The main variation shown before proved, however, that the position of white's knight at d5 is very loose. White will have to lose some tempi for saving that knight anyway.
+15
+k Let's now look at some concrete analysis:
+10
+k What could be black's reply to Qf3?
+10
+k One idea would be defending the pawn at d5. This can be achieved with Nf6 or Bc6.
+12
+k Let's look at Nf6 first:
+8
+g8f6
+k Bg5 is not good here:
+Bg5
+Be7
+Bxf6
+Bxf6
+k White takes on d5 but doesn't achieve anything.
+18
+back 4
+c3d5
+f6d5
+f3d5
+k Compared to the theory line, white doesn't need to worry about his loose Nd5, meaning the white Queen can move freely around.
+15
+f8d6
+d5g5
+k Black's best here is probably Kf8, similar to the theory line, but the exchange of knights certainly favours white.
+15
+k If black plays g7-g6 here, he will lose inevitably. e.g:
+g7g6
+Qf6
+Rf8
+Bh6
+Rg8
+Bb5
+k With the threat of Rxe6.
+20
+back 6
+k Let's now see how play can proceed if black castles:
+10
+e8g8
+g5h4
+f7f5
+k Black has little choice if he wants to avoid mate.
+8
+d3c4
+k This strong diagonal along with the d-file will prove more than enough compensation for the pawn.
+10
+g8h8
+k White cannot take on e6: Bxe6?? Re8!
+10
+c1g5
+e6e5
+a1d1
+b8c7
+e1e3
+k Intending Rh3.
+8
+f5f4
+c4d3
+k Black is in trouble.
+10
+d7f5
+d3f5
+f8f5
+e3h3
+g7g6
+h3d3
+k Black will be overwhelmed on the dark squares.
+10
+back 24
+1
+k Let's now look what happens if black protects d5 by means of Bc6:
+10
+d7c6
+c1f4
+f8d6
+k It is difficult to say which is white's best response here, but the following is very interesting:
+12
+f3g3
+k Strange move, isn't it?
+8
+d6f4
+g3g7
+k The position is rather unclear, but white should certainly be no worse.
+15
+k Let's now look what else black can try after Qf3.
+8
+back 6
+k Instead of protecting d5, black could proceed with Bd6 as in the main variation.
+15
+f8d6
+f3d5
+k It seems black can now safely play Nf6 followed by 0-0, but...
+10
+g8f6
+d5g5
+k This attacks g7, so black has little choice.
+8
+e8g8
+g5h4
+k This position happened many times in knackie's games (blitz, rapid, and even tournament games).
+10
+k The result? Black NEVER survived.
+8
+k White's idea is very simple: Bc1-g5 followed by BxNf6 and Qxh7 mate.
+15
+k While white's plan is easy to foresee, black has no easy way of preventing it.
+15
+k I recommend you try this position against your computer.
+10
+k Let's look at two sample variations: h7-h6 and Be5 (played by Fritz)
+10
+h7h6
+k Black tries to prevent Bg5.
+8
+k The sacrifice Bxh6 now only leads to a roughly equal position:
+8
+c1h6
+d6h2
+k Everything else loses.
+8
+g1h1
+g7h6
+h4h6
+b8f4
+k After this strong defense, black gets an equal game.
+8
+h6h2
+f4h2
+h1h2
+k The game is equal.
+10
+back 9
+k Instead of Bxh6 white should play:
+8
+e1e3
+k Threatening Rh3 followed by Bxh6. A game against Fritz5 continued:
+8
+f8d8
+e3h3
+e6e5
+h3g3
+k Black is now helpless against Bxh6 or Qxh6.
+8
+k So h7-h6 was obviously bad.
+6
+back 6
+k Instead of h6 Fritz5 usually tries:
+8
+d6e5
+k A very clever move; after Bg5 h6! white would be forced into the equal variation Bxh6 Bxh2! we've already seen.
+15
+k Again, white should prefer:
+8
+e1e3
+k White simply threatens Rh3 followed by Bxh7+, while h7-h6 would again be met by Rh3.
+15
+g7g6
+k Analysis showed this is probably the best reply.
+10
+d3e2
+k A very strange move; white wants to be able to take on h5 (after Nh5 or h7-h5) in some variations.
+12
+d7c6
+e3h3
+h7h5
+c1g5
+k Let's just follow a sample analysis game against Fritz5.
+10
+f6d5
+c3e4
+k After Bxb2, white answers Bxh5!
+10
+k After f7-f5 white would answer Nc5! Bxb2 Bxh5! You can check these variations with your computer.
+15
+k The game now goes crazy. Fritz played:
+15
+f7f6
+e2h5
+f6g5
+e4g5
+d5f4
+h5g6
+f4h3
+h4h3
+e5h2
+g1h1
+g8g7
+h3h7
+g7f6
+h7h6
+f6e7
+h6g7
+e7d6
+a1d1
+c6d5
+g5e4
+d6c6
+d1c1
+k and black was mated on the Queenside.
+12
+back 38
+k Further analysis is of course needed, but if you play the Milner-Barry gambit and you find the 'Refutation of the Milner-Barry' hard to meet, Qf3 should provide a serious alternative with the surprise factor being on your side.
+20
+k If you want extensive analysis in Chessbase or PGN format, just send a mail (or a message) to knackie. I'll send you the analysis by mail-attachment.
+20
+k That's all folks! The author now sits and waits for the refutation of the refutation of the refutation of the Milner Barry ... :-)

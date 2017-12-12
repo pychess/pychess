@@ -365,11 +365,16 @@ class FICSMainConnection(FICSConnection):
         self.games = FICSGames(self)
         self.seeks = FICSSeeks(self)
         self.challenges = FICSChallenges(self)
+        self.archived_examine = None
         self.examined_game = None
         self.stored_owner = self.username
         self.history_owner = self.username
         self.journal_owner = self.username
         self.set_user_vars = False
+
+        self.offline_lecture = False
+        self.skip_event = asyncio.Event()  # set when 'Go on' button pressed
+        self.exit_event = asyncio.Event()  # set when 'Exit' button pressed
 
     def close(self):
         if isinstance(self.client, PredictionsTelnet) and self.set_user_vars:
@@ -431,6 +436,21 @@ class FICSMainConnection(FICSConnection):
         self.games.start()
         self.seeks.start()
         self.challenges.start()
+
+        # This block may useful if one wants to create
+        # unit test lines from real life fics output
+        if False:
+            self.client.run_command("set seek 0")
+            self.client.run_command("set shout 0")
+            self.client.run_command("set cshout 0")
+            self.client.run_command("iset seekinfo 0")
+            self.client.run_command("iset seekremove 0")
+            self.client.run_command("iset showownseek 0")
+            self.client.run_command("iset allresults 0")
+            self.client.run_command("iset pin 0")
+            self.client.run_command("set open 0")
+            self.client.run_command("set gin 0")
+            self.client.run_command("set availinfo 0")
 
     def start_helper_manager(self, set_user_vars):
         # if guest accounts disabled we will handle players in the main connection
