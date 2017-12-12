@@ -11,21 +11,7 @@ __desc__ = _(
     "The moves sheet keeps track of the players' moves and lets you navigate through the game history")
 
 
-class Switch:
-    def __init__(self):
-        self.on = False
-
-    def __enter__(self):
-        self.on = True
-
-    def __exit__(self, *a):
-        self.on = False
-
-
 class Sidepanel:
-    def __init__(self):
-        self.frozen = Switch()
-
     def load(self, gmwidg):
         __widget__ = Gtk.ScrolledWindow()
         __widget__.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -133,9 +119,6 @@ class Sidepanel:
         self.cids = {}
 
     def cursorChanged(self, widget, tree, col):
-        if self.frozen.on:
-            return
-
         path, focus_column = tree.get_cursor()
         indices = path.get_indices()
         row = indices[0]
@@ -149,18 +132,17 @@ class Sidepanel:
         self.boardview.setShownBoard(board)
 
     def moves_undone(self, game, moves):
-        with self.frozen:
-            for i in reversed(range(moves)):
-                try:
-                    row, view, other = self._ply_to_row_col_other(
-                        game.variations[0][-1].ply + moves - i)
-                    model = view.get_model()
+        for i in reversed(range(moves)):
+            try:
+                row, view, other = self._ply_to_row_col_other(
+                    game.variations[0][-1].ply + moves - i)
+                model = view.get_model()
+                model.remove(model.get_iter((row, )))
+                if view == self.left:
+                    model = self.numbers.get_model()
                     model.remove(model.get_iter((row, )))
-                    if view == self.left:
-                        model = self.numbers.get_model()
-                        model.remove(model.get_iter((row, )))
-                except ValueError:
-                    continue
+            except ValueError:
+                continue
 
     def game_changed(self, game, ply):
         if self.boardview is None or self.boardview.model is None:
@@ -219,14 +201,13 @@ class Sidepanel:
 
         row, col, other = self._ply_to_row_col_other(shown)
 
-        with self.frozen:
-            other.get_selection().unselect_all()
-            try:
-                col.get_selection().select_iter(col.get_model().get_iter(row))
-                col.scroll_to_cell((row, ), None, False)
-            except ValueError:
-                pass
-                # deleted variations by moves_undoing
+        other.get_selection().unselect_all()
+        try:
+            col.get_selection().select_iter(col.get_model().get_iter(row))
+            col.scroll_to_cell((row, ), None, False)
+        except ValueError:
+            pass
+            # deleted variations by moves_undoing
 
     def _ply_to_row_col_other(self, ply):
         col = ply & 1 and self.left or self.right

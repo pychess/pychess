@@ -17,17 +17,6 @@ __desc__ = _(
     "The comments panel will try to analyze and explain the moves played")
 
 
-class Switch:
-    def __init__(self):
-        self.on = False
-
-    def __enter__(self):
-        self.on = True
-
-    def __exit__(self, *a):
-        self.on = False
-
-
 class Sidepanel:
     def __init__(self):
         self.givenTips = {}
@@ -57,8 +46,6 @@ class Sidepanel:
         self.boardview = gmwidg.board.view
         self.cid = self.boardview.connect("shownChanged", self.shownChanged)
 
-        self.frozen = Switch()
-
         return scrollwin
 
     def on_game_terminated(self, model):
@@ -68,8 +55,6 @@ class Sidepanel:
         self.boardview.disconnect(self.cid)
 
     def cursorChanged(self, tv):
-        if self.frozen.on:
-            return
         path, focus_column = tv.get_cursor()
         indices = path.get_indices()
         if indices:
@@ -84,16 +69,15 @@ class Sidepanel:
             return
         row = shown - self.gamemodel.lowply
 
-        with self.frozen:
-            try:
-                iter = self.store.get_iter(row)
-                selection = self.tv.get_selection()
-                if selection is not None:
-                    selection.select_iter(iter)
-                    self.tv.scroll_to_cell(row)
-            except ValueError:
-                pass
-                # deleted variations by moves_undoing
+        try:
+            iter = self.store.get_iter(row)
+            selection = self.tv.get_selection()
+            if selection is not None:
+                selection.select_iter(iter)
+                self.tv.scroll_to_cell(row)
+        except ValueError:
+            pass
+            # deleted variations by moves_undoing
 
     def moves_undone(self, game, moves):
         model = self.tv.get_model()
@@ -128,8 +112,7 @@ class Sidepanel:
 
         if self.boardview.shown >= model.ply:
             iter = self.store.get_iter(len(self.store) - 1)
-            with self.frozen:
-                self.tv.get_selection().select_iter(iter)
+            self.tv.get_selection().select_iter(iter)
 
     def __chooseComment(self, model, ply):
 
