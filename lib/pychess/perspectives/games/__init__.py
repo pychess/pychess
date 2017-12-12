@@ -123,17 +123,6 @@ class Games(GObject.GObject, Perspective):
                 player = func(gmwidg, *args)
                 players.append(player)
 
-                # Connect to conf
-                if i == 0 or (i == 1 and player0tup[0] != LOCAL):
-                    key = "firstName"
-                    alt = _("You")
-                else:
-                    key = "secondName"
-                    alt = _("Guest")
-
-                if prename == conf.get(key, alt):
-                    self.notify_cids[gmwidg].append(conf.notify_add(key, set_name, player, key, alt))
-
         if player0tup[0] == ARTIFICIAL and player1tup[0] == ARTIFICIAL:
 
             def emit_action(board, action, param, gmwidg):

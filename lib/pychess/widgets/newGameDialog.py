@@ -475,7 +475,7 @@ class _GameInitializationMode(object):
                                         incr, moves], name))
                 else:
                     if not playertups or playertups[0][0] != LOCAL:
-                        name = conf.get("firstName", _("You"))
+                        name = conf.get("firstName", conf.username)
                     else:
                         name = conf.get("secondName", _("Guest"))
                     playertups.append((LOCAL, Human, (color, name), name))
@@ -833,7 +833,7 @@ class EnterNotationExtension(_GameInitializationMode):
                 player0combo = cls.widgets["whitePlayerCombobox"]
                 player0 = player0combo.get_active()
                 if player0 == 0 and '[White "' not in text:
-                    name = '[White "%s"]' % conf.get("firstName", _("You"))
+                    name = '[White "%s"]' % conf.get("firstName", conf.username)
                     text = "%s\n%s" % (name, text)
 
                 player1combo = cls.widgets["blackPlayerCombobox"]
