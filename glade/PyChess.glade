@@ -4079,6 +4079,7 @@ It will search positions from http://www.k4it.de/</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">Warning: this option generates a formatted .pgn file which is not standards complient</property>
                             <property name="halign">start</property>
                             <property name="use_underline">True</property>
                             <property name="xalign">0</property>
