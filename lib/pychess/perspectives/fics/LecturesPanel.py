@@ -126,6 +126,8 @@ class Sidepanel():
         def coro():
             exit_lecture = False
             inside_bsetup = False
+            paused = False
+
             while True:
                 try:
                     step = next(self.steps)
@@ -143,16 +145,23 @@ class Sidepanel():
                         wait_sec = -1
 
                     while wait_sec >= 0:
-                        if connection.exit_event.is_set():
-                            connection.exit_event.clear()
+                        if connection.lecture_exit_event.is_set():
+                            connection.lecture_exit_event.clear()
                             exit_lecture = True
                             break
 
-                        if connection.skip_event.is_set():
+                        if connection.lecture_skip_event.is_set():
+                            connection.lecture_skip_event.clear()
+                            paused = False
                             break
 
+                        if connection.lecture_pause_event.is_set():
+                            connection.lecture_pause_event.clear()
+                            paused = True
+
                         yield from asyncio.sleep(0.1)
-                        wait_sec = wait_sec - 0.1
+                        if not paused:
+                            wait_sec = wait_sec - 0.1
 
                     if exit_lecture:
                         connection.client.run_command("kibitz Lecture exited.")
@@ -162,8 +171,6 @@ class Sidepanel():
 
                     if not just_wait:
                         connection.client.run_command(step)
-
-                    connection.skip_event.clear()
 
                 except StopIteration:
                     connection.client.run_command("kibitz That concludes this lecture.")
