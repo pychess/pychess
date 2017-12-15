@@ -104,7 +104,10 @@ class Sidepanel():
                     elif parts[0] == "back":
                         yield "backward %s" % parts[1]
                     elif parts[0] == "bsetup":
-                        yield "bsetup " + " ".join(parts[1:])
+                        if len(parts) == 1:
+                            yield "bsetup"
+                        else:
+                            yield "bsetup " + " ".join(parts[1:])
                     elif parts[0] == "tomove":
                         yield "tomove %s" % parts[1]
                     elif parts[0] == "wname":
@@ -122,15 +125,24 @@ class Sidepanel():
         @asyncio.coroutine
         def coro():
             exit_lecture = False
+            inside_bsetup = False
             while True:
                 try:
                     step = next(self.steps)
                     print(step)
 
-                    just_wait = step.isdigit()
-                    wait_sec = int(step) if just_wait else 4
+                    if not inside_bsetup and step == "bsetup":
+                        inside_bsetup = True
+                    elif inside_bsetup and step == "bsetup done":
+                        inside_bsetup = False
 
-                    while wait_sec > 0:
+                    just_wait = step.isdigit()
+                    wait_sec = int(step) if just_wait else 0
+
+                    if inside_bsetup:
+                        wait_sec = -1
+
+                    while wait_sec >= 0:
                         if connection.exit_event.is_set():
                             connection.exit_event.clear()
                             exit_lecture = True
@@ -143,7 +155,6 @@ class Sidepanel():
                         wait_sec = wait_sec - 0.1
 
                     if exit_lecture:
-                        print("EXIT lecture!")
                         connection.client.run_command("kibitz Lecture exited.")
                         connection.client.run_command("unexamine")
                         connection.offline_lecture = False
