@@ -143,6 +143,7 @@ class Sidepanel():
                         wait_sec = wait_sec - 0.1
 
                     if exit_lecture:
+                        print("EXIT lecture!")
                         connection.client.run_command("kibitz Lecture exited.")
                         connection.client.run_command("unexamine")
                         connection.offline_lecture = False
