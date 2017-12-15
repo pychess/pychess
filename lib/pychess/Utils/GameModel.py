@@ -247,6 +247,11 @@ class GameModel(GObject.GObject):
 
     @asyncio.coroutine
     def start_analyzer(self, analyzer_type):
+        # prevent starting new analyzers again and agin
+        # when fics lecture reuses the same gamemodel
+        if analyzer_type in self.spectators:
+            return
+
         from pychess.Players.engineNest import init_engine
         analyzer = yield from init_engine(analyzer_type, self)
         if analyzer is None:
@@ -413,7 +418,8 @@ class GameModel(GObject.GObject):
         if self.players and self.status in (WAITING_TO_START, PAUSED, RUNNING):
             if (self.players[0].__type__ == LOCAL and self.players[1].__type__ == REMOTE) or \
                (self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE) or \
-               (self.players[1].__type__ == REMOTE and self.players[0].__type__ == REMOTE and self.examined):
+               (self.players[1].__type__ == REMOTE and self.players[0].__type__ == REMOTE and
+                self.examined and self.connection.offline_lecture):
                 return True
         return False
 
