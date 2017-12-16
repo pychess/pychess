@@ -408,6 +408,7 @@ class BoardManager(GObject.GObject):
 
     def onStyle12(self, match):
         style12 = match.groups()[0]
+        # print("onStyle12", style12[:140])
         gameno = int(style12.split()[15])
         if gameno in self.queuedStyle12s:
             self.queuedStyle12s[gameno].append(style12)
@@ -465,8 +466,20 @@ class BoardManager(GObject.GObject):
                 game = self.connection.games.get(game)
                 self.connection.examined_game = game
 
-            # don't start new game in puzzlebot/endgamebot when they just reuse gameno
+                # don't start another new game when someone (some human examiner or lecturebot/endgamebot)
+                # changes our relation in an already started game from IC_POS_OBSERVING_EXAMINATION to
+                # IC_POS_EXAMINATING
+                if game.relation == IC_POS_OBSERVING_EXAMINATION:
+                    game.relation = relation  # IC_POS_EXAMINATING
+                    # print("IC_POS_OBSERVING_EXAMINATION --> IC_POS_EXAMINATING")
+                    # before this change server sent an unobserve to us
+                    # and it removed gameno from started events dict
+                    # we have to put it back...
+                    self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
+                    return
+
             else:
+                # don't start new game in puzzlebot/endgamebot when they just reuse gameno
                 log.debug("emit('boardSetup') with %s %s %s %s" % (gameno, fen, wname, bname),
                           extra={"task": (self.connection.username, "BM.onStyle12")})
                 self.emit("boardSetup", gameno, fen, wname, bname)
@@ -1044,6 +1057,15 @@ class BoardManager(GObject.GObject):
                                             pgn=pgn),
                             relation=relation)
             game = self.connection.games.get(game)
+
+            # when puzzlebot reuses same gameno for starting next puzzle
+            # no unexamine sent by server, so we have to set None to
+            # self.connection.examined_game to guide self.onStyle12() a bit...
+            if self.connection.examined_game is not None and \
+                    self.connection.examined_game.gameno == gameno:
+                self.connection.examined_game = None
+
+            game.relation = relation  # IC_POS_OBSERVING_EXAMINATION
             self.gamesImObserving[game] = wms, bms
 
             self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
