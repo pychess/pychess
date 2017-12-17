@@ -5,6 +5,7 @@ from urllib.request import Request, urlopen
 
 from gi.repository import Gdk, Gtk
 
+from pychess.Utils.const import NAME, UNDOABLE_STATES
 from pychess.Savers import pgn
 from pychess.widgets import mainwindow
 
@@ -13,6 +14,18 @@ APIKEY = "a137d919b75c8766b082367610189358cfb1ba70"
 
 
 def paste(gamemodel):
+    dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO)
+    if gamemodel.status in UNDOABLE_STATES:
+        text = _("The current game is over. First, please verify the properties of the game.")
+    else:
+        text = _("The current game is not terminated. Its export may have a limited interest.")
+    text += "\n\n" + _("Should %s publicly publish your game as PGN on chesspastebin.com ?") % NAME
+    dialog.set_markup(text)
+    response = dialog.run()
+    dialog.destroy()
+    if response != Gtk.ResponseType.YES:
+        return
+
     output = StringIO()
     text = pgn.save(output, gamemodel)
     values = {'apikey': APIKEY,
