@@ -412,7 +412,7 @@ class GameWidget(GObject.GObject):
             return
 
         if len(analysis) >= 1 and analysis[0] is not None:
-            ply, movstrs, score, depth = analysis[0]
+            ply, movstrs, score, depth, nps = analysis[0]
             board = analyzer.board
             try:
                 moves = listToMoves(board, movstrs, validate=True)

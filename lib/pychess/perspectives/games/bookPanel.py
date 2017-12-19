@@ -228,7 +228,7 @@ class EngineAdvisor(Advisor):
                 self.store[self.path + (i, )] = self.textOnlyRow("")
                 continue
 
-            ply, movstrs, score, depth = line
+            ply, movstrs, score, depth, nps = line
             board0 = self.engine.board
             board = board0.clone()
             try:
