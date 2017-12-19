@@ -605,7 +605,7 @@ class CECPEngine(ProtocolEngine):
             # king. Therefore we just return the "kill king" move
             # automaticaly
             self.emit("analyze", [(self.board.ply, [toAN(
-                self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, "")])
+                self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, "", "")])
             return
 
         print("post", file=self.engine)
@@ -753,7 +753,7 @@ class CECPEngine(ProtocolEngine):
 
                         mvstrs = movere.findall(moves)
                         if mvstrs:
-                            self.emit("analyze", [(self.board.ply, mvstrs, scoreval, depth.strip())])
+                            self.emit("analyze", [(self.board.ply, mvstrs, scoreval, depth.strip(), "")])
 
                         continue
 

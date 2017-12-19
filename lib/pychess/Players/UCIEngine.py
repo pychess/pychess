@@ -446,7 +446,7 @@ class UCIEngine(ProtocolEngine):
                     # king. Therefore we just return the "kill king" move
                     # automaticaly
                     self.emit("analyze", [(self.board.ply, [toAN(
-                        self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, "")])
+                        self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, "", "")])
                     return
                 commands.append("position fen %s" % self.board.asFen())
             else:
@@ -634,8 +634,13 @@ class UCIEngine(ProtocolEngine):
                     else:
                         depth = ""
 
+                    if "nps" in parts:
+                        nps = parts[parts.index("nps") + 1]
+                    else:
+                        nps = ""
+
                     if multipv <= len(self.analysis):
-                        self.analysis[multipv - 1] = (self.board.ply, movstrs, score, depth)
+                        self.analysis[multipv - 1] = (self.board.ply, movstrs, score, depth, nps)
                     self.emit("analyze", self.analysis)
                     continue
 
