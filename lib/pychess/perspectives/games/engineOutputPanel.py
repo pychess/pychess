@@ -225,6 +225,7 @@ class EngineOutput(Gtk.VBox):
         self.re_extract_uci_score_upperbound = re.compile(
             r'score +upperbound +')
         self.re_extract_uci_pv = re.compile(r'pv +([a-hA-HoO].*[^ ]) *$')
+        self.re_extract_uci_nps = re.compile(r'nps +([0-9]+) +')
 
     def _del(self):
         self.detachEngine()
@@ -247,14 +248,17 @@ class EngineOutput(Gtk.VBox):
             startiter.backward_chars(len(line))
             self.output.get_buffer().apply_tag(tag, startiter, enditer)
 
-    def appendThinking(self, depth, score, pv):
+    def appendThinking(self, depth, score, pv, nps):
         # Append a formatted thinking line:
         self.appendNewline()
         self.append(depth.__str__() + ". ", self.tag_color)
         self.append("Score: ", self.tag_bold)
         self.append(score.__str__() + " ")
         self.append("PV: ", self.tag_bold)
-        self.append(pv.__str__())
+        self.append(pv.__str__() + " ")
+        if nps != "":
+            self.append("NPS: ", self.tag_bold)
+            self.append(nps.__str__())
 
     def parseInfoLine(self, line):
         # Parse an identified info line and add it to our output:
@@ -269,6 +273,7 @@ class EngineOutput(Gtk.VBox):
         depth = "?"
         score = "?"
         pv = "?"
+        nps = ""
         infoFound = False
 
         # do more sophisticated parsing here:
@@ -304,6 +309,12 @@ class EngineOutput(Gtk.VBox):
             if result:
                 infoFound = True
                 pv = result.group(1)
+
+            # parse nps:
+            result = self.re_extract_uci_nps.search(line)
+            if result:
+                infoFound = True
+                nps = result.group(1)
         else:
             # CECP/Winboard/GNUChess info line
             # parse all information in one go:
@@ -320,7 +331,7 @@ class EngineOutput(Gtk.VBox):
 
         # If we found useful information, show it:
         if infoFound:
-            self.appendThinking(depth, score, pv)
+            self.appendThinking(depth, score, pv, nps)
 
     def parseLine(self, engine, line):
         # Clean up the line a bit:
