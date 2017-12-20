@@ -93,15 +93,17 @@ class CECPTests(EmittingTestCase):
 
         @asyncio.coroutine
         def coro():
-            yield from self._testLine(self.engineA, self.analyzerA, board,
-                           "1. Mat1 0 1     Bxb7#", 0, ['Bxb7#'], MATE_VALUE, "1.", "")
+            yield from self._testLine(
+                self.engineA, self.analyzerA, board,
+                "1. Mat1 0 1     Bxb7#", 0, ['Bxb7#'], MATE_VALUE, "1.", "")
 
             # Notice, in the opposite situation there is no forced mate. Black can
             # do Bxe3 or Ne7+, but we just emulate a stupid analyzer not
             # recognizing this.
-            yield from self._testLine(self.engineI, self.analyzerI, board.switchColor(),
-                           "10. -Mat 2 35 64989837     Bd4 Bxb7#",
-                           0, ['Bd4', 'Bxb7#'], -MATE_VALUE, "10.", "")
+            yield from self._testLine(
+                self.engineI, self.analyzerI, board.switchColor(),
+                "10. -Mat 2 35 64989837     Bd4 Bxb7#",
+                0, ['Bd4', 'Bxb7#'], -MATE_VALUE, "10.", "185685248")
         self.loop.run_until_complete(coro())
 
     def test2(self):
@@ -116,12 +118,12 @@ class CECPTests(EmittingTestCase):
             yield from self._testLine(
                 self.engineA, self.analyzerA, board,
                 "9. 1833 23 43872584     a8=Q+ Kf7 Qa2+ Kf6 Qd2 Kf5 g4+",
-                94, ['a8=Q+', 'Kf7', 'Qa2+', 'Kf6', 'Qd2', 'Kf5', 'g4+'], 1833, "9.", "")
+                94, ['a8=Q+', 'Kf7', 'Qa2+', 'Kf6', 'Qd2', 'Kf5', 'g4+'], 1833, "9.", "190750365")
 
             yield from self._testLine(
                 self.engineI, self.analyzerI, board.switchColor(),
                 "10. -1883 59 107386433     Kf7 a8=Q Ke6 Qa6+ Ke5 Qd6+ Kf5",
-                94, ['Kf7', 'a8=Q', 'Ke6', 'Qa6+', 'Ke5', 'Qd6+', 'Kf5'], -1883, "10.", "")
+                94, ['Kf7', 'a8=Q', 'Ke6', 'Qa6+', 'Ke5', 'Qd6+', 'Kf5'], -1883, "10.", "182010903")
         self.loop.run_until_complete(coro())
 
 

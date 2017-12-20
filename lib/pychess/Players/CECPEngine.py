@@ -54,7 +54,7 @@ anare = re.compile("""
                              #   Mat1 is used by gnuchess to specify mate in one.
                              #   otherwise we should support a signed float
     \s+                      #
-    ([\d\.]+)                # The time used in seconds
+    ([\d\.]+)                # The time used in centi-seconds
     \s+                      #
     ([\d\.]+)                # Number of nodes visited
     \s+                      #
