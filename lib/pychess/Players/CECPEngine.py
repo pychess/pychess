@@ -54,9 +54,9 @@ anare = re.compile("""
                              #   Mat1 is used by gnuchess to specify mate in one.
                              #   otherwise we should support a signed float
     \s+                      #
-    [\d\.]+                  # The time used in seconds
+    ([\d\.]+)                # The time used in seconds
     \s+                      #
-    [\d\.]+                  # Number of nodes visited
+    ([\d\.]+)                # Number of nodes visited
     \s+                      #
     (.+)                     # The Principal-Variation. With or without move numbers
     \s*                      #
@@ -741,7 +741,7 @@ class CECPEngine(ProtocolEngine):
 
                     match = anare.match(line)
                     if match:
-                        depth, score, moves = match.groups()
+                        depth, score, time, nodes, moves = match.groups()
 
                         if "mat" in score.lower() or "#" in moves:
                             # Will look either like -Mat 3 or Mat3
@@ -751,9 +751,11 @@ class CECPEngine(ProtocolEngine):
                         else:
                             scoreval = int(score)
 
+                        nps = str(int(int(nodes) / (int(time) / 100))) if int(time) > 0 else ""
+
                         mvstrs = movere.findall(moves)
                         if mvstrs:
-                            self.emit("analyze", [(self.board.ply, mvstrs, scoreval, depth.strip(), "")])
+                            self.emit("analyze", [(self.board.ply, mvstrs, scoreval, depth.strip(), nps)])
 
                         continue
 
