@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2006 Thomas Dybdahl Ahle <lobais@gmail.com>, 2013 Tamás Bajusz <gbtami@gmail.com> -->
-<application>
+<desktop-application>
  <id type="desktop">pychess.desktop</id>
  <licence>GFDL</licence>
  <name>PyChess</name>
@@ -54,5 +54,5 @@
  </screenshots>
  <url type="homepage">http://pychess.org</url>
  <updatecontact>pychess-people@googlegroups.com</updatecontact>
-</application>
+</desktop-application>
 
