@@ -85,8 +85,6 @@ class Sidepanel:
             icgamemodel.connection.client.run_command(allob)
 
     def onMessageSent(self, chatView, text):
-        print(text)
-        print('hasattr(self, "player")=%s; self.gamemodel.examined=%s; self.gamemodel.ficsgame.relation=%s' % (hasattr(self, "player"), self.gamemodel.examined, self.gamemodel.ficsgame.relation))
         if hasattr(self, "player") or self.gamemodel.examined:
             if text.startswith('# '):
                 text = text[2:]
