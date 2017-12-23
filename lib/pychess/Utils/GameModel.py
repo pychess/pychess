@@ -696,6 +696,7 @@ class GameModel(GObject.GObject):
                     self.curColor = self.boards[-1].color
                     continue
                 except GameEnded:
+                    log.debug("GameModel.run: got GameEnded exception")
                     break
 
                 assert isinstance(move, Move), "%s" % repr(move)
@@ -730,6 +731,8 @@ class GameModel(GObject.GObject):
 
                 self.checkStatus()
                 self.curColor = 1 - self.curColor
+
+            self.checkStatus()
 
         asyncio.async(coro())
 

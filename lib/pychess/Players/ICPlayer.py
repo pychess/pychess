@@ -31,17 +31,9 @@ class ICPlayer(Player):
         self.pass_interrupt = False
         self.turn_interrupt = False
 
-        # If some times later FICS creates another game with same wplayer,bplayer,gameno
-        # this will change to False and boardUpdate messages will be ignored
-        self.current = True
-
         self.connection = connection = self.gamemodel.connection
 
         self.connections = connections = defaultdict(list)
-        connections[connection.bm].append(connection.bm.connect_after(
-            "playGameCreated", self.__playGameCreated))
-        connections[connection.bm].append(connection.bm.connect_after(
-            "obsGameCreated", self.__obsGameCreated))
         connections[connection.om].append(connection.om.connect(
             "onOfferAdd", self.__onOfferAdd))
         connections[connection.om].append(connection.om.connect(
@@ -68,22 +60,6 @@ class ICPlayer(Player):
         return self.gamemodel.ficsgame.move_queue
 
     # Handle signals from the connection
-
-    def __playGameCreated(self, bm, ficsgame):
-        if self.gamemodel.ficsplayers[0] == ficsgame.wplayer and \
-            self.gamemodel.ficsplayers[1] == ficsgame.bplayer and \
-                self.gameno == ficsgame.gameno:
-            log.debug("ICPlayer.__playGameCreated: gameno reappeared: gameno=%s white=%s black=%s" % (
-                ficsgame.gameno, ficsgame.wplayer.name, ficsgame.bplayer.name))
-            self.current = False
-
-    def __obsGameCreated(self, bm, ficsgame):
-        if self.gamemodel.ficsplayers[0] == ficsgame.wplayer and \
-            self.gamemodel.ficsplayers[1] == ficsgame.bplayer and \
-                self.gameno == ficsgame.gameno:
-            log.debug("ICPlayer.__obsGameCreated: gameno reappeared: gameno=%s white=%s black=%s" % (
-                ficsgame.gameno, ficsgame.wplayer.name, ficsgame.bplayer.name))
-            self.current = False
 
     def __onOfferAdd(self, om, offer):
         if self.gamemodel.status in UNFINISHED_STATES and not self.gamemodel.isObservationGame(
@@ -113,6 +89,7 @@ class ICPlayer(Player):
             self.emit("offer", Offer(CHAT_ACTION, param=text))
 
     def __disconnect(self):
+        log.debug("ICPlayer.__disconnect: %s" % self.name)
         if self.connections is None:
             return
         for obj in self.connections:
@@ -121,7 +98,8 @@ class ICPlayer(Player):
                     obj.disconnect(handler_id)
         self.connections = None
 
-    def end(self, status, reason):
+    def end(self, status=None, reason=None):
+        log.debug("ICPlayer.end: %s" % self.name)
         self.__disconnect()
         self.move_queue.put_nowait("end")
 
@@ -151,11 +129,14 @@ class ICPlayer(Player):
             elif item == "del":
                 raise PlayerIsDead
             elif item == "stm":
+                self.turn_interrupt = False
                 raise TurnInterrupt
             elif item == "fen":
+                self.turn_interrupt = False
                 raise TurnInterrupt
 
             gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms = item
+            log.debug("ICPlayer.makeMove got: %s %s %s %s" % (gameno, ply, curcol, lastmove))
             self.gamemodel.onBoardUpdate(gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
 
             if self.turn_interrupt:
@@ -202,8 +183,10 @@ class ICPlayer(Player):
         # If current player has changed so that it is no longer us to move,
         # We raise TurnInterrupt in order to let GameModel continue the game
         if movecount % 2 == 1 and gamemodel.curplayer != self:
+            log.debug("ICPlayer.playerUndoMoves: set self.turn_interrupt = True %s" % self.name)
             self.turn_interrupt = True
         if movecount % 2 == 0 and gamemodel.curplayer == self:
+            log.debug("ICPlayer.playerUndoMoves: set self.pass_interrupt = True %s" % self.name)
             self.pass_interrupt = True
 
     def resetPosition(self):

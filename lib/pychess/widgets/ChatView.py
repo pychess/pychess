@@ -109,13 +109,6 @@ class ChatView(Gtk.Box):
                 "clicked", lambda btn: self.gamemodel.connection.lecture_pause_event.set())
             box.add(self.pause_btn)
 
-            label = _("Exit")
-            self.exit_btn = Gtk.Button()
-            self.exit_btn.set_label(label)
-            self.exit_btn_cid = self.exit_btn.connect(
-                "clicked", lambda btn: self.gamemodel.connection.lecture_exit_event.set())
-            box.add(self.exit_btn)
-
         self.pack_start(box, False, False, 0)
 
         self.writeview_cid = self.writeView.connect("key-press-event", self.onKeyPress)

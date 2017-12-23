@@ -174,6 +174,7 @@ class ExamineGameTests(EmittingTestCase):
         self.assertEqual(game.move_queue.qsize(), 0)
 
         print(self.games_persp.cur_gmwidg().gamemodel.boards[-1])
+        print(self.games_persp.cur_gmwidg().gamemodel.moves)
 
         self.assertEqual(self.games_persp.cur_gmwidg().gamemodel.ply, 2)
 

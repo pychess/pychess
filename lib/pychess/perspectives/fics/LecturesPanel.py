@@ -139,7 +139,7 @@ class Sidepanel():
                         inside_bsetup = False
 
                     just_wait = step.isdigit()
-                    wait_sec = int(step) if just_wait else 0
+                    wait_sec = int(step) if just_wait else 2
 
                     if inside_bsetup:
                         wait_sec = -1

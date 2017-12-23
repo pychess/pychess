@@ -272,5 +272,6 @@ class PlayGameTests(EmittingTestCase):
         self.assertEqual(gamemodel.ply, 3)
         print(gamemodel.boards[-1])
 
+
 if __name__ == '__main__':
     unittest.main()

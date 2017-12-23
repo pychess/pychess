@@ -22,10 +22,13 @@ class ICGameModel(GameModel):
         self.ficsplayers = (ficsgame.wplayer, ficsgame.bplayer)
         self.gmwidg_ready = asyncio.Event()
         self.kibitz_task = None
+        self.disconnected = False
 
         connections = self.connections
         connections[connection.bm].append(connection.bm.connect(
             "boardSetup", self.onBoardSetup))
+        connections[connection.bm].append(connection.bm.connect(
+            "exGameReset", self.onExGameReset))
         connections[connection.bm].append(connection.bm.connect(
             "exGameBackward", self.onExGameBackward))
         connections[connection.bm].append(connection.bm.connect(
@@ -87,6 +90,7 @@ class ICGameModel(GameModel):
                     log.debug("ICGameModel.__disconnect: object=%s handler_id=%s" %
                               (repr(obj), repr(handler_id)))
                     obj.disconnect(handler_id)
+        self.disconnected = True
 
     def ficsplayer(self, player):
         if player.ichandle == self.ficsplayers[0].name:
@@ -118,12 +122,20 @@ class ICGameModel(GameModel):
                 return False
         return True
 
+    def onExGameReset(self, bm, ficsgame):
+        log.debug("ICGameModel.onExGameReset %s" % self)
+        if ficsgame == self.ficsgame:
+            self.__disconnect()
+            self.players[0].end()
+            self.players[1].end()
+
     def onExGameBackward(self, bm, gameno, ply):
         if gameno == self.ficsgame.gameno:
             self.undoMoves(ply)
 
     def onBoardSetup(self, bm, gameno, fen, wname, bname):
-        if gameno != self.ficsgame.gameno or len(self.players) != 2:
+        log.debug("ICGameModel.onBoardSetup: %s %s %s %s %s" % (bm, gameno, fen, wname, bname))
+        if gameno != self.ficsgame.gameno or len(self.players) != 2 or self.disconnected:
             return
 
         # Set up examined game black player
@@ -138,6 +150,12 @@ class ICGameModel(GameModel):
 
         # Set up examined game position, side to move, castling rights
         if self.boards[-1].asFen() != fen:
+            if self.boards[0].asFen().split()[:2] == fen.split()[:2]:
+                log.debug("ICGameModel.onBoardSetup: undoing moves %s" % self.moves)
+                self.undoMoves(len(self.moves))
+                self.ficsgame.move_queue.put_nowait("stm")
+                return
+
             new_position = self.boards[-1].asFen().split()[0] != fen.split()[0]
 
             # side to move change
@@ -152,9 +170,11 @@ class ICGameModel(GameModel):
                 first_time=False)
 
             if new_position:
+                log.debug('ICGameModel.onBoardSetup: put_nowait("fen"')
                 self.ficsgame.move_queue.put_nowait("fen")
                 self.emit("game_started")
             elif stm_change:
+                log.debug('ICGameModel.onBoardSetup: put_nowait("stm"')
                 self.ficsgame.move_queue.put_nowait("stm")
 
     def onBoardUpdate(self, gameno, ply, curcol, lastmove, fen, wname,
@@ -163,7 +183,7 @@ class ICGameModel(GameModel):
                   "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s") %
                   (str(id(self)), str(self.ply), repr(self.players), str(gameno), str(wname), str(bname),
                    str(ply), str(curcol), str(lastmove), str(fen), str(wms), str(bms)))
-        if gameno != self.ficsgame.gameno or len(self.players) < 2:
+        if gameno != self.ficsgame.gameno or len(self.players) < 2 or self.disconnected:
             return
 
         if self.timed:

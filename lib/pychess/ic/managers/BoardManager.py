@@ -178,6 +178,7 @@ class BoardManager(GObject.GObject):
         'playGameCreated': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'obsGameCreated': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'exGameCreated': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+        'exGameReset': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'exGameBackward': (GObject.SignalFlags.RUN_FIRST, None, (int, int)),
         'archiveGamePreview': (GObject.SignalFlags.RUN_FIRST, None,
                                (object, )),
@@ -408,7 +409,7 @@ class BoardManager(GObject.GObject):
 
     def onStyle12(self, match):
         style12 = match.groups()[0]
-        # print("onStyle12", style12[:140])
+        log.debug("onStyle12: %s" % style12)
         gameno = int(style12.split()[15])
         if gameno in self.queuedStyle12s:
             self.queuedStyle12s[gameno].append(style12)
@@ -1059,16 +1060,20 @@ class BoardManager(GObject.GObject):
             game = self.connection.games.get(game)
 
             # when puzzlebot reuses same gameno for starting next puzzle
-            # no unexamine sent by server, so we have to set None to
+            # sometimes no unexamine sent by server, so we have to set None to
             # self.connection.examined_game to guide self.onStyle12() a bit...
             if self.connection.examined_game is not None and \
                     self.connection.examined_game.gameno == gameno:
+                log.debug("BM.onObserveGameCreated: exGameReset emitted; self.connection.examined_game = %s" % gameno)
+                self.emit("exGameReset", self.connection.examined_game)
                 self.connection.examined_game = None
 
             game.relation = relation  # IC_POS_OBSERVING_EXAMINATION
             self.gamesImObserving[game] = wms, bms
 
             self.gamemodelStartedEvents[game.gameno] = asyncio.Event()
+            # puzzlebot sometimes creates next puzzle with same wplayer,bplayer,gameno
+            game.move_queue = asyncio.Queue()
             self.emit("obsGameCreated", game)
             self.gamemodelStartedEvents[game.gameno].wait()
         else:
@@ -1241,7 +1246,9 @@ class BoardManager(GObject.GObject):
         self.emit("madeExamined", gameno)
 
     def made_unexamined(self, match):
-        """You are no longer examine game"""
+        """ You are no longer examine game """
+        log.debug("BM.made_unexamined(): exGameReset emitted")
+        self.emit("exGameReset", self.connection.examined_game)
         self.connection.examined_game = None
         gameno, = match.groups()
         gameno = int(gameno)

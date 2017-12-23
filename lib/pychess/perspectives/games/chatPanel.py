@@ -85,7 +85,9 @@ class Sidepanel:
             icgamemodel.connection.client.run_command(allob)
 
     def onMessageSent(self, chatView, text):
-        if hasattr(self, "player"):
+        print(text)
+        print('hasattr(self, "player")=%s; self.gamemodel.examined=%s; self.gamemodel.ficsgame.relation=%s' % (hasattr(self, "player"), self.gamemodel.examined, self.gamemodel.ficsgame.relation))
+        if hasattr(self, "player") or self.gamemodel.examined:
             if text.startswith('# '):
                 text = text[2:]
                 self.gamemodel.connection.cm.whisper(text)
@@ -93,6 +95,15 @@ class Sidepanel:
                 text = text[8:]
                 self.gamemodel.connection.cm.whisper(text)
             else:
+                if not hasattr(self, "player"):
+                    if self.gamemodel.players[0].name == self.gamemodel.connection.username:
+                        self.player = self.gamemodel.players[0]
+                        self.opplayer = self.gamemodel.players[1]
+                    else:
+                        self.player = self.gamemodel.players[1]
+                        self.opplayer = self.gamemodel.players[0]
+                    print(self.player)
+                    print(self.opplayer)
                 if self.gamemodel.examined:
                     self.opplayer.putMessage(text)
                 else:
