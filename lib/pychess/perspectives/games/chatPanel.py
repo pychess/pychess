@@ -100,8 +100,7 @@ class Sidepanel:
                     else:
                         self.player = self.gamemodel.players[1]
                         self.opplayer = self.gamemodel.players[0]
-                    print(self.player)
-                    print(self.opplayer)
+
                 if self.gamemodel.examined:
                     self.opplayer.putMessage(text)
                 else:
