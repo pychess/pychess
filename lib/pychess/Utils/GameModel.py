@@ -247,7 +247,7 @@ class GameModel(GObject.GObject):
 
     @asyncio.coroutine
     def start_analyzer(self, analyzer_type):
-        # prevent starting new analyzers again and agin
+        # prevent starting new analyzers again and again
         # when fics lecture reuses the same gamemodel
         if analyzer_type in self.spectators:
             return
@@ -419,7 +419,10 @@ class GameModel(GObject.GObject):
             if (self.players[0].__type__ == LOCAL and self.players[1].__type__ == REMOTE) or \
                (self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE) or \
                (self.players[1].__type__ == REMOTE and self.players[0].__type__ == REMOTE and
-                    self.examined and self.connection.offline_lecture):
+                    self.examined and (
+                    self.connection.offline_lecture or
+                    self.players[0].name == "puzzlebot" or self.players[1].name == "puzzlebot") or
+                    self.players[0].name == "endgamebot" or self.players[1].name == "endgamebot"):
                 return True
         return False
 
