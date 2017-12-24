@@ -140,12 +140,12 @@ class ICGameModel(GameModel):
 
         # Set up examined game black player
         if "Black" not in self.tags or bname != self.tags["Black"]:
-            self.tags["Black"] = self.players[BLACK].name = self.ficsplayers[BLACK].name = bname
+            self.players[BLACK].name = bname
             self.emit("players_changed")
 
         # Set up examined game white player
         if "White" not in self.tags or wname != self.tags["White"]:
-            self.tags["White"] = self.players[WHITE].name = self.ficsplayers[WHITE].name = wname
+            self.players[WHITE].name = wname
             self.emit("players_changed")
 
         # Set up examined game position, side to move, castling rights
