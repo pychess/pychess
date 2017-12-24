@@ -899,12 +899,20 @@ class BoardView(Gtk.DrawingArea):
                 PangoCairo.show_layout(context, layout)
 
         matrix, invmatrix = matrixAround(self.matrix_pi, xc_loc + square / 2, yc_loc + square / 2)
-        paint(False)
-
-        if conf.get("faceToFace", False):
+        if self.rotation == 0:
+            paint(False)
+        else:
             context.transform(matrix)
             paint(True)
             context.transform(invmatrix)
+
+        if conf.get("faceToFace", False):
+            if self.rotation == 0:
+                context.transform(matrix)
+                paint(True)
+                context.transform(invmatrix)
+            else:
+                paint(False)
 
     def draw_image(self, context, image_surface, left, top, width, height):
         """ Draw a scaled image on a given context. """
