@@ -72,7 +72,9 @@ class Sidepanel():
         self.tv.connect("row-activated", self.row_activated, self.connection)
 
         self.store = Gtk.ListStore(int, str, str)
-        for num, title, author in LECTURES:
+        # TODO: there is no bsetup on ICC ?
+        lectures = [] if connection.ICC else LECTURES
+        for num, title, author in lectures:
             self.store.append([num, title, author])
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
