@@ -66,11 +66,10 @@ class BoardControl(Gtk.EventBox):
         'action': (GObject.SignalFlags.RUN_FIRST, None, (str, object))
     }
 
-    def __init__(self, gamemodel, action_menu_items, setup_position=False, game_preview=False, setup_sub_fen=False):
+    def __init__(self, gamemodel, action_menu_items, setup_position=False, game_preview=False):
         GObject.GObject.__init__(self)
         self.setup_position = setup_position
         self.game_preview = game_preview
-        self.setup_sub_fen = setup_sub_fen
         self.view = BoardView(gamemodel, setup_position=setup_position)
         self.add(self.view)
         self.variant = gamemodel.variant

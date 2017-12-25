@@ -479,10 +479,7 @@ class FilterPanel(Gtk.TreeView):
 
         # Add a BoardControl widget to dock and initialize it with a new SetupModel
         self.setupmodel = SetupModel()
-        self.board_control = BoardControl(self.setupmodel,
-                                          {},
-                                          setup_position=True,
-                                          setup_sub_fen=True)
+        self.board_control = BoardControl(self.setupmodel, {}, setup_position=True)
         self.setupmodel.curplayer = SetupPlayer(self.board_control)
         self.setupmodel.connect("game_changed", self.game_changed)
 
