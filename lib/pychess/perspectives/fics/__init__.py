@@ -70,8 +70,11 @@ class FICS(GObject.GObject, Perspective):
         def on_minute_15_clicked(button):
             self.connection.client.run_command("15-minute")
 
-        def on_minute_45_clicked(button):
-            self.connection.client.run_command("45-minute")
+        def on_minute_25_clicked(button):
+            self.connection.client.run_command("25-minute")
+
+        def on_chess960_clicked(button):
+            self.connection.client.run_command("chess960")
 
         self.minute_1_button = Gtk.ToggleToolButton()
         self.minute_1_button.set_label("1")
@@ -93,10 +96,15 @@ class FICS(GObject.GObject, Perspective):
         self.minute_15_button.set_tooltip_text(_("New game from 15-minute playing pool"))
         self.minute_15_button.connect("clicked", on_minute_15_clicked)
 
-        self.minute_45_button = Gtk.ToggleToolButton()
-        self.minute_45_button.set_label("45")
-        self.minute_45_button.set_tooltip_text(_("New game from 45-minute playing pool"))
-        self.minute_45_button.connect("clicked", on_minute_45_clicked)
+        self.minute_25_button = Gtk.ToggleToolButton()
+        self.minute_25_button.set_label("25")
+        self.minute_25_button.set_tooltip_text(_("New game from 25-minute playing pool"))
+        self.minute_25_button.connect("clicked", on_minute_25_clicked)
+
+        self.chess960_button = Gtk.ToggleToolButton()
+        self.chess960_button.set_label("960")
+        self.chess960_button.set_tooltip_text(_("New game from Chess960 playing pool"))
+        self.chess960_button.connect("clicked", on_chess960_clicked)
 
     def init_layout(self):
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -250,7 +258,7 @@ class FICS(GObject.GObject, Perspective):
         self.quick_seek_buttons = []
         if self.connection.ICC:
             self.quick_seek_buttons = [self.minute_1_button, self.minute_3_button, self.minute_5_button,
-                                       self.minute_15_button, self.minute_45_button]
+                                       self.minute_15_button, self.minute_25_button, self.chess960_button]
             tool_buttons += self.quick_seek_buttons
         perspective_manager.set_perspective_toolbuttons("fics", tool_buttons)
 

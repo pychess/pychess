@@ -4,7 +4,8 @@ import asyncio
 from gi.repository import GObject
 
 from pychess.System.Log import log
-from pychess.Utils.const import FEN_START, WHITE, reprResult
+from pychess.Utils.const import SHUFFLECHESS, WILDCASTLESHUFFLECHESS, FISCHERRANDOMCHESS, \
+    RANDOMCHESS, ASYMMETRICRANDOMCHESS, FEN_START, WHITE, reprResult
 from pychess.ic.FICSObjects import FICSGame, FICSBoard, FICSPlayer
 from pychess.ic.managers.BoardManager import BoardManager, parse_reason
 from pychess.ic import IC_POS_OBSERVING, GAME_TYPES, IC_STATUS_PLAYING, IC_POS_EXAMINATING
@@ -202,9 +203,9 @@ class ICCBoardManager(BoardManager):
         if self.connection.examined_game is not None:
             self.emit("exGameCreated", game)
         else:
-            if wild == "20":
-                # in wild 20 (loadfen/loadgame) we have to wait for
-                # a starting fen coming in a DG_POSITION_BEGIN datgram
+            if int(wild) in (1, 2, 3, 4, 20, 21, 22):
+                # several wild variant (including loadfen/loadgame) need
+                # a starting FEN coming in a DG_POSITION_BEGIN datgram
                 log.debug("wild20 is waiting for a starting FEN...")
             else:
                 self.emit("playGameCreated", game)
@@ -325,9 +326,12 @@ class ICCBoardManager(BoardManager):
         fen, moves_to_go = right_part.split("}")
         self.moves_to_go = int(moves_to_go)
 
-        if game.game_type == GAME_TYPES["w20"] and fen != FEN_START:
-            # in wild 20 (loadfen/loadgame) we have to wait for
-            # a starting fen coming in a DG_POSITION_BEGIN datgram
+        if fen != FEN_START and (game.game_type == GAME_TYPES["w20"] or
+                                 game.game_type == GAME_TYPES["w21"] or
+                                 game.game_type.variant_type in (
+                SHUFFLECHESS, WILDCASTLESHUFFLECHESS, FISCHERRANDOMCHESS,
+                RANDOMCHESS, ASYMMETRICRANDOMCHESS)):
+            # a starting fen coming in a DG_POSITION_BEGIN datagram
             log.debug("wild20 got a starting FEN %s" % fen)
             game.board.fen = fen
             self.emit("playGameCreated", game)
