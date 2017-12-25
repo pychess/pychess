@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-23 20:59+0100\n"
+"POT-Creation-Date: 2017-12-25 16:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4904,7 +4904,7 @@ msgstr ""
 
 #: lib/pychess/perspectives/fics/ChatPanel.py:43
 #: lib/pychess/perspectives/fics/ParrentListSection.py:34
-#: lib/pychess/perspectives/fics/__init__.py:545
+#: lib/pychess/perspectives/fics/__init__.py:553
 #: lib/pychess/perspectives/games/chatPanel.py:10
 msgid "Chat"
 msgstr ""
@@ -5033,7 +5033,7 @@ msgid "Assess"
 msgstr ""
 
 #: lib/pychess/perspectives/fics/ParrentListSection.py:33
-#: lib/pychess/perspectives/fics/__init__.py:546
+#: lib/pychess/perspectives/fics/__init__.py:554
 msgid "Follow"
 msgstr ""
 
@@ -5200,86 +5200,90 @@ msgstr ""
 msgid "Log Off"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:78
+#: lib/pychess/perspectives/fics/__init__.py:81
 msgid "New game from 1-minute playing pool"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:83
+#: lib/pychess/perspectives/fics/__init__.py:86
 msgid "New game from 3-minute playing pool"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:88
+#: lib/pychess/perspectives/fics/__init__.py:91
 msgid "New game from 5-minute playing pool"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:93
+#: lib/pychess/perspectives/fics/__init__.py:96
 msgid "New game from 15-minute playing pool"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:98
-msgid "New game from 45-minute playing pool"
+#: lib/pychess/perspectives/fics/__init__.py:101
+msgid "New game from 25-minute playing pool"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:357
+#: lib/pychess/perspectives/fics/__init__.py:106
+msgid "New game from Chess960 playing pool"
+msgstr ""
+
+#: lib/pychess/perspectives/fics/__init__.py:365
 msgid "You have to set kibitz on to see bot messages here."
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:376
+#: lib/pychess/perspectives/fics/__init__.py:384
 msgid ""
 "You may only have 3 outstanding seeks at the same time. If you "
 "want             to add a new seek you must clear your currently active "
 "seeks. Clear your seeks?"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:397
+#: lib/pychess/perspectives/fics/__init__.py:405
 msgid "You can't touch this! You are examining a game."
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:410
+#: lib/pychess/perspectives/fics/__init__.py:418
 msgid " has declined your offer for a match"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:424
+#: lib/pychess/perspectives/fics/__init__.py:432
 msgid " is censoring you"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:438
+#: lib/pychess/perspectives/fics/__init__.py:446
 msgid " noplay listing you"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:453
+#: lib/pychess/perspectives/fics/__init__.py:461
 msgid " uses a formula not fitting your match request:"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:468
+#: lib/pychess/perspectives/fics/__init__.py:476
 msgid "to manual accept"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:471
+#: lib/pychess/perspectives/fics/__init__.py:479
 msgid "to automatic accept"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:473
+#: lib/pychess/perspectives/fics/__init__.py:481
 msgid "rating range now"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:474
+#: lib/pychess/perspectives/fics/__init__.py:482
 msgid "Seek updated"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:487
+#: lib/pychess/perspectives/fics/__init__.py:495
 msgid "Your seeks have been removed"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:507
+#: lib/pychess/perspectives/fics/__init__.py:515
 msgid " has arrived"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:513
+#: lib/pychess/perspectives/fics/__init__.py:521
 msgid " has departed"
 msgstr ""
 
-#: lib/pychess/perspectives/fics/__init__.py:516
+#: lib/pychess/perspectives/fics/__init__.py:524
 msgid " is present"
 msgstr ""
 
