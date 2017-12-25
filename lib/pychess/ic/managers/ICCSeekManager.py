@@ -1,5 +1,6 @@
 from gi.repository import GObject
 
+from pychess.System.Log import log
 from pychess.Utils.const import UNSUPPORTED
 from pychess.ic import GAME_TYPES, TITLES, RATING_TYPES
 from pychess.ic.FICSObjects import FICSSeek
@@ -19,6 +20,7 @@ class ICCSeekManager(SeekManager):
         self.connection.client.run_command("set-2 %s 1" % DG_SEEK_REMOVED)
 
     def on_icc_seek_add(self, data):
+        log.debug("DG_SEEK_ADD %s" % data)
         # index name titles rating provisional-status wild rating-type time
         # inc rated color minrating maxrating autoaccept formula fancy-time-control
         # 195 Tinker {C} 2402 2 0 Blitz 5 3 1 -1 0 9999 1 1 {}
@@ -57,7 +59,7 @@ class ICCSeekManager(SeekManager):
         # fancy_tc = parts[12]
 
         if gametype.variant_type in UNSUPPORTED:
-            print("unsupported variant in seek: %s" % data)
+            log.debug("!!! unsupported variant in seek: %s" % data)
             return
 
         if gametype.rating_type in RATING_TYPES and player.ratings[gametype.rating_type] != rating:
@@ -78,5 +80,6 @@ class ICCSeekManager(SeekManager):
         self.emit("addSeek", seek)
 
     def on_icc_seek_removed(self, data):
+        log.debug("DG_SEEK_REMOVED %s" % data)
         key = data.split()[0]
         self.emit("removeSeek", int(key))

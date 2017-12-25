@@ -121,19 +121,28 @@ class ICPlayer(Player):
             self.connection.bm.sendMove(toAN(board2, move, castleNotation=castle_notation))
             # wait for fics to send back our move we made
             item = yield from self.move_queue.get()
+            log.debug("ICPlayer.makeMove: fics sent back the move we made")
 
         item = yield from self.move_queue.get()
         try:
             if item == "end":
+                log.debug("ICPlayer.makeMove got: end")
                 raise GameEnded
             elif item == "del":
+                log.debug("ICPlayer.makeMove got: del")
                 raise PlayerIsDead
             elif item == "stm":
+                log.debug("ICPlayer.makeMove got: stm")
                 self.turn_interrupt = False
                 raise TurnInterrupt
             elif item == "fen":
+                log.debug("ICPlayer.makeMove got: fen")
                 self.turn_interrupt = False
                 raise TurnInterrupt
+            elif item == "pass":
+                log.debug("ICPlayer.makeMove got: pass")
+                self.pass_interrupt = False
+                raise PassInterrupt
 
             gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms = item
             log.debug("ICPlayer.makeMove got: %s %s %s %s" % (gameno, ply, curcol, lastmove))
@@ -184,10 +193,16 @@ class ICPlayer(Player):
         # We raise TurnInterrupt in order to let GameModel continue the game
         if movecount % 2 == 1 and gamemodel.curplayer != self:
             log.debug("ICPlayer.playerUndoMoves: set self.turn_interrupt = True %s" % self.name)
-            self.turn_interrupt = True
+            if self.connection.ICC:
+                self.move_queue.put_nowait("stm")
+            else:
+                self.turn_interrupt = True
         if movecount % 2 == 0 and gamemodel.curplayer == self:
             log.debug("ICPlayer.playerUndoMoves: set self.pass_interrupt = True %s" % self.name)
-            self.pass_interrupt = True
+            if self.connection.ICC:
+                self.move_queue.put_nowait("pass")
+            else:
+                self.pass_interrupt = True
 
     def resetPosition(self):
         """ Used in observed examined games f.e. when LectureBot starts another example"""

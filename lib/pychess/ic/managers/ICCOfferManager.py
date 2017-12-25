@@ -5,7 +5,7 @@ from pychess.Utils.const import OFFERS, DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, 
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
 from pychess.ic.managers.OfferManager import OfferManager, offerTypeToStr
-from pychess.ic.icc import DG_OFFERS_IN_MY_GAME, DG_MATCH, DG_MATCH_REMOVED, DG_GAME_MESSAGE
+from pychess.ic.icc import DG_OFFERS_IN_MY_GAME, DG_MATCH, DG_MATCH_REMOVED
 
 
 class ICCOfferManager(OfferManager):
@@ -14,19 +14,18 @@ class ICCOfferManager(OfferManager):
         self.connection = connection
 
         self.connection.expect_dg_line(DG_OFFERS_IN_MY_GAME, self.on_icc_offers_in_my_game)
-        self.connection.expect_dg_line(DG_MATCH, self.on_icc_match_add)
+        self.connection.expect_dg_line(DG_MATCH, self.on_icc_match)
         self.connection.expect_dg_line(DG_MATCH_REMOVED, self.on_icc_match_removed)
-        self.connection.expect_dg_line(DG_GAME_MESSAGE, self.on_icc_game_message)
 
         self.connection.client.run_command("set-2 %s 1" % DG_OFFERS_IN_MY_GAME)
         self.connection.client.run_command("set-2 %s 1" % DG_MATCH)
         self.connection.client.run_command("set-2 %s 1" % DG_MATCH_REMOVED)
-        self.connection.client.run_command("set-2 %s 1" % DG_GAME_MESSAGE)
 
         self.lastPly = 0
         self.offers = {}
 
     def on_icc_offers_in_my_game(self, data):
+        log.debug("DG_OFFERS_IN_MY_GAME %s" % data)
         # gamenumber wdraw bdraw wadjourn badjourn wabort babort wtakeback btakeback
         gamenumber, wdraw, bdraw, wadjourn, badjourn, wabort, babort, wtakeback, btakeback = map(int, data.split())
 
@@ -53,21 +52,18 @@ class ICCOfferManager(OfferManager):
         log.debug("ICCOfferManager.on_icc_offers_in_my_game: emitting onOfferAdd: %s" % offer)
         self.emit("onOfferAdd", offer)
 
-    def on_icc_match_add(self, data):
+    def on_icc_match(self, data):
         # challenger-name challenger-rating challenger-titles
         # receiver-name   receiver-rating   receiver-titles
         # wild-number rating-type is-it-rated is-it-adjourned
         # challenger-time-control receiver-time-control
         # challenger-color-request [assess-loss assess-draw assess-win]
         # fancy-time-control
-        print(data)
+        log.debug("DG_MATCH %s" % data)
 
     def on_icc_match_removed(self, data):
         # challenger-name receiver-name ^Y{Explanation string^Y}
-        print(data)
-
-    def on_icc_game_message(self, data):
-        print(data)
+        log.debug("DG_MATCH_REMOVED %s" % data)
 
     def accept(self, offer):
         log.debug("OfferManager.accept: %s" % offer)

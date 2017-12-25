@@ -30,7 +30,7 @@ class ICGameModel(GameModel):
         connections[connection.bm].append(connection.bm.connect(
             "exGameReset", self.onExGameReset))
         connections[connection.bm].append(connection.bm.connect(
-            "exGameBackward", self.onExGameBackward))
+            "gameUndoing", self.onGameUndoing))
         connections[connection.bm].append(connection.bm.connect(
             "timesUpdate", self.onTimesUpdate))
         connections[connection.bm].append(connection.bm.connect(
@@ -129,7 +129,7 @@ class ICGameModel(GameModel):
             self.players[0].end()
             self.players[1].end()
 
-    def onExGameBackward(self, bm, gameno, ply):
+    def onGameUndoing(self, bm, gameno, ply):
         if gameno == self.ficsgame.gameno:
             self.undoMoves(ply)
 
@@ -160,7 +160,6 @@ class ICGameModel(GameModel):
 
             # side to move change
             stm_change = self.boards[-1].asFen().split()[1] != fen.split()[1]
-
             self.status = RUNNING
             self.loadAndStart(
                 StringIO(fen),
