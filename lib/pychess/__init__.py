@@ -1,2 +1,2 @@
-VERSION = "0.99.0"
+VERSION = "0.99.1"
 VERSION_NAME = "Morphy"
