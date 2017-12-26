@@ -81,7 +81,7 @@ class ICSStreamReaderProtocol(asyncio.StreamReaderProtocol):
         else:
             if self.timeseal:
                 data, g_count, self.stateinfo = self.decode(data, self.stateinfo)
-            data = data.replace(b"\r", b"")
+            data = data.replace(b"\r", b"").replace(b"\x07", b"")
             # enable this only for temporary debugging
             log.debug(data, extra={"task": (self.name, "raw")})
 
