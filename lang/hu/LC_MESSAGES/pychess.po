@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-25 16:04+0100\n"
-"PO-Revision-Date: 2017-12-26 09:39+0000\n"
+"PO-Revision-Date: 2017-12-26 09:58+0000\n"
 "Last-Translator: gbtami <gbtami@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/gbtami/pychess/language/hu/)\n"
 "MIME-Version: 1.0\n"
@@ -989,7 +989,7 @@ msgstr "gnuchess"
 
 #: glade/fics_logon.glade:8
 msgid "PyChess - Connect to Internet Chess"
-msgstr "PyChess - Kapcsolódás a FICS-hez"
+msgstr "PyChess - Kapcsolódás"
 
 #: glade/fics_logon.glade:47
 msgid "<b><big>Connect to Online Chess Server</big></b>"
@@ -3514,7 +3514,7 @@ msgstr "Visszaélési problémák miatt jelenleg a vendég(guest) kapcsolatok ni
 
 #: lib/pychess/ic/FICSConnection.py:188
 msgid "Connecting to server"
-msgstr "Kapcsolódási hiba"
+msgstr "Kapcsolódási a szerverhez"
 
 #: lib/pychess/ic/FICSConnection.py:208
 msgid "Logging on to server"
