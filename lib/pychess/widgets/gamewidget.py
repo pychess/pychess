@@ -630,7 +630,12 @@ class GameWidget(GObject.GObject):
         for item in ACTION_MENU_ITEMS:
             actionMenuDic[item] = widgets[item]
 
-        board = BoardControl(gamemodel, actionMenuDic)
+        if isinstance(self.gamemodel, ICGameModel) and self.gamemodel.connection.offline_lecture:
+            preview = True
+        else:
+            preview = False
+
+        board = BoardControl(gamemodel, actionMenuDic, game_preview=preview)
         boardvbox.pack_start(board, True, True, 0)
         return boardvbox, board, infobar, cclock
 
