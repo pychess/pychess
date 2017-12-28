@@ -372,6 +372,9 @@ class UCIEngine(ProtocolEngine):
             self.queue.put_nowait("int")
 
     def spectatorUndoMoves(self, moves, gamemodel):
+        if self.analyzing_paused:
+            return
+
         log.debug("spectatorUndoMoves: moves=%s \
                   gamemodel.ply=%s \
                   gamemodel.boards[-1]=%s \

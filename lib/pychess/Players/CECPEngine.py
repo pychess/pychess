@@ -514,6 +514,9 @@ class CECPEngine(ProtocolEngine):
             self.readyForMoveNowCommand = False
 
     def spectatorUndoMoves(self, moves, gamemodel):
+        if self.analyzing_paused:
+            return
+
         log.debug("spectatorUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s" % (
             moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task": self.defname})
 
