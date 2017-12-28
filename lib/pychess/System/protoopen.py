@@ -20,8 +20,7 @@ def protoopen(uri):
     """ Function for opening many things """
 
     if uri.startswith("file:///"):
-        uri = uri[7:]
-
+        uri = uri[8:]
     try:
         return open(unquote(uri), "rU", encoding=PGN_ENCODING, newline="")
     except (IOError, OSError):
