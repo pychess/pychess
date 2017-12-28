@@ -18,9 +18,11 @@ def splitUri(uri):
 
 def protoopen(uri):
     """ Function for opening many things """
+    splitted = splitUri(uri)
 
-    if uri.startswith("file:///"):
-        uri = uri[8:]
+    if splitted[0] == "file":
+        uri = splitted[1]
+
     try:
         return open(unquote(uri), "rU", encoding=PGN_ENCODING, newline="")
     except (IOError, OSError):
