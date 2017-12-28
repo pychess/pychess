@@ -76,7 +76,7 @@ class GeneralTab:
         # Give to uistuff.keeper
 
         for key in ("firstName", "secondName", "showEmt", "showEval",
-                    "hideTabs", "closeAll", "faceToFace",
+                    "hideTabs", "closeAll", "faceToFace", "scoreLinearScale",
                     "showCaptured", "figuresInNotation",
                     "moveAnimation", "noAnimation",
                     "autoRotate", "showFICSgameno"):

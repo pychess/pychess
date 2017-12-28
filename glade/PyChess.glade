@@ -1643,6 +1643,26 @@
                                       </packing>
                                     </child>
                                     <child>
+                                      <object class="GtkCheckButton" id="scoreLinearScale">
+                                        <property name="label" translatable="yes">Use a linear scale for the score</property>
+                                        <property name="use_action_appearance">False</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="tooltip_text" translatable="yes">Unticked : the exponential stretching displays the full range of the score and enlarges the values around the null average.
+
+Ticked : the linear scale focuses on a limited range around the null average. It highlights the tiny errors and blunders better.</property>
+                                        <property name="halign">start</property>
+                                        <property name="xalign">0</property>
+                                        <property name="draw_indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">5</property>
+                                      </packing>
+                                    </child>
+                                    <child>
                                       <object class="GtkCheckButton" id="showCaptured">
                                         <property name="label" translatable="yes">Show _captured pieces</property>
                                         <property name="use_action_appearance">False</property>

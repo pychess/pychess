@@ -1,11 +1,11 @@
 import sys
-from math import e
+from math import e, floor
 from random import randint
 
 from gi.repository import Gtk, GObject
 from gi.repository import Gdk
 
-from pychess.System import uistuff
+from pychess.System import uistuff, conf
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, DRAW, WHITEWON, BLACKWON
 from pychess.Utils.lutils import leval
@@ -94,32 +94,31 @@ class Sidepanel:
         self.plot.redraw()
 
         # Uncomment this to debug eval function
-        return
-
-        board = model.boards[-1].board
-        opboard = model.boards[-1].clone().board
-        opboard.setColor(1 - opboard.color)
-        material, phase = leval.evalMaterial(board)
-        if board.color == WHITE:
-            print("material", -material)
-            e1 = leval.evalKingTropism(board)
-            e2 = leval.evalKingTropism(opboard)
-            print("evaluation: %d + %d = %d " % (e1, e2, e1 + e2))
-            p1 = leval.evalPawnStructure(board, phase)
-            p2 = leval.evalPawnStructure(opboard, phase)
-            print("pawns: %d + %d = %d " % (p1, p2, p1 + p2))
-            print("knights:", -leval.evalKnights(board))
-            print("king:", -leval.evalKing(board, phase))
-        else:
-            print("material", material)
-            print("evaluation:", leval.evalKingTropism(board))
-            print("pawns:", leval.evalPawnStructure(board, phase))
-            print("pawns2:", leval.evalPawnStructure(opboard, phase))
-            print("pawns3:", leval.evalPawnStructure(board, phase) +
-                  leval.evalPawnStructure(opboard, phase))
-            print("knights:", leval.evalKnights(board))
-            print("king:", leval.evalKing(board, phase))
-        print("----------------------")
+        # ---
+        # board = model.boards[-1].board
+        # opboard = model.boards[-1].clone().board
+        # opboard.setColor(1 - opboard.color)
+        # material, phase = leval.evalMaterial(board)
+        # if board.color == WHITE:
+        #     print("material", -material)
+        #     e1 = leval.evalKingTropism(board)
+        #     e2 = leval.evalKingTropism(opboard)
+        #     print("evaluation: %d + %d = %d " % (e1, e2, e1 + e2))
+        #     p1 = leval.evalPawnStructure(board, phase)
+        #     p2 = leval.evalPawnStructure(opboard, phase)
+        #     print("pawns: %d + %d = %d " % (p1, p2, p1 + p2))
+        #     print("knights:", -leval.evalKnights(board))
+        #     print("king:", -leval.evalKing(board, phase))
+        # else:
+        #     print("material", material)
+        #     print("evaluation:", leval.evalKingTropism(board))
+        #     print("pawns:", leval.evalPawnStructure(board, phase))
+        #     print("pawns2:", leval.evalPawnStructure(opboard, phase))
+        #     print("pawns3:", leval.evalPawnStructure(board, phase) +
+        #           leval.evalPawnStructure(opboard, phase))
+        #     print("knights:", leval.evalKnights(board))
+        #     print("king:", leval.evalKing(board, phase))
+        # print("----------------------")
 
     def game_started(self, model):
         self.game_changed(model, model.ply)
@@ -130,12 +129,6 @@ class Sidepanel:
         if self.plot.selected != shown:
             self.plot.select(shown - self.boardview.model.lowply)
             self.plot.redraw()
-            adj = self.sw.get_vadjustment()
-
-            y = self.plot.moveHeight * (shown - self.boardview.model.lowply)
-            if y < adj.get_value() or y > adj.get_value() + adj.get_page_size(
-            ):
-                adj.set_value(min(y, adj.get_upper() - adj.get_page_size()))
 
     def analysis_changed(self, gamemodel, ply):
         if self.boardview.animating:
@@ -176,9 +169,12 @@ class ScorePlot(Gtk.DrawingArea):
         self.props.can_focus = True
         self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK |
                         Gdk.EventMask.KEY_PRESS_MASK)
-        self.moveHeight = 12
         self.scores = []
         self.selected = 0
+
+    def get_move_height(self):
+        w = int(floor(self.get_allocation().width / self.__len__()))
+        return max(min(w, 24), 1)
 
     def addScore(self, score):
         self.scores.append(score)
@@ -209,14 +205,13 @@ class ScorePlot(Gtk.DrawingArea):
 
     def press(self, widget, event):
         self.grab_focus()
-        self.emit('selected', event.y / self.moveHeight)
+        self.emit('selected', event.x / self.get_move_height())
 
     def expose(self, widget, context):
         a = widget.get_allocation()
-        context.rectangle(a.x, a.y, a.width, a.height)
+        context.rectangle(0, 0, a.width, a.height)
         context.clip()
         self.draw(context)
-        self.set_size_request(-1, (len(self.scores)) * self.moveHeight)
         return False
 
     def draw(self, cr):
@@ -225,7 +220,7 @@ class ScorePlot(Gtk.DrawingArea):
             return
 
         width = self.get_allocation().width
-        height = len(self.scores) * self.moveHeight
+        height = self.get_allocation().height
 
         ########################################
         # Draw background                      #
@@ -236,61 +231,62 @@ class ScorePlot(Gtk.DrawingArea):
         cr.fill()
 
         ########################################
-        # Draw dark middle line                #
-        ########################################
-
-        cr.set_source_rgb(1, 0, 0)
-        cr.move_to(width / 2., 0)
-        cr.line_to(width / 2., height)
-        cr.set_line_width(0.25)
-        cr.stroke()
-
-        ########################################
         # Draw the actual plot (dark area)     #
         ########################################
 
-        # sign = lambda n: n == 0 and 1 or n / abs(n)
         def sign(n):
             return n == 0 and 1 or n / abs(n)
 
         def mapper(score):
-            return (e**(-5e-4 * abs(score)) - 1) * sign(score)
+            if conf.get("scoreLinearScale", False):
+                return min(abs(score), 800) / 800 * sign(score)  # Linear
+            else:
+                return (e ** (5e-4 * abs(score)) - 1) * sign(score)  # Exponentially stretched
 
         if self.scores:
-            # mapper = lambda score: (e**(-5e-4 * abs(score)) - 1) * sign(score)
             cr.set_source_rgb(0, 0, 0)
-            cr.move_to(width, 0)
-            cr.line_to(width / 2 - width / 2 * mapper(self.scores[0]), 0)
+            cr.move_to(0, height)
+            cr.line_to(0, (height / 2.) * (1 + mapper(self.scores[0])))
             for i, score in enumerate(self.scores):
-                x = width / 2 - width / 2 * mapper(score)
-                y = (i + 1) * self.moveHeight
+                x = (i + 1) * self.get_move_height()
+                y = (height / 2.) * (1 + mapper(score))
+                y = max(0, min(height, y))
                 cr.line_to(x, y)
-            cr.line_to(width, height)
-            cr.fill_preserve()
+            cr.line_to(x, height)
+            cr.fill()
+        else:
+            x = 0
+        cr.set_source_rgb(0.9, 0.9, 0.9)
+        cr.rectangle(x, 0, width, height)
+        cr.fill()
 
         ########################################
-        # Draw light middle line               #
+        # Draw middle line and markers         #
         ########################################
 
-        cr.save()
-        cr.clip()
-        cr.set_source_rgb(1, 1, 1)
-        cr.move_to(width / 2., 0)
-        cr.line_to(width / 2., height)
-        cr.set_line_width(0.15)
-        cr.stroke()
-        cr.restore()
+        cr.set_line_width(0.25)
+        markers = [16, -16, 8, -8, 3, -3, 0]  # centipawns
+        for mark in markers:
+            if mark == 0:
+                cr.set_source_rgb(1, 0, 0)
+            else:
+                cr.set_source_rgb(0.85, 0.85, 0.85)
+            y = (height / 2.) * (1 + mapper(100 * mark))
+            y = max(0, min(height, y))
+            cr.move_to(0, y)
+            cr.line_to(width, y)
+            cr.stroke()
 
         ########################################
         # Draw selection                       #
         ########################################
 
-        lw = 2.
+        lw = 2
         cr.set_line_width(lw)
-        y = (self.selected) * self.moveHeight
-        cr.rectangle(lw / 2, y - lw / 2, width - lw, self.moveHeight + lw)
-        sc = self.get_style_context()
-        found, color = sc.lookup_color("p_bg_selected")
+        s = self.get_move_height()
+        x = self.selected * s
+        cr.rectangle(x - lw / 2, lw / 2, s + lw, height - lw)
+        found, color = self.get_style_context().lookup_color("p_bg_selected")
         cr.set_source_rgba(color.red, color.green, color.blue, .15)
         cr.fill_preserve()
         cr.set_source_rgb(color.red, color.green, color.blue)
