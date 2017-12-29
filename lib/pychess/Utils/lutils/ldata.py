@@ -38,6 +38,7 @@ MAXPLY = 10
 # Maximum possible score. Mate in n ply is +/- (MATE_VALUE-n).
 # The hash structure only allows signed 16-bit scores.
 MATE_VALUE = MAXVAL = 32767
+MATE_DEPTH = 255
 
 
 def VALUE_AT_PLY(val, ply):
