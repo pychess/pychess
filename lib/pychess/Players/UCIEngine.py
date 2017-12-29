@@ -628,7 +628,7 @@ class UCIEngine(ProtocolEngine):
                             #                    print >> self.engine, "stop"
                             if score != 0:
                                 sign = score / abs(score)
-                                score = sign * MATE_VALUE
+                                score = sign * (MATE_VALUE - abs(score))
 
                     movstrs = parts[parts.index("pv") + 1:]
 

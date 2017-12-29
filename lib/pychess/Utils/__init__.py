@@ -1,10 +1,10 @@
 import asyncio
 import weakref
 
-from pychess.Utils.lutils.ldata import MATE_VALUE
+from pychess.Utils.lutils.ldata import MATE_VALUE, MATE_DEPTH
 
 
-def prettyPrintScore(s, depth):
+def prettyPrintScore(s, depth, format_mate):
     """The score parameter is an eval value form White point of view"""
 
     if s is None:
@@ -24,8 +24,14 @@ def prettyPrintScore(s, depth):
     else:
         depth = ""
 
-    if abs(s) == MATE_VALUE:
-        return "%s#%s" % (pp, MATE_VALUE)
+    if s >= MATE_VALUE - MATE_DEPTH:
+        mate_in = MATE_VALUE - s
+        if format_mate:
+            if mate_in == 0:
+                return _("Mated")
+            return "%s #%d" % (_("Mate"), mate_in)
+        else:
+            return "%s#%.0f" % (pp, s)
     else:
         return "%s%0.2f%s" % (pp, s / 100.0, depth)
 
