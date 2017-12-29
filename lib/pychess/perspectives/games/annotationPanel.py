@@ -825,7 +825,7 @@ class Sidepanel:
             if board.plyCount in gamemodel.scores:
                 moves, score, depth = gamemodel.scores[board.plyCount]
                 score = score * -1 if board.color == BLACK else score
-                emt_eval += "%s " % prettyPrintScore(score, depth, False)
+                emt_eval += "%s " % prettyPrintScore(score, depth)
 
         if emt_eval:
             if node == self.nodelist[-1]:
@@ -905,7 +905,7 @@ class Sidepanel:
                 score = score * -1 if board.color == BLACK else score
                 # endIter = self.textbuffer.get_iter_at_offset(end_iter().get_offset())
                 self.textbuffer.insert_with_tags_by_name(
-                    end_iter(), "%s " % prettyPrintScore(score, depth, False), "emt")
+                    end_iter(), "%s " % prettyPrintScore(score, depth), "emt")
 
             for index, child in enumerate(board.children):
                 if isinstance(child, str):
