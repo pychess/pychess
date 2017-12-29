@@ -35,7 +35,6 @@ from pychess.Utils.lutils.lmove import toSAN, parseSAN, ParsingError
 from pychess.Utils.Move import Move
 from pychess.Utils.elo import get_elo_rating_change_pgn
 from pychess.Utils.logic import getStatus
-from pychess.Utils.lutils.ldata import MATE_VALUE
 from pychess.Variants import name2variant, NormalBoard, variants
 from pychess.widgets.ChessClock import formatTime
 from pychess.Savers.ChessFile import ChessFile, LoadingError
@@ -865,8 +864,7 @@ class PGNFile(ChessFile):
                             if match:
                                 sign, num, fraction, depth = match.groups()
                                 sign = 1 if sign is None or sign == "+" else -1
-                                num = int(num) if int(
-                                    num) == MATE_VALUE else int(num)
+                                num = int(num)
                                 fraction = 0 if fraction is None else int(
                                     fraction)
                                 value = sign * (num * 100 + fraction)

@@ -265,7 +265,7 @@ class EngineAdvisor(Advisor):
 
             self.store[self.path + (i, )] = [
                 (board0, move, pv),
-                (prettyPrintScore(score, depth), 1, goodness), 0, False,
+                (prettyPrintScore(score, depth, True), 1, goodness), 0, False,
                 " ".join(counted_pv), False, False
             ]
 

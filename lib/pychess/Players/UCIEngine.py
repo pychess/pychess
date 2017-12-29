@@ -9,7 +9,7 @@ from pychess.Utils.logic import validate, getMoveKillingKing, getStatus, legalMo
 from pychess.Utils.const import CASTLE_KK, ANALYZING, WON_ADJUDICATION, FISCHERRANDOMCHESS, \
     INVERSE_ANALYZING, CASTLE_KR, NORMALCHESS, FEN_START, WHITE, NORMAL, DRAW_OFFER, \
     WON_MATE, BLACK, BLACKWON, WHITEWON
-from pychess.Utils.lutils.ldata import MATE_VALUE
+from pychess.Utils.lutils.ldata import MATE_VALUE, MATE_DEPTH
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System import conf
 from pychess.System.Log import log
@@ -628,7 +628,7 @@ class UCIEngine(ProtocolEngine):
                             #                    print >> self.engine, "stop"
                             if score != 0:
                                 sign = score / abs(score)
-                                score = sign * MATE_VALUE
+                                score = sign * (MATE_VALUE - abs(score))
 
                     movstrs = parts[parts.index("pv") + 1:]
 
