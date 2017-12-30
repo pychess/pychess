@@ -527,6 +527,28 @@ class EnginesDialog():
         tree_selection.select_path((0, ))
         selection_changed(tree_selection)
 
+        ################################################################
+        # restore the default options of the engine
+        ################################################################
+
+        def engine_default_options(button):
+            if self.cur_engine is not None and not self.selection:
+                engine = discoverer.getEngineByName(self.cur_engine)
+                options = engine.get("options")
+                if options:
+                    dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO)
+                    dialog.set_markup(_("Do you really want to restore the default options of the engine ?"))
+                    response = dialog.run()
+                    dialog.destroy()
+                    if response == Gtk.ResponseType.YES:
+                        for option in options:
+                            if "default" in option:
+                                option["value"] = option["default"]
+                        discoverer.save()
+                        update_options()
+
+        self.widgets["engine_default_options_button"].connect("clicked", engine_default_options)
+
 
 class KeyValueCellRenderer(Gtk.CellRenderer):
     """ Custom renderer providing different renderers in different rows.
