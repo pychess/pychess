@@ -501,6 +501,23 @@ class BoardView(Gtk.DrawingArea):
         self.greenarrow = None
         self.bluearrow = None
 
+        # remove all circles and arrows
+        need_redraw = False
+        if self.arrows:
+            self.arrows.clear()
+            need_redraw = True
+        if self.circles:
+            self.circles.clear()
+            need_redraw = True
+        if self.pre_arrow is not None:
+            self.pre_arrow = None
+            need_redraw = True
+        if self.pre_circle is not None:
+            self.pre_circle = None
+            need_redraw = True
+        if need_redraw:
+            self.redrawCanvas()
+
         # If there is only one board, we don't do any animation, but simply
         # redraw the entire board. Same if we are at first draw.
         if len(self.model.boards) == 1 or self.shown < self.model.lowply:
