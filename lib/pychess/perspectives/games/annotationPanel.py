@@ -1149,7 +1149,8 @@ class Sidepanel:
 
     def game_loaded(self, model, uri):
         for ply in range(min(40, model.ply, len(model.boards))):
-            model.setOpening(ply)
+            if ply >= model.lowply:
+                model.setOpening(ply)
         self.update()
 
     def __movestr(self, board):

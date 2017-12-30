@@ -106,7 +106,7 @@ class AnalyzeGameDialog():
                         inv_analyzer.setBoard(board)
                     yield from asyncio.sleep(move_time + 0.1)
 
-                    ply = board.ply
+                    ply = board.ply - gamemodel.lowply
                     color = (ply - 1) % 2
                     if ply - 1 in gamemodel.scores and ply in gamemodel.scores and (
                             (color == BLACK and should_black) or (color == WHITE and should_white)):
