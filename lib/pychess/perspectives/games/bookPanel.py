@@ -165,10 +165,12 @@ class EngineAdvisor(Advisor):
 
         self.cid1 = self.engine.connect("analyze", self.on_analyze)
         self.cid2 = self.engine.connect("readyForOptions", self.on_ready_for_options)
+        self.cid3 = self.engine.connect_after("readyForMoves", self.on_ready_for_moves)
 
     def _del(self):
         self.engine.disconnect(self.cid1)
         self.engine.disconnect(self.cid2)
+        self.engine.disconnect(self.cid3)
 
     def _create_new_expected_lines(self):
         parent = self.empty_parent()
@@ -183,7 +185,6 @@ class EngineAdvisor(Advisor):
             return
         if m.isPlayingICSGame():
             return
-
         self.engine.setBoard(boardview.model.getBoardAtPly(
             shown, boardview.shown_variation_idx), search=self.active)
 
@@ -209,6 +210,7 @@ class EngineAdvisor(Advisor):
         self.store.set_value(parent, 6, True)
         self.active = True
 
+    def on_ready_for_moves(self, engine):
         self.shownChanged(self.boardview, self.boardview.shown)
 
     def on_analyze(self, engine, analysis):
