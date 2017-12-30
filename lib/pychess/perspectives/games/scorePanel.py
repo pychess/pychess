@@ -67,6 +67,7 @@ class Sidepanel:
         for i in range(len(self.plot) + model.lowply, ply):
             if i in model.scores:
                 points = model.scores[i][1]
+                points = points * -1 if i % 2 == 1 else points
             else:
                 points = leval.evaluateComplete(
                     model.getBoardAtPly(i).board, WHITE)
@@ -81,6 +82,7 @@ class Sidepanel:
         else:
             if ply in model.scores:
                 points = model.scores[ply][1]
+                points = points * -1 if ply % 2 == 1 else points
             else:
                 points = leval.evaluateComplete(
                     model.getBoardAtPly(ply).board, WHITE)
