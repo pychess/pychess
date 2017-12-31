@@ -240,7 +240,7 @@ class PlayGameTests(EmittingTestCase):
 
         def on_game_started(game):
             p1 = gamemodel.players[1]
-            p1.queue.put_nowait(Move(newMove(G8, F6)))
+            p1.move_queue.put_nowait(Move(newMove(G8, F6)))
 
         gamemodel.connect("game_started", on_game_started)
 

@@ -71,12 +71,12 @@ class DatabaseTests(unittest.TestCase):
             def on_players_changed(game):
                 # fill fools mate moves to players move queue
                 p0 = game.players[0]
-                p0.queue.put_nowait(Move(newMove(F2, F3)))
-                p0.queue.put_nowait(Move(newMove(G2, G4)))
+                p0.move_queue.put_nowait(Move(newMove(F2, F3)))
+                p0.move_queue.put_nowait(Move(newMove(G2, G4)))
 
                 p1 = gamemodel.players[1]
-                p1.queue.put_nowait(Move(newMove(E7, E5)))
-                p1.queue.put_nowait(Move(newMove(D8, H4)))
+                p1.move_queue.put_nowait(Move(newMove(E7, E5)))
+                p1.move_queue.put_nowait(Move(newMove(D8, H4)))
 
             gamemodel.connect("players_changed", on_players_changed)
 
