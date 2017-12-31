@@ -7,7 +7,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.const import REMOTE, DRAW, WHITE, BLACK, RUNNING, WHITEWON, KILLED, \
     TAKEBACK_OFFER, WAITING_TO_START, BLACKWON, PAUSE_OFFER, PAUSED, \
     RESUME_OFFER, DISCONNECTED, CHAT_ACTION, RESIGNATION, FLAG_CALL, OFFERS, LOCAL, \
-    ACTION_ERROR_NONE_TO_ACCEPT, UNFINISHED_STATES, ABORT_OFFER
+    UNFINISHED_STATES, ABORT_OFFER
 from pychess.Players.Human import Human
 from pychess.Savers import fen as fen_loader
 from pychess.ic import GAME_TYPES, TYPE_TOURNAMENT_DIRECTOR
@@ -323,7 +323,7 @@ class ICGameModel(GameModel):
             opPlayer.putMessage(offer.param)
 
         elif offer.type in (RESIGNATION, FLAG_CALL):
-            self.connection.om.offer(offer, self.ply)
+            self.connection.om.offer(offer)
 
         elif offer.type in OFFERS:
             if offer not in self.offers:
@@ -341,14 +341,9 @@ class ICGameModel(GameModel):
         log.debug("ICGameModel.acceptReceived: accepter=%s %s" %
                   (repr(player), offer))
         if player.__type__ == LOCAL:
-            if offer not in self.offers or self.offers[offer] == player:
-                player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
-            else:
-                log.debug(
-                    "ICGameModel.acceptReceived: connection.om.accept(%s)" %
-                    offer)
-                self.connection.om.accept(offer)
-                del self.offers[offer]
+            GameModel.acceptReceived(self, player, offer)
+            log.debug("ICGameModel.acceptReceived: connection.om.accept(%s)" % offer)
+            self.connection.om.accept(offer)
 
         # We don't handle any ServerPlayer calls here, as the fics server will
         # know automatically if he/she accepts an offer, and will simply send
@@ -374,8 +369,8 @@ class ICGameModel(GameModel):
             if self.isObservationGame():
                 self.connection.bm.unobserve(self.ficsgame)
             else:
-                self.connection.om.offer(Offer(ABORT_OFFER), -1)
-                self.connection.om.offer(Offer(RESIGNATION), -1)
+                self.connection.om.offer(Offer(ABORT_OFFER))
+                self.connection.om.offer(Offer(RESIGNATION))
 
         if status == KILLED:
             GameModel.kill(self, reason)

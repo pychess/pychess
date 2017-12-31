@@ -81,7 +81,7 @@ class ICPlayer(Player):
         if offer.index in self.offers:
             log.debug("ICPlayer.__onOfferRemove: emitting withdraw: \
                       self.gameno=%s self.name=%s %s" % (self.gameno, self.name, offer))
-            self.emit("withdraw", self.offers[offer.index])
+            # self.emit("withdraw", self.offers[offer.index])
             del self.offers[offer.index]
 
     def __onPrivateMessage(self, cm, name, title, isadmin, text):
@@ -230,10 +230,9 @@ class ICPlayer(Player):
             # only 1 outstanding takeback offer allowed on FICS, so remove any of ours
             for index in list(self.offers.keys()):
                 if self.offers[index].type == TAKEBACK_OFFER:
-                    log.debug("ICPlayer.offer: del self.offers[%s] %s" %
-                              (index, offer))
+                    log.debug("ICPlayer.offer: del self.offers[%s] %s" % (index, offer))
                     del self.offers[index]
-        self.connection.om.offer(offer, self.gamemodel.ply)
+        self.connection.om.offer(offer)
 
     def offerDeclined(self, offer):
         log.debug("ICPlayer.offerDeclined: sending decline for %s" % offer)

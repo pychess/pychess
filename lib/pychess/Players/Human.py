@@ -6,14 +6,14 @@ from pychess.Utils.const import DRAW_OFFER, ABORT_OFFER, ADJOURN_OFFER, TAKEBACK
     PAUSE_OFFER, RESUME_OFFER, RESIGNATION, FLAG_CALL, SWITCH_OFFER, HURRY_ACTION, \
     ACTION_ERROR_NOT_OUT_OF_TIME, ACTION_ERROR_CLOCK_NOT_STARTED, ACTION_ERROR_SWITCH_UNDERWAY, \
     ACTION_ERROR_TOO_LARGE_UNDO, ACTION_ERROR_NONE_TO_WITHDRAW, ACTION_ERROR_NONE_TO_ACCEPT, \
-    LOCAL, RUNNING, CHAT_ACTION, REMOTE, ACTION_ERROR_NONE_TO_DECLINE
+    LOCAL, RUNNING, CHAT_ACTION, ACTION_ERROR_NONE_TO_DECLINE
 from pychess.Utils.logic import validate
 from pychess.Utils.Move import Move
 from pychess.Utils.Offer import Offer
 from pychess.System.Log import log
 from pychess.System import conf
 
-from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt
+from pychess.Players.Player import Player, PlayerIsDead, TurnInterrupt, PassInterrupt
 from pychess.widgets.InfoBar import InfoBarMessage, InfoBarMessageButton
 from pychess.widgets import InfoBar
 
@@ -86,7 +86,7 @@ class Human(Player):
         self.board = gmwidg.board
         self.gmwidg = gmwidg
         self.gamemodel = self.gmwidg.gamemodel
-        self.queue = asyncio.Queue()
+        self.move_queue = asyncio.Queue()
         self.color = color
 
         self.board_cids = [
@@ -122,7 +122,7 @@ class Human(Player):
     def piece_moved(self, board, move, color):
         if color != self.color:
             return
-        self.queue.put_nowait(move)
+        self.move_queue.put_nowait(move)
 
     def emit_action(self, board, action, param):
         # If there are two or more tabs open, we have to ensure us that it is
@@ -165,26 +165,32 @@ class Human(Player):
             # reset premove
             self.board.view.setPremove(None, None, None, None)
         self.gmwidg.setLocked(False)
-        item = yield from self.queue.get()
+
+        item = yield from self.move_queue.get()
         self.gmwidg.setLocked(True)
+
         if item == "del":
-            raise PlayerIsDead("Killed by foreign forces")
-        if item == "int":
-            log.debug("Human.makeMove: %s: raise TurnInterrupt" % self)
+            log.debug("Human.makeMove got: del")
+            raise PlayerIsDead
+        elif item == "int":
+            log.debug("Human.makeMove got: int")
             raise TurnInterrupt
+        elif item == "pass":
+            log.debug("Human.makeMove got: pass")
+            raise PassInterrupt
         return item
 
     # Ending the game
 
     def end(self, status, reason):
-        self.queue.put_nowait("del")
+        log.debug("Human.end: %s" % self.name)
+        self.move_queue.put_nowait("del")
 
     def kill(self, reason):
-        print("I am killed", self)
         for num in self.conid:
             if self.board.handler_is_connected(num):
                 self.board.disconnect(num)
-        self.queue.put_nowait("del")
+        self.move_queue.put_nowait("del")
 
     # Interacting with the player
 
@@ -216,22 +222,20 @@ class Human(Player):
         log.debug("Human.playerUndoMoves:  movecount=%s self=%s" %
                   (movecount, self))
         # If the movecount is odd, the player has changed, and we have to interupt
-        if movecount % 2 == 1:
+        if movecount % 2 == 1 and gamemodel.curplayer != self:
             # If it is no longer us to move, we raise TurnInterruprt in order to
             # let GameModel continue the game.
-            if gamemodel.curplayer != self:
-                log.debug(
-                    "Human.playerUndoMoves: putting TurnInterrupt into self.queue")
-                self.queue.put_nowait("int")
+            log.debug("Human.playerUndoMoves: putting TurnInterrupt into self.move_queue %s" % self.name)
+            self.move_queue.put_nowait("int")
 
         # If the movecount is even, we have to ensure the board is unlocked.
         # This is because it might have been locked by the game ending, but
         # perhaps we have now undone some moves, and it is no longer ended.
         elif movecount % 2 == 0 and gamemodel.curplayer == self:
-            log.debug(
-                "Human.playerUndoMoves: self=%s: calling gmwidg.setLocked" %
-                (self))
+            log.debug("Human.playerUndoMoves: self=%s: calling gmwidg.setLocked" % (self))
             self.gmwidg.setLocked(False)
+            log.debug("Human.playerUndoMoves: putting TurnInterrupt into self.move_queue %s" % self.name)
+            self.move_queue.put_nowait("pass")
 
     def putMessage(self, text):
         self.emit("messageReceived", text)
@@ -251,12 +255,8 @@ class Human(Player):
 
         heading, text, takes_param = OFFER_MESSAGES[offer.type]
         if takes_param:
-            param = offer.param
-            if offer.type == TAKEBACK_OFFER and \
-                    self.gamemodel.players[1 - self.color].__type__ != REMOTE:
-                param = self.gamemodel.ply - offer.param
-            heading = heading % param
-            text = text % param
+            heading = heading % offer.param
+            text = text % offer.param
 
         def response_cb(infobar, response, message):
             if response == Gtk.ResponseType.ACCEPT:
@@ -296,7 +296,7 @@ class Human(Player):
             _("Resend"), Gtk.ResponseType.ACCEPT))
         message.add_button(InfoBarMessageButton(Gtk.STOCK_CLOSE,
                                                 Gtk.ResponseType.CANCEL))
-        self.gmwidg.showMessage(message)
+        self.gmwidg.replaceMessages(message)
 
     def offerWithdrawn(self, offer):
         log.debug("Human.offerWithdrawn: self=%s %s" % (self, offer))

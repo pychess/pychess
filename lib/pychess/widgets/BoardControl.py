@@ -233,9 +233,9 @@ class BoardControl(Gtk.EventBox):
                     (waitingplayer.__type__ == ARTIFICIAL or
                      self.view.model.isPlayingICSGame()) and \
                     self.view.model.ply - self.view.model.lowply > 1:
-                self.emit("action", TAKEBACK_OFFER, self.view.model.ply - 2)
+                self.emit("action", TAKEBACK_OFFER, 2)
             else:
-                self.emit("action", TAKEBACK_OFFER, self.view.model.ply - 1)
+                self.emit("action", TAKEBACK_OFFER, 1)
         elif key == "pause1":
             self.emit("action", PAUSE_OFFER, None)
         elif key == "resume1":

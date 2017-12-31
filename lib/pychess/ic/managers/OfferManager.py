@@ -131,7 +131,7 @@ class OfferManager(GObject.GObject):
             ply = 0
         else:
             ply = int(ply)
-        offer = Offer(TAKEBACK_OFFER, param=self.lastPly - ply)
+        offer = Offer(TAKEBACK_OFFER, param=ply)
         self.emit("onActionError", offer, ACTION_ERROR_TOO_LARGE_UNDO)
 
     def onOfferAdd(self, match):
@@ -237,12 +237,11 @@ class OfferManager(GObject.GObject):
             s += " " + game_type.seek_text
         self.connection.client.run_command(s)
 
-    def offer(self, offer, curply):
-        log.debug("OfferManager.offer: curply=%s %s" % (curply, offer))
-        self.lastPly = curply
+    def offer(self, offer):
+        log.debug("OfferManager.offer: %s" % offer)
         s = offerTypeToStr[offer.type]
         if offer.type == TAKEBACK_OFFER:
-            s += " " + str(curply - offer.param)
+            s += " " + str(offer.param)
         self.connection.client.run_command(s)
 
     ###

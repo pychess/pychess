@@ -359,6 +359,7 @@ class GameWidget(GObject.GObject):
         if gamemodel.isObservationGame() and not self.isInFront():
             self.light_on_off(True)
 
+        # print(gamemodel.waitingplayer, gamemodel.waitingplayer.__type__)
         if not gamemodel.isPlayingICSGame():
             self.clearMessages()
 

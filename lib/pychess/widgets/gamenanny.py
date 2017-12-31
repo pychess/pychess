@@ -159,9 +159,9 @@ class GameNanny(object):
                     createRematch(gamemodel)
                 elif response == 2:
                     if gamemodel.ply > 1:
-                        offer = Offer(TAKEBACK_OFFER, gamemodel.ply - 2)
+                        offer = Offer(TAKEBACK_OFFER, 2)
                     else:
-                        offer = Offer(TAKEBACK_OFFER, gamemodel.ply - 1)
+                        offer = Offer(TAKEBACK_OFFER, 1)
                     if gamemodel.players[0].__type__ == LOCAL:
                         gamemodel.players[0].emit("offer", offer)
                     else:

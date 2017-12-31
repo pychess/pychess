@@ -535,9 +535,8 @@ class GameModel(GObject.GObject):
             if offer.type == DRAW_OFFER:
                 self.end(DRAW, DRAW_AGREE)
             elif offer.type == TAKEBACK_OFFER:
-                log.debug("GameModel.acceptReceived: undoMoves(%s)" % (
-                    self.ply - offer.param))
-                self.undoMoves(self.ply - offer.param)
+                log.debug("GameModel.acceptReceived: undoMoves(%s)" % offer.param)
+                self.undoMoves(offer.param)
             elif offer.type == ADJOURN_OFFER:
                 self.end(ADJOURNED, ADJOURNED_AGREEMENT)
             elif offer.type == ABORT_OFFER:
