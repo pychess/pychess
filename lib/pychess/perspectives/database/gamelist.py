@@ -133,8 +133,11 @@ class GameList(Gtk.TreeView):
             site = rec["Site"]
             round_ = rec["Round"]
             date = str(get_date(rec))
-            ply = rec["PlyCount"]
-            length = str(int(ply) // 2) if ply else ""
+            try:
+                ply = rec["PlyCount"]
+                length = str(int(ply) // 2) if ply else ""
+            except ValueError:
+                length = ""
             eco = rec["ECO"]
             tc = rec["TimeControl"]
             variant = rec["Variant"]
