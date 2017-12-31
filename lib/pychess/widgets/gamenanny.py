@@ -150,7 +150,7 @@ class GameNanny(object):
                     gmwidg.cids[player] = player.connect("notify::status", status_changed, button)
                     status_changed(player, None, button)
 
-        elif gamemodel.hasLocalPlayer():
+        elif gamemodel.hasLocalPlayer() and not gamemodel.offline_lecture:
 
             def callback(infobar, response, message, gamemodel=gamemodel):
                 if response == 1:
@@ -201,12 +201,17 @@ class GameNanny(object):
         return False
 
     def on_game_started(self, gamemodel, gmwidg):
+        # offline lectures can reuse same gamemodel/gamewidget
+        # to show several examples inside the same lecture
+        if gamemodel.offline_lecture:
+            gmwidg.clearMessages()
+
         # Rotate to human player
         boardview = gmwidg.board.view
         if gamemodel.players[1].__type__ == LOCAL:
             if gamemodel.players[0].__type__ != LOCAL:
                 boardview.rotation = math.pi
-            elif conf.get("autoRotate", True) and \
+            elif (conf.get("autoRotate", True) or gamemodel.offline_lecture) and \
                     gamemodel.curplayer == gamemodel.players[1]:
                 boardview.rotation = math.pi
 

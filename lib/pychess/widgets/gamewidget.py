@@ -630,7 +630,7 @@ class GameWidget(GObject.GObject):
         for item in ACTION_MENU_ITEMS:
             actionMenuDic[item] = widgets[item]
 
-        if isinstance(self.gamemodel, ICGameModel) and self.gamemodel.connection.offline_lecture:
+        if self.gamemodel.offline_lecture:
             preview = True
         else:
             preview = False

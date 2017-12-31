@@ -71,6 +71,14 @@ class Learn(GObject.GObject, Perspective):
             self.init_layout()
             self.first_run = False
 
+        learn_home = Gtk.Box()
+        learn_home.add(Gtk.Label("Practice! Practice! Practice!"))
+        learn_home.show_all()
+
+        if not self.first_run:
+            self.notebooks["learnhome"].remove_page(-1)
+        self.notebooks["learnhome"].append_page(learn_home)
+
         self.panels = [panel.Sidepanel().load(self) for panel in self.sidePanels]
 
         for panel, instance in zip(self.sidePanels, self.panels):

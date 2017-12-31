@@ -72,7 +72,7 @@ class ChatView(Gtk.Box):
             text_buffer.insert_with_tags_by_name(iter, " ", "observers")
             text_buffer.insert(iter, "\n")
 
-            if not self.gamemodel.connection.offline_lecture:
+            if not self.gamemodel.offline_lecture:
                 vbox.pack_start(self.obsView, False, True, 0)
             vbox.pack_start(self.sw, True, True, 0)
 

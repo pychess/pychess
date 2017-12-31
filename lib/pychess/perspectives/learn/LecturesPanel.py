@@ -1,13 +1,16 @@
 import asyncio
+from io import StringIO
 
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, BLACK, LOCAL
+from pychess.Utils.const import WHITE, BLACK, LOCAL, RUNNING
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
+from pychess.Utils.Move import parseAny
 from pychess.Players.Human import Human
 from pychess.perspectives import perspective_manager
+from pychess.Savers import fen as fen_loader
 
 __title__ = _("Lectures")
 
@@ -101,26 +104,7 @@ class Sidepanel():
         def lecture_steps():
             with open(self.lecture, "r") as f:
                 for line in f:
-                    parts = line.strip().split()
-                    if parts[0] == "k" or parts[0] == "kibitz":
-                        yield "kibitz " + " ".join(parts[1:])
-                    elif parts[0] == "back":
-                        yield "backward %s" % parts[1]
-                    elif parts[0] == "bsetup":
-                        if len(parts) == 1:
-                            yield "bsetup"
-                        else:
-                            yield "bsetup " + " ".join(parts[1:])
-                    elif parts[0] == "tomove":
-                        yield "tomove %s" % parts[1]
-                    elif parts[0] == "wname":
-                        yield "wname %s" % parts[1]
-                    elif parts[0] == "bname":
-                        yield "bname %s" % parts[1]
-                    elif parts[0] == "revert":
-                        yield "revert"
-                    else:
-                        yield parts[0]
+                    yield line
             return
 
         self.steps = lecture_steps()
@@ -130,19 +114,73 @@ class Sidepanel():
             exit_lecture = False
             inside_bsetup = False
             paused = False
+            moves_played = 0
+
+            KIBITZ, BACKWARD, BSETUP, BSETUP_DONE, FEN, TOMOVE, WCASTLE, BCASTLE, \
+                WNAME, BNAME, REVERT, WAIT, MOVE = range(13)
 
             while True:
                 try:
                     step = next(self.steps)
                     print(step)
 
-                    if not inside_bsetup and step == "bsetup":
+                    parts = step.strip().split()
+
+                    command = None
+                    param = ""
+
+                    if parts[0] == "k" or parts[0] == "kibitz":
+                        command = KIBITZ
+                        param = " ".join(parts[1:])
+                    elif parts[0] == "back":
+                        command = BACKWARD
+                        param = int(parts[1]) if len(parts) > 1 else 1
+                    elif parts[0] == "bsetup":
+                        if len(parts) == 1:
+                            command = BSETUP
+                        else:
+                            if parts[1] == "done":
+                                command = BSETUP_DONE
+                            elif parts[1] == "fen":
+                                command = FEN
+                                param = parts[2]
+                            elif parts[1] == "tomove":
+                                command = TOMOVE
+                                param = "w" if parts[2].lower()[0] == "w" else "b"
+                            elif parts[1] == "wcastle":
+                                command = WCASTLE
+                                param = parts[2]
+                            elif parts[1] == "bcastle":
+                                command = BCASTLE
+                                param = parts[2]
+                    elif parts[0] == "tomove":
+                        command = TOMOVE
+                        param = "w" if parts[1].lower()[0] == "w" else "b"
+                    elif parts[0] == "wname":
+                        command = WNAME
+                        param = parts[1]
+                    elif parts[0] == "bname":
+                        command = BNAME
+                        param = parts[1]
+                    elif parts[0] == "revert":
+                        command = REVERT
+                    elif len(parts) == 1 and parts[0].isdigit():
+                        command = WAIT
+                        param = int(parts[0])
+                    else:
+                        command = MOVE
+                        param = parts[0]
+
+                    if not inside_bsetup and command == BSETUP:
                         inside_bsetup = True
-                    elif inside_bsetup and step == "bsetup done":
+                        pieces = ""
+                        color = ""
+                        castl = ""
+                        ep = ""
+                    elif inside_bsetup and command == BSETUP_DONE:
                         inside_bsetup = False
 
-                    just_wait = step.isdigit()
-                    wait_sec = int(step) if just_wait else 2
+                    wait_sec = int(param) if command == WAIT else 2
 
                     if inside_bsetup:
                         wait_sec = -1
@@ -167,13 +205,65 @@ class Sidepanel():
                             wait_sec = wait_sec - 0.1
 
                     if exit_lecture:
-                        # connection.client.run_command("kibitz Lecture exited.")
-                        # connection.client.run_command("unexamine")
+                        gamemodel.players[0].putMessage("Lecture exited.")
                         break
 
-                    if not just_wait:
-                        # connection.client.run_command(step)
-                        pass
+                    if command != WAIT:
+                        if command == KIBITZ:
+                            gamemodel.players[0].putMessage(param)
+                        if command == BACKWARD:
+                            gamemodel.undoMoves(param)
+                            moves_played -= param
+                        if command == MOVE:
+                            board = gamemodel.getBoardAtPly(gamemodel.ply)
+                            move = parseAny(board, param)
+                            gamemodel.curplayer.move_queue.put_nowait(move)
+                            moves_played += 1
+                        elif command == REVERT:
+                            gamemodel.undoMoves(moves_played)
+                            moves_played = 0
+                        elif command == BNAME:
+                            gamemodel.players[BLACK].name = param
+                            gamemodel.emit("players_changed")
+                        elif command == WNAME:
+                            gamemodel.players[WHITE].name = param
+                            gamemodel.emit("players_changed")
+                        elif command == FEN:
+                            pieces = param
+                        elif command == TOMOVE:
+                            color = param
+                        elif command == WCASTLE:
+                            if param == "both":
+                                castl += "KQ"
+                            elif param == "kside":
+                                castl += "K"
+                            elif param == "qside":
+                                castl += "Q"
+                        elif command == BCASTLE:
+                            if param == "both":
+                                castl += "kq"
+                            elif param == "kside":
+                                castl += "k"
+                            elif param == "qside":
+                                castl += "q"
+                        elif command == BSETUP_DONE:
+                            if not castl:
+                                castl = "-"
+                            if not ep:
+                                ep = "-"
+                            fen = "%s %s %s %s 0 1" % (pieces, color, castl, ep)
+
+                            curplayer = gamemodel.curplayer
+                            gamemodel.status = RUNNING
+                            gamemodel.loadAndStart(
+                                StringIO(fen),
+                                fen_loader,
+                                0,
+                                -1,
+                                first_time=False)
+                            curplayer.move_queue.put_nowait("int")
+                            gamemodel.emit("game_started")
+                            moves_played = 0
 
                 except StopIteration:
                     # connection.client.run_command("kibitz That concludes this lecture.")
@@ -184,8 +274,7 @@ class Sidepanel():
     def start_lecture_game(self):
         timemodel = TimeModel(0, 0)
         gamemodel = GameModel(timemodel, offline_lecture=True)
-        white_name = _("White")
-        black_name = _("Black")
+        white_name = black_name = "pychessbot"
         p0 = (LOCAL, Human, (WHITE, white_name), white_name)
         p1 = (LOCAL, Human, (BLACK, black_name), black_name)
 

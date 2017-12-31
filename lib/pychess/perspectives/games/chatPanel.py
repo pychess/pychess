@@ -18,6 +18,7 @@ __desc__ = _(
 class Sidepanel:
     def load(self, gmwidg):
         self.gamemodel = gmwidg.gamemodel
+        self.player_cid = None
         self.model_cids = [
             self.gamemodel.connect("game_started", self.onGameStarted),
             self.gamemodel.connect_after("game_terminated", self.on_game_terminated),
@@ -69,13 +70,14 @@ class Sidepanel:
                 allob = 'allob ' + str(gamemodel.ficsgame.gameno)
                 gamemodel.connection.client.run_command(allob)
 
-        if hasattr(self, "player") and not gamemodel.examined:
-            self.player_cid = self.player.connect("messageReceived", self.onMessageReieved)
+        if hasattr(self, "player") and not gamemodel.examined and self.player_cid is None:
+            self.player_cid = self.player.connect("messageReceived", self.onMessageRecieved)
 
         self.chatView.enable()
 
-    def onMessageReieved(self, player, text):
-        self.chatView.addMessage(repr(self.opplayer), text)
+    def onMessageRecieved(self, player, text):
+        sender = "pychessbot" if player.gamemodel.offline_lecture else repr(self.opplayer)
+        self.chatView.addMessage(sender, text)
 
     def onICMessageReieved(self, icgamemodel, player, text):
         self.chatView.addMessage(player, text)

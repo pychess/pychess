@@ -424,9 +424,9 @@ class GameModel(GObject.GObject):
         if self.players and self.status in (WAITING_TO_START, PAUSED, RUNNING):
             if (self.players[0].__type__ == LOCAL and self.players[1].__type__ == REMOTE) or \
                (self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE) or \
+                self.offline_lecture or \
                (self.players[1].__type__ == REMOTE and self.players[0].__type__ == REMOTE and
                     self.examined and (
-                    self.connection.offline_lecture or
                     self.players[0].name == "puzzlebot" or self.players[1].name == "puzzlebot") or
                     self.players[0].name == "endgamebot" or self.players[1].name == "endgamebot"):
                 return True
