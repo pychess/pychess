@@ -114,9 +114,8 @@ class GameWidget(GObject.GObject):
             self.gamemodel.gmwidg_ready.set()
 
     def _del(self):
-        if isinstance(self.gamemodel, ICGameModel):
-            if self.gamemodel.connection.offline_lecture:
-                self.gamemodel.connection.lecture_exit_event.set()
+        if self.gamemodel.offline_lecture:
+            self.gamemodel.lecture_exit_event.set()
 
         for obj in self.cids:
             if obj.handler_is_connected(self.cids[obj]):

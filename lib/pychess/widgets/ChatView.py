@@ -93,20 +93,19 @@ class ChatView(Gtk.Box):
         self.pack_start(self.writeView, False, False, 0)
         box.add(self.writeView)
 
-        if isinstance(self.gamemodel, ICGameModel) and \
-                self.gamemodel.connection.offline_lecture:
+        if self.gamemodel.offline_lecture:
             label = _("Go on")
             self.go_on_btn = Gtk.Button()
             self.go_on_btn.set_label(label)
             self.go_on_btn_cid = self.go_on_btn.connect(
-                "clicked", lambda btn: self.gamemodel.connection.lecture_skip_event.set())
+                "clicked", lambda btn: self.gamemodel.lecture_skip_event.set())
             box.add(self.go_on_btn)
 
             label = _("Pause")
             self.pause_btn = Gtk.Button()
             self.pause_btn.set_label(label)
             self.pause_btn_cid = self.pause_btn.connect(
-                "clicked", lambda btn: self.gamemodel.connection.lecture_pause_event.set())
+                "clicked", lambda btn: self.gamemodel.lecture_pause_event.set())
             box.add(self.pause_btn)
 
         self.pack_start(box, False, False, 0)

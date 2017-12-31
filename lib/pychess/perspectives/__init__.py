@@ -48,8 +48,8 @@ class Perspective(object):
 
             menu_item = Gtk.CheckMenuItem(label=panel.__title__)
             menu_item.name = panel.__name__
-            if menu_item.name != "LecturesPanel":
-                menu_item.set_active(True)
+            # if menu_item.name != "LecturesPanel":
+            #    menu_item.set_active(True)
             menu_item.connect("toggled", self.on_toggled, panel)
             self.menuitems.append(menu_item)
             panel.menu_item = menu_item
@@ -200,6 +200,8 @@ class PerspectiveManager(object):
             self.activate_perspective("database")
         elif self.get_perspective("games").sensitive:
             self.activate_perspective("games")
+        elif self.get_perspective("learn").sensitive:
+            self.activate_perspective("learn")
         else:
             self.activate_perspective("welcome")
 

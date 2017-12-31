@@ -101,7 +101,7 @@ class GameModel(GObject.GObject):
         "observers_received": (GObject.SignalFlags.RUN_FIRST, None, (str, )),
     }
 
-    def __init__(self, timemodel=None, variant=NormalBoard):
+    def __init__(self, timemodel=None, variant=NormalBoard, offline_lecture=False):
         GObject.GObject.__init__(self)
         self.daemon = True
         self.variant = variant
@@ -172,6 +172,12 @@ class GameModel(GObject.GObject):
         self.spectators = {}
 
         self.undoQueue = Queue()
+
+        self.offline_lecture = offline_lecture
+        if offline_lecture:
+            self.lecture_skip_event = asyncio.Event()  # set when 'Go on' button pressed
+            self.lecture_pause_event = asyncio.Event()  # set when 'Pause' button pressed
+            self.lecture_exit_event = asyncio.Event()  # set when 'Exit' button pressed
 
     def zero_reached(self, timemodel, color):
         if conf.get('autoCallFlag', True) and self.players[1 - color].__type__ == ARTIFICIAL:

@@ -36,6 +36,7 @@ from pychess.ic import ICLogon
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.welcome import Welcome
 from pychess.perspectives.games import Games, get_open_dialog
+from pychess.perspectives.learn import Learn
 from pychess.perspectives.fics import FICS
 from pychess.perspectives.database import Database
 from pychess import VERSION, VERSION_NAME
@@ -388,6 +389,12 @@ class GladeHandlers(object):
         perspective = perspective_manager.get_perspective("database")
         perspective.on_update_players()
 
+    # Learn menu
+
+    def on_lectures_activate(self, widget):
+        perspective = perspective_manager.get_perspective("learn")
+        perspective.start_learning()
+
     # Help menu
 
     def on_about_chess1_activate(self, widget):
@@ -621,7 +628,7 @@ class PyChess(Gtk.Application):
 
     def addPerspectives(self):
         perspective_manager.set_widgets(self.widgets)
-        for persp in (Welcome, Games, FICS, Database):
+        for persp in (Welcome, Games, FICS, Database, Learn):
             perspective = persp()
             perspective_manager.add_perspective(perspective)
             perspective.create_toolbuttons()

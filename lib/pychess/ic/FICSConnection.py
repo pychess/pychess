@@ -372,11 +372,6 @@ class FICSMainConnection(FICSConnection):
         self.journal_owner = self.username
         self.set_user_vars = False
 
-        self.offline_lecture = False
-        self.lecture_skip_event = asyncio.Event()  # set when 'Go on' button pressed
-        self.lecture_pause_event = asyncio.Event()  # set when 'Pause' button pressed
-        self.lecture_exit_event = asyncio.Event()  # set when 'Exit' button pressed
-
     def close(self):
         if isinstance(self.client, PredictionsTelnet) and self.set_user_vars:
             self.client.run_command("set open 0")

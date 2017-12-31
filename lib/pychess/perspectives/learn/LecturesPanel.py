@@ -3,7 +3,11 @@ import asyncio
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
-
+from pychess.Utils.const import WHITE, BLACK, LOCAL
+from pychess.Utils.GameModel import GameModel
+from pychess.Utils.TimeModel import TimeModel
+from pychess.Players.Human import Human
+from pychess.perspectives import perspective_manager
 
 __title__ = _("Lectures")
 
@@ -48,11 +52,8 @@ LECTURES = (
 
 
 class Sidepanel():
-    def load(self, widgets, connection, lounge):
-        self.widgets = widgets
-        self.connection = connection
-        self.lounge = lounge
-
+    def load(self, persp):
+        self.persp = persp
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         self.tv = Gtk.TreeView()
@@ -69,13 +70,13 @@ class Sidepanel():
         column = Gtk.TreeViewColumn("Author", renderer, text=2)
         self.tv.append_column(column)
 
-        self.tv.connect("row-activated", self.row_activated, self.connection)
+        self.tv.connect("row-activated", self.row_activated)
 
         self.store = Gtk.ListStore(int, str, str)
-        # TODO: there is no bsetup on ICC ?
-        lectures = [] if connection.ICC else LECTURES
-        for num, title, author in lectures:
+
+        for num, title, author in LECTURES:
             self.store.append([num, title, author])
+
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
 
@@ -88,14 +89,14 @@ class Sidepanel():
 
         return self.box
 
-    def row_activated(self, widget, path, col, connection):
+    def row_activated(self, widget, path, col):
         if path is None:
             return
         lecnum = path[0] + 1
         self.lecture = addDataPrefix("lectures/lec%s.txt" % lecnum)
 
-        connection.client.run_command("examine")
-        connection.offline_lecture = True
+        # connection.client.run_command("examine")
+        gamemodel = self.start_lecture_game()
 
         def lecture_steps():
             with open(self.lecture, "r") as f:
@@ -125,7 +126,7 @@ class Sidepanel():
         self.steps = lecture_steps()
 
         @asyncio.coroutine
-        def coro():
+        def coro(gamemodel):
             exit_lecture = False
             inside_bsetup = False
             paused = False
@@ -147,18 +148,18 @@ class Sidepanel():
                         wait_sec = -1
 
                     while wait_sec >= 0:
-                        if connection.lecture_exit_event.is_set():
-                            connection.lecture_exit_event.clear()
+                        if gamemodel.lecture_exit_event.is_set():
+                            gamemodel.lecture_exit_event.clear()
                             exit_lecture = True
                             break
 
-                        if connection.lecture_skip_event.is_set():
-                            connection.lecture_skip_event.clear()
+                        if gamemodel.lecture_skip_event.is_set():
+                            gamemodel.lecture_skip_event.clear()
                             paused = False
                             break
 
-                        if connection.lecture_pause_event.is_set():
-                            connection.lecture_pause_event.clear()
+                        if gamemodel.lecture_pause_event.is_set():
+                            gamemodel.lecture_pause_event.clear()
                             paused = True
 
                         yield from asyncio.sleep(0.1)
@@ -166,16 +167,29 @@ class Sidepanel():
                             wait_sec = wait_sec - 0.1
 
                     if exit_lecture:
-                        connection.client.run_command("kibitz Lecture exited.")
-                        connection.client.run_command("unexamine")
-                        connection.offline_lecture = False
+                        # connection.client.run_command("kibitz Lecture exited.")
+                        # connection.client.run_command("unexamine")
                         break
 
                     if not just_wait:
-                        connection.client.run_command(step)
+                        # connection.client.run_command(step)
+                        pass
 
                 except StopIteration:
-                    connection.client.run_command("kibitz That concludes this lecture.")
+                    # connection.client.run_command("kibitz That concludes this lecture.")
                     break
 
-        asyncio.async(coro())
+        asyncio.async(coro(gamemodel))
+
+    def start_lecture_game(self):
+        timemodel = TimeModel(0, 0)
+        gamemodel = GameModel(timemodel, offline_lecture=True)
+        white_name = _("White")
+        black_name = _("Black")
+        p0 = (LOCAL, Human, (WHITE, white_name), white_name)
+        p1 = (LOCAL, Human, (BLACK, black_name), black_name)
+
+        perspective = perspective_manager.get_perspective("games")
+        asyncio.async(perspective.generalStart(gamemodel, p0, p1))
+
+        return gamemodel
