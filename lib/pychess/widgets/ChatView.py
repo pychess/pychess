@@ -108,12 +108,22 @@ class ChatView(Gtk.Box):
                 "clicked", lambda btn: self.gamemodel.lecture_pause_event.set())
             box.add(self.pause_btn)
 
+        if self.gamemodel.practice_game:
+            label = _("Hint")
+            self.next_btn = Gtk.Button()
+            self.next_btn.set_label(label)
+            self.next_btn_cid = self.next_btn.connect("clicked", self.on_get_hint)
+            box.add(self.next_btn)
+
         self.pack_start(box, False, False, 0)
 
         self.writeview_cid = self.writeView.connect("key-press-event", self.onKeyPress)
         self.cid = None
         if self.gamemodel is not None:
             self.cid = self.gamemodel.connect_after("game_terminated", self.on_game_terminated)
+
+    def on_get_hint(self, widget):
+        self.addMessage("egtb", self.gamemodel.hint)
 
     def on_game_terminated(self, model):
         if isinstance(self.gamemodel, ICGameModel):

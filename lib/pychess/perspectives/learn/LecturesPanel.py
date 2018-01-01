@@ -273,7 +273,8 @@ class Sidepanel():
 
     def start_lecture_game(self):
         timemodel = TimeModel(0, 0)
-        gamemodel = GameModel(timemodel, offline_lecture=True)
+        gamemodel = GameModel(timemodel)
+        gamemodel.set_offline_lecture()
         white_name = black_name = "pychessbot"
         p0 = (LOCAL, Human, (WHITE, white_name), white_name)
         p1 = (LOCAL, Human, (BLACK, black_name), black_name)

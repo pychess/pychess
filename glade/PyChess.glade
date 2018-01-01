@@ -653,8 +653,8 @@
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="Escape" signal="activate"/>
                         <accelerator key="F11" signal="activate"/>
+                        <accelerator key="Escape" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -783,28 +783,6 @@
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Import games from theweekinchess.com</property>
                         <signal name="activate" handler="on_import_twic_activate" swapped="no"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkMenuItem" id="learn">
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Learn</property>
-                <child type="submenu">
-                  <object class="GtkMenu" id="learn_menu">
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkMenuItem" id="lectures">
-                        <property name="use_action_appearance">False</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Lectures</property>
-                        <signal name="activate" handler="on_lectures_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>

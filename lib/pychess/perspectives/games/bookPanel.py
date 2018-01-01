@@ -341,7 +341,6 @@ class EndgameAdvisor(Advisor):
             "The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
 
-        self.cid = self.egtb.connect("scored", self.on_scored)
         self.queue = asyncio.Queue()
         self.egtb_task = asyncio.async(self.start())
 
@@ -355,32 +354,30 @@ class EndgameAdvisor(Advisor):
             if v == self.StopNow:
                 break
             elif v == self.board.board:
-                self.egtb.scoreAllMoves(v)
+                ret = yield from self.egtb.scoreAllMoves(v)
+                self.on_scored(v, ret)
             self.queue.task_done()
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
         if m is None or m.variant.variant != NORMALCHESS or m.isPlayingICSGame():
-            return
+            if not m.practice_game:
+                return
 
         self.parent = self.empty_parent()
         self.board = m.getBoardAtPly(shown, boardview.shown_variation_idx)
         self.queue.put_nowait(self.board.board)
 
     def _del(self):
-        self.egtb.disconnect(self.cid)
         try:
             self.queue.put_nowait(self.StopNow)
         except asyncio.QueueFull:
             log.warning("EndgameAdvisor.gamewidget_closed: Queue.Full")
         self.egtb_task.cancel()
 
-    def on_scored(self, w, ret):
+    def on_scored(self, board, endings):
         m = self.boardview.model
-        if m.isPlayingICSGame():
-            return
 
-        board, endings = ret
         if board != self.board.board:
             return
 
@@ -394,8 +391,17 @@ class EndgameAdvisor(Advisor):
             else:
                 result = (_("Win"), 1, 1.0)
                 details = _("Mate in %d") % depth
+
+            if m.practice_game:
+                m.hint = "%s %s %s" % (toSAN(self.board, move, True), result[0], details)
+                return
+
+            if m.isPlayingICSGame():
+                return
+
             self.store.append(self.parent, [(self.board, move, None), result,
                                             0, False, details, False, False])
+
         self.tv.expand_row(Gtk.TreePath(self.path), False)
 
         if self.auto_activate:

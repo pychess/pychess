@@ -18,6 +18,7 @@ class Perspective(object):
         self.name = name
         self.label = label
         self.default = False
+        self.always_on = False
         self.widget = Gtk.Alignment()
         self.widget.show()
         self.toolbuttons = []
@@ -56,6 +57,9 @@ class Perspective(object):
 
             box = dock_panel_tab(panel.__title__, panel.__desc__, panel.__icon__, close_button)
             self.docks[panel.__name__] = [box, None, menu_item]
+
+    def activate(self):
+        pass
 
     def on_clicked(self, button, panel):
         """ Toggle show/hide side panel menu item in View menu """
@@ -163,6 +167,9 @@ class PerspectiveManager(object):
             for toolbutton in perspective.toolbuttons:
                 toolbutton.show()
 
+            if perspective.always_on:
+                perspective.activate()
+
     def add_perspective(self, perspective):
         box = self.widgets["persp_buttons"]
         children = box.get_children()
@@ -171,7 +178,10 @@ class PerspectiveManager(object):
         if perspective.default:
             self.current_perspective = perspective
         else:
-            button.set_sensitive(False)
+            if perspective.always_on:
+                button.set_sensitive(True)
+            else:
+                button.set_sensitive(False)
         button.set_name(perspective.name)
         button.set_mode(False)
         box.pack_start(button, True, True, 0)

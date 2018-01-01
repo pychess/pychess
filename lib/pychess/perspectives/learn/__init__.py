@@ -7,13 +7,15 @@ from pychess.System.prefix import addUserConfigPrefix
 from pychess.System.Log import log
 from pychess.widgets import new_notebook
 from pychess.widgets.pydock.PyDockTop import PyDockTop
-from pychess.widgets.pydock import WEST, CENTER
+from pychess.widgets.pydock import WEST, SOUTH, CENTER
 
 
 class Learn(GObject.GObject, Perspective):
     def __init__(self):
         GObject.GObject.__init__(self)
         Perspective.__init__(self, "learn", _("Learn"))
+        self.always_on = True
+
         self.dockLocation = addUserConfigPrefix("pydock-learn.xml")
         self.first_run = True
 
@@ -54,6 +56,7 @@ class Learn(GObject.GObject, Perspective):
             leaf.setDockable(False)
 
             leaf.dock(self.docks["LecturesPanel"][1], WEST, self.docks["LecturesPanel"][0], "LecturesPanel")
+            leaf.dock(self.docks["EndgamesPanel"][1], SOUTH, self.docks["EndgamesPanel"][0], "EndgamesPanel")
 
         def unrealize(dock):
             dock.saveToXML(self.dockLocation)
@@ -66,7 +69,7 @@ class Learn(GObject.GObject, Perspective):
 
         log.debug("Learn.__init__: finished")
 
-    def start_learning(self):
+    def activate(self):
         if self.first_run:
             self.init_layout()
             self.first_run = False

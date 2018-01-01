@@ -101,7 +101,7 @@ class GameModel(GObject.GObject):
         "observers_received": (GObject.SignalFlags.RUN_FIRST, None, (str, )),
     }
 
-    def __init__(self, timemodel=None, variant=NormalBoard, offline_lecture=False):
+    def __init__(self, timemodel=None, variant=NormalBoard):
         GObject.GObject.__init__(self)
         self.daemon = True
         self.variant = variant
@@ -173,11 +173,18 @@ class GameModel(GObject.GObject):
 
         self.undoQueue = Queue()
 
-        self.offline_lecture = offline_lecture
-        if offline_lecture:
-            self.lecture_skip_event = asyncio.Event()  # set when 'Go on' button pressed
-            self.lecture_pause_event = asyncio.Event()  # set when 'Pause' button pressed
-            self.lecture_exit_event = asyncio.Event()  # set when 'Exit' button pressed
+        self.offline_lecture = False
+        self.practice_game = False
+
+    def set_practice_game(self):
+        self.practice_game = True
+        self.hint = ""
+
+    def set_offline_lecture(self):
+        self.offline_lecture = True
+        self.lecture_skip_event = asyncio.Event()  # set when 'Go on' button pressed
+        self.lecture_pause_event = asyncio.Event()  # set when 'Pause' button pressed
+        self.lecture_exit_event = asyncio.Event()  # set when 'Exit' button pressed
 
     def zero_reached(self, timemodel, color):
         if conf.get('autoCallFlag', True) and self.players[1 - color].__type__ == ARTIFICIAL:
@@ -424,7 +431,7 @@ class GameModel(GObject.GObject):
         if self.players and self.status in (WAITING_TO_START, PAUSED, RUNNING):
             if (self.players[0].__type__ == LOCAL and self.players[1].__type__ == REMOTE) or \
                (self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE) or \
-                self.offline_lecture or \
+                self.offline_lecture or self.practice_game or \
                (self.players[1].__type__ == REMOTE and self.players[0].__type__ == REMOTE and
                     self.examined and (
                     self.players[0].name == "puzzlebot" or self.players[1].name == "puzzlebot") or

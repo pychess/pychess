@@ -1,3 +1,5 @@
+import asyncio
+
 from gi.repository import GObject
 
 from .Move import Move
@@ -45,6 +47,7 @@ class EndgameTable(GObject.GObject):
                     return result, depth
         return None, None
 
+    @asyncio.coroutine
     def scoreAllMoves(self, lBoard):
         """ Return each move's result and depth to mate.
 
@@ -58,7 +61,7 @@ class EndgameTable(GObject.GObject):
         piece_count = self._pieceCounts(lBoard)
         for provider in self.providers:
             if provider.supports(piece_count):
-                results = provider.scoreAllMoves(lBoard)
+                results = yield from provider.scoreAllMoves(lBoard)
                 if results:
                     ret = []
                     for lmove, result, depth in results:

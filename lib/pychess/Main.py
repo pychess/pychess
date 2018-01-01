@@ -389,12 +389,6 @@ class GladeHandlers(object):
         perspective = perspective_manager.get_perspective("database")
         perspective.on_update_players()
 
-    # Learn menu
-
-    def on_lectures_activate(self, widget):
-        perspective = perspective_manager.get_perspective("learn")
-        perspective.start_learning()
-
     # Help menu
 
     def on_about_chess1_activate(self, widget):

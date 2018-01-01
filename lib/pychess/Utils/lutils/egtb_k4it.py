@@ -1,3 +1,4 @@
+import asyncio
 import re
 from urllib.request import urlopen
 
@@ -32,6 +33,7 @@ class EgtbK4kit:
     def supports(self, size):
         return sum(size) < 7
 
+    @asyncio.coroutine
     def scoreAllMoves(self, board, probeSoft=False):
         global URL, expression, PROMOTION_FLAGS
         fen = board.asFen().split()[0] + " w - - 0 1"
@@ -41,16 +43,22 @@ class EgtbK4kit:
         if probeSoft or not conf.get("online_egtb_check", True):
             return []
 
-        # Request the page
-        url = (URL + fen).replace(" ", "%20")
-        try:
-            f = urlopen(url)
-        except IOError as e:
-            log.warning(
-                "Unable to read endgame tablebase from the Internet: %s" %
-                repr(e))
-            return []
-        data = f.read()
+        def get_data(URL, fen):
+            # Request the page
+            url = (URL + fen).replace(" ", "%20")
+            try:
+                f = urlopen(url)
+            except IOError as e:
+                log.warning(
+                    "Unable to read endgame tablebase from the Internet: %s" %
+                    repr(e))
+                data = b""
+            data = f.read()
+            return data
+
+        loop = asyncio.get_event_loop()
+        future = loop.run_in_executor(None, get_data, URL, fen)
+        data = yield from future
 
         # Parse
         for color, move_data in enumerate(data.split(b"\nNEXTCOLOR\n")):
