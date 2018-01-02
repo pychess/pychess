@@ -5061,8 +5061,8 @@ If it can use both  you can set here which one you like.</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="tag_filter_ok">
-                <property name="label">gtk-ok</property>
+              <object class="GtkButton" id="tag_filter_cancel">
+                <property name="label">gtk-cancel</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -5077,8 +5077,8 @@ If it can use both  you can set here which one you like.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="tag_filter_cancel">
-                <property name="label">gtk-cancel</property>
+              <object class="GtkButton" id="tag_filter_ok">
+                <property name="label">gtk-ok</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -6621,8 +6621,8 @@ If it can use both  you can set here which one you like.</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">tag_filter_ok</action-widget>
       <action-widget response="-6">tag_filter_cancel</action-widget>
+      <action-widget response="-5">tag_filter_ok</action-widget>
     </action-widgets>
   </object>
 </interface>

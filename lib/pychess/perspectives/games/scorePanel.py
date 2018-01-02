@@ -174,7 +174,10 @@ class ScorePlot(Gtk.DrawingArea):
         self.selected = 0
 
     def get_move_height(self):
-        w = int(floor(self.get_allocation().width / self.__len__()))
+        c = self.__len__()
+        w = self.get_allocation().width
+        if c != 0:
+            w = int(floor(w / c))
         return max(min(w, 24), 1)
 
     def addScore(self, score):

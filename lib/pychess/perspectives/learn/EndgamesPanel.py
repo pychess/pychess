@@ -37,7 +37,7 @@ ENDGAMES = (
     ("kqpkq", "Play King, Queen and Pawn against King and Queen"),
     ("knnkp", "Play King and Two Knights and against King and Pawn"),
     ("kppkpp", "Play King and two pawns against King and two pawns"),
-    ("kqqkqr", "Play King and two qeens against King and Queen"),
+    ("kqqkqr", "Play King and two queens against King and Queen"),
 )
 
 
