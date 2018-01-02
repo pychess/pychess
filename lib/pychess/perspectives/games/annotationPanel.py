@@ -426,7 +426,8 @@ class Sidepanel:
                 if board.children[index] != comment:
                     self.gamemodel.needsSave = True
                 board.children[index] = comment
-        self.update()
+        if drop or update:
+            self.update()
 
     def delete_comment(self, widget=None, board=None, index=0):
         if index == -1 or not board.children:

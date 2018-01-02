@@ -28,7 +28,7 @@ def prettyPrintScore(s, depth, format_mate=False):
         mate_in = MATE_VALUE - s
         if format_mate:
             if mate_in == 0:
-                return _("Mated")
+                return _("Mate")
             return "%s #%d" % (_("Mate"), mate_in)
         else:
             return "%s#%.0f" % (pp, s)
