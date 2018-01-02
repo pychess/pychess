@@ -85,6 +85,8 @@ class Sidepanel:
             model.remove(model.get_iter((len(model) - 1, )))
 
     def game_started(self, model):
+        if model.puzzle_game:
+            return
         self.game_changed(model, model.ply)
 
     def game_changed(self, model, ply):

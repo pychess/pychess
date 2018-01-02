@@ -136,7 +136,7 @@ class Sidepanel():
                         pawn_cords.remove(cord)
                     else:
                         cords.remove(cord)
-
+            # TODO: 2 same color bishop is not ok
             ok = (not lboard.isChecked()) and (not lboard.opIsChecked())
 
         fen = lboard.asFen()

@@ -123,6 +123,9 @@ class Sidepanel:
         # print("----------------------")
 
     def game_started(self, model):
+        if model.puzzle_game:
+            return
+
         self.game_changed(model, model.ply)
 
     def shownChanged(self, boardview, shown):

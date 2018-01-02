@@ -175,10 +175,16 @@ class GameModel(GObject.GObject):
 
         self.offline_lecture = False
         self.practice_game = False
+        self.puzzle_game = False
 
     def set_practice_game(self):
         self.practice_game = True
         self.hint = ""
+
+    def set_puzzle_game(self):
+        self.puzzle_game = True
+        self.hint = ""
+        self.ply_played = 0
 
     def set_offline_lecture(self):
         self.offline_lecture = True
@@ -431,7 +437,7 @@ class GameModel(GObject.GObject):
         if self.players and self.status in (WAITING_TO_START, PAUSED, RUNNING):
             if (self.players[0].__type__ == LOCAL and self.players[1].__type__ == REMOTE) or \
                (self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE) or \
-                self.offline_lecture or self.practice_game or \
+                self.offline_lecture or self.practice_game or self.puzzle_game or \
                (self.players[1].__type__ == REMOTE and self.players[0].__type__ == REMOTE and
                     self.examined and (
                     self.players[0].name == "puzzlebot" or self.players[1].name == "puzzlebot") or

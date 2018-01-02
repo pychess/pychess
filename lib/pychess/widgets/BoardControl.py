@@ -36,7 +36,16 @@ def play_or_add_move(view, board, move):
         if board.board.next.lastMove == move.move:
             # replay mainline move
             view.shown += 1
+            if view.model.puzzle_game:
+                incr = 1 if len(view.model.moves) == board.ply + 1 else 2
+                view.model.ply_played += incr
+                view.model.players[0].putMessage(_("Good move!") if incr == 2 else _("Well done!"))
+                view.model.emit("game_changed", board.ply + incr)
         elif board.board.next.children:
+            if view.model.puzzle_game:
+                view.model.players[0].putMessage(_("You can do it better!"))
+                view.setShownBoard(board)
+                return
             # try to find this move in variations
             for i, vari in enumerate(board.board.next.children):
                 for node in vari:
@@ -48,6 +57,10 @@ def play_or_add_move(view, board, move):
             new_vari = view.model.add_variation(board, (move, ))
             view.setShownBoard(new_vari[-1])
         else:
+            if view.model.puzzle_game:
+                view.model.players[0].putMessage(_("You can do it better!"))
+                view.setShownBoard(board)
+                return
             # create new variation
             new_vari = view.model.add_variation(board, (move, ))
             view.setShownBoard(new_vari[-1])

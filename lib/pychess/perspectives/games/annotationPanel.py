@@ -861,7 +861,9 @@ class Sidepanel:
             if node["board"] == shown_board.board:
                 start = self.textbuffer.get_iter_at_offset(node["start"])
                 end = self.textbuffer.get_iter_at_offset(node["end"])
-                self.textbuffer.apply_tag_by_name("selected", start, end)
+                # don't hightlight initial game comment!
+                if shown_board.board != self.gamemodel.boards[0].board:
+                    self.textbuffer.apply_tag_by_name("selected", start, end)
                 break
 
         if start:
@@ -877,6 +879,10 @@ class Sidepanel:
             # start = end_iter().get_offset()
 
             if board is None:
+                break
+
+            # Hide moves in puzzle games
+            if self.gamemodel.puzzle_game and board.plyCount > self.gamemodel.ply_played:
                 break
 
             # Initial game or variation comment
@@ -929,7 +935,7 @@ class Sidepanel:
             else:
                 break
 
-        if result and result != "*":
+        if result and result != "*" and not self.gamemodel.puzzle_game:
             self.textbuffer.insert_with_tags_by_name(end_iter(), " " + result,
                                                      "move")
 
@@ -1111,6 +1117,9 @@ class Sidepanel:
         self.update()
 
     def game_changed(self, game, ply):
+        if game.puzzle_game:
+            self.update()
+
         board = game.getBoardAtPly(ply, variation=0).board
         # if self.update() insterted all nodes before (f.e opening_changed), do nothing
         if self.nodelist and self.nodelist[-1]["board"] == board:
