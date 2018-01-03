@@ -346,10 +346,21 @@ class BoardControl(Gtk.EventBox):
             self.view.setPremove(None, None, None, None)
             self.currentState = self.normalState
 
+    def color(self, event):
+        state = event.get_state()
+        if state & Gdk.ModifierType.SHIFT_MASK and state & Gdk.ModifierType.CONTROL_MASK:
+            return "Y"
+        elif state & Gdk.ModifierType.SHIFT_MASK:
+            return "R"
+        elif state & Gdk.ModifierType.CONTROL_MASK:
+            return "B"
+        else:
+            return "G"
+
     def button_press(self, widget, event):
         if event.button == 3:
             # first we will draw a circle
-            cord = self.currentState.point2Cord(event.x, event.y)
+            cord = self.currentState.point2Cord(event.x, event.y, self.color(event))
             self.pre_arrow_from = cord
             self.view.pre_circle = cord
             self.view.redrawCanvas()
@@ -379,7 +390,7 @@ class BoardControl(Gtk.EventBox):
     def button_release(self, widget, event):
         if event.button == 3:
             # remove or finalize circle/arrow as needed
-            cord = self.currentState.point2Cord(event.x, event.y)
+            cord = self.currentState.point2Cord(event.x, event.y, self.color(event))
             if self.view.pre_circle == cord:
                 if cord in self.view.circles:
                     self.view.circles.remove(cord)
@@ -551,7 +562,7 @@ class BoardState:
         x_loc /= float(side)
         return x_loc, self.RANKS - y_loc
 
-    def point2Cord(self, x_loc, y_loc):
+    def point2Cord(self, x_loc, y_loc, color=None):
         point = self.transPoint(x_loc, y_loc)
         p0_loc, p1_loc = point[0], point[1]
         if self.parent.variant.variant in DROP_VARIANTS:
@@ -562,7 +573,7 @@ class BoardState:
             if not 0 <= int(p0_loc) <= self.FILES - 1 or not 0 <= int(
                     p1_loc) <= self.RANKS - 1:
                 return None
-        return Cord(int(p0_loc) if p0_loc >= 0 else int(p0_loc) - 1, int(p1_loc))
+        return Cord(int(p0_loc) if p0_loc >= 0 else int(p0_loc) - 1, int(p1_loc), color)
 
     def isSelectable(self, cord):
         # Simple isSelectable method, disabling selecting cords out of bound etc

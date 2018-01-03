@@ -10,6 +10,7 @@ from gi.repository import GLib, Gtk, Gdk, GObject, Pango, PangoCairo
 from pychess.System.prefix import addDataPrefix
 from pychess.System import conf
 from pychess.gfx import Pieces
+from pychess.Savers.pgn import comment_arrows_re, comment_circles_re
 from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.const import ASEAN_VARIANTS, DROP_VARIANTS, WAITING_TO_START, REMOTE, \
@@ -519,6 +520,26 @@ class BoardView(Gtk.DrawingArea):
         if self.pre_circle is not None:
             self.pre_circle = None
             need_redraw = True
+
+        # search circles/arrows in move comments
+        board = self.model.getBoardAtPly(shown, self.shown_variation_idx).board
+        if board.children:
+            for child in board.children:
+                if isinstance(board.children[0], str):
+                    if "[%csl" in child:
+                        match = comment_circles_re.search(child)
+                        circles = match.groups()[0].split(",")
+                        for circle in circles:
+                            self.circles.add(Cord(circle[1:3], color=circle[0]))
+                        need_redraw = True
+
+                    if "[%cal" in child:
+                        match = comment_arrows_re.search(child)
+                        arrows = match.groups()[0].split(",")
+                        for arrow in arrows:
+                            self.arrows.add((Cord(arrow[1:3], color=arrow[0]), Cord(arrow[3:5])))
+                        need_redraw = True
+
         if need_redraw:
             self.redrawCanvas()
 
@@ -1241,18 +1262,32 @@ class BoardView(Gtk.DrawingArea):
                 context.set_source_rgba(red, green, blue, alpha)
             context.fill()
 
+    def color2rgba(self, color):
+        if color == "R":
+            rgba = (.643, 0, 0, 0.8)
+        elif color == "B":
+            rgba = (.204, .396, .643, 0.8)
+        elif color == "Y":
+            rgba = (.961, .475, 0, 0.8)
+        else:
+            # light_green
+            rgba = (0.337, 0.612, 0.117, 0.8)
+        return rgba
+
     def drawCircles(self, context):
         radius = self.square[3] / 2.0
         context.set_line_width(4)
-        light_green = (0.337, 0.612, 0.117, 0.8)
-        context.set_source_rgb(*light_green[:3])
 
         for cord in self.circles:
+            rgba = self.color2rgba(cord.color)
+            context.set_source_rgb(*rgba[:3])
             x_loc, y_loc = self.cord2Point(cord)
             context.new_sub_path()
             context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
             context.stroke()
         if self.pre_circle is not None:
+            rgba = self.color2rgba(self.pre_circle.color)
+            context.set_source_rgb(*rgba[:3])
             x_loc, y_loc = self.cord2Point(self.pre_circle)
             context.new_sub_path()
             context.arc(x_loc + radius, y_loc + radius, radius - 3, 0, 2 * pi)
@@ -1263,11 +1298,11 @@ class BoardView(Gtk.DrawingArea):
         arhh = 0.6  # Arrow head height
         arsw = 0.0  # Arrow stroke width
         for arrow_cords in self.arrows:
-            self.__drawArrow(context, arrow_cords, arw, arhw, arhh, arsw,
-                             light_green, light_green)
+            rgba = self.color2rgba(arrow_cords[0].color)
+            self.__drawArrow(context, arrow_cords, arw, arhw, arhh, arsw, rgba, rgba)
         if self.pre_arrow is not None:
-            self.__drawArrow(context, self.pre_arrow, arw, arhw, arhh, arsw,
-                             light_green, light_green)
+            rgba = self.color2rgba(self.pre_arrow[0].color)
+            self.__drawArrow(context, self.pre_arrow, arw, arhw, arhh, arsw, rgba, rgba)
 
     ###############################
     #        drawLastMove         #

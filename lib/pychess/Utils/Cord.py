@@ -10,12 +10,13 @@ class CordFormatException(Exception):
 
 
 class Cord:
-    def __init__(self, var1, var2=None):
+    def __init__(self, var1, var2=None, color=None):
         """ Inits a new highlevel cord object.
             The cord B3 can be inited in the folowing ways:
             Cord(17), Cord("b3"), Cord(1,2), Cord("b",3)
+            color can be one of "R", "G", "B", "Y"
         """
-
+        self.color = color
         if var2 is None:
             if isinstance(var1, int):
                 # We assume the format Cord(17)

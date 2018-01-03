@@ -71,9 +71,12 @@ pattern = re.compile(r"""
     )    # move (full, count, move with ?!, ?!)
     """, re.VERBOSE | re.DOTALL)
 
-moveeval = re.compile(
-    "\[%eval ([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?(?:/(\d{1,2}))?\]")
-movetime = re.compile("\[%emt (\d:)?(\d{1,2}:)?(\d{1,4})(?:\.(\d{1,3}))?\]")
+move_eval_re = re.compile("\[%eval\s+([+\-])?(?:#)?(\d+)(?:[,\.](\d{1,2}))?(?:/(\d{1,2}))?\]")
+move_time_re = re.compile("\[%emt\s+(\d:)?(\d{1,2}:)?(\d{1,4})(?:\.(\d{1,3}))?\]")
+
+# Chessbase style circles/arrows {[%csl Ra3][%cal Gc2c3,Rc3d4]}
+comment_circles_re = re.compile("\[%csl\s+((?:[RGBY]\w{2},?)+)\]")
+comment_arrows_re = re.compile("\[%cal\s+((?:[RGBY]\w{4},?)+)\]")
 
 
 def wrap(string, length):
@@ -844,7 +847,7 @@ class PGNFile(ChessFile):
                 for child in board.children:
                     if isinstance(child, str):
                         if self.has_emt:
-                            match = movetime.search(child)
+                            match = move_time_re.search(child)
                             if match:
                                 movecount, color = divmod(ply + 1, 2)
                                 hour, minute, sec, msec = match.groups()
@@ -860,7 +863,7 @@ class PGNFile(ChessFile):
                                     movecount] = prev - msec / 1000. + gain
 
                         if self.has_eval:
-                            match = moveeval.search(child)
+                            match = move_eval_re.search(child)
                             if match:
                                 sign, num, fraction, depth = match.groups()
                                 sign = 1 if sign is None or sign == "+" else -1
