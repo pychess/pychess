@@ -16,7 +16,7 @@ __title__ = _("Lectures")
 
 __icon__ = addDataPrefix("glade/panel_book.svg")
 
-__desc__ = _("Study FICS lectures without lecturebot")
+__desc__ = _("Study FICS lectures offline")
 
 
 LECTURES = (

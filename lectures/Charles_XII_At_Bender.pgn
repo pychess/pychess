@@ -1,0 +1,46 @@
+[Event "Charles XII at Bender: Samuel Loyd mate in #3"]
+[Site "https://lichess.org/study/3aJNVC40"]
+[UTCDate "2016.08.15"]
+[UTCTime "10:09:56"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/gbtami"]
+[FEN "8/6R1/7p/5K1k/8/6p1/5bPP/4N3 w - - 0 1"]
+[SetUp "1"]
+
+{ This problem was originally published in 1859. The story involves an incident during the siege of Charles XII of Sweden by the Turks at Bender in 1713. "Charles beguiled this period by means of drills and chess, and used frequently to play with his minister, Christian Albert Grosthusen, some of the contests being mentioned by Voltaire. One day while so engaged, the game had advanced to this stage, and Charles (White) had just announced mate in three." }
+1. Rxg3 Bxg3 (1... Bxe1 2. Rh3+ Bh4 3. g4#) 2. Nf3 Bxh2 3. g4# *
+
+
+[Event "Charles XII at Bender: Samuel Loyd mate in #4"]
+[Site "https://lichess.org/study/3aJNVC40"]
+[UTCDate "2016.08.15"]
+[UTCTime "10:21:15"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/gbtami"]
+[FEN "8/6R1/7p/5K1k/8/6p1/5bPP/8 w - - 0 1"]
+[SetUp "1"]
+
+{ "Scarcely had he uttered the words, when a Turkish bullet, shattering the window, dashed the White knight off of the board in fragments. Grothusen started violently, but Charles, with utmost coolness, begged him to put back the other knight and work out the mate, observing that it was pretty enough. But another glance at the board made Charles smile. We do not need the knight. I can give it to you and still mate in four!" }
+1. hxg3 Be3 (1... Bc5 2. Rg4 Be7 3. Rh4+ Bxh4 4. gxh4)  (1... Be1 2. Rg4 Bxg3 3. Rxg3 Kh4 4. Rh3#) 2. Rg4 Bg5 3. Rh4+ Bxh4 4. g4# *
+
+
+[Event "Charles XII at Bender: Samuel Loyd mate in #5"]
+[Site "https://lichess.org/study/3aJNVC40"]
+[UTCDate "2016.08.15"]
+[UTCTime "10:24:06"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/gbtami"]
+[FEN "8/6R1/7p/5K1k/8/6p1/5bP1/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Who would believe it, he had scarcely spoken when another bullet flew across the room, and the pawn at h2 shared the fate of the knight. Grothusen turned pale. "You have our good friends the Turks with you," said the king unconcerned, "it can scarcely be expected that I should contend against such odds; but let me see if I can dispense with that unlucky pawn. I have it!" he shouted with a tremendous laugh, "I have great pleasure in informing you that there is undoubtedly a mate in 5." }
+1. Rb7 Be3 (1... Bg1 2. Rb1 Bh2 3. Re1 Kh4 4. Kg6 h5 5. Re4#) 2. Rb1 Bg5 3. Rh1+ Bh4 4. Rh2 gxh2 5. g4# *

@@ -63,7 +63,7 @@ class SetupModel(GObject.GObject):
         self.boards = [self.variant()]
         self.variations = [self.boards]
 
-        self.puzzle_game = False
+        self.lesson_game = False
 
     def _get_ply(self):
         return self.boards[-1].ply

@@ -151,7 +151,7 @@ class GameNanny(object):
                     status_changed(player, None, button)
 
         elif gamemodel.hasLocalPlayer() and not gamemodel.offline_lecture and \
-                not gamemodel.practice_game and not gamemodel.puzzle_game:
+                not gamemodel.practice_game and not gamemodel.lesson_game:
 
             def callback(infobar, response, message, gamemodel=gamemodel):
                 if response == 1:

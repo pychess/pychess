@@ -882,7 +882,7 @@ class Sidepanel:
                 break
 
             # Hide moves in puzzle games
-            if self.gamemodel.puzzle_game and board.plyCount > self.gamemodel.ply_played:
+            if self.gamemodel.lesson_game and board.plyCount > self.gamemodel.ply_played:
                 break
 
             # Initial game or variation comment
@@ -935,7 +935,7 @@ class Sidepanel:
             else:
                 break
 
-        if result and result != "*" and not self.gamemodel.puzzle_game:
+        if result and result != "*" and not self.gamemodel.lesson_game:
             self.textbuffer.insert_with_tags_by_name(end_iter(), " " + result,
                                                      "move")
 
@@ -1117,7 +1117,7 @@ class Sidepanel:
         self.update()
 
     def game_changed(self, game, ply):
-        if game.puzzle_game:
+        if game.lesson_game:
             self.update()
 
         board = game.getBoardAtPly(ply, variation=0).board

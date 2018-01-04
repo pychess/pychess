@@ -160,7 +160,7 @@ class Sidepanel:
         self.shownChanged(self.boardview, ply)
 
     def game_started(self, game):
-        if game.puzzle_game:
+        if game.lesson_game:
             return
         self.game_changed(game, game.ply)
 

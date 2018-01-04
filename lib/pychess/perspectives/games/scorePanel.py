@@ -123,7 +123,7 @@ class Sidepanel:
         # print("----------------------")
 
     def game_started(self, model):
-        if model.puzzle_game:
+        if model.lesson_game:
             return
 
         self.game_changed(model, model.ply)

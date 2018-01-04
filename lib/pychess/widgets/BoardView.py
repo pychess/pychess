@@ -264,7 +264,7 @@ class BoardView(Gtk.DrawingArea):
             self.model.disconnect(cid)
 
     def gameStarted(self, model):
-        if model.puzzle_game:
+        if model.lesson_game:
             print(model.lowply)
             self.shown = model.lowply
 
@@ -495,7 +495,7 @@ class BoardView(Gtk.DrawingArea):
         """Adjust the index in current variation board list."""
 
         # We don't do anything if we are already showing the right ply
-        if shown == self._shown and not self.model.puzzle_game:
+        if shown == self._shown and not self.model.lesson_game:
             return
 
         # This would cause IndexErrors later
