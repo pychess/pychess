@@ -1,0 +1,2323 @@
+[Event "?"]
+[Site "London"]
+[Date "1840.??.??"]
+[Round "?"]
+[White "Henry Buckle"]
+[Black "NN"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2qkb1r/pp2nppp/3p4/2pNN1B1/2BnP3/3P4/PPP2PPP/R2bK2R w KQkq - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nf6+ gxf6 2. Bxf7# *
+
+[Event "?"]
+[Site "New York"]
+[Date "1857.??.??"]
+[Round "?"]
+[White "Louis Paulsen"]
+[Black "Blachy"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1rb4r/pkPp3p/1b1P3n/1Q6/N3Pp2/8/P1P3PP/7K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qd5+ Ka6 2. cxb8=N# *
+
+[Event "?"]
+[Site "Paris"]
+[Date "1858.??.??"]
+[Round "?"]
+[White "Paul Morphy"]
+[Black "Duke Isouard"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qb8+ Nxb8 2. Rd8# *
+
+[Event "?"]
+[Site "Breslau"]
+[Date "1865.??.??"]
+[Round "?"]
+[White "Johannes Zukertort"]
+[Black "Adolf Anderssen"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b2k1r/ppp1bppp/8/1B1Q4/5q2/2P5/PPP2PPP/R3R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qd8+ Bxd8 2. Re8# *
+
+[Event "?"]
+[Site "Berlin"]
+[Date "1866.??.??"]
+[Round "?"]
+[White "Gustav Neumann"]
+[Black "Carl Mayet"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5rkr/pp2Rp2/1b1p1Pb1/3P2Q1/2n3P1/2p5/P4P2/4R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxg6+ fxg6 2. Rg7# *
+
+[Event "?"]
+[Site "England"]
+[Date "1876.??.??"]
+[Round "?"]
+[White "Joseph Blackburne"]
+[Black "Martin"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1r1kr3/Nbppn1pp/1b6/8/6Q1/3B1P2/Pq3P1P/3RR1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxd7+ Kxd7 2. Bb5# *
+
+[Event "?"]
+[Site "Frankfurt"]
+[Date "1878.??.??"]
+[Round "?"]
+[White "Wilfried Paulsen"]
+[Black "Adolf Anderssen"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5rk1/1p1q2bp/p2pN1p1/2pP2Bn/2P3P1/1P6/P4QKP/5R2 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxf8+ Bxf8 2. Rxf8# *
+
+[Event "?"]
+[Site "Simul"]
+[Date "1882.??.??"]
+[Round "?"]
+[White "Joseph Blackburne"]
+[Black "Smith"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1nk3r/2b2ppp/p3b3/3NN3/Q2P3q/B2B4/P4PPP/4R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qd7+ Bxd7 2. Nxf7# *
+
+[Event "?"]
+[Site "New York"]
+[Date "1887.??.??"]
+[Round "?"]
+[White "Wilhelm Steinitz"]
+[Black "David Sands"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r4br1/3b1kpp/1q1P4/1pp1RP1N/p7/6Q1/PPB3PP/2KR4 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qg6+ hxg6 2. fxg6# *
+
+[Event "?"]
+[Site "New York"]
+[Date "1891.??.??"]
+[Round "?"]
+[White "Wilhelm Steinitz"]
+[Black "Albert Hodges"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b2k1r/ppppq3/5N1p/4P2Q/4PP2/1B6/PP5P/n2K2R1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh6+ Rxh6 2. Rg8# *
+
+[Event "?"]
+[Site "Nuremberg"]
+[Date "1892.??.??"]
+[Round "?"]
+[White "Siegbert Tarrasch"]
+[Black "Fiedler"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2q1b1r/1pN1n1pp/p1n3k1/4Pb2/2BP4/8/PPP3PP/R1BQ1RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qg4+ Bxg4 2. Bf7# *
+
+[Event "?"]
+[Site "New York"]
+[Date "1893.??.??"]
+[Round "?"]
+[White "Harry Pillsbury"]
+[Black "Lyons Rodgers"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3q2r1/4n2k/p1p1rBpp/PpPpPp2/1P3P1Q/2P3R1/7P/1R5K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh6+ Kxh6 2. Rh3# *
+
+[Event "?"]
+[Site "Nuremberg"]
+[Date "1893.??.??"]
+[Round "?"]
+[White "Siegbert Tarrasch"]
+[Black "Max Kurschner"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2qk2r/pb4pp/1n2Pb2/2B2Q2/p1p5/2P5/2B2PPP/RN2R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qg6+ hxg6 2. Bxg6# *
+
+[Event "?"]
+[Site "New York"]
+[Date "1896.??.??"]
+[Round "?"]
+[White "Frank Teed"]
+[Black "Eugene Delmar"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rnbqkbn1/ppppp3/7r/6pp/3P1p2/3BP1B1/PPP2PPP/RN1QK1NR w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh5+ Rxh5 2. Bg6# *
+
+[Event "?"]
+[Site "Vienna"]
+[Date "1898.??.??"]
+[Round "?"]
+[White "Wilhelm Steinitz"]
+[Black "Herbert Trenchard"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2qrb2/p1pn1Qp1/1p4Nk/4PR2/3n4/7N/P5PP/R6K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Ne7 Nxf5 2. Qg6# *
+
+[Event "?"]
+[Site "Riga"]
+[Date "1899.??.??"]
+[Round "?"]
+[White "Aaron Nimzowitsch"]
+[Black "Gustav Neumann"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b3nr/ppqk1Bbp/2pp4/4P1B1/3n4/3P4/PPP2QPP/R4RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qf5+ Nxf5 2. e6# *
+
+[Event "?"]
+[Site "London"]
+[Date "1899.??.??"]
+[Round "?"]
+[White "Harry Pillsbury"]
+[Black "Samuel Tinsley"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3k1r1r/pb3p2/1p4p1/1B2B3/3qn3/6QP/P4RP1/2R3K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bf6+ Qxf6 2. Qc7# *
+
+[Event "?"]
+[Site "Leipzig"]
+[Date "1899.??.??"]
+[Round "?"]
+[White "Ryder"]
+[Black "NN"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rn2kb1r/1pQbpppp/1p6/qp1N4/6n1/8/PPP3PP/2KR2NR w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qc8+ Bxc8 2. Nc7# *
+
+[Event "?"]
+[Site "Vienna"]
+[Date "1900.??.??"]
+[Round "?"]
+[White "Pulitzer"]
+[Black "George Marco"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2k2nr/pp1b1Q1p/2n4b/3N4/3q4/3P4/PPP3PP/4RR1K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Re8+ Bxe8 2. Qc7# *
+
+[Event "?"]
+[Site "Manchester"]
+[Date "1903.??.??"]
+[Round "?"]
+[White "Emanuel Lasker"]
+[Black "NN"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2q2nr/5p1p/p1Bp3b/1p1NkP2/3pP1p1/2PP2P1/PP5P/R1Bb1RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bf4+ Bxf4 2. gxf4# *
+
+[Event "?"]
+[Site "Heidelberg"]
+[Date "1908.??.??"]
+[Round "?"]
+[White "Schwartz"]
+[Black "Samsonov"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2q1k1r/ppp1bB1p/2np4/6N1/3PP1bP/8/PPP5/RNB2RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Ne6+ Bxe6 2. Bh6# *
+
+[Event "?"]
+[Site "Carlsbad"]
+[Date "1911.??.??"]
+[Round "?"]
+[White "George Rotlevi"]
+[Black "Hugo Suchting"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6k1/1p1r1pp1/p1r3b1/3pPqB1/2pP4/Q1P4R/P3P2K/6R1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qf8+ Kxf8 2. Rh8# *
+
+[Event "?"]
+[Site "Scheveningen"]
+[Date "1913.??.??"]
+[Round "?"]
+[White "Emanuel Lasker"]
+[Black "Fritz Englund"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2kr1b1r/pp3ppp/2p1b2q/4B3/4Q3/2PB2R1/PPP2PPP/3R2K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxc6+ bxc6 2. Ba6# *
+
+[Event "?"]
+[Site "Berlin"]
+[Date "1914.??.??"]
+[Round "?"]
+[White "Richard Teichmann"]
+[Black "NN"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rn2kb1r/pp3ppp/4p1qn/1p4B1/2B5/3P2QP/PPP2PP1/R3K2R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxb8+ Rxb8 2. Bxb5# *
+
+[Event "?"]
+[Site "Melbourne"]
+[Date "1916.??.??"]
+[Round "?"]
+[White "Charles Watson"]
+[Black "NN"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rnb2b1r/p3kBp1/3pNn1p/2pQN3/1p2PP2/4B3/Pq5P/4K3 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxd6+ Kxd6 2. Bxc5# *
+
+[Event "?"]
+[Site "corr. USA"]
+[Date "1920.??.??"]
+[Round "?"]
+[White "Brunnemer"]
+[Black "Patton"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b1k2r/ppQ1q2n/2p2p2/P3p2p/N3P1pP/1B4P1/1PP2P2/3R1NK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rd8+ Qxd8 2. Qf7# *
+
+[Event "?"]
+[Site "Vienna"]
+[Date "1920.??.??"]
+[Round "?"]
+[White "Saviely Tartakower"]
+[Black "Richard Reti"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/1r5p/kpQ3p1/p3rp2/P6P/8/4bPPK/1R6 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxb6+ Rxb6 2. Qa8# *
+
+[Event "?"]
+[Site "Brunn"]
+[Date "1921.??.??"]
+[Round "?"]
+[White "Sery"]
+[Black "Z Vecsey"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b2rk1/2p2ppp/p7/1p6/3P3q/1BP3bP/PP3QP1/RNB1R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxf7+ Rxf7 2. Re8# *
+
+[Event "?"]
+[Site "Graz"]
+[Date "1922.??.??"]
+[Round "?"]
+[White "Johann Berger"]
+[Black "P Froehlich"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2qkb1r/2p1nppp/p2p4/np1NN3/4P3/1BP5/PP1P1PPP/R1B1K2R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nf6+ gxf6 2. Bxf7# *
+
+[Event "?"]
+[Site "Bad Oeynhausen"]
+[Date "1922.??.??"]
+[Round "?"]
+[White "Probst"]
+[Black "Lowig"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rnbkn2r/pppp1Qpp/5b2/3NN3/3Pp3/8/PPP1KP1P/R1B4q w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qe7+ Bxe7 2. Nf7# *
+
+[Event "?"]
+[Site "Vienna"]
+[Date "1923.??.??"]
+[Round "?"]
+[White "Lajos Steiner"]
+[Black "Albert Becker"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4rk2/2pQn2p/p4p2/1p2pN1P/4q3/2P3R1/5PPK/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rg8+ Kf7 2. Nh6# *
+
+[Event "?"]
+[Site "Netherlands"]
+[Date "1927.??.??"]
+[Round "?"]
+[White "Max Euwe"]
+[Black "A Van Mindeno"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b2rk1/pp3ppp/3p4/3Q1nq1/2B1R3/8/PP3PPP/R5K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxf7+ Rxf7 2. Re8# *
+
+[Event "?"]
+[Site "Munich"]
+[Date "1927.??.??"]
+[Round "?"]
+[White "Springe"]
+[Black "Dietmar Gebhard"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b1kb1r/pp1n1pp1/1qp1p2p/6B1/2PPQ3/3B1N2/P4PPP/R4RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxe6+ fxe6 2. Bg6# *
+
+[Event "?"]
+[Site "Carlsbad"]
+[Date "1929.??.??"]
+[Round "?"]
+[White "Milan Vidmar Sr"]
+[Black "Max Euwe"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6k1/5p2/1p5p/p4Np1/5q2/Q6P/PPr5/3R3K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qf8+ Kxf8 2. Rd8# *
+
+[Event "?"]
+[Site "Folkestone"]
+[Date "1933.??.??"]
+[Round "?"]
+[White "William Winter"]
+[Black "Jacob Gemzoe"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r3q3/ppp3k1/3p3R/5b2/2PR3Q/2P1PrP1/P7/4K3 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qf6+ Kg8 2. Rh8# *
+
+[Event "?"]
+[Site "Warsaw"]
+[Date "1935.??.??"]
+[Round "?"]
+[White "Arthur Dake"]
+[Black "Timothy Cranston"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1bq2rk/pp3pbp/2p1p1pQ/7P/3P4/2PB1N2/PP3PPR/2KR4 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh7+ Kxh7 2. hxg6# *
+
+[Event "?"]
+[Site "Warsaw"]
+[Date "1935.??.??"]
+[Round "?"]
+[White "Marcos Luckis"]
+[Black "Moshe Czerniak"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "k1n3rr/Pp3p2/3q4/3N4/3Pp2p/1Q2P1p1/3B1PP1/R4RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxb7+ Kxb7 2. a8=Q# *
+
+[Event "?"]
+[Site "Stockholm"]
+[Date "1937.??.??"]
+[Round "?"]
+[White "Boris Kostic"]
+[Black "Paul Keres"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1bq3r/ppp1b1kp/2n3p1/3B3Q/3p4/8/PPP2PPP/RNB2RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bh6+ Kf6 2. Qg5# *
+
+[Event "?"]
+[Site "Montevideo"]
+[Date "1939.??.??"]
+[Round "?"]
+[White "Alexander Alekhine"]
+[Black "Fahardo"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4r3/pbpn2n1/1p1prp1k/8/2PP2PB/P5N1/2B2R1P/R5K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxf6+ Nxf6 2. g5# *
+
+[Event "?"]
+[Site "Buenos Aires"]
+[Date "1939.??.??"]
+[Round "?"]
+[White "Vladimir Petrov"]
+[Black "H Cordova"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1q5r/1b1r1p1k/2p1pPpb/p1Pp4/3B1P1Q/1P4P1/P4KB1/2RR4 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh6+ Kxh6 2. Rh1# *
+
+[Event "?"]
+[Site "Buenos Aires"]
+[Date "1939.??.??"]
+[Round "?"]
+[White "Isaias Pleci"]
+[Black "Lucius Endzelins"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r4R2/1b2n1pp/p2Np1k1/1pn5/4pP1P/8/PPP1B1P1/2K4R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. h5+ Kh6 2. Nf7# *
+
+[Event "?"]
+[Site "New York"]
+[Date "1942.??.??"]
+[Round "?"]
+[White "Heinz Helms"]
+[Black "Oscar Tenner"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1bqk2r/bppp1ppp/8/PB2N3/3n4/B7/2PPQnPP/RN2K2R w KQkq - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nxd7+ Nxe2 2. Nf6# *
+
+[Event "?"]
+[Site "Southsea"]
+[Date "1950.??.??"]
+[Round "?"]
+[White "Arthur Bisguier"]
+[Black "J. Penrose"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r4r1k/2qb3p/p2p1p2/1pnPN3/2p1Pn2/2P1N3/PPB1QPR1/6RK w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rg8+ Rxg8 2. Nf7# *
+
+[Event "?"]
+[Site "Budapest"]
+[Date "1954.??.??"]
+[Round "?"]
+[White "Pal Benko"]
+[Black "Erno Gereben"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1r2q3/1R6/3p1kp1/1ppBp1b1/p3Pp2/2PP4/PP3P2/5K1Q w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qh8+ Qxh8 2. Rf7# *
+
+[Event "?"]
+[Site "corr."]
+[Date "1954.??.??"]
+[Round "?"]
+[White "Bennsdorf"]
+[Black "G Krepp"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r3kb1r/pb6/2p2p1p/1p2pq2/2pQ3p/2N2B2/PP3PPP/3RR1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bh5+ Qxh5 2. Qd7# *
+
+[Event "?"]
+[Site "Montevideo"]
+[Date "1954.??.??"]
+[Round "?"]
+[White "Miguel Najdorf"]
+[Black "Rodolfo Kalkstein"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4r3/2q1rpk1/p3bN1p/2p3p1/4QP2/2N4P/PP4P1/5RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qh7+ Kxf6 2. Ne4# *
+
+[Event "?"]
+[Site "Vilnius"]
+[Date "1955.??.??"]
+[Round "?"]
+[White "Ratmir Kholmov"]
+[Black "Y Kliavinsh"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r5rk/pp1np1bn/2pp2q1/3P1bN1/2P1N2Q/1P6/PB2PPBP/3R1RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh7+ Qxh7 2. Nf7# *
+
+[Event "?"]
+[Site "Ulan Bator"]
+[Date "1956.??.??"]
+[Round "?"]
+[White "Octav Troianescu"]
+[Black "Cedendemberel Lhagvasuren"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rn1qkb1r/4p2p/2p2nN1/p4p1Q/PpBP4/8/1P3PPP/R1B1K2R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Ne5+ Nxh5 2. Bf7# *
+
+[Event "?"]
+[Site "Vienna"]
+[Date "1958.??.??"]
+[Round "?"]
+[White "Posch"]
+[Black "Derr"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b2rk1/ppppbpp1/7p/4R3/6Qq/2BB4/PPP2PPP/R5K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxg7+ Kxg7 2. Rg5# *
+
+[Event "?"]
+[Site "Bled"]
+[Date "1959.??.??"]
+[Round "?"]
+[White "Mikhail Tal"]
+[Black "Pal Benko"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1r3k2/2n1p1b1/3p2QR/p1pq1pN1/bp6/7P/2P2PP1/4RBK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rh8+ Bxh8 2. Nh7# *
+
+[Event "?"]
+[Site "Buenos Aires"]
+[Date "1960.??.??"]
+[Round "?"]
+[White "Mark Taimanov"]
+[Black "Erich Eliskases"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5b2/1p3rpk/p1b3Rp/4B1RQ/3P1p1P/7q/5P2/6K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxh6+ gxh6 2. Qg6# *
+
+[Event "?"]
+[Site "Baku"]
+[Date "1961.??.??"]
+[Round "?"]
+[White "Boris Spassky"]
+[Black "Boris Vladimirov"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2Rnk1r/1p2q1b1/7p/6pQ/4Ppb1/1BP5/PP3BPP/2K4R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxe8+ Qxe8 2. Bc5# *
+
+[Event "?"]
+[Site "corr."]
+[Date "1962.??.??"]
+[Round "?"]
+[White "J Golemo"]
+[Black "S Sulek"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2qr2k/pp1b3p/2nQ4/2pB1p1P/3n1PpR/2NP2P1/PPP5/2K1R1N1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxe8+ Bxe8 2. Qf8# *
+
+[Event "?"]
+[Site "Belgrade"]
+[Date "1963.??.??"]
+[Round "?"]
+[White "Dragoljub Velimirovic"]
+[Black "Dragoljub Ciric"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4r3/p2r1p1k/3q1Bpp/4P3/1PppR3/P5P1/5P1P/2Q3K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh6+ Kxh6 2. Rh4# *
+
+[Event "?"]
+[Site "Novi Sad"]
+[Date "1965.??.??"]
+[Round "?"]
+[White "Albin Planinec"]
+[Black "Milan Matulovic"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r3n1rk/q3NQ1p/p2pbP2/1p4p1/1P1pP1P1/3R4/P1P4P/3B2K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh7+ Kxh7 2. Rh3# *
+
+[Event "?"]
+[Site "Polanica Zdroj"]
+[Date "1967.??.??"]
+[Round "?"]
+[White "Wlodzimierz Schmidt"]
+[Black "Heinz Liebert"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/8/p3p3/3b1pR1/1B3P1k/8/4r1PK/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Be1+ Rxe1 2. g3# *
+
+[Event "?"]
+[Site "Vinkovci"]
+[Date "1970.??.??"]
+[Round "?"]
+[White "Tigran Petrosian"]
+[Black "Dragoslav Tomic"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "Q7/2r2rpk/2p4p/7N/3PpN2/1p2P3/1K4R1/5q2 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxg7+ Rxg7 2. Nf6# *
+
+[Event "?"]
+[Site "Siegen"]
+[Date "1970.??.??"]
+[Round "?"]
+[White "Samuel Reshevsky"]
+[Black "Yasuji Matsumoto"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r3rknQ/1p1R1pb1/p3pqBB/2p5/8/6P1/PPP2P1P/4R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxg7+ Qxg7 2. Rxf7# *
+
+[Event "?"]
+[Site "Hastings"]
+[Date "1971.??.??"]
+[Round "?"]
+[White "Anatoly Karpov"]
+[Black "Henrique Mecking"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4rr2/1p5R/3p1p2/p2Bp3/P2bPkP1/1P5R/1P2K3/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rg7 Bxb2 2. Rf3# *
+
+[Event "?"]
+[Site "Skopje"]
+[Date "1972.??.??"]
+[Round "?"]
+[White "Walter Browne"]
+[Black "Coskun Kulur"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r4kr1/pbNn1q1p/1p6/2p2BPQ/5B2/8/P6P/b4RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bd6+ Qe7 2. Ne6# *
+
+[Event "?"]
+[Site "Moscow"]
+[Date "1975.??.??"]
+[Round "?"]
+[White "Rafael Vaganian"]
+[Black "Viktor Korchnoi"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6rk/6pp/5p2/p7/P2Q1N2/4P1P1/2r2n1P/6K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Ng6+ hxg6 2. Qh4# *
+
+[Event "?"]
+[Site "Amsterdam"]
+[Date "1978.??.??"]
+[Round "?"]
+[White "Larry Christiansen"]
+[Black "Paul Van Der Sterren"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1n6/p3q2p/2pNk3/1pP1p3/1P2P2Q/2P3P1/6K1/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qh3+ Kf6 2. Qh6# *
+
+[Event "?"]
+[Site "Riga"]
+[Date "1979.??.??"]
+[Round "?"]
+[White "Bent Larsen"]
+[Black "Zoltan Ribli"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2QR4/6b1/1p4pk/7p/5n1P/4rq2/5P2/5BK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rh8+ Bxh8 2. Qxh8# *
+
+[Event "?"]
+[Site "Berlin"]
+[Date "1980.??.??"]
+[Round "?"]
+[White "Raymond Keene"]
+[Black "C Van Baarle"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r3q1k1/5p2/3P2pQ/Ppp5/1pnbN2R/8/1P4PP/5R1K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rf6 Bxf6 2. Nxf6# *
+
+[Event "?"]
+[Site "Caorle"]
+[Date "1981.??.??"]
+[Round "?"]
+[White "Dragoslav Andric"]
+[Black "Luigi Santolini"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5b2/R4p1p/1r2kp2/1p2pN2/2r1P3/P1P3P1/1PK4P/3R4 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Re7+ Bxe7 2. Ng7# *
+
+[Event "?"]
+[Site "Palo Alto"]
+[Date "1981.??.??"]
+[Round "?"]
+[White "Jeremy Silman"]
+[Black "Ozdal Barkan"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r3q1r1/1p2bNkp/p3n3/2PN1B1Q/PP1P1p2/7P/5PP1/6K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qh6+ Kxf7 2. Bxe6# *
+
+[Event "?"]
+[Site "Lucerne"]
+[Date "1982.??.??"]
+[Round "?"]
+[White "Vlastimil Hort"]
+[Black "Alex Dunne"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1r2q2k/4N2p/3p1Pp1/2p1n1P1/2P5/p2P2KQ/P3R3/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh7+ Kxh7 2. Rh2# *
+
+[Event "?"]
+[Site "Germany"]
+[Date "1982.??.??"]
+[Round "?"]
+[White "Boris Spassky"]
+[Black "Arnulf Westermeier"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5R2/4r1r1/1p4k1/p1pB2Bp/P1P4K/2P1p3/1P6/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rf6+ Kh7 2. Rh6# *
+
+[Event "?"]
+[Site "corr."]
+[Date "1984.??.??"]
+[Round "?"]
+[White "Werner Hobusch"]
+[Black "Liebscher"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2bq1rk1/r1p1b1pn/p2pP1Np/1p1B1Q2/4P3/2P4P/PP3PP1/R1B1R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qf7+ Rxf7 2. exf7# *
+
+[Event "?"]
+[Site "Nouro"]
+[Date "1984.??.??"]
+[Round "?"]
+[White "Ian Rogers"]
+[Black "Zlatko Klaric"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1nbk1b1r/1r6/p2P2pp/1B2PpN1/2p2P2/2P1B3/7P/R3K2R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bb6+ Rxb6 2. Nf7# *
+
+[Event "?"]
+[Site "Philadelphia"]
+[Date "1985.??.??"]
+[Round "?"]
+[White "Arthur Bisguier"]
+[Black "Sergey Kudrin"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3r2k1/p1p2p2/bp2p1nQ/4PB1P/2pr3q/6R1/PP3PP1/3R2K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxg6+ fxg6 2. Bxe6# *
+
+[Event "?"]
+[Site "Minsk"]
+[Date "1985.??.??"]
+[Round "?"]
+[White "Sergey Smagin"]
+[Black "Viktor Kupreichik"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6k1/3r3p/p1q3pP/1p1p4/3Q4/4R1P1/P4PK1/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qh8+ Kxh8 2. Re8# *
+
+[Event "?"]
+[Site "Philadelphia"]
+[Date "1987.??.??"]
+[Round "?"]
+[White "Nick De Firmian"]
+[Black "Edward Formanek"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2r3k/b1qn2pp/1p2Bp2/2p2P2/PP1pQ3/7R/1B3PPP/5RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxh7+ Kxh7 2. Qh4# *
+
+[Event "?"]
+[Site "Wijk aan Zee"]
+[Date "1987.??.??"]
+[Round "?"]
+[White "Viktor Korchnoi"]
+[Black "Lev Gutman"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/1p3Qb1/p5pk/P1p1p1p1/1P2P1P1/2P1N2n/5P1P/4qB1K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nf5+ gxf5 2. Qh5# *
+
+[Event "?"]
+[Site "Tashkent"]
+[Date "1987.??.??"]
+[Round "?"]
+[White "Alexey Kuzmin"]
+[Black "Evgeny Vladimirov"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3rrk2/2p2pR1/p4n2/1p1PpP2/2p2q1P/3P1BQ1/PPP5/6RK w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxf7+ Kxf7 2. Qg7# *
+
+[Event "?"]
+[Site "Adelaide"]
+[Date "1988.??.??"]
+[Round "?"]
+[White "Michael Adams"]
+[Black "Luis Comas Fabrego"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r4kr1/1b2R1n1/pq4p1/4Q3/1p4P1/5P2/PPP4P/1K2R3 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1.Rf7+ Kxf7 2.Qe7# *
+
+[Event "?"]
+[Site "New York"]
+[Date "1988.??.??"]
+[Round "?"]
+[White "Vassily Ivanchuk"]
+[Black "Bozidar Ivanovic"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3n4/1R6/p5k1/2B5/1P3PK1/r7/8/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. f5+ Kf6 2. Bd4# *
+
+[Event "?"]
+[Site "Wuppertal"]
+[Date "1990.??.??"]
+[Round "?"]
+[White "Nona Gaprindashvili"]
+[Black "Eliska Richtrova"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1r3rk1/1pnnq1bR/p1pp2B1/P2P1p2/1PP1pP2/2B3P1/5PK1/2Q4R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rh8+ Bxh8 2. Rxh8# *
+
+[Event "?"]
+[Site "USA"]
+[Date "1990.??.??"]
+[Round "?"]
+[White "Leonid Shamkovich"]
+[Black "Anatoly Trubman"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5r1k/pp1n1p1p/5n1Q/3p1pN1/3P4/1P4RP/P1r1qPP1/R5K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxf8+ Nxf8 2. Nxf7# *
+
+[Event "?"]
+[Site "New York"]
+[Date "1991.??.??"]
+[Round "?"]
+[White "Arthur Bisguier"]
+[Black "Fabian Geisler"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5k2/p3Rr2/1p4pp/q4p2/1nbQ1P2/6P1/5N1P/3R2K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Re8+ Kxe8 2. Qd8# *
+
+[Event "?"]
+[Site "Vienna"]
+[Date "1991.??.??"]
+[Round "?"]
+[White "Larry Christiansen"]
+[Black "John Nunn"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4rk2/pp2N1bQ/5p2/8/2q5/P7/3r2PP/4RR1K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxf6+ Bxf6 2. Ng6# *
+
+[Event "?"]
+[Site "Torcy"]
+[Date "1991.??.??"]
+[Round "?"]
+[White "Gregory Kaidanov"]
+[Black "Eric-Thierry Petit"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2q1r3/4pR2/3rQ1pk/p1pnN2p/Pn5B/8/1P4PP/3R3K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nf3 Qxe6 2. Bg5# *
+
+[Event "?"]
+[Site "Moscow"]
+[Date "1991.??.??"]
+[Round "?"]
+[White "Grigory Serper"]
+[Black "Alexei Shirov"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "q2br1k1/1b4pp/3Bp3/p6n/1p3R2/3B1N2/PP2QPPP/6K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxe6+ Rxe6 2. Rf8# *
+
+[Event "?"]
+[Site "Bad Mondorf"]
+[Date "1991.??.??"]
+[Round "?"]
+[White "Almira Skripchenko"]
+[Black "Ralph Zimmer"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5r1k/p2n1p1p/5P1N/1p1p4/2pP3P/8/PP4RK/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rg8+ Rxg8 2. Nxf7# *
+
+[Event "?"]
+[Site "Brussels"]
+[Date "1992.??.??"]
+[Round "?"]
+[White "Michael Adams"]
+[Black "Eric Lobron"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/7p/5pk1/3n2pq/3N1nR1/1P3P2/P6P/4QK2 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1.Qe8+ Kg7 2.Nf5# *
+
+[Event "?"]
+[Site "Duisburg"]
+[Date "1992.??.??"]
+[Round "?"]
+[White "Hoang Thanh Tran"]
+[Black "Alina Calota"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2Q5/pp2rk1p/3p2pq/2bP1r2/5RR1/1P2P3/PB3P1P/7K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxf5+ gxf5 2. Qg8# *
+
+[Event "?"]
+[Site "Nijmegen"]
+[Date "1992.??.??"]
+[Round "?"]
+[White "Dmitri Reinderman"]
+[Black "Harmen Jonkman"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3R1rk1/1pp2pp1/1p6/8/8/P7/1q4BP/3Q2K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxf8+ Kh7 2. Qh5# *
+
+[Event "?"]
+[Site "New York"]
+[Date "1992.??.??"]
+[Round "?"]
+[White "Josh Waitzkin"]
+[Black "Luis Hoyos-Millan"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6k1/5p2/p3bRpQ/4q3/2r3P1/6NP/P1p2R1K/1r6 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxg6+ fxg6 2. Rf8# *
+
+[Event "?"]
+[Site "Tashkent"]
+[Date "1993.??.??"]
+[Round "?"]
+[White "Saidali Iuldachev"]
+[Black "I Dgumaev"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/8/2N1P3/1P6/4Q3/4b2K/4k3/4q3 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nd4+ Kd1 2. Qc2# *
+
+[Event "?"]
+[Site "London"]
+[Date "1994.??.??"]
+[Round "?"]
+[White "Luke McShane"]
+[Black "Aiden Leech"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5b2/q4r1p/p3k1p1/2pNppP1/1P6/3Q1P1P/P7/1K1R4 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nf4+ exf4 2. Qe2# *
+
+[Event "?"]
+[Site "Minsk"]
+[Date "1994.??.??"]
+[Round "?"]
+[White "Yury Shulman"]
+[Black "Ilia Botvinnik"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r3nr1k/1b2Nppp/pn6/q3p1P1/P1p4Q/R7/1P2PP1P/2B2RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh7+ Kxh7 2. Rh3# *
+
+[Event "?"]
+[Site "Villa Ballester"]
+[Date "1996.??.??"]
+[Round "?"]
+[White "Claudia Amura"]
+[Black "Carlos Bulcourf"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/p1R3p1/4p1kn/3p3N/3Pr2P/6P1/PP3K2/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxg7+ Kxh5 2. Rg5# *
+
+[Event "?"]
+[Site "Weilburg"]
+[Date "1996.??.??"]
+[Round "?"]
+[White "Ronald Bancod"]
+[Black "Richard Forster"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b1k2r/1p2bppp/p3q3/1p2p1B1/8/3Q1N2/PPP2PPP/3R1RK1 w kq - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qd8+ Bxd8 2. Rxd8# *
+
+[Event "?"]
+[Site "Hungary"]
+[Date "1996.??.??"]
+[Round "?"]
+[White "Ferenc Berkes"]
+[Black "Diana Nemeth"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rn2k2r/pp2b2p/2p1Q1p1/5B2/1q3B2/8/PPP3PP/3RR2K w kq - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rd8+ Kxd8 2. Qc8# *
+
+[Event "?"]
+[Site "Mitilini"]
+[Date "1996.??.??"]
+[Round "?"]
+[White "Georgios Efthimiou"]
+[Black "V Siametis"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b1k2r/pp3ppp/2n1p3/6B1/2p1q3/Q7/PP2PPPP/3RKB1R w Kkq - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rd8+ Nxd8 2. Qe7# *
+
+[Event "?"]
+[Site "Kremlin PCA Rapid"]
+[Date "1996.??.??"]
+[Round "?"]
+[White "Judit Polgár"]
+[Black "E. Bareev"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5k1r/4npp1/p3p2p/3nP2P/3P3Q/3N4/qB2KPP1/2R5 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rc8+ Nxc8 2. Qd8# *
+
+[Event "?"]
+[Site "Voronezh"]
+[Date "1997.??.??"]
+[Round "?"]
+[White "Anatoly Karpov"]
+[Black "Bidjukova"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2r5/2R5/3npkpp/3bN3/p4PP1/4K3/P1B4P/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. g5+ hxg5 2. Ng4# *
+
+[Event "?"]
+[Site "Koszalin"]
+[Date "1997.??.??"]
+[Round "?"]
+[White "Anatoly Karpov"]
+[Black "Piotr Mickiewicz"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5r1r/1p6/p1p2p2/2P1bPpk/4R3/6PP/P2B2K1/3R4 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rh4+ gxh4 2. g4# *
+
+[Event "?"]
+[Site "St. Petersburg"]
+[Date "1997.??.??"]
+[Round "?"]
+[White "Alexander Riazantsev"]
+[Black "Artem Iljin"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5qrk/5p1n/pp3p1Q/2pPp3/2P1P1rN/2P4R/P5P1/2B3K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Ng6+ R4xg6 2. Qxh7# *
+
+[Event "?"]
+[Site "Staffordshire"]
+[Date "1997.??.??"]
+[Round "?"]
+[White "Jonathan Rowson"]
+[Black "John Richardson"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3rk2r/p1qn1pp1/1p2pb1p/7P/2Pp4/B1P1QP2/P1B1KP2/3R3R w k - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxe6+ fxe6 2. Bg6# *
+
+[Event "?"]
+[Site "Bastia"]
+[Date "1997.??.??"]
+[Round "?"]
+[White "Boris Spassky"]
+[Black "G Gilquin"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r3kb1r/q5pp/p1p1Bnn1/1p2Q3/8/2N2PBP/PPP5/2KRR3 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bf7+ Kxf7 2. Qe6# *
+
+[Event "?"]
+[Site "Marina d'Or"]
+[Date "1998.??.??"]
+[Round "?"]
+[White "Lazaro Bruzon"]
+[Black "Thomas Willemze"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rq3rk1/3n1pp1/pb4n1/3N2P1/1pB1QP2/4B3/PP6/2KR3R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Ne7+ Nxe7 2. Qh7# *
+
+[Event "?"]
+[Site "Koszalin"]
+[Date "1998.??.??"]
+[Round "?"]
+[White "Emil Sutovsky"]
+[Black "Bogdan Grabarczyk"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3q2r1/p2b1k2/1pnBp1N1/3p1pQP/6P1/5R2/2r2P2/4RK2 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nh8+ Rxh8 2. Qg6# *
+
+[Event "?"]
+[Site "Besancon"]
+[Date "1999.??.??"]
+[Round "?"]
+[White "Etienne Bacrot"]
+[Black "Laurent Fressinet"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2r5/3nbkp1/2q1p1p1/1p1n2P1/3P4/2p1P1NQ/1P1B1P2/1B4KR w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bxg6+ Kxg6 2. Qh5# *
+
+[Event "?"]
+[Site "Zalakaros"]
+[Date "1999.??.??"]
+[Round "?"]
+[White "Ludwig Deutsch"]
+[Black "B Zambo"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1bq1rkb/ppp2n1p/5n2/4p1NN/5pQ1/1BP5/PP3PPP/R1B1K2R w KQ - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nxf7+ Nxg4 2. Nh6# *
+
+[Event "?"]
+[Site "Lippstadt"]
+[Date "2000.??.??"]
+[Round "?"]
+[White "Maia Chiburdanidze"]
+[Black "Roman Slobodjan"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4r3/1b2r2p/p2p2k1/P1pP1R1N/3b4/1P1B3P/3n2P1/5R1K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Re5+ Ne4 2. Rf6# *
+
+[Event "?"]
+[Site "Tbilisi"]
+[Date "2000.??.??"]
+[Round "?"]
+[White "Nana Dzagnidze"]
+[Black "Tsiala Kasoshvili"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2b3k1/1p5p/2p1n1pQ/3qB3/3P4/3B3P/r5P1/5RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rf8+ Nxf8 2. Qg7# *
+
+[Event "?"]
+[Site "Aviles"]
+[Date "2000.??.??"]
+[Round "?"]
+[White "Gadir Guseinov"]
+[Black "Ernesto Fernandez Romero"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3rk2r/1pR2p2/b2BpPp1/p2p4/8/1P6/P4PPP/4R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxe6+ fxe6 2. f7# *
+
+[Event "?"]
+[Site "Brussels"]
+[Date "2000.??.??"]
+[Round "?"]
+[White "Luke McShane"]
+[Black "Bart Michiels"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4nr1k/1bq3pp/5p2/1p2pNQ1/3pP3/1B1P3R/1PP3PP/6K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxh7+ Kxh7 2. Qh5# *
+
+[Event "?"]
+[Site "Narva"]
+[Date "2001.??.??"]
+[Round "?"]
+[White "Valentina Golubenko"]
+[Black "Kerttu Oja"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1bk1r2/pp1n2pp/3NQ3/1P6/8/2n2PB1/q1B3PP/3R1RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nxb7+ Bxb7 2. Qxd7# *
+
+[Event "?"]
+[Site "Chalkidiki"]
+[Date "2001.??.??"]
+[Round "?"]
+[White "Boris Grachev"]
+[Black "Sergey Chapar"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1rb2k2/pp3ppQ/7q/2p1n1N1/2p5/2N5/P3BP1P/K2R4 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qg8+ Ke7 2. Qd8# *
+
+[Event "?"]
+[Site "Kramatorsk"]
+[Date "2001.??.??"]
+[Round "?"]
+[White "Katya Lahno"]
+[Black "Sofia Shepeleva"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4r3/5p1k/2p1nBpp/q2p4/P1bP4/2P1R2Q/2B2PPP/6K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh6+ Kxh6 2. Rh3# *
+
+[Event "?"]
+[Site "Internet"]
+[Date "2003.??.??"]
+[Round "?"]
+[White "Axel Bachmann"]
+[Black "Vladimir Galakhov"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6R1/5r1k/p6b/1pB1p2q/1P6/5rQP/5P1K/6R1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rh8+ Kxh8 2. Qg8# *
+
+[Event "?"]
+[Site "Rethymnon"]
+[Date "2003.??.??"]
+[Round "?"]
+[White "Magnus Carlsen"]
+[Black "Helgi Gretarsson"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r5q1/pp1b1kr1/2p2p2/2Q5/2PpB3/1P4NP/P4P2/4RK2 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bg6+ Kxg6 2. Qh5# *
+
+[Event "?"]
+[Site "Calicut"]
+[Date "2003.??.??"]
+[Round "?"]
+[White "Surya Ganguly"]
+[Black "M R Venkatesh"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2r1kb1r/p2b1ppp/3p4/Q2Np1B1/4P2P/8/PP4P1/4KB1n w k - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qd8+ Rxd8 2. Nc7# *
+
+[Event "?"]
+[Site "Belgium"]
+[Date "2003.??.??"]
+[Round "?"]
+[White "Michel Jadoul"]
+[Black "Gordon Plomp"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2q1bk1/5n1p/2p3pP/p7/3Br3/1P3PQR/P5P1/2KR4 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxg6+ hxg6 2. h7# *
+
+[Event "?"]
+[Site "Gerani"]
+[Date "2003.??.??"]
+[Round "?"]
+[White "Zhu Chen"]
+[Black "Ioannis Papaioannou"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4Q3/r4ppk/3p3p/4pPbB/2P1P3/1q5P/6P1/3R3K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bg6+ fxg6 2. fxg6# *
+
+[Event "?"]
+[Site "Tbilisi"]
+[Date "2004.??.??"]
+[Round "?"]
+[White "Nana Dzagnidze"]
+[Black "Inga Charkhalashvili"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rn5r/p4pp1/3n3p/qB1k4/3P4/4P3/PP2NPPP/R4K1R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nf4+ Ke4 2. Bd3# *
+
+[Event "?"]
+[Site "Kazan"]
+[Date "2004.??.??"]
+[Round "?"]
+[White "Alexandra Kosteniuk"]
+[Black "Tatiana Shumiakina"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5R2/6k1/3K4/p6r/1p1NB3/1P4r1/8/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Ne6+ Kh6 2. Rh8# *
+
+[Event "?"]
+[Site "Calvia"]
+[Date "2004.??.??"]
+[Round "?"]
+[White "Bathuyag Mongontuul"]
+[Black "Garcia Vicente"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5r2/1qp2pp1/bnpk3p/4NQ2/2P5/1P5P/5PP1/4R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nxf7+ Rxf7 2. c5# *
+
+[Event "?"]
+[Site "Internet"]
+[Date "2004.??.??"]
+[Round "?"]
+[White "Vladimir Potkin"]
+[Black "Aleksandra Dimitrijevic"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3nk1r1/1pq4p/p3PQpB/5p2/2r5/8/P4PPP/3RR1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxd8+ Qxd8 2. Qf7# *
+
+[Event "?"]
+[Site "Gibraltar"]
+[Date "2005.??.??"]
+[Round "?"]
+[White "M Calzetta"]
+[Black "K White"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1k3r2/4R1Q1/p2q1r2/8/2p1Bb2/5R2/pP5P/K7 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Re8+ Rxe8 2. Qb7# *
+
+[Event "?"]
+[Site "Turin"]
+[Date "2006.??.??"]
+[Round "?"]
+[White "Camilla Baginskaite"]
+[Black "Ana-Cristina Calotescu"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6k1/1r4np/pp1p1R1B/2pP2p1/P1P5/1n5P/6P1/4R2K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Re8+ Nxe8 2. Rf8# *
+
+[Event "?"]
+[Site "Cappelle la Grande"]
+[Date "2006.??.??"]
+[Round "?"]
+[White "Elina Danielian"]
+[Black "Michail Brodsky"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/p2q1p1k/4pQp1/1p1b2Bp/7P/8/5PP1/6K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bh6 Kxh6 2. Qh8# *
+
+[Event "?"]
+[Site "Gausdal"]
+[Date "2006.??.??"]
+[Round "?"]
+[White "Kaido Kulaots"]
+[Black "Felix Levin"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r7/6R1/ppkqrn1B/2pp3p/P6n/2N5/8/1Q1R1K2 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qb5+ axb5 2. axb5# *
+
+[Event "?"]
+[Site "Germany"]
+[Date "2006.??.??"]
+[Round "?"]
+[White "Iweta Radziewicz"]
+[Black "Katharina Bacler"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r2q1k1r/3bnp2/p1n1pNp1/3pP1Qp/Pp1P4/2PB4/5PPP/R1B2RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qh6+ Rxh6 2. Bxh6# *
+
+[Event "?"]
+[Site "Bristol"]
+[Date "2006.??.??"]
+[Round "?"]
+[White "James Sherwin"]
+[Black "Joshua Hall"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6rk/1r2pR1p/3pP1pB/2p1p3/P6Q/P1q3P1/7P/5BK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxh7+ Kxh7 2. Bf8# *
+
+[Event "?"]
+[Site "Turin"]
+[Date "2006.??.??"]
+[Round "?"]
+[White "Radoslaw Wojtaszek"]
+[Black "Darcy Lima"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1r2Rr2/3P1p1k/5Rpp/qp6/2pQ4/7P/5PPK/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxf7+ Rxf7 2. Qh8# *
+
+[Event "?"]
+[Site "Warsaw"]
+[Date "2006.??.??"]
+[Round "?"]
+[White "Sergei Zhigalko"]
+[Black "Boguslaw Major"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r4rk1/5Rbp/p1qN2p1/P1n1P3/8/1Q3N1P/5PP1/5RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxf8+ Kxf8 2. Qf7# *
+
+[Event "?"]
+[Site "Gibraltar"]
+[Date "2007.??.??"]
+[Round "?"]
+[White "Yuriy Kuzubov"]
+[Black "Alexander Van Beek"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "7R/3r4/8/3pkp1p/5N1P/b3PK2/5P2/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rh6 Re7 2. Nd3# *
+
+[Event "?"]
+[Site "Gibraltar"]
+[Date "2007.??.??"]
+[Round "?"]
+[White "Robert Wade"]
+[Black "Colin Horton"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/1R3p2/3rk2p/p2p2p1/P2P2P1/3B1PN1/5K1P/r7 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bf5+ Kf6 2. Nh5# *
+
+[Event "?"]
+[Site "Malme"]
+[Date "2008.??.??"]
+[Round "?"]
+[White "Evgeny Agrest"]
+[Black "Axel Smith"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/5prk/p5rb/P3N2R/1p1PQ2p/7P/1P3RPq/5K2 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxh6+ Kg8 2. Qa8# *
+
+[Event "?"]
+[Site "Tulsa"]
+[Date "2008.??.??"]
+[Round "?"]
+[White "James Berry"]
+[Black "Alexander Gorbunov"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rqb2bk1/3n2pr/p1pp2Qp/1p6/3BP2N/2N4P/PPP3P1/2KR3R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qe6+ Kh8 2. Ng6# *
+
+[Event "?"]
+[Site "Dresden"]
+[Date "2008.??.??"]
+[Round "?"]
+[White "Jon Hammer"]
+[Black "Shakil Abu Sufian"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1Q6/r3R2p/k2p2pP/p1q5/Pp4P1/5P2/1PP3K1/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxa7+ Qxa7 2. Qb5# *
+
+[Event "?"]
+[Site "Dresden"]
+[Date "2008.??.??"]
+[Round "?"]
+[White "Stephen Lukey"]
+[Black "solomon Celis"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3R4/3Q1p2/q1rn2kp/4p3/4P3/2N3P1/5P1P/6K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qg4+ Kf6 2. Nd5# *
+
+[Event "?"]
+[Site "Baku"]
+[Date "2008.??.??"]
+[Round "?"]
+[White "Eltaj Safarli"]
+[Black "Bela Khotenashvili"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5r2/7p/3R4/p3pk2/1p2N2p/1P2BP2/6PK/4r3 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. g4+ hxg3+ 2. Nxg3# *
+
+[Event "?"]
+[Site "Sochi"]
+[Date "2008.??.??"]
+[Round "?"]
+[White "Alexei Shirov"]
+[Black "Dmitry Andreikin"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "7r/3kbp1p/1Q3R2/3p3q/p2P3B/1P5K/P6P/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qc6+ Kd8 2. Rd6# *
+
+[Event "?"]
+[Site "St. Petersburg"]
+[Date "2008.??.??"]
+[Round "?"]
+[White "Sanan Sjugirov"]
+[Black "Maxim Matlakov"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r4r1k/p2p3p/bp1Np3/4P3/2P2nR1/3B1q2/P1PQ4/2K3R1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rg8+ Rxg8 2. Nf7# *
+
+[Event "?"]
+[Site "Moscow"]
+[Date "2008.??.??"]
+[Round "?"]
+[White "Sanan Sjugirov"]
+[Black "Alexander Tjurin"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1r3b2/1bp2pkp/p1q4N/1p1n1pBn/8/2P3QP/PPB2PP1/4R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bf6+ Kxf6 2. Ng8# *
+
+[Event "?"]
+[Site "Moscow"]
+[Date "2008.??.??"]
+[Round "?"]
+[White "Peter Svidler"]
+[Black "Vassily Ivanchuk"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/k1p1q3/Pp5Q/4p3/2P1P2p/3P4/4K3/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qc6 Kxa6 2. Qa8# *
+
+[Event "?"]
+[Site "Khanty Mansyisk"]
+[Date "2009.??.??"]
+[Round "?"]
+[White "Alexander Grischuk"]
+[Black "Baadur Jobava"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/p4q2/6k1/1p3rP1/3Q4/8/PPP5/K6R w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rh6+ Kxg5 2. Qh4# *
+
+[Event "?"]
+[Site "Rijeka"]
+[Date "2010.??.??"]
+[Round "?"]
+[White "Vladimir Akopian"]
+[Black "Vadim Zvjaginsev"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r7/4k1Pp/2n1p2P/q2pp1N1/1p4P1/1P6/P4R2/1K1R4 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rf7+ Kd6 2. Ne4# *
+
+[Event "?"]
+[Site "Germany"]
+[Date "2010.??.??"]
+[Round "?"]
+[White "Aleksandar Berelovich"]
+[Black "Francisco Vallejo Pons"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2Q5/1p3p2/3b1k1p/3Pp3/4B1R1/4q1P1/r4PK1/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qd8+ Be7 2. Qh8# *
+
+[Event "?"]
+[Site "Khanty Mansyisk"]
+[Date "2010.??.??"]
+[Round "?"]
+[White "Mekhri Geldyeva"]
+[Black "Marvorii Nasriddinzoda"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/5Qpk/p1R4p/P2p4/6P1/2rq4/5PPK/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxh6+ Kxh6 2. Qh5# *
+
+[Event "?"]
+[Site "Khanty Mansyisk"]
+[Date "2010.??.??"]
+[Round "?"]
+[White "Suradj Hanoeman"]
+[Black "Rodolfo Varron Abelgas"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3n1k2/5p2/2p1bb2/1p2pN1q/1P2P3/2P3Q1/5PB1/3R2K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qg7+ Bxg7 2. Rxd8# *
+
+[Event "?"]
+[Site "Germany"]
+[Date "2010.??.??"]
+[Round "?"]
+[White "David Howell"]
+[Black "Tomasz Warakomski"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "rnR5/p3p1kp/4p1pn/bpP5/5BP1/5N1P/2P2P2/2K5 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Be5+ Kf7 2. Ng5# *
+
+[Event "?"]
+[Site "Khanty Mansyisk"]
+[Date "2010.??.??"]
+[Round "?"]
+[White "Badr-Eddine Khelfallah"]
+[Black "Euler da Costa Moreira"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6rk/6p1/4R2p/p2pP2b/5Q2/2P2PB1/1q4PK/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxh6+ gxh6 2. Qxh6# *
+
+[Event "?"]
+[Site "Khanty Mansyisk"]
+[Date "2010.??.??"]
+[Round "?"]
+[White "Liem Le Quang"]
+[Black "Phemelo Khetho"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r4r1k/pp5p/n5p1/1q2Np1n/1Pb5/6P1/PQ2PPBP/1RB3K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Nf7+ Kg8 2. Nh6# *
+
+[Event "?"]
+[Site "Khanty Mansyisk"]
+[Date "2010.??.??"]
+[Round "?"]
+[White "Katrina Skinke"]
+[Black "Silvia Collas"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "7k/p1p2bp1/3q1N1p/4rP2/4pQ2/2P4R/P2r2PP/4R2K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rxh6+ gxh6 2. Qxh6# *
+
+[Event "?"]
+[Site "Germany"]
+[Date "2011.??.??"]
+[Round "?"]
+[White "Tanja Butschek"]
+[Black "Julia Krasnopeyeva"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "r1b2k2/1p1p1r1B/n4p2/p1qPp3/2P4N/4P1R1/PPQ3PP/R5K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rg8+ Ke7 2. Nf5# *
+
+[Event "?"]
+[Site "Tallinn"]
+[Date "2012.8.1"]
+[Round "?"]
+[White "Vladimir Fedoseev"]
+[Black "Tomi Nyback"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/8/2K2b2/2N2k2/1p4R1/1B3n1P/3r1P2/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Be6+ Ke5 2. Re4# *
+
+[Event "?"]
+[Site "Tashkent"]
+[Date "2012.14.3"]
+[Round "?"]
+[White "Mukhit Ismailov"]
+[Black "Pavel Potapov"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/3R3p/2b4k/p1p1B1p1/2n2PB1/3p1P2/P7/6K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bg7+ Kg6 2. f5# *
+
+[Event "?"]
+[Site "Germany"]
+[Date "2012.20.10"]
+[Round "?"]
+[White "David Howell"]
+[Black "Aljoscha Feuerstack"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "k2r4/ppRn2p1/6p1/1P3p2/3p1B2/6P1/P4PBP/4n1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bxb7+ Kb8 2. Rxd7# *
+
+[Event "?"]
+[Site "Germany"]
+[Date "2012.21.10"]
+[Round "?"]
+[White "Alexander Motylev"]
+[Black "David Baramidze"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "4rk2/1bq2p1Q/3p1bp1/1p1n2N1/4PB2/2Pp3P/1P1N4/5RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Bxd6+ Qe7 2. Qxf7# *
+
+[Event "?"]
+[Site "Germany"]
+[Date "2012.2.12"]
+[Round "?"]
+[White "Teodora Rogozenco"]
+[Black "Marina Gabriel"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "8/R7/pp1b2kp/1b1B1p2/5P1P/5KP1/P7/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. h5+ Kxh5 2. Bf7# *
+
+[Event "?"]
+[Site "Moscow"]
+[Date "2013.12.2"]
+[Round "?"]
+[White "Pavel Tregubov"]
+[Black "Krishnan Sasikiran"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6k1/p2p2p1/8/3np1N1/1P5R/3q2P1/5RKP/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rh8+ Kxh8 2. Rf8# *
+
+[Event "?"]
+[Site "Germany"]
+[Date "2013.7.4"]
+[Round "?"]
+[White "Martin Zumsande"]
+[Black "Rainer Polzin"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "n3r1k1/Q4R1p/p5pb/1p2p1N1/1q2P3/1P4PB/2P3KP/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rf8+ Qxf8 2. Qxh7# *
+
+[Event "?"]
+[Site "Bratto"]
+[Date "2013.30.4"]
+[Round "?"]
+[White "Michal Olszewski"]
+[Black "Mladen Palac"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "2r5/2k4p/1p2pp2/1P2qp2/8/Q5P1/4PP1P/R5K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qe7+ Kb8 2. Qa7# *
+
+[Event "?"]
+[Site "Legnica"]
+[Date "2013.5.5"]
+[Round "?"]
+[White "Gudmundur Kjartansson"]
+[Black "Sergey Fedorchuk"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6k1/4q1b1/p1p1p1Q1/1r4N1/4p3/1P5R/5P2/7K w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rh8+ Kxh8 2. Qh7# *
+
+[Event "?"]
+[Site "Legnica"]
+[Date "2013.13.5"]
+[Round "?"]
+[White "Vlad-Cristian Jianu"]
+[Black "Burak Firat"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "6k1/p2rR1p1/1p1r1p1R/3P4/4QPq1/1P6/P5PK/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Rh8+ Kxh8 2. Re8# *
+
+[Event "?"]
+[Site "Haguenau"]
+[Date "2013.5.6"]
+[Round "?"]
+[White "Hichem Hamdouchi"]
+[Black "Samy Shoker"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "7R/1bpkp3/p2pp3/3P4/4B1q1/2Q5/4NrP1/3K4 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qc6+ Bxc6 2. dxc6# *
+
+[Event "?"]
+[Site "Meissen"]
+[Date "2013.5.6"]
+[Round "?"]
+[White "Sasa Martinovic"]
+[Black "Vitezslav Rasik"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1r3r1k/qp5p/3N4/3p2Q1/p6P/P7/1b6/1KR3R1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qg8+ Rxg8 2. Nf7# *
+
+[Event "?"]
+[Site "Belgrade"]
+[Date "2013.23.7"]
+[Round "?"]
+[White "Maria Kursova"]
+[Black "Tijana Blagojevic"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "1r3k2/4R3/1p4Pp/p1pN1p2/2Pn1K2/1P6/1P6/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. g7+ Kg8 2. Nf6# *
+
+[Event "?"]
+[Site "Belgrade"]
+[Date "2013.24.7"]
+[Round "?"]
+[White "Ekaterini Pavlidou"]
+[Black "Bojana Bejatovic"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3rr2k/pp1b2b1/4q1pp/2Pp1p2/3B4/1P2QNP1/P6P/R4RK1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Qxh6+ Kg8 2. Qxg7# *
+
+[Event "?"]
+[Site "Belgrade"]
+[Date "2013.26.7"]
+[Round "?"]
+[White "Cristina Adela Foisor"]
+[Black "Maja Velickovski-Kostic"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "3r2k1/6pp/1nQ1R3/3r4/3N2q1/6N1/n4PPP/4R1K1 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. Re8+ Kf7 2. R1e7# *
+
+[Event "?"]
+[Site "Belgrade"]
+[Date "2013.2.8"]
+[Round "?"]
+[White "Ana Srebrnic"]
+[Black "Laura Rogule"]
+[Result "*"]
+[PlyCount "17"]
+[FEN "5bk1/6p1/5PQ1/pp4Pp/2p4P/P2r4/1PK5/8 w - - 1 0"]
+[SetUp "1"]
+[Termination "mate in 2"]
+
+1. f7+ Kh8 2. Qxh5# *

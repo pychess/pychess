@@ -635,7 +635,7 @@ class GameWidget(GObject.GObject):
         else:
             preview = False
 
-        board = BoardControl(gamemodel, actionMenuDic, game_preview=preview)
+        board = BoardControl(gamemodel, actionMenuDic, game_preview=preview, game_widget=self)
         boardvbox.pack_start(board, True, True, 0)
         return boardvbox, board, infobar, cclock
 

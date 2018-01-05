@@ -661,7 +661,8 @@ class GameModel(GObject.GObject):
             self.emit("game_started")
 
             # Let GameModel end() itself on games started with loadAndStart()
-            self.checkStatus()
+            if not self.lesson_game:
+                self.checkStatus()
 
             self.curColor = self.boards[-1].color
 

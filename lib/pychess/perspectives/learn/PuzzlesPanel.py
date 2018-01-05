@@ -1,11 +1,10 @@
 import asyncio
-# import random
-from io import StringIO
+import random
 
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL
+from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, WAITING_TO_START
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants import variants
@@ -13,7 +12,9 @@ from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
 from pychess.System import conf
 from pychess.perspectives import perspective_manager
-from pychess.Savers import fen as fen_loader
+from pychess.Savers.pgn import PGNFile
+from pychess.System.protoopen import protoopen
+from pychess.Database.PgnImport import PgnImport
 
 __title__ = _("Puzzles")
 
@@ -24,9 +25,9 @@ __desc__ = _("Puzzles from GM games")
 
 # http://wtharvey.com/
 PUZZLES = (
-    ("mate_in_2.txt", "Mate in two"),
-    ("mate_in_3.txt", "Mate in three"),
-    ("mate_in_4.txt", "Mate in four"),
+    ("mate_in_2.pgn", "Mate in two"),
+    ("mate_in_3.pgn", "Mate in three"),
+    ("mate_in_4.pgn", "Mate in four"),
 )
 
 
@@ -64,32 +65,36 @@ class Sidepanel():
         if path is None:
             return
         filename = addDataPrefix("lectures/%s" % PUZZLES[path[0]][0])
-        fen = self.get_fen(filename)
+
+        chessfile = PGNFile(protoopen(filename))
+        self.importer = PgnImport(chessfile)
+        chessfile.init_tag_database(self.importer)
+        records, plys = chessfile.get_records()
+
+        rec = records[random.randint(0, len(records))]
+        print(rec)
 
         timemodel = TimeModel(0, 0)
         gamemodel = GameModel(timemodel)
         gamemodel.set_practice_game()
 
-        name = conf.get("firstName", _("You"))
+        chessfile.loadToModel(rec, 0, gamemodel)
+
+        name = rec["White"]  # conf.get("firstName", _("You"))
         p0 = (LOCAL, Human, (WHITE, name), name)
 
         engine = discoverer.getEngineByName("stockfish")
-        name = discoverer.getName(engine)
+        name = rec["Black"]  # name = discoverer.getName(engine)
+        ponder_off = True
         p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
-              (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, True), name)
+              (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), name)
 
+        def fix_name(gamemodel, name):
+            gamemodel.players[1].name = name
+            gamemodel.emit("players_changed")
+        gamemodel.connect("game_started", fix_name, name)
+
+        gamemodel.variant.need_initial_board = True
+        gamemodel.status = WAITING_TO_START
         perspective = perspective_manager.get_perspective("games")
-        asyncio.async(perspective.generalStart(
-            gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
-
-    def get_fen(self, text_file):
-        """ Choose a random FEN position from text_file """
-        print(text_file)
-        fen = ""
-        with open(text_file, encoding="latin-1") as f:
-            for line in f:
-                if line.strip().endswith(" 1 0"):
-                    fen = line.strip()
-                else:
-                    continue
-        return fen
+        asyncio.async(perspective.generalStart(gamemodel, p0, p1))

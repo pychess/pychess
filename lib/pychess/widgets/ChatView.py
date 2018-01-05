@@ -110,10 +110,10 @@ class ChatView(Gtk.Box):
 
         if self.gamemodel.practice_game:
             label = _("Hint")
-            self.next_btn = Gtk.Button()
-            self.next_btn.set_label(label)
-            self.next_btn_cid = self.next_btn.connect("clicked", self.on_get_hint)
-            box.add(self.next_btn)
+            self.hint_btn = Gtk.Button()
+            self.hint_btn.set_label(label)
+            self.hint_btn_cid = self.hint_btn.connect("clicked", self.on_get_hint)
+            box.add(self.hint_btn)
 
         self.pack_start(box, False, False, 0)
 
@@ -123,7 +123,11 @@ class ChatView(Gtk.Box):
             self.cid = self.gamemodel.connect_after("game_terminated", self.on_game_terminated)
 
     def on_get_hint(self, widget):
-        self.addMessage("egtb", self.gamemodel.hint)
+        if self.gamemodel.hint:
+            hint = self.gamemodel.hint
+        else:
+            hint = _("No hint available.")
+        self.addMessage("PyChess", hint)
 
     def on_game_terminated(self, model):
         if isinstance(self.gamemodel, ICGameModel):
