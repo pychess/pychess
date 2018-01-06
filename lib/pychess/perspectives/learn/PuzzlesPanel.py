@@ -10,7 +10,6 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants import variants
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
-from pychess.System import conf
 from pychess.perspectives import perspective_manager
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
@@ -80,11 +79,11 @@ class Sidepanel():
 
         chessfile.loadToModel(rec, 0, gamemodel)
 
-        name = rec["White"]  # conf.get("firstName", _("You"))
+        name = rec["White"]
         p0 = (LOCAL, Human, (WHITE, name), name)
 
         engine = discoverer.getEngineByName("stockfish")
-        name = rec["Black"]  # name = discoverer.getName(engine)
+        name = rec["Black"]
         ponder_off = True
         p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
               (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), name)
