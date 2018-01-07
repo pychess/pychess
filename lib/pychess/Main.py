@@ -8,8 +8,7 @@ import math
 import platform
 import sys
 import subprocess
-from urllib.request import urlopen, url2pathname, pathname2url
-from urllib.parse import unquote
+from urllib.request import url2pathname, pathname2url
 
 from gi.repository import Gdk
 from gi.repository import Gio
@@ -30,6 +29,7 @@ from pychess.widgets import gamewidget
 from pychess.widgets.analyzegameDialog import AnalyzeGameDialog
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import internet_game_tasker
+from pychess.widgets.RecentChooser import recent_menu, recent_manager
 from pychess.Players.engineNest import discoverer
 from pychess.Savers import chesspastebin
 from pychess.ic import ICLogon
@@ -50,8 +50,6 @@ endkeys = list(map(Gdk.keyval_from_name, ("End", "KP_End")))
 functionkeys = [Gdk.keyval_from_name(k)
                 for k in ("F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9",
                           "F10", "F11")]
-
-recentManager = Gtk.RecentManager.get_default()
 
 TARGET_TYPE_URI_LIST = 0xbadbeef
 DRAG_ACTION = Gdk.DragAction.COPY
@@ -151,7 +149,7 @@ class GladeHandlers(object):
     def on_recent_game_activated(self, uri):
         if isinstance(uri, str):
             path = url2pathname(uri)
-            recentManager.add_item("file:" + pathname2url(path))
+            recent_manager.add_item("file:" + pathname2url(path))
 
     # Drag 'n' Drop
 
@@ -426,11 +424,11 @@ class PyChess(Gtk.Application):
         Gtk.Application.do_startup(self)
 
         if self.purge_recent:
-            items = recentManager.get_items()
+            items = recent_manager.get_items()
             for item in items:
                 uri = item.get_uri()
                 if item.get_application_info("pychess"):
-                    recentManager.remove_item(uri)
+                    recent_manager.remove_item(uri)
 
         self.git_rev = ""
 
@@ -511,7 +509,7 @@ class PyChess(Gtk.Application):
     def update_recent(self, gamemodel, uri):
         if isinstance(uri, str):
             path = url2pathname(uri)
-            recentManager.add_item("file:" + pathname2url(path))
+            recent_manager.add_item("file:" + pathname2url(path))
 
     def initGlade(self, log_viewer):
         # Init glade and the 'GladeHandlers'
@@ -588,31 +586,7 @@ class PyChess(Gtk.Application):
         with open(prefix.addDataPrefix("LICENSE"), encoding="utf-8") as f:
             self.aboutdialog.set_license(f.read())
 
-        # RecentChooser
-        def recent_item_activated(self):
-            uri = self.get_current_uri()
-            try:
-                urlopen(unquote(uri)).close()
-                perspective = perspective_manager.get_perspective("database")
-                perspective.open_chessfile(self.get_current_uri())
-            except (IOError, OSError):
-                # shomething wrong whit the uri
-                recentManager.remove_item(uri)
-
-        self.menu_recent = Gtk.RecentChooserMenu()
-        self.menu_recent.set_show_tips(True)
-        self.menu_recent.set_sort_type(Gtk.RecentSortType.MRU)
-        self.menu_recent.set_limit(10)
-        self.menu_recent.set_name("menu_recent")
-
-        self.file_filter = Gtk.RecentFilter()
-        self.file_filter.add_mime_type("application/x-chess-pgn")
-        self.file_filter.add_mime_type("application/x-chess-epd")
-        self.file_filter.add_mime_type("application/x-chess-fen")
-        self.menu_recent.set_filter(self.file_filter)
-
-        self.menu_recent.connect("item-activated", recent_item_activated)
-        widgets["load_recent_game1"].set_submenu(self.menu_recent)
+        widgets["load_recent_game1"].set_submenu(recent_menu)
 
         if conf.get("autoLogin", False):
             internet_game_tasker.connectClicked(None)

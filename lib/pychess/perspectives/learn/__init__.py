@@ -20,9 +20,17 @@ class Learn(GObject.GObject, Perspective):
         self.first_run = True
 
     def create_toolbuttons(self):
-        pass
+        def on_exit_clicked(button):
+            perspective_manager.disable_perspective("learn")
+
+        self.exit_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_QUIT)
+        self.exit_button.set_tooltip_text(_("Quit Learning"))
+        self.exit_button.set_label("exit")
+        self.exit_button.connect("clicked", on_exit_clicked)
 
     def init_layout(self):
+        perspective_manager.set_perspective_toolbuttons("learn", (self.exit_button, ))
+
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("learn", perspective_widget)
         perspective_manager.set_perspective_menuitems("learn", self.menuitems)

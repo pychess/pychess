@@ -63,37 +63,42 @@ class Sidepanel():
     def row_activated(self, widget, path, col):
         if path is None:
             return
-        filename = addDataPrefix("lectures/%s" % PUZZLES[path[0]][0])
+        else:
+            filename = PUZZLES[path[0]][0]
+            start_puzzle_from(filename)
 
-        chessfile = PGNFile(protoopen(filename))
-        self.importer = PgnImport(chessfile)
-        chessfile.init_tag_database(self.importer)
-        records, plys = chessfile.get_records()
 
-        rec = records[random.randint(0, len(records))]
-        print(rec)
+def start_puzzle_from(filename):
+    filename = addDataPrefix("lectures/%s" % filename)
+    chessfile = PGNFile(protoopen(filename))
+    importer = PgnImport(chessfile)
+    chessfile.init_tag_database(importer)
+    records, plys = chessfile.get_records()
 
-        timemodel = TimeModel(0, 0)
-        gamemodel = GameModel(timemodel)
-        gamemodel.set_practice_game()
+    rec = records[random.randint(0, len(records))]
+    print(rec)
 
-        chessfile.loadToModel(rec, 0, gamemodel)
+    timemodel = TimeModel(0, 0)
+    gamemodel = GameModel(timemodel)
+    gamemodel.set_practice_game()
 
-        name = rec["White"]
-        p0 = (LOCAL, Human, (WHITE, name), name)
+    chessfile.loadToModel(rec, 0, gamemodel)
 
-        engine = discoverer.getEngineByName("stockfish")
-        name = rec["Black"]
-        ponder_off = True
-        p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
-              (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), name)
+    name = rec["White"]
+    p0 = (LOCAL, Human, (WHITE, name), name)
 
-        def fix_name(gamemodel, name):
-            gamemodel.players[1].name = name
-            gamemodel.emit("players_changed")
-        gamemodel.connect("game_started", fix_name, name)
+    engine = discoverer.getEngineByName("stockfish")
+    name = rec["Black"]
+    ponder_off = True
+    p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
+          (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), name)
 
-        gamemodel.variant.need_initial_board = True
-        gamemodel.status = WAITING_TO_START
-        perspective = perspective_manager.get_perspective("games")
-        asyncio.async(perspective.generalStart(gamemodel, p0, p1))
+    def fix_name(gamemodel, name):
+        gamemodel.players[1].name = name
+        gamemodel.emit("players_changed")
+    gamemodel.connect("game_started", fix_name, name)
+
+    gamemodel.variant.need_initial_board = True
+    gamemodel.status = WAITING_TO_START
+    perspective = perspective_manager.get_perspective("games")
+    asyncio.async(perspective.generalStart(gamemodel, p0, p1))

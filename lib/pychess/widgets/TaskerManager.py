@@ -1,8 +1,10 @@
 import asyncio
 import math
 import random
+from urllib.request import urlopen
+from urllib.parse import unquote
 
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk, GObject, Pango
 
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
@@ -15,7 +17,10 @@ from pychess.Variants import variants
 from pychess.ic import ICLogon
 from pychess.widgets import newGameDialog
 from pychess.widgets.Background import giveBackground
+from pychess.widgets.RecentChooser import recent_manager
 from pychess.perspectives import perspective_manager
+from pychess.perspectives.games import get_open_dialog
+from pychess.perspectives.learn.PuzzlesPanel import PUZZLES, start_puzzle_from
 
 
 class TaskerManager(Gtk.Table):
@@ -276,5 +281,128 @@ class InternetGameTasker(Gtk.Alignment):
             ICLogon.dialog.widgets["connectButton"].clicked()
 
 
-new_game_tasker, internet_game_tasker = NewGameTasker(), InternetGameTasker()
-tasker.packTaskers(new_game_tasker, internet_game_tasker)
+class LearnTasker(Gtk.Alignment):
+    def __init__(self):
+        GObject.GObject.__init__(self)
+        self.widgets = uistuff.GladeWidgets("taskers.glade")
+        tasker = self.widgets["learnTasker"]
+        tasker.unparent()
+        self.add(tasker)
+
+        startButton = self.widgets["learnButton"]
+        startButton.set_name("learnButton")
+
+        liststore = Gtk.ListStore(str, str)
+
+        for file_name, title in PUZZLES:
+            liststore.append([file_name, title])
+
+        self.puzzle_combo = self.widgets["puzzle_combo"]
+        self.puzzle_combo.set_model(liststore)
+        renderer_text = Gtk.CellRendererText()
+        self.puzzle_combo.pack_start(renderer_text, True)
+        self.puzzle_combo.add_attribute(renderer_text, "text", 1)
+        # TODO: save latest selected
+        # self.puzzle_combo.connect("changed", ???)
+        self.puzzle_combo.set_active(conf.get("puzzle_combo", 0))
+
+        self.widgets["opendialog4"].connect("clicked", self.openDialogClicked)
+        self.widgets["learnButton"].connect("clicked", self.learnClicked)
+
+    def openDialogClicked(self, button):
+        perspective = perspective_manager.get_perspective("learn")
+        perspective.activate()
+
+    def learnClicked(self, button):
+        perspective = perspective_manager.get_perspective("learn")
+        perspective.activate()
+
+        tree_iter = self.puzzle_combo.get_active_iter()
+        if tree_iter is None:
+            return
+        else:
+            model = self.puzzle_combo.get_model()
+            filename = model[tree_iter][0]
+
+        print(filename)
+        start_puzzle_from(filename)
+
+
+class DatabaseTasker(Gtk.Alignment):
+    def __init__(self):
+        GObject.GObject.__init__(self)
+        self.widgets = uistuff.GladeWidgets("taskers.glade")
+        tasker = self.widgets["databaseTasker"]
+        tasker.unparent()
+        self.add(tasker)
+
+        startButton = self.widgets["openButton"]
+        startButton.set_name("openButton")
+
+        liststore = Gtk.ListStore(str)
+        items = recent_manager.get_items()
+        for item in items:
+            uri = item.get_uri()
+            if item.get_application_info("pychess") and item.get_mime_type() == "application/x-chess-pgn":
+                liststore.append((uri, ))
+
+        self.recent_combo = self.widgets["recent_combo"]
+        self.recent_combo.set_model(liststore)
+        renderer_text = Gtk.CellRendererText()
+        renderer_text.set_property("max-width-chars", 30)
+        renderer_text.set_property("ellipsize", Pango.EllipsizeMode.START)
+        self.recent_combo.pack_start(renderer_text, True)
+        self.recent_combo.add_attribute(renderer_text, "text", 0)
+        # TODO: update recent_combo when recent_menu changes
+        # self.recent_combo.connect("changed", ???)
+        self.recent_combo.set_active(conf.get("recent_combo", 0))
+
+        self.widgets["opendialog3"].connect("clicked", self.openDialogClicked)
+        self.widgets["openButton"].connect("clicked", self.openClicked)
+
+    def openDialogClicked(self, button):
+        dialog = get_open_dialog()
+
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            filenames = dialog.get_filenames()
+        else:
+            filenames = None
+
+        dialog.destroy()
+
+        if filenames is not None:
+            for filename in filenames:
+                if filename.lower().endswith(".fen"):
+                    newGameDialog.loadFileAndRun(filename)
+                else:
+                    perspective = perspective_manager.get_perspective("database")
+                    perspective.open_chessfile(filename)
+
+    def openClicked(self, button):
+        if self.widgets["createNew"].get_active():
+            perspective = perspective_manager.get_perspective("database")
+            perspective.create_database()
+
+        else:
+            tree_iter = self.recent_combo.get_active_iter()
+            if tree_iter is None:
+                return
+            else:
+                model = self.recent_combo.get_model()
+                uri = model[tree_iter][0]
+
+            # print(uri, unquote(uri))
+
+            try:
+                urlopen(unquote(uri)).close()
+                perspective = perspective_manager.get_perspective("database")
+                perspective.open_chessfile(unquote(uri))
+            except (IOError, OSError):
+                # shomething wrong whit the uri
+                recent_manager.remove_item(uri)
+
+
+new_game_tasker, internet_game_tasker, database_tasker, learn_tasker = \
+    NewGameTasker(), InternetGameTasker(), DatabaseTasker(), LearnTasker()
+tasker.packTaskers(new_game_tasker, database_tasker, internet_game_tasker, learn_tasker)
