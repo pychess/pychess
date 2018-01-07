@@ -30,9 +30,10 @@ PYTHONBIN = sys.executable.split("/")[-1]
 BITNESS = "64" if platform.machine().endswith('64') else "32"
 
 if sys.platform == "win32":
+    stockfish_name = "stockfish_8_x%s.exe" % BITNESS
     backup = [
         {"protocol": "uci",
-         "name": "stockfish_8_x%s.exe" % BITNESS,
+         "name": stockfish_name,
          "country": "no"},
         {"protocol": "xboard",
          "name": "sjaakii_win%s_ms.exe" % BITNESS,
@@ -49,6 +50,7 @@ if sys.platform == "win32":
                        "vm_name": PYTHONBIN,
                        "vm_args": ["-u"]})
 else:
+    stockfish_name = "stockfish"
     backup = [
         {"protocol": "xboard",
          "name": "pychess-engine",
@@ -109,7 +111,7 @@ else:
          "name": "glaurung",
          "country": "no"},
         {"protocol": "uci",
-         "name": "stockfish",
+         "name": stockfish_name,
          "country": "no"},
         {"protocol": "uci",
          "name": "ShredderClassicLinux",
@@ -652,11 +654,7 @@ def init_engine(analyzer_type, gamemodel, force=False):
 
         engine = discoverer.getEngineByMd5(conf.get(combo_name, 0))
         if engine is None:
-            if sys.platform == "win32":
-                # Let Stockfish to be default analyzer in Windows installer
-                engine = discoverer.getEngineN(-1)
-            else:
-                engine = discoverer.getEngineByName("stockfish")
+            engine = discoverer.getEngineByName(stockfish_name)
 
         if engine is None:
             engine = anaengines[-1]

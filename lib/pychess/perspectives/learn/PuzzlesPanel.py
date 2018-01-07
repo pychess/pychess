@@ -9,7 +9,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants import variants
 from pychess.Players.Human import Human
-from pychess.Players.engineNest import discoverer
+from pychess.Players.engineNest import discoverer, stockfish_name
 from pychess.perspectives import perspective_manager
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
@@ -87,7 +87,7 @@ def start_puzzle_from(filename):
     name = rec["White"]
     p0 = (LOCAL, Human, (WHITE, name), name)
 
-    engine = discoverer.getEngineByName("stockfish")
+    engine = discoverer.getEngineByName(stockfish_name)
     name = rec["Black"]
     ponder_off = True
     p1 = (ARTIFICIAL, discoverer.initPlayerEngine,

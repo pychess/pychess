@@ -19,7 +19,7 @@ from gi.repository import Gtk, GdkPixbuf, Gdk
 
 from pychess.System.prefix import addDataPrefix, getDataPrefix
 from pychess.System import conf, gstreamer, uistuff
-from pychess.Players.engineNest import discoverer
+from pychess.Players.engineNest import discoverer, stockfish_name
 from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SOUND_SELECT
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.gfx import Pieces
@@ -216,14 +216,10 @@ class HintTab:
 
         # Save, load and make analyze combos active
 
-        if sys.platform == "win32":
-            # Let Stockfish to be default analyzer in Windows installer
-            default = discoverer.getEngineN(-1).get("md5")
-        else:
-            engine = discoverer.getEngineByName("stockfish")
-            if engine is None:
-                engine = discoverer.getEngineN(-1)
-            default = engine.get("md5")
+        engine = discoverer.getEngineByName(stockfish_name)
+        if engine is None:
+            engine = discoverer.getEngineN(-1)
+        default = engine.get("md5")
         conf.set("ana_combobox", conf.get("ana_combobox", default))
         conf.set("inv_ana_combobox", conf.get("inv_ana_combobox", default))
 
