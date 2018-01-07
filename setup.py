@@ -170,6 +170,10 @@ DATA_FILES += [('share/gtksourceview-3.0/language-specs', ['gtksourceview-3.0/la
 DATA_FILES += [("share/pychess/pieces", glob('pieces/*.png'))]
 DATA_FILES += [("share/pychess/pieces/ttf", glob('pieces/ttf/*.ttf'))]
 
+# Lectures, puzzles
+DATA_FILES += [("share/pychess/lectures", glob('lectures/*.pgn'))]
+DATA_FILES += [("share/pychess/lectures", glob('lectures/*.txt'))]
+
 for dir in [d for d in listdir('pieces') if isdir(os.path.join('pieces', d)) and d != 'ttf']:
     DATA_FILES += [("share/pychess/pieces/" + dir, glob('pieces/' + dir + '/*.svg'))]
 

@@ -1,7 +1,8 @@
-include glade/*.glade background.jpg glade/*.png glade/*.svg glade/16x16/*.png glade/48x48/*.png flags/*.png boards/*.png
+include glade/*.glade galde/background.jpg glade/*.png glade/*.svg glade/16x16/*.png glade/48x48/*.png flags/*.png boards/*.png
 recursive-include pieces *
 include README.md AUTHORS ARTISTS DOCUMENTERS LICENSE INSTALL TRANSLATORS
 include sounds/*.ogg
+include lectures/*.txt lextures/*.pgn
 include manpages/pychess.1.gz
 include menu/pychess
 include gtksourceview-3.0/language-specs/pgn.lang
