@@ -343,7 +343,8 @@ class DatabaseTasker(Gtk.Alignment):
         items = recent_manager.get_items()
         for item in items:
             uri = item.get_uri()
-            if item.get_application_info("pychess") and item.get_mime_type() == "application/x-chess-pgn":
+            mime = item.get_mime_type()
+            if uri[-3:] in ("pgn", "epd", "fen") or mime[-3:] in ("pgn", "epd", "fen"):
                 liststore.append((uri, ))
 
         self.recent_combo = self.widgets["recent_combo"]

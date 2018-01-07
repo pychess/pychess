@@ -29,6 +29,9 @@ class RecentChooserMenu(Gtk.RecentChooserMenu):
         file_filter.add_mime_type("application/x-chess-pgn")
         file_filter.add_mime_type("application/x-chess-epd")
         file_filter.add_mime_type("application/x-chess-fen")
+        file_filter.add_pattern("*.pgn")
+        file_filter.add_pattern("*.epd")
+        file_filter.add_pattern("*.fen")
         self.set_filter(file_filter)
 
         self.connect("item-activated", recent_item_activated)
