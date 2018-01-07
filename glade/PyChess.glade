@@ -653,8 +653,8 @@
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="F11" signal="activate"/>
                         <accelerator key="Escape" signal="activate"/>
+                        <accelerator key="F11" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -5423,7 +5423,7 @@ If it can use both  you can set here which one you like.</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">8</property>
+                    <property name="top_attach">9</property>
                   </packing>
                 </child>
                 <child>
@@ -5434,7 +5434,7 @@ If it can use both  you can set here which one you like.</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">8</property>
+                    <property name="top_attach">9</property>
                   </packing>
                 </child>
                 <child>
@@ -5445,7 +5445,7 @@ If it can use both  you can set here which one you like.</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">9</property>
+                    <property name="top_attach">10</property>
                   </packing>
                 </child>
                 <child>
@@ -5516,7 +5516,28 @@ If it can use both  you can set here which one you like.</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">9</property>
+                    <property name="top_attach">10</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label68">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Variant</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">8</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="variant">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">8</property>
                   </packing>
                 </child>
                 <child>

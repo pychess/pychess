@@ -11,6 +11,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.widgets.BoardControl import BoardControl
 from pychess.widgets.PieceWidget import PieceWidget
 from pychess.widgets import mainwindow
+from pychess.Variants import name2variant
 
 TAG_FILTER, MATERIAL_FILTER, PATTERN_FILTER, NONE, RULE, SEQUENCE, STREAK = range(7)
 
@@ -33,9 +34,20 @@ class FilterPanel(Gtk.TreeView):
         GObject.GObject.__init__(self)
         self.persp = persp
         self.filtered = False
+        self.widgets = uistuff.GladeWidgets("PyChess.glade")
+
+        # Build variant combo model
+        variant_store = Gtk.ListStore(str, int)
+
+        for name, variant in sorted(name2variant.items()):
+            variant_store.append((name, variant.variant))
+
+        self.widgets["variant"].set_model(variant_store)
+        renderer_text = Gtk.CellRendererText()
+        self.widgets["variant"].pack_start(renderer_text, True)
+        self.widgets["variant"].add_attribute(renderer_text, "text", 0)
 
         # Add piece widgets to dialog *_dock containers on material tab
-        self.widgets = uistuff.GladeWidgets("PyChess.glade")
         self.dialog = self.widgets["filter_dialog"]
         self.dialog.set_transient_for(mainwindow())
 
@@ -368,6 +380,15 @@ class FilterPanel(Gtk.TreeView):
     def ini_widgets_from_query(self, query):
         """ Set filter dialog widget values based on query dict key-value pairs """
 
+        rule = "variant"
+        if rule in query:
+            index = 0
+            model = self.widgets["variant"].get_model()
+            for index, row in enumerate(model):
+                if query[rule] == row[1]:
+                    break
+            self.widgets["variant"].set_active(index)
+
         for rule in ("white", "black", "event", "site", "eco_from", "eco_to", "annotator"):
             if rule in query:
                 self.widgets[rule].set_text(query[rule])
@@ -503,6 +524,12 @@ class FilterPanel(Gtk.TreeView):
         tag_query = {}
         material_query = {}
         pattern_query = {}
+
+        tree_iter = self.widgets["variant"].get_active_iter()
+        if tree_iter is not None:
+            model = self.widgets["variant"].get_model()
+            variant_code = model[tree_iter][1]
+            tag_query["variant"] = variant_code
 
         for rule in ("white", "black", "event", "site", "eco_from", "eco_to", "annotator"):
             if self.widgets[rule].get_text():

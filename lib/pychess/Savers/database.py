@@ -197,6 +197,9 @@ class TagDatabase:
             if "annotator" in tag_query:
                 tags.append(annotator.c.name.startswith(tag_query["annotator"])),
 
+            if "variant" in tag_query:
+                tags.append(game.c.variant == int(tag_query["variant"])),
+
             if "result" in tag_query:
                 tags.append(game.c.result == reprResult.index(tag_query["result"])),
 
