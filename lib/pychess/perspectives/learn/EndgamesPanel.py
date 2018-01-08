@@ -132,10 +132,9 @@ class Sidepanel():
                     piece = chrU2Sign[char.upper()]
                     cord = random.choice(pawn_cords if char == "p" else cords)
                     lboard._addPiece(cord, piece, color)
-                    if char == "p":
+                    cords.remove(cord)
+                    if cord in pawn_cords:
                         pawn_cords.remove(cord)
-                    else:
-                        cords.remove(cord)
             # TODO: 2 same color bishop is not ok
             ok = (not lboard.isChecked()) and (not lboard.opIsChecked())
 
