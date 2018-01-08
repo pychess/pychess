@@ -1,6 +1,7 @@
 import asyncio
 import math
 import random
+from os.path import basename
 from urllib.request import urlopen
 from urllib.parse import unquote
 
@@ -17,7 +18,7 @@ from pychess.Variants import variants
 from pychess.ic import ICLogon
 from pychess.widgets import newGameDialog
 from pychess.widgets.Background import giveBackground
-from pychess.widgets.RecentChooser import recent_manager
+from pychess.widgets.RecentChooser import recent_manager, recent_menu
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.games import get_open_dialog
 from pychess.perspectives.learn.PuzzlesPanel import PUZZLES, start_puzzle_from
@@ -339,27 +340,28 @@ class DatabaseTasker(Gtk.Alignment):
         startButton = self.widgets["openButton"]
         startButton.set_name("openButton")
 
-        liststore = Gtk.ListStore(str)
-        items = recent_manager.get_items()
-        for item in items:
-            uri = item.get_uri()
-            mime = item.get_mime_type()
-            if uri[-3:] in ("pgn", "epd", "fen") or mime[-3:] in ("pgn", "epd", "fen"):
-                liststore.append((uri, ))
+        liststore = Gtk.ListStore(str, str)
 
         self.recent_combo = self.widgets["recent_combo"]
         self.recent_combo.set_model(liststore)
         renderer_text = Gtk.CellRendererText()
-        renderer_text.set_property("max-width-chars", 30)
-        renderer_text.set_property("ellipsize", Pango.EllipsizeMode.START)
+        renderer_text.set_property("max-width-chars", 40)
+        renderer_text.set_property("ellipsize", Pango.EllipsizeMode.END)
         self.recent_combo.pack_start(renderer_text, True)
-        self.recent_combo.add_attribute(renderer_text, "text", 0)
-        # TODO: update recent_combo when recent_menu changes
-        # self.recent_combo.connect("changed", ???)
+        self.recent_combo.add_attribute(renderer_text, "text", 1)
+
+        self.on_recent_menu_changed(recent_manager, liststore)
+        recent_manager.connect("changed", self.on_recent_menu_changed, liststore)
         self.recent_combo.set_active(conf.get("recent_combo", 0))
 
         self.widgets["opendialog3"].connect("clicked", self.openDialogClicked)
         self.widgets["openButton"].connect("clicked", self.openClicked)
+
+    def on_recent_menu_changed(self, manager, liststore):
+        liststore.clear()
+        for uri in recent_menu.get_uris():
+            liststore.append((uri, basename(unquote(uri)), ))
+        self.recent_combo.set_active(0)
 
     def openDialogClicked(self, button):
         dialog = get_open_dialog()
@@ -393,12 +395,11 @@ class DatabaseTasker(Gtk.Alignment):
                 model = self.recent_combo.get_model()
                 uri = model[tree_iter][0]
 
-            # print(uri, unquote(uri))
-
             try:
                 urlopen(unquote(uri)).close()
                 perspective = perspective_manager.get_perspective("database")
                 perspective.open_chessfile(unquote(uri))
+                recent_manager.add_item(uri)
             except (IOError, OSError):
                 # shomething wrong whit the uri
                 recent_manager.remove_item(uri)
