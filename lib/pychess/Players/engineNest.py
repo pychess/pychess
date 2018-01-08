@@ -626,7 +626,7 @@ discoverer = EngineDiscoverer()
 
 
 @asyncio.coroutine
-def init_engine(analyzer_type, gamemodel, force=False):
+def init_engine(analyzer_type, gamemodel, force_engine=None):
     """
     Initializes and starts the engine analyzer of analyzer_type the user has
     configured in the Engines tab of the preferencesDialog, for gamemodel. If no
@@ -647,12 +647,16 @@ def init_engine(analyzer_type, gamemodel, force=False):
 
     analyzer = None
 
-    if conf.get(check_name, default):
+    if conf.get(check_name, default) or force_engine is not None:
         anaengines = list(discoverer.getAnalyzers())
         if len(anaengines) == 0:
             return None
 
-        engine = discoverer.getEngineByMd5(conf.get(combo_name, 0))
+        if force_engine is not None:
+            engine = discoverer.getEngineByName(force_engine)
+        else:
+            engine = discoverer.getEngineByMd5(conf.get(combo_name, 0))
+
         if engine is None:
             engine = discoverer.getEngineByName(stockfish_name)
 

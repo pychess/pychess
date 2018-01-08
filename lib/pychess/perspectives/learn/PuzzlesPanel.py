@@ -4,7 +4,7 @@ import random
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, WAITING_TO_START
+from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, WAITING_TO_START, HINT
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants import variants
@@ -76,7 +76,6 @@ def start_puzzle_from(filename):
     records, plys = chessfile.get_records()
 
     rec = records[random.randint(0, len(records))]
-    print(rec)
 
     timemodel = TimeModel(0, 0)
     gamemodel = GameModel(timemodel)
@@ -84,6 +83,7 @@ def start_puzzle_from(filename):
 
     chessfile.loadToModel(rec, 0, gamemodel)
 
+    # TODO: change colors according to FEN!
     name = rec["White"]
     p0 = (LOCAL, Human, (WHITE, name), name)
 
@@ -94,11 +94,13 @@ def start_puzzle_from(filename):
           (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), name)
 
     def fix_name(gamemodel, name):
+        asyncio.async(gamemodel.start_analyzer(HINT, force_engine=stockfish_name))
         gamemodel.players[1].name = name
         gamemodel.emit("players_changed")
     gamemodel.connect("game_started", fix_name, name)
 
     gamemodel.variant.need_initial_board = True
     gamemodel.status = WAITING_TO_START
+
     perspective = perspective_manager.get_perspective("games")
     asyncio.async(perspective.generalStart(gamemodel, p0, p1))

@@ -265,14 +265,14 @@ class GameModel(GObject.GObject):
             return BLACK
 
     @asyncio.coroutine
-    def start_analyzer(self, analyzer_type):
+    def start_analyzer(self, analyzer_type, force_engine=None):
         # prevent starting new analyzers again and again
         # when fics lecture reuses the same gamemodel
         if analyzer_type in self.spectators:
             return
 
         from pychess.Players.engineNest import init_engine
-        analyzer = yield from init_engine(analyzer_type, self)
+        analyzer = yield from init_engine(analyzer_type, self, force_engine=force_engine)
         if analyzer is None:
             return
 
@@ -318,6 +318,8 @@ class GameModel(GObject.GObject):
     def on_analyze(self, analyzer, analysis):
         if analysis and analysis[0] is not None:
             ply, pv, score, depth, nps = analysis[0]
+            if self.practice_game and len(pv) > 0:
+                self.hint = pv[0]
             if score is not None:
                 if analyzer.mode == ANALYZING:
                     if (ply not in self.scores) or (int(self.scores[ply][2]) <= int(depth)):
