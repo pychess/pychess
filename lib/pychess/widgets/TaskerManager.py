@@ -352,7 +352,6 @@ class DatabaseTasker(Gtk.Alignment):
 
         self.on_recent_menu_changed(recent_manager, liststore)
         recent_manager.connect("changed", self.on_recent_menu_changed, liststore)
-        self.recent_combo.set_active(conf.get("recent_combo", 0))
 
         self.widgets["opendialog3"].connect("clicked", self.openDialogClicked)
         self.widgets["openButton"].connect("clicked", self.openClicked)
