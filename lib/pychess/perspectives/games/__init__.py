@@ -186,8 +186,12 @@ class Games(GObject.GObject, Perspective):
         game.save(uri, saver, append=False, position=position)
 
     def saveGamePGN(self, game):
+        if game.practice_game:
+            return True
+
         if conf.get("saveOwnGames", False) and not game.hasLocalPlayer():
             return True
+
         filename = conf.get("autoSaveFormat", "pychess")
         filename = filename.replace("#n1", game.tags["White"])
         filename = filename.replace("#n2", game.tags["Black"])
