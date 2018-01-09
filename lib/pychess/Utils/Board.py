@@ -158,7 +158,7 @@ class Board:
                                 move.flag in (QUEEN_CASTLE, KING_CASTLE)):
             piece = PAWN if self.variant == CRAZYHOUSECHESS and self[
                 cord1].promoted else self[cord1].piece
-            cord = self.newHoldingCord(self.color)
+            cord = board1.getHoldingCord(self.color, piece)
             moved.append((board1[cord], cord1))
             # add all captured pieces to "new" list to enforce repainting them after a possible reordering
             new = board1.getHoldingPieces(self.color)
