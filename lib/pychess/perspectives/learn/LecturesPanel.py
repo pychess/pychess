@@ -82,6 +82,7 @@ class Sidepanel():
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
+        self.tv.set_cursor(0)
 
         scrollwin = Gtk.ScrolledWindow()
         scrollwin.add(self.tv)
