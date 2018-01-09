@@ -904,7 +904,7 @@ class BoardView(Gtk.DrawingArea):
 
         xc_loc, yc_loc, square, side = self.square
 
-        if contains(rect((xc_loc, yc_loc, square)), rectangle):
+        if rectangle is not None and contains(rect((xc_loc, yc_loc, square)), rectangle):
             return
 
         thick = thickness * square
@@ -933,9 +933,6 @@ class BoardView(Gtk.DrawingArea):
                 layout = self.create_pango_layout(chr(file + ord("A") - 1))
                 layout.set_font_description(
                     Pango.FontDescription("bold %d" % sign_size))
-
-                width = layout.get_pixel_size()[0]
-                height = layout.get_pixel_size()[1]
 
                 # Draw bottom
                 context.move_to(xc_loc + side * num + side / 2 - width / 2, yc_loc + square)
@@ -1061,7 +1058,7 @@ class BoardView(Gtk.DrawingArea):
         if self.draw_grid:
             # grid lines between squares
             context.set_source_rgb(0.0, 0.0, 0.0)
-            context.set_line_width(1.0)
+            context.set_line_width(0.5 if r is None else 1.0)
 
             for loc in range(self.FILES):
                 context.move_to(xc_loc + side * loc, yc_loc)
@@ -1184,7 +1181,7 @@ class BoardView(Gtk.DrawingArea):
                     continue
                 if not piece or piece.x is not None or piece.opacity < 1:
                     continue
-                if not intersects(rect(self.cord2RectRelative(x_loc, y_loc)), rectangle):
+                if rectangle is not None and not intersects(rect(self.cord2RectRelative(x_loc, y_loc)), rectangle):
                     continue
                 if Cord(x_loc, y_loc) == self.selected:
                     context.set_source_rgb(*fg_s)
