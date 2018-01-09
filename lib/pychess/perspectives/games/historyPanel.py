@@ -120,6 +120,8 @@ class Sidepanel:
 
     def cursorChanged(self, widget, tree, col):
         path, focus_column = tree.get_cursor()
+        if path is None:
+            return
         indices = path.get_indices()
         row = indices[0]
 
@@ -204,6 +206,7 @@ class Sidepanel:
         row, col, other = self._ply_to_row_col_other(shown)
 
         other.get_selection().unselect_all()
+        col.set_cursor(row)
         try:
             col.get_selection().select_iter(col.get_model().get_iter(row))
             col.scroll_to_cell((row, ), None, False)
