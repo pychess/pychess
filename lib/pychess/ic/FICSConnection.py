@@ -346,11 +346,13 @@ class FICSConnection(Connection):
 
     def cancel(self):
         self.close()
-        self.client.cancel()
+        if hasattr(self, "client"):
+            self.client.cancel()
 
     def close(self):
         self.connected = False
-        self.client.close()
+        if hasattr(self, "client"):
+            self.client.close()
         if self.keep_alive_task is not None:
             self.keep_alive_task.cancel()
 

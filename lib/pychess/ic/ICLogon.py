@@ -198,7 +198,10 @@ class ICLogon(object):
 
         def pulse():
             self.widgets["progressbar"].pulse()
-            return not self.connection.isConnected()
+            if self.connection is None:
+                return False
+            else:
+                return not self.connection.isConnected()
 
         self.pulser = GObject.timeout_add(30, pulse)
 
