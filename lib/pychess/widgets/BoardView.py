@@ -1702,6 +1702,7 @@ class BoardView(Gtk.DrawingArea):
                 if amount > 1:
                     amount = 1
                     next = False
+                    self.animating = False
                 else:
                     next = True
                 self._rotation = new = oldr + amount * (radians - oldr)
