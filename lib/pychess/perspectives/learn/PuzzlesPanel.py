@@ -70,8 +70,7 @@ class Sidepanel():
 
 
 def start_puzzle_from(filename):
-    filename = addDataPrefix("lectures/%s" % filename)
-    chessfile = PGNFile(protoopen(filename))
+    chessfile = PGNFile(protoopen(addDataPrefix("lectures/%s" % filename)))
     importer = PgnImport(chessfile)
     chessfile.init_tag_database(importer)
     records, plys = chessfile.get_records()
@@ -81,6 +80,7 @@ def start_puzzle_from(filename):
     timemodel = TimeModel(0, 0)
     gamemodel = GameModel(timemodel)
     gamemodel.set_practice_game()
+    gamemodel.filename = filename
 
     chessfile.loadToModel(rec, 0, gamemodel)
 

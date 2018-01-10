@@ -325,7 +325,6 @@ class LearnTasker(Gtk.Alignment):
             model = self.puzzle_combo.get_model()
             filename = model[tree_iter][0]
 
-        print(filename)
         start_puzzle_from(filename)
 
 

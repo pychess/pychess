@@ -3,6 +3,7 @@ from gi.repository import Gtk
 from pychess.Utils.const import UNDOABLE_STATES
 from pychess.Utils.Cord import Cord
 from pychess.Utils.logic import getStatus
+from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_from
 
 HINT, MOVE, RETRY, NEXT = 0, 1, 2, 3
 
@@ -61,17 +62,16 @@ class LearnInfoBar(Gtk.InfoBar):
             self.clear()
             self.reset()
         elif response == NEXT:
-            # TODO:
-            print("start next puzzle")
+            start_puzzle_from(self.gamemodel.filename)
 
     def game_changed(self, gamemodel, ply):
-        if gamemodel.practice_game and gamemodel.hint:
+        if gamemodel.practice_game:
             if len(gamemodel.moves) % 2 == 0:
                 # engine moved, we can enable retry
                 self.set_response_sensitive(RETRY, True)
                 return
 
-            print(gamemodel.hint, repr(gamemodel.moves[-1]))
+            # print(gamemodel.hint, repr(gamemodel.moves[-1]))
             status, reason = getStatus(gamemodel.boards[-1])
 
             self.clear()
@@ -81,7 +81,7 @@ class LearnInfoBar(Gtk.InfoBar):
                 self.content_area.add(label)
                 self.add_button(_("Next"), NEXT)
 
-            elif gamemodel.hint != repr(gamemodel.moves[-1]):
+            elif gamemodel.hint and gamemodel.hint != repr(gamemodel.moves[-1]):
                 self.set_message_type(Gtk.MessageType.ERROR)
                 label = Gtk.Label(_("Not the best!"))
                 self.content_area.add(label)
