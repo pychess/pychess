@@ -504,7 +504,7 @@ class Sidepanel(object):
             if store[iter][5]:
                 cell.set_property("stock-id", "gtk-media-play")
             else:
-                cell.set_property("stock-id", "gtk-stop")
+                cell.set_property("stock-id", "gtk-media-pause")
 
         c4.set_cell_data_func(self.toggleRenderer, cb_visible)
 
