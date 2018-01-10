@@ -730,9 +730,9 @@ Looking up section name 'Type=CheckButton'
 Reading map file section 'Name=autoRotate' for widget of type CheckButton
 Monitor auto_rotate_on, toggled, CheckButton, true
 Monitor Auto.CheckButton.toggled.false.'Name=autoRotate', toggled, CheckButton, false
-Looking up section name 'Label=Auto _promote to  queen, Type=CheckButton'
+Looking up section name 'Label=Auto _promote to queen, Type=CheckButton'
 Looking up section name 'Name=autoPromote'
-Looking up section name 'Label=Auto _promote to  queen'
+Looking up section name 'Label=Auto _promote to queen'
 Looking up section name 'Type=CheckButton'
 Monitor Auto.CheckButton.toggled.true.'Name=autoPromote', toggled, CheckButton, true
 Monitor Auto.CheckButton.toggled.false.'Name=autoPromote', toggled, CheckButton, false
