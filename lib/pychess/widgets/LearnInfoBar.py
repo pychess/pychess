@@ -17,11 +17,12 @@ class LearnInfoBar(Gtk.InfoBar):
 
         self.gamemodel = gamemodel
         self.boardview = boardview
+        self.shown_board = None
 
         self.gamemodel.connect("game_changed", self.game_changed)
         self.connect("response", self.on_response)
-        self.clear()
-        self.reset()
+
+        self.your_turn()
 
     def clear(self):
         for item in self.content_area:
@@ -30,13 +31,37 @@ class LearnInfoBar(Gtk.InfoBar):
         for item in self.action_area:
             self.action_area.remove(item)
 
-    def reset(self):
-        self.set_message_type(Gtk.MessageType.QUESTION)
-        label = Gtk.Label(_("Your turn."))
-        self.content_area.add(label)
+    def your_turn(self, shown_board=None):
+        if shown_board is not None:
+            self.shown_board = shown_board
 
+        self.clear()
+        self.set_message_type(Gtk.MessageType.QUESTION)
+        self.content_area.add(Gtk.Label(_("Your turn.")))
         self.add_button(_("Hint"), HINT)
         self.add_button(_("Move"), MOVE)
+        self.show_all()
+
+    def get_next_puzzle(self):
+        self.clear()
+        self.set_message_type(Gtk.MessageType.INFO)
+        self.content_area.add(Gtk.Label(_("Well done!")))
+        self.add_button(_("Next"), NEXT)
+        self.show_all()
+
+    def retry(self, shown_board=None):
+        if shown_board is not None:
+            self.shown_board = shown_board
+
+        self.clear()
+        self.set_message_type(Gtk.MessageType.ERROR)
+        self.content_area.add(Gtk.Label(_("Not the best!")))
+        self.add_button(_("Retry"), RETRY)
+
+        # disable retry button until engine thinking on next move
+        if self.gamemodel.practice_game:
+            self.set_response_sensitive(RETRY, False)
+        self.show_all()
 
     def on_response(self, widget, response):
         if response in (HINT, MOVE):
@@ -56,13 +81,20 @@ class LearnInfoBar(Gtk.InfoBar):
                     self.boardview.arrows.add((cord0, cord1))
                     self.boardview.redrawCanvas()
             else:
-                hint = _("No hint available.")
+                print("No hint available!")
+
         elif response == RETRY:
-            self.gamemodel.undoMoves(2)
-            self.clear()
-            self.reset()
+            if self.gamemodel.practice_game:
+                self.gamemodel.undoMoves(2)
+            elif self.gamemodel.lesson_game:
+                self.boardview.setShownBoard(self.shown_board)
+            self.your_turn()
+
         elif response == NEXT:
-            start_puzzle_from(self.gamemodel.filename)
+            if self.gamemodel.practice_game:
+                start_puzzle_from(self.gamemodel.filename)
+            else:
+                print("Next clicked!")
 
     def game_changed(self, gamemodel, ply):
         if gamemodel.practice_game:
@@ -74,22 +106,9 @@ class LearnInfoBar(Gtk.InfoBar):
             # print(gamemodel.hint, repr(gamemodel.moves[-1]))
             status, reason = getStatus(gamemodel.boards[-1])
 
-            self.clear()
             if status in UNDOABLE_STATES:
-                self.set_message_type(Gtk.MessageType.INFO)
-                label = Gtk.Label(_("Well done!"))
-                self.content_area.add(label)
-                self.add_button(_("Next"), NEXT)
-
+                self.get_next_puzzle()
             elif gamemodel.hint and gamemodel.hint != repr(gamemodel.moves[-1]):
-                self.set_message_type(Gtk.MessageType.ERROR)
-                label = Gtk.Label(_("Not the best!"))
-                self.content_area.add(label)
-                self.add_button(_("Retry"), RETRY)
-                # disable retry button until engine thinking on next move
-                self.set_response_sensitive(RETRY, False)
-
+                self.retry()
             else:
-                self.reset()
-
-            self.show_all()
+                self.your_turn()

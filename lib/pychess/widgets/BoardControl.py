@@ -13,7 +13,6 @@ from pychess.Utils.const import ARTIFICIAL, FLAG_CALL, ABORT_OFFER, LOCAL, TAKEB
 from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmove, lmovegen
 from pychess.Utils.lutils.lmove import ParsingError
-from pychess.widgets.InfoBar import get_message_content, InfoBarMessage, InfoBarMessageButton
 
 from . import preferencesDialog
 from .PromotionDialog import PromotionDialog
@@ -52,20 +51,12 @@ def play_or_add_move(view, board, move):
             if view.model.lesson_game:
                 incr = 1 if len(view.model.moves) == board.ply + 1 else 2
                 view.model.ply_played += incr
-                # view.model.players[0].putMessage(_("Good move!") if incr == 2 else _("Well done!"))
-                # view.model.emit("game_changed", board.ply + incr)
                 play_sound(move, board)
 
-                def callback(infobar, response, message):
-                    if response == 1:
-                        view.setShownBoard(board)
-                        message.dismiss()
-                    return False
-
-                content = get_message_content(_("Good move!") if incr == 2 else _("Well done!"), "", Gtk.STOCK_DIALOG_INFO)
-                message = InfoBarMessage(Gtk.MessageType.INFO, content, callback)
-                message.add_button(InfoBarMessageButton(_("OK let's go on!"), 1))
-                view.game_widget.replaceMessages(message)
+                if incr == 2:
+                    view.infobar.your_turn(shown_board=board)
+                else:
+                    view.infobar.get_next_puzzle()
 
                 board = view.model.getBoardAtPly(board.ply + incr)
                 view.setShownBoard(board)
@@ -73,8 +64,8 @@ def play_or_add_move(view, board, move):
                     view.model.checkStatus()
         elif board.board.next.children:
             if view.model.lesson_game:
-                view.model.players[0].putMessage(_("You can do it better!"))
-                view.setShownBoard(board)
+                play_sound(move, board)
+                view.infobar.retry(shown_board=board)
                 return
             # try to find this move in variations
             for i, vari in enumerate(board.board.next.children):
@@ -88,21 +79,8 @@ def play_or_add_move(view, board, move):
             view.setShownBoard(new_vari[-1])
         else:
             if view.model.lesson_game:
-                # view.model.players[0].putMessage(_("You can do it better!"))
                 play_sound(move, board)
-                # view.setShownBoard(board)
-                # return
-
-                def callback(infobar, response, message):
-                    if response == 1:
-                        view.setShownBoard(board)
-                        message.dismiss()
-                    return False
-
-                content = get_message_content(_("You can do it better!"), "", Gtk.STOCK_DIALOG_INFO)
-                message = InfoBarMessage(Gtk.MessageType.INFO, content, callback)
-                message.add_button(InfoBarMessageButton(_("Retry"), 1))
-                view.game_widget.replaceMessages(message)
+                view.infobar.retry(shown_board=board)
             # create new variation
             new_vari = view.model.add_variation(board, (move, ))
             view.setShownBoard(new_vari[-1])
@@ -121,13 +99,12 @@ class BoardControl(Gtk.EventBox):
         'action': (GObject.SignalFlags.RUN_FIRST, None, (str, object))
     }
 
-    def __init__(self, gamemodel, action_menu_items, setup_position=False, game_preview=False, game_widget=None):
+    def __init__(self, gamemodel, action_menu_items, setup_position=False, game_preview=False):
         GObject.GObject.__init__(self)
         self.setup_position = setup_position
         self.game_preview = game_preview
-        self.game_widget = game_widget
 
-        self.view = BoardView(gamemodel, setup_position=setup_position, game_widget=game_widget)
+        self.view = BoardView(gamemodel, setup_position=setup_position)
         self.add(self.view)
         self.variant = gamemodel.variant
         self.promotionDialog = PromotionDialog(self.variant.variant)

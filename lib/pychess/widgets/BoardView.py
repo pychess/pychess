@@ -144,7 +144,7 @@ class BoardView(Gtk.DrawingArea):
         'shownChanged': (GObject.SignalFlags.RUN_FIRST, None, (int,))
     }
 
-    def __init__(self, gamemodel=None, preview=False, setup_position=False, game_widget=None):
+    def __init__(self, gamemodel=None, preview=False, setup_position=False):
         GObject.GObject.__init__(self)
 
         if gamemodel is None:
@@ -154,7 +154,6 @@ class BoardView(Gtk.DrawingArea):
         self.asean = self.model.variant.variant in ASEAN_VARIANTS
         self.preview = preview
         self.setup_position = setup_position
-        self.game_widget = game_widget
         self.shown_variation_idx = 0  # the main variation is the first in gamemodel.variations list
 
         self.model_cids = [

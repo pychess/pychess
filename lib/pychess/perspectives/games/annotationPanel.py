@@ -122,8 +122,9 @@ class Sidepanel:
         self.boardview = gmwidg.board.view
         self.cid = self.boardview.connect("shownChanged", self.shownChanged)
 
-        if self.gamemodel.practice_game:
+        if self.gamemodel.practice_game or self.gamemodel.lesson_game:
             self.infobar = LearnInfoBar(self.gamemodel, self.boardview)
+            self.boardview.infobar = self.infobar
             __widget__.pack_start(self.infobar, False, False, 0)
 
         self.model_cids = [
