@@ -17,6 +17,7 @@ class LearnInfoBar(Gtk.InfoBar):
         self.gamemodel = gamemodel
         self.boardview = boardview
 
+        self.gamemodel.connect("game_changed", self.game_changed)
         self.connect("response", self.on_response)
         self.clear()
         self.reset()
@@ -77,13 +78,13 @@ class LearnInfoBar(Gtk.InfoBar):
             if status in UNDOABLE_STATES:
                 self.set_message_type(Gtk.MessageType.INFO)
                 label = Gtk.Label(_("Well done!"))
-                self.content_area().add(label)
+                self.content_area.add(label)
                 self.add_button(_("Next"), NEXT)
 
             elif gamemodel.hint != repr(gamemodel.moves[-1]):
                 self.set_message_type(Gtk.MessageType.ERROR)
                 label = Gtk.Label(_("Not the best!"))
-                self.content_area().add(label)
+                self.content_area.add(label)
                 self.add_button(_("Retry"), RETRY)
                 # disable retry button until engine thinking on next move
                 self.set_response_sensitive(RETRY, False)
