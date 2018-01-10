@@ -10,7 +10,6 @@ from gi.repository import Gdk
 
 from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import WHITE, BLACK, FEN_EMPTY, reprResult
-
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
@@ -20,6 +19,7 @@ from pychess.Savers.pgn import move_count
 from pychess.Savers.pgn import nag2symbol
 from pychess.widgets.Background import set_textview_color
 from pychess.widgets.ChessClock import formatTime
+from pychess.widgets.LearnInfoBar import LearnInfoBar
 from pychess.widgets import insert_formatted
 
 __title__ = _("Annotation")
@@ -110,14 +110,23 @@ class Sidepanel:
         self.textbuffer.create_tag("variation-margin1", left_margin=36)
         self.textbuffer.create_tag("variation-margin2", left_margin=52)
 
-        __widget__ = Gtk.ScrolledWindow()
-        __widget__.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
-        __widget__.add(self.textview)
+        __widget__ = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
+        sw.add(self.textview)
+
+        __widget__.pack_start(sw, True, True, 0)
+
+        self.gamemodel = gmwidg.gamemodel
+
+        if self.gamemodel.practice_game:
+            self.infobar = LearnInfoBar(self.gamemodel, self.boardview)
+            __widget__.pack_start(self.infobar, False, False, 0)
 
         self.boardview = gmwidg.board.view
         self.cid = self.boardview.connect("shownChanged", self.shownChanged)
 
-        self.gamemodel = gmwidg.gamemodel
         self.model_cids = [
             self.gamemodel.connect_after("game_loaded", self.game_loaded),
             self.gamemodel.connect_after("game_changed", self.game_changed),
@@ -881,7 +890,7 @@ class Sidepanel:
             if board is None:
                 break
 
-            # Hide moves in puzzle games
+            # Hide moves in interactive lesson games
             if self.gamemodel.lesson_game and board.plyCount > self.gamemodel.ply_played:
                 break
 
@@ -936,8 +945,7 @@ class Sidepanel:
                 break
 
         if result and result != "*" and not self.gamemodel.lesson_game:
-            self.textbuffer.insert_with_tags_by_name(end_iter(), " " + result,
-                                                     "move")
+            self.textbuffer.insert_with_tags_by_name(end_iter(), " " + result, "move")
 
     def insert_comment(self,
                        comment,
