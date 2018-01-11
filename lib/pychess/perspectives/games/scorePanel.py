@@ -15,7 +15,6 @@ __icon__ = addDataPrefix("glade/panel_score.svg")
 __desc__ = _("The score panel tries to evaluate the positions and shows you a graph of the game progress")
 
 
-
 class Sidepanel:
     def load(self, gmwidg):
         self.boardview = gmwidg.board.view
