@@ -67,7 +67,7 @@ class Sidepanel():
         chessfile.init_tag_database(self.importer)
         records, plys = chessfile.get_records()
 
-        rec = records[random.randint(0, len(records))]
+        rec = records[random.randrange(0, len(records))]
         print(rec)
 
         timemodel = TimeModel(0, 0)
