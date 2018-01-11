@@ -11,11 +11,9 @@ from pychess.Utils.const import WHITE, DRAW, WHITEWON, BLACKWON
 from pychess.Utils.lutils import leval
 
 __title__ = _("Score")
-
 __icon__ = addDataPrefix("glade/panel_score.svg")
+__desc__ = _("The score panel tries to evaluate the positions and shows you a graph of the game progress")
 
-__desc__ = _(
-    "The score panel tries to evaluate the positions and shows you a graph of the game progress")
 
 
 class Sidepanel:
@@ -39,15 +37,29 @@ class Sidepanel:
             self.boardview.model.connect_after("game_started", self.game_started),
             self.boardview.model.connect_after("game_terminated", self.on_game_terminated),
         ]
+
+        def cb_config_changed(none):
+            self.fetch_chess_conf()
+            self.plot.redraw()
+        self.cids_conf = [
+            conf.notify_add("scoreLinearScale", cb_config_changed)
+        ]
+        self.fetch_chess_conf()
+
         uistuff.keepDown(__widget__)
 
         return __widget__
 
+    def fetch_chess_conf(self):
+        self.plot.linear_scale = conf.get("scoreLinearScale", False)
+
     def on_game_terminated(self, model):
         self.plot.disconnect(self.plot_cid)
+        self.boardview.disconnect(self.cid)
         for cid in self.model_cids:
             self.boardview.model.disconnect(cid)
-        self.boardview.disconnect(self.cid)
+        for cid in self.cids_conf:
+            conf.notify_remove(cid)
 
     def moves_undone(self, model, moves):
         for i in range(moves):
@@ -162,7 +174,6 @@ class Sidepanel:
 class ScorePlot(Gtk.DrawingArea):
 
     __gtype_name__ = "ScorePlot" + str(randint(0, sys.maxsize))
-
     __gsignals__ = {"selected": (GObject.SignalFlags.RUN_FIRST, None, (int, ))}
 
     def __init__(self, boardview):
@@ -245,7 +256,7 @@ class ScorePlot(Gtk.DrawingArea):
             return n == 0 and 1 or n / abs(n)
 
         def mapper(score):
-            if conf.get("scoreLinearScale", False):
+            if self.linear_scale:
                 return min(abs(score), 800) / 800 * sign(score)  # Linear
             else:
                 return (e ** (5e-4 * abs(score)) - 1) * sign(score)  # Exponentially stretched
