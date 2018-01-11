@@ -9,6 +9,7 @@ from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, ch
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.lutils.lmove import FILE, RANK
 from pychess.Variants import variants
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer, stockfish_name
@@ -95,7 +96,7 @@ class Sidepanel():
     def row_activated(self, widget, path, col):
         if path is None:
             return
-        pieces = ENDGAMES[path[0]][0]
+        pieces = ENDGAMES[path[0]][0].lower()
 
         fen = self.create_fen(pieces)
 
@@ -125,6 +126,8 @@ class Sidepanel():
         while not ok:
             lboard = LBoard()
             lboard.applyFen("8/8/8/8/8/8/8/8 w - - 0 1")
+            bishop_cords = [[], []]
+            bishop_colors_ok = True
 
             cords = list(range(0, 64))
             pawn_cords = list(range(0 + 8, 64 - 8))
@@ -136,8 +139,19 @@ class Sidepanel():
                     cords.remove(cord)
                     if cord in pawn_cords:
                         pawn_cords.remove(cord)
-            # TODO: 2 same color bishop is not ok
-            ok = (not lboard.isChecked()) and (not lboard.opIsChecked())
+                    if char == "b":
+                        bishop_cords[color].append(cord)
+
+                # 2 same color bishop is not ok
+                if len(bishop_cords[color]) == 2 and bishop_colors_ok:
+                    b0, b1 = bishop_cords[color]
+                    b0_color = BLACK if RANK(b0) % 2 == FILE(b0) % 2 else WHITE
+                    b1_color = BLACK if RANK(b1) % 2 == FILE(b1) % 2 else WHITE
+                    if b0_color == b1_color:
+                        bishop_colors_ok = False
+                        break
+
+            ok = (not lboard.isChecked()) and (not lboard.opIsChecked()) and bishop_colors_ok
 
         fen = lboard.asFen()
         return fen
