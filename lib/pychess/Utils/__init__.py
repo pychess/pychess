@@ -67,7 +67,10 @@ class wait_signal(asyncio.Future):
             super().cancel()
         except AttributeError:
             pass
-        obj = self._obj()
-        if obj is not None:
-            obj.disconnect(self._hnd)
+        try:
+            obj = self._obj()
+            if obj is not None:
+                obj.disconnect(self._hnd)
+        except AttributeError:
+            pass
         return True
