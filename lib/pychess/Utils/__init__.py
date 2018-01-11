@@ -63,7 +63,10 @@ class wait_signal(asyncio.Future):
     def cancel(self):
         if self.cancelled():
             return False
-        super().cancel()
+        try:
+            super().cancel()
+        except AttributeError:
+            pass
         obj = self._obj()
         if obj is not None:
             obj.disconnect(self._hnd)
