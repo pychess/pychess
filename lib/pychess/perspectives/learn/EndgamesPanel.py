@@ -5,7 +5,7 @@ from io import StringIO
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, chrU2Sign
+from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, chr2Sign, chrU2Sign, FAN_PIECES
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.lutils.LBoard import LBoard
@@ -29,10 +29,10 @@ ENDGAMES = (
     ("kpk", "Play King and Pawn against King"),
     ("kbnk", "Play King, Bishop and Knight against King"),
     ("kbbk", "Play King and 2 Bishops against King"),
-    ("kqk", "Play King and Queen against King"),
-    ("krpkr", "Play King, Rook and Pawn against King and Rook"),
     ("krk", "Play King and Rook against King"),
+    ("kqk", "Play King and Queen against King"),
     ("kqkr", "Play King and Queen against King and Rook"),
+    ("krpkr", "Play King, Rook and Pawn against King and Rook"),
     ("kppkp", "Play King and 2 Pawns against King and Pawn"),
     ("kpkp", "Play King and Pawn against King and Pawn"),
     ("kqpkq", "Play King, Queen and Pawn against King and Queen"),
@@ -77,8 +77,16 @@ class Sidepanel():
                     if piece not in ("kqrbnp"):
                         print("Invalid piece %s in %s" % (piece, pieces))
                         continue
+
                 pos = pieces.rfind("k")
-                self.store.append([pieces[:pos], pieces[pos:], title])
+                white_pieces, black_pieces = pieces[:pos], pieces[pos:]
+                wfan = []
+                for piece in white_pieces:
+                    wfan.append(FAN_PIECES[0][chr2Sign[piece]])
+                bfan = []
+                for piece in black_pieces:
+                    bfan.append(FAN_PIECES[1][chr2Sign[piece]])
+                self.store.append(["".join(wfan), "".join(bfan), title])
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
