@@ -134,7 +134,7 @@ class Sidepanel:
         self.cids_conf = []
 
         # Load of the preferences
-        def cb_config_changed(none):
+        def cb_config_changed(*args):
             self.fetch_chess_conf()
             self.update()
 
