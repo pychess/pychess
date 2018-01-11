@@ -50,10 +50,12 @@ class Sidepanel():
         self.tv = Gtk.TreeView()
 
         renderer = Gtk.CellRendererText()
+        renderer.props.font = "Times 14"
         column = Gtk.TreeViewColumn(_("White"), renderer, text=0)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
+        renderer.props.font = "Times 14"
         column = Gtk.TreeViewColumn(_("Black"), renderer, text=1)
         self.tv.append_column(column)
 
