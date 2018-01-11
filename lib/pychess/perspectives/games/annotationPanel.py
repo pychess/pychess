@@ -102,8 +102,6 @@ class Sidepanel:
 
         # Game header
         self.label_info = Gtk.Label()
-        self.label_info.set_text("Info")
-        self.label_info.set_use_markup(True)
         self.label_info.props.xalign = 0
         self.label_players = Gtk.Label()
         self.label_players.props.xalign = 0
