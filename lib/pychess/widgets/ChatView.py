@@ -93,7 +93,7 @@ class ChatView(Gtk.Box):
         self.pack_start(self.writeView, False, False, 0)
         box.add(self.writeView)
 
-        if self.gamemodel.offline_lecture:
+        if self.gamemodel is not None and self.gamemodel.offline_lecture:
             label = _("Go on")
             self.go_on_btn = Gtk.Button()
             self.go_on_btn.set_label(label)
