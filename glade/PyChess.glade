@@ -4575,7 +4575,7 @@ It will search positions from http://www.k4it.de/</property>
               </packing>
             </child>
             <child>
-              <object class="GtkNotebook">
+              <object class="GtkNotebook" id="enginebook">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <child>
@@ -4834,7 +4834,7 @@ If it can use both  you can set here which one you like.</property>
                   </object>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="label73">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Environment</property>
@@ -4844,7 +4844,7 @@ If it can use both  you can set here which one you like.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="box22">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
@@ -4865,7 +4865,7 @@ If it can use both  you can set here which one you like.</property>
                             <property name="rules_hint">True</property>
                             <property name="enable_grid_lines">both</property>
                             <child internal-child="selection">
-                              <object class="GtkTreeSelection"/>
+                              <object class="GtkTreeSelection" id="treeview-selection2"/>
                             </child>
                           </object>
                         </child>
@@ -4899,10 +4899,10 @@ If it can use both  you can set here which one you like.</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="label74">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Strategy</property>
+                    <property name="label" translatable="yes">Options</property>
                   </object>
                   <packing>
                     <property name="position">1</property>
@@ -4924,12 +4924,12 @@ If it can use both  you can set here which one you like.</property>
           </packing>
         </child>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="box19">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="margin_top">10</property>
             <child>
-              <object class="GtkBox">
+              <object class="GtkBox" id="box20">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
@@ -4991,7 +4991,7 @@ If it can use both  you can set here which one you like.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkBox">
+              <object class="GtkBox" id="box21">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">end</property>
