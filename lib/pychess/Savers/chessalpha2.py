@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+# TODO: fix it
+
 from html.entities import entitydefs
 
 from pychess.Utils.Move import toFAN

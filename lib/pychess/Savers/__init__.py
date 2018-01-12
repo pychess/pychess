@@ -1,1 +1,1 @@
-__all__ = ["fen", "epd", "pgn", 'chessalpha2', 'png']
+__all__ = ["fen", "epd", "pgn", 'png']  # chessalpha2 is broken
