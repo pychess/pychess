@@ -68,7 +68,7 @@ def save(file, model, position=None):
     print("</pre></td></tr>", file=file)
 
     sanmvs = map(toFAN, model.boards[:-1], model.moves)
-    sanmvs = map(fanconv, sanmvs)
+    sanmvs = list(map(fanconv, sanmvs))
     if model.lowply & 1:
         sanmvs = ["&gt;"] + list(sanmvs)
     if model.status in (DRAW, WHITEWON, BLACKWON):
@@ -76,10 +76,10 @@ def save(file, model, position=None):
         sanmvs.append(fanconv(reprResult[model.status]))
     sanmvs.extend([''] * (-len(sanmvs) % 4))
     sanmvs = group(sanmvs, 2)
-    for i in range((len(sanmvs) + 1) / 2):
-        left = i + 1 + model.lowply / 2
-        writeMoves(file, str(i + 1 + model.lowply / 2), sanmvs[i],
-                   str(left + len(sanmvs) / 2), sanmvs[i + len(sanmvs) / 2])
+    for i in range((len(sanmvs) + 1) // 2):
+        left = i + 1 + model.lowply // 2
+        writeMoves(file, str(i + 1 + model.lowply // 2), sanmvs[i],
+                   str(left + len(sanmvs) // 2), sanmvs[i + len(sanmvs) // 2])
     print("</table>", file=file)
 
     file.close()
