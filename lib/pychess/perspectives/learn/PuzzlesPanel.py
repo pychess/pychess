@@ -81,7 +81,7 @@ def start_puzzle_from(filename):
     timemodel = TimeModel(0, 0)
     gamemodel = GameModel(timemodel)
     gamemodel.set_practice_game()
-    gamemodel.filename = filename
+    gamemodel.practice = ("puzzle", filename)
 
     chessfile.loadToModel(rec, 0, gamemodel)
 

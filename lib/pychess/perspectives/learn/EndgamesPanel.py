@@ -106,13 +106,18 @@ class Sidepanel():
     def row_activated(self, widget, path, col):
         if path is None:
             return
-        pieces = ENDGAMES[path[0]][0].lower()
+        else:
+            pieces = ENDGAMES[path[0]][0].lower()
+            start_endgame_from(pieces)
 
-        fen = self.create_fen(pieces)
+
+def start_endgame_from(pieces):
+        fen = create_fen(pieces)
 
         timemodel = TimeModel(0, 0)
         gamemodel = GameModel(timemodel)
         gamemodel.set_practice_game()
+        gamemodel.practice = ("endgame", pieces)
 
         name = conf.get("firstName", _("You"))
         p0 = (LOCAL, Human, (WHITE, name), name)
@@ -126,42 +131,43 @@ class Sidepanel():
         asyncio.async(perspective.generalStart(
             gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
 
-    def create_fen(self, pieces):
-        """ Create a random FEN position using given pieces """
 
-        pos = pieces.rfind("k")
-        pieces = pieces[:pos], pieces[pos:]
+def create_fen(pieces):
+    """ Create a random FEN position using given pieces """
 
-        ok = False
-        while not ok:
-            lboard = LBoard()
-            lboard.applyFen("8/8/8/8/8/8/8/8 w - - 0 1")
-            bishop_cords = [[], []]
-            bishop_colors_ok = True
+    pos = pieces.rfind("k")
+    pieces = pieces[:pos], pieces[pos:]
 
-            cords = list(range(0, 64))
-            pawn_cords = list(range(0 + 8, 64 - 8))
-            for color in (BLACK, WHITE):
-                for char in pieces[color]:
-                    piece = chrU2Sign[char.upper()]
-                    cord = random.choice(pawn_cords if char == "p" else cords)
-                    lboard._addPiece(cord, piece, color)
-                    cords.remove(cord)
-                    if cord in pawn_cords:
-                        pawn_cords.remove(cord)
-                    if char == "b":
-                        bishop_cords[color].append(cord)
+    ok = False
+    while not ok:
+        lboard = LBoard()
+        lboard.applyFen("8/8/8/8/8/8/8/8 w - - 0 1")
+        bishop_cords = [[], []]
+        bishop_colors_ok = True
 
-                # 2 same color bishop is not ok
-                if len(bishop_cords[color]) == 2 and bishop_colors_ok:
-                    b0, b1 = bishop_cords[color]
-                    b0_color = BLACK if RANK(b0) % 2 == FILE(b0) % 2 else WHITE
-                    b1_color = BLACK if RANK(b1) % 2 == FILE(b1) % 2 else WHITE
-                    if b0_color == b1_color:
-                        bishop_colors_ok = False
-                        break
+        cords = list(range(0, 64))
+        pawn_cords = list(range(0 + 8, 64 - 8))
+        for color in (BLACK, WHITE):
+            for char in pieces[color]:
+                piece = chrU2Sign[char.upper()]
+                cord = random.choice(pawn_cords if char == "p" else cords)
+                lboard._addPiece(cord, piece, color)
+                cords.remove(cord)
+                if cord in pawn_cords:
+                    pawn_cords.remove(cord)
+                if char == "b":
+                    bishop_cords[color].append(cord)
 
-            ok = (not lboard.isChecked()) and (not lboard.opIsChecked()) and bishop_colors_ok
+            # 2 same color bishop is not ok
+            if len(bishop_cords[color]) == 2 and bishop_colors_ok:
+                b0, b1 = bishop_cords[color]
+                b0_color = BLACK if RANK(b0) % 2 == FILE(b0) % 2 else WHITE
+                b1_color = BLACK if RANK(b1) % 2 == FILE(b1) % 2 else WHITE
+                if b0_color == b1_color:
+                    bishop_colors_ok = False
+                    break
 
-        fen = lboard.asFen()
-        return fen
+        ok = (not lboard.isChecked()) and (not lboard.opIsChecked()) and bishop_colors_ok
+
+    fen = lboard.asFen()
+    return fen

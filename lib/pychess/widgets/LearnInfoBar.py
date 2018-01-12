@@ -4,6 +4,7 @@ from pychess.Utils.const import UNDOABLE_STATES
 from pychess.Utils.Cord import Cord
 from pychess.Utils.logic import getStatus
 from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_from
+from pychess.perspectives.learn.EndgamesPanel import start_endgame_from
 
 HINT, MOVE, RETRY, NEXT = 0, 1, 2, 3
 
@@ -92,7 +93,10 @@ class LearnInfoBar(Gtk.InfoBar):
 
         elif response == NEXT:
             if self.gamemodel.practice_game:
-                start_puzzle_from(self.gamemodel.filename)
+                if self.gamemodel.practice[0] == "puzzle":
+                    start_puzzle_from(self.gamemodel.practice[1])
+                elif self.gamemodel.practice[0] == "endgame":
+                    start_endgame_from(self.gamemodel.practice[1])
             else:
                 print("Next clicked!")
 
