@@ -9,7 +9,7 @@ from gi.repository import Pango
 from gi.repository import Gdk
 
 from pychess.Utils import prettyPrintScore
-from pychess.Utils.const import WHITE, BLACK, FEN_EMPTY, reprResult
+from pychess.Utils.const import WHITE, BLACK, FEN_EMPTY, reprResult, reprSign, FAN_PIECES
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.LBoard import LBoard
@@ -938,6 +938,43 @@ class Sidepanel:
         if result and result != "*" and not self.gamemodel.lesson_game:
             self.textbuffer.insert_with_tags_by_name(end_iter(), " " + result, "move")
 
+    def apply_symbols(self, text):
+        """
+        The method will apply a Unicode symbol for any move contained in a sentence.
+        Because it applies to a PGN-compatible text, only English letters are replaced (RNBQK).
+        """
+        def process_word(word):
+            # Undecoration of the word
+            regex = re_decoration.search(word)
+            if regex:
+                lead, core, trail = regex.groups()
+
+                # Detection of the pieces in the move
+                regex = re_move.search(core)
+                if regex:
+                    parts = list(regex.groups())
+
+                    # Application of the Unicode symbols
+                    for i, sign in enumerate(reprSign):  # TODO what about reprSignMakruk and reprSignSittuyin ?
+                        if parts[0] == sign:
+                            parts[0] = FAN_PIECES[WHITE][i]
+                        if parts[2] == sign:
+                            parts[2] = FAN_PIECES[WHITE][i]
+
+                    return lead + "".join(parts) + trail
+                else:
+                    return word
+            else:
+                return word
+
+        # Application of the filter on each element of the text
+        if self.fan:
+            re_decoration = re.compile('^([^a-hrnkqx1-8]*)([a-hrnkqx1-8=]+)([^a-hrnkqx1-8]*)$', re.IGNORECASE)
+            re_move = re.compile('^([RNBQK]?)([a-h]?[1-8]?x?[a-h][1-8]=?)([RNBQK]?)(.*)$')
+            return " ".join([process_word(word) for word in text.split(" ")])
+        else:
+            return text
+
     def insert_comment(self,
                        comment,
                        board,
@@ -957,8 +994,7 @@ class Sidepanel:
                 break
         start = end_iter.get_offset()
 
-        self.textbuffer.insert_with_tags_by_name(end_iter, comment + " ",
-                                                 "comment")
+        self.textbuffer.insert_with_tags_by_name(end_iter, self.apply_symbols(comment) + " ", "comment")
 
         node = {}
         node["board"] = ini_board if ini_board is not None else board
