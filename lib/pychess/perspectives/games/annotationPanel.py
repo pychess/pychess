@@ -969,7 +969,7 @@ class Sidepanel:
 
         # Application of the filter on each element of the text
         if self.fan:
-            re_decoration = re.compile('^([^a-hrnkqx1-8]*)([a-hrnkqx1-8=]+)([^a-hrnkqx1-8]*)$', re.IGNORECASE)
+            re_decoration = re.compile('^([^a-hrnkqx1-8]*|[0-9]+\.+)?([a-hrnkqx1-8=]+)([^a-hrnkqx1-8]*)$', re.IGNORECASE)
             re_move = re.compile('^([RNBQK]?)([a-h]?[1-8]?x?[a-h][1-8]=?)([RNBQK]?)(.*)$')
             return " ".join([process_word(word) for word in text.split(" ")])
         else:
