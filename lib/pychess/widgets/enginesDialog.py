@@ -133,6 +133,7 @@ class EnginesDialog():
                 options = engine.get("options")
                 self.options_store.clear()
                 if options:
+                    options.sort(key=lambda obj: obj['name'].lower() if 'name' in obj else '')
                     for option in options:
                         key = option["name"]
                         val = option
