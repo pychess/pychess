@@ -131,9 +131,9 @@ class EnginesDialog():
                     self.cur_engine = engines[0]["name"]
                 engine = discoverer.getEngineByName(self.cur_engine)
                 options = engine.get("options")
-                options.sort(key=lambda obj: obj['name'].lower() if 'name' in obj else '')
                 self.options_store.clear()
                 if options:
+                    options.sort(key=lambda obj: obj['name'].lower() if 'name' in obj else '')
                     for option in options:
                         key = option["name"]
                         val = option
