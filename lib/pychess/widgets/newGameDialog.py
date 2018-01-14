@@ -376,7 +376,7 @@ class _GameInitializationMode(object):
                 # print("put clipboard:", clipboard.wait_for_text())
                 return
             elif response == CLEAR:
-                cls.board_control.emit("action", "SETUP", True)
+                cls.board_control.emit("action", "SETUP", None, True)
                 cls.ini_widgets(True)
                 # print("clear")
                 return
@@ -389,7 +389,7 @@ class _GameInitializationMode(object):
                 try:
                     lboard = cls.setupmodel.variant(setup=text).board
                     cls.ini_widgets(lboard.asFen())
-                    cls.board_control.emit("action", "SETUP", text)
+                    cls.board_control.emit("action", "SETUP", None, text)
                 except SyntaxError as e:
                     d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,
                                           buttons=Gtk.ButtonsType.OK,
@@ -402,7 +402,7 @@ class _GameInitializationMode(object):
             elif response == INITIAL:
                 lboard = cls.setupmodel.variant(setup=FEN_START).board
                 cls.ini_widgets(lboard.asFen())
-                cls.board_control.emit("action", "SETUP", FEN_START)
+                cls.board_control.emit("action", "SETUP", None, FEN_START)
                 return
             elif response != Gtk.ResponseType.OK:
                 cls.widgets["newgamedialog"].hide()
@@ -410,7 +410,7 @@ class _GameInitializationMode(object):
                 return
 
             if hasattr(cls, "board_control"):
-                cls.board_control.emit("action", "CLOSE", None)
+                cls.board_control.emit("action", "CLOSE", None, None)
 
             # Find variant
             if cls.widgets["playNormalRadio"].get_active():

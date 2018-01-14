@@ -125,7 +125,7 @@ class Games(GObject.GObject, Perspective):
 
         if player0tup[0] == ARTIFICIAL and player1tup[0] == ARTIFICIAL:
 
-            def emit_action(board, action, param, gmwidg):
+            def emit_action(board, action, player, param, gmwidg):
                 if gmwidg.isInFront():
                     gamemodel.curplayer.emit("offer", Offer(action, param=param))
 

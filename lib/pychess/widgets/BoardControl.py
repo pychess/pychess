@@ -96,7 +96,7 @@ class BoardControl(Gtk.EventBox):
 
     __gsignals__ = {
         'piece_moved': (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
-        'action': (GObject.SignalFlags.RUN_FIRST, None, (str, object))
+        'action': (GObject.SignalFlags.RUN_FIRST, None, (str, object, object))
     }
 
     def __init__(self, gamemodel, action_menu_items, setup_position=False, game_preview=False):
@@ -248,32 +248,32 @@ class BoardControl(Gtk.EventBox):
 
     def actionActivate(self, widget, key):
         """ Put actions from a menu or similar """
+        curplayer = self.view.model.curplayer
         if key == "call_flag":
-            self.emit("action", FLAG_CALL, None)
+            self.emit("action", FLAG_CALL, curplayer, None)
         elif key == "abort":
-            self.emit("action", ABORT_OFFER, None)
+            self.emit("action", ABORT_OFFER, curplayer, None)
         elif key == "adjourn":
-            self.emit("action", ADJOURN_OFFER, None)
+            self.emit("action", ADJOURN_OFFER, curplayer, None)
         elif key == "draw":
-            self.emit("action", DRAW_OFFER, None)
+            self.emit("action", DRAW_OFFER, curplayer, None)
         elif key == "resign":
-            self.emit("action", RESIGNATION, None)
+            self.emit("action", RESIGNATION, curplayer, None)
         elif key == "ask_to_move":
-            self.emit("action", HURRY_ACTION, None)
+            self.emit("action", HURRY_ACTION, curplayer, None)
         elif key == "undo1":
-            curplayer = self.view.model.curplayer
             waitingplayer = self.view.model.waitingplayer
             if curplayer.__type__ == LOCAL and \
                     (waitingplayer.__type__ == ARTIFICIAL or
                      self.view.model.isPlayingICSGame()) and \
                     self.view.model.ply - self.view.model.lowply > 1:
-                self.emit("action", TAKEBACK_OFFER, 2)
+                self.emit("action", TAKEBACK_OFFER, curplayer, 2)
             else:
-                self.emit("action", TAKEBACK_OFFER, 1)
+                self.emit("action", TAKEBACK_OFFER, curplayer, 1)
         elif key == "pause1":
-            self.emit("action", PAUSE_OFFER, None)
+            self.emit("action", PAUSE_OFFER, curplayer, None)
         elif key == "resume1":
-            self.emit("action", RESUME_OFFER, None)
+            self.emit("action", RESUME_OFFER, curplayer, None)
 
     def shownChanged(self, view, shown):
         if self.view is None:

@@ -27,7 +27,7 @@ class SetupPlayer:
         self.board_control.connect("action", self.on_action)
         self.board_control.connect("piece_moved", self.piece_moved)
 
-    def on_action(self, bc, action, param):
+    def on_action(self, bc, action, player, param):
         self.queue.put_nowait((action, param))
         if action == "SETUP":
             # force both virtual player to make_move()

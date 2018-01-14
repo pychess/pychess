@@ -124,23 +124,22 @@ class Human(Player):
             return
         self.move_queue.put_nowait(move)
 
-    def emit_action(self, board, action, param):
+    def emit_action(self, board, action, player, param):
         # If there are two or more tabs open, we have to ensure us that it is
         # us who are in the active tab, and not the others
         if not self.gmwidg.isInFront():
             return
-        log.debug("Human.emit_action: self.name=%s, action=%s" %
-                  (self.name, action))
 
         # If there are two human players, we have to ensure us that it was us
         # who did the action, and not the others
         if self.gamemodel.players[1 - self.color].__type__ == LOCAL:
             if action == HURRY_ACTION:
-                if self.gamemodel.boards[-1].color == self.color:
+                if player.color == self.color:
                     return
             else:
-                if self.gamemodel.boards[-1].color != self.color:
+                if player.color != self.color:
                     return
+        log.debug("Human.emit_action: self.name=%s, action=%s" % (self.name, action))
         self.emit("offer", Offer(action, param=param))
 
     # Send the player move updates

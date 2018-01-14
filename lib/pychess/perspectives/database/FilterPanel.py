@@ -228,7 +228,7 @@ class FilterPanel(Gtk.TreeView):
                 self.update_filters()
 
             if hasattr(self, "board_control"):
-                self.board_control.emit("action", "CLOSE", None)
+                self.board_control.emit("action", "CLOSE", None, None)
 
             self.dialog.hide()
             self.dialog.disconnect(handler_id)
@@ -282,7 +282,7 @@ class FilterPanel(Gtk.TreeView):
                 self.update_filters()
 
             if hasattr(self, "board_control"):
-                self.board_control.emit("action", "CLOSE", None)
+                self.board_control.emit("action", "CLOSE", None, None)
 
             self.dialog.hide()
             self.dialog.disconnect(handler_id)
