@@ -1,7 +1,8 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 
 import re
 import datetime
+import html
 from math import floor
 
 from gi.repository import Gtk
@@ -1022,11 +1023,11 @@ class Sidepanel:
             self.label_info.set_text(str(self.gamemodel.info))
 
         # Players
-        text = "<b>%s</b>" % repr(self.gamemodel.players[0])
+        text = "<b>%s</b>" % html.escape(repr(self.gamemodel.players[0]))
         elo = self.gamemodel.getTag("WhiteElo", "")
         if elo != "":
             text += " (%s)" % elo
-        text += " - <b>%s</b>" % repr(self.gamemodel.players[1])
+        text += " - <b>%s</b>" % html.escape(repr(self.gamemodel.players[1]))
         elo = self.gamemodel.getTag("BlackElo", "")
         if elo != "":
             text += " (%s)" % elo
@@ -1101,7 +1102,7 @@ class Sidepanel:
             if tag:
                 text += ", %s" % tag
         if text != "":
-            text = "<b>%s</b>" % text
+            text = "<b>%s</b>" % html.escape(text)
         self.label_opening.set_text(text)
         self.label_opening.set_use_markup(True)
 
