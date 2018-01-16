@@ -227,7 +227,6 @@ class FICS(GObject.GObject, Perspective):
         self.connection.glm.connect("our-seeks-removed", self.our_seeks_removed)
         self.connection.cm.connect("arrivalNotification", self.onArrivalNotification)
         self.connection.cm.connect("departedNotification", self.onDepartedNotification)
-        self.connection.com.onConsoleMessage("", self.connection.ini_messages)
 
         def get_top_games():
             if perspective_manager.current_perspective == self:
@@ -264,6 +263,9 @@ class FICS(GObject.GObject, Perspective):
 
         if self.first_run:
             self.first_run = False
+
+        # After all panel is set up we can push initial messages out
+        self.connection.com.onConsoleMessage("", self.connection.ini_messages)
 
     def show(self):
         perspective_manager.activate_perspective("fics")
