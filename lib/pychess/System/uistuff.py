@@ -11,7 +11,7 @@ from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix
 
 
-def createCombo(combo, data=[], name=None):
+def createCombo(combo, data=[], name=None, ellipsize_mode=None):
     if name is not None:
         combo.set_name(name)
     lst_store = Gtk.ListStore(Pixbuf, str)
@@ -31,7 +31,8 @@ def createCombo(combo, data=[], name=None):
     crt.set_property('xpad', 4)
     combo.pack_start(crt, True)
     combo.add_attribute(crt, 'text', 1)
-    # crt.set_property('ellipsize', Pango.EllipsizeMode.MIDDLE)
+    if ellipsize_mode is not None:
+        crt.set_property('ellipsize', ellipsize_mode)
 
 
 def updateCombo(combo, data):

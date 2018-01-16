@@ -3,7 +3,7 @@ import sys
 import shutil
 from collections import namedtuple
 
-from gi.repository import Gtk, Gdk, GLib, GObject
+from gi.repository import Gtk, Gdk, GLib, GObject, Pango
 from gi.repository.GdkPixbuf import Pixbuf
 
 from pychess.System import uistuff
@@ -40,7 +40,8 @@ def run(widgets):
             if not(iso.iso2 and os.path.isfile(path)):
                 path = addDataPrefix("flags/unknown.png")
             items.append((get_pixbuf(path), iso.country))
-        uistuff.createCombo(widgets["engine_country_combo"], name="engine_country_combo")
+        uistuff.createCombo(widgets["engine_country_combo"], name="engine_country_combo",
+                            ellipsize_mode=Pango.EllipsizeMode.END)
         data = [(item[0], item[1]) for item in items]
         uistuff.updateCombo(widgets["engine_country_combo"], data)
 
@@ -68,9 +69,7 @@ class EnginesDialog():
         self.cur_engine = None
         self.default_workdir = getEngineDataPrefix()
 
-        uistuff.keepWindowSize("engineswindow",
-                               self.dialog,
-                               defaultSize=(1, 500))
+        uistuff.keepWindowSize("engineswindow", self.dialog)
 
         # Put engines into tree store
         allstore = Gtk.ListStore(Pixbuf, str)
