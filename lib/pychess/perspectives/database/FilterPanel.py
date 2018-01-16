@@ -51,6 +51,11 @@ class FilterPanel(Gtk.TreeView):
         self.dialog = self.widgets["filter_dialog"]
         self.dialog.set_transient_for(mainwindow())
 
+        def hide(widget, event):
+            widget.hide()
+            return True
+        self.dialog.connect("delete-event", hide)
+
         for piece in "qrbnp":
             dock = "w%s_dock" % piece
             self.widgets[dock].add(PieceWidget(Piece(WHITE, chr2Sign[piece])))
