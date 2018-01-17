@@ -75,6 +75,7 @@ class Sidepanel:
         # Header text area
         self.header_textview = Gtk.TextView()
         self.header_textview.set_wrap_mode(Gtk.WrapMode.WORD)
+        self.header_textview.set_editable(False)
         self.header_textview.set_cursor_visible(False)
         self.header_textbuffer = self.header_textview.get_buffer()
 
@@ -147,7 +148,9 @@ class Sidepanel:
         # Layout
         __widget__ = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         __widget__.set_spacing(3)
-        __widget__.pack_start(self.header_textview, False, False, 0)
+        sw = Gtk.ScrolledWindow()
+        sw.add(self.header_textview)
+        __widget__.pack_start(sw, False, False, 0)
         __widget__.pack_start(Gtk.Separator(), False, False, 0)
 
         sw = Gtk.ScrolledWindow()
