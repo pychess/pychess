@@ -19,6 +19,7 @@ from pychess.Savers.pgn import nag2symbol
 from pychess.widgets.Background import set_textview_color
 from pychess.widgets.ChessClock import formatTime
 from pychess.widgets.LearnInfoBar import LearnInfoBar
+from pychess.widgets import insert_formatted
 
 
 # --- Constants
@@ -71,16 +72,25 @@ class Sidepanel:
         self.cursor_standard = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
         self.cursor_hand = Gdk.Cursor.new(Gdk.CursorType.HAND2)
 
-        # Text area
+        # Header text area
+        self.header_textview = Gtk.TextView()
+        self.header_textview.set_wrap_mode(Gtk.WrapMode.WORD)
+        self.header_textview.set_cursor_visible(False)
+        self.header_textbuffer = self.header_textview.get_buffer()
+
+        # Header text tags
+        self.header_textbuffer.create_tag("head1")
+        self.header_textbuffer.create_tag("head2", weight=Pango.Weight.BOLD)
+
+        # Move text area
         self.textview = Gtk.TextView()
         self.textview.set_wrap_mode(Gtk.WrapMode.WORD)
         self.textbuffer = self.textview.get_buffer()
 
-        # Named tags
+        # Move text tags
         self.tag_remove_variation = self.textbuffer.create_tag("remove-variation")
         self.tag_new_line = self.textbuffer.create_tag("new_line")
 
-        # Anonymous tags
         self.textbuffer.create_tag("move", weight=Pango.Weight.BOLD)
         bg_color, fg_color = set_textview_color(self.textview)
         self.textbuffer.create_tag("scored0", foreground_rgba=fg_color)
@@ -99,16 +109,6 @@ class Sidepanel:
         self.textbuffer.create_tag("variation-margin0", left_margin=20)
         self.textbuffer.create_tag("variation-margin1", left_margin=36)
         self.textbuffer.create_tag("variation-margin2", left_margin=52)
-
-        # Game header
-        self.label_info = Gtk.Label()
-        self.label_info.props.xalign = 0
-        self.label_players = Gtk.Label()
-        self.label_players.props.xalign = 0
-        self.label_event = Gtk.Label()
-        self.label_event.props.xalign = 0
-        self.label_opening = Gtk.Label()
-        self.label_opening.props.xalign = 0
 
         # Events
         self.cids_textview = [
@@ -146,10 +146,9 @@ class Sidepanel:
 
         # Layout
         __widget__ = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        __widget__.pack_start(self.label_info, False, True, 1)
-        __widget__.pack_start(self.label_players, False, True, 1)
-        __widget__.pack_start(self.label_event, False, True, 1)
-        __widget__.pack_start(self.label_opening, False, True, 1)
+        __widget__.set_spacing(3)
+        __widget__.pack_start(self.header_textview, False, False, 0)
+        __widget__.pack_start(Gtk.Separator(), False, False, 0)
 
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
@@ -1008,37 +1007,41 @@ class Sidepanel:
 
         return node
 
-    def reset_header(self):
-        self.label_info.set_text("")
-        self.label_players.set_text("")
-        self.label_event.set_text("")
-        self.label_opening.set_text("")
-
     def update_header(self):
-        self.reset_header()
+        self.header_textbuffer.set_text("")
 
-        # Information
+        end_iter = self.header_textbuffer.get_end_iter
+
         if self.gamemodel.info is not None:
-            self.label_info.set_text(str(self.gamemodel.info))
+            insert_formatted(self.header_textview, end_iter(), self.gamemodel.info)
+            self.header_textbuffer.insert(end_iter(), "\n")
 
-        # Players
-        text = "<b>%s</b>" % repr(self.gamemodel.players[0])
-        elo = self.gamemodel.getTag("WhiteElo", "")
-        if elo != "":
-            text += " (%s)" % elo
-        text += " - <b>%s</b>" % repr(self.gamemodel.players[1])
-        elo = self.gamemodel.getTag("BlackElo", "")
-        if elo != "":
-            text += " (%s)" % elo
+        if self.gamemodel.players:
+            text = repr(self.gamemodel.players[0])
+        else:
+            return
+
+        self.header_textbuffer.insert_with_tags_by_name(end_iter(), text, "head2")
+        white_elo = self.gamemodel.tags.get('WhiteElo')
+        if white_elo:
+            self.header_textbuffer.insert_with_tags_by_name(end_iter(), " %s" % white_elo, "head1")
+
+        self.header_textbuffer.insert_with_tags_by_name(end_iter(), " - ", "head1")
+
+        # text = self.gamemodel.tags['Black']
+        text = repr(self.gamemodel.players[1])
+        self.header_textbuffer.insert_with_tags_by_name(end_iter(), text, "head2")
+        black_elo = self.gamemodel.tags.get('BlackElo')
+        if black_elo:
+            self.header_textbuffer.insert_with_tags_by_name(end_iter(), " %s" % black_elo, "head1")
+
         status = reprResult[self.gamemodel.status]
         if status != '*':
-            text += " " + status
+            result = status
         else:
-            text += " <i>%s</i>" % self.gamemodel.getTag('Result', '')
-        self.label_players.set_text(text)
-        self.label_players.set_use_markup(True)
+            result = self.gamemodel.tags['Result']
+        self.header_textbuffer.insert_with_tags_by_name(end_iter(), ' ' + result + '\n', "head2")
 
-        # Event
         text = ""
         time_control = self.gamemodel.tags.get('TimeControl')
         if time_control:
@@ -1087,29 +1090,19 @@ class Sidepanel:
                 text += ', ' + game_date
         elif '?' not in game_date[:4]:
             text += ', ' + game_date[:4]
-        self.label_event.set_text(text)
+        self.header_textbuffer.insert_with_tags_by_name(end_iter(), text, "head1")
 
-        # Opening
-        text = ""
-        tag = self.gamemodel.tags.get('ECO')
-        if tag:
-            text = tag
-            tag = self.gamemodel.tags.get('Opening')
-            if tag:
-                text += ", %s" % tag
-            tag = self.gamemodel.tags.get('Variation')
-            if tag:
-                text += ", %s" % tag
-        if text != "":
-            text = "<b>%s</b>" % text
-        self.label_opening.set_text(text)
-        self.label_opening.set_use_markup(True)
-
-        # Layout
-        self.label_info.set_visible(self.label_info.get_text() != "")
-        self.label_players.set_visible(self.label_players.get_text() != "")
-        self.label_event.set_visible(self.label_event.get_text() != "")
-        self.label_opening.set_visible(self.label_opening.get_text() != "")
+        eco = self.gamemodel.tags.get('ECO')
+        if eco:
+            self.header_textbuffer.insert_with_tags_by_name(end_iter(), "\n" + eco, "head2")
+            opening = self.gamemodel.tags.get('Opening')
+            if opening:
+                self.header_textbuffer.insert_with_tags_by_name(end_iter(), " - ", "head1")
+                self.header_textbuffer.insert_with_tags_by_name(end_iter(), opening, "head2")
+            variation = self.gamemodel.tags.get('Variation')
+            if variation:
+                self.header_textbuffer.insert_with_tags_by_name(end_iter(), ", ", "head1")
+                self.header_textbuffer.insert_with_tags_by_name(end_iter(), variation, "head2")
 
     def update(self, *args):
         """
@@ -1150,7 +1143,7 @@ class Sidepanel:
         self.update()
 
     def on_players_changed(self, model):
-        self.update()
+        self.update_header()
 
     def on_game_loaded(self, model, uri):
         """
