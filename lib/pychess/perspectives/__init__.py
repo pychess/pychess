@@ -103,7 +103,7 @@ class Perspective(object):
                 self.dock.loadFromXML(self.dockLocation, self.docks)
             except Exception as e:
                 # We don't send error message when error caused by no more existing SwitcherPanel
-                if e.args[0] != "SwitcherPanel":
+                if e.args[0] != "SwitcherPanel" and "unittest" not in sys.modules.keys():
                     stringio = StringIO()
                     traceback.print_exc(file=stringio)
                     error = stringio.getvalue()
