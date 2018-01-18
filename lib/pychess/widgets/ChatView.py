@@ -5,7 +5,6 @@ from gi.repository import Gtk, Gdk, Pango, GObject
 
 from pychess.System import uistuff
 from pychess.widgets import insert_formatted
-from pychess.widgets.Background import set_textview_color
 from pychess.Utils.IconLoader import load_icon
 from pychess.ic.ICGameModel import ICGameModel
 
@@ -27,7 +26,6 @@ class ChatView(Gtk.Box):
 
         # Inits the read view
         self.readView = Gtk.TextView()
-        set_textview_color(self.readView)
 
         self.sw = Gtk.ScrolledWindow()
         self.sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
@@ -56,7 +54,6 @@ class ChatView(Gtk.Box):
             # Inits the observers view
             self.obsView = Gtk.TextView()
             self.obsView.set_cursor_visible(False)
-            set_textview_color(self.obsView)
 
             self.obsView.set_editable(False)
             self.obsView.props.wrap_mode = Gtk.WrapMode.WORD

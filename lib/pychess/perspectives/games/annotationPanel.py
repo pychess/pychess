@@ -16,7 +16,6 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toSAN, toFAN
 from pychess.Savers.pgn import move_count
 from pychess.Savers.pgn import nag2symbol
-from pychess.widgets.Background import set_textview_color
 from pychess.widgets.ChessClock import formatTime
 from pychess.widgets.LearnInfoBar import LearnInfoBar
 from pychess.widgets import insert_formatted
@@ -93,18 +92,17 @@ class Sidepanel:
         self.tag_new_line = self.textbuffer.create_tag("new_line")
 
         self.textbuffer.create_tag("move", weight=Pango.Weight.BOLD)
-        bg_color, fg_color = set_textview_color(self.textview)
-        self.textbuffer.create_tag("scored0", foreground_rgba=fg_color)
+        self.textbuffer.create_tag("scored0", weight=Pango.Weight.BOLD)
         self.textbuffer.create_tag("scored1", foreground_rgba=Gdk.RGBA(0.2, 0, 0, 1))
         self.textbuffer.create_tag("scored2", foreground_rgba=Gdk.RGBA(0.4, 0, 0, 1))
         self.textbuffer.create_tag("scored3", foreground_rgba=Gdk.RGBA(0.6, 0, 0, 1))
         self.textbuffer.create_tag("scored4", foreground_rgba=Gdk.RGBA(0.8, 0, 0, 1))
         self.textbuffer.create_tag("scored5", foreground_rgba=Gdk.RGBA(1.0, 0, 0, 1))
-        self.textbuffer.create_tag("emt", foreground="darkgrey", weight=Pango.Weight.NORMAL)
-        self.textbuffer.create_tag("comment", foreground="darkblue")
+        self.textbuffer.create_tag("emt", foreground="grey", weight=Pango.Weight.NORMAL)
+        self.textbuffer.create_tag("comment", foreground="blue")
         self.textbuffer.create_tag("variation-toplevel", weight=Pango.Weight.NORMAL)
-        self.textbuffer.create_tag("variation-even", foreground="darkgreen", style="italic")
-        self.textbuffer.create_tag("variation-uneven", foreground="darkred", style="italic")
+        self.textbuffer.create_tag("variation-even", foreground="green", style="italic")
+        self.textbuffer.create_tag("variation-uneven", foreground="red", style="italic")
         self.textbuffer.create_tag("selected", background_full_height=True, background="grey")
         self.textbuffer.create_tag("margin", left_margin=4)
         self.textbuffer.create_tag("variation-margin0", left_margin=20)

@@ -139,6 +139,7 @@ def newTheme(widget, background=None):
         "@define-color p_dark_prelight " + hexcol(dpcol) + ";" \
         "@define-color p_dark_active " + hexcol(dacol) + ";" \
         "@define-color p_dark_selected " + hexcol(darksel) + ";" \
+        "@define-color p_text " + hexcol(textcol) + ";" \
         "@define-color p_text_aa " + hexcol(textaacol) + ";" \
         "@define-color p_light_color " + hexcol(lcol) + ";" \
         "@define-color p_light_selected " + hexcol(lightsel) + ";" \
@@ -229,14 +230,3 @@ def newTheme(widget, background=None):
     fyle = open(temppng, "wb")
     fyle.write(bytes(colors))
     surface.write_to_png(fyle)
-
-
-def set_textview_color(textview):
-    """ Set the opening Screen Text Colour """
-    # TODO: breaks text selection visibility
-    style_ctxt = textview.get_style_context()
-    bg_color = style_ctxt.lookup_color("p_light_color")[1]
-    # textview.override_background_color(Gtk.StateFlags.NORMAL, bg_color)
-    fg_color = style_ctxt.lookup_color("p_fg_color")[1]
-    # textview.override_color(Gtk.StateFlags.NORMAL, fg_color)
-    return (bg_color, fg_color)

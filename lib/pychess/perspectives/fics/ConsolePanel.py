@@ -5,7 +5,6 @@ from gi.repository import GLib, Gtk, Gdk, GObject, Pango
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets import insert_formatted
-from pychess.widgets.Background import set_textview_color
 from pychess.ic import FICS_COMMANDS, FICS_HELP
 
 
@@ -82,9 +81,6 @@ class ConsoleView(Gtk.Box):
         self.readView.modify_font(fontdesc)
 
         self.textbuffer = self.readView.get_buffer()
-
-        set_textview_color(self.readView)
-
         self.textbuffer.create_tag("text")
         self.textbuffer.create_tag("mytext", weight=Pango.Weight.BOLD)
 
