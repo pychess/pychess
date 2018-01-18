@@ -36,6 +36,8 @@ class Sidepanel:
             return row == 0
         self.tv.set_row_separator_func(is_row_separator)
 
+        self.tv.connect("style-updated", self.on_style_updated)
+
         renderer = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn("mvcount", renderer, text=0)
         column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
@@ -93,11 +95,18 @@ class Sidepanel:
         return scrollwin
 
     def get_background_rgba(self, selected=False):
-        found, color = self.tv.get_style_context().lookup_color("p_bg_selected")
         if selected:
-            return hexcol(Gdk.RGBA(color.red, color.green, color.blue, 1))
+            found, color = self.tv.get_style_context().lookup_color("theme_selected_bg_color")
         else:
-            return hexcol(Gdk.RGBA(1, 1, 1, 1))
+            found, color = self.tv.get_style_context().lookup_color("theme_base_color")
+        return hexcol(Gdk.RGBA(color.red, color.green, color.blue, 1))
+
+    def on_style_updated(self, widget):
+        for row in self.store:
+            row[4] = self.get_background_rgba()
+            row[5] = self.get_background_rgba()
+        # update selected cell
+        self.shownChanged(self.boardview, self.boardview.shown)
 
     def on_game_terminated(self, model):
         self.tv.disconnect(self.tv_cid)
