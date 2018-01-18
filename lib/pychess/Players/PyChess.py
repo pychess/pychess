@@ -39,8 +39,11 @@ class PyChess(object):
         self.outOfBook = False
 
     def print(self, text):
-        print(text, flush=True)
-        log.debug(text, extra={"task": "stdout"})
+        try:
+            print(text, flush=True)
+            log.debug(text, extra={"task": "stdout"})
+        except BrokenPipeError:
+            sys.exit(0)
 
     # Play related
 
