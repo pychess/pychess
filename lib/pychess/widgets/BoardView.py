@@ -609,6 +609,7 @@ class BoardView(Gtk.DrawingArea):
             paint_box = self.paintBoxAround(self.lastMove)
             self.lastMove = None
             self.redrawCanvas(rect(paint_box))
+
         if self.shown > self.model.lowply:
             self.lastMove = self.model.getMoveAtPly(self.shown - 1, self.shown_variation_idx)
         else:
@@ -645,7 +646,10 @@ class BoardView(Gtk.DrawingArea):
             self.animimation_id = - 1
             return False
 
-        paint_box = None
+        if self.lastMove is None:
+            paint_box = None
+        else:
+            paint_box = self.paintBoxAround(self.lastMove)
 
         mod = min(1, (time() - self.animation_start) / ANIMATION_TIME)
         board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
