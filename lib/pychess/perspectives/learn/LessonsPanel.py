@@ -1,5 +1,4 @@
 import asyncio
-import random
 
 from gi.repository import Gtk
 
@@ -60,28 +59,33 @@ class Sidepanel():
     def row_activated(self, widget, path, col):
         if path is None:
             return
-        filename = addDataPrefix("lectures/%s" % LESSONS[path[0]][0])
+        else:
+            filename = LESSONS[path[0]][0]
+            start_lesson_from(filename, 0)
 
-        chessfile = PGNFile(protoopen(filename))
-        self.importer = PgnImport(chessfile)
-        chessfile.init_tag_database(self.importer)
-        records, plys = chessfile.get_records()
 
-        rec = records[random.randrange(0, len(records))]
-        print(rec)
+def start_lesson_from(filename, index):
+    chessfile = PGNFile(protoopen(addDataPrefix("lectures/%s" % filename)))
+    chessfile.limit = 1000
+    importer = PgnImport(chessfile)
+    chessfile.init_tag_database(importer)
+    records, plys = chessfile.get_records()
 
-        timemodel = TimeModel(0, 0)
-        gamemodel = GameModel(timemodel)
-        gamemodel.set_lesson_game()
+    rec = records[index]
 
-        chessfile.loadToModel(rec, -1, gamemodel)
-        gamemodel.boards[0].played = True
+    timemodel = TimeModel(0, 0)
+    gamemodel = GameModel(timemodel)
+    gamemodel.set_lesson_game()
+    gamemodel.practice = ("lesson", filename, index, len(records) - 1)
 
-        name = conf.get("firstName", _("You"))
-        p0 = (LOCAL, Human, (WHITE, name), name)
-        name = "pychessbot"
-        p1 = (LOCAL, Human, (BLACK, name), name)
+    chessfile.loadToModel(rec, -1, gamemodel)
+    gamemodel.boards[0].played = True
 
-        gamemodel.status = WAITING_TO_START
-        perspective = perspective_manager.get_perspective("games")
-        asyncio.async(perspective.generalStart(gamemodel, p0, p1))
+    name = conf.get("firstName", _("You"))
+    p0 = (LOCAL, Human, (WHITE, name), name)
+    name = "pychessbot"
+    p1 = (LOCAL, Human, (BLACK, name), name)
+
+    gamemodel.status = WAITING_TO_START
+    perspective = perspective_manager.get_perspective("games")
+    asyncio.async(perspective.generalStart(gamemodel, p0, p1))

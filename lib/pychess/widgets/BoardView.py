@@ -265,7 +265,6 @@ class BoardView(Gtk.DrawingArea):
 
     def gameStarted(self, model):
         if model.lesson_game:
-            print(model.lowply)
             self.shown = model.lowply
 
         if conf.get("noAnimation", False):

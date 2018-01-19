@@ -5,6 +5,7 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.logic import getStatus
 from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_from
 from pychess.perspectives.learn.EndgamesPanel import start_endgame_from
+from pychess.perspectives.learn.LessonsPanel import start_lesson_from
 
 HINT, MOVE, RETRY, CONTINUE, NEXT = range(5)
 
@@ -43,8 +44,11 @@ class LearnInfoBar(Gtk.InfoBar):
     def get_next_puzzle(self):
         self.clear()
         self.set_message_type(Gtk.MessageType.INFO)
-        self.content_area.add(Gtk.Label(_("Well done!")))
-        self.add_button(_("Next"), NEXT)
+        if self.gamemodel.practice[0] == "lesson" and self.gamemodel.practice[2] == self.gamemodel.practice[3]:
+            self.content_area.add(Gtk.Label(_("Well done! Lesson completed.")))
+        else:
+            self.content_area.add(Gtk.Label(_("Well done!")))
+            self.add_button(_("Next"), NEXT)
         self.show_all()
 
     def opp_turn(self):
@@ -59,7 +63,7 @@ class LearnInfoBar(Gtk.InfoBar):
     def retry(self):
         self.clear()
         self.set_message_type(Gtk.MessageType.ERROR)
-        self.content_area.add(Gtk.Label(_("Not the best!")))
+        self.content_area.add(Gtk.Label(_("Not the best move!")))
         self.add_button(_("Retry"), RETRY)
 
         # disable playing
@@ -105,13 +109,12 @@ class LearnInfoBar(Gtk.InfoBar):
             self.boardcontrol.game_preview = False
 
         elif response == NEXT:
-            if self.gamemodel.practice_game:
-                if self.gamemodel.practice[0] == "puzzle":
-                    start_puzzle_from(self.gamemodel.practice[1])
-                elif self.gamemodel.practice[0] == "endgame":
-                    start_endgame_from(self.gamemodel.practice[1])
-            else:
-                print("Next clicked!")
+            if self.gamemodel.practice[0] == "puzzle":
+                start_puzzle_from(self.gamemodel.practice[1])
+            elif self.gamemodel.practice[0] == "endgame":
+                start_endgame_from(self.gamemodel.practice[1])
+            elif self.gamemodel.practice[0] == "lesson":
+                start_lesson_from(self.gamemodel.practice[1], self.gamemodel.practice[2] + 1)
 
     def game_changed(self, gamemodel, ply):
         if gamemodel.practice_game:

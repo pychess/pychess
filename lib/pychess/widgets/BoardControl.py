@@ -60,7 +60,12 @@ def play_or_add_move(view, board, move):
                         view.showNext()
                         view.infobar.your_turn()
                     else:
-                        print(next_board.board.children)
+                        # TODO: present mainline and variations first moves as buttons
+                        for child in next_board.board.children:
+                            if isinstance(child, list):
+                                print([lboard.lastMove for lboard in child])
+                            elif isinstance(child, str):
+                                print(child)
                         view.infobar.opp_turn()
                     view.showNext()
                 else:
