@@ -36,9 +36,8 @@ def play_or_add_move(view, board, move):
         # at the end of variation or main line
         if not view.shownIsMainLine():
             # add move to existing variation
-            view.model.add_move2variation(
-                board, move, view.shown_variation_idx)
-            view.shown += 1
+            view.model.add_move2variation(board, move, view.shown_variation_idx)
+            view.showNext()
         else:
             # create new variation
             new_vari = view.model.add_variation(board, (move, ))
@@ -47,26 +46,23 @@ def play_or_add_move(view, board, move):
         # inside variation or main line
         if board.board.next.lastMove == move.move:
             # replay mainline move
-            view.shown += 1
             if view.model.lesson_game:
-                incr = 1 if len(view.model.moves) == board.ply + 1 else 2
-                view.model.ply_played += incr
+                view.model.getBoardAtPly(view.shown + 1).played = True
                 play_sound(move, board)
-
+                incr = 1 if len(view.model.moves) == board.ply + 1 else 2
                 if incr == 2:
-                    view.infobar.your_turn(shown_board=board)
+                    view.infobar.opp_turn()
                 else:
                     view.infobar.get_next_puzzle()
-
-                board = view.model.getBoardAtPly(board.ply + incr)
-                view.setShownBoard(board)
-                if incr == 1:
                     view.model.checkStatus()
+
+            view.showNext()
+
         elif board.board.next.children:
             if view.model.lesson_game:
                 play_sound(move, board)
-                view.infobar.retry(shown_board=board)
-                return
+                view.infobar.retry()
+
             # try to find this move in variations
             for i, vari in enumerate(board.board.next.children):
                 for node in vari:
@@ -74,13 +70,16 @@ def play_or_add_move(view, board, move):
                         # replay variation move
                         view.setShownBoard(node.pieceBoard)
                         return
+
             # create new variation
             new_vari = view.model.add_variation(board, (move, ))
             view.setShownBoard(new_vari[-1])
+
         else:
             if view.model.lesson_game:
                 play_sound(move, board)
-                view.infobar.retry(shown_board=board)
+                view.infobar.retry()
+
             # create new variation
             new_vari = view.model.add_variation(board, (move, ))
             view.setShownBoard(new_vari[-1])

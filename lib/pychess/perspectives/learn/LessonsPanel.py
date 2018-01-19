@@ -75,6 +75,7 @@ class Sidepanel():
         gamemodel.set_lesson_game()
 
         chessfile.loadToModel(rec, -1, gamemodel)
+        gamemodel.boards[0].played = True
 
         name = conf.get("firstName", _("You"))
         p0 = (LOCAL, Human, (WHITE, name), name)

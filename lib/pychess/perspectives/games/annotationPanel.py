@@ -157,7 +157,7 @@ class Sidepanel:
         __widget__.pack_start(sw, True, True, 0)
 
         if self.gamemodel.practice_game or self.gamemodel.lesson_game:
-            self.infobar = LearnInfoBar(self.gamemodel, self.boardview)
+            self.infobar = LearnInfoBar(self.gamemodel, gmwidg.board)
             self.boardview.infobar = self.infobar
             __widget__.pack_start(self.infobar, False, False, 0)
 
@@ -881,10 +881,6 @@ class Sidepanel:
             if board is None:
                 break
 
-            # Hide moves in interactive lesson games
-            if self.gamemodel.lesson_game and board.plyCount > self.gamemodel.ply_played:
-                break
-
             # Initial game or variation comment
             if board.prev is None:
                 for index, child in enumerate(board.children):
@@ -897,6 +893,10 @@ class Sidepanel:
                                             ini_board=board)
                 board = board.next
                 continue
+
+            # Don't show moves not yet played in interactive lesson games
+            if self.gamemodel.lesson_game and not board.pieceBoard.played:
+                break
 
             if board.fen_was_applied:
                 self.insert_node(board, end_iter(), -1, level, parent)
@@ -924,6 +924,9 @@ class Sidepanel:
                                         level=level)
                 else:
                     # variation
+                    if self.gamemodel.lesson_game:
+                        continue
+
                     diff, opening_node = self.variation_start(end_iter(), -1,
                                                               level)
                     self.insert_nodes(child[0], level + 1, parent=board)
@@ -1124,7 +1127,10 @@ class Sidepanel:
         self.update_selected_node()
 
     def on_shownChanged(self, boardview, shown):
-        self.update_selected_node()
+        if self.gamemodel.lesson_game:
+            self.update()
+        else:
+            self.update_selected_node()
 
     def on_moves_undone(self, game, moves):
         """

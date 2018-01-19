@@ -184,7 +184,6 @@ class GameModel(GObject.GObject):
     def set_lesson_game(self):
         self.lesson_game = True
         self.hint = ""
-        self.ply_played = 0
 
     def set_offline_lecture(self):
         self.offline_lecture = True

@@ -42,6 +42,9 @@ class Board:
             self.board = lboard
         self.board.pieceBoard = self
 
+        # Set True in interactive lesson games after they happened
+        self.played = False
+
         if setup:
             if lboard is None:
                 if setup is True:

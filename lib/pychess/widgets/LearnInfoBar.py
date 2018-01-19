@@ -6,19 +6,19 @@ from pychess.Utils.logic import getStatus
 from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_from
 from pychess.perspectives.learn.EndgamesPanel import start_endgame_from
 
-HINT, MOVE, RETRY, NEXT = 0, 1, 2, 3
+HINT, MOVE, RETRY, CONTINUE, NEXT = range(5)
 
 
 class LearnInfoBar(Gtk.InfoBar):
-    def __init__(self, gamemodel, boardview):
+    def __init__(self, gamemodel, boardcontrol):
         Gtk.InfoBar.__init__(self)
 
         self.content_area = self.get_content_area()
         self.action_area = self.get_action_area()
 
         self.gamemodel = gamemodel
-        self.boardview = boardview
-        self.shown_board = None
+        self.boardcontrol = boardcontrol
+        self.boardview = boardcontrol.view
 
         self.gamemodel.connect("game_changed", self.game_changed)
         self.connect("response", self.on_response)
@@ -33,9 +33,6 @@ class LearnInfoBar(Gtk.InfoBar):
             self.action_area.remove(item)
 
     def your_turn(self, shown_board=None):
-        if shown_board is not None:
-            self.shown_board = shown_board
-
         self.clear()
         self.set_message_type(Gtk.MessageType.QUESTION)
         self.content_area.add(Gtk.Label(_("Your turn.")))
@@ -50,14 +47,23 @@ class LearnInfoBar(Gtk.InfoBar):
         self.add_button(_("Next"), NEXT)
         self.show_all()
 
-    def retry(self, shown_board=None):
-        if shown_board is not None:
-            self.shown_board = shown_board
+    def opp_turn(self):
+        self.clear()
+        self.set_message_type(Gtk.MessageType.INFO)
+        self.add_button(_("Continue"), CONTINUE)
 
+        # disable playing
+        self.boardcontrol.game_preview = True
+        self.show_all()
+
+    def retry(self):
         self.clear()
         self.set_message_type(Gtk.MessageType.ERROR)
         self.content_area.add(Gtk.Label(_("Not the best!")))
         self.add_button(_("Retry"), RETRY)
+
+        # disable playing
+        self.boardcontrol.game_preview = True
 
         # disable retry button until engine thinking on next move
         if self.gamemodel.practice_game:
@@ -88,8 +94,15 @@ class LearnInfoBar(Gtk.InfoBar):
             if self.gamemodel.practice_game:
                 self.gamemodel.undoMoves(2)
             elif self.gamemodel.lesson_game:
-                self.boardview.setShownBoard(self.shown_board)
+                self.boardview.showPrev()
             self.your_turn()
+            self.boardcontrol.game_preview = False
+
+        elif response == CONTINUE:
+            self.gamemodel.getBoardAtPly(self.boardview.shown + 1).played = True
+            self.boardview.showNext()
+            self.your_turn()
+            self.boardcontrol.game_preview = False
 
         elif response == NEXT:
             if self.gamemodel.practice_game:
