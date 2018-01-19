@@ -611,16 +611,15 @@ class BoardView(Gtk.DrawingArea):
 
         if self.shown > self.model.lowply:
             self.lastMove = self.model.getMoveAtPly(self.shown - 1, self.shown_variation_idx)
+            paint_box = self.paintBoxAround(self.lastMove)
+            self.redrawCanvas(rect(paint_box))
         else:
             self.lastMove = None
 
-        def doSetShown():
-            self.runAnimation(redraw_misc=self.real_set_shown)
-            if not conf.get("noAnimation", False):
-                while self.animating:
-                    self.animimation_id = self.runAnimation()
-
-        doSetShown()
+        self.runAnimation(redraw_misc=self.real_set_shown)
+        if not conf.get("noAnimation", False):
+            while self.animating:
+                self.animimation_id = self.runAnimation()
 
     shown = property(_getShown, _setShown)
 
@@ -645,10 +644,7 @@ class BoardView(Gtk.DrawingArea):
             self.animimation_id = - 1
             return False
 
-        if self.lastMove is None:
-            paint_box = None
-        else:
-            paint_box = self.paintBoxAround(self.lastMove)
+        paint_box = None
 
         mod = min(1, (time() - self.animation_start) / ANIMATION_TIME)
         board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
@@ -755,15 +751,13 @@ class BoardView(Gtk.DrawingArea):
             return paint_box and True or False
 
     def startAnimation(self):
-        def doStartAnimation():
-            self.runAnimation(redraw_misc=True)
-            if not conf.get("noAnimation", False):
-                while self.animating:
-                    self.animimation_id = self.runAnimation()
-
         self.animation_start = time()
         self.animating = True
-        doStartAnimation()
+
+        self.runAnimation(redraw_misc=True)
+        if not conf.get("noAnimation", False):
+            while self.animating:
+                self.animimation_id = self.runAnimation()
 
     #############################
     #          Drawing          #
@@ -813,17 +807,13 @@ class BoardView(Gtk.DrawingArea):
     ###############################
 
     def redrawCanvas(self, rect=None):
-
-        def redraw(rect):
-            if self.get_window():
-                if not rect:
-                    alloc = self.get_allocation()
-                    rect = Gdk.Rectangle()
-                    rect.x, rect.y, rect.width, rect.height = (0, 0, alloc.width, alloc.height)
-#                    self.queue_draw_area(r.x, r.y, r.width, r.height)
-                self.get_window().invalidate_rect(rect, True)
-                self.get_window().process_updates(True)
-        redraw(rect)
+        if self.get_window():
+            if not rect:
+                alloc = self.get_allocation()
+                rect = Gdk.Rectangle()
+                rect.x, rect.y, rect.width, rect.height = (0, 0, alloc.width, alloc.height)
+            self.get_window().invalidate_rect(rect, True)
+            self.get_window().process_updates(True)
 
     ###############################
     #            draw             #
