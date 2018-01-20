@@ -170,23 +170,23 @@ class TagDatabase:
             tags = []
             if "white" in tag_query:
                 if "ignore_tag_colors" in tag_query:
-                    tags.append(or_(pl1.c.name.startswith(tag_query["white"]),
-                                    pl2.c.name.startswith(tag_query["white"])))
+                    tags.append(or_(pl1.c.name.like("%%%s%%" % tag_query["white"]),
+                                    pl2.c.name.like("%%%s%%" % tag_query["white"])))
                 else:
-                    tags.append(pl1.c.name.startswith(tag_query["white"]))
+                    tags.append(pl1.c.name.like("%%%s%%" % tag_query["white"]))
 
             if "black" in tag_query:
                 if "ignore_tag_colors" in tag_query:
-                    tags.append(or_(pl1.c.name.startswith(tag_query["black"]),
-                                    pl2.c.name.startswith(tag_query["black"])))
+                    tags.append(or_(pl1.c.name.like("%%%s%%" % tag_query["black"]),
+                                    pl2.c.name.like("%%%s%%" % tag_query["black"])))
                 else:
-                    tags.append(pl2.c.name.startswith(tag_query["black"]))
+                    tags.append(pl2.c.name.like("%%%s%%" % tag_query["black"]))
 
             if "event" in tag_query:
-                tags.append(event.c.name.startswith(tag_query["event"])),
+                tags.append(event.c.name.like("%%%s%%" % tag_query["event"])),
 
             if "site" in tag_query:
-                tags.append(site.c.name.startswith(tag_query["site"])),
+                tags.append(site.c.name.like("%%%s%%" % tag_query["site"])),
 
             if "eco_from" in tag_query:
                 tags.append(game.c.eco >= tag_query["eco_from"])
@@ -195,7 +195,7 @@ class TagDatabase:
                 tags.append(game.c.eco <= tag_query["eco_to"])
 
             if "annotator" in tag_query:
-                tags.append(annotator.c.name.startswith(tag_query["annotator"])),
+                tags.append(annotator.c.name.like("%%%s%%" % tag_query["annotator"])),
 
             if "variant" in tag_query:
                 tags.append(game.c.variant == int(tag_query["variant"])),
