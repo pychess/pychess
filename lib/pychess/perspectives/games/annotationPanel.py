@@ -32,6 +32,22 @@ EMPTY_BOARD = LBoard()
 EMPTY_BOARD.applyFen(FEN_EMPTY)
 
 
+css = """
+GtkButton#rounded {
+    border-radius: 20px;
+}
+"""
+
+
+def add_provider(widget):
+    screen = widget.get_screen()
+    style = widget.get_style_context()
+    provider = Gtk.CssProvider()
+    provider.load_from_data(css.encode('utf-8'))
+    style.add_provider_for_screen(screen, provider,
+                                  Gtk.STYLE_PROVIDER_PRIORITY_USER)
+
+
 # -- Documentation
 """
 We are maintaining a list of nodes to help manipulate the textbuffer.
@@ -150,6 +166,11 @@ class Sidepanel:
         sw.add(self.header_textview)
         __widget__.pack_start(sw, False, False, 0)
         __widget__.pack_start(Gtk.Separator(), False, False, 0)
+
+        if self.gamemodel.lesson_game:
+            self.choices_box = Gtk.Box()
+            self.choices_box.connect("realize", add_provider)
+            __widget__.pack_start(self.choices_box, False, False, 0)
 
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
@@ -1126,8 +1147,21 @@ class Sidepanel:
         self.insert_nodes(self.gamemodel.boards[0].board, result=result)
         self.update_selected_node()
 
+    def on_choice_clicked(self, button, board):
+        self.infobar.opp_choice_selected(board)
+
     def on_shownChanged(self, boardview, shown):
         if self.gamemodel.lesson_game:
+            if self.infobar.choices:
+                for board, san in self.infobar.choices:
+                    button = Gtk.Button(san)
+                    button.set_name("rounded")
+                    button.connect("clicked", self.on_choice_clicked, board)
+                    self.choices_box.pack_start(button, False, False, 3)
+                self.choices_box.show_all()
+            else:
+                for widget in self.choices_box:
+                    self.choices_box.remove(widget)
             self.update()
         else:
             self.update_selected_node()

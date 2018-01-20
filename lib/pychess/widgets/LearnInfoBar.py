@@ -20,6 +20,7 @@ class LearnInfoBar(Gtk.InfoBar):
         self.gamemodel = gamemodel
         self.boardcontrol = boardcontrol
         self.boardview = boardcontrol.view
+        self.choices = []
 
         self.gamemodel.connect("game_changed", self.game_changed)
         self.connect("response", self.on_response)
@@ -34,6 +35,7 @@ class LearnInfoBar(Gtk.InfoBar):
             self.action_area.remove(item)
 
     def your_turn(self, shown_board=None):
+        self.choices = []
         self.clear()
         self.set_message_type(Gtk.MessageType.QUESTION)
         self.content_area.add(Gtk.Label(_("Your turn.")))
@@ -51,7 +53,8 @@ class LearnInfoBar(Gtk.InfoBar):
             self.add_button(_("Next"), NEXT)
         self.show_all()
 
-    def opp_turn(self):
+    def opp_turn(self, choices):
+        self.choices = choices
         self.clear()
         self.set_message_type(Gtk.MessageType.INFO)
         self.add_button(_("Continue"), CONTINUE)
@@ -95,17 +98,17 @@ class LearnInfoBar(Gtk.InfoBar):
                 print("No hint available!")
 
         elif response == RETRY:
+            self.your_turn()
             if self.gamemodel.practice_game:
                 self.gamemodel.undoMoves(2)
             elif self.gamemodel.lesson_game:
                 self.boardview.showPrev()
-            self.your_turn()
             self.boardcontrol.game_preview = False
 
         elif response == CONTINUE:
+            self.your_turn()
             self.gamemodel.getBoardAtPly(self.boardview.shown + 1).played = True
             self.boardview.showNext()
-            self.your_turn()
             self.boardcontrol.game_preview = False
 
         elif response == NEXT:
@@ -115,6 +118,12 @@ class LearnInfoBar(Gtk.InfoBar):
                 start_endgame_from(self.gamemodel.practice[1])
             elif self.gamemodel.practice[0] == "lesson":
                 start_lesson_from(self.gamemodel.practice[1], self.gamemodel.practice[2] + 1)
+
+    def opp_choice_selected(self, board):
+        self.your_turn()
+        board.played = True
+        self.boardview.setShownBoard(board)
+        self.boardcontrol.game_preview = False
 
     def game_changed(self, gamemodel, ply):
         if gamemodel.practice_game:
