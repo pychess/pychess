@@ -27,7 +27,7 @@
 [SetUp "1"]
 
 { "Scarcely had he uttered the words, when a Turkish bullet, shattering the window, dashed the White knight off of the board in fragments. Grothusen started violently, but Charles, with utmost coolness, begged him to put back the other knight and work out the mate, observing that it was pretty enough. But another glance at the board made Charles smile. We do not need the knight. I can give it to you and still mate in four!" }
-1. hxg3 Be3 (1... Bc5 2. Rg4 Be7 3. Rh4+ Bxh4 4. gxh4)  (1... Be1 2. Rg4 Bxg3 3. Rxg3 Kh4 4. Rh3#) 2. Rg4 Bg5 3. Rh4+ Bxh4 4. g4# *
+1. hxg3 Be3 (1... Bc5 2. Rg4 Be7 3. Rh4+ Bxh4 4. g4#)  (1... Be1 2. Rg4 Bxg3 3. Rxg3 Kh4 4. Rh3#) 2. Rg4 Bg5 3. Rh4+ Bxh4 4. g4# *
 
 
 [Event "Charles XII at Bender: Samuel Loyd mate in #5"]
