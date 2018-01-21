@@ -785,9 +785,20 @@ class LBoard(object):
         self.plyCount -= 1
 
     def __eq__(self, other):
-        return isinstance(other, LBoard) and \
-            self.fen_was_applied and other.fen_was_applied and \
-            self.hash == other.hash and self.plyCount == other.plyCount
+        if not (other is not None and
+                self.fen_was_applied and other.fen_was_applied and
+                self.hash == other.hash and self.plyCount == other.plyCount):
+            return False
+
+        b0, b1 = self.prev, other.prev
+        ok = True
+        while ok and b0 is not None and b1 is not None:
+            if not (b0.fen_was_applied and b1.fen_was_applied and
+                    b0.hash == b1.hash and b0.plyCount == b1.plyCount):
+                ok = False
+            else:
+                b0, b1 = b0.prev, b1.prev
+        return ok
 
     def __ne__(self, other):
         return not self.__eq__(other)

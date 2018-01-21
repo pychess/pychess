@@ -596,6 +596,8 @@ class BoardView(Gtk.DrawingArea):
 
         self._shown = shown
         if self.real_set_shown:
+            if self.model.getBoardAtPly(self.shown, self.shown_variation_idx) in self.model.variations[0]:
+                self.shown_variation_idx = 0
             self.emit("shownChanged", self.shown)
 
         if self.animimation_id != -1:
@@ -1808,9 +1810,6 @@ class BoardView(Gtk.DrawingArea):
                     self.shown -= step
                 else:
                     self.shown = self.model.lowply
-
-                if self.model.getBoardAtPly(self.shown, self.shown_variation_idx) in self.model.variations[0]:
-                    self.shown_variation_idx = 0
 
     def showNext(self, step=1):
         if self.model.examined and self.model.noTD:
