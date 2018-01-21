@@ -12,8 +12,9 @@ from pychess.Utils import prettyPrintScore
 from pychess.Utils.const import WHITE, BLACK, FEN_EMPTY, reprResult, reprSign, FAN_PIECES
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
+from pychess.Utils.Cord import Cord
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Utils.lutils.lmove import toSAN, toFAN
+from pychess.Utils.lutils.lmove import toSAN, toFAN, FCORD, TCORD
 from pychess.Savers.pgn import move_count
 from pychess.Savers.pgn import nag2symbol
 from pychess.widgets.ChessClock import formatTime
@@ -1151,6 +1152,16 @@ class Sidepanel:
         if self.gamemodel.lesson_game:
             self.infobar.opp_choice_selected(board)
 
+    def on_enter_notify_event(self, button, event, move):
+        arrow = Cord(FCORD(move), color="G"), Cord(TCORD(move))
+        self.boardview.arrows.add(arrow)
+        self.boardview.redrawCanvas()
+
+    def on_leave_notify_event(self, button, event, move):
+        arrow = Cord(FCORD(move), color="G"), Cord(TCORD(move))
+        self.boardview.arrows.remove(arrow)
+        self.boardview.redrawCanvas()
+
     def on_shownChanged(self, view, shown):
         try:
             next_board = view.model.getBoardAtPly(view.shown + 1, variation=view.shown_variation_idx)
@@ -1169,14 +1180,14 @@ class Sidepanel:
         for child in next_board.board.children:
             if isinstance(child, list):
                 lboard = child[1]
-                choices.append((lboard.pieceBoard, toSAN(base_board.board, lboard.lastMove)))
+                choices.append((lboard.pieceBoard, lboard.lastMove, toSAN(base_board.board, lboard.lastMove)))
             elif isinstance(child, str):
                 print(child)
 
         # Add main line next move to choice list also
         if choices:
             move = next_board.board.lastMove
-            choices = [(next_board, toSAN(base_board.board, move))] + choices
+            choices = [(next_board, move, toSAN(base_board.board, move))] + choices
 
         need_update = False
 
@@ -1187,10 +1198,12 @@ class Sidepanel:
 
         # Add nev choice buttons
         if choices:
-            for board, san in choices:
+            for board, move, san in choices:
                 button = Gtk.Button(san)
                 button.set_name("rounded")
                 button.connect("clicked", self.on_choice_clicked, board)
+                button.connect("enter_notify_event", self.on_enter_notify_event, move)
+                button.connect("leave_notify_event", self.on_leave_notify_event, move)
                 self.choices_box.pack_start(button, False, False, 3)
                 need_update = True
             self.choices_box.show_all()
