@@ -167,10 +167,9 @@ class Sidepanel:
         __widget__.pack_start(sw, False, False, 0)
         __widget__.pack_start(Gtk.Separator(), False, False, 0)
 
-        if self.gamemodel.lesson_game:
-            self.choices_box = Gtk.Box()
-            self.choices_box.connect("realize", add_provider)
-            __widget__.pack_start(self.choices_box, False, False, 0)
+        self.choices_box = Gtk.Box()
+        self.choices_box.connect("realize", add_provider)
+        __widget__.pack_start(self.choices_box, False, False, 0)
 
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
@@ -916,7 +915,7 @@ class Sidepanel:
                 continue
 
             # Don't show moves not yet played in interactive lesson games
-            if self.gamemodel.lesson_game and not board.pieceBoard.played:
+            if 0:  # self.gamemodel.lesson_game and not board.pieceBoard.played:
                 break
 
             if board.fen_was_applied:
@@ -945,7 +944,7 @@ class Sidepanel:
                                         level=level)
                 else:
                     # variation
-                    if self.gamemodel.lesson_game:
+                    if 0:  # self.gamemodel.lesson_game:
                         continue
 
                     diff, opening_node = self.variation_start(end_iter(), -1,
@@ -1148,20 +1147,55 @@ class Sidepanel:
         self.update_selected_node()
 
     def on_choice_clicked(self, button, board):
-        self.infobar.opp_choice_selected(board)
-
-    def on_shownChanged(self, boardview, shown):
+        self.boardview.setShownBoard(board)
         if self.gamemodel.lesson_game:
-            if self.infobar.choices:
-                for board, san in self.infobar.choices:
-                    button = Gtk.Button(san)
-                    button.set_name("rounded")
-                    button.connect("clicked", self.on_choice_clicked, board)
-                    self.choices_box.pack_start(button, False, False, 3)
-                self.choices_box.show_all()
-            else:
-                for widget in self.choices_box:
-                    self.choices_box.remove(widget)
+            self.infobar.opp_choice_selected(board)
+
+    def on_shownChanged(self, view, shown):
+        try:
+            next_board = view.model.getBoardAtPly(view.shown + 1, variation=view.shown_variation_idx)
+        except IndexError:
+            next_board = None
+
+        # On game end and when new variation was created there will be no choices for sure
+        if next_board is None:
+            self.update_selected_node()
+            return
+
+        base_board = view.model.getBoardAtPly(view.shown, variation=view.shown_variation_idx)
+
+        # Gether variations first moves if there are any
+        choices = []
+        for child in next_board.board.children:
+            if isinstance(child, list):
+                lboard = child[1]
+                choices.append((lboard.pieceBoard, toSAN(base_board.board, lboard.lastMove)))
+            elif isinstance(child, str):
+                print(child)
+
+        # Add main line next move to choice list also
+        if choices:
+            move = next_board.board.lastMove
+            choices = [(next_board, toSAN(base_board.board, move))] + choices
+
+        need_update = False
+
+        # Remove previous choice buttons
+        for widget in self.choices_box:
+            self.choices_box.remove(widget)
+            need_update = True
+
+        # Add nev choice buttons
+        if choices:
+            for board, san in choices:
+                button = Gtk.Button(san)
+                button.set_name("rounded")
+                button.connect("clicked", self.on_choice_clicked, board)
+                self.choices_box.pack_start(button, False, False, 3)
+                need_update = True
+            self.choices_box.show_all()
+
+        if need_update:
             self.update()
         else:
             self.update_selected_node()

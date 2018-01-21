@@ -12,7 +12,7 @@ from pychess.Utils.const import ARTIFICIAL, FLAG_CALL, ABORT_OFFER, LOCAL, TAKEB
 
 from pychess.Utils.logic import validate
 from pychess.Utils.lutils import lmove, lmovegen
-from pychess.Utils.lutils.lmove import ParsingError, toSAN
+from pychess.Utils.lutils.lmove import ParsingError
 
 from . import preferencesDialog
 from .PromotionDialog import PromotionDialog
@@ -59,20 +59,10 @@ def play_or_add_move(view, board, move):
                         next_board.played = True
                         view.showNext()
                         view.infobar.your_turn()
+                        view.showNext()
                     else:
-                        base_board = view.model.getBoardAtPly(view.shown + 1)
-                        choices = []
-                        for child in next_board.board.children:
-                            if isinstance(child, list):
-                                lboard = child[1]
-                                choices.append((lboard.pieceBoard, toSAN(base_board.board, lboard.lastMove)))
-                            elif isinstance(child, str):
-                                print(child)
-                        if choices:
-                            move = next_board.board.lastMove
-                            choices = [(next_board, toSAN(base_board.board, move))] + choices
-                        view.infobar.opp_turn(choices)
-                    view.showNext()
+                        view.infobar.opp_turn()
+                        view.showNext()
                 else:
                     preferencesDialog.SoundTab.playAction("puzzleSuccess")
                     view.infobar.get_next_puzzle()
