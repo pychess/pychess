@@ -524,7 +524,7 @@ class BoardView(Gtk.DrawingArea):
         board = self.model.getBoardAtPly(shown, self.shown_variation_idx).board
         if board.children:
             for child in board.children:
-                if isinstance(board.children[0], str):
+                if isinstance(child, str):
                     if "[%csl" in child:
                         match = comment_circles_re.search(child)
                         circles = match.groups()[0].split(",")
