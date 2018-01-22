@@ -1159,8 +1159,9 @@ class Sidepanel:
 
     def on_leave_notify_event(self, button, event, move):
         arrow = Cord(FCORD(move), color="G"), Cord(TCORD(move))
-        self.boardview.arrows.remove(arrow)
-        self.boardview.redrawCanvas()
+        if arrow in self.boardview.arrows:
+            self.boardview.arrows.remove(arrow)
+            self.boardview.redrawCanvas()
 
     def on_shownChanged(self, view, shown):
         try:
@@ -1168,9 +1169,17 @@ class Sidepanel:
         except IndexError:
             next_board = None
 
-        # On game end and when new variation was created there will be no choices for sure
+        # On game end and variation end there will be no choices for sure
         if next_board is None:
-            self.update_selected_node()
+            # Remove previous choice buttons
+            need_update = False
+            for widget in self.choices_box:
+                self.choices_box.remove(widget)
+                need_update = True
+            if need_update:
+                self.update()
+            else:
+                self.update_selected_node()
             return
 
         base_board = view.model.getBoardAtPly(view.shown, variation=view.shown_variation_idx)
