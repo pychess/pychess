@@ -85,21 +85,31 @@ def start_puzzle_from(filename):
 
     chessfile.loadToModel(rec, 0, gamemodel)
 
-    # TODO: change colors according to FEN!
-    name = rec["White"]
-    p0 = (LOCAL, Human, (WHITE, name), name)
-
     engine = discoverer.getEngineByName(stockfish_name)
-    name = rec["Black"]
-    ponder_off = True
-    p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
-          (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), name)
 
-    def fix_name(gamemodel, name):
+    color = gamemodel.boards[-1].color
+    if color == WHITE:
+        name = rec["White"]
+        p0 = (LOCAL, Human, (WHITE, name), name)
+
+        oppname = rec["Black"]
+        ponder_off = True
+        p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
+              (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), oppname)
+    else:
+        oppname = rec["White"]
+        ponder_off = True
+        p0 = (ARTIFICIAL, discoverer.initPlayerEngine,
+              (engine, WHITE, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), oppname)
+
+        name = rec["Black"]
+        p1 = (LOCAL, Human, (BLACK, name), name)
+
+    def fix_name(gamemodel, name, color):
         asyncio.async(gamemodel.start_analyzer(HINT, force_engine=stockfish_name))
-        gamemodel.players[1].name = name
+        gamemodel.players[1 - color].name = oppname
         gamemodel.emit("players_changed")
-    gamemodel.connect("game_started", fix_name, name)
+    gamemodel.connect("game_started", fix_name, name, color)
 
     gamemodel.variant.need_initial_board = True
     gamemodel.status = WAITING_TO_START
