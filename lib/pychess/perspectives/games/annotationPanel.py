@@ -1137,6 +1137,7 @@ class Sidepanel:
         self.textbuffer.set_text('')
         self.nodelist = []
         self.update_header()
+        self.update_choices()
 
         status = reprResult[self.gamemodel.status]
         if status != '*':
@@ -1163,7 +1164,13 @@ class Sidepanel:
             self.boardview.arrows.remove(arrow)
             self.boardview.redrawCanvas()
 
-    def on_shownChanged(self, view, shown):
+    def remove_choices(self):
+        """ Removes all choice buttons """
+        for widget in self.choices_box:
+            self.choices_box.remove(widget)
+
+    def update_choices(self):
+        view = self.boardview
         try:
             next_board = view.model.getBoardAtPly(view.shown + 1, variation=view.shown_variation_idx)
         except IndexError:
@@ -1171,10 +1178,7 @@ class Sidepanel:
 
         # On game end and variation end there will be no choices for sure
         if next_board is None:
-            # Remove previous choice buttons
-            for widget in self.choices_box:
-                self.choices_box.remove(widget)
-            self.update_selected_node()
+            self.remove_choices()
             return
 
         base_board = view.model.getBoardAtPly(view.shown, variation=view.shown_variation_idx)
@@ -1202,8 +1206,7 @@ class Sidepanel:
             choices = [(next_board, move, text)] + choices
 
         # Remove previous choice buttons
-        for widget in self.choices_box:
-            self.choices_box.remove(widget)
+        self.remove_choices()
 
         # Add nev choice buttons
         if choices:
@@ -1216,6 +1219,8 @@ class Sidepanel:
                 self.choices_box.pack_start(button, False, False, 3)
             self.choices_box.show_all()
 
+    def on_shownChanged(self, view, shown):
+        self.update_choices()
         self.update_selected_node()
 
     def on_moves_undone(self, game, moves):
