@@ -889,7 +889,7 @@ class Sidepanel:
 
         if start:
             # self.textview.scroll_to_iter(start, within_margin=0.03)
-            self.textview.scroll_to_iter(start, 0.03, False, 0.00, 0.00)
+            self.textview.scroll_to_iter(start, 0.01, True, 0.00, 0.00)
 
     def insert_nodes(self, board, level=0, parent=None, result=None):
         """ Recursively builds the node tree """
@@ -1172,14 +1172,9 @@ class Sidepanel:
         # On game end and variation end there will be no choices for sure
         if next_board is None:
             # Remove previous choice buttons
-            need_update = False
             for widget in self.choices_box:
                 self.choices_box.remove(widget)
-                need_update = True
-            if need_update:
-                self.update()
-            else:
-                self.update_selected_node()
+            self.update_selected_node()
             return
 
         base_board = view.model.getBoardAtPly(view.shown, variation=view.shown_variation_idx)
@@ -1206,12 +1201,9 @@ class Sidepanel:
                 text = toSAN(base_board.board, move, True)
             choices = [(next_board, move, text)] + choices
 
-        need_update = False
-
         # Remove previous choice buttons
         for widget in self.choices_box:
             self.choices_box.remove(widget)
-            need_update = True
 
         # Add nev choice buttons
         if choices:
@@ -1222,13 +1214,9 @@ class Sidepanel:
                 button.connect("enter_notify_event", self.on_enter_notify_event, move)
                 button.connect("leave_notify_event", self.on_leave_notify_event, move)
                 self.choices_box.pack_start(button, False, False, 3)
-                need_update = True
             self.choices_box.show_all()
 
-        if need_update:
-            self.update()
-        else:
-            self.update_selected_node()
+        self.update_selected_node()
 
     def on_moves_undone(self, game, moves):
         """
