@@ -1189,14 +1189,22 @@ class Sidepanel:
         for child in next_board.board.children:
             if isinstance(child, list):
                 lboard = child[1]
-                choices.append((lboard.pieceBoard, lboard.lastMove, toSAN(base_board.board, lboard.lastMove)))
+                if self.fan:
+                    text = toFAN(base_board.board, lboard.lastMove)
+                else:
+                    text = toSAN(base_board.board, lboard.lastMove, True)
+                choices.append((lboard.pieceBoard, lboard.lastMove, text))
             elif isinstance(child, str):
                 print(child)
 
         # Add main line next move to choice list also
         if choices:
             move = next_board.board.lastMove
-            choices = [(next_board, move, toSAN(base_board.board, move))] + choices
+            if self.fan:
+                text = toFAN(base_board.board, move)
+            else:
+                text = toSAN(base_board.board, move, True)
+            choices = [(next_board, move, text)] + choices
 
         need_update = False
 

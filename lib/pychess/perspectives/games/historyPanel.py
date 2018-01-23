@@ -76,6 +76,9 @@ class Sidepanel:
 
         def figuresInNotationCallback(none):
             game = self.boardview.model
+            if game.lesson_game:
+                return
+
             for i, move in enumerate(game.moves):
                 board = game.variations[0][i]
                 ply = game.lowply + i + 1
