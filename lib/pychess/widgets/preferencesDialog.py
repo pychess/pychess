@@ -314,6 +314,9 @@ if not conf.hasKey("sounduri10"):
 if not conf.hasKey("sounduri11"):
     conf.set("sounduri11",
              "file:" + pathname2url(addDataPrefix("sounds/success.%s" % EXT)))
+if not conf.hasKey("sounduri12"):
+    conf.set("sounduri12",
+             "file:" + pathname2url(addDataPrefix("sounds/choice.%s" % EXT)))
 
 
 class SoundTab:
@@ -321,7 +324,7 @@ class SoundTab:
     SOUND_DIRS = (addDataPrefix("sounds"), "/usr/share/sounds",
                   "/usr/local/share/sounds", os.path.expanduser("~"))
 
-    COUNT_OF_SOUNDS = 12
+    COUNT_OF_SOUNDS = 13
 
     actionToKeyNo = {
         "aPlayerMoves": 0,
@@ -336,6 +339,7 @@ class SoundTab:
         "shortOnTime": 9,
         "invalidMove": 10,
         "puzzleSuccess": 11,
+        "variationChoice": 12,
     }
 
     _player = None

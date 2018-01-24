@@ -20,6 +20,7 @@ from pychess.Savers.pgn import nag2symbol
 from pychess.widgets.ChessClock import formatTime
 from pychess.widgets.LearnInfoBar import LearnInfoBar
 from pychess.widgets import insert_formatted
+from pychess.widgets import preferencesDialog
 
 
 # --- Constants
@@ -1218,6 +1219,7 @@ class Sidepanel:
                 button.connect("leave_notify_event", self.on_leave_notify_event, move)
                 self.choices_box.pack_start(button, False, False, 3)
             self.choices_box.show_all()
+            preferencesDialog.SoundTab.playAction("variationChoice")
 
     def on_shownChanged(self, view, shown):
         self.update_choices()
