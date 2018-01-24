@@ -87,7 +87,7 @@ def start_puzzle_from(filename):
 
     engine = discoverer.getEngineByName(stockfish_name)
 
-    color = gamemodel.boards[-1].color
+    color = gamemodel.boards[0].color
     if color == WHITE:
         name = rec["White"]
         p0 = (LOCAL, Human, (WHITE, name), name)

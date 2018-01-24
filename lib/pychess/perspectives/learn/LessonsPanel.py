@@ -82,7 +82,7 @@ def start_lesson_from(filename, index):
     chessfile.loadToModel(rec, -1, gamemodel)
     gamemodel.boards[0].played = True
 
-    color = gamemodel.boards[-1].color
+    color = gamemodel.boards[0].color
     if color == WHITE:
         name = conf.get("firstName", _("You"))
         p0 = (LOCAL, Human, (WHITE, name), name)
