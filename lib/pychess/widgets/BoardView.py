@@ -1802,6 +1802,20 @@ class BoardView(Gtk.DrawingArea):
             self.shown_variation_idx = 0
 
     def showPrev(self, step=1):
+        # If prev board belongs to a higher level variation
+        # we have to update shown_variation_idx
+        if not self.shownIsMainLine():
+            board = self.model.getBoardAtPly(self.shown - step, self.shown_variation_idx)
+            for vari in self.model.variations:
+                if board in vari:
+                    # Go back to the common board of variations to let animation system work
+                    board_in_vari = board
+                    while board_in_vari not in self.model.variations[self.shown_variation_idx]:
+                        board_in_vari = vari[board_in_vari.ply - self.model.lowply - 1]
+                    break
+            # swich to the new variation
+            self.shown_variation_idx = self.model.variations.index(vari)
+
         if self.model.examined and self.model.noTD:
             self.model.goPrev(step)
         else:

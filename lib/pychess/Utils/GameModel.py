@@ -383,10 +383,6 @@ class GameModel(GObject.GObject):
         return index
 
     def getBoardAtPly(self, ply, variation=0):
-        # Losing on time in FICS game will undo our last move if it was taken
-        # too late
-        if variation == 0 and ply > self.ply:
-            ply = self.ply
         try:
             return self.variations[variation][self._plyToIndex(ply)]
         except IndexError:
