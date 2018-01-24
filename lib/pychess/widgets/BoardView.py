@@ -1808,10 +1808,6 @@ class BoardView(Gtk.DrawingArea):
             board = self.model.getBoardAtPly(self.shown - step, self.shown_variation_idx)
             for vari in self.model.variations:
                 if board in vari:
-                    # Go back to the common board of variations to let animation system work
-                    board_in_vari = board
-                    while board_in_vari not in self.model.variations[self.shown_variation_idx]:
-                        board_in_vari = vari[board_in_vari.ply - self.model.lowply - 1]
                     break
             # swich to the new variation
             self.shown_variation_idx = self.model.variations.index(vari)
