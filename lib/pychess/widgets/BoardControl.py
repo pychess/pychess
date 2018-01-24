@@ -50,12 +50,14 @@ def play_or_add_move(view, board, move):
                 next_board = view.model.getBoardAtPly(view.shown + 1)
                 next_board.played = True
                 play_sound(move, board)
-                incr = 1 if len(view.model.moves) == board.ply + 1 else 2
+                incr = 1 if len(view.model.moves) == board.ply - view.model.lowply + 1 else 2
                 if incr == 2:
                     next_board = view.model.getBoardAtPly(view.shown + 2)
+
                     # If there is no opp move comment or variation
                     # we make opp next move
-                    if not next_board.board.children:
+                    children = next_board.board.children
+                    if not children or all((isinstance(child, str) for child in children)):
                         next_board.played = True
                         view.showNext()
                         view.infobar.your_turn()
