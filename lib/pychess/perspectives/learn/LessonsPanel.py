@@ -22,6 +22,7 @@ __desc__ = _("Guided interactive lessons in guess the move style")
 
 LESSONS = (
     ("Charles_XII_At_Bender.pgn", "Charles XII at Bender"),
+    ("Back_rank_threats.pgn", "Back rank threats"),
 )
 
 
@@ -81,10 +82,17 @@ def start_lesson_from(filename, index):
     chessfile.loadToModel(rec, -1, gamemodel)
     gamemodel.boards[0].played = True
 
-    name = conf.get("firstName", _("You"))
-    p0 = (LOCAL, Human, (WHITE, name), name)
-    name = "pychessbot"
-    p1 = (LOCAL, Human, (BLACK, name), name)
+    color = gamemodel.boards[-1].color
+    if color == WHITE:
+        name = conf.get("firstName", _("You"))
+        p0 = (LOCAL, Human, (WHITE, name), name)
+        name = "pychessbot"
+        p1 = (LOCAL, Human, (BLACK, name), name)
+    else:
+        name = "pychessbot"
+        p0 = (LOCAL, Human, (WHITE, name), name)
+        name = conf.get("firstName", _("You"))
+        p1 = (LOCAL, Human, (BLACK, name), name)
 
     gamemodel.status = WAITING_TO_START
     perspective = perspective_manager.get_perspective("games")
