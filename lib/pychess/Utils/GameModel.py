@@ -1012,3 +1012,23 @@ class GameModel(GObject.GObject):
         self.variations[variationIdx].append(new)
         self.needsSave = True
         self.emit("variation_extended", board.board, new.board)
+
+    def remove_variation(self, board, parent):
+        """ board must be an lboard object of the first Board object of a variation Board(!) list """
+
+        # Remove the variation (list of lboards) containing board from parent's children list
+        for child in parent.children:
+            if isinstance(child, list) and board in child:
+                parent.children.remove(child)
+                break
+
+        # Remove all variations from gamemodel's variations list which contains this board
+        for vari in self.variations[1:]:
+            if board.pieceBoard in vari:
+                self.variations.remove(vari)
+
+        # remove null_board if variation was added on last played move
+        if not parent.fen_was_applied:
+            parent.prev.next = None
+
+        self.needsSave = True

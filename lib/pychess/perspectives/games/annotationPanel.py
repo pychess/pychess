@@ -305,7 +305,9 @@ class Sidepanel:
         if event.button == 1:
             if "vari" in node:
                 if self.variation_to_remove is not None:
-                    self.remove_variation(self.variation_to_remove)
+                    node = self.variation_to_remove
+                    self.remove_variation(node)
+                    self.gamemodel.remove_variation(node["board"], node["parent"])
                     self.variation_to_remove = None
                 return True
             elif "comment" in node:
@@ -543,37 +545,18 @@ class Sidepanel:
             text = self.__movestr(node["board"])
         return text
 
-    def remove_variation(self, node):
-        # shown_board = self.gamemodel.getBoardAtPly(self.boardview.shown, self.boardview.shown_variation_idx)
-        # TODO
-        in_vari = True  # shown_board in vari
-
-        board = node["board"]
+    def remove_variation(self, node, set_shown=True):
         parent = node["parent"]
+
         # Set new shown board if needed
-        if in_vari:
+        if set_shown:
             if parent.pieceBoard is None:
                 # variation without played move at game end
                 self.boardview.setShownBoard(self.gamemodel.boards[-1])
             else:
                 self.boardview.setShownBoard(parent.pieceBoard)
 
-        # Remove the variation (list of lboards) containing board from parent's children list
-        for child in parent.children:
-            if isinstance(child, list) and board in child:
-                parent.children.remove(child)
-                break
-
-        # Remove all variations from gamemodel's variations list which contains this board
-        for vari in self.gamemodel.variations[1:]:
-            if board.pieceBoard in vari:
-                self.gamemodel.variations.remove(vari)
-
         last_node = self.nodelist[-1] == node
-
-        # remove null_board if variation was added on last played move
-        if not parent.fen_was_applied:
-            parent.prev.next = None
 
         startnode = node["vari"]
         start = startnode["start"]
@@ -596,8 +579,6 @@ class Sidepanel:
         start_iter = self.textbuffer.get_iter_at_offset(start)
         end_iter = self.textbuffer.get_iter_at_offset(end)
         self.textbuffer.delete(start_iter, end_iter)
-
-        self.gamemodel.needsSave = True
 
     def variation_start(self, iter, index, level):
         start = iter.get_offset()
@@ -626,8 +607,7 @@ class Sidepanel:
 
         return (iter.get_offset() - start, node)
 
-    def variation_end(self, iter, index, level, firstboard, parent,
-                      opening_node):
+    def variation_end(self, iter, index, level, firstboard, parent, opening_node):
         start = iter.get_offset()
         if level == 0:
             self.textbuffer.insert_with_tags_by_name(
