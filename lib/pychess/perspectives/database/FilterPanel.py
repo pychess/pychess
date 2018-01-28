@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 import ast
 
-from gi.repository import GLib, Gtk, GObject
+from gi.repository import GLib, Gdk, Gtk, GObject
 
 from pychess.Utils.const import chr2Sign, WHITE, BLACK
 from pychess.Utils.Piece import Piece
@@ -77,6 +77,8 @@ class FilterPanel(Gtk.TreeView):
         dock = "moved_%s_dock" % piece
         self.widgets[dock].add(PieceWidget(Piece(BLACK, chr2Sign[piece])))
         self.widgets[dock].get_child().show()
+
+        self.widgets["copy_sub_fen"].connect("clicked", self.on_copy_sub_fen)
 
         # We will store our filtering queries in a ListStore
         # column 0: query as text
@@ -616,6 +618,12 @@ class FilterPanel(Gtk.TreeView):
 
     def fen_changed(self):
         self.widgets["sub_fen"].set_text(self.get_fen())
+
+    def on_copy_sub_fen(self, widget):
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        text = self.widgets["sub_fen"].get_text()
+        if len(text) > 0:
+            clipboard.set_text(text, -1)
 
     def game_changed(self, model, ply):
         GLib.idle_add(self.fen_changed)
