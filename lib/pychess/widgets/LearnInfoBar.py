@@ -11,7 +11,7 @@ HINT, MOVE, RETRY, CONTINUE, NEXT = range(5)
 
 
 class LearnInfoBar(Gtk.InfoBar):
-    def __init__(self, gamemodel, boardcontrol):
+    def __init__(self, gamemodel, boardcontrol, annotation_panel):
         Gtk.InfoBar.__init__(self)
 
         self.content_area = self.get_content_area()
@@ -20,6 +20,7 @@ class LearnInfoBar(Gtk.InfoBar):
         self.gamemodel = gamemodel
         self.boardcontrol = boardcontrol
         self.boardview = boardcontrol.view
+        self.annotation_panel = annotation_panel
 
         self.gamemodel.connect("game_changed", self.game_changed)
         self.connect("response", self.on_response)
@@ -96,10 +97,27 @@ class LearnInfoBar(Gtk.InfoBar):
 
         elif response == RETRY:
             self.your_turn()
+
             if self.gamemodel.practice_game:
                 self.gamemodel.undoMoves(2)
+
             elif self.gamemodel.lesson_game:
-                self.boardview.showPrev()
+                prev_board = self.gamemodel.getBoardAtPly(self.boardview.shown - 1)
+
+                board = self.gamemodel.getBoardAtPly(
+                    self.boardview.shown,
+                    variation=self.boardview.shown_variation_idx)
+
+                for i, node in enumerate(self.annotation_panel.nodelist):
+                    if node["board"] == board.board:
+                        # We have to pass the variation end marker node to remove_variation()
+                        node = self.annotation_panel.nodelist[i + 1]
+                        self.annotation_panel.choices_enabled = False
+                        self.annotation_panel.remove_variation(node, shown_board=prev_board)
+                        break
+
+                self.gamemodel.undo_in_variation(board)
+
             self.boardcontrol.game_preview = False
 
         elif response == CONTINUE:

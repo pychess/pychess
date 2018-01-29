@@ -1032,3 +1032,29 @@ class GameModel(GObject.GObject):
             parent.prev.next = None
 
         self.needsSave = True
+
+    def undo_in_variation(self, board):
+        """ board must be the latest Board object of a variation board list """
+
+        assert board.board.next is None and len(board.board.children) == 0
+
+        for vari in self.variations[1:]:
+            if board in vari:
+                break
+
+        board = board.board
+        parent = board.prev.next
+
+        for other_vari in self.variations[1:]:
+            if parent.pieceBoard in other_vari:
+                break
+
+        # If this is a one move only variation we have to remove the whole variation
+        # if it's a longer one, just remove the latest move from it
+        if other_vari != vari:
+            self.remove_variation(board, parent)
+        else:
+            parent.next = None
+            del vari[-1]
+
+        self.needsSave = True

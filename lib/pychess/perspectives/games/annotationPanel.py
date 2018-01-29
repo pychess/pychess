@@ -172,6 +172,7 @@ class Sidepanel:
         self.choices_box = Gtk.Box()
         self.choices_box.connect("realize", add_provider)
         __widget__.pack_start(self.choices_box, False, False, 0)
+        self.choices_enabled = True
 
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
@@ -179,7 +180,7 @@ class Sidepanel:
         __widget__.pack_start(sw, True, True, 0)
 
         if self.gamemodel.practice_game or self.gamemodel.lesson_game:
-            self.infobar = LearnInfoBar(self.gamemodel, gmwidg.board)
+            self.infobar = LearnInfoBar(self.gamemodel, gmwidg.board, self)
             self.boardview.infobar = self.infobar
             __widget__.pack_start(self.infobar, False, False, 0)
 
@@ -545,16 +546,18 @@ class Sidepanel:
             text = self.__movestr(node["board"])
         return text
 
-    def remove_variation(self, node, set_shown=True):
+    def remove_variation(self, node, shown_board=None):
         parent = node["parent"]
 
         # Set new shown board if needed
-        if set_shown:
+        if shown_board is None:
             if parent.pieceBoard is None:
                 # variation without played move at game end
                 self.boardview.setShownBoard(self.gamemodel.boards[-1])
             else:
                 self.boardview.setShownBoard(parent.pieceBoard)
+        else:
+            self.boardview.setShownBoard(shown_board)
 
         last_node = self.nodelist[-1] == node
 
@@ -1190,7 +1193,7 @@ class Sidepanel:
         self.remove_choices()
 
         # Add nev choice buttons
-        if choices:
+        if self.choices_enabled and choices:
             for board, move, san in choices:
                 button = Gtk.Button(san)
                 button.set_name("rounded")
@@ -1200,6 +1203,9 @@ class Sidepanel:
                 self.choices_box.pack_start(button, False, False, 3)
             self.choices_box.show_all()
             preferencesDialog.SoundTab.playAction("variationChoice")
+
+        if not self.choices_enabled:
+            self.choices_enabled = True
 
     def on_shownChanged(self, view, shown):
         self.update_choices()
