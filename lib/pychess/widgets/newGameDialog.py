@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import asyncio
 import os.path
 import gettext
@@ -272,34 +274,54 @@ class _GameInitializationMode(object):
         ImageMenu.switchWithImage(configImage, alignment)
 
         def updateString(spin):
+            # Elements of the clock
             minutes = minSpin.get_value_as_int()
             gain = gainSpin.get_value_as_int()
             moves = movesSpin.get_value_as_int()
-            if gain > 0:
+
+            # Duration of the game
+            def calculate_duration(clock_min, clock_inc, clock_moves, ref_moves):
+                if clock_moves > 0:
+                    return int(2 * clock_min * ref_moves / clock_moves)
+                else:
+                    return max(0, int(2 * clock_min + ref_moves * clock_inc / 30))
+
+            duration_20 = calculate_duration(minutes, gain, moves, 20)
+            duration_40 = calculate_duration(minutes, gain, moves, 40)
+            duration_60 = calculate_duration(minutes, gain, moves, 60)
+
+            # Determination of the caption
+            if gain != 0:
                 radiobutton.set_label(
-                    _("%(name)s %(minutes)d min + %(gain)d sec/move") % {
+                    _("%(name)s %(minutes)d min %(sign)s %(gain)d sec/move %(duration)s") % {
                         'name': name,
                         'minutes': minutes,
-                        'gain': gain
-                    })
-            elif gain < 0:
-                radiobutton.set_label(
-                    _("%(name)s %(minutes)d min %(gain)d sec/move") % {
-                        'name': name,
-                        'minutes': minutes,
-                        'gain': gain
+                        'sign': "+" if gain > 0 else "–",
+                        'gain': abs(gain),
+                        'duration': ("(%d')" % duration_40) if duration_40 > 0 else ""
                     })
             elif moves > 0:
-                radiobutton.set_label(_("%(name)s %(minutes)d min / %(moves)d moves") % {
+                radiobutton.set_label(_("%(name)s %(minutes)d min / %(moves)d moves %(duration)s") % {
                     'name': name,
                     'minutes': minutes,
                     'moves': moves,
+                    'duration': ("(%d')" % duration_40) if duration_40 > 0 else ""
                 })
             else:
-                radiobutton.set_label(_("%(name)s %(minutes)d min") % {
+                radiobutton.set_label(_("%(name)s %(minutes)d min %(duration)s") % {
                     'name': name,
-                    'minutes': minutes
+                    'minutes': minutes,
+                    'duration': ("(%d')" % duration_40) if duration_40 > 0 else ""
                 })
+
+            # Determination of the tooltip
+            if duration_20 > 0 and duration_60 > 0 and duration_20 != duration_60:
+                radiobutton.set_tooltip_text(_("Estimated duration : %d - %d minutes") % (
+                    min(duration_20, duration_60),
+                    max(duration_20, duration_60)
+                ))
+            else:
+                radiobutton.set_tooltip_text("")
 
         minSpin.connect("value-changed", updateString)
         movesSpin.connect("value-changed", updateString)
