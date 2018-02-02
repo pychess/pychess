@@ -37,6 +37,7 @@ class Sidepanel:
         self.tv.set_row_separator_func(is_row_separator)
 
         self.tv.connect("style-updated", self.on_style_updated)
+        movetext_font = conf.get("movetextFont", "FreeSerif Regular 12")
 
         renderer = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn("mvcount", renderer, text=0)
@@ -45,12 +46,14 @@ class Sidepanel:
 
         self.white_renderer = Gtk.CellRendererText()
         self.white_renderer.set_property("xalign", 1)
+        self.white_renderer.set_property("font", movetext_font)
         self.white_column = Gtk.TreeViewColumn("white", self.white_renderer, text=1, background=4)
         self.white_column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         self.tv.append_column(self.white_column)
 
         self.black_renderer = Gtk.CellRendererText()
         self.black_renderer.set_property("xalign", 1)
+        self.black_renderer.set_property("font", movetext_font)
         self.black_column = Gtk.TreeViewColumn("black", self.black_renderer, text=2, background=5)
         self.black_column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         self.tv.append_column(self.black_column)
@@ -93,7 +96,15 @@ class Sidepanel:
                 treeiter = self.store.get_iter(Gtk.TreePath(row))
                 self.store.set_value(treeiter, col, notat)
 
-        self.conf_conid = conf.notify_add("figuresInNotation", figuresInNotationCallback)
+        def font_changed(none):
+            movetext_font = conf.get("movetextFont", "FreeSerif Regular 12")
+            self.black_renderer.set_property("font", movetext_font)
+            self.white_renderer.set_property("font", movetext_font)
+            self.shownChanged(self.boardview, self.boardview.shown)
+
+        self.cids_conf = []
+        self.cids_conf.append(conf.notify_add("movetextFont", font_changed))
+        self.cids_conf.append(conf.notify_add("figuresInNotation", figuresInNotationCallback))
 
         return scrollwin
 
@@ -116,6 +127,8 @@ class Sidepanel:
         for cid in self.model_cids:
             self.gamemodel.disconnect(cid)
         self.boardview.disconnect(self.cid)
+        for cid in self.cids_conf:
+            conf.notify_remove(cid)
 
     def on_row_activated(self, tv, path, col, from_show_changed=False):
         if col not in (self.white_column, self.black_column):

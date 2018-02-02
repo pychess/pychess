@@ -675,10 +675,7 @@ def toFAN(board, move):
     """ Returns a Figurine Algebraic Notation string of a move """
 
     san = toSAN(board, move)
-    if board.color == WHITE:
-        return san.translate(san2WhiteFanDic)
-    else:
-        return san.translate(san2BlackFanDic)
+    return san.translate(san2WhiteFanDic)
 
 
 ################################################################################

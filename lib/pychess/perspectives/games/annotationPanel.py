@@ -105,22 +105,38 @@ class Sidepanel:
         self.textview.set_wrap_mode(Gtk.WrapMode.WORD)
         self.textbuffer = self.textview.get_buffer()
 
+        # Load of the preferences
+        def cb_config_changed(*args):
+            self.fetch_chess_conf()
+            for tag in (self.tag_move, self.tag_vari_top, self.tag_vari_even, self.tag_vari_uneven):
+                tag.set_property("font_desc", self.font)
+            self.update()
+        self.fetch_chess_conf()
+
+        self.cids_conf = []
+        self.cids_conf.append(conf.notify_add("movetextFont", cb_config_changed))
+        self.cids_conf.append(conf.notify_add("figuresInNotation", cb_config_changed))
+        self.cids_conf.append(conf.notify_add("showEmt", cb_config_changed))
+        self.cids_conf.append(conf.notify_add("showBlunder", cb_config_changed))
+        self.cids_conf.append(conf.notify_add("showEval", cb_config_changed))
+
         # Move text tags
         self.tag_remove_variation = self.textbuffer.create_tag("remove-variation")
         self.tag_new_line = self.textbuffer.create_tag("new_line")
 
-        self.textbuffer.create_tag("move", weight=Pango.Weight.BOLD)
-        self.textbuffer.create_tag("scored0", weight=Pango.Weight.BOLD)
+        self.tag_move = self.textbuffer.create_tag("move", font_desc=self.font)
+        self.tag_vari_top = self.textbuffer.create_tag("variation-toplevel", font_desc=self.font, style="italic")
+        self.tag_vari_even = self.textbuffer.create_tag("variation-even", font_desc=self.font, foreground="green", style="italic")
+        self.tag_vari_uneven = self.textbuffer.create_tag("variation-uneven", font_desc=self.font, foreground="red", style="italic")
+
+        self.textbuffer.create_tag("scored0")
         self.textbuffer.create_tag("scored1", foreground_rgba=Gdk.RGBA(0.2, 0, 0, 1))
         self.textbuffer.create_tag("scored2", foreground_rgba=Gdk.RGBA(0.4, 0, 0, 1))
         self.textbuffer.create_tag("scored3", foreground_rgba=Gdk.RGBA(0.6, 0, 0, 1))
         self.textbuffer.create_tag("scored4", foreground_rgba=Gdk.RGBA(0.8, 0, 0, 1))
         self.textbuffer.create_tag("scored5", foreground_rgba=Gdk.RGBA(1.0, 0, 0, 1))
-        self.textbuffer.create_tag("emt", foreground="grey", weight=Pango.Weight.NORMAL)
+        self.textbuffer.create_tag("emt", foreground="grey")
         self.textbuffer.create_tag("comment", foreground="blue")
-        self.textbuffer.create_tag("variation-toplevel", weight=Pango.Weight.NORMAL)
-        self.textbuffer.create_tag("variation-even", foreground="green", style="italic")
-        self.textbuffer.create_tag("variation-uneven", foreground="red", style="italic")
         self.textbuffer.create_tag("selected", background_full_height=True, background="grey")
         self.textbuffer.create_tag("margin", left_margin=4)
         self.textbuffer.create_tag("variation-margin0", left_margin=20)
@@ -148,18 +164,6 @@ class Sidepanel:
             self.gamemodel.connect("analysis_changed", self.analysis_changed),
             self.gamemodel.connect("analysis_finished", self.update),
         ]
-        self.cids_conf = []
-
-        # Load of the preferences
-        def cb_config_changed(*args):
-            self.fetch_chess_conf()
-            self.update()
-
-        self.cids_conf.append(conf.notify_add("figuresInNotation", cb_config_changed))
-        self.cids_conf.append(conf.notify_add("showEmt", cb_config_changed))
-        self.cids_conf.append(conf.notify_add("showBlunder", cb_config_changed))
-        self.cids_conf.append(conf.notify_add("showEval", cb_config_changed))
-        self.fetch_chess_conf()
 
         # Layout
         __widget__ = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -191,6 +195,8 @@ class Sidepanel:
         The method retrieves few parameters from the configuration.
         """
         self.fan = conf.get("figuresInNotation", False)
+        movetext_font = conf.get("movetextFont", "FreeSerif Regular 12")
+        self.font = Pango.font_description_from_string(movetext_font)
         self.showEmt = conf.get("showEmt", False)
         self.showBlunder = conf.get("showBlunder", False) and not self.gamemodel.isPlayingICSGame()
         self.showEval = conf.get("showEval", False) and not self.gamemodel.isPlayingICSGame()

@@ -653,8 +653,8 @@
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="F11" signal="activate"/>
                         <accelerator key="Escape" signal="activate"/>
+                        <accelerator key="F11" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -2699,7 +2699,7 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="can_focus">False</property>
                                     <property name="left_padding">12</property>
                                     <child>
-                                      <object class="GtkBox" id="boardcolours_box1">
+                                      <object class="GtkBox" id="background_box">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="border_width">0</property>
@@ -3026,6 +3026,82 @@ It will search positions from http://www.k4it.de/</property>
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkFrame" id="Chess text font">
+                            <property name="name">Board Colours</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label_xalign">0</property>
+                            <property name="shadow_type">none</property>
+                            <child>
+                              <object class="GtkAlignment" id="alignment7">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="left_padding">12</property>
+                                <child>
+                                  <object class="GtkBox" id="font_box">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="border_width">0</property>
+                                    <property name="orientation">vertical</property>
+                                    <child>
+                                      <object class="GtkBox" id="font">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="spacing">9</property>
+                                        <child>
+                                          <object class="GtkLabel" id="label69">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="label" translatable="yes">Font:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkAlignment" id="fontChooserDock">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="padding">4</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel" id="label75">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Move text&lt;/b&gt;</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkFrame" id="chess_sets_frame">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -3079,7 +3155,7 @@ It will search positions from http://www.k4it.de/</property>
                           <packing>
                             <property name="expand">True</property>
                             <property name="fill">True</property>
-                            <property name="position">2</property>
+                            <property name="position">3</property>
                           </packing>
                         </child>
                       </object>
@@ -3158,6 +3234,9 @@ It will search positions from http://www.k4it.de/</property>
                                 <property name="n_columns">3</property>
                                 <property name="column_spacing">3</property>
                                 <property name="row_spacing">3</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
                                 <child>
                                   <object class="GtkComboBox" id="sound0combo">
                                     <property name="visible">True</property>
@@ -3925,9 +4004,6 @@ It will search positions from http://www.k4it.de/</property>
                                     <property name="x_options">GTK_FILL</property>
                                     <property name="y_options"/>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                             </child>

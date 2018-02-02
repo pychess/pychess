@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 """ :Description: This module facilitates configurable object that the end user can
     customise such as which chess setor board colours to use or the ability to turn on/off
     various sidepanel facilities such as hints, comments engine analysis etc. It also allows
@@ -274,10 +276,12 @@ class HintTab:
 
 # Setup default sounds
 EXT = "wav" if sys.platform == "win32" else "ogg"
+COUNT_OF_SOUNDS = 13
 
-for i in range(11):
+for i in range(COUNT_OF_SOUNDS):
     if not conf.hasKey("soundcombo%d" % i):
         conf.set("soundcombo%d" % i, SOUND_URI)
+
 if not conf.hasKey("sounduri0"):
     conf.set("sounduri0",
              "file:" + pathname2url(addDataPrefix("sounds/move1.%s" % EXT)))
@@ -323,8 +327,6 @@ class SoundTab:
 
     SOUND_DIRS = (addDataPrefix("sounds"), "/usr/share/sounds",
                   "/usr/local/share/sounds", os.path.expanduser("~"))
-
-    COUNT_OF_SOUNDS = 13
 
     actionToKeyNo = {
         "aPlayerMoves": 0,
@@ -422,10 +424,9 @@ class SoundTab:
                                                  SOUND_MUTE))
                 opendialog.hide()
 
-        for i in range(self.COUNT_OF_SOUNDS):
+        for i in range(COUNT_OF_SOUNDS):
             combo = widgets["sound%dcombo" % i]
             uistuff.createCombo(combo, items, name="soundcombo%d" % i)
-            # combo.set_active(0)
             combo.connect("changed", callback, i)
 
             label = widgets["soundlabel%d" % i]
@@ -435,9 +436,8 @@ class SoundTab:
             if os.path.isfile(url2pathname(uri[5:])):
                 model = combo.get_model()
                 model.append([audioIco, unquote(os.path.split(uri)[1])])
-                # combo.set_active(3)
 
-        for i in range(self.COUNT_OF_SOUNDS):
+        for i in range(COUNT_OF_SOUNDS):
             if conf.get("soundcombo%d" % i, SOUND_MUTE) == SOUND_URI and \
                     not os.path.isfile(url2pathname(conf.get("sounduri%d" % i, "")[5:])):
                 conf.set("soundcombo%d" % i, SOUND_MUTE)
@@ -448,7 +448,7 @@ class SoundTab:
         def playCallback(button, index):
             SoundTab.playAction(index)
 
-        for i in range(self.COUNT_OF_SOUNDS):
+        for i in range(COUNT_OF_SOUNDS):
             button = widgets["sound%dbutton" % i]
             button.connect("clicked", playCallback, i)
 
@@ -608,6 +608,18 @@ class ThemeTab:
     """
     def __init__(self, widgets):
         self.widgets = widgets
+
+        # Font chooser
+        font = conf.get("movetextFont", "FreeSerif Regular 12")
+        font_button = Gtk.FontButton.new_with_font(font)
+        demo_text = "♔a1 ♕f8 ♖h8 ♗g7 ♘g2 Ka1 Qf8 Rh8 Bg7 Ng2"
+        font_button.set_preview_text(demo_text)
+        self.widgets["fontChooserDock"].add(font_button)
+        font_button.show()
+
+        def select_font(button):
+            conf.set("movetextFont", button.get_font_name())
+        font_button.connect("font-set", select_font)
 
         # Background image
         path = conf.get("welcome_image", addDataPrefix("glade/clear.png"))
