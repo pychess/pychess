@@ -70,7 +70,6 @@ class Sidepanel:
         # mvcount, white move, black move, row number, white move background, black move background
         self.store = Gtk.ListStore(str, str, str, int, str, str)
         self.tv.set_model(self.store)
-        self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         self.tv_cid = self.tv.connect('row_activated', self.on_row_activated)
 
         self.boardview = gmwidg.board.view
@@ -133,8 +132,6 @@ class Sidepanel:
     def on_row_activated(self, tv, path, col, from_show_changed=False):
         if col not in (self.white_column, self.black_column):
             return
-        selection = self.tv.get_selection()
-        selection.unselect_all()
 
         # Make previous activated cell background color unselected
         old_row, old_col = self.activated_cell
