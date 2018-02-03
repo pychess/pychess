@@ -653,8 +653,8 @@
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="Escape" signal="activate"/>
                         <accelerator key="F11" signal="activate"/>
+                        <accelerator key="Escape" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -6766,6 +6766,20 @@ If it can use both  you can set here which one you like.</property>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
                             <property name="position">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="paste_sub_fen">
+                            <property name="label">gtk-paste</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_stock">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">3</property>
                           </packing>
                         </child>
                       </object>

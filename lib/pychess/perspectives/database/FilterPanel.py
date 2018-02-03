@@ -79,6 +79,7 @@ class FilterPanel(Gtk.TreeView):
         self.widgets[dock].get_child().show()
 
         self.widgets["copy_sub_fen"].connect("clicked", self.on_copy_sub_fen)
+        self.widgets["paste_sub_fen"].connect("clicked", self.on_paste_sub_fen)
 
         # We will store our filtering queries in a ListStore
         # column 0: query as text
@@ -624,6 +625,12 @@ class FilterPanel(Gtk.TreeView):
         text = self.widgets["sub_fen"].get_text()
         if len(text) > 0:
             clipboard.set_text(text, -1)
+
+    def on_paste_sub_fen(self, widget):
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        text = clipboard.wait_for_text()
+        if text.count("/") == 7:
+            self.board_control.emit("action", "SETUP", None, text)
 
     def game_changed(self, model, ply):
         GLib.idle_add(self.fen_changed)
