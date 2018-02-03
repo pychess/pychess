@@ -1,13 +1,15 @@
 Features
 --------
 
+- Play on FICS (freechess.org)
+- Play on ICC (chessclub.com)
 - CECP and UCI chess engine support with customizable engine configurations
 - Polyglot opening book support
 - Gaviota end-game tablebase support
 - Hint and Spy move arrows
 - Hint, Score, and Annotation panels
 - Play and analyze games in separate game tabs
-- Countless chess variants including Chess960, Suicide, Crazyhouse, Shuffle, Wildcastle, Losers, Atomic, Three-check, King of the hill, Makruk, Sittuyin, Cambodian
+- Countless chess variants including Chess960, Suicide, Crazyhouse, Shuffle, Wildcastle, Losers, Atomic, Three-check, King of the hill, Horde, Makruk, Sittuyin, Cambodian
 - Reads and writes PGN, EPD and FEN chess file formats
 - Undo and pause chess games
 - Move animation in games
