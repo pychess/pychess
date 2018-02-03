@@ -14,6 +14,7 @@ Subpackages
     pychess.Variants
     pychess.gfx
     pychess.ic
+    pychess.perspectives
     pychess.widgets
 
 Submodules
@@ -23,14 +24,6 @@ pychess.Main module
 -------------------
 
 .. automodule:: pychess.Main
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pychess.compat module
----------------------
-
-.. automodule:: pychess.compat
     :members:
     :undoc-members:
     :show-inheritance:

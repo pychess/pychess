@@ -4,6 +4,14 @@ pychess.Database package
 Submodules
 ----------
 
+pychess.Database.JvR module
+---------------------------------
+
+.. automodule:: pychess.Database.JvR
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pychess.Database.PgnImport module
 ---------------------------------
 
@@ -20,26 +28,10 @@ pychess.Database.dbwalk module
     :undoc-members:
     :show-inheritance:
 
-pychess.Database.gamelist module
---------------------------------
-
-.. automodule:: pychess.Database.gamelist
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.Database.model module
 -----------------------------
 
 .. automodule:: pychess.Database.model
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pychess.Database.timer module
------------------------------
-
-.. automodule:: pychess.Database.timer
     :members:
     :undoc-members:
     :show-inheritance:

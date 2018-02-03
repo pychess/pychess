@@ -21,7 +21,7 @@ __title__ = _("Endgames")
 
 __icon__ = addDataPrefix("glade/panel_book.svg")
 
-__desc__ = _("Practice endgames")
+__desc__ = _("Practice endgames with computer")
 
 
 # TODO: get it from a text file

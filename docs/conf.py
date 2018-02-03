@@ -7,26 +7,65 @@ import os
 # mocking C extension modules we use in pychess
 # Currently looks like unittest.mock is broken in python 3.5
 # had to 'pip install -U mock' to get this to work
-if sys.version_info < (3,5):
+if sys.version_info < (3, 5):
     from unittest.mock import MagicMock
 else:
     from mock import Mock as MagicMock
+
 
 class GObjectMock(MagicMock):
     class GObject():
         def connect(*args):
             pass
 
+        def connect_after(*args):
+            pass
+
+
 class GtkMock(MagicMock):
     class Alignment:
-        pass
+        def add(*args):
+            pass
+
+    class ComboBox:
+        def add_attribute(*args):
+            pass
+
+        def clear(*args):
+            pass
+
+        def connect(*args):
+            pass
+
+        def get_active(*args):
+            return 0
+
+        def get_value(*args):
+            return 0
+
+        def set_value(*args):
+            pass
+
+        def pack_start(*args):
+            pass
+
+        def set_model(*args):
+            pass
+
     class Notebook:
         def set_show_border(*args):
             pass
+
         def set_show_tabs(*args):
             pass
+
     class ScrolledWindow:
         pass
+
+    class Slider:
+        def get_value(*args):
+            return 0
+
 
 class Mock(MagicMock):
     @classmethod
@@ -38,8 +77,10 @@ class Mock(MagicMock):
         else:
             return Mock()
 
-MOCK_MODULES = ['cairo', 'gi', 'gi.repository', 'gi.repository.GdkPixbuf',
-                'sqlalchemy', 'sqlalchemy.exc', 'sqlalchemy.schema']
+
+MOCK_MODULES = ['cairo', 'gi', 'gi.repository', 'gi.repository.GdkPixbuf', 'gi.repository.GLib',
+                'sqlalchemy', 'sqlalchemy.engine', 'sqlalchemy.exc', 'sqlalchemy.pool',
+                'sqlalchemy.ext.compiler', 'sqlalchemy.schema', 'sqlalchemy.sql.expression']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
@@ -47,7 +88,10 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 sys.path.insert(0, os.path.abspath('../lib'))
 sys.path.insert(0, os.path.abspath('../sidepanels'))
 
-import pychess
+try:
+    import pychess
+except ImportError:
+    pass
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -57,7 +101,7 @@ extensions = [
     'sphinx.ext.intersphinx',
 ]
 
-#intersphinx_mapping = {'Gtk' : ('http://lazka.github.io/pgi-docs/#Gtk-3.0/', None )}
+# intersphinx_mapping = {'Gtk' : ('http://lazka.github.io/pgi-docs/#Gtk-3.0/', None )}
 
 intersphinx_mapping = {
     'gobject': ('http://lazka.github.io/pgi-docs/GObject-2.0', None),

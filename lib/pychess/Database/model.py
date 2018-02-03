@@ -31,9 +31,14 @@ def after_cursor_execute(conn, cursor, statement, parameters, context, executema
     log.debug("Total Time: %.02fms" % (total * 1000), extra={"task": "SQL"})
 
 
-class Explain(Executable, ClauseElement):
-    def __init__(self, stmt):
-        self.statement = _literal_as_text(stmt)
+# Just to make sphinx happy...
+try:
+    class Explain(Executable, ClauseElement):
+        def __init__(self, stmt):
+            self.statement = _literal_as_text(stmt)
+except TypeError:
+    class Explain:
+        pass
 
 
 @compiles(Explain, 'sqlite')

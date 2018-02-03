@@ -79,11 +79,16 @@ def setup_glib_logging():
         GLib.LogLevelFlags.LEVEL_ERROR: logging.ERROR,
         GLib.LogLevelFlags.LEVEL_CRITICAL: logging.CRITICAL,
     }
-    level_flag = (
-        GLib.LogLevelFlags.LEVEL_WARNING |
-        GLib.LogLevelFlags.LEVEL_ERROR |
-        GLib.LogLevelFlags.LEVEL_CRITICAL
-    )
+
+    # Just to make sphinx happy...
+    try:
+        level_flag = (
+            GLib.LogLevelFlags.LEVEL_WARNING |
+            GLib.LogLevelFlags.LEVEL_ERROR |
+            GLib.LogLevelFlags.LEVEL_CRITICAL
+        )
+    except TypeError:
+        level_flag = GLib.LogLevelFlags.LEVEL_INFO
 
     log_domain = "Gtk"
     log = logging.getLogger(log_domain)

@@ -20,26 +20,10 @@ pychess.System.LogEmitter module
     :undoc-members:
     :show-inheritance:
 
-pychess.System.MultiArray module
---------------------------------
-
-.. automodule:: pychess.System.MultiArray
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.System.SubProcess module
 --------------------------------
 
 .. automodule:: pychess.System.SubProcess
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pychess.System.TaskQueue module
--------------------------------
-
-.. automodule:: pychess.System.TaskQueue
     :members:
     :undoc-members:
     :show-inheritance:
@@ -76,14 +60,6 @@ pychess.System.conf module
     :undoc-members:
     :show-inheritance:
 
-pychess.System.conf_configParser module
----------------------------------------
-
-.. automodule:: pychess.System.conf_configParser
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.System.debug module
 ---------------------------
 
@@ -92,18 +68,18 @@ pychess.System.debug module
     :undoc-members:
     :show-inheritance:
 
-pychess.System.gstreamer module
--------------------------------
+pychess.System.gst_player module
+--------------------------------
 
-.. automodule:: pychess.System.gstreamer
+.. automodule:: pychess.System.gst_player
     :members:
     :undoc-members:
     :show-inheritance:
 
-pychess.System.idle_add module
-------------------------------
+pychess.System.gstreamer module
+-------------------------------
 
-.. automodule:: pychess.System.idle_add
+.. automodule:: pychess.System.gstreamer
     :members:
     :undoc-members:
     :show-inheritance:
@@ -132,6 +108,14 @@ pychess.System.protoopen module
     :undoc-members:
     :show-inheritance:
 
+pychess.System.readuntil module
+-------------------------------
+
+.. automodule:: pychess.System.readuntil
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pychess.System.repeat module
 ----------------------------
 
@@ -144,14 +128,6 @@ pychess.System.uistuff module
 -----------------------------
 
 .. automodule:: pychess.System.uistuff
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pychess.System.which module
----------------------------
-
-.. automodule:: pychess.System.which
     :members:
     :undoc-members:
     :show-inheritance:

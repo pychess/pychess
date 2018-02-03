@@ -177,8 +177,12 @@ class NewGameTasker(Gtk.Alignment):
         widgets['opponentLabel'].set_mnemonic_widget(self.playerCombo)
 
         def on_skill_changed(scale):
-            pix = newGameDialog.skillToIconLarge[int(scale.get_value())]
-            widgets["skillImage"].set_from_pixbuf(pix)
+            # Just to make sphinx happy...
+            try:
+                pix = newGameDialog.skillToIconLarge[int(scale.get_value())]
+                widgets["skillImage"].set_from_pixbuf(pix)
+            except TypeError:
+                pass
 
         widgets["skillSlider"].connect("value-changed", on_skill_changed)
         on_skill_changed(widgets["skillSlider"])
@@ -357,8 +361,12 @@ class DatabaseTasker(Gtk.Alignment):
 
     def on_recent_menu_changed(self, manager, liststore):
         liststore.clear()
-        for uri in recent_menu.get_uris():
-            liststore.append((uri, basename(unquote(uri)), ))
+        # Just to make sphinx happy...
+        try:
+            for uri in recent_menu.get_uris():
+                liststore.append((uri, basename(unquote(uri)), ))
+        except TypeError:
+            pass
         self.recent_combo.set_active(0)
 
     def openDialogClicked(self, button):

@@ -75,14 +75,6 @@ pychess.Utils.Piece module
     :undoc-members:
     :show-inheritance:
 
-pychess.Utils.Rating module
----------------------------
-
-.. automodule:: pychess.Utils.Rating
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.Utils.SetupModel module
 -------------------------------
 
@@ -107,6 +99,14 @@ pychess.Utils.book module
     :undoc-members:
     :show-inheritance:
 
+pychess.Utils.checkversion module
+---------------------------------
+
+.. automodule:: pychess.Utils.checkversion
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pychess.Utils.const module
 --------------------------
 
@@ -123,10 +123,26 @@ pychess.Utils.eco module
     :undoc-members:
     :show-inheritance:
 
+pychess.Utils.elo module
+------------------------
+
+.. automodule:: pychess.Utils.elo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pychess.Utils.eval module
 -------------------------
 
 .. automodule:: pychess.Utils.eval
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.Utils.isoCountries module
+---------------------------------
+
+.. automodule:: pychess.Utils.isoCountries
     :members:
     :undoc-members:
     :show-inheritance:

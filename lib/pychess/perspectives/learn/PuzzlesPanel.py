@@ -19,7 +19,7 @@ __title__ = _("Puzzles")
 
 __icon__ = addDataPrefix("glade/panel_book.svg")
 
-__desc__ = _("Puzzles from GM games")
+__desc__ = _("Puzzles from GM games and Chess compositions")
 
 
 # http://wtharvey.com/

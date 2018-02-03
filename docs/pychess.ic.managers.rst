@@ -100,6 +100,93 @@ pychess.ic.managers.SeekManager module
     :undoc-members:
     :show-inheritance:
 
+pychess.ic.managers.ICCAdjournManager module
+--------------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCAdjournManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.ic.managers.ICCAutoLogOutManager module
+-----------------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCAutoLogOutManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.ic.managers.ICCBoardManager module
+------------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCBoardManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.ic.managers.ICCChatManager module
+-----------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCChatManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.ic.managers.ICCErrorManager module
+------------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCErrorManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.ic.managers.ICCFingerManager module
+-------------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCFingerManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.ic.managers.ICCHelperManager module
+-------------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCHelperManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.ic.managers.ICCListAndVarManager module
+-----------------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCListAndVarManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.ic.managers.ICCNewsManager module
+-----------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCNewsManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.ic.managers.ICCOfferManager module
+------------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCOfferManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.ic.managers.ICCSeekManager module
+-----------------------------------------
+
+.. automodule:: pychess.ic.managers.ICCSeekManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Module contents
 ---------------

@@ -60,14 +60,6 @@ pychess.Savers.pgn module
     :undoc-members:
     :show-inheritance:
 
-pychess.Savers.pgnbase module
------------------------------
-
-.. automodule:: pychess.Savers.pgnbase
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.Savers.png module
 -------------------------
 

@@ -76,6 +76,22 @@ pychess.Variants.fischerandom module
     :undoc-members:
     :show-inheritance:
 
+pychess.Variants.giveaway module
+--------------------------------
+
+.. automodule:: pychess.Variants.giveaway
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.Variants.horde module
+-----------------------------
+
+.. automodule:: pychess.Variants.horde
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pychess.Variants.kingofthehill module
 -------------------------------------
 
@@ -136,6 +152,14 @@ pychess.Variants.queenodds module
 ---------------------------------
 
 .. automodule:: pychess.Variants.queenodds
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.Variants.racingkings module
+-----------------------------------
+
+.. automodule:: pychess.Variants.racingkings
     :members:
     :undoc-members:
     :show-inheritance:

@@ -145,7 +145,12 @@ def keep(widget, key, get_value_=None, set_value_=None, first_value=None):
         raise AttributeError("key '%s' isn't in widgets" % key)
 
     for class_, methods_ in METHODS:
-        if isinstance(widget, class_):
+        # Use try-except just to make spinx happy...
+        try:
+            if isinstance(widget, class_):
+                getter, setter, signal = methods_
+                break
+        except TypeError:
             getter, setter, signal = methods_
             break
     else:
@@ -306,7 +311,11 @@ def keepWindowSize(key,
 
     def loadPosition(window):
         # log.debug("keepWindowSize.loadPosition: %s" % window.title)
-        width, height = window.get_size_request()
+        # Just to make sphinx happy...
+        try:
+            width, height = window.get_size_request()
+        except TypeError:
+            pass
 
         if conf.hasKey(key + "_width") and conf.hasKey(key + "_height"):
             width = conf.get(key + "_width")
@@ -322,8 +331,7 @@ def keepWindowSize(key,
             window.resize(width, height)
 
         elif key == "mainwindow":
-            monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds(
-            )
+            monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds()
             width = int(monitor_width / 2)
             height = int(monitor_height / 4) * 3
             log.debug("Resizing window to width=%s height=%s" %
@@ -331,7 +339,14 @@ def keepWindowSize(key,
             window.resize(width, height)
 
         elif key == "preferencesdialogwindow":
+            monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds()
+            width = int(monitor_width / 2)
+            height = int(monitor_height / 4) * 3
             window.resize(1, 1)
+        else:
+            monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds()
+            width = int(monitor_width / 2)
+            height = int(monitor_height / 4) * 3
 
         if conf.hasKey(key + "_x") and conf.hasKey(key + "_y"):
             x = max(0, conf.get(key + "_x"))
@@ -340,8 +355,7 @@ def keepWindowSize(key,
             window.move(x, y)
 
         elif defaultPosition in (POSITION_CENTER, POSITION_GOLDEN):
-            monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds(
-            )
+            monitor_x, monitor_y, monitor_width, monitor_height = getMonitorBounds()
             x_loc = int(monitor_width / 2 - width / 2) + monitor_x
             if defaultPosition == POSITION_CENTER:
                 y_loc = int(monitor_height / 2 - height / 2) + monitor_y
@@ -376,10 +390,14 @@ def onceWhenReady(window, func, *args, **kwargs):
 def getMonitorBounds():
     screen = Gdk.Screen.get_default()
     root_window = screen.get_root_window()
-    ptr_window, mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
-    current_monitor_number = screen.get_monitor_at_point(mouse_x, mouse_y)
-    monitor_geometry = screen.get_monitor_geometry(current_monitor_number)
-    return monitor_geometry.x, monitor_geometry.y, monitor_geometry.width, monitor_geometry.height
+    # Just to make sphinx happy...
+    try:
+        ptr_window, mouse_x, mouse_y, mouse_mods = root_window.get_pointer()
+        current_monitor_number = screen.get_monitor_at_point(mouse_x, mouse_y)
+        monitor_geometry = screen.get_monitor_geometry(current_monitor_number)
+        return monitor_geometry.x, monitor_geometry.y, monitor_geometry.width, monitor_geometry.height
+    except TypeError:
+        return (0, 0, 0, 0)
 
 
 tooltip = Gtk.Window(Gtk.WindowType.POPUP)

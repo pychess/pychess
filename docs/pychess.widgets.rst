@@ -27,14 +27,6 @@ pychess.widgets.BoardControl module
     :undoc-members:
     :show-inheritance:
 
-pychess.widgets.BoardPreview module
------------------------------------
-
-.. automodule:: pychess.widgets.BoardPreview
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.widgets.BoardView module
 --------------------------------
 
@@ -59,18 +51,18 @@ pychess.widgets.ChainVBox module
     :undoc-members:
     :show-inheritance:
 
-pychess.widgets.ChatView module
--------------------------------
+pychess.widgets.ChannelsPanel module
+------------------------------------
 
-.. automodule:: pychess.widgets.ChatView
+.. automodule:: pychess.widgets.ChannelsPanel
     :members:
     :undoc-members:
     :show-inheritance:
 
-pychess.widgets.ChatWindow module
----------------------------------
+pychess.widgets.ChatView module
+-------------------------------
 
-.. automodule:: pychess.widgets.ChatWindow
+.. automodule:: pychess.widgets.ChatView
     :members:
     :undoc-members:
     :show-inheritance:
@@ -83,10 +75,10 @@ pychess.widgets.ChessClock module
     :undoc-members:
     :show-inheritance:
 
-pychess.widgets.ConsoleWindow module
-------------------------------------
+pychess.widgets.ExternalsDialog module
+--------------------------------------
 
-.. automodule:: pychess.widgets.ConsoleWindow
+.. automodule:: pychess.widgets.ExternalsDialog
     :members:
     :undoc-members:
     :show-inheritance:
@@ -103,6 +95,22 @@ pychess.widgets.InfoBar module
 ------------------------------
 
 .. automodule:: pychess.widgets.InfoBar
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.widgets.InfoPanel module
+--------------------------------
+
+.. automodule:: pychess.widgets.InfoPanel
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.widgets.LearnInfoBar module
+-----------------------------------
+
+.. automodule:: pychess.widgets.LearnInfoBar
     :members:
     :undoc-members:
     :show-inheritance:
@@ -131,10 +139,10 @@ pychess.widgets.PromotionDialog module
     :undoc-members:
     :show-inheritance:
 
-pychess.widgets.SetupBoard module
----------------------------------
+pychess.widgets.RecentChooser module
+------------------------------------
 
-.. automodule:: pychess.widgets.SetupBoard
+.. automodule:: pychess.widgets.RecentChooser
     :members:
     :undoc-members:
     :show-inheritance:
@@ -155,10 +163,18 @@ pychess.widgets.TaskerManager module
     :undoc-members:
     :show-inheritance:
 
-pychess.widgets.ToggleComboBox module
--------------------------------------
+pychess.widgets.ViewsPanel module
+---------------------------------
 
-.. automodule:: pychess.widgets.ToggleComboBox
+.. automodule:: pychess.widgets.ViewsPanel
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pychess.widgets.WebKitBrowser module
+------------------------------------
+
+.. automodule:: pychess.widgets.WebKitBrowser
     :members:
     :undoc-members:
     :show-inheritance:
@@ -207,14 +223,6 @@ pychess.widgets.gamewidget module
 ---------------------------------
 
 .. automodule:: pychess.widgets.gamewidget
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pychess.widgets.ionest module
------------------------------
-
-.. automodule:: pychess.widgets.ionest
     :members:
     :undoc-members:
     :show-inheritance:

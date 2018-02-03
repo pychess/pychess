@@ -43,14 +43,6 @@ pychess.ic.ICLogon module
     :undoc-members:
     :show-inheritance:
 
-pychess.ic.ICLounge module
---------------------------
-
-.. automodule:: pychess.ic.ICLounge
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pychess.ic.TimeSeal module
 --------------------------
 

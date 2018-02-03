@@ -17,7 +17,7 @@ __title__ = _("Lessons")
 
 __icon__ = addDataPrefix("glade/panel_book.svg")
 
-__desc__ = _("Guided interactive lessons in guess the move style")
+__desc__ = _('Guided interactive lessons in "guess the move" style')
 
 
 LESSONS = (
