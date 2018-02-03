@@ -149,7 +149,7 @@ class GameModel(GObject.GObject):
         if self.timed:
             self.zero_reached_cid = self.timemodel.connect('zero_reached', self.zero_reached)
             if self.timemodel.moves == 0:
-                self.tags["TimeControl"] = "%d+%d" % (self.timemodel.minutes * 60, self.timemodel.gain)
+                self.tags["TimeControl"] = "%d%s%d" % (self.timemodel.minutes * 60, "+" if self.timemodel.gain >= 0 else "-", abs(self.timemodel.gain))
             else:
                 self.tags["TimeControl"] = "%d/%d" % (self.timemodel.moves, self.timemodel.minutes * 60)
             # Notice: tags["WhiteClock"] and tags["BlackClock"] are never set

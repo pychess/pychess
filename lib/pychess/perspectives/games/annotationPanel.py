@@ -15,8 +15,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.Utils.Cord import Cord
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toSAN, toFAN, FCORD, TCORD
-from pychess.Savers.pgn import move_count
-from pychess.Savers.pgn import nag2symbol
+from pychess.Savers.pgn import move_count, nag2symbol, parseTimeControlTag
 from pychess.widgets.ChessClock import formatTime
 from pychess.widgets.LearnInfoBar import LearnInfoBar
 from pychess.widgets import insert_formatted
@@ -1060,19 +1059,28 @@ class Sidepanel:
         text = ""
         time_control = self.gamemodel.tags.get('TimeControl')
         if time_control:
-            if re.match("^[0-9]+\+[0-9]+$", time_control) is None:
+            match = parseTimeControlTag(time_control)
+            if match is None:
                 text += time_control
             else:
-                mins, inc = time_control.split('+')
-                tmin = int(floor(int(mins) / 60))
-                tsec = int(mins) - 60 * tmin
+                secs, inc, moves = match
+
+                ttime = ""
+                tmin = int(floor(secs / 60))
+                tsec = secs - 60 * tmin
                 if tmin > 0:
-                    text += str(tmin) + " " + (_("mins") if tmin > 1 else _("min"))
+                    ttime += str(tmin) + " " + (_("mins") if tmin > 1 else _("min"))
                 if tsec > 0:
-                    text += " " if text != "" else ""
-                    text += str(tsec) + " " + (_("secs") if tsec > 1 else _("sec"))
-                if inc != "" and inc != "0":
-                    text += " + " + inc + " " + (_("secs") if int(inc) > 1 else _("sec")) + "/" + _("move")
+                    if ttime != "":
+                        ttime += " "
+                    ttime += str(tsec) + " " + (_("secs") if tsec > 1 else _("sec"))
+
+                if moves is not None and moves > 0:
+                    text += _("%s for %d moves") % (ttime, moves)
+                else:
+                    text += ttime
+                    if inc != 0:
+                        text += (" + " if inc >= 0 else " – ") + str(abs(inc)) + " " + (_("secs") if abs(inc) > 1 else _("sec")) + "/" + _("move")
 
         event = self.gamemodel.tags['Event']
         if event and event != "?":

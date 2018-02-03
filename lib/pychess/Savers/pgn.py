@@ -120,14 +120,14 @@ def parseClockTimeTag(tag):
 def parseTimeControlTag(tag):
     """
     Parses 'TimeControl' PGN header and returns the time and gain the
-    players have on game satrt in seconds
+    players have on game start in seconds
     """
-    match = re.match("(\d+)(?:\+(\d+))?", tag)
+    match = re.match("^(\d+)\+?(\-?\d+)?$", tag)
     if match:
         secs, gain = match.groups()
         return int(secs), int(gain) if gain is not None else 0, 0
     else:
-        match = re.match("(\d+)(?:\/(\d+))?", tag)
+        match = re.match("^(\d+)\/(\d+)$", tag)
         if match:
             moves, secs = match.groups()
             return int(secs), 0, int(moves)
