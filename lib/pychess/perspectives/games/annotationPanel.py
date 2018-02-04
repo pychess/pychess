@@ -657,7 +657,6 @@ class Sidepanel:
                 end = self.textbuffer.get_iter_at_offset(n["end"])
                 node = n
                 break
-
         if node is None:
             return
 
@@ -674,6 +673,7 @@ class Sidepanel:
             for node in self.nodelist[index + 1:]:
                 node["start"] += diff
                 node["end"] += diff
+        self.update_selected_node()
 
     def insert_node(self, board, iter, index, level, parent):
         start = iter.get_offset()
