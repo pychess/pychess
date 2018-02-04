@@ -1,0 +1,1316 @@
+---
+authors: 
+  - Lasker, Emanuel
+source: Lasker's Chess Magazine
+date: 1906
+algebraic: 
+  white: [Kc1, Qg2, Ra4, Sf3, Sd4, Pg5, Pf2]
+  black: [Kf4, Qa8, Be7, Sg7, Pd6, Pc3]
+stipulation: "#2"
+solution: |
+  "1...Nf5 2.Ne2#/Ne6#
+  1...Qe4 2.Qg3#
+  
+  1.Qh2+??
+     1...Kg4 2.Qh4#
+  but 1...Ke4!
+  
+  1.Qh3?? (2.Ne2#/Ne6#/Qh4#)
+     1...Nf5 2.Qxf5#/Ne2#/Ne6#
+     1...Qxa4 2.Qh4#
+     1...Qc8 2.Ne2#/Ne6#/Nc6#
+     1...Qh8 2.Ne2#/Ne6#/Nf5#/Nc2#/Nc6#/Nb3#/Nb5#
+     1...Qe4 2.Ne2#/Qh4#/Qg3#
+     1...Qxf3 2.Nxf3#
+     1...Bxg5 2.Ne2#/Ne6#
+  but 1...Ke4!
+  
+  1.Nh4! (2.Ng6#)
+     1...Qe8 2.Nc6#
+     1...Qe4 2.Qg3#
+     1...Qf3/Qxg2 2.Ndxf3#"
+keywords: 
+  - Flight giving and taking key
+---
+authors: 
+  - Keidanski, Theodore Hermann
+  - Lasker, Emanuel
+source: Lasker's Chess Magazine
+date: 1908-01
+algebraic: 
+  white: [Kd8, Rd4, Ra8, Pg5]
+  black: [Kc6, Pf5]
+stipulation: "#4"
+solution: |
+  "1.Rd4-f4 ! zugzwang.
+        1...Kc6-d6 
+            2.Rf4*f5 threat:
+                    3.Ra8-a6 # 
+                2...Kd6-e6 
+                    3.Ra8-a5 threat:
+                            4.Rf5-f6 # 
+                2...Kd6-c6 
+                    3.Ra8-b8 zugzwang.
+                        3...Kc6-d6 
+                            4.Rb8-b6 # 
+        1...Kc6-b6 
+            2.Ra8-b8 + 
+                2...Kb6-c6 
+                    3.Rf4*f5 zugzwang.
+                        3...Kc6-d6 
+                            4.Rb8-b6 # 
+                2...Kb6-a6 
+                    3.Rf4-a4 # 
+                2...Kb6-a7 
+                    3.Kd8-c8 threat:
+                            4.Rf4-a4 # 
+                    3.Kd8-c7 threat:
+                            4.Rf4-a4 # 
+                    3.Rb8-b1 threat:
+                            4.Rf4-a4 # 
+                    3.Rb8-b2 threat:
+                            4.Rf4-a4 # 
+                    3.Rb8-b3 threat:
+                            4.Rf4-a4 # 
+                2...Kb6-c5 
+                    3.Kd8-d7 zugzwang.
+                        3...Kc5-d5 
+                            4.Rb8-b5 # 
+                2...Kb6-a5 
+                    3.Kd8-d7 zugzwang.
+                        3...Ka5-a6 
+                            4.Rf4-a4 # 
+                    3.Kd8-e8 zugzwang.
+                        3...Ka5-a6 
+                            4.Rf4-a4 # 
+                    3.Kd8-c8 zugzwang.
+                        3...Ka5-a6 
+                            4.Rf4-a4 # 
+                    3.Kd8-e7 zugzwang.
+                        3...Ka5-a6 
+                            4.Rf4-a4 # 
+                    3.Kd8-c7 zugzwang.
+                        3...Ka5-a6 
+                            4.Rf4-a4 # 
+                    3.Rb8-b1 zugzwang.
+                        3...Ka5-a6 
+                            4.Rf4-a4 # 
+                    3.Rb8-b2 zugzwang.
+                        3...Ka5-a6 
+                            4.Rf4-a4 # 
+                    3.Rb8-b3 zugzwang.
+                        3...Ka5-a6 
+                            4.Rf4-a4 # 
+                    3.g5-g6 zugzwang.
+                        3...Ka5-a6 
+                            4.Rf4-a4 # 
+                    3.Rf4-f1 threat:
+                            4.Rf1-a1 # 
+                    3.Rf4-f2 threat:
+                            4.Rf2-a2 # 
+        1...Kc6-c5 
+            2.Kd8-c7 threat:
+                    3.Ra8-a5 # 
+                2...Kc5-d5 
+                    3.Ra8-e8 zugzwang.
+                        3...Kd5-c5 
+                            4.Re8-e5 # 
+                2...Kc5-b5 
+                    3.Ra8-a1 zugzwang.
+                        3...Kb5-c5 
+                            4.Ra1-a5 # 
+                    3.Ra8-a2 zugzwang.
+                        3...Kb5-c5 
+                            4.Ra2-a5 # 
+                    3.Ra8-a3 zugzwang.
+                        3...Kb5-c5 
+                            4.Ra3-a5 # 
+                    3.Ra8-a4 zugzwang.
+                        3...Kb5-c5 
+                            4.Rf4*f5 # 
+                            4.Ra4-a5 # 
+                    3.Ra8-a7 zugzwang.
+                        3...Kb5-c5 
+                            4.Ra7-a5 # 
+                    3.Kc7-d6 zugzwang.
+                        3...Kb5-b6 
+                            4.Rf4-b4 # 
+                    3.g5-g6 zugzwang.
+                        3...Kb5-c5 
+                            4.Ra8-a5 # 
+                    3.Rf4-a4 threat:
+                            4.Ra8-a5 # 
+        1...Kc6-b7 
+            2.Rf4*f5 zugzwang.
+                2...Kb7-b6 
+                    3.Kd8-c8 zugzwang.
+                        3...Kb6-c6 
+                            4.Ra8-a6 # 
+                2...Kb7*a8 
+                    3.Kd8-c7 threat:
+                            4.Rf5-a5 # 
+                2...Kb7-c6 
+                    3.Ra8-b8 zugzwang.
+                        3...Kc6-d6 
+                            4.Rb8-b6 # 
+        1...Kc6-d5 
+            2.Kd8-d7 threat:
+                    3.Ra8-a5 # 
+                2...Kd5-e5 
+                    3.Ra8-a4 zugzwang.
+                        3...Ke5-d5 
+                            4.Rf4*f5 # 
+                            4.Ra4-a5 # 
+                    3.Rf4-a4 threat:
+                            4.Ra8-a5 # 
+                    3.Rf4-b4 threat:
+                            4.Ra8-a5 # 
+                2...Kd5-c5 
+                    3.Ra8-b8 zugzwang.
+                        3...Kc5-d5 
+                            4.Rb8-b5 # 
+        1...Kc6-b5 
+            2.Kd8-c7 zugzwang.
+                2...Kb5-c5 
+                    3.Ra8-a5 #"
+comments: 
+  - 11528 Deutsche Schachzeitung [1908]
+---
+authors: 
+  - Lasker, Emanuel
+source: Checkmate
+source-id: 285
+date: 1903-06
+algebraic: 
+  white: [Ke5, Rb1, Ra3, Bd2, Bb3]
+  black: [Kg2, Pg5]
+stipulation: "#3"
+solution: |
+  "1.Rb1-b2 ! threat:
+            2.Bd2*g5 + 
+                2...Kg2-g1 
+                    3.Ra3-a1 # 
+                2...Kg2-g3 
+                    3.Bb3-d1 # 
+                    3.Bb3-e6 # 
+                2...Kg2-f3 
+                    3.Bb3-e6 # 
+                    3.Bb3-d1 # 
+                2...Kg2-h3 
+                    3.Bb3-d1 # 
+                    3.Bb3-e6 # 
+                2...Kg2-h1 
+                    3.Ra3-a1 # 
+                2...Kg2-f1 
+                    3.Ra3-a1 # 
+        1...Kg2-g3 
+            2.Bd2-e1 + 
+                2...Kg3-h3 
+                    3.Bb3-d1 # 
+                    3.Bb3-e6 # 
+                2...Kg3-g4 
+                    3.Bb3-d1 # 
+                2...Kg3-f3 
+                    3.Bb3-d1 # 
+                    3.Bb3-e6 # 
+        1...Kg2-f3 
+            2.Bd2-e1 threat:
+                    3.Bb3-d1 # 
+                    3.Bb3-e6 # 
+                2...Kf3-g4 
+                    3.Bb3-d1 # 
+        1...Kg2-h3 
+            2.Bd2-e1 threat:
+                    3.Bb3-d1 # 
+                    3.Bb3-e6 # 
+                2...Kh3-g4 
+                    3.Bb3-d1 # 
+                2...g5-g4 
+                    3.Bb3-e6 #"
+keywords: 
+  - Miniature
+comments: 
+  - also in The Philadelphia Inquirer, 11 August 1907
+---
+authors: 
+  - Lasker, Emanuel
+source: Checkmate
+date: 1903
+algebraic: 
+  white: [Kf3, Qa4, Rd6, Ba3, Pc4]
+  black: [Ke5, Bc8, Pf5, Pf4, Pd5, Pc7]
+stipulation: "#3"
+solution: |
+  "1.Qa4-b5 ! threat:
+            2.Qb5*d5 # 
+        1...Ke5-d4 
+            2.Qb5*d5 + 
+                2...Kd4-c3 
+                    3.Qd5-d3 # 
+        1...c7-c5 
+            2.Qb5*c5 threat:
+                    3.Qc5*d5 # 
+                    3.Ba3-b2 # 
+                2...Bc8-b7 
+                    3.Ba3-b2 # 
+                2...Bc8-e6 
+                    3.Ba3-b2 # 
+        1...c7-c6 
+            2.Qb5-b2 + 
+                2...d5-d4 
+                    3.Qb2*d4 # 
+                    3.Qb2-e2 # 
+            2.Qb5-c5 threat:
+                    3.Ba3-b2 # 
+        1...c7*d6 
+            2.Ba3-b2 + 
+                2...Ke5-e6 
+                    3.Qb5-e8 # 
+        1...Bc8-b7 
+            2.c4*d5 threat:
+                    3.Qb5-b2 # 
+                2...Ke5-d4 
+                    3.Ba3-b2 # 
+                2...Bb7*d5 + 
+                    3.Qb5*d5 # 
+                2...c7-c5 
+                    3.d5*c6 ep. # 
+                2...c7*d6 
+                    3.Ba3-b2 # 
+        1...Bc8-e6 
+            2.Qb5-b2 + 
+                2...d5-d4 
+                    3.Qb2*d4 #"
+---
+authors: 
+  - Lasker, Emanuel
+source: Schweizerische Schachzeitung
+date: 1900-10
+algebraic: 
+  white: [Ke1, Qc8, Rh1, Ra1, Se2]
+  black: [Ke4]
+stipulation: "#2"
+solution: |
+  "1.Qc6+??
+     1...Ke3/Kd3 2.Ra3#/Rh3#
+     1...Ke5 2.Ra5#/Rh5#
+  but 1...Kf5!
+  
+  1.Qf5+??
+     1...Ke3 2.Ra3#/Rh3#
+  but 1...Kxf5!
+  
+  1.Qe6+!
+     1...Kf3 2.O-O#
+     1...Kd3 2.O-O-O#"
+keywords: 
+  - Checking key
+  - Flight taking key
+  - No pawns
+comments: 
+  - Süddeutsche Schachzeitung [1958]
+  - under the pseudonym Dr.Krüger
+---
+authors: 
+  - Lasker, Emanuel
+source: Lasker's Chess Magazine
+date: 1906
+algebraic: 
+  white: [Ka1, Qg2, Ra4, Sf3, Sd4, Pf2]
+  black: [Kf4, Bf8, Bc6, Sg7, Ph5, Pf6, Pd6]
+stipulation: "#2"
+solution: |
+  "1...f5 2.Ne2#/Ne6#/Nxc6#
+  1...Be4 2.Qg3#
+  1...Nf5 2.Ne2#/Ne6#
+  
+  1.Qh2+??
+     1...Kg4 2.Qh4#/Qg3#
+  but 1...Ke4!
+  
+  1.Qh3?? (2.Ne2#/Ne6#/Nxc6#/Qh4#)
+     1...d5/Bd5 2.Qh4#/Ne2#/Ne6#
+     1...Nf5 2.Qxf5#/Ne2#/Ne6#
+     1...Ne6 2.Qh4#/Qf5#/Ne2#/Nxe6#
+     1...Be4 2.Qh4#/Qg3#/Ne2#
+     1...Bxf3 2.Nxf3#
+     1...Bd7 2.Ne2#/Ne6#/Nc6#/Nb5#
+     1...Bb5 2.Qh4#/Ne2#/Ne6#/Nxb5#
+     1...Bxa4 2.Qh4#
+  but 1...Ke4!
+  
+  1.Nh4! (2.Nxc6#/Ng6#)
+     1...Ke5/d5/Nf5/Ne6/Bd5/Bb5/Bxa4 2.Ng6#
+     1...Be4 2.Qg3#
+     1...Bf3/Bxg2 2.Ndxf3#
+     1...Be8 2.Nc6#"
+keywords: 
+  - Model mates
+  - Flight giving and taking key
+---
+authors: 
+  - Lasker, Emanuel
+source: Sport und Neuburger Wochenschach
+date: 1912
+algebraic: 
+  white: [Ka3, Qh2, Rb3, Pg7, Pg3]
+  black: [Ka5, Bf1, Pe3, Pd4, Pe5, Pa6, Pb7]
+stipulation: "#3"
+solution: |
+  "1.Qh2-h1 ! threat:
+            2.Qh1*b7 threat:
+                    3.Qb7-b4 # 
+                    3.Qb7-b6 # 
+                    3.Qb7-c7 # 
+                2...Bf1-b5 
+                    3.Qb7-c7 # 
+        1...e5-e4 
+            2.Rb3*b7 zugzwang.
+                2...Bf1-b5 
+                    3.Qh1-e1 # 
+                2...Bf1-h3 
+                    3.Qh1-e1 # 
+                2...Bf1-g2 
+                    3.Qh1-e1 # 
+                    3.Qh1-h5 # 
+                2...Bf1-c4 
+                    3.Qh1-e1 # 
+                2...Bf1-d3 
+                    3.Qh1-e1 # 
+                2...Bf1-e2 
+                    3.Qh1-e1 # 
+                2...e3-e2 
+                    3.Qh1-h5 # 
+                2...d4-d3 
+                    3.Qh1-h5 # 
+        1...b7-b6 
+            2.Rb3-b5 + 
+                2...Bf1*b5 
+                    3.Qh1-e1 # 
+                2...Ka5*b5 
+                    3.Qh1-d5 # 
+                2...a6*b5 
+                    3.Qh1-a8 #"
+---
+authors: 
+  - Gabor, Karl
+  - Lasker, Emanuel
+source: «64»
+date: 1936
+algebraic: 
+  white: [Ka2, Qh3, Rc6, Se5, Ph6, Pg4, Pb4]
+  black: [Ke4, Pg5, Pf7, Pb6, Pb5]
+stipulation: "#3"
+solution: |
+  "1.Rc6-f6 ! threat:
+            2.Se5-c6 threat:
+                    3.Qh3-f3 # 
+                2...Ke4-d5 
+                    3.Qh3-d3 # 
+        1...Ke4*e5 
+            2.Qh3-d3 zugzwang.
+                2...Ke5*f6 
+                    3.Qd3-d6 #"
+---
+authors: 
+  - Lasker, Emanuel
+source: Lasker's Chess Magazine
+date: 1906
+algebraic: 
+  white: [Kc1, Qg2, Ra4, Sf3, Sd4, Pg5, Pf2]
+  black: [Kf4, Qa8, Sg7, Pe7, Pd6, Pc3]
+stipulation: "#2"
+solution: |
+  "1...Nf5 2.Ne2#/Ne6#
+  1...Qe4 2.Qg3#
+  
+  1.Qh2+??
+     1...Kg4 2.Qh4#
+  but 1...Ke4!
+  
+  1.Qh3?? (2.Ne2#/Ne6#/Qh4#)
+     1...Nf5 2.Qxf5#/Ne2#/Ne6#
+     1...Qxa4 2.Qh4#
+     1...Qc8 2.Ne2#/Ne6#/Nc6#
+     1...Qh8 2.Ne2#/Ne6#/Nf5#/Nc2#/Nc6#/Nb3#/Nb5#
+     1...Qe4 2.Ne2#/Qh4#/Qg3#
+     1...Qxf3 2.Nxf3#
+  but 1...Ke4!
+  
+  1.Nh4! (2.Ng6#)
+     1...Qe8 2.Nc6#
+     1...Qe4 2.Qg3#
+     1...Qf3/Qxg2 2.Ndxf3#"
+keywords: 
+  - Flight giving and taking key
+---
+authors: 
+  - Teichmann, Richard
+  - Lasker, Emanuel
+source: Womanhood
+date: 1900
+algebraic: 
+  white: [Ke6, Qa4, Bb6, Sf3, Se1, Ph2, Pd6, Pd5, Pd4]
+  black: [Ke4, Bf1, Ph5, Ph3, Pg6, Pe2]
+stipulation: "#3"
+solution: |
+  "1.d6-d7 ! threat:
+            2.d5-d6 threat:
+                    3.d4-d5 # 
+  
+    1.Qa4-a3 ! threat:
+            2.Sf3-d2 + 
+                2...Ke4-f4 
+                    3.Qa3-g3 # 
+            2.Sf3-g5 + 
+                2...Ke4-f4 
+                    3.Qa3-g3 # 
+            2.Qa3-c1 threat:
+                    3.Sf3-g5 # 
+        1...Bf1-g2 
+            2.Sf3-d2 + 
+                2...Ke4-f4 
+                    3.Qa3-g3 # 
+            2.Sf3-g5 + 
+                2...Ke4-f4 
+                    3.Qa3-g3 # 
+        1...Ke4-f4 
+            2.Qa3-c1 + 
+                2...Kf4-g4 
+                    3.Qc1-g5 # 
+                2...Kf4-e4 
+                    3.Sf3-g5 # 
+        1...h5-h4 
+            2.Qa3-c1 threat:
+                    3.Sf3-g5 #"
+---
+authors: 
+  - Lasker, Emanuel
+source: Hampstead and Highgate Express
+date: 1894
+algebraic: 
+  white: [Kb3, Rf3, Sg4, Sd4, Pe5, Pc3, Pb4]
+  black: [Kd5]
+stipulation: "#3"
+solution: |
+  "1.Kb3-c2 ! threat:
+            2.Rf3-f4 zugzwang.
+                2...Kd5-c4 
+                    3.Sg4-e3 # 
+        1...Kd5-e4 
+            2.c3-c4 zugzwang.
+                2...Ke4*d4 
+                    3.Rf3-f4 #"
+---
+authors: 
+  - Gabor, Karl
+  - Lasker, Emanuel
+source: «64»
+date: 1936
+algebraic: 
+  white: [Kg2, Qf2, Sc5, Sb2, Pf4, Pe5, Pe2]
+  black: [Kd5, Pg4, Pf5, Pc6, Pb6, Pb4, Pb3]
+stipulation: "#4"
+solution: |
+  "1.Qf2-e3 ! threat:
+            2.Qe3-d3 + 
+                2...Kd5*c5 
+                    3.Qd3-c4 # 
+                    3.Sb2-a4 # 
+        1...b6-b5 
+            2.Qe3-g1 zugzwang.
+                2...g4-g3 
+                    3.e2-e3 zugzwang.
+                        3...Kd5*c5 
+                            4.e3-e4 # 
+        1...b6*c5 
+            2.Qe3*b3 + 
+                2...Kd5-d4 
+                    3.Qb3-d3 # 
+                2...c5-c4 
+                    3.Qb3*c4 # 
+                2...Kd5-e4 
+                    3.Sb2-d1 threat:
+                            4.Qb3-c4 # 
+                        3...Ke4*f4 
+                            4.Qb3-e3 # 
+                        3...Ke4-d4 
+                            4.Qb3-d3 #"
+---
+authors: 
+  - Gabor, Karl
+  - Lasker, Emanuel
+source: «64»
+date: 1936
+algebraic: 
+  white: [Kd1, Qg8, Rf3, Sc6, Pc4, Pb2]
+  black: [Kf6, Bc1, Pg3, Pf5, Pf4, Pd4, Pd2, Pc5]
+stipulation: "#4"
+solution: |
+  "1.Sc6-e5 ! threat:
+            2.Qg8-f7 + 
+                2...Kf6-g5 
+                    3.Qf7-g6 + 
+                        3...Kg5-h4 
+                            4.Qg6-h6 # 
+                2...Kf6*e5 
+                    3.Qf7-e7 # 
+        1...Kf6*e5 
+            2.Qg8-g7 + 
+                2...Ke5-e6 
+                    3.Rf3-a3 threat:
+                            4.Ra3-a6 # 
+                    3.Rf3-b3 threat:
+                            4.Rb3-b6 # 
+                2...Ke5-e4 
+                    3.Qg7-b7 + 
+                        3...Ke4-e5 
+                            4.Qb7-e7 # 
+                    3.Qg7-e7 + 
+                        3...Ke4*f3 
+                            4.Qe7-e2 # 
+                2...Ke5-d6 
+                    3.Rf3-a3 threat:
+                            4.Ra3-a6 #"
+---
+authors: 
+  - Lasker, Emanuel
+source: Lasker's Chess Magazine
+date: 1904
+algebraic: 
+  white: [Ke6, Qa4, Bb6, Sf3, Se1, Ph2, Pd6, Pd5, Pd4]
+  black: [Ke4, Bf1, Ph5, Ph3, Pf6, Pe2]
+stipulation: "#3"
+solution: |
+  "1.d6-d7 ! threat:
+            2.d5-d6 threat:
+                    3.d4-d5 #"
+---
+authors: 
+  - Lasker, Emanuel
+source: Common Sense in Chess
+date: 1896
+algebraic: 
+  white: [Ke5, Ph5, Pf6]
+  black: [Kf8, Ph6]
+stipulation: +
+solution: |
+  1.Ke5-e4 Kf8-e8 2.Ke4-f4
+   Ke8-f8 3.Kf4-e5 Kf8-f7 4.Ke5-f5 Kf7-f8 5.Kf5-g6 Kf8-g8 6.Kg6*h6
+   Kg8-f7 7.Kh6-g5 3...Kf8-e8 4.Ke5-e6 Ke8-f8 5.f6-f7 Kf8-g7 6.Ke6-e7
+   Kg7-h7 7.Ke7-f6  1.Ke5-f4 ! {wins, too}
+comments: 
+  - |
+    More about this endgame can be found here: http://www.chesshistory.com/winter/winter51.html (Fahrni v Alapin)
+    
+---
+authors: 
+  - Lasker, Emanuel
+source: 
+algebraic: 
+  white: [Kh6, Bd2, Pg6]
+  black: [Kf8, Bb2]
+stipulation: +
+solution: 1. Kh7 Bd4 2. Bh6+ Ke8 3. Bg7 Bc5 4. Bb2 Bf8 5. Ba3 1-0
+---
+authors: 
+  - Lasker, Emanuel
+source: Lasker's Chess Magazine
+algebraic: 
+  white: [Kd5, Bd4, Pf5, Pe5]
+  black: [Kd7, Rd1]
+stipulation: +
+solution: |
+  1.e5-e6+ Kd7-e8 2.f5-f6 Rd1-f1 3.Kd5-e4 Ke8-f8 4.Bd4-e5 Kf8-e8
+   5.Be5-f4 Ke8-f8 6.Ke4-f5 Kf8-e8{
+  }7.Kf5-g5 Rf1-g1+ 8.Kg5-h6 Rg1-f1
+   9.Bf4-g5 Rf1-e1 10.Kh6-g7 Re1*e6 11.f6-f7+
+---
+authors: 
+  - Lasker, Emanuel
+source: Deutsches Wochenschach
+source-id: 92
+date: 1890-07-13
+algebraic: 
+  white: [Kc8, Rh7, Pc7]
+  black: [Ka5, Rc2, Ph2]
+stipulation: +
+solution: |
+  "1.Kc8-d7 ? Rc2-d2+ 2.Kd7-c6 Rd2-c2+ 3.Kc6-b7 Rc2-b2+
+  1.Kc8-b7 {or Kb8} Rc2-b2+ 2.Kb7-a7 Rb2-c2 3.Rh7-h5+ Ka5-a4 4.Ka7-b6 {or Kb7} Rc2-b2+
+   5.Kb6-a6 Rb2-c2 6.Rh5-h4+ Ka4-a3 7.Ka6-b6 Rc2-b2+ 8.Kb6-a5 Rb2-c2
+   9.Rh4-h3+ Ka3-a2 10.Rh3*h2 ! 10.Ka5-b6 ? Ka2-b1 ! 11.Rh3*h2 Rc2*h2
+   12.c7-c8=Q Rh2-b2+ 6...Ka4-b3 7.Ka6-b7"
+---
+authors: 
+  - Lasker, Emanuel
+source: Deutsches Wochenschach
+source-id: version
+date: 1890
+algebraic: 
+  white: [Ka8, Rh7, Pc7]
+  black: [Ka5, Rc2, Ph2]
+stipulation: +
+solution: |
+  1.Ka8-b7 {or Kb8} Rc2-b2+ 2.Kb7-a7 Rb2-c2 3.Rh7-h5+ Ka5-a4 ! 4.Ka7-b7 Rc2-b2+
+   5.Kb7-a6 Rb2-c2 6.Rh5-h4+ Ka4-a3 7.Ka6-b6 Rc2-b2+ 8.Kb6-a5 Rb2-c2
+   9.Rh4-h3+ Ka3-a2 10.Rh3*h2 ! Rc2*h2 11.c7-c8=Q
+---
+authors: 
+  - Lasker, Emanuel
+source: Deutsches Wochenschach
+source-id: 92 version
+date: 1890-07-13
+algebraic: 
+  white: [Kc8, Rf7, Pc7]
+  black: [Ka6, Rc2, Pf2]
+stipulation: +
+solution: |
+  1. Kb8 Rb2+
+  2. Ka8 Rc2
+  3. Rf6+ Ka5
+  4. Kb8 Rb2+
+  5. Ka7 Rc2
+  6. Rf5+ Ka4
+  7. Kb7 Rb2+
+  8. Ka6 Rc2
+  9. Rf4+ Ka3
+  10. Kb6 Rb2+
+  11. Ka5 Rc2
+  12. Rf3+ Kb2
+  13. Rxf2 Rxf2
+  14. c8Q 1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Deutsches Wochenschach
+date: 1890
+algebraic: 
+  white: [Kc8, Rh7, Pc7]
+  black: [Ka6, Rc2, Ph2]
+stipulation: +
+solution: |
+  1. Kb8 Rb2+ 2. Ka8 Rc2 3. Rh6+ Ka5 4. Kb7 Rb2+ 5. Ka7
+  Rc2 6. Rh5+ Ka4 7. Kb6 Rb2+ 8. Ka6 Rc2 9. Rh4+ Ka3 10.
+  Kb6 Rb2+ 11. Ka5 Rc2 12. Rh3+ Ka2 13. Rxh2 1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: The London Fortnightly
+date: 1892
+algebraic: 
+  white: [Kf1, Pf7, Pa5]
+  black: [Kh3, Rg4]
+stipulation: +
+solution: |
+  1. f8=R $1 (1. f8=Q $2 Rf4+ 2. Qxf4) 1... Ra4 2. Ra8
+  Kg4 3. Ke2 Kf5 4. a6 Kg6 5. Kd3 Kf7 6. Kc3 Kg7 7. Kb3
+  Ra5 8. Kb4 Ra1 9. Kb5 Rb1+ 10. Kc6 Ra1 11. Kb7 Rb1+
+  12. Ka7 Kf7 13. Rb8 Ra1 14. Rb6 1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: The London Fortnightly
+date: 1892
+algebraic: 
+  white: [Kg6, Se6, Pf6]
+  black: [Ka6, Rc6]
+stipulation: +
+solution: |
+  1. f7 Rxe6+ (1... Rc8 2. Nc7+ Kb7 3. Ne8 Rc6+ 4. Kg7)
+  2. Kg5 Re5+ 3. Kg4 Re4+ 4. Kg3 Re3+ 5. Kf2 1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Dresdner Schachblätter
+date: 1894
+algebraic: 
+  white: [Kg3, Rb1, Sd6, Sa2, Pc2]
+  black: [Kc5, Rd5, Rd1, Se5, Sa5]
+stipulation: "="
+solution: |
+  1. Rb5+ Kxd6 2. Rxd5+ Rxd5 3. Nc3 Nac4 $1 4. Nxd5 Kxd5
+  5. c3 Ke4 1/2-1/2
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Dresdner Schachblätter
+date: 1894
+algebraic: 
+  white: [Ka3, Rd1, Sf6, Sc2, Pg2]
+  black: [Ke5, Rf5, Rf1, Sg5, Sc5]
+stipulation: "="
+solution: |
+  1. Rd5+ Kxf6 2. Rxf5+ Rxf5 3. Ne3 Nce4 4. Nxf5 Kxf5
+  5. g4+ 1/2-1/2
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Dresdner Schachblätter
+date: 1894
+algebraic: 
+  white: [Ke1, Rb5, Sd8, Sa4, Pe4]
+  black: [Kc7, Rd7, Rd3, Se7, Sa7]
+stipulation: "="
+solution: |
+  1. Rb7+ Kxd8 2. Rxd7+ Rxd7 3. Nc5 Nac6 4. Nxd7 Kxd7
+  5. e5 $1 Nd4 6. e6+ $1 1/2-1/2
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Dresdner Schachblätter
+date: 1894
+algebraic: 
+  white: [Kg6, Rb8, Sd3, Sa7, Pc5]
+  black: [Kc4, Rd8, Rd4, Se4, Sa4]
+stipulation: "="
+solution: 1. Rb4+ Kxd3 2. Rxd4+ Rxd4 3. Nc6 1/2-1/2
+---
+authors: 
+  - Lasker, Emanuel
+source: The Philadelphia Times
+source-id: 1389
+date: 1894-04-08
+algebraic: 
+  white: [Kb1, Sh6, Sf5, Pg7, Pf7]
+  black: [Kh7, Qd2, Rg2, Rf8, Pa3]
+stipulation: +
+solution: |
+  "1. Pg7*f8=S+ Kh7-h8
+   2. Sf8-g6+ Rg2*g6
+   3. Pf7-f8=Q+ Kh8-h7
+   4. Qf8-e7+ Kh7-h8
+   5. Sh6-f7+ Kh8-h7
+   6. Sf7-e5+ Kh7-g8
+   7. Qe7-f7+ Kg8-h8
+   8. Se5*g6#"
+---
+authors: 
+  - Lasker, Emanuel
+source: 
+date: 1895
+algebraic: 
+  white: [Kf3, Pf6, Pe6]
+  black: [Ke8, Pd4, Pc7]
+stipulation: +
+solution: |
+  "1. Kf4 $1 Kf8 2. Ke4 c5 3. Kd3 Ke8 4. e7 Kd7 5. Kc4
+  Ke8 6. Kxc5 d3 7. Kd6 Kf7 ( 7... d2 8. Ke6 d1=Q 9. f7#)
+  8. Kd7 d2 9. e8=Q+ 1-0"
+---
+authors: 
+  - Lasker, Emanuel
+source: 
+date: 1895
+algebraic: 
+  white: [Ka4, Rb7, Bd2, Pc6, Pb5]
+  black: [Kd8, Rb6, Bc7, Ph3, Pg4, Pf6, Pa7]
+stipulation: "="
+solution: 1. Rxc7 Kxc7 2. Bf4+ Kc8 3. Ka5 Rb7 4. cxb7+ Kxb7 1/2-1/2
+---
+authors: 
+  - Lasker, Emanuel
+source: Санкт-Петербургские ведомости
+source-id: version
+date: 1896-04-19
+algebraic: 
+  white: [Kh1, Qa5, Rc1, Ph3, Pg2, Pb7]
+  black: [Kb8, Qe7, Rd8, Bg3, Pa7]
+stipulation: +
+solution: 1.Rc1-c8+ Rd8*c8 2.Qa5*a7+ Kb8*a7 3.b7*c8=S+
+keywords: 
+  - White underpromotion
+comments: 
+  - anticipated 415285
+---
+authors: 
+  - Lasker, Emanuel
+source: Санкт-Петербургские ведомости
+source-id: version
+date: 1896-04-19
+algebraic: 
+  white: [Kh1, Qb6, Rc1, Ph3, Pg2, Pb7]
+  black: [Kb8, Qe7, Re8, Bh2, Ph4, Pg3]
+stipulation: +
+solution: 1.Rc1-c8+ Re8*c8 2.Qb6-a7+ Kb8*a7 3.b7*c8=S+ Ka7-b7 4.Sc8*e7
+comments: 
+  - anticipated 415285
+---
+authors: 
+  - Lasker, Emanuel
+source: Новое время (Санкт-Петербург)
+date: 1895
+algebraic: 
+  white: [Ke8, Sh8, Sf8, Pc3]
+  black: [Kf1, Sb1]
+stipulation: +
+solution: 1. c4 Nd2 2. c5 Nb3 3. c6 Nd4 4. c7 Nb5 5. c8=N $1 1-0
+---
+authors: 
+  - Lasker, Emanuel
+  - Reichhelm, Gustavus Charles
+source: Chicago Tribune
+date: 1901-05-26
+algebraic: 
+  white: [Ka1, Pf4, Pd5, Pd4, Pa4]
+  black: [Ka7, Pf5, Pd6, Pa5]
+stipulation: "+"
+solution: |
+  "{version by Reichhelm}  1.Ka1-b2 ? Ka7-a8 !
+  1.Ka1-b1 ! Ka7-b7 2.Kb1-c1 ! Kb7-c8 3.Kc1-d2 ! Kc8-b7 4.Kd2-c3 ! Kb7-c7 5.Kc3-d3
+   ! Kc7-b7 6.Kd3-e3 ! Kb7-c7 7.Ke3-f3 Kc7-d7 8.Kf3-g3 Kd7-e7 9.Kg3-h4
+   Ke7-f6 10.Kh4-h5 1...Ka7-b6 2.Kb1-c2 !"
+comments: 
+  - also in The Philadelphia Times (no. 2074), 26 May 1901
+---
+authors: 
+  - Lasker, Emanuel
+source: Manchester Evening News
+date: 1901
+algebraic: 
+  white: [Ka3, Pf5, Pd5, Pd4, Pa4]
+  black: [Ka8, Pf6, Pd6, Pa5]
+stipulation: +
+solution: |
+  1. Kb2 (1. Kb3 $2 Ka7) 1... Ka7 (1... Kb8 2. Kc2 Kc8
+  3. Kd2 Kd8 4. Kc3 Kc7 5. Kd3) (1... Kb7 2. Kc3 Kc7 3.
+  Kd3) 2. Kb3 Ka6 3. Kc2 Kb6 4. Kd2 Kc7 5. Kd3 1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Manchester Evening News
+date: 1901
+algebraic: 
+  white: [Kb1, Qc2, Ba1, Ph4, Ph3, Pa2]
+  black: [Kh7, Qg6, Ph5, Pg7, Pc5, Pc3, Pb4, Pa3]
+stipulation: "="
+solution: |
+  1. Bxc3 (1. Kc1 $2 Qxc2+ 2. Kxc2 Kh6 3. Bxc3 bxc3 4.
+  Kxc3 g5 5. hxg5+ Kxg5) 1... bxc3 2. Ka1 c4 3. Qe4 c2
+  4. Qxg6+ (4. Qxc2 $2 Qd3) 4... Kxg6 1/2-1/2
+  
+keywords: 
+  - Digits
+---
+authors: 
+  - Lasker, Emanuel
+source: Manchester Evening News
+date: 1901
+algebraic: 
+  white: [Kb5, Qa5, Rb7, Bc6, Sf5, Ph7, Pc7]
+  black: [Kc8, Qg7, Re8, Rd4, Bd8, Bd1, Sd7, Sa8, Pa7]
+stipulation: "="
+solution: |
+  1. Rb8+ (1. cxd8=Q+ $1) 1... Nxb8 2. Bb7+ Kxb7 3. Nd6+
+  Rxd6 4. Qxa7+ Kxa7 5. c8=N+ Kb7 6. Nxd6+ Kc7 7. Nxe8+
+  1/2-1/2
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Manchester Evening News
+date: 1901
+algebraic: 
+  white: [Kd2, Qd8, Rb1, Ra8, Bg1, Pd4, Pd3]
+  black: [Ka6, Qc6, Rb4, Bd7, Se8, Pd6, Pd5, Pc5, Pa7]
+stipulation: +
+solution: |
+  1. Ra1+ Ra4 2. dxc5 Rxa1 3. Rxa7+ Kxa7 4. Qxd7+ $1 Qxd7
+  5. c6+ Rxg1 6. cxd7 Rg8 7. d8=Q 1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Manchester Evening News
+date: 1901
+algebraic: 
+  white: [Kd2, Qd8, Rb1, Ra8, Be3, Pd4, Pd3]
+  black: [Ka6, Qc6, Rb4, Bd7, Se8, Pd6, Pd5, Pc5, Pa7]
+stipulation: +
+solution: |
+  "1. Ra1+ Ra4 2. dxc5 Rxa1 (2... d4 3. Rxa4+ Qxa4 4. Qb6#)
+  3. Rxa7+ Kxa7 4. Qxd7+ Qxd7 5. c6+ Ka6 6. cxd7 1-0"
+---
+authors: 
+  - Lasker, Emanuel
+source: Manchester Evening News
+date: 1901
+algebraic: 
+  white: [Ka3, Pf4, Pd5, Pd4, Pa4]
+  black: [Ka8, Pf5, Pd6, Pa5]
+stipulation: +
+solution: |
+  1. Kb2 $1 Ka7 (1... Kb8 2. Kc2 Kc8 3. Kd2 Kd8 4. Kc3
+  Kc7 5. Kd3 Kb7 (5... Kc8 6. Kc4) 6. Ke3 Kc7 7. Kf3 Kd7
+  8. Kg3 Ke7 9. Kh4 Kf7 10. Kh5) 2. Kb3 Kb7 (2... Ka6
+  3. Kc2) 3. Kc3 Kc7 4. Kd3 Kd7 (4... Kb6 5. Ke3) 5. Kc4
+  1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Manchester Evening News
+date: 1901
+algebraic: 
+  white: [Kb5, Qa5, Rb7, Bc6, Se4, Ph7, Pc7]
+  black: [Kc8, Qg7, Re8, Rd4, Bd8, Bd1, Sd7, Sa8, Pa7]
+stipulation: "="
+solution: |
+  1. Rb8+ Nxb8 2. Bb7+ Kxb7 3. Nd6+ Rxd6 4. Qxa7+ $1 Kxa7
+  5. c8=N+ Kb7 6. Nxd6+ Ka7 7. Nc8+ 1/2-1/2
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Schweizerische Schachzeitung
+source-id: 27
+date: 1901
+algebraic: 
+  white: [Ke3, Sf4, Ph4, Pg3]
+  black: [Kh6, Bg4]
+stipulation: +
+solution: |
+  1. Ke4 Bd7 (1... Bc8 2. Nd5 Kh5 3. Kf4 Be6 (3... Ba6
+  4. Nf6+ Kg6 5. Ne8 Kh5 6. Ng7+ Kg6 7. Nf5) 4. Nf6+ Kg6
+  5. Ne8 Bd7 6. h5+) (1... Bd1 2. Kf5 Bc2+ 3. Kg4 Bd1+
+  4. Kh3) 2. Nd5 Bc8 3. Kf4 Kh5 4. Ne3 Ba6 5. g4+ Kxh4
+  6. Nf5+ Kh3 7. g5 Bc4 8. g6 Bd5 9. Kg5 Bc4 10. Kf6 Bb3
+  11. Nh6 Bc2 12. g7 Bh7 13. Nf7 Kg4 14. Ng5 Bg8 15. Kg6
+  Kf4 16. Nf7 Kg3 17. Nh6 Ba2 18. Nf7 Bb1+ 19. Kh6 1-0
+  
+---
+authors: 
+  - Capablanca Y Graupera, José Raúl
+  - Lasker, Emanuel
+source: Vossische Zeitung
+date: 1914-07-26
+algebraic: 
+  white: [Kd8, Rb8, Sa6, Pb5]
+  black: [Ka7, Sd5, Sc7, Pb6]
+stipulation: +
+solution: |
+  1. Nxc7 Nxc7 2. Ra8+ $3 Nxa8 (2... Kxa8 3. Kxc7 Ka7
+  4. Kc6) 3. Kc8 Nc7 4. Kxc7 Ka8 5. Kxb6 1-0
+  
+---
+authors: 
+  - Capablanca Y Graupera, José Raúl
+  - Lasker, Emanuel
+source: Vossische Zeitung
+source-id: vesion
+date: 1914-07-26
+algebraic: 
+  white: [Kd7, Rd8, Pb5]
+  black: [Ka7, Sc7, Sa8, Pb6]
+stipulation: +
+solution: 1. Rxa8+ Nxa8 2. Kc8 Nc7 3. Kxc7 Ka8 4. Kxb6 1-0
+---
+authors: 
+  - Lasker, Emanuel
+source: The British Chess Magazine
+date: 1921
+algebraic: 
+  white: [Ka4, Ph4, Pf4, Pe3, Pd4, Pc5, Pb4, Pa5]
+  black: [Ka6, Ph5, Pf6, Pf5, Pe4, Pd5, Pc6, Pa7]
+stipulation: +
+solution: |
+  1. Kb3 $1 (1. b5+ $2 cxb5+ 2. Kb4 Kb7 3. Kxb5 a6+) 1...
+  Kb7 (1... Kb5 2. a6 Kxa6 3. Ka4) 2. a6+ Kxa6 (2... Kc7
+  3. Ka4 Kd7 4. b5 Kc7 5. bxc6 Kc8 6. c7 $1 Kxc7 7. Kb5
+  Kd7 8. c6+ Kd6 9. c7 Kxc7 10. Kc5) 3. Ka4 Kb7 4. b5
+  a6 (4... cxb5+ 5. Kxb5 Kc7 6. Ka6 Kb8 7. c6 Ka8 8. Kb5
+  Kb8 9. Kc5) 5. bxc6+ Kxc6 6. Ka5 Kb7 7. c6+ Kxc6 8.
+  Kxa6 Kc7 9. Kb5 1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Lasker's Chess Magazine
+date: 1925
+algebraic: 
+  white: [Kf2, Rd8, Pd4]
+  black: [Kf4, Be4, Pd5]
+stipulation: +
+solution: |
+  1. Rh8 Bf5 2. Rh4+ Bg4 3. Kg2 Kg5 4. Kg3 Bf5 5. Rh8
+  Bg6 6. Rf8 Be4 7. Re8 Kf6 8. Kf4 Bg2 9. Ra8 Kf7 (9...
+  Ke6 10. Ra6+) 10. Ke5 Be4 11. Ra7+ Ke8 12. Ke6 Kd8 13.
+  Kd6 Kc8 (13... Ke8 14. Re7+ Kd8 (14... Kf8 15. Re5)
+  15. Re5 Kc8 16. Re8+ Kb7 17. Re7+ Kb8 18. Rc7) 14. Ra8+
+  Kb7 15. Rg8 (15. Ra5 Kc8 16. Rxd5 Bxd5 17. Kxd5 Kd7)
+  15... Bf3 16. Rg3 Be4 17. Rc3 $1 Bg2 18. Rc5 Bf3 19.
+  Rxd5 Bxd5 20. Kxd5 wins
+  cooks:
+  1. Re8
+  1. Ke2
+  
+comments: 
+  - Cooked
+---
+authors: 
+  - Lasker, Emanuel
+source: Lehrbuch des Schachspiels
+date: 1926
+algebraic: 
+  white: [Kd4, Pf2, Pa2]
+  black: [Kd6, Pe4, Pd5]
+stipulation: +
+solution: |
+  1. a4 Kc6 (1... Ke6 2. a5 Kd6 3. a6 Kc7 4. a7 Kb7 5.
+  Kxd5 Kxa7 6. Kxe4) 2. a5 Kb5 3. Kxd5 Kxa5 4. Kxe4 1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Lehrbuch des Schachspiels
+date: 1926
+algebraic: 
+  white: [Kb2, Qc2, Ph4, Pa4]
+  black: [Kh7, Qg6, Ph5, Pg7, Pa7, Pa5]
+stipulation: "="
+solution: 1. Ka3 $1 Kh6 2. Qc1+ Kh7 3. Qc2 a6 4. Qb1 1/2-1/2
+---
+authors: 
+  - Lasker, Emanuel
+source: Lehrbuch des Schachspiels
+date: 1926
+algebraic: 
+  white: [Kc1, Be1]
+  black: [Ke4, Bh5, Pd3, Pc4, Pb5]
+stipulation: "="
+solution: |
+  1... Kd4 (1... Ke3 $1 2. Bd2+ Ke2 3. Ba5 d2+ $1 4. Bxd2
+  Kd3 $1 5. Ba5 c3 $1) 2. Kb2 Ke3 3. Kc1 (3. Kc3 $2 Ke2
+  4. Bd2 b4+) 3... Ke4 (3... d2+ $1 4. Bxd2+ Kd3) 4. Ba5
+  Kd5 5. Kb2 Kc5 6. Ka3 1/2-1/2
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: 
+date: 1930
+algebraic: 
+  white: [Kc2, Pc4, Pb5]
+  black: [Kc5, Pd6]
+stipulation: +
+solution: |
+  1. Kc3 Kb6 (1... d5 2. cxd5 Kxd5 3. Kb4 Kd6 4. Ka5 Kc7
+  5. Ka6 Kb8 6. Kb6) 2. Kd4 Kc7 (2... Kb7 3. Kd5 Kc7 4.
+  b6+ Kxb6 5. Kxd6) 3. Kd5 Kd7 4. b6 1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: 
+date: 1937
+algebraic: 
+  white: [Ke2, Bd2, Pg2, Pb2]
+  black: [Kg8, Be7, Pg7, Pe5]
+stipulation: +
+solution: |
+  1. Bc3 Bd6 2. Ke3 Kf7 3. Ke4 Ke6 4. b4 Bc7 5. b5 Kf6
+  6. g4 Ke6 7. g5 g6 8. Bb2 Bd8 9. Bxe5 Bxg5 10. b6 $1
+  1-0
+  
+---
+authors: 
+  - Lasker, Emanuel
+source: Санкт-Петербургские ведомости
+date: 1896-04-28
+algebraic: 
+  white: [Kf6, Se5, Pd7]
+  black: [Kh8, Ra6]
+stipulation: +
+solution: |
+  1.Se5-c6 ! Ra6*c6+ 2.Kf6-e5 Rc6-c5+ 3.Ke5-e4 Rc5-c4+ 4.Ke4-e3
+   Rc4-c3+ 5.Ke3-d2 3.Ke5-d6 ! {dual} 1...Ra6-a8 ! {refutation}
+---
+authors: 
+  - Lasker, Emanuel
+source: Neue Freie Presse
+source-id: 259
+date: 1935-12-22
+algebraic: 
+  white: [Kd4, Sd7, Sb5, Pc6]
+  black: [Ka8, Bb8, Sa1, Pc7]
+stipulation: "#3"
+solution: |
+  "1. Kc4? waiting
+  1... Sb3 2. K:b3 waiting
+    2... Ba7 3. S:c7#
+  But 1... Sc2! 
+  
+  1. Kd3? waiting
+  1... Sc2 2. K:c2 waiting
+    2... Ba7 3. S:c7#
+  But 1... Sb3! 
+  
+  1. Kc3! waiting
+  1... Sb3 2. K:b3 waiting
+    2... Ba7 3. S:c7#
+  1... Sc2 2. K:c2 waiting
+    2... Ba7 3. S:c7#"
+---
+authors: 
+  - Lasker, Emanuel
+source: Deutsches Wochenschach
+source-id: 83
+date: 1890-01-05
+algebraic: 
+  white: [Ke6, Qg6, Bf7, Pf5]
+  black: [Kh8, Rf8, Bg5, Ph6, Pf6, Pc2]
+stipulation: +
+solution: "1. Bg8! R:g8 2.Kf7! R:g6 3.fg c1Q 4.g7+ Kh7 5.g8Q#"
+keywords: 
+  - Attention
+comments: 
+  - Wrong author. The correct author is Berthold Lasker. We have to wait until Berthold Lasker arises in the list.
+  - Check alsso 343499
+---
+authors: 
+  - Lasker, Emanuel
+source: 
+source-id: /
+date: 1926
+algebraic: 
+  white: [Kd5, Rh6, Pf3, Pe4]
+  black: [Kd7, Bc5, Pf4, Pe5, Pd6]
+stipulation: +
+solution: |
+  1.Rh7+ Kd8 
+    2.Ke6
+    3.Rd7
+    4.Rxd6 wins
+---
+authors: 
+  - Кузьмичев, Владимир Викторович
+  - Lasker, Emanuel
+source: Правда Севера
+date: 2015
+algebraic: 
+  white: [Ke1, Qh3, Rh1, Ra1, Se2]
+  black: [Ke4]
+stipulation: "#2"
+solution: |
+  "1.Qh3-e6 + !
+      1...Ke4-f3
+          2.0-0 #
+      1...Ke4-d3
+          2.0-0-0 #
+  
+   1.0-0-0 ? zugzwang.
+    but
+      1...Ke4-e5 !
+  
+   1.Ra1-a6 ? zugzwang.
+      1...Ke4-e5
+          2.Qh3-e6 #
+    but
+      1...Ke4-d5 !"
+keywords: 
+  - Flight giving and taking key
+  - Castling
+comments: 
+  - see 136013, 181027, 159519
+---
+authors: 
+  - Keidanski, Theodore Hermann
+  - Lasker, Emanuel
+source: American Chess Bulletin
+source-id: 10/200
+date: 1906-10
+algebraic: 
+  white: [Kb7, Rh8, Rg3, Sf8, Se2, Ph2, Pg6, Pf4, Pc4, Pc3]
+  black: [Ke4, Pg7, Pf6, Pe5, Pd7, Pc5]
+stipulation: "#4"
+solution: |
+  "1.Sf8-e6 ! threat:
+         2.Se6*c5 +
+             2...Ke4-f5
+                 3.Rh8-h5 #
+     1...d7*e6
+         2.f4-f5 {- zugzwang}
+             2...e6*f5
+                 3.Se2-f4 {- zugzwang}
+                     3...Ke4*f4
+                         4.Rh8-h4 #
+                     3...e5*f4
+                         4.Rh8-e8 #
+             2...Ke4*f5
+                 3.Rh8-h4 
+                     3...e5-e4
+                         4.Rh4-h5 #
+     1...e5*f4
+         2.Se6*c5 +
+             2...Ke4-e5
+                 3.Rh8-e8 +
+                     3...Ke5-f5
+                         4.Se2-d4 #
+                     3... Ke5-d6 4. Sc5-e4#
+     1...d7-d6
+         2.Rh8-h4 threat:
+                 3.f4-f5 +
+                     3...Ke4*f5
+                         4.Se6*g7 #
+             2...Ke4-f5
+                 3.Se6*g7 +
+                     3...Kf5-e4
+                         4.f4-f5 #
+             2...e5*f4
+                 3.Rh4*f4 +
+                     3...Ke4-e5
+                         4.Rg3-e3 #
+         2.f4-f5  {(dual)}
+             2...Ke4*f5
+                 3.Se6*g7 +
+                     3...Kf5-e4
+                         4.Rh8-h4 #"
+keywords: 
+  - Zugzwang
+  - Dual
+---
+authors: 
+  - Lasker, Emanuel
+source: Common Sense in Chess
+date: 1931
+algebraic: 
+  white: [Kc5, Pc6, Pa5]
+  black: [Kc7, Pa6]
+stipulation: +
+solution: |
+  1.Kc5-d5 Kc7-c8 2.Kd5-d4 ! {or Kc4} Kc8-d8 3.Kd4-c4 Kd8-c8 4.Kc4-d5 Kc8-c7
+   5.Kd5-c5 Kc7-c8 6.Kc5-b6 Kc8-b8 7.Kb6*a6 Kb8-c7 8.Ka6-b5 4...Kc8-d8
+   5.Kd5-d6 Kd8-c8 6.c6-c7 Kc8-b7 7.Kd6-d7 Kb7-a7 8.Kd7-c6
+  
+comments: 
+  - confirm 281399
+---
+authors: 
+  - Lasker, Emanuel
+source: The San Francisco Chronicle
+source-id: 502
+date: 1903-11-22
+algebraic: 
+  white: [Kb6, Bh4, Be6, Se4, Sc5, Pd6, Pd2]
+  black: [Ke5, Pg7, Pg6]
+stipulation: "#2"
+solution: |
+  "1.Se4-g5 ! zugzwang.
+     1...Ke5-d4
+         2.Sg5-f3 #
+     1...Ke5-f4
+         2.Sc5-d3 #
+     1...Ke5-f6
+         2.Sc5-d7 #
+     1...Ke5*d6
+         2.Sg5-f7 #"
+keywords: 
+  - BK star

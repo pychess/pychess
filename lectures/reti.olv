@@ -1,0 +1,1308 @@
+---
+authors: 
+  - Réti, Richard
+source: Neuigkeits-Weltblatt
+source-id: 500
+date: 1909
+algebraic: 
+  white: [Kb7, Qf5, Bh6, Bb3]
+  black: [Kd4, Be1, Pe7, Pe2, Pd3, Pb6, Pa3]
+stipulation: "#3"
+solution: |
+  "1.Qf5-e6 ! threat:
+            2.Bh6-g7 + 
+                2...Kd4-c5 
+                    3.Qe6*b6 # 
+            2.Qe6-c4 + 
+                2...Kd4-e5 
+                    3.Qc4-f4 # 
+        1...Be1-h4 
+            2.Bh6-d2 threat:
+                    3.Qe6-d5 # 
+                    3.Qe6-e3 # 
+                2...e2-e1=Q 
+                    3.Qe6-d5 # 
+                2...e2-e1=R 
+                    3.Qe6-d5 # 
+                2...Kd4-c5 
+                    3.Qe6-d5 # 
+                    3.Qe6-e5 # 
+                    3.Qe6*b6 # 
+                2...Bh4-f2 
+                    3.Qe6-d5 # 
+                2...Bh4-g5 
+                    3.Qe6-d5 # 
+            2.Qe6-c4 + 
+                2...Kd4-e5 
+                    3.Qc4-f4 # 
+        1...Be1-g3 
+            2.Bh6-d2 threat:
+                    3.Qe6-d5 # 
+                    3.Qe6-e3 # 
+                2...e2-e1=Q 
+                    3.Qe6-d5 # 
+                2...e2-e1=R 
+                    3.Qe6-d5 # 
+                2...Bg3-f2 
+                    3.Qe6-d5 # 
+                2...Bg3-e5 
+                    3.Qe6-d5 # 
+                    3.Qe6-c4 # 
+                2...Bg3-f4 
+                    3.Qe6-d5 # 
+                2...Kd4-c5 
+                    3.Qe6-d5 # 
+                    3.Qe6*b6 # 
+            2.Bh6-g7 + 
+                2...Bg3-e5 
+                    3.Qe6*e5 # 
+                2...Kd4-c5 
+                    3.Qe6*b6 # 
+        1...Be1-a5 
+            2.Qe6-c4 + 
+                2...Kd4-e5 
+                    3.Qc4-f4 # 
+        1...Be1-d2 
+            2.Bh6*d2 threat:
+                    3.Qe6-d5 # 
+                    3.Qe6-e3 # 
+                2...e2-e1=Q 
+                    3.Qe6-d5 # 
+                2...e2-e1=R 
+                    3.Qe6-d5 # 
+                2...Kd4-c5 
+                    3.Qe6-d5 # 
+                    3.Qe6-e5 # 
+                    3.Qe6*b6 # 
+            2.Bh6-g7 + 
+                2...Kd4-c5 
+                    3.Qe6*b6 # 
+        1...Kd4-c3 
+            2.Bh6-g7 + 
+                2...Kc3-b4 
+                    3.Qe6*b6 # 
+                2...Kc3-d2 
+                    3.Qe6-h6 # 
+        1...b6-b5 
+            2.Bh6-g7 + 
+                2...Kd4-c5 
+                    3.Qe6*e7 #"
+---
+authors: 
+  - Réti, Richard
+source: Neues Wiener Tagblatt
+source-id: 2773
+date: 1908
+algebraic: 
+  white: [Ka8, Qf4, Rh7, Rc4, Sb8, Pg3, Pf2, Pd7, Pb6, Pb3, Pb2, Pa4]
+  black: [Kd5, Re5, Rd6, Ba7, Pf5, Pb4]
+stipulation: "#3"
+solution: |
+  "1.g3-g4 ! zugzwang.
+        1...Re5-e4 
+            2.Rc4-d4 + 
+                2...Re4*d4 
+                    3.Qf4*f5 # 
+                2...Kd5-c5 
+                    3.Qf4*d6 # 
+                2...Kd5*d4 
+                    3.Qf4*d6 # 
+        1...Rd6*b6 
+            2.Rc4-c5 + 
+                2...Kd5-d6 
+                    3.Qf4*e5 # 
+                2...Kd5*c5 
+                    3.Qf4*e5 # 
+            2.Rc4-d4 + 
+                2...Kd5-c5 
+                    3.Qf4*e5 # 
+                2...Kd5-e6 
+                    3.Qf4-h6 # 
+        1...Kd5-e6 
+            2.Rc4-e4 threat:
+                    3.Qf4*e5 # 
+                2...Re5*e4 
+                    3.Qf4*f5 # 
+                2...f5*e4 
+                    3.Qf4-f7 # 
+                2...Rd6-d5 
+                    3.Qf4-h6 # 
+        1...Ba7*b8 
+            2.g4*f5 threat:
+                    3.Qf4-d2 # 
+                    3.Qf4-d4 # 
+                2...Re5-e1 
+                    3.Qf4-d4 # 
+        1...f5*g4 
+            2.Qf4-f7 + 
+                2...Re5-e6 
+                    3.Rh7-h5 # 
+                2...Rd6-e6 
+                    3.d7-d8=Q #"
+---
+authors: 
+  - Réti, Richard
+source: Časopis českých šachistů
+source-id: 677
+date: 1910
+algebraic: 
+  white: [Kf1, Qc7, Sd5, Sc3, Pb3, Pb2]
+  black: [Kd4, Sg6, Pf5, Pf4, Pe6, Pd6]
+stipulation: "#3"
+solution: |
+  "1.Sc3-e4 ! threat:
+            2.Qc7-c3 + 
+                2...Kd4*d5 
+                    3.Se4-f6 # 
+                2...Kd4*e4 
+                    3.Sd5-f6 # 
+            2.Sd5-f6 threat:
+                    3.Qc7-c3 # 
+            2.Se4-f6 threat:
+                    3.Qc7-c3 # 
+        1...Kd4*e4 
+            2.Sd5-f6 + 
+                2...Ke4-d4 
+                    3.Qc7-c3 # 
+                2...Ke4-e5 
+                    3.Qc7-c3 # 
+                2...Ke4-e3 
+                    3.Qc7-c3 # 
+                2...Ke4-f3 
+                    3.Qc7-c3 # 
+                2...Ke4-d3 
+                    3.Qc7-c3 # 
+        1...Kd4*d5 
+            2.Se4-f6 + 
+                2...Kd5-d4 
+                    3.Qc7-c3 # 
+                2...Kd5-e5 
+                    3.Qc7-c3 # 
+        1...Kd4-e5 
+            2.Qc7-c3 + 
+                2...Ke5*d5 
+                    3.Se4-f6 # 
+                2...Ke5*e4 
+                    3.Sd5-f6 # 
+        1...f4-f3 
+            2.Se4-f6 threat:
+                    3.Qc7-c3 # 
+        1...f5*e4 
+            2.Sd5-e3 threat:
+                    3.Qc7-c3 # 
+                2...f4*e3 
+                    3.Qc7*d6 # 
+        1...e6*d5 
+            2.Se4-g5 threat:
+                    3.Qc7-c3 # 
+                2...Kd4-e5 
+                    3.Qc7-g7 # 
+        1...Sg6-e5 
+            2.Qc7-c3 + 
+                2...Kd4*d5 
+                    3.Se4-f6 # 
+                2...Kd4*e4 
+                    3.Sd5-f6 # 
+        1...Sg6-e7 
+            2.Qc7-c3 + 
+                2...Kd4*d5 
+                    3.Se4-f6 # 
+                2...Kd4*e4 
+                    3.Sd5-f6 #"
+---
+authors: 
+  - Gold, Sámuel
+  - Réti, Richard
+  - Steiner, Sigmund
+source: Neues Wiener Tagblatt
+source-id: 2784
+date: 1908
+algebraic: 
+  white: [Ka4, Qd6, Sh4, Sf2, Pe2, Pa5]
+  black: [Kd4, Ra7, Sc7, Pg7, Pf7, Pe3, Pd5, Pa6]
+stipulation: "#3"
+solution: |
+  "1.Ka4-a3 ! threat:
+            2.Sh4-f3 + 
+                2...Kd4-c4 
+                    3.Qd6-b4 # 
+                    3.Qd6-c6 # 
+                2...Kd4-c3 
+                    3.Qd6-c6 # 
+                    3.Qd6-c5 # 
+        1...Kd4-c3 
+            2.Qd6-b4 + 
+                2...Kc3-c2 
+                    3.Qb4-b2 # 
+        1...Sc7-b5 + 
+            2.Ka3-b4 threat:
+                    3.Qd6-f4 # 
+                    3.Sh4-f3 # 
+                    3.Sh4-f5 # 
+                2...e3*f2 
+                    3.Qd6-f4 # 
+                2...Sb5*d6 
+                    3.Sh4-f3 # 
+        1...Sc7-e6 
+            2.Qd6-b4 + 
+                2...Kd4-e5 
+                    3.Sf2-g4 #"
+---
+authors: 
+  - Mandler, Arthur
+  - Réti, Richard
+source: Eclaireur de Nice
+date: 1924
+algebraic: 
+  white: [Kd1, Sc2, Pe2]
+  black: [Kc3, Pe3, Pd4]
+stipulation: +
+solution: 1.Se1 Kb2 2.Sd3+ Kc3 3.Sc1 Kb2 4.Sa2 Kb1 5.Sb4 Kb2 6.Sd5 Kb3 7.Sc7 Kb2(c3) 8.Sb5(+) Kc4 9.Sd6+ Kb3(c3) 10.Se4(+) Kb2 11.Sc5 Kc3 12.Ke1 Kc2(c4) 13.Sd3 Kc3 14.Kf1 Kd2 15.Se5(f4) Kd1 16.Kg2 wins 2....Kb3 3.Sf4 Kb2 4.Sd5 wins
+keywords: 
+  - Digits
+  - Letters
+---
+authors: 
+  - Mandler, Arthur
+  - Réti, Richard
+source: Eclaireur de Nice
+date: 1924
+algebraic: 
+  white: [Kf1, Se2, Pg2]
+  black: [Ke3, Pg3, Pf4]
+stipulation: +
+solution: |
+  1.Sg1 Kd2 2.Sf3+ Kd3 3.Ke1 Ke3 4.Se5 Ke4 5.Sc4 Kd3
+    6.Sd2 Ke3 7.Sf3 Kd3 8.Kf1 Ke3 9.Se1 Kd2 10.Sc2 Kd1
+     11.Sb4 Kd2 12.Sd5 wins
+  
+keywords: 
+  - Digits
+  - Letters
+---
+authors: 
+  - Réti, Richard
+source: Шахматный листок
+date: 1927
+algebraic: 
+  white: [Kc7, Ph7, Pf7, Pc5, Pa2]
+  black: [Kd4, Ra8, Pb7, Pa7]
+stipulation: +
+solution: |
+  1. Kd7 $1 (1. Kd6 $143 Rh8 2. c6 bxc6 3. a4 a5 4. Ke6
+  Kc5 5. Ke5 Rf8 6. Ke6 Rh8 7. Kf6 Kd6 8. Kg7 Ke7 9. Kxh8
+  Kxf7 $11) (1. c6 $143 bxc6 2. Kd7 Rh8 3. Kd6 c5 $1 4.
+  Ke6 c4 5. Kf6 c3 6. Kg7 Rxh7+ 7. Kxh7 c2 8. f8=Q c1=Q
+  $11) 1... Rh8 2. Kd6 Kc4 (2... a5 $144 3. a4 $18) (2...
+  a6 $144 3. a3 a5 4. a4 $18) (2... Ke4 $144 3. Ke6 Kd4
+  4. Kf6 $18) 3. c6 bxc6 4. Ke5 $1 (4. Ke6 $143 Kc5 5.
+  Kf6 Kd6 6. Kg7 Ke7 $11) 4... Kc5 5. Ke6 (5. Kf6 $143
+  Kd6 6. Kg7 Ke7 $11) 5... a5 6. a4 $18 (6. Kf6 $143 Kd6
+  7. Kg7 Ke7 8. Kxh8 Kxf7 $11) 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Deutschösterreichische Tages-Zeitung
+date: 1921-09-11
+algebraic: 
+  white: [Kh8, Pc6]
+  black: [Ka6, Ph5]
+stipulation: "="
+solution: |
+  "1.Kh8-h7 ? h5-h4 2.Kh7-h6 h4-h3
+  1.Kh8-g7 ! h5-h4 2.Kg7-f6 ! Ka6-b6 3.Kf6-e5 ! h4-h3 4.Ke5-d6 ! h3-h2 5.c6-c7
+   Kb6-b7 6.Kd6-d7 3...Kb6*c6 4.Ke5-f4 h4-h3 5.Kf4-g3 2...h4-h3
+   3.Kf6-e6 h3-h2 4.c6-c7 1...Ka6-b6 2.Kg7-f6 ! h5-h4 3.Kf6-e5
+   ! h4-h3 4.Ke5-d6 h3-h2 5.c6-c7 Kb6-b7 6.Kd6-d7"
+keywords: 
+  - Reti maneuver
+---
+authors: 
+  - Réti, Richard
+source: Národní Listy
+date: 1928
+algebraic: 
+  white: [Kh5, Pc6]
+  black: [Ka6, Ph6, Pg7, Pf6]
+stipulation: "="
+solution: |
+  1.Kh5-g6 ! Ka6-b6 2.Kg6*g7 !
+   h6-h5 3.Kg7*f6 h5-h4 4.Kf6-e5 ! h4-h3 5.Ke5-d6 h3-h2 6.c6-c7 Kb6-b7
+   7.Kd6-d7 4...Kb6*c6 5.Ke5-f4 2...f6-f5 3.Kg7-f6 f5-f4 4.Kf6-e5
+   f4-f3 5.Ke5-d6 1...h6-h5 2.Kg6*g7 h5-h4 3.Kg7*f6 Ka6-b6
+   4.Kf6-e5 Kb6*c6 5.Ke5-f4 1...f6-f5 2.Kg6*g7 f5-f4 3.Kg7-f6
+   f4-f3 4.Kf6-e7 f3-f2 5.c6-c7 f2-f1=Q 6.c7-c8=Q+
+  
+keywords: 
+  - Reti maneuver
+comments: 
+  - modifies 277102
+---
+authors: 
+  - Réti, Richard
+source: Berliner Tageblatt
+date: 1925
+algebraic: 
+  white: [Kf5, Rd4, Pg2, Pa2]
+  black: [Kh5, Rf8, Ph6, Pg5, Pf6, Pd3]
+stipulation: +
+solution: |
+  1. g3 Rg8 2. Rb4 $1 g4 $1 3. Rb1 Rg5+ 4. Kxf6 Rg6+ 5.
+  Kf7 d2 6. a4 $1 d1=Q $1 7. Rxd1 Rf6+ 8. Kg7 Rf5 $1 (8...
+  Rg6+ $144 9. Kh7 $18 Kg5 10. Rd5+ Kf6 11. Rd6+ $18)
+  9. Rb1 Kg5 (9... Rg5+ $144 10. Kh7 Rf5 11. Rb5 $18)
+  10. Rb6 $1 Re5 11. Rb5 $18 1-0
+  
+comments: 
+  - a version of a study in Tijdschrift v. d. N. S. B., 1922
+---
+authors: 
+  - Réti, Richard
+source: Hastings and St.Leonards Post
+source-id: version
+date: 1922
+algebraic: 
+  white: [Kg2, Sc2, Pf2, Pa5]
+  black: [Kc6, Bh6, Ph2]
+stipulation: +
+solution: 1.Sc2-d4+ Kc6-c5 2.Kg2-h1 !
+---
+authors: 
+  - Réti, Richard
+source: Teplitz-Schönauer Anzeiger
+date: 1922
+algebraic: 
+  white: [Kd5, Ba5, Sf6]
+  black: [Ka3, Pc5, Pb4]
+stipulation: +
+solution: |
+  1. Ke4 $3 (1. Kc4 $143 b3 2. Ne4 b2 3. Nc3 b1=Q 4. Nxb1+
+  Ka4 5. Be1 $11) 1... b3 2. Nd5 b2 3. Nc3 Kb3 4. Kd3
+  c4+ 5. Kd2 $18 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Bohemia
+date: 1923
+algebraic: 
+  white: [Kf6, Rc1, Bh6]
+  black: [Ka2, Pb3]
+stipulation: +
+solution: "1. Rc3 b2 2. Bc1 b1=Q 3. Ra3# 1-0"
+---
+authors: 
+  - Réti, Richard
+source: Wiener Schachzeitung
+date: 1923
+algebraic: 
+  white: [Ka3, Rd8, Sd6]
+  black: [Kd2, Ph4, Ph2, Pb3, Pa7]
+stipulation: +
+solution: |
+  1. Re8 $3 h1=Q (1... Kd1 $144 2. Ne4 Ke1 3. Ng3+ Kf2
+  4. Nh1+ Kg2 5. Re1 $18) 2. Ne4+ Kc1 3. Rc8+ Kb1 4. Nd2+
+  Ka1 5. Nxb3+ Kb1 6. Nd2+ Ka1 7. Rc2 $1 $18 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Bohemia
+date: 1923
+algebraic: 
+  white: [Kb2, Rg3, Bh3]
+  black: [Kd1, Pf4, Pe2]
+stipulation: +
+solution: |
+  "1. Rd3+ Ke1 2. Rf3 Kd2 (2... Kd1 $144 {main} 3. Bg4
+  $1 e1=Q (3... Kd2 $144 4. Rf2 $18) 4. Rd3# (4. Rf2+
+  $144 $18 {cook AK})) 3. Bf1 e1=Q (3... exf1=Q $144 4.
+  Rxf1 Ke3 5. Kc2 f3 6. Re1+ (6. Kd1 $143 f2 7. Rh1 Kf3
+  8. Rf1 Ke3 $11) 6... Kf2 $18) 4. Rd3# 1-0"
+---
+authors: 
+  - Réti, Richard
+source: 28. Říjen
+date: 1925
+algebraic: 
+  white: [Kb6, Pb5, Pa5]
+  black: [Kd7, Bc4, Sf1]
+stipulation: "="
+solution: |
+  1. Kb7 Ne3 (1... Bd5+ $144 2. Ka7 $1 $11) (1... Bxb5
+  $144 2. a6 $1 $11) 2. a6 ( 2. b6 $143 Nd5 3. Ka7 Nb4
+  $1 4. b7 Nc6+ 5. Ka8 Kc7 $19) 2... Nd5 3. a7 Nc7 4.
+  a8=Q Bd5+ 5. Ka7 Nxa8 6. b6 Kc8 7. b7+ Bxb7 $11 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Národní listy
+source-id: 15
+date: 1928-06-10
+algebraic: 
+  white: [Kd5, Ph6, Pd6]
+  black: [Kf7, Bd8, Pf6]
+stipulation: "="
+solution: |
+  1. Kc6 Ba5
+  2. Kd5 Bc3
+  3. h7! f5
+  4. d7 Ke7
+  5. d8Q+ Kxd8
+  6. Ke6 f4
+  7. Kd5 f3
+  8. Kc4 Lf6
+  9. Kd3 draws
+  
+---
+authors: 
+  - Réti, Richard
+source: Národní listy
+source-id: 16
+date: 1928-06-19
+algebraic: 
+  white: [Kf8, Pe6]
+  black: [Ka7, Be2, Pg6]
+stipulation: "="
+solution: |
+  1.Kf8-e7 ! g6-g5 2.Ke7-d6 g5-g4 3.e6-e7 Be2-b5 4.Kd6-c5 Bb5-e8
+   5.Kc5-d4 g4-g3 6.Kd4-e3 4...g4-g3 5.Kc5*b5
+  
+keywords: 
+  - Reti maneuver
+---
+authors: 
+  - Réti, Richard
+source: Шахматный листок
+date: 1928
+algebraic: 
+  white: [Kd3, Ba6, Sh5, Pg2]
+  black: [Kb3, Pg4, Pf4, Pe5, Pc3]
+stipulation: "="
+solution: |
+  1. Ng3 $1 (1. Bb5 $143 e4+ 2. Ke2 (2. Kxe4 $144 c2 3.
+  Nxf4 c1=Q $19) 2... c2 3. Nxf4 c1=Q $19) 1... fxg3 2.
+  Bb5 e4+ (2... c2 $144 3. Ba4+ Kxa4 4. Kxc2 $11) 3. Ke2
+  (3. Ke3 $143 Ka3 $1 (3... c2 $143 4. Ba4+ Kxa4 5. Kd2
+  $11)) 3... c2 4. Ba4+ Kxa4 5. Kd2 Kb3 6. Kc1 Kc4 (6...
+  Kc3 $144 $11) (6... e3 $144 $11) 7. Kxc2 e3 8. Kd1 Kd3
+  9. Ke1 e2 $11 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Kölnische Volkszeitung
+date: 1928-12-16
+algebraic: 
+  white: [Kb6, Rf4, Be4]
+  black: [Kd7, Pe3, Pe2]
+stipulation: +
+solution: |
+  "1. Bc6+? Kd6
+  2. Rd4+ Ke5
+  3. Re4+ Kd6
+  4. Rxe3 e1Q
+  5. Rxe1 stalemate
+  
+  1. Bf5+ Kd8(6) 
+  2. Rd4+ Ke7(8)
+  3.Re4+ Kd8! 
+  4. Bd7! e1Q
+  5. Bb5! Qa5+
+  6. Kxa5 wins  
+  3. ... Kf6
+  4. Rxe3 wins
+  1. ... Ke7(8)
+  2. Re4+ Kd8 etc."
+keywords: 
+  - Stalemate avoidance
+comments: 
+  - This is the corrected version by Rinck in Bohemia from 1935-07-28
+---
+authors: 
+  - Réti, Richard
+source: Шахматный листок
+date: 1928
+distinction: 1st Honorable Mention
+algebraic: 
+  white: [Kh7, Ph5, Pg4, Pe4]
+  black: [Ke7, Ba8, Pf6, Pd6]
+stipulation: +
+solution: |
+  1. e5 dxe5 (1... Be4+ $144 2. Kg7 fxe5 (2... dxe5 $144
+  3. h6 Bc2 $11 { See main line}) 3. g5 d5 4. h6 d4 5.
+  g6 Bxg6 6. Kxg6 d3 7. h7 d2 8. h8=Q d1=Q $11) (1...
+  fxe5 $144 2. Kg7 Be4 (2... e4 $144 3. h6 e3 4. h7 e2
+  5. h8=Q e1=Q 6. Qxa8 $11) 3. h6 d5 4. g5 $11) 2. Kg7
+  Be4 3. h6 Bd3 4. Kg8 Ke6 5. Kg7 $11 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Шахматы
+source-id: 330
+date: 1928-04
+distinction: 1st Prize
+algebraic: 
+  white: [Kh7, Qf6, Pg5, Pe4, Pc3, Pb3]
+  black: [Ke8, Rf8, Bh2, Pf7, Pd6, Pb5]
+stipulation: +
+solution: |
+  "1. Kh6! Be5 2. Kg7! Bh2 3. c4! bxc4 4. e5! Bxe5 5. bxc4 Bxf6+
+  6. gxf6 Rh8 7. Kxh8 Kd7 8. Kg8,Kh7 wins
+  5. ... Bh2 6. c5 wins
+  4. bxc4? Be5 looses
+  3. ... b4? 4. c5 looses
+  3. e5? Bxe5 4. c4 b4 looses
+  2. ... Bxf6+ 3. gxf6 wins"
+---
+authors: 
+  - Réti, Richard
+source: Národní listy
+date: 1929
+distinction: Special Prize
+algebraic: 
+  white: [Kc5, Pf7, Pe6, Pa7]
+  black: [Ke7, Bd1, Sc7]
+stipulation: "="
+solution: |
+  1. Kb6 (1. f8=Q+ $143 Kxf8 2. Kc6 Na8 3. Kd7 Ba4+ (3...
+  Bg4 $143 4. Kd8 Bxe6 $11) 4. Kc8 (4. Kd8 $144 Bc6 $19)
+  4... Ke7 $1 5. Kb7 Kd6 $1 6. e7 Bc6+ $19) 1... Na8+
+  2. Kb7 Bf3+ 3. Kc8 (3. Kb8 $143 Bd5 4. Kc8 Bxe6+ $19)
+  3... Bc6 (3... Bg2 $144 4. f8=Q+ Kxf8 5. Kd7 $1 Bh3
+  6. Kd8 Bxe6 $11) 4. f8=Q+ Kxf8 5. Kd8 Kg7 $1 6. Ke7
+  Kg6 $1 7. Kf8 (7. Kd6 $143 Ba4 8. Ke7 Kf5 $19) 7...
+  Nb6 $1 8. e7 (8. Ke7 $143 Nc8+ 9. Kf8 Kf6 $19) 8...
+  Nd7+ 9. Ke8 Nf6+ 10. Kd8 $1 (10. Kf8 $143 Nh7+ 11. Kg8
+  Bd5+ 12. Kh8 Nf6 $19) 10... Kf7 11. e8=Q+ Nxe8 12. Kc8
+  Nf6 13. Kb8 Nd7+ 14. Kc7 Ne5 15. Kb8 $11 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Sämtliche Studien (Réti)
+date: 1931
+algebraic: 
+  white: [Kd6, Ph4, Pb5]
+  black: [Kg8, Ph5, Pg6, Pa7]
+stipulation: "="
+solution: |
+  1. Kd5 $1 (1. Kc6 $143 g5 2. Kb7 g4 $1 (2... gxh4 $143
+  3. Kxa7 h3 4. b6 h2 5. b7 h1=Q 6. b8=Q+ $11) 3. Kxa7
+  g3 4. b6 g2 5. b7 g1=Q+ $19) (1. Ke5 $143 Kf7 2. Ke4
+  Ke6 3. Kf4 Kf6 $19) 1... Kf7 (1... Kg7 $144 2. Ke4 $3
+  (2. Ke5 $143 Kf7 $19) (2. Ke6 $143 g5 $19) 2... Kf6
+  3. Kf4 Ke7 4. Ke3 $3 (4. Ke5 $143 Kf7 $19) (4. Ke4 $143
+  Ke6 $19) (4. Kg5 $143 Kf7 5. Kf4 Kf6 $19) (4. Kf3 $143
+  Kd6 $19) 4... Kd7 5. Kd3 Kc7 6. Kc4 Kd7 (6... g5 $144
+  7. hxg5 h4 8. g6 $11) 7. Kd3 $1 $11 (7. Kd5 $143 Ke7
+  8. Ke5 (8. Kc6 $144 g5 $19) (8. Ke4 $144 Ke6 $19) 8...
+  Kf7 $19)) 2. Ke5 $1 Ke7 3. Kd5 $1 Kd7 (3... Kf6 $144
+  4. Kc6 $3 g5 5. hxg5+ $3 Kxg5 6. Kb7 h4 7. Kxa7 h3 8.
+  b6 h2 9. b7 h1=Q 10. b8=Q $11) (3... g5 $144 4. hxg5
+  $11) 4. Ke5 $1 (4. Kc5 $143 g5 5. hxg5 h4 $19) 4...
+  Kc7 (4... Ke7 $144 5. Kd5 $11) 5. Kd5 Kb6 (5... g5 $144
+  6. hxg5 $11) 6. Kc4 Ka5 (6... Kb7 $144 7. Kc5 Kb8 (7...
+  Kc7 $144 8. Kd5 $11) 8. Kc4 Kc8 9. Kd4 Kd8 (9... Kd7
+  $144 10. Ke5 $11) 10. Ke4 Ke8 (10... Ke7 $144 11. Kd5
+  $11) 11. Kf4 Kf8 (11... Kf7 $144 12. Ke5 $11) ( 11...
+  Ke7 $144 12. Ke3 $1 $11) 12. Ke4 $1 (12. Kf3 $143 Kf7
+  13. Ke3 Ke7 14. Kf3 (14. Kd3 $144 Kf6 15. Ke4 g5 $19)
+  14... Kd6 $19) 12... Kg7 (12... Kg8 $144 13. Ke3 Kg7
+  14. Ke4 $1 $11) 13. Ke3 $1 Kf7 (13... Kf6 $144 14. Kf4
+  $11) 14. Kf3 $1 $11) 7. Kc5 Ka4 8. Kc4 Ka3 9. Kc3 Ka2
+  10. Kc2 Ka1 11. Kc3 Kb1 12. Kb3 $11 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Wiener Tageblatt
+date: 1925
+algebraic: 
+  white: [Kc5, Qc6, Se4]
+  black: [Ka2, Qg2, Pg3]
+stipulation: +
+solution: |
+  1. Nc3+ $1 Ka1 2. Qa4+ Kb2 3. Qa2+ Kc1 4. Qb1+ Kd2 5.
+  Qb2+ Ke1 6. Qc1+ Kf2 7. Nd1+ $1 Kf3 (7... Ke2 $144 8.
+  Qb2+ Kd3 $18 {Main line}) 8. Qc3+ Ke2 (8... Kf4 $144
+  9. Qf6+ Ke4 10. Qd4+ (10. Qc6+ $144 $2 Kd3 11. Qa6+
+  Kd2 12. Qa2+ Kd3 13. Nb2+ Ke4 14. Qd5+ Ke3 15. Nd1+
+  $18 {loss of time}) 10... Kf3 11. Qd5+ $18) 9. Qb2+
+  Kd3 (9... Kf3 $144 10. Qb7+ $18) 10. Qb3+ Kd2 11. Qa2+
+  Kd3 12. Nb2+ $1 Ke3 (12... Kc3 $144 13. Na4+ $18) 13.
+  Nc4+ Kf3 14. Ne5+ 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Tagesbote
+date: 1928
+algebraic: 
+  white: [Kf6, Sf8, Pe6, Pd3]
+  black: [Kc8, Rd6]
+stipulation: +
+solution: |
+  1. d4 Rxd4 (1... Kc7 2. d5 Rxd5 3. e7 Rd8 4. Ne6+ $18)
+  2. e7 Rd6+ $1 (2... Re4 3. Ne6 Kd7 4. Nc5+ $18) 3. Kg7
+  $3 (3. Kf7 $2 Rd8 4. Kf6 Re8 $11) 3... Rd8 4. Kf7 Kc7
+  5. Ne6+ 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: 
+algebraic: 
+  white: [Kg1, Rb1, Se3, Pe7]
+  black: [Ka5, Re6, Bh1, Pg2]
+stipulation: +
+solution: |
+  1. Nf5 (1. Rb8 $2 Rxe3 2. e8=Q Rxe8 $11) 1... Ka4 (1...
+  Ka6 2. Nd6 Rxe7 3. Ra1+ Kb6 4. Nc8+ $18) (1... Re5 2.
+  Nd4 Re3 (2... Ka4 3. Ra1+ Kb4 4. Nc6+ $18) (2... Ka6
+  3. Nc2 Rxe7 4. Nb4+ $18) 3. Ra1+ (3. Rc1 Re4 4. Rc5+
+  $18) 3... Kb6 4. Nf5 Re5 5. Nd6 $1 $18) (1... Re4 2.
+  Nd4 Ka6 (2... Ka4 3. Ra1+) (2... Re3 3. Ra1+) 3. Nc2
+  $1) (1... Re2 2. Nd4 $1 Re3 (2... Re4 3. Nb3+) 3. Ra1+
+  Kb6 4. Nf5 Re5 5. Nd6 $18) 2. Nd4 Re4 {der schwarze
+  Turm kann nicht auf ein schwarzes Feld ziehen, ohne
+  nach 3. Ra1+ Nb4 von dem Springer genommen zu werden}
+  3. Ra1+ Kb4 4. Rc1 $3 (4. Nc2+ $2 Kc3 5. Re1 Rxe7 $1
+  6. Rxe7 Kxc2 $11) 4... Ka5 (4... Ka3 5. Rc3+) (4...
+  Ka4 5. Rc4+ Ka5 $18) 5. Rc5+ Kb4 (5... Ka6 6. Rc6+ Ka7
+  7. Re6 $18) (5... Ka4 6. Rc4+ {Eine meisterhafte Beherrschung
+  des schwarzen Turmes}) 6. Re5 Rxe5 7. Nc6+ $18 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Ostrauer Morgenzeitung
+date: 1929
+algebraic: 
+  white: [Ka8, Pg4, Pd5, Pc7]
+  black: [Kf6, Ba6, Ph6]
+stipulation: "="
+solution: |
+  1. d6 Ke6 2. d7 (2. Ka7 $2 Bc8 3. Kb8 Kd7) 2... Kxd7
+  3. Ka7 Be2 4. Kb8 Ba6 5. Ka7 Bc8 6. Kb8 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Tijdschrift vd NSB
+date: 1922
+algebraic: 
+  white: [Ke4, Rf2]
+  black: [Kh3, Ph4, Pg7, Pg5]
+stipulation: +
+solution: |
+  1. Rd2 Kg3 (1... g4 2. Ke3 g5 (2... Kg3 3. Ke2 Kg2 4.
+  Rd4) 3. Rd4 Kg3 4. Ke2 h3 5. Kf1) (1... g6 2. Kf3 g4+
+  3. Kf2 Kh2 4. Kf1+) (1... Kg4 2. Rg2+) 2. Rd3+ Kg2 (2...
+  Kg4 3. Ke3 Kg3 4. Ke2+ Kg2 5. Rd5) 3. Kf5 h3 4. Kg4
+  h2 5. Rd2+ Kg1 6. Kg3 h1=N+ 7. Kf3 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Kagan's Neueste Schachnachrichten
+source-id: 31
+date: 1920
+distinction: Honorable Mention
+algebraic: 
+  white: [Kc5, Ph3, Pb4, Pa5]
+  black: [Ke2, Bf3, Pb7]
+stipulation: +
+solution: |
+  1.Kd4 Kf2 2.h4 Kg3 (2...Be2 $1 {cook IB} 3.Kc5 (3.Ke4
+  Kg2 $1 4.Kf5 (4.Ke3 Kf1) 4...Kf3 $1 5.h5 Ke3 6.h6 Kd4)
+  3...Ke3 $1 4.Kb6 (4.b5 Kf4) 4...Bf3 5.h5 Bxh5 6.Kxb7
+  Be2 7.Kb6 (7.a6 Kd4 8.a7 (8.Kb6 Kc4 9.b5 Bf3) 8...Kc4
+  9.Kb6 Bf3 10.b5 Ba8 11.Ka6 Kc5) (7.Kc6 Kd4 8.b5 Kc4)
+  7...Kd4 8.a6 Kc4 9.b5 Bf3) 3.Ke3 Bg4 $1 4.b5 $1 Kxh4
+  5.b6 Bc8 6.Kf4 Kh5 7.Ke5 Kg5 8.Kd6 Kf5 9.Kc7   1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Kagan's Neueste Schachnachrichten
+source-id: 31
+date: 1920
+distinction: Honorable Mention
+algebraic: 
+  white: [Kd4, Ph2, Pb3, Pa5]
+  black: [Kh1, Bf3, Pb7]
+stipulation: +
+solution: |
+  1.h4 (1.Ke3 $2 Bd1) 1...Kg2 2.Ke3 (2.b4 $2 Be2) (2.Kc5
+  $2 Kg3 3.b4 Kxh4 4.b5 Be2 5.Kb6 Kg4) 2...Kg3 3.b4 Bg4
+  4.b5 Kxh4 5.b6 (5.Kf4 $2 Bd7) 5...Bc8 6.Kf4 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Kagan's Neueste Schachnachrichten
+source-id: 31
+date: 1920
+distinction: Honorable Mention
+algebraic: 
+  white: [Kc4, Ph3, Pb4, Pa4]
+  black: [Ke2, Bf3, Pb7]
+stipulation: +
+solution: |
+  1.Kd4 (1.h4 $2 Ke3) 1...Kf2 2.h4 (2.b5 $2 Kg3) 2...Kg3
+  3.Ke3 Bg4 $1 {cook AC} 4.b5 $1 Kxh4 5.b6 $1 Bc8 6.Kf4
+  Bg4   1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Kagan's Neueste Schachnachrichten
+source-id: 32
+date: 1920
+distinction: 2nd Prize
+algebraic: 
+  white: [Ke5, Ph4, Pb5, Pa4]
+  black: [Kf2, Bf3, Pa7]
+stipulation: +
+solution: |
+  1.Kf5 $1 (1.Kf4 $2 Be2 2.Ke4 Kg3 3.Ke3 Bg4 $1 4.a5 Kxh4
+  5.b6 axb6 6.axb6 Bc8) 1...Ke3 (1...Be2 {main} 2.Kf4
+  Kg2 3.Kg5 Kf3 4.h5 Ke3 5.h6 Bd3 6.a5) 2.a5 Kd4 3.b6
+  (3.Kf4 $1 {minor dual AC} Bd5 4.b6 axb6 5.axb6 Kc5 6.Ke5)
+  3...axb6 4.axb6 Kc5 5.Kf4 Bd5 6.Ke5 Bf3 7.h5   1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Magyar Sakkvilág
+source-id: 202
+date: 1929
+distinction: Commendation
+algebraic: 
+  white: [Kc7, Rg1, Sa3, Pe6, Pa5]
+  black: [Kc3, Qb2, Ph6]
+stipulation: +
+solution: |
+  1. e7 Qe2 (1... Qh2+ {main} 2. Kc6 Qe2 $1 3. Nb5+ Kd2
+  (3... Kb2 4. Rb1+) (3... Kb4 4. Rg4+ Kxa5 5. Ra4+) 4.
+  Rd1+ $1) 2. Rg3+ Kb2 3. Re3 $1 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Шахматы
+source-id: 387
+date: 1929
+distinction: Commendation
+algebraic: 
+  white: [Kb7, Se4, Pa6]
+  black: [Ka5, Sb5]
+stipulation: +
+solution: |
+  1. Nc5 Kb4 2. Kb6 Nd6 3. Ne4 Nc8+ 4. Kc7 Kb5 5. Kb7
+  Ka5 6. Nc5 Nd6+ 7. Kc7 Nb5+ 8. Kc6 Na7+ 9. Kb7 Nb5 10.
+  Ne4 Kb4 11. Kb6 Kc4 12. Nc3 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Troitzky Ty
+date: 1929
+distinction: 5th Honorable Mention
+algebraic: 
+  white: [Ka4, Rb1, Pg6, Pb7]
+  black: [Kb8, Rf8]
+stipulation: +
+solution: |
+  1. Rb5 (1. Ka5 $2 Rf2 2. Rg1 Rf8 3. Ka6 (3. Kb6 Rf1)
+  3... Rg8 4. g7 (4. Kb5 Kxb7 5. Kc5 Kc7 6. Kd5 Kd7 7.
+  Ke5 Ke7 8. Kf5 Rf8+) 4... Rxg7) 1... Rf1 2. Rg5 Rf8
+  3. Kb5 Kxb7 4. Kc5 Kc7 5. Kd5 Kd7 6. Ke5 Ke7 7. Rf5
+  1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: 
+date: 1929
+algebraic: 
+  white: [Kf7, Rf3, Pe5]
+  black: [Ke4, Be7, Pf5]
+stipulation: +
+solution: |
+  1. Rf2 $1 Kxe5 (1... Bc5 2. Rc2 Ba3 3. e6) (1... Bh4
+  2. e6 f4 3. Rh2 Bg5 4. Rh5 Bd8 5. Rh8 Bg5 6. Rf8 Ke3
+  7. Kg6 Be7 8. Rf7 Bd8 9. Kf5) 2. Kxe7 f4 3. Rf1 $1 1-0
+  
+---
+authors: 
+  - Réti, Richard
+  - Майзелис, Илья Львович
+source: 
+date: 1929
+algebraic: 
+  white: [Kg8, Ra7]
+  black: [Kf6, Pe6, Pc7]
+stipulation: +
+solution: |
+  1...c6 (1...e5 2.Rxc7 Kf5 (2...e4 3.Rc5 $1) 3.Kf7 e4
+  4.Re7 Kf4 5.Ke6 $1 e3 6.Kd5 Kf3 7.Kd4 e2 8.Kd3) (1...c5
+  2.Rc7 Ke5 $1 (2...e5 3.Rxc5 Kf5 4.Kf7 Kf4 5.Ke6 e4 6.Kd5
+  e3 7.Kd4) 3.Rxc5+ Kd4 4.Rc1 $1 (4.Rc8 $2 e5 5.Re8 e4)
+  4...e5 5.Rd1+ $1 Kc3 (5...Ke3 6.Re1+ Kf4 7.Kf7 e4 8.Ke6
+  $1 e3 9.Kd5 Kf3 10.Kd4) 6.Re1 Kd4 7.Kf7 e4 8.Ke6 e3
+  9.Kf5 Kd3 10.Kf4 e2 11.Kf3) 2.Kh7 $1 (2.Rc7 $2 e5 3.Rxc6+
+  Kf5 4.Kf7 e4 5.Re6 Kf4 6.Ke7 e3 7.Kd6 Kf3 8.Kd5 e2)
+  (2.Ra5 $2 e5 3.Rc5 Kf5 4.Kf7 Kf4 5.Ke6 e4) 2...e5 3.Kh6
+  e4 4.Kh5 (4.Ra5 $2 e3 $1 5.Ra3 Ke5 6.Rxe3+ Kd4 7.Re1
+  c5) 4...Kf5 5.Kh4 Kf4 6.Rf7+ Ke3 7.Kg3 c5 8.Rc7 Kd4
+  9.Kf4 c4 10.Rd7+ Kc3 11.Kxe4   1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Basler Nachrichten
+source-id: 2053
+date: 1929
+algebraic: 
+  white: [Ke4, Pg5, Pg4, Pf4, Pd7, Pd6]
+  black: [Kh4, Bd8, Ph7]
+stipulation: +
+solution: |
+  1. g6 (1. f5 $1 {cook} Kxg5 2. Ke5 Kh6 3. Kd5) 1...
+  hxg6 2. g5 Kh5 3. Kd5 $1 ( 3. Ke5 $2 Kg4 4. f5 Kxg5
+  5. f6 Kh6 $3 6. Ke6 g5) 3... Kg4 4. Ke5 Ba5 5. f5 Kxg5
+  6. f6 Bc3+ 7. Kd5 $1 Bxf6 8. Ke6 Bd8 9. Kf7 Kf5 10.
+  Ke8 Bf6 11. d8=Q Bxd8 12. Kxd8 g5 13. Ke8 g4 14. d7
+  g3 15. d8=Q 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Basler Nachrichten
+source-id: 2053
+date: 1929
+algebraic: 
+  white: [Ke2, Pg5, Pf4, Pd7, Pd5]
+  black: [Kh3, Be7, Pg7]
+stipulation: +
+solution: |
+  1. Kd3 $1 Kg3 2. Ke3 Kh4 3. Kd4 Kg4 (3... Bd8 4. g6
+  $1 Kh5 5. f5 Bf6+ 6. Kc5 Kg5 7. Kd6 Bd8 8. Ke6) (3...
+  g6 4. d6 Bd8 5. Kd5 $1 Kg4 6. Ke5 Ba5 7. f5) 4. Ke4
+  Bd8 5. Ke5 g6 6. d6 Ba5 7. f5 Kxg5 8. f6 Bc3+ (8...
+  Kh6 9. Ke6 Bd8 10. Kf7 g5 11. Ke8 Bxf6 12. d8=Q Bxd8
+  13. Kxd8) 9. Kd5 $1 Bxf6 10. Ke6 Bd8 11. Kf7 Kf5 12.
+  Ke8 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Basler Nachrichten
+source-id: 2053
+date: 1929
+algebraic: 
+  white: [Ke4, Pg4, Pf4, Pd7, Pd6]
+  black: [Kh4, Bd8, Pg6]
+stipulation: +
+solution: |
+  1. g5 Kh5 $1 2. Kd5 $1 (2. Ke5 $2 Kg4 3. f5 Kxg5 4.
+  f6 $1 Kh6 $1 5. Ke6 g5) 2... Kg4 3. Ke5 Ba5 4. f5 Kxg5
+  5. f6 Bc3+ 6. Kd5 $1 Bxf6 7. Ke6 Bd8 8. Kf7 Kf5 9. Ke8
+  Bf6 10. d8=Q Bxd8 11. Kxd8 g5 {eg} 12. d7 g4 13. Ke8
+  g3 14. d8=Q 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Münchner Zeitung
+date: 1929
+algebraic: 
+  white: [Kg1, Bg7, Sc3]
+  black: [Ka1, Pe3, Pa2]
+stipulation: +
+solution: |
+  1. Kf1 (1. Kg2 $2 Kb2 2. Nb5+ Kb1 $1 3. Na3+ Kc1 4.
+  Kf3 e2 5. Kxe2 a1=Q 6. Bxa1 ) 1... Kb2 2. Nb5+ Kb1 3.
+  Na3+ Kc1 4. Ke1 e2 5. Nc4 $1 Kb1 6. Nd2+ 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Národní listy
+date: 1929
+algebraic: 
+  white: [Kb6, Rd1, Pg6, Pg4, Pe6]
+  black: [Kc8, Re7, Pg7]
+stipulation: +
+solution: |
+  1. Rd6 (1. Rc1+ $2 Kd8 2. Rc6 Re8 3. Kc5 Ke7 4. Kd5
+  Rd8+ 5. Ke5 Rc8 $3 6. Rxc8) 1... Rc7 2. Kb5 Ra7 3. Kc5
+  Ra5+ 4. Kb4 Ra7 5. Kb5 Rc7 6. Kb6 Re7 7. Kc5 Ra7 8.
+  Rd4 $1 Ra5+ 9. Kc6 Ra6+ 10. Kd5 Ra5+ 11. Ke4 Ra6 12.
+  Ke5 Ra5+ 13. Kf4 Ra7 14. Rd5 Rb7 15. Ke5 Ra7 16. Kd6
+  Kd8 17. Kc6+ Ke8 18. Rd7 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Národní listy
+date: 1929
+algebraic: 
+  white: [Ka3, Rd6, Pg6, Pg5, Pe6]
+  black: [Kb8, Rc7, Pg7]
+stipulation: +
+solution: |
+  1. Ka4 Kc8 2. Kb4 Ra7 3. Kb5 Rc7 4. Kb6 Re7 5. Kc5 Ra7
+  6. Rd4 $1 Ra5+ 7. Kc6 Ra6+ 8. Kd5 Ra5+ 9. Ke4 Ra6 10.
+  Ke5 Ra5+ 11. Kf4 Ra7 12. Rd5 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Národní listy
+date: 1929
+algebraic: 
+  white: [Kb6, Rd1, Pg6, Pg5, Pe6]
+  black: [Kc8, Re7, Pg7]
+stipulation: +
+solution: |
+  1. Rd6 Rc7 2. Kb5 Ra7 3. Kc5 Ra5+ 4. Kb4 Ra7 5. Kb5
+  Rc7 6. Kb6 Re7 7. Kc5 Ra7 8. Rd4 Ra5+ 9. Kc6 Ra6+ 10.
+  Kd5 Kd8 11. Ke5+ Ke8 12. Rd7 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Шахматы
+source-id: 399
+date: 1929
+algebraic: 
+  white: [Kg5, Sf4, Sb2, Ph7]
+  black: [Kc3, Rd8, Pc7]
+stipulation: +
+solution: |
+  1. Na4+ $1 Kb3 (1... Kc4 2. Ng6 Kd5 $1 3. Ne7+ Kc4 4.
+  Ng8 Rd5+ 5. Kg6 Rd6+ 6. Nf6 Rd8 7. Nd7 $1 (7. Kg7 $2
+  Kd4 $1) 7... Rh8 8. Nac5 c6 9. Kg7 Rxh7+ 10. Kxh7) (1...
+  Kb4 2. Ng6 c5 3. Kf6 $1 c4 4. Ke7 Rc8 5. Nb6 c3 6. Nxc8
+  c2 7. h8=Q) 2. Ng6 (2. Nc5+ $1 {cook HH} Kc4 3. Nfe6)
+  (2. Ne6 $1 {cook HH}) 2... Kxa4 3. Kf6 c5 4. Ke7 Ra8
+  5. Nf8 Ra7+ 6. Nd7 Ra8 7. Nb6+ 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Шахматный листок
+source-id: 369
+date: 1929
+algebraic: 
+  white: [Kc3, Pf2, Pd3]
+  black: [Kb1, Rh2]
+stipulation: "="
+solution: |
+  1. f3 $1 (1. f4 $2 Rf2 2. d4 Rxf4 3. Kc4 Kc2) (1. d4
+  $2 Rxf2 2. Kc4 (2. d5 Rf4) 2... Kc2 3. d5 Rd2) 1...
+  Rf2 (1... Rh4 2. d4 Rf4 3. Kc4 Kc2 4. Kc5 Kd3 5. d5)
+  ( 1... Ka2 $1 {cook IM} 2. f4 (2. Kb4 Kb2) 2... Rf2
+  3. Kc4 (3. Kb4 Rxf4+ 4. Kc5 Rf5+) 3... Ka3 4. d4 Ka4
+  5. Kc5 Ka5 6. d5 Rc2+ 7. Kd6 Kb6 8. f5 Rf2 9. Ke6 Kc7
+  10. f6 Kd8 11. Kf7 Kd7 12. Kg7 Ke8) 2. d4 Rxf3+ 3. Kc4
+  Kc2 4. d5 Rd3 5. Kc5 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Шахматный листок
+source-id: 369
+date: 1929
+algebraic: 
+  white: [Kb3, Pe2, Pc3]
+  black: [Ka1, Rh2]
+stipulation: "="
+solution: |
+  1. e3 $1 (1. e4 $2 Re2 2. Kc4 (2. c4 Rxe4 3. Kb4 Kb2
+  4. Kb5 Kc3 5. c5 Kd4 6. c6 Kd5) 2... Rxe4+ 3. Kd5 Re8
+  $1 (3... Re1 $2 4. c4 Rd1+ 5. Ke6 $1) 4. c4 Rd8+ 5.
+  Ke6 Re8+ 6. Kd5 Kb2 7. c5 Kc3 8. c6 Kb4) 1... Re2 2.
+  c4 Rxe3+ 3. Kb4 Kb2 4. c5 Rd3 5. Kb5 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Шахматный листок
+source-id: 369
+date: 1929
+algebraic: 
+  white: [Kc3, Pf2, Pd3]
+  black: [Kb1, Ra2]
+stipulation: "="
+solution: |
+  1. f3 $1 Rf2 (1... Kc1 $1 {cook MD} 2. Kd4 (2. d4 Ra3+
+  3. Kb4 (3. Kc4 Kd2 4. d5 Ke3 5. d6 Rd3 $1 6. Kc5 Kf4)
+  3... Rd3 $1 4. Kc5 Kd2 5. d5 (5. f4 Ke3 6. f5 Rxd4 )
+  5... Ke3 6. d6 Kf4 7. Kc6 Ke5 8. f4+ Ke6 9. f5+ Kxf5)
+  2... Kd2 3. f4 (3. Ke4 Kc3 4. f4 Kb4 5. Kd5 Rf2 6. Ke5
+  Kc5) 3... Ke2 $1 (3... Ra4+ $2 4. Ke5 Kxd3 5. f5) 4.
+  Ke4 (4. Ke5 Kf3 5. d4 Re2+ $1 6. Kf5 Rd2 7. Ke5 Kg4
+  8. d5 Kh5 $1 9. f5 Kh6 $1 10. d6 Kg7) 4... Kf2 $1 5.
+  d4 Re2+ $1 6. Kf5 (6. Kd5 Kf3 7. f5 Kf4 8. f6 Kg5 9.
+  f7 Rf2 10. Ke6 Kg6 11. d5 Re2+) 6... Ke3 $1 7. Ke5 (7.
+  d5 Kd4 8. d6 Kc5 9. d7 Rd2) 7... Kf3+ 8. Kf5 Rd2 $1
+  9. Ke5 Kg4 10. d5 Kh5 $1 11. f5 Kh6 $1 12. d6 Kg7) 2.
+  d4 Rxf3+ 3. Kc4 Kc2 4. d5 Rd3 5. Kc5 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Tidskrift för Schack
+source-id: 7019
+date: 1929-12
+algebraic: 
+  white: [Ke3, Rf6]
+  black: [Kc3, Sg5]
+stipulation: +
+solution: |
+  "1.Rf6-g6 ? Sg5-f7 2.Ke3-e4 Kc3-c4 3.Rg6-f6 Sf7-d8
+  1.Rf6-f5 ? Sg5-e6 2.Rf5-e5 Se6-d8 3.Ke3-e4 Kc3-c4
+  1.Ke3-f4 Sg5-h3+ 2.Kf4-f3 ! Sh3-g5+ 3.Kf3-e3 Kc3-c4 4.Ke3-f4 Sg5-h3+
+   5.Kf4-e4 ! Sh3-g5+ 6.Ke4-e5 ! Sg5-h3 7.Rf6-f3 Sh3-g5 8.Rf3-f4+
+   Kc4-c5 9.Rf4-f5 Sg5-h3 10.Ke5-e4+ ! Kc5-c4 11.Ke4-e3 9...Sg5-h7
+   10.Ke5-e6+ 8...Kc4-d3 9.Rf4-f5 Sg5-h7 ! 10.Ke5-f4 8.Rf3-f5 ! {dual}
+   Sg5-h3 9.Ke5-e4 7...Sh3-g1 8.Rf3-e3 Kc4-c5 9.Ke5-f5 ! Kc5-d4 10.Kf5-f4
+   6...Kc4-d3 7.Rf6-f5 6...Kc4-c5 7.Rf6-f5 5...Sh3-g1 6.Ke4-e3 3...Kc3-c2
+   4.Rf6-g6 Sg5-f7 5.Ke3-d4 Sf7-d8 6.Kd4-d5 Sd8-b7 7.Rg6-a6 5...Kc2-d2
+   6.Kd4-e4 ! Kd2-e2 7.Ke4-f4 Ke2-f2 8.Rg6-f6 Sf7-d8 9.Rf6-d6 Sd8-b7
+   10.Rd6-d5 3...Kc3-b3 4.Ke3-f4 Sg5-h3+ 5.Kf4-g4 Sh3-g1 6.Rf6-f2
+   Kb3-c3 7.Rf2-g2 2...Sh3-g1+ 3.Kf3-e3 2.Kf4-g4 ? Sh3-g1 2.Kf4-g3 ? Sh3-g5"
+keywords: 
+  - Dual
+---
+authors: 
+  - Réti, Richard
+source: Tijdschrift vd NSB
+date: 1929
+algebraic: 
+  white: [Kh1, Rb5, Rb2, Se3, Pg2]
+  black: [Kc1, Qg6, Bh2, Pg7, Pg5, Pg3]
+stipulation: +
+solution: |
+  1. R5b4 $1 (1. Rc2+ $2 Qxc2 2. Nxc2 Kxc2 3. Rxg5 Kd3
+  4. Rxg7 Ke4 5. Rh7 Kf4 6. Rxh2 gxh2 7. Kxh2 Kg4) (1.
+  Rb8 $2 Qe4 $1 (1... Qd3 2. R2b3)) (1. Rb7 $2 Qh7 2.
+  R7b4 Qg6) 1... Qh7 $1 (1... Qd3 2. R2b3 Qg6 3. Rd4)
+  2. Rb7 Qg6 (2... Qd3 3. R2b3) (2... Qe4 3. Rc7+ Kxb2
+  4. Nc4+ Qxc4 5. Rxc4 Kb3 6. Rc7) 3. R2b6 Qe4 4. Rd7
+  Qxe3 5. Rc6+ Kb2 6. Rb7+ Qb3 $1 7. Rxb3+ Kxb3 8. Rc7
+  (8. Rc5 $1 {cook JU}) 8... g6 9. Rc6 Kb4 10. Rxg6 Kc4
+  11. Rxg5 Kd4 12. Rh5 Ke4 13. Rxh2 gxh2 14. Kxh2 Kf4
+  15. Kh3 Kg5 16. Kg3 1-0
+  
+---
+authors: 
+  - Réti, Richard
+source: Magyar Sakkvilág
+source-id: 167
+date: 1928
+distinction: Commendation
+algebraic: 
+  white: [Ke8, Pb7, Pb5]
+  black: [Ke5, Bb8, Sg6]
+stipulation: "="
+solution: |
+  1. Kd8 $1 (1. Kd7 $2 Bd6 2. Kc8 (2. b6 Kd5 3. Kc8 Ne7+
+  4. Kd7 Nc6) 2... Ne7+ 3. Kd7 Nd5) 1... Bd6 2. Kd7 $1
+  Kd5 3. Kc8 Ne7+ 4. Kd7 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Шахматный листок
+source-id: 265
+date: 1928
+distinction: 1st Honorable Mention
+algebraic: 
+  white: [Kg7, Pg5, Pf4, Pd4]
+  black: [Kd7, Ba5, Pe6, Pc6]
+stipulation: "="
+solution: |
+  1. Kf7 (1. d5 $2 Ke7 $1 2. dxc6 Bc7 3. g6 Bxf4 4. Kh7
+  Be5 5. Kg8 Ke8 6. Kh7 Ba1 $1 7. Kh6 (7. Kg8 e5) 7...
+  Bf6) 1... Bc3 2. d5 $1 cxd5 (2... exd5 $1 {cook IB}
+  3. g6 Bh8 $1 4. Kg8 (4. f5 d4 5. f6 d3 6. g7 Bxg7 7.
+  fxg7 d2 8. g8=Q d1=Q) 4... Bb2 5. Kf7 c5 6. f5 c4 7.
+  f6 c3 8. g7 c2 9. g8=Q c1=Q) 3. g6 Kd6 4. Kf8 $1 Bb2
+  5. Kf7 Bh8 6. Kg8 Bc3 7. Kf7 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Шахматный листок
+source-id: 265
+date: 1928
+distinction: 1st Honorable Mention
+algebraic: 
+  white: [Kh7, Ph5, Pg4, Pe4]
+  black: [Ke7, Bb5, Pf6, Pd6]
+stipulation: "="
+solution: |
+  1. e5 $1 dxe5 2. Kg7 Bd3 3. h6 Ke6 (3... Bh7 4. Kxh7
+  Kf7 5. g5 $1 fxg5 6. Kh8 g4 7. h7 g3) 4. Kg8 Bc2 5.
+  Kg7 1/2-1/2
+  
+---
+authors: 
+  - Réti, Richard
+source: Tidskrift för Schack
+source-id: 6255
+date: 1921
+algebraic: 
+  white: [Kh1, Qg3, Re6, Sd6, Sc6]
+  black: [Kd5, Sc7, Sa3, Ph3, Pc5, Pa6]
+stipulation: "#3"
+solution: |
+  "1. Sc8! [2. Sb6+
+    2. ... Kxe6 3. Qg6#]
+  1. ... Sa8 2. Qg4 [3. S8e7, S6e7, Rd6, Qe4#]
+    2. ... c4 3. Qf5#
+  1. ... Sxe6 2. Qf3+
+    2. ... Kc4 3. Sd6#
+  1. ... Kxe6 2. Qg6+
+    2. ... Kd5/d7 3. Sb6#
+  1. ... Sc4 2. Qg4 [3. S8e7, S6e7, Qe4#]
+    2. ... Sxe6 3. Qf3#"
+---
+authors: 
+  - Réti, Richard
+source: Über Land und Meer
+source-id: 15
+date: 1904
+algebraic: 
+  white: [Ka4, Qh4, Bf4, Bb1, Sg2, Pc4, Pc2]
+  black: [Kd4, Qe5, Sf8, Pf3, Pb6]
+stipulation: "#3"
+solution: |
+  "1. Qf2!+
+  1. ... Qe3 2. Qxe3+
+    2. ... Kxc4 3. Ba2#
+  1. ... Kxc4 2. Ba2+
+    2. ... Kc3 3. Bxe5#
+  1. ... Kc3 2. Bxe5+
+    2. ... Kxc4 3. Qd4, Ba2#"
+---
+authors: 
+  - Réti, Richard
+source: Sahmatnyi Listok
+date: 1927
+distinction: 2nd Prize
+algebraic: 
+  white: [Kh7, Pf6, Pf5, Pd5]
+  black: [Kc7, Be1, Sb8]
+stipulation: "="
+solution: |
+  1.d6+ Kxd6 2.f7 Sd7 3.Kg7 Bc3+ 4.Kg8 Ke7 5.f8/Q+ Sxf8
+    6.f6+ Bxf6 =
+---
+authors: 
+  - Réti, Richard
+source: Münchner Neueste Nachrichten
+date: 1928
+algebraic: 
+  white: [Ke7, Rd4]
+  black: [Ke5, Pd5]
+stipulation: +
+solution: |
+  1. Rd2(3) d4
+  2. Rd1 Kd5
+  3. Kd7 Ke4
+  4. Kc6 d3
+  5. Kc5 wins
+  
+---
+authors: 
+  - Réti, Richard
+source: Kölnische Volkszeitung
+date: 1928-01
+algebraic: 
+  white: [Kg1, Rc1]
+  black: [Kf5, Pg2, Pe2, Pc2]
+stipulation: +
+solution: |
+  "1.Kg1*g2 ? Kf5-e4 2.Kg2-f2 e2-e1=Q+
+   ! 3.Kf2*e1 Ke4-d3 4.Rc1-a1 Kd3-c3 5.Ra1-c1 Kc3-d3 ! 3.Rc1*e1+
+   Ke4-d3 2...Ke4-d3 ? 3.Kf2-e1
+  1.Kg1-f2 ! Kf5-e4 2.Kf2*e2 Ke4-d4
+   ! 3.Rc1-g1 {or Ra1} Kd4-e4 4.Rg1-e1 ! Ke4-e5 5.Ke2-e3 ! Ke5-e6 6.Ke3-e4
+   5.Ke2-d2+ ? Ke5-f4 5.Ke2-f2+ ? Ke5-d4 4...Ke4-d4 5.Ke2-d2 4...Ke4-f4
+   5.Ke2-f2 3...Kd4-c3 4.Rg1-e1 Kc3-b2 5.Ke2-d2 Kb2-b3 6.Re1-c1 3.Rc1-e1 ? Kd4-e4 !"
+---
+authors: 
+  - Réti, Richard
+source: Kagan's Neueste Schachnachrichten
+source-id: version
+date: 1922-04
+algebraic: 
+  white: [Ka4, Pc5]
+  black: [Ka6, Ph6]
+stipulation: "="
+solution: |
+  "1.c5-c6 h6-h5 2.Ka4-b4 Ka6-b6 3.Kb4-c4 h5-h4 4.Kc4-d5 ! h4-h3
+   5.Kd5-d6 4...Kb6-c7 5.Kd5-e4 1.Ka4-b4 ! {cook} h6-h5 2.c5-c6
+   ! 2.Kb4-c4 ? h5-h4 1...Ka6-b7 2.Kb4-c4"
+keywords: 
+  - Reti maneuver
+  - Cooked
+---
+authors: 
+  - Réti, Richard
+source: Kagan's Neueste Schachnachrichten
+date: 1922-04
+algebraic: 
+  white: [Ka4, Pc6]
+  black: [Ka6, Ph6]
+stipulation: "=" Black to move
+solution: |
+  1...h6-h5 2.Ka4-b4 ! Ka6-b6
+   3.Kb4-c4 ! h5-h4 4.Kc4-d5 ! Kb6-c7 5.Kd5-e4 4...h4-h3
+   5.Kd5-d6 h3-h2 6.c6-c7 3...Kb6*c6 4.Kc4-d4 2...h5-h4 3.Kb4-c5
+   h4-h3 4.Kc5-d6 h3-h2 5.c6-c7 Ka6-b7 6.Kd6-d7
+keywords: 
+  - Reti maneuver
+---
+authors: 
+  - Réti, Richard
+source: L’Alfiere di Re
+date: 1922
+algebraic: 
+  white: [Kf3, Rc3, Sc5, Pf5, Pe2]
+  black: [Ka5, Sc1, Pf7, Pd2, Pb5]
+stipulation: +
+solution: |
+  1.Rc3-c2 d2-d1=Q 2.Rc2*c1 Qd1-d5+ 3.e2-e4 Qd5-a2 4.Rc1-a1 {+-}
+  3...Qd5-e5 4.Rc1-a1+ Qe5*a1 5.Sc5-b3+  {+-}
+  4...Ka5-b4 5.Sc5-d3+ {+-}
+  4...Ka5-b6 5.Sc5-d7+ {+-}
+  
+comments: 
+  - also in The San Francisco Chronicle (no. 150), 17 December 1922
+---
+authors: 
+  - Réti, Richard
+source: Wiener Schachzeitung
+date: 1923
+algebraic: 
+  white: [Kb4, Ra8, Sf6]
+  black: [Kd2, Ph4, Ph3, Pb3, Pa7]
+stipulation: +
+solution: |
+  "1.Kb4-a3! h3-h2 2.Ra8-e8 h2-h1=Q 3.Sf6-e4+ Kd2-c2 4.Re8-c8+ Kc2-b1 5.Se4-d2+ Kb1-a1 6.Sd2*b3+ Ka1-b1 7.Sb3-d2+ Kb1-a1 {
+  } 8.Rc8-c2 {+-} threat: 9.Sd2-b3+ Ka1-b1 10.Rc2-b2# 
+  2...Kd2-d1 3.Sf6-e4 Kd1-e2 4.Se4-g3+ Ke2-f3 5.Sg3-h1 Kf3-g2 6.Re8-e1 {+-}
+  1.Kb4*b3? h3-h2 2.Sf6-e4+ Kd2-e3 3.Ra8-e8 Ke3-f3 4.Se4-g5+ Kf3-g4 5.Re8-e1 Kg4*g5 6.Re1-h1 Kg5-g4 {
+  }7.Rh1*h2 Kg4-g3 8.Rh2-h1 h4-h3 9.Rh1-c1 h3-h2 10.Kb3-a4 Kg3-g2 11.Ka4-a5 h2-h1=Q 12.Rc1*h1 Kg2*h1 =
+  1.Ra8-h8? b3-b2 2.Sf6-e4+ Kd2-e3 3.Se4-c3 Ke3-f2 4.Rh8*h4 Kf2-g3 5.Rh4-h7 h3-h2 6.Kb4-b3 Kg3-g2 {
+  }7.Rh7-g7+ Kg2-f3 8.Rg7-f7+ Kf3-g2 9.Rf7-g7+ {=}"

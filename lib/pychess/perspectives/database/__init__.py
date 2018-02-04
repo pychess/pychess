@@ -18,7 +18,7 @@ from pychess.widgets import gamewidget
 from pychess.Database.model import create_indexes, drop_indexes
 from pychess.Database.PgnImport import PgnImport, download_file
 from pychess.Database.JvR import JvR
-from pychess.Savers import fen, epd
+from pychess.Savers import fen, epd, olv
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
 
@@ -206,6 +206,9 @@ class Database(GObject.GObject, Perspective):
             elif filename.endswith(".epd"):
                 self.importer = None
                 chessfile = epd.load(protoopen(filename))
+            elif filename.endswith(".olv"):
+                self.importer = None
+                chessfile = olv.load(protoopen(filename, encoding="utf-8"))
             elif filename.endswith(".fen"):
                 self.importer = None
                 chessfile = fen.load(protoopen(filename))

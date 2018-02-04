@@ -16,7 +16,7 @@ def splitUri(uri):
         return uri.split("://")
 
 
-def protoopen(uri):
+def protoopen(uri, encoding=PGN_ENCODING):
     """ Function for opening many things """
     splitted = splitUri(uri)
 
@@ -24,7 +24,7 @@ def protoopen(uri):
         uri = splitted[1]
 
     try:
-        return open(unquote(uri), "rU", encoding=PGN_ENCODING, newline="")
+        return open(unquote(uri), "rU", encoding=encoding, newline="")
     except (IOError, OSError):
         pass
 

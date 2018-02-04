@@ -948,7 +948,7 @@ class Sidepanel:
             else:
                 break
 
-        if result and result != "*" and not self.gamemodel.lesson_game:
+        if result and result != "*" and not self.gamemodel.lesson_game and not self.gamemodel.practice_game:
             self.textbuffer.insert_with_tags_by_name(end_iter(), " " + result, "move")
 
     def apply_symbols(self, text):

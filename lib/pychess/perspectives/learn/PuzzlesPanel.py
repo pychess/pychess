@@ -11,6 +11,7 @@ from pychess.Variants import variants
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer, stockfish_name
 from pychess.perspectives import perspective_manager
+from pychess.Savers.olv import OLVFile
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
 from pychess.Database.PgnImport import PgnImport
@@ -27,6 +28,9 @@ PUZZLES = (
     ("mate_in_2.pgn", "Mate in two"),
     ("mate_in_3.pgn", "Mate in three"),
     ("mate_in_4.pgn", "Mate in four"),
+    ("lasker.olv", "Lasker Emanuel"),
+    ("loyd.olv", "Loyd Samuel"),
+    ("reti.olv", "Réti Richard"),
 )
 
 
@@ -70,10 +74,14 @@ class Sidepanel():
 
 
 def start_puzzle_from(filename):
-    chessfile = PGNFile(protoopen(addDataPrefix("lectures/%s" % filename)))
-    chessfile.limit = 1000
-    importer = PgnImport(chessfile)
-    chessfile.init_tag_database(importer)
+    if filename.lower().endswith(".pgn"):
+        chessfile = PGNFile(protoopen(addDataPrefix("lectures/%s" % filename)))
+        chessfile.limit = 1000
+        importer = PgnImport(chessfile)
+        chessfile.init_tag_database(importer)
+    elif filename.lower().endswith(".olv"):
+        chessfile = OLVFile(protoopen(addDataPrefix("lectures/%s" % filename), encoding="utf-8"))
+
     records, plys = chessfile.get_records()
 
     rec = records[random.randrange(0, len(records))]
