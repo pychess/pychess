@@ -40,7 +40,12 @@ class OLVFile(ChessFile):
         games = []
         rec = None
         rec_id = 1
+
+        # authors is a more line list (each line starts with "-")
         in_authors = False
+
+        # piece list are usually in one line list inside []
+        # but sometimes given in more line lists
         in_white = False
         in_black = False
 
@@ -57,6 +62,7 @@ class OLVFile(ChessFile):
                 in_black = False
                 rec["FEN"] = self.lboard.asFen()
 
+            # New record start
             if line == "---":
                 if rec is not None:
                     games.append(rec)
@@ -138,6 +144,7 @@ class OLVFile(ChessFile):
                     rec["Black"] = "Mate in %s" % line[2:-1]
 
             elif line.startswith("solution:"):
+                # TODO: solutions can be in several (sometimes rather unusual) form
                 pass
 
             else:
@@ -159,6 +166,10 @@ class OLVFile(ChessFile):
                     cord = Cord(piece[1:3]).cord
                     piece = chr2piece[piece[0]]
                     self.lboard._addPiece(cord, piece, BLACK)
+
+        # Append the latest record
+        if rec is not None:
+            games.append(rec)
 
         return games
 
