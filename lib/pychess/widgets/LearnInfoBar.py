@@ -151,7 +151,7 @@ class LearnInfoBar(Gtk.InfoBar):
 
             if status in UNDOABLE_STATES:
                 self.get_next_puzzle()
-            elif gamemodel.hint and gamemodel.hint != gamemodel.moves[-1].as_uci():
+            elif gamemodel.hint and gamemodel.hint != gamemodel.moves[-1].as_uci() and self.gamemodel.practice[0] != "endgame":
                 self.retry()
             else:
                 self.your_turn()
