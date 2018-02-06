@@ -38,7 +38,7 @@ class ExternalsDialog():
         check_button.set_active(conf.get("download_scoutfish", False))
         check_button.connect("toggled", lambda w: conf.set("download_scoutfish", w.get_active()))
         box.add(check_button)
-        link = "https://github.com/gbtami/scoutfish"
+        link = "https://github.com/pychess/scoutfish"
         link_button = Gtk.LinkButton(link, link)
         box.add(link_button)
         vbox.pack_start(box, False, False, 0)
@@ -48,7 +48,7 @@ class ExternalsDialog():
         check_button.set_active(conf.get("download_chess_db", False))
         check_button.connect("toggled", lambda w: conf.set("download_chess_db", w.get_active()))
         box.add(check_button)
-        link = "https://github.com/gbtami/chess_db"
+        link = "https://github.com/pychess/chess_db"
         link_button = Gtk.LinkButton(link, link)
         box.add(link_button)
         vbox.pack_start(box, False, False, 0)
@@ -84,7 +84,7 @@ class ExternalsDialog():
         def coro():
             altpath = getEngineDataPrefix()
             if pgn.scoutfish_path is None and conf.get("download_scoutfish", False):
-                binary = "https://github.com/gbtami/scoutfish/releases/download/20170627/%s" % pgn.scoutfish
+                binary = "https://github.com/pychess/scoutfish/releases/download/20170627/%s" % pgn.scoutfish
                 filename = yield from download_file_async(binary)
                 if filename is not None:
                     dest = shutil.move(filename, os.path.join(altpath, pgn.scoutfish))
@@ -92,7 +92,7 @@ class ExternalsDialog():
                     pgn.scoutfish_path = dest
 
             if pgn.chess_db_path is None and conf.get("download_chess_db", False):
-                binary = "https://github.com/gbtami/chess_db/releases/download/20170627/%s" % pgn.parser
+                binary = "https://github.com/pychess/chess_db/releases/download/20170627/%s" % pgn.parser
                 filename = yield from download_file_async(binary)
                 if filename is not None:
                     dest = shutil.move(filename, os.path.join(altpath, pgn.parser))
