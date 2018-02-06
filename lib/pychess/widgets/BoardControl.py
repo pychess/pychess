@@ -395,6 +395,8 @@ class BoardControl(Gtk.EventBox):
         if event.button == 3:
             # first we will draw a circle
             cord = self.currentState.point2Cord(event.x, event.y, self.color(event))
+            if cord is None or cord.x < 0 or cord.x > self.FILES or cord.y < 0 or cord.y > self.RANKS:
+                return
             self.pre_arrow_from = cord
             self.view.pre_circle = cord
             self.view.redrawCanvas()
@@ -425,6 +427,8 @@ class BoardControl(Gtk.EventBox):
         if event.button == 3:
             # remove or finalize circle/arrow as needed
             cord = self.currentState.point2Cord(event.x, event.y, self.color(event))
+            if cord is None or cord.x < 0 or cord.x > self.FILES or cord.y < 0 or cord.y > self.RANKS:
+                return
             if self.view.pre_circle == cord:
                 if cord in self.view.circles:
                     self.view.circles.remove(cord)
@@ -450,6 +454,8 @@ class BoardControl(Gtk.EventBox):
 
     def motion_notify(self, widget, event):
         to = self.currentState.point2Cord(event.x, event.y)
+        if to is None or to.x < 0 or to.x > self.FILES or to.y < 0 or to.y > self.RANKS:
+            return
         if self.pre_arrow_from is not None:
             if to != self.pre_arrow_from:
                 # this will be an arrow
