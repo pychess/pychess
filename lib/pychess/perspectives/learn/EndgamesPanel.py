@@ -170,5 +170,4 @@ def create_fen(pieces):
         ok = (not lboard.isChecked()) and (not lboard.opIsChecked()) and bishop_colors_ok
 
     fen = lboard.asFen()
-    return "3K4/4R3/2P5/5k2/8/8/8/6r1 w - - 0 1"
     return fen
