@@ -8,6 +8,7 @@ from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, chr2Sign, chrU2Sign, FAN_PIECES
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
+from pychess.Utils.lutils.attack import isAttacked
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import FILE, RANK
 from pychess.Variants import variants
@@ -147,10 +148,18 @@ def create_fen(pieces):
 
         cords = list(range(0, 64))
         pawn_cords = list(range(0 + 8, 64 - 8))
-        for color in (BLACK, WHITE):
+
+        # Order of color is important here to prevent offering
+        # positions with trivial captures in first move
+        for color in (WHITE, BLACK):
             for char in pieces[color]:
                 piece = chrU2Sign[char.upper()]
-                cord = random.choice(pawn_cords if char == "p" else cords)
+                attacked = True
+                limit = 100
+                while attacked and limit > 0:
+                    cord = random.choice(pawn_cords if char == "p" else cords)
+                    attacked = isAttacked(lboard, cord, 1 - color)
+                    limit -= 1
                 lboard._addPiece(cord, piece, color)
                 cords.remove(cord)
                 if cord in pawn_cords:
