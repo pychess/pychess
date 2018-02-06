@@ -107,6 +107,12 @@ class Move:
             board[self.cord1] is not None and \
             self.flag != QUEEN_CASTLE and self.flag != KING_CASTLE
 
+    def as_uci(self):
+        move = "%s%s%s%s" % (self.cord0.cx, self.cord0.cy, self.cord1.cx, self.cord1.cy)
+        if self.flag in PROMOTIONS:
+            move += reprSign[lmove.PROMOTE_PIECE(self.flag)].lower()
+        return move
+
 # Parsers
 
 
