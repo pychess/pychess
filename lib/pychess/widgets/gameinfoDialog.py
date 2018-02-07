@@ -1,4 +1,6 @@
-from gi.repository import Gtk, Gdk
+import re
+
+from gi.repository import Gtk, Gdk, GObject
 
 from pychess.Utils.const import BLACK, WHITE
 from pychess.perspectives import perspective_manager
@@ -11,22 +13,16 @@ def run(widgets):
     persp = perspective_manager.get_perspective("games")
     gamemodel = persp.cur_gmwidg().gamemodel
 
-    widgets["event_entry"].set_text(str(gamemodel.getTag("Event", "")))
     widgets["site_entry"].set_text(str(gamemodel.getTag("Site", "")))
+    widgets["event_entry"].set_text(str(gamemodel.getTag("Event", "")))
+    widgets["date_entry"].set_text(str(gamemodel.getTag("Date", "")))
     widgets["round_entry"].set_text(str(gamemodel.getTag("Round", "")))
+    widgets["annotator_entry"].set_text(str(gamemodel.getTag("Annotator", "")))
     widgets["white_entry"].set_text(str(gamemodel.getTag("White", "")))
     widgets["black_entry"].set_text(str(gamemodel.getTag("Black", "")))
     widgets["white_elo_entry"].set_text(str(gamemodel.getTag("WhiteElo", "")))
     widgets["black_elo_entry"].set_text(str(gamemodel.getTag("BlackElo", "")))
     refresh_elo_rating_change(widgets)
-    widgets["annotator_entry"].set_text(str(gamemodel.getTag("Annotator", "")))
-
-    # Notice: GtkCalender month goes from 0 to 11, but gamemodel goes from
-    # 1 to 12
-    widgets["game_info_calendar"].clear_marks()
-    widgets["game_info_calendar"].select_month(
-        int(gamemodel.tags["Month"]) - 1, int(gamemodel.tags["Year"]))
-    widgets["game_info_calendar"].select_day(int(gamemodel.tags["Day"]))
 
     global firstRun
     if firstRun:
@@ -43,24 +39,39 @@ def initialize(widgets):
     def accept_new_properties(button, *args):
         persp = perspective_manager.get_perspective("games")
         gamemodel = persp.cur_gmwidg().gamemodel
-        gamemodel.tags["Event"] = widgets["event_entry"].get_text()
+
         gamemodel.tags["Site"] = widgets["site_entry"].get_text()
+        gamemodel.tags["Event"] = widgets["event_entry"].get_text()
+        gamemodel.tags["Date"] = widgets["date_entry"].get_text()
+        match = re.match("^([0-9\?]{4})\.([0-9\?]{2})\.([0-9\?]{2})$", gamemodel.tags["Date"])
+        if match is not None:
+            gamemodel.tags["Year"], gamemodel.tags["Month"], gamemodel.tags["Day"] = match.groups()
+        else:
+            gamemodel.tags["Year"], gamemodel.tags["Month"], gamemodel.tags["Day"] = "0", "0", "0"
+        for tag in ["Year", "Month", "Day"]:
+            try:
+                gamemodel.tags[tag] = int(gamemodel.tags[tag])
+            except ValueError:
+                gamemodel.tags[tag] = 0
         gamemodel.tags["Round"] = widgets["round_entry"].get_text()
+        gamemodel.tags["Annotator"] = widgets["annotator_entry"].get_text()
         gamemodel.tags["White"] = widgets["white_entry"].get_text()
         gamemodel.tags["Black"] = widgets["black_entry"].get_text()
         gamemodel.tags["WhiteElo"] = widgets["white_elo_entry"].get_text()
         gamemodel.tags["BlackElo"] = widgets["black_elo_entry"].get_text()
-        gamemodel.tags["Annotator"] = widgets["annotator_entry"].get_text()
-        gamemodel.tags["Year"] = widgets["game_info_calendar"].get_date()[0]
-        gamemodel.tags["Month"] = widgets["game_info_calendar"].get_date()[
-            1] + 1
-        gamemodel.tags["Day"] = widgets["game_info_calendar"].get_date()[2]
+
         widgets["game_info"].hide()
 
         gamemodel.players[BLACK].setName(gamemodel.tags["Black"])
         gamemodel.players[WHITE].setName(gamemodel.tags["White"])
         gamemodel.emit("players_changed")
         return True
+
+    tags_store = Gtk.ListStore(str, GObject.TYPE_PYOBJECT)
+    tagstv = widgets["tags_treeview"]
+    tagstv.set_model(tags_store)
+    tagstv.append_column(Gtk.TreeViewColumn("Tag", Gtk.CellRendererText()))
+    tagstv.append_column(Gtk.TreeViewColumn("Value", Gtk.CellRendererText()))
 
     widgets["white_elo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
     widgets["black_elo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
@@ -81,7 +92,7 @@ def refresh_elo_rating_change(widgets):
 
     site = gamemodel.tags["Site"]
     if "lichess.org" in site or "chessclub.com" in site or "freechess.org" in site:
-        # TODO
+        # TODO : lichess takes 3 parameters per player
         widgets["w_elo_change"].set_text("")
         widgets["b_elo_change"].set_text("")
         return

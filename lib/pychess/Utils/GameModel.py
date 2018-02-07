@@ -244,17 +244,17 @@ class GameModel(GObject.GObject):
         log.debug("GameModel.setPlayers: <- emit players_changed")
         log.debug("GameModel.setPlayers: returning")
 
-    def getTag(self, name, defaultValue):
-        if name in self.tags and self.tags[name] is not None:
-            return self.tags[name]
-        else:
-            return defaultValue
-
-    def getTagExport(self, name, defaultValue):
-        val = self.getTag(name, defaultValue)
-        if type(val) is str:
-            val = val.replace("\\", "\\\\")
-            val = val.replace("\"", "\\\"")
+    def getTag(self, name, defaultValue, intFormat=False):
+        # Extraction of the tag
+        val = self.tags[name] if name in self.tags else None
+        if val is None or val == "":
+            val = defaultValue
+        # Convertion to int
+        if intFormat:
+            try:
+                val = int(val)
+            except ValueError:
+                val = 0
         return val
 
     def color(self, player):

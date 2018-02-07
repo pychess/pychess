@@ -1061,7 +1061,7 @@ class Sidepanel:
         if time_control:
             match = parseTimeControlTag(time_control)
             if match is None:
-                text += time_control
+                text += _("No time control") if time_control == "-" else time_control
             else:
                 secs, inc, moves = match
 
