@@ -24,6 +24,9 @@ flake8 --install-hook=git
 git config flake8.strict true
 
 -------------------------------
+PyChess learning modules need stockfish to be installed
+
+-------------------------------
 Dependencies for Ubuntu/Debian:
 gnome-icon-theme
 python3
