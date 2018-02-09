@@ -5,6 +5,7 @@ from gi.repository import Gtk, Gdk
 from pychess.Utils.const import BLACK, WHITE
 from pychess.perspectives import perspective_manager
 from pychess.Utils.elo import get_elo_rating_change_str
+from pychess.widgets import mainwindow
 
 firstRun = True
 tags_store = Gtk.ListStore(str, str)
@@ -42,6 +43,29 @@ def initialize(widgets):
     def hide_window(button, *args):
         widgets["game_info"].hide()
         return True
+
+    def on_pick_date(button, *args):
+        dialog = Gtk.Dialog(_("Pick a date"),
+                            mainwindow(),
+                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
+
+        calendar = Gtk.Calendar()
+
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw.add(calendar)
+
+        dialog.get_content_area().pack_start(sw, True, True, 0)
+        dialog.resize(300, 200)
+        dialog.show_all()
+
+        response = dialog.run()
+        dialog.destroy()
+
+        if response == Gtk.ResponseType.ACCEPT:
+            year, month, day = calendar.get_date()
+            widgets["date_entry"].set_text("%04d.%02d.%02d" % (year, month + 1, day))
 
     def on_add_tag(button, *args):
         tv_iter = tags_store.append([_("New"), ""])
@@ -116,6 +140,7 @@ def initialize(widgets):
     # Events on the UI
     widgets["whiteelo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
     widgets["blackelo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
+    widgets["date_button"].connect("clicked", on_pick_date)
     widgets["tag_add_button"].connect("clicked", on_add_tag)
     widgets["tag_delete_button"].connect("clicked", on_delete_tag)
     widgets["game_info"].connect("delete-event", hide_window)

@@ -18,8 +18,7 @@ from pychess.Utils.lutils.lmove import toSAN, toFAN, FCORD, TCORD
 from pychess.Savers.pgn import move_count, nag2symbol, parseTimeControlTag
 from pychess.widgets.ChessClock import formatTime
 from pychess.widgets.LearnInfoBar import LearnInfoBar
-from pychess.widgets import insert_formatted
-from pychess.widgets import preferencesDialog
+from pychess.widgets import insert_formatted, preferencesDialog, mainwindow
 
 
 # --- Constants
@@ -428,7 +427,7 @@ class Sidepanel:
                                        Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT)
 
         dialog = Gtk.Dialog(_("Add comment") if creation else _("Edit comment"),
-                            None,
+                            mainwindow(),
                             Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                             buttons_list)
 
