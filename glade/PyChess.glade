@@ -4400,7 +4400,7 @@ It will search positions from http://www.k4it.de/</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="black_elo_entry">
+                  <object class="GtkEntry" id="blackelo_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                   </object>
@@ -4502,7 +4502,7 @@ It will search positions from http://www.k4it.de/</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="white_elo_entry">
+                  <object class="GtkEntry" id="whiteelo_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                   </object>

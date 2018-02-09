@@ -220,6 +220,7 @@ def save(handle, model, position=None):
     for tag in model.tags:
         # Debug: print(">> %s = %s" % (tag, str(model.tags[tag])))
         write_tag(tag, model.tags[tag])
+    print('', file=handle)
 
     # Discovery of the moves and comments
     save_emt = conf.get("saveEmt", False)

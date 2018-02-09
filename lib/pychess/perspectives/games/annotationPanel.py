@@ -1053,7 +1053,7 @@ class Sidepanel:
         if status != '*':
             result = status
         else:
-            result = self.gamemodel.tags['Result']
+            result = self.gamemodel.getTag('Result', '*')
         self.header_textbuffer.insert_with_tags_by_name(end_iter(), ' ' + result + '\n', "head2")
 
         text = ""

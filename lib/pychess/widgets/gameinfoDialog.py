@@ -1,33 +1,40 @@
 import re
 
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk
 
 from pychess.Utils.const import BLACK, WHITE
 from pychess.perspectives import perspective_manager
 from pychess.Utils.elo import get_elo_rating_change_str
 
 firstRun = True
+tags_store = Gtk.ListStore(str, str)
+dedicated_tags = ['Site', 'Event', 'Date', 'Round', 'Annotator', 'White', 'Black', 'WhiteElo', 'BlackElo']
 
 
 def run(widgets):
+    global firstRun, tags_store, dedicated_tags
+
+    # Data from the game
     persp = perspective_manager.get_perspective("games")
     gamemodel = persp.cur_gmwidg().gamemodel
 
-    widgets["site_entry"].set_text(str(gamemodel.getTag("Site", "")))
-    widgets["event_entry"].set_text(str(gamemodel.getTag("Event", "")))
-    widgets["date_entry"].set_text(str(gamemodel.getTag("Date", "")))
-    widgets["round_entry"].set_text(str(gamemodel.getTag("Round", "")))
-    widgets["annotator_entry"].set_text(str(gamemodel.getTag("Annotator", "")))
-    widgets["white_entry"].set_text(str(gamemodel.getTag("White", "")))
-    widgets["black_entry"].set_text(str(gamemodel.getTag("Black", "")))
-    widgets["white_elo_entry"].set_text(str(gamemodel.getTag("WhiteElo", "")))
-    widgets["black_elo_entry"].set_text(str(gamemodel.getTag("BlackElo", "")))
-    refresh_elo_rating_change(widgets)
-
-    global firstRun
+    # Initialization
     if firstRun:
         initialize(widgets)
         firstRun = False
+
+    # Load of the tags having a dedicated field
+    for tag in dedicated_tags:
+        widgets["%s_entry" % tag.lower()].set_text(str(gamemodel.getTag(tag, "")))
+    refresh_elo_rating_change(widgets)
+
+    # Load of the tags in the editor
+    tags_store.clear()
+    for tag in gamemodel.tags:
+        if tag not in dedicated_tags and isinstance(gamemodel.tags[tag], str):
+            tags_store.append([tag, gamemodel.tags[tag]])
+
+    # Show the loaded dialog
     widgets["game_info"].show()
 
 
@@ -36,46 +43,81 @@ def initialize(widgets):
         widgets["game_info"].hide()
         return True
 
+    def on_add_tag(button, *args):
+        tv_iter = tags_store.append([_("New"), ""])
+        path = tags_store.get_path(tv_iter)
+        widgets["tags_treeview"].set_cursor(path)
+
+    def on_delete_tag(button, *args):
+        store, tv_iter = widgets["tags_treeview"].get_selection().get_selected()
+        if tv_iter:
+            store.remove(tv_iter)
+
     def accept_new_properties(button, *args):
         persp = perspective_manager.get_perspective("games")
         gamemodel = persp.cur_gmwidg().gamemodel
 
-        gamemodel.tags["Site"] = widgets["site_entry"].get_text()
-        gamemodel.tags["Event"] = widgets["event_entry"].get_text()
-        gamemodel.tags["Date"] = widgets["date_entry"].get_text()
-        match = re.match("^([0-9\?]{4})\.([0-9\?]{2})\.([0-9\?]{2})$", gamemodel.tags["Date"])
-        if match is not None:
-            gamemodel.tags["Year"], gamemodel.tags["Month"], gamemodel.tags["Day"] = match.groups()
-        else:
-            gamemodel.tags["Year"], gamemodel.tags["Month"], gamemodel.tags["Day"] = "0", "0", "0"
-        for tag in ["Year", "Month", "Day"]:
-            try:
-                gamemodel.tags[tag] = int(gamemodel.tags[tag])
-            except ValueError:
-                gamemodel.tags[tag] = 0
-        gamemodel.tags["Round"] = widgets["round_entry"].get_text()
-        gamemodel.tags["Annotator"] = widgets["annotator_entry"].get_text()
-        gamemodel.tags["White"] = widgets["white_entry"].get_text()
-        gamemodel.tags["Black"] = widgets["black_entry"].get_text()
-        gamemodel.tags["WhiteElo"] = widgets["white_elo_entry"].get_text()
-        gamemodel.tags["BlackElo"] = widgets["black_elo_entry"].get_text()
+        # Remove the existing tags in string format
+        for tag in list(gamemodel.tags):
+            if isinstance(gamemodel.tags[tag], str):
+                del gamemodel.tags[tag]
+
+        # Copy of the tags from the dedicated fields
+        for tag in dedicated_tags:
+            gamemodel.tags[tag] = widgets["%s_entry" % tag.lower()].get_text()
+            if tag == "Date":  # TODO Study the removal of that part
+                match = re.match("^([0-9\?]{4})\.([0-9\?]{2})\.([0-9\?]{2})$", gamemodel.tags["Date"])
+                if match is not None:
+                    gamemodel.tags["Year"], gamemodel.tags["Month"], gamemodel.tags["Day"] = match.groups()
+                else:
+                    gamemodel.tags["Year"], gamemodel.tags["Month"], gamemodel.tags["Day"] = "0", "0", "0"
+                for tag in ["Year", "Month", "Day"]:
+                    try:
+                        gamemodel.tags[tag] = int(gamemodel.tags[tag])
+                    except ValueError:
+                        gamemodel.tags[tag] = 0
+
+        # Copy the extra tags from the editor
+        for tag in tags_store:
+            if tag[0] != "" and tag not in dedicated_tags:
+                gamemodel.tags[tag[0]] = tag[1]
 
         widgets["game_info"].hide()
 
+        # Apply some settings to the game model
         gamemodel.players[BLACK].setName(gamemodel.tags["Black"])
         gamemodel.players[WHITE].setName(gamemodel.tags["White"])
         gamemodel.emit("players_changed")
         return True
 
-    tags_store = Gtk.ListStore(str, GObject.TYPE_PYOBJECT)
-    tagstv = widgets["tags_treeview"]
-    tagstv.set_model(tags_store)
-    tagstv.append_column(Gtk.TreeViewColumn("Tag", Gtk.CellRendererText()))
-    tagstv.append_column(Gtk.TreeViewColumn("Value", Gtk.CellRendererText()))
+    # Tag editor
+    def tag_edited_cb(cell, path, new_text):
+        global tags_store
+        tags_store[path][0] = new_text
 
-    widgets["white_elo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
-    widgets["black_elo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
+    def value_edited_cb(cell, path, new_text):
+        global tags_store
+        tags_store[path][1] = new_text
 
+    global tags_store
+    tv_tags = widgets["tags_treeview"]
+    tv_tags.set_model(tags_store)
+
+    tag_renderer = Gtk.CellRendererText()
+    tag_renderer.set_property("editable", True)
+    tag_renderer.connect("edited", tag_edited_cb)
+    tv_tags.append_column(Gtk.TreeViewColumn("Tag", tag_renderer, text=0))
+
+    value_renderer = Gtk.CellRendererText()
+    value_renderer.set_property("editable", True)
+    value_renderer.connect("edited", value_edited_cb)
+    tv_tags.append_column(Gtk.TreeViewColumn("Value", value_renderer, text=1))
+
+    # Events on the UI
+    widgets["whiteelo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
+    widgets["blackelo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
+    widgets["tag_add_button"].connect("clicked", on_add_tag)
+    widgets["tag_delete_button"].connect("clicked", on_delete_tag)
     widgets["game_info"].connect("delete-event", hide_window)
     widgets["game_info_cancel_button"].connect("clicked", hide_window)
     widgets["game_info_ok_button"].connect("clicked", accept_new_properties)
@@ -97,8 +139,8 @@ def refresh_elo_rating_change(widgets):
         widgets["b_elo_change"].set_text("")
         return
 
-    welo = widgets["white_elo_entry"].get_text()
-    belo = widgets["black_elo_entry"].get_text()
+    welo = widgets["whiteelo_entry"].get_text()
+    belo = widgets["blackelo_entry"].get_text()
 
     wchange = get_elo_rating_change_str(gamemodel, WHITE, welo, belo)
     widgets["w_elo_change"].set_text(wchange)
