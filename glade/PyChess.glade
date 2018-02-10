@@ -133,6 +133,11 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-connect</property>
   </object>
+  <object class="GtkImage" id="image24">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">x-office-calendar</property>
+  </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -653,8 +658,8 @@
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="F11" signal="activate"/>
                         <accelerator key="Escape" signal="activate"/>
+                        <accelerator key="F11" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -4329,8 +4334,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Site:</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="top_attach">1</property>
@@ -4360,8 +4365,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Rating change:</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="top_attach">8</property>
@@ -4373,9 +4378,9 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">For each player, the statistics provide the probability to win the game and the variation of your ELO if you lose / end into a tie / win, or simply the final ELO rating change</property>
-                    <property name="xalign">1</property>
                     <property name="xpad">3</property>
                     <property name="ypad">6</property>
+                    <property name="xalign">1</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -4389,8 +4394,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="tooltip_text" translatable="yes">For each player, the statistics provide the probability to win the game and the variation of your ELO if you lose / end into a tie / win, or simply the final ELO rating change</property>
-                    <property name="xalign">1</property>
                     <property name="xpad">3</property>
+                    <property name="xalign">1</property>
                   </object>
                   <packing>
                     <property name="left_attach">3</property>
@@ -4416,8 +4421,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Black ELO:</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -4431,8 +4436,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Black:</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -4446,8 +4451,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Round:</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -4493,8 +4498,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">White ELO:</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="top_attach">7</property>
@@ -4533,8 +4538,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">White:</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="top_attach">6</property>
@@ -4546,8 +4551,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Date:</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="top_attach">3</property>
@@ -4559,8 +4564,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Annotator:</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="top_attach">4</property>
@@ -4583,8 +4588,8 @@ It will search positions from http://www.k4it.de/</property>
                   <object class="GtkLabel" id="label5">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Game</property>
+                    <property name="xalign">0</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -4595,8 +4600,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_top">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Players</property>
+                    <property name="xalign">0</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -4633,8 +4638,8 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="xalign">0</property>
                     <property name="label" translatable="yes">Event:</property>
+                    <property name="xalign">0</property>
                   </object>
                   <packing>
                     <property name="top_attach">2</property>
@@ -4661,11 +4666,11 @@ It will search positions from http://www.k4it.de/</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="date_button">
-                        <property name="label" translatable="yes">Pick</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="margin_left">5</property>
+                        <property name="image">image24</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
