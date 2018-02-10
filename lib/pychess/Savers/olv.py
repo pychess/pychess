@@ -64,7 +64,7 @@ class OLVFile(ChessFile):
 
             # New record start
             if line == "---":
-                if rec is not None:
+                if rec is not None and rec["Black"].startswith("Mate in "):
                     games.append(rec)
                     rec_id += 1
 
@@ -139,7 +139,7 @@ class OLVFile(ChessFile):
                 elif "=" in line:
                     rec["Result"] = DRAW
                     rec["Black"] = "Draw"
-                elif "#" in line:
+                elif line.startswith('"#'):
                     rec["Result"] = WHITEWON
                     rec["Black"] = "Mate in %s" % line[2:-1]
 
@@ -168,7 +168,7 @@ class OLVFile(ChessFile):
                     self.lboard._addPiece(cord, piece, BLACK)
 
         # Append the latest record
-        if rec is not None:
+        if rec is not None and rec["Black"].startswith("Mate in "):
             games.append(rec)
 
         return games
