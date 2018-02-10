@@ -138,81 +138,93 @@ def parseTimeControlTag(tag):
 def save(handle, model, position=None):
     """ Saves the game from GameModel to .pgn """
 
-    # Header
-    status = "%s" % reprResult[model.status]
+    # Local functions
+    def tag_default_date():
+        year = model.getTag("Year", 0, intFormat=True)
+        month = model.getTag("Month", 0, intFormat=True)
+        day = model.getTag("Day", 0, intFormat=True)
+        if year > 0 or month > 0 or day > 0:
+            return "%s.%s.%s" % ("%04d" % year if year != 0 else "????", "%02d" % month if month != 0 else "??", "%02d" % day if day != 0 else "??")
+        else:
+            return ""
 
-    print('[Event "%s"]' % model.getTagExport("Event", ""), file=handle)
-    print('[Site "%s"]' % model.getTagExport("Site", ""), file=handle)
-    print('[Date "%04d.%02d.%02d"]' %
-          (int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])), file=handle)
-    print('[Round "%s"]' % model.getTagExport("Round", "?"), file=handle)
-    print('[White "%s"]' % repr(model.players[WHITE]), file=handle)
-    print('[Black "%s"]' % repr(model.players[BLACK]), file=handle)
-    print('[Result "%s"]' % status, file=handle)
-    tag = model.getTagExport("ECO", "")
-    if tag != "":
-        print('[ECO "%s"]' % tag, file=handle)
-        tag = model.getTagExport("Opening", "")
-        if tag != "":
-            print('[Opening "%s"]' % tag, file=handle)  # Unofficial
-            tag = model.getTagExport("Variation", "")
-            if tag != "":
-                print('[Variation "%s"]' % tag, file=handle)  # Unofficial
-    welo = model.getTagExport("WhiteElo", "")
-    if welo != "":
-        print('[WhiteElo "%s"]' % welo, file=handle)
-    belo = model.getTagExport("BlackElo", "")
-    if belo != "":
-        print('[BlackElo "%s"]' % belo, file=handle)
-    if welo != "" and belo != "" and conf.get("saveRatingChange", False):
-        diff = str(get_elo_rating_change_pgn(model, WHITE))
-        if diff != "":
-            print('[WhiteRatingDiff "%s"]' % diff, file=handle)  # Unofficial
-        diff = str(get_elo_rating_change_pgn(model, BLACK))
-        if diff != "":
-            print('[BlackRatingDiff "%s"]' % diff, file=handle)  # Unofficial
-    tag = model.getTagExport("TimeControl", "")
-    if tag != "":
-        print('[TimeControl "%s"]' % tag, file=handle)
-    if model.timed:
-        print('[WhiteClock "%s"]' %
-              msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)), file=handle)
-        print('[BlackClock "%s"]' %
-              msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)), file=handle)
+    processed_tags = []
 
+    def write_tag(tag, value, roster=False):
+        nonlocal processed_tags
+        if tag in processed_tags or (not roster and value == ""):
+            return
+        try:
+            pval = str(value)
+            pval = pval.replace("\\", "\\\\")
+            pval = pval.replace("\"", "\\\"")
+            print('[%s "%s"]' % (tag, pval), file=handle)
+            processed_tags = processed_tags + [tag]
+        except Exception:
+            pass
+
+    # Mandatory ordered seven-tag roster
+    status = reprResult[model.status]
+    str_tags_keys = ["Event", "Site", "Date", "Round", "White", "Black", "Result"]
+    str_tags_vals_default = ["", "", tag_default_date(), "?", repr(model.players[WHITE]), repr(model.players[BLACK]), status]
+    for i, tag in enumerate(str_tags_keys):
+        value = model.getTag(tag, str_tags_vals_default[i])
+        write_tag(tag, value, roster=True)
+
+    # Variant
     if model.variant.variant != NORMALCHESS:
-        print('[Variant "%s"]' % model.variant.cecp_name.capitalize(),
-              file=handle)
+        write_tag("Variant", model.variant.cecp_name.capitalize())
 
+    # Initial position
     if model.boards[0].asFen() != FEN_START:
-        print('[SetUp "1"]', file=handle)
-        print('[FEN "%s"]' % model.boards[0].asFen(), file=handle)
-    print('[PlyCount "%s"]' % (model.ply - model.lowply), file=handle)
-    tag = model.getTagExport("Annotator", "")
-    if tag != "":
-        print('[Annotator "%s"]' % tag, file=handle)
-    if model.reason == WON_CALLFLAG:
-        termination = "time forfeit"
-    elif model.reason == WON_ADJUDICATION and model.isEngine2EngineGame():
-        termination = "rules infraction"
-    elif model.reason in (DRAW_ADJUDICATION, WON_ADJUDICATION):
-        termination = "adjudication"
-    elif model.reason == WHITE_ENGINE_DIED:
-        termination = "white engine died"
-    elif model.reason == BLACK_ENGINE_DIED:
-        termination = "black engine died"
-    elif model.reason in ABORTED_REASONS:
-        termination = "abandoned"
-    elif model.reason in ADJOURNED_REASONS:
-        termination = "unterminated"
-    else:
-        termination = "normal"
-    print('[Termination "%s"]' % termination, file=handle)
+        write_tag("SetUp", "1")
+        write_tag("FEN", model.boards[0].asFen())
 
-    save_emt = conf.get("saveEmt", False)
-    save_eval = conf.get("saveEval", False)
+    # Number of moves
+    write_tag("PlyCount", model.ply - model.lowply)
+
+    # Final position
+    if model.reason == WON_CALLFLAG:
+        value = "time forfeit"
+    elif model.reason == WON_ADJUDICATION and model.isEngine2EngineGame():
+        value = "rules infraction"
+    elif model.reason in (DRAW_ADJUDICATION, WON_ADJUDICATION):
+        value = "adjudication"
+    elif model.reason == WHITE_ENGINE_DIED:
+        value = "white engine died"
+    elif model.reason == BLACK_ENGINE_DIED:
+        value = "black engine died"
+    elif model.reason in ABORTED_REASONS:
+        value = "abandoned"
+    elif model.reason in ADJOURNED_REASONS:
+        value = "unterminated"
+    else:
+        value = "unterminated" if status == "*" else "normal"
+    write_tag("Termination", value)
+
+    # ELO and its variation
+    if conf.get("saveRatingChange", False):
+        welo = model.getTag("WhiteElo", "")
+        belo = model.getTag("BlackElo", "")
+        if welo != "" and belo != "":
+            write_tag("WhiteRatingDiff", get_elo_rating_change_pgn(model, WHITE))  # Unofficial
+            write_tag("BlackRatingDiff", get_elo_rating_change_pgn(model, BLACK))  # Unofficial
+
+    # Time
+    if model.timed:
+        write_tag('WhiteClock', msToClockTimeTag(int(model.timemodel.getPlayerTime(WHITE) * 1000)))
+        write_tag('BlackClock', msToClockTimeTag(int(model.timemodel.getPlayerTime(BLACK) * 1000)))
+
+    # Write all the unprocessed tags, except some ones generated by PyChess (TODO study their removal)
+    processed_tags = processed_tags + ["Year", "Month", "Day", "Time"]
+    for tag in model.tags:
+        # Debug: print(">> %s = %s" % (tag, str(model.tags[tag])))
+        write_tag(tag, model.tags[tag])
+    print('', file=handle)
 
     # Discovery of the moves and comments
+    save_emt = conf.get("saveEmt", False)
+    save_eval = conf.get("saveEval", False)
     result = []
     walk(model.boards[0].board, result, model, save_emt, save_eval)
 
@@ -523,10 +535,10 @@ class PGNFile(ChessFile):
         self.tag_database.build_order_by(self.order_col, self.is_desc)
 
     def reset_last_seen(self):
-        col_max = "ZZZ" if isinstance(self.order_col.type, String) else 2**32
+        col_max = "ZZZ" if isinstance(self.order_col.type, String) else 2 ** 32
         col_min = "" if isinstance(self.order_col.type, String) else -1
         if self.is_desc:
-            self.last_seen = [(col_max, 2**32)]
+            self.last_seen = [(col_max, 2 ** 32)]
         else:
             self.last_seen = [(col_min, -1)]
 
@@ -856,11 +868,8 @@ class PGNFile(ChessFile):
                                 hour = 0 if hour is None else int(hour[:-1])
                                 minute = 0 if minute is None else int(minute[:-1])
                                 msec = 0 if msec is None else int(msec)
-                                msec += int(sec) * 1000 + int(
-                                    minute) * 60 * 1000 + int(
-                                        hour) * 60 * 60 * 1000
-                                model.timemodel.intervals[color][
-                                    movecount] = prev - msec / 1000. + gain
+                                msec += int(sec) * 1000 + int(minute) * 60 * 1000 + int(hour) * 60 * 60 * 1000
+                                model.timemodel.intervals[color][movecount] = prev - msec / 1000. + gain
 
                         if self.has_eval:
                             match = move_eval_re.search(child)
