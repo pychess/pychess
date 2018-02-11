@@ -102,7 +102,9 @@ class LearnInfoBar(Gtk.InfoBar):
                 self.gamemodel.undoMoves(2)
 
             elif self.gamemodel.lesson_game:
-                prev_board = self.gamemodel.getBoardAtPly(self.boardview.shown - 1)
+                prev_board = self.gamemodel.getBoardAtPly(
+                    self.boardview.shown - 1,
+                    variation=self.boardview.shown_variation_idx)
 
                 board = self.gamemodel.getBoardAtPly(
                     self.boardview.shown,

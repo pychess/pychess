@@ -553,15 +553,23 @@ class Sidepanel:
     def remove_variation(self, node, shown_board=None):
         parent = node["parent"]
 
-        # Set new shown board if needed
+        # Set new shown board to parent board by default
         if shown_board is None:
             if parent.pieceBoard is None:
                 # variation without played move at game end
                 self.boardview.setShownBoard(self.gamemodel.boards[-1])
             else:
                 self.boardview.setShownBoard(parent.pieceBoard)
+
+        # but in interactive lessons "Retry" needs prev board to show again
         else:
             self.boardview.setShownBoard(shown_board)
+            # We have to fix show_variation_index here, unless
+            # after removing the variation it will be invalid!
+            for vari in self.gamemodel.variations:
+                if shown_board in vari:
+                    break
+            self.boardview.shown_variation_idx = self.gamemodel.variations.index(vari)
 
         last_node = self.nodelist[-1] == node
 
