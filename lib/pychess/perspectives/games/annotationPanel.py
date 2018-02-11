@@ -550,26 +550,15 @@ class Sidepanel:
             text = self.__movestr(node["board"])
         return text
 
-    def remove_variation(self, node, shown_board=None):
+    def remove_variation(self, node):
         parent = node["parent"]
 
         # Set new shown board to parent board by default
-        if shown_board is None:
-            if parent.pieceBoard is None:
-                # variation without played move at game end
-                self.boardview.setShownBoard(self.gamemodel.boards[-1])
-            else:
-                self.boardview.setShownBoard(parent.pieceBoard)
-
-        # but in interactive lessons "Retry" needs prev board to show again
+        if parent.pieceBoard is None:
+            # variation without played move at game end
+            self.boardview.setShownBoard(self.gamemodel.boards[-1])
         else:
-            self.boardview.setShownBoard(shown_board)
-            # We have to fix show_variation_index here, unless
-            # after removing the variation it will be invalid!
-            for vari in self.gamemodel.variations:
-                if shown_board in vari:
-                    break
-            self.boardview.shown_variation_idx = self.gamemodel.variations.index(vari)
+            self.boardview.setShownBoard(parent.pieceBoard)
 
         last_node = self.nodelist[-1] == node
 
@@ -740,6 +729,10 @@ class Sidepanel:
         self.gamemodel.needsSave = True
 
     def variation_added(self, gamemodel, boards, parent):
+        # Don't show moves in interactive lesson games
+        if self.gamemodel.lesson_game:
+            return
+
         # first find the iter where we will inset this new variation
         node = None
         for n in self.nodelist:
@@ -911,8 +904,8 @@ class Sidepanel:
                 board = board.next
                 continue
 
-            # Don't show moves not yet played in interactive lesson games
-            if 0:  # self.gamemodel.lesson_game and not board.pieceBoard.played:
+            # Don't show moves in interactive lesson games
+            if self.gamemodel.lesson_game:
                 break
 
             if board.fen_was_applied:
@@ -941,14 +934,9 @@ class Sidepanel:
                                         level=level)
                 else:
                     # variation
-                    if 0:  # self.gamemodel.lesson_game:
-                        continue
-
-                    diff, opening_node = self.variation_start(end_iter(), -1,
-                                                              level)
+                    diff, opening_node = self.variation_start(end_iter(), -1, level)
                     self.insert_nodes(child[0], level + 1, parent=board)
-                    self.variation_end(end_iter(), -1, level, child[1], board,
-                                       opening_node)
+                    self.variation_end(end_iter(), -1, level, child[1], board, opening_node)
 
             if board.next:
                 board = board.next

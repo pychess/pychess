@@ -110,13 +110,16 @@ class LearnInfoBar(Gtk.InfoBar):
                     self.boardview.shown,
                     variation=self.boardview.shown_variation_idx)
 
-                for i, node in enumerate(self.annotation_panel.nodelist):
-                    if node["board"] == board.board:
-                        # We have to pass the variation end marker node to remove_variation()
-                        node = self.annotation_panel.nodelist[i + 1]
-                        self.annotation_panel.choices_enabled = False
-                        self.annotation_panel.remove_variation(node, shown_board=prev_board)
+                self.annotation_panel.choices_enabled = False
+                self.boardview.setShownBoard(prev_board)
+                # We have to fix show_variation_index here, unless
+                # after removing the variation it will be invalid!
+                for vari in self.gamemodel.variations:
+                    if prev_board in vari:
                         break
+                self.boardview.shown_variation_idx = self.gamemodel.variations.index(vari)
+
+                self.annotation_panel.choices_enabled = True
 
                 self.gamemodel.undo_in_variation(board)
 
