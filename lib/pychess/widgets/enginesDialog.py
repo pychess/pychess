@@ -610,7 +610,7 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
         return
 
     def spin_edited_cb(self, cell, path, new_text, model):
-        model[path][1]["value"] = new_text
+        model[path][1]["value"] = int(new_text)
         discoverer.save()
         return
 
