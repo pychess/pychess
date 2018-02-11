@@ -179,11 +179,11 @@ class GameModel(GObject.GObject):
 
     def set_practice_game(self):
         self.practice_game = True
-        self.hint = ""
+        self.hints = []
 
     def set_lesson_game(self):
         self.lesson_game = True
-        self.hint = ""
+        self.hints = []
 
     def set_offline_lecture(self):
         self.offline_lecture = True
@@ -276,6 +276,10 @@ class GameModel(GObject.GObject):
             return
 
         analyzer.setOptionInitialBoard(self)
+        # Enable 3 hints in learn perspective puzzles
+        if force_engine is not None:
+            analyzer.setOption("MultiPV", 3)
+
         self.spectators[analyzer_type] = analyzer
         self.emit("analyzer_added", analyzer, analyzer_type)
         self.analyzer_cids[analyzer_type] = analyzer.connect("analyze", self.on_analyze)
@@ -315,10 +319,16 @@ class GameModel(GObject.GObject):
         yield from self.start_analyzer(analyzer_type)
 
     def on_analyze(self, analyzer, analysis):
+        if analysis and self.practice_game:
+            self.hints = []
+            for anal in analysis:
+                if anal is not None:
+                    ply, pv, score, depth, nps = anal
+                    if len(pv) > 0:
+                        self.hints.append((pv[0], score))
+
         if analysis and analysis[0] is not None:
             ply, pv, score, depth, nps = analysis[0]
-            if self.practice_game and len(pv) > 0:
-                self.hint = pv[0]
             if score is not None:
                 if analyzer.mode == ANALYZING:
                     if (ply not in self.scores) or (int(self.scores[ply][2]) <= int(depth)):

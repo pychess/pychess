@@ -117,6 +117,7 @@ def start_puzzle_from(filename):
         asyncio.async(gamemodel.start_analyzer(HINT, force_engine=stockfish_name))
         gamemodel.players[1 - color].name = oppname
         gamemodel.emit("players_changed")
+
     gamemodel.connect("game_started", fix_name, name, color)
 
     gamemodel.variant.need_initial_board = True

@@ -77,13 +77,13 @@ class LearnInfoBar(Gtk.InfoBar):
 
     def on_response(self, widget, response):
         if response in (HINT, MOVE):
-            if self.gamemodel.hint:
+            if self.gamemodel.hints:
                 if self.boardview.arrows:
                     self.boardview.arrows.clear()
                 if self.boardview.circles:
                     self.boardview.circles.clear()
 
-                hint = self.gamemodel.hint
+                hint = self.gamemodel.hints[0][0]
                 cord0 = Cord(hint[0], int(hint[1]), "G")
                 cord1 = Cord(hint[2], int(hint[3]), "G")
                 if response == HINT:
@@ -146,12 +146,17 @@ class LearnInfoBar(Gtk.InfoBar):
                 self.set_response_sensitive(RETRY, True)
                 return
 
-            # print(gamemodel.hint, repr(gamemodel.moves[-1]))
-            status, reason = getStatus(gamemodel.boards[-1])
+            if self.gamemodel.practice[0] != "endgame" and gamemodel.hints:
+                expect_best = True
+                best_score = gamemodel.hints[0][1]
+                best_moves = [hint[0] for hint in gamemodel.hints if hint[1] == best_score]
+            else:
+                expect_best = False
 
+            status, reason = getStatus(gamemodel.boards[-1])
             if status in UNDOABLE_STATES:
                 self.get_next_puzzle()
-            elif gamemodel.hint and gamemodel.hint != gamemodel.moves[-1].as_uci() and self.gamemodel.practice[0] != "endgame":
+            elif expect_best and gamemodel.moves[-1].as_uci() not in best_moves:
                 self.retry()
             else:
                 self.your_turn()
