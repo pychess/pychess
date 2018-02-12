@@ -295,21 +295,21 @@ class ICLogon(object):
                 ports.append(23)
         alternate_host = self.widgets["hostEntry"].get_text()
 
+        timeseal =  self.widgets["timesealCheck"].get_active()
+
         self.showConnecting()
         self.host = host if host is not None else alternate_host if alternate_host else "freechess.org"
-        self.connection = FICSMainConnection(self.host, ports, username,
-                                             password)
+        self.connection = FICSMainConnection(self.host, ports, timeseal, username, password)
         for signal, callback in (("connected", self.onConnected),
                                  ("error", self.onConnectionError),
                                  ("connectingMsg", self.showMessage)):
-            self.cids[self.connection].append(self.connection.connect(
-                signal, callback))
+            self.cids[self.connection].append(self.connection.connect(signal, callback))
         self.main_connected_event = asyncio.Event()
         self.connection_task = asyncio.async(self.connection.start())
 
         # guest users are rather limited on ICC (helper connection is useless)
         if self.host not in ("localhost", "chessclub.com"):
-            self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
+            self.helperconn = FICSHelperConnection(self.connection, self.host, ports, timeseal)
             self.helperconn.connect("error", self.onHelperConnectionError)
 
             @asyncio.coroutine
