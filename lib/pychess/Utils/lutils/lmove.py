@@ -653,6 +653,7 @@ san2WhiteFanDic = {
     ord("B"): FAN_PIECES[WHITE][BISHOP],
     ord("S"): FAN_PIECES[WHITE][BISHOP],
     ord("N"): FAN_PIECES[WHITE][KNIGHT],
+    ord("P"): FAN_PIECES[WHITE][PAWN],
     ord("+"): "†",
     ord("#"): "‡"
 }
@@ -666,6 +667,7 @@ san2BlackFanDic = {
     ord("B"): FAN_PIECES[BLACK][BISHOP],
     ord("S"): FAN_PIECES[BLACK][BISHOP],
     ord("N"): FAN_PIECES[BLACK][KNIGHT],
+    ord("P"): FAN_PIECES[BLACK][PAWN],
     ord("+"): "†",
     ord("#"): "‡"
 }
