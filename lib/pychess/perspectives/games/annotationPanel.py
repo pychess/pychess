@@ -135,6 +135,7 @@ class Sidepanel:
         self.textbuffer.create_tag("scored5", foreground_rgba=Gdk.RGBA(1.0, 0, 0, 1))
         self.textbuffer.create_tag("emt", foreground="grey")
         self.textbuffer.create_tag("comment", foreground="blue")
+        self.textbuffer.create_tag("lesson-comment", foreground="green", font_desc=self.font)
         self.textbuffer.create_tag("selected", background_full_height=True, background="grey")
         self.textbuffer.create_tag("margin", left_margin=4)
         self.textbuffer.create_tag("variation-margin0", left_margin=20)
@@ -883,6 +884,10 @@ class Sidepanel:
     def insert_nodes(self, board, level=0, parent=None, result=None):
         """ Recursively builds the node tree """
 
+        # Don't show moves in interactive lesson games
+        if self.gamemodel.lesson_game:
+            return
+
         end_iter = self.textbuffer.get_end_iter  # Convenience shortcut to the function
 
         while True:
@@ -903,10 +908,6 @@ class Sidepanel:
                                             ini_board=board)
                 board = board.next
                 continue
-
-            # Don't show moves in interactive lesson games
-            if self.gamemodel.lesson_game:
-                break
 
             if board.fen_was_applied:
                 self.insert_node(board, end_iter(), -1, level, parent)
@@ -1163,6 +1164,10 @@ class Sidepanel:
             self.choices_box.remove(widget)
 
     def update_choices(self):
+        # First update lesson move comments
+        if self.gamemodel.lesson_game:
+            self.show_lesson_comments()
+
         view = self.boardview
         try:
             next_board = view.model.getBoardAtPly(view.shown + 1, variation=view.shown_variation_idx)
@@ -1186,8 +1191,6 @@ class Sidepanel:
                 else:
                     text = toSAN(base_board.board, lboard.lastMove, True)
                 choices.append((lboard.pieceBoard, lboard.lastMove, text))
-            elif isinstance(child, str):
-                print(child)
 
         # Add main line next move to choice list also
         if choices:
@@ -1215,6 +1218,21 @@ class Sidepanel:
 
         if not self.choices_enabled:
             self.choices_enabled = True
+
+    def show_lesson_comments(self):
+        self.textbuffer.set_text('')
+        self.nodelist = []
+        view = self.boardview
+        board = view.model.getBoardAtPly(view.shown, variation=view.shown_variation_idx)
+        for index, child in enumerate(board.board.children):
+            if isinstance(child, str):
+                if child.lstrip().startswith("[%"):
+                    continue
+                end_iter = self.textbuffer.get_end_iter()
+                self.textbuffer.insert_with_tags_by_name(
+                    end_iter,
+                    self.apply_symbols(child) + " ",
+                    "lesson-comment")
 
     def on_shownChanged(self, view, shown):
         self.update_choices()

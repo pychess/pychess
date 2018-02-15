@@ -48,22 +48,24 @@ def play_or_add_move(view, board, move):
             # replay mainline move
             if view.model.lesson_game:
                 next_board = view.model.getBoardAtPly(view.shown + 1)
-                next_board.played = True
                 play_sound(move, board)
                 incr = 1 if len(view.model.moves) == board.ply - view.model.lowply + 1 else 2
                 if incr == 2:
                     next_board = view.model.getBoardAtPly(view.shown + 2)
 
-                    # If there is no opp move comment or variation
-                    # we make opp next move
-                    children = next_board.board.children
-                    if not children or all((isinstance(child, str) for child in children)):
-                        next_board.played = True
+                    # If there is any opponent move variation let the user choose opp next move
+                    if any(child for child in next_board.board.children if isinstance(child, list)):
+                        view.infobar.opp_turn()
+                        view.showNext()
+                    # If there is some comment to read let the user read it before opp move
+                    elif any(child for child in board.board.children if isinstance(child, str)):
+                        view.infobar.opp_turn()
+                        view.showNext()
+
+                    # If there is nothing to wait for we make opp next move
+                    else:
                         view.showNext()
                         view.infobar.your_turn()
-                        view.showNext()
-                    else:
-                        view.infobar.opp_turn()
                         view.showNext()
                 else:
                     preferencesDialog.SoundTab.playAction("puzzleSuccess")

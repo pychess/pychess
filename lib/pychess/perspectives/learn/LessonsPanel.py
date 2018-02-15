@@ -80,7 +80,6 @@ def start_lesson_from(filename, index):
     gamemodel.practice = ("lesson", filename, index, len(records) - 1)
 
     chessfile.loadToModel(rec, -1, gamemodel)
-    gamemodel.boards[0].played = True
 
     color = gamemodel.boards[0].color
     if color == WHITE:

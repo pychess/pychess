@@ -127,7 +127,6 @@ class LearnInfoBar(Gtk.InfoBar):
 
         elif response == CONTINUE:
             self.your_turn()
-            self.gamemodel.getBoardAtPly(self.boardview.shown + 1).played = True
             self.boardview.showNext()
             self.boardcontrol.game_preview = False
 
@@ -141,7 +140,6 @@ class LearnInfoBar(Gtk.InfoBar):
 
     def opp_choice_selected(self, board):
         self.your_turn()
-        board.played = True
         self.boardcontrol.game_preview = False
 
     def game_changed(self, gamemodel, ply):
