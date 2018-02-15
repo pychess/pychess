@@ -668,7 +668,11 @@ class GameWidget(GObject.GObject):
         toolbar.insert(filterButton, -1)
 
         def on_clicked(button, func):
-            func()
+            # Prevent moving in game while lesson not finished
+            if self.gamemodel.lesson_game:
+                return
+            else:
+                func()
 
         self.cids[firstButton] = firstButton.connect("clicked", on_clicked, self.board.view.showFirst)
         self.cids[prevButton] = prevButton.connect("clicked", on_clicked, self.board.view.showPrev)

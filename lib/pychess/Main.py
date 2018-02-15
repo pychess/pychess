@@ -109,6 +109,10 @@ class GladeHandlers(object):
             if current_focused_widget is not None and isinstance(current_focused_widget, Gtk.Entry):
                 return False
 
+            # Prevent moving in game while lesson not finished
+            if gmwidg.gamemodel.lesson_game:
+                return
+
             # Navigate on boardview with arrow keys
             if event.keyval in leftkeys:
                 if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
