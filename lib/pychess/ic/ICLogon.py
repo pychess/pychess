@@ -302,7 +302,7 @@ class ICLogon(object):
                 ports.append(23)
         alternate_host = self.widgets["hostEntry"].get_text()
 
-        timeseal =  self.widgets["timesealCheck"].get_active()
+        timeseal = self.widgets["timesealCheck"].get_active()
 
         self.showConnecting()
         self.host = host if host is not None else alternate_host if alternate_host else "freechess.org"

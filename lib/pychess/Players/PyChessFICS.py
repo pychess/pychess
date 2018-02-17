@@ -131,7 +131,7 @@ class PyChessFICS(PyChess):
 
         PyChess.makeReady(self)
 
-        self.connection = FICSMainConnection("freechess.org", self.ports,
+        self.connection = FICSMainConnection("freechess.org", self.ports, True,
                                              self.username, self.password)
         self.connection.connect("connectingMsg", self.__showConnectLog)
         self.connection._connect()
