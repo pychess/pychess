@@ -195,9 +195,10 @@ class Games(GObject.GObject, Perspective):
         filename = conf.get("autoSaveFormat", "pychess")
         filename = filename.replace("#n1", game.tags["White"])
         filename = filename.replace("#n2", game.tags["Black"])
-        filename = filename.replace("#y", "%s" % game.tags["Year"])
-        filename = filename.replace("#m", "%s" % game.tags["Month"])
-        filename = filename.replace("#d", "%s" % game.tags["Day"])
+        year, month, day = game.getGameDate()
+        filename = filename.replace("#y", "%s" % year)
+        filename = filename.replace("#m", "%s" % month)
+        filename = filename.replace("#d", "%s" % day)
         pgn_path = conf.get("autoSavePath", os.path.expanduser("~")) + \
             "/" + filename + ".pgn"
         append = True

@@ -2,6 +2,7 @@ from collections import defaultdict
 import asyncio
 import traceback
 import datetime
+import re
 from queue import Queue
 from io import StringIO
 
@@ -134,12 +135,8 @@ class GameModel(GObject.GObject):
         self.tags = {
             "Event": _("Local Event"),
             "Site": _("Local Site"),
-            "Round": 1,
-            "Year": now.year,
-            "Month": now.month,
-            "Day": now.day,
-            "Time": "%02d:%02d:00" % (now.hour, now.minute),
-            "Result": "*",
+            "Date": "%04d.%02d.%02d" % (now.year, now.month, now.day),
+            "Round": 1
         }
 
         self.endstatus = None
@@ -256,6 +253,18 @@ class GameModel(GObject.GObject):
             except ValueError:
                 val = 0
         return val
+
+    def getGameDate(self):
+        date = self.getTag('Date', '')
+        elements = re.match("^([0-9\?]{4})(\.([0-9\?]{2})(\.([0-9\?]{2}))?)?$", date)
+        if elements is None:
+            y, m, d = '', '', ''
+        else:
+            elements = elements.groups()
+            y = elements[0] if elements[0] is not None else ''
+            m = elements[2] if elements[2] is not None else ''
+            d = elements[4] if elements[4] is not None else ''
+        return y, m, d
 
     def color(self, player):
         if player is self.players[0]:
