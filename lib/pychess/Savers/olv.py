@@ -5,7 +5,7 @@ from pychess.Utils.Cord import Cord
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.const import DRAW, WHITEWON, BLACKWON, WAITING_TO_START, \
-    WHITE, BLACK, KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN, reprResult
+    WHITE, BLACK, KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN
 
 __label__ = _("Chess Compositions from yacpdb.org")
 __ending__ = "olv"
@@ -180,7 +180,6 @@ class OLVFile(ChessFile):
         model.tags['Event'] = rec["Event"]
         model.tags['Site'] = rec["Site"]
         model.tags['Date'] = self.get_date(rec)
-        model.tags['Result'] = reprResult[rec["Result"]]
         model.tags['Round'] = ""
         model.tags['White'] = "?"
         model.tags['Black'] = "?"

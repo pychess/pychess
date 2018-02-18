@@ -15,25 +15,39 @@ def save(path, model, offset):
     game_event = model.tags["Event"]
     game_site = model.tags["Site"]
 
-    year, month, day = int(model.tags["Year"]), int(model.tags["Month"]), int(model.tags["Day"])
-    game_round = model.tags["Round"] if "Round" in model.tags else ""
+    year, month, day = model.getGameDate()
+    try:
+        year = int(year)
+    except ValueError:
+        year = 0
+    try:
+        month = int(month)
+    except ValueError:
+        month = 0
+    try:
+        day = int(day)
+    except ValueError:
+        day = 0
+    game_round = model.getTag("Round", "")
 
     white = repr(model.players[WHITE])
     black = repr(model.players[BLACK])
 
     result = model.status
-    eco = model.tags["ECO"] if "ECO" in model.tags else ""
+    eco = model.getTag("ECO", "")
 
-    time_control = model.tags["TimeControl"] if "TimeControl" in model.tags else ""
+    time_control = model.getTag("TimeControl", "")
     board = int(model.tags["Board"]) if "Board" in model.tags else 0
 
-    if "WhiteElo" in model.tags:
-        white_elo = int(model.tags["WhiteElo"]) if model.tags["WhiteElo"] else 0
-    else:
+    white_elo = model.getTag("WhiteElo", "")
+    try:
+        white_elo = int(white_elo)
+    except ValueError:
         white_elo = 0
-    if "BlackElo" in model.tags:
-        black_elo = int(model.tags["BlackElo"]) if model.tags["BlackElo"] else 0
-    else:
+    black_elo = model.getTag("BlackElo", "")
+    try:
+        black_elo = int(black_elo)
+    except ValueError:
         black_elo = 0
 
     variant = model.variant.variant

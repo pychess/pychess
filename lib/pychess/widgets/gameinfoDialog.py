@@ -1,8 +1,8 @@
-import re
 
 from gi.repository import Gtk, Gdk
 
 from pychess.Utils.const import BLACK, WHITE
+from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
 from pychess.Utils.elo import get_elo_rating_change_str
 from pychess.widgets import mainwindow
@@ -45,12 +45,34 @@ def initialize(widgets):
         return True
 
     def on_pick_date(button, *args):
+        # Parse the existing date
+        obj = GameModel()
+        obj.tags = {"Date": widgets["date_entry"].get_text()}
+        year, month, day = obj.getGameDate()
+
+        # Prepare the date of the picker
+        calendar = Gtk.Calendar()
+        curyear, curmonth, curday = calendar.get_date()
+        try:
+            year = int(year)
+        except ValueError:
+            year = curyear
+        try:
+            month = int(month) - 1
+        except ValueError:
+            month = curmonth
+        try:
+            day = int(day)
+        except ValueError:
+            day = curday
+        calendar.select_month(month, year)
+        calendar.select_day(day)
+
+        # Show the dialog
         dialog = Gtk.Dialog(_("Pick a date"),
                             mainwindow(),
                             Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
-
-        calendar = Gtk.Calendar()
 
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
@@ -89,17 +111,6 @@ def initialize(widgets):
         # Copy of the tags from the dedicated fields
         for tag in dedicated_tags:
             gamemodel.tags[tag] = widgets["%s_entry" % tag.lower()].get_text()
-            if tag == "Date":  # TODO Study the removal of that part
-                match = re.match("^([0-9\?]{4})\.([0-9\?]{2})\.([0-9\?]{2})$", gamemodel.tags["Date"])
-                if match is not None:
-                    gamemodel.tags["Year"], gamemodel.tags["Month"], gamemodel.tags["Day"] = match.groups()
-                else:
-                    gamemodel.tags["Year"], gamemodel.tags["Month"], gamemodel.tags["Day"] = "0", "0", "0"
-                for tag in ["Year", "Month", "Day"]:
-                    try:
-                        gamemodel.tags[tag] = int(gamemodel.tags[tag])
-                    except ValueError:
-                        gamemodel.tags[tag] = 0
 
         # Copy the extra tags from the editor
         for tag in tags_store:

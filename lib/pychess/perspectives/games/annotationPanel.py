@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 
 import re
-import datetime
 from math import floor
 
 from gi.repository import Gtk
@@ -1096,19 +1095,11 @@ class Sidepanel:
                 text += ', '
             text += _('round %s') % round
 
-        game_date = self.gamemodel.tags.get('Date')
-        if game_date is None:
-            game_date = "%02d.%02d.%02d" % (self.gamemodel.tags['Year'], self.gamemodel.tags['Month'],
-                                            self.gamemodel.tags['Day'])
-        if ('?' not in game_date) and game_date.count('.') == 2:
-            y, m, d = map(int, game_date.split('.'))
-            # strftime() is limited to > 1900 dates
-            try:
-                text += ', ' + datetime.date(y, m, d).strftime('%x')
-            except ValueError:
-                text += ', ' + game_date
-        elif '?' not in game_date[:4]:
-            text += ', ' + game_date[:4]
+        game_date = self.gamemodel.getTag('Date', '')
+        if game_date != "":
+            if len(text) > 0:
+                text += ', '
+            text += game_date
         self.header_textbuffer.insert_with_tags_by_name(end_iter(), text, "head1")
 
         eco = self.gamemodel.tags.get('ECO')
@@ -1137,7 +1128,7 @@ class Sidepanel:
         if status != '*':
             result = status
         else:
-            result = self.gamemodel.tags['Result']
+            result = self.gamemodel.getTag('Result', '*')
 
         self.insert_nodes(self.gamemodel.boards[0].board, result=result)
         self.update_selected_node()
