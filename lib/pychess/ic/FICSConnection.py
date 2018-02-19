@@ -57,13 +57,14 @@ class Connection(GObject.GObject):
         'error': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
     }
 
-    def __init__(self, host, ports, username, password):
+    def __init__(self, host, ports, timeseal, username, password):
         GObject.GObject.__init__(self)
         self.daemon = True
         self.host = host
         self.ports = ports
         self.username = username
         self.password = password
+        self.timeseal = timeseal
 
         self.connected = False
         self.connecting = False
@@ -170,8 +171,8 @@ PREVENTED = _("Due to abuse problems, guest connections have been prevented.\n" 
 
 
 class FICSConnection(Connection):
-    def __init__(self, host, ports, username="guest", password=""):
-        Connection.__init__(self, host, ports, username, password)
+    def __init__(self, host, ports, timeseal, username="guest", password=""):
+        Connection.__init__(self, host, ports, timeseal, username, password)
 
     def _post_connect_hook(self, lines):
         pass
@@ -191,7 +192,7 @@ class FICSConnection(Connection):
                           extra={"task": (self.host, "raw")})
                 try:
                     connected_event = asyncio.Event()
-                    self.client = ICSTelnet()
+                    self.client = ICSTelnet(self.timeseal)
                     asyncio.async(self.client.start(self.host, port, connected_event))
                     yield from connected_event.wait()
                 except socket.error as err:
@@ -364,8 +365,8 @@ class FICSConnection(Connection):
 
 
 class FICSMainConnection(FICSConnection):
-    def __init__(self, host, ports, username="guest", password=""):
-        FICSConnection.__init__(self, host, ports, username, password)
+    def __init__(self, host, ports, timeseal, username="guest", password=""):
+        FICSConnection.__init__(self, host, ports, timeseal, username, password)
         self.lvm = None
         self.notify_users = []
         self.ini_messages = []
@@ -480,8 +481,8 @@ class FICSMainConnection(FICSConnection):
 
 
 class FICSHelperConnection(FICSConnection):
-    def __init__(self, main_conn, host, ports, username="guest", password=""):
-        FICSConnection.__init__(self, host, ports, username, password)
+    def __init__(self, main_conn, host, ports, timeseal, username="guest", password=""):
+        FICSConnection.__init__(self, host, ports, timeseal, username, password)
         self.main_conn = main_conn
 
     def _start_managers(self, lines):

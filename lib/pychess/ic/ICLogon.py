@@ -75,6 +75,8 @@ class ICLogon(object):
             conf.set("hostEntry", self.host_get_value(widget), section=self.ics)
         self.widgets["hostEntry"].connect("changed", on_host_changed)
 
+        self.widgets["timesealCheck"].connect("toggled", self.on_timeseal_toggled)
+
         self.infobar = Gtk.InfoBar()
         self.infobar.set_message_type(Gtk.MessageType.WARNING)
         # self.widgets["messagePanelHBox"].pack_start(self.infobar,
@@ -142,6 +144,9 @@ class ICLogon(object):
         self.widgets["passEntry"].set_sensitive(not widget.get_active())
         conf.set("asGuestCheck", widget.get_active(), section=self.ics)
 
+    def on_timeseal_toggled(self, widget):
+        conf.set("timesealCheck", widget.get_active(), section=self.ics)
+
     def on_ics_combo_changed(self, combo):
         tree_iter = combo.get_active_iter()
         if tree_iter is not None:
@@ -154,6 +159,8 @@ class ICLogon(object):
             self.password_set_value(self.widgets["passEntry"], conf.get("passwordEntry", "", section=self.ics))
             default_host = "freechess.org" if self.ics == "FICS" else "chessclub.com"
             self.host_set_value(self.widgets["hostEntry"], conf.get("hostEntry", default_host, section=self.ics))
+            self.widgets["timesealCheck"].set_active(conf.get("timesealCheck", True, section=self.ics))
+            self.on_timeseal_toggled(self.widgets["timesealCheck"])
 
     def _disconnect(self):
         for obj in self.cids:
@@ -295,21 +302,21 @@ class ICLogon(object):
                 ports.append(23)
         alternate_host = self.widgets["hostEntry"].get_text()
 
+        timeseal = self.widgets["timesealCheck"].get_active()
+
         self.showConnecting()
         self.host = host if host is not None else alternate_host if alternate_host else "freechess.org"
-        self.connection = FICSMainConnection(self.host, ports, username,
-                                             password)
+        self.connection = FICSMainConnection(self.host, ports, timeseal, username, password)
         for signal, callback in (("connected", self.onConnected),
                                  ("error", self.onConnectionError),
                                  ("connectingMsg", self.showMessage)):
-            self.cids[self.connection].append(self.connection.connect(
-                signal, callback))
+            self.cids[self.connection].append(self.connection.connect(signal, callback))
         self.main_connected_event = asyncio.Event()
         self.connection_task = asyncio.async(self.connection.start())
 
         # guest users are rather limited on ICC (helper connection is useless)
-        if self.host not in ("localhost", "chessclub.com"):
-            self.helperconn = FICSHelperConnection(self.connection, self.host, ports)
+        if self.host not in ("localhost", "127.0.0.1", "chessclub.com"):
+            self.helperconn = FICSHelperConnection(self.connection, self.host, ports, timeseal)
             self.helperconn.connect("error", self.onHelperConnectionError)
 
             @asyncio.coroutine

@@ -169,24 +169,23 @@ timestamp_path = shutil.which(timestamp, os.X_OK, path=altpath)
 class ICSTelnet():
     sensitive = False
 
-    def __init__(self):
+    def __init__(self, timeseal):
         self.name = ""
         self.connected = False
         self.canceled = False
         self.FatICS = False
         self.USCN = False
         self.ICC = False
-        self.timeseal = False
+        self.timeseal = timeseal
         self.ICC_buffer = ""
 
     @asyncio.coroutine
-    def start(self, host, port, connected_event, timeseal=True):
+    def start(self, host, port, connected_event):
         if self.canceled:
             raise CanceledException()
         self.port = port
         self.host = host
         self.connected_event = connected_event
-        self.timeseal = timeseal
 
         self.name = host
 

@@ -57,7 +57,7 @@ class DummyConnection(Connection):
             self.commands.append(command)
 
     def __init__(self):
-        Connection.__init__(self, 'host', (0, ), 'tester', '123456')
+        Connection.__init__(self, 'host', (0, ), True, 'tester', '123456')
 
         class FakeSet(list):
             def __init__(self, *args):

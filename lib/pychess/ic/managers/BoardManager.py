@@ -1302,7 +1302,7 @@ class BoardManager(GObject.GObject):
 
 if __name__ == "__main__":
     from pychess.ic.FICSConnection import Connection
-    con = Connection("", "", "", "")
+    con = Connection("", "", True, "", "")
     bm = BoardManager(con)
 
     print(bm._BoardManager__parseStyle12(
