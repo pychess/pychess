@@ -191,9 +191,8 @@ class ICSTelnet():
 
         if host == "chessclub.com":
             self.ICC = True
-            self.timeseal = False
 
-            if timestamp_path is not None:
+            if self.timeseal and timestamp_path is not None:
                 self.host = "127.0.0.1"
                 self.port = 5500
                 try:
@@ -212,6 +211,8 @@ class ICSTelnet():
                     self.host = host
             else:
                 log.info("%s not found" % timestamp_path)
+
+            self.timeseal = False
 
         def cb(reader, writer):
             reader.stream_writer = writer
