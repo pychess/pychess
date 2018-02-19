@@ -668,7 +668,10 @@ class PGNFile(ChessFile):
             if line.startswith('[') and line.endswith(']'):
                 tag_match = TAG_REGEX.match(line)
                 if tag_match:
-                    header[tag_match.group(1)] = tag_match.group(2)
+                    value = tag_match.group(2)
+                    value = value.replace("\\\"", "\"")
+                    value = value.replace("\\\\", "\\")
+                    header[tag_match.group(1)] = value
             else:
                 break
         return header

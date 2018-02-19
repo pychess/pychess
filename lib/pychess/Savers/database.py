@@ -16,18 +16,10 @@ def save(path, model, offset):
     game_site = model.tags["Site"]
 
     year, month, day = model.getGameDate()
-    try:
-        year = int(year)
-    except ValueError:
-        year = 0
-    try:
-        month = int(month)
-    except ValueError:
-        month = 0
-    try:
-        day = int(day)
-    except ValueError:
-        day = 0
+    year = 0 if year is None else year
+    month = 0 if month is None else month
+    day = 0 if day is None else day
+
     game_round = model.getTag("Round", "")
 
     white = repr(model.players[WHITE])
