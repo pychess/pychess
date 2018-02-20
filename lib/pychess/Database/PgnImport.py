@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import collections
 import json
 import os
@@ -16,6 +15,7 @@ from sqlalchemy import select, func
 from sqlalchemy.exc import SQLAlchemyError
 
 from pychess.Utils.const import NORMALCHESS, RUNNING, DRAW, WHITEWON, BLACKWON
+from pychess.Utils.GameModel import GameModel
 from pychess.Variants import name2variant
 from pychess.System import download_file
 from pychess.System.protoopen import protoopen, protosave
@@ -220,6 +220,8 @@ class PgnImport():
             # use transaction to avoid autocommit slowness
             # and to let undo importing (rollback) if self.cancel was set
             trans = self.conn.begin()
+            date_parser = GameModel()
+            date_parser.tags = {"Date": None}
             try:
                 i = 0
                 for tags in read_games(handle, handle_json):
@@ -276,20 +278,8 @@ class PgnImport():
 
                     site_id = get_id(tags["Site"] if "Site" in tags else "", site, SITE)
 
-                    game_date = tags["Date"] if "Date" in tags else ""
-                    try:
-                        if game_date and '?' not in game_date:
-                            ymd = game_date.split('.')
-                            if len(ymd) == 3:
-                                game_year, game_month, game_day = map(int, ymd)
-                            else:
-                                game_year, game_month, game_day = int(game_date[:4]), None, None
-                        elif game_date and '?' not in game_date[:4]:
-                            game_year, game_month, game_day = int(game_date[:4]), None, None
-                        else:
-                            game_year, game_month, game_day = None, None, None
-                    except (ValueError, IndexError):
-                        game_year, game_month, game_day = None, None, None
+                    date_parser.tags["Date"] = tags["Date"] if "Date" in tags else ""
+                    game_year, game_month, game_day = date_parser.getGameDate()
 
                     game_round = tags['Round'] if "Round" in tags else ""
 
@@ -523,7 +513,10 @@ def read_games(handle, handle_json=None):
                     game_headers = collections.defaultdict(str)
                     game_pos = last_pos
 
-                game_headers[tag_match.group(1)] = tag_match.group(2)
+                tag_value = tag_match.group(2)
+                tag_value = tag_value.replace("\\\"", "\"")
+                tag_value = tag_value.replace("\\\\", "\\")
+                game_headers[tag_match.group(1)] = tag_value
 
                 last_pos += len(line)
                 line = handle.readline()

@@ -258,12 +258,21 @@ class GameModel(GObject.GObject):
         date = self.getTag('Date', '')
         elements = re.match("^([0-9\?]{4})(\.([0-9\?]{2})(\.([0-9\?]{2}))?)?$", date)
         if elements is None:
-            y, m, d = '', '', ''
+            y, m, d = None, None, None
         else:
             elements = elements.groups()
-            y = elements[0] if elements[0] is not None else ''
-            m = elements[2] if elements[2] is not None else ''
-            d = elements[4] if elements[4] is not None else ''
+            try:
+                y = int(elements[0])
+            except Exception:
+                y = None
+            try:
+                m = int(elements[2])
+            except Exception:
+                m = None
+            try:
+                d = int(elements[4])
+            except Exception:
+                d = None
         return y, m, d
 
     def color(self, player):

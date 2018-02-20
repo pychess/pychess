@@ -53,18 +53,9 @@ def initialize(widgets):
         # Prepare the date of the picker
         calendar = Gtk.Calendar()
         curyear, curmonth, curday = calendar.get_date()
-        try:
-            year = int(year)
-        except ValueError:
-            year = curyear
-        try:
-            month = int(month) - 1
-        except ValueError:
-            month = curmonth
-        try:
-            day = int(day)
-        except ValueError:
-            day = curday
+        year = curyear if year is None else year
+        month = curmonth if month is None else month - 1
+        day = curday if day is None else day
         calendar.select_month(month, year)
         calendar.select_day(day)
 

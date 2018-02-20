@@ -196,11 +196,13 @@ class Games(GObject.GObject, Perspective):
         filename = filename.replace("#n1", game.tags["White"])
         filename = filename.replace("#n2", game.tags["Black"])
         year, month, day = game.getGameDate()
+        year = '' if year is None else str(year)
+        month = '' if month is None else str(month)
+        day = '' if day is None else str(day)
         filename = filename.replace("#y", "%s" % year)
         filename = filename.replace("#m", "%s" % month)
         filename = filename.replace("#d", "%s" % day)
-        pgn_path = conf.get("autoSavePath", os.path.expanduser("~")) + \
-            "/" + filename + ".pgn"
+        pgn_path = conf.get("autoSavePath", os.path.expanduser("~")) + "/" + filename + ".pgn"
         append = True
         try:
             if not os.path.isfile(pgn_path):
