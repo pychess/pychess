@@ -13,7 +13,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import FILE, RANK
 from pychess.Variants import variants
 from pychess.Players.Human import Human
-from pychess.Players.engineNest import discoverer, stockfish_name
+from pychess.Players.engineNest import discoverer
 from pychess.System import conf
 from pychess.perspectives import perspective_manager
 from pychess.Savers import fen as fen_loader
@@ -123,7 +123,7 @@ def start_endgame_from(pieces):
         name = conf.get("firstName", _("You"))
         p0 = (LOCAL, Human, (WHITE, name), name)
 
-        engine = discoverer.getEngineByName(stockfish_name)
+        engine = discoverer.getEngineByName(discoverer.getEngineLearn())
         name = discoverer.getName(engine)
         p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
               (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, True), name)

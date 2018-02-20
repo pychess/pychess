@@ -30,7 +30,7 @@ PYTHONBIN = sys.executable.split("/")[-1]
 BITNESS = "64" if platform.machine().endswith('64') else "32"
 
 if sys.platform == "win32":
-    stockfish_name = "stockfish_8_x%s.exe" % BITNESS
+    stockfish_name = "stockfish_8_x%s.exe" % BITNESS  # TODO Version 9 is available
     backup = [
         {"protocol": "uci",
          "name": stockfish_name,
@@ -503,6 +503,50 @@ class EngineDiscoverer(GObject.GObject):
 
         return engine_variants
 
+    def getEngineLearn(self):
+        # Local helpers
+        def has_classical(engine):
+            status = engine['protocol'] == 'uci'  # PyChess engine cannot be selected here
+            if 'variants' in engine:
+                status = status and 'normal' in engine['variants']
+            if 'options' in engine:
+                for option in engine['options']:
+                    if option['name'] == 'UCI_Variant' and 'choices' in option:
+                        status = status and 'chess' in option['choices']
+            return status
+
+        def is_stockfish(engine):
+            return 'stockfish' in engine['name'] and has_classical(engine)
+
+        # Initialization
+        id = conf.get('ana_combobox', None)
+        analyzer_enabled = conf.get('analyzer_check', False)
+
+        # Stockfish from the preferences
+        if analyzer_enabled:  # The analyzer should be active else we might believe that it is irrelevant
+            for engine in self.engines:
+                if engine['md5'] == id and is_stockfish(engine):
+                    return engine['name']
+
+        # Stockfish from the raw list of engines
+        for engine in self.engines:
+            if is_stockfish(engine):
+                return engine['name']
+
+        # Preferred engine
+        if analyzer_enabled:
+            for engine in self.engines:
+                if engine['md5'] == id and has_classical(engine):
+                    return engine['name']
+
+        # First found
+        for engine in self.engines:
+            if has_classical(engine):
+                return engine['name']
+
+        # No engine found
+        return None
+
     def getName(self, engine=None):
         return engine["name"]
 
@@ -658,7 +702,7 @@ def init_engine(analyzer_type, gamemodel, force_engine=None):
             engine = discoverer.getEngineByMd5(conf.get(combo_name, 0))
 
         if engine is None:
-            engine = discoverer.getEngineByName(stockfish_name)
+            engine = discoverer.getEngineByName(discoverer.getEngineLearn())
 
         if engine is None:
             engine = anaengines[-1]

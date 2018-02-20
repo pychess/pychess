@@ -21,7 +21,7 @@ from gi.repository import Gtk, GdkPixbuf, Gdk
 
 from pychess.System.prefix import addDataPrefix, getDataPrefix
 from pychess.System import conf, gstreamer, uistuff
-from pychess.Players.engineNest import discoverer, stockfish_name
+from pychess.Players.engineNest import discoverer
 from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SOUND_SELECT
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.gfx import Pieces
@@ -218,7 +218,7 @@ class HintTab:
 
         # Save, load and make analyze combos active
 
-        engine = discoverer.getEngineByName(stockfish_name)
+        engine = discoverer.getEngineByName(discoverer.getEngineLearn())
         if engine is None:
             engine = discoverer.getEngineN(-1)
         default = engine.get("md5")

@@ -9,7 +9,7 @@ from pychess.Utils.GameModel import GameModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants import variants
 from pychess.Players.Human import Human
-from pychess.Players.engineNest import discoverer, stockfish_name
+from pychess.Players.engineNest import discoverer
 from pychess.perspectives import perspective_manager
 from pychess.Savers.olv import OLVFile
 from pychess.Savers.pgn import PGNFile
@@ -93,7 +93,7 @@ def start_puzzle_from(filename):
 
     chessfile.loadToModel(rec, 0, gamemodel)
 
-    engine = discoverer.getEngineByName(stockfish_name)
+    engine = discoverer.getEngineByName(discoverer.getEngineLearn())
 
     color = gamemodel.boards[0].color
     if color == WHITE:
@@ -114,7 +114,7 @@ def start_puzzle_from(filename):
         p1 = (LOCAL, Human, (BLACK, name), name)
 
     def fix_name(gamemodel, name, color):
-        asyncio.async(gamemodel.start_analyzer(HINT, force_engine=stockfish_name))
+        asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
         gamemodel.players[1 - color].name = oppname
         gamemodel.emit("players_changed")
 
