@@ -5,7 +5,7 @@ from sqlalchemy import select, func, and_, or_
 
 from pychess.Utils.const import FEN_START, WHITE, BLACK, reprResult
 from pychess.Database import model as dbmodel
-from pychess.Database.model import game, event, site, player, pl1, pl2, annotator, source
+from pychess.Database.model import game, event, site, player, pl1, pl2, annotator, source, tag_game
 
 
 count_games = select([func.count()]).select_from(game)
@@ -272,3 +272,6 @@ class TagDatabase:
             return None
         else:
             return result[0]
+
+    def get_exta_tags(self, rec):
+        return self.engine.execute(select([tag_game]).where(tag_game.c.game_id == rec["Id"]))

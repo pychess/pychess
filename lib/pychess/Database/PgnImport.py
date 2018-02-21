@@ -18,6 +18,11 @@ from pychess.System.protoopen import protoopen, protosave
 from pychess.Database.model import event, site, player, game, annotator, tag_game, source
 # from pychess.System import profile_me
 
+# Editable (on game info dialog) tags
+dedicated_tags = ('Event', 'Site', 'Date', 'Round', 'White', 'Black', 'WhiteElo', 'BlackElo', 'Annotator')
+
+# Other tags stored in game table
+other_game_tags = ('Result', 'SetUp', 'FEN', 'ECO', 'Variant', 'PlyCount', 'offset', 'offset8')
 
 TAG_REGEX = re.compile(r"\[([a-zA-Z0-9_]+)\s+\"(.*)\"\]")
 
@@ -281,8 +286,6 @@ class PgnImport():
 
                     source_id = get_id(orig_filename, source, SOURCE, info=info)
 
-                    self.next_id[GAME] += 1
-
                     ply_count = tags["PlyCount"] if "PlyCount" in tags else 0
 
                     offset = base_offset + int(tags["offset"])
@@ -309,6 +312,15 @@ class PgnImport():
                         'source_id': source_id,
                     })
 
+                    for tag in tags:
+                        if tag not in dedicated_tags and tag not in other_game_tags and tags[tag]:
+                            self.tag_game_data.append({
+                                'game_id': self.next_id[GAME],
+                                'tag_name': tag,
+                                'tag_value': tags[tag],
+                            })
+
+                    self.next_id[GAME] += 1
                     i += 1
 
                     if len(self.game_data) >= self.CHUNK:
@@ -333,6 +345,10 @@ class PgnImport():
                         if self.source_data:
                             self.conn.execute(self.ins_source, self.source_data)
                             self.source_data = []
+
+                        if self.tag_game_data:
+                            self.conn.execute(self.ins_tag_game, self.tag_game_data)
+                            self.tag_game_data = []
 
                         self.conn.execute(self.ins_game, self.game_data)
                         self.game_data = []
@@ -363,6 +379,10 @@ class PgnImport():
                 if self.source_data:
                     self.conn.execute(self.ins_source, self.source_data)
                     self.source_data = []
+
+                if self.tag_game_data:
+                    self.conn.execute(self.ins_tag_game, self.tag_game_data)
+                    self.tag_game_data = []
 
                 if self.game_data:
                     self.conn.execute(self.ins_game, self.game_data)

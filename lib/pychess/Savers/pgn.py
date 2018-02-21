@@ -79,6 +79,9 @@ move_time_re = re.compile("\[%emt\s+(\d:)?(\d{1,2}:)?(\d{1,4})(?:\.(\d{1,3}))?\]
 comment_circles_re = re.compile("\[%csl\s+((?:[RGBY]\w{2},?)+)\]")
 comment_arrows_re = re.compile("\[%cal\s+((?:[RGBY]\w{4},?)+)\]")
 
+# Mandatory tags (except "Result")
+mandatory_tags = ("Event", "Site", "Date", "Round", "White", "Black")
+
 
 def msToClockTimeTag(ms):
     """
@@ -163,7 +166,7 @@ def save(handle, model, position=None):
 
     # Mandatory ordered seven-tag roster
     status = reprResult[model.status]
-    for tag in ("Event", "Site", "Date", "Round", "White", "Black"):
+    for tag in mandatory_tags:
         value = model.tags[tag]
         write_tag(tag, value, roster=True)
     write_tag("Result", reprResult[model.status], roster=True)
@@ -699,20 +702,19 @@ class PGNFile(ChessFile):
         else:
             variant = self.get_variant(rec)
 
-        # the seven mandatory PGN headers
-        model.tags['Event'] = rec["Event"]
-        model.tags['Site'] = rec["Site"]
-        model.tags['Date'] = rec["Date"]
-        model.tags['Round'] = rec["Round"]
-        model.tags['White'] = rec["White"]
-        model.tags['Black'] = rec["Black"]
+        # Load mandatory tags
+        for tag in mandatory_tags:
+            model.tags[tag] = rec[tag]
 
-        # non-mandatory tags
-        for tag in ('Annotator', 'ECO', 'WhiteElo', 'BlackElo', 'TimeControl'):
+        # Load other tags
+        for tag in ('WhiteElo', 'BlackElo', 'ECO', 'TimeControl', 'Annotator'):
             model.tags[tag] = rec[tag]
 
         if not self.pgn_is_string:
             model.info = self.tag_database.get_info(rec)
+            extra_tags = self.tag_database.get_exta_tags(rec)
+            for et in extra_tags:
+                model.tags[et['tag_name']] = et['tag_value']
 
         if model.tags['TimeControl']:
             tc = parseTimeControlTag(model.tags['TimeControl'])

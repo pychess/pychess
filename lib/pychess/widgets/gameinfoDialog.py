@@ -2,18 +2,19 @@
 from gi.repository import Gtk, Gdk
 
 from pychess.Savers.pgn import parseDateTag
+from pychess.Database.PgnImport import dedicated_tags
 from pychess.Utils.const import BLACK, WHITE
 from pychess.perspectives import perspective_manager
 from pychess.Utils.elo import get_elo_rating_change_str
 from pychess.widgets import mainwindow
 
 firstRun = True
+
 tags_store = Gtk.ListStore(str, str)
-dedicated_tags = ['Site', 'Event', 'Date', 'Round', 'Annotator', 'White', 'Black', 'WhiteElo', 'BlackElo']
 
 
 def run(widgets):
-    global firstRun, tags_store, dedicated_tags
+    global firstRun, tags_store
 
     # Data from the game
     persp = perspective_manager.get_perspective("games")
