@@ -18,6 +18,7 @@ from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
 from pychess.System.uistuff import GladeWidgets
 from pychess.System.prefix import addUserConfigPrefix
+from pychess.Savers.pgn import parseDateTag
 from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT, LOCAL, ARTIFICIAL, MENU_ITEMS
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamewidget, mainwindow, new_notebook
@@ -195,7 +196,7 @@ class Games(GObject.GObject, Perspective):
         filename = conf.get("autoSaveFormat", "pychess")
         filename = filename.replace("#n1", game.tags["White"])
         filename = filename.replace("#n2", game.tags["Black"])
-        year, month, day = game.getGameDate()
+        year, month, day = parseDateTag(game.tags["Date"])
         year = '' if year is None else str(year)
         month = '' if month is None else str(month)
         day = '' if day is None else str(day)

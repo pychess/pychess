@@ -74,8 +74,8 @@ def get_elo_rating_change(model, overridden_welo, overridden_belo):
         return result
 
     # Gathering of the data
-    welo = model.getTag("WhiteElo", "") if overridden_welo is None else overridden_welo
-    belo = model.getTag("BlackElo", "") if overridden_belo is None else overridden_belo
+    welo = model.tags["WhiteElo"] if overridden_welo is None else overridden_welo
+    belo = model.tags["BlackElo"] if overridden_belo is None else overridden_belo
     blitz = model.timemodel.isBlitzFide()
 
     # Result

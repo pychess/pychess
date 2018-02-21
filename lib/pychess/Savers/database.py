@@ -15,32 +15,21 @@ def save(path, model, offset):
     game_event = model.tags["Event"]
     game_site = model.tags["Site"]
 
-    year, month, day = model.getGameDate()
-    year = 0 if year is None else year
-    month = 0 if month is None else month
-    day = 0 if day is None else day
+    date = model.tags["Date"]
 
-    game_round = model.getTag("Round", "")
+    game_round = model.tags["Round"]
 
     white = repr(model.players[WHITE])
     black = repr(model.players[BLACK])
 
     result = model.status
-    eco = model.getTag("ECO", "")
+    eco = model.tags["ECO"]
 
-    time_control = model.getTag("TimeControl", "")
+    time_control = model.tags["TimeControl"]
     board = int(model.tags["Board"]) if "Board" in model.tags else 0
 
-    white_elo = model.getTag("WhiteElo", "")
-    try:
-        white_elo = int(white_elo)
-    except ValueError:
-        white_elo = 0
-    black_elo = model.getTag("BlackElo", "")
-    try:
-        black_elo = int(black_elo)
-    except ValueError:
-        black_elo = 0
+    white_elo = model.tags["WhiteElo"]
+    black_elo = model.tags["BlackElo"]
 
     variant = model.variant.variant
 
@@ -78,9 +67,7 @@ def save(path, model, offset):
             'offset8': (offset >> 3) << 3,
             'event_id': event_id,
             'site_id': site_id,
-            'date_year': year,
-            'date_month': month,
-            'date_day': day,
+            'date': date,
             'round': game_round,
             'white_id': white_id,
             'black_id': black_id,
@@ -119,9 +106,7 @@ col2label = {game.c.id: "Id",
              event.c.name: "Event",
              site.c.name: "Site",
              game.c.round: "Round",
-             game.c.date_year: "Year",
-             game.c.date_month: "Month",
-             game.c.date_day: "Day",
+             game.c.date: "Date",
              game.c.white_elo: "WhiteElo",
              game.c.black_elo: "BlackElo",
              game.c.ply_count: "PlyCount",
@@ -209,11 +194,11 @@ class TagDatabase:
             if "result" in tag_query:
                 tags.append(game.c.result == reprResult.index(tag_query["result"])),
 
-            if "year_from" in tag_query:
-                tags.append(game.c.date_year >= tag_query["year_from"])
+            if "date_from" in tag_query:
+                tags.append(game.c.date >= tag_query["date_from"])
 
-            if "year_to" in tag_query:
-                tags.append(game.c.date_year <= tag_query["year_to"])
+            if "date_to" in tag_query:
+                tags.append(game.c.date <= tag_query["date_to"])
 
             if "elo_from" in tag_query:
                 tags.append(game.c.white_elo >= tag_query["elo_from"])

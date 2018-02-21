@@ -1,8 +1,8 @@
 
 from gi.repository import Gtk, Gdk
 
+from pychess.Savers.pgn import parseDateTag
 from pychess.Utils.const import BLACK, WHITE
-from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
 from pychess.Utils.elo import get_elo_rating_change_str
 from pychess.widgets import mainwindow
@@ -26,13 +26,21 @@ def run(widgets):
 
     # Load of the tags having a dedicated field
     for tag in dedicated_tags:
-        widgets["%s_entry" % tag.lower()].set_text(str(gamemodel.getTag(tag, "")))
+        tag_value = gamemodel.tags[tag]
+        if tag_value is None:
+            continue
+        if tag == "Date":
+            tag_value = tag_value.replace(".??", "").replace("????.", "")
+        elif tag_value == "?":
+            tag_value = ""
+        widgets["%s_entry" % tag.lower()].set_text(tag_value)
     refresh_elo_rating_change(widgets)
 
     # Load of the tags in the editor
     tags_store.clear()
     for tag in gamemodel.tags:
-        if tag not in dedicated_tags and isinstance(gamemodel.tags[tag], str):
+        # print(tag, gamemodel.tags[tag])
+        if tag not in dedicated_tags and isinstance(gamemodel.tags[tag], str) and gamemodel.tags[tag]:
             tags_store.append([tag, gamemodel.tags[tag]])
 
     # Show the loaded dialog
@@ -46,9 +54,8 @@ def initialize(widgets):
 
     def on_pick_date(button, *args):
         # Parse the existing date
-        obj = GameModel()
-        obj.tags = {"Date": widgets["date_entry"].get_text()}
-        year, month, day = obj.getGameDate()
+        date = widgets["date_entry"].get_text()
+        year, month, day = parseDateTag(date)
 
         # Prepare the date of the picker
         calendar = Gtk.Calendar()

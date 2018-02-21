@@ -14,7 +14,7 @@ from pychess.Database.model import game, event, site, pl1, pl2
 
 
 cols = (game.c.id, pl1.c.name, game.c.white_elo, pl2.c.name, game.c.black_elo,
-        game.c.result, game.c.date_year, event.c.name, site.c.name, game.c.round,
+        game.c.result, game.c.date, event.c.name, site.c.name, game.c.round,
         game.c.ply_count, game.c.eco, game.c.time_control, game.c.variant, game.c.fen)
 
 
@@ -115,7 +115,6 @@ class GameList(Gtk.TreeView):
         else:
             self.liststore.clear()
 
-        get_date = self.persp.chessfile.get_date
         add = self.liststore.append
 
         self.records = []
@@ -125,14 +124,15 @@ class GameList(Gtk.TreeView):
             offs = rec["Offset"]
             wname = rec["White"]
             bname = rec["Black"]
-            welo = "" if rec["WhiteElo"] == 0 else str(rec["WhiteElo"])
-            belo = "" if rec["BlackElo"] == 0 else str(rec["BlackElo"])
+            welo = rec["WhiteElo"]
+            belo = rec["BlackElo"]
             result = rec["Result"]
             result = "½-½" if result == DRAW else reprResult[result] if result else "*"
-            event = rec["Event"]
-            site = rec["Site"]
-            round_ = rec["Round"]
-            date = str(get_date(rec))
+            event = rec["Event"].replace("?", "")
+            site = rec["Site"].replace("?", "")
+            round_ = rec["Round"].replace("?", "")
+            date = rec["Date"].replace(".??", "").replace("????.", "")
+
             try:
                 ply = rec["PlyCount"]
                 length = str(int(ply) // 2) if ply else ""
@@ -165,7 +165,7 @@ class GameList(Gtk.TreeView):
 
         self.gamemodel = GameModel()
 
-        variant = rec[13]
+        variant = rec["Variant"]
         if variant:
             self.gamemodel.tags["Variant"] = variant
 

@@ -138,6 +138,16 @@
     <property name="can_focus">False</property>
     <property name="icon_name">x-office-calendar</property>
   </object>
+  <object class="GtkImage" id="image25">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">x-office-calendar</property>
+  </object>
+  <object class="GtkImage" id="image26">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">x-office-calendar</property>
+  </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -658,8 +668,8 @@
                         <property name="image">image13</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_leave_fullscreen1_activate" swapped="no"/>
-                        <accelerator key="F11" signal="activate"/>
                         <accelerator key="Escape" signal="activate"/>
+                        <accelerator key="F11" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -4657,6 +4667,8 @@ It will search positions from http://www.k4it.de/</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="tooltip_text" translatable="yes">Expected format as "yyyy.mm.dd" with the allowed joker "?"</property>
+                        <property name="max_length">10</property>
+                        <property name="width_chars">10</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -5386,16 +5398,6 @@ If it can use both  you can set here which one you like.</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="year_from_adjustment">
-    <property name="upper">3000</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="year_to_adjustment">
-    <property name="upper">3000</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkDialog" id="filter_dialog">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Filter</property>
@@ -5628,7 +5630,7 @@ If it can use both  you can set here which one you like.</property>
                   <object class="GtkLabel" id="label49">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Year</property>
+                    <property name="label" translatable="yes">Date</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -5641,20 +5643,29 @@ If it can use both  you can set here which one you like.</property>
                     <property name="can_focus">False</property>
                     <property name="spacing">6</property>
                     <child>
-                      <object class="GtkSpinButton" id="year_from">
+                      <object class="GtkEntry" id="date_from">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="max_length">4</property>
-                        <property name="width_chars">4</property>
-                        <property name="max_width_chars">4</property>
-                        <property name="text" translatable="yes">0</property>
-                        <property name="adjustment">year_from_adjustment</property>
-                        <property name="numeric">True</property>
+                        <property name="max_length">10</property>
+                        <property name="width_chars">10</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="date_button2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="image">image26</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -5666,24 +5677,33 @@ If it can use both  you can set here which one you like.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSpinButton" id="year_to">
+                      <object class="GtkEntry" id="date_to">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="max_length">4</property>
-                        <property name="width_chars">4</property>
-                        <property name="max_width_chars">4</property>
-                        <property name="text" translatable="yes">0</property>
-                        <property name="adjustment">year_to_adjustment</property>
-                        <property name="numeric">True</property>
+                        <property name="max_length">10</property>
+                        <property name="width_chars">10</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="date_button1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="image">image25</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">4</property>
                       </packing>
                     </child>
                   </object>
@@ -6979,5 +6999,15 @@ If it can use both  you can set here which one you like.</property>
       <action-widget response="-6">tag_filter_cancel</action-widget>
       <action-widget response="-5">tag_filter_ok</action-widget>
     </action-widgets>
+  </object>
+  <object class="GtkAdjustment" id="year_from_adjustment">
+    <property name="upper">3000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="year_to_adjustment">
+    <property name="upper">3000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
 </interface>

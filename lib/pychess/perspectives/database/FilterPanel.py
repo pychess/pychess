@@ -397,13 +397,13 @@ class FilterPanel(Gtk.TreeView):
                     break
             self.widgets["variant"].set_active(index)
 
-        for rule in ("white", "black", "event", "site", "eco_from", "eco_to", "annotator"):
+        for rule in ("white", "black", "event", "site", "date_from", "date_to", "eco_from", "eco_to", "annotator"):
             if rule in query:
                 self.widgets[rule].set_text(query[rule])
             else:
                 self.widgets[rule].set_text("")
 
-        for rule in ("elo_from", "elo_to", "year_from", "year_to"):
+        for rule in ("elo_from", "elo_to"):
             if rule in query:
                 self.widgets[rule].set_value(query[rule])
             else:
@@ -539,11 +539,11 @@ class FilterPanel(Gtk.TreeView):
             variant_code = model[tree_iter][1]
             tag_query["variant"] = variant_code
 
-        for rule in ("white", "black", "event", "site", "eco_from", "eco_to", "annotator"):
+        for rule in ("white", "black", "event", "site", "date_from", "date_to", "eco_from", "eco_to", "annotator"):
             if self.widgets[rule].get_text():
                 tag_query[rule] = self.widgets[rule].get_text()
 
-        for rule in ("elo_from", "elo_to", "year_from", "year_to"):
+        for rule in ("elo_from", "elo_to"):
             if self.widgets[rule].get_value_as_int():
                 tag_query[rule] = self.widgets[rule].get_value_as_int()
 

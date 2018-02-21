@@ -1031,7 +1031,7 @@ class Sidepanel:
             return
 
         self.header_textbuffer.insert_with_tags_by_name(end_iter(), text, "head2")
-        white_elo = self.gamemodel.tags.get('WhiteElo')
+        white_elo = self.gamemodel.tags['WhiteElo']
         if white_elo:
             self.header_textbuffer.insert_with_tags_by_name(end_iter(), " %s" % white_elo, "head1")
 
@@ -1040,15 +1040,11 @@ class Sidepanel:
         # text = self.gamemodel.tags['Black']
         text = repr(self.gamemodel.players[1])
         self.header_textbuffer.insert_with_tags_by_name(end_iter(), text, "head2")
-        black_elo = self.gamemodel.tags.get('BlackElo')
+        black_elo = self.gamemodel.tags['BlackElo']
         if black_elo:
             self.header_textbuffer.insert_with_tags_by_name(end_iter(), " %s" % black_elo, "head1")
 
-        status = reprResult[self.gamemodel.status]
-        if status != '*':
-            result = status
-        else:
-            result = self.gamemodel.getTag('Result', '*')
+        result = reprResult[self.gamemodel.status]
         self.header_textbuffer.insert_with_tags_by_name(end_iter(), ' ' + result + '\n', "head2")
 
         text = ""
@@ -1095,11 +1091,12 @@ class Sidepanel:
                 text += ', '
             text += _('round %s') % round
 
-        game_date = self.gamemodel.getTag('Date', '')
-        if game_date != "":
+        date = self.gamemodel.tags['Date']
+        date = date.replace(".??", "").replace("????.", "")
+        if date != "":
             if len(text) > 0:
                 text += ', '
-            text += game_date
+            text += date
         self.header_textbuffer.insert_with_tags_by_name(end_iter(), text, "head1")
 
         eco = self.gamemodel.tags.get('ECO')
@@ -1124,11 +1121,7 @@ class Sidepanel:
         self.update_header()
         self.update_choices()
 
-        status = reprResult[self.gamemodel.status]
-        if status != '*':
-            result = status
-        else:
-            result = self.gamemodel.getTag('Result', '*')
+        result = reprResult[self.gamemodel.status]
 
         self.insert_nodes(self.gamemodel.boards[0].board, result=result)
         self.update_selected_node()

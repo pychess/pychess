@@ -5,14 +5,13 @@ import shutil
 import time
 
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
-    String, SmallInteger, ForeignKey, event
+    String, SmallInteger, ForeignKey, event, select
 from sqlalchemy.engine import Engine
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql.expression import Executable, ClauseElement, _literal_as_text
 
-from pychess.Utils.const import LOCAL, ARTIFICIAL, REMOTE
 from pychess.System.Log import log
 from pychess.System.prefix import addUserCachePrefix
 
@@ -75,11 +74,16 @@ def insert_or_ignore(engine, stmt):
 engines = {}
 
 # PyChess database schema version
-SCHEMA_VERSION = "20170109"
+SCHEMA_VERSION = "20180221"
+
+
+def get_schema_version(engine):
+    return engine.execute(select([schema_version.c.version])).scalar()
 
 
 def get_engine(path=None, dialect="sqlite", echo=False):
     if path is None:
+        # In memory database
         url = "sqlite://"
     elif dialect == "sqlite":
         url = "%s:///%s" % (dialect, path)
@@ -95,9 +99,9 @@ def get_engine(path=None, dialect="sqlite", echo=False):
                 shutil.copyfile(empty_db, path)
             engine = create_engine(url, echo=echo)
 
-        if path is None or not os.path.isfile(path):
+        if path != empty_db and (path is None or get_schema_version(engine) != SCHEMA_VERSION):
+            metadata.drop_all(engine)
             metadata.create_all(engine)
-            ini_tag(engine)
             ini_schema_version(engine)
 
         engines[url] = engine
@@ -147,16 +151,14 @@ game = Table(
     Column('offset8', Integer, index=True),
     Column('event_id', Integer, ForeignKey('event.id'), index=True),
     Column('site_id', Integer, ForeignKey('site.id'), index=True),
-    Column('date_year', SmallInteger),
-    Column('date_month', SmallInteger),
-    Column('date_day', SmallInteger),
+    Column('date', String(10), default=""),
     Column('round', String(8), default=""),
     Column('white_id', Integer, ForeignKey('player.id'), index=True),
     Column('black_id', Integer, ForeignKey('player.id'), index=True),
     Column('result', SmallInteger, default=0),
-    Column('white_elo', SmallInteger, default=0),
-    Column('black_elo', SmallInteger, default=0),
-    Column('ply_count', SmallInteger, default=0),
+    Column('white_elo', String(4), default=""),
+    Column('black_elo', String(4), default=""),
+    Column('ply_count', String(3), default=""),
     Column('eco', String(3), default=""),
     Column('time_control', String(7), default=""),
     Column('board', SmallInteger, default=0),
@@ -167,17 +169,12 @@ game = Table(
     Column('source_id', Integer, ForeignKey('source.id'), index=True),
 )
 
-tag = Table(
-    'tag', metadata,
-    Column('id', Integer, primary_key=True),
-    Column('name', String(256), index=True),
-)
-
 tag_game = Table(
-    'tags', metadata,
+    'tag_game', metadata,
     Column('id', Integer, primary_key=True),
     Column('game_id', Integer, ForeignKey('game.id'), nullable=False),
-    Column('tag_id', Integer, ForeignKey('tag.id'), nullable=False, index=True),
+    Column('tag_name', String(128), default=""),
+    Column('tag_value', String(128), default=""),
 )
 
 schema_version = Table(
@@ -206,22 +203,9 @@ def create_indexes(engine):
             index.create(bind=engine)
 
 
-def ini_tag(engine):
-    conn = engine.connect()
-    new_values = [
-        {"id": LOCAL, "name": "Local game"},
-        {"id": ARTIFICIAL, "name": "Chess engine(s)"},
-        {"id": REMOTE, "name": "ICS game"},
-    ]
-    conn.execute(tag.insert(), new_values)
-    conn.close()
-
-
 def ini_schema_version(engine):
     conn = engine.connect()
-    conn.execute(schema_version.insert(), [
-        {"id": 1, "version": SCHEMA_VERSION},
-    ])
+    conn.execute(schema_version.insert(), [{"id": 1, "version": SCHEMA_VERSION}, ])
     conn.close()
 
 
@@ -229,4 +213,6 @@ def ini_schema_version(engine):
 empty_db = os.path.join(addUserCachePrefix("%s.sqlite" % SCHEMA_VERSION))
 if not os.path.isfile(empty_db):
     engine = get_engine(empty_db)
+    metadata.create_all(engine)
+    ini_schema_version(engine)
     engine.dispose()

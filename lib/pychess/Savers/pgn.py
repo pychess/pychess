@@ -8,6 +8,7 @@ from os.path import getmtime
 import platform
 import re
 import sys
+import textwrap
 
 from gi.repository import GLib
 
@@ -79,19 +80,6 @@ comment_circles_re = re.compile("\[%csl\s+((?:[RGBY]\w{2},?)+)\]")
 comment_arrows_re = re.compile("\[%cal\s+((?:[RGBY]\w{4},?)+)\]")
 
 
-def wrap(string, length):
-    lines = []
-    last = 0
-    while True:
-        if len(string) - last <= length:
-            lines.append(string[last:])
-            break
-        i = string[last:length + last].rfind(" ")
-        lines.append(string[last:i + last])
-        last += i + 1
-    return "\n".join(lines)
-
-
 def msToClockTimeTag(ms):
     """
     Converts milliseconds to a chess clock time string in 'WhiteClock'/
@@ -135,13 +123,34 @@ def parseTimeControlTag(tag):
             return None
 
 
+def parseDateTag(tag):
+    elements = re.match("^([0-9\?]{4})(\.([0-9\?]{2})(\.([0-9\?]{2}))?)?$", tag)
+    if elements is None:
+        y, m, d = None, None, None
+    else:
+        elements = elements.groups()
+        try:
+            y = int(elements[0])
+        except Exception:
+            y = None
+        try:
+            m = int(elements[2])
+        except Exception:
+            m = None
+        try:
+            d = int(elements[4])
+        except Exception:
+            d = None
+    return y, m, d
+
+
 def save(handle, model, position=None):
     """ Saves the game from GameModel to .pgn """
     processed_tags = []
 
     def write_tag(tag, value, roster=False):
         nonlocal processed_tags
-        if tag in processed_tags or (not roster and value == ""):
+        if tag in processed_tags or (not roster and not value):
             return
         try:
             pval = str(value)
@@ -154,11 +163,10 @@ def save(handle, model, position=None):
 
     # Mandatory ordered seven-tag roster
     status = reprResult[model.status]
-    str_tags_keys = ["Event", "Site", "Date", "Round", "White", "Black", "Result"]
-    str_tags_vals_default = ["", "", "", "?", repr(model.players[WHITE]), repr(model.players[BLACK]), status]
-    for i, tag in enumerate(str_tags_keys):
-        value = model.getTag(tag, str_tags_vals_default[i])
+    for tag in ("Event", "Site", "Date", "Round", "White", "Black"):
+        value = model.tags[tag]
         write_tag(tag, value, roster=True)
+    write_tag("Result", reprResult[model.status], roster=True)
 
     # Variant
     if model.variant.variant != NORMALCHESS:
@@ -193,8 +201,8 @@ def save(handle, model, position=None):
 
     # ELO and its variation
     if conf.get("saveRatingChange", False):
-        welo = model.getTag("WhiteElo", "")
-        belo = model.getTag("BlackElo", "")
+        welo = model.tags["WhiteElo"]
+        belo = model.tags["BlackElo"]
         if welo != "" and belo != "":
             write_tag("WhiteRatingDiff", get_elo_rating_change_pgn(model, WHITE))  # Unofficial
             write_tag("BlackRatingDiff", get_elo_rating_change_pgn(model, BLACK))  # Unofficial
@@ -208,7 +216,6 @@ def save(handle, model, position=None):
     for tag in model.tags:
         # Debug: print(">> %s = %s" % (tag, str(model.tags[tag])))
         write_tag(tag, model.tags[tag])
-    print('', file=handle)
 
     # Discovery of the moves and comments
     save_emt = conf.get("saveEmt", False)
@@ -218,44 +225,48 @@ def save(handle, model, position=None):
 
     # Alignment of the fetched elements
     indented = conf.get("indentPgn", False)
-    buffer = ""
-    depth = 0
-    crlf = False
-    for text in result:
-        # De/Indentation
-        crlf = (buffer[-1:] if len(buffer) > 0 else "") in ["\r", "\n"]
-        if text == "(":
-            depth += 1
-            if indented and not crlf:
+    if indented:
+        buffer = ""
+        depth = 0
+        crlf = False
+        for text in result:
+            # De/Indentation
+            crlf = (buffer[-1:] if len(buffer) > 0 else "") in ["\r", "\n"]
+            if text == "(":
+                depth += 1
+                if indented and not crlf:
+                    buffer += os.linesep
+                    crlf = True
+            # Space between each term
+            last = buffer[-1:] if len(buffer) > 0 else ""
+            crlf = last in ["\r", "\n"]
+            if not crlf and last != " " and last != "\t" and last != "(" and not text.startswith("\r") and not text.startswith("\n") and text != ")" and len(buffer) > 0:
+                buffer += " "
+            # New line for a new main move
+            if len(buffer) == 0 or (indented and depth == 0 and last != "\r" and last != "\n" and re.match("^[0-9]+\.", text) is not None):
                 buffer += os.linesep
                 crlf = True
-        # Space between each term
-        last = buffer[-1:] if len(buffer) > 0 else ""
-        crlf = last in ["\r", "\n"]
-        if not crlf and last != " " and last != "\t" and last != "(" and not text.startswith("\r") and not text.startswith("\n") and text != ")" and len(buffer) > 0:
-            buffer += " "
-        # New line for a new main move
-        if len(buffer) == 0 or (indented and depth == 0 and last != "\r" and last != "\n" and re.match("^[0-9]+\.", text) is not None):
-            buffer += os.linesep
-            crlf = True
-        # Alignment
-        if crlf and depth > 0:
-            for j in range(0, depth):
-                buffer += "    "
-        # Term
-        buffer += text
-        if indented and text == ")":
-            buffer += os.linesep
-            crlf = True
-            depth -= 1
-
-    # Status of the game
-    buffer += ("" if crlf else (os.linesep if indented else " ")) + model.getTag('Result', '*')
-    if not indented:
-        buffer = wrap(buffer, 80)
+            # Alignment
+            if crlf and depth > 0:
+                for j in range(0, depth):
+                    buffer += "    "
+            # Term
+            buffer += text
+            if indented and text == ")":
+                buffer += os.linesep
+                crlf = True
+                depth -= 1
+    else:
+        # Add new line to separate tag section and movetext
+        print('', file=handle)
+        buffer = textwrap.fill(" ".join(result), width=80)
 
     # Final
-    print(buffer, "", file=handle)
+    status = reprResult[model.status]
+    print(buffer, status, file=handle)
+    # Add new line to separate next game
+    print('', file=handle)
+
     output = handle.getvalue() if isinstance(handle, StringIO) else ""
     handle.close()
     return output
@@ -684,27 +695,21 @@ class PGNFile(ChessFile):
 
         if self.pgn_is_string:
             rec = self.games[0]
-            game_date = rec["Date"]
             variant = rec["Variant"].capitalize()
         else:
-            game_date = self.get_date(rec)
             variant = self.get_variant(rec)
 
         # the seven mandatory PGN headers
-        model.tags['Event'] = rec["Event"] if rec["Event"] is not None else ""
-        model.tags['Site'] = rec["Site"] if rec["Site"] is not None else ""
-        model.tags['Date'] = game_date
+        model.tags['Event'] = rec["Event"]
+        model.tags['Site'] = rec["Site"]
+        model.tags['Date'] = rec["Date"]
         model.tags['Round'] = rec["Round"]
-        model.tags['White'] = rec["White"] if rec["White"] is not None else "?"
-        model.tags['Black'] = rec["Black"] if rec["Black"] is not None else "?"
+        model.tags['White'] = rec["White"]
+        model.tags['Black'] = rec["Black"]
 
         # non-mandatory tags
         for tag in ('Annotator', 'ECO', 'WhiteElo', 'BlackElo', 'TimeControl'):
-            value = rec[tag]
-            if value:
-                model.tags[tag] = value
-            else:
-                model.tags[tag] = ""
+            model.tags[tag] = rec[tag]
 
         if not self.pgn_is_string:
             model.info = self.tag_database.get_info(rec)
@@ -1054,20 +1059,6 @@ class PGNFile(ChessFile):
     def get_variant(self, rec):
         variant = rec["Variant"]
         return variants[variant].cecp_name.capitalize() if variant else ""
-
-    def get_date(self, rec):
-        year = rec['Year']
-        month = rec['Month']
-        day = rec['Day']
-        if year and month and day:
-            tag_date = "%s.%02d.%02d" % (year, month, day)
-        elif year and month:
-            tag_date = "%s.%02d" % (year, month)
-        elif year:
-            tag_date = "%s" % year
-        else:
-            tag_date = ""
-        return tag_date
 
 
 nag2symbolDict = {

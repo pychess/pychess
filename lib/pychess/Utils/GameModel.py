@@ -1,8 +1,7 @@
-from collections import defaultdict
 import asyncio
-import traceback
+import collections
 import datetime
-import re
+import traceback
 from queue import Queue
 from io import StringIO
 
@@ -127,17 +126,16 @@ class GameModel(GObject.GObject):
             self.timemodel = timemodel
         self.timemodel.gamemodel = self
 
-        self.connections = defaultdict(list)  # mainly for IC subclasses
+        self.connections = collections.defaultdict(list)  # mainly for IC subclasses
         self.analyzer_cids = {}
         self.examined = False
 
         now = datetime.datetime.now()
-        self.tags = {
-            "Event": _("Local Event"),
-            "Site": _("Local Site"),
-            "Date": "%04d.%02d.%02d" % (now.year, now.month, now.day),
-            "Round": 1
-        }
+        self.tags = collections.defaultdict(str)
+        self.tags["Event"] = _("Local Event")
+        self.tags["Site"] = _("Local Site")
+        self.tags["Date"] = "%04d.%02d.%02d" % (now.year, now.month, now.day)
+        self.tags["Round"] = "1"
 
         self.endstatus = None
         self.zero_reached_cid = None
@@ -240,40 +238,6 @@ class GameModel(GObject.GObject):
         self.emit("players_changed")
         log.debug("GameModel.setPlayers: <- emit players_changed")
         log.debug("GameModel.setPlayers: returning")
-
-    def getTag(self, name, defaultValue, intFormat=False):
-        # Extraction of the tag
-        val = self.tags[name] if name in self.tags else None
-        if val is None or val == "":
-            val = defaultValue
-        # Convertion to int
-        if intFormat:
-            try:
-                val = int(val)
-            except ValueError:
-                val = 0
-        return val
-
-    def getGameDate(self):
-        date = self.getTag('Date', '')
-        elements = re.match("^([0-9\?]{4})(\.([0-9\?]{2})(\.([0-9\?]{2}))?)?$", date)
-        if elements is None:
-            y, m, d = None, None, None
-        else:
-            elements = elements.groups()
-            try:
-                y = int(elements[0])
-            except Exception:
-                y = None
-            try:
-                m = int(elements[2])
-            except Exception:
-                m = None
-            try:
-                d = int(elements[4])
-            except Exception:
-                d = None
-        return y, m, d
 
     def color(self, player):
         if player is self.players[0]:

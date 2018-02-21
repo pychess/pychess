@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import collections
-import json
 import os
 import re
-import shutil
-import sys
 import subprocess
 import zipfile
 
@@ -15,7 +12,6 @@ from sqlalchemy import select, func
 from sqlalchemy.exc import SQLAlchemyError
 
 from pychess.Utils.const import NORMALCHESS, RUNNING, DRAW, WHITEWON, BLACKWON
-from pychess.Utils.GameModel import GameModel
 from pychess.Variants import name2variant
 from pychess.System import download_file
 from pychess.System.protoopen import protoopen, protosave
@@ -41,12 +37,6 @@ pgn2Const = {"*": RUNNING,
              "1/2": DRAW,
              "1-0": WHITEWON,
              "0-1": BLACKWON}
-
-
-this_dir = os.path.dirname(os.path.abspath(__file__))
-external = os.path.join(this_dir, "..", "external")
-executable = "pgnextractor.exe" if sys.platform == "win32" else "pgnextractor"
-pgnextractor = shutil.which(executable, mode=os.X_OK, path=external)
 
 
 class PgnImport():
@@ -202,29 +192,14 @@ class PgnImport():
             # estimated game count
             all_games = max(size / 840, 1)
 
-            handle_json = None
-            if pgnextractor is not None:
-                try:
-                    headers_json = os.path.splitext(pgnfile)[0] + ".headers.json"
-                    if not os.path.isfile(headers_json):
-                        output = subprocess.check_output([pgnextractor, "headers", pgnfile]).decode()
-                        for line in output:
-                            if line.startswith("Games"):
-                                all_games = line.split()[1]
-                    handle_json = protoopen(headers_json)
-                except subprocess.CalledProcessError:
-                    print("pgnextractor failed")
-
             get_id = self.get_id
 
             # use transaction to avoid autocommit slowness
             # and to let undo importing (rollback) if self.cancel was set
             trans = self.conn.begin()
-            date_parser = GameModel()
-            date_parser.tags = {"Date": None}
             try:
                 i = 0
-                for tags in read_games(handle, handle_json):
+                for tags in read_games(handle):
                     if not tags:
                         print("Empty game #%s" % (i + 1))
                         continue
@@ -233,9 +208,9 @@ class PgnImport():
                         trans.rollback()
                         return
 
-                    fenstr = tags["FEN"] if "FEN" in tags else ""
+                    fenstr = tags["FEN"]
 
-                    variant = tags["Variant"] if "Variant" in tags else ""
+                    variant = tags["Variant"]
                     if variant:
                         if "fischer" in variant.lower() or "960" in variant:
                             variant = "Fischerandom"
@@ -264,29 +239,24 @@ class PgnImport():
                         variant = 0
 
                     if basename == "eco.pgn":
-                        white = tags["Opening"] if "Opening" in tags else ""
-                        black = tags["Variation"] if "Variation" in tags else ""
+                        white = tags["Opening"]
+                        black = tags["Variation"]
                     else:
-                        white = tags["White"] if "White" in tags else ""
-                        if white == "":
-                            white = "?"
-                        black = tags["Black"] if "Black" in tags else ""
-                        if black == "":
-                            black = "?"
+                        white = tags["White"]
+                        black = tags["Black"]
 
-                    event_id = get_id(tags["Event"] if "Event" in tags else "", event, EVENT)
+                    event_id = get_id(tags["Event"], event, EVENT)
 
-                    site_id = get_id(tags["Site"] if "Site" in tags else "", site, SITE)
+                    site_id = get_id(tags["Site"], site, SITE)
 
-                    date_parser.tags["Date"] = tags["Date"] if "Date" in tags else ""
-                    game_year, game_month, game_day = date_parser.getGameDate()
+                    date = tags["Date"]
 
-                    game_round = tags['Round'] if "Round" in tags else ""
+                    game_round = tags['Round']
 
                     white_id = get_id(white, player, PLAYER)
                     black_id = get_id(black, player, PLAYER)
 
-                    result = tags["Result"] if "Result" in tags else ""
+                    result = tags["Result"]
                     if result in pgn2Const:
                         result = pgn2Const[result]
                     else:
@@ -296,21 +266,18 @@ class PgnImport():
                             print("Invalid Result tag in game #%s: %s" % (i + 1, result))
                             continue
 
-                    white_elo = tags['WhiteElo'] if "WhiteElo" in tags else "0"
-                    white_elo = int(white_elo) if white_elo and white_elo.isdigit() else 0
+                    white_elo = tags['WhiteElo']
+                    black_elo = tags['BlackElo']
 
-                    black_elo = tags['BlackElo'] if "BlackElo" in tags else ""
-                    black_elo = int(black_elo) if black_elo and black_elo.isdigit() else 0
+                    time_control = tags["TimeControl"]
 
-                    time_control = tags["TimeControl"] if "TimeControl" in tags else ""
+                    eco = tags["ECO"][:3]
 
-                    eco = tags["ECO"][:3] if "ECO" in tags else ""
-
-                    fen = tags["FEN"] if "FEN" in tags else ""
+                    fen = tags["FEN"]
 
                     board_tag = int(tags["Board"]) if "Board" in tags else 0
 
-                    annotator_id = get_id(tags["Annotator"] if "Annotator" in tags else "", annotator, ANNOTATOR)
+                    annotator_id = get_id(tags["Annotator"], annotator, ANNOTATOR)
 
                     source_id = get_id(orig_filename, source, SOURCE, info=info)
 
@@ -325,9 +292,7 @@ class PgnImport():
                         'offset8': (offset >> 3) << 3,
                         'event_id': event_id,
                         'site_id': site_id,
-                        'date_year': game_year,
-                        'date_month': game_month,
-                        'date_day': game_day,
+                        'date': date,
                         'round': game_round,
                         'white_id': white_id,
                         'black_id': black_id,
@@ -443,49 +408,8 @@ class PgnImport():
                 print("Importing %s failed! \n%s" % (pgnfile, e))
 
 
-def read_games(handle, handle_json=None):
+def read_games(handle):
     """Based on chess.pgn.scan_headers() from Niklas Fiekas python-chess"""
-
-    if handle_json is not None:
-        for line in handle_json:
-            try:
-                yield json.loads(line)
-            except ValueError as e:
-                try:
-                    if "\\" in line:
-                        line = line.replace("\\", "")
-                        yield json.loads(line)
-                    elif e.message.startswith("Expecting ',' delimiter"):
-                        if '"Date":' in line and '"Site":' in line and '"Event":' in line:
-                            left, date = line.split(', "Date":')
-                            left, site = left.split(', "Site":')
-                            left, event = left.split('"Event":')
-                            event = event.replace('"', '')
-                            site = site.replace('"', '')
-                            line = '{"Event":"%s", "Site":"%s", "Date":%s' % (event, site, date)
-                            yield json.loads(line)
-                        else:
-                            continue
-                    elif e.message.startswith("Invalid control character"):
-                        stripped = []
-                        for char in line:
-                            if ord(char) >= 32:
-                                stripped.append(char)
-                        line = "".join(stripped)
-                        yield json.loads(line)
-                    elif e.message.startswith("No JSON object could be decoded"):
-                        if line.startswith("[Date"):
-                            line = line.replace("[Date", '{"Date')
-                            yield json.loads(line)
-                        else:
-                            continue
-                    else:
-                        continue
-                except ValueError:
-                    continue
-            except ValueError:
-                continue
-        return
 
     in_comment = False
 
