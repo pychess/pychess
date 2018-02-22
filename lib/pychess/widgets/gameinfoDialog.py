@@ -168,7 +168,7 @@ def refresh_elo_rating_change(widgets):
     gamemodel = persp.cur_gmwidg().gamemodel
 
     site = gamemodel.tags["Site"]
-    if "lichess.org" in site or "chessclub.com" in site or "freechess.org" in site:
+    if site is not None and ("lichess.org" in site or "chessclub.com" in site or "freechess.org" in site):
         # TODO : lichess takes 3 parameters per player
         widgets["w_elo_change"].set_text("")
         widgets["b_elo_change"].set_text("")

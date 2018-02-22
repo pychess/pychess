@@ -128,10 +128,10 @@ class GameList(Gtk.TreeView):
             belo = rec["BlackElo"]
             result = rec["Result"]
             result = "½-½" if result == DRAW else reprResult[result] if result else "*"
-            event = rec["Event"].replace("?", "")
-            site = rec["Site"].replace("?", "")
-            round_ = rec["Round"].replace("?", "")
-            date = rec["Date"].replace(".??", "").replace("????.", "")
+            event = "" if rec["Event"] is None else rec["Event"].replace("?", "")
+            site = "" if rec["Site"] is None else rec["Site"].replace("?", "")
+            round_ = "" if rec["Round"] is None else rec["Round"].replace("?", "")
+            date = "" if rec["Date"] is None else rec["Date"].replace(".??", "").replace("????.", "")
 
             try:
                 ply = rec["PlyCount"]

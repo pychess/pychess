@@ -168,6 +168,14 @@ def save(handle, model, position=None):
     status = reprResult[model.status]
     for tag in mandatory_tags:
         value = model.tags[tag]
+        if tag == "Date":
+            y, m, d = parseDateTag(value)
+            y = "%04d" % y if y is not None else "????"
+            m = "%02d" % m if m is not None else "??"
+            d = "%02d" % d if d is not None else "??"
+            value = "%s.%s.%s" % (y, m, d)
+        elif value == "":
+            value = "?"
         write_tag(tag, value, roster=True)
     write_tag("Result", reprResult[model.status], roster=True)
 
