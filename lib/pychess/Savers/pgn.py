@@ -25,7 +25,7 @@ from pychess.external.chess_db import Parser
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
     WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE, \
     ABORTED_REASONS, ADJOURNED_REASONS, WON_CALLFLAG, DRAW_ADJUDICATION, WON_ADJUDICATION, \
-    WHITE_ENGINE_DIED, BLACK_ENGINE_DIED
+    WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, RUNNING
 
 from pychess.System import conf
 from pychess.System.Log import log
@@ -41,7 +41,7 @@ from pychess.widgets.ChessClock import formatTime
 from pychess.Savers.ChessFile import ChessFile, LoadingError
 from pychess.Savers.database import col2label, TagDatabase
 from pychess.Database import model as dbmodel
-from pychess.Database.PgnImport import TAG_REGEX
+from pychess.Database.PgnImport import TAG_REGEX, pgn2Const
 from pychess.Database.model import game, create_indexes, drop_indexes
 
 __label__ = _("Chess Game")
@@ -698,9 +698,6 @@ class PGNFile(ChessFile):
 
         if self.pgn_is_string:
             rec = self.games[0]
-            variant = rec["Variant"].capitalize()
-        else:
-            variant = self.get_variant(rec)
 
         # Load mandatory tags
         for tag in mandatory_tags:
@@ -710,11 +707,20 @@ class PGNFile(ChessFile):
         for tag in ('WhiteElo', 'BlackElo', 'ECO', 'TimeControl', 'Annotator'):
             model.tags[tag] = rec[tag]
 
-        if not self.pgn_is_string:
+        if self.pgn_is_string:
+            for tag in rec:
+                if isinstance(rec[tag], str) and rec[tag]:
+                    model.tags[tag] = rec[tag]
+        else:
             model.info = self.tag_database.get_info(rec)
             extra_tags = self.tag_database.get_exta_tags(rec)
             for et in extra_tags:
                 model.tags[et['tag_name']] = et['tag_value']
+
+        if self.pgn_is_string:
+            variant = rec["Variant"].capitalize()
+        else:
+            variant = self.get_variant(rec)
 
         if model.tags['TimeControl']:
             tc = parseTimeControlTag(model.tags['TimeControl'])
@@ -878,7 +884,15 @@ class PGNFile(ChessFile):
 
         # Apply result from .pgn if the last position was loaded
         if position == -1 or len(model.moves) == position - model.lowply:
-            status = rec["Result"]
+            if self.pgn_is_string:
+                result = rec["Result"]
+                if result in pgn2Const:
+                    status = pgn2Const[result]
+                else:
+                    status = RUNNING
+            else:
+                status = rec["Result"]
+
             if status in (WHITEWON, BLACKWON) and status != model.status:
                 model.status = status
                 model.reason = WON_RESIGN
