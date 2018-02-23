@@ -57,41 +57,6 @@ def initialize(widgets):
         widgets["game_info"].hide()
         return True
 
-    def on_pick_date(button, *args):
-        # Parse the existing date
-        date = widgets["date_entry"].get_text()
-        year, month, day = parseDateTag(date)
-
-        # Prepare the date of the picker
-        calendar = Gtk.Calendar()
-        curyear, curmonth, curday = calendar.get_date()
-        year = curyear if year is None else year
-        month = curmonth if month is None else month - 1
-        day = curday if day is None else day
-        calendar.select_month(month, year)
-        calendar.select_day(day)
-
-        # Show the dialog
-        dialog = Gtk.Dialog(_("Pick a date"),
-                            mainwindow(),
-                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
-
-        sw = Gtk.ScrolledWindow()
-        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        sw.add(calendar)
-
-        dialog.get_content_area().pack_start(sw, True, True, 0)
-        dialog.resize(300, 200)
-        dialog.show_all()
-
-        response = dialog.run()
-        dialog.destroy()
-
-        if response == Gtk.ResponseType.ACCEPT:
-            year, month, day = calendar.get_date()
-            widgets["date_entry"].set_text("%04d.%02d.%02d" % (year, month + 1, day))
-
     def on_add_tag(button, *args):
         tv_iter = tags_store.append([_("New"), ""])
         path = tags_store.get_path(tv_iter)
@@ -173,7 +138,7 @@ def initialize(widgets):
     # Events on the UI
     widgets["whiteelo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
     widgets["blackelo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
-    widgets["date_button"].connect("clicked", on_pick_date)
+    widgets["date_button"].connect("clicked", on_pick_date, widgets["date_entry"])
     widgets["tag_add_button"].connect("clicked", on_add_tag)
     widgets["tag_delete_button"].connect("clicked", on_delete_tag)
     widgets["game_info"].connect("delete-event", hide_window)
@@ -213,3 +178,39 @@ def refresh_elo_rating_change(widgets):
         widgets["b_elo_change"].override_color(Gtk.StateFlags.NORMAL, red if bchange.startswith("-") else green)
     else:
         widgets["b_elo_change"].override_color(Gtk.StateFlags.NORMAL, black)
+
+
+def on_pick_date(button, date_entry):
+    # Parse the existing date
+    date = date_entry.get_text()
+    year, month, day = parseDateTag(date)
+
+    # Prepare the date of the picker
+    calendar = Gtk.Calendar()
+    curyear, curmonth, curday = calendar.get_date()
+    year = curyear if year is None else year
+    month = curmonth if month is None else month - 1
+    day = curday if day is None else day
+    calendar.select_month(month, year)
+    calendar.select_day(day)
+
+    # Show the dialog
+    dialog = Gtk.Dialog(_("Pick a date"),
+                        mainwindow(),
+                        Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
+
+    sw = Gtk.ScrolledWindow()
+    sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+    sw.add(calendar)
+
+    dialog.get_content_area().pack_start(sw, True, True, 0)
+    dialog.resize(300, 200)
+    dialog.show_all()
+
+    response = dialog.run()
+    dialog.destroy()
+
+    if response == Gtk.ResponseType.ACCEPT:
+        year, month, day = calendar.get_date()
+        date_entry.set_text("%04d.%02d.%02d" % (year, month + 1, day))

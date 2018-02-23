@@ -9,6 +9,7 @@ from pychess.Utils.SetupModel import SetupModel, SetupPlayer
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 from pychess.widgets.BoardControl import BoardControl
+from pychess.widgets.gameinfoDialog import on_pick_date
 from pychess.widgets.PieceWidget import PieceWidget
 from pychess.widgets import mainwindow
 from pychess.Variants import name2variant
@@ -46,6 +47,10 @@ class FilterPanel(Gtk.TreeView):
         renderer_text = Gtk.CellRendererText()
         self.widgets["variant"].pack_start(renderer_text, True)
         self.widgets["variant"].add_attribute(renderer_text, "text", 0)
+
+        # Connect date_from and date_to to corresponding calendars
+        self.widgets["date_from_button"].connect("clicked", on_pick_date, self.widgets["date_from"])
+        self.widgets["date_to_button"].connect("clicked", on_pick_date, self.widgets["date_to"])
 
         # Add piece widgets to dialog *_dock containers on material tab
         self.dialog = self.widgets["filter_dialog"]
