@@ -66,7 +66,7 @@ class Sidepanel():
 
 
 def start_lesson_from(filename, index):
-    chessfile = PGNFile(protoopen(addDataPrefix("lectures/%s" % filename)))
+    chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
     chessfile.limit = 1000
     importer = PgnImport(chessfile)
     chessfile.init_tag_database(importer)

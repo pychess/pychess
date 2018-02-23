@@ -97,7 +97,7 @@ class Sidepanel():
         if path is None:
             return
         lecnum = path[0] + 1
-        self.lecture = addDataPrefix("lectures/lec%s.txt" % lecnum)
+        self.lecture = addDataPrefix("learn/lectures/lec%s.txt" % lecnum)
 
         # connection.client.run_command("examine")
         gamemodel = self.start_lecture_game()

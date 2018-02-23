@@ -75,12 +75,12 @@ class Sidepanel():
 
 def start_puzzle_from(filename):
     if filename.lower().endswith(".pgn"):
-        chessfile = PGNFile(protoopen(addDataPrefix("lectures/%s" % filename)))
+        chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename)))
         chessfile.limit = 1000
         importer = PgnImport(chessfile)
         chessfile.init_tag_database(importer)
     elif filename.lower().endswith(".olv"):
-        chessfile = OLVFile(protoopen(addDataPrefix("lectures/%s" % filename), encoding="utf-8"))
+        chessfile = OLVFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename), encoding="utf-8"))
 
     records, plys = chessfile.get_records()
 
