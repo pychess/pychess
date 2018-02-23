@@ -1293,22 +1293,10 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">10</property>
-                    <property name="label" translatable="yes">Annotator:</property>
+                    <property name="label" translatable="yes">Result:</property>
                     <property name="xalign">0</property>
                   </object>
                   <packing>
-                    <property name="top_attach">4</property>
-                    <property name="bottom_attach">5</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="annotator_entry">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">4</property>
                     <property name="top_attach">4</property>
                     <property name="bottom_attach">5</property>
                   </packing>
@@ -1329,7 +1317,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_top">10</property>
-                    <property name="label" translatable="yes">Players</property>
+                    <property name="label" translatable="yes">Players:</property>
                     <property name="xalign">0</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
@@ -1416,6 +1404,24 @@
                     <property name="top_attach">3</property>
                     <property name="bottom_attach">4</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="result_combo">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="right_attach">2</property>
+                    <property name="top_attach">4</property>
+                    <property name="bottom_attach">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>
@@ -5356,6 +5362,7 @@ If it can use both  you can set here which one you like.</property>
       </object>
     </child>
   </object>
+  <object class="GtkListStore" id="liststore5"/>
   <object class="GtkTextBuffer" id="scout_textbuffer"/>
   <object class="GtkAdjustment" id="wb_max_adjustment">
     <property name="upper">9</property>

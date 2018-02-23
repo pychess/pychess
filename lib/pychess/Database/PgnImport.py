@@ -19,10 +19,10 @@ from pychess.Database.model import event, site, player, game, annotator, tag_gam
 # from pychess.System import profile_me
 
 # Editable (on game info dialog) tags
-dedicated_tags = ('Event', 'Site', 'Date', 'Round', 'White', 'Black', 'WhiteElo', 'BlackElo', 'Annotator')
+dedicated_tags = ('Event', 'Site', 'Date', 'Round', 'White', 'Black', 'WhiteElo', 'BlackElo')
 
 # Other tags stored in game table
-other_game_tags = ('Result', 'SetUp', 'FEN', 'ECO', 'Variant', 'PlyCount', 'offset', 'offset8')
+other_game_tags = ('Result', 'SetUp', 'FEN', 'ECO', 'Variant', 'PlyCount', 'Annotator', 'offset', 'offset8')
 
 TAG_REGEX = re.compile(r"\[([a-zA-Z0-9_]+)\s+\"(.*)\"\]")
 

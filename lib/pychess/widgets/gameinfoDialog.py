@@ -3,7 +3,7 @@ from gi.repository import Gtk, Gdk
 
 from pychess.Savers.pgn import parseDateTag
 from pychess.Database.PgnImport import dedicated_tags
-from pychess.Utils.const import BLACK, WHITE
+from pychess.Utils.const import BLACK, WHITE, DRAW, WHITEWON, BLACKWON, UNKNOWN_STATE, reprResult
 from pychess.perspectives import perspective_manager
 from pychess.Utils.elo import get_elo_rating_change_str
 from pychess.widgets import mainwindow
@@ -36,6 +36,10 @@ def run(widgets):
             tag_value = ""
         widgets["%s_entry" % tag.lower()].set_text(tag_value)
     refresh_elo_rating_change(widgets)
+
+    combo = widgets["result_combo"]
+    acive_id = reprResult[gamemodel.status]
+    combo.set_active_id(acive_id)
 
     # Load of the tags in the editor
     tags_store.clear()
@@ -111,6 +115,15 @@ def initialize(widgets):
         for tag in dedicated_tags:
             gamemodel.tags[tag] = widgets["%s_entry" % tag.lower()].get_text()
 
+        combo = widgets["result_combo"]
+        tree_iter = combo.get_active_iter()
+        if tree_iter is not None:
+            model = combo.get_model()
+            status = model[tree_iter][0]
+            if status != gamemodel.status:
+                gamemodel.status = status
+                gamemodel.checkStatus()
+
         # Copy the extra tags from the editor
         for tag in tags_store:
             if tag[0] != "" and tag not in dedicated_tags:
@@ -146,6 +159,16 @@ def initialize(widgets):
     value_renderer.set_property("editable", True)
     value_renderer.connect("edited", value_edited_cb)
     tv_tags.append_column(Gtk.TreeViewColumn("Value", value_renderer, text=1))
+
+    result_combo = widgets["result_combo"]
+    result_store = Gtk.ListStore(int, str)
+    for result in ((WHITEWON, "1-0"), (BLACKWON, "0-1"), (DRAW, "1/2-1/2"), (UNKNOWN_STATE, "*")):
+        result_store.append(result)
+    result_combo.set_model(result_store)
+    result_combo.set_id_column(1)
+    renderer_text = Gtk.CellRendererText()
+    result_combo.pack_start(renderer_text, True)
+    result_combo.add_attribute(renderer_text, "text", 1)
 
     # Events on the UI
     widgets["whiteelo_entry"].connect("changed", lambda p: refresh_elo_rating_change(widgets))
