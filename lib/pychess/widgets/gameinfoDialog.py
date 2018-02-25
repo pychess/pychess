@@ -1,7 +1,7 @@
 
 from gi.repository import Gtk, Gdk
 
-from pychess.Savers.pgn import parseDateTag
+from pychess.Savers.database import parseDateTag
 from pychess.Database.PgnImport import dedicated_tags
 from pychess.Utils.const import BLACK, WHITE, DRAW, WHITEWON, BLACKWON, UNKNOWN_STATE, reprResult
 from pychess.perspectives import perspective_manager

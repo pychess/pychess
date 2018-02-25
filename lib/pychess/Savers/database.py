@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-
+import re
 
 from sqlalchemy import select, func, and_, or_
 
@@ -9,6 +9,27 @@ from pychess.Database.model import game, event, site, player, pl1, pl2, annotato
 
 
 count_games = select([func.count()]).select_from(game)
+
+
+def parseDateTag(tag):
+    elements = re.match("^([0-9\?]{4})(\.([0-9\?]{2})(\.([0-9\?]{2}))?)?$", tag)
+    if elements is None:
+        y, m, d = None, None, None
+    else:
+        elements = elements.groups()
+        try:
+            y = int(elements[0])
+        except Exception:
+            y = None
+        try:
+            m = int(elements[2])
+        except Exception:
+            m = None
+        try:
+            d = int(elements[4])
+        except Exception:
+            d = None
+    return y, m, d
 
 
 def save(path, model, offset):
@@ -198,7 +219,17 @@ class TagDatabase:
                 tags.append(game.c.date >= tag_query["date_from"])
 
             if "date_to" in tag_query:
-                tags.append(game.c.date <= tag_query["date_to"])
+                # When date_to is not given as full date we have to prepare
+                # date_to filled with some "?" to get correct query results
+                # because for example "2018.??.??" is greater than "2018"
+                date_to = tag_query["date_to"]
+                y, m, d = parseDateTag(date_to)
+                y = "%04d" % y if y is not None else "????"
+                m = "%02d" % m if m is not None else "??"
+                d = "%02d" % d if d is not None else "??"
+                date_to = "%s.%s.%s" % (y, m, d)
+
+                tags.append(game.c.date <= date_to)
 
             if "elo_from" in tag_query:
                 tags.append(game.c.white_elo >= tag_query["elo_from"])

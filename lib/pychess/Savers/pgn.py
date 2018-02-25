@@ -39,7 +39,7 @@ from pychess.Utils.logic import getStatus
 from pychess.Variants import name2variant, NormalBoard, variants
 from pychess.widgets.ChessClock import formatTime
 from pychess.Savers.ChessFile import ChessFile, LoadingError
-from pychess.Savers.database import col2label, TagDatabase
+from pychess.Savers.database import col2label, TagDatabase, parseDateTag
 from pychess.Database import model as dbmodel
 from pychess.Database.PgnImport import TAG_REGEX, pgn2Const
 from pychess.Database.model import game, create_indexes, drop_indexes
@@ -124,27 +124,6 @@ def parseTimeControlTag(tag):
             return int(secs), 0, int(moves)
         else:
             return None
-
-
-def parseDateTag(tag):
-    elements = re.match("^([0-9\?]{4})(\.([0-9\?]{2})(\.([0-9\?]{2}))?)?$", tag)
-    if elements is None:
-        y, m, d = None, None, None
-    else:
-        elements = elements.groups()
-        try:
-            y = int(elements[0])
-        except Exception:
-            y = None
-        try:
-            m = int(elements[2])
-        except Exception:
-            m = None
-        try:
-            d = int(elements[4])
-        except Exception:
-            d = None
-    return y, m, d
 
 
 def save(handle, model, position=None):
