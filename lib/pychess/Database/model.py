@@ -3,7 +3,6 @@
 import os
 import shutil
 import time
-from os.path import getmtime
 
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
     String, SmallInteger, ForeignKey, event, select
