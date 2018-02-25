@@ -186,8 +186,9 @@ def save(handle, model, position=None):
     elif model.reason in ADJOURNED_REASONS:
         value = "unterminated"
     else:
-        value = "unterminated" if status == "*" else "normal"
-    write_tag("Termination", value)
+        value = "unterminated" if status == "*" else None
+    if value is not None:
+        write_tag("Termination", value)
 
     # ELO and its variation
     if conf.get("saveRatingChange", False):

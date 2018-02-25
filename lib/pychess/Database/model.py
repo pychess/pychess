@@ -168,7 +168,6 @@ game = Table(
     Column('board', SmallInteger, default=0),
     Column('fen', String(128), default=""),
     Column('variant', SmallInteger, default=0),
-    Column('termination', SmallInteger, default=0),
     Column('annotator_id', Integer, ForeignKey('annotator.id'), index=True),
     Column('source_id', Integer, ForeignKey('source.id'), index=True),
 )
