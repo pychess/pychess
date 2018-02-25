@@ -42,7 +42,7 @@ from pychess.Savers.ChessFile import ChessFile, LoadingError
 from pychess.Savers.database import col2label, TagDatabase, parseDateTag
 from pychess.Database import model as dbmodel
 from pychess.Database.PgnImport import TAG_REGEX, pgn2Const
-from pychess.Database.model import game, create_indexes, drop_indexes
+from pychess.Database.model import game, create_indexes, drop_indexes, metadata, ini_schema_version
 
 __label__ = _("Chess Game")
 __ending__ = "pgn"
@@ -450,6 +450,13 @@ class PGNFile(ChessFile):
     def init_tag_database(self, importer):
         """ Create/open .sqlite database of game header tags """
         # Import .pgn header tags to .sqlite database
+
+        sqlite_path = self.path.replace(".pgn", ".sqlite")
+        if os.path.isfile(self.path) and os.path.isfile(sqlite_path) and getmtime(self.path) > getmtime(sqlite_path):
+            metadata.drop_all(self.engine)
+            metadata.create_all(self.engine)
+            ini_schema_version(self.engine)
+
         size = self.size
         if size > 0 and self.tag_database.count == 0:
             if size > 10000000:
