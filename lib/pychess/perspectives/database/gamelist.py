@@ -169,7 +169,9 @@ class GameList(Gtk.TreeView):
         if variant:
             self.gamemodel.tags["Variant"] = variant
 
-        wp, bp = rec["White"], rec["Black"]
+        # Lichess exports study .pgn without White and Black tags
+        wp = "" if rec["White"] is None else rec["White"]
+        bp = "" if rec["Black"] is None else rec["Black"]
         p0 = (LOCAL, Human, (WHITE, wp), wp)
         p1 = (LOCAL, Human, (BLACK, bp), bp)
         self.persp.chessfile.loadToModel(rec, -1, self.gamemodel)
