@@ -3,6 +3,7 @@
 import os
 import shutil
 import time
+from os.path import getmtime
 
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
     String, SmallInteger, ForeignKey, event, select
@@ -88,7 +89,9 @@ def get_engine(path=None, dialect="sqlite", echo=False):
     elif dialect == "sqlite":
         url = "%s:///%s" % (dialect, path)
 
-    if url in engines and os.path.isfile(path) and os.path.getsize(path) > 0:
+    pgn_date_mismatch = path is not None and getmtime(path.replace(".sqlite", ".pgn")) > getmtime(path)
+
+    if url in engines and os.path.isfile(path) and os.path.getsize(path) > 0 and not pgn_date_mismatch:
         return engines[url]
     else:
         if path is None:
@@ -99,7 +102,8 @@ def get_engine(path=None, dialect="sqlite", echo=False):
                 shutil.copyfile(empty_db, path)
             engine = create_engine(url, echo=echo)
 
-        if path != empty_db and (path is None or get_schema_version(engine) != SCHEMA_VERSION):
+        version_mismatch = get_schema_version(engine) != SCHEMA_VERSION
+        if path != empty_db and (path is None or pgn_date_mismatch or version_mismatch):
             metadata.drop_all(engine)
             metadata.create_all(engine)
             ini_schema_version(engine)
