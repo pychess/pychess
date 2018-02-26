@@ -727,9 +727,9 @@ class PGNFile(ChessFile):
                 model.timemodel.minutes = secs / 60
                 model.timemodel.moves = moves
                 for tag, color in (('WhiteClock', WHITE), ('BlackClock', BLACK)):
-                    if hasattr(rec, tag):
+                    if tag in model.tags:
                         try:
-                            millisec = parseClockTimeTag(rec[tag])
+                            millisec = parseClockTimeTag(model.tags[tag])
                             # We need to fix when FICS reports negative clock time like this
                             # [TimeControl "180+0"]
                             # [WhiteClock "0:00:15.867"]
@@ -741,7 +741,6 @@ class PGNFile(ChessFile):
                         except ValueError:
                             raise LoadingError(
                                 "Error parsing '%s'" % tag)
-
         fenstr = rec["FEN"]
 
         if variant:
@@ -894,6 +893,9 @@ class PGNFile(ChessFile):
             elif status == DRAW and status != model.status:
                 model.status = DRAW
                 model.reason = DRAW_AGREE
+
+        if model.timed:
+            model.timemodel.movingColor = model.boards[-1].color
 
         # If parsing gave an error we throw it now, to enlarge our possibility
         # of being able to continue the game from where it failed.
