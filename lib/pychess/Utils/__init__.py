@@ -5,7 +5,7 @@ from pychess.Utils.lutils.ldata import MATE_VALUE, MATE_DEPTH
 
 
 def prettyPrintScore(s, depth, format_mate=False):
-    """The score parameter is an eval value form White point of view"""
+    """The score parameter is an eval value from White point of view"""
 
     if s is None:
         return "?"
