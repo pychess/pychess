@@ -1,0 +1,94 @@
+[Event "Lichess Practice: Piece Checkmates I: Queen and rook mate"]
+[Site "https://lichess.org/study/BJy6fEDf"]
+[UTCDate "2017.02.18"]
+[UTCTime "12:42:39"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/3k4/8/8/4K3/8/Q6R w - - 0 1"]
+[SetUp "1"]
+
+{ Use your queen and rook to restrict the king and deliver checkmate. Mate in 3 if played perfectly. }
+ *
+
+
+[Event "Lichess Practice: Piece Checkmates I: Two rook mate"]
+[Site "https://lichess.org/study/BJy6fEDf"]
+[UTCDate "2017.01.30"]
+[UTCTime "17:10:21"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/3k4/8/8/4K3/8/R6R w - - 0 1"]
+[SetUp "1"]
+
+{ Use your rooks to restrict the king and deliver checkmate. Mate in 4 if played perfectly. }
+1. Ra5 Kc6 2. Rh6+ Kb7 3. Rg5 Kb8 4. Rg7 Kc8 5. Rh8# *
+
+
+[Event "Lichess Practice: Piece Checkmates I: Queen and bishop mate"]
+[Site "https://lichess.org/study/BJy6fEDf"]
+[UTCDate "2017.02.18"]
+[UTCTime "12:41:45"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/3k4/8/8/2QBK3/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Use your queen and bishop to restrict the king and deliver checkmate. Mate in 5 if played perfectly. }
+ *
+
+
+[Event "Lichess Practice: Piece Checkmates I: Queen and knight mate"]
+[Site "https://lichess.org/study/BJy6fEDf"]
+[UTCDate "2017.02.18"]
+[UTCTime "12:42:18"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/3k4/8/8/2QNK3/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Use your queen and knight to restrict the king and deliver checkmate. Mate in 5 if played perfectly. }
+ *
+
+
+[Event "Lichess Practice: Piece Checkmates I: Queen mate"]
+[Site "https://lichess.org/study/BJy6fEDf"]
+[UTCDate "2017.01.30"]
+[UTCTime "17:11:16"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/3k4/8/8/4K3/8/4Q3 w - - 0 1"]
+[SetUp "1"]
+
+{ Use your queen to restrict the king, force it to the edge of the board and deliver checkmate. The queen can't do it alone, so use your king to help. Mate in 6 if played perfectly. }
+1. Qa5 Ke6 2. Ke4 Kd7 3. Kd5 Ke7 4. Qb6 Kf7 5. Ke5 Kg7 6. Qf6+ Kh7 7. Qg5 Kh8 8. Kf6 Kh7 9. Qg7# *
+
+
+[Event "Lichess Practice: Piece Checkmates I: Rook mate"]
+[Site "https://lichess.org/study/BJy6fEDf"]
+[UTCDate "2017.01.30"]
+[UTCTime "17:11:58"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/3k4/8/8/4K3/8/4R3 w - - 0 1"]
+[SetUp "1"]
+
+{ Use your rook to restrict the king, force it to the edge of the board and deliver checkmate. The rook can't do it alone, so use your king to help. Mate in 11 if played perfectly. }
+1. Kd4 Kc6 2. Re6+ Kd7 3. Kd5 Kc7 4. Rh6 Kd7 5. Rh7+ Ke8 6. Ke6 Kd8 7. Rg7 Kc8 8. Kd6 Kb8 9. Kc6 Ka8 10. Kb6 Kb8 11. Rg8# *

@@ -1,0 +1,85 @@
+[Termination "-100cp in 2"]
+[Event "Lichess Practice: Zwischenzug: Zwischenzug"]
+[Site "https://lichess.org/study/ITWY4GN2"]
+[UTCDate "2017.02.03"]
+[UTCTime "00:35:00"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "rBbqk2r/pp3ppp/5n2/8/1bpP4/8/PP2B1PP/RN1Q1KNR b kq - 0 9"]
+[SetUp "1"]
+
+{ Whether you call it Zwischenzug (from German), Intermezzo (from Italian), an intermediate move or just an in-between move, it's all the same thing. It's a very common tactic that you need to know because it happens in almost all chess games. A Zwischenzug is when a player, instead of playing the expected move, often a recapture, plays another move that makes an immediate threat that the opponent must answer, before playing the original expected move.
+
+In this Savielly Tartakower - Jose Raul Capablanca game from 1924, Tartakower just played Bxb8. Instead of recapturing immediately with Rxb8, can you find a better move that makes a strong threat? }
+9... Nd5 10. Kf2 Rxb8 *
+
+
+[Termination "-500cp in 3"]
+[Event "Lichess Practice: Zwischenzug: Zwischenschach"]
+[Site "https://lichess.org/study/ITWY4GN2"]
+[UTCDate "2017.02.03"]
+[UTCTime "00:29:32"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "2r2rk1/pp1b1ppp/1q2p3/3pP3/1B3Pn1/3B1N2/P3Q1PP/RN2KR2 b Q - 0 16"]
+[SetUp "1"]
+
+{ A Zwischenzug that is also a check, is called a Zwischenschach, Zwischen-check, or simply an in-between check. Instead of recapturing with Qxb4 immediately, find the Zwischenschach in this Samuel Rosenthal - Cecil Valentine De Vere game from 1867. }
+16... Rc1+ 17. Kd2 Rxf1 18. Qxf1 Qxb4+ *
+
+
+[Termination "+300cp in 3"]
+[Event "Lichess Practice: Zwischenzug: Zwischenzug Challenge #1"]
+[Site "https://lichess.org/study/ITWY4GN2"]
+[UTCDate "2017.02.02"]
+[UTCTime "23:32:35"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "r1b5/4kq2/p1Bbp1Qp/6p1/8/4B1P1/PPP4P/6K1 w - - 0 29"]
+[SetUp "1"]
+
+{ From Wolfgang Unzicker - Mikhail Tal, 1975. }
+29. Qxh6 Bd7 30. Qxg5+ Kf8 31. Bxa8 *
+
+
+[Termination "+400cp in 2"]
+[Event "Lichess Practice: Zwischenzug: Zwischenzug Challenge #2"]
+[Site "https://lichess.org/study/ITWY4GN2"]
+[UTCDate "2017.02.03"]
+[UTCTime "00:24:16"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "2r3k1/q5pp/4p3/2rp1p2/1p1B1P2/1P1QP3/P1R3PP/6K1 w - - 2 28"]
+[SetUp "1"]
+
+{ From Alexander Kotov - Ratmir Kholmov, 1971. }
+28. Qb5 Rxc2 29. Bxa7 Rxa2 *
+
+
+[Termination "+220cp in 3"]
+[Event "Lichess Practice: Zwischenzug: Zwischenzug Challenge #3"]
+[Site "https://lichess.org/study/ITWY4GN2"]
+[UTCDate "2017.02.03"]
+[UTCTime "00:25:19"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "2r2r1k/1pN1Qpbp/p4pp1/qb6/8/1B6/PP3PPP/2RR2K1 w - - 10 23"]
+[SetUp "1"]
+
+{ From Boris Gelfand - Peter Svidler, 1996. }
+23. Be6 Be2 24. Bxc8 Bxd1 25. Rxd1 *

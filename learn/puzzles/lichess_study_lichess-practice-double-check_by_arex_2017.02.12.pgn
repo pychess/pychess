@@ -1,0 +1,100 @@
+[Termination "mate in 2"]
+[Event "Lichess Practice: Double Check: Double Check Introduction"]
+[Site "https://lichess.org/study/RUQASaZm"]
+[UTCDate "2017.02.12"]
+[UTCTime "12:57:34"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "k1q5/1pp5/8/8/N7/8/8/R5K1 w - - 0 1"]
+[SetUp "1"]
+
+{ A Double Check is when two pieces are delivering check simultaneously. A Double Check is generally more powerful than a normal check, because the opponent can only respond with a king move. (The pieces that are delivering check cannot both be captured or blocked with one move.) }
+ *
+
+
+[Termination "mate in 3"]
+[Event "Lichess Practice: Double Check: Double Check #1"]
+[Site "https://lichess.org/study/RUQASaZm"]
+[UTCDate "2017.02.12"]
+[UTCTime "11:22:53"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "r3k2r/ppp2pp1/2np4/2B1p2n/2B1P1Nq/3P4/PPP2PP1/RN1Q1RK1 b kq - 0 11"]
+[SetUp "1"]
+
+{ From Schwartz - Carl Hartlaub, 1918. }
+11... Qh1+ 12. Kxh1 Ng3+ 13. Kg1 Rh1# *
+
+
+[Termination "mate in 3"]
+[Event "Lichess Practice: Double Check: Double Check #2"]
+[Site "https://lichess.org/study/RUQASaZm"]
+[UTCDate "2017.02.12"]
+[UTCTime "11:27:04"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "rn2kb1r/pp2pp1p/2p2p2/8/8/3Q1N2/qPPB1PPP/2KR3R w kq - 0 13"]
+[SetUp "1"]
+
+{ From Georges Koltanowski - Arthur Dunkelblum, 1923. }
+13. Qd8+ Kxd8 14. Ba5+ Kc8 15. Rd8# *
+
+
+[Termination "mate in 3"]
+[Event "Lichess Practice: Double Check: Double Check #3"]
+[Site "https://lichess.org/study/RUQASaZm"]
+[UTCDate "2017.02.12"]
+[UTCTime "11:33:14"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "r4k2/pppb1Pp1/2np3p/2b5/2B2Bnq/2N5/PP2Q1PP/4RR1K w - - 6 17"]
+[SetUp "1"]
+
+{ From Rudolf Rezso Charousek - Jakob Wollner, 1893. }
+17. Qe8+ Rxe8 18. fxe8=Q+ Bxe8 19. Bxd6# *
+
+
+[Termination "mate in 4"]
+[Event "Lichess Practice: Double Check: Double Check #4"]
+[Site "https://lichess.org/study/RUQASaZm"]
+[UTCDate "2017.02.12"]
+[UTCTime "11:58:04"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "3r2k1/pp5p/6p1/2Ppq3/4Nr2/4B2b/PP2P2K/R1Q1R2B b - - 0 26"]
+[SetUp "1"]
+
+{ From Milorad Kapelan - James Tarjan, 1983. }
+ *
+
+
+[Termination "+1500cp in 5"]
+[Event "Lichess Practice: Double Check: Double Check #5"]
+[Site "https://lichess.org/study/RUQASaZm"]
+[UTCDate "2017.02.12"]
+[UTCTime "11:17:01"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "r3k2r/2q1np1p/p3P1p1/1p2p3/8/2PBB3/P1PR2PP/5RK1 w kq - 0 21"]
+[SetUp "1"]
+
+{ From Mikhail Tal - Alexey Suetin, 1969. }
+21. exf7+ Kd7 22. Bf5+ Kc6 23. Be4+ Nd5 24. Bxd5+ Kd7 25. Bxa8+ Ke6 *

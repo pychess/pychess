@@ -1,0 +1,150 @@
+[Termination "+500cp in 2"]
+[Event "Lichess Practice: The Skewer: Relative Skewer #1"]
+[Site "https://lichess.org/study/tuoBxVE5"]
+[UTCDate "2017.01.29"]
+[UTCTime "15:13:31"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/1r3k2/2q1ppp1/8/5PB1/4P3/4QK2/5R2 w - - 0 1"]
+[SetUp "1"]
+
+{ A skewer is an attack upon two pieces in a line and is similar to a pin. A skewer is sometimes described as a "reverse pin"; the difference is that in a skewer, the more valuable piece is in front of the piece of lesser value. If the piece being attacked is not a king, then it is a Relative Skewer. }
+ *
+
+
+[Termination "+300cp in 2"]
+[Event "Lichess Practice: The Skewer: Relative Skewer #2"]
+[Site "https://lichess.org/study/tuoBxVE5"]
+[UTCDate "2017.01.29"]
+[UTCTime "19:00:43"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "r2r2k1/2p2ppp/5n2/4p3/pB2P3/P2q3P/2R2PP1/2RQ2K1 w - - 0 1"]
+[SetUp "1"]
+
+ *
+
+
+[Termination "-500cp in 3"]
+[Event "Lichess Practice: The Skewer: Relative Skewer #3"]
+[Site "https://lichess.org/study/tuoBxVE5"]
+[UTCDate "2017.02.03"]
+[UTCTime "21:47:42"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "4rr1k/ppqb2p1/3b4/2p2n2/2PpBP1P/PP4P1/2QBN3/R3K2R b KQ - 0 22"]
+[SetUp "1"]
+
+{ From Magnus - Emil Schallopp, 1868. }
+22... Rxe4 23. Qxe4 Bc6 24. Qd3 Bxh1 *
+
+
+[Termination "-300cp in 4"]
+[Event "Lichess Practice: The Skewer: //Relative Skewer #4"]
+[Site "https://lichess.org/study/tuoBxVE5"]
+[UTCDate "2017.02.03"]
+[UTCTime "21:55:45"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "r4rk1/pbq2ppp/1p2pn2/n1p5/3P4/PBP1P1N1/1B3PPP/2RQ1RK1 b - - 9 14"]
+[SetUp "1"]
+
+{ From Donato Rivera - Robert James Fischer, 1962. }
+14... Qc6 15. e4 Qb5 16. e5 Ne8 17. Bc2 Qxb2 *
+
+
+[Termination "-500cp in 2"]
+[Event "Lichess Practice: The Skewer: Absolute Skewer #1"]
+[Site "https://lichess.org/study/tuoBxVE5"]
+[UTCDate "2017.01.29"]
+[UTCTime "15:22:48"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/3qkb2/8/8/4KB2/5Q2/8/8 b - - 0 1"]
+[SetUp "1"]
+
+{ A skewer is an attack upon two pieces in a line and is similar to a pin. A skewer is sometimes described as a "reverse pin"; the difference is that in a skewer, the more valuable piece is in front of the piece of lesser value. If the piece being attacked is a king, then it is an Absolute Skewer. The king is said to be skewered. }
+ *
+
+
+[Termination "+500cp in 3"]
+[Event "Lichess Practice: The Skewer: Absolute Skewer #2"]
+[Site "https://lichess.org/study/tuoBxVE5"]
+[UTCDate "2017.01.29"]
+[UTCTime "15:46:42"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "2Q5/1p4q1/p4k2/6p1/P3b3/6BP/5PP1/6K1 w - - 4 51"]
+[SetUp "1"]
+
+{ From Nigel Short - Rafael Vaganian, 1989. }
+ *
+
+
+[Termination "+400cp in 3"]
+[Event "Lichess Practice: The Skewer: Absolute Skewer #3"]
+[Site "https://lichess.org/study/tuoBxVE5"]
+[UTCDate "2017.01.29"]
+[UTCTime "15:52:14"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "5Q2/2k2p2/3bqP2/R2p4/3P1p2/2p4P/2P3P1/7K w - - 1 1"]
+[SetUp "1"]
+
+{ A missed tactic from Viswanathan Anand - Vassily Ivanchuk, 2005. }
+ *
+
+
+[Termination "+500cp in 4"]
+[Event "Lichess Practice: The Skewer: Absolute Skewer #4"]
+[Site "https://lichess.org/study/tuoBxVE5"]
+[UTCDate "2017.01.29"]
+[UTCTime "17:35:35"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "5k2/pp1b4/3N1pp1/3P4/2p5/q1P1QP2/5KP1/8 w - - 0 39"]
+[SetUp "1"]
+
+{ From Garry Kasparov - Stefano Tatai, 1986. }
+ *
+
+
+[Termination "+200cp in 3"]
+[Event "Lichess Practice: The Skewer: Absolute Skewer #5"]
+[Site "https://lichess.org/study/tuoBxVE5"]
+[UTCDate "2017.01.29"]
+[UTCTime "19:06:44"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "6q1/6p1/2k4p/R6B/p7/8/2P3P1/2K5 w - - 0 1"]
+[SetUp "1"]
+
+{ A study by Henri Rinck from page 217 of the July 1903 Deutsche Schachzeitung. }
+1. Ra8 Qxa8 2. Bf3+ Kb5 3. Bxa8 h5 *

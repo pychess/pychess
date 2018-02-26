@@ -142,6 +142,7 @@ class OLVFile(ChessFile):
                 elif line.startswith('"#'):
                     rec["Result"] = WHITEWON
                     rec["Black"] = "Mate in %s" % line[2:-1]
+                    rec["Termination"] = "mate in %s" % line[2:-1]
 
             elif line.startswith("solution:"):
                 # TODO: solutions can be in several (sometimes rather unusual) form
@@ -183,6 +184,7 @@ class OLVFile(ChessFile):
         model.tags['Round'] = ""
         model.tags['White'] = "?"
         model.tags['Black'] = "?"
+        model.tags['Termination'] = rec["Termination"]
 
         fen = rec["FEN"]
 

@@ -23,8 +23,27 @@ __icon__ = addDataPrefix("glade/panel_book.svg")
 __desc__ = _("Puzzles from GM games and Chess compositions")
 
 
-# http://wtharvey.com/
+# https://lichess.org/practice, http://wtharvey.com, http://www.yacpdb.org
 PUZZLES = (
+    ("lichess_study_lichess-practice-checkmate-patterns-i_by_arex_2017.01.22.pgn", "checkmate-patterns-i"),
+    ("lichess_study_lichess-practice-checkmate-patterns-ii_by_arex_2017.01.25.pgn", "checkmate-patterns-ii"),
+    ("lichess_study_lichess-practice-checkmate-patterns-iii_by_arex_2017.01.27.pgn", "checkmate-patterns-iii"),
+    ("lichess_study_lichess-practice-checkmate-patterns-iv_by_arex_2017.01.25.pgn", "checkmate-patterns-iv"),
+    ("lichess_study_lichess-practice-discovered-attacks_by_arex_2017.01.30.pgn", "discovered-attacks"),
+    ("lichess_study_lichess-practice-double-check_by_arex_2017.02.12.pgn", "double-check"),
+    ("lichess_study_lichess-practice-greek-gift_by_arex_2017.02.11.pgn", "greek-gift"),
+    ("lichess_study_lichess-practice-interference_by_arex_2017.02.11.pgn", "interference"),
+    ("lichess_study_lichess-practice-key-squares_by_arex_2017.01.21.pgn", "key-squares"),
+    ("lichess_study_lichess-practice-opposition_by_arex_2017.01.22.pgn", "opposition"),
+    ("lichess_study_lichess-practice-overloaded-pieces_by_arex_2017.01.31.pgn", "overloaded-pieces"),
+    ("lichess_study_lichess-practice-piece-checkmates-i_by_arex_2017.01.25.pgn", "piece-checkmates-i"),
+    ("lichess_study_lichess-practice-piece-checkmates-ii_by_arex_2017.01.25.pgn", "piece-checkmates-ii"),
+    ("lichess_study_lichess-practice-rook-endgames_by_TonyRo_2017.02.01.pgn", "rook-endgames"),
+    ("lichess_study_lichess-practice-the-fork_by_arex_2017.01.29.pgn", "the-fork"),
+    ("lichess_study_lichess-practice-the-pin_by_arex_2017.01.22.pgn", "the-pin"),
+    ("lichess_study_lichess-practice-the-skewer_by_arex_2017.01.29.pgn", "the-skewer"),
+    ("lichess_study_lichess-practice-zugzwang_by_arex_2017.02.01.pgn", "zugzwang"),
+    ("lichess_study_lichess-practice-zwischenzug_by_arex_2017.02.02.pgn", "zwischenzug"),
     ("mate_in_2.pgn", "Mate in two"),
     ("mate_in_3.pgn", "Mate in three"),
     ("mate_in_4.pgn", "Mate in four"),
@@ -92,25 +111,27 @@ def start_puzzle_from(filename):
     gamemodel.practice = ("puzzle", filename)
 
     chessfile.loadToModel(rec, 0, gamemodel)
+    print(gamemodel.tags["Termination"])
 
     engine = discoverer.getEngineByName(discoverer.getEngineLearn())
 
     color = gamemodel.boards[0].color
+    # Lichess exports study .pgn without White and Black tags!
     if color == WHITE:
-        name = rec["White"]
+        name = "" if rec["White"] is None else rec["White"]
         p0 = (LOCAL, Human, (WHITE, name), name)
 
-        oppname = rec["Black"]
+        oppname = "" if rec["Black"] is None else rec["Black"]
         ponder_off = True
         p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
               (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), oppname)
     else:
-        oppname = rec["White"]
+        oppname = "" if rec["White"] is None else rec["White"]
         ponder_off = True
         p0 = (ARTIFICIAL, discoverer.initPlayerEngine,
               (engine, WHITE, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), oppname)
 
-        name = rec["Black"]
+        name = "" if rec["Black"] is None else rec["Black"]
         p1 = (LOCAL, Human, (BLACK, name), name)
 
     def fix_name(gamemodel, name, color):

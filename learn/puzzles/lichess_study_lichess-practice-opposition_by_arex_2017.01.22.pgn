@@ -1,0 +1,134 @@
+[Termination "promotion with +100cp"]
+[Event "Lichess Practice: Opposition: Direct Opposition #1"]
+[Site "https://lichess.org/study/A4ujYOer"]
+[UTCDate "2017.01.22"]
+[UTCTime "09:50:32"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/2k5/8/8/2PK4/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Direct Opposition is a position in which the kings are on the same rank or file and they are separated by one square. In such a situation, the player not having to move is said to "have the opposition". The side without the opposition may have to move the king away, potentially allowing the opposing king access to important squares. Take the opposition to reach a key square and win! }
+ *
+
+
+[Termination "draw in 20"]
+[Event "Lichess Practice: Opposition: Direct Opposition #2"]
+[Site "https://lichess.org/study/A4ujYOer"]
+[UTCDate "2017.01.22"]
+[UTCTime "00:41:28"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/8/4p3/4k3/8/8/4K3 w - - 0 1"]
+[SetUp "1"]
+
+{ Take the opposition to prevent black from reaching a key square and hold the draw. }
+ *
+
+
+[Termination "promotion with +100cp"]
+[Event "Lichess Practice: Opposition: Direct Opposition #3"]
+[Site "https://lichess.org/study/A4ujYOer"]
+[UTCDate "2017.01.22"]
+[UTCTime "00:33:52"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/4k3/8/8/2P1K3/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Take the opposition to reach a key square and win! }
+ *
+
+
+[Termination "promotion with +100cp"]
+[Event "Lichess Practice: Opposition: Direct Opposition #4"]
+[Site "https://lichess.org/study/A4ujYOer"]
+[UTCDate "2017.01.22"]
+[UTCTime "00:34:22"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/7k/8/1p6/7K/2P5/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Take the opposition to reach a key square and win! }
+ *
+
+
+[Termination "promotion with +100cp"]
+[Event "Lichess Practice: Opposition: Direct Opposition #5"]
+[Site "https://lichess.org/study/A4ujYOer"]
+[UTCDate "2017.01.22"]
+[UTCTime "00:35:03"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/4R2n/4K1pk/6p1/7P/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Use your knowledge of Direct Opposition to win the game. }
+ *
+
+
+[Termination "draw in 20"]
+[Event "Lichess Practice: Opposition: Distant Opposition #1"]
+[Site "https://lichess.org/study/A4ujYOer"]
+[UTCDate "2017.01.22"]
+[UTCTime "00:47:49"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/8/5kp1/8/8/8/6K1 w - - 0 1"]
+[SetUp "1"]
+
+{ Distant Opposition is a position in which the kings are on the same rank or file but are separated by more than one square. If there are an odd number of squares between the kings, the player not having the move has the (distant) opposition. Take the Distant Opposition to hold the draw. }
+ *
+
+
+[Termination "promotion with +100cp"]
+[Event "Lichess Practice: Opposition: Distant Opposition #2"]
+[Site "https://lichess.org/study/A4ujYOer"]
+[UTCDate "2017.01.22"]
+[UTCTime "00:52:03"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "4k3/8/8/1p5p/1P5P/8/8/4K3 w - - 0 1"]
+[SetUp "1"]
+
+{ Take the Distant Opposition to win the game. }
+ *
+
+
+[Termination "promotion with +100cp"]
+[Event "Lichess Practice: Opposition: As a means to an end"]
+[Site "https://lichess.org/study/A4ujYOer"]
+[UTCDate "2017.01.22"]
+[UTCTime "00:56:41"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/4k3/8/2PK4/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White can take Direct Opposition, but is that the best move? Remember the key squares. }
+ *

@@ -1,0 +1,122 @@
+[Event "Lichess Practice: Piece Checkmates II: Queen vs bishop mate"]
+[Site "https://lichess.org/study/Rg2cMBZ6"]
+[UTCDate "2017.01.30"]
+[UTCTime "17:27:00"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/3kb3/8/8/3KQ3/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Keep your pieces on the opposite color squares from the enemy bishop to stay safe. Use your queen to encroach on the king and look for double attacks. Mate in 10 if played perfectly. }
+ *
+
+
+[Event "Lichess Practice: Piece Checkmates II: Queen vs knight mate"]
+[Site "https://lichess.org/study/Rg2cMBZ6"]
+[UTCDate "2017.01.30"]
+[UTCTime "17:26:30"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/3kn3/8/8/3KQ3/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Force the enemy king to the edge of the board while avoiding tricky knight forks. Mate in 12 if played perfectly. }
+ *
+
+
+[Event "Lichess Practice: Piece Checkmates II: Queen vs rook mate"]
+[Site "https://lichess.org/study/Rg2cMBZ6"]
+[UTCDate "2017.01.30"]
+[UTCTime "17:28:17"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/3kr3/8/3KQ3/8/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Normally the winning process involves the queen first winning the rook by a fork and then checkmating with the king and queen, but forced checkmates with the rook still on the board are possible in some positions or against incorrect defense.
+
+Mate in 18 if played perfectly. }
+ *
+
+
+[Date "2017.01.30"]
+[Site "https://lichess.org/study/BJy6fEDf"]
+[Event "Lichess Practice: Piece Checkmates I: Two bishop mate"]
+[Annotator "arex @ https://lichess.org"]
+[UTCDate "2017.02.18"]
+[UTCTime "12:38:24"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[FEN "8/8/3k4/8/8/2BBK3/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ When trying to checkmate with two bishops, there are two important principles to follow. One, the bishops are best when they are near the center of the board and on adjacent diagonals. This cuts off the opposing king. Two, the king must be used aggressively, in conjunction with the bishops.
+
+Mate in 13 if played perfectly. }
+ *
+
+
+[Date "2017.01.30"]
+[Site "https://lichess.org/study/BJy6fEDf"]
+[Event "Lichess Practice: Piece Checkmates I: Knight and bishop mate"]
+[Annotator "arex @ https://lichess.org"]
+[UTCDate "2017.02.18"]
+[UTCTime "12:08:37"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[FEN "8/8/1k1K4/8/2BN4/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Of the basic checkmates, this is the most difficult one to force, because the knight and bishop cannot form a linear barrier to the enemy king from a distance. The checkmate can be forced only in a corner that the bishop controls. The mating process often requires accurate play, since a few errors could result in a draw either by the fifty-move rule or stalemate.
+
+Mate in 10 if played perfectly. }
+ *
+
+
+[Event "Lichess Practice: Piece Checkmates II: Knight and bishop mate #2"]
+[Site "https://lichess.org/study/Rg2cMBZ6"]
+[UTCDate "2017.02.21"]
+[UTCTime "10:05:54"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "8/8/3k4/3B4/3K4/8/3N4/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Of the basic checkmates, this is the most difficult one to force, because the knight and bishop cannot form a linear barrier to the enemy king from a distance. The checkmate can be forced only in a corner that the bishop controls. The mating process often requires accurate play, since a few errors could result in a draw either by the fifty-move rule or stalemate.
+
+Mate in 19 if played perfectly. }
+1. Nc4+ Kd7 2. Ke5 Ke7 3. Nb6 Kf8 4. Kf6 Ke8 5. Bb3 Kf8 6. Nd7+ Ke8 7. Ke6 Kd8 8. Kd6 Ke8 9. Ba2 Kd8 10. Bf7 Kc8 11. Nc5 Kd8 12. Nb7+ Kc8 13. Kc6 Kb8 14. Nd6 Ka7 15. Bc4 Kb8 16. Kb6 Ka8 17. Kc7 Ka7 18. Nc8+ Ka8 19. Bd5# *
+
+
+[Event "Lichess Practice: Piece Checkmates II: Two knights vs pawn"]
+[Site "https://lichess.org/study/Rg2cMBZ6"]
+[UTCDate "2017.01.25"]
+[UTCTime "22:49:55"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "6k1/6p1/8/4K3/4NN2/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Two knights can't force checkmate by themselves, but if the enemy has a pawn, we can avoid stalemate and force mate.
+
+Mate in 15 if played perfectly. }
+1. Ke6 Kf8 2. Nd6 g5 3. Nh5 g4 4. Ng3 Kg7 5. Ke7 Kg6 6. Nde4 Kg7 7. Nc5 Kg6 8. Ne6 Kh7 9. Kf6 Kg8 10. Kg6 Kh8 11. Kf7 Kh7 12. Nf5 Kh8 13. Nf8 g3 14. Ne7 g2 15. Neg6# *
