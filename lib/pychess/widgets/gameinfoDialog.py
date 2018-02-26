@@ -3,7 +3,7 @@ from gi.repository import Gtk, Gdk
 
 from pychess.Savers.database import parseDateTag
 from pychess.Database.PgnImport import dedicated_tags
-from pychess.Utils.const import BLACK, WHITE, DRAW, WHITEWON, BLACKWON, UNKNOWN_STATE, reprResult
+from pychess.Utils.const import BLACK, WHITE, DRAW, WHITEWON, BLACKWON, RUNNING, reprResult
 from pychess.perspectives import perspective_manager
 from pychess.Utils.elo import get_elo_rating_change_str
 from pychess.widgets import mainwindow
@@ -127,7 +127,7 @@ def initialize(widgets):
 
     result_combo = widgets["result_combo"]
     result_store = Gtk.ListStore(int, str)
-    for result in ((WHITEWON, "1-0"), (BLACKWON, "0-1"), (DRAW, "1/2-1/2"), (UNKNOWN_STATE, "*")):
+    for result in ((WHITEWON, "1-0"), (BLACKWON, "0-1"), (DRAW, "1/2-1/2"), (RUNNING, "*")):
         result_store.append(result)
     result_combo.set_model(result_store)
     result_combo.set_id_column(1)
