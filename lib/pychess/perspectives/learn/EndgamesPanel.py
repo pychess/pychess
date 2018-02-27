@@ -120,13 +120,14 @@ def start_endgame_from(pieces):
         gamemodel.set_practice_game()
         gamemodel.practice = ("endgame", pieces)
 
-        name = conf.get("firstName", _("You"))
-        p0 = (LOCAL, Human, (WHITE, name), name)
+        player_name = conf.get("firstName", _("You"))
+        p0 = (LOCAL, Human, (WHITE, player_name), player_name)
 
         engine = discoverer.getEngineByName(discoverer.getEngineLearn())
-        name = discoverer.getName(engine)
+        ponder_off = True
+        engine_name = discoverer.getName(engine)
         p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
-              (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, True), name)
+              (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), engine_name)
 
         perspective = perspective_manager.get_perspective("games")
         asyncio.async(perspective.generalStart(

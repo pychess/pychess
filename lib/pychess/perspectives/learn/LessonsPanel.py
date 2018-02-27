@@ -82,16 +82,13 @@ def start_lesson_from(filename, index):
     chessfile.loadToModel(rec, -1, gamemodel)
 
     color = gamemodel.boards[0].color
-    if color == WHITE:
-        name = conf.get("firstName", _("You"))
-        p0 = (LOCAL, Human, (WHITE, name), name)
-        name = "pychessbot"
-        p1 = (LOCAL, Human, (BLACK, name), name)
-    else:
-        name = "pychessbot"
-        p0 = (LOCAL, Human, (WHITE, name), name)
-        name = conf.get("firstName", _("You"))
-        p1 = (LOCAL, Human, (BLACK, name), name)
+    player_name = conf.get("firstName", _("You"))
+
+    w_name = player_name if color == WHITE else "PyChess"
+    b_name = "PyChess" if color == WHITE else player_name
+
+    p0 = (LOCAL, Human, (WHITE, w_name), w_name)
+    p1 = (LOCAL, Human, (BLACK, b_name), b_name)
 
     gamemodel.status = WAITING_TO_START
     perspective = perspective_manager.get_perspective("games")

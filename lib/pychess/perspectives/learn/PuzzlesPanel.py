@@ -13,6 +13,7 @@ from pychess.Players.engineNest import discoverer
 from pychess.perspectives import perspective_manager
 from pychess.Savers.olv import OLVFile
 from pychess.Savers.pgn import PGNFile
+from pychess.System import conf
 from pychess.System.protoopen import protoopen
 from pychess.Database.PgnImport import PgnImport
 
@@ -114,32 +115,30 @@ def start_puzzle_from(filename):
     print(gamemodel.tags["Termination"])
 
     engine = discoverer.getEngineByName(discoverer.getEngineLearn())
+    ponder_off = True
 
     color = gamemodel.boards[0].color
-    # Lichess exports study .pgn without White and Black tags!
+    player_name = conf.get("firstName", _("You"))
+    engine_name = discoverer.getName(engine)
+
+    w_name = player_name if color == WHITE else engine_name
+    b_name = engine_name if color == WHITE else player_name
+
     if color == WHITE:
-        name = "" if rec["White"] is None else rec["White"]
-        p0 = (LOCAL, Human, (WHITE, name), name)
-
-        oppname = "" if rec["Black"] is None else rec["Black"]
-        ponder_off = True
+        p0 = (LOCAL, Human, (WHITE, w_name), w_name)
         p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
-              (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), oppname)
+              (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), b_name)
     else:
-        oppname = "" if rec["White"] is None else rec["White"]
-        ponder_off = True
         p0 = (ARTIFICIAL, discoverer.initPlayerEngine,
-              (engine, WHITE, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), oppname)
-
-        name = "" if rec["Black"] is None else rec["Black"]
-        p1 = (LOCAL, Human, (BLACK, name), name)
+              (engine, WHITE, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), w_name)
+        p1 = (LOCAL, Human, (BLACK, b_name), b_name)
 
     def fix_name(gamemodel, name, color):
         asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
-        gamemodel.players[1 - color].name = oppname
+        gamemodel.players[1 - color].name = name
         gamemodel.emit("players_changed")
 
-    gamemodel.connect("game_started", fix_name, name, color)
+    gamemodel.connect("game_started", fix_name, engine_name, color)
 
     gamemodel.variant.need_initial_board = True
     gamemodel.status = WAITING_TO_START
