@@ -43,8 +43,7 @@ def add_provider(widget):
     style = widget.get_style_context()
     provider = Gtk.CssProvider()
     provider.load_from_data(css.encode('utf-8'))
-    style.add_provider_for_screen(screen, provider,
-                                  Gtk.STYLE_PROVIDER_PRIORITY_USER)
+    style.add_provider_for_screen(screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
 
 # -- Documentation
@@ -105,8 +104,9 @@ class Sidepanel:
         # Load of the preferences
         def cb_config_changed(*args):
             self.fetch_chess_conf()
-            for tag in (self.tag_move, self.tag_vari_top, self.tag_vari_even, self.tag_vari_uneven):
-                tag.set_property("font_desc", self.font)
+            self.tag_move.set_property("font_desc", self.font)
+            for i in range(len(self.tag_vari_depth)):
+                self.tag_vari_depth[i].set_property("font_desc", self.font)
             self.update()
         self.fetch_chess_conf()
 
@@ -122,9 +122,11 @@ class Sidepanel:
         self.tag_new_line = self.textbuffer.create_tag("new_line")
 
         self.tag_move = self.textbuffer.create_tag("move", font_desc=self.font)
-        self.tag_vari_top = self.textbuffer.create_tag("variation-toplevel", font_desc=self.font, style="italic")
-        self.tag_vari_even = self.textbuffer.create_tag("variation-even", font_desc=self.font, foreground="green", style="italic")
-        self.tag_vari_uneven = self.textbuffer.create_tag("variation-uneven", font_desc=self.font, foreground="red", style="italic")
+        colors = ["#4b4b4b", "#51a745", "#ee3e34", "#3965a8", "#a882bc", "#f09243", "#772120", "#c0c000"]  # black, green, red, blue, purple, orange, brown, ochre
+        self.tag_vari_depth = []
+        for i in range(64):
+            tag = self.textbuffer.create_tag("variation-depth-%d" % i, font_desc=self.font, foreground=colors[i % len(colors)], style="italic", left_margin=15 * (i + 1))
+            self.tag_vari_depth.append(tag)
 
         self.textbuffer.create_tag("scored0")
         self.textbuffer.create_tag("scored1", foreground_rgba=Gdk.RGBA(0.2, 0, 0, 1))
@@ -133,13 +135,10 @@ class Sidepanel:
         self.textbuffer.create_tag("scored4", foreground_rgba=Gdk.RGBA(0.8, 0, 0, 1))
         self.textbuffer.create_tag("scored5", foreground_rgba=Gdk.RGBA(1.0, 0, 0, 1))
         self.textbuffer.create_tag("emt", foreground="grey")
-        self.textbuffer.create_tag("comment", foreground="blue")
+        self.textbuffer.create_tag("comment", foreground="#6e71ec")
         self.textbuffer.create_tag("lesson-comment", foreground="green", font_desc=self.font)
-        self.textbuffer.create_tag("selected", background_full_height=True, background="grey")
+        self.textbuffer.create_tag("selected", background_full_height=True, background="#ffcbff")
         self.textbuffer.create_tag("margin", left_margin=4)
-        self.textbuffer.create_tag("variation-margin0", left_margin=20)
-        self.textbuffer.create_tag("variation-margin1", left_margin=36)
-        self.textbuffer.create_tag("variation-margin2", left_margin=52)
 
         # Events
         self.cids_textview = [
@@ -588,15 +587,8 @@ class Sidepanel:
         start = iter.get_offset()
         if not iter.ends_tag(tag=self.tag_new_line):
             self.textbuffer.insert_with_tags_by_name(iter, "\n", "new_line")
-        if level == 0:
-            self.textbuffer.insert_with_tags_by_name(
-                iter, "[", "variation-toplevel", "variation-margin0")
-        elif (level + 1) % 2 == 0:
-            self.textbuffer.insert_with_tags_by_name(
-                iter, "(", "variation-even", "variation-margin1")
-        else:
-            self.textbuffer.insert_with_tags_by_name(
-                iter, "(", "variation-uneven", "variation-margin2")
+        vlevel = min(level + 1, len(self.tag_vari_depth) - 1)
+        self.textbuffer.insert_with_tags_by_name(iter, "(", "variation-depth-%d" % vlevel)
 
         node = {}
         node["board"] = EMPTY_BOARD
@@ -613,17 +605,10 @@ class Sidepanel:
 
     def variation_end(self, iter, index, level, firstboard, parent, opening_node):
         start = iter.get_offset()
-        if level == 0:
-            self.textbuffer.insert_with_tags_by_name(
-                iter, "]", "variation-toplevel", "variation-margin0")
-        elif (level + 1) % 2 == 0:
-            self.textbuffer.insert_with_tags_by_name(
-                iter, ")", "variation-even", "variation-margin1")
-        else:
-            self.textbuffer.insert_with_tags_by_name(
-                iter, ")", "variation-uneven", "variation-margin2")
+        vlevel = min(level + 1, len(self.tag_vari_depth) - 1)
+        self.textbuffer.insert_with_tags_by_name(iter, ")", "variation-depth-%d" % vlevel)
 
-        self.textbuffer.insert_with_tags_by_name(iter, u"✖ ", "remove-variation")
+        self.textbuffer.insert_with_tags_by_name(iter, u" ✖ ", "remove-variation")
         # chr = iter.get_char()
 
         # somehow iter.begins_tag() doesn't work, so we use get_char() instead
@@ -683,15 +668,8 @@ class Sidepanel:
             self.textbuffer.apply_tag_by_name("move", startIter, endIter)
             self.textbuffer.apply_tag_by_name("margin", startIter, endIter)
             self.colorize_node(board.plyCount, startIter, endIter)
-        elif level == 1:
-            self.textbuffer.apply_tag_by_name("variation-toplevel", startIter, endIter)
-            self.textbuffer.apply_tag_by_name("variation-margin0", startIter, endIter)
-        elif level % 2 == 0:
-            self.textbuffer.apply_tag_by_name("variation-even", startIter, endIter)
-            self.textbuffer.apply_tag_by_name("variation-margin1", startIter, endIter)
         else:
-            self.textbuffer.apply_tag_by_name("variation-uneven", startIter, endIter)
-            self.textbuffer.apply_tag_by_name("variation-margin2", startIter, endIter)
+            self.textbuffer.apply_tag_by_name("variation-depth-%d" % level, startIter, endIter)
 
         node = {}
         node["board"] = board
