@@ -134,6 +134,7 @@
                       <packing>
                         <property name="top_attach">2</property>
                         <property name="bottom_attach">3</property>
+                        <property name="x_options">GTK_FILL</property>
                       </packing>
                     </child>
                     <child>
@@ -158,6 +159,9 @@
                         <property name="use_underline">True</property>
                         <property name="xalign">0</property>
                       </object>
+                      <packing>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
                     </child>
                     <child>
                       <object class="GtkHScale" id="skillSlider">
@@ -361,6 +365,9 @@
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">Server:</property>
                       </object>
+                      <packing>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -523,6 +530,9 @@
                         <property name="use_underline">True</property>
                         <property name="xalign">0</property>
                       </object>
+                      <packing>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
                     </child>
                     <child>
                       <object class="GtkCheckButton" id="createNew">
@@ -651,6 +661,18 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
+                          <object class="GtkImage" id="image2">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="xalign">1</property>
+                            <property name="yalign">1</property>
+                            <property name="pixbuf">poput.png</property>
+                          </object>
+                          <packing>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkImage" id="openImage1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
@@ -691,26 +713,39 @@
                       <placeholder/>
                     </child>
                     <child>
-                      <placeholder/>
-                    </child>
-                    <child>
                       <object class="GtkLabel" id="puzzleLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">_Puzzle:</property>
+                        <property name="label" translatable="yes">Category:</property>
                         <property name="use_underline">True</property>
                         <property name="xalign">0</property>
                       </object>
+                      <packing>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
                     </child>
                     <child>
-                      <object class="GtkComboBox" id="puzzle_combo">
+                      <object class="GtkComboBox" id="category_combo">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="right_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="learn_combo">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="popup_fixed_width">False</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
                       </packing>
                     </child>
                   </object>

@@ -21,6 +21,9 @@ from pychess.widgets.Background import giveBackground
 from pychess.widgets.RecentChooser import recent_manager, recent_menu
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.games import get_open_dialog
+from pychess.perspectives.learn.LecturesPanel import LECTURES, start_lecture_from
+from pychess.perspectives.learn.EndgamesPanel import ENDGAMES, start_endgame_from
+from pychess.perspectives.learn.LessonsPanel import LESSONS, start_lesson_from
 from pychess.perspectives.learn.PuzzlesPanel import PUZZLES, start_puzzle_from
 
 
@@ -286,6 +289,9 @@ class InternetGameTasker(Gtk.Alignment):
             ICLogon.dialog.widgets["connectButton"].clicked()
 
 
+LECTURE, LESSON, PUZZLE, ENDGAME = range(4)
+
+
 class LearnTasker(Gtk.Alignment):
     def __init__(self):
         GObject.GObject.__init__(self)
@@ -297,19 +303,73 @@ class LearnTasker(Gtk.Alignment):
         startButton = self.widgets["learnButton"]
         startButton.set_name("learnButton")
 
-        liststore = Gtk.ListStore(str, str)
+        categorystore = Gtk.ListStore(int, str)
 
-        for file_name, title in PUZZLES:
-            liststore.append([file_name, title])
+        learn_mapping = {
+            LECTURE: (_("Lectures"), LECTURES),
+            LESSON: (_("Lessons"), LESSONS),
+            PUZZLE: (_("Puzzles"), PUZZLES),
+            ENDGAME: (_("Endgames"), ENDGAMES),
+        }
+        for key, value in learn_mapping.items():
+            categorystore.append([key, value[0]])
 
-        self.puzzle_combo = self.widgets["puzzle_combo"]
-        self.puzzle_combo.set_model(liststore)
+        self.category_combo = self.widgets["category_combo"]
+        self.category_combo.set_model(categorystore)
+        renderer = Gtk.CellRendererText()
+        self.category_combo.pack_start(renderer, True)
+        self.category_combo.add_attribute(renderer, "text", 1)
+
+        self.learnstore = Gtk.ListStore(int, str, str)
+        self.learn_combo = self.widgets["learn_combo"]
+        self.learn_combo.set_model(self.learnstore)
         renderer_text = Gtk.CellRendererText()
-        self.puzzle_combo.pack_start(renderer_text, True)
-        self.puzzle_combo.add_attribute(renderer_text, "text", 1)
-        # TODO: save latest selected
-        # self.puzzle_combo.connect("changed", ???)
-        self.puzzle_combo.set_active(conf.get("puzzle_combo", 0))
+        renderer_text.set_property("width-chars", 30)
+        renderer_text.set_property("ellipsize", Pango.EllipsizeMode.END)
+        self.learn_combo.pack_start(renderer_text, True)
+        self.learn_combo.add_attribute(renderer_text, "text", 2)
+        self.learn_combo.set_active(0)
+
+        def on_category_changed(combo):
+            tree_iter = combo.get_active_iter()
+            if tree_iter is None:
+                return
+            else:
+                model = combo.get_model()
+                self.category = model[tree_iter][0]
+
+                self.learnstore.clear()
+                if self.category == LECTURE:
+                    for num, file_name, title, author in LECTURES:
+                        self.learnstore.append([num, file_name, title])
+                elif self.category == LESSON:
+                    for num, file_name, title, author in LESSONS:
+                        self.learnstore.append([num, file_name, title])
+                elif self.category == PUZZLE:
+                    for num, file_name, title, author in PUZZLES:
+                        self.learnstore.append([num, file_name, title])
+                elif self.category == ENDGAME:
+                    for num, pieces, title in ENDGAMES:
+                        self.learnstore.append([num, pieces, title])
+
+                learn = conf.get("learncombo%s" % self.category, 0)
+                self.learn_combo.set_active(learn)
+
+                def on_learn_changed(combo):
+                    tree_iter = combo.get_active_iter()
+                    if tree_iter is None:
+                        return
+                    else:
+                        model = combo.get_model()
+                        newlearn = model[tree_iter][0] - 1
+                        conf.set("learncombo%s" % self.category, newlearn)
+                self.learn_combo.connect("changed", on_learn_changed)
+
+        self.category_combo.connect("changed", on_category_changed)
+        self.category = conf.get("categorycombo", 0)
+        self.category_combo.set_active(self.category)
+
+        uistuff.keep(self.widgets["category_combo"], "categorycombo")
 
         self.widgets["opendialog4"].connect("clicked", self.openDialogClicked)
         self.widgets["learnButton"].connect("clicked", self.learnClicked)
@@ -322,14 +382,23 @@ class LearnTasker(Gtk.Alignment):
         perspective = perspective_manager.get_perspective("learn")
         perspective.activate()
 
-        tree_iter = self.puzzle_combo.get_active_iter()
+        tree_iter = self.learn_combo.get_active_iter()
         if tree_iter is None:
             return
         else:
-            model = self.puzzle_combo.get_model()
-            filename = model[tree_iter][0]
+            model = self.learn_combo.get_model()
+            source = model[tree_iter][1]
 
-        start_puzzle_from(filename)
+        # TODO
+        latest_index = 0
+        if self.category == LECTURE:
+            start_lecture_from(source, latest_index)
+        elif self.category == LESSON:
+            start_lesson_from(source, latest_index)
+        elif self.category == PUZZLE:
+            start_puzzle_from(source, latest_index)
+        elif self.category == ENDGAME:
+            start_endgame_from(source)
 
 
 class DatabaseTasker(Gtk.Alignment):
@@ -348,7 +417,7 @@ class DatabaseTasker(Gtk.Alignment):
         self.recent_combo = self.widgets["recent_combo"]
         self.recent_combo.set_model(liststore)
         renderer_text = Gtk.CellRendererText()
-        renderer_text.set_property("max-width-chars", 40)
+        renderer_text.set_property("width-chars", 30)
         renderer_text.set_property("ellipsize", Pango.EllipsizeMode.END)
         self.recent_combo.pack_start(renderer_text, True)
         self.recent_combo.add_attribute(renderer_text, "text", 1)

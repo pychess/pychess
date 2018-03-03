@@ -1,5 +1,4 @@
 import asyncio
-import random
 
 from gi.repository import Gtk
 
@@ -26,31 +25,36 @@ __desc__ = _("Puzzles from GM games and Chess compositions")
 
 # https://lichess.org/practice, http://wtharvey.com, http://www.yacpdb.org
 PUZZLES = (
-    ("lichess_study_lichess-practice-checkmate-patterns-i_by_arex_2017.01.22.pgn", "checkmate-patterns-i"),
-    ("lichess_study_lichess-practice-checkmate-patterns-ii_by_arex_2017.01.25.pgn", "checkmate-patterns-ii"),
-    ("lichess_study_lichess-practice-checkmate-patterns-iii_by_arex_2017.01.27.pgn", "checkmate-patterns-iii"),
-    ("lichess_study_lichess-practice-checkmate-patterns-iv_by_arex_2017.01.25.pgn", "checkmate-patterns-iv"),
-    ("lichess_study_lichess-practice-discovered-attacks_by_arex_2017.01.30.pgn", "discovered-attacks"),
-    ("lichess_study_lichess-practice-double-check_by_arex_2017.02.12.pgn", "double-check"),
-    ("lichess_study_lichess-practice-greek-gift_by_arex_2017.02.11.pgn", "greek-gift"),
-    ("lichess_study_lichess-practice-interference_by_arex_2017.02.11.pgn", "interference"),
-    ("lichess_study_lichess-practice-key-squares_by_arex_2017.01.21.pgn", "key-squares"),
-    ("lichess_study_lichess-practice-opposition_by_arex_2017.01.22.pgn", "opposition"),
-    ("lichess_study_lichess-practice-overloaded-pieces_by_arex_2017.01.31.pgn", "overloaded-pieces"),
-    ("lichess_study_lichess-practice-piece-checkmates-i_by_arex_2017.01.25.pgn", "piece-checkmates-i"),
-    ("lichess_study_lichess-practice-piece-checkmates-ii_by_arex_2017.01.25.pgn", "piece-checkmates-ii"),
-    ("lichess_study_lichess-practice-rook-endgames_by_TonyRo_2017.02.01.pgn", "rook-endgames"),
-    ("lichess_study_lichess-practice-the-fork_by_arex_2017.01.29.pgn", "the-fork"),
-    ("lichess_study_lichess-practice-the-pin_by_arex_2017.01.22.pgn", "the-pin"),
-    ("lichess_study_lichess-practice-the-skewer_by_arex_2017.01.29.pgn", "the-skewer"),
-    ("lichess_study_lichess-practice-zugzwang_by_arex_2017.02.01.pgn", "zugzwang"),
-    ("lichess_study_lichess-practice-zwischenzug_by_arex_2017.02.02.pgn", "zwischenzug"),
-    ("mate_in_2.pgn", "Mate in two"),
-    ("mate_in_3.pgn", "Mate in three"),
-    ("mate_in_4.pgn", "Mate in four"),
-    ("lasker.olv", "Lasker Emanuel"),
-    ("loyd.olv", "Loyd Samuel"),
-    ("reti.olv", "Réti Richard"),
+    (1, "lichess_study_lichess-practice-piece-checkmates-i_by_arex_2017.01.25.pgn", "Lichess: Piece Checkmates I", "arex"),
+    (2, "lichess_study_lichess-practice-checkmate-patterns-i_by_arex_2017.01.22.pgn", "Lichess: Checkmate Patterns I", "arex"),
+    (3, "lichess_study_lichess-practice-checkmate-patterns-ii_by_arex_2017.01.25.pgn", "Lichess: Checkmate Patterns II", "arex"),
+    (4, "lichess_study_lichess-practice-checkmate-patterns-iii_by_arex_2017.01.27.pgn", "Lichess: Checkmate Patterns III", "arex"),
+    (5, "lichess_study_lichess-practice-checkmate-patterns-iv_by_arex_2017.01.25.pgn", "Lichess: Checkmate Patterns IV", "arex"),
+    (6, "lichess_study_lichess-practice-piece-checkmates-ii_by_arex_2017.01.25.pgn", "Lichess: Piece Checkmates II", "arex"),
+
+    (7, "lichess_study_lichess-practice-the-pin_by_arex_2017.01.22.pgn", "Lichess: The Pin", "arex"),
+    (8, "lichess_study_lichess-practice-the-skewer_by_arex_2017.01.29.pgn", "Lichess: The Skewer", "arex"),
+    (9, "lichess_study_lichess-practice-the-fork_by_arex_2017.01.29.pgn", "Lichess: The Fork", "arex"),
+    (10, "lichess_study_lichess-practice-discovered-attacks_by_arex_2017.01.30.pgn", "Lichess:  Discovered Attacks", "arex"),
+    (11, "lichess_study_lichess-practice-double-check_by_arex_2017.02.12.pgn", "Lichess: Double Check", "arex"),
+    (12, "lichess_study_lichess-practice-overloaded-pieces_by_arex_2017.01.31.pgn", "Lichess: Overloaded pieces", "arex"),
+    (13, "lichess_study_lichess-practice-zwischenzug_by_arex_2017.02.02.pgn", "Lichess: Zwischenzug", "arex"),
+
+    (14, "lichess_study_lichess-practice-zugzwang_by_arex_2017.02.01.pgn", "Lichess: Zugzwang", "arex"),
+    (15, "lichess_study_lichess-practice-interference_by_arex_2017.02.11.pgn", "Lichess: Interference", "arex"),
+    (16, "lichess_study_lichess-practice-greek-gift_by_arex_2017.02.11.pgn", "Lichess: Greek Gift", "arex"),
+
+    (17, "lichess_study_lichess-practice-key-squares_by_arex_2017.01.21.pgn", "Lichess: Key Squares", "arex"),
+    (18, "lichess_study_lichess-practice-opposition_by_arex_2017.01.22.pgn", "Lichess: Opposition", "arex"),
+    (19, "lichess_study_lichess-practice-rook-endgames_by_TonyRo_2017.02.01.pgn", "Lichess: Rook Endgames", "arex"),
+
+    (20, "mate_in_2.pgn", "Puzzles by GMs: Mate in 1", "wtharvey.com"),
+    (21, "mate_in_3.pgn", "Puzzles by GMs: Mate in 2", "wtharvey.com"),
+    (22, "mate_in_4.pgn", "Puzzles by GMs: Mate in 3", "wtharvey.com"),
+
+    (23, "lasker.olv", "Puzzles by Emanuel Lasker", "yacpdb.org"),
+    (24, "loyd.olv", "Puzzles by Samuel Loyd", "yacpdb.org"),
+    (25, "reti.olv", "Puzzles by Richard Réti", "yacpdb.org"),
 )
 
 
@@ -62,15 +66,23 @@ class Sidepanel():
         self.tv = Gtk.TreeView()
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Title"), renderer, text=1)
+        column = Gtk.TreeViewColumn("Id", renderer, text=0)
+        self.tv.append_column(column)
+
+        renderer = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_("Title"), renderer, text=2)
+        self.tv.append_column(column)
+
+        renderer = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn("Author", renderer, text=3)
         self.tv.append_column(column)
 
         self.tv.connect("row-activated", self.row_activated)
 
-        self.store = Gtk.ListStore(str, str)
+        self.store = Gtk.ListStore(int, str, str, str)
 
-        for file_name, title in PUZZLES:
-            self.store.append([file_name, title])
+        for num, file_name, title, author in PUZZLES:
+            self.store.append([num, file_name, title, author])
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -89,11 +101,13 @@ class Sidepanel():
         if path is None:
             return
         else:
-            filename = PUZZLES[path[0]][0]
-            start_puzzle_from(filename)
+            filename = PUZZLES[path[0]][1]
+            # TODO
+            latest_index = 0
+            start_puzzle_from(filename, latest_index)
 
 
-def start_puzzle_from(filename):
+def start_puzzle_from(filename, index):
     if filename.lower().endswith(".pgn"):
         chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename)))
         chessfile.limit = 1000
@@ -104,12 +118,12 @@ def start_puzzle_from(filename):
 
     records, plys = chessfile.get_records()
 
-    rec = records[random.randrange(0, len(records))]
+    rec = records[index]
 
     timemodel = TimeModel(0, 0)
     gamemodel = GameModel(timemodel)
     gamemodel.set_practice_game()
-    gamemodel.practice = ("puzzle", filename)
+    gamemodel.practice = ("puzzle", filename, index)
 
     chessfile.loadToModel(rec, 0, gamemodel)
     print(gamemodel.tags["Termination"])
@@ -118,6 +132,11 @@ def start_puzzle_from(filename):
     ponder_off = True
 
     color = gamemodel.boards[0].color
+
+    w_name = "" if rec["White"] is None else rec["White"]
+    b_name = "" if rec["Black"] is None else rec["Black"]
+    print(w_name, b_name)
+
     player_name = conf.get("firstName", _("You"))
     engine_name = discoverer.getName(engine)
 

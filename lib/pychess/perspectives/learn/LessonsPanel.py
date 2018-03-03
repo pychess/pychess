@@ -21,8 +21,8 @@ __desc__ = _('Guided interactive lessons in "guess the move" style')
 
 
 LESSONS = (
-    ("Charles_XII_At_Bender.pgn", "Charles XII at Bender"),
-    ("Back_rank_threats.pgn", "Back rank threats"),
+    (1, "Charles_XII_At_Bender.pgn", "Charles XII at Bender", "gbtami"),
+    (2, "Back_rank_threats.pgn", "Back rank threats", "gbtami"),
 )
 
 
@@ -34,15 +34,23 @@ class Sidepanel():
         self.tv = Gtk.TreeView()
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Title"), renderer, text=1)
+        column = Gtk.TreeViewColumn("Id", renderer, text=0)
+        self.tv.append_column(column)
+
+        renderer = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_("Title"), renderer, text=2)
+        self.tv.append_column(column)
+
+        renderer = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn("Author", renderer, text=3)
         self.tv.append_column(column)
 
         self.tv.connect("row-activated", self.row_activated)
 
-        self.store = Gtk.ListStore(str, str)
+        self.store = Gtk.ListStore(int, str, str, str)
 
-        for file_name, title in LESSONS:
-            self.store.append([file_name, title])
+        for num, file_name, title, author in LESSONS:
+            self.store.append([num, file_name, title, author])
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -61,8 +69,10 @@ class Sidepanel():
         if path is None:
             return
         else:
-            filename = LESSONS[path[0]][0]
-            start_lesson_from(filename, 0)
+            filename = LESSONS[path[0]][1]
+            # TODO
+            latest_index = 0
+            start_lesson_from(filename, latest_index)
 
 
 def start_lesson_from(filename, index):

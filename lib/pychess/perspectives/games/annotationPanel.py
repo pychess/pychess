@@ -730,7 +730,7 @@ class Sidepanel:
 
     def variation_added(self, gamemodel, boards, parent):
         # Don't show moves in interactive lesson games
-        if self.gamemodel.lesson_game:
+        if self.gamemodel.practice_game or self.gamemodel.lesson_game:
             return
 
         # first find the iter where we will inset this new variation
@@ -884,7 +884,7 @@ class Sidepanel:
         """ Recursively builds the node tree """
 
         # Don't show moves in interactive lesson games
-        if self.gamemodel.lesson_game:
+        if self.gamemodel.practice_game or self.gamemodel.lesson_game:
             return
 
         end_iter = self.textbuffer.get_end_iter  # Convenience shortcut to the function
@@ -1128,7 +1128,7 @@ class Sidepanel:
 
     def on_choice_clicked(self, button, board):
         self.boardview.setShownBoard(board)
-        if self.gamemodel.lesson_game:
+        if self.gamemodel.practice_game or self.gamemodel.lesson_game:
             self.infobar.opp_choice_selected(board)
 
     def on_enter_notify_event(self, button, event, move):
@@ -1149,7 +1149,7 @@ class Sidepanel:
 
     def update_choices(self):
         # First update lesson move comments
-        if self.gamemodel.lesson_game:
+        if self.gamemodel.lesson_game or self.gamemodel.practice_game:
             self.show_lesson_comments()
 
         view = self.boardview
@@ -1255,7 +1255,7 @@ class Sidepanel:
         """
         The method is called when a game is changed, like by a move.
         """
-        if game.lesson_game:
+        if self.gamemodel.practice_game or self.gamemodel.lesson_game:
             self.update()
 
         board = game.getBoardAtPly(ply, variation=0).board

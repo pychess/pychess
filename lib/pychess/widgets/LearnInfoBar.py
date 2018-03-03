@@ -132,7 +132,7 @@ class LearnInfoBar(Gtk.InfoBar):
 
         elif response == NEXT:
             if self.gamemodel.practice[0] == "puzzle":
-                start_puzzle_from(self.gamemodel.practice[1])
+                start_puzzle_from(self.gamemodel.practice[1], self.gamemodel.practice[2] + 1)
             elif self.gamemodel.practice[0] == "endgame":
                 start_endgame_from(self.gamemodel.practice[1])
             elif self.gamemodel.practice[0] == "lesson":
