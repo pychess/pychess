@@ -230,3 +230,11 @@ def newTheme(widget, background=None):
     fyle = open(temppng, "wb")
     fyle.write(bytes(colors))
     surface.write_to_png(fyle)
+
+
+def isDarkTheme(widget):
+    color = widget.get_style_context().get_background_color(Gtk.StateFlags.NORMAL)
+    minimal = min(color.red, color.green, color.blue)
+    maximal = max(color.red, color.green, color.blue)
+    lightness = (minimal + maximal) / 2
+    return lightness < 0.5
