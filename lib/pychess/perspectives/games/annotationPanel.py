@@ -18,6 +18,7 @@ from pychess.Savers.pgn import move_count, nag2symbol, parseTimeControlTag
 from pychess.widgets.ChessClock import formatTime
 from pychess.widgets.LearnInfoBar import LearnInfoBar
 from pychess.widgets import insert_formatted, preferencesDialog, mainwindow
+from pychess.widgets.Background import isDarkTheme
 
 
 # --- Constants
@@ -122,10 +123,13 @@ class Sidepanel:
         self.tag_new_line = self.textbuffer.create_tag("new_line")
 
         self.tag_move = self.textbuffer.create_tag("move", font_desc=self.font)
-        colors = ["#4b4b4b", "#51a745", "#ee3e34", "#3965a8", "#a882bc", "#f09243", "#772120", "#c0c000"]  # black, green, red, blue, purple, orange, brown, ochre
+        if isDarkTheme(self.textview):
+            palette = ["#e5e5e5", "#35e119", "#ee3e34", "#24c6ee", "#a882bc", "#f09243", "#e475e5", "#c0c000"]  # white, green, red, aqua, purple, orange, fuchsia, ochre
+        else:
+            palette = ["#4b4b4b", "#51a745", "#ee3e34", "#3965a8", "#a882bc", "#f09243", "#772120", "#c0c000"]  # black, green, red, blue, purple, orange, brown, ochre
         self.tag_vari_depth = []
         for i in range(64):
-            tag = self.textbuffer.create_tag("variation-depth-%d" % i, font_desc=self.font, foreground=colors[i % len(colors)], style="italic", left_margin=15 * (i + 1))
+            tag = self.textbuffer.create_tag("variation-depth-%d" % i, font_desc=self.font, foreground=palette[i % len(palette)], style="italic", left_margin=15 * (i + 1))
             self.tag_vari_depth.append(tag)
 
         self.textbuffer.create_tag("scored0")
