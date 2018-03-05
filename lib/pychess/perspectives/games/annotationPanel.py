@@ -123,10 +123,7 @@ class Sidepanel:
         self.tag_new_line = self.textbuffer.create_tag("new_line")
 
         self.tag_move = self.textbuffer.create_tag("move", font_desc=self.font)
-        if isDarkTheme(self.textview):
-            palette = ["#e5e5e5", "#35e119", "#ee3e34", "#24c6ee", "#a882bc", "#f09243", "#e475e5", "#c0c000"]  # white, green, red, aqua, purple, orange, fuchsia, ochre
-        else:
-            palette = ["#4b4b4b", "#51a745", "#ee3e34", "#3965a8", "#a882bc", "#f09243", "#772120", "#c0c000"]  # black, green, red, blue, purple, orange, brown, ochre
+        palette = self.get_palette()
         self.tag_vari_depth = []
         for i in range(64):
             tag = self.textbuffer.create_tag("variation-depth-%d" % i, font_desc=self.font, foreground=palette[i % len(palette)], style="italic", left_margin=15 * (i + 1))
@@ -148,6 +145,7 @@ class Sidepanel:
         self.cids_textview = [
             self.textview.connect("motion-notify-event", self.motion_notify_event),
             self.textview.connect("button-press-event", self.button_press_event),
+            self.textview.connect("style-updated", self.on_style_updated)
         ]
         self.cid_shown_changed = self.boardview.connect("shownChanged", self.on_shownChanged)
         self.cid_remove_variation = self.tag_remove_variation.connect("event", self.tag_event_handler)
@@ -215,6 +213,18 @@ class Sidepanel:
             self.gamemodel.disconnect(cid)
         for cid in self.cids_conf:
             conf.notify_remove(cid)
+
+    def get_palette(self):
+        if isDarkTheme(self.textview):
+            palette = ["#e5e5e5", "#35e119", "#ee3e34", "#24c6ee", "#a882bc", "#f09243", "#e475e5", "#c0c000"]  # white, green, red, aqua, purple, orange, fuchsia, ochre
+        else:
+            palette = ["#4b4b4b", "#51a745", "#ee3e34", "#3965a8", "#a882bc", "#f09243", "#772120", "#c0c000"]  # black, green, red, blue, purple, orange, brown, ochre
+        return palette
+
+    def on_style_updated(self, widget):
+        palette = self.get_palette()
+        for i in range(64):
+            self.tag_vari_depth[i].set_property("foreground", palette[i % len(palette)])
 
     def tag_event_handler(self, tag, widget, event, iter):
         """
