@@ -43,7 +43,7 @@ class GameList(Gtk.TreeView):
 
         titles = (_("Id"), _("White"), _("W Elo"), _("Black"), _("B Elo"),
                   _("Result"), _("Date"), _("Event"), _("Site"), _("Round"),
-                  _("Length"), "ECO", "TC", _("Variant"), "FEN")
+                  _("Length"), "ECO", _("Time control"), _("Variant"), "FEN")
 
         for i, title in enumerate(titles):
             r = Gtk.CellRendererText()
