@@ -123,7 +123,7 @@ class Games(GObject.GObject, Perspective):
                 # issue tracker, we need to give human players special treatment
                 player = func(gmwidg, *args)
                 players.append(player)
-
+        assert len(players) == 2
         if player0tup[0] == ARTIFICIAL and player1tup[0] == ARTIFICIAL:
 
             def emit_action(board, action, player, param, gmwidg):

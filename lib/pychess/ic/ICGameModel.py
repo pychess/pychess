@@ -349,6 +349,7 @@ class ICGameModel(GameModel):
         # know automatically if he/she accepts an offer, and will simply send
         # us the result.
 
+    @asyncio.coroutine
     def checkStatus(self):
         pass
 

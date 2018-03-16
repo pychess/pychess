@@ -5,7 +5,7 @@ from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, RUNNING
-from pychess.Utils.GameModel import GameModel
+from pychess.Utils.LearnModel import LearnModel, LECTURE
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.Move import parseAny
 from pychess.Players.Human import Human
@@ -98,7 +98,7 @@ class Sidepanel():
             return
         else:
             filename = LECTURES[path[0]][1]
-            # TODO
+            # TODO: save/restore
             latest_index = 0
             start_lecture_from(filename, latest_index)
 
@@ -106,8 +106,9 @@ class Sidepanel():
 def start_lecture_from(filename, index):
     # connection.client.run_command("examine")
     timemodel = TimeModel(0, 0)
-    gamemodel = GameModel(timemodel)
-    gamemodel.set_offline_lecture()
+    gamemodel = LearnModel(timemodel)
+    gamemodel.set_learn_data(LECTURE, filename, index)
+
     white_name = black_name = "PyChess"
     p0 = (LOCAL, Human, (WHITE, white_name), white_name)
     p1 = (LOCAL, Human, (BLACK, black_name), black_name)

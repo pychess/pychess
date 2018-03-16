@@ -1,11 +1,12 @@
 from gi.repository import Gtk
 
-from pychess.Utils.const import UNDOABLE_STATES
+from pychess.Utils.const import UNDOABLE_STATES, PRACTICE_GOAL_REACHED
 from pychess.Utils.Cord import Cord
-from pychess.Utils.logic import getStatus
+from pychess.Utils.LearnModel import learn2str, LESSON, PUZZLE
 from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_from
 from pychess.perspectives.learn.EndgamesPanel import start_endgame_from
 from pychess.perspectives.learn.LessonsPanel import start_lesson_from
+from pychess.widgets import preferencesDialog
 
 HINT, MOVE, RETRY, CONTINUE, NEXT = range(5)
 
@@ -22,7 +23,8 @@ class LearnInfoBar(Gtk.InfoBar):
         self.boardview = boardcontrol.view
         self.annotation_panel = annotation_panel
 
-        self.gamemodel.connect("game_changed", self.game_changed)
+        self.gamemodel.connect("game_changed", self.on_game_changed)
+        self.gamemodel.connect("goal_checked", self.on_goal_checked)
         self.connect("response", self.on_response)
 
         self.your_turn()
@@ -39,18 +41,22 @@ class LearnInfoBar(Gtk.InfoBar):
         self.set_message_type(Gtk.MessageType.QUESTION)
         self.content_area.add(Gtk.Label(_("Your turn.")))
         self.add_button(_("Hint"), HINT)
-        self.add_button(_("Move"), MOVE)
+        self.add_button(_("Best move"), MOVE)
         self.show_all()
 
     def get_next_puzzle(self):
         self.clear()
         self.set_message_type(Gtk.MessageType.INFO)
-        if self.gamemodel.practice[0] == "lesson" and self.gamemodel.practice[2] == self.gamemodel.practice[3]:
-            self.content_area.add(Gtk.Label(_("Well done! Lesson completed.")))
+        if self.gamemodel.learn_type in(LESSON, PUZZLE) and self.gamemodel.current_index + 1 == self.gamemodel.game_count:
+            self.content_area.add(Gtk.Label(_("Well done! %s completed." % learn2str[self.gamemodel.learn_type])))
         else:
             self.content_area.add(Gtk.Label(_("Well done!")))
             self.add_button(_("Next"), NEXT)
         self.show_all()
+        preferencesDialog.SoundTab.playAction("puzzleSuccess")
+
+        if self.gamemodel.learn_type == LESSON:
+            self.gamemodel.solved = True
 
     def opp_turn(self):
         self.clear()
@@ -77,13 +83,13 @@ class LearnInfoBar(Gtk.InfoBar):
 
     def on_response(self, widget, response):
         if response in (HINT, MOVE):
-            if self.gamemodel.hints:
+            if self.gamemodel.ply in self.gamemodel.hints:
                 if self.boardview.arrows:
                     self.boardview.arrows.clear()
                 if self.boardview.circles:
                     self.boardview.circles.clear()
 
-                hint = self.gamemodel.hints[0][0]
+                hint = self.gamemodel.hints[self.gamemodel.ply][0][0]
                 cord0 = Cord(hint[0], int(hint[1]), "G")
                 cord1 = Cord(hint[2], int(hint[3]), "G")
                 if response == HINT:
@@ -93,7 +99,8 @@ class LearnInfoBar(Gtk.InfoBar):
                     self.boardview.arrows.add((cord0, cord1))
                     self.boardview.redrawCanvas()
             else:
-                print("No hint available!")
+                # TODO:
+                print("No hint available yet!")
 
         elif response == RETRY:
             self.your_turn()
@@ -131,35 +138,32 @@ class LearnInfoBar(Gtk.InfoBar):
             self.boardcontrol.game_preview = False
 
         elif response == NEXT:
-            if self.gamemodel.practice[0] == "puzzle":
-                start_puzzle_from(self.gamemodel.practice[1], self.gamemodel.practice[2] + 1)
-            elif self.gamemodel.practice[0] == "endgame":
-                start_endgame_from(self.gamemodel.practice[1])
-            elif self.gamemodel.practice[0] == "lesson":
-                start_lesson_from(self.gamemodel.practice[1], self.gamemodel.practice[2] + 1)
+            if self.gamemodel.puzzle_game:
+                start_puzzle_from(self.gamemodel.source, self.gamemodel.current_index + 1)
+            elif self.gamemodel.end_game:
+                start_endgame_from(self.gamemodel.source)
+            elif self.gamemodel.lesson_game:
+                start_lesson_from(self.gamemodel.source, self.gamemodel.current_index + 1)
+            else:
+                print(self.gamemodel.__dir__())
 
     def opp_choice_selected(self, board):
         self.your_turn()
         self.boardcontrol.game_preview = False
 
-    def game_changed(self, gamemodel, ply):
+    def on_game_changed(self, gamemodel, ply):
         if gamemodel.practice_game:
             if len(gamemodel.moves) % 2 == 0:
                 # engine moved, we can enable retry
                 self.set_response_sensitive(RETRY, True)
                 return
 
-            if self.gamemodel.practice[0] != "endgame" and gamemodel.hints:
-                expect_best = True
-                best_score = gamemodel.hints[0][1]
-                best_moves = [hint[0] for hint in gamemodel.hints if hint[1] == best_score]
-            else:
-                expect_best = False
-
-            status, reason = getStatus(gamemodel.boards[-1])
-            if status in UNDOABLE_STATES:
-                self.get_next_puzzle()
-            elif expect_best and gamemodel.moves[-1].as_uci() not in best_moves:
-                self.retry()
-            else:
-                self.your_turn()
+    def on_goal_checked(self, gamemodel):
+        if gamemodel.status in UNDOABLE_STATES and self.gamemodel.end_game:
+            self.get_next_puzzle()
+        elif gamemodel.reason == PRACTICE_GOAL_REACHED:
+            self.get_next_puzzle()
+        elif gamemodel.failed_playing_best:
+            self.retry()
+        else:
+            self.your_turn()

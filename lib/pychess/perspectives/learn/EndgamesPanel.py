@@ -6,7 +6,7 @@ from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, chr2Sign, chrU2Sign, FAN_PIECES
-from pychess.Utils.GameModel import GameModel
+from pychess.Utils.LearnModel import LearnModel, ENDGAME
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.lutils.attack import isAttacked
 from pychess.Utils.lutils.LBoard import LBoard
@@ -108,7 +108,7 @@ class Sidepanel():
         if path is None:
             return
         else:
-            pieces = ENDGAMES[path[0]][0].lower()
+            pieces = ENDGAMES[path[0]][1].lower()
             start_endgame_from(pieces)
 
 
@@ -116,9 +116,8 @@ def start_endgame_from(pieces):
         fen = create_fen(pieces)
 
         timemodel = TimeModel(0, 0)
-        gamemodel = GameModel(timemodel)
-        gamemodel.set_practice_game()
-        gamemodel.practice = ("endgame", pieces)
+        gamemodel = LearnModel(timemodel)
+        gamemodel.set_learn_data(ENDGAME, pieces)
 
         player_name = conf.get("firstName", _("You"))
         p0 = (LOCAL, Human, (WHITE, player_name), player_name)

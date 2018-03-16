@@ -767,6 +767,7 @@ class PGNFile(ChessFile):
         if fenstr:
             try:
                 board.applyFen(fenstr)
+                model.tags["FEN"] = fenstr
             except SyntaxError as err:
                 board.applyFen(FEN_EMPTY)
                 raise LoadingError(

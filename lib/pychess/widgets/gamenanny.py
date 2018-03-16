@@ -16,6 +16,7 @@ from pychess.Utils.const import WAITING_TO_START, WHITE, BLACK, WHITEWON, \
     UNDOABLE_REASONS, BLACK_ENGINE_DIED, HINT, SPY, RUNNING, ABORT_OFFER, ADJOURN_OFFER, \
     DRAW_OFFER, PAUSE_OFFER, RESUME_OFFER, HURRY_ACTION, FLAG_CALL
 from pychess.Utils.repr import reprResult_long, reprReason_long
+from pychess.Utils.LearnModel import LearnModel
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.widgets import preferencesDialog
@@ -150,8 +151,7 @@ class GameNanny(object):
                     gmwidg.cids[player] = player.connect("notify::status", status_changed, button)
                     status_changed(player, None, button)
 
-        elif gamemodel.hasLocalPlayer() and not gamemodel.offline_lecture and \
-                not gamemodel.practice_game and not gamemodel.lesson_game:
+        elif gamemodel.hasLocalPlayer() and not isinstance(gamemodel, LearnModel):
 
             def callback(infobar, response, message, gamemodel=gamemodel):
                 if response == 1:

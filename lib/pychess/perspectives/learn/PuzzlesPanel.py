@@ -4,7 +4,7 @@ from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, WAITING_TO_START, HINT
-from pychess.Utils.GameModel import GameModel
+from pychess.Utils.LearnModel import LearnModel, PUZZLE
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Variants import variants
 from pychess.Players.Human import Human
@@ -48,9 +48,9 @@ PUZZLES = (
     (18, "lichess_study_lichess-practice-opposition_by_arex_2017.01.22.pgn", "Lichess: Opposition", "arex"),
     (19, "lichess_study_lichess-practice-rook-endgames_by_TonyRo_2017.02.01.pgn", "Lichess: Rook Endgames", "arex"),
 
-    (20, "mate_in_2.pgn", "Puzzles by GMs: Mate in 1", "wtharvey.com"),
-    (21, "mate_in_3.pgn", "Puzzles by GMs: Mate in 2", "wtharvey.com"),
-    (22, "mate_in_4.pgn", "Puzzles by GMs: Mate in 3", "wtharvey.com"),
+    (20, "mate_in_2.pgn", "Puzzles by GMs: Mate in 2", "wtharvey.com"),
+    (21, "mate_in_3.pgn", "Puzzles by GMs: Mate in 3", "wtharvey.com"),
+    (22, "mate_in_4.pgn", "Puzzles by GMs: Mate in 4", "wtharvey.com"),
 
     (23, "lasker.olv", "Puzzles by Emanuel Lasker", "yacpdb.org"),
     (24, "loyd.olv", "Puzzles by Samuel Loyd", "yacpdb.org"),
@@ -102,7 +102,7 @@ class Sidepanel():
             return
         else:
             filename = PUZZLES[path[0]][1]
-            # TODO
+            # TODO: save/restore
             latest_index = 0
             start_puzzle_from(filename, latest_index)
 
@@ -121,12 +121,10 @@ def start_puzzle_from(filename, index):
     rec = records[index]
 
     timemodel = TimeModel(0, 0)
-    gamemodel = GameModel(timemodel)
-    gamemodel.set_practice_game()
-    gamemodel.practice = ("puzzle", filename, index)
+    gamemodel = LearnModel(timemodel)
 
     chessfile.loadToModel(rec, 0, gamemodel)
-    print(gamemodel.tags["Termination"])
+    gamemodel.set_learn_data(PUZZLE, filename, index, len(records))
 
     engine = discoverer.getEngineByName(discoverer.getEngineLearn())
     ponder_off = True
@@ -135,21 +133,21 @@ def start_puzzle_from(filename, index):
 
     w_name = "" if rec["White"] is None else rec["White"]
     b_name = "" if rec["Black"] is None else rec["Black"]
-    print(w_name, b_name)
 
     player_name = conf.get("firstName", _("You"))
     engine_name = discoverer.getName(engine)
 
-    w_name = player_name if color == WHITE else engine_name
-    b_name = engine_name if color == WHITE else player_name
+    if rec["Event"].startswith("Lichess Practice"):
+        w_name = player_name if color == WHITE else engine_name
+        b_name = engine_name if color == WHITE else player_name
 
     if color == WHITE:
         p0 = (LOCAL, Human, (WHITE, w_name), w_name)
         p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
-              (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), b_name)
+              (engine, BLACK, 20, variants[NORMALCHESS], 20, 0, 0, ponder_off), b_name)
     else:
         p0 = (ARTIFICIAL, discoverer.initPlayerEngine,
-              (engine, WHITE, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), w_name)
+              (engine, WHITE, 20, variants[NORMALCHESS], 20, 0, 0, ponder_off), w_name)
         p1 = (LOCAL, Human, (BLACK, b_name), b_name)
 
     def fix_name(gamemodel, name, color):
@@ -157,7 +155,10 @@ def start_puzzle_from(filename, index):
         gamemodel.players[1 - color].name = name
         gamemodel.emit("players_changed")
 
-    gamemodel.connect("game_started", fix_name, engine_name, color)
+    if rec["Event"].startswith("Lichess Practice"):
+        gamemodel.connect("game_started", fix_name, engine_name, color)
+    else:
+        gamemodel.connect("game_started", fix_name, b_name, color)
 
     gamemodel.variant.need_initial_board = True
     gamemodel.status = WAITING_TO_START

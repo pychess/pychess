@@ -4,7 +4,7 @@ from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, WAITING_TO_START
-from pychess.Utils.GameModel import GameModel
+from pychess.Utils.LearnModel import LearnModel, LESSON
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
 from pychess.System import conf
@@ -70,7 +70,7 @@ class Sidepanel():
             return
         else:
             filename = LESSONS[path[0]][1]
-            # TODO
+            # TODO: save/restore
             latest_index = 0
             start_lesson_from(filename, latest_index)
 
@@ -85,9 +85,8 @@ def start_lesson_from(filename, index):
     rec = records[index]
 
     timemodel = TimeModel(0, 0)
-    gamemodel = GameModel(timemodel)
-    gamemodel.set_lesson_game()
-    gamemodel.practice = ("lesson", filename, index, len(records) - 1)
+    gamemodel = LearnModel(timemodel)
+    gamemodel.set_learn_data(LESSON, filename, index, len(records))
 
     chessfile.loadToModel(rec, -1, gamemodel)
 

@@ -70,7 +70,6 @@ def play_or_add_move(view, board, move):
                 else:
                     preferencesDialog.SoundTab.playAction("puzzleSuccess")
                     view.infobar.get_next_puzzle()
-                    view.model.lesson_game = False
                     view.model.emit("game_loaded", None)
                     view.showNext()
             else:

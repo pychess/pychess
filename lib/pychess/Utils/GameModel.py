@@ -168,23 +168,16 @@ class GameModel(GObject.GObject):
 
         self.undoQueue = Queue()
 
+        # learn_type set by LearnModel.set_learn_data()
         self.offline_lecture = False
-        self.practice_game = False
+        self.puzzle_game = False
         self.lesson_game = False
+        self.end_game = False
+        self.solved = False
 
-    def set_practice_game(self):
-        self.practice_game = True
-        self.hints = []
-
-    def set_lesson_game(self):
-        self.lesson_game = True
-        self.hints = []
-
-    def set_offline_lecture(self):
-        self.offline_lecture = True
-        self.lecture_skip_event = asyncio.Event()  # set when 'Go on' button pressed
-        self.lecture_pause_event = asyncio.Event()  # set when 'Pause' button pressed
-        self.lecture_exit_event = asyncio.Event()  # set when 'Exit' button pressed
+    @property
+    def practice_game(self):
+        return self.puzzle_game or self.end_game
 
     def zero_reached(self, timemodel, color):
         if conf.get('autoCallFlag', True) and self.players[1 - color].__type__ == ARTIFICIAL:
@@ -247,6 +240,10 @@ class GameModel(GObject.GObject):
 
     @asyncio.coroutine
     def start_analyzer(self, analyzer_type, force_engine=None):
+        # Don't start regular analyzers
+        if self.practice_game and force_engine is None:
+            return
+
         # prevent starting new analyzers again and again
         # when fics lecture reuses the same gamemodel
         if analyzer_type in self.spectators:
@@ -258,9 +255,10 @@ class GameModel(GObject.GObject):
             return
 
         analyzer.setOptionInitialBoard(self)
-        # Enable 3 hints in learn perspective puzzles
+        # Enable to find alternate hint in learn perspective puzzles
         if force_engine is not None:
-            analyzer.setOption("MultiPV", 3)
+            analyzer.setOption("MultiPV", 2)
+            analyzer.analysis_depth = 18
 
         self.spectators[analyzer_type] = analyzer
         self.emit("analyzer_added", analyzer, analyzer_type)
@@ -302,12 +300,17 @@ class GameModel(GObject.GObject):
 
     def on_analyze(self, analyzer, analysis):
         if analysis and self.practice_game:
-            self.hints = []
-            for anal in analysis:
+            for i, anal in enumerate(analysis):
                 if anal is not None:
                     ply, pv, score, depth, nps = anal
                     if len(pv) > 0:
-                        self.hints.append((pv[0], score))
+                        if ply not in self.hints:
+                            self.hints[ply] = []
+
+                        if len(self.hints[ply]) < i + 1:
+                            self.hints[ply].append((pv[0], score))
+                        else:
+                            self.hints[ply][i] = (pv[0], score)
 
         if analysis and analysis[0] is not None:
             ply, pv, score, depth, nps = analysis[0]
@@ -628,7 +631,6 @@ class GameModel(GObject.GObject):
     # Run stuff
 
     def start(self):
-
         def coro():
             log.debug("GameModel.run: Starting. self=%s" % self)
             # Avoid racecondition when self.start is called while we are in
@@ -738,15 +740,17 @@ class GameModel(GObject.GObject):
                         spectator.putMove(self.boards[-1], self.moves[-1],
                                           self.boards[-2])
 
+                yield from self.checkStatus()
+
                 self.setOpening()
 
-                self.checkStatus()
                 self.curColor = 1 - self.curColor
 
-            self.checkStatus()
+            yield from self.checkStatus()
 
         asyncio.async(coro())
 
+    @asyncio.coroutine
     def checkStatus(self):
         """ Updates self.status so it fits with what getStatus(boards[-1])
             would return. That is, if the game is e.g. check mated this will
@@ -760,6 +764,9 @@ class GameModel(GObject.GObject):
             return
 
         status, reason = getStatus(self.boards[-1])
+
+        if hasattr(self, "practice_game") and self.practice_game and len(self.moves) % 2 == 1:
+            yield from self.check_goal(status, reason)
 
         if self.endstatus is not None:
             self.end(self.endstatus, reason)

@@ -10,7 +10,8 @@ from .const import ADJOURNED_LOST_CONNECTION_BLACK, UNKNOWN_REASON, WON_LESSMATE
     ADJOURNED_AGREEMENT, WON_KINGEXPLODE, WON_KINGINCENTER, ABORTED_SERVER_SHUTDOWN, \
     ABORTED_AGREEMENT, WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, WON_ADJUDICATION, \
     ADJOURNED_COURTESY_BLACK, ADJOURNED_COURTESY, DRAW_REPITITION, ABORTED_COURTESY, \
-    DRAW_50MOVES, ADJOURNED_LOST_CONNECTION_WHITE, ABORTED_EARLY, ABORTED_DISCONNECTION
+    DRAW_50MOVES, ADJOURNED_LOST_CONNECTION_WHITE, ABORTED_EARLY, ABORTED_DISCONNECTION, \
+    CANCELLED, PRACTICE_GOAL_REACHED
 
 
 if '_' not in builtins.__dict__:
@@ -33,6 +34,7 @@ reprResult_long = {
     ADJOURNED: _("The game has been adjourned"),
     ABORTED: _("The game has been aborted"),
     UNKNOWN_STATE: _("Unknown game state"),
+    CANCELLED: _("Game cancelled"),
 }
 
 reprReason_long = {
@@ -93,5 +95,6 @@ reprReason_long = {
     WHITE_ENGINE_DIED: _("Because the %(white)s engine died"),
     BLACK_ENGINE_DIED: _("Because the %(black)s engine died"),
     DISCONNECTED: _("Because the connection to the server was lost"),
-    UNKNOWN_REASON: _("The reason is unknown")
+    UNKNOWN_REASON: _("The reason is unknown"),
+    PRACTICE_GOAL_REACHED: _("Because practice goal reached"),
 }

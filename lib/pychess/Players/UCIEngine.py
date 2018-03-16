@@ -52,6 +52,7 @@ class UCIEngine(ProtocolEngine):
         self.uciPosition = "startpos"
         self.uciPositionListsMoves = False
         self.analysis = [None]
+        self.analysis_depth = None
 
         self.queue = asyncio.Queue()
         self.parse_line_task = asyncio.async(self.parseLine(self.engine))
@@ -455,7 +456,9 @@ class UCIEngine(ProtocolEngine):
             else:
                 commands.append("position %s" % self.uciPosition)
 
-            if conf.get("infinite_analysis", False):
+            if self.analysis_depth is not None:
+                commands.append("go depth %s" % self.analysis_depth)
+            elif conf.get("infinite_analysis", False):
                 commands.append("go infinite")
             else:
                 move_time = int(conf.get("max_analysis_spin", 3)) * 1000
@@ -653,7 +656,10 @@ class UCIEngine(ProtocolEngine):
                               extra={"task": self.defname})
                     self.needBestmove = False
                     self.bestmove_event.set()
-                    self.__sendQueuedGo(sendlast=True)
+                    if parts[1] == "(none)":
+                        self.emit("analyze", [])
+                    else:
+                        self.__sendQueuedGo(sendlast=True)
                     continue
 
                 # Stockfish complaining it received a 'stop' without a corresponding 'position..go'
