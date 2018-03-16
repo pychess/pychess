@@ -11,9 +11,82 @@ from pychess.widgets import preferencesDialog
 HINT, MOVE, RETRY, CONTINUE, NEXT = range(5)
 
 
+css = """
+@define-color info_fg_color rgb (181, 171, 156);
+@define-color info_bg_color rgb (252, 252, 189);
+@define-color question_fg_color rgb (97, 122, 214);
+@define-color question_bg_color rgb (138, 173, 212);
+@define-color error_fg_color rgb (235, 235, 235);
+@define-color error_bg_color rgb (223, 56, 44);
+
+.question {
+    background-image: -gtk-gradient (linear, left top, left bottom,
+                                     from (shade (@question_bg_color, 1.04)),
+                                     to (shade (@question_bg_color, 0.96)));
+    border-style: solid;
+    border-width: 1px;
+
+    color: @question_fg_color;
+
+    border-color: shade (@question_bg_color, 0.8);
+    border-bottom-color: shade (@question_bg_color, 0.75);
+
+    box-shadow: inset 1px 0 shade (@question_bg_color, 1.08),
+                inset -1px 0 shade (@question_bg_color, 1.08),
+                inset 0 1px shade (@question_bg_color, 1.1),
+                inset 0 -1px shade (@question_bg_color, 1.04);
+}
+
+.info {
+    background-image: -gtk-gradient (linear, left top, left bottom,
+                                     from (shade (@info_bg_color, 1.04)),
+                                     to (shade (@info_bg_color, 0.96)));
+    border-style: solid;
+    border-width: 1px;
+
+    color: @info_fg_color;
+
+    border-color: shade (@info_bg_color, 0.8);
+    border-bottom-color: shade (@info_bg_color, 0.75);
+
+    box-shadow: inset 1px 0 shade (@info_bg_color, 1.08),
+                inset -1px 0 shade (@info_bg_color, 1.08),
+                inset 0 1px shade (@info_bg_color, 1.1),
+                inset 0 -1px shade (@info_bg_color, 1.04);
+}
+
+.error {
+    background-image: -gtk-gradient (linear, left top, left bottom,
+                                     from (shade (@error_bg_color, 1.04)),
+                                     to (shade (@error_bg_color, 0.96)));
+    border-style: solid;
+    border-width: 1px;
+
+    color: @error_fg_color;
+
+    border-color: shade (@error_bg_color, 0.8);
+    border-bottom-color: shade (@error_bg_color, 0.75);
+
+    box-shadow: inset 1px 0 shade (@error_bg_color, 1.08),
+                inset -1px 0 shade (@error_bg_color, 1.08),
+                inset 0 1px shade (@error_bg_color, 1.1),
+                inset 0 -1px shade (@error_bg_color, 1.04);
+}
+"""
+
+
+def add_provider(widget):
+    screen = widget.get_screen()
+    style = widget.get_style_context()
+    provider = Gtk.CssProvider()
+    provider.load_from_data(css.encode('utf-8'))
+    style.add_provider_for_screen(screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
+
+
 class LearnInfoBar(Gtk.InfoBar):
     def __init__(self, gamemodel, boardcontrol, annotation_panel):
         Gtk.InfoBar.__init__(self)
+        self.connect("realize", add_provider)
 
         self.content_area = self.get_content_area()
         self.action_area = self.get_action_area()
