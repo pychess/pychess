@@ -85,15 +85,23 @@ class LearnModel(GameModel):
         elif learn_type == ENDGAME:
             self.end_game = True
 
-    def check_failed_playing_best(self):
+    def check_failed_playing_best(self, status):
         if self.ply - 1 in self.hints:
             best_score = self.hints[self.ply - 1][0][1]
             best_moves = [hint[0] for hint in self.hints[self.ply - 1] if hint[1] == best_score]
         else:
             best_moves = []
 
-        if self.puzzle_game and self.goal.result in (MATE_IN, DRAW_IN, EQUAL_IN, EVAL_IN):
-            expect_best = True
+        if self.puzzle_game:
+            # No need to check in best moves (and let add more time to analyzer) in trivial cases
+            if self.goal.result in (MATE, MATE_IN) and status == (BLACKWON if self.black_starts else WHITEWON):
+                return False
+            elif self.goal.result == DRAW_IN and status == DRAW:
+                return False
+            elif self.goal.result in (MATE_IN, DRAW_IN, EQUAL_IN, EVAL_IN):
+                expect_best = True
+            else:
+                expect_best = False
         else:
             expect_best = False
 
@@ -109,14 +117,14 @@ class LearnModel(GameModel):
             self.emit("goal_checked")
             return
 
-        self.failed_playing_best = self.check_failed_playing_best()
+        self.failed_playing_best = self.check_failed_playing_best(status)
         if self.failed_playing_best:
             # print("failed_playing_best() == True -> yield from asyncio.sleep(1.1) ")
             # It may happen that analysis had no time to fill hints with best moves
             # so we give him another chance with some additional time to think on it
             self.spectators[HINT].setBoard(self.boards[-2])
             yield from asyncio.sleep(1.5)
-            self.failed_playing_best = self.check_failed_playing_best()
+            self.failed_playing_best = self.check_failed_playing_best(status)
 
         full_moves = self.ply // 2 if self.black_starts else self.ply // 2 + 1
         # print("Is Goal not reached?", self.goal.result, status, full_moves, self.goal.moves, self.failed_playing_best)
