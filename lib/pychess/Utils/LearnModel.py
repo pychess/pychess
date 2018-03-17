@@ -54,6 +54,7 @@ class LearnModel(GameModel):
     __gsignals__ = {
         # goal_checked is emitted after puzzle game goal check finished
         "goal_checked": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "learn_success": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
 
     @property

@@ -150,6 +150,7 @@ class Sidepanel:
         self.cid_shown_changed = self.boardview.connect("shownChanged", self.on_shownChanged)
         self.cid_remove_variation = self.tag_remove_variation.connect("event", self.tag_event_handler)
         self.cids_gamemodel = [
+            self.gamemodel.connect_after("learn_success", self.on_learn_success),
             self.gamemodel.connect_after("game_loaded", self.on_game_loaded),
             self.gamemodel.connect_after("game_changed", self.on_game_changed),
             self.gamemodel.connect_after("game_started", self.update),
@@ -1232,6 +1233,9 @@ class Sidepanel:
 
         if self.gamemodel.ply > 0:
             self.textbuffer.delete(start, end)
+        self.update()
+
+    def on_learn_success(self, model):
         self.update()
 
     def on_players_changed(self, model):
