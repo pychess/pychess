@@ -265,11 +265,7 @@ class PgnImport():
                     if result in pgn2Const:
                         result = pgn2Const[result]
                     else:
-                        if basename == "eco.pgn":
-                            result = RUNNING
-                        else:
-                            print("Invalid Result tag in game #%s: %s" % (i + 1, result))
-                            continue
+                        result = RUNNING
 
                     white_elo = tags['WhiteElo']
                     black_elo = tags['BlackElo']
