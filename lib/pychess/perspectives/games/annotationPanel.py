@@ -150,7 +150,6 @@ class Sidepanel:
         self.cid_shown_changed = self.boardview.connect("shownChanged", self.on_shownChanged)
         self.cid_remove_variation = self.tag_remove_variation.connect("event", self.tag_event_handler)
         self.cids_gamemodel = [
-            self.gamemodel.connect_after("learn_success", self.on_learn_success),
             self.gamemodel.connect_after("game_loaded", self.on_game_loaded),
             self.gamemodel.connect_after("game_changed", self.on_game_changed),
             self.gamemodel.connect_after("game_started", self.update),
@@ -164,6 +163,9 @@ class Sidepanel:
             self.gamemodel.connect("analysis_changed", self.analysis_changed),
             self.gamemodel.connect("analysis_finished", self.update),
         ]
+
+        if self.gamemodel.lesson_game:
+            self.cids_gamemodel.append(self.gamemodel.connect_after("learn_success", self.on_learn_success))
 
         # Layout
         __widget__ = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
