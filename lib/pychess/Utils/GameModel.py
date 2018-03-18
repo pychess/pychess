@@ -241,7 +241,7 @@ class GameModel(GObject.GObject):
     @asyncio.coroutine
     def start_analyzer(self, analyzer_type, force_engine=None):
         # Don't start regular analyzers
-        if self.practice_game and force_engine is None:
+        if (self.practice_game or self.lesson_game) and force_engine is None and not self.solved:
             return
 
         # prevent starting new analyzers again and again
@@ -429,7 +429,7 @@ class GameModel(GObject.GObject):
         if self.players and self.status in (WAITING_TO_START, PAUSED, RUNNING):
             if (self.players[0].__type__ == LOCAL and self.players[1].__type__ == REMOTE) or \
                (self.players[1].__type__ == LOCAL and self.players[0].__type__ == REMOTE) or \
-                self.offline_lecture or self.practice_game or self.lesson_game or \
+               ((self.offline_lecture or self.practice_game or self.lesson_game) and not self.solved) or \
                (self.players[1].__type__ == REMOTE and self.players[0].__type__ == REMOTE and
                     self.examined and (
                     self.players[0].name == "puzzlebot" or self.players[1].name == "puzzlebot") or

@@ -128,8 +128,7 @@ class LearnInfoBar(Gtk.InfoBar):
         self.show_all()
         preferencesDialog.SoundTab.playAction("puzzleSuccess")
 
-        if self.gamemodel.learn_type == LESSON:
-            self.gamemodel.solved = True
+        self.gamemodel.solved = True
 
     def opp_turn(self):
         self.clear()

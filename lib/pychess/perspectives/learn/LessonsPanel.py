@@ -3,7 +3,7 @@ import asyncio
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, BLACK, LOCAL, WAITING_TO_START
+from pychess.Utils.const import WHITE, BLACK, LOCAL, WAITING_TO_START, HINT
 from pychess.Utils.LearnModel import LearnModel, LESSON
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
@@ -12,6 +12,7 @@ from pychess.perspectives import perspective_manager
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
 from pychess.Database.PgnImport import PgnImport
+from pychess.Players.engineNest import discoverer
 
 __title__ = _("Lessons")
 
@@ -99,6 +100,11 @@ def start_lesson_from(filename, index):
     p0 = (LOCAL, Human, (WHITE, w_name), w_name)
     p1 = (LOCAL, Human, (BLACK, b_name), b_name)
 
+    def restart_analyzer(gamemodel):
+        asyncio.async(gamemodel.restart_analyzer(HINT))
+    gamemodel.connect("learn_success", restart_analyzer)
+
     gamemodel.status = WAITING_TO_START
     perspective = perspective_manager.get_perspective("games")
     asyncio.async(perspective.generalStart(gamemodel, p0, p1))
+    asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
