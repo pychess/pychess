@@ -127,7 +127,7 @@ class LearnModel(GameModel):
             yield from asyncio.sleep(1.5)
             self.failed_playing_best = self.check_failed_playing_best(status)
 
-        full_moves = self.ply // 2 if self.black_starts else self.ply // 2 + 1
+        full_moves = (self.ply - self.lowply) // 2 + 1
         # print("Is Goal not reached?", self.goal.result, status, full_moves, self.goal.moves, self.failed_playing_best)
 
         if (self.goal.result == MATE_IN and status in (WHITEWON, BLACKWON) and full_moves == self.goal.moves) or \
