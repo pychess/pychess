@@ -299,7 +299,7 @@ class GameModel(GObject.GObject):
         yield from self.start_analyzer(analyzer_type)
 
     def on_analyze(self, analyzer, analysis):
-        if analysis and self.practice_game:
+        if analysis and (self.practice_game or self.lesson_game):
             for i, anal in enumerate(analysis):
                 if anal is not None:
                     ply, pv, score, depth, nps = anal
@@ -311,7 +311,6 @@ class GameModel(GObject.GObject):
                             self.hints[ply].append((pv[0], score))
                         else:
                             self.hints[ply][i] = (pv[0], score)
-
         if analysis and analysis[0] is not None:
             ply, pv, score, depth, nps = analysis[0]
             if score is not None:

@@ -141,6 +141,8 @@ def start_puzzle_from(filename, index):
         w_name = player_name if color == WHITE else engine_name
         b_name = engine_name if color == WHITE else player_name
 
+    opp_name = engine_name if rec["Event"].startswith("Lichess Practice") else b_name
+
     if color == WHITE:
         p0 = (LOCAL, Human, (WHITE, w_name), w_name)
         p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
@@ -150,15 +152,12 @@ def start_puzzle_from(filename, index):
               (engine, WHITE, 20, variants[NORMALCHESS], 20, 0, 0, ponder_off), w_name)
         p1 = (LOCAL, Human, (BLACK, b_name), b_name)
 
-    def fix_name(gamemodel, name, color):
+    def start_analyzer(gamemodel, name, color):
         asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
         gamemodel.players[1 - color].name = name
         gamemodel.emit("players_changed")
 
-    if rec["Event"].startswith("Lichess Practice"):
-        gamemodel.connect("game_started", fix_name, engine_name, color)
-    else:
-        gamemodel.connect("game_started", fix_name, b_name, color)
+    gamemodel.connect("game_started", start_analyzer, opp_name, color)
 
     gamemodel.variant.need_initial_board = True
     gamemodel.status = WAITING_TO_START

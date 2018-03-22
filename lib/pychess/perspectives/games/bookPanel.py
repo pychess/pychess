@@ -183,10 +183,11 @@ class EngineAdvisor(Advisor):
         m = boardview.model
         if m is None:
             return
-        if m.isPlayingICSGame():
+        if m.isPlayingICSGame() and not m.lesson_game:
             return
+
         self.engine.setBoard(boardview.model.getBoardAtPly(
-            shown, boardview.shown_variation_idx), search=self.active)
+            shown, boardview.shown_variation_idx), search=self.active or m.lesson_game)
 
         if self.active:
             self._create_new_expected_lines()
@@ -361,7 +362,7 @@ class EndgameAdvisor(Advisor):
     def shownChanged(self, boardview, shown):
         m = boardview.model
         if m is None or m.variant.variant != NORMALCHESS or m.isPlayingICSGame():
-            if not m.practice_game:
+            if not (m.practice_game or m.lesson_game):
                 return
 
         self.parent = self.empty_parent()
@@ -392,7 +393,7 @@ class EndgameAdvisor(Advisor):
                 result = (_("Win"), 1, 1.0)
                 details = _("Mate in %d") % depth
 
-            if m.practice_game:
+            if m.practice_game or m.lesson_game:
                 m.hint = "%s %s %s" % (toSAN(self.board, move, True), result[0], details)
                 return
 

@@ -155,13 +155,13 @@ class LearnInfoBar(Gtk.InfoBar):
 
     def on_response(self, widget, response):
         if response in (HINT, MOVE):
-            if self.gamemodel.ply in self.gamemodel.hints:
+            if self.boardview.shown in self.gamemodel.hints:
                 if self.boardview.arrows:
                     self.boardview.arrows.clear()
                 if self.boardview.circles:
                     self.boardview.circles.clear()
 
-                hint = self.gamemodel.hints[self.gamemodel.ply][0][0]
+                hint = self.gamemodel.hints[self.boardview.shown][0][0]
                 cord0 = Cord(hint[0], int(hint[1]), "G")
                 cord1 = Cord(hint[2], int(hint[3]), "G")
                 if response == HINT:
@@ -172,7 +172,7 @@ class LearnInfoBar(Gtk.InfoBar):
                     self.boardview.redrawCanvas()
             else:
                 # TODO:
-                print("No hint available yet!")
+                print("No hint available yet!", self.gamemodel.ply, self.boardview.shown)
 
         elif response == RETRY:
             self.your_turn()

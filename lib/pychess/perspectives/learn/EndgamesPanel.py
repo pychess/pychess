@@ -5,7 +5,7 @@ from io import StringIO
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, chr2Sign, chrU2Sign, FAN_PIECES
+from pychess.Utils.const import WHITE, BLACK, LOCAL, NORMALCHESS, ARTIFICIAL, chr2Sign, chrU2Sign, FAN_PIECES, HINT
 from pychess.Utils.LearnModel import LearnModel, ENDGAME
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.lutils.attack import isAttacked
@@ -128,9 +128,16 @@ def start_endgame_from(pieces):
         p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
               (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), engine_name)
 
+        def restart_analyzer(gamemodel):
+            asyncio.async(gamemodel.restart_analyzer(HINT))
+        gamemodel.connect("learn_success", restart_analyzer)
+
+        def start_analyzer(gamemodel):
+            asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
+        gamemodel.connect("game_started", start_analyzer)
+
         perspective = perspective_manager.get_perspective("games")
-        asyncio.async(perspective.generalStart(
-            gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
+        asyncio.async(perspective.generalStart(gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
 
 
 def create_fen(pieces):

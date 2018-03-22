@@ -669,7 +669,7 @@ class GameWidget(GObject.GObject):
 
         def on_clicked(button, func):
             # Prevent moving in game while lesson not finished
-            if self.gamemodel.lesson_game:
+            if self.gamemodel.lesson_game and not self.gamemodel.solved:
                 return
             else:
                 func()
