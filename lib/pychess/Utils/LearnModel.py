@@ -2,7 +2,7 @@ import asyncio
 
 from gi.repository import GObject
 
-from pychess.Utils.const import BLACKWON, WHITEWON, DRAW, UNDOABLE_STATES, CANCELLED, PRACTICE_GOAL_REACHED, HINT
+from pychess.Utils.const import BLACKWON, WHITEWON, DRAW, UNDOABLE_STATES, CANCELLED, PRACTICE_GOAL_REACHED
 from pychess.Utils.GameModel import GameModel
 
 LECTURE, PUZZLE, LESSON, ENDGAME = range(4)
@@ -109,7 +109,6 @@ class LearnModel(GameModel):
         failed = expect_best and self.moves[-1].as_uci() not in best_moves
         return failed
 
-    @asyncio.coroutine
     def check_goal(self, status, reason):
         if self.end_game:
             self.failed_playing_best = False
@@ -117,15 +116,6 @@ class LearnModel(GameModel):
                 self.end(status, reason)
             self.emit("goal_checked")
             return
-
-        self.failed_playing_best = self.check_failed_playing_best(status)
-        if self.failed_playing_best:
-            # print("failed_playing_best() == True -> yield from asyncio.sleep(1.1) ")
-            # It may happen that analysis had no time to fill hints with best moves
-            # so we give him another chance with some additional time to think on it
-            self.spectators[HINT].setBoard(self.boards[-2])
-            yield from asyncio.sleep(1.5)
-            self.failed_playing_best = self.check_failed_playing_best(status)
 
         full_moves = (self.ply - self.lowply) // 2 + 1
         # print("Is Goal not reached?", self.goal.result, status, full_moves, self.goal.moves, self.failed_playing_best)
@@ -141,6 +131,7 @@ class LearnModel(GameModel):
                 self.end(CANCELLED, PRACTICE_GOAL_REACHED)
         else:
             if status in UNDOABLE_STATES:
+                # print("check_goal() status in UNDOABLE_STATES -> self.end(status, reason)")
                 self.failed_playing_best = True
                 self.end(status, reason)
             # print("Goal not reached yet.", self.goal.result, status, full_moves, self.goal.moves, self.failed_playing_best)

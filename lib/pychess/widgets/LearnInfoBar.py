@@ -149,7 +149,7 @@ class LearnInfoBar(Gtk.InfoBar):
         self.boardcontrol.game_preview = True
 
         # disable retry button until engine thinking on next move
-        if self.gamemodel.practice_game:
+        if self.gamemodel.practice_game and self.gamemodel.status not in UNDOABLE_STATES:
             self.set_response_sensitive(RETRY, False)
         self.show_all()
 
@@ -178,7 +178,9 @@ class LearnInfoBar(Gtk.InfoBar):
             self.your_turn()
 
             if self.gamemodel.practice_game:
-                self.gamemodel.undoMoves(2)
+                me_played_last_move = self.gamemodel.boards[-1].color != self.gamemodel.boards[0].color
+                moves = 1 if self.gamemodel.status in UNDOABLE_STATES and me_played_last_move else 2
+                self.gamemodel.undoMoves(moves)
 
             elif self.gamemodel.lesson_game:
                 prev_board = self.gamemodel.getBoardAtPly(

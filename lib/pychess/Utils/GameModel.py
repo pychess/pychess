@@ -29,7 +29,7 @@ from .const import WAITING_TO_START, UNKNOWN_REASON, WHITE, ARTIFICIAL, RUNNING,
     ADJOURNED_AGREEMENT, PAUSE_OFFER, RESUME_OFFER, ACTION_ERROR_NONE_TO_ACCEPT, \
     ABORTED_AGREEMENT, WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, WON_ADJUDICATION, \
     UNDOABLE_STATES, DRAW_REPITITION, UNDOABLE_REASONS, UNFINISHED_STATES, \
-    DRAW_50MOVES
+    DRAW_50MOVES, HINT
 
 
 class GameModel(GObject.GObject):
@@ -739,23 +739,34 @@ class GameModel(GObject.GObject):
                         spectator.putMove(self.boards[-1], self.moves[-1],
                                           self.boards[-2])
 
-                yield from self.checkStatus()
+                if self.puzzle_game and len(self.moves) % 2 == 1:
+                    status, reason = getStatus(self.boards[-1])
+                    self.failed_playing_best = self.check_failed_playing_best(status)
+                    if self.failed_playing_best:
+                        # print("failed_playing_best() == True -> yield from asyncio.sleep(1.5) ")
+                        # It may happen that analysis had no time to fill hints with best moves
+                        # so we give him another chance with some additional time to think on it
+                        self.spectators[HINT].setBoard(self.boards[-2])
+                        # TODO: wait for an event (analyzer PV reaching 18 ply)
+                        # instead of hard coded sleep time
+                        yield from asyncio.sleep(1.5)
+                        self.failed_playing_best = self.check_failed_playing_best(status)
+
+                self.checkStatus()
 
                 self.setOpening()
 
                 self.curColor = 1 - self.curColor
 
-            yield from self.checkStatus()
+            self.checkStatus()
 
         asyncio.async(coro())
 
-    @asyncio.coroutine
     def checkStatus(self):
         """ Updates self.status so it fits with what getStatus(boards[-1])
             would return. That is, if the game is e.g. check mated this will
             call mode.end(), or if moves have been undone from an otherwise
             ended position, this will call __resume and emit game_unended. """
-
         log.debug("GameModel.checkStatus:")
 
         # call flag by engine
@@ -764,8 +775,8 @@ class GameModel(GObject.GObject):
 
         status, reason = getStatus(self.boards[-1])
 
-        if hasattr(self, "practice_game") and self.practice_game and len(self.moves) % 2 == 1:
-            yield from self.check_goal(status, reason)
+        if self.practice_game and (len(self.moves) % 2 == 1 or status in UNDOABLE_STATES):
+            self.check_goal(status, reason)
 
         if self.endstatus is not None:
             self.end(self.endstatus, reason)
