@@ -389,14 +389,12 @@ class LearnTasker(Gtk.Alignment):
             model = self.learn_combo.get_model()
             source = model[tree_iter][1]
 
-        # TODO
-        latest_index = 0
         if self.category == LECTURE:
-            start_lecture_from(source, latest_index)
+            start_lecture_from(source)
         elif self.category == LESSON:
-            start_lesson_from(source, latest_index)
+            start_lesson_from(source)
         elif self.category == PUZZLE:
-            start_puzzle_from(source, latest_index)
+            start_puzzle_from(source)
         elif self.category == ENDGAME:
             start_endgame_from(source)
 

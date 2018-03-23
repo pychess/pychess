@@ -71,12 +71,13 @@ class Sidepanel():
             return
         else:
             filename = LESSONS[path[0]][1]
-            # TODO: save/restore
-            latest_index = 0
-            start_lesson_from(filename, latest_index)
+            start_lesson_from(filename)
 
 
-def start_lesson_from(filename, index):
+def start_lesson_from(filename, index=None):
+    if index is None:
+        index = 0
+
     chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
     chessfile.limit = 1000
     importer = PgnImport(chessfile)

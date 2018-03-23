@@ -1,4 +1,6 @@
 import asyncio
+import json
+import os
 
 from gi.repository import Gtk
 
@@ -14,6 +16,7 @@ from pychess.Savers.olv import OLVFile
 from pychess.Savers.pgn import PGNFile
 from pychess.System import conf
 from pychess.System.protoopen import protoopen
+from pychess.System.prefix import addUserDataPrefix
 from pychess.Database.PgnImport import PgnImport
 
 __title__ = _("Puzzles")
@@ -102,12 +105,10 @@ class Sidepanel():
             return
         else:
             filename = PUZZLES[path[0]][1]
-            # TODO: save/restore
-            latest_index = 0
-            start_puzzle_from(filename, latest_index)
+            start_puzzle_from(filename)
 
 
-def start_puzzle_from(filename, index):
+def start_puzzle_from(filename, index=None):
     if filename.lower().endswith(".pgn"):
         chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename)))
         chessfile.limit = 1000
@@ -118,6 +119,25 @@ def start_puzzle_from(filename, index):
 
     records, plys = chessfile.get_records()
 
+    solving_status_file = addUserDataPrefix("puzzles.json")
+    if os.path.isfile(solving_status_file):
+        with open(solving_status_file, "r") as f:
+            solving_status = json.load(f)
+        if filename not in solving_status:
+            with open(solving_status_file, "w") as f:
+                solving_status[filename] = [0] * chessfile.count
+                json.dump(solving_status, f)
+    else:
+        with open(solving_status_file, "w") as f:
+            solving_status = {}
+            solving_status[filename] = [0] * chessfile.count
+            json.dump(solving_status, f)
+
+    print("Solved: %s / %s" % (solving_status[filename].count(1), len(solving_status[filename])))
+
+    if index is None:
+        index = solving_status[filename].index(0)
+
     rec = records[index]
 
     timemodel = TimeModel(0, 0)
@@ -125,6 +145,8 @@ def start_puzzle_from(filename, index):
 
     chessfile.loadToModel(rec, 0, gamemodel)
     gamemodel.set_learn_data(PUZZLE, filename, index, len(records))
+    gamemodel.solving_status = solving_status
+    gamemodel.solving_status_file = solving_status_file
 
     engine = discoverer.getEngineByName(discoverer.getEngineLearn())
     ponder_off = True

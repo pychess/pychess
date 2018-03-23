@@ -98,12 +98,13 @@ class Sidepanel():
             return
         else:
             filename = LECTURES[path[0]][1]
-            # TODO: save/restore
-            latest_index = 0
-            start_lecture_from(filename, latest_index)
+            start_lecture_from(filename)
 
 
-def start_lecture_from(filename, index):
+def start_lecture_from(filename, index=None):
+    if index is None:
+        index = 0
+
     # connection.client.run_command("examine")
     timemodel = TimeModel(0, 0)
     gamemodel = LearnModel(timemodel)
