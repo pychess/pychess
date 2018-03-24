@@ -1,4 +1,5 @@
 import os
+import json
 
 from gi.repository import Gtk, GObject
 
@@ -8,6 +9,7 @@ from pychess.System.Log import log
 from pychess.widgets import new_notebook
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import WEST, SOUTH, CENTER
+from pychess.System.prefix import addUserDataPrefix
 
 
 class Learn(GObject.GObject, Perspective):
@@ -101,3 +103,29 @@ class Learn(GObject.GObject, Perspective):
             instance.show()
 
         perspective_manager.activate_perspective("learn")
+
+
+def get_solving_status(statusfile, filename, count):
+    solving_status_file = addUserDataPrefix(statusfile)
+    if os.path.isfile(solving_status_file):
+        with open(solving_status_file, "r") as f:
+            solving_status = json.load(f)
+        if filename not in solving_status:
+            with open(solving_status_file, "w") as f:
+                solving_status[filename] = [0] * count
+                json.dump(solving_status, f)
+    else:
+        with open(solving_status_file, "w") as f:
+            solving_status = {}
+            solving_status[filename] = [0] * count
+            json.dump(solving_status, f)
+
+    # print("Solved: %s / %s %s" % (solving_status[filename].count(1), len(solving_status[filename]), filename))
+
+    return solving_status_file, solving_status
+
+
+def update_solving_status(gamemodel):
+    with open(gamemodel.solving_status_file, "w") as f:
+        gamemodel.solving_status[gamemodel.source][gamemodel.current_index] = 1
+        json.dump(gamemodel.solving_status, f)

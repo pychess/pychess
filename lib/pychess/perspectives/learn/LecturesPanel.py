@@ -62,15 +62,15 @@ class Sidepanel():
         self.tv = Gtk.TreeView()
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn("Id", renderer, text=0)
+        column = Gtk.TreeViewColumn(_("Id"), renderer, text=0)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn("Title", renderer, text=2)
+        column = Gtk.TreeViewColumn(_("Title"), renderer, text=2)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn("Author", renderer, text=3)
+        column = Gtk.TreeViewColumn(_("Author"), renderer, text=3)
         self.tv.append_column(column)
 
         self.tv.connect("row-activated", self.row_activated)

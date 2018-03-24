@@ -69,6 +69,7 @@ class LearnModel(GameModel):
 
         self.hints = {}
         self.goal = None
+        self.failed_playing_best = False
 
         if learn_type == LECTURE:
             self.offline_lecture = True
@@ -111,7 +112,6 @@ class LearnModel(GameModel):
 
     def check_goal(self, status, reason):
         if self.end_game:
-            self.failed_playing_best = False
             if status in UNDOABLE_STATES:
                 self.end(status, reason)
             self.emit("goal_checked")

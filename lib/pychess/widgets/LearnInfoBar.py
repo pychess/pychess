@@ -1,5 +1,3 @@
-import json
-
 from gi.repository import Gtk
 
 from pychess.Utils.const import UNDOABLE_STATES, PRACTICE_GOAL_REACHED
@@ -237,17 +235,12 @@ class LearnInfoBar(Gtk.InfoBar):
     def on_goal_checked(self, gamemodel):
         if gamemodel.status in UNDOABLE_STATES and self.gamemodel.end_game:
             self.get_next_puzzle()
+
         elif gamemodel.reason == PRACTICE_GOAL_REACHED:
-            with open(self.gamemodel.solving_status_file, "w") as f:
-                self.gamemodel.solving_status[self.gamemodel.source][self.gamemodel.current_index] = 1
-                json.dump(self.gamemodel.solving_status, f)
-
             self.get_next_puzzle()
-        elif gamemodel.failed_playing_best:
-            with open(self.gamemodel.solving_status_file, "w") as f:
-                self.gamemodel.solving_status[self.gamemodel.source][self.gamemodel.current_index] = -1
-                json.dump(self.gamemodel.solving_status, f)
 
+        elif gamemodel.failed_playing_best:
             self.retry()
+
         else:
             self.your_turn()

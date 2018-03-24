@@ -9,6 +9,7 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
 from pychess.System import conf
 from pychess.perspectives import perspective_manager
+from pychess.perspectives.learn import get_solving_status, update_solving_status
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
 from pychess.Players.engineNest import discoverer
@@ -21,8 +22,8 @@ __desc__ = _('Guided interactive lessons in "guess the move" style')
 
 
 LESSONS = (
-    (1, "Charles_XII_At_Bender.pgn", "Charles XII at Bender", "gbtami"),
-    (2, "Back_rank_threats.pgn", "Back rank threats", "gbtami"),
+    (1, "Charles_XII_At_Bender.pgn", "Charles XII at Bender", "gbtami", 3),
+    (2, "Back_rank_threats.pgn", "Back rank threats", "gbtami", 1),
 )
 
 
@@ -34,7 +35,7 @@ class Sidepanel():
         self.tv = Gtk.TreeView()
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn("Id", renderer, text=0)
+        column = Gtk.TreeViewColumn(_("Id"), renderer, text=0)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
@@ -42,15 +43,22 @@ class Sidepanel():
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn("Author", renderer, text=3)
+        column = Gtk.TreeViewColumn(_("Author"), renderer, text=3)
+        self.tv.append_column(column)
+
+        renderer = Gtk.CellRendererProgress()
+        column = Gtk.TreeViewColumn(_("Progress"), renderer, text=4, value=5)
         self.tv.append_column(column)
 
         self.tv.connect("row-activated", self.row_activated)
 
-        self.store = Gtk.ListStore(int, str, str, str)
+        self.store = Gtk.ListStore(int, str, str, str, str, int)
 
-        for num, file_name, title, author in LESSONS:
-            self.store.append([num, file_name, title, author])
+        for num, file_name, title, author, count in LESSONS:
+            solving_status_file, solving_status = get_solving_status("lessons.json", file_name, count)
+            solved = solving_status[file_name].count(1)
+            progress = 0 if not solved else round((solved * 100.) / len(solving_status[file_name]))
+            self.store.append([num, file_name, title, author, "%s / %s" % (solved, count), progress])
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -74,19 +82,23 @@ class Sidepanel():
 
 
 def start_lesson_from(filename, index=None):
-    if index is None:
-        index = 0
-
     chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
     chessfile.limit = 1000
     chessfile.init_tag_database()
     records, plys = chessfile.get_records()
+
+    solving_status_file, solving_status = get_solving_status("lessons.json", filename, chessfile.count)
+
+    if index is None:
+        index = solving_status[filename].index(0)
 
     rec = records[index]
 
     timemodel = TimeModel(0, 0)
     gamemodel = LearnModel(timemodel)
     gamemodel.set_learn_data(LESSON, filename, index, len(records))
+    gamemodel.solving_status = solving_status
+    gamemodel.solving_status_file = solving_status_file
 
     chessfile.loadToModel(rec, -1, gamemodel)
 
@@ -100,6 +112,7 @@ def start_lesson_from(filename, index=None):
     p1 = (LOCAL, Human, (BLACK, b_name), b_name)
 
     def restart_analyzer(gamemodel):
+        update_solving_status(gamemodel)
         asyncio.async(gamemodel.restart_analyzer(HINT))
     gamemodel.connect("learn_success", restart_analyzer)
 

@@ -343,10 +343,10 @@ class LearnTasker(Gtk.Alignment):
                     for num, file_name, title, author in LECTURES:
                         self.learnstore.append([num, file_name, title])
                 elif self.category == LESSON:
-                    for num, file_name, title, author in LESSONS:
+                    for num, file_name, title, author, count in LESSONS:
                         self.learnstore.append([num, file_name, title])
                 elif self.category == PUZZLE:
-                    for num, file_name, title, author in PUZZLES:
+                    for num, file_name, title, author, count in PUZZLES:
                         self.learnstore.append([num, file_name, title])
                 elif self.category == ENDGAME:
                     for num, pieces, title in ENDGAMES:
