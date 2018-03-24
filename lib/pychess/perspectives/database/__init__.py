@@ -193,9 +193,8 @@ class Database(GObject.GObject, Perspective):
                 GLib.idle_add(self.progressbar1.show)
                 GLib.idle_add(self.progressbar1.set_text, _("Opening chessfile..."))
                 chessfile = PGNFile(protoopen(filename), self.progressbar1)
-                self.importer = PgnImport(chessfile)
-                chessfile.init_tag_database(self.importer)
-                if self.importer.cancel:
+                self.importer = chessfile.init_tag_database()
+                if self.importer is not None and self.importer.cancel:
                     chessfile.tag_database.close()
                     if os.path.isfile(chessfile.sqlite_path):
                         os.remove(chessfile.sqlite_path)

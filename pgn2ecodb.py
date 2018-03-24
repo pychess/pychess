@@ -5,7 +5,6 @@
 import os
 import sqlite3
 
-from pychess.Database.PgnImport import PgnImport
 from pychess.Savers.pgn import load
 from pychess.System.protoopen import protoopen
 from pychess.System.prefix import addDataPrefix
@@ -26,8 +25,7 @@ if __name__ == '__main__':
     def feed(pgnfile, lang):
         cf = load(protoopen(pgnfile))
         cf.limit = 5000
-        importer = PgnImport(cf)
-        cf.init_tag_database(importer)
+        cf.init_tag_database()
         records, plys = cf.get_records()
 
         rows = []

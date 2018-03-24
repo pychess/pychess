@@ -41,7 +41,7 @@ from pychess.widgets.ChessClock import formatTime
 from pychess.Savers.ChessFile import ChessFile, LoadingError
 from pychess.Savers.database import col2label, TagDatabase, parseDateTag
 from pychess.Database import model as dbmodel
-from pychess.Database.PgnImport import TAG_REGEX, pgn2Const
+from pychess.Database.PgnImport import TAG_REGEX, pgn2Const, PgnImport
 from pychess.Database.model import game, create_indexes, drop_indexes, metadata, ini_schema_version
 
 __label__ = _("Chess Game")
@@ -447,7 +447,7 @@ class PGNFile(ChessFile):
         self.tag_database.close()
         ChessFile.close(self)
 
-    def init_tag_database(self, importer):
+    def init_tag_database(self, importer=None):
         """ Create/open .sqlite database of game header tags """
         # Import .pgn header tags to .sqlite database
 
@@ -463,10 +463,14 @@ class PGNFile(ChessFile):
                 drop_indexes(self.engine)
             if self.progressbar is not None:
                 GLib.idle_add(self.progressbar.set_text, _("Importing game headers..."))
+            if importer is None:
+                importer = PgnImport(self)
             importer.initialize()
             importer.do_import(self.path, progressbar=self.progressbar)
             if size > 10000000 and not importer.cancel:
                 create_indexes(self.engine)
+
+        return importer
 
     def init_chess_db(self):
         """ Create/open polyglot .bin file with extra win/loss/draw stats

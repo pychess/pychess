@@ -11,7 +11,6 @@ from pychess.System import conf
 from pychess.perspectives import perspective_manager
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
-from pychess.Database.PgnImport import PgnImport
 from pychess.Players.engineNest import discoverer
 
 __title__ = _("Lessons")
@@ -80,8 +79,7 @@ def start_lesson_from(filename, index=None):
 
     chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
     chessfile.limit = 1000
-    importer = PgnImport(chessfile)
-    chessfile.init_tag_database(importer)
+    chessfile.init_tag_database()
     records, plys = chessfile.get_records()
 
     rec = records[index]

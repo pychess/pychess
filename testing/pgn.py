@@ -1,7 +1,6 @@
 
 import unittest
 
-from pychess.Database.PgnImport import PgnImport
 from pychess.Savers.pgn import load, walk, pattern, MOVE
 from pychess.System.protoopen import protoopen
 
@@ -47,14 +46,14 @@ def normalize(text):
     text = text.replace('{  ', '{').replace('{ ', '{')
     return text
 
+
 filenames = ("atomic", "chess960rwch", "world_matches", "zh")
 
 for filename in filenames:
     print("Creating test methods for %s" % filename)
     pgnfile = load(protoopen('gamefiles/%s.pgn' % filename))
     pgnfile.limit = 1000
-    importer = PgnImport(pgnfile)
-    pgnfile.init_tag_database(importer)
+    pgnfile.init_tag_database()
     games, plys = pgnfile.get_records()
 
     for i, game in enumerate(games):
