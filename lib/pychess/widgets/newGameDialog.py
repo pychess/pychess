@@ -144,10 +144,8 @@ class _GameInitializationMode(object):
         cls.widgets["blackPlayerButton"].set_image(Gtk.Image.new_from_pixbuf(cls.black))
         cls.widgets["blackPlayerButton"].connect("button-press-event", on_exchange_players)
 
-        uistuff.createCombo(cls.widgets["whitePlayerCombobox"],
-                            name="whitePlayerCombobox")
-        uistuff.createCombo(cls.widgets["blackPlayerCombobox"],
-                            name="blackPlayerCombobox")
+        uistuff.createCombo(cls.widgets["whitePlayerCombobox"], name="whitePlayerCombobox")
+        uistuff.createCombo(cls.widgets["blackPlayerCombobox"], name="blackPlayerCombobox")
 
         cls.widgets["playersIcon"].set_from_pixbuf(big_people)
         cls.widgets["timeIcon"].set_from_pixbuf(big_time)
@@ -155,39 +153,26 @@ class _GameInitializationMode(object):
         def on_playerCombobox_changed(widget, skill_hbox):
             skill_hbox.props.visible = widget.get_active() > 0
 
-        cls.widgets["whitePlayerCombobox"].connect(
-            "changed", on_playerCombobox_changed, cls.widgets["skillHbox1"])
-        cls.widgets["blackPlayerCombobox"].connect(
-            "changed", on_playerCombobox_changed, cls.widgets["skillHbox2"])
+        cls.widgets["whitePlayerCombobox"].connect("changed", on_playerCombobox_changed, cls.widgets["skillHbox1"])
+        cls.widgets["blackPlayerCombobox"].connect("changed", on_playerCombobox_changed, cls.widgets["skillHbox2"])
         cls.widgets["whitePlayerCombobox"].set_active(0)
         cls.widgets["blackPlayerCombobox"].set_active(1)
 
         def on_skill_changed(scale, image):
             image.set_from_pixbuf(skillToIcon[int(scale.get_value())])
 
-        cls.widgets["skillSlider1"].connect("value-changed", on_skill_changed,
-                                            cls.widgets["skillIcon1"])
-        cls.widgets["skillSlider2"].connect("value-changed", on_skill_changed,
-                                            cls.widgets["skillIcon2"])
+        cls.widgets["skillSlider1"].connect("value-changed", on_skill_changed, cls.widgets["skillIcon1"])
+        cls.widgets["skillSlider2"].connect("value-changed", on_skill_changed, cls.widgets["skillIcon2"])
         cls.widgets["skillSlider1"].set_value(3)
         cls.widgets["skillSlider2"].set_value(3)
 
-        cls.__initTimeRadio(
-            _("Blitz"), "ngblitz", cls.widgets["blitzRadio"],
-            cls.widgets["configImageBlitz"], 5, 0, 0)
-        cls.__initTimeRadio(
-            _("Rapid"), "ngrapid", cls.widgets["rapidRadio"],
-            cls.widgets["configImageRapid"], 15, 5, 0)
-        cls.__initTimeRadio(
-            _("Normal"), "ngnormal", cls.widgets["normalRadio"],
-            cls.widgets["configImageNormal"], 40, 15, 0)
-        cls.__initTimeRadio(
-            _("Classical"), "ngclassical", cls.widgets["classicalRadio"],
-            cls.widgets["configImageClassical"], 3, 0, 40)
+        cls.__initTimeRadio("ngblitz", cls.widgets["blitzRadio"], cls.widgets["configImageBlitz"], 5, 0, 0)
+        cls.__initTimeRadio("ngrapid", cls.widgets["rapidRadio"], cls.widgets["configImageRapid"], 15, 5, 0)
+        cls.__initTimeRadio("ngnormal", cls.widgets["normalRadio"], cls.widgets["configImageNormal"], 45, 15, 0)
+        cls.__initTimeRadio("ngclassical", cls.widgets["classicalRadio"], cls.widgets["configImageClassical"], 3, 0, 40)
 
         cls.__initVariantRadio("ngvariant1", cls.widgets["playVariant1Radio"],
-                               cls.widgets["configImageVariant1"],
-                               FISCHERRANDOMCHESS)
+                               cls.widgets["configImageVariant1"], FISCHERRANDOMCHESS)
         cls.__initVariantRadio("ngvariant2", cls.widgets["playVariant2Radio"],
                                cls.widgets["configImageVariant2"], LOSERSCHESS)
 
@@ -199,11 +184,9 @@ class _GameInitializationMode(object):
             else:
                 variant = conf.get("ngvariant2", LOSERSCHESS)
             variant1 = conf.get("ngvariant1", FISCHERRANDOMCHESS)
-            cls.widgets["playVariant1Radio"].set_tooltip_text(variants[
-                variant1].__desc__)
+            cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)
             variant2 = conf.get("ngvariant2", LOSERSCHESS)
-            cls.widgets["playVariant2Radio"].set_tooltip_text(variants[
-                variant2].__desc__)
+            cls.widgets["playVariant2Radio"].set_tooltip_text(variants[variant2].__desc__)
             data = [(item[0], item[1]) for item in playerItems[variant]]
             uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], data)
             uistuff.updateCombo(cls.widgets["whitePlayerCombobox"], data)
@@ -214,24 +197,20 @@ class _GameInitializationMode(object):
         conf.notify_add("ngvariant1", updateCombos)
         conf.notify_add("ngvariant2", updateCombos)
         cls.widgets["playNormalRadio"].connect("toggled", updateCombos)
-        cls.widgets["playNormalRadio"].set_tooltip_text(variants[
-            NORMALCHESS].__desc__)
+        cls.widgets["playNormalRadio"].set_tooltip_text(variants[NORMALCHESS].__desc__)
         cls.widgets["playVariant1Radio"].connect("toggled", updateCombos)
         variant1 = conf.get("ngvariant1", FISCHERRANDOMCHESS)
-        cls.widgets["playVariant1Radio"].set_tooltip_text(variants[
-            variant1].__desc__)
+        cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)
         cls.widgets["playVariant2Radio"].connect("toggled", updateCombos)
         variant2 = conf.get("ngvariant2", LOSERSCHESS)
-        cls.widgets["playVariant2Radio"].set_tooltip_text(variants[
-            variant2].__desc__)
+        cls.widgets["playVariant2Radio"].set_tooltip_text(variants[variant2].__desc__)
 
         # The "variant" has to come before players, because the engine positions
         # in the user comboboxes can be different in different variants
         for key in ("whitePlayerCombobox", "blackPlayerCombobox",
                     "skillSlider1", "skillSlider2", "notimeRadio",
                     "blitzRadio", "rapidRadio", "normalRadio", "classicalRadio",
-                    "playNormalRadio", "playVariant1Radio",
-                    "playVariant2Radio"):
+                    "playNormalRadio", "playVariant1Radio", "playVariant2Radio"):
             uistuff.keep(cls.widgets[key], key)
 
         # We don't want the dialog to deallocate when closed. Rather we hide
@@ -239,8 +218,7 @@ class _GameInitializationMode(object):
         cls.widgets["newgamedialog"].connect("delete_event", lambda *a: True)
 
     @classmethod
-    def __initTimeRadio(cls, name, id, radiobutton, configImage, defmin,
-                        defgain, defmoves):
+    def __initTimeRadio(cls, id, radiobutton, configImage, defmin, defgain, defmoves):
         minSpin = Gtk.SpinButton()
         minSpin.set_adjustment(Gtk.Adjustment(1, 0, 240, 1))
         setattr(cls, "%s_min" % id, minSpin)
@@ -280,36 +258,46 @@ class _GameInitializationMode(object):
             moves = movesSpin.get_value_as_int()
 
             # Duration of the game
-            def calculate_duration(clock_min, clock_inc, clock_moves, ref_moves):
-                if clock_moves > 0:
-                    return int(2 * clock_min * ref_moves / clock_moves)
+            def calculate_duration(ref_moves):
+                if moves > 0:
+                    return int(2 * minutes * ref_moves / moves)
                 else:
-                    return max(0, int(2 * clock_min + ref_moves * clock_inc / 30))
+                    return max(0, int(2 * minutes + ref_moves * gain / 30))
 
-            duration_20 = calculate_duration(minutes, gain, moves, 20)
-            duration_40 = calculate_duration(minutes, gain, moves, 40)
-            duration_60 = calculate_duration(minutes, gain, moves, 60)
+            duration_20 = calculate_duration(20)
+            duration_40 = calculate_duration(40)
+            duration_60 = calculate_duration(60)
 
             # Determination of the caption
-            if gain != 0:
+            def get_game_name():
+                """ https://www.fide.com/fide/handbook.html?id=171&view=article """
+                if defmoves > 0:
+                    return _("Classical")
+                if duration_60 <= 20:  # 10 minutes per player
+                    return _("Blitz")
+                if duration_60 < 120:  # 60 minutes per player
+                    return _("Rapid")
+                return _("Normal")
+
+            if moves > 0:
+                radiobutton.set_label(_("%(name)s %(minutes)d min / %(moves)d moves %(duration)s") % {
+                    'name': get_game_name(),
+                    'minutes': minutes,
+                    'moves': moves,
+                    'duration': ("(%d')" % duration_40) if duration_40 > 0 else ""
+                })
+            elif gain != 0:
                 radiobutton.set_label(
                     _("%(name)s %(minutes)d min %(sign)s %(gain)d sec/move %(duration)s") % {
-                        'name': name,
+                        'name': get_game_name(),
                         'minutes': minutes,
                         'sign': "+" if gain > 0 else "–",
                         'gain': abs(gain),
                         'duration': ("(%d')" % duration_40) if duration_40 > 0 else ""
                     })
-            elif moves > 0:
-                radiobutton.set_label(_("%(name)s %(minutes)d min / %(moves)d moves %(duration)s") % {
-                    'name': name,
-                    'minutes': minutes,
-                    'moves': moves,
-                    'duration': ("(%d')" % duration_40) if duration_40 > 0 else ""
-                })
             else:
                 radiobutton.set_label(_("%(name)s %(minutes)d min %(duration)s") % {
-                    'name': name,
+                    'name': get_game_name(),
                     'minutes': minutes,
                     'duration': ("(%d')" % duration_40) if duration_40 > 0 else ""
                 })
