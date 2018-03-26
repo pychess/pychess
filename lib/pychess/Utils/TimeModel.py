@@ -264,4 +264,4 @@ class TimeModel(GObject.GObject):
 
     def isBlitzFide(self):
         val = 60 * self.minutes + 60 * (self.gain if self.handle_gain else 0)
-        return 300 <= val and val <= 600  # Between 5 and 10 minutes for 60 moves (estimation)
+        return val <= 600  # Less or equal than 10 minutes for 60 moves and for each player
