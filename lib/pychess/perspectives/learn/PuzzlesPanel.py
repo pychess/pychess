@@ -10,7 +10,7 @@ from pychess.Variants import variants
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
 from pychess.perspectives import perspective_manager
-from pychess.perspectives.learn import SolvingProgress
+from pychess.perspectives.learn import puzzles_solving_progress
 from pychess.Savers.olv import OLVFile
 from pychess.Savers.pgn import PGNFile
 from pychess.System import conf
@@ -83,13 +83,23 @@ class Sidepanel():
 
         self.tv.connect("row-activated", self.row_activated)
 
+        def on_progress_updated(solving_progress, key, progress):
+            for i, row in enumerate(self.store):
+                if row[1] == key:
+                    solved = progress.count(1)
+                    percent = 0 if not solved else round((solved * 100.) / len(progress))
+                    treeiter = self.store.get_iter(Gtk.TreePath(i))
+                    self.store[treeiter][4] = "%s / %s" % (solved, len(progress))
+                    self.store[treeiter][5] = percent
+        puzzles_solving_progress.connect("progress_updated", on_progress_updated)
+
         self.store = Gtk.ListStore(int, str, str, str, str, int)
 
         for num, file_name, title, author, count in PUZZLES:
-            progress = solving_progress.get(file_name, [0] * count)
+            progress = puzzles_solving_progress.get(file_name, [0] * count)
             solved = progress.count(1)
-            progress = 0 if not solved else round((solved * 100.) / len(progress))
-            self.store.append([num, file_name, title, author, "%s / %s" % (solved, count), progress])
+            percent = 0 if not solved else round((solved * 100.) / len(progress))
+            self.store.append([num, file_name, title, author, "%s / %s" % (solved, len(progress)), percent])
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -112,9 +122,6 @@ class Sidepanel():
             start_puzzle_from(filename)
 
 
-solving_progress = SolvingProgress("puzzles.json")
-
-
 def start_puzzle_from(filename, index=None):
     if filename.lower().endswith(".pgn"):
         chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename)))
@@ -125,7 +132,7 @@ def start_puzzle_from(filename, index=None):
 
     records, plys = chessfile.get_records()
 
-    progress = solving_progress.get(filename, [0] * chessfile.count)
+    progress = puzzles_solving_progress.get(filename, [0] * chessfile.count)
 
     if index is None:
         index = progress.index(0)
@@ -172,9 +179,9 @@ def start_puzzle_from(filename, index=None):
 
     def goal_checked(gamemodle):
         if gamemodel.reason == PRACTICE_GOAL_REACHED:
-            progress = solving_progress[gamemodel.source]
+            progress = puzzles_solving_progress[gamemodel.source]
             progress[gamemodel.current_index] = 1
-            solving_progress[gamemodel.source] = progress
+            puzzles_solving_progress[gamemodel.source] = progress
     gamemodel.connect("goal_checked", goal_checked)
 
     gamemodel.variant.need_initial_board = True

@@ -1,7 +1,10 @@
 import os
 import json
+from abc import ABCMeta
+from collections import UserDict
 
 from gi.repository import Gtk, GObject
+from gi.types import GObjectMeta
 
 from pychess.perspectives import Perspective, perspective_manager
 from pychess.System.prefix import addUserConfigPrefix
@@ -105,30 +108,49 @@ class Learn(GObject.GObject, Perspective):
         perspective_manager.activate_perspective("learn")
 
 
-class SolvingProgress(dict):
+class GObjectMutableMapping(GObjectMeta, ABCMeta):
+    """ GObject.GObject and UserDict has different metaclasses
+        so we have to create this metaclass to avoid
+        TypeError: metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
+    """
+    pass
+
+
+class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping):
     """ Book keeping of puzzle/lesson solving progress
         Each dict key is a .pgn/.olv file name
-        Values are list of 0/1 values showing that a given file puzzles solved or not
+        Values are list of 0/1 values showing a given file puzzles solved or not
         The dict is automatically synced with corresponding puzzles.json/lessons.json files
     """
 
+    __gsignals__ = {
+        "progress_updated": (GObject.SignalFlags.RUN_FIRST, None, (str, object, )),
+    }
+
     def __init__(self, progress_file):
+        GObject.GObject.__init__(self)
+        UserDict.__init__(self)
         self.progress_file = addUserDataPrefix(progress_file)
 
     def get(self, key, default):
         if os.path.isfile(self.progress_file):
             with open(self.progress_file, "r") as f:
-                self.update(json.load(f))
-            if key not in self:
-                self[key] = default
+                self.data = json.load(f)
+            if key not in self.data:
+                self.data[key] = default
         else:
-            self[key] = default
+            self.data[key] = default
 
         # print("Solved: %s / %s %s" % (self[key].count(1), len(self[key]), key))
 
-        return self[key]
+        return self.data[key]
 
     def __setitem__(self, key, value):
         with open(self.progress_file, "w") as f:
-            dict.__setitem__(self, key, value)
-            json.dump(self, f)
+            self.data[key] = value
+            json.dump(self.data, f)
+            self.emit("progress_updated", key, value)
+
+
+puzzles_solving_progress = SolvingProgress("puzzles.json")
+lessons_solving_progress = SolvingProgress("lessons.json")

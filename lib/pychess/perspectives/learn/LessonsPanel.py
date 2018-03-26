@@ -9,7 +9,7 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
 from pychess.System import conf
 from pychess.perspectives import perspective_manager
-from pychess.perspectives.learn import SolvingProgress
+from pychess.perspectives.learn import lessons_solving_progress
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
 from pychess.Players.engineNest import discoverer
@@ -52,10 +52,20 @@ class Sidepanel():
 
         self.tv.connect("row-activated", self.row_activated)
 
+        def on_progress_updated(solving_progress, key, progress):
+            for i, row in enumerate(self.store):
+                if row[1] == key:
+                    solved = progress.count(1)
+                    percent = 0 if not solved else round((solved * 100.) / len(progress))
+                    treeiter = self.store.get_iter(Gtk.TreePath(i))
+                    self.store[treeiter][4] = "%s / %s" % (solved, len(progress))
+                    self.store[treeiter][5] = percent
+        lessons_solving_progress.connect("progress_updated", on_progress_updated)
+
         self.store = Gtk.ListStore(int, str, str, str, str, int)
 
         for num, file_name, title, author, count in LESSONS:
-            progress = solving_progress.get(file_name, [0] * count)
+            progress = lessons_solving_progress.get(file_name, [0] * count)
             solved = progress.count(1)
             progress = 0 if not solved else round((solved * 100.) / len(progress))
             self.store.append([num, file_name, title, author, "%s / %s" % (solved, count), progress])
@@ -81,16 +91,13 @@ class Sidepanel():
             start_lesson_from(filename)
 
 
-solving_progress = SolvingProgress("lessons.json")
-
-
 def start_lesson_from(filename, index=None):
     chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
     chessfile.limit = 1000
     chessfile.init_tag_database()
     records, plys = chessfile.get_records()
 
-    progress = solving_progress.get(filename, [0] * chessfile.count)
+    progress = lessons_solving_progress.get(filename, [0] * chessfile.count)
 
     if index is None:
         index = progress.index(0)
@@ -113,9 +120,9 @@ def start_lesson_from(filename, index=None):
     p1 = (LOCAL, Human, (BLACK, b_name), b_name)
 
     def learn_success(gamemodel):
-        progress = solving_progress[gamemodel.source]
+        progress = lessons_solving_progress[gamemodel.source]
         progress[gamemodel.current_index] = 1
-        solving_progress[gamemodel.source] = progress
+        lessons_solving_progress[gamemodel.source] = progress
         asyncio.async(gamemodel.restart_analyzer(HINT))
     gamemodel.connect("learn_success", learn_success)
 
