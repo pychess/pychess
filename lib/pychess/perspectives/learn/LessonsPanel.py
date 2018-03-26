@@ -9,7 +9,7 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
 from pychess.System import conf
 from pychess.perspectives import perspective_manager
-from pychess.perspectives.learn import get_solving_status, update_solving_status
+from pychess.perspectives.learn import SolvingProgress
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
 from pychess.Players.engineNest import discoverer
@@ -55,9 +55,9 @@ class Sidepanel():
         self.store = Gtk.ListStore(int, str, str, str, str, int)
 
         for num, file_name, title, author, count in LESSONS:
-            solving_status_file, solving_status = get_solving_status("lessons.json", file_name, count)
-            solved = solving_status[file_name].count(1)
-            progress = 0 if not solved else round((solved * 100.) / len(solving_status[file_name]))
+            progress = solving_progress.get(file_name, [0] * count)
+            solved = progress.count(1)
+            progress = 0 if not solved else round((solved * 100.) / len(progress))
             self.store.append([num, file_name, title, author, "%s / %s" % (solved, count), progress])
 
         self.tv.set_model(self.store)
@@ -81,24 +81,25 @@ class Sidepanel():
             start_lesson_from(filename)
 
 
+solving_progress = SolvingProgress("lessons.json")
+
+
 def start_lesson_from(filename, index=None):
     chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
     chessfile.limit = 1000
     chessfile.init_tag_database()
     records, plys = chessfile.get_records()
 
-    solving_status_file, solving_status = get_solving_status("lessons.json", filename, chessfile.count)
+    progress = solving_progress.get(filename, [0] * chessfile.count)
 
     if index is None:
-        index = solving_status[filename].index(0)
+        index = progress.index(0)
 
     rec = records[index]
 
     timemodel = TimeModel(0, 0)
     gamemodel = LearnModel(timemodel)
     gamemodel.set_learn_data(LESSON, filename, index, len(records))
-    gamemodel.solving_status = solving_status
-    gamemodel.solving_status_file = solving_status_file
 
     chessfile.loadToModel(rec, -1, gamemodel)
 
@@ -111,10 +112,12 @@ def start_lesson_from(filename, index=None):
     p0 = (LOCAL, Human, (WHITE, w_name), w_name)
     p1 = (LOCAL, Human, (BLACK, b_name), b_name)
 
-    def restart_analyzer(gamemodel):
-        update_solving_status(gamemodel)
+    def learn_success(gamemodel):
+        progress = solving_progress[gamemodel.source]
+        progress[gamemodel.current_index] = 1
+        solving_progress[gamemodel.source] = progress
         asyncio.async(gamemodel.restart_analyzer(HINT))
-    gamemodel.connect("learn_success", restart_analyzer)
+    gamemodel.connect("learn_success", learn_success)
 
     def start_analyzer(gamemodel):
         asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))

@@ -105,27 +105,30 @@ class Learn(GObject.GObject, Perspective):
         perspective_manager.activate_perspective("learn")
 
 
-def get_solving_status(statusfile, filename, count):
-    solving_status_file = addUserDataPrefix(statusfile)
-    if os.path.isfile(solving_status_file):
-        with open(solving_status_file, "r") as f:
-            solving_status = json.load(f)
-        if filename not in solving_status:
-            with open(solving_status_file, "w") as f:
-                solving_status[filename] = [0] * count
-                json.dump(solving_status, f)
-    else:
-        with open(solving_status_file, "w") as f:
-            solving_status = {}
-            solving_status[filename] = [0] * count
-            json.dump(solving_status, f)
+class SolvingProgress(dict):
+    """ Book keeping of puzzle/lesson solving progress
+        Each dict key is a .pgn/.olv file name
+        Values are list of 0/1 values showing that a given file puzzles solved or not
+        The dict is automatically synced with corresponding puzzles.json/lessons.json files
+    """
 
-    # print("Solved: %s / %s %s" % (solving_status[filename].count(1), len(solving_status[filename]), filename))
+    def __init__(self, progress_file):
+        self.progress_file = addUserDataPrefix(progress_file)
 
-    return solving_status_file, solving_status
+    def get(self, key, default):
+        if os.path.isfile(self.progress_file):
+            with open(self.progress_file, "r") as f:
+                self.update(json.load(f))
+            if key not in self:
+                self[key] = default
+        else:
+            self[key] = default
 
+        # print("Solved: %s / %s %s" % (self[key].count(1), len(self[key]), key))
 
-def update_solving_status(gamemodel):
-    with open(gamemodel.solving_status_file, "w") as f:
-        gamemodel.solving_status[gamemodel.source][gamemodel.current_index] = 1
-        json.dump(gamemodel.solving_status, f)
+        return self[key]
+
+    def __setitem__(self, key, value):
+        with open(self.progress_file, "w") as f:
+            dict.__setitem__(self, key, value)
+            json.dump(self, f)
