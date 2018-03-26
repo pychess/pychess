@@ -7,33 +7,38 @@ from pychess.Utils.lutils.ldata import MATE_VALUE, MATE_DEPTH
 def prettyPrintScore(s, depth, format_mate=False):
     """The score parameter is an eval value from White point of view"""
 
+    # Particular values
     if s is None:
         return "?"
-
+    if s == -MATE_VALUE:
+        return _("Illegal")
     if s == 0:
         return "0.00/%s" % depth
 
+    # Preparation
     if s > 0:
         pp = "+"
+        mp = ""
     else:
         pp = "-"
+        mp = "-"
         s = -s
-
     if depth:
         depth = "/" + depth
     else:
         depth = ""
 
-    if s >= MATE_VALUE - MATE_DEPTH:
-        mate_in = MATE_VALUE - s
+    # Rendering
+    if s < MATE_VALUE - MATE_DEPTH:
+        return "%s%0.2f%s" % (pp, s / 100.0, depth)
+    else:
+        mate_in = int(MATE_VALUE - s)
         if format_mate:
             if mate_in == 0:
                 return _("Mate")
-            return "%s #%d" % (_("Mate"), mate_in)
+            return "%s #%s%d" % (_("Mate"), mp, mate_in)
         else:
-            return "%s#%.0f" % (pp, s)
-    else:
-        return "%s%0.2f%s" % (pp, s / 100.0, depth)
+            return "%s#%.0f" % (pp, s)  # Sign before sharp to be parsed in PGN
 
 
 def createStoryTextAppEvent(text):
