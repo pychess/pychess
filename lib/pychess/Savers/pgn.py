@@ -1064,10 +1064,12 @@ class PGNFile(ChessFile):
             if (not in_comment and "{" in line) or (in_comment and "}" in line):
                 in_comment = line.rfind("{") > line.rfind("}")
 
+            # if there is something add it
             if line.strip():
                 lines.append(line)
                 line = self.handle.readline()
-            elif len(lines) == 0:
+            # if line is empty it should be the game separator line except...
+            elif len(lines) == 0 or in_comment:
                 line = self.handle.readline()
             else:
                 break
