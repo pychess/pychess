@@ -3,7 +3,7 @@ import json
 from abc import ABCMeta
 from collections import UserDict
 
-from gi.repository import Gtk, GObject
+from gi.repository import Gdk, Gtk, GObject
 from gi.types import GObjectMeta
 
 from pychess.perspectives import Perspective, perspective_manager
@@ -65,12 +65,13 @@ class Learn(GObject.GObject, Perspective):
 
         # Default layout of side panels
         if not os.path.isfile(self.dockLocation):
-            leaf = self.dock.dock(self.docks["learnhome"][1], CENTER, self.docks["learnhome"][0], "learnhome")
-            leaf.setDockable(False)
+            leaf0 = self.dock.dock(self.docks["learnhome"][1], CENTER, self.docks["learnhome"][0], "learnhome")
+            leaf0.setDockable(False)
 
-            leaf.dock(self.docks["PuzzlesPanel"][1], WEST, self.docks["PuzzlesPanel"][0], "PuzzlesPanel")
-            leaf = leaf.dock(self.docks["LecturesPanel"][1], SOUTH, self.docks["LecturesPanel"][0], "LecturesPanel")
-            leaf = leaf.dock(self.docks["LessonsPanel"][1], SOUTH, self.docks["LessonsPanel"][0], "LessonsPanel")
+            leaf = leaf0.dock(self.docks["PuzzlesPanel"][1], WEST, self.docks["PuzzlesPanel"][0], "PuzzlesPanel")
+            leaf.dock(self.docks["LessonsPanel"][1], SOUTH, self.docks["LessonsPanel"][0], "LessonsPanel")
+
+            leaf = leaf0.dock(self.docks["LecturesPanel"][1], SOUTH, self.docks["LecturesPanel"][0], "LecturesPanel")
             leaf.dock(self.docks["EndgamesPanel"][1], SOUTH, self.docks["EndgamesPanel"][0], "EndgamesPanel")
 
         def unrealize(dock):
@@ -89,8 +90,42 @@ class Learn(GObject.GObject, Perspective):
             self.init_layout()
             self.first_run = False
 
-        learn_home = Gtk.Box()
-        learn_home.add(Gtk.Label("Practice! Practice! Practice!"))
+        learn_home = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
+        box = Gtk.Box()
+
+        self.tv = Gtk.TreeView()
+
+        color = Gdk.RGBA()
+        color.parse("lightblue")
+
+        for i, col in enumerate((_("lichess"), _("wtharvey"), _("yacpdb"), _("lessons"))):
+            renderer = Gtk.CellRendererProgress()
+            renderer.set_orientation(Gtk.Orientation.VERTICAL)
+            renderer.props.height = 100
+            renderer.props.inverted = True
+            renderer.props.cell_background_rgba = color
+            column = Gtk.TreeViewColumn(col, renderer, text=i * 2, value=i * 2 + 1)
+            self.tv.append_column(column)
+
+        self.store = Gtk.ListStore(str, int, str, int, str, int, str, int)
+
+        self.update_progress(None, None, None)
+
+        self.tv.set_model(self.store)
+        self.tv.get_selection().set_mode(Gtk.SelectionMode.NONE)
+
+        puzzles_solving_progress.connect("progress_updated", self.update_progress)
+        lessons_solving_progress.connect("progress_updated", self.update_progress)
+
+        box.pack_start(self.tv, False, False, 6)
+
+        label = Gtk.Label(xpad=6, xalign=0)
+        label.set_markup("<b>%s</b>" % _("Progress"))
+        learn_home.pack_start(label, False, False, 6)
+
+        learn_home.pack_start(box, False, False, 0)
+
         learn_home.show_all()
 
         if not self.first_run:
@@ -106,6 +141,39 @@ class Learn(GObject.GObject, Perspective):
             instance.show()
 
         perspective_manager.activate_perspective("learn")
+
+    def update_progress(self, solving_progress, key, progress):
+        self.store.clear()
+
+        # Compute cumulative puzzles solving statistics
+        solving_progress = puzzles_solving_progress.read_all()
+
+        stat = [0, 0, 0, 0, 0, 0, 0, 0]
+        for filename, progress in solving_progress.items():
+            if filename.startswith("lichess"):
+                stat[0] += len(progress)
+                stat[1] += progress.count(1)
+            elif filename.startswith("mate_in"):
+                stat[2] += len(progress)
+                stat[3] += progress.count(1)
+            elif filename.endswith(".olv"):
+                stat[4] += len(progress)
+                stat[5] += progress.count(1)
+
+        # Compute cumulative lessons solving statistics
+        solving_progress = lessons_solving_progress.read_all()
+
+        for filename, progress in solving_progress.items():
+            stat[6] += len(progress)
+            stat[7] += progress.count(1)
+
+        stats = []
+        for i in range(4):
+            percent = 0 if not stat[i * 2 + 1] else round((stat[i * 2 + 1] * 100.) / stat[i * 2])
+            stats.append("%s%%" % percent)
+            stats.append(percent)
+
+        self.store.append(stats)
 
 
 class GObjectMutableMapping(GObjectMeta, ABCMeta):
@@ -149,7 +217,15 @@ class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping
         with open(self.progress_file, "w") as f:
             self.data[key] = value
             json.dump(self.data, f)
-            self.emit("progress_updated", key, value)
+        self.emit("progress_updated", key, value)
+
+    def read_all(self):
+        if os.path.isfile(self.progress_file):
+            with open(self.progress_file, "r") as f:
+                self.data = json.load(f)
+                return self.data
+        else:
+            return {}
 
 
 puzzles_solving_progress = SolvingProgress("puzzles.json")
