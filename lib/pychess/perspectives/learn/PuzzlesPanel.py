@@ -29,6 +29,7 @@ __desc__ = _("Lichess practice studies Puzzles from GM games and Chess compositi
 puzzles0 = []
 puzzles1 = []
 puzzles2 = []
+puzzles3 = []
 for elem in sorted(os.listdir(path=addDataPrefix("learn/puzzles/"))):
     if elem.startswith("lichess_study") and elem.endswith(".pgn"):
         if elem[14:31] == "lichess-practice-":
@@ -39,8 +40,10 @@ for elem in sorted(os.listdir(path=addDataPrefix("learn/puzzles/"))):
         puzzles1.append((elem, "Puzzles by GMs: Mate in %s" % elem[8], "wtharvey.com"))
     elif elem.endswith(".olv"):
         puzzles2.append((elem, "Puzzles by %s" % elem.split(".olv")[0].capitalize(), "yacpdb.org"))
+    elif elem.endswith(".pgn"):
+        puzzles3.append((elem, elem.split(".pgn")[0].capitalize(), _("others")))
 
-PUZZLES = puzzles0 + puzzles1 + puzzles2
+PUZZLES = puzzles0 + puzzles1 + puzzles2 + puzzles3
 
 
 class Sidepanel():
