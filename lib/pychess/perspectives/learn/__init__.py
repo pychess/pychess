@@ -7,12 +7,15 @@ from gi.repository import Gdk, Gtk, GObject
 from gi.types import GObjectMeta
 
 from pychess.perspectives import Perspective, perspective_manager
-from pychess.System.prefix import addUserConfigPrefix
+from pychess.System.prefix import addUserConfigPrefix, addDataPrefix
 from pychess.System.Log import log
 from pychess.widgets import new_notebook
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import WEST, SOUTH, CENTER
 from pychess.System.prefix import addUserDataPrefix
+from pychess.Savers.olv import OLVFile
+from pychess.Savers.pgn import PGNFile
+from pychess.System.protoopen import protoopen
 
 
 class Learn(GObject.GObject, Perspective):
@@ -200,14 +203,26 @@ class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping
         UserDict.__init__(self)
         self.progress_file = addUserDataPrefix(progress_file)
 
-    def get(self, key, default):
+    def get_count(self, filename):
+        subdir = "puzzles" if self.progress_file.endswith("puzzles.json") else "lessons"
+        if filename.lower().endswith(".pgn"):
+            chessfile = PGNFile(protoopen(addDataPrefix("learn/%s/%s" % (subdir, filename))))
+            chessfile.limit = 1000
+            chessfile.init_tag_database()
+        elif filename.lower().endswith(".olv"):
+            chessfile = OLVFile(protoopen(addDataPrefix("learn/%s/%s" % (subdir, filename)), encoding="utf-8"))
+        chessfile.close()
+        count = chessfile.count
+        return count
+
+    def __getitem__(self, key):
         if os.path.isfile(self.progress_file):
             with open(self.progress_file, "r") as f:
                 self.data = json.load(f)
             if key not in self.data:
-                self.data[key] = default
+                self.data[key] = [0] * self.get_count(key)
         else:
-            self.data[key] = default
+            self.data[key] = [0] * self.get_count(key)
 
         # print("Solved: %s / %s %s" % (self[key].count(1), len(self[key]), key))
 

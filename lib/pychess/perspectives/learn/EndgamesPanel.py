@@ -27,19 +27,19 @@ __desc__ = _("Practice endgames with computer")
 
 # TODO: get it from a text file
 ENDGAMES = (
-    (1, "kpk", "King and Pawn vs King"),
-    (2, "kbnk", "King, Bishop and Knight vs King"),
-    (3, "kbbk", "King and 2 Bishops vs King"),
-    (4, "krk", "King and Rook vs King"),
-    (5, "kqk", "King and Queen vs King"),
-    (6, "kqkr", "King and Queen vs King and Rook"),
-    (7, "krpkr", "King, Rook and Pawn vs King and Rook"),
-    (8, "kppkp", "King and 2 Pawns vs King and Pawn"),
-    (9, "kpkp", "King and Pawn vs King and Pawn"),
-    (10, "kqpkq", "King, Queen and Pawn vs King and Queen"),
-    (11, "knnkp", "King and Two Knights and vs King and Pawn"),
-    (12, "kppkpp", "King and two pawns vs King and two pawns"),
-    (13, "kqqkqr", "King and two queens vs King and Queen"),
+    ("kpk", "King and Pawn vs King"),
+    ("kbnk", "King, Bishop and Knight vs King"),
+    ("kbbk", "King and 2 Bishops vs King"),
+    ("krk", "King and Rook vs King"),
+    ("kqk", "King and Queen vs King"),
+    ("kqkr", "King and Queen vs King and Rook"),
+    ("krpkr", "King, Rook and Pawn vs King and Rook"),
+    ("kppkp", "King and 2 Pawns vs King and Pawn"),
+    ("kpkp", "King and Pawn vs King and Pawn"),
+    ("kqpkq", "King, Queen and Pawn vs King and Queen"),
+    ("knnkp", "King and Two Knights and vs King and Pawn"),
+    ("kppkpp", "King and two pawns vs King and two pawns"),
+    ("kqqkqr", "King and two queens vs King and Queen"),
 )
 
 
@@ -52,23 +52,23 @@ class Sidepanel():
 
         renderer = Gtk.CellRendererText()
         renderer.props.font = "Times 14"
-        column = Gtk.TreeViewColumn(_("White"), renderer, text=1)
+        column = Gtk.TreeViewColumn(_("White"), renderer, text=0)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
         renderer.props.font = "Times 14"
-        column = Gtk.TreeViewColumn(_("Black"), renderer, text=2)
+        column = Gtk.TreeViewColumn(_("Black"), renderer, text=1)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Title"), renderer, text=3)
+        column = Gtk.TreeViewColumn(_("Title"), renderer, text=2)
         self.tv.append_column(column)
 
         self.tv.connect("row-activated", self.row_activated)
 
-        self.store = Gtk.ListStore(int, str, str, str)
+        self.store = Gtk.ListStore(str, str, str)
 
-        for num, pieces, title in ENDGAMES:
+        for pieces, title in ENDGAMES:
             if pieces.count("k") != 2:
                 print("Game needs exactly 2 kings! %s" % pieces)
                 continue
@@ -89,7 +89,7 @@ class Sidepanel():
                 bfan = []
                 for piece in black_pieces:
                     bfan.append(FAN_PIECES[1][chr2Sign[piece]])
-                self.store.append([num, "".join(wfan), "".join(bfan), title])
+                self.store.append(["".join(wfan), "".join(bfan), title])
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -108,7 +108,7 @@ class Sidepanel():
         if path is None:
             return
         else:
-            pieces = ENDGAMES[path[0]][1].lower()
+            pieces = ENDGAMES[path[0]][0].lower()
             start_endgame_from(pieces)
 
 

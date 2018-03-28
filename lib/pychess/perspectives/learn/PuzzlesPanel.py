@@ -1,3 +1,4 @@
+import os
 import asyncio
 
 from gi.repository import Gtk
@@ -24,38 +25,22 @@ __desc__ = _("Lichess practice studies Puzzles from GM games and Chess compositi
 
 
 # https://lichess.org/practice, http://wtharvey.com, http://www.yacpdb.org
-PUZZLES = (
-    (1, "lichess_study_lichess-practice-piece-checkmates-i_by_arex_2017.01.25.pgn", "Piece Checkmates I by arex", "lichess.org", 6),
-    (2, "lichess_study_lichess-practice-checkmate-patterns-i_by_arex_2017.01.22.pgn", "Checkmate Patterns I by arex", "lichess.org", 17),
-    (3, "lichess_study_lichess-practice-checkmate-patterns-ii_by_arex_2017.01.25.pgn", "Checkmate Patterns II by arex", "lichess.org", 24),
-    (4, "lichess_study_lichess-practice-checkmate-patterns-iii_by_arex_2017.01.27.pgn", "Checkmate Patterns III by arex", "lichess.org", 18),
-    (5, "lichess_study_lichess-practice-checkmate-patterns-iv_by_arex_2017.01.25.pgn", "Checkmate Patterns IV by arex", "lichess.org", 16),
-    (6, "lichess_study_lichess-practice-piece-checkmates-ii_by_arex_2017.01.25.pgn", "Piece Checkmates II by arex", "lichess.org", 7),
 
-    (7, "lichess_study_lichess-practice-the-pin_by_arex_2017.01.22.pgn", "The Pin by arex", "lichess.org", 8),
-    (8, "lichess_study_lichess-practice-the-skewer_by_arex_2017.01.29.pgn", "The Skewer by arex", "lichess.org", 9),
-    (9, "lichess_study_lichess-practice-the-fork_by_arex_2017.01.29.pgn", "The Fork by arex", "lichess.org", 18),
-    (10, "lichess_study_lichess-practice-discovered-attacks_by_arex_2017.01.30.pgn", " Discovered Attacks by arex", "lichess.org", 10),
-    (11, "lichess_study_lichess-practice-double-check_by_arex_2017.02.12.pgn", "Double Check by arex", "lichess.org", 6),
-    (12, "lichess_study_lichess-practice-overloaded-pieces_by_arex_2017.01.31.pgn", "Overloaded pieces by arex", "lichess.org", 11),
-    (13, "lichess_study_lichess-practice-zwischenzug_by_arex_2017.02.02.pgn", "Zwischenzug by arex", "lichess.org", 5),
+puzzles0 = []
+puzzles1 = []
+puzzles2 = []
+for elem in sorted(os.listdir(path=addDataPrefix("learn/puzzles/"))):
+    if elem.startswith("lichess_study") and elem.endswith(".pgn"):
+        if elem[14:31] == "lichess-practice-":
+            puzzles0.append((elem, elem[31:elem.find("_by_")].replace("-", " ").capitalize(), "lichess.org"))
+        else:
+            puzzles0.append((elem, elem[14:elem.find("_by_").replace("-", " ").capitalize()], "lichess.org"))
+    elif elem.startswith("mate_in_") and elem.endswith(".pgn"):
+        puzzles1.append((elem, "Puzzles by GMs: Mate in %s" % elem[8], "wtharvey.com"))
+    elif elem.endswith(".olv"):
+        puzzles2.append((elem, "Puzzles by %s" % elem.split(".olv")[0].capitalize(), "yacpdb.org"))
 
-    (14, "lichess_study_lichess-practice-zugzwang_by_arex_2017.02.01.pgn", "Zugzwang by arex", "lichess.org", 4),
-    (15, "lichess_study_lichess-practice-interference_by_arex_2017.02.11.pgn", "Interference by arex", "lichess.org", 7),
-    (16, "lichess_study_lichess-practice-greek-gift_by_arex_2017.02.11.pgn", "Greek Gift by arex", "lichess.org", 6),
-
-    (17, "lichess_study_lichess-practice-key-squares_by_arex_2017.01.21.pgn", "Key Squares by arex", "lichess.org", 11),
-    (18, "lichess_study_lichess-practice-opposition_by_arex_2017.01.22.pgn", "Opposition by arex", "lichess.org", 8),
-    (19, "lichess_study_lichess-practice-rook-endgames_by_TonyRo_2017.02.01.pgn", "Rook Endgames by TonyRo", "lichess.org", 5),
-
-    (20, "mate_in_2.pgn", "Puzzles by GMs: Mate in 2", "wtharvey.com", 166),
-    (21, "mate_in_3.pgn", "Puzzles by GMs: Mate in 3", "wtharvey.com", 375),
-    (22, "mate_in_4.pgn", "Puzzles by GMs: Mate in 4", "wtharvey.com", 373),
-
-    (23, "lasker.olv", "Puzzles by Emanuel Lasker", "yacpdb.org", 18),
-    (24, "loyd.olv", "Puzzles by Samuel Loyd", "yacpdb.org", 810),
-    (25, "reti.olv", "Puzzles by Richard Réti", "yacpdb.org", 6),
-)
+PUZZLES = puzzles0 + puzzles1 + puzzles2
 
 
 class Sidepanel():
@@ -66,40 +51,36 @@ class Sidepanel():
         self.tv = Gtk.TreeView()
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Id"), renderer, text=0)
+        column = Gtk.TreeViewColumn(_("Title"), renderer, text=1)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Title"), renderer, text=2)
-        self.tv.append_column(column)
-
-        renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Source"), renderer, text=3)
+        column = Gtk.TreeViewColumn(_("Source"), renderer, text=2)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererProgress()
-        column = Gtk.TreeViewColumn(_("Progress"), renderer, text=4, value=5)
+        column = Gtk.TreeViewColumn(_("Progress"), renderer, text=3, value=4)
         self.tv.append_column(column)
 
         self.tv.connect("row-activated", self.row_activated)
 
         def on_progress_updated(solving_progress, key, progress):
             for i, row in enumerate(self.store):
-                if row[1] == key:
+                if row[0] == key:
                     solved = progress.count(1)
                     percent = 0 if not solved else round((solved * 100.) / len(progress))
                     treeiter = self.store.get_iter(Gtk.TreePath(i))
-                    self.store[treeiter][4] = "%s / %s" % (solved, len(progress))
-                    self.store[treeiter][5] = percent
+                    self.store[treeiter][3] = "%s / %s" % (solved, len(progress))
+                    self.store[treeiter][4] = percent
         puzzles_solving_progress.connect("progress_updated", on_progress_updated)
 
-        self.store = Gtk.ListStore(int, str, str, str, str, int)
+        self.store = Gtk.ListStore(str, str, str, str, int)
 
-        for num, file_name, title, author, count in PUZZLES:
-            progress = puzzles_solving_progress.get(file_name, [0] * count)
+        for file_name, title, author in PUZZLES:
+            progress = puzzles_solving_progress.get(file_name)
             solved = progress.count(1)
             percent = 0 if not solved else round((solved * 100.) / len(progress))
-            self.store.append([num, file_name, title, author, "%s / %s" % (solved, len(progress)), percent])
+            self.store.append([file_name, title, author, "%s / %s" % (solved, len(progress)), percent])
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -118,7 +99,7 @@ class Sidepanel():
         if path is None:
             return
         else:
-            filename = PUZZLES[path[0]][1]
+            filename = PUZZLES[path[0]][0]
             start_puzzle_from(filename)
 
 

@@ -320,14 +320,14 @@ class LearnTasker(Gtk.Alignment):
         self.category_combo.pack_start(renderer, True)
         self.category_combo.add_attribute(renderer, "text", 1)
 
-        self.learnstore = Gtk.ListStore(int, str, str)
+        self.learnstore = Gtk.ListStore(str, str)
         self.learn_combo = self.widgets["learn_combo"]
         self.learn_combo.set_model(self.learnstore)
         renderer_text = Gtk.CellRendererText()
         renderer_text.set_property("width-chars", 30)
         renderer_text.set_property("ellipsize", Pango.EllipsizeMode.END)
         self.learn_combo.pack_start(renderer_text, True)
-        self.learn_combo.add_attribute(renderer_text, "text", 2)
+        self.learn_combo.add_attribute(renderer_text, "text", 1)
         self.learn_combo.set_active(0)
 
         def on_category_changed(combo):
@@ -340,17 +340,17 @@ class LearnTasker(Gtk.Alignment):
 
                 self.learnstore.clear()
                 if self.category == LECTURE:
-                    for num, file_name, title, author in LECTURES:
-                        self.learnstore.append([num, file_name, title])
+                    for file_name, title, author in LECTURES:
+                        self.learnstore.append([file_name, title])
                 elif self.category == LESSON:
-                    for num, file_name, title, author, count in LESSONS:
-                        self.learnstore.append([num, file_name, title])
+                    for file_name, title, author in LESSONS:
+                        self.learnstore.append([file_name, title])
                 elif self.category == PUZZLE:
-                    for num, file_name, title, author, count in PUZZLES:
-                        self.learnstore.append([num, file_name, title])
+                    for file_name, title, author in PUZZLES:
+                        self.learnstore.append([file_name, title])
                 elif self.category == ENDGAME:
-                    for num, pieces, title in ENDGAMES:
-                        self.learnstore.append([num, pieces, title])
+                    for pieces, title in ENDGAMES:
+                        self.learnstore.append([pieces, title])
 
                 learn = conf.get("learncombo%s" % self.category, 0)
                 self.learn_combo.set_active(learn)
@@ -361,7 +361,7 @@ class LearnTasker(Gtk.Alignment):
                         return
                     else:
                         model = combo.get_model()
-                        newlearn = model[tree_iter][0] - 1
+                        newlearn = model.get_path(tree_iter)[0]
                         conf.set("learncombo%s" % self.category, newlearn)
                 self.learn_combo.connect("changed", on_learn_changed)
 
@@ -387,7 +387,7 @@ class LearnTasker(Gtk.Alignment):
             return
         else:
             model = self.learn_combo.get_model()
-            source = model[tree_iter][1]
+            source = model[tree_iter][0]
 
         if self.category == LECTURE:
             start_lecture_from(source)

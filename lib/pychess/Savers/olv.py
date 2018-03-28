@@ -12,6 +12,7 @@ __ending__ = "olv"
 __append__ = True
 
 
+# Note S for the knights as N is reserverd for Nightriders
 chr2piece = {"K": KING,
              "Q": QUEEN,
              "R": ROOK,
@@ -37,9 +38,11 @@ class OLVFile(ChessFile):
         self.count = len(self.games)
 
     def read_games(self, handle):
+        """ We don't return games if stipulation is not 'mate in #' """
         games = []
         rec = None
         rec_id = 1
+        contains_fairy_pieces = False
 
         # authors is a more line list (each line starts with "-")
         in_authors = False
@@ -64,9 +67,11 @@ class OLVFile(ChessFile):
 
             # New record start
             if line == "---":
-                if rec is not None and rec["Black"].startswith("Mate in "):
+                if rec is not None and rec["Black"].startswith("Mate in ") and not contains_fairy_pieces:
                     games.append(rec)
                     rec_id += 1
+
+                contains_fairy_pieces = False
 
                 self.lboard = LBoard()
                 self.lboard.applyFen("8/8/8/8/8/8/8/8 w - - 0 1")
@@ -105,9 +110,12 @@ class OLVFile(ChessFile):
                 if len(parts) > 1:
                     pieces = parts[1][:-1]
                     for piece in pieces.split(", "):
-                        cord = Cord(piece[1:3]).cord
-                        piece = chr2piece[piece[0]]
-                        self.lboard._addPiece(cord, piece, WHITE)
+                        if piece.startswith("Royal") or piece[0] not in chr2piece:
+                            contains_fairy_pieces = True
+                        else:
+                            cord = Cord(piece[1:3]).cord
+                            piece = chr2piece[piece[0]]
+                            self.lboard._addPiece(cord, piece, WHITE)
                 else:
                     in_white = True
 
@@ -116,9 +124,12 @@ class OLVFile(ChessFile):
                 if len(parts) > 1:
                     pieces = parts[1][:-1]
                     for piece in pieces.split(", "):
-                        cord = Cord(piece[1:3]).cord
-                        piece = chr2piece[piece[0]]
-                        self.lboard._addPiece(cord, piece, BLACK)
+                        if piece.startswith("Royal") or piece[0] not in chr2piece:
+                            contains_fairy_pieces = True
+                        else:
+                            cord = Cord(piece[1:3]).cord
+                            piece = chr2piece[piece[0]]
+                            self.lboard._addPiece(cord, piece, BLACK)
 
                     rec["FEN"] = self.lboard.asFen()
                 else:
@@ -169,7 +180,7 @@ class OLVFile(ChessFile):
                     self.lboard._addPiece(cord, piece, BLACK)
 
         # Append the latest record
-        if rec is not None and rec["Black"].startswith("Mate in "):
+        if rec is not None and rec["Black"].startswith("Mate in ") and not contains_fairy_pieces:
             games.append(rec)
 
         return games

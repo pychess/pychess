@@ -20,39 +20,38 @@ __desc__ = _("Study FICS lectures offline")
 
 
 LECTURES = (
-    (1, "lec1.txt", "2...Qh4+ against the King's Gambit", "toddmf"),
-    (2, "lec2.txt", "Tactics Training lesson 1# 'Back rank weakness'", "knackie"),
-    (3, "lec3.txt", "Denker's Favorite Game", "toddmf"),
-    (4, "lec4.txt", "Introduction to the 2.Nc3 Caro-Kann", "KayhiKing"),
-    (5, "lec5.txt", "Tactics Training lesson 2# 'Discovered Attack'", "knackie"),
-    (6, "lec6.txt", "King's Indian Attack vs. the French", "cissmjg"),
-    (7, "lec7.txt", "Rook vs Pawn endgames", "toddmf"),
-    (8, "lec8.txt", "The Stonewall Attack", "MBDil"),
-    (9, "lec9.txt", "Tactics Training lesson 3# 'Enclosed Kings'", "knackie"),
-    (10, "lec10.txt", "The Steinitz Variation of the French Defense", "Seipman"),
-    (11, "lec11.txt", "A draw against a Grandmaster", "talpa"),
-    (12, "lec12.txt", "Tactics Training lesson 4# 'King in the centre'", "knackie"),
-    (13, "lec13.txt", "The Modern Defense", "GMDavies"),
-    (14, "lec14.txt", "Tactics Training lesson 5# 'Pulling the king to the open'", "knackie"),
-    (15, "lec15.txt", "King's Indian Attack vs. the Caro-Kann", "cissmjg"),
-    (16, "lec16.txt", "Introduction to Bughouse", "Tecumseh"),
-    (17, "lec17.txt", "Refuting the Milner-Barry Gambit in the French Defense", "Kabal"),
-    (18, "lec18.txt", "Tactics Training lesson 6# 'Mating Attack'", "knackie"),
-    (19, "lec19.txt", "Closed Sicilian Survey, part 1", "Oren"),
-    (20, "lec20.txt", "Hypermodern Magic - A study of the central blockade", "Bahamut"),
-    (21, "lec21.txt", "Tactics Training lesson 7# 'Opening / Closing Files'", "knackie"),
-    (22, "lec22.txt", "Thoughts on the Refutation of the Milner-Barry", "knackie"),
-    (23, "lec23.txt", "Tactics Training lesson 8# 'Opening / Closing Diagonals'", "knackie"),
-    (24, "lec24.txt", "King's Indian Attack vs. Other Defenses", "cissmjg"),
-    (25, "lec25.txt", "Basic Pawn Endings I", "DAV"),
-    (26, "lec26.txt", "Giuoco Piano", "afw"),
-    (27, "lec27.txt", "Tactics Training lesson 9# 'Long Diagonals'", "knackie"),
-    (28, "lec28.txt", "Secrets of the Flank Attack", "Shidinov"),
-    (29, "lec29.txt", "Mating Combinations", "Kabal"),
-    (30, "lec30.txt", "Basic Pawn Endings II", "DAV"),
-    (31, "lec31.txt", "Grandmaster Knezevic's first FICS lecture", "toddmf"),
+    ("lec1.txt", "2...Qh4+ against the King's Gambit", "toddmf"),
+    ("lec2.txt", "Tactics Training lesson 1# 'Back rank weakness'", "knackie"),
+    ("lec3.txt", "Denker's Favorite Game", "toddmf"),
+    ("lec4.txt", "Introduction to the 2.Nc3 Caro-Kann", "KayhiKing"),
+    ("lec5.txt", "Tactics Training lesson 2# 'Discovered Attack'", "knackie"),
+    ("lec6.txt", "King's Indian Attack vs. the French", "cissmjg"),
+    ("lec7.txt", "Rook vs Pawn endgames", "toddmf"),
+    ("lec8.txt", "The Stonewall Attack", "MBDil"),
+    ("lec9.txt", "Tactics Training lesson 3# 'Enclosed Kings'", "knackie"),
+    ("lec10.txt", "The Steinitz Variation of the French Defense", "Seipman"),
+    ("lec11.txt", "A draw against a Grandmaster", "talpa"),
+    ("lec12.txt", "Tactics Training lesson 4# 'King in the centre'", "knackie"),
+    ("lec13.txt", "The Modern Defense", "GMDavies"),
+    ("lec14.txt", "Tactics Training lesson 5# 'Pulling the king to the open'", "knackie"),
+    ("lec15.txt", "King's Indian Attack vs. the Caro-Kann", "cissmjg"),
+    ("lec16.txt", "Introduction to Bughouse", "Tecumseh"),
+    ("lec17.txt", "Refuting the Milner-Barry Gambit in the French Defense", "Kabal"),
+    ("lec18.txt", "Tactics Training lesson 6# 'Mating Attack'", "knackie"),
+    ("lec19.txt", "Closed Sicilian Survey, part 1", "Oren"),
+    ("lec20.txt", "Hypermodern Magic - A study of the central blockade", "Bahamut"),
+    ("lec21.txt", "Tactics Training lesson 7# 'Opening / Closing Files'", "knackie"),
+    ("lec22.txt", "Thoughts on the Refutation of the Milner-Barry", "knackie"),
+    ("lec23.txt", "Tactics Training lesson 8# 'Opening / Closing Diagonals'", "knackie"),
+    ("lec24.txt", "King's Indian Attack vs. Other Defenses", "cissmjg"),
+    ("lec25.txt", "Basic Pawn Endings I", "DAV"),
+    ("lec26.txt", "Giuoco Piano", "afw"),
+    ("lec27.txt", "Tactics Training lesson 9# 'Long Diagonals'", "knackie"),
+    ("lec28.txt", "Secrets of the Flank Attack", "Shidinov"),
+    ("lec29.txt", "Mating Combinations", "Kabal"),
+    ("lec30.txt", "Basic Pawn Endings II", "DAV"),
+    ("lec31.txt", "Grandmaster Knezevic's first FICS lecture", "toddmf"),
 )
-
 
 class Sidepanel():
     def load(self, persp):
@@ -62,23 +61,19 @@ class Sidepanel():
         self.tv = Gtk.TreeView()
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Id"), renderer, text=0)
+        column = Gtk.TreeViewColumn(_("Title"), renderer, text=1)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Title"), renderer, text=2)
-        self.tv.append_column(column)
-
-        renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Author"), renderer, text=3)
+        column = Gtk.TreeViewColumn(_("Author"), renderer, text=2)
         self.tv.append_column(column)
 
         self.tv.connect("row-activated", self.row_activated)
 
-        self.store = Gtk.ListStore(int, str, str, str)
+        self.store = Gtk.ListStore(str, str, str)
 
-        for num, file_name, title, author in LECTURES:
-            self.store.append([num, file_name, title, author])
+        for file_name, title, author in LECTURES:
+            self.store.append([file_name, title, author])
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -97,7 +92,7 @@ class Sidepanel():
         if path is None:
             return
         else:
-            filename = LECTURES[path[0]][1]
+            filename = LECTURES[path[0]][0]
             start_lecture_from(filename)
 
 

@@ -1,3 +1,4 @@
+import os
 import asyncio
 
 from gi.repository import Gtk
@@ -21,10 +22,12 @@ __icon__ = addDataPrefix("glade/panel_book.svg")
 __desc__ = _('Guided interactive lessons in "guess the move" style')
 
 
-LESSONS = (
-    (1, "Charles_XII_At_Bender.pgn", "Charles XII at Bender", "gbtami", 3),
-    (2, "Back_rank_threats.pgn", "Back rank threats", "gbtami", 1),
-)
+LESSONS = []
+for elem in sorted(os.listdir(path=addDataPrefix("learn/lessons/"))):
+    if elem.startswith("lichess_study") and elem.endswith(".pgn"):
+        LESSONS.append((elem, elem[14:elem.find("_by_")].replace("-", " ").capitalize(), "lichess.org"))
+    elif elem.endswith(".pgn"):
+        LESSONS.append((elem, elem.replace("-", " ").capitalize(), "pychess.org"))
 
 
 class Sidepanel():
@@ -35,40 +38,36 @@ class Sidepanel():
         self.tv = Gtk.TreeView()
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Id"), renderer, text=0)
+        column = Gtk.TreeViewColumn(_("Title"), renderer, text=1)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Title"), renderer, text=2)
-        self.tv.append_column(column)
-
-        renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Author"), renderer, text=3)
+        column = Gtk.TreeViewColumn(_("Author"), renderer, text=2)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererProgress()
-        column = Gtk.TreeViewColumn(_("Progress"), renderer, text=4, value=5)
+        column = Gtk.TreeViewColumn(_("Progress"), renderer, text=3, value=4)
         self.tv.append_column(column)
 
         self.tv.connect("row-activated", self.row_activated)
 
         def on_progress_updated(solving_progress, key, progress):
             for i, row in enumerate(self.store):
-                if row[1] == key:
+                if row[0] == key:
                     solved = progress.count(1)
                     percent = 0 if not solved else round((solved * 100.) / len(progress))
                     treeiter = self.store.get_iter(Gtk.TreePath(i))
-                    self.store[treeiter][4] = "%s / %s" % (solved, len(progress))
-                    self.store[treeiter][5] = percent
+                    self.store[treeiter][3] = "%s / %s" % (solved, len(progress))
+                    self.store[treeiter][4] = percent
         lessons_solving_progress.connect("progress_updated", on_progress_updated)
 
-        self.store = Gtk.ListStore(int, str, str, str, str, int)
+        self.store = Gtk.ListStore(str, str, str, str, int)
 
-        for num, file_name, title, author, count in LESSONS:
-            progress = lessons_solving_progress.get(file_name, [0] * count)
+        for file_name, title, author in LESSONS:
+            progress = lessons_solving_progress.get(file_name)
             solved = progress.count(1)
-            progress = 0 if not solved else round((solved * 100.) / len(progress))
-            self.store.append([num, file_name, title, author, "%s / %s" % (solved, count), progress])
+            percent = 0 if not solved else round((solved * 100.) / len(progress))
+            self.store.append([file_name, title, author, "%s / %s" % (solved, len(progress)), percent])
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -87,7 +86,7 @@ class Sidepanel():
         if path is None:
             return
         else:
-            filename = LESSONS[path[0]][1]
+            filename = LESSONS[path[0]][0]
             start_lesson_from(filename)
 
 
