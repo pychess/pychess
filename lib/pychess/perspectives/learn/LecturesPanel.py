@@ -53,6 +53,7 @@ LECTURES = (
     ("lec31.txt", "Grandmaster Knezevic's first FICS lecture", "toddmf"),
 )
 
+
 class Sidepanel():
     def load(self, persp):
         self.persp = persp
