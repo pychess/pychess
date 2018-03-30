@@ -1,0 +1,2669 @@
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1844
+algebraic: 
+  white: [Kc8, Rg7, Sd5, Sc3, Pd2]
+  black: [Kf5]
+stipulation: "#4"
+solution: |
+  "1.Kc8-d7 ! zugzwang.
+        1...Kf5-e5 
+            2.Rg7-g5 + 
+                2...Ke5-d4 
+                    3.Sd5-e3 threat:
+                            4.Rg5-d5 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Illustrated London News
+date: 1845
+algebraic: 
+  white: [Kd6, Bc8, Sd4, Pf3, Pf2, Pe2, Pb2, Pa2]
+  black: [Kb4, Pf4, Pb3, Pa5, Pa4]
+stipulation: "#4"
+solution: |
+  "1.a2-a3 + ! 
+        1...Kb4-c4 
+            2.Bc8-h3 zugzwang.
+                2...Kc4*d4 
+                    3.Bh3-f1 zugzwang.
+                        3...Kd4-c4 
+                            4.e2-e3 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: Chess Monthly
+date: 1880
+algebraic: 
+  white: [Kd2, Sc5, Sb5]
+  black: [Kb2, Pc4, Pb3, Pa2]
+stipulation: "#6"
+solution: |
+  "1.Sc5-a4 + ! 
+        1...Kb2-b1 
+            2.Sb5-a3 + 
+                2...Kb1-a1 
+                    3.Kd2-c3 zugzwang.
+                        3...b3-b2 
+                            4.Sa3-c2 + 
+                                4...Ka1-b1 
+                                    5.Kc3-d2 threat:
+                                            6.Sa4-c3 # 
+        1...Kb2-a1 
+            2.Sb5-a3 threat:
+                    3.Kd2-c3 zugzwang.
+                        3...b3-b2 
+                            4.Sa3-c2 + 
+                                4...Ka1-b1 
+                                    5.Kc3-d2 threat:
+                                            6.Sa4-c3 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: Шахматный листок
+date: 1860
+algebraic: 
+  white: [Kf3, Rd8, Bh4]
+  black: [Kh1, Bb6, Ph3]
+stipulation: "#4"
+solution: |
+  "1.Rd8-d1 + ! 
+        1...Kh1-h2 
+            2.Bh4-g3 # 
+        1...Bb6-g1 
+            2.Bh4-g3 zugzwang.
+                2...h3-h2 
+                    3.Bg3-e1 zugzwang.
+                        3...Bg1-a7 
+                            4.Be1-f2 # 
+                        3...Bg1-b6 
+                            4.Be1-f2 # 
+                        3...Bg1-c5 
+                            4.Be1-f2 # 
+                        3...Bg1-d4 
+                            4.Be1-f2 # 
+                        3...Bg1-e3 
+                            4.Be1-f2 # 
+                        3...Bg1-f2 
+                            4.Be1*f2 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1847-05-01
+algebraic: 
+  white: [Ke2, Qf6, Se7]
+  black: [Ke4]
+stipulation: "#4"
+solution: |
+  "1. Sc8 Kd5
+  2. Kd3 Kc5
+  3. Qb6+ Kd5
+  4. Qd6#"
+keywords: 
+  - No pawns
+comments: 
+  - Later an identical work was published by Николай Терентьевич Майстренко, & Владимир Георгиевич Швецов, Волгоградская правда, 1971.
+---
+authors: 
+  - Horwitz, Bernhard
+source: XIX Century
+algebraic: 
+  white: [Kf5, Bd4, Pg2]
+  black: [Kh4, Bg8, Pf7]
+stipulation: "#8"
+solution: 
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: The New Chess Player
+source-id: 1852
+date: 1887-04-03
+algebraic: 
+  white: [Kb6, Ra7, Pg6]
+  black: [Kh8, Sg8, Pg7]
+stipulation: "#10"
+solution: |
+  "1.Kb6-c6 Sg8-h6 2.Kc6-d6 Sh6-g8 3.Ra7-a1 Sg8-h6 4.Kd6-e6 Sh6-g8
+   5.Ra1-h1+ Sg8-h6 6.Rh1*h6+ g7*h6 7.Ke6-f7 h6-h5 8.g6-g7+ Kh8-h7
+   9.g7-g8=Q+ Kh7-h6 10.Qg8-g7# 1.Kb6-c5 {cook} 1.Kb6-c7 {cook}"
+keywords: 
+  - Cooked
+comments: 
+  - reprinted as 731 The Philadelphia Times, 1887-04-03
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: Chess Studies
+date: 1851
+algebraic: 
+  white: [Ka8, Qf7]
+  black: [Ka6, Rb4, Pd7, Pb6, Pa5]
+stipulation: "#9"
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: 
+algebraic: 
+  white: [Kb3, Sb4]
+  black: [Ka1, Bb2, Pc3, Pb5, Pa3]
+stipulation: "#6"
+solution: |
+  "1.Kb3-c2 ! zugzwang.
+        1...Bb2-c1 
+            2.Kc2*c1 threat:
+                    3.Kc1-c2 zugzwang.
+                        3...a3-a2 
+                            4.Kc2-c1 threat:
+                                    5.Sb4-c2 # 
+                2...c3-c2 
+                    3.Kc1*c2 threat:
+                            4.Kc2-c1 zugzwang.
+                                4...a3-a2 
+                                    5.Sb4-c2 # 
+                        3...a3-a2 
+                            4.Sb4-d3 threat:
+                                    5.Sd3-c1 threat:
+                                            6.Sc1-b3 # 
+                                    5.Sd3-c5 threat:
+                                            6.Sc5-b3 # 
+                            4.Sb4-c6 threat:
+                                    5.Sc6-a5 threat:
+                                            6.Sa5-b3 # 
+                                    5.Sc6-d4 threat:
+                                            6.Sd4-b3 # 
+                            4.Sb4-a6 threat:
+                                    5.Sa6-c5 threat:
+                                            6.Sc5-b3 # 
+        1...a3-a2 
+            2.Sb4-c6 threat:
+                    3.Sc6-a5 threat:
+                            4.Sa5-b3 # 
+                    3.Sc6-d4 threat:
+                            4.Sd4-b3 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Illustrated London News
+date: 1848
+algebraic: 
+  white: [Kd2, Rh5, Rh3]
+  black: [Kc4]
+stipulation: "#3"
+solution: |
+  "1.Rh3-h4 + ! 
+        1...Kc4-b3 
+            2.Rh5-a5 zugzwang.
+                2...Kb3-b2 
+                    3.Rh4-b4 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: 777 Chess Miniatures
+date: 1849
+algebraic: 
+  white: [Kh4, Qa6, Bf6, Be4]
+  black: [Kf4, Pf7, Pe7]
+stipulation: "#3"
+solution: |
+  "1.Qa6-d3 ! threat:
+            2.Qd3-f3 # 
+        1...e7*f6 
+            2.Qd3-d4 zugzwang.
+                2...f6-f5 
+                    3.Be4-h1 # 
+                    3.Be4-g2 # 
+                    3.Be4-a8 # 
+                    3.Be4-b7 # 
+                    3.Be4-c6 # 
+                    3.Be4-d5 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1848
+algebraic: 
+  white: [Kg8, Sf6, Pg4]
+  black: [Kg6, Pg7, Pg5]
+stipulation: "#3"
+solution: |
+  "1.Sf6-d7 ! zugzwang.
+        1...Kg6-h6 
+            2.Sd7-e5 zugzwang.
+                2...g7-g6 
+                    3.Se5-f7 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1850
+algebraic: 
+  white: [Kd8, Qh5, Sc3, Pf3, Pb3]
+  black: [Kd4]
+stipulation: "#3"
+solution: |
+  "1.Sc3-d1 ! zugzwang.
+        1...Kd4-d3 
+            2.Qh5-h2 zugzwang.
+                2...Kd3-d4 
+                    3.Qh2-d6 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: Chess Studies
+date: 1851
+algebraic: 
+  white: [Kg3, Sf1, Se3]
+  black: [Kh1, Pf2, Pe4]
+stipulation: "#6"
+solution: |
+  "1.Kg3-g4 ! zugzwang.
+        1...Kh1-g1 
+            2.Kg4-h3 zugzwang.
+                2...Kg1-h1 
+                    3.Sf1-g3 + 
+                        3...Kh1-g1 
+                            4.Sg3-e2 + 
+                                4...Kg1-h1 
+                                    5.Se3-f1 threat:
+                                            6.Sf1-g3 # 
+  
+    1.Kg3-h4 ! zugzwang.
+        1...Kh1-g1 
+            2.Kh4-h3 zugzwang.
+                2...Kg1-h1 
+                    3.Sf1-g3 + 
+                        3...Kh1-g1 
+                            4.Sg3-e2 + 
+                                4...Kg1-h1 
+                                    5.Se3-f1 threat:
+                                            6.Sf1-g3 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: Chess Studies
+date: 1851
+algebraic: 
+  white: [Kb3, Sg1, Sd3]
+  black: [Kb1, Pd4]
+stipulation: "#8"
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: Chess Studies
+date: 1851
+algebraic: 
+  white: [Ke2, Sg6, Sf5]
+  black: [Kg2, Ph3, Ph2]
+stipulation: "#9"
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: Chess Studies
+date: 1851
+algebraic: 
+  white: [Kf4, Be7, Bb7]
+  black: [Kh3, Ph4]
+stipulation: "#4"
+solution: |
+  "1.Be7-c5 ! zugzwang.
+        1...Kh3-h2 
+            2.Kf4-g4 zugzwang.
+                2...h4-h3 
+                    3.Kg4-f3 zugzwang.
+                        3...Kh2-h1 
+                            4.Kf3-g3 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: Chess Studies
+date: 1851
+algebraic: 
+  white: [Kc3, Sg3, Sd7]
+  black: [Ka5, Pa6]
+stipulation: "#18"
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: Chess Studies
+date: 1851
+algebraic: 
+  white: [Kg3, Sf1, Sd2]
+  black: [Kh1, Pf2]
+stipulation: "#8"
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1851
+algebraic: 
+  white: [Kc4, Qf6, Bg8]
+  black: [Ke4]
+stipulation: "#3"
+solution: |
+  "1.Bg8-e6 ! threat:
+            2.Be6-g4 threat:
+                    3.Qf6-d4 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player
+date: 1851
+algebraic: 
+  white: [Kc1, Bd1, Sc6, Sa6]
+  black: [Ka1]
+stipulation: "#5"
+solution: |
+  "1.Sa6-c5 ! threat:
+            2.Sc6-d4 zugzwang.
+                2...Ka1-a2 
+                    3.Bd1-b3 + 
+                        3...Ka2-a1 
+                            4.Sd4-c2 # 
+                        3...Ka2-a3 
+                            4.Sd4-c2 # 
+        1...Ka1-a2 
+            2.Sc5-b3 zugzwang.
+                2...Ka2-a3 
+                    3.Kc1-b1 zugzwang.
+                        3...Ka3-a4 
+                            4.Sb3-d4 + 
+                                4...Ka4-a3 
+                                    5.Sd4-b5 # 
+  
+    1.Sa6-c7 ! zugzwang.
+        1...Ka1-a2 
+            2.Sc7-b5 zugzwang.
+                2...Ka2-a1 
+                    3.Sc6-d4 zugzwang.
+                        3...Ka1-a2 
+                            4.Bd1-b3 + 
+                                4...Ka2-a1 
+                                    5.Sd4-c2 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The New Chess Player
+date: 1852
+algebraic: 
+  white: [Kd3, Qg6, Bc2, Sb1]
+  black: [Kb5, Bc5, Pa5]
+stipulation: "#3"
+solution: |
+  "1.Bc2-a4 + ! 
+        1...Kb5-b4 
+            2.Qg6-e4 + 
+                2...Bc5-d4 
+                    3.Qe4*d4 # 
+            2.Qg6-e8 threat:
+                    3.Qe8-b5 # 
+            2.Qg6-g4 + 
+                2...Bc5-d4 
+                    3.Qg4*d4 # 
+            2.Qg6-c6 threat:
+                    3.Qc6-b5 # 
+        1...Kb5*a4 
+            2.Kd3-c4 threat:
+                    3.Qg6-c2 # 
+                    3.Qg6-e8 # 
+                    3.Qg6-c6 # 
+                2...Bc5-d6 
+                    3.Qg6-c2 # 
+                    3.Qg6-e8 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The New Chess Player
+date: 1852
+algebraic: 
+  white: [Kf4, Rf6, Rf3, Bh6]
+  black: [Kh4, Rg2]
+stipulation: "#4"
+solution: |
+  "1.Bh6-g5 + ! 
+        1...Rg2*g5 
+            2.Rf6-h6 + 
+                2...Rg5-h5 
+                    3.Rf3-f2 threat:
+                            4.Rf2-h2 # 
+                        3...Kh4-h3 
+                            4.Rh6*h5 # 
+        1...Kh4-h5 
+            2.Rf6-h6 # 
+            2.Rf3-h3 # 
+  
+    1.Kf4-f5 ! threat:
+            2.Bh6-c1 threat:
+                    3.Rf6-h6 # 
+                2...Rg2-g6 
+                    3.Rf6*g6 threat:
+                            4.Rg6-h6 # 
+                    3.Kf5*g6 threat:
+                            4.Rf6-f4 # 
+                2...Rg2-g5 + 
+                    3.Bc1*g5 + 
+                        3...Kh4-h5 
+                            4.Rf3-h3 # 
+                            4.Rf6-h6 # 
+            2.Bh6-d2 threat:
+                    3.Rf6-h6 # 
+                2...Rg2-g6 
+                    3.Rf6*g6 threat:
+                            4.Rg6-h6 # 
+                    3.Kf5*g6 threat:
+                            4.Rf6-f4 # 
+                    3.Bd2-e1 + 
+                        3...Kh4-h5 
+                            4.Rf3-h3 # 
+                        3...Rg6-g3 
+                            4.Rf6-h6 # 
+                2...Rg2-g5 + 
+                    3.Bd2*g5 + 
+                        3...Kh4-h5 
+                            4.Rf6-h6 # 
+                            4.Rf3-h3 # 
+            2.Bh6-e3 threat:
+                    3.Rf6-h6 # 
+                2...Rg2-g6 
+                    3.Rf6*g6 threat:
+                            4.Rg6-h6 # 
+                    3.Kf5*g6 threat:
+                            4.Rf6-f4 # 
+                    3.Be3-f2 + 
+                        3...Kh4-h5 
+                            4.Rf3-h3 # 
+                        3...Rg6-g3 
+                            4.Rf6-h6 # 
+                2...Rg2-g5 + 
+                    3.Be3*g5 + 
+                        3...Kh4-h5 
+                            4.Rf6-h6 # 
+                            4.Rf3-h3 # 
+            2.Bh6-f4 threat:
+                    3.Rf6-h6 # 
+                2...Rg2-g6 
+                    3.Rf6*g6 threat:
+                            4.Rg6-h6 # 
+                2...Rg2-g5 + 
+                    3.Bf4*g5 + 
+                        3...Kh4-h5 
+                            4.Rf6-h6 # 
+                            4.Rf3-h3 # 
+        1...Rg2-g3 
+            2.Bh6-f4 threat:
+                    3.Rf6-h6 # 
+                2...Rg3-g6 
+                    3.Rf6*g6 threat:
+                            4.Rg6-h6 # 
+                2...Rg3-g5 + 
+                    3.Bf4*g5 + 
+                        3...Kh4-h5 
+                            4.Rf3-h3 # 
+                            4.Rf6-h6 # 
+                2...Kh4-h3 
+                    3.Rf3*g3 + 
+                        3...Kh3-h4 
+                            4.Rf6-h6 # 
+                        3...Kh3-h2 
+                            4.Rf6-h6 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: Über Land und Meer
+date: 1862
+algebraic: 
+  white: [Kf5, Bc5, Pg2]
+  black: [Kh4, Bg8, Pf7]
+stipulation: "#8"
+solution: "1.Bf2+ Kh5 2.g4+ Kh6 3.Kf6 Kh7 4.g5 Kh8 5.Bd4 Kh7 6.Ba1 Kh8 7.g6 fxg6 8.Kxg6#"
+---
+authors: 
+  - Horwitz, Bernhard
+source: "???? vor"
+date: 1880
+algebraic: 
+  white: [Kg8, Bg6, Sd3, Pg4]
+  black: [Kh6, Pg7, Pg5]
+stipulation: "#4"
+solution: |
+  "1.Sd3-c5 ! zugzwang.
+        1...Kh6*g6 
+            2.Sc5-d7 zugzwang.
+                2...Kg6-h6 
+                    3.Sd7-e5 zugzwang.
+                        3...g7-g6 
+                            4.Se5-f7 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: Chess Studies and Endgames
+date: 1889
+algebraic: 
+  white: [Ke2, Rf6, Bh8]
+  black: [Kh1, Ph3, Ph2]
+stipulation: "#9"
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: 
+algebraic: 
+  white: [Kb1, Qg6, Bb3, Pf4, Pc2, Pa4]
+  black: [Ke7, Qc7, Rh8, Ra7, Bd8, Pa5]
+stipulation: "#12"
+solution: 1.Dg6-f7 + !
+---
+authors: 
+  - Horwitz, Bernhard
+source: 
+algebraic: 
+  white: [Kb6, Se4, Sb3, Ph2, Pf3, Pe5, Pe3, Pc2]
+  black: [Ka4, Rh6, Rb8, Pg3, Pf6, Pc3, Pb7, Pa3]
+stipulation: "#7"
+solution: 1.Sb3-c5 + !
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1848
+algebraic: 
+  white: [Ke1, Bb8, Sg3, Se5, Pd3, Pa3]
+  black: [Kd4, Rb6, Bd5, Pa6]
+stipulation: "#5"
+solution: |
+  "1.Sg3-e2 + ! 
+        1...Kd4-c5 
+            2.d3-d4 + 
+                2...Kc5-b5 
+                    3.Se2-c3 + 
+                        3...Kb5-a5 
+                            4.Bb8-c7 zugzwang.
+                                4...Bd5-a2 
+                                    5.Se5-c6 # 
+                                4...Bd5-b3 
+                                    5.Se5-c6 # 
+                                4...Bd5-c4 
+                                    5.Se5-c6 # 
+                                    5.Se5*c4 # 
+                                4...Bd5-h1 
+                                    5.Se5-c4 # 
+                                4...Bd5-g2 
+                                    5.Se5-c4 # 
+                                4...Bd5-f3 
+                                    5.Se5-c4 # 
+                                4...Bd5-e4 
+                                    5.Se5-c4 # 
+                                4...Bd5-g8 
+                                    5.Se5-c6 # 
+                                4...Bd5-f7 
+                                    5.Se5-c6 # 
+                                4...Bd5-e6 
+                                    5.Se5-c6 # 
+                                4...Bd5-a8 
+                                    5.Se5-c4 # 
+                                4...Bd5-b7 
+                                    5.Se5-c4 # 
+                                4...Bd5-c6 
+                                    5.Se5-c4 # 
+                                    5.Se5*c6 # 
+        1...Kd4-e3 
+            2.Bb8-a7 threat:
+                    3.Ba7*b6 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1851
+algebraic: 
+  white: [Kd7, Bh3, Be3, Se6, Ph5, Ph2, Pe2, Pc2, Pa4]
+  black: [Kd5, Ph7, Ph6, Pe4]
+stipulation: "#5"
+solution: |
+  "1.Se6-f4 + ! 
+        1...Kd5-c4 
+            2.Sf4-d5 zugzwang.
+                2...Kc4*d5 
+                    3.Bh3-e6 + 
+                        3...Kd5-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+        1...Kd5-e5 
+            2.Sf4-d5 zugzwang.
+                2...Ke5*d5 
+                    3.Bh3-e6 + 
+                        3...Kd5-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+            2.Sf4-g2 zugzwang.
+                2...Ke5-d5 
+                    3.Bh3-e6 + 
+                        3...Kd5-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                2...Ke5-f6 
+                    3.Bh3-e6 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+            2.Bh3-e6 threat:
+                    3.Sf4-h3 zugzwang.
+                        3...Ke5-f6 
+                            4.Be3-d4 # 
+                    3.h2-h4 zugzwang.
+                        3...Ke5-f6 
+                            4.Be3-d4 # 
+                2...Ke5-f6 
+                    3.Sf4-h3 threat:
+                            4.Be3-d4 # 
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.a4-a5 zugzwang.
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.c2-c4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.c2-c3 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.a4-a5 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.c2-c4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.c2-c3 threat:
+                                    5.Be3-d4 # 
+                    3.Sf4-g2 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                    3.Be3-d4 + 
+                        3...Kf6-g5 
+                            4.e2-e3 zugzwang.
+                                4...Kg5-h4 
+                                    5.Bd4-f6 # 
+                    3.h2-h4 threat:
+                            4.Be3-d4 # 
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.Kd7-e8 threat:
+                                    5.Be3-d4 # 
+                            4.Sf4-g2 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.Sf4-h3 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.Sf4-d5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.Sf4-g2 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.Sf4-h3 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.a4-a5 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.c2-c4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.c2-c3 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+  
+    1.Se6-c7 + ! 
+        1...Kd5-c4 
+            2.Sc7-d5 zugzwang.
+                2...Kc4*d5 
+                    3.Bh3-e6 + 
+                        3...Kd5-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+        1...Kd5-e5 
+            2.Sc7-d5 zugzwang.
+                2...Ke5*d5 
+                    3.Bh3-e6 + 
+                        3...Kd5-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+            2.Sc7-a6 zugzwang.
+                2...Ke5-f6 
+                    3.Bh3-e6 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                2...Ke5-d5 
+                    3.Bh3-e6 + 
+                        3...Kd5-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+            2.Sc7-b5 zugzwang.
+                2...Ke5-f6 
+                    3.Bh3-e6 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                2...Ke5-d5 
+                    3.Bh3-e6 + 
+                        3...Kd5-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+            2.Sc7-a8 zugzwang.
+                2...Ke5-d5 
+                    3.Bh3-e6 + 
+                        3...Kd5-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                2...Ke5-f6 
+                    3.Bh3-e6 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+            2.a4-a5 zugzwang.
+                2...Ke5-f6 
+                    3.Bh3-e6 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.Kd7-d6 zugzwang.
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-d5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-e8 + 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                    5.Be3-c5 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+            2.Bh3-e6 threat:
+                    3.h2-h4 zugzwang.
+                        3...Ke5-f6 
+                            4.Be3-d4 # 
+                2...Ke5-f6 
+                    3.h2-h4 threat:
+                            4.Be3-d4 # 
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.Kd7-d8 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.Kd7-d6 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                                    5.Sc7-e8 # 
+                            4.Kd7-e8 threat:
+                                    5.Be3-d4 # 
+                            4.Sc7-a6 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.Sc7-b5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.Sc7-d5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-e8 + 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                    5.Be3-c5 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-a8 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.a4-a5 zugzwang.
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.c2-c4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.c2-c3 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.Sc7-a6 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.Sc7-b5 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.Sc7-a8 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.a4-a5 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.c2-c4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                            4.c2-c3 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                    3.Kd7-d6 threat:
+                            4.Sc7-e8 # 
+                        3...Kf6-g7 
+                            4.Kd6-e7 threat:
+                                    5.Be3-d4 # 
+                            4.a4-a5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                                    5.Sc7-e8 # 
+                            4.h2-h3 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                            4.c2-c4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                            4.c2-c3 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                    3.Sc7-a6 zugzwang.
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-g7 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                    3.Sc7-b5 zugzwang.
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-g7 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                    3.Sc7-a8 zugzwang.
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-g7 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                    3.a4-a5 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.Kd7-d6 zugzwang.
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-d5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-e8 + 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                    5.Be3-c5 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                    3.Be3-f4 threat:
+                            4.Sc7-e8 # 
+                        3...Kf6-g7 
+                            4.Sc7-e8 + 
+                                4...Kg7-f8 
+                                    5.Bf4*h6 # 
+                                    5.Bf4-d6 # 
+                                4...Kg7-h8 
+                                    5.Bf4-e5 # 
+                            4.Kd7-e7 threat:
+                                    5.Bf4-e5 # 
+                            4.e2-e3 zugzwang.
+                                4...Kg7-f8 
+                                    5.Bf4*h6 # 
+                                4...Kg7-h8 
+                                    5.Bf4-e5 # 
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                    3.h2-h3 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.Kd7-d6 zugzwang.
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-d5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-e8 + 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                    5.Be3-c5 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.h3-h4 zugzwang.
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h3-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                    3.c2-c4 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.Kd7-d6 zugzwang.
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-d5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-e8 + 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                    5.Be3-c5 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+                    3.c2-c3 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.Kd7-d6 zugzwang.
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-d5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-e8 + 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                    5.Be3-c5 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+            2.Bh3-g4 zugzwang.
+                2...Ke5-f6 
+                    3.Bg4-e6 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.Kd7-d6 zugzwang.
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-d5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-e8 + 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                    5.Be3-c5 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+            2.c2-c4 zugzwang.
+                2...Ke5-f6 
+                    3.Bh3-e6 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.Kd7-d6 zugzwang.
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-d5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-e8 + 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                    5.Be3-c5 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 # 
+            2.c2-c3 threat:
+                    3.Be3-d4 + 
+                        3...Ke5-f4 
+                            4.Sc7-e6 # 
+                2...Ke5-f6 
+                    3.Bh3-e6 zugzwang.
+                        3...Kf6-g7 
+                            4.Kd7-e7 threat:
+                                    5.Be3-d4 # 
+                            4.Kd7-d6 zugzwang.
+                                4...Kg7-f6 
+                                    5.Sc7-e8 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-d5 zugzwang.
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.Sc7-e8 + 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                    5.Be3-c5 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                            4.h2-h4 zugzwang.
+                                4...Kg7-f6 
+                                    5.Be3-d4 # 
+                                4...Kg7-f8 
+                                    5.Be3*h6 # 
+                                4...Kg7-h8 
+                                    5.Be3-d4 # 
+                        3...Kf6-e5 
+                            4.h2-h4 zugzwang.
+                                4...Ke5-f6 
+                                    5.Be3-d4 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1846
+algebraic: 
+  white: [Kg1, Re2, Bd6, Se3, Sc5]
+  black: [Kc3]
+stipulation: "#3"
+solution: |
+  "1.Kg1-f2 ! zugzwang.
+        1...Kc3-d4 
+            2.Re2-b2 zugzwang.
+                2...Kd4-c3 
+                    3.Bd6-e5 # 
+        1...Kc3-b4 
+            2.Re2-b2 + 
+                2...Kb4-a5 
+                    3.Bd6-c7 # 
+                    3.Se3-c4 # 
+                2...Kb4-c3 
+                    3.Bd6-e5 # 
+                2...Kb4-a3 
+                    3.Se3-c4 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1847
+algebraic: 
+  white: [Kg2, Rf6, Bf5, Se7, Se6, Pg5, Pf3, Pe2, Pd2]
+  black: [Kd6, Rc4, Bh7, Se8, Sd4, Pf4, Pe5, Pc7, Pc5, Pb6]
+stipulation: "#5"
+solution: |
+  "1.Se6*d4 + ! 
+        1...Kd6*e7 
+            2.Sd4-c6 # 
+        1...Se8*f6 
+            2.Se7-c8 + 
+                2...Kd6-d5 
+                    3.Bf5-e6 + 
+                        3...Kd5*d4 
+                            4.Sc8-a7 threat:
+                                    5.Sa7-b5 # 
+                                    5.Sa7-c6 # 
+                                4...Rc4-b4 
+                                    5.Sa7-c6 # 
+                                4...e5-e4 
+                                    5.Sa7-c6 # 
+                                4...c7-c6 
+                                    5.Sa7*c6 # 
+                                4...Bh7-e4 
+                                    5.Sa7-b5 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1847
+algebraic: 
+  white: [Kd7, Rh5, Sf5, Se2, Pc2, Pb3, Pb2]
+  black: [Kc5, Qh8, Bc4, Pb6, Pb5, Pa6]
+stipulation: "#5"
+solution: |
+  "1.Sf5-e7 + ! 
+        1...Qh8*h5 
+            2.b3-b4 + 
+                2...Kc5*b4 
+                    3.Se7-c6 + 
+                        3...Kb4-c5 
+                            4.b2-b4 + 
+                                4...Kc5-d5 
+                                    5.Se2-c3 # 
+                        3...Kb4-a4 
+                            4.Se2-c3 # 
+        1...Bc4-d5 
+            2.Rh5*d5 + 
+                2...Kc5-b4 
+                    3.Se7-c6 # 
+        1...Kc5-b4 
+            2.Se7-c6 # 
+        1...Qh8-e5 
+            2.Rh5*e5 + 
+                2...Bc4-d5 
+                    3.Re5*d5 + 
+                        3...Kc5-b4 
+                            4.Se7-c6 # 
+                    3.c2-c3 threat:
+                            4.Re5*d5 # 
+                2...Kc5-b4 
+                    3.Se7-c6 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1848
+algebraic: 
+  white: [Kd8, Bd7, Se6, Pf4, Pf3, Pe5, Pb2]
+  black: [Kd5, Pf5, Pb5]
+stipulation: "#3"
+solution: |
+  "1.Bd7*b5 ! threat:
+            2.Kd8-e8 zugzwang.
+                2...Kd5*e6 
+                    3.Bb5-c4 # 
+            2.b2-b4 zugzwang.
+                2...Kd5*e6 
+                    3.Bb5-c4 # 
+            2.b2-b3 zugzwang.
+                2...Kd5*e6 
+                    3.Bb5-c4 # 
+  
+    1.b2-b3 ! threat:
+            2.Bd7*b5 zugzwang.
+                2...Kd5*e6 
+                    3.Bb5-c4 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1855
+algebraic: 
+  white: [Kb4, Bd1, Bc1, Sh7, Pg2, Pf4, Pc6, Pc3, Pb5]
+  black: [Kd3, Pg6, Pf7]
+stipulation: "#4"
+solution: |
+  "1.Sh7-f6 ! threat:
+            2.c6-c7 threat:
+                    3.c7-c8=Q threat:
+                            4.Qc8-h3 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c4 # 
+                            4.Qc8-d8 # 
+                    3.c7-c8=R threat:
+                            4.Rc8-d8 # 
+                    3.c7-c8=B zugzwang.
+                        3...g6-g5 
+                            4.Bc8-f5 # 
+  
+    1.c6-c7 ! threat:
+            2.Sh7-f6 threat:
+                    3.c7-c8=Q threat:
+                            4.Qc8-h3 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c4 # 
+                            4.Qc8-d8 # 
+                    3.c7-c8=R threat:
+                            4.Rc8-d8 # 
+                    3.c7-c8=B zugzwang.
+                        3...g6-g5 
+                            4.Bc8-f5 # 
+            2.c7-c8=Q threat:
+                    3.Qc8-c4 # 
+                2...Kd3-e4 
+                    3.Qc8-c4 + 
+                        3...Ke4-f5 
+                            4.Qc4-d5 # 
+                            4.g2-g4 # 
+                    3.Qc8-b7 + 
+                        3...Ke4-f5 
+                            4.Qb7-d5 # 
+                        3...Ke4-d3 
+                            4.Qb7-d5 # 
+                            4.Qb7-f3 # 
+                    3.Qc8-d7 threat:
+                            4.Sh7-f6 # 
+                            4.Sh7-g5 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                        3...f7-f6 
+                            4.Sh7*f6 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                    3.Qc8-c5 threat:
+                            4.Bd1-c2 # 
+                        3...Ke4-d3 
+                            4.Qc5-e3 # 
+                            4.Qc5-d4 # 
+                            4.Qc5-c4 # 
+                            4.Qc5-d5 # 
+                    3.Qc8-c6 + 
+                        3...Ke4-f5 
+                            4.Qc6-d5 # 
+                            4.g2-g4 # 
+                        3...Ke4-d3 
+                            4.Qc6-f3 # 
+                            4.Qc6-d5 # 
+                            4.Qc6-c4 # 
+                    3.Qc8-a8 + 
+                        3...Ke4-f5 
+                            4.Qa8-d5 # 
+                        3...Ke4-d3 
+                            4.Qa8-d5 # 
+                            4.Qa8-f3 # 
+                    3.Qc8-e8 + 
+                        3...Ke4-d5 
+                            4.Qe8-c6 # 
+                            4.Qe8-e5 # 
+                        3...Ke4-f5 
+                            4.Qe8-e5 # 
+                            4.g2-g4 # 
+                        3...Ke4-d3 
+                            4.Qe8-e2 # 
+                            4.Qe8-e3 # 
+                    3.Qc8-d8 threat:
+                            4.Bd1-c2 # 
+                        3...Ke4-f5 
+                            4.Qd8-d5 # 
+                    3.Sh7-f6 + 
+                        3...Ke4-d3 
+                            4.Qc8-h3 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c4 # 
+                            4.Qc8-d8 # 
+                    3.Sh7-g5 + 
+                        3...Ke4-d5 
+                            4.Qc8-d8 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c5 # 
+                            4.Qc8-c6 # 
+                        3...Ke4-d3 
+                            4.Qc8-h3 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c4 # 
+                            4.Qc8-d8 # 
+                    3.Kb4-c4 threat:
+                            4.Sh7-f6 # 
+                            4.Sh7-g5 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                        3...f7-f6 
+                            4.Qc8-e6 # 
+                            4.Sh7*f6 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                    3.g2-g4 threat:
+                            4.Qc8-c4 # 
+                        3...Ke4-d5 
+                            4.Qc8-c6 # 
+                    3.Bd1-e2 threat:
+                            4.Sh7-f6 # 
+                        3...Ke4-d5 
+                            4.Qc8-c6 # 
+                    3.Bd1-c2 + 
+                        3...Ke4-d5 
+                            4.Qc8-d7 # 
+                            4.Qc8-c6 # 
+            2.c7-c8=B threat:
+                    3.Sh7-f6 zugzwang.
+                        3...g6-g5 
+                            4.Bc8-f5 # 
+                2...Kd3-e4 
+                    3.Kb4-c4 threat:
+                            4.Sh7-f6 # 
+                            4.Sh7-g5 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                        3...f7-f6 
+                            4.Sh7*f6 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+            2.g2-g4 threat:
+                    3.c7-c8=Q threat:
+                            4.Qc8-c4 # 
+        1...Kd3-e4 
+            2.c7-c8=Q threat:
+                    3.Qc8-b7 + 
+                        3...Ke4-f5 
+                            4.Qb7-d5 # 
+                        3...Ke4-d3 
+                            4.Qb7-d5 # 
+                            4.Qb7-f3 # 
+                    3.Qc8-d7 threat:
+                            4.Sh7-f6 # 
+                            4.Sh7-g5 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                        3...f7-f6 
+                            4.Sh7*f6 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                    3.Qc8-c4 + 
+                        3...Ke4-f5 
+                            4.Qc4-d5 # 
+                            4.g2-g4 # 
+                    3.Qc8-c5 threat:
+                            4.Bd1-c2 # 
+                        3...Ke4-d3 
+                            4.Qc5-e3 # 
+                            4.Qc5-d4 # 
+                            4.Qc5-c4 # 
+                            4.Qc5-d5 # 
+                    3.Qc8-c6 + 
+                        3...Ke4-f5 
+                            4.Qc6-d5 # 
+                            4.g2-g4 # 
+                        3...Ke4-d3 
+                            4.Qc6-f3 # 
+                            4.Qc6-d5 # 
+                            4.Qc6-c4 # 
+                    3.Qc8-a8 + 
+                        3...Ke4-f5 
+                            4.Qa8-d5 # 
+                        3...Ke4-d3 
+                            4.Qa8-d5 # 
+                            4.Qa8-f3 # 
+                    3.Qc8-e8 + 
+                        3...Ke4-d5 
+                            4.Qe8-c6 # 
+                            4.Qe8-e5 # 
+                        3...Ke4-f5 
+                            4.Qe8-e5 # 
+                            4.g2-g4 # 
+                        3...Ke4-d3 
+                            4.Qe8-e2 # 
+                            4.Qe8-e3 # 
+                    3.Qc8-d8 threat:
+                            4.Bd1-c2 # 
+                        3...Ke4-f5 
+                            4.Qd8-d5 # 
+                    3.Sh7-f6 + 
+                        3...Ke4-d3 
+                            4.Qc8-h3 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c4 # 
+                            4.Qc8-d8 # 
+                    3.Sh7-g5 + 
+                        3...Ke4-d5 
+                            4.Qc8-d8 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c5 # 
+                            4.Qc8-c6 # 
+                        3...Ke4-d3 
+                            4.Qc8-h3 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c4 # 
+                            4.Qc8-d8 # 
+                    3.Kb4-c4 threat:
+                            4.Sh7-f6 # 
+                            4.Sh7-g5 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                        3...f7-f6 
+                            4.Qc8-e6 # 
+                            4.Sh7*f6 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                    3.g2-g4 threat:
+                            4.Qc8-c4 # 
+                        3...Ke4-d5 
+                            4.Qc8-c6 # 
+                    3.Bd1-e2 threat:
+                            4.Sh7-f6 # 
+                        3...Ke4-d5 
+                            4.Qc8-c6 # 
+                    3.Bd1-c2 + 
+                        3...Ke4-d5 
+                            4.Qc8-c6 # 
+                            4.Qc8-d7 # 
+                2...g6-g5 
+                    3.Qc8-c5 threat:
+                            4.Bd1-c2 # 
+                        3...Ke4-d3 
+                            4.Qc5-e3 # 
+                            4.Qc5-d4 # 
+                            4.Qc5-c4 # 
+                            4.Qc5-f5 # 
+                            4.Qc5-d5 # 
+                    3.Qc8-c6 + 
+                        3...Ke4-f5 
+                            4.g2-g4 # 
+                        3...Ke4-d3 
+                            4.Qc6-f3 # 
+                            4.Qc6-d5 # 
+                            4.Qc6-c4 # 
+                    3.Sh7-f6 + 
+                        3...Ke4-d3 
+                            4.Qc8-h3 # 
+                            4.Qc8-f5 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c4 # 
+                            4.Qc8-d8 # 
+                    3.Sh7*g5 + 
+                        3...Ke4-d5 
+                            4.Qc8-d8 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c5 # 
+                            4.Qc8-c6 # 
+                        3...Ke4-d3 
+                            4.Qc8-h3 # 
+                            4.Qc8-f5 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c4 # 
+                            4.Qc8-d8 # 
+                    3.g2-g4 threat:
+                            4.Qc8-f5 # 
+                            4.Qc8-c4 # 
+                        3...Ke4-d5 
+                            4.Qc8-c6 # 
+                        3...g5*f4 
+                            4.Qc8-f5 # 
+                    3.Bd1-g4 threat:
+                            4.Qc8-f5 # 
+                            4.Qc8-c4 # 
+                        3...Ke4-d5 
+                            4.Qc8-c6 # 
+                        3...Ke4-d3 
+                            4.Qc8-f5 # 
+                        3...g5*f4 
+                            4.Qc8-f5 # 
+                    3.Bd1-f3 + 
+                        3...Ke4-d3 
+                            4.Qc8-f5 # 
+                    3.Bd1-c2 + 
+                        3...Ke4-d5 
+                            4.Qc8-d7 # 
+                            4.Qc8-c6 # 
+                2...f7-f6 
+                    3.Qc8-b7 + 
+                        3...Ke4-f5 
+                            4.Qb7-d5 # 
+                        3...Ke4-d3 
+                            4.Qb7-d5 # 
+                            4.Qb7-f3 # 
+                    3.Qc8-e6 + 
+                        3...Ke4-d3 
+                            4.Qe6-c4 # 
+                            4.Qe6-d5 # 
+                            4.Qe6-e2 # 
+                            4.Qe6-e3 # 
+                    3.Qc8-d7 threat:
+                            4.Sh7*f6 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                    3.Qc8-c4 + 
+                        3...Ke4-f5 
+                            4.Qc4-d5 # 
+                            4.g2-g4 # 
+                    3.Qc8-c5 threat:
+                            4.Bd1-c2 # 
+                        3...Ke4-d3 
+                            4.Qc5-e3 # 
+                            4.Qc5-d4 # 
+                            4.Qc5-c4 # 
+                            4.Qc5-d5 # 
+                    3.Qc8-c6 + 
+                        3...Ke4-f5 
+                            4.Qc6-d5 # 
+                            4.g2-g4 # 
+                        3...Ke4-d3 
+                            4.Qc6-f3 # 
+                            4.Qc6-d5 # 
+                            4.Qc6-c4 # 
+                    3.Qc8-a8 + 
+                        3...Ke4-f5 
+                            4.Qa8-d5 # 
+                        3...Ke4-d3 
+                            4.Qa8-d5 # 
+                            4.Qa8-f3 # 
+                    3.Qc8-g8 threat:
+                            4.Bd1-c2 # 
+                        3...Ke4-f5 
+                            4.Qg8-d5 # 
+                        3...Ke4-d3 
+                            4.Qg8-c4 # 
+                            4.Qg8-d5 # 
+                    3.Qc8-e8 + 
+                        3...Ke4-d5 
+                            4.Qe8-c6 # 
+                        3...Ke4-f5 
+                            4.g2-g4 # 
+                        3...Ke4-d3 
+                            4.Qe8-e2 # 
+                            4.Qe8-e3 # 
+                    3.Qc8-d8 threat:
+                            4.Bd1-c2 # 
+                        3...Ke4-f5 
+                            4.Qd8-d5 # 
+                    3.Sh7*f6 + 
+                        3...Ke4-d3 
+                            4.Qc8-h3 # 
+                            4.Qc8-d7 # 
+                            4.Qc8-c4 # 
+                            4.Qc8-d8 # 
+                    3.Kb4-c4 threat:
+                            4.Qc8-e6 # 
+                            4.Sh7*f6 # 
+                            4.Bd1-f3 # 
+                            4.Bd1-c2 # 
+                    3.g2-g4 threat:
+                            4.Qc8-c4 # 
+                        3...Ke4-d5 
+                            4.Qc8-c6 # 
+                    3.Bd1-e2 threat:
+                            4.Qc8-e6 # 
+                            4.Sh7*f6 # 
+                        3...Ke4-d5 
+                            4.Qc8-c6 # 
+                    3.Bd1-c2 + 
+                        3...Ke4-d5 
+                            4.Qc8-d7 # 
+                            4.Qc8-c6 # 
+            2.Kb4-c4 threat:
+                    3.Bd1-c2 # 
+                2...Ke4-f5 
+                    3.c7-c8=Q + 
+                        3...Kf5-e4 
+                            4.Bd1-c2 # 
+                            4.Sh7-f6 # 
+                            4.Sh7-g5 # 
+                            4.Bd1-f3 # 
+                    3.c7-c8=B + 
+                        3...Kf5-e4 
+                            4.Bd1-f3 # 
+                            4.Sh7-f6 # 
+                            4.Sh7-g5 # 
+                            4.Bd1-c2 #"
+---
+authors: 
+  - Horwitz, Bernhard
+source: 
+algebraic: 
+  white: [Kb3, Bh1, Sb2, Pc2]
+  black: [Kd4, Be3, Ph2, Pg3, Pf4, Pe5, Pd6, Pc7, Pa7, Pa5]
+stipulation: "#23"
+solution: |
+  "1.c3+,Kc5
+  2.Sa4+,Kb5
+  3.c4+,Ka6
+  4.Kc2,Bd4
+  5.Kd3,Bf2
+  6.Ke2,Bg1
+  7.Kf1,Bc5
+  8.Bd5!,h1Q+
+  9.Bxh1,g2+
+  10.Bxg2,Be3
+  11.Bf3,Bd4
+  12.Kg2,Be3
+  13.Kh3,Bb6
+  14.Kg4,Bc5
+  15.Kf5,e4
+  16.Bxe4,f3
+  17.Bxf3,Bd4
+  18.Ke6,d5
+  19.Bxd5,Bb6
+  20.Kd7,c6
+  21.Bxc6,Lg1
+  22.Kc8,Bb6
+  23.Bb7#
+  "
+---
+authors: 
+  - Horwitz, Bernhard
+source: L'Illustration
+date: 1854
+algebraic: 
+  white: [Kg6, Be4, Sf5, Se3, Pf3, Pe2, Pc4]
+  black: [Kf4, Sd7, Pc5, Pb4]
+stipulation: "#4"
+solution: |
+  "1.Se3-d5 + ! 
+        1...Kf4-e5 
+            2.f3-f4 + 
+                2...Ke5-e6 
+                    3.Sd5-c7 # 
+                2...Ke5*e4 
+                    3.Kg6-g5 zugzwang.
+                        3...b4-b3 
+                            4.Sd5-c3 # 
+                        3...Sd7-b6 
+                            4.Sd5-f6 # 
+                        3...Sd7-e5 
+                            4.Sd5-f6 # 
+                        3...Sd7-f6 
+                            4.Sd5*f6 # 
+                        3...Sd7-f8 
+                            4.Sd5-f6 # 
+                        3...Sd7-b8 
+                            4.Sd5-f6 #"
+keywords: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Player's Chronicle
+date: 1845
+algebraic: 
+  white: [Kg5, Re2, Bc1, Ba2, Sh2, Sd5, Ph5, Ph4, Pg6, Pf7, Pd6, Pd3, Pc5, Pb6]
+  black: [Ke6, Bc8, Sg4, Pg7, Pf5, Pe3, Pd7, Pd4, Pb7]
+stipulation: "s#8"
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, 1. Teil
+  
+source-id: 1
+algebraic: 
+  white: [Kc2, Se5, Sc3, Pe4, Pb2, Pa4, Pa2]
+  black: [Kc5, Qa5, Bd5, Pa6]
+stipulation: +
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, 1. Teil
+  
+source-id: 2
+algebraic: 
+  white: [Kd5, Qd7, Bc4]
+  black: [Ka8, Qb8]
+stipulation: +
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, 1. Teil
+  
+source-id: 3
+algebraic: 
+  white: [Ke5, Rd3, Bh5, Pd2, Pc2]
+  black: [Kc4, Qb5, Pd5, Pc6, Pb6, Pb4]
+stipulation: +
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, 1. Teil
+  
+source-id: 4
+algebraic: 
+  white: [Kd1, Bg6, Ba1, Se8, Sc8, Ph3, Pg3, Pf2, Pe2, Pd3, Pd2, Pa2]
+  black: [Kc6, Qc5, Bd4, Sd7, Sb7, Pe4, Pc4, Pb6]
+stipulation: +
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, 1. Teil
+  
+source-id: 5
+algebraic: 
+  white: [Kb1, Qe5, Rb5, Bc5, Sb2, Pf2, Pc2, Pa2]
+  black: [Kg6, Qg8, Rf8, Ra8, Bg5, Sh6, Ph7, Pg4, Pf7, Pf3, Pa6]
+stipulation: +
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: Chess Player's Chronicle
+source-id: 121
+date: 1850
+algebraic: 
+  white: [Ke2, Ra1, Sd8, Pf2, Pd2]
+  black: [Kd4, Qd5, Pc7]
+stipulation: +
+solution: |
+  1.Ra1-a4+ Kd4-e5 ! 2.Ra4-a5 ! c7-c5 3.Ra5*c5 ! Qd5*c5 4.d2-d4+
+   ! Qc5*d4 5.Sd8-c6+ Ke5-e4 6.Sc6*d4 Ke4*d4 7.Ke2-f3 ! 4...Ke5*d4
+   5.Sd8-e6+ Kd4-d5 6.Se6*c5 2...Qd5*a5 3.Sd8-c6+ Ke5-d6
+   4.Sc6*a5 1...Kd4-c5 2.Ra4-a5+
+  
+comments: 
+  - also, with Josef Kling, in The Philadelphia Times (no. 1054), 26 October 1890
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, 1. Teil
+  
+source-id: 8
+algebraic: 
+  white: [Kb8, Qf8]
+  black: [Ka1, Pf2, Pb2]
+stipulation: +
+solution: 1.Qa3+! Kb1 2.Qd3+ ...  2.Qa6 ...
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, 1. Teil
+  
+source-id: 9
+algebraic: 
+  white: [Kd3, Bd8, Pe7]
+  black: [Kb1, Pa2]
+stipulation: +
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, 1. Teil
+  
+source-id: 10
+algebraic: 
+  white: [Kg8, Rh8, Se7, Ph7]
+  black: [Kf6, Ba3]
+stipulation: +
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, 1. Teil
+  
+source-id: 15
+algebraic: 
+  white: [Ka1, Rh4]
+  black: [Ka3, Rc3, Pb4, Pa2]
+stipulation: "="
+solution: 
+keywords: 
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, 1. Teil
+  
+source-id: 17
+algebraic: 
+  white: [Kc7, Bd1, Ba5, Sd7]
+  black: [Ka8, Qe7, Sh7, Sg8]
+stipulation: "="
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 2
+date: 1882
+algebraic: 
+  white: [Kf8, Rd6, Bc5, Sh1, Ph3, Ph2, Pg4, Pf3, Pe2]
+  black: [Kh8, Ph4, Pg5, Pe3]
+stipulation: "#10"
+solution: |
+  Weiß setzt in 10 Zügen mit dem Springer Matt, ohne ;einen Bauer zu ziehn oder zu schlagen.
+  
+  Td6-g6
+  
+keywords: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 3
+date: 1882
+algebraic: 
+  white: [Ke3, Qf7, Bg6, Sg8, Sd8, Pg2]
+  black: [Kg4, Rg5, Bh4, Pg7, Pg3, Pe5]
+stipulation: +
+solution: |
+  Weiß soll mit dem Springer d8 mattsetzen, ohne ;einen feindlichen Stein zu schlagen.
+  
+  Sg8-h6+
+  
+keywords: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 6
+date: 1882
+algebraic: 
+  white: [Kh6, Rf4, Bb7, Pg3, Pd6]
+  black: [Kh8, Qd8, Pg6, Pd7]
+stipulation: +
+solution: Tf4-f7
+keywords: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 7
+date: 1882
+algebraic: 
+  white: [Kg2, Rc1, Pg6]
+  black: [Kh4, Ra3, Pf4]
+stipulation: +
+solution: Tc1-g1
+keywords: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 8
+date: 1882
+algebraic: 
+  white: [Kb3, Rh2, Sd4]
+  black: [Ka1, Qc1, Bh6, Pg7]
+stipulation: +
+solution: Th2-a2+
+keywords: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Monthly
+source-id: 22
+date: 1880-01
+algebraic: 
+  white: [Kg5, Bc4, Pf6]
+  black: [Kh7, Bg6]
+stipulation: +
+solution: |
+  "1.Kg5-f4 ? Kh7-h6 2.Kf4-e5 Kh6-g5 3.Ke5-e6 Kg5-f4 4.Ke6-e7 Kf4-e5 
+  1.Bc4-g8+ ! Kh7-h8 ! 2.Bg8-e6 ! Bg6-e8 !
+   3.Kg5-f5 Kh8-h7 4.Be6-d5 ! Be8-h5 5.Kf5-e6 Kh7-g6 6.Ke6-e7 Kg6-f5
+   7.Bd5-f7 Bh5-d1 8.Bf7-e6+ 4...Kh7-h6 5.Kf5-e6 Kh6-g6
+   6.Ke6-e7 Kg6-g5 7.Bd5-e6 ! Be8-h5 8.Be6-f7 Bh5-d1 9.Bf7-e8 Bd1-b3
+   10.Be8-d7 Kg5-f4 11.Bd7-e6 7...Kg5-g6 8.Be6-d7 ! Be8-f7 9.Bd7-f5+
+   Kg6*f5 10.Ke7*f7 4...Be8-d7+ 5.Kf5-e5 Kh7-g6 6.f6-f7 Kg6-g7 7.Ke5-d6
+   Bd7-f5 8.Kd6-e7 2...Kh8-h7 3.Be6-f5 2...Bg6-d3 3.Kg5-f4 Bd3-b5
+   4.Kf4-e5 Bb5-e8 5.Ke5-d6 Kh8-h7 6.Kd6-e7 Kh7-g6 7.Be6-d7 Be8-f7
+   8.Bd7-f5+ 1...Kh7*g8 2.Kg5*g6
+  1.Bc4-e6 ! {cook} Bg6-e8 2.Be6-d5 {or Bc4,Bc3,Ba2}
+   2.Kg5-f5? Kh7-h6 3.Be6-d5 Be8-h5 4.Kf5-e6 Kh6-g5 5.Ke6-e7 Kg5-f4
+   6.Bd5-f7 Bh5-d1 7.Bf7-e8 Bd1-b3 8.Be8-d7 Kf4-e5"
+keywords: 
+  - Cooked
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 10
+date: 1882
+algebraic: 
+  white: [Kd2, Rc7, Sd1]
+  black: [Ka2, Qa1]
+stipulation: +
+solution: Tc7-a7+
+keywords: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 11
+date: 1882
+algebraic: 
+  white: [Ke6, Rb3, Se1, Sd4, Pe2, Pb5, Pa4, Pa2]
+  black: [Kd1, Rh2, Bh4, Sf1, Pg7, Pg2, Pf4, Pe3, Pb6, Pb4]
+stipulation: +
+solution: Tb3-b1+
+keywords: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 12
+date: 1882
+algebraic: 
+  white: [Kg4, Rd1, Ba7, Sg5, Pc4, Pb3]
+  black: [Ka8, Qa5, Pc6, Pc5, Pb7, Pb4]
+stipulation: +
+solution: La7-b6
+keywords: 
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 13
+date: 1882
+algebraic: 
+  white: [Kb6, Se5, Se4, Pe2]
+  black: [Ke6, Qf8, Pe7]
+stipulation: "="
+solution: Se4-c5+
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 14
+date: 1882
+algebraic: 
+  white: [Kg2, Rc4, Bd1, Pe5, Pa4]
+  black: [Kd7, Qf7, Pe7, Pa5]
+stipulation: +
+solution: e5-e6+
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben (2. Teil)
+  
+source-id: 15
+date: 1882
+algebraic: 
+  white: [Kh7, Qg4, Sb8]
+  black: [Kf8, Qa3, Pb6]
+stipulation: +
+solution: Dg4-g8+
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, III.
+  
+source-id: studies/1
+date: 1887
+algebraic: 
+  white: [Kb2, Bd3, Sc5, Ph2, Pg2, Pe5, Pe2, Pd4, Pc3, Pb5]
+  black: [Kd5, Qf4, Pg4, Pf5, Pe6, Pe3, Pc4, Pb6]
+stipulation: +
+solution: |
+  1. Be4+ Qxe4 2. Sd7 Qxd4 3. cxd4 Kxd4 4. g3 c3+ 5. Kb3 +-
+  1. ... fxe4 2. Sd7 +-
+  [ 1. Sa4 cxd3 2. exd3 Dxd4 3. cxd4 Kxd4 4. Kc2 ... ]
+  
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Monthly
+source-id: 65
+date: 1885-10
+algebraic: 
+  white: [Kc5, Bf4, Pa3]
+  black: [Ka7, Pb5, Pa4]
+stipulation: +
+solution: |
+  "1. Kc6 Ka8 2. Kb6! b4 3. axb4 a3 {eg} 4. b5
+  a2 5. Be5 a1Q 6. Bxa1 wins
+  1. ... Ka6 2. Be3 Ka5 3. Bc5 Ka6 4. Bb6 b4
+  5. axb4 a3 6. b5#
+  Dual:
+  2. Kc7! b4 3. axb4 a3 4. b5 a2 5. b6 a1=Q 6. b7+ Ka7 7. b8Q+ Ka6 8. Qb6#
+  2. ... Ka7 3. Be3+ Ka6 4. Kc6 Ka5 5. Bc5 Ka6 6. Bb6 b4 7. axb4 a3 8. b5# 
+  3. ... Ka8 4. Bf2 b4 5. axb4 a3 6. b5 a2 7. b6 a1Q 8. b7#"
+keywords: 
+  - Dual
+---
+authors: 
+  - Horwitz, Bernhard
+source: |
+  Dufresne: Sammlung leichterer Schachaufgaben, v. 3
+  
+source-id: 3
+date: 1887
+algebraic: 
+  white: [Kh4, Qc1, Ba4, Pg5]
+  black: [Kg8, Qg7, Bb1, Ba1, Pg6, Pd3]
+stipulation: +
+solution: 
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Monthly
+date: 1881
+algebraic: 
+  white: [Ke2, Rf6, Bh8]
+  black: [Kh1, Ph3, Ph2]
+stipulation: +
+solution: |
+  "1. Rf8 {with duals} (1. Ke1 $1 Kg2 2. Rf2+ Kg1 3. Bd4
+  h1=Q 4. Re2#) 1... Kg2 2. Rg8+ (2. Be5 $1 h1=Q 3. Rg8#)
+  2... Kh1 3. Bg7 $1 {Indian} Kg2 4. Be5+ Kh1 5. Bxh2
+  1-0"
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Chess Monthly
+date: 1881
+algebraic: 
+  white: [Kd2, Ra4, Sd8]
+  black: [Ka1, Pa3, Pa2]
+stipulation: +
+solution: |
+  "1. Ra8 $1 {with duals} Kb2 2. Rb8+ (2. Nc6) 2... Ka1
+  3. Nb7 $1 {Indian} Kb2 4. Nc5+ Ka1 5. Nb3+ Kb2 6. Nd4+
+  Ka1 7. Nc2# 1-0"
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: The Chess Player
+date: 1852
+algebraic: 
+  white: [Ke3, Pg4, Pf5, Pe4, Pd5]
+  black: [Ke5, Pg5, Pf6, Pd6]
+stipulation: "="
+solution: |
+  {mutual zugzwang - virtual stalemate} 1. Kd3 $1 (1.
+  Kf3 $2 Kd4 $19) 1... Kf4 2. Kd4 Kxg4 3. Ke3 Kh5 4. Kf3
+  g4+ ({but} 4... Kh6 $1 5. Kg4 Kg7 $19) 5. Kg2 (5. Kg3
+  $2 Kg5 {mutual zugzwang} 6. Kf2 Kf4 $19) ({minor dual}
+  5. Kf2) 5... Kg5 6. Kg3 {mutual zugzwang} 1/2-1/2
+  
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: The Chess Player
+date: 1852
+algebraic: 
+  white: [Ke4, Pg4, Pf3, Pd2]
+  black: [Ke6, Pg5, Pf4, Pe5, Pd4]
+stipulation: +
+solution: |
+  1. d3 $1 {mutual zugzwang - virtual stalemate} Kd6 (1...
+  Kf6 2. Kd5 e4 3. Kxe4 Ke6 4. Kxd4 $18) 2. Kf5 Kd5 3.
+  Kxg5 Ke6 (3... e4 4. fxe4+ Ke5 5. Kh4 $18) 4. Kh4 $1
+  (4. Kh5 $2 e4 $1 $19) 4... Kf6 5. Kh3 $1 1-0
+  
+---
+authors: 
+  - Horwitz, Bernhard
+source: 
+date: 1884
+algebraic: 
+  white: [Kb2, Ph5, Pg4, Pf4]
+  black: [Kg2, Bf7, Ph6]
+stipulation: +
+solution: |
+  1. f5 Kg3 2. g5 hxg5 (2... Bxh5 3. gxh6) (2... Kg4 3.
+  g6 Bd5 4. f6 Kxh5 5. f7) 3. h6 Bg8 4. f6 Kf4 5. h7 Bxh7
+  6. f7 1-0
+  
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: 
+date: 1904
+algebraic: 
+  white: [Kg8, Qc7, Bh7, Pe2]
+  black: [Ka1, Rb1, Pa2]
+stipulation: +
+solution: |
+  "1.Qg7+ Rb2 2.Qg1+ (2.e4 $1 {cook JU}) 2...Rb1 3.Qd4+
+  Rb2 4.e4 Kb1 5.Qd1# 1-0"
+keywords: 
+  - "Stipulation?"
+---
+authors: 
+  - Horwitz, Bernhard
+source: Land and Water
+source-id: 54
+date: 1873-01-25
+algebraic: 
+  white: [Kh6, Qb6, Bd2]
+  black: [Ke4, Qf7]
+stipulation: +
+solution: |
+  1. Qe3+ Kf5
+  2. Qf3+ Ke6
+  3. Qb3+ Ke7
+  4. Bg5+ Kf8
+  5. Qb(d)8+ Qe8
+  6. Qd6+ Kg8
+  7. Be7 wins
+  
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: 
+algebraic: 
+  white: [Kh6, Pg7, Pf6, Pe7]
+  black: [Kg8, Be8]
+stipulation: +
+solution: |
+  1.Kg5 Kf7
+    2.Kf5 Bd2+
+    3.Ke5 Ba4
+    4.Kd6 Bb5
+    5.Kc7 Ba4
+    6.Kd8 Bb5
+    7.g8/Q+ Kxg8
+    8.e8/Q+ Bxe8
+    9.Kxe8 wins
+  
+keywords: 
+  - Letters
+---
+authors: 
+  - Horwitz, Bernhard
+source: "Sourse?"
+algebraic: 
+  white: [Kh7, Bf6, Pe7, Pc6, Pb7]
+  black: [Ke8, Qb8, Pf7, Pc7]
+stipulation: +
+solution: |
+  1.Kg8 Qa7 
+  2.Bd4 Qb8 
+  3.Bс5 f5 
+  4.Kg7 f4 
+  5.Kf6 f3 
+  6.Bf2
+keywords: 
+  - Domination
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: Chess Studies
+source-id: 9
+date: 1851
+algebraic: 
+  white: [Kf3, Pc6, Pb5]
+  black: [Kc7, Ph6, Pd6]
+stipulation: +
+solution: |
+  "1.Kf3-f4 Kc7-b6 2.Kf4-f5
+   ! Kb6-c7 3.Kf5-f6 ! Kc7-b6 4.Kf6-e6 ! Kb6-c7 5.Ke6-d5 h6-h5 6.b5-b6+
+   Kc7*b6 7.Kd5*d6 h5-h4 8.c6-c7 Kb6-b7 9.Kd6-d7 6...Kc7-c8 7.Kd5*d6
+   h5-h4 8.b6-b7+ Kc8-b8 9.c6-c7+ Kb8*b7 10.Kd6-d7 4...h6-h5 5.Ke6*d6
+   h5-h4 6.c6-c7 h4-h3 7.c7-c8=Q h3-h2 8.Qc8-a6# 4.Kf6-g6 ! {dual}
+   d6-d5 5.Kg6-f5 h6-h5 6.Kf5-e5 h5-h4 7.Ke5-d6 h4-h3 8.c6-c7 h3-h2
+   9.c7-c8=Q h2-h1=Q 10.Qc8-a6# 6...Kb6-c7 7.Ke5*d5 3...h6-h5 4.Kf6-g5
+   3...d6-d5 4.Kf6-e5 3.Kf5-e6 ? h6-h5 4.Ke6-f5 d6-d5 5.Kf5-f4 h5-h4
+   6.Kf4-g4 d5-d4 4.Ke6-d5 h5-h4 5.b5-b6+ Kc7*b6 6.Kd5*d6 h4-h3 7.c6-c7
+   h3-h2 8.c7-c8=Q h2-h1=Q 2...Kb6-a7 3.Kf5-e6 Ka7-b6 4.Ke6-d7 2.Kf4-e4
+   ! {dual} h6-h5 3.Ke4-d5 h5-h4 4.Kd5*d6 h4-h3 5.c6-c7 h3-h2
+   6.c7-c8=Q h2-h1=Q 7.Qc8-a6# 3...Kb6-c7 4.b5-b6+ 2...Kb6-c7 3.Ke4-d5
+   h6-h5 4.b5-b6+ 1...h6-h5 2.Kf4-g5 1...d6-d5 2.Kf4-e5 h6-h5 3.Ke5*d5
+   h5-h4 4.Kd5-e4"
+keywords: 
+  - Dual
+---
+authors: 
+  - Horwitz, Bernhard
+source: Sonntags-Blatt für Schach-Freunde
+source-id: 27/135
+date: 1861-07-07
+algebraic: 
+  white: [Kb2, Se3, Sd2, Pa4]
+  black: [Kb4, Pb7, Pb5, Pa7]
+stipulation: +
+solution: |
+  "1. Sc2+ Kxa4 2. Sb3 b4 3. Scd4 b6 4. Ka2 a6 5. Kb2 a5 6. Ka2 b5 7. Sc5#
+  2. ... b6 3. Ka2
+  1. ... Ka5 2. Sb3+ Ka6 3. a5 b6 4. Sb4+ Kb7 5. a6+
+  2. ... Kxa4 3. Ka2
+  1. ... Kc5 2. Sb3+ Kb6 3. a5+
+  2. ... Kc6 3. Scd4+"
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: Chess Studies
+source-id: 74
+date: 1851
+algebraic: 
+  white: [Kc4, Rh2]
+  black: [Ka4, Pc3, Pb2]
+stipulation: +
+solution: |
+  1.Rh2-h8 Ka4-a5 2.Kc4*c3 b2-b1=S+ 3.Kc3-b2 Sb1-d2 4.Rh8-h4 Ka5-b5
+   5.Kb2-c3 Sd2-b1+ 6.Kc3-c2 Sb1-a3+ 7.Kc2-b3 Sa3-b1 8.Rh4-h2 {or Rd4} 5...Sd2-f3
+   6.Rh4-h3 Sf3-g1 7.Rh3-e3 4...Sd2-f3 5.Rh4-f4 Sf3-e1 6.Kb2-c3 Se1-g2
+   7.Rf4-e4 4...Sd2-f1 5.Kb2-c3 Sf1-g3 6.Rh4-g4 Sg3-f1 7.Kc3-d3 Sf1-h2 8.Rg4-g2
+  
+keywords: 
+  - Black underpromotion
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: Chess Studies and End-games
+source-id: 33
+date: 1884
+algebraic: 
+  white: [Kf2, Pg2, Pf3, Pe4, Pd5, Pc6, Pb5]
+  black: [Kh4, Pf4, Pe5, Pd6, Pc7, Pb6]
+stipulation: +
+solution: |
+  "1.g2-g4 ? Kh4-g5 ! 2.Kf2-g2 Kg5-g6 3.Kg2-h3 Kg6-g5 4.Kh3-h2 Kg5-h6 5.Kh2-h1 Kh6-h7
+  1.g2-g3+ f4*g3+ 2.Kf2-g2 Kh4-h5 3.Kg2*g3 Kh5-g5 4.f3-f4+ e5*f4+
+   5.Kg3-f3 Kg5-g6 6.Kf3*f4 Kg6-f6 7.e4-e5+ d6*e5+ 8.Kf4-e4 Kf6-f7
+   9.Ke4*e5 Kf7-e7 10.d5-d6+ c7*d6+ 11.Ke5-d5 Ke7-e8 12.Kd5*d6 Ke8-d8
+   13.c6-c7+ Kd8-c8 14.Kd6-e6 Kc8*c7 15.Ke6-e7 Kc7-c8 16.Ke7-d6 Kc8-b7
+   17.Kd6-d7 12.Kd5-e6 ! {dual} 12.c6-c7 ! {dual}
+   9.d5-d6 ! {dual} 6.e4-e5 ! {dual} 3.f3-f4 ! {dual}
+   e5*f4 4.Kg2-h3 Kh5-g6 5.e4-e5 ! d6*e5 6.d5-d6 c7*d6 7.c6-c7 1.Kf2-e1
+   ! {cook} Kh4-g3 2.Ke1-f1 Kg3-h4 3.Kf1-f2 Kh4-h5 4.g2-g3 f4*g3+
+   5.Kf2*g3 2...Kg3-h2 3.Kf1-f2 Kh2-h1 4.g2-g4 f4*g3 ep.+ 5.Kf2*g3
+   Kh1-g1 6.f3-f4 1.Kf2-f1 ! {cook} Kh4-g3 2.Kf1-g1 Kg3-h4 3.Kg1-h2
+   Kh4-h5 4.Kh2-h3 Kh5-g5 5.g2-g4 Kg5-g6 6.Kh3-h4 Kg6-h6 7.g4-g5+
+   Kh6-g6 8.Kh4-g4 Kg6-g7 9.Kg4-h5 Kg7-h7 10.g5-g6+ Kh7-g7 11.Kh5-g5
+   Kg7-g8 12.Kg5-f6 ! Kg8-f8 13.g6-g7+ Kf8-g8 14.Kf6-e7 5...f4*g3 ep.
+   6.Kh3*g3 Kg5-g6 7.f3-f4 3...Kh4-g5 4.Kh2-h3 Kg5-h5 5.g2-g3 f4*g3
+   6.Kh3*g3 Kh5-g5 7.f3-f4+ 5.g2-g4+ ? Kh5-g5 ! 6.Kh3-h2 Kg5-h6 7.Kh2-g2
+   Kh6-g6 ! 8.Kg2-h3 Kg6-g5"
+keywords: 
+  - Cooked
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: Chess Studies
+source-id: 20
+date: 1851
+algebraic: 
+  white: [Kc2, Bd7, Sh3, Sc4, Pf2, Pc3]
+  black: [Ke4, Qd5, Pf4, Pf3]
+stipulation: +
+solution: |
+  1.Sh3-g5+ Qd5*g5 2.Sc4-d2+ Ke4-d5 3.c3-c4+ Kd5-c5 4.Sd2-e4+ 3...Kd5-d6
+   4.Sd2-e4+ 3...Kd5-e5 4.Sd2*f3+ 3...Kd5-d4 4.Sd2*f3+
+keywords: 
+  - King cross flight
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: Chess Studies
+source-id: 12
+date: 1851
+algebraic: 
+  white: [Kc2, Rh7, Bf1, Pe7]
+  black: [Ke6, Rb8, Bh8, Pa6]
+stipulation: +
+solution: |
+  1.Bf1-h3+ Ke6-d6 2.Bh3-d7 ! Kd6*d7 3.e7-e8=Q+ ! Kd7*e8 4.Rh7*h8+
+   2...Rb8-b2+ 3.Kc2-c1 ! Kd6*d7 4.e7-e8=Q+ Kd7*e8 5.Rh7*h8+
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: Chess Studies
+source-id: 22
+date: 1851
+algebraic: 
+  white: [Kh2, Rg4, Rf4]
+  black: [Kg6, Qd6, Sg5]
+stipulation: "="
+solution: |
+  1...Qd6-e5 2.Kh2-g2 Kg6-h6 3.Rg4-h4+ Kh6-g7 4.Rh4-g4 Kg7-h8 5.Rg4-h4+
+   Sg5-h7 6.Rf4-g4
+---
+authors: 
+  - Horwitz, Bernhard
+source: The Philadelphia Times
+source-id: 583
+date: 1885-09-20
+algebraic: 
+  white: [Kb5, Qh7, Pe6, Pb6]
+  black: [Ka8, Qb8, Sg8, Pe7, Pa2]
+stipulation: +
+solution: 1.Qh7-e4
+---
+authors: 
+  - Horwitz, Bernhard
+source: The International Chess Magazine
+date: 1885
+algebraic: 
+  white: [Kf8, Sb1, Pf5, Pe6]
+  black: [Kd8, Bb4, Pe7]
+stipulation: +
+solution: |
+  1.Kf8-f7 Kd8-c7 2.Sb1-d2 Kc7-d8 3.Sd2-f3 Bb4-d6 4.Sf3-h4 Bd6-a3
+   5.Sh4-g6 Ba3-b4 6.Sg6*e7 ! Bb4*e7 7.f5-f6 Be7*f6 8.Kf7*f6 Kd8-e8
+   9.e6-e7 5.Kf7-f8 ! {dual} Kd8-c7 6.Sh4-g6 Kc7-d8 7.Sg6*e7
+   Ba3*e7+ 8.Kf8-f7 2...Bb4*d2 3.f5-f6 2...Kc7-c6 ! {refutation} 3.Sd2-c4
+   Kc6-d5 4.Sc4-b6+ Kd5-e4 5.Kf7-g6 Bb4-c5 6.Sb6-c8 Ke4-e5 7.Sc8-a7
+   Ke5-d5 8.Sa7-b5 Kd5-c6 9.Sb5-c3 Bc5-d6 10.Sc3-e4 Bd6-b4 11.Se4-f6
+   Kc6-d6 ! 12.Sf6-d7 Kd6-d5 13.f5-f6 e7*f6 1...Bb4-e1 {main}
+   2.Sb1-a3 Be1-c3 3.Sa3-c4 Bc3-d4 4.Sc4-d6 ! Bd4-e5 5.Sd6-c8 Be5-f6
+   6.Sc8*e7 4...Bd4-f6 5.Sd6-e4 Bf6-h4 6.f5-f6 4.Sc4-a5 ! {dual}
+   Bd4-f6 5.Sa5-c6+ 1.Sb1-d2 ! {cook} Bb4*d2 2.f5-f6 Bd2-g5
+   3.f6-f7 Bg5-h6+ 4.Kf8-g8 Kd8-c7 5.f7-f8=Q Bh6*f8 6.Kg8*f8 Kc7-d6 7.Kf8-f7
+  
+keywords: 
+  - Cooked
+comments: 
+  - B. Horwitz's last composition sent to The International Chess Magazine
+  - also in The Philadelphia Times, 11 October 1885
+---
+authors: 
+  - Horwitz, Bernhard
+source: Wiener Schach-Zeitung
+date: 1855-09
+algebraic: 
+  white: [Ka6, Qc5, Bg1, Pe4]
+  black: [Kb8, Qh3, Be5, Pf6]
+stipulation: +
+solution: |
+  "1.Qc5-f8+ ? Qh3-c8+ ! 2.Qf8*c8+ Kb8*c8
+   1...Kb8-c7 ? 2.Bg1-b6+ Kc7-c6 3.Qf8-a8+ Kc6-d6 4.Qa8-d5+ Kd6-e7
+   5.Bb6-c5+ Ke7-e8 6.Qd5-g8+ Ke8-d7 7.Ka6-b7 ! 2...Kc7-d7 3.Qf8-d8+
+  1.Qc5-b5+ Kb8-c8 2.Qb5-e8+ Kc8-c7 3.Bg1-b6+ Kc7-d6 4.Qe8-f8+ Kd6-c6
+   5.Qf8-a8+ Kc6-d6 6.Qa8-d5+ Kd6-e7 7.Bb6-c5+ Ke7-e8 8.Qd5-g8+ Ke8-d7
+   9.Ka6-b7 4...Kd6-e6 5.Qf8-c8+ 4...Kd6-d7 5.Qf8-d8+ 1...Kb8-c7
+   2.Bg1-b6+ Kc7-d6 3.Qb5-d5+"
+---
+authors: 
+  - Kling, Josef
+  - Horwitz, Bernhard
+source: Chess Studies
+source-id: 6
+date: 1851
+algebraic: 
+  white: [Kd5, Pd6, Pb5]
+  black: [Kd7, Pb6]
+stipulation: +
+solution: |
+  1.Kd5-e5 Kd7-d8 2.Ke5-d4
+   Kd8-c8 3.Kd4-e4 Kc8-d8 4.Ke4-e5 Kd8-d7 5.Ke5-d5 2.d6-d7 ! {dual}
+   Kd8*d7 3.Ke5-d5 2...Kd8-e7 3.d7-d8=Q+ 2.Ke5-e4 {dual}
+keywords: 
+  - Dual

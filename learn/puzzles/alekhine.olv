@@ -1,0 +1,363 @@
+---
+authors: 
+  - Алехин, Александр Александрович
+source: 
+date: 1925
+algebraic: 
+  white: [Ke3, Qb6, Sc2]
+  black: [Kb1, Pb2, Pa2]
+stipulation: "#3"
+solution: |
+  "1.Sc2-a1 ! zugzwang.
+        1...Kb1-c1 
+            2.Qb6-c6 + 
+                2...Kc1-d1 
+                    3.Qc6-h1 # 
+                2...Kc1-b1 
+                    3.Qc6-h1 # 
+        1...Kb1*a1 
+            2.Qb6-d4 zugzwang.
+                2...Ka1-b1 
+                    3.Qd4-d1 #"
+---
+authors: 
+  - Алехин, Александр Александрович
+source: 
+date: 1914
+algebraic: 
+  white: [Kc8, Qf4, Ra8, Sg6, Se6, Ph2, Pd4]
+  black: [Kf7, Bc2, Ba1, Ph6, Ph5, Pf6, Pd6, Pc6]
+stipulation: "#3"
+solution: |
+  "1.Qf4-f5 ! threat:
+            2.Kc8-d7 threat:
+                    3.Ra8-f8 # 
+                    3.Sg6-h8 # 
+                2...Bc2*f5 
+                    3.Sg6-h8 # 
+            2.Ra8-a7 + 
+                2...Kf7-e8 
+                    3.Ra7-e7 # 
+                    3.Se6-g7 # 
+                2...Kf7-g8 
+                    3.Ra7-g7 # 
+        1...Ba1*d4 
+            2.Kc8-d7 threat:
+                    3.Ra8-f8 # 
+                    3.Sg6-h8 # 
+                2...Bc2*f5 
+                    3.Sg6-h8 # 
+        1...Bc2*f5 
+            2.Ra8-a7 + 
+                2...Kf7-e8 
+                    3.Ra7-e7 # 
+                2...Kf7-g8 
+                    3.Ra7-g7 # 
+                2...Kf7*g6 
+                    3.Ra7-g7 # 
+                2...Kf7*e6 
+                    3.Sg6-f4 # 
+        1...Bc2-a4 
+            2.Kc8-c7 threat:
+                    3.Ra8-f8 # 
+            2.Kc8-b7 threat:
+                    3.Ra8-f8 # 
+            2.Ra8-a7 + 
+                2...Kf7-e8 
+                    3.Ra7-e7 # 
+                    3.Se6-g7 # 
+                2...Kf7-g8 
+                    3.Ra7-g7 # 
+        1...Bc2-b3 
+            2.Ra8-a7 + 
+                2...Kf7-e8 
+                    3.Ra7-e7 # 
+                    3.Se6-g7 # 
+                2...Kf7-g8 
+                    3.Ra7-g7 # 
+        1...c6-c5 
+            2.Ra8-a7 + 
+                2...Kf7-e8 
+                    3.Ra7-e7 # 
+                    3.Se6-g7 # 
+                2...Kf7-g8 
+                    3.Ra7-g7 # 
+        1...Kf7-e8 
+            2.Ra8-a7 threat:
+                    3.Ra7-e7 # 
+                    3.Se6-g7 # 
+                2...Bc2*f5 
+                    3.Ra7-e7 # 
+            2.Kc8-c7 + 
+                2...Ke8-f7 
+                    3.Ra8-f8 # 
+            2.Kc8-b7 + 
+                2...Ke8-f7 
+                    3.Ra8-f8 # 
+                2...Ke8-d7 
+                    3.Ra8-d8 # 
+                    3.Se6-c5 # 
+                    3.Se6-f8 # 
+            2.Qf5*f6 threat:
+                    3.Kc8-c7 # 
+                    3.Qf6-e7 # 
+                    3.Qf6-f8 # 
+                    3.Se6-g7 # 
+                    3.Se6-c7 # 
+                2...Bc2*g6 
+                    3.Kc8-c7 # 
+                    3.Qf6-f8 # 
+                    3.Se6-g7 # 
+                    3.Se6-c7 # 
+                2...Bc2-f5 
+                    3.Kc8-c7 # 
+                    3.Qf6-e7 # 
+                    3.Qf6-f8 #"
+---
+authors: 
+  - Алехин, Александр Александрович
+source: К Новой Армии
+source-id: 3/3
+date: 1920-05-05
+algebraic: 
+  white: [Kc8, Qf4, Ra8, Sg6, Se6, Pd4]
+  black: [Kf7, Bc2, Ba1, Ph6, Ph5, Pf6, Pd6, Pc6]
+stipulation: "#3"
+solution: |
+  "1.Qf4-f5 ! threat:
+            2.Kc8-d7 threat:
+                    3.Ra8-f8 # 
+                    3.Sg6-h8 # 
+                2...Bc2*f5 
+                    3.Sg6-h8 # 
+            2.Ra8-a7 + 
+                2...Kf7-e8 
+                    3.Ra7-e7 # 
+                    3.Se6-g7 # 
+                2...Kf7-g8 
+                    3.Ra7-g7 # 
+        1...Ba1*d4 
+            2.Kc8-d7 threat:
+                    3.Ra8-f8 # 
+                    3.Sg6-h8 # 
+                2...Bc2*f5 
+                    3.Sg6-h8 # 
+        1...Bc2*f5 
+            2.Ra8-a7 + 
+                2...Kf7-e8 
+                    3.Ra7-e7 # 
+                2...Kf7-g8 
+                    3.Ra7-g7 # 
+                2...Kf7*g6 
+                    3.Ra7-g7 # 
+                2...Kf7*e6 
+                    3.Sg6-f4 # 
+        1...Bc2-a4 
+            2.Kc8-c7 threat:
+                    3.Ra8-f8 # 
+            2.Kc8-b7 threat:
+                    3.Ra8-f8 # 
+            2.Ra8-a7 + 
+                2...Kf7-e8 
+                    3.Ra7-e7 # 
+                    3.Se6-g7 # 
+                2...Kf7-g8 
+                    3.Ra7-g7 # 
+        1...Bc2-b3 
+            2.Ra8-a7 + 
+                2...Kf7-e8 
+                    3.Ra7-e7 # 
+                    3.Se6-g7 # 
+                2...Kf7-g8 
+                    3.Ra7-g7 # 
+        1...c6-c5 
+            2.Ra8-a7 + 
+                2...Kf7-e8 
+                    3.Ra7-e7 # 
+                    3.Se6-g7 # 
+                2...Kf7-g8 
+                    3.Ra7-g7 # 
+        1...Kf7-e8 
+            2.Ra8-a7 threat:
+                    3.Ra7-e7 # 
+                    3.Se6-g7 # 
+                2...Bc2*f5 
+                    3.Ra7-e7 # 
+            2.Kc8-c7 + 
+                2...Ke8-f7 
+                    3.Ra8-f8 # 
+            2.Kc8-b7 + 
+                2...Ke8-f7 
+                    3.Ra8-f8 # 
+                2...Ke8-d7 
+                    3.Ra8-d8 # 
+                    3.Se6-c5 # 
+                    3.Se6-f8 # 
+            2.Qf5*f6 threat:
+                    3.Kc8-c7 # 
+                    3.Qf6-e7 # 
+                    3.Qf6-f8 # 
+                    3.Se6-g7 # 
+                    3.Se6-c7 # 
+                2...Bc2*g6 
+                    3.Kc8-c7 # 
+                    3.Qf6-f8 # 
+                    3.Se6-g7 # 
+                    3.Se6-c7 # 
+                2...Bc2-f5 
+                    3.Kc8-c7 # 
+                    3.Qf6-e7 # 
+                    3.Qf6-f8 #"
+---
+authors: 
+  - Алехин, Александр Александрович
+source: Tijdschrift vd NSB
+date: 1933
+algebraic: 
+  white: [Kd2, Rd3, Pg2, Pf2, Pc4, Pb2, Pa4]
+  black: [Ke7, Re5, Pg6, Pf7, Pe6, Pc5, Pb4]
+stipulation: +
+solution: |
+  1. g4 Re4 (1... f5 $144 2. Re3 Rxe3 3. Kxe3 e5 4. b3
+  $18) 2. a5 Rxg4 3. a6 Rh4 (3... Rg1 $144 4. a7 Ra1 5.
+  Ra3 $18) 4. Rd8 Kxd8 5. a7 $18 1-0
+  
+---
+authors: 
+  - Алехин, Александр Александрович
+source: 
+date: 1924
+algebraic: 
+  white: [Kd4, Pg4, Pd6]
+  black: [Kb7, Ph7, Pg6, Pf7]
+stipulation: +
+solution: |
+  1. g5 $1 Kc6 2. Ke5 Kd7 3. Kd5 (3. Kf6 $2 Kxd6 4. Kxf7
+  Ke5) 3... Kd8 4. Kc6 1-0
+  
+---
+authors: 
+  - Алехин, Александр Александрович
+source: Tijdschrift vd NSB
+date: 1933
+algebraic: 
+  white: [Kd2, Rd3, Pf2, Pc4, Pb2, Pa5]
+  black: [Ke7, Rg4, Pg6, Pf7, Pe6, Pc5, Pb4]
+stipulation: +
+solution: |
+  1. a6 Rh4 (1... Rg1 2. Ra3 $1 bxa3 3. a7) 2. Rd8 Kxd8
+  3. a7 1-0
+  
+---
+authors: 
+  - Алехин, Александр Александрович
+source: 
+date: 1930
+algebraic: 
+  white: [Kh8, Qb5, Rg3, Rf4]
+  black: [Kh6, Rd4, Bd5]
+stipulation: "#2"
+solution: |
+  "1...Be4 2.Qg5#/Rh4#
+  1...Bf3/Bg2/Bh1/Be6/Bg8/Bc4/Bb3/Ba2/Bc6/Bb7/Ba8 2.Rf6#/Qg5#
+  1...Bf7 2.Qg5#
+  1...Rd3/Rd2/Rd1 2.Rh4#
+  
+  1.Qxd5?? (2.Qg5#/Qh1#/Rf6#)
+     1...Rd2/Rd1 2.Rf6#/Rh4#/Qg5#
+     1...Re4 2.Qg5#/Rf6#
+     1...Rxf4 2.Qg5#
+  but 1...Rxd5!
+  
+  1.Qd3?? (2.Qg6#/Qh7#)
+     1...Be4/Rxd3 2.Rh4#
+     1...Bf7 2.Qh7#
+     1...Bg8 2.Qg6#
+  but 1...Re4!
+  
+  1.Qd7?? (2.Qh7#/Qh3#)
+     1...Be4 2.Qh3#/Rh4#
+     1...Bf3/Bg2/Be6/Rxf4 2.Qh7#
+     1...Bg8 2.Qh3#
+  but 1...Bf7!
+  
+  1.Qe8?? (2.Qg6#/Rf6#)
+     1...Rxf4 2.Qg6#
+     1...Be4 2.Rh4#
+  but 1...Bf7!
+  
+  1.Rf7?? (2.Rh7#)
+     1...Be4/Bxf7 2.Qg5#
+  but 1...Rg4!
+  
+  1.Rxd4?? (2.Rh4#)
+     1...Be4/Bf7 2.Qg5#
+     1...Bf3 2.Rd6#/Qg5#
+  but 1...Kh5!
+  
+  1.Qb1! (2.Qg6#/Qh7#)
+     1...Be4/Rd3 2.Rh4#
+     1...Bf7 2.Qh7#
+     1...Bg8 2.Qh1#/Qg6#
+     1...Re4 2.Qh1#"
+keywords: 
+  - No pawns
+  - Grimshaw
+---
+authors: 
+  - Алехин, Александр Александрович
+source: L'Italia Scacchistica
+source-id: 11/
+date: 1932-06-01
+algebraic: 
+  white: [Kg8, Qb4, Re8, Rc2, Bg2, Bc1, Sc3, Sa5, Ph3, Pg4, Pf6, Pf2, Pd2]
+  black: [Ke5, Rh5, Bh4, Se6, Sa7, Ph6, Pg6, Pd7, Pd4, Pb6, Pb5, Pa6]
+stipulation: "#3"
+solution: |
+  "1. Qc4! [2. Qd5+ K:f6 3. Se4#]
+  1... Kd6 2. Qc7+!
+    2... K:c7 3. S:b5#
+    2... S:c7 3. Sb7#
+  1... Kf4 2. Q:d4+!
+    2... S:d4 3. d3#
+    2... Kg5 3. Qe5#
+  1... K:f6 2. Q:d4+!
+    2... S:d4, Re5 3. Se4#
+    2... Kg5 3. Qe5#
+  1... d:c3 2. Qf4+! K:f4 3. d3#
+  1... d:c3 2. Q:c3+ - Dual
+  
+  (1... b:c4 2. S:c4+
+    2... Kf4 3. d3#
+    2... K:f6 3. Se4#
+  1... d3 2. f4+
+    2... Kd6 3. Sb7, Se4#
+    2... K:f6 3. Se4#)"
+keywords: 
+  - Active sacrifice
+  - Dual
+comments: 
+  - |
+    373639 - correction.
+---
+authors: 
+  - Алехин, Александр Александрович
+source: Шахматная композиция
+date: 2012
+algebraic: 
+  white: [Kg8, Qb4, Re8, Rc2, Bc1, Ba2, Sc3, Sb2, Pg4, Pg2, Pf3, Pd2, Pa6]
+  black: [Ke5, Rh5, Bh4, Bf1, Se6, Sa7, Ph6, Pg6, Pg3, Pd7, Pd4, Pb6]
+stipulation: "#3"
+solution: |
+  "1.Qc4!! [2.Qd5+]
+  1...B:c4 2.S:c4+ Kf4 3.d3#, 2...Kf6 3.Se4#
+  1...Kf4 2.Q:d4+!! S:d4 3.d3#, 2...Kg5 3.Qe5#
+  1...Kd6 2.Qc7+!! K:c7 3.Sb5#, 2...S:c7 3.Se4#
+  1...Kf6 2.Q:d4+!! S:d4 3.Se4#, 2...Kg5 3.Qe5#
+  1...d:c3 2.Qf4+!! K:f4 3.d4#
+  
+  1...d3 2.f4+ Kd6 3.Se4#
+  1...Bd3 2.S:d3+ Kd6 3.Se4#"
+comments: 
+  - 335181
+  - Correction I.Agapov, V.Aberman, A,Vasilenko.

@@ -1,0 +1,1257 @@
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Club de Belgrade
+date: 1928
+distinction: 1st Prize, ex aequo, 1928-1929
+algebraic: 
+  white: [Ke8, Qa4, Rh8, Rf5, Bg6, Sf1, Se4]
+  black: [Kg4, Qe3, Rh1, Bc5, Sf3, Ph3, Pg5, Pd3]
+stipulation: "#2"
+solution: |
+  "1.Rf5-f7 ! threat:
+          2.Qa4-d7 #
+      1...Qe3-f4
+          2.Se4-f6 #
+      1...Qe3-d4{(Se5)}
+          2.Se4-f2 #
+      1...Qe3*e4 +
+          2.Qa4*e4 #
+      1...Sf3-h4
+          2.Bg6-h5 #
+      1...Sf3-d4
+          2.Sf1*e3 #"
+keywords: 
+  - Unpinning
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Skakbladet
+date: 1933
+algebraic: 
+  white: [Kb2, Qd6, Rh4, Rd8, Bh8, Bg6, Sf1, Sa3, Pf6, Pf3, Pc2, Pb5, Pb3]
+  black: [Kd4, Rg7, Rg2, Bg4, Ba7, Sd5, Sc7, Ph5, Pg3]
+stipulation: "#2"
+solution: |
+  "1...Rd7[a] 2.f7#[A]
+  1...Bc5 2.Qf4#
+  1...Rg1 2.c3#
+  1...Rxc2+ 2.Nxc2#
+  1...Ne6/Ne8/Na6/Na8 2.Qxd5#
+  1...Nxb5 2.Nxb5#/Qxd5#
+  1...Re7 2.fxe7#
+  
+  1.Bxg7[B]? (2.f7#[A])
+     1...Rxc2+ 2.Nxc2#
+     1...Ne6/Ne8 2.Qxd5#
+  but 1...Re2!
+  
+  1.f7[A]? (2.Bxg7#[B])
+     1...Rxc2+ 2.Nxc2#
+     1...Ne6/Ne8 2.Qxd5#
+  but 1...Re2!
+  
+  1.Ne3?? (2.Nf5#)
+     1...Rxc2+ 2.Naxc2#/Nexc2#
+  but 1...Kxe3!
+  
+  1.fxg7?? (2.g8Q#/g8R#/g8B#/g8N#)
+     1...Rxc2+ 2.Nxc2#
+     1...Ne6/Ne8 2.Qxd5#
+  but 1...Re2!
+  
+  1.f4! (2.Qb4#)
+     1...Rd7[a] 2.f7#[A]
+     1...Rxc2+ 2.Nxc2#
+     1...Bc5 2.Qe5#
+     1...Na6 2.Qxd5#
+     1...Be2 2.c3#
+     1...Bd7 2.f5#"
+keywords: 
+  - Levman
+  - Nietvelt
+  - Threat reversal
+  - Urania
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: The Chess Weekly
+source-id: 23/38
+date: 1909-05-01
+algebraic: 
+  white: [Kh4, Rc7, Sg7]
+  black: [Kh6, Bf4, Pg3, Pg2]
+stipulation: "="
+solution: 1. Sf5+ Kg6 2. Rg7+ K:f5 3. R:g3 B:g3+ 4. Kh3 g1Q =
+comments: 
+  - also published in «Tattersall's a Thousand End-Games» 1911
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: 250 избранных этюдов
+source-id: 2
+date: 1938
+algebraic: 
+  white: [Kh1, Re2, Be4, Pc2, Pb4, Pb2]
+  black: [Kd4, Qd8, Ph2, Pg5, Pg3, Pd7, Pc7, Pb5]
+stipulation: "+"
+solution: |
+  "{composed 1923.} 1.Be4-c6 g3-g2+ 2.Bc6*g2 d7-d5 3.Bg2-f1 {e. g.} Qd8-d6
+   4.Re2-e1 4.c2-c3+ { or } Kd4-c4 5.Re2-e6+ Kc4-b3 6.Re6*d6
+   c7*d6 7.Bf1*b5 4.Re2-e8 1...d7*c6 2.Re2-d2+ 1...d7-d5 2.Bc6*b5
+   1...Qd8-f6 2.Re2-e4#"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: «64»
+source-id: 6/290
+date: 1940
+distinction: 1st Comm., 1939-1940
+algebraic: 
+  white: [Ke1, Qa2, Rh1, Rg8, Bc1, Bb5, Sh6, Sc6, Ph2, Pf4, Pe5, Pe3]
+  black: [Kf3, Rc4, Bg6, Se6, Ph4, Ph3, Pc5, Pc3]
+stipulation: "#2"
+solution: |
+  "1.Qa2-a8 ! threat:
+          2.Sc6-d4 #
+      1...Kf3-e4
+          2.Sc6-b4 #
+      1...Rc4-e4
+          2.0-0 #
+      1...Bg6-e4
+          2.Rh1-f1 #"
+keywords: 
+  - Castling
+  - Dual avoidance
+  - Selfblock
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: «64»
+source-id: 15-16/302
+date: 1926
+algebraic: 
+  white: [Kh5, Qe2, Pe7, Pe5, Pd4, Pc7, Pc3, Pa5]
+  black: [Kd7, Pc4, Pa6]
+stipulation: "#3"
+solution: |
+  "1.Qe2-f3 ! zugzwang.
+     1...Kd7-e8
+         2.Qf3-f8 +
+             2...Ke8-d7
+                 3.c7-c8=Q #
+         2.c7-c8=Q +
+             2...Ke8*e7
+                 3.Qf3-b7 #
+                 3.Qf3-f8 #
+                 3.Qf3-f6 #
+     1...Kd7-c8
+         2.e7-e8=Q +
+             2...Kc8*c7
+                 3.Qf3-c6 #
+                 3.Qf3-f7 #
+     1...Kd7*c7
+         2.Qf3-f7 threat:
+                 3.e7-e8=Q #
+     1...Kd7*e7
+         2.Qf3-b7 threat:
+                 3.c7-c8=Q #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: The Chess Weekly
+source-id: 11/158
+date: 1909-02-06
+algebraic: 
+  white: [Kh3, Rd2, Rb1, Sh4, Sg1, Pc2]
+  black: [Kf1, Be1, Pf3]
+stipulation: "#3"
+solution: "1. Rh2! f2 2. Sgf3 Ke2 3. R:e1#"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: The Chess Weekly
+source-id: 14/177
+date: 1909-02-27
+algebraic: 
+  white: [Kg3, Qg5, Bc4, Se7, Sd3, Pf5, Pa3, Pa2]
+  black: [Ke4, Bc2, Pg4, Pf7, Pe5, Pc3, Pb5]
+stipulation: "#3"
+solution: |
+  "1. Qc1! ~ 2. Qg1 ~ 3. Sc5#
+        2... B:d3 3. Bd5#
+  1... b:c4 2. Sc5+ Kd4 3. Qg1#
+  1... Kd4 2. Qg1+ K:c4 3. S:e5#
+        2... Ke4 3. Sc5#
+  1... Bd1 2. Q:c3 ~ 3. Q:e5, Sc5, Sf2#
+        2... Ke3 3. Sc5, Sf2#
+  1... B:d3 2. Bd5+ Kd4 3. Qg1#"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Deutsche Schachzeitung
+source-id: 1152
+date: 1909
+algebraic: 
+  white: [Kg6, Rh7, Rg5, Ph3]
+  black: [Kg8, Qf8, Se2, Ph5]
+stipulation: "="
+solution: 1.Rg7+ Q:g7+ 2.K:h5 Sf4+ 3.Kh4 Sg6+ 4.R:g6 Q:g6 pat
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Rigaer Tageblatt
+source-id: version
+date: 1909
+distinction: Comm.
+algebraic: 
+  white: [Ke1, Rh7, Bf8]
+  black: [Kd8, Ra8, Pa6]
+stipulation: +
+solution: |
+  1. Bc5 Rc8
+  2. Bb6+ Ke8
+  3. Bc7 a5
+  4. Kd1 a4
+  5. Kc1 a3
+  6. Kb1 a2+
+  7. Ka1 wins
+  
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Schweizerische Arbeiter-Schachzeitung
+source-id: /335
+date: 1935-11
+algebraic: 
+  white: [Kh4, Qc6, Be8, Sg6, Pf7]
+  black: [Kg7, Bg8, Ph6]
+stipulation: "#2"
+solution: |
+  "1. Qd7! [2. f8Q#]
+  1... B:f7 2. Q:f7#
+  1... Kh7 2. f8S#
+  1... K:g6/f6 2. f:g8S#"
+keywords: 
+  - 2 flights giving key
+  - Promotion
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Schweizerische Arbeiter-Schachzeitung
+source-id: 340
+date: 1935-11
+algebraic: 
+  white: [Kc3, Rd1, Bd7, Sg6, Sa6, Pg2, Pc6, Pa2]
+  black: [Kd6, Bd5]
+stipulation: "#3"
+solution: |
+  "1. Kd3! waiting
+  1... Bf3 2. g:f3 Kd5 3. Kc3#
+  1... B:g2 2. Kc4+ Bd5+ 3. R:d5#
+  1... Bb3 2. a:b3  Kd5 3. Ke3#
+  1... B:a2 2. Ke4+ Bd5+ 3. R:d5#"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Schweizerische Arbeiter-Schachzeitung
+source-id: 431
+date: 1937-04
+algebraic: 
+  white: [Ka5, Qg2, Bb7, Pe6, Pc7, Pc4]
+  black: [Ka7, Bc8, Pc5]
+stipulation: "#3"
+solution: |
+  "1. Qg7! waiting
+  1... Bd7 2. Q:d7 waiting
+    2... K:b7 3. c8Q#
+  1... B:e6 2. Qb2 ~ 3. Qb6#
+  1... B:b7 2. c8B  Ka8/b8 3. Q:b7#
+  1... K:b7 2. Qb2+
+    2... Ka7/a8 3. Qb8#
+    2... K:c7/c6 3. Qb6#"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Schweizerische Arbeiter-Schachzeitung
+source-id: 432
+date: 1937-04
+algebraic: 
+  white: [Kg1, Qb5, Ra3, Bh6, Bb3, Sg2, Sf2, Ph2, Pc2]
+  black: [Kf3, Rd8, Ba5, Sg6, Sc5, Ph5, Pe4, Pd4]
+stipulation: "#2"
+solution: |
+  "1. c4! [2. Bd1#]
+  1... S:b3 2. Q:h5#
+  1... d:c3 e.p. 2. Se1#
+  1... Ke2 2. Bd1#"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахіст (Київ)
+source-id: 8/9
+date: 1936-12-15
+algebraic: 
+  white: [Ka1, Qd8, Sb6, Sa7, Pe5, Pb5, Pb2]
+  black: [Ka5, Rg6, Bh6, Bg2, Sg8, Pe6, Pe3, Pb7]
+stipulation: "#3"
+solution: |
+  "1. Qd6? [2. b4#]
+  1... Bc6 2. Sc4+
+    2... Ka4 3. Qa3#
+  But 1... Rg4! 
+  
+  1. Qd4? ~ 2. b4#
+  But 1... Bf8! 
+  
+  1. b3! [2. Sd5+
+    2... b6 3. Q:b6#]
+  1... Rg7 2. Qd4 ~ 3. b4#
+  1... Bg5 2. Qd6 [3. Sc4, b4#]
+    2... Bf1/d5 3. b4#
+    2... Bc6 3. Sc4#
+  1... Kb4 2. Qd4+
+    2... K:b3 3. Qb2#
+    2... Ka3 3. Qa4#
+    2... Ka5 3. b4#"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Národní Listy
+source-id: 132/669
+date: 1911-05-14
+algebraic: 
+  white: [Kf6, Qf2, Rb5, Pg7, Pg5, Pf7, Pf3, Pe2, Pd2, Pc2, Pb3]
+  black: [Kd5, Rc6, Bc5, Pg6, Pf4, Pd6, Pc7, Pb6, Pb4]
+stipulation: "s#2"
+solution: "1. Qh4!  Kd4 2. e4 d5#"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Národní Listy
+source-id: 173/687
+date: 1911-06-25
+algebraic: 
+  white: [Kc2, Qd2, Bf6, Sg7, Pc6, Pc3, Pb4]
+  black: [Ke4, Pg6, Pe6]
+stipulation: "#3"
+solution: |
+  "1. Qf2! - zz
+  1... e5 2. Qg2+ Kf4, Ke3 3. Bg5#
+  1... g5 2. Qe2+ Kf4 3. Be5#
+       2... Kd5 3. Q:e6#
+  1... Kd5 2. Qf3+ Kd6 3. Se8#
+       2... Kc4 3. Qd3#"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Národní Listy
+source-id: 201/698
+date: 1911-07-23
+algebraic: 
+  white: [Kf2, Rf5, Bd8, Bd3, Pd5, Pc3, Pb5]
+  black: [Kc5, Pd6, Pc6]
+stipulation: "#3"
+solution: |
+  "1. Ba5! - zz
+  1... c:d5 2. c4 Kd4 3. R:d5#
+  1... c:b5 2. Ke3 b4 3. c:b4#"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Magyar Sakkujság
+source-id: 6/54
+date: 1911-07-10
+algebraic: 
+  white: [Kf1, Qa1, Be5, Pg6, Pf7, Pd6, Pd2, Pb3]
+  black: [Kf8, Ba3, Ph5, Pg5, Pe6, Pd7, Pd4, Pb4, Pa7, Pa2]
+stipulation: "#3"
+solution: |
+  "1.Kf1-g1 ! threat:
+          2.Qa1-f1 threat:
+                  3.g6-g7 #
+      1...Ba3-c1
+          2.Qa1*d4 threat:
+                  3.Be5-g7 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Jas
+source-id: 727
+date: 1935-12-06
+algebraic: 
+  white: [Ka5, Qa7, Rd4, Rc3, Bh1, Bf2, Se8, Pb2]
+  black: [Kc5, Rb6, Pe5, Pc4]
+stipulation: "s#3"
+solution: |
+  "1.Ka5-a4 ! zugzwang.
+     1...e5-e4
+         2.b2-b4 +
+             2...Kc5-c6
+                 3.Qa7-a6
+                     3...Rb6*a6 #
+     1...e5*d4
+         2.Qa7-a5 +
+             2...Rb6-b5
+                 3.Ka4-a3
+                     3...Rb5*a5 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматы в СССР
+source-id: 1/1374
+date: 1932
+algebraic: 
+  white: [Kc6, Qg5, Rf4, Rc3, Pg3]
+  black: [Ke1, Pf5, Pe2, Pd2]
+stipulation: "#3"
+solution: |
+  "1.Rf4-f3 !{display-departure-square} zugzwang.
+     1...Ke1-d1
+         2.Qg5-h5 threat:
+                 3.Rf3-f1 #
+             2...Kd1-e1
+                 3.Qh5-h1 #
+     1...d2-d1=Q{(d1~)}
+         2.Rc3-c1 zugzwang.
+             2...Qd1*c1 +
+                 3.Qg5*c1 #
+             2...f5-f4
+                 3.Qg5-a5 #
+     1...f5-f4
+         2.Qg5-a5 threat:
+                 3.Rc3-c1 #
+             2...Ke1-d1
+                 3.Qa5-a1 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Polski Zadaniowiec
+date: 1931
+distinction: 1st Prize
+algebraic: 
+  white: [Ka5, Qd5, Rh2, Rg3, Bf3, Be1, Se2, Sd3, Pc2, Pb6, Pa4]
+  black: [Ke3, Rg5, Be4, Bc1, Sg7, Sa2, Ph5, Pg4, Pe6, Pc3, Pb7, Pb4]
+stipulation: "s#2"
+solution: |
+  "1.Sd3-b2 ! threat:
+          2.Qd5-c5 +
+              2...Rg5*c5 #
+      1...Be4*f3
+          2.Qd5-e5 +
+              2...Rg5*e5 #
+      1...Be4-f5
+          2.Qd5-e4 +
+              2...Bf5*e4 #
+      1...Be4*d5
+          2.Bf3-h1 +
+              2...Bd5-f3 #
+      1...Rg5-g6
+          2.Qd5-g5 +
+              2...Rg6*g5 #
+      1...e6-e5
+          2.Qd5-d4 +
+              2...e5*d4 #
+      1...e6*d5
+          2.Sb2-c4 +
+              2...d5*c4 #
+      1...Sg7-f5
+          2.Qd5-d4 +
+              2...Sf5*d4 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Schweizerische Schachzeitung
+source-id: 797
+date: 1907-05
+algebraic: 
+  white: [Ka4, Rb8, Rb4, Pc7, Pc6, Pa5]
+  black: [Ka6, Rc8, Pa7]
+stipulation: "#3"
+solution: |
+  "1.Rb8-a8 ! threat:
+          2.Rb4-b6 #
+      1...Rc8*a8
+          2.Rb4-b8 threat:
+                  3.c7-c8=Q #
+              2...Ra8*b8
+                  3.c7*b8=S #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Schweizerische Schachzeitung
+source-id: 798
+date: 1907-05
+algebraic: 
+  white: [Kh3, Qf5, Se4, Sb2, Pc2, Pb4]
+  black: [Kd4, Sa1, Pe2, Pd5]
+stipulation: "#3"
+solution: |
+  "1.Qf5-f4 ! threat:
+          2.c2-c3 #
+      1...Sa1*c2
+          2.Se4-c5 +
+              2...Kd4-c3
+                  3.Sb2-a4 #
+      1...e2-e1=Q
+          2.c2-c3 +
+              2...Qe1*c3 +
+                  3.Se4-g3 #
+      1...d5*e4
+          2.Qf4-f6 +
+              2...Kd4-d5
+                  3.c2-c4 #
+              2...Kd4-e3
+                  3.Sb2-c4 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Schweizerische Schachzeitung
+source-id: 799
+date: 1907-05
+algebraic: 
+  white: [Kf8, Qf1, Re5, Be6, Pe4, Pc3]
+  black: [Kd6, Ba4, Pe3, Pc6, Pc4, Pb6, Pb5]
+stipulation: "#3"
+solution: |
+  "1.Be6-c8 ! 
+      1...c6-c5
+          2.Re5-e7 threat:
+                  3.Qf1-f6 #
+      1...Kd6*e5
+          2.Kf8-e7 threat:
+                  3.Qf1-f5 #
+      1...Kd6-c7
+          2.Qf1-f7 +
+              2...Kc7-d6
+                  3.Qf7-e7 #
+              2...Kc7-b8
+                  3.Qf7-b7 #
+              2...Kc7*c8
+                  3.Re5-e8 #
+              2...Kc7-d8
+                  3.Qf7-d7 #
+                  3.Re5-e8 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Schweizerische Schachzeitung
+source-id: 800
+date: 1907-05
+algebraic: 
+  white: [Kb8, Rd4, Sd7, Sd6, Pb5, Pb3, Pa2]
+  black: [Ka5, Ra1, Sc3, Pd5]
+stipulation: "#3"
+solution: |
+  "1.a2-a3 ! threat:
+          2.Rd4-a4 +
+              2...Sc3*a4
+                  3.b3-b4 #
+      1...Ra1*a3
+          2.b3-b4 +
+              2...Ka5-a4
+                  3.Sd7-c5 #
+      1...Ra1-b1
+          2.Rd4-b4 threat:
+                  3.Sd6-b7 #
+              2...Sc3*b5
+                  3.Rb4-a4 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Schweizerische Schachzeitung
+source-id: 802
+date: 1907-05
+algebraic: 
+  white: [Kb7, Qe3, Bc8, Se5, Pf7]
+  black: [Kf6, Rh8, Bg7, Sg8, Ph7, Ph5, Ph4, Pg3]
+stipulation: "#3"
+solution: |
+  "1.Qe3-d4 ! threat:
+          2.Qd4-d6 +
+              2...Kf6-g5
+                  3.Se5-f3 #
+      1...Kf6-g5
+          2.Qd4*h4 +
+              2...Kg5*h4
+                  3.Se5-f3 #
+              2...Kg5-h6
+                  3.Qh4-f4 #
+      1...Kf6-e7
+          2.Qd4-d8 +
+              2...Ke7*d8
+                  3.Se5-c6 #
+      1...Bg7-f8
+          2.Qd4-f4 +
+              2...Kf6-g7
+                  3.Qf4-g5 #
+              2...Kf6-e7
+                  3.Se5-c6 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Schweizerische Schachzeitung
+source-id: 803
+date: 1907-05
+algebraic: 
+  white: [Kf7, Qc1, Rb7, Rb6, Pe4, Pd7]
+  black: [Kd6, Re1, Bc6, Sd2, Sb1, Pf5]
+stipulation: "#2"
+solution: |
+  "1.Rb6-b5 ! threat:
+          2.Qc1-c5 #
+      1...Sb1-c3
+          2.Qc1-a3 #
+      1...Re1*c1
+          2.e4-e5 #
+      1...Sd2*e4
+          2.Qc1-f4 #
+      1...Sd2-c4
+          2.Qc1-h6 #
+      1...Bc6*b5
+          2.Qc1-c7 #
+      1...Bc6-d5 +
+          2.Rb5*d5 #
+      1...Bc6*b7
+          2.d7-d8=Q #
+      1...Sd2-b3
+          2.Qc1-h6 #
+          2.Qc1-f4 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматы
+source-id: 12/288
+date: 1925
+algebraic: 
+  white: [Kb7, Qb2, Re1, Bf5, Ba3, Pg4, Pc2, Pa2]
+  black: [Kd5, Re2, Pf4, Pe7, Pb6]
+stipulation: "#2"
+solution: |
+  "1.c2-c3 ! threat:
+          2.Qb2-b5 #
+      1...Kd5-e5
+          2.c3-c4 #
+      1...Re2*b2
+          2.Bf5-e6 #
+      1...Kd5-c4
+          2.Qb2-b3 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматы
+source-id: 12/289
+date: 1925
+algebraic: 
+  white: [Ka2, Qd1, Bg1, Se3, Sc3, Ph4, Pg2, Pf6, Pd5, Pd2, Pc2, Pb6]
+  black: [Kd6, Ra7, Bd3, Ph5, Pd7, Pc4, Pa5]
+stipulation: "#3"
+solution: |
+  "1.Qd1-f1 ! threat:
+          2.Se3-f5 +
+              2...Bd3*f5
+                  3.Qf1-f4 #
+              2...Kd6-e5
+                  3.Bg1-d4 #
+      1...Bd3*f1
+          2.d2-d4 threat:
+                  3.Se3-f5 #
+                  3.Sc3-e4 #
+                  3.Sc3-b5 #
+                  3.Bg1-h2 #
+              2...c4*d3 ep.
+                  3.Se3-c4 #
+      1...Kd6-e5
+          2.Qf1-f4 +
+              2...Ke5*f4
+                  3.Bg1-h2 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматный листок
+source-id: 20/1024
+date: 1929
+algebraic: 
+  white: [Kc7, Rf4, Bb1, Pe6, Pb4, Pb2, Pa2]
+  black: [Ka4, Pf5, Pe7]
+stipulation: "#3"
+solution: |
+  "1.Bb1-e4 ! threat:
+          2.Be4-c6 #
+      1...Ka4-b5
+          2.Be4-b7 zugzwang.
+              2...Kb5-a4
+                  3.Bb7-c6 #
+      1...Ka4*b4
+          2.Be4-c6 +
+              2...Kb4-c5
+                  3.b2-b4 #
+              2...Kb4-a5
+                  3.Rf4-a4 #
+      1...f5*e4
+          2.Kc7-b6 zugzwang.
+              2...Ka4*b4
+                  3.Rf4*e4 #
+              2...e4-e3
+                  3.b4-b5 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматный листок
+source-id: 19/1016
+date: 1929
+algebraic: 
+  white: [Kf5, Bb5, Bb4, Pf3, Pd6, Pc7, Pa6]
+  black: [Kc8, Rg1, Bh1, Pg2, Pf2, Pe2, Pb6]
+stipulation: "#3"
+solution: |
+  "1.Bb4-e1 ! threat:
+          2.Kf5-e6 threat:
+                  3.Bb5-d7 #
+      1...f2-f1=B
+          2.Be1-g3 threat:
+                  3.d6-d7 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматный листок
+source-id: 14/992
+date: 1929
+algebraic: 
+  white: [Ka7, Bg8, Bf8, Se3, Sb6, Ph6, Pe7]
+  black: [Ke8, Rf2, Rd2, Be1, Sd1, Ph3, Pf6, Pf5, Pd6, Pd5, Pb5, Pa4]
+stipulation: "#3"
+solution: |
+  "1.h6-h7 ! threat:
+          2.h7-h8=S threat:
+                  3.Bg8-f7 #
+      1...Rd2-c2
+          2.Se3*d5{display-departure-file} threat:
+                  3.Sd5*f6 #
+              2...Be1-c3
+                  3.Sd5-c7 #
+              2...Rc2-c7 +
+                  3.Sd5*c7 #
+      1...Rf2-g2
+          2.Se3*f5 threat:
+                  3.Sf5*d6 #
+              2...Be1-g3
+                  3.Sf5-g7 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматный листок
+source-id: 12/975
+date: 1929
+algebraic: 
+  white: [Kg5, Qc1, Bh2, Sg2, Pf6, Pf5, Pc3, Pb7, Pb2]
+  black: [Ke5, Ra7, Sa6, Pf4, Pd7, Pd3, Pb6]
+stipulation: "#3"
+solution: |
+  "1.Qc1-h1 ! threat:
+          2.Sg2*f4 threat:
+                  3.Sf4*d3 #
+                  3.Sf4-e2 #
+                  3.Sf4-h3 #
+                  3.Sf4-h5 #
+                  3.Sf4-g6 #
+                  3.Sf4-e6 #
+                  3.Sf4-d5 #
+                  3.Qh1-d5 #
+  
+      1...Ke5-e4
+          2.Sg2-h4 +
+              2...Ke4-e3
+                  3.Qh1-e1 #
+              2...Ke4-e5
+                  3.Bh2*f4 #
+              2...f4-f3
+                  3.Qh1*f3 #
+      1...Sa6-c5
+          2.Bh2*f4 +
+              2...Ke5-e4
+                  3.Sg2-e1 #
+                  3.Sg2-h4 #
+                  3.Sg2-e3 #
+              2...Ke5-d5
+                  3.Sg2-e3 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматный листок
+source-id: 8/939
+date: 1929
+algebraic: 
+  white: [Kh3, Qb4, Be3, Ph6, Pg5, Pg2, Pc5, Pc2, Pb3]
+  black: [Kf5, Pc7]
+stipulation: "#3"
+solution: |
+  "1.Qb4-b8 ! threat:
+          2.Qb8-e8 threat:
+                  3.g2-g4 #
+      1...c7-c6
+          2.Qb8-d6 zugzwang.
+              2...Kf5-e4
+                  3.Qd6-e6 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматный листок
+source-id: 5/912
+date: 1929
+algebraic: 
+  white: [Kd1, Qg3, Pf6, Pe7, Pd6]
+  black: [Ke8, Ba5, Pe6]
+stipulation: "#3"
+solution: "1.Qg3-e5 ?  1...Ke8-d7 !"
+keywords: 
+  - Unsound
+comments: 
+  - "with bPa5? 1.Qe5!"
+  - 138793
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматный листок
+source-id: 3/894
+date: 1929
+algebraic: 
+  white: [Ke8, Qh5, Rd7, Pg7, Pg4]
+  black: [Kh7, Bh6, Bg8, Pg5, Pe6]
+stipulation: "#3"
+solution: |
+  "1.Ke8-d8 ! zugzwang.
+      1...e6-e5
+          2.Qh5-e8 zugzwang.
+              2...e5-e4
+                  3.Qe8*e4 #
+              2...Bg8-a2{(Bg~)}
+                  3.g7-g8=Q #
+              2...Bh6*g7
+                  3.Qe8-h5 #
+  
+      1...Bg8-f7
+          2.Qh5*f7 threat:
+                  3.g7-g8=Q #
+              2...Bh6*g7
+                  3.Qf7*g7 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматы
+source-id: 3-4/43
+date: 1923
+algebraic: 
+  white: [Ka1, Qc3, Re2, Bf1, Sd8, Sd5, Pd4, Pb2]
+  black: [Ka6, Be3, Sa8, Sa3, Pa7, Pa4]
+stipulation: "#2"
+solution: |
+  "1.b2-b4 ! zugzwang.
+       1...a4*b3 ep.
+          2.Re2-a2 #
+       1...Be3-c1{(B~)}
+          2.Re2-e6 #
+       1...Sa3-c2 +
+          2.Re2*c2 #
+       1...Sa3-c4
+          2.Qc3*c4 #
+       1...Sa3-b5
+          2.Qc3-c8 #
+       1...Ka6-b5
+          2.Qc3-c6 #
+       1...Sa8-b6
+          2.Sd5-c7 #
+       1...Sa8-c7
+          2.Qc3-c6 #
+       1...Sa3-b1
+          2.Qc3-c4 #
+          2.Qc3-d3 #
+          2.Re2-e1 #{(R~)}"
+keywords: 
+  - En passant
+  - Battery play
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматы
+source-id: 1-2/35
+date: 1923
+algebraic: 
+  white: [Kc8, Bb3, Sa6, Ph5, Pg7, Pg6, Pe5, Pe3, Pa5]
+  black: [Ke7, Sd7, Ph6]
+stipulation: "#4"
+solution: |
+  "1.Sa6-c5 ! threat:
+          2.Sc5*d7 threat:
+                  3.g7-g8=S +
+                      3...Ke7-e8
+                          4.Bb3-f7 #
+              2...Ke7-e8
+                  3.Bb3-f7 +
+                      3...Ke8-e7
+                          4.g7-g8=S #
+                  3.g7-g8=Q +
+                      3...Ke8-e7
+                          4.Qg8-e6 #
+                          4.Qg8-f7 #
+                          4.Qg8-d8 #
+                          4.Qg8-f8 #
+      1...Sd7-b6 +
+          2.a5*b6 zugzwang.
+              2...Ke7-e8
+                  3.g7-g8=Q +
+                      3...Ke8-e7
+                          4.Qg8-f7 #
+                          4.Qg8-d8 #
+      1...Sd7*e5
+          2.g7-g8=Q threat:
+                  3.Qg8-d8 #
+              2...Se5-f7
+                  3.Qg8*f7 +
+                      3...Ke7-d6
+                          4.Qf7-c7 #
+              2...Se5-d7
+                  3.Sc5*d7 threat:
+                          4.Qg8-e6 #
+                          4.Qg8-f8 #
+                      3...Ke7-d6
+                          4.Qg8-e6 #
+                  3.Qg8-e6 +
+                      3...Ke7-f8
+                          4.Qe6-f7 #
+              2...Se5-c6
+                  3.Qg8-e6 +
+                      3...Ke7-f8
+                          4.Qe6-f7 #
+                  3.Qg8-g7 +
+                      3...Ke7-d6
+                          4.Sc5-e4 #
+                          4.Sc5-b7 #
+                      3...Ke7-e8
+                          4.Qg7-f7 #
+              2...Ke7-d6
+                  3.Sc5-e4 +
+                      3...Kd6-e7
+                          4.Qg8-d8 #
+                      3...Kd6-c6
+                          4.Qg8-d5 #
+                          4.Bb3-a4 #
+                  3.Sc5-b7 +
+                      3...Kd6-e7
+                          4.Qg8-d8 #
+                      3...Kd6-c6
+                          4.Qg8-d5 #
+                          4.Bb3-a4 #
+                  3.Qg8-d5 +
+                      3...Kd6-e7
+                          4.Qd5-d8 #
+                  3.Qg8-e6 +
+                      3...Kd6*c5
+                          4.Qe6-b6 #
+              2...Ke7-f6
+                  3.Qg8-d8 +
+                      3...Kf6-g7
+                          4.Sc5-e6 #
+                      3...Kf6-f5
+                          4.Bb3-e6 #
+      1...Sd7-f6
+          2.Bb3-f7 zugzwang.
+              2...Sf6-d5
+                  3.g7-g8=S +
+                      3...Ke7-f8
+                          4.Sc5-e6 #
+              2...Sf6-e4
+                  3.g7-g8=S +
+                      3...Ke7-f8
+                          4.Sc5-e6 #
+              2...Sf6-g4
+                  3.g7-g8=Q threat:
+                          4.Qg8-d8 #
+                          4.Qg8-e8 #
+                      3...Sg4-f6
+                          4.Qg8-d8 #
+                      3...Sg4*e5
+                          4.Qg8-d8 #
+                  3.g7-g8=S +
+                      3...Ke7-f8
+                          4.Sc5-e6 #
+              2...Sf6*h5
+                  3.g7-g8=Q threat:
+                          4.Qg8-d8 #
+                          4.Qg8-e8 #
+                      3...Sh5-g7
+                          4.Qg8-d8 #
+                      3...Sh5-f6
+                          4.Qg8-d8 #
+                  3.g7-g8=S +
+                      3...Ke7-f8
+                          4.Sc5-e6 #
+              2...Sf6-h7
+                  3.g7-g8=S +
+                      3...Ke7-f8
+                          4.Sc5-e6 #
+              2...Sf6-g8
+                  3.Sc5-e4 zugzwang.
+                      3...Sg8-f6
+                          4.e5*f6 #
+              2...Sf6-e8{(Sd7)}
+                  3.g7-g8=S +
+                      3...Ke7-f8
+                          4.Sc5-e6 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Шахматы
+source-id: 2/7
+date: 1922
+algebraic: 
+  white: [Kh4, Qd2, Rf8, Ph5, Pf6, Pe3, Pd5, Pc6]
+  black: [Ke5, Sg8, Se8, Ph6, Pe4, Pd6, Pc7]
+stipulation: "#3"
+solution: |
+  "1.f6-f7 ! threat:
+          2.f7*g8=Q threat:
+                  3.Qg8-e6 #
+                  3.Qg8-g3 #
+                  3.Qd2-c3 #
+                  3.Qd2-b2 #
+                  3.Qd2-d4 #
+                  3.Qd2-h2 #
+  
+          2.f7*e8=Q +
+              2...Sg8-e7
+                  3.Qe8*e7 #
+                  3.Qd2-d4 #
+  
+      1...Ke5-f6
+          2.Qd2-h2 zugzwang.
+              2...Kf6-g7
+                  3.f7*g8=Q #
+              2...Kf6-e7
+                  3.f7*e8=Q #
+  
+              2...Kf6-f5
+                  3.Qh2-f4 #
+              2...Se8-g7
+                  3.f7*g8=S #
+              2...Sg8-e7
+                  3.f7*e8=S #
+      1...Se8-f6
+          2.f7*g8=Q threat:
+                  3.Qg8-e6 #
+              2...Sf6*d5
+                  3.Qg8*d5 #
+                  3.Qd2*d5 #
+                  3.Qd2-d4 #
+              2...Sf6*g8
+                  3.Qd2-d4 #
+      1...Se8-g7
+          2.Qd2-d4 +
+              2...Ke5-f5
+                  3.f7*g8=Q #
+                  3.f7*g8=S #
+                  3.f7*g8=R #
+                  3.f7*g8=B #
+      1...Sg8-e7
+          2.Qd2-d4 +
+              2...Ke5-f5
+                  3.f7*e8=Q #
+                  3.f7*e8=S #
+                  3.f7*e8=R #
+                  3.f7*e8=B #
+      1...Sg8-f6
+          2.f7*e8=Q +
+              2...Ke5-f5
+                  3.Qe8-e6 #
+                  3.Qd2-f2 #
+              2...Sf6*e8
+                  3.Qd2-d4 #
+          2.f7*e8=R +
+              2...Ke5-f5
+                  3.Qd2-f2 #
+              2...Sf6*e8
+                  3.Qd2-d4 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: «64»
+source-id: 24/937
+date: 1929
+distinction: Comm., 2nd half-year
+algebraic: 
+  white: [Kg2, Qe4, Rh5, Ra8, Be7, Ba2, Sg6, Sf8]
+  black: [Kg8, Rg4, Rd3, Bf7, Bf4, Sh3, Pg3, Pd2, Pb7]
+stipulation: "#2"
+solution: |
+  "1.Sg6-e5 ! threat:
+          2.Qe4-h7 #
+      1...Sh3-g5
+          2.Qe4-g6 #
+      1...Rg4-g7
+          2.Sf8-d7 #
+      1...Bf7-d5
+          2.Sf8-e6 #"
+keywords: 
+  - Battery play
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Конкурс имени VII шахматно-шашечного съезда, «64»
+source-id: 1/
+date: 1932
+distinction: 5th HM, 1931-1932
+algebraic: 
+  white: [Ke8, Qe3, Rd7, Rc2, Bh1, Bc5, Sa3, Pe6, Pa6, Pa5]
+  black: [Kc6, Qg2, Rh5, Re4, Sc1, Ph7, Pf7, Pf5, Pc7]
+stipulation: "#2"
+solution: |
+  "1.Qe3-f4 ! threat:
+          2.Qf4*c7 #
+      1...Qg2-g8 +
+          2.Bc5-f8 #
+      1...Qg2-g3
+          2.Bc5-e3 #
+      1...Qg2-h2
+          2.Bc5-f2 #
+      1...Re4*e6 +
+          2.Bc5-e7 #
+      1...Re4-e5
+          2.Qf4-a4 #
+      1...Re4*f4
+          2.Bc5-d4 #"
+keywords: 
+  - Half-pin
+  - Battery play
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Tijdschrift vd NSB
+date: 1921
+algebraic: 
+  white: [Ka3, Qb8, Rf4, Rc1, Ba1, Sb4, Pg3, Pd2]
+  black: [Ke5, Sd6, Sb2, Pe6, Pd3, Pc4, Pb5]
+stipulation: "s#4"
+solution: |
+  "1.Rc1-c3 ! zugzwang.
+      1...Sb2-d1
+          2.Rc3*c4 +
+              2...Sd1-c3
+                  3.Ba1-b2 zugzwang.
+                      3...b5*c4
+                          4.Qb8-b5 +
+                              4...Sd6*b5 #
+              2...Sd1-b2
+                  3.Ka3-b3 zugzwang.
+                      3...b5*c4 +
+                          4.Kb3-c3
+                              4...Sb2-d1 #
+                              4...Sb2-a4 #
+      1...Sb2-a4
+          2.Rc3*c4 +
+              2...Sa4-b2
+                  3.Ka3-b3 zugzwang.
+                      3...b5*c4 +
+                          4.Kb3-c3
+                              4...Sb2-d1 #
+                              4...Sb2-a4 #
+              2...Sa4-c3
+                  3.Ba1-b2 zugzwang.
+                      3...b5*c4
+                          4.Qb8-b5 +
+                              4...Sd6*b5 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Die Schwalbe
+date: 1934
+algebraic: 
+  white: [Kh1, Rh2, Rb2, Bh8, Bh7, Sd2, Pa5]
+  black: [Ka1, Ra6, Ph3, Pb6, Pa7]
+stipulation: "s#4"
+solution: |
+  "1.Sd2-b1 ! zugzwang.
+      1...Ra6*a5
+          2.Rb2-e2 +
+              2...Ra5-e5
+                  3.Re2-e1 threat:
+                          4.Sb1-c3 +
+                              4...Re5*e1 #
+      1...b6-b5
+          2.Rb2-f2 +
+              2...Ra6-f6
+                  3.Rf2-f1 threat:
+                          4.Sb1-c3 +
+                              4...Rf6*f1 #
+      1...b6*a5
+          2.Rb2-f2 +
+              2...Ra6-f6
+                  3.Rf2-f1 threat:
+                          4.Sb1-c3 +
+                              4...Rf6*f1 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Смена (Москва)
+source-id: 1/93
+date: 1939
+algebraic: 
+  white: [Kc8, Bd4, Bb7, Pf5, Pc5]
+  black: [Ka7, Sh5, Pf6, Pc6]
+stipulation: "#3"
+solution: |
+  "1.Bd4-g1 ! {- zugzwang}
+     1...Sh5-f4
+         2.Bg1-h2 {- zugzwang}
+             2...Sf4-d3 {(S~)}
+                 3.Bh2-b8 #
+     1...Sh5-g3
+         2.Bg1-h2 {- zugzwang}
+             2...Sg3-e2 {(S~)}
+                 3.Bh2-b8 #
+     1...Sh5-g7
+         2.Bg1-h2 threat:
+                 3.Bh2-b8 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: Смена (Москва)
+source-id: 1/94
+date: 1939
+algebraic: 
+  white: [Kg6, Rg5, Pb5]
+  black: [Kh8, Rb4, Ba6, Ba5, Pd4, Pc7]
+stipulation: "#3"
+solution: |
+  "1.Rg5-d5 ! threat:
+         2.Rd5-d8 #
+     1...Ba6*b5
+         2.Rd5-d8 +
+             2...Bb5-e8 +
+                 3.Rd8*e8 #
+     1...c7-c5
+         2.Kg6-f7 threat:
+                 3.Rd5-h5 #
+     1...c7-c6
+         2.Rd5-e5 threat:
+                 3.Re5-e8 #"
+---
+authors: 
+  - Куббель, Леонид Иванович
+source: 
+date: 1908
+algebraic: 
+  white: [Kd7, Rd3, Bb4, Sc4, Sa3, Pf3, Pe5, Pd4, Pc6, Pb5]
+  black: [Kd5, Sa8, Pf5, Pf4, Pc7, Pb6, Pa6, Pa4]
+stipulation: "#3"
+solution: |
+  "1.Rd3-d1 ! 
+     1...a6-a5
+         2.Bb4-d2 
+             2...Kd5*d4
+                 3.Bd2-b4 #
+     1...a6*b5
+         2.Sc4-d2 
+             2...Kd5*d4
+                 3.Sd2-c4 #"
+comments: 
+  - republished in «Смена» (Москва), 1939, № 7/117
