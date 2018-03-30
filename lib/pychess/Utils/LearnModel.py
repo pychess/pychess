@@ -57,15 +57,13 @@ class LearnModel(GameModel):
         "learn_success": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
 
-    @property
-    def black_starts(self):
-        return "FEN" in self.tags and self.tags["FEN"].split()[1] == "b"
-
     def set_learn_data(self, learn_type, source, current_index=None, game_count=None):
         self.learn_type = learn_type
         self.source = source
         self.current_index = current_index
         self.game_count = game_count
+
+        self.black_starts = "FEN" in self.tags and self.tags["FEN"].split()[1] == "b"
 
         self.hints = {}
         self.goal = None
@@ -120,8 +118,9 @@ class LearnModel(GameModel):
         full_moves = (self.ply - self.lowply) // 2 + 1
         # print("Is Goal not reached?", self.goal.result, status, full_moves, self.goal.moves, self.failed_playing_best)
 
-        if (self.goal.result == MATE_IN and status in (WHITEWON, BLACKWON) and full_moves == self.goal.moves) or \
-           (self.goal.result == DRAW_IN and status == DRAW and full_moves == self.goal.moves) or \
+        if (self.goal.result == DRAW_IN and status == DRAW and full_moves <= self.goal.moves) or \
+           (self.goal.result == MATE_IN and status == WHITEWON and full_moves <= self.goal.moves and not self.black_starts) or \
+           (self.goal.result == MATE_IN and status == BLACKWON and full_moves <= self.goal.moves and self.black_starts) or \
            (self.goal.result in (EVAL_IN, EQUAL_IN) and full_moves == self.goal.moves and not self.failed_playing_best) or \
            (self.goal.result == MATE and status in (WHITEWON, BLACKWON)) or \
            (self.goal.result == PROMOTION and self.moves[-1].promotion):

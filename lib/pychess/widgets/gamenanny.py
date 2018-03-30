@@ -191,7 +191,8 @@ class GameNanny(object):
             self.engineDead(gamemodel.players[1], gmwidg)
 
         if (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()) or \
-                gamemodel.isEngine2EngineGame() or isinstance(gamemodel, LearnModel):
+                gamemodel.isEngine2EngineGame() or \
+                (isinstance(gamemodel, LearnModel) and not gamemodel.failed_playing_best):
             asyncio.async(gamemodel.restart_analyzer(HINT))
             asyncio.async(gamemodel.restart_analyzer(SPY))
             if not conf.get("hint_mode", False):
