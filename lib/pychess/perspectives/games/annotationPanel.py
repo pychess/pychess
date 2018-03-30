@@ -138,8 +138,9 @@ class Sidepanel:
         self.textbuffer.create_tag("emt", foreground="grey")
         self.textbuffer.create_tag("comment", foreground="#6e71ec")
         self.textbuffer.create_tag("lesson-comment", foreground="green", font_desc=self.font)
-        self.textbuffer.create_tag("selected", background_full_height=True, background="#ffcbff")
         self.textbuffer.create_tag("margin", left_margin=4)
+
+        self.selected_tag = self.textbuffer.create_tag("selected", background_full_height=True, background=self.get_slected_background())
 
         # Events
         self.cids_textview = [
@@ -224,10 +225,15 @@ class Sidepanel:
             palette = ["#4b4b4b", "#51a745", "#ee3e34", "#3965a8", "#a882bc", "#f09243", "#772120", "#c0c000"]  # black, green, red, blue, purple, orange, brown, ochre
         return palette
 
+    def get_slected_background(self):
+        return "grey" if isDarkTheme(self.textview) else "lightgrey"
+
     def on_style_updated(self, widget):
         palette = self.get_palette()
         for i in range(64):
             self.tag_vari_depth[i].set_property("foreground", palette[i % len(palette)])
+
+        self.selected_tag.set_property("background", self.get_slected_background())
 
     def tag_event_handler(self, tag, widget, event, iter):
         """
