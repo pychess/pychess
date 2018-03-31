@@ -202,7 +202,7 @@ class LearnInfoBar(Gtk.InfoBar):
 
                 self.annotation_panel.choices_enabled = True
 
-                self.gamemodel.undo_in_variation(board)
+                # self.gamemodel.undo_in_variation(board)
 
             self.boardcontrol.game_preview = False
 

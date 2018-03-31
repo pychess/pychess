@@ -105,9 +105,9 @@ def start_lesson_from(filename, index=None):
 
     timemodel = TimeModel(0, 0)
     gamemodel = LearnModel(timemodel)
-    gamemodel.set_learn_data(LESSON, filename, index, len(records))
 
     chessfile.loadToModel(rec, -1, gamemodel)
+    gamemodel.set_learn_data(LESSON, filename, index, len(records))
 
     color = gamemodel.boards[0].color
     player_name = conf.get("firstName", _("You"))
