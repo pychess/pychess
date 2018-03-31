@@ -187,10 +187,6 @@ class LearnInfoBar(Gtk.InfoBar):
                     self.boardview.shown - 1,
                     variation=self.boardview.shown_variation_idx)
 
-                board = self.gamemodel.getBoardAtPly(
-                    self.boardview.shown,
-                    variation=self.boardview.shown_variation_idx)
-
                 self.annotation_panel.choices_enabled = False
                 self.boardview.setShownBoard(prev_board)
                 # We have to fix show_variation_index here, unless
@@ -201,8 +197,6 @@ class LearnInfoBar(Gtk.InfoBar):
                 self.boardview.shown_variation_idx = self.gamemodel.variations.index(vari)
 
                 self.annotation_panel.choices_enabled = True
-
-                # self.gamemodel.undo_in_variation(board)
 
             self.boardcontrol.game_preview = False
 

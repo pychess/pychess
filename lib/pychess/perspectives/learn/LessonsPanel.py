@@ -119,6 +119,7 @@ def start_lesson_from(filename, index=None):
     p1 = (LOCAL, Human, (BLACK, b_name), b_name)
 
     def learn_success(gamemodel):
+        chessfile.loadToModel(rec, -1, gamemodel)
         progress = lessons_solving_progress[gamemodel.source]
         progress[gamemodel.current_index] = 1
         lessons_solving_progress[gamemodel.source] = progress
