@@ -108,7 +108,10 @@ class Sidepanel():
 
 def start_puzzle_from(filename, index=None):
     if filename.lower().endswith(".pgn"):
-        chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename)))
+        if filename.startswith("lichess_study"):
+            chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename), encoding="utf-8"))
+        else:
+            chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename)))
         chessfile.limit = 1000
         chessfile.init_tag_database()
     elif filename.lower().endswith(".olv"):

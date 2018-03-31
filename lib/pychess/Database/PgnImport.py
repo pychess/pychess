@@ -13,8 +13,9 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from pychess.Utils.const import NORMALCHESS, RUNNING, DRAW, WHITEWON, BLACKWON
 from pychess.Variants import name2variant
+from pychess.System.Log import log
 from pychess.System import download_file
-from pychess.System.protoopen import protoopen, protosave
+from pychess.System.protoopen import protoopen, protosave, PGN_ENCODING
 from pychess.Database.model import event, site, player, game, annotator, tag_game, source
 # from pychess.System import profile_me
 
@@ -151,7 +152,7 @@ class PgnImport():
         orig_filename = filename
         count_source = self.conn.execute(self.count_source.where(source.c.name == orig_filename)).scalar()
         if count_source > 0:
-            print("%s is already imported" % filename)
+            log.info("%s is already imported" % filename)
             return
 
         # collect new names not in they dict yet
@@ -171,7 +172,7 @@ class PgnImport():
                 return
         else:
             if not os.path.isfile(filename):
-                print("Can't open %s" % filename)
+                log.info("Can't open %s" % filename)
                 return
 
         if filename.lower().endswith(".zip") and zipfile.is_zipfile(filename):
@@ -189,10 +190,13 @@ class PgnImport():
             if progressbar is not None:
                 GLib.idle_add(progressbar.set_text, _("Reading %s ..." % basename))
             else:
-                print("Reading %s ..." % pgnfile)
+                log.info("Reading %s ..." % pgnfile)
 
             size = os.path.getsize(pgnfile)
-            handle = protoopen(pgnfile)
+            if self.chessfile.handle.encoding == PGN_ENCODING:
+                handle = protoopen(pgnfile)
+            else:
+                handle = protoopen(pgnfile, encoding=self.chessfile.handle.encoding)
 
             # estimated game count
             all_games = max(size / 840, 1)
@@ -206,7 +210,7 @@ class PgnImport():
                 i = 0
                 for tags in read_games(handle):
                     if not tags:
-                        print("Empty game #%s" % (i + 1))
+                        log.info("Empty game #%s" % (i + 1))
                         continue
 
                     if self.cancel:
@@ -234,7 +238,7 @@ class PgnImport():
 
                     if variant:
                         if variant not in name2variant:
-                            print("Unknown variant: %s" % variant)
+                            log.info("Unknown variant: %s" % variant)
                             continue
                         variant = name2variant[variant].variant
                         if variant == NORMALCHESS:
@@ -354,7 +358,7 @@ class PgnImport():
                             GLib.idle_add(progressbar.set_text, _(
                                 "%(counter)s game headers from %(filename)s imported" % ({"counter": i, "filename": basename})))
                         else:
-                            print(pgnfile, i)
+                            log.info("From %s imported %s" % (pgnfile, i))
 
                 if self.event_data:
                     self.conn.execute(self.ins_event, self.event_data)
@@ -389,7 +393,7 @@ class PgnImport():
                     GLib.idle_add(progressbar.set_text, _(
                         "%(counter)s game headers from %(filename)s imported" % ({"counter": i, "filename": basename})))
                 else:
-                    print(pgnfile, i)
+                    log.info("From %s imported %s" % (pgnfile, i))
                 trans.commit()
 
                 if self.append_pgn:
@@ -397,7 +401,7 @@ class PgnImport():
                     self.db_handle.close()
                     self.db_handle = protosave(self.chessfile.path, self.append_pgn)
 
-                    print("Append from %s to %s" % (pgnfile, self.chessfile.path))
+                    log.info("Append from %s to %s" % (pgnfile, self.chessfile.path))
                     handle.seek(0)
                     self.db_handle.writelines(handle)
                     self.db_handle.close()
@@ -421,7 +425,7 @@ class PgnImport():
 
             except SQLAlchemyError as e:
                 trans.rollback()
-                print("Importing %s failed! \n%s" % (pgnfile, e))
+                log.info("Importing %s failed! \n%s" % (pgnfile, e))
 
 
 def read_games(handle):

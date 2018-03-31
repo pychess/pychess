@@ -19,7 +19,7 @@ MATE, MATE_IN, DRAW_IN, EQUAL_IN, EVAL_IN, PROMOTION = range(6)
 class Goal():
     def __init__(self, termination):
         self.termination = termination
-        print(termination)
+        # print(termination)
 
         if termination.startswith("mate in"):
             self.result = MATE_IN
@@ -47,7 +47,7 @@ class Goal():
             self.result = MATE
             self.moves = None
             self.cp = None
-            print("No termination tag, expecting MATE", termination)
+            # print("No termination tag, expecting MATE", termination)
 
 
 class LearnModel(GameModel):
