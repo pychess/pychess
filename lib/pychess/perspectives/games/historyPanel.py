@@ -2,6 +2,7 @@ from gi.repository import Gtk, Gdk
 
 from pychess.System import conf
 from pychess.System.prefix import addDataPrefix
+from pychess.Utils.const import BLACK
 from pychess.Utils.Move import toSAN, toFAN
 from pychess.widgets.Background import hexcol
 
@@ -16,7 +17,6 @@ class Sidepanel:
     def load(self, gmwidg):
 
         self.gamemodel = gmwidg.board.view.model
-        self.black_starts = self.gamemodel.lowply % 2 == 1
         self.model_cids = [
             self.gamemodel.connect_after("game_changed", self.game_changed),
             self.gamemodel.connect_after("game_started", self.game_started),
@@ -147,7 +147,7 @@ class Sidepanel:
         self.store.set_value(treeiter, bg_col, self.get_background_rgba(selected=True))
 
         index = path[0] * 2 - 1 + (1 if col == self.black_column else 0)
-        if self.black_starts:
+        if self.gamemodel.starting_color == BLACK:
             index -= 1
 
         if index < len(self.gamemodel.boards):

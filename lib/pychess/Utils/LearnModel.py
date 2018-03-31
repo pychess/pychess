@@ -2,7 +2,7 @@ import asyncio
 
 from gi.repository import GObject
 
-from pychess.Utils.const import BLACKWON, WHITEWON, DRAW, UNDOABLE_STATES, CANCELLED, PRACTICE_GOAL_REACHED
+from pychess.Utils.const import BLACKWON, WHITEWON, DRAW, UNDOABLE_STATES, CANCELLED, PRACTICE_GOAL_REACHED, BLACK, WHITE
 from pychess.Utils.GameModel import GameModel
 
 LECTURE, PUZZLE, LESSON, ENDGAME = range(4)
@@ -63,8 +63,6 @@ class LearnModel(GameModel):
         self.current_index = current_index
         self.game_count = game_count
 
-        self.black_starts = "FEN" in self.tags and self.tags["FEN"].split()[1] == "b"
-
         self.hints = {}
         self.goal = None
         self.failed_playing_best = False
@@ -94,7 +92,9 @@ class LearnModel(GameModel):
 
         if self.puzzle_game:
             # No need to check in best moves (and let add more time to analyzer) in trivial cases
-            if self.goal.result in (MATE, MATE_IN) and status == (BLACKWON if self.black_starts else WHITEWON):
+            if self.goal.result in (MATE, MATE_IN) and (
+                (status == BLACKWON and self.starting_color == BLACK) or
+                    (status == WHITEWON and self.starting_color == WHITE)):
                 return False
             elif self.goal.result == DRAW_IN and status == DRAW:
                 return False
@@ -119,8 +119,8 @@ class LearnModel(GameModel):
         # print("Is Goal not reached?", self.goal.result, status, full_moves, self.goal.moves, self.failed_playing_best)
 
         if (self.goal.result == DRAW_IN and status == DRAW and full_moves <= self.goal.moves) or \
-           (self.goal.result == MATE_IN and status == WHITEWON and full_moves <= self.goal.moves and not self.black_starts) or \
-           (self.goal.result == MATE_IN and status == BLACKWON and full_moves <= self.goal.moves and self.black_starts) or \
+           (self.goal.result == MATE_IN and status == WHITEWON and full_moves <= self.goal.moves and self.starting_color == WHITE) or \
+           (self.goal.result == MATE_IN and status == BLACKWON and full_moves <= self.goal.moves and self.starting_color == BLACK) or \
            (self.goal.result in (EVAL_IN, EQUAL_IN) and full_moves == self.goal.moves and not self.failed_playing_best) or \
            (self.goal.result == MATE and status in (WHITEWON, BLACKWON)) or \
            (self.goal.result == PROMOTION and self.moves[-1].promotion):

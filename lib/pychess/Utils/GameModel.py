@@ -179,6 +179,10 @@ class GameModel(GObject.GObject):
     def practice_game(self):
         return self.puzzle_game or self.end_game
 
+    @property
+    def starting_color(self):
+        return BLACK if "FEN" in self.tags and self.tags["FEN"].split()[1] == "b" else WHITE
+
     def zero_reached(self, timemodel, color):
         if conf.get('autoCallFlag', True) and self.players[1 - color].__type__ == ARTIFICIAL:
             if self.status == RUNNING and timemodel.getPlayerTime(color) <= 0:
