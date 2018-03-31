@@ -220,9 +220,9 @@ class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping
             with open(self.progress_file, "r") as f:
                 self.data = json.load(f)
             if key not in self.data:
-                self.data[key] = [0] * self.get_count(key)
+                self.__setitem__(key, [0] * self.get_count(key))
         else:
-            self.data[key] = [0] * self.get_count(key)
+            self.__setitem__(key, [0] * self.get_count(key))
 
         # print("Solved: %s / %s %s" % (self[key].count(1), len(self[key]), key))
 
