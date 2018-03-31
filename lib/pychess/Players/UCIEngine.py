@@ -311,7 +311,7 @@ class UCIEngine(ProtocolEngine):
 
         if ((not self.hasOption('UCI_Elo')) and
                 (not self.hasOption('Skill Level'))) or strength <= 19:
-            self.timeHandicap = t_hcap = 0.01 * 10**(strength / 10.)
+            self.timeHandicap = t_hcap = 0.01 * 10 ** (strength / 10.)
             self.wtime = int(max(self.wtime * t_hcap, 1))
             self.btime = int(max(self.btime * t_hcap, 1))
             self.incr = int(self.incr * t_hcap)

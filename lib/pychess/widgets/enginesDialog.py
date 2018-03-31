@@ -1,7 +1,6 @@
 import os
 import sys
 import shutil
-from collections import namedtuple
 
 from gi.repository import Gtk, Gdk, GLib, GObject, Pango
 from gi.repository.GdkPixbuf import Pixbuf
@@ -10,17 +9,12 @@ from pychess.System import uistuff
 from pychess.System.prefix import getEngineDataPrefix, addDataPrefix
 from pychess.Utils.IconLoader import get_pixbuf
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp
+from pychess.Players.engineList import VM_LIST
 from pychess.Utils.isoCountries import ISO3166_LIST
 from pychess.widgets import newGameDialog
 from pychess.widgets import mainwindow
 
 firstRun = True
-
-VM = namedtuple('VM', 'name, ext, args')
-VM_LIST = [
-    VM("node", ".js", None),
-    VM("java", ".jar", "-jar"),
-    VM("python", ".py", "-u")]
 
 
 def run(widgets):
@@ -76,21 +70,16 @@ class EnginesDialog():
 
         self.tv = self.widgets["engines_treeview"]
         self.tv.set_model(allstore)
-        self.tv.append_column(Gtk.TreeViewColumn("Flag",
-                                                 Gtk.CellRendererPixbuf(),
-                                                 pixbuf=0))
+        self.tv.append_column(Gtk.TreeViewColumn("Flag", Gtk.CellRendererPixbuf(), pixbuf=0))
         name_renderer = Gtk.CellRendererText()
         name_renderer.set_property("editable", False)
-        self.tv.append_column(Gtk.TreeViewColumn("Name",
-                                                 name_renderer,
-                                                 text=1))
+        self.tv.append_column(Gtk.TreeViewColumn("Name", name_renderer, text=1))
 
         def name_edited(renderer, path, new_name):
             if self.cur_engine is not None:
                 old_name = self.cur_engine
                 if new_name and new_name != old_name:
-                    names = [engine["name"]
-                             for engine in discoverer.getEngines()]
+                    names = [engine["name"] for engine in discoverer.getEngines()]
                     if new_name not in names:
                         engine = discoverer.getEngineByName(self.cur_engine)
                         engine["name"] = new_name
@@ -113,13 +102,8 @@ class EnginesDialog():
         self.options_store = Gtk.ListStore(str, GObject.TYPE_PYOBJECT)
         optv = self.widgets["options_treeview"]
         optv.set_model(self.options_store)
-        optv.append_column(Gtk.TreeViewColumn("Option",
-                                              Gtk.CellRendererText(),
-                                              text=0))
-        optv.append_column(Gtk.TreeViewColumn("Data",
-                                              KeyValueCellRenderer(
-                                                  self.options_store),
-                                              data=1))
+        optv.append_column(Gtk.TreeViewColumn("Option", Gtk.CellRendererText(), text=0))
+        optv.append_column(Gtk.TreeViewColumn("Data", KeyValueCellRenderer(self.options_store), data=1))
 
         def update_options(*args):
             if self.cur_engine is not None:
@@ -212,39 +196,52 @@ class EnginesDialog():
 
             if response == Gtk.ResponseType.OK:
                 new_engine = engine_chooser_dialog.get_filename()
-                vm_name = None
-                vm_args = None
-                vmpath = ""
-                if new_engine.lower().endswith(".exe") and sys.platform != "win32":
-                    vm_name = "wine"
-                    vmpath = shutil.which(vm_name, mode=os.R_OK | os.X_OK)
-                    if vmpath is None:
-                        msg_dia = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
-                                                    buttons=Gtk.ButtonsType.OK)
-                        msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
-                                             new_engine))
-                        msg_dia.format_secondary_text(_("wine not installed"))
-                        msg_dia.run()
-                        msg_dia.hide()
-                        new_engine = ""
+                binname = os.path.split(new_engine)[1]
+                ext = os.path.splitext(new_engine)[1]
 
-                for vm in VM_LIST:
-                    ext = os.path.splitext(new_engine)[1]
-                    if ext == vm.ext:
-                        vm_name = vm.name
-                        vm_args = vm.args
+                # Verify if the engine already exists under the same name
+                if new_engine != "":
+                    for eng in discoverer.getEngines():
+                        if eng["command"] == new_engine:
+                            msg_dia = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
+                                                        buttons=Gtk.ButtonsType.OK)
+                            msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
+                            msg_dia.format_secondary_text(_("The engine is already installed under the same name"))
+                            msg_dia.run()
+                            msg_dia.hide()
+                            new_engine = ""
+                            break
+
+                # Detect the host application
+                if new_engine != "":
+                    vm_name = None
+                    vm_args = None
+                    vmpath = ""
+
+                    # Scripting
+                    for vm in VM_LIST:
+                        if ext == vm.ext:
+                            vm_name = vm.name
+                            vm_args = vm.args
+                            break
+
+                    # Wine for Windows application under Linux
+                    if vm_name is None and new_engine.lower().endswith(".exe") and sys.platform != "win32":
+                        vm_name = "wine"
+
+                    # Check that the interpreter is available
+                    if vm_name is not None:
                         vmpath = shutil.which(vm_name, mode=os.R_OK | os.X_OK)
                         if vmpath is None:
                             msg_dia = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                                         buttons=Gtk.ButtonsType.OK)
-                            msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
-                                                 new_engine))
+                            msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
                             msg_dia.format_secondary_text(vm_name + _(" is not installed"))
                             msg_dia.run()
                             msg_dia.hide()
                             new_engine = ""
-                        break
 
+                # Next checks
                 if new_engine:
                     vm_ext_list = [vm.ext for vm in VM_LIST]
                     if ext not in vm_ext_list and not os.access(new_engine, os.X_OK):
@@ -266,12 +263,10 @@ class EnginesDialog():
                         if vm_args is not None:
                             engine_command.append(vm_args)
                         engine_command.append(new_engine)
-                        # Some engines support CECP and UCI, but main variant engines are CECP,
-                        # so we better to start with CECP this case
-                        variant_engines = ("fmax", "sjaakii", "sjeng")
-                        if any((True
-                                for eng in variant_engines
-                                if eng in new_engine.lower())):
+
+                        # Search the engines based on the most expectable protocol
+                        refeng = discoverer.getReferencedEngine(binname)
+                        if refeng is not None and refeng["protocol"] == "xboard":
                             checkers = [is_cecp, is_uci]
                         else:
                             checkers = [is_uci, is_cecp]
@@ -287,30 +282,21 @@ class EnginesDialog():
 
                         if not check_ok:
                             # restore the original
-                            engine = discoverer.getEngineByName(
-                                self.cur_engine)
-                            engine_chooser_dialog.set_filename(engine[
-                                "command"])
+                            engine = discoverer.getEngineByName(self.cur_engine)
+                            engine_chooser_dialog.set_filename(engine["command"])
                             msg_dia = Gtk.MessageDialog(mainwindow(),
                                                         type=Gtk.MessageType.ERROR,
                                                         buttons=Gtk.ButtonsType.OK)
                             msg_dia.set_markup(
                                 _("<big><b>Unable to add %s</b></big>" %
                                   new_engine))
-                            msg_dia.format_secondary_text(_(
-                                "There is something wrong with this executable"))
+                            msg_dia.format_secondary_text(_("There is something wrong with this executable"))
                             msg_dia.run()
                             msg_dia.hide()
                             engine_chooser_dialog.hide()
                             self.add = False
                             engine_chooser_dialog.hide()
                             return
-
-                        binname = os.path.split(new_engine)[1]
-                        for eng in discoverer.getEngines():
-                            if eng["name"] == binname:
-                                binname = eng["name"] + "(1)"
-                                break
 
                         self.widgets["engine_command_entry"].set_text(new_engine)
                         self.widgets["engine_protocol_combo"].set_active(0 if uci else 1)
@@ -322,17 +308,15 @@ class EnginesDialog():
                         if vm_args is not None:
                             vm_args = vm_args.split(",")
                         # print(binname, new_engine, protocol, vm_name, vm_args)
-                        discoverer.addEngine(binname, new_engine, protocol, vm_name, vm_args, "unknown")
+                        discoverer.addEngine(binname, new_engine, protocol, vm_name, vm_args)
                         self.cur_engine = binname
                         self.add = False
                         discoverer.discover()
                     except Exception:
                         msg_dia = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR,
                                                     buttons=Gtk.ButtonsType.OK)
-                        msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" %
-                                             new_engine))
-                        msg_dia.format_secondary_text(_(
-                            "There is something wrong with this executable"))
+                        msg_dia.set_markup(_("<big><b>Unable to add %s</b></big>" % new_engine))
+                        msg_dia.format_secondary_text(_("There is something wrong with this executable"))
                         msg_dia.run()
                         msg_dia.hide()
                         self.add = False
@@ -476,6 +460,20 @@ class EnginesDialog():
         self.widgets["engine_country_combo"].connect("key-press-event", country_keypressed)
 
         ################################################################
+        # ELO changed
+        ################################################################
+        def elo_changed(widget):
+            if self.cur_engine is not None:
+                new_elo = self.widgets["engine_elo_entry"].get_text().strip()
+                engine = discoverer.getEngineByName(self.cur_engine)
+                old_elo = engine.get("elo")
+                if new_elo != old_elo:
+                    engine["elo"] = new_elo
+                    discoverer.save()
+
+        self.widgets["engine_elo_entry"].connect("changed", elo_changed)
+
+        ################################################################
         # engine tree
         ################################################################
         self.selection = False
@@ -490,7 +488,6 @@ class EnginesDialog():
                 name = store[row][1]
                 self.cur_engine = name
                 engine = discoverer.getEngineByName(name)
-                self.widgets['copy_engine_button'].set_sensitive(True)
                 if "PyChess.py" in engine["command"]:
                     self.widgets['remove_engine_button'].set_sensitive(False)
                 else:
@@ -518,6 +515,9 @@ class EnginesDialog():
                         self.widgets["engine_country_combo"].set_active(idx)
                         break
                     idx += 1
+
+                elo = engine.get("elo")
+                self.widgets["engine_elo_entry"].set_text(elo if elo is not None else "")
 
                 update_options()
                 self.selection = False
@@ -670,15 +670,11 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
     def do_render(self, ctx, widget, background_area, cell_area, flags):
         self.renderer.render(ctx, widget, background_area, cell_area, flags)
 
-    def do_activate(self, event, widget, path, background_area, cell_area,
-                    flags):
-        return self.renderer.activate(event, widget, path, background_area,
-                                      cell_area, flags)
+    def do_activate(self, event, widget, path, background_area, cell_area, flags):
+        return self.renderer.activate(event, widget, path, background_area, cell_area, flags)
 
-    def do_start_editing(self, event, widget, path, background_area, cell_area,
-                         flags):
-        return self.renderer.start_editing(event, widget, path,
-                                           background_area, cell_area, flags)
+    def do_start_editing(self, event, widget, path, background_area, cell_area, flags):
+        return self.renderer.start_editing(event, widget, path, background_area, cell_area, flags)
 
 
 GObject.type_register(KeyValueCellRenderer)
