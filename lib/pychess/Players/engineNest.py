@@ -260,6 +260,15 @@ class EngineDiscoverer(GObject.GObject):
             log.error("Saving engines.json raised exception: %s" % ", ".join(str(a) for a in err.args))
 
     def pre_discover(self):
+        # Remove the expired engines
+        self.engines = [(engine) for engine in self.engines if os.path.isfile(engine.get('command'))]
+        if not self.getEngineByMd5(conf.get("ana_combobox", None)):
+            conf.set("analyzer_check", False)
+            conf.set("ana_combobox", None)
+        if not self.getEngineByMd5(conf.get("inv_ana_combobox", None)):
+            conf.set("inv_analyzer_check", False)
+            conf.set("inv_ana_combobox", None)
+
         # Scan the referenced engines to see if they are installed
         for engine in ENGINES_LIST:
             if self.getEngineByName(engine.name) is not None:  # No rediscovery if already exists
