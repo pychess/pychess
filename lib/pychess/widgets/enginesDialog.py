@@ -75,22 +75,6 @@ class EnginesDialog():
         name_renderer.set_property("editable", False)
         self.tv.append_column(Gtk.TreeViewColumn("Name", name_renderer, text=1))
 
-        def name_edited(renderer, path, new_name):
-            if self.cur_engine is not None:
-                old_name = self.cur_engine
-                if new_name and new_name != old_name:
-                    names = [engine["name"] for engine in discoverer.getEngines()]
-                    if new_name not in names:
-                        engine = discoverer.getEngineByName(self.cur_engine)
-                        engine["name"] = new_name
-                        discoverer.save()
-                        self.cur_engine = new_name
-                        update_store()
-                        # Notify playerCombos in NewGameTasker
-                        discoverer.emit("all_engines_discovered")
-
-        name_renderer.connect("edited", name_edited)
-
         # Add cell renderer to protocol combo column
         protocol_combo = self.widgets["engine_protocol_combo"]
         protocol_combo.set_name("engine_protocol_combo")

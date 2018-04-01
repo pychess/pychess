@@ -271,7 +271,7 @@ class EngineDiscoverer(GObject.GObject):
 
         # Scan the referenced engines to see if they are installed
         for engine in ENGINES_LIST:
-            if self.getEngineByName(engine.name) is not None:  # No rediscovery if already exists
+            if self.getEngineByName(engine.name, exactName=False) is not None:  # No rediscovery if already exists
                 continue
             engine = self.getReferencedEngine(engine.name)
             if self.__findRunData(engine):
@@ -280,10 +280,9 @@ class EngineDiscoverer(GObject.GObject):
         # Check if the existing engines need a refresh
         for engine in self.engines:
             rundata = self.__findRunData(engine)
-            if rundata:
-                if self.__needClean(rundata, engine):
-                    self.__clean(rundata, engine)
-                    engine['recheck'] = True
+            if rundata and self.__needClean(rundata, engine):
+                self.__clean(rundata, engine)
+                engine['recheck'] = True
 
         # Runs all the engines in toBeRechecked, in order to gather information
         self.toBeRechecked = sorted([(c["name"], [c, False]) for c in self.engines if c.get('recheck')])
@@ -333,12 +332,12 @@ class EngineDiscoverer(GObject.GObject):
     def getEngineN(self, index):
         return self.getEngines()[index]
 
-    def getEngineByName(self, name):
+    def getEngineByName(self, name, exactName=True):
         approximate = None
         for engine in self.engines:
             if engine["name"] == name:  # Priority to exact name
                 return engine
-            if name.lower() in engine["name"].lower():
+            if not exactName and name.lower() in engine["name"].lower():
                 approximate = engine
         return approximate
 
