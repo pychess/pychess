@@ -5180,7 +5180,7 @@ If it can use both  you can set here which one you like.</property>
                       <object class="GtkEntry" id="engine_elo_entry">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="tooltip_text" translatable="yes">Command line parameters needed by the engine</property>
+                        <property name="tooltip_text" translatable="yes">Estimated strength of the engine</property>
                         <property name="invisible_char">●</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>

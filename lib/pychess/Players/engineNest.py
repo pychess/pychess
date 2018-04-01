@@ -261,7 +261,7 @@ class EngineDiscoverer(GObject.GObject):
 
     def pre_discover(self):
         # Remove the expired engines
-        self.engines = [(engine) for engine in self.engines if os.path.isfile(engine.get('command'))]
+        self.engines = [engine for engine in self.engines if os.path.isfile(engine.get('command'))]
         if not self.getEngineByMd5(conf.get("ana_combobox", None)):
             conf.set("analyzer_check", False)
             conf.set("ana_combobox", None)
@@ -381,7 +381,7 @@ class EngineDiscoverer(GObject.GObject):
     def getEngineLearn(self):
         # Local helpers
         def has_classical(engine):
-            status = engine['protocol'] == 'uci'  # PyChess engine cannot be selected here
+            status = engine['name'] in all_analyzers  # Some XB engines are not analyzers
             if 'variants' in engine:
                 status = status and 'normal' in engine['variants']
             if 'options' in engine:
@@ -396,6 +396,8 @@ class EngineDiscoverer(GObject.GObject):
         # Initialization
         id = conf.get('ana_combobox', None)
         analyzer_enabled = conf.get('analyzer_check', False)
+        all_analyzers = [engine["name"] for engine in self.engines
+                         if self.is_analyzer(engine) and not "pychess" in engine["name"].lower()]
 
         # Stockfish from the preferences
         if analyzer_enabled:  # The analyzer should be active else we might believe that it is irrelevant
@@ -413,6 +415,21 @@ class EngineDiscoverer(GObject.GObject):
             for engine in self.engines:
                 if engine['md5'] == id and has_classical(engine):
                     return engine['name']
+
+        # By declared ELO
+        elomin = 2499
+        elomaster = None
+        for engine in self.engines:
+            if has_classical(engine):
+                try:
+                    elo = int(engine.get("elo"))
+                except ValueError:
+                    elo = 0
+                if elo > elomin:
+                    elomin = elo
+                    elomaster = engine['name']
+        if elomaster is not None:
+            return elomaster
 
         # First found
         for engine in self.engines:
