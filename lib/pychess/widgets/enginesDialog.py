@@ -88,7 +88,10 @@ class EnginesDialog():
                     if option["type"] != "button":
                         val["default"] = option.get("default")
                         val["value"] = option.get("value", val["default"])
-                    self.options_store.append([key, val])
+                        modified = val["value"] != val["default"]
+                    else:
+                        modified = False
+                    self.options_store.append(["*" if modified else "", key, val])
 
     def update_store(self, *args):
         newGameDialog.createPlayerUIGlobals(discoverer)
@@ -132,11 +135,12 @@ class EnginesDialog():
         protocol_combo.add_attribute(cell, "text", 0)
 
         # Add columns and cell renderers to options treeview
-        self.options_store = Gtk.ListStore(str, GObject.TYPE_PYOBJECT)
+        self.options_store = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
         optv = self.widgets["options_treeview"]
         optv.set_model(self.options_store)
-        optv.append_column(Gtk.TreeViewColumn("Option", Gtk.CellRendererText(), text=0))
-        optv.append_column(Gtk.TreeViewColumn("Data", KeyValueCellRenderer(self.options_store), data=1))
+        optv.append_column(Gtk.TreeViewColumn("  ", Gtk.CellRendererText(), text=0))
+        optv.append_column(Gtk.TreeViewColumn(_("Option"), Gtk.CellRendererText(), text=1))
+        optv.append_column(Gtk.TreeViewColumn(_("Value"), KeyValueCellRenderer(self.options_store), data=2))
 
         self.update_store()
 
@@ -603,17 +607,23 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
         self.button_renderer = Gtk.CellRendererText()
         self.button_renderer.set_property("editable", False)
 
+    def update_modified_mark(self, ref):
+        ref[0] = "*" if ref[2].get("value") != ref[2].get("default") else ""
+
     def text_edited_cb(self, cell, path, new_text, model):
-        model[path][1]["value"] = new_text
+        model[path][2]["value"] = new_text
+        self.update_modified_mark(model[path])
         return
 
     def toggled_cb(self, cell, path, model):
-        model[path][1]["value"] = not model[path][1]["value"]
+        model[path][2]["value"] = not model[path][2]["value"]
+        self.update_modified_mark(model[path])
         return
 
     def spin_edited_cb(self, cell, path, new_text, model):
         try:
-            model[path][1]["value"] = int(new_text)
+            model[path][2]["value"] = int(new_text)
+            self.update_modified_mark(model[path])
         except Exception:
             pass
         return
