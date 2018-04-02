@@ -138,6 +138,7 @@ def start_endgame_from(pieces):
 
         perspective = perspective_manager.get_perspective("games")
         asyncio.async(perspective.generalStart(gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
+        perspective.activate_panel("annotationPanel")
 
 
 def create_fen(pieces):

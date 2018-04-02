@@ -80,6 +80,7 @@ class Perspective(object):
 
         if active:
             self.notebooks[name].show()
+            leaf.setCurrentPanel(name)
             if shown == 0 and hasattr(leaf, "position"):
                 # If this is the first one, adjust Gtk.Paned divider handle
                 if leaf.position != 0:
@@ -96,6 +97,16 @@ class Perspective(object):
                     parent.set_position(parent.props.min_position)
                 else:
                     parent.set_position(parent.props.max_position)
+
+    def activate_panel(self, name):
+        for panel in self.sidePanels:
+            if panel.__name__.startswith(name):
+                if panel.menu_item.get_active():
+                    # if menu item is already active set_active() doesn't triggers on_toggled()
+                    self.on_toggled(panel.menu_item, panel)
+                else:
+                    panel.menu_item.set_active(True)
+                break
 
     def load_from_xml(self):
         if os.path.isfile(self.dockLocation):

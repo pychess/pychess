@@ -136,3 +136,4 @@ def start_lesson_from(filename, index=None):
     gamemodel.status = WAITING_TO_START
     perspective = perspective_manager.get_perspective("games")
     asyncio.async(perspective.generalStart(gamemodel, p0, p1))
+    perspective.activate_panel("annotationPanel")
