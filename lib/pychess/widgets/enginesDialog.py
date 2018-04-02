@@ -21,13 +21,6 @@ engine_dialog = None
 def run(widgets):
     global firstRun, engine_dialog
     if firstRun:
-        # Bubble sort for the translated countries
-        for i in range(len(ISO3166_LIST) - 1, 1, - 1):
-            for j in range(1, i - 1):
-                if ISO3166_LIST[i].country < ISO3166_LIST[j].country:
-                    tmp = ISO3166_LIST[i]
-                    ISO3166_LIST[i] = ISO3166_LIST[j]
-                    ISO3166_LIST[j] = tmp
         # Display of the countries
         items = []
         for iso in ISO3166_LIST:
