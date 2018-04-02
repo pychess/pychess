@@ -132,13 +132,13 @@ def start_endgame_from(pieces):
             asyncio.async(gamemodel.restart_analyzer(HINT))
         gamemodel.connect("learn_success", restart_analyzer)
 
-        def start_analyzer(gamemodel):
+        def on_game_started(gamemodel):
+            perspective.activate_panel("annotationPanel")
             asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
-        gamemodel.connect("game_started", start_analyzer)
+        gamemodel.connect("game_started", on_game_started)
 
         perspective = perspective_manager.get_perspective("games")
         asyncio.async(perspective.generalStart(gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
-        perspective.activate_panel("annotationPanel")
 
 
 def create_fen(pieces):

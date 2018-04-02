@@ -129,11 +129,11 @@ def start_lesson_from(filename, index=None):
         asyncio.async(gamemodel.restart_analyzer(HINT))
     gamemodel.connect("learn_success", learn_success)
 
-    def start_analyzer(gamemodel):
+    def on_game_started(gamemodel):
+        perspective.activate_panel("annotationPanel")
         asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
-    gamemodel.connect("game_started", start_analyzer)
+    gamemodel.connect("game_started", on_game_started)
 
     gamemodel.status = WAITING_TO_START
     perspective = perspective_manager.get_perspective("games")
     asyncio.async(perspective.generalStart(gamemodel, p0, p1))
-    perspective.activate_panel("annotationPanel")

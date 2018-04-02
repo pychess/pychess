@@ -158,11 +158,12 @@ def start_puzzle_from(filename, index=None):
               (engine, WHITE, 20, variants[NORMALCHESS], 20, 0, 0, ponder_off), w_name)
         p1 = (LOCAL, Human, (BLACK, b_name), b_name)
 
-    def start_analyzer(gamemodel, name, color):
+    def on_game_started(gamemodel, name, color):
+        perspective.activate_panel("annotationPanel")
         asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
         gamemodel.players[1 - color].name = name
         gamemodel.emit("players_changed")
-    gamemodel.connect("game_started", start_analyzer, opp_name, color)
+    gamemodel.connect("game_started", on_game_started, opp_name, color)
 
     def goal_checked(gamemodle):
         if gamemodel.reason == PRACTICE_GOAL_REACHED:
@@ -176,4 +177,3 @@ def start_puzzle_from(filename, index=None):
 
     perspective = perspective_manager.get_perspective("games")
     asyncio.async(perspective.generalStart(gamemodel, p0, p1))
-    perspective.activate_panel("annotationPanel")

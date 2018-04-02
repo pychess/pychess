@@ -110,9 +110,12 @@ def start_lecture_from(filename, index=None):
     p0 = (LOCAL, Human, (WHITE, white_name), white_name)
     p1 = (LOCAL, Human, (BLACK, black_name), black_name)
 
+    def on_game_started(gamemodel):
+        perspective.activate_panel("chatPanel")
+    gamemodel.connect("game_started", on_game_started)
+
     perspective = perspective_manager.get_perspective("games")
     asyncio.async(perspective.generalStart(gamemodel, p0, p1))
-    perspective.activate_panel("chatPanel")
 
     def lecture_steps(lecture_file):
         with open(lecture_file, "r") as f:
