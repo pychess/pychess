@@ -96,6 +96,9 @@ class EngineDiscoverer(GObject.GObject):
                                 new_engine["name"] = engine_command
                                 self.engines.append(new_engine)
 
+        # Initial backup of the loaded engines
+        self.backup()
+
     def __findRunData(self, engine):
         """ Searches for a readable, executable named 'name' in the PATH.
             For the PyChess engine, special handling is taken, and we search
@@ -252,6 +255,13 @@ class EngineDiscoverer(GObject.GObject):
     ######
     # Save the xml
     ######
+
+    def backup(self):
+        self.enginesBackup = json.dumps(self.engines)
+
+    def restore(self):
+        self.engines = json.loads(self.enginesBackup)
+
     def save(self, *args):
         try:
             with open(self.jsonpath, "w") as file_handle:

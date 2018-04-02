@@ -15,10 +15,11 @@ from pychess.widgets import newGameDialog
 from pychess.widgets import mainwindow
 
 firstRun = True
+engine_dialog = None
 
 
 def run(widgets):
-    global firstRun
+    global firstRun, engine_dialog
     if firstRun:
         # Bubble sort for the translated countries
         for i in range(len(ISO3166_LIST) - 1, 1, - 1):
@@ -39,24 +40,72 @@ def run(widgets):
         data = [(item[0], item[1]) for item in items]
         uistuff.updateCombo(widgets["engine_country_combo"], data)
 
-        EnginesDialog(widgets)
+        engine_dialog = EnginesDialog(widgets)
 
-        def delete_event(widget, *args):
+        def cancel_event(widget, *args):
+            discoverer.restore()
             widgets["manage_engines_dialog"].hide()
             return True
 
-        widgets["manage_engines_dialog"].connect("delete-event", delete_event)
-        widgets["engines_close_button"].connect("clicked", delete_event)
+        def save_event(widget, *args):
+            discoverer.save()
+            widgets["manage_engines_dialog"].hide()
+            return True
+
+        widgets["manage_engines_dialog"].connect("delete-event", cancel_event)
+        widgets["engine_cancel_button"].connect("clicked", cancel_event)
+        widgets["engine_save_button"].connect("clicked", save_event)
         widgets["manage_engines_dialog"].connect(
             "key-press-event",
-            lambda w, e: delete_event(w) if e.keyval == Gdk.KEY_Escape else None)
+            lambda w, e: cancel_event(w) if e.keyval == Gdk.KEY_Escape else None)
 
-        firstRun = False
-
+    discoverer.backup()
+    engine_dialog.widgets["enginebook"].set_current_page(0)
     widgets["manage_engines_dialog"].show()
+    if not firstRun:
+        engine_dialog.update_store()
+    firstRun = False
 
 
 class EnginesDialog():
+    def update_options(self, *args):
+        # Initial reset
+        self.options_store.clear()
+
+        # Detection of the name of the engine to reload
+        engines = discoverer.getEngines()
+        names = [engine["name"] for engine in engines]
+        if self.cur_engine not in names:
+            self.cur_engine = engines[0]["name"]
+        engine = discoverer.getEngineByName(self.cur_engine)
+        if engine:
+            options = engine.get("options")
+            if options:
+                options.sort(key=lambda obj: obj['name'].lower() if 'name' in obj else '')
+                for option in options:
+                    key = option["name"]
+                    val = option
+                    if option["type"] != "button":
+                        val["default"] = option.get("default")
+                        val["value"] = option.get("value", val["default"])
+                    self.options_store.append([key, val])
+
+    def update_store(self, *args):
+        newGameDialog.createPlayerUIGlobals(discoverer)
+        engine_names = [row[1] for row in self.allstore]
+        new_items = []
+        # don't add the very first (Human) player to engine store
+        for item in newGameDialog.allEngineItems:
+            if item[1] not in engine_names:
+                new_items.append(item)
+        ts_iter = None
+        for item in new_items:
+            ts_iter = self.allstore.append(item)
+        if ts_iter is not None:
+            text_select = self.tv.get_selection()
+            text_select.select_iter(ts_iter)
+        self.update_options()
+
     def __init__(self, widgets):
         self.widgets = widgets
         self.dialog = self.widgets["manage_engines_dialog"]
@@ -66,10 +115,10 @@ class EnginesDialog():
         uistuff.keepWindowSize("engineswindow", self.dialog)
 
         # Put engines into tree store
-        allstore = Gtk.ListStore(Pixbuf, str)
+        self.allstore = Gtk.ListStore(Pixbuf, str)
 
         self.tv = self.widgets["engines_treeview"]
-        self.tv.set_model(allstore)
+        self.tv.set_model(self.allstore)
         self.tv.append_column(Gtk.TreeViewColumn("Flag", Gtk.CellRendererPixbuf(), pixbuf=0))
         name_renderer = Gtk.CellRendererText()
         name_renderer.set_property("editable", False)
@@ -89,46 +138,10 @@ class EnginesDialog():
         optv.append_column(Gtk.TreeViewColumn("Option", Gtk.CellRendererText(), text=0))
         optv.append_column(Gtk.TreeViewColumn("Data", KeyValueCellRenderer(self.options_store), data=1))
 
-        def update_options(*args):
-            if self.cur_engine is not None:
-                engines = discoverer.getEngines()
-                names = [engine["name"] for engine in engines]
-                # After deleting an engine we will select first
-                if self.cur_engine not in names:
-                    self.cur_engine = engines[0]["name"]
-                engine = discoverer.getEngineByName(self.cur_engine)
-                options = engine.get("options")
-                self.options_store.clear()
-                if options:
-                    options.sort(key=lambda obj: obj['name'].lower() if 'name' in obj else '')
-                    for option in options:
-                        key = option["name"]
-                        val = option
-                        if option["type"] != "button":
-                            val["default"] = option.get("default")
-                            val["value"] = option.get("value", val["default"])
-                        self.options_store.append([key, val])
+        self.update_store()
 
-        def update_store(*args):
-            newGameDialog.createPlayerUIGlobals(discoverer)
-            engine_names = [row[1] for row in allstore]
-            new_items = []
-            # don't add the very first (Human) player to engine store
-            for item in newGameDialog.allEngineItems:
-                if item[1] not in engine_names:
-                    new_items.append(item)
-            ts_iter = None
-            for item in new_items:
-                ts_iter = allstore.append(item)
-            if ts_iter is not None:
-                text_select = self.tv.get_selection()
-                text_select.select_iter(ts_iter)
-            update_options()
-
-        update_store()
-
-        def do_update_store(*args):
-            GLib.idle_add(update_store)
+        def do_update_store(self, *args):
+            GLib.idle_add(self.update_store)
 
         discoverer.connect_after("engine_discovered", do_update_store)
 
@@ -138,15 +151,15 @@ class EnginesDialog():
         def remove(button):
             if self.cur_engine is not None:
                 self.widgets['remove_engine_button'].set_sensitive(False)
-                # engine = discoverer.getEngineByName(self.cur_engine)
                 discoverer.removeEngine(self.cur_engine)
-                discoverer.save()
 
                 selection = self.tv.get_selection()
                 result = selection.get_selected()
                 if result is not None:
                     model, ts_iter = result
                     model.remove(ts_iter)
+                if model.iter_n_children() == 0:
+                    clearView()
 
                 # Notify playerCombos in NewGameTasker
                 discoverer.emit("all_engines_discovered")
@@ -316,16 +329,28 @@ class EnginesDialog():
         self.widgets["add_engine_button"].connect("clicked", add)
 
         ################################################################
+        def clearView():
+            self.cur_engine = None
+            self.widgets["vm_command_entry"].set_text("")
+            self.widgets["vm_args_entry"].set_text("")
+            self.widgets["engine_command_entry"].set_text("")
+            self.widgets["engine_args_entry"].set_text("")
+            self.widgets["engine_protocol_combo"].set_active(0)
+            self.widgets["engine_country_combo"].set_active(0)
+            self.widgets["engine_elo_entry"].set_text("")
+            self.options_store.clear()
+            self.selection = False
+
+        ################################################################
         # vm args
         ################################################################
         def vm_args_changed(widget):
-            if self.cur_engine is not None:
+            if self.cur_engine is not None and not self.selection:
                 new_args = self.widgets["vm_args_entry"].get_text().strip()
                 engine = discoverer.getEngineByName(self.cur_engine)
                 old_args = engine.get("vm_args")
                 if new_args != old_args:
                     engine["vm_args"] = new_args.split()
-                    discoverer.save()
 
         self.widgets["vm_args_entry"].connect("changed", vm_args_changed)
 
@@ -333,13 +358,12 @@ class EnginesDialog():
         # engine args
         ################################################################
         def args_changed(widget):
-            if self.cur_engine is not None:
+            if self.cur_engine is not None and not self.selection:
                 new_args = self.widgets["engine_args_entry"].get_text().strip()
                 engine = discoverer.getEngineByName(self.cur_engine)
                 old_args = engine.get("args")
                 if new_args != old_args:
                     engine["args"] = new_args.split()
-                    discoverer.save()
 
         self.widgets["engine_args_entry"].connect("changed", args_changed)
 
@@ -363,7 +387,6 @@ class EnginesDialog():
             old_directory = engine.get("workingDirectory")
             if new_directory != old_directory and new_directory != self.default_workdir:
                 engine["workingDirectory"] = new_directory
-                discoverer.save()
 
         dir_chooser_button.connect("current-folder-changed", select_dir)
 
@@ -416,7 +439,6 @@ class EnginesDialog():
                 new_country = ISO3166_LIST[widget.get_active()].iso2
                 if old_country != new_country:
                     engine["country"] = new_country
-                    discoverer.save()
 
                     # Refresh the flag in the tree view
                     path = addDataPrefix("flags/%s.png" % new_country)
@@ -447,13 +469,12 @@ class EnginesDialog():
         # ELO changed
         ################################################################
         def elo_changed(widget):
-            if self.cur_engine is not None:
+            if self.cur_engine is not None and not self.selection:
                 new_elo = self.widgets["engine_elo_entry"].get_text().strip()
                 engine = discoverer.getEngineByName(self.cur_engine)
                 old_elo = engine.get("elo")
                 if new_elo != old_elo:
                     engine["elo"] = new_elo
-                    discoverer.save()
 
         self.widgets["engine_elo_entry"].connect("changed", elo_changed)
 
@@ -503,7 +524,7 @@ class EnginesDialog():
                 elo = engine.get("elo")
                 self.widgets["engine_elo_entry"].set_text(elo if elo is not None else "")
 
-                update_options()
+                self.update_options()
                 self.selection = False
 
         tree_selection = self.tv.get_selection()
@@ -528,8 +549,7 @@ class EnginesDialog():
                         for option in options:
                             if "default" in option:
                                 option["value"] = option["default"]
-                        discoverer.save()
-                        update_options()
+                        self.update_options()
 
         self.widgets["engine_default_options_button"].connect("clicked", engine_default_options)
 
@@ -585,18 +605,15 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
 
     def text_edited_cb(self, cell, path, new_text, model):
         model[path][1]["value"] = new_text
-        discoverer.save()
         return
 
     def toggled_cb(self, cell, path, model):
         model[path][1]["value"] = not model[path][1]["value"]
-        discoverer.save()
         return
 
     def spin_edited_cb(self, cell, path, new_text, model):
         try:
             model[path][1]["value"] = int(new_text)
-            discoverer.save()
         except Exception:
             pass
         return

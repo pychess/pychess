@@ -5353,18 +5353,44 @@ If it can use both  you can set here which one you like.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="engines_close_button">
-                <property name="label">gtk-close</property>
-                <property name="use_action_appearance">False</property>
+              <object class="GtkBox" id="box24">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkButton" id="engine_cancel_button">
+                    <property name="label">gtk-cancel</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="engine_save_button">
+                    <property name="label">gtk-save</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="margin_left">5</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">2</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
