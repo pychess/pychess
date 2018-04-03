@@ -1,4 +1,3 @@
-[Termination "mate in 3"]
 [Event "Charles XII at Bender: Samuel Loyd mate in #3"]
 [Site "https://lichess.org/study/3aJNVC40"]
 [UTCDate "2016.08.15"]
@@ -15,7 +14,6 @@
 1. Rxg3 { Excellent! } 1... Bxg3 (1... Bxe1 2. Rh3+ Bh4 3. g4#) 2. Nf3 { Now the black bishop the only piece able to move so it can't prevent white to mate on g4. } (2. hxg3 { Oh no, this is stalemate! }) 2... Bxh2 3. g4# *
 
 
-[Termination "mate in 4"]
 [Event "Charles XII at Bender: Samuel Loyd mate in #4"]
 [Site "https://lichess.org/study/3aJNVC40"]
 [UTCDate "2016.08.15"]
@@ -32,7 +30,6 @@
 1. hxg3 Be3 (1... Bc5 2. Rg4 Be7 3. Rh4+ Bxh4 4. g4#)  (1... Be1 2. Rg4 Bxg3 3. Rxg3 Kh4 4. Rh3#) 2. Rg4 Bg5 3. Rh4+ Bxh4 4. g4# *
 
 
-[Termination "mate in 5"]
 [Event "Charles XII at Bender: Samuel Loyd mate in #5"]
 [Site "https://lichess.org/study/3aJNVC40"]
 [UTCDate "2016.08.15"]
@@ -49,21 +46,17 @@
 1. Rb7 Be3 (1... Bg1 2. Rb1 Bh2 3. Re1 Kh4 4. Kg6 h5 5. Re4#) 2. Rb1 Bg5 3. Rh1+ Bh4 4. Rh2 gxh2 5. g4# *
 
 
-[White "Benko, Pal"]
-[Black "Mate in two"]
-[Date "2013.??.??"]
-[Result "1-0"]
-[Termination "mate in 2"]
-[Event "Sam Loyd Prequel"]
+[Event "Charles XII at Bender: Benkő Pál mate in #2"]
 [Site "https://lichess.org/study/3aJNVC40"]
 [UTCDate "2018.04.03"]
-[UTCTime "09:52:45"]
-[Variant "From Position"]
+[UTCTime "10:11:41"]
+[Variant "Standard"]
 [ECO "?"]
 [Opening "?"]
+[Result "*"]
 [Annotator "https://lichess.org/@/gbtami"]
 [FEN "8/6R1/7p/5K1k/6R1/6p1/5bPP/4N3 w - - 0 1"]
 [SetUp "1"]
 
 { Hungarian composer GM Benkő Pál composed a prequel to Sam Loyd's first problem, with an extra White rook on g4, making it a mate in two moves. }
-1. R4g5+ hxg5 (1... Kh4 2. Nf3#) 2. Rh7# 1-0
+1. R4g5+ hxg5 (1... Kh4 2. Nf3#) 2. Rh7# *
