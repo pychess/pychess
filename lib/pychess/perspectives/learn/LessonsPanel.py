@@ -42,7 +42,7 @@ class Sidepanel():
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn(_("Author"), renderer, text=2)
+        column = Gtk.TreeViewColumn(_("Source"), renderer, text=2)
         self.tv.append_column(column)
 
         renderer = Gtk.CellRendererProgress()
