@@ -150,11 +150,21 @@ class _GameInitializationMode(object):
         cls.widgets["playersIcon"].set_from_pixbuf(big_people)
         cls.widgets["timeIcon"].set_from_pixbuf(big_time)
 
-        def on_playerCombobox_changed(widget, skill_hbox):
-            skill_hbox.props.visible = widget.get_active() > 0
+        def on_playerCombobox_changed(widget, skill_hbox, skill_level):
+            position = widget.get_active()
+            skill_hbox.props.visible = position > 0
+            if position > 0:
+                tree_iter = widget.get_active_iter()
+                if tree_iter is not None:
+                    engine_name = widget.get_model()[tree_iter][1]
+                    engine = discoverer.getEngineByName(engine_name)
+                    if engine:
+                        pref_level = engine.get("level")
+                        if pref_level:
+                            skill_level.set_value(pref_level)
 
-        cls.widgets["whitePlayerCombobox"].connect("changed", on_playerCombobox_changed, cls.widgets["skillHbox1"])
-        cls.widgets["blackPlayerCombobox"].connect("changed", on_playerCombobox_changed, cls.widgets["skillHbox2"])
+        cls.widgets["whitePlayerCombobox"].connect("changed", on_playerCombobox_changed, cls.widgets["skillHbox1"], cls.widgets["skillSlider1"])
+        cls.widgets["blackPlayerCombobox"].connect("changed", on_playerCombobox_changed, cls.widgets["skillHbox2"], cls.widgets["skillSlider2"])
         cls.widgets["whitePlayerCombobox"].set_active(0)
         cls.widgets["blackPlayerCombobox"].set_active(1)
 

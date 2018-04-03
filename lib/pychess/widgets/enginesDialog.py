@@ -8,7 +8,7 @@ from gi.repository.GdkPixbuf import Pixbuf
 from pychess.System import uistuff
 from pychess.System.prefix import getEngineDataPrefix, addDataPrefix
 from pychess.Utils.IconLoader import get_pixbuf
-from pychess.Players.engineNest import discoverer, is_uci, is_cecp
+from pychess.Players.engineNest import discoverer, is_uci, is_cecp, defaultEngineLevel
 from pychess.Players.engineList import VM_LIST
 from pychess.Utils.isoCountries import ISO3166_LIST
 from pychess.widgets import newGameDialog
@@ -138,7 +138,7 @@ class EnginesDialog():
         self.update_store()
 
         def do_update_store(self, *args):
-            GLib.idle_add(self.update_store)
+            GLib.idle_add(engine_dialog.update_store)
 
         discoverer.connect_after("engine_discovered", do_update_store)
 
@@ -476,6 +476,19 @@ class EnginesDialog():
         self.widgets["engine_elo_entry"].connect("changed", elo_changed)
 
         ################################################################
+        # level changed
+        ################################################################
+        def level_changed(widget):
+            if self.cur_engine is not None and not self.selection:
+                new_level = widget.get_value()
+                engine = discoverer.getEngineByName(self.cur_engine)
+                old_level = engine.get("level")
+                if new_level != old_level:
+                    engine["level"] = int(new_level)
+
+        self.widgets["engine_level_scale"].connect("value-changed", level_changed)
+
+        ################################################################
         # engine tree
         ################################################################
         self.selection = False
@@ -520,6 +533,13 @@ class EnginesDialog():
 
                 elo = engine.get("elo")
                 self.widgets["engine_elo_entry"].set_text(elo if elo is not None else "")
+
+                level = engine.get("level")
+                try:
+                    level = level if level else defaultEngineLevel
+                except Exception:
+                    level = defaultEngineLevel
+                self.widgets["engine_level_scale"].set_value(level)
 
                 self.update_options()
                 self.selection = False

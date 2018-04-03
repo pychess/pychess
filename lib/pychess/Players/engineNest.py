@@ -25,6 +25,7 @@ from pychess.Players.engineList import PYTHONBIN, VM_LIST, ENGINES_LIST
 from pychess.Variants import variants
 
 attrToProtocol = {"uci": UCIEngine, "xboard": CECPEngine}
+defaultEngineLevel = 10
 
 
 class SubProcessError(Exception):
@@ -463,9 +464,12 @@ class EngineDiscoverer(GObject.GObject):
                           "protocol": engine.protocol[:6],
                           "recheck": True,
                           "country": engine.country,
-                          "elo": engine.elo}
+                          "elo": engine.elo,
+                          "level": 5 if engine.depthDependent else defaultEngineLevel}
                 if engine.protocol == "xboard1":
                     result["protover"] = 1
+                if engine.protocol == "xboard2":
+                    result["protover"] = 2
                 if engine.protocol == "uci":
                     result["analyze"] = True
 
@@ -589,7 +593,8 @@ class EngineDiscoverer(GObject.GObject):
             engine = copy(refeng)
         else:
             engine = {"country": "unknown",
-                      "elo": ""}
+                      "elo": "",
+                      "level": defaultEngineLevel}
 
         # New values
         engine["name"] = name
