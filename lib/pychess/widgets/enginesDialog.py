@@ -35,8 +35,22 @@ def run(widgets):
 
         engine_dialog = EnginesDialog(widgets)
 
-        def cancel_event(widget, *args):
-            discoverer.restore()
+        def cancel_event(widget, with_confirmation, *args):
+            # Confirm if the changes need to be saved
+            modified = discoverer.hasChanged()
+            if modified and with_confirmation:
+                dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO)
+                dialog.set_markup(_("You have unsaved changes. Do you want to save before leaving?"))
+                response = dialog.run()
+                dialog.destroy()
+                # if response == Gtk.ResponseType.CANCEL:
+                #    return False
+                if response == Gtk.ResponseType.NO:
+                    discoverer.restore()
+                if response == Gtk.ResponseType.YES:
+                    discoverer.save()
+
+            # Close the window
             widgets["manage_engines_dialog"].hide()
             return True
 
@@ -45,8 +59,8 @@ def run(widgets):
             widgets["manage_engines_dialog"].hide()
             return True
 
-        widgets["manage_engines_dialog"].connect("delete-event", cancel_event)
-        widgets["engine_cancel_button"].connect("clicked", cancel_event)
+        widgets["manage_engines_dialog"].connect("delete-event", cancel_event, True)
+        widgets["engine_cancel_button"].connect("clicked", cancel_event, False)
         widgets["engine_save_button"].connect("clicked", save_event)
         widgets["manage_engines_dialog"].connect(
             "key-press-event",
@@ -327,6 +341,7 @@ class EnginesDialog():
 
         ################################################################
         def clearView():
+            self.selection = True
             self.cur_engine = None
             self.widgets["vm_command_entry"].set_text("")
             self.widgets["vm_args_entry"].set_text("")
@@ -335,6 +350,7 @@ class EnginesDialog():
             self.widgets["engine_protocol_combo"].set_active(0)
             self.widgets["engine_country_combo"].set_active(0)
             self.widgets["engine_elo_entry"].set_text("")
+            self.widgets["engine_level_scale"].set_value(defaultEngineLevel)
             self.options_store.clear()
             self.selection = False
 

@@ -263,6 +263,9 @@ class EngineDiscoverer(GObject.GObject):
     def restore(self):
         self.engines = json.loads(self.enginesBackup)
 
+    def hasChanged(self):
+        return self.enginesBackup != json.dumps(self.engines)
+
     def save(self, *args):
         try:
             with open(self.jsonpath, "w") as file_handle:
