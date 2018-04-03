@@ -52,6 +52,7 @@ class EngineDiscoverer(GObject.GObject):
     def __init__(self):
         GObject.GObject.__init__(self)
         self.jsonpath = addUserConfigPrefix("engines.json")
+        self.engines = []
         try:
             self.engines = json.load(open(self.jsonpath))
         except ValueError as err:
@@ -61,8 +62,6 @@ class EngineDiscoverer(GObject.GObject):
             os.rename(self.jsonpath, self.jsonpath + ".bak")
         except IOError as err:
             log.info("engineNest: Couldn\'t open engines.json, creating a new.\n%s" % err)
-        if not self.engines:
-            self.engines = []
 
         # Try to detect engines shipping .eng files on Linux (suggested by HGM on talkchess.com forum)
         for protocol in ("xboard", "uci"):
@@ -275,7 +274,7 @@ class EngineDiscoverer(GObject.GObject):
 
     def pre_discover(self):
         # Remove the expired engines
-        self.engines = [engine for engine in self.engines if os.path.isfile(engine.get('command'))]
+        self.engines = [engine for engine in self.engines if os.path.isfile(engine.get('command', ''))]
         if not self.getEngineByMd5(conf.get("ana_combobox", None)):
             conf.set("analyzer_check", False)
             conf.set("ana_combobox", None)
@@ -411,7 +410,7 @@ class EngineDiscoverer(GObject.GObject):
         id = conf.get('ana_combobox', None)
         analyzer_enabled = conf.get('analyzer_check', False)
         all_analyzers = [engine["name"] for engine in self.engines
-                         if self.is_analyzer(engine) and not "pychess" in engine["name"].lower()]
+                         if self.is_analyzer(engine) and "pychess" not in engine["name"].lower()]
 
         # Stockfish from the preferences
         if analyzer_enabled:  # The analyzer should be active else we might believe that it is irrelevant
@@ -461,7 +460,7 @@ class EngineDiscoverer(GObject.GObject):
             and the preconfigured values found for it.
         """
         for engine in ENGINES_LIST:
-            if engine.name in name.lower():
+            if engine.name.lower() in name.lower():
                 # Properties of the engine
                 result = {"name": name,
                           "protocol": engine.protocol[:6],
@@ -476,7 +475,7 @@ class EngineDiscoverer(GObject.GObject):
                 if engine.protocol == "uci":
                     result["analyze"] = True
 
-                # Attached interpreter
+                # Attached interpreter
                 ext = os.path.splitext(name.lower())[1]
                 if ext != "":
                     for vm in VM_LIST:
@@ -487,7 +486,7 @@ class EngineDiscoverer(GObject.GObject):
 
                 # Linux-specific parameters
                 if sys.platform != "win32":
-                    if not "vm_name" in result and ext == ".exe":
+                    if "vm_name" not in result and ext == ".exe":
                         result["vm_name"] = "wine"
 
                 # Verify the host application
@@ -590,7 +589,7 @@ class EngineDiscoverer(GObject.GObject):
         return engine
 
     def addEngine(self, name, new_engine, protocol, vm_name, vm_args):
-        # Default values
+        # Default values
         refeng = self.getReferencedEngine(name)
         if refeng is not None:
             engine = copy(refeng)

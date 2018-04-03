@@ -76,29 +76,30 @@ def run(widgets):
 
 class EnginesDialog():
     def update_options(self, *args):
-        # Initial reset
-        self.options_store.clear()
+        if self.cur_engine is not None:
+            # Initial reset
+            self.options_store.clear()
 
-        # Detection of the name of the engine to reload
-        engines = discoverer.getEngines()
-        names = [engine["name"] for engine in engines]
-        if self.cur_engine not in names:
-            self.cur_engine = engines[0]["name"]
-        engine = discoverer.getEngineByName(self.cur_engine)
-        if engine:
-            options = engine.get("options")
-            if options:
-                options.sort(key=lambda obj: obj['name'].lower() if 'name' in obj else '')
-                for option in options:
-                    key = option["name"]
-                    val = option
-                    if option["type"] != "button":
-                        val["default"] = option.get("default")
-                        val["value"] = option.get("value", val["default"])
-                        modified = val["value"] != val["default"]
-                    else:
-                        modified = False
-                    self.options_store.append(["*" if modified else "", key, val])
+            # Detection of the name of the engine to reload
+            engines = discoverer.getEngines()
+            names = [engine["name"] for engine in engines]
+            if self.cur_engine not in names:
+                self.cur_engine = engines[0]["name"]
+            engine = discoverer.getEngineByName(self.cur_engine)
+            if engine:
+                options = engine.get("options")
+                if options:
+                    options.sort(key=lambda obj: obj['name'].lower() if 'name' in obj else '')
+                    for option in options:
+                        key = option["name"]
+                        val = option
+                        if option["type"] != "button":
+                            val["default"] = option.get("default")
+                            val["value"] = option.get("value", val["default"])
+                            modified = val["value"] != val["default"]
+                        else:
+                            modified = False
+                        self.options_store.append(["*" if modified else "", key, val])
 
     def update_store(self, *args):
         newGameDialog.createPlayerUIGlobals(discoverer)

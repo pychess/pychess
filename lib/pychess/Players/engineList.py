@@ -19,6 +19,8 @@ VM_LIST = [
 # ELO from http://www.computerchess.org.uk/ccrl/404/
 ENGINES = namedtuple('ENGINES', 'name, protocol, country, elo, depthDependent')
 ENGINES_LIST = [
+    ENGINES("pychess-engine", "xboard", "dk", "", True),
+    ENGINES("PyChess.py", "xboard", "dk", "", True),
     ENGINES("toledo-uci", "uci", "mx", "1212", True),
     ENGINES("gnuchessu", "uci", "us", "2808", False),
     ENGINES("stockfish", "uci", "no", "3562", False),
@@ -33,7 +35,6 @@ ENGINES_LIST = [
     ENGINES("shredder", "uci", "de", "3328", False),
     ENGINES("houdini", "uci", "be", "3536", False),
     ENGINES("phalanx", "xboard1", "cz", "2653", False),
-    ENGINES("pychess", "xboard", "dk", "", True),
     ENGINES("sjaakii", "xboard", "nl", "2194", False),
     ENGINES("crafty", "xboard", "us", "3060", False),
     ENGINES("diablo", "uci", "us", "2385", False),
