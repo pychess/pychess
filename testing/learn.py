@@ -1,10 +1,8 @@
-import asyncio
 import unittest
 
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff
 from pychess.widgets import gamewidget
-from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.perspectives.games import Games
 from pychess.perspectives.learn import Learn
 from pychess.perspectives.learn.EndgamesPanel import start_endgame_from, ENDGAMES
@@ -12,6 +10,8 @@ from pychess.perspectives.learn.LecturesPanel import start_lecture_from, LECTURE
 from pychess.perspectives.learn.LessonsPanel import start_lesson_from, LESSONS
 from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_from, PUZZLES
 from pychess.perspectives import perspective_manager
+
+discoverer.discover()
 
 
 class LearnTests(unittest.TestCase):
@@ -25,9 +25,6 @@ class LearnTests(unittest.TestCase):
 
         self.learn_persp = Learn()
         perspective_manager.add_perspective(self.learn_persp)
-
-        dd = DiscovererDialog(discoverer)
-        self.dd_task = asyncio.async(dd.start())
 
     def test1(self):
         """ Start next endgame """
