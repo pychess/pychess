@@ -350,7 +350,7 @@ class EnginesDialog():
             self.widgets["engine_args_entry"].set_text("")
             self.widgets["engine_protocol_combo"].set_active(0)
             self.widgets["engine_country_combo"].set_active(0)
-            self.widgets["engine_elo_entry"].set_text("")
+            self.widgets["engine_comment_entry"].set_text("")
             self.widgets["engine_level_scale"].set_value(defaultEngineLevel)
             self.options_store.clear()
             self.selection = False
@@ -480,17 +480,17 @@ class EnginesDialog():
         self.widgets["engine_country_combo"].connect("key-press-event", country_keypressed)
 
         ################################################################
-        # ELO changed
+        # comment changed
         ################################################################
-        def elo_changed(widget):
+        def comment_changed(widget):
             if self.cur_engine is not None and not self.selection:
-                new_elo = self.widgets["engine_elo_entry"].get_text().strip()
+                new_comment = self.widgets["engine_comment_entry"].get_text().strip()
                 engine = discoverer.getEngineByName(self.cur_engine)
-                old_elo = engine.get("elo")
-                if new_elo != old_elo:
-                    engine["elo"] = new_elo
+                old_comment = engine.get("comment")
+                if new_comment != old_comment:
+                    engine["comment"] = new_comment
 
-        self.widgets["engine_elo_entry"].connect("changed", elo_changed)
+        self.widgets["engine_comment_entry"].connect("changed", comment_changed)
 
         ################################################################
         # level changed
@@ -548,12 +548,12 @@ class EnginesDialog():
                         break
                     idx += 1
 
-                elo = engine.get("elo")
-                self.widgets["engine_elo_entry"].set_text(elo if elo is not None else "")
+                comment = engine.get("comment")
+                self.widgets["engine_comment_entry"].set_text(comment if comment is not None else "")
 
                 level = engine.get("level")
                 try:
-                    level = level if level else defaultEngineLevel
+                    level = int(level) if level else defaultEngineLevel
                 except Exception:
                     level = defaultEngineLevel
                 self.widgets["engine_level_scale"].set_value(level)

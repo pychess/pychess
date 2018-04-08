@@ -25,7 +25,7 @@ from pychess.Players.engineList import PYTHONBIN, VM_LIST, ENGINES_LIST
 from pychess.Variants import variants
 
 attrToProtocol = {"uci": UCIEngine, "xboard": CECPEngine}
-defaultEngineLevel = 10
+defaultEngineLevel = 20
 
 
 class SubProcessError(Exception):
@@ -240,7 +240,6 @@ class EngineDiscoverer(GObject.GObject):
             engine['recheck'] = True
         else:
             engine["country"] = refeng["country"]
-            engine["elo"] = refeng["elo"]
 
         # Clean it
         engine['command'] = path
@@ -394,7 +393,7 @@ class EngineDiscoverer(GObject.GObject):
     def getEngineLearn(self):
         # Local helpers
         def has_classical(engine):
-            status = engine['name'] in all_analyzers  # Some XB engines are not analyzers
+            status = engine['protocol'] == 'uci'
             if 'variants' in engine:
                 status = status and 'normal' in engine['variants']
             if 'options' in engine:
@@ -409,8 +408,6 @@ class EngineDiscoverer(GObject.GObject):
         # Initialization
         id = conf.get('ana_combobox', None)
         analyzer_enabled = conf.get('analyzer_check', False)
-        all_analyzers = [engine["name"] for engine in self.engines
-                         if self.is_analyzer(engine) and "pychess" not in engine["name"].lower()]
 
         # Stockfish from the preferences
         if analyzer_enabled:  # The analyzer should be active else we might believe that it is irrelevant
@@ -428,21 +425,6 @@ class EngineDiscoverer(GObject.GObject):
             for engine in self.engines:
                 if engine['md5'] == id and has_classical(engine):
                     return engine['name']
-
-        # By declared ELO
-        elomin = 2499
-        elomaster = None
-        for engine in self.engines:
-            if has_classical(engine):
-                try:
-                    elo = int(engine.get("elo"))
-                except ValueError:
-                    elo = 0
-                if elo > elomin:
-                    elomin = elo
-                    elomaster = engine['name']
-        if elomaster is not None:
-            return elomaster
 
         # First found
         for engine in self.engines:
@@ -466,7 +448,7 @@ class EngineDiscoverer(GObject.GObject):
                           "protocol": engine.protocol[:6],
                           "recheck": True,
                           "country": engine.country,
-                          "elo": engine.elo,
+                          "comment": "",
                           "level": 5 if engine.depthDependent else defaultEngineLevel}
                 if engine.protocol == "xboard1":
                     result["protover"] = 1
@@ -595,7 +577,7 @@ class EngineDiscoverer(GObject.GObject):
             engine = copy(refeng)
         else:
             engine = {"country": "unknown",
-                      "elo": "",
+                      "comment": "",
                       "level": defaultEngineLevel}
 
         # New values
