@@ -2,7 +2,7 @@ import unittest
 
 modules_to_test = (
     "bitboard",
-    # "database",
+    "database",
     "draw",
     "eval",
     "fen",
@@ -28,6 +28,7 @@ modules_to_test = (
     'engine',
     'savegame',
     'dialogs',
+    'learn',
 )
 
 
