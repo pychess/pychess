@@ -11,7 +11,7 @@ from pychess.perspectives.learn.LessonsPanel import start_lesson_from, LESSONS
 from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_from, PUZZLES
 from pychess.perspectives import perspective_manager
 
-discoverer.discover()
+discoverer.pre_discover()
 
 
 class LearnTests(unittest.TestCase):

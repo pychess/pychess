@@ -516,7 +516,7 @@ class EngineDiscoverer(GObject.GObject):
             return status
 
         def is_stockfish(engine):
-            return 'stockfish' in engine['name'].lower() and has_classical(engine)
+            return 'stockfish' in engine['name'].lower()
 
         # Initialization
         id = conf.get('ana_combobox', None)
