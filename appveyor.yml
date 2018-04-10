@@ -3,6 +3,7 @@ version: build-{build}-{branch}
 environment:
   global:
    AIO: pygi-aio-3.18.2_rev12-setup_549872deadabb77a91efbc56c50fe15f969e5681.exe
+   STOCKFISH: stockfish-windows-amd64.exe
 
   matrix:
     # http://www.appveyor.com/docs/installed-software#python lists available
@@ -31,9 +32,14 @@ install:
   - "if not exist %AIO% appveyor DownloadFile https://sourceforge.net/projects/pygobjectwin32/files/%AIO%"
   - "if not exist %PYTHON%\\lib\\site-packages\\gi %AIO% %PYTHON% GDKPixbuf GTK GTKSourceView Pango"
 
+  # ownload stockfish
+  - "if not exist %STOCKFISH% appveyor DownloadFile https://github.com/niklasf/Stockfish/releases/download/fishnet-170318/%STOCKFISH% -FileName c:\\pychess\\engines\\stockfish_9_x64.exe"
+  - "dir c:\\pychess\\engines"
+
 cache:
   - "%AIO%"
   - "%PYTHON%\\lib\\site-packages"
+  - ".\\engines"
 
 build_script:
   - "python setup.py build sdist"

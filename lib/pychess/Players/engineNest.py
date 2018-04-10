@@ -30,7 +30,7 @@ PYTHONBIN = sys.executable.split("/")[-1]
 BITNESS = "64" if platform.machine().endswith('64') else "32"
 
 if sys.platform == "win32":
-    stockfish_name = "stockfish_8_x%s.exe" % BITNESS  # TODO Version 9 is available
+    stockfish_name = "stockfish_9_x%s.exe" % BITNESS
     backup = [
         {"protocol": "uci",
          "name": stockfish_name,
