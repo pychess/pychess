@@ -17,7 +17,6 @@ if "/usr/games" not in os.environ["PATH"]:
     os.environ["PATH"] = "/usr/games:%s" % os.environ["PATH"]
 
 discoverer.pre_discover()
-print(discoverer.getEngines())
 
 
 class LearnTests(unittest.TestCase):
