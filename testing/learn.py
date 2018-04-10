@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from pychess.Players.engineNest import discoverer
@@ -11,8 +12,13 @@ from pychess.perspectives.learn.LessonsPanel import start_lesson_from, LESSONS
 from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_from, PUZZLES
 from pychess.perspectives import perspective_manager
 
+# fix PATH on travis
+if "/usr/games" not in os.environ["PATH"]:
+    os.environ["PATH"] = "/usr/games:%s" % os.environ["PATH"]
+
 discoverer.pre_discover()
 print(discoverer.getEngines())
+
 
 class LearnTests(unittest.TestCase):
     def setUp(self):
