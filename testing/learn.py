@@ -12,7 +12,7 @@ from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_from, PUZZLES
 from pychess.perspectives import perspective_manager
 
 discoverer.pre_discover()
-
+print(discoverer.getEngines())
 
 class LearnTests(unittest.TestCase):
     def setUp(self):
