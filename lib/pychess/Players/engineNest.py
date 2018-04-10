@@ -395,6 +395,8 @@ class EngineDiscoverer(GObject.GObject):
                       ", ".join(str(a) for a in err.args))
 
     def pre_discover(self):
+        print(os.environ["PATH"])
+        print("is /usr/games/stockfish exist:", os.path.isfile("/usr/games/stockfish"))
         self.engines = []
         # List available engines
         for engine in self._engines:
