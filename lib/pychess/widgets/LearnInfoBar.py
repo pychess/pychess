@@ -8,7 +8,7 @@ from pychess.perspectives.learn.EndgamesPanel import start_endgame_from
 from pychess.perspectives.learn.LessonsPanel import start_lesson_from
 from pychess.widgets import preferencesDialog
 
-HINT, MOVE, RETRY, CONTINUE, NEXT = range(5)
+HINT, MOVE, RETRY, CONTINUE, BACK_TO_MAINLINE, NEXT = range(6)
 
 
 css = """
@@ -153,6 +153,16 @@ class LearnInfoBar(Gtk.InfoBar):
             self.set_response_sensitive(RETRY, False)
         self.show_all()
 
+    def back_to_mainline(self):
+        self.clear()
+        self.set_message_type(Gtk.MessageType.INFO)
+        self.content_area.add(Gtk.Label(_("Cool! Now let see how it goes in the main line.")))
+        self.add_button(_("Back to main line"), BACK_TO_MAINLINE)
+
+        # disable playing
+        self.boardcontrol.game_preview = True
+        self.show_all()
+
     def on_response(self, widget, response):
         if response in (HINT, MOVE):
             if self.boardview.shown in self.gamemodel.hints:
@@ -203,6 +213,11 @@ class LearnInfoBar(Gtk.InfoBar):
         elif response == CONTINUE:
             self.your_turn()
             self.boardview.showNext()
+            self.boardcontrol.game_preview = False
+
+        elif response == BACK_TO_MAINLINE:
+            self.opp_turn()
+            self.boardview.backToMainLine()
             self.boardcontrol.game_preview = False
 
         elif response == NEXT:
