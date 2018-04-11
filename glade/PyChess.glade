@@ -23,6 +23,12 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="adjustment4">
+    <property name="lower">1</property>
+    <property name="upper">20</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">5</property>
+  </object>
   <object class="GtkAdjustment" id="bb_max_adjustment">
     <property name="upper">9</property>
     <property name="step_increment">1</property>
@@ -4917,7 +4923,7 @@ It will search positions from http://www.k4it.de/</property>
                     <property name="margin_right">10</property>
                     <property name="margin_top">10</property>
                     <property name="margin_bottom">10</property>
-                    <property name="n_rows">7</property>
+                    <property name="n_rows">8</property>
                     <property name="n_columns">2</property>
                     <property name="column_spacing">3</property>
                     <property name="row_spacing">3</property>
@@ -5162,6 +5168,37 @@ If it can use both  you can set here which one you like.</property>
                         <property name="y_options">GTK_FILL</property>
                       </packing>
                     </child>
+                    <child>
+                      <object class="GtkLabel" id="label79">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Comment:</property>
+                      </object>
+                      <packing>
+                        <property name="top_attach">7</property>
+                        <property name="bottom_attach">8</property>
+                        <property name="x_options">GTK_FILL</property>
+                        <property name="y_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="engine_comment_entry">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="tooltip_text" translatable="yes">Free comment about the engine</property>
+                        <property name="invisible_char">●</property>
+                        <property name="primary_icon_activatable">False</property>
+                        <property name="secondary_icon_activatable">False</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">7</property>
+                        <property name="bottom_attach">8</property>
+                        <property name="y_options">GTK_FILL</property>
+                      </packing>
+                    </child>
                   </object>
                 </child>
                 <child type="tab">
@@ -5180,13 +5217,56 @@ If it can use both  you can set here which one you like.</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
+                      <object class="GtkBox" id="box26">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">10</property>
+                        <property name="margin_right">10</property>
+                        <property name="margin_top">10</property>
+                        <property name="margin_bottom">5</property>
+                        <child>
+                          <object class="GtkLabel" id="label80">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_right">10</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Preferred level:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkScale" id="engine_level_scale">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Level 1 is the weakest and level 20 is the strongest. You may not define a too high level if the engine is based on the depth to explore</property>
+                            <property name="adjustment">adjustment4</property>
+                            <property name="round_digits">0</property>
+                            <property name="digits">0</property>
+                            <property name="value_pos">right</property>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkScrolledWindow" id="scrolledwindow6">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="margin_left">10</property>
                         <property name="margin_right">10</property>
-                        <property name="margin_top">10</property>
-                        <property name="margin_bottom">5</property>
                         <property name="shadow_type">in</property>
                         <child>
                           <object class="GtkTreeView" id="options_treeview">
@@ -5205,7 +5285,7 @@ If it can use both  you can set here which one you like.</property>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
                         <property name="padding">4</property>
-                        <property name="position">0</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -5215,13 +5295,15 @@ If it can use both  you can set here which one you like.</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="halign">end</property>
+                        <property name="margin_left">10</property>
                         <property name="margin_right">10</property>
+                        <property name="margin_top">5</property>
                         <property name="margin_bottom">10</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
@@ -5282,22 +5364,6 @@ If it can use both  you can set here which one you like.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="copy_engine_button">
-                    <property name="label">gtk-copy</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="can_default">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkButton" id="remove_engine_button">
                     <property name="label">gtk-delete</property>
                     <property name="use_action_appearance">False</property>
@@ -5338,18 +5404,44 @@ If it can use both  you can set here which one you like.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="engines_close_button">
-                <property name="label">gtk-close</property>
-                <property name="use_action_appearance">False</property>
+              <object class="GtkBox" id="box24">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkButton" id="engine_cancel_button">
+                    <property name="label">gtk-cancel</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="engine_save_button">
+                    <property name="label">gtk-save</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="margin_left">5</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">2</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>

@@ -138,6 +138,13 @@ class Games(GObject.GObject, Perspective):
         log.debug("Games.generalStart: <- gamemodel.setPlayers(): %s" %
                   (gamemodel))
 
+        # Forward information from the engines
+        for playertup, tagname in ((player0tup, "WhiteElo"), (player1tup, "BlackElo")):
+            if playertup[0] == ARTIFICIAL:
+                elo = playertup[2][0].get("elo")
+                if elo:
+                    gamemodel.tags[tagname] = elo
+
         # Starting
         if loaddata:
             try:

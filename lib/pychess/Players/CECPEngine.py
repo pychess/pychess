@@ -418,7 +418,7 @@ class CECPEngine(ProtocolEngine):
         self.strength = strength
 
         if strength <= 19:
-            self.__setTimeHandicap(0.01 * 10**(strength / 10.))
+            self.__setTimeHandicap(0.01 * 10 ** (strength / 10.))
 
         if strength <= 18:
             self.__setDepth(strength)

@@ -261,3 +261,11 @@ ISO3166_LIST = [
     ISO3166("zm", _("Zambia")),
     ISO3166("zw", _("Zimbabwe"))
 ]
+
+# Bubble sort for the translated countries
+for i in range(len(ISO3166_LIST) - 1, 1, - 1):
+    for j in range(1, i - 1):
+        if ISO3166_LIST[i].country < ISO3166_LIST[j].country:
+            tmp = ISO3166_LIST[i]
+            ISO3166_LIST[i] = ISO3166_LIST[j]
+            ISO3166_LIST[j] = tmp
