@@ -105,6 +105,7 @@ class EngineDiscoverer(GObject.GObject):
             For the PyChess engine, special handling is taken, and we search
             PYTHONPATH as well as the directory from where the 'os' module is
             imported """
+        print(engine)
         if engine.get("vm_name") is not None:
             vm_command = engine.get("vm_command")
             altpath = dirname(vm_command) if vm_command else None
@@ -284,6 +285,7 @@ class EngineDiscoverer(GObject.GObject):
 
         # Scan the referenced engines to see if they are installed
         for engine in ENGINES_LIST:
+            print(engine)
             if self.getEngineByName(engine.name, exactName=False) is not None:  # No rediscovery if already exists
                 continue
             engine = self.getReferencedEngine(engine.name)
