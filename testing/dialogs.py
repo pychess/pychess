@@ -14,7 +14,7 @@ from pychess.perspectives.welcome import Welcome
 from pychess.perspectives import perspective_manager
 
 
-class DatabaseTests(unittest.TestCase):
+class DialogTests(unittest.TestCase):
     def setUp(self):
         widgets = uistuff.GladeWidgets("PyChess.glade")
         gamewidget.setWidgets(widgets)
@@ -37,6 +37,7 @@ class DatabaseTests(unittest.TestCase):
         self.dd_task = asyncio.async(dd.start())
 
         preferencesDialog.run(gamewidget.getWidgets())
+
 
 if __name__ == '__main__':
     unittest.main()

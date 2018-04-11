@@ -40,6 +40,11 @@ class ChessClock(Gtk.DrawingArea):
     def expose(self, widget, ctx):
         context = widget.get_window().cairo_create()
         clip_ext = context.clip_extents()
+
+        if clip_ext[0] > 0 or clip_ext[2] < self.get_allocated_width():
+            self.redraw_canvas()
+            return False
+
         rec = Gdk.Rectangle()
         rec.x, rec.y, rec.width, rec.height = clip_ext[0], clip_ext[1], \
             clip_ext[2] - clip_ext[0], clip_ext[3] - clip_ext[1]

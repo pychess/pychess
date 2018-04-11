@@ -25,6 +25,7 @@ from pychess.Players.engineList import PYTHONBIN, VM_LIST, ENGINES_LIST
 from pychess.Variants import variants
 
 attrToProtocol = {"uci": UCIEngine, "xboard": CECPEngine}
+
 defaultEngineLevel = 20
 
 
@@ -403,7 +404,7 @@ class EngineDiscoverer(GObject.GObject):
             return status
 
         def is_stockfish(engine):
-            return 'stockfish' in engine['name'].lower() and has_classical(engine)
+            return 'stockfish' in engine['name'].lower()
 
         # Initialization
         id = conf.get('ana_combobox', None)

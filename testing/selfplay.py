@@ -17,7 +17,7 @@ from pychess.Variants import variants
 from pychess.System.Log import log
 log.logger.setLevel(logging.INFO)
 
-discoverer.discover()
+discoverer.pre_discover()
 
 PYCHESS_VARIANTS = (NORMALCHESS, CRAZYHOUSECHESS, FISCHERRANDOMCHESS, LOSERSCHESS, SUICIDECHESS,
                     THREECHECKCHESS, KINGOFTHEHILLCHESS, WILDCASTLESHUFFLECHESS, ASEANCHESS,

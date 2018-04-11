@@ -31,6 +31,11 @@ from pychess.perspectives import perspective_manager
 
 firstRun = True
 
+hint_tab = None
+theme_tab = None
+sound_tab = None
+save_tab = None
+
 
 def run(widgets):
     global firstRun
@@ -45,17 +50,28 @@ def initialize(widgets):
     """ :Description: Initialises the various tabs for each section of configurable artifacts
     """
     GeneralTab(widgets)
-    HintTab(widgets)
-    SoundTab(widgets)
 
     # All side panels can be show/hide from View menu now, so no need to do the same from preferences
     # We can re enable this after implementing install/uninstall functionality in the future...
     # PanelTab(widgets)
-    ThemeTab(widgets)
-
-    SaveTab(widgets)
 
     uistuff.keepWindowSize("preferencesdialog", widgets["preferences_dialog"])
+
+    notebook = widgets["preferences_notebook"]
+
+    def switch_page(widget, page, page_num):
+        global hint_tab, theme_tab, sound_tab, save_tab
+
+        if page_num == 1 and hint_tab is None:
+            hint_tab = HintTab(widgets)
+        elif page_num == 3 and theme_tab is None:
+            theme_tab = ThemeTab(widgets)
+        elif page_num == 4 and sound_tab is None:
+            sound_tab = SoundTab(widgets)
+        elif page_num == 5 and save_tab is None:
+            save_tab = SaveTab(widgets)
+
+    notebook.connect("switch_page", switch_page)
 
     def delete_event(widget, _):
         widgets["preferences_dialog"].hide()

@@ -11,7 +11,7 @@
 [SetUp "1"]
 
 { This problem was originally published in 1859. The story involves an incident during the siege of Charles XII of Sweden by the Turks at Bender in 1713. "Charles beguiled this period by means of drills and chess, and used frequently to play with his minister, Christian Albert Grosthusen, some of the contests being mentioned by Voltaire. One day while so engaged, the game had advanced to this stage, and Charles (White) had just announced mate in three." }
-1. Rxg3 Bxg3 (1... Bxe1 2. Rh3+ Bh4 3. g4#) 2. Nf3 Bxh2 3. g4# *
+1. Rxg3 { Excellent! } 1... Bxg3 (1... Bxe1 2. Rh3+ Bh4 3. g4#) 2. Nf3 { Now the black bishop the only piece able to move so it can't prevent white to mate on g4. } (2. hxg3 { Oh no, this is stalemate! }) 2... Bxh2 3. g4# *
 
 
 [Event "Charles XII at Bender: Samuel Loyd mate in #4"]
@@ -44,3 +44,19 @@
 
 { Who would believe it, he had scarcely spoken when another bullet flew across the room, and the pawn at h2 shared the fate of the knight. Grothusen turned pale. "You have our good friends the Turks with you," said the king unconcerned, "it can scarcely be expected that I should contend against such odds; but let me see if I can dispense with that unlucky pawn. I have it!" he shouted with a tremendous laugh, "I have great pleasure in informing you that there is undoubtedly a mate in 5." }
 1. Rb7 Be3 (1... Bg1 2. Rb1 Bh2 3. Re1 Kh4 4. Kg6 h5 5. Re4#) 2. Rb1 Bg5 3. Rh1+ Bh4 4. Rh2 gxh2 5. g4# *
+
+
+[Event "Charles XII at Bender: Benkő Pál mate in #2"]
+[Site "https://lichess.org/study/3aJNVC40"]
+[UTCDate "2018.04.03"]
+[UTCTime "10:11:41"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/gbtami"]
+[FEN "8/6R1/7p/5K1k/6R1/6p1/5bPP/4N3 w - - 0 1"]
+[SetUp "1"]
+
+{ Hungarian composer GM Benkő Pál composed a prequel to Sam Loyd's first problem, with an extra White rook on g4, making it a mate in two moves. }
+1. R4g5+ hxg5 (1... Kh4 2. Nf3#) 2. Rh7# *
