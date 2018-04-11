@@ -32,7 +32,7 @@ ENGINES_LIST = [
     ENGINES("gnuchess", "xboard", "us", False),
     ENGINES("hoichess", "xboard", "de", False),
     ENGINES("shredder", "uci", "de", False),
-    ENGINES("houdini", "uci", "be", False),
+    ENGINES("Houdini.exe", "uci", "be", False),
     ENGINES("phalanx", "xboard1", "cz", False),
     ENGINES("sjaakii", "xboard", "nl", False),
     ENGINES("crafty", "xboard", "us", False),
@@ -42,7 +42,7 @@ ENGINES_LIST = [
     ENGINES("toledo", "xboard", "mx", True),
     ENGINES("faile", "xboard1", "ca", False),
     ENGINES("fruit", "uci", "fr", False),
-    ENGINES("rybka", "uci", "cz", False),
+    ENGINES("Rybka.exe", "uci", "cz", False),
     ENGINES("sjeng", "xboard", "be", False),
     ENGINES("toga2", "uci", "de", False),
     ENGINES("gull", "uci", "ru", False)
