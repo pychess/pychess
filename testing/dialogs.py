@@ -14,6 +14,9 @@ from pychess.perspectives.welcome import Welcome
 from pychess.perspectives import perspective_manager
 
 
+discoverer.pre_discover()
+
+
 class DialogTests(unittest.TestCase):
     def setUp(self):
         widgets = uistuff.GladeWidgets("PyChess.glade")
