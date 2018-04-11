@@ -1,3 +1,4 @@
+import platform
 import sys
 from collections import namedtuple
 
@@ -5,6 +6,14 @@ from collections import namedtuple
 # Constants
 PYTHONBIN = sys.executable.split("/")[-1]
 
+BITNESS = "64" if platform.machine().endswith('64') else "32"
+
+if sys.platform == "win32":
+    stockfish_name = "stockfish_9_x%s.exe" % BITNESS
+    sjaakii_name = "sjaakii_win%s_ms.exe" % BITNESS
+else:
+    stockfish_name = "stockfish"
+    sjaakii_name = "jaakii"
 
 # List of known interpreters
 VM = namedtuple('VM', 'name, ext, args')
@@ -22,7 +31,7 @@ ENGINES_LIST = [
     ENGINES("PyChess.py", "xboard", "dk", True),
     ENGINES("toledo-uci", "uci", "mx", True),
     ENGINES("gnuchessu", "uci", "us", False),
-    ENGINES("stockfish", "uci", "no", False),
+    ENGINES(stockfish_name, "uci", "no", False),
     ENGINES("amundsen", "xboard", "sw", False),
     ENGINES("andscacs", "uci", "ad", False),
     ENGINES("anticrux", "uci", "fr", True),
@@ -34,7 +43,7 @@ ENGINES_LIST = [
     ENGINES("shredder", "uci", "de", False),
     ENGINES("Houdini.exe", "uci", "be", False),
     ENGINES("phalanx", "xboard1", "cz", False),
-    ENGINES("sjaakii", "xboard", "nl", False),
+    ENGINES(sjaakii_name, "xboard", "nl", False),
     ENGINES("crafty", "xboard", "us", False),
     ENGINES("diablo", "uci", "us", False),
     ENGINES("hiarcs", "uci", "gb", False),
