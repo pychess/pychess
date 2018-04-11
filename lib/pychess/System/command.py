@@ -27,8 +27,8 @@ class Command():
                 input=self.inputstr,
                 timeout=timeout)
         except subprocess.TimeoutExpired:
+            output, error = process.communicate()
             process.kill()
-            output, error = self.process.communicate()
 
         status = process.returncode
         return status, output, error
