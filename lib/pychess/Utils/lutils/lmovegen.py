@@ -181,9 +181,12 @@ def genPieceMoves(board, piece, tcord):
         if kings:
             kingMoves = moveArray[KING]
             for fcord in iterBits(kings):
-                for tcord in iterBits(kingMoves[fcord] & notfriends):
-                    moves.add(newMove(fcord, tcord))
+                for tc in iterBits(kingMoves[fcord] & notfriends):
+                    if tc == tcord:
+                        moves.add(newMove(fcord, tcord))
             return moves
+
+    return moves
 
 
 def genAllMoves(board, drops=True):
