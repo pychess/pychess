@@ -64,7 +64,7 @@ def run(widgets):
         widgets["engine_save_button"].connect("clicked", save_event)
         widgets["manage_engines_dialog"].connect(
             "key-press-event",
-            lambda w, e: cancel_event(w) if e.keyval == Gdk.KEY_Escape else None)
+            lambda w, e: cancel_event(w, True) if e.keyval == Gdk.KEY_Escape else None)
 
     discoverer.backup()
     engine_dialog.widgets["enginebook"].set_current_page(0)
