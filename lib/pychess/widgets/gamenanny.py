@@ -213,9 +213,12 @@ class GameNanny(object):
         if gamemodel.players[1].__type__ == LOCAL:
             if gamemodel.players[0].__type__ != LOCAL:
                 boardview.rotation = math.pi
-            elif (conf.get("autoRotate", True) or gamemodel.offline_lecture) and \
-                    gamemodel.curplayer == gamemodel.players[1]:
+
+        if isinstance(gamemodel, LearnModel):
+            if gamemodel.starting_color == BLACK:
                 boardview.rotation = math.pi
+            else:
+                boardview.rotation = 0
 
         # Play set-up sound
         preferencesDialog.SoundTab.playAction("gameIsSetup")

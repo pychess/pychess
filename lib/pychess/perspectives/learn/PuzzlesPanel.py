@@ -128,9 +128,9 @@ def start_puzzle_from(filename, index=None):
 
     timemodel = TimeModel(0, 0)
     gamemodel = LearnModel(timemodel)
+    gamemodel.set_learn_data(PUZZLE, filename, index, len(records))
 
     chessfile.loadToModel(rec, 0, gamemodel)
-    gamemodel.set_learn_data(PUZZLE, filename, index, len(records))
 
     engine = discoverer.getEngineByName(discoverer.getEngineLearn())
     ponder_off = True

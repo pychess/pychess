@@ -692,7 +692,7 @@ class PGNFile(ChessFile):
     def loadToModel(self, rec, position=-1, model=None):
         """ Parse game text and load game record header tags to a GameModel object """
 
-        if not model:
+        if model is None:
             model = GameModel()
 
         if self.pgn_is_string:

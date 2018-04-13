@@ -61,6 +61,7 @@ class FenFile(ChessFile):
         fen = self.games[0]["FEN"]
         try:
             board = model.variant(setup=fen)
+            model.tags["FEN"] = fen
         except SyntaxError as err:
             board = model.variant()
             raise LoadingError(
