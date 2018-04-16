@@ -194,9 +194,6 @@ class Games(GObject.GObject, Perspective):
         game.save(uri, saver, append=False, position=position)
 
     def saveGamePGN(self, game):
-        if game.practice_game or game.lesson_game:
-            return True
-
         if conf.get("saveOwnGames", False) and not game.hasLocalPlayer():
             return True
 

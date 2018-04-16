@@ -57,6 +57,10 @@ class LearnModel(GameModel):
         "learn_success": (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
 
+    def isChanged(self):
+        """ Never save learn games changes to .pgn """
+        return False
+
     def set_learn_data(self, learn_type, source, current_index=None, game_count=None):
         self.learn_type = learn_type
         self.source = source
