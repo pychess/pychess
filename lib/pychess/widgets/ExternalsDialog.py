@@ -58,7 +58,7 @@ class ExternalsDialog():
         check_button.set_active(conf.get("download_timestamp", False))
         check_button.connect("toggled", lambda w: conf.set("download_timestamp", w.get_active()))
         box.add(check_button)
-        link = "https://www.chessclub.com/user/resources/icc/timestamp"
+        link = "http://download.chessclub.com/timestamp/"
         link_button = Gtk.LinkButton(link, link)
         box.add(link_button)
         vbox.pack_start(box, False, False, 0)
@@ -100,7 +100,7 @@ class ExternalsDialog():
                     pgn.chess_db_path = dest
 
             if TimeSeal.timestamp_path is None and conf.get("download_timestamp", False):
-                binary = "https://www.chessclub.com/user/resources/icc/timestamp/%s" % TimeSeal.timestamp
+                binary = "http://download.chessclub.com.s3.amazonaws.com/timestamp/%s" % TimeSeal.timestamp
                 filename = yield from download_file_async(binary)
                 if filename is not None:
                     dest = shutil.move(filename, os.path.join(altpath, TimeSeal.timestamp))
