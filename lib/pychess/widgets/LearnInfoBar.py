@@ -123,7 +123,8 @@ class LearnInfoBar(Gtk.InfoBar):
         if self.gamemodel.learn_type in(LESSON, PUZZLE) and self.gamemodel.current_index + 1 == self.gamemodel.game_count:
             self.content_area.add(Gtk.Label(_("Well done! %s completed." % learn2str[self.gamemodel.learn_type])))
         else:
-            self.content_area.add(Gtk.Label(_("Well done!")))
+            if "FEN" in self.gamemodel.tags:
+                self.content_area.add(Gtk.Label(_("Well done!")))
             self.add_button(_("Next"), NEXT)
         self.show_all()
         preferencesDialog.SoundTab.playAction("puzzleSuccess")

@@ -59,6 +59,7 @@ class BoardControl(Gtk.EventBox):
         self.gamemodel_cids = []
         self.gamemodel_cids.append(gamemodel.connect("moves_undoing", self.moves_undone))
         self.gamemodel_cids.append(gamemodel.connect("game_ended", self.game_ended))
+        self.gamemodel_cids.append(gamemodel.connect("game_started", self.game_started))
 
         self.cids = []
         self.cids.append(self.connect("button_press_event", self.button_press))
@@ -320,6 +321,11 @@ class BoardControl(Gtk.EventBox):
         self.currentState = self.normalState
 
         self.view.startAnimation()
+
+    def game_started(self, gamemodel):
+        if self.view.model.lesson_game and "FEN" not in gamemodel.tags:
+            self.view.infobar.get_next_puzzle()
+            self.view.model.emit("learn_success")
 
     def getBoard(self):
         return self.view.model.getBoardAtPly(self.view.shown,

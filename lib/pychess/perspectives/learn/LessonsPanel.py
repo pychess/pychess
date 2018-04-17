@@ -126,12 +126,14 @@ def start_lesson_from(filename, index=None):
         progress = lessons_solving_progress[gamemodel.source]
         progress[gamemodel.current_index] = 1
         lessons_solving_progress[gamemodel.source] = progress
-        asyncio.async(gamemodel.restart_analyzer(HINT))
+        if "FEN" in gamemodel.tags:
+            asyncio.async(gamemodel.restart_analyzer(HINT))
     gamemodel.connect("learn_success", learn_success)
 
     def on_game_started(gamemodel):
         perspective.activate_panel("annotationPanel")
-        asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
+        if "FEN" in gamemodel.tags:
+            asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
     gamemodel.connect("game_started", on_game_started)
 
     gamemodel.status = WAITING_TO_START
