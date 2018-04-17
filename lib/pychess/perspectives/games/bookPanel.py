@@ -15,7 +15,6 @@ from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.lutils.lmove import ParsingError
 from pychess.System.prefix import addDataPrefix
 from pychess.System.Log import log
-from pychess.widgets.BoardControl import play_or_add_move
 from math import ceil
 
 __title__ = _("Hints")
@@ -88,13 +87,14 @@ class Advisor(object):
 
 
 class OpeningAdvisor(Advisor):
-    def __init__(self, store, tv, boardview):
+    def __init__(self, store, tv, boardcontrol):
         Advisor.__init__(self, store, _("Opening Book"), OPENING)
         self.tooltip = _(
             "The opening book will try to inspire you during the opening phase of the game by showing you common moves made by chess masters")
         #        self.opening_names = []
         self.tv = tv
-        self.boardview = boardview
+        self.boardcontrol = boardcontrol
+        self.boardview = boardcontrol.view
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
@@ -142,12 +142,12 @@ class OpeningAdvisor(Advisor):
     def row_activated(self, iter, model, from_gui=True):
         if self.store.get_path(iter) != Gtk.TreePath(self.path):
             board, move, moves = self.store[iter][0]
-            play_or_add_move(self.boardview, board, move)
+            self.boardcontrol.play_or_add_move(board, move)
 
 
 class EngineAdvisor(Advisor):
     # An EngineAdvisor always has self.linesExpected rows reserved for analysis.
-    def __init__(self, store, engine, mode, tv, boardview):
+    def __init__(self, store, engine, mode, tv, boardcontrol):
         if mode == HINT:
             Advisor.__init__(self, store, _("Analysis by %s") % engine, HINT)
             self.tooltip = _(
@@ -161,7 +161,7 @@ class EngineAdvisor(Advisor):
         self.tv = tv
         self.active = False
         self.linesExpected = 1
-        self.boardview = boardview
+        self.boardview = boardcontrol.view
 
         self.cid1 = self.engine.connect("analyze", self.on_analyze)
         self.cid2 = self.engine.connect("readyForOptions", self.on_ready_for_options)
@@ -331,13 +331,14 @@ class EngineAdvisor(Advisor):
 
 
 class EndgameAdvisor(Advisor):
-    def __init__(self, store, tv, boardview):
+    def __init__(self, store, tv, boardcontrol):
         Advisor.__init__(self, store, _("Endgame Table"), ENDGAME)
         self.egtb = EndgameTable()
         # If mate in # was activated by double click let egtb do the rest
         self.auto_activate = False
         self.tv = tv
-        self.boardview = boardview
+        self.boardcontrol = boardcontrol
+        self.boardview = boardcontrol.view
         self.tooltip = _(
             "The endgame table will show exact analysis when there are few pieces on the board.")
         # TODO: Show a message if tablebases for the position exist but are neither installed nor allowed.
@@ -352,7 +353,7 @@ class EndgameAdvisor(Advisor):
     def start(self):
         while True:
             v = yield from self.queue.get()
-            if v == self.StopNow:
+            if isinstance(v, Exception) and v == self.StopNow:
                 break
             elif v == self.board.board:
                 ret = yield from self.egtb.scoreAllMoves(v)
@@ -424,12 +425,13 @@ class EndgameAdvisor(Advisor):
                     # double click on mate in #
                     self.auto_activate = True
 
-            play_or_add_move(self.boardview, board, move)
+            self.boardcontrol.play_or_add_move(board, move)
 
 
 class Sidepanel(object):
     def load(self, gmwidg):
         self.gmwidg = gmwidg
+        self.boardcontrol = gmwidg.board
         self.boardview = gmwidg.board.view
 
         self.sw = Gtk.ScrolledWindow()
@@ -536,10 +538,10 @@ class Sidepanel(object):
         self.conf_conids = []
 
         if conf.get("opening_check", False):
-            advisor = OpeningAdvisor(self.store, self.tv, self.boardview)
+            advisor = OpeningAdvisor(self.store, self.tv, self.boardcontrol)
             self.advisors.append(advisor)
         if conf.get("endgame_check", False):
-            advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
+            advisor = EndgameAdvisor(self.store, self.tv, self.boardcontrol)
             self.advisors.append(advisor)
 
         self.model_cids = [
@@ -550,7 +552,7 @@ class Sidepanel(object):
 
         def on_opening_check(none):
             if conf.get("opening_check", False) and self.boardview is not None:
-                advisor = OpeningAdvisor(self.store, self.tv, self.boardview)
+                advisor = OpeningAdvisor(self.store, self.tv, self.boardcontrol)
                 self.advisors.append(advisor)
                 advisor.shownChanged(self.boardview, self.boardview.shown)
             else:
@@ -575,7 +577,7 @@ class Sidepanel(object):
 
         def on_endgame_check(none):
             if conf.get("endgame_check", False):
-                advisor = EndgameAdvisor(self.store, self.tv, self.boardview)
+                advisor = EndgameAdvisor(self.store, self.tv, self.boardcontrol)
                 self.advisors.append(advisor)
                 advisor.shownChanged(self.boardview, self.boardview.shown)
             else:
@@ -606,10 +608,10 @@ class Sidepanel(object):
     def on_analyzer_added(self, gamemodel, analyzer, analyzer_type):
         if analyzer_type == HINT:
             self.advisors.append(EngineAdvisor(self.store, analyzer, HINT,
-                                               self.tv, self.boardview))
+                                               self.tv, self.boardcontrol))
         if analyzer_type == SPY:
             self.advisors.append(EngineAdvisor(self.store, analyzer, SPY,
-                                               self.tv, self.boardview))
+                                               self.tv, self.boardcontrol))
 
     def on_analyzer_removed(self, gamemodel, analyzer, analyzer_type):
         for advisor in self.advisors:

@@ -19,92 +19,6 @@ from .PromotionDialog import PromotionDialog
 from .BoardView import BoardView, rect, join
 
 
-def play_sound(move, board):
-    if move.is_capture(board):
-        sound = "aPlayerCaptures"
-    else:
-        sound = "aPlayerMoves"
-
-    if board.board.isChecked():
-        sound = "aPlayerChecks"
-
-    preferencesDialog.SoundTab.playAction(sound)
-
-
-def play_or_add_move(view, board, move):
-    if board.board.next is None:
-        # at the end of variation or main line
-        if not view.shownIsMainLine():
-            # add move to existing variation
-            view.model.add_move2variation(board, move, view.shown_variation_idx)
-            view.showNext()
-        else:
-            # create new variation
-            new_vari = view.model.add_variation(board, (move, ))
-            view.setShownBoard(new_vari[-1])
-    else:
-        # inside variation or main line
-        if board.board.next.lastMove == move.move:
-            # replay mainline move
-            if view.model.lesson_game:
-                next_board = view.model.getBoardAtPly(view.shown + 1, view.shown_variation_idx)
-                play_sound(move, board)
-                incr = 1 if len(view.model.variations[view.shown_variation_idx]) - 1 == board.ply - view.model.lowply + 1 else 2
-                if incr == 2:
-                    next_next_board = view.model.getBoardAtPly(view.shown + 2, view.shown_variation_idx)
-                    # If there is any opponent move variation let the user choose opp next move
-                    if any(child for child in next_next_board.board.children if isinstance(child, list)):
-                        view.infobar.opp_turn()
-                        view.showNext()
-                    # If there is some comment to read let the user read it before opp move
-                    elif any(child for child in next_board.board.children if isinstance(child, str)):
-                        view.infobar.opp_turn()
-                        view.showNext()
-
-                    # If there is nothing to wait for we make opp next move
-                    else:
-                        view.showNext()
-                        view.infobar.your_turn()
-                        view.showNext()
-                else:
-                    if view.shownIsMainLine():
-                        preferencesDialog.SoundTab.playAction("puzzleSuccess")
-                        view.infobar.get_next_puzzle()
-                        view.model.emit("learn_success")
-                        view.showNext()
-                    else:
-                        view.infobar.back_to_mainline()
-                        view.showNext()
-            else:
-                view.showNext()
-
-        elif board.board.next.children:
-            if view.model.lesson_game:
-                play_sound(move, board)
-                view.infobar.retry()
-
-            # try to find this move in variations
-            for i, vari in enumerate(board.board.next.children):
-                for node in vari:
-                    if type(node) != str and node.lastMove == move.move and node.plyCount == board.ply + 1:
-                        # replay variation move
-                        view.setShownBoard(node.pieceBoard)
-                        return
-
-            # create new variation
-            new_vari = view.model.add_variation(board, (move, ))
-            view.setShownBoard(new_vari[-1])
-
-        else:
-            if view.model.lesson_game:
-                play_sound(move, board)
-                view.infobar.retry()
-
-            # create new variation
-            new_vari = view.model.add_variation(board, (move, ))
-            view.setShownBoard(new_vari[-1])
-
-
 class BoardControl(Gtk.EventBox):
     """ Creates a BoardView for GameModel to control move selection,
         action menu selection and emits signals to let Human player
@@ -214,6 +128,90 @@ class BoardControl(Gtk.EventBox):
         promotion = self.promotionDialog.runAndHide(color, variant)
         return promotion
 
+    def play_sound(self, move, board):
+        if move.is_capture(board):
+            sound = "aPlayerCaptures"
+        else:
+            sound = "aPlayerMoves"
+
+        if board.board.isChecked():
+            sound = "aPlayerChecks"
+
+        preferencesDialog.SoundTab.playAction(sound)
+
+    def play_or_add_move(self, board, move):
+        if board.board.next is None:
+            # at the end of variation or main line
+            if not self.view.shownIsMainLine():
+                # add move to existing variation
+                self.view.model.add_move2variation(board, move, self.view.shown_variation_idx)
+                self.view.showNext()
+            else:
+                # create new variation
+                new_vari = self.view.model.add_variation(board, (move, ))
+                self.view.setShownBoard(new_vari[-1])
+        else:
+            # inside variation or main line
+            if board.board.next.lastMove == move.move:
+                # replay mainline move
+                if self.view.model.lesson_game:
+                    next_board = self.view.model.getBoardAtPly(self.view.shown + 1, self.view.shown_variation_idx)
+                    self.play_sound(move, board)
+                    incr = 1 if len(self.view.model.variations[self.view.shown_variation_idx]) - 1 == board.ply - self.view.model.lowply + 1 else 2
+                    if incr == 2:
+                        next_next_board = self.view.model.getBoardAtPly(self.view.shown + 2, self.view.shown_variation_idx)
+                        # If there is any opponent move variation let the user choose opp next move
+                        if any(child for child in next_next_board.board.children if isinstance(child, list)):
+                            self.view.infobar.opp_turn()
+                            self.view.showNext()
+                        # If there is some comment to read let the user read it before opp move
+                        elif any(child for child in next_board.board.children if isinstance(child, str)):
+                            self.view.infobar.opp_turn()
+                            self.view.showNext()
+
+                        # If there is nothing to wait for we make opp next move
+                        else:
+                            self.view.showNext()
+                            self.view.infobar.your_turn()
+                            self.view.showNext()
+                    else:
+                        if self.view.shownIsMainLine():
+                            preferencesDialog.SoundTab.playAction("puzzleSuccess")
+                            self.view.infobar.get_next_puzzle()
+                            self.view.model.emit("learn_success")
+                            self.view.showNext()
+                        else:
+                            self.view.infobar.back_to_mainline()
+                            self.view.showNext()
+                else:
+                    self.view.showNext()
+
+            elif board.board.next.children:
+                if self.view.model.lesson_game:
+                    self.play_sound(move, board)
+                    self.view.infobar.retry()
+
+                # try to find this move in variations
+                for i, vari in enumerate(board.board.next.children):
+                    for node in vari:
+                        if type(node) != str and node.lastMove == move.move and node.plyCount == board.ply + 1:
+                            # replay variation move
+                            self.view.setShownBoard(node.pieceBoard)
+                            return
+
+                # create new variation
+                new_vari = self.view.model.add_variation(board, (move, ))
+                self.view.setShownBoard(new_vari[-1])
+
+            else:
+                if self.view.model.lesson_game:
+                    self.play_sound(move, board)
+                    self.view.infobar.retry()
+
+                # create new variation
+                new_vari = self.view.model.add_variation(board, (move, ))
+                self.view.setShownBoard(new_vari[-1])
+
     def emit_move_signal(self, cord0, cord1, promotion=None):
         # Game end can change cord0 to None while dragging a piece
         if cord0 is None:
@@ -263,7 +261,7 @@ class BoardControl(Gtk.EventBox):
                 if self.view.model.examined:
                     self.view.model.connection.bm.sendMove(toAN(board, move))
         else:
-            play_or_add_move(self.view, board, move)
+            self.play_or_add_move(board, move)
 
     def actionActivate(self, widget, key):
         """ Put actions from a menu or similar """
@@ -522,7 +520,7 @@ class BoardControl(Gtk.EventBox):
                     if self.view.model.examined:
                         self.view.model.connection.bm.sendMove(toAN(board, move))
                 else:
-                    play_or_add_move(self.view, board, move)
+                    self.play_or_add_move(board, move)
             self.keybuffer = ""
 
         elif keyname == "BackSpace":
