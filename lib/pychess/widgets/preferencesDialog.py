@@ -97,11 +97,11 @@ class GeneralTab:
                     "hideTabs", "closeAll", "faceToFace", "scoreLinearScale",
                     "showCaptured", "figuresInNotation",
                     "moveAnimation", "noAnimation",
-                    "autoRotate", "showFICSgameno"):
+                    "autoPromote", "autoRotate", "showFICSgameno"):
             uistuff.keep(widgets[key], key)
 
         # Options on by default
-        for key in ("autoPromote", "fullAnimation", "showBlunder", "showCords", "drawGrid"):
+        for key in ("fullAnimation", "showBlunder", "showCords", "drawGrid"):
             uistuff.keep(widgets[key], key, first_value=True)
 
 # Hint initing
