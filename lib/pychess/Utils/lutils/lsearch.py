@@ -13,6 +13,7 @@ from .ldata import MATE_VALUE, VALUE_AT_PLY
 from .TranspositionTable import TranspositionTable
 from pychess.Variants.atomic import kingExplode
 from pychess.Variants.kingofthehill import testKingInCenter
+from pychess.Variants.suicide import pieceCount
 from pychess.Variants.threecheck import checkCount
 from . import ldraw
 
@@ -61,6 +62,12 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     if board.variant == ATOMICCHESS:
         if bin(board.boards[board.color][KING]).count("1") == 0:
             return [], MATED
+    elif board.variant == LOSERSCHESS:
+        if pieceCount(board, board.color) == 1:
+            return [], -MATED
+    elif board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS:
+        if pieceCount(board, board.color) == 0:
+            return [], -MATED
     elif board.variant == KINGOFTHEHILLCHESS:
         if testKingInCenter(board):
             return [], MATED
