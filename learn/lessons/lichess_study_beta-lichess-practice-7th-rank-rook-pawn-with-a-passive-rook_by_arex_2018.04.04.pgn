@@ -1,0 +1,143 @@
+[Event "(BETA) Lichess Practice: 7th-Rank Rook Pawn with a Passive Rook: King on f7"]
+[Site "https://lichess.org/study/MkDViieT"]
+[UTCDate "2018.04.04"]
+[UTCTime "02:25:26"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "R7/P4k2/8/8/8/r7/6K1/8 w - - 0 1"]
+[SetUp "1"]
+
+{ Since the Black king is not on one of the red squares, we know this is a win for White. Let's win this game by playing the only winning move . }
+1. Rh8 { We are now threatening to promote. However, Black can't play Rxa7 due to Rh7+, winning the rook on a7. The best Black can do is to delay the eventual loss. } { [%cal Ra3a7,Ga3a2] } 1... Ra2+ { We move towards the promotion square } { [%cal Gg2f3] } 2. Kf3 Ra3+ { [%cal Gf3e4] } 3. Ke4 Ra4+ { [%cal Ge4d5] } 4. Kd5 Ra5+ { [%cal Gd5c6] } 5. Kc6 Ra6+ { [%cal Gc6b7] } 6. Kb7 { We are now threatening a8=Q, so Black has to give up their Rook. } { [%cal Ga7a8] } 6... Rxa7+ { [%cal Gb7a7] } (6... Rd6) 7. Kxa7 *
+
+
+[Event "(BETA) Lichess Practice: 7th-Rank Rook Pawn with a Passive Rook: King on g7"]
+[Site "https://lichess.org/study/MkDViieT"]
+[UTCDate "2018.04.04"]
+[UTCTime "04:14:25"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "R7/P5k1/8/8/8/r7/6K1/8 b - - 0 1"]
+[SetUp "1"]
+
+{ To draw this position as Black we keep our King on g7 or h7, and we keep our Rook on the promotion file whenever we can. If White moves their King next to their pawn we have to check it away.
+
+Right now, White isn't threatening anything, so we can just shuffle our King between g7 and h7. }
+1... Kh7 2. Kf2 { [%cal Gh7g7] } 2... Kg7 3. Ke2 { [%cal Gg7h7] } 3... Kh7 4. Kd2 { [%cal Gh7g7] } 4... Kg7 5. Kc2 { [%cal Gg7h7] } 5... Kh7 6. Kb2 { Our Rook is threatened, so we move it away while keeping it on the promotion file. } { [%cal Ga3a6] } 6... Ra6 7. Kb3 { White has no threats, so we keep shuffling. } { [%cal Gh7g7] } 7... Kg7 8. Kb4 { [%cal Gg7h7] } 8... Kh7 9. Kb5 { Our Rook is threatened, so we move it away while keeping it on the promotion file. } { [%cal Ga6a1] } 9... Ra1 10. Kb6 { White is now protecting their pawn and threatens to move their Rook away from the promotion square, followed by a8=Q. Continuing to shuffle with Kg7 would be a losing blunder for Black. Instead, we have to check White's King away from the pawn. } { [%cal Rh7g7,Ga1b1] } 10... Rb1+ 11. Kc5 { We stay on the promotion file when we can. } { [%cal Gb1a1] } 11... Ra1 12. Kb4 { White has no threats, so we keep shuffling. } { [%cal Gh7g7] } 12... Kg7 13. Kb3 { White has no threats, so we keep shuffling. } { [%cal Gg7h7] } 13... Kh7 14. Kb2 { Our Rook is threatened, so we move it away while keeping it on the promotion file. } { [%cal Ga1a6] } 14... Ra6 *
+
+
+[Event "(BETA) Lichess Practice: 7th-Rank Rook Pawn with a Passive Rook: King on g7, extra g-pawn"]
+[Site "https://lichess.org/study/MkDViieT"]
+[UTCDate "2018.04.04"]
+[UTCTime "02:39:38"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "R7/P5k1/8/8/8/r5P1/6K1/8 w - - 0 1"]
+[SetUp "1"]
+
+{ An extra pawn on g3 has been introduced. What difference does it make? Well, if we push it to g6, it takes away the h7 square from Black's King. }
+1. g4 { White has no threats, so Black shuffles. } 1... Kh7 { [%cal Gg4g5] } 2. g5 Kg7 { [%cal Gg5g6] } 3. g6 { Black can no longer shuffle their King because h7 is unavailable, but Black's King can still occupy g7 and Black can still do nothing by moving their Rook back and forth on the promotion file. Note that Kxg6 would be a losing blunder for Black due to Rg8+ followed by a8=Q. } { [%csl Bh7][%cal Rg7g6,Bg6h7] } 3... Ra4 { We can try to help our pawn with our King. } { [%cal Gg2f3] } 4. Kf3 Ra6 { [%cal Gf3e4] } 5. Ke4 Ra1 { [%cal Ge4d5] } 6. Kd5 Ra2 { [%cal Gd5c6] } 7. Kc6 Ra1 { [%cal Gc6b7] } 8. Kb7 { We are now threatening to move our Rook from the promotion square followed by a8=Q, so Black has to check our King away. } 8... Rb1+ { Let's try to hunt down the Rook. } { [%cal Gb7a6] } 9. Ka6 Ra1+ { [%cal Ga6b5] } 10. Kb5 Rb1+ { [%cal Gb5a4] } 11. Ka4 Ra1+ { [%cal Ga4b3] } 12. Kb3 Ra6 { [%cal Gb3b4] } 13. Kb4 Ra1 { [%cal Gb4b3] } 14. Kb3 *
+
+
+[Event "(BETA) Lichess Practice: 7th-Rank Rook Pawn with a Passive Rook: King on g7, extra b-f pawn"]
+[Site "https://lichess.org/study/MkDViieT"]
+[UTCDate "2018.04.04"]
+[UTCTime "02:42:50"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "R7/P5k1/8/8/8/r4P2/6K1/8 w - - 0 1"]
+[SetUp "1"]
+
+{ An extra g-pawn does not help White, but an extra b-, c-, d-, e-, or f-pawn does win for White. Why? Because we can now force Black's King away from g7 and h7. }
+1. f4 { [%cal Gf4f5] } 1... Ra1 2. f5 { [%cal Gf5f6] } 2... Ra6 3. f6+ { Kh7 loses due to f7 followed by f8=Q.
+Kxf6 loses due to Rf8+ followed by a8=Q.
+Rxf6 loses due to Rb8 followed by a8=Q.
+What happens after Kf7? } { [%cal Ra6f6,Rg7f6,Rg7h7,Gg7f7] } 3... Kf7 { With Black's King off g7 and h7, we can exploit the skewer as before. } { [%cal Ga8h8] } (3... Kh7 4. f7)  (3... Rxf6 4. Rb8) 4. Rh8 { Note that Kxf6 would lose to the skewer Rh6+, winning the Rook on a6. } { [%cal Rf7f6,Ga6a7] } 4... Rxa7 { Play the skewer we have seen before. } { [%cal Gh8h7] } (4... Kxf6 5. Rh6+) 5. Rh7+ Kxf6 6. Rxa7 *
+
+
+[Event "(BETA) Lichess Practice: 7th-Rank Rook Pawn with a Passive Rook: Exercise: King on g7, extra c-pawn"]
+[Site "https://lichess.org/study/MkDViieT"]
+[UTCDate "2018.04.04"]
+[UTCTime "05:09:32"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "R7/P5k1/8/8/8/r1PK4/8/8 w - - 0 1"]
+[SetUp "1"]
+
+ *
+
+
+[Event "(BETA) Lichess Practice: 7th-Rank Rook Pawn with a Passive Rook: Exercise: King on g7, 2 vs 1 on the King-side"]
+[Site "https://lichess.org/study/MkDViieT"]
+[UTCDate "2018.04.04"]
+[UTCTime "05:04:39"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "R7/P5k1/6p1/8/5P1P/8/r7/6K1 w - - 0 1"]
+[SetUp "1"]
+
+ *
+
+
+[Event "(BETA) Lichess Practice: 7th-Rank Rook Pawn with a Passive Rook: Hochstrasser - Papa, 2012: Forcing an f-pawn"]
+[Site "https://lichess.org/study/MkDViieT"]
+[UTCDate "2018.04.04"]
+[UTCTime "06:00:39"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "R7/8/P5k1/5pp1/8/5PKP/r7/8 w - - 1 56"]
+[SetUp "1"]
+
+{ We attempt to force an f-pawn, which we know would be winning for us. }
+56. h4 { [%cal Gg5g4,Rg5h4] } 56... gxh4+?? { gxh4+ was played in the game, but g4 would have drawn for Black as there would be no way to force an f-pawn anymore. } { [%cal Gg3h4] } (56... g4!) 57. Kxh4 Ra4+?? { Ra4+ was played in the game, but f4 would still have saved the draw for Black as White would no longer be able to win Black's f-pawn. Why? Because with the Black pawn on f4, White can no longer zugzwang Black's Rook away from protecting the pawn, which is what happens later in the game continuation. } { [%cal Gh4g3] } (57... f4!) 58. Kg3 Kf6 { Kf6 was another missed opportunity for Black to play f4. Now we get to play it, instead. } { [%cal Gf3f4] } 59. f4 Kg6 { We enter the familiar 7th rank Rook pawn position, forcing Black's King to g7 or h7 (in order to prevent White from playing Rh8). } { [%cal Ga6a7] } 60. a7 Kg7 { Since Black's King is restricted to g7 and h7, and Black's Rook is restricted to the a-file, we can start marching our King to take f5. } { [%cal Gg3f3] } 61. Kf3 Ra3+ { [%cal Gf3e2] } 62. Ke2 Kh7 { [%cal Ge2d2] } 63. Kd2 Kg7 { [%cal Gd2c2] } 64. Kc2 Kh7 { [%cal Gc2b2] } 65. Kb2 Ra6 { Note that Black has to stay on the promotion file with their Rook. } { [%cal Gb2b3] } 66. Kb3 Kg7 { [%cal Gb3c4] } 67. Kc4 Ra5 { [%cal Gc4b4] } 68. Kb4 Ra1 { [%cal Gb4c5] } 69. Kc5 Rc1+ { [%cal Gc5d6] } 70. Kd6 Ra1 { [%cal Gd6e5] } 71. Ke5 Ra5+ { [%cal Ge5e6] } 72. Ke6 Kh7 { Put Black in zugzwang. } { [%cal Ge6f6] } 73. Kf6 { Kh6 is the only legal King move, and it loses to Rh8+. This means Black has to move their Rook away from protecting the f5 pawn, or away from protecting the promotion file. } { [%cal Rh7h6] } 73... Ra1 { [%cal Gf6f5] } 74. Kxf5 Kg7 { We can now make way for our f-pawn which will force Black's king away from g7 and h7. } { [%cal Gf5g5] } 75. Kg5 Rg1+ { [%cal Gg5h4] } 76. Kh4 Ra1 { [%cal Gf4f5] } 77. f5 Rh1+ { [%cal Gh4g3] } 78. Kg3 Rg1+ { [%cal Gg3h2] } 79. Kh2 Ra1 { [%cal Gf5f6] } 80. f6+ { Moving away from g7 loses in the different ways we have seen before. Congratulations! } { [%cal Rg7f7,Rg7f6,Rg7g6,Rg7h6,Rg7h7] } *
+
+
+[Event "(BETA) Lichess Practice: 7th-Rank Rook Pawn with a Passive Rook: Bartholomew - Thaler, 2012: Trading into a winning 4v4 pawn endgame"]
+[Site "https://lichess.org/study/MkDViieT"]
+[UTCDate "2018.04.04"]
+[UTCTime "06:30:20"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "R7/P6k/5pp1/4p2p/4P2P/5P2/r5PK/8 w - - 1 43"]
+[SetUp "1"]
+
+43. Kg1 Kg7 { [%cal Gg1f1] } 44. Kf1 Ra1+ { [%cal Gf1e2] } 45. Ke2 Ra2+ { [%cal Ge2d3] } 46. Kd3 { Note that Black can't play Rxg2, because we will then be able to promote our pawn. } { [%cal Ra2g2] } 46... Ra4 { [%cal Gd3c3] } 47. Kc3 Ra3+ { [%cal Gc3b4] } 48. Kb4 Ra1 { [%cal Gb4c5] } 49. Kc5 Ra6 { Black is trying to restrict White's King from infiltrating Black's position. We can use the fact that Black's Rook has to stay on the promotion file to infiltrate with our King. } { [%cal Gc5b5] } 50. Kb5 Ra1 { [%cal Gb5c6] } 51. Kc6 Ra2 { [%cal Ga8d8] } 52. Rd8 Rxa7 { [%cal Gd8d7] } 53. Rd7+ Rxd7 { [%cal Gc6d7] } 54. Kxd7 { If Black goes Kf7, White can respond Kd6 and Black is in zugzwang. } { [%cal Rg7f7] } 54... Kh6 { [%cal Gd7e7] } 55. Ke7 g5 { [%cal Ge7f6] } 56. Kxf6 gxh4 { [%cal Gf6f5] } 57. Kf5 Kg7 { [%cal Gf5e5] } 58. Kxe5 { ...and we have an easily winning pawn endgame. } *
+
+
+[Event "(BETA) Lichess Practice: 7th-Rank Rook Pawn with a Passive Rook: Spassky - Torre, 1982: Forcing an e-pawn"]
+[Site "https://lichess.org/study/MkDViieT"]
+[UTCDate "2018.04.04"]
+[UTCTime "06:43:22"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/arex"]
+[FEN "R7/P5pk/5p2/4p2p/4P2P/5P2/6PK/r7 w - - 3 46"]
+[SetUp "1"]
+
+46. g3 Ra2+ { [%cal Gh2g1] } 47. Kg1 Kg6 { [%cal Gf3f4] } 48. f4 Kf7 { [%cal Gf4e5] } 49. fxe5 fxe5 { [%cal Gg1f1] } 50. Kf1 Ra1+ { [%cal Gf1f2] } 51. Kf2 Ra3 { [%cal Gf2e2] } 52. Ke2 Kg6 { [%cal Ge2d2] } 53. Kd2 Ra4 { [%cal Gd2c3] } 54. Kc3 Ra1 { [%cal Gc3c4] } 55. Kc4 Kf7 { [%cal Gc4d5] } 56. Kd5 Ra5+ { Put Black in zugzwang. } { [%cal Gd5d6] } 57. Kd6 Kg6 { [%cal Gd6e6] } 58. Ke6 { Black doesn't want to move their Rook away from the promotion square, nor from protecting the e5 pawn. Kh6 would lose to Rh8+. Black could try Kh7, but after Kf5 g6+ Kf6, Black will eventually run out of moves and the Black Rook will be forced to move. In the game, Black moved their Rook immediately. } { [%cal Rg6h6,Ra5a1,Rg6h7] } 58... Ra1 { [%cal Ge6e5] } 59. Kxe5 Kf7 { [%cal Ge5f5] } 60. Kf5 Ra5+ { [%cal Ge4e5] } 61. e5 g6+ { [%cal Gf5e4] } 62. Ke4 { ...and due to the e-pawn, we win as we have seen before. } *
