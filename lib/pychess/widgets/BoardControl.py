@@ -323,9 +323,13 @@ class BoardControl(Gtk.EventBox):
         self.view.startAnimation()
 
     def game_started(self, gamemodel):
-        if self.view.model.lesson_game and "FEN" not in gamemodel.tags:
-            self.view.infobar.get_next_puzzle()
-            self.view.model.emit("learn_success")
+        if self.view.model.lesson_game:
+            if "FEN" in gamemodel.tags:
+                if gamemodel.orientation != gamemodel.starting_color:
+                    self.view.showNext()
+            else:
+                self.view.infobar.get_next_puzzle()
+                self.view.model.emit("learn_success")
 
     def getBoard(self):
         return self.view.model.getBoardAtPly(self.view.shown,

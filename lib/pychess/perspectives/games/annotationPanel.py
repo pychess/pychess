@@ -1170,7 +1170,7 @@ class Sidepanel:
         base_board = view.model.getBoardAtPly(view.shown, variation=view.shown_variation_idx)
 
         # Don't show our choices in lesson games
-        if self.gamemodel.lesson_game and base_board.color == self.gamemodel.starting_color:
+        if self.gamemodel.lesson_game and base_board.color == self.gamemodel.orientation:
             self.remove_choices()
             return
 

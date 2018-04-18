@@ -112,6 +112,13 @@ def start_lesson_from(filename, index=None):
 
     chessfile.loadToModel(rec, -1, gamemodel)
 
+    # Lichess doesn't export some study data to .pgn like
+    # Orientation, Analysis mode, Chapter pinned comment, move hint comments, general fail comment
+    if filename.startswith("lichess_study_beta-lichess-practice-checkmating-with-a-knight-and-bishop"):
+        if index in (4, 6, 8, 9):
+            gamemodel.tags["Orientation"] = "White"
+            print(index, '[Orientation "White"]')
+
     color = gamemodel.boards[0].color
     player_name = conf.get("firstName", _("You"))
 

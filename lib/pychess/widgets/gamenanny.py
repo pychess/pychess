@@ -215,7 +215,7 @@ class GameNanny(object):
                 boardview.rotation = math.pi
 
         if isinstance(gamemodel, LearnModel):
-            if gamemodel.starting_color == BLACK:
+            if gamemodel.orientation == BLACK:
                 boardview.rotation = math.pi
             else:
                 boardview.rotation = 0

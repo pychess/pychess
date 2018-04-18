@@ -183,6 +183,13 @@ class GameModel(GObject.GObject):
     def starting_color(self):
         return BLACK if "FEN" in self.tags and self.tags["FEN"].split()[1] == "b" else WHITE
 
+    @property
+    def orientation(self):
+        if "Orientation" in self.tags:
+            return BLACK if self.tags["Orintation"].lower() == "black" else WHITE
+        else:
+            return self.starting_color
+
     def zero_reached(self, timemodel, color):
         if conf.get('autoCallFlag', True) and self.players[1 - color].__type__ == ARTIFICIAL:
             if self.status == RUNNING and timemodel.getPlayerTime(color) <= 0:
