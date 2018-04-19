@@ -11,6 +11,7 @@ from pychess.Variants import variants
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
 from pychess.perspectives import perspective_manager
+from pychess.perspectives.learn import lessons_solving_progress
 from pychess.perspectives.learn import puzzles_solving_progress
 from pychess.Savers.olv import OLVFile
 from pychess.Savers.pgn import PGNFile
@@ -128,9 +129,14 @@ def start_puzzle_from(filename, index=None):
 
     timemodel = TimeModel(0, 0)
     gamemodel = LearnModel(timemodel)
-    gamemodel.set_learn_data(PUZZLE, filename, index, len(records))
 
     chessfile.loadToModel(rec, 0, gamemodel)
+
+    start_puzzle_game(gamemodel, filename, records, index, rec)
+
+
+def start_puzzle_game(gamemodel, filename, records, index, rec, from_lesson=False):
+    gamemodel.set_learn_data(PUZZLE, filename, index, len(records), from_lesson=from_lesson)
 
     engine = discoverer.getEngineByName(discoverer.getEngineLearn())
     ponder_off = True
@@ -167,9 +173,17 @@ def start_puzzle_from(filename, index=None):
 
     def goal_checked(gamemodle):
         if gamemodel.reason == PRACTICE_GOAL_REACHED:
-            progress = puzzles_solving_progress[gamemodel.source]
+            if from_lesson:
+                progress = lessons_solving_progress[gamemodel.source]
+            else:
+                progress = puzzles_solving_progress[gamemodel.source]
+
             progress[gamemodel.current_index] = 1
-            puzzles_solving_progress[gamemodel.source] = progress
+
+            if from_lesson:
+                lessons_solving_progress[gamemodel.source] = progress
+            else:
+                puzzles_solving_progress[gamemodel.source] = progress
     gamemodel.connect("goal_checked", goal_checked)
 
     gamemodel.variant.need_initial_board = True

@@ -61,11 +61,12 @@ class LearnModel(GameModel):
         """ Never save learn games changes to .pgn """
         return False
 
-    def set_learn_data(self, learn_type, source, current_index=None, game_count=None):
+    def set_learn_data(self, learn_type, source, current_index=None, game_count=None, from_lesson=False):
         self.learn_type = learn_type
         self.source = source
         self.current_index = current_index
         self.game_count = game_count
+        self.from_lesson = from_lesson
 
         self.hints = {}
         self.goal = None

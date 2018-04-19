@@ -11,6 +11,7 @@ from pychess.Players.Human import Human
 from pychess.System import conf
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.learn import lessons_solving_progress
+from pychess.perspectives.learn.PuzzlesPanel import start_puzzle_game
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
 from pychess.Players.engineNest import discoverer
@@ -108,9 +109,17 @@ def start_lesson_from(filename, index=None):
 
     timemodel = TimeModel(0, 0)
     gamemodel = LearnModel(timemodel)
-    gamemodel.set_learn_data(LESSON, filename, index, len(records))
 
     chessfile.loadToModel(rec, -1, gamemodel)
+
+    if len(gamemodel.moves) > 0:
+        start_lesson_game(gamemodel, filename, chessfile, records, index, rec)
+    else:
+        start_puzzle_game(gamemodel, filename, records, index, rec, from_lesson=True)
+
+
+def start_lesson_game(gamemodel, filename, chessfile, records, index, rec):
+    gamemodel.set_learn_data(LESSON, filename, index, len(records))
 
     # Lichess doesn't export some study data to .pgn like
     # Orientation, Analysis mode, Chapter pinned comment, move hint comments, general fail comment
