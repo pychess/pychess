@@ -3,7 +3,7 @@
 # The greater the score, the better the position
 
 from pychess.Utils.const import WHITE, BLACK, LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS,\
-    ASEAN_VARIANTS, ATOMICCHESS, CRAZYHOUSECHESS,\
+    ASEAN_VARIANTS, ATOMICCHESS, CRAZYHOUSECHESS, RACINGKINGSCHESS,\
     BPAWN, BISHOP, KNIGHT, QUEEN, KING, PAWN, ROOK, \
     CAS_FLAGS, H7, B6, A7, H2, G3, A2, B3, G6, D1, G8, B8, G1, B1
 from .bitboard import iterBits, firstBit, lsb
@@ -12,7 +12,7 @@ from .ldata import fileBits, bitPosArray, PIECE_VALUES, FILE, RANK, PAWN_VALUE,\
     kwingpawns1, kwingpawns2, qwingpawns1, qwingpawns2, frontWall, endingKing,\
     brank7, brank8, distance, isolaniMask, d2e2, passedScores, squarePawnMask,\
     moveArray, brank67, lbox, stonewall, isolani_normal, isolani_weaker,\
-    passedPawnMask, fromToRay, pawnScoreBoard, sdistance, taxicab
+    passedPawnMask, fromToRay, pawnScoreBoard, sdistance, taxicab, racingKing
 from .lsort import staticExchangeEvaluate
 from .lmovegen import newMove
 from ctypes import create_string_buffer, memset
@@ -29,12 +29,16 @@ def evaluateComplete(board, color):
     s, phase = evalMaterial(board, color)
     if board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS):
         return s
+
+    s += evalKing(board, color, phase) - evalKing(board, 1 - color, phase)
+    if board.variant == RACINGKINGSCHESS:
+        return s
+
     s += evalBishops(board, color, phase) - evalBishops(board, 1 - color,
                                                         phase)
     s += evalRooks(board, color, phase) - evalRooks(board, 1 - color, phase)
     s += evalDoubleQR7(board, color, phase) - evalDoubleQR7(board, 1 - color,
                                                             phase)
-    s += evalKing(board, color, phase) - evalKing(board, 1 - color, phase)
     s += evalKingTropism(board, color, phase) - evalKingTropism(board, 1 -
                                                                 color, phase)
     if board.variant in ASEAN_VARIANTS:
@@ -457,6 +461,9 @@ def evalKing(board, color, phase):
     # - - - K - - - R
 
     king = board.kings[color]
+
+    if board.variant == RACINGKINGSCHESS:
+        return racingKing[king]
 
     # If we are in endgame, we want our king in the center, and theirs far away
     if phase >= 6:

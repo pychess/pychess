@@ -11,7 +11,7 @@ from pychess.Utils.book import getOpenings
 from pychess.Utils.const import NORMALCHESS, FEN_START, BLACK, FISCHERRANDOMCHESS, \
     CRAZYHOUSECHESS, WILDCASTLESHUFFLECHESS, LOSERSCHESS, SUICIDECHESS, ATOMICCHESS, \
     THREECHECKCHESS, KINGOFTHEHILLCHESS, ASEANCHESS, MAKRUKCHESS, CAMBODIANCHESS, \
-    SITTUYINCHESS, GIVEAWAYCHESS, HORDECHESS, WHITE
+    SITTUYINCHESS, GIVEAWAYCHESS, HORDECHESS, RACINGKINGSCHESS, WHITE
 from pychess.Utils.lutils.Benchmark import benchmark
 from pychess.Utils.lutils.perft import perft
 from pychess.Utils.lutils.LBoard import LBoard
@@ -59,7 +59,7 @@ class PyChessCECP(PyChess):
             "analyze": 1,
             "myname": "PyChess %s" % pychess.VERSION,
             "variants": "normal,wildcastle,nocastle,fischerandom,crazyhouse," +
-                        "losers,suicide,giveaway,horde,atomic," +
+                        "losers,suicide,giveaway,horde,atomic,racingkings," +
                         "kingofthehill,3check,asean,cambodian,makruk,sittuyin",
             "colors": 0,
             "ics": 0,
@@ -149,6 +149,8 @@ class PyChessCECP(PyChess):
                             self.board.iniAtomic()
                         elif lines[1] == "3check":
                             self.board.variant = THREECHECKCHESS
+                        elif lines[1] == "racingkings":
+                            self.board.variant = RACINGKINGSCHESS
                         elif lines[1] == "kingofthehill":
                             self.board.variant = KINGOFTHEHILLCHESS
                             self.print("setup (PNBRQKpnbrqk) 8x8+0_fairy %s" %

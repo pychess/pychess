@@ -11,7 +11,7 @@ try:
     from pychess.Utils.book import getOpenings  # nopep8
     from pychess.Utils.const import WHITE, ASEANCHESS, SITTUYINCHESS, ATOMICCHESS, reprResult, \
         CAMBODIANCHESS, LOSERSCHESS, KINGOFTHEHILLCHESS, DRAW, BLACKWON, WHITEWON, MAKRUKCHESS, \
-        SUICIDECHESS, GIVEAWAYCHESS, THREECHECKCHESS, HORDECHESS  # nopep8
+        SUICIDECHESS, GIVEAWAYCHESS, THREECHECKCHESS, HORDECHESS, RACINGKINGSCHESS  # nopep8
     from pychess.Utils.lutils import lsearch  # nopep8
     from pychess.Utils.lutils.ldata import MAXPLY  # nopep8
     from pychess.Utils.lutils.lsearch import alphaBeta  # nopep8
@@ -71,7 +71,7 @@ class PyChess(object):
         choice = None
         if self.board.variant not in (ASEANCHESS, CAMBODIANCHESS, MAKRUKCHESS, HORDECHESS,
                                       SITTUYINCHESS, LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS,
-                                      ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS):
+                                      ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS, RACINGKINGSCHESS):
             for move, weight, learn in getOpenings(self.board):
                 totalWeight += weight
                 if totalWeight == 0:

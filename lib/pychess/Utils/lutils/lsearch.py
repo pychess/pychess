@@ -6,7 +6,7 @@ from .lmovegen import genAllMoves, genCheckEvasions, genCaptures
 from .egtb_gaviota import EgtbGaviota
 from pychess.Utils.const import ATOMICCHESS, KINGOFTHEHILLCHESS, THREECHECKCHESS,\
     LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, EMPTY, PROMOTIONS, DROP, KING,\
-    hashfALPHA, hashfBETA, hashfEXACT, hashfBAD, DRAW, WHITE, WHITEWON
+    RACINGKINGSCHESS, hashfALPHA, hashfBETA, hashfEXACT, hashfBAD, DRAW, WHITE, WHITEWON
 from .leval import evaluateComplete
 from .lsort import getCaptureValue, getMoveValue
 from .ldata import MATE_VALUE, VALUE_AT_PLY
@@ -15,6 +15,7 @@ from pychess.Variants.atomic import kingExplode
 from pychess.Variants.kingofthehill import testKingInCenter
 from pychess.Variants.suicide import pieceCount
 from pychess.Variants.threecheck import checkCount
+from pychess.Variants.racingkings import testKingInEightRow
 from . import ldraw
 
 TIMECHECK_FREQ = 500
@@ -73,6 +74,9 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             return [], MATED
     elif board.variant == THREECHECKCHESS:
         if checkCount(board) == 3:
+            return [], MATED
+    elif board.variant == RACINGKINGSCHESS:
+        if testKingInEightRow(board):
             return [], MATED
 
     ############################################################################
@@ -159,7 +163,7 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if isCheck:
             # Being in check is that serious, that we want to take a deeper look
             depth += 1
-        elif board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, ATOMICCHESS):
+        elif board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS, ATOMICCHESS, RACINGKINGSCHESS):
             return [], evaluateComplete(board, board.color)
         else:
             mvs, val = quiescent(board, alpha, beta, ply)
@@ -187,6 +191,9 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             mlist = [m
                      for m in genAllMoves(board)
                      if not kingExplode(board, m, board.color)]
+        moves = [(-getMoveValue(board, table, depth, m), m) for m in mlist]
+    elif board.variant == RACINGKINGSCHESS:
+        mlist = [m for m in genAllMoves(board) if not board.willGiveCheck(m)]
         moves = [(-getMoveValue(board, table, depth, m), m) for m in mlist]
     else:
         if isCheck:
