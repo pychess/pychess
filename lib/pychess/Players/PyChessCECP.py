@@ -45,8 +45,6 @@ class PyChessCECP(PyChess):
         self.analyzing = False
         self.thread = None
 
-        self.basetime = 0
-
         self.features = {
             "ping": 1,
             "setboard": 1,
@@ -229,7 +227,7 @@ class PyChessCECP(PyChess):
                     if len(minutes) > 1 and minutes[1]:
                         self.basetime += int(minutes[1])
                     self.clock[:] = self.basetime, self.basetime
-                    self.increment = inc, inc
+                    self.increment = inc
 
                 elif lines[0] == "st":
                     self.searchtime = float(lines[1])

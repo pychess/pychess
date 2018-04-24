@@ -28,7 +28,8 @@ class PyChess(object):
         self.skipPruneChance = 0
 
         self.clock = [0, 0]
-        self.increment = [0, 0]
+        self.basetime = 0
+        self.increment = 0
         self.movestogo = 0
         self.searchtime = 0
         self.scr = 0  # The current predicted score. Used when accepting draw offers
@@ -93,7 +94,7 @@ class PyChess(object):
             lsearch.skipPruneChance = self.skipPruneChance
             lsearch.searching = True
 
-            timed = self.basetime > 0
+            timed = (self.basetime > 0 or self.increment > 0)
 
             if self.searchtime > 0:
                 usetime = self.searchtime
@@ -109,7 +110,7 @@ class PyChess(object):
                         # If we have time, we assume 40 moves rather than 80
                         usetime *= 2
                     # The increment is a constant. We'll use this always
-                    usetime += self.increment[self.playingAs]
+                    usetime += self.increment
 
             prevtime = 0
             starttime = time()
@@ -146,7 +147,7 @@ class PyChess(object):
                 prevtime = time() - starttime - prevtime
 
                 self.clock[self.playingAs] -= time(
-                ) - starttime - self.increment[self.playingAs]
+                ) - starttime - self.increment
 
             if not mvs:
                 if not lsearch.searching:
