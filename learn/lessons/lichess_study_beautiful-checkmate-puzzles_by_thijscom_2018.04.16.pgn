@@ -1,0 +1,412 @@
+[Event "Beautiful Checkmate Puzzles: ▶▷ INTRODUCTION ◁◀"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "21:28:50"]
+[Variant "Standard"]
+[ECO "A00"]
+[Opening "Barnes Opening: Fool's Mate"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+
+{ ███████████████████████████ ▪▫▪▫ REGULAR PUZZLES (PARTS 1-2) AVAILABLE HERE: ▫▪▫ ▫▪▫▪▫▪▫▪▫▪▫▪▫ https://lichess.org/study/iDSPaPWA ▪▫▪▫▪▫▪▫▪▫▪▫▪ ▫▪▫▪▫▪▫▪▫▪▫▪▫ https://lichess.org/study/ByFy31hm ▪▫▪▫▪▫▪▫▪▫▪▫▪ ███████████████████████████ }
+1. f3 { This study is a collection of checkmating puzzles, where the assignment is to force mate within a certain number of moves. In most puzzles, there are many winning moves, but only one move leads to forced mate in the required number of moves. For puzzles where the assignment is to find the only winning (or drawing) move, see https://lichess.org/study/iDSPaPWA and https://lichess.org/study/ByFy31hm. } 1... e5 { The puzzles/chapters are listed on the left hand side above the chat window, and are sorted alphabetically by the composers of these puzzles. Each chapter represents a different puzzle. The solution can be viewed on the right hand side, together with an analysis of all the variations crucial to these puzzles. } 2. g4 { If you like these puzzles or have any comments, feel free to drop a line in the chat box on the left, or add this study to your favorites by clicking the little heart ❤️ below the board when loading the study. And as mentioned, do not forget to check out the other puzzle collections at https://lichess.org/study/iDSPaPWA and https://lichess.org/study/ByFy31hm. } 2... Qh4# *
+
+
+[Event "Beautiful Checkmate Puzzles: Bagrecov, 1974"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:55:03"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "2b5/8/8/6pp/Q5Pk/8/7K/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qe8! { White sets up a mate threat on h5, while at the same time giving up control of the g4 square. Fortunately all three captures on g4 can be met with mate on different squares. } { [%cal Ge8h5] } 1... Bxg4 (1... hxg4 2. Qh8#)  (1... Kxg4 2. Qe4#)  (1... Be6 2. Qxh5#) 2. Qe1# *
+
+
+[Event "Beautiful Checkmate Puzzles: Belchikov, 2006"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.17"]
+[UTCTime "00:00:37"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "b4K2/8/p1k5/4Q3/P7/8/5B2/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Bg3 { The key move highlights the weakness of the black position along the h2-b8 diagonal. All four black's distinct replies lead to mate, while if it were white to move there would not be a mate in one. } 1... Bb7 (1... Kb7 2. Qc7#)  (1... Kb6 2. Qc7#)  (1... Kd7 2. Qe8#)  (1... a5 2. Qb5#) 2. Qd6# *
+
+
+[Event "Beautiful Checkmate Puzzles: Benko, 1983-A"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "22:53:07"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "4k2r/R6b/1K6/8/8/8/8/1Q6 w k - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! (See also Benko's associated puzzle, with the rook on b7.) }
+1. Qh1! { The key move threatens mate on a8 with the queen, while keeping an eye on the h-file (and h7) to refute black's main defenses of castling and blocking a back-rank check with the bishop. } { [%cal Gh1a8] } 1... O-O (1... Be4 2. Qxh8#)  (1... Kf8 2. Qa8#) 2. Qxh7# *
+
+
+[Event "Beautiful Checkmate Puzzles: Benko, 1983-B"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "22:56:36"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "4k2r/1R5b/1K6/8/8/8/8/1Q6 w k - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! (See also Benko's associated puzzle, with the rook on a7.) }
+1. Qa1! { The key move again threatens a back-rank mate, while attacking the rook on h8 and covering g7 in case of black castling. Note that the same move does not work when the white rook is on a7. } { [%cal Ga1a8] } 1... O-O (1... Bf5 2. Qxh8#)  (1... Rg8 2. Qa8#) 2. Qg7# *
+
+
+[Event "Beautiful Checkmate Puzzles: Benoit, 1950"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.17"]
+[UTCTime "00:06:35"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/b1R5/5K2/6Q1/3kp3/3p4/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qc1! { The key move gives up control of the fifth rank, but sets up a new mate threat on d7. Black's responses can be parried with mates on c4, c5, d2, and d7. } 1... d2 (1... Bb6 2. Rd7#)  (1... Bb8 2. Qc5#)  (1... Kd5 2. Rd7#)  (1... e3 2. Qc4#) 2. Qxd2# *
+
+
+[Event "Beautiful Checkmate Puzzles: Betins, 1889"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:08:11"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/8/8/8/3Q4/7K/N1pp4/3k4 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Nc1! { This knight move prevents black from advancing his c-pawn, which is his main defense against most quiet first moves by white, and this also sets up dual mate threats on a1 and g1, after black's king moves to c1 and e1. } { [%cal Gd4g1] } 1... Kxc1 (1... Ke1 2. Qg1#) 2. Qa1# *
+
+
+[Event "Beautiful Checkmate Puzzles: Cabrera, 1964"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:12:27"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "4Q3/8/8/4p3/3NkN2/8/4K3/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qe7! Kxf4 (1... Kxd4 2. Qb4#) 2. Qh4# *
+
+
+[Event "Beautiful Checkmate Puzzles: Campbell, 1861"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.17"]
+[UTCTime "00:13:51"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/7B/5Q2/6p1/6k1/8/5K2/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qh8 Kf4 (1... Kh5 2. Bf5#) 2. Qd4# *
+
+
+[Event "Beautiful Checkmate Puzzles: Courtenay, 1868"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:16:02"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/8/k1K4Q/8/8/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qe3! { This key move takes away the a7 square from the black king, and simultaneously sets up an inevitable mate on a3. } 1... Ka5 2. Qa3# *
+
+
+[Event "Beautiful Checkmate Puzzles: Dawson, 1923"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.18"]
+[UTCTime "00:11:39"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "3kN3/3Pp3/2p1Pp2/5p2/1p3P1Q/4p3/P3P3/4K2R w K - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in three! }
+1. O-O! { The nice key move clears two squares for the white queen at once: e1 and h1. From there, the queen can reach a5 and a8, delivering checkmate, depending on which black pawn moves off the diagonal. } { [%cal Gh4h1,Gh1a8,Gh4e1,Ge1a5] } 1... c5 (1... b3 2. Qe1 b2 3. Qa5#) 2. Qh1 c4 3. Qa8# *
+
+
+[Event "Beautiful Checkmate Puzzles: De Veer, 1914"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:18:05"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "5k2/8/8/2K1Q2B/8/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qg3! { This queen move cuts the black king off from the g-file, setting up a mate on d6 on the next move. Note that white only mates in one due to it being black to move; white is not currently threatening mate in one. } 1... Ke7 2. Qd6# *
+
+
+[Event "Beautiful Checkmate Puzzles: Denkovski, 1967"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:21:44"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "5B2/8/5K2/3k4/8/2R5/4R3/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Bg7 { The key move gives up control of the d6 square, and sets up two distinct mating patterns against black's two replies. Note again that white is not threatening mate in one, and is only able to deliver mate on the next move because black has to move first. } 1... Kd4 (1... Kd6 2. Rd2#) 2. Ke6# *
+
+
+[Event "Beautiful Checkmate Puzzles: Ibulaev, 2013-A"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:40:51"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/8/8/N3B3/8/6NP/3P1Pk1/R3K2R w KQ - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! (This is part of a four-puzzle collection with similar positions, by the same composer.) }
+1. f3! { The key move removes the f-pawn from the board, luring the black king to f3 and setting up a deadly short castle. } 1... Kxf3 2. O-O# *
+
+
+[Event "Beautiful Checkmate Puzzles: Ibulaev, 2013-B"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:41:07"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/8/8/N3B3/8/6NP/2kP1P2/R3K2R w KQ - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! (This is part of a four-puzzle collection with similar positions, by the same composer.) }
+1. d3! { The key move removes the d-pawn from the board, luring the black king to d3 and setting up a deadly long castle. } 1... Kxd3 2. O-O-O# *
+
+
+[Event "Beautiful Checkmate Puzzles: Ibulaev, 2013-C"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:41:22"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/8/8/N3B3/8/6N1/3PPPk1/R3K2R w KQ - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! (This is part of a four-puzzle collection with similar positions, by the same composer.) }
+1. O-O-O! { The key move gives up control of the f-pawn, setting up a mate on h2. } 1... Kxf2 2. Rh2# *
+
+
+[Event "Beautiful Checkmate Puzzles: Ibulaev, 2013-D"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:41:36"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/8/8/N3B3/8/6N1/2kPPP2/R3K2R w KQ - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! (This is part of a four-puzzle collection with similar positions, by the same composer.) }
+1. O-O! { The key move gives up control of the d-pawn, setting up a mate on a2. } 1... Kxd2 2. Ra2# *
+
+
+[Event "Beautiful Checkmate Puzzles: Loyd, 1855"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "21:34:39"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "2brrb2/8/p7/7Q/1p1kpPp1/1P1pN1P1/3K4/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qa5! { Surprisingly enough, after this move black is in zugzwang! The rooks and bishops together cover key squares on the fifth rank (c5, d5, e5, f5), and all moves lose control of one of these important squares, allowing mate by the knight or queen. } 1... Bc5 (1... Bd6 2. Qd5#)  (1... Be7 2. Qe5#)  (1... Bg7 2. Qxb4#)  (1... Rd7 2. Nf5#)  (1... Rd6 2. Qxb4#)  (1... Rd5 2. Qxd5#)  (1... Re7 2. Qxb4#)  (1... Re6 2. Nf5#)  (1... Re5 2. Qxe5#)  (1... Bd7 2. Qd5#)  (1... Be6 2. Qe5#)  (1... Bf5 2. Nxf5#)  (1... Bb7 2. Nf5#)  (1... Bh6 2. Qxb4#) 2. Qa1# *
+
+
+[Event "Beautiful Checkmate Puzzles: Loyd, 1857"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "21:56:22"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/8/8/8/5N2/6n1/1np5/1rk1K2Q w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qa8! { This key move covers a1, preventing black from moving the rook, while the white knight pins the black knights to the defense of d3 and e2 respectively. Black is in zugzwang, and has to allow one of these three mates. } 1... Nf1 (1... Nc4 2. Nd3#)  (1... Ra1 2. Qxa1#) 2. Ne2# *
+
+
+[Event "Beautiful Checkmate Puzzles: Loyd, 1859 (i)"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "22:11:18"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/8/8/6Q1/4R3/2K2p2/5k2/5b2 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Re1! { The key move indirectly threatens mate on g1 with the queen, preventing black from moving the bishop. This rook move introduces two more mating patterns, to refute black's attempts 1... Kxe1 and 1... Bg2. } 1... Bg2 (1... Be2 2. Qg1#)  (1... Kxe1 2. Qd2#) 2. Qh4# *
+
+
+[Event "Beautiful Checkmate Puzzles: Loyd, 1859 (ii)"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "22:25:00"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "4R2b/5k2/3K4/4p3/4P2Q/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qg4! { The solution gives the black king an extra square (f6) and does not threaten any direct mates, but again relies on zugzwang to force mate on the next move. Black has four main defenses, where the two bishop mates lead to the same (but reflected) mating patterns. Black's king moves introduce two distinct mating patterns as well. } 1... Kxe8 (1... Bf6 2. Qg8#)  (1... Bg7 2. Qe6#)  (1... Kf6 2. Rf8#) 2. Qg8# *
+
+
+[Event "Beautiful Checkmate Puzzles: Loyd, 1868"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "22:04:22"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "n3k2r/1Pb1p3/1p2Q3/1K1B4/8/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. b8=N! { This surprising key move covers the d7-square - against most other moves, black can play 1... Bd8, but in this case white has a mate on f7. Note that white is not threatening mate in one at the moment, and it is only because black is in zugzwang that he can deliver mate in two. } (1. b8=Q+ Bd8)  (1. bxa8=Q+ Bd8)  (1. Kc6 Rh6) 1... Bd8 (1... Bxb8 2. Qc8#)  (1... Rf8 2. Qd7#)  (1... Rh5 2. Qg8#)  (1... Kf8 2. Qf7#) 2. Qf7# *
+
+
+[Event "Beautiful Checkmate Puzzles: Loyd, 1880"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "21:30:09"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/8/8/8/1BB5/NN6/krQ5/7K w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qh7! { This key move puts black in zugzwang. White does not threaten mate directly, but most rook moves allow 2. Qb1#. Retreating all the way to h7 further makes sure that 1... Rh2+ can be met with 2. Qxh2#. } 1... Rh2+ (1... Rxb3 2. Qb1#)  (1... Rd2 2. Qb1#)  (1... Rc2 2. Qxc2#) 2. Qxh2# *
+
+
+[Event "Beautiful Checkmate Puzzles: Loyd, 1881"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "22:38:57"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/8/7p/4K1kb/8/7R/7Q/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qa2! { This queen move sets up (indirect) mating threats on g2 and g8, putting black in zugzwang - all his moves allow either Qg2# or Qg8#. } 1... Kg6 (1... Kg4 2. Qg2#)  (1... Bg4 2. Qg8#)  (1... Bg6 2. Qg2#) 2. Qg8# *
+
+
+[Event "Beautiful Checkmate Puzzles: Singer, 1986"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.17"]
+[UTCTime "00:24:17"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "8/Ppk5/1N1p4/1Q1K4/8/8/8/8 w - - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Qa4! { The solution keeps an eye on d7 (in case the black king tries to flee), and gives up the white knight, setting up a new mate on a8 in case black captures the knight. } 1... Kxb6 (1... Kd8 2. Qd7#) 2. a8=N# *
+
+
+[Event "Beautiful Checkmate Puzzles: Tkachenko, 2002"]
+[Site "https://lichess.org/study/RdtICntn"]
+[UTCDate "2018.04.16"]
+[UTCTime "23:35:19"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/thijscom"]
+[FEN "r3k3/5R1R/p6K/8/8/8/8/8 w q - 0 1"]
+[SetUp "1"]
+
+{ White to play and mate in two! }
+1. Rb7! { White has a variety of ways to set up a checkmate threat on h8, but this key move is the only move that refutes black's main defense, which is castling long. } { [%cal Gh7h8] } (1. Kg6? O-O-O) 1... O-O-O (1... a5 2. Rh8#) 2. Rhc7# *
