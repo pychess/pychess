@@ -133,6 +133,3 @@ def setup_glib_logging():
     except AttributeError:
         # Only present in glib 2.50+
         pass
-
-
-setup_glib_logging()

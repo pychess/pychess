@@ -95,7 +95,8 @@ except ImportError:
 ###############################################################################
 # Parse command line arguments
 
-from pychess.System.Log import log, LoggerWriter
+from pychess.System.Log import log, LoggerWriter, setup_glib_logging
+
 if getattr(sys, 'frozen', False):
     sys.stdout = LoggerWriter(logging.getLogger("STDOUT"), logging.INFO)
     sys.stderr = LoggerWriter(logging.getLogger("STDERR"), logging.ERROR)
@@ -203,6 +204,7 @@ except ImportError:
 
 ###############################################################################
 # Start logging
+setup_glib_logging()
 
 if log_viewer:
     log.logger.addHandler(GLogHandler(logemitter))

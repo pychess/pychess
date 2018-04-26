@@ -9,8 +9,6 @@ from timeit import default_timer
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
-from gi.repository import GLib
-
 
 @asyncio.coroutine
 def download_file_async(url, progressbar=None):
@@ -24,6 +22,7 @@ def download_file(url, progressbar=None):
     temp_file = None
     try:
         if progressbar is not None:
+            from gi.repository import GLib
             GLib.idle_add(progressbar.set_text, "Downloading %s ..." % url)
         else:
             print("Downloading %s ..." % url)

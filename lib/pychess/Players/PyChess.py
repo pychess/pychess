@@ -51,19 +51,21 @@ class PyChess(object):
     def __remainingMovesA(self):
         # Based on regression of a 180k games pgn
         ply_count = self.board.plyCount
-        return -1.71086e-12 * ply_count**6 \
+        remaining = -1.71086e-12 * ply_count**6 \
             + 1.69103e-9 * ply_count**5 \
             - 6.00801e-7 * ply_count**4 \
             + 8.17741e-5 * ply_count**3 \
             + 2.91858e-4 * ply_count**2 \
             - 0.94497 * ply_count \
             + 78.8979
+        self.print("# remaining moves estimate=%s" % remaining)
+        return remaining
 
     def __remainingMovesB(self):
         # Classical timecontrol
         ply = self.board.plyCount % (self.movestogo * 2)
         remaining = self.movestogo - ply // 2
-        self.print("# remaining moves=%s" % remaining)
+        self.print("# remaining moves estimate=%s" % remaining)
         return remaining
 
     def __getBestOpening(self):
