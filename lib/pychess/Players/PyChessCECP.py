@@ -230,6 +230,7 @@ class PyChessCECP(PyChess):
                         self.basetime += int(minutes[1])
                     self.clock[:] = self.basetime, self.basetime
                     self.increment = inc
+                    self.searchtime = 0
 
                 elif lines[0] == "st":
                     self.searchtime = float(lines[1])
