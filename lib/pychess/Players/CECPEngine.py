@@ -608,7 +608,7 @@ class CECPEngine(ProtocolEngine):
             # king. Therefore we just return the "kill king" move
             # automaticaly
             self.emit("analyze", [(self.board.ply, [toAN(
-                self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, "", "")])
+                self.board, getMoveKillingKing(self.board))], MATE_VALUE - 1, 1, "")])
             return
 
         print("post", file=self.engine)

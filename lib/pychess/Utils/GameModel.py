@@ -324,7 +324,7 @@ class GameModel(GObject.GObject):
                             self.hints[ply][i] = (pv[0], score)
         if analysis and analysis[0] is not None:
             ply, pv, score, depth, nps = analysis[0]
-            if score is not None:
+            if score is not None and depth:
                 if analyzer.mode == ANALYZING:
                     if (ply not in self.scores) or (int(self.scores[ply][2]) <= int(depth)):
                         self.scores[ply] = (pv, score, depth)
