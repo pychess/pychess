@@ -14,3 +14,4 @@ Linux desktop that does everything you require from an advanced chess client.
 - Translations: https://www.transifex.com/projects/p/pychess/
 - Mailing list: http://groups.google.com/group/pychess-people
 - Chat: http://webchat.freenode.net/?channels=pychess&uio=d4
+- pychess-engine playing on lichess.org https://lichess.org/@/PyChessBot
