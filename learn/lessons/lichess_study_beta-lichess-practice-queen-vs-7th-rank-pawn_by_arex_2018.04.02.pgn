@@ -9,10 +9,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7K/8/Q7/8/8/6k1/5p2/8 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Not a Bishop or Rook pawn = Win"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.02"]
@@ -24,11 +21,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7K/8/1Q6/8/8/8/3kp3/8 w - - 0 1"]
 [SetUp "1"]
-
 { Get your Queen closer to the black King and pawn, without letting Black promote. }
 1. Qd4+ { Black does not want to block their own pawn from promoting. That would give White a free move to bring their King closer. } { [%csl Re1,Gc2,Gc1][%cal Rd2e1,Gd2c2,Gd2c1] } 1... Kc2 { We threaten the pawn. } { [%cal Gd4e3] } 2. Qe3 { Exactly! Black has to defend the pawn in the only way they can. } 2... Kd1 { Now we check the King and attack the pawn at the same time. } { [%cal Ge3d3] } 3. Qd3+ { This forces Black to block their own pawn, as Kc2 which is the only other legal move would lose the pawn immediately. } { [%cal Rd1c1,Gd1e1] } 3... Ke1 { Now we have gained a free move! What should we do with it? } { [%cal Gh8g7] } 4. Kg7 { Exactly, we bring the King closer. Now, Black only has two legal moves. Stepping into the pin with Kf1 gives White another free move immediately, so Black will normally play Kf2. } { [%cal Re1f1,Ge1f2,Bd3f1] } 4... Kf2 { Many moves are winning for White, but the most efficient technique is to pin the pawn to the King. } { [%cal Gd3d2] } 5. Qd2 Kf1 { We repeat the technique. Force the black King to block their own pawn or to step away from it. } { [%cal Gd2f4] } 6. Qf4+ Kg2 { Threaten the pawn. } { [%cal Gf4e3] } 7. Qe3 Kf1 { We check the King and attack the pawn at the same time. } { [%cal Ge3f3] } 8. Qf3+ Ke1 { White gains another free move! } { [%cal Gg7f6] } 9. Kf6 Kd2 { Pin! } { [%cal Gf3f2] } 10. Qf2 Kd1 { Force the black King to block their own pawn or to step away from it. } { [%cal Gf2d4] } 11. Qd4+ Kc1 { Threaten the pawn. } { [%cal Gd4e3] } 12. Qe3+ Kd1 { We check the King and attack the pawn at the same time. } { [%cal Ge3d3] } 13. Qd3+ Ke1 { White gains another free move! } { [%cal Gf6e5] } 14. Ke5 Kf2 { Pin! } { [%cal Gd3d2] } 15. Qd2 Kf1 { Force the black King to block their own pawn or to step away from it. } { [%cal Gd2f4] } 16. Qf4+ Kg1 { Threaten the pawn. } { [%cal Gf4e3] } 17. Qe3+ Kf1 { We check the King and attack the pawn at the same time. } { [%cal Ge3f3] } 18. Qf3+ Ke1 { White gains another free move! } { [%cal Ge5e4] } 19. Ke4 Kd2 { Here we normally pin the pawn to the King, but because our King is close, we can actually force Black to block their own pawn more quickly. } { [%cal Gf3d3] } 20. Qd3+ { If Black abandons the pawn with Kc1, we win easily. Black may therefore block their own pawn again. } { [%cal Rd2c1,Gd2e1] } 20... Ke1 { White gains another free move! Many moves including Ke3, win for White, but let's be as efficient as possible. } { [%cal Ge4f3] } 21. Kf3 Kf1 { Mate in 2! } { [%cal Gd3e2] } 22. Qxe2+ Kg1 { Mate in 1! } { [%cal Ge2g2] } 23. Qg2# *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Exercise: d-pawn = Win"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.03"]
@@ -40,10 +34,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7K/8/1Q6/8/8/8/3pk3/8 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Exercise: b-pawn = Win"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.08"]
@@ -55,10 +46,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7K/8/1Q6/8/8/8/1pk5/8 w - - 0 1"]
 [SetUp "1"]
-
 1. Qc5+ Kb3 2. Qb5+ Kc2 3. Qc4+ Kd2 4. Qb3 Kc1 5. Qc3+ Kb1 6. Kg7 Ka2 7. Qc2 Ka1 8. Qa4+ Kb1 9. Kf7 (9. Kf6 Kc1 10. Qc4+ Kd2 11. Qb3 Kc1 12. Qc3+ Kb1 13. Ke5 Ka2 14. Qc2 Ka1 15. Qa4+ Kb1 16. Kd4 Kc1 17. Qc4+ Kd2 18. Qc3+ Ke2 19. Qxb2+ Kf3) 9... Kc1 *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Rook pawn, no King assistance = Draw"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.03"]
@@ -70,11 +58,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/1K6/P7/8/3q4/8/8/7k w - - 0 1"]
 [SetUp "1"]
-
 { Play the only drawing move for White to get to the relevant position we are discussing. }
 1. a7 Qb4+ { Black tries to get their Queen closer. Multiple moves holds a draw for White, but if we can't promote our pawn, we should put our King on, or next to, the corner square. } { [%cal Gb7a8] } 2. Ka8 { Note that many moves are an immediate draw by stalemate for Black. } { [%csl Rb5,Rb6,Rb3,Rb2,Rb1,Rh2,Rg2,Rg1][%cal Rb4b5,Rb4b6,Rb4b3,Rb4b2,Rb4b1,Rh1g1,Rh1g2,Rh1h2] } 2... Qa5 { Black tries to get closer. We just stay next to the corner square. Either legal move is fine for White. } { [%cal Ga8b8] } 3. Kb8 { We are now threatening to promote. } { [%cal Ga7a8] } 3... Qb6+ { If we can't promote our pawn, we stay on, or next to, the corner square with our King. } { [%cal Gb8a8] } 4. Ka8 Qa6 { Only one legal move. We keep shuffling. } { [%cal Ga8b8] } 5. Kb8 { Threatening to promote. } { [%cal Ga7a8] } 5... Qd6+ { If we can't promote our pawn, we stay on, or next to, the corner square with our King. Any legal move draws for White. } { [%cal Gb8a8] } 6. Ka8 Qd8+ { Only one legal move. We keep shuffling. } { [%cal Ga8b7] } 7. Kb7 { Threatening to promote. } { [%cal Ga7a8] } 7... Qd7+ { One wrong step and you lose instantly! } { [%cal Rb7a8,Gb7b8] } 8. Kb8 { Threatening to promote. } { [%cal Ga7a8] } (8. Ka8 { This allows mate in 1! } { [%cal Rd7c8] }) 8... Qa4 { If allowed, we promote our pawn to force the draw. } { [%cal Ga7a8] } 9. a8=Q+ Qxa8+ { [%cal Gb8a8] } 10. Kxa8 *
-
-
 [Termination "draw in 20"]
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Exercise: Rook pawn, no King assistance"]
 [Site "https://lichess.org/study/pt20yRkT"]
@@ -87,10 +72,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/1K6/P7/8/3q4/8/8/7k w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Bishop pawn, no King assistance = Draw"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.03"]
@@ -102,11 +84,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7K/8/4Q3/8/8/8/2p5/1k6 w - - 0 1"]
 [SetUp "1"]
-
 { As before, we check the King and attack the pawn at the same time }
 1. Qb3+ Ka1 { Black is taking advantage of the fact that Qxc2 would be an immediate draw by stalemate. Note that Black is now threatening to promote. } { [%cal Rb3c2,Gb3a3,Bc2c1] } 2. Qa3+ Kb1 { Check the King and attack the pawn at the same time. } { [%cal Ga3b3] } 3. Qb3+ Kc1 { If Black blocks their own pawn instead of going to the corner, it's still a draw, it just takes longer. As White, we can try to use the technique we learned before. We use the free move to get our King closer. } { [%cal Gh8g7] } 4. Kg7 Kd2 { Pin the pawn. } { [%cal Gb3b2] } 5. Qb2 Kd1 { Force the black King to block their own pawn or to step away from it. } { [%cal Gb2d4] } 6. Qd4+ Ke1 { Threaten the pawn. } { [%cal Gd4c3] } 7. Qc3+ Kd1 { Check the King and attack the pawn at the same time. } { [%cal Gc3d3] } 8. Qd3+ Kc1 { Bring the King closer. } { [%cal Gg7f6] } 9. Kf6 Kb2 { Pin the pawn. } { [%cal Gd3d2] } 10. Qd2 { Note that Ka1 would be losing for Black in this position, as it allows White to get their Queen in front of the pawn. } { [%cal Rb2a1,Gb2b1,Bd2c1] } 10... Kb1 { Force the black King to block their own pawn or to step away from it. } { [%cal Gd2b4] } 11. Qb4+ Ka1 { Threaten the pawn. } { [%cal Gb4c3] } 12. Qc3+ Kb1 { Check the King and attack the pawn at the same time. } { [%cal Gc3b3] } 13. Qb3+ { Ka1 would draw as we saw before. } { [%cal Gb1c1] } 13... Kc1 { Bring the King closer. } { [%cal Gf6e5] } 14. Ke5 Kd2 { Pin the pawn. } { [%cal Gb3b2] } 15. Qb2 Kd1 { Force the black King to block their own pawn or to step away from it. } { [%cal Gb2d4] } 16. Qd4+ Ke1 { Threaten the pawn. } { [%cal Gd4c3] } 17. Qc3+ Kd1 { Check the King and attack the pawn at the same time. } { [%cal Gc3d3] } 18. Qd3+ Kc1 { Bring the King closer. } { [%cal Ge5d4] } 19. Kd4 Kb2 { Pin the pawn. } { [%cal Gd3d2] } 20. Qd2 { Ka1 would lose for Black here, because White would play Kc3 and be able to capture the pawn. } { [%cal Rb2a1,Gb2b1] } 20... Kb1 { Force the black King to block their own pawn or to step away from it. } { [%cal Gd2b4] } 21. Qb4+ Ka1 { Threaten the pawn. } { [%cal Gb4c3] } 22. Qc3+ Kb1 { Check the King and attack the pawn at the same time. } { [%cal Gc3b3] } 23. Qb3+ { Now, Black can't afford to continue as normal anymore. After Kc1, White would play Kd3 and be able to capture the pawn with mate to follow. Black has to play Ka1 to draw. } { [%cal Gb1a1,Rb1c1] } 23... Ka1 { Again, Qxc2 is an immediate draw by stalemate. White can try to other moves, but won't be successful. } { [%cal Rb3c2,Gb3a3] } 24. Qa3+ { Only one legal move for Black. } 24... Kb1 { Pin the pawn. } { [%cal Ga3d3] } 25. Qd3 { Ka2 loses to Qxc2. Kc1 loses to Kc3 which will win the pawn. Ka1 draws because the pawn can only be captured with stalemate. Kb2 also draws, which we will see later. } { [%cal Gb1a1,Gb1b2,Rb1c1,Rb1a2] } 25... Ka1 { Can we try covering the promotion square? } { [%cal Gd3f1] } 26. Qf1+ { Black threatens to promote. } { [%cal Rc2c1,Ra1a2,Ga1b2] } 26... Kb2 { White does not get a free move. } { [%cal Gf1b5] } 27. Qb5+ { Kc1 would lose because it gives White a free move to bring the King closer. } { [%cal Rb2c1,Gb2a1,Gb2a2,Gb2a3] } 27... Ka1 { Promotion is threatened again. } { [%cal Gb5a5] } 28. Qa5+ Kb1 { If the game is not drawn by stalemate with the King in the corner, threefold repetition or the 50-move rule, it may be drawn by allowing promotion and trading down to just the two Kings. } { [%cal Ga5c3] } 29. Qc3 { If Black is allowed, they will promote. } 29... c1=Q { [%cal Gc3c1] } 30. Qxc1+ Kxc1 *
-
-
 [Termination "draw in 20"]
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Exercise: Bishop pawn, no King assistance"]
 [Site "https://lichess.org/study/pt20yRkT"]
@@ -119,10 +98,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7K/8/4Q3/8/8/8/2p5/1k6 w - - 0 1"]
 [SetUp "1"]
-
 1. Qe4 (1. Qb3+) *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Rook pawn, King assistance on short side = Win"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.03"]
@@ -134,11 +110,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/8/K7/2Q5/8/p7/1k6 w - - 0 1"]
 [SetUp "1"]
-
 { The first step is to get our Queen to d2. Black is threatening to promote, so we need to do it without losing any time. }
 1. Qb3+ { Kc1 would drop the pawn and lose immediately, so Black goes Ka1. } { [%csl Yb3,Bd2][%cal Rb1c1,Gb1a1] } 1... Ka1 { Force the King out to the 7th rank. } { [%csl Yb3,Bd2][%cal Gb3d1] } 2. Qd1+ { [%csl Yb3,Bd2][%cal Ga1b2] } 2... Kb2 { Get the Queen into position. } { [%csl Yb3,Bd2][%cal Gd1d2] } 3. Qd2+ { Ka1 and Ka3 both lose instantly to checkmate in 1. After Kb1 we would play Kb4 and Black loses in a similar way to Kb3, but since Kb3 is slightly longer variation, let's look at that. } { [%csl Yb3,Bd2][%cal Rb2a1,Rb2a3,Rb2b1,Gb2b3] } 3... Kb3 { Check the King back to the 7th rank so our King can get to b3. } { [%csl Yb3,Bd2][%cal Gd2d3] } 4. Qd3+ { [%csl Yb3,Bd2] } 4... Kb2 { Now we can enter with our King. } { [%csl Yb3,Bd2][%cal Ga5b4] } 5. Kb4 { [%csl Yb3,Bd2] } 5... a1=Q { Get the Queen back in position to set up the checkmate threats. } { [%csl Yb3,Bd2][%cal Gd3d2] } 6. Qd2+ { Only one legal move. } { [%csl Yb3,Bd2][%cal Gb2b1] } 6... Kb1 { [%csl Yb3,Bd2][%cal Gb4b3] } 7. Kb3 { We have reached the goal position. Three checkmates in 1 are threatened. Note that Black can't check White without losing their Queen. } { [%csl Gd1,Gc2,Gb2,Yb3,Bd2][%cal Gd2d1,Gd2c2,Gd2b2] } 7... Qa4+ { [%cal Gb3a4] } 8. Kxa4 Ka1 { [%cal Ga4b3] } 9. Kb3 Kb1 { [%cal Gd2b2] } 10. Qb2# *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Exercise: Rook pawn, King assistance on short side"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.04"]
@@ -150,10 +123,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/8/K7/2Q5/8/p7/1k6 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Rook pawn, King assistance on long side = Win"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.03"]
@@ -165,11 +135,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/8/8/2QK4/8/p7/1k6 w - - 0 1"]
 [SetUp "1"]
-
 { The first step is to get our Queen to d2. Black is threatening to promote, so we need to do it without losing any time. }
 1. Qb3+ { Kc1 would drop the pawn and lose immediately, so Black goes Ka1. } { [%csl Yd3,Yd2,Yd1] } 1... Ka1 { Force the King out to the 7th rank. } { [%csl Yd3,Yd2,Yd1][%cal Gb3d1] } 2. Qd1+ { [%csl Yd3,Yd2,Yd1] } 2... Kb2 { Get the Queen into position. } { [%csl Yd3,Yd2,Yd1][%cal Gd1d2] } 3. Qd2+ { [%csl Yd3,Yd2,Yd1] } 3... Kb1 { Now we can enter with our King. } { [%csl Yd3,Yd2,Yd1][%cal Gd4d3] } 4. Kd3 { White has reached the goal position. } { [%csl Yd3,Yd2,Yd1] } 4... a1=N { Black has to promote to a Knight to avoid Qc2#, but it just delays the inevitable. } { [%csl Yd3,Yd2,Yd1][%cal Gd3c3] } (4... a1=Q 5. Qc2#) 5. Kc3 Nc2 { [%cal Gd2c2] } 6. Qxc2+ Ka1 { [%cal Gc2b2] } 7. Qb2# *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Exercise: Rook pawn, King assistance on long side"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.04"]
@@ -181,10 +148,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/8/8/2QK4/8/p7/1k6 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Bishop pawn, defending King on long side, King assistance on short side = Win"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.03"]
@@ -196,11 +160,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/8/1K6/4Q3/8/2pk4/8 w - - 0 1"]
 [SetUp "1"]
-
 { We start with the normal technique. Force the black King to block their own pawn or to step away from it. }
 1. Qd4+ { [%csl Yb3] } 1... Ke2 { Threaten the pawn. } { [%csl Yb3][%cal Gd4c3] } 2. Qc3 { [%csl Yb3] } 2... Kd1 { Check the King and attack the pawn at the same time. } { [%csl Yb3][%cal Gc3d3] } 3. Qd3+ { [%csl Yb3] } 3... Kc1 { Use the free move to bring the King closer. } { [%csl Yb3][%cal Gb5b4] } 4. Kb4 { [%csl Yb3] } 4... Kb2 { Pin the pawn. } { [%csl Yb3][%cal Gd3d2] } 5. Qd2 { Ka2 would drop the pawn immediately. Ka1 and Kb1 can be met the same way. } { [%csl Yb3][%cal Rb2a2,Rb2a1,Gb2b1] } 5... Kb1 { Reach the goal position. } { [%csl Yb3][%cal Gb4b3] } 6. Kb3 { c1=Q would immediately lose to Qa2#, so Black is forced to promote to a Knight } { [%csl Yb3] } 6... c1=N+ { [%csl Yb3][%cal Gb3a3] } 7. Ka3 Nd3 { We could capture the Knight, but mate in 2 is better. } { [%cal Gd2c3] } 8. Qc3 Nb2 { [%cal Gc3b2] } 9. Qxb2# *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Bishop pawn, defending King on long side, King assistance on long side = Win"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.03"]
@@ -212,11 +173,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/Q7/8/6K1/8/2pk4/8 w - - 0 1"]
 [SetUp "1"]
-
 { Black is threatening to promote. We need to get our Queen closer without losing any time. }
 1. Qd6+ Ke2 { [%cal Gd6e5] } 2. Qe5+ Kd2 { [%cal Ge5d4] } 3. Qd4+ Ke2 { Normally we would threaten the pawn with Qc3, which also works, but we can be even more efficient here, because our King is so close. } { [%cal Gd4b2] } 4. Qb2 (4. Qc3 Kd1 5. Qd3+ Kc1 6. Qb3 Kd2 7. Qb2 Kd3 8. Kf3 Kc4) 4... Kd1 { Here we can actually afford to spend a move on getting the King closer. Do you see why? } { [%cal Gg4f3] } 5. Kf3 { c1=Q would immediately lose to Qe2#. c1=N loses slightly more slowly. The relatively best option for Black is Kd2, but this also loses. } { [%cal Rc2c1,Gd1d2] } 5... Kd2 { Shoulder the King to get closer to the pawn. } { [%cal Gf3e4] } 6. Ke4 Kd1 { Bring the King closer to threaten Qc2#. } { [%cal Ge4d3] } 7. Kd3 { c1=Q would immediately lose to Qe2#. c1=N loses slightly more slowly. The relatively best option for Black is Ke1, but this also loses. } { [%cal Rc2c1] } 7... Ke1 { [%cal Gb2c2] } 8. Qxc2 Kf1 { [%cal Gc2h2] } 9. Qh2 Ke1 { [%cal Gh2e2] } 10. Qe2# *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Exercise: Bishop pawn, defending King on long side, King assistance on long side"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.04"]
@@ -228,10 +186,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/Q7/8/6K1/8/2pk4/8 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Bishop pawn, defending King on short side, King assistance on short side = Win"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.03"]
@@ -243,11 +198,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/4Q3/8/8/K7/8/1kp5/8 w - - 0 1"]
 [SetUp "1"]
-
 { Force the black King to block their own pawn or to step away from it. }
 1. Qb4+ { Ka1 would lose after Kb3 c1=Q Qa4+ threatening an unstoppable Qa2#. Kc1 would lose after Qe1+ Kb2 Qd2 Kb1 Kb3 forcing a Knight promotion and eventual checkmate as we have seen before. Ka2 loses just as quickly, but let's see why. } { [%cal Gb2a2,Rb2c1,Rb2a1] } 1... Ka2 { Pin and threaten the pawn. Note that Qc3 would be a massive blunder because after c1=Q, Qxc1 would be stalemate. } { [%cal Rb4c3,Gb4d2] } 2. Qd2 { Ka1 loses due to Kb3 Kb1 Qxc2+ Ka1 Qa2#. Kb2 loses because Kb4 Kb1 Kb3, forcing a Knight promotion and eventual checkmate. Kb2 is the best try. } { [%cal Ga2b1,Ra2b2,Ra2a1] } 2... Kb1 { Threaten checkmate. } { [%cal Ga4b3] } 3. Kb3 { Forcing c1=N+, as c1=Q would immediately lose due to Qa2#. } 3... c1=N+ { [%cal Gb3a3] } 4. Ka3 Nd3 { [%cal Gd2c3] } 5. Qc3 Nb2 { [%cal Gc3b2] } 6. Qxb2# *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Bishop pawn, defending King on short side, King assistance on long side = Win"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.03"]
@@ -259,11 +211,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/4Q3/8/8/8/8/1kp5/4K3 w - - 0 1"]
 [SetUp "1"]
-
 { Force the black King to block their own pawn or to step away from it. }
 1. Qb4+ { Kc1 loses after Qc3 Kb1 Kd2, winning the pawn on the next move. Ka1 loses more slowly. } { [%cal Rb2c1,Gb2a1] } 1... Ka1 { March in and take the pawn. } { [%cal Ge1d2] } (1... Kc1 2. Qc3 Kb1 3. Kd2) 2. Kd2 { No matter what Black does, it's checkmate in 2. } 2... Ka2 { [%cal Gd2c2] } 3. Kxc2 Ka1 { [%cal Gb4b2] } 4. Qb2# *
-
-
 [Event "(BETA) Lichess Practice: Queen vs 7th-Rank Pawn: Exercise: Bishop pawn, defending King on short side, King assistance on long sid"]
 [Site "https://lichess.org/study/pt20yRkT"]
 [UTCDate "2018.04.04"]
@@ -275,5 +224,4 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/4Q3/8/8/8/8/1kp5/4K3 w - - 0 1"]
 [SetUp "1"]
-
  *

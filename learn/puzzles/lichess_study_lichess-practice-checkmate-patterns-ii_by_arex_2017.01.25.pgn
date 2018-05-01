@@ -10,10 +10,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7k/5B1p/8/8/8/8/8/5KB1 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns II: Double Bishop Mate #2"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -26,11 +23,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r1bq3k/pp2R2p/3B2p1/2pBbp2/2Pp4/3P4/P1P3PP/6K1 w - - 0 1"]
 [SetUp "1"]
-
 { From Heinrich Ranneforth - Herbert Edward Dobell, 1903. }
  *
-
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns II: Double Bishop Mate #3"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -43,11 +37,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r3k2r/pbpp1ppp/1p6/2bBPP2/8/1QPp1P1q/PP1P3P/RNBR3K b kq - 0 1"]
 [SetUp "1"]
-
 { From Victor Kahn - Carl Hartlaub, 1916. }
 1... Qxf3+ 2. Bxf3 *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns II: Boden's Mate #1"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -60,11 +51,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2kr4/3p4/8/8/5B2/8/8/5BK1 w - - 0 1"]
 [SetUp "1"]
-
 { In Boden's Mate, two attacking bishops on criss-crossing diagonals deliver mate to a king obstructed by friendly pieces, usually a rook and a pawn. }
  *
-
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns II: Boden's Mate #2"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -77,11 +65,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2k1rb1r/ppp3pp/2n2q2/3B1b2/5P2/2P1BQ2/PP1N1P1P/2KR3R b - - 0 1"]
 [SetUp "1"]
-
 { From R Schulder - Samuel Standidge Boden, 1853. }
  *
-
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns II: Boden's Mate #3"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -94,11 +79,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2kr1b1r/pp1npppp/2p1bn2/7q/5B2/2NB1Q1P/PPP1N1P1/2KR3R w - - 0 1"]
 [SetUp "1"]
-
 { From Emil Joseph Diemer - Portz, 1948. }
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns II: Balestra Mate #1"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -111,11 +93,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5k2/8/6Q1/8/8/6B1/8/6K1 w - - 0 1"]
 [SetUp "1"]
-
 { The Balestra Mate is similar to Boden's Mate, but instead of two bishops, a bishop and a queen is used. The bishop delivers the checkmate, while the queen blocks the remaining escape squares. }
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns II: Arabian Mate #1"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -128,11 +107,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7k/5R2/5N2/8/8/8/8/7K w - - 0 1"]
 [SetUp "1"]
-
 { In the Arabian Mate, the knight and the rook team up to trap the opposing king on a corner of the board. The rook sits on a square adjacent to the king both to prevent escape along the diagonal and to deliver checkmate while the knight sits two squares away diagonally from the king to prevent escape on the square next to the king and to protect the rook. }
  *
-
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns II: Arabian Mate #2"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -145,11 +121,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r4nk1/pp2r1p1/2p1P2p/3p1P1N/8/8/PPPK4/6RR w - - 0 1"]
 [SetUp "1"]
-
 { From Zaven Andriasian - Brent Burg, 2013. }
  *
-
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns II: Arabian Mate #3"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -162,11 +135,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3qrk2/p1r2pp1/1p2pb2/nP1bN2Q/3PN3/P6R/5PPP/R5K1 w - - 0 1"]
 [SetUp "1"]
-
 { From Gregory Kaidanov - Viswanathan Anand, 1987. }
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns II: Corner Mate #1"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -179,11 +149,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7k/7p/8/6N1/8/8/8/6RK w - - 0 1"]
 [SetUp "1"]
-
 { The Corner Mate works by confining the king to the corner using a rook or queen and using a knight to engage the checkmate. }
  *
-
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns II: Corner Mate #2"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -196,11 +163,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5rk1/3Q1p2/6p1/P5r1/R1q1n3/7B/7P/5R1K b - - 0 1"]
 [SetUp "1"]
-
 { From Hugh Edward Myers - Dmitri Poliakoff, 1955. }
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns II: Morphy's Mate #1"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -213,11 +177,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7k/5p1p/8/8/7B/8/8/6RK w - - 0 1"]
 [SetUp "1"]
-
 { Morphy's Mate is named after Paul Morphy. It works by using the bishop to attack the enemy king while your rook and an enemy pawn helps to confine it. }
  *
-
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns II: Morphy's Mate #2"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -230,11 +191,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5rk1/p4p1p/1p1rpp2/3qB3/3PR3/7P/PP3PP1/6K1 w - - 0 1"]
 [SetUp "1"]
-
 { A variation in Aron Nimzowitsch - Bjorn Nielsen, 1930 that was not played. }
  *
-
-
 [Termination "mate in 6"]
 [Event "Lichess Practice: Checkmate Patterns II: Morphy's Mate #3"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -247,11 +205,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2r1nrk1/pp1q1p1p/3bpp2/5P2/1P1Q4/P3P3/1BP2P1P/R3K2R w KQ - 0 1"]
 [SetUp "1"]
-
 { From John Owen - Amos Burn, 1887. }
  *
-
-
 [Termination "mate in 6"]
 [Event "Lichess Practice: Checkmate Patterns II: Morphy's Mate #4"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -264,11 +219,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2r2rk1/5ppp/pp6/2q5/2P2P2/3pP1RP/P5P1/B1R3K1 w - - 0 1"]
 [SetUp "1"]
-
 { From Samuel Reshevsky - George Shainswit, 1951. }
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns II: Pillsbury's Mate #1"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -281,11 +233,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5rk1/5p1p/8/8/8/8/1B6/4K2R w - - 0 1"]
 [SetUp "1"]
-
 { Pillsbury's Mate is named for Harry Nelson Pillsbury and is a variation of Morphy's Mate. The rook delivers checkmate while the bishop prevents the King from fleeing to the corner square. }
  *
-
-
 [Termination "mate in 5"]
 [Event "Lichess Practice: Checkmate Patterns II: Pillsbury's Mate #2"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -298,11 +247,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2rqnrk1/pp3ppp/1b1p4/3p2Q1/2n1P3/3B1P2/PB2NP1P/R5RK w - - 0 1"]
 [SetUp "1"]
-
 { From Adolf Anderssen - Berthold Suhle, 1860. }
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns II: Damiano's Mate #1"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -315,11 +261,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5rk1/6p1/6P1/7Q/8/8/8/6K1 w - - 0 1"]
 [SetUp "1"]
-
 { Damiano's Mate is a classic method of checkmating and one of the oldest. It works by confining the king with a pawn or bishop and using a queen to initiate the final blow. Damiano's mate is often arrived at by first sacrificing a rook on the h-file, then checking the king with the queen on the h-file, and then moving in for the mate. The checkmate was first published by Pedro Damiano in 1512. }
  *
-
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns II: Damiano's Mate #2"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -332,11 +275,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4rk2/1p1q1p2/3p1Bn1/p1pP1p2/P1P5/1PK3Q1/8/7R w - - 0 1"]
 [SetUp "1"]
-
 { From Ulvi Bajarani - Dragan Solak, 2010. }
  *
-
-
 [Termination "mate in 5"]
 [Event "Lichess Practice: Checkmate Patterns II: Damiano's Mate #3"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -349,11 +289,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "q1r4r/1b2kpp1/p3p3/P1b5/1pN1P3/3BBPp1/1P4P1/R3QRK1 b - - 0 1"]
 [SetUp "1"]
-
 { From Alexander Baburin - Utut Adianto, 1993. }
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns II: Lolli's Mate #1"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -366,11 +303,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "6k1/5p2/5PpQ/8/8/8/8/6K1 w - - 0 1"]
 [SetUp "1"]
-
 { Lolli's Mate involves infiltrating Black's fianchetto position using both a pawn and queen. The queen often gets to the h6 square by means of sacrifices on the h-file. It is named after Giambattista Lolli. }
  *
-
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns II: Lolli's Mate #2"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -383,11 +317,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r4r2/1q3pkp/p1b1p1n1/1p4QP/4P3/1BP3P1/P4P2/R2R2K1 w - - 0 1"]
 [SetUp "1"]
-
 { From Rudolf Spielmann - Ernst Gruenfeld, 1929. }
  *
-
-
 [Termination "mate in 6"]
 [Event "Lichess Practice: Checkmate Patterns II: Lolli's Mate #3"]
 [Site "https://lichess.org/study/8yadFPpU"]
@@ -400,6 +331,5 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4r1qk/5p1p/pp2rPpR/2pbP1Q1/3pR3/2P5/P5PP/2B3K1 w - - 0 1"]
 [SetUp "1"]
-
 { From Joseph Henry Blackburne - Alexander Steinkuehler, 1871. }
  *

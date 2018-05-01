@@ -9,17 +9,12 @@
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "PPPPPPPP/PP4PP/P2pp2P/P1p2p1P/P1p2p1P/P2pp2P/PP4PP/PPPPPPPP b - - 0 1"]
 [SetUp "1"]
-
 { Hello everyone and welcome!!
-
 Because many people requested it, I decided to make the second part of my previous study about "Game puzzles with interactive lesson!" which is available here: lichess.org/study/Bhmd5jqq.
 Thank you very much for your support!
-
 I hope you enjoy it and have fun!
-
 PS If you find these puzzles useful and entertaining, please don't forget to press the heart-shaped button below, thanks in advance! }
  *
-
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 1"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -32,27 +27,9 @@ PS If you find these puzzles useful and entertaining, please don't forget to pre
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "2r2r2/1Q3pkp/p4np1/qp6/4B3/1P2P2P/P4PP1/R4RK1 b - - 7 20"]
 [SetUp "1"]
-
 { White's position is uncomfortable and only has a few squares available to protect the light-squared bishop.
 Can you find the best move to start this combination? }
 20... Rc7 { Good! } (20... Rb8 { This move is correct but not the best one. } 21. Qc6) 21. b4 Rxb7 { Excellent! } 22. bxa5 { The next move is pretty obvious :) } 22... Nxe4 { Great, you completed the first puzzle. This was just an easy warm-up :) } *
-
-
-[Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 2"]
-[Site "https://lichess.org/study/VefYFYMP"]
-[UTCDate "2018.01.03"]
-[UTCTime "21:56:45"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/Francesco_Super"]
-[FEN "2r2rk1/pp1bqpp1/2nppn1p/2p3N1/1bP5/1PN3P1/PBQPPPBP/3R1RK1 w - - 0 1"]
-[SetUp "1"]
-
-{ The Queen is threatening checkmate but the h7 square is controlled by the knight. How do we take advantage of this position? }
-1. Nd5 { Well spotted! We are threatening to take the Queen and the Knight! } { [%cal Gd5f6,Gd5e7] } 1... exd5 { The only possible move for Black } 2. Bxf6 { Excellent! Black can't take the bishop because of checkmate in #1 for White so the only move for Black is... } 2... hxg5 { The only possible move for Black to avoid checkmate } 3. Bxe7 { Congratulations, you completed this puzzle. Proceed to the next one :) } 3... Nxe7 *
-
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 3"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -65,10 +42,22 @@ Can you find the best move to start this combination? }
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "1k1r3r/pbq2ppp/1ppbpn2/8/Q1P1P3/2N1BPP1/PP5P/2KR1B1R w - - 0 1"]
 [SetUp "1"]
-
 { Take a look at the position of our opponent's knight, bishop and Queen carefully. Can you spot a winning move? }
 1. Rxd6 { Well spotted! } (1. e5 { Not correct, the bishop can easily take the pawn }) 1... Qxd6 { Can you spot a strong, forcing move for White? } 2. e5 { Well done! It's a double attack! The Queen can't take the pawn otherwise the move Bf4 will make Black lose the game completely. } { [%csl Gf6] } 2... Qe7 { The next move is quite obvious } 3. exf6 { Congratulations! You completed this puzzle! } { [%cal Ge7f6] } 3... Qxf6 *
 
+[Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 2"]
+[Site "https://lichess.org/study/VefYFYMP"]
+[UTCDate "2018.01.03"]
+[UTCTime "21:56:45"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/Francesco_Super"]
+[FEN "2r2rk1/pp1bqpp1/2nppn1p/2p3N1/1bP5/1PN3P1/PBQPPPBP/3R1RK1 w - - 0 1"]
+[SetUp "1"]
+{ The Queen is threatening checkmate but the h7 square is controlled by the knight. How do we take advantage of this position? }
+1. Nd5 { Well spotted! We are threatening to take the Queen and the Knight! } { [%cal Gd5f6,Gd5e7] } 1... exd5 { The only possible move for Black } 2. Bxf6 { Excellent! Black can't take the bishop because of checkmate in #1 for White so the only move for Black is... } 2... hxg5 { The only possible move for Black to avoid checkmate } 3. Bxe7 { Congratulations, you completed this puzzle. Proceed to the next one :) } 3... Nxe7 *
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 4"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -81,11 +70,9 @@ Can you find the best move to start this combination? }
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "2r4k/1bqpbr1p/pp4p1/3P1p2/2P5/PQNB1P2/1P5P/1K1R1R2 w - - 0 1"]
 [SetUp "1"]
-
-{ Black has some weaknesses in this position and the c4 and d6 pawns will play a crucial role in this attack. What is the best move? }
+{ Black has some weaknesses in this position and the c4 and d5 pawns will play a crucial role in this attack. What is the best move? }
 1. d6 { Excellent! At first glance d6 can look like a useless pawn sacrifice but... it's actually not } 1... Qxd6 { The only good move for Black. Now it's time to launch a strong discovered attack! } 2. c5 { Well done! We are attacking the Queen and at the same time we are threatening to take the unprotected rook } 2... Qf6 { The only move possible to defend the rook. Let's reinforce our attack! } 3. Bc4 { Very good, the rook has two attackers and it is forced to move } 3... Rg7 { Attack the only undefended piece of Black } 4. Bd5 { Correct, well done! } (4. cxb6 { This is a good move as well but not the best one }) 4... Bxd5 5. Nxd5 { Good, we are threatening the Queen and the pawn in b6 } { [%cal Gd5f6,Gd5b6] } 5... Qc6 { Now it's time to gain some material } 6. cxb6 { Excellent, this was the best move } (6. Nxb6 { Blunder! Black can play Rb8 pinning our knight! } { [%csl Gb8] })  (6. Nxe7 { Another good move but not the best one :/ })  (6. Qxb6 { Big mistake, the bishop can take the c5 pawn } { [%csl Gc5] }) 6... Bc5 { The bishop is threatening to take the pawn after Rb8, how can we prevent this? } { [%cal Gc5b6,Gc8b8] } 7. Rc1 { Excellent move! } (7. Rd3 { Another good move but we want to pin that bishop } 7... Rb8) 7... Rb8 { We now want our rook to be in the best possible square... } 8. Rfe1 { Well spotted, now the rook is controlling the e file!
 You completed the chapter, proceed to the next chapter :) } { [%cal Ge1e8] } *
-
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 5"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -98,10 +85,8 @@ You completed the chapter, proceed to the next chapter :) } { [%cal Ge1e8] } *
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "8/kp2q3/pR2r2r/1Pp5/7R/1P2Q2P/4K3/8 w - - 0 1"]
 [SetUp "1"]
-
 { It looks over for our Queen, but there is a way to prevent this. What is the best move to start this series of moves? }
 1. Rxe6 { Good, well spotted! } 1... Rxe6 { Our Queen is still pinned... We have to kick that rook out :P } 2. b6+ { Well done! } 2... Kxb6 { The only possible move for the king to avoid a mate in #3 } 3. Rh6 { Excellent!! The rook is now pinned and it is over for the Black Queen! } 3... Rxh6 { Easy.... } 4. Qxe7 { Congratulations, you completed this puzzle! } *
-
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 6"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -114,28 +99,9 @@ You completed the chapter, proceed to the next chapter :) } { [%cal Ge1e8] } *
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "r4r1k/1bq1b1pp/p3pn2/4Np2/1pNP4/3B4/PP1BQPPP/2RR2K1 w - - 0 1"]
 [SetUp "1"]
-
 { The aim of the following moves is to launch a strong double attack to Black!
 What is the best move in this position? }
 1. Nf7+ { Well spotted!! } 1... Rxf7 { Can you spot the winning move? } 2. Ne5 { Excellent! Our knight is attacking the rook and our rook is attacking the Queen! } { [%cal Ge5f7,Gc1c7] } 2... Qb6 { It's simple now... :) } 3. Nxf7+ { Congrats, you completed this puzzle! } *
-
-
-[Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 7"]
-[Site "https://lichess.org/study/VefYFYMP"]
-[UTCDate "2018.01.04"]
-[UTCTime "15:34:44"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/Francesco_Super"]
-[FEN "7k/8/5r2/8/8/2R5/8/K1B5 w - - 0 1"]
-[SetUp "1"]
-
-{ What is the best move in this position? There is only one move that is winning. }
-1. Bb2 { Well done! The rook can't move anywhere otherwise it leads to a forced checkmate sequence for White. } (1. Rh3+) 1... Kh7 { Can you find the correct move? } 2. Rc7+ { Excellent! it is over for our opponent's rook! } (2. Rh3+ { Blunder, now all the advantage we gained before is lost.
-This checks the king and attacks black's rook simultaneously, but black can simply play Rh6, blocking the check and saving his rook. After the trade of rooks white can't checkmate black with a single bishop so it ends in a draw which is not what we want! }) 2... Kg6 { Pretty obvious now... } 3. Bxf6 { Well done, you completed this puzzle :) } *
-
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 8"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -148,12 +114,25 @@ This checks the king and attacks black's rook simultaneously, but black can simp
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "2krr3/ppp3pp/2n5/2Bq1b2/Q2P4/5N2/P4PPP/3R1K1R b - - 0 1"]
 [SetUp "1"]
-
 { The position is winning for Black and we can manage to threaten checkmate.
 Our rooks are in their best possible squares and the opponent's King is very vulnerable.
 What is the best move in this position? }
 1... Qxf3 { Very well spotted! It looks crazy at first glance but it's not... } 2. gxf3 { Now look at the vulnerability of the King, let's immeidately start to take advantage of this! } 2... Bh3+ { Excellent, the King can only move in g1and our bishop is in a really strong position! } 3. Kg1 { One move is winning! } 3... Re6 { Well done! We want to threaten checkmate in g6! } 4. Qc2 { Let's activate another piece! } 4... Ne5 { Great move! Threatening mate! } { [%cal Ge5f3] } (4... Rg6+ { This looks like the best move at first, but it drastically reduces our advantage because we are giving up our strong rook }) 5. Qf5 { The only possible move to avoid checkmate! White loses its Queen and we are clearly winning! Now take the Queen! } 5... Bxf5 { Congrats, you've completed this puzzle! } *
 
+[Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 7"]
+[Site "https://lichess.org/study/VefYFYMP"]
+[UTCDate "2018.01.04"]
+[UTCTime "15:34:44"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/Francesco_Super"]
+[FEN "7k/8/5r2/8/8/2R5/8/K1B5 w - - 0 1"]
+[SetUp "1"]
+{ What is the best move in this position? There is only one move that is winning. }
+1. Bb2 { Well done! The rook can't move anywhere otherwise it leads to a forced checkmate sequence for White. } (1. Rh3+) 1... Kh7 { Can you find the correct move? } 2. Rc7+ { Excellent! it is over for our opponent's rook! } (2. Rh3+ { Blunder, now all the advantage we gained before is lost.
+This checks the king and attacks black's rook simultaneously, but black can simply play Rh6, blocking the check and saving his rook. After the trade of rooks white can't checkmate black with a single bishop so it ends in a draw which is not what we want! }) 2... Kg6 { Pretty obvious now... } 3. Bxf6 { Well done, you completed this puzzle :) } *
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 9"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -166,10 +145,8 @@ What is the best move in this position? }
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "8/5p1k/4p1b1/4P3/2Pq4/2Q2KP1/r3P3/2R2B2 b - - 0 1"]
 [SetUp "1"]
-
 { Black has an enormous advantage, that we can transform in a forced checkmate sequence! }
 1... Ra3 { Well spotted! The Queen is now pinned } 2. Qxa3 { This is a big blunder from White, now it's checkmate in #9 } 2... Be4+ { Great! Keep going! } 3. Kf4 Bg2+ { Excellent! We are getting nearer! } 4. e4 Qxe4+ 5. Kg5 Qxe5+ (5... Qf5+ { BLUNDER!! Now the position is totally equal and this is not what we want }) 6. Kh4 Qf6+ 7. Kg4 Qf5+ 8. Kh4 { It's checkmate in #3, you've almost done it! } 8... Qh3+ 9. Kg5 Qh6+ (9... Qf5+ { It's correct but it will take us longer to checkmate the King }) 10. Kg4 { It's checkmate in one! } 10... f5# { Congratulations! You completed the puzzle! } *
-
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 10"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -182,10 +159,8 @@ What is the best move in this position? }
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "5r2/1p4r1/3kp1b1/1Pp1p2p/2PpP3/q2B1PP1/3Q2K1/1R5R b - - 0 1"]
 [SetUp "1"]
-
 { We can gain a lot of advantage in this position, can you find the best move? }
 1... Rxf3 { Well spotted!! Another winning sacrfice! } 2. Kxf3 { Our aim is to take our opponent's Queen. Can you spot the next move of this formidable combination? } 2... Bxe4+ { Excellent!! } 3. Kxe4 Rxg3 { Great move! Keep going! } 4. Rhg1 { You really have to look at the position of the pieces carefully to spot the next move } 4... Qa2 { This looks like a huge blunder by Black at first glance, but if you analyze the position you will notice that White can't take our Queen otherwise it's checkmate in one with Re3. } { [%cal Gg3e3,Rd2a2] } 5. Rxg3 { Now we can take the Queen and we have a huge advantage! } 5... Qxd2 { This was a difficult puzzle (hopefully) and congratulations for completing it! } *
-
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 11"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -198,28 +173,8 @@ What is the best move in this position? }
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "r3r3/1p3pk1/2p2qp1/8/1P1Pp3/4P1PK/4QP1P/1R2R3 b - - 0 1"]
 [SetUp "1"]
-
 { One move is winning. Only one. }
 1... Ra2 { Excellent! The Queen can't move anywhere otherwise it's checkmate in #3. } { [%cal Gf6f3,Re2a2,Re2a6,Re2d1,Re2f1] } *
-
-
-[Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 12"]
-[Site "https://lichess.org/study/VefYFYMP"]
-[UTCDate "2018.01.05"]
-[UTCTime "14:37:33"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/Francesco_Super"]
-[FEN "r3k2r/1pp1n3/p2p2q1/3Ppp2/1PPb2pp/P2P2P1/3NBPKP/2RQ1R2 b - - 0 1"]
-[SetUp "1"]
-
-{ We want to create a strong attack to the King using our rooks and Queen.
-We want to open the position first to start the attack }
-1... hxg3 (1... Kf7 { It is correct but we can make this move later on. Let's open the position up first }) 2. hxg3 { Excellent, now the h-file is dominated by our rook. Now we want to prevent our opponent's rook to move in h1, how can we do this? } { [%cal Gh8h1] } 2... Rh2+ { Well spotted! } (2... Rh6)  (2... Rh3 { It is a decent move but we are not fulfilling our aim in this position... now White can play Rh1 } 3. Rh1) 3. Kxh2 { Now the King is occupying the h file and we can start our attacking moves } 3... Qh5+ { Good! } 4. Kg1 { Now the King is very vulnerable and exposed to attacks! Let's activate our pieces! } 4... Kf7 { Good, we are allowing our rook to move in h8 and threaten checkmate } 5. Nf3 { The only possible move to defend h2. Now let's continue with our attacking plan. } { [%cal Gf3h2] } 5... Rh8 { Well spotted. Now we are threatening checkmate in h1!!
-Black still has a chance to defend checkmate... } 6. Nh4 { We want to get rid of that knight! } 6... Ng6 { Well spotted! } 7. Qa4 { The Queen is threatening a powerful check in d7, what is the best move to prevent it? } { [%cal Ga4d7] } 7... c6 { Correct, this was the best move because White can't take that pawn otherwise it's mate in 4. Now White has only one move available } { [%cal Rd5c6] } (7... Ke7 { It's an inaccuracy because the knight can check our King which means that our Queen will be forced to move out of the h-file } { [%cal Gh4g6,Yh5g6] }) 8. Qa5 { The Queen is threatening check once again... and we have to prevent it... once again } { [%cal Ga5c7] } 8... b6 { It's a forced checkmate sequence now... } 9. Qxb6 { The only move for White to increase the make the checkmate sequence longer } (9. Qxa6) 9... Bxb6 { Congratulations! Now we are definetly winning the game! } *
-
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 13"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -232,10 +187,24 @@ Black still has a chance to defend checkmate... } 6. Nh4 { We want to get rid of
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "5rk1/1b1q2p1/p7/4P1B1/1p1N1p1Q/1P6/P3K2R/2r5 b - - 0 1"]
 [SetUp "1"]
-
 { It's a forced mate sequence for Black, and the first move can look a bit surprising to most players :) Can you spot it? }
 1... Bf3+ { Very well spotted! } (1... Qxd4 { Blunder! It's a draw! }) 2. Kxf3 { Now check the King! } 2... Qd5+ 3. Kg4 Rg1+ 4. Kh3 Qxd4 5. Re2 Qd5 6. Bxf4 Qh1+ 7. Rh2 Qf3+ 8. Bg3 Qf1+ 9. Rg2 Qxg2+ 10. Kg4 Qf3+ 11. Kg5 Qf5# *
 
+[Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 12"]
+[Site "https://lichess.org/study/VefYFYMP"]
+[UTCDate "2018.01.05"]
+[UTCTime "14:37:33"]
+[Variant "Standard"]
+[ECO "?"]
+[Opening "?"]
+[Result "*"]
+[Annotator "https://lichess.org/@/Francesco_Super"]
+[FEN "r3k2r/1pp1n3/p2p2q1/3Ppp2/1PPb2pp/P2P2P1/3NBPKP/2RQ1R2 b - - 0 1"]
+[SetUp "1"]
+{ We want to create a strong attack to the King using our rooks and Queen.
+We want to open the position first to start the attack }
+1... hxg3 (1... Kf7 { It is correct but we can make this move later on. Let's open the position up first }) 2. hxg3 { Excellent, now the h-file is dominated by our rook. Now we want to prevent our opponent's rook to move in h1, how can we do this? } { [%cal Gh8h1] } 2... Rh2+ { Well spotted! } (2... Rh6)  (2... Rh3 { It is a decent move but we are not fulfilling our aim in this position... now White can play Rh1 } 3. Rh1) 3. Kxh2 { Now the King is occupying the h file and we can start our attacking moves } 3... Qh5+ { Good! } 4. Kg1 { Now the King is very vulnerable and exposed to attacks! Let's activate our pieces! } 4... Kf7 { Good, we are allowing our rook to move in h8 and threaten checkmate } 5. Nf3 { The only possible move to defend h2. Now let's continue with our attacking plan. } { [%cal Gf3h2] } 5... Rh8 { Well spotted. Now we are threatening checkmate in h1!!
+Black still has a chance to defend checkmate... } 6. Nh4 { We want to get rid of that knight! } 6... Ng6 { Well spotted! } 7. Qa4 { The Queen is threatening a powerful check in d7, what is the best move to prevent it? } { [%cal Ga4d7] } 7... c6 { Correct, this was the best move because White can't take that pawn otherwise it's mate in 4. Now White has only one move available } { [%cal Rd5c6] } (7... Ke7 { It's an inaccuracy because the knight can check our King which means that our Queen will be forced to move out of the h-file } { [%cal Gh4g6,Yh5g6] }) 8. Qa5 { The Queen is threatening check once again... and we have to prevent it... once again } { [%cal Ga5c7] } 8... b6 { It's a forced checkmate sequence now... } 9. Qxb6 { The only move for White to increase the make the checkmate sequence longer } (9. Qxa6) 9... Bxb6 { Congratulations! Now we are definetly winning the game! } *
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 14"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -248,10 +217,8 @@ Black still has a chance to defend checkmate... } 6. Nh4 { We want to get rid of
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "8/1p3k2/8/p2qp1QP/P1B1b3/1P3r2/2P5/1K6 b - - 0 1"]
 [SetUp "1"]
-
 { This looks lost for Black since the light-squared bishop is pinning our Queen, but instead, we are winning! }
 1... Rxb3+ { Excellent, well spotted!! Our rook can't get taken because our bishop is pinning the c2 pawn } 2. Ka2 { Well done! Now it gets easy... } 2... Qxc4 { Great! You've completed the puzzle! } *
-
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 15"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -264,10 +231,8 @@ Black still has a chance to defend checkmate... } 6. Nh4 { We want to get rid of
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "1rr3k1/p3ppbp/3pbnp1/7P/qP1BP1P1/5P2/1PPQ4/1NKR1B1R b Kq - 0 1"]
 [SetUp "1"]
-
 { We can make a winning move here!! Look at the position of our rook and of our Queen first to find out the possible threats to the opponent's King. How can we win something here? }
 1... Bh6 { Very well spotted!! The Queen is pinned and can't take the bishop otherwise it's checkmate in #1!! :) } 2. Bd3 { Easy... } 2... Bxd2+ { Congrats! You completed this puzzle! } *
-
 
 [Event "💎(2nd part) Game puzzles with interactive lessons!💎: Puzzle 16"]
 [Site "https://lichess.org/study/VefYFYMP"]
@@ -280,7 +245,6 @@ Black still has a chance to defend checkmate... } 6. Nh4 { We want to get rid of
 [Annotator "https://lichess.org/@/Francesco_Super"]
 [FEN "2rq2k1/1p1npp1p/p2p2p1/3P4/bP2PP2/r2BB2P/P2R1QPK/5R2 b - - 0 1"]
 [SetUp "1"]
-
 { The bishop in d3 is a big weakness, we have to put pressure on it }
 1... Rcc3 { Great! Now we have two attackers and the bishop only has one defender } { [%csl Gc3,Ga3] } 2. Qe2 { This defends the bishop.
 Let's attack it with another piece! } 2... Bb5 { Excellent, well done! Now White is forced to make another defensive move } { [%cal Gb5d3,Gc3d3,Ga3d3] } 3. Rfd1 { Now let's put our Queen in a good position } 3... Qc7 { Good move! Now the light-squared bishop has to move or it will get taken } { [%csl Gc7,Gc3] } 4. Bxb5 (4. Bd4) 4... Rxe3 { Excellent! We are attacking the Queen and the bishop at the same time } (4... axb5 { Big blunder, now White can play Bd4 restricting the rook to c4 } 5. Bd4 Rc4) 5. Qc4 { White is forcing the trade of Queens } 5... Qxc4 6. Bxc4 Rxe4 { Congrats, you've completed the puzzle! } *

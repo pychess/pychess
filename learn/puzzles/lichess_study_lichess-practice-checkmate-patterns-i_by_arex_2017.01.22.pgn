@@ -10,11 +10,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "6k1/4Rppp/8/8/8/8/5PPP/6K1 w - - 0 1"]
 [SetUp "1"]
-
 { A Back-Rank Mate (also known as Corridor Mate) is a checkmate delivered by a rook or queen along the back rank in which the mated king is unable to move up the board because the king is blocked by friendly pieces (usually pawns) on the second rank. }
  *
-
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns I: Back-Rank Mate #2"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -27,10 +24,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2r1r1k1/5ppp/8/8/Q7/8/5PPP/4R1K1 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Back-Rank Mate #3"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -43,11 +37,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "6k1/3qb1pp/4p3/ppp1P3/8/2PP1Q2/PP4PP/5RK1 w - - 0 1"]
 [SetUp "1"]
-
 { From Zsuzsa Markhot - Sanja Arslanagic, 1997. }
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns I: Hook Mate #1"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -60,11 +51,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "R7/4kp2/5N2/4P3/8/8/8/6K1 w - - 0 1"]
 [SetUp "1"]
-
 { The Hook Mate involves the use of a white rook, knight, and pawn along with one black pawn to limit the black king's escape. The rook is protected by the knight and the knight is protected by the pawn. }
  *
-
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Hook Mate #2"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -77,11 +65,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5r1b/2R1R3/P4r2/2p2Nkp/2b3pN/6P1/4PP2/6K1 w - - 0 1"]
 [SetUp "1"]
-
 { From Vassily Ivanchuk - Levon Aronian, 2013. }
  *
-
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Hook Mate #3"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -94,11 +79,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2b1Q3/1kp5/p1Nb4/3P4/1P5p/p6P/K3R1P1/5q2 w - - 0 1"]
 [SetUp "1"]
-
 { From Ian Nepomniachtchi - Ivan Salgado Lopez, 2008. }
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns I: Anastasia's Mate #1"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -111,11 +93,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5r2/1b2Nppk/8/2R5/8/8/5PPP/6K1 w - - 0 1"]
 [SetUp "1"]
-
 { In Anastasia's Mate, a knight and rook team up to trap the opposing king between the side of the board on one side and a friendly piece on the other. This checkmate got its name from the novel "Anastasia und das Schachspiel" by Johann Jakob Wilhelm Heinse. }
  *
-
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns I: Anastasia's Mate #2"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -128,10 +107,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5r1k/1b2Nppp/8/2R5/4Q3/8/5PPP/6K1 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Anastasia's Mate #3"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -144,10 +120,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5rk1/1b3ppp/8/2RN4/8/8/2Q2PPP/6K1 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Anastasia's Mate #4"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -160,11 +133,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "1r5k/6pp/2pr4/P1Q3bq/1P2Bn2/2P5/5PPP/R3NRK1 b - - 0 1"]
 [SetUp "1"]
-
 { From Irina Andrenko - Olga Kalinina, 2007. }
  *
-
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Blind Swine Mate #1"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -177,11 +147,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5rk1/1R2R1pp/8/8/8/8/8/1K6 w - - 0 1"]
 [SetUp "1"]
-
 { The name of this pattern is attributed to Polish master Dawid Janowski referring to coupled rooks on a player's 7th rank as swine. For this type of mate, the rooks on white's 7th rank can start out on any two of the files from a to e, and although black pawns are commonly present, they are not necessary to effect the mate. }
  *
-
-
 [Termination "mate in 6"]
 [Event "Lichess Practice: Checkmate Patterns I: Blind Swine Mate #2"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -194,11 +161,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r4rk1/2R5/1n2N1pp/2Rp4/p2P4/P3P2P/qP3PPK/8 w - - 0 1"]
 [SetUp "1"]
-
 { From Rudolf Swiderski - Aron Nimzowitsch, 1905. }
  *
-
-
 [Termination "mate in 5"]
 [Event "Lichess Practice: Checkmate Patterns I: Blind Swine Mate #3"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -211,11 +175,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5rk1/1R1R1p1p/4N1p1/p7/5p2/1P4P1/r2nP1KP/8 w - - 0 1"]
 [SetUp "1"]
-
 { From Vassily Ivanchuk - Levon Aronian, 2006. }
  *
-
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns I: Smothered Mate #1"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -228,11 +189,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "6rk/6pp/8/6N1/8/8/8/7K w - - 0 1"]
 [SetUp "1"]
-
 { Smothered Mate occurs when a knight checkmates a king that is smothered (surrounded) by his friendly pieces and he has nowhere to move nor is there any way to capture the knight. It is also known as "Philidor's Legacy" after François-André Danican Philidor, though its documentation predates Philidor by several hundred years. }
  *
-
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns I: Smothered Mate #2"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -245,10 +203,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "6rk/6pp/6q1/6N1/8/7Q/6PP/6K1 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns I: Smothered Mate #3"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -261,11 +216,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3r3k/1p1b1Qbp/1n2B1p1/p5N1/Pq6/8/1P4PP/R6K w - - 0 1"]
 [SetUp "1"]
-
 { From Alexander Grischuk - Ruslan Ponomariov, 2000. }
  *
-
-
 [Termination "mate in 6"]
 [Event "Lichess Practice: Checkmate Patterns I: Smothered Mate #4"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -278,6 +230,5 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r1k4r/ppp1bq1p/2n1N3/6B1/3p2Q1/8/PPP2PPP/R5K1 w - - 0 1"]
 [SetUp "1"]
-
 { From Paul Morphy - Schrufer, 1859. }
  *

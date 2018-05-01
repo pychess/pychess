@@ -10,13 +10,9 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "rnbq1rk1/pppn1ppp/4p3/3pP3/1b1P4/2NB1N2/PPP2PPP/R1BQK2R w KQq - 0 1"]
 [SetUp "1"]
-
 { The Greek Gift sacrifice is a common tactical theme, where one side sacrifices their bishop by capturing the rook pawn of a castled king position (white playing Bxh7+ or black playing Bxh2+) usually in order to checkmate the opponent or gain significant material advantage.
-
 Play the Greek Gift sacrifice and maintain a winning position for 4 moves to complete this exercise. }
 1. Bxh7+ (18. Bxh7+) 1... Kxh7 { Ng5 and Qh5 are very common follow-up moves to a Greek Gift sacrifice. } { [%cal Gf3g5,Gd1h5] } (20... Kf8) 2. Ng5+ Kg8 (2... Qxg5 3. Bxg5 Rh8 4. Qh5+ Kg8 5. Qg4 c5) 3. Qh5 Qxg5 4. Bxg5 *
-
-
 [Termination "mate in 7"]
 [Event "Lichess Practice: Greek Gift: Greek Gift Challenge #1"]
 [Site "https://lichess.org/study/s5pLU7Of"]
@@ -29,11 +25,8 @@ Play the Greek Gift sacrifice and maintain a winning position for 4 moves to com
 [Annotator "https://lichess.org/@/arex"]
 [FEN "rnb2rk1/pp1nqppp/4p3/3pP3/3p3P/2NB3N/PPP2PP1/R2QK2R w KQ - 0 10"]
 [SetUp "1"]
-
 { From Efim Bogoljubov - NN, 1951. }
 10. Bxh7+ Kh8 11. Qh5 Qxh4 12. Qxh4 Nf6 13. Bd3+ Kg8 14. exf6 Re8 15. Qh7+ Kf8 16. Qxg7# *
-
-
 [Termination "+260cp in 6"]
 [Event "Lichess Practice: Greek Gift: Greek Gift Challenge #2"]
 [Site "https://lichess.org/study/s5pLU7Of"]
@@ -46,11 +39,8 @@ Play the Greek Gift sacrifice and maintain a winning position for 4 moves to com
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r3r1k1/1b2qppp/p7/1p1Pb3/1P6/P2B4/1B2Q1PP/3R1RK1 w - - 0 21"]
 [SetUp "1"]
-
 { Maintain a winning position for 6 moves to complete this exercise. From Carl Schlechter - Geza Maroczy, 1907. }
  *
-
-
 [Termination "+340cp in 6"]
 [Event "Lichess Practice: Greek Gift: Greek Gift Challenge #3"]
 [Site "https://lichess.org/study/s5pLU7Of"]
@@ -63,11 +53,8 @@ Play the Greek Gift sacrifice and maintain a winning position for 4 moves to com
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r2qrbk1/5ppp/pn1p4/np2P1P1/3p4/5N2/PPB2PP1/R1BQR1K1 w - - 1 20"]
 [SetUp "1"]
-
 { Maintain a winning position for 6 moves to complete this exercise. From Boris Spassky - Efim Geller, 1965. }
  *
-
-
 [Termination "+290cp in 5"]
 [Event "Lichess Practice: Greek Gift: Greek Gift Challenge #4"]
 [Site "https://lichess.org/study/s5pLU7Of"]
@@ -80,11 +67,8 @@ Play the Greek Gift sacrifice and maintain a winning position for 4 moves to com
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3r1rk1/bpq2ppp/p1b1p3/2P5/1P2B3/P4Q2/1B3PPP/2R2RK1 w - - 3 18"]
 [SetUp "1"]
-
 { Maintain a winning position for 6 moves to complete this exercise. From Anthony Miles - Walter Shawn Browne, 1982. }
 18. Bxh7+ Kxh7 19. Qh5+ Kg8 20. Bxg7 f5 21. Qh8+ Kf7 22. Bxf8 Bb8 *
-
-
 [Termination "+400cp in 4"]
 [Event "Lichess Practice: Greek Gift: Defend against the Greek Gift"]
 [Site "https://lichess.org/study/s5pLU7Of"]
@@ -97,6 +81,5 @@ Play the Greek Gift sacrifice and maintain a winning position for 4 moves to com
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r1b2rk1/ppqn1ppB/4p3/2pnP3/1p1P4/5N2/PP1N1PPP/R2Q1RK1 b - - 0 12"]
 [SetUp "1"]
-
 { The Greek Gift sacrifice does not always work. Defend accurately. From Miguel A Quinteros - Yasser Seirawan, 1985. }
 12... Kxh7 13. Ng5+ Kg8 14. Qh5 N5f6 15. exf6 Nxf6 16. Qh4 *

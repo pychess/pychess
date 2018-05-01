@@ -10,11 +10,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/8/1k6/8/4K3/2P5/8 w - - 0 1"]
 [SetUp "1"]
-
 { If the pawn is on the second, third, or fourth rank, there are three key squares – the square two squares in front of the pawn and the squares to the left and right of that square. Reach a key square and win. }
  *
-
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Pawn on the 3rd rank"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -27,11 +24,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4k3/8/8/8/8/1KP5/8/8 w - - 0 1"]
 [SetUp "1"]
-
 { If the pawn is on the second, third, or fourth rank, there are three key squares – the square two squares in front of the pawn and the squares to the left and right of that square. Reach a key square and win. }
  *
-
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Pawn on the 4th rank"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -44,11 +38,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/k7/4K3/2P5/8/8/8 w - - 0 1"]
 [SetUp "1"]
-
 { If the pawn is on the second, third, or fourth rank, there are three key squares – the square two squares in front of the pawn and the squares to the left and right of that square. Reach a key square and win. }
  *
-
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Pawn on the 5th rank"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -61,11 +52,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3k4/8/8/1KP5/8/8/8/8 w - - 0 1"]
 [SetUp "1"]
-
 { If the pawn is on the fifth or sixth rank, there are six key squares: the square in front of the pawn and the squares to the left and right, as well as the square two squares in front of the pawn, and the squares to the left and right of it. Reach a key square and win. }
  *
-
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Pawn on the 6th rank"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -78,11 +66,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2k5/8/1KP5/8/8/8/8/8 w - - 0 1"]
 [SetUp "1"]
-
 { If the pawn is on the fifth or sixth rank, there are six key squares: the square in front of the pawn and the squares to the left and right, as well as the square two squares in front of the pawn, and the squares to the left and right of it. Reach a key square and win. }
  *
-
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Knight pawn on the 6th exception #1"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -95,11 +80,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "k7/2K5/8/1P6/8/8/8/8 w - - 0 1"]
 [SetUp "1"]
-
 { There is an exception to the key squares rule when a knight pawn is on its sixth rank, and the defending king is in the corner. Avoid the stalemate trick and win. }
 1. Kc6 Ka7 2. Kc7 Ka8 3. Kb6 Kb8 4. Ka6 Kc7 5. Ka7 Kd6 6. b6 Kc5 7. b7 Kc4 8. b8=Q Kd5 *
-
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Knight pawn on the 6th exception #2"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -112,10 +94,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "6k1/8/6K1/6P1/8/8/8/8 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Pawn on the 7th rank"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -128,11 +107,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/1kP1K3/8/8/8/8/8/8 w - - 0 1"]
 [SetUp "1"]
-
 { When the pawn is on the seventh rank, the key squares are the squares on the seventh and eighth rank that touch the pawn's square. Reach a key square and win. }
  *
-
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Rook pawn #1"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -145,11 +121,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/4k3/6K1/7P/8/8/8/8 w - - 0 1"]
 [SetUp "1"]
-
 { An advanced rook pawn generally has two key squares: the two squares on the adjacent file that touch the promotion square. Reach a key square and win. }
  *
-
-
 [Termination "Draw in 10"]
 [Event "Lichess Practice: Key Squares: Rook pawn #2"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -162,11 +135,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/8/8/pk6/8/3K4/8 w - - 0 1"]
 [SetUp "1"]
-
 { An advanced rook pawn generally has two key squares: the two squares on the adjacent file that touch the promotion square. Reach a key square and win. Prevent black from reaching a key square to draw the game. }
  *
-
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Any key square by any route"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -179,6 +149,5 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5k2/8/8/8/8/2P5/8/3K4 w - - 0 1"]
 [SetUp "1"]
-
 { With a king and pawn versus a lone king, it is important to get the attacking king to any key square and the path to a key square is not always direct. Reach a key square and win. }
  *

@@ -10,11 +10,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2q3k1/8/8/5N2/6P1/7K/8/8 w - - 0 1"]
 [SetUp "1"]
-
 { A fork is a tactic whereby a single piece makes two or more direct attacks simultaneously. Most commonly two pieces are threatened, which is also sometimes called a double attack. The attacking piece is called the forking piece; the pieces attacked are said to be forked. }
 1... Nxg5 *
-
-
 [Termination "+300cp in 2"]
 [Event "Lichess Practice: The Fork: Knight Fork #2"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -27,11 +24,8 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "6k1/5r1p/p2N4/nppP2q1/2P5/1P2N3/PQ5P/7K w - - 0 1"]
 [SetUp "1"]
-
 { From Tigran Vartanovich Petrosian - Boris Spassky, 1966. }
  *
-
-
 [Termination "+500cp in 2"]
 [Event "Lichess Practice: The Fork: Pawn Fork  #1"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -44,10 +38,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7k/8/8/4b1n1/8/8/5PPP/5R1K w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Termination "equalize in 2"]
 [Event "Lichess Practice: The Fork: Pawn Fork #2"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -60,10 +51,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r1bqkb1r/pppp1ppp/2n5/4p3/2B1N3/5N2/PPPP1PPP/R1BQK2R b KQkq - 0 2"]
 [SetUp "1"]
-
  *
-
-
 [Termination "+100cp in 2"]
 [Event "Lichess Practice: The Fork: Rook Fork #1"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -76,10 +64,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/b5k1/8/8/8/1K6/3R4 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Termination "+100cp in 2"]
 [Event "Lichess Practice: The Fork: Bishop Fork #1"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -92,10 +77,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5k2/8/8/8/8/r6P/5B2/6K1 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Termination "+200cp in 2"]
 [Event "Lichess Practice: The Fork: Queen Fork #1"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -108,10 +90,7 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4k2r/2n2p1p/6p1/3n4/5Q2/8/5PPP/6K1 w - - 0 1"]
 [SetUp "1"]
-
  *
-
-
 [Termination "+400cp in 3"]
 [Event "Lichess Practice: The Fork: Double Attack #1"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -124,13 +103,9 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r3k3/7p/6p1/5p2/5r2/2NP4/PPP2PPP/R5K1 w - - 0 1"]
 [SetUp "1"]
-
 { A fork is often also called a double attack, because it usually attacks two targets. A fork can of course attack more than two targets, and the targets don't have to be pieces. Direct mating threats, or even an implied threat can also be excellent targets for a fork.
-
 In this position, you can fork an undefended piece and a second implied threat. }
  *
-
-
 [Termination "+800cp in 2"]
 [Event "Lichess Practice: The Fork: Double Attack #2"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -143,13 +118,9 @@ In this position, you can fork an undefended piece and a second implied threat. 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3r1k2/pp1n2pb/q1p1Qp2/2P2r2/3Pp1Np/P1P1B2P/6P1/1R1R2K1 w - - 0 1"]
 [SetUp "1"]
-
 { In this position, you can fork an undefended piece and a direct mate threat.
-
 From Hans-Dieter Mueller vs Arlette van Weersel, 2001. }
  *
-
-
 [Termination "-500cp in 3"]
 [Event "Lichess Practice: The Fork: Fork Challenge #1 N"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -162,11 +133,8 @@ From Hans-Dieter Mueller vs Arlette van Weersel, 2001. }
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/5pk1/8/4p3/pp1qPn2/5P2/PP2B3/2Q2K2 b - - 0 1"]
 [SetUp "1"]
-
 { From Alexander Kazimirovich Tolush - Vladimir Simagin, 1952. }
  *
-
-
 [Termination "+400cp in 4"]
 [Event "Lichess Practice: The Fork: Fork Challenge #2 N"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -179,11 +147,8 @@ From Hans-Dieter Mueller vs Arlette van Weersel, 2001. }
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4k3/R4br1/8/p3P3/4N3/5K2/8/8 w - - 0 1"]
 [SetUp "1"]
-
 { From Magnus Carlsen - Nigel Short, 2004. }
  *
-
-
 [Termination "-300cp in 4"]
 [Event "Lichess Practice: The Fork: Fork Challenge #3 N"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -196,11 +161,8 @@ From Hans-Dieter Mueller vs Arlette van Weersel, 2001. }
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r5k1/ppp2p1p/6pB/4n2n/3bPp1q/2NB3P/PPP3PK/R2Q1R2 b - - 1 1"]
 [SetUp "1"]
-
 { From Harris - Sunil Weeramantry, 1972. }
  *
-
-
 [Termination "+400cp in 3"]
 [Event "Lichess Practice: The Fork: Fork Challenge #4 Q"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -213,11 +175,8 @@ From Hans-Dieter Mueller vs Arlette van Weersel, 2001. }
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/1q6/p3p1k1/2P1Q2p/P3P2P/2P5/4r1PK/8 w - - 0 1"]
 [SetUp "1"]
-
 { From Peter Leko - Vladimir Kramnik, 2007. }
  *
-
-
 [Termination "-700cp in 3"]
 [Event "Lichess Practice: The Fork: Fork Challenge #5 Q"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -230,11 +189,8 @@ From Hans-Dieter Mueller vs Arlette van Weersel, 2001. }
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5Bk1/1b1r2p1/q4p1p/2Q5/2P5/6PP/P4P2/4R1K1 b - - 0 31"]
 [SetUp "1"]
-
 { Can you make multiple mate threats with one move? A missed tactic from Jon Ludvig Hammer - Viswanathan Anand, 2010. }
 31... Qe6 32. Qb4 Qxh3 33. Qxb7 Rxb7 34. Bd6 *
-
-
 [Termination "-30cp in 3"]
 [Event "Lichess Practice: The Fork: Fork Challenge #6 P"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -247,11 +203,8 @@ From Hans-Dieter Mueller vs Arlette van Weersel, 2001. }
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r1bq1rk1/3np1bp/p2p1pp1/1PpP3n/4PP1B/2N2Q2/PP1N2PP/R3KB1R b KQ - 1 1"]
 [SetUp "1"]
-
 { From Viktor Korchnoi - John Nunn, 1988. }
 1... Nxf4 2. Qxf4 g5 3. Qf2 gxh4 *
-
-
 [Termination "+20cp in 3"]
 [Event "Lichess Practice: The Fork: Fork Challenge #7 P"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -264,11 +217,8 @@ From Hans-Dieter Mueller vs Arlette van Weersel, 2001. }
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4b1rr/4k1p1/4pp1n/pp1pP1RP/2pP1R2/P1P2B1N/2PK1P2/8 w - - 0 1"]
 [SetUp "1"]
-
 { From Judit Polgar vs Viktor Korchnoi, 2006. }
  *
-
-
 [Termination "equalize in 3"]
 [Event "Lichess Practice: The Fork: // Fork Challenge #8 P"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -281,11 +231,8 @@ From Hans-Dieter Mueller vs Arlette van Weersel, 2001. }
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4r1k1/1pp1npbp/p2qnBp1/3pN1P1/3P4/2P1N1Q1/PP3P1P/R6K b - - 0 1"]
 [SetUp "1"]
-
 { From Luke McShane - Magnus Carlsen, 2012. }
 1... Nxg5 (1. Bxc6+)  (1. Nxc6) 2. Bxg5 f6 *
-
-
 [Termination "+300cp in 4"]
 [Event "Lichess Practice: The Fork: // Fork Challenge #9 BN"]
 [Site "https://lichess.org/study/Qj281y1p"]
@@ -298,6 +245,5 @@ From Hans-Dieter Mueller vs Arlette van Weersel, 2001. }
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r3kbnr/p3pppp/2pp4/qB2N3/4P3/2N5/PPP2PPP/R1BbK2R w KQkq - 0 1"]
 [SetUp "1"]
-
 { From Raymond Keene - E Fielder, 1964. }
 1. Bxc6+ (1... Nxg5) 1... Kd8 2. Nxf7+ Kc7 3. Bxa8 Bh5 (3... Bxc2 4. Nxh8) 4. Nxh8 *
