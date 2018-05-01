@@ -109,7 +109,7 @@ class Sidepanel():
 
 def start_puzzle_from(filename, index=None):
     if filename.lower().endswith(".pgn"):
-        if filename.startswith("lichess_study"):
+        if filename.startswith("lichess_"):
             chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename), encoding="utf-8"))
         else:
             chessfile = PGNFile(protoopen(addDataPrefix("learn/puzzles/%s" % filename)))

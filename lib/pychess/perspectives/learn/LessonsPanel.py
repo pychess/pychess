@@ -92,7 +92,7 @@ class Sidepanel():
 
 
 def start_lesson_from(filename, index=None):
-    if filename.startswith("lichess_study"):
+    if filename.startswith("lichess_"):
         chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename), encoding="utf-8"))
     else:
         chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
