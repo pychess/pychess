@@ -10,8 +10,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "6k1/5pp1/4b1n1/8/8/3BR3/5PPP/6K1 w - - 0 1"]
 [SetUp "1"]
+
 { A piece is Overloaded (also known as "overworked") if it has more than one responsibility, e.g. defending a piece, defending a square, blocking a check, and blockading a piece. In this example, the f7 pawn has at least two responsibilities; it is protecting the bishop on e6, but it is also protecting the knight on g6. Can you exploit this double responsibility? }
  *
+
+
 [Termination "+50cp in 1"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #2"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -24,8 +27,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2r1rbk1/5pp1/3P1n2/8/8/3Q3P/2B2PPK/8 w - - 0 1"]
 [SetUp "1"]
+
 { In this example, the f6 knight has two responsibilities. One of those responsibilities is more important than the other. Can you exploit the situation? }
  *
+
+
 [Termination "+1000cp in 4"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #3"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -38,8 +44,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2b5/7p/3k2pP/1p1p1pP1/1P1P1K2/8/5P2/3B4 w - - 0 1"]
 [SetUp "1"]
+
 { In this example, the h7 pawn has two responsibilities. Can you exploit the situation? From Alexander Grischuk - Evgeny Alekseev, 2008. https://lichess.org/yOyudklB#104 }
  *
+
+
 [Termination "+500cp in 1"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #4"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -52,8 +61,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3q3k/pp2b1pp/8/2P5/1P2RBQ1/2P5/P4rPp/7K w - - 2 29"]
 [SetUp "1"]
+
 { From Jose Raul Capablanca - Rudolf Spielmann, 1911. https://lichess.org/QN4PcsKD#56 }
  *
+
+
 [Termination "+400cp in 3"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #5"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -66,8 +78,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/1Q1rkpp1/p3p3/3nB1r1/8/3q3P/PP3R2/K1R5 w - - 2 34"]
 [SetUp "1"]
+
 { From Shakhriyar Mamedyarov - Peter Svidler, 2009. https://lichess.org/ctDrrcM6#66 }
  *
+
+
 [Termination "+600cp in 4"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #6"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -80,8 +95,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3r2k1/pb1r1pp1/1pn2q1p/3B4/6Q1/P4NP1/1P3PP1/3RR1K1 w - - 7 23"]
 [SetUp "1"]
+
 { From Garry Kasparov - Anatoly Karpov, 1985. https://lichess.org/iK5KRqtZ#44 }
  *
+
+
 [Termination "+400cp in 4"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #7"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -94,8 +112,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2Q5/1p3p1k/p2prPq1/8/7p/8/PP3RP1/6K1 w - - 0 1"]
 [SetUp "1"]
+
 { From Boris Spassky - Bent Larsen, 1969. https://lichess.org/YgaPGPCz#130 }
  *
+
+
 [Termination "+250cp in 3"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #8"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -108,8 +129,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5k1r/p4p2/3Np2p/3bP3/8/3RBPb1/1r4P1/2R3K1 w - - 0 1"]
 [SetUp "1"]
+
 { From Yury Shulman - Loek van Wely, 2009. https://lichess.org/Jgay9DvA#54 }
  *
+
+
 [Termination "-300cp in 3"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #9"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -122,8 +146,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3r2k1/1pp4p/p1n1q1p1/2Q5/1P2B3/P3P1Pb/3N1R1P/6K1 b - - 1 1"]
 [SetUp "1"]
+
 { From Viktor Korchnoi - Irina Krush, 2007. https://lichess.org/rL6AKS42/black#53 }
  *
+
+
 [Termination "+640cp in 4"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #10"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -136,7 +163,10 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r7/2k1Pp1p/p1n2p2/P1b1r3/2p5/2P3P1/5P1P/1R1Q2K1 w - - 2 29"]
 [SetUp "1"]
+
 29. Rb7+ Kxb7 30. Qd7+ Kb8 31. e8=Q+ Rxe8 32. Qxe8+ Kb7 *
+
+
 [White "Magnus Carlsen"]
 [Black "Alexander Grischuk"]
 [Date "2009.03.04"]
@@ -150,4 +180,5 @@
 [ECO "B84"]
 [Opening "Sicilian Defense: Scheveningen Variation, Classical Variation"]
 [Annotator "https://lichess.org/@/arex"]
+
 1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Be2 e6 7. O-O Be7 8. a4 Nc6 9. Be3 O-O 10. f4 Qc7 11. Kh1 Re8 12. Bf3 Bf8 13. Qd2 Rb8 14. Qf2 e5 15. fxe5 dxe5 16. Nb3 Nb4 17. Ba7 Ra8 18. Bb6 Qe7 19. Rad1 Be6 20. Nd5 Bxd5 21. exd5 e4 22. d6 Qe6 23. Nc5 Qf5 24. Be2 Qxf2 25. Rxf2 Nbd5 26. a5 Nxb6 27. axb6 Rab8 28. Rxf6 gxf6 29. Nd7 f5 30. c4 a5 31. c5 Bg7 32. Nxb8 Rxb8 33. Ba6 Bf6 (33... bxa6 34. c6) 34. Bxb7 Rxb7 35. c6 Rxb6 36. Rc1 Bxb2 37. d7 { 1-0 Black resigns. } 1-0

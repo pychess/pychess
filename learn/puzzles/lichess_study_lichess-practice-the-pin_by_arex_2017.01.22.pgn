@@ -10,8 +10,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7k/8/8/4n3/4P3/8/8/6BK w - - 0 1"]
 [SetUp "1"]
+
 { An absolute pin is when a piece is pinned to its king and can't move without exposing its king to a check from an opposing piece on the same line or diagonal. Pin the knight to win it. }
  *
+
+
 [Termination "+200cp in 2"]
 [Event "Lichess Practice: The Pin: Set up an absolute pin #2"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -24,8 +27,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5k2/p1p2pp1/7p/2r5/8/1P3P2/PBP3PP/1K6 w - - 0 1"]
 [SetUp "1"]
+
 { Can you set up an immediate absolute pin? }
  *
+
+
 [Termination "+700cp in 1"]
 [Event "Lichess Practice: The Pin: Set up a relative pin #1"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -38,8 +44,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "1k6/ppp3q1/8/4r3/8/8/3B1PPP/R4QK1 w - - 0 1"]
 [SetUp "1"]
+
 { A relative pin is one where the piece shielded by the pinned piece is a piece other than the king, but it's typically more valuable than the pinned piece. Moving such a pinned piece is legal but may not be prudent, as the shielded piece would then be vulnerable to capture. Do you see the immediate relative pin? }
  *
+
+
 [Termination "+500cp in 2"]
 [Event "Lichess Practice: The Pin: Exploit the pin #1"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -52,8 +61,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4k3/6p1/5p1p/4n3/8/7P/5PP1/4R1K1 w - - 0 1"]
 [SetUp "1"]
+
 { Use your knowledge of pins to win a piece. }
  *
+
+
 [Termination "+300cp in 1"]
 [Event "Lichess Practice: The Pin: Exploit the pin #2"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -66,8 +78,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r4rk1/pp1p1ppp/1qp2n2/8/4P3/1P1P2Q1/PBP2PPP/R4RK1 w - - 0 1"]
 [SetUp "1"]
+
 { Use your knowledge of pins to win a piece. }
  *
+
+
 [Termination "+70cp in 1"]
 [Event "Lichess Practice: The Pin: Exploit the pin #3"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -80,8 +95,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4r1r1/2p5/1p1kn3/p1p1R1p1/P6p/5N1P/1PP1R1PK/8 w - - 0 1"]
 [SetUp "1"]
+
 { Use your knowledge of pins to win a pawn. From Magnus Carlsen - Arkadij Naiditsch, 2009. }
  *
+
+
 [Termination "mate in 2"]
 [Event "Lichess Practice: The Pin: Exploit the pin #4"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -94,8 +112,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "1r1n1rk1/ppq2p2/2b2bp1/2pB3p/2P4P/4P3/PBQ2PP1/1R3RK1 w - - 0 1"]
 [SetUp "1"]
+
 { A missed tactic in Laszlo Szabo - Samuel Reshevsky, 1953. }
  *
+
+
 [Termination "-800cp in 3"]
 [Event "Lichess Practice: The Pin: Exploit the pin #5"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -108,5 +129,6 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "q5k1/5pp1/8/1pb1P3/2p4p/2P2r1P/1P3PQ1/1N3R1K b - - 0 1"]
 [SetUp "1"]
+
 { Here there are multiple pins ready to be exploited. Win white's queen! From Hampyuk - Anatoly Karpov, 1965. }
  *

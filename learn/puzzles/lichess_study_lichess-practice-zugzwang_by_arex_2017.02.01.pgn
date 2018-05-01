@@ -10,9 +10,13 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "kbK5/pp6/1P6/8/8/8/8/R7 w - - 0 1"]
 [SetUp "1"]
+
 { The word Zugzwang comes from German and means 'being forced to make a move'. A player is in Zugzwang when it's their turn and any move they can make is a bad move. Can you find the move that will put black in Zugzwang and force mate in 2?
+
 This is a composition by Paul Morphy, originally published in the New York Clipper on June 28, 1856. }
 1. Ra6 *
+
+
 [Termination "mate in 3"]
 [Event "Lichess Practice: Zugzwang: Zugzwang #2"]
 [Site "https://lichess.org/study/9cKgYrHb"]
@@ -25,8 +29,11 @@ This is a composition by Paul Morphy, originally published in the New York Clipp
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5rk1/6n1/8/7p/4q1pP/6P1/6RQ/6NK b - - 0 1"]
 [SetUp "1"]
+
 { Here you can use Zugzwang to force checkmate. How cool is that? }
  *
+
+
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Zugzwang: Zugzwang #3"]
 [Site "https://lichess.org/study/9cKgYrHb"]
@@ -39,8 +46,11 @@ This is a composition by Paul Morphy, originally published in the New York Clipp
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/3k4/1p1p4/1P6/2P1K3/8/8 w - - 0 1"]
 [SetUp "1"]
+
 { Use your knowledge of Zugzwang to promote one of your pawns safely. }
  *
+
+
 [Termination "mate in 4"]
 [Event "Lichess Practice: Zugzwang: Zugzwang #4"]
 [Site "https://lichess.org/study/9cKgYrHb"]
@@ -53,5 +63,6 @@ This is a composition by Paul Morphy, originally published in the New York Clipp
 [Annotator "https://lichess.org/@/arex"]
 [FEN "1k1b4/2n5/1K6/4B3/6B1/8/8/8 w - - 0 1"]
 [SetUp "1"]
+
 { From an endgame composition by Goldberg, published in 1931. }
  *

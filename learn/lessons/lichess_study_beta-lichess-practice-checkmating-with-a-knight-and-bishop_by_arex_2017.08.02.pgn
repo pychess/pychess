@@ -9,10 +9,14 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4k3/8/8/8/8/8/8/4KBN1 w - - 0 1"]
 [SetUp "1"]
+
 { The first step is to restrict Black's King to one of the green triangles we see on the board in this position. We will control the long diagonal of the triangle with our Bishop, and we will control the necessary dark squares using our Knight and King.
+
 Move your King closer to the center to read about step 2 in the overall plan. }
 1. Ke2 { [%csl Ga8,Gh1][%cal Ga2g8,Gb1h7,Gg8a8,Gb1h1,Gh7h1,Ga2a8] } 1... Ke7 { When Black's King has been restricted to the first triangle, the second step is to further restrict it to a smaller second triangle (marked in green).
 Move your King closer to the center to read about step 3 in the overall plan. } { [%csl Ga8,Gh1][%cal Ga4e8,Ge8a8,Gd1h5,Gh5h1,Ga4a8,Gd1h1,Be2e3] } 2. Ke3 { [%csl Gh1,Ga8][%cal Ga4a8,Ga4e8,Ge8a8,Gd1h1,Gd1h5,Gh5h1] } 2... Ke6 { When Black's King has been restricted to the second triangle, the third step is to further restrict it to a smaller third triangle (marked in green), in which we will be able to set up the checkmate. } { [%csl Gh1,Ga8][%cal Ga6c8,Ga6a8,Gc8a8,Gf1h3,Gf1h1,Gh3h1,Be3e4] } 3. Ke4 { Now you know the overall plan. In the next chapter we'll see a famous example of what can happen if you don't know this endgame. } { [%csl Ga8,Gh1][%cal Ga6c8,Gc8a8,Ga6a8,Gf1h3,Gh3h1,Gf1h1] } *
+
+
 [White "Anna Ushenina"]
 [WhiteElo "2491"]
 [Black "Olga Girya"]
@@ -28,7 +32,10 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [ECO "D11"]
 [Opening "Slav Defense: Modern"]
 [Annotator "https://lichess.org/@/arex"]
+
 1. d4 d5 2. c4 c6 3. Nf3 Nf6 4. Qb3 dxc4 5. Qxc4 Bf5 6. g3 e6 7. Bg2 Nbd7 8. O-O Be7 9. e3 O-O 10. Rd1 Qc7 11. Nc3 Bg6 12. h3 Rad8 13. Qe2 e5 14. e4 exd4 15. Nxd4 Rfe8 16. Bf4 Qc8 17. Be3 Bb4 18. f3 Qb8 19. Bf2 Bh5 20. Qc2 Bd6 21. Nce2 Bg6 22. a3 h5 23. b4 Ne5 24. Qb3 Nxf3+ 25. Nxf3 Nxe4 26. Nh4 Nxf2 27. Kxf2 Bh7 28. Nf3 Re7 29. Ra2 Rde8 30. Rad2 Bc7 31. Nfd4 Bb6 32. Qf3 Qe5 33. Kg1 a5 34. Kh1 axb4 35. axb4 Qg5 36. h4 Qh6 37. Nf4 Re3 38. Qxh5 Rxg3 39. Qxh6 gxh6 40. Nh5 Rg6 41. Re2 Rxe2 42. Nxe2 Kf8 43. Bh3 Bc7 44. Bf5 Rd6 45. Rxd6 Bxd6 46. Bxh7 Be7 47. Nhf4 Bxh4 48. Bf5 Ke7 49. Nd3 Kd6 50. Nc3 Kc7 51. Kg2 Kb6 52. Kf3 Bf6 53. Ne4 Be7 54. Bc8 Kc7 55. Bg4 Kb6 56. Nec5 Kb5 57. Nxb7 Bxb4 58. Nxb4 Kxb4 59. Nd8 c5 60. Nxf7 c4 61. Ke2 Kc3 62. Kd1 Kb2 63. Nxh6 c3 64. Bf5 Kb3 65. Bc2+ Kb2 66. Nf5 Ka1 67. Ne3 Kb2 68. Nd5 Ka1 69. Ke2 Kb2 70. Kd3 Kc1 71. Ba4 Kb2 72. Nxc3 { White has reached the Knight and Bishop versus lone king endgame. With perfect play, this is mate in 24. } 72... Ka1 73. Nd1 Ka2 74. Bc2 Ka1 75. Kc3 Ka2 76. Bb3+ Ka1 77. Ne3 Kb1 78. Nc2 Kc1 79. Ba2 Kd1 80. Nd4 Ke1 81. Kd3 Kf2 82. Bd5 Kg3 83. Ke3 Kg4 84. Be4 Kg5 85. Kf3 Kf6 86. Kf4 Kg7 87. Kg5 Kf7 88. Kf5 Kg7 89. Bd5 Kh6 90. Ne6 Kh7 91. Kf6 Kg8 92. Nf4+ Kh8 93. Be4 Kg8 94. Nh3 Kh8 95. Ng5 Kg8 96. Nf7 Kf8 97. Bh7 Ke8 98. Bf5 Kf8 99. Nh6 Ke8 100. Nf7 Kf8 101. Ne5 Kg8 102. Ng6 Kh7 103. Be6 Kh6 104. Bg8 Kh5 105. Ne5 Kh4 106. Kf5 Kg3 107. Bc4 Kf2 108. Kf4 Ke1 109. Ke3 Kd1 110. Bd3 Kc1 111. Nc4 Kd1 112. Nb6 Kc1 113. Na4 Kd1 114. Be4 Kc1 115. Bd3 Kd1 116. Nb2+ Kc1 117. Nc4 Kd1 118. Bg6 Kc1 119. Bf5 Kd1 120. Nb6 Kc1 121. Na4 Kd1 122. Nb2+ Kc1 123. Nc4 Kd1 124. Kd3 Kc1 125. Kc3 Kd1 126. Bd3 { Black claimed a draw due to the 50 move rule, 1/2 - 1/2 } 1/2-1/2
+
+
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Restricting the King to the First Triangle"]
 [Site "https://lichess.org/study/ByhlXnmM"]
 [UTCDate "2017.08.05"]
@@ -40,8 +47,11 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4k3/8/8/8/8/8/8/4KBN1 w - - 0 1"]
 [SetUp "1"]
+
 { You will have to use all of your pieces to push Black's king to a corner. Black will first try to stay in the center. Continue the lesson by moving your King towards the center. }
 1. Ke2 Ke7 { Black is also moving towards the center. } { [%cal Be2e3] } 2. Ke3 Ke6 { Occupy the center. } { [%cal Be3e4] } 3. Ke4 Kf6 { White now controls the center. When Black can't stay in the center, they will usually try to move towards the wrong corner (h8 in this case). This looks like a good opportunity to get your Bishop into the game. } { [%cal Bf1c4] } 4. Bc4 Kg6 { Take away the f6 square from Black. } { [%csl Rf6][%cal Be4e5,Re5f6] } 5. Ke5 Kg7 { Take away the g6 square from Black. } { [%csl Rg6][%cal Be5f5,Rf5g6] } 6. Kf5 (6. Bf7 { Giving up your bishop means you won't have enough material to win and the game is now a draw :-( }) 6... Kh6 { Get your Knight in the game. } { [%cal Bg1f3] } 7. Nf3 Kg7 { Move your Knight closer. } { [%cal Bf3e5] } 8. Ne5 Kh7 { In this phase of the endgame, your King belongs on f6 where it controls g7, while leaving both f7 and g6 for your Knight. } { [%csl Rg6,Rf7,Rg7][%cal Bf5f6,Re5f7,Re5g6,Rf6g7] } 9. Kf6 Kh8 { The Knight is the only piece that can force the King out of the wrong corner. Force the Black King out of hiding! } { [%cal Ge5f7] } 10. Nf7+ Kh7 { The Black King only has one square. Pass the move in order to force Kg8! } { [%csl Rh8,Rh6,Gg5,Gg6,Gg7][%cal Rf7h6,Rf7h8,Bc4d5,Gf6g7,Gf6g6,Gf6g5] } 11. Bd5 Kg8 $7 { Take away the h7 square in order to force Kf8 - only move! } { [%cal Bf6g6] } 12. Kg6 { [%csl Rh7,Rg7,Rf7][%cal Rg6f7,Rg6g7,Rg6h7] } 12... Kf8 $7 { Now we can maneuver our Knight safely to the correct position for the first triangle. } { [%cal Bf7e5] } 13. Ne5 Ke7 { [%cal Be5d3] } 14. Nd3 Kd6 { Get your last piece into the perfect square to complete the first triangle! } { [%cal Bd5b3] } 15. Bb3 { Nice work! The King is now restricted to the first triangle. Notice how we control all the red squares. } { [%csl Ra4,Rb4,Rc4,Rc5,Rd5,Re5,Re6,Rf6,Rf7,Rg7,Rg8,Bb3,Bd3,Bg6][%cal Gg8a8,Ga2g8] } *
+
+
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Exercise: Restricting the King to the First Triangle"]
 [Site "https://lichess.org/study/ByhlXnmM"]
 [UTCDate "2017.08.05"]
@@ -53,8 +63,11 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "6k1/5N2/5K2/8/2B5/8/8/8 w - - 20 11"]
 [SetUp "1"]
+
 { In the previous chapter, Black replied to Nf7+ with Kh7. Here, Black replies Kg8 instead. Based on what we have learned so far, what move should White now play? }
 11. Kg6! { Correct! In the previous chapter, after Nf7+ Kh7 we played Bd5 as a waiting move in order to force Kg8. Since Black played Kg8 willingly, we can immediately play Kg6 Kf8 and reroute our Knight to d3. } (11. Bd5? { This move also wins, but is not the move I was looking for. It is not necessary to play a waiting move now that Black volunteerily played Kg8. }) *
+
+
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Restricting the King to the Second Triangle"]
 [Site "https://lichess.org/study/ByhlXnmM"]
 [UTCDate "2017.08.05"]
@@ -66,7 +79,10 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/3k2K1/8/8/1B1N4/8/8 b - - 29 15"]
 [SetUp "1"]
+
 15... Ke7 { Before we can transition our Bishop to the second triangle by playing Ba4, we must further restrict the Black King. Start by taking away the f8 square. } { [%cal Bg6g7] } 16. Kg7 Ke8 { Play a waiting move that will help you to force Black's King back. } { [%cal Bb3c4] } 17. Bc4 Ke7 { Take away the e6 and e8 squares. } { [%cal Bc4f7] } 18. Bf7 { [%csl Re8,Re6][%cal Rf7e8,Rf7e6] } 18... Kd6 { Now invade with your King to take more territory. } { [%cal Bg7f8] } 19. Kf8 Kd7 { Since you can't invade further with your King at the moment, play another waiting move. } { [%cal Bf7b3] } 20. Bb3 Kd6 { Black's area is shrinking. Invade further! } { [%cal Bf8e8] } 21. Ke8 Kc7 { Take the opposition. } { [%cal Be8e7] } 22. Ke7 Kc6 { If you played Ba4 now, the King would escape to d5. Cover that square first. } { [%cal Be7e6] } (22... Kc8 23. Ba4 Kb7) 23. Ke6 Kb5 { You still can't play Ba4 to transition to the second triangle. Take away more territory from the Black King. Avoid putting your King on d5, because that is where you want your Knight to end up. } { [%cal Be6d6] } (23... Kc7?? 24. Ba4 Kb6 25. Kd6 Ka5 26. Bd7 Kb6 27. Nf4 Ka5 28. Nd5 { [%cal Rd5b4] }) 24. Kd6 Ka5 { Ba4 is still not possible. One more King move will solve that problem. } { [%cal Bd6c5] } 25. Kc5 Ka6 { Finally, you can transition the Bishop safely without letting the Black King escape. } { [%cal Bb3a4] } 26. Ba4 Kb7 { The Knight doesn't have to cover b4 at the moment, so this is the perfect time to re-maneuver the Knight into the perfect square for the second triangle. } { [%cal Bd3f4] } 27. Nf4 Kc8 { Get the Knight into the perfect position for the second triangle, covering b6, c7 and e7. } { [%cal Bf4d5] } 28. Nd5 Kd8 { Your King must go back in order to push Black's King further towards the corner, otherwise it will shuffle back and forth on d8 and c7. } { [%cal Bc5d6] } 29. Kd6 Kc8 { Take away the d8 square } { [%cal Bd6e7] } 30. Ke7 Kb7 { Set up the perfect Second Triangle by taking away the a6 square } { [%cal Ba4b5] } 31. Bb5 { Nice work! The King is now restricted to the Second Triangle. Notice how we control all the red squares. } { [%csl Ra6,Rb6,Rc6,Rc7,Rd7,Rd8,Re8,Bb5,Bd5,Be7][%cal Ga4e8,Ge8a8,Ga4a8] } *
+
+
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Exercise: Restricting the King to the Second Triangle"]
 [Site "https://lichess.org/study/ByhlXnmM"]
 [UTCDate "2017.08.06"]
@@ -78,7 +94,10 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/4k1K1/8/8/2B5/3N4/8/8 w - - 34 18"]
 [SetUp "1"]
+
 18. Bf7! { Correct! We're pushing the King back so that we can invade with Kf8. } { [%csl Re8,Re6][%cal Rf7e8,Rf7e6] } 18... Kd6 { And now? } 19. Kf8 { Correct! We invade with our King to further restrict Black. } *
+
+
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Restricting the King to the Third Triangle"]
 [Site "https://lichess.org/study/ByhlXnmM"]
 [UTCDate "2017.08.05"]
@@ -90,7 +109,10 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/1k2K3/8/1B1N4/8/8/8/8 b - - 61 31"]
 [SetUp "1"]
+
 31... Ka7 { Before you can safely transition your Bishop to the third triangle by playing Ba6, you must further restrict the Black King. Restrict the Black King further in a way that does not allow Black to take the opposition. } { [%cal Be7d6] } 32. Kd6 Kb7 { Take the opposition. } { [%cal Bd6d7] } 33. Kd7 Ka7 { Take the opposition. } { [%cal Bd7c7] } 34. Kc7 Ka8 { Transition your Bishop to the diagonal of the third triangle. } { [%cal Bb5a6] } 35. Ba6 Ka7 { Keep the Black King restricted, but don't lose your Bishop. Avoid the stalemate! } { [%cal Ba6c8] } 36. Bc8 Ka8 { Prepare Ba6. } { [%cal Bc7b6] } 37. Kb6 (37. Nc3 Ka7 38. Nb5+ Ka8 39. Bb7#) 37... Kb8 { Put your Bishop on the perfect square for the third triangle. } { [%cal Bc8a6] } 38. Ba6 { Congratulations! Notice how we control all the red squares. } { [%csl Ga6,Gb6,Gd5,Ra7,Rb7,Rc7,Rc8] } *
+
+
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Exercise: Restricting the King to the Third Triangle"]
 [Site "https://lichess.org/study/ByhlXnmM"]
 [UTCDate "2017.08.06"]
@@ -102,7 +124,10 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "k7/2K5/8/1B1N4/8/8/8/8 w - - 68 35"]
 [SetUp "1"]
+
 35. Ba6! { Correct! The position of the Black King allows us to transition our Bishop to the long diagonal of the Third Triangle. } 35... Ka7 36. Bc8 { Preserving the bishop while still restricting the Black King. Well done! } *
+
+
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Delivering Mate"]
 [Site "https://lichess.org/study/ByhlXnmM"]
 [UTCDate "2017.08.05"]
@@ -114,8 +139,11 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "1k6/8/BK6/3N4/8/8/8/8 b - - 75 38"]
 [SetUp "1"]
+
 { When we reach the third triangle, our King and Bishop is restricting the enemy King which frees up our Knight to deliver mate. }
 38... Ka8 { [%cal Bd5f6] } 39. Nf6 Kb8 { [%cal Bf6d7] } 40. Nd7+ Ka8 { [%cal Ba6b7] } 41. Bb7# *
+
+
 [Termination "mate in 3"]
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Exercise: Delivering Mate"]
 [Site "https://lichess.org/study/ByhlXnmM"]
@@ -128,7 +156,10 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "k7/8/BK6/3N4/8/8/8/8 b - - 0 1"]
 [SetUp "1"]
+
 1... Kb8 { In this position, the King is on b8 instead of a8 which means you must checkmate Black slightly differently. Mate in three. } 2. Ne7 Ka8 3. Bb7+ Kb8 4. Nc6# *
+
+
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Exercise: Checkmate the Engine"]
 [Site "https://lichess.org/study/ByhlXnmM"]
 [UTCDate "2017.08.05"]
@@ -140,8 +171,11 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4k3/8/8/8/8/8/8/4KBN1 w - - 0 1"]
 [SetUp "1"]
+
 { This is where the rubber meets the road. Use everything you have learned to win the game. }
  *
+
+
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Exercise: Checkmate the Engine - DSB Edition"]
 [Site "https://lichess.org/study/ByhlXnmM"]
 [UTCDate "2017.08.05"]
@@ -153,8 +187,11 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4k3/8/8/8/8/8/8/4KNB1 w - - 0 1"]
 [SetUp "1"]
+
 { Can you do it with a Dark Squared Bishop? }
  *
+
+
 [Event "(BETA) Lichess Practice: Checkmating with a Knight and Bishop: Exercise: Checkmate the Engine - Rotated Edition"]
 [Site "https://lichess.org/study/ByhlXnmM"]
 [UTCDate "2017.08.05"]
@@ -166,5 +203,6 @@ Move your King closer to the center to read about step 3 in the overall plan. } 
 [Annotator "https://lichess.org/@/arex"]
 [FEN "1NBK4/8/8/8/8/8/8/3k4 w - - 0 1"]
 [SetUp "1"]
+
 { A change in perspective. Can you checkmate Black on h1? }
  *

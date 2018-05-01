@@ -10,8 +10,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5rk1/5p1p/8/3N4/8/8/1B6/7K w - - 0 1"]
 [SetUp "1"]
+
 { The Suffocation Mate works by using the knight to attack the enemy king and the bishop to confine the king's escape routes. }
  *
+
+
 [Termination "mate in 4"]
 [Event "Lichess Practice: Checkmate Patterns IV: Suffocation Mate #2"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -24,8 +27,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r4k1r/1q3p1p/p1N2p2/1pp5/8/1PPP4/1P3PPP/R1B1R1K1 w - - 0 1"]
 [SetUp "1"]
+
 { From Wilhelm Steinitz - J B Brockenbrough, 1885. }
 19. Bh6+ Kg8 20. Re3 Qd7 21. Rg3+ Qg4 22. Rxg4# *
+
+
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns IV: Greco's Mate #1"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -38,8 +44,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "7k/6p1/6Q1/8/8/1B6/8/6K1 w - - 0 1"]
 [SetUp "1"]
+
 { Greco's Mate is named after the famous Italian checkmate cataloguer Gioachino Greco. It works by using the bishop to contain the black king by use of the black g-pawn and subsequently using the queen or a rook to checkmate the king by moving it to the edge of the board. }
  *
+
+
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns IV: Greco's Mate #2"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -52,8 +61,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r4r1k/ppn1NBpp/4b3/4P3/3p1R2/1P6/P1P3PP/R5K1 w - - 0 1"]
 [SetUp "1"]
+
 { From Max Euwe - Wiersma, 1920. }
  *
+
+
 [Termination "mate in 4"]
 [Event "Lichess Practice: Checkmate Patterns IV: Greco's Mate #3"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -66,8 +78,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r2q1rk1/pbp3pp/1p1b4/3N1p2/2B5/P3PPn1/1P3P1P/2RQK2R w K - 0 1"]
 [SetUp "1"]
+
 { From Sidney Paine Johnston - Frank James Marshall, 1899. }
  *
+
+
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns IV: Max Lange's Mate #1"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -80,8 +95,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2Q5/5Bpk/7p/8/8/8/8/6K1 w - - 0 1"]
 [SetUp "1"]
+
 { Max Lange's Mate is named after German chess player and problem composer Max Lange. It works by using the bishop and queen in combination to checkmate the king. }
  *
+
+
 [Termination "mate in 5"]
 [Event "Lichess Practice: Checkmate Patterns IV: Max Lange's Mate #2"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -94,8 +112,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r3k3/ppp2pp1/8/2bpP2P/4q3/1B1p1Q2/PPPP2P1/RNB4K b q - 0 1"]
 [SetUp "1"]
+
 { From Adolf Anderssen - Max Lange, 1859. }
  *
+
+
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns IV: Blackburne's Mate #1"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -108,8 +129,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5rk1/7p/8/6N1/8/8/1BB5/6K1 w - - 0 1"]
 [SetUp "1"]
+
 { Blackburne's Mate is named for Joseph Henry Blackburne. This checkmate utilizes an enemy rook (or bishop or queen) to confine the black king's escape to the f8 square.. One of the bishops confines the black king's movement by operating at a distance, while the knight and the other bishop operate within close range. }
  *
+
+
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns IV: //Blackburne's Mate #2"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -122,7 +146,10 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r2q1rk1/pp2bp2/2n3p1/3b2Np/8/1P1B4/PB3PPP/R2Q1RK1 w - - 0 1"]
 [SetUp "1"]
+
 1. Qxh5 a6 2. Qh8# *
+
+
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns IV: Réti's Mate #1"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -135,8 +162,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "1nb5/1pk5/2p5/8/7B/8/8/3R3K w - - 0 1"]
 [SetUp "1"]
+
 { Réti's Mate is named after Richard Réti, who delivered it in an 11-move game against Savielly Tartakower in 1910 in Vienna. It works by trapping the enemy king with four of its own pieces that are situated on flight squares and then attacking it with a bishop that is protected by a rook or queen. }
  *
+
+
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns IV: Légal's Mate #1"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -149,8 +179,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3q1b2/4kB2/3p4/4N3/8/2N5/8/6K1 w - - 0 1"]
 [SetUp "1"]
+
 { In Légal's Mate, the knight moves into a position to check the king. The bishop is guarded by the other knight, and the enemy pieces block the king's escape. }
  *
+
+
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns IV: Kill Box Mate #1"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -163,8 +196,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2kr4/8/1Q6/8/8/8/5PPP/3R1RK1 w - - 0 1"]
 [SetUp "1"]
+
 { The Kill Box Mate occurs when a rook is next to the enemy king and support by a queen that also block the king's escape squares. The rook and the queen catch the enemy king in a 3 by 3 "kill box". }
  *
+
+
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns IV: Triangle Mate #1"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -177,8 +213,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/3p4/3k4/2R4Q/8/4K3/8/8 w - - 0 1"]
 [SetUp "1"]
+
 { A Triangle Mate is delivered by a queen attacking an enemy king, while it is supported by a rook. The queen and rook are one square away from the enemy king. They are on the same rank or file, separated by one square, with the enemy king being between them one square away, forming a triangle. The king must be restricted from escaping to the middle square behind it away from the queen and rook, by the edge of the board, a piece blocking it, or by controlling that square with a third piece. }
  *
+
+
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns IV: Vukovic Mate #1"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -191,8 +230,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "4k3/R7/4N3/3r4/8/B7/4K3/8 w - - 0 1"]
 [SetUp "1"]
+
 { In the Vukovic Mate, a rook and knight team up to mate the king on the edge of the board. The rook delivers mate while supported by a third piece, and the knight is used to block the king's escape squares. }
  *
+
+
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns IV: Vukovic Mate #2"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -205,8 +247,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "R7/8/8/7p/6n1/6k1/3r4/5K2 b - - 0 1"]
 [SetUp "1"]
+
 { From Howard Staunton - Elijah Williams, 1851. }
  *
+
+
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns IV: Vukovic Mate #3"]
 [Site "https://lichess.org/study/96Lij7wH"]
@@ -219,5 +264,6 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "2r5/8/8/5K1k/4N1R1/7P/8/8 w - - 0 1"]
 [SetUp "1"]
+
 { From Pavol Danek - Stanislav Hanuliak, 2001. }
  *

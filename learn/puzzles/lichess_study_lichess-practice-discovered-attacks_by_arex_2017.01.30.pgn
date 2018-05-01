@@ -10,8 +10,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5q2/3k2pp/8/8/8/5N2/6PP/5RK1 w - - 0 1"]
 [SetUp "1"]
+
 { A Discovered Attack is an attack that is revealed when one piece moves out of the way of another. Discovered Attacks can be extremely powerful, as the piece moved can make a threat independently of the piece it reveals. Like many chess tactics, they succeed because the opponent is unable to meet two threats at once. While typically the consequence of a discovered attack is the gain of material, they do not have to do this to be effective; the tactic can be used merely to gain a tempo. }
  *
+
+
 [Termination "+1000cp in 2"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Check #1"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -24,8 +27,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "5k2/3q2pp/8/8/8/5N2/6PP/5RK1 w - - 0 1"]
 [SetUp "1"]
+
 { When a Discovered Attack is a check, it is called a Discovered Check. }
  *
+
+
 [Termination "+400cp in 2"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Attack #2"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -38,7 +44,10 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r4k2/2r2pp1/7p/3P4/4B3/5N2/6PP/5RK1 w - - 0 1"]
 [SetUp "1"]
+
  *
+
+
 [Termination "mate in 2"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Check #2"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -51,8 +60,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r2q1bnr/pp2k1pp/3p1p2/1Bp1N1B1/8/2Pp4/PP3PPP/RN1bR1K1 w - - 0 12"]
 [SetUp "1"]
+
 { From William Norwood Potter - Matthews, 1868. }
  *
+
+
 [Termination "-270cp in 3"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Attack #3"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -65,8 +77,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r1b2rk1/ppqn1pbp/5np1/3p4/3BP3/1P1B1P1P/P2N2PN/R2Q1RK1 b - - 0 14"]
 [SetUp "1"]
+
 { From Marianna Bagdasarova - Ksenya Rybenko, 1998. }
  *
+
+
 [Termination "+300cp in 3"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Check #3"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -79,8 +94,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3k4/7R/p2P4/2p1b3/8/2P3rB/P4r2/1K2R3 w - - 3 41"]
 [SetUp "1"]
+
 { From Viswanathan Anand - Vladimir Kramnik, 2005. }
  *
+
+
 [Termination "+400cp in 2"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Attack #4"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -93,8 +111,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/8/4np2/4pk1p/RNr4P/P3KP2/1P6/8 w - - 1 1"]
 [SetUp "1"]
+
 { From Mikhail Tal - Orest Averkin, 1973. }
 1. Nd5 Rc7 2. Nxc7 *
+
+
 [Termination "mate in 3"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Check #4"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -107,8 +128,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "r1bq2rk/1p1p4/p1n1pPQp/3n4/4N3/1N1Bb3/PPP3PP/R4R1K w - - 0 1"]
 [SetUp "1"]
+
 { From Jiri Lechtynsky - Ludek Pachman, 1968. }
  *
+
+
 [Termination "-500cp in 3"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Attack #5"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -121,8 +145,11 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "8/1b1Q1ppk/p2bp2p/1p1q4/3Pp3/1P2B1P1/P6P/2R3K1 b - - 0 1"]
 [SetUp "1"]
+
 { From Yasser Seirawan - Alexey Shirov, 1993. }
 1... Bf4 2. Rc7 (2. Qxd5 Bxe3+ 3. Kf1 Bxd5) *
+
+
 [Termination "+700cp in 3"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Check #5"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -135,5 +162,6 @@
 [Annotator "https://lichess.org/@/arex"]
 [FEN "3r4/1R1P1k1p/1p1q2p1/1Pp5/2P5/6P1/4Q1KP/8 w - - 6 51"]
 [SetUp "1"]
+
 { From Viktor Korchnoi - Piet Bakker, 1976. }
  *

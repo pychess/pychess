@@ -7,8 +7,11 @@
 [Opening "Barnes Opening: Fool's Mate"]
 [Result "*"]
 [Annotator "https://lichess.org/@/thijscom"]
-{PART 1 AVAILABLE HERE: https://lichess.org/study/iDSPaPWA CHECKMATE PUZZLES AVAILABLE HERE: https://lichess.org/study/RdtICntn}
-1. f3 { This study, the second in its series (the first part can be found at https://lichess.org/study/iDSPaPWA), is a collection of beautiful chess studies, where the assignment is to force a win or a draw. In these puzzles there is only one, often elegant solution achieving this goal. For checkmating puzzles, where the assignment is to force mate within 2/3 moves, see https://lichess.org/study/RdtICntn. } 1... e5 { The puzzles/chapters are listed on the left hand side above the chat window, and are sorted alphabetically by the composers of these puzzles. Each chapter represents a different puzzle. The solution, as well as a detailed analysis of the variations crucial to the solutions, can be found on the right hand side after completing the puzzle and clicking "Analyse". } 2. g4 { If you like these puzzles or have any comments, feel free to drop a line in the chat box on the left, or add this study to your favorites by clicking the little heart ❤️ below the board when loading the study. And as mentioned, do not forget to check out the other puzzle collections at https://lichess.org/study/iDSPaPWA and https://lichess.org/study/RdtICntn. } 2... Qh4# { As a sidenote, you might notice that some chapters have a *-mark, and some do not. Chapters without a * are fully annotated, with hints and guidance why other moves are wrong, while the chapters with a * are not quite fully annotated. (This is a rather time-consuming process.) } *
+
+{ This study, the second in its series (the first part can be found at https://lichess.org/study/iDSPaPWA), is a collection of beautiful chess studies, where the assignment is to force a win or a draw. In these puzzles there is only one, often elegant solution achieving this goal. For checkmating puzzles, where the assignment is to force mate within 2/3 moves, see https://lichess.org/study/RdtICntn. }
+1. f3 { The puzzles/chapters are listed on the left hand side above the chat window, and are sorted alphabetically by the composers of these puzzles. Each chapter represents a different puzzle. The solution, as well as a detailed analysis of the variations crucial to the solutions, can be found on the right hand side after completing the puzzle and clicking "Analyse". } 1... e5 { If you like these puzzles or have any comments, feel free to drop a line in the chat box on the left, or add this study to your favorites by clicking the little heart ❤️ below the board when loading the study. And as mentioned, do not forget to check out the other puzzle collections at https://lichess.org/study/iDSPaPWA and https://lichess.org/study/RdtICntn. } 2. g4 { As a sidenote, you might notice that some chapters have a *-mark, and some do not. Chapters without a * are fully annotated, with hints and guidance why other moves are wrong, while the chapters with a * are not quite fully annotated. (This is a rather time-consuming process.) } 2... Qh4# *
+
+
 [Result "*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [Event "Beautiful Chess Studies (1): Afanasyev, 1968"]
@@ -20,9 +23,12 @@
 [Opening "?"]
 [FEN "2n1kq2/8/K3P3/4N1PN/8/8/8/8 w - - 0 1"]
 [SetUp "1"]
+
 { In this position, white is down a queen for a knight and two pawns. On the other hand, the black pieces are awkwardly placed on the back rank, and the black pieces have very few squares to move to. How does white use this to quickly force a draw? }
 1. Nf6+! { Correct! White gives a check, further restricting the black queen, and forcing the black king to move from e8. } 1... Kd8 { As 1... Ke7? 2. Ng6+ immediately loses the queen, black decides that 1... Kd8 is his best chance. How does white continue? } (1... Ke7 2. Ng6+) 2. e7+! { Correct! The king and queen are forked by the pawn, and the knight on e5 threatens to deliver a fork on the next move if either piece captures on e7. } 2... Nxe7 { Black therefore captures on e7 with his knight, avoiding the loss of his queen. This however further restricts the black queen. What does white play next? } (2... Qxe7 3. Nc6+)  (2... Kxe7 3. Ng6+) 3. Kb7!! { Correct! This amazing, quiet move shows the helplessness of black's position, despite the considerable material advantage. Black's king is trapped, the knight cannot move due to a checkmate on c6, and the queen is struggling to find any safe squares to move to. } 3... Qg7 { Black finds the only move that does not immediately lose the queen (or loses to checkmate). What does white play next? } (3... Qh8? 4. Nf7#)  (3... Nf5? { (or any other knight move) } 4. Nc6#) 4. Kb8!! { Correct! Although white cannot yet exploit the positioning of black's pieces, this king move again demonstrates the helplessness of black's position. } 4... Qf8 { Black again has no good options, and decides to move the queen back to f8. What does white play next? } (4... Qxg5? 5. Nf7#)  (4... Qh8? 5. Nf7#)  (4... Nd5? { (or any other knight move) } 5. Nc6#) 5. Kb7! { Correct! If black does not try to win, white cannot force a win, and with best play by both sides we will soon reach a three-fold repetition. (1/2-1/2) } *
-[Event "Beautiful Chess Studies (2): Ditrichson, 1926"]
+
+
+[Event "Beautiful Chess Studies (2): Ditrichson, 1926*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
 [UTCTime "12:40:09"]
@@ -33,35 +39,12 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "8/k7/r1P4R/p7/8/p7/P7/K7 w - - 0 1"]
 [SetUp "1"]
-{ In this study, white has a dangerous advanced c-pawn (threatening to become a queen in two moves), but white also has an awkwardly placed king, vulnerable to mating attacks on the first rank. Can you find a way for white to win? }
-1. Rd6! { Correct! This particular rook move is the only winning move, as will become apparent soon. } (1. Rh7+? Kb6 2. c7 Ra8 { And black holds the draw. })  (1. c7?? Rxh6 2. c8=Q Rh1+ { And black wins! })  (1. Kb1? Rb6+ 2. Kc1 Kb8 { And black makes a draw. }) 1... Rb6 { Black decides to improve his rook slightly, threatening to play Ka7-b8-c7 next. What does white play next? } (1... a4 2. c7 Rxd6 3. c8=N+ { And white wins. })  (1... Ka8 2. c7 Rxd6 3. c8=Q+ Ka7 4. Qc7+ { And white wins. })  (1... Kb8 2. c7+ Kb7 (2... Kxc7 3. Rxa6) 3. Rxa6 Kxa6 4. c8=Q+ { And white wins. }) 2. c7! { Correct! With the white rook on d6, the time is now right to advance the pawn. } 2... Rxd6 { As black cannot both stop the pawn and save his own rook, he decides to capture white's rook, threatening mate on d1. How does white continue? } (2... Kb7 3. Rxb6+ Kxb6 4. c8=Q { And white also wins. }) 3. c8=N+! { Correct! This promotion to a knight forks the king and rook, preventing black's checkmating plans. Soon white will not only capture black's rook, but also black's two a-pawns, after which the white a-pawn will decide the game. (1-0) } *
-[Event "Beautiful Chess Studies (2): Grin, 1975*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.26"]
-[UTCTime "20:03:45"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "8/P7/1k6/6Q1/2p5/4K3/8/1q6 w - - 0 1"]
-[SetUp "1"]
+
 { White to play and win! }
-1. Qa5+!! Kxa5 2. a8=R+! (2. a8=Q+? Kb4 3. Qb7+ Kc3! 4. Qxb1 $10 { And black is stalemated! }) 2... Kb4 3. Rb8+ { And white wins the queen and the game! (1-0) } *
-[Event "Beautiful Chess Studies (2): Heuacker, 1930*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "01:11:04"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "1B6/8/7P/4p3/3b3k/8/8/2K5 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Ba7! Ba1 (1... Bxa7 2. h7 { And white promotes. }) 2. Kb1 Bc3 3. Kc2 Ba1 4. Bd4!! Bxd4 (4... exd4 5. Kd3! { And black is too late to stop the h-pawn. }) 5. Kd3! Ba1 (5... Kg5 6. h7 Kg6 7. h8=Q e4+ 8. Kxd4) 6. Ke4! Kg5 7. h7 { And white promotes to a queen, soon winning the game! (1-0) } *
-[Event "Beautiful Chess Studies (2): Kalandadze, 1965"]
+1. Rd6! (1. Rh7+? Kb6 2. c7 Ra8 { And black holds the draw. })  (1. c7?? Rxh6 2. c8=Q Rh1+ { And black wins! })  (1. Kb1? Rb6+ 2. Kc1 Kb8 { And black makes a draw. }) 1... Rb6 (1... a4 2. c7 Rxd6 3. c8=N+ { And white wins. })  (1... Ka8 2. c7 Rxd6 3. c8=Q+ Ka7 4. Qc7+ { And white wins. })  (1... Kb8 2. c7+ Kb7 (2... Kxc7 3. Rxa6) 3. Rxa6 Kxa6 4. c8=Q+ { And white wins. }) 2. c7 Rxd6 (2... Kb7 3. Rxb6+ Kxb6 4. c8=Q { And white also wins. }) 3. c8=N+! { And white wins the rook, and soon the game! (1-0) } *
+
+
+[Event "Beautiful Chess Studies (2): Kalandadze, 1965*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.17"]
 [UTCTime "22:53:58"]
@@ -72,8 +55,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "3k4/1P1PRP2/8/p7/p7/p7/K7/1r3r2 w - - 0 1"]
 [SetUp "1"]
-{ This somewhat artificial position sees white down a full rook(!), but whereas black's pawns are currently blocked by the black king, white's three pawns are all close to promotion. Your assignment: white to play and win! }
-1. Re1!! { Correct! Black's rooks are overloaded with protecting against promotion and defending each other, and this rook move nicely exploits this vulnerability. } 1... Rb2+ { Either way of taking the rook is fatal, so black decides to give a check. What should white play? } (1... Rfxe1 2. b8=Q+ Rxb8 (2... Kxd7 3. Qxb1 Rxb1 4. f8=Q $18) 3. f8=Q+ Kxd7 4. Qxb8 $18)  (1... Rbxe1 2. f8=Q+ Rxf8 (2... Kxd7 3. Qxf1 Rxf1 4. b8=Q $18) 3. b8=Q+ Kxd7 4. Qxf8 $18)  (1... Rxb7 2. Rxf1 { And white promotes. })  (1... Rxf7 2. Rxb1 { And white promotes. }) 2. Kxa3 { Correct! White cannot retreat to a1, as that would immediately lead to checkmate in one after Rxe1. } 2... Rff2 { Black still cannot capture the rook, and reinstates his two-rooks construction. How does white continue? } (2... Rb3+ 3. Kxa4 Rb4+ 4. Kxa5 Rff4 5. Re4 { This transposes to the main line. }) 3. Re2! { Correct! The black rooks are still overloaded, and this move breaks up the harmony between the black rooks again! } 3... Rb3+ { Black recognizes that the rook is still poisoned, and decides to side-step the rook again with a check. What should white play next? } 4. Kxa4 { Correct! White again undermines the rook on b3, renewing the threat on both rooks. } 4... Rff3 { Black yet again reinstates his defensive mechanism of two defending rooks. How should white proceed? } 5. Re3! { Correct! White repeats the same method of breaking apart the black fortress, by interposing his own rook between black's two rooks. } 5... Rb4+ { Black once more delivers a check on b4, using his last remaining a-pawn for support. How does white continue? } 6. Kxa5 { Correct! White captures the last black a-pawn, renewing the threat on both black rooks. } 6... Rff4 { Black defends both rooks once more, using the same mechanic as before. What should white play? } 7. Re4! { Correct! White interposes his rook one last time, and this time black has no escape anymore. Regardless of black's reply, white will be able to convert to an easily winning endgame. (1-0) } *
+
+{ White to play and win! }
+1. Re1!! Rb2+ (1... Rfxe1 2. f8=Q+)  (1... Rbxe1 2. f8=Q+ Rxf8 3. b8=Q+) 2. Kxa3 Rff2 (2... Rb3+ 3. Kxa4 Rb4+ 4. Kxa5 Rff4 5. Re4) 3. Re2! Rb3+ 4. Kxa4 Rff3 5. Re3! Rb4+ 6. Kxa5 Rff4 7. Re4! Rbxe4 8. b8=Q+ { And white wins! (1-0) } *
+
+
 [Event "Beautiful Chess Studies (2): Kalandadze, 1966*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
@@ -85,8 +71,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "3R4/5p1p/q4k1P/5P2/4P1K1/4B3/8/8 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and win! }
 1. Rd6+! (1. Bg5+? Ke5 2. Bf4+ Kxe4! { And black is ok! }) 1... Qxd6 2. Bg5+ Ke5 3. Bf4+ Kf6 (3... Kxe4 4. Bxd6 { And white wins. }) 4. e5+! (4. Bxd6? { Stalemate! }) 4... Qxe5 (4... Ke7 5. exd6+ { And white wins. }) 5. Bg5# { And black is checkmated! (1-0) } *
+
+
 [Event "Beautiful Chess Studies (2): Kalandadze, 1981*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
@@ -98,9 +87,12 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "8/7k/8/1p6/1P6/7r/KP5p/3R4 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and draw! }
 1. Rh1 Kg6 2. b3! (2. Kb1? Kf5 3. Kc2 Kf4 4. Kd2 Kf3 { And black wins. }) 2... Kf5 3. Ka3! Kf4 4. Rxh2! Rxh2 { And white is stalemated! } *
-[Event "Beautiful Chess Studies (2): Kaminer, 1927"]
+
+
+[Event "Beautiful Chess Studies (2): Kaminer, 1927*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.17"]
 [UTCTime "23:48:24"]
@@ -111,8 +103,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "n7/8/7n/2k5/2PR4/2P5/2K5/8 w - - 0 1"]
 [SetUp "1"]
-{ Here we have a position where white has a rook (and two doubled pawns) for two knights, which is usually not enough to win. Can you find a way to exploit the awkward position of black's pieces to force a white victory? }
-1. Rh4! { Correct! White attacks one of black's knights, which has a very hard time finding a good square to hide. } 1... Nf7 { Black plays the only move that does not immediately lose a knight to a pin on the fifth or eighth rank. How does white continue putting pressure on black's position? } (1... Ng8 2. Rh8)  (1... Nf5 2. Rh5) 2. Rh7! { Correct! This knight is not out of danger yet, and white hits it again, forcing it to another awkward square. } 2... Nd6 { Again, the knight only has one square which does not immediately lose material. (Note that 2... Ne5 fails to 3. Ra7 Nb6 4. Ra5+ Kd6 5. c5+, winning a knight.) How does white proceed? } (2... Ne5 3. Ra7! Nb6 4. Ra5+ Kd6 5. c5+ { And white wins a piece. })  (2... Ng5 3. Rh5)  (2... Nd8 3. Rh8) 3. Ra7! { Correct! The white rook now attacks the other black knight, which is stuck in the corner. } 3... Nb6 { The other black knight also finds shelter around the black king, and black is pretty confident now that he will not be losing either of his knights soon. Is he right, or can white still force a win? } 4. Rc7# { Correct! The black knights may be safe, but the king is now checkmated in the center of the board! (1-0) } *
+
+{ White to play and win! }
+1. Rh4! Nf7 (1... Ng8 2. Rh8)  (1... Nf5 2. Rh5) 2. Rh7! Nd6 (2... Ne5 3. Ra7 Nb6 4. Ra5+ Kd6 5. c5+ { And white wins a piece. })  (2... Ng5 3. Rh5)  (2... Nd8 3. Rh8) 3. Ra7! Nb6 4. Rc7# { And black is checkmated! (1-0) } *
+
+
 [Event "Beautiful Chess Studies (2): Kasparyan, 1935*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.17"]
@@ -124,9 +119,12 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "2B3K1/8/3N1p1p/6pk/5P1P/6P1/7r/5r2 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and win! }
 1. Ne8! Kg6 (1... Rxh4 2. Ng7+ Kg6 3. Bf5#)  (1... f5 2. Bxf5 gxh4 3. Ng7#) 2. h5+! Rxh5 (2... Kxh5 3. Ng7+ Kg6 4. Bf5#) 3. f5+! Rxf5 4. g4! Rf4 5. Bf5+! Rxf5 6. Ng7!! { We've reached a very picturesque position, where the white g-pawn will capture one of the black rooks on the next move with mate! } 6... Rd5 7. gxh5# { And black is checkmated! (1-0) } *
-[Event "Beautiful Chess Studies (2): Klukin, 1982"]
+
+
+[Event "Beautiful Chess Studies (2): Klukin, 1982*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
 [UTCTime "13:10:03"]
@@ -137,8 +135,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "6r1/R4Nn1/3ppkp1/8/4P1K1/8/8/8 w - - 0 1"]
 [SetUp "1"]
-{ Although black is up two pawns, his pieces are not very well coordinated, and he is hanging by a thread. Can you find the correct way to make use of black's lack of coordination that leads to victory? }
-1. e5+! { Correct! The black king is the main hunting target, and this move forces black to block an escape square around his king with his own pawn. } (1. Nh6? Rf8! { And black is doing fine. } 2. e5+ Kxe5! (2... dxe5?? 3. Rf7+! Rxf7 4. Ng8#) 3. Rxg7 d5 $10) 1... dxe5 { Black has no choice but to capture the pawn, and he is now up three pawns. Why does this not matter? } 2. Nh6! { Correct! White attacks the black rook and at the same time threatens mate on f7. } 2... Rf8 { Black finds a multi-purpose move, saving his rook and covering the checkmate on f7. How does white continue? } (2... Rh8? 3. Rf7# { And black is checkmated. })  (2... g5 3. Nxg8+ { And white wins. }) 3. Rf7+! { Correct! The black rook on f8 is overloaded with the protection of f8 and g7, and this sacrifice sets up an unusual smothered mate. } 3... Rxf7 { Black's only move is capturing the white rook. Can you deliver the final blow? } 4. Ng8# { Correct! With only a knight left, white delivers a smothered mate in the center of the board. An unusual but pretty sight! (1-0) } *
+
+{ White to play and win! }
+1. e5+! (1. Nh6? Rf8! { And black is doing fine. } 2. e5+ Kxe5! (2... dxe5?? 3. Rf7+! Rxf7 4. Ng8#) 3. Rxg7 d5 $10) 1... dxe5 2. Nh6! Rf8 (2... Rh8? 3. Rf7# { And black is checkmated. })  (2... g5 3. Nxg8+ { And white wins. }) 3. Rf7+! Rxf7 4. Ng8# { And black is checkmated! (1-0) } *
+
+
 [Event "Beautiful Chess Studies (2): Kubbel, 1934*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.17"]
@@ -150,21 +151,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "5k2/1p3p2/1P3PPK/8/5p1p/4p2P/B3PP1p/5r2 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and draw! }
-1. g7+! Kg8 (1... Ke8 2. g8=Q+ { And white wins. }) 2. Bd5! h1=Q (2... Rg1!? 3. Be4! Rg6+ 4. Bxg6 fxg6 5. Kxg6 h1=Q 6. f7#)  (2... Rd1? 3. Be4! Rd6 4. Bh7#) 3. f3! Ra1 (3... Qxh3 4. Be4 { And white mates soon! })  (3... Rg1!? 4. Be4 Rg6+ 5. Bxg6 fxg6 6. f7+ Kxf7 7. Kh7 { And white also gets a queen, saving the draw. })  (3... Qg2 4. Be4 Qg6+ (4... Qg5+ 5. Kxg5 { And white still threatens Kh6 and Bh7# }) 5. Bxg6 fxg6 6. f7+ Kxf7 7. Kh7 { And white wins. })  (3... Qxf3 4. exf3 e2 5. Be4 e1=Q 6. Bh7#) 4. Be4! Qb1 5. Bf5!! Qxf5 { And white is stalemated! (1/2-1/2) } *
-[Event "Beautiful Chess Studies (2): Leow, 1849*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "01:34:29"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "8/8/p6R/1bK5/k7/1p6/1P6/8 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Rh1 Ka5 2. Ra1+ Ba4 3. Ra2! bxa2 4. b4# { And black is checkmated! (1-0) } *
+1. g7+ Kg8 (1... Ke8 2. g8=Q+ { And white wins. }) 2. Bd5 h1=Q 3. f3! Ra1 (3... Qxh3 4. Be4 { [%cal Ge4h7] }) 4. Be4 Qb1 5. Bf5! Qxf5 { And white is stalemated! (1/2-1/2) } *
+
+
 [Event "Beautiful Chess Studies (2): Maksimovskih, 1982*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
@@ -176,8 +167,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "8/3R2B1/6p1/6k1/6p1/6N1/6K1/2q5 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and win! }
 1. Rd5+! Kh4 (1... Kf4 2. Bh6+ g5 3. Bxg5# { And black is checkmated! }) 2. Rh5+! (2. Bf6+? g5 { And black saves the draw. } 3. Bxg5+ Qxg5 4. Rxg5 Kxg5 $10) 2... gxh5 3. Bf6+ Qg5 4. Nf5# { And black is checkmated! } *
+
+
 [Event "Beautiful Chess Studies (2): Mitrofanov, 1967*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.17"]
@@ -189,8 +183,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "kb4Q1/P7/1PP5/K6q/8/8/8/4n3 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and win! }
 1. Qg5!! (1. Ka6? Qe2+ { And black saves the draw! }) 1... Qxg5+ 2. Ka6 Bxa7 3. c7! Qa5+ (3... Qf5 4. b7#)  (3... Qf6 4. c8=Q+ Bb8 5. Qb7#) 4. Kxa5 Kb7 (4... Bxb6+ 5. Kxb6) 5. bxa7 { And one of white's pawns will promote soon! (1-0) } *
+
+
 [Event "Beautiful Chess Studies (2): Pogosyants, 1962*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
@@ -202,21 +199,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "8/1p6/1p6/pP4B1/K7/8/pk6/q7 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and draw! (Historical note: this is a slight modification to Pogosyants' original puzzle, which had a duplicate solution for white's second and fourth moves. The additional black pawn on b7, which originally was not there, prevents this duplicate solution, and ensures that all white's moves in the main line are "only moves".) }
 1. Bf6+! Kb1 2. Bb2! (2. Bc3? { This move, with a very similar idea, barely fails after black gives up two queens and his a-pawn to win white's b-pawn. } 2... Qb2! (2... Qxc3? { Stalemate! }) 3. Bxb2 a1=Q+! (3... Kxb2? { Stalemate! }) 4. Bxa1 Kxa1 { Black's plan is ultimately to give up the a-pawn for white's b-pawn, after which } 5. Ka3 a4 6. Kxa4 Ka2 7. Kb4 Kb2 8. Ka4 Kc3 9. Ka3 Kc4 10. Ka4 Kc5 11. Ka3 Kxb5 12. Kb3 { Even though white achieves opposition, the additional black pawn on b7 ensures that black can easily win this pawn endgame. The original study, without a pawn on b7, allowed white to hold the draw also with 2. Bc3!. }) 2... Kc2 (2... Kxb2? { Stalemate! })  (2... Qxb2? { Stalemate! }) 3. Bxa1! Kb1 4. Kb3! (4. Bd4? a1=Q+ 5. Bxa1 Kxa1 6. Ka3 a4 { And black wins, similar to the variation given after 2. Bc3? - black will win white's b-pawn, and win the resulting pawn endgame. Again, in the original puzzle, 4. Bd4 would have sufficed to hold the draw as well. }) 4... a4+ 5. Kc3! (5. Kxa4? Kxa1 { And black wins! }) 5... Kxa1 6. Kc2 a3 7. Kc1 { And black is stalemated! (1/2-1/2) } *
-[Event "Beautiful Chess Studies (2): Pogosyants, 1963*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.19"]
-[UTCTime "01:12:59"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "2k5/p4q2/1n2N3/8/PK2Q3/8/8/8 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Qc6+ Kb8 2. Qd6+ Kc8 (2... Ka8 3. Qd8+ Kb7 { This transposes to the main line. } (3... Nc8? 4. Qxc8#)) 3. Qd8+! Kb7 4. Qxb6+! Kxb6 (4... axb6 5. Nd8+) 5. a5+! Ka6 (5... Kc6 6. Nd8+)  (5... Kb7 6. Nd8+) 6. Nc5# { Black has avoided losing his queen, but instead finds his king checkmated on the edge of the board! (1-0) } *
+
+
 [Event "Beautiful Chess Studies (2): Pogosyants, 1968*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
@@ -228,8 +215,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "8/R2n1p2/b7/4P3/8/k6K/8/8 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and win! }
 1. Rxd7 (1. Rxa6+ Kb4 { And black wins the e-pawn, saving the draw. } 2. e6 fxe6 3. Rxe6 $10) 1... Bc8 2. e6! fxe6 (2... Bxd7 3. exd7 { And white wins. }) 3. Rc7 Ba6 4. Ra7 { And white wins! (1-0) } *
+
+
 [Event "Beautiful Chess Studies (2): Pogosyants, 1970*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
@@ -241,8 +231,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "6K1/6P1/2r5/5Bp1/7k/8/6Pn/8 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and win! }
 1. Kh8! (1. Kh7? Rc7 $10) 1... Rh6+ 2. Bh7! Rxh7+ 3. Kxh7 Ng4 4. g3+! (4. g8=Q? Nf6+ $19)  (4. Kg6? Ne5+ 5. Kf5 Nf7 $10) 4... Kh5 (4... Kxg3 5. Kg6 Ne5+ 6. Kxg5) 5. g8=N!! Ne5 6. Nf6# { And black is checkmated! (1-0) } *
+
+
 [Event "Beautiful Chess Studies (2): Pogosyants, 1986*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
@@ -254,8 +247,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "8/8/8/p7/k2K4/r7/8/NB6 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and draw! }
 1. Nc2! (1. Bc2+? Kb4 2. Nb3 Rxb3 3. Bxb3 Kxb3 { And black wins. }) 1... Rb3 2. Ba2! Rb2 3. Kd3!! (3. Kc3? Rxa2 4. Kd3 Kb3)  (3. Kc4? Rxc2+ 4. Kd3 Rxa2) 3... Rxa2 4. Kc3! Kb5 5. Kb3 Ra4 6. Na3+! { And black has to give up his rook, leading to a draw! (1/2-1/2) } *
+
+
 [Event "Beautiful Chess Studies (2): Prokes, 1939*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.17"]
@@ -267,152 +263,12 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "8/8/8/7K/2k5/3pp3/8/5R2 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and draw! }
 1. Kg4! e2 2. Rc1+! Kd4 (2... Kb3 3. Kf3 d2 4. Rb1+ Kc2 5. Kxe2 Kxb1 6. Kxd2) 3. Kf3! d2 4. Rc4+! Kd3 (4... Kxc4 5. Kxe2 Kc3 6. Kd1 Kd3) 5. Rd4+! Kxd4 6. Kxe2 Kc3 7. Kd1 Kd3 { Stalemate! (1/2-1/2) } *
-[Event "Beautiful Chess Studies (2): Prokes, 1940*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.26"]
-[UTCTime "19:56:36"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "k1K5/r7/8/4R3/r3R3/8/8/8 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Rb5! R7a5 (1... Rxe4 2. Rb8#)  (1... Rc7+ 2. Kxc7 Rxe4 3. Ra5#) 2. Reb4! Ka7 (2... Rxb5 3. Rxa4+ Ra5 4. Rxa5#)  (2... Rxb4 3. Rxa5#)  (2... Ra2 3. Rb8+ Ka7 4. R4b7+ Ka6 5. Ra8#) 3. Rb7+ Ka6 (3... Ka8 4. Rb8+ Ka7 5. R4b7+ Ka6 6. Ra8#) 4. R4b6# { And black is checkmated! (1-0) } *
-[Event "Beautiful Chess Studies (2): Reti, 1922*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "01:25:57"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "8/5p2/8/kpN2P2/8/2R2K2/3pP3/2n5 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Rc2! (1. Rxc1? dxc1=N! { And black will be able to make a draw! }) 1... d1=Q 2. Rxc1! Qd5+ (2... Qxc1? 3. Nb3+ { And white wins. })  (2... Qd2 3. Nb3+)  (2... Qd4 3. Nb3+)  (2... Qd6 3. Nb7+)  (2... Qd8 3. Nb7+) 3. e4! Qe5 (3... Qa2 4. Ra1! Qxa1 5. Nb3+ { And white wins the black queen. })  (3... Qd6 4. Nb7+)  (3... Qd4 4. Nb3+)  (3... Qd8 4. Nb7+)  (3... Qd2 4. Nb3+)  (3... Qa8 4. Ra1+)  (3... Qc6 4. Nb3+) 4. Ra1+! Qxa1 (4... Kb6 5. Nd7+)  (4... Kb4 5. Nd3+) 5. Nb3+ { And white finally wins the black queen and the game! (1-0) } *
-[Event "Beautiful Chess Studies (2): Reti, 1923*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "01:14:22"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "8/8/5K1B/8/8/1p6/k7/2R5 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Rc3! b2 2. Bc1!! b1=Q 3. Ra3# { And black is checkmated! (1-0) } *
-[Event "Beautiful Chess Studies (2): Rinck, 1902*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "15:39:36"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "8/1qp5/p1p1pn1P/4k3/5pP1/1N5K/PR3P2/8 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Na5 Qc8 (1... Qxb2 2. Nc4+)  (1... Qa7 2. Nxc6+)  (1... Qa8 2. Rb8 Qxb8 (2... Qa7 3. Nxc6+) 3. Nxc6+) 2. Rb8 Qd7 (2... Qxb8 3. Nxc6+) 3. Rd8 Qh7 (3... Qxd8 4. Nxc6+)  (3... Qe7 4. Nxc6+)  (3... Qf7 4. Nc4+ Ke4 5. Nd2+ Ke5 6. Nf3+ Ke4 7. Ng5+) 4. Nc4+ Ke4 $7 5. Nd2+ Ke5 $7 6. Nf3+ Ke4 $7 7. Ng5+ { And white wins the black queen and the game! (1-0) } *
-[Event "Beautiful Chess Studies (2): Rinck, 1902 (ii)*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "16:29:16"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "k2n4/p1BK4/8/1p6/8/1P1B4/q7/8 w - - 0 1"]
-[SetUp "1"]
-{ White to play and draw! }
-1. Be4+! Nb7 (1... Nc6 2. Bxc6#) 2. Kc8! Qa6 (2... a5 3. Bb6 { And black gets checkmated. }) 3. Bd5! (3. b4 Qe6#)  (3. Bc6 Qxc6) 3... b4 4. Bc6! Qxc6 { And white is stalemated! } *
-[Event "Beautiful Chess Studies (2): Rinck, 1903*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "01:38:08"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "4k3/2R5/6p1/1pK1p1q1/8/2N3P1/3P4/8 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Ne4! Qh6 (1... Qh5 2. Nf6+)  (1... Qg4 2. Nf6+)  (1... Qf5 2. Nd6+)  (1... Qd8 2. Nd6+ Kf8 3. Rc8) 2. Rh7! Qf8+ (2... Qxh7 3. Nf6+) 3. Nd6+ Kd8 4. Rh8! Qxh8 5. Nf7+ { And white wins the queen and the game! (1-0) } *
-[Event "Beautiful Chess Studies (2): Rinck, 1903 (ii)*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "15:28:29"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "6q1/6p1/2k4p/R6B/p7/8/2P3P1/2K5 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Ra8! Qa2 (1... Qxa8 2. Bf3+)  (1... Qe6 2. Ra6+)  (1... Qh7 2. Bg6 Qxg6 3. Ra6+)  (1... Qd5 2. Bf3)  (1... Qc4 2. Rc8+) 2. Rxa4! Qg8 (2... Qxa4 3. Be8+)  (2... Qd5 3. Bf3)  (2... Qe6 3. Ra6+) 3. Ra8! Qh7 (3... Qxa8 4. Bf3+)  (3... Qe6 4. Ra6+)  (3... Qd5 4. Bf3)  (3... Qc4 4. Rc8+) 4. Bg6! Qxg6 5. Ra6+ { And white finally wins black's queen and the game! (1-0) } *
-[Event "Beautiful Chess Studies (2): Rinck, 1903 (iii)*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "17:05:57"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "8/6p1/3B4/4N3/4p1Pk/8/p3pP1K/8 w - - 0 1"]
-[SetUp "1"]
-{ White to play and draw! }
-1. Be7+! g5 $7 2. Bb4! a1=Q (2... a1=R 3. Be1 Rxe1 4. Nf3+ exf3)  (2... e1=Q? 3. Bxe1 a1=Q 4. f3+ Qxe1 5. Ng6#) 3. Be1! Qxe1 (3... Qxe5+ 4. f4+ { And white wins the black queen. })  (3... Qc1? 4. f3+ Qxe1 5. Ng6# { And black is checkmated! }) 4. Nf3+! exf3 { And white is stalemated! (1/2-1/2) } *
-[Event "Beautiful Chess Studies (2): Rinck, 1905*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "01:08:30"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "b5K1/6P1/8/4B3/2N5/8/5p1p/3k4 w - - 0 1"]
-[SetUp "1"]
-{ White to play and draw! }
-1. Ne3+! (1. Bxh2? Bd5+ 2. Kh8 Bxc4 { And black wins. }) 1... Ke2 2. Bxh2! Kxe3 3. Kh8! Bd5 4. g8=Q! Bxg8 5. Bg1!! fxg1=R { And white is stalemated! (1/2-1/2) } *
-[Event "Beautiful Chess Studies (2): Rinck, 1907*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "16:18:09"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "6r1/3p3p/p3P2P/k7/1p1PN3/1P6/8/5K2 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. e7! Re8 2. Nd6! Rxe7 3. d5!! Kb6 (3... Re5 4. Nc4+)  (3... Re3 4. Nc4+) 4. Nc8+ { And white wins the rook and the game! (1-0) } *
-[Event "Beautiful Chess Studies (2): Rinck, 1917*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.27"]
-[UTCTime "15:21:28"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "3N4/4p3/q3Bpp1/1N2k3/P6P/6P1/3K4/8 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Nf7+ Kxe6 (1... Ke4 2. Bd5+ Kf5 (2... Kxd5 3. Nc7+) 3. Nh6+ Ke5 $7 4. Ng4+ Kf5 (4... Kxd5 5. Nc7+) 5. Ne3+ Ke5 $7 6. Nc4+ Kxd5 (6... Kf5 7. Be6+ Ke4 (7... Kxe6 8. Nc7+)  (7... Qxe6 8. Nd4+) 8. Bc8! Qa8 (8... Qxa4 9. Nc3+)  (8... Qc6 9. Bb7 Qxb7 10. Ncd6+ exd6 11. Nxd6+)  (8... Qxc8 9. Ncd6+ exd6 10. Nxd6+) 9. Bb7+ Qxb7 10. Ncd6+ exd6 11. Nxd6+ { And white wins the queen and the game! (1-0) }) 7. Nc7+) 2. Nc7+ *
-[Event "Beautiful Chess Studies (2): Rjabinin, 1991"]
+
+
+[Event "Beautiful Chess Studies (2): Rjabinin, 1991*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
 [UTCTime "12:46:23"]
@@ -423,21 +279,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "5nB1/8/3K2P1/6k1/8/8/8/8 w - - 0 1"]
 [SetUp "1"]
-{ This "clean" study, with only very few pieces left on the board, shows that even positions with so few pieces can be rich in tactical motives. Here white is up a dangerous pawn, and all white's hopes are pinned on getting this pawn across. How does white proceed to victory? }
-1. g7! { Correct! Clearly the white g-pawn needs to be saved to keep any winning chances. } 1... Ne6!? { Whereas 1... Ng6? can easily be met with moving the bishop and getting a queen, all other three knight moves contain some venom and require precision on white's side to be victorious. (Can you see how white wins after 1... Nd7!? and after 1... Nh7!?) The main line sees black playing 1... Ne6!? - how does white refute this move? } (1... Nh7!? { This tricky alternative move sees black sacrificing the knight on h7 instead. } 2. Bxh7! Kf6 { Black again sets up a stalemate trap, and now a different underpromotion is required to win... } 3. g8=R! { And white wins! } (3. g8=Q? { Stalemate! })  (3. g8=N+? Kg7! { And black makes a draw! })  (3. g8=B? { And white will not be able to win the game with similar bishops. }))  (1... Nd7!? { This knight move hopes to distract the white king, giving black time to win the g-pawn, or alternatively to stop the g-pawn with Nf6. } 2. Bh7! { The only winning move sees the bishop cutting off the b1-h7 diagonal for the black king. } (2. Kxd7? Kg6 { And black saves the draw. }) 2... Nf6 3. Ke7! { And black will soon be in zugzwang, unable to stop the white pawn. } 3... Nd5+ 4. Kf8 Nf6 5. Kf7 { And white wins the knight or promotes to a queen on the next move. }) 2. Bxe6! { Correct! That move was not too hard; capturing the knight, and freeing the g8 square for a future promotion. } 2... Kf6 { Black is not quite resigning yet, and threatens the g-pawn. What does white play next? } 3. g8=N+! { Correct! White needs to be careful to prevent a stalemate, and only this promotion to a knight leads to victory for white! (1-0) } (3. g8=Q? { Stalemate! })  (3. g8=R? { Stalemate! })  (3. g8=B? $10 { And white will not be able to mate with two bishops of the same color. }) *
-[Event "Beautiful Chess Studies (2): Rusinek, 1987*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.26"]
-[UTCTime "20:07:00"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "7B/7P/8/8/k7/1p3b2/n2P4/1K6 w - - 0 1"]
-[SetUp "1"]
-{ White to play and draw! }
-1. d3! (1. Ba1? Be4+ 2. d3 Bxh7! { And black wins. }) 1... Be2 2. Ba1! Bxd3+ 3. Kb2 Bxh7 { And white is stalemated! (1/2-1/2) } *
+
+{ White to play and win! }
+1. g7! Ne6!? (1... Nh7!? 2. Bxh7! Kf6 3. g8=R! { And white wins! } (3. g8=Q? { Stalemate! })  (3. g8=N+? Kg7! { And black makes a draw! }))  (1... Nd7!? 2. Bh7! (2. Kxd7? Kg6 { And black saves the draw. })  (2. Bf7? Nf6 3. Ke7 Kf5 { And black saves the draw! }) 2... Nf6 3. Ke7! { And white wins! }) 2. Bxe6! Kf6 3. g8=N+! { And white wins! (1-0) } *
+
+
 [Event "Beautiful Chess Studies (2): Sabinin, 1983*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
@@ -449,8 +295,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "8/P7/4b3/Nk1r4/1p6/pK6/2P5/8 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and draw! }
 1. c4+! (1. a8=Q Rd3# { And white is checkmated! }) 1... bxc3 2. a8=Q! Rd8+ 3. Kxa3! Rxa8 { Stalemate! } *
+
+
 [Event "Beautiful Chess Studies (2): Sackmann, 1909*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.17"]
@@ -462,21 +311,11 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "8/6P1/2P2n2/k7/2n5/2N3K1/8/8 w - - 0 1"]
 [SetUp "1"]
+
 { White to play and win! }
 1. c7! Nd6 2. Ne4!! Ndxe4+ 3. Kf4 Nd6 4. Ke5! { And one of white's pawns will soon promote! (1-0) } *
-[Event "Beautiful Chess Studies (2): Slepyan, 1983*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.26"]
-[UTCTime "20:01:19"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "2kb4/4P3/K1p5/8/8/6q1/8/1R3B2 w - - 0 1"]
-[SetUp "1"]
-{ White to play and win! }
-1. Rb8+! (1. e8=Q?? Qa3#)  (1. exd8=Q+? Kxd8 $19) 1... Qxb8 (1... Kxb8 2. exd8=Q#)  (1... Kd7 2. exd8=Q+) 2. Bh3+! Kc7 3. e8=N# { And black is checkmated! (1-0) } *
+
+
 [Event "Beautiful Chess Studies (2): Troitsky, 1895*"]
 [Site "https://lichess.org/study/ByFy31hm"]
 [UTCDate "2018.04.18"]
@@ -488,17 +327,5 @@
 [Annotator "https://lichess.org/@/thijscom"]
 [FEN "5k2/4p2p/6P1/3K4/8/4B3/8/8 w - - 0 1"]
 [SetUp "1"]
+
 1. Bh6+! Kg8 2. g7! Kf7 (2... e6+ 3. Kd6 Kf7 4. Ke5 Kg8 5. Kf6 e5 6. Ke6 e4 7. Kf6 e3 8. Bxe3 { And the black king will eventually be driven away from g8, after which white promotes his pawn. } 8... h5 9. Bf2 h4 10. Bxh4 Kh7 11. Kf7)  (2... e5 3. Ke6 e4 4. Kf6 e3 5. Bxe3 { And white wins. }) 3. g8=Q+!! Kxg8 4. Ke6! Kh8 5. Kf7 e5 6. Bg7# *
-[Event "Beautiful Chess Studies (2): Zacharov, 1988*"]
-[Site "https://lichess.org/study/ByFy31hm"]
-[UTCDate "2018.04.26"]
-[UTCTime "20:13:45"]
-[Variant "Standard"]
-[ECO "?"]
-[Opening "?"]
-[Result "*"]
-[Annotator "https://lichess.org/@/thijscom"]
-[FEN "8/8/4R3/5b2/7k/3r4/5P2/1K6 w - - 0 1"]
-[SetUp "1"]
-{ White seems to be in deep trouble - his rook is hanging, and black is threatening a devastating discovered attack with his rook, winning the white rook if it moves away from e6. Nonetheless, white can save a draw here - how? }
-1. Rh6+! (1. Rf6? Kg5! { And white will soon lose his rook. })  (1. Re5? Rd5+) 1... Kg5 (1... Kg4 2. Kb2 { And with best play, the position is a theoretical draw. }) 2. Rh2!! Rh3+ 3. Ka1! Rxh2 4. f4+! Kf6 { And white is stalemated! (1/2-1/2) } *

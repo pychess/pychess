@@ -10,9 +10,13 @@
 [Annotator "https://lichess.org/@/TonyRo"]
 [FEN "6K1/4k1P1/8/8/8/7r/8/5R2 w - - 0 1"]
 [SetUp "1"]
+
 { This is the classic Lucena position. White is definitely winning, but has a major problem to solve: His king stands on the pawn's promotion square and currently can't move. Furthermore, even if he could, repeated rook checks from behind will force him back in front of the pawn. The next sequence, famously called "building a bridge", addresses those issues elegantly.
+
 Analysis from B.Larsen-W.Browne, Las Palmas 1982. }
 1. Re1+! Kd7 { [%cal Ge1e4,Ge4g4,Bg8f7,Bf7g5] } (1... Kd6 2. Kf8 (2. Re4 Rh1 3. Kf7 $18) 2... Rf3+ 3. Ke8 Rg3 4. Re7 Rg1 5. Kf8 $18 { [%cal Ge7f7,Gg1f1] }) 2. Re4! Rh1 (2... Kd6 3. Kf7 Rf3+ 4. Kg6 Rg3+ 5. Kf6 Kd5 6. Re5+ Kd4 7. Rg5)  (2... Ra3 3. Rh4! $18 { [%cal Gg8h7] }) 3. Kf7 Rf1+ 4. Kg6 Rg1+ 5. Kf6 { [%cal Rg1g7,Rf6g7] } (5. Kh6 Rh1+ (5... Kd6 6. Rh4! $18 { [%cal Gh6h7] }) 6. Kg5 Rg1+ 7. Rg4) 5... Rf1+ (5... Kd6 6. Re6+! (6. Re5?? { [%cal Ge5g5] } 6... Rxg7! $10) 6... Kd5 (6... Kd7 7. Re5 $18) 7. Re5+ Kd4 (7... Kd6) 8. Rg5 $18) 6. Kg5 Rg1+ 7. Rg4 $18 { [%cal Gg7g8] } *
+
+
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Rook Endgames: Lucena - Alternative Wins"]
 [Site "https://lichess.org/study/9c6GrCTk"]
@@ -25,9 +29,13 @@ Analysis from B.Larsen-W.Browne, Las Palmas 1982. }
 [Annotator "https://lichess.org/@/TonyRo"]
 [FEN "5K2/3k1P2/8/8/8/8/6r1/4R3 w - - 0 1"]
 [SetUp "1"]
+
 { In the case where White has a central or bishop's pawn there is an alternative winning method: to maneuver the rook to the g8-square and budge Black's rook from that file, then simply marching forward with the king until there are no checks left. Be careful to not allow the rook to skewer the king and pawn!
+
 H.Ni-N.Pert, Liverpool 2007. }
 1. Rh1! { [%cal Gh1h8,Gh8g8] } (1. Re4!? Rg1 2. Rd4+ Kc6 3. Ke7) 1... Rg3 2. Rh8!? (2. Rh7 Rg1 3. Rg7 Rf1 4. Kg8 $18 { [%cal Gf7f8,Gg7d7] }) 2... Rg2 3. Rg8 Rb2 4. Kg7 (4. Rg4! Rb8+ 5. Kg7 Ke7 6. f8=Q+ Rxf8 7. Re4+ $18) 4... Rg2+ 5. Kh6 { [%cal Gf7f8] } 5... Rh2+ 6. Kg5 Rg2+ 7. Kh4 (7. Kf4?? Rf2+ 8. Kg5 Rxf7 $10) 7... Rh2+ 8. Kg3 $18 *
+
+
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Rook Endgames: Reaching the Lucena I"]
 [Site "https://lichess.org/study/9c6GrCTk"]
@@ -40,9 +48,13 @@ H.Ni-N.Pert, Liverpool 2007. }
 [Annotator "https://lichess.org/@/TonyRo"]
 [FEN "8/4k3/8/6P1/6K1/8/7r/5R2 w - - 0 1"]
 [SetUp "1"]
+
 { In this position Black is unable to stop White from reaching the Lucena Position. See if you can reach the Lucena and "build the bridge"!
+
 J.Steer-A.Szurkos, Budapest 2014 }
 1. g6 Rg2+ 2. Kh5! (2. Kf5?? Kf8! $10) 2... Rh2+ 3. Kg5 Rg2+ 4. Kh6 Rh2+ 5. Kg7 Rh3 6. Kg8 Rh2 7. g7 $18 { [%cal Gf1e1,Ge1e4] } *
+
+
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Rook Endgames: Reaching the Lucena II"]
 [Site "https://lichess.org/study/9c6GrCTk"]
@@ -55,9 +67,13 @@ J.Steer-A.Szurkos, Budapest 2014 }
 [Annotator "https://lichess.org/@/TonyRo"]
 [FEN "8/6R1/8/5K2/1k6/r3P3/8/8 w - - 0 1"]
 [SetUp "1"]
+
 { A slightly trickier example, but the idea is the same. Cut off Black's king, reach the Lucena Position, and then either "build the bridge" or use the alternative winning method discussed in example #2.
+
 D.Andreikin-A.Korobov, Karpov Memorial 2016. }
 1. e4! (1. Rd7?? Rxe3 $10) 1... Kc5 2. Rd7! { [%csl Gc5][%cal Gd7d1] } 2... Kc6 3. Rd1 (3. Rd2 $18) 3... Rh3 4. e5 Rh5+ 5. Kf6 Rh6+ 6. Kf7 (6. Kg5 Rh2 7. e6 $18) 6... Rh7+ 7. Kg6 Rh2 8. e6 Kc7 9. e7 Rg2+ 10. Kf7 Rf2+ 11. Ke8 $18 *
+
+
 [Termination "draw in 20"]
 [Event "Lichess Practice: Rook Endgames: Philidor Position"]
 [Site "https://lichess.org/study/9c6GrCTk"]
@@ -70,5 +86,6 @@ D.Andreikin-A.Korobov, Karpov Memorial 2016. }
 [Annotator "https://lichess.org/@/TonyRo"]
 [FEN "1r2k3/R7/8/4PK2/8/8/8/8 b - - 0 1"]
 [SetUp "1"]
+
 { The Philidor Position, named after the legendary François-André Danican Philidor, who's analysis of this position dates all the way back to 1777! The key idea here is to cut off White's king along Black's 3rd rank, leaving White with no choice but to push the pawn to make safety for his king. This allows Black to switch to checks from behind, when the pawn sadly leaves White's king no safe shelter! }
 1... Rb6! { [%cal Gb6h6,Rf5e6,Rf5f6,Rf5g6] } (1... Rd8 2. Ke6) 2. e6 (2. Rc7 Ra6! { [%cal Ga6h6] } 3. Rh7) 2... Rb1! { [%csl Yf5][%cal Gb1f1] } 3. Kf6 Rf1+ 4. Kg5 Rg1+ { and so forth: the checks never stop if White wants to keep his e-pawn protected. } *
