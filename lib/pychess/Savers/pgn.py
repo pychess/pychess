@@ -1067,7 +1067,7 @@ class PGNFile(ChessFile):
 
             # if there is something add it
             if line.strip():
-                if self.handle.pgn_encoding != PGN_ENCODING:
+                if not self.pgn_is_string and self.handle.pgn_encoding != PGN_ENCODING:
                     line = line.encode(PGN_ENCODING).decode(self.handle.pgn_encoding)
                 lines.append(line)
                 line = self.handle.readline()
