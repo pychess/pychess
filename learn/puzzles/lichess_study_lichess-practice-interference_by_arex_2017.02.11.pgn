@@ -18,7 +18,6 @@ In this position, Black threatens mate on e2, but White's queen is protecting th
 From Adolf Jay Fink - Alexander Alekhine, 1932. }
 14... Bb5 15. Qxb5 Rxb5 *
 
-
 [Termination "mate in 7"]
 [Event "Lichess Practice: Interference: Interference #2"]
 [Site "https://lichess.org/study/g1fxVZu9"]
@@ -33,7 +32,6 @@ From Adolf Jay Fink - Alexander Alekhine, 1932. }
 [SetUp "1"]
 
 20... Rd4 21. Re8+ Rxe8 22. Qxd4 Qh1+ 23. Qg1 Re1+ 24. Kxe1 Qxg1+ 25. Nf1 Qf2+ 26. Kd1 Qe2# *
-
 
 [Termination "+350cp in 3"]
 [Event "Lichess Practice: Interference: Interference #3"]
@@ -51,7 +49,6 @@ From Adolf Jay Fink - Alexander Alekhine, 1932. }
 { From Vasily Smyslov - Alexander Kazimirovich Tolush, 1961. }
 17. Bb8 Rxb8 18. Qxb8 Qxb8 19. Rxb8+ Rd8 *
 
-
 [Termination "-115cp in 5"]
 [Event "Lichess Practice: Interference: Interference #4"]
 [Site "https://lichess.org/study/g1fxVZu9"]
@@ -67,7 +64,6 @@ From Adolf Jay Fink - Alexander Alekhine, 1932. }
 
 { From Ludwig Rellstab - Miguel Najdorf, 1950. }
 21... Bd4 22. Rxd4 Nxd4 23. Qxd8 Rxc1+ 24. Bxc1 Nxe2+ 25. Kf2 Rxd8 *
-
 
 [Termination "-700cp in 2"]
 [Event "Lichess Practice: Interference: Interference #5"]
@@ -85,7 +81,6 @@ From Adolf Jay Fink - Alexander Alekhine, 1932. }
 { From Viswanathan Anand - Levon Aronian, 2008. }
 30... Re3 31. Qxe3 fxe3 *
 
-
 [Termination "-360cp in 2"]
 [Event "Lichess Practice: Interference: Interference #6"]
 [Site "https://lichess.org/study/g1fxVZu9"]
@@ -101,7 +96,6 @@ From Adolf Jay Fink - Alexander Alekhine, 1932. }
 
 { From Hikaru Nakamura - Alexander Beliavsky, 2005. }
 36... e4 37. Qb3 Qxf5 *
-
 
 [Termination "+620cp in 3"]
 [Event "Lichess Practice: Interference: Interference #7"]

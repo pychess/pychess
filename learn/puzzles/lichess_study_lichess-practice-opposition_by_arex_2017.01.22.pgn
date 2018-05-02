@@ -14,7 +14,6 @@
 { Direct Opposition is a position in which the kings are on the same rank or file and they are separated by one square. In such a situation, the player not having to move is said to "have the opposition". The side without the opposition may have to move the king away, potentially allowing the opposing king access to important squares. Take the opposition to reach a key square and win! }
  *
 
-
 [Termination "draw in 20"]
 [Event "Lichess Practice: Opposition: Direct Opposition #2"]
 [Site "https://lichess.org/study/A4ujYOer"]
@@ -30,7 +29,6 @@
 
 { Take the opposition to prevent black from reaching a key square and hold the draw. }
  *
-
 
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Opposition: Direct Opposition #3"]
@@ -48,7 +46,6 @@
 { Take the opposition to reach a key square and win! }
  *
 
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Opposition: Direct Opposition #4"]
 [Site "https://lichess.org/study/A4ujYOer"]
@@ -64,7 +61,6 @@
 
 { Take the opposition to reach a key square and win! }
  *
-
 
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Opposition: Direct Opposition #5"]
@@ -82,7 +78,6 @@
 { Use your knowledge of Direct Opposition to win the game. }
  *
 
-
 [Termination "draw in 20"]
 [Event "Lichess Practice: Opposition: Distant Opposition #1"]
 [Site "https://lichess.org/study/A4ujYOer"]
@@ -99,7 +94,6 @@
 { Distant Opposition is a position in which the kings are on the same rank or file but are separated by more than one square. If there are an odd number of squares between the kings, the player not having the move has the (distant) opposition. Take the Distant Opposition to hold the draw. }
  *
 
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Opposition: Distant Opposition #2"]
 [Site "https://lichess.org/study/A4ujYOer"]
@@ -115,7 +109,6 @@
 
 { Take the Distant Opposition to win the game. }
  *
-
 
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Opposition: As a means to an end"]

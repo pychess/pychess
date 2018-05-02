@@ -14,7 +14,6 @@
 { A Double Check is when two pieces are delivering check simultaneously. A Double Check is generally more powerful than a normal check, because the opponent can only respond with a king move. (The pieces that are delivering check cannot both be captured or blocked with one move.) }
  *
 
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Double Check: Double Check #1"]
 [Site "https://lichess.org/study/RUQASaZm"]
@@ -30,7 +29,6 @@
 
 { From Schwartz - Carl Hartlaub, 1918. }
 11... Qh1+ 12. Kxh1 Ng3+ 13. Kg1 Rh1# *
-
 
 [Termination "mate in 3"]
 [Event "Lichess Practice: Double Check: Double Check #2"]
@@ -48,7 +46,6 @@
 { From Georges Koltanowski - Arthur Dunkelblum, 1923. }
 13. Qd8+ Kxd8 14. Ba5+ Kc8 15. Rd8# *
 
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Double Check: Double Check #3"]
 [Site "https://lichess.org/study/RUQASaZm"]
@@ -65,7 +62,6 @@
 { From Rudolf Rezso Charousek - Jakob Wollner, 1893. }
 17. Qe8+ Rxe8 18. fxe8=Q+ Bxe8 19. Bxd6# *
 
-
 [Termination "mate in 4"]
 [Event "Lichess Practice: Double Check: Double Check #4"]
 [Site "https://lichess.org/study/RUQASaZm"]
@@ -81,7 +77,6 @@
 
 { From Milorad Kapelan - James Tarjan, 1983. }
  *
-
 
 [Termination "+1500cp in 5"]
 [Event "Lichess Practice: Double Check: Double Check #5"]

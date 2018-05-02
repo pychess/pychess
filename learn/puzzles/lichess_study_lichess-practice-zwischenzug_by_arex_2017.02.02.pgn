@@ -16,7 +16,6 @@
 In this Savielly Tartakower - Jose Raul Capablanca game from 1924, Tartakower just played Bxb8. Instead of recapturing immediately with Rxb8, can you find a better move that makes a strong threat? }
 9... Nd5 10. Kf2 Rxb8 *
 
-
 [Termination "-500cp in 3"]
 [Event "Lichess Practice: Zwischenzug: Zwischenschach"]
 [Site "https://lichess.org/study/ITWY4GN2"]
@@ -32,7 +31,6 @@ In this Savielly Tartakower - Jose Raul Capablanca game from 1924, Tartakower ju
 
 { A Zwischenzug that is also a check, is called a Zwischenschach, Zwischen-check, or simply an in-between check. Instead of recapturing with Qxb4 immediately, find the Zwischenschach in this Samuel Rosenthal - Cecil Valentine De Vere game from 1867. }
 16... Rc1+ 17. Kd2 Rxf1 18. Qxf1 Qxb4+ *
-
 
 [Termination "+300cp in 3"]
 [Event "Lichess Practice: Zwischenzug: Zwischenzug Challenge #1"]
@@ -50,7 +48,6 @@ In this Savielly Tartakower - Jose Raul Capablanca game from 1924, Tartakower ju
 { From Wolfgang Unzicker - Mikhail Tal, 1975. }
 29. Qxh6 Bd7 30. Qxg5+ Kf8 31. Bxa8 *
 
-
 [Termination "+400cp in 2"]
 [Event "Lichess Practice: Zwischenzug: Zwischenzug Challenge #2"]
 [Site "https://lichess.org/study/ITWY4GN2"]
@@ -66,7 +63,6 @@ In this Savielly Tartakower - Jose Raul Capablanca game from 1924, Tartakower ju
 
 { From Alexander Kotov - Ratmir Kholmov, 1971. }
 28. Qb5 Rxc2 29. Bxa7 Rxa2 *
-
 
 [Termination "+220cp in 3"]
 [Event "Lichess Practice: Zwischenzug: Zwischenzug Challenge #3"]

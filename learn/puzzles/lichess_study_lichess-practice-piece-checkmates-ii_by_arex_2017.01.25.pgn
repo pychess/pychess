@@ -13,7 +13,6 @@
 { Keep your pieces on the opposite color squares from the enemy bishop to stay safe. Use your queen to encroach on the king and look for double attacks. Mate in 10 if played perfectly. }
  *
 
-
 [Event "Lichess Practice: Piece Checkmates II: Queen vs knight mate"]
 [Site "https://lichess.org/study/Rg2cMBZ6"]
 [UTCDate "2017.01.30"]
@@ -28,7 +27,6 @@
 
 { Force the enemy king to the edge of the board while avoiding tricky knight forks. Mate in 12 if played perfectly. }
  *
-
 
 [Event "Lichess Practice: Piece Checkmates II: Queen vs rook mate"]
 [Site "https://lichess.org/study/Rg2cMBZ6"]
@@ -46,7 +44,6 @@
 
 Mate in 18 if played perfectly. }
  *
-
 
 [Date "2017.01.30"]
 [Site "https://lichess.org/study/BJy6fEDf"]
@@ -66,7 +63,6 @@ Mate in 18 if played perfectly. }
 Mate in 13 if played perfectly. }
  *
 
-
 [Date "2017.01.30"]
 [Site "https://lichess.org/study/BJy6fEDf"]
 [Event "Lichess Practice: Piece Checkmates I: Knight and bishop mate"]
@@ -85,7 +81,6 @@ Mate in 13 if played perfectly. }
 Mate in 10 if played perfectly. }
  *
 
-
 [Event "Lichess Practice: Piece Checkmates II: Knight and bishop mate #2"]
 [Site "https://lichess.org/study/Rg2cMBZ6"]
 [UTCDate "2017.02.21"]
@@ -102,7 +97,6 @@ Mate in 10 if played perfectly. }
 
 Mate in 19 if played perfectly. }
 1. Nc4+ Kd7 2. Ke5 Ke7 3. Nb6 Kf8 4. Kf6 Ke8 5. Bb3 Kf8 6. Nd7+ Ke8 7. Ke6 Kd8 8. Kd6 Ke8 9. Ba2 Kd8 10. Bf7 Kc8 11. Nc5 Kd8 12. Nb7+ Kc8 13. Kc6 Kb8 14. Nd6 Ka7 15. Bc4 Kb8 16. Kb6 Ka8 17. Kc7 Ka7 18. Nc8+ Ka8 19. Bd5# *
-
 
 [Event "Lichess Practice: Piece Checkmates II: Two knights vs pawn"]
 [Site "https://lichess.org/study/Rg2cMBZ6"]

@@ -16,7 +16,6 @@
 This is a composition by Paul Morphy, originally published in the New York Clipper on June 28, 1856. }
 1. Ra6 *
 
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Zugzwang: Zugzwang #2"]
 [Site "https://lichess.org/study/9cKgYrHb"]
@@ -33,7 +32,6 @@ This is a composition by Paul Morphy, originally published in the New York Clipp
 { Here you can use Zugzwang to force checkmate. How cool is that? }
  *
 
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Zugzwang: Zugzwang #3"]
 [Site "https://lichess.org/study/9cKgYrHb"]
@@ -49,7 +47,6 @@ This is a composition by Paul Morphy, originally published in the New York Clipp
 
 { Use your knowledge of Zugzwang to promote one of your pawns safely. }
  *
-
 
 [Termination "mate in 4"]
 [Event "Lichess Practice: Zugzwang: Zugzwang #4"]

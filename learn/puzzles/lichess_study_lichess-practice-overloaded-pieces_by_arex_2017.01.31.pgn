@@ -14,7 +14,6 @@
 { A piece is Overloaded (also known as "overworked") if it has more than one responsibility, e.g. defending a piece, defending a square, blocking a check, and blockading a piece. In this example, the f7 pawn has at least two responsibilities; it is protecting the bishop on e6, but it is also protecting the knight on g6. Can you exploit this double responsibility? }
  *
 
-
 [Termination "+50cp in 1"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #2"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -30,7 +29,6 @@
 
 { In this example, the f6 knight has two responsibilities. One of those responsibilities is more important than the other. Can you exploit the situation? }
  *
-
 
 [Termination "+1000cp in 4"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #3"]
@@ -48,7 +46,6 @@
 { In this example, the h7 pawn has two responsibilities. Can you exploit the situation? From Alexander Grischuk - Evgeny Alekseev, 2008. https://lichess.org/yOyudklB#104 }
  *
 
-
 [Termination "+500cp in 1"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #4"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -64,7 +61,6 @@
 
 { From Jose Raul Capablanca - Rudolf Spielmann, 1911. https://lichess.org/QN4PcsKD#56 }
  *
-
 
 [Termination "+400cp in 3"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #5"]
@@ -82,7 +78,6 @@
 { From Shakhriyar Mamedyarov - Peter Svidler, 2009. https://lichess.org/ctDrrcM6#66 }
  *
 
-
 [Termination "+600cp in 4"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #6"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -98,7 +93,6 @@
 
 { From Garry Kasparov - Anatoly Karpov, 1985. https://lichess.org/iK5KRqtZ#44 }
  *
-
 
 [Termination "+400cp in 4"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #7"]
@@ -116,7 +110,6 @@
 { From Boris Spassky - Bent Larsen, 1969. https://lichess.org/YgaPGPCz#130 }
  *
 
-
 [Termination "+250cp in 3"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #8"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -132,7 +125,6 @@
 
 { From Yury Shulman - Loek van Wely, 2009. https://lichess.org/Jgay9DvA#54 }
  *
-
 
 [Termination "-300cp in 3"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #9"]
@@ -150,7 +142,6 @@
 { From Viktor Korchnoi - Irina Krush, 2007. https://lichess.org/rL6AKS42/black#53 }
  *
 
-
 [Termination "+640cp in 4"]
 [Event "Lichess Practice: Overloaded Pieces: Overloaded #10"]
 [Site "https://lichess.org/study/o734CNqp"]
@@ -165,7 +156,6 @@
 [SetUp "1"]
 
 29. Rb7+ Kxb7 30. Qd7+ Kb8 31. e8=Q+ Rxe8 32. Qxe8+ Kb7 *
-
 
 [White "Magnus Carlsen"]
 [Black "Alexander Grischuk"]

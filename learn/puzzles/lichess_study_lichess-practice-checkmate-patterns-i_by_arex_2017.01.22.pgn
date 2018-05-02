@@ -14,7 +14,6 @@
 { A Back-Rank Mate (also known as Corridor Mate) is a checkmate delivered by a rook or queen along the back rank in which the mated king is unable to move up the board because the king is blocked by friendly pieces (usually pawns) on the second rank. }
  *
 
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns I: Back-Rank Mate #2"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -29,7 +28,6 @@
 [SetUp "1"]
 
  *
-
 
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Back-Rank Mate #3"]
@@ -47,7 +45,6 @@
 { From Zsuzsa Markhot - Sanja Arslanagic, 1997. }
  *
 
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns I: Hook Mate #1"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -63,7 +60,6 @@
 
 { The Hook Mate involves the use of a white rook, knight, and pawn along with one black pawn to limit the black king's escape. The rook is protected by the knight and the knight is protected by the pawn. }
  *
-
 
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Hook Mate #2"]
@@ -81,7 +77,6 @@
 { From Vassily Ivanchuk - Levon Aronian, 2013. }
  *
 
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Hook Mate #3"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -97,7 +92,6 @@
 
 { From Ian Nepomniachtchi - Ivan Salgado Lopez, 2008. }
  *
-
 
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns I: Anastasia's Mate #1"]
@@ -115,7 +109,6 @@
 { In Anastasia's Mate, a knight and rook team up to trap the opposing king between the side of the board on one side and a friendly piece on the other. This checkmate got its name from the novel "Anastasia und das Schachspiel" by Johann Jakob Wilhelm Heinse. }
  *
 
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns I: Anastasia's Mate #2"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -131,7 +124,6 @@
 
  *
 
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Anastasia's Mate #3"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -146,7 +138,6 @@
 [SetUp "1"]
 
  *
-
 
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Anastasia's Mate #4"]
@@ -164,7 +155,6 @@
 { From Irina Andrenko - Olga Kalinina, 2007. }
  *
 
-
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns I: Blind Swine Mate #1"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -180,7 +170,6 @@
 
 { The name of this pattern is attributed to Polish master Dawid Janowski referring to coupled rooks on a player's 7th rank as swine. For this type of mate, the rooks on white's 7th rank can start out on any two of the files from a to e, and although black pawns are commonly present, they are not necessary to effect the mate. }
  *
-
 
 [Termination "mate in 6"]
 [Event "Lichess Practice: Checkmate Patterns I: Blind Swine Mate #2"]
@@ -198,7 +187,6 @@
 { From Rudolf Swiderski - Aron Nimzowitsch, 1905. }
  *
 
-
 [Termination "mate in 5"]
 [Event "Lichess Practice: Checkmate Patterns I: Blind Swine Mate #3"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -214,7 +202,6 @@
 
 { From Vassily Ivanchuk - Levon Aronian, 2006. }
  *
-
 
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns I: Smothered Mate #1"]
@@ -232,7 +219,6 @@
 { Smothered Mate occurs when a knight checkmates a king that is smothered (surrounded) by his friendly pieces and he has nowhere to move nor is there any way to capture the knight. It is also known as "Philidor's Legacy" after François-André Danican Philidor, though its documentation predates Philidor by several hundred years. }
  *
 
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns I: Smothered Mate #2"]
 [Site "https://lichess.org/study/fE4k21MW"]
@@ -247,7 +233,6 @@
 [SetUp "1"]
 
  *
-
 
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns I: Smothered Mate #3"]
@@ -264,7 +249,6 @@
 
 { From Alexander Grischuk - Ruslan Ponomariov, 2000. }
  *
-
 
 [Termination "mate in 6"]
 [Event "Lichess Practice: Checkmate Patterns I: Smothered Mate #4"]

@@ -8,9 +8,8 @@
 [Result "*"]
 [Annotator "https://lichess.org/@/thijscom"]
 
-{ This study, the first in its series (the second part can be found at https://lichess.org/study/ByFy31hm), is a collection of beautiful chess studies, where the assignment is to force a win or a draw. In these puzzles there is only one, often elegant solution achieving this goal. For checkmating puzzles, where the assignment is to force mate within 2/3 moves, see https://lichess.org/study/RdtICntn. }
-1. f3 { The puzzles/chapters are listed on the left hand side above the chat window, and are sorted alphabetically by the composers of these puzzles. Each chapter represents a different puzzle. The solution, as well as a detailed analysis of the variations crucial to the solutions, can be found on the right hand side after completing the puzzle and clicking "Analyse". } 1... e5 { If you like these puzzles or have any comments, feel free to drop a line in the chat box on the left, or add this study to your favorites by clicking the little heart ❤️ below the board when loading the study. And as mentioned, do not forget to check out the other puzzle collections at https://lichess.org/study/RdtICntn and https://lichess.org/study/ByFy31hm. } 2. g4 { As a sidenote, you might notice that some chapters have a *-mark, and some do not. Chapters without a * are fully annotated, with hints and guidance why other moves are wrong, while the chapters with a * are not quite fully annotated. (This is a rather time-consuming process.) } 2... Qh4# *
-
+{ PART 2 AVAILABLE HERE: https://lichess.org/study/ByFy31hm CHECKMATE PUZZLES AVAILABLE HERE: https://lichess.org/study/RdtICntn }
+1. f3 { This study, the first in its series (the second part can be found at https://lichess.org/study/ByFy31hm), is a collection of beautiful chess studies, where the assignment is to force a win or a draw. In these puzzles there is only one, often elegant solution achieving this goal. For checkmating puzzles, where the assignment is to force mate within 2/3 moves, see https://lichess.org/study/RdtICntn. } 1... e5 { The puzzles/chapters are listed on the left hand side above the chat window, and are sorted alphabetically by the composers of these puzzles. Each chapter represents a different puzzle. The solution, as well as a detailed analysis of the variations crucial to the solutions, can be found on the right hand side after completing the puzzle and clicking "Analyse". } 2. g4 { If you like these puzzles or have any comments, feel free to drop a line in the chat box on the left, or add this study to your favorites by clicking the little heart ❤️ below the board when loading the study. And as mentioned, do not forget to check out the other puzzle collections at https://lichess.org/study/RdtICntn and https://lichess.org/study/ByFy31hm. } 2... Qh4# { As a sidenote, you might notice that some chapters have a *-mark, and some do not. Chapters without a * are fully annotated, with hints and guidance why other moves are wrong, while the chapters with a * are not quite fully annotated. (This is a rather time-consuming process.) } *
 
 [Event "Beautiful Chess Studies (1): Afanasyev, 1964"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -27,7 +26,6 @@
 { In this position white is up two pawns and a knight, but black is threatening to get a queen very soon. How does white win the game anyway? }
 1. c3! { Correct! This pawn move covers two key squares (b4 and d4) and sets up an alternative way to win - if the pawn cannot be stopped, then maybe black can be checkmated. } 1... e1=Q { Black decides his best chance is to get a queen; both king moves would have allowed a knight check, after which the black pawn can be stopped. How does white proceed? } (1... Kc4 2. Ne3+ Kd3 3. Ng2 { And white will win. })  (1... Kb5 2. Nd4+ Kc4 3. Nxe2 { And white wins. }) 2. Nd6! { Correct! White completely traps the black king, and set up a deadly check with his b-pawn. Checkmate (or winning the queen) seems inevitable. } 2... Qxc3! { Black sees a tricky way to counter white's mating plan. How does white respond to this move? } (2... Qb1 3. b4+ Qxb4 4. cxb4+ { And the white e-pawn will decide the game. }) 3. Nb7+! { Correct! White does not fall for the stalemate trap (3. bxc3? is a draw!), and instead gives an intermediate check first. } (3. bxc3? { Stalemate! }) 3... Kd4+ { Black has no choice to move the king away from c5. What does white play next? } 4. bxc3+ { Correct! Only now does white capture the black queen, as there is no stalemate anymore. As black is not in time to win both white pawns, white will soon win the game. (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Afek, 2001"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.08"]
@@ -42,7 +40,6 @@
 
 { In this position, white is up a far-advanced a-pawn, but this pawn appears to be doomed. How does white convert this position into a win anyway? }
 1. a8=R!! { Correct! White promotes his pawn to distract the black queen, without falling for any stalemate traps. } (1. a8=Q? Qd3+! 2. Qxd3 { And black saves the draw by stalemate! }) 1... Qxa8 { Black has no choice but to take the rook, as otherwise the white rook and queen will quickly checkmate black. How does white continue? } 2. Qb1+ { Correct! White forces the black king further to the edge of the board. } 2... Ka7 { Black tries to run his king to b8, to block the checks with his queen. This inaccuracy however allows white to finish the game quickly. How does white proceed? } (2... Ka6 3. Qa2+ Kb7 4. Qb3+ Kc8 5. Qc4+ Kb7 6. Qb5+ { And black will finally be forced to move the king to a7 anyway, with a similar result as in the game. } 6... Ka7 (6... Kc8 7. Qd7+ Kb8 8. Qc7#) 7. Kc7!) 3. Kc7! { Correct! White threatens mate, and the black queen is unable to hinder white with any spite checks. White will mate black in at most a few more moves. (1-0) } (3. Qa2+? Kb8 { And white can no longer win. }) *
-
 
 [Event "Beautiful Chess Studies (1): Afruniev, 1974"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -59,7 +56,6 @@
 { In this position, both sides have pawns ready to promote, but while the black bishop is in time to stop the white pawn, the white knight appears to be too late to stop the black pawn on e2. How does white save a draw anyway? }
 1. Ne5! { Correct! White prepares to cover the e1-square with the knight, forcing black's next move. } 1... e1=Q { Black gets his queen, and all seems hopeless for white. Can you find a way out? } (1... e1=R { This essentially leads to the same result. }) 2. f8=Q+! { Correct! White sacrifices his advanced pawn, again forcing black's reply. } (2. f8=R+ { This move also works, and transposes to the main line. }) 2... Bxf8 { Black's only move seems to have decided the game: white is now a full queen down. What does white play next? } 3. Nf7+ { Correct! White has one more free spite check with his knight, again leaving black no choice. } 3... Kg8 { The black king steps aside, and begs the question why white has not resigned yet. How does white continue? } 4. Nh6+ { Correct! White aims for a perpetual with Nf7-h6-f7, thereby forcing black to take to avoid a perpetual. } 4... Bxh6 { Unfortunately for black, taking on h6 leaves white in stalemate! (1/2-1/2) } (4... Kh8 5. Nf7+ Kg8 6. Nh6+ Bxh6) *
 
-
 [Event "Beautiful Chess Studies (1): Becker, 1988"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.04.04"]
@@ -75,8 +71,7 @@
 { This seemingly innocent endgame holds quite a few hidden surprises. How does white navigate the tricks and traps in this position to quickly force black's resignation? }
 1. e6+! { Correct! White avoids 1. Rh7+? Ke6! after which the black rook cannot be captured due to a stalemate. This move instead lifts the stalemate, and threatens to win the rook with a skewer on one of the next moves. } (1. Rh7+ Ke6 2. Rxa7 { And black is stalemated! } (2. Rh6+ Kf7 { This does not transpose back to the main line, as after 2. Rh6+ Kf7! white can no longer force a win. })) 1... Kd6 { Black sees that e.g. 1... Ke7? 2. Rh7+ now does lose a full rook, and takes cover behind the white pawn. How does white continue? } (1... Ke8 2. Rh8+ Ke7 3. Rh7+)  (1... Ke7 2. Rh7+) 2. e7+! { Correct! White would be happy to get rid of his e-pawn, as it would allow winning the black rook. } 2... Kd7 { Black again notices the danger of a rook check on h7, and again takes cover behind the white pawn. What does white play next? } (2... Kxe7 3. Rh7+) 3. e8=Q+! { Correct! White insists on black capturing the e-pawn, after which the king can be attacked by the white rook. } (3. Rh7 Ra4+ 4. Ke5 Ke8 { And black forced a draw. }) 3... Kxe8 { Black has no choice but to capture the queen. How does white proceed? } 4. Rh8+! { Correct! The black king is put in check, and cannot find a good square to hide. } 4... Kf7 { The black king charges at white's rook, but he is just too late. How does white decide black's fate? } 5. Rh7+! { Correct! The black king and rook are finally skewered, and white will capture the rook on the next move, winning the game! (1-0) } *
 
-
-[Event "Beautiful Chess Studies (1): Benko, 1944*"]
+[Event "Beautiful Chess Studies (1): Benko, 1944"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.18"]
 [UTCTime "17:59:12"]
@@ -88,11 +83,10 @@
 [FEN "7q/4kppB/6R1/4N1P1/3PK3/8/3P4/8 w - - 0 1"]
 [SetUp "1"]
 
-{ White to play and win! }
-1. Re6+! Kxe6 (1... fxe6 2. Ng6+)  (1... Kf8 2. Nd7#)  (1... Kd8 2. Nxf7+) 2. d5+! Ke7 (2... Kd6 3. Nxf7+) 3. d6+! Ke8 (3... Kxd6 4. Nxf7+)  (3... Kd8 4. Nxf7+)  (3... Kf8 4. g6!) 4. d7+! Ke7 (4... Kd8 5. Nxf7+) 5. d8=Q+! Qxd8 (5... Kxd8 6. Nxf7+) 6. Nc6+ { And white wins the queen and the game! (1-0) } *
+{ In this study, the question is not how this position was miraculously reached, but how white can save his pieces from the awkward positions they are in, and convert his material advantage to a win. What should white play? }
+1. Re6+! { Correct! White sacrifices his rook, noting that the rook is poisoned for the f7-pawn due to the knight fork on g6. } 1... Kxe6 { Black has no choice but to capture with his king; all alternatives lead to a collapse even sooner. How should white continue? } (1... fxe6 2. Ng6+ { And white wins the queen and the game. })  (1... Kf8 2. Nd7# { And black is checkmated! })  (1... Kd8 2. Nxf7+ { And the black queen is lost. }) 2. d5+! { Correct! One of the points of the rook check was to lure the king to e6, so now the d-pawn can advance with tempo. } 2... Ke7 { Black has no choice, as the only alternative 2... Kd6 immediately loses to 3. Nxf7+. What should white play next? } (2... Kd6? 3. Nxf7+ { And white wins the black queen. }) 3. d6+! { Correct! The pawn marches up the board even further, using the fact that the black king has very few squares to hide. } 3... Ke8 { The black king wisely avoids taking the pawn, and sidesteps potential knight forks for now. How should white proceed? } (3... Kxd6 4. Nxf7+ { And white wins the black queen. })  (3... Kd8 4. Nxf7+ { And white wins the black queen. })  (3... Kf8 4. g6! { And black will soon lose his queen. })  (3... Ke6 4. Bf5+ Kxd6 5. Nxf7+ { And white wins the black queen. }) 4. d7+! { Correct! White keeps putting the black king in check, again using the fact that the black king is not quite feeling comfortable. } 4... Ke7 { The black king again sidesteps any direct knight forks, and moves to e7. What should white play now? } (4... Kd8 5. Nxf7+) 5. d8=Q+! { Correct! White yet again marches his pawn up the board, to get himself a queen. } 5... Qxd8 { Black must capture the queen, and taking with the king would fall for the by now well-known fork on f7. Taking with the queen therefore seems like the lesser evil, but how does white exploit this capture? } (5... Kxd8 6. Nxf7+) 6. Nc6+ { Correct! White finally found a way to fork the black king and queen, winning the queen and the game! (1-0) } *
 
-
-[Event "Beautiful Chess Studies (1): Benko, 1990*"]
+[Event "Beautiful Chess Studies (1): Benko, 1990"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.18"]
 [UTCTime "17:48:16"]
@@ -104,11 +98,10 @@
 [FEN "7r/6k1/4KpBp/5PbQ/8/8/2p3P1/8 w - - 0 1"]
 [SetUp "1"]
 
-{ White is currently up a queen and has a strong control over the light squares surrounding the black king. On the other hand, black is threatening to get a queen as well, after which the white king will not feel safe either. How does white quickly score the full point! }
-1. Bh7! Rf8 (1... Ra8 { This attempt for a perpetual fails as well, as the white king can eventually outrun the black rook and bishop. } 2. Qf7+ Kh8 3. Bg6 Ra6+ 4. Kd5 Ra5+ 5. Ke4 Re5+ (5... Ra4+ 6. Kf3 Ra3+ 7. Kf2 Be3+ 8. Ke2 c1=N+ 9. Kf1) 6. Kd3 c1=N+ 7. Kc4 Re4+ 8. Kd5 Re5+ 9. Kd6)  (1... Kxh7 2. Qg6#)  (1... Rxh7 2. Qf7+ Kh8 3. Qf8#) 2. Qg6+ Kh8 3. Bg8! Rxg8 (3... c1=Q 4. Qh7#) 4. Kf7! Rxg6 (4... c1=Q 5. Qxg8#)  (4... Rd8 5. Qg7#) 5. fxg6 c1=Q 6. g7+ Kh7 7. g8=Q# { And black is checkmated! (1-0) } *
+{ White is currently up a queen for a rook and has a strong control over the light squares surrounding the black king. On the other hand, black has an unstoppable c-pawn, and after black gets a queen, the white king will not feel very safe either. How does white quickly score the full point? }
+1. Bh7! { Correct! The bishop clears the way for the white queen, which threatens to infiltrate through the light squares. } 1... Rf8 { Black finds the most tenacious defense, covering f7 and preparing to hide the king in the corner. How should white continue? } (1... Ra8 { This attempt for a perpetual fails as well, as the white king can eventually outrun the black rook and bishop. } 2. Qf7+ Kh8 3. Bg6 Ra6+ 4. Kd5 Ra5+ 5. Ke4 Re5+ (5... Ra4+ 6. Kf3 Ra3+ 7. Kf2 Be3+ 8. Ke2 c1=N+ 9. Kf1) 6. Kd3 c1=N+ 7. Kc4 Re4+ 8. Kd5 Re5+ 9. Kd6)  (1... Kxh7 2. Qg6#)  (1... Rxh7 2. Qf7+ Kh8 3. Qf8#) 2. Qg6+ { Correct! The queen infiltrates, and the black king is driven to the corner. } 2... Kh8 $7 { Black's only move is a king retreat to the corner, but the black king now feels reasonably safe in this corner. How does white crack black's defensive setup? } 3. Bg8! { Correct! The white bishop again clears the way for the white queen, which now threatens mate in 1 on h7. } 3... Rxg8 { Black has no choice but to take the bishop, due to the mate threat on h7. How does white continue from here? } (3... c1=Q 4. Qh7#) 4. Kf7! { Correct! The king now infiltrates with deadly effect as well! The white queen is left en prise, but white has a backup plan to win in case the queen is lost. } 4... Rxg6 { As white was threatening mate by simply taking the rook, black had no choice but to take the offered queen. What was the point of white's previous move? } (4... c1=Q 5. Qxg8#)  (4... Rd8 5. Qg7#) 5. fxg6 { Correct! This innocent pawn, originally on f5, now decides the game, as it is also unstoppable. } 5... c1=Q { Black cannot stop white's g-pawn, and decides to get a queen now that the action is over. How should white proceed? } 6. g7+ { Correct! The pawn advances with check, gaining a crucial tempo. } 6... Kh7 $7 { Black's only option is to play Kh7. How does white finish the game? } 7. g8=Q# { Correct! The f-pawn has become a queen and, together with the king, now decides the game in white's favor: black is checkmated! (1-0) } *
 
-
-[Event "Beautiful Chess Studies (1): Benko, 1999*"]
+[Event "Beautiful Chess Studies (1): Benko, 1999"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.18"]
 [UTCTime "18:10:02"]
@@ -121,10 +114,9 @@
 [SetUp "1"]
 
 { In this endgame we see white having a full rook more than black, but somehow white's king and rook are very awkwardly placed, while the black king threatens to gobble up the white queenside and advance his own queenside pawns. How does white refute black's ideas, and force a win? }
-1. a4! { Correct! White offers a pawn trade, which would liquidate the entire queenside. } (1. Rg1? Kxb2 2. Rg5 Kxa2 3. Rxb5 a4 { And black will soon force a draw. })  (1. b4? axb4 2. Rg1 Kb2 3. Rg2+ Ka3 4. Kg7 b3 5. axb3 Kxb3 { And black is in time to save the draw. } 6. Kf6 b4 7. Ke5 Kc3 8. Ke4 b3 9. Ke3 b2 10. Rg1 Kc2)  (1. b3? Kb2 2. Rg1 Kxa2 { And black will save the draw. })  (1. a3? Kxb2 2. Re1 Kxa3 { And black will save the draw. }) 1... Kxb2 { Black observes that neither 1... bxa4? 2. Rxa4 nor 1... b4 2. Rg1 Kxb2 3. Rg5 offer him any drawing chances, and instead captures on b2 first, seemingly gaining a tempo on the white rook. What does white play next? } (1... b4? 2. Rg1 Kb3 3. Rg5 Kxa4 4. Rg3 { And black is unable to make a passed pawn. })  (1... bxa4? 2. Rxa4 Kxb2 3. Rxa5 { And white will easily win the KR vs. K endgame. }) 2. Ra3!! { Correct! This amazing move is all about gaining a tempo in the upcoming pawn race of white's b-pawn against black's a-pawn: white loses one move on making this additional rook move, while it costs black two additional moves to move the king from a3 to a1, after capturing the rook. Observe that 2. axb5? Kxa1 3. b6 a4 3. b7 a3 4. b8=Q a2 is a draw! } (2. axb5 Kxa1 3. b6 a4 4. b7 a3 5. b8=Q a2 { And black is just in time to save the draw! }) 2... Kxa3 { Black must capture the rook, as both pawn moves lose to 2... bxa4? 3. Rxa4 and 2... b4 3. Rg3 followed by 4. Rg5 and 5. Rxa5. What does white play next? } (2... b4 3. Rf3 b3 4. Rf5 Ka3 5. Rxa5 b2 6. Rb5 { And white wins. }) 3. axb5 { Correct! White now enters the pawn race with his b-pawn, knowing that black will be just one move short. } 3... a4 { Black advances his pawn. What does white play? } 4. b6 { Correct! White advances his pawn as well. } 4... Ka2 { Black needs to move his king to make way for his a-pawn, losing an important tempo. What does white play? } 5. b7 { Correct! White marches his pawn up the board. } 5... a3 { Black advances his pawn as well. What does white play? } 6. b8=Q { Correct! Although black has an advanced a-pawn, his pawn is not yet advanced far enough up the board to force a draw; black would need two moves to play Ka1 and a2, and unfortunately he only has one move. (1-0) } *
+1. a4! { Correct! White offers a pawn trade, which would liquidate the entire queenside. } (1. Rg1? Kxb2 2. Rg5 Kxa2 3. Rxb5 a4 { And black will soon force a draw. })  (1. b4? axb4 2. Rg1 Kb2 3. Rg2+ Ka3 4. Kg7 b3 5. axb3 Kxb3 { And black is in time to save the draw. } 6. Kf6 b4 7. Ke5 Kc3 8. Ke4 b3 9. Ke3 b2 10. Rg1 Kc2)  (1. b3? Kb2 2. Rg1 Kxa2 { And black will save the draw. })  (1. a3? Kxb2 2. Re1 Kxa3 { And black will save the draw. }) 1... Kxb2 { Black observes that neither 1... bxa4? 2. Rxa4 nor 1... b4 2. Rg1 Kxb2 3. Rg5 offer him any drawing chances, and instead captures on b2 first, seemingly gaining a tempo on the white rook. What does white play next? } (1... b4? 2. Rg1 Kb3 3. Rg5 Kxa4 4. Rg3 { And black is unable to make a passed pawn. })  (1... bxa4? 2. Rxa4 Kxb2 3. Rxa5 { And white will easily win the KR vs. K endgame. }) 2. Ra3!! { Correct! This amazing move is all about gaining a tempo in the upcoming pawn race of white's b-pawn against black's a-pawn: white loses one move on making this additional rook move, while it costs black two additional moves to move the king from a3 to a1, after capturing the rook. Observe that 2. axb5? Kxa1 3. b6 a4 3. b7 a3 4. b8=Q a2 is a draw! } (2. axb5 Kxa1 3. b6 a4 4. b7 a3 5. b8=Q a2 { And black is just in time to save the draw! }) 2... Kxa3 { Black must capture the rook, as both pawn moves lose to 2... bxa4? 3. Rxa4 and 2... b4 3. Rg3 followed by 4. Rg5 and 5. Rxa5. What does white play next? } (2... b4 3. Rf3 b3 4. Rf5 Ka3 5. Rxa5 b2 6. Rb5 { And white wins. }) 3. axb5 { Correct! White now enters the pawn race with his b-pawn, knowing that black will be just one move short. } 3... a4 { Black advances his pawn. What does white play? } 4. b6 { Correct! White advances his pawn as well, hoping to get to the other side sooner than black. } 4... Ka2 { Black needs to move his king to make way for his a-pawn, losing an important tempo. What does white play? } 5. b7 { Correct! White marches his pawn up the board, and almost has a new queen. } 5... a3 { Black advances his pawn as well. What does white play? } 6. b8=Q { Correct! Although black has an advanced a-pawn, his pawn is not yet advanced far enough up the board to force a draw; black would need two moves to play Ka1 and a2, and unfortunately he only has one move. (1-0) [An example line: 6... Ka1 7. Qe5+ Kb1 8. Qe1+ Kb2 9. Qb4+ Ka2 10. Kg7 Ka1 11. Qxa3+ and white wins.] } *
 
-
-[Event "Beautiful Chess Studies (1): Benko, 2003*"]
+[Event "Beautiful Chess Studies (1): Benko, 2003"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.18"]
 [UTCTime "17:37:35"]
@@ -136,9 +128,8 @@
 [FEN "4k1rr/R7/8/8/8/8/8/R3K3 w Q - 0 1"]
 [SetUp "1"]
 
-{ In this magnificent study by Pal Benko, both sides have two rooks, but black's pieces are not yet well coordinated. Can white combine threats of checkmate and skewers to win the game? }
-1. O-O-O! Rf8 (1... Rg5 2. Ra8+)  (1... Rh6 2. Re1+ Kf8 3. Rf1+ Ke8 4. Ra8+) 2. Kb1! Rhg8 (2... Rh6 3. Re1+ Kd8 4. Ra8+) 3. Ka1! (3. Rc1? Kd8 $10) 3... Rf6 { Black can finally remove one of his rooks from the back rank, without losing a rook to a skewer. How does white win anyway? } (3... Rf7 4. Ra8+) 4. Rb1! Rd6 5. Rb8+! Rd8 $7 6. Rxd8+ Kxd8 $7 7. Ra8+ { And white finally wins a black rook via a skewer! (1-0) } *
-
+{ In this magnificent study by famous chess player and composer Pal Benko, both sides have two rooks, but black's pieces are not very well coordinated. Can white combine threats of checkmate and skewers to win the game? }
+1. O-O-O! { Correct! White prevents that black frees up his rooks with tempo (checks), and continues putting pressure on the black position. } 1... Rf8 { Black sees that he cannot move either rook from the back rank, as then the other rook will be lost to a skewer by the a7-rook. Instead, black prepares a (slow) way to untangle. How should white continue? } (1... Rg5 2. Ra8+)  (1... Rh6 2. Re1+ Kf8 3. Rf1+ Ke8 4. Ra8+) 2. Kb1! { Correct! White cannot yet exploit black's position yet, and improves the position of his king, clearing more squares for the d1-rook. } 2... Rhg8 { Black pulls his other rook closer to the king, and is now ready to move the rook from f8 along the f-file. What should white play? } (2... Rh6 3. Re1+ Kd8 4. Ra8+) 3. Ka1! { Correct! This remarkable maneuver further increases the pressure on black's position, by also clearing the b1-square for the rook on d1. } (3. Rc1? Kd8 $10) 3... Rf6 { Black can finally remove one of his rooks from the back rank, without losing a rook to a skewer. How does white win anyway? } (3... Rf7 4. Ra8+) 4. Rb1! { Correct! As the a7-rook alone cannot win material with a skewer, white now sets up a mate threat on b8 using the other rook. } (4. Ra8+? Kf7 5. Rd7+ Ke6 $10) 4... Rd6 { Black's only defense against the mate is blocking the check with his own rook. What should white play now? } 5. Rb8+! { Correct! White delivers check anyway, forcing black's reply. } 5... Rd8 $7 { Black has no choice but to put his rook on d8, blocking the check. What does white play? } 6. Rxd8+ { Correct! White trades on d8, luring the black king to d8 and further away from the protection of the other rook. } 6... Kxd8 $7 { Black has no choice but to recapture. How does white finally finish the game? } 7. Ra8+ { Correct! After a long buildup, with many threats of mate and back-rank skewers, this skewer finally decides the game by winning a full rook. (1-0) } *
 
 [Event "Beautiful Chess Studies (1): Capablanca/Lasker, 1914"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -155,8 +146,7 @@
 { This study, composed by two former World Champions, sees white having a material advantage of a rook against a knight. Moreover, the black knights are hanging, and the black king has been cornered, making this seem like an easy win. However, things are not as simple as they seem, as black has some stalemate tricks up his sleeve. How does white win anyway? }
 1. Nxc7! { Correct! Black threatens to take on b5/a6, and this knight on c7 needs to be captured. If black now captures on b8, then white takes the knight on d5, easily winning the game. } 1... Nxc7 { Black passes on the free rook, and instead takes the white knight. Now both white's rook and b-pawn are hanging. How does white proceed? } (1... Kxb8 2. Nxd5 { And white also wins. }) 2. Ra8+!! { Correct! This amazing move lifts the stalemate (which would have appeared if white had captured on c7), and threatens to convert to a winning pawn endgame. } (2. Kxc7? { Stalemate! }) 2... Nxa8 { Seeing that 2... Kxa8 3. Kxc7 leads to a lost pawn endgame, and 2... Kb7 3. Ra7+! similarly does not save black, he decides to capture with the knight on a8. What does white play? } (2... Kb7 3. Ra7+! Kxa7 4. Kxc7 { And white also wins. })  (2... Kxa8 3. Kxc7 Ka7 4. Kc6 { And white also wins. }) 3. Kc8! { Correct! Black is in zugzwang, and has no choice but to give up his knight anyway. } 3... Nc7 $7 { Black's only move, which unfortunately for him costs material. How does white continue? } 4. Kxc7 { Correct! White captures the knight, and has reached a winning pawn endgame, where he will soon capture the b-pawn and promote his own b-pawn to a queen. (1-0) } *
 
-
-[Event "Beautiful Chess Studies (1): Dizvov, 1978*"]
+[Event "Beautiful Chess Studies (1): Dizvov, 1978"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.15"]
 [UTCTime "14:19:34"]
@@ -168,11 +158,10 @@
 [FEN "5Q1N/5P1p/5Pp1/p5kp/8/7K/8/2q5 w - - 0 1"]
 [SetUp "1"]
 
-{ White to play and win! }
-1. Qh6+! Kxh6 (1... Kxf6 2. Qxc1 { And white also wins. }) 2. f8=Q+ Kg5 3. Qh6+! Kxh6 4. Nf7# { And black is checkmated! (1-0) } *
+{ In this somewhat strange position, white is up a knight and has two dangerous f-pawns. On the other hand, his king is very exposed, and the white pieces seem terribly misplaced. How does white show that his pieces are actually optimally placed to win the game? }
+1. Qh6+! { Correct! The queen sacrifices itself on h6, luring the black king back into the top-right corner. } 1... Kxh6 { As the queen check also skewered the queen on c1, black had no choice but to capture the offered queen. Now, how does white proceed? } (1... Kxf6 2. Qxc1 { And white also wins. }) 2. f8=Q+ { Correct! With the far-advanced f-pawn, white gets a new queen with tempo. } 2... Kg5 $7 { Black's only move brings us back to the starting position, except that now there is no longer a white pawn on f7. How does white proceed from here? } 3. Qh6+! { Correct! White yet again sacrifices his queen on h6, claiming that material is overrated. } 3... Kxh6 { Black again has no choice, as stepping aside would lose the queen on c1. Now, what was the point of white's queen sacrifices? } 4. Nf7# { Correct! After two queen sacrifices, the knight and the pawn on f6 decide the game with this beautiful checkmate! (1-0) } *
 
-
-[Event "Beautiful Chess Studies (1): Gorgiev, 1957*"]
+[Event "Beautiful Chess Studies (1): Gorgiev, 1957"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.15"]
 [UTCTime "14:35:02"]
@@ -184,9 +173,8 @@
 [FEN "6N1/5pk1/6p1/3n1P2/3P2K1/8/1B6/8 w - - 0 1"]
 [SetUp "1"]
 
-{ White to play and win! }
-1. Ne7! Nxe7 (1... gxf5+ 2. Nxf5+ { And white remains up a piece. }) 2. f6+! Kxf6 3. d5# { And black is checkmated! (1-0) } *
-
+{ In this position, white is up a piece, but somehow the white knight has found itself trapped deep inside enemy territory. Nonetheless, your assignment is clear: white to play and win! }
+1. Ne7! { Correct! The white knight cannot escape through f6 or h6, so it hopes for the best via e7. } 1... Nxe7 { If black wants to save a draw, he must capture white's knight, equalizing the material balance. How does white proceed? } (1... gxf5+ 2. Nxf5+ { And white remains up a piece. }) 2. f6+! { Correct! White forks the black king and knight with this check, forcing black's reply. } 2... Kxf6 { Black must capture the pawn to keep hopes for a draw alive. Now, what was the point of white's last two moves? } 3. d5# { Correct! This discovered check is in fact checkmate! Black's materialistic greed, hoping to get his lost material back, ultimately led to this pretty checkmate in the middle of the board. (1-0) } *
 
 [Event "Beautiful Chess Studies (1): Gorgiev, 1958"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -203,7 +191,6 @@
 { Although white is a rook down, it is clear that the white pawn on b7 is worth its weight in gold. Unfortunately, simply taking with 1. bxc8=Q+ will not lead to more than a draw after 1... Kxc8. How does white force a win with a powerful sequence of moves? }
 1. Qb6+!! { Correct! This spectacular move pulls the king away from the defense of the rook, and threatens to win the house with a fork on c8. } 1... Kb8 { Black does not fall for white's nasty trick, and hides on b8. How does white continue? } (1... Kd7 2. e6+! Qxe6+ (2... Ke8 3. bxc8=Q+) 3. Qxe6+ Kxe6 4. bxc8=Q+)  (1... Kxb6 2. bxc8=N+! { This was the main point of white's initial move. } 2... Kc5 3. Nxe7 Kd4 4. Ng6 { And white will be in time to bring his own king and promote the pawn. }) 2. Qa7+! { Correct! White continues chasing the black king, forcing it to release control over the c8-square. } 2... Kxa7 { Black finally takes the white queen. Alternatively, 2... Kc7 would have lost to the simple 3. bxc8=Q++ Kxc8 4. Qxe7. Now, what was the idea behind these last queen moves? } 3. bxc8=N+! { Correct! White promotes to a knight, winning the black queen, and easily winning the resulting endgame. (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Gorgiev, 1975"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.09"]
@@ -218,7 +205,6 @@
 
 { White has cornered the black king, and the white king is in time to stop two of black's pawns. The third black pawn on h4 however seems unstoppable, even for the white knight. Can you find the narrow path to a draw? }
 1. Nd5! { Correct! The white knight threatens to stop the pawn from reaching h3, and so black is left no choice. } 1... h3 { Black runs the pawn down the board, not afraid of the white knight. What does white play? } 2. Nf4! { Correct! The white knight attacks the black pawn, again forcing it to hurry to the other side. } (2. Nxf6? h2 3. Nh5 h1=Q { And black wins. }) 2... h2 { The black pawn has almost reached its destination square. What does white play next? } 3. Nh5! { Correct! The white knight aims for the g3 square, from where it can stop the advanced h-pawn. Black is therefore left no choice but to promote the pawn. } 3... h1=Q { Unfortunately for black however, promoting to a bishop or knight only leads to a draw, while promoting to a queen (or rook) immediately leads to a stalemate! (1/2-1/2) } (3... h1=R { And it is still a stalemate. })  (3... h1=B 4. Nxf6 { And it will soon be a draw as well. }) *
-
 
 [Event "Beautiful Chess Studies (1): Gunst, 1922"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -235,7 +221,6 @@
 { This twin puzzle to (Pogosyants, 1987) sees white in a similar awkward situation: he would be happy to deliver checkmate with the knight and bishop, but it seems that one of his pieces will be lost to the black king soon. How does white win anyway? }
 1. Bb7!! { Correct! This accurate move paves the way for a near winning plan. } (1. Ba6? Kc7 2. Kc5 d6+! 3. Kd5 Kxb8 4. Kc6 (4. Kxd6 Ka8 5. Kc7) 4... d5)  (1. Bxd7? Kc7 { And black wins one of white's pieces, saving a draw. }) 1... Kc7 { Black needs to win either of whites pieces to save the draw. How does white continue? } 2. Ba6!! { Correct! In the last two moves white intentionally lost a tempo - if in this position white were to move, it would be a draw! } 2... Kxb8 { Black has no choice but to capture the piece - moving the king anywhere else or moving the d-pawn would allow white to save both pieces. Now, what was the point of white's last few moves? } (2... d6 3. Nc6) 3. Kd6! { Correct! The d-pawn is stopped for now, forcing the black king into the corner. } 3... Ka8 { Black's only move. Now, how does white win the game? } 4. Kc7 { Correct! The black king is stalemated, but at the same time the black d-pawn is released, preventing black from claiming a draw. } 4... d5 { Black has to move his d-pawn, but this only helps white. How does white finish the game? } 5. Bb7# { Correct! Black is checkmated with white's last minor piece, taking revenge for the white knight which was lost in battle. (1-0) } (5. Kc8 d4 6. Bb7# { White can torture black some more moves, if he so wishes. }) *
 
-
 [Event "Beautiful Chess Studies (1): Herbstman, 1929*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.04.04"]
@@ -250,7 +235,6 @@
 
 { White to play and draw! }
 1. Rg4+! Kf8 (1... Kh7 2. Rh4+ Kg6 3. Rxh2 { And white has an advantage. }) 2. Rf4+! Ke8 (2... Kg7 3. Rg4+ Kf8 4. Rf4+ { With a perpetual. }) 3. Rh4! h1=Q (3... h1=R 4. Rxe4 { And white draws. }) 4. Rh8+! Qxh8 { Stalemate! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Herbstman, 1939*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -267,7 +251,6 @@
 { White to play and draw! }
 1. c8=Q+! (1. Rxh4+ Kg8)  (1. Kf7 Qf1+) 1... Qxc8 2. Kf7! Qd8 (2... Qc2 3. Rxh4+ Qh7+ 4. Rxh7+ Kxh7 5. Kf6! { And white is just in time to stop the black pawn, forcing a draw! } (5. Ke7? d5! $19)) 3. Rg6! Kh7 4. Rh6+! Kxh6 { Stalemate! (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Kajev, 1932*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.04.04"]
@@ -282,7 +265,6 @@
 
 { White to play and win! }
 1. Rh6+ Kg4 $7 2. Ne5+ Rxe5 $7 3. Rf4+ Kxf4 $7 4. Rh4# { And black is checkmated! (1-0) } *
-
 
 [Event "Beautiful Chess Studies (1): Kallstrom, 1973"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -299,7 +281,6 @@
 { In this position, white is down two pawns, and although he can capture black's bishop, the black a-pawn seems unstoppable. How does white save a draw anyway? }
 1. Bd6! { Correct! White challenges the black a-pawn, forcing it to move. } (1. Ba7? a2 2. Bd4 f5! 3. Kxf7 f4 $19) 1... a2 { The black a-pawn has almost reached its destination, and white appears to be too late. What does white play? } 2. Be7! { Correct! White has found a cunning drawing plan, starting with this bishop move. } 2... a1=Q { Black promotes to a queen, oblivious to white's plan. (Observe that 2... Kg5 would have similarly led to a forced draw.) How does white force a draw now? } (2... Kg5 3. Bxf6+! Kxf6 { And white is also stalemated! }) 3. Bxf6+! { Correct! This fork of the queen and king forces black to recapture... } 3... Qxf6 { ...after which white is stalemated! (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Kivi, 1941"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.09"]
@@ -314,7 +295,6 @@
 
 { White has a knight and bishop and would be happy to checkmate black with those, but after a moment of carelessness he has allowed a black pawn to reach h2, which now seems unstoppable. How does white win anyway? }
 1. Ne4! { Correct! White threatens to stop the black h-pawn, forcing black to make a choice. } 1... h1=Q { Black decides to get a queen, and starts thinking about actually winning the game. How does white proceed? (See the analysis for why 1... h1=N!? also does not save black.) } (1... h1=N!? { This tricky black move avoids the main line, but this also does not save the draw for black, as the knight is trapped and will soon be lost. } 2. Bf1! (2. Be2? Kf5 3. Bf3 Ng3 4. Nxg3+ Kf4 { And black saves the draw. }) 2... Kf5 3. Bg2 { And the black knight is lost. }) 2. Be8+! { Correct! The white knight and bishop work together harmoniously to force the black king to an awkward square. } 2... Kf5 $7 { Black's only move. Now, how does white exploit the positioning of black's pieces? } 3. Ng3+! { Correct! White wins the black queen, and will soon win the other black pawn and the game. } *
-
 
 [Event "Beautiful Chess Studies (1): Kondrachev, 1985"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -331,7 +311,6 @@
 { With an extra queen for a rook, black seems destined for a win. Nonetheless, white has a clean and short way to force a draw! }
 1. Rb7+! { Correct! The black king is not quite happy on b6, and this move forces the king to step back. } 1... Ka5 { After 1... Ka6?? 2. Ra3+ white would win a full queen and the game, but this move seems to bring the king to safety soon. What powerful move does white have to save the draw? } (1... Ka6? 2. Ra3+ Ra5 3. Rxa5+ Kxa5 4. Rxb1 { And white wins. }) 2. Rc5! { Correct! This nice aesthetic move puts the black rook in an awkward two-way pin. White simply threatens to take on b5 next. } 2... Rxc5 { Black decides to capture the free rook on c5. What was the point of white's previous move? } 3. Rxb1 { Correct! White wins the black queen, and reaches a drawn rook endgame. (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Kovalenko, 1968"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.10"]
@@ -346,7 +325,6 @@
 
 { White has two connected passed pawns, and threatens to win the black rook. However, things are not as simple as they seem. How does white avoid the pitfalls, and win the game? }
 1. b6+! { Correct! The tempting move 1. Bd4+? does not work due to 1... Ka8! after which 2. Bxe3 is a stalemate! This move sidesteps this issue, and threatens to win the rook on the next move if black takes the pawn. } (1. Bd4+? Ka8 2. Bxe3 { Stalemate! }) 1... Ka6 { Black sees white's winning plan, and does not fall for the fork on d4. How does white continue? } (1... Ka8 2. b7+ Ka7 3. b8=Q+ { And white easily wins. })  (1... Kxb6 2. Bd4+ { And white wins. }) 2. b7 { Correct! Rather than winning the black rook, white now threatens to get a queen. } 2... Rxe5 { Black takes the bishop, and although white can now get a queen, things are again not as simple as they seem. What does white play next? } 3. b8=N+! { Correct! White promotes with check, preventing a check on e8 by the black rook. } (3. b8=Q? Re8+ 4. Kc7 Rxb8 5. Kxb8 Kb6 { And black saves the draw. }) 3... Kb6 { Black chooses to move his king to b6; Ka5 and Ka7 would have led to similar variations. How does white continue? } (3... Ka5 4. Nc6+)  (3... Ka7 4. Nc6+) 4. Nd7+ { Correct! White forks the king and rook, and black is unable to win the white c-pawn. White will win the rook, and will soon guide the pawn to promotion. (1-0) } *
-
 
 [Event "Beautiful Chess Studies (1): Kovalenko, 1972*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -363,7 +341,6 @@
 { White to play and draw! }
 1. Re1 (1. Ra3 Ra8+ 2. Kb4 Rxa3) 1... Rb1 (1... a1=Q+ 2. Rxa1 Ra8+ 3. Kb4 Rxa1 4. Bd4 { And white will save the draw. }) 2. Re4+ Kf5 3. Ra4 a1=Q (3... Rxg1 4. Rxa2) 4. Bd4! { Correct! White saves his bishop, and will win the black queen on the next move! (1/2-1/2) } (4. Rxa1? Rxa1+ 5. Kb5 Rxg1 { And black wins. }) *
 
-
 [Event "Beautiful Chess Studies (1): Kozlowski, 1931*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.13"]
@@ -378,7 +355,6 @@
 
 { White to play and win! }
 1. Rg7+! (1. g7 Re8)  (1. Bg7 fxg6+ 2. Bxf8 Kxh7)  (1. Bf6 fxg6 2. Rg7+ Kh8 3. Rf7+ Kg8) 1... Kxh8 $7 2. Rh7+! Kg8 $7 3. g7! Re8 (3... Kxh7 4. gxf8=Q) 4. Rh8+ Kxg7 $7 5. Rxe8 { And white wins! (1-0) } *
-
 
 [Event "Beautiful Chess Studies (1): Kozlowski, 1931 (ii)*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -395,7 +371,6 @@
 { White to play and win! }
 1. Nd7+! Kc7 2. Nf8!! Kd8 (2... Kd6 3. Kg4 Kd5 4. Kh5 Ke5 5. Kg5 Ke4 6. Kh6 Kf5 7. Kg7 Kg5 8. Nd7) 3. Kf4! (3. Kg4! { This move transposes to the main line, and is equally strong. }) 3... Ke8 4. Kg5! Kxf8 5. Kh6! Ke8 6. Kg7! Kd7 7. Kxg8! Ke6 8. Kg7! { And white wins! (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Kozlowski, 1931 (iii)*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.15"]
@@ -410,7 +385,6 @@
 
 { White to play and draw! }
 1. Rb6+ Kg5 (1... Kg7 2. Rb7+ Kg8 3. Rb8+ Kf7 4. Rb7+ Kg6 { Black cannot allow the white rook to capture on h7, controlling the h1-square. }) 2. Rb5+ Kg4 (2... Kf4?? 3. Rh5 $18) 3. Rb4+ Kg3 4. Rb3+ Kg2 5. Ka2! h1=Q 6. Rb1! (6. Rb2+? Kf3 7. Rb3+ Ke4 8. Rb4+ Kd5 9. Rb5+ Kd6 10. Rb6+ Kc7 $19 { And black escapes the checks. }) 6... Qh6 7. Rb2+ Kf3 8. Rb3+ Ke4 9. Rb4+ Kd5 10. Rb5+ Kc4 11. Rb4+ { And black cannot avoid a perpetual check, without losing the queen! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Kozlowski, 1932*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -427,7 +401,6 @@
 { White to play and draw! }
 1. Rb6+! Kc7 (1... Ka7 2. Ra6+ Kb7 3. Ra2) 2. Rc6+! Kb7 3. Rc2!! { Surprisingly, black is unable to untangle his rooks without losing one of them. } 3... Ka7 (3... Kb6 4. Rb2 Kc5!? 5. b6! { And black is too late to save both rooks and stop the white b-pawn, also leading to a draw. } 5... Kc4 6. b7 R1d2+ 7. Rxd2 Rb3 $10) 4. Ra2+! Kb6 5. Rb2! { And black cannot avoid either a perpetual, or losing one of the rooks, both leading to a draw. (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Kozlowski, 1938*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.15"]
@@ -442,7 +415,6 @@
 
 { White to play and draw! }
 1. Bh5+! (1. Bg6? Bc2 2. Bh5+ Ke1 3. Ba5+ Kf1 { And black promotes. }) 1... Kd2 (1... Kc1 2. Be3+ Kb1 3. Bd4 { And white captures the pawn on the next move. }) 2. Ba5+! Kc1 3. Bb4! b1=Q 4. Ba3+! Kd2 5. Bb4+! Ke3 6. Bc5+! Kf4 7. Bd6+! Ke3 8. Bc5+! { And black cannot avoid a perpetual, due to a bishop check on g6 winning the black queen! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Kozyrev, 1987"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -459,7 +431,6 @@
 { Even such a seemingly simple position can sometimes contain beautiful tactical motifs. Here the position inevitably seems headed for a draw, but with three accurate moves white can force a win. }
 1. Rg8! { Correct! White threatens mate on g6, leaving black with few options to prevent immediate disaster. } 1... Rf6 { The black rook covers g6, preventing Rg6#. (Note that h5-h4, creating air for the king, would have lost to a fork on g4.) How does white continue? } (1... h4 2. Ng4+ Kh5 3. Nxf2) 2. Rg6+! { Correct! White seizes the opportunity to exploit the overloaded black rook. } 2... Rxg6 { Black has no choice but to accept the offered rook sacrifice. How does white now finish the game? } 3. Nf7# { Correct! The black king is checkmated in a rather picturesque way, smothered by his own pieces. (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Kricheli, 1982"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.09"]
@@ -474,7 +445,6 @@
 
 { Although material is equal, white has gotten himself into a nasty pin. Can white miraculously save the draw? }
 1. Bd3 { Correct! White sacrifices the bishop, to save the rook (or to be able to recapture on e2 with the bishop). } 1... Rxd3 { Black captures the free bishop, thereby releasing the pin on the rook, but also setting up a deadly discovered attack in case the white rook moves. How does white respond? } 2. Re4 { Correct! This square and this square alone saves a draw. } 2... Rd4+ { Black gives a discovered check, to win the white rook. What does white play now? } 3. Ka5 { Correct! This reveals the point of the previous rook move: the rook cannot be captured. } 3... Rxe4 { If black does not capture, white should theoretically be able to save the KR vs. KRB endgame. And if black captures, as we see here, white is stalemated! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Kricheli, 1984"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -491,7 +461,6 @@
 { In this position, material is equal, but white has two hanging bishops and an awkwardly placed king. How does white quickly convert this position to a draw? }
 1. Bf5! { Correct! White saves one bishop, forcing black to capture the other if he wants to win. } 1... Rxg1 { Black takes the bishop, and is now a rook up for two pawns. What does white play? } 2. Bg4+! { Correct! White gives a check with the bishop, essentially forcing black's reply. } 2... Bxg4+ { Black cannot give up the bishop without losing all winning chances, and is happy to trade bishops. How does white proceed? } (2... Kf2 3. Bxh5 Rh1+ 4. Kg4 { And white will be able to defend with his bishop for a rook. }) 3. Kh2!! { Correct! White does not recapture on g4, but goes for the bigger fish on g1. Unfortunately for black, he cannot save the rook without reaching a stalemate position! } (3. Kxg4 Rxg2 { And black wins. }) 3... Rc1 { Giving up the rook is no more than a draw, while 3... Kf2 or any rook move are stalemate! (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Kubbel, 1908"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.09"]
@@ -506,7 +475,6 @@
 
 { In this endgame, black is threatening to get a queen and win the game. Can white save the draw? }
 1. Rh3+! { Correct! White harasses the black king, and challenges black to find a safe spot where white cannot capture the pawn/queen with his rook. } 1... Kf4 { Black notices that 1... Kf2 2. Rh2 allows white to sacrifice the rook for the pawn, leading to no more than a draw. Similarly 2. Kg4? Rxh7! sets up a skewer on g7. The text move avoids these traps. How does white continue? } (1... Kg4? 2. Rxh7!)  (1... Kf2? 2. Rh2!) 2. Rh4+! { Correct! White again begs the question where the black king is going to hide, hoping to either put the rook on g4 (if the king moves to the e-file) or capture on h7 (if the king moves to the g-file). } 2... Kf5 { Black avoids immediate draws, and moves the king further up the board. What does white play next? } (2... Kg5 3. Rxh7)  (2... Kg3 3. Rxh7) 3. Rh5+! { Correct! White keeps up the checks, asking the king where it is going. } 3... Kf6 { The black king has reached f6, and black's intentions are revealed: he intends to block the next check with his bishop. What does white play? } (3... Kg6 4. Rxh7) 4. Rh1! { Correct! With the black king on f6, covering the g7-square, white seezes his chance to force a draw. } (4. Rh6+? Bg6 $19 { And black promotes next. }) 4... gxh1=Q { White threatened 5. Rg1 and 6. Rxg2, so black has no choice but to capture on h1. But unfortunately for him, promoting to a knight or bishop allows white to capture on h7, while promoting to a rook or queen leads to a draw by stalemate! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Kubbel, 1934"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -523,7 +491,6 @@
 { Even though both players have the same material, black has two dangerously far advanced pawns. How does white save a draw? }
 1. Bxe3! { Correct! White eliminates the dangerous e-pawn, leaving black only with an advanced c-pawn. } 1... Bd2 { The white bishop is pinned to the king, and clearly white cannot afford to lose his bishop. How does he continue? } 2. Bg5! { Correct! White protects his bishop for now, without allowing black to recapture on d2 with his c-pawn. } (2. Bxd2? cxd2 { [%cal Gd2d1] }) 2... Kf5 { Black renews the threat on the white bishop, again forcing white to make a tough decision. How does white continue? } 3. f4! { Correct! This dual-purpose move blocks the attack on g5, and eliminates the f-pawn from the board. } (3. Bxd2? cxd2 { [%cal Gd2d1] }) 3... Bxf4 { Black again renews the threat on the bishop, and hopes to win the pawn endgame in case of an exchange. How does white shatter blacks hopes for a win? } 4. Kh5! { Correct! White sets up a stalemate trap, thereby either saving the draw or the bishop. If black does not capture, white can for instance play Be7-b4xc3 to force a draw. } (4. Bxf4? Kxf4 { [%cal Gf4e3,Ge3d2,Gd2c2] }) 4... Bxg5 { Black accepts his fate and the inevitable draw with a capture on g5: stalemate! (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Kubbel, 1935*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.13"]
@@ -538,7 +505,6 @@
 
 { White to play and draw! }
 1. Kg2! Rh5 2. gxh7! Kd6 (2... Rg5 3. Rc8+) 3. Ra8! Rxh7 4. Ra6+ Ke5 (4... Ke7 5. Ra7+) 5. Ra5+ { And white wins the rook, and saves the draw! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Liburkin, 1934"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -555,7 +521,6 @@
 { In this funny-looking position, white has far-advanced triple a-pawns, and black's pieces are poorly coordinated. How can white exploit these features to score the full point? }
 1. Bc7! { Correct! White prepares to move his bishop to a strong square. } 1... Kf1 { Black is almost in zugzwang, and moves his king to make room for his bishop to move. How does white proceed? } 2. Bb6! { Correct! White posts his bishop on the strong b6-square, unafraid of a capture by the black pawn. } 2... Bf2 { Black understands that either capture on b6 is fatal, and so he has only one move not losing the bishop and the game. How does white continue? } (2... axb6? 3. a7 { And white promotes. })  (2... Bxb6? 3. axb6 { And one of the white pawns will promote. }) 3. Kh2! { Correct! White puts the question back in black's camp, on how he wants to deal with the awkward positioning of his pieces. } 3... Ke2 { Black again makes the only move not losing either the bishop or the important a-pawn. What does white play next? } (3... Be1 4. Bxa7 Bxa5 5. Be3 { And white will soon promote either of his pawns. })  (3... Ke1? 4. Kg2 { This only accelerates black's downfall, as black is already unable to cope with the threats now. }) 4. Kg2! { Correct! White again asks how black is going to deal with his awkward pieces, now that the three pieces in the corner have all moved up on the board. } 4... Be3 { Black again only has one option to keep the status quo. How does white continue? } 5. Kg3 { Correct! The same pattern as before continues, and black is again almost in zugzwang. } 5... Kd3 { Black again has no choice but to move the king up the board, while defending the bishop. How does white proceed? } 6. Kf3 { Correct! White again brings his king slightly closer to the queenside, keeping the black pieces in check. } 6... Bd4 { Black does not want to give up the important a-pawn, nor his bishop, so he again carefully moves the bishop one step closer to the queenside. What does white do? } 7. Kf4 { Correct! The white king creeps closer and closer to the queenside. } 7... Kc4 { Black again moves his king up the board, close to the white a-pawns. What does white play? } (7... Bc3 8. Bxa7 Bxa5 9. Bb8 (9. Bg1 Bc7+ 10. Kf5 Bb8 11. Ke6 Kc4 12. Kd7 Kb4 13. Kc8 Ka5 14. Kb7) 9... Bb6) 8. Ke4 { Correct! White again brings his king slightly closer. } 8... Bc5 { Black continues the same pattern again, of moving up the bishop one square. What does white do? } (8... Bc3 9. Bxa7 Bxa5 10. Bg1) 9. Ke5 { Correct! White again moves his king up the board, and now black is faced with a tough decision, as he cannot play Kb5. } 9... Kb4 { Black now moves his king sideways, as b5 is protected. What does white play? } 10. Kd5 { Correct! White forces the black bishop off the diagonal, after which white will be able to win the black a-pawn and the game. } 10... Be7 { Black moves the bishop off the diagonal, as taking on b6 is still fatal. What does white play next? } 11. Kc6 { Correct! White must collect the a7-pawn to win, and this is the easiest way to do it. } (11. Ke6 Kxa4 12. Kxe7 Kb5 13. Kd6 Kxa6 14. Kc6 { This barely wins as well, but is arguably a bit less straightforward. })  (11. Bxa7? Kxa5 { This throws the win away, as the pawns on a5 and a6 are lost by force. }) 11... Kxa4 { Black captures the most backward white pawn, but white has two more strong pawns left. How does he bring them to the other side? } 12. Kb7 { Correct! White wins the black a-pawn, and will then clear the way for the a6-pawn to promote. Black is defenseless against white executing this plan. (1-0) } (12. Bxa7 Kxa5 13. Kb7 { This also wins for white. }) *
 
-
 [Event "Beautiful Chess Studies (1): Liburkin, 1947"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.09"]
@@ -570,7 +535,6 @@
 
 { While there is equal material for both sides, white has a clean-cut way to force a black resignation within a few moves. How does he do this? }
 1. Qh8+! { Correct! White threatens the black king, and black has only one good reply to this check. } (1. Qh2+? f4 { And the position will likely head towards a draw. }) 1... Qf6 { Note that moving the king to f4 would have walked into a skewer by the white queen on h2. Therefore blocking the check with the queen is the only option for black. Now, what does white play? } (1... Kf4 2. Qh2+ { And white wins the black queen. }) 2. Qb8+! { Correct! Black is again in check, and still has few options of dealing with this. } (2. Qh2+? f4 { And the position will likely head towards a draw. }) 2... Qd6 { Blocking the check is again the only option, as Kd4 walks into Qb2+. How does white proceed now? } (2... Kd4 3. Qb2+ { And white will win the black queen on the next move. }) 3. Qb2+! { Correct! White keeps harassing black, leaving black with few good replies. } 3... Qd4 { This is again the only move, as Kf4 Qh2+ loses the queen to a skewer. How does white proceed? } (3... Kf4 4. Qh2+ { And white wins the black queen on the next move. }) 4. Qh2+! { Correct! White keeps up harassing the black king. } 4... Qf4 { Black again blocks the check with his queen, asking white what he is really trying to achieve with all these checks. Is white actually making any progress? } (4... f4 5. Qh8+ { And black also loses his queen. }) 5. Qh8+! { Correct! Yes, white has made significant progress, as the black queen now cannot interfere with the checks anymore. The black king is now forced to move to an awkward square. } 5... Kd6 { Black's only reply is Kd6, but he can already see the doom hanging over his position. How does white finish the game? } 6. Qb8+! { Correct! After a strange carousel, the black king and queen have finally been skewered, and white will soon win the black queen and the game. (1-0) } *
-
 
 [Event "Beautiful Chess Studies (1): Loyd, 1860*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -587,7 +551,6 @@
 { White to play and draw! }
 1. Bd7! (1. Bc6+? Kg1 2. Bh1? (2. Bd7 h2 3. Bc6 Ng2+) 2... Kxh1 3. Kf2 Kh2 4. Kf1 Kg3 { And black wins. }) 1... h2 (1... Nf3+ 2. Ke2 Nd4+ 3. Ke3 h2 4. Kxd4 h1=Q 5. Bc6+ { And white also saves the draw. }) 2. Bc6+! Kg1 (2... Nf3+ 3. Ke2 h1=Q 4. Bxf3+ { And white saves the draw. }) 3. Bh1!! Ng2+ (3... Kxh1 4. Kf2! { And white saves the draw in a similar way as in the main line. } (4. Kf1? Nf5 5. Kf2 Ng3 { And black wins. })) 4. Ke2! (4. Bxg2? Kxg2 { And black wins. }) 4... Kxh1 5. Kf1! (5. Kf2? Ne3 { And white cannot keep the black king caged in the corner. }) 5... Ne3+ 6. Kf2 { And black cannot prevent white from repeating Kf1-f2-f1-f2-... until the end of time, thereby saving the draw! (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Mattison, 1914*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.15"]
@@ -602,7 +565,6 @@
 
 { White to play and draw! }
 1. Rg1! exd1=R { See the analysis for how 1... exd1=Q+ also leads to a draw. } (1... exd1=Q+ 2. Kh3+! Qxg1) 2. Kh5+! Rxg1 { And white is stalemated! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Mironenko, 1983"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -619,7 +581,6 @@
 { In this position, white is down a lot of material, but his rook is hanging in there, threatening to take the black queen. Unfortunately that would leave white down several pawns, so white is thinking about resignation. Can you change his mind, and find a drawing line? }
 1. Rh5! { Correct! White sees that his king is almost in stalemate, and dares the black queen to take the rook. } 1... d6 { Black sees that taking is a draw, and therefore he cannot move either his queen or his king. What does white play now? } (1... Qxh5 { Stalemate! })  (1... d5 2. Rh2 d4 3. Rh5 d3 4. Rxh6+ Kxh6) 2. Rh2! { Correct! The stalemate threat is renewed, again leaving black with few options. } 2... d5 { Black's goal is to lift the stalemate with a pawn check on d2. How does white continue? } (2... Qxh2 { Stalemate! }) 3. Rh5! { Correct! White is happy to wait for black's d-pawn to advance further. } 3... d4 { Having no other choice, black yet again advances the d-pawn, hoping to give a check in two moves, after which he will not think twice about capturing that annoying white rook. What does white play? } (3... Qxh5 { Stalemate! }) 4. Rh2! { Correct! White is still happy to repeat moves, waiting for the d-pawn to move further down the board. } 4... d3 { Black again advances his pawn, and is ready for a check on d2. What does white play? } (4... Qxh2 { Stalemate! }) 5. Rxh6+! { Correct! White recognized the threat of 5... d2+, and noticed that the white king is now in stalemate even when the black queen is off the board! } (5. Rh5? d2+! 6. Kxe2 Qxh5+ { And black wins. }) 5... Kxh6 { Black has no choice but to recapture the rook, leading to a stalemate! (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Pogosyants, 1959*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.04.01"]
@@ -634,7 +595,6 @@
 
 { White to play and draw! }
 1. Re4+ Kg5 2. Re5+ Kh6 (2... Nxe5 3. Ne4+ { And white wins the black queen. })  (2... Qxe5 3. Nf7+ { And white wins the black queen. }) 3. Rh5+ Kxh5 (3... Kg7 4. Ne8+ { And white wins the black queen. }) 4. g4+ Kh6 (4... Kg5 5. Ne4+ { And white wins the black queen. }) 5. g5+ Qxg5 (5... Kxg5 6. Ne4+ { And white wins the black queen. }) 6. Nf7+ { Correct! White finally forks the king and queen and saves the draw! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Pogosyants, 1961*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -651,7 +611,6 @@
 { One of Pogosyants' first chess compositions, and arguably also one of his best. White is up a piece, but the black pawn threatens to promote in two moves. At first sight it might seem easy to stop the pawn, but things are harder than they seem... White to play and win! }
 1. Bf1! { Correct! The black g-pawn needs to be stopped, and this is the only sensible way to do it (without giving up the knight). } 1... Bb5 { Black has some tricks up his sleeve, and tries to distract the bishop from covering the g2-square. How does white reply? } 2. Bg2! { Correct! White avoids the black bishop, and blocks the g-pawn. All hope seems lost for black, but he has another trick up his sleeve... } 2... Bf1 { Black tries to set up a stalemate by sacrificing the bishop and pawn. How does white respond? } 3. Bxf1! { Correct! This bishop cannot be avoided, and needs to be captured now. Black still has one move left he can make. } 3... g2 { Black sacrifices his g-pawn, and offers a draw - after all, capturing on g2 would lead to an instant stalemate and a draw. Can you find the spectacular refutation of black's stalemate plans? } 4. Ng3!! { Correct! This brilliant and completely unexpected move prevents a stalemate, protects f1 in case of a capture, and sets up a mate on f5 in case the pawn promotes on g1 instead. All three main black replies lose, and this truly remarkable move is the only move that guarantees white the win! } 4... g1=Q { Black sees that the bishop on f1 is protected, and that capturing the knight will cost him his g-pawn. He decides to get a queen on g1 instead. How does white finish the game? } (4... gxf1=Q 5. Nxf1 { And white wins with his extra f-pawn. })  (4... Kxg3 5. Bxg2 { And black cannot take the bishop, as the f-pawn would promote. }) 5. Nf5# { Correct! White's last move not only lifted the stalemate and protected f1, but also set up a mate threat on f5, in case the pinned g-pawn left the f1-h3 diagonal. White wins! (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Pogosyants, 1961 (ii)*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.04.01"]
@@ -666,7 +625,6 @@
 
 { Although white is up an exchange, black threatens to take white's last remaining pawn in a few moves, forcing a draw. How does white make use of the awkward black pieces to force resignation? }
 1. Rh8! { Correct! White attacks the (trapped) black knight, forcing the black king to retreat. } 1... Kg7 { The black king retreats, and asks white the question what the point of the rook move was. How does white continue? } 2. Kg5! { Correct! White ignores the threat against the rook, and activates the king. } 2... Kxh8 { Black seizes the opportunity to take the rook (2... Nf6 3. Rh4! would have led to a winning position for white as well). How does white continue here, a piece down? } (2... Nf6 3. Rh4 Ne8 4. Rd4 { And white will eventually convert this endgame to a win. }) 3. Kg6! { Correct! The black king and knight are trapped, and black is forced to give up his knight. Afterwards, having the opposition, white will win the black d-pawn and march his pawn to victory. (1-0) } *
-
 
 [Event "Beautiful Chess Studies (1): Pogosyants, 1962"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -683,7 +641,6 @@
 { In this position black is up a queen for a rook and knight, but the queen has found itself in an awkward position on a8. How can white exploit the poor black coordination, to score a full point? }
 1. Nb6! { Correct! The black queen is attacked, and unfortunately for black it does not have many good squares to move to. } 1... Qa7 { Black saw that 1... Qb8? loses to 2. Rh8+, so he plays the only move that does not immediately lose the black queen. How does white keep up the pressure? } (1... Qb8? 2. Rh8+ { And white wins the black queen and the game. }) 2. c7+! { Correct! White plays another forceful move, threatening to promote, and thereby forcing black's response. } 2... Kxc7 { Black takes the pawn, and threatens to take the white knight. How does white continue? } 3. Rc1+! { Correct! White correctly sees that black has few good responses to this check, and the most natural reply loses as well. } 3... Kxb6 { All other responses lose even faster, so black goes for the most challenging response, taking the white knight. How does white proceed? } (3... Kb8? 4. Rc8#)  (3... Kd8? 4. Rc8#)  (3... Kd6? 4. Nc8+) 4. Rc8! { Correct! White is now down a queen for a rook, but this move demonstrates the supremacy of the white rook over the black queen and king. } 4... a5 { Black attempts to free the queen from her cage. What does white play? } 5. b5! { Correct! White keeps the a-file closed, and controls the a6-square with the pawn. The black king and queen are helpless. } 5... e6 { The only moves black has left that do not immediately lose the queen, involve moving his e-pawn. How does white respond? } 6. e3! { Correct! Black and white are in a perpetual zugzwang, and it is important that white wins this tempo game. The careless 6. e4? e5! would have forced white to release black from the bind. } 6... e5 { Black makes his last non-losing move. What does white play? } 7. e4! { Correct! White puts black in zugzwang, and black is forced to give up the queen for at most a white pawn. (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Pogosyants, 1962 (ii)"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.10"]
@@ -698,7 +655,6 @@
 
 { White has cornered the black king, but appears to be too late to either stop the black a-pawn or checkmate black. How does he save the draw? }
 1. Bd4! { Correct! White makes a last attempt to stop the black pawn from promoting, forcing black to take the bishop. } 1... exd4 { Black takes the piece with a smile, thinking victory will soon be his. How does white prove him wrong? } 2. Ka4! { Correct! White steps aside with his king, seemingly surrendering to the fact that black will get a queen. } 2... a1=Q { Black does not see white's cunning plan, and gets a queen. How does white continue? } 3. Rb1! { Correct! White spotted a stalemate, and sends his rook on a desperado trip. } 3... Qc3 { Black recognizes that 3... Qa2 4. Rb2! does not change the status quo, and sees that he can also move his queen to c3. What is white's response? } 4. Rb6+! { Correct! The white rook now sacrifices itself on b6, leaving black no choice but to take it. } 4... axb6 { Regardless of whether black takes the rook with his king or pawn, the result is the same: stalemate! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Pogosyants, 1963*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -715,7 +671,6 @@
 { White to play and draw! }
 1. Rh6+! Ka7 2. Qb6+! Rxb6 3. axb6+! Ka6 (3... Ka8 4. b7+ Ka7 5. Ra6+ Kxa6 6. b8=N+) 4. b7+! Ka7 (4... Ka5 5. Ra6+ Kxa6 (5... Kb4 6. b8=Q) 6. b8=N+) 5. Ra6+!! Kxa6 6. b8=N+!! Kb6 (6... Ka7 7. Nc6+)  (6... Ka5 7. Nc6+) 7. Nd7+ { And white wins the black queen! (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Pogosyants, 1964*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.04.01"]
@@ -730,7 +685,6 @@
 
 { White to play and draw! }
 1. Rf4+! Kh5+ 2. Kh3! Rg3+! (2... Rg4 3. Rxg4 g5 4. Rxg5+ { And white also forces a draw. }) 3. fxg3 g5 4. Rh4+! gxh4 5. g4+! Kg6 6. g5! Qh5 (6... Qh7 7. Nf8+) 7. Nf4+ { White wins the black queen, and black is left with a bishop of the wrong color to promote the h-pawn! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Pogosyants, 1964 (ii)*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -747,7 +701,6 @@
 { White to play and draw! }
 1. g7! Nc5+ 2. Ka3! (2. Kxa5? Be5 3. g8=Q Bc3#) 2... Bf4! 3. Kb2! (3. g8=Q? Bc1#) 3... Be5+ 4. Ka3! Bxg7 { White is stalemated! (1/2-1/2) } (4... Bf4 5. Kb2 Be5+ 6. Ka3 { Black has no better than either a repetition or a stalemate. }) *
 
-
 [Event "Beautiful Chess Studies (1): Pogosyants, 1967*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.04.01"]
@@ -762,7 +715,6 @@
 
 { White to play and draw! }
 1. Qc7+! Ka8 2. Qc8+! Bxc8 (2... Bb8 3. Nc7+ Ka7 4. Nb5+ Ka8 5. Nc7+ { And white has a perpetual check, forcing a draw. }) 3. Nc7+! Kb8 4. Na6+! bxa6 { And white is stalemated! (1/2-1/2) } (4... Ka8 5. Nc7+ Kb8 6. Na6+ { Black has no better than either a perpetual check or a stalemate. }) *
-
 
 [Event "Beautiful Chess Studies (1): Pogosyants, 1969"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -779,7 +731,6 @@
 { White has a strong pawn on g7, ready to promote. However, black has set up a discovered check with his rook to capture white's promoted piece. How does white force black to his knees? }
 1. g8=N+! { Correct! Promoting to a queen would walk into a discovered check, so a knight promotion with check is white's best chance. } (1. g8=Q Bb7+ 2. Kxb7 Rxg8 { And white will certainly not win. }) 1... Kg6 { Black only has one move, as Ke6 would run into Ng7#. What does white play next? } (1... Ke6? { This walks right into mate in one. } 2. Ng7#) 2. Nge7+ { Correct! With tempo, the white knight on g8 sets out on a journey to greener pastures. } (2. Nfe7+? Kg7 { And black is better. }) 2... Kf6 { Black had no choice but to play this move. How does white continue? } 3. Nd5+ { Correct! Black is checked again, and the knight from g8 continues its journey. } 3... Kg6 { Black again has no choice, as Ke6 would run into Ng7#. Now, what does white play? } (3... Ke6 4. Ng7#) 4. Nf4+ { Correct! Black is checked again, with the same knight that came from g8. } (4. Nfe7+ Kg7 5. Nb6 { This also wins, but is not as elegant and strong as the text. }) 4... Kf6 { Black again only has one move. How does white continue? } 5. Nh5+ { Correct! The white knight from g8 now finds itself on h5, where it covers g7, and therefore forces the black king to move into a different direction. } 5... Ke6 { Now Kg6 would have walked into Ne7#, so the king moves to e6. Did white achieve anything? } (5... Kg6 6. Ne7#) 6. Nhg7+ { Correct! The knight from g8 continues its journey, harassing the black king from various different angles. } (6. Nfg7+ Ke7) 6... Kf6 { Black again has no choice but to move the king back to f6. What does white play now? } 7. Ne8+ { Correct! The white knight has moves for its sixth consecutive time in a row, now reaching e8. From here it also covers g7, thereby forcing the black king to e6. } 7... Ke6 { As Kg6 Ng7# ends the game, the king has no choice but to move to e6. What does white play next? } 8. Nc7+ { Correct! Yet another knight check we have not yet seen, and the black king again needs to step aside. } (8. Nfg7+? Ke7) 8... Kf6 { Black has no choice but to move back to f6 for the fourth time. What does white play next? } 9. Nxa8 { Correct! White cannot checkmate black just yet, but capturing the rook guarantees a big material advantage, which (with some effort) he will be able to convert into a win. (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Pogosyants, 1979"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.09"]
@@ -794,7 +745,6 @@
 
 { In this position, both sides have equal material, but black's king is not feeling very safe. How does white exploit this to quickly force resignation? }
 1. Ne7! { Correct! This discovered attack sets up a checkmate on g8, and blocks the black queen from giving any checks against the white king. } 1... Nxh7 { Black cannot capture on h7 with the king due to the deadly queen check on h2, while simply moving the knight would run into 2. Qg8+ Qxg8 3. hxg8=Q#. With this move, black thinks he has successfully defended against all white's threats. How does white prove him wrong? } (1... Qxe7 2. Qg8#)  (1... Ne6 2. Qxe6 Kxh7 3. Qh3+)  (1... Kxh7 2. Qh2+ Qh5 3. Qxh5#) 2. Qg8+! { Correct! This queen check lures the queen away from e8, and locks up the black king in the corner. } (2. Ng6+? Qxg6 3. Qa8+ Nf8 4. Qxf8+ Kh7) 2... Qxg8 { Black has no choice to recapture. How does white finish the game? } 3. Ng6# { Correct! Black had no choice but to cooperate with this pretty smothered checkmate! (1-0) } *
-
 
 [Event "Beautiful Chess Studies (1): Pogosyants, 1980"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -811,7 +761,6 @@
 { White has forced his king deep into black's camp, putting pressure on the black fortress formed by the king and bishop. How does white effortlessly convert this into a win? }
 1. b6+! { Correct! White further restricts the black pieces, while further advancing his own pawns. } (1. a6? bxa6 2. bxa6 Kb6 { And the game will be a draw. }) 1... Kc8 { Black needs to keep protecting the bishop on b8, so the king steps back. How does white continue? } 2. a6! { Correct! White clears the way for the b-pawn to advance further, by sacrificing his advanced a-pawn. } 2... bxa6 { Black has no choice but to accept the sacrifice, as otherwise the three white pawns will be overwhelming. How does white proceed? } (2... Be5 3. axb7+ Kd7 4. b8=Q { And white wins. }) 3. b7+! { Correct! White pushes his b-pawn further, forcing the black king to block his own bishop again. } 3... Kc7 { The black king moves back to c7, thereby blocking its own bishop on b8. How does white exploit this awkwardness in black's camp? } 4. a3! { Correct! Both sides only have their a-pawn left to move, and this pawn move ensures that black will be the first to run out of moves. } (4. a4? a5! { And white is stalemated! }) 4... a5 { Black cannot move his king and bishop, so he also moves his a-pawn. What does white play next? } 5. a4 $22 { Correct! This is white's only move, but it is also winning, as black is now in zugzwang - he has to give up his fortress. } 5... Kc6 { Black reluctantly moves his king away from c7. How does white proceed? } (5... Ba7 6. Kxa7 { This loses as well. }) 6. Kxb8 { Correct! The white b-pawn is now unstoppable, and white will soon win the game. (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Pogosyants, 1987"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.08"]
@@ -826,7 +775,6 @@
 
 { In this position, the white pieces have seemingly gotten themselves into major trouble, and the black king threatens to take the rook to force a draw. How does white miraculously win this position? }
 1. Nh6! { Correct! White threatens to save the rook and the win, forcing black to capture the rook. } 1... Kxh8 { Black takes the rook, and offers a draw. How do you continue? } (1... Kxh6 2. Kxe6 { And white will easily convert with an extra rook. }) 2. Kf6! { Correct! White traps the black king in the corner, leaving black no option but to move his e-pawn. } (2. Kxe6 Kg7 { If the black king is allowed to escape the corner, a draw becomes inevitable. }) 2... e5 $7 { Black runs with his e-pawn, and offers white a draw again. Do you accept? } 3. Kf7! { Correct! White plays on, having bigger plans than a draw. } (3. Nf7+? Kg8 { And black escapes. }) 3... e4 $7 { Black still has no choice but to push his e-pawn. How does white continue? } 4. Kf8 { Correct! White further increases the bind on the black king. } (4. Kf6 { Technically this also wins, but it is two moves slower. } 4... e3 5. Kf7 e2 6. Kf8 e1=Q 7. Nf7#) 4... e3 $7 { Black yet again moves his e-pawn. How does white finish the game? } 5. Nf7# { Correct! Black is mated with the lone knight and king. Although usually a knight and king do not suffice to win, this is one of the few exceptions where black was stuck in a mating net. (1-0) } (5. Kf7 { If white wants to make black suffer for his draw offers, he can even delay the mate by two moves. } 5... e2 6. Kf8 e1=Q 7. Nf7#) *
-
 
 [Event "Beautiful Chess Studies (1): Prokes, 1948"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -843,7 +791,6 @@
 { In this position, both sides have pawns which almost reached their destination squares. However, with the black bishop covering the important long diagonal (and both promotion squares), it seems that black will win the game. How does white miraculously save the draw in just a few moves? }
 1. h8=Q { Correct! Even though black is covering h8, white promotes anyway. } (1. Bg7 Bxg7 2. h8=Q Bxh8 { And white loses. }) 1... Bxh8 { Black of course must capture the white queen if he wants to win. What does white play? } (1... a1=Q 2. Qh7+ { And white will be able to hold the draw. }) 2. Bg7! { Correct! This strange move prevents black from getting a queen, leaving black with only one candidate move... } 2... Bxg7 { Black must capture the bishop (as otherwise white will simply capture the black bishop), but unfortunately for him, the result is a stalemate! (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Prokes, 1948 (ii)"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.09"]
@@ -858,7 +805,6 @@
 
 { Although a piece down, white has a very strong pawn on e6, and the black king has seemingly misplaced itself somewhat on a5. How can white exploit these features to score the full point? }
 1. e7! { Correct! White threatens to get a queen, forcing black's reply. } (1. exf7? Bxb3+) 1... Bxb3+ { The bishop captures with check, and aims to stop the e-pawn from a4. How does white continue? } 2. Kc5! { Correct! White sees that he has another chance of winning the game, if black tries to stop the pawn. } 2... Ba4 { Allowing white to promote is not an option for black, so he plays Ba4 anyway. How does white win the game? } 3. b4# { Correct! Black may have stopped the e-pawn from reaching the promotion square, but he has trapped his own king. Checkmate! (1-0) } *
-
 
 [Event "Beautiful Chess Studies (1): Raina, 1971"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -875,7 +821,6 @@
 { In this position white is up a rook, but the black pawn on f2 is about to become a queen. How does white save half a point with a few accurate moves? }
 1. Re4! { Correct! This square and only this square will save the draw, as we will see soon. } 1... f1=Q { Black needs to get a queen now that he still has the chance. What was the point of white's last move? } (1... g6+ 2. Kg4 f1=Q 3. Rf4+ { And white also makes a draw. }) 2. Rf4+! { Correct! The white rook sacrifices itself on f4, forcing the black queen to capture it. } (2. g6+ { This also works. } 2... Kg8 (2... Kf6 3. Rf4+ Qxf4) 3. Re8+ Qf8 4. Rxf8+ Kxf8 { And white also makes a draw. }) 2... Qxf4 { Not taking would allow white to win, so black captures the rook. What does white play next? } 3. g6+! { Correct! This pawn check leaves the white king in a stalemate position, and there is nothing black can do about it. } 3... Kf6 { And white is stalemated! (1/2-1/2) } *
 
-
 [Event "Beautiful Chess Studies (1): Sarychev, 1948"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.05"]
@@ -890,7 +835,6 @@
 
 { In this endgame, white is up a piece, but it does not seem enough to win: only if he can capture the black bishop soon, will he have realistic winning chances. How does he achieve the seemingly impossible, and win the game? }
 1. Ke1! { Correct! White attacks the black bishop, forcing it to move closer to the white knight. } 1... Bc2 { Black finds the only square that prevents an immediate discovered attack on the bishop. How does white continue? } (1... Bb3 2. Nc5+)  (1... Ba4 2. Nb6+)  (1... Bf3 2. Ne5+)  (1... Bh5 2. Nf6+) 2. Kd2! { Correct! White continues harassing the black bishop, forcing it to move again. } 2... Bb1 { The black bishop again crawls away, for now still staying out of reach of the knight. How does white proceed? } (2... Be4 3. Nc5+)  (2... Bg6 3. Ne5+)  (2... Bh7 3. Nf6+)  (2... Bb3 3. Nc5+)  (2... Ba4 3. Nb6+) 3. Kc1! { Correct! White again threatens the bishop, and forces it to make another tough choice. } 3... Ba2 { The bishop finds another square to hide on, without falling for a discovered attack. However, he is still not out of the woods yet. What does white play next? } (3... Bd3 4. Nc5+)  (3... Be4 4. Nc5+)  (3... Bg6 4. Ne5+)  (3... Bh7 4. Nf6+) 4. Kb2! { Correct! White hits the bishop again, but this time the bishop has no "safe" squares anymore. } 4... Bg8 { The black bishop has had enough of the white king, and runs away. How can white finally win the bishop? } (4... Bc4 5. Nb6+)  (4... Bd5 5. Nb6+)  (4... Bf7 5. Ne5+) 5. Nf6+ { Correct! White finally delivers the highly anticipated discovered check, with devastating effect. Black loses the bishop and, if white knows how to mate with knight and bishop, the game. (1-0) } *
-
 
 [Event "Beautiful Chess Studies (1): Selesniev, 1916*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -907,7 +851,6 @@
 { White to play and win! }
 1. Bd4! g1=Q!? (1... Kxd4 2. c8=Q g1=Q 3. Qc5+! { And white wins the black queen. }) 2. Bxg1 a2 3. Bd4! Kxd4 4. c8=Q a1=Q 5. Qh8+ { And white wins the black queen and the game! (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Selman, 1940*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.09"]
@@ -922,7 +865,6 @@
 
 { White to play and draw! }
 1. Nc7 c3 2. Nb5 c2 3. Nd4 c1=Q 4. Nf3+ gxf3 { Stalemate! (1/2-1/2) } *
-
 
 [Event "Beautiful Chess Studies (1): Tavariani, 1982*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -939,7 +881,6 @@
 { White to play and win! }
 1. Rh7! a1=Q 2. Rh1! Qa2 3. Rd1+! Kc7 4. Bd5! { And the black queen is lost! (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Troitsky, 1896*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.12"]
@@ -954,7 +895,6 @@
 
 { White to play and win! }
 1. Bf3+! Kh2 2. Nf1+! Kh3 3. Bh1! Bh2 (3... Bc5 4. Kf4 Bd6+ 5. Kf3 { And we get a similar position as in the main line. }) 4. Ke4! Bc7 (4... Kg4 5. Nxh2+) 5. Kf3! Bf4 6. Bg2# { Checkmate! (1-0) } *
-
 
 [Event "Beautiful Chess Studies (1): Troitsky, 1898*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
@@ -971,7 +911,6 @@
 { White to play and win! }
 1. Kh6! Kh8 2. Nh4! Kg8 (2... Bg8 3. Ng6#) 3. Nf3! Kh8 4. Ne5! Kg8 (4... Bg8 5. Ng6#) 5. Nc6 (5. Nd7 Kh8 6. Nf8 Bg8 7. Ng6# { This wins for white as well. }) 5... Kh8 6. Ne7! Bg8 (6... Bg6 7. Nxg6+) 7. Ng6# { Checkmate! (1-0) } *
 
-
 [Event "Beautiful Chess Studies (1): Troitsky, 1909*"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.03.12"]
@@ -987,8 +926,7 @@
 { White to play and win! }
 1. Nc2+! Kb1 $7 2. Na3+! Ka1 $7 3. Bh6! Nd3 4. Bg7+! Nb2 5. Kf6! Na4 6. Kf5+ (6. Ke6+ Nb2 7. Ke5 { This transposes to the main line. }) 6... Nb2 7. Ke5! Nd3+ 8. Ke4+ (8. Kd5+ Nb2 9. Kd4 { This transposes to the main line. }) 8... Nb2 9. Kd4! Nd1 10. Kd3+ (10. Kc4+ Nb2+ 11. Kc3 { This transposes to the main line. }) 10... Nb2+ 11. Kc3! Na4+ 12. Kc2+ (12. Kb3+ Nb2 13. Bxb2# { This is equivalent to the main line. }) 12... Nb2 13. Bxb2# { Checkmate! (1-0) } *
 
-
-[Event "Beautiful Chess Studies (1): Wotawa, 1963*"]
+[Event "Beautiful Chess Studies (1): Wotawa, 1963"]
 [Site "https://lichess.org/study/iDSPaPWA"]
 [UTCDate "2018.04.04"]
 [UTCTime "16:52:29"]
@@ -1000,9 +938,8 @@
 [FEN "3B2K1/8/3r2pk/p5p1/6P1/8/p7/8 w - - 0 1"]
 [SetUp "1"]
 
-{ White to play and draw! }
-1. Be7 Rd8+ 2. Bxd8 a1=Q (2... a1=B? 3. Be7) 3. Bf6 Qa2+ (3... Qxf6 { Stalemate! }) 4. Kh8 Qf7 5. Bxg5+ Kxg5 { And white is stalemated! (1/2-1/2) } *
-
+{ Although black is up a lot of material, threatens white's bishop and threatens to get a queen, white has strong threats against the black king as well. How can white make the most of these threats to force a draw? }
+1. Be7 { Correct! White moves the bishop away from danger, and threatens a decisive check on f8. } 1... Rd8+ { Black sees that getting a queen loses to a check on f8, and so first sacrifices his rook, to distract the white bishop. How does white respond? } 2. Bxd8 { Correct! The rook must be captured, giving black time to promote his pawn. } 2... a1=Q { As expected, black gets a queen, now that there are no direct mate threats against his king. How does white save himself from this seemingly hopeless position? } (2... a1=B? 3. Be7) 3. Bf6! { Correct! The bishop attacks the black queen, and threatens a mate on g7, in case it moves. Note that if black captures the bishop, white is stalemated! } (3. Be7 Qg7#) 3... Qa2+ { Black avoids the stalemate, and gains a tempo on the white king to deal with the mate threat later. What should white play? } (3... Qxf6 { Stalemate! }) 4. Kh8! { Correct! The white king hides in the corner, invulnerable to further checks by the black queen. } 4... Qf7 { Black needs to defend against white's mate threat on g7, and therefore brings the queen to f7. How does white continue? } 5. Bxg5+! { Correct! With no more mate threats, but with the white king trapped in the corner, the white bishop sacrifices itself on g5. } 5... Kxg5 $7 { Black has no choice but to capture the bishop, leading to a stalemate! (1/2-1/2) } *
 
 [Event "Beautiful Chess Studies (1): Zachodjakin, 1961"]
 [Site "https://lichess.org/study/iDSPaPWA"]

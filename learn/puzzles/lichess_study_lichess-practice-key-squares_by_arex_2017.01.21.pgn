@@ -14,7 +14,6 @@
 { If the pawn is on the second, third, or fourth rank, there are three key squares – the square two squares in front of the pawn and the squares to the left and right of that square. Reach a key square and win. }
  *
 
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Pawn on the 3rd rank"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -30,7 +29,6 @@
 
 { If the pawn is on the second, third, or fourth rank, there are three key squares – the square two squares in front of the pawn and the squares to the left and right of that square. Reach a key square and win. }
  *
-
 
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Pawn on the 4th rank"]
@@ -48,7 +46,6 @@
 { If the pawn is on the second, third, or fourth rank, there are three key squares – the square two squares in front of the pawn and the squares to the left and right of that square. Reach a key square and win. }
  *
 
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Pawn on the 5th rank"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -64,7 +61,6 @@
 
 { If the pawn is on the fifth or sixth rank, there are six key squares: the square in front of the pawn and the squares to the left and right, as well as the square two squares in front of the pawn, and the squares to the left and right of it. Reach a key square and win. }
  *
-
 
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Pawn on the 6th rank"]
@@ -82,7 +78,6 @@
 { If the pawn is on the fifth or sixth rank, there are six key squares: the square in front of the pawn and the squares to the left and right, as well as the square two squares in front of the pawn, and the squares to the left and right of it. Reach a key square and win. }
  *
 
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Knight pawn on the 6th exception #1"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -99,7 +94,6 @@
 { There is an exception to the key squares rule when a knight pawn is on its sixth rank, and the defending king is in the corner. Avoid the stalemate trick and win. }
 1. Kc6 Ka7 2. Kc7 Ka8 3. Kb6 Kb8 4. Ka6 Kc7 5. Ka7 Kd6 6. b6 Kc5 7. b7 Kc4 8. b8=Q Kd5 *
 
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Knight pawn on the 6th exception #2"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -114,7 +108,6 @@
 [SetUp "1"]
 
  *
-
 
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Pawn on the 7th rank"]
@@ -132,7 +125,6 @@
 { When the pawn is on the seventh rank, the key squares are the squares on the seventh and eighth rank that touch the pawn's square. Reach a key square and win. }
  *
 
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Rook pawn #1"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -149,7 +141,6 @@
 { An advanced rook pawn generally has two key squares: the two squares on the adjacent file that touch the promotion square. Reach a key square and win. }
  *
 
-
 [Termination "Draw in 10"]
 [Event "Lichess Practice: Key Squares: Rook pawn #2"]
 [Site "https://lichess.org/study/xebrDvFe"]
@@ -165,7 +156,6 @@
 
 { An advanced rook pawn generally has two key squares: the two squares on the adjacent file that touch the promotion square. Reach a key square and win. Prevent black from reaching a key square to draw the game. }
  *
-
 
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Key Squares: Any key square by any route"]

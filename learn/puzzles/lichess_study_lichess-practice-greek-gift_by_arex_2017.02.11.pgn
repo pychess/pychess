@@ -16,7 +16,6 @@
 Play the Greek Gift sacrifice and maintain a winning position for 4 moves to complete this exercise. }
 1. Bxh7+ (18. Bxh7+) 1... Kxh7 { Ng5 and Qh5 are very common follow-up moves to a Greek Gift sacrifice. } { [%cal Gf3g5,Gd1h5] } (20... Kf8) 2. Ng5+ Kg8 (2... Qxg5 3. Bxg5 Rh8 4. Qh5+ Kg8 5. Qg4 c5) 3. Qh5 Qxg5 4. Bxg5 *
 
-
 [Termination "mate in 7"]
 [Event "Lichess Practice: Greek Gift: Greek Gift Challenge #1"]
 [Site "https://lichess.org/study/s5pLU7Of"]
@@ -32,7 +31,6 @@ Play the Greek Gift sacrifice and maintain a winning position for 4 moves to com
 
 { From Efim Bogoljubov - NN, 1951. }
 10. Bxh7+ Kh8 11. Qh5 Qxh4 12. Qxh4 Nf6 13. Bd3+ Kg8 14. exf6 Re8 15. Qh7+ Kf8 16. Qxg7# *
-
 
 [Termination "+260cp in 6"]
 [Event "Lichess Practice: Greek Gift: Greek Gift Challenge #2"]
@@ -50,7 +48,6 @@ Play the Greek Gift sacrifice and maintain a winning position for 4 moves to com
 { Maintain a winning position for 6 moves to complete this exercise. From Carl Schlechter - Geza Maroczy, 1907. }
  *
 
-
 [Termination "+340cp in 6"]
 [Event "Lichess Practice: Greek Gift: Greek Gift Challenge #3"]
 [Site "https://lichess.org/study/s5pLU7Of"]
@@ -67,7 +64,6 @@ Play the Greek Gift sacrifice and maintain a winning position for 4 moves to com
 { Maintain a winning position for 6 moves to complete this exercise. From Boris Spassky - Efim Geller, 1965. }
  *
 
-
 [Termination "+290cp in 5"]
 [Event "Lichess Practice: Greek Gift: Greek Gift Challenge #4"]
 [Site "https://lichess.org/study/s5pLU7Of"]
@@ -83,7 +79,6 @@ Play the Greek Gift sacrifice and maintain a winning position for 4 moves to com
 
 { Maintain a winning position for 6 moves to complete this exercise. From Anthony Miles - Walter Shawn Browne, 1982. }
 18. Bxh7+ Kxh7 19. Qh5+ Kg8 20. Bxg7 f5 21. Qh8+ Kf7 22. Bxf8 Bb8 *
-
 
 [Termination "+400cp in 4"]
 [Event "Lichess Practice: Greek Gift: Defend against the Greek Gift"]

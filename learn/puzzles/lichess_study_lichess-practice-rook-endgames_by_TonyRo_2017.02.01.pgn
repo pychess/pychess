@@ -16,7 +16,6 @@
 Analysis from B.Larsen-W.Browne, Las Palmas 1982. }
 1. Re1+! Kd7 { [%cal Ge1e4,Ge4g4,Bg8f7,Bf7g5] } (1... Kd6 2. Kf8 (2. Re4 Rh1 3. Kf7 $18) 2... Rf3+ 3. Ke8 Rg3 4. Re7 Rg1 5. Kf8 $18 { [%cal Ge7f7,Gg1f1] }) 2. Re4! Rh1 (2... Kd6 3. Kf7 Rf3+ 4. Kg6 Rg3+ 5. Kf6 Kd5 6. Re5+ Kd4 7. Rg5)  (2... Ra3 3. Rh4! $18 { [%cal Gg8h7] }) 3. Kf7 Rf1+ 4. Kg6 Rg1+ 5. Kf6 { [%cal Rg1g7,Rf6g7] } (5. Kh6 Rh1+ (5... Kd6 6. Rh4! $18 { [%cal Gh6h7] }) 6. Kg5 Rg1+ 7. Rg4) 5... Rf1+ (5... Kd6 6. Re6+! (6. Re5?? { [%cal Ge5g5] } 6... Rxg7! $10) 6... Kd5 (6... Kd7 7. Re5 $18) 7. Re5+ Kd4 (7... Kd6) 8. Rg5 $18) 6. Kg5 Rg1+ 7. Rg4 $18 { [%cal Gg7g8] } *
 
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Rook Endgames: Lucena - Alternative Wins"]
 [Site "https://lichess.org/study/9c6GrCTk"]
@@ -34,7 +33,6 @@ Analysis from B.Larsen-W.Browne, Las Palmas 1982. }
 
 H.Ni-N.Pert, Liverpool 2007. }
 1. Rh1! { [%cal Gh1h8,Gh8g8] } (1. Re4!? Rg1 2. Rd4+ Kc6 3. Ke7) 1... Rg3 2. Rh8!? (2. Rh7 Rg1 3. Rg7 Rf1 4. Kg8 $18 { [%cal Gf7f8,Gg7d7] }) 2... Rg2 3. Rg8 Rb2 4. Kg7 (4. Rg4! Rb8+ 5. Kg7 Ke7 6. f8=Q+ Rxf8 7. Re4+ $18) 4... Rg2+ 5. Kh6 { [%cal Gf7f8] } 5... Rh2+ 6. Kg5 Rg2+ 7. Kh4 (7. Kf4?? Rf2+ 8. Kg5 Rxf7 $10) 7... Rh2+ 8. Kg3 $18 *
-
 
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Rook Endgames: Reaching the Lucena I"]
@@ -54,7 +52,6 @@ H.Ni-N.Pert, Liverpool 2007. }
 J.Steer-A.Szurkos, Budapest 2014 }
 1. g6 Rg2+ 2. Kh5! (2. Kf5?? Kf8! $10) 2... Rh2+ 3. Kg5 Rg2+ 4. Kh6 Rh2+ 5. Kg7 Rh3 6. Kg8 Rh2 7. g7 $18 { [%cal Gf1e1,Ge1e4] } *
 
-
 [Termination "promotion with +100cp"]
 [Event "Lichess Practice: Rook Endgames: Reaching the Lucena II"]
 [Site "https://lichess.org/study/9c6GrCTk"]
@@ -72,7 +69,6 @@ J.Steer-A.Szurkos, Budapest 2014 }
 
 D.Andreikin-A.Korobov, Karpov Memorial 2016. }
 1. e4! (1. Rd7?? Rxe3 $10) 1... Kc5 2. Rd7! { [%csl Gc5][%cal Gd7d1] } 2... Kc6 3. Rd1 (3. Rd2 $18) 3... Rh3 4. e5 Rh5+ 5. Kf6 Rh6+ 6. Kf7 (6. Kg5 Rh2 7. e6 $18) 6... Rh7+ 7. Kg6 Rh2 8. e6 Kc7 9. e7 Rg2+ 10. Kf7 Rf2+ 11. Ke8 $18 *
-
 
 [Termination "draw in 20"]
 [Event "Lichess Practice: Rook Endgames: Philidor Position"]

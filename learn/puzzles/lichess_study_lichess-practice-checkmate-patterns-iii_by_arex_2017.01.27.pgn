@@ -14,7 +14,6 @@
 { The Opera Mate works by attacking the king on the back rank with a rook using a bishop to protect it. A pawn or other piece other than a knight of the enemy king's is used to restrict its movement. The checkmate was named after its implementation by Paul Morphy in 1858 at a game at the Paris opera against Duke Karl of Brunswick and Count Isouard, known as the "The Opera Game". }
  *
 
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns III: Opera Mate #2"]
 [Site "https://lichess.org/study/PDkQDt6u"]
@@ -30,7 +29,6 @@
 
 { From Josef Emil Krejcik - Julius Thirring, 1898. }
  *
-
 
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns III: Opera Mate #3"]
@@ -48,7 +46,6 @@
 { From John William Schulten - Bernhard Horwitz, 1846. }
  *
 
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns III: Anderssen's Mate #1"]
 [Site "https://lichess.org/study/PDkQDt6u"]
@@ -64,7 +61,6 @@
 
 { In Anderssen's mate, named for Adolf Anderssen, the rook or queen is supported by a diagonally-attacking piece such as a pawn or bishop as it checkmates the opposing king along the eighth rank. }
  *
-
 
 [Termination "mate in 3"]
 [Event "Lichess Practice: Checkmate Patterns III: Anderssen's Mate #2"]
@@ -82,7 +78,6 @@
 { From Isidor Gunsberg - Emil Schallopp, 1886. }
  *
 
-
 [Termination "mate in 4"]
 [Event "Lichess Practice: Checkmate Patterns III: Anderssen's Mate #3"]
 [Site "https://lichess.org/study/PDkQDt6u"]
@@ -98,7 +93,6 @@
 
 { From Rudolf Spielmann - Baldur Hoenlinger, 1929. }
  *
-
 
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns III: Dovetail Mate #1"]
@@ -116,7 +110,6 @@
 { In the Dovetail Mate, the mating queen is one square diagonally from the mated king which escape is blocked by two friendly non-Knight pieces. }
  *
 
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns III: Dovetail Mate #2"]
 [Site "https://lichess.org/study/PDkQDt6u"]
@@ -132,7 +125,6 @@
 
 { From Gioachino Greco - NN, 1620. }
  *
-
 
 [Termination "mate in 4"]
 [Event "Lichess Practice: Checkmate Patterns III: Dovetail Mate #3"]
@@ -150,7 +142,6 @@
 { From Juan Manuel Bellon Lopez - Jan Smejkal, 1970. }
  *
 
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns III: Dovetail Mate #4"]
 [Site "https://lichess.org/study/PDkQDt6u"]
@@ -166,7 +157,6 @@
 
 { Other variations of the Dovetail Mate can occur if a queen delivers mate by checking the king from a diagonally adjacent square while supported by a friendly piece and you also control the two potential escape squares with other pieces, typically a bishop. }
 1. Qe8# *
-
 
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns III: Cozio's Mate #1"]
@@ -184,7 +174,6 @@
 { Cozio's Mate is an upside down version of the Dovetail Mate. It was named after a study by Carlo Cozio that was published in 1766. }
  *
 
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns III: Swallow's Tail Mate #1"]
 [Site "https://lichess.org/study/PDkQDt6u"]
@@ -200,7 +189,6 @@
 
 { The Swallow's Tail Mate works by attacking the enemy king with a queen that is protected by a rook or other piece. The enemy king's own pieces block its means of escape. It is also known as the Guéridon Mate. }
  *
-
 
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns III: Swallow's Tail Mate #2"]
@@ -218,7 +206,6 @@
 { From Paul Keres - Robert James Fischer, 1959. }
  *
 
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns III: Epaulette Mate #1"]
 [Site "https://lichess.org/study/PDkQDt6u"]
@@ -234,7 +221,6 @@
 
 { The Epaulette Mate is a checkmate where two parallel retreat squares for a checked king are occupied by its own pieces, preventing its escape. }
  *
-
 
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns III: Epaulette Mate #2"]
@@ -252,7 +238,6 @@
 { From Loek van Wely - Alexander Morozevich, 2001. }
  *
 
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns III: Epaulette Mate #3"]
 [Site "https://lichess.org/study/PDkQDt6u"]
@@ -269,7 +254,6 @@
 { From Magnus Carlsen - Sipke Ernst, 2004. }
  *
 
-
 [Termination "mate in 1"]
 [Event "Lichess Practice: Checkmate Patterns III: Pawn Mate #1"]
 [Site "https://lichess.org/study/PDkQDt6u"]
@@ -285,7 +269,6 @@
 
 { Although the Pawn Mate can take many forms, it is generally characterized as a mate in which a pawn is the final attacking piece and where enemy pawns are nearby. The Pawn Mate is sometimes also called the David and Goliath Mate, named after the biblical account of David and Goliath. }
  *
-
 
 [Termination "mate in 2"]
 [Event "Lichess Practice: Checkmate Patterns III: Pawn Mate #2"]

@@ -14,7 +14,6 @@
 { An absolute pin is when a piece is pinned to its king and can't move without exposing its king to a check from an opposing piece on the same line or diagonal. Pin the knight to win it. }
  *
 
-
 [Termination "+200cp in 2"]
 [Event "Lichess Practice: The Pin: Set up an absolute pin #2"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -30,7 +29,6 @@
 
 { Can you set up an immediate absolute pin? }
  *
-
 
 [Termination "+700cp in 1"]
 [Event "Lichess Practice: The Pin: Set up a relative pin #1"]
@@ -48,7 +46,6 @@
 { A relative pin is one where the piece shielded by the pinned piece is a piece other than the king, but it's typically more valuable than the pinned piece. Moving such a pinned piece is legal but may not be prudent, as the shielded piece would then be vulnerable to capture. Do you see the immediate relative pin? }
  *
 
-
 [Termination "+500cp in 2"]
 [Event "Lichess Practice: The Pin: Exploit the pin #1"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -64,7 +61,6 @@
 
 { Use your knowledge of pins to win a piece. }
  *
-
 
 [Termination "+300cp in 1"]
 [Event "Lichess Practice: The Pin: Exploit the pin #2"]
@@ -82,7 +78,6 @@
 { Use your knowledge of pins to win a piece. }
  *
 
-
 [Termination "+70cp in 1"]
 [Event "Lichess Practice: The Pin: Exploit the pin #3"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -99,7 +94,6 @@
 { Use your knowledge of pins to win a pawn. From Magnus Carlsen - Arkadij Naiditsch, 2009. }
  *
 
-
 [Termination "mate in 2"]
 [Event "Lichess Practice: The Pin: Exploit the pin #4"]
 [Site "https://lichess.org/study/9ogFv8Ac"]
@@ -115,7 +109,6 @@
 
 { A missed tactic in Laszlo Szabo - Samuel Reshevsky, 1953. }
  *
-
 
 [Termination "-800cp in 3"]
 [Event "Lichess Practice: The Pin: Exploit the pin #5"]

@@ -14,7 +14,6 @@
 { A Discovered Attack is an attack that is revealed when one piece moves out of the way of another. Discovered Attacks can be extremely powerful, as the piece moved can make a threat independently of the piece it reveals. Like many chess tactics, they succeed because the opponent is unable to meet two threats at once. While typically the consequence of a discovered attack is the gain of material, they do not have to do this to be effective; the tactic can be used merely to gain a tempo. }
  *
 
-
 [Termination "+1000cp in 2"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Check #1"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -31,7 +30,6 @@
 { When a Discovered Attack is a check, it is called a Discovered Check. }
  *
 
-
 [Termination "+400cp in 2"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Attack #2"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -46,7 +44,6 @@
 [SetUp "1"]
 
  *
-
 
 [Termination "mate in 2"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Check #2"]
@@ -64,7 +61,6 @@
 { From William Norwood Potter - Matthews, 1868. }
  *
 
-
 [Termination "-270cp in 3"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Attack #3"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -80,7 +76,6 @@
 
 { From Marianna Bagdasarova - Ksenya Rybenko, 1998. }
  *
-
 
 [Termination "+300cp in 3"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Check #3"]
@@ -98,7 +93,6 @@
 { From Viswanathan Anand - Vladimir Kramnik, 2005. }
  *
 
-
 [Termination "+400cp in 2"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Attack #4"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -114,7 +108,6 @@
 
 { From Mikhail Tal - Orest Averkin, 1973. }
 1. Nd5 Rc7 2. Nxc7 *
-
 
 [Termination "mate in 3"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Check #4"]
@@ -132,7 +125,6 @@
 { From Jiri Lechtynsky - Ludek Pachman, 1968. }
  *
 
-
 [Termination "-500cp in 3"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Attack #5"]
 [Site "https://lichess.org/study/MnsJEWnI"]
@@ -148,7 +140,6 @@
 
 { From Yasser Seirawan - Alexey Shirov, 1993. }
 1... Bf4 2. Rc7 (2. Qxd5 Bxe3+ 3. Kf1 Bxd5) *
-
 
 [Termination "+700cp in 3"]
 [Event "Lichess Practice: Discovered Attacks: Discovered Check #5"]

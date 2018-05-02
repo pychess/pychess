@@ -14,7 +14,6 @@
 { A skewer is an attack upon two pieces in a line and is similar to a pin. A skewer is sometimes described as a "reverse pin"; the difference is that in a skewer, the more valuable piece is in front of the piece of lesser value. If the piece being attacked is not a king, then it is a Relative Skewer. }
  *
 
-
 [Termination "+300cp in 2"]
 [Event "Lichess Practice: The Skewer: Relative Skewer #2"]
 [Site "https://lichess.org/study/tuoBxVE5"]
@@ -29,7 +28,6 @@
 [SetUp "1"]
 
  *
-
 
 [Termination "-500cp in 3"]
 [Event "Lichess Practice: The Skewer: Relative Skewer #3"]
@@ -47,7 +45,6 @@
 { From Magnus - Emil Schallopp, 1868. }
 22... Rxe4 23. Qxe4 Bc6 24. Qd3 Bxh1 *
 
-
 [Termination "-300cp in 4"]
 [Event "Lichess Practice: The Skewer: //Relative Skewer #4"]
 [Site "https://lichess.org/study/tuoBxVE5"]
@@ -63,7 +60,6 @@
 
 { From Donato Rivera - Robert James Fischer, 1962. }
 14... Qc6 15. e4 Qb5 16. e5 Ne8 17. Bc2 Qxb2 *
-
 
 [Termination "-500cp in 2"]
 [Event "Lichess Practice: The Skewer: Absolute Skewer #1"]
@@ -81,7 +77,6 @@
 { A skewer is an attack upon two pieces in a line and is similar to a pin. A skewer is sometimes described as a "reverse pin"; the difference is that in a skewer, the more valuable piece is in front of the piece of lesser value. If the piece being attacked is a king, then it is an Absolute Skewer. The king is said to be skewered. }
  *
 
-
 [Termination "+500cp in 3"]
 [Event "Lichess Practice: The Skewer: Absolute Skewer #2"]
 [Site "https://lichess.org/study/tuoBxVE5"]
@@ -97,7 +92,6 @@
 
 { From Nigel Short - Rafael Vaganian, 1989. }
  *
-
 
 [Termination "+400cp in 3"]
 [Event "Lichess Practice: The Skewer: Absolute Skewer #3"]
@@ -115,7 +109,6 @@
 { A missed tactic from Viswanathan Anand - Vassily Ivanchuk, 2005. }
  *
 
-
 [Termination "+500cp in 4"]
 [Event "Lichess Practice: The Skewer: Absolute Skewer #4"]
 [Site "https://lichess.org/study/tuoBxVE5"]
@@ -131,7 +124,6 @@
 
 { From Garry Kasparov - Stefano Tatai, 1986. }
  *
-
 
 [Termination "+200cp in 3"]
 [Event "Lichess Practice: The Skewer: Absolute Skewer #5"]
