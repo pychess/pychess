@@ -192,10 +192,7 @@ class Database(GObject.GObject, Perspective):
             if filename.endswith(".pgn"):
                 GLib.idle_add(self.progressbar1.show)
                 GLib.idle_add(self.progressbar1.set_text, _("Opening chessfile..."))
-                if os.path.basename(filename).startswith("lichess_"):
-                    chessfile = PGNFile(protoopen(filename, encoding="utf-8"), self.progressbar1)
-                else:
-                    chessfile = PGNFile(protoopen(filename), self.progressbar1)
+                chessfile = PGNFile(protoopen(filename), self.progressbar1)
                 self.importer = chessfile.init_tag_database()
                 if self.importer is not None and self.importer.cancel:
                     chessfile.tag_database.close()

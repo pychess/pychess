@@ -29,6 +29,7 @@ from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, 
 
 from pychess.System import conf
 from pychess.System.Log import log
+from pychess.System.protoopen import PGN_ENCODING
 from pychess.System.prefix import getEngineDataPrefix
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
@@ -1066,6 +1067,8 @@ class PGNFile(ChessFile):
 
             # if there is something add it
             if line.strip():
+                if self.handle.pgn_encoding != PGN_ENCODING:
+                    line = line.encode(PGN_ENCODING).decode(self.handle.pgn_encoding)
                 lines.append(line)
                 line = self.handle.readline()
             # if line is empty it should be the game separator line except...
@@ -1073,7 +1076,6 @@ class PGNFile(ChessFile):
                 line = self.handle.readline()
             else:
                 break
-
         return "".join(lines)
 
     def get_variant(self, rec):

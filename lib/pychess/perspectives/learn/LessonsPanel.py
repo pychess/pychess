@@ -92,10 +92,7 @@ class Sidepanel():
 
 
 def start_lesson_from(filename, index=None):
-    if filename.startswith("lichess_"):
-        chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename), encoding="utf-8"))
-    else:
-        chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
+    chessfile = PGNFile(protoopen(addDataPrefix("learn/lessons/%s" % filename)))
     chessfile.limit = 1000
     chessfile.init_tag_database()
     records, plys = chessfile.get_records()

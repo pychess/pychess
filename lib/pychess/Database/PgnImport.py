@@ -193,10 +193,7 @@ class PgnImport():
                 log.info("Reading %s ..." % pgnfile)
 
             size = os.path.getsize(pgnfile)
-            if self.chessfile.handle.encoding == PGN_ENCODING:
-                handle = protoopen(pgnfile)
-            else:
-                handle = protoopen(pgnfile, encoding=self.chessfile.handle.encoding)
+            handle = protoopen(pgnfile)
 
             # estimated game count
             all_games = max(size / 840, 1)
@@ -460,6 +457,9 @@ def read_games(handle):
                 tag_value = tag_match.group(2)
                 tag_value = tag_value.replace("\\\"", "\"")
                 tag_value = tag_value.replace("\\\\", "\\")
+
+                if handle.pgn_encoding != PGN_ENCODING:
+                    tag_value = tag_value.encode(PGN_ENCODING).decode(handle.pgn_encoding)
                 game_headers[tag_match.group(1)] = tag_value
 
                 last_pos += len(line)

@@ -206,10 +206,7 @@ class SolvingProgress(GObject.GObject, UserDict, metaclass=GObjectMutableMapping
     def get_count(self, filename):
         subdir = "puzzles" if self.progress_file.endswith("puzzles.json") else "lessons"
         if filename.lower().endswith(".pgn"):
-            if filename.startswith("lichess_"):
-                chessfile = PGNFile(protoopen(addDataPrefix("learn/%s/%s" % (subdir, filename)), encoding="utf-8"))
-            else:
-                chessfile = PGNFile(protoopen(addDataPrefix("learn/%s/%s" % (subdir, filename))))
+            chessfile = PGNFile(protoopen(addDataPrefix("learn/%s/%s" % (subdir, filename))))
             chessfile.limit = 1000
             chessfile.init_tag_database()
         elif filename.lower().endswith(".olv"):
