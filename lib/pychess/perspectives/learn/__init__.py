@@ -9,7 +9,7 @@ from gi.types import GObjectMeta
 from pychess.perspectives import Perspective, perspective_manager
 from pychess.System.prefix import addUserConfigPrefix, addDataPrefix
 from pychess.System.Log import log
-from pychess.widgets import new_notebook
+from pychess.widgets import new_notebook, mainwindow
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock import WEST, SOUTH, CENTER
 from pychess.System.prefix import addUserDataPrefix
@@ -128,6 +128,24 @@ class Learn(GObject.GObject, Perspective):
         learn_home.pack_start(label, False, False, 6)
 
         learn_home.pack_start(box, False, False, 0)
+
+        reset = Gtk.Button(_("Reset my progress"))
+        learn_home.pack_start(reset, False, False, 6)
+
+        def on_reset_clicked(button):
+            dialog = Gtk.MessageDialog(mainwindow(), 0, Gtk.MessageType.QUESTION,
+                                       Gtk.ButtonsType.OK_CANCEL,
+                                       _("You will lose all your progress data!"))
+            response = dialog.run()
+            if response == Gtk.ResponseType.OK:
+                for filename, progress in lessons_solving_progress.items():
+                    lessons_solving_progress[filename] = [0] * len(progress)
+                for filename, progress in puzzles_solving_progress.items():
+                    puzzles_solving_progress[filename] = [0] * len(progress)
+                self.update_progress(None, None, None)
+            dialog.destroy()
+
+        reset.connect("clicked", on_reset_clicked)
 
         learn_home.show_all()
 
