@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-25 16:04+0100\n"
-"PO-Revision-Date: 2017-12-26 00:54+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2018-04-05 06:58+0000\n"
+"Last-Translator: Lars Ekman <lars@svensberg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/gbtami/pychess/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -241,26 +241,26 @@ msgstr "Svart:"
 
 #: glade/PyChess.glade:1212
 msgid "White ELO:"
-msgstr ""
+msgstr "Vit ELO:"
 
 #: glade/PyChess.glade:1224
 msgid "Black ELO:"
-msgstr ""
+msgstr "Svart ELO:"
 
 #: glade/PyChess.glade:1262
 msgid "Annotator:"
-msgstr ""
+msgstr "Kommentator:"
 
 #: glade/PyChess.glade:1286
 msgid "Rating change:"
-msgstr ""
+msgstr "Änring av rating:"
 
 #: glade/PyChess.glade:1298 glade/PyChess.glade:1314
 msgid ""
 "For each player, the statistics provide the probability to win the game and "
 "the variation of your ELO if you lose / end into a tie / win, or simply the "
 "final ELO rating change"
-msgstr ""
+msgstr "För varje spelare ger statistiken sannolikheten för att vinna partiet och ändringen i ditt ELO om du förlorar / spelar remi / vinner, eller helt enkelt den slutliga ELO-ratingändringen"
 
 #: glade/PyChess.glade:1339
 msgid "<b>Game data</b>"
@@ -435,32 +435,32 @@ msgstr "Om vald, kommer PyChess att föreslå bästa öppningsdragen på tipspan
 
 #: glade/PyChess.glade:1967
 msgid "Polyglot book file:"
-msgstr ""
+msgstr "Polyglot bokfil:"
 
 #: glade/PyChess.glade:2011
 msgid "Use _local tablebases"
-msgstr ""
+msgstr "Använd _lokala slutspelsdatabaser"
 
 #: glade/PyChess.glade:2016
 msgid ""
 "If set, PyChess will show game results for different moves in positions containing 6 or less pieces.\n"
 "You can download tablebase files from:\n"
 "http://www.olympuschess.com/egtb/gaviota/"
-msgstr ""
+msgstr "Om vald, visar PyChess partiresultat för olika drag i positioner som innehåller 6 eller färre pjäser.\nDu kan ladda ner slutspelsdatabaser från:\nhttp://www.olympuschess.com/egtb/gaviota/"
 
 #: glade/PyChess.glade:2045
 msgid "Gaviota TB path:"
-msgstr ""
+msgstr "Sökväg Gaviota-bas :"
 
 #: glade/PyChess.glade:2085
 msgid "Use _online tablebases"
-msgstr ""
+msgstr "Använd _online slutspelsdatabaser"
 
 #: glade/PyChess.glade:2090
 msgid ""
 "If set, PyChess will show game results for different moves in positions containing 6 or less pieces.\n"
 "It will search positions from http://www.k4it.de/"
-msgstr ""
+msgstr "Om vald, visar PyChess partiresultat för olika drag i positioner som innehåller 6 eller färre pjäser.\nDet kommer att söka positioner från http://www.k4it.de/"
 
 #: glade/PyChess.glade:2111
 msgid "<b>Opening, endgame</b>"
@@ -474,7 +474,7 @@ msgstr "Använd _analysatorn"
 msgid ""
 "The analyzer will run in the background and analyze the game. <b>This is "
 "necessary for the hint mode to work</b>"
-msgstr ""
+msgstr "Analysatorn kommer att köras i bakgrunden och analysera partiet. <b>Detta är nödvändigt för att tipspanelen ska fungera</b>"
 
 #: glade/PyChess.glade:2218
 msgid "Use _inverted analyzer"
@@ -528,11 +528,11 @@ msgstr "<b>Välkomstskärm</b>"
 
 #: glade/PyChess.glade:2788
 msgid "Texture:"
-msgstr ""
+msgstr "Textur:"
 
 #: glade/PyChess.glade:2822
 msgid "Frame:"
-msgstr ""
+msgstr "Ram:"
 
 #: glade/PyChess.glade:2856
 msgid "Light Squares :"
@@ -540,7 +540,7 @@ msgstr "Ljusa rutor:"
 
 #: glade/PyChess.glade:2885
 msgid "Grid"
-msgstr ""
+msgstr "Rutnät"
 
 #: glade/PyChess.glade:2906
 msgid "Dark Squares :"
@@ -548,7 +548,7 @@ msgstr "Mörka rutor:"
 
 #: glade/PyChess.glade:2935
 msgid "Reset Colours"
-msgstr ""
+msgstr "Återställ färger"
 
 #: glade/PyChess.glade:2949
 msgid "Sho_w cords"
@@ -562,7 +562,7 @@ msgstr "Om vald, kommer brädet att visa rader och linjer för varje schackruta.
 
 #: glade/PyChess.glade:2995
 msgid "<b>Board Style</b>"
-msgstr ""
+msgstr "<b>Brädesinställningar</b>"
 
 #: glade/PyChess.glade:3054
 msgid "<b>Chess Sets</b>"
@@ -602,7 +602,7 @@ msgstr "En spelare tar:"
 
 #: glade/PyChess.glade:3467
 msgid "Game is _set-up:"
-msgstr ""
+msgstr "Paritet är _uppsatt:"
 
 #: glade/PyChess.glade:3519
 msgid "_Observed moves:"
@@ -662,17 +662,17 @@ msgstr "Spara motoranalysens värderingar"
 
 #: glade/PyChess.glade:4052
 msgid "Save _rating change values"
-msgstr ""
+msgstr "Spara _rating ändringsvärden"
 
 #: glade/PyChess.glade:4077
 msgid "Indent _PGN file"
-msgstr ""
+msgstr "Gör indrag i _PGN fil"
 
 #: glade/PyChess.glade:4082
 msgid ""
 "Warning: this option generates a formatted .pgn file which is not standards "
 "complient"
-msgstr ""
+msgstr "Varning: Det här alternativet genererar en formaterad .png-fil som inte är standardkompatibel"
 
 #: glade/PyChess.glade:4103
 msgid "Save _own games only"
@@ -688,23 +688,23 @@ msgstr "Promovering"
 
 #: glade/PyChess.glade:4201 lib/pychess/Utils/repr.py:24
 msgid "Queen"
-msgstr "Dam"
+msgstr "dam"
 
 #: glade/PyChess.glade:4247 lib/pychess/Utils/repr.py:23
 msgid "Rook"
-msgstr "Torn"
+msgstr "torn"
 
 #: glade/PyChess.glade:4293 lib/pychess/Utils/repr.py:23
 msgid "Bishop"
-msgstr "Löpare"
+msgstr "löpare"
 
 #: glade/PyChess.glade:4339 lib/pychess/Utils/repr.py:23
 msgid "Knight"
-msgstr "Springare"
+msgstr "springare"
 
 #: glade/PyChess.glade:4385 lib/pychess/Utils/repr.py:24
 msgid "King"
-msgstr "Kung"
+msgstr "kung"
 
 #: glade/PyChess.glade:4416
 msgid "<b><big>Promote pawn to what?</big></b>"
@@ -716,7 +716,7 @@ msgstr "Standard"
 
 #: glade/PyChess.glade:4481
 msgid "Knights"
-msgstr "Springare"
+msgstr "springare"
 
 #: glade/PyChess.glade:4492
 msgid "uci"
@@ -947,11 +947,11 @@ msgid ""
 "evaluation for the move made in the game) exceeds this value, it will add an"
 " annotation for that move (consisting of the engine's Principal Variation "
 "for the move) to the Annotation panel"
-msgstr ""
+msgstr "Om analysatorn finner ett drag där utvärderingsskillnaden (skillnaden mellan utvärderingen för draget som den anser är det bästa draget och utvärderingen för draget som görs i partiet) överstiger detta värde, kommer det att lägga till en anteckning för det draget (bestående av av motorns huvudvariant för dragen) till anteckningspanelen"
 
 #: glade/analyze_game.glade:164
 msgid "Variation annotation creation threshold in centipawns:"
-msgstr ""
+msgstr "Variation annotation creation threshold in centipawns:"
 
 #: glade/analyze_game.glade:198
 msgid "Analyze from current position"
@@ -1330,15 +1330,15 @@ msgstr "Ursprungliga inställningar"
 
 #: glade/newInOut.glade:275 glade/newInOut.glade:321 glade/taskers.glade:169
 msgid "Engine playing strength (1=weakest, 20=strongest)"
-msgstr ""
+msgstr "Motorstyrka (1 = svagaste, 20 = starkaste)"
 
 #: glade/newInOut.glade:359
 msgid "White side - Click to exchange the players"
-msgstr ""
+msgstr "Vit sida - klicka för att byta spelare"
 
 #: glade/newInOut.glade:371
 msgid "Black side - Click to exchange the players"
-msgstr ""
+msgstr "Svart sida - klicka för att byta spelare"
 
 #: glade/newInOut.glade:397
 msgid "<b>Players</b>"
@@ -1418,7 +1418,7 @@ msgstr "Vit O-O"
 
 #: glade/newInOut.glade:1558
 msgid "Rotate the board"
-msgstr ""
+msgstr "Rotera brädet"
 
 #: glade/saveGamesDialog.glade:7
 msgid "Quit PyChess"
@@ -1449,7 +1449,7 @@ msgstr "Om du inte spara, nya ändringar till dina partier kommer gå förlorade
 
 #: glade/taskers.glade:37
 msgid "Detailed settings of players, time control and chess variant"
-msgstr ""
+msgstr "Detaljerade inställningar av spelare, tidskontroll och schackvariant"
 
 #: glade/taskers.glade:127
 msgid "_Opponent:"
@@ -1461,11 +1461,11 @@ msgstr "_Din färg:"
 
 #: glade/taskers.glade:222
 msgid "<b>_Start Game</b>"
-msgstr "<b>_Start parti</b>"
+msgstr "<b>_Starta parti</b>"
 
 #: glade/taskers.glade:285
 msgid "Detailed connection settings"
-msgstr ""
+msgstr "Detaljerade anslutningsinställningar"
 
 #: glade/taskers.glade:355
 msgid "Auto login on startup"
@@ -1739,17 +1739,17 @@ msgstr "Chess Alpha 2 diagram"
 #: lib/pychess/Savers/chesspastebin.py:19
 msgid ""
 "The current game is over. First, please verify the properties of the game."
-msgstr ""
+msgstr "Det aktuella partiet är slut. Verifiera först egenskaperna hos partiet."
 
 #: lib/pychess/Savers/chesspastebin.py:21
 msgid ""
 "The current game is not terminated. Its export may have a limited interest."
-msgstr ""
+msgstr "Det aktuella partiet är inte avslutat. Dess export kan ha ett begränsat intresse."
 
 #: lib/pychess/Savers/chesspastebin.py:22
 #, python-format
 msgid "Should %s publicly publish your game as PGN on chesspastebin.com ?"
-msgstr ""
+msgstr "Ska %s offentligt publicera ditt parti som PGN på chesspastebin.com?"
 
 #: lib/pychess/Savers/chesspastebin.py:57
 msgid "Game shared at "
@@ -1783,7 +1783,7 @@ msgstr "Schackparti"
 
 #: lib/pychess/Savers/pgn.py:329
 msgid "Analyzer's primary variation"
-msgstr ""
+msgstr "Analysatorns huvudvariant"
 
 #: lib/pychess/Savers/pgn.py:454
 msgid "Importing game headers..."
@@ -2915,109 +2915,109 @@ msgstr "Okänd partistatus"
 
 #: lib/pychess/Utils/repr.py:40
 msgid "Because neither player has sufficient material to mate"
-msgstr "För att ingen av spelare har tillräckligt med material för att göra matt"
+msgstr "för att ingen av spelare har tillräckligt med material för att göra matt"
 
 #: lib/pychess/Utils/repr.py:42
 msgid "Because the same position was repeated three times in a row"
-msgstr "För att samma ställning har upprepats tre gånger"
+msgstr "för att samma ställning har upprepats tre gånger"
 
 #: lib/pychess/Utils/repr.py:43
 msgid "Because the last 50 moves brought nothing new"
-msgstr "För att de senaste 50 dragen inte har gett något nytt"
+msgstr "för att de senaste 50 dragen inte har gett något nytt"
 
 #: lib/pychess/Utils/repr.py:44
 msgid "Because both players ran out of time"
-msgstr "För att båda spelarna har slut på tid"
+msgstr "för att båda spelarna har slut på tid"
 
 #: lib/pychess/Utils/repr.py:45
 #, python-format
 msgid "Because %(mover)s stalemated"
-msgstr "För att %(mover)s pattsatt"
+msgstr "för att %(mover)s pattsatt"
 
 #: lib/pychess/Utils/repr.py:46
 msgid "Because both players agreed to a draw"
-msgstr "För att båda spelarna enades om remi"
+msgstr "för att båda spelarna enades om remi"
 
 #: lib/pychess/Utils/repr.py:47 lib/pychess/Utils/repr.py:59
 msgid "Because of adjudication by an admin"
-msgstr "På grund av avdömning från en administratör"
+msgstr "på grund av avdömning från en administratör"
 
 #: lib/pychess/Utils/repr.py:48
 msgid "Because the game exceed the max length"
-msgstr "För att partiet överstiger maxlängden"
+msgstr "för att partiet överstiger maxlängden"
 
 #: lib/pychess/Utils/repr.py:50
 #, python-format
 msgid ""
 "Because %(white)s ran out of time and %(black)s has insufficient material to"
 " mate"
-msgstr "För att %(white)s fick slut på tid och %(black)s har tillräckligt med material att göra matt"
+msgstr "för att %(white)s fick slut på tid och %(black)s har tillräckligt med material att göra matt"
 
 #: lib/pychess/Utils/repr.py:52
 #, python-format
 msgid ""
 "Because %(black)s ran out of time and %(white)s has insufficient material to"
 " mate"
-msgstr "För att %(black)s fick slut på tid och %(white)s har tillräckligt med matrial att göra matt"
+msgstr "för att %(black)s fick slut på tid och %(white)s har tillräckligt med matrial att göra matt"
 
 #: lib/pychess/Utils/repr.py:54
 msgid "Because both players have the same amount of pieces"
-msgstr "För att båda spelarna har samma antal pjäser"
+msgstr "för att båda spelarna har samma antal pjäser"
 
 #: lib/pychess/Utils/repr.py:55
 #, python-format
 msgid "Because %(loser)s resigned"
-msgstr "För att %(loser)s gav upp"
+msgstr "för att %(loser)s gav upp"
 
 #: lib/pychess/Utils/repr.py:56
 #, python-format
 msgid "Because %(loser)s ran out of time"
-msgstr "För att %(loser)s fick slut på tid"
+msgstr "för att %(loser)s fick slut på tid"
 
 #: lib/pychess/Utils/repr.py:57
 #, python-format
 msgid "Because %(loser)s was checkmated"
-msgstr "För att %(loser)s blev schack matt"
+msgstr "för att %(loser)s blev schackmatt"
 
 #: lib/pychess/Utils/repr.py:58
 #, python-format
 msgid "Because %(loser)s disconnected"
-msgstr "För att %(loser)s kopplade ifrån"
+msgstr "för att %(loser)s kopplade ifrån"
 
 #: lib/pychess/Utils/repr.py:60
 #, python-format
 msgid "Because %(winner)s has fewer pieces"
-msgstr "För att %(winner)s har färre pjäser"
+msgstr "för att %(winner)s har färre pjäser"
 
 #: lib/pychess/Utils/repr.py:61
 #, python-format
 msgid "Because %(winner)s lost all pieces"
-msgstr "För att %(winner)s förlorade alla pjäser"
+msgstr "för att %(winner)s förlorade alla pjäser"
 
 #: lib/pychess/Utils/repr.py:62
 #, python-format
 msgid "Because %(loser)s king exploded"
-msgstr "För att %(loser)s kung exploderade"
+msgstr "för att %(loser)s kung exploderade"
 
 #: lib/pychess/Utils/repr.py:63
 #, python-format
 msgid "Because %(winner)s king reached the center"
-msgstr "För att %(winner)s kung nådde centrum"
+msgstr "för att %(winner)s kung nådde centrum"
 
 #: lib/pychess/Utils/repr.py:64
 #, python-format
 msgid "Because %(winner)s was giving check 3 times"
-msgstr "För att %(winner)s schackade 3 gånger"
+msgstr "för att %(winner)s schackade 3 gånger"
 
 #: lib/pychess/Utils/repr.py:65
 #, python-format
 msgid "Because %(winner)s king reached the eight row"
-msgstr "För att %(winner)s kung nådde den åttonde raden"
+msgstr "för att %(winner)s kung nådde den åttonde raden"
 
 #: lib/pychess/Utils/repr.py:66
 #, python-format
 msgid "Because %(winner)s wiped out white horde"
-msgstr ""
+msgstr "Eftersom %(winner)s utplånade vits hord"
 
 #: lib/pychess/Utils/repr.py:67
 msgid "Because a player lost connection"
@@ -3161,7 +3161,7 @@ msgid ""
 "* Pieces placed randomly behind the pawns, SUBJECT TO THE CONSTRAINT THAT THE BISHOPS ARE BALANCED\n"
 "* No castling\n"
 "* Black's arrangement DOES NOT mirrors white's"
-msgstr "FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n* Randomly chosen pieces (two queens or three rooks possible)\n* Exactly one king of each color\n* Pieces placed randomly behind the pawns, SUBJECT TO THE CONSTRAINT THAT THE BISHOPS ARE BALANCED\n* No castling\n* Black's arrangement DOES NOT mirrors white's"
+msgstr "FICS wild/4: http://www.freechess.org/Help/HelpFiles/wild.html\n* Slumpmässigt utvalda pjäser (två damer eller tre torn möjliga)\n* Exakt en kung av varje färg\n* Pjäserna placeras slumpmässigt bakom bönderna, UNDERSTÄLLDA ATT LÖPARNA ÄR BALANSERADE\n* Ingen rockad\n* Svarts uppställning speglar INTE vits"
 
 #: lib/pychess/Variants/asymmetricrandom.py:18
 msgid "Asymmetric Random"
@@ -3232,20 +3232,20 @@ msgid ""
 "* Bishops must start on opposite color squares\n"
 "* Black's starting position is obtained by rotating white's position 180 degrees around the board's center\n"
 "* No castling"
-msgstr ""
+msgstr "http://brainking.com/en/GameRules?tp=2\n* Placering av pjäserna på 1: a och 8: e raden är slumpmässig\n* Kungen börjar i högra hörnet\n* Löparna måste börja på rutor med motsatta färger\n* Svarts startposition erhålls genom att rotera vits positionen 180 grader runt brädets centrum\n* Ingen rockad"
 
 #: lib/pychess/Variants/corner.py:18
 msgid "Corner"
-msgstr ""
+msgstr "Hörnschack"
 
 #: lib/pychess/Variants/crazyhouse.py:10
 msgid ""
 "FICS crazyhouse: http://www.freechess.org/Help/HelpFiles/crazyhouse.html"
-msgstr ""
+msgstr "FICS crazyhouse: http://www.freechess.org/Help/HelpFiles/crazyhouse.html"
 
 #: lib/pychess/Variants/crazyhouse.py:11 lib/pychess/ic/FICSObjects.py:61
 msgid "Crazyhouse"
-msgstr ""
+msgstr "Crazyhouse"
 
 #: lib/pychess/Variants/euroshogi.py:17
 msgid "EuroShogi: http://en.wikipedia.org/wiki/EuroShogi"
@@ -3267,11 +3267,11 @@ msgstr "Fischerandom"
 
 #: lib/pychess/Variants/giveaway.py:15
 msgid "ICC giveaway: https://www.chessclub.com/user/help/Giveaway"
-msgstr ""
+msgstr "ICC giveaway: https://www.chessclub.com/user/help/Giveaway"
 
 #: lib/pychess/Variants/giveaway.py:16
 msgid "Giveaway"
-msgstr ""
+msgstr "Giveaway"
 
 #: lib/pychess/Variants/horde.py:12
 msgid ""
@@ -3279,11 +3279,11 @@ msgid ""
 "White wants to checkmate as usual.\n"
 "White pawns on the first rank may move two squares,\n"
 "similar to pawns on the second rank."
-msgstr ""
+msgstr "Svart måste ta alla vita pjäser för att vinna.\nVit vill  göra schackmatt som vanligt.\nVita bönderna på första raden kan flyttas två rutor,\nliknande bönderna på andra raden.."
 
 #: lib/pychess/Variants/horde.py:16
 msgid "Horde"
-msgstr ""
+msgstr "Hord"
 
 #: lib/pychess/Variants/kingofthehill.py:15
 msgid ""
@@ -3305,11 +3305,11 @@ msgstr "Udda springare"
 
 #: lib/pychess/Variants/losers.py:13
 msgid "FICS losers: http://www.freechess.org/Help/HelpFiles/losers_chess.html"
-msgstr ""
+msgstr "FICS losers: http://www.freechess.org/Help/HelpFiles/losers_chess.html"
 
 #: lib/pychess/Variants/losers.py:14 lib/pychess/ic/FICSObjects.py:63
 msgid "Losers"
-msgstr ""
+msgstr "Losers"
 
 #: lib/pychess/Variants/normal.py:8
 msgid ""
@@ -3366,11 +3366,11 @@ msgid ""
 "their king to the last row, the game is a draw\n"
 "(this rule is to compensate for the advantage of white that they may move first.)\n"
 "Apart from the above, pieces move and capture precisely as in normal chess."
-msgstr ""
+msgstr "I det här spelet är det helt förbjudet att schacka. Det är inte bara förbjudet\natt ställa kungen i schack men det är också förbjudet att schacka motståndarens kung.\nSyftet med spelet är att vara den första spelaren som flyttar sin kung till åttonde raden.\nNär vit flyttar sin kung till åttonde raden och om svart flyttar sin kung därefter \n också till sista raden, då är partiet remi\n(denna regel är till för att kompensera fördelen för vit genom att få börja.)\nBortsett från ovanstående rör sig pjäserna och tar exakt som i normalt schack."
 
 #: lib/pychess/Variants/racingkings.py:24
 msgid "Racing Kings"
-msgstr ""
+msgstr "Rusande kungar"
 
 #: lib/pychess/Variants/randomchess.py:19
 msgid ""
@@ -3380,12 +3380,12 @@ msgid ""
 "* Pieces placed randomly behind the pawns\n"
 "* No castling\n"
 "* Black's arrangement mirrors white's"
-msgstr ""
+msgstr "FICS wild/3: http://www.freechess.org/Help/HelpFiles/wild.html\n* Slumpmässigt utvalda pjäser (två damer eller tre torn möjliga)\n* Exakt en kung av varje färg\n* Pjäsernas placeras slumpmässigt bakom bönderna\n* Ingen rockad\n* Svarts uppställning speglar vits"
 
 #: lib/pychess/Variants/randomchess.py:25
 #: lib/pychess/widgets/TaskerManager.py:157
 msgid "Random"
-msgstr ""
+msgstr "Random"
 
 #: lib/pychess/Variants/rookodds.py:11
 msgid "One player starts with one less rook piece"
@@ -3402,31 +3402,31 @@ msgid ""
 "* Random arrangement of the pieces behind the pawns\n"
 "* No castling\n"
 "* Black's arrangement mirrors white's"
-msgstr ""
+msgstr "xboard nocastle: http://home.hccnet.nl/h.g.muller/engine-intf.html#8\nFICS wild/2: http://www.freechess.org/Help/HelpFiles/wild.html\n* Slumpmässigt placering av pjäserna bakom bönderna\n* Ingen rockad\n* Svarts uppställning speglar vits"
 
 #: lib/pychess/Variants/shuffle.py:19 lib/pychess/widgets/newGameDialog.py:324
 #: lib/pychess/perspectives/fics/SeekChallenge.py:605
 msgid "Shuffle"
-msgstr ""
+msgstr "Shuffle"
 
 #: lib/pychess/Variants/suicide.py:18
 msgid ""
 "FICS suicide: http://www.freechess.org/Help/HelpFiles/suicide_chess.html"
-msgstr ""
+msgstr "FICS suicide: http://www.freechess.org/Help/HelpFiles/suicide_chess.html"
 
 #: lib/pychess/Variants/suicide.py:19 lib/pychess/ic/FICSObjects.py:65
 msgid "Suicide"
-msgstr ""
+msgstr "Suicide"
 
 #: lib/pychess/Variants/theban.py:11
 msgid ""
 "Variant developed by Kai Laskos: "
 "http://talkchess.com/forum/viewtopic.php?t=40990"
-msgstr ""
+msgstr "Variant utvecklad av Kai Laskos: http://talkchess.com/forum/viewtopic.php?t=40990"
 
 #: lib/pychess/Variants/theban.py:12
 msgid "Theban"
-msgstr ""
+msgstr "Theban"
 
 #: lib/pychess/Variants/threecheck.py:9
 msgid "Win by giving check 3 times"
@@ -3441,11 +3441,11 @@ msgid ""
 "FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\n"
 "http://en.wikipedia.org/wiki/Chess_variant#Chess_with_different_starting_positions\n"
 "Pawns start on their 7th rank rather than their 2nd rank!"
-msgstr ""
+msgstr "FICS wild/5: http://www.freechess.org/Help/HelpFiles/wild.html\nhttps://en.wikipedia.org/wiki/List_of_chess_variants#Different_starting_position\nBönderna börjar på 7: e raden i stället för 2:a raden!"
 
 #: lib/pychess/Variants/upsidedown.py:14
 msgid "Upside Down"
-msgstr ""
+msgstr "Upp och ner"
 
 #: lib/pychess/Variants/wildcastle.py:11
 msgid ""
@@ -3456,11 +3456,11 @@ msgid ""
 "* so they are not on the same files as White's King and Queen.\n"
 "* Castling is done similarly to normal chess:\n"
 "* o-o-o indicates long castling and o-o short castling."
-msgstr ""
+msgstr "xboard wildcastle http://home.hccnet.nl/h.g.muller/engine-intf.html#8\nFICS wild/0: http://www.freechess.org/Help/HelpFiles/wild.html\n* Vit har den typiska uppställningen vid start.\n* Svarta pjäserna är desamma, förutom att kungen och drottningen är omvända,\n* så de är inte på samma flygel som vits kung och dam.\n* Rockad görs på samma sätt som normalt schack:\n* o-o-o indikerar lång rockad och o-o kort rockad."
 
 #: lib/pychess/Variants/wildcastle.py:18
 msgid "Wildcastle"
-msgstr ""
+msgstr "Wildcastle"
 
 #: lib/pychess/Variants/wildcastleshuffle.py:11
 msgid ""
@@ -3473,15 +3473,15 @@ msgid ""
 "* Subject to these constraints the position of the                  pieces on their first ranks is random.\n"
 "* Castling is done similarly to normal chess:\n"
 "* o-o-o indicates long castling and o-o short castling."
-msgstr ""
+msgstr "xboard wildcastle http://home.hccnet.nl/h.g.muller/engine-intf.html#8\nFICS wild/1: http://www.freechess.org/Help/HelpFiles/wild.html\n* I denna variant har båda sidorna samma uppsättning pjäser som i normalt schack.\n* Den vita kungen börjar på d1 eller e1 och den svarta kungen börjar på d8 eller e8,\n* och torna är i sina vanliga positioner.\n* Löparna är alltid på motsatta färger.\n* Med förbehåll för dessa begränsningar är positionen                  av pjäserna på första raden slumpmässig.\n* Rockad görs på samma sätt som i normalt schack:\n* o-o-o indikerar lång rockad och o-o kort rockad."
 
 #: lib/pychess/Variants/wildcastleshuffle.py:21
 msgid "Wildcastle shuffle"
-msgstr ""
+msgstr "Wildcastle shuffle"
 
 #: lib/pychess/ic/FICSConnection.py:159
 msgid "The connection was broken - got \"end of file\" message"
-msgstr ""
+msgstr "Anslutningen bröts - fick meddelandet \"slut på fil\""
 
 #: lib/pychess/ic/FICSConnection.py:160
 #, python-format
@@ -3851,7 +3851,7 @@ msgstr "<b><big>PyChess kunde inte ladda dina panelinställningar</big></b>"
 msgid ""
 "Your panel settings have been reset. If this problem repeats,"
 "                         you should report it to the developers"
-msgstr ""
+msgstr "Dina panelinställningar har återställts. Om problemet upprepas                         ska du rapportera det till utvecklarna"
 
 #: lib/pychess/widgets/ChannelsPanel.py:176
 msgid "Friends"
@@ -3887,7 +3887,7 @@ msgstr "Observatörer"
 
 #: lib/pychess/widgets/ChatView.py:98
 msgid "Go on"
-msgstr ""
+msgstr "Fortsätt"
 
 #: lib/pychess/widgets/ChatView.py:105 lib/pychess/widgets/gamewidget.py:301
 msgid "Pause"
@@ -3900,35 +3900,35 @@ msgstr "Be om behörigheter"
 #: lib/pychess/widgets/ExternalsDialog.py:33
 msgid ""
 "Some of PyChess features needs your permission to download external programs"
-msgstr ""
+msgstr "Några av PyChess-funktionerna behöver ditt tillstånd att ladda ner externa program"
 
 #: lib/pychess/widgets/ExternalsDialog.py:37
 msgid "database querying needs scoutfish"
-msgstr ""
+msgstr "databasfrågan behöver scoutfish"
 
 #: lib/pychess/widgets/ExternalsDialog.py:47
 msgid "database opening tree needs chess_db"
-msgstr ""
+msgstr "öppningträdets databas behöver chess_db"
 
 #: lib/pychess/widgets/ExternalsDialog.py:57
 msgid "ICC lag compensation needs timestamp"
-msgstr ""
+msgstr "Kompensation för ICC eftersläpning behöver tidsstämpel"
 
 #: lib/pychess/widgets/ExternalsDialog.py:66
 msgid "Don't show this dialog on startup."
-msgstr ""
+msgstr "Visa inte den här dialogrutan vid uppstart."
 
 #: lib/pychess/widgets/InfoPanel.py:88
 msgid "No conversation's selected"
-msgstr ""
+msgstr "Ingen konversation vald"
 
 #: lib/pychess/widgets/InfoPanel.py:127
 msgid "Loading player data"
-msgstr ""
+msgstr "Laddar spelarens data"
 
 #: lib/pychess/widgets/InfoPanel.py:175
 msgid "Receiving list of players"
-msgstr ""
+msgstr "Tar emot lista över spelare"
 
 #: lib/pychess/widgets/LogDialog.py:21
 msgid "PyChess Information Window"
@@ -4122,11 +4122,11 @@ msgstr "Erbjud ångra"
 
 #: lib/pychess/widgets/gamewidget.py:549
 msgid " has lagged for 30 seconds"
-msgstr ""
+msgstr "har släpat efter i 30 sekunder"
 
 #: lib/pychess/widgets/gamewidget.py:567
 msgid " is lagging heavily but hasn't disconnected"
-msgstr ""
+msgstr " släpar kraftigt efter men har inte kopplats ifrån"
 
 #: lib/pychess/widgets/gamewidget.py:568
 msgid "Continue to wait for opponent, or try to adjourn the game?"
@@ -4252,7 +4252,7 @@ msgstr "Spelöppningsböcker"
 
 #: lib/pychess/widgets/preferencesDialog.py:178
 msgid "Select Gaviota TB path"
-msgstr "Välj Gaviota TB sökväg"
+msgstr "Välj sökväg Gaviota-slutspelsdatabas"
 
 #: lib/pychess/widgets/preferencesDialog.py:374
 msgid "Open Sound File"
@@ -4306,7 +4306,7 @@ msgstr "Du kan välja mellan 20 olika nivåer när du spelar mot datorn."
 msgid ""
 "Chess Variants are like the pieces of the last line will be placed on the "
 "board."
-msgstr ""
+msgstr "Schackvarianter är som pjäserna på sista raden och kommer att placeras på brädet."
 
 #: lib/pychess/widgets/tipOfTheDay.py:44
 msgid ""
@@ -4431,7 +4431,7 @@ msgstr "tagna-strängen (%s) är felaktig"
 
 #: lib/pychess/Utils/lutils/lmove.py:380
 msgid "pawn capture without target piece is invalid"
-msgstr ""
+msgstr "ta en bonde utan målpjäs är ogiltigt"
 
 #: lib/pychess/Utils/lutils/lmove.py:384
 #, python-format
@@ -4699,23 +4699,23 @@ msgstr "Lägg till nytt filter"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:108
 msgid "Seq"
-msgstr ""
+msgstr "Sek"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:110
 msgid ""
 "Create new squence where listed conditions may be satisfied at different "
 "times in a game"
-msgstr ""
+msgstr "Skapa ny sekvens där angivna villkor kan uppfyllas vid olika tider i ett parti"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:115
 msgid "Str"
-msgstr ""
+msgstr "Str"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:117
 msgid ""
 "Create new streak sequence where listed conditions have to be satisfied in "
 "consecutive (half)moves"
-msgstr ""
+msgstr "Skapa ny strängsekvens där de angivna villkoren måste uppfyllas i efterföljande (halv)drag"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:122
 msgid "Filter game list by various conditions"
@@ -4851,7 +4851,7 @@ msgstr "Arkiverade"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:28
 msgid "Adjourned, history and journal games list"
-msgstr ""
+msgstr "Uppskjutna, historia och journal partilista"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:56
 #: lib/pychess/perspectives/fics/SeekListPanel.py:74
@@ -4908,7 +4908,7 @@ msgstr "Konsol"
 
 #: lib/pychess/perspectives/fics/ConsolePanel.py:16
 msgid "Command line interface to the chess server"
-msgstr ""
+msgstr "Kommandoradsgränssnitt mot schackservern"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:69
 #: lib/pychess/perspectives/fics/FicsHome.py:71
@@ -4940,7 +4940,7 @@ msgstr "Bästa"
 msgid ""
 "On FICS, your \"Wild\" rating encompasses all of the"
 "                         following variants at all time controls:\n"
-msgstr ""
+msgstr "På FICS, din \"Wild\"-rating omfattar alla följande                         varianter vid alla tidskontroller:\n"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:109
 msgid "Sanctions"
@@ -4978,14 +4978,14 @@ msgid ""
 "remain active with the ability to play games. (With some restrictions. For "
 "example, no premium videos, some limitations in channels, and so on.) To "
 "register an account, go to "
-msgstr ""
+msgstr "Du är för närvarande inloggad som gäst men det finns en helt gratis provperiod i 30 dagar, och förutom det finns det ingen kostnad och kontot skulle förbli aktivt med förmågan att spela partier. (Med vissa begränsningar. Till exempel inga premiumvideor, vissa begränsningar i kanaler osv.) För att registrera ett konto, gå till"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:197
 msgid ""
 "You are currently logged in as a guest. A guest can't play rated games and "
 "therefore isn't able to play as many of the types of matches offered as a "
 "registered user. To register an account, go to "
-msgstr ""
+msgstr "Du är för närvarande inloggad som gäst. En gäst kan inte spela rankade partier och kan därför inte spela så många typer av matcher som erbjuds som en registrerad användare. För att registrera ett konto, gå till"
 
 #: lib/pychess/perspectives/fics/GameListPanel.py:15
 msgid "Game List"
@@ -5002,11 +5002,11 @@ msgstr "Pågående partier: %d"
 
 #: lib/pychess/perspectives/fics/LecturesPanel.py:8
 msgid "Lectures"
-msgstr ""
+msgstr "Lektioner"
 
 #: lib/pychess/perspectives/fics/LecturesPanel.py:12
 msgid "Study FICS lectures without lecturebot"
-msgstr ""
+msgstr "Studera FICS-föreläsningar utan Lecturebot"
 
 #: lib/pychess/perspectives/fics/NewsPanel.py:7
 msgid "News"
@@ -5208,11 +5208,11 @@ msgstr "Nytt parti från 15-minuters poolen"
 
 #: lib/pychess/perspectives/fics/__init__.py:101
 msgid "New game from 25-minute playing pool"
-msgstr ""
+msgstr "Nytt parti från 25 minuters spelpool"
 
 #: lib/pychess/perspectives/fics/__init__.py:106
 msgid "New game from Chess960 playing pool"
-msgstr ""
+msgstr "Nytt parti från Chess960 spelarpool"
 
 #: lib/pychess/perspectives/fics/__init__.py:365
 msgid "You have to set kibitz on to see bot messages here."
@@ -5239,7 +5239,7 @@ msgstr " censurerar dig"
 
 #: lib/pychess/perspectives/fics/__init__.py:446
 msgid " noplay listing you"
-msgstr ""
+msgstr " noplay noterar dig"
 
 #: lib/pychess/perspectives/fics/__init__.py:461
 msgid " uses a formula not fitting your match request:"
@@ -5308,7 +5308,7 @@ msgstr "<big><b>Okänd filtyp '%s'</b></big>"
 msgid ""
 "Was unable to save '%(uri)s' as PyChess doesn't know the format "
 "'%(ending)s'."
-msgstr ""
+msgstr "Det gick inte att spara '%(uri)s'. PyChess känner inte till formatet '%(ending)s'."
 
 #: lib/pychess/perspectives/games/__init__.py:288
 #, python-format
@@ -5319,7 +5319,7 @@ msgstr "<big><b>Kunde inte spara filen '%s'</b></big>"
 msgid ""
 "You don't have the necessary rights to save the file.\n"
 "    Please ensure that you have given the right path and try again."
-msgstr ""
+msgstr "Du har inte nödvändiga rättigheter att spara filen.\n    Se till att du har rätt sökväg och försök igen."
 
 #: lib/pychess/perspectives/games/__init__.py:299
 msgid "_Replace"
@@ -5372,7 +5372,7 @@ msgid ""
 "Unable to save to configured file."
 "                                                     Save the games before "
 "closing?"
-msgstr ""
+msgstr "Kan inte spara till konfigurationsfil.                                                     Spara partier innan du stänger?\n "
 
 #: lib/pychess/perspectives/games/__init__.py:395
 #, python-format
@@ -5383,20 +5383,20 @@ msgstr[1] "_Spara %d dokumenten"
 
 #: lib/pychess/perspectives/games/__init__.py:442
 msgid "Save the current game before you close it?"
-msgstr ""
+msgstr "Spara det aktuella partiet innan du stänger det?"
 
 #: lib/pychess/perspectives/games/__init__.py:448
 msgid ""
 "Unable to save to configured file."
 "                                             Save the current game before "
 "you close it?"
-msgstr ""
+msgstr "Kan inte spara till konfigurationsfil.                                                     Spara det aktuella partiet innan du stänger?"
 
 #: lib/pychess/perspectives/games/__init__.py:464
 msgid ""
 "It is not possible later to continue the game,\n"
 "if you don't save it."
-msgstr ""
+msgstr "Det är inte möjligt att fortsätta partiet senare,\nom du inte sparar det."
 
 #: lib/pychess/perspectives/games/__init__.py:812
 msgid "All Chess Files"
@@ -5404,7 +5404,7 @@ msgstr "Alla schackfiler"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:25
 msgid "Annotation"
-msgstr ""
+msgstr "Anteckning"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:28
 msgid "Annotated game"
@@ -5514,32 +5514,32 @@ msgstr "Lägg till värderingssymbol"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:358
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:362
 msgid "Symbols"
-msgstr ""
+msgstr "Symboler"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:366
 msgid "All the evaluations"
-msgstr ""
+msgstr "Alla utvärderingar"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:370
 msgid "Remove"
-msgstr ""
+msgstr "Ta bort"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1015
 msgid "mins"
-msgstr ""
+msgstr "min"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1018
 #: lib/pychess/perspectives/games/annotationPanel.py:1020
 msgid "secs"
-msgstr ""
+msgstr "sek"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1020
 msgid "move"
-msgstr ""
+msgstr "drag"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1038
 #, python-format
@@ -5612,13 +5612,13 @@ msgstr "Att lägga till förslag kan hjälpa dig att hitta idéer, men saktar ne
 
 #: lib/pychess/perspectives/games/bookPanel.py:332
 msgid "Endgame Table"
-msgstr "Slutspelstabell"
+msgstr "Slutspelsdatabas"
 
 #: lib/pychess/perspectives/games/bookPanel.py:339
 msgid ""
 "The endgame table will show exact analysis when there are few pieces on the "
 "board."
-msgstr "Slutspelstabellen visar en exakt analys när det finns några få pjäser på brädet."
+msgstr "Slutspelsdatabasen visar en exakt analys när det finns några få pjäser på brädet."
 
 #: lib/pychess/perspectives/games/bookPanel.py:391
 #: lib/pychess/perspectives/games/bookPanel.py:394

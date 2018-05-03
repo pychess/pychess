@@ -4,13 +4,14 @@
 # 
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008
+# Muhammad K Huda <mhmmd.huda@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-25 16:04+0100\n"
-"PO-Revision-Date: 2017-12-26 00:54+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2018-03-23 00:04+0000\n"
+"Last-Translator: Muhammad K Huda <mhmmd.huda@gmail.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/gbtami/pychess/language/id/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -25,11 +26,11 @@ msgstr "_Permainan"
 
 #: glade/PyChess.glade:199
 msgid "_New Game"
-msgstr "Permai_nan Baru"
+msgstr "_Permainan Baru"
 
 #: glade/PyChess.glade:212
 msgid "Play _Internet Chess"
-msgstr ""
+msgstr "Bermain _Catur Online"
 
 #: glade/PyChess.glade:231
 msgid "_Load Game"
@@ -37,15 +38,15 @@ msgstr "_Muat Permainan"
 
 #: glade/PyChess.glade:247
 msgid "Load _Recent Game"
-msgstr ""
+msgstr "Memuat _Permainan Terakhir"
 
 #: glade/PyChess.glade:256 lib/pychess/widgets/newGameDialog.py:677
 msgid "Setup Position"
-msgstr ""
+msgstr "Menyusun Posisi"
 
 #: glade/PyChess.glade:266
 msgid "Enter Game _Notation"
-msgstr ""
+msgstr "Mencantumkan _Catatan Permainan"
 
 #: glade/PyChess.glade:279
 msgid "_Save Game"
@@ -53,19 +54,19 @@ msgstr "_Simpan Permainan"
 
 #: glade/PyChess.glade:293
 msgid "Save Game _As"
-msgstr "Simpan Permainan Seb_agai"
+msgstr "Simpan Permainan _Sebagai"
 
 #: glade/PyChess.glade:311
 msgid "Share Game"
-msgstr ""
+msgstr "Bagikan Permainan"
 
 #: glade/PyChess.glade:317
 msgid "_Export Position"
-msgstr ""
+msgstr "_Ekspor Posisi"
 
 #: glade/PyChess.glade:331
 msgid "_Analyze Game"
-msgstr ""
+msgstr "_Analisa Permainan"
 
 #: glade/PyChess.glade:365
 msgid "Player _Rating"
@@ -73,35 +74,35 @@ msgstr "_Penilaian Pemain"
 
 #: glade/PyChess.glade:410
 msgid "_Edit"
-msgstr ""
+msgstr "_Edit"
 
 #: glade/PyChess.glade:421
 msgid "_Copy PGN"
-msgstr ""
+msgstr "_Salin PGN"
 
 #: glade/PyChess.glade:433
 msgid "_Copy FEN"
-msgstr ""
+msgstr "_Salin FEN"
 
 #: glade/PyChess.glade:450
 msgid "_Engines"
-msgstr ""
+msgstr "_Mesin Catur"
 
 #: glade/PyChess.glade:460
 msgid "Externals"
-msgstr ""
+msgstr "Eksternal"
 
 #: glade/PyChess.glade:486
 msgid "_Actions"
-msgstr "Tind_akan"
+msgstr "_Aksi"
 
 #: glade/PyChess.glade:497
 msgid "Offer _Abort"
-msgstr ""
+msgstr "Tawarkan _Gugur"
 
 #: glade/PyChess.glade:507
 msgid "Offer Ad_journment"
-msgstr ""
+msgstr "Tawarkan _Tunda"
 
 #: glade/PyChess.glade:517 glade/fics_lounge.glade:1927
 msgid "Offer _Draw"
@@ -109,15 +110,15 @@ msgstr "Tawarkan _Imbang"
 
 #: glade/PyChess.glade:528
 msgid "Offer _Pause"
-msgstr ""
+msgstr "Tawarkan _Istirahat"
 
 #: glade/PyChess.glade:538 glade/fics_lounge.glade:1825
 msgid "Offer _Resume"
-msgstr ""
+msgstr "Tawarkan _Lanjut"
 
 #: glade/PyChess.glade:544
 msgid "Offer _Undo"
-msgstr ""
+msgstr "Tawarkan _Undo"
 
 #: glade/PyChess.glade:567
 msgid "_Call Flag"
@@ -125,15 +126,15 @@ msgstr "_Panggil Bendera"
 
 #: glade/PyChess.glade:577 glade/fics_lounge.glade:1883
 msgid "R_esign"
-msgstr ""
+msgstr "_Berhenti"
 
 #: glade/PyChess.glade:587
 msgid "Ask to _Move"
-msgstr ""
+msgstr "Meminta _Bergerak"
 
 #: glade/PyChess.glade:602
 msgid "Auto Call _Flag"
-msgstr ""
+msgstr "Panggil _Bendera Otomatis"
 
 #: glade/PyChess.glade:615
 msgid "_View"
@@ -145,15 +146,15 @@ msgstr "_Putar Papan"
 
 #: glade/PyChess.glade:636
 msgid "_Fullscreen"
-msgstr ""
+msgstr "_Layar Penuh"
 
 #: glade/PyChess.glade:649
 msgid "Leave _Fullscreen"
-msgstr ""
+msgstr "Tutup _Layar Penuh"
 
 #: glade/PyChess.glade:666
 msgid "_Show Sidepanels"
-msgstr ""
+msgstr "_Tampilkan Panel Samping"
 
 #: glade/PyChess.glade:677
 msgid "_Log Viewer"
@@ -161,35 +162,35 @@ msgstr "Penampil _Log"
 
 #: glade/PyChess.glade:694
 msgid "_Hint arrow"
-msgstr ""
+msgstr "_Petunjuk Panah"
 
 #: glade/PyChess.glade:706
 msgid "Sp_y arrow"
-msgstr ""
+msgstr "Panah _Mengintai"
 
 #: glade/PyChess.glade:721 lib/pychess/perspectives/database/__init__.py:38
 msgid "Database"
-msgstr ""
+msgstr "Database"
 
 #: glade/PyChess.glade:727
 msgid "New _Database"
-msgstr ""
+msgstr "Database _Baru"
 
 #: glade/PyChess.glade:739
 msgid "Save database as"
-msgstr ""
+msgstr "Simpan database sebagai"
 
 #: glade/PyChess.glade:757
 msgid "Import chessfile"
-msgstr ""
+msgstr "Impor chessfile"
 
 #: glade/PyChess.glade:774
 msgid "Import annotated games from endgame.nl"
-msgstr ""
+msgstr "Impor permainan bernotasi dari endgame.nl"
 
 #: glade/PyChess.glade:784
 msgid "Import games from theweekinchess.com"
-msgstr ""
+msgstr "Impor permainan dari theweekinchess.com"
 
 #: glade/PyChess.glade:797
 msgid "_Help"
@@ -201,19 +202,19 @@ msgstr "Tentang Catur"
 
 #: glade/PyChess.glade:816
 msgid "How to Play"
-msgstr ""
+msgstr "Cara Bermain"
 
 #: glade/PyChess.glade:825
 msgid "Translate PyChess"
-msgstr ""
+msgstr "Terjemahkan PyChess"
 
 #: glade/PyChess.glade:831
 msgid "Tip of the Day"
-msgstr ""
+msgstr "Tips Harian"
 
 #: glade/PyChess.glade:935
 msgid "Chess client"
-msgstr ""
+msgstr "Klien catur"
 
 #: glade/PyChess.glade:962
 msgid "Game information"
@@ -233,38 +234,38 @@ msgstr "Putaran:"
 
 #: glade/PyChess.glade:1156
 msgid "White:"
-msgstr ""
+msgstr "Putih:"
 
 #: glade/PyChess.glade:1168
 msgid "Black:"
-msgstr ""
+msgstr "Hitam:"
 
 #: glade/PyChess.glade:1212
 msgid "White ELO:"
-msgstr ""
+msgstr "ELO Putih:"
 
 #: glade/PyChess.glade:1224
 msgid "Black ELO:"
-msgstr ""
+msgstr "ELO Hitam:"
 
 #: glade/PyChess.glade:1262
 msgid "Annotator:"
-msgstr ""
+msgstr "Pencatat:"
 
 #: glade/PyChess.glade:1286
 msgid "Rating change:"
-msgstr ""
+msgstr "Perubahan Rating:"
 
 #: glade/PyChess.glade:1298 glade/PyChess.glade:1314
 msgid ""
 "For each player, the statistics provide the probability to win the game and "
 "the variation of your ELO if you lose / end into a tie / win, or simply the "
 "final ELO rating change"
-msgstr ""
+msgstr "Untung masing-masing pemain, statistik memberikan kemungkinan untuk kemenangan sebuah permainan dan variasi dari ELO jika anda mengalami kekalahan / imbang / menang, atau secara sederhana rating ELO berubah"
 
 #: glade/PyChess.glade:1339
 msgid "<b>Game data</b>"
-msgstr "<b>Data permainan,/b>"
+msgstr "<b>Data permainan</b>"
 
 #: glade/PyChess.glade:1394
 msgid "<b>Date of game</b>"
@@ -276,19 +277,19 @@ msgstr "Preferensi"
 
 #: glade/PyChess.glade:1463
 msgid "The displayed name of the first human player, e.g., John."
-msgstr ""
+msgstr "Nama yang tercantum dari pemain pertama, contoh John."
 
 #: glade/PyChess.glade:1475
 msgid "<b>Name of _first human player:</b>"
-msgstr ""
+msgstr "<b>Nama _pemain pertama:</b>"
 
 #: glade/PyChess.glade:1504
 msgid "The displayed name of the guest player, e.g., Mary."
-msgstr ""
+msgstr "Nama yang tercantum dari pemain tamu, contoh Mary."
 
 #: glade/PyChess.glade:1516
 msgid "<b>Name of s_econd human player:</b>"
-msgstr ""
+msgstr "Nama _pemain kedua:"
 
 #: glade/PyChess.glade:1552
 msgid "_Hide tabs when only one game is open"
@@ -298,21 +299,21 @@ msgstr "_Sembunyikan tab ketika hanya satu permainan terbuka"
 msgid ""
 "If set, this hides the tab in the top of the playing window, when it is not "
 "needed."
-msgstr ""
+msgstr "Jika diatur, ini akan menyembunyikan tab pada bagian atas jendela permainan, bilamana tidak dibutuhkan."
 
 #: glade/PyChess.glade:1571
 msgid "_Use main app closer [x] to close all games"
-msgstr ""
+msgstr "_Gunakan penutup aplikasi utama [x] untuk menutup seluruh permainan"
 
 #: glade/PyChess.glade:1576
 msgid ""
 "If set, clicking on main application window closer first time it closes all "
 "games."
-msgstr ""
+msgstr "Jika diatur, mengklik pada penutup jendela aplikasi utama pertama kali akan menutup seluruh permainan."
 
 #: glade/PyChess.glade:1590
 msgid "Auto _rotate board to current human player"
-msgstr ""
+msgstr "_Rotasi papan otomatis untuk pemain saat ini"
 
 #: glade/PyChess.glade:1595
 msgid ""
@@ -2890,12 +2891,12 @@ msgstr "Permainan berakhir seri"
 #: lib/pychess/Utils/repr.py:30
 #, python-format
 msgid "%(white)s won the game"
-msgstr ""
+msgstr "%(white)s memenangkan permainan"
 
 #: lib/pychess/Utils/repr.py:31
 #, python-format
 msgid "%(black)s won the game"
-msgstr ""
+msgstr "%(black)s memenangkan permainan"
 
 #: lib/pychess/Utils/repr.py:32
 msgid "The game has been killed"
@@ -2911,40 +2912,40 @@ msgstr "Permainan telah dibatalkan"
 
 #: lib/pychess/Utils/repr.py:35
 msgid "Unknown game state"
-msgstr ""
+msgstr "Posisi permainan tidak dikenal"
 
 #: lib/pychess/Utils/repr.py:40
 msgid "Because neither player has sufficient material to mate"
-msgstr ""
+msgstr "Karena tidak ada pemain yang memiliki material cukup untuk checkmate"
 
 #: lib/pychess/Utils/repr.py:42
 msgid "Because the same position was repeated three times in a row"
-msgstr ""
+msgstr "Karena posisi yang sama berulang sebanyak tiga kali berturut-turut"
 
 #: lib/pychess/Utils/repr.py:43
 msgid "Because the last 50 moves brought nothing new"
-msgstr ""
+msgstr "Karena 50 pergerakan terakhir tidak ada yang baru"
 
 #: lib/pychess/Utils/repr.py:44
 msgid "Because both players ran out of time"
-msgstr ""
+msgstr "Karena kedua pemain kehabisan waktu"
 
 #: lib/pychess/Utils/repr.py:45
 #, python-format
 msgid "Because %(mover)s stalemated"
-msgstr ""
+msgstr "Karena %(mover)s telah dikalahkan"
 
 #: lib/pychess/Utils/repr.py:46
 msgid "Because both players agreed to a draw"
-msgstr ""
+msgstr "Karena kedua pemain setuju imbang"
 
 #: lib/pychess/Utils/repr.py:47 lib/pychess/Utils/repr.py:59
 msgid "Because of adjudication by an admin"
-msgstr ""
+msgstr "Karena keputusan oleh admin"
 
 #: lib/pychess/Utils/repr.py:48
 msgid "Because the game exceed the max length"
-msgstr ""
+msgstr "Karena permainan melebihi jangka maksimum"
 
 #: lib/pychess/Utils/repr.py:50
 #, python-format
@@ -3021,20 +3022,20 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:67
 msgid "Because a player lost connection"
-msgstr ""
+msgstr "Karena seorang pemain kehilangan koneksi internet"
 
 #: lib/pychess/Utils/repr.py:68
 msgid "Because both players agreed to an adjournment"
-msgstr ""
+msgstr "Karena kedua pemain setuju untuk melakukan rehat"
 
 #: lib/pychess/Utils/repr.py:69
 msgid "Because the server was shut down"
-msgstr ""
+msgstr "Karena server mati"
 
 #: lib/pychess/Utils/repr.py:71
 msgid ""
 "Because a player lost connection and the other player requested adjournment"
-msgstr ""
+msgstr "Karena seorang pemain kehilangan koneksi internet dan pemain lain mengajukan untuk rehat"
 
 #: lib/pychess/Utils/repr.py:73
 #, python-format
@@ -3062,17 +3063,17 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:81
 msgid "Because of adjudication by an admin. No rating changes have occurred."
-msgstr ""
+msgstr "Karena keputusan oleh admin. Tidak ada perubahan rating yang diberikan."
 
 #: lib/pychess/Utils/repr.py:83
 msgid ""
 "Because both players agreed to abort the game. No rating changes have "
 "occurred."
-msgstr ""
+msgstr "Karena kedua pemain setuju untuk mengakhiri permainan. Tidak ada perubahan rating yang diberikan."
 
 #: lib/pychess/Utils/repr.py:85
 msgid "Because of courtesy by a player. No rating changes have occurred."
-msgstr ""
+msgstr "Karena kebaikan seorang pemain. Tidak ada perubahan rating yang diberikan."
 
 #: lib/pychess/Utils/repr.py:87
 msgid ""

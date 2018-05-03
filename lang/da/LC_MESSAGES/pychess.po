@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the pychess package.
 # 
 # Translators:
-# Peter Hansen <peterih@fastmail.com>, 2016-2017
+# Peter Hansen <peterih@fastmail.com>, 2016-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-25 16:04+0100\n"
-"PO-Revision-Date: 2017-12-26 00:54+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2018-03-27 22:16+0000\n"
+"Last-Translator: Peter Hansen <peterih@fastmail.com>\n"
 "Language-Team: Danish (http://www.transifex.com/gbtami/pychess/language/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -241,11 +241,11 @@ msgstr "Sort:"
 
 #: glade/PyChess.glade:1212
 msgid "White ELO:"
-msgstr ""
+msgstr "Hvid ELO:"
 
 #: glade/PyChess.glade:1224
 msgid "Black ELO:"
-msgstr ""
+msgstr "Sort ELO:"
 
 #: glade/PyChess.glade:1262
 msgid "Annotator:"
@@ -778,7 +778,7 @@ msgstr ""
 
 #: glade/PyChess.glade:4814
 msgid "Country:"
-msgstr ""
+msgstr "Land:"
 
 #: glade/PyChess.glade:4828
 msgid "Country of origin of the engine"
@@ -1799,7 +1799,7 @@ msgstr ""
 
 #: lib/pychess/Savers/pgn.py:807
 msgid "Invalid move."
-msgstr ""
+msgstr "Ugyldigt træk."
 
 #: lib/pychess/Savers/pgn.py:933
 #, python-format
@@ -1881,11 +1881,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:16
 msgid "Albania"
-msgstr ""
+msgstr "Albanien"
 
 #: lib/pychess/Utils/isoCountries.py:17
 msgid "Armenia"
-msgstr ""
+msgstr "Armenien"
 
 #: lib/pychess/Utils/isoCountries.py:19
 msgid "Angola"
@@ -1897,7 +1897,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:21
 msgid "Argentina"
-msgstr ""
+msgstr "Argentina"
 
 #: lib/pychess/Utils/isoCountries.py:22
 msgid "American Samoa"
@@ -1905,11 +1905,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:23
 msgid "Austria"
-msgstr ""
+msgstr "Østrig"
 
 #: lib/pychess/Utils/isoCountries.py:24
 msgid "Australia"
-msgstr ""
+msgstr "Australien"
 
 #: lib/pychess/Utils/isoCountries.py:25
 msgid "Aruba"
@@ -2009,7 +2009,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:49
 msgid "Canada"
-msgstr ""
+msgstr "Canada"
 
 #: lib/pychess/Utils/isoCountries.py:50
 msgid "Cocos (Keeling) Islands"
@@ -2033,7 +2033,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:55
 msgid "Côte d'Ivoire"
-msgstr ""
+msgstr "Elfenbenskysten"
 
 #: lib/pychess/Utils/isoCountries.py:56
 msgid "Cook Islands"
@@ -2041,7 +2041,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:57
 msgid "Chile"
-msgstr ""
+msgstr "Chile"
 
 #: lib/pychess/Utils/isoCountries.py:58
 msgid "Cameroon"
@@ -2049,19 +2049,19 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:59
 msgid "China"
-msgstr ""
+msgstr "Kina"
 
 #: lib/pychess/Utils/isoCountries.py:60
 msgid "Colombia"
-msgstr ""
+msgstr "Colombia"
 
 #: lib/pychess/Utils/isoCountries.py:61
 msgid "Costa Rica"
-msgstr ""
+msgstr "Costa Rica"
 
 #: lib/pychess/Utils/isoCountries.py:62
 msgid "Cuba"
-msgstr ""
+msgstr "Cuba"
 
 #: lib/pychess/Utils/isoCountries.py:63
 msgid "Cabo Verde"
@@ -2093,7 +2093,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:70
 msgid "Denmark"
-msgstr ""
+msgstr "Danmark"
 
 #: lib/pychess/Utils/isoCountries.py:71
 msgid "Dominica"
@@ -2105,7 +2105,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:73
 msgid "Algeria"
-msgstr ""
+msgstr "Algeriet"
 
 #: lib/pychess/Utils/isoCountries.py:74
 msgid "Ecuador"
@@ -2113,11 +2113,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:75
 msgid "Estonia"
-msgstr ""
+msgstr "Estland"
 
 #: lib/pychess/Utils/isoCountries.py:76
 msgid "Egypt"
-msgstr ""
+msgstr "Egypten"
 
 #: lib/pychess/Utils/isoCountries.py:77
 msgid "Western Sahara"
@@ -2129,7 +2129,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:79
 msgid "Spain"
-msgstr ""
+msgstr "Spanien"
 
 #: lib/pychess/Utils/isoCountries.py:80
 msgid "Ethiopia"
@@ -2137,7 +2137,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:81
 msgid "Finland"
-msgstr ""
+msgstr "Finland"
 
 #: lib/pychess/Utils/isoCountries.py:82
 msgid "Fiji"
@@ -2153,11 +2153,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:85
 msgid "Faroe Islands"
-msgstr ""
+msgstr "Færøerne"
 
 #: lib/pychess/Utils/isoCountries.py:86
 msgid "France"
-msgstr ""
+msgstr "Frankrig"
 
 #: lib/pychess/Utils/isoCountries.py:87
 msgid "Gabon"
@@ -2165,7 +2165,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:88
 msgid "United Kingdom of Great Britain and Northern Ireland"
-msgstr ""
+msgstr "Storbrittanien og Nordirland"
 
 #: lib/pychess/Utils/isoCountries.py:89
 msgid "Grenada"
@@ -2173,7 +2173,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:90
 msgid "Georgia"
-msgstr ""
+msgstr "Georgien"
 
 #: lib/pychess/Utils/isoCountries.py:91
 msgid "French Guiana"
@@ -2213,7 +2213,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:100
 msgid "Greece"
-msgstr ""
+msgstr "Grækenland"
 
 #: lib/pychess/Utils/isoCountries.py:101
 msgid "South Georgia and the South Sandwich Islands"
@@ -2221,7 +2221,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:102
 msgid "Guatemala"
-msgstr ""
+msgstr "Guetemala"
 
 #: lib/pychess/Utils/isoCountries.py:103
 msgid "Guam"
@@ -2237,7 +2237,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:106
 msgid "Hong Kong"
-msgstr ""
+msgstr "Hong Kong"
 
 #: lib/pychess/Utils/isoCountries.py:107
 msgid "Heard Island and McDonald Islands"
@@ -2245,11 +2245,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:108
 msgid "Honduras"
-msgstr ""
+msgstr "Honduras"
 
 #: lib/pychess/Utils/isoCountries.py:109
 msgid "Croatia"
-msgstr ""
+msgstr "Kroatien"
 
 #: lib/pychess/Utils/isoCountries.py:110
 msgid "Haiti"
@@ -2257,19 +2257,19 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:111
 msgid "Hungary"
-msgstr ""
+msgstr "Ungarn"
 
 #: lib/pychess/Utils/isoCountries.py:112
 msgid "Indonesia"
-msgstr ""
+msgstr "Indonesien"
 
 #: lib/pychess/Utils/isoCountries.py:113
 msgid "Ireland"
-msgstr ""
+msgstr "Irland"
 
 #: lib/pychess/Utils/isoCountries.py:114
 msgid "Israel"
-msgstr ""
+msgstr "Israel"
 
 #: lib/pychess/Utils/isoCountries.py:115
 msgid "Isle of Man"
@@ -2277,7 +2277,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:116
 msgid "India"
-msgstr ""
+msgstr "Indien"
 
 #: lib/pychess/Utils/isoCountries.py:117
 msgid "British Indian Ocean Territory"
@@ -2521,11 +2521,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:177
 msgid "Netherlands"
-msgstr ""
+msgstr "Holland"
 
 #: lib/pychess/Utils/isoCountries.py:178
 msgid "Norway"
-msgstr ""
+msgstr "Norge"
 
 #: lib/pychess/Utils/isoCountries.py:179
 msgid "Nepal"

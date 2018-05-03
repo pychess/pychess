@@ -13,14 +13,15 @@
 # Erdoğan Şahin, 2016
 # gbtami <gbtami@gmail.com>, 2013
 # Necdet Yücel <necdetyucel@gmail.com>, 2016
+# Samet Can ALTUNSOY <scaltunsoy@gmail.com>, 2018
 # Yaşar Çiv, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-25 16:04+0100\n"
-"PO-Revision-Date: 2017-12-26 00:54+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2018-03-30 20:31+0000\n"
+"Last-Translator: Samet Can ALTUNSOY <scaltunsoy@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/gbtami/pychess/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -119,7 +120,7 @@ msgstr "_Beraberlik Öner"
 
 #: glade/PyChess.glade:528
 msgid "Offer _Pause"
-msgstr ""
+msgstr "Mola teklif et."
 
 #: glade/PyChess.glade:538 glade/fics_lounge.glade:1825
 msgid "Offer _Resume"
@@ -332,11 +333,11 @@ msgstr ""
 
 #: glade/PyChess.glade:1609
 msgid "Auto _promote to  queen"
-msgstr ""
+msgstr "Vezire otomatik terfi"
 
 #: glade/PyChess.glade:1614
 msgid "If set, pawn promotes to queen without promotion dialog selection."
-msgstr ""
+msgstr "Eğer seçiliyse piyonlar oyuncuya sorulmaksızın vezire terfi olacaktır."
 
 #: glade/PyChess.glade:1628
 msgid "Face _to Face display mode"
@@ -350,11 +351,11 @@ msgstr ""
 
 #: glade/PyChess.glade:1647
 msgid "Show _captured pieces"
-msgstr ""
+msgstr "Yenilen taşları göster."
 
 #: glade/PyChess.glade:1652
 msgid "If set, the captured figurines will be shown next to the board."
-msgstr ""
+msgstr "Eğer seçiliyse yenilen taşların figürleri tahtanın yanında gözükecektir."
 
 #: glade/PyChess.glade:1666
 msgid "Prefer figures in _notation"
@@ -628,7 +629,7 @@ msgstr ""
 
 #: glade/PyChess.glade:3700
 msgid "_Invalid move:"
-msgstr ""
+msgstr "_Geçersiz hamle:"
 
 #: glade/PyChess.glade:3752
 msgid "Activate alarm when _remaining sec is:"
@@ -690,7 +691,7 @@ msgstr ""
 
 #: glade/PyChess.glade:4132
 msgid "Save"
-msgstr ""
+msgstr "Kaydet"
 
 #: glade/PyChess.glade:4158
 msgid "Promotion"
@@ -714,7 +715,7 @@ msgstr "At"
 
 #: glade/PyChess.glade:4385 lib/pychess/Utils/repr.py:24
 msgid "King"
-msgstr "Kral"
+msgstr "Şah"
 
 #: glade/PyChess.glade:4416
 msgid "<b><big>Promote pawn to what?</big></b>"
@@ -2767,7 +2768,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:237
 msgid "Turkey"
-msgstr ""
+msgstr "Türkiye"
 
 #: lib/pychess/Utils/isoCountries.py:238
 msgid "Trinidad and Tobago"
@@ -2937,7 +2938,7 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:44
 msgid "Because both players ran out of time"
-msgstr ""
+msgstr "Çünkü iki oyuncunun da süresi doldu"
 
 #: lib/pychess/Utils/repr.py:45
 #, python-format
@@ -2946,7 +2947,7 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:46
 msgid "Because both players agreed to a draw"
-msgstr ""
+msgstr "Çünkü iki oyuncu da beraberlikte mutabakat sağladı."
 
 #: lib/pychess/Utils/repr.py:47 lib/pychess/Utils/repr.py:59
 msgid "Because of adjudication by an admin"
@@ -4090,45 +4091,45 @@ msgstr ""
 msgid ""
 "This game can be automatically aborted without rating loss because"
 "                       there has not yet been two moves made"
-msgstr ""
+msgstr "Oyunda henüz iki hamle yapılmadığından derece kaybı olmaksızın oyun sonlandırılabilir."
 
 #: lib/pychess/widgets/gamewidget.py:181
 msgid "Offer Abort"
-msgstr ""
+msgstr "Maçın iptalini öner"
 
 #: lib/pychess/widgets/gamewidget.py:183
 msgid ""
 "Your opponent must agree to abort the game because there"
 "                       has been two or more moves made"
-msgstr ""
+msgstr "İki ya da daha fazla hamle yapıldığından rakibinizin oyunu sonlandırmayı kabul etmesi gerekmektedir."
 
 #: lib/pychess/widgets/gamewidget.py:201
 msgid "This game can not be adjourned because one or both players are guests"
-msgstr ""
+msgstr "Oyunculardan biri ya da oyuncuların ikisi de misafir olduğundan maç ertelenemez."
 
 #: lib/pychess/widgets/gamewidget.py:219
 msgid "Claim Draw"
-msgstr ""
+msgstr "Beraberlik iddia et"
 
 #: lib/pychess/widgets/gamewidget.py:302
 msgid "Resume"
-msgstr ""
+msgstr "Duraklat"
 
 #: lib/pychess/widgets/gamewidget.py:304
 msgid "Offer Pause"
-msgstr ""
+msgstr "Mola teklif et."
 
 #: lib/pychess/widgets/gamewidget.py:305
 msgid "Offer Resume"
-msgstr ""
+msgstr "Devam teklifi et"
 
 #: lib/pychess/widgets/gamewidget.py:309
 msgid "Undo"
-msgstr ""
+msgstr "Geri Al"
 
 #: lib/pychess/widgets/gamewidget.py:311
 msgid "Offer Undo"
-msgstr ""
+msgstr "Geri Alma Teklif Et"
 
 #: lib/pychess/widgets/gamewidget.py:549
 msgid " has lagged for 30 seconds"
@@ -4144,19 +4145,19 @@ msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:580
 msgid "Wait"
-msgstr ""
+msgstr "Bekle"
 
 #: lib/pychess/widgets/gamewidget.py:581
 msgid "Adjourn"
-msgstr ""
+msgstr "Ertele"
 
 #: lib/pychess/widgets/gamewidget.py:642
 msgid "Jump to initial position"
-msgstr ""
+msgstr "İlk hamleye git"
 
 #: lib/pychess/widgets/gamewidget.py:646
 msgid "Step back one move"
-msgstr ""
+msgstr "Bir hamle geri al"
 
 #: lib/pychess/widgets/gamewidget.py:650
 msgid "Go back to the main line"
@@ -4164,11 +4165,11 @@ msgstr ""
 
 #: lib/pychess/widgets/gamewidget.py:654
 msgid "Step forward one move"
-msgstr ""
+msgstr "Bir hamle ileri al"
 
 #: lib/pychess/widgets/gamewidget.py:658
 msgid "Jump to latest position"
-msgstr ""
+msgstr "Son hamleye git"
 
 #: lib/pychess/widgets/gamewidget.py:662
 msgid "Find postion in current database"
@@ -4196,7 +4197,7 @@ msgstr "Dakika:"
 
 #: lib/pychess/widgets/newGameDialog.py:262
 msgid "Moves:"
-msgstr ""
+msgstr "Hamleler:"
 
 #: lib/pychess/widgets/newGameDialog.py:262
 msgid "Gain:"
@@ -4270,7 +4271,7 @@ msgstr "Ses Dosyası Aç"
 
 #: lib/pychess/widgets/preferencesDialog.py:384
 msgid "Sound files"
-msgstr ""
+msgstr "Ses dosyaları"
 
 #: lib/pychess/widgets/preferencesDialog.py:391
 msgid "No sound"
@@ -4290,7 +4291,7 @@ msgstr ""
 
 #: lib/pychess/widgets/preferencesDialog.py:613
 msgid "Select background image file"
-msgstr ""
+msgstr "Arka plan resmi dosyası seç"
 
 #: lib/pychess/widgets/preferencesDialog.py:620
 msgid "Images"
@@ -4298,7 +4299,7 @@ msgstr ""
 
 #: lib/pychess/widgets/preferencesDialog.py:812
 msgid "Select auto save path"
-msgstr ""
+msgstr "Otomatik kayıt dizini seç"
 
 #: lib/pychess/widgets/tipOfTheDay.py:40
 msgid ""
@@ -4361,18 +4362,18 @@ msgstr ""
 msgid ""
 "Do you know that you can help translate Pychess in your language, "
 "<b>Help</b> > <b>Translate Pychess</b>."
-msgstr ""
+msgstr "Pychess'i kendi dilinize çevirmeye yardım edebileceğinizi biliyor musunuz? <b>Yardım</b> > <b>Pychess'i çevir</b>"
 
 #: lib/pychess/widgets/tipOfTheDay.py:54
 msgid ""
 "Do you know that it is possible to finish a chess game in just 2 turns?"
-msgstr ""
+msgstr "Bir satranç oyununun sadece iki turda sona erebileceğini biliyor musunuz?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:55
 msgid ""
 "Do you know that the number of possible chess games exceeds the number of "
 "atoms in the Universe?"
-msgstr ""
+msgstr "Mümkün olan satranç oyunlarının sayısının evrendeki atomların sayından daha fazla olduğunu biliyor musunuz?"
 
 #: lib/pychess/Utils/lutils/LBoard.py:187
 #, python-format
@@ -5427,7 +5428,7 @@ msgstr ""
 #: lib/pychess/perspectives/games/annotationPanel.py:305
 #: lib/pychess/perspectives/games/annotationPanel.py:392
 msgid "Add comment"
-msgstr ""
+msgstr "Yorum ekle"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:309
 #: lib/pychess/perspectives/games/annotationPanel.py:392
@@ -5436,11 +5437,11 @@ msgstr ""
 
 #: lib/pychess/perspectives/games/annotationPanel.py:315
 msgid "Good move"
-msgstr ""
+msgstr "İyi hamle"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:316
 msgid "Bad move"
-msgstr ""
+msgstr "Kötü hamle"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:317
 msgid "Excellent move"
@@ -5558,12 +5559,12 @@ msgstr ""
 
 #: lib/pychess/perspectives/games/bookPanel.py:21
 msgid "Hints"
-msgstr ""
+msgstr "İpuçları"
 
 #: lib/pychess/perspectives/games/bookPanel.py:26
 msgid ""
 "The hint panel will provide computer advice during each stage of the game"
-msgstr ""
+msgstr "İpucu paneli oyunun her bir aşamasında bilgisayarın tavsiyelerini gösterir"
 
 #: lib/pychess/perspectives/games/bookPanel.py:28
 msgid "Official PyChess panel."
@@ -5605,7 +5606,7 @@ msgstr ""
 #: lib/pychess/perspectives/games/bookPanel.py:176
 #: lib/pychess/perspectives/games/bookPanel.py:287
 msgid "Calculating..."
-msgstr ""
+msgstr "Hesaplanıyor..."
 
 #: lib/pychess/perspectives/games/bookPanel.py:323
 msgid ""
@@ -5640,13 +5641,13 @@ msgstr ""
 msgid ""
 "In this position,\n"
 "there is no legal move."
-msgstr ""
+msgstr "Bu pozisyonda,\ngeçerli hamle yok."
 
 #: lib/pychess/perspectives/games/chatPanel.py:15
 msgid ""
 "The chat panel lets you communicate with your opponent during the game, "
 "assuming he or she is interested"
-msgstr ""
+msgstr "Sohbet paneli oyun boyunca rakibinizle iletişim kurmanıza, eğer o da ilgileniyorsa, olanak sağlar"
 
 #: lib/pychess/perspectives/games/commentPanel.py:12
 msgid "Comments"
@@ -5654,7 +5655,7 @@ msgstr "Yorumlar"
 
 #: lib/pychess/perspectives/games/commentPanel.py:17
 msgid "The comments panel will try to analyze and explain the moves played"
-msgstr ""
+msgstr "Yorum paneli oynanan hamleleri açıklamaya ve analiz etmeye çalışır"
 
 #: lib/pychess/perspectives/games/commentPanel.py:120
 msgid "Initial position"
@@ -5687,7 +5688,7 @@ msgstr "Hamle Geçmişi"
 msgid ""
 "The moves sheet keeps track of the players' moves and lets you navigate "
 "through the game history"
-msgstr ""
+msgstr "Notasyon kağıdı oyuncuların hamlelerinin kaydını tutar ve sizin oyun geçmişi boyunca klavuzluk eder."
 
 #: lib/pychess/perspectives/games/scorePanel.py:13
 msgid "Score"
@@ -5697,4 +5698,4 @@ msgstr "Skor"
 msgid ""
 "The score panel tries to evaluate the positions and shows you a graph of the"
 " game progress"
-msgstr ""
+msgstr "Skor paneli pozisyonları değerlendirir ve size oyunun işleyişinin bir grafiğini gösterir"
