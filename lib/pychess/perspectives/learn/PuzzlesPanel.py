@@ -80,11 +80,15 @@ class Sidepanel():
 
         self.store = Gtk.ListStore(str, str, str, str, int)
 
-        for file_name, title, author in PUZZLES:
-            progress = puzzles_solving_progress.get(file_name)
-            solved = progress.count(1)
-            percent = 0 if not solved else round((solved * 100.) / len(progress))
-            self.store.append([file_name, title, author, "%s / %s" % (solved, len(progress)), percent])
+        @asyncio.coroutine
+        def coro():
+            for file_name, title, author in PUZZLES:
+                progress = puzzles_solving_progress.get(file_name)
+                solved = progress.count(1)
+                percent = 0 if not solved else round((solved * 100.) / len(progress))
+                self.store.append([file_name, title, author, "%s / %s" % (solved, len(progress)), percent])
+                yield from asyncio.sleep(0)
+        asyncio.async(coro())
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
