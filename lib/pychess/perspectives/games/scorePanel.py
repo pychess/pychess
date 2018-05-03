@@ -95,8 +95,11 @@ class Sidepanel:
                 points = model.scores[ply][1]
                 points = points * -1 if ply % 2 == 1 else points
             else:
-                points = leval.evaluateComplete(
-                    model.getBoardAtPly(ply).board, WHITE)
+                try:
+                    points = leval.evaluateComplete(
+                        model.getBoardAtPly(ply).board, WHITE)
+                except IndexError:
+                    return
         self.plot.addScore(points)
 
         # As shownChanged will normally be emitted just after game_changed -
