@@ -166,13 +166,19 @@ class LearnInfoBar(Gtk.InfoBar):
 
     def on_response(self, widget, response):
         if response in (HINT, MOVE):
-            if self.boardview.shown in self.gamemodel.hints:
+            if self.gamemodel.lesson_game:
+                next_move = self.gamemodel.getMoveAtPly(self.boardview.shown, self.boardview.shown_variation_idx)
+                hints = {self.boardview.shown: ((next_move.as_uci(),),)}
+            else:
+                hints = self.gamemodel.hints
+
+            if self.boardview.shown in hints:
                 if self.boardview.arrows:
                     self.boardview.arrows.clear()
                 if self.boardview.circles:
                     self.boardview.circles.clear()
 
-                hint = self.gamemodel.hints[self.boardview.shown][0][0]
+                hint = hints[self.boardview.shown][0][0]
                 cord0 = Cord(hint[0], int(hint[1]), "G")
                 cord1 = Cord(hint[2], int(hint[3]), "G")
                 if response == HINT:
