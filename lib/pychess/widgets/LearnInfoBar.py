@@ -12,48 +12,9 @@ HINT, MOVE, RETRY, CONTINUE, BACK_TO_MAINLINE, NEXT = range(6)
 
 
 css = """
-@define-color info_fg_color rgb (181, 171, 156);
-@define-color info_bg_color rgb (252, 252, 189);
-@define-color question_fg_color rgb (97, 122, 214);
-@define-color question_bg_color rgb (138, 173, 212);
 @define-color error_fg_color rgb (235, 235, 235);
 @define-color error_bg_color rgb (223, 56, 44);
 
-.question {
-    background-image: -gtk-gradient (linear, left top, left bottom,
-                                     from (shade (@question_bg_color, 1.04)),
-                                     to (shade (@question_bg_color, 0.96)));
-    border-style: solid;
-    border-width: 1px;
-
-    color: @question_fg_color;
-
-    border-color: shade (@question_bg_color, 0.8);
-    border-bottom-color: shade (@question_bg_color, 0.75);
-
-    box-shadow: inset 1px 0 shade (@question_bg_color, 1.08),
-                inset -1px 0 shade (@question_bg_color, 1.08),
-                inset 0 1px shade (@question_bg_color, 1.1),
-                inset 0 -1px shade (@question_bg_color, 1.04);
-}
-
-.info {
-    background-image: -gtk-gradient (linear, left top, left bottom,
-                                     from (shade (@info_bg_color, 1.04)),
-                                     to (shade (@info_bg_color, 0.96)));
-    border-style: solid;
-    border-width: 1px;
-
-    color: @info_fg_color;
-
-    border-color: shade (@info_bg_color, 0.8);
-    border-bottom-color: shade (@info_bg_color, 0.75);
-
-    box-shadow: inset 1px 0 shade (@info_bg_color, 1.08),
-                inset -1px 0 shade (@info_bg_color, 1.08),
-                inset 0 1px shade (@info_bg_color, 1.1),
-                inset 0 -1px shade (@info_bg_color, 1.04);
-}
 
 .error {
     background-image: -gtk-gradient (linear, left top, left bottom,
