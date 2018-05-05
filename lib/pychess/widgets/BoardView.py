@@ -184,8 +184,6 @@ class BoardView(Gtk.DrawingArea):
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES
 
-        self.animimation_id = -1
-        self._do_stop = False
         self.animation_start = time()
         self.last_shown = None
         self.deadlist = []
@@ -460,7 +458,6 @@ class BoardView(Gtk.DrawingArea):
             adjust the shown variation index too.
             If board is in the main line, reset the shown variation idx to 0(the main line).
         """
-
         if board in self.model.variations[self.shown_variation_idx]:
             # if the board to be shown is in the current shown variation, we are ok
             self.shown = self.model.variations[self.shown_variation_idx].index(board) + \
@@ -492,9 +489,8 @@ class BoardView(Gtk.DrawingArea):
 
     def _setShown(self, shown):
         """Adjust the index in current variation board list."""
-
         # We don't do anything if we are already showing the right ply
-        if shown == self._shown and not self.model.lesson_game:
+        if shown == self._shown:
             return
 
         # This would cause IndexErrors later
@@ -600,9 +596,6 @@ class BoardView(Gtk.DrawingArea):
                 self.shown_variation_idx = 0
             self.emit("shownChanged", self.shown)
 
-        if self.animimation_id != -1:
-            self._do_stop = True
-
         self.animation_start = time()
         self.animating = True
 
@@ -621,7 +614,7 @@ class BoardView(Gtk.DrawingArea):
         self.runAnimation(redraw_misc=self.real_set_shown)
         if not conf.get("noAnimation", False):
             while self.animating:
-                self.animimation_id = self.runAnimation()
+                self.runAnimation()
 
     shown = property(_getShown, _setShown)
 
@@ -637,13 +630,10 @@ class BoardView(Gtk.DrawingArea):
             which starts the animation, also sets a timestamp for the acceleration
             to work properply.
         """
-
         if self.model is None:
             return False
 
-        if self._do_stop:
-            self._do_stop = False
-            self.animimation_id = - 1
+        if not self.animating:
             return False
 
         paint_box = None
@@ -759,7 +749,7 @@ class BoardView(Gtk.DrawingArea):
         self.runAnimation(redraw_misc=True)
         if not conf.get("noAnimation", False):
             while self.animating:
-                self.animimation_id = self.runAnimation()
+                self.runAnimation()
 
     #############################
     #          Drawing          #
