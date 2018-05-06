@@ -2,10 +2,10 @@ import asyncio
 
 from gi.repository import GObject
 
-from pychess.Utils.const import BLACKWON, WHITEWON, DRAW, UNDOABLE_STATES, CANCELLED, PRACTICE_GOAL_REACHED, BLACK, WHITE
+from pychess.Utils.const import BLACKWON, WHITEWON, DRAW, UNDOABLE_STATES,\
+    CANCELLED, PRACTICE_GOAL_REACHED, BLACK, WHITE, LECTURE, LESSON, PUZZLE, ENDGAME
 from pychess.Utils.GameModel import GameModel
 
-LECTURE, PUZZLE, LESSON, ENDGAME = range(4)
 learn2str = {
     LECTURE: "Lecture",
     PUZZLE: "Puzzle",

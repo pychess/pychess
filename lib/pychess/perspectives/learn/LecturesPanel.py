@@ -4,13 +4,14 @@ from io import StringIO
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, BLACK, LOCAL, RUNNING
-from pychess.Utils.LearnModel import LearnModel, LECTURE
+from pychess.Utils.const import WHITE, BLACK, LOCAL, RUNNING, LECTURE
+from pychess.Utils.LearnModel import LearnModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Utils.Move import parseAny
 from pychess.Players.Human import Human
 from pychess.perspectives import perspective_manager
 from pychess.Savers import fen as fen_loader
+from pychess.System import conf
 
 __title__ = _("Lectures")
 
@@ -78,7 +79,7 @@ class Sidepanel():
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
-        self.tv.set_cursor(0)
+        self.tv.set_cursor(conf.get("learncombo%s" % LECTURE, 0))
 
         scrollwin = Gtk.ScrolledWindow()
         scrollwin.add(self.tv)
@@ -94,6 +95,9 @@ class Sidepanel():
             return
         else:
             filename = LECTURES[path[0]][0]
+            conf.set("categorycombo", LECTURE)
+            from pychess.widgets.TaskerManager import learn_tasker
+            learn_tasker.learn_combo.set_active(path[0])
             start_lecture_from(filename)
 
 

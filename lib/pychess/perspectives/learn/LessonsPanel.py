@@ -4,8 +4,8 @@ import asyncio
 from gi.repository import Gtk
 
 from pychess.System.prefix import addDataPrefix
-from pychess.Utils.const import WHITE, BLACK, LOCAL, WAITING_TO_START, HINT
-from pychess.Utils.LearnModel import LearnModel, LESSON
+from pychess.Utils.const import WHITE, BLACK, LOCAL, WAITING_TO_START, HINT, LESSON
+from pychess.Utils.LearnModel import LearnModel
 from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.Human import Human
 from pychess.System import conf
@@ -75,7 +75,7 @@ class Sidepanel():
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
-        self.tv.set_cursor(0)
+        self.tv.set_cursor(conf.get("learncombo%s" % LESSON, 0))
 
         scrollwin = Gtk.ScrolledWindow()
         scrollwin.add(self.tv)
@@ -91,6 +91,9 @@ class Sidepanel():
             return
         else:
             filename = LESSONS[path[0]][0]
+            conf.set("categorycombo", LESSON)
+            from pychess.widgets.TaskerManager import learn_tasker
+            learn_tasker.learn_combo.set_active(path[0])
             start_lesson_from(filename)
 
 

@@ -13,7 +13,7 @@ from pychess.System import uistuff, conf
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.TimeModel import TimeModel
-from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE, BLACK, NORMALCHESS
+from pychess.Utils.const import LOCAL, ARTIFICIAL, WHITE, BLACK, NORMALCHESS, LECTURE, LESSON, PUZZLE, ENDGAME
 from pychess.Variants import variants
 from pychess.ic import ICLogon
 from pychess.widgets import newGameDialog
@@ -287,9 +287,6 @@ class InternetGameTasker(Gtk.Alignment):
         ICLogon.run()
         if not ICLogon.dialog.connection:
             ICLogon.dialog.widgets["connectButton"].clicked()
-
-
-LECTURE, LESSON, PUZZLE, ENDGAME = range(4)
 
 
 class LearnTasker(Gtk.Alignment):
