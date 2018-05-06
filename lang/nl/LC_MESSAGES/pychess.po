@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-05-03 16:33+0200\n"
-"PO-Revision-Date: 2018-05-05 09:06+0000\n"
+"PO-Revision-Date: 2018-05-06 10:08+0000\n"
 "Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/gbtami/pychess/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -295,7 +295,7 @@ msgid ""
 "Unticked : the exponential stretching displays the full range of the score and enlarges the values around the null average.\n"
 "\n"
 "Ticked : the linear scale focuses on a limited range around the null average. It highlights the tiny errors and blunders better."
-msgstr ""
+msgstr "Onaangevinkt: de exponentiële waarde toont het volledige scorebereik en vergroot de waarde rond het nulpunt (gemiddelde).\n\nAangevinkt: de lineaire schaal focust op een gelimiteerd bereik rond het nulpunt (gemiddelde). Het markeert kleine fouten en blunders beter."
 
 #: glade/PyChess.glade:1226
 msgid "Show _captured pieces"
@@ -850,7 +850,7 @@ msgstr "Voorkeursniveau:"
 msgid ""
 "Level 1 is the weakest and level 20 is the strongest. You may not define a "
 "too high level if the engine is based on the depth to explore"
-msgstr ""
+msgstr "Niveau 1 is het zwakst en niveau 20 het sterkst. U mag geen te hoog niveau opgeven als de aandrijving gebaseerd is op de verkendiepte."
 
 #: glade/PyChess.glade:5293
 msgid "Restore the default options"
@@ -1583,7 +1583,7 @@ msgstr "<b>Database openen</b>"
 
 #: glade/taskers.glade:657
 msgid "View lectures, solve puzzles or start practicing endgames"
-msgstr ""
+msgstr "Lezingen weergeven, puzzels oplossen of oefenen van eindspellen"
 
 #: glade/taskers.glade:720
 msgid "Category:"
@@ -1893,7 +1893,7 @@ msgstr "Het spel kan niet worden geladen vanwege een fout bij het verwerken van 
 
 #: lib/pychess/Savers/olv.py:10
 msgid "Chess Compositions from yacpdb.org"
-msgstr ""
+msgstr "Schaakcomposities van yacpdb.org"
 
 #: lib/pychess/Savers/pgn.py:48
 msgid "Chess Game"
@@ -1974,11 +1974,11 @@ msgstr "sec"
 
 #: lib/pychess/Utils/__init__.py:14
 msgid "Illegal"
-msgstr ""
+msgstr "Illegaal"
 
 #: lib/pychess/Utils/__init__.py:38 lib/pychess/Utils/__init__.py:39
 msgid "Mate"
-msgstr ""
+msgstr "Schaakmat"
 
 #: lib/pychess/Utils/checkversion.py:47
 #, python-format
@@ -3041,7 +3041,7 @@ msgstr "Onbekende spelstatus"
 
 #: lib/pychess/Utils/repr.py:37
 msgid "Game cancelled"
-msgstr ""
+msgstr "Spel afgebroken"
 
 #: lib/pychess/Utils/repr.py:42
 msgid "Because neither player has sufficient material to mate"
@@ -3241,7 +3241,7 @@ msgstr "De reden is onbekend"
 
 #: lib/pychess/Utils/repr.py:99
 msgid "Because practice goal reached"
-msgstr ""
+msgstr "Omdat het oefendoel behaald is"
 
 #: lib/pychess/Variants/asean.py:20
 msgid ""
@@ -4066,48 +4066,48 @@ msgstr "Bezig met ophalen van spelerslijst"
 
 #: lib/pychess/widgets/LearnInfoBar.py:115
 msgid "Your turn."
-msgstr ""
+msgstr "Uw beurt."
 
 #: lib/pychess/widgets/LearnInfoBar.py:116
 msgid "Hint"
-msgstr ""
+msgstr "Tip"
 
 #: lib/pychess/widgets/LearnInfoBar.py:117
 msgid "Best move"
-msgstr ""
+msgstr "Beste zet"
 
 #: lib/pychess/widgets/LearnInfoBar.py:124
 #, python-format
 msgid "Well done! %s completed."
-msgstr ""
+msgstr "Goed gedaan! %s is afgerond."
 
 #: lib/pychess/widgets/LearnInfoBar.py:127
 msgid "Well done!"
-msgstr ""
+msgstr "Goed gedaan!"
 
 #: lib/pychess/widgets/LearnInfoBar.py:128
 msgid "Next"
-msgstr ""
+msgstr "Volgende"
 
 #: lib/pychess/widgets/LearnInfoBar.py:137
 msgid "Continue"
-msgstr ""
+msgstr "Doorgaan"
 
 #: lib/pychess/widgets/LearnInfoBar.py:146
 msgid "Not the best move!"
-msgstr ""
+msgstr "Niet de beste zet!"
 
 #: lib/pychess/widgets/LearnInfoBar.py:147
 msgid "Retry"
-msgstr ""
+msgstr "Opnieuw proberen"
 
 #: lib/pychess/widgets/LearnInfoBar.py:160
 msgid "Cool! Now let see how it goes in the main line."
-msgstr ""
+msgstr "Cool! Nu maar zien hoe het gaat in het hoofdonderdeel."
 
 #: lib/pychess/widgets/LearnInfoBar.py:161
 msgid "Back to main line"
-msgstr ""
+msgstr "Terug naar hoofdonderdeel"
 
 #: lib/pychess/widgets/LogDialog.py:21
 msgid "PyChess Information Window"
@@ -4132,17 +4132,17 @@ msgstr "Lezingen"
 #: lib/pychess/widgets/TaskerManager.py:310
 #: lib/pychess/perspectives/learn/LessonsPanel.py:19
 msgid "Lessons"
-msgstr ""
+msgstr "Lessen"
 
 #: lib/pychess/widgets/TaskerManager.py:311
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:21
 msgid "Puzzles"
-msgstr ""
+msgstr "Puzzels"
 
 #: lib/pychess/widgets/TaskerManager.py:312
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:21
 msgid "Endgames"
-msgstr ""
+msgstr "Eindspellen"
 
 #: lib/pychess/widgets/ViewsPanel.py:33
 msgid "You have opened no conversations yet"
@@ -4167,15 +4167,15 @@ msgstr "Afbreken"
 
 #: lib/pychess/widgets/enginesDialog.py:43
 msgid "You have unsaved changes. Do you want to save before leaving?"
-msgstr ""
+msgstr "U heeft onopgeslagen wijzigingen. Wilt u deze opslaan alvorens te verlaten?"
 
 #: lib/pychess/widgets/enginesDialog.py:150
 msgid "Option"
-msgstr ""
+msgstr "Optie"
 
 #: lib/pychess/widgets/enginesDialog.py:151
 msgid "Value"
-msgstr ""
+msgstr "Waarde"
 
 #: lib/pychess/widgets/enginesDialog.py:185
 msgid "Select engine"
@@ -4195,7 +4195,7 @@ msgstr "<groot><b>Toevoegen van %s is mislukt</b></groot>"
 
 #: lib/pychess/widgets/enginesDialog.py:218
 msgid "The engine is already installed under the same name"
-msgstr ""
+msgstr "De aandrijving is al geïnstalleerd onder dezelfde naam"
 
 #: lib/pychess/widgets/enginesDialog.py:248
 msgid " is not installed"
@@ -4222,15 +4222,15 @@ msgstr "Kies de werkmap"
 
 #: lib/pychess/widgets/enginesDialog.py:579
 msgid "Do you really want to restore the default options of the engine ?"
-msgstr ""
+msgstr "Weet u zeker dat u de standaardwaarden van de aandrijving wilt herstellen?"
 
 #: lib/pychess/widgets/gameinfoDialog.py:61
 msgid "New"
-msgstr ""
+msgstr "Nieuw"
 
 #: lib/pychess/widgets/gameinfoDialog.py:198
 msgid "Pick a date"
-msgstr ""
+msgstr "Kies een datum"
 
 #: lib/pychess/widgets/gamenanny.py:112
 #, python-format
@@ -4421,22 +4421,22 @@ msgstr "Snel"
 #: lib/pychess/widgets/newGameDialog.py:293
 #, python-format
 msgid "%(name)s %(minutes)d min / %(moves)d moves %(duration)s"
-msgstr ""
+msgstr "%(name)s %(minutes)d min / %(moves)d zetten %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:301
 #, python-format
 msgid "%(name)s %(minutes)d min %(sign)s %(gain)d sec/move %(duration)s"
-msgstr ""
+msgstr "%(name)s %(minutes)d min %(sign)s %(gain)d sec/zet %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:309
 #, python-format
 msgid "%(name)s %(minutes)d min %(duration)s"
-msgstr ""
+msgstr "%(name)s %(minutes)d min %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:317
 #, python-format
 msgid "Estimated duration : %d - %d minutes"
-msgstr ""
+msgstr "Geschatte duur : %d - %d minuten"
 
 #: lib/pychess/widgets/newGameDialog.py:343
 msgid "Odds"
@@ -5068,19 +5068,19 @@ msgstr "Duur"
 
 #: lib/pychess/perspectives/database/gamelist.py:46
 msgid "Time control"
-msgstr ""
+msgstr "Tijdbeheer"
 
 #: lib/pychess/perspectives/database/gamelist.py:67
 msgid "First games"
-msgstr ""
+msgstr "Eerste spellen"
 
 #: lib/pychess/perspectives/database/gamelist.py:71
 msgid "Previous games"
-msgstr ""
+msgstr "Vorige spellen"
 
 #: lib/pychess/perspectives/database/gamelist.py:75
 msgid "Next games"
-msgstr ""
+msgstr "Volgende spellen"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:24
 #: lib/pychess/perspectives/fics/ParrentListSection.py:37
@@ -5760,7 +5760,7 @@ msgstr "Verwijderen"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1059
 msgid "No time control"
-msgstr ""
+msgstr "Geen tijdbeheer"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1067
 msgid "mins"
@@ -5774,7 +5774,7 @@ msgstr "seconden"
 #: lib/pychess/perspectives/games/annotationPanel.py:1074
 #, python-format
 msgid "%s for %d moves"
-msgstr ""
+msgstr "%s voor %d zetten"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1078
 msgid "move"
@@ -5930,74 +5930,74 @@ msgstr "Het scorepaneel probeert de posities te evalueren en u een grafiek te la
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:25
 msgid "Practice endgames with computer"
-msgstr ""
+msgstr "Eindspellen beoefenen met computer"
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:64
 #: lib/pychess/perspectives/learn/LecturesPanel.py:65
 #: lib/pychess/perspectives/learn/LessonsPanel.py:42
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:58
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 #: lib/pychess/perspectives/learn/LecturesPanel.py:19
 msgid "Study FICS lectures offline"
-msgstr ""
+msgstr "FICS-lezing offline bestuderen"
 
 #: lib/pychess/perspectives/learn/LecturesPanel.py:69
 msgid "Author"
-msgstr ""
+msgstr "Auteur"
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:23
 msgid "Guided interactive lessons in \"guess the move\" style"
-msgstr ""
+msgstr "Interactieve lessen met begeleiding in de stijl van \"raad de zet\""
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:46
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:62
 msgid "Source"
-msgstr ""
+msgstr "Bron"
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:50
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:66
 #: lib/pychess/perspectives/learn/__init__.py:127
 msgid "Progress"
-msgstr ""
+msgstr "Voortgang"
 
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:25
 msgid "Lichess practice studies Puzzles from GM games and Chess compositions"
-msgstr ""
+msgstr "Lichess-oefenstudies, puzzels van GM-spellen en schaakcomposities"
 
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:45
 msgid "others"
-msgstr ""
+msgstr "overigen"
 
 #: lib/pychess/perspectives/learn/__init__.py:24
 msgid "Learn"
-msgstr ""
+msgstr "Leren"
 
 #: lib/pychess/perspectives/learn/__init__.py:35
 msgid "Quit Learning"
-msgstr ""
+msgstr "Stoppen met leren"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "lichess"
-msgstr ""
+msgstr "lichess"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "wtharvey"
-msgstr ""
+msgstr "wtharvey"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "yacpdb"
-msgstr ""
+msgstr "yacpdb"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "lessons"
-msgstr ""
+msgstr "lessen"
 
 #: lib/pychess/perspectives/learn/__init__.py:132
 msgid "Reset my progress"
-msgstr ""
+msgstr "Mijn voortgang terugzetten op nul"
 
 #: lib/pychess/perspectives/learn/__init__.py:138
 msgid "You will lose all your progress data!"
-msgstr ""
+msgstr "U verliest al uw voortgangsgegevens!"

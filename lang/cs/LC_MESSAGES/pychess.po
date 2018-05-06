@@ -9,14 +9,14 @@
 # fri, 2013-2014
 # gbtami <gbtami@gmail.com>, 2016
 # fri, 2015
-# fri, 2013-2016
+# fri, 2013-2016,2018
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-05-03 16:33+0200\n"
-"PO-Revision-Date: 2018-05-04 00:28+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2018-05-06 09:13+0000\n"
+"Last-Translator: fri\n"
 "Language-Team: Czech (http://www.transifex.com/gbtami/pychess/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -167,35 +167,35 @@ msgstr "P_rohlížeč záznamů"
 
 #: glade/PyChess.glade:715
 msgid "_Hint arrow"
-msgstr ""
+msgstr "Pora_dní šipka"
 
 #: glade/PyChess.glade:727
 msgid "Sp_y arrow"
-msgstr ""
+msgstr "Špio_nážní šipka"
 
 #: glade/PyChess.glade:742 lib/pychess/perspectives/database/__init__.py:38
 msgid "Database"
-msgstr ""
+msgstr "Databáze"
 
 #: glade/PyChess.glade:748
 msgid "New _Database"
-msgstr ""
+msgstr "Nová _databáze"
 
 #: glade/PyChess.glade:760
 msgid "Save database as"
-msgstr ""
+msgstr "Uložit databázi jako"
 
 #: glade/PyChess.glade:778
 msgid "Import chessfile"
-msgstr ""
+msgstr "Zavést šachový soubor"
 
 #: glade/PyChess.glade:795
 msgid "Import annotated games from endgame.nl"
-msgstr ""
+msgstr "Zavést hry opatřené poznámkami z endgame.nl"
 
 #: glade/PyChess.glade:805
 msgid "Import games from theweekinchess.com"
-msgstr ""
+msgstr " Zavést hry z theweekinchess.com"
 
 #: glade/PyChess.glade:818
 msgid "_Help"
@@ -273,7 +273,7 @@ msgstr "Když je zapnuta tato volba, šachovnice se otočí po každém tahu, ab
 
 #: glade/PyChess.glade:1168
 msgid "Auto _promote to queen"
-msgstr ""
+msgstr "Automoticky _proměnit na královnu"
 
 #: glade/PyChess.glade:1173
 msgid "If set, pawn promotes to queen without promotion dialog selection."
@@ -291,7 +291,7 @@ msgstr "Když je zapnuta tato volba, černé figurky jsou zobrazeny s hlavou sm�
 
 #: glade/PyChess.glade:1206
 msgid "Use a linear scale for the score"
-msgstr ""
+msgstr "Použít pro dosažený výsledek lineární stupnici"
 
 #: glade/PyChess.glade:1211
 msgid ""
@@ -454,7 +454,7 @@ msgstr "Nejvíce času na rozbor v sekundách:"
 
 #: glade/PyChess.glade:1901
 msgid "Infinite analysis"
-msgstr ""
+msgstr "Nekonečný rozbor"
 
 #: glade/PyChess.glade:1931
 msgid "<b>Analyzing</b>"
@@ -490,11 +490,11 @@ msgstr "<b>Uvítací obrazovka</b>"
 
 #: glade/PyChess.glade:2367
 msgid "Texture:"
-msgstr ""
+msgstr "Povrch:"
 
 #: glade/PyChess.glade:2401
 msgid "Frame:"
-msgstr ""
+msgstr "Rámeček:"
 
 #: glade/PyChess.glade:2435
 msgid "Light Squares :"
@@ -502,7 +502,7 @@ msgstr "Světlá pole:"
 
 #: glade/PyChess.glade:2464
 msgid "Grid"
-msgstr ""
+msgstr "Mřížka"
 
 #: glade/PyChess.glade:2485
 msgid "Dark Squares :"
@@ -510,7 +510,7 @@ msgstr "Tmavá pole:"
 
 #: glade/PyChess.glade:2514
 msgid "Reset Colours"
-msgstr ""
+msgstr "Vrátit barvy na výchozí"
 
 #: glade/PyChess.glade:2528
 msgid "Sho_w cords"
@@ -524,15 +524,15 @@ msgstr "Když je zapnuta tato volba, sloupce a řádky hrací desky jsou zobraze
 
 #: glade/PyChess.glade:2574
 msgid "<b>Board Style</b>"
-msgstr ""
+msgstr "<b>Styl šachovnice</b>"
 
 #: glade/PyChess.glade:2614
 msgid "Font:"
-msgstr ""
+msgstr "Písmo:"
 
 #: glade/PyChess.glade:2652
 msgid "<b>Move text</b>"
-msgstr ""
+msgstr "<b>Posunout text</b>"
 
 #: glade/PyChess.glade:2709
 msgid "<b>Chess Sets</b>"
@@ -596,11 +596,11 @@ msgstr "Spustit poplach, když z_bývajících sekund je:"
 
 #: glade/PyChess.glade:3451
 msgid "_Puzzle success:"
-msgstr ""
+msgstr "Úspěch _hlavolamu:"
 
 #: glade/PyChess.glade:3518
 msgid "_Variation choices:"
-msgstr ""
+msgstr "Volby _variant:"
 
 #: glade/PyChess.glade:3575
 msgid "<b>Play Sound When...</b>"
@@ -612,7 +612,7 @@ msgstr "_Zvuky"
 
 #: glade/PyChess.glade:3622
 msgid "_Auto save finished games to .pgn file"
-msgstr ""
+msgstr "_Automaticky uložit skončené hry do souboru .pgn"
 
 #: glade/PyChess.glade:3655
 msgid "Save files to:"
@@ -640,7 +640,7 @@ msgstr "Uložit hodnoty _vyhodnocení stroje provádějícího rozbor"
 
 #: glade/PyChess.glade:3827
 msgid "Save _rating change values"
-msgstr ""
+msgstr "Uložit hodnoty změn _hodnocení"
 
 #: glade/PyChess.glade:3852
 msgid "Indent _PGN file"
@@ -706,7 +706,7 @@ msgstr "Server:"
 
 #: glade/PyChess.glade:4390
 msgid "Rating change:"
-msgstr ""
+msgstr "Změna hodnocení:"
 
 #: glade/PyChess.glade:4402 glade/PyChess.glade:4418
 msgid ""
@@ -717,7 +717,7 @@ msgstr ""
 
 #: glade/PyChess.glade:4446
 msgid "Black ELO:"
-msgstr ""
+msgstr "Černý ELO:"
 
 #: glade/PyChess.glade:4461
 msgid "Black:"
@@ -729,7 +729,7 @@ msgstr "Kolo:"
 
 #: glade/PyChess.glade:4523
 msgid "White ELO:"
-msgstr ""
+msgstr "Bílý ELO:"
 
 #: glade/PyChess.glade:4563
 msgid "White:"
@@ -737,19 +737,19 @@ msgstr "Bílý:"
 
 #: glade/PyChess.glade:4576
 msgid "Date:"
-msgstr ""
+msgstr "Datum:"
 
 #: glade/PyChess.glade:4589
 msgid "Result:"
-msgstr ""
+msgstr "Výsledek:"
 
 #: glade/PyChess.glade:4601
 msgid "Game"
-msgstr ""
+msgstr "Hra"
 
 #: glade/PyChess.glade:4613
 msgid "Players:"
-msgstr ""
+msgstr "Hráči"
 
 #: glade/PyChess.glade:4651
 msgid "Event:"
@@ -761,11 +761,11 @@ msgstr ""
 
 #: glade/PyChess.glade:4724
 msgid "Identification"
-msgstr ""
+msgstr "Označení"
 
 #: glade/PyChess.glade:4815
 msgid "Additional tags"
-msgstr ""
+msgstr "Dodatečné značky"
 
 #: glade/PyChess.glade:4849
 msgid "uci"
@@ -793,7 +793,7 @@ msgstr "Parametry:"
 
 #: glade/PyChess.glade:4976
 msgid "Command line parameters needed by the engine"
-msgstr ""
+msgstr "Parametry příkazového řádku potřebné pro stroj"
 
 #: glade/PyChess.glade:5001
 msgid ""
@@ -811,43 +811,43 @@ msgstr "Adresář, ze kterého bude stroj spouštěn."
 
 #: glade/PyChess.glade:5081
 msgid "Runtime env command:"
-msgstr ""
+msgstr "Příkaz pro běhové prostředí:"
 
 #: glade/PyChess.glade:5098
 msgid "Runtime environment of engine command (wine or node)"
-msgstr ""
+msgstr "Příkaz pro běhové prostředí stroje (wine nebo node)"
 
 #: glade/PyChess.glade:5116
 msgid "Runtime env parameters:"
-msgstr ""
+msgstr "Parametry pro běhové prostředí:"
 
 #: glade/PyChess.glade:5130
 msgid "Command line parameters needed by the runtime env"
-msgstr ""
+msgstr "Parametry příkazového řádku potřebné pro běhové prostředí."
 
 #: glade/PyChess.glade:5147
 msgid "Country:"
-msgstr ""
+msgstr "Země:"
 
 #: glade/PyChess.glade:5161
 msgid "Country of origin of the engine"
-msgstr ""
+msgstr "Země původu stroje"
 
 #: glade/PyChess.glade:5176
 msgid "Comment:"
-msgstr ""
+msgstr "Poznámka:"
 
 #: glade/PyChess.glade:5189
 msgid "Free comment about the engine"
-msgstr ""
+msgstr "Volná poznámka ke stroji"
 
 #: glade/PyChess.glade:5208
 msgid "Environment"
-msgstr ""
+msgstr "Prostředí"
 
 #: glade/PyChess.glade:5233
 msgid "Preferred level:"
-msgstr ""
+msgstr "Upřednostňovaná úroveň:"
 
 #: glade/PyChess.glade:5245
 msgid ""
@@ -857,15 +857,15 @@ msgstr ""
 
 #: glade/PyChess.glade:5293
 msgid "Restore the default options"
-msgstr ""
+msgstr "Obnovit výchozí volby"
 
 #: glade/PyChess.glade:5318
 msgid "Options"
-msgstr ""
+msgstr "Volby"
 
 #: glade/PyChess.glade:5511
 msgid "Filter"
-msgstr ""
+msgstr "Filtr"
 
 #: glade/PyChess.glade:5581 glade/PyChess.glade:6886
 #: glade/fics_lounge.glade:3167 lib/pychess/Utils/repr.py:22
@@ -895,7 +895,7 @@ msgstr "Černý"
 
 #: glade/PyChess.glade:5623 glade/PyChess.glade:6207
 msgid "Ignore colors"
-msgstr ""
+msgstr "Přehlížet barvy"
 
 #: glade/PyChess.glade:5639 lib/pychess/perspectives/database/gamelist.py:45
 msgid "Event"
@@ -907,18 +907,18 @@ msgstr "ECO"
 
 #: glade/PyChess.glade:5672
 msgid "Elo"
-msgstr ""
+msgstr "Elo"
 
 #: glade/PyChess.glade:5691 glade/PyChess.glade:5721 glade/PyChess.glade:6126
 #: glade/PyChess.glade:6140 glade/PyChess.glade:6154 glade/PyChess.glade:6168
 #: glade/PyChess.glade:6182 glade/PyChess.glade:6309 glade/PyChess.glade:6323
 #: glade/PyChess.glade:6337 glade/PyChess.glade:6351 glade/PyChess.glade:6365
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: glade/PyChess.glade:5706 glade/PyChess.glade:5783 glade/PyChess.glade:5846
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: glade/PyChess.glade:5741 lib/pychess/perspectives/database/gamelist.py:45
 msgid "Date"
@@ -930,7 +930,7 @@ msgstr "Stránka"
 
 #: glade/PyChess.glade:5900
 msgid "Annotator"
-msgstr ""
+msgstr "Autor vysvětlujících poznámek"
 
 #: glade/PyChess.glade:5922 lib/pychess/perspectives/database/gamelist.py:45
 msgid "Result"
@@ -938,15 +938,15 @@ msgstr "Výsledek"
 
 #: glade/PyChess.glade:5936
 msgid "1-0"
-msgstr ""
+msgstr "1-0"
 
 #: glade/PyChess.glade:5951
 msgid "0-1"
-msgstr ""
+msgstr "0-1"
 
 #: glade/PyChess.glade:5966
 msgid "1/2-1/2"
-msgstr ""
+msgstr "1/2-1/2"
 
 #: glade/PyChess.glade:5981 lib/pychess/ic/__init__.py:296
 msgid "*"
@@ -960,19 +960,19 @@ msgstr "Varianta"
 
 #: glade/PyChess.glade:6033
 msgid "Header"
-msgstr ""
+msgstr "Záhlaví"
 
 #: glade/PyChess.glade:6221
 msgid "Imbalance"
-msgstr ""
+msgstr "Nevyrovnanost"
 
 #: glade/PyChess.glade:6412
 msgid "White move"
-msgstr ""
+msgstr "Tah bílého"
 
 #: glade/PyChess.glade:6435
 msgid "Black move"
-msgstr ""
+msgstr "Tah černého"
 
 #: glade/PyChess.glade:6798
 msgid "Not a capture (quiet) move"
