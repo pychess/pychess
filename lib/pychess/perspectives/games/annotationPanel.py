@@ -171,9 +171,7 @@ class Sidepanel:
         # Layout
         __widget__ = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         __widget__.set_spacing(3)
-        sw = Gtk.ScrolledWindow()
-        sw.add(self.header_textview)
-        __widget__.pack_start(sw, False, False, 0)
+        __widget__.pack_start(self.header_textview, False, False, 0)
         __widget__.pack_start(Gtk.Separator(), False, False, 0)
 
         self.choices_box = Gtk.Box()
@@ -182,7 +180,6 @@ class Sidepanel:
         self.choices_enabled = True
 
         sw = Gtk.ScrolledWindow()
-        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
         sw.add(self.textview)
         __widget__.pack_start(sw, True, True, 0)
 
