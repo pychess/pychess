@@ -65,7 +65,7 @@ class CECPTests(EmittingTestCase):
 
         analyzer.connect("readyForOptions", optionsCallback)
         analyzer.prestart()
-        analyzer.start()
+        analyzer.start(asyncio.Event(), set())
 
         return engine, analyzer
 
