@@ -165,22 +165,20 @@ class EngineDiscoverer(GObject.GObject):
 
     @asyncio.coroutine
     def __discoverE(self, engine):
-        try:
-            subproc = yield from self.initEngine(engine, BLACK, False)
-            subproc.connect('readyForOptions', self.__discoverE2, engine)
-            subproc.prestart()  # Sends the 'start line'
+        subproc = yield from self.initEngine(engine, BLACK, False)
+        subproc.connect('readyForOptions', self.__discoverE2, engine)
+        subproc.prestart()  # Sends the 'start line'
 
-            event = asyncio.Event()
-            subproc.start(event)
-            yield from event.wait()
-        except SubProcessError as err:
-            log.warning("Engine %s failed discovery: %s" % (engine["name"], err))
-            self.emit("engine_failed", engine["name"], engine)
-            subproc.kill(UNKNOWN_REASON)
-        except PlayerIsDead as err:
+        event = asyncio.Event()
+        is_dead = set()
+        subproc.start(event, is_dead)
+
+        yield from event.wait()
+
+        if is_dead:
             # Check if the player died after engine_discovered by our own hands
             if not self.toBeRechecked[engine["name"]][1]:
-                log.warning("Engine %s failed discovery: %s" % (engine["name"], err))
+                log.warning("Engine %s failed discovery" % engine["name"])
                 self.emit("engine_failed", engine["name"], engine)
             subproc.kill(UNKNOWN_REASON)
 
@@ -305,8 +303,12 @@ class EngineDiscoverer(GObject.GObject):
         self.pre_discover()
 
         def count(self_, name, engine, wentwell):
-            if wentwell:
-                self.toBeRechecked[name][1] = True
+            if not wentwell:
+                print("cout not wentwell on engine", name)
+                self.engines.remove(engine)
+
+            self.toBeRechecked[name][1] = True
+
             if all([elem[1] for elem in self.toBeRechecked.values()]):
                 self.engines.sort(key=lambda x: x["name"])
                 self.emit("all_engines_discovered")

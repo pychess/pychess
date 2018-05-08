@@ -69,22 +69,22 @@ class UCIEngine(ProtocolEngine):
     def prestart(self):
         print("uci", file=self.engine)
 
-    def start(self, event=None):
-        asyncio.async(self.__startBlocking(event))
+    def start(self, event, dead):
+        asyncio.async(self.__startBlocking(event, dead))
 
     @asyncio.coroutine
-    def __startBlocking(self, event):
+    def __startBlocking(self, event=None, is_dead=None):
         try:
             return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
         except asyncio.TimeoutError:
             log.warning("Got timeout error", extra={"task": self.defname})
-            raise PlayerIsDead
+            is_dead.add(True)
         except Exception:
             log.warning("Unknown error", extra={"task": self.defname})
-            raise PlayerIsDead
+            is_dead.add(True)
         else:
             if return_value == 'die':
-                raise PlayerIsDead
+                is_dead.add(True)
             assert return_value == "ready" or return_value == "del"
 
         if event is not None:

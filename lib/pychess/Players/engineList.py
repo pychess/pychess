@@ -30,7 +30,6 @@ ENGINES_LIST = [
     ENGINES("pychess-engine", "xboard", "dk", True),
     ENGINES("PyChess.py", "xboard", "dk", True),
     ENGINES("toledo-uci", "uci", "mx", True),
-    ENGINES("gnuchessu", "uci", "us", False),
     ENGINES(stockfish_name, "uci", "no", False),
     ENGINES("amundsen", "xboard", "sw", False),
     ENGINES("andscacs", "uci", "ad", False),

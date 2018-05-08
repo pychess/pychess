@@ -168,11 +168,11 @@ class CECPEngine(ProtocolEngine):
             # we don't start a new game for CECPv2 here,
             # we will do it after feature accept/reject is completed.
 
-    def start(self, event=None):
-        asyncio.async(self.__startBlocking(event))
+    def start(self, event, dead):
+        asyncio.async(self.__startBlocking(event, dead))
 
     @asyncio.coroutine
-    def __startBlocking(self, event):
+    def __startBlocking(self, event=None, is_dead=None):
         if self.protover == 1:
             self.emit("readyForMoves")
             return_value = "ready"
@@ -189,13 +189,13 @@ class CECPEngine(ProtocolEngine):
                 self.emit("readyForMoves")
             except asyncio.TimeoutError:
                 log.warning("Got timeout error", extra={"task": self.defname})
-                raise PlayerIsDead
+                is_dead.add(True)
             except Exception:
                 log.warning("Unknown error", extra={"task": self.defname})
-                raise PlayerIsDead
+                is_dead.add(True)
             else:
                 if return_value == "die":
-                    raise PlayerIsDead
+                    is_dead.add(True)
                 assert return_value == "ready" or return_value == "del"
 
         if event is not None:

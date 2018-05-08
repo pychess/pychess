@@ -655,8 +655,18 @@ class GameModel(GObject.GObject):
 
             for player in self.players + list(self.spectators.values()):
                 event = asyncio.Event()
-                player.start(event)
+                is_dead = set()
+                player.start(event, is_dead)
+
                 yield from event.wait()
+
+                if is_dead:
+                    if player in self.players[WHITE]:
+                        self.kill(WHITE_ENGINE_DIED)
+                        break
+                    elif player in self.players[BLACK]:
+                        self.kill(BLACK_ENGINE_DIED)
+                        break
 
             log.debug("GameModel.run: emitting 'game_started' self=%s" % self)
             self.emit("game_started")
