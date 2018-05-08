@@ -63,7 +63,7 @@ class Player(GObject.GObject):
     def prestart(self):
         pass  # Optional
 
-    def start(self, event):
+    def start(self, event, is_dead):
         event.set()
 
     def setOptionInitialBoard(self, model):
