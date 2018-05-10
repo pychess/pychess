@@ -4,6 +4,7 @@
 import sys
 import os
 import atexit
+import builtins
 from configparser import RawConfigParser
 
 from pychess.Utils.const import FISCHERRANDOMCHESS, LOSERSCHESS, COUNT_OF_SOUNDS, SOUND_MUTE
@@ -62,6 +63,11 @@ def notify_add(key, func, *args, section=section):
 
 def notify_remove(conid):
     del idkeyfuncs[conid]
+
+
+if "_" not in builtins.__dir__():
+    def _(text):
+        return text
 
 
 DEFAULTS = {
