@@ -75,7 +75,7 @@ class Sidepanel():
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
-        self.tv.set_cursor(conf.get("learncombo%s" % LESSON, 0))
+        self.tv.set_cursor(conf.get("learncombo%s" % LESSON))
 
         scrollwin = Gtk.ScrolledWindow()
         scrollwin.add(self.tv)
@@ -132,7 +132,7 @@ def start_lesson_game(gamemodel, filename, chessfile, records, index, rec):
             print(index, '[Orientation "White"]')
 
     color = gamemodel.boards[0].color
-    player_name = conf.get("firstName", _("You"))
+    player_name = conf.get("firstName")
 
     w_name = player_name if color == WHITE else "PyChess"
     b_name = "PyChess" if color == WHITE else player_name

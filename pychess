@@ -95,7 +95,10 @@ except ImportError:
 ###############################################################################
 # Parse command line arguments
 
-from pychess.System.Log import log, LoggerWriter, setup_glib_logging
+try:
+    from pychess.System.Log import log, LoggerWriter, setup_glib_logging
+except ImportError:
+    pass
 
 if getattr(sys, 'frozen', False):
     sys.stdout = LoggerWriter(logging.getLogger("STDOUT"), logging.INFO)
@@ -154,11 +157,6 @@ os.environ["SQLITE_TMPDIR"] = os.path.expanduser("~")
 
 ###############################################################################
 # Set up translations
-try:
-    from pychess.System import uistuff
-except:
-    pass
-uistuff.no_gettext = no_gettext
 
 if no_gettext:
     os.environ['LANG'] = "C"
@@ -202,6 +200,8 @@ except ImportError:
     raise
     pass
 
+conf.no_gettext = no_gettext
+
 ###############################################################################
 # Start logging
 setup_glib_logging()
@@ -211,16 +211,16 @@ if log_viewer:
 log.logger.setLevel(logging.DEBUG if log_debug is True else logging.INFO)
 oldlogs = [l for l in os.listdir(getUserDataPrefix())
            if l.endswith(".log")]
-conf.set("max_log_files", conf.get("max_log_files", 10))
+conf.set("max_log_files", conf.get("max_log_files"))
 oldlogs.sort()
-l = len(oldlogs)
-while l > conf.get("max_log_files", 10):
+lel_oldlogs = len(oldlogs)
+while lel_oldlogs > conf.get("max_log_files"):
     try:
         os.remove(addUserDataPrefix(oldlogs[0]))
         del oldlogs[0]
     except OSError:
         pass
-    l -= 1
+    lel_oldlogs -= 1
 
 
 @asyncio.coroutine

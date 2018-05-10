@@ -167,10 +167,18 @@ class EngineAdvisor(Advisor):
         self.cid2 = self.engine.connect("readyForOptions", self.on_ready_for_options)
         self.cid3 = self.engine.connect_after("readyForMoves", self.on_ready_for_moves)
 
+        self.figuresInNotation = conf.get("figuresInNotation")
+
+        def on_figures_in_notation(none):
+            self.figuresInNotation = conf.get("figuresInNotation")
+
+        self.cid4 = conf.notify_add("figuresInNotation", on_figures_in_notation)
+
     def _del(self):
         self.engine.disconnect(self.cid1)
         self.engine.disconnect(self.cid2)
         self.engine.disconnect(self.cid3)
+        conf.notify_remove(self.cid4)
 
     def _create_new_expected_lines(self):
         parent = self.empty_parent()
@@ -224,8 +232,6 @@ class EngineAdvisor(Advisor):
         if not self.active:
             return
 
-        is_FAN = conf.get("figuresInNotation", False)
-
         for i, line in enumerate(analysis):
             if line is None:
                 self.store[self.path + (i, )] = self.textOnlyRow("")
@@ -259,7 +265,7 @@ class EngineAdvisor(Advisor):
                     mvcount = ""
                 counted_pv.append("%s%s" %
                                   (mvcount, toFAN(board, pvmove)
-                                   if is_FAN else toSAN(board, pvmove, True)))
+                                   if self.figuresInNotation else toSAN(board, pvmove, True)))
                 board = board.move(pvmove)
 
             goodness = (min(max(score, -250), 250) + 250) / 500.0
@@ -434,6 +440,8 @@ class Sidepanel(object):
         self.boardcontrol = gmwidg.board
         self.boardview = gmwidg.board.view
 
+        self.figuresInNotation = conf.get("figuresInNotation")
+
         self.sw = Gtk.ScrolledWindow()
         self.tv = Gtk.TreeView()
         self.tv.set_property("headers_visible", False)
@@ -456,7 +464,7 @@ class Sidepanel(object):
             if not move:
                 cell.set_property("text", "")
             else:
-                if conf.get("figuresInNotation", False):
+                if self.figuresInNotation:
                     cell.set_property("text", toFAN(board, move))
                 else:
                     cell.set_property("text", toSAN(board, move, True))
@@ -537,10 +545,10 @@ class Sidepanel(object):
         self.advisors = []
         self.conf_conids = []
 
-        if conf.get("opening_check", False):
+        if conf.get("opening_check"):
             advisor = OpeningAdvisor(self.store, self.tv, self.boardcontrol)
             self.advisors.append(advisor)
-        if conf.get("endgame_check", False):
+        if conf.get("endgame_check"):
             advisor = EndgameAdvisor(self.store, self.tv, self.boardcontrol)
             self.advisors.append(advisor)
 
@@ -551,7 +559,7 @@ class Sidepanel(object):
         ]
 
         def on_opening_check(none):
-            if conf.get("opening_check", False) and self.boardview is not None:
+            if conf.get("opening_check") and self.boardview is not None:
                 advisor = OpeningAdvisor(self.store, self.tv, self.boardcontrol)
                 self.advisors.append(advisor)
                 advisor.shownChanged(self.boardview, self.boardview.shown)
@@ -565,8 +573,7 @@ class Sidepanel(object):
         self.conf_conids.append(conf.notify_add("opening_check", on_opening_check))
 
         def on_opening_file_entry_changed(none):
-            default_path = os.path.join(addDataPrefix("pychess_book.bin"))
-            path = conf.get("opening_file_entry", default_path)
+            path = conf.get("opening_file_entry")
             if os.path.isfile(path):
                 for advisor in self.advisors:
                     if advisor.mode == OPENING and self.boardview is not None:
@@ -576,7 +583,7 @@ class Sidepanel(object):
         self.conf_conids.append(conf.notify_add("opening_file_entry", on_opening_file_entry_changed))
 
         def on_endgame_check(none):
-            if conf.get("endgame_check", False):
+            if conf.get("endgame_check"):
                 advisor = EndgameAdvisor(self.store, self.tv, self.boardcontrol)
                 self.advisors.append(advisor)
                 advisor.shownChanged(self.boardview, self.boardview.shown)
@@ -589,6 +596,11 @@ class Sidepanel(object):
                         self.advisors.remove(advisor)
 
         self.conf_conids.append(conf.notify_add("endgame_check", on_endgame_check))
+
+        def on_figures_in_notation(none):
+            self.figuresInNotation = conf.get("figuresInNotation")
+
+        self.conf_conids.append(conf.notify_add("figuresInNotation", on_figures_in_notation))
 
         return self.sw
 

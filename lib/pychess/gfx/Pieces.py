@@ -304,4 +304,4 @@ def set_piece_theme(piece_set):
 
 
 makruk_svg_pieces = get_svg_pieces("makruk")
-set_piece_theme(conf.get("pieceTheme", "Chessicons"))
+set_piece_theme(conf.get("pieceTheme"))

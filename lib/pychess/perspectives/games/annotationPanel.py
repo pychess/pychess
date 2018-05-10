@@ -194,12 +194,12 @@ class Sidepanel:
         """
         The method retrieves few parameters from the configuration.
         """
-        self.fan = conf.get("figuresInNotation", False)
-        movetext_font = conf.get("movetextFont", "FreeSerif Regular 12")
+        self.fan = conf.get("figuresInNotation")
+        movetext_font = conf.get("movetextFont")
         self.font = Pango.font_description_from_string(movetext_font)
-        self.showEmt = conf.get("showEmt", False)
-        self.showBlunder = conf.get("showBlunder", False) and not self.gamemodel.isPlayingICSGame()
-        self.showEval = conf.get("showEval", False) and not self.gamemodel.isPlayingICSGame()
+        self.showEmt = conf.get("showEmt")
+        self.showBlunder = conf.get("showBlunder") and not self.gamemodel.isPlayingICSGame()
+        self.showEval = conf.get("showEval") and not self.gamemodel.isPlayingICSGame()
 
     def on_game_terminated(self, model):
         """

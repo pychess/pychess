@@ -77,8 +77,8 @@ class ListAndVarManager:
 
     def autoFlagNotify(self, *args):
         self.connection.client.run_command(
-            "set autoflag %s" % int(conf.get('autoCallFlag', False)))
-        # print 'notify flag', conf.get('autoCallFlag',False)
+            "set autoflag %s" % int(conf.get('autoCallFlag')))
+        # print 'notify flag', conf.get('autoCallFlag')
 
     def getList(self, list_name):
         if list_name in self.publicLists:

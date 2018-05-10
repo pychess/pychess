@@ -17,7 +17,7 @@ from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.SetupModel import SetupModel, SetupPlayer
 from pychess.Utils.TimeModel import TimeModel
-from pychess.Utils.const import FISCHERRANDOMCHESS, LOSERSCHESS, NORMALCHESS, VARIANTS_BLINDFOLD, \
+from pychess.Utils.const import NORMALCHESS, VARIANTS_BLINDFOLD, \
     VARIANTS_ODDS, VARIANTS_SHUFFLE, VARIANTS_OTHER, VARIANTS_OTHER_NONSTANDARD, VARIANTS_ASEAN, \
     WHITE, BLACK, UNSUPPORTED, ARTIFICIAL, LOCAL, reprFile, W_OO, W_OOO, B_OO, B_OOO, \
     FAN_PIECES, reprSign, FEN_START, WAITING_TO_START
@@ -181,21 +181,19 @@ class _GameInitializationMode(object):
         cls.__initTimeRadio("ngnormal", cls.widgets["normalRadio"], cls.widgets["configImageNormal"], 45, 15, 0)
         cls.__initTimeRadio("ngclassical", cls.widgets["classicalRadio"], cls.widgets["configImageClassical"], 3, 0, 40)
 
-        cls.__initVariantRadio("ngvariant1", cls.widgets["playVariant1Radio"],
-                               cls.widgets["configImageVariant1"], FISCHERRANDOMCHESS)
-        cls.__initVariantRadio("ngvariant2", cls.widgets["playVariant2Radio"],
-                               cls.widgets["configImageVariant2"], LOSERSCHESS)
+        cls.__initVariantRadio("ngvariant1", cls.widgets["playVariant1Radio"], cls.widgets["configImageVariant1"])
+        cls.__initVariantRadio("ngvariant2", cls.widgets["playVariant2Radio"], cls.widgets["configImageVariant2"])
 
         def updateCombos(*args):
             if cls.widgets["playNormalRadio"].get_active():
                 variant = NORMALCHESS
             elif cls.widgets["playVariant1Radio"].get_active():
-                variant = conf.get("ngvariant1", FISCHERRANDOMCHESS)
+                variant = conf.get("ngvariant1")
             else:
-                variant = conf.get("ngvariant2", LOSERSCHESS)
-            variant1 = conf.get("ngvariant1", FISCHERRANDOMCHESS)
+                variant = conf.get("ngvariant2")
+            variant1 = conf.get("ngvariant1")
             cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)
-            variant2 = conf.get("ngvariant2", LOSERSCHESS)
+            variant2 = conf.get("ngvariant2")
             cls.widgets["playVariant2Radio"].set_tooltip_text(variants[variant2].__desc__)
             data = [(item[0], item[1]) for item in playerItems[variant]]
             uistuff.updateCombo(cls.widgets["blackPlayerCombobox"], data)
@@ -209,10 +207,10 @@ class _GameInitializationMode(object):
         cls.widgets["playNormalRadio"].connect("toggled", updateCombos)
         cls.widgets["playNormalRadio"].set_tooltip_text(variants[NORMALCHESS].__desc__)
         cls.widgets["playVariant1Radio"].connect("toggled", updateCombos)
-        variant1 = conf.get("ngvariant1", FISCHERRANDOMCHESS)
+        variant1 = conf.get("ngvariant1")
         cls.widgets["playVariant1Radio"].set_tooltip_text(variants[variant1].__desc__)
         cls.widgets["playVariant2Radio"].connect("toggled", updateCombos)
-        variant2 = conf.get("ngvariant2", LOSERSCHESS)
+        variant2 = conf.get("ngvariant2")
         cls.widgets["playVariant2Radio"].set_tooltip_text(variants[variant2].__desc__)
 
         # The "variant" has to come before players, because the engine positions
@@ -232,15 +230,15 @@ class _GameInitializationMode(object):
         minSpin = Gtk.SpinButton()
         minSpin.set_adjustment(Gtk.Adjustment(1, 0, 240, 1))
         setattr(cls, "%s_min" % id, minSpin)
-        uistuff.keep(minSpin, "%s min" % id, first_value=defmin)
+        uistuff.keep(minSpin, "%s min" % id)
         movesSpin = Gtk.SpinButton()
         movesSpin.set_adjustment(Gtk.Adjustment(0, 0, 60, 20))
         setattr(cls, "%s_moves" % id, movesSpin)
-        uistuff.keep(movesSpin, "%s moves" % id, first_value=defmoves)
+        uistuff.keep(movesSpin, "%s moves" % id)
         gainSpin = Gtk.SpinButton()
         gainSpin.set_adjustment(Gtk.Adjustment(0, -60, 60, 1))
         setattr(cls, "%s_gain" % id, gainSpin)
-        uistuff.keep(gainSpin, "%s gain" % id, first_value=defgain)
+        uistuff.keep(gainSpin, "%s gain" % id)
 
         table = Gtk.Table(2, 2)
         table.props.row_spacing = 3
@@ -327,7 +325,7 @@ class _GameInitializationMode(object):
         updateString(None)
 
     @classmethod
-    def __initVariantRadio(cls, confid, radiobutton, configImage, default):
+    def __initVariantRadio(cls, confid, radiobutton, configImage):
         model = Gtk.TreeStore(str)
         treeview = Gtk.TreeView(model)
         treeview.set_headers_visible(False)
@@ -372,7 +370,7 @@ class _GameInitializationMode(object):
             return path.get_depth() > 1
 
         selection.set_select_function(selfunc, None)
-        variant = conf.get(confid, default)
+        variant = conf.get(confid)
         if variant in variantToPath:
             selection.select_path(variantToPath[variant])
 
@@ -436,9 +434,9 @@ class _GameInitializationMode(object):
             if cls.widgets["playNormalRadio"].get_active():
                 variant_index = NORMALCHESS
             elif cls.widgets["playVariant1Radio"].get_active():
-                variant_index = conf.get("ngvariant1", FISCHERRANDOMCHESS)
+                variant_index = conf.get("ngvariant1")
             else:
-                variant_index = conf.get("ngvariant2", LOSERSCHESS)
+                variant_index = conf.get("ngvariant2")
             variant = variants[variant_index]
 
             # Find time
@@ -495,9 +493,9 @@ class _GameInitializationMode(object):
                                         incr, moves], name))
                 else:
                     if not playertups or playertups[0][0] != LOCAL:
-                        name = conf.get("firstName", conf.username)
+                        name = conf.get("firstName")
                     else:
-                        name = conf.get("secondName", _("Guest"))
+                        name = conf.get("secondName")
                     playertups.append((LOCAL, Human, (color, name), name))
 
             # Set forcePonderOff initPlayerEngine param True in engine-engine games
@@ -853,13 +851,13 @@ class EnterNotationExtension(_GameInitializationMode):
                 player0combo = cls.widgets["whitePlayerCombobox"]
                 player0 = player0combo.get_active()
                 if player0 == 0 and '[White "' not in text:
-                    name = '[White "%s"]' % conf.get("firstName", conf.username)
+                    name = '[White "%s"]' % conf.get("firstName")
                     text = "%s\n%s" % (name, text)
 
                 player1combo = cls.widgets["blackPlayerCombobox"]
                 player1 = player1combo.get_active()
                 if player1 == 0 and '[Black "' not in text:
-                    name = '[Black "%s"]' % conf.get("secondName", _("Guest"))
+                    name = '[Black "%s"]' % conf.get("secondName")
                     text = "%s\n%s" % (name, text)
 
                 loadType = pgn

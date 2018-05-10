@@ -351,7 +351,10 @@ class PyChessCECP(PyChess):
 
                 elif lines[0] == "egtpath":
                     if len(lines) >= 3 and lines[1] == "gaviota":
-                        conf.set("egtb_path", conf.get("egtb_path", lines[2]))
+                        if lines[2]:
+                            conf.set("egtb_path", lines[2])
+                        else:
+                            conf.set("egtb_path", conf.get("egtb_path"))
                         from pychess.Utils.lutils.lsearch import enableEGTB
                         enableEGTB()
 

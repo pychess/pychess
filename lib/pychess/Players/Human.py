@@ -112,7 +112,7 @@ class Human(Player):
     # Handle signals from the board
 
     def zero_reached(self, timemodel, color):
-        if conf.get('autoCallFlag', False) and \
+        if conf.get("autoCallFlag") and \
                 self.gamemodel.status == RUNNING and \
                 timemodel.getPlayerTime(1 - self.color) <= 0:
             log.info('Automatically sending flag call on behalf of player %s.'

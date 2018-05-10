@@ -50,7 +50,7 @@ class Sidepanel:
         return __widget__
 
     def fetch_chess_conf(self):
-        self.plot.linear_scale = conf.get("scoreLinearScale", False)
+        self.plot.linear_scale = conf.get("scoreLinearScale")
 
     def on_game_terminated(self, model):
         self.plot.disconnect(self.plot_cid)

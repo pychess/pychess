@@ -36,6 +36,12 @@ class ChessClock(Gtk.DrawingArea):
 
         self.model = None
         self.short_on_time = [False, False]
+        self.alarm_spin = conf.get("alarm_spin")
+
+        conf.notify_add("alarm_spin", self.on_alarm_spin)
+
+    def on_alarm_spin(self, *args):
+        self.alarm_spin = conf.get("alarm_spin")
 
     def expose(self, widget, ctx):
         context = widget.get_window().cairo_create()
@@ -205,7 +211,7 @@ class ChessClock(Gtk.DrawingArea):
     def update(self, wmovecount=-1, bmovecount=-1):
         if self.model.ended:
             return False
-        alarm_time = int(conf.get("alarm_spin", 15))
+        alarm_time = int(self.alarm_spin)
         if self.model.getPlayerTime(self.model.movingColor) <= alarm_time and \
             self.model.gamemodel.players[self.model.movingColor].__type__ == LOCAL and \
             self.model.gamemodel.status in UNFINISHED_STATES and \

@@ -37,7 +37,7 @@ class Sidepanel:
         self.tv.set_row_separator_func(is_row_separator)
 
         self.tv.connect("style-updated", self.on_style_updated)
-        movetext_font = conf.get("movetextFont", "FreeSerif Regular 12")
+        movetext_font = conf.get("movetextFont")
 
         renderer = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn("mvcount", renderer, text=0)
@@ -76,15 +76,19 @@ class Sidepanel:
         self.cid = self.boardview.connect("shownChanged", self.shownChanged)
         scrollwin.show_all()
 
+        self.figuresInNotation = conf.get("figuresInNotation")
+
         def figuresInNotationCallback(none):
             game = self.boardview.model
             if game.lesson_game:
                 return
 
+            self.figuresInNotation = conf.get("figuresInNotation")
+
             for i, move in enumerate(game.moves):
                 board = game.variations[0][i]
                 ply = game.lowply + i + 1
-                if conf.get("figuresInNotation", False):
+                if conf.get("figuresInNotation"):
                     notat = toFAN(board, move)
                 else:
                     notat = toSAN(board, move, True)
@@ -96,7 +100,7 @@ class Sidepanel:
                 self.store.set_value(treeiter, col, notat)
 
         def font_changed(none):
-            movetext_font = conf.get("movetextFont", "FreeSerif Regular 12")
+            movetext_font = conf.get("movetextFont")
             self.black_renderer.set_property("font", movetext_font)
             self.white_renderer.set_property("font", movetext_font)
             self.shownChanged(self.boardview, self.boardview.shown)
@@ -184,8 +188,10 @@ class Sidepanel:
         if self.boardview is None or self.boardview.model is None:
             return
 
-        for i in range(len(self.store) + gamemodel.lowply, ply + 1):
-            self.add_move(gamemodel, i)
+#        for i in range(len(self.store) + gamemodel.lowply, ply + 1):
+#            self.add_move(gamemodel, i)
+
+        self.add_move(gamemodel, ply)
         self.shownChanged(self.boardview, ply)
 
     def game_started(self, game):
@@ -198,7 +204,7 @@ class Sidepanel:
             self.store.append(["%4s." % gamemodel.lowply, "1234567", "1234567", 0, self.get_background_rgba(), self.get_background_rgba()])
             return
 
-        if conf.get("figuresInNotation", False):
+        if self.figuresInNotation:
             notat = toFAN(gamemodel.getBoardAtPly(ply - 1), gamemodel.getMoveAtPly(ply - 1))
         else:
             notat = toSAN(gamemodel.getBoardAtPly(ply - 1), gamemodel.getMoveAtPly(ply - 1), localRepr=True)

@@ -140,7 +140,7 @@ METHODS = (
 )
 
 
-def keep(widget, key, get_value_=None, set_value_=None, first_value=None):
+def keep(widget, key, get_value_=None, set_value_=None):  # , first_value=None):
     if widget is None:
         raise AttributeError("key '%s' isn't in widgets" % key)
 
@@ -175,10 +175,7 @@ def keep(widget, key, get_value_=None, set_value_=None, first_value=None):
         except TypeError:
             log.warning("uistuff.keep.setFromConf: Key '%s' from conf had the wrong type '%s', ignored" %
                         (key, type(conf.get(key))))
-            if first_value is not None:
-                conf.set(key, first_value)
-            else:
-                conf.set(key, get_value())
+            # print("uistuff.keep TypeError %s %s" % (key, conf.get(key)))
         else:
             set_value(v)
 
@@ -191,8 +188,8 @@ def keep(widget, key, get_value_=None, set_value_=None, first_value=None):
 
     if conf.hasKey(key):
         setFromConf()
-    elif first_value is not None:
-        conf.set(key, first_value)
+    elif conf.get(key) is not None:
+        conf.set(key, conf.get(key))
 
 
 # loadDialogWidget() and saveDialogWidget() are similar to uistuff.keep() but are needed
@@ -421,16 +418,13 @@ def makeYellow(box):
     onceWhenReady(box, cb)
 
 
-no_gettext = False
-
-
 class GladeWidgets:
     """ A simple class that wraps a the glade get_widget function
         into the python __getitem__ version """
 
     def __init__(self, filename):
         # TODO: remove this when upstream fixes translations with Python3+Windows
-        if sys.platform == "win32" and not no_gettext:
+        if sys.platform == "win32" and not conf.no_gettext:
             tree = ET.parse(addDataPrefix("glade/%s" % filename))
             for node in tree.iter():
                 if 'translatable' in node.attrib:
@@ -442,7 +436,7 @@ class GladeWidgets:
             self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         else:
             self.builder = Gtk.Builder()
-            if not no_gettext:
+            if not conf.no_gettext:
                 self.builder.set_translation_domain("pychess")
             self.builder.add_from_file(addDataPrefix("glade/%s" % filename))
 

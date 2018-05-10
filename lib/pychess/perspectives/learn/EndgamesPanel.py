@@ -93,7 +93,7 @@ class Sidepanel():
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
-        self.tv.set_cursor(conf.get("learncombo%s" % ENDGAME, 0))
+        self.tv.set_cursor(conf.get("learncombo%s" % ENDGAME))
 
         scrollwin = Gtk.ScrolledWindow()
         scrollwin.add(self.tv)
@@ -122,7 +122,7 @@ def start_endgame_from(pieces):
         gamemodel = LearnModel(timemodel)
         gamemodel.set_learn_data(ENDGAME, pieces)
 
-        player_name = conf.get("firstName", _("You"))
+        player_name = conf.get("firstName")
         p0 = (LOCAL, Human, (WHITE, player_name), player_name)
 
         engine = discoverer.getEngineByName(discoverer.getEngineLearn())

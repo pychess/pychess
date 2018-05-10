@@ -237,7 +237,7 @@ class BoardControl(Gtk.EventBox):
             elif len(self.variant.PROMOTIONS) == 1:
                 promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
             else:
-                if conf.get("autoPromote", False):
+                if conf.get("autoPromote"):
                     promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
                 else:
                     promotion = self.getPromotion()
@@ -952,7 +952,7 @@ class LockedActiveState(LockedBoardState):
             board = self.getBoard()
             if board[self.view.selected].sign == PAWN and \
                     cord.cord in board.PROMOTION_ZONE[1 - board.color]:
-                if conf.get("autoPromote", False):
+                if conf.get("autoPromote"):
                     promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
                 else:
                     promotion = self.parent.getPromotion()
@@ -971,7 +971,7 @@ class LockedActiveState(LockedBoardState):
             board = self.getBoard()
             if board[self.view.active].sign == PAWN and \
                     cord.cord in board.PROMOTION_ZONE[1 - board.color]:
-                if conf.get("autoPromote", False):
+                if conf.get("autoPromote"):
                     promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
                 else:
                     promotion = self.parent.getPromotion()

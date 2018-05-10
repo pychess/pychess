@@ -102,7 +102,7 @@ class Games(GObject.GObject, Perspective):
 
         # Initing players
 
-        def set_name(none, player, key, alt):
+        def xxxset_name(none, player, key, alt):
             player.setName(conf.get(key, alt))
 
         players = []
@@ -194,10 +194,10 @@ class Games(GObject.GObject, Perspective):
         game.save(uri, saver, append=False, position=position)
 
     def saveGamePGN(self, game):
-        if conf.get("saveOwnGames", False) and not game.hasLocalPlayer():
+        if conf.get("saveOwnGames") and not game.hasLocalPlayer():
             return True
 
-        filename = conf.get("autoSaveFormat", "pychess")
+        filename = conf.get("autoSaveFormat")
         filename = filename.replace("#n1", game.tags["White"])
         filename = filename.replace("#n2", game.tags["Black"])
         year, month, day = parseDateTag(game.tags["Date"])
@@ -207,7 +207,7 @@ class Games(GObject.GObject, Perspective):
         filename = filename.replace("#y", "%s" % year)
         filename = filename.replace("#m", "%s" % month)
         filename = filename.replace("#d", "%s" % day)
-        pgn_path = conf.get("autoSavePath", os.path.expanduser("~")) + "/" + filename + ".pgn"
+        pgn_path = conf.get("autoSavePath") + "/" + filename + ".pgn"
         append = True
         try:
             if not os.path.isfile(pgn_path):
@@ -369,7 +369,7 @@ class Games(GObject.GObject, Perspective):
                 if not gmwidg.gamemodel.isChanged():
                     response = Gtk.ResponseType.OK
                 else:
-                    if conf.get("autoSave", False):
+                    if conf.get("autoSave"):
                         x = self.saveGamePGN(game)
                         if x:
                             response = Gtk.ResponseType.OK
@@ -452,7 +452,7 @@ class Games(GObject.GObject, Perspective):
             response = Gtk.ResponseType.OK
         else:
             markup = "<b><big>" + _("Save the current game before you close it?") + "</big></b>"
-            if conf.get("autoSave", False):
+            if conf.get("autoSave"):
                 x = self.saveGamePGN(gmwidg.gamemodel)
                 if x:
                     response = Gtk.ResponseType.OK
@@ -537,7 +537,7 @@ class Games(GObject.GObject, Perspective):
         for notebook in self.notebooks.values():
             notebook.remove_page(pageNum)
 
-        if headbook.get_n_pages() == 1 and conf.get("hideTabs", False):
+        if headbook.get_n_pages() == 1 and conf.get("hideTabs"):
             self.show_tabs(False)
 
         if headbook.get_n_pages() == 0:
@@ -569,7 +569,7 @@ class Games(GObject.GObject, Perspective):
         headbook.set_scrollable(True)
         align.add(headbook)
         perspective_widget.pack_start(align, False, True, 0)
-        self.show_tabs(not conf.get("hideTabs", False))
+        self.show_tabs(not conf.get("hideTabs"))
 
         # Initing center
 
@@ -725,7 +725,7 @@ class Games(GObject.GObject, Perspective):
         if not head:
             return
         if head.get_n_pages() == 1:
-            self.show_tabs(not conf.get("hideTabs", False))
+            self.show_tabs(not conf.get("hideTabs"))
 
     def attachGameWidget(self, gmwidg):
         log.debug("attachGameWidget: %s" % gmwidg)
@@ -769,7 +769,7 @@ class Games(GObject.GObject, Perspective):
         gmwidg.stat_hbox.show_all()
 
         if headbook.get_n_pages() == 1:
-            self.show_tabs(not conf.get("hideTabs", False))
+            self.show_tabs(not conf.get("hideTabs"))
         else:
             # We should always show tabs if more than one exists
             self.show_tabs(True)

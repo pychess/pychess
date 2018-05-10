@@ -61,7 +61,7 @@ class Sidepanel():
             panel.start()
         self.chatbox.show_all()
 
-        uistuff.keep(self.chatbox, "chat_paned_position", first_value=100)
+        uistuff.keep(self.chatbox, "chat_paned_position")
 
         return __widget__
 

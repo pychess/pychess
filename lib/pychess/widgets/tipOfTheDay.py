@@ -11,7 +11,7 @@ class TipOfTheDay:
         self.widgets["window1"].set_transient_for(mainwindow())
         uistuff.keepWindowSize("tipoftheday", self.widgets["window1"], (320, 240), uistuff.POSITION_CENTER)
 
-        self.widgets["checkbutton1"].set_active(conf.get("show_tip_at_startup", False))
+        self.widgets["checkbutton1"].set_active(conf.get("show_tip_at_startup"))
         self.widgets["checkbutton1"].connect("toggled", lambda w: conf.set("show_tip_at_startup", w.get_active()))
         self.widgets["close_button"].connect("clicked", lambda w: self.widgets["window1"].emit("delete-event", None))
         self.widgets["window1"].connect("delete_event", lambda w, a: self.widgets["window1"].destroy())

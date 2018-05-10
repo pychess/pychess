@@ -320,7 +320,7 @@ class UCIEngine(ProtocolEngine):
             self.setOption('Ponder', strength >= 19 and not forcePonderOff)
 
         if self.hasOption('GaviotaTbPath') and strength == 20:
-            self.setOption('GaviotaTbPath', conf.get("egtb_path", ""))
+            self.setOption('GaviotaTbPath', conf.get("egtb_path"))
 
     # Interacting with the player
 
@@ -458,10 +458,10 @@ class UCIEngine(ProtocolEngine):
 
             if self.analysis_depth is not None:
                 commands.append("go depth %s" % self.analysis_depth)
-            elif conf.get("infinite_analysis", False):
+            elif conf.get("infinite_analysis"):
                 commands.append("go infinite")
             else:
-                move_time = int(conf.get("max_analysis_spin", 3)) * 1000
+                move_time = int(conf.get("max_analysis_spin")) * 1000
                 commands.append("go movetime %s" % move_time)
 
         if self.hasOption("MultiPV") and self.multipvSetting > 1:

@@ -19,15 +19,16 @@ from urllib.parse import unquote
 
 from gi.repository import Gtk, GdkPixbuf, Gdk
 
-from pychess.System.prefix import addDataPrefix, getDataPrefix
+from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
-from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SOUND_SELECT
+from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SOUND_SELECT, COUNT_OF_SOUNDS
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.gfx import Pieces
 from pychess.widgets import mainwindow
-from pychess.widgets.Background import hexcol, newTheme
+from pychess.widgets.Background import newTheme
 from pychess.perspectives import perspective_manager
+
 
 firstRun = True
 
@@ -42,8 +43,9 @@ def run(widgets):
     if firstRun:
         initialize(widgets)
         firstRun = False
-    widgets["preferences_dialog"].show()
-    widgets["preferences_dialog"].present()
+    else:
+        widgets["preferences_dialog"].show()
+        widgets["preferences_dialog"].present()
 
 
 def initialize(widgets):
@@ -88,21 +90,19 @@ def initialize(widgets):
 class GeneralTab:
     def __init__(self, widgets):
 
-        conf.set("firstName", conf.get("firstName", conf.username))
-        conf.set("secondName", conf.get("secondName", _("Guest")))
-
         # Give to uistuff.keeper
+        for key in conf.DEFAULTS["General"]:
+            # widgets having special getter/setter
+            if key in ("ana_combobox", "inv_ana_combobox", "pieceTheme", "board_style", "board_frame"):
+                continue
 
-        for key in ("firstName", "secondName", "showEmt", "showEval",
-                    "hideTabs", "closeAll", "faceToFace", "scoreLinearScale",
-                    "showCaptured", "figuresInNotation",
-                    "moveAnimation", "noAnimation",
-                    "autoPromote", "autoRotate", "showFICSgameno"):
-            uistuff.keep(widgets[key], key)
-
-        # Options on by default
-        for key in ("fullAnimation", "showBlunder", "showCords", "drawGrid"):
-            uistuff.keep(widgets[key], key, first_value=True)
+            try:
+                if widgets[key] is not None:
+                    uistuff.keep(widgets[key], key)
+            except AttributeError:
+                print("GeneralTab AttributeError", key, conf.DEFAULTS["General"][key])
+            except TypeError:
+                print("GeneralTab TypeError", key, conf.DEFAULTS["General"][key])
 
 # Hint initing
 
@@ -112,8 +112,7 @@ def anal_combo_get_value(combobox):
     return engine.get("md5")
 
 
-def anal_combo_set_value(combobox, value, show_arrow_check, ana_check,
-                         analyzer_type):
+def anal_combo_set_value(combobox, value, show_arrow_check, analyzer_type):
     engine = discoverer.getEngineByMd5(value)
     if engine is None:
         combobox.set_active(0)
@@ -145,14 +144,8 @@ class HintTab:
     def __init__(self, widgets):
         self.widgets = widgets
 
-        # Options on by default
-        for key in ("opening_check", "endgame_check", "online_egtb_check", "inv_analyzer_check"):
-            uistuff.keep(widgets[key], key, first_value=False)
-        uistuff.keep(widgets["analyzer_check"], "analyzer_check", first_value=True)
-
         # Opening book
-        default_path = os.path.join(addDataPrefix("pychess_book.bin"))
-        path = conf.get("opening_file_entry", default_path)
+        path = conf.get("opening_file_entry")
         conf.set("opening_file_entry", path)
 
         book_chooser_dialog = Gtk.FileChooserDialog(
@@ -188,8 +181,7 @@ class HintTab:
                                                     on_opening_check_toggled)
 
         # Endgame
-        default_path = os.path.join(getDataPrefix())
-        egtb_path = conf.get("egtb_path", default_path)
+        egtb_path = conf.get("egtb_path")
         conf.set("egtb_path", egtb_path)
 
         egtb_chooser_dialog = Gtk.FileChooserDialog(
@@ -234,12 +226,8 @@ class HintTab:
 
         # Save, load and make analyze combos active
 
-        engine = discoverer.getEngineByName(discoverer.getEngineLearn())
-        if engine is None:
-            engine = discoverer.getEngineN(-1)
-        default = engine.get("md5")
-        conf.set("ana_combobox", conf.get("ana_combobox", default))
-        conf.set("inv_ana_combobox", conf.get("inv_ana_combobox", default))
+        conf.set("ana_combobox", conf.get("ana_combobox"))
+        conf.set("inv_ana_combobox", conf.get("inv_ana_combobox"))
 
         def on_analyzer_check_toggled(check):
             self.widgets["analyzers_vbox"].set_sensitive(check.get_active())
@@ -278,21 +266,20 @@ class HintTab:
 
         uistuff.keep(
             self.widgets["ana_combobox"], "ana_combobox", anal_combo_get_value,
-            lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode", "analyzer_check", HINT))
+            lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode", HINT))
         uistuff.keep(
             self.widgets["inv_ana_combobox"], "inv_ana_combobox",
             anal_combo_get_value,
-            lambda combobox, value: anal_combo_set_value(combobox, value, "spy_mode", "inv_analyzer_check", SPY))
+            lambda combobox, value: anal_combo_set_value(combobox, value, "spy_mode", SPY))
 
-        uistuff.keep(self.widgets["max_analysis_spin"], "max_analysis_spin", first_value=3)
-        uistuff.keep(self.widgets["infinite_analysis"], "infinite_analysis", first_value=False)
+        uistuff.keep(self.widgets["max_analysis_spin"], "max_analysis_spin")
+        uistuff.keep(self.widgets["infinite_analysis"], "infinite_analysis")
 
 
 # Sound initing
 
 # Setup default sounds
 EXT = "wav" if sys.platform == "win32" else "ogg"
-COUNT_OF_SOUNDS = 13
 
 for i in range(COUNT_OF_SOUNDS):
     if not conf.hasKey("soundcombo%d" % i):
@@ -361,6 +348,13 @@ class SoundTab:
     }
 
     _player = None
+    useSounds = conf.get("useSounds")
+
+    soundcombo = []
+    sounduri = []
+    for i in range(COUNT_OF_SOUNDS):
+        soundcombo.append(conf.get("soundcombo%s" % i))
+        sounduri.append(conf.get("sounduri%s" % i))
 
     @classmethod
     def getPlayer(cls):
@@ -370,19 +364,19 @@ class SoundTab:
 
     @classmethod
     def playAction(cls, action):
-        if not conf.get("useSounds", True):
+        if not cls.useSounds:
             return
 
         if isinstance(action, str):
             key_no = cls.actionToKeyNo[action]
         else:
             key_no = action
-        typ = conf.get("soundcombo%d" % key_no, SOUND_MUTE)
+        typ = cls.soundcombo[key_no]
         if typ == SOUND_BEEP:
             sys.stdout.write("\a")
             sys.stdout.flush()
         elif typ == SOUND_URI:
-            uri = conf.get("sounduri%d" % key_no, "")
+            uri = cls.sounduri[key_no]
             if not os.path.isfile(url2pathname(uri[5:])):
                 conf.set("soundcombo%d" % key_no, SOUND_MUTE)
                 return
@@ -436,8 +430,7 @@ class SoundTab:
                         model.set(model.get_iter((3, )), 1, label)
                     combobox.set_active(3)
                 else:
-                    combobox.set_active(conf.get("soundcombo%d" % index,
-                                                 SOUND_MUTE))
+                    combobox.set_active(conf.get("soundcombo%d" % index))
                 opendialog.hide()
 
         for i in range(COUNT_OF_SOUNDS):
@@ -448,14 +441,14 @@ class SoundTab:
             label = widgets["soundlabel%d" % i]
             label.props.mnemonic_widget = combo
 
-            uri = conf.get("sounduri%d" % i, "")
+            uri = conf.get("sounduri%d" % i)
             if os.path.isfile(url2pathname(uri[5:])):
                 model = combo.get_model()
                 model.append([audioIco, unquote(os.path.split(uri)[1])])
 
         for i in range(COUNT_OF_SOUNDS):
-            if conf.get("soundcombo%d" % i, SOUND_MUTE) == SOUND_URI and \
-                    not os.path.isfile(url2pathname(conf.get("sounduri%d" % i, "")[5:])):
+            if conf.get("soundcombo%d" % i) == SOUND_URI and \
+                    not os.path.isfile(url2pathname(conf.get("sounduri%d" % i)[5:])):
                 conf.set("soundcombo%d" % i, SOUND_MUTE)
             uistuff.keep(widgets["sound%dcombo" % i], "soundcombo%d" % i)
 
@@ -473,6 +466,7 @@ class SoundTab:
         def checkCallBack(*args):
             checkbox = widgets["useSounds"]
             widgets["sounds_frame"].set_property("sensitive", checkbox.get_active())
+            self.useSounds = conf.get("useSounds")
 
         conf.notify_add("useSounds", checkCallBack)
         widgets["useSounds"].set_active(True)
@@ -482,8 +476,6 @@ class SoundTab:
         if not self.getPlayer().ready:
             widgets["useSounds"].set_sensitive(False)
             widgets["useSounds"].set_active(False)
-
-        uistuff.keep(widgets["alarm_spin"], "alarm_spin", first_value=15)
 
 # Panel initing
 
@@ -626,7 +618,7 @@ class ThemeTab:
         self.widgets = widgets
 
         # Font chooser
-        font = conf.get("movetextFont", "FreeSerif Regular 12")
+        font = conf.get("movetextFont")
         font_button = Gtk.FontButton.new_with_font(font)
         demo_text = "♔a1 ♕f8 ♖h8 ♗g7 ♘g2 Ka1 Qf8 Rh8 Bg7 Ng2"
         font_button.set_preview_text(demo_text)
@@ -638,7 +630,7 @@ class ThemeTab:
         font_button.connect("font-set", select_font)
 
         # Background image
-        path = conf.get("welcome_image", addDataPrefix("glade/clear.png"))
+        path = conf.get("welcome_image")
         conf.set("welcome_image", path)
 
         image_chooser_dialog = Gtk.FileChooserDialog(
@@ -678,24 +670,20 @@ class ThemeTab:
         data = [(item[0], item[1]) for item in board_items]
 
         uistuff.createCombo(widgets["board_style"], data)
-        uistuff.keep(widgets["board_style"], "board_style", first_value=1)
+        uistuff.keep(widgets["board_style"], "board_style")
 
-        # conf.set("board_style", conf.get("board_style", 1))
+        # conf.set("board_style", conf.get("board_style"))
 
         # Board frame
         uistuff.createCombo(widgets["board_frame"], name="board_frame")
         data = [(item[0], item[1]) for item in [(None, "no frame")] + board_items[1:]]
 
         uistuff.createCombo(widgets["board_frame"], data)
-        uistuff.keep(widgets["board_frame"], "board_frame", first_value=1)
+        uistuff.keep(widgets["board_frame"], "board_frame")
 
-        # conf.set("board_frame", conf.get("board_frame", 1))
+        # conf.set("board_frame", conf.get("board_frame"))
 
         # Board Colours
-
-        style_ctxt = widgets["main_window"].get_style_context()
-        LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])
-        DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
 
         def onColourSetLight(_):
             """ :Description: Sets the light squares of the chess board
@@ -718,20 +706,20 @@ class ThemeTab:
         def onResetColourClicked(_):
             """ :Description: Resets the chess board squares to factory default
             """
-            conf.set("lightcolour", LIGHT)
-            conf.set("darkcolour", DARK)
+            conf.set("lightcolour", conf.get("lightcolour"))
+            conf.set("darkcolour", conf.get("darkcolour"))
 
         widgets["reset_btn"].connect("clicked", onResetColourClicked)
 
         # Get the current board colours if set, if not set, set them to default
-        conf.set("lightcolour", conf.get("lightcolour", LIGHT))
-        conf.set("darkcolour", conf.get("darkcolour", DARK))
+        conf.set("lightcolour", conf.get("lightcolour"))
+        conf.set("darkcolour", conf.get("darkcolour"))
 
         # Next 2 lines take a #hex str converts them to a color then to a RGBA representation
         self.lightcolour = Gdk.RGBA()
-        self.lightcolour.parse(conf.get("lightcolour", LIGHT))
+        self.lightcolour.parse(conf.get("lightcolour"))
         self.darkcolour = Gdk.RGBA()
-        self.darkcolour.parse(conf.get("darkcolour", DARK))
+        self.darkcolour.parse(conf.get("darkcolour"))
 
         # Set the color swatches in preference to stored values
         widgets['light_cbtn'].set_rgba(self.lightcolour)
@@ -776,7 +764,7 @@ class ThemeTab:
             selected = iconview.get_selected_items()
 
             if len(selected) == 0:
-                return conf.get("pieceTheme", "Chessicons")
+                return conf.get("pieceTheme")
 
             indices = selected[0].get_indices()
             if indices:
@@ -792,7 +780,7 @@ class ThemeTab:
                 index = 0
             iconview.select_path(Gtk.TreePath(index, ))
 
-        uistuff.keep(widgets["pieceTheme"], "pieceTheme", _getActive, _setActive, "Chessicons")
+        uistuff.keep(widgets["pieceTheme"], "pieceTheme", _getActive, _setActive)
 
     def discoverThemes(self):
         """ :Description: Finds all the different chess sets that are present
@@ -833,11 +821,10 @@ class SaveTab:
             widgets["autosave_grid"].set_property("sensitive", checkbox.get_active())
 
         conf.notify_add("autoSave", checkCallBack)
-        uistuff.keep(widgets["autoSave"], "autoSave", first_value=True)
+        uistuff.keep(widgets["autoSave"], "autoSave")
         checkCallBack(_)
 
-        default_path = os.path.expanduser("~")
-        self.auto_save_path = conf.get("autoSavePath", default_path)
+        self.auto_save_path = conf.get("autoSavePath")
         conf.set("autoSavePath", self.auto_save_path)
 
         auto_save_chooser_dialog = Gtk.FileChooserDialog(
@@ -864,11 +851,11 @@ class SaveTab:
 
         auto_save_chooser_button.connect("current-folder-changed", selectAutoSave)
 
-        conf.set("autoSaveFormat", conf.get("autoSaveFormat", "pychess"))
+        conf.set("autoSaveFormat", conf.get("autoSaveFormat"))
         uistuff.keep(widgets["autoSaveFormat"], "autoSaveFormat")
 
-        uistuff.keep(widgets["saveEmt"], "saveEmt")
-        uistuff.keep(widgets["saveEval"], "saveEval")
-        uistuff.keep(widgets["saveRatingChange"], "saveRatingChange")
-        uistuff.keep(widgets["indentPgn"], "indentPgn")
-        uistuff.keep(widgets["saveOwnGames"], "saveOwnGames", first_value=True)
+        # uistuff.keep(widgets["saveEmt"], "saveEmt")
+        # uistuff.keep(widgets["saveEval"], "saveEval")
+        # uistuff.keep(widgets["saveRatingChange"], "saveRatingChange")
+        # uistuff.keep(widgets["indentPgn"], "indentPgn")
+        # uistuff.keep(widgets["saveOwnGames"], "saveOwnGames")

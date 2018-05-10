@@ -19,7 +19,6 @@ from pychess.Utils.const import ASEAN_VARIANTS, DROP_VARIANTS, WAITING_TO_START,
     WILDCASTLECHESS, PAWN, KNIGHT, SITTUYINCHESS, BLACK
 from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
     HiddenPiecesBoard, AllWhiteBoard
-from .Background import hexcol
 from . import preferencesDialog
 
 
@@ -175,11 +174,13 @@ class BoardView(Gtk.DrawingArea):
             conf.notify_add("showCords", self.onShowCords),
             conf.notify_add("showCaptured", self.onShowCaptured),
             conf.notify_add("faceToFace", self.onFaceToFace),
-            conf.notify_add("pieceTheme", self.onSetPieceTheme),
-            conf.notify_add("board_frame", self.onBoardFrameTheme),
-            conf.notify_add("board_style", self.onBoardColourTheme),
-            conf.notify_add("lightcolour", self.onBoardColourTheme),
-            conf.notify_add("darkcolour", self.onBoardColourTheme),
+            conf.notify_add("noAnimation", self.onNoAnimation),
+            conf.notify_add("autoRotate", self.onAutoRotate),
+            conf.notify_add("pieceTheme", self.onPieceTheme),
+            conf.notify_add("board_frame", self.onBoardFrame),
+            conf.notify_add("board_style", self.onBoardStyle),
+            conf.notify_add("lightcolour", self.onBoardColour),
+            conf.notify_add("darkcolour", self.onBoardColour),
         ]
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES
@@ -212,20 +213,25 @@ class BoardView(Gtk.DrawingArea):
 
         self.no_frame = False
         self._show_cords = False
-        self.show_cords = conf.get("showCords", True)
+        self.show_cords = conf.get("showCords")
 
         self._draw_grid = False
-        self.draw_grid = conf.get("drawGrid", True)
+        self.draw_grid = conf.get("drawGrid")
 
         self._show_captured = False
         if self.preview:
             self.showCaptured = False
         else:
-            self.showCaptured = conf.get("showCaptured", False) or \
+            self.showCaptured = conf.get("showCaptured") or \
                 self.model.variant.variant in DROP_VARIANTS
 
-        self.onBoardColourTheme()
-        self.onBoardFrameTheme()
+        self.noAnimation = conf.get("noAnimation")
+        self.faceToFace = conf.get("faceToFace")
+        self.autoRotate = conf.get("autoRotate")
+
+        self.onBoardColour()
+        self.onBoardStyle()
+        self.onBoardFrame()
 
         self._show_enpassant = False
 
@@ -265,7 +271,7 @@ class BoardView(Gtk.DrawingArea):
         if model.lesson_game:
             self.shown = model.lowply
 
-        if conf.get("noAnimation", False):
+        if self.noAnimation:
             self.got_started = True
             self.redrawCanvas()
         else:
@@ -306,7 +312,7 @@ class BoardView(Gtk.DrawingArea):
             self.shown = ply
 
             # Rotate board
-            if conf.get("autoRotate", False):
+            if self.autoRotate:
                 if self.model.players and self.model.curplayer.__type__ == LOCAL:
                     self.rotation = self.model.boards[-1].color * pi
 
@@ -365,37 +371,54 @@ class BoardView(Gtk.DrawingArea):
         """ Checks the configuration / preferences to see if the board
             grid should be displayed.
         """
-        self.draw_grid = conf.get("drawGrid", True)
+        self.draw_grid = conf.get("drawGrid")
 
     def onShowCords(self, *args):
         """ Checks the configuration / preferences to see if the board
             co-ordinates should be displayed.
         """
-        self.show_cords = conf.get("showCords", True)
+        self.show_cords = conf.get("showCords")
 
     def onShowCaptured(self, *args):
         """ Check the configuration / preferences to see if
-            cthe captured pieces should be displayed
+            the captured pieces should be displayed
         """
-        self.showCaptured = conf.get("showCaptured", False)
+        self.showCaptured = conf.get("showCaptured")
+
+    def onNoAnimation(self, *args):
+        """ Check the configuration / preferences to see if
+            no animation needed at all
+        """
+        self.noAnimation = conf.get("noAnimation")
 
     def onFaceToFace(self, *args):
         """ If the preference for pieces to be displayed facing each other
             has been set then refresh the board
         """
+        self.faceToFace = conf.get("faceToFace")
         self.redrawCanvas()
 
-    def onSetPieceTheme(self, *args):
+    def onAutoRotate(self, *args):
+        self.autoRotate = conf.get("autoRotate")
+
+    def onPieceTheme(self, *args):
         """ If the preference to display another chess set has been
             selected then refresh the board
         """
         self.redrawCanvas()
 
-    def onBoardColourTheme(self, *args):
+    def onBoardColour(self, *args):
         """ If the preference to display another set of board colours has been
             selected then refresh the board
         """
-        board_style = conf.get("board_style", 1)
+        self.light_colour = conf.get("lightcolour")
+        self.dark_colour = conf.get("darkcolour")
+
+    def onBoardStyle(self, *args):
+        """ If the preference to display another set of board colours has been
+            selected then refresh the board
+        """
+        board_style = conf.get("board_style")
         self.colors_only = board_style == 0
         if not self.colors_only:
             # create dark and light square surfaces
@@ -409,8 +432,8 @@ class BoardView(Gtk.DrawingArea):
 
         self.redrawCanvas()
 
-    def onBoardFrameTheme(self, *args):
-        board_frame = conf.get("board_frame", 1)
+    def onBoardFrame(self, *args):
+        board_frame = conf.get("board_frame")
         self.no_frame = board_frame == 0
         if not self.no_frame:
             # create board frame surface
@@ -612,7 +635,7 @@ class BoardView(Gtk.DrawingArea):
             self.lastMove = None
 
         self.runAnimation(redraw_misc=self.real_set_shown)
-        if not conf.get("noAnimation", False):
+        if not self.noAnimation:
             while self.animating:
                 self.runAnimation()
 
@@ -663,7 +686,7 @@ class BoardView(Gtk.DrawingArea):
                         y_loc = self.premove1.y
 
                 if piece.x is not None:
-                    if not conf.get("noAnimation", False):
+                    if not self.noAnimation:
                         if piece.piece == KNIGHT:
                             newx = piece.x + (x_loc - piece.x) * mod**(1.5)
                             newy = piece.y + (y_loc - piece.y) * mod
@@ -700,7 +723,7 @@ class BoardView(Gtk.DrawingArea):
                     else:
                         paint_box = self.cord2RectRelative(px_loc, py_loc)
 
-                    if not conf.get("noAnimation", False):
+                    if not self.noAnimation:
                         new_op = piece.opacity + (1 - piece.opacity) * mod
                     else:
                         new_op = 1
@@ -718,7 +741,7 @@ class BoardView(Gtk.DrawingArea):
             else:
                 paint_box = join(paint_box, self.cord2RectRelative(x_loc, y_loc))
 
-            if not conf.get("noAnimation", False):
+            if not self.noAnimation:
                 new_op = piece.opacity + (0 - piece.opacity) * mod
             else:
                 new_op = 0
@@ -734,7 +757,7 @@ class BoardView(Gtk.DrawingArea):
         if paint_box:
             self.redrawCanvas(rect(paint_box))
 
-        if conf.get("noAnimation", False):
+        if self.noAnimation:
             self.animating = False
             return False
         else:
@@ -747,7 +770,7 @@ class BoardView(Gtk.DrawingArea):
         self.animating = True
 
         self.runAnimation(redraw_misc=True)
-        if not conf.get("noAnimation", False):
+        if not self.noAnimation:
             while self.animating:
                 self.runAnimation()
 
@@ -930,7 +953,7 @@ class BoardView(Gtk.DrawingArea):
             paint(True)
             context.transform(invmatrix)
 
-        if conf.get("faceToFace", False):
+        if self.faceToFace:
             if self.rotation == 0:
                 context.transform(matrix)
                 paint(True)
@@ -975,10 +998,8 @@ class BoardView(Gtk.DrawingArea):
     def drawBoard(self, context, r):
         xc_loc, yc_loc, square, side = self.square
 
-        style_ctxt = self.get_style_context()
-        LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])
         col = Gdk.RGBA()
-        col.parse(conf.get("lightcolour", LIGHT))
+        col.parse(self.light_colour)
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
         if self.model.variant.variant in ASEAN_VARIANTS:
@@ -997,10 +1018,8 @@ class BoardView(Gtk.DrawingArea):
             if self.colors_only:
                 context.fill()
 
-        style_ctxt = self.get_style_context()
-        DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
         col = Gdk.RGBA()
-        col.parse(conf.get("darkcolour", DARK))
+        col.parse(self.dark_colour)
         context.set_source_rgba(col.red, col.green, col.blue, col.alpha)
 
         if self.model.variant.variant in ASEAN_VARIANTS:
@@ -1095,7 +1114,7 @@ class BoardView(Gtk.DrawingArea):
 
         side = self.square[3]
 
-        if not conf.get("faceToFace", False):
+        if not self.faceToFace:
             matrix, invmatrix, cx_loc, cy_loc = self.getCordMatrices(x_loc, y_loc)
         else:
             cx_loc, cy_loc = self.cord2Point(x_loc, y_loc)
@@ -1665,7 +1684,7 @@ class BoardView(Gtk.DrawingArea):
     ################################
 
     def _setRotation(self, radians):
-        if not conf.get("fullAnimation", True):
+        if not conf.get("fullAnimation"):
             self._rotation = radians
             self.next_rotation = radians
             self.matrix = cairo.Matrix.init_rotate(radians)

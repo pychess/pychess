@@ -406,7 +406,7 @@ class SeekChallengeSection():
                 uistuff.loadDialogWidget(self.widgets[widget], widget,
                                          seeknumber)
 
-        self.lastdifference = conf.get("lastdifference-%d" % seeknumber, -1)
+        self.lastdifference = conf.get("lastdifference-%d" % seeknumber)
         self.loading_seek_editor = False
 
     def __saveSeekEditor(self, seeknumber):
@@ -657,10 +657,9 @@ class SeekChallengeSection():
             return
         self.finger = finger
 
-        numfingers = conf.get("numberOfFingers", 0) + 1
+        numfingers = conf.get("numberOfFingers") + 1
         conf.set("numberOfFingers", numfingers)
-        if conf.get("numberOfTimesLoggedInAsRegisteredUser",
-                    0) is 1 and numfingers is 1:
+        if conf.get("numberOfTimesLoggedInAsRegisteredUser") is 1 and numfingers is 1:
             standard = self.__getRating(TYPE_STANDARD)
             blitz = self.__getRating(TYPE_BLITZ)
             lightning = self.__getRating(TYPE_LIGHTNING)

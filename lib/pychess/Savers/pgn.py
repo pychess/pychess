@@ -192,7 +192,7 @@ def save(handle, model, position=None):
         write_tag("Termination", value)
 
     # ELO and its variation
-    if conf.get("saveRatingChange", False):
+    if conf.get("saveRatingChange"):
         welo = model.tags["WhiteElo"]
         belo = model.tags["BlackElo"]
         if welo != "" and belo != "":
@@ -210,13 +210,13 @@ def save(handle, model, position=None):
         write_tag(tag, model.tags[tag])
 
     # Discovery of the moves and comments
-    save_emt = conf.get("saveEmt", False)
-    save_eval = conf.get("saveEval", False)
+    save_emt = conf.get("saveEmt")
+    save_eval = conf.get("saveEval")
     result = []
     walk(model.boards[0].board, result, model, save_emt, save_eval)
 
     # Alignment of the fetched elements
-    indented = conf.get("indentPgn", False)
+    indented = conf.get("indentPgn")
     if indented:
         buffer = ""
         depth = 0

@@ -195,9 +195,9 @@ class GameNanny(object):
                 (isinstance(gamemodel, LearnModel) and not gamemodel.failed_playing_best):
             asyncio.async(gamemodel.restart_analyzer(HINT))
             asyncio.async(gamemodel.restart_analyzer(SPY))
-            if not conf.get("hint_mode", False):
+            if not conf.get("hint_mode"):
                 gamemodel.pause_analyzer(HINT)
-            if not conf.get("spy_mode", False):
+            if not conf.get("spy_mode"):
                 gamemodel.pause_analyzer(SPY)
 
         return False
@@ -233,9 +233,9 @@ class GameNanny(object):
         if not gamemodel.isEngine2EngineGame():
             asyncio.async(gamemodel.start_analyzer(HINT))
             asyncio.async(gamemodel.start_analyzer(SPY))
-            if not conf.get("hint_mode", False):
+            if not conf.get("hint_mode"):
                 gamemodel.pause_analyzer(HINT)
-            if not conf.get("spy_mode", False):
+            if not conf.get("spy_mode"):
                 gamemodel.pause_analyzer(SPY)
         return False
 

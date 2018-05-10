@@ -115,4 +115,4 @@ class MenuItemsDict(dict):
         for item in self.ANAL_MENU_ITEMS:
             dict.__setitem__(self, item, GtkMenuItem(item, sensitive=True))
         for item in self.VIEW_MENU_ITEMS:
-            dict.__setitem__(self, item, GtkMenuToggleButton(item, active=conf.get(item, False)))
+            dict.__setitem__(self, item, GtkMenuToggleButton(item, active=conf.get(item)))

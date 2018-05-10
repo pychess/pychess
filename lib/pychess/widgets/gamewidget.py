@@ -94,7 +94,7 @@ class GameWidget(GObject.GObject):
         self.notify_cids = [conf.notify_add("showFICSgameno", self.on_show_fics_gameno), ]
 
         if self.gamemodel.display_text:
-            if isinstance(self.gamemodel, ICGameModel) and conf.get("showFICSgameno", False):
+            if isinstance(self.gamemodel, ICGameModel) and conf.get("showFICSgameno"):
                 self.game_info_label.set_text("%s [%s]" % (
                     self.display_text, self.gamemodel.ficsgame.gameno))
             else:
@@ -144,7 +144,7 @@ class GameWidget(GObject.GObject):
         """ Checks the configuration / preferences to see if the FICS
             game number should be displayed next to player names.
         """
-        if isinstance(self.gamemodel, ICGameModel) and conf.get("showFICSgameno", False):
+        if isinstance(self.gamemodel, ICGameModel) and conf.get("showFICSgameno"):
             self.game_info_label.set_text(" [%s]" % self.gamemodel.ficsgame.gameno)
         else:
             self.game_info_label.set_text("")

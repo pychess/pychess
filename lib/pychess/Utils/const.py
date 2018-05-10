@@ -205,6 +205,7 @@ OPENING, ENDGAME, HINT, SPY = ["opening", "endgame", "hint", "spy"]
 
 # Sound settings
 SOUND_MUTE, SOUND_BEEP, SOUND_SELECT, SOUND_URI = range(4)
+COUNT_OF_SOUNDS = 13
 
 # Brush types. Send piece object for Piece brush
 CLEAR, ENPAS = range(2)

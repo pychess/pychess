@@ -92,7 +92,7 @@ class Sidepanel():
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
-        self.tv.set_cursor(conf.get("learncombo%s" % PUZZLE, 0))
+        self.tv.set_cursor(conf.get("learncombo%s" % PUZZLE))
 
         scrollwin = Gtk.ScrolledWindow()
         scrollwin.add(self.tv)
@@ -150,7 +150,7 @@ def start_puzzle_game(gamemodel, filename, records, index, rec, from_lesson=Fals
     w_name = "" if rec["White"] is None else rec["White"]
     b_name = "" if rec["Black"] is None else rec["Black"]
 
-    player_name = conf.get("firstName", _("You"))
+    player_name = conf.get("firstName")
     engine_name = discoverer.getName(engine)
 
     if rec["Event"].startswith("Lichess Practice"):

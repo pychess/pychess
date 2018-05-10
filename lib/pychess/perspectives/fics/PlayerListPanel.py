@@ -39,7 +39,7 @@ class Sidepanel(ParrentListSection):
         for widget in self.filter_buttons:
             uistuff.keep(self.widgets[widget], widget)
             self.widgets[widget].connect("toggled", self.on_filter_button_toggled)
-            initial = conf.get(widget, True)
+            initial = conf.get(widget)
             self.filter_toggles[widget] = initial
             self.widgets[widget].set_active(initial)
 

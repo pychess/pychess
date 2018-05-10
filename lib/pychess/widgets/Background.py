@@ -184,7 +184,7 @@ def newTheme(widget, background=None):
     ]
 
     if background is None:
-        background = conf.get("welcome_image", addDataPrefix("glade/background.jpg"))
+        background = conf.get("welcome_image")
 
     if not path.isfile(background):
         background = addDataPrefix("glade/clear.png")

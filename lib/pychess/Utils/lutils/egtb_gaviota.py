@@ -39,7 +39,7 @@ class EgtbGaviota:
         self.initialized = False
 
         # Get a list of files in the tablebase folder.
-        configuredTbPath = conf.get("egtb_path", "")
+        configuredTbPath = conf.get("egtb_path")
         tbPath = configuredTbPath or getDataPrefix()
         try:
             tbPathContents = os.listdir(tbPath)

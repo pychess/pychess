@@ -273,12 +273,6 @@ class EngineDiscoverer(GObject.GObject):
     def pre_discover(self):
         # Remove the expired engines
         self.engines = [engine for engine in self.engines if os.path.isfile(engine.get('command', ''))]
-        if not self.getEngineByMd5(conf.get("ana_combobox", None)):
-            conf.set("analyzer_check", False)
-            conf.set("ana_combobox", None)
-        if not self.getEngineByMd5(conf.get("inv_ana_combobox", None)):
-            conf.set("inv_analyzer_check", False)
-            conf.set("inv_ana_combobox", None)
 
         # Scan the referenced engines to see if they are installed
         for engine in ENGINES_LIST:
@@ -409,8 +403,8 @@ class EngineDiscoverer(GObject.GObject):
             return 'stockfish' in engine['name'].lower()
 
         # Initialization
-        id = conf.get('ana_combobox', None)
-        analyzer_enabled = conf.get('analyzer_check', False)
+        id = conf.get('ana_combobox')
+        analyzer_enabled = conf.get('analyzer_check')
 
         # Stockfish from the preferences
         if analyzer_enabled:  # The analyzer should be active else we might believe that it is irrelevant
@@ -615,17 +609,15 @@ def init_engine(analyzer_type, gamemodel, force_engine=None):
     if analyzer_type == HINT:
         combo_name = "ana_combobox"
         check_name = "analyzer_check"
-        default = True
         mode = ANALYZING
     else:
         combo_name = "inv_ana_combobox"
         check_name = "inv_analyzer_check"
-        default = False
         mode = INVERSE_ANALYZING
 
     analyzer = None
 
-    if conf.get(check_name, default) or force_engine is not None:
+    if conf.get(check_name) or force_engine is not None:
         anaengines = list(discoverer.getAnalyzers())
         if len(anaengines) == 0:
             return None
@@ -633,7 +625,7 @@ def init_engine(analyzer_type, gamemodel, force_engine=None):
         if force_engine is not None:
             engine = discoverer.getEngineByName(force_engine)
         else:
-            engine = discoverer.getEngineByMd5(conf.get(combo_name, 0))
+            engine = discoverer.getEngineByMd5(conf.get(combo_name))
 
         if engine is None:
             engine = discoverer.getEngineByName(discoverer.getEngineLearn())

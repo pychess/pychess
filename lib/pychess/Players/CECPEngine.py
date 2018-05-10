@@ -431,8 +431,7 @@ class CECPEngine(ProtocolEngine):
 
         if strength == 20:
             if "gaviota" in self.features["egt"]:
-                self.optionQueue.append("egtpath gaviota %s" % conf.get(
-                    "egtb_path", ""))
+                self.optionQueue.append("egtpath gaviota %s" % conf.get("egtb_path"))
         else:
             self.optionQueue.append("random")
 
@@ -615,9 +614,9 @@ class CECPEngine(ProtocolEngine):
         print("analyze", file=self.engine)
         self.engineIsAnalyzing = True
 
-        if not conf.get("infinite_analysis", False):
+        if not conf.get("infinite_analysis"):
             loop = asyncio.get_event_loop()
-            loop.call_later(conf.get("max_analysis_spin", 3), self.__stop_analyze)
+            loop.call_later(conf.get("max_analysis_spin"), self.__stop_analyze)
 
     def __printColor(self):
         if self.features["colors"]:  # or self.mode == INVERSE_ANALYZING:

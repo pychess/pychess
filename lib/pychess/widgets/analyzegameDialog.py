@@ -23,14 +23,14 @@ class AnalyzeGameDialog():
         self.widgets["analyze_game"].set_transient_for(mainwindow())
         self.stop_event = asyncio.Event()
 
-        uistuff.keep(self.widgets["fromCurrent"], "fromCurrent", first_value=True)
-        uistuff.keep(self.widgets["shouldBlack"], "shouldBlack", first_value=True)
-        uistuff.keep(self.widgets["shouldWhite"], "shouldWhite", first_value=True)
+        uistuff.keep(self.widgets["fromCurrent"], "fromCurrent")
+        uistuff.keep(self.widgets["shouldBlack"], "shouldBlack")
+        uistuff.keep(self.widgets["shouldWhite"], "shouldWhite")
         uistuff.keep(self.widgets["threatPV"], "threatPV")
         uistuff.keep(self.widgets["showEval"], "showEval")
-        uistuff.keep(self.widgets["showBlunder"], "showBlunder", first_value=True)
-        uistuff.keep(self.widgets["max_analysis_spin"], "max_analysis_spin", first_value=3)
-        uistuff.keep(self.widgets["variation_threshold_spin"], "variation_threshold_spin", first_value=50)
+        uistuff.keep(self.widgets["showBlunder"], "showBlunder")
+        uistuff.keep(self.widgets["max_analysis_spin"], "max_analysis_spin")
+        uistuff.keep(self.widgets["variation_threshold_spin"], "variation_threshold_spin")
 
         # Analyzing engines
         uistuff.createCombo(self.widgets["ana_combobox"], name="ana_combobox")
@@ -44,8 +44,7 @@ class AnalyzeGameDialog():
         update_analyzers_store(discoverer)
 
         uistuff.keep(self.widgets["ana_combobox"], "ana_combobox", anal_combo_get_value,
-                     lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode",
-                                                                  "analyzer_check", HINT))
+                     lambda combobox, value: anal_combo_set_value(combobox, value, "hint_mode", HINT))
 
         def hide_window(button, *args):
             self.widgets["analyze_game"].destroy()
@@ -59,15 +58,15 @@ class AnalyzeGameDialog():
             gmwidg = persp.cur_gmwidg()
             gamemodel = gmwidg.gamemodel
 
-            old_check_value = conf.get("analyzer_check", True)
+            old_check_value = conf.get("analyzer_check")
             conf.set("analyzer_check", True)
             if HINT not in gamemodel.spectators:
                 asyncio.async(gamemodel.start_analyzer(HINT))
             analyzer = gamemodel.spectators[HINT]
             gmwidg.menuitems["hint_mode"].active = True
-            threat_PV = conf.get("ThreatPV", False)
+            threat_PV = conf.get("ThreatPV")
             if threat_PV:
-                old_inv_check_value = conf.get("inv_analyzer_check", False)
+                old_inv_check_value = conf.get("inv_analyzer_check")
                 conf.set("inv_analyzer_check", True)
                 if SPY not in gamemodel.spectators:
                     asyncio.async(gamemodel.start_analyzer(SPY))
@@ -90,12 +89,12 @@ class AnalyzeGameDialog():
 
             @asyncio.coroutine
             def analyse_moves():
-                should_black = conf.get("shouldBlack", True)
-                should_white = conf.get("shouldWhite", True)
-                from_current = conf.get("fromCurrent", True)
+                should_black = conf.get("shouldBlack")
+                should_white = conf.get("shouldWhite")
+                from_current = conf.get("fromCurrent")
                 start_ply = gmwidg.board.view.shown if from_current else 0
-                move_time = int(conf.get("max_analysis_spin", 3))
-                threshold = int(conf.get("variation_threshold_spin", 50))
+                move_time = int(conf.get("max_analysis_spin"))
+                threshold = int(conf.get("variation_threshold_spin"))
                 for board in gamemodel.boards[start_ply:]:
                     if self.stop_event.is_set():
                         break

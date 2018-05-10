@@ -167,7 +167,6 @@ class NewGameTasker(Gtk.Alignment):
         widgets["colorDock"].add(combo)
         if combo.get_active() < 0:
             combo.set_active(0)
-        uistuff.keep(combo, "newgametasker_colorcombo")
         widgets['yourColorLabel'].set_mnemonic_widget(combo)
 
         # We need to wait until after engines have been discovered, to init the
@@ -228,10 +227,10 @@ class NewGameTasker(Gtk.Alignment):
 
         gamemodel = GameModel(TimeModel(5 * 60, 0))
 
-        name = conf.get("firstName", _("You"))
+        name = conf.get("firstName")
         player0tup = (LOCAL, Human, (color, name), name)
         if opponent == 0:
-            name = conf.get("secondName", _("Guest"))
+            name = conf.get("secondName")
             player1tup = (LOCAL, Human, (1 - color, name), name)
         else:
             engine = discoverer.getEngineByName(engine)
@@ -270,14 +269,14 @@ class InternetGameTasker(Gtk.Alignment):
         self.ics_combo.pack_start(renderer_text, True)
         self.ics_combo.add_attribute(renderer_text, "text", 0)
         self.ics_combo.connect("changed", ICLogon.dialog.on_ics_combo_changed)
-        self.ics_combo.set_active(conf.get("ics_combo", 0))
+        self.ics_combo.set_active(conf.get("ics_combo"))
 
         self.widgets["connectButton"].connect("clicked", self.connectClicked)
         self.widgets["opendialog2"].connect("clicked", self.openDialogClicked)
 
         self.widgets["startIcon"].set_from_pixbuf(big_start)
 
-        uistuff.keep(self.widgets["ics_combo"], "icsCombo")
+        uistuff.keep(self.widgets["ics_combo"], "ics_combo")
         uistuff.keep(self.widgets["autoLogin"], "autoLogin")
 
     def openDialogClicked(self, button):
@@ -349,7 +348,7 @@ class LearnTasker(Gtk.Alignment):
                     for pieces, title in ENDGAMES:
                         self.learnstore.append([pieces, title])
 
-                learn = conf.get("learncombo%s" % self.category, 0)
+                learn = conf.get("learncombo%s" % self.category)
                 self.learn_combo.set_active(learn)
 
                 def on_learn_changed(combo):
@@ -363,7 +362,7 @@ class LearnTasker(Gtk.Alignment):
                 self.learn_combo.connect("changed", on_learn_changed)
 
         self.category_combo.connect("changed", on_category_changed)
-        self.category = conf.get("categorycombo", 0)
+        self.category = conf.get("categorycombo")
         self.category_combo.set_active(self.category)
 
         uistuff.keep(self.widgets["category_combo"], "categorycombo")

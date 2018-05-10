@@ -96,7 +96,7 @@ class ICLogon(object):
         if value is not None:
             names = value.split("|")
         else:
-            names = conf.get("usernameEntry", "", section=self.ics).split("|")
+            names = conf.get("usernameEntry", section=self.ics).split("|")
         if len(names) == 0:
             names = ["", ""]
         elif len(names) < 2:
@@ -153,13 +153,12 @@ class ICLogon(object):
             model = combo.get_model()
             self.ics = model[tree_iter][0]
             # print("Selected: %s" % self.ics)
-            self.widgets["logOnAsGuest"].set_active(conf.get("asGuestCheck", True, section=self.ics))
+            self.widgets["logOnAsGuest"].set_active(conf.get("asGuestCheck", section=self.ics))
             self.on_logOnAsGuest_toggled(self.widgets["logOnAsGuest"])
-            self.user_name_set_value(self.widgets["nameEntry"], conf.get("usernameEntry", "", section=self.ics))
-            self.password_set_value(self.widgets["passEntry"], conf.get("passwordEntry", "", section=self.ics))
-            default_host = "freechess.org" if self.ics == "FICS" else "chessclub.com"
-            self.host_set_value(self.widgets["hostEntry"], conf.get("hostEntry", default_host, section=self.ics))
-            self.widgets["timesealCheck"].set_active(conf.get("timesealCheck", True, section=self.ics))
+            self.user_name_set_value(self.widgets["nameEntry"], conf.get("usernameEntry", section=self.ics))
+            self.password_set_value(self.widgets["passEntry"], conf.get("passwordEntry", section=self.ics))
+            self.host_set_value(self.widgets["hostEntry"], conf.get("hostEntry", section=self.ics))
+            self.widgets["timesealCheck"].set_active(conf.get("timesealCheck", section=self.ics))
             self.on_timeseal_toggled(self.widgets["timesealCheck"])
 
     def _disconnect(self):

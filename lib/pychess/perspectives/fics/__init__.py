@@ -208,7 +208,7 @@ class FICS(GObject.GObject, Perspective):
         self.connection.connect("disconnected", lambda connection: self.close())
         self.connection.connect("error", self.on_connection_error)
         if self.connection.isRegistred():
-            numtimes = conf.get("numberOfTimesLoggedInAsRegisteredUser", 0) + 1
+            numtimes = conf.get("numberOfTimesLoggedInAsRegisteredUser") + 1
             conf.set("numberOfTimesLoggedInAsRegisteredUser", numtimes)
         self.connection.em.connect("onCommandNotFound", lambda em, cmd: log.error(
             "Fics answered '%s': Command not found" % cmd))

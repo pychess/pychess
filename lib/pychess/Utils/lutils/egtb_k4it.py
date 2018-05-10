@@ -40,7 +40,7 @@ class EgtbK4kit:
         if (fen, board.color) in self.table:
             return self.table[(fen, board.color)]
 
-        if probeSoft or not conf.get("online_egtb_check", True):
+        if probeSoft or not conf.get("online_egtb_check"):
             return []
 
         def get_data(URL, fen):

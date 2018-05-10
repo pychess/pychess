@@ -22,6 +22,7 @@ from pychess.Utils.const import HINT, NAME, SPY
 # from pychess.Utils.checkversion import checkversion
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
+from pychess.widgets.Background import hexcol
 from pychess.widgets.tipOfTheDay import TipOfTheDay
 from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.widgets.ExternalsDialog import ExternalsDialog
@@ -255,11 +256,11 @@ class GladeHandlers(object):
     def on_quit1_activate(self, widget, *args):
         perspective = perspective_manager.get_perspective("games")
         if isinstance(widget, Gdk.Event):
-            if len(perspective.gamewidgets) == 1 and conf.get("hideTabs", False):
+            if len(perspective.gamewidgets) == 1 and conf.get("hideTabs"):
                 gmwidg = perspective.cur_gmwidg()
                 perspective.closeGame(gmwidg, gmwidg.gamemodel)
                 return True
-            elif len(perspective.gamewidgets) >= 1 and conf.get("closeAll", False):
+            elif len(perspective.gamewidgets) >= 1 and conf.get("closeAll"):
                 perspective.closeAllGames(perspective.gamewidgets)
                 return True
         if perspective.closeAllGames(perspective.gamewidgets) in (
@@ -473,17 +474,35 @@ class PyChess(Gtk.Application):
         gamewidget.getWidgets()["leave_fullscreen1"].hide()
 
         # Externals download dialog
-        if not conf.get("dont_show_externals_at_startup", False):
+        if not conf.get("dont_show_externals_at_startup"):
             externals_dialog = ExternalsDialog()
             externals_dialog.show()
 
         # Tip of the day dialog
-        if conf.get("show_tip_at_startup", False):
+        if conf.get("show_tip_at_startup"):
             tip_of_the_day = TipOfTheDay()
             tip_of_the_day.show()
 
+        def on_all_engine_discovered(discoverer):
+            engine = discoverer.getEngineByName(discoverer.getEngineLearn())
+            if engine is None:
+                engine = discoverer.getEngineN(-1)
+            default_engine = engine.get("md5")
+            conf.set("ana_combobox", default_engine)
+            conf.set("inv_ana_combobox", default_engine)
+
+            preferencesDialog.run(gamewidget.getWidgets())
+
+        discoverer.connect_after("all_engines_discovered", on_all_engine_discovered)
+
         dd = DiscovererDialog(discoverer)
         self.dd_task = asyncio.async(dd.start())
+
+        style_ctxt = gamewidget.getWidgets()["main_window"].get_style_context()
+        LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])
+        DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
+        conf.set("lightcolour", LIGHT)
+        conf.set("darkcolour", DARK)
 
     def on_gmwidg_created(self, gamehandler, gmwidg):
         log.debug("GladeHandlers.on_gmwidg_created: starting")
@@ -534,10 +553,10 @@ class PyChess(Gtk.Application):
         for widget in ("hint_mode", "spy_mode"):
             widgets[widget].set_sensitive(False)
 
-        uistuff.keep(widgets["hint_mode"], "hint_mode", first_value=True)
-        uistuff.keep(widgets["spy_mode"], "spy_mode", first_value=True)
-        uistuff.keep(widgets["show_sidepanels"], "show_sidepanels", first_value=True)
-        uistuff.keep(widgets["auto_call_flag"], "autoCallFlag", first_value=True)
+        uistuff.keep(widgets["hint_mode"], "hint_mode")
+        uistuff.keep(widgets["spy_mode"], "spy_mode")
+        uistuff.keep(widgets["show_sidepanels"], "show_sidepanels")
+        uistuff.keep(widgets["auto_call_flag"], "autoCallFlag")
 
         # Show main window and init d'n'd
         widgets["main_window"].set_title('%s - PyChess' % _('Welcome'))
@@ -592,7 +611,7 @@ class PyChess(Gtk.Application):
 
         widgets["load_recent_game1"].set_submenu(recent_menu)
 
-        if conf.get("autoLogin", False):
+        if conf.get("autoLogin"):
             internet_game_tasker.connectClicked(None)
 
     def website(self, clb, link):

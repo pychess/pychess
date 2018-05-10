@@ -35,7 +35,7 @@ class ExternalsDialog():
 
         box = Gtk.Box()
         check_button = Gtk.CheckButton(_("database querying needs scoutfish"))
-        check_button.set_active(conf.get("download_scoutfish", False))
+        check_button.set_active(conf.get("download_scoutfish"))
         check_button.connect("toggled", lambda w: conf.set("download_scoutfish", w.get_active()))
         box.add(check_button)
         link = "https://github.com/pychess/scoutfish"
@@ -45,7 +45,7 @@ class ExternalsDialog():
 
         box = Gtk.Box()
         check_button = Gtk.CheckButton(_("database opening tree needs chess_db"))
-        check_button.set_active(conf.get("download_chess_db", False))
+        check_button.set_active(conf.get("download_chess_db"))
         check_button.connect("toggled", lambda w: conf.set("download_chess_db", w.get_active()))
         box.add(check_button)
         link = "https://github.com/pychess/chess_db"
@@ -55,7 +55,7 @@ class ExternalsDialog():
 
         box = Gtk.Box()
         check_button = Gtk.CheckButton(_("ICC lag compensation needs timestamp"))
-        check_button.set_active(conf.get("download_timestamp", False))
+        check_button.set_active(conf.get("download_timestamp"))
         check_button.connect("toggled", lambda w: conf.set("download_timestamp", w.get_active()))
         box.add(check_button)
         link = "http://download.chessclub.com/timestamp/"
@@ -64,7 +64,7 @@ class ExternalsDialog():
         vbox.pack_start(box, False, False, 0)
 
         check_button = Gtk.CheckButton(_("Don't show this dialog on startup."))
-        check_button.set_active(conf.get("dont_show_externals_at_startup", False))
+        check_button.set_active(conf.get("dont_show_externals_at_startup"))
         check_button.connect("toggled", lambda w: conf.set("dont_show_externals_at_startup", w.get_active()))
         vbox.pack_start(check_button, True, True, 0)
 
@@ -83,7 +83,7 @@ class ExternalsDialog():
         @asyncio.coroutine
         def coro():
             altpath = getEngineDataPrefix()
-            if pgn.scoutfish_path is None and conf.get("download_scoutfish", False):
+            if pgn.scoutfish_path is None and conf.get("download_scoutfish"):
                 binary = "https://github.com/pychess/scoutfish/releases/download/20170627/%s" % pgn.scoutfish
                 filename = yield from download_file_async(binary)
                 if filename is not None:
@@ -91,7 +91,7 @@ class ExternalsDialog():
                     os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
                     pgn.scoutfish_path = dest
 
-            if pgn.chess_db_path is None and conf.get("download_chess_db", False):
+            if pgn.chess_db_path is None and conf.get("download_chess_db"):
                 binary = "https://github.com/pychess/chess_db/releases/download/20170627/%s" % pgn.parser
                 filename = yield from download_file_async(binary)
                 if filename is not None:
@@ -99,7 +99,7 @@ class ExternalsDialog():
                     os.chmod(dest, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
                     pgn.chess_db_path = dest
 
-            if TimeSeal.timestamp_path is None and conf.get("download_timestamp", False):
+            if TimeSeal.timestamp_path is None and conf.get("download_timestamp"):
                 binary = "http://download.chessclub.com.s3.amazonaws.com/timestamp/%s" % TimeSeal.timestamp
                 filename = yield from download_file_async(binary)
                 if filename is not None:

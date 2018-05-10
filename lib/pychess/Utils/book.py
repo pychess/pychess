@@ -1,25 +1,13 @@
 
 import os
-import sys
 from struct import Struct
 from collections import namedtuple
 
 from pychess.System import conf
-from pychess.System.prefix import addDataPrefix
 from pychess.Utils.lutils.lmove import parsePolyglot
 from pychess.System.Log import log
 
-if getattr(sys, 'frozen', False):
-    # pyinstaller specific!
-    if hasattr(sys, "_MEIPASS"):
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.dirname(sys.executable)
-    default_path = os.path.join(base_path, "pychess_book.bin")
-else:
-    default_path = os.path.join(addDataPrefix("pychess_book.bin"))
-
-path = conf.get("opening_file_entry", default_path)
+path = conf.get("opening_file_entry")
 
 if os.path.isfile(path):
     bookfile = True
