@@ -13,7 +13,7 @@ if sys.platform == "win32":
     sjaakii_name = "sjaakii_win%s_ms.exe" % BITNESS
 else:
     stockfish_name = "stockfish"
-    sjaakii_name = "jaakii"
+    sjaakii_name = "sjaakii"
 
 # List of known interpreters
 VM = namedtuple('VM', 'name, ext, args')
