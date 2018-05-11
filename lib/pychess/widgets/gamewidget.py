@@ -2,15 +2,13 @@
 
 import sys
 from collections import defaultdict
-from io import StringIO
 
-from gi.repository import Gdk, Gtk, GObject
+from gi.repository import Gtk, GObject
 
 import pychess
 from .BoardControl import BoardControl
 from .ChessClock import ChessClock
 from .MenuItemsDict import MenuItemsDict
-from pychess.Savers import pgn
 from pychess.System import conf
 
 from pychess.System.Log import log
@@ -768,18 +766,6 @@ class GameWidget(GObject.GObject):
         self.infobar.clear_messages()
         if self == self.perspective.cur_gmwidg():
             self.perspective.notebooks["messageArea"].hide()
-
-    def copy_pgn(self):
-        output = StringIO()
-        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-        clipboard.set_text(pgn.save(output, self.gamemodel), -1)
-
-    def copy_fen(self):
-        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-        ply = self.board.view.shown
-        variation = self.board.view.shown_variation_idx
-        fen = self.gamemodel.getBoardAtPly(ply, variation).asFen()
-        clipboard.set_text(fen, -1)
 
 
 # ###############################################################################

@@ -503,8 +503,11 @@ class Games(GObject.GObject, Perspective):
             self.gamewidgets.remove(gmwidg)
             gmwidg.gamemodel.terminate()
 
+            db_persp = perspective_manager.get_perspective("database")
             if len(self.gamewidgets) == 0:
                 for widget in MENU_ITEMS:
+                    if widget in ("copy_pgn", "copy_fen") and db_persp.preview_panel is not None:
+                        continue
                     gamewidget.getWidgets()[widget].set_property('sensitive', False)
 
         return response

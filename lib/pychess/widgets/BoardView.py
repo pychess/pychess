@@ -3,10 +3,12 @@
 
 from math import floor, ceil, pi
 from time import time
+from io import StringIO
 
 import cairo
 from gi.repository import GLib, Gtk, Gdk, GObject, Pango, PangoCairo
 
+from pychess.Savers import pgn
 from pychess.System.prefix import addDataPrefix
 from pychess.System import conf
 from pychess.gfx import Pieces
@@ -1861,3 +1863,13 @@ class BoardView(Gtk.DrawingArea):
         self.premove1 = premove1
         self.premove_ply = premove_ply
         self.premove_promotion = promotion
+
+    def copy_pgn(self):
+        output = StringIO()
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        clipboard.set_text(pgn.save(output, self.model), -1)
+
+    def copy_fen(self):
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        fen = self.model.getBoardAtPly(self.shown, self.shown_variation_idx).asFen()
+        clipboard.set_text(fen, -1)

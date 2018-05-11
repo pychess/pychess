@@ -350,11 +350,25 @@ class GladeHandlers(object):
 
     def on_copy_pgn_activate(self, widget):
         persp = perspective_manager.get_perspective("games")
-        persp.cur_gmwidg().copy_pgn()
+        if perspective_manager.current_perspective == persp:
+            persp.cur_gmwidg().board.view.copy_pgn()
+            return
+
+        persp = perspective_manager.get_perspective("database")
+        if perspective_manager.current_perspective == persp:
+            if persp.preview_panel is not None:
+                persp.preview_panel.boardview.copy_pgn()
 
     def on_copy_fen_activate(self, widget):
         persp = perspective_manager.get_perspective("games")
-        persp.cur_gmwidg().copy_fen()
+        if perspective_manager.current_perspective == persp:
+            persp.cur_gmwidg().board.view.copy_fen()
+            return
+
+        persp = perspective_manager.get_perspective("database")
+        if perspective_manager.current_perspective == persp:
+            if persp.preview_panel is not None:
+                persp.preview_panel.boardview.copy_fen()
 
     def on_manage_engines_activate(self, widget):
         enginesDialog.run(gamewidget.getWidgets())

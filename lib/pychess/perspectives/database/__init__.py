@@ -176,6 +176,15 @@ class Database(GObject.GObject, Perspective):
         self.widgets["import_endgame_nl"].set_sensitive(on)
         self.widgets["import_twic"].set_sensitive(on)
 
+        if on:
+            gamewidget.getWidgets()["copy_pgn"].set_property('sensitive', on)
+            gamewidget.getWidgets()["copy_fen"].set_property('sensitive', on)
+        else:
+            persp = perspective_manager.get_perspective("games")
+            if persp.cur_gmwidg() is None:
+                gamewidget.getWidgets()["copy_pgn"].set_property('sensitive', on)
+                gamewidget.getWidgets()["copy_fen"].set_property('sensitive', on)
+
     def open_chessfile(self, filename):
         if self.first_run:
             self.init_layout()
@@ -284,6 +293,7 @@ class Database(GObject.GObject, Perspective):
                 break
 
         if len(self.chessfiles) == 0:
+            self.chessfile = None
             self.set_sensitives(False)
             perspective_manager.disable_perspective("database")
 
