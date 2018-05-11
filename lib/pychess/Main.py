@@ -483,6 +483,8 @@ class PyChess(Gtk.Application):
             tip_of_the_day = TipOfTheDay()
             tip_of_the_day.show()
 
+        preferencesDialog.run(gamewidget.getWidgets())
+
         def on_all_engine_discovered(discoverer):
             engine = discoverer.getEngineByName(discoverer.getEngineLearn())
             if engine is None:
@@ -490,8 +492,6 @@ class PyChess(Gtk.Application):
             default_engine = engine.get("md5")
             conf.set("ana_combobox", default_engine)
             conf.set("inv_ana_combobox", default_engine)
-
-            preferencesDialog.run(gamewidget.getWidgets())
 
         discoverer.connect_after("all_engines_discovered", on_all_engine_discovered)
 
