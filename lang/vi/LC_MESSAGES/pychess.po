@@ -4,13 +4,14 @@
 # 
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010
+# nguyen vui <vantienwin@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-05-03 16:33+0200\n"
-"PO-Revision-Date: 2018-05-04 00:28+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2018-05-07 03:30+0000\n"
+"Last-Translator: nguyen vui <vantienwin@gmail.com>\n"
 "Language-Team: Vietnamese (http://www.transifex.com/gbtami/pychess/language/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -37,11 +38,11 @@ msgstr "_Tải ván cờ"
 
 #: glade/PyChess.glade:268
 msgid "Load _Recent Game"
-msgstr ""
+msgstr "Tải_Trò chơi Hiện thời"
 
 #: glade/PyChess.glade:277 lib/pychess/widgets/newGameDialog.py:697
 msgid "Setup Position"
-msgstr ""
+msgstr "Thiết lập Vị trí"
 
 #: glade/PyChess.glade:287
 msgid "Enter Game _Notation"
@@ -57,7 +58,7 @@ msgstr "Lưu lại ván với _Tên"
 
 #: glade/PyChess.glade:332
 msgid "Share Game"
-msgstr ""
+msgstr "Chia sẽ trò chơi"
 
 #: glade/PyChess.glade:338
 msgid "_Export Position"
@@ -145,11 +146,11 @@ msgstr "_Xoay bàn cờ"
 
 #: glade/PyChess.glade:657
 msgid "_Fullscreen"
-msgstr ""
+msgstr "_Đầy màn hình"
 
 #: glade/PyChess.glade:670
 msgid "Leave _Fullscreen"
-msgstr ""
+msgstr "Thoát_Đầy màn hình"
 
 #: glade/PyChess.glade:687
 msgid "_Show Sidepanels"
@@ -169,15 +170,15 @@ msgstr ""
 
 #: glade/PyChess.glade:742 lib/pychess/perspectives/database/__init__.py:38
 msgid "Database"
-msgstr ""
+msgstr "Cơ sỡ dữ liệu"
 
 #: glade/PyChess.glade:748
 msgid "New _Database"
-msgstr ""
+msgstr "Mới_dữ liệu"
 
 #: glade/PyChess.glade:760
 msgid "Save database as"
-msgstr ""
+msgstr "Lưu dữ liệu là"
 
 #: glade/PyChess.glade:778
 msgid "Import chessfile"

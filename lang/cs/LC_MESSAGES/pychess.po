@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-05-03 16:33+0200\n"
-"PO-Revision-Date: 2018-05-06 09:13+0000\n"
+"PO-Revision-Date: 2018-05-07 10:17+0000\n"
 "Last-Translator: fri\n"
 "Language-Team: Czech (http://www.transifex.com/gbtami/pychess/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -95,7 +95,7 @@ msgstr "S_troje"
 
 #: glade/PyChess.glade:481
 msgid "Externals"
-msgstr ""
+msgstr "Zevnějšek"
 
 #: glade/PyChess.glade:507
 msgid "_Actions"
@@ -644,7 +644,7 @@ msgstr "Uložit hodnoty změn _hodnocení"
 
 #: glade/PyChess.glade:3852
 msgid "Indent _PGN file"
-msgstr ""
+msgstr "Odsadit soubor _PGN"
 
 #: glade/PyChess.glade:3857
 msgid ""
@@ -976,15 +976,15 @@ msgstr "Tah černého"
 
 #: glade/PyChess.glade:6798
 msgid "Not a capture (quiet) move"
-msgstr ""
+msgstr "Není (tichý) tah zajmutí"
 
 #: glade/PyChess.glade:6834
 msgid "Moved"
-msgstr ""
+msgstr "Taženo"
 
 #: glade/PyChess.glade:6845
 msgid "Captured"
-msgstr ""
+msgstr "Zajmuto"
 
 #: glade/PyChess.glade:6867 glade/newInOut.glade:1421
 msgid "Side to move"
@@ -992,19 +992,19 @@ msgstr "Strana na tahu"
 
 #: glade/PyChess.glade:6941
 msgid "Material/move"
-msgstr ""
+msgstr "Materiál/přesun"
 
 #: glade/PyChess.glade:6991
 msgid "Sub-FEN :"
-msgstr ""
+msgstr "Pod-FEN :"
 
 #: glade/PyChess.glade:7060
 msgid "Pattern"
-msgstr ""
+msgstr "Vzor"
 
 #: glade/PyChess.glade:7090
 msgid "Scout"
-msgstr ""
+msgstr "Průzkumník"
 
 #: glade/analyze_game.glade:22
 msgid "Analyze game"
@@ -1065,7 +1065,7 @@ msgstr "PyChess - Přípojit k internetovým šachům"
 
 #: glade/fics_logon.glade:47
 msgid "<b><big>Connect to Online Chess Server</big></b>"
-msgstr ""
+msgstr "<b><big>Připojit se k internetovému šachovému serveru</big></b>"
 
 #: glade/fics_logon.glade:129
 msgid "_Password:"
@@ -1089,11 +1089,11 @@ msgstr "_Přípojky:"
 
 #: glade/fics_logon.glade:281
 msgid "Lag:"
-msgstr ""
+msgstr "Prodleva:"
 
 #: glade/fics_logon.glade:290
 msgid "Use time compensation"
-msgstr ""
+msgstr "Použít časovou náhradu"
 
 #: glade/fics_logon.glade:379
 msgid "S_ign up"
@@ -1238,7 +1238,7 @@ msgstr "host"
 
 #: glade/fics_lounge.glade:1500
 msgid "Titled"
-msgstr ""
+msgstr "S názvem"
 
 #: glade/fics_lounge.glade:1527
 msgid "_Player List"
@@ -1415,19 +1415,19 @@ msgstr "Vložit FEN"
 
 #: glade/newInOut.glade:169
 msgid "Initial setup"
-msgstr ""
+msgstr "Výchozí nastavení"
 
 #: glade/newInOut.glade:275 glade/newInOut.glade:321 glade/taskers.glade:171
 msgid "Engine playing strength (1=weakest, 20=strongest)"
-msgstr ""
+msgstr "Herní síla stroje (1 = nejslabší, 20 = nejsilnější)"
 
 #: glade/newInOut.glade:359
 msgid "White side - Click to exchange the players"
-msgstr ""
+msgstr "Bílá strana - Klepněte pro výměnu hráčů"
 
 #: glade/newInOut.glade:371
 msgid "Black side - Click to exchange the players"
-msgstr ""
+msgstr "Černá strana - Klepněte pro výměnu hráčů"
 
 #: glade/newInOut.glade:397
 msgid "<b>Players</b>"
@@ -1451,7 +1451,7 @@ msgstr "Normální: 40 min + 15 s/tah"
 
 #: glade/newInOut.glade:655
 msgid "Classical:    3 min / 40 moves"
-msgstr ""
+msgstr "Klasická:    3 minuty/40 tahů"
 
 #: glade/newInOut.glade:766
 msgid "_Play Normal chess"
@@ -1507,7 +1507,7 @@ msgstr "Bílý O-O"
 
 #: glade/newInOut.glade:1558
 msgid "Rotate the board"
-msgstr ""
+msgstr "Otočit šachovnici"
 
 #: glade/saveGamesDialog.glade:7
 msgid "Quit PyChess"
@@ -1538,7 +1538,7 @@ msgstr "Pokud hru neuložíte, bude nynější stav hry trvale ztracen."
 
 #: glade/taskers.glade:39
 msgid "Detailed settings of players, time control and chess variant"
-msgstr ""
+msgstr "Podrobná nastavení hráčů, řízení času a šachovou variantu"
 
 #: glade/taskers.glade:130
 msgid "_Opponent:"
@@ -1554,7 +1554,7 @@ msgstr "<b>_Spustit hru</b>"
 
 #: glade/taskers.glade:276
 msgid "Detailed connection settings"
-msgstr ""
+msgstr "Podrobná nastavení připojení"
 
 #: glade/taskers.glade:346
 msgid "Auto login on startup"
@@ -1562,7 +1562,7 @@ msgstr "Automatické přihlášení při spuštění"
 
 #: glade/taskers.glade:366
 msgid "Server:"
-msgstr ""
+msgstr "Server:"
 
 #: glade/taskers.glade:415
 msgid "<b>_Connect to server</b>"
@@ -1570,31 +1570,31 @@ msgstr "<b>_Připojit k serveru</b>"
 
 #: glade/taskers.glade:466
 msgid "Select a pgn or epd or fen chess file"
-msgstr ""
+msgstr "Vyberte šachový soubor PGN nebo EPD nebo FEN"
 
 #: glade/taskers.glade:529
 msgid "_Recent:"
-msgstr ""
+msgstr "_Nedávný:"
 
 #: glade/taskers.glade:539
 msgid "Create a new database"
-msgstr ""
+msgstr "Vytvořit novou databázi"
 
 #: glade/taskers.glade:606
 msgid "<b>Open database</b>"
-msgstr ""
+msgstr "<b>Otevřít databázi</b>"
 
 #: glade/taskers.glade:657
 msgid "View lectures, solve puzzles or start practicing endgames"
-msgstr ""
+msgstr "Zobrazit přednášky, řešit hlavolamy nebo začít s cvičením koncových her"
 
 #: glade/taskers.glade:720
 msgid "Category:"
-msgstr ""
+msgstr "Skupina:"
 
 #: glade/taskers.glade:793
 msgid "<b>Start learning</b>"
-msgstr ""
+msgstr "<b>Začít s výukou</b>"
 
 #: glade/tipoftheday.glade:7
 msgid "Tip Of The day"
@@ -1624,12 +1624,12 @@ msgstr "Otevřít hru"
 #: lib/pychess/Database/PgnImport.py:191
 #, python-format
 msgid "Reading %s ..."
-msgstr ""
+msgstr "Čte se %s ..."
 
 #: lib/pychess/Database/PgnImport.py:356 lib/pychess/Database/PgnImport.py:391
 #, python-format
 msgid "%(counter)s game headers from %(filename)s imported"
-msgstr ""
+msgstr "%(counter)s herních záhlaví z %(filename)s zavedeno"
 
 #: lib/pychess/Players/CECPEngine.py:805
 #, python-format
@@ -1856,17 +1856,17 @@ msgstr "Čachy-Alpha-2-Diagram"
 #: lib/pychess/Savers/chesspastebin.py:19
 msgid ""
 "The current game is over. First, please verify the properties of the game."
-msgstr ""
+msgstr "Nynější hra je skončena. Nejprve, prosím, prověřte vlastnosti hry."
 
 #: lib/pychess/Savers/chesspastebin.py:21
 msgid ""
 "The current game is not terminated. Its export may have a limited interest."
-msgstr ""
+msgstr "Nynější hra není skončena. O její vyvedení může být omezený zájem."
 
 #: lib/pychess/Savers/chesspastebin.py:22
 #, python-format
 msgid "Should %s publicly publish your game as PGN on chesspastebin.com ?"
-msgstr ""
+msgstr "Má %s vaši hru zveřejnit jako PGN na chesspastebin.com ?"
 
 #: lib/pychess/Savers/chesspastebin.py:57
 msgid "Game shared at "
@@ -1896,7 +1896,7 @@ msgstr "Hru nelze nahrát z důvodu chyby při zpracování FEN"
 
 #: lib/pychess/Savers/olv.py:10
 msgid "Chess Compositions from yacpdb.org"
-msgstr ""
+msgstr "Šachová rozvržení z yacpdb.org"
 
 #: lib/pychess/Savers/pgn.py:48
 msgid "Chess Game"
@@ -1904,19 +1904,19 @@ msgstr "Šachová hra"
 
 #: lib/pychess/Savers/pgn.py:334
 msgid "Analyzer's primary variation"
-msgstr ""
+msgstr "Základní obměna analyzátoru"
 
 #: lib/pychess/Savers/pgn.py:466
 msgid "Importing game headers..."
-msgstr ""
+msgstr "Zavádí se herní záhlaví"
 
 #: lib/pychess/Savers/pgn.py:483
 msgid "Creating .bin index file..."
-msgstr ""
+msgstr "Vytváří se rejstříkový soubor .bin..."
 
 #: lib/pychess/Savers/pgn.py:509
 msgid "Creating .scout index file..."
-msgstr ""
+msgstr "Vytváří se rejstříkový soubor .scout..."
 
 #: lib/pychess/Savers/pgn.py:813
 msgid "Invalid move."
@@ -1925,7 +1925,7 @@ msgstr "Neplatný tah."
 #: lib/pychess/Savers/pgn.py:946
 #, python-format
 msgid "Error parsing %(mstr)s"
-msgstr ""
+msgstr "Chyba při zpracování %(mstr)s"
 
 #: lib/pychess/Savers/pgn.py:979
 #, python-format
@@ -1977,11 +1977,11 @@ msgstr "s"
 
 #: lib/pychess/Utils/__init__.py:14
 msgid "Illegal"
-msgstr ""
+msgstr "Neplatný"
 
 #: lib/pychess/Utils/__init__.py:38 lib/pychess/Utils/__init__.py:39
 msgid "Mate"
-msgstr ""
+msgstr "Pomocník"
 
 #: lib/pychess/Utils/checkversion.py:47
 #, python-format
@@ -1990,11 +1990,11 @@ msgstr "<b>Je dostupná nová verze %s!</b>"
 
 #: lib/pychess/Utils/isoCountries.py:11
 msgid "Andorra"
-msgstr ""
+msgstr "Andorra"
 
 #: lib/pychess/Utils/isoCountries.py:12
 msgid "United Arab Emirates"
-msgstr ""
+msgstr "Spojené arabské emiráty"
 
 #: lib/pychess/Utils/isoCountries.py:13
 msgid "Afghanistan"
@@ -2002,99 +2002,99 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:14
 msgid "Antigua and Barbuda"
-msgstr ""
+msgstr "Antigua a Barbuda"
 
 #: lib/pychess/Utils/isoCountries.py:15
 msgid "Anguilla"
-msgstr ""
+msgstr "Anguilla"
 
 #: lib/pychess/Utils/isoCountries.py:16
 msgid "Albania"
-msgstr ""
+msgstr "Albánie"
 
 #: lib/pychess/Utils/isoCountries.py:17
 msgid "Armenia"
-msgstr ""
+msgstr "Arménie"
 
 #: lib/pychess/Utils/isoCountries.py:19
 msgid "Angola"
-msgstr ""
+msgstr "Angola"
 
 #: lib/pychess/Utils/isoCountries.py:20
 msgid "Antarctica"
-msgstr ""
+msgstr "Antarktika"
 
 #: lib/pychess/Utils/isoCountries.py:21
 msgid "Argentina"
-msgstr ""
+msgstr "Argentina"
 
 #: lib/pychess/Utils/isoCountries.py:22
 msgid "American Samoa"
-msgstr ""
+msgstr "Americká Samoa"
 
 #: lib/pychess/Utils/isoCountries.py:23
 msgid "Austria"
-msgstr ""
+msgstr "Rakousko"
 
 #: lib/pychess/Utils/isoCountries.py:24
 msgid "Australia"
-msgstr ""
+msgstr "Austrálie"
 
 #: lib/pychess/Utils/isoCountries.py:25
 msgid "Aruba"
-msgstr ""
+msgstr "Aruba"
 
 #: lib/pychess/Utils/isoCountries.py:26
 msgid "Åland Islands"
-msgstr ""
+msgstr "Ålandské ostrovy"
 
 #: lib/pychess/Utils/isoCountries.py:27
 msgid "Azerbaijan"
-msgstr ""
+msgstr "Ázerbájdžán"
 
 #: lib/pychess/Utils/isoCountries.py:28
 msgid "Bosnia and Herzegovina"
-msgstr ""
+msgstr "Bosna a Hercegovina"
 
 #: lib/pychess/Utils/isoCountries.py:29
 msgid "Barbados"
-msgstr ""
+msgstr "Barbados"
 
 #: lib/pychess/Utils/isoCountries.py:30
 msgid "Bangladesh"
-msgstr ""
+msgstr "Bangladéš"
 
 #: lib/pychess/Utils/isoCountries.py:31
 msgid "Belgium"
-msgstr ""
+msgstr "Belgie"
 
 #: lib/pychess/Utils/isoCountries.py:32
 msgid "Burkina Faso"
-msgstr ""
+msgstr "Burkina Faso"
 
 #: lib/pychess/Utils/isoCountries.py:33
 msgid "Bulgaria"
-msgstr ""
+msgstr "Bulharsko"
 
 #: lib/pychess/Utils/isoCountries.py:34
 msgid "Bahrain"
-msgstr ""
+msgstr "Bahrajn"
 
 #: lib/pychess/Utils/isoCountries.py:35
 msgid "Burundi"
-msgstr ""
+msgstr "Burundi"
 
 #: lib/pychess/Utils/isoCountries.py:36
 msgid "Benin"
-msgstr ""
+msgstr "Benin"
 
 #: lib/pychess/Utils/isoCountries.py:37
 msgid "Saint Barthélemy"
-msgstr ""
+msgstr "Svatý Bartoloměj"
 
 #: lib/pychess/Utils/isoCountries.py:38
 msgid "Bermuda"
-msgstr ""
+msgstr "Bermudy"
 
 #: lib/pychess/Utils/isoCountries.py:39
 msgid "Brunei Darussalam"
@@ -2110,35 +2110,35 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:42
 msgid "Brazil"
-msgstr ""
+msgstr "Brazílie"
 
 #: lib/pychess/Utils/isoCountries.py:43
 msgid "Bahamas"
-msgstr ""
+msgstr "Bahamy"
 
 #: lib/pychess/Utils/isoCountries.py:44
 msgid "Bhutan"
-msgstr ""
+msgstr "Bhútán"
 
 #: lib/pychess/Utils/isoCountries.py:45
 msgid "Bouvet Island"
-msgstr ""
+msgstr "Bouvetův ostrov"
 
 #: lib/pychess/Utils/isoCountries.py:46
 msgid "Botswana"
-msgstr ""
+msgstr "Botswana"
 
 #: lib/pychess/Utils/isoCountries.py:47
 msgid "Belarus"
-msgstr ""
+msgstr "Bělorusko"
 
 #: lib/pychess/Utils/isoCountries.py:48
 msgid "Belize"
-msgstr ""
+msgstr "Belize"
 
 #: lib/pychess/Utils/isoCountries.py:49
 msgid "Canada"
-msgstr ""
+msgstr "Kanada"
 
 #: lib/pychess/Utils/isoCountries.py:50
 msgid "Cocos (Keeling) Islands"
@@ -2146,139 +2146,139 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:51
 msgid "Congo (the Democratic Republic of the)"
-msgstr ""
+msgstr "Kongo (Demokratická republika)"
 
 #: lib/pychess/Utils/isoCountries.py:52
 msgid "Central African Republic"
-msgstr ""
+msgstr "Středoafrická republika"
 
 #: lib/pychess/Utils/isoCountries.py:53
 msgid "Congo"
-msgstr ""
+msgstr "Kongo"
 
 #: lib/pychess/Utils/isoCountries.py:54
 msgid "Switzerland"
-msgstr ""
+msgstr "Švýcarsko"
 
 #: lib/pychess/Utils/isoCountries.py:55
 msgid "Côte d'Ivoire"
-msgstr ""
+msgstr "Slonovinové pobřeží"
 
 #: lib/pychess/Utils/isoCountries.py:56
 msgid "Cook Islands"
-msgstr ""
+msgstr "Cookovy ostrovy"
 
 #: lib/pychess/Utils/isoCountries.py:57
 msgid "Chile"
-msgstr ""
+msgstr "Chile"
 
 #: lib/pychess/Utils/isoCountries.py:58
 msgid "Cameroon"
-msgstr ""
+msgstr "Kamerun"
 
 #: lib/pychess/Utils/isoCountries.py:59
 msgid "China"
-msgstr ""
+msgstr "Čína"
 
 #: lib/pychess/Utils/isoCountries.py:60
 msgid "Colombia"
-msgstr ""
+msgstr "Kolumbie"
 
 #: lib/pychess/Utils/isoCountries.py:61
 msgid "Costa Rica"
-msgstr ""
+msgstr "Kostarika"
 
 #: lib/pychess/Utils/isoCountries.py:62
 msgid "Cuba"
-msgstr ""
+msgstr "Kuba"
 
 #: lib/pychess/Utils/isoCountries.py:63
 msgid "Cabo Verde"
-msgstr ""
+msgstr "Kapverdy"
 
 #: lib/pychess/Utils/isoCountries.py:64
 msgid "Curaçao"
-msgstr ""
+msgstr "Curaçao"
 
 #: lib/pychess/Utils/isoCountries.py:65
 msgid "Christmas Island"
-msgstr ""
+msgstr "Vánoční ostrov"
 
 #: lib/pychess/Utils/isoCountries.py:66
 msgid "Cyprus"
-msgstr ""
+msgstr "Kypr"
 
 #: lib/pychess/Utils/isoCountries.py:67
 msgid "Czechia"
-msgstr ""
+msgstr "Česká republika"
 
 #: lib/pychess/Utils/isoCountries.py:68
 msgid "Germany"
-msgstr ""
+msgstr "Německo"
 
 #: lib/pychess/Utils/isoCountries.py:69
 msgid "Djibouti"
-msgstr ""
+msgstr "Džibutsko"
 
 #: lib/pychess/Utils/isoCountries.py:70
 msgid "Denmark"
-msgstr ""
+msgstr "Dánsko"
 
 #: lib/pychess/Utils/isoCountries.py:71
 msgid "Dominica"
-msgstr ""
+msgstr "Dominika (Společenství Dominika)"
 
 #: lib/pychess/Utils/isoCountries.py:72
 msgid "Dominican Republic"
-msgstr ""
+msgstr "Dominikánská republika"
 
 #: lib/pychess/Utils/isoCountries.py:73
 msgid "Algeria"
-msgstr ""
+msgstr "Alžírsko"
 
 #: lib/pychess/Utils/isoCountries.py:74
 msgid "Ecuador"
-msgstr ""
+msgstr "Ekvádor"
 
 #: lib/pychess/Utils/isoCountries.py:75
 msgid "Estonia"
-msgstr ""
+msgstr "Estonsko"
 
 #: lib/pychess/Utils/isoCountries.py:76
 msgid "Egypt"
-msgstr ""
+msgstr "Egypt"
 
 #: lib/pychess/Utils/isoCountries.py:77
 msgid "Western Sahara"
-msgstr ""
+msgstr "Západní Sahara"
 
 #: lib/pychess/Utils/isoCountries.py:78
 msgid "Eritrea"
-msgstr ""
+msgstr "Eritrea"
 
 #: lib/pychess/Utils/isoCountries.py:79
 msgid "Spain"
-msgstr ""
+msgstr "Španělsko"
 
 #: lib/pychess/Utils/isoCountries.py:80
 msgid "Ethiopia"
-msgstr ""
+msgstr "Etiopie"
 
 #: lib/pychess/Utils/isoCountries.py:81
 msgid "Finland"
-msgstr ""
+msgstr "Finsko"
 
 #: lib/pychess/Utils/isoCountries.py:82
 msgid "Fiji"
-msgstr ""
+msgstr "Fidži"
 
 #: lib/pychess/Utils/isoCountries.py:83
 msgid "Falkland Islands [Malvinas]"
-msgstr ""
+msgstr "Falklandské ostrovy [Malvíny]"
 
 #: lib/pychess/Utils/isoCountries.py:84
 msgid "Micronesia (Federated States of)"
-msgstr ""
+msgstr "Federativní státy Mikronésie"
 
 #: lib/pychess/Utils/isoCountries.py:85
 msgid "Faroe Islands"
@@ -2286,11 +2286,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:86
 msgid "France"
-msgstr ""
+msgstr "Francie"
 
 #: lib/pychess/Utils/isoCountries.py:87
 msgid "Gabon"
-msgstr ""
+msgstr "Gabon"
 
 #: lib/pychess/Utils/isoCountries.py:88
 msgid "United Kingdom of Great Britain and Northern Ireland"
@@ -2298,7 +2298,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:89
 msgid "Grenada"
-msgstr ""
+msgstr "Grenada"
 
 #: lib/pychess/Utils/isoCountries.py:90
 msgid "Georgia"
@@ -2318,7 +2318,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:94
 msgid "Gibraltar"
-msgstr ""
+msgstr "Gibraltar"
 
 #: lib/pychess/Utils/isoCountries.py:95
 msgid "Greenland"
@@ -2326,7 +2326,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:96
 msgid "Gambia"
-msgstr ""
+msgstr "Gambie"
 
 #: lib/pychess/Utils/isoCountries.py:97
 msgid "Guinea"
@@ -2334,7 +2334,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:98
 msgid "Guadeloupe"
-msgstr ""
+msgstr "Guadeloupe"
 
 #: lib/pychess/Utils/isoCountries.py:99
 msgid "Equatorial Guinea"
@@ -2342,7 +2342,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:100
 msgid "Greece"
-msgstr ""
+msgstr "Řecko"
 
 #: lib/pychess/Utils/isoCountries.py:101
 msgid "South Georgia and the South Sandwich Islands"
@@ -2350,11 +2350,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:102
 msgid "Guatemala"
-msgstr ""
+msgstr "Guatemala"
 
 #: lib/pychess/Utils/isoCountries.py:103
 msgid "Guam"
-msgstr ""
+msgstr "Guam"
 
 #: lib/pychess/Utils/isoCountries.py:104
 msgid "Guinea-Bissau"
@@ -2362,11 +2362,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:105
 msgid "Guyana"
-msgstr ""
+msgstr "Guyana"
 
 #: lib/pychess/Utils/isoCountries.py:106
 msgid "Hong Kong"
-msgstr ""
+msgstr "Hong Kong"
 
 #: lib/pychess/Utils/isoCountries.py:107
 msgid "Heard Island and McDonald Islands"
@@ -2374,15 +2374,15 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:108
 msgid "Honduras"
-msgstr ""
+msgstr "Honduras"
 
 #: lib/pychess/Utils/isoCountries.py:109
 msgid "Croatia"
-msgstr ""
+msgstr "Chorvatsko"
 
 #: lib/pychess/Utils/isoCountries.py:110
 msgid "Haiti"
-msgstr ""
+msgstr "Haiti"
 
 #: lib/pychess/Utils/isoCountries.py:111
 msgid "Hungary"
@@ -2390,23 +2390,23 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:112
 msgid "Indonesia"
-msgstr ""
+msgstr "Indonésie"
 
 #: lib/pychess/Utils/isoCountries.py:113
 msgid "Ireland"
-msgstr ""
+msgstr "Irsko"
 
 #: lib/pychess/Utils/isoCountries.py:114
 msgid "Israel"
-msgstr ""
+msgstr "Izrael"
 
 #: lib/pychess/Utils/isoCountries.py:115
 msgid "Isle of Man"
-msgstr ""
+msgstr "Ostrov Man"
 
 #: lib/pychess/Utils/isoCountries.py:116
 msgid "India"
-msgstr ""
+msgstr "Indie"
 
 #: lib/pychess/Utils/isoCountries.py:117
 msgid "British Indian Ocean Territory"
@@ -2414,19 +2414,19 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:118
 msgid "Iraq"
-msgstr ""
+msgstr "Irák"
 
 #: lib/pychess/Utils/isoCountries.py:119
 msgid "Iran (Islamic Republic of)"
-msgstr ""
+msgstr "Írán (Íránská islámská republika)"
 
 #: lib/pychess/Utils/isoCountries.py:120
 msgid "Iceland"
-msgstr ""
+msgstr "Island"
 
 #: lib/pychess/Utils/isoCountries.py:121
 msgid "Italy"
-msgstr ""
+msgstr "Itálie"
 
 #: lib/pychess/Utils/isoCountries.py:122
 msgid "Jersey"
@@ -2438,15 +2438,15 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:124
 msgid "Jordan"
-msgstr ""
+msgstr "Jordánsko"
 
 #: lib/pychess/Utils/isoCountries.py:125
 msgid "Japan"
-msgstr ""
+msgstr "Japonsko"
 
 #: lib/pychess/Utils/isoCountries.py:126
 msgid "Kenya"
-msgstr ""
+msgstr "Keňa"
 
 #: lib/pychess/Utils/isoCountries.py:127
 msgid "Kyrgyzstan"
@@ -2454,11 +2454,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:128
 msgid "Cambodia"
-msgstr ""
+msgstr "Kambodža"
 
 #: lib/pychess/Utils/isoCountries.py:129
 msgid "Kiribati"
-msgstr ""
+msgstr "Kiribati"
 
 #: lib/pychess/Utils/isoCountries.py:130
 msgid "Comoros"
@@ -2474,7 +2474,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:133
 msgid "Korea (the Republic of)"
-msgstr ""
+msgstr "Korea (republika)"
 
 #: lib/pychess/Utils/isoCountries.py:134
 msgid "Kuwait"
@@ -2494,7 +2494,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:138
 msgid "Lebanon"
-msgstr ""
+msgstr "Libanon"
 
 #: lib/pychess/Utils/isoCountries.py:139
 msgid "Saint Lucia"
@@ -2510,15 +2510,15 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:142
 msgid "Liberia"
-msgstr ""
+msgstr "Libérie"
 
 #: lib/pychess/Utils/isoCountries.py:143
 msgid "Lesotho"
-msgstr ""
+msgstr "Lesotho"
 
 #: lib/pychess/Utils/isoCountries.py:144
 msgid "Lithuania"
-msgstr ""
+msgstr "Litva"
 
 #: lib/pychess/Utils/isoCountries.py:145
 msgid "Luxembourg"
@@ -2526,19 +2526,19 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:146
 msgid "Latvia"
-msgstr ""
+msgstr "Lotyšsko"
 
 #: lib/pychess/Utils/isoCountries.py:147
 msgid "Libya"
-msgstr ""
+msgstr "Libye"
 
 #: lib/pychess/Utils/isoCountries.py:148
 msgid "Morocco"
-msgstr ""
+msgstr "Maroko"
 
 #: lib/pychess/Utils/isoCountries.py:149
 msgid "Monaco"
-msgstr ""
+msgstr "Monako"
 
 #: lib/pychess/Utils/isoCountries.py:150
 msgid "Moldova (the Republic of)"
@@ -2546,7 +2546,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:151
 msgid "Montenegro"
-msgstr ""
+msgstr "Černá Hora"
 
 #: lib/pychess/Utils/isoCountries.py:152
 msgid "Saint Martin (French part)"
@@ -2554,7 +2554,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:153
 msgid "Madagascar"
-msgstr ""
+msgstr "Madagaskar"
 
 #: lib/pychess/Utils/isoCountries.py:154
 msgid "Marshall Islands"
@@ -2566,7 +2566,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:156
 msgid "Mali"
-msgstr ""
+msgstr "Mali"
 
 #: lib/pychess/Utils/isoCountries.py:157
 msgid "Myanmar"
@@ -2574,7 +2574,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:158
 msgid "Mongolia"
-msgstr ""
+msgstr "Mongolsko"
 
 #: lib/pychess/Utils/isoCountries.py:159
 msgid "Macao"
@@ -2590,7 +2590,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:162
 msgid "Mauritania"
-msgstr ""
+msgstr "Mauritánie"
 
 #: lib/pychess/Utils/isoCountries.py:163
 msgid "Montserrat"
@@ -2606,7 +2606,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:166
 msgid "Maldives"
-msgstr ""
+msgstr "Maledivy"
 
 #: lib/pychess/Utils/isoCountries.py:167
 msgid "Malawi"
@@ -2614,7 +2614,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:168
 msgid "Mexico"
-msgstr ""
+msgstr "Mexiko"
 
 #: lib/pychess/Utils/isoCountries.py:169
 msgid "Malaysia"
@@ -2626,7 +2626,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:171
 msgid "Namibia"
-msgstr ""
+msgstr "Namibie"
 
 #: lib/pychess/Utils/isoCountries.py:172
 msgid "New Caledonia"
@@ -2634,7 +2634,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:173
 msgid "Niger"
-msgstr ""
+msgstr "Niger"
 
 #: lib/pychess/Utils/isoCountries.py:174
 msgid "Norfolk Island"
@@ -2642,7 +2642,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:175
 msgid "Nigeria"
-msgstr ""
+msgstr "Nigérie"
 
 #: lib/pychess/Utils/isoCountries.py:176
 msgid "Nicaragua"
@@ -2650,19 +2650,19 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:177
 msgid "Netherlands"
-msgstr ""
+msgstr "Nizozemí"
 
 #: lib/pychess/Utils/isoCountries.py:178
 msgid "Norway"
-msgstr ""
+msgstr "Norsko"
 
 #: lib/pychess/Utils/isoCountries.py:179
 msgid "Nepal"
-msgstr ""
+msgstr "Nepál"
 
 #: lib/pychess/Utils/isoCountries.py:180
 msgid "Nauru"
-msgstr ""
+msgstr "Nauru"
 
 #: lib/pychess/Utils/isoCountries.py:181
 msgid "Niue"
@@ -2678,11 +2678,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:184
 msgid "Panama"
-msgstr ""
+msgstr "Panama"
 
 #: lib/pychess/Utils/isoCountries.py:185
 msgid "Peru"
-msgstr ""
+msgstr "Peru"
 
 #: lib/pychess/Utils/isoCountries.py:186
 msgid "French Polynesia"
@@ -2690,19 +2690,19 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:187
 msgid "Papua New Guinea"
-msgstr ""
+msgstr "Papua-Nová Guinea"
 
 #: lib/pychess/Utils/isoCountries.py:188
 msgid "Philippines"
-msgstr ""
+msgstr "Filipíny"
 
 #: lib/pychess/Utils/isoCountries.py:189
 msgid "Pakistan"
-msgstr ""
+msgstr "Pákistán"
 
 #: lib/pychess/Utils/isoCountries.py:190
 msgid "Poland"
-msgstr ""
+msgstr "Polsko"
 
 #: lib/pychess/Utils/isoCountries.py:191
 msgid "Saint Pierre and Miquelon"
@@ -2714,7 +2714,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:193
 msgid "Puerto Rico"
-msgstr ""
+msgstr "Portoriko"
 
 #: lib/pychess/Utils/isoCountries.py:194
 msgid "Palestine, State of"
@@ -2722,11 +2722,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:195
 msgid "Portugal"
-msgstr ""
+msgstr "Portugalsko"
 
 #: lib/pychess/Utils/isoCountries.py:196
 msgid "Palau"
-msgstr ""
+msgstr "Palau"
 
 #: lib/pychess/Utils/isoCountries.py:197
 msgid "Paraguay"
@@ -2734,31 +2734,31 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:198
 msgid "Qatar"
-msgstr ""
+msgstr "Katar"
 
 #: lib/pychess/Utils/isoCountries.py:199
 msgid "Réunion"
-msgstr ""
+msgstr "Réunion"
 
 #: lib/pychess/Utils/isoCountries.py:200
 msgid "Romania"
-msgstr ""
+msgstr "Rumunsko"
 
 #: lib/pychess/Utils/isoCountries.py:201
 msgid "Serbia"
-msgstr ""
+msgstr "Srbsko"
 
 #: lib/pychess/Utils/isoCountries.py:202
 msgid "Russian Federation"
-msgstr ""
+msgstr "Ruská federace"
 
 #: lib/pychess/Utils/isoCountries.py:203
 msgid "Rwanda"
-msgstr ""
+msgstr "Rwanda"
 
 #: lib/pychess/Utils/isoCountries.py:204
 msgid "Saudi Arabia"
-msgstr ""
+msgstr "Saudská Arábie"
 
 #: lib/pychess/Utils/isoCountries.py:205
 msgid "Solomon Islands"
@@ -2770,15 +2770,15 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:207
 msgid "Sudan"
-msgstr ""
+msgstr "Súdán"
 
 #: lib/pychess/Utils/isoCountries.py:208
 msgid "Sweden"
-msgstr ""
+msgstr "Švédsko"
 
 #: lib/pychess/Utils/isoCountries.py:209
 msgid "Singapore"
-msgstr ""
+msgstr "Singapur"
 
 #: lib/pychess/Utils/isoCountries.py:210
 msgid "Saint Helena, Ascension and Tristan da Cunha"
@@ -2786,7 +2786,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:211
 msgid "Slovenia"
-msgstr ""
+msgstr "Slovinsko"
 
 #: lib/pychess/Utils/isoCountries.py:212
 msgid "Svalbard and Jan Mayen"
@@ -2794,23 +2794,23 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:213
 msgid "Slovakia"
-msgstr ""
+msgstr "Slovensko"
 
 #: lib/pychess/Utils/isoCountries.py:214
 msgid "Sierra Leone"
-msgstr ""
+msgstr "Sierra Leone"
 
 #: lib/pychess/Utils/isoCountries.py:215
 msgid "San Marino"
-msgstr ""
+msgstr "San Marino"
 
 #: lib/pychess/Utils/isoCountries.py:216
 msgid "Senegal"
-msgstr ""
+msgstr "Senegal"
 
 #: lib/pychess/Utils/isoCountries.py:217
 msgid "Somalia"
-msgstr ""
+msgstr "Somálsko"
 
 #: lib/pychess/Utils/isoCountries.py:218
 msgid "Suriname"
@@ -2838,7 +2838,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:224
 msgid "Swaziland"
-msgstr ""
+msgstr "Swazijsko"
 
 #: lib/pychess/Utils/isoCountries.py:225
 msgid "Turks and Caicos Islands"
@@ -2854,7 +2854,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:228
 msgid "Togo"
-msgstr ""
+msgstr "Togo"
 
 #: lib/pychess/Utils/isoCountries.py:229
 msgid "Thailand"
@@ -2862,7 +2862,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:230
 msgid "Tajikistan"
-msgstr ""
+msgstr "Tádžikistán"
 
 #: lib/pychess/Utils/isoCountries.py:231
 msgid "Tokelau"
@@ -2874,11 +2874,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:233
 msgid "Turkmenistan"
-msgstr ""
+msgstr "Turkmenistán"
 
 #: lib/pychess/Utils/isoCountries.py:234
 msgid "Tunisia"
-msgstr ""
+msgstr "Tunisko"
 
 #: lib/pychess/Utils/isoCountries.py:235
 msgid "Tonga"
@@ -2886,15 +2886,15 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:237
 msgid "Turkey"
-msgstr ""
+msgstr "Turecko"
 
 #: lib/pychess/Utils/isoCountries.py:238
 msgid "Trinidad and Tobago"
-msgstr ""
+msgstr "Trinidad a Tobago"
 
 #: lib/pychess/Utils/isoCountries.py:239
 msgid "Tuvalu"
-msgstr ""
+msgstr "Tuvalu"
 
 #: lib/pychess/Utils/isoCountries.py:240
 msgid "Taiwan (Province of China)"
@@ -2906,11 +2906,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:242
 msgid "Ukraine"
-msgstr ""
+msgstr "Ukrajina"
 
 #: lib/pychess/Utils/isoCountries.py:243
 msgid "Uganda"
-msgstr ""
+msgstr "Uganda"
 
 #: lib/pychess/Utils/isoCountries.py:244
 msgid "United States Minor Outlying Islands"
@@ -2922,11 +2922,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:246
 msgid "Uruguay"
-msgstr ""
+msgstr "Uruguay"
 
 #: lib/pychess/Utils/isoCountries.py:247
 msgid "Uzbekistan"
-msgstr ""
+msgstr "Uzbekistán"
 
 #: lib/pychess/Utils/isoCountries.py:248
 msgid "Holy See"
@@ -2942,7 +2942,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:251
 msgid "Virgin Islands (British)"
-msgstr ""
+msgstr "Panesnké ostrovy (Britské)"
 
 #: lib/pychess/Utils/isoCountries.py:252
 msgid "Virgin Islands (U.S.)"
@@ -2950,11 +2950,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:253
 msgid "Viet Nam"
-msgstr ""
+msgstr "Vietnam"
 
 #: lib/pychess/Utils/isoCountries.py:254
 msgid "Vanuatu"
-msgstr ""
+msgstr "Vanuatu"
 
 #: lib/pychess/Utils/isoCountries.py:255
 msgid "Wallis and Futuna"
@@ -2962,11 +2962,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:256
 msgid "Samoa"
-msgstr ""
+msgstr "Samoa"
 
 #: lib/pychess/Utils/isoCountries.py:257
 msgid "Yemen"
-msgstr ""
+msgstr "Jemen"
 
 #: lib/pychess/Utils/isoCountries.py:258
 msgid "Mayotte"
@@ -2974,15 +2974,15 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:260
 msgid "South Africa"
-msgstr ""
+msgstr "Jižní Afrika (Jihoafrická republika)"
 
 #: lib/pychess/Utils/isoCountries.py:261
 msgid "Zambia"
-msgstr ""
+msgstr "Zambie"
 
 #: lib/pychess/Utils/isoCountries.py:262
 msgid "Zimbabwe"
-msgstr ""
+msgstr "Zimbabwe"
 
 #: lib/pychess/Utils/repr.py:24
 msgid "Pawn"
@@ -3044,7 +3044,7 @@ msgstr ""
 
 #: lib/pychess/Utils/repr.py:37
 msgid "Game cancelled"
-msgstr ""
+msgstr "Hra zrušena"
 
 #: lib/pychess/Utils/repr.py:42
 msgid "Because neither player has sufficient material to mate"
@@ -3793,27 +3793,27 @@ msgstr "Přihlášení hostů zakázána serverem FICS"
 
 #: lib/pychess/ic/__init__.py:147
 msgid "1-minute"
-msgstr ""
+msgstr "1 minuta"
 
 #: lib/pychess/ic/__init__.py:148
 msgid "3-minute"
-msgstr ""
+msgstr "3 minuty"
 
 #: lib/pychess/ic/__init__.py:149
 msgid "5-minute"
-msgstr ""
+msgstr "5 minut"
 
 #: lib/pychess/ic/__init__.py:150
 msgid "15-minute"
-msgstr ""
+msgstr "15 minut"
 
 #: lib/pychess/ic/__init__.py:151
 msgid "45-minute"
-msgstr ""
+msgstr "45 minut"
 
 #: lib/pychess/ic/__init__.py:152
 msgid "Chess960"
-msgstr ""
+msgstr "Chess960"
 
 #: lib/pychess/ic/__init__.py:154
 msgid "Examined"
@@ -4032,7 +4032,7 @@ msgstr "Pozastavit"
 
 #: lib/pychess/widgets/ExternalsDialog.py:19
 msgid "Ask for permissions"
-msgstr ""
+msgstr "Požádat o oprávnění"
 
 #: lib/pychess/widgets/ExternalsDialog.py:33
 msgid ""
@@ -4069,40 +4069,40 @@ msgstr "Přijímá se počet hráčů"
 
 #: lib/pychess/widgets/LearnInfoBar.py:115
 msgid "Your turn."
-msgstr ""
+msgstr "Vaše kolo."
 
 #: lib/pychess/widgets/LearnInfoBar.py:116
 msgid "Hint"
-msgstr ""
+msgstr "Rada"
 
 #: lib/pychess/widgets/LearnInfoBar.py:117
 msgid "Best move"
-msgstr ""
+msgstr "Nejlepší tah"
 
 #: lib/pychess/widgets/LearnInfoBar.py:124
 #, python-format
 msgid "Well done! %s completed."
-msgstr ""
+msgstr "Výborně! %s dokončeno."
 
 #: lib/pychess/widgets/LearnInfoBar.py:127
 msgid "Well done!"
-msgstr ""
+msgstr "Výborně!"
 
 #: lib/pychess/widgets/LearnInfoBar.py:128
 msgid "Next"
-msgstr ""
+msgstr "Další"
 
 #: lib/pychess/widgets/LearnInfoBar.py:137
 msgid "Continue"
-msgstr ""
+msgstr "Pokračovat"
 
 #: lib/pychess/widgets/LearnInfoBar.py:146
 msgid "Not the best move!"
-msgstr ""
+msgstr "Nikoli nejlepší tah!"
 
 #: lib/pychess/widgets/LearnInfoBar.py:147
 msgid "Retry"
-msgstr ""
+msgstr "Zkusit ještě jednou"
 
 #: lib/pychess/widgets/LearnInfoBar.py:160
 msgid "Cool! Now let see how it goes in the main line."
@@ -4110,7 +4110,7 @@ msgstr ""
 
 #: lib/pychess/widgets/LearnInfoBar.py:161
 msgid "Back to main line"
-msgstr ""
+msgstr "Zpět do hlavního řádku"
 
 #: lib/pychess/widgets/LogDialog.py:21
 msgid "PyChess Information Window"
@@ -4130,22 +4130,22 @@ msgstr "Vy"
 #: lib/pychess/widgets/TaskerManager.py:309
 #: lib/pychess/perspectives/learn/LecturesPanel.py:15
 msgid "Lectures"
-msgstr ""
+msgstr "Přednášky"
 
 #: lib/pychess/widgets/TaskerManager.py:310
 #: lib/pychess/perspectives/learn/LessonsPanel.py:19
 msgid "Lessons"
-msgstr ""
+msgstr "Vyučovací hodiny"
 
 #: lib/pychess/widgets/TaskerManager.py:311
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:21
 msgid "Puzzles"
-msgstr ""
+msgstr "Hlavolamy"
 
 #: lib/pychess/widgets/TaskerManager.py:312
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:21
 msgid "Endgames"
-msgstr ""
+msgstr "Koncovky"
 
 #: lib/pychess/widgets/ViewsPanel.py:33
 msgid "You have opened no conversations yet"
@@ -4174,11 +4174,11 @@ msgstr ""
 
 #: lib/pychess/widgets/enginesDialog.py:150
 msgid "Option"
-msgstr ""
+msgstr "Volba"
 
 #: lib/pychess/widgets/enginesDialog.py:151
 msgid "Value"
-msgstr ""
+msgstr "Hodnota"
 
 #: lib/pychess/widgets/enginesDialog.py:185
 msgid "Select engine"
@@ -4198,11 +4198,11 @@ msgstr "<big><b>Nelze přidat %s</b></big>"
 
 #: lib/pychess/widgets/enginesDialog.py:218
 msgid "The engine is already installed under the same name"
-msgstr ""
+msgstr "Stroj je již nainstalován pod stejným názvem"
 
 #: lib/pychess/widgets/enginesDialog.py:248
 msgid " is not installed"
-msgstr ""
+msgstr "nenainstalováno"
 
 #: lib/pychess/widgets/enginesDialog.py:259
 #, python-format
@@ -4225,15 +4225,15 @@ msgstr "Vybrat pracovní adresář"
 
 #: lib/pychess/widgets/enginesDialog.py:579
 msgid "Do you really want to restore the default options of the engine ?"
-msgstr ""
+msgstr "Opravdu chcete obnovit výchozí volby stroje?"
 
 #: lib/pychess/widgets/gameinfoDialog.py:61
 msgid "New"
-msgstr ""
+msgstr "Nový"
 
 #: lib/pychess/widgets/gameinfoDialog.py:198
 msgid "Pick a date"
-msgstr ""
+msgstr "Zvolte datum"
 
 #: lib/pychess/widgets/gamenanny.py:112
 #, python-format
@@ -4407,7 +4407,7 @@ msgstr "Minuty:"
 
 #: lib/pychess/widgets/newGameDialog.py:252
 msgid "Moves:"
-msgstr ""
+msgstr "Tahy:"
 
 #: lib/pychess/widgets/newGameDialog.py:252
 msgid "Gain:"
