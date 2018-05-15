@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-05-03 16:33+0200\n"
-"PO-Revision-Date: 2018-05-07 10:17+0000\n"
+"PO-Revision-Date: 2018-05-13 16:28+0000\n"
 "Last-Translator: fri\n"
 "Language-Team: Czech (http://www.transifex.com/gbtami/pychess/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -426,7 +426,7 @@ msgstr "Když je zapnuta tato volba, PyChess bude ukazovat herní výsledky pro 
 
 #: glade/PyChess.glade:1690
 msgid "<b>Opening, endgame</b>"
-msgstr "<b>Zahájení/Otevření hry, zakončení hry</b>"
+msgstr "<b>Zahájení/Otevření hry, koncovky</b>"
 
 #: glade/PyChess.glade:1724
 msgid "Use _analyzer"
@@ -757,7 +757,7 @@ msgstr "Událost:"
 
 #: glade/PyChess.glade:4669
 msgid "Expected format as \"yyyy.mm.dd\" with the allowed joker \"?\""
-msgstr ""
+msgstr "Očekáván formát \"rrrr.mm.dd\" s povoleným zástupným symbolem \"?\""
 
 #: glade/PyChess.glade:4724
 msgid "Identification"
@@ -1137,7 +1137,7 @@ msgstr "5 min"
 
 #: glade/fics_lounge.glade:551
 msgid "_Clear Seeks"
-msgstr "_Vyprázdnit vyhledané nabídky ke hře"
+msgstr "_Vyprázdnit žádosti"
 
 #: glade/fics_lounge.glade:575
 msgid "_Accept"
@@ -1149,7 +1149,7 @@ msgstr "_Odmítnout"
 
 #: glade/fics_lounge.glade:972
 msgid "Send all seeks"
-msgstr "Odeslat všechna hledání"
+msgstr "Odeslat všechny žádosti"
 
 #: glade/fics_lounge.glade:1026
 msgid "Send seek"
@@ -1205,7 +1205,7 @@ msgstr "Čas"
 
 #: glade/fics_lounge.glade:1233
 msgid "Seek _Graph"
-msgstr "Graf hledání"
+msgstr "_Graf žádostí"
 
 #: glade/fics_lounge.glade:1257
 msgid "0 Players Ready"
@@ -1292,7 +1292,7 @@ msgstr "Přírůstek:"
 
 #: glade/fics_lounge.glade:2484
 msgid "Time control:  "
-msgstr "Kontrola času:"
+msgstr "Ovládání času:"
 
 #: glade/fics_lounge.glade:2538 glade/newInOut.glade:715
 msgid "<b>Time Control</b>"
@@ -1586,7 +1586,7 @@ msgstr "<b>Otevřít databázi</b>"
 
 #: glade/taskers.glade:657
 msgid "View lectures, solve puzzles or start practicing endgames"
-msgstr "Zobrazit přednášky, řešit hlavolamy nebo začít s cvičením koncových her"
+msgstr "Zobrazit přednášky, řešit hlavolamy nebo začít s cvičením koncovek"
 
 #: glade/taskers.glade:720
 msgid "Category:"
@@ -1998,7 +1998,7 @@ msgstr "Spojené arabské emiráty"
 
 #: lib/pychess/Utils/isoCountries.py:13
 msgid "Afghanistan"
-msgstr ""
+msgstr "Afghánistán"
 
 #: lib/pychess/Utils/isoCountries.py:14
 msgid "Antigua and Barbuda"
@@ -3507,7 +3507,7 @@ msgstr ""
 
 #: lib/pychess/Variants/racingkings.py:24
 msgid "Racing Kings"
-msgstr ""
+msgstr "Závodění králů"
 
 #: lib/pychess/Variants/randomchess.py:19
 msgid ""
@@ -3826,7 +3826,7 @@ msgstr "Jiné"
 
 #: lib/pychess/ic/__init__.py:228
 msgid "Bullet"
-msgstr ""
+msgstr "Kulka"
 
 #: lib/pychess/ic/__init__.py:273
 msgid "Administrator"
@@ -3890,7 +3890,7 @@ msgstr "Smyšlený účet"
 
 #: lib/pychess/ic/__init__.py:289
 msgid "Candidate Master"
-msgstr ""
+msgstr "Uchazeč o místo mistra"
 
 #: lib/pychess/ic/__init__.py:290
 msgid "FIDE Arbeiter"
@@ -3898,7 +3898,7 @@ msgstr ""
 
 #: lib/pychess/ic/__init__.py:291
 msgid "National Master"
-msgstr ""
+msgstr "Národní mistr"
 
 #: lib/pychess/ic/__init__.py:292
 msgid "Display Master"
@@ -4053,7 +4053,7 @@ msgstr ""
 
 #: lib/pychess/widgets/ExternalsDialog.py:66
 msgid "Don't show this dialog on startup."
-msgstr ""
+msgstr "Neukazovat tento dialog při spuštění."
 
 #: lib/pychess/widgets/InfoPanel.py:88
 msgid "No conversation's selected"
@@ -4212,7 +4212,7 @@ msgstr ""
 #: lib/pychess/widgets/enginesDialog.py:261
 #, python-format
 msgid "Try chmod a+x %s"
-msgstr ""
+msgstr "Zkusit chmod a+x %s"
 
 #: lib/pychess/widgets/enginesDialog.py:302
 #: lib/pychess/widgets/enginesDialog.py:328
@@ -4259,7 +4259,7 @@ msgstr "Zpět o jeden krok"
 
 #: lib/pychess/widgets/gamenanny.py:179
 msgid "Undo two moves"
-msgstr "Zpět o dva kroky"
+msgstr "Zpět o dva tahy"
 
 #: lib/pychess/widgets/gamenanny.py:254
 msgid "You sent an abort offer"
@@ -4391,11 +4391,11 @@ msgstr "Jít na poslední stav hry"
 
 #: lib/pychess/widgets/gamewidget.py:667
 msgid "Find postion in current database"
-msgstr ""
+msgstr "Najít pozici v nynější databázi"
 
 #: lib/pychess/widgets/gamewidget.py:703
 msgid "Position not in current database"
-msgstr ""
+msgstr "Pozice není v nynější databázi"
 
 #: lib/pychess/widgets/newGameDialog.py:81
 msgid "Human Being"
@@ -4415,7 +4415,7 @@ msgstr "Přírustek:"
 
 #: lib/pychess/widgets/newGameDialog.py:285
 msgid "Classical"
-msgstr ""
+msgstr "Klasická"
 
 #: lib/pychess/widgets/newGameDialog.py:289
 msgid "Rapid"
@@ -4424,22 +4424,22 @@ msgstr "Rychle"
 #: lib/pychess/widgets/newGameDialog.py:293
 #, python-format
 msgid "%(name)s %(minutes)d min / %(moves)d moves %(duration)s"
-msgstr ""
+msgstr "%(name)s %(minutes)d minut/ %(moves)d tahů %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:301
 #, python-format
 msgid "%(name)s %(minutes)d min %(sign)s %(gain)d sec/move %(duration)s"
-msgstr ""
+msgstr "%(name)s %(minutes)d minut %(sign)s %(gain)d s/tah %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:309
 #, python-format
 msgid "%(name)s %(minutes)d min %(duration)s"
-msgstr ""
+msgstr "%(name)s %(minutes)d minut %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:317
 #, python-format
 msgid "Estimated duration : %d - %d minutes"
-msgstr ""
+msgstr "Odhadovaná doba trvání : %d - %d minut"
 
 #: lib/pychess/widgets/newGameDialog.py:343
 msgid "Odds"
@@ -4660,7 +4660,7 @@ msgstr "Zaujatá pozice (%s) je neplatná"
 
 #: lib/pychess/Utils/lutils/lmove.py:380
 msgid "pawn capture without target piece is invalid"
-msgstr ""
+msgstr "Zajmutí pěšce bez cílové figurky je neplatné"
 
 #: lib/pychess/Utils/lutils/lmove.py:384
 #, python-format
@@ -4909,70 +4909,70 @@ msgstr "Neoficiální kanál %d"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:26
 msgid "Filters"
-msgstr ""
+msgstr "Filtry"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:30
 msgid "Filters panel can filter game list by various conditions"
-msgstr ""
+msgstr "Filtrovací panel může filtrovat seznam her podle různých podmínek"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:118
 msgid "Edit selected filter"
-msgstr ""
+msgstr "Upravit vybraný filtr"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:123
 msgid "Remove selected filter"
-msgstr ""
+msgstr "Odstranit vybraný filtr"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:128
 msgid "Add new filter"
-msgstr ""
+msgstr "Přidat nový filtr"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:133
 msgid "Seq"
-msgstr ""
+msgstr "Posl"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:135
 msgid ""
 "Create new squence where listed conditions may be satisfied at different "
 "times in a game"
-msgstr ""
+msgstr "Vytvořit novou posloupnost, kde zahrnuté podmínky mohou být ve hře uspokojeny v různou dobu"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:140
 msgid "Str"
-msgstr ""
+msgstr "Řad"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:142
 msgid ""
 "Create new streak sequence where listed conditions have to be satisfied in "
 "consecutive (half)moves"
-msgstr ""
+msgstr "Vytvořit novou řadovou posloupnost, kde zahrnuté podmínky musí být uspokojeny v po sobě jdoucích/následujících (půl)tazích"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:147
 msgid "Filter game list by various conditions"
-msgstr ""
+msgstr "Filtrovat seznam her podle různých podmínek"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:182
 #: lib/pychess/perspectives/database/FilterPanel.py:187
 msgid "Sequence"
-msgstr ""
+msgstr "Série"
 
 #: lib/pychess/perspectives/database/FilterPanel.py:194
 #: lib/pychess/perspectives/database/FilterPanel.py:199
 #: lib/pychess/perspectives/database/FilterPanel.py:202
 msgid "Streak"
-msgstr ""
+msgstr "Řada"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:10
 msgid "Openings"
-msgstr ""
+msgstr "Zahájení"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:14
 msgid "Openings panel can filter game list by opening moves"
-msgstr ""
+msgstr "Zahajovací panel může filtrovat seznam her podle zahajovacích tahů"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:35
 msgid "Move"
-msgstr ""
+msgstr "Tah"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:40
 #: lib/pychess/perspectives/fics/FicsHome.py:120
@@ -4982,73 +4982,73 @@ msgstr "Hry"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:45
 msgid "Winning %"
-msgstr ""
+msgstr "Vítězný %"
 
 #: lib/pychess/perspectives/database/OpeningTreePanel.py:74
 msgid "Filter game list by opening moves"
-msgstr ""
+msgstr "Filtrovat seznam her podle zahajovajích tahů"
 
 #: lib/pychess/perspectives/database/PreviewPanel.py:13
 msgid "Preview"
-msgstr ""
+msgstr "Náhled"
 
 #: lib/pychess/perspectives/database/PreviewPanel.py:17
 msgid "Preview panel can filter game list by current game moves"
-msgstr ""
+msgstr "Náhledovy panel může filtrovat seznam her podle tahů nynější hry"
 
 #: lib/pychess/perspectives/database/PreviewPanel.py:43
 msgid "Filter game list by current game moves"
-msgstr ""
+msgstr "Filtrovat seznam her podle tahů nynější hry"
 
 #: lib/pychess/perspectives/database/PreviewPanel.py:47
 msgid "Add sub-fen filter from position/circles"
-msgstr ""
+msgstr "Přidat filtr pod-FEN z position/circles"
 
 #: lib/pychess/perspectives/database/__init__.py:83
 msgid "Import PGN file"
-msgstr ""
+msgstr "Zavést soubor PGN"
 
 #: lib/pychess/perspectives/database/__init__.py:87
 msgid "Save to PGN file as..."
-msgstr ""
+msgstr "Uložit do souboru PGN jako..."
 
 #: lib/pychess/perspectives/database/__init__.py:186
 msgid "Open"
-msgstr ""
+msgstr "Otevřít"
 
 #: lib/pychess/perspectives/database/__init__.py:194
 msgid "Opening chessfile..."
-msgstr ""
+msgstr "Otevírá se šachový soubor..."
 
 #: lib/pychess/perspectives/database/__init__.py:331
 msgid "Save as"
-msgstr ""
+msgstr "Uložit jako"
 
 #: lib/pychess/perspectives/database/__init__.py:374
 #: lib/pychess/perspectives/games/__init__.py:816
 msgid "Open chess file"
-msgstr ""
+msgstr "Otevřít šachový soubor"
 
 #: lib/pychess/perspectives/database/__init__.py:424
 msgid "Recreating indexes..."
-msgstr ""
+msgstr "Vytváří se znovu rejstříky..."
 
 #: lib/pychess/perspectives/database/__init__.py:443
 msgid "Import"
-msgstr ""
+msgstr "Zavést"
 
 #: lib/pychess/perspectives/database/__init__.py:450
 msgid "Preparing to start import..."
-msgstr ""
+msgstr "Připravuje se zahájení zavádění..."
 
 #: lib/pychess/perspectives/database/__init__.py:458
 msgid "Create New Pgn Database"
-msgstr ""
+msgstr "Vytvořit novou databázi Pgn"
 
 #: lib/pychess/perspectives/database/__init__.py:478
 #, python-format
 msgid "<big><b>File '%s' already exists.</b></big>"
-msgstr ""
+msgstr "<big><b>Soubor '%s' již existuje.</b></big>"
 
 #: lib/pychess/perspectives/database/gamelist.py:44
 msgid "Id"
@@ -5068,23 +5068,23 @@ msgstr "Kolo"
 
 #: lib/pychess/perspectives/database/gamelist.py:46
 msgid "Length"
-msgstr ""
+msgstr "Délka"
 
 #: lib/pychess/perspectives/database/gamelist.py:46
 msgid "Time control"
-msgstr ""
+msgstr "Ovládání času"
 
 #: lib/pychess/perspectives/database/gamelist.py:67
 msgid "First games"
-msgstr ""
+msgstr "První hry"
 
 #: lib/pychess/perspectives/database/gamelist.py:71
 msgid "Previous games"
-msgstr ""
+msgstr "Předchozí hry"
 
 #: lib/pychess/perspectives/database/gamelist.py:75
 msgid "Next games"
-msgstr ""
+msgstr "Další hry"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:24
 #: lib/pychess/perspectives/fics/ParrentListSection.py:37
@@ -5093,7 +5093,7 @@ msgstr "Archivováno"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:28
 msgid "Adjourned, history and journal games list"
-msgstr ""
+msgstr "Seznam přerušených her, historie a deník her"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:56
 #: lib/pychess/perspectives/fics/SeekListPanel.py:74
@@ -5127,11 +5127,11 @@ msgstr "Přezkoumat odloženou hru"
 
 #: lib/pychess/perspectives/fics/ChatPanel.py:20
 msgid "Talking"
-msgstr ""
+msgstr "Mluvení"
 
 #: lib/pychess/perspectives/fics/ChatPanel.py:24
 msgid "List of server channels"
-msgstr ""
+msgstr "Seznam serverových kanálů"
 
 #: lib/pychess/perspectives/fics/ChatPanel.py:43
 #: lib/pychess/perspectives/fics/ParrentListSection.py:34
@@ -5142,15 +5142,15 @@ msgstr "Rozhovor"
 
 #: lib/pychess/perspectives/fics/ChatPanel.py:44
 msgid "Info"
-msgstr ""
+msgstr "Informace"
 
 #: lib/pychess/perspectives/fics/ConsolePanel.py:11
 msgid "Console"
-msgstr ""
+msgstr "Konzole"
 
 #: lib/pychess/perspectives/fics/ConsolePanel.py:15
 msgid "Command line interface to the chess server"
-msgstr ""
+msgstr "Rozhraní příkazového řádku k šachovému serveru"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:69
 #: lib/pychess/perspectives/fics/FicsHome.py:71
@@ -5172,7 +5172,7 @@ msgstr "Prohra"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:71
 msgid "Need"
-msgstr ""
+msgstr "Potřeba"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:71
 msgid "Best"
@@ -5211,7 +5211,7 @@ msgstr "Připojování"
 #: lib/pychess/perspectives/fics/FicsHome.py:170
 #: lib/pychess/perspectives/fics/ParrentListSection.py:36
 msgid "Finger"
-msgstr ""
+msgstr "Prst"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:188
 msgid ""
@@ -5231,11 +5231,11 @@ msgstr ""
 
 #: lib/pychess/perspectives/fics/GameListPanel.py:15
 msgid "Game List"
-msgstr ""
+msgstr "Seznam her"
 
 #: lib/pychess/perspectives/fics/GameListPanel.py:19
 msgid "List of ongoing games"
-msgstr ""
+msgstr "Seznam dále probíhajících her"
 
 #: lib/pychess/perspectives/fics/GameListPanel.py:195
 #, python-format
@@ -5244,11 +5244,11 @@ msgstr "Běžící hry: %d"
 
 #: lib/pychess/perspectives/fics/NewsPanel.py:7
 msgid "News"
-msgstr ""
+msgstr "Novinky"
 
 #: lib/pychess/perspectives/fics/NewsPanel.py:11
 msgid "List of server news"
-msgstr ""
+msgstr "Seznam serverových novinek"
 
 #: lib/pychess/perspectives/fics/ParrentListSection.py:31
 #: lib/pychess/perspectives/fics/SeekListPanel.py:166
@@ -5262,11 +5262,11 @@ msgstr "Sledovat"
 
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:12
 msgid "Player List"
-msgstr ""
+msgstr "Seznam hráčů"
 
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:16
 msgid "List of players"
-msgstr ""
+msgstr "Seznam hráčů"
 
 #: lib/pychess/perspectives/fics/PlayerListPanel.py:52
 #: lib/pychess/perspectives/fics/SeekListPanel.py:70
@@ -5355,11 +5355,11 @@ msgstr "Změnit toleranci"
 
 #: lib/pychess/perspectives/fics/SeekGraphPanel.py:10
 msgid "Seek Graph"
-msgstr ""
+msgstr "Graf žádostí"
 
 #: lib/pychess/perspectives/fics/SeekGraphPanel.py:14
 msgid "Handle seeks on graphical way"
-msgstr ""
+msgstr "Zacházet se žádostmi graficky"
 
 #: lib/pychess/perspectives/fics/SeekGraphPanel.py:49
 msgid " min"
@@ -5367,11 +5367,11 @@ msgstr " min"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:19
 msgid "Seeks / Challenges"
-msgstr ""
+msgstr "Žádosti/Výzvy"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:23
 msgid "Handle seeks and challenges"
-msgstr ""
+msgstr "Zacházet se žádostmi a výzvami"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:167
 msgid "Effect on ratings by the possible outcomes"
@@ -5418,35 +5418,35 @@ msgstr " kde <b>%(player)s</b> hraje<b>%(color)s</b>."
 
 #: lib/pychess/perspectives/fics/__init__.py:47
 msgid "ICS"
-msgstr ""
+msgstr "ICS"
 
 #: lib/pychess/perspectives/fics/__init__.py:57
 msgid "Log Off"
-msgstr ""
+msgstr "Odhlásit se"
 
 #: lib/pychess/perspectives/fics/__init__.py:81
 msgid "New game from 1-minute playing pool"
-msgstr ""
+msgstr "Nová hra z herní zásoby jednominutových her"
 
 #: lib/pychess/perspectives/fics/__init__.py:86
 msgid "New game from 3-minute playing pool"
-msgstr ""
+msgstr "Nová hra z herní zásoby tříminutových her"
 
 #: lib/pychess/perspectives/fics/__init__.py:91
 msgid "New game from 5-minute playing pool"
-msgstr ""
+msgstr "Nová hra z herní zásoby pětiminutových her"
 
 #: lib/pychess/perspectives/fics/__init__.py:96
 msgid "New game from 15-minute playing pool"
-msgstr ""
+msgstr "Nová hra z herní zásoby patnáctiminutových her"
 
 #: lib/pychess/perspectives/fics/__init__.py:101
 msgid "New game from 25-minute playing pool"
-msgstr ""
+msgstr "Nová hra z herní zásoby pětadvacetiminutových her"
 
 #: lib/pychess/perspectives/fics/__init__.py:106
 msgid "New game from Chess960 playing pool"
-msgstr ""
+msgstr "Nová hra z herní zásoby Chess960"
 
 #: lib/pychess/perspectives/fics/__init__.py:367
 msgid "You have to set kibitz on to see bot messages here."
@@ -5607,7 +5607,7 @@ msgid ""
 "Unable to save to configured file."
 "                                                     Save the games before "
 "closing?"
-msgstr ""
+msgstr "Nelze uložit do nastaveného souboru.\nUložit hry před jejich zavřením?"
 
 #: lib/pychess/perspectives/games/__init__.py:407
 #, python-format
@@ -5662,27 +5662,27 @@ msgstr "Upravit poznámku"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:371
 msgid "Good move"
-msgstr ""
+msgstr "Dobrý tah"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:372
 msgid "Bad move"
-msgstr ""
+msgstr "Špatný tah"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:373
 msgid "Excellent move"
-msgstr ""
+msgstr "Výborný tah"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:374
 msgid "Very bad move"
-msgstr ""
+msgstr "Velice špatný tah"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:375
 msgid "Interesting move"
-msgstr ""
+msgstr "Zajímavý tah"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:376
 msgid "Suspicious move"
-msgstr ""
+msgstr "Podezřelý tah"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:377
 msgid "Forced move"
@@ -5702,19 +5702,19 @@ msgstr "Nejasná pozice"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:390
 msgid "Slight advantage"
-msgstr ""
+msgstr "Lehká výhoda"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:391
 msgid "Moderate advantage"
-msgstr ""
+msgstr "Mírná výhoda"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:392
 msgid "Decisive advantage"
-msgstr ""
+msgstr "Rozhodující výhoda"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:393
 msgid "Crushing advantage"
-msgstr ""
+msgstr "Zdrcující výhoda"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:394
 msgid "Zugzwang"
@@ -5722,7 +5722,7 @@ msgstr "Vynucený tah"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:395
 msgid "Development advantage"
-msgstr ""
+msgstr "Rozvíjející výhoda"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:396
 msgid "Initiative"
@@ -5750,41 +5750,41 @@ msgstr "Přidat vyhodnocovací symbol"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:414
 msgid "Comment"
-msgstr ""
+msgstr "Poznámka"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:418
 msgid "Symbols"
-msgstr ""
+msgstr "Symboly"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:422
 msgid "All the evaluations"
-msgstr ""
+msgstr "Všechna vyhodnocení"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:426
 msgid "Remove"
-msgstr ""
+msgstr "Odstranit"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1059
 msgid "No time control"
-msgstr ""
+msgstr "Bez ovládání času"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1067
 msgid "mins"
-msgstr ""
+msgstr "m"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1071
 #: lib/pychess/perspectives/games/annotationPanel.py:1078
 msgid "secs"
-msgstr ""
+msgstr "s"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1074
 #, python-format
 msgid "%s for %d moves"
-msgstr ""
+msgstr "%s pro %d tahů"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1078
 msgid "move"
-msgstr ""
+msgstr "tah"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1096
 #, python-format
@@ -5936,74 +5936,74 @@ msgstr "Panel s výsledky se pokouší o vyhodnocování pozic a ukazuje vám ob
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:25
 msgid "Practice endgames with computer"
-msgstr ""
+msgstr "Cvičit koncovky s počítačem"
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:64
 #: lib/pychess/perspectives/learn/LecturesPanel.py:65
 #: lib/pychess/perspectives/learn/LessonsPanel.py:42
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:58
 msgid "Title"
-msgstr ""
+msgstr "Název"
 
 #: lib/pychess/perspectives/learn/LecturesPanel.py:19
 msgid "Study FICS lectures offline"
-msgstr ""
+msgstr "Učit se ze cvičení FICS nepřipojen k internetu"
 
 #: lib/pychess/perspectives/learn/LecturesPanel.py:69
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:23
 msgid "Guided interactive lessons in \"guess the move\" style"
-msgstr ""
+msgstr "Provázené interaktivní lekce ve stylu \"hádej tah\""
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:46
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:62
 msgid "Source"
-msgstr ""
+msgstr "Zdroj"
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:50
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:66
 #: lib/pychess/perspectives/learn/__init__.py:127
 msgid "Progress"
-msgstr ""
+msgstr "Postup"
 
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:25
 msgid "Lichess practice studies Puzzles from GM games and Chess compositions"
-msgstr ""
+msgstr "Lichess procvičuje hlavolamová cvičení z her GM a šachových prací"
 
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:45
 msgid "others"
-msgstr ""
+msgstr "jiné"
 
 #: lib/pychess/perspectives/learn/__init__.py:24
 msgid "Learn"
-msgstr ""
+msgstr "Učit de"
 
 #: lib/pychess/perspectives/learn/__init__.py:35
 msgid "Quit Learning"
-msgstr ""
+msgstr "Ukončit výuku"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "lichess"
-msgstr ""
+msgstr "lichess"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "wtharvey"
-msgstr ""
+msgstr "wtharvey"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "yacpdb"
-msgstr ""
+msgstr "yacpdb"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "lessons"
-msgstr ""
+msgstr "lekce"
 
 #: lib/pychess/perspectives/learn/__init__.py:132
 msgid "Reset my progress"
-msgstr ""
+msgstr "Vynulovat můj postup"
 
 #: lib/pychess/perspectives/learn/__init__.py:138
 msgid "You will lose all your progress data!"
-msgstr ""
+msgstr "Ztratíte všechny údaje o svém postupu!"
