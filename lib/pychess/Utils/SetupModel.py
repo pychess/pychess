@@ -47,6 +47,7 @@ class SetupModel(GObject.GObject):
         "game_started": (GObject.SignalFlags.RUN_FIRST, None, ()),
         "game_changed": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
         "moves_undoing": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
+        "variation_undoing": (GObject.SignalFlags.RUN_FIRST, None, ()),
         "game_loading": (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         "game_loaded": (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         "game_ended": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
