@@ -18,7 +18,7 @@ from gi.repository import GLib
 from pychess.System.Log import log
 from pychess.System import conf, uistuff, prefix
 from pychess.System.debug import print_obj_referrers, print_muppy_sumary
-from pychess.Utils.const import HINT, NAME, SPY
+from pychess.Utils.const import HINT, NAME, SPY, NORMALCHESS
 # from pychess.Utils.checkversion import checkversion
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
