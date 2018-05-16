@@ -1,7 +1,7 @@
 import asyncio
 import unittest
 
-from pychess.Utils.const import FEN_START
+from pychess.Utils.const import FEN_START, NORMALCHESS
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff
 from pychess.widgets import gamewidget
@@ -34,7 +34,7 @@ class DialogTests(unittest.TestCase):
 
         enginesDialog.run(gamewidget.getWidgets())
 
-        newGameDialog.SetupPositionExtension.run(FEN_START)
+        newGameDialog.SetupPositionExtension.run(FEN_START, NORMALCHESS)
 
         dd = DiscovererDialog(discoverer)
         self.dd_task = asyncio.async(dd.start())
