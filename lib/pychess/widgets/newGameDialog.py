@@ -17,13 +17,14 @@ from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.SetupModel import SetupModel, SetupPlayer
 from pychess.Utils.TimeModel import TimeModel
-from pychess.Utils.const import NORMALCHESS, VARIANTS_BLINDFOLD, \
+from pychess.Utils.const import NORMALCHESS, VARIANTS_BLINDFOLD, FISCHERRANDOMCHESS, \
     VARIANTS_ODDS, VARIANTS_SHUFFLE, VARIANTS_OTHER, VARIANTS_OTHER_NONSTANDARD, VARIANTS_ASEAN, \
-    WHITE, BLACK, UNSUPPORTED, ARTIFICIAL, LOCAL, reprFile, W_OO, W_OOO, B_OO, B_OOO, \
+    WHITE, BLACK, UNSUPPORTED, ARTIFICIAL, LOCAL, reprCord, reprFile, W_OO, W_OOO, B_OO, B_OOO, \
     FAN_PIECES, reprSign, FEN_START, WAITING_TO_START
 
 from pychess.Utils.repr import localReprSign
 from pychess.Utils.lutils.ldata import FILE
+from pychess.Utils.lutils.LBoard import LBoard
 from pychess.System import uistuff
 from pychess.System.Log import log
 from pychess.System.protoopen import splitUri
@@ -586,10 +587,11 @@ class SetupPositionExtension(_GameInitializationMode):
                                            cls.moveno_spin_changed)
         cls.widgets["fifty_spin"].connect("value-changed",
                                           cls.fifty_spin_changed)
-        cls.widgets["woo"].connect("toggled", cls.castl_toggled, "K")
-        cls.widgets["wooo"].connect("toggled", cls.castl_toggled, "Q")
-        cls.widgets["boo"].connect("toggled", cls.castl_toggled, "k")
-        cls.widgets["booo"].connect("toggled", cls.castl_toggled, "q")
+
+        cls.widgets["woo"].connect("toggled", cls.castl_toggled, W_OO)
+        cls.widgets["wooo"].connect("toggled", cls.castl_toggled, W_OOO)
+        cls.widgets["boo"].connect("toggled", cls.castl_toggled, B_OO)
+        cls.widgets["booo"].connect("toggled", cls.castl_toggled, B_OOO)
 
         ep_store = Gtk.ListStore(str)
         ep_store.append(["-"])
@@ -642,10 +644,30 @@ class SetupPositionExtension(_GameInitializationMode):
 
     @classmethod
     def castl_toggled(cls, button, castl):
-        if button.get_active():
-            cls.castl.add(castl)
+        lboard = cls.setupmodel.boards[-1].board
+        if lboard.variant == FISCHERRANDOMCHESS:
+            if castl == W_OO:
+                cast_letter = reprCord[lboard.ini_rooks[0][1]][0].upper()
+            elif castl == W_OOO:
+                cast_letter = reprCord[lboard.ini_rooks[0][0]][0].upper()
+            elif castl == B_OO:
+                cast_letter = reprCord[lboard.ini_rooks[1][1]][0]
+            elif castl == B_OOO:
+                cast_letter = reprCord[lboard.ini_rooks[1][0]][0]
         else:
-            cls.castl.discard(castl)
+            if castl == W_OO:
+                cast_letter = "K"
+            elif castl == W_OOO:
+                cast_letter = "Q"
+            elif castl == B_OO:
+                cast_letter = "k"
+            elif castl == B_OOO:
+                cast_letter = "q"
+
+        if button.get_active():
+            cls.castl.add(cast_letter)
+        else:
+            cls.castl.discard(cast_letter)
         cls.fen_changed()
 
     @classmethod
@@ -669,8 +691,9 @@ class SetupPositionExtension(_GameInitializationMode):
         return "%s %s %s %s %s %s" % parts
 
     @classmethod
-    def ini_widgets(cls, setup):
-        lboard = cls.setupmodel.variant(setup=setup).board
+    def ini_widgets(cls, setup, lboard=None):
+        if lboard is None:
+            lboard = cls.setupmodel.variant(setup=setup).board
         cls.widgets["side_button"].set_active(False if lboard.color == WHITE
                                               else True)
         cls.widgets["fifty_spin"].set_value(lboard.fifty)
@@ -683,7 +706,7 @@ class SetupPositionExtension(_GameInitializationMode):
         cls.widgets["booo"].set_active(lboard.castling & B_OOO)
 
     @classmethod
-    def run(cls, fenstr):
+    def run(cls, fenstr, variant):
         cls._ensureReady()
         if cls.widgets["newgamedialog"].props.visible:
             cls.widgets["newgamedialog"].present()
@@ -708,9 +731,11 @@ class SetupPositionExtension(_GameInitializationMode):
         cls.widgets["setupBoardDock"].add(cls.board_control)
         cls.board_control.show_all()
         if fenstr is not None:
-            cls.setupmodel.boards = [cls.setupmodel.variant(setup=fenstr)]
+            lboard = LBoard(variant)
+            lboard.applyFen(fenstr)
+            cls.setupmodel.boards = [cls.setupmodel.variant(setup=fenstr, lboard=lboard)]
             cls.setupmodel.variations = [cls.setupmodel.boards]
-            cls.ini_widgets(fenstr)
+            cls.ini_widgets(fenstr, lboard)
         else:
             fenstr = cls.get_fen()
             cls.ini_widgets(True)

@@ -16,13 +16,16 @@ class SetupBoard(Board):
     PROMOTION_ZONE = ((), ())
     PROMOTIONS = ()
 
-    def __init__(self, setup=True):
+    def __init__(self, setup=True, lboard=None):
         fenstr = SETUPSTART if setup is True else setup
         # add all kind if piece to holdings
         parts = fenstr.split()
         parts[0] += "/prnsqkPRNSQK"
         fenstr = " ".join(parts)
-        Board.__init__(self, setup=fenstr)
+        if lboard is not None:
+            Board.__init__(self, setup=fenstr, lboard=lboard)
+        else:
+            Board.__init__(self, setup=fenstr)
         self._ply = 0
 
     def _get_ply(self):

@@ -203,10 +203,13 @@ class GladeHandlers(object):
         if gmwidg is not None:
             ply = gmwidg.board.view.shown
             variation = gmwidg.board.view.shown_variation_idx
-            fen = gmwidg.gamemodel.getBoardAtPly(ply, variation).asFen()
+            board = gmwidg.gamemodel.getBoardAtPly(ply, variation)
+            fen = board.asFen()
+            variant = board.variant
         else:
             fen = None
-        newGameDialog.SetupPositionExtension.run(fen)
+            variant = NORMALCHESS
+        newGameDialog.SetupPositionExtension.run(fen, variant)
 
     def on_enter_game_notation_activate(self, widget):
         newGameDialog.EnterNotationExtension.run()
