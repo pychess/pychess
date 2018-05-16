@@ -43,11 +43,17 @@ class GameModel(GObject.GObject):
         # game_changed is emitted when a move has been made.
         "game_changed": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
         # moves_undoig is emitted when a undoMoves call has been accepted, but
-        # before anywork has been done to execute it.
+        # before any work has been done to execute it.
         "moves_undoing": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
         # moves_undone is emitted after n moves have been undone in the
         # gamemodel and the players.
         "moves_undone": (GObject.SignalFlags.RUN_FIRST, None, (int, )),
+        # variation_undoig is emitted when a undo_in_variation call has been started, but
+        # before any work has been done to execute it.
+        "variation_undoing": (GObject.SignalFlags.RUN_FIRST, None, ()),
+        # variation_undone is emitted after 1 move have been undone in the
+        # boardview shown variation
+        "variation_undone": (GObject.SignalFlags.RUN_FIRST, None, ()),
         # game_unended is emitted if moves have been undone, such that the game
         # which had previously ended, is now again active.
         "game_unended": (GObject.SignalFlags.RUN_FIRST, None, ()),
@@ -1045,7 +1051,6 @@ class GameModel(GObject.GObject):
 
     def remove_variation(self, board, parent):
         """ board must be an lboard object of the first Board object of a variation Board(!) list """
-
         # Remove the variation (list of lboards) containing board from parent's children list
         for child in parent.children:
             if isinstance(child, list) and board in child:
@@ -1065,8 +1070,8 @@ class GameModel(GObject.GObject):
 
     def undo_in_variation(self, board):
         """ board must be the latest Board object of a variation board list """
-
         assert board.board.next is None and len(board.board.children) == 0
+        self.emit("variation_undoing")
 
         for vari in self.variations[1:]:
             if board in vari:
@@ -1075,16 +1080,14 @@ class GameModel(GObject.GObject):
         board = board.board
         parent = board.prev.next
 
-        for other_vari in self.variations[1:]:
-            if parent.pieceBoard in other_vari:
-                break
-
         # If this is a one move only variation we have to remove the whole variation
         # if it's a longer one, just remove the latest move from it
-        if other_vari != vari:
+        first_vari_moves = [child[1] for child in parent.children if not isinstance(child, str)]
+        if board in first_vari_moves:
             self.remove_variation(board, parent)
         else:
-            parent.next = None
+            board.prev.next = None
             del vari[-1]
 
         self.needsSave = True
+        self.emit("variation_undone")

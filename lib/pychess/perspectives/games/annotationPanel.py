@@ -156,6 +156,7 @@ class Sidepanel:
             self.gamemodel.connect_after("game_started", self.update),
             self.gamemodel.connect_after("game_ended", self.update),
             self.gamemodel.connect_after("moves_undone", self.on_moves_undone),
+            self.gamemodel.connect_after("variation_undone", self.update),
             self.gamemodel.connect_after("opening_changed", self.update),
             self.gamemodel.connect_after("players_changed", self.on_players_changed),
             self.gamemodel.connect_after("game_terminated", self.on_game_terminated),
@@ -816,7 +817,11 @@ class Sidepanel:
         if not self.boardview.shownIsMainLine():
             return
 
-        board = gamemodel.getBoardAtPly(ply).board
+        try:
+            board = gamemodel.getBoardAtPly(ply).board
+        except IndexError:
+            return
+
         node = None
         if self.showEval or self.showBlunder:
             for n in self.nodelist:

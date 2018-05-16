@@ -161,6 +161,7 @@ class BoardView(Gtk.DrawingArea):
             self.model.connect("game_started", self.gameStarted),
             self.model.connect("game_changed", self.gameChanged),
             self.model.connect("moves_undoing", self.movesUndoing),
+            self.model.connect("variation_undoing", self.variationUndoing),
             self.model.connect("game_loading", self.gameLoading),
             self.model.connect("game_loaded", self.gameLoaded),
             self.model.connect("game_ended", self.gameEnded),
@@ -330,6 +331,9 @@ class BoardView(Gtk.DrawingArea):
             self.shown_variation_idx = 0
             self.shown = model.ply - moves
         self.redrawCanvas()
+
+    def variationUndoing(self, model):
+        self.showPrev()
 
     def gameLoading(self, model, uri):
         self.auto_update_shown = False
@@ -512,8 +516,11 @@ class BoardView(Gtk.DrawingArea):
     def _getShown(self):
         return self._shown
 
-    def _setShown(self, shown):
-        """Adjust the index in current variation board list."""
+    def _setShown(self, shown, old_variation_idx=None):
+        """ Adjust the index in current variation board list.
+            old_variation_index is used when variation was added
+            to the last played move and we want to step back.
+        """
         # We don't do anything if we are already showing the right ply
         if shown == self._shown:
             return
@@ -521,6 +528,9 @@ class BoardView(Gtk.DrawingArea):
         # This would cause IndexErrors later
         if not self.model.lowply <= shown <= self.model.variations[self.shown_variation_idx][-1].ply:
             return
+
+        if old_variation_idx is None:
+            old_variation_idx = self.shown_variation_idx
 
         self.redarrow = None
         self.greenarrow = None
@@ -577,13 +587,13 @@ class BoardView(Gtk.DrawingArea):
 
         deadset = set()
         for i in range(self.shown, shown, step):
-            board = self.model.getBoardAtPly(i, self.shown_variation_idx)
+            board = self.model.getBoardAtPly(i, old_variation_idx)
             board1 = self.model.getBoardAtPly(i + step, self.shown_variation_idx)
             if step == 1:
                 move = self.model.getMoveAtPly(i, self.shown_variation_idx)
                 moved, new, dead = board.simulateMove(board1, move)
             else:
-                move = self.model.getMoveAtPly(i - 1, self.shown_variation_idx)
+                move = self.model.getMoveAtPly(i - 1, old_variation_idx)
                 moved, new, dead = board.simulateUnmove(board1, move)
 
             # We need to ensure, that the piece coordinate is saved in the
@@ -609,8 +619,7 @@ class BoardView(Gtk.DrawingArea):
                 piece.opacity = 0
 
         self.deadlist = []
-        for y_loc, row in enumerate(self.model.getBoardAtPly(self.shown,
-                                                             self.shown_variation_idx).data):
+        for y_loc, row in enumerate(self.model.getBoardAtPly(self.shown, old_variation_idx).data):
             for x_loc, piece in row.items():
                 if piece in deadset:
                     self.deadlist.append((piece, x_loc, y_loc))
@@ -1815,12 +1824,14 @@ class BoardView(Gtk.DrawingArea):
     def showPrev(self, step=1):
         # If prev board belongs to a higher level variation
         # we have to update shown_variation_idx
+        old_variation_idx = None
         if not self.shownIsMainLine():
             board = self.model.getBoardAtPly(self.shown - step, self.shown_variation_idx)
             for vari in self.model.variations:
                 if board in vari:
                     break
             # swich to the new variation
+            old_variation_idx = self.shown_variation_idx
             self.shown_variation_idx = self.model.variations.index(vari)
 
         if self.model.examined and self.model.noTD:
@@ -1828,9 +1839,9 @@ class BoardView(Gtk.DrawingArea):
         else:
             if self.shown > self.model.lowply:
                 if self.shown - step > self.model.lowply:
-                    self.shown -= step
+                    self._setShown(self.shown - step, old_variation_idx)
                 else:
-                    self.shown = self.model.lowply
+                    self._setShown(self.model.lowply, old_variation_idx)
 
     def showNext(self, step=1):
         if self.model.examined and self.model.noTD:

@@ -280,6 +280,13 @@ class BoardControl(Gtk.EventBox):
         elif key == "ask_to_move":
             self.emit("action", HURRY_ACTION, curplayer, None)
         elif key == "undo1":
+            board = self.view.model.getBoardAtPly(self.view.shown, variation=self.view.shown_variation_idx)
+            if board.board.next is not None or board.board.children:
+                return
+            if not self.view.shownIsMainLine():
+                self.view.model.undo_in_variation(board)
+                return
+
             waitingplayer = self.view.model.waitingplayer
             if curplayer.__type__ == LOCAL and \
                     (waitingplayer.__type__ == ARTIFICIAL or
