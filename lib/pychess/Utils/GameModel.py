@@ -274,8 +274,8 @@ class GameModel(GObject.GObject):
         analyzer.setOptionInitialBoard(self)
         # Enable to find alternate hint in learn perspective puzzles
         if force_engine is not None:
-            analyzer.setOption("MultiPV", 2)
-            analyzer.analysis_depth = 18
+            analyzer.setOption("MultiPV", 3)
+            analyzer.analysis_depth = 20
 
         self.spectators[analyzer_type] = analyzer
         self.emit("analyzer_added", analyzer, analyzer_type)

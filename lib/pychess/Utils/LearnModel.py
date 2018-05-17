@@ -91,7 +91,7 @@ class LearnModel(GameModel):
     def check_failed_playing_best(self, status):
         if self.ply - 1 in self.hints:
             best_score = self.hints[self.ply - 1][0][1]
-            best_moves = [hint[0] for hint in self.hints[self.ply - 1] if hint[1] == best_score]
+            best_moves = [hint[0] for hint in self.hints[self.ply - 1] if abs(hint[1] - best_score) <= 10]
         else:
             best_moves = []
 
@@ -103,7 +103,7 @@ class LearnModel(GameModel):
                 return False
             elif self.goal.result == DRAW_IN and status == DRAW:
                 return False
-            elif self.goal.result in (MATE_IN, DRAW_IN, EQUAL_IN, EVAL_IN):
+            elif self.goal.result in (MATE_IN, DRAW_IN, EQUAL_IN, EVAL_IN, PROMOTION):
                 expect_best = True
             else:
                 expect_best = False
