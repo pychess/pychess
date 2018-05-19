@@ -976,6 +976,14 @@ class GameModel(GObject.GObject):
         return False
 
     def add_variation(self, board, moves, comment="", score="", emit=True):
+        if board.board.next is None:
+            # If we are in the latest played board, and want to add a variation
+            # we have to add the latest move first
+            if board.board.lastMove is None or board.board.prev is None:
+                return
+            moves = [Move(board.board.lastMove)] + moves
+            board = board.board.prev.pieceBoard
+
         board0 = board
         board = board0.clone()
         board.board.prev = None
@@ -998,15 +1006,6 @@ class GameModel(GObject.GObject):
                 board.board.next = new.board
             variation.append(new)
             board = new
-
-        if board0.board.next is None:
-            # If we are in the latest played board, and want to add a variation
-            # we have to add a not played yet board first
-            # which can hold the variation as his child
-            from pychess.Utils.lutils.LBoard import LBoard
-            null_board = LBoard()
-            null_board.prev = board0.board
-            board0.board.next = null_board
 
         board0.board.next.children.append(
             [vboard.board for vboard in variation])
