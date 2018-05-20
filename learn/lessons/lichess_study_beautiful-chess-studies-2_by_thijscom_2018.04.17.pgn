@@ -174,7 +174,7 @@
 [SetUp "1"]
 
 { White to play and draw! }
-1. g7+! Kg8 (1... Ke8 2. g8=Q+ { And white wins. }) 2. Bd5! h1=Q (2... Rg1!? 3. Be4! Rg6+ 4. Bxg6 fxg6 5. Kxg6 h1=Q 6. f7#)  (2... Rd1? 3. Be4! Rd6 4. Bh7#) 3. f3! Ra1 (3... Qxh3 4. Be4 { And white mates soon! })  (3... Rg1!? 4. Be4 Rg6+ 5. Bxg6 fxg6 6. f7+ Kxf7 7. Kh7 { And white also gets a queen, saving the draw. })  (3... Qg2 4. Be4 Qg6+ (4... Qg5+ 5. Kxg5 { And white still threatens Kh6 and Bh7# }) 5. Bxg6 fxg6 6. f7+ Kxf7 7. Kh7 { And white wins. })  (3... Qxf3 4. exf3 e2 5. Be4 e1=Q 6. Bh7#) 4. Be4! Qb1 5. Bf5!! Qxf5 { And white is stalemated! (1/2-1/2) } *
+1. g7+! Kg8 (1... Ke8 2. g8=Q+ { And white wins. }) 2. Bd5! h1=Q (2... Rg1!? 3. Be4! Rg6+ 4. Bxg6 fxg6 5. Kxg6 h1=Q 6. f7#)  (2... Rd1? 3. Be4! Rd6 4. Bh7#) 3. f3! Ra1 (3... Qxh3? 4. Be4 { And white mates soon! })  (3... Rg1!? 4. Be4 Rg6+ 5. Bxg6 fxg6 (5... Qb1 6. Bxb1 $10) 6. f7+ Kxf7 7. Kh7 { And white also gets a queen, saving the draw. })  (3... Qg2? 4. Be4 Qg6+ (4... Qg5+ 5. Kxg5 { And white still threatens Kh6 and Bh7# }) 5. Bxg6 fxg6 6. f7+ Kxf7 7. Kh7 { And white wins. })  (3... Qxf3? 4. exf3 e2 5. Be4 e1=Q 6. Bh7#) 4. Be4! Qb1 5. Bf5!! Qxf5 { And white is stalemated! (1/2-1/2) } (5... Ra5 6. Bxb1 Rh5+ (6... Rf5 7. Bxf5) 7. Kxh5) *
 
 [Event "Beautiful Chess Studies (2): Leow, 1849*"]
 [Site "https://lichess.org/study/ByFy31hm"]
