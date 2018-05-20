@@ -661,9 +661,13 @@ class GameWidget(GObject.GObject):
         lastButton.set_tooltip_text(_("Jump to latest position"))
         toolbar.insert(lastButton, -1)
 
-        filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
+        filterButton = Gtk.ToolButton(Gtk.STOCK_FIND)
         filterButton.set_tooltip_text(_("Find postion in current database"))
         toolbar.insert(filterButton, -1)
+
+        saveButton = Gtk.ToolButton(Gtk.STOCK_SAVE)
+        saveButton.set_tooltip_text(_("Save arrows/circles to .pgn as comments"))
+        toolbar.insert(saveButton, -1)
 
         def on_clicked(button, func):
             # Prevent moving in game while lesson not finished
@@ -678,6 +682,7 @@ class GameWidget(GObject.GObject):
         self.cids[nextButton] = nextButton.connect("clicked", on_clicked, self.board.view.showNext)
         self.cids[lastButton] = lastButton.connect("clicked", on_clicked, self.board.view.showLast)
         self.cids[filterButton] = filterButton.connect("clicked", on_clicked, self.find_in_database)
+        self.cids[saveButton] = saveButton.connect("clicked", on_clicked, self.save_shapes_to_pgn)
 
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, True, True, 0)
@@ -706,6 +711,33 @@ class GameWidget(GObject.GObject):
             persp.gamelist.ply = view.shown
             persp.gamelist.load_games()
             perspective_manager.activate_perspective("database")
+
+    def save_shapes_to_pgn(self):
+        view = self.board.view
+        shown_board = self.gamemodel.getBoardAtPly(view.shown, view.shown_variation_idx)
+
+        for child in shown_board.board.children:
+            if isinstance(child, str):
+                if child.lstrip().startswith("[%csl "):
+                    shown_board.board.children.remove(child)
+                    self.gamemodel.needsSave = True
+                elif child.lstrip().startswith("[%cal "):
+                    shown_board.board.children.remove(child)
+                    self.gamemodel.needsSave = True
+
+        if view.circles:
+            csl = []
+            for circle in view.circles:
+                csl.append("%s%s" % (circle.color, repr(circle)))
+            shown_board.board.children = ["[%%csl %s]" % ",".join(csl)] + shown_board.board.children
+            self.gamemodel.needsSave = True
+
+        if view.arrows:
+            cal = []
+            for arrow in view.arrows:
+                cal.append("%s%s%s" % (arrow[0].color, repr(arrow[0]), repr(arrow[1])))
+            shown_board.board.children = ["[%%cal %s]" % ",".join(cal)] + shown_board.board.children
+            self.gamemodel.needsSave = True
 
     def light_on_off(self, on):
         child = self.tabcontent.get_child()

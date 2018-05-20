@@ -313,7 +313,6 @@ def walk(node, result, model, save_emt=False, save_eval=False, vari=False):
 
         for child in node.children:
             if isinstance(child, str):
-                child = re.sub("\[%.*?\]", "", child)
                 # comment
                 if child:
                     result.append("{%s}" % child)
