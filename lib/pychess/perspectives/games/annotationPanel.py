@@ -728,7 +728,8 @@ class Sidepanel:
         self.gamemodel.needsSave = True
 
     def hide_movelist(self):
-        return self.gamemodel.lesson_game and not self.gamemodel.solved
+        return (self.gamemodel.lesson_game and not self.gamemodel.solved) or (
+            self.gamemodel.puzzle_game and len(self.gamemodel.moves) == 0)
 
     def variation_added(self, gamemodel, boards, parent):
         # Don't show moves in interactive lesson games

@@ -1017,8 +1017,12 @@ class PGNFile(ChessFile):
 
                 elif group == COMMENT_BRACE:
                     comm = text.replace('{\r\n', '{').replace('\r\n}', '}')
-                    comm = comm[1:-1].splitlines()
-                    comment = ' '.join([line.strip() for line in comm])
+                    # Preserve new lines of lichess study comments
+                    if "lichess_study_" in self.path:
+                        comment = comm[1:-1]
+                    else:
+                        comm = comm[1:-1].splitlines()
+                        comment = ' '.join([line.strip() for line in comm])
                     if variation and last_board == board:
                         # initial variation comment
                         boards[0].children.append(comment)
@@ -1072,6 +1076,8 @@ class PGNFile(ChessFile):
                 line = self.handle.readline()
             # if line is empty it should be the game separator line except...
             elif len(lines) == 0 or in_comment:
+                if in_comment:
+                    lines.append(line)
                 line = self.handle.readline()
             else:
                 break

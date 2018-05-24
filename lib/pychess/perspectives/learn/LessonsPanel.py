@@ -26,7 +26,9 @@ __desc__ = _('Guided interactive lessons in "guess the move" style')
 LESSONS = []
 for elem in sorted(os.listdir(path=addDataPrefix("learn/lessons/"))):
     if elem.startswith("lichess_study") and elem.endswith(".pgn"):
-        LESSONS.append((elem, elem[14:elem.find("_by_")].replace("-", " ").capitalize(), "lichess.org"))
+        title = elem.replace("beta-lichess-practice-", "")
+        title = title[14:title.find("_by_")].replace("-", " ").capitalize()
+        LESSONS.append((elem, title, "lichess.org"))
     elif elem.endswith(".pgn"):
         LESSONS.append((elem, elem.replace("-", " ").capitalize(), "pychess.org"))
 
