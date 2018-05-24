@@ -358,9 +358,7 @@ def parseSAN(board, san):
     else:
         piece = PAWN
         if notat[-1] in "18" and flag == NORMAL_MOVE and board.variant != SITTUYINCHESS:
-            raise ParsingError(
-                san, _("promotion move without promoted piece is incorrect"),
-                board.asFen())
+            flag = QUEEN_PROMOTION
 
     if "x" in notat:
         notat, tcord = notat.split("x")
@@ -633,9 +631,7 @@ def parseAN(board, an):
         flag = ENPASSANT
     elif board.arBoard[fcord] == PAWN:
         if an[3] in "18" and board.variant != SITTUYINCHESS:
-            raise ParsingError(
-                an, _("promotion move without promoted piece is incorrect"),
-                board.asFen())
+            flag = QUEEN_PROMOTION
 
     return newMove(fcord, tcord, flag)
 
