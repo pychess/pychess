@@ -1018,7 +1018,7 @@ class PGNFile(ChessFile):
                 elif group == COMMENT_BRACE:
                     comm = text.replace('{\r\n', '{').replace('\r\n}', '}')
                     # Preserve new lines of lichess study comments
-                    if "lichess_study_" in self.path:
+                    if self.path is not None and "lichess_study_" in self.path:
                         comment = comm[1:-1]
                     else:
                         comm = comm[1:-1].splitlines()
