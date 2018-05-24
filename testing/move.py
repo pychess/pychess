@@ -41,10 +41,12 @@ class MoveTestCase(unittest.TestCase):
         board.applyFen("4k3/P7/8/8/8/8/8/4K3 w - - 0 1")
 
         self.assertRaises(ParsingError, parseAN, board, 'a7a8K')
-        self.assertRaises(ParsingError, parseAN, board, 'a7a8')
+        # If promotion piece is missing pychess assumes queen promotion from 0.99.2
+        # self.assertRaises(ParsingError, parseAN, board, 'a7a8')
 
         self.assertRaises(ParsingError, parseSAN, board, 'a8K')
-        self.assertRaises(ParsingError, parseSAN, board, 'a8')
+        # If promotion piece is missing pychess assumes queen promotion from 0.99.2
+        # self.assertRaises(ParsingError, parseSAN, board, 'a8')
 
     def test_parseFAN(self):
         """Testing parseFAN"""
