@@ -98,6 +98,8 @@ def setup_glib_logging():
             # Looks like it was some hackish code in GTK+ which is now removed:
             # https://git.gnome.org/browse/gtk+/commit/?id=a3805333361fee37a3b1a974cfa6452a85169f08
             return True
+        elif "GdkPixbuf" in message:
+            return True
         return False
 
     # This logging handler is for "old" glib logging using a simple

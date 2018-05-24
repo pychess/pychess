@@ -204,7 +204,8 @@ conf.no_gettext = no_gettext
 
 ###############################################################################
 # Start logging
-setup_glib_logging()
+if log_debug:
+    setup_glib_logging()
 
 if log_viewer:
     log.logger.addHandler(GLogHandler(logemitter))
