@@ -1,44 +1,32 @@
-
-import ssl
+import asyncio
 import json
-import codecs
-from threading import Thread
 from urllib.error import URLError
-from urllib.request import Request, urlopen
 
 from gi.repository import GLib, Gtk
 
 from pychess import VERSION
+from pychess.System.fetch import fetch
 from pychess.widgets import mainwindow
 
 URL = "https://api.github.com/repos/pychess/pychess/releases/latest"
 LINK = "https://github.com/pychess/pychess/releases"
 
 
+@asyncio.coroutine
 def checkversion():
-
-    def worker():
-        new_version = None
-        req = Request(URL)
-        try:
-            if hasattr(ssl, '_create_unverified_context'):
-                context = ssl._create_unverified_context()
-                response = urlopen(req, context=context, timeout=1)
-            else:
-                response = urlopen(req, timeout=1)
-        except URLError as err:
-            if hasattr(err, 'reason'):
-                print('We failed to reach the server.')
-                print('Reason: ', err.reason)
-            elif hasattr(err, 'code'):
-                print('The server couldn\'t fulfill the request.')
-                print('Error code: ', err.code)
-        else:
-            reader = codecs.getreader("utf-8")
-            new_version = json.load(reader(response))["name"]
-
-        if new_version is not None and VERSION.split(".") < new_version.split("."):
-            GLib.idle_add(notify, new_version)
+    new_version = None
+    try:
+        response = yield from fetch(URL)
+    except URLError as err:
+        if hasattr(err, 'reason'):
+            print('We failed to reach the server.')
+            print('Reason: ', err.reason)
+        elif hasattr(err, 'code'):
+            print('The server couldn\'t fulfill the request.')
+            print('Error code: ', err.code)
+    else:
+        str_response = response.decode('utf-8')
+        new_version = json.loads(str_response)["name"]
 
     def notify(new_version):
         msg_dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.INFO,
@@ -51,6 +39,5 @@ def checkversion():
         msg_dialog.connect("response", lambda msg_dialog, a: msg_dialog.hide())
         msg_dialog.show()
 
-    t = Thread(target=worker)
-    t.daemon = True
-    t.start()
+    if new_version is not None and VERSION.split(".") < new_version.split("."):
+        GLib.idle_add(notify, new_version)

@@ -19,7 +19,7 @@ from pychess.System.Log import log
 from pychess.System import conf, uistuff, prefix
 from pychess.System.debug import print_obj_referrers, print_muppy_sumary
 from pychess.Utils.const import HINT, NAME, SPY, NORMALCHESS
-# from pychess.Utils.checkversion import checkversion
+from pychess.Utils.checkversion import checkversion
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
 from pychess.widgets.Background import hexcol
@@ -457,7 +457,7 @@ class PyChess(Gtk.Application):
         self.initGlade(self.log_viewer)
         self.addPerspectives()
         self.handleArgs(self.chess_file)
-        # checkversion()
+        asyncio.async(checkversion())
 
         self.loaded_cids = {}
         self.saved_cids = {}
