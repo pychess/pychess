@@ -79,7 +79,7 @@ The relevant part of the game starts at 72. Nxc3. Scroll through the moves and w
 [FEN "6k1/5N2/5K2/8/2B5/8/8/8 w - - 20 11"]
 [SetUp "1"]
 
-{[%cal Be5f6,Rh8g8]}
+{[%cal Ge5f7,Rh8g8]}
 { In the previous chapter, Black replied to Nf7+ with Kh7. Here, Black replies Kg8 instead. Based on what we have learned so far, what move should White now play? }
 11. Kg6! { Correct! In the previous chapter, after Nf7+ Kh7 we played Bd5 as a waiting move in order to force Kg8. Since Black played Kg8 willingly, we can immediately play Kg6 Kf8 and reroute our Knight to d3. } (11. Bd5? { This move also wins, but is not the move I was looking for. It is not necessary to play a waiting move now that Black volunteerily played Kg8. }) *
 

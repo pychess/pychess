@@ -36,7 +36,7 @@ Win this game.}
 [FEN "7K/8/1Q6/8/8/8/3kp3/8 w - - 0 1"]
 [SetUp "1"]
 
-{csl Gb6d4]} {[%csl Rae,Gb2,Rc2,Gd2,Ge2,Rf2,Gg2,Rh2]}
+{[%cal Gb6d4]} {[%csl Ra2,Gb2,Rc2,Gd2,Ge2,Rf2,Gg2,Rh2]}
 {If the pawn on the 7th rank is NOT a Bishop or Rook pawn, the side with the Queen can win.
 
 The key to winning these positions is to get our King near the pawn so we can capture it safely. To do this, we must force Black to block their own pawn with their King. This will give us a free move which we can use to get our King closer.}
@@ -93,6 +93,7 @@ The key to winning these positions is to get our King near the pawn so we can ca
 [FEN "8/1K6/P7/8/3q4/8/8/7k w - - 0 1"]
 [SetUp "1"]
 
+{[%cal Ga6a7]}
 {If the pawn on the 7th rank is a Bishop or Rook pawn, and the side with the Queen does not have their King near the pawn, the side with the pawn can draw.
 
 When it's a Rook pawn, the side with the pawn just needs to promote it if allowed, or otherwise keep their King in or near the corner. The side with the Queen won't have any time to get their King closer.
@@ -248,7 +249,7 @@ The side with the Queen can allow the pawn to promote and deliver checkmate. Whi
 [FEN "8/8/8/1K6/4Q3/8/2pk4/8 w - - 0 1"]
 [SetUp "1"]
 
-{[%cal Ge4de4} {[%csl Yb3,Ga5,Gb5,Gc5,Gd5,Gd4,Ge4,Gf4,Gg4,Gg3,Gg2,Gg1]}
+{[%cal Ge4d4]} {[%csl Yb3,Ga5,Gb5,Gc5,Gd5,Gd4,Ge4,Gf4,Gg4,Gg3,Gg2,Gg1]}
 {If the pawn on the 7th rank is a Bishop pawn, and the side with the Queen has their King on one of the green squares on their move, they can win the game.
 
 The side with the Queen can allow the pawn to promote and deliver checkmate. When the attacking King is on the short side, and the defending King is on the long side, the attacker can accomplish this by having their King on b3 when the pawn promotes.
@@ -268,7 +269,7 @@ We start with the normal technique. Force the black King to block their own pawn
 [FEN "8/8/Q7/8/6K1/8/2pk4/8 w - - 0 1"]
 [SetUp "1"]
 
-{[%cal Ga6d6} {[%csl Yf3,Yf2,Yf1,Ga5,Gb5,Gc5,Gd5,Gd4,Ge4,Gf4,Gg4,Gg3,Gg2,Gg1]}
+{[%cal Ga6d6]} {[%csl Yf3,Yf2,Yf1,Ga5,Gb5,Gc5,Gd5,Gd4,Ge4,Gf4,Gg4,Gg3,Gg2,Gg1]}
 {If the pawn on the 7th rank is a Bishop pawn, and the side with the Queen has their King on one of the green squares on their move, they can win the game.
 
 The side with the Queen can allow the pawn to promote and deliver checkmate. When both Kings are on the long side, the attacker can accomplish this by having their King on one of the orange squares (f3, f2, f1) when the pawn promotes.

@@ -90,7 +90,7 @@ Right now, White isn't threatening anything, so we can just shuffle our King bet
 [FEN "R7/P5k1/8/8/8/r4P2/6K1/8 w - - 0 1"]
 [SetUp "1"]
 
-{[%cal Gf3f4]}  {[%csl Rb2,Rc2,Rd2,Re2,Rf2]}
+{[%cal Gf3f4]}  {[%csl Gb2,Gc2,Gd2,Ge2,Gf2]}
 { An extra g-pawn does not help White, but an extra b-, c-, d-, e-, or f-pawn does win for White. Why? Because we can now force Black's King away from g7 and h7. }
 1. f4 { [%cal Gf4f5] } 1... Ra1 2. f5 { [%cal Gf5f6] } 2... Ra6 3. f6+ { Kh7 loses due to f7 followed by f8=Q.
 Kxf6 loses due to Rf8+ followed by a8=Q.
@@ -109,7 +109,7 @@ What happens after Kf7? } { [%cal Ra6f6,Rg7f6,Rg7h7,Gg7f7] } 3... Kf7 { With Bla
 [FEN "R7/P5k1/8/8/8/r1PK4/8/8 w - - 0 1"]
 [SetUp "1"]
 
-{[%csl Rb2,Rc2,Rd2,Re2,Rf2]}
+{[%csl Gb2,Gc2,Gd2,Ge2,Gf2]}
 {Checkmate the opponent
 
 We know that an extra b-, c-, d-, e-, or f-pawn win for White. Prove it.}
@@ -127,7 +127,7 @@ We know that an extra b-, c-, d-, e-, or f-pawn win for White. Prove it.}
 [FEN "R7/P5k1/6p1/8/5P1P/8/r7/6K1 w - - 0 1"]
 [SetUp "1"]
 
-{[%csl Rb2,Rc2,Rd2,Re2,Rf2]}
+{[%csl Gb2,Gc2,Gd2,Ge2,Gf2]}
 {Checkmate the opponent
 
 We know that an extra b-, c-, d-, e-, or f-pawn win for White. Force a win.}
@@ -163,7 +163,7 @@ We attempt to force an f-pawn, which we know would be winning for us. }
 [FEN "R7/P6k/5pp1/4p2p/4P2P/5P2/r5PK/8 w - - 1 43"]
 [SetUp "1"]
 
-{[%cal Gh2f1]}
+{[%cal Gh2g1]}
 {In this game, White did not force an e- or f-pawn, but rather sacrificed the a7 pawn to trade Rooks into a winning 4v4 pawn endgame. This is a useful concept to remember. From [Bartholomew - Thaler, 2012](https://lichess.org/0OQ4CsA3#84).}
 43. Kg1 Kg7 { [%cal Gg1f1] } 44. Kf1 Ra1+ { [%cal Gf1e2] } 45. Ke2 Ra2+ { [%cal Ge2d3] } 46. Kd3 { Note that Black can't play Rxg2, because we will then be able to promote our pawn. } { [%cal Ra2g2] } 46... Ra4 { [%cal Gd3c3] } 47. Kc3 Ra3+ { [%cal Gc3b4] } 48. Kb4 Ra1 { [%cal Gb4c5] } 49. Kc5 Ra6 { Black is trying to restrict White's King from infiltrating Black's position. We can use the fact that Black's Rook has to stay on the promotion file to infiltrate with our King. } { [%cal Gc5b5] } 50. Kb5 Ra1 { [%cal Gb5c6] } 51. Kc6 Ra2 { [%cal Ga8d8] } 52. Rd8 Rxa7 { [%cal Gd8d7] } 53. Rd7+ Rxd7 { [%cal Gc6d7] } 54. Kxd7 { If Black goes Kf7, White can respond Kd6 and Black is in zugzwang. } { [%cal Rg7f7] } 54... Kh6 { [%cal Gd7e7] } 55. Ke7 g5 { [%cal Ge7f6] } 56. Kxf6 gxh4 { [%cal Gf6f5] } 57. Kf5 Kg7 { [%cal Gf5e5] } 58. Kxe5 { ...and we have an easily winning pawn endgame. } *
 
