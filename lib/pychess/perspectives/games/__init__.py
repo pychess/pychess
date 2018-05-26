@@ -225,7 +225,7 @@ class Games(GObject.GObject, Perspective):
             if scoutfish_path is not None:
                 pgn_text = pgn.save(StringIO(), game)
 
-                tmp = tempfile.NamedTemporaryFile(mode="w", delete=False)
+                tmp = tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", delete=False)
                 pgnfile = tmp.name
                 with tmp.file as f:
                     f.write(pgn_text)

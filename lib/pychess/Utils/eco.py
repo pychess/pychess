@@ -4,6 +4,7 @@ import gettext
 import sqlite3
 import struct
 
+from pychess.System import conf
 from pychess.System.prefix import addDataPrefix, isInstalled
 
 db_path = os.path.join(addDataPrefix("eco.db"))
@@ -34,5 +35,5 @@ def get_eco(hash):
         return None
     cur = conn.cursor()
     select = "select eco, opening, variation from openings where hash=? and lang=?"
-    cur.execute(select, (memoryview(hash_struct.pack(hash)), lang))
+    cur.execute(select, (memoryview(hash_struct.pack(hash)), "en" if conf.no_gettext else lang))
     return cur.fetchone()

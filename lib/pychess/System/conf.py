@@ -20,8 +20,8 @@ for sect in ("FICS", "ICC"):
 
 path = addUserConfigPrefix("config")
 if os.path.isfile(path):
-    configParser.readfp(open(path))
-atexit.register(lambda: configParser.write(open(path, "w")))
+    configParser.readfp(open(path, encoding="utf-8"))
+atexit.register(lambda: configParser.write(open(path, "w", encoding="utf-8")))
 
 if sys.platform == "win32":
     username = os.environ["USERNAME"]

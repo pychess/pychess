@@ -140,9 +140,10 @@ def save(handle, model, position=None):
             pval = pval.replace("\\", "\\\\")
             pval = pval.replace("\"", "\\\"")
             print('[%s "%s"]' % (tag, pval), file=handle)
-            processed_tags = processed_tags + [tag]
-        except Exception:
-            pass
+        except UnicodeEncodeError:
+            pval = bytes(pval, "utf-8").decode(PGN_ENCODING, errors="ignore")
+            print('[%s "%s"]' % (tag, pval), file=handle)
+        processed_tags = processed_tags + [tag]
 
     # Mandatory ordered seven-tag roster
     status = reprResult[model.status]
