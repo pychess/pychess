@@ -288,6 +288,8 @@ class GameWidget(GObject.GObject):
             if self.gamemodel.timemodel.hasBWTimes(bmovecount, wmovecount):
                 self.clock.update(wmovecount, bmovecount)
 
+        self.on_shapes_changed(self.board)
+
     def game_started(self, gamemodel):
         if self.gamemodel.isLocalGame():
             self.menuitems["abort"].label = _("Abort")
@@ -665,9 +667,9 @@ class GameWidget(GObject.GObject):
         filterButton.set_tooltip_text(_("Find postion in current database"))
         toolbar.insert(filterButton, -1)
 
-        saveButton = Gtk.ToolButton(Gtk.STOCK_SAVE)
-        saveButton.set_tooltip_text(_("Save arrows/circles to .pgn as comments"))
-        toolbar.insert(saveButton, -1)
+        self.saveButton = Gtk.ToolButton(Gtk.STOCK_SAVE)
+        self.saveButton.set_tooltip_text(_("Save arrows/circles"))
+        toolbar.insert(self.saveButton, -1)
 
         def on_clicked(button, func):
             # Prevent moving in game while lesson not finished
@@ -682,13 +684,19 @@ class GameWidget(GObject.GObject):
         self.cids[nextButton] = nextButton.connect("clicked", on_clicked, self.board.view.showNext)
         self.cids[lastButton] = lastButton.connect("clicked", on_clicked, self.board.view.showLast)
         self.cids[filterButton] = filterButton.connect("clicked", on_clicked, self.find_in_database)
-        self.cids[saveButton] = saveButton.connect("clicked", on_clicked, self.save_shapes_to_pgn)
+        self.cids[self.saveButton] = self.saveButton.connect("clicked", on_clicked, self.save_shapes_to_pgn)
+
+        self.on_shapes_changed(self.board)
+        self.board.connect("shapes_changed", self.on_shapes_changed)
 
         tool_box = Gtk.Box()
         tool_box.pack_start(toolbar, True, True, 0)
 
         align.add(tool_box)
         return align
+
+    def on_shapes_changed(self, boardcontrol):
+        self.saveButton.set_sensitive(boardcontrol.view.has_unsaved_shapes)
 
     def find_in_database(self):
         persp = perspective_manager.get_perspective("database")
@@ -738,6 +746,14 @@ class GameWidget(GObject.GObject):
                 cal.append("%s%s%s" % (arrow[0].color, repr(arrow[0]), repr(arrow[1])))
             shown_board.board.children = ["[%%cal %s]" % ",".join(cal)] + shown_board.board.children
             self.gamemodel.needsSave = True
+
+        view.saved_arrows = set()
+        view.saved_arrows |= view.arrows
+
+        view.saved_circles = set()
+        view.saved_circles |= view.circles
+
+        self.on_shapes_changed(self.board)
 
     def light_on_off(self, on):
         child = self.tabcontent.get_child()

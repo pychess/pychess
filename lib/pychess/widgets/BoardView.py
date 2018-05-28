@@ -262,6 +262,10 @@ class BoardView(Gtk.DrawingArea):
         self.pre_arrow = None
         self.pre_circle = None
 
+        # circles and arrows from .pgn comments
+        self.saved_circles = set()
+        self.saved_arrows = set()
+
     def _del(self):
         self.disconnect(self.draw_cid)
         self.disconnect(self.realize_cid)
@@ -513,6 +517,10 @@ class BoardView(Gtk.DrawingArea):
     def shownIsMainLine(self):
         return self.shown_variation_idx == 0
 
+    @property
+    def has_unsaved_shapes(self):
+        return self.saved_arrows != self.arrows or self.saved_circles != self.circles
+
     def _getShown(self):
         return self._shown
 
@@ -538,6 +546,12 @@ class BoardView(Gtk.DrawingArea):
 
         # remove all circles and arrows
         need_redraw = False
+        if self.saved_circles:
+            self.saved_circles.clear()
+            need_redraw = True
+        if self.saved_arrows:
+            self.saved_arrows.clear()
+            need_redraw = True
         if self.arrows:
             self.arrows.clear()
             need_redraw = True
@@ -560,6 +574,7 @@ class BoardView(Gtk.DrawingArea):
                         match = comment_circles_re.search(child)
                         circles = match.groups()[0].split(",")
                         for circle in circles:
+                            self.saved_circles.add(Cord(circle[1:3], color=circle[0]))
                             self.circles.add(Cord(circle[1:3], color=circle[0]))
                         need_redraw = True
 
@@ -567,6 +582,7 @@ class BoardView(Gtk.DrawingArea):
                         match = comment_arrows_re.search(child)
                         arrows = match.groups()[0].split(",")
                         for arrow in arrows:
+                            self.saved_arrows.add((Cord(arrow[1:3], color=arrow[0]), Cord(arrow[3:5])))
                             self.arrows.add((Cord(arrow[1:3], color=arrow[0]), Cord(arrow[3:5])))
                         need_redraw = True
 

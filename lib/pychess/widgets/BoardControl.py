@@ -28,6 +28,7 @@ class BoardControl(Gtk.EventBox):
     """
 
     __gsignals__ = {
+        'shapes_changed': (GObject.SignalFlags.RUN_FIRST, None, ()),
         'piece_moved': (GObject.SignalFlags.RUN_FIRST, None, (object, int)),
         'action': (GObject.SignalFlags.RUN_FIRST, None, (str, object, object))
     }
@@ -456,6 +457,7 @@ class BoardControl(Gtk.EventBox):
                 else:
                     self.view.circles.add(cord)
                 self.view.pre_circle = None
+                self.emit("shapes_changed")
 
             if self.view.pre_arrow is not None:
                 if self.view.pre_arrow in self.view.arrows:
@@ -463,6 +465,7 @@ class BoardControl(Gtk.EventBox):
                 else:
                     self.view.arrows.add(self.view.pre_arrow)
                 self.view.pre_arrow = None
+                self.emit("shapes_changed")
 
             self.pre_arrow_from = None
             self.pre_arrow_to = None
