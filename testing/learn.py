@@ -1,9 +1,11 @@
+import asyncio
 import os
 import unittest
 
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff
 from pychess.widgets import gamewidget
+from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.perspectives.games import Games
 from pychess.perspectives.learn import Learn
 from pychess.perspectives.learn.EndgamesPanel import start_endgame_from, ENDGAMES
@@ -29,7 +31,18 @@ class LearnTests(unittest.TestCase):
         perspective_manager.add_perspective(self.games_persp)
 
         self.learn_persp = Learn()
+        self.learn_persp.create_toolbuttons()
         perspective_manager.add_perspective(self.learn_persp)
+
+        perspective_manager.current_perspective = self.learn_persp
+
+        dd = DiscovererDialog(discoverer)
+        self.dd_task = asyncio.async(dd.start())
+
+    def test0(self):
+        """ Init layout """
+        self.learn_persp.activate()
+        self.assertEqual(len(self.learn_persp.store), 1)
 
     def test1(self):
         """ Start next endgame """
