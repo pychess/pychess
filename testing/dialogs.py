@@ -39,7 +39,23 @@ class DialogTests(unittest.TestCase):
         dd = DiscovererDialog(discoverer)
         self.dd_task = asyncio.async(dd.start())
 
-        preferencesDialog.run(gamewidget.getWidgets())
+        widgets = gamewidget.getWidgets()
+        preferencesDialog.run(widgets)
+
+        notebook = widgets["preferences_notebook"]
+        self.assertIsNotNone(preferencesDialog.general_tab)
+
+        notebook.next_page()
+        self.assertIsNotNone(preferencesDialog.hint_tab)
+
+        notebook.next_page()
+        self.assertIsNotNone(preferencesDialog.theme_tab)
+
+        notebook.next_page()
+        self.assertIsNotNone(preferencesDialog.sound_tab)
+
+        notebook.next_page()
+        self.assertIsNotNone(preferencesDialog.save_tab)
 
 
 if __name__ == '__main__':

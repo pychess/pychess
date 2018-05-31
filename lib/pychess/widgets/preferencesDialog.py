@@ -32,6 +32,7 @@ from pychess.perspectives import perspective_manager
 
 firstRun = True
 
+general_tab = None
 hint_tab = None
 theme_tab = None
 sound_tab = None
@@ -51,7 +52,8 @@ def run(widgets):
 def initialize(widgets):
     """ :Description: Initialises the various tabs for each section of configurable artifacts
     """
-    GeneralTab(widgets)
+    global general_tab
+    general_tab = GeneralTab(widgets)
 
     # All side panels can be show/hide from View menu now, so no need to do the same from preferences
     # We can re enable this after implementing install/uninstall functionality in the future...
