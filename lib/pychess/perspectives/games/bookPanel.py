@@ -98,7 +98,7 @@ class OpeningAdvisor(Advisor):
 
     def shownChanged(self, boardview, shown):
         m = boardview.model
-        if m is None or m.variant.variant != NORMALCHESS or m.isPlayingICSGame():
+        if m is None or m.isPlayingICSGame():
             return
 
         b = m.getBoardAtPly(shown, boardview.shown_variation_idx)

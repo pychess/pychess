@@ -22,6 +22,7 @@ from gi.repository import Gtk, GdkPixbuf, Gdk
 from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
+from pychess.Utils import book
 from pychess.Utils.const import HINT, SPY, SOUND_MUTE, SOUND_BEEP, SOUND_URI, SOUND_SELECT, COUNT_OF_SOUNDS
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.gfx import Pieces
@@ -170,6 +171,7 @@ class HintTab:
             new_book = book_chooser_dialog.get_filename()
             if new_book:
                 conf.set("opening_file_entry", new_book)
+                book.path = new_book
             else:
                 # restore the original
                 book_chooser_dialog.set_filename(path)
