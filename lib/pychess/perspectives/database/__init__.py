@@ -1,10 +1,15 @@
 import os
 import threading
+from struct import pack
 
 from gi.repository import Gtk, GObject, GLib
 
-from pychess.Utils.const import FIRST_PAGE, NEXT_PAGE
+from pychess.Utils.const import FIRST_PAGE, NEXT_PAGE, FEN_START, DRAW, WHITEWON, BLACKWON  # , reprCord
 from pychess.Utils.IconLoader import load_icon
+from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.lutils.lmove import toPolyglot  # , FCORD, TCORD
+from pychess.Utils.GameModel import GameModel
+from pychess.Variants import name2variant, NormalBoard
 from pychess.perspectives import Perspective, perspective_manager
 from pychess.perspectives.database.gamelist import GameList
 from pychess.perspectives.database.OpeningTreePanel import OpeningTreePanel
@@ -23,6 +28,7 @@ from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
 
 pgn_icon = load_icon(24, "application-x-chess-pgn", "pychess")
+BOOK_DEPTH = 8
 
 
 class Database(GObject.GObject, Perspective):
@@ -173,6 +179,7 @@ class Database(GObject.GObject, Perspective):
         self.import_button.set_sensitive(on)
         self.widgets["import_chessfile"].set_sensitive(on)
         self.widgets["database_save_as"].set_sensitive(on)
+        self.widgets["create_book"].set_sensitive(on)
         self.widgets["import_endgame_nl"].set_sensitive(on)
         self.widgets["import_twic"].set_sensitive(on)
 
@@ -463,6 +470,83 @@ class Database(GObject.GObject, Perspective):
         thread.daemon = True
         thread.start()
 
+    def process_records(self, callback, *args):
+        counter = 0
+        records, plys = self.chessfile.get_records(FIRST_PAGE)
+        callback(counter, records, *args)
+        while True:
+            records, plys = self.chessfile.get_records(NEXT_PAGE)
+            if records:
+                callback(counter, records, *args)
+            else:
+                break
+
+    def create_book(self):
+        print("creating book...")
+        self.positions = {}
+        visitor = PgnVisitor(self.chessfile)
+        visitor.process_records(self.feed_book)
+
+        filename = "book.bin"
+        with open(filename, "wb") as to_file:
+            for key, moves in sorted(self.positions.items(), key=lambda item: item[0]):
+                # print(key, moves)
+                for move in moves:
+                    to_file.write(pack(">QHHI", key, move, moves[move], 0))
+
+    def feed_book(self, records):
+        for rec in records:
+            model = GameModel()
+
+            if rec["Result"] == DRAW:
+                score = (1, 1)
+            elif rec["Result"] == WHITEWON:
+                score = (2, 0)
+            elif rec["Result"] == BLACKWON:
+                score = (0, 2)
+            else:
+                score = (0, 0)
+
+            fenstr = rec["FEN"]
+            variant = self.chessfile.get_variant(rec)
+
+            if variant:
+                model.variant = name2variant[variant]
+                board = LBoard(model.variant.variant)
+            else:
+                model.variant = NormalBoard
+                board = LBoard()
+
+            if fenstr:
+                try:
+                    board.applyFen(fenstr)
+                except SyntaxError as err:
+                    continue
+            else:
+                board.applyFen(FEN_START)
+
+            boards = [board]
+
+            movetext = self.chessfile.get_movetext(rec)
+            boards = self.chessfile.parse_movetext(movetext, boards[0], -1)
+
+            for board in boards:
+                if board.plyCount > BOOK_DEPTH:
+                    break
+                move = board.lastMove
+                if move is not None:
+                    poly_move = toPolyglot(board.prev, move)
+                    # move_str = "%s%s" % (reprCord[FCORD(move)], reprCord[TCORD(move)])
+                    # print("%0.16x" % board.prev.hash, poly_move, board.prev.asFen(), move_str)
+                    if board.prev.hash in self.positions:
+                        if poly_move in self.positions[board.prev.hash]:
+                            self.positions[board.prev.hash][poly_move] += score[board.prev.color]
+                        else:
+                            self.positions[board.prev.hash][poly_move] = score[board.prev.color]
+                    else:
+                        # board.prev.asFen(), move_str,
+                        self.positions[board.prev.hash] = {poly_move: score[board.prev.color]}
+
     def create_database(self):
         dialog = Gtk.FileChooserDialog(
             _("Create New Pgn Database"), mainwindow(), Gtk.FileChooserAction.SAVE,
@@ -535,3 +619,24 @@ def get_latest_twic():
                 latest = int(line[position + len(PREFIX):][:4])
                 break
     return latest
+
+
+class PgnVisitor:
+    def __init__(self, chessfile):
+        self.chessfile = chessfile
+        self.counter = 0
+
+    def process_records(self, callback):
+        records, plys = self.chessfile.get_records(FIRST_PAGE)
+        callback(records)
+        self.counter += len(records)
+        print(self.counter)
+
+        while True:
+            records, plys = self.chessfile.get_records(NEXT_PAGE)
+            if records:
+                callback(records)
+                self.counter += len(records)
+                print(self.counter)
+            else:
+                break

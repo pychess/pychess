@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.6"/>
   <object class="GtkAccelGroup" id="accelgroup1"/>
@@ -196,6 +196,9 @@
     <accel-groups>
       <group name="accelgroup1"/>
     </accel-groups>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkVBox" id="mainvbox">
         <property name="visible">True</property>
@@ -768,6 +771,16 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkMenuItem" id="create_book">
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Create polyglot opening book</property>
+                        <signal name="activate" handler="on_create_book_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkSeparatorMenuItem" id="skillelinje3">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -960,6 +973,9 @@
     <property name="documenters"/>
     <property name="artists"/>
     <property name="logo">christmas_about.png</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="can_focus">False</property>
@@ -983,6 +999,9 @@
     <property name="title" translatable="yes">Preferences</property>
     <property name="icon_name">pychess</property>
     <property name="transient_for">main_window</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkVBox" id="vbox11">
         <property name="visible">True</property>
@@ -3935,6 +3954,9 @@ It will search positions from http://www.k4it.de/</property>
     <property name="icon_name">pychess</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox4">
         <property name="visible">True</property>
@@ -4266,6 +4288,9 @@ It will search positions from http://www.k4it.de/</property>
     <property name="icon_name">pychess</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="vbox3">
         <property name="visible">True</property>
@@ -4860,6 +4885,9 @@ It will search positions from http://www.k4it.de/</property>
     <property name="title" translatable="yes">Manage engines</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox3">
         <property name="visible">True</property>
@@ -5172,8 +5200,8 @@ If it can use both  you can set here which one you like.</property>
                       <object class="GtkLabel" id="label79">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="label" translatable="yes">Comment:</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="top_attach">7</property>
@@ -5229,8 +5257,8 @@ If it can use both  you can set here which one you like.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_right">10</property>
-                            <property name="xalign">0</property>
                             <property name="label" translatable="yes">Preferred level:</property>
+                            <property name="xalign">0</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -5511,6 +5539,9 @@ If it can use both  you can set here which one you like.</property>
     <property name="title" translatable="yes">Filter</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox2">
         <property name="can_focus">False</property>
