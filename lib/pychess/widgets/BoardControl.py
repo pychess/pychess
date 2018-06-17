@@ -150,7 +150,7 @@ class BoardControl(Gtk.EventBox):
                 self.view.showNext()
             else:
                 # create new variation
-                new_vari = self.view.model.add_variation(board, (move, ))
+                new_vari = self.view.model.add_variation(board, [move])
                 self.view.setShownBoard(new_vari[-1])
         else:
             # inside variation or main line
@@ -202,7 +202,7 @@ class BoardControl(Gtk.EventBox):
                             return
 
                 # create new variation
-                new_vari = self.view.model.add_variation(board, (move, ))
+                new_vari = self.view.model.add_variation(board, [move])
                 self.view.setShownBoard(new_vari[-1])
 
             else:
@@ -211,7 +211,7 @@ class BoardControl(Gtk.EventBox):
                     self.view.infobar.retry()
 
                 # create new variation
-                new_vari = self.view.model.add_variation(board, (move, ))
+                new_vari = self.view.model.add_variation(board, [move])
                 self.view.setShownBoard(new_vari[-1])
 
     def emit_move_signal(self, cord0, cord1, promotion=None):
