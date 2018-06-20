@@ -158,7 +158,7 @@ class Games(GObject.GObject, Perspective):
                 d.set_markup(_("<big><b>Error loading game</big></b>"))
                 d.format_secondary_text(", ".join(str(a) for a in e.args))
                 d.show()
-                d.hide()
+                d.destroy()
 
         else:
             if gamemodel.variant.need_initial_board:
@@ -284,7 +284,7 @@ class Games(GObject.GObject, Perspective):
                         "Was unable to save '%(uri)s' as PyChess doesn't know the format '%(ending)s'.") %
                         {'uri': uri, 'ending': ending})
                     d.run()
-                    d.hide()
+                    d.destroy()
                     continue
                 else:
                     saver = enddir[ending]
@@ -302,7 +302,7 @@ class Games(GObject.GObject, Perspective):
                     "You don't have the necessary rights to save the file.\n\
     Please ensure that you have given the right path and try again."))
                 d.run()
-                d.hide()
+                d.destroy()
                 continue
 
             if os.path.isfile(uri):
@@ -318,7 +318,7 @@ class Games(GObject.GObject, Perspective):
                 d.format_secondary_text(_(
                     "The file already exists in '%s'. If you replace it, its content will be overwritten.") % folder)
                 replaceRes = d.run()
-                d.hide()
+                d.destroy()
 
                 if replaceRes == 1:
                     append = True
@@ -338,7 +338,7 @@ class Games(GObject.GObject, Perspective):
                 d.format_secondary_text(_("The error was: %s") % ", ".join(
                     str(a) for a in e.args))
                 d.run()
-                d.hide()
+                d.destroy()
                 continue
 
             break
