@@ -1,3 +1,4 @@
+import asyncio
 import os
 import threading
 from struct import pack
@@ -105,14 +106,14 @@ class Database(GObject.GObject, Perspective):
         self.spinner = Gtk.Spinner()
         self.spinner.set_size_request(50, 50)
         self.progressbar0 = Gtk.ProgressBar(show_text=True)
-        self.progressbar1 = Gtk.ProgressBar(show_text=True)
+        self.progressbar = Gtk.ProgressBar(show_text=True)
 
         self.progress_dialog = Gtk.Dialog("", mainwindow(), 0, (
             Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
         self.progress_dialog.set_deletable(False)
         self.progress_dialog.get_content_area().pack_start(self.spinner, True, True, 0)
         self.progress_dialog.get_content_area().pack_start(self.progressbar0, True, True, 0)
-        self.progress_dialog.get_content_area().pack_start(self.progressbar1, True, True, 0)
+        self.progress_dialog.get_content_area().pack_start(self.progressbar, True, True, 0)
         self.progress_dialog.get_content_area().show_all()
 
         # Initing headbook
@@ -200,15 +201,14 @@ class Database(GObject.GObject, Perspective):
         perspective_manager.activate_perspective("database")
 
         self.progress_dialog.set_title(_("Open"))
-        self.progressbar0.hide()
         self.spinner.show()
         self.spinner.start()
 
         def opening():
             if filename.endswith(".pgn"):
-                GLib.idle_add(self.progressbar1.show)
-                GLib.idle_add(self.progressbar1.set_text, _("Opening chessfile..."))
-                chessfile = PGNFile(protoopen(filename), self.progressbar1)
+                GLib.idle_add(self.progressbar.show)
+                GLib.idle_add(self.progressbar.set_text, _("Opening chessfile..."))
+                chessfile = PGNFile(protoopen(filename), self.progressbar)
                 self.importer = chessfile.init_tag_database()
                 if self.importer is not None and self.importer.cancel:
                     chessfile.tag_database.close()
@@ -232,6 +232,7 @@ class Database(GObject.GObject, Perspective):
                 chessfile = None
 
             GLib.idle_add(self.spinner.stop)
+            GLib.idle_add(self.spinner.hide)
             GLib.idle_add(self.progress_dialog.hide)
 
             if chessfile is not None:
@@ -358,16 +359,25 @@ class Database(GObject.GObject, Perspective):
 
         dialog.destroy()
 
-        if filename is not None:
+        if filename is None:
+            return
+
+        self.progress_dialog.set_title(_("Save as"))
+
+        def save_as(cancel_event):
             with open(filename, "w") as to_file:
-                records, plys = self.chessfile.get_records(FIRST_PAGE)
-                self.save_records(records, to_file)
-                while True:
-                    records, plys = self.chessfile.get_records(NEXT_PAGE)
-                    if records:
-                        self.save_records(records, to_file)
-                    else:
-                        break
+                self.process_records(self.save_records, cancel_event, to_file)
+
+            GLib.idle_add(self.progress_dialog.hide)
+
+        cancel_event = threading.Event()
+        loop = asyncio.get_event_loop()
+        loop.run_in_executor(None, save_as, cancel_event)
+
+        response = self.progress_dialog.run()
+        if response == Gtk.ResponseType.CANCEL:
+            cancel_event.set()
+        self.progress_dialog.hide()
 
     def save_records(self, records, to_file):
         f = self.chessfile.handle
@@ -428,17 +438,17 @@ class Database(GObject.GObject, Perspective):
         self.importer = PgnImport(self.chessfile, append_pgn=True)
         self.importer.initialize()
         for i, filename in enumerate(filenames):
-            GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
-            # GLib.idle_add(self.progressbar0.set_text, filename)
+            if len(filenames) > 1:
+                GLib.idle_add(self.progressbar0.set_fraction, i / float(len(filenames)))
             if self.importer.cancel:
                 break
             if isinstance(filename, tuple):
                 info_link, pgn_link = filename
-                self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar1)
+                self.importer.do_import(pgn_link, info=info_link, progressbar=self.progressbar)
             else:
-                self.importer.do_import(filename, progressbar=self.progressbar1)
+                self.importer.do_import(filename, progressbar=self.progressbar)
 
-        GLib.idle_add(self.progressbar1.set_text, _("Recreating indexes..."))
+        GLib.idle_add(self.progressbar.set_text, _("Recreating indexes..."))
 
         # .sqlite
         create_indexes(self.chessfile.engine)
@@ -454,47 +464,83 @@ class Database(GObject.GObject, Perspective):
         self.chessfile.set_scout_filter(None)
         GLib.idle_add(self.gamelist.load_games)
         GLib.idle_add(self.emit, "chessfile_imported", self.chessfile)
+        GLib.idle_add(self.progressbar0.hide)
         GLib.idle_add(self.progress_dialog.hide)
 
     def do_import(self, filenames):
         self.progress_dialog.set_title(_("Import"))
-        self.spinner.hide()
-        if len(filenames) == 1:
-            self.progressbar0.hide()
-        else:
+        if len(filenames) > 1:
             self.progressbar0.show()
-        self.progressbar1.show()
-        self.progressbar1.set_text(_("Preparing to start import..."))
+        self.progressbar.show()
+        self.progressbar.set_text(_("Preparing to start import..."))
 
         thread = threading.Thread(target=self.importing, args=(filenames, ))
         thread.daemon = True
         thread.start()
 
-    def process_records(self, callback, *args):
+    def process_records(self, callback, cancel_event, *args):
         counter = 0
+
         records, plys = self.chessfile.get_records(FIRST_PAGE)
-        callback(counter, records, *args)
-        while True:
+        callback(records, *args)
+        GLib.idle_add(self.progressbar.set_text, "%s games processed" % counter)
+
+        while not cancel_event.is_set():
             records, plys = self.chessfile.get_records(NEXT_PAGE)
             if records:
-                callback(counter, records, *args)
+                callback(records, *args)
+                counter += len(records)
+                GLib.idle_add(self.progressbar.set_text, "%s games processed" % counter)
             else:
                 break
 
     def create_book(self):
-        print("creating book...")
-        self.positions = {}
-        visitor = PgnVisitor(self.chessfile)
-        visitor.process_records(self.feed_book)
+        dialog = Gtk.FileChooserDialog(
+            _("Create New Polyglot Opening Book"), mainwindow(), Gtk.FileChooserAction.SAVE,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_NEW, Gtk.ResponseType.ACCEPT))
 
-        filename = "book.bin"
-        with open(filename, "wb") as to_file:
-            for key, moves in sorted(self.positions.items(), key=lambda item: item[0]):
-                # print(key, moves)
-                for move in moves:
-                    to_file.write(pack(">QHHI", key, move, moves[move], 0))
+        dialog.set_current_folder(os.path.expanduser("~"))
+        dialog.set_current_name("new_book.bin")
 
-    def feed_book(self, records):
+        new_bin = None
+        response = dialog.run()
+        if response == Gtk.ResponseType.ACCEPT:
+            new_bin = dialog.get_filename()
+            if not new_bin.endswith(".bin"):
+                new_bin = "%s.bin" % new_bin
+        dialog.destroy()
+
+        if new_bin is None:
+            return
+
+        self.progress_dialog.set_title(_("Create Polyglot Book"))
+
+        def creating_book(cancel_event):
+            positions = {}
+            self.process_records(self.feed_book, cancel_event, positions)
+
+            if cancel_event.is_set():
+                return
+
+            with open(new_bin, "wb") as to_file:
+                GLib.idle_add(self.progressbar.set_text, _("Save"))
+                for key, moves in sorted(positions.items(), key=lambda item: item[0]):
+                    # print(key, moves)
+                    for move in moves:
+                        to_file.write(pack(">QHHI", key, move, moves[move], 0))
+
+            GLib.idle_add(self.progress_dialog.hide)
+
+        cancel_event = threading.Event()
+        loop = asyncio.get_event_loop()
+        loop.run_in_executor(None, creating_book, cancel_event)
+
+        response = self.progress_dialog.run()
+        if response == Gtk.ResponseType.CANCEL:
+            cancel_event.set()
+        self.progress_dialog.hide()
+
+    def feed_book(self, records, positions):
         for rec in records:
             model = GameModel()
 
@@ -538,14 +584,14 @@ class Database(GObject.GObject, Perspective):
                     poly_move = toPolyglot(board.prev, move)
                     # move_str = "%s%s" % (reprCord[FCORD(move)], reprCord[TCORD(move)])
                     # print("%0.16x" % board.prev.hash, poly_move, board.prev.asFen(), move_str)
-                    if board.prev.hash in self.positions:
-                        if poly_move in self.positions[board.prev.hash]:
-                            self.positions[board.prev.hash][poly_move] += score[board.prev.color]
+                    if board.prev.hash in positions:
+                        if poly_move in positions[board.prev.hash]:
+                            positions[board.prev.hash][poly_move] += score[board.prev.color]
                         else:
-                            self.positions[board.prev.hash][poly_move] = score[board.prev.color]
+                            positions[board.prev.hash][poly_move] = score[board.prev.color]
                     else:
                         # board.prev.asFen(), move_str,
-                        self.positions[board.prev.hash] = {poly_move: score[board.prev.color]}
+                        positions[board.prev.hash] = {poly_move: score[board.prev.color]}
 
     def create_database(self):
         dialog = Gtk.FileChooserDialog(
@@ -571,8 +617,7 @@ class Database(GObject.GObject, Perspective):
                                       buttons=Gtk.ButtonsType.OK)
                 d.set_markup(_("<big><b>File '%s' already exists.</b></big>") % new_pgn)
                 d.run()
-                d.hide()
-                print("%s allready exist." % new_pgn)
+                d.destroy()
 
         dialog.destroy()
 
@@ -619,24 +664,3 @@ def get_latest_twic():
                 latest = int(line[position + len(PREFIX):][:4])
                 break
     return latest
-
-
-class PgnVisitor:
-    def __init__(self, chessfile):
-        self.chessfile = chessfile
-        self.counter = 0
-
-    def process_records(self, callback):
-        records, plys = self.chessfile.get_records(FIRST_PAGE)
-        callback(records)
-        self.counter += len(records)
-        print(self.counter)
-
-        while True:
-            records, plys = self.chessfile.get_records(NEXT_PAGE)
-            if records:
-                callback(records)
-                self.counter += len(records)
-                print(self.counter)
-            else:
-                break
