@@ -1,7 +1,17 @@
+import asyncio
+import os
 import unittest
 
+from pychess.System import uistuff
+from pychess.widgets import gamewidget
+from pychess.perspectives.games import Games
+from pychess.perspectives.database import Database
+from pychess.perspectives import perspective_manager
+from pychess.Utils.const import A2, A4, E2, E4
+from pychess.Utils import book
 from pychess.Utils.Board import Board
 from pychess.Utils.lutils.LBoard import LBoard
+from pychess.Utils.lutils.lmovegen import newMove
 
 # Examples taken from http://alpha.uhasselt.be/Research/Algebra/Toga/book_format.html
 testcases = [
@@ -17,6 +27,19 @@ testcases = [
 ]
 
 
+pgn = """
+[Event ""]
+[Result "1-0"]
+
+1. e4 d5 2. e5 f5 3. Ke2 Kf7 1-0
+
+[Event ""]
+[Result "0-1"]
+
+1. a4 b5 2. h4 b4 3. c4 bxc3 Ra3 0-1
+"""
+
+
 class PolyglotTestCase(unittest.TestCase):
 
     def testPolyglot_1(self):
@@ -26,6 +49,63 @@ class PolyglotTestCase(unittest.TestCase):
             board = LBoard(Board)
             board.applyFen(testcase[0])
             self.assertEqual(board.hash, testcase[1])
+
+    def testPolyglot_2(self):
+        """Testing Polyglot book creation"""
+
+        widgets = uistuff.GladeWidgets("PyChess.glade")
+        gamewidget.setWidgets(widgets)
+        perspective_manager.set_widgets(widgets)
+
+        self.games_persp = Games()
+        perspective_manager.add_perspective(self.games_persp)
+
+        self.database_persp = Database()
+        self.database_persp.create_toolbuttons()
+        perspective_manager.add_perspective(self.database_persp)
+
+        filename = "polyglot_test.pgn"
+        with open(filename, "w") as f:
+            f.write(pgn)
+
+        self.database_persp.open_chessfile(filename)
+
+        BIN = "polyglot_test.bin"
+
+        if os.path.isfile(BIN):
+            os.remove(BIN)
+
+        def coro():
+            def on_book_created(persp, event):
+                self.assertTrue(os.path.isfile(BIN))
+
+                book.bookfile = BIN
+
+                testcase = testcases[0]
+                board = LBoard(Board)
+                board.applyFen(testcase[0])
+                openings = book.getOpenings(board)
+                self.assertEqual(openings, [(newMove(E2, E4), 2, 0), ((newMove(A2, A4), 0, 0))])
+
+                testcase = testcases[-1]
+                board = LBoard(Board)
+                board.applyFen(testcase[0])
+                openings = book.getOpenings(board)
+                self.assertEqual(openings, [])
+
+                event.set()
+
+            event = asyncio.Event()
+            self.database_persp.connect("bookfile_created", on_book_created, event)
+
+            self.database_persp.create_book(BIN)
+
+            yield from event.wait()
+
+        loop = asyncio.get_event_loop()
+        loop.set_debug(enabled=True)
+
+        loop.run_until_complete(coro())
 
 
 if __name__ == '__main__':
