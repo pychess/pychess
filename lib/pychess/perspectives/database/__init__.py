@@ -38,6 +38,7 @@ class Database(GObject.GObject, Perspective):
         'chessfile_opened': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
         'chessfile_closed': (GObject.SignalFlags.RUN_FIRST, None, ()),
         'chessfile_imported': (GObject.SignalFlags.RUN_FIRST, None, (object, )),
+        'bookfile_created': (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
 
     def __init__(self):
@@ -494,21 +495,21 @@ class Database(GObject.GObject, Perspective):
             else:
                 break
 
-    def create_book(self):
-        dialog = Gtk.FileChooserDialog(
-            _("Create New Polyglot Opening Book"), mainwindow(), Gtk.FileChooserAction.SAVE,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_NEW, Gtk.ResponseType.ACCEPT))
+    def create_book(self, new_bin=None):
+        if new_bin is None:
+            dialog = Gtk.FileChooserDialog(
+                _("Create New Polyglot Opening Book"), mainwindow(), Gtk.FileChooserAction.SAVE,
+                (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_NEW, Gtk.ResponseType.ACCEPT))
 
-        dialog.set_current_folder(os.path.expanduser("~"))
-        dialog.set_current_name("new_book.bin")
+            dialog.set_current_folder(os.path.expanduser("~"))
+            dialog.set_current_name("new_book.bin")
 
-        new_bin = None
-        response = dialog.run()
-        if response == Gtk.ResponseType.ACCEPT:
-            new_bin = dialog.get_filename()
-            if not new_bin.endswith(".bin"):
-                new_bin = "%s.bin" % new_bin
-        dialog.destroy()
+            response = dialog.run()
+            if response == Gtk.ResponseType.ACCEPT:
+                new_bin = dialog.get_filename()
+                if not new_bin.endswith(".bin"):
+                    new_bin = "%s.bin" % new_bin
+            dialog.destroy()
 
         if new_bin is None:
             return
@@ -528,7 +529,7 @@ class Database(GObject.GObject, Perspective):
                     # print(key, moves)
                     for move in moves:
                         to_file.write(pack(">QHHI", key, move, moves[move], 0))
-
+            GLib.idle_add(self.emit, "bookfile_created")
             GLib.idle_add(self.progress_dialog.hide)
 
         cancel_event = threading.Event()
