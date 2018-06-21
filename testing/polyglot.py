@@ -82,7 +82,8 @@ class PolyglotTestCase(unittest.TestCase):
             def on_book_created(persp, event):
                 self.assertTrue(os.path.isfile(BIN))
 
-                book.bookfile = BIN
+                book.path = BIN
+                book.bookfile = True
 
                 testcase = testcases[0]
                 board = LBoard(Board)
