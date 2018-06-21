@@ -64,13 +64,16 @@ class PolyglotTestCase(unittest.TestCase):
         self.database_persp.create_toolbuttons()
         perspective_manager.add_perspective(self.database_persp)
 
-        filename = "polyglot_test.pgn"
-        with open(filename, "w") as f:
+        PGN = "polyglot.pgn"
+        if os.path.isfile(PGN):
+            os.remove(PGN)
+
+        with open(PGN, "w") as f:
             f.write(pgn)
 
-        self.database_persp.open_chessfile(filename)
+        self.database_persp.open_chessfile(PGN)
 
-        BIN = "polyglot_test.bin"
+        BIN = "polyglot_book.bin"
 
         if os.path.isfile(BIN):
             os.remove(BIN)
@@ -85,7 +88,7 @@ class PolyglotTestCase(unittest.TestCase):
                 board = LBoard(Board)
                 board.applyFen(testcase[0])
                 openings = book.getOpenings(board)
-                self.assertEqual(openings, [(newMove(E2, E4), 2, 0), ((newMove(A2, A4), 0, 0))])
+                self.assertEqual(openings, [(newMove(E2, E4), 2, 0), (newMove(A2, A4), 0, 0)])
 
                 testcase = testcases[-1]
                 board = LBoard(Board)
