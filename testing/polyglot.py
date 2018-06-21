@@ -89,7 +89,7 @@ class PolyglotTestCase(unittest.TestCase):
                 board = LBoard(Board)
                 board.applyFen(testcase[0])
                 openings = book.getOpenings(board)
-                self.assertEqual(openings, [(newMove(E2, E4), 2, 0), (newMove(A2, A4), 0, 0)])
+                self.assertEqual(sorted(openings), sorted([(newMove(E2, E4), 2, 0), (newMove(A2, A4), 0, 0)]))
 
                 testcase = testcases[-1]
                 board = LBoard(Board)
