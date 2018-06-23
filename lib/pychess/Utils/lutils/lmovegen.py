@@ -7,7 +7,7 @@ from pychess.Utils.const import EMPTY, PAWN,\
     QUEEN, KNIGHT, BISHOP, ROOK, KING, WHITE, BLACK,\
     SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, GIVEAWAYCHESS, CAMBODIANCHESS,\
     ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, CRAZYHOUSECHESS, ASEAN_VARIANTS,\
-    HORDECHESS, BPAWN, sliders,\
+    HORDECHESS, PLACEMENTCHESS, BPAWN, sliders,\
     A8, A6, G6, F6, H1, C3, B2, B3, A3, D6, D8, E3, E1, E8, C7, F2, D1, E6, H3, D3, H2, G7, H6, H7,\
     ASEAN_QUEEN, ASEAN_BBISHOP, ASEAN_WBISHOP, NORMAL_MOVE, QUEEN_CASTLE, KING_CASTLE, ENPASSANT,\
     KNIGHT_PROMOTION, BISHOP_PROMOTION, ROOK_PROMOTION, QUEEN_PROMOTION, KING_PROMOTION, NULL_MOVE,\
@@ -197,7 +197,7 @@ def genAllMoves(board, drops=True):
             yield move
 
     # In sittuyin you have to place your pieces before any real move
-    if board.variant == SITTUYINCHESS:
+    if board.variant == SITTUYINCHESS or board.variant == PLACEMENTCHESS:
         if board.plyCount < 16:
             return
 
@@ -686,6 +686,7 @@ def genDrops(board):
         if holding[piece] > 0:
             for cord, elem in enumerate(arBoard):
                 if elem == EMPTY:
+                    # forbidden drop moves
                     if board.variant == SITTUYINCHESS:
                         if color == WHITE:
                             if cord in (A3, B3, C3, D3) or cord > H3:
@@ -700,7 +701,41 @@ def genDrops(board):
                                piece != ROOK and cord >= A8:
                                 continue
 
+                    elif board.variant == PLACEMENTCHESS:
+                        # drop pieces enabled on base line only
+                        if color == WHITE:
+                            if cord > H1:
+                                continue
+                        else:
+                            if cord < A8:
+                                continue
+
+                        # bishops must be on opposite colour squares
+                        base_line = arBoard[0:8] if color == WHITE else arBoard[56:64]
+                        occupied_colors = [0, 0]
+                        occupied_colors[cord % 2] += 1
+                        for i, baseline_piece in enumerate(base_line):
+                            if baseline_piece != EMPTY:
+                                occupied_colors[i % 2] += 1
+
+                        if holding[BISHOP] == 2 and piece != BISHOP:
+                            # occupying all same colored fields before any bishop dropped is no-no
+                            if occupied_colors[WHITE] == 4 or occupied_colors[BLACK] == 4:
+                                continue
+                        elif holding[BISHOP] == 1:
+                            for i, baseline_piece in enumerate(base_line):
+                                if baseline_piece == BISHOP:
+                                    first_bishop_cord = i
+                                    break
+                            # occupying all possible place of opp colored bishop is no-no
+                            if piece != BISHOP and occupied_colors[1 - first_bishop_cord % 2] == 4:
+                                continue
+                            # same colored bishop is no-no
+                            elif piece == BISHOP and first_bishop_cord % 2 == cord % 2:
+                                continue
+
                     if piece == PAWN:
                         if cord >= 56 or cord <= 7:
                             continue
+
                     yield newMove(piece, cord, DROP)

@@ -2,7 +2,7 @@ from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, 
     ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, CAMBODIANCHESS, MAKRUKCHESS, \
     FISCHERRANDOMCHESS, SITTUYINCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, \
     SUICIDECHESS, GIVEAWAYCHESS, DROP_VARIANTS, BLACK, WHITE, FAN_PIECES, NULL_MOVE, CAS_FLAGS, \
-    HORDECHESS, NORMALCHESS, FEN_START, \
+    NORMALCHESS, PLACEMENTCHESS, FEN_START, \
     chrU2Sign, cordDic, reprCord, reprFile, reprSign, reprSignMakruk, reprSignSittuyin, \
     A1, A8, B1, B8, \
     C1, C8, D1, D8, \
@@ -385,11 +385,9 @@ class LBoard(object):
                 return False
             if -2 < (self.kings[0] >> 3) - (self.kings[1] >> 3) < 2 and -2 < (self.kings[0] & 7) - (self.kings[1] & 7) < 2:
                 return False
-        elif self.variant == SITTUYINCHESS and self.plyCount < 16:
-            return False
         if self.checked is None:
             kingcord = self.kings[self.color]
-            if self.variant == HORDECHESS and kingcord == -1:
+            if kingcord == -1:
                 return False
             self.checked = isAttacked(self,
                                       kingcord,
@@ -405,11 +403,9 @@ class LBoard(object):
                 return False
             if -2 < (self.kings[0] >> 3) - (self.kings[1] >> 3) < 2 and -2 < (self.kings[0] & 7) - (self.kings[1] & 7) < 2:
                 return False
-        elif self.variant == SITTUYINCHESS and self.plyCount < 16:
-            return False
         if self.opchecked is None:
             kingcord = self.kings[1 - self.color]
-            if self.variant == HORDECHESS and kingcord == -1:
+            if kingcord == -1:
                 return False
             self.opchecked = isAttacked(self,
                                         kingcord,
@@ -669,6 +665,18 @@ class LBoard(object):
             elif tcord == self.ini_rooks[opcolor][1]:
                 side = 0 if wildcastle else 1
                 castling &= ~CAS_FLAGS[opcolor][side]
+
+        if self.variant == PLACEMENTCHESS and self.plyCount == 16:
+            castling = 0
+            if self.arBoard[A1] == ROOK and self.arBoard[E1] == KING:
+                castling |= W_OOO
+            if self.arBoard[H1] == ROOK and self.arBoard[E1] == KING:
+                castling |= W_OO
+            if self.arBoard[A8] == ROOK and self.arBoard[E8] == KING:
+                castling |= B_OOO
+            if self.arBoard[H8] == ROOK and self.arBoard[E8] == KING:
+                castling |= B_OO
+
         self.setCastling(castling)
 
         self.setColor(opcolor)
