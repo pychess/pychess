@@ -666,7 +666,7 @@ class LBoard(object):
                 side = 0 if wildcastle else 1
                 castling &= ~CAS_FLAGS[opcolor][side]
 
-        if self.variant == PLACEMENTCHESS and self.plyCount == 16:
+        if self.variant == PLACEMENTCHESS and self.plyCount == 15:
             castling = 0
             if self.arBoard[A1] == ROOK and self.arBoard[E1] == KING:
                 castling |= W_OOO
