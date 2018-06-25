@@ -218,9 +218,8 @@ class BoardControl(Gtk.EventBox):
         # Game end can change cord0 to None while dragging a piece
         if cord0 is None:
             return
-        color = self.view.model.boards[-1].color
-        board = self.view.model.getBoardAtPly(self.view.shown,
-                                              self.view.shown_variation_idx)
+        board = self.getBoard()
+        color = board.color
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
         if promotion is None and board[cord0].sign == PAWN and \
