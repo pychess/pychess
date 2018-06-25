@@ -150,7 +150,7 @@ class Games(GObject.GObject, Perspective):
             try:
                 uri, loader, gameno, position = loaddata
                 gamemodel.loadAndStart(uri, loader, gameno, position)
-                if position != gamemodel.ply:
+                if position != gamemodel.ply and position != -1:
                     gmwidg.board.view.shown = position
             except LoadingError as e:
                 d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.WARNING,

@@ -529,7 +529,7 @@ class BoardView(Gtk.DrawingArea):
             old_variation_index is used when variation was added
             to the last played move and we want to step back.
         """
-
+        assert shown >= 0
         if shown < self.model.lowply:
             shown = self.model.lowply
 
