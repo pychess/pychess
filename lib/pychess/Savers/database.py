@@ -235,6 +235,12 @@ class TagDatabase:
                 tags.append(game.c.white_elo >= tag_query["elo_from"])
                 tags.append(game.c.black_elo >= tag_query["elo_from"])
 
+                # white_elo and black_elo are String(4) in game table
+                # we need to prevent selecting games where a player elo is 999 or 400
+                # when tag_query["elo_from"] is for example was set to 2200
+                tags.append(game.c.white_elo < "4")
+                tags.append(game.c.black_elo < "4")
+
             if "elo_to" in tag_query:
                 tags.append(game.c.white_elo <= tag_query["elo_to"])
                 tags.append(game.c.black_elo <= tag_query["elo_to"])
