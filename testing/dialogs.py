@@ -1,12 +1,15 @@
 import asyncio
 import unittest
 
+from gi.repository import Gtk
+
 from pychess.Utils.const import FEN_START, NORMALCHESS
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff
 from pychess.widgets import gamewidget
 from pychess.widgets import enginesDialog
 from pychess.widgets import newGameDialog
+from pychess.widgets.newGameDialog import COPY, CLEAR, PASTE, INITIAL
 from pychess.widgets import preferencesDialog
 from pychess.widgets.discovererDialog import DiscovererDialog
 from pychess.perspectives.games import Games
@@ -19,6 +22,9 @@ discoverer.pre_discover()
 
 class DialogTests(unittest.TestCase):
     def setUp(self):
+        self.loop = asyncio.get_event_loop()
+        self.loop.set_debug(enabled=True)
+
         widgets = uistuff.GladeWidgets("PyChess.glade")
         gamewidget.setWidgets(widgets)
         perspective_manager.set_widgets(widgets)
@@ -29,15 +35,98 @@ class DialogTests(unittest.TestCase):
         self.games_persp = Games()
         perspective_manager.add_perspective(self.games_persp)
 
-    def test1(self):
-        """ Open several dialogs """
+    def tearDown(self):
+        self.games_persp.gamewidgets.clear()
 
+    def test0(self):
+        """ Open engines dialogs """
+
+        # engines dialog
         enginesDialog.run(gamewidget.getWidgets())
 
-        newGameDialog.SetupPositionExtension.run(FEN_START, NORMALCHESS)
+    def test1(self):
+        """ Open new game dialog """
 
-        dd = DiscovererDialog(discoverer)
-        self.dd_task = asyncio.async(dd.start())
+        dialog = newGameDialog.NewGameMode()
+
+        def coro(dialog):
+            def on_gmwidg_created(persp, gmwidg, event):
+                event.set()
+
+            event = asyncio.Event()
+            self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
+
+            dialog.run()
+            dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
+
+            yield from event.wait()
+
+        self.loop.run_until_complete(coro(dialog))
+
+    def test2(self):
+        """ Open setup position dialog """
+
+        dialog = newGameDialog.SetupPositionExtension()
+
+        def coro(dialog):
+            def on_gmwidg_created(persp, gmwidg, event):
+                event.set()
+
+            event = asyncio.Event()
+            self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
+
+            dialog.run(FEN_START, NORMALCHESS)
+            dialog.widgets["newgamedialog"].response(INITIAL)
+            dialog.widgets["newgamedialog"].response(COPY)
+            dialog.widgets["newgamedialog"].response(CLEAR)
+            dialog.widgets["newgamedialog"].response(PASTE)
+            dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
+
+            yield from event.wait()
+
+        self.loop.run_until_complete(coro(dialog))
+
+    def test3(self):
+        """ Start a new game from enter notation dialog """
+
+        dialog = newGameDialog.EnterNotationExtension()
+
+        def coro(dialog):
+            def on_gmwidg_created(persp, gmwidg, event):
+                event.set()
+
+            event = asyncio.Event()
+            self.games_persp.connect("gmwidg_created", on_gmwidg_created, event)
+
+            dialog.run()
+            dialog.sourcebuffer.set_text("1. f3 e5 2. g4 Qh4")
+            dialog.widgets["newgamedialog"].response(Gtk.ResponseType.OK)
+
+            yield from event.wait()
+
+        self.loop.run_until_complete(coro(dialog))
+
+        # Show the firs move of the game
+        def coro1():
+            def on_shown_changed(view, shown, event):
+                if shown == 1:
+                    event.set()
+
+            gmwidg = self.games_persp.gamewidgets.pop()
+            view = gmwidg.board.view
+            board = gmwidg.gamemodel.boards[1]
+
+            event = asyncio.Event()
+            view.connect("shownChanged", on_shown_changed, event)
+
+            view.setShownBoard(board)
+
+            yield from event.wait()
+
+        self.loop.run_until_complete(coro1())
+
+    def test4(self):
+        """ Open preferences dialog """
 
         widgets = gamewidget.getWidgets()
         preferencesDialog.run(widgets)
@@ -56,6 +145,23 @@ class DialogTests(unittest.TestCase):
 
         notebook.next_page()
         self.assertIsNotNone(preferencesDialog.save_tab)
+
+    def test5(self):
+        """ Open engine discoverer dialog """
+        dd = DiscovererDialog(discoverer)
+
+        def coro():
+            def on_all_engines_discovered(discoverer, event):
+                event.set()
+
+            event = asyncio.Event()
+            discoverer.connect("all_engines_discovered", on_all_engines_discovered, event)
+
+            asyncio.async(dd.start())
+
+            yield from event.wait()
+
+        self.loop.run_until_complete(coro())
 
 
 if __name__ == '__main__':
