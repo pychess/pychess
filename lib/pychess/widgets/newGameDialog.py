@@ -313,9 +313,9 @@ class _GameInitializationMode(object):
 
             # Determination of the tooltip
             if duration_20 > 0 and duration_60 > 0 and duration_20 != duration_60:
-                radiobutton.set_tooltip_text(_("Estimated duration : %d - %d minutes") % (
-                    min(duration_20, duration_60),
-                    max(duration_20, duration_60)
+                radiobutton.set_tooltip_text(_("Estimated duration : %(min)d - %(max)d minutes") % ({
+                    "min": min(duration_20, duration_60),
+                    "max": max(duration_20, duration_60)}
                 ))
             else:
                 radiobutton.set_tooltip_text("")

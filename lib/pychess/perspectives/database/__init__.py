@@ -484,14 +484,14 @@ class Database(GObject.GObject, Perspective):
 
         records, plys = self.chessfile.get_records(FIRST_PAGE)
         callback(records, *args)
-        GLib.idle_add(self.progressbar.set_text, "%s games processed" % counter)
+        GLib.idle_add(self.progressbar.set_text, _("%s games processed") % counter)
 
         while not cancel_event.is_set():
             records, plys = self.chessfile.get_records(NEXT_PAGE)
             if records:
                 callback(records, *args)
                 counter += len(records)
-                GLib.idle_add(self.progressbar.set_text, "%s games processed" % counter)
+                GLib.idle_add(self.progressbar.set_text, _("%s games processed") % counter)
             else:
                 break
 
@@ -639,7 +639,7 @@ class Database(GObject.GObject, Perspective):
         name, ext = os.path.splitext(chessfile.path)
         basename = os.path.basename(name)
         info = "%s.%s" % (basename, ext[1:])
-        tooltip = "%s\ncontaining %s games" % (chessfile.path, chessfile.count)
+        tooltip = _("%(path)s\ncontaining %(count)s games") % ({"path": chessfile.path, "count": chessfile.count})
         tabcontent.set_tooltip_text(tooltip)
 
         label = Gtk.Label(info)

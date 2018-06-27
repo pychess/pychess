@@ -1074,7 +1074,7 @@ class Sidepanel:
                     ttime += str(tsec) + " " + (_("secs") if tsec > 1 else _("sec"))
 
                 if moves is not None and moves > 0:
-                    text += _("%s for %d moves") % (ttime, moves)
+                    text += _("%(time)s for %(count)d moves") % ({"time": ttime, "count": moves})
                 else:
                     text += ttime
                     if inc != 0:
