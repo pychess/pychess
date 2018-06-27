@@ -99,7 +99,7 @@ class DialogTests(unittest.TestCase):
 
     def test3(self):
         """ Start a new game from enter notation dialog """
-        print("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
+        print("---- Pyglib version: %s.%s.%s" % GLib.pyglib_version, flush=True)
         dialog = newGameDialog.EnterNotationExtension()
 
         def coro(dialog):
