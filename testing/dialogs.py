@@ -1,5 +1,6 @@
 import asyncio
 import unittest
+import sys
 
 from gi.repository import Gtk
 
@@ -22,6 +23,14 @@ discoverer.pre_discover()
 
 class DialogTests(unittest.TestCase):
     def setUp(self):
+        if sys.platform == "win32":
+            from asyncio.windows_events import ProactorEventLoop
+            loop = ProactorEventLoop()
+            asyncio.set_event_loop(loop)
+        else:
+            loop = asyncio.SelectorEventLoop()
+            asyncio.set_event_loop(loop)
+
         self.loop = asyncio.get_event_loop()
         self.loop.set_debug(enabled=True)
 
@@ -43,6 +52,8 @@ class DialogTests(unittest.TestCase):
 
         # engines dialog
         enginesDialog.run(gamewidget.getWidgets())
+        engines = [item[1] for item in enginesDialog.engine_dialog.allstore]
+        self.assertTrue("PyChess.py" in engines)
 
     def test1(self):
         """ Open new game dialog """
