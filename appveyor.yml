@@ -2,7 +2,7 @@ version: build-{build}-{branch}
 
 environment:
   global:
-   AIO: pygi-aio-3.18.2_rev12-setup_549872deadabb77a91efbc56c50fe15f969e5681.exe
+   AIO: pygi-aio-3.24.1_rev1-setup_049a323fe25432b10f7e9f543b74598d4be74a39.exe
    STOCKFISH: stockfish-windows-amd64.exe
 
   matrix:
