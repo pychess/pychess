@@ -76,6 +76,8 @@ class DialogTests(unittest.TestCase):
 
     def test2(self):
         """ Open setup position dialog """
+        print()
+        print("---- Pyglib version: %s.%s.%s" % GLib.pyglib_version)
 
         dialog = newGameDialog.SetupPositionExtension()
 
