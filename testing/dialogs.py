@@ -2,7 +2,7 @@ import asyncio
 import unittest
 import sys
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GLib
 
 from pychess.Utils.const import FEN_START, NORMALCHESS
 from pychess.Players.engineNest import discoverer
@@ -99,7 +99,7 @@ class DialogTests(unittest.TestCase):
 
     def test3(self):
         """ Start a new game from enter notation dialog """
-
+        print("Pyglib version: %s.%s.%s" % GLib.pyglib_version)
         dialog = newGameDialog.EnterNotationExtension()
 
         def coro(dialog):
