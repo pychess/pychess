@@ -76,8 +76,6 @@ class DialogTests(unittest.TestCase):
 
     def test2(self):
         """ Open setup position dialog """
-        print()
-        print("---- Pyglib version: %s.%s.%s" % GLib.pyglib_version)
 
         dialog = newGameDialog.SetupPositionExtension()
 
@@ -99,10 +97,12 @@ class DialogTests(unittest.TestCase):
 
         self.loop.run_until_complete(coro(dialog))
 
+    @unittest.skipIf(sys.platform == "win32",
+                     "Windows produces TypeError: could not get a reference to type class\n" + 
+                     "on line: cls.sourcebuffer = GtkSource.Buffer()")
     def test3(self):
         """ Start a new game from enter notation dialog """
-        print()
-        print("---- Pyglib version: %s.%s.%s" % GLib.pyglib_version)
+
         dialog = newGameDialog.EnterNotationExtension()
 
         def coro(dialog):
