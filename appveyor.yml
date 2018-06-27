@@ -39,7 +39,7 @@ install:
 
 cache:
   - "%AIO%"
-  # - "%PYTHON%\\lib\\site-packages"
+  - "%PYTHON%\\lib\\site-packages"
   - "c:\\projects\\pychess\\engines"
 
 build_script:
