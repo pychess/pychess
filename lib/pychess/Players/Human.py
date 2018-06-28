@@ -218,8 +218,8 @@ class Human(Player):
             self.gmwidg.setLocked(False)
 
     def playerUndoMoves(self, movecount, gamemodel):
-        log.debug("Human.playerUndoMoves:  movecount=%s self=%s" %
-                  (movecount, self))
+        log.debug("Human.playerUndoMoves:  movecount=%s self=%s gamemodel.curplayer=%s" %
+                  (movecount, self, gamemodel.curplayer))
         # If the movecount is odd, the player has changed, and we have to interupt
         if movecount % 2 == 1 and gamemodel.curplayer != self:
             # If it is no longer us to move, we raise TurnInterruprt in order to
@@ -233,7 +233,7 @@ class Human(Player):
         elif movecount % 2 == 0 and gamemodel.curplayer == self:
             log.debug("Human.playerUndoMoves: self=%s: calling gmwidg.setLocked" % (self))
             self.gmwidg.setLocked(False)
-            log.debug("Human.playerUndoMoves: putting TurnInterrupt into self.move_queue %s" % self.name)
+            log.debug("Human.playerUndoMoves: putting PassInterrupt into self.move_queue %s" % self.name)
             self.move_queue.put_nowait("pass")
 
     def putMessage(self, text):

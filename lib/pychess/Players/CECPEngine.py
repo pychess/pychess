@@ -525,17 +525,22 @@ class CECPEngine(ProtocolEngine):
         self.board = gamemodel.boards[-1]
 
     def playerUndoMoves(self, moves, gamemodel):
-        log.debug("playerUndoMoves: moves=%s gamemodel.ply=%s gamemodel.boards[-1]=%s self.board=%s" % (
-            moves, gamemodel.ply, gamemodel.boards[-1], self.board), extra={"task": self.defname})
+        log.debug("CECPEngine.playerUndoMoves: moves=%s self=%s gamemodel.curplayer=%s" %
+                  (moves, self, gamemodel.curplayer), extra={"task": self.defname})
 
         if gamemodel.curplayer != self and moves % 2 == 1:
             # Interrupt if we were searching, but should no longer do so
+            log.debug("CECPEngine.playerUndoMoves: putting TurnInterrupt into self.move_queue %s" % self.name, extra={"task": self.defname})
             self.queue.put_nowait("int")
 
         self.__tellEngineToStopPlayingCurrentColor()
 
-        for i in range(moves):
-            print("undo", file=self.engine)
+# This caused https://github.com/pychess/pychess/issues/1652
+# so instead of sending "undo" we send "setboard" here
+#        for i in range(moves):
+#            print("undo", file=self.engine)
+
+        self.__setBoard(gamemodel.boards[-1])
 
         if gamemodel.curplayer == self:
             self.board = gamemodel.boards[-1]
