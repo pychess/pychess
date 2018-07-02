@@ -5,6 +5,7 @@ import sys
 import os
 import atexit
 import builtins
+import locale
 from configparser import RawConfigParser
 
 from pychess.Utils.const import FISCHERRANDOMCHESS, LOSERSCHESS, COUNT_OF_SOUNDS, SOUND_MUTE
@@ -19,9 +20,10 @@ for sect in ("FICS", "ICC"):
         configParser.add_section(sect)
 
 path = addUserConfigPrefix("config")
+encoding = locale.getpreferredencoding()
 if os.path.isfile(path):
-    configParser.readfp(open(path, encoding="utf-8"))
-atexit.register(lambda: configParser.write(open(path, "w", encoding="utf-8")))
+    configParser.readfp(open(path, encoding=encoding))
+atexit.register(lambda: configParser.write(open(path, "w", encoding=encoding)))
 
 if sys.platform == "win32":
     username = os.environ["USERNAME"]
