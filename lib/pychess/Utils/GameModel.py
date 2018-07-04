@@ -435,8 +435,7 @@ class GameModel(GObject.GObject):
         return not self.hasLocalPlayer()
 
     def isEngine2EngineGame(self):
-        if self.players[0].__type__ == ARTIFICIAL and self.players[
-                1].__type__ == ARTIFICIAL:
+        if len(self.players) == 2 and self.players[0].__type__ == ARTIFICIAL and self.players[1].__type__ == ARTIFICIAL:
             return True
         else:
             return False
