@@ -5,8 +5,8 @@ from urllib.error import URLError
 from gi.repository import GLib, Gtk
 
 from pychess import VERSION
-from pychess.System.fetch import fetch
 from pychess.widgets import mainwindow
+from pychess.System import download_file_async
 
 URL = "https://api.github.com/repos/pychess/pychess/releases/latest"
 LINK = "https://github.com/pychess/pychess/releases"
@@ -15,18 +15,12 @@ LINK = "https://github.com/pychess/pychess/releases"
 @asyncio.coroutine
 def checkversion():
     new_version = None
-    try:
-        response = yield from fetch(URL)
-    except URLError as err:
-        if hasattr(err, 'reason'):
-            print('We failed to reach the server.')
-            print('Reason: ', err.reason)
-        elif hasattr(err, 'code'):
-            print('The server couldn\'t fulfill the request.')
-            print('Error code: ', err.code)
-    else:
-        str_response = response.decode('utf-8')
-        new_version = json.loads(str_response)["name"]
+
+    filename = yield from download_file_async(URL)
+
+    if filename is not None:
+        with open(filename, encoding="utf-8") as f:
+            new_version = json.loads(f.read())["name"]
 
     def notify(new_version):
         msg_dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.INFO,
