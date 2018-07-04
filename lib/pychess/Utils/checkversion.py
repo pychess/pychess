@@ -1,6 +1,5 @@
 import asyncio
 import json
-from urllib.error import URLError
 
 from gi.repository import GLib, Gtk
 
