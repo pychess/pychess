@@ -130,9 +130,9 @@ os.chdir(os.path.abspath(os.path.dirname(__file__)))
 stderr = sys.stderr
 stdout = sys.stdout
 
-#exec(open("pgn2ecodb.py").read())
+exec(open("pgn2ecodb.py").read())
 
-#exec(open("create_theme_preview.py").read())
+exec(open("create_theme_preview.py").read())
 
 # restore
 sys.stderr = stderr
