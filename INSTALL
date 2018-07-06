@@ -84,9 +84,10 @@ gst-plugins-base
 -------------------------
 Dependencies for Windows:
 python 3.4
-sqlalchemy
-pexpect
-psutil 3.4.2 (later versions from pypi doesn't work on XP)
+python -m pip install --upgrade pip
+pip install sqlalchemy
+pip install pexpect
+pip install psutil
 PyGObject (from http://sourceforge.net/projects/pygobjectwin32)
   Base packages
   GDK-Pixbuf
