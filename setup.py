@@ -7,6 +7,9 @@ from os.path import isdir
 import os
 import site
 import sys
+import platform
+
+MINGW = platform.python_compiler().startswith("GCC")
 
 from imp import load_module, find_module
 pychess = load_module("pychess", *find_module("pychess", ["lib"]))
@@ -127,9 +130,9 @@ os.chdir(os.path.abspath(os.path.dirname(__file__)))
 stderr = sys.stderr
 stdout = sys.stdout
 
-exec(open("pgn2ecodb.py").read())
+#exec(open("pgn2ecodb.py").read())
 
-exec(open("create_theme_preview.py").read())
+#exec(open("create_theme_preview.py").read())
 
 # restore
 sys.stderr = stderr
@@ -184,7 +187,10 @@ DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
 pofile = "LC_MESSAGES/pychess"
 if sys.platform == "win32":
     argv0_path = os.path.dirname(os.path.abspath(sys.executable))
-    sys.path.append(argv0_path + "\\tools\\i18n")
+    if MINGW:
+        sys.path.append(argv0_path + "\\..\\lib\\python3.6\\tools\\i18n")
+    else:
+        sys.path.append(argv0_path + "\\tools\\i18n")
     import msgfmt
 
 pychess_langs = []
@@ -205,9 +211,16 @@ if msi:
 
     # Get the site-package folder, not everybody will install
     # Python into C:\PythonXX
-    site_dir = site.getsitepackages()[1]
-    include_dll_path = os.path.join(site_dir, "gnome")
-    lang_path = os.path.join(site_dir, "gnome", "share", "locale")
+    if MINGW:
+        site_dir = site.getsitepackages()[0]
+        include_lib_path = os.path.join(site_dir, "..", "..", "..")
+        include_dll_path = os.path.join(site_dir, "..", "..", "..", "bin")
+        lang_path = os.path.join(site_dir, "..", "..", "..", "share", "locale")
+    else:
+        site_dir = site.getsitepackages()[1]
+        include_lib_path = os.path.join(site_dir, "gnome")
+        include_dll_path = os.path.join(site_dir, "gnome")
+        lang_path = os.path.join(site_dir, "gnome", "share", "locale")
 
     # gtk3.0 .mo files
     gtk_mo = [f + "/LC_MESSAGES/gtk30.mo" for f in os.listdir(lang_path) if f in pychess_langs]
@@ -237,7 +250,7 @@ if msi:
 
     # Let's add gtk libraries folders and files
     for lib in gtk_libs:
-        include_files.append((os.path.join(include_dll_path, lib), lib))
+        include_files.append((os.path.join(include_lib_path, lib), lib))
 
     base = None
     # Lets not open the console while running the app
