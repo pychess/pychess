@@ -90,8 +90,12 @@ class Sidepanel:
         self.game_changed(model, model.ply)
 
     def game_changed(self, model, ply):
-        for i in range(len(self.store) + model.lowply, ply + 1):
-            self.addComment(model, self.__chooseComment(model, i))
+        if len(self.store) == 0:
+            for i in range(len(self.store) + model.lowply, ply + 1):
+                self.addComment(model, self.__chooseComment(model, i))
+        else:
+            self.addComment(model, self.__chooseComment(model, ply))
+
         self.shownChanged(self.boardview, ply)
 
     def addComment(self, model, comment):

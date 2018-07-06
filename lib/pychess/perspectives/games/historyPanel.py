@@ -188,8 +188,11 @@ class Sidepanel:
         if self.boardview is None or self.boardview.model is None:
             return
 
-        for i in range(len(self.store) + gamemodel.lowply, ply + 1):
-            self.add_move(gamemodel, i)
+        if len(self.store) == 0:
+            for i in range(len(self.store) + gamemodel.lowply, ply + 1):
+                self.add_move(gamemodel, i)
+        else:
+            self.add_move(gamemodel, ply)
 
         self.shownChanged(self.boardview, ply)
 
