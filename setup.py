@@ -287,7 +287,7 @@ else:
                 "pychess.Database", "pychess.widgets", "pychess.widgets.pydock",
                 "pychess.perspectives", "pychess.perspectives.welcome",
                 "pychess.perspectives.games", "pychess.perspectives.fics",
-                "pychess.perspectives.database",
+                "pychess.perspectives.database", "pychess.perspectives.learn",
                 "pychess.external", "pychess.external.gbulb", "pychess.external.pexpect"]
 
     build_exe_options = {}
