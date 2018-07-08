@@ -3,16 +3,17 @@
 from distutils.command.register import register
 from glob import glob
 from os import listdir
-from os.path import isdir
+from os.path import isdir, isfile
 import os
 import site
 import sys
 import platform
 
-MINGW = platform.python_compiler().startswith("GCC")
 
 from imp import load_module, find_module
 pychess = load_module("pychess", *find_module("pychess", ["lib"]))
+
+MINGW = platform.python_compiler().startswith("GCC")
 
 msi = False
 if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
@@ -130,9 +131,11 @@ os.chdir(os.path.abspath(os.path.dirname(__file__)))
 stderr = sys.stderr
 stdout = sys.stdout
 
-exec(open("pgn2ecodb.py").read())
+if not isfile("eco.db"):
+    exec(open("pgn2ecodb.py").read())
 
-exec(open("create_theme_preview.py").read())
+if not isfile(os.path.abspath("pieces/Pychess.png")):
+    exec(open("create_theme_preview.py").read())
 
 # restore
 sys.stderr = stderr
