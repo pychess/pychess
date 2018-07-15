@@ -22,8 +22,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-27 11:08+0200\n"
-"PO-Revision-Date: 2018-06-27 12:47+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2018-07-12 23:50+0000\n"
+"Last-Translator: ecrucru\n"
 "Language-Team: French (http://www.transifex.com/gbtami/pychess/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -194,7 +194,7 @@ msgstr "Sauvegarder la base de données sous"
 
 #: glade/PyChess.glade:779
 msgid "Create polyglot opening book"
-msgstr ""
+msgstr "Créer un livre d'ouvertures Polyglot"
 
 #: glade/PyChess.glade:791
 msgid "Import chessfile"
@@ -284,7 +284,7 @@ msgstr "Lorsque cette option est sélectionnée, l'échiquier pivote après chaq
 
 #: glade/PyChess.glade:1187
 msgid "Auto _promote to queen"
-msgstr ""
+msgstr "_Promouvoir en dame"
 
 #: glade/PyChess.glade:1192
 msgid "If set, pawn promotes to queen without promotion dialog selection."
@@ -302,14 +302,14 @@ msgstr "Lorsque cette option est sélectionnée, les pièces noires sont affich�
 
 #: glade/PyChess.glade:1225
 msgid "Use a linear scale for the score"
-msgstr ""
+msgstr "Utiliser une échelle linéaire pour le score"
 
 #: glade/PyChess.glade:1230
 msgid ""
 "Unticked : the exponential stretching displays the full range of the score and enlarges the values around the null average.\n"
 "\n"
 "Ticked : the linear scale focuses on a limited range around the null average. It highlights the tiny errors and blunders better."
-msgstr ""
+msgstr "Décoché : l'étirement exponentiel affiche toutes les valeurs possibles du score tout en élargissant les valeurs centrales proches de zéro.\n\nCoché : l'échelle linéaire se focalise sur les scores autour de la valeur zéro sans déformation. Les erreurs et les bourdes sont ainsi plus visibles."
 
 #: glade/PyChess.glade:1245
 msgid "Show _captured pieces"
@@ -539,11 +539,11 @@ msgstr "<b>Style de plateau</b>"
 
 #: glade/PyChess.glade:2633
 msgid "Font:"
-msgstr ""
+msgstr "Police:"
 
 #: glade/PyChess.glade:2671
 msgid "<b>Move text</b>"
-msgstr ""
+msgstr "<b>Coup</b>"
 
 #: glade/PyChess.glade:2728
 msgid "<b>Chess Sets</b>"
@@ -607,11 +607,11 @@ msgstr "Activer l'alarme quand le temps _restant en seconde est:"
 
 #: glade/PyChess.glade:3470
 msgid "_Puzzle success:"
-msgstr ""
+msgstr "Succès des _puzzles :"
 
 #: glade/PyChess.glade:3537
 msgid "_Variation choices:"
-msgstr ""
+msgstr "Choix de _variations :"
 
 #: glade/PyChess.glade:3594
 msgid "<b>Play Sound When...</b>"
@@ -748,19 +748,19 @@ msgstr "Blanc :"
 
 #: glade/PyChess.glade:4601
 msgid "Date:"
-msgstr ""
+msgstr "Date:"
 
 #: glade/PyChess.glade:4614
 msgid "Result:"
-msgstr ""
+msgstr "Résultat:"
 
 #: glade/PyChess.glade:4626
 msgid "Game"
-msgstr ""
+msgstr "Partie"
 
 #: glade/PyChess.glade:4638
 msgid "Players:"
-msgstr ""
+msgstr "Joueurs:"
 
 #: glade/PyChess.glade:4676
 msgid "Event:"
@@ -768,15 +768,15 @@ msgstr "Événement :"
 
 #: glade/PyChess.glade:4694
 msgid "Expected format as \"yyyy.mm.dd\" with the allowed joker \"?\""
-msgstr ""
+msgstr "Format attendu en \"aaaa.mm.jj\" avec le joker possible \"?\""
 
 #: glade/PyChess.glade:4749
 msgid "Identification"
-msgstr ""
+msgstr "Identification"
 
 #: glade/PyChess.glade:4840
 msgid "Additional tags"
-msgstr ""
+msgstr "Attributs additionnels"
 
 #: glade/PyChess.glade:4874
 msgid "uci"
@@ -846,33 +846,33 @@ msgstr "Pays d'origine du moteur"
 
 #: glade/PyChess.glade:5203
 msgid "Comment:"
-msgstr ""
+msgstr "Commentaire:"
 
 #: glade/PyChess.glade:5217
 msgid "Free comment about the engine"
-msgstr ""
+msgstr "Commentaire libre à propos du moteur de jeu"
 
 #: glade/PyChess.glade:5236
 msgid "Environment"
-msgstr ""
+msgstr "Environnement"
 
 #: glade/PyChess.glade:5260
 msgid "Preferred level:"
-msgstr ""
+msgstr "Niveau préféré:"
 
 #: glade/PyChess.glade:5273
 msgid ""
 "Level 1 is the weakest and level 20 is the strongest. You may not define a "
 "too high level if the engine is based on the depth to explore"
-msgstr ""
+msgstr "Le niveau 1 est le plus faible et le niveau 20 est le plus fort. Vous ne devez pas définir une valeur trop élevée si le moteur dépend de la profondeur de jeu"
 
 #: glade/PyChess.glade:5321
 msgid "Restore the default options"
-msgstr ""
+msgstr "Restaurer les options par défaut"
 
 #: glade/PyChess.glade:5346
 msgid "Options"
-msgstr ""
+msgstr "Options"
 
 #: glade/PyChess.glade:5539
 msgid "Filter"
@@ -1007,7 +1007,7 @@ msgstr "Pièce/Coup"
 
 #: glade/PyChess.glade:7022
 msgid "Sub-FEN :"
-msgstr ""
+msgstr "Sous-FEN :"
 
 #: glade/PyChess.glade:7091
 msgid "Pattern"
@@ -1100,11 +1100,11 @@ msgstr "Po_rts :"
 
 #: glade/fics_logon.glade:281
 msgid "Lag:"
-msgstr ""
+msgstr "Latence :"
 
 #: glade/fics_logon.glade:290
 msgid "Use time compensation"
-msgstr ""
+msgstr "Utiliser la compensation de temps"
 
 #: glade/fics_logon.glade:379
 msgid "S_ign up"
@@ -1570,7 +1570,7 @@ msgstr "Connexion automatique au démarrage"
 
 #: glade/taskers.glade:369
 msgid "Server:"
-msgstr ""
+msgstr "Serveur :"
 
 #: glade/taskers.glade:418
 msgid "<b>_Connect to server</b>"
@@ -1578,31 +1578,31 @@ msgstr "<b>_Connexion au serveur</b>"
 
 #: glade/taskers.glade:469
 msgid "Select a pgn or epd or fen chess file"
-msgstr ""
+msgstr "Sélectionner un fichier d'échecs PGN, EPD ou FEN"
 
 #: glade/taskers.glade:532
 msgid "_Recent:"
-msgstr ""
+msgstr "_Récent :"
 
 #: glade/taskers.glade:542
 msgid "Create a new database"
-msgstr ""
+msgstr "Créer une nouvelle base"
 
 #: glade/taskers.glade:609
 msgid "<b>Open database</b>"
-msgstr ""
+msgstr "<b>Ouvrir une base</b>"
 
 #: glade/taskers.glade:660
 msgid "View lectures, solve puzzles or start practicing endgames"
-msgstr ""
+msgstr "Lire des cours, résoudre des puzzles ou pratiquer des fins de parties"
 
 #: glade/taskers.glade:723
 msgid "Category:"
-msgstr ""
+msgstr "Catégorie :"
 
 #: glade/taskers.glade:796
 msgid "<b>Start learning</b>"
-msgstr ""
+msgstr "<b>Démarrer l'apprentissage</b>"
 
 #: glade/tipoftheday.glade:7
 msgid "Tip Of The day"
@@ -1904,7 +1904,7 @@ msgstr "Impossible de charger la partie car une erreur s'est produite lors de l'
 
 #: lib/pychess/Savers/olv.py:10
 msgid "Chess Compositions from yacpdb.org"
-msgstr ""
+msgstr "Études d'échecs de yacpdb.org"
 
 #: lib/pychess/Savers/pgn.py:48
 msgid "Chess Game"
@@ -1985,11 +1985,11 @@ msgstr "sec"
 
 #: lib/pychess/Utils/__init__.py:14
 msgid "Illegal"
-msgstr ""
+msgstr "Illégal"
 
 #: lib/pychess/Utils/__init__.py:38 lib/pychess/Utils/__init__.py:39
 msgid "Mate"
-msgstr ""
+msgstr "Mat"
 
 #: lib/pychess/Utils/checkversion.py:35
 #, python-format
@@ -3052,7 +3052,7 @@ msgstr "Statut de la partie inconnu"
 
 #: lib/pychess/Utils/repr.py:37
 msgid "Game cancelled"
-msgstr ""
+msgstr "Partie annulée"
 
 #: lib/pychess/Utils/repr.py:42
 msgid "Because neither player has sufficient material to mate"
@@ -3252,7 +3252,7 @@ msgstr "La raison est inconnue"
 
 #: lib/pychess/Utils/repr.py:99
 msgid "Because practice goal reached"
-msgstr ""
+msgstr "Parce que l'objectif de l'entraînement est atteint"
 
 #: lib/pychess/Variants/asean.py:20
 msgid ""
@@ -3498,11 +3498,11 @@ msgstr "Pions poussés"
 msgid ""
 "Pre-chess: "
 "https://en.wikipedia.org/wiki/List_of_chess_variants#Different_starting_position"
-msgstr ""
+msgstr "Pre-chess: https://en.wikipedia.org/wiki/List_of_chess_variants#Different_starting_position"
 
 #: lib/pychess/Variants/placement.py:13
 msgid "Placement"
-msgstr ""
+msgstr "Placement"
 
 #: lib/pychess/Variants/queenodds.py:11
 msgid "One player starts with one less queen piece"
@@ -4087,48 +4087,48 @@ msgstr "Réception de la liste des joueurs"
 
 #: lib/pychess/widgets/LearnInfoBar.py:76
 msgid "Your turn."
-msgstr ""
+msgstr "Votre tour."
 
 #: lib/pychess/widgets/LearnInfoBar.py:77
 msgid "Hint"
-msgstr ""
+msgstr "Indice"
 
 #: lib/pychess/widgets/LearnInfoBar.py:78
 msgid "Best move"
-msgstr ""
+msgstr "Meilleur coup"
 
 #: lib/pychess/widgets/LearnInfoBar.py:85
 #, python-format
 msgid "Well done! %s completed."
-msgstr ""
+msgstr "Bien joué ! %s terminé."
 
 #: lib/pychess/widgets/LearnInfoBar.py:88
 msgid "Well done!"
-msgstr ""
+msgstr "Bien joué !"
 
 #: lib/pychess/widgets/LearnInfoBar.py:89
 msgid "Next"
-msgstr ""
+msgstr "Suivant"
 
 #: lib/pychess/widgets/LearnInfoBar.py:98
 msgid "Continue"
-msgstr ""
+msgstr "Continuer"
 
 #: lib/pychess/widgets/LearnInfoBar.py:107
 msgid "Not the best move!"
-msgstr ""
+msgstr "Pas le meilleur coup !"
 
 #: lib/pychess/widgets/LearnInfoBar.py:108
 msgid "Retry"
-msgstr ""
+msgstr "Réessayer"
 
 #: lib/pychess/widgets/LearnInfoBar.py:121
 msgid "Cool! Now let see how it goes in the main line."
-msgstr ""
+msgstr "Super ! Regardons maintenant quelle est la ligne principale."
 
 #: lib/pychess/widgets/LearnInfoBar.py:122
 msgid "Back to main line"
-msgstr ""
+msgstr "Retour à la ligne principale"
 
 #: lib/pychess/widgets/LogDialog.py:21
 msgid "PyChess Information Window"
@@ -4146,17 +4146,17 @@ msgstr "Leçons"
 #: lib/pychess/widgets/TaskerManager.py:306
 #: lib/pychess/perspectives/learn/LessonsPanel.py:19
 msgid "Lessons"
-msgstr ""
+msgstr "Leçons"
 
 #: lib/pychess/widgets/TaskerManager.py:307
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:21
 msgid "Puzzles"
-msgstr ""
+msgstr "Puzzles"
 
 #: lib/pychess/widgets/TaskerManager.py:308
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:21
 msgid "Endgames"
-msgstr ""
+msgstr "Fins de parties"
 
 #: lib/pychess/widgets/ViewsPanel.py:33
 msgid "You have opened no conversations yet"
@@ -4181,15 +4181,15 @@ msgstr "Abandonner"
 
 #: lib/pychess/widgets/enginesDialog.py:43
 msgid "You have unsaved changes. Do you want to save before leaving?"
-msgstr ""
+msgstr "Vous avez des modifications non enregistrées. Voulez-vous les sauvegarder avant de quitter ?"
 
 #: lib/pychess/widgets/enginesDialog.py:150
 msgid "Option"
-msgstr ""
+msgstr "Option"
 
 #: lib/pychess/widgets/enginesDialog.py:151
 msgid "Value"
-msgstr ""
+msgstr "Valeur"
 
 #: lib/pychess/widgets/enginesDialog.py:185
 msgid "Select engine"
@@ -4209,7 +4209,7 @@ msgstr "<big><b>Impossible d'ajouter %s</b></big>"
 
 #: lib/pychess/widgets/enginesDialog.py:218
 msgid "The engine is already installed under the same name"
-msgstr ""
+msgstr "Le moteur est déjà installé sous le même nom"
 
 #: lib/pychess/widgets/enginesDialog.py:248
 msgid " is not installed"
@@ -4236,15 +4236,15 @@ msgstr "Choisir le répertoire de travail"
 
 #: lib/pychess/widgets/enginesDialog.py:579
 msgid "Do you really want to restore the default options of the engine ?"
-msgstr ""
+msgstr "Voulez-vous vraiment restaurer les options par défaut du moteur de jeu ?"
 
 #: lib/pychess/widgets/gameinfoDialog.py:61
 msgid "New"
-msgstr ""
+msgstr "Nouveau"
 
 #: lib/pychess/widgets/gameinfoDialog.py:198
 msgid "Pick a date"
-msgstr ""
+msgstr "Choisir une date"
 
 #: lib/pychess/widgets/gamenanny.py:112
 #, python-format
@@ -4406,7 +4406,7 @@ msgstr "Trouver la position dans la base de données"
 
 #: lib/pychess/widgets/gamewidget.py:671
 msgid "Save arrows/circles"
-msgstr ""
+msgstr "Sauvegarder les flèches et les cercles"
 
 #: lib/pychess/widgets/gamewidget.py:714
 msgid "Position not in current database"
@@ -4439,22 +4439,22 @@ msgstr "Rapide"
 #: lib/pychess/widgets/newGameDialog.py:292
 #, python-format
 msgid "%(name)s %(minutes)d min / %(moves)d moves %(duration)s"
-msgstr ""
+msgstr "%(name)s %(minutes)d min / %(moves)d coups %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:300
 #, python-format
 msgid "%(name)s %(minutes)d min %(sign)s %(gain)d sec/move %(duration)s"
-msgstr ""
+msgstr "%(name)s %(minutes)d min %(sign)s %(gain)d sec/coup %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:308
 #, python-format
 msgid "%(name)s %(minutes)d min %(duration)s"
-msgstr ""
+msgstr "%(name)s %(minutes)d min %(duration)s"
 
 #: lib/pychess/widgets/newGameDialog.py:316
 #, python-format
 msgid "Estimated duration : %(min)d - %(max)d minutes"
-msgstr ""
+msgstr "Durée estimée : %(min)d - %(max)d minutes"
 
 #: lib/pychess/widgets/newGameDialog.py:342
 msgid "Odds"
@@ -5056,15 +5056,15 @@ msgstr "Préparation de l'importation..."
 #: lib/pychess/perspectives/database/__init__.py:494
 #, python-format
 msgid "%s games processed"
-msgstr ""
+msgstr "%s parties traitées"
 
 #: lib/pychess/perspectives/database/__init__.py:501
 msgid "Create New Polyglot Opening Book"
-msgstr ""
+msgstr "Créer un nouveau livre d'ouvertures Polyglot"
 
 #: lib/pychess/perspectives/database/__init__.py:517
 msgid "Create Polyglot Book"
-msgstr ""
+msgstr "Créer un livre Polyglot"
 
 #: lib/pychess/perspectives/database/__init__.py:599
 msgid "Create New Pgn Database"
@@ -5080,7 +5080,7 @@ msgstr "<big><b>Le fichier '%s' existe déjà.</b></big>"
 msgid ""
 "%(path)s\n"
 "containing %(count)s games"
-msgstr ""
+msgstr "%(path)s\ncontient %(count)s parties"
 
 #: lib/pychess/perspectives/database/gamelist.py:44
 msgid "Id"
@@ -5104,19 +5104,19 @@ msgstr "Longueur"
 
 #: lib/pychess/perspectives/database/gamelist.py:46
 msgid "Time control"
-msgstr ""
+msgstr "Contrôle du temps"
 
 #: lib/pychess/perspectives/database/gamelist.py:67
 msgid "First games"
-msgstr ""
+msgstr "Premières parties"
 
 #: lib/pychess/perspectives/database/gamelist.py:71
 msgid "Previous games"
-msgstr ""
+msgstr "Parties précédentes"
 
 #: lib/pychess/perspectives/database/gamelist.py:75
 msgid "Next games"
-msgstr ""
+msgstr "Parties suivantes"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:24
 #: lib/pychess/perspectives/fics/ParrentListSection.py:37
@@ -5796,7 +5796,7 @@ msgstr "Supprimer"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1062
 msgid "No time control"
-msgstr ""
+msgstr "Pas de contrôle du temps"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1070
 msgid "mins"
@@ -5810,7 +5810,7 @@ msgstr "secs"
 #: lib/pychess/perspectives/games/annotationPanel.py:1077
 #, python-format
 msgid "%(time)s for %(count)d moves"
-msgstr ""
+msgstr "%(time)s pour %(count)d coups"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:1081
 msgid "move"
@@ -5966,74 +5966,74 @@ msgstr "Le panneau de score essaie d'évaluer les positions et vous montre un gr
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:25
 msgid "Practice endgames with computer"
-msgstr ""
+msgstr "Pratiquer des fins de parties contre l'ordinateur"
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:64
 #: lib/pychess/perspectives/learn/LecturesPanel.py:66
 #: lib/pychess/perspectives/learn/LessonsPanel.py:44
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:58
 msgid "Title"
-msgstr ""
+msgstr "Titre"
 
 #: lib/pychess/perspectives/learn/LecturesPanel.py:20
 msgid "Study FICS lectures offline"
-msgstr ""
+msgstr "Étude hors ligne de cours FICS"
 
 #: lib/pychess/perspectives/learn/LecturesPanel.py:70
 msgid "Author"
-msgstr ""
+msgstr "Auteur"
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:23
 msgid "Guided interactive lessons in \"guess the move\" style"
-msgstr ""
+msgstr "Leçons interactives pour deviner le coup"
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:48
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:62
 msgid "Source"
-msgstr ""
+msgstr "Source"
 
 #: lib/pychess/perspectives/learn/LessonsPanel.py:52
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:66
 #: lib/pychess/perspectives/learn/__init__.py:127
 msgid "Progress"
-msgstr ""
+msgstr "Progression"
 
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:25
 msgid "Lichess practice studies Puzzles from GM games and Chess compositions"
-msgstr ""
+msgstr "Études Lichess issues de parties de grands maîtres ou de compositions"
 
 #: lib/pychess/perspectives/learn/PuzzlesPanel.py:45
 msgid "others"
-msgstr ""
+msgstr "Autres"
 
 #: lib/pychess/perspectives/learn/__init__.py:24
 msgid "Learn"
-msgstr ""
+msgstr "Apprendre"
 
 #: lib/pychess/perspectives/learn/__init__.py:35
 msgid "Quit Learning"
-msgstr ""
+msgstr "Quitter l'apprentissage"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "lichess"
-msgstr ""
+msgstr "lichess"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "wtharvey"
-msgstr ""
+msgstr "wtharvey"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "yacpdb"
-msgstr ""
+msgstr "yacpdb"
 
 #: lib/pychess/perspectives/learn/__init__.py:105
 msgid "lessons"
-msgstr ""
+msgstr "leçons"
 
 #: lib/pychess/perspectives/learn/__init__.py:132
 msgid "Reset my progress"
-msgstr ""
+msgstr "Effacer la progression"
 
 #: lib/pychess/perspectives/learn/__init__.py:138
 msgid "You will lose all your progress data!"
-msgstr ""
+msgstr "Vous allez perdre toute vos données de progression !"
