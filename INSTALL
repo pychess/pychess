@@ -28,6 +28,7 @@ PyChess learning modules need stockfish to be installed
 
 -------------------------------
 Dependencies for Ubuntu/Debian:
+stockfish
 gnome-icon-theme
 python3
 python3-cairo
@@ -49,6 +50,7 @@ gir1.2-gst-plugins-base-1.0
 
 --------------------------------------------
 Dependencies for CentOS/RHEL7 and Fedora 20:
+stockfish
 python3
 python3-gobject
 python3-cairo
@@ -66,6 +68,7 @@ python3-psutil
 
 ----------------------
 Dependencies for Arch:
+stockfish
 python
 python-gobject
 python-cairo
@@ -83,6 +86,7 @@ gst-plugins-base
 
 -------------------------
 Dependencies for Windows:
+stockfish
 python 3.4
 python -m pip install --upgrade pip
 pip install sqlalchemy
