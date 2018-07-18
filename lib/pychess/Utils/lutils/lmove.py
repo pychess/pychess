@@ -208,7 +208,7 @@ def toSAN(board, move, localRepr=False):
     if flag == DROP:
         return "%s@%s%s" % (part0, part1, check_or_mate())
 
-    if fpiece not in (PAWN, KING):
+    if fpiece != PAWN:
         xs = []
         ys = []
 

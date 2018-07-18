@@ -1,9 +1,10 @@
 import unittest
 
+from pychess.Utils.const import GIVEAWAYCHESS, G1, G2, H2
 from pychess.Utils.Move import Move
 from pychess.Utils.lutils.LBoard import LBoard
-from pychess.Utils.lutils.lmove import parseAN, parseSAN, parseFAN, toFAN, ParsingError
-from pychess.Utils.lutils.lmovegen import genAllMoves
+from pychess.Utils.lutils.lmove import parseAN, parseSAN, parseFAN, toFAN, toSAN, ParsingError
+from pychess.Utils.lutils.lmovegen import genAllMoves, newMove
 
 
 class MoveTestCase(unittest.TestCase):
@@ -64,6 +65,15 @@ class MoveTestCase(unittest.TestCase):
 
             fan = toFAN(board, lmove)
             self.assertEqual(parseFAN(board, fan), lmove)
+
+    def test_toSAN(self):
+        """ Testing toSAN() with giveaway king move """
+
+        board = LBoard(GIVEAWAYCHESS)
+        board.applyFen("4R3/8/7B/2P5/8/8/PP5k/6k1 b - - 0 28")
+
+        self.assertEqual(toSAN(board, newMove(G1, G2)), "Kgg2")
+        self.assertEqual(toSAN(board, newMove(H2, G2)), "Khg2")
 
 
 if __name__ == '__main__':
