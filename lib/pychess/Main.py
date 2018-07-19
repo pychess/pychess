@@ -514,7 +514,9 @@ class PyChess(Gtk.Application):
             conf.set("ana_combobox", default_engine)
             conf.set("inv_ana_combobox", default_engine)
 
-        discoverer.connect_after("all_engines_discovered", on_all_engine_discovered)
+        # Try to set conf analyzer engine on very first start of pychess
+        if conf.get("ana_combobox") == 0:
+            discoverer.connect_after("all_engines_discovered", on_all_engine_discovered)
 
         dd = DiscovererDialog(discoverer)
         self.dd_task = asyncio.async(dd.start())
