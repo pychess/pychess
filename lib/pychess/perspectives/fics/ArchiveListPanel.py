@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-import asyncio
 from io import StringIO
 
 from gi.repository import Gtk

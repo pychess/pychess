@@ -1,7 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-import asyncio
-
 from gi.repository import Gtk, GObject
 
 from pychess.compat import create_task

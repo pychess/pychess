@@ -1,4 +1,3 @@
-import asyncio
 import math
 import random
 from os.path import basename

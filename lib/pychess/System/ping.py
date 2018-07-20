@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-import asyncio
 import re
 import sys
 import shutil

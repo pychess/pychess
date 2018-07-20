@@ -7,7 +7,6 @@
     events such as running out of time or piece movement events etc.
 """
 
-import asyncio
 import os
 from os import listdir
 from os.path import isdir, isfile, splitext

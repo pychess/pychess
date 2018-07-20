@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-import asyncio
 import os.path
 import gettext
 import locale

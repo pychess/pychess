@@ -2,7 +2,6 @@
     taking care of stuff that is neither very offscreen nor very onscreen
     like bringing up dialogs and """
 
-import asyncio
 import math
 from collections import defaultdict
 
