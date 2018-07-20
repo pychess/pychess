@@ -11,12 +11,15 @@ from pychess.System.cairoextras import create_cairo_font_face_for_file
 piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
 pnames = ('Pawn', 'Knight', 'Bishop', 'Rook', 'Queen', 'King')
 
+makruk_svg_pieces = None
 
 def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False):
     """Rendering pieces using .svg chess figurines"""
 
     color = WHITE if allwhite else piece.color
     if asean:
+        if makruk_svg_pieces is None:
+            makruk_svg_pieces = get_svg_pieces("makruk")
         image = makruk_svg_pieces[color][piece.sign]
         w, h = image.props.width, image.props.height
         offset_x = 0
@@ -202,5 +205,4 @@ def set_piece_theme(piece_set):
             drawPiece = drawPiece2
 
 
-makruk_svg_pieces = get_svg_pieces("makruk")
 set_piece_theme(conf.get("pieceTheme"))
