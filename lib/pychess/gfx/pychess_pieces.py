@@ -1,7 +1,7 @@
 import re
 
 from pychess.Utils.const import BLACK, WHITE, KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN
-
+from pychess.gfx.Pieces import drawPiece3, size
 
 elemExpr = re.compile(r"([a-zA-Z])\s*([0-9\.,\s]*)\s+|[z]\s+")
 spaceExpr = re.compile(r"[\s,]+")
@@ -19,7 +19,6 @@ def parse(n, psize):
         else:
             yield "c.rel_curve_to(%s)" % pstr
 
-size = 800.0
 
 pieces = {
     BLACK: {

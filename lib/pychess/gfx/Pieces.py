@@ -1,4 +1,3 @@
-import cairo
 from gi.repository import Rsvg
 
 from pychess.Utils.const import BLACK, WHITE, KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN, \
@@ -11,7 +10,10 @@ from pychess.System.cairoextras import create_cairo_font_face_for_file
 piece_ord = {KING: 0, QUEEN: 1, ROOK: 2, BISHOP: 3, KNIGHT: 4, PAWN: 5}
 pnames = ('Pawn', 'Knight', 'Bishop', 'Rook', 'Queen', 'King')
 
+size = 800.0
+
 makruk_svg_pieces = None
+
 
 def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False):
     """Rendering pieces using .svg chess figurines"""
@@ -89,42 +91,6 @@ def drawPiece4(piece, context, x, y, psize, allwhite=False, asean=False):
         else:
             close_path = True
     context.fill()
-
-
-# This version has proven itself nearly three times as slow as the "draw each time" method.
-# At least when drawing one path only. Might be useful when drawing svg
-def drawPiece5(piece, cc, x, y, psize, allwhite=False, asean=False):
-    """Rendering pieces from cache instead of draw each time"""
-
-    if asean:
-        drawPiece3(piece, cc, x, y, psize, allwhite=allwhite, asean=True)
-        return
-
-    if piece not in surfaceCache:
-        s = cc.get_target().create_similar(cairo.CONTENT_COLOR_ALPHA,
-                                           int(size), int(size))
-        ctx = cairo.Context(s)
-        ctx.move_to(0, 0)
-        drawPieceReal(piece, ctx, size)
-        ctx.set_source_rgb(0, 0, 0)
-        ctx.fill()
-        surfaceCache[piece] = s
-
-    cc.save()
-
-    cc.set_source_rgb(0, 0, 0)
-    cc.scale(psize / size, psize / size)
-    cc.translate(x * size / psize, y * size / psize)
-    cc.rectangle(0, 0, int(size), int(size))
-
-    # TODO: DOes this give any performance boost?
-    # From cairo thread:
-    # Or paint() instead of fill().  fill() needs a path, so you should do a
-    # rectangle() first.
-
-    cc.set_source_surface(surfaceCache[piece], 0, 0)
-    cc.fill()
-    cc.restore()
 
 
 surfaceCache = {}
