@@ -18,7 +18,6 @@ from gi.repository import GLib
 from pychess.compat import create_task
 from pychess.System.Log import log
 from pychess.System import conf, uistuff, prefix
-from pychess.System.debug import print_obj_referrers, print_muppy_sumary
 from pychess.Utils.const import HINT, NAME, SPY, NORMALCHESS
 from pychess.Utils.checkversion import checkversion
 from pychess.widgets import enginesDialog
@@ -68,6 +67,7 @@ class GladeHandlers(object):
 
         # debug leaking memory
         if Gdk.keyval_name(event.keyval) == "F12":
+        from pychess.System.debug import print_obj_referrers, print_muppy_sumary
             if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
                 print_muppy_sumary()
             else:
