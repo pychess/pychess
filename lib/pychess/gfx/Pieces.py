@@ -18,6 +18,7 @@ def drawPiece3(piece, context, x, y, psize, allwhite=False, asean=False):
 
     color = WHITE if allwhite else piece.color
     if asean:
+        global makruk_svg_pieces
         if makruk_svg_pieces is None:
             makruk_svg_pieces = get_svg_pieces("makruk")
         image = makruk_svg_pieces[color][piece.sign]
