@@ -67,7 +67,7 @@ class GladeHandlers(object):
 
         # debug leaking memory
         if Gdk.keyval_name(event.keyval) == "F12":
-        from pychess.System.debug import print_obj_referrers, print_muppy_sumary
+            from pychess.System.debug import print_obj_referrers, print_muppy_sumary
             if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
                 print_muppy_sumary()
             else:
