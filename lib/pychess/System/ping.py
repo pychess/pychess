@@ -7,6 +7,7 @@ import shutil
 
 from gi.repository import GObject
 
+from pychess.compat import create_task
 from pychess.System.Log import log
 from pychess.System.SubProcess import SubProcess
 
@@ -46,7 +47,7 @@ class Pinger(GObject.GObject):
         else:
             args = ["-i10", self.host]
         self.subproc = SubProcess(shutil.which("ping"), args, env={"LANG": "en"})
-        asyncio.async(self.subproc.start())
+        create_task(self.subproc.start())
         self.conid1 = self.subproc.connect("line", self.__handleLines)
         self.conid2 = self.subproc.connect("died", self.__handleDead)
 

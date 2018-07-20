@@ -1,6 +1,7 @@
 import asyncio
 import collections
 
+from pychess.compat import create_task
 from pychess.Utils import wait_signal
 from pychess.Utils.Move import parseAny
 from pychess.Utils.Board import Board
@@ -55,7 +56,7 @@ class UCIEngine(ProtocolEngine):
         self.analysis_depth = None
 
         self.queue = asyncio.Queue()
-        self.parse_line_task = asyncio.async(self.parseLine(self.engine))
+        self.parse_line_task = create_task(self.parseLine(self.engine))
         self.died_cid = self.engine.connect("died", lambda e: self.queue.put_nowait("die"))
         self.invalid_move = None
 
@@ -70,7 +71,7 @@ class UCIEngine(ProtocolEngine):
         print("uci", file=self.engine)
 
     def start(self, event, is_dead):
-        asyncio.async(self.__startBlocking(event, is_dead))
+        create_task(self.__startBlocking(event, is_dead))
 
     @asyncio.coroutine
     def __startBlocking(self, event, is_dead):
@@ -209,7 +210,7 @@ class UCIEngine(ProtocolEngine):
             self._recordMove(board, None, None)
             if search:
                 self._searchNow()
-        asyncio.async(coro())
+        create_task(coro())
 
     def putMove(self, board1, move, board2):
         log.debug("putMove: board1=%s move=%s board2=%s self.board=%s" % (
@@ -227,7 +228,7 @@ class UCIEngine(ProtocolEngine):
             self._recordMove(board1, move, board2)
             if not self.analyzing_paused:
                 self._searchNow()
-        asyncio.async(coro())
+        create_task(coro())
 
     @asyncio.coroutine
     def makeMove(self, board1, move, board2):

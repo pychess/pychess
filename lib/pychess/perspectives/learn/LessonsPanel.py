@@ -3,6 +3,7 @@ import asyncio
 
 from gi.repository import Gtk
 
+from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
 from pychess.Utils.const import WHITE, BLACK, LOCAL, WAITING_TO_START, HINT, LESSON
 from pychess.Utils.LearnModel import LearnModel
@@ -73,7 +74,7 @@ class Sidepanel():
                 solved = progress.count(1)
                 percent = 0 if not solved else round((solved * 100.) / len(progress))
                 self.store.append([file_name, title, author, "%s / %s" % (solved, len(progress)), percent])
-        asyncio.async(coro())
+        create_task(coro())
 
         self.tv.set_model(self.store)
         self.tv.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
@@ -149,15 +150,15 @@ def start_lesson_game(gamemodel, filename, chessfile, records, index, rec):
         progress[gamemodel.current_index] = 1
         lessons_solving_progress[gamemodel.source] = progress
         if "FEN" in gamemodel.tags:
-            asyncio.async(gamemodel.restart_analyzer(HINT))
+            create_task(gamemodel.restart_analyzer(HINT))
     gamemodel.connect("learn_success", learn_success)
 
     def on_game_started(gamemodel):
         perspective.activate_panel("annotationPanel")
         if "FEN" in gamemodel.tags:
-            asyncio.async(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
+            create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
     gamemodel.connect("game_started", on_game_started)
 
     gamemodel.status = WAITING_TO_START
     perspective = perspective_manager.get_perspective("games")
-    asyncio.async(perspective.generalStart(gamemodel, p0, p1))
+    create_task(perspective.generalStart(gamemodel, p0, p1))

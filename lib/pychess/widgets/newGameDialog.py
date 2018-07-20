@@ -22,6 +22,7 @@ from pychess.Utils.const import NORMALCHESS, VARIANTS_BLINDFOLD, FISCHERRANDOMCH
     WHITE, BLACK, UNSUPPORTED, ARTIFICIAL, LOCAL, reprCord, reprFile, W_OO, W_OOO, B_OO, B_OOO, \
     FAN_PIECES, reprSign, FEN_START, WAITING_TO_START
 
+from pychess.compat import create_task
 from pychess.Utils.repr import localReprSign
 from pychess.Utils.lutils.ldata import FILE
 from pychess.Utils.lutils.LBoard import LBoard
@@ -554,7 +555,7 @@ class NewGameMode(_GameInitializationMode):
 
         def _callback(gamemodel, p0, p1):
             perspective = perspective_manager.get_perspective("games")
-            asyncio.async(perspective.generalStart(gamemodel, p0, p1))
+            create_task(perspective.generalStart(gamemodel, p0, p1))
 
         cls._generalRun(_callback, _validate)
 
@@ -761,7 +762,7 @@ class SetupPositionExtension(_GameInitializationMode):
         def _callback(gamemodel, p0, p1):
             text = cls.get_fen()
             perspective = perspective_manager.get_perspective("games")
-            asyncio.async(perspective.generalStart(
+            create_task(perspective.generalStart(
                 gamemodel, p0, p1, (StringIO(text), fen, 0, -1)))
 
         cls._generalRun(_callback, _validate)
@@ -908,7 +909,7 @@ class EnterNotationExtension(_GameInitializationMode):
         def _callback(gamemodel, p0, p1):
             text, loadType = _get_text()
             perspective = perspective_manager.get_perspective("games")
-            asyncio.async(perspective.generalStart(
+            create_task(perspective.generalStart(
                 gamemodel, p0, p1, (StringIO(text), loadType, 0, -1)))
 
         cls._generalRun(_callback, _validate)
@@ -971,7 +972,7 @@ def createRematch(gamemodel):
                        gain), repr(wp))
 
     perspective = perspective_manager.get_perspective("games")
-    asyncio.async(perspective.generalStart(newgamemodel, player0tup, player1tup))
+    create_task(perspective.generalStart(newgamemodel, player0tup, player1tup))
 
 
 def loadFileAndRun(uri):
@@ -985,4 +986,4 @@ def loadFileAndRun(uri):
     p0 = (LOCAL, Human, (WHITE, white_name), white_name)
     p1 = (LOCAL, Human, (BLACK, black_name), black_name)
     perspective = perspective_manager.get_perspective("games")
-    asyncio.async(perspective.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1)))
+    create_task(perspective.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1)))

@@ -9,6 +9,7 @@ from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GObject
 
+from pychess.compat import create_task
 from pychess.System import uistuff, conf
 from pychess.widgets import mainwindow
 from pychess.ic.FICSConnection import FICSMainConnection, FICSHelperConnection, LogOnException
@@ -311,7 +312,7 @@ class ICLogon(object):
                                  ("connectingMsg", self.showMessage)):
             self.cids[self.connection].append(self.connection.connect(signal, callback))
         self.main_connected_event = asyncio.Event()
-        self.connection_task = asyncio.async(self.connection.start())
+        self.connection_task = create_task(self.connection.start())
 
         # guest users are rather limited on ICC (helper connection is useless)
         if self.host not in ("localhost", "127.0.0.1", "chessclub.com"):
@@ -323,7 +324,7 @@ class ICLogon(object):
                 yield from self.main_connected_event.wait()
                 yield from self.helperconn.start()
 
-            self.helperconn_task = asyncio.async(coro())
+            self.helperconn_task = create_task(coro())
 
     def onHelperConnectionError(self, connection, error):
         if self.helperconn is not None:
@@ -347,7 +348,7 @@ class ICLogon(object):
             def coro():
                 yield from self.main_connected_event.wait()
                 self.connection.start_helper_manager(set_user_vars)
-            asyncio.async(coro())
+            create_task(coro())
 
     def onConnected(self, connection):
         self.main_connected_event.set()

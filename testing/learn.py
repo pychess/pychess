@@ -2,6 +2,7 @@ import asyncio
 import os
 import unittest
 
+from pychess.compat import create_task
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff
 from pychess.widgets import gamewidget
@@ -37,7 +38,7 @@ class LearnTests(unittest.TestCase):
         perspective_manager.current_perspective = self.learn_persp
 
         dd = DiscovererDialog(discoverer)
-        self.dd_task = asyncio.async(dd.start())
+        self.dd_task = create_task(dd.start())
 
     def test0(self):
         """ Init layout """

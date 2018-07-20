@@ -4,6 +4,7 @@ import sys
 
 from gi.repository import Gtk, GLib
 
+from pychess.compat import create_task
 from pychess.Utils.const import FEN_START, NORMALCHESS
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff
@@ -60,6 +61,7 @@ class DialogTests(unittest.TestCase):
 
         dialog = newGameDialog.NewGameMode()
 
+        @asyncio.coroutine
         def coro(dialog):
             def on_gmwidg_created(persp, gmwidg, event):
                 event.set()
@@ -79,6 +81,7 @@ class DialogTests(unittest.TestCase):
 
         dialog = newGameDialog.SetupPositionExtension()
 
+        @asyncio.coroutine
         def coro(dialog):
             def on_gmwidg_created(persp, gmwidg, event):
                 event.set()
@@ -105,6 +108,7 @@ class DialogTests(unittest.TestCase):
 
         dialog = newGameDialog.EnterNotationExtension()
 
+        @asyncio.coroutine
         def coro(dialog):
             def on_gmwidg_created(persp, gmwidg, event):
                 event.set()
@@ -121,6 +125,7 @@ class DialogTests(unittest.TestCase):
         self.loop.run_until_complete(coro(dialog))
 
         # Show the firs move of the game
+        @asyncio.coroutine
         def coro1():
             def on_shown_changed(view, shown, event):
                 if shown == 1:
@@ -164,6 +169,7 @@ class DialogTests(unittest.TestCase):
         """ Open engine discoverer dialog """
         dd = DiscovererDialog(discoverer)
 
+        @asyncio.coroutine
         def coro():
             def on_all_engines_discovered(discoverer, event):
                 event.set()
@@ -171,7 +177,7 @@ class DialogTests(unittest.TestCase):
             event = asyncio.Event()
             discoverer.connect("all_engines_discovered", on_all_engines_discovered, event)
 
-            asyncio.async(dd.start())
+            create_task(dd.start())
 
             yield from event.wait()
 

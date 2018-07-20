@@ -6,6 +6,7 @@ import re
 from gi.repository import Gtk, GObject
 
 
+from pychess.compat import create_task
 from pychess.Utils import wait_signal
 from pychess.System import conf
 from pychess.System.Log import log
@@ -138,7 +139,7 @@ class CECPEngine(ProtocolEngine):
         self.lastpong = 0
 
         self.queue = asyncio.Queue()
-        self.parse_line_task = asyncio.async(self.parseLine(self.engine))
+        self.parse_line_task = create_task(self.parseLine(self.engine))
         self.died_cid = self.engine.connect("died", lambda e: self.queue.put_nowait("die"))
         self.invalid_move = None
 
@@ -169,7 +170,7 @@ class CECPEngine(ProtocolEngine):
             # we will do it after feature accept/reject is completed.
 
     def start(self, event, is_dead):
-        asyncio.async(self.__startBlocking(event, is_dead))
+        create_task(self.__startBlocking(event, is_dead))
 
     @asyncio.coroutine
     def __startBlocking(self, event, is_dead):
@@ -289,7 +290,7 @@ class CECPEngine(ProtocolEngine):
             self.setBoardList([board], [])
             if search:
                 self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
-        asyncio.async(coro())
+        create_task(coro())
 
     def putMove(self, board1, move, board2):
         """ Sends the engine the last move made (for spectator engines).
@@ -305,7 +306,7 @@ class CECPEngine(ProtocolEngine):
             self.setBoardList([board1], [])
             if not self.analyzing_paused:
                 self.__sendAnalyze(self.mode == INVERSE_ANALYZING)
-        asyncio.async(coro())
+        create_task(coro())
 
     @asyncio.coroutine
     def makeMove(self, board1, move, board2):
@@ -366,12 +367,13 @@ class CECPEngine(ProtocolEngine):
         self.mode = mode
 
     def setOptionInitialBoard(self, model):
+        @asyncio.coroutine
         def coro():
             yield from self.ready_moves_event.wait()
             # We don't use the optionQueue here, as set board prints a whole lot of
             # stuff. Instead we just call it.
             self.setBoardList(model.boards[:], model.moves[:])
-        asyncio.async(coro())
+        create_task(coro())
 
     def setBoardList(self, boards, moves):
         # Notice: If this method is to be called while playing, the engine will

@@ -22,8 +22,8 @@ if not getattr(sys, 'frozen', False):
 ###############################################################################
 # Check requirements
 
-if sys.version_info < (3, 4, 0):
-    print('ERROR: PyChess requires Python >= 3.4')
+if sys.version_info < (3, 4, 2):
+    print('ERROR: PyChess requires Python >= 3.4.2')
     sys.exit(1)
 
 try:
@@ -192,6 +192,7 @@ else:
         locale.bindtextdomain(domain, locale_dir)
 
 try:
+    from pychess.compat import create_task
     from pychess.System.LogEmitter import GLogHandler, logemitter
     from pychess.System.prefix import getUserDataPrefix, addUserDataPrefix
     from pychess.System import conf
@@ -257,7 +258,7 @@ try:
         loop.run_forever(application=gtk_app)
     else:
         main_context = GLib.MainContext.default()
-        asyncio.async(start(gtk_app))
+        create_task(start(gtk_app))
         glib_update(main_context, loop)
         loop.run_forever()
 finally:

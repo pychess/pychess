@@ -19,6 +19,7 @@ from urllib.parse import unquote
 
 from gi.repository import Gtk, GdkPixbuf, Gdk
 
+from pychess.compat import create_task
 from pychess.System.prefix import addDataPrefix
 from pychess.System import conf, gstreamer, uistuff
 from pychess.Players.engineNest import discoverer
@@ -138,7 +139,7 @@ def anal_combo_set_value(combobox, value, show_arrow_check, analyzer_type):
         if analyzer_type in spectators and \
                 spectators[analyzer_type].md5 != md5:
             gmwidg.gamemodel.remove_analyzer(analyzer_type)
-            asyncio.async(gmwidg.gamemodel.start_analyzer(analyzer_type))
+            create_task(gmwidg.gamemodel.start_analyzer(analyzer_type))
             if not widgets[show_arrow_check].get_active():
                 gmwidg.gamemodel.pause_analyzer(analyzer_type)
 
@@ -240,7 +241,7 @@ class HintTab:
             if len(perspective.gamewidgets) != 0:
                 if check.get_active():
                     for gmwidg in perspective.gamewidgets:
-                        asyncio.async(gmwidg.gamemodel.restart_analyzer(HINT))
+                        create_task(gmwidg.gamemodel.restart_analyzer(HINT))
                         if not widgets["hint_mode"].get_active():
                             gmwidg.gamemodel.pause_analyzer(HINT)
                 else:
@@ -256,7 +257,7 @@ class HintTab:
             if len(perspective.gamewidgets) != 0:
                 if check.get_active():
                     for gmwidg in perspective.gamewidgets:
-                        asyncio.async(gmwidg.gamemodel.restart_analyzer(SPY))
+                        create_task(gmwidg.gamemodel.restart_analyzer(SPY))
                         if not widgets["spy_mode"].get_active():
                             gmwidg.gamemodel.pause_analyzer(SPY)
                 else:

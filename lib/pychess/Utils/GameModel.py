@@ -7,6 +7,7 @@ from io import StringIO
 
 from gi.repository import GObject
 
+from pychess.compat import create_task
 from pychess.Savers.ChessFile import LoadingError
 from pychess.Players.Player import PlayerIsDead, PassInterrupt, TurnInterrupt, InvalidMove, GameEnded
 from pychess.System import conf
@@ -646,6 +647,7 @@ class GameModel(GObject.GObject):
     # Run stuff
 
     def start(self):
+        @asyncio.coroutine
         def coro():
             log.debug("GameModel.run: Starting. self=%s" % self)
             # Avoid racecondition when self.start is called while we are in
@@ -786,7 +788,7 @@ class GameModel(GObject.GObject):
 
             self.checkStatus()
 
-        asyncio.async(coro())
+        create_task(coro())
 
     def checkStatus(self):
         """ Updates self.status so it fits with what getStatus(boards[-1])

@@ -11,6 +11,7 @@ from collections import OrderedDict
 
 from gi.repository import GLib, GObject
 
+from pychess.compat import create_task
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.command import Command
@@ -315,7 +316,7 @@ class EngineDiscoverer(GObject.GObject):
             self.connect("all_engines_discovered", self.save)
             for engine, done in self.toBeRechecked.values():
                 if not done:
-                    asyncio.async(self.__discoverE(engine))
+                    create_task(self.__discoverE(engine))
         else:
             self.emit("all_engines_discovered")
             createStoryTextAppEvent("all_engines_discovered")

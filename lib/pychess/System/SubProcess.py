@@ -8,6 +8,7 @@ import time
 
 from gi.repository import GObject, Gtk, Gio, GLib
 
+from pychess.compat import create_task
 from pychess.Utils import wait_signal
 from pychess.System.Log import log
 from pychess.Players.ProtocolEngine import TIME_OUT_SECOND
@@ -70,7 +71,7 @@ class SubProcess(GObject.GObject):
                         proc.nice(niceness)
                     else:
                         proc.set_nice(niceness)
-                self.read_stdout_task = asyncio.async(self.read_stdout(self.proc.stdout))
+                self.read_stdout_task = create_task(self.read_stdout(self.proc.stdout))
                 self.write_task = None
             except asyncio.TimeoutError:
                 log.warning("TimeoutError", extra={"task": self.defname})
@@ -84,7 +85,7 @@ class SubProcess(GObject.GObject):
                 raise
 
     def write(self, line):
-        self.write_task = asyncio.async(self.write_stdin(self.proc.stdin, line))
+        self.write_task = create_task(self.write_stdin(self.proc.stdin, line))
 
     @asyncio.coroutine
     def write_stdin(self, writer, line):
@@ -204,7 +205,7 @@ class Application(Gtk.Application):
 
     def on_subprocess(self, action, param):
         proc = SubProcess("python", [os.path.expanduser("~") + "/pychess/lib/pychess/Players/PyChess.py", ])
-        asyncio.async(self.parse_line(proc))
+        create_task(self.parse_line(proc))
         print("xboard", file=proc)
         print("protover 2", file=proc)
 

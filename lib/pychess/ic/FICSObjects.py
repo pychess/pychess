@@ -3,6 +3,7 @@ import asyncio
 import datetime
 from gi.repository import GLib, GObject
 
+from pychess.compat import create_task
 from pychess.System.Log import log
 from pychess.Utils.IconLoader import load_icon, get_pixbuf
 from pychess.Utils.const import ADJOURNED, WHITE, BLACK, UNSUPPORTED
@@ -1219,7 +1220,7 @@ class FICSGames(GObject.GObject):
                     game = self[game]
                     self.emit("FICSGameEnded", game)
                     del self[game]
-                asyncio.async(coro(game))
+                create_task(coro(game))
             else:
                 game = self[game]
                 self.emit("FICSGameEnded", game)

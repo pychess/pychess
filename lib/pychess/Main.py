@@ -15,6 +15,7 @@ from gi.repository import Gio
 from gi.repository import Gtk
 from gi.repository import GLib
 
+from pychess.compat import create_task
 from pychess.System.Log import log
 from pychess.System import conf, uistuff, prefix
 from pychess.System.debug import print_obj_referrers, print_muppy_sumary
@@ -461,7 +462,7 @@ class PyChess(Gtk.Application):
         self.initGlade(self.log_viewer)
         self.addPerspectives()
         self.handleArgs(self.chess_file)
-        asyncio.async(checkversion())
+        create_task(checkversion())
 
         self.loaded_cids = {}
         self.saved_cids = {}
@@ -488,7 +489,7 @@ class PyChess(Gtk.Application):
             yield from asyncio.sleep(10)
 
     def do_activate(self):
-        # asyncio.async(self.print_tasks())
+        # create_task(self.print_tasks())
         self.add_window(self.window)
         self.window.show_all()
         gamewidget.getWidgets()["player_rating1"].hide()
@@ -519,7 +520,7 @@ class PyChess(Gtk.Application):
             discoverer.connect_after("all_engines_discovered", on_all_engine_discovered)
 
         dd = DiscovererDialog(discoverer)
-        self.dd_task = asyncio.async(dd.start())
+        self.dd_task = create_task(dd.start())
 
         style_ctxt = gamewidget.getWidgets()["main_window"].get_style_context()
         LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])

@@ -8,6 +8,7 @@ from collections import defaultdict
 
 from gi.repository import Gtk
 
+from pychess.compat import create_task
 from pychess.ic.FICSObjects import make_sensitive_if_available, make_sensitive_if_playing
 from pychess.ic.ICGameModel import ICGameModel
 from pychess.Utils.Offer import Offer
@@ -193,8 +194,8 @@ class GameNanny(object):
         if (isinstance(gamemodel, ICGameModel) and not gamemodel.isObservationGame()) or \
                 gamemodel.isEngine2EngineGame() or \
                 (isinstance(gamemodel, LearnModel) and not gamemodel.failed_playing_best):
-            asyncio.async(gamemodel.restart_analyzer(HINT))
-            asyncio.async(gamemodel.restart_analyzer(SPY))
+            create_task(gamemodel.restart_analyzer(HINT))
+            create_task(gamemodel.restart_analyzer(SPY))
             if not conf.get("hint_mode"):
                 gamemodel.pause_analyzer(HINT)
             if not conf.get("spy_mode"):
@@ -231,8 +232,8 @@ class GameNanny(object):
 
         # Start analyzers if any
         if not gamemodel.isEngine2EngineGame():
-            asyncio.async(gamemodel.start_analyzer(HINT))
-            asyncio.async(gamemodel.start_analyzer(SPY))
+            create_task(gamemodel.start_analyzer(HINT))
+            create_task(gamemodel.start_analyzer(SPY))
             if not conf.get("hint_mode"):
                 gamemodel.pause_analyzer(HINT)
             if not conf.get("spy_mode"):

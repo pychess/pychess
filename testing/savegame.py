@@ -3,6 +3,7 @@ import asyncio
 import logging
 import unittest
 
+from pychess.compat import create_task
 from pychess.Utils.Move import Move
 from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.GameModel import GameModel
@@ -56,6 +57,7 @@ class DatabaseTests(unittest.TestCase):
         loop = asyncio.get_event_loop()
         loop.set_debug(enabled=True)
 
+        @asyncio.coroutine
         def coro():
             gamemodel = GameModel(TimeModel(1, 0))
 
@@ -80,7 +82,7 @@ class DatabaseTests(unittest.TestCase):
 
             gamemodel.connect("players_changed", on_players_changed)
 
-            asyncio.async(self.games_persp.generalStart(gamemodel, player0tup, player1tup))
+            create_task(self.games_persp.generalStart(gamemodel, player0tup, player1tup))
 
             # waiting for game end ...
             yield from event.wait()

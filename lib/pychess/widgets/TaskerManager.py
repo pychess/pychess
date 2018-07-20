@@ -7,6 +7,7 @@ from urllib.parse import unquote
 
 from gi.repository import Gtk, GObject, Pango
 
+from pychess.compat import create_task
 from pychess.Players.Human import Human
 from pychess.Players.engineNest import discoverer
 from pychess.System import uistuff, conf
@@ -241,9 +242,9 @@ class NewGameTasker(Gtk.Alignment):
 
         perspective = perspective_manager.get_perspective("games")
         if color == WHITE:
-            asyncio.async(perspective.generalStart(gamemodel, player0tup, player1tup))
+            create_task(perspective.generalStart(gamemodel, player0tup, player1tup))
         else:
-            asyncio.async(perspective.generalStart(gamemodel, player1tup, player0tup))
+            create_task(perspective.generalStart(gamemodel, player1tup, player0tup))
 
 
 big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")

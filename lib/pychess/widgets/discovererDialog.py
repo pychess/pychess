@@ -2,6 +2,7 @@ import asyncio
 
 from gi.repository import Gtk
 
+from pychess.compat import create_task
 from pychess.Utils import wait_signal
 from pychess.System import uistuff
 
@@ -60,8 +61,8 @@ class DiscovererDialog:
         # let dialog window draw itself
         yield from asyncio.sleep(0.1)
 
-        asyncio.async(self.all_whatcher())
-        asyncio.async(self.discovered_whatcher())
+        create_task(self.all_whatcher())
+        create_task(self.discovered_whatcher())
 
         self.discoverer.discover()
 

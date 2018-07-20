@@ -2,6 +2,7 @@ import asyncio
 
 from gi.repository import Gtk
 
+from pychess.compat import create_task
 from pychess.Utils.const import HINT, SPY, BLACK, WHITE
 from pychess.System import conf
 from pychess.System import uistuff
@@ -61,7 +62,7 @@ class AnalyzeGameDialog():
             old_check_value = conf.get("analyzer_check")
             conf.set("analyzer_check", True)
             if HINT not in gamemodel.spectators:
-                asyncio.async(gamemodel.start_analyzer(HINT))
+                create_task(gamemodel.start_analyzer(HINT))
             analyzer = gamemodel.spectators[HINT]
             gmwidg.menuitems["hint_mode"].active = True
             threat_PV = conf.get("ThreatPV")
@@ -69,7 +70,7 @@ class AnalyzeGameDialog():
                 old_inv_check_value = conf.get("inv_analyzer_check")
                 conf.set("inv_analyzer_check", True)
                 if SPY not in gamemodel.spectators:
-                    asyncio.async(gamemodel.start_analyzer(SPY))
+                    create_task(gamemodel.start_analyzer(SPY))
                 inv_analyzer = gamemodel.spectators[SPY]
                 gmwidg.menuitems["spy_mode"].active = True
 
@@ -150,7 +151,7 @@ class AnalyzeGameDialog():
 
                 gamemodel.emit("analysis_finished")
 
-            asyncio.async(analyse_moves())
+            create_task(analyse_moves())
             hide_window(None)
 
             return True
