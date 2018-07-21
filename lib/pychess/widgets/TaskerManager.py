@@ -147,12 +147,13 @@ class TaskerManager(Gtk.Table):
 
 
 tasker = TaskerManager()
+tasker_widgets = uistuff.GladeWidgets("taskers.glade")
 
 
 class NewGameTasker(Gtk.Alignment):
     def __init__(self):
         GObject.GObject.__init__(self)
-        self.widgets = widgets = uistuff.GladeWidgets("taskers.glade")
+        self.widgets = widgets = tasker_widgets
         tasker = widgets["newGameTasker"]
         tasker.unparent()
         self.add(tasker)
@@ -252,7 +253,7 @@ big_start = load_icon(48, "stock_init", "gnome-globe", "applications-internet")
 class InternetGameTasker(Gtk.Alignment):
     def __init__(self):
         GObject.GObject.__init__(self)
-        self.widgets = uistuff.GladeWidgets("taskers.glade")
+        self.widgets = tasker_widgets
         tasker = self.widgets["internetGameTasker"]
         tasker.unparent()
         self.add(tasker)
@@ -291,7 +292,7 @@ class InternetGameTasker(Gtk.Alignment):
 class LearnTasker(Gtk.Alignment):
     def __init__(self):
         GObject.GObject.__init__(self)
-        self.widgets = uistuff.GladeWidgets("taskers.glade")
+        self.widgets = tasker_widgets
         tasker = self.widgets["learnTasker"]
         tasker.unparent()
         self.add(tasker)
@@ -398,7 +399,7 @@ class LearnTasker(Gtk.Alignment):
 class DatabaseTasker(Gtk.Alignment):
     def __init__(self):
         GObject.GObject.__init__(self)
-        self.widgets = uistuff.GladeWidgets("taskers.glade")
+        self.widgets = tasker_widgets
         tasker = self.widgets["databaseTasker"]
         tasker.unparent()
         self.add(tasker)
