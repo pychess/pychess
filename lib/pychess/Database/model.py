@@ -9,8 +9,8 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Integer,\
 from sqlalchemy.engine import Engine
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.sql.expression import Executable, ClauseElement, _literal_as_text
+# from sqlalchemy.ext.compiler import compiles
+# from sqlalchemy.sql.expression import Executable, ClauseElement, _literal_as_text
 
 from pychess.System.Log import log
 from pychess.System.prefix import addUserCachePrefix
@@ -31,20 +31,20 @@ def after_cursor_execute(conn, cursor, statement, parameters, context, executema
 
 
 # Just to make sphinx happy...
-try:
-    class Explain(Executable, ClauseElement):
-        def __init__(self, stmt):
-            self.statement = _literal_as_text(stmt)
-except TypeError:
-    class Explain:
-        pass
+# try:
+#     class Explain(Executable, ClauseElement):
+#         def __init__(self, stmt):
+#             self.statement = _literal_as_text(stmt)
+# except TypeError:
+#     class Explain:
+#         pass
 
 
-@compiles(Explain, 'sqlite')
-def slite_explain(element, compiler, **kw):
-    text = "EXPLAIN QUERY PLAN "
-    text += compiler.process(element.statement, **kw)
-    return text
+# @compiles(Explain, 'sqlite')
+# def slite_explain(element, compiler, **kw):
+#     text = "EXPLAIN QUERY PLAN "
+#     text += compiler.process(element.statement, **kw)
+#     return text
 
 
 @event.listens_for(Engine, "connect")
