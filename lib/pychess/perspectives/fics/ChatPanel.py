@@ -1,10 +1,6 @@
 import re
 
 from gi.repository import Gtk
-from pychess.widgets.ChatView import ChatView
-from pychess.widgets.ViewsPanel import ViewsPanel
-from pychess.widgets.InfoPanel import InfoPanel
-from pychess.widgets.ChannelsPanel import ChannelsPanel
 from pychess.System import uistuff
 from pychess.System.prefix import addDataPrefix
 
@@ -28,6 +24,11 @@ class Sidepanel():
 
     def load(self, widgets, connection, lounge):
         self.connection = connection
+
+        # deferred imports to not slow down PyChess starting up
+        from pychess.widgets.ViewsPanel import ViewsPanel
+        from pychess.widgets.InfoPanel import InfoPanel
+        from pychess.widgets.ChannelsPanel import ChannelsPanel
 
         self.viewspanel = ViewsPanel(self.connection)
         self.channelspanel = ChannelsPanel(self.connection)
@@ -66,6 +67,8 @@ class Sidepanel():
         return __widget__
 
     def onConversationAdded(self, panel, grp_id, text, grp_type):
+        # deferred import to not slow down PyChess starting up
+        from pychess.widgets.ChatView import ChatView
         chatView = ChatView()
         plus_channel = '+channel ' + str(grp_id)
         self.connection.cm.connection.client.run_command(plus_channel)

@@ -10,7 +10,6 @@ from pychess.Utils.const import HINT, OPENING, SPY, BLACK, NULL_MOVE, ENDGAME, D
 from pychess.Utils.book import getOpenings
 from pychess.Utils.eco import get_eco
 from pychess.Utils.logic import legalMoveCount
-from pychess.Utils.EndgameTable import EndgameTable
 from pychess.Utils.Move import Move, toSAN, toFAN, listToMoves
 from pychess.Utils.lutils.lmovegen import newMove
 from pychess.Utils.lutils.lmove import ParsingError
@@ -340,6 +339,8 @@ class EngineAdvisor(Advisor):
 class EndgameAdvisor(Advisor):
     def __init__(self, store, tv, boardcontrol):
         Advisor.__init__(self, store, _("Endgame Table"), ENDGAME)
+        # deferred import to not slow down PyChess starting up
+        from pychess.Utils.EndgameTable import EndgameTable
         self.egtb = EndgameTable()
         # If mate in # was activated by double click let egtb do the rest
         self.auto_activate = False
