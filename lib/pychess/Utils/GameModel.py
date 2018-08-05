@@ -682,6 +682,10 @@ class GameModel(GObject.GObject):
             if not self.lesson_game:
                 self.checkStatus()
 
+            if self.isEngine2EngineGame() and self.timed:
+                self.timemodel.start()
+                self.timemodel.started = True
+
             self.curColor = self.boards[-1].color
 
             while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
