@@ -97,6 +97,8 @@ class UCIEngine(ProtocolEngine):
                 self.setOption('Ponder', False)
 
         for option, value in self.optionsToBeSent.items():
+            if option == "MultiPV" and self.mode not in (ANALYZING, INVERSE_ANALYZING):
+                continue
             if isinstance(value, bool):
                 value = str(value).lower()
             print("setoption name %s value %s" % (option, str(value)),
@@ -730,7 +732,7 @@ class UCIEngine(ProtocolEngine):
         if n != self.multipvSetting:
             self.multipvSetting = n
             print("stop", file=self.engine)
-            print("setoption name MultiPV value", n, file=self.engine)
+            print("setoption name MultiPV value %s" % n, file=self.engine)
             self._searchNow()
         return n
 
