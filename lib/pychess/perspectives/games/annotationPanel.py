@@ -351,6 +351,10 @@ class Sidepanel:
                         position = index
                         break
 
+                menuitem = Gtk.MenuItem(_("Refresh"))
+                menuitem.connect('activate', self.menu_refresh)
+                self.menu.append(menuitem)
+
                 if len(self.gamemodel.boards) > 1 and board == self.gamemodel.boards[1].board and \
                         not self.gamemodel.boards[0].board.children:
                     menuitem = Gtk.MenuItem(_("Add start comment"))
@@ -428,6 +432,9 @@ class Sidepanel:
                 self.menu.show_all()
                 self.menu.popup(None, None, None, None, event.button, event.time)
         return True
+
+    def menu_refresh(self, widget):
+        self.update()
 
     def menu_edit_comment(self, widget=None, board=None, index=0):
         """
