@@ -13,7 +13,7 @@ import platform
 from imp import load_module, find_module
 pychess = load_module("pychess", *find_module("pychess", ["lib"]))
 
-MINGW = platform.python_compiler().startswith("GCC")
+MSYS2 = platform.python_compiler().startswith("GCC")
 
 msi = False
 if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
@@ -52,8 +52,8 @@ if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
 else:
     from distutils.core import setup
 
-if sys.version_info < (3, 4, 0):
-    print('ERROR: PyChess requires Python >= 3.4')
+if sys.version_info < (3, 4, 2):
+    print('ERROR: PyChess requires Python >= 3.4.2')
     sys.exit(1)
 
 if sys.platform == "win32":
@@ -190,8 +190,9 @@ DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
 pofile = "LC_MESSAGES/pychess"
 if sys.platform == "win32":
     argv0_path = os.path.dirname(os.path.abspath(sys.executable))
-    if MINGW:
-        sys.path.append(argv0_path + "\\..\\lib\\python3.6\\tools\\i18n")
+    if MSYS2:
+        major, minor, micro, releaselevel, serial = sys.version_info
+        sys.path.append(argv0_path + "\\..\\lib\\python%s.%s\\tools\\i18n" % (major, minor))
     else:
         sys.path.append(argv0_path + "\\tools\\i18n")
     import msgfmt
@@ -214,7 +215,7 @@ if msi:
 
     # Get the site-package folder, not everybody will install
     # Python into C:\PythonXX
-    if MINGW:
+    if MSYS2:
         site_dir = site.getsitepackages()[0]
         include_lib_path = os.path.join(site_dir, "..", "..", "..")
         include_dll_path = os.path.join(site_dir, "..", "..", "..", "bin")
@@ -235,7 +236,6 @@ if msi:
     # We need to add all the libraries too (for themes, etc..)
     gtk_libs = ['etc',
                 'share/icons/adwaita',
-                'share/themes/adwaita',
                 'lib/gio',
                 'lib/gdk-pixbuf-2.0',
                 'lib/girepository-1.0',
@@ -274,12 +274,15 @@ if msi:
         "add_to_path": True}
 
     build_exe_options = {
-        "compressed": False,
-        "include_msvcr": True,
         "path": sys.path + ["lib"],
         "includes": ["gi", "sqlalchemy.sql.default_comparator"],
         "packages": ["gi", "sqlalchemy.dialects.sqlite", "pexpect", "psutil", "pychess"],
         "include_files": include_files}
+    if MSYS2:
+        build_exe_options["excludes"] = ["pychess.external.gbulb", "pychess.external.pexpect"]
+    else:
+        build_exe_options["include_msvcr"] = True
+
 else:
     PACKAGES = ["pychess", "pychess.gfx", "pychess.ic", "pychess.ic.managers",
                 "pychess.Players", "pychess.Savers", "pychess.System",
