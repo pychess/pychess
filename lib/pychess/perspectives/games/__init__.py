@@ -23,8 +23,7 @@ from pychess.Utils.const import UNFINISHED_STATES, ABORTED, ABORTED_AGREEMENT, L
 from pychess.Utils.Offer import Offer
 from pychess.widgets import gamewidget, mainwindow, new_notebook
 from pychess.widgets.gamenanny import game_nanny
-from pychess.perspectives import Perspective
-from pychess.perspectives import perspective_manager
+from pychess.perspectives import Perspective, perspective_manager, panel_name
 from pychess.widgets.pydock.PyDockTop import PyDockTop
 from pychess.widgets.pydock.__init__ import CENTER, EAST, SOUTH
 from pychess.ic.ICGameModel import ICGameModel
@@ -560,7 +559,7 @@ class Games(GObject.GObject, Perspective):
                           "messageArea": new_notebook("messageArea")}
         self.main_notebook = self.notebooks["board"]
         for panel in self.sidePanels:
-            self.notebooks[panel.__name__] = new_notebook(panel.__name__)
+            self.notebooks[panel_name(panel.__name__)] = new_notebook(panel_name(panel.__name__))
 
         # Initing headbook
 
@@ -589,7 +588,7 @@ class Games(GObject.GObject, Perspective):
 
         self.docks["board"] = (Gtk.Label(label="Board"), self.notebooks["board"], None)
         for panel in self.sidePanels:
-            self.docks[panel.__name__][1] = self.notebooks[panel.__name__]
+            self.docks[panel_name(panel.__name__)][1] = self.notebooks[panel_name(panel.__name__)]
 
         self.load_from_xml()
 
@@ -766,7 +765,7 @@ class Games(GObject.GObject, Perspective):
         self.notebooks["board"].append_page(gmwidg.boardvbox, None)
         gmwidg.boardvbox.show_all()
         for panel, instance in zip(self.sidePanels, gmwidg.panels):
-            self.notebooks[panel.__name__].append_page(instance, None)
+            self.notebooks[panel_name(panel.__name__)].append_page(instance, None)
             instance.show_all()
         self.notebooks["buttons"].append_page(gmwidg.stat_hbox, None)
         gmwidg.stat_hbox.show_all()

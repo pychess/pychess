@@ -11,7 +11,7 @@ from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.lmove import toPolyglot  # , FCORD, TCORD
 from pychess.Utils.GameModel import GameModel
 from pychess.Variants import name2variant, NormalBoard
-from pychess.perspectives import Perspective, perspective_manager
+from pychess.perspectives import Perspective, perspective_manager, panel_name
 from pychess.perspectives.database.gamelist import GameList
 from pychess.perspectives.database.OpeningTreePanel import OpeningTreePanel
 from pychess.perspectives.database.FilterPanel import FilterPanel
@@ -102,7 +102,7 @@ class Database(GObject.GObject, Perspective):
         self.notebooks = {"gamelist": new_notebook()}
         self.main_notebook = self.notebooks["gamelist"]
         for panel in self.sidePanels:
-            self.notebooks[panel.__name__] = new_notebook(panel.__name__)
+            self.notebooks[panel_name(panel.__name__)] = new_notebook(panel_name(panel.__name__))
 
         self.spinner = Gtk.Spinner()
         self.spinner.set_size_request(50, 50)
@@ -140,7 +140,7 @@ class Database(GObject.GObject, Perspective):
 
         self.docks["gamelist"] = (Gtk.Label(label="gamelist"), self.notebooks["gamelist"], None)
         for panel in self.sidePanels:
-            self.docks[panel.__name__][1] = self.notebooks[panel.__name__]
+            self.docks[panel_name(panel.__name__)][1] = self.notebooks[panel_name(panel.__name__)]
 
         self.load_from_xml()
 

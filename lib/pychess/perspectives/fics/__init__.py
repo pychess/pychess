@@ -24,7 +24,7 @@ from pychess.Utils.TimeModel import TimeModel
 from pychess.Players.ICPlayer import ICPlayer
 from pychess.Players.Human import Human
 from pychess.Savers import pgn, fen
-from pychess.perspectives import Perspective, perspective_manager
+from pychess.perspectives import Perspective, perspective_manager, panel_name
 
 
 class PlayerNotificationMessage(InfoBarMessage):
@@ -125,11 +125,11 @@ class FICS(GObject.GObject, Perspective):
         self.notebooks = {"ficshome": new_notebook()}
         self.main_notebook = self.notebooks["ficshome"]
         for panel in self.sidePanels:
-            self.notebooks[panel.__name__] = new_notebook(panel.__name__)
+            self.notebooks[panel_name(panel.__name__)] = new_notebook(panel_name(panel.__name__))
 
         self.docks["ficshome"] = (Gtk.Label(label="ficshome"), self.notebooks["ficshome"], None)
         for panel in self.sidePanels:
-            self.docks[panel.__name__][1] = self.notebooks[panel.__name__]
+            self.docks[panel_name(panel.__name__)][1] = self.notebooks[panel_name(panel.__name__)]
 
         self.load_from_xml()
 
@@ -249,8 +249,8 @@ class FICS(GObject.GObject, Perspective):
 
         for panel, instance in zip(self.sidePanels, self.panels):
             if not self.first_run:
-                self.notebooks[panel.__name__].remove_page(-1)
-            self.notebooks[panel.__name__].append_page(instance)
+                self.notebooks[panel_name(panel.__name__)].remove_page(-1)
+            self.notebooks[panel_name(panel.__name__)].append_page(instance)
             instance.show()
 
         tool_buttons = [self.logoff_button, ]

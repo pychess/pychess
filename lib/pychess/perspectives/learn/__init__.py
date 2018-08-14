@@ -6,7 +6,7 @@ from collections import UserDict
 from gi.repository import Gdk, Gtk, GObject
 from gi.types import GObjectMeta
 
-from pychess.perspectives import Perspective, perspective_manager
+from pychess.perspectives import Perspective, perspective_manager, panel_name
 from pychess.System.prefix import addUserConfigPrefix, addDataPrefix
 from pychess.System.Log import log
 from pychess.widgets import new_notebook, mainwindow
@@ -46,7 +46,7 @@ class Learn(GObject.GObject, Perspective):
         self.notebooks = {"home": new_notebook()}
         self.main_notebook = self.notebooks["home"]
         for panel in self.sidePanels:
-            self.notebooks[panel.__name__] = new_notebook(panel.__name__)
+            self.notebooks[panel_name(panel.__name__)] = new_notebook(panel_name(panel.__name__))
 
         self.dock = PyDockTop("learn", self)
         align = Gtk.Alignment()
@@ -58,11 +58,11 @@ class Learn(GObject.GObject, Perspective):
         self.notebooks = {"learnhome": new_notebook()}
         self.main_notebook = self.notebooks["learnhome"]
         for panel in self.sidePanels:
-            self.notebooks[panel.__name__] = new_notebook(panel.__name__)
+            self.notebooks[panel_name(panel.__name__)] = new_notebook(panel_name(panel.__name__))
 
         self.docks["learnhome"] = (Gtk.Label(label="learnhome"), self.notebooks["learnhome"], None)
         for panel in self.sidePanels:
-            self.docks[panel.__name__][1] = self.notebooks[panel.__name__]
+            self.docks[panel_name(panel.__name__)][1] = self.notebooks[panel_name(panel.__name__)]
 
         self.load_from_xml()
 
@@ -157,8 +157,8 @@ class Learn(GObject.GObject, Perspective):
 
         for panel, instance in zip(self.sidePanels, self.panels):
             if not self.first_run:
-                self.notebooks[panel.__name__].remove_page(-1)
-            self.notebooks[panel.__name__].append_page(instance)
+                self.notebooks[panel_name(panel.__name__)].remove_page(-1)
+            self.notebooks[panel_name(panel.__name__)].append_page(instance)
             instance.show()
 
         perspective_manager.activate_perspective("learn")

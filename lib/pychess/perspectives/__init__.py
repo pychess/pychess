@@ -1,6 +1,6 @@
 import os
 import sys
-import imp
+import importlib
 import traceback
 import zipfile
 import zipimport
@@ -12,6 +12,10 @@ from pychess import MSYS2
 from pychess.System.Log import log
 from pychess.widgets import createImage, dock_panel_tab, mainwindow, gtk_close
 from pychess.widgets.pydock import SOUTH
+
+
+def panel_name(module_name):
+    return module_name.split(".")[-1]
 
 
 class Perspective(object):
@@ -38,7 +42,7 @@ class Perspective(object):
             ext = ".pyc" if getattr(sys, 'frozen', False) and MSYS2 else ".py"
             postfix = "Panel%s" % ext
             files = [f[:-len(ext)] for f in os.listdir(path) if f.endswith(postfix)]
-            self.sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
+            self.sidePanels = [importlib.import_module("pychess.perspectives.%s.%s" % (name, f)) for f in files]
 
         for panel in self.sidePanels:
             close_button = Gtk.Button()
@@ -49,7 +53,7 @@ class Perspective(object):
             close_button.connect("clicked", self.on_clicked, panel)
 
             menu_item = Gtk.CheckMenuItem(label=panel.__title__)
-            menu_item.name = panel.__name__
+            menu_item.name = panel_name(panel.__name__)
             # if menu_item.name != "LecturesPanel":
             #    menu_item.set_active(True)
             menu_item.connect("toggled", self.on_toggled, panel)
@@ -57,7 +61,7 @@ class Perspective(object):
             panel.menu_item = menu_item
 
             box = dock_panel_tab(panel.__title__, panel.__desc__, panel.__icon__, close_button)
-            self.docks[panel.__name__] = [box, None, menu_item]
+            self.docks[panel_name(panel.__name__)] = [box, None, menu_item]
 
     def on_clicked(self, button, panel):
         """ Toggle show/hide side panel menu item in View menu """
@@ -66,10 +70,10 @@ class Perspective(object):
     def on_toggled(self, menu_item, panel):
         """ Show/Hide side panel """
         try:
-            leaf = self.notebooks[panel.__name__].get_parent().get_parent()
+            leaf = self.notebooks[panel_name(panel.__name__)].get_parent().get_parent()
         except AttributeError:
             # new sidepanel appeared (not in saved layout .xml file)
-            name = panel.__name__
+            name = panel_name(panel.__name__)
             leaf = self.main_notebook.get_parent().get_parent()
             leaf.dock(self.docks[name][1], SOUTH, self.docks[name][0], name)
 
@@ -77,8 +81,8 @@ class Perspective(object):
         names = [p[2] for p in leaf.panels]
 
         active = menu_item.get_active()
-        name = panel.__name__
-        shown = sum([1 for panel in self.sidePanels if panel.__name__ in names and self.notebooks[panel.__name__].is_visible()])
+        name = panel_name(panel.__name__)
+        shown = sum([1 for panel in self.sidePanels if panel_name(panel.__name__) in names and self.notebooks[panel_name(panel.__name__)].is_visible()])
 
         if active:
             self.notebooks[name].show()
@@ -102,7 +106,7 @@ class Perspective(object):
 
     def activate_panel(self, name):
         for panel in self.sidePanels:
-            if panel.__name__.startswith(name):
+            if panel_name(panel.__name__).startswith(name):
                 if panel.menu_item.get_active():
                     # if menu item is already active set_active() doesn't triggers on_toggled()
                     self.on_toggled(panel.menu_item, panel)
