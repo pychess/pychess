@@ -8,6 +8,7 @@ import builtins
 import locale
 from configparser import RawConfigParser
 
+from pychess import MSYS2
 from pychess.Utils.const import FISCHERRANDOMCHESS, LOSERSCHESS, COUNT_OF_SOUNDS, SOUND_MUTE
 from pychess.System.Log import log
 from pychess.System.prefix import addDataPrefix, addUserConfigPrefix, getDataPrefix
@@ -37,7 +38,7 @@ else:
     else:
         username = userdata.pw_name
 
-if getattr(sys, 'frozen', False):
+if getattr(sys, 'frozen', False) and not MSYS2:
     # pyinstaller specific!
     if hasattr(sys, "_MEIPASS"):
         base_path = sys._MEIPASS

@@ -7,13 +7,11 @@ from os.path import isdir, isfile
 import os
 import site
 import sys
-import platform
 
 
 from imp import load_module, find_module
 pychess = load_module("pychess", *find_module("pychess", ["lib"]))
 
-MSYS2 = platform.python_compiler().startswith("GCC")
 
 msi = False
 if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
@@ -190,7 +188,7 @@ DATA_FILES += [('share/man/man1', ['manpages/pychess.1.gz'])]
 pofile = "LC_MESSAGES/pychess"
 if sys.platform == "win32":
     argv0_path = os.path.dirname(os.path.abspath(sys.executable))
-    if MSYS2:
+    if pychess.MSYS2:
         major, minor, micro, releaselevel, serial = sys.version_info
         sys.path.append(argv0_path + "\\..\\lib\\python%s.%s\\tools\\i18n" % (major, minor))
     else:
@@ -215,7 +213,7 @@ if msi:
 
     # Get the site-package folder, not everybody will install
     # Python into C:\PythonXX
-    if MSYS2:
+    if pychess.MSYS2:
         site_dir = site.getsitepackages()[0]
         include_lib_path = os.path.join(site_dir, "..", "..", "..")
         include_dll_path = os.path.join(site_dir, "..", "..", "..", "bin")
@@ -271,14 +269,18 @@ if msi:
 
     bdist_msi_options = {
         "upgrade_code": "{5167584f-c196-428f-be40-4c861025e90a}",
-        "add_to_path": True}
+        "add_to_path": False}
+
+    perspectives = ["pychess.perspectives"]
+    for persp in ("welcome", "games", "fics", "database", "learn"):
+        perspectives.append("pychess.perspectives.%s" % persp)
 
     build_exe_options = {
         "path": sys.path + ["lib"],
         "includes": ["gi", "sqlalchemy.sql.default_comparator"],
-        "packages": ["gi", "sqlalchemy.dialects.sqlite", "pexpect", "psutil", "pychess"],
+        "packages": ["asyncio", "gi", "sqlalchemy.dialects.sqlite", "pexpect", "psutil", "pychess"] + perspectives,
         "include_files": include_files}
-    if MSYS2:
+    if pychess.MSYS2:
         build_exe_options["excludes"] = ["pychess.external.gbulb", "pychess.external.pexpect"]
     else:
         build_exe_options["include_msvcr"] = True

@@ -8,6 +8,7 @@ from io import StringIO
 
 from gi.repository import Gtk
 
+from pychess import MSYS2
 from pychess.System.Log import log
 from pychess.widgets import createImage, dock_panel_tab, mainwindow, gtk_close
 from pychess.widgets.pydock import SOUTH
@@ -25,7 +26,7 @@ class Perspective(object):
         self.docks = {}
         self.main_notebook = None
 
-        if getattr(sys, 'frozen', False):
+        if getattr(sys, 'frozen', False) and not MSYS2:
             zip_path = os.path.join(os.path.dirname(sys.executable), "library.zip")
             importer = zipimport.zipimporter(zip_path + "/pychess/perspectives/%s" % name)
             postfix = "Panel.pyc"
@@ -34,8 +35,9 @@ class Perspective(object):
             self.sidePanels = [importer.load_module(name) for name in names]
         else:
             path = "%s/%s" % (os.path.dirname(__file__), name)
-            postfix = "Panel.py"
-            files = [f[:-3] for f in os.listdir(path) if f.endswith(postfix)]
+            ext = ".pyc" if getattr(sys, 'frozen', False) and MSYS2 else ".py"
+            postfix = "Panel%s" % ext
+            files = [f[:-len(ext)] for f in os.listdir(path) if f.endswith(postfix)]
             self.sidePanels = [imp.load_module(f, *imp.find_module(f, [path])) for f in files]
 
         for panel in self.sidePanels:
