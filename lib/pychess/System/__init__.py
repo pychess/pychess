@@ -4,10 +4,19 @@ import sys
 import pstats
 import inspect
 import cProfile
+import ssl
 import tempfile
 from timeit import default_timer
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
+
+from pychess import MSYS2
+
+# TODO: this hack only needed until we can figure out
+# what ssl cert files needed to copied in setup.py
+# when cx_freezee bdist_msi command is used
+if MSYS2:
+    ssl._create_default_https_context = ssl._create_unverified_context
 
 
 @asyncio.coroutine

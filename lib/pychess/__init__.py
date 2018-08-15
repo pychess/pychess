@@ -1,6 +1,6 @@
-import platform
+import sysconfig
 
-MSYS2 = platform.python_compiler().startswith("GCC")
+MSYS2 = "mingw" in sysconfig.get_platform()
 
 VERSION = "0.99.2"
 VERSION_NAME = "Morphy"

@@ -208,35 +208,36 @@ for dir in [d for d in listdir("lang") if isdir("lang/" + d) and d != "en"]:
 PACKAGES = []
 
 if msi:
-    # TODO: cx_freeze doesn't allow letters in version
-    # VERSION = "0.12.0"
-
-    # Get the site-package folder, not everybody will install
-    # Python into C:\PythonXX
     if pychess.MSYS2:
-        site_dir = site.getsitepackages()[0]
-        include_lib_path = os.path.join(site_dir, "..", "..", "..")
-        include_dll_path = os.path.join(site_dir, "..", "..", "..", "bin")
-        lang_path = os.path.join(site_dir, "..", "..", "..", "share", "locale")
+        gtk_data_path = sys.prefix
+        gtk_exec_path = os.path.join(sys.prefix, "bin")
+        lang_path = os.path.join(sys.prefix, "share", "locale")
     else:
+        # Get the site-package folder, not everybody will install
+        # Python into C:\PythonXX
         site_dir = site.getsitepackages()[1]
-        include_lib_path = os.path.join(site_dir, "gnome")
-        include_dll_path = os.path.join(site_dir, "gnome")
+        gtk_data_path = os.path.join(site_dir, "gnome")
+        gtk_exec_path = os.path.join(site_dir, "gnome")
         lang_path = os.path.join(site_dir, "gnome", "share", "locale")
 
     # gtk3.0 .mo files
     gtk_mo = [f + "/LC_MESSAGES/gtk30.mo" for f in os.listdir(lang_path) if f in pychess_langs]
 
     # Collect the list of missing dll when cx_freeze builds the app
-    missing_dll = [f for f in os.listdir(include_dll_path) if
-                   (f.endswith(".dll") or (f.startswith("gspawn") and f.endswith(".exe")))]
+    gtk_exec = ['libgtksourceview-3.0-1.dll',
+                'libjpeg-8.dll',
+                'librsvg-2-2.dll',
+                ]
 
     # We need to add all the libraries too (for themes, etc..)
-    gtk_libs = ['etc',
-                'share/icons/adwaita',
-                'lib/gio',
+    gtk_data = ['etc',
                 'lib/gdk-pixbuf-2.0',
                 'lib/girepository-1.0',
+                'share/icons/adwaita/icon-theme.cache',
+                'share/icons/adwaita/index.theme',
+                'share/icons/adwaita/16x16',
+                'share/icons/adwaita/24x24',
+                'share/icons/adwaita/48x48',
                 'share/glib-2.0']
 
     # Create the list of includes as cx_freeze likes
@@ -246,12 +247,12 @@ if msi:
         if os.path.isfile(mofile):
             include_files.append((mofile, "share/locale/" + mo))
 
-    for dll in missing_dll:
-        include_files.append((os.path.join(include_dll_path, dll), dll))
+    for dll in gtk_exec:
+        include_files.append((os.path.join(gtk_exec_path, dll), dll))
 
-    # Let's add gtk libraries folders and files
-    for lib in gtk_libs:
-        include_files.append((os.path.join(include_lib_path, lib), lib))
+    # Let's add gtk data
+    for lib in gtk_data:
+        include_files.append((os.path.join(gtk_data_path, lib), lib))
 
     base = None
     # Lets not open the console while running the app
@@ -277,11 +278,11 @@ if msi:
 
     build_exe_options = {
         "path": sys.path + ["lib"],
-        "includes": ["gi", "sqlalchemy.sql.default_comparator"],
-        "packages": ["asyncio", "gi", "sqlalchemy.dialects.sqlite", "pexpect", "psutil", "pychess"] + perspectives,
+        "includes": ["gi"],
+        "packages": ["asyncio", "gi", "sqlalchemy.dialects.sqlite", "sqlalchemy.sql.default_comparator", "pexpect", "pychess"] + perspectives,
         "include_files": include_files}
     if pychess.MSYS2:
-        build_exe_options["excludes"] = ["pychess.external.gbulb", "pychess.external.pexpect"]
+        build_exe_options["excludes"] = ["tkinter", "pychess.external.gbulb", "pychess.external.pexpect"]
     else:
         build_exe_options["include_msvcr"] = True
 
