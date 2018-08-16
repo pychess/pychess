@@ -80,7 +80,7 @@ test_script:
   # print(board) needs this in Windows console (before Python 3.6)
   - set PYTHONIOENCODING=utf8
   - set PYTHONPATH=../lib
-  - "python3 run_tets.py"
+  - "python3 run_tests.py"
 
 #---------------------------------#
 #      artifacts configuration    #
