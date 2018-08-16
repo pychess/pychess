@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-from distutils.command.register import register
 from glob import glob
 from os import listdir
 from os.path import isdir, isfile
@@ -9,12 +8,14 @@ import site
 import sys
 
 
-from imp import load_module, find_module
-pychess = load_module("pychess", *find_module("pychess", ["lib"]))
-
-
 msi = False
 if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
+    import msilib
+
+    # monkeypatching msilib to add missing Win64 needed by distutils.command.bdist_msi
+    # see https://bugs.python.org/issue34251
+    msilib.Win64 = msilib.AMD64
+
     try:
         from cx_Freeze import setup, Executable
         from cx_Freeze.windist import bdist_msi
@@ -22,8 +23,6 @@ if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
     except ImportError:
         print("ERROR: can't import cx_Freeze!")
         sys.exit(1)
-
-    import msilib
 
     # Monkeypatching cx_freezee to do per user installer
     class peruser_bdist_msi(bdist_msi):  # noqa
@@ -63,6 +62,9 @@ if sys.platform == "win32":
         print('Installing from http://sourceforge.net/projects/pygobjectwin32')
         sys.exit(1)
 
+from imp import load_module, find_module
+pychess = load_module("pychess", *find_module("pychess", ["lib"]))
+
 VERSION = pychess.VERSION
 
 NAME = "pychess"
@@ -70,6 +72,7 @@ NAME = "pychess"
 # We have to subclass register command because
 # PyChess from another author already exist on pypi.
 
+from distutils.command.register import register
 
 class RegisterCommand(register):
     def run(self):

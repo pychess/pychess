@@ -1,53 +1,91 @@
-version: build-{build}-{branch}
+# https://www.appveyor.com/docs/appveyor-yml/
+#   - Indent each level of configuration with 2 spaces. Do not use tabs!
+#   - All section names are case-sensitive.
+#   - Section names should be unique on each level.
+
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: 0.99.2-{build}-{branch}
+
+# branches to build
+branches:
+  # whitelist
+  only:
+    - master
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2015
+
+clone_folder: c:\projects\pychess
 
 environment:
   global:
-   AIO: pygi-aio-3.24.1_rev1-setup_049a323fe25432b10f7e9f543b74598d4be74a39.exe
    STOCKFISH: stockfish-windows-amd64.exe
 
   matrix:
-    # http://www.appveyor.com/docs/installed-software#python lists available
-    # versions
-    - PYTHON: "C:\\Python34"
-      PYTHON_VERSION: "3.4.x" # currently 3.4.4
-      PYTHON_ARCH: "32"
-
-init:
-  - "echo %PYTHON%"
-
-install:
-  - "set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-
-  # Check that we have the expected version and architecture for Python  - "python --version"
-  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
-
-  # Upgrade to the latest version of pip to avoid it displaying warnings
-  # about it being out of date.
-  # - "pip install --disable-pip-version-check --user --upgrade pip"
-  - "pip install pexpect"
-  - "pip install psutil"
-  - "pip install sqlalchemy"
-
-  # Download pygobjectwin32
-  - "if not exist %AIO% appveyor DownloadFile https://sourceforge.net/projects/pygobjectwin32/files/%AIO%"
-  - "if not exist %PYTHON%\\lib\\site-packages\\gi %AIO% %PYTHON% GDKPixbuf GTK GTKSourceView Pango"
-
-  # ownload stockfish
-  - "if not exist c:\\projects\\pychess\\engines mkdir c:\\projects\\pychess\\engines"
-  - "if not exist c:\\projects\\pychess\\engines\\%STOCKFISH% appveyor DownloadFile https://github.com/niklasf/Stockfish/releases/download/fishnet-170318/%STOCKFISH% -FileName c:\\projects\\pychess\\engines\\stockfish_9_x64.exe"
-  - dir c:\projects\pychess\engines
+#    - MSYS2_ARCH: x86_64
+#      MSYSTEM: MINGW64
+#      PKG_PREFIX: mingw-w64-x86_64
+    - MSYS2_ARCH: i686
+      MSYSTEM: MINGW32
+      PKG_PREFIX: mingw-w64-i686
 
 cache:
-  - "%AIO%"
-  - "%PYTHON%\\lib\\site-packages"
   - "c:\\projects\\pychess\\engines"
 
+#---------------------------------#
+#    Run Msys2-build commands     #
+#---------------------------------#
+
+init:
+  - PATH C:\msys64\%MSYSTEM%\bin;C:\msys64\usr\bin;C:\msys64\bin;%PATH%
+
+install:
+  - bash -lc "pacman -Syu --noconfirm"
+
+  # we want python3.7
+  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3"
+
+  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-gtk3 %PKG_PREFIX%-gtksourceview3 %PKG_PREFIX%-python3-gobject %PKG_PREFIX%-python3-cairo"
+  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-psutil %PKG_PREFIX%-python3-sqlalchemy"
+  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-cx_Freeze %PKG_PREFIX%-zlib %PKG_PREFIX%-python3-pip"
+
+  # check python version
+  - "python3 --version"
+
+  - "pip3 install pexpect"
+
+  # download stockfish
+  - "if not exist c:\\projects\\pychess\\engines mkdir c:\\projects\\pychess\\engines"
+  - "if not exist c:\\projects\\pychess\\engines\\%STOCKFISH% appveyor DownloadFile https://github.com/niklasf/Stockfish/releases/download/fishnet-250718/%STOCKFISH% -FileName c:\\projects\\pychess\\engines\\stockfish_9_x64.exe"
+  - dir c:\projects\pychess\engines
+
+  - "if not exist C:\\msys64\\MINGW32\\DLLs mkdir C:\\msys64\\MINGW32\\DLLs"
+  - "if not exist C:\\msys64\\MINGW32\\DLLs\\sqlite3.dll copy C:\\msys64\\MINGW32\\bin\\libsqlite3-0.dll C:\\msys64\\MINGW32\\DLLs\\sqlite3.dll"
+
 build_script:
-  - "python setup.py build sdist"
+  - "python3 setup.py bdist_msi"
+  - "dir dist"
 
 test_script:
- - cd testing
- # print(board) needs this in Windows console (before Python 3.6)
- - set PYTHONIOENCODING=utf8
- - set PYTHONPATH=../lib
- - python -m unittest discover -p "*.py"
+#  - 'msiexec.exe /i c:\\projects\\pychess\\dist\pychess-0.99.2-mingw.msi /QN /L*V "msilog.log"'
+  - cd testing
+  # print(board) needs this in Windows console (before Python 3.6)
+  - set PYTHONIOENCODING=utf8
+  - set PYTHONPATH=../lib
+  - "python3 run_tets.py"
+
+#---------------------------------#
+#      artifacts configuration    #
+#---------------------------------#
+
+artifacts:
+  - path: 'dist\*.msi'
+#  - path: 'msilog.log'
