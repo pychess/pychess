@@ -60,6 +60,7 @@ class CECPTests(unittest.TestCase):
             self.p0.connect("readyForOptions", optionsCallback)
             self.p1.connect("readyForOptions", optionsCallback)
 
+            @asyncio.coroutine
             def coro(variant):
                 self.game = GameModel(TimeModel(60, 0), variant)
                 self.game.setPlayers([self.p0, self.p1])

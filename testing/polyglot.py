@@ -78,6 +78,7 @@ class PolyglotTestCase(unittest.TestCase):
         if os.path.isfile(BIN):
             os.remove(BIN)
 
+        @asyncio.coroutine
         def coro():
             def on_book_created(persp, event):
                 self.assertTrue(os.path.isfile(BIN))

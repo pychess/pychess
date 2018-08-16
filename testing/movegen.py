@@ -1,5 +1,6 @@
 import unittest
 
+from pychess import MSYS2
 from pychess.Utils.lutils.lmovegen import genAllMoves, genCheckEvasions
 from pychess.Utils.lutils.LBoard import LBoard
 # from pychess.Utils.lutils.ldata import *
@@ -112,6 +113,7 @@ class FindMovesTestCase(unittest.TestCase):
                 self.assertEqual(board.hash, hash)
                 self.assertEqual(self.count, suposedMoveCount)
 
+    @unittest.skipIf(MSYS2, "Testing perft takes time. Leave it to travis.")
     def testMovegen1(self):
         """Testing NORMAL variant move generator with perftsuite.epd"""
         print()

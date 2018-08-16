@@ -1,5 +1,6 @@
 import unittest
 
+from pychess import MSYS2
 from pychess.Utils.lutils.lmovegen import genAllMoves
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.lutils.validator import validateMove
@@ -68,12 +69,14 @@ class FRCFindMovesTestCase(unittest.TestCase):
                 self.perft(board, depth + 1, [])
                 self.assertEqual(self.count, suposedMoveCount)
 
+    @unittest.skipIf(MSYS2, "Testing perft takes time. Leave it to travis.")
     def testMovegen1(self):
         """Testing FRC variant move generator with perftsuite.epd"""
         print()
         self.MAXDEPTH = 3
         self.movegen(self.positions1)
 
+    @unittest.skipIf(MSYS2, "Testing perft takes time. Leave it to travis.")
     def testMovegen2(self):
         """Testing FRC variant move generator with frc_perftsuite.epd"""
         print()
