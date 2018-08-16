@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/pychess/pychess.svg?branch=master)](https://travis-ci.org/pychess/pychess)
-[![Build status](https://ci.appveyor.com/api/projects/status/hlra98l4lqk2u71a?svg=true)](https://ci.appveyor.com/project/gbtami/pychess)
+[![Build status](https://ci.appveyor.com/api/projects/status/6ogd60wtqw84k5yv?svg=true)](https://ci.appveyor.com/project/gbtami/pychess-1t7a2)
 [![codecov](https://codecov.io/gh/pychess/pychess/branch/master/graph/badge.svg)](https://codecov.io/gh/pychess/pychess)
 [![Documentation Status](https://readthedocs.org/projects/pychess/badge/?version=latest)](http://pychess.readthedocs.org/en/latest/?badge=latest)
 
