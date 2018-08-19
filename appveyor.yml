@@ -8,7 +8,7 @@
 #---------------------------------#
 
 # version format
-version: 0.99.2-{build}-{branch}
+version: snapshot-{build}-{branch}
 
 # branches to build
 branches:
@@ -82,13 +82,13 @@ build_script:
   - "python3 setup.py bdist_msi"
   - "dir dist"
 
+#after_build:
+#  - if %APPVEYOR_REPO_TAG%=="True" appweyor PushArtifact dist\pychess-0.99.2-mingw.msi
+
 #---------------------------------#
 #      artifacts configuration    #
 #---------------------------------#
 
-#artifacts:
-#  - path: 'dist\*.msi'
+artifacts:
+  - path: 'dist\*.msi'
 #  - path: 'msilog.log'
-
-after_build:
-  - if %APPVEYOR_REPO_TAG%=="True" appweyor PushArtifact dist\pychess-%APPVEYOR_REPO_TAG_NAME%-mingw.msi
