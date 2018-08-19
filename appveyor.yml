@@ -70,10 +70,6 @@ install:
   - "if not exist C:\\msys64\\MINGW32\\DLLs mkdir C:\\msys64\\MINGW32\\DLLs"
   - "if not exist C:\\msys64\\MINGW32\\DLLs\\sqlite3.dll copy C:\\msys64\\MINGW32\\bin\\libsqlite3-0.dll C:\\msys64\\MINGW32\\DLLs\\sqlite3.dll"
 
-build_script:
-  - "python3 setup.py bdist_msi"
-  - "dir dist"
-
 test_script:
 #  - 'msiexec.exe /i c:\\projects\\pychess\\dist\pychess-0.99.2-mingw.msi /QN /L*V "msilog.log"'
   - cd testing
@@ -82,10 +78,17 @@ test_script:
   - set PYTHONPATH=../lib
   - "python3 run_tests.py"
 
+build_script:
+  - "python3 setup.py bdist_msi"
+  - "dir dist"
+
 #---------------------------------#
 #      artifacts configuration    #
 #---------------------------------#
 
-artifacts:
-  - path: 'dist\*.msi'
+#artifacts:
+#  - path: 'dist\*.msi'
 #  - path: 'msilog.log'
+
+after_build:
+  - if %APPVEYOR_REPO_TAG%=="True" appweyor PushArtifact dist\pychess-%APPVEYOR_REPO_TAG_NAME%-mingw.msi
