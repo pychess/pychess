@@ -251,7 +251,7 @@ class PerspectiveManager(object):
             self.toolbar.add(button)
             button.show()
 
-    def set_perspective_menuitems(self, name, menuitems):
+    def set_perspective_menuitems(self, name, menuitems, default=True):
         perspective, button, index = self.perspectives[name]
         for item in perspective.menuitems:
             if item in self.viewmenu:
@@ -265,6 +265,8 @@ class PerspectiveManager(object):
         for item in menuitems:
             perspective.menuitems.append(item)
             self.viewmenu.append(item)
+            if default:
+                item.set_active(True)
             item.show()
 
 

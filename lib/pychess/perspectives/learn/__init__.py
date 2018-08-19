@@ -41,7 +41,6 @@ class Learn(GObject.GObject, Perspective):
 
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("learn", perspective_widget)
-        perspective_manager.set_perspective_menuitems("learn", self.menuitems)
 
         self.notebooks = {"home": new_notebook()}
         self.main_notebook = self.notebooks["home"]
@@ -67,7 +66,9 @@ class Learn(GObject.GObject, Perspective):
         self.load_from_xml()
 
         # Default layout of side panels
+        first_time_layout = False
         if not os.path.isfile(self.dockLocation):
+            first_time_layout = True
             leaf0 = self.dock.dock(self.docks["learnhome"][1], CENTER, self.docks["learnhome"][0], "learnhome")
             leaf0.setDockable(False)
 
@@ -85,6 +86,8 @@ class Learn(GObject.GObject, Perspective):
 
         self.dock.show_all()
         perspective_widget.show_all()
+
+        perspective_manager.set_perspective_menuitems("learn", self.menuitems, default=first_time_layout)
 
         log.debug("Learn.__init__: finished")
 

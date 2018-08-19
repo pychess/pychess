@@ -593,7 +593,9 @@ class Games(GObject.GObject, Perspective):
         self.load_from_xml()
 
         # Default layout of side panels
+        first_time_layout = False
         if not os.path.isfile(self.dockLocation):
+            first_time_layout = True
             leaf = self.dock.dock(self.docks["board"][1],
                                   CENTER,
                                   Gtk.Label(label=self.docks["board"][0]),
@@ -659,7 +661,7 @@ class Games(GObject.GObject, Perspective):
         centerVBox.show_all()
         perspective_widget.show_all()
 
-        perspective_manager.set_perspective_menuitems("games", self.menuitems)
+        perspective_manager.set_perspective_menuitems("games", self.menuitems, default=first_time_layout)
 
         conf.notify_add("hideTabs", self.tabsCallback)
 

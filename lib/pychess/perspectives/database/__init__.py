@@ -145,7 +145,9 @@ class Database(GObject.GObject, Perspective):
         self.load_from_xml()
 
         # Default layout of side panels
+        first_time_layout = False
         if not os.path.isfile(self.dockLocation):
+            first_time_layout = True
             leaf = self.dock.dock(self.docks["gamelist"][1], CENTER, self.docks["gamelist"][0], "gamelist")
             leaf.setDockable(False)
 
@@ -162,10 +164,9 @@ class Database(GObject.GObject, Perspective):
         self.dock.show_all()
         perspective_widget.show_all()
 
-        perspective_manager.set_perspective_menuitems("database", self.menuitems)
+        perspective_manager.set_perspective_menuitems("database", self.menuitems, default=first_time_layout)
 
-        perspective_manager.set_perspective_toolbuttons("database", [
-            self.import_button, self.save_as_button])
+        perspective_manager.set_perspective_toolbuttons("database", [self.import_button, self.save_as_button])
 
     def on_switch_page(self, notebook, page, page_num):
         if page in self.page_dict:

@@ -109,7 +109,6 @@ class FICS(GObject.GObject, Perspective):
     def init_layout(self):
         perspective_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         perspective_manager.set_perspective_widget("fics", perspective_widget)
-        perspective_manager.set_perspective_menuitems("fics", self.menuitems)
 
         self.infobar = InfoBarNotebook("fics_lounge_infobar")
         self.infobar.hide()
@@ -134,7 +133,9 @@ class FICS(GObject.GObject, Perspective):
         self.load_from_xml()
 
         # Default layout of side panels
+        first_time_layout = False
         if not os.path.isfile(self.dockLocation):
+            first_time_layout = True
             leaf = self.dock.dock(self.docks["ficshome"][1], CENTER, self.docks["ficshome"][0], "ficshome")
             leaf.setDockable(False)
 
@@ -158,6 +159,8 @@ class FICS(GObject.GObject, Perspective):
 
         self.dock.show_all()
         perspective_widget.show_all()
+
+        perspective_manager.set_perspective_menuitems("fics", self.menuitems, default=first_time_layout)
 
         log.debug("FICS.__init__: finished")
 
