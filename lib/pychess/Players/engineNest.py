@@ -549,7 +549,7 @@ class EngineDiscoverer(GObject.GObject):
         def optionsCallback(engine):
             engine.setOptionStrength(diffi, forcePonderOff)
             engine.setOptionVariant(variant)
-            if secs > 0:
+            if secs > 0 or incr > 0:
                 engine.setOptionTime(secs, incr, moves)
 
         engine.connect("readyForOptions", optionsCallback)

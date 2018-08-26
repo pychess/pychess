@@ -113,6 +113,7 @@ class PyChess(object):
                         usetime *= 2
                     # The increment is a constant. We'll use this always
                     usetime += self.increment
+                usetime = min(usetime, self.clock[self.playingAs] / 2)
 
             prevtime = 0
             starttime = time()

@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-
 from math import ceil, pi, cos, sin
 
 import cairo
@@ -13,7 +12,7 @@ from . import preferencesDialog
 
 def formatTime(seconds, clk2pgn=False):
     minus = ""
-    if seconds not in range(-10, 10):
+    if seconds <= -10 or seconds >= 10:
         seconds = ceil(seconds)
     if seconds < 0:
         minus = "-"
@@ -211,10 +210,13 @@ class ChessClock(Gtk.DrawingArea):
     def update(self, wmovecount=-1, bmovecount=-1):
         if self.model.ended:
             return False
+        if len(self.model.gamemodel.players) < 2:
+            return not self.model.ended
         alarm_time = int(self.alarm_spin)
         if self.model.getPlayerTime(self.model.movingColor) <= alarm_time and \
             self.model.gamemodel.players[self.model.movingColor].__type__ == LOCAL and \
             self.model.gamemodel.status in UNFINISHED_STATES and \
+            self.model.secs != 0 and \
             self.model.gamemodel.endstatus not in (DRAW, WHITEWON, BLACKWON, UNKNOWN_STATE) and \
                 not self.short_on_time[self.model.movingColor]:
             self.short_on_time[self.model.movingColor] = True

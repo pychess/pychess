@@ -283,10 +283,23 @@ def quiescent(board, alpha, beta, ply):
     if skipPruneChance and random() < skipPruneChance:
         return [], (alpha + beta) // 2
 
-    global nodes
+    global searching, nodes, endtime, timecheck_counter
 
     if ldraw.test(board):
         return [], 0
+
+    timecheck_counter -= 1
+    if timecheck_counter == 0:
+        if time() > endtime:
+            searching = False
+        timecheck_counter = TIMECHECK_FREQ
+
+    ############################################################################
+    # Break itereation if interupted or if times up                            #
+    ############################################################################
+
+    if not searching:
+        return [], -evaluateComplete(board, 1 - board.color)
 
     isCheck = board.isChecked()
 

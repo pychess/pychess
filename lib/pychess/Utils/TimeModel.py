@@ -30,7 +30,10 @@ class TimeModel(GObject.GObject):
 
         # time control (not necessarily where the game was resumed,
         # i.e. self.intervals[0][0])
-        self.intervals = [[secs], [bsecs]]
+        if secs == 0 and gain > 0:
+            self.intervals = [[gain], [gain]]
+        else:
+            self.intervals = [[secs], [bsecs]]
         self.gain = gain
         self.secs = secs
 
@@ -227,8 +230,7 @@ class TimeModel(GObject.GObject):
             if self.paused:
                 return self.intervals[color][movecount] - self.pauseInterval
             elif self.counter:
-                return self.intervals[color][movecount] - (time() -
-                                                           self.counter)
+                return self.intervals[color][movecount] - (time() - self.counter)
         return self.intervals[color][movecount]
 
     def getInitialTime(self):
