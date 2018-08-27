@@ -154,8 +154,6 @@ class PyChessCECP(PyChess):
                             self.board.variant = RACINGKINGSCHESS
                         elif lines[1] == "kingofthehill":
                             self.board.variant = KINGOFTHEHILLCHESS
-                            self.print("setup (PNBRQKpnbrqk) 8x8+0_fairy %s" %
-                                       FEN_START)
                         elif lines[1] == "horde":
                             self.board = LBoard(HORDECHESS)
                             self.board.applyFen(HORDESTART)
@@ -171,23 +169,9 @@ class PyChessCECP(PyChess):
                         elif lines[1] == "cambodian":
                             self.board = LBoard(CAMBODIANCHESS)
                             self.board.applyFen(KAMBODIANSTART)
-                            self.print(
-                                "setup (PN.R.M....SKpn.r.m....sk) 8x8+0_makruk %s"
-                                % KAMBODIANSTART)
-                            self.print("piece K& KiN")
-                            self.print("piece M& FifD")
                         elif lines[1] == "sittuyin":
                             self.board = LBoard(SITTUYINCHESS)
                             self.board.applyFen(SITTUYINSTART)
-                            self.print(
-                                "setup (PN.R.F....SKpn.r.f....sk) 8x8+6_bughouse %s"
-                                % SITTUYINSTART)
-                            self.print("piece N& Nj@3")
-                            self.print("piece S& FfWj@3")
-                            self.print("piece F& Fjb@3")
-                            self.print("piece R& R@1")
-                            self.print("piece K& Kj@3")
-                            self.print("piece P& fmWfcFj@3")
 
                 elif lines[0] == "quit":
                     self.forced = True
