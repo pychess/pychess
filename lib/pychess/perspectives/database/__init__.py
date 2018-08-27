@@ -26,10 +26,10 @@ from pychess.Database.PgnImport import PgnImport, download_file
 from pychess.Database.JvR import JvR
 from pychess.Savers import fen, epd, olv
 from pychess.Savers.pgn import PGNFile
+from pychess.System import conf
 from pychess.System.protoopen import protoopen
 
 pgn_icon = load_icon(24, "application-x-chess-pgn", "pychess")
-BOOK_DEPTH = 8
 
 
 class Database(GObject.GObject, Perspective):
@@ -543,6 +543,8 @@ class Database(GObject.GObject, Perspective):
         self.progress_dialog.hide()
 
     def feed_book(self, records, positions):
+        BOOK_DEPTH_MAX = conf.get("book_depth_max")
+
         for rec in records:
             model = GameModel()
 
@@ -579,7 +581,7 @@ class Database(GObject.GObject, Perspective):
             boards = self.chessfile.parse_movetext(movetext, boards[0], -1)
 
             for board in boards:
-                if board.plyCount > BOOK_DEPTH:
+                if board.plyCount > BOOK_DEPTH_MAX:
                     break
                 move = board.lastMove
                 if move is not None:

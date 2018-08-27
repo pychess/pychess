@@ -119,6 +119,7 @@ DEFAULTS = {
         "infinite_analysis": False,
         "opening_check": False,
         "opening_file_entry": default_book_path,
+        "book_depth_max": 8,
         "endgame_check": False,
         "egtb_path": os.path.join(getDataPrefix()),
         "online_egtb_check": True,
