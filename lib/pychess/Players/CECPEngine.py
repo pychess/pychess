@@ -281,6 +281,9 @@ class CECPEngine(ProtocolEngine):
 
     # Send the player move updates
 
+    def set_board(self, board):
+        self.setBoardList([board], [])
+
     def setBoard(self, board, search=True):
         def coro():
             if self.engineIsAnalyzing:

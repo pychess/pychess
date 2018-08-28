@@ -196,6 +196,9 @@ class UCIEngine(ProtocolEngine):
                                         model.boards[0:ply]):
             self._recordMove(board1, move, board2)
 
+    def set_board(self, board):
+        self._recordMove(board, None, None)
+
     def setBoard(self, board, search=True):
         log.debug("setBoardAtPly: board=%s" % board,
                   extra={"task": self.defname})

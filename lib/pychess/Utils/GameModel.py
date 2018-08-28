@@ -1,6 +1,7 @@
 import asyncio
 import collections
 import datetime
+import random
 import traceback
 from queue import Queue
 from io import StringIO
@@ -13,6 +14,7 @@ from pychess.Players.Player import PlayerIsDead, PassInterrupt, TurnInterrupt, I
 from pychess.System import conf
 from pychess.System.protoopen import protoopen, protosave
 from pychess.System.Log import log
+from pychess.Utils.book import getOpenings
 from pychess.Utils.Move import Move
 from pychess.Utils.eco import get_eco
 from pychess.Utils.Offer import Offer
@@ -644,6 +646,24 @@ class GameModel(GObject.GObject):
         self.needsSave = False
         self.emit("game_saved", uri)
 
+    def get_book_move(self):
+        openings = getOpenings(self.boards[-1].board)
+        openings.sort(key=lambda t: t[1], reverse=True)
+        if not openings:
+            return None
+
+        total_weights = 0
+        for move, weight, learn in openings:
+            total_weights += weight
+
+        choice = random.randint(0, total_weights - 1)
+
+        current_sum = 0
+        for move, weight, learn in openings:
+            current_sum += weight
+            if current_sum > choice:
+                return Move(move)
+
     # Run stuff
 
     def start(self):
@@ -688,6 +708,8 @@ class GameModel(GObject.GObject):
 
             self.curColor = self.boards[-1].color
 
+            book_depth_max = conf.get("book_depth_max")
+
             while self.status in (PAUSED, RUNNING, DRAW, WHITEWON, BLACKWON):
                 curPlayer = self.players[self.curColor]
                 if self.timed:
@@ -699,12 +721,21 @@ class GameModel(GObject.GObject):
                 try:
                     log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: calling %s.makeMove()" % (
                         id(self), str(self.players), self.ply, str(curPlayer)))
-                    if self.ply > self.lowply:
-                        move = yield from curPlayer.makeMove(self.boards[-1], self.moves[-1], self.boards[-2])
-                    else:
-                        move = yield from curPlayer.makeMove(self.boards[-1], None, None)
-                    log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s" % (
-                        id(self), str(self.players), self.ply, move, str(curPlayer)))
+
+                    move = None
+                    if curPlayer.__type__ == ARTIFICIAL and book_depth_max > 0 and self.ply <= book_depth_max:
+                        move = self.get_book_move()
+                        log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from book" % (
+                            id(self), str(self.players), self.ply, move))
+                        if move is not None:
+                            curPlayer.set_board(self.boards[-1].move(move))
+                    if move is None:
+                        if self.ply > self.lowply:
+                            move = yield from curPlayer.makeMove(self.boards[-1], self.moves[-1], self.boards[-2])
+                        else:
+                            move = yield from curPlayer.makeMove(self.boards[-1], None, None)
+                        log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s" % (
+                            id(self), str(self.players), self.ply, move, str(curPlayer)))
                 except PlayerIsDead as e:
                     if self.status in (WAITING_TO_START, PAUSED, RUNNING):
                         stringio = StringIO()
