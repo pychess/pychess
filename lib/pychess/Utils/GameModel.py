@@ -656,6 +656,9 @@ class GameModel(GObject.GObject):
         for move, weight, learn in openings:
             total_weights += weight
 
+        if total_weights < 1:
+            return None
+
         choice = random.randint(0, total_weights - 1)
 
         current_sum = 0
