@@ -1,6 +1,7 @@
 import unittest
 
 modules_to_test = (
+    "Board",
     "bitboard",
     "database",
     "draw",

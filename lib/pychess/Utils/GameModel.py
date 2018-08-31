@@ -784,6 +784,7 @@ class GameModel(GObject.GObject):
                 newBoard = self.boards[-1].move(move)
                 newBoard.board.prev = self.boards[-1].board
 
+                # newBoard.printPieces()
                 # Variation on next move can exist from the hint panel...
                 if self.boards[-1].board.next is not None:
                     newBoard.board.children = self.boards[

@@ -1,6 +1,6 @@
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import DROP, NORMAL_MOVE, PAWN, SITTUYINCHESS, QUEEN, KING, \
-    NULL_MOVE, FISCHERRANDOMCHESS, WHITE, BLACK, W_OOO, W_OO, B_OOO, B_OO, QUEEN_CASTLE, \
+    NULL_MOVE, WHITE, BLACK, W_OOO, W_OO, B_OOO, B_OO, QUEEN_CASTLE, \
     KING_CASTLE, CAMBODIANCHESS, ENPASSANT, PROMOTIONS, CASTLE_SAN, C1, G1, reprSign
 from pychess.Utils.lutils.lmovegen import newMove
 from .lutils import lmove
@@ -48,7 +48,12 @@ class Move:
             elif board[self.cord0].piece == KING:
                 if self.cord0 == self.cord1:
                     self.flag = NULL_MOVE
-                elif board.variant == FISCHERRANDOMCHESS:
+
+                if self.cord0.x - self.cord1.x == 2 and board.variant != CAMBODIANCHESS:
+                    self.flag = QUEEN_CASTLE if self.cord0.x == 4 else KING_CASTLE
+                elif self.cord0.x - self.cord1.x == -2 and board.variant != CAMBODIANCHESS:
+                    self.flag = KING_CASTLE if self.cord0.x == 4 else QUEEN_CASTLE
+                else:
                     if (abs(self.cord0.x - self.cord1.x) > 1 and self.cord1.x == C1) or (
                             board.board.ini_rooks[board.color][0] == self.cord1.cord and (
                                 (board.board.color == WHITE and board.board.castling & W_OOO) or (
@@ -59,12 +64,6 @@ class Move:
                                 (board.board.color == WHITE and board.board.castling & W_OO) or (
                             board.board.color == BLACK and board.board.castling & B_OO))):
                         self.flag = KING_CASTLE
-                elif board.variant != CAMBODIANCHESS:
-                    if self.cord0.x - self.cord1.x == 2:
-                        self.flag = QUEEN_CASTLE if self.cord0.x == 4 else KING_CASTLE
-                    elif self.cord0.x - self.cord1.x == -2:
-                        self.flag = KING_CASTLE if self.cord0.x == 4 else QUEEN_CASTLE
-
             elif board[self.cord0].piece == PAWN and \
                     board[self.cord1] is None and \
                     self.cord0.x != self.cord1.x and \

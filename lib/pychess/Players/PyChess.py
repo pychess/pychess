@@ -129,7 +129,7 @@ class PyChess(object):
                 # Heuristic time saving
                 # Don't waste time, if the estimated isn't enough to complete
                 # next depth
-                if timed and usetime <= prevtime * 4 and usetime > 1:
+                if depth > 1 and timed and usetime <= prevtime * 4 and usetime > 1:
                     break
                 lsearch.timecheck_counter = lsearch.TIMECHECK_FREQ
                 search_result = alphaBeta(self.board, depth)
