@@ -11,7 +11,7 @@ from .const import ADJOURNED_LOST_CONNECTION_BLACK, UNKNOWN_REASON, WON_LESSMATE
     ABORTED_AGREEMENT, WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, WON_ADJUDICATION, \
     ADJOURNED_COURTESY_BLACK, ADJOURNED_COURTESY, DRAW_REPITITION, ABORTED_COURTESY, \
     DRAW_50MOVES, ADJOURNED_LOST_CONNECTION_WHITE, ABORTED_EARLY, ABORTED_DISCONNECTION, \
-    CANCELLED, PRACTICE_GOAL_REACHED
+    CANCELLED, PRACTICE_GOAL_REACHED, DRAW_KINGSINEIGHTROW
 
 
 if '_' not in builtins.__dict__:
@@ -54,6 +54,7 @@ reprReason_long = {
     _("Because %(black)s ran out of time and %(white)s has insufficient material to mate"),
     DRAW_EQUALMATERIAL:
     _("Because both players have the same amount of pieces"),
+    DRAW_KINGSINEIGHTROW: _("Because both king reached the eight row"),
     WON_RESIGN: _("Because %(loser)s resigned"),
     WON_CALLFLAG: _("Because %(loser)s ran out of time"),
     WON_MATE: _("Because %(loser)s was checkmated"),

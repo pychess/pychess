@@ -6,6 +6,8 @@ from pychess.Utils.Board import Board
 
 RACINGKINGSSTART = "8/8/8/8/8/8/krbnNBRK/qrbnNBRQ w - - 0 1"
 
+RANK8 = (A8, B8, C8, D8, E8, F8, G8, H8)
+
 
 class RacingKingsBoard(Board):
     """ :Description: The Racing Kings variation is where the object of the game
@@ -36,6 +38,9 @@ class RacingKingsBoard(Board):
 
 def testKingInEightRow(board):
     """ Test for a winning position """
-    return board.kings[board.color - 1] in (A8, B8, C8, D8, E8, F8, G8, H8)
+    return board.kings[board.color - 1] in RANK8
 
-# TODO: implement both king goes to 8.row draw rule
+
+def test2KingInEightRow(board):
+    """ Test for a winning position """
+    return board.kings[board.color] in RANK8 and board.kings[board.color - 1] in RANK8

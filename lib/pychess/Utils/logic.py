@@ -12,7 +12,7 @@ from .const import LOSERSCHESS, WHITE, WHITEWON, BLACKWON, WON_NOMATERIAL, KING,
     SUICIDECHESS, GIVEAWAYCHESS, ATOMICCHESS, WON_KINGEXPLODE, KINGOFTHEHILLCHESS, BLACK, DRAW, \
     CRAZYHOUSECHESS, WON_KINGINCENTER, THREECHECKCHESS, WON_THREECHECK, WON_MATE, DRAW_STALEMATE, \
     DRAW_INSUFFICIENT, DRAW_EQUALMATERIAL, WON_LESSMATERIAL, WON_WIPEOUT, DRAW_REPITITION, \
-    WON_KINGINEIGHTROW, RACINGKINGSCHESS, DRAW_50MOVES, RUNNING, ENPASSANT, UNKNOWN_REASON
+    WON_KINGINEIGHTROW, RACINGKINGSCHESS, DRAW_50MOVES, DRAW_KINGSINEIGHTROW, RUNNING, ENPASSANT, UNKNOWN_REASON
 
 from .lutils.bitboard import iterBits
 from .lutils.attack import getAttacks
@@ -21,7 +21,7 @@ from pychess.Variants.losers import testKingOnly
 from pychess.Variants.atomic import kingExplode
 from pychess.Variants.kingofthehill import testKingInCenter
 from pychess.Variants.threecheck import checkCount
-from pychess.Variants.racingkings import testKingInEightRow
+from pychess.Variants.racingkings import testKingInEightRow, test2KingInEightRow
 
 
 def getDestinationCords(board, cord):
@@ -92,12 +92,26 @@ def getStatus(board):
                 status = BLACKWON
             return status, WON_THREECHECK
     elif board.variant == RACINGKINGSCHESS:
-        if testKingInEightRow(lboard):
-            if board.color == BLACK:
-                status = WHITEWON
-            else:
-                status = BLACKWON
-            return status, WON_KINGINEIGHTROW
+        if test2KingInEightRow(lboard):
+            return DRAW, DRAW_KINGSINEIGHTROW
+        elif testKingInEightRow(lboard):
+            can_save = False
+            for move in lmovegen.genAllMoves(lboard):
+                if lboard.willGiveCheck(move) or lboard.willLeaveInCheck(move):
+                    continue
+
+                lboard.applyMove(move)
+                if testKingInEightRow(lboard):
+                    can_save = True
+                    lboard.popMove()
+                    break
+                lboard.popMove()
+            if not can_save:
+                if board.color == BLACK:
+                    status = WHITEWON
+                else:
+                    status = BLACKWON
+                return status, WON_KINGINEIGHTROW
     else:
         if ldraw.testMaterial(lboard):
             return DRAW, DRAW_INSUFFICIENT
