@@ -323,8 +323,9 @@ class Board:
                 newBoard[cord1].captured = False
                 newBoard[holding_coord] = None
         else:
-            if self.variant == ATOMICCHESS and (flag == ENPASSANT or
-                                                self[move.cord1] is not None):
+            if self.variant == ATOMICCHESS and (
+                flag == ENPASSANT or self[move.cord1] is not None) and (
+                    flag not in (QUEEN_CASTLE, KING_CASTLE)):
                 piece = self[move.cord0].piece
                 new_piece = Piece(self.color, piece, captured=True)
                 nth[1 - self.color] += 1

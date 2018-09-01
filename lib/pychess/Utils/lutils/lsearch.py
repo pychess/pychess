@@ -175,10 +175,19 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
 
     if board.variant in (LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS):
         mlist = [m for m in genCaptures(board)]
-        if board.variant == LOSERSCHESS and isCheck:
-            evasions = [m for m in genCheckEvasions(board)]
-            eva_cap = [m for m in evasions if m in mlist]
-            mlist = eva_cap if eva_cap else evasions
+        if board.variant == LOSERSCHESS:
+            if isCheck:
+                evasions = [m for m in genCheckEvasions(board)]
+                eva_cap = [m for m in evasions if m in mlist]
+                mlist = eva_cap if eva_cap else evasions
+            else:
+                valid_captures = []
+                for move in mlist:
+                    board.applyMove(move)
+                    if not board.opIsChecked():
+                        valid_captures.append(move)
+                    board.popMove()
+                mlist = valid_captures
         if not mlist and not isCheck:
             mlist = [m for m in genAllMoves(board)]
         moves = [(-getMoveValue(board, table, depth, m), m) for m in mlist]
@@ -212,7 +221,6 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
     ############################################################################
 
     for moveValue, move in moves:
-
         nodes += 1
 
         board.applyMove(move)
