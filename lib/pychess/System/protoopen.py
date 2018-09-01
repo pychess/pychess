@@ -24,7 +24,7 @@ def protoopen(uri, encoding=PGN_ENCODING):
         uri = splitted[1]
 
     try:
-        handle = open(unquote(uri), "rU", encoding=encoding, newline="")
+        handle = open(unquote(uri), "r", encoding=encoding, newline="")
         handle.pgn_encoding = "utf-8" if os.path.basename(uri).startswith("lichess_") else encoding
         return handle
     except (IOError, OSError):
