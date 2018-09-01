@@ -650,6 +650,7 @@ class GameModel(GObject.GObject):
         openings = getOpenings(self.boards[-1].board)
         openings.sort(key=lambda t: t[1], reverse=True)
         if not openings:
+            print("No book move in", self.boards[-1].board)
             return None
 
         total_weights = 0
@@ -657,6 +658,7 @@ class GameModel(GObject.GObject):
             total_weights += weight
 
         if total_weights < 1:
+            print("(total_weights < 1) No book move in", self.boards[-1].board)
             return None
 
         choice = random.randint(0, total_weights - 1)
