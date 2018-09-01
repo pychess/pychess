@@ -120,12 +120,13 @@ class FindMovesTestCase(unittest.TestCase):
         # return
         self.MAXDEPTH = 3
         positions = []
-        for line in open('gamefiles/perftsuite.epd'):
-            if line.startswith("#"):
-                continue
-            parts = line.split(";")
-            depths = [(int(s[1]), int(s[3:].rstrip())) for s in parts[1:]]
-            positions.append((parts[0], depths))
+        with open('gamefiles/perftsuite.epd') as f:
+            for line in f:
+                if line.startswith("#"):
+                    continue
+                parts = line.split(";")
+                depths = [(int(s[1]), int(s[3:].rstrip())) for s in parts[1:]]
+                positions.append((parts[0], depths))
 
         self.movegen(positions, NORMALCHESS)
 
@@ -137,12 +138,14 @@ class FindMovesTestCase(unittest.TestCase):
         return
         self.MAXDEPTH = 7
         positions = []
-        for line in open('gamefiles/perftsuite2.epd'):
-            if line.startswith("#"):
-                continue
-            parts = line.split(";")
-            depths = [(int(s[1]), int(s[3:].rstrip())) for s in parts[1:]]
-            positions.append((parts[0], depths))
+        with open('gamefiles/perftsuite2.epd') as f:
+            for line in f:
+                if line.startswith("#"):
+                    continue
+                parts = line.split(";")
+                depths = [(int(s[1]), int(s[3:].rstrip())) for s in parts[1:]]
+                positions.append((parts[0], depths))
+
         self.movegen(positions, NORMALCHESS)
 
     def testMovegen3(self):
@@ -169,6 +172,7 @@ class FindMovesTestCase(unittest.TestCase):
         # return
         self.MAXDEPTH = 3
         self.movegen(positions, MAKRUKCHESS)
+
 
 if __name__ == '__main__':
     unittest.main()

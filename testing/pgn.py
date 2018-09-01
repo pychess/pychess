@@ -5,7 +5,18 @@ from pychess.Savers.pgn import load, walk, pattern, MOVE
 from pychess.System.protoopen import protoopen
 
 
+file_names = ("atomic", "chess960rwch", "world_matches", "zh")
+file_handles = []
+for name in file_names:
+    file_handles.append(protoopen("gamefiles/%s.pgn" % name))
+
+
 class PgnTestCase(unittest.TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        for handle in file_handles:
+            handle.close()
+
     def test_movre(self):
         """Testing SAN pattern regexp"""
         moves = "e4 fxg7 g8=Q gxh8=N a2+ axb1# c1=Q+ exd8=N# " + \
@@ -47,11 +58,9 @@ def normalize(text):
     return text
 
 
-filenames = ("atomic", "chess960rwch", "world_matches", "zh")
-
-for filename in filenames:
-    print("Creating test methods for %s" % filename)
-    pgnfile = load(protoopen('gamefiles/%s.pgn' % filename))
+for j, name in enumerate(file_names):
+    print("Creating test methods for %s" % name)
+    pgnfile = load(file_handles[j])
     pgnfile.limit = 1000
     pgnfile.init_tag_database()
     games, plys = pgnfile.get_records()
@@ -69,7 +78,7 @@ for filename in filenames:
         test_method = create_test(orig, new)
 
         # change it's name to be unique in PgnTestCase class
-        test_method.__name__ = 'test_%s_%d' % (filename, i + 1)
+        test_method.__name__ = 'test_%s_%d' % (name, i + 1)
         test_method.__doc__ = "Pgn read-write %s" % ' '.join(test_method.__name__.split('_'))
 
         # monkey patch PgnTestCase class, adding the new test method

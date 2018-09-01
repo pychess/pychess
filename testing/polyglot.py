@@ -45,7 +45,8 @@ SQLITE = "polyglot.sqlite"
 
 
 class PolyglotTestCase(unittest.TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         for fi in (PGN, BIN, SCOUT, SQLITE):
             if os.path.isfile(fi):
                 os.remove(fi)
@@ -53,12 +54,13 @@ class PolyglotTestCase(unittest.TestCase):
         with open(PGN, "w") as f:
             f.write(pgn)
 
-        self.saved_book_path = book.path
+        cls.saved_book_path = book.path
         book.path = BIN
         book.bookfile = True
 
-    def tearDown(self):
-        book.path = self.saved_book_path
+    @classmethod
+    def tearDownClass(cls):
+        book.path = cls.saved_book_path
 
         for fi in (PGN, BIN, SCOUT, SQLITE):
             if os.path.isfile(fi):

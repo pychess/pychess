@@ -6,23 +6,25 @@ from pychess.System.protoopen import protoopen
 
 
 class DrawTestCase(unittest.TestCase):
-    def setUp(self):
-        self.f1 = protoopen('gamefiles/3fold.pgn')
-        self.PgnFile1 = pgn.load(self.f1)
-        self.PgnFile1.get_records()
+    @classmethod
+    def setUpClass(cls):
+        cls.f1 = protoopen('gamefiles/3fold.pgn')
+        cls.PgnFile1 = pgn.load(cls.f1)
+        cls.PgnFile1.get_records()
 
-        self.f2 = protoopen('gamefiles/bilbao.pgn')
-        self.PgnFile2 = pgn.load(self.f2)
-        self.PgnFile2.get_records()
+        cls.f2 = protoopen('gamefiles/bilbao.pgn')
+        cls.PgnFile2 = pgn.load(cls.f2)
+        cls.PgnFile2.get_records()
 
-        self.f3 = protoopen('gamefiles/material.pgn')
-        self.PgnFile3 = pgn.load(self.f3)
-        self.PgnFile3.get_records()
+        cls.f3 = protoopen('gamefiles/material.pgn')
+        cls.PgnFile3 = pgn.load(cls.f3)
+        cls.PgnFile3.get_records()
 
-    def tearDown(self):
-        self.f1.close()
-        self.f2.close()
-        self.f3.close()
+    @classmethod
+    def tearDownClass(cls):
+        cls.f1.close()
+        cls.f2.close()
+        cls.f3.close()
 
     def test1(self):
         """Testing the same position, for the third time"""
