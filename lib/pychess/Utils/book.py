@@ -8,13 +8,13 @@ from pychess.Utils.lutils.lmove import parsePolyglot
 from pychess.System.Log import log
 
 path = conf.get("opening_file_entry")
-print(path)
+
 if os.path.isfile(path):
     bookfile = True
 else:
     bookfile = False
     log.warning("Could not find %s" % path)
-print(bookfile)
+
 # The book probing code is based on that of PolyGlot by Fabien Letouzey.
 # PolyGlot is available under the GNU GPL from http://wbec-ridderkerk.nl
 

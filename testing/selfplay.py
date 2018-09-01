@@ -91,5 +91,6 @@ class CECPTests(unittest.TestCase):
 
             loop.run_until_complete(coro(variant))
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -650,16 +650,13 @@ class GameModel(GObject.GObject):
         openings = getOpenings(self.boards[-1].board)
         openings.sort(key=lambda t: t[1], reverse=True)
         if not openings:
-            print("No book move in", self.boards[-1].board)
             return None
 
         total_weights = 0
         for move, weight, learn in openings:
-            print("  ", move, weight, learn)
             total_weights += weight
 
         if total_weights < 1:
-            print("(total_weights < 1) No book move in", self.boards[-1].board)
             return None
 
         choice = random.randint(0, total_weights - 1)
@@ -733,7 +730,6 @@ class GameModel(GObject.GObject):
                         move = self.get_book_move()
                         log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from book" % (
                             id(self), str(self.players), self.ply, move))
-                        print(move, "from book")
                         if move is not None:
                             curPlayer.set_board(self.boards[-1].move(move))
                     if move is None:
@@ -743,7 +739,6 @@ class GameModel(GObject.GObject):
                             move = yield from curPlayer.makeMove(self.boards[-1], None, None)
                         log.debug("GameModel.run: id=%s, players=%s, self.ply=%s: got move=%s from %s" % (
                             id(self), str(self.players), self.ply, move, str(curPlayer)))
-                        print(move)
                 except PlayerIsDead as e:
                     if self.status in (WAITING_TO_START, PAUSED, RUNNING):
                         stringio = StringIO()

@@ -38,9 +38,31 @@ pgn = """
 
 1. a4 b5 2. h4 b4 3. c4 bxc3 Ra3 0-1
 """
+PGN = "polyglot.pgn"
+BIN = "polyglot_book.bin"
+SCOUT = "polyglot.scout"
+SQLITE = "polyglot.sqlite"
 
 
 class PolyglotTestCase(unittest.TestCase):
+    def setUp(self):
+        for fi in (PGN, BIN, SCOUT, SQLITE):
+            if os.path.isfile(fi):
+                os.remove(fi)
+
+        with open(PGN, "w") as f:
+            f.write(pgn)
+
+        self.saved_book_path = book.path
+        book.path = BIN
+        book.bookfile = True
+
+    def tearDown(self):
+        book.path = self.saved_book_path
+
+        for fi in (PGN, BIN, SCOUT, SQLITE):
+            if os.path.isfile(fi):
+                os.remove(fi)
 
     def testPolyglot_1(self):
         """Testing hash keys agree with Polyglot's"""
@@ -64,27 +86,12 @@ class PolyglotTestCase(unittest.TestCase):
         self.database_persp.create_toolbuttons()
         perspective_manager.add_perspective(self.database_persp)
 
-        PGN = "polyglot.pgn"
-        if os.path.isfile(PGN):
-            os.remove(PGN)
-
-        with open(PGN, "w") as f:
-            f.write(pgn)
-
         self.database_persp.open_chessfile(PGN)
-
-        BIN = "polyglot_book.bin"
-
-        if os.path.isfile(BIN):
-            os.remove(BIN)
 
         @asyncio.coroutine
         def coro():
             def on_book_created(persp, event):
                 self.assertTrue(os.path.isfile(BIN))
-
-                book.path = BIN
-                book.bookfile = True
 
                 testcase = testcases[0]
                 board = LBoard(Board)
