@@ -655,6 +655,7 @@ class GameModel(GObject.GObject):
 
         total_weights = 0
         for move, weight, learn in openings:
+            print("  ", move, weight, learn)
             total_weights += weight
 
         if total_weights < 1:
