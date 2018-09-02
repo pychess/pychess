@@ -19,6 +19,7 @@ from pychess.Utils.Move import Move
 from pychess.Utils.eco import get_eco
 from pychess.Utils.Offer import Offer
 from pychess.Utils.TimeModel import TimeModel
+from pychess.Savers import html, txt
 from pychess.Variants.normal import NormalBoard
 
 from .logic import getStatus, isClaimableDraw, playerHasMatingMaterial
@@ -636,7 +637,10 @@ class GameModel(GObject.GObject):
             raise error
 
     def save(self, uri, saver, append, position=None):
-        if isinstance(uri, str):
+        if saver in (html, txt):
+            fileobj = open(uri, "a" if append else "w", encoding="utf-8", newline="")
+            self.uri = uri
+        elif isinstance(uri, str):
             fileobj = protosave(uri, append)
             self.uri = uri
         else:

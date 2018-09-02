@@ -12,7 +12,7 @@ from gi.repository import Gtk
 from gi.repository import GObject
 
 from pychess.Savers.ChessFile import LoadingError
-from pychess.Savers import epd, fen, pgn, olv, png, database
+from pychess.Savers import epd, fen, pgn, olv, png, database, html, txt
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import isWriteable
@@ -29,7 +29,7 @@ from pychess.widgets.pydock.__init__ import CENTER, EAST, SOUTH
 from pychess.ic.ICGameModel import ICGameModel
 
 enddir = {}
-savers = (pgn, epd, fen, olv, png)  # chessalpha2 is broken
+savers = (pgn, epd, fen, olv, png, html, txt)  # chessalpha2 is broken
 
 saveformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
 exportformats = Gtk.ListStore(str, str, GObject.TYPE_PYOBJECT)
