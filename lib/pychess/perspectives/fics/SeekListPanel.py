@@ -173,7 +173,7 @@ class Sidepanel(ParrentListSection):
             name0.set_markup("<b>%s</b>" % assess["names"][0])
             name1 = Gtk.Label()
             name1.set_markup("<b>%s</b>" % assess["names"][1])
-            grid.attach(Gtk.Label(""), 0, 0, 1, 1)
+            grid.attach(Gtk.Label(label=""), 0, 0, 1, 1)
             grid.attach(name0, 1, 0, 1, 1)
             grid.attach(name1, 2, 0, 1, 1)
             grid.attach(Gtk.Label(assess["type"]), 0, 1, 1, 1)

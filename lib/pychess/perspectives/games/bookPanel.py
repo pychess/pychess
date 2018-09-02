@@ -481,7 +481,7 @@ class Sidepanel(object):
         adjustment = Gtk.Adjustment(value=1,
                                     lower=1,
                                     upper=9,
-                                    step_incr=1)
+                                    step_increment=1)
         self.multipvRenderer.set_property("adjustment", adjustment)
         self.multipvRenderer.set_property("editable", True)
         self.multipvRenderer.set_property("width_chars", 1)
@@ -729,7 +729,7 @@ width, height = 80, 23
 class StrengthCellRenderer(Gtk.CellRenderer):
     __gproperties__ = {
         "data":
-        (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.PARAM_READWRITE),
+        (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.ParamFlags.READWRITE),
     }
 
     def __init__(self):
@@ -807,7 +807,7 @@ class CellRendererPixbufXt(Gtk.CellRendererPixbuf):
     __gproperties__ = {'active-state':
                        (GObject.TYPE_STRING, 'pixmap/active widget state',
                         'stock-icon name representing active widget state',
-                        None, GObject.PARAM_READWRITE)}
+                        None, GObject.ParamFlags.READWRITE)}
     __gsignals__ = {'clicked': (GObject.SignalFlags.RUN_LAST, None,
                                 (GObject.TYPE_STRING, )), }
 

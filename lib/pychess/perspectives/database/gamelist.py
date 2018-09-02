@@ -62,15 +62,15 @@ class GameList(Gtk.TreeView):
         # buttons
         toolbar = Gtk.Toolbar()
 
-        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
+        firstButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_PREVIOUS)
         firstButton.set_tooltip_text(_("First games"))
         toolbar.insert(firstButton, -1)
 
-        prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
+        prevButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_REWIND)
         prevButton.set_tooltip_text(_("Previous games"))
         toolbar.insert(prevButton, -1)
 
-        nextButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_FORWARD)
+        nextButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_FORWARD)
         nextButton.set_tooltip_text(_("Next games"))
         toolbar.insert(nextButton, -1)
 

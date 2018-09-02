@@ -199,7 +199,7 @@ class ChessClock(Gtk.DrawingArea):
         self.formatedCache = [formatTime(self.model.getPlayerTime(
             self.model.movingColor or WHITE))] * 2
         if model.secs != 0 or model.gain != 0:
-            GObject.timeout_add(100, self.update)
+            GLib.timeout_add(100, self.update)
 
     def time_changed(self, model):
         self.update()

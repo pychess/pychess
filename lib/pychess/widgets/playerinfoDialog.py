@@ -53,7 +53,7 @@ def initialize(widgets):
 class HistoryCellRenderer(Gtk.CellRenderer):
     __gproperties__ = {
         "data":
-        (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.PARAM_READWRITE),
+        (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.ParamFlags.READWRITE),
     }
 
     def __init__(self):

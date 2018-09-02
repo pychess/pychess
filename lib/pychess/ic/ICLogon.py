@@ -7,6 +7,7 @@ from collections import defaultdict
 
 from gi.repository import Gdk
 from gi.repository import Gtk
+from gi.repository import GLib
 from gi.repository import GObject
 
 from pychess.compat import create_task
@@ -210,7 +211,7 @@ class ICLogon(object):
             else:
                 return not self.connection.isConnected()
 
-        self.pulser = GObject.timeout_add(30, pulse)
+        self.pulser = GLib.timeout_add(30, pulse)
 
     def showNormal(self):
         self.widgets["mainbox"].set_sensitive(True)

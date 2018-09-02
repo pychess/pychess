@@ -16,7 +16,7 @@ class OverlayWindow(Gtk.Window):
     }  # Class global self.cache for svgPath:rsvg and (svgPath,w,h):surface
 
     def __init__(self, parent):
-        Gtk.Window.__init__(self, Gtk.WindowType.POPUP)
+        Gtk.Window.__init__(self, type=Gtk.WindowType.POPUP)
 
         # set RGBA visual for the window so transparency works
         self.set_app_paintable(True)

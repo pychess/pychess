@@ -114,17 +114,17 @@ class FilterPanel(Gtk.TreeView):
         # Add buttons
         toolbar = Gtk.Toolbar()
 
-        editButton = Gtk.ToolButton(Gtk.STOCK_EDIT)
+        editButton = Gtk.ToolButton(stock_id=Gtk.STOCK_EDIT)
         editButton.set_tooltip_text(_("Edit selected filter"))
         editButton.connect("clicked", self.on_edit_clicked)
         toolbar.insert(editButton, -1)
 
-        delButton = Gtk.ToolButton(Gtk.STOCK_REMOVE)
+        delButton = Gtk.ToolButton(stock_id=Gtk.STOCK_REMOVE)
         delButton.set_tooltip_text(_("Remove selected filter"))
         delButton.connect("clicked", self.on_del_clicked)
         toolbar.insert(delButton, -1)
 
-        addButton = Gtk.ToolButton(Gtk.STOCK_ADD)
+        addButton = Gtk.ToolButton(stock_id=Gtk.STOCK_ADD)
         addButton.set_tooltip_text(_("Add new filter"))
         addButton.connect("clicked", self.on_add_clicked)
         toolbar.insert(addButton, -1)

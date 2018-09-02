@@ -64,10 +64,10 @@ class OpeningTreePanel(Gtk.TreeView):
         #  buttons
         toolbar = Gtk.Toolbar()
 
-        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
+        firstButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_PREVIOUS)
         toolbar.insert(firstButton, -1)
 
-        prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
+        prevButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_REWIND)
         toolbar.insert(prevButton, -1)
 
         self.filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)

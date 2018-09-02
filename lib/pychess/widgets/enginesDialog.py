@@ -605,7 +605,7 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
             ('Clear Hash', {'name': 'Clear Hash', 'type': 'button'})
     """
     __gproperties__ = {"data": (GObject.TYPE_PYOBJECT, "Data", "Data",
-                                GObject.PARAM_READWRITE)}
+                                GObject.ParamFlags.READWRITE)}
 
     def __init__(self, model):
         GObject.GObject.__init__(self)
@@ -683,7 +683,7 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
             adjustment = Gtk.Adjustment(value=int(value["value"]),
                                         lower=value["min"],
                                         upper=value["max"],
-                                        step_incr=1)
+                                        step_increment=1)
             self.spin_renderer.set_property("adjustment", adjustment)
             self.spin_renderer.set_property("text", str(value["value"]))
             self.set_property("mode", Gtk.CellRendererMode.EDITABLE)

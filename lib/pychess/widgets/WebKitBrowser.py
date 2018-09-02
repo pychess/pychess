@@ -21,13 +21,13 @@ class WebKitBrowser(object):
         self.toolbar = Gtk.Toolbar()
         self.box.pack_start(self.toolbar, False, False, 0)
 
-        self.go_back_button = Gtk.ToolButton(Gtk.STOCK_GO_BACK)
+        self.go_back_button = Gtk.ToolButton(stock_id=Gtk.STOCK_GO_BACK)
         self.toolbar.insert(self.go_back_button, -1)
 
-        self.go_forward_button = Gtk.ToolButton(Gtk.STOCK_GO_FORWARD)
+        self.go_forward_button = Gtk.ToolButton(stock_id=Gtk.STOCK_GO_FORWARD)
         self.toolbar.insert(self.go_forward_button, -1)
 
-        self.go_refresh_button = Gtk.ToolButton(Gtk.STOCK_REFRESH)
+        self.go_refresh_button = Gtk.ToolButton(stock_id=Gtk.STOCK_REFRESH)
         self.toolbar.insert(self.go_refresh_button, -1)
 
         self.url = Gtk.Entry()

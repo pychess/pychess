@@ -603,7 +603,7 @@ class GameWidget(GObject.GObject):
         text_hbox = Gtk.HBox()
         white_label = Gtk.Label(label="")
         text_hbox.pack_start(white_label, False, True, 0)
-        text_hbox.pack_start(Gtk.Label(" - "), False, True, 0)
+        text_hbox.pack_start(Gtk.Label(label=" - "), False, True, 0)
         black_label = Gtk.Label(label="")
         text_hbox.pack_start(black_label, False, True, 0)
         gameinfo_label = Gtk.Label(label="")
@@ -643,31 +643,31 @@ class GameWidget(GObject.GObject):
         align = createAlignment(4, 0, 4, 0)
         toolbar = Gtk.Toolbar()
 
-        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
+        firstButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_PREVIOUS)
         firstButton.set_tooltip_text(_("Jump to initial position"))
         toolbar.insert(firstButton, -1)
 
-        prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
+        prevButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_REWIND)
         prevButton.set_tooltip_text(_("Step back one move"))
         toolbar.insert(prevButton, -1)
 
-        mainButton = Gtk.ToolButton(Gtk.STOCK_REDO)
+        mainButton = Gtk.ToolButton(stock_id=Gtk.STOCK_REDO)
         mainButton.set_tooltip_text(_("Go back to the main line"))
         toolbar.insert(mainButton, -1)
 
-        nextButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_FORWARD)
+        nextButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_FORWARD)
         nextButton.set_tooltip_text(_("Step forward one move"))
         toolbar.insert(nextButton, -1)
 
-        lastButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_NEXT)
+        lastButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_NEXT)
         lastButton.set_tooltip_text(_("Jump to latest position"))
         toolbar.insert(lastButton, -1)
 
-        filterButton = Gtk.ToolButton(Gtk.STOCK_FIND)
+        filterButton = Gtk.ToolButton(stock_id=Gtk.STOCK_FIND)
         filterButton.set_tooltip_text(_("Find postion in current database"))
         toolbar.insert(filterButton, -1)
 
-        self.saveButton = Gtk.ToolButton(Gtk.STOCK_SAVE)
+        self.saveButton = Gtk.ToolButton(stock_id=Gtk.STOCK_SAVE)
         self.saveButton.set_tooltip_text(_("Save arrows/circles"))
         toolbar.insert(self.saveButton, -1)
 

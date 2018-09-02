@@ -27,23 +27,23 @@ class PreviewPanel:
         # buttons
         toolbar = Gtk.Toolbar()
 
-        firstButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_PREVIOUS)
+        firstButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_PREVIOUS)
         toolbar.insert(firstButton, -1)
 
-        prevButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_REWIND)
+        prevButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_REWIND)
         toolbar.insert(prevButton, -1)
 
-        nextButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_FORWARD)
+        nextButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_FORWARD)
         toolbar.insert(nextButton, -1)
 
-        lastButton = Gtk.ToolButton(Gtk.STOCK_MEDIA_NEXT)
+        lastButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_NEXT)
         toolbar.insert(lastButton, -1)
 
         self.filterButton = Gtk.ToggleToolButton(Gtk.STOCK_FIND)
         self.filterButton.set_tooltip_text(_("Filter game list by current game moves"))
         toolbar.insert(self.filterButton, -1)
 
-        addButton = Gtk.ToolButton(Gtk.STOCK_ADD)
+        addButton = Gtk.ToolButton(stock_id=Gtk.STOCK_ADD)
         addButton.set_tooltip_text(_("Add sub-fen filter from position/circles"))
         toolbar.insert(addButton, -1)
 
