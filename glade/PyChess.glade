@@ -1535,6 +1535,7 @@ Ticked : the linear scale focuses on a limited range around the null average. It
                                   <object class="GtkVBox" id="opening_vbox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkCheckButton" id="opening_check">
                                         <property name="label" translatable="yes">Use opening _book</property>
@@ -1622,9 +1623,10 @@ Ticked : the linear scale focuses on a limited range around the null average. It
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkSpinButton" id="book_dept_max">
+                                              <object class="GtkSpinButton" id="book_depth_max">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
+                                                <property name="tooltip_text" translatable="yes">Used by engine players and polyglot book creator</property>
                                                 <property name="max_length">2</property>
                                                 <property name="max_width_chars">2</property>
                                                 <property name="progress_pulse_step">1</property>
@@ -1657,6 +1659,7 @@ Ticked : the linear scale focuses on a limited range around the null average. It
                                   <object class="GtkVBox" id="endgame_vbox">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkCheckButton" id="endgame_check">
                                         <property name="label" translatable="yes">Use _local tablebases</property>
@@ -1791,6 +1794,7 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkVBox" id="vbox63">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkCheckButton" id="analyzer_check">
                                         <property name="label" translatable="yes">Use _analyzer</property>
@@ -1864,6 +1868,7 @@ It will search positions from http://www.k4it.de/</property>
                                   <object class="GtkVBox" id="vbox64">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="spacing">4</property>
                                     <child>
                                       <object class="GtkCheckButton" id="inv_analyzer_check">
                                         <property name="label" translatable="yes">Use _inverted analyzer</property>

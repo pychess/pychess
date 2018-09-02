@@ -184,8 +184,7 @@ class HintTab:
         self.widgets["opening_check"].connect_after("toggled",
                                                     on_opening_check_toggled)
 
-        depth_max = conf.get("book_depth_max")
-        conf.set("book_depth_max", depth_max)
+        uistuff.keep(self.widgets["book_depth_max"], "book_depth_max")
 
         # Endgame
         egtb_path = conf.get("egtb_path")
