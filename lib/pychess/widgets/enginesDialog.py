@@ -605,7 +605,7 @@ class KeyValueCellRenderer(Gtk.CellRenderer):
             ('Clear Hash', {'name': 'Clear Hash', 'type': 'button'})
     """
     __gproperties__ = {"data": (GObject.TYPE_PYOBJECT, "Data", "Data",
-                                GObject.ParamFlags.READWRITE)}
+                                GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE)}
 
     def __init__(self, model):
         GObject.GObject.__init__(self)

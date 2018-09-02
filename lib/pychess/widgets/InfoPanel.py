@@ -13,7 +13,7 @@ def get_playername(playername):
 
 class BulletCellRenderer(Gtk.CellRenderer):
     __gproperties__ = {
-        "color": (object, "Color", "Color", GObject.ParamFlags.READWRITE),
+        "color": (object, "Color", "Color", GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE),
     }
 
     def __init__(self):

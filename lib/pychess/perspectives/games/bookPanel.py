@@ -729,7 +729,7 @@ width, height = 80, 23
 class StrengthCellRenderer(Gtk.CellRenderer):
     __gproperties__ = {
         "data":
-        (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.ParamFlags.READWRITE),
+        (GObject.TYPE_PYOBJECT, "Data", "Data", GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE),
     }
 
     def __init__(self):
@@ -807,7 +807,7 @@ class CellRendererPixbufXt(Gtk.CellRendererPixbuf):
     __gproperties__ = {'active-state':
                        (GObject.TYPE_STRING, 'pixmap/active widget state',
                         'stock-icon name representing active widget state',
-                        None, GObject.ParamFlags.READWRITE)}
+                        None, GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE)}
     __gsignals__ = {'clicked': (GObject.SignalFlags.RUN_LAST, None,
                                 (GObject.TYPE_STRING, )), }
 
