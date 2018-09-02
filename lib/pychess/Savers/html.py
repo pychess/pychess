@@ -35,7 +35,7 @@ style = """
     display: table-cell;
     vertical-align:middle;
 }
-""" % (SIZE * 8, SIZE * 8, SIZE // 4, SIZE, SIZE, SIZE, SIZE, SIZE, SIZE)
+""" % (SIZE * 8, SIZE * 8, SIZE // 4, SIZE, SIZE, SIZE - 8, SIZE, SIZE, SIZE - 8)
 
 
 def save(file, model, position=None):
