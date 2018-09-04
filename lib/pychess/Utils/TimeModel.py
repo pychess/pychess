@@ -74,7 +74,7 @@ class TimeModel(GObject.GObject):
         cur_time = time()
         whites_time = cur_time + self.getPlayerTime(WHITE)
         blacks_time = cur_time + self.getPlayerTime(BLACK)
-        if whites_time <= blacks_time:
+        if self.movingColor == WHITE:
             the_time = whites_time
             color = WHITE
         else:
@@ -98,6 +98,7 @@ class TimeModel(GObject.GObject):
 
     def __checkzero(self, color):
         if self.getPlayerTime(color) <= 0 and self.started:
+            self.emit("time_changed")
             self.emit('zero_reached', color)
             return False
         return True
@@ -228,10 +229,10 @@ class TimeModel(GObject.GObject):
     def getPlayerTime(self, color, movecount=-1):
         if color == self.movingColor and self.started and movecount == -1:
             if self.paused:
-                return self.intervals[color][movecount] - self.pauseInterval
+                return max(0, self.intervals[color][movecount] - self.pauseInterval)
             elif self.counter:
-                return self.intervals[color][movecount] - (time() - self.counter)
-        return self.intervals[color][movecount]
+                return max(0, self.intervals[color][movecount] - (time() - self.counter))
+        return max(0, self.intervals[color][movecount])
 
     def getInitialTime(self):
         return self.intervals[WHITE][0]
