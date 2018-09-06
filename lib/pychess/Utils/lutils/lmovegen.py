@@ -326,8 +326,7 @@ def genAllMoves(board, drops=True):
         for cord in iterBits(capLeftPawns):
             if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if (board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS) or p != KING_PROMOTION:
-                        yield newMove(cord - 7, cord, p)
+                    yield newMove(cord - 7, cord, p)
             elif cord == enpassant:
                 yield newMove(cord - 7, cord, ENPASSANT)
             else:
@@ -357,8 +356,7 @@ def genAllMoves(board, drops=True):
         for cord in iterBits(movedpawns):
             if cord in promotion_zone:
                 for p in PROMOTIONS:
-                    if (board.variant == SUICIDECHESS or board.variant == GIVEAWAYCHESS) or p != KING_PROMOTION:
-                        yield newMove(cord + 8, cord, p)
+                    yield newMove(cord + 8, cord, p)
             else:
                 yield newMove(cord + 8, cord)
 
