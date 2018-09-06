@@ -3,7 +3,7 @@
 # The greater the score, the better the position
 
 from pychess.Utils.const import WHITE, BLACK, LOSERSCHESS, SUICIDECHESS, GIVEAWAYCHESS,\
-    ASEAN_VARIANTS, ATOMICCHESS, CRAZYHOUSECHESS, RACINGKINGSCHESS,\
+    ASEAN_VARIANTS, ATOMICCHESS, CRAZYHOUSECHESS, RACINGKINGSCHESS, THREECHECKCHESS,\
     BPAWN, BISHOP, KNIGHT, QUEEN, KING, PAWN, ROOK, \
     CAS_FLAGS, H7, B6, A7, H2, G3, A2, B3, G6, D1, G8, B8, G1, B1
 from .bitboard import iterBits, firstBit, lsb
@@ -15,11 +15,14 @@ from .ldata import fileBits, bitPosArray, PIECE_VALUES, FILE, RANK, PAWN_VALUE,\
     passedPawnMask, fromToRay, pawnScoreBoard, sdistance, taxicab, racingKing
 from .lsort import staticExchangeEvaluate
 from .lmovegen import newMove
+from pychess.Variants.threecheck import checkCount
 from ctypes import create_string_buffer, memset
 from struct import Struct
 
 # from random import randint
 randomval = 0  # randint(8,12)/10.
+
+CHECK_BONUS = (0, 100, 500, 2000)
 
 
 def evaluateComplete(board, color):
@@ -31,7 +34,7 @@ def evaluateComplete(board, color):
         return s
 
     s += evalKing(board, color, phase) - evalKing(board, 1 - color, phase)
-    if board.variant == RACINGKINGSCHESS:
+    if board.variant == RACINGKINGSCHESS or board.variant == THREECHECKCHESS:
         return s
 
     s += evalBishops(board, color, phase) - evalBishops(board, 1 - color,
@@ -464,6 +467,9 @@ def evalKing(board, color, phase):
 
     if board.variant == RACINGKINGSCHESS:
         return racingKing[king]
+
+    if board.variant == THREECHECKCHESS:
+        return CHECK_BONUS[min(3, checkCount(board))]
 
     # If we are in endgame, we want our king in the center, and theirs far away
     if phase >= 6:

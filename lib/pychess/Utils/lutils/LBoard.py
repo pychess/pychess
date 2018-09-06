@@ -2,7 +2,7 @@ from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, 
     ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, CAMBODIANCHESS, MAKRUKCHESS, \
     FISCHERRANDOMCHESS, SITTUYINCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, \
     SUICIDECHESS, GIVEAWAYCHESS, DROP_VARIANTS, BLACK, WHITE, FAN_PIECES, NULL_MOVE, CAS_FLAGS, \
-    NORMALCHESS, PLACEMENTCHESS, FEN_START, \
+    NORMALCHESS, PLACEMENTCHESS, THREECHECKCHESS, FEN_START, \
     chrU2Sign, cordDic, reprCord, reprFile, reprSign, reprSignMakruk, reprSignSittuyin, \
     A1, A8, B1, B8, \
     C1, C8, D1, D8, \
@@ -174,6 +174,9 @@ class LBoard(object):
         elif self.variant == ATOMICCHESS:
             self.iniAtomic()
 
+        elif self.variant == THREECHECKCHESS:
+            self.remaining_checks = [3, 3]
+
         elif self.variant == CAMBODIANCHESS:
             self.iniCambodian()
 
@@ -189,6 +192,9 @@ class LBoard(object):
             raise SyntaxError(
                 _("FEN needs at least 2 data fields in fenstr. \n\n%s") %
                 fenstr)
+        elif len(parts) >= 7 and self.variant == THREECHECKCHESS:
+            pieceChrs, colChr, castChr, epChr, checksChr, fiftyChr, moveNoChr = parts[:7]
+            self.remaining_checks = list(map(int, checksChr.split("+")))
         elif len(parts) >= 6:
             pieceChrs, colChr, castChr, epChr, fiftyChr, moveNoChr = parts[:6]
         elif len(parts) == 5:
@@ -1008,6 +1014,8 @@ class LBoard(object):
             copy.hist_capture_promoting = self.hist_capture_promoting[:]
         elif self.variant == ATOMICCHESS:
             copy.hist_exploding_around = [a[:] for a in self.hist_exploding_around]
+        elif self.variant == THREECHECKCHESS:
+            copy.remaining_checks = self.remaining_checks[:]
         elif self.variant == CAMBODIANCHESS:
             copy.ini_kings = self.ini_kings
             copy.ini_queens = self.ini_queens

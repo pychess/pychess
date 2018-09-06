@@ -3,6 +3,8 @@
 from pychess.Utils.const import THREECHECKCHESS, VARIANTS_OTHER_NONSTANDARD
 from pychess.Utils.Board import Board
 
+THREECHECKSTART = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 3+3 0 1"
+
 
 class ThreeCheckBoard(Board):
     variant = THREECHECKCHESS
@@ -13,9 +15,15 @@ class ThreeCheckBoard(Board):
     standard_rules = False
     variant_group = VARIANTS_OTHER_NONSTANDARD
 
+    def __init__(self, setup=False, lboard=None):
+        if setup is True:
+            Board.__init__(self, setup=THREECHECKSTART, lboard=lboard)
+        else:
+            Board.__init__(self, setup=setup, lboard=lboard)
+
 
 def checkCount(board):
-    cc = 0
+    cc = 3 - board.remaining_checks[board.color]
     lboard = board.clone()
     while lboard.hist_move:
         if lboard.isChecked():
