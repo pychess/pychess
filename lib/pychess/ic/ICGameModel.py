@@ -267,6 +267,13 @@ class ICGameModel(GameModel):
         if self.players[BLACK].icrating:
             self.tags["BlackElo"] = self.players[BLACK].icrating
 
+        if (self.connection.username == self.ficsplayers[WHITE].name) and self.ficsplayers[WHITE].isGuest():
+            self.tags["White"] += " (Player)"
+            self.emit("players_changed")
+        if (self.connection.username == self.ficsplayers[BLACK].name) and self.ficsplayers[BLACK].isGuest():
+            self.tags["Black"] += " (Player)"
+            self.emit("players_changed")
+
     def onGamePaused(self, bm, gameno, paused):
         if paused:
             self.pause()

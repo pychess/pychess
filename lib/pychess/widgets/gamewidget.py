@@ -473,6 +473,10 @@ class GameWidget(GObject.GObject):
         if isinstance(self.gamemodel, ICGameModel):
             if self.gamemodel.ficsplayers:
                 text = self.gamemodel.ficsplayers[color].name
+                if (self.gamemodel.connection.username ==
+                    self.gamemodel.ficsplayers[color].name) and \
+                        self.gamemodel.ficsplayers[color].isGuest():
+                    text += " (Player)"
         else:
             if self.gamemodel.players:
                 text = repr(self.gamemodel.players[color])
