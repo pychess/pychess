@@ -18,6 +18,7 @@ try:
     splash = Gtk.Window()
     splash.props.type_hint = Gdk.WindowTypeHint.SPLASHSCREEN
     splash.set_decorated(False)
+    splash.set_position(Gtk.WindowPosition.CENTER)
     from pychess.System import prefix
     splash.add(Gtk.Image().new_from_file(prefix.addDataPrefix("glade/about.png")))
     splash.show_all()
