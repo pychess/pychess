@@ -431,7 +431,7 @@ class GladeHandlers(object):
 
 
 class PyChess(Gtk.Application):
-    def __init__(self, log_viewer, purge_recent, chess_file, ics_host, ics_port, loop):
+    def __init__(self, log_viewer, purge_recent, chess_file, ics_host, ics_port, loop, splash):
         Gtk.Application.__init__(self,
                                  application_id="org.pychess",
                                  flags=Gio.ApplicationFlags.NON_UNIQUE)
@@ -446,6 +446,7 @@ class PyChess(Gtk.Application):
         self.purge_recent = purge_recent
         self.chess_file = chess_file
         self.window = None
+        self.splash = splash
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -527,6 +528,8 @@ class PyChess(Gtk.Application):
         DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
         conf.set("lightcolour", LIGHT)
         conf.set("darkcolour", DARK)
+
+        self.splash.destroy()
 
     def on_gmwidg_created(self, gamehandler, gmwidg):
         log.debug("GladeHandlers.on_gmwidg_created: starting")

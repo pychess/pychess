@@ -1,13 +1,33 @@
 #!/usr/bin/env python3
 
-# PyChess startup script.
-# This script is to check package requirements, and set up system/enviroment
-# stuff, to make the PyChess Main class run smoothly.
+import os
+import sys
+
+# Fix environment to let pychess run in place
+if getattr(sys, 'frozen', False):
+    this_dir = os.path.dirname(sys.executable)
+else:
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+if os.path.isdir(os.path.join(this_dir, "lib/pychess")) and \
+        os.path.join(this_dir, "lib") not in sys.path:
+    sys.path = [os.path.join(this_dir, "lib")] + sys.path
+
+# Create splash screen
+try:
+    from gi.repository import Gtk, Gdk
+    splash = Gtk.Window()
+    splash.props.type_hint = Gdk.WindowTypeHint.SPLASHSCREEN
+    splash.set_decorated(False)
+    from pychess.System import prefix
+    splash.add(Gtk.Image().new_from_file(prefix.addDataPrefix("glade/about.png")))
+    splash.show_all()
+    while Gtk.events_pending():
+        Gtk.main_iteration()
+except:
+    print("Failed to create splash screen")
 
 import argparse
 import asyncio
-import os
-import sys
 import gettext
 import locale
 import logging
@@ -19,9 +39,7 @@ if not getattr(sys, 'frozen', False):
     except ImportError:
         pass
 
-###############################################################################
 # Check requirements
-
 if sys.version_info < (3, 4, 2):
     print('ERROR: PyChess requires Python >= 3.4.2')
     sys.exit(1)
@@ -70,20 +88,7 @@ except ImportError:
     print("ERROR: PyChess requires psutil to be installed")
     sys.exit(1)
 
-###############################################################################
-# Fix environment
-
-if getattr(sys, 'frozen', False):
-    this_dir = os.path.dirname(sys.executable)
-else:
-    this_dir = os.path.dirname(os.path.abspath(__file__))
-if os.path.isdir(os.path.join(this_dir, "lib/pychess")) and \
-        os.path.join(this_dir, "lib") not in sys.path:
-    sys.path = [os.path.join(this_dir, "lib")] + sys.path
-
-###############################################################################
 # Ensure access to data store
-
 try:
     import pychess
     from pychess.System.prefix import addDataPrefix, getDataPrefix, isInstalled
@@ -92,9 +97,7 @@ except ImportError:
     print("Please try to run pychess as stated in the INSTALL file")
     sys.exit(1)
 
-###############################################################################
 # Parse command line arguments
-
 try:
     from pychess.System.Log import log, LoggerWriter, setup_glib_logging
 except ImportError:
@@ -150,14 +153,11 @@ if gbulb_loop:
         print("ERROR: PyChess requires gbulb to be installed.")
         sys.exit(1)
 
-#####################################################
 # Set sqlite temp dir path
 os.environ["SQLITE_TMPDIR"] = os.path.expanduser("~")
 
 
-###############################################################################
 # Set up translations
-
 if no_gettext:
     os.environ['LANG'] = "C"
     locale.setlocale(locale.LC_ALL, 'C')
@@ -203,7 +203,6 @@ except ImportError:
 
 conf.no_gettext = no_gettext
 
-###############################################################################
 # Start logging
 if log_debug:
     setup_glib_logging()
@@ -248,7 +247,7 @@ else:
     loop = asyncio.SelectorEventLoop()
     asyncio.set_event_loop(loop)
 
-gtk_app = PyChess(log_viewer, purge_recent, chess_file, ics_host, ics_port, loop)
+gtk_app = PyChess(log_viewer, purge_recent, chess_file, ics_host, ics_port, loop, splash)
 
 if log_debug:
     loop.set_debug(enabled=True)
