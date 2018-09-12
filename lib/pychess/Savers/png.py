@@ -4,6 +4,7 @@ import math
 
 import cairo
 
+from pychess.System import conf
 from pychess.widgets.BoardView import BoardView, matrixAround
 
 __label__ = _("Png image")
@@ -16,8 +17,9 @@ SQUARE = 40
 def save(file, model, position=None, flip=False):
     """Export the current position into a .png file"""
 
+    show_cords = conf.get("showCords")
     boardview = BoardView(model)
-    padding = int(SQUARE / 4) if boardview.show_cords else 0
+    padding = int(SQUARE / 4) if show_cords else 0
 
     width = SQUARE * 8 + padding * 2
     height = SQUARE * 8 + padding * 2
@@ -38,7 +40,7 @@ def save(file, model, position=None, flip=False):
     boardview.drawBoard(context, None)
     boardview.drawPieces(context, None)
 
-    if boardview.show_cords:
+    if show_cords:
         boardview.drawCords(context, None)
 
     surface.write_to_png(file.name)
