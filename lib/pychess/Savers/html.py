@@ -38,7 +38,7 @@ style = """
 """ % (SIZE * 8, SIZE * 8, SIZE // 4, SIZE, SIZE, SIZE - 8, SIZE, SIZE, SIZE - 8)
 
 
-def save(file, model, position=None):
+def save(file, model, position=None, flip=False):
     """Export the current position into a .html file using html+css"""
 
     print("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>", file=file)
@@ -48,7 +48,7 @@ def save(file, model, position=None):
     data = model.boards[position].data[:]
 
     board = ""
-    for j, row in enumerate(reversed(data)):
+    for j, row in enumerate(data if flip else reversed(data)):
         for i in range(8):
             if j % 2 == 0:
                 color = "white" if i % 2 == 0 else "black"

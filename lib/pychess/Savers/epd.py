@@ -12,7 +12,7 @@ __ending__ = "epd"
 __append__ = True
 
 
-def save(handle, model, position=None):
+def save(handle, model, position=None, flip=False):
     """Saves game to file in fen format"""
 
     color = model.boards[-1].color

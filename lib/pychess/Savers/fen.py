@@ -14,7 +14,7 @@ __ending__ = "fen"
 __append__ = True
 
 
-def save(handle, model, position=None):
+def save(handle, model, position=None, flip=False):
     """Saves game to file in fen format"""
     print(position, model.ply, model.lowply)
     print(model.boards)

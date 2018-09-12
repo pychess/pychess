@@ -636,7 +636,7 @@ class GameModel(GObject.GObject):
         if error:
             raise error
 
-    def save(self, uri, saver, append, position=None):
+    def save(self, uri, saver, append, position=None, flip=False):
         if saver in (html, txt):
             fileobj = open(uri, "a" if append else "w", encoding="utf-8", newline="")
             self.uri = uri
@@ -646,7 +646,7 @@ class GameModel(GObject.GObject):
         else:
             fileobj = uri
             self.uri = None
-        saver.save(fileobj, self, position)
+        saver.save(fileobj, self, position, flip)
         self.needsSave = False
         self.emit("game_saved", uri)
 

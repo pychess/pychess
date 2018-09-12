@@ -32,7 +32,7 @@ def parseDateTag(tag):
     return y, m, d
 
 
-def save(path, model, offset):
+def save(path, model, offset, flip=False):
     game_event = model.tags["Event"]
     game_site = model.tags["Site"]
 

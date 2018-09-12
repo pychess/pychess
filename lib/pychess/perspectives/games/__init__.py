@@ -327,7 +327,8 @@ class Games(GObject.GObject, Perspective):
                 print(repr(uri))
 
             try:
-                game.save(uri, saver, append, position)
+                flip = self.cur_gmwidg().board.view.rotation > 0
+                game.save(uri, saver, append, position, flip)
             except IOError as e:
                 d = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR)
                 d.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK)

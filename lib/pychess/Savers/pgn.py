@@ -127,7 +127,7 @@ def parseTimeControlTag(tag):
             return None
 
 
-def save(handle, model, position=None):
+def save(handle, model, position=None, flip=False):
     """ Saves the game from GameModel to .pgn """
     processed_tags = []
 
