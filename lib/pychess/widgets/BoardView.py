@@ -495,8 +495,6 @@ class BoardView(Gtk.DrawingArea):
             # if the board to be shown is in the current shown variation, we are ok
             self.shown = self.model.variations[self.shown_variation_idx].index(board) + \
                 self.model.lowply
-            if board in self.model.variations[0]:
-                self.shown_variation_idx = 0
         else:
             # else we have to go back first
             for vari in self.model.variations:
@@ -642,8 +640,15 @@ class BoardView(Gtk.DrawingArea):
 
         self._shown = shown
         if self.real_set_shown:
-            if self.model.getBoardAtPly(self.shown, self.shown_variation_idx) in self.model.variations[0]:
+            board = self.model.getBoardAtPly(self.shown, self.shown_variation_idx)
+            if board in self.model.variations[0]:
                 self.shown_variation_idx = 0
+            else:
+                for vari in self.model.variations:
+                    if board in vari:
+                        # swich to the new variation
+                        self.shown_variation_idx = self.model.variations.index(vari)
+                        break
             self.emit("shownChanged", self.shown)
 
         self.animation_start = time()
