@@ -166,7 +166,15 @@ class LearnInfoBar(Gtk.InfoBar):
                     variation=self.boardview.shown_variation_idx)
 
                 self.annotation_panel.choices_enabled = False
+
                 self.boardview.setShownBoard(prev_board)
+                # We have to fix show_variation_index here, unless
+                # after removing the variation it will be invalid!
+                for vari in self.gamemodel.variations:
+                    if prev_board in vari:
+                        break
+                self.boardview.shown_variation_idx = self.gamemodel.variations.index(vari)
+
                 self.annotation_panel.choices_enabled = True
 
             self.boardcontrol.game_preview = False
