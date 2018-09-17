@@ -240,6 +240,9 @@ class FilterPanel(Gtk.TreeView):
 
                 self.update_filters()
 
+                if (not self.filtered) and len(self.treestore) == 1:
+                    self.filterButton.set_active(True)
+
             if hasattr(self, "board_control"):
                 self.board_control.emit("action", "CLOSE", None, None)
 
