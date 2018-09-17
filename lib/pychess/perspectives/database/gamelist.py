@@ -78,6 +78,16 @@ class GameList(Gtk.TreeView):
         prevButton.connect("clicked", self.on_prev_clicked)
         nextButton.connect("clicked", self.on_next_clicked)
 
+        limit_combo = Gtk.ComboBoxText()
+        for limit in ("100", "500", "1000", "5000"):
+            limit_combo.append_text(limit)
+        limit_combo.set_active(0)
+
+        toolitem = Gtk.ToolItem.new()
+        toolitem.add(limit_combo)
+        toolbar.insert(toolitem, -1)
+        limit_combo.connect("changed", self.on_limit_combo_changed)
+
         sw = Gtk.ScrolledWindow()
         sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         sw.add(self)
@@ -96,6 +106,12 @@ class GameList(Gtk.TreeView):
 
     def on_next_clicked(self, button):
         self.load_games(direction=NEXT_PAGE)
+
+    def on_limit_combo_changed(self, combo):
+        text = combo.get_active_text()
+        if text is not None:
+            self.persp.chessfile.limit = int(text)
+            self.load_games(direction=FIRST_PAGE)
 
     def sort_column_changed(self, treesortable):
         sort_column_id, order = treesortable.get_sort_column_id()
