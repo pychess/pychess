@@ -51,6 +51,9 @@ class AnalyzeGameDialog():
             self.widgets["analyze_game"].destroy()
 
         def abort():
+            self.analyzer.pause()
+            if self.threat_PV:
+                self.inv_analyzer.pause()
             self.stop_event.set()
             self.widgets["analyze_game"].destroy()
 
@@ -72,10 +75,10 @@ class AnalyzeGameDialog():
                     except Exception:
                         log.error("Unknown error while starting hint analyzer")
                         return
-                analyzer = gamemodel.spectators[HINT]
+                self.analyzer = gamemodel.spectators[HINT]
                 gmwidg.menuitems["hint_mode"].active = True
-                threat_PV = conf.get("ThreatPV")
-                if threat_PV:
+                self.threat_PV = conf.get("ThreatPV")
+                if self.threat_PV:
                     old_inv_check_value = conf.get("inv_analyzer_check")
                     conf.set("inv_analyzer_check", True)
                     if SPY not in gamemodel.spectators:
@@ -96,7 +99,7 @@ class AnalyzeGameDialog():
 
                 def response_cb(infobar, response, message):
                     conf.set("analyzer_check", old_check_value)
-                    if threat_PV:
+                    if self.threat_PV:
                         conf.set("inv_analyzer_check", old_inv_check_value)
                     message.dismiss()
                     abort()
@@ -117,8 +120,8 @@ class AnalyzeGameDialog():
                             break
 
                         gmwidg.board.view.setShownBoard(board)
-                        analyzer.setBoard(board)
-                        if threat_PV:
+                        self.analyzer.setBoard(board)
+                        if self.threat_PV:
                             inv_analyzer.setBoard(board)
                         yield from asyncio.sleep(move_time + 0.1)
 
@@ -134,7 +137,7 @@ class AnalyzeGameDialog():
                             diff = score - oldscore
                             if ((diff > threshold and color == BLACK) or (diff < -1 * threshold and color == WHITE)) and (
                                gamemodel.moves[ply - 1] != parseAny(gamemodel.boards[ply - 1], oldmoves[0])):
-                                if threat_PV:
+                                if self.threat_PV:
                                     try:
                                         if ply - 1 in gamemodel.spy_scores:
                                             oldmoves0, oldscore0, olddepth0 = gamemodel.spy_scores[ply - 1]
@@ -161,7 +164,7 @@ class AnalyzeGameDialog():
                     self.widgets["analyze_game"].hide()
                     self.widgets["analyze_ok_button"].set_sensitive(True)
                     conf.set("analyzer_check", old_check_value)
-                    if threat_PV:
+                    if self.threat_PV:
                         conf.set("inv_analyzer_check", old_inv_check_value)
                     message.dismiss()
 
