@@ -5,14 +5,14 @@
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008
 # 김준혁 <kjh9348@gmail.com>, 2016
-# 김준혁 <kjh9348@gmail.com>, 2016
+# 김준혁 <kjh9348@gmail.com>, 2016,2018
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-27 11:08+0200\n"
-"PO-Revision-Date: 2018-06-27 12:47+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2018-08-13 14:43+0000\n"
+"Last-Translator: 김준혁 <kjh9348@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/gbtami/pychess/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -147,11 +147,11 @@ msgstr "체스판 회전(_R)"
 
 #: glade/PyChess.glade:660
 msgid "_Fullscreen"
-msgstr "전체화면(_F)"
+msgstr "전체 화면(_F)"
 
 #: glade/PyChess.glade:673
 msgid "Leave _Fullscreen"
-msgstr "전체화면 종료(_F)"
+msgstr "전체 화면 종료(_F)"
 
 #: glade/PyChess.glade:690
 msgid "_Show Sidepanels"
@@ -171,11 +171,11 @@ msgstr ""
 
 #: glade/PyChess.glade:745 lib/pychess/perspectives/database/__init__.py:46
 msgid "Database"
-msgstr ""
+msgstr "데이터베이스"
 
 #: glade/PyChess.glade:751
 msgid "New _Database"
-msgstr ""
+msgstr "새 데이터베이스(_D)"
 
 #: glade/PyChess.glade:763
 msgid "Save database as"
@@ -729,7 +729,7 @@ msgstr "라운드:"
 
 #: glade/PyChess.glade:4548
 msgid "White ELO:"
-msgstr ""
+msgstr "백 ELO:"
 
 #: glade/PyChess.glade:4588
 msgid "White:"
@@ -785,11 +785,11 @@ msgstr ""
 
 #: glade/PyChess.glade:4976
 msgid "Protocol:"
-msgstr ""
+msgstr "프로토콜"
 
 #: glade/PyChess.glade:4990
 msgid "Parameters:"
-msgstr ""
+msgstr "매개변수:"
 
 #: glade/PyChess.glade:5004
 msgid "Command line parameters needed by the engine"
@@ -799,7 +799,7 @@ msgstr ""
 msgid ""
 "Engines use uci or xboard communication protocol to talk to the GUI.\n"
 "If it can use both  you can set here which one you like."
-msgstr ""
+msgstr "엔진은 uci 또는 xboard 통신 프로토콜을 사용하여 GUI와 연결됩니다.\n엔진이 두 가지를 모두 지원한다면 원하는 것을 설정할 수 있습니다."
 
 #: glade/PyChess.glade:5054
 msgid "Working directory:"
@@ -827,7 +827,7 @@ msgstr ""
 
 #: glade/PyChess.glade:5175
 msgid "Country:"
-msgstr ""
+msgstr "국가:"
 
 #: glade/PyChess.glade:5189
 msgid "Country of origin of the engine"
@@ -843,7 +843,7 @@ msgstr ""
 
 #: glade/PyChess.glade:5236
 msgid "Environment"
-msgstr ""
+msgstr "환경"
 
 #: glade/PyChess.glade:5260
 msgid "Preferred level:"
@@ -861,7 +861,7 @@ msgstr ""
 
 #: glade/PyChess.glade:5346
 msgid "Options"
-msgstr ""
+msgstr "옵션"
 
 #: glade/PyChess.glade:5539
 msgid "Filter"
@@ -878,7 +878,7 @@ msgstr ""
 #: lib/pychess/perspectives/fics/SeekChallenge.py:354
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:55
 msgid "White"
-msgstr ""
+msgstr "백"
 
 #: glade/PyChess.glade:5623 glade/PyChess.glade:6933
 #: glade/fics_lounge.glade:3195 lib/pychess/Utils/repr.py:22
@@ -1367,7 +1367,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:3503
 msgid "<b>Options</b>"
-msgstr ""
+msgstr "<b>옵션</b>"
 
 #: glade/findbar.glade:6
 msgid "window1"
@@ -1547,7 +1547,7 @@ msgstr ""
 
 #: glade/taskers.glade:228
 msgid "<b>_Start Game</b>"
-msgstr ""
+msgstr "<b>게임 시작(_S)</b>"
 
 #: glade/taskers.glade:279
 msgid "Detailed connection settings"
@@ -1579,7 +1579,7 @@ msgstr ""
 
 #: glade/taskers.glade:609
 msgid "<b>Open database</b>"
-msgstr ""
+msgstr "<b>데이터베이스 열기</b>"
 
 #: glade/taskers.glade:660
 msgid "View lectures, solve puzzles or start practicing endgames"
@@ -1599,15 +1599,15 @@ msgstr "오늘의 팁"
 
 #: glade/tipoftheday.glade:62
 msgid "Show tips at startup"
-msgstr ""
+msgstr "시작할 때 팁 보이기"
 
 #: lib/pychess/Main.py:419
 msgid "http://en.wikipedia.org/wiki/Chess"
-msgstr ""
+msgstr "https://ko.wikipedia.org/wiki/%EC%B2%B4%EC%8A%A4"
 
 #: lib/pychess/Main.py:422
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
-msgstr ""
+msgstr "https://ko.wikipedia.org/wiki/%EC%B2%B4%EC%8A%A4_%EA%B7%9C%EC%B9%99"
 
 #: lib/pychess/Main.py:583 lib/pychess/widgets/gamenanny.py:80
 #: lib/pychess/perspectives/welcome/__init__.py:7
@@ -4186,7 +4186,7 @@ msgstr ""
 
 #: lib/pychess/widgets/enginesDialog.py:190
 msgid "Executable files"
-msgstr ""
+msgstr "실행 파일"
 
 #: lib/pychess/widgets/enginesDialog.py:217
 #: lib/pychess/widgets/enginesDialog.py:247
@@ -4217,7 +4217,7 @@ msgstr ""
 #: lib/pychess/widgets/enginesDialog.py:302
 #: lib/pychess/widgets/enginesDialog.py:328
 msgid "There is something wrong with this executable"
-msgstr ""
+msgstr "이 실행 파일에 문제가 있습니다."
 
 #: lib/pychess/widgets/enginesDialog.py:388
 msgid "Select working directory"
@@ -4562,7 +4562,7 @@ msgstr ""
 msgid ""
 "To play on <b>Fullscreen mode</b>, just type <b>F11</b>. Coming back, F11 "
 "again."
-msgstr "<b>전체화면 모드</b>로 플레이하려면 <b>F11</b>을 누르세요. 돌아오려면 F11을 다시 누르세요."
+msgstr "<b>전체 화면 모드</b>로 플레이하려면 <b>F11</b>을 누르세요. 돌아오려면 F11을 다시 누르세요."
 
 #: lib/pychess/widgets/tipOfTheDay.py:49
 msgid "<b>Hint mode</b> analyzing your game, enable this type <b>Ctrl+H</b>."
@@ -5656,7 +5656,7 @@ msgstr ""
 
 #: lib/pychess/perspectives/games/annotationPanel.py:26
 msgid "Annotation"
-msgstr ""
+msgstr "주석"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:29
 msgid "Annotated game"
@@ -5932,7 +5932,7 @@ msgstr "이 게임에는 체스 엔진(컴퓨터 플레이어)이 참여하지 �
 
 #: lib/pychess/perspectives/games/historyPanel.py:9
 msgid "Move History"
-msgstr ""
+msgstr "이동 기록"
 
 #: lib/pychess/perspectives/games/historyPanel.py:13
 msgid ""
