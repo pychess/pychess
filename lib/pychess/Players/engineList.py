@@ -125,16 +125,16 @@ ENGINES_LIST = [
     ENGINE("frenzee", "xboard", "dk", 2768, False),
     ENGINE("gogobello", "uci", "it", 2767, False),
     ENGINE("pawny", "uci", "bg", 2767, False),
-# bison - YACC-compatible parser generator
-#    ENGINE("bison", "uci", "ru", 2758, False),
+    # bison - YACC-compatible parser generator
+    # ENGINE("bison", "uci", "ru", 2758, False),
     ENGINE("chessmaster", "xboard", "nl", 2757, False),
     ENGINE("karballo", "uci", "es", 2756, False),
     ENGINE("jonny", "uci", "de", 2755, False),  # Formerly XB
     ENGINE("devel", "uci", "no", 2740, False),
     ENGINE("chronos", "uci", "ar", 2737, False),
     ENGINE("shield", "uci", "it", 2733, False),
-# cheese - tool to take pictures and videos from your webcam
-#    ENGINE("cheese", "uci", "fr", 2730, False),  # Allows XB
+    # cheese - tool to take pictures and videos from your webcam
+    # ENGINE("cheese", "uci", "fr", 2730, False),  # Allows XB
     ENGINE("counter", "uci", "ru", 2715, False),
     ENGINE("tiger", "uci", "gp", 2713, False),
     ENGINE("greko", "uci", "ru", 2713, False),
@@ -303,7 +303,8 @@ ENGINES_LIST = [
     ENGINE("aice", "xboard", "gr", 2314, False),
     ENGINE("absolute-zero", "uci", "zh", 2311, False),
     ENGINE("sungorus", "uci", "es", 2311, False),
-#    ENGINE("nebiyu", "xboard", "et", 2310, False),
+    # TODO: wine crash on Ubuntu 1804 with NebiyuAlien.xe
+    # ENGINE("nebiyu", "xboard", "et", 2310, False),
     ENGINE("averno", "xboard", "es", 2309, False),
     ENGINE("asterisk", "uci", "hu", 2307, False),  # Allows XB
     ENGINE("joker", "xboard", "nl", 2305, False),
