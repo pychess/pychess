@@ -115,9 +115,14 @@ class SubProcess(GObject.GObject):
             if line:
                 yield
 
-                line = line.decode().rstrip()
-                # Some engines send author names in different encodinds (f.e. spike)
-                if not line or line.startswith("id author"):
+                try:
+                    line = line.decode().rstrip()
+                except UnicodeError:
+                    # Some engines send author names in different encodinds (f.e. spike)
+                    print("UnicodeError while decoding:", line)
+                    continue
+
+                if not line:
                     continue
 
                 for word in self.warnwords:

@@ -113,7 +113,6 @@ ENGINES_LIST = [
     ENGINE("tornado", "uci", "de", 2851, False),
     ENGINE("bugchess", "xboard", "fr", 2842, False),
     ENGINE("octochess", "uci", "de", 2813, False),  # Allows XB
-    ENGINE("gnuchessu", "uci", "us", 2807, False),
     ENGINE("gnuchess", "xboard", "us", 2807, False),
     ENGINE("godel", "uci", "es", 2807, False),  # May allow XB
     ENGINE("rhetoric", "uci", "es", 2804, False),
@@ -133,7 +132,7 @@ ENGINES_LIST = [
     ENGINE("devel", "uci", "no", 2740, False),
     ENGINE("chronos", "uci", "ar", 2737, False),
     ENGINE("shield", "uci", "it", 2733, False),
-    ENGINE("cheese", "uci", "fr", 2730, False),  # Allows XB
+#    ENGINE("cheese", "uci", "fr", 2730, False),  # Allows XB
     ENGINE("counter", "uci", "ru", 2715, False),
     ENGINE("tiger", "uci", "gp", 2713, False),
     ENGINE("greko", "uci", "ru", 2713, False),
@@ -302,7 +301,7 @@ ENGINES_LIST = [
     ENGINE("aice", "xboard", "gr", 2314, False),
     ENGINE("absolute-zero", "uci", "zh", 2311, False),
     ENGINE("sungorus", "uci", "es", 2311, False),
-    ENGINE("nebiyu", "xboard", "et", 2310, False),
+#    ENGINE("nebiyu", "xboard", "et", 2310, False),
     ENGINE("averno", "xboard", "es", 2309, False),
     ENGINE("asterisk", "uci", "hu", 2307, False),  # Allows XB
     ENGINE("joker", "xboard", "nl", 2305, False),

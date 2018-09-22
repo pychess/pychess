@@ -299,7 +299,7 @@ class EngineDiscoverer(GObject.GObject):
 
         def count(self_, name, engine, wentwell):
             if not wentwell:
-                print("cout not wentwell on engine", name)
+                print("count() not went well on engine", name)
                 self.engines.remove(engine)
 
             self.toBeRechecked[name][1] = True
