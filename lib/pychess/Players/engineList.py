@@ -125,13 +125,15 @@ ENGINES_LIST = [
     ENGINE("frenzee", "xboard", "dk", 2768, False),
     ENGINE("gogobello", "uci", "it", 2767, False),
     ENGINE("pawny", "uci", "bg", 2767, False),
-    ENGINE("bison", "uci", "ru", 2758, False),
+# bison - YACC-compatible parser generator
+#    ENGINE("bison", "uci", "ru", 2758, False),
     ENGINE("chessmaster", "xboard", "nl", 2757, False),
     ENGINE("karballo", "uci", "es", 2756, False),
     ENGINE("jonny", "uci", "de", 2755, False),  # Formerly XB
     ENGINE("devel", "uci", "no", 2740, False),
     ENGINE("chronos", "uci", "ar", 2737, False),
     ENGINE("shield", "uci", "it", 2733, False),
+# cheese - tool to take pictures and videos from your webcam
 #    ENGINE("cheese", "uci", "fr", 2730, False),  # Allows XB
     ENGINE("counter", "uci", "ru", 2715, False),
     ENGINE("tiger", "uci", "gp", 2713, False),
