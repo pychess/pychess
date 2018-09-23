@@ -429,6 +429,7 @@ class SoundTab:
                     uri = opendialog.get_uri()
                     model = combobox.get_model()
                     conf.set("sounduri%d" % index, uri)
+                    self.sounduri[index] = uri
                     label = unquote(os.path.split(uri)[1])
                     if len(model) == 3:
                         model.append([audioIco, label])
