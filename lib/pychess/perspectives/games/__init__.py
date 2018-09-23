@@ -692,6 +692,14 @@ class Games(GObject.GObject, Perspective):
 
             headbook.connect("page-reordered", page_reordered, headbook)
 
+    def adjust_divider(self, diff):
+        """ Try to move paned (containing board) divider to show/hide captured pieces """
+        if self.dock is None:
+            return
+        child = self.dock.get_children()[0]
+        c1 = child.paned.get_child1()
+        c1.paned.set_position(c1.paned.get_position() + diff)
+
     def getheadbook(self):
         if len(self.key2gmwidg) == 0:
             return None

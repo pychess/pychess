@@ -22,6 +22,7 @@ from pychess.Utils.const import ASEAN_VARIANTS, DROP_VARIANTS, WAITING_TO_START,
 from pychess.Variants.blindfold import BlindfoldBoard, HiddenPawnsBoard, \
     HiddenPiecesBoard, AllWhiteBoard
 from . import preferencesDialog
+from pychess.perspectives import perspective_manager
 
 
 def intersects(r_zero, r_one):
@@ -187,6 +188,7 @@ class BoardView(Gtk.DrawingArea):
         ]
         self.RANKS = self.model.boards[0].RANKS
         self.FILES = self.model.boards[0].FILES
+        self.FILES_FOR_HOLDING = 6
 
         self.animation_start = time()
         self.last_shown = None
@@ -221,12 +223,10 @@ class BoardView(Gtk.DrawingArea):
         self._draw_grid = False
         self.draw_grid = conf.get("drawGrid")
 
-        self._show_captured = False
-        if self.preview:
-            self.showCaptured = False
-        else:
-            self.showCaptured = conf.get("showCaptured") or \
-                self.model.variant.variant in DROP_VARIANTS
+        self._show_captured = None
+        if self.setup_position:
+            self.set_size_request(int(40 * (self.FILES + self.FILES_FOR_HOLDING)), 40 * self.RANKS)
+            self.redrawCanvas()
 
         self.noAnimation = conf.get("noAnimation")
         self.faceToFace = conf.get("faceToFace")
@@ -292,6 +292,7 @@ class BoardView(Gtk.DrawingArea):
 
             self.got_started = True
             self.startAnimation()
+
         self.emit("shownChanged", self.shown)
 
     def gameChanged(self, model, ply):
@@ -880,11 +881,7 @@ class BoardView(Gtk.DrawingArea):
         cos_, sin_ = self.matrix[0], self.matrix[1]
         context.transform(self.matrix)
 
-        if self.showCaptured:
-            holding_size = (alloc.width / (self.FILES + 6)) * 6
-        else:
-            holding_size = 0
-        square = float(min(alloc.width - holding_size, alloc.height)) * (1 - self.padding)
+        square = float(min(alloc.width, alloc.height)) * (1 - self.padding)
         if SCALE_ROTATED_BOARD:
             square /= abs(cos_) + abs(sin_)
         xc_loc = alloc.width / 2. - square / 2
@@ -909,6 +906,11 @@ class BoardView(Gtk.DrawingArea):
         if self.model.status == KILLED:
             pass
             # self.drawCross(context, r)
+
+        # At this point we have real values of self.get_allocation()
+        # and can adjust board paned divider if needed
+        if self._show_captured is None:
+            self.showCaptured = conf.get("showCaptured")
 
         # Unselect to mark redrawn areas - for debugging purposes
         # context.transform(self.invmatrix)
@@ -1771,8 +1773,20 @@ class BoardView(Gtk.DrawingArea):
 
     def _setShowCaptured(self, show_captured):
         self._show_captured = show_captured or self.model.variant.variant in DROP_VARIANTS
-        files_for_holding = 6 if self._show_captured else 0
-        self.set_size_request(int(30 * (self.FILES + files_for_holding)), 30 * self.RANKS)
+
+        alloc = self.get_allocation()
+        size = alloc.height / self.RANKS
+
+        persp = perspective_manager.get_perspective("games")
+        if self._show_captured:
+            needed_width = size * (self.FILES + self.FILES_FOR_HOLDING) + self.padding * 2
+            if alloc.width < needed_width:
+                persp.adjust_divider(needed_width - alloc.width)
+        else:
+            needed_width = size * self.FILES + self.padding * 2
+            if alloc.width > needed_width:
+                persp.adjust_divider(needed_width - alloc.width)
+
         self.redrawCanvas()
 
     def _getShowCaptured(self):
