@@ -394,7 +394,7 @@ class BoardView(Gtk.DrawingArea):
         """ Check the configuration / preferences to see if
             the captured pieces should be displayed
         """
-        self.showCaptured = conf.get("showCaptured")
+        self._setShowCaptured(conf.get("showCaptured"), force_restore=True)
 
     def onNoAnimation(self, *args):
         """ Check the configuration / preferences to see if
@@ -1771,7 +1771,7 @@ class BoardView(Gtk.DrawingArea):
         return self._show_cords
     show_cords = property(_getShowCords, _setShowCords)
 
-    def _setShowCaptured(self, show_captured):
+    def _setShowCaptured(self, show_captured, force_restore=False):
         self._show_captured = show_captured or self.model.variant.variant in DROP_VARIANTS
 
         alloc = self.get_allocation()
@@ -1782,7 +1782,7 @@ class BoardView(Gtk.DrawingArea):
             needed_width = size * (self.FILES + self.FILES_FOR_HOLDING) + self.padding * 2
             if alloc.width < needed_width:
                 persp.adjust_divider(needed_width - alloc.width)
-        else:
+        elif force_restore:
             needed_width = size * self.FILES + self.padding * 2
             if alloc.width > needed_width:
                 persp.adjust_divider(needed_width - alloc.width)
