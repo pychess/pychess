@@ -270,7 +270,7 @@ class EnginesDialog():
                         if vmpath:
                             engine_command.append(vmpath)
                         if vm_args is not None:
-                            engine_command.append(vm_args)
+                            engine_command += vm_args
                         engine_command.append(new_engine)
 
                         # Search the engines based on the most expectable protocol
@@ -314,8 +314,6 @@ class EnginesDialog():
                         # active = self.widgets["engine_protocol_combo"].get_active()
                         protocol = "uci" if uci else "xboard"
 
-                        if vm_args is not None:
-                            vm_args = vm_args.split(",")
                         # print(binname, new_engine, protocol, vm_name, vm_args)
                         discoverer.addEngine(binname, new_engine, protocol, vm_name, vm_args)
                         self.cur_engine = binname
