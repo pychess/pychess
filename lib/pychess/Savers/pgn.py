@@ -12,10 +12,7 @@ import textwrap
 
 from gi.repository import GLib
 
-try:
-    import pexpect
-except ImportError:
-    from pychess.external import pexpect
+import pexpect
 
 from sqlalchemy import String
 
