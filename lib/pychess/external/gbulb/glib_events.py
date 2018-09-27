@@ -7,7 +7,7 @@ import socket
 import sys
 import threading
 import weakref
-from asyncio import events, futures, tasks
+from asyncio import constants, events, futures, sslproto, tasks
 
 from gi.repository import GLib, Gio
 
@@ -122,11 +122,15 @@ class GLibChildWatcher(AbstractChildWatcher):
 
 
 class GLibHandle(events.Handle):
-    __slots__ = ('_source', '_repeat')
+    __slots__ = ('_source', '_repeat', '_context')
 
-    def __init__(self, *, loop, source, repeat, callback, args):
+    def __init__(self, *, loop, source, repeat, callback, args, context=None):
         super().__init__(callback, args, loop)
 
+        if sys.version_info[:2] >= (3, 7) and context is None:
+            import contextvars
+            context = contextvars.copy_context()
+        self._context = context
         self._source = source
         self._repeat = repeat
         loop._handlers.add(self)
@@ -212,7 +216,7 @@ class _BaseEventLoop(asyncio.BaseEventLoop):
     `asyncio.BaseEventLoop`. This is necessary as the Unix implementation will also indirectly
     inherit from that class (thereby creating diamond inheritance).
     Python permits and fully supports diamond inheritance so this is not a problem. However it
-    is, on the other hand, not permitted to inherit from a class both directly *and* indirectly -
+    is, on the other hand, not permitted to inherit from a class both directly *and* indirectly –
     hence we add this intermediate class to make sure that can never happen (see
     https://stackoverflow.com/q/29214888 for a minimal example a forbidden inheritance tree) and
     https://www.python.org/download/releases/2.3/mro/ for some extensive documentation of the
@@ -279,30 +283,20 @@ class GLibBaseEventLoop(_BaseEventLoop, GLibBaseEventLoopPlatformExt):
 
     def _make_ssl_transport(self, rawsock, protocol, sslcontext, waiter=None,
                             *, server_side=False, server_hostname=None,
-                            extra=None, server=None):
+                            extra=None, server=None, ssl_handshake_timeout=None):
         """Create SSL transport."""
-        from asyncio import sslproto
-
-        if not sslproto._is_sslproto_available():
-            # Python 3.4.3 and below
-            if hasattr(self, "_make_legacy_ssl_transport"):
-                # HACK: Add compatibility aliases to make
-                #       `_SelectorSslTransport` somehow work, then reuse the
-                #       SSL transport code from the official library
-                self._add_reader = self.add_reader
-                self._remove_reader = self.remove_reader
-                self._add_writer = self.add_writer
-                self._remove_writer = self.remove_writer
-                return self._make_legacy_ssl_transport(
-                             rawsock, protocol, sslcontext, waiter,
-                             server_side=server_side, server_hostname=server_hostname,
-                             extra=extra, server=server)
+        # sslproto._is_sslproto_available was removed from asyncio, starting from Python 3.7.
+        if hasattr(sslproto, '_is_sslproto_available') and not sslproto._is_sslproto_available():
             raise NotImplementedError("Proactor event loop requires Python 3.5"
                                       " or newer (ssl.MemoryBIO) to support "
                                       "SSL")
+        # Support for the ssl_handshake_timeout keyword argument was added in Python 3.7.
+        extra_protocol_kwargs = {}
+        if sys.version_info[:2] >= (3, 7):
+            extra_protocol_kwargs['ssl_handshake_timeout'] = ssl_handshake_timeout
 
         ssl_protocol = sslproto.SSLProtocol(self, protocol, sslcontext, waiter,
-                                            server_side, server_hostname)
+                                            server_side, server_hostname, **extra_protocol_kwargs)
         transports.SocketTransport(self, rawsock, ssl_protocol, extra=extra, server=server)
         return ssl_protocol._app_transport
 
@@ -359,7 +353,8 @@ class GLibBaseEventLoop(_BaseEventLoop, GLibBaseEventLoopPlatformExt):
         pass  # This is already done in `.select()`
 
     def _start_serving(self, protocol_factory, sock,
-                       sslcontext=None, server=None, backlog=100):
+                       sslcontext=None, server=None, backlog=100,
+                       ssl_handshake_timeout=getattr(constants, 'SSL_HANDSHAKE_TIMEOUT', 60.0)):
         self._transports[sock.fileno()] = server
 
         def server_loop(f=None):
@@ -368,6 +363,7 @@ class GLibBaseEventLoop(_BaseEventLoop, GLibBaseEventLoopPlatformExt):
                     (conn, addr) = f.result()
                     protocol = protocol_factory()
                     if sslcontext is not None:
+                        # FIXME: add ssl_handshake_timeout to this call once 3.7 support is merged in.
                         self._make_ssl_transport(
                             conn, protocol, sslcontext, server_side=True,
                             extra={'peername': addr}, server=server)
@@ -687,6 +683,7 @@ class GLibEventLoop(GLibBaseEventLoop):
     def __init__(self, *, context=None, application=None):
         self._application = application
         self._running = False
+        self._argv = None
 
         super().__init__(context)
         if application is None:
@@ -708,7 +705,7 @@ class GLibEventLoop(GLibBaseEventLoop):
 
         try:
             if self._application is not None:
-                self._application.run(None)
+                self._application.run(self._argv)
             else:
                 self._mainloop.run()
         finally:
@@ -726,7 +723,7 @@ class GLibEventLoop(GLibBaseEventLoop):
         def stop(f):
             self.stop()
 
-        future = tasks.async(future, loop=self)
+        future = tasks.ensure_future(future, loop=self)
         future.add_done_callback(stop)
         try:
             self.run_forever(**kw)
@@ -738,15 +735,20 @@ class GLibEventLoop(GLibBaseEventLoop):
 
         return future.result()
 
-    def run_forever(self, application=None):
+    def run_forever(self, application=None, argv=None):
         """Run the event loop until stop() is called."""
         if application is not None:
             self.set_application(application)
+        if argv is not None:
+            self.set_argv(argv)
 
         if self.is_running():
             raise RuntimeError(
                 "Recursively calling run_forever is forbidden. "
                 "To recursively run the event loop, call run().")
+
+        if hasattr(self, '_mainloop') and hasattr(self._mainloop, "_quit_by_sigint"):
+            del self._mainloop._quit_by_sigint
 
         try:
             self.run()
@@ -754,7 +756,7 @@ class GLibEventLoop(GLibBaseEventLoop):
             self.stop()
 
     # Methods scheduling callbacks.  All these return Handles.
-    def call_soon(self, callback, *args):
+    def call_soon(self, callback, *args, context=None):
         self._check_not_coroutine(callback, 'call_soon')
         source = GLib.Idle()
 
@@ -765,11 +767,13 @@ class GLibEventLoop(GLibBaseEventLoop):
             source=source,
             repeat=False,
             callback=callback,
-            args=args)
+            args=args,
+            context=context,
+        )
 
     call_soon_threadsafe = call_soon
 
-    def call_later(self, delay, callback, *args):
+    def call_later(self, delay, callback, *args, context=None):
         self._check_not_coroutine(callback, 'call_later')
 
         return GLibHandle(
@@ -777,12 +781,15 @@ class GLibEventLoop(GLibBaseEventLoop):
             source=GLib.Timeout(delay*1000) if delay > 0 else GLib.Idle(),
             repeat=False,
             callback=callback,
-            args=args)
+            args=args,
+            context=context,
+        )
 
-    def call_at(self, when, callback, *args):
+    def call_at(self, when, callback, *args, context=None):
         self._check_not_coroutine(callback, 'call_at')
 
-        return self.call_later(when - self.time(), callback, *args)
+        return self.call_later(
+            when - self.time(), callback, *args, context=context)
 
     def time(self):
         return GLib.get_monotonic_time() / 1000000
@@ -811,6 +818,10 @@ class GLibEventLoop(GLibBaseEventLoop):
         self._application = application
         self._policy._application = application
         del self._mainloop
+
+    def set_argv(self, argv):
+        """Sets argv to be passed to Gio.Application.run()"""
+        self._argv = argv
 
 
 class GLibEventLoopPolicy(events.AbstractEventLoopPolicy):

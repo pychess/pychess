@@ -19,7 +19,7 @@ Apache 2.0
 [https://github.com/nathan-hoad/gbulb](https://github.com/nathan-hoad/gbulb)
 
 ## Requirements
-- python3.4+ or python3.3 with [asyncio][asyncio]
+- python3.5+
 - pygobject
 - glib
 - gtk+3 (optional)
@@ -45,6 +45,11 @@ Apache 2.0
 
         loop = asyncio.get_event_loop()
         loop.run_forever(application=my_gapplication_object)
+
+
+### Waiting on a signal asynchronously
+
+See examples/wait_signal.py
 
 ## Known issues
 
@@ -94,5 +99,4 @@ calling GLib's primitives.
 
 
 [PEP3156]:  http://www.python.org/dev/peps/pep-3156/
-[asyncio]:  https://pypi.python.org/pypi/asyncio
 [glibloop]: https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html
