@@ -4,12 +4,8 @@ import json
 import os
 import re
 
-try:
-    import pexpect
-    from pexpect.popen_spawn import PopenSpawn
-except ImportError:
-    from pychess.external import pexpect
-    from pychess.external.pexpect.popen_spawn import PopenSpawn
+import pexpect
+from pexpect.popen_spawn import PopenSpawn
 
 PGN_HEADERS_REGEX = re.compile(r"\[([A-Za-z0-9_]+)\s+\"(.*)\"\]")
 
