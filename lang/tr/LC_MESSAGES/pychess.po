@@ -14,14 +14,16 @@
 # gbtami <gbtami@gmail.com>, 2013
 # Necdet Yücel <necdetyucel@gmail.com>, 2016
 # Samet Can ALTUNSOY <scaltunsoy@gmail.com>, 2018
+# Sercan S <sercan.suerkan@gmail.com>, 2018
+# Volkan Gezer <volkangezer@gmail.com>, 2018
 # Yaşar Çiv, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-09-20 23:08+0200\n"
-"PO-Revision-Date: 2018-09-21 00:15+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2018-10-07 23:12+0000\n"
+"Last-Translator: Volkan Gezer <volkangezer@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/gbtami/pychess/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -88,15 +90,15 @@ msgstr "_Düzenle"
 
 #: glade/PyChess.glade:451
 msgid "_Copy PGN"
-msgstr ""
+msgstr "_PGN Kopyala"
 
 #: glade/PyChess.glade:463
 msgid "_Copy FEN"
-msgstr ""
+msgstr "_FEN Kopyala"
 
 #: glade/PyChess.glade:480
 msgid "_Engines"
-msgstr ""
+msgstr "_Satranç Motorları"
 
 #: glade/PyChess.glade:490
 msgid "Externals"
@@ -108,7 +110,7 @@ msgstr "_Eylemler"
 
 #: glade/PyChess.glade:527
 msgid "Offer _Abort"
-msgstr ""
+msgstr "Oyun ipta_li Teklif Et"
 
 #: glade/PyChess.glade:537
 msgid "Offer Ad_journment"
@@ -116,7 +118,7 @@ msgstr ""
 
 #: glade/PyChess.glade:547 glade/fics_lounge.glade:1927
 msgid "Offer _Draw"
-msgstr "_Beraberlik Öner"
+msgstr "_Beraberlik Teklif Et"
 
 #: glade/PyChess.glade:558
 msgid "Offer _Pause"
@@ -124,11 +126,11 @@ msgstr "Mola teklif et."
 
 #: glade/PyChess.glade:568 glade/fics_lounge.glade:1825
 msgid "Offer _Resume"
-msgstr "Maça devam öner"
+msgstr "Maça devam teklif et"
 
 #: glade/PyChess.glade:574
 msgid "Offer _Undo"
-msgstr ""
+msgstr "_Geri Alma Teklif Et"
 
 #: glade/PyChess.glade:597
 msgid "_Call Flag"
@@ -329,7 +331,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1289 glade/analyze_game.glade:261
 msgid "Colorize analyzed moves"
-msgstr ""
+msgstr "Analiz edilen hamleleri renklendir"
 
 #: glade/PyChess.glade:1294
 msgid "If set, PyChess will colorize suboptimal analyzed moves with red."
@@ -366,7 +368,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1408
 msgid "F_ull board animation"
-msgstr ""
+msgstr "Ta_m tahta animasyonalrı"
 
 #: glade/PyChess.glade:1413
 msgid "Animate pieces, board rotation and more. Use this on fast machines."
@@ -378,7 +380,7 @@ msgstr "Sadece _hareketleri canlandır"
 
 #: glade/PyChess.glade:1432
 msgid "Only animate piece moves."
-msgstr ""
+msgstr "Sadece taş hareketlerini canlandır."
 
 #: glade/PyChess.glade:1447
 msgid "No _animation"
@@ -398,7 +400,7 @@ msgstr "_Genel"
 
 #: glade/PyChess.glade:1541
 msgid "Use opening _book"
-msgstr ""
+msgstr "Açılış Kitabı K_ullan"
 
 #: glade/PyChess.glade:1546
 msgid "If set, PyChess will suggest best opening moves on hint panel."
@@ -515,7 +517,7 @@ msgstr ""
 
 #: glade/PyChess.glade:2512
 msgid "Light Squares :"
-msgstr ""
+msgstr "Açık Kareler"
 
 #: glade/PyChess.glade:2541
 msgid "Grid"
@@ -523,11 +525,11 @@ msgstr ""
 
 #: glade/PyChess.glade:2562
 msgid "Dark Squares :"
-msgstr ""
+msgstr "Koyu Kareler"
 
 #: glade/PyChess.glade:2591
 msgid "Reset Colours"
-msgstr ""
+msgstr "Renkleri Sıfırla"
 
 #: glade/PyChess.glade:2605
 msgid "Sho_w cords"
@@ -545,7 +547,7 @@ msgstr ""
 
 #: glade/PyChess.glade:2691
 msgid "Font:"
-msgstr ""
+msgstr "Yazıtipi"
 
 #: glade/PyChess.glade:2729
 msgid "<b>Move text</b>"
@@ -734,7 +736,7 @@ msgstr ""
 
 #: glade/PyChess.glade:4529
 msgid "Black ELO:"
-msgstr ""
+msgstr "Siyah ELO:"
 
 #: glade/PyChess.glade:4544
 msgid "Black:"
@@ -746,7 +748,7 @@ msgstr "Raunt:"
 
 #: glade/PyChess.glade:4606
 msgid "White ELO:"
-msgstr ""
+msgstr "Beyaz ELO:"
 
 #: glade/PyChess.glade:4646
 msgid "White:"
@@ -754,19 +756,19 @@ msgstr "Beyaz:"
 
 #: glade/PyChess.glade:4659
 msgid "Date:"
-msgstr ""
+msgstr "Tarih:"
 
 #: glade/PyChess.glade:4672
 msgid "Result:"
-msgstr ""
+msgstr "Sonuç:"
 
 #: glade/PyChess.glade:4684
 msgid "Game"
-msgstr ""
+msgstr "Oyun:"
 
 #: glade/PyChess.glade:4696
 msgid "Players:"
-msgstr ""
+msgstr "Oyuncular:"
 
 #: glade/PyChess.glade:4734
 msgid "Event:"
@@ -782,7 +784,7 @@ msgstr ""
 
 #: glade/PyChess.glade:4898
 msgid "Additional tags"
-msgstr ""
+msgstr "Ek etiketler"
 
 #: glade/PyChess.glade:4932
 msgid "uci"
@@ -794,7 +796,7 @@ msgstr ""
 
 #: glade/PyChess.glade:4943
 msgid "Manage engines"
-msgstr ""
+msgstr "Satranç motorlarını yönet"
 
 #: glade/PyChess.glade:5020
 msgid "Command:"
@@ -810,7 +812,7 @@ msgstr "Parametreler:"
 
 #: glade/PyChess.glade:5062
 msgid "Command line parameters needed by the engine"
-msgstr ""
+msgstr "Satranç motoru tarafından istenen komut istemi parametreleri"
 
 #: glade/PyChess.glade:5087
 msgid ""
@@ -844,7 +846,7 @@ msgstr ""
 
 #: glade/PyChess.glade:5233
 msgid "Country:"
-msgstr ""
+msgstr "Ülke:"
 
 #: glade/PyChess.glade:5247
 msgid "Country of origin of the engine"
@@ -864,7 +866,7 @@ msgstr ""
 
 #: glade/PyChess.glade:5318
 msgid "Preferred level:"
-msgstr ""
+msgstr "Tercih edilen seviye:"
 
 #: glade/PyChess.glade:5331
 msgid ""
@@ -874,11 +876,11 @@ msgstr ""
 
 #: glade/PyChess.glade:5379
 msgid "Restore the default options"
-msgstr ""
+msgstr "Öntanımlı ayarlara geri dön"
 
 #: glade/PyChess.glade:5404
 msgid "Options"
-msgstr ""
+msgstr "Seçenekler"
 
 #: glade/PyChess.glade:5597
 msgid "Filter"
@@ -916,7 +918,7 @@ msgstr ""
 
 #: glade/PyChess.glade:5728 lib/pychess/perspectives/database/gamelist.py:44
 msgid "Event"
-msgstr ""
+msgstr "Etkinlik"
 
 #: glade/PyChess.glade:5739
 msgid "ECO"
@@ -947,11 +949,11 @@ msgstr ""
 
 #: glade/PyChess.glade:5989
 msgid "Annotator"
-msgstr ""
+msgstr "Yorumcu"
 
 #: glade/PyChess.glade:6011 lib/pychess/perspectives/database/gamelist.py:44
 msgid "Result"
-msgstr ""
+msgstr "Sonuç:"
 
 #: glade/PyChess.glade:6025
 msgid "1-0"
@@ -1260,11 +1262,11 @@ msgstr "_Oyuncu Listesi"
 
 #: glade/fics_lounge.glade:1714
 msgid "_Game List"
-msgstr "_Oyun Listesi"
+msgstr "O_yun Listesi"
 
 #: glade/fics_lounge.glade:1769
 msgid "_My games"
-msgstr ""
+msgstr "Oyunla_rım"
 
 #: glade/fics_lounge.glade:1971
 msgid "Offer A_bort"
@@ -1421,7 +1423,7 @@ msgstr ""
 
 #: glade/newInOut.glade:143
 msgid "Clear"
-msgstr ""
+msgstr "Temizle"
 
 #: glade/newInOut.glade:156
 msgid "Paste FEN"
@@ -1473,7 +1475,7 @@ msgstr "_Normal satranç oyna"
 
 #: glade/newInOut.glade:806
 msgid "Play Fischer Random chess"
-msgstr ""
+msgstr "Fischer Rastgele Satranç Oyna"
 
 #: glade/newInOut.glade:856
 msgid "Play Losers chess"
@@ -1501,7 +1503,7 @@ msgstr ""
 
 #: glade/newInOut.glade:1433
 msgid "Move number"
-msgstr ""
+msgstr "Hamle Sayısı"
 
 #: glade/newInOut.glade:1443
 msgid "Black O-O"
@@ -1521,7 +1523,7 @@ msgstr "Beyaz O-O"
 
 #: glade/newInOut.glade:1558
 msgid "Rotate the board"
-msgstr ""
+msgstr "Tahtayı Döndür"
 
 #: glade/saveGamesDialog.glade:7
 msgid "Quit PyChess"
@@ -1592,7 +1594,7 @@ msgstr ""
 
 #: glade/taskers.glade:542
 msgid "Create a new database"
-msgstr ""
+msgstr "Yeni bir veritabanı oluştur"
 
 #: glade/taskers.glade:609
 msgid "<b>Open database</b>"
@@ -1604,7 +1606,7 @@ msgstr ""
 
 #: glade/taskers.glade:723
 msgid "Category:"
-msgstr ""
+msgstr "Kategori:"
 
 #: glade/taskers.glade:796
 msgid "<b>Start learning</b>"
@@ -1652,7 +1654,7 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:22
 msgid "Your opponent has offered you a draw."
-msgstr ""
+msgstr "Rakibiniz size beraberlik teklif etti."
 
 #: lib/pychess/Players/Human.py:23
 msgid ""
@@ -1662,7 +1664,7 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:25
 msgid "Your opponent wants to abort the game."
-msgstr ""
+msgstr "Rakibiniz oyunun iptalini talep etti."
 
 #: lib/pychess/Players/Human.py:26
 msgid ""
@@ -1695,7 +1697,7 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:34
 msgid "Your opponent wants to pause the game."
-msgstr ""
+msgstr "Rakibiniz oyuna ara vermek istiyor."
 
 #: lib/pychess/Players/Human.py:35
 msgid ""
@@ -1705,7 +1707,7 @@ msgstr ""
 
 #: lib/pychess/Players/Human.py:37
 msgid "Your opponent wants to resume the game."
-msgstr ""
+msgstr "Rakibiniz oyuna devam etmek istiyor"
 
 #: lib/pychess/Players/Human.py:38
 msgid ""
@@ -1938,7 +1940,7 @@ msgstr ""
 
 #: lib/pychess/Savers/pgn.py:813
 msgid "Invalid move."
-msgstr ""
+msgstr "Geçersiz hamle."
 
 #: lib/pychess/Savers/pgn.py:946
 #, python-format
@@ -2016,11 +2018,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:12
 msgid "United Arab Emirates"
-msgstr ""
+msgstr "Birleşik Arap Emirlikleri"
 
 #: lib/pychess/Utils/isoCountries.py:13
 msgid "Afghanistan"
-msgstr ""
+msgstr "Afganistan"
 
 #: lib/pychess/Utils/isoCountries.py:14
 msgid "Antigua and Barbuda"
@@ -2032,11 +2034,11 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:16
 msgid "Albania"
-msgstr ""
+msgstr "Arnavutluk"
 
 #: lib/pychess/Utils/isoCountries.py:17
 msgid "Armenia"
-msgstr ""
+msgstr "Ermenistan"
 
 #: lib/pychess/Utils/isoCountries.py:19
 msgid "Angola"
@@ -2048,7 +2050,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:21
 msgid "Argentina"
-msgstr ""
+msgstr "Arjantin"
 
 #: lib/pychess/Utils/isoCountries.py:22
 msgid "American Samoa"
@@ -2056,7 +2058,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:23
 msgid "Austria"
-msgstr ""
+msgstr "Avusturya"
 
 #: lib/pychess/Utils/isoCountries.py:24
 msgid "Australia"
@@ -3347,7 +3349,7 @@ msgstr ""
 #: lib/pychess/Variants/blindfold.py:10
 #: lib/pychess/widgets/newGameDialog.py:341
 msgid "Blindfold"
-msgstr ""
+msgstr "Körleme"
 
 #: lib/pychess/Variants/blindfold.py:19
 msgid ""
@@ -5638,7 +5640,7 @@ msgstr "<big><b>PyChess oyunu kaydedemedi</b></big>"
 #: lib/pychess/perspectives/games/__init__.py:338
 #, python-format
 msgid "The error was: %s"
-msgstr "Hata şuydu %s"
+msgstr "Hata şuydu: %s"
 
 #: lib/pychess/perspectives/games/__init__.py:363
 #, python-format
