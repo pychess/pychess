@@ -128,7 +128,10 @@ def start_puzzle_from(filename, index=None):
     progress = puzzles_solving_progress.get(filename, [0] * chessfile.count)
 
     if index is None:
-        index = progress.index(0)
+        try:
+            index = progress.index(0)
+        except ValueError:
+            index = 0
 
     rec = records[index]
 
