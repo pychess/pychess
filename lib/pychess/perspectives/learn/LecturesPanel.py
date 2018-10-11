@@ -151,7 +151,7 @@ def start_lecture_from(filename, index=None):
                 command = None
                 param = ""
 
-                if parts[0] == "k" or parts[0] == "kibitz":
+                if parts[0].lower() in ("k", "ki", "kib", "kibitz"):
                     command = KIBITZ
                     param = " ".join(parts[1:])
                 elif parts[0] == "back":
