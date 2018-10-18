@@ -1,3 +1,4 @@
+import os
 import platform
 import sys
 from collections import namedtuple
@@ -24,6 +25,11 @@ VM_LIST = [
     VM(PYTHONBIN, ".py", ["-u"])
 ]
 
+# Needed by shutil.which() on Windows to find .py engines
+if sys.platform == "win32":
+    for vm in VM_LIST:
+        if vm.ext.upper() not in os.getenv("PATHEXT"):
+            os.environ["PATHEXT"] += ";%s" % vm.ext.upper()
 
 # List of engines later sorted by descending length of name
 ENGINE = namedtuple('ENGINE', 'name, protocol, country, elo, depthDependent')
