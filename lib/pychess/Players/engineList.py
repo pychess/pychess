@@ -40,7 +40,8 @@ ENGINES_LIST = [
     ENGINE("stockfish", "uci", "no", 3559, False),
     ENGINE("houdini", "uci", "be", 3534, False),
     ENGINE("komodo", "uci", "us", 3513, False),
-    ENGINE("fire", "uci", "us", 3356, False),
+    # fire in mesa-demos https://www.archlinux.org/packages/extra/x86_64/mesa-demos/files/
+    # ENGINE("fire", "uci", "us", 3356, False),
     ENGINE("fizbo", "uci", "us", 3351, False),
     ENGINE("shredder", "uci", "de", 3327, False),
     ENGINE("andscacs", "uci", "ad", 3318, False),
@@ -303,7 +304,7 @@ ENGINES_LIST = [
     ENGINE("aice", "xboard", "gr", 2314, False),
     ENGINE("absolute-zero", "uci", "zh", 2311, False),
     ENGINE("sungorus", "uci", "es", 2311, False),
-    # TODO: wine crash on Ubuntu 1804 with NebiyuAlien.xe
+    # TODO: wine crash on Ubuntu 1804 with NebiyuAlien.exe
     # ENGINE("nebiyu", "xboard", "et", 2310, False),
     ENGINE("averno", "xboard", "es", 2309, False),
     ENGINE("asterisk", "uci", "hu", 2307, False),  # Allows XB
@@ -605,7 +606,8 @@ ENGINES_LIST = [
     ENGINE("tikov", "uci", "gb", 1236, False),
     ENGINE("raffaela", "xboard", "it", 1223, False),
     ENGINE("dragontooth", "uci", "us", 1222, False),
-    ENGINE("gringo", "xboard", "at", 1222, False),
+    # gringo - grounding tools for (disjunctive) logic programs
+    # ENGINE("gringo", "xboard", "at", 1222, False),
     ENGINE("pierre", "xboard", "ca", 1221, False),
     ENGINE("toledo-uci", "uci", "mx", 1218, True),
     ENGINE("toledo", "xboard", "mx", 1218, False),
