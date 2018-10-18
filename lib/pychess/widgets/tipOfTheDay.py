@@ -59,7 +59,7 @@ class TipOfTheDay:
             _("An evaluation of +2.3 is an advantage for White of more than 2 pawns, even if White and Black have the same number of pawns. The position of all the pieces and their mobility are some of the factors that contribute to the score."),
             _("PyChess includes a chess engine that offers an evaluation for any chess position. Winning against PyChess engine is a coherent way to succeed in chess and improve your skills."),
             _("The rating is your strength: 1500 is a good average player, 2000 is a national champion and 2800 is the best human chess champion. From the properties of the game in the menu <b>Game</b>, the difference of points gives you your chance to win and the projected evolution of your rating. If your rating is provisional, append a question mark '?' to your level, like ""1399?""."),
-            _("Several rating systems exist to evaluate your skills in chess. The most common one is ELO (from its creator Arpad Elo) established on 1970. Schematically, the concept is to engage ±20 points for a game and that you will win or lose proportionally to the difference of ELO points you have with your opponent."),
+            _("Several rating systems exist to evaluate your skills in chess. The most common one is ELO (from its creator Arpad Elo) established on 1970. Schematically, the concept is to engage +/- 20 points for a game and that you will win or lose proportionally to the difference of ELO points you have with your opponent."),
             _("Each chess engine has its own evaluation function. It is normal to get different scores for a same position."),
 
             # Opening book and EGDB

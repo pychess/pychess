@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 """PEP 3156 event loop based on GLib"""
 
 import asyncio
