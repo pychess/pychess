@@ -10,6 +10,7 @@
 # gbtami <gbtami@gmail.com>, 2015-2016
 # kopiersperre <jksregistrierungen@gmail.com>, 2013
 # Jochen <inactive+jansenj@transifex.com>, 2014
+# Julian Willemer, 2018
 # Karl Gustav <b8s8z@yahoo.com>, 2016
 # Lars H. <Lars.Horn.81@gmail.com>, 2015
 # Matthias Walther <matthiaspeterw@aol.com>, 2012
@@ -25,8 +26,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-09-20 23:08+0200\n"
-"PO-Revision-Date: 2018-09-21 13:40+0000\n"
-"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
+"PO-Revision-Date: 2018-10-17 01:24+0000\n"
+"Last-Translator: Julian Willemer\n"
 "Language-Team: German (http://www.transifex.com/gbtami/pychess/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -853,7 +854,7 @@ msgstr "Land:"
 
 #: glade/PyChess.glade:5247
 msgid "Country of origin of the engine"
-msgstr ""
+msgstr "Herkunftsland der Engine"
 
 #: glade/PyChess.glade:5261
 msgid "Comment:"
