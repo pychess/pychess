@@ -645,6 +645,7 @@ class SetupPositionExtension(_GameInitializationMode):
     @classmethod
     def castl_toggled(cls, button, castl):
         lboard = cls.setupmodel.boards[-1].board
+        # TODO: this doesn't work at all
         if lboard.variant == FISCHERRANDOMCHESS:
             if castl == W_OO:
                 cast_letter = reprCord[lboard.ini_rooks[0][1]][0].upper()
@@ -742,6 +743,7 @@ class SetupPositionExtension(_GameInitializationMode):
         cls.widgets["fen_entry"].set_text(fenstr)
 
         cls.setupmodel.start()
+        cls.board_control.emit("action", "SETUP", None, fenstr)
 
         def _validate(gamemodel):
             try:

@@ -2,7 +2,7 @@ from pychess.Utils.const import EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, 
     ATOMICCHESS, BUGHOUSECHESS, CRAZYHOUSECHESS, CAMBODIANCHESS, MAKRUKCHESS, \
     FISCHERRANDOMCHESS, SITTUYINCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, \
     SUICIDECHESS, GIVEAWAYCHESS, DROP_VARIANTS, BLACK, WHITE, FAN_PIECES, NULL_MOVE, CAS_FLAGS, \
-    NORMALCHESS, PLACEMENTCHESS, THREECHECKCHESS, FEN_START, \
+    NORMALCHESS, PLACEMENTCHESS, THREECHECKCHESS, SETUPCHESS, FEN_START, \
     chrU2Sign, cordDic, reprCord, reprFile, reprSign, reprSignMakruk, reprSignSittuyin, \
     A1, A8, B1, B8, \
     C1, C8, D1, D8, \
@@ -168,9 +168,6 @@ class LBoard(object):
             self.fin_kings = ([None, None], [None, None])
             self.fin_rooks = ([None, None], [None, None])
 
-        elif self.variant in DROP_VARIANTS:
-            self.iniHouse()
-
         elif self.variant == ATOMICCHESS:
             self.iniAtomic()
 
@@ -179,6 +176,9 @@ class LBoard(object):
 
         elif self.variant == CAMBODIANCHESS:
             self.iniCambodian()
+
+        if self.variant in DROP_VARIANTS:
+            self.iniHouse()
 
             # Get information
         parts = fenstr.split()
@@ -224,7 +224,7 @@ class LBoard(object):
 
         if castChr != "-":
             for Chr in castChr:
-                valid_chars = "ABCDEFGHKQ" if self.variant == FISCHERRANDOMCHESS else "KQ"
+                valid_chars = "ABCDEFGHKQ" if self.variant == FISCHERRANDOMCHESS or self.variant == SETUPCHESS else "KQ"
                 if Chr.upper() not in valid_chars:
                     if self.variant == CAMBODIANCHESS:
                         pass
