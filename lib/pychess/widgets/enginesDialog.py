@@ -8,7 +8,7 @@ from gi.repository.GdkPixbuf import Pixbuf
 from pychess.System import uistuff
 from pychess.System.prefix import getEngineDataPrefix, addDataPrefix
 from pychess.Utils.IconLoader import get_pixbuf
-from pychess.Players.engineNest import discoverer, is_uci, is_cecp, defaultEngineLevel
+from pychess.Players.engineNest import discoverer, is_uci, is_cecp, ENGINE_DEFAULT_LEVEL
 from pychess.Players.engineList import VM_LIST
 from pychess.Utils.isoCountries import ISO3166_LIST
 from pychess.widgets import newGameDialog
@@ -349,7 +349,7 @@ class EnginesDialog():
             self.widgets["engine_protocol_combo"].set_active(0)
             self.widgets["engine_country_combo"].set_active(0)
             self.widgets["engine_comment_entry"].set_text("")
-            self.widgets["engine_level_scale"].set_value(defaultEngineLevel)
+            self.widgets["engine_level_scale"].set_value(ENGINE_DEFAULT_LEVEL)
             self.options_store.clear()
             self.selection = False
 
@@ -551,9 +551,9 @@ class EnginesDialog():
 
                 level = engine.get("level")
                 try:
-                    level = int(level) if level else defaultEngineLevel
+                    level = int(level)
                 except Exception:
-                    level = defaultEngineLevel
+                    level = ENGINE_DEFAULT_LEVEL
                 self.widgets["engine_level_scale"].set_value(level)
 
                 self.update_options()

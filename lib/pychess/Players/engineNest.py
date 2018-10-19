@@ -27,7 +27,7 @@ from pychess.Variants import variants
 
 attrToProtocol = {"uci": UCIEngine, "xboard": CECPEngine}
 
-defaultEngineLevel = 20
+ENGINE_DEFAULT_LEVEL = 20
 
 
 class SubProcessError(Exception):
@@ -277,11 +277,12 @@ class EngineDiscoverer(GObject.GObject):
 
         # Scan the referenced engines to see if they are installed
         for engine in ENGINES_LIST:
-            if self.getEngineByName(engine.name, exactName=False) is not None:  # No rediscovery if already exists
-                continue
-            engine = self.getReferencedEngine(engine.name)
-            if engine is not None and self.__findRunData(engine):
-                self.engines.append(engine)
+            if engine.autoDetect:
+                if self.getEngineByName(engine.name, exactName=False) is not None:  # No rediscovery if already exists
+                    continue
+                engine = self.getReferencedEngine(engine.name)
+                if engine is not None and self.__findRunData(engine):
+                    self.engines.append(engine)
 
         # Check if the existing engines need a refresh
         for engine in self.engines:
@@ -447,7 +448,7 @@ class EngineDiscoverer(GObject.GObject):
                           "recheck": True,
                           "country": engine.country,
                           "comment": "",
-                          "level": 5 if engine.depthDependent else defaultEngineLevel}
+                          "level": ENGINE_DEFAULT_LEVEL if engine.defaultLevel is None else engine.defaultLevel}
                 if engine.protocol == "xboard1":
                     result["protover"] = 1
                 if engine.protocol == "xboard2":
@@ -578,7 +579,7 @@ class EngineDiscoverer(GObject.GObject):
         else:
             engine = {"country": "unknown",
                       "comment": "",
-                      "level": defaultEngineLevel}
+                      "level": ENGINE_DEFAULT_LEVEL}
 
         # New values
         engine["name"] = name
