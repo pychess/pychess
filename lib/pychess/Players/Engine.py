@@ -1,11 +1,11 @@
-from threading import Thread
+import asyncio
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
 from gi.repository import GObject
 
 
-from pychess.System import fident
+from pychess.compat import create_task
 from pychess.System.Log import log
 from pychess.Utils.Offer import Offer
 from pychess.Utils.const import ARTIFICIAL, CHAT_ACTION
@@ -103,14 +103,10 @@ class Engine(Player):
     # General chat handling
 
     def putMessage(self, message):
-        # TODO: use pandorabots API
-        # https://developer.pandorabots.com/docs
-        return
-
         def answer(message):
             try:
                 data = urlopen(
-                    "http://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
+                    "https://www.pandorabots.com/pandora/talk?botid=8d034368fe360895",
                     urlencode({"message": message,
                                "botcust2": "x"}).encode("utf-8")).read().decode('utf-8')
             except IOError as err:
@@ -123,6 +119,10 @@ class Engine(Player):
             answer = data[data.find(sstring) + len(sstring):data.find(estring, data.find(sstring))]
             self.emit("offer", Offer(CHAT_ACTION, answer))
 
-        thread = Thread(target=answer, name=fident(answer), args=(message, ))
-        thread.daemon = True
-        thread.start()
+        @asyncio.coroutine
+        def get_answer(message):
+            loop = asyncio.get_event_loop()
+            future = loop.run_in_executor(None, answer, message)
+            yield from future
+
+        create_task(get_answer(message))
