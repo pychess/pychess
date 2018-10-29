@@ -118,12 +118,12 @@ def initialize(widgets):
     tag_renderer = Gtk.CellRendererText()
     tag_renderer.set_property("editable", True)
     tag_renderer.connect("edited", tag_edited_cb)
-    tv_tags.append_column(Gtk.TreeViewColumn("Tag", tag_renderer, text=0))
+    tv_tags.append_column(Gtk.TreeViewColumn(_("Tag"), tag_renderer, text=0))
 
     value_renderer = Gtk.CellRendererText()
     value_renderer.set_property("editable", True)
     value_renderer.connect("edited", value_edited_cb)
-    tv_tags.append_column(Gtk.TreeViewColumn("Value", value_renderer, text=1))
+    tv_tags.append_column(Gtk.TreeViewColumn(_("Value"), value_renderer, text=1))
 
     result_combo = widgets["result_combo"]
     result_store = Gtk.ListStore(int, str)
