@@ -52,7 +52,7 @@ class TipOfTheDay:
             # Analysis
             _("You must define a chess engine in the preferences in order to use the local chess analysis. By default, PyChess recommends you to use the free engine named Stockfish which is renown to be the strongest engine in the world."),
             _("<b>Hint mode</b> analyzes your game to show you the best current move. Enable it with the shortcut <b>Ctrl+H</b> from the menu <b>View</b>."),
-            _("<b>Spy mode</b> analyzes the threats, so the best move that your opponent would play as if it was his turn. Enable it with the shortcut <b>Ctrl+H</b> from the menu <b>View</b>."),
+            _("<b>Spy mode</b> analyzes the threats, so the best move that your opponent would play as if it was his turn. Enable it with the shortcut <b>Ctrl+Y</b> from the menu <b>View</b>."),
             _("<b>Ponder</b> is an option available in some chess engines that allows thinking when it is not the turn of the engine. It will then consume more resources on your computer."),
             _("<b>MultiPV</b> is an option of some chess engines that shows other possible good moves. They are displayed in the panel <b>Hints</b>. The value can be adapted from that panel with a double-click on the displayed figure."),
             _("You cannot use the local chess analysis mode while you are playing an unterminated game over Internet. Else you would be a cheater."),
@@ -89,7 +89,7 @@ class TipOfTheDay:
             _("PyChess uses the external module Scoutfish to evaluate the chess databases. For example, it is possible to extract the games where some pieces are in precise count or positions."),
             _("Parser/ChessDB is an external module used by PyChess to show the expected outcome for a given position."),
             _("SQLite is an internal module used to describe the loaded PGN files, so that PyChess can retrieve the games very fast during a search."),
-            _("PyChess generates 3 information files when a PGN file is opened : .sqlite (description), scout (positions), .bin (book and outcomes). These files can be removed manually if necessary."),
+            _("PyChess generates 3 information files when a PGN file is opened : .sqlite (description), .scout (positions), .bin (book and outcomes). These files can be removed manually if necessary."),
 
             # Lessons
             _("PyChess uses offline lessons to learn chess. You will be then never disappointed if you have no Internet connection."),

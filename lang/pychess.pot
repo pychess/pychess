@@ -4714,7 +4714,7 @@ msgstr ""
 #: lib/pychess/widgets/tipOfTheDay.py:55
 msgid ""
 "<b>Spy mode</b> analyzes the threats, so the best move that your opponent "
-"would play as if it was his turn. Enable it with the shortcut <b>Ctrl+H</b> "
+"would play as if it was his turn. Enable it with the shortcut <b>Ctrl+Y</b> "
 "from the menu <b>View</b>."
 msgstr ""
 
@@ -4911,7 +4911,7 @@ msgstr ""
 #: lib/pychess/widgets/tipOfTheDay.py:92
 msgid ""
 "PyChess generates 3 information files when a PGN file is opened : .sqlite "
-"(description), scout (positions), .bin (book and outcomes). These files can "
+"(description), .scout (positions), .bin (book and outcomes). These files can "
 "be removed manually if necessary."
 msgstr ""
 
