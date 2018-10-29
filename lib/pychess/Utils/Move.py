@@ -1,6 +1,6 @@
 from pychess.Utils.Cord import Cord
 from pychess.Utils.const import DROP, NORMAL_MOVE, PAWN, SITTUYINCHESS, QUEEN, KING, \
-    NULL_MOVE, WHITE, BLACK, W_OOO, W_OO, B_OOO, B_OO, QUEEN_CASTLE, \
+    NULL_MOVE, WHITE, BLACK, W_OOO, W_OO, B_OOO, B_OO, QUEEN_CASTLE, FISCHERRANDOMCHESS,\
     KING_CASTLE, CAMBODIANCHESS, ENPASSANT, PROMOTIONS, CASTLE_SAN, C1, G1, reprSign
 from pychess.Utils.lutils.lmovegen import newMove
 from .lutils import lmove
@@ -49,9 +49,9 @@ class Move:
                 if self.cord0 == self.cord1:
                     self.flag = NULL_MOVE
 
-                if self.cord0.x - self.cord1.x == 2 and board.variant != CAMBODIANCHESS:
+                if self.cord0.x - self.cord1.x == 2 and board.variant not in (CAMBODIANCHESS, FISCHERRANDOMCHESS):
                     self.flag = QUEEN_CASTLE if self.cord0.x == 4 else KING_CASTLE
-                elif self.cord0.x - self.cord1.x == -2 and board.variant != CAMBODIANCHESS:
+                elif self.cord0.x - self.cord1.x == -2 and board.variant not in (CAMBODIANCHESS, FISCHERRANDOMCHESS):
                     self.flag = KING_CASTLE if self.cord0.x == 4 else QUEEN_CASTLE
                 else:
                     if (abs(self.cord0.x - self.cord1.x) > 1 and self.cord1.x == C1) or (
