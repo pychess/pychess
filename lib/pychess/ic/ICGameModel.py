@@ -350,9 +350,14 @@ class ICGameModel(GameModel):
         log.debug("ICGameModel.acceptReceived: accepter=%s %s" %
                   (repr(player), offer))
         if player.__type__ == LOCAL:
-            GameModel.acceptReceived(self, player, offer)
-            log.debug("ICGameModel.acceptReceived: connection.om.accept(%s)" % offer)
-            self.connection.om.accept(offer)
+            if offer not in self.offers or self.offers[offer] == player:
+                player.offerError(offer, ACTION_ERROR_NONE_TO_ACCEPT)
+            else:
+                log.debug(
+                    "ICGameModel.acceptReceived: connection.om.accept(%s)" %
+                    offer)
+                self.connection.om.accept(offer)
+                del self.offers[offer]
 
         # We don't handle any ServerPlayer calls here, as the fics server will
         # know automatically if he/she accepts an offer, and will simply send
