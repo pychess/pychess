@@ -258,8 +258,8 @@ class Games(GObject.GObject, Perspective):
         title = _("Save Game") if not export else _("Export position")
         savedialog.set_title(title)
         while True:
-            savedialog.set_current_name(
-                "%s %s %s" % (game.players[0], _("vs."), game.players[1]))
+            filename = "%s-%s" % (game.players[0], game.players[1])
+            savedialog.set_current_name(filename.replace(" ", "_"))
 
             res = savedialog.run()
             if res != Gtk.ResponseType.ACCEPT:
