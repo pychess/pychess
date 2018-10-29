@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-18 22:28+0200\n"
+"POT-Creation-Date: 2018-10-29 23:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4208,6 +4208,7 @@ msgid "Option"
 msgstr ""
 
 #: lib/pychess/widgets/enginesDialog.py:151
+#: lib/pychess/widgets/gameinfoDialog.py:126
 msgid "Value"
 msgstr ""
 
@@ -4260,6 +4261,10 @@ msgstr ""
 
 #: lib/pychess/widgets/gameinfoDialog.py:61
 msgid "New"
+msgstr ""
+
+#: lib/pychess/widgets/gameinfoDialog.py:121
+msgid "Tag"
 msgstr ""
 
 #: lib/pychess/widgets/gameinfoDialog.py:198
@@ -5905,11 +5910,6 @@ msgstr ""
 msgid "Export position"
 msgstr ""
 
-#: lib/pychess/perspectives/games/__init__.py:262
-#: lib/pychess/perspectives/games/__init__.py:400
-msgid "vs."
-msgstr ""
-
 #: lib/pychess/perspectives/games/__init__.py:280
 #, python-format
 msgid "<big><b>Unknown file type '%s'</b></big>"
@@ -5983,6 +5983,10 @@ msgid ""
 "Unable to save to configured "
 "file.                                                     Save the games "
 "before closing?"
+msgstr ""
+
+#: lib/pychess/perspectives/games/__init__.py:400
+msgid "vs."
 msgstr ""
 
 #: lib/pychess/perspectives/games/__init__.py:407
