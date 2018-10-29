@@ -8,7 +8,7 @@ from pychess.Utils.Offer import Offer
 from pychess.Utils.const import REMOTE, DRAW, WHITE, BLACK, RUNNING, WHITEWON, KILLED, \
     TAKEBACK_OFFER, WAITING_TO_START, BLACKWON, PAUSE_OFFER, PAUSED, \
     RESUME_OFFER, DISCONNECTED, CHAT_ACTION, RESIGNATION, FLAG_CALL, OFFERS, LOCAL, \
-    UNFINISHED_STATES, ABORT_OFFER
+    UNFINISHED_STATES, ABORT_OFFER, ACTION_ERROR_NONE_TO_ACCEPT
 from pychess.Players.Human import Human
 from pychess.Savers import fen as fen_loader
 from pychess.ic import GAME_TYPES, TYPE_TOURNAMENT_DIRECTOR

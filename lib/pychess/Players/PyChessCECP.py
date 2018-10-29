@@ -238,7 +238,7 @@ class PyChessCECP(PyChess):
                     self.__stopSearching()
                     try:
                         move = parseAny(self.board, lines[1])
-                    except ParsingError as err:
+                    except ParsingError:
                         self.print("Error (unknown command): %s" % lines[1])
                         self.print(self.board.prepr(ascii=ASCII))
                         continue

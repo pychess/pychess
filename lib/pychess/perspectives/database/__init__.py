@@ -570,7 +570,7 @@ class Database(GObject.GObject, Perspective):
             if fenstr:
                 try:
                     board.applyFen(fenstr)
-                except SyntaxError as err:
+                except SyntaxError:
                     continue
             else:
                 board.applyFen(FEN_START)
