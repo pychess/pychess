@@ -689,14 +689,12 @@ def genDrops(board):
                         if color == WHITE:
                             if cord in (A3, B3, C3, D3) or cord > H3:
                                 continue
-                            if piece == ROOK and cord > H1 or \
-                               piece != ROOK and cord <= H1:
+                            if piece == ROOK and cord > H1:
                                 continue
                         else:
                             if cord in (E6, F6, G6, H6) or cord < A6:
                                 continue
-                            if piece == ROOK and cord < A8 or \
-                               piece != ROOK and cord >= A8:
+                            if piece == ROOK and cord < A8:
                                 continue
 
                     elif board.variant == PLACEMENTCHESS:

@@ -117,7 +117,7 @@ class AiWokBoard(Board):
 # Sittuyin, or Myanmar Chess
 ############################
 # Official rules:
-# http://www.docfoc.com/how-to-play-myanmar-traditional-chess-eng-book-1
+# https://vdocuments.net/how-to-play-myanmar-traditional-chess-eng-book-1.html
 
 SITTUYINSTART = "8/8/4pppp/pppp4/4PPPP/PPPP4/8/8/rrnnssfkRRNNSSFK w - - 0 1"
 
