@@ -33,17 +33,21 @@ class Move:
                     "Move needs a Board object in order to investigate flags")
 
             self.flag = NORMAL_MOVE
-            if board[
-                    self.cord0].piece == PAWN and self.cord1.cord in board.PROMOTION_ZONE[
-                        board.board.color]:
+            if board[self.cord0].piece == PAWN and \
+                    self.cord1.cord in board.PROMOTION_ZONE[board.board.color] and \
+                    board.variant != SITTUYINCHESS:
                 if promotion is None:
-                    if board.variant == SITTUYINCHESS:
-                        if cord0 == cord1:
-                            self.flag = lmove.FLAG_PIECE(QUEEN)
-                    else:
-                        self.flag = lmove.FLAG_PIECE(QUEEN)
+                    self.flag = lmove.FLAG_PIECE(QUEEN)
                 else:
                     self.flag = lmove.FLAG_PIECE(promotion)
+
+            elif board[self.cord0].piece == PAWN and \
+                    self.cord0.cord in board.PROMOTION_ZONE[board.board.color] and \
+                    board.variant == SITTUYINCHESS:
+                    if cord0 == cord1:
+                        self.flag = lmove.FLAG_PIECE(QUEEN)
+                    elif board[self.cord1] is None and (self.cord0.cord + self.cord1.cord) % 2 == 1:
+                        self.flag = lmove.FLAG_PIECE(QUEEN)
 
             elif board[self.cord0].piece == KING:
                 if self.cord0 == self.cord1:

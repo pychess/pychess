@@ -223,18 +223,9 @@ class BoardControl(Gtk.EventBox):
         # Ask player for which piece to promote into. If this move does not
         # include a promotion, QUEEN will be sent as a dummy value, but not used
         if promotion is None and board[cord0].sign == PAWN and \
-                cord1.cord in board.PROMOTION_ZONE[color]:
-            if self.variant.variant == SITTUYINCHESS:
-                # no promotion allowed if we have queen
-                if board.board.boards[color][QUEEN]:
-                    promotion = None
-                else:
-                    # promotion is always optional
-                    promotion = self.getPromotion()
-                    if promotion is None and cord0 == cord1:
-                        # if don't want in place promotion
-                        return
-            elif len(self.variant.PROMOTIONS) == 1:
+                cord1.cord in board.PROMOTION_ZONE[color] and \
+                self.variant.variant != SITTUYINCHESS:
+            if len(self.variant.PROMOTIONS) == 1:
                 promotion = lmove.PROMOTE_PIECE(self.variant.PROMOTIONS[0])
             else:
                 if conf.get("autoPromote"):
@@ -245,6 +236,19 @@ class BoardControl(Gtk.EventBox):
                         # Put back pawn moved be d'n'd
                         self.view.runAnimation(redraw_misc=False)
                         return
+        if promotion is None and board[cord0].sign == PAWN and \
+                cord0.cord in board.PROMOTION_ZONE[color] and \
+                self.variant.variant == SITTUYINCHESS:
+            # no promotion allowed if we have queen
+            if board.board.boards[color][QUEEN]:
+                promotion = None
+            # in place promotion
+            elif cord1.cord in board.PROMOTION_ZONE[color]:
+                promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
+            # queen move promotion (but not a pawn capture!)
+            elif board[cord1] is None and (cord0.cord + cord1.cord) % 2 == 1:
+                promotion = lmove.PROMOTE_PIECE(QUEEN_PROMOTION)
+
         if cord0.x < 0 or cord0.x > self.FILES - 1:
             move = Move(lmovegen.newMove(board[cord0].piece, cord1.cord, DROP))
         else:
@@ -591,7 +595,7 @@ class BoardState:
         if cord0 is None or cord1 is None:
             return False
         # prevent accidental NULL_MOVE creation
-        if cord0 == cord1:
+        if cord0 == cord1 and self.parent.variant.variant != SITTUYINCHESS:
             return False
         if self.getBoard()[cord0] is None:
             return False
@@ -785,6 +789,8 @@ class ActiveState(BoardState):
                 self.view.dragged_piece = None
                 self.view.startAnimation()
                 self.parent.setStateNormal()
+                if self.parent.variant.variant == SITTUYINCHESS:
+                    self.parent.emit_move_signal(self.view.selected, cord)
             else:  # leave last selected piece selected
                 self.view.active = None
                 self.view.dragged_piece = None

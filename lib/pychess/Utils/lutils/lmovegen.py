@@ -217,6 +217,7 @@ def genAllMoves(board, drops=True):
     kings = board.boards[board.color][KING]
 
     PROMOTIONS = variants[board.variant].PROMOTIONS
+    # In sittuyin only one queen allowed to exist any time per side
     if board.variant == SITTUYINCHESS and queens:
         PROMOTIONS = (NORMAL_MOVE, )
 
@@ -289,7 +290,10 @@ def genAllMoves(board, drops=True):
 
         # One step
 
-        promotion_zone = variants[board.variant].PROMOTION_ZONE[WHITE]
+        if board.variant == SITTUYINCHESS:
+            promotion_zone = []
+        else:
+            promotion_zone = variants[board.variant].PROMOTION_ZONE[WHITE]
         movedpawns = (pawns >>
                       8) & notblocker  # Move all pawns one step forward
         for cord in iterBits(movedpawns):
@@ -350,7 +354,10 @@ def genAllMoves(board, drops=True):
 
         # One step
 
-        promotion_zone = variants[board.variant].PROMOTION_ZONE[BLACK]
+        if board.variant == SITTUYINCHESS:
+            promotion_zone = []
+        else:
+            promotion_zone = variants[board.variant].PROMOTION_ZONE[BLACK]
         movedpawns = (pawns << 8) & notblocker
         movedpawns &= 0xffffffffffffffff  # contrain to 64 bits
         for cord in iterBits(movedpawns):
@@ -395,11 +402,22 @@ def genAllMoves(board, drops=True):
             else:
                 yield newMove(cord + 9, cord)
 
-    # Sittuyin in place promotions
+    # Sittuyin promotions
     if board.variant == SITTUYINCHESS and pawns and not queens:
+        queenMoves = moveArray[ASEAN_QUEEN]
+        promotion_zone = variants[SITTUYINCHESS].PROMOTION_ZONE[board.color]
         for cord in iterBits(pawns):
             if cord in promotion_zone:
-                yield newMove(cord, cord, QUEEN_PROMOTION)
+                # in place promotions
+                move = newMove(cord, cord, QUEEN_PROMOTION)
+                if not board.willGiveCheck(move):
+                    yield move
+
+                # queen move promotion
+                for c in iterBits(queenMoves[cord] & notblocker):
+                    move = newMove(cord, c, QUEEN_PROMOTION)
+                    if not board.willGiveCheck(move):
+                        yield move
 
     # Cambodian extra first moves for king and queen
     if board.variant == CAMBODIANCHESS:
@@ -450,6 +468,7 @@ def genCaptures(board):
     kings = board.boards[board.color][KING]
 
     PROMOTIONS = variants[board.variant].PROMOTIONS
+    # In sittuyin only one queen allowed to exist any time per side
     if board.variant == SITTUYINCHESS and queens:
         PROMOTIONS = (NORMAL_MOVE, )
 
@@ -594,6 +613,7 @@ def genCheckEvasions(board):
     if bin(checkers).count("1") == 1:
 
         PROMOTIONS = variants[board.variant].PROMOTIONS
+        # In sittuyin promotion move not allowed to capture opponent pieces
         if board.variant == SITTUYINCHESS and board.boards[board.color][QUEEN]:
             PROMOTIONS = (NORMAL_MOVE, )
         promotion_zone = variants[board.variant].PROMOTION_ZONE[color]

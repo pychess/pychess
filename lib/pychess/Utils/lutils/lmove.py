@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
-from .ldata import bitPosArray, fileBits, rankBits
-from .bitboard import firstBit
+from .ldata import bitPosArray, fileBits, rankBits, moveArray
+from .bitboard import firstBit, iterBits
 from .validator import validateMove
 
 from pychess.Utils.const import SAN, AN, LAN, ENPASSANT, EMPTY, PAWN, KING_CASTLE, QUEEN_CASTLE,\
@@ -9,7 +9,7 @@ from pychess.Utils.const import SAN, AN, LAN, ENPASSANT, EMPTY, PAWN, KING_CASTL
     QUEEN, KNIGHT, BISHOP, ROOK, KING, NORMALCHESS, NORMAL_MOVE, PROMOTIONS, WHITE, BLACK, DROP,\
     FAN_PIECES, SITTUYINCHESS, FISCHERRANDOMCHESS, SUICIDECHESS, MAKRUKCHESS, CAMBODIANCHESS,\
     GIVEAWAYCHESS, ATOMICCHESS, WILDCASTLECHESS, WILDCASTLESHUFFLECHESS, HORDECHESS,\
-    chrU2Sign, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, NULL_MOVE, FAN
+    chrU2Sign, CASTLE_KR, CASTLE_SAN, QUEEN_PROMOTION, NULL_MOVE, FAN, ASEAN_QUEEN
 from pychess.Utils.repr import reprPiece, localReprSign
 from pychess.Utils.lutils.lmovegen import genAllMoves, genPieceMoves, newMove
 
@@ -47,6 +47,15 @@ class ParsingError(Exception):
         The reason should be usable in the context: 'Move was not parseable
         because %s' % reason """
     pass
+
+
+def sittuyin_promotion_fcord(board, tcord):
+    from pychess.Variants import variants
+    queenMoves = moveArray[ASEAN_QUEEN]
+    promotion_zone = variants[SITTUYINCHESS].PROMOTION_ZONE[board.color]
+    for fcord in iterBits(queenMoves[tcord]):
+        if fcord in promotion_zone:
+            return fcord
 
 ################################################################################
 # parseAny                                                                     #
@@ -247,6 +256,9 @@ def toSAN(board, move, localRepr=False):
             if fpiece == PAWN:
                 part0 += reprFile[FILE(fcord)]
 
+    if board.variant == SITTUYINCHESS and flag in PROMOTIONS:
+        part0 = reprCord[fcord]
+
     notat = part0 + part1
     if flag in PROMOTIONS:
         if board.variant in (CAMBODIANCHESS, MAKRUKCHESS):
@@ -427,9 +439,15 @@ def parseSAN(board, san):
                 pawns = board.boards[BLACK][PAWN]
                 fcord = tcord + 16 if RANK(tcord) == 4 and not (
                     pawns & fileBits[FILE(tcord)] & rankBits[5]) else tcord + 8
-            if board.variant == SITTUYINCHESS and flag == QUEEN_PROMOTION and \
-                    (pawns & fileBits[FILE(tcord)] & rankBits[RANK(tcord)]):
+
+            if board.variant == SITTUYINCHESS and flag == QUEEN_PROMOTION:
+                if pawns & fileBits[FILE(tcord)] & rankBits[RANK(tcord)]:
+                    # in place promotion
                     return newMove(tcord, tcord, flag)
+                else:
+                    # queen move promotion (fcord have to be the closest cord of promotion zone)
+                    fcord = sittuyin_promotion_fcord(board, tcord)
+                    return newMove(fcord, tcord, flag)
         return newMove(fcord, tcord, flag)
     else:
         if board.pieceCount[color][piece] == 1:
