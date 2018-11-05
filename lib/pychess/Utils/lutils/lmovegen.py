@@ -468,8 +468,8 @@ def genCaptures(board):
     kings = board.boards[board.color][KING]
 
     PROMOTIONS = variants[board.variant].PROMOTIONS
-    # In sittuyin only one queen allowed to exist any time per side
-    if board.variant == SITTUYINCHESS and queens:
+    # In sittuyin promotion can't give capture
+    if board.variant == SITTUYINCHESS:
         PROMOTIONS = (NORMAL_MOVE, )
 
     # Knights
