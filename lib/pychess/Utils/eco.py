@@ -35,5 +35,5 @@ def get_eco(hash):
         return None
     cur = conn.cursor()
     select = "select eco, opening, variation from openings where hash=? and lang=?"
-    cur.execute(select, (memoryview(hash_struct.pack(hash)), "en" if conf.no_gettext else lang))
+    cur.execute(select, (memoryview(hash_struct.pack(hash)), "en" if conf.no_gettext or lang not in ("da", "de", "es", "hu") else lang))
     return cur.fetchone()
