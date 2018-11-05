@@ -150,7 +150,7 @@ class FindMovesTestCase(unittest.TestCase):
 
     def testMovegen3(self):
         """Testing SITTUYINCHESS variant move generator"""
-        positions = [("8/6k1/6p1/3s2P1/3npR2/2r5/p2N2F1/3K4 b - - 0 49", [(1, 32), (2, 653), (3, 18439), (4, 357804)])]
+        positions = [("8/6k1/6p1/3s2P1/3npR2/2r5/p2N2F1/3K4 b - - 0 49", [(1, 34), (2, 693)])]
         print()
         # return
         self.MAXDEPTH = 3
