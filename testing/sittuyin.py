@@ -4,6 +4,8 @@
 import unittest
 
 from pychess.Utils.logic import validate
+from pychess.Utils.lutils.lmovegen import genCheckEvasions, genCaptures, genAllMoves
+from pychess.Utils.lutils.lmove import toAN
 from pychess.Utils.Move import parseAN, parseSAN
 from pychess.Variants.asean import SittuyinBoard
 
@@ -46,6 +48,16 @@ FEN2 = "8/8/R2P1k2/8/8/8/8/4K3 w - - 0 9"
 # . . . . . . . .
 # . . . . ♔ . . .
 FEN3 = "5k2/8/R2P4/8/8/8/8/4K3 w - - 0 9"
+
+# . . . . . ♚ . .
+# . . . . . . . .
+# . . ♜ . . ♔ . .
+# . . . ♙ . . . ♟
+# . . . . . . . .
+# . . . . . ♞ ♞ .
+# . . . . . . . .
+# . . . . . . . .
+FEN4 = "5k2/8/2r2K2/3P3p/8/5nn1/8/8 w - - 0 9"
 
 
 class SittuyinTestCase(unittest.TestCase):
@@ -102,6 +114,39 @@ class SittuyinTestCase(unittest.TestCase):
         self.assertTrue(validate(board, parseAN(board, 'd6e5f')))
         # pawn promotion move can't give check
         self.assertFalse(validate(board, parseAN(board, 'd6e7f')))
+
+    def test_geCaptures(self):
+        """Testing validate move in Sittuyin variant"""
+
+        board = SittuyinBoard(setup=FEN4)
+        print(board)
+
+        moves = set()
+        for move in genCaptures(board.board):
+            moves.add(toAN(board.board, move))
+        self.assertEqual(moves, set(("d5c6",)))
+
+    def test_genCheckEvasions(self):
+        """Testing validate move in Sittuyin variant"""
+        board = SittuyinBoard(setup=FEN4)
+        print(board)
+
+        moves = set()
+        for move in genCheckEvasions(board.board):
+            moves.add(toAN(board.board, move))
+        self.assertEqual(moves, set(("d5c6", "d5d6", "d5e6=F")))
+
+    def test_genAllMoves(self):
+        """Testing validate move in Sittuyin variant"""
+        board = SittuyinBoard(setup=FEN4)
+        print(board)
+
+        moves = set()
+        for move in genAllMoves(board.board):
+            moves.add(toAN(board.board, move))
+        # pseudo legal moves
+        m = set(("f6e7", "f6f7", "f6g7", "f6e6", "f6g6", "f6e5", "f6f5", "f6g5", "d5c6", "d5d5=F", "d5d6", "d5e6=F", "d5c4=F", "d5e4=F"))
+        self.assertEqual(moves, m)
 
 
 if __name__ == '__main__':

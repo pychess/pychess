@@ -1,4 +1,3 @@
-
 from .bitboard import bitPosArray, iterBits, clearBit, firstBit
 from .attack import isAttacked, pinnedOnKing, getAttacks
 from .ldata import fromToRay, moveArray, directions, fileBits, rankBits,\
@@ -189,9 +188,31 @@ def genPieceMoves(board, piece, tcord):
     return moves
 
 
+def gen_sittuyin_promotions(board):
+    from pychess.Variants import variants
+    blocker = board.blocker
+    notblocker = ~blocker
+
+    pawns = board.boards[board.color][PAWN]
+
+    queenMoves = moveArray[ASEAN_QUEEN]
+    promotion_zone = variants[SITTUYINCHESS].PROMOTION_ZONE[board.color]
+    for cord in iterBits(pawns):
+        if board.pieceCount[board.color][PAWN] == 1 or cord in promotion_zone:
+            # in place promotions
+            move = newMove(cord, cord, QUEEN_PROMOTION)
+            if not board.willGiveCheck(move):
+                yield move
+
+            # queen move promotion
+            for c in iterBits(queenMoves[cord] & notblocker):
+                move = newMove(cord, c, QUEEN_PROMOTION)
+                if not board.willGiveCheck(move):
+                    yield move
+
+
 def genAllMoves(board, drops=True):
     from pychess.Variants import variants
-
     if drops and board.variant in DROP_VARIANTS:
         for move in genDrops(board):
             yield move
@@ -404,20 +425,8 @@ def genAllMoves(board, drops=True):
 
     # Sittuyin promotions
     if board.variant == SITTUYINCHESS and pawns and not queens:
-        queenMoves = moveArray[ASEAN_QUEEN]
-        promotion_zone = variants[SITTUYINCHESS].PROMOTION_ZONE[board.color]
-        for cord in iterBits(pawns):
-            if board.pieceCount[board.color][PAWN] == 1 or cord in promotion_zone:
-                # in place promotions
-                move = newMove(cord, cord, QUEEN_PROMOTION)
-                if not board.willGiveCheck(move):
-                    yield move
-
-                # queen move promotion
-                for c in iterBits(queenMoves[cord] & notblocker):
-                    move = newMove(cord, c, QUEEN_PROMOTION)
-                    if not board.willGiveCheck(move):
-                        yield move
+        for move in gen_sittuyin_promotions(board):
+            yield move
 
     # Cambodian extra first moves for king and queen
     if board.variant == CAMBODIANCHESS:
@@ -607,6 +616,7 @@ def genCheckEvasions(board):
     kcord = board.kings[color]
     kings = board.boards[color][KING]
     pawns = board.boards[color][PAWN]
+    queens = board.boards[board.color][QUEEN]
     checkers = getAttacks(board, kcord, opcolor)
 
     arBoard = board.arBoard
@@ -623,7 +633,7 @@ def genCheckEvasions(board):
         b = getAttacks(board, chkcord, color) & ~kings
         for cord in iterBits(b):
             if not pinnedOnKing(board, cord, color):
-                if arBoard[cord] == PAWN and chkcord in promotion_zone:
+                if arBoard[cord] == PAWN and chkcord in promotion_zone and board.variant != SITTUYINCHESS:
                     for p in PROMOTIONS:
                         yield newMove(cord, chkcord, p)
                 else:
@@ -679,6 +689,12 @@ def genCheckEvasions(board):
                                 if cord >= 56 or cord <= 7:
                                     continue
                             yield newMove(piece, cord, DROP)
+
+                if board.variant == SITTUYINCHESS and pawns and not queens:
+                    from .lmove import TCORD
+                    for move in gen_sittuyin_promotions(board):
+                        if TCORD(move) == cord:
+                            yield move
 
     # If more than one checkers, move king to get out of check
     if checkers:
