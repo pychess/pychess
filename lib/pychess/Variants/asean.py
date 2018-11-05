@@ -121,6 +121,7 @@ class AiWokBoard(Board):
 
 SITTUYINSTART = "8/8/4pppp/pppp4/4PPPP/PPPP4/8/8/rrnnssfkRRNNSSFK w - - 0 1"
 
+
 class SittuyinBoard(Board):
     variant = SITTUYINCHESS
     __desc__ = _("Sittuyin: http://en.wikipedia.org/wiki/Sittuyin")
