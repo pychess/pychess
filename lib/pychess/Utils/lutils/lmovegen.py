@@ -407,7 +407,7 @@ def genAllMoves(board, drops=True):
         queenMoves = moveArray[ASEAN_QUEEN]
         promotion_zone = variants[SITTUYINCHESS].PROMOTION_ZONE[board.color]
         for cord in iterBits(pawns):
-            if cord in promotion_zone:
+            if board.pieceCount[board.color][PAWN] == 1 or cord in promotion_zone:
                 # in place promotions
                 move = newMove(cord, cord, QUEEN_PROMOTION)
                 if not board.willGiveCheck(move):
