@@ -45,6 +45,10 @@ cache:
 #---------------------------------#
 
 init:
+  # temporary fix for https://github.com/appveyor/ci/issues/2571
+  - del C:\Windows\System32\libssl-*.dll C:\Windows\system32\libcrypto-*.dll
+  - del C:\Windows\SysWOW64\libssl-*.dll C:\Windows\SysWOW64\libcrypto-*.dll
+
   - PATH C:\msys64\%MSYSTEM%\bin;C:\msys64\usr\bin;C:\msys64\bin;%PATH%
 
 install:
@@ -56,10 +60,6 @@ install:
   - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-gtk3 %PKG_PREFIX%-gtksourceview3 %PKG_PREFIX%-python3-gobject %PKG_PREFIX%-python3-cairo"
   - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-psutil %PKG_PREFIX%-python3-sqlalchemy"
   - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-cx_Freeze %PKG_PREFIX%-zlib %PKG_PREFIX%-python3-pip"
-
-  # temporary fix for https://github.com/appveyor/ci/issues/2571
-  - del C:\Windows\System32\libssl-*.dll C:\Windows\system32\libcrypto-*.dll
-  - del C:\Windows\SysWOW64\libssl-*.dll C:\Windows\SysWOW64\libcrypto-*.dll
 
   # check python version
   - "python3 --version"
