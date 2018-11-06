@@ -186,8 +186,6 @@ class CECPEngine(ProtocolEngine):
                     # Gaviota sends done=0 after "xboard" and after "protover 2" too
                     if return_value == "not ready":
                         return_value = yield from asyncio.wait_for(self.queue.get(), TIME_OUT_SECOND)
-                self.emit("readyForOptions")
-                self.emit("readyForMoves")
             except asyncio.TimeoutError:
                 log.warning("Got timeout error", extra={"task": self.defname})
                 is_dead.add(True)
