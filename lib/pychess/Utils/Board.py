@@ -8,7 +8,7 @@ from .const import A1, A8, B1, B8, C1, C8, D1, D8, E1, E8, F1, F8, G1, G8, H1, H
     BISHOP, ROOK, ROOK_PROMOTION, QUEEN_PROMOTION, KNIGHT_PROMOTION, BLACK, FEN_START, \
     WHITE, NORMALCHESS, PAWN, BISHOP_PROMOTION, KNIGHT, QUEEN, KING, DROP_VARIANTS, NULL_MOVE, \
     DROP, ATOMICCHESS, ENPASSANT, FISCHERRANDOMCHESS, QUEEN_CASTLE, CRAZYHOUSECHESS, KING_CASTLE, \
-    WILDCASTLECHESS, PROMOTIONS, WILDCASTLESHUFFLECHESS, FAN_PIECES
+    WILDCASTLECHESS, PROMOTIONS, WILDCASTLESHUFFLECHESS, SITTUYINCHESS, FAN_PIECES
 
 
 def reverse_enum(L):
@@ -132,6 +132,9 @@ class Board:
 
         cord0, cord1 = move.cords
 
+        if cord0 == cord1 and self.variant == SITTUYINCHESS:
+            return moved, new, dead
+
         if move.flag == DROP:
             piece = FCORD(move.move)
             cord0 = self.getHoldingCord(self.color, piece)
@@ -209,6 +212,9 @@ class Board:
             return moved, new, dead
 
         cord0, cord1 = move.cords
+
+        if cord0 == cord1 and self.variant == SITTUYINCHESS:
+            return moved, new, dead
 
         if self.variant == ATOMICCHESS and (board1[cord1] or
                                             move.flag == ENPASSANT):
@@ -288,6 +294,7 @@ class Board:
         cord0, cord1 = move.cords
 
         if (self[move.cord1] is not None or flag == ENPASSANT) and \
+                not (cord0 == cord1 and self.variant == SITTUYINCHESS) and \
                 not (flag in (QUEEN_CASTLE, KING_CASTLE)):
             if self.variant == CRAZYHOUSECHESS:
                 piece = PAWN if flag == ENPASSANT or self[
