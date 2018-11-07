@@ -1,6 +1,7 @@
 from pychess.Utils.const import SETUPCHESS, VARIANTS_OTHER, BLACK, reprSign
 from pychess.Utils.Board import Board
 from pychess.Utils.Piece import Piece
+from pychess.Utils.lutils.LBoard import LBoard
 
 SETUPSTART = "4k3/8/8/8/8/8/8/4K3 w - - 0 1"
 
@@ -61,7 +62,7 @@ class SetupBoard(Board):
             new_board[cord0] = None
         return new_board
 
-    def as_fen(self):
+    def as_fen(self, variant):
         fenstr = []
         for r, row in enumerate(reversed(self.data)):
             empty = 0
@@ -83,7 +84,10 @@ class SetupBoard(Board):
                 fenstr.append(str(empty))
             if r != 7:
                 fenstr.append("/")
-        return "".join(fenstr)
+
+        board = LBoard(variant)
+        board.applyFen("".join(fenstr) + " w")
+        return board.asFen().split()[0]
 
     def __repr__(self):
         return self.as_fen()
