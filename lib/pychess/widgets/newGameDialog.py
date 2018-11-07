@@ -606,6 +606,10 @@ class SetupPositionExtension(_GameInitializationMode):
         cls.widgets["ep_combo"].set_active(0)
         cls.widgets["ep_combo"].connect("changed", cls.ep_combo_changed)
 
+        cls.widgets["playNormalRadio"].connect("toggled", cls.fen_changed)
+        cls.widgets["playVariant1Radio"].connect("toggled", cls.fen_changed)
+        cls.widgets["playVariant2Radio"].connect("toggled", cls.fen_changed)
+
     @classmethod
     def side_button_toggled(cls, button):
         if button.get_active():
@@ -623,7 +627,7 @@ class SetupPositionExtension(_GameInitializationMode):
             view.rotation = pi
 
     @classmethod
-    def fen_changed(cls):
+    def fen_changed(cls, *args):
         cls.widgets["fen_entry"].set_text(cls.get_fen())
 
     @classmethod
@@ -673,7 +677,17 @@ class SetupPositionExtension(_GameInitializationMode):
 
     @classmethod
     def get_fen(cls):
-        pieces = cls.setupmodel.boards[-1].as_fen()
+        # Find variant
+        if cls.widgets["playNormalRadio"].get_active():
+            variant_index = NORMALCHESS
+        elif cls.widgets["playVariant1Radio"].get_active():
+            variant_index = conf.get("ngvariant1")
+        else:
+            variant_index = conf.get("ngvariant2")
+        variant = variants[variant_index]
+
+        pieces = cls.setupmodel.boards[-1].as_fen(variant.variant)
+
         side = "b" if cls.widgets["side_button"].get_active() else "w"
         castl = "".join(sorted(cls.castl)) if cls.castl else "-"
 
