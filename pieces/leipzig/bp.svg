@@ -1,69 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="144pt"
-   height="144pt"
-   viewBox="0 0 50.800001 50.8"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="bp.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="-64.220545"
-     inkscape:cy="130.55124"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     units="pt"
-     inkscape:window-width="3840"
-     inkscape:window-height="2035"
-     inkscape:window-x="-13"
-     inkscape:window-y="-13"
-     inkscape:window-maximized="1" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-246.2)">
-    <g
-       aria-label="o"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50.79999924px;line-height:1.25;font-family:'Chess Leipzig';-inkscape-font-specification:'Chess Leipzig';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       id="text27"
-       transform="translate(0.001152,0.07585)">
-      <path
-         d="M 25.412402,293.61415 H 11.893848 q 0.471289,-5.33301 4.539258,-9.0041 0.669726,-0.62012 0.74414,-0.66973 2.108399,-1.73633 3.59668,-4.14238 -3.819922,-2.50528 -3.819922,-7.06934 0,-2.82773 1.711523,-5.08496 0.570508,-0.71934 1.21543,-1.63711 0.669727,-0.91777 1.066602,-1.78594 -0.595313,0.14883 -1.810742,0.47129 -1.190625,0.32246 -1.761133,0.54571 1.711523,-1.5875 3.249414,-3.77032 1.562695,-2.18281 1.835547,-4.63847 -1.265039,-1.28985 -1.265039,-3.02617 0,-1.73633 1.215429,-2.97657 1.240235,-1.24023 3.001367,-1.24023 1.711524,0 2.951758,1.24023 1.240234,1.24024 1.240234,2.97657 0,1.76113 -1.265039,3.02617 0.272852,2.45566 1.835547,4.63847 1.5875,2.18282 3.299024,3.77032 -0.570508,-0.22325 -1.810742,-0.54571 -1.21543,-0.32246 -1.810743,-0.47129 0.396875,0.86817 1.041797,1.78594 0.669727,0.91777 1.265039,1.63711 1.711524,2.25723 1.711524,5.08496 0,4.56406 -3.819922,7.06934 1.413867,2.38125 3.571875,4.14238 0.37207,0.29766 0.74414,0.66973 4.092774,3.67109 4.539258,9.0041 z"
-         style="stroke-width:0.26458332"
-         id="path29"
-         inkscape:connector-curvature="0" />
-    </g>
-  </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="144pt" height="144pt" version="1.1" viewBox="0 0 50.8 50.8" xmlns="http://www.w3.org/2000/svg">
+	<g transform="translate(0,-246.2)">
+		<g transform="translate(.001152 .07585)" aria-label="o">
+			<path d="m25.412 293.61h-13.519q0.47129-5.333 4.5393-9.0041 0.66973-0.62012 0.74414-0.66973 2.1084-1.7363 3.5967-4.1424-3.8199-2.5053-3.8199-7.0693 0-2.8277 1.7115-5.085 0.57051-0.71934 1.2154-1.6371 0.66973-0.91777 1.0666-1.7859-0.59531 0.14883-1.8107 0.47129-1.1906 0.32246-1.7611 0.54571 1.7115-1.5875 3.2494-3.7703 1.5627-2.1828 1.8355-4.6385-1.265-1.2898-1.265-3.0262 0-1.7363 1.2154-2.9766 1.2402-1.2402 3.0014-1.2402 1.7115 0 2.9518 1.2402 1.2402 1.2402 1.2402 2.9766 0 1.7611-1.265 3.0262 0.27285 2.4557 1.8355 4.6385 1.5875 2.1828 3.299 3.7703-0.57051-0.22325-1.8107-0.54571-1.2154-0.32246-1.8107-0.47129 0.39688 0.86817 1.0418 1.7859 0.66973 0.91777 1.265 1.6371 1.7115 2.2572 1.7115 5.085 0 4.5641-3.8199 7.0693 1.4139 2.3812 3.5719 4.1424 0.37207 0.29766 0.74414 0.66973 4.0928 3.6711 4.5393 9.0041z" stroke-width=".26458"/>
+		</g>
+	</g>
 </svg>
