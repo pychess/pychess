@@ -3,7 +3,7 @@ from gi.repository import GObject
 from pychess.Players.Engine import Engine
 from pychess.Utils.const import NORMAL, ANALYZING, INVERSE_ANALYZING
 
-TIME_OUT_SECOND = 10
+TIME_OUT_SECOND = 30
 
 
 class ProtocolEngine(Engine):
