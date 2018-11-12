@@ -165,7 +165,7 @@ class Games(GObject.GObject, Perspective):
                     player.setOptionInitialBoard(gamemodel)
             log.debug("Games..generalStart: -> gamemodel.start(): %s" %
                       (gamemodel))
-
+            gamemodel.emit("game_loaded", "")
             gamemodel.start()
             log.debug("Games.generalStart: <- gamemodel.start(): %s" %
                       (gamemodel))
