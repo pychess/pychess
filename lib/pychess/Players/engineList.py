@@ -120,7 +120,7 @@ ENGINES_LIST = [
     ENGINE("baron", "xboard", "nl", 2880, AUTO_DETECT, None),
     ENGINE("pirarucu", "uci", "br", 2868, AUTO_DETECT, None),
     ENGINE("dirty", "xboard", "es", 2867, AUTO_DETECT, None),
-    ENGINE("nemo", "uci", "de", 2857, AUTO_DETECT, None),
+    ENGINE("nemo", "uci", "de", 2857, NO_AUTO_DETECT, None),  # nemo - File manager and graphical shell for Cinnamon
     ENGINE("tornado", "uci", "de", 2851, AUTO_DETECT, None),
     ENGINE("godel", "uci", "es", 2850, AUTO_DETECT, None),  # May allow XB
     ENGINE("bugchess", "xboard", "fr", 2842, AUTO_DETECT, None),
