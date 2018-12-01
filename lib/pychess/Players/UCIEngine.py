@@ -92,12 +92,15 @@ class UCIEngine(ProtocolEngine):
             event.set()
 
     def __onReadyForOptions(self, self_):
-        if self.mode in (ANALYZING, INVERSE_ANALYZING):
+        analyze_mode = self.mode in (ANALYZING, INVERSE_ANALYZING)
+        if analyze_mode:
             if self.hasOption("Ponder"):
                 self.setOption('Ponder', False)
+        if self.hasOption("UCI_AnalyseMode"):
+            self.setOption("UCI_AnalyseMode", analyze_mode)
 
         for option, value in self.optionsToBeSent.items():
-            if option == "MultiPV" and self.mode not in (ANALYZING, INVERSE_ANALYZING):
+            if option == "MultiPV" and not analyze_mode:
                 continue
             if isinstance(value, bool):
                 value = str(value).lower()
