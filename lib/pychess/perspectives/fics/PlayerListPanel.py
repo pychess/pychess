@@ -21,6 +21,7 @@ class Sidepanel(ParrentListSection):
     def load(self, widgets, connection, lounge):
         self.widgets = widgets
         self.connection = connection
+        lounge.players_tab = self
         self.lounge = lounge
 
         __widget__ = lounge.players_list
