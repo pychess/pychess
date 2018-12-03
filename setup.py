@@ -194,18 +194,16 @@ if sys.platform == "win32":
     argv0_path = os.path.dirname(os.path.abspath(sys.executable))
     if pychess.MSYS2:
         major, minor, micro, releaselevel, serial = sys.version_info
-        sys.path.append(argv0_path + "\\..\\lib\\python%s.%s\\tools\\i18n" % (major, minor))
+        msgfmt_path = argv0_path + "/../lib/python%s.%s/tools/i18n/" % (major, minor)
     else:
-        sys.path.append(argv0_path + "\\tools\\i18n")
-    import msgfmt
+        msgfmt_path = argv0_path + "/tools/i18n/"
+    msgfmt = "%s %smsgfmt.py" % (os.path.abspath(sys.executable), msgfmt_path)
+else:
+    msgfmt = "msgfmt"
 
 pychess_langs = []
 for dir in [d for d in listdir("lang") if isdir("lang/" + d) and d != "en"]:
-    if sys.platform == "win32":
-        file = "lang/%s/%s" % (dir, pofile)
-        msgfmt.make(file + ".po", file + ".mo")
-    else:
-        os.popen("msgfmt lang/%s/%s.po -o lang/%s/%s.mo" % (dir, pofile, dir, pofile))
+    os.popen("%s lang/%s/%s.po" % (msgfmt, dir, pofile))
     DATA_FILES += [("share/locale/" + dir + "/LC_MESSAGES", ["lang/" + dir + "/" + pofile + ".mo"])]
     pychess_langs.append(dir)
 
