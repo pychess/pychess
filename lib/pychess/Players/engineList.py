@@ -53,7 +53,7 @@ ENGINES_LIST = [
     ENGINE("komodo", "uci", "us", 3509, AUTO_DETECT, None),
     ENGINE("fire", "uci", "us", 3442, NO_AUTO_DETECT, None),  # fire in mesa-demos https://www.archlinux.org/packages/extra/x86_64/mesa-demos/files/
     ENGINE("ethereal", "uci", "us", 3402, AUTO_DETECT, None),
-    ENGINE("xiphos", "uci", "us", 3359, AUTO_DETECT, None),
+    ENGINE("xiphos", "uci", "us", 3359, NO_AUTO_DETECT, None),  # xiphos - environment for Bible reading, study, and research
     ENGINE("fizbo", "uci", "us", 3349, AUTO_DETECT, None),
     ENGINE("andscacs", "uci", "ad", 3341, AUTO_DETECT, None),
     ENGINE("booot", "uci", "ua", 3340, AUTO_DETECT, None),  # Formerly XB
