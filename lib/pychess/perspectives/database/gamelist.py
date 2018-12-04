@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from io import StringIO
 
 from gi.repository import Gtk, GObject
 
@@ -10,6 +11,8 @@ from pychess.Utils.GameModel import GameModel
 from pychess.perspectives import perspective_manager
 from pychess.Variants import variants
 from pychess.Database.model import game, event, site, pl1, pl2
+from pychess.widgets import newGameDialog
+from pychess.Savers import pgn
 
 
 cols = (game.c.id, pl1.c.name, game.c.white_elo, pl2.c.name, game.c.black_elo,
@@ -179,6 +182,14 @@ class GameList(Gtk.TreeView):
     def row_activated(self, widget, path, col):
         rec, ply = self.get_record(path)
         if rec is None:
+            return
+
+        # Enable unfinished games to continue from newgamedialog
+        if rec["Result"] not in UNDOABLE_STATES:
+            newGameDialog.EnterNotationExtension.run()
+            model = self.persp.chessfile.loadToModel(rec)
+            text = pgn.save(StringIO(), model)
+            newGameDialog.EnterNotationExtension.sourcebuffer.set_text(text)
             return
 
         self.gamemodel = GameModel()
