@@ -85,7 +85,7 @@ def getStatus(board):
                 status = BLACKWON
             return status, WON_KINGINCENTER
     elif board.variant == THREECHECKCHESS:
-        if checkCount(lboard) == 3:
+        if checkCount(lboard, lboard.color) == 3:
             if board.color == BLACK:
                 status = WHITEWON
             else:

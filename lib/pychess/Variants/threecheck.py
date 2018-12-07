@@ -22,9 +22,11 @@ class ThreeCheckBoard(Board):
             Board.__init__(self, setup=setup, lboard=lboard)
 
 
-def checkCount(board):
-    cc = 3 - board.remaining_checks[board.color]
+def checkCount(board, color):
     lboard = board.clone()
+    if color != board.color and lboard.hist_move:
+        lboard.popMove()
+    cc = 3 - board.remaining_checks[board.color]
     while lboard.hist_move:
         if lboard.isChecked():
             cc += 1

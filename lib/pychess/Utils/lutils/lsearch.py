@@ -73,7 +73,7 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
         if testKingInCenter(board):
             return [], MATED
     elif board.variant == THREECHECKCHESS:
-        if checkCount(board) == 3:
+        if checkCount(board, board.color) == 3:
             return [], MATED
     elif board.variant == RACINGKINGSCHESS:
         if testKingInEightRow(board):

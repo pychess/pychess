@@ -469,7 +469,7 @@ def evalKing(board, color, phase):
         return racingKing[king]
 
     if board.variant == THREECHECKCHESS:
-        return CHECK_BONUS[min(3, checkCount(board))]
+        return CHECK_BONUS[min(3, checkCount(board, 1 - color))]
 
     # If we are in endgame, we want our king in the center, and theirs far away
     if phase >= 6:
