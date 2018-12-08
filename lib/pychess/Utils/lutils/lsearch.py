@@ -15,7 +15,6 @@ from pychess.Variants.atomic import kingExplode
 from pychess.Variants.kingofthehill import testKingInCenter
 from pychess.Variants.suicide import pieceCount
 from pychess.Variants.threecheck import checkCount
-from pychess.Variants.racingkings import testKingInEightRow
 from . import ldraw
 
 TIMECHECK_FREQ = 500
@@ -74,9 +73,6 @@ def alphaBeta(board, depth, alpha=-MATE_VALUE, beta=MATE_VALUE, ply=0):
             return [], MATED
     elif board.variant == THREECHECKCHESS:
         if checkCount(board, board.color) == 3:
-            return [], MATED
-    elif board.variant == RACINGKINGSCHESS:
-        if testKingInEightRow(board):
             return [], MATED
 
     ############################################################################

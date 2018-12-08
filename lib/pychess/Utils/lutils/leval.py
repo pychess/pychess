@@ -16,6 +16,7 @@ from .ldata import fileBits, bitPosArray, PIECE_VALUES, FILE, RANK, PAWN_VALUE,\
 from .lsort import staticExchangeEvaluate
 from .lmovegen import newMove
 from pychess.Variants.threecheck import checkCount
+from pychess.Variants.racingkings import testKingInEightRow
 from ctypes import create_string_buffer, memset
 from struct import Struct
 
@@ -66,6 +67,11 @@ def evaluateComplete(board, color):
 
 
 def evalMaterial(board, color):
+    # While opp reached rank 8 we can save the game if we also reach it
+    # but for this we have to force the shortest (one king move) draw line!
+    if board.variant == RACINGKINGSCHESS and testKingInEightRow(board):
+        return [0, 0]
+
     pieceCount = board.pieceCount
     opcolor = 1 - color
     material = [0, 0]
