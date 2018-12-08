@@ -300,10 +300,12 @@ def parseSAN(board, san):
         c = c.lower()
         if c == "k" and board.variant != SUICIDECHESS and board.variant != GIVEAWAYCHESS:
             raise ParsingError(san, _("invalid promoted piece"), board.asFen())
-        elif c == "." and board.variant in (CAMBODIANCHESS, MAKRUKCHESS,
-                                            SITTUYINCHESS):
-            # temporary hack for xboard bug
-            flag = QUEEN_PROMOTION
+        elif c == ".":
+            if board.variant in (CAMBODIANCHESS, MAKRUKCHESS, SITTUYINCHESS):
+                # temporary hack for xboard bug
+                flag = QUEEN_PROMOTION
+            else:
+                raise ParsingError(san, "invalid san", board.asFen())
         else:
             flag = chr2Sign[c] + 2
 
