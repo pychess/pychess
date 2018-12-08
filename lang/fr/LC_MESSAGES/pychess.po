@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-18 22:28+0200\n"
-"PO-Revision-Date: 2018-10-29 20:12+0000\n"
+"POT-Creation-Date: 2018-10-29 23:04+0100\n"
+"PO-Revision-Date: 2018-12-03 23:32+0000\n"
 "Last-Translator: ecrucru\n"
 "Language-Team: French (http://www.transifex.com/gbtami/pychess/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -4208,6 +4208,7 @@ msgid "Option"
 msgstr "Option"
 
 #: lib/pychess/widgets/enginesDialog.py:151
+#: lib/pychess/widgets/gameinfoDialog.py:126
 msgid "Value"
 msgstr "Valeur"
 
@@ -4261,6 +4262,10 @@ msgstr "Voulez-vous vraiment restaurer les options par défaut du moteur de jeu 
 #: lib/pychess/widgets/gameinfoDialog.py:61
 msgid "New"
 msgstr "Nouveau"
+
+#: lib/pychess/widgets/gameinfoDialog.py:121
+msgid "Tag"
+msgstr "Attribut"
 
 #: lib/pychess/widgets/gameinfoDialog.py:198
 msgid "Pick a date"
@@ -5906,11 +5911,6 @@ msgstr "Sauvegarder la partie"
 msgid "Export position"
 msgstr "Exporter la position"
 
-#: lib/pychess/perspectives/games/__init__.py:262
-#: lib/pychess/perspectives/games/__init__.py:400
-msgid "vs."
-msgstr "contre"
-
 #: lib/pychess/perspectives/games/__init__.py:280
 #, python-format
 msgid "<big><b>Unknown file type '%s'</b></big>"
@@ -5986,6 +5986,10 @@ msgid ""
 "                                                     Save the games before "
 "closing?"
 msgstr "Impossible d'enregistrer dans le fichier cible.\nEnregistrer les parties avant de fermer?"
+
+#: lib/pychess/perspectives/games/__init__.py:400
+msgid "vs."
+msgstr "contre"
 
 #: lib/pychess/perspectives/games/__init__.py:407
 #, python-format
@@ -6083,7 +6087,7 @@ msgstr "Position non claire"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:392
 msgid "Slight advantage"
-msgstr "Léger avantage"
+msgstr "Avantage léger"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:393
 msgid "Moderate advantage"
@@ -6119,7 +6123,7 @@ msgstr "Compensation"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:401
 msgid "Counterplay"
-msgstr "Contre la montre"
+msgstr "Contre-jeu"
 
 #: lib/pychess/perspectives/games/annotationPanel.py:402
 msgid "Time pressure"
