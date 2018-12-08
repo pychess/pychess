@@ -108,7 +108,10 @@ class PreviewPanel:
         self.boardview._shown = self.gamemodel.lowply
 
         self.boardview.redrawCanvas()
-        self.boardview.shown = ply if ply > 0 else self.persp.gamelist.ply
+        if ply > 0 or self.persp.gamelist.ply > 0:
+            self.boardview.shown = ply if ply > 0 else self.persp.gamelist.ply
+        else:
+            self.boardview.showLast()
 
     def on_first_clicked(self, button):
         self.boardview.showFirst()
