@@ -1,5 +1,5 @@
 __pycache__/
-*.py[cod]
+*.py[codz]
 
 _build/
 build/
@@ -10,6 +10,8 @@ dist/
 *.html
 *.mo
 *.*~
+*.sqlite
+*.scout
 
 pieces/*.png
 eco.db
