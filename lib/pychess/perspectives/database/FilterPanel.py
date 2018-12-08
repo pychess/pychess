@@ -3,7 +3,7 @@ import ast
 
 from gi.repository import GLib, Gdk, Gtk, GObject
 
-from pychess.Utils.const import chr2Sign, WHITE, BLACK
+from pychess.Utils.const import chr2Sign, WHITE, BLACK, NORMALCHESS
 from pychess.Utils.Piece import Piece
 from pychess.Utils.SetupModel import SetupModel, SetupPlayer
 from pychess.System import uistuff
@@ -644,4 +644,4 @@ class FilterPanel(Gtk.TreeView):
         GLib.idle_add(self.fen_changed)
 
     def get_fen(self):
-        return self.setupmodel.boards[-1].as_fen()
+        return self.setupmodel.boards[-1].as_fen(NORMALCHESS)
