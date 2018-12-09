@@ -13,7 +13,7 @@ PYTHONBIN = sys.executable.split("/")[-1]
 BITNESS = "64" if platform.machine().endswith('64') else "32"
 
 if sys.platform == "win32":
-    stockfish_name = "stockfish_9_x%s.exe" % BITNESS
+    stockfish_name = "stockfish_10_x%s.exe" % BITNESS
     sjaakii_name = "sjaakii_win%s_ms.exe" % BITNESS
 else:
     stockfish_name = "stockfish"
