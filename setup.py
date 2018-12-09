@@ -6,6 +6,7 @@ from os.path import isdir, isfile
 import os
 import site
 import sys
+import subprocess
 
 
 msi = False
@@ -203,7 +204,11 @@ else:
 
 pychess_langs = []
 for dir in [d for d in listdir("lang") if isdir("lang/" + d) and d != "en"]:
-    os.popen("%s lang/%s/%s.po -o lang/%s/%s.mo" % (msgfmt, dir, pofile, dir, pofile))
+    if sys.platform == "win32":
+        command = "%s lang/%s/%s.po" % (msgfmt, dir, pofile)
+    else:
+        command = "%s lang/%s/%s.po -o lang/%s/%s.mo" % (msgfmt, dir, pofile, dir, pofile)
+    subprocess.call(command.split())
     DATA_FILES += [("share/locale/" + dir + "/LC_MESSAGES", ["lang/" + dir + "/" + pofile + ".mo"])]
     pychess_langs.append(dir)
 
