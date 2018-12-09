@@ -98,7 +98,7 @@ class FilterPanel(Gtk.TreeView):
         self.set_headers_visible(True)
         self.set_grid_lines(Gtk.TreeViewGridLines.HORIZONTAL)
 
-        column = Gtk.TreeViewColumn("filter", Gtk.CellRendererText(), text=0)
+        column = Gtk.TreeViewColumn(_("Filter"), Gtk.CellRendererText(), text=0)
         column.set_min_width(80)
         self.append_column(column)
 
