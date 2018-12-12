@@ -605,6 +605,15 @@ def parseAN(board, an):
         raise ParsingError(an, "the move must be 4 or 6 chars long",
                            board.asFen())
 
+    if "@" in an:
+        tcord = cordDic[an[-2:]]
+        if an[0].islower():
+            # Sjeng-ism
+            piece = chr2Sign[an[0]]
+        else:
+            piece = chrU2Sign[an[0]]
+        return newMove(piece, tcord, DROP)
+
     try:
         fcord = cordDic[an[:2]]
         tcord = cordDic[an[2:4]]
