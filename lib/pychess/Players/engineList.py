@@ -8,19 +8,13 @@ from collections import namedtuple
 AUTO_DETECT = True
 NO_AUTO_DETECT = False
 
-PYTHONBIN = sys.executable.split("/")[-1]
-
+# CPUID
 BITNESS = "64" if platform.machine().endswith('64') else "32"
-
-if sys.platform == "win32":
-    stockfish_name = "stockfish_10_x%s.exe" % BITNESS
-    sjaakii_name = "sjaakii_win%s_ms.exe" % BITNESS
-else:
-    stockfish_name = "stockfish"
-    sjaakii_name = "sjaakii"
-
+POPCOUNT = True  # TODO Auto-detect
+BMI2 = True  # TODO Auto-detect
 
 # List of known interpreters
+PYTHONBIN = sys.executable.split("/")[-1]
 VM = namedtuple('VM', 'name, ext, args')
 VM_LIST = [
     VM("node", ".js", None),
@@ -37,6 +31,13 @@ if sys.platform == "win32":
 # List of engines later sorted by descending length of name
 # The comments provides known conflicts with Linux packages
 # Weak engines (<2700) should be added manually unless a package exists already
+if sys.platform == "win32":
+    stockfish_name = "stockfish_10_x%s.exe" % BITNESS
+    sjaakii_name = "sjaakii_win%s_ms.exe" % BITNESS
+else:
+    stockfish_name = "stockfish"
+    sjaakii_name = "sjaakii"
+
 ENGINE = namedtuple('ENGINE', 'name, protocol, country, elo, autoDetect, defaultLevel')
 ENGINES_LIST = [
     # -- Full names for internal processing
@@ -670,7 +671,8 @@ ENGINES_LIST = [
     ENGINE("anticrux", "uci", "fr", 0, NO_AUTO_DETECT, 10),
     ENGINE("fairymax", "xboard", "nl", 0, AUTO_DETECT, None),
     ENGINE("fruit", "uci", "fr", 2783, AUTO_DETECT, None),
-    ENGINE("sunfish", "xboard", "dk", 0, NO_AUTO_DETECT, None)
+    ENGINE("sunfish", "xboard", "dk", 0, NO_AUTO_DETECT, None),
+    ENGINE("democracy", "uci", "fr", 0, NO_AUTO_DETECT, None)
 ]
 
 
@@ -681,3 +683,77 @@ for i in range(len(ENGINES_LIST) - 1, 1, - 1):
             tmp = ENGINES_LIST[i]
             ENGINES_LIST[i] = ENGINES_LIST[j]
             ENGINES_LIST[j] = tmp
+
+
+# Mass detection of the engines
+def listEnginesFromPath(defaultPath, withRecursion):
+    # Base folders
+    if defaultPath is None or defaultPath == "":
+        base = os.getenv("PATH")
+        withRecursion = False
+    else:
+        base = defaultPath
+    base = [os.path.join(p, "") for p in base.split(";")]
+
+    # List the executable files
+    found_engines = []
+    for dir in base:
+        files = os.listdir(dir)
+        for file in files:
+            file_ci = file.lower()
+            fullname = os.path.join(dir, file)
+
+            # Recurse the folders by appending to the scanned list
+            if os.path.isdir(fullname):
+                if withRecursion:
+                    base.append(os.path.join(dir, file, ""))
+                continue
+
+            # Blacklisted keywords
+            blacklisted = False
+            for kw in ["install", "reset", "remove", "delete", "purge", "config", "register"]:
+                if kw in file_ci:
+                    blacklisted = True
+            if blacklisted:
+                continue
+
+            # Check if the file is a supported scripting language, or an executable file
+            executable = False
+            for vm in VM_LIST:
+                if file_ci.endswith(vm.ext):
+                    executable = True
+                    break
+            if not executable:
+                if sys.platform == "win32":
+                    executable = file_ci.endswith(".exe")
+                else:
+                    executable = os.access(fullname, os.X_OK)
+            if not executable:
+                continue
+
+            # Check the filename against the known list of engines
+            found = False
+            for engine in ENGINES_LIST:
+                if engine.name in file_ci:
+                    found = True
+                    break
+            if not found:
+                continue
+
+            # Check the bitness because x64 does not run on x32
+            if BITNESS == "32" and "64" in file_ci:
+                continue
+
+            # Check the support for POPCNT
+            if not POPCOUNT and "popcnt" in file_ci:
+                continue
+
+            # Check the support for BMI2
+            if not BMI2 and "bmi2" in file_ci:
+                continue
+
+            # Great, this is an engine !
+            found_engines.append(fullname)
+
+    # Return the found engines as an array of full file names
+    return found_engines
