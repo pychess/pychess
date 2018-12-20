@@ -207,6 +207,13 @@ class Database(GObject.GObject, Perspective):
         self.spinner.start()
 
         def opening():
+            # Redirection of the PGN file
+            nonlocal filename
+            for ext in [".sqlite", ".bin", ".scout"]:
+                if filename.endswith(ext):
+                    filename = filename[:len(filename) - len(ext)] + ".pgn"
+
+            # Processing by file extension
             if filename.endswith(".pgn"):
                 GLib.idle_add(self.progressbar.show)
                 GLib.idle_add(self.progressbar.set_text, _("Opening chessfile..."))
