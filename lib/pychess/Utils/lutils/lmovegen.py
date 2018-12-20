@@ -196,18 +196,24 @@ def gen_sittuyin_promotions(board):
     pawns = board.boards[board.color][PAWN]
 
     queenMoves = moveArray[ASEAN_QUEEN]
+
+    def willDirectAttack(board, move, cord):
+        board_clone = board.clone()
+        board_clone.applyMove(move)
+        return board.friends[1 - board.color] & moveArray[ASEAN_QUEEN][cord]
+
     promotion_zone = variants[SITTUYINCHESS].PROMOTION_ZONE[board.color]
     for cord in iterBits(pawns):
         if board.pieceCount[board.color][PAWN] == 1 or cord in promotion_zone:
             # in place promotions
             move = newMove(cord, cord, QUEEN_PROMOTION)
-            if not board.willGiveCheck(move):
+            if not board.willGiveCheck(move) and not willDirectAttack(board, move, cord):
                 yield move
 
             # queen move promotion
             for c in iterBits(queenMoves[cord] & notblocker):
                 move = newMove(cord, c, QUEEN_PROMOTION)
-                if not board.willGiveCheck(move):
+                if not board.willGiveCheck(move) and not willDirectAttack(board, move, c):
                     yield move
 
 
