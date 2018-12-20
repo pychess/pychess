@@ -80,8 +80,8 @@ class SittuyinTestCase(unittest.TestCase):
         board = SittuyinBoard(setup=FEN1)
         print(board)
         # but (optional) promotion if we don't have Met (queen)
-        self.assertTrue(validate(board, parseAN(board, 'b2b2f')))
-        self.assertTrue(validate(board, parseSAN(board, 'b2=f')))
+        self.assertFalse(validate(board, parseAN(board, 'b2b2f')))
+        self.assertFalse(validate(board, parseSAN(board, 'b2=f')))
         self.assertEqual(parseAN(board, 'b2b2f'), parseSAN(board, 'b2=f'))
         self.assertTrue(validate(board, parseAN(board, 'b2a1f')))
         self.assertTrue(validate(board, parseSAN(board, 'a1=f')))
@@ -145,7 +145,7 @@ class SittuyinTestCase(unittest.TestCase):
         for move in genAllMoves(board.board):
             moves.add(toAN(board.board, move))
         # pseudo legal moves
-        m = set(("f6e7", "f6f7", "f6g7", "f6e6", "f6g6", "f6e5", "f6f5", "f6g5", "d5c6", "d5d5=F", "d5d6", "d5e6=F", "d5c4=F", "d5e4=F"))
+        m = set(("f6e7", "f6f7", "f6g7", "f6e6", "f6g6", "f6e5", "f6f5", "f6g5", "d5c6", "d5d6", "d5e6=F", "d5c4=F"))
         self.assertEqual(moves, m)
 
 
