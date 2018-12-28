@@ -443,12 +443,14 @@ class EngineDiscoverer(GObject.GObject):
         for engine in ENGINES_LIST:
             if engine.name.lower() in name.lower():
                 # Properties of the engine
-                result = {"name": name,
+                result = {"name": os.path.basename(name),
                           "protocol": engine.protocol[:6],
                           "recheck": True,
                           "country": engine.country,
                           "comment": "",
                           "level": ENGINE_DEFAULT_LEVEL if engine.defaultLevel is None else engine.defaultLevel}
+                if '/' in name or '\\' in name:
+                    result["command"] = name
                 if engine.protocol == "xboard1":
                     result["protover"] = 1
                 if engine.protocol == "xboard2":
@@ -591,6 +593,10 @@ class EngineDiscoverer(GObject.GObject):
         if vm_args is not None:
             engine["vm_args"] = vm_args
         self.engines.append(engine)
+
+    def addEngineFromReference(self, engine):
+        if engine is not None:
+            self.engines.append(engine)
 
     def removeEngine(self, name):
         names = [engine["name"] for engine in self.engines]

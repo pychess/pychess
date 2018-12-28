@@ -9,7 +9,7 @@ from pychess.System import uistuff
 from pychess.System.prefix import getEngineDataPrefix, addDataPrefix
 from pychess.Utils.IconLoader import get_pixbuf
 from pychess.Players.engineNest import discoverer, is_uci, is_cecp, ENGINE_DEFAULT_LEVEL
-from pychess.Players.engineList import VM_LIST
+from pychess.Players.engineList import VM_LIST, listEnginesFromPath
 from pychess.Utils.isoCountries import ISO3166_LIST
 from pychess.widgets import newGameDialog
 from pychess.widgets import mainwindow
@@ -337,6 +337,77 @@ class EnginesDialog():
             engine_chooser_dialog.hide()
 
         self.widgets["add_engine_button"].connect("clicked", add)
+
+        ################################################################
+        # add in mass button
+        ################################################################
+
+        def addInMass(button):
+            # Ask the user to select a folder
+            folder_dlg = Gtk.FileChooserDialog(_("Choose folder"), None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+            answer = folder_dlg.run()
+            path = folder_dlg.get_filename()
+            folder_dlg.destroy()
+
+            # Search for the engines
+            if answer != Gtk.ResponseType.OK:
+                return False
+            possibleFiles = listEnginesFromPath(path, withRecursion=True)
+
+            # Remove the existing engines from the list
+            def isNewEngine(path):
+                sfn = os.path.basename(path)
+                for engine in discoverer.getEngines():
+                    if sfn in engine.get("command"):  # The short name must be unique
+                        return False
+                return True
+            possibleFiles = [fn for fn in possibleFiles if isNewEngine(fn)]
+            if len(possibleFiles) == 0:
+                return False
+
+            # Prepare the result in a dialog
+            mass_dialog = self.widgets["engine_list_dialog"]
+            mass_list = self.widgets["mass_list_treeview"]
+            if len(mass_list.get_columns()) == 0:  # Not initialized yet
+                mass_store = Gtk.ListStore(bool, str)
+                mass_list.set_model(mass_store)
+
+                def checkbox_renderer_cb(cell, path, model):
+                    model[path][0] = not model[path][0]
+                    return
+                checkbox_renderer = Gtk.CellRendererToggle()
+                checkbox_renderer.set_property("activatable", True)
+                checkbox_renderer.connect("toggled", checkbox_renderer_cb, mass_store)
+                mass_list.append_column(Gtk.TreeViewColumn(_("Import"), checkbox_renderer, active=0))
+                mass_list.append_column(Gtk.TreeViewColumn(_("File name"), Gtk.CellRendererText(), text=1))
+            else:
+                mass_store = mass_list.get_model()
+
+            mass_store.clear()
+            for fn in possibleFiles:
+                mass_store.append([False, fn])
+
+            # Show the dialog
+            answer = mass_dialog.run()
+            mass_dialog.hide()
+            if answer != Gtk.ResponseType.OK.real:
+                return False
+
+            # Add the new engines
+            self.add = True
+            found = False
+            for entry in mass_store:
+                if entry[0]:
+                    neweng = discoverer.getReferencedEngine(entry[1])
+                    if neweng is not None:
+                        discoverer.addEngineFromReference(neweng)
+                        found = True
+            self.add = False
+            if found:
+                discoverer.discover()
+            return True
+
+        self.widgets["mass_engine_button"].connect("clicked", addInMass)
 
         ################################################################
         def clearView():

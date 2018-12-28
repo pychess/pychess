@@ -711,7 +711,7 @@ def listEnginesFromPath(defaultPath, withRecursion):
 
             # Blacklisted keywords
             blacklisted = False
-            for kw in ["install", "reset", "remove", "delete", "purge", "config", "register"]:
+            for kw in ["install", "setup", "reset", "remove", "delete", "purge", "config", "register"]:
                 if kw in file_ci:
                     blacklisted = True
             if blacklisted:
