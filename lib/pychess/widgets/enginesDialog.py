@@ -344,7 +344,7 @@ class EnginesDialog():
 
         def addInMass(button):
             # Ask the user to select a folder
-            folder_dlg = Gtk.FileChooserDialog(_("Choose folder"), None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+            folder_dlg = Gtk.FileChooserDialog(_("Choose a folder"), None, Gtk.FileChooserAction.SELECT_FOLDER, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
             answer = folder_dlg.run()
             path = folder_dlg.get_filename()
             folder_dlg.destroy()
@@ -367,6 +367,7 @@ class EnginesDialog():
 
             # Prepare the result in a dialog
             mass_dialog = self.widgets["engine_list_dialog"]
+            self.widgets["mass_path_label"].set_text(path)
             mass_list = self.widgets["mass_list_treeview"]
             if len(mass_list.get_columns()) == 0:  # Not initialized yet
                 mass_store = Gtk.ListStore(bool, str)
@@ -385,7 +386,7 @@ class EnginesDialog():
 
             mass_store.clear()
             for fn in possibleFiles:
-                mass_store.append([False, fn])
+                mass_store.append([False, fn[len(path):]])
 
             # Show the dialog
             answer = mass_dialog.run()
@@ -398,9 +399,9 @@ class EnginesDialog():
             found = False
             for entry in mass_store:
                 if entry[0]:
-                    neweng = discoverer.getReferencedEngine(entry[1])
-                    if neweng is not None:
-                        discoverer.addEngineFromReference(neweng)
+                    newengine = discoverer.getReferencedEngine(path + entry[1])
+                    if newengine is not None:
+                        discoverer.addEngineFromReference(newengine)
                         found = True
             self.add = False
             if found:
