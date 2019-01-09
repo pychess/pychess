@@ -104,14 +104,14 @@ class PreviewPanel:
                 dialogue.format_secondary_text(err.args[1])
             dialogue.connect("response", lambda dialogue, a: dialogue.hide())
             dialogue.show()
+        self.boardview.noAnimation = True
         self.boardview.lastMove = None
         self.boardview._shown = self.gamemodel.lowply
 
-        self.boardview.redrawCanvas()
         if ply > 0 or self.persp.gamelist.ply > 0:
             self.boardview.shown = ply if ply > 0 else self.persp.gamelist.ply
         else:
-            self.boardview.showLast()
+            self.boardview.shown = self.boardview.model.ply
 
     def on_first_clicked(self, button):
         self.boardview.showFirst()
