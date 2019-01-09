@@ -27,7 +27,7 @@ __desc__ = _(
 __about__ = _("Official PyChess panel.")
 
 
-class Advisor(object):
+class Advisor:
     def __init__(self, store, name, mode):
         """ The tree store's columns are:
             (Board, Move, pv)           Indicate the suggested move
@@ -436,7 +436,7 @@ class EndgameAdvisor(Advisor):
             self.boardcontrol.play_or_add_move(board, move)
 
 
-class Sidepanel(object):
+class Sidepanel:
     def load(self, gmwidg):
         self.gmwidg = gmwidg
         self.boardcontrol = gmwidg.board

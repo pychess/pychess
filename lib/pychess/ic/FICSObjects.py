@@ -818,7 +818,7 @@ class FICSSeeks(GObject.GObject):
         self.connection.glm.refresh_seeks()
 
 
-class FICSBoard(object):
+class FICSBoard:
     def __init__(self, wms, bms, fen=None, pgn=None):
         assert isinstance(wms, int), wms
         assert isinstance(bms, int), bms

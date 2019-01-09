@@ -9,7 +9,7 @@ from pychess.Utils.const import ACTION_MENU_ITEMS
 ################################################################################
 
 
-class GtkMenuItem(object):
+class GtkMenuItem:
     def __init__(self,
                  name,
                  sensitive=False,

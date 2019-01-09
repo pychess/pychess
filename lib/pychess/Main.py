@@ -58,7 +58,7 @@ DRAG_RESTRICT = Gtk.TargetFlags.OTHER_APP
 DND_LIST = [Gtk.TargetEntry.new("text/uri-list", DRAG_RESTRICT, TARGET_TYPE_URI_LIST)]
 
 
-class GladeHandlers(object):
+class GladeHandlers:
     def __init__(self, app):
         self.app = app
 

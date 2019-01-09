@@ -7,7 +7,7 @@ from pychess.ic import BLOCK_START, BLOCK_SEPARATOR, BLOCK_END, BLKCMD_PASSWORD
 from pychess.ic.icc import UNIT_START, UNIT_END, DTGR_START, MY_ICC_PREFIX
 
 
-class ConsoleHandler(object):
+class ConsoleHandler:
     def __init__(self, callback):
         self.callback = callback
 
@@ -16,7 +16,7 @@ class ConsoleHandler(object):
             self.callback(line)
 
 
-class Prediction(object):
+class Prediction:
     def __init__(self, callback, *regexps):
         self.callback = callback
         self.name = callback.__name__
@@ -164,7 +164,7 @@ TelnetLine = collections.namedtuple('TelnetLine', ['line', 'code', 'code_type'])
 EmptyTelnetLine = TelnetLine("", None, None)
 
 
-class TelnetLines(object):
+class TelnetLines:
     def __init__(self, telnet, show_reply):
         self.telnet = telnet
         self.lines = collections.deque()
@@ -268,7 +268,7 @@ class TelnetLines(object):
         return lines
 
 
-class PredictionsTelnet(object):
+class PredictionsTelnet:
     def __init__(self, telnet, predictions, reply_cmd_dict, replay_dg_dict, replay_cn_dict):
         self.telnet = telnet
         self.predictions = predictions

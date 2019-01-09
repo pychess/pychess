@@ -22,7 +22,7 @@ except ImportError:
     sys.exit(1)
 
 
-class PyChess(object):
+class PyChess:
     def __init__(self):
         self.sd = MAXPLY
         self.skipPruneChance = 0

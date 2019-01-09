@@ -111,7 +111,7 @@ COPY, CLEAR, PASTE, INITIAL = 2, 3, 4, 5
 # ===============================================================================
 
 
-class _GameInitializationMode(object):
+class _GameInitializationMode:
     @classmethod
     def _ensureReady(cls):
         if not hasattr(_GameInitializationMode, "superhasRunInit"):

@@ -29,7 +29,7 @@ STRICT_FEN = False
 ################################################################################
 
 
-class LBoard(object):
+class LBoard:
     __hash__ = None
 
     ini_kings = (E1, E8)

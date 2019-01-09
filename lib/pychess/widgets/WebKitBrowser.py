@@ -7,7 +7,7 @@ def open_link(label, url):
     return True
 
 
-class WebKitBrowser(object):
+class WebKitBrowser:
     def __init__(self, url):
         from pychess.System.uistuff import keepWindowSize
         self.window = Gtk.Window()

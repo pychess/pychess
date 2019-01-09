@@ -63,7 +63,7 @@ class BulletCellRenderer(Gtk.CellRenderer):
 GObject.type_register(BulletCellRenderer)
 
 
-class Panel(object):
+class Panel:
     def start(self):
         pass
 

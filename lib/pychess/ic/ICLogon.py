@@ -43,7 +43,7 @@ class AutoLogoutException(Exception):
     pass
 
 
-class ICLogon(object):
+class ICLogon:
     def __init__(self):
         self.connection = None
         self.helperconn = None

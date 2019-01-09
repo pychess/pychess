@@ -68,7 +68,7 @@ STATUS = {
 }
 
 
-class GameType(object):
+class GameType:
     def __init__(self,
                  fics_name,
                  short_fics_name,

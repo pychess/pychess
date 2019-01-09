@@ -26,7 +26,7 @@ from pychess.widgets.gamewidget import getWidgets
 from pychess.perspectives import perspective_manager
 
 
-class GameNanny(object):
+class GameNanny:
     def __init__(self):
         self.offer_cids = defaultdict(dict)
         self.gmwidg_cids = defaultdict(list)

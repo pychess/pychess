@@ -18,7 +18,7 @@ def panel_name(module_name):
     return module_name.split(".")[-1]
 
 
-class Perspective(object):
+class Perspective:
     def __init__(self, name, label):
         self.name = name
         self.label = label
@@ -152,7 +152,7 @@ class Perspective(object):
         pass
 
 
-class PerspectiveManager(object):
+class PerspectiveManager:
     def __init__(self):
         self.perspectives = {}
         self.current_perspective = None

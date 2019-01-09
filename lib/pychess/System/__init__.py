@@ -125,7 +125,7 @@ def profile_me(fn):
 
 # Python Timer Class - Context Manager for Timing Code Blocks
 # Corey Goldberg - 2012
-class Timer(object):
+class Timer:
     def __init__(self, text):
         self.text = text
         self.timer = default_timer
