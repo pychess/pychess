@@ -698,7 +698,10 @@ class Games(GObject.GObject, Perspective):
             return
         child = self.dock.get_children()[0]
         c1 = child.paned.get_child1()
-        c1.paned.set_position(c1.paned.get_position() + diff)
+        if hasattr(c1, "paned"):
+            c1.paned.set_position(c1.paned.get_position() + diff)
+        else:
+            child.paned.set_position(child.paned.get_position() + diff)
 
     def getheadbook(self):
         if len(self.key2gmwidg) == 0:
