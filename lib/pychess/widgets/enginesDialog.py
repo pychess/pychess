@@ -352,7 +352,7 @@ class EnginesDialog():
             # Search for the engines
             if answer != Gtk.ResponseType.OK:
                 return False
-            possibleFiles = listEnginesFromPath(path, withRecursion=True)
+            possibleFiles = listEnginesFromPath(path)
 
             # Remove the existing engines from the list
             def isNewEngine(path):
