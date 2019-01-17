@@ -696,19 +696,21 @@ for i in range(len(ENGINES_LIST) - 1, 1, - 1):
             ENGINES_LIST[j] = tmp
 
 
-# Mass detection of the engines
-def listEnginesFromPath(defaultPath, withRecursion):
+# Mass detection of the engines (no recursion if maxDepth=0)
+def listEnginesFromPath(defaultPath, maxDepth=3, withSymLink=False):
     # Base folders
     if defaultPath is None or defaultPath == "":
         base = os.getenv("PATH")
-        withRecursion = False
+        maxDepth = 1
     else:
         base = defaultPath
     base = [os.path.join(p, "") for p in base.split(";")]
 
     # List the executable files
     found_engines = []
-    for dir in base:
+    depth_current = 1
+    depth_next = len(base)
+    for depth_loop, dir in enumerate(base):
         files = os.listdir(dir)
         for file in files:
             file_ci = file.lower()
@@ -716,13 +718,19 @@ def listEnginesFromPath(defaultPath, withRecursion):
 
             # Recurse the folders by appending to the scanned list
             if os.path.isdir(fullname):
-                if withRecursion:
-                    base.append(os.path.join(dir, file, ""))
+                if not withSymLink and os.path.islink(fullname):
+                    continue
+                if maxDepth > 0:
+                    if depth_loop == depth_next:
+                        depth_current += 1
+                        depth_next = len(base)
+                    if depth_current <= maxDepth:
+                        base.append(os.path.join(dir, file, ""))
                 continue
 
             # Blacklisted keywords
             blacklisted = False
-            for kw in ["install", "setup", "reset", "remove", "delete", "purge", "config", "register"]:
+            for kw in ["install", "setup", "reset", "remove", "delete", "purge", "config", "register", "editor", "book"]:
                 if kw in file_ci:
                     blacklisted = True
             if blacklisted:
