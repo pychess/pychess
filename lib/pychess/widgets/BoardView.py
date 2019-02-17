@@ -1903,6 +1903,16 @@ class BoardView(Gtk.DrawingArea):
             while not self.shownIsMainLine():
                 self.showPrev()
 
+    def backToParentLine(self):
+        if self.model.examined and self.model.noTD:
+            self.model.backToMainLine()
+        else:
+            varline = self.shown_variation_idx
+            while True:
+                self.showPrev()
+                if self.shownIsMainLine() or self.shown_variation_idx != varline:
+                    break
+
     def setPremove(self, premove_piece, premove0, premove1, premove_ply, promotion=None):
         self.premove_piece = premove_piece
         self.premove0 = premove0
