@@ -655,9 +655,13 @@ class GameWidget(GObject.GObject):
         prevButton.set_tooltip_text(_("Step back one move"))
         toolbar.insert(prevButton, -1)
 
-        mainButton = Gtk.ToolButton(stock_id=Gtk.STOCK_REDO)
+        mainButton = Gtk.ToolButton(stock_id=Gtk.STOCK_GOTO_FIRST)
         mainButton.set_tooltip_text(_("Go back to the main line"))
         toolbar.insert(mainButton, -1)
+
+        upButton = Gtk.ToolButton(stock_id=Gtk.STOCK_GOTO_TOP)
+        upButton.set_tooltip_text(_("Go back to the parent line"))
+        toolbar.insert(upButton, -1)
 
         nextButton = Gtk.ToolButton(stock_id=Gtk.STOCK_MEDIA_FORWARD)
         nextButton.set_tooltip_text(_("Step forward one move"))
@@ -685,6 +689,7 @@ class GameWidget(GObject.GObject):
         self.cids[firstButton] = firstButton.connect("clicked", on_clicked, self.board.view.showFirst)
         self.cids[prevButton] = prevButton.connect("clicked", on_clicked, self.board.view.showPrev)
         self.cids[mainButton] = mainButton.connect("clicked", on_clicked, self.board.view.backToMainLine)
+        self.cids[upButton] = upButton.connect("clicked", on_clicked, self.board.view.backToParentLine)
         self.cids[nextButton] = nextButton.connect("clicked", on_clicked, self.board.view.showNext)
         self.cids[lastButton] = lastButton.connect("clicked", on_clicked, self.board.view.showLast)
         self.cids[filterButton] = filterButton.connect("clicked", on_clicked, self.find_in_database)
