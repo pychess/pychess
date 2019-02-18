@@ -245,7 +245,7 @@ class Sidepanel(ParrentListSection):
                 return 1
             else:
                 return -1
-        elif column is 7:
+        elif column == 7:
             return self.timeCompareFunction(model, iter0, iter1, column)
         else:
             value0 = row0[column]

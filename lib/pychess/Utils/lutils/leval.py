@@ -444,7 +444,7 @@ def evalDoubleQR7(board, color, phase):
 
     if bin((boards[QUEEN] | boards[ROOK]) & brank7[color]).count("1") >= 2 and \
             (opboards[KING] & brank8[color] or opboards[PAWN] & brank7[color]):
-            return 30
+        return 30
 
     return 0
 

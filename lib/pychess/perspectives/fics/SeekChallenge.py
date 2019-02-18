@@ -659,7 +659,7 @@ class SeekChallengeSection():
 
         numfingers = conf.get("numberOfFingers") + 1
         conf.set("numberOfFingers", numfingers)
-        if conf.get("numberOfTimesLoggedInAsRegisteredUser") is 1 and numfingers is 1:
+        if conf.get("numberOfTimesLoggedInAsRegisteredUser") == 1 and numfingers == 1:
             standard = self.__getRating(TYPE_STANDARD)
             blitz = self.__getRating(TYPE_BLITZ)
             lightning = self.__getRating(TYPE_LIGHTNING)

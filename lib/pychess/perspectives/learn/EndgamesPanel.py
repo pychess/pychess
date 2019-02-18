@@ -116,32 +116,32 @@ class Sidepanel():
 
 
 def start_endgame_from(pieces):
-        fen = create_fen(pieces)
+    fen = create_fen(pieces)
 
-        timemodel = TimeModel(0, 0)
-        gamemodel = LearnModel(timemodel)
-        gamemodel.set_learn_data(ENDGAME, pieces)
+    timemodel = TimeModel(0, 0)
+    gamemodel = LearnModel(timemodel)
+    gamemodel.set_learn_data(ENDGAME, pieces)
 
-        player_name = conf.get("firstName")
-        p0 = (LOCAL, Human, (WHITE, player_name), player_name)
+    player_name = conf.get("firstName")
+    p0 = (LOCAL, Human, (WHITE, player_name), player_name)
 
-        engine = discoverer.getEngineByName(discoverer.getEngineLearn())
-        ponder_off = True
-        engine_name = discoverer.getName(engine)
-        p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
-              (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), engine_name)
+    engine = discoverer.getEngineByName(discoverer.getEngineLearn())
+    ponder_off = True
+    engine_name = discoverer.getName(engine)
+    p1 = (ARTIFICIAL, discoverer.initPlayerEngine,
+          (engine, BLACK, 20, variants[NORMALCHESS], 60, 0, 0, ponder_off), engine_name)
 
-        def restart_analyzer(gamemodel):
-            create_task(gamemodel.restart_analyzer(HINT))
-        gamemodel.connect("learn_success", restart_analyzer)
+    def restart_analyzer(gamemodel):
+        create_task(gamemodel.restart_analyzer(HINT))
+    gamemodel.connect("learn_success", restart_analyzer)
 
-        def on_game_started(gamemodel):
-            perspective.activate_panel("annotationPanel")
-            create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
-        gamemodel.connect("game_started", on_game_started)
+    def on_game_started(gamemodel):
+        perspective.activate_panel("annotationPanel")
+        create_task(gamemodel.start_analyzer(HINT, force_engine=discoverer.getEngineLearn()))
+    gamemodel.connect("game_started", on_game_started)
 
-        perspective = perspective_manager.get_perspective("games")
-        create_task(perspective.generalStart(gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
+    perspective = perspective_manager.get_perspective("games")
+    create_task(perspective.generalStart(gamemodel, p0, p1, loaddata=(StringIO(fen), fen_loader, 0, -1)))
 
 
 def create_fen(pieces):

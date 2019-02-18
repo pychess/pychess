@@ -43,46 +43,46 @@ class SubProcess(GObject.GObject):
 
     @asyncio.coroutine
     def start(self):
-            log.debug("SubProcess.start(): create_subprocess_exec...", extra={"task": self.defname})
-            if sys.platform == "win32":
-                # To prevent engines opening console window
-                startupinfo = subprocess.STARTUPINFO()
-                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            else:
-                startupinfo = None
+        log.debug("SubProcess.start(): create_subprocess_exec...", extra={"task": self.defname})
+        if sys.platform == "win32":
+            # To prevent engines opening console window
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        else:
+            startupinfo = None
 
-            create = asyncio.create_subprocess_exec(* self.argv,
-                                                    stdin=asyncio.subprocess.PIPE,
-                                                    stdout=asyncio.subprocess.PIPE,
-                                                    startupinfo=startupinfo,
-                                                    env=self.env,
-                                                    cwd=self.cwd)
-            try:
-                self.proc = yield from asyncio.wait_for(create, TIME_OUT_SECOND)
-                self.pid = self.proc.pid
-                # print(self.pid, self.path)
-                if self.lowPriority:
-                    proc = psutil.Process(self.pid)
-                    if sys.platform == "win32":
-                        niceness = psutil.BELOW_NORMAL_PRIORITY_CLASS
-                    else:
-                        niceness = 15  # The higher, the lower the priority
-                    if psutil.__version__ >= "2.0.0":
-                        proc.nice(niceness)
-                    else:
-                        proc.set_nice(niceness)
-                self.read_stdout_task = create_task(self.read_stdout(self.proc.stdout))
-                self.write_task = None
-            except asyncio.TimeoutError:
-                log.warning("TimeoutError", extra={"task": self.defname})
-                raise
-            except GLib.GError:
-                log.warning("GLib.GError", extra={"task": self.defname})
-                raise
-            except Exception:
-                e = sys.exc_info()[0]
-                log.warning("%s" % e, extra={"task": self.defname})
-                raise
+        create = asyncio.create_subprocess_exec(* self.argv,
+                                                stdin=asyncio.subprocess.PIPE,
+                                                stdout=asyncio.subprocess.PIPE,
+                                                startupinfo=startupinfo,
+                                                env=self.env,
+                                                cwd=self.cwd)
+        try:
+            self.proc = yield from asyncio.wait_for(create, TIME_OUT_SECOND)
+            self.pid = self.proc.pid
+            # print(self.pid, self.path)
+            if self.lowPriority:
+                proc = psutil.Process(self.pid)
+                if sys.platform == "win32":
+                    niceness = psutil.BELOW_NORMAL_PRIORITY_CLASS
+                else:
+                    niceness = 15  # The higher, the lower the priority
+                if psutil.__version__ >= "2.0.0":
+                    proc.nice(niceness)
+                else:
+                    proc.set_nice(niceness)
+            self.read_stdout_task = create_task(self.read_stdout(self.proc.stdout))
+            self.write_task = None
+        except asyncio.TimeoutError:
+            log.warning("TimeoutError", extra={"task": self.defname})
+            raise
+        except GLib.GError:
+            log.warning("GLib.GError", extra={"task": self.defname})
+            raise
+        except Exception:
+            e = sys.exc_info()[0]
+            log.warning("%s" % e, extra={"task": self.defname})
+            raise
 
     def write(self, line):
         self.write_task = create_task(self.write_stdin(self.proc.stdin, line))
@@ -225,7 +225,7 @@ class Application(Gtk.Application):
                 break
 
     def on_quit(self, action, param):
-            self.quit()
+        self.quit()
 
 
 if __name__ == "__main__":

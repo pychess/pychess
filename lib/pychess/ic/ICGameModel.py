@@ -178,7 +178,7 @@ class ICGameModel(GameModel):
                 self.ficsgame.move_queue.put_nowait("stm")
 
     def update_board(self, gameno, ply, curcol, lastmove, fen, wname,
-                      bname, wms, bms):
+                     bname, wms, bms):
         log.debug(("ICGameModel.update_board: id=%s self.ply=%s self.players=%s gameno=%s " +
                   "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s") %
                   (str(id(self)), str(self.ply), repr(self.players), str(gameno), str(wname), str(bname),
