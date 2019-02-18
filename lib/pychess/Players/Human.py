@@ -220,6 +220,8 @@ class Human(Player):
     def playerUndoMoves(self, movecount, gamemodel):
         log.debug("Human.playerUndoMoves:  movecount=%s self=%s gamemodel.curplayer=%s" %
                   (movecount, self, gamemodel.curplayer))
+        self.gmwidg.clearMessages()
+
         # If the movecount is odd, the player has changed, and we have to interupt
         if movecount % 2 == 1 and gamemodel.curplayer != self:
             # If it is no longer us to move, we raise TurnInterruprt in order to
@@ -259,6 +261,8 @@ class Human(Player):
 
         def response_cb(infobar, response, message):
             if response == Gtk.ResponseType.ACCEPT:
+                if offer.type == TAKEBACK_OFFER:
+                    self.gamemodel.undoMoves(offer.param)
                 self.emit("accept", offer)
             elif response == Gtk.ResponseType.NO:
                 self.emit("decline", offer)

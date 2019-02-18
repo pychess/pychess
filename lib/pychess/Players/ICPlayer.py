@@ -146,7 +146,7 @@ class ICPlayer(Player):
 
             gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms = item
             log.debug("ICPlayer.makeMove got: %s %s %s %s" % (gameno, ply, curcol, lastmove))
-            self.gamemodel.onBoardUpdate(gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
+            self.gamemodel.update_board(gameno, ply, curcol, lastmove, fen, wname, bname, wms, bms)
 
             if self.turn_interrupt:
                 self.turn_interrupt = False

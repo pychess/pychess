@@ -124,3 +124,4 @@ class InfoBarNotebook(Gtk.Notebook):
     def clear_messages(self):
         for child in self.get_children():
             self.remove(child)
+        self.show_all()

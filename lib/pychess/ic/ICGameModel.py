@@ -177,9 +177,9 @@ class ICGameModel(GameModel):
                 log.debug('ICGameModel.onBoardSetup: put_nowait("stm"')
                 self.ficsgame.move_queue.put_nowait("stm")
 
-    def onBoardUpdate(self, gameno, ply, curcol, lastmove, fen, wname,
+    def update_board(self, gameno, ply, curcol, lastmove, fen, wname,
                       bname, wms, bms):
-        log.debug(("ICGameModel.onBoardUpdate: id=%s self.ply=%s self.players=%s gameno=%s " +
+        log.debug(("ICGameModel.update_board: id=%s self.ply=%s self.players=%s gameno=%s " +
                   "wname=%s bname=%s ply=%s curcol=%s lastmove=%s fen=%s wms=%s bms=%s") %
                   (str(id(self)), str(self.ply), repr(self.players), str(gameno), str(wname), str(bname),
                    str(ply), str(curcol), str(lastmove), str(fen), str(wms), str(bms)))
@@ -187,7 +187,7 @@ class ICGameModel(GameModel):
             return
 
         if self.timed:
-            log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s: updating timemodel" %
+            log.debug("ICGameModel.update_board: id=%d self.players=%s: updating timemodel" %
                       (id(self), str(self.players)))
             # If game end coming from helper connection before last move made
             # we have to tap() ourselves
@@ -201,7 +201,7 @@ class ICGameModel(GameModel):
             self.timemodel.updatePlayer(BLACK, bms / 1000.)
 
         if ply < self.ply:
-            log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s \
+            log.debug("ICGameModel.update_board: id=%d self.players=%s \
                       self.ply=%d ply=%d: TAKEBACK" %
                       (id(self), str(self.players), self.ply, ply))
             for offer in list(self.offers.keys()):
@@ -226,7 +226,7 @@ class ICGameModel(GameModel):
                 curPlayer.resetPosition()
 
         elif ply > self.ply + 1:
-            log.debug("ICGameModel.onBoardUpdate: id=%d self.players=%s \
+            log.debug("ICGameModel.update_board: id=%d self.players=%s \
                       self.ply=%d ply=%d: FORWARD JUMP" %
                       (id(self), str(self.players), self.ply, ply))
             self.status = RUNNING
