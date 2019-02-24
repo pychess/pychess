@@ -22,7 +22,7 @@ from pychess.external.chess_db import Parser
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
     WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE, \
     ABORTED_REASONS, ADJOURNED_REASONS, WON_CALLFLAG, DRAW_ADJUDICATION, WON_ADJUDICATION, \
-    WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, RUNNING
+    WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, RUNNING, TOOL_NONE, TOOL_CHESSDB, TOOL_SCOUTFISH
 
 from pychess.System import conf
 from pychess.System.Log import log
@@ -527,6 +527,20 @@ class PGNFile(ChessFile):
             for mstat in move_stat["moves"]:
                 rows.append((mstat["move"], int(mstat["games"]), int(mstat["wins"]), int(mstat["losses"]), int(mstat["draws"])))
         return rows
+
+    def has_position(self, fen):
+        # ChessDB (prioritary)
+        if self.chess_db is not None:
+            ret = self.chess_db.find("limit %s skip %s %s" % (1, 0, fen))
+            if len(ret["moves"]) > 0:
+                return TOOL_CHESSDB, True
+        # Scoutfish (alternate by approximation)
+        if self.scoutfish is not None:
+            q = {"limit": 1, "skip": 0, "sub-fen": fen}
+            ret = self.scoutfish.scout(q)
+            if ret["match count"] > 0:
+                return TOOL_SCOUTFISH, True
+        return TOOL_NONE, False
 
     def set_tag_order(self, order_col, is_desc):
         self.order_col = order_col

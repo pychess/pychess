@@ -7,6 +7,8 @@ import re
 import pexpect
 from pexpect.popen_spawn import PopenSpawn
 
+from pychess.Players.ProtocolEngine import TIME_OUT_SECOND
+
 PGN_HEADERS_REGEX = re.compile(r"\[([A-Za-z0-9_]+)\s+\"(.*)\"\]")
 
 
@@ -14,7 +16,7 @@ class Parser:
     def __init__(self, engine=''):
         if not engine:
             engine = './parser'
-        self.p = PopenSpawn(engine, encoding="utf-8")
+        self.p = PopenSpawn(engine, timeout=TIME_OUT_SECOND, encoding="utf-8")
         self.pgn = ''
         self.db = ''
 

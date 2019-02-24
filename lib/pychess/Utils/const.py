@@ -9,6 +9,9 @@ LOCAL, ARTIFICIAL, REMOTE = range(3)
 # Engine strengths
 EASY, INTERMEDIATE, EXPERT = range(3)
 
+# Tools
+TOOL_NONE, TOOL_CHESSDB, TOOL_SCOUTFISH = range(3)
+
 # Player colors
 WHITE, BLACK = range(2)
 
