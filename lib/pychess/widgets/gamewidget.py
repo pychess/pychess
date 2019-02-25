@@ -15,7 +15,7 @@ from pychess.System.Log import log
 from pychess.Utils.IconLoader import get_pixbuf
 from pychess.Utils.const import REMOTE, UNFINISHED_STATES, PAUSED, RUNNING, LOCAL, \
     WHITE, BLACK, ACTION_MENU_ITEMS, DRAW, UNDOABLE_STATES, HINT, SPY, WHITEWON, \
-    MENU_ITEMS, BLACKWON, DROP, FAN_PIECES
+    MENU_ITEMS, BLACKWON, DROP, FAN_PIECES, TOOL_CHESSDB, TOOL_SCOUTFISH
 from pychess.Utils.GameModel import GameModel
 from pychess.Utils.Move import listToMoves
 from pychess.Utils.lutils import lmove
@@ -710,21 +710,42 @@ class GameWidget(GObject.GObject):
     def find_in_database(self):
         persp = perspective_manager.get_perspective("database")
         if persp.chessfile is None:
+            dialogue = Gtk.MessageDialog(pychess.widgets.mainwindow(),
+                                         type=Gtk.MessageType.ERROR,
+                                         buttons=Gtk.ButtonsType.OK,
+                                         message_format=_("No database is currently opened."))
+            dialogue.run()
+            dialogue.destroy()
             return
 
         view = self.board.view
         shown_board = self.gamemodel.getBoardAtPly(view.shown, view.shown_variation_idx)
         fen = shown_board.asFen()
 
-        result = persp.chessfile.get_book_moves(fen)
-        if len(result) == 0:
-            dialogue = Gtk.MessageDialog(pychess.widgets.mainwindow(), type=Gtk.MessageType.WARNING,
+        tool, found = persp.chessfile.has_position(fen)
+        if not found:
+            dialogue = Gtk.MessageDialog(pychess.widgets.mainwindow(),
+                                         type=Gtk.MessageType.WARNING,
                                          buttons=Gtk.ButtonsType.OK,
-                                         message_format=_("Position not in current database"))
+                                         message_format=_("The position does not exist in the database."))
             dialogue.run()
             dialogue.destroy()
         else:
-            persp.chessfile.set_fen_filter(fen)
+            if tool == TOOL_CHESSDB:
+                persp.chessfile.set_fen_filter(fen)
+            elif tool == TOOL_SCOUTFISH:
+                dialogue = Gtk.MessageDialog(pychess.widgets.mainwindow(),
+                                             type=Gtk.MessageType.QUESTION,
+                                             buttons=Gtk.ButtonsType.YES_NO,
+                                             message_format=_("An approximate position has been found. Do you want to display it ?"))
+                response = dialogue.run()
+                dialogue.destroy()
+                if response != Gtk.ResponseType.YES:
+                    return
+
+                persp.chessfile.set_scout_filter({'sub-fen': fen})
+            else:
+                raise RuntimeError('Internal error')
             persp.gamelist.ply = view.shown
             persp.gamelist.load_games()
             perspective_manager.activate_perspective("database")
