@@ -234,7 +234,7 @@
                         <property name="image">image1</property>
                         <property name="use_stock">False</property>
                         <child type="submenu">
-                          <object class="GtkMenu">
+                          <object class="GtkMenu" id="new_game_menu">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
