@@ -225,7 +225,7 @@
                   <object class="GtkMenu" id="game_menu">
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="new_game1">
+                      <object class="GtkImageMenuItem" id="new_game_group1">
                         <property name="label" translatable="yes">_New Game</property>
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
@@ -233,8 +233,40 @@
                         <property name="use_underline">True</property>
                         <property name="image">image1</property>
                         <property name="use_stock">False</property>
-                        <signal name="activate" handler="on_new_game1_activate" swapped="no"/>
-                        <accelerator key="N" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <child type="submenu">
+                          <object class="GtkMenu" id="new_game_menu">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkMenuItem" id="new_game1">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">From _Default Start Position</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="on_new_game1_activate" swapped="no"/>
+                                <accelerator key="N" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkMenuItem" id="set_up_position1">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">From _Custom Position</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="on_set_up_position_activate" swapped="no"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkMenuItem" id="enter_game_notation1">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">From _Game Notation</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="on_enter_game_notation_activate" swapped="no"/>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                     </child>
                     <child>
@@ -279,26 +311,6 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="set_up_position1">
-                        <property name="use_action_appearance">False</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Setup Position</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_set_up_position_activate" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="enter_game_notation1">
-                        <property name="use_action_appearance">False</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Enter Game _Notation</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_enter_game_notation_activate" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
                       <object class="GtkSeparatorMenuItem" id="skillelinje4">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -333,16 +345,6 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="share_game">
-                        <property name="use_action_appearance">False</property>
-                        <property name="visible">True</property>
-                        <property name="sensitive">False</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Share Game</property>
-                        <signal name="activate" handler="on_share_game_activate" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
                       <object class="GtkImageMenuItem" id="export_position1">
                         <property name="label" translatable="yes">_Export Position</property>
                         <property name="use_action_appearance">False</property>
@@ -357,16 +359,13 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="analyze_game1">
-                        <property name="label" translatable="yes">_Analyze Game</property>
-                        <property name="use_action_appearance">False</property>
+                      <object class="GtkMenuItem" id="share_game">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Share _Game</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">False</property>
-                        <signal name="activate" handler="on_analyze_game_activate" swapped="no"/>
-                        <accelerator key="A" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                        <signal name="activate" handler="on_share_game_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -395,6 +394,18 @@
                         <property name="label" translatable="yes">Player _Rating</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_player_rating1_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="analyze_game1">
+                        <property name="label" translatable="yes">_Analyze Game</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_analyze_game_activate" swapped="no"/>
+                        <accelerator key="A" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>

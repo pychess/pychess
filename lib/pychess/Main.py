@@ -174,6 +174,25 @@ class GladeHandlers:
     def on_new_game1_activate(self, widget):
         newGameDialog.NewGameMode.run()
 
+    def on_set_up_position_activate(self, widget):
+        rotate_menu = gamewidget.getWidgets()["rotate_board1"]
+        rotate_menu.set_sensitive(True)
+        persp = perspective_manager.get_perspective("games")
+        gmwidg = persp.cur_gmwidg()
+        if gmwidg is not None:
+            ply = gmwidg.board.view.shown
+            variation = gmwidg.board.view.shown_variation_idx
+            board = gmwidg.gamemodel.getBoardAtPly(ply, variation)
+            fen = board.asFen()
+            variant = board.variant
+        else:
+            fen = None
+            variant = NORMALCHESS
+        newGameDialog.SetupPositionExtension.run(fen, variant)
+
+    def on_enter_game_notation_activate(self, widget):
+        newGameDialog.EnterNotationExtension.run()
+
     def on_play_internet_chess_activate(self, widget):
         ICLogon.run()
 
@@ -196,25 +215,6 @@ class GladeHandlers:
                     perspective = perspective_manager.get_perspective("database")
                     perspective.open_chessfile(filename)
 
-    def on_set_up_position_activate(self, widget):
-        rotate_menu = gamewidget.getWidgets()["rotate_board1"]
-        rotate_menu.set_sensitive(True)
-        persp = perspective_manager.get_perspective("games")
-        gmwidg = persp.cur_gmwidg()
-        if gmwidg is not None:
-            ply = gmwidg.board.view.shown
-            variation = gmwidg.board.view.shown_variation_idx
-            board = gmwidg.gamemodel.getBoardAtPly(ply, variation)
-            fen = board.asFen()
-            variant = board.variant
-        else:
-            fen = None
-            variant = NORMALCHESS
-        newGameDialog.SetupPositionExtension.run(fen, variant)
-
-    def on_enter_game_notation_activate(self, widget):
-        newGameDialog.EnterNotationExtension.run()
-
     def on_save_game1_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
         gmwidg = perspective.cur_gmwidg()
@@ -227,11 +227,6 @@ class GladeHandlers:
         position = gmwidg.board.view.shown
         perspective.saveGameAs(gmwidg.gamemodel, position)
 
-    def on_share_game_activate(self, widget):
-        perspective = perspective_manager.get_perspective("games")
-        gmwidg = perspective.cur_gmwidg()
-        chesspastebin.paste(gmwidg.gamemodel)
-
     def on_export_position_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
         gmwidg = perspective.cur_gmwidg()
@@ -239,12 +234,17 @@ class GladeHandlers:
         perspective = perspective_manager.get_perspective("games")
         perspective.saveGameAs(gmwidg.gamemodel, position, export=True)
 
-    def on_analyze_game_activate(self, widget):
-        analyze_game_dialog = AnalyzeGameDialog()
-        analyze_game_dialog.run()
+    def on_share_game_activate(self, widget):
+        perspective = perspective_manager.get_perspective("games")
+        gmwidg = perspective.cur_gmwidg()
+        chesspastebin.paste(gmwidg.gamemodel)
 
     def on_properties1_activate(self, widget):
         gameinfoDialog.run(gamewidget.getWidgets())
+
+    def on_analyze_game_activate(self, widget):
+        analyze_game_dialog = AnalyzeGameDialog()
+        analyze_game_dialog.run()
 
     def on_player_rating1_activate(self, widget):
         playerinfoDialog.run(gamewidget.getWidgets())
