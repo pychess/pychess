@@ -8,6 +8,9 @@ import site
 import sys
 import subprocess
 
+this_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path = [os.path.join(this_dir, "lib")] + sys.path
+
 from pychess.Savers.pgn import PGNFile
 from pychess.System.protoopen import protoopen
 
