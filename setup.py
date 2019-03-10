@@ -185,10 +185,12 @@ DATA_FILES += [("share/pychess/pieces/ttf", glob('pieces/ttf/*.ttf'))]
 
 # Lectures, puzzles, lessons
 for filename in glob('learn/puzzles/*.pgn'):
-    PGNFile(protoopen(filename))
+    chessfile = PGNFile(protoopen(filename))
+    chessfile.init_tag_database()
 
 for filename in glob('learn/lessons/*.pgn'):
-    PGNFile(protoopen(filename))
+    chessfile = PGNFile(protoopen(filename))
+    chessfile.init_tag_database()
 
 DATA_FILES += [("share/pychess/learn/puzzles", glob('learn/puzzles/*.olv'))]
 DATA_FILES += [("share/pychess/learn/puzzles", glob('learn/puzzles/*.pgn'))]
