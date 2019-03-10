@@ -8,6 +8,9 @@ import site
 import sys
 import subprocess
 
+from pychess.Savers.pgn import PGNFile
+from pychess.System.protoopen import protoopen
+
 
 msi = False
 if len(sys.argv) > 1 and sys.argv[1] == "bdist_msi":
@@ -178,9 +181,17 @@ DATA_FILES += [("share/pychess/pieces", glob('pieces/*.png'))]
 DATA_FILES += [("share/pychess/pieces/ttf", glob('pieces/ttf/*.ttf'))]
 
 # Lectures, puzzles, lessons
+for filename in glob('learn/puzzles/*.pgn'):
+    PGNFile(protoopen(filename))
+
+for filename in glob('learn/lessons/*.pgn'):
+    PGNFile(protoopen(filename))
+
 DATA_FILES += [("share/pychess/learn/puzzles", glob('learn/puzzles/*.olv'))]
 DATA_FILES += [("share/pychess/learn/puzzles", glob('learn/puzzles/*.pgn'))]
+DATA_FILES += [("share/pychess/learn/puzzles", glob('learn/puzzles/*.sqlite'))]
 DATA_FILES += [("share/pychess/learn/lessons", glob('learn/lessons/*.pgn'))]
+DATA_FILES += [("share/pychess/learn/lessons", glob('learn/lessons/*.sqlite'))]
 DATA_FILES += [("share/pychess/learn/lectures", glob('learn/lectures/*.txt'))]
 
 for dir in [d for d in listdir('pieces') if isdir(os.path.join('pieces', d)) and d != 'ttf']:

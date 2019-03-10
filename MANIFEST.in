@@ -2,7 +2,7 @@ include glade/*.glade glade/background.jpg glade/*.png glade/*.svg glade/16x16/*
 recursive-include pieces *
 include README.md AUTHORS ARTISTS DOCUMENTERS LICENSE INSTALL TRANSLATORS
 include sounds/*.ogg
-include learn/lectures/*.txt learn/lessons/*.pgn learn/puzzles/*.pgn learn/puzzles/*.olv
+include learn/lectures/*.txt learn/lessons/*.pgn learn/lessons/*.sqlite learn/puzzles/*.pgn learn/puzzles/*.sqlite learn/puzzles/*.olv
 include manpages/pychess.1.gz
 include menu/pychess
 include gtksourceview-3.0/language-specs/pgn.lang
