@@ -30,7 +30,7 @@ from pychess.System.protoopen import PGN_ENCODING
 from pychess.System.prefix import getEngineDataPrefix
 from pychess.Utils.lutils.LBoard import LBoard
 from pychess.Utils.GameModel import GameModel
-from pychess.Utils.lutils.lmove import toSAN, parseSAN, ParsingError
+from pychess.Utils.lutils.lmove import toSAN, parseAny, ParsingError, parseAny
 from pychess.Utils.Move import Move
 from pychess.Utils.elo import get_elo_rating_change_pgn
 from pychess.Utils.logic import getStatus
@@ -976,7 +976,7 @@ class PGNFile(ChessFile):
 
                     mstr = m.group(MOVE)
                     try:
-                        lmove = parseSAN(last_board, mstr)
+                        lmove = parseAny(last_board, mstr)
                     except ParsingError as err:
                         # TODO: save the rest as comment
                         # last_board.children.append(string[m.start():])
