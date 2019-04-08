@@ -713,8 +713,8 @@ class ThemeTab:
         def onResetColourClicked(_):
             """ :Description: Resets the chess board squares to factory default
             """
-            conf.set("lightcolour", conf.get("lightcolour"))
-            conf.set("darkcolour", conf.get("darkcolour"))
+            conf.set("lightcolour", conf.DEFAULTS["General"]["lightcolour"])
+            conf.set("darkcolour", conf.DEFAULTS["General"]["darkcolour"])
 
         widgets["reset_btn"].connect("clicked", onResetColourClicked)
 
