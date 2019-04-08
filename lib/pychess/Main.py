@@ -526,8 +526,8 @@ class PyChess(Gtk.Application):
         style_ctxt = gamewidget.getWidgets()["main_window"].get_style_context()
         LIGHT = hexcol(style_ctxt.lookup_color("p_light_color")[1])
         DARK = hexcol(style_ctxt.lookup_color("p_dark_color")[1])
-        conf.set("lightcolour", LIGHT)
-        conf.set("darkcolour", DARK)
+        conf.DEFAULTS["General"]["lightcolour"] = LIGHT
+        conf.DEFAULTS["General"]["darkcolour"] = DARK
 
         self.splash.destroy()
 

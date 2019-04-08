@@ -424,6 +424,7 @@ class BoardView(Gtk.DrawingArea):
         """
         self.light_colour = conf.get("lightcolour")
         self.dark_colour = conf.get("darkcolour")
+        self.redrawCanvas()
 
     def onBoardStyle(self, *args):
         """ If the preference to display another set of board colours has been
