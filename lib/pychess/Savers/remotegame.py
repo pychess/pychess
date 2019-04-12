@@ -3,7 +3,7 @@ import os
 import re
 import json
 from urllib.request import Request, urlopen
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 from html.parser import HTMLParser
 import base64
 
@@ -53,15 +53,15 @@ class InternetGameInterface:
 
         # Decode
         cs = response.info().get_content_charset()
-        if not cs is None:
+        if cs is not None:
             data = bytes.decode(cs)
         else:
             try:
                 data = bytes.decode('utf-8')
-            except:
+            except Exception:
                 try:
                     data = bytes.decode('latin-1')
-                except:
+                except Exception:
                     data = ''
 
         # Result
@@ -144,7 +144,7 @@ class InternetGameChessgames(InternetGameInterface):
             return False
 
         # Read the arguments
-        args = urllib.parse.parse_qs(parsed.query)
+        args = parse_qs(parsed.query)
         if 'gid' in args:
             gid = args['gid'][0]
             if gid.isdigit() and gid != '0':
@@ -192,11 +192,11 @@ class InternetGameFicsgames(InternetGameInterface):
     def assign_game(self, url):
         # Verify the URL
         parsed = urlparse(url)
-        if not parsed.netloc.lower() in ['www.ficsgames.org', 'ficsgames.org'] or not 'show' in parsed.path.lower():
+        if parsed.netloc.lower() not in ['www.ficsgames.org', 'ficsgames.org'] or not 'show' in parsed.path.lower():
             return False
 
         # Read the arguments
-        args = urllib.parse.parse_qs(parsed.query)
+        args = parse_qs(parsed.query)
         if 'ID' in args:
             gid = args['ID'][0]
             if gid.isdigit() and gid != '0':
@@ -252,7 +252,7 @@ class InternetGameChesstempo(InternetGameInterface):
 
         # Download
         url = 'http://chesstempo.com/requests/download_game_pgn.php?gameids=%s' % self.id
-        req = Request(url, headers = { 'User-Agent': self.userAgent })  # Else a random game is retrieved
+        req = Request(url, headers={'User-Agent': self.userAgent})  # Else a random game is retrieved
         response = urlopen(req)
         pgn = self.read_data(response)
         if len(pgn) <= 128:
@@ -295,7 +295,7 @@ class InternetGameChess24(InternetGameInterface):
 
         # Download the page
         url = 'https://chess24.com/en/game/%s' % self.id
-        req = Request(url, headers = { 'User-Agent': self.userAgent })  # Else HTTP 403 Forbidden
+        req = Request(url, headers={'User-Agent': self.userAgent})  # Else HTTP 403 Forbidden
         response = urlopen(req)
         pgn = self.read_data(response)
 
@@ -309,7 +309,7 @@ class InternetGameChess24(InternetGameInterface):
                 continue
 
             # Read the game from JSON
-            bourne = json.loads(line[pos1+17:pos2+1])
+            bourne = json.loads(line[pos1 + 17:pos2 + 1])
             game = self.json_field(bourne, 'chessGame')
             moves = self.json_field(game, 'moves')
             if None in [game, moves]:
@@ -318,15 +318,15 @@ class InternetGameChess24(InternetGameInterface):
             # Build the header of the PGN file
             result = self.json_field(game, 'meta/Result')
             pgn = '[Event "%s"]\n[Site "%s"]\n[Date "%s"]\n[Round "%s"]\n[White "%s"]\n[WhiteElo "%s"]\n[Black "%s"]\n[BlackElo "%s"]\n[Result "%s"]\n' % (
-                        self.json_field(game, 'meta/Event'),
-                        self.json_field(game, 'meta/Site'),
-                        self.json_field(game, 'meta/Date'),
-                        self.json_field(game, 'meta/Round'),
-                        self.json_field(game, 'meta/White/Name'),
-                        self.json_field(game, 'meta/White/Elo'),
-                        self.json_field(game, 'meta/Black/Name'),
-                        self.json_field(game, 'meta/Black/Elo'),
-                        result)
+                self.json_field(game, 'meta/Event'),
+                self.json_field(game, 'meta/Site'),
+                self.json_field(game, 'meta/Date'),
+                self.json_field(game, 'meta/Round'),
+                self.json_field(game, 'meta/White/Name'),
+                self.json_field(game, 'meta/White/Elo'),
+                self.json_field(game, 'meta/Black/Name'),
+                self.json_field(game, 'meta/Black/Elo'),
+                result)
 
             # Build the PGN
             board = LBoard(variant=FISCHERRANDOMCHESS)
@@ -346,7 +346,7 @@ class InternetGameChess24(InternetGameInterface):
                     kfen = kfen.replace('\/', '/')
                     try:
                         board.applyFen(kfen)
-                    except:
+                    except Exception:
                         return None
                     pgn += '[Variant "Fischerandom"]\n[SetUp "1"]\n[FEN "%s"]\n\n{ %s }\n' % (kfen, url)
                     head_complete = True
@@ -364,7 +364,7 @@ class InternetGameChess24(InternetGameInterface):
                             board.applyMove(kmove)
                         else:
                             pgn += kmove + ' '
-                    except:
+                    except Exception:
                         return None
 
             # Final result
@@ -385,11 +385,11 @@ class InternetGame365chess(InternetGameInterface):
     def assign_game(self, url):
         # Verify the URL
         parsed = urlparse(url)
-        if not parsed.netloc.lower() in ['www.365chess.com', '365chess.com'] or not 'view_game' in parsed.path.lower():
+        if parsed.netloc.lower() not in ['www.365chess.com', '365chess.com'] or not 'view_game' in parsed.path.lower():
             return False
 
         # Read the arguments
-        args = urllib.parse.parse_qs(parsed.query)
+        args = parse_qs(parsed.query)
         if 'g' in args:
             gid = args['g'][0]
             if gid.isdigit() and gid != '0':
@@ -411,8 +411,8 @@ class InternetGame365chess(InternetGameInterface):
         game = {}
         pos1 = pgn.find(".ApplyPgnMoveText('")
         pos2 = pgn.find("')", pos1)
-        if not -1 in [pos1, pos2]:
-            game['_pgn'] = pgn[pos1+19:pos2]
+        if -1 not in [pos1, pos2]:
+            game['_pgn'] = pgn[pos1 + 19:pos2]
 
         # Header
         lines = pgn.split("\n")
@@ -522,7 +522,7 @@ class InternetGameChessbomb(InternetGameInterface):
             return None
 
         # Download
-        req = Request(self.id, headers = { 'User-Agent': self.userAgent })  # Else HTTP 403 Forbidden
+        req = Request(self.id, headers={'User-Agent': self.userAgent})  # Else HTTP 403 Forbidden
         response = urlopen(req)
         pgn = self.read_data(response)
 
@@ -542,12 +542,12 @@ class InternetGameChessbomb(InternetGameInterface):
                     if pos1 == -1:
                         return
                     pos1 = data.find('"', pos1)
-                    pos2 = data.find('"', pos1+1)
-                    if not -1 in [pos1, pos2]:
+                    pos2 = data.find('"', pos1 + 1)
+                    if -1 not in [pos1, pos2]:
                         try:
-                            self.json = base64.b64decode(data[pos1+1:pos2]).decode().strip()
+                            self.json = base64.b64decode(data[pos1 + 1:pos2]).decode().strip()
                             self.json = json.loads(self.json)
-                        except:
+                        except Exception:
                             self.json = None
                             return
 
@@ -581,7 +581,7 @@ class InternetGameChessbomb(InternetGameInterface):
             pos1 = move.find('_')
             if pos1 == -1:
                 break
-            game['_pgn'] += move[pos1+1:] + ' '
+            game['_pgn'] += move[pos1 + 1:] + ' '
 
         # Rebuild the PGN game
         if len(game['_pgn']) == 0:
@@ -631,11 +631,13 @@ chess_providers = [InternetGameLichess(),
                    InternetGameChessbomb(),
                    InternetGameGeneric()]
 
+
 # Get the list of chess providers
 def get_internet_game_providers():
     list = [cp.get_description() for cp in chess_providers]
     list.sort()
     return list
+
 
 # Retrieve a game from a URL
 def get_internet_game_as_pgn(url):
@@ -651,7 +653,7 @@ def get_internet_game_as_pgn(url):
         if prov.assign_game(url):
             try:
                 pgn = prov.download_game()
-            except:
+            except Exception:
                 pgn = None
             if pgn is None:
                 continue
@@ -659,7 +661,7 @@ def get_internet_game_as_pgn(url):
             # Verify that it starts with the correct magic character (ex.: "<" denotes an HTML content, "[" a chess game, etc...)
             pgn = pgn.strip()
             if not pgn.startswith('['):
-                 return None
+                return None
 
             # Extract the first game
             pos = pgn.find("\n\n[")

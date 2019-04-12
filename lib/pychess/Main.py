@@ -248,10 +248,10 @@ class GladeHandlers:
 
         # Load the game
         perspective = perspective_manager.get_perspective("games")
-        create_task(perspective.generalStart(   GameModel(),
-                                                (LOCAL, Human, (WHITE, _("White")), _("White")),
-                                                (LOCAL, Human, (WHITE, _("Black")), _("Black")),
-                                                (StringIO(remdata), pgn, 0, -1)))
+        create_task(perspective.generalStart(GameModel(),
+                                             (LOCAL, Human, (WHITE, _("White")), _("White")),
+                                             (LOCAL, Human, (BLACK, _("Black")), _("Black")),
+                                             (StringIO(remdata), pgn, 0, -1)))
 
     def on_save_game1_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
