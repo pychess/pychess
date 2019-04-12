@@ -32,7 +32,7 @@ modules_to_test = (
     'savegame',
     'dialogs',
     'learn',
-    'remotegame',
+    # 'remotegame',
 )
 
 

@@ -192,7 +192,7 @@ class InternetGameFicsgames(InternetGameInterface):
     def assign_game(self, url):
         # Verify the URL
         parsed = urlparse(url)
-        if parsed.netloc.lower() not in ['www.ficsgames.org', 'ficsgames.org'] or not 'show' in parsed.path.lower():
+        if parsed.netloc.lower() not in ['www.ficsgames.org', 'ficsgames.org'] or 'show' not in parsed.path.lower():
             return False
 
         # Read the arguments
@@ -385,7 +385,7 @@ class InternetGame365chess(InternetGameInterface):
     def assign_game(self, url):
         # Verify the URL
         parsed = urlparse(url)
-        if parsed.netloc.lower() not in ['www.365chess.com', '365chess.com'] or not 'view_game' in parsed.path.lower():
+        if parsed.netloc.lower() not in ['www.365chess.com', '365chess.com'] or 'view_game' not in parsed.path.lower():
             return False
 
         # Read the arguments
