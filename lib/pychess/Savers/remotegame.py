@@ -20,6 +20,9 @@ from pychess.Utils.lutils.lmove import parseAny, toSAN
 # ssl._create_default_https_context = ssl._create_unverified_context
 
 
+TYPE_NONE, TYPE_GAME, TYPE_STUDY = range(3)
+
+
 # Abstract class to download a game from the Internet
 class InternetGameInterface:
     # Internal
@@ -83,33 +86,52 @@ class InternetGameInterface:
 
 # Lichess.org
 class InternetGameLichess(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.url_type = TYPE_NONE
+        self.url_tld = 'org'
+
     def get_description(self):
         return 'Lichess.org -- %s' % _('Download link')
 
     def get_test_links(self):
-        return [('http://lichess.org/CA4bR2b8/black/analysis#12', True),    # Game in advanced position
-                ('https://lichess.org/CA4bR2b8', True),                     # Canonical address
-                ('https://lichess.org/game/export/CA4bR2b8', True),         # Download link
-                ('http://fr.lichess.org/@/thibault', False),                # Not a game (user page)
-                ('http://lichess.org/blog', False),                         # Not a game (page)
-                ('http://lichess.dev/ABCD1234', False),                     # Not a game (wrong ID)
-                ('https://LICHESS.org/nGhOUXdP?p=0', True),                 # Variant game with parameter
-                ('https://lichess.org/nGhOUXdP?p=0#3', True)]               # Variant game with parameter and anchor
+        return [('http://lichess.org/CA4bR2b8/black/analysis#12', True),        # Game in advanced position
+                ('https://lichess.org/CA4bR2b8', True),                         # Canonical address
+                ('https://lichess.org/game/export/CA4bR2b8', True),             # Download link
+                ('http://fr.lichess.org/@/thibault', False),                    # Not a game (user page)
+                ('http://lichess.org/blog', False),                             # Not a game (page)
+                ('http://lichess.dev/ABCD1234', False),                         # Not a game (wrong ID)
+                ('https://LICHESS.org/nGhOUXdP?p=0', True),                     # Variant game with parameter
+                ('https://lichess.org/nGhOUXdP?p=0#3', True),                   # Variant game with parameter and anchor
+                ('https://hu.lichess.org/study/hr4H7sOB?page=1', True),         # Study of one game with unused parameter
+                ('https://lichess.org/study/hr4H7sOB/fvtzEXvi.pgn#32', True),   # Chapter of a study with anchor
+                ('https://lichess.org/STUDY/hr4H7sOB.pgn', True)]               # Study of one game
 
     def assign_game(self, url):
-        # Parse the provided URL to retrieve the ID
+        # Parse the provided URL to retrieve the ID of the game
         rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/(game\/export\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE)
         m = rxp.match(url)
-        if m is None:
-            return False
+        if m is not None:
+            id = str(m.group(4))
+            if len(id) == 8:
+                self.url_type = TYPE_GAME
+                self.id = id
+                self.url_tld = m.group(2)
+                return True
 
-        # Extract the identifier
-        id = str(m.group(4))
-        if len(id) != 8:
-            return False
-        else:
-            self.id = id
-            return True
+        # Do the same for a study
+        rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)
+        m = rxp.match(url)
+        if m is not None:
+            id = str(m.group(3))
+            if len(id) in [8, 17]:
+                self.url_type = TYPE_STUDY
+                self.id = id
+                self.url_tld = m.group(2)
+                return True
+
+        # Nothing found
+        return False
 
     def download_game(self):
         # Check
@@ -117,8 +139,14 @@ class InternetGameLichess(InternetGameInterface):
             return None
 
         # Download (possible error 404)
-        url = 'http://lichess.org/game/export/%s?literate=1' % self.id
-        response = urlopen(url)
+        if self.url_type == TYPE_GAME:
+            url = 'https://lichess.%s/game/export/%s?literate=1' % (self.url_tld, self.id)
+        elif self.url_type == TYPE_STUDY:
+            url = 'https://lichess.%s/study/%s.pgn' % (self.url_tld, self.id)
+        else:
+            return None
+        req = Request(url, headers={'User-Agent': self.userAgent})  # For the studies
+        response = urlopen(req)
         return self.read_data(response)
 
 
@@ -228,7 +256,7 @@ class InternetGameChesstempo(InternetGameInterface):
         return [('https://chesstempo.com/gamedb/game/2046457', True),               # Game
                 ('https://chesstempo.com/gamedb/game/2046457/foo/bar/123', True),   # Game with additional path
                 ('https://www.chesstempo.com/gamedb/game/2046457?p=0#tag', True),   # Game with additional parameters
-                ('http://chesstempo.com', False)]                                   # Not a game
+                ('http://chesstempo.com/faq.html', False)]                          # Not a game
 
     def assign_game(self, url):
         # Parse the provided URL to retrieve the ID
@@ -600,7 +628,7 @@ class InternetGameGeneric(InternetGameInterface):
         return 'Generic -- %s' % _('Various techniques')
 
     def get_test_links(self):
-        return []
+        return None
 
     def assign_game(self, url):
         self.id = url
@@ -614,10 +642,10 @@ class InternetGameGeneric(InternetGameInterface):
         # Download
         response = urlopen(self.id)
         mime = response.info().get_content_type().lower()
-        if mime != 'application/x-chess-pgn':
-            return None
-        else:
+        if mime == 'application/x-chess-pgn':
             return self.read_data(response)
+        else:
+            return None
 
 
 # Interface
@@ -646,7 +674,7 @@ def get_internet_game_as_pgn(url):
         return None
     p = urlparse(url.strip())
     if '' in [p.scheme, p.netloc, p.path]:
-        return 0
+        return None
 
     # Download a game for each provider
     for prov in chess_providers:

@@ -11,7 +11,7 @@ class RemoteGameTestCase(unittest.TestCase):
 
             # Pick one link only to not overload the remote server
             list = cp.get_test_links()
-            if len(list) == 0:
+            if list is None or len(list) == 0:
                 continue
             url, expected = random.choice(list)
             print('- Target link : %s' % url)
