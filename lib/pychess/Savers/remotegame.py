@@ -74,9 +74,6 @@ class InternetGameInterface:
     def get_description(self):
         pass
 
-    def get_test_links(self):
-        pass
-
     def assign_game(self, url):
         pass
 
@@ -93,19 +90,6 @@ class InternetGameLichess(InternetGameInterface):
 
     def get_description(self):
         return 'Lichess.org -- %s' % _('Download link')
-
-    def get_test_links(self):
-        return [('http://lichess.org/CA4bR2b8/black/analysis#12', True),        # Game in advanced position
-                ('https://lichess.org/CA4bR2b8', True),                         # Canonical address
-                ('https://lichess.org/game/export/CA4bR2b8', True),             # Download link
-                ('http://fr.lichess.org/@/thibault', False),                    # Not a game (user page)
-                ('http://lichess.org/blog', False),                             # Not a game (page)
-                ('http://lichess.dev/ABCD1234', False),                         # Not a game (wrong ID)
-                ('https://LICHESS.org/nGhOUXdP?p=0', True),                     # Variant game with parameter
-                ('https://lichess.org/nGhOUXdP?p=0#3', True),                   # Variant game with parameter and anchor
-                ('https://hu.lichess.org/study/hr4H7sOB?page=1', True),         # Study of one game with unused parameter
-                ('https://lichess.org/study/hr4H7sOB/fvtzEXvi.pgn#32', True),   # Chapter of a study with anchor
-                ('https://lichess.org/STUDY/hr4H7sOB.pgn', True)]               # Study of one game
 
     def assign_game(self, url):
         # Parse the provided URL to retrieve the ID of the game
@@ -159,12 +143,6 @@ class InternetGameChessgames(InternetGameInterface):
     def get_description(self):
         return 'ChessGames.com -- %s' % _('Download link')
 
-    def get_test_links(self):
-        return [('http://www.chessgames.com/perl/chessgame?gid=1075462&comp=1', True),          # With computer analysis
-                ('http://www.chessgames.com/perl/chessgame?gid=1075463', True),                 # Without computer analysis
-                ('http://www.CHESSGAMES.com/perl/chessgame?gid=1075463&comp=1#test', True),     # Without computer analysis but requested in URL
-                ('http://www.chessgames.com/perl/chessgame?gid=1234567890', False)]             # Not a game
-
     def assign_game(self, url):
         # Verify the hostname
         parsed = urlparse(url)
@@ -211,12 +189,6 @@ class InternetGameFicsgames(InternetGameInterface):
     def get_description(self):
         return 'FicsGames.org -- %s' % _('Download link')
 
-    def get_test_links(self):
-        return [('https://www.ficsgames.org/cgi-bin/show.cgi?ID=451813954;action=save', True),      # Normal game
-                ('https://www.ficsgames.org/cgi-bin/show.cgi?ID=qwertz;action=save', True),         # Invalid identifier (not numeric)
-                ('https://www.ficsgames.org/cgi-bin/show.cgi?ID=0#anchor', False),                  # Invalid identifier (null)
-                ('https://www.ficsgames.org/about.html', False)]                                    # Not a game
-
     def assign_game(self, url):
         # Verify the URL
         parsed = urlparse(url)
@@ -251,12 +223,6 @@ class InternetGameFicsgames(InternetGameInterface):
 class InternetGameChesstempo(InternetGameInterface):
     def get_description(self):
         return 'ChessTempo.com -- %s' % _('Download link')
-
-    def get_test_links(self):
-        return [('https://chesstempo.com/gamedb/game/2046457', True),               # Game
-                ('https://chesstempo.com/gamedb/game/2046457/foo/bar/123', True),   # Game with additional path
-                ('https://www.chesstempo.com/gamedb/game/2046457?p=0#tag', True),   # Game with additional parameters
-                ('http://chesstempo.com/faq.html', False)]                          # Not a game
 
     def assign_game(self, url):
         # Parse the provided URL to retrieve the ID
@@ -297,9 +263,6 @@ class InternetGameChess24(InternetGameInterface):
 
     def get_description(self):
         return 'Chess24.com -- %s' % _('HTML parsing')
-
-    def get_test_links(self):
-        return [('https://chess24.com/en/game/DQhOOrJaQKS31LOiOmrqPg#anchor', True)]    # Game with anchor
 
     def assign_game(self, url):
         # Parse the provided URL to retrieve the ID
@@ -406,10 +369,6 @@ class InternetGame365chess(InternetGameInterface):
     def get_description(self):
         return '365chess.com -- %s' % _('HTML parsing')
 
-    def get_test_links(self):
-        return [('https://www.365chess.com/view_game.php?g=4187437#anchor', True),      # Game 1/2-1/2 for special chars
-                ('https://www.365chess.com/view_game.php?g=1234567890', False)]         # Not a game
-
     def assign_game(self, url):
         # Verify the URL
         parsed = urlparse(url)
@@ -481,10 +440,6 @@ class InternetGameChesspastebin(InternetGameInterface):
     def get_description(self):
         return 'ChessPastebin.com -- %s' % _('HTML parsing')
 
-    def get_test_links(self):
-        return [('https://www.chesspastebin.com/2018/12/29/anonymous-anonymous-by-george-2/', True),    # Game
-                ('https://www.chesspastebin.com', False)]                                               # Homepage
-
     def assign_game(self, url):
         # Verify the hostname
         parsed = urlparse(url)
@@ -529,10 +484,6 @@ class InternetGameChesspastebin(InternetGameInterface):
 class InternetGameChessbomb(InternetGameInterface):
     def get_description(self):
         return 'ChessBomb.com -- %s' % _('HTML parsing')
-
-    def get_test_links(self):
-        return [('https://www.chessbomb.com/arena/2019-katowice-chess-festival-im/04-Kubicka_Anna-Sliwicka_Alicja', True),  # Game
-                ('https://www.chessbomb.com/arena/2019-bangkok-chess-open', False)]                                         # Not a game (arena)
 
     def assign_game(self, url):
         # Verify the hostname
@@ -626,9 +577,6 @@ class InternetGameChessbomb(InternetGameInterface):
 class InternetGameGeneric(InternetGameInterface):
     def get_description(self):
         return 'Generic -- %s' % _('Various techniques')
-
-    def get_test_links(self):
-        return None
 
     def assign_game(self, url):
         self.id = url
