@@ -459,25 +459,39 @@ class InternetGameChesspastebin(InternetGameInterface):
         response = urlopen(self.id)
         pgn = self.read_data(response)
 
+        # Extract the game ID
+        rxp = re.compile('.*?\<div id=\"([0-9]+)_board\"\>\<\/div\>.*?', flags=re.IGNORECASE)
+        m = rxp.match(pgn.replace("\n", ''))
+        if m is None:
+            return None
+        gid = m.group(1)
+
         # Definition of the parser
         class chesspastebinparser(HTMLParser):
             def __init__(self):
                 HTMLParser.__init__(self)
-                self.last_tag = None
+                self.tag_ok = False
                 self.pgn = None
 
             def handle_starttag(self, tag, attrs):
-                self.last_tag = tag.lower()
+                if tag.lower() == 'div':
+                    for k, v in attrs:
+                        if k.lower() == 'id' and v == gid:
+                            self.tag_ok = True
 
             def handle_data(self, data):
-                if self.pgn is None and self.last_tag == 'div':
-                    if '[Event "' in data:
-                        self.pgn = data
+                if self.pgn is None and self.tag_ok:
+                    self.pgn = data
 
         # Read the PGN
         parser = chesspastebinparser()
         parser.feed(pgn)
-        return parser.pgn
+        pgn = parser.pgn
+        if pgn is not None:  # Any game should start here with '[' but you can paste anything
+            pgn = pgn.strip()
+            if not pgn.startswith('['):
+                pgn = "[Annotator \"ChessPastebin.com\"]\n%s" % pgn
+        return pgn
 
 
 # ChessBomb.com
