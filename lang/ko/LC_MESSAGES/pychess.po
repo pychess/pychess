@@ -5,13 +5,13 @@
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008
 # 김준혁 <kjh9348@gmail.com>, 2016
-# 김준혁 <kjh9348@gmail.com>, 2016,2018
+# 김준혁 <kjh9348@gmail.com>, 2016,2018-2019
 msgid ""
 msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-29 23:04+0100\n"
-"PO-Revision-Date: 2018-11-27 12:29+0000\n"
+"PO-Revision-Date: 2019-02-05 17:30+0000\n"
 "Last-Translator: 김준혁 <kjh9348@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/gbtami/pychess/language/ko/)\n"
 "MIME-Version: 1.0\n"
@@ -365,7 +365,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1427
 msgid "Only animate _moves"
-msgstr ""
+msgstr "이동 애니메이션만(_M)"
 
 #: glade/PyChess.glade:1432
 msgid "Only animate piece moves."
@@ -434,7 +434,7 @@ msgstr ""
 
 #: glade/PyChess.glade:1765
 msgid "<b>Opening, endgame</b>"
-msgstr ""
+msgstr "<b>오프닝, 엔드게임</b>"
 
 #: glade/PyChess.glade:1800
 msgid "Use _analyzer"
@@ -510,7 +510,7 @@ msgstr "밝은 색 칸 :"
 
 #: glade/PyChess.glade:2541
 msgid "Grid"
-msgstr ""
+msgstr "격자"
 
 #: glade/PyChess.glade:2562
 msgid "Dark Squares :"
@@ -536,7 +536,7 @@ msgstr ""
 
 #: glade/PyChess.glade:2691
 msgid "Font:"
-msgstr ""
+msgstr "글꼴:"
 
 #: glade/PyChess.glade:2729
 msgid "<b>Move text</b>"
@@ -789,7 +789,7 @@ msgstr "엔진 관리"
 
 #: glade/PyChess.glade:5020
 msgid "Command:"
-msgstr ""
+msgstr "명령:"
 
 #: glade/PyChess.glade:5034
 msgid "Protocol:"
@@ -855,7 +855,7 @@ msgstr "환경"
 
 #: glade/PyChess.glade:5318
 msgid "Preferred level:"
-msgstr ""
+msgstr "선호 레벨:"
 
 #: glade/PyChess.glade:5331
 msgid ""
@@ -1351,7 +1351,7 @@ msgstr ""
 
 #: glade/fics_lounge.glade:3234
 msgid "<b>Your Color</b>"
-msgstr ""
+msgstr "<b>내 색</b>"
 
 #: glade/fics_lounge.glade:3293
 msgid "Play normal chess rules"
@@ -1551,7 +1551,7 @@ msgstr "상대방(_O):"
 
 #: glade/taskers.glade:161
 msgid "_Your Color:"
-msgstr ""
+msgstr "내 색(_Y):"
 
 #: glade/taskers.glade:228
 msgid "<b>_Start Game</b>"
@@ -1595,7 +1595,7 @@ msgstr ""
 
 #: glade/taskers.glade:723
 msgid "Category:"
-msgstr ""
+msgstr "분류:"
 
 #: glade/taskers.glade:796
 msgid "<b>Start learning</b>"
@@ -4059,12 +4059,12 @@ msgstr ""
 
 #: lib/pychess/widgets/ExternalsDialog.py:20
 msgid "Ask for permissions"
-msgstr ""
+msgstr "권한 요청"
 
 #: lib/pychess/widgets/ExternalsDialog.py:34
 msgid ""
 "Some of PyChess features needs your permission to download external programs"
-msgstr ""
+msgstr "PyChess의 일부 기능을 위해 외부 프로그램을 다운로드할 수 있는 권한이 필요합니다."
 
 #: lib/pychess/widgets/ExternalsDialog.py:38
 msgid "database querying needs scoutfish"
@@ -4080,7 +4080,7 @@ msgstr ""
 
 #: lib/pychess/widgets/ExternalsDialog.py:67
 msgid "Don't show this dialog on startup."
-msgstr ""
+msgstr "시작 시 이 대화상자 보이지 않기"
 
 #: lib/pychess/widgets/InfoPanel.py:88
 msgid "No conversation's selected"
@@ -4190,7 +4190,7 @@ msgstr "중단"
 
 #: lib/pychess/widgets/enginesDialog.py:43
 msgid "You have unsaved changes. Do you want to save before leaving?"
-msgstr ""
+msgstr "저장하지 않은 변경 사항이 있습니다. 닫기 전에 저장하시겠습니까?"
 
 #: lib/pychess/widgets/enginesDialog.py:150
 msgid "Option"
@@ -4199,7 +4199,7 @@ msgstr "옵션"
 #: lib/pychess/widgets/enginesDialog.py:151
 #: lib/pychess/widgets/gameinfoDialog.py:126
 msgid "Value"
-msgstr ""
+msgstr "값"
 
 #: lib/pychess/widgets/enginesDialog.py:185
 msgid "Select engine"

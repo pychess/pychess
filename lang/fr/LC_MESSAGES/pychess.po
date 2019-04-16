@@ -6,7 +6,7 @@
 # alaindresse <inactive+alaindresse@transifex.com>, 2014
 # JoeCocker, 2017
 # CInlloc <cinlloc@gmail.com>, 2016
-# ecrucru, 2017-2018
+# ecrucru, 2017-2019
 # Fabian Michel <fabianmichel@gmail.com>, 2016
 # gbtami <gbtami@gmail.com>, 2016
 # Hervé Renault <hr@helixo.fr>, 2018
@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-29 23:04+0100\n"
-"PO-Revision-Date: 2018-12-03 23:32+0000\n"
+"PO-Revision-Date: 2019-01-01 16:38+0000\n"
 "Last-Translator: ecrucru\n"
 "Language-Team: French (http://www.transifex.com/gbtami/pychess/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -635,11 +635,11 @@ msgstr "S_auvegarder automatiquement les parties terminées en PGN"
 
 #: glade/PyChess.glade:3732
 msgid "Save files to:"
-msgstr "Enregistrer les parties vers:"
+msgstr "Enregistrer les parties vers :"
 
 #: glade/PyChess.glade:3759
 msgid "Use name format:"
-msgstr "Utiliser format de nom :"
+msgstr "Utiliser le format de nom :"
 
 #: glade/PyChess.glade:3803
 msgid "Names:  #n1, #n2"
@@ -651,11 +651,11 @@ msgstr "Année, mois, jour : #y, #m, #d"
 
 #: glade/PyChess.glade:3854
 msgid "Save elapsed move _times"
-msgstr "Sauvegarde du _temps écoulé des déplacements"
+msgstr "Sauvegarder le _temps écoulé des déplacements"
 
 #: glade/PyChess.glade:3879
 msgid "Save analyzing engine _evaluation values"
-msgstr "Sauv_egarde des évaluations de l'analyseur"
+msgstr "Sauv_egarder les évaluations de l'analyseur"
 
 #: glade/PyChess.glade:3904
 msgid "Save _rating change values"
@@ -673,7 +673,7 @@ msgstr "Attention : l'option génère un fichier PGN formatté qui ne respecte p
 
 #: glade/PyChess.glade:3955
 msgid "Save _own games only"
-msgstr "Sauvegarde de ses pr_opres parties seulement"
+msgstr "Sauvegarder ses pr_opres parties seulement"
 
 #: glade/PyChess.glade:3984 lib/pychess/perspectives/database/__init__.py:528
 msgid "Save"
