@@ -44,8 +44,8 @@ class RemoteGameTestCase(unittest.TestCase):
         self.executeTest(InternetGameChessgames(), links)
 
     def testFicsgames(self):
-        links = [('https://www.ficsgames.org/cgi-bin/show.cgi?ID=451813954;action=save', True), # Normal game
-                 ('https://www.ficsgames.org/cgi-bin/show.cgi?ID=qwertz;action=save', True),    # Invalid identifier (not numeric)
+        links = [('https://www.ficsgames.org/cgi-bin/show.cgi?ID=451813954;action=save', True),  # Normal game
+                 ('https://www.ficsgames.org/cgi-bin/show.cgi?ID=qwertz;action=save', False),    # Invalid identifier (not numeric)
                  ('https://www.ficsgames.org/cgi-bin/show.cgi?ID=0#anchor', False),             # Invalid identifier (null)
                  ('https://www.ficsgames.org/about.html', False)]                               # Not a game
         self.executeTest(InternetGameFicsgames(), links)
