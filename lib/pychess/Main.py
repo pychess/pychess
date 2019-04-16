@@ -9,6 +9,7 @@ import platform
 import sys
 import subprocess
 from urllib.request import url2pathname, pathname2url
+from io import StringIO
 
 from gi.repository import Gdk
 from gi.repository import Gio
@@ -32,7 +33,12 @@ from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.widgets.RecentChooser import recent_menu, recent_manager
 from pychess.Players.engineNest import discoverer
-from pychess.Savers import chesspastebin
+from pychess.Players.Human import Human
+from pychess.Savers import chesspastebin, pgn
+from pychess.Savers.remotegame import get_internet_game_as_pgn
+from pychess.Utils.const import LOCAL, WHITE, BLACK
+from pychess.Utils.GameModel import GameModel
+from pychess.widgets import mainwindow
 from pychess.ic import ICLogon
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.welcome import Welcome
@@ -214,6 +220,38 @@ class GladeHandlers:
                 else:
                     perspective = perspective_manager.get_perspective("database")
                     perspective.open_chessfile(filename)
+
+    def on_remote_game_activate(self, widget):
+        # Ask the user for an URL
+        widgets = gamewidget.getWidgets()
+        url_dialog = widgets["url_path_dialog"]
+        widgets["url_edit"].set_text('')
+        widgets["url_edit"].grab_focus()
+        answer = url_dialog.run()
+        url_dialog.hide()
+        if answer != Gtk.ResponseType.OK.real:
+            return
+
+        # Download the game
+        url = widgets["url_edit"].get_text().strip()
+        if len(url) == 0:
+            return
+        remdata = get_internet_game_as_pgn(url)
+        if remdata is None:
+            dlg = Gtk.MessageDialog(mainwindow(),
+                                    type=Gtk.MessageType.ERROR,
+                                    buttons=Gtk.ButtonsType.OK,
+                                    message_format=_("The provided link does not lead to a meaningful chess content."))
+            dlg.run()
+            dlg.destroy()
+            return
+
+        # Load the game
+        perspective = perspective_manager.get_perspective("games")
+        create_task(perspective.generalStart(GameModel(),
+                                             (LOCAL, Human, (WHITE, _("White")), _("White")),
+                                             (LOCAL, Human, (BLACK, _("Black")), _("Black")),
+                                             (StringIO(remdata), pgn, 0, -1)))
 
     def on_save_game1_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
