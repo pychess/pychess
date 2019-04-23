@@ -160,7 +160,7 @@ class InternetGameInterface:
         if '_moves' in game:
             pgn += '%s ' % game['_moves']
         if '_reason' in game:
-            pgn += '{%s} ' % game['_reason'];
+            pgn += '{%s} ' % game['_reason']
         if 'Result' in game:
             pgn += '%s ' % game['Result']
         return pgn.strip()
@@ -1026,11 +1026,11 @@ class InternetGameChessCom(InternetGameInterface):
                 return pgn
 
         # Logic for the daily games
-        if self.url_type.lower() == 'daily':
+        elif self.url_type.lower() == 'daily':
             return None
 
-        # Rebuild the PGN game
-        return self.rebuild_pgn(game)
+        else:
+            return None  # Never reached
 
 
 # Generic
