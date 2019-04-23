@@ -1149,7 +1149,7 @@ def get_internet_game_as_pgn(url):
             # Reorganize the spaces to bypass Scoutfish's limitation
             lc = len(pgn)
             while (True):
-                pgn = pgn.replace('\\n\\n\\n', '\\n\\n')
+                pgn = pgn.replace("\n\n\n", "\n\n")
                 lcn = len(pgn)
                 if lcn == lc:
                     break
