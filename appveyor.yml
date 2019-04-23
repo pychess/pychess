@@ -59,7 +59,7 @@ install:
   - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3"
 
   - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-gtk3 %PKG_PREFIX%-gtksourceview3 %PKG_PREFIX%-python3-gobject %PKG_PREFIX%-python3-cairo"
-  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-psutil %PKG_PREFIX%-python3-sqlalchemy"
+  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-psutil %PKG_PREFIX%-python3-websockets %PKG_PREFIX%-python3-sqlalchemy"
   - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-cx_Freeze %PKG_PREFIX%-zlib %PKG_PREFIX%-python3-pip"
 
   # check python version

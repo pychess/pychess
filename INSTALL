@@ -37,6 +37,7 @@ python3-gi-cairo
 python3-sqlalchemy
 python3-pexpect
 python3-psutil
+python3-websockets
 gobject-introspection
 gir1.2-glib-2.0
 gir1.2-gtk-3.0
@@ -65,6 +66,7 @@ gstreamer1-plugins-base
 python3-sqlalchemy
 python3-pexpect
 python3-psutil
+python3-websockets
 
 ----------------------
 Dependencies for Arch:
@@ -75,6 +77,7 @@ python-cairo
 python-sqlalchemy
 python-pexpect
 python-psutil
+python-websockets
 gobject-introspection
 glib2
 gtk3
