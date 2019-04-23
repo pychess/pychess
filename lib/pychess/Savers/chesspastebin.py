@@ -9,7 +9,7 @@ from pychess.Utils.const import NAME, UNDOABLE_STATES
 from pychess.Savers import pgn
 from pychess.widgets import mainwindow
 
-URL = "http://www.chesspastebin.com/api/add/"
+URL = "https://www.chesspastebin.com/api/add/"
 APIKEY = "a137d919b75c8766b082367610189358cfb1ba70"
 
 
