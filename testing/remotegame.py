@@ -112,7 +112,7 @@ class RemoteGameTestCase(unittest.TestCase):
         links = [('https://www.CHESS.com/live/game/3638784952#anchor', True),               # Live game
                  ('https://chess.com/de/live/game/3635508736?username=rikikits', True),     # Live game Chess960
                  ('https://www.chess.com/daily/game/223897998', False),                     # Daily game
-                 ('https://chess.com/live/game/13029832074287114', True),                   # Not a game (wrong ID)
+                 ('https://chess.com/live/game/13029832074287114', False),                   # Not a game (wrong ID)
                  ('https://www.chess.com', False)]                                          # Not a game (homepage)
         self.executeTest(InternetGameChessCom(), links)
 
