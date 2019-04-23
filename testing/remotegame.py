@@ -89,7 +89,7 @@ class RemoteGameTestCase(unittest.TestCase):
     def testChessOrg(self):
         links = [('https://chess.org/play/19a8ffe8-b543-4a41-be02-e84e0f4d6f3a', True),     # Classic game
                  ('https://CHESS.org/play/c28f1b76-aee0-4577-b8a5-eeda6a0e14af', True),     # Chess960
-                 ('https://chess.org/play/c28fffe8-ae43-4541-b802-eeda6a4d6f3a', True),     # Not a game (unknown ID)
+                 ('https://chess.org/play/c28fffe8-ae43-4541-b802-eeda6a4d6f3a', False),     # Not a game (unknown ID)
                  ('https://chess.org', False)]                                              # Not a game (homepage)
         self.executeTest(InternetGameChessOrg(), links)
 
