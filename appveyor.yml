@@ -59,13 +59,14 @@ install:
   - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3"
 
   - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-gtk3 %PKG_PREFIX%-gtksourceview3 %PKG_PREFIX%-python3-gobject %PKG_PREFIX%-python3-cairo"
-  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-psutil %PKG_PREFIX%-python3-websockets %PKG_PREFIX%-python3-sqlalchemy"
+  - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-psutil %PKG_PREFIX%-python3-sqlalchemy"
   - bash -lc "pacman -S --needed --noconfirm %PKG_PREFIX%-python3-cx_Freeze %PKG_PREFIX%-zlib %PKG_PREFIX%-python3-pip"
 
   # check python version
   - "python3 --version"
 
   - "pip3 install pexpect"
+  - "pip3 install websockets"
 
   # download stockfish
   - "if not exist c:\\projects\\pychess\\engines mkdir c:\\projects\\pychess\\engines"
