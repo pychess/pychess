@@ -35,7 +35,10 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://lichess.org/nGhOUXdP?p=0#3', True),                      # Variant game with parameter and anchor
                  ('https://hu.lichess.org/study/hr4H7sOB?page=1', True),            # Study of one game with unused parameter
                  ('https://lichess.org/study/hr4H7sOB/fvtzEXvi.pgn#32', True),      # Chapter of a study with anchor
-                 ('https://lichess.org/STUDY/hr4H7sOB.pgn', True)]                  # Study of one game
+                 ('https://lichess.org/STUDY/hr4H7sOB.pgn', True),                  # Study of one game
+                 ('https://lichess.org/training/daily', True),                      # Daily puzzle
+                 ('https://lichess.org/training/84969', True),                      # Puzzle
+                 ('https://lichess.org/training/1281301832', False)]                # Not a puzzle (wrong ID)
         self.executeTest(InternetGameLichess(), links)
 
     def testChessgames(self):
@@ -89,7 +92,7 @@ class RemoteGameTestCase(unittest.TestCase):
     def testChessOrg(self):
         links = [('https://chess.org/play/19a8ffe8-b543-4a41-be02-e84e0f4d6f3a', True),     # Classic game
                  ('https://CHESS.org/play/c28f1b76-aee0-4577-b8a5-eeda6a0e14af', True),     # Chess960
-                 ('https://chess.org/play/c28fffe8-ae43-4541-b802-eeda6a4d6f3a', False),     # Not a game (unknown ID)
+                 ('https://chess.org/play/c28fffe8-ae43-4541-b802-eeda6a4d6f3a', False),    # Not a game (unknown ID)
                  ('https://chess.org', False)]                                              # Not a game (homepage)
         self.executeTest(InternetGameChessOrg(), links)
 
@@ -112,7 +115,7 @@ class RemoteGameTestCase(unittest.TestCase):
         links = [('https://www.CHESS.com/live/game/3638784952#anchor', True),               # Live game
                  ('https://chess.com/de/live/game/3635508736?username=rikikits', True),     # Live game Chess960
                  ('https://www.chess.com/daily/game/223897998', False),                     # Daily game
-                 ('https://chess.com/live/game/13029832074287114', False),                   # Not a game (wrong ID)
+                 ('https://chess.com/live/game/13029832074287114', False),                  # Not a game (wrong ID)
                  ('https://www.chess.com', False)]                                          # Not a game (homepage)
         self.executeTest(InternetGameChessCom(), links)
 

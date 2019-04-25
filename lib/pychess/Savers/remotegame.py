@@ -24,7 +24,7 @@ from pychess.System.Log import log
 # ssl._create_default_https_context = ssl._create_unverified_context
 
 
-TYPE_NONE, TYPE_GAME, TYPE_STUDY = range(3)
+TYPE_NONE, TYPE_GAME, TYPE_STUDY, TYPE_PUZZLE = range(4)
 
 
 # Abstract class to download a game from the Internet
@@ -187,25 +187,36 @@ class InternetGameLichess(InternetGameInterface):
         return 'Lichess.org -- %s' % _('Download link')
 
     def assign_game(self, url):
-        # Retrieve the ID of the game
-        rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/(game\/export\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE)
-        m = rxp.match(url)
-        if m is not None:
-            id = str(m.group(4))
-            if len(id) == 8:
-                self.url_type = TYPE_GAME
-                self.id = id
-                self.url_tld = m.group(2)
-                return True
-
-        # Do the same for a study
+        # Retrieve the ID of the study
         rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)
         m = rxp.match(url)
         if m is not None:
-            id = str(m.group(3))
-            if len(id) in [8, 17]:
+            gid = m.group(3)
+            if len(gid) in [8, 17]:
                 self.url_type = TYPE_STUDY
-                self.id = id
+                self.id = gid
+                self.url_tld = m.group(2)
+                return True
+
+        # Retrieve the ID of the puzzle
+        rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/training\/([0-9]+|daily)[\/\?\#]?', re.IGNORECASE)
+        m = rxp.match(url)
+        if m is not None:
+            gid = m.group(3)
+            if (gid.isdigit() and gid != '0') or gid == 'daily':
+                self.url_type = TYPE_PUZZLE
+                self.id = gid
+                self.url_tld = m.group(2)
+                return True
+
+        # Retrieve the ID of the game
+        rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/(game\/export\/)?([a-z0-9]+)\/?([\S\/]+)?$', re.IGNORECASE)  # More permissive
+        m = rxp.match(url)
+        if m is not None:
+            gid = m.group(4)
+            if len(gid) == 8:
+                self.url_type = TYPE_GAME
+                self.id = gid
                 self.url_tld = m.group(2)
                 return True
 
@@ -214,17 +225,111 @@ class InternetGameLichess(InternetGameInterface):
 
     def download_game(self):
         # Check
-        if self.id is None or self.url_tld is None:
+        if None in [self.id, self.url_tld]:
             return None
 
-        # Download (possible error 404)
+        # Logic for the games
         if self.url_type == TYPE_GAME:
             url = 'https://lichess.%s/game/export/%s?literate=1' % (self.url_tld, self.id)
+            return self.download(url)
+
+        # Logic for the studies
         elif self.url_type == TYPE_STUDY:
             url = 'https://lichess.%s/study/%s.pgn' % (self.url_tld, self.id)
+            return self.download(url, userAgent=True)
+
+        # Logic for the puzzles
+        elif self.url_type == TYPE_PUZZLE:
+            url = 'https://lichess.%s/training/%s' % (self.url_tld, self.id)
+            page = self.download(url)
+            if page is None:
+                return None
+
+            # Extract the JSON
+            page = page.replace("\n", '')
+            pos1 = page.find("lichess.puzzle =")
+            if pos1 == -1:
+                return None
+            pos1 = page.find('"game"', pos1 + 1)
+            if pos1 == -1:
+                return None
+            c = 1
+            pos2 = pos1
+            while pos2 < len(page):
+                pos2 += 1
+                if page[pos2] == '{':
+                    c += 1
+                if page[pos2] == '}':
+                    c -= 1
+                if c == 0:
+                    break
+            if c != 0:
+                return None
+
+            # Header
+            bourne = page[pos1 - 1:pos2 + 1]
+            chessgame = self.json_loads(bourne)
+            puzzle = self.json_field(chessgame, 'puzzle')
+            if puzzle == '':
+                return None
+            game = {}
+            game['_url'] = 'https://lichess.org/%s#%s' % (self.json_field(puzzle, 'gameId'), self.json_field(puzzle, 'initialPly'))
+            game['Site'] = 'lichess.org'
+            rating = self.json_field(puzzle, 'rating')
+            game['Event'] = 'Puzzle %d, rated %s' % (self.json_field(puzzle, 'id'), rating)
+            game['Result'] = '*'
+            game['X_ID'] = self.json_field(puzzle, 'id')
+            game['X_TimeControl'] = self.json_field(chessgame, 'game/clock')
+            game['X_Rating'] = rating
+            game['X_Attempts'] = self.json_field(puzzle, 'attempts')
+            game['X_Vote'] = self.json_field(puzzle, 'vote')
+
+            # Players
+            players = self.json_field(chessgame, 'game/players')
+            if not isinstance(players, list):
+                return None
+            for p in players:
+                if p['color'] == 'white':
+                    t = 'White'
+                elif p['color'] == 'black':
+                    t = 'Black'
+                else:
+                    return None
+                pos1 = p['name'].find(' (')
+                if pos1 == -1:
+                    game[t] = p['name']
+                else:
+                    game[t] = p['name'][:pos1]
+                    game[t + 'Elo'] = p['name'][pos1 + 2:-1]
+
+            # Moves
+            moves = self.json_field(chessgame, 'game/treeParts')
+            if not isinstance(moves, list):
+                return None
+            game['_moves'] = ''
+            for m in moves:
+                if m['ply'] in [0, '0']:
+                    game['SetUp'] = '1'
+                    game['FEN'] = m['fen']
+                else:
+                    game['_moves'] += '%s ' % m['san']
+
+            # Solution
+            game['_moves'] += ' {Solution: '
+            puzzle = self.json_field(puzzle, 'branch')
+            while True:
+                game['_moves'] += '%s ' % self.json_field(puzzle, 'san')
+                puzzle = self.json_field(puzzle, 'children')
+                if len(puzzle) == 0:
+                    break
+                puzzle = puzzle[0]
+            game['_moves'] += '}'
+
+            # Rebuild the PGN game
+            return self.rebuild_pgn(game)
+
         else:
-            return None
-        return self.download(url, userAgent=True)  # For the studies
+            return None  # Never reached
 
 
 # ChessGames.com
@@ -999,6 +1104,8 @@ class InternetGameChessCom(InternetGameInterface):
             # Extract the JSON
             page = page.replace("\n", '')
             pos1 = page.find("init('live'")
+            if pos1 == -1:
+                return None
             pos1 = page.find('{', pos1 + 1)
             pos1 = page.find('{', pos1 + 1)
             if pos1 == -1:
