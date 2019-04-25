@@ -137,6 +137,7 @@ class InternetGameInterface:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         result = loop.run_until_complete(coro)
+        loop.close()
         asyncio.set_event_loop(curloop)
         return result
 
@@ -827,7 +828,7 @@ class InternetGameChessOrg(InternetGameInterface):
         def coro():
             url = 'wss://chess.org:443/play-sockjs/%d/%s/websocket' % (rndI, rndS)
             log.debug('Websocket connecting to %s' % url)
-            ws = yield from websockets.connect(url, origin="https://chess.org:443", close_timeout=5)
+            ws = yield from websockets.connect(url, origin="https://chess.org:443")
             try:
                 # Server: Hello
                 data = yield from ws.recv()
