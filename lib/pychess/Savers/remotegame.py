@@ -274,8 +274,8 @@ class InternetGameLichess(InternetGameInterface):
             if puzzle == '':
                 return None
             game = {}
-            game['_url'] = 'https://lichess.org/%s#%s' % (self.json_field(puzzle, 'gameId'), self.json_field(puzzle, 'initialPly'))
-            game['Site'] = 'lichess.org'
+            game['_url'] = 'https://lichess.%s/%s#%s' % (self.url_tld, self.json_field(puzzle, 'gameId'), self.json_field(puzzle, 'initialPly'))
+            game['Site'] = 'lichess.%s' % self.url_tld
             rating = self.json_field(puzzle, 'rating')
             game['Event'] = 'Puzzle %d, rated %s' % (self.json_field(puzzle, 'id'), rating)
             game['Result'] = '*'

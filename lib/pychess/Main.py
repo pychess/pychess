@@ -9,7 +9,6 @@ import platform
 import sys
 import subprocess
 from urllib.request import url2pathname, pathname2url
-from io import StringIO
 
 from gi.repository import Gdk
 from gi.repository import Gio
@@ -34,8 +33,9 @@ from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.widgets.RecentChooser import recent_menu, recent_manager
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
-from pychess.Savers import chesspastebin, pgn
+from pychess.Savers import chesspastebin
 from pychess.Savers.remotegame import get_internet_game_as_pgn
+from pychess.System.protoopen import splitUri
 from pychess.Utils.const import LOCAL, WHITE, BLACK
 from pychess.Utils.GameModel import GameModel
 from pychess.widgets import mainwindow
@@ -171,6 +171,30 @@ class GladeHandlers:
             for uri in uris:
                 if uri.lower().endswith(".fen"):
                     newGameDialog.loadFileAndRun(uri)
+
+                elif uri.lower().endswith(".url"):
+                    uri = splitUri(uri)[1]
+                    with open(uri, 'r') as file:
+                        content = file.read()
+                    list = content.replace("\r", '').split("\n")
+                    section = False
+                    success = False
+                    for item in list:
+                        if item.startswith('['):
+                            section = item.startswith('[InternetShortcut]')
+                            continue
+                        if section and item.startswith('URL='):
+                            pgn = get_internet_game_as_pgn(item[4:])
+                            success = newGameDialog.loadPgnAndRun(pgn)
+                            break
+                    if not success:
+                        dlg = Gtk.MessageDialog(mainwindow(),
+                                                type=Gtk.MessageType.ERROR,
+                                                buttons=Gtk.ButtonsType.OK,
+                                                message_format=_("No game can be retrieved from the Internet shortcut."))
+                        dlg.run()
+                        dlg.destroy()
+
                 else:
                     perspective = perspective_manager.get_perspective("database")
                     perspective.open_chessfile(uri)
@@ -247,11 +271,7 @@ class GladeHandlers:
             return
 
         # Load the game
-        perspective = perspective_manager.get_perspective("games")
-        create_task(perspective.generalStart(GameModel(),
-                                             (LOCAL, Human, (WHITE, _("White")), _("White")),
-                                             (LOCAL, Human, (BLACK, _("Black")), _("Black")),
-                                             (StringIO(remdata), pgn, 0, -1)))
+        newGameDialog.loadPgnAndRun(remdata)
 
     def on_save_game1_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")

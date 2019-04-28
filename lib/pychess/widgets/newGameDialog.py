@@ -1002,3 +1002,13 @@ def loadFileAndRun(uri):
     p1 = (LOCAL, Human, (BLACK, black_name), black_name)
     perspective = perspective_manager.get_perspective("games")
     create_task(perspective.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1)))
+
+def loadPgnAndRun(data):
+    if data in [None, '']:
+        return False
+    perspective = perspective_manager.get_perspective("games")
+    create_task(perspective.generalStart(GameModel(),
+                                         (LOCAL, Human, (WHITE, _("White")), _("White")),
+                                         (LOCAL, Human, (BLACK, _("Black")), _("Black")),
+                                         (StringIO(data), enddir['pgn'], 0, -1)))
+    return True
