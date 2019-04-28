@@ -32,12 +32,9 @@ from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.widgets.RecentChooser import recent_menu, recent_manager
 from pychess.Players.engineNest import discoverer
-from pychess.Players.Human import Human
 from pychess.Savers import chesspastebin
 from pychess.Savers.remotegame import get_internet_game_as_pgn
 from pychess.System.protoopen import splitUri
-from pychess.Utils.const import LOCAL, WHITE, BLACK
-from pychess.Utils.GameModel import GameModel
 from pychess.widgets import mainwindow
 from pychess.ic import ICLogon
 from pychess.perspectives import perspective_manager

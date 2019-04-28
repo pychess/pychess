@@ -1003,6 +1003,7 @@ def loadFileAndRun(uri):
     perspective = perspective_manager.get_perspective("games")
     create_task(perspective.generalStart(gamemodel, p0, p1, (uri, loader, 0, -1)))
 
+
 def loadPgnAndRun(data):
     if data in [None, '']:
         return False
