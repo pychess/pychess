@@ -164,37 +164,84 @@ class GladeHandlers:
 
     def on_drag_received(self, widget, context, x, y, selection, target_type, timestamp):
         if target_type == TARGET_TYPE_URI_LIST:
+            NOTPROC, PARTIAL, FULL = range(3)
+            status = NOTPROC
             uris = selection.get_uris()
             for uri in uris:
-                if uri.lower().endswith(".fen"):
-                    newGameDialog.loadFileAndRun(uri)
+                fn, fext = os.path.splitext(uri.lower())
+                b = False
 
-                elif uri.lower().endswith(".url"):
-                    uri = splitUri(uri)[1]
-                    with open(uri, 'r') as file:
+                # Chess position
+                if fext == '.fen':
+                    b = newGameDialog.loadFileAndRun(uri)
+
+                # Shortcut
+                elif fext in ['.url', '.desktop']:
+                    # Preconf
+                    if fext == '.url':
+                        sectname = 'InternetShortcut'
+                        typeok = True
+                    elif fext == '.desktop':
+                        sectname = 'Desktop Entry'
+                        typeok = False
+                    else:
+                        assert(False)
+
+                    # Read the shortcut
+                    filename = splitUri(uri)[1]
+                    with open(filename, 'r') as file:
                         content = file.read()
-                    list = content.replace("\r", '').split("\n")
-                    section = False
-                    success = False
-                    for item in list:
-                        if item.startswith('['):
-                            section = item.startswith('[InternetShortcut]')
-                            continue
-                        if section and item.startswith('URL='):
-                            pgn = get_internet_game_as_pgn(item[4:])
-                            success = newGameDialog.loadPgnAndRun(pgn)
-                            break
-                    if not success:
-                        dlg = Gtk.MessageDialog(mainwindow(),
-                                                type=Gtk.MessageType.ERROR,
-                                                buttons=Gtk.ButtonsType.OK,
-                                                message_format=_("No game can be retrieved from the Internet shortcut."))
-                        dlg.run()
-                        dlg.destroy()
+                    lines = content.replace("\r", '').split("\n")
 
+                    # Extract the link
+                    section = False
+                    link = ''
+                    for item in lines:
+                        # Header
+                        if item.startswith('['):
+                            if section:
+                                break
+                            section = item.startswith('[%s]' % sectname)
+                        if not section:
+                            continue
+
+                        # Item
+                        if item.startswith('URL='):
+                            link = item[4:]
+                        if item.startswith('Type=Link') and fext == '.desktop':
+                            typeok = True
+
+                    # Load the link
+                    if typeok and link != '':
+                        pgn = get_internet_game_as_pgn(link)
+                        b = newGameDialog.loadPgnAndRun(pgn)
+
+                # Database
                 else:
                     perspective = perspective_manager.get_perspective("database")
                     perspective.open_chessfile(uri)
+                    b = True
+
+                # Update the global status
+                if b:
+                    if status == NOTPROC:
+                        status = FULL
+                else:
+                    if status != NOTPROC:
+                        status = PARTIAL
+
+            # Feedback about the load
+            msg = ''
+            if status == NOTPROC:
+                msg = _('All the links failed to fetch a relevant chess content.')
+                msgtype = Gtk.MessageType.ERROR
+            elif status == PARTIAL:
+                msg = _('Some links were invalid.')
+                msgtype = Gtk.MessageType.WARNING
+            if msg != '':
+                dlg = Gtk.MessageDialog(mainwindow(), type=msgtype, buttons=Gtk.ButtonsType.OK, message_format=msg)
+                dlg.run()
+                dlg.destroy()
 
     # Game Menu
 
