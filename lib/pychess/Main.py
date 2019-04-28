@@ -9,7 +9,6 @@ import platform
 import sys
 import subprocess
 from urllib.request import url2pathname, pathname2url
-from io import StringIO
 
 from gi.repository import Gdk
 from gi.repository import Gio
@@ -33,11 +32,9 @@ from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.widgets.RecentChooser import recent_menu, recent_manager
 from pychess.Players.engineNest import discoverer
-from pychess.Players.Human import Human
-from pychess.Savers import chesspastebin, pgn
+from pychess.Savers import chesspastebin
 from pychess.Savers.remotegame import get_internet_game_as_pgn
-from pychess.Utils.const import LOCAL, WHITE, BLACK
-from pychess.Utils.GameModel import GameModel
+from pychess.System.protoopen import splitUri
 from pychess.widgets import mainwindow
 from pychess.ic import ICLogon
 from pychess.perspectives import perspective_manager
@@ -167,13 +164,84 @@ class GladeHandlers:
 
     def on_drag_received(self, widget, context, x, y, selection, target_type, timestamp):
         if target_type == TARGET_TYPE_URI_LIST:
+            NOTPROC, PARTIAL, FULL = range(3)
+            status = NOTPROC
             uris = selection.get_uris()
             for uri in uris:
-                if uri.lower().endswith(".fen"):
-                    newGameDialog.loadFileAndRun(uri)
+                fn, fext = os.path.splitext(uri.lower())
+                b = False
+
+                # Chess position
+                if fext == '.fen':
+                    b = newGameDialog.loadFileAndRun(uri)
+
+                # Shortcut
+                elif fext in ['.url', '.desktop']:
+                    # Preconf
+                    if fext == '.url':
+                        sectname = 'InternetShortcut'
+                        typeok = True
+                    elif fext == '.desktop':
+                        sectname = 'Desktop Entry'
+                        typeok = False
+                    else:
+                        assert(False)
+
+                    # Read the shortcut
+                    filename = splitUri(uri)[1]
+                    with open(filename, 'r') as file:
+                        content = file.read()
+                    lines = content.replace("\r", '').split("\n")
+
+                    # Extract the link
+                    section = False
+                    link = ''
+                    for item in lines:
+                        # Header
+                        if item.startswith('['):
+                            if section:
+                                break
+                            section = item.startswith('[%s]' % sectname)
+                        if not section:
+                            continue
+
+                        # Item
+                        if item.startswith('URL='):
+                            link = item[4:]
+                        if item.startswith('Type=Link') and fext == '.desktop':
+                            typeok = True
+
+                    # Load the link
+                    if typeok and link != '':
+                        pgn = get_internet_game_as_pgn(link)
+                        b = newGameDialog.loadPgnAndRun(pgn)
+
+                # Database
                 else:
                     perspective = perspective_manager.get_perspective("database")
                     perspective.open_chessfile(uri)
+                    b = True
+
+                # Update the global status
+                if b:
+                    if status == NOTPROC:
+                        status = FULL
+                else:
+                    if status != NOTPROC:
+                        status = PARTIAL
+
+            # Feedback about the load
+            msg = ''
+            if status == NOTPROC:
+                msg = _('All the links failed to fetch a relevant chess content.')
+                msgtype = Gtk.MessageType.ERROR
+            elif status == PARTIAL:
+                msg = _('Some links were invalid.')
+                msgtype = Gtk.MessageType.WARNING
+            if msg != '':
+                dlg = Gtk.MessageDialog(mainwindow(), type=msgtype, buttons=Gtk.ButtonsType.OK, message_format=msg)
+                dlg.run()
+                dlg.destroy()
 
     # Game Menu
 
@@ -247,11 +315,7 @@ class GladeHandlers:
             return
 
         # Load the game
-        perspective = perspective_manager.get_perspective("games")
-        create_task(perspective.generalStart(GameModel(),
-                                             (LOCAL, Human, (WHITE, _("White")), _("White")),
-                                             (LOCAL, Human, (BLACK, _("Black")), _("Black")),
-                                             (StringIO(remdata), pgn, 0, -1)))
+        newGameDialog.loadPgnAndRun(remdata)
 
     def on_save_game1_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
