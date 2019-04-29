@@ -714,18 +714,15 @@ class PyChess(Gtk.Application):
         # About dialog
         self.aboutdialog = widgets["aboutdialog1"]
         self.aboutdialog.set_program_name(NAME)
-        self.aboutdialog.set_copyright("Copyright © 2006-2018")
+        self.aboutdialog.set_copyright("Copyright © 2006-2019")
         self.aboutdialog.set_version(VERSION_NAME + " " + VERSION)
         if os.path.isdir(prefix.addDataPrefix(".git")):
             try:
-                label = subprocess.check_output(["git", "describe"])
+                self.git_rev = subprocess.check_output(["git", "describe", "--tags"]).decode().strip()
+                self.aboutdialog.set_version('%s Git %s' % (VERSION_NAME, self.git_rev))
             except subprocess.CalledProcessError:
-                label = ""
-            if label:
-                comments = self.aboutdialog.get_comments()
-                self.git_rev = label
-                self.aboutdialog.set_comments("git %s\n%s" %
-                                              (self.git_rev, comments))
+                pass
+        self.aboutdialog.set_comments(self.aboutdialog.get_comments())
 
         with open(prefix.addDataPrefix("ARTISTS"), encoding="utf-8") as f:
             self.aboutdialog.set_artists(f.read().splitlines())
