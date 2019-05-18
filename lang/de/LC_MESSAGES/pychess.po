@@ -18,6 +18,7 @@
 # Pilgrim <pilgrim@clovermail.net>, 2013
 # Poly BOT <tigrinya.tigrigna@gmail.com>, 2018
 # scuffi <scuffle@gmx.de>, 2014-2017
+# Søren Woods <fdsktm8dol@mt2015.com>, 2019
 # Steve <raccoon@gmx.at>, 2014
 # Thomas Worofsky <thomas.worofsky@gmail.com>, 2016
 # valsu <valsu@hylia.de>, 2015
@@ -26,8 +27,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-16 09:34+0200\n"
-"PO-Revision-Date: 2019-04-16 13:26+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2019-04-29 15:33+0000\n"
+"Last-Translator: Søren Woods <fdsktm8dol@mt2015.com>\n"
 "Language-Team: German (http://www.transifex.com/gbtami/pychess/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -206,7 +207,7 @@ msgstr "Datenbank speichern als"
 
 #: glade/PyChess.glade:813
 msgid "Create polyglot opening book"
-msgstr "Polyglot Eröffnungsbuch erstellen"
+msgstr "Polyglot-Eröffnungsbuch erstellen"
 
 #: glade/PyChess.glade:825
 msgid "Import chessfile"
@@ -339,7 +340,7 @@ msgstr "Bevorzuge Figuren in der Notation."
 msgid ""
 "If set, PyChess will use figures to express moved pieces, rather than "
 "uppercase letters."
-msgstr "Wenn aktiviert, werden Figuren statt Großbuchstaben genutzt um die Züge zu dokumentieren."
+msgstr "Wenn aktiviert, werden Figuren statt Großbuchstaben genutzt, um die Züge zu dokumentieren."
 
 #: glade/PyChess.glade:1317 glade/analyze_game.glade:261
 msgid "Colorize analyzed moves"
@@ -363,7 +364,7 @@ msgstr "Zeige Bewertungen"
 
 #: glade/PyChess.glade:1358
 msgid "If set, the hint analyzer engine evaluation value is shown."
-msgstr "Wenn aktiviert, wird die Bewertung des Tipp-Analyseschachprogramm angezeigt."
+msgstr "Wenn aktiviert, wird die Bewertung des Tipp-Analyseschachprogramms angezeigt."
 
 #: glade/PyChess.glade:1371
 msgid "Show FICS game numbers in tab labels"
@@ -372,7 +373,7 @@ msgstr "FICS-Spielnummern in der Tab-Beschriftung anzeigen"
 #: glade/PyChess.glade:1376
 msgid ""
 "If set, FICS game numbers in tab labels next to player names are shown."
-msgstr "Aktiviert in der Tab-Beschriftung die Anzeige der FICS Spielnummer bei den Namen der Spieler."
+msgstr "Aktiviert in der Tab-Beschriftung die Anzeige der FICS-Spielnummer bei den Namen der Spieler."
 
 #: glade/PyChess.glade:1402
 msgid "<b>General Options</b>"
@@ -529,7 +530,7 @@ msgstr ""
 
 #: glade/PyChess.glade:2540
 msgid "Light Squares :"
-msgstr "helle Felder :"
+msgstr "Weiße Felder:"
 
 #: glade/PyChess.glade:2569
 msgid "Grid"
@@ -537,7 +538,7 @@ msgstr "Gitter"
 
 #: glade/PyChess.glade:2590
 msgid "Dark Squares :"
-msgstr "dunkle Felder :"
+msgstr "Schwarze Felder:"
 
 #: glade/PyChess.glade:2619
 msgid "Reset Colours"
@@ -567,7 +568,7 @@ msgstr ""
 
 #: glade/PyChess.glade:2814
 msgid "<b>Chess Sets</b>"
-msgstr "<b>Schachsets</b>"
+msgstr "<b>Figuren</b>"
 
 #: glade/PyChess.glade:2838
 msgid "Themes"
@@ -623,7 +624,7 @@ msgstr "_Ungültiger Zug:"
 
 #: glade/PyChess.glade:3512
 msgid "Activate alarm when _remaining sec is:"
-msgstr "Alarm geben falls _Restzeit unter"
+msgstr "Alarm bei _Restzeit:"
 
 #: glade/PyChess.glade:3556
 msgid "_Puzzle success:"
@@ -792,7 +793,7 @@ msgstr "Spieler:"
 
 #: glade/PyChess.glade:4868
 msgid "Event:"
-msgstr "Ereignis"
+msgstr "Ereignis:"
 
 #: glade/PyChess.glade:4886
 msgid "Expected format as \"yyyy.mm.dd\" with the allowed joker \"?\""
@@ -1532,7 +1533,7 @@ msgstr "Halbzug Uhr"
 
 #: glade/newInOut.glade:1409
 msgid "En passant line"
-msgstr "En passant Zeile"
+msgstr "En passant auf Linie"
 
 #: glade/newInOut.glade:1433
 msgid "Move number"
@@ -1556,7 +1557,7 @@ msgstr "Weiß O-O"
 
 #: glade/newInOut.glade:1558
 msgid "Rotate the board"
-msgstr ""
+msgstr "Brett drehen"
 
 #: glade/saveGamesDialog.glade:7
 msgid "Quit PyChess"
@@ -1659,11 +1660,11 @@ msgstr ""
 
 #: lib/pychess/Main.py:458
 msgid "http://en.wikipedia.org/wiki/Chess"
-msgstr "http://de.wikipedia.org/wiki/Schach"
+msgstr "https://de.wikipedia.org/wiki/Schach"
 
 #: lib/pychess/Main.py:461
 msgid "http://en.wikipedia.org/wiki/Rules_of_chess"
-msgstr "http://de.wikipedia.org/wiki/Schach#Spielregeln"
+msgstr "https://de.wikipedia.org/wiki/Schach#Spielregeln"
 
 #: lib/pychess/Main.py:627 lib/pychess/widgets/gamenanny.py:80
 #: lib/pychess/perspectives/welcome/__init__.py:7
@@ -2222,7 +2223,7 @@ msgstr ""
 
 #: lib/pychess/Utils/isoCountries.py:51
 msgid "Congo (the Democratic Republic of the)"
-msgstr ""
+msgstr "Demokratische Republik Kongo"
 
 #: lib/pychess/Utils/isoCountries.py:52
 msgid "Central African Republic"
@@ -2354,7 +2355,7 @@ msgstr "Falklandinseln [Malwinen]"
 
 #: lib/pychess/Utils/isoCountries.py:84
 msgid "Micronesia (Federated States of)"
-msgstr ""
+msgstr "Föderierte Staaten von Mikronesien"
 
 #: lib/pychess/Utils/isoCountries.py:85
 msgid "Faroe Islands"

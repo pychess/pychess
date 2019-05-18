@@ -4,7 +4,7 @@
 # 
 # Translators:
 # Bernard Decock <bernarddecock.marke@gmail.com>, 2017
-# Heimen Stoffels <vistausss@outlook.com>, 2018
+# Heimen Stoffels <vistausss@outlook.com>, 2018-2019
 # jezusisstoer <jezusisstoer@gmail.com>, 2014
 # Pieter Aerts <pieter.info@telenet.be>, 2016-2017
 # Poly BOT <tigrinya.tigrigna@gmail.com>, 2018
@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-16 09:34+0200\n"
-"PO-Revision-Date: 2019-04-16 13:26+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2019-04-18 10:45+0000\n"
+"Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/gbtami/pychess/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,15 +33,15 @@ msgstr "_Nieuw spel"
 
 #: glade/PyChess.glade:249
 msgid "From _Default Start Position"
-msgstr ""
+msgstr "Vanaf stan_daard startpositie"
 
 #: glade/PyChess.glade:259
 msgid "From _Custom Position"
-msgstr ""
+msgstr "Vanaf _aangepaste positie"
 
 #: glade/PyChess.glade:268
 msgid "From _Game Notation"
-msgstr ""
+msgstr "Vanaf _spelnotatie"
 
 #: glade/PyChess.glade:279
 msgid "Play _Internet Chess"
@@ -57,7 +57,7 @@ msgstr "_Recent spel laden"
 
 #: glade/PyChess.glade:320
 msgid "Load Re_mote Game"
-msgstr ""
+msgstr "Exter_n spel laden"
 
 #: glade/PyChess.glade:338
 msgid "_Save Game"
@@ -73,7 +73,7 @@ msgstr "_Exportpositie"
 
 #: glade/PyChess.glade:383
 msgid "Share _Game"
-msgstr ""
+msgstr "_Spel delen"
 
 #: glade/PyChess.glade:411
 msgid "Player _Rating"
@@ -185,7 +185,7 @@ msgstr "Database"
 
 #: glade/PyChess.glade:785
 msgid "New _Database"
-msgstr "Nieuwe _database"
+msgstr "Nieuwe _databank"
 
 #: glade/PyChess.glade:797
 msgid "Save database as"
@@ -312,11 +312,11 @@ msgstr "Onaangevinkt: de exponentiële waarde toont het volledige scorebereik en
 
 #: glade/PyChess.glade:1279
 msgid "Show _captured pieces"
-msgstr "_Geslagen stukken weergeven"
+msgstr "_Geslagen stukken tonen"
 
 #: glade/PyChess.glade:1284
 msgid "If set, the captured figurines will be shown next to the board."
-msgstr "Als dit wordt ingsteld, dan worden, tijdens het spel, de geslagen stukken naast het veld weergegeven."
+msgstr "Als dit wordt ingsteld, dan worden, tijdens het spel, de geslagen stukken naast het veld getoond."
 
 #: glade/PyChess.glade:1298
 msgid "Prefer figures in _notation"
@@ -326,7 +326,7 @@ msgstr "Cijfers in_notatie prefereren"
 msgid ""
 "If set, PyChess will use figures to express moved pieces, rather than "
 "uppercase letters."
-msgstr "Als dit wordt ingsteld, dan zal Pychess cijfers gebruiken om verplaatste stukken aan te duiden in plaats van hoofdletters."
+msgstr "Als dit wordt ingsteld, dan gebruikt Pychess cijfers om verplaatste stukken aan te duiden in plaats van hoofdletters."
 
 #: glade/PyChess.glade:1317 glade/analyze_game.glade:261
 msgid "Colorize analyzed moves"
@@ -334,7 +334,7 @@ msgstr "Geanalyseerde zetten voorzien van kleur"
 
 #: glade/PyChess.glade:1322
 msgid "If set, PyChess will colorize suboptimal analyzed moves with red."
-msgstr "Als dit wordt ingsteld, dan zal PyChess tijdens het spel alternatieve zetten in rood aanduiden."
+msgstr "Als dit wordt ingsteld, dan duidt PyChess tijdens het spel alternatieve zetten in rood aan."
 
 #: glade/PyChess.glade:1335
 msgid "Show elapsed move times"
@@ -342,24 +342,24 @@ msgstr "Verstreken zettijden weergeven"
 
 #: glade/PyChess.glade:1340
 msgid "If set, the elapsed time that a player used for the move is shown."
-msgstr "Als dit wordt ingsteld, dan wordt, na een zet, de door de speler gebruikte verstreken tijd weergegeven."
+msgstr "Als dit wordt ingsteld, dan wordt, na een zet, de door de speler gebruikte verstreken tijd getoond."
 
 #: glade/PyChess.glade:1353 glade/analyze_game.glade:276
 msgid "Show evaluation values"
-msgstr "Evaluatiewaarden weergeven"
+msgstr "Evaluatiewaarden tonen"
 
 #: glade/PyChess.glade:1358
 msgid "If set, the hint analyzer engine evaluation value is shown."
-msgstr "Als dit wordt ingesteld, dan geeft de Hint-analyse na een zet de evaluatie van het spel weer."
+msgstr "Als dit wordt ingesteld, dan toont de Hint-analyse na een zet de evaluatie van het spel."
 
 #: glade/PyChess.glade:1371
 msgid "Show FICS game numbers in tab labels"
-msgstr "FICS-spelnummers weergeven op tabbladlabels"
+msgstr "FICS-spelnummers tonen op tabbladlabels"
 
 #: glade/PyChess.glade:1376
 msgid ""
 "If set, FICS game numbers in tab labels next to player names are shown."
-msgstr "Als dit wordt ingesteld, dan worden FICS-spelnummers na een zet weergegeven op de tabbladlabels, naast de spelernamen."
+msgstr "Als dit wordt ingesteld, dan worden FICS-spelnummers na een zet getoond op de tabbladlabels, naast de spelersnamen."
 
 #: glade/PyChess.glade:1402
 msgid "<b>General Options</b>"
@@ -379,7 +379,7 @@ msgstr "Alleen zetten v_oorzien van effect"
 
 #: glade/PyChess.glade:1460
 msgid "Only animate piece moves."
-msgstr "Alleen effect weergeven bij het verplaatsen van stukken."
+msgstr "Alleen effect tonen bij het verplaatsen van stukken."
 
 #: glade/PyChess.glade:1475
 msgid "No _animation"
@@ -426,7 +426,7 @@ msgid ""
 "If set, PyChess will show game results for different moves in positions containing 6 or less pieces.\n"
 "You can download tablebase files from:\n"
 "http://www.olympuschess.com/egtb/gaviota/"
-msgstr "Als dit wordt ingsteld, dan zal PyChess na een zet de spelresultaten weergeven van verschillende zetten met 6 of minder stukken.\nU kunt basistabellen downloaden op:\nhttp://www.olympuschess.com/egtb/gaviota"
+msgstr "Als dit wordt ingsteld, dan toont PyChess na een zet de spelresultaten van verschillende zetten met 6 of minder stukken.\nJe kunt basistabellen downloaden op:\nhttp://www.olympuschess.com/egtb/gaviota/"
 
 #: glade/PyChess.glade:1727
 msgid "Gaviota TB path:"
@@ -440,7 +440,7 @@ msgstr "_Online basistabellen gebruiken"
 msgid ""
 "If set, PyChess will show game results for different moves in positions containing 6 or less pieces.\n"
 "It will search positions from http://www.k4it.de/"
-msgstr "Als dit wordt ingsteld, dan zal PyChess na een zet de spelresultaten weergeven van verschillende zetten met 6 of minder stukken.\nEr zal gezocht worden naar posities op http://www.k4it.de/"
+msgstr "Als dit wordt ingsteld, dan toont PyChess na een zet de spelresultaten van verschillende zetten met 6 of minder stukken.\nEr wordt gezocht naar posities op http://www.k4it.de/"
 
 #: glade/PyChess.glade:1793
 msgid "<b>Opening, endgame</b>"
@@ -464,7 +464,7 @@ msgstr "_Omgekeerde analyse gebruiken"
 msgid ""
 "The inverse analyzer will analyze the game as if your opponent was to move. "
 "<b>This is necessary for the spy mode to work</b>"
-msgstr "De omgekeerde analyseerder zal het spel analyseren op basis van de tegenstander. <b>Dit is noodzakelijk voor de werking van de spionmodus.</b>"
+msgstr "De omgekeerde analyseerder analyseert het spel op basis van de tegenstander. <b>Dit is noodzakelijk voor de werking van de spionmodus.</b>"
 
 #: glade/PyChess.glade:1977 glade/analyze_game.glade:122
 msgid "Maximum analysis time in seconds:"
@@ -472,7 +472,7 @@ msgstr "Maximum analysetijd in seconden:"
 
 #: glade/PyChess.glade:2006
 msgid "Infinite analysis"
-msgstr "Oneindige analuse"
+msgstr "Oneindige analyse"
 
 #: glade/PyChess.glade:2036
 msgid "<b>Analyzing</b>"
@@ -538,7 +538,7 @@ msgstr "Akkoorden _weergeven"
 msgid ""
 "If set, the playing board will display labels and ranks for each chess "
 "field. These are usable in chess notation."
-msgstr "Als dit wordt ingesteld, dan zal het speelbord labels en rangschikking weergeven van elk schaakveld. Deze zijn bruikbaar in schaaknoteringen."
+msgstr "Als dit wordt ingesteld, dan toont het speelbord labels en rangschikkingen van elk schaakveld. Deze zijn bruikbaar in schaaknotaties."
 
 #: glade/PyChess.glade:2679
 msgid "<b>Board Style</b>"
@@ -562,7 +562,7 @@ msgstr "Thema's"
 
 #: glade/PyChess.glade:2863
 msgid "_Use sounds in PyChess"
-msgstr "_Geluiden gebruiken in PyChess"
+msgstr "_Geluiden afspelen"
 
 #: glade/PyChess.glade:3125
 msgid "A player _checks:"
@@ -668,7 +668,7 @@ msgstr "_PGN-bestand voorzien van tabs"
 msgid ""
 "Warning: this option generates a formatted .pgn file which is not standards "
 "complient"
-msgstr "Waarschuwing: deze optie genereert een opgemaakt .png-bestand; dit is niet conform de standaard."
+msgstr "Waarschuwing: deze optie genereert een opgemaakt .pgn-bestand; dit is niet conform de standaard."
 
 #: glade/PyChess.glade:3983
 msgid "Save _own games only"
@@ -704,15 +704,15 @@ msgstr "Koning"
 
 #: glade/PyChess.glade:4299
 msgid "<b><big>Promote pawn to what?</big></b>"
-msgstr "<b><big>Waar wilt u de pion naar promoveren?</big></b>"
+msgstr "<b><big>Waar wil je de pion naar promoveren?</big></b>"
 
 #: glade/PyChess.glade:4322
 msgid "Load a remote game"
-msgstr ""
+msgstr "Laad een extern spel"
 
 #: glade/PyChess.glade:4391
 msgid "Paste the link to download:"
-msgstr ""
+msgstr "Plak hier de downloadlink:"
 
 #: glade/PyChess.glade:4467
 msgid "Default"
@@ -739,7 +739,7 @@ msgid ""
 "For each player, the statistics provide the probability to win the game and "
 "the variation of your ELO if you lose / end into a tie / win, or simply the "
 "final ELO rating change"
-msgstr "De statistieken geven voor elke speler de winkans aan en de variatie van uw ELO als u verliest / gelijkspel heeft / wint of the definitieve ELO-rangwijziging"
+msgstr "De statistieken geven voor elke speler de winkans aan en de variatie van je ELO als je verliest / gelijkspel hebt / wint of de definitieve ELO-rangwijziging"
 
 #: glade/PyChess.glade:4663
 msgid "Black ELO:"
@@ -825,7 +825,7 @@ msgstr "De opdrachtregel-parameters die nodig zijn voor de aandrijving."
 msgid ""
 "Engines use uci or xboard communication protocol to talk to the GUI.\n"
 "If it can use both  you can set here which one you like."
-msgstr "Aandrijvingen maken gebruik van het communicatieprotocol uci of xboard om te communiceren met de applicatie.\nAls u de beschikking heeft over beide, dan kunt hier uw voorkeur aangeven."
+msgstr "Aandrijvingen maken gebruik van het communicatieprotocol uci of xboard om te communiceren met de app.\nAls je beschikt over beide, dan kun je hier je voorkeur aangeven."
 
 #: glade/PyChess.glade:5246
 msgid "Working directory:"
@@ -879,7 +879,7 @@ msgstr "Voorkeursniveau:"
 msgid ""
 "Level 1 is the weakest and level 20 is the strongest. You may not define a "
 "too high level if the engine is based on the depth to explore"
-msgstr "Niveau 1 is het zwakst en niveau 20 het sterkst. U mag geen te hoog niveau opgeven als de aandrijving gebaseerd is op de verkendiepte."
+msgstr "Niveau 1 is het zwakst en niveau 20 het sterkst. Je mag geen te hoog niveau opgeven als de aandrijving gebaseerd is op de verkendiepte."
 
 #: glade/PyChess.glade:5513
 msgid "Restore the default options"
@@ -891,15 +891,15 @@ msgstr "Opties"
 
 #: glade/PyChess.glade:5605
 msgid "Add from folder"
-msgstr ""
+msgstr "Toevoegen uit map"
 
 #: glade/PyChess.glade:5692
 msgid "Detected engines"
-msgstr ""
+msgstr "Gedecteerde aandrijvingen"
 
 #: glade/PyChess.glade:5767
 msgid "Base path:"
-msgstr ""
+msgstr "Basispad:"
 
 #: glade/PyChess.glade:5885
 #: lib/pychess/perspectives/database/FilterPanel.py:101
@@ -1060,7 +1060,7 @@ msgid ""
 "evaluation for the move made in the game) exceeds this value, it will add an"
 " annotation for that move (consisting of the engine's Principal Variation "
 "for the move) to the Annotation panel"
-msgstr "Als de analysator een zet vindt waar het evaluatieverschil (het verschil tussen de evaluatie van de zet die hij vindt dat het beste en de evaluatie van de gedane zet) deze waarde overschrijdt, dan zal er een aantekening worden gemaakt voor die zet (die bestaat uit de Principevariatie voor de zet) op het Aantekeningpaneel."
+msgstr "Als de analysator een zet vindt waar het evaluatieverschil (het verschil tussen de evaluatie van de zet die hij vindt dat het beste en de evaluatie van de gedane zet) deze waarde overschrijdt, dan wordt er een aantekening gemaakt voor die zet (die bestaat uit de Principevariatie voor de zet) op het Aantekeningpaneel."
 
 #: glade/analyze_game.glade:164
 msgid "Variation annotation creation threshold in centipawns:"
@@ -1084,7 +1084,7 @@ msgstr "Bedreigende variatieregels toevoegen"
 
 #: glade/discovererDialog.glade:18
 msgid "<big><b>PyChess is discovering your engines. Please wait.</b></big>"
-msgstr "<big><b>PyChess is bezig met zoeken naar uw aandrijvingen. Even geduld.</b></big>"
+msgstr "<big><b>PyChess is bezig met zoeken naar je aandrijvingen. Even geduld.</b></big>"
 
 #: glade/discovererDialog.glade:77
 msgid "PyChess.py:"
@@ -1340,7 +1340,7 @@ msgstr "Geen voorkeur"
 
 #: glade/fics_lounge.glade:2660
 msgid "Your strength: "
-msgstr "Uw sterkte: "
+msgstr "Jouw sterkte: "
 
 #: glade/fics_lounge.glade:2702
 msgid "(Blitz)"
@@ -1357,7 +1357,7 @@ msgid ""
 "preserved when\n"
 "a) your rating for the type of game sought has changed\n"
 "b) you change the variant or the time control"
-msgstr "Als deze knop op \"vergrendeld\" staat, dan zal de relatie\ntussen \"Sterkte van tegenstander\" en \"Uw sterkte\" behouden\nblijven als\na) uw rang voor het gezochte speltype wijzigt\nb) u de variant van de tijdscontrole wijzigt"
+msgstr "Als deze knop op \"vergrendeld\" staat, dan blijft de relatie\ntussen \"Sterkte van tegenstander\" en \"Jouw sterkte\" behouden als\na) je rang voor het gezochte speltype wijzigt\nb) je de variant van de tijdscontrole wijzigt"
 
 #: glade/fics_lounge.glade:2876
 msgid "Center:"
@@ -1382,7 +1382,7 @@ msgstr "<b>Sterkte van tegenstander</b>"
 
 #: glade/fics_lounge.glade:3234
 msgid "<b>Your Color</b>"
-msgstr "<b>Uw kleur</b>"
+msgstr "<b>Jouw kleur</b>"
 
 #: glade/fics_lounge.glade:3293
 msgid "Play normal chess rules"
@@ -1562,15 +1562,15 @@ msgstr "%d documenten op_slaan"
 msgid ""
 "<big><b>There are %d games with unsaved moves. Save changes before "
 "closing?</b></big>"
-msgstr "<big><b>Er zijn %d spellen met niet-opgeslagen zetten. Wilt u de wijzigingen opslaan alvorens af te sluiten?</b></big>"
+msgstr "<big><b>Er zijn %d spellen met niet-opgeslagen zetten. Wil je de wijzigingen opslaan alvorens af te sluiten?</b></big>"
 
 #: glade/saveGamesDialog.glade:161
 msgid "Select the games you want to save:"
-msgstr "Selecteer de spellen die u wilt opslaan:"
+msgstr "Kies de spellen die je wilt opslaan:"
 
 #: glade/saveGamesDialog.glade:204
 msgid "If you don't save, new changes to your games will be permanently lost."
-msgstr "Als u niet opslaat, dan zullen de wijzigingen aan uw spellen definitief verloren gaan."
+msgstr "Als je niets opslaat, dan gaan de wijzigingen aan je spellen definitief verloren."
 
 #: glade/taskers.glade:42
 msgid "Detailed settings of players, time control and chess variant"
@@ -1582,7 +1582,7 @@ msgstr "_Tegenstander:"
 
 #: glade/taskers.glade:161
 msgid "_Your Color:"
-msgstr "_Uw kleur"
+msgstr "_Jouw kleur"
 
 #: glade/taskers.glade:228
 msgid "<b>_Start Game</b>"
@@ -1614,7 +1614,7 @@ msgstr "_Recent:"
 
 #: glade/taskers.glade:542
 msgid "Create a new database"
-msgstr "Nieuwe database creëren"
+msgstr "Nieuwe databank creëren"
 
 #: glade/taskers.glade:609
 msgid "<b>Open database</b>"
@@ -1622,7 +1622,7 @@ msgstr "<b>Database openen</b>"
 
 #: glade/taskers.glade:660
 msgid "View lectures, solve puzzles or start practicing endgames"
-msgstr "Lezingen weergeven, puzzels oplossen of oefenen van eindspellen"
+msgstr "Lezingen tonen, puzzels oplossen of eindspellen beoefenen"
 
 #: glade/taskers.glade:723
 msgid "Category:"
@@ -1642,7 +1642,7 @@ msgstr "Tips weergeven bij opstarten"
 
 #: lib/pychess/Main.py:244
 msgid "The provided link does not lead to a meaningful chess content."
-msgstr ""
+msgstr "De opgegeven link leidt niet naar bruikbare schaakinhoud."
 
 #: lib/pychess/Main.py:458
 msgid "http://en.wikipedia.org/wiki/Chess"
@@ -1669,7 +1669,7 @@ msgstr "Bezig met lezen van %s ..."
 #: lib/pychess/Database/PgnImport.py:356 lib/pychess/Database/PgnImport.py:391
 #, python-format
 msgid "%(counter)s game headers from %(filename)s imported"
-msgstr "%(counter)s spelkoppen van %(filename)s zij geïmporteerd"
+msgstr "%(counter)s spelkoppen van %(filename)s zijn geïmporteerd"
 
 #: lib/pychess/Players/CECPEngine.py:805
 #, python-format
@@ -1678,66 +1678,66 @@ msgstr "De spelcomputer %s geeft een foutmelding:"
 
 #: lib/pychess/Players/Human.py:22
 msgid "Your opponent has offered you a draw."
-msgstr "Uw tegenspeler bied een gelijkspel aan."
+msgstr "Je tegenspeler bied een gelijkspel aan."
 
 #: lib/pychess/Players/Human.py:23
 msgid ""
 "Your opponent has offered you a draw. If you accept this offer, the game "
 "will end with a score of 1/2 - 1/2."
-msgstr "Uw tegenstander bied een gelijkspel aan. Als u dit aanvaardt, dan zal het spel eindigen met een score van 1/2 – 1/2."
+msgstr "Je tegenstander bied een gelijkspel aan. Als je dit aanvaardt, dan eindigt het spel met een score van 1/2 – 1/2."
 
 #: lib/pychess/Players/Human.py:25
 msgid "Your opponent wants to abort the game."
-msgstr "Uw tegenstander wenst het spel te beëindigen."
+msgstr "Je tegenstander wenst het spel te beëindigen."
 
 #: lib/pychess/Players/Human.py:26
 msgid ""
 "Your opponent has asked that the game be aborted. If you accept this offer, "
 "the game will end with no rating change."
-msgstr "Uw tegenstander heeft gevraagd om beëindiging van het spel. Als u dit aanvaardt, dan zal het spel eindigen zonder rangwijziging."
+msgstr "Je tegenstander heeft gevraagd om beëindiging van het spel. Als je dit aanvaardt, dan eindigt het spel zonder rangwijziging."
 
 #: lib/pychess/Players/Human.py:28
 msgid "Your opponent wants to adjourn the game."
-msgstr "Uw tegenstander wenst het spel uit te stellen."
+msgstr "Je tegenstander wenst het spel uit te stellen."
 
 #: lib/pychess/Players/Human.py:29
 msgid ""
 "Your opponent has asked that the game be adjourned. If you accept this "
 "offer, the game will be adjourned and you can resume it later (when your "
 "opponent is online and both players agree to resume)."
-msgstr "Uw tegenstander heeft gevraagd om het spel uit te stellen. Als u dit aanvaardt, dan zal het spel worden uitgesteld en kunt u het op een later moment hervatten (als uw tegenspeler online is en beide spelers beslissen om verder te spelen)."
+msgstr "Je tegenstander heeft gevraagd om het spel uit te stellen. Als je dit aanvaardt, dan wordt het spel uitgesteld en kun je het op een later moment hervatten (als je tegenspeler online is en beide spelers beslissen om verder te spelen)."
 
 #: lib/pychess/Players/Human.py:31
 #, python-format
 msgid "Your opponent wants to undo %s move(s)."
-msgstr "Uw tegenstander wil %s zet(ten) ongedaan maken."
+msgstr "Je tegenstander wil %s zet(ten) ongedaan maken."
 
 #: lib/pychess/Players/Human.py:32
 #, python-format
 msgid ""
 "Your opponent has asked that the last %s move(s) be undone. If you accept "
 "this offer, the game will continue from the earlier position."
-msgstr "Uw tegenstander heeft gevraagd om de laatste %s zet(ten) ongedaan te maken. Als u dit aanvaardt, dan zal het spel worden hervat vanuit een eerdere positie."
+msgstr "Je tegenstander heeft gevraagd om de laatste %s zet(ten) ongedaan te maken. Als je dit aanvaardt, dan wordt het spel hervat vanuit een eerdere positie."
 
 #: lib/pychess/Players/Human.py:34
 msgid "Your opponent wants to pause the game."
-msgstr "Uw tegenstander wenst het spel te pauzeren."
+msgstr "Je tegenstander wenst het spel te pauzeren."
 
 #: lib/pychess/Players/Human.py:35
 msgid ""
 "Your opponent has asked that the game be paused. If you accept this offer, "
 "the game clock will be paused until both players agree to resume the game."
-msgstr "Uw tegenstander vraagt om het spel te pauzeren. Als u dit aanvaardt, dan zal de wedstrijdklok worden onderbroken totdat beide spelers tot hervatten bereid zijn."
+msgstr "Je tegenstander vraagt om het spel te pauzeren. Als je dit aanvaardt, dan wordt de wedstrijdklok onderbroken totdat beide spelers tot hervatten bereid zijn."
 
 #: lib/pychess/Players/Human.py:37
 msgid "Your opponent wants to resume the game."
-msgstr "Uw tegenstander wil het spel hervatten."
+msgstr "Je tegenstander wil het spel hervatten."
 
 #: lib/pychess/Players/Human.py:38
 msgid ""
 "Your opponent has asked that the game be resumed. If you accept this offer, "
 "the game clock will continue from where it was paused."
-msgstr "Uw tegenspeler vraagt om het spel te hervatten. Als u dit aanvaardt, dan loopt de wedstrijdklok verder vanwaar ze werd onderbroken."
+msgstr "Je tegenspeler vraagt om het spel te hervatten. Als je dit aanvaardt, dan loopt de wedstrijdklok verder vanwaar ze werd onderbroken."
 
 #: lib/pychess/Players/Human.py:42
 msgid "The resignation"
@@ -1781,7 +1781,7 @@ msgstr "terugtrekken"
 
 #: lib/pychess/Players/Human.py:55
 msgid "call your opponents flag"
-msgstr "Roep de vlag van uw tegenstander"
+msgstr "roep de vlag van je tegenstander"
 
 #: lib/pychess/Players/Human.py:56
 msgid "offer a draw"
@@ -1813,11 +1813,11 @@ msgstr "terugname voorstellen"
 
 #: lib/pychess/Players/Human.py:63
 msgid "ask your opponent to move"
-msgstr "vraag uw tegenstander om een zet te doen"
+msgstr "vraag je tegenstander om een zet te doen"
 
 #: lib/pychess/Players/Human.py:67
 msgid "Your opponent is not out of time."
-msgstr "Uw tegenstander bevindt zich nog binnen de tijd."
+msgstr "Je tegenstander bevindt zich nog binnen de tijd."
 
 #: lib/pychess/Players/Human.py:68
 msgid "The clock hasn't been started yet."
@@ -1825,21 +1825,21 @@ msgstr "De tijdklok is nog niet gestart."
 
 #: lib/pychess/Players/Human.py:70
 msgid "You can't switch colors during the game."
-msgstr "Tijdens het spel kunt u niet van kleur wisselen."
+msgstr "Tijdens het spel kun je niet van kleur wisselen."
 
 #: lib/pychess/Players/Human.py:71
 msgid "You have tried to undo too many moves."
-msgstr "U heeft geprobeerd teveel zetten ongedaan te maken."
+msgstr "Je hebt geprobeerd teveel zetten ongedaan te maken."
 
 #: lib/pychess/Players/Human.py:197
 msgid "Your opponent asks you to hurry!"
-msgstr "Uw tegenstander vraagt u om op te schieten!"
+msgstr "Je tegenstander vraagt je om op te schieten!"
 
 #: lib/pychess/Players/Human.py:199
 msgid ""
 "Generally this means nothing, as the game is time-based, but if you want to"
 "             please your opponent, perhaps you should get going."
-msgstr "Over het algemeen betekent dit niets omdat het spel tijdgebonden is, maar om uw tegenspeler te plezieren moet u misschien een zet doen."
+msgstr "Over het algemeen betekent dit niets omdat het spel tijdgebonden is, maar om je tegenspeler te plezieren moet je wellicht een zet doen."
 
 #: lib/pychess/Players/Human.py:276
 #: lib/pychess/perspectives/fics/ParrentListSection.py:30
@@ -1855,7 +1855,7 @@ msgstr "Weigeren"
 #: lib/pychess/Players/Human.py:286
 #, python-format
 msgid "%s was declined by your opponent"
-msgstr "%s is geweigerd door uw tegenstander"
+msgstr "%s is geweigerd door je tegenstander"
 
 #: lib/pychess/Players/Human.py:288
 #, python-format
@@ -1869,11 +1869,11 @@ msgstr "Opnieuw versturen"
 #: lib/pychess/Players/Human.py:307
 #, python-format
 msgid "%s was withdrawn by your opponent"
-msgstr "%s is ingetrokken door uw tegenstander"
+msgstr "%s is ingetrokken door je tegenstander"
 
 #: lib/pychess/Players/Human.py:309
 msgid "Your opponent seems to have changed their mind."
-msgstr "Uw tegenstander is van gedachten veranderd."
+msgstr "Je tegenstander is van gedachten veranderd."
 
 #: lib/pychess/Players/Human.py:327
 #, python-format
@@ -1906,7 +1906,7 @@ msgstr "Het huidige spel is niet afgebroken. Exporteren is mogelijk van weinig w
 #: lib/pychess/Savers/chesspastebin.py:22
 #, python-format
 msgid "Should %s publicly publish your game as PGN on chesspastebin.com ?"
-msgstr "Moet %s uw spel openbaar publiceren als PGN op chesspastebin.com ?"
+msgstr "Moet %s je spel openbaarmaken als PGN op chesspastebin.com ?"
 
 #: lib/pychess/Savers/chesspastebin.py:57
 msgid "Game shared at "
@@ -1996,16 +1996,16 @@ msgstr "PNG-afbeelding"
 #: lib/pychess/Savers/remotegame.py:92 lib/pychess/Savers/remotegame.py:144
 #: lib/pychess/Savers/remotegame.py:190 lib/pychess/Savers/remotegame.py:225
 msgid "Download link"
-msgstr ""
+msgstr "Downloadlink"
 
 #: lib/pychess/Savers/remotegame.py:265 lib/pychess/Savers/remotegame.py:370
 #: lib/pychess/Savers/remotegame.py:441 lib/pychess/Savers/remotegame.py:500
 msgid "HTML parsing"
-msgstr ""
+msgstr "HTML-verwerking"
 
 #: lib/pychess/Savers/remotegame.py:593
 msgid "Various techniques"
-msgstr ""
+msgstr "Verschillende technieken"
 
 #: lib/pychess/Savers/txt.py:6
 msgid "Text Diagram"
@@ -3119,7 +3119,7 @@ msgstr "Omdat dezelfde positie zich driemaal herhaalde"
 
 #: lib/pychess/Utils/repr.py:45
 msgid "Because the last 50 moves brought nothing new"
-msgstr "Omdat de laatste 50 zetten niets nieuw opleverden"
+msgstr "Omdat de laatste 50 zetten niets nieuws opleverden"
 
 #: lib/pychess/Utils/repr.py:46
 msgid "Because both players ran out of time"
@@ -3706,7 +3706,7 @@ msgstr "'%s' is geen geregistreerde naam"
 msgid ""
 "The entered password was invalid.\n"
 "If you forgot your password, go to <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a> to request a new one over email."
-msgstr "Het ingevoerde wachtwoord is ongeldig.\nAls u uw wachtwoord vergeten bent, ga dan naar <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a> om per e-mail een nieuw wachtwoord aan te vragen."
+msgstr "Het ingevoerde wachtwoord is ongeldig.\nAls je je wachtwoord vergeten bent, ga dan naar <a href=\"http://www.freechess.org/password\">http://www.freechess.org/password</a> om per e-mail een nieuw wachtwoord aan te vragen."
 
 #: lib/pychess/ic/FICSConnection.py:167
 #, python-format
@@ -3716,13 +3716,13 @@ msgstr "Sorry, '%s' is al ingelogd"
 #: lib/pychess/ic/FICSConnection.py:169
 #, python-format
 msgid "'%s' is a registered name.  If it is yours, type the password."
-msgstr "'%s' is een geregistreerde naam. Als dit uw naam is, typ dan uw wachtwoord."
+msgstr "'%s' is een geregistreerde naam. Als dit jouw naam is, typ dan je wachtwoord."
 
 #: lib/pychess/ic/FICSConnection.py:170
 msgid ""
 "Due to abuse problems, guest connections have been prevented.\n"
 "You can still register on http://www.freechess.org"
-msgstr "Vanwege misbruik zijn gastverbindingen niet toegestaan.\nU kunt zich nog steeds registreren op http://www.freechess.org"
+msgstr "Vanwege misbruik zijn gastverbindingen niet toegestaan.\nJe kunt je nog steeds registreren op http://www.freechess.org"
 
 #: lib/pychess/ic/FICSConnection.py:190
 msgid "Connecting to server"
@@ -3779,7 +3779,7 @@ msgstr "Niet beschikbaar"
 
 #: lib/pychess/ic/FICSObjects.py:167
 msgid "Running Simul Match"
-msgstr "Simultaan spel spele"
+msgstr "Simultaan spel spelen"
 
 #: lib/pychess/ic/FICSObjects.py:169
 msgid "In Tournament"
@@ -3862,7 +3862,7 @@ msgstr "Automatisch uitloggen"
 
 #: lib/pychess/ic/ICLogon.py:246
 msgid "You have been logged out because you were idle more than 60 minutes"
-msgstr "U bent uitgelogd omdat u langer dan 60 minuten inactief was"
+msgstr "Je bent uitgelogd omdat je langer dan 60 minuten inactief was"
 
 #: lib/pychess/ic/ICLogon.py:334
 msgid "Guest logins disabled by FICS server"
@@ -3963,7 +3963,7 @@ msgstr "Vrouwelijke FIDE Master"
 
 #: lib/pychess/ic/__init__.py:288
 msgid "Dummy Account"
-msgstr "Test-account"
+msgstr "Testaccount"
 
 #: lib/pychess/ic/__init__.py:289
 msgid "Candidate Master"
@@ -3991,7 +3991,7 @@ msgstr "T"
 
 #: lib/pychess/ic/__init__.py:296
 msgid "U"
-msgstr "U"
+msgstr "Jij"
 
 #: lib/pychess/ic/__init__.py:296
 msgid "CA"
@@ -4059,13 +4059,13 @@ msgstr "DM"
 
 #: lib/pychess/perspectives/__init__.py:132
 msgid "<b><big>PyChess was unable to load your panel settings</big></b>"
-msgstr "<b><big> PyChess kan uw paneelinstellingen niet laden</big></b>"
+msgstr "<b><big> PyChess kan je paneelinstellingen niet laden</big></b>"
 
 #: lib/pychess/perspectives/__init__.py:134
 msgid ""
 "Your panel settings have been reset. If this problem repeats,"
 "                         you should report it to the developers"
-msgstr "Uw paneelinstellingen zijn teruggezet. Als dit probleem zich herhaalt, dan moet u dit melden aan de ontwikkelaars."
+msgstr "Je paneelinstellingen zijn hersteld. Als dit probleem zich herhaalt, meld dit dan aan de ontwikkelaars."
 
 #: lib/pychess/widgets/ChannelsPanel.py:176
 msgid "Friends"
@@ -4114,11 +4114,11 @@ msgstr "Vragen om toestemming"
 #: lib/pychess/widgets/ExternalsDialog.py:34
 msgid ""
 "Some of PyChess features needs your permission to download external programs"
-msgstr "Sommige PyChess-functies vereisen uw toestemming om externe applicaties te mogen downloaden"
+msgstr "Sommige PyChess-functies vereisen jouw machtiging om externe applicaties te downloaden"
 
 #: lib/pychess/widgets/ExternalsDialog.py:38
 msgid "database querying needs scoutfish"
-msgstr "database-opvraging vereist scoutfish"
+msgstr "databank-opvraging vereist scoutfish"
 
 #: lib/pychess/widgets/ExternalsDialog.py:48
 msgid "database opening tree needs chess_db"
@@ -4146,7 +4146,7 @@ msgstr "Bezig met ophalen van spelerslijst"
 
 #: lib/pychess/widgets/LearnInfoBar.py:76
 msgid "Your turn."
-msgstr "Uw beurt."
+msgstr "Jouw beurt."
 
 #: lib/pychess/widgets/LearnInfoBar.py:77
 msgid "Hint"
@@ -4219,7 +4219,7 @@ msgstr "Eindspellen"
 
 #: lib/pychess/widgets/ViewsPanel.py:33
 msgid "You have opened no conversations yet"
-msgstr "U heeft nog geen gesprekken gestart"
+msgstr "Je hebt nog geen gesprekken gestart"
 
 #: lib/pychess/widgets/ViewsPanel.py:68
 msgid "Only registered users may talk to this channel"
@@ -4231,7 +4231,7 @@ msgstr "Bezig met spelanalyse..."
 
 #: lib/pychess/widgets/analyzegameDialog.py:97
 msgid "Do you want to abort it?"
-msgstr "Wilt u dit afbreken?"
+msgstr "Wil je dit afbreken?"
 
 #: lib/pychess/widgets/analyzegameDialog.py:107
 #: lib/pychess/widgets/gamewidget.py:173 lib/pychess/widgets/gamewidget.py:295
@@ -4240,7 +4240,7 @@ msgstr "Afbreken"
 
 #: lib/pychess/widgets/enginesDialog.py:43
 msgid "You have unsaved changes. Do you want to save before leaving?"
-msgstr "U heeft onopgeslagen wijzigingen. Wilt u deze opslaan alvorens te verlaten?"
+msgstr "Je hebt onopgeslagen wijzigingen. Wil je deze opslaan alvorens te verlaten?"
 
 #: lib/pychess/widgets/enginesDialog.py:150
 msgid "Option"
@@ -4292,7 +4292,7 @@ msgstr "Er is iets mis met dit uitvoerbare bestand"
 
 #: lib/pychess/widgets/enginesDialog.py:347
 msgid "Choose a folder"
-msgstr ""
+msgstr "Kies een map"
 
 #: lib/pychess/widgets/enginesDialog.py:382
 #: lib/pychess/perspectives/database/__init__.py:480
@@ -4301,7 +4301,7 @@ msgstr "Importeren"
 
 #: lib/pychess/widgets/enginesDialog.py:383
 msgid "File name"
-msgstr ""
+msgstr "Bestandsnaam"
 
 #: lib/pychess/widgets/enginesDialog.py:458
 msgid "Select working directory"
@@ -4309,7 +4309,7 @@ msgstr "Kies de werkmap"
 
 #: lib/pychess/widgets/enginesDialog.py:649
 msgid "Do you really want to restore the default options of the engine ?"
-msgstr "Weet u zeker dat u de standaardwaarden van de aandrijving wilt herstellen?"
+msgstr "Weet je zeker dat je de standaardwaarden van de aandrijving wilt herstellen?"
 
 #: lib/pychess/widgets/gameinfoDialog.py:61
 msgid "New"
@@ -4317,7 +4317,7 @@ msgstr "Nieuw"
 
 #: lib/pychess/widgets/gameinfoDialog.py:121
 msgid "Tag"
-msgstr ""
+msgstr "Label"
 
 #: lib/pychess/widgets/gameinfoDialog.py:198
 msgid "Pick a date"
@@ -4351,35 +4351,35 @@ msgstr "Twee zetten ongedaan maken"
 
 #: lib/pychess/widgets/gamenanny.py:254
 msgid "You sent an abort offer"
-msgstr "U heeft een voorstel tot afbreken verstuurd"
+msgstr "Je hebt een voorstel tot afbreken verstuurd"
 
 #: lib/pychess/widgets/gamenanny.py:256
 msgid "You sent an adjournment offer"
-msgstr "U heeft een voorstel tot uitstellen verstuurd"
+msgstr "Je hebt een voorstel tot uitstellen verstuurd"
 
 #: lib/pychess/widgets/gamenanny.py:258
 msgid "You sent a draw offer"
-msgstr "U heeft een remisevoorstel verstuurd"
+msgstr "Je hebt een remisevoorstel verstuurd"
 
 #: lib/pychess/widgets/gamenanny.py:260
 msgid "You sent a pause offer"
-msgstr "U heeft een pauzeervoorstel verstuurd"
+msgstr "Je hebt een pauzeervoorstel verstuurd"
 
 #: lib/pychess/widgets/gamenanny.py:262
 msgid "You sent a resume offer"
-msgstr "U heeft een voorstel tot hervatten verstuurd"
+msgstr "Je hebt een voorstel tot hervatten verstuurd"
 
 #: lib/pychess/widgets/gamenanny.py:264
 msgid "You sent an undo offer"
-msgstr "U heeft een voorstel tot ongedaan maken verstuurd"
+msgstr "Je hebt een voorstel tot ongedaan maken verstuurd"
 
 #: lib/pychess/widgets/gamenanny.py:266
 msgid "You asked your opponent to move"
-msgstr "U heeft uw tegenstander gevraagd om een zet te doen"
+msgstr "Je hebt je tegenstander gevraagd om een zet te doen"
 
 #: lib/pychess/widgets/gamenanny.py:268
 msgid "You sent flag call"
-msgstr "U heeft een vlagoproep verstuurd"
+msgstr "Je hebt een vlagoproep verstuurd"
 
 #: lib/pychess/widgets/gamenanny.py:289
 #, python-format
@@ -4391,7 +4391,7 @@ msgid ""
 "PyChess has lost connection to the engine, probably because it has died.\n"
 "\n"
 "             You can try to start a new game with the engine, or try to play against another one."
-msgstr "PyChess heeft geen verbinding meer met de aandrijving; deze is waarschijnlijk gestopt..\n\n             U kunt proberen om een nieuw spel te starten met deze aandrijving of te kiezen voor een andere aandrijving."
+msgstr "PyChess heeft geen verbinding meer met de aandrijving; deze is waarschijnlijk gestopt..\n\n             Je kunt proberen om een nieuw spel te starten met deze aandrijving of te kiezen voor een andere aandrijving."
 
 #: lib/pychess/widgets/gamewidget.py:175
 msgid ""
@@ -4407,7 +4407,7 @@ msgstr "Afbreken aanbieden"
 msgid ""
 "Your opponent must agree to abort the game because there"
 "                       has been two or more moves made"
-msgstr "Uw tegenstander moet akkoord gaan met afbreken omdat er twee of meer zetten geplaatst zijn."
+msgstr "Je tegenstander moet akkoord gaan met afbreken omdat er twee of meer zetten geplaatst zijn."
 
 #: lib/pychess/widgets/gamewidget.py:198
 msgid "This game can not be adjourned because one or both players are guests"
@@ -4447,7 +4447,7 @@ msgstr "heeft hevige vertraging opgelopen maar is nog verbonden"
 
 #: lib/pychess/widgets/gamewidget.py:572
 msgid "Continue to wait for opponent, or try to adjourn the game?"
-msgstr "Wilt u blijven wachten op de tegenstander of proberen om het spel uit te stellen?"
+msgstr "Wil je blijven wachten op de tegenstander of proberen om het spel uit te stellen?"
 
 #: lib/pychess/widgets/gamewidget.py:584
 msgid "Wait"
@@ -4471,7 +4471,7 @@ msgstr "Ga terug naar de hoofdlijn"
 
 #: lib/pychess/widgets/gamewidget.py:663
 msgid "Go back to the parent line"
-msgstr ""
+msgstr "Ga terug naar het hoofdonderdeel"
 
 #: lib/pychess/widgets/gamewidget.py:667
 msgid "Step forward one move"
@@ -4483,7 +4483,7 @@ msgstr "Ga naar de laatste positie"
 
 #: lib/pychess/widgets/gamewidget.py:675
 msgid "Find postion in current database"
-msgstr "Positie zoeken in huidige database"
+msgstr "Positie opzoeken in huidige databank"
 
 #: lib/pychess/widgets/gamewidget.py:679
 msgid "Save arrows/circles"
@@ -4491,15 +4491,15 @@ msgstr "Pijlen/cirkels opslaan"
 
 #: lib/pychess/widgets/gamewidget.py:716
 msgid "No database is currently opened."
-msgstr ""
+msgstr "Er is geen databank geopend."
 
 #: lib/pychess/widgets/gamewidget.py:730
 msgid "The position does not exist in the database."
-msgstr ""
+msgstr "De positie bevindt zich niet in de databank."
 
 #: lib/pychess/widgets/gamewidget.py:740
 msgid "An approximate position has been found. Do you want to display it ?"
-msgstr ""
+msgstr "Er is een geschatte positie aangetroffen. Wil je deze tonen?"
 
 #: lib/pychess/widgets/newGameDialog.py:82
 msgid "Human Being"
@@ -4573,7 +4573,7 @@ msgstr "Positie instellen"
 
 #: lib/pychess/widgets/newGameDialog.py:820
 msgid "Type or paste PGN game or FEN positions here"
-msgstr "Typ of plak hier uw PGN-spel of FEN-posities"
+msgstr "Typ of plak hier je PGN-spel of FEN-posities"
 
 #: lib/pychess/widgets/newGameDialog.py:864
 msgid "Enter Game"
@@ -4609,7 +4609,7 @@ msgstr "Geluidssignaal"
 
 #: lib/pychess/widgets/preferencesDialog.py:415
 msgid "Select sound file..."
-msgstr "Selecteer geluidsbestand..."
+msgstr "Kies geluidsbestand..."
 
 #: lib/pychess/widgets/preferencesDialog.py:554
 msgid "Undescribed panel"
@@ -4625,7 +4625,7 @@ msgstr "Afbeeldingen"
 
 #: lib/pychess/widgets/preferencesDialog.py:838
 msgid "Select auto save path"
-msgstr "Selecteer automatisch opslaan-pad"
+msgstr "Kies automatisch opslaan-pad"
 
 #: lib/pychess/widgets/tipOfTheDay.py:24
 msgid ""
@@ -4633,82 +4633,82 @@ msgid ""
 "chess enthusiasts: bug reports, source code, documentation, translations, "
 "feature requests, user assistance... Let's get in touch at "
 "<b>http://www.pychess.org</b>"
-msgstr "PyChess is een open-source schaakprogramma dat verbeterd kan worden door iedere schaakenthousiasteling: bug rapportages, source code, documentatie, vertalingen, functionaliteitsverzoeken, gebruikersondersteuning... Laten we in contact komen via <b>http://www.pychess.org</b>"
+msgstr "PyChess is een open-source schaakprogramma dat verbeterd kan worden door iedere schaakenthousiasteling: bugmeldingen, broncode, documentatie, vertalingen, ideeën delen, gebruikersondersteuning... Ga naar <b>http://www.pychess.org</b>"
 
 #: lib/pychess/widgets/tipOfTheDay.py:25
 msgid ""
 "PyChess supports a wide range of chess engines, variants, Internet servers "
 "and lessons. It is a perfect desktop application to increase your chess "
 "skills very conveniently."
-msgstr "PyChess ondersteunt een breed scala aan schaakcomputers, varianten, Internet servers en lessen. Het is een perfect bureaublad programma om met gemak schaakvaardigheden te verhogen."
+msgstr "PyChess ondersteunt een breed scala aan schaakcomputers, varianten, internetservers en lessen. Het is dé perfecte app om met gemak je schaakvaardigheden te verhogen."
 
 #: lib/pychess/widgets/tipOfTheDay.py:26
 msgid ""
 "The releases of PyChess hold the name of historical world chess champions. "
 "Do you know the name of the current world chess champion?"
-msgstr "De uitgebrachte versies van PyChess dragen namen van historische schaakwereldkampioenen. Weet u wat de naam is van de huidige schaakwereldkampioen?"
+msgstr "De uitgebrachte versies van PyChess dragen namen van historische schaakwereldkampioenen. Weet je wat de naam is van de huidige schaakwereldkampioen?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:27
 msgid ""
 "Do you know that you can help to translate PyChess into your language, "
 "<b>Help</b> > <b>Translate PyChess</b>."
-msgstr "Wist u dat u kunt helpen bij het vertalen van PyChess? Ga naar<b>Hulp</b> > <b>PyChess vertalen</b>."
+msgstr "Wist je dat je kunt helpen PyChess te vertalen? Ga naar<b>Hulp</b> > <b>PyChess vertalen</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:28
 msgid ""
 "A game is made of an opening, a middle-game and an end-game. PyChess is able"
 " to train you thanks to its opening book, its supported chess engines and "
 "its training module."
-msgstr "Een partij bestaat uit een opening, het middenspel en een eindspel. PyChess kunt u trainen door gebruik te maken van een openingsboek, de schaakcomputers die het ondersteunt en de trainingsmodule. "
+msgstr "Een partij bestaat uit een opening, het middenspel en een eindspel. PyChess kan je trainen door gebruik te maken van een openingsboek, de schaakcomputers die het ondersteunt en de oefenmodule. "
 
 #: lib/pychess/widgets/tipOfTheDay.py:31
 msgid ""
 "Do you know that it is possible to finish a chess game in just 2 turns?"
-msgstr "Wist u dat het mogelijk is om een spel af te ronden in slechts 2 beurten?"
+msgstr "Wist je dat het mogelijk is om een spel af te ronden in slechts 2 beurten?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:32
 msgid "Do you know that a knight is better placed in the center of the board?"
-msgstr "Weet u dat een paard beter staat in het centrum van het bord?"
+msgstr "Wist je dat een paard beter staat op het midden van het bord?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:33
 msgid ""
 "Do you know that moving the queen at the very beginning of a game does not "
 "offer any particular advantage?"
-msgstr "Weet u dat het bewegen van de dame in het begin van de partij niet een bepaald voordeel biedt?"
+msgstr "Wist je dat het verplaatsen van de dame aan het begin van een spel geen merkbaar voordeel biedt?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:34
 msgid ""
 "Do you know that having two-colored bishops working together is very "
 "powerful?"
-msgstr "Weet u dat het hebben van twee samenwerkende lopers die over verschillende kleuren velden bewegen erg krachtig is?"
+msgstr "Wist je dat het hebben van twee samenwerkende lopers die over verschillende kleuren velden bewegen erg krachtig is?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:35
 msgid "Do you know that the rooks are generally engaged late in game?"
-msgstr "Weet u dat de torens meestal laat in de partij in het spel betrokken worden?"
+msgstr "Wist je dat de torens meestal pas laat in de partij in het spel betrokken worden?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:36
 msgid ""
 "Do you know that the king can move across two cells under certain "
 "conditions? This is called castling."
-msgstr "Weet u dat de koning in bepaalde gevallen over twee velden kan bewegen in één zet? Dat heet rokeren. "
+msgstr "Wist je dat de koning soms over twee velden kan worden verplaatst in één zet? Dit heet 'rokeren'. "
 
 #: lib/pychess/widgets/tipOfTheDay.py:37
 msgid ""
 "Do you know that the number of possible chess games exceeds the number of "
 "atoms in the Universe?"
-msgstr "Wist u dat het aantal mogelijke schaakvarianten hoger ligt dan het aantal atomen in het universum?"
+msgstr "Wist je dat het aantal mogelijke schaakvarianten hoger ligt dan het aantal atomen in het universum?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:40
 msgid ""
 "You can start a new game by <b>Game</b> > <b>New Game</b>, then choose the "
 "<b>Players</b>, <b>Time Control</b> and <b>Chess Variants</b>."
-msgstr ""
+msgstr "Je kunt een nieuw spel starten via<b>Spel</b> > <b>Nieuw Spel</b>. In het Nieuw Spel-venster kun je <b>Spelers</b>, <b>Tijdscontrole</b> en <b>Schaakvarianten</b> kiezen."
 
 #: lib/pychess/widgets/tipOfTheDay.py:41
 msgid ""
 "You can choose from 20 different difficulties to play against the computer. "
 "It will mainly affect the available time to think."
-msgstr ""
+msgstr "Je kunt spelen tegen de computer op 20 verschillende spelniveaus. Dit verandert alleen de beschikbare denktijd."
 
 #: lib/pychess/widgets/tipOfTheDay.py:42
 msgid ""
@@ -5484,7 +5484,7 @@ msgstr "Polyglot-boek creëren"
 
 #: lib/pychess/perspectives/database/__init__.py:609
 msgid "Create New Pgn Database"
-msgstr "Nieuwe PGN-database creëren"
+msgstr "Nieuwe PGN-databank creëren"
 
 #: lib/pychess/perspectives/database/__init__.py:629
 #, python-format
@@ -5541,7 +5541,7 @@ msgstr "Gearchiveerd"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:28
 msgid "Adjourned, history and journal games list"
-msgstr "Lijst met uitgestelde, voormalige en gelogde spellen"
+msgstr "Lijst met uitgestelde, voormalige en vastgelegde spellen"
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:56
 #: lib/pychess/perspectives/fics/SeekListPanel.py:74
@@ -5563,7 +5563,7 @@ msgstr "Datum/Tijd"
 msgid ""
 " with whom you have an adjourned <b>%(timecontrol)s</b> <b>%(gametype)s</b> "
 "game is online."
-msgstr "met wie u <b>%(timecontrol)s</b> hebt uitgesteld.  Het spel<b>%(gametype)s</b> is online."
+msgstr " met wie je <b>%(timecontrol)s</b> hebt uitgesteld.  Het spel<b>%(gametype)s</b> is online."
 
 #: lib/pychess/perspectives/fics/ArchiveListPanel.py:167
 msgid "Request Continuation"
@@ -5630,7 +5630,7 @@ msgstr "Beste "
 msgid ""
 "On FICS, your \"Wild\" rating encompasses all of the"
 "                         following variants at all time controls:\n"
-msgstr "Op FICS bestaat uw \"Wild\"-rang uit de                         volgende varianten op alle tijdcontroles:\n"
+msgstr "Op FICS bestaat je \"Wild\"-rang uit de                         volgende varianten op alle tijdcontroles:\n"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:109
 msgid "Sanctions"
@@ -5668,7 +5668,7 @@ msgid ""
 "remain active with the ability to play games. (With some restrictions. For "
 "example, no premium videos, some limitations in channels, and so on.) To "
 "register an account, go to "
-msgstr "U bent momenteel ingelogd als gastgebruiker. Er is een gratis proefperiode van 30 dagen beschikbaar. Er worden geen betalingen verricht en het account blijft actief; er kan dus gewoon worden gespeeld. Maar er zijn beperkingen: geen premium-video's, kanaalbeperkingen, enz. Ga, om een account te registeren, naar"
+msgstr "Je bent momenteel ingelogd als gastgebruiker. Er is een gratis proefperiode van 30 dagen beschikbaar. Er worden geen betalingen verricht en het account blijft actief; er kan dus gewoon worden gespeeld. Maar er zijn beperkingen: geen premium-video's, kanaalbeperkingen, enz. Ga, om een account te registeren, naar"
 
 #: lib/pychess/perspectives/fics/FicsHome.py:197
 msgid ""
@@ -5737,7 +5737,7 @@ msgid ""
 "                 can't establish ratings, and the chain button's state has "
 "no effect when                 there is no rating to which to tie \"Opponent"
 " Strength\" to"
-msgstr "De linkknop is uitgeschakeld omdat u ingelogd bent als gastgebruiker. Gastgebruikers kunnen geen rangen opbouwen en linkknop heeft geen effect zolang er geen rang is t.o.v. de \"sterkte van de tegenstander\""
+msgstr "De linkknop is uitgeschakeld omdat je ingelogd bent als gastgebruiker. Gastgebruikers kunnen geen rangen opbouwen en de linkknop heeft geen effect zolang er geen rang is t.o.v. de \"sterkte van de tegenstander\""
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:249
 msgid "Challenge: "
@@ -5745,12 +5745,12 @@ msgstr "Uitdaging:"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:290
 msgid "If set you can refuse players accepting your seek"
-msgstr "Als u dit instelt, dan kunt spelers weigeren die uw verzoek accepteren"
+msgstr "Als je dit instelt, dan kun je spelers weigeren die je verzoek accepteren"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:294
 #: lib/pychess/perspectives/fics/SeekChallenge.py:297
 msgid "This option is not applicable because you're challenging a player"
-msgstr "Deze optie is niet van toepassing, omdat u een speler heeft uitgedaagd"
+msgstr "Deze optie is niet van toepassing omdat je een speler hebt uitgedaagd"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:310
 msgid "Edit Seek: "
@@ -5771,11 +5771,11 @@ msgstr "Elke sterkte"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:581
 msgid "You can't play rated games because you are logged in as a guest"
-msgstr "U kunt geen rangspellen spelen omdat u bent ingelogd als gastgebruiker"
+msgstr "Je kunt geen rangspellen spelen omdat je bent ingelogd als gastgebruiker"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:585
 msgid "You can't play rated games because \"Untimed\" is checked, "
-msgstr "U kunt geen rangspellen spelen omdat \"Zonder klok' is aangevinkt,"
+msgstr "Je kunt geen rangspellen spelen omdat \"Zonder klok' is aangevinkt,"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:586
 msgid "and on FICS, untimed games can't be rated"
@@ -5783,7 +5783,7 @@ msgstr "en op FICS kunnen spellen zonder klok niet gewaardeerd worden"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:590
 msgid "This option is not available because you're challenging a guest, "
-msgstr "Deze optie is niet beschikbaar omdat u een gastgebruiker heeft uitgedaagd"
+msgstr "Deze optie is niet beschikbaar omdat je een gastgebruiker hebt uitgedaagd"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:591
 msgid "and guests can't play rated games"
@@ -5791,7 +5791,7 @@ msgstr "en gastspelers kunnen geen rangspellen spelen."
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:706
 msgid "You can't select a variant because \"Untimed\" is checked, "
-msgstr "U kunt geen variant selecteren omdat “zonder klok’ is aangevinkt"
+msgstr "Je kunt geen variant kiezen omdat “Zonder klok’ is aangevinkt,"
 
 #: lib/pychess/perspectives/fics/SeekChallenge.py:707
 msgid "and on FICS, untimed games have to be normal chess rules"
@@ -5851,13 +5851,13 @@ msgstr "Actieve verzoeken: %d "
 msgid ""
 " would like to resume your adjourned <b>%(time)s</b> <b>%(gametype)s</b> "
 "game."
-msgstr "wil graag uw uitgestelde spel <b> %(time)s </b> <b>%(gametype)s</b> hervatten."
+msgstr "wil graag je uitgestelde spel <b> %(time)s </b> <b>%(gametype)s</b> hervatten."
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:311
 #, python-format
 msgid ""
 " challenges you to a <b>%(time)s</b> %(rated)s <b>%(gametype)s</b> game"
-msgstr "daagt u uit tot een <b> %(time)s </b> %(rated)s <b> %(gametype)s </b> spel"
+msgstr "daagt je uit tot een <b> %(time)s </b> %(rated)s <b> %(gametype)s </b> spel"
 
 #: lib/pychess/perspectives/fics/SeekListPanel.py:316
 #, python-format
@@ -5898,34 +5898,34 @@ msgstr "Nieuw spel van Schaak 960-spelgroep"
 
 #: lib/pychess/perspectives/fics/__init__.py:370
 msgid "You have to set kibitz on to see bot messages here."
-msgstr "U moet kibitz instellen om hier bot-berichten te kunnen lezen."
+msgstr "Je moet kibitz instellen om hier bot-berichten te kunnen lezen."
 
 #: lib/pychess/perspectives/fics/__init__.py:389
 msgid ""
 "You may only have 3 outstanding seeks at the same time. If you want"
 "             to add a new seek you must clear your currently active seeks. "
 "Clear your seeks?"
-msgstr "U mag slechts 3 verzoeken tegelijkertijd hebben. Als u een nieuw verzoek toe wilt voegen, dan moet u de huidige verzoeken verwijderen. Wilt u uw verzoeken wissen?"
+msgstr "Je mag slechts 3 verzoeken tegelijkertijd hebben. Als je een nieuw verzoek wilt toevoegen, dan moet je de huidige verzoeken verwijderen. Wil je je verzoeken wissen?"
 
 #: lib/pychess/perspectives/fics/__init__.py:410
 msgid "You can't touch this! You are examining a game."
-msgstr "U kunt dit niet aanklikken omdat u een spel onderzoekt!"
+msgstr "Je kunt dit niet aanklikken omdat je een spel onderzoekt!"
 
 #: lib/pychess/perspectives/fics/__init__.py:423
 msgid " has declined your offer for a match"
-msgstr " heeft uw wedstrijdaanbod geweigerd"
+msgstr " heeft je wedstrijdaanbod geweigerd"
 
 #: lib/pychess/perspectives/fics/__init__.py:437
 msgid " is censoring you"
-msgstr "censureert u"
+msgstr "censureert je"
 
 #: lib/pychess/perspectives/fics/__init__.py:451
 msgid " noplay listing you"
-msgstr " geen spel waarin u voorkomt"
+msgstr " geen spel waarin je voorkomt"
 
 #: lib/pychess/perspectives/fics/__init__.py:466
 msgid " uses a formula not fitting your match request:"
-msgstr " gebruikt een formule die niet voldoet aan uw wedstrijdverzoek:"
+msgstr " gebruikt een formule die niet voldoet aan je wedstrijdverzoek:"
 
 #: lib/pychess/perspectives/fics/__init__.py:481
 msgid "to manual accept"
@@ -5945,7 +5945,7 @@ msgstr "Verzoek bijgewerkt"
 
 #: lib/pychess/perspectives/fics/__init__.py:500
 msgid "Your seeks have been removed"
-msgstr "Uw verzoeken zijn verwijderd"
+msgstr "Je verzoeken zijn verwijderd"
 
 #: lib/pychess/perspectives/fics/__init__.py:520
 msgid " has arrived"
@@ -5996,7 +5996,7 @@ msgstr "<big><b>Het bestand '%s' kan niet worden opgeslagen</big>"
 msgid ""
 "You don't have the necessary rights to save the file.\n"
 "    Please ensure that you have given the right path and try again."
-msgstr "U beschikt niet over de benodigde rechten om het bestand op te mogen slaan.\n  Zorg ervoor dat u het juiste pad hebt opgegeven en probeer het opnieuw."
+msgstr "Je beschikt niet over de benodigde machtigingen om het bestand op te slaan.\n  Zorg ervoor dat je het juiste pad hebt opgegeven en probeer het opnieuw."
 
 #: lib/pychess/perspectives/games/__init__.py:310
 msgid "_Replace"
@@ -6011,14 +6011,14 @@ msgstr "Bestand bestaat al"
 msgid ""
 "<big><b>A file named '%s' already exists. Would you like to replace "
 "it?</b></big>"
-msgstr "<big><b>Er bestaat al een bestand met de naam '%s'. Wilt u dit vervangen?</b></big>"
+msgstr "<big><b>Er bestaat al een bestand met de naam '%s'. Wil je dit vervangen?</b></big>"
 
 #: lib/pychess/perspectives/games/__init__.py:318
 #, python-format
 msgid ""
 "The file already exists in '%s'. If you replace it, its content will be "
 "overwritten."
-msgstr "Het bestand bestaat al in '%s'. Als u het vervangt, dan zal de inhoud overschreven worden."
+msgstr "Het bestand bestaat al in '%s'. Als je het vervangt, dan wordt de inhoud overschreven."
 
 #: lib/pychess/perspectives/games/__init__.py:335
 msgid "Could not save the file"
@@ -6042,14 +6042,14 @@ msgstr[1] "Er zijn %d spellen met niet-opgeslagen zetten."
 
 #: lib/pychess/perspectives/games/__init__.py:366
 msgid "Save moves before closing?"
-msgstr "Wilt u uw zetten opslaan alvorens af te sluiten?"
+msgstr "Wil je je zetten opslaan alvorens af te sluiten?"
 
 #: lib/pychess/perspectives/games/__init__.py:378
 msgid ""
 "Unable to save to configured file."
 "                                                     Save the games before "
 "closing?"
-msgstr "Het geconfigureerde bestand kan niet worden opgeslagen.                                                     Wilt u de spellen opslaan alvorens af te sluiten?"
+msgstr "Het ingestelde bestand kan niet worden opgeslagen.                                                     Wil je de spellen opslaan alvorens af te sluiten?"
 
 #: lib/pychess/perspectives/games/__init__.py:400
 msgid "vs."
@@ -6064,20 +6064,20 @@ msgstr[1] "%d documenten op_slaan"
 
 #: lib/pychess/perspectives/games/__init__.py:454
 msgid "Save the current game before you close it?"
-msgstr "<b><big>Wilt u het huidige spel opslaan voordat u het afsluit?</big></b>"
+msgstr "<b><big>Wil je het huidige spel opslaan voordat je het afsluit?</big></b>"
 
 #: lib/pychess/perspectives/games/__init__.py:460
 msgid ""
 "Unable to save to configured file."
 "                                             Save the current game before "
 "you close it?"
-msgstr "Het geconfigureerde bestand kan niet worden opgeslagen. Wilt u het huidige spel opslaan alvorens af te sluiten?"
+msgstr "Het ingestelde bestand kan niet worden opgeslagen.                                                     Wil je het huidige spel opslaan alvorens af te sluiten?"
 
 #: lib/pychess/perspectives/games/__init__.py:476
 msgid ""
 "It is not possible later to continue the game,\n"
 "if you don't save it."
-msgstr "Als u het spel niet opslaat, dan is het niet mogelijk om \nhet spel op een later moment te hervatten."
+msgstr "Als je het spel niet opslaat, dan is het niet mogelijk om \nhet spel op een later moment te hervatten."
 
 #: lib/pychess/perspectives/games/__init__.py:840
 msgid "All Chess Files"
@@ -6247,7 +6247,7 @@ msgstr "Tips"
 #: lib/pychess/perspectives/games/bookPanel.py:25
 msgid ""
 "The hint panel will provide computer advice during each stage of the game"
-msgstr "Het tippaneel zal door de computer gegeneerd advies weergeven tijdens de voortgang van het spel"
+msgstr "Het tippaneel toont door de computer gegeneerd advies tijdens de voortgang van het spel"
 
 #: lib/pychess/perspectives/games/bookPanel.py:27
 msgid "Official PyChess panel."
@@ -6261,7 +6261,7 @@ msgstr "Openingenboek"
 msgid ""
 "The opening book will try to inspire you during the opening phase of the "
 "game by showing you common moves made by chess masters"
-msgstr "Het openingenboek zal proberen u te inspireren tijdens de beginfase van het spel door u gebruikelijke zetten te laten zien, zoals gedaan door schaakhelden"
+msgstr "Het openingenboek probeert je te inspireren tijdens de beginfase van het spel door je gebruikelijke zetten te tonen, zoals gedaan door schaakhelden"
 
 #: lib/pychess/perspectives/games/bookPanel.py:152
 #, python-format
@@ -6284,7 +6284,7 @@ msgstr "Aanvalsanalyse door %s"
 msgid ""
 "%s will identify what threats would exist if it were your opponent's turn to"
 " move"
-msgstr "%s zal identificeren welke aanvallen kunnen bestaan alsof uw tegenstander aan de beurt is"
+msgstr "%s identificeert welke aanvallen kunnen bestaan alsof je tegenstander aan de beurt is"
 
 #: lib/pychess/perspectives/games/bookPanel.py:186
 #: lib/pychess/perspectives/games/bookPanel.py:296
@@ -6296,13 +6296,13 @@ msgid ""
 "Engine scores are in units of pawns, from White's point of view. Double "
 "clicking on analysis lines you can insert them into Annotation panel as "
 "variations."
-msgstr "Aandrijvingsscores zijn in pioneenheden, vanuit het gezichtsveld van Wit. Door te dubbelklikken op de analyseregels kunt u ze invoegen op het Aantekeningpaneel als variaties."
+msgstr "Aandrijvingsscores zijn in pioneenheden, vanuit het gezichtsveld van Wit. Door te dubbelklikken op de analyseregels kun je ze invoegen op het Aantekeningpaneel als variaties."
 
 #: lib/pychess/perspectives/games/bookPanel.py:335
 msgid ""
 "Adding suggestions can help you find ideas, but slows down the computer's "
 "analysis."
-msgstr "Het toevoegen van suggesties kan u helpen bij het vinden van ideëen, maar vertraagd de computeranalyse."
+msgstr "Het toevoegen van suggesties kan je helpen bij het vinden van ideëen, maar vertraagt de computeranalyse."
 
 #: lib/pychess/perspectives/games/bookPanel.py:341
 msgid "Endgame Table"
@@ -6312,7 +6312,7 @@ msgstr "Eindspel-tabel"
 msgid ""
 "The endgame table will show exact analysis when there are few pieces on the "
 "board."
-msgstr "De eindspel-tabel zal u de exacte analyse tonen als er weinig stukken op het bord staan."
+msgstr "De eindspeltabel toont je de exacte analyse als er weinig stukken op het bord staan."
 
 #: lib/pychess/perspectives/games/bookPanel.py:400
 #: lib/pychess/perspectives/games/bookPanel.py:403
@@ -6330,7 +6330,7 @@ msgstr "In deze positie\nis er geen legale zet."
 msgid ""
 "The chat panel lets you communicate with your opponent during the game, "
 "assuming he or she is interested"
-msgstr "Het chatpaneel stelt u tijdens het spel in staat om te communiceren met uw tegenstander, als hij of zij daarin geïnteresseerd is."
+msgstr "Het chatpaneel stelt je tijdens het spel in staat om te communiceren met je tegenstander, als hij of zij daarin geïnteresseerd is."
 
 #: lib/pychess/perspectives/games/commentPanel.py:12
 msgid "Comments"
@@ -6338,7 +6338,7 @@ msgstr "Opmerkingen"
 
 #: lib/pychess/perspectives/games/commentPanel.py:17
 msgid "The comments panel will try to analyze and explain the moves played"
-msgstr "Het opmerkingenpaneel zal proberen om de gespeelde zetten te analyseren en uit te leggen."
+msgstr "Het opmerkingenpaneel probeert om de gespeelde zetten te analyseren en uit te leggen."
 
 #: lib/pychess/perspectives/games/commentPanel.py:126
 msgid "Initial position"
@@ -6357,7 +6357,7 @@ msgstr "Aandrijvingen"
 msgid ""
 "The engine output panel shows the thinking output of chess engines (computer"
 " players) during a game"
-msgstr "Het aandrijvings-uitvoerpaneel laat de denkwijze van schaakaandrijvingen (computerspelers) zien tijdens een spel."
+msgstr "Het aandrijvings-uitvoerpaneel toont de denkwijze van schaakaandrijvingen (computerspelers) tijdens een spel."
 
 #: lib/pychess/perspectives/games/engineOutputPanel.py:41
 msgid "No chess engines (computer players) are participating in this game."
@@ -6371,7 +6371,7 @@ msgstr "Zetgeschiedenis"
 msgid ""
 "The moves sheet keeps track of the players' moves and lets you navigate "
 "through the game history"
-msgstr "De zetgeschiedenis houdt de zetten van de speler bij en stelt u in staat te navigeren door de spelgeschiedenis."
+msgstr "De zetgeschiedenis houdt de zetten van de speler bij en stelt je in staat te navigeren door de spelgeschiedenis."
 
 #: lib/pychess/perspectives/games/scorePanel.py:13
 msgid "Score"
@@ -6381,7 +6381,7 @@ msgstr "Score"
 msgid ""
 "The score panel tries to evaluate the positions and shows you a graph of the"
 " game progress"
-msgstr "Het scorepaneel probeert de posities te evalueren en u een grafiek te laten zien van de spelvoortgang."
+msgstr "Het scorepaneel probeert de posities te evalueren en je een grafiek te tonen van de spelvoortgang."
 
 #: lib/pychess/perspectives/learn/EndgamesPanel.py:25
 msgid "Practice endgames with computer"
@@ -6455,4 +6455,4 @@ msgstr "Mijn voortgang terugzetten op nul"
 
 #: lib/pychess/perspectives/learn/__init__.py:141
 msgid "You will lose all your progress data!"
-msgstr "U verliest al uw voortgangsgegevens!"
+msgstr "Je verliest al je voortgangsgegevens!"
