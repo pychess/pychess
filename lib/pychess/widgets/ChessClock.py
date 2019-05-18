@@ -1,30 +1,14 @@
 # -*- coding: UTF-8 -*-
 
-from math import ceil, pi, cos, sin
+from math import pi, cos, sin
 
 import cairo
 from gi.repository import GLib, Gtk, Gdk, Pango, PangoCairo, GObject
 
 from pychess.System import conf
+from pychess.Utils import formatTime
 from pychess.Utils.const import BLACK, WHITE, LOCAL, UNFINISHED_STATES, DRAW, WHITEWON, BLACKWON, UNKNOWN_STATE
 from . import preferencesDialog
-
-
-def formatTime(seconds, clk2pgn=False):
-    minus = ""
-    if seconds <= -10 or seconds >= 10:
-        seconds = ceil(seconds)
-    if seconds < 0:
-        minus = "-"
-        seconds = -seconds
-    hours, remainder = divmod(seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    if hours or clk2pgn:
-        return minus + "%d:%02d:%02d" % (hours, minutes, seconds)
-    elif not minutes and seconds < 10:
-        return minus + "%.1f" % seconds
-    else:
-        return minus + "%d:%02d" % (minutes, seconds)
 
 
 class ChessClock(Gtk.DrawingArea):

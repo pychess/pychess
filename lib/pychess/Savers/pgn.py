@@ -10,8 +10,6 @@ import re
 import sys
 import textwrap
 
-from gi.repository import GLib
-
 import pexpect
 
 from sqlalchemy import String
@@ -23,7 +21,6 @@ from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, 
     WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE, \
     ABORTED_REASONS, ADJOURNED_REASONS, WON_CALLFLAG, DRAW_ADJUDICATION, WON_ADJUDICATION, \
     WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, RUNNING, TOOL_NONE, TOOL_CHESSDB, TOOL_SCOUTFISH
-
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import PGN_ENCODING
@@ -35,7 +32,7 @@ from pychess.Utils.Move import Move
 from pychess.Utils.elo import get_elo_rating_change_pgn
 from pychess.Utils.logic import getStatus
 from pychess.Variants import name2variant, NormalBoard, variants
-from pychess.widgets.ChessClock import formatTime
+from pychess.Utils import formatTime
 from pychess.Savers.ChessFile import ChessFile, LoadingError
 from pychess.Savers.database import col2label, TagDatabase, parseDateTag
 from pychess.Database import model as dbmodel
@@ -460,6 +457,7 @@ class PGNFile(ChessFile):
             if size > 10000000:
                 drop_indexes(self.engine)
             if self.progressbar is not None:
+                from gi.repository import GLib
                 GLib.idle_add(self.progressbar.set_text, _("Importing game headers..."))
             if importer is None:
                 importer = PgnImport(self)
@@ -477,6 +475,7 @@ class PGNFile(ChessFile):
         if chess_db_path is not None and self.path and self.size > 0:
             try:
                 if self.progressbar is not None:
+                    from gi.repository import GLib
                     GLib.idle_add(self.progressbar.set_text, _("Creating .bin index file..."))
                 self.chess_db = Parser(engine=(chess_db_path, ))
                 self.chess_db.open(self.path)
@@ -503,6 +502,7 @@ class PGNFile(ChessFile):
         if scoutfish_path is not None and self.path and self.size > 0:
             try:
                 if self.progressbar is not None:
+                    from gi.repository import GLib
                     GLib.idle_add(self.progressbar.set_text, _("Creating .scout index file..."))
                 self.scoutfish = Scoutfish(engine=(scoutfish_path, ))
                 self.scoutfish.open(self.path)

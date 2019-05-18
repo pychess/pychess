@@ -1,7 +1,25 @@
 import asyncio
 import weakref
+from math import ceil
 
 from pychess.Utils.lutils.ldata import MATE_VALUE, MATE_DEPTH
+
+
+def formatTime(seconds, clk2pgn=False):
+    minus = ""
+    if seconds <= -10 or seconds >= 10:
+        seconds = ceil(seconds)
+    if seconds < 0:
+        minus = "-"
+        seconds = -seconds
+    hours, remainder = divmod(seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    if hours or clk2pgn:
+        return minus + "%d:%02d:%02d" % (hours, minutes, seconds)
+    elif not minutes and seconds < 10:
+        return minus + "%.1f" % seconds
+    else:
+        return minus + "%d:%02d" % (minutes, seconds)
 
 
 def prettyPrintScore(s, depth, format_mate=False):
