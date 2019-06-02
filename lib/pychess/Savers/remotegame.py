@@ -2,13 +2,14 @@ import os
 import re
 import json
 from urllib.request import Request, urlopen
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, unquote, urlencode
+from html import unescape
 from html.parser import HTMLParser
 import asyncio
 import websockets
-import base64
+from base64 import b64decode
 import string
-import random
+from random import choice, randint
 
 from pychess import VERSION
 from pychess.Utils.const import FISCHERRANDOMCHESS
@@ -21,26 +22,41 @@ from pychess.System.Log import log
 #     return p
 # VERSION = '1.0'
 # import ssl
-# ssl._create_default_https_context = ssl._create_unverified_context
+# ssl._create_default_https_context = ssl._create_unverified_context  # Chess24, ICCF
 
 
-TYPE_NONE, TYPE_GAME, TYPE_STUDY, TYPE_PUZZLE = range(4)
+TYPE_NONE, TYPE_GAME, TYPE_STUDY, TYPE_PUZZLE, TYPE_EVENT = range(5)
+CHESS960 = 'Fischerandom'
+DEFAULT_BOARD = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+DEFAULT_AN = True  # To rebuild a readable PGN
+
+CAT_DL = _('Download link')
+CAT_HTML = _('HTML parsing')
+CAT_API = _('Application programming interface')
+CAT_MISC = _('Various techniques')
+CAT_WS = _('Websockets')
 
 
 # Abstract class to download a game from the Internet
 class InternetGameInterface:
     # Internal
     def __init__(self):
+        ''' Initialize the common data that can be used in ALL the sub-classes. '''
         self.id = None
         self.userAgent = 'PyChess %s' % VERSION
 
     def is_enabled(self):
+        ''' To disable a chess provider temporarily, override this method in the sub-class. '''
         return True
 
     def get_game_id(self):
+        ''' Return the unique identifier of the game that was detected after a successful call to assign_game().
+            The value is None if no game was found earlier. '''
         return self.id
 
     def reacts_to(self, url, host):
+        ''' Return True if the URL belongs to the HOST. The sub-domains other than "www" are not supported.
+            The method is used to accept any URL when a unique identifier cannot be extracted by assign_game(). '''
         # Verify the hostname
         if url is None:
             return False
@@ -53,6 +69,8 @@ class InternetGameInterface:
         return True
 
     def json_loads(self, data):
+        ''' Load a JSON and handle the errors.
+            The value None is returned when the data are not relevant or misbuilt. '''
         try:
             if data is None or data == '':
                 return None
@@ -61,6 +79,8 @@ class InternetGameInterface:
             return None
 
     def json_field(self, data, path):
+        ''' Conveniently read a field from a JSON data. The PATH is a key like "node1/node2/key".
+            A blank string is returned in case of error. '''
         if data is None or data == '':
             return ''
         keys = path.split('/')
@@ -76,6 +96,8 @@ class InternetGameInterface:
             return value
 
     def read_data(self, response):
+        ''' Read the data from an HTTP request and execute the charset conversion.
+            The value None is returned in case of error. '''
         # Check
         if response is None:
             return None
@@ -92,6 +114,7 @@ class InternetGameInterface:
                 try:
                     data = bytes.decode('latin-1')
                 except Exception:
+                    log.debug('Error in the decoding of the data')
                     data = None
 
         # Result
@@ -102,8 +125,11 @@ class InternetGameInterface:
             return data
 
     def download(self, url, userAgent=False):
+        ''' Download the URL from the Internet.
+            The USERAGENT is requested by some websites to make sure that you are not a bot.
+            The value None is returned in case of error. '''
         # Check
-        if url is None or url == '':
+        if url in [None, '']:
             return None
 
         # Download
@@ -120,6 +146,11 @@ class InternetGameInterface:
             return None
 
     def download_list(self, links, userAgent=False):
+        ''' Download and concatenate the URL given in the array LINKS.
+            The USERAGENT is requested by some websites to make sure that you are not a bot.
+            The number of downloads is limited to 10.
+            The downloads that failed are dropped silently.
+            The value None is returned in case of no data or error. '''
         pgn = ''
         for i, link in enumerate(links):
             data = self.download(link, userAgent)
@@ -133,6 +164,8 @@ class InternetGameInterface:
             return pgn
 
     def async_from_sync(self, coro):
+        ''' The method is used for the WebSockets technique to call an asynchronous task from a synchronous task. '''
+        # TODO Not working under Linux while PyChess GUI is running
         curloop = asyncio.get_event_loop()
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -141,7 +174,33 @@ class InternetGameInterface:
         asyncio.set_event_loop(curloop)
         return result
 
+    def send_xhr(self, url, postData, userAgent=False):
+        ''' Call a target URL by submitting the POSTDATA.
+            The USERAGENT is requested by some websites to make sure that you are not a bot.
+            The value None is returned in case of error. '''
+        # Check
+        if url in [None, ''] or postData in [None, '']:
+            return None
+
+        # Call data
+        try:
+            log.debug('Calling API: %s' % url)
+            if userAgent:
+                req = Request(url, urlencode(postData).encode(), headers={'User-Agent': self.userAgent})
+            else:
+                req = Request(url, urlencode(postData).encode())
+            response = urlopen(req)
+            return self.read_data(response)
+        except Exception as exception:
+            log.debug('Exception raised: %s' % repr(exception))
+            return None
+
     def rebuild_pgn(self, game):
+        ''' Return an object in PGN format.
+            The keys starting with "_" are dropped silently.
+            The key "_url" becomes the first comment.
+            The key "_moves" contains the moves.
+            The key "_reason" becomes the last comment. '''
         # Check
         if game is None or game == '' or '_moves' not in game or game['_moves'] == '':
             return None
@@ -152,7 +211,7 @@ class InternetGameInterface:
             if e[:1] != '_' and game[e] not in [None, '']:
                 pgn += '[%s "%s"]\n' % (e, game[e])
         if pgn == '':
-            pgn = '[Annotator "%s"]\n' % self.userAgent
+            pgn = '[Annotator "PyChess %s"]\n' % VERSION
         pgn += "\n"
 
         # Body
@@ -168,12 +227,15 @@ class InternetGameInterface:
 
     # External
     def get_description(self):
+        ''' (Abstract) Name of the chess provider written as "Chess provider -- Technique used" '''
         pass
 
     def assign_game(self, url):
+        ''' (Abstract) Detect the unique identifier of URL '''
         pass
 
     def download_game(self):
+        ''' (Abstract) Download the game identified earlier by assign_game() '''
         pass
 
 
@@ -185,7 +247,7 @@ class InternetGameLichess(InternetGameInterface):
         self.url_tld = 'org'
 
     def get_description(self):
-        return 'Lichess.org -- %s' % _('Download link')
+        return 'Lichess.org -- %s' % CAT_DL
 
     def assign_game(self, url):
         # Retrieve the ID of the study
@@ -224,6 +286,33 @@ class InternetGameLichess(InternetGameInterface):
         # Nothing found
         return False
 
+    def query_api(self, path):
+        response = urlopen(Request('https://lichess.%s%s' % (self.url_tld, path), headers={'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/vnd.lichess.v4+json'}))
+        bourne = self.read_data(response)
+        return self.json_loads(bourne)
+
+    def adjust_tags(self, pgn):
+        # Check
+        if pgn in [None, '']:
+            return pgn
+
+        # Replace the tags
+        reps = [('Variant', 'UltraBullet', ''),
+                ('Variant', 'Bullet', ''),
+                ('Variant', 'Blitz', ''),
+                ('Variant', 'Rapid', ''),
+                ('Variant', 'Classical', ''),
+                ('Variant', 'Correspondence', ''),
+                ('Variant', 'Standard', ''),
+                ('Variant', 'Chess960', CHESS960),
+                ('Variant', 'ThreeCheck', '3check'),
+                ('Variant', 'Antichess', 'Suicide')]  # TODO Use shared constants
+        for rep in reps:
+            tag, s, d = rep
+            pgn = pgn.replace('[%s "%s"]' % (tag, s), '[%s "%s"]' % (tag, d))
+        pgn = pgn.replace('[Variant ""]\n', '')
+        return pgn
+
     def download_game(self):
         # Check
         if None in [self.id, self.url_tld]:
@@ -231,8 +320,15 @@ class InternetGameLichess(InternetGameInterface):
 
         # Logic for the games
         if self.url_type == TYPE_GAME:
-            url = 'https://lichess.%s/game/export/%s?literate=1' % (self.url_tld, self.id)
-            return self.download(url)
+            # Download the finished game
+            api = self.query_api('/import/master/%s/white' % self.id)
+            if self.json_field(api, 'game/status/name') != 'started':
+                url = 'https://lichess.%s/game/export/%s?literate=1' % (self.url_tld, self.id)
+                return self.adjust_tags(self.download(url))
+
+            # Rebuild the PGN file
+            else:
+                return None  # Not available
 
         # Logic for the studies
         elif self.url_type == TYPE_STUDY:
@@ -241,6 +337,10 @@ class InternetGameLichess(InternetGameInterface):
 
         # Logic for the puzzles
         elif self.url_type == TYPE_PUZZLE:
+            # The API doesn't provide the history of the moves
+            # chessgame = self.query_api('/training/%s/load' % self.id)
+
+            # Fetch the puzzle
             url = 'https://lichess.%s/training/%s' % (self.url_tld, self.id)
             page = self.download(url)
             if page is None:
@@ -330,7 +430,7 @@ class InternetGameLichess(InternetGameInterface):
             return self.rebuild_pgn(game)
 
         else:
-            return None  # Never reached
+            assert(False)
 
 
 # ChessGames.com
@@ -340,7 +440,7 @@ class InternetGameChessgames(InternetGameInterface):
         self.computer = False
 
     def get_description(self):
-        return 'ChessGames.com -- %s' % _('Download link')
+        return 'ChessGames.com -- %s' % CAT_DL
 
     def assign_game(self, url):
         # Verify the hostname
@@ -384,7 +484,7 @@ class InternetGameChessgames(InternetGameInterface):
 # FicsGames.org
 class InternetGameFicsgames(InternetGameInterface):
     def get_description(self):
-        return 'FicsGames.org -- %s' % _('Download link')
+        return 'FicsGames.org -- %s' % CAT_DL
 
     def assign_game(self, url):
         # Verify the URL
@@ -417,7 +517,7 @@ class InternetGameFicsgames(InternetGameInterface):
 # ChessTempo.com
 class InternetGameChesstempo(InternetGameInterface):
     def get_description(self):
-        return 'ChessTempo.com -- %s' % _('Download link')
+        return 'ChessTempo.com -- %s' % CAT_DL
 
     def assign_game(self, url):
         rxp = re.compile('^https?:\/\/(\S+\.)?chesstempo\.com\/gamedb\/game\/(\d+)\/?([\S\/]+)?$', re.IGNORECASE)
@@ -446,10 +546,10 @@ class InternetGameChesstempo(InternetGameInterface):
 class InternetGameChess24(InternetGameInterface):
     def __init__(self):
         InternetGameInterface.__init__(self)
-        self.use_an = True  # True to rebuild a readable PGN
+        self.use_an = DEFAULT_AN
 
     def get_description(self):
-        return 'Chess24.com -- %s' % _('HTML parsing')
+        return 'Chess24.com -- %s' % CAT_HTML
 
     def assign_game(self, url):
         rxp = re.compile('^https?:\/\/chess24\.com\/[a-z]+\/(analysis|game|download-game)\/([a-z0-9\-_]+)[\/\?\#]?', re.IGNORECASE)
@@ -519,7 +619,7 @@ class InternetGameChess24(InternetGameInterface):
                         board.applyFen(kfen)
                     except Exception:
                         return None
-                    game['Variant'] = 'Fischerandom'
+                    game['Variant'] = CHESS960
                     game['SetUp'] = '1'
                     game['FEN'] = kfen
                     head_complete = True
@@ -548,7 +648,7 @@ class InternetGameChess24(InternetGameInterface):
 # 365chess.com
 class InternetGame365chess(InternetGameInterface):
     def get_description(self):
-        return '365chess.com -- %s' % _('HTML parsing')
+        return '365chess.com -- %s' % CAT_HTML
 
     def assign_game(self, url):
         # Verify the URL
@@ -615,7 +715,7 @@ class InternetGame365chess(InternetGameInterface):
 # ChessPastebin.com
 class InternetGameChesspastebin(InternetGameInterface):
     def get_description(self):
-        return 'ChessPastebin.com -- %s' % _('HTML parsing')
+        return 'ChessPastebin.com -- %s' % CAT_HTML
 
     def assign_game(self, url):
         return self.reacts_to(url, 'chesspastebin.com')
@@ -666,7 +766,7 @@ class InternetGameChesspastebin(InternetGameInterface):
 # ChessBomb.com
 class InternetGameChessbomb(InternetGameInterface):
     def get_description(self):
-        return 'ChessBomb.com -- %s' % _('HTML parsing')
+        return 'ChessBomb.com -- %s' % CAT_HTML
 
     def assign_game(self, url):
         return self.reacts_to(url, 'chessbomb.com')
@@ -699,8 +799,8 @@ class InternetGameChessbomb(InternetGameInterface):
                     pos2 = data.find('"', pos1 + 1)
                     if -1 not in [pos1, pos2]:
                         try:
-                            self.json = base64.b64decode(data[pos1 + 1:pos2]).decode().strip()
-                            self.json = json.loads(self.json)
+                            bourne = b64decode(data[pos1 + 1:pos2]).decode().strip()
+                            self.json = json.loads(bourne)
                         except Exception:
                             self.json = None
                             return
@@ -745,7 +845,7 @@ class InternetGameChessbomb(InternetGameInterface):
 # TheChessWorld.com
 class InternetGameThechessworld(InternetGameInterface):
     def get_description(self):
-        return 'TheChessWorld.com -- %s' % _('Download link')
+        return 'TheChessWorld.com -- %s' % CAT_DL
 
     def assign_game(self, url):
         return self.reacts_to(url, 'thechessworld.com')
@@ -767,8 +867,8 @@ class InternetGameThechessworld(InternetGameInterface):
 
             # Finds the games
             rxp = re.compile(".*pgn_uri:.*'([^']+)'.*", re.IGNORECASE)
-            list = data.split("\n")
-            for line in list:
+            lines = data.split("\n")
+            for line in lines:
                 m = rxp.match(line)
                 if m is not None:
                     links.append('https://www.thechessworld.com' + m.group(1))
@@ -781,10 +881,10 @@ class InternetGameThechessworld(InternetGameInterface):
 class InternetGameChessOrg(InternetGameInterface):
     def __init__(self):
         InternetGameInterface.__init__(self)
-        self.use_an = True  # True to rebuild a readable PGN
+        self.use_an = DEFAULT_AN
 
     def get_description(self):
-        return 'Chess.org -- %s' % _('Websockets')
+        return 'Chess.org -- %s' % CAT_WS
 
     def assign_game(self, url):
         rxp = re.compile('^https?:\/\/chess\.org\/play\/([a-f0-9\-]+)[\/\?\#]?', re.IGNORECASE)
@@ -820,8 +920,8 @@ class InternetGameChessOrg(InternetGameInterface):
             return None
 
         # Random elements to get a unique URL
-        rndI = random.randint(1, 1000)
-        rndS = ''.join(random.choice(string.ascii_lowercase) for i in range(8))
+        rndI = randint(1, 1000)
+        rndS = ''.join(choice(string.ascii_lowercase) for i in range(8))
 
         # Open a websocket to retrieve the chess data
         @asyncio.coroutine
@@ -879,7 +979,7 @@ class InternetGameChessOrg(InternetGameInterface):
         if startPos not in ['', 'startpos']:
             game['SetUp'] = '1'
             game['FEN'] = startPos
-            game['Variant'] = 'Fischerandom'
+            game['Variant'] = CHESS960
             try:
                 board.applyFen(startPos)
             except Exception:
@@ -938,7 +1038,7 @@ class InternetGameEuropeechecs(InternetGameInterface):
         InternetGameInterface.__init__(self)
 
     def get_description(self):
-        return 'Europe-Echecs.com -- %s' % _('Download link')
+        return 'Europe-Echecs.com -- %s' % CAT_DL
 
     def assign_game(self, url):
         return self.reacts_to(url, 'europe-echecs.com')
@@ -960,8 +1060,8 @@ class InternetGameEuropeechecs(InternetGameInterface):
 
             # Find the chess widgets
             rxp = re.compile(".*class=\"cbwidget\"\s+id=\"([0-9a-f]+)_container\".*", re.IGNORECASE)
-            list = page.split("\n")
-            for line in list:
+            lines = page.split("\n")
+            for line in lines:
                 m = rxp.match(line)
                 if m is not None:
                     links.append('https://www.europe-echecs.com/embed/doc_%s.pgn' % m.group(1))
@@ -974,100 +1074,149 @@ class InternetGameEuropeechecs(InternetGameInterface):
 class InternetGameGameknot(InternetGameInterface):
     def __init__(self):
         InternetGameInterface.__init__(self)
-        self.use_an = True  # True to rebuild a readable PGN
+        self.url_type = TYPE_NONE
+        self.use_an = DEFAULT_AN
 
     def get_description(self):
-        return 'GameKnot.com -- %s' % _('HTML parsing')
+        return 'GameKnot.com -- %s' % CAT_HTML
 
     def assign_game(self, url):
-        # Verify the URL
+        # Verify the hostname
         parsed = urlparse(url)
         if parsed.netloc.lower() not in ['www.gameknot.com', 'gameknot.com']:
             return False
-        if 'chess.pl' not in parsed.path.lower() and 'analyze-board.pl' not in parsed.path.lower():
+
+        # Verify the page
+        ppl = parsed.path.lower()
+        if 'chess.pl' in ppl or 'analyze-board.pl' in ppl:
+            self.url_type = TYPE_GAME
+        elif 'chess-puzzle.pl' in ppl:
+            self.url_type = TYPE_PUZZLE
+        else:
             return False
 
-        # Read the arguments
-        args = parse_qs(parsed.query)
-        if 'bd' in args:
-            gid = args['bd'][0]
-            if gid.isdigit() and gid != '0':
-                self.id = gid
-                return True
-        return False
+        # Accept any incoming link because the puzzle ID is a combination of several parameters
+        self.id = url
+        return True
 
     def download_game(self):
         # Check
-        if self.id is None:
+        if self.url_type not in [TYPE_PUZZLE, TYPE_GAME] or self.id is None:
             return None
 
         # Download
-        url = 'https://gameknot.com/analyze-board.pl?bd=%s' % self.id
-        page = self.download(url, userAgent=True)
+        page = self.download(self.id, userAgent=True)
         if page is None:
             return None
 
-        # Header
-        game = {}
-        structure = [('anbd_movelist', 's', '_moves'),
-                     ('anbd_result', 'i', 'Result'),
-                     ('anbd_player_w', 's', 'White'),
-                     ('anbd_player_b', 's', 'Black'),
-                     ('anbd_rating_w', 'i', 'WhiteElo'),
-                     ('anbd_rating_b', 'i', 'BlackElo'),
-                     ('anbd_title', 's', 'Event'),
-                     ('anbd_timestamp', 's', 'Date'),
-                     ('export_web_input_result_text', 's', '_reason')]
-        for var, type, tag in structure:
-            game[tag] = ''
-        game['_url'] = url
-        lines = page.split(';')
-        for line in lines:
+        # Library
+        def extract_variables(page, structure):
+            game = {}
             for var, type, tag in structure:
-                if var not in line.lower():
-                    continue
-                if type == 's':
-                    pos1 = line.find("'")
-                    pos2 = line.find("'", pos1 + 1)
-                    if pos2 > pos1:
-                        game[tag] = line[pos1 + 1:pos2]
-                elif type == 'i':
-                    pos1 = line.find("=")
-                    if pos1 != -1:
-                        txt = line[pos1 + 1:].strip()
-                        if txt not in ['', '0']:
-                            game[tag] = txt
-                else:
-                    return None
-        if game['Result'] == '1':
-            game['Result'] = '1-0'
-        elif game['Result'] == '2':
-            game['Result'] = '1/2-1/2'
-        elif game['Result'] == '3':
-            game['Result'] = '0-1'
-        else:
-            game['Result'] = '*'
+                game[tag] = ''
+            lines = page.split(';')
+            for line in lines:
+                for var, type, tag in structure:
+                    pos1 = line.find(var)
+                    if pos1 == -1:
+                        continue
+                    if type == 's':
+                        pos1 = line.find("'", pos1 + 1)
+                        pos2 = line.find("'", pos1 + 1)
+                        if pos2 > pos1:
+                            game[tag] = line[pos1 + 1:pos2]
+                    elif type == 'i':
+                        pos1 = line.find('=', pos1 + 1)
+                        if pos1 != -1:
+                            txt = line[pos1 + 1:].strip()
+                            if txt not in ['', '0']:
+                                game[tag] = txt
+                    else:
+                        assert(False)
+            return game
 
-        # Body
-        board = LBoard()
-        board.applyFen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
-        moves = game['_moves'].split('-')
-        game['_moves'] = ''
-        for move in moves:
-            if move == '':
-                break
-            try:
-                if self.use_an:
-                    kmove = parseAny(board, move)
-                    game['_moves'] += toSAN(board, kmove) + ' '
-                    board.applyMove(kmove)
-                else:
-                    game['_moves'] += move + ' '
-            except Exception:
-                return None
+        # Logic for the puzzles
+        if self.url_type == TYPE_PUZZLE:
+            structure = [('puzzle_id', 'i', '_id'),
+                         ('puzzle_fen', 's', 'FEN'),
+                         ('load_solution(', 's', '_solution')]
+            game = extract_variables(page, structure)
+            game['_url'] = 'https://gameknot.com/chess-puzzle.pl?pz=%s' % game['_id']
+            game['White'] = _('White')
+            game['Black'] = _('Black')
+            game['Result'] = '*'
+            if game['FEN'] != '':
+                game['SetUp'] = '1'
+            if game['_solution'] != '':
+                list = game['_solution'].split('|')
+                game['_moves'] = ' {Solution:'
+                nextid = '0'
+                for item in list:
+                    item = item.split(',')
+                    # 0 = identifier of the move
+                    # 1 = player
+                    # 2 = identifier of the previous move
+                    # 3 = count of following moves
+                    # 4 = algebraic notation of the move
+                    # 5 = UCI notation of the move
+                    # 6 = ?
+                    # 7 = identifier of the next move
+                    # > = additional moves for the current line
+                    curid = item[0]
+                    if curid != nextid:
+                        continue
+                    if len(item) == 4:
+                        break
+                    nextid = item[7]
+                    if self.use_an:
+                        move = item[4]
+                    else:
+                        move = item[5]
+                    game['_moves'] += ' %s' % move
+                game['_moves'] += '}'
+
+        # Logic for the games
+        elif self.url_type == TYPE_GAME:
+            # Header
+            structure = [('anbd_movelist', 's', '_moves'),
+                         ('anbd_result', 'i', 'Result'),
+                         ('anbd_player_w', 's', 'White'),
+                         ('anbd_player_b', 's', 'Black'),
+                         ('anbd_rating_w', 'i', 'WhiteElo'),
+                         ('anbd_rating_b', 'i', 'BlackElo'),
+                         ('anbd_title', 's', 'Event'),
+                         ('anbd_timestamp', 's', 'Date'),
+                         ('export_web_input_result_text', 's', '_reason')]
+            game = extract_variables(page, structure)
+            if game['Result'] == '1':
+                game['Result'] = '1-0'
+            elif game['Result'] == '2':
+                game['Result'] = '1/2-1/2'
+            elif game['Result'] == '3':
+                game['Result'] = '0-1'
+            else:
+                game['Result'] = '*'
+
+            # Body
+            board = LBoard()
+            board.applyFen(DEFAULT_BOARD)
+            moves = game['_moves'].split('-')
+            game['_moves'] = ''
+            for move in moves:
+                if move == '':
+                    break
+                try:
+                    if self.use_an:
+                        kmove = parseAny(board, move)
+                        game['_moves'] += toSAN(board, kmove) + ' '
+                        board.applyMove(kmove)
+                    else:
+                        game['_moves'] += move + ' '
+                except Exception:
+                    return None
 
         # Rebuild the PGN game
-        return self.rebuild_pgn(game)
+        return unquote(self.rebuild_pgn(game))
 
 
 # Chess.com
@@ -1075,10 +1224,10 @@ class InternetGameChessCom(InternetGameInterface):
     def __init__(self):
         InternetGameInterface.__init__(self)
         self.url_type = None
-        self.use_an = True  # True to rebuild a readable PGN
+        self.use_an = DEFAULT_AN
 
     def get_description(self):
-        return 'Chess.com -- %s' % _('HTML parsing')
+        return 'Chess.com -- %s' % CAT_HTML
 
     def assign_game(self, url):
         rxp = re.compile('^https?:\/\/([\S]+\.)?chess\.com\/([a-z]+\/)?(live|daily)\/game\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
@@ -1135,16 +1284,658 @@ class InternetGameChessCom(InternetGameInterface):
 
         # Logic for the daily games
         elif self.url_type.lower() == 'daily':
-            return None
+            return None  # Not available
 
         else:
-            return None  # Never reached
+            assert(False)
+
+
+# Schach-Spielen.eu
+class InternetGameSchachspielen(InternetGameInterface):
+    def get_description(self):
+        return 'Schach-Spielen.eu -- %s' % CAT_HTML
+
+    def assign_game(self, url):
+        rxp = re.compile('^https?:\/\/(www\.)?schach-spielen\.eu\/(game|analyse)\/([a-z0-9]+)[\/\?\#]?', re.IGNORECASE)
+        m = rxp.match(url)
+        if m is not None:
+            gid = m.group(3)
+            if len(gid) == 8:
+                self.id = gid
+                return True
+        return False
+
+    def download_game(self):
+        # Download
+        if self.id is None:
+            return None
+        page = self.download('https://www.schach-spielen.eu/analyse/%s' % self.id)
+        if page is None:
+            return None
+
+        # Definition of the parser
+        class schachspielenparser(HTMLParser):
+            def __init__(self):
+                HTMLParser.__init__(self)
+                self.tag_ok = False
+                self.pgn = None
+
+            def handle_starttag(self, tag, attrs):
+                if tag.lower() == 'textarea':
+                    for k, v in attrs:
+                        if k.lower() == 'id' and v == 'pgnText':
+                            self.tag_ok = True
+
+            def handle_data(self, data):
+                if self.pgn is None and self.tag_ok:
+                    self.pgn = data
+
+        # Read the PGN
+        parser = schachspielenparser()
+        parser.feed(page)
+        pgn = parser.pgn
+        if pgn is not None:
+            pgn = pgn.replace('[Variant "chess960"]', '[Variant "%s"]' % CHESS960)
+        return pgn
+
+
+# RedHotPawn.com
+class InternetGameRedhotpawn(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.url_type = None
+
+    def get_description(self):
+        return 'RedHotPawn.com -- %s' % CAT_HTML
+
+    def assign_game(self, url):
+        # Verify the URL
+        parsed = urlparse(url)
+        if parsed.netloc.lower() not in ['www.redhotpawn.com', 'redhotpawn.com']:
+            return False
+
+        # Verify the path
+        ppl = parsed.path.lower()
+        if 'chess-game-' in ppl:
+            ttype = TYPE_GAME
+            key = 'gameid'
+        elif 'chess-puzzle-' in ppl:
+            ttype = TYPE_PUZZLE
+            if 'chess-puzzle-serve' in url.lower():
+                self.url_type = ttype
+                self.id = url
+                return True
+            else:
+                key = 'puzzleid'
+        else:
+            return False
+
+        # Read the arguments
+        args = parse_qs(parsed.query)
+        if key in args:
+            gid = args[key][0]
+            if gid.isdigit() and gid != '0':
+                self.url_type = ttype
+                self.id = gid
+                return True
+        return False
+
+    def download_game(self):
+        # Download
+        if self.id is None:
+            return None
+        if self.url_type == TYPE_GAME:
+            url = 'https://www.redhotpawn.com/pagelet/view/game-pgn.php?gameid=%s' % self.id
+        elif self.url_type == TYPE_PUZZLE:
+            if '://' in self.id:
+                url = self.id
+                event = _('Puzzle')
+            else:
+                url = 'https://www.redhotpawn.com/chess-puzzles/chess-puzzle-solve.php?puzzleid=%s' % self.id
+                event = _('Puzzle %s') % self.id
+        else:
+            return None
+        page = self.download(url)
+        if page is None:
+            return None
+
+        # Logic for the games
+        if self.url_type == TYPE_GAME:
+            # Parser
+            class redhotpawnparser(HTMLParser):
+                def __init__(self):
+                    HTMLParser.__init__(self)
+                    self.tag_ok = False
+                    self.pgn = None
+
+                def handle_starttag(self, tag, attrs):
+                    if tag.lower() == 'textarea':
+                        self.tag_ok = True
+
+                def handle_data(self, data):
+                    if self.pgn is None and self.tag_ok:
+                        self.pgn = data
+
+            # Extractor
+            parser = redhotpawnparser()
+            parser.feed(page)
+            return parser.pgn.strip()
+
+        # Logic for the puzzles
+        elif self.url_type == TYPE_PUZZLE:
+            pos1 = page.find('var g_startFenStr')
+            if pos1 != -1:
+                pos1 = page.find("'", pos1)
+                pos2 = page.find("'", pos1 + 1)
+                if pos2 > pos1:
+                    game = {}
+                    game['_url'] = url
+                    game['FEN'] = page[pos1 + 1:pos2]
+                    game['SetUp'] = '1'
+                    game['Event'] = event
+                    game['White'] = _('White')
+                    game['Black'] = _('Black')
+                    pos1 = page.find('<h4>')
+                    pos2 = page.find('</h4>', pos1)
+                    if pos1 != -1 and pos2 > pos1:
+                        game['_moves'] = '{%s}' % page[pos1 + 4:pos2]
+                    return self.rebuild_pgn(game)
+
+        return None
+
+
+# Chess-Samara.ru
+class InternetGameChesssamara(InternetGameInterface):
+    def get_description(self):
+        return 'Chess-Samara.ru -- %s' % CAT_DL
+
+    def assign_game(self, url):
+        rxp = re.compile('^https?:\/\/(\S+\.)?chess-samara\.ru\/(\d+)\-', re.IGNORECASE)
+        m = rxp.match(url)
+        if m is not None:
+            gid = str(m.group(2))
+            if gid.isdigit() and gid != '0':
+                self.id = gid
+                return True
+        return False
+
+    def download_game(self):
+        # Check
+        if self.id is None:
+            return None
+
+        # Download
+        pgn = self.download('https://chess-samara.ru/view/pgn.html?gameid=%s' % self.id)
+        if pgn is None or len(pgn) == 0:
+            return None
+        else:
+            return pgn
+
+
+# 2700chess.com
+class InternetGame2700chess(InternetGameInterface):
+    def get_description(self):
+        return '2700chess.com -- %s' % CAT_HTML
+
+    def assign_game(self, url):
+        # Verify the hostname
+        parsed = urlparse(url)
+        if parsed.netloc.lower() not in ['www.2700chess.com', '2700chess.com']:
+            return False
+
+        # Refactor the direct link
+        if parsed.path.lower() == '/games/download':
+            args = parse_qs(parsed.query)
+            if 'slug' in args:
+                self.id = 'https://2700chess.com/games/%s' % args['slug'][0]
+                return True
+
+        # Verify the path
+        if parsed.path.startswith('/games/'):
+            self.id = url
+            return True
+        else:
+            return False
+
+    def download_game(self):
+        # Download
+        if self.id is None:
+            return None
+        page = self.download(self.id)
+        if page is None:
+            return None
+
+        # Extract the PGN
+        lines = page.split(';')
+        for line in lines:
+            if 'analysis.setPgn(' in line:
+                pos1 = line.find('"')
+                if pos1 != -1:
+                    pos2 = pos1
+                    while pos2 < len(line):
+                        pos2 += 1
+                        if line[pos2] == '"' and line[pos2 - 1:pos2 + 1] != '\\"':
+                            pgn = line[pos1 + 1:pos2]
+                            return pgn.replace('\\"', '"').replace('\\/', '/').replace('\\n', "\n").strip()
+        return None
+
+
+# Iccf.com
+class InternetGameIccf(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.url_type = None
+
+    def get_description(self):
+        return 'Iccf.com -- %s' % CAT_DL
+
+    def assign_game(self, url):
+        # Verify the hostname
+        parsed = urlparse(url)
+        if parsed.netloc.lower() not in ['www.iccf.com', 'iccf.com']:
+            return False
+
+        # Verify the path
+        ppl = parsed.path.lower()
+        if '/game' in ppl:
+            ttyp = TYPE_GAME
+        elif '/event' in ppl:
+            ttyp = TYPE_EVENT
+        else:
+            return False
+
+        # Read the arguments
+        args = parse_qs(parsed.query)
+        if 'id' in args:
+            gid = args['id'][0]
+            if gid.isdigit() and gid != '0':
+                self.url_type = ttyp
+                self.id = gid
+                return True
+        return False
+
+    def download_game(self):
+        # Check
+        if self.url_type not in [TYPE_GAME, TYPE_EVENT] or self.id is None:
+            return None
+
+        # Download
+        if self.url_type == TYPE_GAME:
+            url = 'https://www.iccf.com/GetPGN.aspx?id=%s'
+        elif self.url_type == TYPE_EVENT:
+            url = 'https://www.iccf.com/GetEventPGN.aspx?id=%s'
+        pgn = self.download(url % self.id)
+        if pgn in [None, ''] or 'does not exist.' in pgn or 'Invalid event' in pgn:
+            return None
+        else:
+            return pgn
+
+
+# SchachArena.de
+class InternetGameSchacharena(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.use_an = DEFAULT_AN
+
+    def get_description(self):
+        return 'SchachArena.de -- %s' % CAT_HTML
+
+    def assign_game(self, url):
+        # Verify the URL
+        parsed = urlparse(url)
+        if parsed.netloc.lower() not in ['www.schacharena.de', 'schacharena.de'] or 'verlauf' not in parsed.path.lower():
+            return False
+
+        # Read the arguments
+        args = parse_qs(parsed.query)
+        if 'brett' in args:
+            gid = args['brett'][0]
+            if gid.isdigit() and gid != '0':
+                self.id = gid
+                return True
+        return False
+
+    def download_game(self):
+        # Check
+        if self.id is None:
+            return None
+
+        # Download page
+        page = self.download('https://www.schacharena.de/new/verlauf.php?brett=%s' % self.id)
+        if page is None:
+            return None
+
+        # Init
+        rxp_player = re.compile('.*spielerstatistik.*name=(\w+).*\[([0-9]+)\].*', re.IGNORECASE)
+        rxp_move = re.compile('.*<span.*onMouseOut.*fan\(([0-9]+)\).*', re.IGNORECASE)
+        rxp_result = re.compile('.*>(1\-0|0\-1|1\/2\-1\/2)\s([^\<]+)<.*', re.IGNORECASE)
+        player_count = 0
+        board = LBoard()
+        board.applyFen(DEFAULT_BOARD)
+
+        # Parse
+        game = {}
+        game['Result'] = '*'
+        reason = ''
+        game['_moves'] = ''
+        game['_url'] = 'https://www.schacharena.de/new/verlauf_to_pgn_n.php?brett=%s' % self.id  # If one want to get the full PGN
+        lines = page.split("\n")
+        for line in lines:
+            # Player
+            m = rxp_player.match(line)
+            if m is not None:
+                player_count += 1
+                if player_count == 1:
+                    tag = 'White'
+                elif player_count == 2:
+                    tag = 'Black'
+                else:
+                    return None
+                game[tag] = m.group(1)
+                game[tag + 'Elo'] = m.group(2)
+                continue
+
+            # Move
+            m = rxp_move.match(line)
+            if m is not None:
+                move = m.group(1)
+                move = '_abcdefgh'[int(move[0])] + move[1] + '_abcdefgh'[int(move[2])] + move[3]
+                if self.use_an:
+                    kmove = parseAny(board, move)
+                    move = toSAN(board, kmove)
+                    board.applyMove(kmove)
+                game['_moves'] += '%s ' % move
+                continue
+
+            # Result
+            m = rxp_result.match(line)
+            if m is not None:
+                game['Result'] = m.group(1)
+                reason = unescape(m.group(2))
+                continue
+
+        # Final PGN
+        if reason != '':
+            game['_moves'] += ' {%s}' % reason
+        return self.rebuild_pgn(game)
+
+
+# ChessPuzzle.net
+class InternetGameChesspuzzle(InternetGameInterface):
+    def get_description(self):
+        return 'ChessPuzzle.net -- %s' % CAT_HTML
+
+    def assign_game(self, url):
+        rxp = re.compile('^https?:\/\/(\S+\.)?chesspuzzle\.net\/(Puzzle|Solution)\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
+        m = rxp.match(url)
+        if m is not None:
+            gid = str(m.group(3))
+            if gid.isdigit() and gid != '0':
+                self.id = gid
+                return True
+        return False
+
+    def download_game(self):
+        # Check
+        if self.id is None:
+            return None
+
+        # Download the puzzle
+        page = self.download('https://chesspuzzle.net/Solution/%s' % self.id, userAgent=True)  # Else 403 Forbidden
+        if page is None:
+            return None
+
+        # Definition of the parser
+        class chesspuzzleparser(HTMLParser):
+            def __init__(self):
+                HTMLParser.__init__(self)
+                self.last_tag = None
+                self.pgn = None
+
+            def handle_starttag(self, tag, attrs):
+                self.last_tag = tag.lower()
+
+            def handle_data(self, data):
+                if self.pgn is None and self.last_tag == 'script':
+                    lines = data.split("\n")
+                    for line in lines:
+                        pos1 = line.find('pgn_text')
+                        if pos1 != -1:
+                            pos1 = line.find("'", pos1 + 1)
+                            pos2 = line.find("'", pos1 + 1)
+                            if pos1 != -1 and pos2 > pos1:
+                                self.pgn = line[pos1 + 1:pos2].replace(']  ', "]\n\n").replace('] ', "]\n").strip()
+                                break
+
+        # Get the puzzle
+        parser = chesspuzzleparser()
+        parser.feed(page)
+        return parser.pgn
+
+
+# ChessKing.com
+class InternetGameChessking(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.url_type = None
+
+    def get_description(self):
+        return 'ChessKing.com -- %s' % CAT_DL
+
+    def assign_game(self, url):
+        rxp = re.compile('^https?:\/\/(\S+\.)?chessking\.com\/games\/(ff\/)?([0-9]+)[\/\?\#]?', re.IGNORECASE)
+        m = rxp.match(url)
+        if m is not None:
+            gid = str(m.group(3))
+            if gid.isdigit() and gid != '0' and len(gid) <= 9:
+                if m.group(2) == 'ff/':
+                    self.url_type = 'f'
+                else:
+                    self.url_type = 'g'
+                self.id = gid
+                return True
+        return False
+
+    def download_game(self):
+        # Check
+        if None in [self.url_type, self.id]:
+            return None
+
+        # Download
+        id = self.id
+        while len(id) < 9:
+            id = '0%s' % id
+        url = 'https://c1.chessking.com/pgn/%s/%s/%s/%s%s.pgn' % (self.url_type, id[:3], id[3:6], self.url_type, id)
+        return self.download(url)
+
+
+# IdeaChess.com
+class InternetGameIdeachess(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.url_type = None
+
+    def get_description(self):
+        return 'IdeaChess.com -- %s' % CAT_API
+
+    def assign_game(self, url):
+        # Game ID
+        rxp = re.compile('^https?:\/\/(\S+\.)?ideachess\.com\/.*\/.*\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
+        m = rxp.match(url)
+        if m is not None:
+            gid = str(m.group(2))
+            if gid.isdigit() and gid != '0':
+                # Game type
+                classification = [('/chess_tactics_puzzles/checkmate_n/', 'm'),
+                                  ('/echecs_tactiques/mat_n/', 'm'),
+                                  ('/scacchi_tattica/scacco_matto_n/', 'm'),
+                                  ('/chess_tactics_puzzles/tactics_n/', 't'),
+                                  ('/echecs_tactiques/tactiques_n/', 't'),
+                                  ('/scacchi_tattica/tattica_n/', 't')]
+                for path, ttyp in classification:
+                    if path in url.lower():
+                        self.url_type = ttyp
+                        self.id = gid
+                        return True
+        return False
+
+    def download_game(self):
+        # Check
+        if self.url_type is None or self.id is None:
+            return None
+
+        # Fetch the puzzle
+        api = 'http://www.ideachess.com/com/ajax2'
+        data = {'message': '{"action":100,"data":{"problemNumber":%s,"kind":"%s"}}' % (self.id, self.url_type)}
+        bourne = self.send_xhr(api, data, userAgent=True)
+        chessgame = self.json_loads(bourne)
+        if self.json_field(chessgame, 'action') != 200:
+            return None
+
+        # Build the PGN
+        game = {}
+        if self.url_type == 'm':
+            game['_url'] = 'http://www.ideachess.com/chess_tactics_puzzles/checkmate_n/%s' % self.id
+        elif self.url_type == 't':
+            game['_url'] = 'http://www.ideachess.com/chess_tactics_puzzles/tactics_n/%s' % self.id
+        else:
+            assert(False)
+        game['FEN'] = b64decode(self.json_field(chessgame, 'data/FEN')).decode().strip()
+        game['SetUp'] = '1'
+        game['_moves'] = self.json_field(chessgame, 'data/PGN')
+        v = self.json_field(chessgame, 'data/requiredMoves')
+        if v > 0:
+            game['Site'] = _('%d moves to find') % v
+        list = self.json_field(chessgame, 'data/extraInfo').split('|')
+        if len(list) == 4:
+            game['Event'] = list[0][list[0].find(' ') + 1:].strip()
+            game['Date'] = list[1].strip()
+            l2 = list[2].split(' - ')
+            if len(l2) == 2:
+                game['White'] = l2[0].strip()
+                game['Black'] = l2[1].strip()
+            game['Result'] = list[3].strip()
+        else:
+            game['Result'] = '*'
+        return self.rebuild_pgn(game)
+
+
+# Chess-DB.com
+class InternetGameChessdb(InternetGameInterface):
+    def get_description(self):
+        return 'Chess-DB.com -- %s' % CAT_HTML
+
+    def assign_game(self, url):
+        # Verify the URL
+        parsed = urlparse(url)
+        if parsed.netloc.lower() not in ['www.chess-db.com', 'chess-db.com'] or 'game.jsp' not in parsed.path.lower():
+            return False
+
+        # Read the arguments
+        args = parse_qs(parsed.query)
+        if 'id' in args:
+            gid = args['id'][0]
+            rxp = re.compile('^[0-9\.]+$', re.IGNORECASE)
+            if rxp.match(gid) is not None:
+                self.id = gid
+                return True
+        return False
+
+    def download_game(self):
+        # Download
+        if self.id is None:
+            return None
+        page = self.download('https://chess-db.com/public/game.jsp?id=%s' % self.id)
+        if page is None:
+            return None
+
+        # Definition of the parser
+        class chessdbparser(HTMLParser):
+            def __init__(self):
+                HTMLParser.__init__(self)
+                self.tag_ok = False
+                self.pgn = None
+                self.pgn_tmp = None
+
+            def handle_starttag(self, tag, attrs):
+                if tag.lower() == 'input':
+                    for k, v in attrs:
+                        k = k.lower()
+                        if k == 'name' and v == 'pgn':
+                            self.tag_ok = True
+                        if k == 'value' and v.count('[') == v.count(']'):
+                            self.pgn_tmp = v
+
+            def handle_data(self, data):
+                if self.pgn is None and self.tag_ok:
+                    self.pgn = self.pgn_tmp
+
+        # Read the PGN
+        parser = chessdbparser()
+        parser.feed(page)
+        return parser.pgn
+
+
+# ChessPro.ru
+class InternetGameChesspro(InternetGameInterface):
+    def get_description(self):
+        return 'ChessPro.ru -- %s' % CAT_HTML
+
+    def assign_game(self, url):
+        return self.reacts_to(url, 'chesspro.ru')
+
+    def download_game(self):
+        # Check
+        if self.id is None:
+            return None
+
+        # Download the page
+        page = self.download(self.id)
+        if page is None:
+            return None
+
+        # Find the chess widget
+        rxp = re.compile('.*OpenGame\(\s*"g[0-9]+\"\s*,"(.*)"\s*\)\s*;.*', re.IGNORECASE)
+        lines = page.split("\n")
+        for line in lines:
+            m = rxp.match(line)
+            if m is not None:
+                return '[Annotator "ChessPro.ru"]\n%s' % m.group(1)
+        return None
+
+
+# Ficgs.com
+class InternetGameFicgs(InternetGameInterface):
+    def get_description(self):
+        return 'Ficgs.com -- %s' % CAT_DL
+
+    def assign_game(self, url):
+        rxp = re.compile('^https?:\/\/(\S+\.)?ficgs\.com\/game_(\d+).html', re.IGNORECASE)
+        m = rxp.match(url)
+        if m is not None:
+            gid = str(m.group(2))
+            if gid.isdigit() and gid != '0':
+                self.id = gid
+                return True
+        return False
+
+    def download_game(self):
+        # Check
+        if self.id is None:
+            return None
+
+        # Download
+        return self.download('http://www.ficgs.com/game_%s.pgn' % self.id)
 
 
 # Generic
 class InternetGameGeneric(InternetGameInterface):
+    def __init__(self):
+        InternetGameInterface.__init__(self)
+        self.allow_octet_stream = False
+
     def get_description(self):
-        return 'Generic -- %s' % _('Various techniques')
+        return 'Generic -- %s' % CAT_MISC
 
     def assign_game(self, url):
         # Any page is valid
@@ -1165,7 +1956,7 @@ class InternetGameGeneric(InternetGameInterface):
             return None
 
         # Chess file
-        if mime == 'application/x-chess-pgn':
+        if (mime in ['application/x-chess-pgn', 'application/pgn']) or (self.allow_octet_stream and mime == 'application/octet-stream'):
             return data
 
         # Web-page
@@ -1218,6 +2009,18 @@ chess_providers = [InternetGameLichess(),
                    InternetGameEuropeechecs(),
                    InternetGameGameknot(),
                    InternetGameChessCom(),
+                   InternetGameSchachspielen(),
+                   InternetGameRedhotpawn(),
+                   InternetGameChesssamara(),
+                   InternetGame2700chess(),
+                   InternetGameIccf(),
+                   InternetGameSchacharena(),
+                   InternetGameChesspuzzle(),
+                   InternetGameChessking(),
+                   InternetGameIdeachess(),
+                   InternetGameChessdb(),
+                   InternetGameChesspro(),
+                   InternetGameFicgs(),
                    InternetGameGeneric()]
 
 
@@ -1236,18 +2039,22 @@ def get_internet_game_as_pgn(url):
     p = urlparse(url.strip())
     if '' in [p.scheme, p.netloc]:
         return None
+    log.debug('URL to retrieve: %s' % url)
 
     # Download a game for each provider
     for prov in chess_providers:
         if not prov.is_enabled():
             continue
         if prov.assign_game(url):
+            log.debug('Responding chess provider: %s' % prov.get_description())
             try:
                 pgn = prov.download_game()
             except Exception:
                 pgn = None
             if pgn is None:
+                log.debug('Download failed')
                 continue
+            log.debug('Successful download')
 
             # Verify that it starts with the correct magic character (ex.: "<" denotes an HTML content, "[" a chess game, etc...)
             pgn = pgn.strip()
