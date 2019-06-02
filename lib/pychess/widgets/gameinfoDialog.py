@@ -6,7 +6,6 @@ from pychess.Database.PgnImport import dedicated_tags
 from pychess.Utils.const import BLACK, WHITE, DRAW, WHITEWON, BLACKWON, RUNNING, reprResult
 from pychess.perspectives import perspective_manager
 from pychess.Utils.elo import get_elo_rating_change_str
-from pychess.widgets import mainwindow
 
 firstRun = True
 
@@ -43,10 +42,13 @@ def run(widgets):
 
     # Load of the tags in the editor
     tags_store.clear()
+    tlist = []
     for tag in gamemodel.tags:
-        # print(tag, gamemodel.tags[tag])
         if tag not in dedicated_tags and isinstance(gamemodel.tags[tag], str) and gamemodel.tags[tag]:
-            tags_store.append([tag, gamemodel.tags[tag]])
+            tlist.append(tag)
+    tlist.sort()
+    for tag in tlist:
+        tags_store.append([tag, gamemodel.tags[tag]])
 
     # Show the loaded dialog
     widgets["game_info"].show()
@@ -196,7 +198,7 @@ def on_pick_date(button, date_entry):
 
     # Show the dialog
     dialog = Gtk.Dialog(_("Pick a date"),
-                        mainwindow(),
+                        None,
                         Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                         (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
 
