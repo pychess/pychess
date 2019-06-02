@@ -1537,9 +1537,9 @@ class InternetGameIccf(InternetGameInterface):
 
         # Verify the path
         ppl = parsed.path.lower()
-        if 'game' in ppl:
+        if '/game' in ppl:
             ttyp = TYPE_GAME
-        elif 'event' in ppl:
+        elif '/event' in ppl:
             ttyp = TYPE_EVENT
         else:
             return False

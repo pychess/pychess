@@ -147,7 +147,7 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://www.redhotpawn.com', False),                                                             # Not a game (homepage)
                  ('https://www.redhotpawn.com/chess-puzzles/chess-puzzle-solve.php?puzzleid=7470', True),           # Puzzle
                  ('https://www.redhotpawn.com/chess-puzzles/chess-puzzle-serve.php', True),                         # Puzzle through a random link
-                 ('https://www.redhotpawn.com/chess-puzzles/chess-puzzle-solve.php?puzzleid=1234567890', True)]     # Not a puzzle (wrong ID)
+                 ('https://www.redhotpawn.com/chess-puzzles/chess-puzzle-solve.php?puzzleid=1234567890', False)]    # Not a puzzle (wrong ID)
         self.executeTest(InternetGameRedhotpawn(), links)
 
     def testChesssamara(self):
@@ -194,7 +194,7 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://play.chessking.com', False)]                         # Not a game (homepage)
         self.executeTest(InternetGameChessking(), links)
 
-    def testIdeachess():
+    def testIdeachess(self):
         links = [('http://www.ideachess.com/chess_tactics_puzzles/checkmate_n/37431', True),            # Mate EN
                  ('http://fr.ideachess.com/echecs_tactiques/mat_n/37431', True),                        # Mate FR
                  ('http://it.ideachess.com/scacchi_tattica/scacco_matto_n/37431', True),                # Mate IT
@@ -209,8 +209,8 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('http://es.ideachess.com/chess_tactics_puzzles/tactics_n/32603', True),               # Tactics ES
                  ('http://nl.ideachess.com/chess_tactics_puzzles/tactics_n/32603', True),               # Tactics NL
                  ('http://ru.ideachess.com/chess_tactics_puzzles/tactics_n/32603', True),               # Tactics RU
-                 ('http://www.ideachess.com/chess_tactics_puzzles/checkmate_n/123457890', True),        # Not a mate (wrong ID)
-                 ('http://www.ideachess.com/chess_tactics_puzzles/tactics_n/123457890', True),          # Not a tactics (wrong ID)
+                 ('http://www.ideachess.com/chess_tactics_puzzles/checkmate_n/123457890', False),       # Not a mate (wrong ID)
+                 ('http://www.ideachess.com/chess_tactics_puzzles/tactics_n/123457890', False),         # Not a tactics (wrong ID)
                  ('http://www.ideachess.com', False)]                                                   # Not a puzzle (homepage)
         self.executeTest(InternetGameIdeachess(), links)
 
@@ -219,7 +219,7 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://chess-db.com/public/game.jsp?id=623539.2900084.7718912.30537', False),       # Game but website bug with escaping '
                  ('https://chess-db.com/public/game.jsp?id=123456.1234567.1234567.123456789', False),   # Not a game (unknown game)
                  ('https://chess-db.com/public/game.jsp?id=ABC123', False),                             # Not a game (wrong ID)
-                 ('https://chess-db.com/play.jsp?id=623539.1039784.81308416.30442', True),              # Not a game (wrong path)
+                 ('https://chess-db.com/play.jsp?id=623539.1039784.81308416.30442', False),             # Not a game (wrong path)
                  ('https://chess-db.com', False)]                                                       # Not a game (homepage)
         self.executeTest(InternetGameChessdb(), links)
 
@@ -231,8 +231,8 @@ class RemoteGameTestCase(unittest.TestCase):
 
     def testFicgs(self):
         links = [('http://FICGS.com/game_95671.html', True),                            # Game
-                 ('http://www.ficgs.com/game_1234567890.html', True),                   # Not a game (wrong ID)
-                 ('http://www.ficgs.com/view_95671.html', True),                        # Not a game (wrong path)
+                 ('http://www.ficgs.com/game_1234567890.html', False),                  # Not a game (wrong ID)
+                 ('http://www.ficgs.com/view_95671.html', False),                       # Not a game (wrong path)
                  ('http://www.ficgs.com', False)]                                       # Not a game (homepage)
         self.executeTest(InternetGameFicgs(), links)
 
