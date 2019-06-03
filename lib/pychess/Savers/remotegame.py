@@ -230,7 +230,7 @@ class InternetGameInterface:
         # Check
         if pgn in [None, '']:
             return None
-        
+
         # Verify that it starts with the correct magic character (ex.: "<" denotes an HTML content, "[" a chess game, etc...)
         pgn = pgn.strip()
         if not pgn.startswith('['):
