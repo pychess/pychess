@@ -12,7 +12,7 @@
 # Leonardo Gregianin <leogregianin@gmail.com>, 2014-2015
 # Marcos Bernardino da Silva <mbernardino6@gmail.com>, 2017
 # Orlando Noronha <lando.noronha@gmail.com>, 2016
-# Ronaldo Rezende Junior <ronaldo.rrj@gmail.com>, 2016-2018
+# Ronaldo Rezende Junior <ronaldo.rrj@gmail.com>, 2016-2019
 # Rui <xymarior@yandex.com>, 2018
 # Alexandro Casanova <shorterfire@gmail.com>, 2012
 msgid ""
@@ -20,8 +20,8 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-16 09:34+0200\n"
-"PO-Revision-Date: 2019-04-16 13:26+0000\n"
-"Last-Translator: slav0nic <slav0nic0@gmail.com>\n"
+"PO-Revision-Date: 2019-06-02 21:25+0000\n"
+"Last-Translator: Ronaldo Rezende Junior <ronaldo.rrj@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/gbtami/pychess/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -40,15 +40,15 @@ msgstr "_Novo Jogo"
 
 #: glade/PyChess.glade:249
 msgid "From _Default Start Position"
-msgstr ""
+msgstr "De _Posição Inicial Padrão"
 
 #: glade/PyChess.glade:259
 msgid "From _Custom Position"
-msgstr ""
+msgstr "De _Posição Personalizada"
 
 #: glade/PyChess.glade:268
 msgid "From _Game Notation"
-msgstr ""
+msgstr "De _Notação do Jogo"
 
 #: glade/PyChess.glade:279
 msgid "Play _Internet Chess"
@@ -64,7 +64,7 @@ msgstr "Carregar _Jogo Recente"
 
 #: glade/PyChess.glade:320
 msgid "Load Re_mote Game"
-msgstr ""
+msgstr "Carregar Jogo Re_Moto"
 
 #: glade/PyChess.glade:338
 msgid "_Save Game"
@@ -80,7 +80,7 @@ msgstr "_Exportar Posição"
 
 #: glade/PyChess.glade:383
 msgid "Share _Game"
-msgstr ""
+msgstr "Compartilhar _Jogo"
 
 #: glade/PyChess.glade:411
 msgid "Player _Rating"
@@ -715,11 +715,11 @@ msgstr "<b><big>Promover Peão a que?</big></b>"
 
 #: glade/PyChess.glade:4322
 msgid "Load a remote game"
-msgstr ""
+msgstr "Carregar um jogo remoto"
 
 #: glade/PyChess.glade:4391
 msgid "Paste the link to download:"
-msgstr ""
+msgstr "Copiar o link para download"
 
 #: glade/PyChess.glade:4467
 msgid "Default"
@@ -898,15 +898,15 @@ msgstr "Opções"
 
 #: glade/PyChess.glade:5605
 msgid "Add from folder"
-msgstr ""
+msgstr "Adicionar para pasta"
 
 #: glade/PyChess.glade:5692
 msgid "Detected engines"
-msgstr ""
+msgstr "Detectar computador"
 
 #: glade/PyChess.glade:5767
 msgid "Base path:"
-msgstr ""
+msgstr "Caminho base:"
 
 #: glade/PyChess.glade:5885
 #: lib/pychess/perspectives/database/FilterPanel.py:101
@@ -1649,7 +1649,7 @@ msgstr "Mostrar dicas ao iniciar"
 
 #: lib/pychess/Main.py:244
 msgid "The provided link does not lead to a meaningful chess content."
-msgstr ""
+msgstr "O link fornecido não leva a um conteúdo de xadrez significativo"
 
 #: lib/pychess/Main.py:458
 msgid "http://en.wikipedia.org/wiki/Chess"
@@ -2003,16 +2003,16 @@ msgstr "Imagem PNG"
 #: lib/pychess/Savers/remotegame.py:92 lib/pychess/Savers/remotegame.py:144
 #: lib/pychess/Savers/remotegame.py:190 lib/pychess/Savers/remotegame.py:225
 msgid "Download link"
-msgstr ""
+msgstr "Link de download"
 
 #: lib/pychess/Savers/remotegame.py:265 lib/pychess/Savers/remotegame.py:370
 #: lib/pychess/Savers/remotegame.py:441 lib/pychess/Savers/remotegame.py:500
 msgid "HTML parsing"
-msgstr ""
+msgstr "Análise HTML"
 
 #: lib/pychess/Savers/remotegame.py:593
 msgid "Various techniques"
-msgstr ""
+msgstr "Técnicas variadas"
 
 #: lib/pychess/Savers/txt.py:6
 msgid "Text Diagram"
@@ -4299,7 +4299,7 @@ msgstr "À algo errado com este executável"
 
 #: lib/pychess/widgets/enginesDialog.py:347
 msgid "Choose a folder"
-msgstr ""
+msgstr "Escolha a pasta"
 
 #: lib/pychess/widgets/enginesDialog.py:382
 #: lib/pychess/perspectives/database/__init__.py:480
@@ -4308,7 +4308,7 @@ msgstr "Importar"
 
 #: lib/pychess/widgets/enginesDialog.py:383
 msgid "File name"
-msgstr ""
+msgstr "Nome do arquivo"
 
 #: lib/pychess/widgets/enginesDialog.py:458
 msgid "Select working directory"
@@ -4324,7 +4324,7 @@ msgstr "Novo"
 
 #: lib/pychess/widgets/gameinfoDialog.py:121
 msgid "Tag"
-msgstr ""
+msgstr "Tag"
 
 #: lib/pychess/widgets/gameinfoDialog.py:198
 msgid "Pick a date"
@@ -4478,7 +4478,7 @@ msgstr "Volte para a linha inicial"
 
 #: lib/pychess/widgets/gamewidget.py:663
 msgid "Go back to the parent line"
-msgstr ""
+msgstr "Voltar para a linha principal"
 
 #: lib/pychess/widgets/gamewidget.py:667
 msgid "Step forward one move"
@@ -4498,15 +4498,15 @@ msgstr "Salvar setas/círculos"
 
 #: lib/pychess/widgets/gamewidget.py:716
 msgid "No database is currently opened."
-msgstr ""
+msgstr "Nenhuma base de dados está aberto atualmente"
 
 #: lib/pychess/widgets/gamewidget.py:730
 msgid "The position does not exist in the database."
-msgstr ""
+msgstr "A posição não existe na base de dados"
 
 #: lib/pychess/widgets/gamewidget.py:740
 msgid "An approximate position has been found. Do you want to display it ?"
-msgstr ""
+msgstr "Uma posição aproximada foi encontrada. Você gostaria de ver isto?"
 
 #: lib/pychess/widgets/newGameDialog.py:82
 msgid "Human Being"
@@ -4640,33 +4640,33 @@ msgid ""
 "chess enthusiasts: bug reports, source code, documentation, translations, "
 "feature requests, user assistance... Let's get in touch at "
 "<b>http://www.pychess.org</b>"
-msgstr ""
+msgstr "PyChess é uma aplicação de xadrez open-source que pode ser melhorada por quem é entusiasta em xadrez: reporte de bugs, código fonte, documentação, tradução, pedidos de melhorias, assistência ao usuário... Entre em contato em <b>http://www.pychess.org</b>"
 
 #: lib/pychess/widgets/tipOfTheDay.py:25
 msgid ""
 "PyChess supports a wide range of chess engines, variants, Internet servers "
 "and lessons. It is a perfect desktop application to increase your chess "
 "skills very conveniently."
-msgstr ""
+msgstr "PyChess suporta uma grande variedade de computadores de xadrez, servidores de internet e lições. Ele é uma aplicação perfeita para melhorar suas habilidades de forma conveniente."
 
 #: lib/pychess/widgets/tipOfTheDay.py:26
 msgid ""
 "The releases of PyChess hold the name of historical world chess champions. "
 "Do you know the name of the current world chess champion?"
-msgstr ""
+msgstr "Os lançamentos do PyChess usa o nome de históricos campeões mundiais de xadrez. Você sabe o nome do atual campeão mundial de xadrez?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:27
 msgid ""
 "Do you know that you can help to translate PyChess into your language, "
 "<b>Help</b> > <b>Translate PyChess</b>."
-msgstr ""
+msgstr "Você sabia que você pode ajudar a traduzir o PyChess para sua linguagem, <b>Ajuda</b>><b>Traduzir PyChess</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:28
 msgid ""
 "A game is made of an opening, a middle-game and an end-game. PyChess is able"
 " to train you thanks to its opening book, its supported chess engines and "
 "its training module."
-msgstr ""
+msgstr "Um jogo é construído de aberturas, meio jogo e finais. PyChess é capaz de treiná-lo graças ao seu livro de abertura, seu suporte a computadores de xadrez e seu módulo de treinamento."
 
 #: lib/pychess/widgets/tipOfTheDay.py:31
 msgid ""
@@ -4675,29 +4675,29 @@ msgstr "Você sabia que é possível fazer um xeque-mate com dois movimentos?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:32
 msgid "Do you know that a knight is better placed in the center of the board?"
-msgstr ""
+msgstr "Você sabia que o cavalo é melhor posicionado no centro do tabuleiro?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:33
 msgid ""
 "Do you know that moving the queen at the very beginning of a game does not "
 "offer any particular advantage?"
-msgstr ""
+msgstr "Você sabia que mover a rainha muito cedo não oferece nenhuma vantagem significativa?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:34
 msgid ""
 "Do you know that having two-colored bishops working together is very "
 "powerful?"
-msgstr ""
+msgstr "Você sabia que ter os dois bispos trabalhando juntos é bastante eficiente?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:35
 msgid "Do you know that the rooks are generally engaged late in game?"
-msgstr ""
+msgstr "Você sabia que as torres são geralmente envolvidas no fim de jogo?"
 
 #: lib/pychess/widgets/tipOfTheDay.py:36
 msgid ""
 "Do you know that the king can move across two cells under certain "
 "conditions? This is called castling."
-msgstr ""
+msgstr "Você sabia que o rei pode mover duas casas em algumas circunstancias? Isto é chamado de roque."
 
 #: lib/pychess/widgets/tipOfTheDay.py:37
 msgid ""
@@ -4709,19 +4709,19 @@ msgstr "Você sabia que o número de possíveis jogos no xadrez é maior que o n
 msgid ""
 "You can start a new game by <b>Game</b> > <b>New Game</b>, then choose the "
 "<b>Players</b>, <b>Time Control</b> and <b>Chess Variants</b>."
-msgstr ""
+msgstr "Você pode iniciar um novo jogo em <b>Jogo</b> > <b>Novo Jogo</b>, depois escolha <b>Jogadores</b>, <b>Controle de Tempo</b> e <b>Variantes</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:41
 msgid ""
 "You can choose from 20 different difficulties to play against the computer. "
 "It will mainly affect the available time to think."
-msgstr ""
+msgstr "Você pode escolher 20 diferentes dificuldades para jogar contra o computador. Isso afetará principalmente o tempo disponível para ele pensar."
 
 #: lib/pychess/widgets/tipOfTheDay.py:42
 msgid ""
 "The level 20 gives a full autonomy to the chess engine in managing its own "
 "time during the game."
-msgstr ""
+msgstr "O nível 20 dá uma total autonomia para o computador administrar seu próprio tempo durante o jogo."
 
 #: lib/pychess/widgets/tipOfTheDay.py:43
 msgid ""
@@ -4735,88 +4735,88 @@ msgid ""
 "Calling the flag is the termination of the current game when the time of "
 "your opponent is over. If the clock is with you, click on the menu item "
 "<b>Actions</b> > <b>Call Flag</b> to claim the victory."
-msgstr ""
+msgstr "Chamar a bandeira é terminar o jogo atual quando o tempo do seu oponente terminar. Se o relógio estiver com você, clique no item de menu <b>Ações</b> > </b>Chamar bandeira</b> para reivindicar a vitória."
 
 #: lib/pychess/widgets/tipOfTheDay.py:45
 msgid ""
 "Press <b>Ctrl+Z</b> to ask your opponent to rollback the last played move. "
 "Against a computer or for an unrated game, undoing is generally "
 "automatically accepted."
-msgstr ""
+msgstr "Use <b>Ctrl+Z</b> para pedir ao seu oponente para voltar a ultima jogada. Contra o computador ou em jogo não pontuado, geralmente será automaticamente aceito."
 
 #: lib/pychess/widgets/tipOfTheDay.py:46
 msgid ""
 "To play on <b>Fullscreen mode</b>, just press the key <b>F11</b>. Press it "
 "again to exit this mode."
-msgstr ""
+msgstr "Para jogar no <b>Modo tela cheia</b>, pressione a tecla <b>F11</b>. Pressione novamente para sair do modo."
 
 #: lib/pychess/widgets/tipOfTheDay.py:47
 msgid ""
 "Many sounds are emitted by PyChess while you are playing if you activate "
 "them in the preferences: <b>Settings</b> > <b>Preferences</b> > <b>Sound "
 "tab</b> > <b>Use sounds in PyChess</b>."
-msgstr ""
+msgstr "Alguns sons são emitidos pelo PyChess enquanto você está jogando se você ativar eles em preferencias: <b>Ajustes</b> > <b>Preferencias</b> > <b>Sons</b> > <b>Usar sons no PyChess</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:48
 msgid ""
 "Do you know that a game is generally finished after 20 to 40 moves per "
 "player? The estimated duration of a game is displayed when you configure a "
 "new game."
-msgstr ""
+msgstr "Você sabia que um jogo em geral termina entre 20 a 40 jogadas por jogador? A duração estimada de um jogo é exibida quando você configura um novo jogo."
 
 #: lib/pychess/widgets/tipOfTheDay.py:49
 msgid ""
 "The standard file format to manage chess games is <b>PGN</b>. It stands for "
 "Portable Game Notation. Do not get confused with PNG which is a usual file "
 "format to store drawings and pictures."
-msgstr ""
+msgstr "O formato de arquivo padrão de jogos de xadrez é <b>PGN</b>. Significa Portable Game Notation. Não confundir com PNG que é muito usado para armazenar desenhos e fotos."
 
 #: lib/pychess/widgets/tipOfTheDay.py:50
 msgid ""
 "You can share a position by using the exchange format <b>FEN</b>, which "
 "stands for Forsyth-Edwards Notation. This format is also adapted for the "
 "chess variants."
-msgstr ""
+msgstr "Você pode compartilhar uma posição usando o formato <b>FEN</b>, que significa Forsyth-Edwards Notation. Este formato é também adaptado para variantes de xadrez."
 
 #: lib/pychess/widgets/tipOfTheDay.py:53
 msgid ""
 "You must define a chess engine in the preferences in order to use the local "
 "chess analysis. By default, PyChess recommends you to use the free engine "
 "named Stockfish which is renown to be the strongest engine in the world."
-msgstr ""
+msgstr "Você deve definir um computador de xadrez nas preferências para usar a análise de xadrez local. Por padrão, o PyChess recomenda que você use o computador gratuito chamado Stockfish, que é reconhecido como o computador mais forte do mundo."
 
 #: lib/pychess/widgets/tipOfTheDay.py:54
 msgid ""
 "<b>Hint mode</b> analyzes your game to show you the best current move. "
 "Enable it with the shortcut <b>Ctrl+H</b> from the menu <b>View</b>."
-msgstr ""
+msgstr "<b>Modo dica</b> analiza seu jogo para mostrar a melhor jogada. Habilite isto com o atalho de teclado <b>Ctrl+H</b> do menu <b>Ver</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:55
 msgid ""
 "<b>Spy mode</b> analyzes the threats, so the best move that your opponent "
 "would play as if it was his turn. Enable it with the shortcut <b>Ctrl+Y</b> "
 "from the menu <b>View</b>."
-msgstr ""
+msgstr "<b>Modo espião</b> analisa as ameaças, a melhor jogada que seu oponente poderia jogar se fosse a vez dele. Habilite isso com o atalho de teclado <b>Ctrl+Y</b> do menu <b>Ver</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:56
 msgid ""
 "<b>Ponder</b> is an option available in some chess engines that allows "
 "thinking when it is not the turn of the engine. It will then consume more "
 "resources on your computer."
-msgstr ""
+msgstr "<b>Ponder</b> é uma opção disponível em alguns computadores de xadrez que permite pensar quando não é a vez dele. Esta opção consome mais recursos do seu computador."
 
 #: lib/pychess/widgets/tipOfTheDay.py:57
 msgid ""
 "<b>MultiPV</b> is an option of some chess engines that shows other possible "
 "good moves. They are displayed in the panel <b>Hints</b>. The value can be "
 "adapted from that panel with a double-click on the displayed figure."
-msgstr ""
+msgstr "<b>MultiPV1</b> é a opção de alguns de alguns computadores de xadrez que possibilita outros bons movimentos. Ele é mostrado no painel <b>Dicas</b>. O valor pode ser adaptado deste painel com um clique duplo na figura exibida."
 
 #: lib/pychess/widgets/tipOfTheDay.py:58
 msgid ""
 "You cannot use the local chess analysis mode while you are playing an "
 "unterminated game over Internet. Else you would be a cheater."
-msgstr ""
+msgstr "Você não pode usar o modo de análise de xadrez local enquanto estiver jogando um jogo não finalizado na Internet. Isto seria considerado trapaça."
 
 #: lib/pychess/widgets/tipOfTheDay.py:59
 msgid ""
