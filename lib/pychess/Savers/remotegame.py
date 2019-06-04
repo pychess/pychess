@@ -225,6 +225,34 @@ class InternetGameInterface:
             pgn += '%s ' % game['Result']
         return pgn.strip()
 
+    def sanitize(self, pgn):
+        ''' Modify the PGN output to comply with the expected format '''
+        # Check
+        if pgn in [None, '']:
+            return None
+
+        # Verify that it starts with the correct magic character (ex.: "<" denotes an HTML content, "[" a chess game, etc...)
+        pgn = pgn.strip()
+        if not pgn.startswith('['):
+            return None
+
+        # Reorganize the spaces to bypass Scoutfish's limitation
+        lc = len(pgn)
+        while (True):
+            pgn = pgn.replace("\n\n\n", "\n\n")
+            lcn = len(pgn)
+            if lcn == lc:
+                break
+            lc = lcn
+
+        # Extract the first game
+        pos = pgn.find("\n\n[")  # TODO Support in-memory database to load several games at once
+        if pos != -1:
+            pgn = pgn[:pos]
+
+        # Return the PGN with the local crlf
+        return pgn.replace("\n", os.linesep)
+
     # External
     def get_description(self):
         ''' (Abstract) Name of the chess provider written as "Chess provider -- Technique used" '''
@@ -2034,49 +2062,32 @@ def get_internet_game_providers():
 # Retrieve a game from a URL
 def get_internet_game_as_pgn(url):
     # Check the format
-    if url is None:
+    if url in [None, '']:
         return None
     p = urlparse(url.strip())
     if '' in [p.scheme, p.netloc]:
         return None
     log.debug('URL to retrieve: %s' % url)
 
-    # Download a game for each provider
+    # Call the chess providers
     for prov in chess_providers:
         if not prov.is_enabled():
             continue
         if prov.assign_game(url):
+            # Download
             log.debug('Responding chess provider: %s' % prov.get_description())
             try:
                 pgn = prov.download_game()
+                pgn = prov.sanitize(pgn)
             except Exception:
                 pgn = None
+
+            # Check
             if pgn is None:
                 log.debug('Download failed')
-                continue
-            log.debug('Successful download')
-
-            # Verify that it starts with the correct magic character (ex.: "<" denotes an HTML content, "[" a chess game, etc...)
-            pgn = pgn.strip()
-            if not pgn.startswith('['):
-                return None
-
-            # Reorganize the spaces to bypass Scoutfish's limitation
-            lc = len(pgn)
-            while (True):
-                pgn = pgn.replace("\n\n\n", "\n\n")
-                lcn = len(pgn)
-                if lcn == lc:
-                    break
-                lc = lcn
-
-            # Extract the first game
-            pos = pgn.find("\n\n[")  # TODO Support in-memory database to load several games at once
-            if pos != -1:
-                pgn = pgn[:pos]
-
-            # Return the PGN with the local crlf
-            return pgn.replace("\n", os.linesep)
+            else:
+                log.debug('Successful download')
+                return pgn
     return None
 
 
