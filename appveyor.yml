@@ -53,6 +53,11 @@ init:
 
 install:
   - bash -lc "pacman -Syu --noconfirm"
+
+  # Workaround gcc9 update issues
+  - pacman -R --noconfirm mingw-w64-i686-gcc-ada mingw-w64-i686-gcc-objc || true;
+  - pacman -R --noconfirm mingw-w64-x86_64-gcc-ada mingw-w64-x86_64-gcc-objc || true;
+
   - bash -lc "pacman -Su --noconfirm"
 
   # we want python3.7
