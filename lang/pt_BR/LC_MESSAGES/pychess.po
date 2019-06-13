@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: pychess\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-04-16 09:34+0200\n"
-"PO-Revision-Date: 2019-06-02 21:25+0000\n"
+"PO-Revision-Date: 2019-06-12 14:56+0000\n"
 "Last-Translator: Ronaldo Rezende Junior <ronaldo.rrj@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/gbtami/pychess/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
@@ -4824,14 +4824,14 @@ msgid ""
 "if White and Black have the same number of pawns. The position of all the "
 "pieces and their mobility are some of the factors that contribute to the "
 "score."
-msgstr ""
+msgstr "A avaliação de +2.3 é uma vantagem para as Brancas que tiverem mais de 2 peões, do que se Brancas e Pretas tiverem o mesmo numero de peões. A posição de todas as peças e suas mobilidades são um dos fatores que contribuem para a pontuação."
 
 #: lib/pychess/widgets/tipOfTheDay.py:60
 msgid ""
 "PyChess includes a chess engine that offers an evaluation for any chess "
 "position. Winning against PyChess engine is a coherent way to succeed in "
 "chess and improve your skills."
-msgstr ""
+msgstr "PyChess inclui um computador que oferce a avaliação de qualquer posição de xadrez. Ganhar contra o PyChess é uma maneira coerente de ter sucesso no xadrez e melhorar suas habilidades."
 
 #: lib/pychess/widgets/tipOfTheDay.py:61
 msgid ""
@@ -4841,7 +4841,7 @@ msgid ""
 "gives you your chance to win and the projected evolution of your rating. If "
 "your rating is provisional, append a question mark '?' to your level, like "
 "1399?."
-msgstr ""
+msgstr "A pontuação é sua força: 1500 é uma media boa para o jogador, 2000 é um campeão nacional e 2800 é o melhor campeão humano. No menu em propriedades do jogo <b>Jogo</b>, a diferença de pontos te mostra a chance de ganhar e projeta a evolução da pontuação. Se sua pontuação for provisória, haverá um ponto de interrogação \"?\" para o seu nível, como 1399 ?."
 
 #: lib/pychess/widgets/tipOfTheDay.py:62
 msgid ""
@@ -4850,63 +4850,63 @@ msgid ""
 "Schematically, the concept is to engage +/- 20 points for a game and that "
 "you will win or lose proportionally to the difference of ELO points you have"
 " with your opponent."
-msgstr ""
+msgstr "Alguns sistemas de pontuações existem para avaliar seu conhecimento no xadrez. O mais usado é o ELO (do creador Arpad Elo) estabelecido em 1970. Esquematicamente, o conceito é usar +/- 20 pontos por um jogo e você ganhará ou perderá proporcionalmente à diferença de pontos ELO que você tem contra seu oponente."
 
 #: lib/pychess/widgets/tipOfTheDay.py:63
 msgid ""
 "Each chess engine has its own evaluation function. It is normal to get "
 "different scores for a same position."
-msgstr ""
+msgstr "Cada computador de xadrez tem sua função avaliação. É normal ter diferente pontuação para a mesma posição."
 
 #: lib/pychess/widgets/tipOfTheDay.py:66
 msgid ""
 "The opening book gives you the moves that are considered to be good from a "
 "theoretical perspective. You are free to play any other legal move."
-msgstr ""
+msgstr "O livro de abertura te da os movimentos que são considerados bons de acordo com a perspectiva teórica. Você é livre para jogar qualquer posição."
 
 #: lib/pychess/widgets/tipOfTheDay.py:67
 msgid ""
 "The <b>Gaviota tables</b> are precalculated positions that tell the final "
 "outcome of the current game in terms of win, loss or draw."
-msgstr ""
+msgstr "Na <b>tabela Gaivota</b>tem posições pré-calculadas que informam o resultado final do jogo atual em termos de vitória, derrota ou empate."
 
 #: lib/pychess/widgets/tipOfTheDay.py:68
 msgid ""
 "Do you know that your computer is too small to store a 7-piece endgame "
 "database? That's why the Gaviota tablebase is limited to 5 pieces."
-msgstr ""
+msgstr "Você sabia que seu computador é pequeno demais para armazenar um banco de dados de 7 peças de final do jogo? É por isso que a base de dados Gaviota é limitada a 5 peças."
 
 #: lib/pychess/widgets/tipOfTheDay.py:69
 msgid ""
 "A tablebase can be connected either to PyChess, or to a compatible chess "
 "engine."
-msgstr ""
+msgstr "Uma base de dados pode ser conectada ao PyChess ou a um computador de xadrez compatível."
 
 #: lib/pychess/widgets/tipOfTheDay.py:70
 msgid ""
 "The <b>DTZ</b> is the distance to zero, so the remaining possible moves to "
 "end into a tie as soon as possible."
-msgstr ""
+msgstr "A <b>DTZ</b> é a distancia para zero, o restante de jogadas possíveis para um final em empate."
 
 #: lib/pychess/widgets/tipOfTheDay.py:73
 msgid ""
 "The chess variants consist in changing the start position, the rules of the "
 "game, the types of the pieces... The gameplay is totally modified, so you "
 "must use dedicated chess engines to play against the computer."
-msgstr ""
+msgstr "As variantes do xadrez consistem em mudar a posição inicial, as regras do jogo, os tipos de peças ... A jogabilidade é totalmente modificada, então você deve usar computadores de xadrez dedicados para jogar contra o computador."
 
 #: lib/pychess/widgets/tipOfTheDay.py:74
 msgid ""
 "In Chess960, the lines of the main pieces are shuffled in a precise order. "
 "Therefore, you cannot use the booking book and you should change your "
 "tactical habits."
-msgstr ""
+msgstr "No Chess960, as linhas das peças principais são embaralhadas em uma ordem precisa. Portanto, você não pode usar o livro de aberturas e deve mudar seus hábitos táticos."
 
 #: lib/pychess/widgets/tipOfTheDay.py:75
 msgid ""
 "When playing crazyhouse chess, the captured pieces change of ownership and "
 "can reappear on the board at a later turn."
-msgstr ""
+msgstr "Jogando crazyhouse chess , as capturas de pelas mudam de propriedade e podem reaparecer no tabuleiro na ultima jogada."
 
 #: lib/pychess/widgets/tipOfTheDay.py:76
 msgid ""
@@ -4914,32 +4914,32 @@ msgid ""
 "must give your pieces to your opponent by forcing the captures like at "
 "draughts. The outcome of the game can change completely if you make an "
 "incorrect move."
-msgstr ""
+msgstr "Suicide chess, giveaway chess ou antichess são todos da mesma variante: você deve dar suas peças ao seu oponente forçando as capturas como no jogo de damas. O resultado do jogo pode mudar completamente se você fizer um movimento incorreto."
 
 #: lib/pychess/widgets/tipOfTheDay.py:77
 msgid ""
 "Playing horde in PyChess consists in destroying a flow of 36 white pawns "
 "with a normal set of black pieces."
-msgstr ""
+msgstr "Jogar horde no PyChess consiste em destruir um fluxo de 36 peões brancos com as peças normais das pretas."
 
 #: lib/pychess/widgets/tipOfTheDay.py:78
 msgid ""
 "You might be interested in playing King of the hill if you target to place "
 "your king in the middle of the board, instead of protecting it in a corner "
 "of the board as usual."
-msgstr ""
+msgstr "Você pode estar interessado em jogar King of the hill se tiver como alvo colocar seu rei no meio do tabuleiro, em vez de protegê-lo em um canto do tabuleiro como de costume."
 
 #: lib/pychess/widgets/tipOfTheDay.py:79
 msgid ""
 "A lot of fun is offered by atomic chess that destroys all the surrounding "
 "main pieces at each capture move."
-msgstr ""
+msgstr "Muita diversão é oferecida pelo atomic chess que destrói todas as peças principais em cada movimento de captura."
 
 #: lib/pychess/widgets/tipOfTheDay.py:80
 msgid ""
 "The experienced chess players can use blind pieces by starting a new variant"
 " game."
-msgstr ""
+msgstr "Os enxadristas experientes podem usar blind chess para iniciar um novo jogo variante."
 
 #: lib/pychess/widgets/tipOfTheDay.py:83
 msgid ""
@@ -4947,93 +4947,93 @@ msgid ""
 "can find your games later and see the evolution of your rating. In the "
 "preferences, PyChess still have the possibility to save your played games "
 "locally."
-msgstr ""
+msgstr "Você deve se inscrever online para jogar em um servidor de xadrez, para que você possa encontrar seus jogos e mais tarde ver a evolução de sua pontuação. Nas preferências, PyChess ainda te da a possibilidade de salvar seus jogos jogados localmente."
 
 #: lib/pychess/widgets/tipOfTheDay.py:84
 msgid ""
 "The time compensation is a feature that doesn't waste your clock time "
 "because of the latency of your Internet connection. The module can be "
 "downloaded from the menu <b>Edit</b> > <b>Externals</b>."
-msgstr ""
+msgstr "A compensação de tempo é um recurso que não desperdiça seu tempo do relógio devido à latência de sua conexão com a Internet. O modulo pode ser baixado pelo menu <b>Editar</b> > <b>Externo</b>."
 
 #: lib/pychess/widgets/tipOfTheDay.py:85
 msgid ""
 "You can play against chess engines on an Internet chess server. Use the "
 "filter to include or exclude them from the available players."
-msgstr ""
+msgstr "Você pode jogar contra os computadores de xadrez em um servidor de xadrez da Internet. Use o filtro para incluí-los ou excluí-los dos jogadores disponíveis."
 
 #: lib/pychess/widgets/tipOfTheDay.py:86
 msgid ""
 "The communication with an Internet chess server is not standardized. "
 "Therefore you can only connect to the supported chess servers in PyChess, "
 "like freechess.org or chessclub.com"
-msgstr ""
+msgstr "A comunicação com os servidores de xadrez da Internet não são padrões. Portanto você somente pode conectar com servidores suportados pelo PyChess, como freechess.org ou chessclub.com"
 
 #: lib/pychess/widgets/tipOfTheDay.py:89
 msgid ""
 "PyChess uses the external module Scoutfish to evaluate the chess databases. "
 "For example, it is possible to extract the games where some pieces are in "
 "precise count or positions."
-msgstr ""
+msgstr "Pychess usa o modulo Scoutfish para avaliar a base de dados. Por exemplo, é possível extrair os jogos em que algumas peças estão em contagem ou posições precisas."
 
 #: lib/pychess/widgets/tipOfTheDay.py:90
 msgid ""
 "Parser/ChessDB is an external module used by PyChess to show the expected "
 "outcome for a given position."
-msgstr ""
+msgstr "Parser/ChessDB é um modulo externo usado pelo PyChess para mostrar o resultado esperado para uma determinada posição."
 
 #: lib/pychess/widgets/tipOfTheDay.py:91
 msgid ""
 "SQLite is an internal module used to describe the loaded PGN files, so that "
 "PyChess can retrieve the games very fast during a search."
-msgstr ""
+msgstr "O SQLite é um módulo interno usado para descrever os arquivos PGN carregados, para que o PyChess possa recuperar os jogos muito rapidamente durante uma pesquisa."
 
 #: lib/pychess/widgets/tipOfTheDay.py:92
 msgid ""
 "PyChess generates 3 information files when a PGN file is opened : .sqlite "
 "(description), .scout (positions), .bin (book and outcomes). These files can"
 " be removed manually if necessary."
-msgstr ""
+msgstr "O PyChess gera 3 arquivos de informação quando um arquivo PGN é aberto: .sqlite (descrição), .scout (posições), .bin (livro e resultados). Esses arquivos podem ser removidos manualmente, se necessário."
 
 #: lib/pychess/widgets/tipOfTheDay.py:95
 msgid ""
 "PyChess uses offline lessons to learn chess. You will be then never "
 "disappointed if you have no Internet connection."
-msgstr ""
+msgstr "PyChess usa lições off-line para aprender xadrez. Você nunca ficará desapontado se não tiver conexão com a Internet."
 
 #: lib/pychess/widgets/tipOfTheDay.py:96
 msgid ""
 "To start Learning, click on the <b>Book icon</b> available on the welcome "
 "screen. Or choose the category next to that button to start the activity "
 "directly."
-msgstr ""
+msgstr "Para iniciar o aprendizado, clique em <b>icone do Livro</b> disponível na tela inicial. Ou escolha a categoria ao lado desse botão para iniciar a atividade diretamente."
 
 #: lib/pychess/widgets/tipOfTheDay.py:97
 msgid ""
 "The <b>lectures</b> are commented games to learn step-by-step the strategy "
 "and principles of some chess techniques. Just watch and read."
-msgstr ""
+msgstr "As <b>palestras</b> são jogos comentados para aprender passo a passo a estratégia e os princípios de algumas técnicas de xadrez. Apenas observe e leia."
 
 #: lib/pychess/widgets/tipOfTheDay.py:98
 msgid ""
 "Whatever the number of pawns, an <b>end-game</b> starts when the board is "
 "made of certain main pieces : 1 rook vs 1 bishop, 1 queen versus 2 rooks, "
 "etc... Knowing the moves will help you to not miss the checkmate!"
-msgstr ""
+msgstr "Qualquer que seja o número de peões, um <b>fim de jogo</b> começa quando o tabuleiro está com apenas algumas peças principais: 1 torre contra 1 bispo, 1 rainha contra 2 torres, etc ... Saber os movimentos irá ajudá-lo a não perder com xeque-mate!"
 
 #: lib/pychess/widgets/tipOfTheDay.py:99
 msgid ""
 "A <b>puzzle</b> is a set of simple positions classified by theme for which "
 "you should guess the best moves. It helps you to understand the patterns to "
 "drive an accurate attack or defense."
-msgstr ""
+msgstr "Um <b>puzzle</b> é um conjunto de posições simples classificadas por tema para as quais você deve adivinhar os melhores movimentos. Isso ajuda você a entender os padrões para usar um ataque ou defesa precisos."
 
 #: lib/pychess/widgets/tipOfTheDay.py:100
 msgid ""
 "A <b>lesson</b> is a complex study that explains the tactics for a given "
 "position. It is common to view circles and arrows over the board to focus on"
 " the behavior of the pieces, the threats, etc..."
-msgstr ""
+msgstr "Uma <b>lição</b> é um estudo complexo que explica as táticas para uma determinada posição. É comum ver círculos e setas sobre o tabuleiro para focar no comportamento das peças, nas ameaças, etc ..."
 
 #: lib/pychess/Utils/lutils/LBoard.py:190
 #, python-format
