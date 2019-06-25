@@ -270,6 +270,15 @@
                                 <signal name="activate" handler="on_enter_game_notation_activate" swapped="no"/>
                               </object>
                             </child>
+                            <child>
+                              <object class="GtkMenuItem" id="enter_game_clipboard1">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">From Cli_pboard</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="on_enter_game_clipboard_activate" swapped="no"/>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>

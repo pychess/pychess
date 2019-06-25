@@ -9,6 +9,7 @@ import platform
 import sys
 import subprocess
 from urllib.request import url2pathname, pathname2url
+from io import StringIO
 
 from gi.repository import Gdk
 from gi.repository import Gio
@@ -33,6 +34,7 @@ from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.widgets.RecentChooser import recent_menu, recent_manager
 from pychess.Players.engineNest import discoverer
 from pychess.Savers import chesspastebin
+from pychess.Savers.pgn import PGNFile
 from pychess.Savers.remotegame import get_internet_game_as_pgn
 from pychess.System.protoopen import splitUri
 from pychess.widgets import mainwindow
@@ -266,6 +268,24 @@ class GladeHandlers:
 
     def on_enter_game_notation_activate(self, widget):
         newGameDialog.EnterNotationExtension.run()
+
+    def on_enter_game_clipboard_activate(self, widget):
+        ok = False
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        text = clipboard.wait_for_text()
+        if text not in [None, '']:
+            try:
+                pgn = PGNFile(StringIO(text))
+                pgn.loadToModel(None)
+                newGameDialog.loadPgnAndRun(text)
+                ok = True
+            except Exception:
+                pass
+        if not ok:
+            dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
+            dialog.set_markup(_('The clipboard contains no relevant chess data.'))
+            dialog.run()
+            dialog.destroy()
 
     def on_play_internet_chess_activate(self, widget):
         ICLogon.run()
