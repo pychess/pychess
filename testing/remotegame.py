@@ -34,21 +34,24 @@ class RemoteGameTestCase(unittest.TestCase):
         self.assertEqual(ok, expected)
 
     def testLichess(self):
-        links = [('http://lichess.org/CA4bR2b8/black/analysis#12', True),           # Game in advanced position
-                 ('https://lichess.org/CA4bR2b8', True),                            # Canonical address
-                 ('https://lichess.org/game/export/CA4bR2b8', True),                # Download link
-                 ('http://fr.lichess.org/@/thibault', False),                       # Not a game (user page)
-                 ('http://lichess.org/blog', False),                                # Not a game (page)
-                 ('http://lichess.dev/ABCD1234', False),                            # Not a game (wrong ID)
-                 ('https://lichess.org/9y4KpPyG', True),                            # Variant game Chess960
-                 ('https://LICHESS.org/nGhOUXdP?p=0', True),                        # Variant game with parameter
-                 ('https://lichess.org/nGhOUXdP?p=0#3', True),                      # Variant game with parameter and anchor
-                 ('https://hu.lichess.org/study/hr4H7sOB?page=1', True),            # Study of one game with unused parameter
-                 ('https://lichess.org/study/hr4H7sOB/fvtzEXvi.pgn#32', True),      # Chapter of a study with anchor
-                 ('https://lichess.org/STUDY/hr4H7sOB.pgn', True),                  # Study of one game
-                 ('https://lichess.org/training/daily', True),                      # Daily puzzle
-                 ('https://lichess.org/training/84969', True),                      # Puzzle
-                 ('https://lichess.org/training/1281301832', False)]                # Not a puzzle (wrong ID)
+        links = [('http://lichess.org/CA4bR2b8/black/analysis#12', True),                           # Game in advanced position
+                 ('https://lichess.org/CA4bR2b8', True),                                            # Canonical address
+                 ('https://lichess.org/game/export/CA4bR2b8', True),                                # Download link
+                 ('http://fr.lichess.org/@/thibault', False),                                       # Not a game (user page)
+                 ('http://lichess.org/blog', False),                                                # Not a game (page)
+                 ('http://lichess.dev/ABCD1234', False),                                            # Not a game (wrong ID)
+                 ('https://lichess.org/9y4KpPyG', True),                                            # Variant game Chess960
+                 ('https://LICHESS.org/nGhOUXdP?p=0', True),                                        # Variant game with parameter
+                 ('https://lichess.org/nGhOUXdP?p=0#3', True),                                      # Variant game with parameter and anchor
+                 ('https://hu.lichess.org/study/hr4H7sOB?page=1', True),                            # Study of one game with unused parameter
+                 ('https://lichess.org/study/76AirB4Y/C1NcczQl', True),                             # Chapter of a study
+                 ('https://lichess.org/study/hr4H7sOB/fvtzEXvi.pgn#32', True),                      # Chapter of a study with anchor
+                 ('https://lichess.org/STUDY/hr4H7sOB.pgn', True),                                  # Study of one game
+                 ('https://lichess.org/training/daily', True),                                      # Daily puzzle
+                 ('https://lichess.org/training/84969', True),                                      # Puzzle
+                 ('https://lichess.org/training/1281301832', False),                                # Not a puzzle (wrong ID)
+                 ('https://lichess.org/broadcast/2019-gct-zagreb-round-4/jQ1dbbX9', True),          # Broadcast
+                 ('https://lichess.org/broadcast/2019-pychess-round-1/pychess1', False)]            # Not a broadcast (wrong ID)
         self.executeTest(InternetGameLichess(), links)
 
     def testChessgames(self):

@@ -482,7 +482,7 @@ class GameWidget(GObject.GObject):
                 text = repr(self.gamemodel.players[color])
         if with_elo:
             elo = self.gamemodel.tags.get("WhiteElo" if color == WHITE else "BlackElo")
-            if elo:
+            if elo not in [None, '', '?', '0', 0]:
                 text += " (%s)" % str(elo)
         return text
 

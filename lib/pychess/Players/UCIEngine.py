@@ -96,6 +96,8 @@ class UCIEngine(ProtocolEngine):
         if analyze_mode:
             if self.hasOption("Ponder"):
                 self.setOption('Ponder', False)
+            if self.hasOption("UCI_LimitStrength"):
+                self.setOption('UCI_LimitStrength', False)
         if self.hasOption("UCI_AnalyseMode"):
             self.setOption("UCI_AnalyseMode", analyze_mode)
 
@@ -309,25 +311,36 @@ class UCIEngine(ProtocolEngine):
     def setOptionStrength(self, strength, forcePonderOff):
         self.strength = strength
 
+        # Restriction by embedded ELO evaluation (Stockfish, Arasan, Rybka, CT800, Spike...)
         if self.hasOption('UCI_LimitStrength') and strength <= 18:
             self.setOption('UCI_LimitStrength', True)
             if self.hasOption('UCI_Elo'):
-                self.setOption('UCI_Elo', 150 * strength)
+                try:
+                    minElo = int(self.options["UCI_Elo"]["min"])
+                except Exception:
+                    minElo = 1000
+                try:
+                    maxElo = int(self.options["UCI_Elo"]["max"])
+                except Exception:
+                    maxElo = 2800
+                self.setOption('UCI_Elo', int(minElo + strength * (maxElo - minElo) / 20))
 
-        # Stockfish and anticrux engines offer 20 skill levels
+        # Restriction by unofficial option "Skill Level" (Stockfish, anticrux...)
         if self.hasOption('Skill Level'):
             self.setOption('Skill Level', strength)
 
-        if ((not self.hasOption('UCI_Elo')) and
-                (not self.hasOption('Skill Level'))) or strength <= 19:
+        # Restriction by available time
+        if (not self.hasOption('UCI_Elo') and not self.hasOption('Skill Level')) or strength <= 19:
             self.timeHandicap = t_hcap = 0.01 * 10 ** (strength / 10.)
             self.wtime = int(max(self.wtime * t_hcap, 1))
             self.btime = int(max(self.btime * t_hcap, 1))
             self.incr = int(self.incr * t_hcap)
 
+        # Amplification with pondering
         if self.hasOption('Ponder'):
             self.setOption('Ponder', strength >= 19 and not forcePonderOff)
 
+        # Amplification by endgame database
         if self.hasOption('GaviotaTbPath') and strength == 20:
             self.setOption('GaviotaTbPath', conf.get("egtb_path"))
 

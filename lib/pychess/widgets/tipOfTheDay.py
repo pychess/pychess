@@ -112,7 +112,7 @@ class TipOfTheDay:
 
     def shuffleTips(self):
         # Because of the fixed seed, the same shuffled list will be returned.
-        # The idea is to manage all the tips bove by category but to display
+        # The idea is to manage all the tips above by category but to display
         # them once from a random order that can be reproduced at every run.
         for i in range(len(self.tips) - self.tips_fixed):
             p1 = self.xorshift()
