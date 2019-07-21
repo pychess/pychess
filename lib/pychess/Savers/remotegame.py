@@ -1258,77 +1258,6 @@ class InternetGameGameknot(InternetGameInterface):
         return unquote(self.rebuild_pgn(game))
 
 
-# Chess.com
-class InternetGameChessCom(InternetGameInterface):
-    def __init__(self):
-        InternetGameInterface.__init__(self)
-        self.url_type = None
-        self.use_an = DEFAULT_AN
-
-    def get_description(self):
-        return 'Chess.com -- %s' % CAT_HTML
-
-    def assign_game(self, url):
-        rxp = re.compile('^https?:\/\/([\S]+\.)?chess\.com\/([a-z]+\/)?(live|daily)\/game\/([0-9]+)[\/\?\#]?', re.IGNORECASE)
-        m = rxp.match(url)
-        if m is not None:
-            self.url_type = m.group(3)
-            self.id = m.group(4)
-            return True
-        return False
-
-    def download_game(self):
-        # Check
-        if None in [self.id, self.url_type]:
-            return None
-
-        # Download
-        url = 'https://www.chess.com/%s/game/%s' % (self.url_type, self.id)
-        page = self.download(url, userAgent=True)  # Else 403 Forbidden
-        if page is None:
-            return None
-
-        # Logic for the live games
-        if self.url_type.lower() == 'live':
-            # Extract the JSON
-            page = page.replace("\n", '')
-            pos1 = page.find("init('live'")
-            if pos1 == -1:
-                return None
-            pos1 = page.find('{', pos1 + 1)
-            pos1 = page.find('{', pos1 + 1)
-            if pos1 == -1:
-                return None
-            c = 1
-            pos2 = pos1
-            while pos2 < len(page):
-                pos2 += 1
-                if page[pos2] == '{':
-                    c += 1
-                if page[pos2] == '}':
-                    c -= 1
-                if c == 0:
-                    break
-            if c != 0:
-                return None
-
-            # Extract the PGN
-            bourne = page[pos1:pos2 + 1].replace('&quot;', '"').replace('\\r', '')
-            chessgame = self.json_loads(bourne)
-            pgn = self.json_field(chessgame, 'pgn').replace('\\n', "\n")
-            if pgn == '':
-                return None
-            else:
-                return pgn
-
-        # Logic for the daily games
-        elif self.url_type.lower() == 'daily':
-            return None  # Not available
-
-        else:
-            assert(False)
-
-
 # Schach-Spielen.eu
 class InternetGameSchachspielen(InternetGameInterface):
     def get_description(self):
@@ -2047,7 +1976,6 @@ chess_providers = [InternetGameLichess(),
                    InternetGameChessOrg(),
                    InternetGameEuropeechecs(),
                    InternetGameGameknot(),
-                   InternetGameChessCom(),
                    InternetGameSchachspielen(),
                    InternetGameRedhotpawn(),
                    InternetGameChesssamara(),
