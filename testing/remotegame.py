@@ -1,7 +1,7 @@
 import unittest
 import random
 
-from pychess.Savers.remotegame import InternetGameLichess, InternetGameChessgames, InternetGameFicsgames, InternetGameChesstempo, InternetGameChess24, InternetGame365chess, InternetGameChesspastebin, InternetGameChessbomb, InternetGameThechessworld, InternetGameChessOrg, InternetGameEuropeechecs, InternetGameGameknot, InternetGameChessCom, InternetGameSchachspielen, InternetGameRedhotpawn, InternetGameChesssamara, InternetGame2700chess, InternetGameIccf, InternetGameSchacharena, InternetGameChesspuzzle, InternetGameChessking, InternetGameIdeachess, InternetGameChessdb, InternetGameChesspro, InternetGameFicgs, InternetGameGeneric
+from pychess.Savers.remotegame import InternetGameLichess, InternetGameChessgames, InternetGameFicsgames, InternetGameChesstempo, InternetGameChess24, InternetGame365chess, InternetGameChesspastebin, InternetGameChessbomb, InternetGameThechessworld, InternetGameChessOrg, InternetGameEuropeechecs, InternetGameGameknot, InternetGameSchachspielen, InternetGameRedhotpawn, InternetGameChesssamara, InternetGame2700chess, InternetGameIccf, InternetGameSchacharena, InternetGameChesspuzzle, InternetGameChessking, InternetGameIdeachess, InternetGameChessdb, InternetGameChesspro, InternetGameFicgs, InternetGameGeneric
 
 
 class RemoteGameTestCase(unittest.TestCase):
@@ -127,17 +127,6 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://gameknot.com/chess-puzzle.pl?pz=224571', True),                  # Puzzle with analysis
                  ('https://gameknot.com/chess-puzzle.pl?pz=ABC', True)]                     # Random puzzle from wrong ID
         self.executeTest(InternetGameGameknot(), links)
-
-    def testChessCom(self):
-        links = [('https://www.CHESS.com/live/game/3638784952#anchor', True),               # Live game
-                 ('https://chess.com/de/live/game/3635508736?username=rikikits', True),     # Live game Chess960
-                 ('https://www.chess.com/daily/game/223897998', False),                     # Daily game
-                 ('https://www.chess.com/DAILY/game/224478042', False),                     # Daily game
-                 ('https://www.chess.com/daily/game/225006782', False),                     # Daily game Chess960
-                 ('https://www.chess.com/daily/GAME/205389002', False),                     # Daily game Chess960
-                 ('https://chess.com/live/game/13029832074287114', False),                  # Not a game (wrong ID)
-                 ('https://www.chess.com', False)]                                          # Not a game (homepage)
-        self.executeTest(InternetGameChessCom(), links)
 
     def testSchachspielen(self):
         links = [('https://www.schach-spielen.eu/analyse/2jcpl1vs/black#test', True),       # Best game ever with anchor
