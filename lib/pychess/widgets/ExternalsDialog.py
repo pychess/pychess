@@ -31,7 +31,7 @@ class ExternalsDialog():
         self.window.add(vbox)
         uistuff.keepWindowSize("externalsdialog", self.window, (320, 240), uistuff.POSITION_CENTER)
 
-        label = Gtk.Label(_("Some of PyChess features needs your permission to download external programs"))
+        label = Gtk.Label(_("Some PyChess features require further permission in order to download external components"))
         vbox.pack_start(label, True, True, 0)
 
         box = Gtk.Box()
