@@ -14,6 +14,8 @@ if os.path.isdir(os.path.join(this_dir, "lib/pychess")) and \
 
 # Create splash screen
 try:
+    import gi
+    gi.require_version('Gtk', '3.0')
     from gi.repository import Gtk, Gdk
     splash = Gtk.Window()
     splash.props.type_hint = Gdk.WindowTypeHint.SPLASHSCREEN
