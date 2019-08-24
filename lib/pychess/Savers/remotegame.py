@@ -86,10 +86,16 @@ class InternetGameInterface:
         keys = path.split('/')
         value = data
         for key in keys:
-            if key in value:
-                value = value[key]
+            if key.startswith('[') and key.endswith(']'):
+                try:
+                    value = value[int(key[1:-1])]
+                except (ValueError, TypeError, IndexError):
+                    return ''
             else:
-                return ''
+                if key in value:
+                    value = value[key]
+                else:
+                    return ''
         if value is None:
             return ''
         else:
@@ -115,7 +121,7 @@ class InternetGameInterface:
                     data = bytes.decode('latin-1')
                 except Exception:
                     log.debug('Error in the decoding of the data')
-                    data = None
+                    return None
 
         # Result
         data = data.replace("\ufeff", '').replace("\r", '').strip()
@@ -289,6 +295,17 @@ class InternetGameLichess(InternetGameInterface):
                 self.url_tld = m.group(2)
                 return True
 
+        # Retrieve the ID of the practice
+        rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/practice\/[\w\-\/]+\/([a-z0-9]+\/[a-z0-9]+)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)
+        m = rxp.match(url)
+        if m is not None:
+            gid = m.group(3)
+            if len(gid) == 17:
+                self.url_type = TYPE_STUDY
+                self.id = gid
+                self.url_tld = m.group(2)
+                return True
+
         # Retrieve the ID of the study
         rxp = re.compile('^https?:\/\/([\S]+\.)?lichess\.(org|dev)\/study\/([a-z0-9]+(\/[a-z0-9]+)?)(\.pgn)?\/?([\S\/]+)?$', re.IGNORECASE)
         m = rxp.match(url)
@@ -330,28 +347,6 @@ class InternetGameLichess(InternetGameInterface):
         bourne = self.read_data(response)
         return self.json_loads(bourne)
 
-    def adjust_tags(self, pgn):
-        # Check
-        if pgn in [None, '']:
-            return pgn
-
-        # Replace the tags
-        reps = [('Variant', 'UltraBullet', ''),
-                ('Variant', 'Bullet', ''),
-                ('Variant', 'Blitz', ''),
-                ('Variant', 'Rapid', ''),
-                ('Variant', 'Classical', ''),
-                ('Variant', 'Correspondence', ''),
-                ('Variant', 'Standard', ''),
-                ('Variant', 'Chess960', CHESS960),
-                ('Variant', 'ThreeCheck', '3check'),
-                ('Variant', 'Antichess', 'Suicide')]  # TODO Use shared constants
-        for rep in reps:
-            tag, s, d = rep
-            pgn = pgn.replace('[%s "%s"]' % (tag, s), '[%s "%s"]' % (tag, d))
-        pgn = pgn.replace('[Variant ""]\n', '')
-        return pgn
-
     def download_game(self):
         # Check
         if None in [self.id, self.url_tld]:
@@ -363,7 +358,7 @@ class InternetGameLichess(InternetGameInterface):
             api = self.query_api('/import/master/%s/white' % self.id)
             if self.json_field(api, 'game/status/name') != 'started':
                 url = 'https://lichess.%s/game/export/%s?literate=1' % (self.url_tld, self.id)
-                return self.adjust_tags(self.download(url))
+                return self.download(url)
 
             # Rebuild the PGN file
             else:

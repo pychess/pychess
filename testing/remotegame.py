@@ -51,7 +51,9 @@ class RemoteGameTestCase(unittest.TestCase):
                  ('https://lichess.org/training/84969', True),                                      # Puzzle
                  ('https://lichess.org/training/1281301832', False),                                # Not a puzzle (wrong ID)
                  ('https://lichess.org/broadcast/2019-gct-zagreb-round-4/jQ1dbbX9', True),          # Broadcast
-                 ('https://lichess.org/broadcast/2019-pychess-round-1/pychess1', False)]            # Not a broadcast (wrong ID)
+                 ('https://lichess.org/broadcast/2019-pychess-round-1/pychess1', False),            # Not a broadcast (wrong ID)
+                 ('https://lichess.ORG/practice/basic-tactics/the-pin/9ogFv8Ac/BRmScz9t#hi', True), # Practice
+                 ('https://lichess.org/practice/py/chess/12345678/abcdEFGH', False)]                # Not a practice (wrong ID)
         self.executeTest(InternetGameLichess(), links)
 
     def testChessgames(self):

@@ -1,7 +1,7 @@
 import os
-import platform
 import sys
 from collections import namedtuple
+from pychess.System.cpu import get_cpu
 
 
 # Constants
@@ -9,9 +9,7 @@ AUTO_DETECT = True
 NO_AUTO_DETECT = False
 
 # CPUID
-BITNESS = "64" if platform.machine().endswith('64') else "32"
-POPCOUNT = True  # TODO Auto-detect
-BMI2 = True  # TODO Auto-detect
+cpu = get_cpu()
 
 # List of known interpreters
 PYTHONBIN = sys.executable.split("/")[-1]
@@ -23,7 +21,7 @@ VM_LIST = [
 ]
 
 # Needed by shutil.which() on Windows to find .py engines
-if sys.platform == "win32":
+if cpu['windows']:
     for vm in VM_LIST:
         if vm.ext.upper() not in os.getenv("PATHEXT"):
             os.environ["PATHEXT"] += ";%s" % vm.ext.upper()
@@ -31,9 +29,9 @@ if sys.platform == "win32":
 # List of engines later sorted by descending length of name
 # The comments provides known conflicts with Linux packages
 # Weak engines (<2700) should be added manually unless a package exists already
-if sys.platform == "win32":
-    stockfish_name = "stockfish_10_x%s.exe" % BITNESS
-    sjaakii_name = "sjaakii_win%s_ms.exe" % BITNESS
+if cpu['windows']:
+    stockfish_name = "stockfish_10_x%s.exe" % cpu['bitness']
+    sjaakii_name = "sjaakii_win%s_ms.exe" % cpu['bitness']
 else:
     stockfish_name = "stockfish"
     sjaakii_name = "sjaakii"
@@ -764,8 +762,8 @@ def listEnginesFromPath(defaultPath, maxDepth=3, withSymLink=False):
                     executable = True
                     break
             if not executable:
-                if sys.platform == "win32":
-                    executable = file_ci.endswith(".exe")
+                if cpu['windows']:
+                    executable = file_ci.endswith(cpu['binext'])
                 else:
                     executable = os.access(fullname, os.X_OK)
             if not executable:
@@ -781,15 +779,15 @@ def listEnginesFromPath(defaultPath, maxDepth=3, withSymLink=False):
                 continue
 
             # Check the bitness because x64 does not run on x32
-            if BITNESS == "32" and "64" in file_ci:
+            if cpu['bitness'] == "32" and "64" in file_ci:
                 continue
 
             # Check the support for POPCNT
-            if not POPCOUNT and "popcnt" in file_ci:
+            if not cpu['popcnt'] and "popcnt" in file_ci:
                 continue
 
             # Check the support for BMI2
-            if not BMI2 and "bmi2" in file_ci:
+            if not cpu['bmi2'] and "bmi2" in file_ci:
                 continue
 
             # Great, this is an engine !

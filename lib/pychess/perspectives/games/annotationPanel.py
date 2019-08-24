@@ -1046,7 +1046,7 @@ class Sidepanel:
 
         self.header_textbuffer.insert_with_tags_by_name(end_iter(), text, "head2")
         white_elo = self.gamemodel.tags['WhiteElo']
-        if white_elo:
+        if white_elo not in [None, '', '?', '0', 0]:
             self.header_textbuffer.insert_with_tags_by_name(end_iter(), " %s" % white_elo, "head1")
 
         self.header_textbuffer.insert_with_tags_by_name(end_iter(), " - ", "head1")
@@ -1055,7 +1055,7 @@ class Sidepanel:
         text = repr(self.gamemodel.players[1])
         self.header_textbuffer.insert_with_tags_by_name(end_iter(), text, "head2")
         black_elo = self.gamemodel.tags['BlackElo']
-        if black_elo:
+        if black_elo not in [None, '', '?', '0', 0]:
             self.header_textbuffer.insert_with_tags_by_name(end_iter(), " %s" % black_elo, "head1")
 
         result = reprResult[self.gamemodel.status]
