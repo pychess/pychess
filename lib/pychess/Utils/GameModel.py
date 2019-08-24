@@ -320,6 +320,14 @@ class GameModel(GObject.GObject):
         yield from self.start_analyzer(analyzer_type)
 
     def on_analyze(self, analyzer, analysis):
+        def safe_int(p):
+            if p in [None, '']:
+                return 0
+            try:
+                return int(p)
+            except ValueError:
+                return 0
+
         if analysis and (self.practice_game or self.lesson_game):
             for i, anal in enumerate(analysis):
                 if anal is not None:
@@ -336,11 +344,11 @@ class GameModel(GObject.GObject):
             ply, pv, score, depth, nps = analysis[0]
             if score is not None and depth:
                 if analyzer.mode == ANALYZING:
-                    if (ply not in self.scores) or (int(self.scores[ply][2]) <= int(depth)):
+                    if (ply not in self.scores) or (safe_int(self.scores[ply][2]) <= safe_int(depth)):
                         self.scores[ply] = (pv, score, depth)
                         self.emit("analysis_changed", ply)
                 else:
-                    if (ply not in self.spy_scores) or (int(self.spy_scores[ply][2]) <= int(depth)):
+                    if (ply not in self.spy_scores) or (safe_int(self.spy_scores[ply][2]) <= safe_int(depth)):
                         self.spy_scores[ply] = (pv, score, depth)
 
     def setOpening(self, ply=None):

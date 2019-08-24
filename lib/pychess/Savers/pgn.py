@@ -5,9 +5,7 @@ import collections
 import os
 from io import StringIO
 from os.path import getmtime
-import platform
 import re
-import sys
 import textwrap
 
 import pexpect
@@ -35,6 +33,7 @@ from pychess.Variants import name2variant, NormalBoard, variants
 from pychess.Utils import formatTime
 from pychess.Savers.ChessFile import ChessFile, LoadingError
 from pychess.Savers.database import col2label, TagDatabase, parseDateTag
+from pychess.System.cpu import get_cpu
 from pychess.Database import model as dbmodel
 from pychess.Database.PgnImport import TAG_REGEX, pgn2Const, PgnImport
 from pychess.Database.model import game, create_indexes, drop_indexes, metadata, ini_schema_version
@@ -375,22 +374,15 @@ def load(handle, progressbar=None):
     return PGNFile(handle, progressbar)
 
 
-try:
-    with open("/proc/cpuinfo") as f:
-        cpuinfo = f.read()
-except OSError:
-    cpuinfo = ""
-
-BITNESS = "64" if platform.machine().endswith('64') else "32"
-MODERN = "-modern" if "popcnt" in cpuinfo else ""
-EXT = ".exe" if sys.platform == "win32" else ""
+cpuinfo = get_cpu()
+MODERN = "-modern" if cpuinfo['popcnt'] else ""
 
 altpath = getEngineDataPrefix()
 
-scoutfish = "scoutfish_x%s%s%s" % (BITNESS, MODERN, EXT)
+scoutfish = "scoutfish_x%s%s%s" % (cpuinfo['bitness'], MODERN, cpuinfo['binext'])
 scoutfish_path = shutil.which(scoutfish, mode=os.X_OK, path=altpath)
 
-parser = "parser_x%s%s%s" % (BITNESS, MODERN, EXT)
+parser = "parser_x%s%s%s" % (cpuinfo['bitness'], MODERN, cpuinfo['binext'])
 chess_db_path = shutil.which(parser, mode=os.X_OK, path=altpath)
 
 
