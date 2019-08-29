@@ -17,8 +17,8 @@ from pychess.external.chess_db import Parser
 
 from pychess.Utils.const import WHITE, BLACK, reprResult, FEN_START, FEN_EMPTY, \
     WON_RESIGN, DRAW, BLACKWON, WHITEWON, NORMALCHESS, DRAW_AGREE, FIRST_PAGE, PREV_PAGE, NEXT_PAGE, \
-    ABORTED_REASONS, ADJOURNED_REASONS, WON_CALLFLAG, DRAW_ADJUDICATION, WON_ADJUDICATION, \
-    WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, RUNNING, TOOL_NONE, TOOL_CHESSDB, TOOL_SCOUTFISH
+    ABORTED_REASONS, ADJOURNED_REASONS, ADJUDICATION_REASONS, WON_ADJUDICATION, DEATH_REASONS, CALLFLAG_REASONS, \
+    RUNNING, TOOL_NONE, TOOL_CHESSDB, TOOL_SCOUTFISH
 from pychess.System import conf
 from pychess.System.Log import log
 from pychess.System.protoopen import PGN_ENCODING
@@ -166,24 +166,21 @@ def save(handle, model, position=None, flip=False):
     write_tag("PlyCount", model.ply - model.lowply)
 
     # Final position
-    if model.reason == WON_CALLFLAG:
-        value = "time forfeit"
+    if model.reason in ABORTED_REASONS:
+        value = "abandoned"
     elif model.reason == WON_ADJUDICATION and model.isEngine2EngineGame():
         value = "rules infraction"
-    elif model.reason in (DRAW_ADJUDICATION, WON_ADJUDICATION):
+    elif model.reason in ADJUDICATION_REASONS:
         value = "adjudication"
-    elif model.reason == WHITE_ENGINE_DIED:
-        value = "white engine died"
-    elif model.reason == BLACK_ENGINE_DIED:
-        value = "black engine died"
-    elif model.reason in ABORTED_REASONS:
-        value = "abandoned"
-    elif model.reason in ADJOURNED_REASONS:
+    elif model.reason in DEATH_REASONS:
+        value = "death"
+    elif model.reason in CALLFLAG_REASONS:
+        value = "time forfeit"
+    elif model.reason in ADJOURNED_REASONS or status == "*":
         value = "unterminated"
     else:
-        value = "unterminated" if status == "*" else None
-    if value is not None:
-        write_tag("Termination", value)
+        value = "normal"
+    write_tag("Termination", value)
 
     # ELO and its variation
     if conf.get("saveRatingChange"):
