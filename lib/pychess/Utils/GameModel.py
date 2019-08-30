@@ -32,7 +32,7 @@ from .const import WAITING_TO_START, UNKNOWN_REASON, WHITE, ARTIFICIAL, RUNNING,
     ACTION_ERROR_NONE_TO_DECLINE, ADJOURN_OFFER, ADJOURNED, ABORT_OFFER, ABORTED, \
     ADJOURNED_AGREEMENT, PAUSE_OFFER, RESUME_OFFER, ACTION_ERROR_NONE_TO_ACCEPT, \
     ABORTED_AGREEMENT, WHITE_ENGINE_DIED, BLACK_ENGINE_DIED, WON_ADJUDICATION, \
-    UNDOABLE_STATES, DRAW_REPITITION, UNDOABLE_REASONS, UNFINISHED_STATES, \
+    UNDOABLE_STATES, DRAW_REPETITION, UNDOABLE_REASONS, UNFINISHED_STATES, \
     DRAW_50MOVES, HINT
 
 
@@ -863,7 +863,7 @@ class GameModel(GObject.GObject):
 
         if status != RUNNING and self.status in (WAITING_TO_START, PAUSED,
                                                  RUNNING):
-            if status == DRAW and reason in (DRAW_REPITITION, DRAW_50MOVES):
+            if status == DRAW and reason in (DRAW_REPETITION, DRAW_50MOVES):
                 if self.isEngine2EngineGame():
                     self.end(status, reason)
                     return
