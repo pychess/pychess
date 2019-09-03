@@ -1268,9 +1268,8 @@ class Sidepanel:
         """
         The method is called when a game is loaded.
         """
-        for ply in range(min(40, model.ply, len(model.boards))):
-            if ply >= model.lowply:
-                model.setOpening(ply)
+        if model.tags.get('ECO', '') == '' and model.tags.get('Opening', '') == '':
+            model.setOpening(redetermine=True)
         self.update()
 
     def on_game_changed(self, game, ply):
