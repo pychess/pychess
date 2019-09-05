@@ -1,3 +1,3 @@
 #!/bin/sh
 
-PYTHONPATH=../lib python3 "$@"
+PYTHONPATH=../lib PYCHESS_UNITTEST=true python3 "$@"

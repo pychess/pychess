@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 
+import os
 import os.path
 import gettext
 import locale
@@ -420,19 +421,22 @@ class _GameInitializationMode:
                     d.show()
                 return
             elif response == INITIAL:
-                ecoterms = getUserTextDialog(dialog,
-                                             _("Start position from the opening book"),
-                                             _("Type an ECO code or a keyword (with wildcard *):"))
-                ecofen = find_opening_fen(ecoterms)
-                if ecofen is None:
-                    if ecoterms != '':
-                        dlgwin = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO)
-                        dlgwin.set_markup(_('No position was found. Do you want to use the default setup ?'))
-                        dlgrep = dlgwin.run()
-                        dlgwin.destroy()
-                        if dlgrep != Gtk.ResponseType.YES:
-                            return
+                if os.environ.get('PYCHESS_UNITTEST'):  # The modal dialog cannot be automated in the background
                     ecofen = FEN_START
+                else:
+                    ecoterms = getUserTextDialog(dialog,
+                                                 _("Start position from the opening book"),
+                                                 _("Type an ECO code or a keyword (with wildcard *):"))
+                    ecofen = find_opening_fen(ecoterms)
+                    if ecofen is None:
+                        if ecoterms != '':
+                            dlgwin = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO)
+                            dlgwin.set_markup(_('No position was found. Do you want to use the default setup ?'))
+                            dlgrep = dlgwin.run()
+                            dlgwin.destroy()
+                            if dlgrep != Gtk.ResponseType.YES:
+                                return
+                        ecofen = FEN_START
                 lboard = cls.setupmodel.variant(setup=ecofen).board
                 cls.ini_widgets(lboard.asFen())
                 cls.board_control.emit("action", "SETUP", None, ecofen)
