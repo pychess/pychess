@@ -185,6 +185,7 @@ class HintTab:
                                                     on_opening_check_toggled)
 
         uistuff.keep(self.widgets["book_depth_max"], "book_depth_max")
+        uistuff.keep(self.widgets["book_check_exact_match"], "book_exact_match")
 
         # Endgame
         egtb_path = conf.get("egtb_path")

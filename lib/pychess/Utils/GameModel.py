@@ -351,21 +351,31 @@ class GameModel(GObject.GObject):
                     if (ply not in self.spy_scores) or (safe_int(self.spy_scores[ply][2]) <= safe_int(depth)):
                         self.spy_scores[ply] = (pv, score, depth)
 
-    def setOpening(self, ply=None):
+    def setOpening(self, ply=None, redetermine=False):
         if ply is None:
             ply = self.ply
-        if ply > 40:
-            return
 
-        if ply > 0:
-            opening = get_eco(self.getBoardAtPly(ply).board.hash)
-        else:
-            opening = None
+        opening = None
+        while ply >= self.lowply:
+            opening = get_eco(self.getBoardAtPly(ply).board.hash, exactPosition=True)
+            if opening is None and redetermine:
+                ply = ply - 1
+            else:
+                break
+
         if opening is not None:
             self.tags["ECO"] = opening[0]
             self.tags["Opening"] = opening[1]
             self.tags["Variation"] = opening[2]
-            self.emit("opening_changed")
+        else:
+            if redetermine:
+                if 'ECO' in self.tags:
+                    del self.tags['ECO']
+                if 'Opening' in self.tags:
+                    del self.tags['Opening']
+                if 'Variation' in self.tags:
+                    del self.tags['Variation']
+        self.emit("opening_changed")
 
     # Board stuff
 
@@ -1013,7 +1023,7 @@ class GameModel(GObject.GObject):
             self.timemodel.undoMoves(moves)
 
         self.checkStatus()
-        self.setOpening()
+        self.setOpening(redetermine=True)
 
         self.emit("moves_undone", moves)
 

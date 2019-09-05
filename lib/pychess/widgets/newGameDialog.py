@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 
+import os
 import os.path
 import gettext
 import locale
@@ -32,8 +33,8 @@ from pychess.System import conf
 from pychess.System.prefix import getDataPrefix, isInstalled, addDataPrefix
 from pychess.Players.engineNest import discoverer
 from pychess.Players.Human import Human
-from pychess.widgets import ImageMenu
-from pychess.widgets import mainwindow
+from pychess.widgets import ImageMenu, mainwindow
+from pychess.widgets.prompttext import getUserTextDialog
 from pychess.widgets.BoardControl import BoardControl
 from pychess.Savers import fen, pgn
 from pychess.Savers.ChessFile import LoadingError
@@ -41,6 +42,7 @@ from pychess.Variants import variants
 from pychess.Variants.normal import NormalBoard
 from pychess.perspectives import perspective_manager
 from pychess.perspectives.games import enddir
+from pychess.Utils.eco import find_opening_fen
 
 # ===============================================================================
 # We init most dialog icons global to make them accessibly to the
@@ -419,9 +421,25 @@ class _GameInitializationMode:
                     d.show()
                 return
             elif response == INITIAL:
-                lboard = cls.setupmodel.variant(setup=FEN_START).board
+                if os.environ.get('PYCHESS_UNITTEST'):  # The modal dialog cannot be automated in the background
+                    ecofen = FEN_START
+                else:
+                    ecoterms = getUserTextDialog(dialog,
+                                                 _("Start position from the opening book"),
+                                                 _("Type an ECO code or a keyword (with wildcard *):"))
+                    ecofen = find_opening_fen(ecoterms)
+                    if ecofen is None:
+                        if ecoterms != '':
+                            dlgwin = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO)
+                            dlgwin.set_markup(_('No position was found. Do you want to use the default setup ?'))
+                            dlgrep = dlgwin.run()
+                            dlgwin.destroy()
+                            if dlgrep != Gtk.ResponseType.YES:
+                                return
+                        ecofen = FEN_START
+                lboard = cls.setupmodel.variant(setup=ecofen).board
                 cls.ini_widgets(lboard.asFen())
-                cls.board_control.emit("action", "SETUP", None, FEN_START)
+                cls.board_control.emit("action", "SETUP", None, ecofen)
                 return
             elif response != Gtk.ResponseType.OK:
                 cls.widgets["newgamedialog"].hide()

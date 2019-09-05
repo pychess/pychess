@@ -123,13 +123,15 @@ class OpeningAdvisor(Advisor):
             goodness = min(float(weight * len(openings)), 1.0)
             weight = "%0.1f%%" % (100 * weight)
 
-            opening = get_eco(b.move(Move(move)).board.hash)
+            opening = get_eco(b.move(Move(move)).board.hash, exactPosition=conf.get('book_exact_match'))
             if opening is None:
                 eco = ""
 #                self.opening_names.append("")
             else:
-                eco = "%s - %s %s" % (opening[0], opening[1], opening[2])
+                eco = "%s - %s%s%s" % (opening[0], opening[1], ', ' if opening[2] != '' else '', opening[2])
 #                self.opening_names.append("%s %s" % (opening[1], opening[2]))
+                if opening[3] == int(False):
+                    eco = '(...) %s' % eco.strip()
 
             self.store.append(parent, [(b, Move(move), None), (
                 weight, 1, goodness), 0, False, eco, False, False])

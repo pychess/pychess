@@ -87,6 +87,7 @@ test_script:
   # print(board) needs this in Windows console (before Python 3.6)
   - set PYTHONIOENCODING=utf8
   - set PYTHONPATH=../lib
+  - set PYCHESS_UNITTEST=true
   - "python3 run_tests.py"
 
 build_script:

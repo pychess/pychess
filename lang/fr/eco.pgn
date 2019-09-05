@@ -1,0 +1,2929 @@
+[ECO "A00"]
+[Opening "Ouverture de flanc"]
+
+*
+
+[ECO "A01"]
+[Opening "Attaque Nimzovich-Larsen"]
+
+*
+
+[ECO "A02"]
+[Opening "Ouverture Bird"]
+
+*
+
+[ECO "A03"]
+[Opening "Ouverture Bird"]
+[Variation "Variante hollandaise"]
+
+*
+
+[ECO "A04"]
+[Opening "Début Réti"]
+
+*
+
+[ECO "A05"]
+[Opening "Début Réti"]
+
+*
+
+[ECO "A06"]
+[Opening "Début Réti"]
+
+*
+
+[ECO "A07"]
+[Opening "Début Réti"]
+[Variation "Fianchetto accéléré"]
+
+*
+
+[ECO "A08"]
+[Opening "Début Réti"]
+[Variation "Variante sicilienne"]
+
+*
+
+[ECO "A09"]
+[Opening "Gambit Réti"]
+
+*
+
+[ECO "A10"]
+[Opening "Anglaise"]
+
+*
+
+[ECO "A11"]
+[Opening "Anglaise"]
+[Variation "Défense Caro-Kann"]
+
+*
+
+[ECO "A12"]
+[Opening "Anglaise"]
+[Variation "Variante anglo-slave, variante Bogoljubov"]
+
+*
+
+[ECO "A13"]
+[Opening "Anglaise"]
+[Variation "Défense Agincourt"]
+
+*
+
+[ECO "A14"]
+[Opening "Anglaise"]
+[Variation "Défense Agincourt, néo-catalane refusée"]
+
+*
+
+[ECO "A15"]
+[Opening "Anglaise"]
+[Variation "Défense anglo-indienne"]
+
+*
+
+[ECO "A16"]
+[Opening "Anglaise"]
+[Variation "Défense anglo-indienne, variante du cavalier de la reine"]
+
+*
+
+[ECO "A17"]
+[Opening "Anglaise"]
+[Variation "Défense anglo-indienne, système Hedgehog"]
+
+*
+
+[ECO "A18"]
+[Opening "Anglaise"]
+[Variation "Variante Mikenas-Carls"]
+
+*
+
+[ECO "A19"]
+[Opening "Anglaise"]
+[Variation "Variante sicilienne Mikenas-Carls"]
+
+*
+
+[ECO "A20"]
+[Opening "Sicilienne inversée"]
+
+*
+
+[ECO "A21"]
+[Opening "Sicilienne inversée"]
+
+*
+
+[ECO "A22"]
+[Opening "Sicilienne inversée"]
+[Variation "Système de Brême"]
+
+*
+
+[ECO "A23"]
+[Opening "Sicilienne inversée"]
+[Variation "Système de Brême, variante Keres"]
+
+*
+
+[ECO "A24"]
+[Opening "Sicilienne inversée"]
+[Variation "Système de Brême, fianchetto"]
+
+*
+
+[ECO "A25"]
+[Opening "Sicilienne inversée"]
+[Variation "Système fermé"]
+
+*
+
+[ECO "A26"]
+[Opening "Sicilienne inversée"]
+[Variation "Système fermé symétrique"]
+
+*
+
+[ECO "A27"]
+[Opening "Sicilienne inversée"]
+[Variation "Système des 3 cavaliers"]
+
+*
+
+[ECO "A28"]
+[Opening "Sicilienne inversée"]
+[Variation "Système des 4 cavaliers"]
+
+*
+
+[ECO "A29"]
+[Opening "Sicilienne inversée"]
+[Variation "Système des 4 cavaliers, fianchetto"]
+
+*
+
+[ECO "A30"]
+[Opening "Anglaise"]
+[Variation "Variante symétrique"]
+
+*
+
+[ECO "A31"]
+[Opening "Anglaise"]
+[Variation "Variante symétrique, variante anti-Benoni"]
+
+*
+
+[ECO "A32"]
+[Opening "Anglaise"]
+[Variation "Variante symétrique, variante anti-Benoni, défense Spielmann"]
+
+*
+
+[ECO "A33"]
+[Opening "Anglaise"]
+[Variation "Variante symétrique, variante anti-Benoni, défense Spielmann"]
+
+*
+
+[ECO "A34"]
+[Opening "Anglaise"]
+[Variation "Variante symétrique, ligne principale"]
+
+*
+
+[ECO "A35"]
+[Opening "Anglaise"]
+[Variation "Variante symétrique, variante des 2 cavaliers"]
+
+*
+
+[ECO "A36"]
+[Opening "Anglaise"]
+[Variation "Variante symétrique, fianchetto"]
+
+*
+
+[ECO "A37"]
+[Opening "Anglaise"]
+[Variation "Variante symétrique, variante des 2 cavaliers"]
+
+*
+
+[ECO "A38"]
+[Opening "Anglaise"]
+[Variation "Variante symétrique complète"]
+
+*
+
+[ECO "A39"]
+[Opening "Anglaise"]
+[Variation "Variante symétrique, variante Mecking"]
+
+*
+
+[ECO "A40"]
+[Opening "Partie du pion-dame"]
+
+*
+
+[ECO "A41"]
+[Opening "Partie du pion-dame"]
+
+*
+
+[ECO "A42"]
+[Opening "Défense moderne"]
+[Variation "Système Averbakh"]
+
+*
+
+[ECO "A43"]
+[Opening "Défense vieille Benoni"]
+
+*
+
+[ECO "A44"]
+[Opening "Défense vieille Benoni"]
+
+*
+
+[ECO "A45"]
+[Opening "Indienne"]
+
+*
+
+[ECO "A46"]
+[Opening "Indienne"]
+[Variation "Variante des cavalierss"]
+
+*
+
+[ECO "A47"]
+[Opening "Défense pseudo-ouest-indienne"]
+
+*
+
+[ECO "A48"]
+[Opening "Défense est-indienne"]
+
+*
+
+[ECO "A49"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Przepiorka"]
+
+*
+
+[ECO "A50"]
+[Opening "Indienne"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "A51"]
+[Opening "Indienne"]
+[Variation "Gambit de Budapest refusé"]
+
+*
+
+[ECO "A52"]
+[Opening "Indienne"]
+[Variation "Gambit de Budapest"]
+
+*
+
+[ECO "A53"]
+[Opening "Défense vieille indienne"]
+
+*
+
+[ECO "A54"]
+[Opening "Défense vieille indienne"]
+[Variation "Variante ukrainienne"]
+
+*
+
+[ECO "A55"]
+[Opening "Défense vieille indienne"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "A56"]
+[Opening "Défense Benoni"]
+
+*
+
+[ECO "A57"]
+[Opening "Gambit Benko"]
+
+*
+
+[ECO "A58"]
+[Opening "Gambit Benko"]
+[Variation "Accepté"]
+
+*
+
+[ECO "A59"]
+[Opening "Gambit Benko"]
+[Variation "Accepté, variante yougoslave"]
+
+*
+
+[ECO "A60"]
+[Opening "Défense Benoni"]
+[Variation "Variante moderne"]
+
+*
+
+[ECO "A61"]
+[Opening "Défense Benoni"]
+
+*
+
+[ECO "A62"]
+[Opening "Défense Benoni"]
+[Variation "Fianchetto"]
+
+*
+
+[ECO "A63"]
+[Opening "Défense Benoni"]
+[Variation "Fianchetto, défense Hastings"]
+
+*
+
+[ECO "A64"]
+[Opening "Défense Benoni"]
+[Variation "Fianchetto, défense Hastings, ligne principale"]
+
+*
+
+[ECO "A65"]
+[Opening "Défense Benoni"]
+[Variation "Variante du pion-roi"]
+
+*
+
+[ECO "A66"]
+[Opening "Défense Benoni"]
+[Variation "Attaque des 4 pions"]
+
+*
+
+[ECO "A67"]
+[Opening "Défense Benoni"]
+[Variation "Variante Taimanov"]
+
+*
+
+[ECO "A68"]
+[Opening "Défense Benoni"]
+[Variation "Attaque des 4 pions"]
+
+*
+
+[ECO "A69"]
+[Opening "Défense Benoni"]
+[Variation "Attaque des 4 pions, ligne principale"]
+
+*
+
+[ECO "A70"]
+[Opening "Défense Benoni"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "A71"]
+[Opening "Défense Benoni"]
+[Variation "Variante classique, Averbakh-Grivas attaque"]
+
+*
+
+[ECO "A72"]
+[Opening "Défense Benoni"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "A73"]
+[Opening "Défense Benoni"]
+[Variation "Variante classique, ligne principale"]
+
+*
+
+[ECO "A74"]
+[Opening "Défense Benoni"]
+[Variation "Variante classique, ligne complète"]
+
+*
+
+[ECO "A75"]
+[Opening "Défense Benoni"]
+[Variation "Variante classique, contre-attaque argentine"]
+
+*
+
+[ECO "A76"]
+[Opening "Défense Benoni"]
+[Variation "Variante classique, défense Czerniak"]
+
+*
+
+[ECO "A77"]
+[Opening "Défense Benoni"]
+[Variation "Variante classique, défense Czerniak, ligne de Tal"]
+
+*
+
+[ECO "A78"]
+[Opening "Défense Benoni"]
+[Variation "Variante classique, défense Czerniak"]
+
+*
+
+[ECO "A79"]
+[Opening "Défense Benoni"]
+[Variation "Variante classique, défense Czerniak"]
+
+*
+
+[ECO "A80"]
+[Opening "Hollandaise"]
+
+*
+
+[ECO "A81"]
+[Opening "Hollandaise"]
+[Variation "Attaque fianchetto"]
+
+*
+
+[ECO "A82"]
+[Opening "Hollandaise"]
+[Variation "Gambit Staunton"]
+
+*
+
+[ECO "A83"]
+[Opening "Hollandaise"]
+[Variation "Gambit Staunton"]
+
+*
+
+[ECO "A84"]
+[Opening "Hollandaise"]
+
+*
+
+[ECO "A85"]
+[Opening "Hollandaise"]
+[Variation "Variante du cavalier-dame"]
+
+*
+
+[ECO "A86"]
+[Opening "Hollandaise"]
+[Variation "Fianchetto"]
+
+*
+
+[ECO "A87"]
+[Opening "Hollandaise"]
+[Variation "Variante Leningrad"]
+
+*
+
+[ECO "A88"]
+[Opening "Hollandaise"]
+[Variation "Variante Leningrad, variante Warsaw"]
+
+*
+
+[ECO "A89"]
+[Opening "Hollandaise"]
+[Variation "Variante Leningrad, variante Matulavic"]
+
+*
+
+[ECO "A90"]
+[Opening "Hollandaise"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "A91"]
+[Opening "Hollandaise"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "A92"]
+[Opening "Hollandaise"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "A93"]
+[Opening "Hollandaise"]
+[Variation "Variante classique, variante Stonewall, variante Botvinnik"]
+
+*
+
+[ECO "A94"]
+[Opening "Hollandaise"]
+[Variation "Variante classique, variante Stonewall avec Fa3"]
+
+*
+
+[ECO "A95"]
+[Opening "Hollandaise"]
+[Variation "Variante classique, variante Stonewall avec Cc3"]
+
+*
+
+[ECO "A96"]
+[Opening "Hollandaise"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "A97"]
+[Opening "Hollandaise"]
+[Variation "Variante classique, variante Iline-Jenevsky"]
+
+*
+
+[ECO "A98"]
+[Opening "Hollandaise"]
+[Variation "Variante classique, variante Iline-Jenevsky, ligne Alatortsev-Lisitsyn"]
+
+*
+
+[ECO "A99"]
+[Opening "Hollandaise"]
+[Variation "Variante classique, variante Iline-Jenevsky, ligne principale moderne"]
+
+*
+
+[ECO "B00"]
+[Opening "Partie du pion-roi"]
+
+*
+
+[ECO "B01"]
+[Opening "Défense scandinave"]
+
+*
+
+[ECO "B02"]
+[Opening "Défense Alekhine"]
+
+*
+
+[ECO "B03"]
+[Opening "Défense Alekhine"]
+
+*
+
+[ECO "B04"]
+[Opening "Défense Alekhine"]
+[Variation "Variante moderne"]
+
+*
+
+[ECO "B05"]
+[Opening "Défense Alekhine"]
+[Variation "Variante moderne, ligne principale"]
+
+*
+
+[ECO "B06"]
+[Opening "Défense Robatsch moderne"]
+
+*
+
+[ECO "B07"]
+[Opening "Défense Pirc"]
+
+*
+
+[ECO "B08"]
+[Opening "Défense Pirc"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "B09"]
+[Opening "Défense Pirc"]
+[Variation "Attaque autrichienne"]
+
+*
+
+[ECO "B10"]
+[Opening "Caro-Kann"]
+
+*
+
+[ECO "B11"]
+[Opening "Caro-Kann"]
+[Variation "Attaque des deux cavaliers, variante Mindeno"]
+
+*
+
+[ECO "B12"]
+[Opening "Caro-Kann"]
+
+*
+
+[ECO "B13"]
+[Opening "Caro-Kann"]
+[Variation "Variante d'échange"]
+
+*
+
+[ECO "B14"]
+[Opening "Caro-Kann"]
+[Variation "Attaque Panov"]
+
+*
+
+[ECO "B15"]
+[Opening "Caro-Kann"]
+
+*
+
+[ECO "B16"]
+[Opening "Caro-Kann"]
+[Variation "Variante Bronstein-Larsen"]
+
+*
+
+[ECO "B17"]
+[Opening "Caro-Kann"]
+[Variation "Variante Karpov"]
+
+*
+
+[ECO "B18"]
+[Opening "Caro-Kann"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "B19"]
+[Opening "Caro-Kann"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "B20"]
+[Opening "Sicilienne"]
+
+*
+
+[ECO "B21"]
+[Opening "Sicilienne"]
+[Variation "Gambit Smith-Morra"]
+
+*
+
+[ECO "B22"]
+[Opening "Sicilienne"]
+[Variation "Variante Alapin"]
+
+*
+
+[ECO "B23"]
+[Opening "Sicilienne"]
+[Variation "Fermée"]
+
+*
+
+[ECO "B24"]
+[Opening "Sicilienne"]
+[Variation "Fermée, fianchetto"]
+
+*
+
+[ECO "B25"]
+[Opening "Sicilienne"]
+[Variation "Fermée"]
+
+*
+
+[ECO "B26"]
+[Opening "Sicilienne"]
+[Variation "Fermée"]
+
+*
+
+[ECO "B27"]
+[Opening "Sicilienne"]
+
+*
+
+[ECO "B28"]
+[Opening "Sicilienne"]
+[Variation "Variante O'Kelly"]
+
+*
+
+[ECO "B29"]
+[Opening "Sicilienne"]
+[Variation "Variante Nimzovitch"]
+
+*
+
+[ECO "B30"]
+[Opening "Sicilienne"]
+[Variation "Vieille sicilienne"]
+
+*
+
+[ECO "B31"]
+[Opening "Sicilienne"]
+[Variation "Attaque Nejmetdinov-Nimzovitch, fianchetto"]
+
+*
+
+[ECO "B32"]
+[Opening "Sicilienne"]
+[Variation "Ouverte"]
+
+*
+
+[ECO "B33"]
+[Opening "Sicilienne"]
+[Variation "Ouverte"]
+
+*
+
+[ECO "B34"]
+[Opening "Sicilienne"]
+[Variation "Variante dragon accélérée, variante moderne"]
+
+*
+
+[ECO "B35"]
+[Opening "Sicilienne"]
+[Variation "Variante dragon accélérée, variante moderne avec Fc4"]
+
+*
+
+[ECO "B36"]
+[Opening "Sicilienne"]
+[Variation "Variante dragon accélérée, étau de Maróczy"]
+
+*
+
+[ECO "B37"]
+[Opening "Sicilienne"]
+[Variation "Fianchetto accéléré, étau de Maróczy"]
+
+*
+
+[ECO "B38"]
+[Opening "Sicilienne"]
+[Variation "Variante dragon accélérée, étau de Maróczy"]
+
+*
+
+[ECO "B39"]
+[Opening "Sicilienne"]
+[Variation "Variante dragon accélérée, étau de Maróczy, variante de Breyer"]
+
+*
+
+[ECO "B40"]
+[Opening "Sicilienne"]
+[Variation "Variante française"]
+
+*
+
+[ECO "B41"]
+[Opening "Sicilienne"]
+[Variation "Variante Kan"]
+
+*
+
+[ECO "B42"]
+[Opening "Sicilienne"]
+[Variation "Variante Kan, variante moderne"]
+
+*
+
+[ECO "B43"]
+[Opening "Sicilienne"]
+[Variation "Variante Kan, variante du cavalier"]
+
+*
+
+[ECO "B44"]
+[Opening "Sicilienne"]
+[Variation "Variante Taïmanov"]
+
+*
+
+[ECO "B45"]
+[Opening "Sicilienne"]
+[Variation "Variante Taïmanov, ligne principale"]
+
+*
+
+[ECO "B46"]
+[Opening "Sicilienne"]
+[Variation "Variante Taïmanov"]
+
+*
+
+[ECO "B47"]
+[Opening "Sicilienne"]
+[Variation "Variante Taïmanov, variante Bastrikov"]
+
+*
+
+[ECO "B48"]
+[Opening "Sicilienne"]
+[Variation "Variante Taïmanov, variante Bastrikov"]
+
+*
+
+[ECO "B49"]
+[Opening "Sicilienne"]
+[Variation "Variante Taïmanov, variante Bastrikov"]
+
+*
+
+[ECO "B50"]
+[Opening "Sicilienne"]
+
+*
+
+[ECO "B51"]
+[Opening "Sicilienne"]
+[Variation "Variante de Moscou, attaque Canal-Sokolsky"]
+
+*
+
+[ECO "B52"]
+[Opening "Sicilienne"]
+[Variation "Variante de Moscou, attaque Canal-Sokolsky, ligne principale"]
+
+*
+
+[ECO "B53"]
+[Opening "Sicilienne"]
+[Variation "Variante Tchekhover"]
+
+*
+
+[ECO "B54"]
+[Opening "Sicilienne"]
+[Variation "Variantes modernes"]
+
+*
+
+[ECO "B55"]
+[Opening "Sicilienne"]
+[Variation "Variante Prins, attaque de Venise (anti-dragon)"]
+
+*
+
+[ECO "B56"]
+[Opening "Sicilienne"]
+[Variation "Variantes modernes"]
+
+*
+
+[ECO "B57"]
+[Opening "Sicilienne"]
+[Variation "Attaque Sozine, pas Scheveningue"]
+
+*
+
+[ECO "B58"]
+[Opening "Sicilienne"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "B59"]
+[Opening "Sicilienne"]
+[Variation "Variante Boleslavsky"]
+
+*
+
+[ECO "B60"]
+[Opening "Sicilienne"]
+[Variation "Variante Richter-Rauzer"]
+
+*
+
+[ECO "B61"]
+[Opening "Sicilienne"]
+[Variation "Variante Richter-Rauzer, variante moderne"]
+
+*
+
+[ECO "B62"]
+[Opening "Sicilienne"]
+[Variation "Variante Richter-Rauzer"]
+
+*
+
+[ECO "B63"]
+[Opening "Sicilienne"]
+[Variation "Variante Richter-Rauzer, variante traditionnelle"]
+
+*
+
+[ECO "B64"]
+[Opening "Sicilienne"]
+[Variation "Variante Richter-Rauzer, variante classique"]
+
+*
+
+[ECO "B65"]
+[Opening "Sicilienne"]
+[Variation "Variante Richter-Rauzer, attaque Rauzer"]
+
+*
+
+[ECO "B66"]
+[Opening "Sicilienne"]
+[Variation "Variante Richter-Rauzer, variante néo-moderne avec déviations rapides"]
+
+*
+
+[ECO "B67"]
+[Opening "Sicilienne"]
+[Variation "Variante Richter-Rauzer, variante néo-moderne"]
+
+*
+
+[ECO "B68"]
+[Opening "Sicilienne"]
+[Variation "Variante Richter-Rauzer, variante néo-moderne"]
+
+*
+
+[ECO "B69"]
+[Opening "Sicilienne"]
+[Variation "Variante Richter-Rauzer, variante néo-moderne, attaque Nejmetdinov"]
+
+*
+
+[ECO "B70"]
+[Opening "Sicilienne"]
+[Variation "Variante du dragon"]
+
+*
+
+[ECO "B71"]
+[Opening "Sicilienne"]
+[Variation "Variante du dragon, variante Levenfish"]
+
+*
+
+[ECO "B72"]
+[Opening "Sicilienne"]
+[Variation "Variante du dragon"]
+
+*
+
+[ECO "B73"]
+[Opening "Sicilienne"]
+[Variation "Variante du dragon, variante classique"]
+
+*
+
+[ECO "B74"]
+[Opening "Sicilienne"]
+[Variation "Variante du dragon, variante classique, ligne principale"]
+
+*
+
+[ECO "B75"]
+[Opening "Sicilienne"]
+[Variation "Variante du dragon, attaque yougoslave avec déviations rapides"]
+
+*
+
+[ECO "B76"]
+[Opening "Sicilienne"]
+[Variation "Variante du dragon, attaque yougoslave"]
+
+*
+
+[ECO "B77"]
+[Opening "Sicilienne"]
+[Variation "Variante du dragon, attaque yougoslave, ligne principale"]
+
+*
+
+[ECO "B78"]
+[Opening "Sicilienne"]
+[Variation "Variante du dragon, attaque yougoslave"]
+
+*
+
+[ECO "B79"]
+[Opening "Sicilienne"]
+[Variation "Variante du dragon, attaque yougoslave"]
+
+*
+
+[ECO "B80"]
+[Opening "Sicilienne"]
+[Variation "Variante de Scheveningue"]
+
+*
+
+[ECO "B81"]
+[Opening "Sicilienne"]
+[Variation "Variante de Scheveningue, attaque Keres"]
+
+*
+
+[ECO "B82"]
+[Opening "Sicilienne"]
+[Variation "Variante de Scheveningue, attaque Matanovic"]
+
+*
+
+[ECO "B83"]
+[Opening "Sicilienne"]
+[Variation "Variante de Scheveningue, variante classique"]
+
+*
+
+[ECO "B84"]
+[Opening "Sicilienne"]
+[Variation "Variante de Scheveningue, variante classique"]
+
+*
+
+[ECO "B85"]
+[Opening "Sicilienne"]
+[Variation "Variante de Scheveningue, variante classique, variante Paulsen"]
+
+*
+
+[ECO "B86"]
+[Opening "Sicilienne"]
+[Variation "Attaque Sozine"]
+
+*
+
+[ECO "B87"]
+[Opening "Sicilienne"]
+[Variation "Attaque Sozine, variante Flank"]
+
+*
+
+[ECO "B88"]
+[Opening "Sicilienne"]
+[Variation "Attaque Sozine, variante Leonhardt"]
+
+*
+
+[ECO "B89"]
+[Opening "Sicilienne"]
+[Variation "Attaque Sozine, ligne principale"]
+
+*
+
+[ECO "B90"]
+[Opening "Sicilienne"]
+[Variation "Variante Najdorf"]
+
+*
+
+[ECO "B91"]
+[Opening "Sicilienne"]
+[Variation "Variante Najdorf, variante de Zagreb, fianchetto"]
+
+*
+
+[ECO "B92"]
+[Opening "Sicilienne"]
+[Variation "Variante Najdorf, variante Opovcensky"]
+
+*
+
+[ECO "B93"]
+[Opening "Sicilienne"]
+[Variation "Variante Najdorf, variante d'Amsterdam"]
+
+*
+
+[ECO "B94"]
+[Opening "Sicilienne"]
+[Variation "Variante Najdorf"]
+
+*
+
+[ECO "B95"]
+[Opening "Sicilienne"]
+[Variation "Variante Najdorf"]
+
+*
+
+[ECO "B96"]
+[Opening "Sicilienne"]
+[Variation "Variante Najdorf"]
+
+*
+
+[ECO "B97"]
+[Opening "Sicilienne"]
+[Variation "Variante Najdorf, variante du pion empoisonné"]
+
+*
+
+[ECO "B98"]
+[Opening "Sicilienne"]
+[Variation "Variante Najdorf"]
+
+*
+
+[ECO "B99"]
+[Opening "Sicilienne"]
+[Variation "Variante Najdorf, ligne principale"]
+
+*
+
+[ECO "C00"]
+[Opening "Défense française"]
+
+*
+
+[ECO "C01"]
+[Opening "Défense française"]
+[Variation "Variante d'échange"]
+
+*
+
+[ECO "C02"]
+[Opening "Défense française"]
+[Variation "Variante d'avance"]
+
+*
+
+[ECO "C03"]
+[Opening "Défense française"]
+[Variation "Variante Tarrasch"]
+
+*
+
+[ECO "C04"]
+[Opening "Défense française"]
+[Variation "Variante Tarrasch, défense Guimard, ligne principale"]
+
+*
+
+[ECO "C05"]
+[Opening "Défense française"]
+[Variation "Variante Tarrasch, variante fermée"]
+
+*
+
+[ECO "C06"]
+[Opening "Défense française"]
+[Variation "Variante Tarrasch, variante fermée, ligne principale"]
+
+*
+
+[ECO "C07"]
+[Opening "Défense française"]
+[Variation "Variante Tarrasch, système ouvert"]
+
+*
+
+[ECO "C08"]
+[Opening "Défense française"]
+[Variation "Variante Tarrasch, ouverte"]
+
+*
+
+[ECO "C09"]
+[Opening "Défense française"]
+[Variation "Variante Tarrasch, variante ouverte, ligne principale"]
+
+*
+
+[ECO "C10"]
+[Opening "Défense française"]
+[Variation "Variante Paulsen"]
+
+*
+
+[ECO "C11"]
+[Opening "Défense française"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "C12"]
+[Opening "Défense française"]
+[Variation "Variante McCutcheon"]
+
+*
+
+[ECO "C13"]
+[Opening "Défense française"]
+[Variation "Variante classique, ligne principale"]
+
+*
+
+[ECO "C14"]
+[Opening "Défense française"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "C15"]
+[Opening "Défense française"]
+[Variation "Variante Winawer"]
+
+*
+
+[ECO "C16"]
+[Opening "Défense française"]
+[Variation "Variante Winawer, variante d'avance"]
+
+*
+
+[ECO "C17"]
+[Opening "Défense française"]
+[Variation "Variante Winawer, variante d'avance"]
+
+*
+
+[ECO "C18"]
+[Opening "Défense française"]
+[Variation "Variante Winawer, variante d'avance"]
+
+*
+
+[ECO "C19"]
+[Opening "Défense française"]
+[Variation "Variante Winawer, variante d'avance"]
+
+*
+
+[ECO "C20"]
+[Opening "Partie du pion-roi"]
+
+*
+
+[ECO "C21"]
+[Opening "Partie du centre"]
+
+*
+
+[ECO "C22"]
+[Opening "Partie du centre"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "C23"]
+[Opening "Début du fou"]
+
+*
+
+[ECO "C24"]
+[Opening "Début du fou"]
+[Variation "Défense berlinoise"]
+
+*
+
+[ECO "C25"]
+[Opening "Partie viennoise"]
+
+*
+
+[ECO "C26"]
+[Opening "Partie viennoise"]
+[Variation "Variante Falkbeer"]
+
+*
+
+[ECO "C27"]
+[Opening "Partie viennoise"]
+
+*
+
+[ECO "C28"]
+[Opening "Partie viennoise"]
+[Variation "Variante Stanley, variante des 3 cavaliers"]
+
+*
+
+[ECO "C29"]
+[Opening "Gambit viennois"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "C30"]
+[Opening "Gambit du roi"]
+
+*
+
+[ECO "C31"]
+[Opening "Gambit du roi refusé"]
+[Variation "Contre-gambit Falkbeer"]
+
+*
+
+[ECO "C32"]
+[Opening "Gambit du roi refusé"]
+[Variation "Contre-gambit Falkbeer"]
+
+*
+
+[ECO "C33"]
+[Opening "Gambit du roi accepté"]
+
+*
+
+[ECO "C34"]
+[Opening "Gambit du roi accepté"]
+[Variation "Gambit du cavalier"]
+
+*
+
+[ECO "C35"]
+[Opening "Gambit du roi accepté"]
+[Variation "Défense Cunningham"]
+
+*
+
+[ECO "C36"]
+[Opening "Gambit du roi accepté"]
+[Variation "Défense moderne"]
+
+*
+
+[ECO "C37"]
+[Opening "Gambit du roi accepté"]
+
+*
+
+[ECO "C38"]
+[Opening "Gambit du roi accepté"]
+[Variation "Variante traditionnelle"]
+
+*
+
+[ECO "C39"]
+[Opening "Gambit du roi accepté"]
+[Variation "Gambit du cavalier"]
+
+*
+
+[ECO "C40"]
+[Opening "Début ouvert"]
+
+*
+
+[ECO "C41"]
+[Opening "Défense Philidor"]
+
+*
+
+[ECO "C42"]
+[Opening "Défense Petrov"]
+
+*
+
+[ECO "C43"]
+[Opening "Défense Petrov"]
+[Variation "Attaque moderne"]
+
+*
+
+[ECO "C44"]
+[Opening "Partie du pion-roi"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "C45"]
+[Opening "Partie écossaise"]
+
+*
+
+[ECO "C46"]
+[Opening "Partie des 3 cavaliers"]
+
+*
+
+[ECO "C47"]
+[Opening "Partie des 4 cavaliers"]
+[Variation "Variante écossaise"]
+
+*
+
+[ECO "C48"]
+[Opening "Partie des 4 cavaliers"]
+[Variation "Variante espagnole"]
+
+*
+
+[ECO "C49"]
+[Opening "Partie des 4 cavaliers"]
+[Variation "Double espagnol"]
+
+*
+
+[ECO "C50"]
+[Opening "Partie italienne"]
+
+*
+
+[ECO "C51"]
+[Opening "Partie italienne"]
+[Variation "Gambit Evans"]
+
+*
+
+[ECO "C52"]
+[Opening "Partie italienne"]
+[Variation "Gambit Evans, ligne principale"]
+
+*
+
+[ECO "C53"]
+[Opening "Partie italienne"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "C54"]
+[Opening "Partie italienne"]
+[Variation "Variante classique, gambit Greco, ligne traditionnelle"]
+
+*
+
+[ECO "C55"]
+[Opening "Défense des 2 cavaliers"]
+
+*
+
+[ECO "C56"]
+[Opening "Défense des 2 cavaliers"]
+[Variation "Gambit écossais, double gambit accepté"]
+
+*
+
+[ECO "C57"]
+[Opening "Défense des 2 cavaliers"]
+[Variation "Attaque du cavalier"]
+
+*
+
+[ECO "C58"]
+[Opening "Défense des 2 cavaliers"]
+[Variation "Défense Polerio"]
+
+*
+
+[ECO "C59"]
+[Opening "Défense des 2 cavaliers"]
+[Variation "Défense Polerio, défense Suhle"]
+
+*
+
+[ECO "C60"]
+[Opening "Partie espagnole"]
+
+*
+
+[ECO "C61"]
+[Opening "Partie espagnole"]
+[Variation "Variante Bird"]
+
+*
+
+[ECO "C62"]
+[Opening "Partie espagnole"]
+[Variation "Défense Steinitz"]
+
+*
+
+[ECO "C63"]
+[Opening "Partie espagnole"]
+[Variation "Défense Schliemann"]
+
+*
+
+[ECO "C64"]
+[Opening "Partie espagnole"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "C65"]
+[Opening "Partie espagnole"]
+[Variation "Défense berlinoise"]
+
+*
+
+[ECO "C66"]
+[Opening "Partie espagnole"]
+[Variation "Défense berlinoise, défense améliorée Steinitz"]
+
+*
+
+[ECO "C67"]
+[Opening "Partie espagnole"]
+[Variation "Défense berlinoise, gambit de Rio accepté"]
+
+*
+
+[ECO "C68"]
+[Opening "Partie espagnole"]
+[Variation "Variante d'échange"]
+
+*
+
+[ECO "C69"]
+[Opening "Partie espagnole"]
+[Variation "Variante d'échange, ligne principale"]
+
+*
+
+[ECO "C70"]
+[Opening "Partie espagnole"]
+[Variation "Défense Morphy"]
+
+*
+
+[ECO "C71"]
+[Opening "Partie espagnole"]
+[Variation "Défense Morphy, défense Steinitz moderne"]
+
+*
+
+[ECO "C72"]
+[Opening "Partie espagnole"]
+[Variation "Défense Morphy, défense Steinitz moderne"]
+
+*
+
+[ECO "C73"]
+[Opening "Partie espagnole"]
+[Variation "Défense Morphy, défense Steinitz moderne"]
+
+*
+
+[ECO "C74"]
+[Opening "Partie espagnole"]
+[Variation "Défense Morphy, défense Steinitz moderne"]
+
+*
+
+[ECO "C75"]
+[Opening "Partie espagnole"]
+[Variation "Défense Morphy, défense Steinitz moderne"]
+
+*
+
+[ECO "C76"]
+[Opening "Partie espagnole"]
+[Variation "Défense Morphy, défense Steinitz moderne, fianchetto"]
+
+*
+
+[ECO "C77"]
+[Opening "Partie espagnole"]
+[Variation "Défense Morphy"]
+
+*
+
+[ECO "C78"]
+[Opening "Partie espagnole"]
+[Variation "Défense Morphy"]
+
+*
+
+[ECO "C79"]
+[Opening "Partie espagnole"]
+[Variation "Défense Steinitz différée"]
+
+*
+
+[ECO "C80"]
+[Opening "Partie espagnole"]
+[Variation "Ouverte"]
+
+*
+
+[ECO "C81"]
+[Opening "Partie espagnole"]
+[Variation "Ouverte, attaque Howell"]
+
+*
+
+[ECO "C82"]
+[Opening "Partie espagnole"]
+[Variation "Ouverte"]
+
+*
+
+[ECO "C83"]
+[Opening "Partie espagnole"]
+[Variation "Ouverte, défense classique"]
+
+*
+
+[ECO "C84"]
+[Opening "Partie espagnole"]
+[Variation "Variantes fermées"]
+
+*
+
+[ECO "C85"]
+[Opening "Partie espagnole"]
+[Variation "Fermée, échange différé"]
+
+*
+
+[ECO "C86"]
+[Opening "Partie espagnole"]
+[Variation "Fermée, attaque Worrall"]
+
+*
+
+[ECO "C87"]
+[Opening "Partie espagnole"]
+[Variation "Fermée, variante Averbakh"]
+
+*
+
+[ECO "C88"]
+[Opening "Partie espagnole"]
+[Variation "Fermée"]
+
+*
+
+[ECO "C89"]
+[Opening "Partie espagnole"]
+[Variation "Gambit Marshall"]
+
+*
+
+[ECO "C90"]
+[Opening "Partie espagnole"]
+[Variation "Fermée"]
+
+*
+
+[ECO "C91"]
+[Opening "Partie espagnole"]
+[Variation "Fermée, variante Yates"]
+
+*
+
+[ECO "C92"]
+[Opening "Partie espagnole"]
+[Variation "Fermée"]
+
+*
+
+[ECO "C93"]
+[Opening "Partie espagnole"]
+[Variation "Fermée, défense Smyslov"]
+
+*
+
+[ECO "C94"]
+[Opening "Partie espagnole"]
+[Variation "Fermée, défense Breyer"]
+
+*
+
+[ECO "C95"]
+[Opening "Partie espagnole"]
+[Variation "Fermée, Breyer"]
+
+*
+
+[ECO "C96"]
+[Opening "Partie espagnole"]
+[Variation "Fermée"]
+
+*
+
+[ECO "C97"]
+[Opening "Partie espagnole"]
+[Variation "Fermée, défense Tchigorine"]
+
+*
+
+[ECO "C98"]
+[Opening "Partie espagnole"]
+[Variation "Fermée, défense Tchigorine"]
+
+*
+
+[ECO "C99"]
+[Opening "Partie espagnole"]
+[Variation "Fermée, défense Tchigorine, système Panov"]
+
+*
+
+[ECO "D00"]
+[Opening "Partie du pion-dame"]
+
+*
+
+[ECO "D01"]
+[Opening "Attaque Richter-Veressov"]
+
+*
+
+[ECO "D02"]
+[Opening "Partie du pion-dame"]
+[Variation "Variante Zukertort"]
+
+*
+
+[ECO "D03"]
+[Opening "Partie du pion-dame"]
+[Variation "Attaque de Torre"]
+
+*
+
+[ECO "D04"]
+[Opening "Partie du pion-dame"]
+[Variation "Système Colle"]
+
+*
+
+[ECO "D05"]
+[Opening "Partie du pion-dame"]
+[Variation "Système Colle"]
+
+*
+
+[ECO "D06"]
+[Opening "Gambit-dame"]
+
+*
+
+[ECO "D07"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense Tchigorine"]
+
+*
+
+[ECO "D08"]
+[Opening "Gambit-dame refusé"]
+[Variation "Contre-gambit Albin"]
+
+*
+
+[ECO "D09"]
+[Opening "Gambit-dame refusé"]
+[Variation "Contre-gambit Albin, fianchetto"]
+
+*
+
+[ECO "D10"]
+[Opening "Défense slave"]
+
+*
+
+[ECO "D11"]
+[Opening "Défense slave"]
+[Variation "Ligne moderne"]
+
+*
+
+[ECO "D12"]
+[Opening "Défense slave"]
+[Variation "Défense Schallopp"]
+
+*
+
+[ECO "D13"]
+[Opening "Défense slave"]
+[Variation "Variante d'échange"]
+
+*
+
+[ECO "D14"]
+[Opening "Défense slave"]
+[Variation "Variante d'échange, ligne symétrique"]
+
+*
+
+[ECO "D15"]
+[Opening "Défense slave"]
+[Variation "Variante des 3 cavaliers"]
+
+*
+
+[ECO "D16"]
+[Opening "Défense slave"]
+[Variation "Variante Alapine"]
+
+*
+
+[ECO "D17"]
+[Opening "Défense slave"]
+[Variation "Variante tchèque"]
+
+*
+
+[ECO "D18"]
+[Opening "Défense slave"]
+[Variation "Variante tchèque, système classique"]
+
+*
+
+[ECO "D19"]
+[Opening "Gambit-dame refusé"]
+[Variation "Slave, variante hollandaise"]
+
+*
+
+[ECO "D20"]
+[Opening "Gambit-dame accepté"]
+
+*
+
+[ECO "D21"]
+[Opening "Gambit-dame accepté"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "D22"]
+[Opening "Gambit-dame accepté"]
+[Variation "Défense Alekhine"]
+
+*
+
+[ECO "D23"]
+[Opening "Gambit-dame accepté"]
+
+*
+
+[ECO "D24"]
+[Opening "Gambit-dame accepté"]
+[Variation "Variante Showalter"]
+
+*
+
+[ECO "D25"]
+[Opening "Gambit-dame accepté"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "D26"]
+[Opening "Gambit-dame accepté"]
+[Variation "Ligne principale, système traditionnel"]
+
+*
+
+[ECO "D27"]
+[Opening "Gambit-dame accepté"]
+[Variation "Variante classique, ligne principale"]
+
+*
+
+[ECO "D28"]
+[Opening "Gambit-dame accepté"]
+[Variation "Variante classique, système Alekhine"]
+
+*
+
+[ECO "D29"]
+[Opening "Gambit-dame accepté"]
+[Variation "Variante classique, système Alekhine, ligne principale"]
+
+*
+
+[ECO "D30"]
+[Opening "Gambit-dame refusé"]
+
+*
+
+[ECO "D31"]
+[Opening "Gambit-dame refusé"]
+[Variation "Variante du cavalier-dame"]
+
+*
+
+[ECO "D32"]
+[Opening "Défense Tarrasch"]
+
+*
+
+[ECO "D33"]
+[Opening "Défense Tarrasch"]
+[Variation "Système Rubinstein"]
+
+*
+
+[ECO "D34"]
+[Opening "Défense Tarrasch"]
+[Variation "Variante de Prague, ligne principale"]
+
+*
+
+[ECO "D35"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense normale"]
+
+*
+
+[ECO "D36"]
+[Opening "Gambit-dame refusé"]
+[Variation "Variante d'échange, variante Reshevsky"]
+
+*
+
+[ECO "D37"]
+[Opening "Gambit-dame refusé"]
+[Variation "Variante des 3 cavaliers"]
+
+*
+
+[ECO "D38"]
+[Opening "Gambit-dame refusé"]
+[Variation "Variante Ragozin"]
+
+*
+
+[ECO "D39"]
+[Opening "Gambit-dame refusé"]
+[Variation "Variante Ragozin, variante viennoise"]
+
+*
+
+[ECO "D40"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense semi-Tarrasch"]
+
+*
+
+[ECO "D41"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense semi-Tarrasch"]
+
+*
+
+[ECO "D42"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense semi-Tarrasch, ligne principale"]
+
+*
+
+[ECO "D43"]
+[Opening "Semi-slave"]
+
+*
+
+[ECO "D44"]
+[Opening "Semi-slave"]
+[Variation "Acceptée"]
+
+*
+
+[ECO "D45"]
+[Opening "Semi-slave"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "D46"]
+[Opening "Semi-slave"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "D47"]
+[Opening "Semi-slave"]
+[Variation "Variante semi-Méran"]
+
+*
+
+[ECO "D48"]
+[Opening "Semi-slave"]
+[Variation "Variante Méran"]
+
+*
+
+[ECO "D49"]
+[Opening "Semi-slave"]
+[Variation "Variante Méran, variante Blumenfeld"]
+
+*
+
+[ECO "D50"]
+[Opening "Gambit-dame refusé"]
+[Variation "Variante moderne"]
+
+*
+
+[ECO "D51"]
+[Opening "Gambit-dame refusé"]
+[Variation "Variante moderne, défense du cavalier"]
+
+*
+
+[ECO "D52"]
+[Opening "Gambit-dame refusé"]
+
+*
+
+[ECO "D53"]
+[Opening "Gambit-dame refusé"]
+
+*
+
+[ECO "D54"]
+[Opening "Gambit-dame refusé"]
+[Variation "Variante néo-orthodoxe"]
+
+*
+
+[ECO "D55"]
+[Opening "Gambit-dame refusé"]
+[Variation "Variante moderne, ligne principale"]
+
+*
+
+[ECO "D56"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense Lasker"]
+
+*
+
+[ECO "D57"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense Lasker, ligne principale"]
+
+*
+
+[ECO "D58"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense Tartakover"]
+
+*
+
+[ECO "D59"]
+[Opening "Gambit-dame refusé"]
+[Variation "Système Tartacover, variante d'échange Makagonov"]
+
+*
+
+[ECO "D60"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense orthodoxe"]
+
+*
+
+[ECO "D61"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense orthodoxe, variante Rubinstein"]
+
+*
+
+[ECO "D62"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense orthodoxe, variante Rubinstein, ligne Flohr"]
+
+*
+
+[ECO "D63"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense orthodoxe, ligne principale"]
+
+*
+
+[ECO "D64"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense orthodoxe, attaque Rubinstein"]
+
+*
+
+[ECO "D65"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense orthodoxe, attaque Rubinstein"]
+
+*
+
+[ECO "D66"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense orthodoxe, ligne Fd3"]
+
+*
+
+[ECO "D67"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense orthodoxe, système Capablanca"]
+
+*
+
+[ECO "D68"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense orthodoxe, variante classique"]
+
+*
+
+[ECO "D69"]
+[Opening "Gambit-dame refusé"]
+[Variation "Défense orthodoxe, variante classique"]
+
+*
+
+[ECO "D70"]
+[Opening "Néo-Grünfeld"]
+
+*
+
+[ECO "D71"]
+[Opening "Néo-Grünfeld"]
+[Variation "Avec 5.cd"]
+
+*
+
+[ECO "D72"]
+[Opening "Néo-Grünfeld"]
+[Variation "Avec 5.cd, ligne principale"]
+
+*
+
+[ECO "D73"]
+[Opening "Néo-Grünfeld"]
+[Variation "Avec 5.Cf3"]
+
+*
+
+[ECO "D74"]
+[Opening "Néo-Grünfeld"]
+[Variation "Avec 6.cd Cxd5 7.O-O"]
+
+*
+
+[ECO "D75"]
+[Opening "Néo-Grünfeld"]
+[Variation "Avec 6.cd Cxd5 7.O-O c5 8.dc"]
+
+*
+
+[ECO "D76"]
+[Opening "Néo-Grünfeld"]
+[Variation "Avec 6.cd Cxd5 7.O-O Cb6"]
+
+*
+
+[ECO "D77"]
+[Opening "Néo-Grünfeld"]
+[Variation "Avec 6.O-O"]
+
+*
+
+[ECO "D78"]
+[Opening "Néo-Grünfeld"]
+[Variation "Avec 6.O-O c6"]
+
+*
+
+[ECO "D79"]
+[Opening "Néo-Grünfeld"]
+[Variation "Avec 6.O-O, ligne principale"]
+
+*
+
+[ECO "D80"]
+[Opening "Grünfeld"]
+
+*
+
+[ECO "D81"]
+[Opening "Grünfeld"]
+[Variation "Variante russe, variante accélérée"]
+
+*
+
+[ECO "D82"]
+[Opening "Grünfeld"]
+[Variation "Attaque Brinckmann"]
+
+*
+
+[ECO "D83"]
+[Opening "Grünfeld"]
+[Variation "Attaque Brinckmann, gambit Grünfeld"]
+
+*
+
+[ECO "D84"]
+[Opening "Grünfeld"]
+[Variation "Attaque Brinckmann, gambit Grünfeld accepté"]
+
+*
+
+[ECO "D85"]
+[Opening "Grünfeld"]
+[Variation "Variante d'échange"]
+
+*
+
+[ECO "D86"]
+[Opening "Grünfeld"]
+[Variation "Variante d'échange, variante classique"]
+
+*
+
+[ECO "D87"]
+[Opening "Grünfeld"]
+[Variation "Variante d'échange, variante Spassky"]
+
+*
+
+[ECO "D88"]
+[Opening "Grünfeld"]
+[Variation "Variante d'échange, variante Spassky"]
+
+*
+
+[ECO "D89"]
+[Opening "Grünfeld"]
+[Variation "Variante d'échange, variante Spassky"]
+
+*
+
+[ECO "D90"]
+[Opening "Grünfeld"]
+[Variation "Variante des 3 cavaliers"]
+
+*
+
+[ECO "D91"]
+[Opening "Grünfeld"]
+[Variation "Variante des 3 cavaliers, système Petrossian"]
+
+*
+
+[ECO "D92"]
+[Opening "Grünfeld"]
+[Variation "Variante des 3 cavaliers, attaque hongroise"]
+
+*
+
+[ECO "D93"]
+[Opening "Grünfeld"]
+[Variation "Variante des 3 cavaliers, variante hongroise"]
+
+*
+
+[ECO "D94"]
+[Opening "Grünfeld"]
+[Variation "Variante des 3 cavaliers, variante Burille"]
+
+*
+
+[ECO "D95"]
+[Opening "Grünfeld"]
+[Variation "Variante des 3 cavaliers, variante viennoise"]
+
+*
+
+[ECO "D96"]
+[Opening "Grünfeld"]
+[Variation "Variante russe"]
+
+*
+
+[ECO "D97"]
+[Opening "Grünfeld"]
+[Variation "Variante russe"]
+
+*
+
+[ECO "D98"]
+[Opening "Grünfeld"]
+[Variation "Variante russe, variante Smyslov"]
+
+*
+
+[ECO "D99"]
+[Opening "Grünfeld"]
+[Variation "Variante russe, variante Smyslov"]
+
+*
+
+[ECO "E00"]
+[Opening "Partie du pion-dame"]
+[Variation "Défense est-indienne"]
+
+*
+
+[ECO "E01"]
+[Opening "Catalane"]
+[Variation "Fermée"]
+
+*
+
+[ECO "E02"]
+[Opening "Catalane"]
+[Variation "Ouverte"]
+
+*
+
+[ECO "E03"]
+[Opening "Catalane"]
+[Variation "Ouverte"]
+
+*
+
+[ECO "E04"]
+[Opening "Catalane"]
+[Variation "Ouverte"]
+
+*
+
+[ECO "E05"]
+[Opening "Catalane"]
+[Variation "Ouverte, ligne classique"]
+
+*
+
+[ECO "E06"]
+[Opening "Catalane"]
+[Variation "Fermée"]
+
+*
+
+[ECO "E07"]
+[Opening "Catalane"]
+[Variation "Fermée"]
+
+*
+
+[ECO "E08"]
+[Opening "Catalane"]
+[Variation "Fermée"]
+
+*
+
+[ECO "E09"]
+[Opening "Catalane"]
+[Variation "Fermée, ligne principale"]
+
+*
+
+[ECO "E10"]
+[Opening "Partie du pion-dame"]
+[Variation "Anti-Nimzo-indienne"]
+
+*
+
+[ECO "E11"]
+[Opening "Défense Bogo-indienne"]
+
+*
+
+[ECO "E12"]
+[Opening "Défense ouest-indienne"]
+
+*
+
+[ECO "E13"]
+[Opening "Défense ouest-indienne"]
+[Variation "Variante Kasparov"]
+
+*
+
+[ECO "E14"]
+[Opening "Défense ouest-indienne"]
+[Variation "Système Spassky"]
+
+*
+
+[ECO "E15"]
+[Opening "Défense ouest-indienne"]
+[Variation "Fianchetto"]
+
+*
+
+[ECO "E16"]
+[Opening "Défense ouest-indienne"]
+[Variation "Variante Capablanca"]
+
+*
+
+[ECO "E17"]
+[Opening "Défense ouest-indienne"]
+[Variation "Variante traditionnelle"]
+
+*
+
+[ECO "E18"]
+[Opening "Défense ouest-indienne"]
+[Variation "Variante classique, ligne traditionnelle"]
+
+*
+
+[ECO "E19"]
+[Opening "Défense ouest-indienne"]
+[Variation "Variante classique, ligne traditionnelle, ligne principale"]
+
+*
+
+[ECO "E20"]
+[Opening "Défense Nimzo-indienne"]
+
+*
+
+[ECO "E21"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante des trois cavaliers"]
+
+*
+
+[ECO "E22"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Spielmann"]
+
+*
+
+[ECO "E23"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Spielmann, gambit Romanovsky"]
+
+*
+
+[ECO "E24"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Sämisch accélérée"]
+
+*
+
+[ECO "E25"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Sämisch"]
+
+*
+
+[ECO "E26"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Sämisch"]
+
+*
+
+[ECO "E27"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Sämisch"]
+
+*
+
+[ECO "E28"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Sämisch"]
+
+*
+
+[ECO "E29"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Sämisch"]
+
+*
+
+[ECO "E30"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante de Léningrad"]
+
+*
+
+[ECO "E31"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante de Léningrad, défense Benoni"]
+
+*
+
+[ECO "E32"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante classique"]
+
+*
+
+[ECO "E33"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante classique, variante de Zurich"]
+
+*
+
+[ECO "E34"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante classique, variante Noa"]
+
+*
+
+[ECO "E35"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante classique, variante Noa"]
+
+*
+
+[ECO "E36"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante classique, variante Noa"]
+
+*
+
+[ECO "E37"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante classique, variante Noa"]
+
+*
+
+[ECO "E38"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante classique, variante berlinoise"]
+
+*
+
+[ECO "E39"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante classique, variante berlinoise, variante Pirc"]
+
+*
+
+[ECO "E40"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "E41"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Hübner"]
+
+*
+
+[ECO "E42"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Hübner, variante Rubinstein"]
+
+*
+
+[ECO "E43"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante de Saint-Petersburg"]
+
+*
+
+[ECO "E44"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Variante Fischer"]
+
+*
+
+[ECO "E45"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, variante Bronstein"]
+
+*
+
+[ECO "E46"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "E47"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, attaque du fou"]
+
+*
+
+[ECO "E48"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, attaque du fou, défense classique"]
+
+*
+
+[ECO "E49"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, système Botvinnik"]
+
+*
+
+[ECO "E50"]
+[Opening "Défense Nimzo-indienne"]
+
+*
+
+[ECO "E51"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, défense Ragozin"]
+
+*
+
+[ECO "E52"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, défense Schlechter"]
+
+*
+
+[ECO "E53"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, système Gligoric"]
+
+*
+
+[ECO "E54"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, système Gligoric, échange en c4"]
+
+*
+
+[ECO "E55"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, système Gligoric, variante Bronstein"]
+
+*
+
+[ECO "E56"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, système Gligoric, défense Bernstein"]
+
+*
+
+[ECO "E57"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale avec 8...dc et 9...cd"]
+
+*
+
+[ECO "E58"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, défense Berstein, ligne d'échange"]
+
+*
+
+[ECO "E59"]
+[Opening "Défense Nimzo-indienne"]
+[Variation "Ligne principale, défense Berstein"]
+
+*
+
+[ECO "E60"]
+[Opening "Défense est-indienne"]
+
+*
+
+[ECO "E61"]
+[Opening "Défense est-indienne"]
+
+*
+
+[ECO "E62"]
+[Opening "Défense est-indienne"]
+[Variation "Fianchetto retardé"]
+
+*
+
+[ECO "E63"]
+[Opening "Défense est-indienne"]
+[Variation "Fianchetto, variante Panno"]
+
+*
+
+[ECO "E64"]
+[Opening "Défense est-indienne"]
+[Variation "Fianchetto, variante yougoslave, ligne rare"]
+
+*
+
+[ECO "E65"]
+[Opening "Défense est-indienne"]
+[Variation "Fianchetto, variante yougoslave"]
+
+*
+
+[ECO "E66"]
+[Opening "Défense est-indienne"]
+[Variation "Fianchetto, variante yougoslave, ligne avancée"]
+
+*
+
+[ECO "E67"]
+[Opening "Défense est-indienne"]
+[Variation "Fianchetto, défense Debrecen"]
+
+*
+
+[ECO "E68"]
+[Opening "Défense est-indienne"]
+[Variation "Fianchetto, variante classique"]
+
+*
+
+[ECO "E69"]
+[Opening "Défense est-indienne"]
+[Variation "Fianchetto, variante classique, ligne principale"]
+
+*
+
+[ECO "E70"]
+[Opening "Défense est-indienne"]
+[Variation "Ligne principale"]
+
+*
+
+[ECO "E71"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Makagonov"]
+
+*
+
+[ECO "E72"]
+[Opening "Défense est-indienne"]
+[Variation "Ligne principale, fianchetto retardé"]
+
+*
+
+[ECO "E73"]
+[Opening "Défense est-indienne"]
+[Variation "Ligne principale, développement standard"]
+
+*
+
+[ECO "E74"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Averbakh, défense Benoni"]
+
+*
+
+[ECO "E75"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Averbakh, ligne principale"]
+
+*
+
+[ECO "E76"]
+[Opening "Défense est-indienne"]
+[Variation "Attaque des 4 pions"]
+
+*
+
+[ECO "E77"]
+[Opening "Défense est-indienne"]
+[Variation "Attaque des 4 pions"]
+
+*
+
+[ECO "E78"]
+[Opening "Défense est-indienne"]
+[Variation "Attaque des 4 pions, attaque fluide"]
+
+*
+
+[ECO "E79"]
+[Opening "Défense est-indienne"]
+[Variation "Attaque des 4 pions, variante d'échange"]
+
+*
+
+[ECO "E80"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Sämisch"]
+
+*
+
+[ECO "E81"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Sämisch, défense normale"]
+
+*
+
+[ECO "E82"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Sämisch, double fianchetto"]
+
+*
+
+[ECO "E83"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Sämisch, défense Yates"]
+
+*
+
+[ECO "E84"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Sämisch, ligne principale Panno"]
+
+*
+
+[ECO "E85"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Sämisch, variante orthodoxe"]
+
+*
+
+[ECO "E86"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Sämisch"]
+
+*
+
+[ECO "E87"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Sämisch, fermée"]
+
+*
+
+[ECO "E88"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Sämisch, variante orthodoxe avec 7.d5 c6"]
+
+*
+
+[ECO "E89"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Sämisch, fermée, ligne principale"]
+
+*
+
+[ECO "E90"]
+[Opening "Défense est-indienne"]
+[Variation "Ligne principale, défenses rares"]
+
+*
+
+[ECO "E91"]
+[Opening "Défense est-indienne"]
+[Variation "Variante orthodoxe"]
+
+*
+
+[ECO "E92"]
+[Opening "Défense est-indienne"]
+[Variation "Variante orthodoxe"]
+
+*
+
+[ECO "E93"]
+[Opening "Défense est-indienne"]
+[Variation "Variante Petrossian, défense normale"]
+
+*
+
+[ECO "E94"]
+[Opening "Défense est-indienne"]
+[Variation "Variante orthodoxe"]
+
+*
+
+[ECO "E95"]
+[Opening "Défense est-indienne"]
+[Variation "Variante orthodoxe"]
+
+*
+
+[ECO "E96"]
+[Opening "Défense est-indienne"]
+[Variation "Variante orthodoxe, défense positionnelle, ligne principale"]
+
+*
+
+[ECO "E97"]
+[Opening "Défense est-indienne"]
+[Variation "Variante orthodoxe, défense Aronin-Taïmanov"]
+
+*
+
+[ECO "E98"]
+[Opening "Défense est-indienne"]
+[Variation "Variante orthodoxe, système classique"]
+
+*
+
+[ECO "E99"]
+[Opening "Défense est-indienne"]
+[Variation "Variante orthodoxe, système classique, ligne traditionnelle"]
+
+*
+

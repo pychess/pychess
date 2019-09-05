@@ -23,5 +23,5 @@ script:
  - /usr/local/bin/flake8 --exclude=lib/pychess/external/ lib/pychess/
  - xvfb-run -a $PYTHON ./setup.py build sdist
  - cd testing
- - PYTHONPATH=../lib xvfb-run -a coverage run --omit=../lib/pychess/external/* --source ../lib -m unittest discover -p "*.py"
+ - PYTHONPATH=../lib PYCHESS_UNITTEST=true xvfb-run -a coverage run --omit=../lib/pychess/external/* --source ../lib -m unittest discover -p "*.py"
  - codecov
