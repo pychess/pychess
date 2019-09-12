@@ -10,6 +10,7 @@ def get_cpu():
     result['windows'] = result['platform'] == 'win32'
     result['linux'] = result['platform'].startswith('linux')
     result['mac'] = result['platform'] == 'darwin'
+    result['release'] = platform.release().lower()
     result['binext'] = '.exe' if result['windows'] else ''
 
     # Number of bits

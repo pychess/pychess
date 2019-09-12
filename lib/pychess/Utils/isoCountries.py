@@ -221,7 +221,7 @@ ISO3166_LIST = [
     ISO3166("sv", _("El Salvador")),
     ISO3166("sx", _("Sint Maarten (Dutch part)")),
     ISO3166("sy", _("Syrian Arab Republic")),
-    ISO3166("sz", _("Swaziland")),
+    ISO3166("sz", _("Eswatini")),
     ISO3166("tc", _("Turks and Caicos Islands")),
     ISO3166("td", _("Chad")),
     ISO3166("tf", _("French Southern Territories")),

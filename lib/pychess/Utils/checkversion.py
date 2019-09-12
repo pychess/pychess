@@ -1,3 +1,4 @@
+import os.path
 import asyncio
 import json
 
@@ -5,14 +6,21 @@ from gi.repository import GLib, Gtk
 
 from pychess import VERSION
 from pychess.widgets import mainwindow
-from pychess.System import download_file_async
+from pychess.System import download_file_async, prefix
 
 URL = "https://api.github.com/repos/pychess/pychess/releases/latest"
 LINK = "https://github.com/pychess/pychess/releases"
 
 
+def isgit():
+    return os.path.isdir(prefix.addDataPrefix(".git"))
+
+
 @asyncio.coroutine
 def checkversion():
+    if isgit():
+        return
+
     new_version = None
 
     filename = yield from download_file_async(URL)
