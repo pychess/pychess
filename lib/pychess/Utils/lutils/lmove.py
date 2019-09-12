@@ -475,8 +475,7 @@ def parseSAN(board, san):
                         continue
                     return move
 
-    errstring = "no %s is able to move to %s" % (reprPiece[piece],
-                                                 reprCord[tcord])
+    errstring = _("no %s is able to move to %s") % (reprPiece[piece], reprCord[tcord])
     raise ParsingError(san, errstring, board.asFen())
 
 ################################################################################

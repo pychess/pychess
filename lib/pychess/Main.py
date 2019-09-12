@@ -20,9 +20,8 @@ from pychess.compat import create_task
 from pychess.System.Log import log
 from pychess.System import conf, uistuff, prefix
 from pychess.Utils.const import HINT, NAME, SPY, NORMALCHESS
-from pychess.Utils.checkversion import checkversion
-from pychess.widgets import enginesDialog
-from pychess.widgets import newGameDialog
+from pychess.Utils.checkversion import isgit, checkversion
+from pychess.widgets import enginesDialog, newGameDialog
 from pychess.widgets.Background import hexcol
 from pychess.widgets.tipOfTheDay import TipOfTheDay
 from pychess.widgets.discovererDialog import DiscovererDialog
@@ -32,6 +31,7 @@ from pychess.widgets.analyzegameDialog import AnalyzeGameDialog
 from pychess.widgets import preferencesDialog, gameinfoDialog, playerinfoDialog
 from pychess.widgets.TaskerManager import internet_game_tasker
 from pychess.widgets.RecentChooser import recent_menu, recent_manager
+from pychess.widgets.prompttext import getUserTextDialog
 from pychess.Players.engineNest import discoverer
 from pychess.Savers import chesspastebin
 from pychess.Savers.pgn import PGNFile
@@ -273,14 +273,16 @@ class GladeHandlers:
         ok = False
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         text = clipboard.wait_for_text()
-        if text not in [None, '']:
-            try:
-                pgn = PGNFile(StringIO(text))
-                pgn.loadToModel(None)
-                newGameDialog.loadPgnAndRun(text)
-                ok = True
-            except Exception:
-                pass
+        if text is not None:
+            text = text.strip()
+            if text != '':
+                try:
+                    pgn = PGNFile(StringIO(text))
+                    pgn.loadToModel(None)
+                    newGameDialog.loadPgnAndRun(text)
+                    ok = True
+                except Exception:
+                    pass
         if not ok:
             dialog = Gtk.MessageDialog(mainwindow(), type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK)
             dialog.set_markup(_('The clipboard contains no relevant chess data.'))
@@ -310,32 +312,18 @@ class GladeHandlers:
                     perspective.open_chessfile(filename)
 
     def on_remote_game_activate(self, widget):
-        # Ask the user for an URL
-        widgets = gamewidget.getWidgets()
-        url_dialog = widgets["url_path_dialog"]
-        widgets["url_edit"].set_text('')
-        widgets["url_edit"].grab_focus()
-        answer = url_dialog.run()
-        url_dialog.hide()
-        if answer != Gtk.ResponseType.OK.real:
-            return
-
-        # Download the game
-        url = widgets["url_edit"].get_text().strip()
-        if len(url) == 0:
-            return
-        remdata = get_internet_game_as_pgn(url)
-        if remdata is None:
-            dlg = Gtk.MessageDialog(mainwindow(),
-                                    type=Gtk.MessageType.ERROR,
-                                    buttons=Gtk.ButtonsType.OK,
-                                    message_format=_("The provided link does not lead to a meaningful chess content."))
-            dlg.run()
-            dlg.destroy()
-            return
-
-        # Load the game
-        newGameDialog.loadPgnAndRun(remdata)
+        url = getUserTextDialog(mainwindow(), _('Load a remote game'), _('Paste the link to download:'))
+        if url is not None:
+            remdata = get_internet_game_as_pgn(url.strip())
+            if remdata is None:
+                dlg = Gtk.MessageDialog(mainwindow(),
+                                        type=Gtk.MessageType.ERROR,
+                                        buttons=Gtk.ButtonsType.OK,
+                                        message_format=_("The provided link does not lead to a meaningful chess content."))
+                dlg.run()
+                dlg.destroy()
+            else:
+                newGameDialog.loadPgnAndRun(remdata)
 
     def on_save_game1_activate(self, widget):
         perspective = perspective_manager.get_perspective("games")
@@ -544,12 +532,15 @@ class GladeHandlers:
     def on_how_to_play1_activate(self, widget):
         webbrowser.open(_("http://en.wikipedia.org/wiki/Rules_of_chess"))
 
-    def translate_this_application_activate(self, widget):
-        webbrowser.open("https://www.transifex.com/projects/p/pychess/")
-
     def on_TipOfTheDayMenuItem_activate(self, widget):
         tip_of_the_day = TipOfTheDay()
         tip_of_the_day.show()
+
+    def translate_this_application_activate(self, widget):
+        webbrowser.open("https://www.transifex.com/projects/p/pychess/")
+
+    def report_issue_activate(self, widget):
+        webbrowser.open("https://github.com/pychess/pychess/issues")
 
 
 class PyChess(Gtk.Application):
@@ -736,7 +727,7 @@ class PyChess(Gtk.Application):
         self.aboutdialog.set_program_name(NAME)
         self.aboutdialog.set_copyright("Copyright © 2006-2019")
         self.aboutdialog.set_version(VERSION_NAME + " " + VERSION)
-        if os.path.isdir(prefix.addDataPrefix(".git")):
+        if isgit():
             try:
                 self.git_rev = subprocess.check_output(["git", "describe", "--tags"]).decode().strip()
                 self.aboutdialog.set_version('%s Git %s' % (VERSION_NAME, self.git_rev))

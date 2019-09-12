@@ -462,6 +462,7 @@ class Sidepanel:
         textedit.set_editable(True)
         textedit.set_cursor_visible(True)
         textedit.set_wrap_mode(Gtk.WrapMode.WORD)
+        textedit.set_accepts_tab(False)
 
         textbuffer = textedit.get_buffer()
         textbuffer.set_text(board.children[index])
@@ -478,19 +479,13 @@ class Sidepanel:
         dialog.destroy()
 
         (iter_first, iter_last) = textbuffer.get_bounds()
-        comment = textbuffer.get_text(iter_first, iter_last, False)
-        update = response in [Gtk.ResponseType.REJECT, Gtk.ResponseType.ACCEPT]
-        drop = (response == Gtk.ResponseType.REJECT) or (creation and not update) or (update and len(comment) == 0)
-        if drop:
-            if not creation:
-                self.gamemodel.needsSave = True
-            del board.children[index]
-        else:
-            if update:
-                if board.children[index] != comment:
-                    self.gamemodel.needsSave = True
+        comment = '' if response == Gtk.ResponseType.REJECT else textbuffer.get_text(iter_first, iter_last, False)
+        if response != Gtk.ResponseType.CANCEL and board.children[index] != comment:
+            if len(comment) == 0:
+                del board.children[index]
+            else:
                 board.children[index] = comment
-        if drop or update:
+            self.gamemodel.needsSave = True
             self.update()
 
     def menu_delete_comment(self, widget=None, board=None, index=0):
